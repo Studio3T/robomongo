@@ -35,7 +35,7 @@ Compiling:
 
     $ cd build
     $ chmod +x build-linux-debug.sh
-    $ build-linux-debug.sh
+    $ ./build-linux-debug.sh
 
 Executable will be placed to: target/debug/app/out
 

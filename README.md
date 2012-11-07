@@ -18,10 +18,26 @@ Prerequisites:
 Compiling:
 
     > cd build
-    > build-windows-debug
+    > build-windows-debug.bat
 
-Executable will be placed in: target/debug/app/out
+Executable will be placed to: target/debug/app/out
 
+
+Linux
+-------
+
+Prerequisites:
+
+* Qt should be installed. Tested with Qt 4.8
+* Your PATH variable should have Qt bin folder
+
+Compiling:
+
+    $ cd build
+    $ chmod +x build-linux-debug.sh
+    $ build-linux-debug.sh
+
+Executable will be placed to: target/debug/app/out
 
 Download
 ========

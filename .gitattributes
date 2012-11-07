@@ -1,1 +1,37 @@
-*.dll -text
+# Auto detect text files and perform LF normalization
+*  text=auto
+
+# Explicitly declaring text files we want to always be normalized and converted 
+# to native line endings on checkout.
+
+*.cs     text 
+*.java   text 
+*.html   text 
+*.css    text
+*.js     text
+*.sql    text
+*.cpp    text
+*.h      text
+*.rm     text
+*.pro    text
+*.pri    text
+
+# Declare files that will always have CRLF line endings (Windows) on checkout.
+
+*.bat    text eol=crlf
+
+# Declare files that will always have LF line endings (Unix) on checkout.
+
+*.sh     text eol=lf
+
+#
+# Binary files
+# 
+
+*.png   binary
+*.jpg   binary
+*.gif   binary
+*.dll   binary
+*.exe   binary
+*.doc   binary
+*.docx  binary

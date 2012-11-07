@@ -17,8 +17,8 @@ Prerequisites:
 
 Compiling:
 
-> cd build
-> build-windows-debug
+    > cd build
+    > build-windows-debug
 
 Executable will be placed in: target/debug/app/out
 

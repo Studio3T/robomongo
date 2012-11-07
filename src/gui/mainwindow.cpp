@@ -4,6 +4,7 @@
 #include "qstyle.h"
 #include <QLayout>
 #include <QPushButton>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -73,6 +74,13 @@ MainWindow::MainWindow(QWidget *parent) :
                 );
 
     _tabWidget->addTab(new QPushButton("Push me, and then"), "File");
+
+    QSettings settings;
+
+    //settings.
+
+
+
     _tabWidget->addTab(new QLabel("Muahaha2"), "About");
 
     _tabWidget->setCurrentIndex(_tabWidget->count() - 1);

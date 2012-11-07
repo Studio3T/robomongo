@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
-SUBDIRS = gui  \
+SUBDIRS = core \
+          gui  \
           app
 
 

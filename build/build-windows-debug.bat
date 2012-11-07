@@ -38,7 +38,7 @@ REM - QMake
 REM -----------------------------------
 
 REM Run qmake
-qmake %PROJECT_ROOT%src\play.pro -r -spec win32-msvc2010 "CONFIG+=debug" "CONFIG+=declarative_debug"
+qmake %PROJECT_ROOT%src\robomongo.pro -r -spec win32-msvc2010 "CONFIG+=debug" "CONFIG+=declarative_debug"
 if %ERRORLEVEL% neq 0 (
   echo.
   echo Error when running qmake.

@@ -3,6 +3,7 @@
 
 target/
 *~
+*.autosave
 
 # Compiled Object files
 *.slo

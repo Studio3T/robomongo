@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     bool ok;
 
     // json is a QString containing the data to convert
-    QVariantMap result = parser.parse (" { \"tesst2\" : \"value\" } ", &ok).toMap();
+    QVariantMap result = parser.parse (" { \"tesddst2\" : \"value\" } ", &ok).toMap();
 
 
 

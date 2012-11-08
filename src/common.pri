@@ -22,6 +22,18 @@ message(UI_DIR:       $$UI_DIR)
 message(SRC_ROOT:     $$SRC_ROOT)
 message(OUTPUT_ROOT:  $$OUTPUT_ROOT)
 
+# Populate $$OS_CPU variable
+contains(QMAKE_HOST.arch, x86_64) {
+    win32:OS_CPU=win-amd64
+    unix:OS_CPU=unix-amd64
+} else {
+    win32:OS_CPU=unix-i386
+    unix:OS_CPU=unix-i386
+}
+
+THIRDPARTY_LIBS_PATH=$$ROOT/libs/$$OS_CPU
+
+
 # libs paths:
 LIBS += -L$$OUTPUT_ROOT/gui/out \
         -L$$OUTPUT_ROOT/core/out
@@ -30,5 +42,7 @@ LIBS += -L$$OUTPUT_ROOT/gui/out \
 INCLUDEPATH += $$ROOT/include
 
 # third party libs
-LIBS += -L$$ROOT/libs/qjson \
+LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson \
         -lqjson
+
+

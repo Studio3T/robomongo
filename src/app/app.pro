@@ -24,7 +24,7 @@ win32 {
 
     } else {
         # Copy qjson.dll to to app/out folder
-        QMAKE_POST_LINK += $$quote(xcopy \"$$ROOT\\libs\\qjson\\qjson.dll\" \"$$OUT_PWD\\out\" $$escape_expand(\\n))
+        QMAKE_POST_LINK += $$quote(xcopy \"$$THIRDPARTY_LIBS_PATH\\qjson\\qjson.dll\" \"$$OUT_PWD\\out\" $$escape_expand(\\n))
     }
 }
 

@@ -23,7 +23,8 @@ message(SRC_ROOT:     $$SRC_ROOT)
 message(OUTPUT_ROOT:  $$OUTPUT_ROOT)
 
 # libs paths:
-LIBS += -L$$OUTPUT_ROOT/gui/out
+LIBS += -L$$OUTPUT_ROOT/gui/out \
+        -L$$OUTPUT_ROOT/core/out
 
 # include paths:
 INCLUDEPATH += $$ROOT/include

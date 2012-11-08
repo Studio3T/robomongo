@@ -1,5 +1,7 @@
 #include "ConnectionRecord.h"
 
+using namespace Robomongo;
+
 /*
 ** Constructs connection record
 */

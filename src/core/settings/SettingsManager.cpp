@@ -1,6 +1,9 @@
 #include "SettingsManager.h"
 #include <QDir>
 #include <QDebug>
+#include "AppRegistry.h"
+
+using namespace Robomongo;
 
 SettingsManager::SettingsManager()
 {

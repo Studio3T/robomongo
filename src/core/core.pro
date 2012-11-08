@@ -5,9 +5,13 @@ TARGET   = core
 TEMPLATE = lib
 CONFIG  += staticlib
 
-SOURCES += settings/ConnectionRecord.cpp \
+SOURCES += \
+    AppRegistry.cpp \
+    settings/ConnectionRecord.cpp \
     settings/SettingsManager.cpp
 
-HEADERS  += settings/ConnectionRecord.h \
+HEADERS  += \
+    AppRegistry.h \
+    settings/ConnectionRecord.h \
     settings/SettingsManager.h
 

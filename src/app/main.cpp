@@ -1,9 +1,12 @@
 #include <QApplication>
 #include <QSettings>
 #include <QList>
+#include <QMessageBox>
+#include <QDir>
 #include "mainwindow.h"
 
 #include "qjson/parser.h"
+#include "settings/SettingsManager.h"
 
 struct Login {
      QString userName;
@@ -37,7 +40,11 @@ int main(int argc, char *argv[])
     // json is a QString containing the data to convert
     QVariantMap result = parser.parse (" { \"tesst2\" : \"value\" } ", &ok).toMap();
 
+    SettingsManager * manager = new SettingsManager();
 
+    QMessageBox msg;
+    msg.setText(QDir::homePath());
+    msg.show();
 
     MainWindow w;
     w.show();

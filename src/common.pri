@@ -26,6 +26,8 @@ message(OUTPUT_ROOT:  $$OUTPUT_ROOT)
 LIBS += -L$$OUTPUT_ROOT/gui/out
 
 # include paths:
-INCLUDEPATH += $$ROOT/libs/qjson/include
+INCLUDEPATH += $$ROOT/include
+
+# third party libs
 LIBS += -L$$ROOT/libs/qjson \
         -lqjson

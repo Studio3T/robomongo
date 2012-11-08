@@ -8,6 +8,8 @@
 #include "qjson/parser.h"
 #include "settings/SettingsManager.h"
 
+using namespace Robomongo;
+
 struct Login {
      QString userName;
      QString password;

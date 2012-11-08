@@ -3,12 +3,15 @@
 
 #include "ConnectionRecord.h"
 
-class SettingsManager
+namespace Robomongo
 {
-public:
-    SettingsManager();
+    class SettingsManager
+    {
+    public:
+        SettingsManager();
 
-    void addConnection(const ConnectionRecord & connection);
-};
+        void addConnection(const ConnectionRecord & connection);
+    };
+}
 
 #endif // SETTINGSMANAGER_H

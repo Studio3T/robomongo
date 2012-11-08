@@ -12,8 +12,8 @@ TEMPLATE = app
 SOURCES += main.cpp
         
 INCLUDEPATH += \
-            ../gui \
-            ../core
+            $$ROOT/src/gui \
+            $$ROOT/src/core
 
 LIBS += -lgui -lcore
 

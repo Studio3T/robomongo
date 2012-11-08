@@ -27,12 +27,13 @@ contains(QMAKE_HOST.arch, x86_64) {
     win32:OS_CPU=win-amd64
     unix:OS_CPU=unix-amd64
 } else {
-    win32:OS_CPU=unix-i386
+    win32:OS_CPU=win-i386
     unix:OS_CPU=unix-i386
 }
 
 THIRDPARTY_LIBS_PATH=$$ROOT/libs/$$OS_CPU
 
+message(THIRDPARTY_LIBS_PATH: $$THIRDPARTY_LIBS_PATH)
 
 # libs paths:
 LIBS += -L$$OUTPUT_ROOT/gui/out \

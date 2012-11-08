@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    a.setOrganizationDomain("robomongo.com");
+    a.setOrganizationDomain("robomongo.codm");
     a.setOrganizationName("Robomongo");
     a.setApplicationName("Robomongo");
 
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     bool ok;
 
     // json is a QString containing the data to convert
-    QVariantMap result = parser.parse (" { \"tesfdddst2\" : \"value\" } ", &ok).toMap();
+    QVariantMap result = parser.parse (" { \"tâedsfdddddddddst2\" : \"value\" } ", &ok).toMap();
 
     SettingsManager * manager = new SettingsManager();
 

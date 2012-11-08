@@ -19,7 +19,14 @@ LIBS += -lgui -lcore
 
 
 
+win32 {
+    contains(QMAKE_HOST.arch, x86_64) {
 
+    } else {
+        # Copy qjson.dll to to app/out folder
+        QMAKE_POST_LINK += $$quote(xcopy \"$$ROOT\\libs\\qjson\\qjson.dll\" \"$$OUT_PWD\\out\" $$escape_expand(\\n))
+    }
+}
 
 
 

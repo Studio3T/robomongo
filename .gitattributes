@@ -35,3 +35,4 @@
 *.exe   binary
 *.doc   binary
 *.docx  binary
+*.lib   binary

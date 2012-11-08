@@ -18,7 +18,7 @@ Prerequisites:
 Compiling:
 
     > cd build
-    > build-windows-debug.bat
+    > build.bat
 
 Executable will be placed to: target/debug/app/out
 
@@ -34,8 +34,8 @@ Prerequisites:
 Compiling:
 
     $ cd build
-    $ chmod +x build-linux-debug.sh
-    $ ./build-linux-debug.sh
+    $ chmod u+x build.sh
+    $ ./build.sh
 
 Executable will be placed to: target/debug/app/out
 

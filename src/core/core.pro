@@ -5,7 +5,9 @@ TARGET   = core
 TEMPLATE = lib
 CONFIG  += staticlib
 
-SOURCES += settings/ConnectionRecord.cpp
+SOURCES += settings/ConnectionRecord.cpp \
+    settings/SettingsManager.cpp
 
-HEADERS  += settings/ConnectionRecord.h
+HEADERS  += settings/ConnectionRecord.h \
+    settings/SettingsManager.h
 

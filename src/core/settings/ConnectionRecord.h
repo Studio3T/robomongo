@@ -1,3 +1,6 @@
+#ifndef CONNECTIONRECORD_H
+#define CONNECTIONRECORD_H
+
 #include <QString>
 
 
@@ -52,38 +55,38 @@ public:
 	/*
 	** Internal ID of connection
 	*/
-	int id() const { return _id; };
-	void setId(const int id) { _id = id; };
+    int id() const { return _id; }
+    void setId(const int id) { _id = id; }
 
 	/*
 	** Name of connection
 	*/
-	QString connectionName() const { return _connectionName; };
-	void setConnectionName(const QString & connectionName) { _connectionName = connectionName; };
+    QString connectionName() const { return _connectionName; }
+    void setConnectionName(const QString & connectionName) { _connectionName = connectionName; }
 
 	/*
 	** Database address
 	*/
-	QString databaseAddress() const { return _databaseAddress; };
-	void setDatabaseAddress(const QString & databaseAddress) { _databaseAddress = databaseAddress; };
+    QString databaseAddress() const { return _databaseAddress; }
+    void setDatabaseAddress(const QString & databaseAddress) { _databaseAddress = databaseAddress; }
 
 	/*
 	** Port of database
 	*/
-	int databasePort() const { return _databasePort; };
-	void setDatabasePort(const int port) { _databasePort = port; };
+    int databasePort() const { return _databasePort; }
+    void setDatabasePort(const int port) { _databasePort = port; }
 
 	/*
 	** User name
 	*/
-	QString userName() const { return _userName; };
-	void setUserName(const QString & userName) { _userName = userName; };
+    QString userName() const { return _userName; }
+    void setUserName(const QString & userName) { _userName = userName; }
 
 	/*
 	** Password
 	*/
-	QString userPassword() const { return _userPassword; };
-	void setUserPassword(const QString & userPassword) { _userPassword = userPassword; };
+    QString userPassword() const { return _userPassword; }
+    void setUserPassword(const QString & userPassword) { _userPassword = userPassword; }
 
 
 	ConnectionRecord * clone();
@@ -91,3 +94,4 @@ public:
 	QString getFullAddress() const { return QString("%1:%2").arg(_databaseAddress).arg(_databasePort); }
 };
 
+#endif // CONNECTIONRECORD_H

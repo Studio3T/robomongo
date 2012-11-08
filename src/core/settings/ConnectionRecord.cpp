@@ -3,14 +3,9 @@
 /*
 ** Constructs connection record
 */
-ConnectionRecord::ConnectionRecord()
+ConnectionRecord::ConnectionRecord() :
+    _id(0), _databasePort(27017)
 {
-	_id = 0;
-	_connectionName = QString();
-	_userName = QString();
-	_userPassword = QString();
-	_databaseAddress = QString();
-	_databasePort = 27017;
 }
 
 /*

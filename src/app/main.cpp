@@ -3,7 +3,7 @@
 #include <QList>
 #include "mainwindow.h"
 
-#include "parser.h"
+#include "qjson/parser.h"
 
 struct Login {
      QString userName;
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     bool ok;
 
     // json is a QString containing the data to convert
-    QVariantMap result = parser.parse (" { \"test\" : \"value\" } ", &ok).toMap();
+    QVariantMap result = parser.parse (" { \"tesst2\" : \"value\" } ", &ok).toMap();
 
 
 

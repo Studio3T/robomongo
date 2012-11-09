@@ -1,34 +1,60 @@
 @echo off 
 setlocal enableextensions enabledelayedexpansion
 
-REM -----------------------------------
-REM - Configuration
-REM -----------------------------------
+rem -----------------------------------
+rem - Configuration
+rem -----------------------------------
 
-REM Visual C++ directory
+rem Visual C++ directory
 set VISUALC_DIR=%ProgramFiles%\Microsoft Visual Studio 10.0\VC
 
-REM Store current directory in order to return to it after
+rem store current directory in order to return to it after
 set ORIGINAL_DIR=%CD%
 
-REM Find project root folder
+rem find project root folder
 set PROJECT_ROOT=%CD%\..\
 
+rem mode is a first arg
+set MODE=%1
+
+rem if mode wasnt specified - debug mode assumed
+if %1. ==. (
+  set MODE=debug
+)
+
+rem if not 'debug' AND 'release' - print error message
+if not %MODE% == debug (
+  if not %MODE% == release (
+    echo.
+    echo Specified mode ^(%MODE%^) is unsupported.
+    goto FINALLY
+  )
+)
+
+rem target folder where build will be placed
+set TARGET=%PROJECT_ROOT%target\%MODE%
+
+if %MODE% == debug (
+  set QMAKE_ARGS= -r -spec win32-msvc2010 "CONFIG+=debug" "CONFIG+=declarative_debug"
+)
+
+if %MODE% == release (
+  set QMAKE_ARGS= -r -spec win32-msvc2010 "CONFIG+=release"
+)
+
+echo Target folder: %TARGET%
 echo Visual C folder: %VISUALC_DIR%
 
 REM -----------------------------------
 REM - Preparation
 REM -----------------------------------
 
-REM Create target folder
-set OUTPUT=%PROJECT_ROOT%target\debug
-if not exist %OUTPUT% mkdir %OUTPUT%
+REM create target folder (if not already exists)
+if not exist %TARGET% mkdir %TARGET%
 if %ERRORLEVEL% neq 0 goto ERROR
 
-echo Output folder: %OUTPUT%
-
-REM Go to /target/debug folder
-cd %PROJECT_ROOT%target\debug
+REM go to target folder
+cd %TARGET%
 if %ERRORLEVEL% neq 0 goto ERROR
 
 echo.
@@ -37,8 +63,8 @@ REM -----------------------------------
 REM - QMake
 REM -----------------------------------
 
-REM Run qmake
-qmake %PROJECT_ROOT%src\robomongo.pro -r -spec win32-msvc2010 "CONFIG+=debug" "CONFIG+=declarative_debug"
+REM run qmake
+qmake %PROJECT_ROOT%src\robomongo.pro %QMAKE_ARGS%
 if %ERRORLEVEL% neq 0 (
   echo.
   echo Error when running qmake.
@@ -49,6 +75,7 @@ REM -----------------------------------
 REM - Visual C nmake
 REM -----------------------------------
 
+REM configure Visual C shell environment
 IF "!%VSINSTALLDIR%!" == "!!" (
 
   echo Settings Visual C environment variables...
@@ -59,6 +86,7 @@ IF "!%VSINSTALLDIR%!" == "!!" (
   echo Skipping Visual C environment setup ^(already configured^)
 )
 
+REM
 nmake
 if %ERRORLEVEL% neq 0 (
   echo.
@@ -84,7 +112,7 @@ REM -----------------------------------
 
 echo.
 echo Done without errors.
-echo Executable location: %OUTPUT%
+echo Executable location: %TARGET%
 goto FINALLY
 
 REM -----------------------------------

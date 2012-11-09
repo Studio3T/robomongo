@@ -22,11 +22,18 @@ if %1. ==. (
 rem if not 'debug' AND 'release' - print error message
 if not %MODE% == debug (
   if not %MODE% == release (
-    echo.
-    echo Specified mode ^(%MODE%^) is unsupported.
-    exit /b 1
-    pause
+    if not %MODE% == all (
+      echo.
+      echo Specified mode ^(%MODE%^) is unsupported.
+      exit /b 1
+    )
   )
+)
+
+if %MODE% == all (
+  %0 debug
+  %0 release
+  goto EOF
 )
 
 rem target folder where build will be placed
@@ -48,6 +55,7 @@ if %ERRORLEVEL% neq 0 (
   pause
 )
 
+rem check that clean was successfull
 if not exist %TARGET% (
   echo.
   echo Done without errors.
@@ -56,3 +64,5 @@ if not exist %TARGET% (
   echo.
   echo Error when removing files. Not all files were removed.
 )
+
+:EOF

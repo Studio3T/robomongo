@@ -15,6 +15,12 @@ if [[ $MODE != "release" ]] && [[ $MODE != "debug" ]] && [[ $MODE != "all" ]]; t
     exit 1
 fi
 
+# add 'executable' bit to clean.sh and rebuild.sh if needed
+if [ ! -x `pwd`/"clean.sh" ] ; then
+  chmod u+x clean.sh
+  chmod u+x rebuild.sh
+fi
+
 # if 'all' specified - build in debug and release mode
 if [[ $MODE = "all" ]]; then
   $0 debug

@@ -8,11 +8,18 @@ if [ -z $MODE ]; then
    MODE=debug
 fi
 
-if [[ $MODE != "release" ]] && [[ $MODE != "debug" ]]; then
+if [[ $MODE != "release" ]] && [[ $MODE != "debug" ]] && [[ $MODE != "all" ]]; then
     echo
     echo -e "\e[00;31m Specified mode ($MODE) is unsupported.\e[00m"
     echo
     exit 1
+fi
+
+# if 'all' specified - build in debug and release mode
+if [[ $MODE = "all" ]]; then
+  $0 debug
+  $0 release
+  exit 0
 fi
 
 PROJECT_ROOT=`pwd`/..                  # Find project root

@@ -5,9 +5,6 @@ rem -----------------------------------
 rem - Configuration
 rem -----------------------------------
 
-rem store current directory in order to return to it after
-set ORIGINAL_DIR=%CD%
-
 rem find project root folder
 set PROJECT_ROOT=%CD%\..\
 

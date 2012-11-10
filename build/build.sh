@@ -16,7 +16,6 @@ if [[ $MODE != "release" ]] && [[ $MODE != "debug" ]]; then
 fi
 
 PROJECT_ROOT=`pwd`/..                  # Find project root
-ORIGINAL_DIR=`pwd`                     # Store current directory in order to return to it after
 TARGET=${PROJECT_ROOT}/target/$MODE    # Prepare output directory name
 OUTPUT=${TARGET}/out                   # Prepare output directory name
 

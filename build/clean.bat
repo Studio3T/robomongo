@@ -28,8 +28,8 @@ if not %MODE% == debug (
 )
 
 if %MODE% == all (
-  %0 debug
-  %0 release
+  call %0 debug
+  call %0 release
   goto EOF
 )
 
@@ -39,7 +39,7 @@ set TARGET=%PROJECT_ROOT%target\%MODE%
 if not exist %TARGET% (
   echo.
   echo Already clean: !TARGET!.
-  exit /b 1
+  goto EOF
   pause
 )
 

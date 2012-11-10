@@ -25,10 +25,18 @@ if %1. ==. (
 rem if not 'debug' AND 'release' - print error message
 if not %MODE% == debug (
   if not %MODE% == release (
-    echo.
-    echo Specified mode ^(%MODE%^) is unsupported.
-    goto FINALLY
+    if not %MODE% == all (
+      echo.
+      echo Specified mode ^(%MODE%^) is unsupported.
+      goto FINALLY
+    )
   )
+)
+
+if %MODE% == all (
+  %0 debug
+  %0 release
+  goto FINALLY
 )
 
 rem target folder where build will be placed

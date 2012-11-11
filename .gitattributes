@@ -15,6 +15,8 @@
 *.rm     text
 *.pro    text
 *.pri    text
+*.txt    text 
+*.md     text
 
 # Declare files that will always have CRLF line endings (Windows) on checkout.
 
@@ -29,6 +31,7 @@
 # 
 
 *.png   binary
+*.so    binary
 *.jpg   binary
 *.gif   binary
 *.dll   binary

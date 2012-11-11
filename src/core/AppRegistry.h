@@ -3,6 +3,8 @@
 
 namespace Robomongo
 {
+    class SettingsManager;
+
     class AppRegistry
     {
     public:
@@ -14,8 +16,11 @@ namespace Robomongo
             return _instance;
         }
 
+        SettingsManager * settingsManager() { return _settingsManager; }
+
     private:
         AppRegistry();
+        SettingsManager * _settingsManager;
 
         /*
         ** Singleton support

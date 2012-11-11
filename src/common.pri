@@ -36,14 +36,20 @@ THIRDPARTY_LIBS_PATH=$$ROOT/libs/$$OS_CPU
 message(THIRDPARTY_LIBS_PATH: $$THIRDPARTY_LIBS_PATH)
 
 # libs paths:
-LIBS += -L$$OUTPUT_ROOT/gui/out \
-        -L$$OUTPUT_ROOT/core/out
+LIBS += -L$$OUTPUT_ROOT/gui/out
+LIBS += -L$$OUTPUT_ROOT/core/out
 
 # include paths:
 INCLUDEPATH += $$ROOT/include
+INCLUDEPATH += $$ROOT/include/boost
+
+# This forces the relink when building target
+# http://stackoverflow.com/questions/1485435/force-relink-when-building-in-qt-creator
+unix:PRE_TARGETDEPS += $$OUTPUT_ROOT/core/out/libcore.a
+unix:PRE_TARGETDEPS += $$OUTPUT_ROOT/gui/out/libgui.a
 
 # third party libs
-LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson \
-        -lqjson
+LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson
+LIBS += -lqjson
 
 

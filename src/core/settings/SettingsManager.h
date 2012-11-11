@@ -2,15 +2,26 @@
 #define SETTINGSMANAGER_H
 
 #include "ConnectionRecord.h"
+#include "boost/ptr_container/ptr_vector.hpp"
 
 namespace Robomongo
 {
     class SettingsManager
     {
+
     public:
         SettingsManager();
+        ~SettingsManager();
 
-        void addConnection(const ConnectionRecord & connection);
+        bool load();
+        bool save();
+
+        void addConnection(ConnectionRecord * connection);
+        void removeConnection(int index);
+
+    private:
+        QString _configPath;
+        boost::ptr_vector<ConnectionRecord> _connections;
     };
 }
 

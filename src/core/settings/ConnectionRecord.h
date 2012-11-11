@@ -2,9 +2,12 @@
 #define CONNECTIONRECORD_H
 
 #include <QString>
+#include <QVariant>
+#include <QVariantMap>
 
 namespace Robomongo
 {
+
     /*
     ** Represents connection record
     */
@@ -57,6 +60,9 @@ namespace Robomongo
         ** Clone ConnectionRecord
         */
         ConnectionRecord * clone();
+
+        QVariant toVariant() const;
+        void fromVariant(QVariantMap map);
 
         /*
         ** Internal ID of connection

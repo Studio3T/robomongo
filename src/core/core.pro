@@ -13,5 +13,11 @@ SOURCES += \
 HEADERS  += \
     AppRegistry.h \
     settings/ConnectionRecord.h \
-    settings/SettingsManager.h
+    settings/SettingsManager.h \
+    Core.h
 
+message(inside core huevo: $$THIRDPARTY_LIBS_PATH/qjson)
+
+# third party libs
+LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson
+LIBS += -lqjsond

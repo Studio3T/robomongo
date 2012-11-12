@@ -16,6 +16,7 @@ namespace Robomongo
         bool load();
         bool save();
 
+
         void addConnection(ConnectionRecord * connection);
         void removeConnection(int index);
 

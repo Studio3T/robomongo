@@ -5,7 +5,7 @@ using namespace Robomongo;
 
 AppRegistry::AppRegistry()
 {
-    _settingsManager = new SettingsManager();
+    _settingsManager.reset(new SettingsManager());
 }
 
 AppRegistry::~AppRegistry()

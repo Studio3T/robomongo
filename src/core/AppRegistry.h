@@ -1,7 +1,7 @@
 #ifndef APPREGISTRY_H
 #define APPREGISTRY_H
 
-//#include "Core.h"
+#include "Core.h"
 
 namespace Robomongo
 {
@@ -18,11 +18,11 @@ namespace Robomongo
             return _instance;
         }
 
-        SettingsManager * settingsManager() { return _settingsManager; }
+        SettingsManager & settingsManager() { return * _settingsManager.get(); }
 
     private:
         AppRegistry();
-        SettingsManager * _settingsManager;
+        SettingsManager_ScopedPtr _settingsManager;
 
         /*
         ** Singleton support

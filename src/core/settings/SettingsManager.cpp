@@ -18,8 +18,9 @@ using namespace Robomongo;
 
 SettingsManager::SettingsManager()
 {
-    _configPath = QString("%1/.config/robomongo/robomongo.json")
-            .arg(QDir::homePath());
+    _version = "1.0";
+    _configPath = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
+    _configDir  = QString("%1/.config/robomongo").arg(QDir::homePath());
 
     load();
 
@@ -47,29 +48,29 @@ bool SettingsManager::load()
     if( !ok )
         return false;
 
+    // 1. Load connections
     QVariantList list = data.value("connections").toList();
-
     foreach(QVariant map, list) {
         ConnectionRecord * record = new ConnectionRecord();
         record->fromVariant(map.toMap());
         addConnection(record);
     }
 
+    // 2. Load version
+    _version = data.value("version").toString();
+
     return true;
 }
 
 bool SettingsManager::save()
 {
-    QFile f(_configPath);
-    if( !f.open(QIODevice::WriteOnly|QIODevice::Truncate) ) return false;
-
-    QJson::Serializer s;
-    bool ok;
-
     QVariantMap map;
 
-    QVariantList list;
+    // 1. Save version
+    map.insert("version", _version);
 
+    // 2. Save connections
+    QVariantList list;
     for (int i = 0; i < _connections.size(); i++)
     {
         const ConnectionRecord & record = _connections.at(i);
@@ -79,8 +80,19 @@ bool SettingsManager::save()
 
     map.insert("connections", list);
 
-    s.serialize(map, &f, &ok);
-    //s.serialize(*((QVariantMap*)this), &f, &ok);
+    bool ok;
+    {
+        if (!QDir().mkpath(_configDir))
+            return false;
+
+        QFile f(_configPath);
+        if(!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+            return false;
+
+        QJson::Serializer s;
+        //s.setIndentMode(QJson::IndentFull);
+        s.serialize(map, &f, &ok);
+    }
 
     qDebug() << "SettingsManager saved file: " << _configPath;
 

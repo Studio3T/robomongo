@@ -19,8 +19,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    SettingsManager & m = AppRegistry::instance().settingsManager();
-    m.save();
+    //for (int i = 0; i < 1; i ++)
+    AppRegistry::instance().settingsManager().save();
 
     MainWindow w;
     w.show();

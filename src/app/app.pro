@@ -17,6 +17,11 @@ INCLUDEPATH += \
 
 LIBS += -lgui -lcore -lqjson
 
+# This forces the relink when building target
+# http://stackoverflow.com/questions/1485435/force-relink-when-building-in-qt-creator
+unix:PRE_TARGETDEPS += $$OUTPUT_ROOT/core/out/libcore.a
+unix:PRE_TARGETDEPS += $$OUTPUT_ROOT/gui/out/libgui.a
+
 win32 {
     contains(QMAKE_HOST.arch, x86_64) {
 

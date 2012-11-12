@@ -82,7 +82,7 @@ bool SettingsManager::save()
     s.serialize(map, &f, &ok);
     //s.serialize(*((QVariantMap*)this), &f, &ok);
 
-    qDebug() << "saved file: " << _configPath;
+    qDebug() << "SettingsManager saved file: " << _configPath;
 
     return ok;
 }

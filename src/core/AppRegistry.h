@@ -1,6 +1,8 @@
 #ifndef APPREGISTRY_H
 #define APPREGISTRY_H
 
+//#include "Core.h"
+
 namespace Robomongo
 {
     class SettingsManager;

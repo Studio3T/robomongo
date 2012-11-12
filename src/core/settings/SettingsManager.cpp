@@ -1,4 +1,6 @@
 #include "SettingsManager.h"
+
+// Qt libs
 #include <QDir>
 #include <QDebug>
 #include <QFile>
@@ -7,11 +9,10 @@
 #include "AppRegistry.h"
 #include "ConnectionRecord.h"
 
+// Third party libs
 #include "boost/ptr_container/ptr_vector.hpp"
 #include "qjson/parser.h"
 #include "qjson/serializer.h"
-
-
 
 using namespace Robomongo;
 

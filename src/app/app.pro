@@ -15,9 +15,7 @@ INCLUDEPATH += \
             $$ROOT/src/gui \
             $$ROOT/src/core
 
-LIBS += -lgui -lcore
-
-
+LIBS += -lgui -lcore -lqjson
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64) {

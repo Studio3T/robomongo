@@ -2,18 +2,11 @@
 
 using namespace Robomongo;
 
-/*
-** Constructs connection record
-*/
+/**
+ * Creates ConnectionRecord with default values
+ */
 ConnectionRecord::ConnectionRecord() :
     _id(0), _databasePort(27017)
-{
-}
-
-/*
-** Destructs connection record
-*/
-ConnectionRecord::~ConnectionRecord()
 {
 }
 

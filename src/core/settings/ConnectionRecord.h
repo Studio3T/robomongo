@@ -46,15 +46,11 @@ namespace Robomongo
         QString _userPassword;
 
     public:
-        /*
-        ** Constructs connection record
-        */
-        ConnectionRecord();
 
-        /*
-        ** Destructs connection record
-        */
-        ~ConnectionRecord();
+        /**
+         * Creates ConnectionRecord with default values
+         */
+        ConnectionRecord();
 
         /*
         ** Clone ConnectionRecord

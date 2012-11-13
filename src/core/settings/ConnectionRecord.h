@@ -4,46 +4,32 @@
 #include <QString>
 #include <QVariant>
 #include <QVariantMap>
+#include <QSharedDataPointer>
+#include <QSharedData>
+#include <QDebug>
 
 namespace Robomongo
 {
+
+    class ConnectionRecordPrivate : public QSharedData
+    {
+    public:
+        ConnectionRecordPrivate() {}
+        int id;
+        QString connectionName;
+        QString databaseAddress;
+        int databasePort;
+        QString userName;
+        QString userPassword;
+    };
 
     /*
     ** Represents connection record
     */
     class ConnectionRecord
     {
-
     private:
-        /*
-        ** Internal ID of connection
-        */
-        int _id;
-
-        /*
-        ** Name of connection
-        */
-        QString _connectionName;
-
-        /*
-        ** Database address
-        */
-        QString _databaseAddress;
-
-        /*
-        ** Port of database
-        */
-        int _databasePort;
-
-        /*
-        ** User name
-        */
-        QString _userName;
-
-        /*
-        ** Password
-        */
-        QString _userPassword;
+        QExplicitlySharedDataPointer<ConnectionRecordPrivate> _this;
 
     public:
 
@@ -51,6 +37,10 @@ namespace Robomongo
          * Creates ConnectionRecord with default values
          */
         ConnectionRecord();
+
+        ConnectionRecord(const ConnectionRecord& other) : _this(other._this) {}
+        ConnectionRecord& operator=(const ConnectionRecord& other) { _this = other._this; return *this; }
+        ~ConnectionRecord() { qDebug() << "Distructed"; }
 
         /*
         ** Clone ConnectionRecord
@@ -63,44 +53,44 @@ namespace Robomongo
         /*
         ** Internal ID of connection
         */
-        int id() const { return _id; }
-        void setId(const int id) { _id = id; }
+        int id() const { return _this->id; }
+        void setId(const int id) { _this->id = id; }
 
         /*
         ** Name of connection
         */
-        QString connectionName() const { return _connectionName; }
-        void setConnectionName(const QString & connectionName) { _connectionName = connectionName; }
+        QString connectionName() const { return _this->connectionName; }
+        void setConnectionName(const QString & connectionName) { _this->connectionName = connectionName; }
 
         /*
         ** Database address
         */
-        QString databaseAddress() const { return _databaseAddress; }
-        void setDatabaseAddress(const QString & databaseAddress) { _databaseAddress = databaseAddress; }
+        QString databaseAddress() const { return _this->databaseAddress; }
+        void setDatabaseAddress(const QString & databaseAddress) { _this->databaseAddress = databaseAddress; }
 
         /*
         ** Port of database
         */
-        int databasePort() const { return _databasePort; }
-        void setDatabasePort(const int port) { _databasePort = port; }
+        int databasePort() const { return _this->databasePort; }
+        void setDatabasePort(const int port) { _this->databasePort = port; }
 
         /*
         ** User name
         */
-        QString userName() const { return _userName; }
-        void setUserName(const QString & userName) { _userName = userName; }
+        QString userName() const { return _this->userName; }
+        void setUserName(const QString & userName) { _this->userName = userName; }
 
         /*
         ** Password
         */
-        QString userPassword() const { return _userPassword; }
-        void setUserPassword(const QString & userPassword) { _userPassword = userPassword; }
+        QString userPassword() const { return _this->userPassword; }
+        void setUserPassword(const QString & userPassword) { _this->userPassword = userPassword; }
 
         QString getFullAddress() const
         {
             return QString("%1:%2")
-                .arg(_databaseAddress)
-                .arg(_databasePort);
+                .arg(_this->databaseAddress)
+                .arg(_this->databasePort);
         }
     };
 }

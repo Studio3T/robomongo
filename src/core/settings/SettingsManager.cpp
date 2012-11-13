@@ -16,6 +16,10 @@
 
 using namespace Robomongo;
 
+/**
+ * Creates SettingsManager for config file in default location
+ * ~/.config/robomongo/robomongo.json
+ */
 SettingsManager::SettingsManager()
 {
     _version = "1.0";
@@ -27,11 +31,10 @@ SettingsManager::SettingsManager()
     qDebug() << "SettingsManager initialized in " << _configPath;
 }
 
-SettingsManager::~SettingsManager()
-{
-    qDebug() << "SettingsManager released";
-}
-
+/**
+ * Load settings from config file.
+ * @return true if success, false otherwise
+ */
 bool SettingsManager::load()
 {
     if (!QFile::exists(_configPath))
@@ -44,57 +47,36 @@ bool SettingsManager::load()
     QJson::Parser parser;
     bool ok;
 
-    QVariantMap data = parser.parse(f.readAll(), &ok).toMap();
+    QVariantMap map = parser.parse(f.readAll(), &ok).toMap();
     if( !ok )
         return false;
 
-    // 1. Load connections
-    QVariantList list = data.value("connections").toList();
-    foreach(QVariant map, list) {
-        ConnectionRecord * record = new ConnectionRecord();
-        record->fromVariant(map.toMap());
-        addConnection(record);
-    }
-
-    // 2. Load version
-    _version = data.value("version").toString();
+    loadFromMap(map);
 
     return true;
 }
 
+/**
+ * Saves all settings to config file.
+ * @return true if success, false otherwise
+ */
 bool SettingsManager::save()
 {
-    QVariantMap map;
+    QVariantMap map = convertToMap();
 
-    // 1. Save version
-    map.insert("version", _version);
+    if (!QDir().mkpath(_configDir))
+        return false;
 
-    // 2. Save connections
-    QVariantList list;
-    for (int i = 0; i < _connections.size(); i++)
-    {
-        const ConnectionRecord & record = _connections.at(i);
-        QVariantMap rm = record.toVariant().toMap();
-        list.append(rm);
-    }
-
-    map.insert("connections", list);
+    QFile f(_configPath);
+    if(!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return false;
 
     bool ok;
-    {
-        if (!QDir().mkpath(_configDir))
-            return false;
+    QJson::Serializer s;
+    //s.setIndentMode(QJson::IndentFull);
+    s.serialize(map, &f, &ok);
 
-        QFile f(_configPath);
-        if(!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
-            return false;
-
-        QJson::Serializer s;
-        //s.setIndentMode(QJson::IndentFull);
-        s.serialize(map, &f, &ok);
-    }
-
-    qDebug() << "SettingsManager saved file: " << _configPath;
+    qDebug() << "Settings saved to: " << _configPath;
 
     return ok;
 }
@@ -107,4 +89,38 @@ void SettingsManager::addConnection(ConnectionRecord *connection)
 void SettingsManager::removeConnection(int index)
 {
     _connections.erase(_connections.begin() + index);
+}
+
+void SettingsManager::loadFromMap(QVariantMap &map)
+{
+    // 1. Load connections
+    QVariantList list = map.value("connections").toList();
+    foreach(QVariant var, list) {
+        ConnectionRecord * record = new ConnectionRecord();
+        record->fromVariant(var.toMap());
+        addConnection(record);
+    }
+
+    // 2. Load version
+    _version = map.value("version").toString();
+}
+
+QVariantMap SettingsManager::convertToMap() const
+{
+    QVariantMap map;
+
+    // 1. Save version
+    map.insert("version", _version);
+
+    // 2. Save connections
+    QVariantList list;
+    for (size_t i = 0; i < _connections.size(); i++)
+    {
+        const ConnectionRecord & record = _connections.at(i);
+        QVariantMap rm = record.toVariant().toMap();
+        list.append(rm);
+    }
+
+    map.insert("connections", list);
+    return map;
 }

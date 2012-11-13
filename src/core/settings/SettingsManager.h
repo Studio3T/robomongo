@@ -2,9 +2,10 @@
 #define SETTINGSMANAGER_H
 
 #include <QDir>
-
 #include "ConnectionRecord.h"
 #include "boost/ptr_container/ptr_vector.hpp"
+#include "Core.h"
+
 
 namespace Robomongo
 {
@@ -40,13 +41,31 @@ namespace Robomongo
          */
         bool save();
 
-
+        /**
+         * Adds connection to the end of list
+         */
         void addConnection(ConnectionRecord *connection);
+
+        /**
+         * Removes connection by index
+         */
         void removeConnection(int index);
+
+        /**
+         * Returns list of connections
+         */
+        const ConnectionRecord_PtrVector connections() const { return _connections; }
 
     private:
 
+        /**
+         * Load settings from the map. Existings settings will be overwritten.
+         */
         void loadFromMap(QVariantMap &map);
+
+        /**
+         * Save all settings to map.
+         */
         QVariantMap convertToMap() const;
 
         /**
@@ -61,8 +80,15 @@ namespace Robomongo
          */
         QString _configDir;
 
+        /**
+         * Version of app
+         */
         QString _version;
-        boost::ptr_vector<ConnectionRecord> _connections;
+
+        /**
+         * List of connections
+         */
+        ConnectionRecord_PtrVector _connections;
     };
 }
 

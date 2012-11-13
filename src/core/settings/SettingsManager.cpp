@@ -6,7 +6,6 @@
 #include <QFile>
 #include <QVariantList>
 
-#include "AppRegistry.h"
 #include "ConnectionRecord.h"
 
 // Third party libs
@@ -81,30 +80,28 @@ bool SettingsManager::save()
     return ok;
 }
 
-void SettingsManager::addConnection(ConnectionRecord *connection)
-{
-    _connections.push_back(connection);
-}
-
-void SettingsManager::removeConnection(int index)
-{
-    _connections.erase(_connections.begin() + index);
-}
-
+/**
+ * Load settings from the map. Existings settings will be overwritten.
+ */
 void SettingsManager::loadFromMap(QVariantMap &map)
 {
     // 1. Load connections
+    _connections.clear();
+
     QVariantList list = map.value("connections").toList();
     foreach(QVariant var, list) {
         ConnectionRecord * record = new ConnectionRecord();
         record->fromVariant(var.toMap());
-        addConnection(record);
+        _connections.push_back(record);
     }
 
     // 2. Load version
     _version = map.value("version").toString();
 }
 
+/**
+ * Save all settings to map.
+ */
 QVariantMap SettingsManager::convertToMap() const
 {
     QVariantMap map;
@@ -124,3 +121,20 @@ QVariantMap SettingsManager::convertToMap() const
     map.insert("connections", list);
     return map;
 }
+
+/**
+ * Adds connection to the end of list
+ */
+void SettingsManager::addConnection(ConnectionRecord *connection)
+{
+    _connections.push_back(connection);
+}
+
+/**
+ * Removes connection by index
+ */
+void SettingsManager::removeConnection(int index)
+{
+    _connections.erase(_connections.begin() + index);
+}
+

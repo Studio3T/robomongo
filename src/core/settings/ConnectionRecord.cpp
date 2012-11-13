@@ -5,9 +5,10 @@ using namespace Robomongo;
 /**
  * Creates ConnectionRecord with default values
  */
-ConnectionRecord::ConnectionRecord() :
-    _id(0), _databasePort(27017)
+ConnectionRecord::ConnectionRecord() : _this(new ConnectionRecordPrivate)
 {
+    _this->id = 0;
+    _this->databasePort = 27017;
 }
 
 ConnectionRecord * ConnectionRecord::clone()

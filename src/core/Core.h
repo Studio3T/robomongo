@@ -4,6 +4,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 /*
 ** Smart pointers for Mongo* staff
@@ -15,6 +16,9 @@ namespace Robomongo
 
     class SettingsManager;
     typedef boost::scoped_ptr<SettingsManager> SettingsManager_ScopedPtr;
+
+    class ConnectionRecord;
+    typedef boost::ptr_vector<ConnectionRecord> ConnectionRecord_PtrVector;
 
 }
 

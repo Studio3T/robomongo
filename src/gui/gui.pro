@@ -7,5 +7,6 @@ CONFIG  += staticlib
 
 SOURCES += mainwindow.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h =
+
 

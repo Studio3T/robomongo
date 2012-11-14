@@ -90,9 +90,9 @@ void SettingsManager::loadFromMap(QVariantMap &map)
 
     QVariantList list = map.value("connections").toList();
     foreach(QVariant var, list) {
-        ConnectionRecord * record = new ConnectionRecord();
-        record->fromVariant(var.toMap());
-        _connections.push_back(record);
+        ConnectionRecord record;
+        record.fromVariant(var.toMap());
+        _connections.append(record);
     }
 
     // 2. Load version
@@ -111,9 +111,8 @@ QVariantMap SettingsManager::convertToMap() const
 
     // 2. Save connections
     QVariantList list;
-    for (size_t i = 0; i < _connections.size(); i++)
-    {
-        const ConnectionRecord & record = _connections.at(i);
+
+    foreach(const ConnectionRecord & record, _connections) {
         QVariantMap rm = record.toVariant().toMap();
         list.append(rm);
     }
@@ -125,9 +124,9 @@ QVariantMap SettingsManager::convertToMap() const
 /**
  * Adds connection to the end of list
  */
-void SettingsManager::addConnection(ConnectionRecord *connection)
+void SettingsManager::addConnection(const ConnectionRecord &connection)
 {
-    _connections.push_back(connection);
+    _connections.append(connection);
 }
 
 /**
@@ -135,6 +134,6 @@ void SettingsManager::addConnection(ConnectionRecord *connection)
  */
 void SettingsManager::removeConnection(int index)
 {
-    _connections.erase(_connections.begin() + index);
+    _connections.removeAt(index);
 }
 

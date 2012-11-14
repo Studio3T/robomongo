@@ -19,7 +19,7 @@ using namespace Robomongo;
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
 
     //for (int i = 0; i < 1; i ++)
     AppRegistry::instance().settingsManager().save();
@@ -34,14 +34,8 @@ int main(int argc, char *argv[])
     ConnectionRecord another = record;
     another.setDatabasePort(345);
 
-
-
-
-//    QList<QString> *str = new QList<QString>();
-
-
 //    MainWindow w;
 //    w.show();
 
-    return a.exec();
+    return app.exec();
 }

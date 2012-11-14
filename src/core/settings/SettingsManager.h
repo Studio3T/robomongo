@@ -9,7 +9,6 @@
 
 namespace Robomongo
 {
-
     /**
      * SettingsManager gives you access to all settings, that is used
      * by Robomongo. It can load() and save() them. Config file usually
@@ -44,7 +43,7 @@ namespace Robomongo
         /**
          * Adds connection to the end of list
          */
-        void addConnection(ConnectionRecord *connection);
+        void addConnection(const ConnectionRecord &connection);
 
         /**
          * Removes connection by index
@@ -54,7 +53,7 @@ namespace Robomongo
         /**
          * Returns list of connections
          */
-        const ConnectionRecord_PtrVector connections() const { return _connections; }
+        const QList<ConnectionRecord> connections() const { return _connections; }
 
     private:
 
@@ -88,7 +87,7 @@ namespace Robomongo
         /**
          * List of connections
          */
-        ConnectionRecord_PtrVector _connections;
+        QList<ConnectionRecord> _connections;
     };
 }
 

@@ -3,51 +3,42 @@
 
 #include <QDialog>
 #include <QListWidget>
-#include "ConnectionRecord.h"
+#include "settings/ConnectionRecord.h"
 #include <boost/scoped_ptr.hpp>
 
 using namespace boost;
 
-// Forward declarations
-class ConnectionsDialogViewModel;
-class ConnectionDialogViewModel;
-
-/*
-** Dialog allows select/edit/add/delete connections
-*/
-class ConnectionsDialog : public QDialog
+namespace Robomongo
 {
-	Q_OBJECT
+    /*
+    ** Dialog allows select/edit/add/delete connections
+    */
+    class ConnectionsDialog : public QDialog
+    {
+        Q_OBJECT
 
-private:
+    private:
 
-	/*
-	** Main list widget
-	*/
-	QListWidget * _listWidget;
+        /*
+        ** Main list widget
+        */
+        QListWidget * _listWidget;
 
-	/*
-	** View model
-	*/
-    scoped_ptr<ConnectionsDialogViewModel> _viewModel;
+        QList<ConnectionRecord> _connections;
 
-	/*
-	** Seems this fields should be deleted from this class 
-	*/ 
-	ConnectionDialogViewModel * _connection;
+    public:
 
-public:
+        ConnectionsDialog(QList<ConnectionRecord> & connections);
 
-	ConnectionsDialog(ConnectionsDialogViewModel * viewModel);
+        virtual void accept();
 
-    ConnectionDialogViewModel * connection() { return _connection; }
-	virtual void accept();
+    private slots:
+        void edit();
+        void add();
+        void remove();
+        void refresh();
+    };
+}
 
-private slots:
-	void edit();
-	void add();
-	void remove();
-	void refresh();
-};
 
 #endif // CONNECTIONSDIALOG_H

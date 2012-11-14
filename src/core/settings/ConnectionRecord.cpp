@@ -11,17 +11,9 @@ ConnectionRecord::ConnectionRecord() : _data(new ConnectionRecordPrivate)
     _data->databasePort = 27017;
 }
 
-ConnectionRecord * ConnectionRecord::clone()
-{
-	ConnectionRecord * connection = new ConnectionRecord;
-	connection->setConnectionName(connectionName());
-	connection->setDatabaseAddress(databaseAddress());
-	connection->setDatabasePort(databasePort());
-	connection->setUserName(userName());
-	connection->setUserPassword(userPassword());
-    return connection;
-}
-
+/**
+ * Converts to QVariantMap
+ */
 QVariant ConnectionRecord::toVariant() const
 {
     QVariantMap map;
@@ -33,6 +25,9 @@ QVariant ConnectionRecord::toVariant() const
     return map;
 }
 
+/**
+ * Converts from QVariantMap (and clean current state)
+ */
 void ConnectionRecord::fromVariant(QVariantMap map)
 {
     setConnectionName(map.value("connectionName").toString());

@@ -12,8 +12,6 @@ namespace Robomongo
     public:
         ~AppRegistry(void);
 
-
-
         static AppRegistry & instance()
         {
             static AppRegistry _instance;

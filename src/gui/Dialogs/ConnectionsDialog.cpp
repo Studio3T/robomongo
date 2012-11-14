@@ -1,25 +1,16 @@
-//#include "StdAfx.h"
-#include "AppRegistry.h"
+#include <QApplication>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QMessageBox>
 #include "ConnectionsDialog.h"
-#include "ConnectionService.h"
 
-// View models
-#include "ConnectionDialogViewModel.h"
-#include "ConnectionsDialogViewModel.h"
-
-// Widgets
-#include "EditConnectionDialog.h"
-
-
+using namespace Robomongo;
 /*
 ** Constructs Dialog
 */
-ConnectionsDialog::ConnectionsDialog(ConnectionsDialogViewModel * viewModel) : QDialog()
+ConnectionsDialog::ConnectionsDialog(QList<ConnectionRecord> & records) : QDialog()
 {
-	_viewModel.reset(viewModel);
-
-	connect(_viewModel.get(), SIGNAL(refreshed()), SLOT(refresh()));
-
+    _connections = records;
 	_listWidget = new QListWidget;
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
 
@@ -59,26 +50,25 @@ ConnectionsDialog::ConnectionsDialog(ConnectionsDialogViewModel * viewModel) : Q
 	mainLayout->addLayout(secondColumnLayout);
 
 	setWindowTitle("Connections...");
-	setWindowIcon(AppRegistry::instance().serverIcon());
+    //setWindowIcon(AppRegistry::instance().serverIcon());
 
     // Remove help button (?)
     setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    _viewModel->refresh();
+    refresh();
 }
 
 void ConnectionsDialog::refresh()
 {
 	_listWidget->clear();
 	
-	QList<ConnectionDialogViewModel *> connectionsModels = _viewModel->connections();
-	foreach(ConnectionDialogViewModel * connectionModel, connectionsModels)
+    foreach(ConnectionRecord connectionModel, _connections)
 	{
 		QListWidgetItem * item = new QListWidgetItem;
-		item->setText(connectionModel->connectionName());
+        item->setText(connectionModel.connectionName());
 
 		// storing pointer to our connection record
-		item->setData(Qt::UserRole, QVariant::fromValue<void*>(connectionModel));
+        item->setData(Qt::UserRole, QVariant::fromValue<ConnectionRecord>(connectionModel));
 
 		_listWidget->addItem(item);
 	}
@@ -96,19 +86,21 @@ void ConnectionsDialog::edit()
 
 	// Getting stored pointer
 	QVariant data = currentItem->data(Qt::UserRole);
-	ConnectionDialogViewModel * connectionModel = reinterpret_cast<ConnectionDialogViewModel *>(data.value<void*>());
+    ConnectionRecord connectionModel = data.value<ConnectionRecord>();
 
-	EditConnectionDialog editDialog(connectionModel);
+    int i = 90;
+/*	EditConnectionDialog editDialog(connectionModel);
 
 	// Do nothing if not accepted
 	if (editDialog.exec() != QDialog::Accepted)
 		return;
-
-	_viewModel->updateConnection(connectionModel);
+*/
+//	_viewModel->updateConnection(connectionModel);
 }
 
 void ConnectionsDialog::add()
 {
+    /*
 	ConnectionDialogViewModel * newModel = new ConnectionDialogViewModel(_viewModel.get());
 
 	EditConnectionDialog editDialog(newModel);
@@ -117,7 +109,7 @@ void ConnectionsDialog::add()
 	if (editDialog.exec() != QDialog::Accepted)
 		return;
 
-	_viewModel->insertConnection(newModel);;
+    _viewModel->insertConnection(newModel);*/
 }
 
 void ConnectionsDialog::remove()
@@ -139,9 +131,9 @@ void ConnectionsDialog::remove()
 
 	// Getting stored pointer
 	QVariant data = currentItem->data(Qt::UserRole);
-	ConnectionDialogViewModel  * connection = reinterpret_cast<ConnectionDialogViewModel*>(data.value<void*>());
+//	ConnectionDialogViewModel  * connection = reinterpret_cast<ConnectionDialogViewModel*>(data.value<void*>());
 
-	_viewModel->deleteConnection(connection);
+//	_viewModel->deleteConnection(connection);
 }
 
 void ConnectionsDialog::accept()
@@ -154,9 +146,9 @@ void ConnectionsDialog::accept()
 
 	// Getting stored pointer
 	QVariant data = currentItem->data(Qt::UserRole);
-	ConnectionDialogViewModel * connection = reinterpret_cast<ConnectionDialogViewModel*>(data.value<void*>());
+//	ConnectionDialogViewModel * connection = reinterpret_cast<ConnectionDialogViewModel*>(data.value<void*>());
 
 	hide();
-	_viewModel->selectConnection(connection);
+//	_viewModel->selectConnection(connection);
 	QDialog::accept();
 }

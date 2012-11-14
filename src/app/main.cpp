@@ -13,26 +13,38 @@
 #include "settings/SettingsManager.h"
 #include "AppRegistry.h"
 #include "settings/ConnectionRecord.h"
+#include "Dialogs/ConnectionsDialog.h"
 //#include "Core.h"
 
 using namespace Robomongo;
 
 int main(int argc, char *argv[])
 {
+
     QApplication app(argc, argv);
 
     //for (int i = 0; i < 1; i ++)
     AppRegistry::instance().settingsManager().save();
 
-    QMessageBox box;
+/*    QMessageBox box;
     box.setText("Hello");
-    box.show();
+    box.show();*/
 
     ConnectionRecord record;
     record.setConnectionName("Hello");
 
-    ConnectionRecord another = record;
+    ConnectionRecord another;
+    another.setConnectionName("Another");
     another.setDatabasePort(345);
+
+    QList<ConnectionRecord> records;
+    records.append(record);
+    records.append(another);
+
+    ConnectionsDialog dialog(records);
+    dialog.show();
+
+
 
 //    MainWindow w;
 //    w.show();

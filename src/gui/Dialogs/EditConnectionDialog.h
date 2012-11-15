@@ -1,82 +1,89 @@
 #ifndef EDITCONNECTIONDIALOG_H
 #define EDITCONNECTIONDIALOG_H
 
+#include <QApplication>
 #include <QDialog>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QStyle>
+#include <settings/ConnectionRecord.h>
 
-class ConnectionDialogViewModel;
-
-/*
-** Dialog allows to edit connection
-*/
-class EditConnectionDialog : public QDialog
+namespace Robomongo
 {
-	Q_OBJECT
-
-private:
-
     /*
-    ** Text boxs
+    ** Dialog allows to edit connection
     */
-	QLineEdit * _connectionName;
-	QLineEdit * _serverAddress;
-	QLineEdit * _serverPort;
-	QLineEdit * _userName;
-	QLineEdit * _userPassword;
-	QLineEdit * _databases;
+    class EditConnectionDialog : public QDialog
+    {
+        Q_OBJECT
 
-    /*
-    ** View model
-    */
-    ConnectionDialogViewModel * _connection;
+    private:
 
-    /*
-    ** Check that user is okay to close this window
-    */
-    bool _canBeClosed();
+        /*
+        ** Text boxs
+        */
+        QLineEdit * _connectionName;
+        QLineEdit * _serverAddress;
+        QLineEdit * _serverPort;
+        QLineEdit * _userName;
+        QLineEdit * _userPassword;
+        QLineEdit * _databases;
 
-protected:
+        /*
+        ** View model
+        */
+        ConnectionRecord _connection;
 
-    /*
-    ** Close event handler
-    */
-    void closeEvent(QCloseEvent *);
+        /*
+        ** Check that user is okay to close this window
+        */
+        bool _canBeClosed();
 
-    void keyPressEvent(QKeyEvent *e);
+    protected:
+
+        /*
+        ** Close event handler
+        */
+        void closeEvent(QCloseEvent *);
+
+        void keyPressEvent(QKeyEvent *e);
 
 
-protected slots:
+    protected slots:
 
-    /*
-    ** Handles moment when close button was clicked
-    */
-    void ui_closeButtonClicked();
+        /*
+        ** Handles moment when close button was clicked
+        */
+        void ui_closeButtonClicked();
 
-    /*
-    ** Handle test button clicked event
-    */
-    void ui_testButtonClicked();
+        /*
+        ** Handle test button clicked event
+        */
+        void ui_testButtonClicked();
 
-public:
+    public:
 
-    /*
-    ** Constructs dialog with specified viewmodel
-    */
-    EditConnectionDialog(ConnectionDialogViewModel * connection);
+        /*
+        ** Constructs dialog with specified viewmodel
+        */
+        EditConnectionDialog(ConnectionRecord connection);
 
-    /*
-    ** Destructs dialog
-    */
-    ~EditConnectionDialog();
+        /*
+        ** Destructs dialog
+        */
+        ~EditConnectionDialog();
 
-    /*
-    ** Returns current state of view model
-    */
-    ConnectionDialogViewModel * connection() { return _connection; }
+        /*
+        ** Returns current state of view model
+        */
+        ConnectionRecord connection() { return _connection; }
 
-    /*
-    ** Override virtual method
-    */
-    virtual void accept();
-};
+        /*
+        ** Override virtual method
+        */
+        virtual void accept();
+    };
+}
+
 
 #endif // EDITCONNECTIONDIALOG_H

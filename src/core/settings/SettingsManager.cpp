@@ -19,7 +19,7 @@ using namespace Robomongo;
  * Creates SettingsManager for config file in default location
  * ~/.config/robomongo/robomongo.json
  */
-SettingsManager::SettingsManager()
+SettingsManager::SettingsManager(QObject *parent) : QObject(parent)
 {
     _version = "1.0";
     _configPath = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
@@ -127,13 +127,23 @@ QVariantMap SettingsManager::convertToMap() const
 void SettingsManager::addConnection(const ConnectionRecord &connection)
 {
     _connections.append(connection);
+    emit connectionAdded(connection);
+}
+
+/**
+ * Update connection
+ */
+void SettingsManager::updateConnection(const ConnectionRecord &connection)
+{
+    emit connectionUpdated(connection);
 }
 
 /**
  * Removes connection by index
  */
-void SettingsManager::removeConnection(int index)
+void SettingsManager::removeConnection(const ConnectionRecord &connection)
 {
-    _connections.removeAt(index);
+    _connections.removeOne(connection);
+    emit connectionRemoved(connection);
 }
 

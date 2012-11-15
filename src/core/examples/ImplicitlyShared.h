@@ -1,5 +1,5 @@
-#ifndef CONNECTIONRECORD_H
-#define CONNECTIONRECORD_H
+#ifndef IMPLICITLYSHARED_H
+#define IMPLICITLYSHARED_H
 
 #include <QString>
 #include <QVariant>
@@ -12,19 +12,22 @@ namespace Robomongo
 {
 
     /**
-     * Represents connection record
+     * Example of implicitly shared (actually, explicitly) class.
+     *
+     * You can use it in containers, like QList<ImplicitlyShared> (operator==() specified),
+     * and in QHash-like containers (qHash is defined)
      */
-    class ConnectionRecord
+    class ImplicitlyShared
     {
     private:
 
         /**
          * Private data
          */
-        class ConnectionRecordPrivate : public QSharedData
+        class ImplicitlySharedPrivate : public QSharedData
         {
         public:
-            ConnectionRecordPrivate() {}
+            ImplicitlySharedPrivate() {}
             int id;
             QString connectionName;
             QString databaseAddress;
@@ -36,23 +39,23 @@ namespace Robomongo
         /**
          * Shared data
          */
-        QExplicitlySharedDataPointer<ConnectionRecordPrivate> _data;
-        friend uint qHash(const ConnectionRecord &key);
+        QExplicitlySharedDataPointer<ImplicitlySharedPrivate> _data;
+        friend uint qHash(const ImplicitlyShared &key);
 
     public:
 
         /**
-         * Creates ConnectionRecord with default values
+         * Creates ImplicitlyShared with default values
          */
-        ConnectionRecord();
+        ImplicitlyShared();
 
         /**
          * Shared data support
          */
-        ConnectionRecord(const ConnectionRecord& other) : _data(other._data) {}
-        ConnectionRecord& operator=(const ConnectionRecord& other) { _data = other._data; return *this; }
-        bool operator ==(const ConnectionRecord& other) const { return _data == other._data; }
-        ~ConnectionRecord() {}
+        ImplicitlyShared(const ImplicitlyShared& other) : _data(other._data) {}
+        ImplicitlyShared& operator=(const ImplicitlyShared& other) { _data = other._data; return *this; }
+        bool operator ==(const ImplicitlyShared& other) const { return _data == other._data; }
+        ~ImplicitlyShared() {}
 
         /**
          * Converts to QVariantMap
@@ -111,15 +114,15 @@ namespace Robomongo
         }
     };
 
-    inline uint qHash(const ConnectionRecord &key)
+    inline uint qHash(const ImplicitlyShared &key)
     {
         return ::qHash(key._data.data());
     }
 }
 
-Q_DECLARE_METATYPE(Robomongo::ConnectionRecord)
+Q_DECLARE_METATYPE(Robomongo::ImplicitlyShared)
 
 
 
 
-#endif // CONNECTIONRECORD_H
+#endif // IMPLICITLYSHARED_H

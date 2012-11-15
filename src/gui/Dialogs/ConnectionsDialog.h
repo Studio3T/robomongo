@@ -3,7 +3,10 @@
 
 #include <QDialog>
 #include <QListWidget>
+#include <QListWidgetItem>
+#include <QHash>
 #include "settings/ConnectionRecord.h"
+#include "settings/SettingsManager.h"
 #include <boost/scoped_ptr.hpp>
 
 using namespace boost;
@@ -22,21 +25,27 @@ namespace Robomongo
         /*
         ** Main list widget
         */
-        QListWidget * _listWidget;
+        QListWidget *_listWidget;
+        SettingsManager *_settingsManager;
 
-        QList<ConnectionRecord> _connections;
+        QHash<ConnectionRecord, QListWidgetItem *> _hash;
 
     public:
 
-        ConnectionsDialog(QList<ConnectionRecord> & connections);
+        ConnectionsDialog(SettingsManager * manager);
 
         virtual void accept();
 
     private slots:
+        void add(ConnectionRecord);
+        void update(ConnectionRecord);
+        void remove(ConnectionRecord);
         void edit();
         void add();
         void remove();
         void refresh();
+
+        void set(QListWidgetItem *item, ConnectionRecord record);
     };
 }
 

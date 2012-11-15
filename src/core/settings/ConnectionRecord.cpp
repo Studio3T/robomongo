@@ -36,3 +36,4 @@ void ConnectionRecord::fromVariant(QVariantMap map)
     setUserName(map.value("userName").toString());
     setUserPassword(map.value("userPassword").toString());
 }
+

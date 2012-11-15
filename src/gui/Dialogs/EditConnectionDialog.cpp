@@ -1,12 +1,13 @@
-#include "StdAfx.h"
+#include <QtGui>
 #include "EditConnectionDialog.h"
-#include "ConnectionDialogViewModel.h"
 #include "AppRegistry.h"
+
+using namespace Robomongo;
 
 /*
 ** Constructs dialog with specified viewmodel
 */
-EditConnectionDialog::EditConnectionDialog(ConnectionDialogViewModel * connection) : QDialog()
+EditConnectionDialog::EditConnectionDialog(ConnectionRecord connection) : QDialog()
 {
 	_connection = connection;
 
@@ -20,11 +21,11 @@ EditConnectionDialog::EditConnectionDialog(ConnectionDialogViewModel * connectio
 	QPushButton * testButton = new QPushButton("Test");
     connect(testButton, SIGNAL(clicked()), this, SLOT(ui_testButtonClicked()));
 
-	_connectionName = new QLineEdit(_connection->connectionName(), this);
-	_serverAddress = new QLineEdit(_connection->databaseAddress(), this);
-	_serverPort = new QLineEdit(QString::number(_connection->databasePort()), this);
-	_userName = new QLineEdit(_connection->userName(), this);
-	_userPassword = new QLineEdit(_connection->userPassword(), this);
+    _connectionName = new QLineEdit(_connection.connectionName(), this);
+    _serverAddress = new QLineEdit(_connection.databaseAddress(), this);
+    _serverPort = new QLineEdit(QString::number(_connection.databasePort()), this);
+    _userName = new QLineEdit(_connection.userName(), this);
+    _userPassword = new QLineEdit(_connection.userPassword(), this);
 
 	QHBoxLayout * bottomLayout = new QHBoxLayout;
 	bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
@@ -51,7 +52,7 @@ EditConnectionDialog::EditConnectionDialog(ConnectionDialogViewModel * connectio
 	setContentsMargins(7, 7, 7, 7);
 
 	setWindowTitle("Edit connection");
-	setWindowIcon(AppRegistry::instance().serverIcon());
+//now	setWindowIcon(AppRegistry::instance().serverIcon());
 
     // Remove help button (?)
     setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -67,11 +68,11 @@ EditConnectionDialog::~EditConnectionDialog()
 
 void EditConnectionDialog::accept()
 {
-	_connection->setConnectionName(_connectionName->text());
-	_connection->setDatabaseAddress(_serverAddress->text());
-	_connection->setDatabasePort(_serverPort->text().toInt());
-	_connection->setUserName(_userName->text());
-	_connection->setUserPassword(_userPassword->text());
+    _connection.setConnectionName(_connectionName->text());
+    _connection.setDatabaseAddress(_serverAddress->text());
+    _connection.setDatabasePort(_serverPort->text().toInt());
+    _connection.setUserName(_userName->text());
+    _connection.setUserPassword(_userPassword->text());
 
     QDialog::accept();
 }
@@ -102,11 +103,11 @@ void EditConnectionDialog::closeEvent(QCloseEvent * event)
 bool EditConnectionDialog::_canBeClosed()
 {
     bool unchanged =
-            _connection->connectionName() == _connectionName->text()
-            && _connection->databaseAddress() == _serverAddress->text()
-            && QString::number(_connection->databasePort()) == _serverPort->text()
-            && _connection->userName() == _userName->text()
-            && _connection->userPassword() == _userPassword->text();
+            _connection.connectionName() == _connectionName->text()
+            && _connection.databaseAddress() == _serverAddress->text()
+            && QString::number(_connection.databasePort()) == _serverPort->text()
+            && _connection.userName() == _userName->text()
+            && _connection.userPassword() == _userPassword->text();
 
     // If data was unchanged - simply close dialog
     if (unchanged)
@@ -134,7 +135,7 @@ void EditConnectionDialog::keyPressEvent(QKeyEvent *e)
 
 void EditConnectionDialog::ui_testButtonClicked()
 {
-    bool res = _connection->test(_serverAddress->text(), _serverPort->text(), _userName->text(), _userPassword->text());
+    bool res = true;//_connection->test(_serverAddress->text(), _serverPort->text(), _userName->text(), _userPassword->text());
 
     if (res)
         QMessageBox::information(NULL, "Success!", "Success! Connection exists.", "Ok");

@@ -13,39 +13,104 @@ using namespace boost;
 
 namespace Robomongo
 {
-    /*
-    ** Dialog allows select/edit/add/delete connections
-    */
+    /**
+     * @brief Forward declaration
+     */
+    class ConnectionListWidgetItem;
+
+    /**
+     * @brief Dialog allows select/edit/add/delete connections
+     */
     class ConnectionsDialog : public QDialog
     {
         Q_OBJECT
 
     private:
 
-        /*
-        ** Main list widget
-        */
+        /**
+         * @brief Main list widget
+         */
         QListWidget *_listWidget;
+
+        /**
+         * @brief Settings manager
+         */
         SettingsManager *_settingsManager;
 
-        QHash<ConnectionRecord, QListWidgetItem *> _hash;
+        /**
+         * @brief Hash that helps to connect ConnectionRecord with ConnectionListWidgetItem*
+         */
+        QHash<ConnectionRecord, ConnectionListWidgetItem *> _hash;
 
     public:
 
-        ConnectionsDialog(SettingsManager * manager);
+        /**
+         * @brief Creates dialog
+         */
+        ConnectionsDialog(SettingsManager *manager);
 
+        /**
+         * @brief This function is called when user clicks on "Connect" button.
+         */
         virtual void accept();
 
     private slots:
-        void add(ConnectionRecord);
-        void update(ConnectionRecord);
-        void remove(ConnectionRecord);
-        void edit();
-        void add();
-        void remove();
-        void refresh();
 
-        void set(QListWidgetItem *item, ConnectionRecord record);
+        /**
+         * @brief Add connection to the list widget
+         */
+        void add(const ConnectionRecord &connection);
+
+        /**
+         * @brief Update specified connection (if it exists for this dialog)
+         */
+        void update(const ConnectionRecord &connection);
+
+        /**
+         * @brief Remove specified connection (if it exists for this dialog)
+         */
+        void remove(const ConnectionRecord &connection);
+
+        /**
+         * @brief Initiate 'add' action, usually when user clicked on Add button
+         */
+        void add();
+
+        /**
+         * @brief Initiate 'edit' action, usually when user clicked on Edit button
+         */
+        void edit();
+
+        /**
+         * @brief Initiate 'remove' action, usually when user clicked on Remove button
+         */
+        void remove();
+    };
+
+    /**
+     * @brief Simple ListWidgetItem that has several convenience methods.
+     */
+    class ConnectionListWidgetItem : public QListWidgetItem
+    {
+    public:
+
+        /**
+         * @brief Returns attached ConnectionRecord.
+         */
+        ConnectionRecord connection()
+        {
+            QVariant var = data(Qt::UserRole);
+            return var.value<ConnectionRecord>();
+        }
+
+        /**
+         * @brief Attach ConnectionRecord to this item
+         */
+        void setConnection(ConnectionRecord connection)
+        {
+            setText(connection.connectionName());
+            setData(Qt::UserRole, QVariant::fromValue<ConnectionRecord>(connection));
+        }
     };
 }
 

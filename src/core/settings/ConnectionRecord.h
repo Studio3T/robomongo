@@ -109,6 +109,14 @@ namespace Robomongo
                 .arg(_data->databaseAddress)
                 .arg(_data->databasePort);
         }
+
+        QString getReadableName() const
+        {
+            if (_data->connectionName.isEmpty())
+                return getFullAddress();
+
+            return _data->connectionName;
+        }
     };
 
     inline uint qHash(const ConnectionRecord &key)

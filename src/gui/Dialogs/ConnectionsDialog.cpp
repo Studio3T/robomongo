@@ -7,9 +7,10 @@
 #include "Dialogs/EditConnectionDialog.h"
 
 using namespace Robomongo;
-/*
-** Constructs Dialog
-*/
+
+/**
+ * @brief Creates dialog
+ */
 ConnectionsDialog::ConnectionsDialog(SettingsManager * settingsManager) : QDialog()
 {
     _settingsManager = settingsManager;
@@ -17,8 +18,8 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager * settingsManager) : QDialo
     connect(_settingsManager, SIGNAL(connectionUpdated(ConnectionRecord)), this, SLOT(update(ConnectionRecord)));
     connect(_settingsManager, SIGNAL(connectionRemoved(ConnectionRecord)), this, SLOT(remove(ConnectionRecord)));
 
-
 	_listWidget = new QListWidget;
+    _listWidget->setViewMode(QListView::ListMode);
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
 
 	QPushButton * addButton = new QPushButton("Add");
@@ -44,7 +45,6 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager * settingsManager) : QDialo
 	QVBoxLayout * firstColumnLayout = new QVBoxLayout;
 	firstColumnLayout->addWidget(_listWidget);
 	firstColumnLayout->addLayout(bottomLayout);
-	//firstColumnLayout->addWidget(connectButton, 5, Qt::AlignRight);
 
 	QVBoxLayout * secondColumnLayout = new QVBoxLayout;
 	secondColumnLayout->setAlignment(Qt::AlignTop);
@@ -62,50 +62,35 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager * settingsManager) : QDialo
     // Remove help button (?)
     setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    refresh();
-}
-
-void ConnectionsDialog::refresh()
-{
-	_listWidget->clear();
-	
+    // Populate list with connections
     foreach(ConnectionRecord connectionModel, _settingsManager->connections())
         add(connectionModel);
-
-    _listWidget->setViewMode(QListView::ListMode);
 }
 
-void ConnectionsDialog::set(QListWidgetItem *item, ConnectionRecord connection)
-{
-    item->setText(connection.connectionName());
-    item->setData(Qt::UserRole, QVariant::fromValue<ConnectionRecord>(connection));
-}
-
-void ConnectionsDialog::edit()
+/**
+ * @brief This function is called when user clicks on "Connect" button.
+ */
+void ConnectionsDialog::accept()
 {
     QListWidgetItem * currentItem = _listWidget->currentItem();
 
-	// Do nothing if no item selected
-	if (currentItem == 0)
-		return;
+    // Do nothing if no item selected
+    if (currentItem == 0)
+        return;
 
-	// Getting stored pointer
-    QVariant data = currentItem->data(Qt::UserRole);
-    ConnectionRecord connectionModel = data.value<ConnectionRecord>();
+    QMessageBox box;
+    box.setText(QString("Number of items: %1").arg(_settingsManager->connections().count()));
+    box.exec();
 
-    int i = 90;
-    EditConnectionDialog editDialog(connectionModel);
+    return;
 
-	// Do nothing if not accepted
-	if (editDialog.exec() != QDialog::Accepted)
-		return;
-
-    _settingsManager->updateConnection(connectionModel);
-
-
-//	_viewModel->updateConnection(connectionModel);
+    hide();
+    QDialog::accept();
 }
 
+/**
+ * @brief Initiate 'add' action, usually when user clicked on Add button
+ */
 void ConnectionsDialog::add()
 {
     ConnectionRecord newModel;
@@ -117,79 +102,81 @@ void ConnectionsDialog::add()
 
     _settingsManager->addConnection(newModel);
     _listWidget->setFocus();
-
-//    _viewModel->insertConnection(newModel);*/
 }
 
+/**
+ * @brief Initiate 'edit' action, usually when user clicked on Edit button
+ */
+void ConnectionsDialog::edit()
+{
+    ConnectionListWidgetItem *currentItem = (ConnectionListWidgetItem *) _listWidget->currentItem();
+
+    // Do nothing if no item selected
+    if (currentItem == 0)
+        return;
+
+    ConnectionRecord connection = currentItem->connection();
+    EditConnectionDialog editDialog(connection);
+
+    // Do nothing if not accepted
+    if (editDialog.exec() != QDialog::Accepted)
+        return;
+
+    _settingsManager->updateConnection(connection);
+}
+
+/**
+ * @brief Initiate 'remove' action, usually when user clicked on Remove button
+ */
 void ConnectionsDialog::remove()
 {
-	QListWidgetItem * currentItem = _listWidget->currentItem();
+    ConnectionListWidgetItem * currentItem = (ConnectionListWidgetItem *)_listWidget->currentItem();
 
 	// Do nothing if no item selected
 	if (currentItem == 0)
 		return;
 
+    ConnectionRecord connectionModel = currentItem->connection();
+
     // Ask user
     int answer = QMessageBox::question(this,
-            "Connections",
-            "Really delete selected connection?",
-            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+        "Connections",
+        QString("Really delete \"%1\" connection?").arg(connectionModel.getReadableName()),
+        QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
     if (answer != QMessageBox::Yes)
         return;
 
-	// Getting stored pointer
-
-    // Getting stored pointer
-    QVariant data = currentItem->data(Qt::UserRole);
-    ConnectionRecord connectionModel = data.value<ConnectionRecord>();
     _settingsManager->removeConnection(connectionModel);
-//	ConnectionDialogViewModel  * connection = reinterpret_cast<ConnectionDialogViewModel*>(data.value<void*>());
-
-//	_viewModel->deleteConnection(connection);
 }
 
-void ConnectionsDialog::accept()
+/**
+ * @brief Add connection to the list widget
+ */
+void ConnectionsDialog::add(const ConnectionRecord &connection)
 {
-    QListWidgetItem * currentItem = _listWidget->currentItem();
-
-	// Do nothing if no item selected
-	if (currentItem == 0)
-		return;
-
-	// Getting stored pointer
-    QVariant data = currentItem->data(Qt::UserRole);
-//	ConnectionDialogViewModel * connection = reinterpret_cast<ConnectionDialogViewModel*>(data.value<void*>());
-
-    QMessageBox box;
-    box.setText(QString("Number of items: %1").arg(_settingsManager->connections().count()));
-    box.exec();
-
-    return;
-
-	hide();
-//	_viewModel->selectConnection(connection);
-    QDialog::accept();
-}
-
-void ConnectionsDialog::add(ConnectionRecord connection)
-{
-    QListWidgetItem * item = new QListWidgetItem;
-    set(item, connection);
+    ConnectionListWidgetItem * item = new ConnectionListWidgetItem;
+    item->setConnection(connection);
     _listWidget->addItem(item);
     _hash.insert(connection, item);
 }
 
-void ConnectionsDialog::update(ConnectionRecord connection)
+/**
+ * @brief Update specified connection (if it exists for this dialog)
+ */
+void ConnectionsDialog::update(const ConnectionRecord &connection)
 {
-    QListWidgetItem *item = _hash.value(connection);
+    ConnectionListWidgetItem *item = _hash.value(connection);
     if (!item)
         return;
 
-    set(item, connection);
+    item->setConnection(connection);
 }
 
-void ConnectionsDialog::remove(ConnectionRecord connection)
+/**
+ * @brief Remove specified connection (if it exists for this dialog)
+ */
+void ConnectionsDialog::remove(const ConnectionRecord &connection)
 {
     QListWidgetItem *item = _hash.value(connection);
     if (!item)

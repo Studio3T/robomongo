@@ -11,12 +11,12 @@
 namespace Robomongo
 {
     /**
-     * SettingsManager gives you access to all settings, that is used
-     * by Robomongo. It can load() and save() them. Config file usually
-     * located here: ~/.config/robomongo/robomongo.json
+     * @brief SettingsManager gives you access to all settings, that is used
+     *        by Robomongo. It can load() and save() them. Config file usually
+     *        located here: ~/.config/robomongo/robomongo.json
      *
-     * You can access this manager via:
-     * AppRegistry::instance().settingsManager()
+     *        You can access this manager via:
+     *        AppRegistry::instance().settingsManager()
      *
      * @threadsafe no
      */
@@ -26,40 +26,40 @@ namespace Robomongo
 
     public:
         /**
-         * Creates SettingsManager for config file in default location
-         * ~/.config/robomongo/robomongo.json
+         * @brief Creates SettingsManager for config file in default location
+         *        (usually ~/.config/robomongo/robomongo.json)
          */
         SettingsManager(QObject *parent=0);
 
         /**
-         * Load settings from config file.
+         * @brief Load settings from config file.
          * @return true if success, false otherwise
          */
         bool load();
 
         /**
-         * Saves all settings to config file.
+         * @brief Saves all settings to config file.
          * @return true if success, false otherwise
          */
         bool save();
 
         /**
-         * Adds connection to the end of list
+         * @brief Adds connection to the end of list
          */
         void addConnection(const ConnectionRecord &connection);
 
         /**
-         * Update connection
+         * @brief Update connection
          */
         void updateConnection(const ConnectionRecord &connection);
 
         /**
-         * Removes connection by index
+         * @brief Removes connection by index
          */
         void removeConnection(const ConnectionRecord &connection);
 
         /**
-         * Returns list of connections
+         * @brief Returns list of connections
          */
         const QList<ConnectionRecord> connections() const { return _connections; }
 
@@ -71,34 +71,34 @@ namespace Robomongo
     private:
 
         /**
-         * Load settings from the map. Existings settings will be overwritten.
+         * @brief Load settings from the map. Existings settings will be overwritten.
          */
         void loadFromMap(QVariantMap &map);
 
         /**
-         * Save all settings to map.
+         * @brief Save all settings to map.
          */
         QVariantMap convertToMap() const;
 
         /**
-         * Config file absolute path
-         * (usually: /home/user/.config/robomongo/robomongo.json)
+         * @brief Config file absolute path
+         *        (usually: /home/user/.config/robomongo/robomongo.json)
          */
         QString _configPath;
 
         /**
-         * Config file containing directory path
-         * (usually: /home/user/.config/robomongo)
+         * @brief Config file containing directory path
+         *        (usually: /home/user/.config/robomongo)
          */
         QString _configDir;
 
         /**
-         * Version of app
+         * @brief Version of app
          */
         QString _version;
 
         /**
-         * List of connections
+         * @brief List of connections
          */
         QList<ConnectionRecord> _connections;
     };

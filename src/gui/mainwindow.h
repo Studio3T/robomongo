@@ -15,7 +15,7 @@ public:
     ~MainWindow();
     
 private:
-    QTabWidget * _tabWidget;
+    QTabWidget *_tabWidget;
 
 };
 

@@ -20,13 +20,13 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     connect(_settingsManager, SIGNAL(connectionUpdated(ConnectionRecordPtr)), this, SLOT(update(ConnectionRecordPtr)));
     connect(_settingsManager, SIGNAL(connectionRemoved(ConnectionRecordPtr)), this, SLOT(remove(ConnectionRecordPtr)));
 
-    QAction *addAction = new QAction("Add", this);
+    QAction *addAction = new QAction("&Add", this);
     connect(addAction, SIGNAL(triggered()), this, SLOT(add()));
 
-    QAction *editAction = new QAction("Edit", this);
+    QAction *editAction = new QAction("&Edit", this);
     connect(editAction, SIGNAL(triggered()), this, SLOT(edit()));
 
-    QAction *removeAction = new QAction("Remove", this);
+    QAction *removeAction = new QAction("&Remove", this);
     connect(removeAction, SIGNAL(triggered()), this, SLOT(remove()));
 
 	_listWidget = new QListWidget;
@@ -37,19 +37,19 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     _listWidget->addAction(removeAction);
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
 
-    QPushButton *addButton = new QPushButton("Add");
+    QPushButton *addButton = new QPushButton("&Add");
 	connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
 
-    QPushButton *editButton = new QPushButton("Edit");
+    QPushButton *editButton = new QPushButton("&Edit");
 	connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
 
-    QPushButton *removeButton = new QPushButton("Remove");
+    QPushButton *removeButton = new QPushButton("&Remove");
 	connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
 
-    QPushButton *cancelButton = new QPushButton("Cancel");
+    QPushButton *cancelButton = new QPushButton("&Cancel");
 	connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
-    QPushButton *connectButton = new QPushButton("Connect");
+    QPushButton *connectButton = new QPushButton("C&onnect");
     connectButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
 	connect(connectButton, SIGNAL(clicked()), this, SLOT(accept()));
 

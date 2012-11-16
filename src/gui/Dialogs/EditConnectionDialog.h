@@ -55,12 +55,12 @@ namespace Robomongo
         /**
          * @brief Text boxes
          */
-        QLineEdit * _connectionName;
-        QLineEdit * _serverAddress;
-        QLineEdit * _serverPort;
-        QLineEdit * _userName;
-        QLineEdit * _userPassword;
-        QLineEdit * _databases;
+        QLineEdit *_connectionName;
+        QLineEdit *_serverAddress;
+        QLineEdit *_serverPort;
+        QLineEdit *_userName;
+        QLineEdit *_userPassword;
+        QLineEdit *_databases;
 
         /**
          * @brief Edited connection

@@ -112,7 +112,7 @@ QVariantMap SettingsManager::convertToMap() const
     // 2. Save connections
     QVariantList list;
 
-    foreach(const ConnectionRecordPtr & record, _connections) {
+    foreach(const ConnectionRecordPtr &record, _connections) {
         QVariantMap rm = record->toVariant().toMap();
         list.append(rm);
     }

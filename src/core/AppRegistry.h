@@ -12,13 +12,13 @@ namespace Robomongo
     public:
         ~AppRegistry(void);
 
-        static AppRegistry & instance()
+        static AppRegistry &instance()
         {
             static AppRegistry _instance;
             return _instance;
         }
 
-        SettingsManager & settingsManager() { return * _settingsManager.get(); }
+        SettingsManager &settingsManager() { return *_settingsManager.get(); }
 
     private:
         AppRegistry();

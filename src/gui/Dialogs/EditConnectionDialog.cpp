@@ -11,14 +11,14 @@ EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDi
 {
 	_connection = connection;
 
-	QPushButton * saveButton = new QPushButton("Save");
+    QPushButton *saveButton = new QPushButton("Save");
 	saveButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
 	connect(saveButton, SIGNAL(clicked()), this, SLOT(accept()));
 
-	QPushButton * cancelButton = new QPushButton("Cancel");
+    QPushButton *cancelButton = new QPushButton("Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
-	QPushButton * testButton = new QPushButton("Test");
+    QPushButton *testButton = new QPushButton("Test");
     connect(testButton, SIGNAL(clicked()), this, SLOT(testConnection()));
 
     _connectionName = new QLineEdit(_connection->connectionName(), this);
@@ -27,12 +27,12 @@ EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDi
     _userName = new QLineEdit(_connection->userName(), this);
     _userPassword = new QLineEdit(_connection->userPassword(), this);
 
-	QHBoxLayout * bottomLayout = new QHBoxLayout;
+    QHBoxLayout *bottomLayout = new QHBoxLayout;
 	bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
 	bottomLayout->addWidget(saveButton, 1, Qt::AlignRight);
 	bottomLayout->addWidget(cancelButton);
 
-	QGridLayout * editLayout = new QGridLayout;
+    QGridLayout *editLayout = new QGridLayout;
 	editLayout->addWidget(new QLabel("Name"), 0, 0);
 	editLayout->addWidget(_connectionName, 0, 1);
 	editLayout->addWidget(new QLabel("Server"), 1, 0);
@@ -44,7 +44,7 @@ EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDi
 	editLayout->addWidget(new QLabel("Password"), 4, 0);
 	editLayout->addWidget(_userPassword, 4, 1);
 
-	QVBoxLayout * mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
 	mainLayout->addLayout(editLayout);
 	mainLayout->addLayout(bottomLayout);
 
@@ -74,7 +74,7 @@ void EditConnectionDialog::accept()
 /**
  * @brief Close event handler
  */
-void EditConnectionDialog::closeEvent(QCloseEvent * event)
+void EditConnectionDialog::closeEvent(QCloseEvent *event)
 {
     if (canBeClosed())
         event->accept();

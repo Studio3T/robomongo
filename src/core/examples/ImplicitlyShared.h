@@ -77,13 +77,13 @@ namespace Robomongo
          * Name of connection
          */
         QString connectionName() const { return _data->connectionName; }
-        void setConnectionName(const QString & connectionName) { _data->connectionName = connectionName; }
+        void setConnectionName(const QString &connectionName) { _data->connectionName = connectionName; }
 
         /**
          * Database address
          */
         QString databaseAddress() const { return _data->databaseAddress; }
-        void setDatabaseAddress(const QString & databaseAddress) { _data->databaseAddress = databaseAddress; }
+        void setDatabaseAddress(const QString &databaseAddress) { _data->databaseAddress = databaseAddress; }
 
         /**
          * Port of database
@@ -95,13 +95,13 @@ namespace Robomongo
          * User name
          */
         QString userName() const { return _data->userName; }
-        void setUserName(const QString & userName) { _data->userName = userName; }
+        void setUserName(const QString &userName) { _data->userName = userName; }
 
         /**
          * Password
          */
         QString userPassword() const { return _data->userPassword; }
-        void setUserPassword(const QString & userPassword) { _data->userPassword = userPassword; }
+        void setUserPassword(const QString &userPassword) { _data->userPassword = userPassword; }
 
         /**
          * Returns connection full address (i.e. locahost:8090)

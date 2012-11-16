@@ -11,14 +11,14 @@ EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDi
 {
 	_connection = connection;
 
-    QPushButton *saveButton = new QPushButton("Save");
+    QPushButton *saveButton = new QPushButton("&Save");
 	saveButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
 	connect(saveButton, SIGNAL(clicked()), this, SLOT(accept()));
 
-    QPushButton *cancelButton = new QPushButton("Cancel");
+    QPushButton *cancelButton = new QPushButton("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
-    QPushButton *testButton = new QPushButton("Test");
+    QPushButton *testButton = new QPushButton("&Test");
     connect(testButton, SIGNAL(clicked()), this, SLOT(testConnection()));
 
     _connectionName = new QLineEdit(_connection->connectionName(), this);

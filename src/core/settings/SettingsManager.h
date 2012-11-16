@@ -46,27 +46,27 @@ namespace Robomongo
         /**
          * @brief Adds connection to the end of list
          */
-        void addConnection(const ConnectionRecordShared &connection);
+        void addConnection(const ConnectionRecordPtr &connection);
 
         /**
          * @brief Update connection
          */
-        void updateConnection(const ConnectionRecordShared &connection);
+        void updateConnection(const ConnectionRecordPtr &connection);
 
         /**
          * @brief Removes connection by index
          */
-        void removeConnection(const ConnectionRecordShared &connection);
+        void removeConnection(const ConnectionRecordPtr &connection);
 
         /**
          * @brief Returns list of connections
          */
-        const QList<ConnectionRecordShared> connections() const { return _connections; }
+        const QList<ConnectionRecordPtr> connections() const { return _connections; }
 
     signals:
-        void connectionAdded(const ConnectionRecordShared &connection);
-        void connectionUpdated(const ConnectionRecordShared &connection);
-        void connectionRemoved(const ConnectionRecordShared &connection);
+        void connectionAdded(const ConnectionRecordPtr &connection);
+        void connectionUpdated(const ConnectionRecordPtr &connection);
+        void connectionRemoved(const ConnectionRecordPtr &connection);
 
     private:
 
@@ -100,7 +100,7 @@ namespace Robomongo
         /**
          * @brief List of connections
          */
-        QList<ConnectionRecordShared> _connections;
+        QList<ConnectionRecordPtr> _connections;
     };
 }
 

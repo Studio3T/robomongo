@@ -90,7 +90,7 @@ void SettingsManager::loadFromMap(QVariantMap &map)
 
     QVariantList list = map.value("connections").toList();
     foreach(QVariant var, list) {
-        ConnectionRecordShared record(new ConnectionRecord);
+        ConnectionRecordPtr record(new ConnectionRecord);
         record->fromVariant(var.toMap());
         _connections.append(record);
     }
@@ -112,7 +112,7 @@ QVariantMap SettingsManager::convertToMap() const
     // 2. Save connections
     QVariantList list;
 
-    foreach(const ConnectionRecordShared & record, _connections) {
+    foreach(const ConnectionRecordPtr & record, _connections) {
         QVariantMap rm = record->toVariant().toMap();
         list.append(rm);
     }
@@ -124,7 +124,7 @@ QVariantMap SettingsManager::convertToMap() const
 /**
  * Adds connection to the end of list
  */
-void SettingsManager::addConnection(const ConnectionRecordShared &connection)
+void SettingsManager::addConnection(const ConnectionRecordPtr &connection)
 {
     _connections.append(connection);
     emit connectionAdded(connection);
@@ -133,7 +133,7 @@ void SettingsManager::addConnection(const ConnectionRecordShared &connection)
 /**
  * Update connection
  */
-void SettingsManager::updateConnection(const ConnectionRecordShared &connection)
+void SettingsManager::updateConnection(const ConnectionRecordPtr &connection)
 {
     emit connectionUpdated(connection);
 }
@@ -141,7 +141,7 @@ void SettingsManager::updateConnection(const ConnectionRecordShared &connection)
 /**
  * Removes connection by index
  */
-void SettingsManager::removeConnection(const ConnectionRecordShared &connection)
+void SettingsManager::removeConnection(const ConnectionRecordPtr &connection)
 {
     _connections.removeOne(connection);
     emit connectionRemoved(connection);

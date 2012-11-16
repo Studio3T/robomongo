@@ -41,7 +41,7 @@ namespace Robomongo
         /**
          * @brief Hash that helps to connect ConnectionRecord with ConnectionListWidgetItem*
          */
-        QHash<ConnectionRecordShared, ConnectionListWidgetItem *> _hash;
+        QHash<ConnectionRecordPtr, ConnectionListWidgetItem *> _hash;
 
     public:
 
@@ -60,17 +60,17 @@ namespace Robomongo
         /**
          * @brief Add connection to the list widget
          */
-        void add(const ConnectionRecordShared &connection);
+        void add(const ConnectionRecordPtr &connection);
 
         /**
          * @brief Update specified connection (if it exists for this dialog)
          */
-        void update(const ConnectionRecordShared &connection);
+        void update(const ConnectionRecordPtr &connection);
 
         /**
          * @brief Remove specified connection (if it exists for this dialog)
          */
-        void remove(const ConnectionRecordShared &connection);
+        void remove(const ConnectionRecordPtr &connection);
 
         /**
          * @brief Initiate 'add' action, usually when user clicked on Add button
@@ -98,19 +98,19 @@ namespace Robomongo
         /**
          * @brief Returns attached ConnectionRecord.
          */
-        ConnectionRecordShared connection()
+        ConnectionRecordPtr connection()
         {
             QVariant var = data(Qt::UserRole);
-            return var.value<ConnectionRecordShared>();
+            return var.value<ConnectionRecordPtr>();
         }
 
         /**
          * @brief Attach ConnectionRecord to this item
          */
-        void setConnection(ConnectionRecordShared connection)
+        void setConnection(ConnectionRecordPtr connection)
         {
             setText(connection->connectionName());
-            setData(Qt::UserRole, QVariant::fromValue<ConnectionRecordShared>(connection));
+            setData(Qt::UserRole, QVariant::fromValue<ConnectionRecordPtr>(connection));
         }
     };
 }

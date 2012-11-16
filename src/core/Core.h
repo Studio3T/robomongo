@@ -21,7 +21,7 @@ namespace Robomongo
     class ConnectionRecord;
     typedef boost::ptr_vector<ConnectionRecord> ConnectionRecord_PtrVector;
 
-    typedef QSharedPointer<ConnectionRecord> ConnectionRecordShared;
+    typedef QSharedPointer<ConnectionRecord> ConnectionRecordPtr;
 
 
 }

@@ -99,7 +99,7 @@ namespace Robomongo
     };
 }
 
-Q_DECLARE_METATYPE(Robomongo::ConnectionRecordShared)
+Q_DECLARE_METATYPE(Robomongo::ConnectionRecordPtr)
 
 
 

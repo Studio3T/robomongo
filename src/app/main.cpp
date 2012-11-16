@@ -3,6 +3,7 @@
 //#include <QList>
 #include <QMessageBox>
 #include <QList>
+#include <QSharedPointer>
 //#include <QDir>
 //#include "mainwindow.h"
 //#include "boost/shared_ptr.hpp"
@@ -14,7 +15,7 @@
 #include "AppRegistry.h"
 #include "settings/ConnectionRecord.h"
 #include "Dialogs/ConnectionsDialog.h"
-//#include "Core.h"
+#include "Core.h"
 
 using namespace Robomongo;
 
@@ -30,6 +31,31 @@ int main(int argc, char *argv[])
 
     ConnectionsDialog dialog(&AppRegistry::instance().settingsManager());
     dialog.show();
+
+    ConnectionRecordShared record1(new ConnectionRecord);
+    ConnectionRecordShared record2(new ConnectionRecord);
+    ConnectionRecordShared record1a = record1;
+    ConnectionRecordShared record1b = record1a;
+    ConnectionRecordShared record2a = record2;
+
+    record1.data();
+
+    QList<ConnectionRecordShared> list;
+    list.append(record1);
+    list.append(record2);
+
+    list.removeOne(record1a);
+    list.removeOne(record1b);
+    list.removeOne(record2a);
+
+    QHash<ConnectionRecordShared, QString> hash;
+    hash.insert(record1, "one");
+    hash.insert(record2, "two");
+
+    hash.remove(record1a);
+    hash.remove(record1b);
+    hash.remove(record2a);
+
 
 //    ConnectionRecord man1;
 //    ConnectionRecord man2;

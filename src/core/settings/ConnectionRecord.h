@@ -7,6 +7,7 @@
 #include <QSharedDataPointer>
 #include <QSharedData>
 #include <QDebug>
+#include <Core.h>
 
 namespace Robomongo
 {
@@ -14,30 +15,16 @@ namespace Robomongo
     /**
      * Represents connection record
      */
-    class ConnectionRecord
+    class ConnectionRecord : public QObject
     {
+        Q_OBJECT
     private:
-
-        /**
-         * Private data
-         */
-        class ConnectionRecordPrivate : public QSharedData
-        {
-        public:
-            ConnectionRecordPrivate() {}
-            int id;
-            QString connectionName;
-            QString databaseAddress;
-            int databasePort;
-            QString userName;
-            QString userPassword;
-        };
-
-        /**
-         * Shared data
-         */
-        QExplicitlySharedDataPointer<ConnectionRecordPrivate> _data;
-        friend uint qHash(const ConnectionRecord &key);
+        int _id;
+        QString _connectionName;
+        QString _databaseAddress;
+        int _databasePort;
+        QString _userName;
+        QString _userPassword;
 
     public:
 
@@ -45,14 +32,6 @@ namespace Robomongo
          * Creates ConnectionRecord with default values
          */
         ConnectionRecord();
-
-        /**
-         * Shared data support
-         */
-        ConnectionRecord(const ConnectionRecord& other) : _data(other._data) {}
-        ConnectionRecord& operator=(const ConnectionRecord& other) { _data = other._data; return *this; }
-        bool operator ==(const ConnectionRecord& other) const { return _data == other._data; }
-        ~ConnectionRecord() {}
 
         /**
          * Converts to QVariantMap
@@ -67,38 +46,38 @@ namespace Robomongo
         /**
          * Internal ID of connection
          */
-        int id() const { return _data->id; }
-        void setId(const int id) { _data->id = id; }
+        int id() const { return _id; }
+        void setId(const int id) { _id = id; }
 
         /**
          * Name of connection
          */
-        QString connectionName() const { return _data->connectionName; }
-        void setConnectionName(const QString & connectionName) { _data->connectionName = connectionName; }
+        QString connectionName() const { return _connectionName; }
+        void setConnectionName(const QString & connectionName) { _connectionName = connectionName; }
 
         /**
          * Database address
          */
-        QString databaseAddress() const { return _data->databaseAddress; }
-        void setDatabaseAddress(const QString & databaseAddress) { _data->databaseAddress = databaseAddress; }
+        QString databaseAddress() const { return _databaseAddress; }
+        void setDatabaseAddress(const QString & databaseAddress) { _databaseAddress = databaseAddress; }
 
         /**
          * Port of database
          */
-        int databasePort() const { return _data->databasePort; }
-        void setDatabasePort(const int port) { _data->databasePort = port; }
+        int databasePort() const { return _databasePort; }
+        void setDatabasePort(const int port) { _databasePort = port; }
 
         /**
          * User name
          */
-        QString userName() const { return _data->userName; }
-        void setUserName(const QString & userName) { _data->userName = userName; }
+        QString userName() const { return _userName; }
+        void setUserName(const QString & userName) { _userName = userName; }
 
         /**
          * Password
          */
-        QString userPassword() const { return _data->userPassword; }
-        void setUserPassword(const QString & userPassword) { _data->userPassword = userPassword; }
+        QString userPassword() const { return _userPassword; }
+        void setUserPassword(const QString & userPassword) { _userPassword = userPassword; }
 
         /**
          * Returns connection full address (i.e. locahost:8090)
@@ -106,26 +85,21 @@ namespace Robomongo
         QString getFullAddress() const
         {
             return QString("%1:%2")
-                .arg(_data->databaseAddress)
-                .arg(_data->databasePort);
+                .arg(_databaseAddress)
+                .arg(_databasePort);
         }
 
         QString getReadableName() const
         {
-            if (_data->connectionName.isEmpty())
+            if (_connectionName.isEmpty())
                 return getFullAddress();
 
-            return _data->connectionName;
+            return _connectionName;
         }
     };
-
-    inline uint qHash(const ConnectionRecord &key)
-    {
-        return ::qHash(key._data.data());
-    }
 }
 
-Q_DECLARE_METATYPE(Robomongo::ConnectionRecord)
+Q_DECLARE_METATYPE(Robomongo::ConnectionRecordShared)
 
 
 

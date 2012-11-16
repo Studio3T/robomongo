@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QStyle>
 #include <settings/ConnectionRecord.h>
+#include "Core.h"
 
 namespace Robomongo
 {
@@ -32,7 +33,7 @@ namespace Robomongo
         /*
         ** View model
         */
-        ConnectionRecord _connection;
+        ConnectionRecordShared _connection;
 
         /*
         ** Check that user is okay to close this window
@@ -66,7 +67,7 @@ namespace Robomongo
         /*
         ** Constructs dialog with specified viewmodel
         */
-        EditConnectionDialog(ConnectionRecord connection);
+        EditConnectionDialog(ConnectionRecordShared connection);
 
         /*
         ** Destructs dialog
@@ -76,7 +77,7 @@ namespace Robomongo
         /*
         ** Returns current state of view model
         */
-        ConnectionRecord connection() { return _connection; }
+        ConnectionRecordShared connection() { return _connection; }
 
         /*
         ** Override virtual method

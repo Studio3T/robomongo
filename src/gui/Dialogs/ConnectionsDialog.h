@@ -26,23 +26,6 @@ namespace Robomongo
     {
         Q_OBJECT
 
-    private:
-
-        /**
-         * @brief Main list widget
-         */
-        QListWidget *_listWidget;
-
-        /**
-         * @brief Settings manager
-         */
-        SettingsManager *_settingsManager;
-
-        /**
-         * @brief Hash that helps to connect ConnectionRecord with ConnectionListWidgetItem*
-         */
-        QHash<ConnectionRecordPtr, ConnectionListWidgetItem *> _hash;
-
     public:
 
         /**
@@ -86,6 +69,24 @@ namespace Robomongo
          * @brief Initiate 'remove' action, usually when user clicked on Remove button
          */
         void remove();
+
+    private:
+
+        /**
+         * @brief Main list widget
+         */
+        QListWidget *_listWidget;
+
+        /**
+         * @brief Settings manager
+         */
+        SettingsManager *_settingsManager;
+
+        /**
+         * @brief Hash that helps to connect ConnectionRecord with ConnectionListWidgetItem*
+         */
+        QHash<ConnectionRecordPtr, ConnectionListWidgetItem *> _hash;
+
     };
 
     /**

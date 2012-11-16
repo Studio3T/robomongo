@@ -11,18 +11,50 @@
 
 namespace Robomongo
 {
-    /*
-    ** Dialog allows to edit connection
-    */
+    /**
+     * @brief This Dialog allows to edit single connection
+     */
     class EditConnectionDialog : public QDialog
     {
         Q_OBJECT
 
+    public:
+
+        /**
+         * @brief Constructs dialog with specified connection
+         */
+        EditConnectionDialog(ConnectionRecordPtr connection);
+
+        /**
+         * @brief Accept() is called when user agree with entered data.
+         */
+        virtual void accept();
+
+    protected:
+
+        /**
+         * @brief Close event handler
+         */
+        void closeEvent(QCloseEvent *);
+
+        /**
+         * @brief Key press event handler
+         */
+        void keyPressEvent(QKeyEvent *e);
+
+
+    private slots:
+
+        /**
+         * @brief Test current connection
+         */
+        void testConnection();
+
     private:
 
-        /*
-        ** Text boxs
-        */
+        /**
+         * @brief Text boxes
+         */
         QLineEdit * _connectionName;
         QLineEdit * _serverAddress;
         QLineEdit * _serverPort;
@@ -30,59 +62,16 @@ namespace Robomongo
         QLineEdit * _userPassword;
         QLineEdit * _databases;
 
-        /*
-        ** View model
-        */
+        /**
+         * @brief Edited connection
+         */
         ConnectionRecordPtr _connection;
 
-        /*
-        ** Check that user is okay to close this window
-        */
-        bool _canBeClosed();
-
-    protected:
-
-        /*
-        ** Close event handler
-        */
-        void closeEvent(QCloseEvent *);
-
-        void keyPressEvent(QKeyEvent *e);
-
-
-    protected slots:
-
-        /*
-        ** Handles moment when close button was clicked
-        */
-        void ui_closeButtonClicked();
-
-        /*
-        ** Handle test button clicked event
-        */
-        void ui_testButtonClicked();
-
-    public:
-
-        /*
-        ** Constructs dialog with specified viewmodel
-        */
-        EditConnectionDialog(ConnectionRecordPtr connection);
-
-        /*
-        ** Destructs dialog
-        */
-        ~EditConnectionDialog();
-
-        /*
-        ** Returns current state of view model
-        */
-        ConnectionRecordPtr connection() { return _connection; }
-
-        /*
-        ** Override virtual method
-        */
-        virtual void accept();
+        /**
+         * @brief Check that it is okay to close this window
+         *        (there is no modification of data, that we possibly can loose)
+         */
+        bool canBeClosed();
     };
 }
 

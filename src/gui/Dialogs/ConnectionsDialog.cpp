@@ -14,9 +14,9 @@ using namespace Robomongo;
 ConnectionsDialog::ConnectionsDialog(SettingsManager * settingsManager) : QDialog()
 {
     _settingsManager = settingsManager;
-    connect(_settingsManager, SIGNAL(connectionAdded(ConnectionRecord)), this, SLOT(add(ConnectionRecord)));
-    connect(_settingsManager, SIGNAL(connectionUpdated(ConnectionRecord)), this, SLOT(update(ConnectionRecord)));
-    connect(_settingsManager, SIGNAL(connectionRemoved(ConnectionRecord)), this, SLOT(remove(ConnectionRecord)));
+    connect(_settingsManager, SIGNAL(connectionAdded(ConnectionRecordShared)), this, SLOT(add(ConnectionRecordShared)));
+    connect(_settingsManager, SIGNAL(connectionUpdated(ConnectionRecordShared)), this, SLOT(update(ConnectionRecordShared)));
+    connect(_settingsManager, SIGNAL(connectionRemoved(ConnectionRecordShared)), this, SLOT(remove(ConnectionRecordShared)));
 
 	_listWidget = new QListWidget;
     _listWidget->setViewMode(QListView::ListMode);
@@ -63,7 +63,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager * settingsManager) : QDialo
     setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     // Populate list with connections
-    foreach(ConnectionRecord connectionModel, _settingsManager->connections())
+    foreach(ConnectionRecordShared connectionModel, _settingsManager->connections())
         add(connectionModel);
 }
 
@@ -93,7 +93,7 @@ void ConnectionsDialog::accept()
  */
 void ConnectionsDialog::add()
 {
-    ConnectionRecord newModel;
+    ConnectionRecordShared newModel(new ConnectionRecord);
 	EditConnectionDialog editDialog(newModel);
 
 	// Do nothing if not accepted
@@ -115,7 +115,7 @@ void ConnectionsDialog::edit()
     if (currentItem == 0)
         return;
 
-    ConnectionRecord connection = currentItem->connection();
+    ConnectionRecordShared connection = currentItem->connection();
     EditConnectionDialog editDialog(connection);
 
     // Do nothing if not accepted
@@ -136,12 +136,12 @@ void ConnectionsDialog::remove()
 	if (currentItem == 0)
 		return;
 
-    ConnectionRecord connectionModel = currentItem->connection();
+    ConnectionRecordShared connectionModel = currentItem->connection();
 
     // Ask user
     int answer = QMessageBox::question(this,
         "Connections",
-        QString("Really delete \"%1\" connection?").arg(connectionModel.getReadableName()),
+        QString("Really delete \"%1\" connection?").arg(connectionModel->getReadableName()),
         QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
     if (answer != QMessageBox::Yes)
@@ -153,7 +153,7 @@ void ConnectionsDialog::remove()
 /**
  * @brief Add connection to the list widget
  */
-void ConnectionsDialog::add(const ConnectionRecord &connection)
+void ConnectionsDialog::add(const ConnectionRecordShared &connection)
 {
     ConnectionListWidgetItem * item = new ConnectionListWidgetItem;
     item->setConnection(connection);
@@ -164,7 +164,7 @@ void ConnectionsDialog::add(const ConnectionRecord &connection)
 /**
  * @brief Update specified connection (if it exists for this dialog)
  */
-void ConnectionsDialog::update(const ConnectionRecord &connection)
+void ConnectionsDialog::update(const ConnectionRecordShared &connection)
 {
     ConnectionListWidgetItem *item = _hash.value(connection);
     if (!item)
@@ -176,7 +176,7 @@ void ConnectionsDialog::update(const ConnectionRecord &connection)
 /**
  * @brief Remove specified connection (if it exists for this dialog)
  */
-void ConnectionsDialog::remove(const ConnectionRecord &connection)
+void ConnectionsDialog::remove(const ConnectionRecordShared &connection)
 {
     QListWidgetItem *item = _hash.value(connection);
     if (!item)

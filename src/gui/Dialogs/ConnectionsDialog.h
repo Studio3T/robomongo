@@ -8,6 +8,7 @@
 #include "settings/ConnectionRecord.h"
 #include "settings/SettingsManager.h"
 #include <boost/scoped_ptr.hpp>
+#include "Core.h"
 
 using namespace boost;
 
@@ -40,7 +41,7 @@ namespace Robomongo
         /**
          * @brief Hash that helps to connect ConnectionRecord with ConnectionListWidgetItem*
          */
-        QHash<ConnectionRecord, ConnectionListWidgetItem *> _hash;
+        QHash<ConnectionRecordShared, ConnectionListWidgetItem *> _hash;
 
     public:
 
@@ -59,17 +60,17 @@ namespace Robomongo
         /**
          * @brief Add connection to the list widget
          */
-        void add(const ConnectionRecord &connection);
+        void add(const ConnectionRecordShared &connection);
 
         /**
          * @brief Update specified connection (if it exists for this dialog)
          */
-        void update(const ConnectionRecord &connection);
+        void update(const ConnectionRecordShared &connection);
 
         /**
          * @brief Remove specified connection (if it exists for this dialog)
          */
-        void remove(const ConnectionRecord &connection);
+        void remove(const ConnectionRecordShared &connection);
 
         /**
          * @brief Initiate 'add' action, usually when user clicked on Add button
@@ -97,19 +98,19 @@ namespace Robomongo
         /**
          * @brief Returns attached ConnectionRecord.
          */
-        ConnectionRecord connection()
+        ConnectionRecordShared connection()
         {
             QVariant var = data(Qt::UserRole);
-            return var.value<ConnectionRecord>();
+            return var.value<ConnectionRecordShared>();
         }
 
         /**
          * @brief Attach ConnectionRecord to this item
          */
-        void setConnection(ConnectionRecord connection)
+        void setConnection(ConnectionRecordShared connection)
         {
-            setText(connection.connectionName());
-            setData(Qt::UserRole, QVariant::fromValue<ConnectionRecord>(connection));
+            setText(connection->connectionName());
+            setData(Qt::UserRole, QVariant::fromValue<ConnectionRecordShared>(connection));
         }
     };
 }

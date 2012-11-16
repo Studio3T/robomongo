@@ -5,10 +5,10 @@ using namespace Robomongo;
 /**
  * Creates ConnectionRecord with default values
  */
-ConnectionRecord::ConnectionRecord() : _data(new ConnectionRecordPrivate)
+ConnectionRecord::ConnectionRecord() : QObject()
 {
-    _data->id = 0;
-    _data->databasePort = 27017;
+    _id = 0;
+    _databasePort = 27017;
 }
 
 /**

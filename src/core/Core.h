@@ -1,6 +1,7 @@
 #ifndef CORE_H
 #define CORE_H
 
+#include <QSharedPointer>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -19,6 +20,9 @@ namespace Robomongo
 
     class ConnectionRecord;
     typedef boost::ptr_vector<ConnectionRecord> ConnectionRecord_PtrVector;
+
+    typedef QSharedPointer<ConnectionRecord> ConnectionRecordShared;
+
 
 }
 

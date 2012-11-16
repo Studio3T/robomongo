@@ -7,7 +7,7 @@ using namespace Robomongo;
 /*
 ** Constructs dialog with specified viewmodel
 */
-EditConnectionDialog::EditConnectionDialog(ConnectionRecord connection) : QDialog()
+EditConnectionDialog::EditConnectionDialog(ConnectionRecordShared connection) : QDialog()
 {
 	_connection = connection;
 
@@ -21,11 +21,11 @@ EditConnectionDialog::EditConnectionDialog(ConnectionRecord connection) : QDialo
 	QPushButton * testButton = new QPushButton("Test");
     connect(testButton, SIGNAL(clicked()), this, SLOT(ui_testButtonClicked()));
 
-    _connectionName = new QLineEdit(_connection.connectionName(), this);
-    _serverAddress = new QLineEdit(_connection.databaseAddress(), this);
-    _serverPort = new QLineEdit(QString::number(_connection.databasePort()), this);
-    _userName = new QLineEdit(_connection.userName(), this);
-    _userPassword = new QLineEdit(_connection.userPassword(), this);
+    _connectionName = new QLineEdit(_connection->connectionName(), this);
+    _serverAddress = new QLineEdit(_connection->databaseAddress(), this);
+    _serverPort = new QLineEdit(QString::number(_connection->databasePort()), this);
+    _userName = new QLineEdit(_connection->userName(), this);
+    _userPassword = new QLineEdit(_connection->userPassword(), this);
 
 	QHBoxLayout * bottomLayout = new QHBoxLayout;
 	bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
@@ -68,11 +68,11 @@ EditConnectionDialog::~EditConnectionDialog()
 
 void EditConnectionDialog::accept()
 {
-    _connection.setConnectionName(_connectionName->text());
-    _connection.setDatabaseAddress(_serverAddress->text());
-    _connection.setDatabasePort(_serverPort->text().toInt());
-    _connection.setUserName(_userName->text());
-    _connection.setUserPassword(_userPassword->text());
+    _connection->setConnectionName(_connectionName->text());
+    _connection->setDatabaseAddress(_serverAddress->text());
+    _connection->setDatabasePort(_serverPort->text().toInt());
+    _connection->setUserName(_userName->text());
+    _connection->setUserPassword(_userPassword->text());
 
     QDialog::accept();
 }
@@ -103,11 +103,11 @@ void EditConnectionDialog::closeEvent(QCloseEvent * event)
 bool EditConnectionDialog::_canBeClosed()
 {
     bool unchanged =
-            _connection.connectionName() == _connectionName->text()
-            && _connection.databaseAddress() == _serverAddress->text()
-            && QString::number(_connection.databasePort()) == _serverPort->text()
-            && _connection.userName() == _userName->text()
-            && _connection.userPassword() == _userPassword->text();
+            _connection->connectionName() == _connectionName->text()
+            && _connection->databaseAddress() == _serverAddress->text()
+            && QString::number(_connection->databasePort()) == _serverPort->text()
+            && _connection->userName() == _userName->text()
+            && _connection->userPassword() == _userPassword->text();
 
     // If data was unchanged - simply close dialog
     if (unchanged)

@@ -33,7 +33,7 @@ namespace Robomongo
         /*
         ** View model
         */
-        ConnectionRecordShared _connection;
+        ConnectionRecordPtr _connection;
 
         /*
         ** Check that user is okay to close this window
@@ -67,7 +67,7 @@ namespace Robomongo
         /*
         ** Constructs dialog with specified viewmodel
         */
-        EditConnectionDialog(ConnectionRecordShared connection);
+        EditConnectionDialog(ConnectionRecordPtr connection);
 
         /*
         ** Destructs dialog
@@ -77,7 +77,7 @@ namespace Robomongo
         /*
         ** Returns current state of view model
         */
-        ConnectionRecordShared connection() { return _connection; }
+        ConnectionRecordPtr connection() { return _connection; }
 
         /*
         ** Override virtual method

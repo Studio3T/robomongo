@@ -32,15 +32,15 @@ int main(int argc, char *argv[])
     ConnectionsDialog dialog(&AppRegistry::instance().settingsManager());
     dialog.show();
 
-    ConnectionRecordShared record1(new ConnectionRecord);
-    ConnectionRecordShared record2(new ConnectionRecord);
-    ConnectionRecordShared record1a = record1;
-    ConnectionRecordShared record1b = record1a;
-    ConnectionRecordShared record2a = record2;
+    ConnectionRecordPtr record1(new ConnectionRecord);
+    ConnectionRecordPtr record2(new ConnectionRecord);
+    ConnectionRecordPtr record1a = record1;
+    ConnectionRecordPtr record1b = record1a;
+    ConnectionRecordPtr record2a = record2;
 
     record1.data();
 
-    QList<ConnectionRecordShared> list;
+    QList<ConnectionRecordPtr> list;
     list.append(record1);
     list.append(record2);
 
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     list.removeOne(record1b);
     list.removeOne(record2a);
 
-    QHash<ConnectionRecordShared, QString> hash;
+    QHash<ConnectionRecordPtr, QString> hash;
     hash.insert(record1, "one");
     hash.insert(record2, "two");
 

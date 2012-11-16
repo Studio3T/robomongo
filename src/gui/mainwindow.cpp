@@ -19,11 +19,11 @@ MainWindow::MainWindow(QWidget *parent) :
     _tabWidget->setMovable(true);
     //_tabWidget->resize(400, 300);
     _tabWidget->setTabsClosable(true);
-    _tabWidget->setTabToolTip(0, "const QString & tip");
+    _tabWidget->setTabToolTip(0, "const QString &tip");
 
 
 
-    QHBoxLayout * hlayout = new QHBoxLayout;
+    QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->setObjectName("Main layout");
     hlayout->setMargin(0);
     hlayout->addWidget(_tabWidget);

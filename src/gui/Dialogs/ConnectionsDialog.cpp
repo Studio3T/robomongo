@@ -13,7 +13,7 @@ using namespace Robomongo;
 /**
  * @brief Creates dialog
  */
-ConnectionsDialog::ConnectionsDialog(SettingsManager * settingsManager) : QDialog()
+ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog()
 {
     _settingsManager = settingsManager;
     connect(_settingsManager, SIGNAL(connectionAdded(ConnectionRecordPtr)), this, SLOT(add(ConnectionRecordPtr)));

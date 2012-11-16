@@ -4,9 +4,9 @@
 
 using namespace Robomongo;
 
-/*
-** Constructs dialog with specified viewmodel
-*/
+/**
+ * @brief Constructs dialog with specified connection
+ */
 EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDialog()
 {
 	_connection = connection;
@@ -16,10 +16,10 @@ EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDi
 	connect(saveButton, SIGNAL(clicked()), this, SLOT(accept()));
 
 	QPushButton * cancelButton = new QPushButton("Cancel");
-    connect(cancelButton, SIGNAL(clicked()), this, SLOT(ui_closeButtonClicked()));
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
 	QPushButton * testButton = new QPushButton("Test");
-    connect(testButton, SIGNAL(clicked()), this, SLOT(ui_testButtonClicked()));
+    connect(testButton, SIGNAL(clicked()), this, SLOT(testConnection()));
 
     _connectionName = new QLineEdit(_connection->connectionName(), this);
     _serverAddress = new QLineEdit(_connection->databaseAddress(), this);
@@ -44,7 +44,6 @@ EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDi
 	editLayout->addWidget(new QLabel("Password"), 4, 0);
 	editLayout->addWidget(_userPassword, 4, 1);
 
-
 	QVBoxLayout * mainLayout = new QVBoxLayout(this);
 	mainLayout->addLayout(editLayout);
 	mainLayout->addLayout(bottomLayout);
@@ -52,20 +51,15 @@ EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDi
 	setContentsMargins(7, 7, 7, 7);
 
 	setWindowTitle("Edit connection");
-//now	setWindowIcon(AppRegistry::instance().serverIcon());
+    //now	setWindowIcon(AppRegistry::instance().serverIcon());
 
     // Remove help button (?)
     setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 }
 
-/*
-** Destructs dialog
-*/
-EditConnectionDialog::~EditConnectionDialog()
-{
-
-}
-
+/**
+ * @brief Accept() is called when user agree with entered data.
+ */
 void EditConnectionDialog::accept()
 {
     _connection->setConnectionName(_connectionName->text());
@@ -77,37 +71,29 @@ void EditConnectionDialog::accept()
     QDialog::accept();
 }
 
-/*
-** Handles moment when close button was clicked
-*/
-void EditConnectionDialog::ui_closeButtonClicked()
-{
-    if (_canBeClosed())
-        reject();
-}
-
-/*
-** Close event handler
-*/
+/**
+ * @brief Close event handler
+ */
 void EditConnectionDialog::closeEvent(QCloseEvent * event)
 {
-    if (_canBeClosed())
+    if (canBeClosed())
         event->accept();
     else
         event->ignore();
 }
 
-/*
-** Check that user is okay to close this window
-*/
-bool EditConnectionDialog::_canBeClosed()
+/**
+ * @brief Check that it is okay to close this window
+ *        (there is no modification of data, that we possibly can loose)
+ */
+bool EditConnectionDialog::canBeClosed()
 {
     bool unchanged =
-            _connection->connectionName() == _connectionName->text()
-            && _connection->databaseAddress() == _serverAddress->text()
-            && QString::number(_connection->databasePort()) == _serverPort->text()
-            && _connection->userName() == _userName->text()
-            && _connection->userPassword() == _userPassword->text();
+        _connection->connectionName() == _connectionName->text()
+        && _connection->databaseAddress() == _serverAddress->text()
+        && QString::number(_connection->databasePort()) == _serverPort->text()
+        && _connection->userName() == _userName->text()
+        && _connection->userPassword() == _userPassword->text();
 
     // If data was unchanged - simply close dialog
     if (unchanged)
@@ -125,17 +111,23 @@ bool EditConnectionDialog::_canBeClosed()
     return false;
 }
 
+/**
+ * @brief Key press event handler
+ */
 void EditConnectionDialog::keyPressEvent(QKeyEvent *e)
 {
     if (e->key() == Qt::Key_Escape)
-        ui_closeButtonClicked();
+        close();
     else
         QDialog::keyPressEvent(e);
 }
 
-void EditConnectionDialog::ui_testButtonClicked()
+/**
+ * @brief Test current connection
+ */
+void EditConnectionDialog::testConnection()
 {
-    bool res = true;//_connection->test(_serverAddress->text(), _serverPort->text(), _userName->text(), _userPassword->text());
+    bool res = true; //_connection->test(_serverAddress->text(), _serverPort->text(), _userName->text(), _userPassword->text());
 
     if (res)
         QMessageBox::information(NULL, "Success!", "Success! Connection exists.", "Ok");

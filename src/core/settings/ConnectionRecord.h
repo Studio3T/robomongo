@@ -18,13 +18,6 @@ namespace Robomongo
     class ConnectionRecord : public QObject
     {
         Q_OBJECT
-    private:
-        int _id;
-        QString _connectionName;
-        QString _databaseAddress;
-        int _databasePort;
-        QString _userName;
-        QString _userPassword;
 
     public:
 
@@ -96,6 +89,15 @@ namespace Robomongo
 
             return _connectionName;
         }
+
+    private:
+
+        int _id;
+        QString _connectionName;
+        QString _databaseAddress;
+        int _databasePort;
+        QString _userName;
+        QString _userPassword;
     };
 }
 

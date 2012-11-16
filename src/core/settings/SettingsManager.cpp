@@ -72,7 +72,7 @@ bool SettingsManager::save()
 
     bool ok;
     QJson::Serializer s;
-    //s.setIndentMode(QJson::IndentFull);
+    s.setIndentMode(QJson::IndentFull);
     s.serialize(map, &f, &ok);
 
     qDebug() << "Settings saved to: " << _configPath;

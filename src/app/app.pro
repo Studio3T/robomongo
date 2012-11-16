@@ -33,7 +33,19 @@ win32 {
     }
 }
 
+unix {
+    contains(QMAKE_HOST.arch, x86_64) {
+        # Copy qjson to to app/out folder
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so.0\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so.0.7.1\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    } else {
 
+    }
+
+    QMAKE_POST_LINK += $$quote(cp \"$$ROOT/build/linux/run.sh\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(chmod u+x \"$$OUT_PWD/out/run.sh\" $$escape_expand(\\n\\t))
+}
 
 
 

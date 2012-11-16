@@ -1,7 +1,9 @@
+#include <QObject>
 #include <QApplication>
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QHash>
+#include <QAction>
 #include <QMessageBox>
 #include "ConnectionsDialog.h"
 #include "Dialogs/EditConnectionDialog.h"
@@ -18,41 +20,54 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager * settingsManager) : QDialo
     connect(_settingsManager, SIGNAL(connectionUpdated(ConnectionRecordPtr)), this, SLOT(update(ConnectionRecordPtr)));
     connect(_settingsManager, SIGNAL(connectionRemoved(ConnectionRecordPtr)), this, SLOT(remove(ConnectionRecordPtr)));
 
+    QAction *addAction = new QAction("Add", this);
+    connect(addAction, SIGNAL(triggered()), this, SLOT(add()));
+
+    QAction *editAction = new QAction("Edit", this);
+    connect(editAction, SIGNAL(triggered()), this, SLOT(edit()));
+
+    QAction *removeAction = new QAction("Remove", this);
+    connect(removeAction, SIGNAL(triggered()), this, SLOT(remove()));
+
 	_listWidget = new QListWidget;
     _listWidget->setViewMode(QListView::ListMode);
+    _listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+    _listWidget->addAction(addAction);
+    _listWidget->addAction(editAction);
+    _listWidget->addAction(removeAction);
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
 
-	QPushButton * addButton = new QPushButton("Add");
+    QPushButton *addButton = new QPushButton("Add");
 	connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
 
-	QPushButton * editButton = new QPushButton("Edit");
+    QPushButton *editButton = new QPushButton("Edit");
 	connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
 
-	QPushButton * removeButton = new QPushButton("Remove");
+    QPushButton *removeButton = new QPushButton("Remove");
 	connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
 
-	QPushButton * cancelButton = new QPushButton("Cancel");
+    QPushButton *cancelButton = new QPushButton("Cancel");
 	connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
-	QPushButton * connectButton = new QPushButton("Connect");
+    QPushButton *connectButton = new QPushButton("Connect");
     connectButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
 	connect(connectButton, SIGNAL(clicked()), this, SLOT(accept()));
 
-	QHBoxLayout * bottomLayout = new QHBoxLayout;
+    QHBoxLayout *bottomLayout = new QHBoxLayout;
 	bottomLayout->addWidget(connectButton, 1, Qt::AlignRight);
 	bottomLayout->addWidget(cancelButton);
 
-	QVBoxLayout * firstColumnLayout = new QVBoxLayout;
+    QVBoxLayout *firstColumnLayout = new QVBoxLayout;
 	firstColumnLayout->addWidget(_listWidget);
 	firstColumnLayout->addLayout(bottomLayout);
 
-	QVBoxLayout * secondColumnLayout = new QVBoxLayout;
+    QVBoxLayout *secondColumnLayout = new QVBoxLayout;
 	secondColumnLayout->setAlignment(Qt::AlignTop);
 	secondColumnLayout->addWidget(addButton);
 	secondColumnLayout->addWidget(editButton);
 	secondColumnLayout->addWidget(removeButton);
 
-	QHBoxLayout * mainLayout = new QHBoxLayout(this);
+    QHBoxLayout *mainLayout = new QHBoxLayout(this);
 	mainLayout->addLayout(firstColumnLayout);
 	mainLayout->addLayout(secondColumnLayout);
 
@@ -72,7 +87,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager * settingsManager) : QDialo
  */
 void ConnectionsDialog::accept()
 {
-    QListWidgetItem * currentItem = _listWidget->currentItem();
+    QListWidgetItem *currentItem = _listWidget->currentItem();
 
     // Do nothing if no item selected
     if (currentItem == 0)
@@ -130,7 +145,7 @@ void ConnectionsDialog::edit()
  */
 void ConnectionsDialog::remove()
 {
-    ConnectionListWidgetItem * currentItem = (ConnectionListWidgetItem *)_listWidget->currentItem();
+    ConnectionListWidgetItem *currentItem = (ConnectionListWidgetItem *)_listWidget->currentItem();
 
 	// Do nothing if no item selected
 	if (currentItem == 0)
@@ -155,7 +170,7 @@ void ConnectionsDialog::remove()
  */
 void ConnectionsDialog::add(const ConnectionRecordPtr &connection)
 {
-    ConnectionListWidgetItem * item = new ConnectionListWidgetItem;
+    ConnectionListWidgetItem *item = new ConnectionListWidgetItem;
     item->setConnection(connection);
     _listWidget->addItem(item);
     _hash.insert(connection, item);

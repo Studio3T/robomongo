@@ -32,7 +32,7 @@ namespace Robomongo
         ** Singleton support
         */
         AppRegistry(AppRegistry const &);       // To protect from copies of singleton
-        void operator=(AppRegistry const &);	// To protect from copies of singleton
+        void operator=(AppRegistry const &);    // To protect from copies of singleton
     };
 }
 

@@ -9,11 +9,11 @@ using namespace Robomongo;
  */
 EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDialog()
 {
-	_connection = connection;
+    _connection = connection;
 
     QPushButton *saveButton = new QPushButton("&Save");
-	saveButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
-	connect(saveButton, SIGNAL(clicked()), this, SLOT(accept()));
+    saveButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(accept()));
 
     QPushButton *cancelButton = new QPushButton("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
@@ -28,30 +28,30 @@ EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDi
     _userPassword = new QLineEdit(_connection->userPassword(), this);
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
-	bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
-	bottomLayout->addWidget(saveButton, 1, Qt::AlignRight);
-	bottomLayout->addWidget(cancelButton);
+    bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
+    bottomLayout->addWidget(saveButton, 1, Qt::AlignRight);
+    bottomLayout->addWidget(cancelButton);
 
     QGridLayout *editLayout = new QGridLayout;
-	editLayout->addWidget(new QLabel("Name"), 0, 0);
-	editLayout->addWidget(_connectionName, 0, 1);
-	editLayout->addWidget(new QLabel("Server"), 1, 0);
-	editLayout->addWidget(_serverAddress, 1, 1);
-	editLayout->addWidget(new QLabel("Port"), 2, 0);
-	editLayout->addWidget(_serverPort, 2, 1, Qt::AlignLeft);
-	editLayout->addWidget(new QLabel("Username"), 3, 0);
-	editLayout->addWidget(_userName, 3, 1);
-	editLayout->addWidget(new QLabel("Password"), 4, 0);
-	editLayout->addWidget(_userPassword, 4, 1);
+    editLayout->addWidget(new QLabel("Name"), 0, 0);
+    editLayout->addWidget(_connectionName, 0, 1);
+    editLayout->addWidget(new QLabel("Server"), 1, 0);
+    editLayout->addWidget(_serverAddress, 1, 1);
+    editLayout->addWidget(new QLabel("Port"), 2, 0);
+    editLayout->addWidget(_serverPort, 2, 1, Qt::AlignLeft);
+    editLayout->addWidget(new QLabel("Username"), 3, 0);
+    editLayout->addWidget(_userName, 3, 1);
+    editLayout->addWidget(new QLabel("Password"), 4, 0);
+    editLayout->addWidget(_userPassword, 4, 1);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-	mainLayout->addLayout(editLayout);
-	mainLayout->addLayout(bottomLayout);
+    mainLayout->addLayout(editLayout);
+    mainLayout->addLayout(bottomLayout);
 
-	setContentsMargins(7, 7, 7, 7);
+    setContentsMargins(7, 7, 7, 7);
 
-	setWindowTitle("Edit connection");
-    //now	setWindowIcon(AppRegistry::instance().serverIcon());
+    setWindowTitle("Edit connection");
+    //now    setWindowIcon(AppRegistry::instance().serverIcon());
 
     // Remove help button (?)
     setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);

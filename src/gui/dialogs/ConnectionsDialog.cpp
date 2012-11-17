@@ -29,7 +29,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     QAction *removeAction = new QAction("&Remove", this);
     connect(removeAction, SIGNAL(triggered()), this, SLOT(remove()));
 
-	_listWidget = new QListWidget;
+    _listWidget = new QListWidget;
     _listWidget->setViewMode(QListView::ListMode);
     _listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
     _listWidget->addAction(addAction);
@@ -38,40 +38,40 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
 
     QPushButton *addButton = new QPushButton("&Add");
-	connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
+    connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
 
     QPushButton *editButton = new QPushButton("&Edit");
-	connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
+    connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
 
     QPushButton *removeButton = new QPushButton("&Remove");
-	connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
+    connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
 
     QPushButton *cancelButton = new QPushButton("&Cancel");
-	connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
     QPushButton *connectButton = new QPushButton("C&onnect");
     connectButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
-	connect(connectButton, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(connectButton, SIGNAL(clicked()), this, SLOT(accept()));
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
-	bottomLayout->addWidget(connectButton, 1, Qt::AlignRight);
-	bottomLayout->addWidget(cancelButton);
+    bottomLayout->addWidget(connectButton, 1, Qt::AlignRight);
+    bottomLayout->addWidget(cancelButton);
 
     QVBoxLayout *firstColumnLayout = new QVBoxLayout;
-	firstColumnLayout->addWidget(_listWidget);
-	firstColumnLayout->addLayout(bottomLayout);
+    firstColumnLayout->addWidget(_listWidget);
+    firstColumnLayout->addLayout(bottomLayout);
 
     QVBoxLayout *secondColumnLayout = new QVBoxLayout;
-	secondColumnLayout->setAlignment(Qt::AlignTop);
-	secondColumnLayout->addWidget(addButton);
-	secondColumnLayout->addWidget(editButton);
-	secondColumnLayout->addWidget(removeButton);
+    secondColumnLayout->setAlignment(Qt::AlignTop);
+    secondColumnLayout->addWidget(addButton);
+    secondColumnLayout->addWidget(editButton);
+    secondColumnLayout->addWidget(removeButton);
 
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
-	mainLayout->addLayout(firstColumnLayout);
-	mainLayout->addLayout(secondColumnLayout);
+    mainLayout->addLayout(firstColumnLayout);
+    mainLayout->addLayout(secondColumnLayout);
 
-	setWindowTitle("Connections...");
+    setWindowTitle("Connections...");
     //setWindowIcon(AppRegistry::instance().serverIcon());
 
     // Remove help button (?)
@@ -109,11 +109,11 @@ void ConnectionsDialog::accept()
 void ConnectionsDialog::add()
 {
     ConnectionRecordPtr newModel(new ConnectionRecord);
-	EditConnectionDialog editDialog(newModel);
+    EditConnectionDialog editDialog(newModel);
 
-	// Do nothing if not accepted
-	if (editDialog.exec() != QDialog::Accepted)
-		return;
+    // Do nothing if not accepted
+    if (editDialog.exec() != QDialog::Accepted)
+        return;
 
     _settingsManager->addConnection(newModel);
     _listWidget->setFocus();
@@ -147,9 +147,9 @@ void ConnectionsDialog::remove()
 {
     ConnectionListWidgetItem *currentItem = (ConnectionListWidgetItem *)_listWidget->currentItem();
 
-	// Do nothing if no item selected
-	if (currentItem == 0)
-		return;
+    // Do nothing if no item selected
+    if (currentItem == 0)
+        return;
 
     ConnectionRecordPtr connectionModel = currentItem->connection();
 

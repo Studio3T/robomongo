@@ -27,7 +27,7 @@ QIcon GuiRegistry::serverIcon()
 QIcon GuiRegistry::databaseIcon()
 {
     if (_databaseIcon.isNull())
-        _databaseIcon = QIcon(":/robomongo/icons/database_16x16.png");
+        _databaseIcon = QIcon(":/robomongo/icons/database_16x16.gif");
 
     return _databaseIcon;
 }

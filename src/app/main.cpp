@@ -37,7 +37,15 @@ int main(int argc, char *argv[])
     //for (int i = 0; i < 1; i ++)
     AppRegistry::instance().settingsManager().save();
 
+    QRect screenGeometry = QApplication::desktop()->screenGeometry();
+    QSize size(screenGeometry.width() - 450, screenGeometry.height() - 165);
+
     MainWindow win;
+    win.resize(size);
+
+    int x = (screenGeometry.width() - win.width()) / 2;
+    int y = (screenGeometry.height() - win.height()) / 2;
+    win.move(x, y);
     win.show();
 
 //    ConnectionsDialog dialog(&AppRegistry::instance().settingsManager());

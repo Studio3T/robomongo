@@ -6,6 +6,10 @@
 
 namespace Robomongo
 {
+    class LogWidget;
+    class ExplorerWidget;
+
+
     class MainWindow : public QMainWindow
     {
         Q_OBJECT
@@ -17,7 +21,19 @@ namespace Robomongo
         /*
         ** Status
         */
-        QLabel * _status;
+        QLabel *_status;
+
+        /*
+        ** Log panel
+        */
+        LogWidget *_log;
+
+        /*
+        ** The only Explorer in the window
+        */
+        ExplorerWidget *_explorer;
+
+        void createDatabaseExplorer();
 
     signals:
 

@@ -4,6 +4,8 @@
 #include "AppRegistry.h"
 #include "dialogs/ConnectionsDialog.h"
 #include "settings/SettingsManager.h"
+#include "widgets/LogWidget.h"
+#include "widgets/explorer/ExplorerWidget.h"
 
 using namespace Robomongo;
 
@@ -41,10 +43,12 @@ MainWindow::MainWindow() : QMainWindow()
     statusBar()->addPermanentWidget(_status);
 
     //createTabs();
-    //createDatabaseExplorer();
+    createDatabaseExplorer();
 
     setWindowTitle("Robomongo 0.2");
     setWindowIcon(GuiRegistry::instance().databaseIcon());
+
+    setCentralWidget(new QWidget(this));
 
     //connect(_viewModel, SIGNAL(statusMessageUpdated(QString)), SLOT(vm_statusMessageUpdated(QString)));
 }
@@ -55,4 +59,22 @@ void MainWindow::manageConnections()
     dialog.exec();
 
     AppRegistry::instance().settingsManager().save();
+}
+
+void MainWindow::createDatabaseExplorer()
+{
+    /*
+    ** Explorer
+    */
+    _explorer = new ExplorerWidget(this);
+    QDockWidget *explorerDock = new QDockWidget(tr(" Database Explorer"));
+    explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    explorerDock->setWidget(_explorer);
+    addDockWidget(Qt::LeftDockWidgetArea, explorerDock);
+
+    _log = new LogWidget(this);
+    QDockWidget *logDock = new QDockWidget(tr(" Log"));
+    logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+    logDock->setWidget(_log);
+    addDockWidget(Qt::BottomDockWidgetArea, logDock);
 }

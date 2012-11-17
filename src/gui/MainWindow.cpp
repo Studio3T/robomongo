@@ -12,18 +12,22 @@ using namespace Robomongo;
 MainWindow::MainWindow() : QMainWindow()
 {
     // Exit action
-    QAction *exitAction = new QAction("Exit", this);
+    QAction *exitAction = new QAction("&Exit", this);
+    exitAction->setShortcut(QKeySequence::Quit);
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     // Connect action
-    QAction *connectAction = new QAction("Connect", this);
+    QAction *connectAction = new QAction("&Connect", this);
+    connectAction->setShortcut(QKeySequence::Open);
     connectAction->setIcon(GuiRegistry::instance().serverIcon());
     connectAction->setIconText("Connect");
+    connectAction->setToolTip("Connect to MongoDB");
     connect(connectAction, SIGNAL(triggered()), this, SLOT(manageConnections()));
 
     // Refresh action
     QAction *refreshAction = new QAction("Refresh", this);
     refreshAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
+    connect(refreshAction, SIGNAL(triggered()), this, SLOT(refreshConnections()));
 
     // File menu
     QMenu *fileMenu = menuBar()->addMenu("File");
@@ -37,6 +41,7 @@ MainWindow::MainWindow() : QMainWindow()
     toolBar->addAction(connectAction);
     toolBar->addAction(refreshAction);
     toolBar->addSeparator();
+    toolBar->setShortcutEnabled(1, true);
     addToolBar(toolBar);
 
     _status = new QLabel;
@@ -50,6 +55,9 @@ MainWindow::MainWindow() : QMainWindow()
 
     setCentralWidget(new QWidget(this));
 
+    QToolTip::showText(QPoint(0,0),QString
+            ("Help reminder short keys : <br/>  ctrl-D : push Button"));
+
     //connect(_viewModel, SIGNAL(statusMessageUpdated(QString)), SLOT(vm_statusMessageUpdated(QString)));
 }
 
@@ -58,7 +66,14 @@ void MainWindow::manageConnections()
     ConnectionsDialog dialog(&AppRegistry::instance().settingsManager());
     dialog.exec();
 
-    AppRegistry::instance().settingsManager().save();
+    activateWindow();
+        AppRegistry::instance().settingsManager().save();
+}
+
+void MainWindow::refreshConnections()
+{
+    QToolTip::showText(QPoint(0,0),QString
+        ("Help reminder short keys : <br/>  <b>Ctrl+D</b> : push Button"));
 }
 
 void MainWindow::createDatabaseExplorer()

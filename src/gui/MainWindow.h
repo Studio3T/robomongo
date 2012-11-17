@@ -39,6 +39,7 @@ namespace Robomongo
 
     public slots:
         void manageConnections();
+        void refreshConnections();
     };
 
 }

@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "ExampleWindow.h"
 #include <QLabel>
 #include <QHBoxLayout>
 #include "qstyle.h"
@@ -6,7 +6,7 @@
 #include <QPushButton>
 #include <QSettings>
 
-MainWindow::MainWindow(QWidget *parent) :
+ExampleWindow::ExampleWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     setObjectName("Main Window");
@@ -89,6 +89,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
-MainWindow::~MainWindow()
+ExampleWindow::~ExampleWindow()
 {
 }

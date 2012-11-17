@@ -17,6 +17,9 @@ INCLUDEPATH += \
 
 LIBS += -lgui -lcore -lqjson
 
+RESOURCES += \
+    ../gui/resources/gui.qrc
+
 # This forces the relink when building target
 # http://stackoverflow.com/questions/1485435/force-relink-when-building-in-qt-creator
 unix:PRE_TARGETDEPS += $$OUTPUT_ROOT/core/out/libcore.a

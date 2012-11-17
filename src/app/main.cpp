@@ -15,8 +15,9 @@
 #include "settings/SettingsManager.h"
 #include "AppRegistry.h"
 #include "settings/ConnectionRecord.h"
-#include "Dialogs/ConnectionsDialog.h"
+#include "dialogs/ConnectionsDialog.h"
 #include "Core.h"
+#include "MainWindow.h"
 
 using namespace Robomongo;
 
@@ -36,13 +37,13 @@ int main(int argc, char *argv[])
     //for (int i = 0; i < 1; i ++)
     AppRegistry::instance().settingsManager().save();
 
-    ConnectionsDialog dialog(&AppRegistry::instance().settingsManager());
-    dialog.exec();
+    MainWindow win;
+    win.show();
 
-    AppRegistry::instance().settingsManager().save();
+//    ConnectionsDialog dialog(&AppRegistry::instance().settingsManager());
+//    dialog.exec();
 
-    app.exit();
-    return 0;
+    //AppRegistry::instance().settingsManager().save();
 
 //    MainWindow w;
 //    w.show();

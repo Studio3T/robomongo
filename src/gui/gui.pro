@@ -5,13 +5,17 @@ TARGET   = gui
 TEMPLATE = lib
 CONFIG  += staticlib
 
-SOURCES += mainwindow.cpp \
-    Dialogs/ConnectionsDialog.cpp \
-    Dialogs/EditConnectionDialog.cpp
+SOURCES += ExampleWindow.cpp \
+    dialogs/ConnectionsDialog.cpp \
+    dialogs/EditConnectionDialog.cpp \
+    MainWindow.cpp \
+    GuiRegistry.cpp
 
-HEADERS  += mainwindow.h = \
-    Dialogs/ConnectionsDialog.h \
-    Dialogs/EditConnectionDialog.h
+HEADERS  += ExampleWindow.h = \
+    dialogs/ConnectionsDialog.h \
+    dialogs/EditConnectionDialog.h \
+    MainWindow.h \
+    GuiRegistry.h
 
 INCLUDEPATH += \
             $$ROOT/src/core

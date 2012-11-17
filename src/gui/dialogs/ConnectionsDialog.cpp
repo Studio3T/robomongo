@@ -6,7 +6,7 @@
 #include <QAction>
 #include <QMessageBox>
 #include "ConnectionsDialog.h"
-#include "Dialogs/EditConnectionDialog.h"
+#include "dialogs/EditConnectionDialog.h"
 
 using namespace Robomongo;
 

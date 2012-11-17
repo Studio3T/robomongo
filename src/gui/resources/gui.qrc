@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/robomongo">
+        <file>icons/collection_16x16.png</file>
+        <file>icons/database_16x16.gif</file>
+        <file>icons/server_16x16.gif</file>
+        <file>icons/left_16x16.png</file>
+        <file>icons/right_16x16.png</file>
+        <file>icons/bson_binary_16x16.png</file>
+        <file>icons/bson_bool_16x16.png</file>
+        <file>icons/bson_datetime_16x16.png</file>
+        <file>icons/bson_double_16x16.png</file>
+        <file>icons/bson_integer_16x16.png</file>
+        <file>icons/bson_null_16x16.png</file>
+        <file>icons/bson_string_16x16.png</file>
+        <file>icons/bson_unsupported_16x16.png</file>
+        <file>icons/bson_array_16x16.png</file>
+        <file>icons/bson_object_16x16.png</file>
+    </qresource>
+</RCC>

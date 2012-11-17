@@ -10,8 +10,10 @@ namespace Robomongo
     class AppRegistry
     {
     public:
-        ~AppRegistry(void);
 
+        /**
+         * @brief Returns single instance of AppRegistry
+         */
         static AppRegistry &instance()
         {
             static AppRegistry _instance;
@@ -22,6 +24,8 @@ namespace Robomongo
 
     private:
         AppRegistry();
+        ~AppRegistry(void);
+
         SettingsManager_ScopedPtr _settingsManager;
 
         /*

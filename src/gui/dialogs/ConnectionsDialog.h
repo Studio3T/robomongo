@@ -34,6 +34,11 @@ namespace Robomongo
         ConnectionsDialog(SettingsManager *manager);
 
         /**
+         * @brief ConnectionRecord, that was selected after pressing on "Connect" button
+         */
+        ConnectionRecordPtr selectedConnection() const { return _selectedConnection; }
+
+        /**
          * @brief This function is called when user clicks on "Connect" button.
          */
         virtual void accept();
@@ -71,6 +76,11 @@ namespace Robomongo
         void remove();
 
     private:
+
+        /**
+         * @brief ConnectionRecord, that was selected after pressing on "Connect" button
+         */
+        ConnectionRecordPtr _selectedConnection;
 
         /**
          * @brief Main list widget

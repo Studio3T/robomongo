@@ -2,53 +2,59 @@
 #define EXPLORERDATABASECATEGORYTREEITEM_H
 
 #include <QObject>
+#include <QTreeWidgetItem>
 
-class ExplorerDatabaseTreeItem;
-
-enum ExplorerDatabaseCategory 
+namespace Robomongo
 {
-	Collections,
-	Functions,
-	Files,
-	Users
-};
+    class ExplorerDatabaseTreeItem;
 
-/*
-** Database category Tree Item (looks like folder in the UI)
-*/
-class ExplorerDatabaseCategoryTreeItem : public QObject, public QTreeWidgetItem
-{
-	Q_OBJECT
+    enum ExplorerDatabaseCategory
+    {
+        Collections,
+        Functions,
+        Files,
+        Users
+    };
 
-private:
+    /*
+    ** Database category Tree Item (looks like folder in the UI)
+    */
+    class ExplorerDatabaseCategoryTreeItem : public QObject, public QTreeWidgetItem
+    {
+        Q_OBJECT
 
-	/*
-	** Database category of this tree item
-	*/
-	ExplorerDatabaseCategory _category;
+    private:
 
-	/*
-	** Database tree item this category belongs to
-	*/
-	ExplorerDatabaseTreeItem * _databaseItem;
+        /*
+        ** Database category of this tree item
+        */
+        ExplorerDatabaseCategory _category;
 
-public:
+        /*
+        ** Database tree item this category belongs to
+        */
+        ExplorerDatabaseTreeItem * _databaseItem;
 
-	/*
-	** Constructs database category tree item
-	*/
-	ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseCategory category, ExplorerDatabaseTreeItem * databaseItem);
-	
+    public:
 
-	/*
-	** Database category of this tree item
-	*/
-	ExplorerDatabaseCategory category() const { return _category; }
+        /*
+        ** Constructs database category tree item
+        */
+        ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseCategory category, ExplorerDatabaseTreeItem * databaseItem);
 
-	/*
-	** Database tree item this category belongs to
-	*/
-	ExplorerDatabaseTreeItem * databaseItem() const { return _databaseItem; }
-};
+
+        /*
+        ** Database category of this tree item
+        */
+        ExplorerDatabaseCategory category() const { return _category; }
+
+        /*
+        ** Database tree item this category belongs to
+        */
+        ExplorerDatabaseTreeItem * databaseItem() const { return _databaseItem; }
+    };
+
+}
+
 
 #endif // EXPLORERDATABASECATEGORYTREEITEM_H

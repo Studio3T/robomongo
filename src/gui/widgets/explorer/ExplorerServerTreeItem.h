@@ -1,47 +1,41 @@
 #ifndef EXPLORERSERVERTREEITEM_H
 #define EXPLORERSERVERTREEITEM_H
 
+#include <QTreeWidgetItem>
 #include <QObject>
 
-class ExplorerServerViewModel;
-class ExplorerDatabaseViewModel;
-
-class ExplorerServerTreeItem : public QObject, public QTreeWidgetItem
+namespace Robomongo
 {
-	Q_OBJECT
+    class ExplorerServerTreeItem : public QObject, public QTreeWidgetItem
+    {
+        Q_OBJECT
 
-private:
+    private:
 
-	/*
-	** View model for explorer server tree item
-	*/
-	ExplorerServerViewModel * _viewModel;
 
-public:
+    public:
 
-	/*
-	** Constructs ExplorerServerTreeItem
-	*/
-	ExplorerServerTreeItem(ExplorerServerViewModel * viewModel);
+        /*
+        ** Constructs ExplorerServerTreeItem
+        */
+        ExplorerServerTreeItem();
 
-	/*
-	** Expand server tree item;
-	*/
-	void expand();
+        /*
+        ** Expand server tree item;
+        */
+        void expand();
 
-    /*
-    ** View model for explorer server tree item
-    */
-    ExplorerServerViewModel * viewModel() const { return _viewModel; }
 
-public slots:
+    public slots:
 
-	/*
-	**
-	*/
-	void databaseRefreshed(QList<ExplorerDatabaseViewModel *> databases);
+        /*
+        **
+        */
+        void databaseRefreshed();
 
-	
-};
+
+    };
+}
+
 
 #endif // EXPLORERSERVERTREEITEM_H

@@ -1,28 +1,27 @@
-#include "StdAfx.h"
 #include "ExplorerDatabaseTreeItem.h"
-#include "ExplorerDatabaseViewModel.h"
-#include "AppRegistry.h"
+#include "GuiRegistry.h"
 #include "ExplorerCollectionTreeItem.h"
-#include "ExplorerCollectionViewModel.h"
 #include "ExplorerDatabaseCategoryTreeItem.h"
+
+using namespace Robomongo;
 
 /*
 ** Constructs DatabaseTreeItem
 */
-ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(ExplorerDatabaseViewModel * viewModel) : QObject()
+ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem() : QObject()
 {
-	_viewModel = viewModel;
+    //_viewModel = viewModel;
 
-	setText(0, _viewModel->databaseName());;
-	setIcon(0, AppRegistry::instance().databaseIcon());
+    setText(0, "Some db" /*_viewModel->databaseName()*/);
+    setIcon(0, GuiRegistry::instance().databaseIcon());
 	setExpanded(true);
 
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
-	connect(_viewModel, SIGNAL(collectionsRefreshed()), SLOT(vm_collectionRefreshed()));
+//	connect(_viewModel, SIGNAL(collectionsRefreshed()), SLOT(vm_collectionRefreshed()));
 
 
-	QIcon icon = AppRegistry::instance().folderIcon();
+    QIcon icon = GuiRegistry::instance().folderIcon();
 
 	_collectionItem = new ExplorerDatabaseCategoryTreeItem(Collections, this);
 	_collectionItem->setText(0, "Collections");
@@ -58,7 +57,7 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(ExplorerDatabaseViewModel * v
 */
 void ExplorerDatabaseTreeItem::expandCollections()
 {
-	_viewModel->expandCollections();
+    //_viewModel->expandCollections();
 }
 
 void ExplorerDatabaseTreeItem::vm_collectionRefreshed()
@@ -73,12 +72,13 @@ void ExplorerDatabaseTreeItem::vm_collectionRefreshed()
 	}
 
     // Add system folder
-    QIcon folderIcon = AppRegistry::instance().folderIcon();
+    QIcon folderIcon = GuiRegistry::instance().folderIcon();
     QTreeWidgetItem * systemFolder = new QTreeWidgetItem();
     systemFolder->setIcon(0, folderIcon);
     systemFolder->setText(0, "System");
     _collectionItem->addChild(systemFolder);
 
+    /*P
 	foreach(ExplorerCollectionViewModel * collection, _viewModel->collections())
 	{
         if (collection->system())
@@ -90,5 +90,5 @@ void ExplorerDatabaseTreeItem::vm_collectionRefreshed()
 
 		ExplorerCollectionTreeItem * collectionItem = new ExplorerCollectionTreeItem(collection);
 		_collectionItem->addChild(collectionItem);
-	}	
+    }	*/
 }

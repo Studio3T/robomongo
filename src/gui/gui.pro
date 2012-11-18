@@ -12,7 +12,11 @@ SOURCES += ExampleWindow.cpp \
     widgets/explorer/ExplorerWidget.cpp \
     widgets/explorer/ExplorerTreeWidget.cpp \
     MainWindow.cpp \
-    GuiRegistry.cpp
+    GuiRegistry.cpp \
+    widgets/explorer/ExplorerServerTreeItem.cpp \
+    widgets/explorer/ExplorerDatabaseTreeItem.cpp \
+    widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp \
+    widgets/explorer/ExplorerCollectionTreeItem.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
@@ -21,7 +25,11 @@ HEADERS  += ExampleWindow.h = \
     widgets/explorer/ExplorerWidget.h \
     widgets/explorer/ExplorerTreeWidget.h \
     MainWindow.h \
-    GuiRegistry.h
+    GuiRegistry.h \
+    widgets/explorer/ExplorerServerTreeItem.h \
+    widgets/explorer/ExplorerDatabaseTreeItem.h \
+    widgets/explorer/ExplorerDatabaseCategoryTreeItem.h \
+    widgets/explorer/ExplorerCollectionTreeItem.h
 
 INCLUDEPATH += \
             $$ROOT/src/core

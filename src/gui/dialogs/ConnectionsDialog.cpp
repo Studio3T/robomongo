@@ -87,19 +87,15 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
  */
 void ConnectionsDialog::accept()
 {
-    QListWidgetItem *currentItem = _listWidget->currentItem();
+    ConnectionListWidgetItem *currentItem = (ConnectionListWidgetItem *) _listWidget->currentItem();
 
     // Do nothing if no item selected
     if (currentItem == 0)
         return;
 
-    QMessageBox box;
-    box.setText(QString("Number of items: %1").arg(_settingsManager->connections().count()));
-    box.exec();
+    _selectedConnection = currentItem->connection();
 
-    return;
-
-    hide();
+    close();
     QDialog::accept();
 }
 

@@ -5,6 +5,7 @@
 #include "dialogs/ConnectionsDialog.h"
 #include "settings/SettingsManager.h"
 #include "QMessageBox"
+#include "mongodb/MongoManager.h"
 #include "widgets/LogWidget.h"
 #include "widgets/explorer/ExplorerWidget.h"
 
@@ -74,6 +75,11 @@ void MainWindow::manageConnections()
     {
         ConnectionRecordPtr selected = dialog.selectedConnection();
 
+//        AppRegistry::instance().mongoManager().connectToServer(
+//            selected->databaseAddress(),
+//            QString::number(selected->databasePort()),
+//            QString(),
+//            selected->userName(), selected->userPassword());
     }
 
 

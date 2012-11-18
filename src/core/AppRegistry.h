@@ -20,7 +20,8 @@ namespace Robomongo
             return _instance;
         }
 
-        SettingsManager &settingsManager() { return *_settingsManager.get(); }
+        SettingsManager &settingsManager() const { return *_settingsManager.get(); }
+        MongoManager &mongoManager() const { return *_mongoManager.get(); }
 
     private:
         AppRegistry();

@@ -1,17 +1,17 @@
-#include "StdAfx.h"
 #include "ExplorerCollectionTreeItem.h"
-#include "ExplorerCollectionViewModel.h"
-#include "AppRegistry.h"
+#include "GuiRegistry.h"
+
+using namespace Robomongo;
 
 /*
 ** Constructs collection tree item
 */
-ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(ExplorerCollectionViewModel * viewModel) : QObject()
+ExplorerCollectionTreeItem::ExplorerCollectionTreeItem() : QObject()
 {
-	_viewModel = viewModel;
+    // _viewModel = viewModel;
 
-	setText(0, _viewModel->collectionName());
-	setIcon(0, AppRegistry::instance().collectionIcon());
+    setText(0, "Some collection name" /*_viewModel->collectionName()*/);
+    setIcon(0, GuiRegistry::instance().collectionIcon());
 	setExpanded(true);
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 }

@@ -2,43 +2,43 @@
 #define EXPLORERDATABASETREEITEM_H
 
 #include <QObject>
+#include <QTreeWidgetItem>
 
-class ExplorerDatabaseViewModel;
-class ExplorerCollectionTreeItem;
-class ExplorerDatabaseCategoryTreeItem;
 
-class ExplorerDatabaseTreeItem : public QObject, public QTreeWidgetItem
+namespace Robomongo
 {
-	Q_OBJECT
+    class ExplorerCollectionTreeItem;
+    class ExplorerDatabaseCategoryTreeItem;
 
-private:
-	/*
-	** View Model
-	*/
-	ExplorerDatabaseViewModel * _viewModel;
+    class ExplorerDatabaseTreeItem : public QObject, public QTreeWidgetItem
+    {
+        Q_OBJECT
 
-	ExplorerDatabaseCategoryTreeItem * _collectionItem;
-	ExplorerDatabaseCategoryTreeItem * _javascriptItem;
-	ExplorerDatabaseCategoryTreeItem * _usersItem;
-	ExplorerDatabaseCategoryTreeItem * _filesItem;
+    private:
 
-public:
+        ExplorerDatabaseCategoryTreeItem * _collectionItem;
+        ExplorerDatabaseCategoryTreeItem * _javascriptItem;
+        ExplorerDatabaseCategoryTreeItem * _usersItem;
+        ExplorerDatabaseCategoryTreeItem * _filesItem;
 
-	/*
-	** Constructs DatabaseTreeItem
-	*/
-	ExplorerDatabaseTreeItem(ExplorerDatabaseViewModel * _viewModel);
+    public:
 
-	/*
-	** Expand database tree item to see collections;
-	*/
-	void expandCollections();
+        /*
+        ** Constructs DatabaseTreeItem
+        */
+        ExplorerDatabaseTreeItem();
 
-public slots:
+        /*
+        ** Expand database tree item to see collections;
+        */
+        void expandCollections();
 
-	void vm_collectionRefreshed();
+    public slots:
 
-	
-};
+        void vm_collectionRefreshed();
+
+
+    };
+}
 
 #endif // EXPLORERDATABASETREEITEM_H

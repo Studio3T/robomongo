@@ -2,30 +2,30 @@
 #define EXPLORERCOLLECTIONTREEITEM_H
 
 #include <QObject>
-class ExplorerCollectionViewModel;
+#include <QTreeWidgetItem>
 
-class ExplorerCollectionTreeItem : public QObject, public QTreeWidgetItem
+namespace Robomongo
 {
-	Q_OBJECT
+    class ExplorerCollectionTreeItem : public QObject, public QTreeWidgetItem
+    {
+        Q_OBJECT
 
-private:
+    private:
 
-	/*
-	** View model
-	*/
-	ExplorerCollectionViewModel * _viewModel;
+        /*
+        ** View model
+        */
+        //ExplorerCollectionViewModel * _viewModel;
 
-public:
+    public:
 
-	/*
-	** Constructs collection tree item
-	*/
-	ExplorerCollectionTreeItem(ExplorerCollectionViewModel * viewModel);
+        /*
+        ** Constructs collection tree item
+        */
+        ExplorerCollectionTreeItem();
 
-	/*
-	** View model
-	*/
-	ExplorerCollectionViewModel * viewModel() const { return _viewModel; }
-};
+    };
+}
+
 
 #endif // EXPLORERCOLLECTIONTREEITEM_H

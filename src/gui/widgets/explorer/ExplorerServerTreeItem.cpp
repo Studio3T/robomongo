@@ -1,27 +1,24 @@
-#include "StdAfx.h"
 #include "ExplorerServerTreeItem.h"
-#include "ExplorerServerViewModel.h"
-#include "ExplorerDatabaseViewModel.h"
 #include "ExplorerDatabaseTreeItem.h"
-#include "AppRegistry.h"
+#include "GuiRegistry.h"
 
-ExplorerServerTreeItem::ExplorerServerTreeItem(ExplorerServerViewModel * viewModel) : QObject()
+using namespace Robomongo;
+
+ExplorerServerTreeItem::ExplorerServerTreeItem() : QObject()
 {
-	_viewModel = viewModel;
-
-	setText(0, _viewModel->serverName());
-	setIcon(0, AppRegistry::instance().serverIcon());
+    setText(0, "One" /*_viewModel->serverName()*/);
+    setIcon(0, GuiRegistry::instance().serverIcon());
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
-	connect(_viewModel, SIGNAL(databasesRefreshed(QList<ExplorerDatabaseViewModel *>)), SLOT(databaseRefreshed(QList<ExplorerDatabaseViewModel *>)));
+    //connect(_viewModel, SIGNAL(databasesRefreshed(QList<ExplorerDatabaseViewModel *>)), SLOT(databaseRefreshed(QList<ExplorerDatabaseViewModel *>)));
 }
 
 void ExplorerServerTreeItem::expand()
 {
-	_viewModel->expand();
+    //_viewModel->expand();
 }
 
-void ExplorerServerTreeItem::databaseRefreshed(QList<ExplorerDatabaseViewModel *> databases)
+void ExplorerServerTreeItem::databaseRefreshed()
 {
     // Remove child items
 	int itemCount = childCount();
@@ -33,12 +30,13 @@ void ExplorerServerTreeItem::databaseRefreshed(QList<ExplorerDatabaseViewModel *
 	}
 
     // Add system folder
-    QIcon folderIcon = AppRegistry::instance().folderIcon();
+    QIcon folderIcon = GuiRegistry::instance().folderIcon();
     QTreeWidgetItem * systemFolder = new QTreeWidgetItem();
     systemFolder->setIcon(0, folderIcon);
     systemFolder->setText(0, "System");
     addChild(systemFolder);
 
+    /*
 	foreach(ExplorerDatabaseViewModel * database, databases)
 	{
         if (database->system())
@@ -50,5 +48,5 @@ void ExplorerServerTreeItem::databaseRefreshed(QList<ExplorerDatabaseViewModel *
 
 		ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(database);
 		addChild(dbItem);
-	}	
+    }	*/
 }

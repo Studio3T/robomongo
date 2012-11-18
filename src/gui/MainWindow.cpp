@@ -4,6 +4,7 @@
 #include "AppRegistry.h"
 #include "dialogs/ConnectionsDialog.h"
 #include "settings/SettingsManager.h"
+#include "QMessageBox"
 #include "widgets/LogWidget.h"
 #include "widgets/explorer/ExplorerWidget.h"
 
@@ -64,10 +65,20 @@ MainWindow::MainWindow() : QMainWindow()
 void MainWindow::manageConnections()
 {
     ConnectionsDialog dialog(&AppRegistry::instance().settingsManager());
-    dialog.exec();
+    int result = dialog.exec();
 
+    // saving settings
+    AppRegistry::instance().settingsManager().save();
+
+    if (result == QDialog::Accepted)
+    {
+        ConnectionRecordPtr selected = dialog.selectedConnection();
+
+    }
+
+
+    // on linux focus is lost - we need to activate main window back
     activateWindow();
-        AppRegistry::instance().settingsManager().save();
 }
 
 void MainWindow::refreshConnections()

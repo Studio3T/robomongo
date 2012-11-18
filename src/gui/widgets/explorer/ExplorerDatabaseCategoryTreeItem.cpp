@@ -1,6 +1,7 @@
-#include "StdAfx.h"
 #include "ExplorerDatabaseCategoryTreeItem.h"
 #include "ExplorerDatabaseTreeItem.h"
+
+using namespace Robomongo;
 
 /*
 ** Constructs database category tree item

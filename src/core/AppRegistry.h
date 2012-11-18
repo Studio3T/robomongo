@@ -27,10 +27,11 @@ namespace Robomongo
         ~AppRegistry(void);
 
         SettingsManager_ScopedPtr _settingsManager;
+        MongoManagerScopedPtr _mongoManager;
 
-        /*
-        ** Singleton support
-        */
+        /**
+         * Singleton support
+         */
         AppRegistry(AppRegistry const &);       // To protect from copies of singleton
         void operator=(AppRegistry const &);    // To protect from copies of singleton
     };

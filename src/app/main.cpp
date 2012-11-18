@@ -19,7 +19,16 @@
 #include "Core.h"
 #include "MainWindow.h"
 
+#include "mongo/client/dbclient.h"
+
 using namespace Robomongo;
+
+void insert( mongo::DBClientConnection & conn , const char * name , int num ) {
+    mongo::BSONObjBuilder obj;
+    obj.append( "name" , name );
+    obj.append( "num" , num );
+    conn.insert( "test.people" , obj.obj() );
+}
 
 int main(int argc, char *argv[])
 {
@@ -29,6 +38,22 @@ int main(int argc, char *argv[])
     QString str = proc.value("LD_LIBRARY_PATH");
 
     qDebug() << str;
+
+    mongo::DBClientConnection conn;
+    std::string errmsg;
+    if ( ! conn.connect( std::string( "127.0.0.1:27017" ), errmsg ) ) {
+        std::cout << "couldn't connect : " << errmsg << endl;
+        return EXIT_FAILURE;
+    }
+
+    {
+        // clean up old data from any previous tests
+        mongo::BSONObjBuilder query;
+        conn.remove( "test.people" , query.obj() );
+    }
+
+    insert( conn , "eliot" , 15 );
+    insert( conn , "sara" , 23 );
 
     //QStringList environment = QProcess::systemEnvironment();
 

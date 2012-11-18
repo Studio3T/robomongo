@@ -45,6 +45,8 @@ INCLUDEPATH += $$ROOT/include/boost
 
 # third party libs
 LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson
-LIBS += -lqjson
+LIBS += -L$$THIRDPARTY_LIBS_PATH/mongoclient
+LIBS += -L$$THIRDPARTY_LIBS_PATH/boost
+LIBS += -lqjson -lmongoclient -lboost_thread -lboost_filesystem -lboost_system
 
 

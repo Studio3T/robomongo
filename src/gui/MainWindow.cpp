@@ -8,11 +8,16 @@
 #include "mongodb/MongoManager.h"
 #include "widgets/LogWidget.h"
 #include "widgets/explorer/ExplorerWidget.h"
+#include "mongodb/MongoServer.h"
+#include "mongodb/MongoException.h"
 
 using namespace Robomongo;
 
-MainWindow::MainWindow() : QMainWindow()
+MainWindow::MainWindow() : QMainWindow(),
+    _mongoManager(AppRegistry::instance().mongoManager()),
+    _settingsManager(AppRegistry::instance().settingsManager())
 {
+
     // Exit action
     QAction *exitAction = new QAction("&Exit", this);
     exitAction->setShortcut(QKeySequence::Quit);
@@ -65,21 +70,25 @@ MainWindow::MainWindow() : QMainWindow()
 
 void MainWindow::manageConnections()
 {
-    ConnectionsDialog dialog(&AppRegistry::instance().settingsManager());
+    ConnectionsDialog dialog(&_settingsManager);
     int result = dialog.exec();
 
-    // saving settings
-    AppRegistry::instance().settingsManager().save();
+    // save settings
+    _settingsManager.save();
 
     if (result == QDialog::Accepted)
     {
         ConnectionRecordPtr selected = dialog.selectedConnection();
 
-//        AppRegistry::instance().mongoManager().connectToServer(
-//            selected->databaseAddress(),
-//            QString::number(selected->databasePort()),
-//            QString(),
-//            selected->userName(), selected->userPassword());
+        try
+        {
+            _mongoManager.connectToServer(selected);
+        }
+        catch(MongoException &ex)
+        {
+            QString message = QString("Cannot connect to MongoDB (%1)").arg(selected->getFullAddress());
+            QMessageBox::information(this, "Error", message);
+        }
     }
 
 

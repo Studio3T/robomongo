@@ -1,15 +1,18 @@
 #include <QStringList>
 #include "MongoServer.h"
 #include "MongoException.h"
+#include "MongoDatabase.h"
+#include "settings/ConnectionRecord.h"
 
 using namespace Robomongo;
 using namespace std;
 
-MongoServer::MongoServer(const QString &host, const QString &port) : QObject()
+MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord) : QObject(),
+    _connectionRecord(connectionRecord)
 {
-    _host = host;
-    _port = port;
-    _address = QString("%1:%2").arg(host).arg(port);
+    _host = _connectionRecord->databaseAddress();
+    _port = QString::number(_connectionRecord->databasePort());
+    _address = QString("%1:%2").arg(_host).arg(_port);
 
     _connection.reset(new mongo::DBClientConnection);
 }
@@ -58,4 +61,25 @@ QStringList MongoServer::databaseNames()
     }
 
     return stringList;
+}
+
+const QList<MongoDatabasePtr> MongoServer::listDatabases()
+{
+    QStringList names = databaseNames();
+
+    QList<MongoDatabasePtr> list;
+    //return list;
+
+    foreach(QString name, names)
+    {
+        // this not leaks:
+        //MongoDatabase *ddd = new MongoDatabase(this, name);
+        //delete ddd;
+
+        // this leaks:
+        MongoDatabasePtr db(new MongoDatabase(this, name));
+        list.append(db);
+    }
+
+    return list;
 }

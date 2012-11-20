@@ -4,6 +4,8 @@
 #include <QObject>
 #include "mongo/client/dbclient.h"
 #include "Core.h"
+#include <QList>
+#include <QHash>
 
 namespace Robomongo
 {
@@ -11,7 +13,7 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        explicit MongoServer(const QString &host, const QString &port);
+        explicit MongoServer(const ConnectionRecordPtr &connectionRecord);
 
         /**
          * @brief Try to connect to MongoDB server.
@@ -35,15 +37,32 @@ namespace Robomongo
          */
         QString lastErrorMessage() { return _lastErrorMessage; }
 
+        /**
+         * @brief Returns associated connection record
+         */
+        const ConnectionRecordPtr connectionRecord() const { return _connectionRecord; }
+
+
+        const QList<MongoDatabasePtr> listDatabases();
+
 
     private:
 
         DBClientConnection_ScopedPtr _connection;
 
+        /**
+         * @brief Associated connection record
+         */
+        ConnectionRecordPtr _connectionRecord;
+
         QString _host;
         QString _port;
         QString _address;
         QString _lastErrorMessage;
+
+        QList<MongoDatabasePtr> _databases;
+        QHash<QString, MongoDatabasePtr> _databasesByName;
+
     };
 }
 

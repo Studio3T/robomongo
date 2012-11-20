@@ -3,11 +3,11 @@
 
 #include <QTreeWidget>
 #include <QWidget>
+#include "Core.h"
 
 namespace Robomongo
 {
-    class ExplorerViewModel;
-    class ExplorerServerViewModel;
+    class MongoManager;
 
     /*
     ** Explorer widget (usually you'll see it at the right of main window)
@@ -15,18 +15,6 @@ namespace Robomongo
     class ExplorerWidget : public QWidget
     {
         Q_OBJECT
-
-    private:
-
-        /*
-        ** Explorer view model
-        */
-        ExplorerViewModel *_viewModel;
-
-        /*
-        ** Main tree widget of the explorer
-        */
-        QTreeWidget *_treeWidget;
 
     public:
         /*
@@ -39,7 +27,7 @@ namespace Robomongo
         /*
         ** Add server to tree view
         */
-        void addServer();
+        void addServer(MongoServerPtr server);
 
         /*
         ** Add server to tree view
@@ -61,6 +49,17 @@ namespace Robomongo
         void ui_itemClicked(QTreeWidgetItem*,int);
         void ui_disonnectActionTriggered();
 
+    private:
+
+        /*
+        ** Main tree widget of the explorer
+        */
+        QTreeWidget *_treeWidget;
+
+        /**
+         * @brief MongoManager
+         */
+        MongoManager &_mongoManager;
     };
 }
 

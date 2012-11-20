@@ -2,6 +2,7 @@
 #include "MongoServer.h"
 #include "MongoException.h"
 #include "mongo/client/dbclient.h"
+#include "settings/ConnectionRecord.h"
 
 using namespace Robomongo;
 
@@ -10,15 +11,17 @@ MongoManager::MongoManager(QObject *parent) :
 {
 }
 
-MongoServerPtr MongoManager::connectToServer(const QString &host, const QString &port, const QString &database,
-                                             const QString &username, const QString &password)
+/**
+ * @brief Connect to MongoDB server
+ */
+MongoServerPtr MongoManager::connectToServer(const ConnectionRecordPtr &connectionRecord)
 {
-    MongoServerPtr server(new MongoServer(host, port));
+    MongoServerPtr server(new MongoServer(connectionRecord));
     server->tryConnect();
 
-    bool userSpecified = !username.isEmpty();
-    bool passwordSpecified = !password.isEmpty();
+    if (connectionRecord->isAuthNeeded())
+        server->authenticate(QString(), connectionRecord->userName(), connectionRecord->userPassword());
 
-    if (userSpecified || passwordSpecified)
-        server->authenticate(database, username, password);
+    emit connected(server);
+    return server;
 }

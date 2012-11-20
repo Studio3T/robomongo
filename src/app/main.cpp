@@ -59,7 +59,6 @@ int main(int argc, char *argv[])
 
 
 
-    //for (int i = 0; i < 1; i ++)
     AppRegistry::instance().settingsManager().save();
 
     QRect screenGeometry = QApplication::desktop()->screenGeometry();

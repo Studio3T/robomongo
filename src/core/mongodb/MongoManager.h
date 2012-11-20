@@ -11,14 +11,24 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit MongoManager(QObject *parent = 0);
+        MongoManager(QObject *parent = 0);
 
         /**
          * @brief Connect to MongoDB server
          */
-        MongoServerPtr connectToServer(const QString & host, const QString & port, const QString & database,
-                                       const QString & username, const QString & password);
+        MongoServerPtr connectToServer(const ConnectionRecordPtr &connectionRecord);
 
+    signals:
+
+        /**
+         * @brief Fires when connected
+         */
+        void connected(const MongoServerPtr &server);
+
+        /**
+         * @brief Fires when disconnected
+         */
+        void disconnected(const MongoServerPtr &server);
     };
 }
 

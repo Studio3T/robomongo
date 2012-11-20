@@ -73,6 +73,16 @@ namespace Robomongo
         void setUserPassword(const QString &userPassword) { _userPassword = userPassword; }
 
         /**
+         * @brief Checks that auth required
+         */
+        bool isAuthNeeded() const {
+            bool userSpecified = !_userName.isEmpty();
+            bool passwordSpecified = !_userPassword.isEmpty();
+
+            return (userSpecified || passwordSpecified);
+        }
+
+        /**
          * Returns connection full address (i.e. locahost:8090)
          */
         QString getFullAddress() const

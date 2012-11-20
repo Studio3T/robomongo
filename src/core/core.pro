@@ -11,7 +11,8 @@ SOURCES += \
     settings/SettingsManager.cpp \
     examples/ImplicitlyShared.cpp \
     mongodb/MongoManager.cpp \
-    mongodb/MongoServer.cpp
+    mongodb/MongoServer.cpp \
+    mongodb/MongoDatabase.cpp
 
 HEADERS  += \
     AppRegistry.h \
@@ -21,7 +22,8 @@ HEADERS  += \
     examples/ImplicitlyShared.h \
     mongodb/MongoManager.h \
     mongodb/MongoServer.h \
-    mongodb/MongoException.h
+    mongodb/MongoException.h \
+    mongodb/MongoDatabase.h
 
 message(inside core huevo: $$THIRDPARTY_LIBS_PATH/qjson)
 

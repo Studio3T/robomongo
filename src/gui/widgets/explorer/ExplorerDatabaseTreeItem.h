@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QTreeWidgetItem>
-
+#include "Core.h"
 
 namespace Robomongo
 {
@@ -21,12 +21,14 @@ namespace Robomongo
         ExplorerDatabaseCategoryTreeItem * _usersItem;
         ExplorerDatabaseCategoryTreeItem * _filesItem;
 
+        MongoDatabasePtr _database;
+
     public:
 
         /*
         ** Constructs DatabaseTreeItem
         */
-        ExplorerDatabaseTreeItem();
+        ExplorerDatabaseTreeItem(MongoDatabasePtr database);
 
         /*
         ** Expand database tree item to see collections;

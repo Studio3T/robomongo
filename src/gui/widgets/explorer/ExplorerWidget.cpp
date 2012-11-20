@@ -7,16 +7,19 @@
 #include "AppRegistry.h"
 #include <QtGui>
 #include "ExplorerTreeWidget.h"
+#include "ExplorerServerTreeItem.h"
+#include "mongodb/MongoManager.h"
 
 using namespace Robomongo;
 
-/*
-** Constructs ExplorerWidget
-*/
-ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent)
+/**
+ * Constructs ExplorerWidget
+ */
+ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
+    _mongoManager(AppRegistry::instance().mongoManager())
 {
-    //_viewModel = viewModel;
     //connect(_viewModel, SIGNAL(serverAdded(ExplorerServerViewModel *)), this, SLOT(addServer(ExplorerServerViewModel *)));
+    connect(&_mongoManager, SIGNAL(connected(MongoServerPtr)), this, SLOT(addServer(MongoServerPtr)));
 
     _treeWidget = new ExplorerTreeWidget;
     _treeWidget->setIndentation(15);    
@@ -71,10 +74,10 @@ void ExplorerWidget::ui_customContextMenuRequested(QPoint p)
 /*
 ** Add server to tree view
 */
-void ExplorerWidget::addServer()
+void ExplorerWidget::addServer(MongoServerPtr server)
 {
-//    QTreeWidgetItem *item = new ExplorerServerTreeItem(server);
-//    _treeWidget->addTopLevelItem(item);
+    QTreeWidgetItem *item = new ExplorerServerTreeItem(server);
+    _treeWidget->addTopLevelItem(item);
 }
 
 void ExplorerWidget::removeServer()
@@ -106,13 +109,14 @@ void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)
 
         return;
     }
+    */
 
     ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
     if (serverItem)
     {
         serverItem->expand();
         return;
-    } */
+    }
 }
 
 /*

@@ -1,12 +1,15 @@
 #include "ExplorerServerTreeItem.h"
 #include "ExplorerDatabaseTreeItem.h"
 #include "GuiRegistry.h"
+#include "mongodb/MongoServer.h"
+#include "settings/ConnectionRecord.h"
 
 using namespace Robomongo;
 
-ExplorerServerTreeItem::ExplorerServerTreeItem() : QObject()
+ExplorerServerTreeItem::ExplorerServerTreeItem(const MongoServerPtr &server) : QObject(),
+    _server(server)
 {
-    setText(0, "One" /*_viewModel->serverName()*/);
+    setText(0, _server->connectionRecord()->getReadableName());
     setIcon(0, GuiRegistry::instance().serverIcon());
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
@@ -15,10 +18,12 @@ ExplorerServerTreeItem::ExplorerServerTreeItem() : QObject()
 
 void ExplorerServerTreeItem::expand()
 {
+    QList<MongoDatabasePtr> dbs = _server->listDatabases();
+    databaseRefreshed(dbs);
     //_viewModel->expand();
 }
 
-void ExplorerServerTreeItem::databaseRefreshed()
+void ExplorerServerTreeItem::databaseRefreshed(QList<MongoDatabasePtr> dbs)
 {
     // Remove child items
 	int itemCount = childCount();
@@ -36,17 +41,17 @@ void ExplorerServerTreeItem::databaseRefreshed()
     systemFolder->setText(0, "System");
     addChild(systemFolder);
 
-    /*
-	foreach(ExplorerDatabaseViewModel * database, databases)
+    foreach(MongoDatabasePtr database, dbs)
 	{
+        /*
         if (database->system())
         {
             ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(database);
             systemFolder->addChild(dbItem);
             continue;
-        }
+        }*/
 
-		ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(database);
+        ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(database);
 		addChild(dbItem);
-    }	*/
+    }
 }

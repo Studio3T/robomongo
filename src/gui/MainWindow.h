@@ -8,6 +8,8 @@ namespace Robomongo
 {
     class LogWidget;
     class ExplorerWidget;
+    class MongoManager;
+    class SettingsManager;
 
 
     class MainWindow : public QMainWindow
@@ -32,6 +34,12 @@ namespace Robomongo
         ** The only Explorer in the window
         */
         ExplorerWidget *_explorer;
+
+        /**
+         * @brief MongoManager
+         */
+        MongoManager &_mongoManager;
+        SettingsManager &_settingsManager;
 
         void createDatabaseExplorer();
 

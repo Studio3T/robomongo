@@ -2,17 +2,19 @@
 #include "GuiRegistry.h"
 #include "ExplorerCollectionTreeItem.h"
 #include "ExplorerDatabaseCategoryTreeItem.h"
+#include "mongodb/MongoDatabase.h"
 
 using namespace Robomongo;
 
 /*
 ** Constructs DatabaseTreeItem
 */
-ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem() : QObject()
+ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabasePtr database) : QObject(),
+    _database(database)
 {
     //_viewModel = viewModel;
 
-    setText(0, "Some db" /*_viewModel->databaseName()*/);
+    setText(0, _database->name());
     setIcon(0, GuiRegistry::instance().databaseIcon());
 	setExpanded(true);
 

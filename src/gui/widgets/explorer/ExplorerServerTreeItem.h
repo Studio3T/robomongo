@@ -3,6 +3,7 @@
 
 #include <QTreeWidgetItem>
 #include <QObject>
+#include "Core.h"
 
 namespace Robomongo
 {
@@ -10,15 +11,12 @@ namespace Robomongo
     {
         Q_OBJECT
 
-    private:
-
-
     public:
 
         /*
         ** Constructs ExplorerServerTreeItem
         */
-        ExplorerServerTreeItem();
+        ExplorerServerTreeItem(const MongoServerPtr &server);
 
         /*
         ** Expand server tree item;
@@ -31,8 +29,12 @@ namespace Robomongo
         /*
         **
         */
-        void databaseRefreshed();
+        void databaseRefreshed(QList<MongoDatabasePtr> dbs);
 
+
+    private:
+
+        MongoServerPtr _server;
 
     };
 }

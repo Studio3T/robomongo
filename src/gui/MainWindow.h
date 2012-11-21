@@ -3,6 +3,7 @@
 
 #include <QtGui>
 #include <QWidget>
+#include "Core.h"
 
 namespace Robomongo
 {
@@ -48,6 +49,7 @@ namespace Robomongo
     public slots:
         void manageConnections();
         void refreshConnections();
+        void reportFailedConnection(const ConnectionRecordPtr &connection);
     };
 
 }

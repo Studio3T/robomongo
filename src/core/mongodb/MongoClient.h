@@ -12,6 +12,8 @@ namespace Robomongo
         explicit MongoClient(QString address, QObject *parent = 0);
         explicit MongoClient(QString host, int port, QObject *parent = 0);
 
+        ~MongoClient();
+
         /**
          * @brief Load list of all database names
          */

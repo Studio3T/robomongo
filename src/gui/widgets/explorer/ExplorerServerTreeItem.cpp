@@ -18,6 +18,11 @@ ExplorerServerTreeItem::ExplorerServerTreeItem(const MongoServerPtr &server) : Q
     //connect(_viewModel, SIGNAL(databasesRefreshed(QList<ExplorerDatabaseViewModel *>)), SLOT(databaseRefreshed(QList<ExplorerDatabaseViewModel *>)));
 }
 
+ExplorerServerTreeItem::~ExplorerServerTreeItem()
+{
+    int z = 56;
+}
+
 void ExplorerServerTreeItem::expand()
 {
     _server->listDatabases();
@@ -43,8 +48,16 @@ void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabasePtr> &db
     systemFolder->setText(0, "System");
     addChild(systemFolder);
 
-    foreach(MongoDatabasePtr database, dbs)
-	{
+// no leaks:
+//    ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(dbs.at(0));
+//    addChild(dbItem);
+
+
+    for (int i = 0; i < dbs.size(); i++)
+    {
+        // why leaks??
+        //MongoDatabasePtr database(dbs.at(i));
+
         /*
         if (database->system())
         {
@@ -53,7 +66,12 @@ void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabasePtr> &db
             continue;
         }*/
 
-        ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(database);
-		addChild(dbItem);
+        ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(dbs.at(i));
+        addChild(dbItem);
     }
+
+   // foreach(MongoDatabasePtr database, dbs)
+    //{
+
+    //}
 }

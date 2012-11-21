@@ -28,7 +28,8 @@ namespace Robomongo
         /*
         ** Constructs DatabaseTreeItem
         */
-        ExplorerDatabaseTreeItem(MongoDatabasePtr database);
+        ExplorerDatabaseTreeItem(const MongoDatabasePtr &database);
+        ~ExplorerDatabaseTreeItem();
 
         /*
         ** Expand database tree item to see collections;

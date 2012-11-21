@@ -10,6 +10,11 @@ MongoManager::MongoManager(QObject *parent) : QObject(parent)
 {
 }
 
+MongoManager::~MongoManager()
+{
+
+}
+
 /**
  * @brief Connect to MongoDB server
  */

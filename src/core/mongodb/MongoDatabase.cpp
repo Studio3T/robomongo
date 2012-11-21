@@ -8,3 +8,8 @@ MongoDatabase::MongoDatabase(const MongoServer *server, const QString &name) : Q
     _server = server;
     _name = name;
 }
+
+MongoDatabase::~MongoDatabase()
+{
+    int dta = 87;
+}

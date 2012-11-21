@@ -9,7 +9,7 @@ using namespace Robomongo;
 /*
 ** Constructs DatabaseTreeItem
 */
-ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabasePtr database) : QObject(),
+ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(const MongoDatabasePtr &database) : QObject(),
     _database(database)
 {
     //_viewModel = viewModel;
@@ -51,7 +51,12 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabasePtr database) : 
 	_usersItem->setIcon(0, icon);
 	_usersItem->setExpanded(true);
 	_usersItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-	addChild(_usersItem);
+    addChild(_usersItem);
+}
+
+ExplorerDatabaseTreeItem::~ExplorerDatabaseTreeItem()
+{
+    int a = 87;
 }
 
 /*

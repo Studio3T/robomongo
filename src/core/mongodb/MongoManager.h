@@ -12,6 +12,7 @@ namespace Robomongo
 
     public:
         MongoManager(QObject *parent = 0);
+        ~MongoManager();
 
     public slots:
         /**

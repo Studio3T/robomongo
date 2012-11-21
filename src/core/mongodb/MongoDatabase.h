@@ -17,6 +17,7 @@ namespace Robomongo
          * @param server - pointer to parent MongoServer
          */
         MongoDatabase(const MongoServer *server, const QString &name);
+        ~MongoDatabase();
 
         QString name() const { return _name; }
 

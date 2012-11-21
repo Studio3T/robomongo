@@ -30,6 +30,11 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     _serverMenu->addAction(refreshAction);
 }
 
+ExplorerTreeWidget::~ExplorerTreeWidget()
+{
+    int a = 67;
+}
+
 void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QTreeWidgetItem *item = itemAt(event->pos());

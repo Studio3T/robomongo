@@ -20,8 +20,13 @@ MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord) : QObject(
 
     _connection.reset(new mongo::DBClientConnection);
 
-    _client = new MongoClient(_address);
-    connect(_client, SIGNAL(databaseNamesLoaded(QStringList)), this, SLOT(onDatabaseNameLoaded(QStringList)));
+    _client.reset(new MongoClient(_address));
+    connect(_client.data(), SIGNAL(databaseNamesLoaded(QStringList)), this, SLOT(onDatabaseNameLoaded(QStringList)));
+}
+
+MongoServer::~MongoServer()
+{
+    int z = 80;
 }
 
 /**

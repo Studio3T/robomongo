@@ -6,16 +6,17 @@
 #include "Core.h"
 #include <QList>
 #include <QHash>
+#include <QScopedPointer>
+#include "MongoClient.h"
 
 namespace Robomongo
 {
-    class MongoClient;
-
     class MongoServer : public QObject
     {
         Q_OBJECT
     public:
         explicit MongoServer(const ConnectionRecordPtr &connectionRecord);
+        ~MongoServer();
 
         /**
          * @brief Try to connect to MongoDB server.
@@ -53,7 +54,7 @@ namespace Robomongo
 
     private:
 
-        MongoClient *_client;
+        QScopedPointer<MongoClient> _client;
 
         DBClientConnection_ScopedPtr _connection;
 

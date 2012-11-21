@@ -21,6 +21,14 @@ MongoClient::MongoClient(QString host, int port, QObject *parent) : QObject(pare
     init();
 }
 
+MongoClient::~MongoClient()
+{
+    _thread->quit();
+    _thread->wait(1000);
+
+    delete _thread;
+}
+
 void MongoClient::init()
 {
     _thread = new QThread();
@@ -50,11 +58,17 @@ void MongoClient::_loadDatabaseNames()
 {
     boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
 
-    QStringList stringList;
-
     list<string> dbs = conn->get()->getDatabaseNames();
 
     conn->done();
+
+    QStringList stringList;
+
+//    for (int i = 0; i < 10; i++) {
+//        stringList.append("Muahaha");
+//    }
+
+
 
     for ( list<string>::iterator i = dbs.begin(); i != dbs.end(); i++ ) {
         stringList.append(QString::fromStdString(*i));

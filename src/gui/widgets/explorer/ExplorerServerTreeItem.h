@@ -17,6 +17,7 @@ namespace Robomongo
         ** Constructs ExplorerServerTreeItem
         */
         ExplorerServerTreeItem(const MongoServerPtr &server);
+        ~ExplorerServerTreeItem();
 
         /*
         ** Expand server tree item;

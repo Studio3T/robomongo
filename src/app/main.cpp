@@ -33,6 +33,8 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+
+
     qRegisterMetaType<ConnectionRecordPtr>("ConnectionRecordPtr");
 
     QProcessEnvironment proc = QProcessEnvironment::systemEnvironment();

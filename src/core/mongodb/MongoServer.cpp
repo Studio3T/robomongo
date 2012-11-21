@@ -3,6 +3,7 @@
 #include "MongoException.h"
 #include "MongoDatabase.h"
 #include "settings/ConnectionRecord.h"
+#include "MongoClient.h"
 
 using namespace Robomongo;
 using namespace std;
@@ -18,6 +19,9 @@ MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord) : QObject(
 //    con->findOne();
 
     _connection.reset(new mongo::DBClientConnection);
+
+    _client = new MongoClient(_address);
+    connect(_client, SIGNAL(databaseNamesLoaded(QStringList)), this, SLOT(onDatabaseNameLoaded(QStringList)));
 }
 
 /**
@@ -50,28 +54,14 @@ bool MongoServer::authenticate(const QString &database, const QString &username,
     }
 }
 
-/**
- * @brief Load list of all database names
- */
-QStringList MongoServer::databaseNames()
+void MongoServer::listDatabases()
 {
-    QStringList stringList;
-
-    list<string> dbs = _connection->getDatabaseNames();
-
-    for ( list<string>::iterator i = dbs.begin(); i != dbs.end(); i++ ) {
-        stringList.append(QString::fromStdString(*i));
-    }
-
-    return stringList;
+    _client->loadDatabaseNames();
 }
 
-const QList<MongoDatabasePtr> MongoServer::listDatabases()
+void MongoServer::onDatabaseNameLoaded(const QStringList &names)
 {
-    QStringList names = databaseNames();
-
     QList<MongoDatabasePtr> list;
-    //return list;
 
     foreach(QString name, names)
     {
@@ -84,5 +74,5 @@ const QList<MongoDatabasePtr> MongoServer::listDatabases()
         list.append(db);
     }
 
-    return list;
+    emit databaseListLoaded(list);
 }

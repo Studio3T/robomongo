@@ -13,17 +13,19 @@ ExplorerServerTreeItem::ExplorerServerTreeItem(const MongoServerPtr &server) : Q
     setIcon(0, GuiRegistry::instance().serverIcon());
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
+    connect(_server.data(), SIGNAL(databaseListLoaded(QList<MongoDatabasePtr>)), this, SLOT(databaseRefreshed(QList<MongoDatabasePtr>)));
+
     //connect(_viewModel, SIGNAL(databasesRefreshed(QList<ExplorerDatabaseViewModel *>)), SLOT(databaseRefreshed(QList<ExplorerDatabaseViewModel *>)));
 }
 
 void ExplorerServerTreeItem::expand()
 {
-    QList<MongoDatabasePtr> dbs = _server->listDatabases();
-    databaseRefreshed(dbs);
+    _server->listDatabases();
+    //databaseRefreshed(dbs);
     //_viewModel->expand();
 }
 
-void ExplorerServerTreeItem::databaseRefreshed(QList<MongoDatabasePtr> dbs)
+void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabasePtr> &dbs)
 {
     // Remove child items
 	int itemCount = childCount();

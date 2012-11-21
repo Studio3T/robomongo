@@ -9,6 +9,8 @@
 
 namespace Robomongo
 {
+    class MongoClient;
+
     class MongoServer : public QObject
     {
         Q_OBJECT
@@ -28,11 +30,6 @@ namespace Robomongo
         bool authenticate(const QString &database, const QString &username, const QString &password);
 
         /**
-         * @brief Load list of all database names
-         */
-        QStringList databaseNames();
-
-        /**
          * @brief Returns last error message
          */
         QString lastErrorMessage() { return _lastErrorMessage; }
@@ -43,10 +40,20 @@ namespace Robomongo
         const ConnectionRecordPtr connectionRecord() const { return _connectionRecord; }
 
 
-        const QList<MongoDatabasePtr> listDatabases();
+        void listDatabases();
+
+    signals:
+
+        void databaseListLoaded(const QList<MongoDatabasePtr> &list);
+
+    public slots:
+        void onDatabaseNameLoaded(const QStringList &names);
+
 
 
     private:
+
+        MongoClient *_client;
 
         DBClientConnection_ScopedPtr _connection;
 

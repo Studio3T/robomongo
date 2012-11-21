@@ -18,7 +18,6 @@
 #include "dialogs/ConnectionsDialog.h"
 #include "Core.h"
 #include "MainWindow.h"
-
 #include "mongo/client/dbclient.h"
 
 using namespace Robomongo;
@@ -33,6 +32,8 @@ void insert( mongo::DBClientConnection & conn , const char * name , int num ) {
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+    qRegisterMetaType<ConnectionRecordPtr>("ConnectionRecordPtr");
 
     QProcessEnvironment proc = QProcessEnvironment::systemEnvironment();
     QString str = proc.value("LD_LIBRARY_PATH");

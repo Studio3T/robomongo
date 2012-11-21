@@ -6,6 +6,7 @@
 #include <boost/weak_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include "Wrapper.h"
 
 namespace mongo
 {

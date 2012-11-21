@@ -14,6 +14,9 @@ MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord) : QObject(
     _port = QString::number(_connectionRecord->databasePort());
     _address = QString("%1:%2").arg(_host).arg(_port);
 
+//    mongo::ScopedDbConnection con("_host");
+//    con->findOne();
+
     _connection.reset(new mongo::DBClientConnection);
 }
 

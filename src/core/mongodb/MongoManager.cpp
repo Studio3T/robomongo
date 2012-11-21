@@ -6,8 +6,7 @@
 
 using namespace Robomongo;
 
-MongoManager::MongoManager(QObject *parent) :
-    QObject(parent)
+MongoManager::MongoManager(QObject *parent) : QObject(parent), Wrapper(this)
 {
 }
 
@@ -16,12 +15,23 @@ MongoManager::MongoManager(QObject *parent) :
  */
 MongoServerPtr MongoManager::connectToServer(const ConnectionRecordPtr &connectionRecord)
 {
-    MongoServerPtr server(new MongoServer(connectionRecord));
-    server->tryConnect();
+    try
+    {
+        MongoServerPtr server(new MongoServer(connectionRecord));
+        server->tryConnect();
 
-    if (connectionRecord->isAuthNeeded())
-        server->authenticate(QString(), connectionRecord->userName(), connectionRecord->userPassword());
+        //sleep(1000);
 
-    emit connected(server);
-    return server;
+        if (connectionRecord->isAuthNeeded())
+            server->authenticate(QString(), connectionRecord->userName(), connectionRecord->userPassword());
+
+        emit connected(server);
+        return server;
+    }
+    catch(MongoException &ex)
+    {
+        emit connectionFailed(connectionRecord);
+//        QString message = QString("Cannot connect to MongoDB (%1)").arg(selected->getFullAddress());
+//        QMessageBox::information(this, "Error", message);
+    }
 }

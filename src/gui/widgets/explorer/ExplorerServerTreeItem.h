@@ -29,7 +29,7 @@ namespace Robomongo
         /*
         **
         */
-        void databaseRefreshed(QList<MongoDatabasePtr> dbs);
+        void databaseRefreshed(const QList<MongoDatabasePtr> &dbs);
 
 
     private:

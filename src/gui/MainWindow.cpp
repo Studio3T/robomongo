@@ -83,8 +83,8 @@ void MainWindow::manageConnections()
 
         try
         {
-            //_mongoManager.connectToServer(selected);
-            _mongoManager.invokeConnectToServer(selected);
+            _mongoManager.connectToServer(selected);
+            //_mongoManager.invokeConnectToServer(selected);
         }
         catch(MongoException &ex)
         {

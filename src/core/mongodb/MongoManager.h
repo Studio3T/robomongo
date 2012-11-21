@@ -6,7 +6,7 @@
 
 namespace Robomongo
 {
-    class MongoManager : public QObject, Wrapper
+    class MongoManager : public QObject
     {
         Q_OBJECT
 
@@ -18,9 +18,6 @@ namespace Robomongo
          * @brief Connect to MongoDB server
          */
         MongoServerPtr connectToServer(const ConnectionRecordPtr &connectionRecord);
-
-        void invokeConnectToServer(const ConnectionRecordPtr &connectionRecord)
-        { invoke("connectToServer", Q_ARG(ConnectionRecordPtr, connectionRecord)); }
 
     signals:
 

@@ -38,7 +38,7 @@ namespace Robomongo
 
     public slots:
 
-        void vm_collectionRefreshed();
+        void vm_collectionRefreshed(const QList<MongoCollectionPtr> &collections);
 
 
     };

@@ -3,10 +3,12 @@
 
 #include <QObject>
 #include "Core.h"
+#include "mongo/client/dbclient.h"
+#include "boost/shared_ptr.hpp"
 
 namespace Robomongo
 {
-    class MongoDatabase : public QObject
+    class MongoDatabase : public QObject, public boost::enable_shared_from_this<MongoDatabase>
     {
         Q_OBJECT
 
@@ -19,6 +21,8 @@ namespace Robomongo
         MongoDatabase(const MongoServer *server, const QString &name);
         ~MongoDatabase();
 
+        void listCollections();
+
         QString name() const { return _name; }
 
         /**
@@ -27,6 +31,15 @@ namespace Robomongo
          */
         bool isSystem() const { return _system; }
 
+        virtual bool event(QEvent *);
+
+
+    signals:
+
+        void collectionListLoaded(const QList<MongoCollectionPtr> &list);
+
+    private slots:
+        void collectionNamesLoaded(const QString &databaseName, const QStringList &collectionNames);
 
     private:
 

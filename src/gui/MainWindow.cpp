@@ -62,10 +62,6 @@ MainWindow::MainWindow() : QMainWindow(),
     setWindowIcon(GuiRegistry::instance().databaseIcon());
 
     setCentralWidget(new QWidget(this));
-
-    QToolTip::showText(QPoint(0,0),QString
-            ("Help reminder short keys : <br/>  ctrl-D : push Button"));
-
     //connect(_viewModel, SIGNAL(statusMessageUpdated(QString)), SLOT(vm_statusMessageUpdated(QString)));
 }
 
@@ -101,7 +97,7 @@ void MainWindow::manageConnections()
 void MainWindow::refreshConnections()
 {
     QToolTip::showText(QPoint(0,0),QString
-                       ("Help reminder short keys : <br/>  <b>Ctrl+D</b> : push Button"));
+                       ("Refresh not working yet... : <br/>  <b>Ctrl+D</b> : push Button"));
 }
 
 void MainWindow::reportFailedConnection(const MongoServerPtr &server)

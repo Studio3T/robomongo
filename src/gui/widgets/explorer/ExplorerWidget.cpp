@@ -16,14 +16,18 @@ using namespace Robomongo;
  * Constructs ExplorerWidget
  */
 ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
-    _mongoManager(AppRegistry::instance().mongoManager())
+    _mongoManager(AppRegistry::instance().mongoManager()), _progress(0)
 {
     //connect(_viewModel, SIGNAL(serverAdded(ExplorerServerViewModel *)), this, SLOT(addServer(ExplorerServerViewModel *)));
     connect(&_mongoManager, SIGNAL(connected(MongoServerPtr)), this, SLOT(addServer(MongoServerPtr)));
+    connect(&_mongoManager, SIGNAL(connecting(MongoServerPtr)), this, SLOT(onConnecting(MongoServerPtr)));
+    connect(&_mongoManager, SIGNAL(connectionFailed(MongoServerPtr)), this, SLOT(onConnectionFailed(MongoServerPtr)));
+
 
     _treeWidget = new ExplorerTreeWidget;
     _treeWidget->setIndentation(15);    
     _treeWidget->setHeaderHidden(true);
+
 
     QHBoxLayout *vlaout = new QHBoxLayout();
     vlaout->setMargin(0);
@@ -36,6 +40,12 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     connect(_treeWidget, SIGNAL(disconnectActionTriggered()), SLOT(ui_disonnectActionTriggered()));
 
     setLayout(vlaout);
+
+    QMovie *movie = new QMovie(":robomongo/icons/loading.gif", QByteArray(), this);
+    _progressLabel = new QLabel(this);
+    _progressLabel->setMovie(movie);
+    _progressLabel->hide();
+    movie->start();
 }
 
 void ExplorerWidget::ui_disonnectActionTriggered()
@@ -58,7 +68,22 @@ void ExplorerWidget::ui_disonnectActionTriggered()
 
 //    int index = _treeWidget->indexOfTopLevelItem(serverItem);
 
-//    _treeWidget->takeTopLevelItem(index);
+    //    _treeWidget->takeTopLevelItem(index);
+}
+
+void ExplorerWidget::increaseProgress()
+{
+    ++_progress;
+    _progressLabel->move(width() / 2 - 8, height() / 2 - 8);
+    _progressLabel->show();
+}
+
+void ExplorerWidget::decreaseProgress()
+{
+    --_progress;
+
+    if (!_progress)
+        _progressLabel->hide();
 }
 
 void ExplorerWidget::ui_itemClicked(QTreeWidgetItem* a1 ,int b)
@@ -76,8 +101,22 @@ void ExplorerWidget::ui_customContextMenuRequested(QPoint p)
 */
 void ExplorerWidget::addServer(MongoServerPtr server)
 {
+    decreaseProgress();
+
     QTreeWidgetItem *item = new ExplorerServerTreeItem(server);
     _treeWidget->addTopLevelItem(item);
+
+//    _treeWidget->setItemWidget(item, 0, yourLabel);
+}
+
+void ExplorerWidget::onConnecting(MongoServerPtr server)
+{
+    increaseProgress();
+}
+
+void ExplorerWidget::onConnectionFailed(MongoServerPtr server)
+{
+    decreaseProgress();
 }
 
 void ExplorerWidget::removeServer()

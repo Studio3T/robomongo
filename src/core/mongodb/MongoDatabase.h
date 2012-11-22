@@ -21,11 +21,18 @@ namespace Robomongo
 
         QString name() const { return _name; }
 
+        /**
+         * @brief Checks that this is a system database
+         * @return true if system, false otherwise
+         */
+        bool isSystem() const { return _system; }
+
 
     private:
 
         const MongoServer *_server;
         QString _name;
+        bool _system;
 
     };
 

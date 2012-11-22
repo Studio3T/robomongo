@@ -24,6 +24,8 @@ namespace Robomongo
 
     signals:
 
+        void connecting(const MongoServerPtr &server);
+
         /**
          * @brief Fires when connected
          */

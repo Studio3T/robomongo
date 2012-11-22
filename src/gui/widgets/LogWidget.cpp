@@ -1,13 +1,18 @@
 #include "LogWidget.h"
 #include "MainWindow.h"
+#include "AppRegistry.h"
+#include "mongodb/MongoServer.h"
 
 using namespace Robomongo;
 
 /*
 ** Constructs log widget panel for main window
 */
-LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow)
+LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
+    _mongoManager(AppRegistry::instance().mongoManager())
 {
+    connect(&_mongoManager, SIGNAL(connecting(MongoServerPtr)), this, SLOT(onConnecting(MongoServerPtr)));
+
     _mainWindow = mainWindow;
 
     _logTextEdit = new QPlainTextEdit;
@@ -27,6 +32,14 @@ void LogWidget::vm_queryExecuted(const QString &query, const QString &result)
 //    _logTextEdit->append(result);
 
     // Scroll to bottom
+    QScrollBar *sb = _logTextEdit->verticalScrollBar();
+    sb->setValue(sb->maximum());
+}
+
+void LogWidget::onConnecting(const MongoServerPtr &record)
+{
+    _logTextEdit->appendPlainText(QString("Connecting to %1...").arg(record->connectionRecord()->getFullAddress()));
+
     QScrollBar *sb = _logTextEdit->verticalScrollBar();
     sb->setValue(sb->maximum());
 }

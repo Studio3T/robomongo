@@ -25,9 +25,9 @@ void MongoManager::connectToServer(const ConnectionRecordPtr &connectionRecord)
     MongoServerPtr server(new MongoServer(connectionRecord));
     connect(server.get(), SIGNAL(connectionEstablished(MongoServerPtr, QString)), this, SLOT(onConnectionEstablished(MongoServerPtr, QString)));
     connect(server.get(), SIGNAL(connectionFailed(MongoServerPtr, QString)), this, SLOT(onConnectionFailed(MongoServerPtr, QString)));
-
     _servers.append(server);
 
+    emit connecting(server);
     server->tryConnect();
 }
 

@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QPlainTextEdit>
+#include "mongodb/MongoManager.h"
+#include "settings/ConnectionRecord.h"
 
 namespace Robomongo
 {
@@ -27,6 +29,11 @@ namespace Robomongo
         */
         QPlainTextEdit *_logTextEdit;
 
+        /**
+         * @brief MongoManager
+         */
+        MongoManager &_mongoManager;
+
     public:
 
         /*
@@ -37,6 +44,8 @@ namespace Robomongo
     public slots:
 
         void vm_queryExecuted(const QString &query, const QString &result);
+
+        void onConnecting(const MongoServerPtr &record);
     };
 
 }

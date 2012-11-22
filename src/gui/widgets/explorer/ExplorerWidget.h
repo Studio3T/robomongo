@@ -4,6 +4,7 @@
 #include <QTreeWidget>
 #include <QWidget>
 #include "Core.h"
+#include <QLabel>
 
 namespace Robomongo
 {
@@ -29,6 +30,10 @@ namespace Robomongo
         */
         void addServer(MongoServerPtr server);
 
+        void onConnecting(MongoServerPtr server);
+
+        void onConnectionFailed(MongoServerPtr server);
+
         /*
         ** Add server to tree view
         */
@@ -50,6 +55,11 @@ namespace Robomongo
         void ui_disonnectActionTriggered();
 
     private:
+
+        int _progress;
+        void increaseProgress();
+        void decreaseProgress();
+        QLabel *_progressLabel;
 
         /*
         ** Main tree widget of the explorer

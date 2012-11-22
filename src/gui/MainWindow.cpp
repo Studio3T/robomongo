@@ -17,7 +17,7 @@ MainWindow::MainWindow() : QMainWindow(),
     _mongoManager(AppRegistry::instance().mongoManager()),
     _settingsManager(AppRegistry::instance().settingsManager())
 {
-    connect(&_mongoManager, SIGNAL(connectionFailed(ConnectionRecordPtr)), this, SLOT(reportFailedConnection(ConnectionRecordPtr)));
+    connect(&_mongoManager, SIGNAL(connectionFailed(MongoServerPtr)), this, SLOT(reportFailedConnection(MongoServerPtr)));
 
     // Exit action
     QAction *exitAction = new QAction("&Exit", this);
@@ -104,8 +104,9 @@ void MainWindow::refreshConnections()
                        ("Help reminder short keys : <br/>  <b>Ctrl+D</b> : push Button"));
 }
 
-void MainWindow::reportFailedConnection(const ConnectionRecordPtr &connection)
+void MainWindow::reportFailedConnection(const MongoServerPtr &server)
 {
+    ConnectionRecordPtr connection = server->connectionRecord();
     QString message = QString("Cannot connect to MongoDB (%1)").arg(connection->getFullAddress());
     QMessageBox::information(this, "Error", message);
 }

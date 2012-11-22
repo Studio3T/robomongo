@@ -46,9 +46,13 @@ namespace Robomongo
     signals:
 
         void databaseListLoaded(const QList<MongoDatabasePtr> &list);
+        void connectionEstablished(const QString &address);
+        void connectionFailed(const QString &address);
 
     public slots:
         void onDatabaseNameLoaded(const QStringList &names);
+        void onConnectionEstablished(const QString &address);
+        void onConnectionFailed(const QString &address);
 
 
 

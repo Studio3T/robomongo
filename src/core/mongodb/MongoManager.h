@@ -2,6 +2,7 @@
 #define MONGOMANAGER_H
 
 #include <QObject>
+#include <QHash>
 #include "Core.h"
 
 namespace Robomongo
@@ -27,12 +28,19 @@ namespace Robomongo
          */
         void connected(const MongoServerPtr &server);
 
-        void connectionFailed(const ConnectionRecordPtr &connection);
+        void connectionFailed(const MongoServerPtr &server);
 
         /**
          * @brief Fires when disconnected
          */
         void disconnected(const MongoServerPtr &server);
+
+    private slots:
+        void onConnectionEstablished(const QString &address);
+        void onConnectionFailed(const QString &address);
+
+    private:
+        QHash<QString, MongoServerPtr> _servers;
     };
 }
 

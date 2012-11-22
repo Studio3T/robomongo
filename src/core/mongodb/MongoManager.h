@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QUuid>
 #include "Core.h"
 
 namespace Robomongo
@@ -19,7 +20,7 @@ namespace Robomongo
         /**
          * @brief Connect to MongoDB server
          */
-        MongoServerPtr connectToServer(const ConnectionRecordPtr &connectionRecord);
+        void connectToServer(const ConnectionRecordPtr &connectionRecord);
 
     signals:
 
@@ -36,11 +37,11 @@ namespace Robomongo
         void disconnected(const MongoServerPtr &server);
 
     private slots:
-        void onConnectionEstablished(const QString &address);
-        void onConnectionFailed(const QString &address);
+        void onConnectionEstablished(const MongoServerPtr &server, const QString &address);
+        void onConnectionFailed(const MongoServerPtr &server, const QString &address);
 
     private:
-        QHash<QString, MongoServerPtr> _servers;
+        QList<MongoServerPtr> _servers;
     };
 }
 

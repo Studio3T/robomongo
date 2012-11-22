@@ -3,6 +3,7 @@
 #include <QStringList>
 #include "boost/scoped_ptr.hpp"
 #include "mongo/client/dbclient.h"
+#include <QMutexLocker>
 
 using namespace Robomongo;
 using namespace std;
@@ -83,10 +84,13 @@ void MongoClient::_loadDatabaseNames()
 
 void MongoClient::_establishConnection()
 {
+    QMutexLocker lock(&_firstConnectionMutex);
+
     try
     {
         boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
         conn->done();
+
         emit connectionEstablished(_address);
     }
     catch(DBException &ex)

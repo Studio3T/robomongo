@@ -2,6 +2,7 @@
 #define MONGOSERVER_H
 
 #include <QObject>
+#include <QUuid>
 #include "mongo/client/dbclient.h"
 #include "Core.h"
 #include <QList>
@@ -11,7 +12,7 @@
 
 namespace Robomongo
 {
-    class MongoServer : public QObject
+    class MongoServer : public QObject, public boost::enable_shared_from_this<MongoServer>
     {
         Q_OBJECT
     public:
@@ -40,14 +41,13 @@ namespace Robomongo
          */
         const ConnectionRecordPtr connectionRecord() const { return _connectionRecord; }
 
-
         void listDatabases();
 
     signals:
 
         void databaseListLoaded(const QList<MongoDatabasePtr> &list);
-        void connectionEstablished(const QString &address);
-        void connectionFailed(const QString &address);
+        void connectionEstablished(const MongoServerPtr &server, const QString &address);
+        void connectionFailed(const MongoServerPtr &server, const QString &address);
 
     public slots:
         void onDatabaseNameLoaded(const QStringList &names);

@@ -20,23 +20,29 @@ MongoManager::~MongoManager()
  */
 MongoServerPtr MongoManager::connectToServer(const ConnectionRecordPtr &connectionRecord)
 {
-//    try
-//    {
-        MongoServerPtr server(new MongoServer(connectionRecord));
-        server->tryConnect();
+    MongoServerPtr server(new MongoServer(connectionRecord));
+    connect(server.data(), SIGNAL(connectionEstablished(QString)), this, SLOT(onConnectionEstablished(QString)));
+    connect(server.data(), SIGNAL(connectionFailed(QString)), this, SLOT(onConnectionFailed(QString)));
 
-        //sleep(1000);
+    _servers.insert(connectionRecord->getFullAddress(), server);
+    server->tryConnect();
 
-        if (connectionRecord->isAuthNeeded())
-            server->authenticate(QString(), connectionRecord->userName(), connectionRecord->userPassword());
-
-        emit connected(server);
-        return server;
-/*    }
-    catch(MongoException &ex)
-    {
-        emit connectionFailed(connectionRecord);
-//        QString message = QString("Cannot connect to MongoDB (%1)").arg(selected->getFullAddress());
-//        QMessageBox::information(this, "Error", message);
-    }*/
+    return server;
 }
+
+
+void MongoManager::onConnectionEstablished(const QString &address)
+{
+    emit connected(_servers.value(address));
+}
+
+void MongoManager::onConnectionFailed(const QString &address)
+{
+    emit connectionFailed(_servers.value(address));
+}
+
+
+
+// NOTEBOOK*******************************************************
+//        if (connectionRecord->isAuthNeeded())
+//            server->authenticate(QString(), connectionRecord->userName(), connectionRecord->userPassword());

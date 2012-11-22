@@ -15,13 +15,12 @@ MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord) : QObject(
     _port = QString::number(_connectionRecord->databasePort());
     _address = QString("%1:%2").arg(_host).arg(_port);
 
-//    mongo::ScopedDbConnection con("_host");
-//    con->findOne();
-
     _connection.reset(new mongo::DBClientConnection);
 
     _client.reset(new MongoClient(_address));
     connect(_client.data(), SIGNAL(databaseNamesLoaded(QStringList)), this, SLOT(onDatabaseNameLoaded(QStringList)));
+    connect(_client.data(), SIGNAL(connectionEstablished(QString)), this, SLOT(onConnectionEstablished(QString)));
+    connect(_client.data(), SIGNAL(connectionFailed(QString)), this, SLOT(onConnectionFailed(QString)));
 }
 
 MongoServer::~MongoServer()
@@ -35,12 +34,7 @@ MongoServer::~MongoServer()
  */
 void MongoServer::tryConnect()
 {
-    try {
-        _connection->connect(_address.toStdString());
-    }
-    catch (mongo::UserException & e) {
-        throw MongoException("Unable to connect");
-    }
+    _client->establishConnection();
 }
 
 /**
@@ -80,4 +74,14 @@ void MongoServer::onDatabaseNameLoaded(const QStringList &names)
     }
 
     emit databaseListLoaded(list);
+}
+
+void MongoServer::onConnectionEstablished(const QString &address)
+{
+    emit connectionEstablished(address);
+}
+
+void MongoServer::onConnectionFailed(const QString &address)
+{
+    emit connectionFailed(address);
 }

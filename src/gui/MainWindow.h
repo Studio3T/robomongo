@@ -49,7 +49,7 @@ namespace Robomongo
     public slots:
         void manageConnections();
         void refreshConnections();
-        void reportFailedConnection(const ConnectionRecordPtr &connection);
+        void reportFailedConnection(const MongoServerPtr &connection);
     };
 
 }

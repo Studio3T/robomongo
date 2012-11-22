@@ -14,6 +14,8 @@ namespace Robomongo
 
         ~MongoClient();
 
+        void establishConnection();
+
         /**
          * @brief Load list of all database names
          */
@@ -21,8 +23,11 @@ namespace Robomongo
 
     signals:
         void databaseNamesLoaded(const QStringList &names);
+        void connectionEstablished(const QString &address);
+        void connectionFailed(const QString &address);
 
     private slots:
+        void _establishConnection();
         void _loadDatabaseNames();
 
     private:

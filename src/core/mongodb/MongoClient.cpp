@@ -43,6 +43,11 @@ void MongoClient::invoke(char *methodName, QGenericArgument arg1, QGenericArgume
     QMetaObject::invokeMethod(this, methodName, Qt::QueuedConnection, arg1, arg2, arg3, arg4, arg5);
 }
 
+void MongoClient::establishConnection()
+{
+    invoke("_establishConnection");
+}
+
 /**
  * @brief Load list of all database names
  */
@@ -56,23 +61,36 @@ void MongoClient::loadDatabaseNames()
  */
 void MongoClient::_loadDatabaseNames()
 {
-    boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
+    try
+    {
+        boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
+        list<string> dbs = conn->get()->getDatabaseNames();
+        conn->done();
 
-    list<string> dbs = conn->get()->getDatabaseNames();
+        QStringList stringList;
+        for ( list<string>::iterator i = dbs.begin(); i != dbs.end(); i++ ) {
+            stringList.append(QString::fromStdString(*i));
+        }
 
-    conn->done();
-
-    QStringList stringList;
-
-//    for (int i = 0; i < 10; i++) {
-//        stringList.append("Muahaha");
-//    }
-
-
-
-    for ( list<string>::iterator i = dbs.begin(); i != dbs.end(); i++ ) {
-        stringList.append(QString::fromStdString(*i));
+        emit databaseNamesLoaded(stringList);
     }
+    catch(DBException &ex)
+    {
+        emit connectionFailed(_address);
+    }
+}
 
-    emit databaseNamesLoaded(stringList);
+
+void MongoClient::_establishConnection()
+{
+    try
+    {
+        boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
+        conn->done();
+        emit connectionEstablished(_address);
+    }
+    catch(DBException &ex)
+    {
+        emit connectionFailed(_address);
+    }
 }

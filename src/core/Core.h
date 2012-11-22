@@ -32,7 +32,7 @@ namespace Robomongo
     typedef QWeakPointer<MongoServer> MongoServerWeakPtr;
 
     class MongoDatabase;
-    typedef QSharedPointer<MongoDatabase> MongoDatabasePtr;
+    typedef boost::shared_ptr<MongoDatabase> MongoDatabasePtr;
 
     class ConnectionRecord;
     typedef boost::ptr_vector<ConnectionRecord> ConnectionRecord_PtrVector;

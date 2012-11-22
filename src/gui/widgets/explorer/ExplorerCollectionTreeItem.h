@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTreeWidgetItem>
+#include "Core.h"
 
 namespace Robomongo
 {
@@ -17,12 +18,14 @@ namespace Robomongo
         */
         //ExplorerCollectionViewModel * _viewModel;
 
+        MongoCollectionPtr _collection;
+
     public:
 
         /*
         ** Constructs collection tree item
         */
-        ExplorerCollectionTreeItem();
+        ExplorerCollectionTreeItem(const MongoCollectionPtr &collection);
 
     };
 }

@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QMutex>
+#include <QEvent>
+#include <QStringList>
 
 namespace Robomongo
 {
@@ -22,14 +24,21 @@ namespace Robomongo
          */
         void loadDatabaseNames();
 
+        /**
+         * @brief Load list of all collection names
+         */
+        void loadCollectionNames(QObject *sender, const QString &databaseName);
+
     signals:
         void databaseNamesLoaded(const QStringList &names);
+        void collectionNamesLoaded(const QString &databaseName, const QStringList &names);
         void connectionEstablished(const QString &address);
         void connectionFailed(const QString &address);
 
     private slots:
         void _establishConnection();
         void _loadDatabaseNames();
+        void _loadCollectionNames(QObject *sender, const QString &databaseName);
 
     private:
 
@@ -44,6 +53,17 @@ namespace Robomongo
         QThread *_thread;
         QMutex _firstConnectionMutex;
 
+    };
+
+    class CollectionNamesLoaded : public QEvent
+    {
+    public:
+
+        CollectionNamesLoaded(const QString &databaseName, const QStringList &collectionNames)
+            : _databaseName(databaseName), _collectionNames(collectionNames), QEvent((QEvent::Type)(QEvent::User + 1)) { }
+
+        QString _databaseName;
+        QStringList _collectionNames;
     };
 }
 

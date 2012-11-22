@@ -4,6 +4,7 @@
 #include "boost/scoped_ptr.hpp"
 #include "mongo/client/dbclient.h"
 #include <QMutexLocker>
+#include <QCoreApplication>
 
 using namespace Robomongo;
 using namespace std;
@@ -57,6 +58,11 @@ void MongoClient::loadDatabaseNames()
     invoke("_loadDatabaseNames");
 }
 
+void MongoClient::loadCollectionNames(QObject *sender, const QString &databaseName)
+{
+    invoke("_loadCollectionNames", Q_ARG(QObject *, sender), Q_ARG(QString, databaseName));
+}
+
 /**
  * @brief Actual implementation of loadDatabaseNames()
  */
@@ -74,6 +80,29 @@ void MongoClient::_loadDatabaseNames()
         }
 
         emit databaseNamesLoaded(stringList);
+    }
+    catch(DBException &ex)
+    {
+        emit connectionFailed(_address);
+    }
+}
+
+void MongoClient::_loadCollectionNames(QObject *sender, const QString &databaseName)
+{
+    try
+    {
+        boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
+        list<string> dbs = conn->get()->getCollectionNames(databaseName.toStdString());
+        conn->done();
+
+        QStringList stringList;
+        for ( list<string>::iterator i = dbs.begin(); i != dbs.end(); i++ ) {
+            stringList.append(QString::fromStdString(*i));
+        }
+
+        QCoreApplication::postEvent(sender, new CollectionNamesLoaded(databaseName, stringList));
+
+//        emit collectionNamesLoaded(databaseName, stringList);
     }
     catch(DBException &ex)
     {

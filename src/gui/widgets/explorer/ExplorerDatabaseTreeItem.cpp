@@ -3,6 +3,7 @@
 #include "ExplorerCollectionTreeItem.h"
 #include "ExplorerDatabaseCategoryTreeItem.h"
 #include "mongodb/MongoDatabase.h"
+#include "mongodb/MongoCollection.h"
 
 using namespace Robomongo;
 
@@ -21,6 +22,7 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(const MongoDatabasePtr &datab
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
 //	connect(_viewModel, SIGNAL(collectionsRefreshed()), SLOT(vm_collectionRefreshed()));
+    connect(_database.get(), SIGNAL(collectionListLoaded(QList<MongoCollectionPtr>)), this, SLOT(vm_collectionRefreshed(QList<MongoCollectionPtr>)));
 
 
     QIcon icon = GuiRegistry::instance().folderIcon();
@@ -64,10 +66,11 @@ ExplorerDatabaseTreeItem::~ExplorerDatabaseTreeItem()
 */
 void ExplorerDatabaseTreeItem::expandCollections()
 {
+    _database->listCollections();
     //_viewModel->expandCollections();
 }
 
-void ExplorerDatabaseTreeItem::vm_collectionRefreshed()
+void ExplorerDatabaseTreeItem::vm_collectionRefreshed(const QList<MongoCollectionPtr> &collections)
 {
 	// remove child items
 	int itemCount = _collectionItem->childCount();
@@ -85,10 +88,12 @@ void ExplorerDatabaseTreeItem::vm_collectionRefreshed()
     systemFolder->setText(0, "System");
     _collectionItem->addChild(systemFolder);
 
-    /*P
-	foreach(ExplorerCollectionViewModel * collection, _viewModel->collections())
-	{
-        if (collection->system())
+
+    for (int i = 0; i < collections.size(); i++)
+    {
+        MongoCollectionPtr collection(collections.at(i));
+
+        if (collection->isSystem())
         {
             ExplorerCollectionTreeItem * collectionItem = new ExplorerCollectionTreeItem(collection);
             systemFolder->addChild(collectionItem);
@@ -97,5 +102,5 @@ void ExplorerDatabaseTreeItem::vm_collectionRefreshed()
 
 		ExplorerCollectionTreeItem * collectionItem = new ExplorerCollectionTreeItem(collection);
 		_collectionItem->addChild(collectionItem);
-    }	*/
+    }
 }

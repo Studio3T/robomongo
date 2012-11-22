@@ -43,6 +43,8 @@ namespace Robomongo
 
         void listDatabases();
 
+        MongoClient *client() const { return _client.data(); }
+
     signals:
 
         void databaseListLoaded(const QList<MongoDatabasePtr> &list);

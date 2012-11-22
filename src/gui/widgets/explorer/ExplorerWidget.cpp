@@ -1,7 +1,7 @@
 #include "ExplorerWidget.h"
 //#include "ExplorerServerTreeItem.h"
-//#include "ExplorerDatabaseTreeItem.h"
-//#include "ExplorerDatabaseCategoryTreeItem.h"
+#include "ExplorerDatabaseTreeItem.h"
+#include "ExplorerDatabaseCategoryTreeItem.h"
 //#include "ExplorerCollectionTreeItem.h"
 
 #include "AppRegistry.h"
@@ -129,7 +129,6 @@ void ExplorerWidget::removeServer()
 */
 void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)
 {
-    /*
     ExplorerDatabaseCategoryTreeItem *categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
     if (categoryItem)
     {
@@ -148,7 +147,7 @@ void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)
 
         return;
     }
-    */
+
 
     ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
     if (serverItem)

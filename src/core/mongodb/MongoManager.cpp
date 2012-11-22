@@ -1,3 +1,4 @@
+#include <QUuid>
 #include "MongoManager.h"
 #include "MongoServer.h"
 #include "MongoException.h"
@@ -18,27 +19,27 @@ MongoManager::~MongoManager()
 /**
  * @brief Connect to MongoDB server
  */
-MongoServerPtr MongoManager::connectToServer(const ConnectionRecordPtr &connectionRecord)
+void MongoManager::connectToServer(const ConnectionRecordPtr &connectionRecord)
 {
+    QUuid uid = QUuid::createUuid();
     MongoServerPtr server(new MongoServer(connectionRecord));
-    connect(server.data(), SIGNAL(connectionEstablished(QString)), this, SLOT(onConnectionEstablished(QString)));
-    connect(server.data(), SIGNAL(connectionFailed(QString)), this, SLOT(onConnectionFailed(QString)));
+    connect(server.get(), SIGNAL(connectionEstablished(MongoServerPtr, QString)), this, SLOT(onConnectionEstablished(MongoServerPtr, QString)));
+    connect(server.get(), SIGNAL(connectionFailed(MongoServerPtr, QString)), this, SLOT(onConnectionFailed(MongoServerPtr, QString)));
 
-    _servers.insert(connectionRecord->getFullAddress(), server);
+    _servers.append(server);
+
     server->tryConnect();
-
-    return server;
 }
 
 
-void MongoManager::onConnectionEstablished(const QString &address)
+void MongoManager::onConnectionEstablished(const MongoServerPtr &server, const QString &address)
 {
-    emit connected(_servers.value(address));
+    emit connected(server);
 }
 
-void MongoManager::onConnectionFailed(const QString &address)
+void MongoManager::onConnectionFailed(const MongoServerPtr &server, const QString &address)
 {
-    emit connectionFailed(_servers.value(address));
+    emit connectionFailed(server);
 }
 
 

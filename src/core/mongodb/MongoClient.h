@@ -2,6 +2,7 @@
 #define MONGOCLIENT_H
 
 #include <QObject>
+#include <QMutex>
 
 namespace Robomongo
 {
@@ -41,6 +42,7 @@ namespace Robomongo
 
         QString _address;
         QThread *_thread;
+        QMutex _firstConnectionMutex;
 
     };
 }

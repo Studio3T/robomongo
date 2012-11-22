@@ -78,10 +78,10 @@ void MongoServer::onDatabaseNameLoaded(const QStringList &names)
 
 void MongoServer::onConnectionEstablished(const QString &address)
 {
-    emit connectionEstablished(address);
+    emit connectionEstablished(shared_from_this(), address);
 }
 
 void MongoServer::onConnectionFailed(const QString &address)
 {
-    emit connectionFailed(address);
+    emit connectionFailed(shared_from_this(), address);
 }

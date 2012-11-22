@@ -28,8 +28,7 @@ namespace Robomongo
     typedef boost::scoped_ptr<MongoManager> MongoManagerScopedPtr;
 
     class MongoServer;
-    typedef QSharedPointer<MongoServer> MongoServerPtr;
-    typedef QWeakPointer<MongoServer> MongoServerWeakPtr;
+    typedef boost::shared_ptr<MongoServer> MongoServerPtr;
 
     class MongoDatabase;
     typedef boost::shared_ptr<MongoDatabase> MongoDatabasePtr;

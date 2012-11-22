@@ -52,11 +52,10 @@ void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabasePtr> &db
 //    ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(dbs.at(0));
 //    addChild(dbItem);
 
-
     for (int i = 0; i < dbs.size(); i++)
     {
         // why leaks??
-        //MongoDatabasePtr database(dbs.at(i));
+        MongoDatabasePtr database(dbs.at(i));
 
         /*
         if (database->system())
@@ -66,7 +65,7 @@ void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabasePtr> &db
             continue;
         }*/
 
-        ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(dbs.at(i));
+        ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(database);
         addChild(dbItem);
     }
 

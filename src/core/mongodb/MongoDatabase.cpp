@@ -7,6 +7,10 @@ MongoDatabase::MongoDatabase(const MongoServer *server, const QString &name) : Q
 {
     _server = server;
     _name = name;
+
+    // Check that this is a system database
+    _system = name == "admin" ||
+              name == "local";
 }
 
 MongoDatabase::~MongoDatabase()

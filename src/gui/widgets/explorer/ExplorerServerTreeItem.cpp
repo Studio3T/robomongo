@@ -2,6 +2,7 @@
 #include "ExplorerDatabaseTreeItem.h"
 #include "GuiRegistry.h"
 #include "mongodb/MongoServer.h"
+#include "mongodb/MongoDatabase.h"
 #include "settings/ConnectionRecord.h"
 
 using namespace Robomongo;
@@ -57,13 +58,12 @@ void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabasePtr> &db
         // why leaks??
         MongoDatabasePtr database(dbs.at(i));
 
-        /*
-        if (database->system())
+        if (database->isSystem())
         {
             ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(database);
             systemFolder->addChild(dbItem);
             continue;
-        }*/
+        }
 
         ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(database);
         addChild(dbItem);

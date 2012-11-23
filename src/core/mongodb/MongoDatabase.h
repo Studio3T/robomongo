@@ -5,6 +5,9 @@
 #include "Core.h"
 #include "mongo/client/dbclient.h"
 #include "boost/shared_ptr.hpp"
+#include "events/MongoEvents.h"
+#include "MongoClient.h"
+#include "MongoServer.h"
 
 namespace Robomongo
 {
@@ -18,7 +21,7 @@ namespace Robomongo
          * @brief MongoDatabase
          * @param server - pointer to parent MongoServer
          */
-        MongoDatabase(const MongoServer *server, const QString &name);
+        MongoDatabase(MongoServer *server, const QString &name);
         ~MongoDatabase();
 
         void listCollections();
@@ -31,6 +34,9 @@ namespace Robomongo
          */
         bool isSystem() const { return _system; }
 
+        /**
+         * @brief Events dispatcher
+         */
         virtual bool event(QEvent *);
 
 
@@ -38,12 +44,12 @@ namespace Robomongo
 
         void collectionListLoaded(const QList<MongoCollectionPtr> &list);
 
-    private slots:
-        void collectionNamesLoaded(const QString &databaseName, const QStringList &collectionNames);
-
     private:
 
-        const MongoServer *_server;
+        void handle(const CollectionNamesLoaded *collectionNames);
+
+        MongoServer *_server;
+        MongoClient *_client;
         QString _name;
         bool _system;
 

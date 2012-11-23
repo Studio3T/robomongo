@@ -15,7 +15,8 @@ SOURCES += \
     mongodb/MongoDatabase.cpp \
     Wrapper.cpp \
     mongodb/MongoClient.cpp \
-    mongodb/MongoCollection.cpp
+    mongodb/MongoCollection.cpp \
+    events/MongoEvents.cpp
 
 HEADERS  += \
     AppRegistry.h \
@@ -29,7 +30,8 @@ HEADERS  += \
     mongodb/MongoDatabase.h \
     Wrapper.h \
     mongodb/MongoClient.h \
-    mongodb/MongoCollection.h
+    mongodb/MongoCollection.h \
+    events/MongoEvents.h
 
 message(inside core huevo: $$THIRDPARTY_LIBS_PATH/qjson)
 

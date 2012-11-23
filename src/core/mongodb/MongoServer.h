@@ -9,6 +9,7 @@
 #include <QHash>
 #include <QScopedPointer>
 #include "MongoClient.h"
+#include "events/MongoEvents.h"
 
 namespace Robomongo
 {
@@ -45,18 +46,22 @@ namespace Robomongo
 
         MongoClient *client() const { return _client.data(); }
 
+        /**
+         * @brief Events dispatcher
+         */
+        virtual bool event(QEvent *event);
+
     signals:
 
         void databaseListLoaded(const QList<MongoDatabasePtr> &list);
         void connectionEstablished(const MongoServerPtr &server, const QString &address);
         void connectionFailed(const MongoServerPtr &server, const QString &address);
 
-    public slots:
-        void onDatabaseNameLoaded(const QStringList &names);
-        void onConnectionEstablished(const QString &address);
-        void onConnectionFailed(const QString &address);
+    private:
 
-
+        void handle(const DatabaseNamesLoaded *event);
+        void handle(const ConnectionEstablished *event);
+        void handle(const ConnectionFailed *event);
 
     private:
 

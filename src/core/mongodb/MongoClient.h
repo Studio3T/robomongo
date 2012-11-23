@@ -17,53 +17,37 @@ namespace Robomongo
 
         ~MongoClient();
 
-        void establishConnection();
+        void establishConnection(QObject *sender);
 
         /**
          * @brief Load list of all database names
          */
-        void loadDatabaseNames();
+        void loadDatabaseNames(QObject *sender);
 
         /**
          * @brief Load list of all collection names
          */
         void loadCollectionNames(QObject *sender, const QString &databaseName);
 
-    signals:
-        void databaseNamesLoaded(const QStringList &names);
-        void collectionNamesLoaded(const QString &databaseName, const QStringList &names);
-        void connectionEstablished(const QString &address);
-        void connectionFailed(const QString &address);
-
     private slots:
-        void _establishConnection();
-        void _loadDatabaseNames();
+        void _establishConnection(QObject *sender);
+        void _loadDatabaseNames(QObject *sender);
         void _loadCollectionNames(QObject *sender, const QString &databaseName);
 
     private:
 
         void init();
 
-        void invoke(char * methodName, QGenericArgument arg1 = QGenericArgument(), QGenericArgument arg2 = QGenericArgument(),
-                                       QGenericArgument arg3 = QGenericArgument(), QGenericArgument arg4 = QGenericArgument(),
-                                       QGenericArgument arg5 = QGenericArgument());
+        void reply(QObject *obj, QEvent *event);
+        void invoke(char *methodName, QGenericArgument arg1 = QGenericArgument(), QGenericArgument arg2 = QGenericArgument(),
+                                      QGenericArgument arg3 = QGenericArgument(), QGenericArgument arg4 = QGenericArgument(),
+                                      QGenericArgument arg5 = QGenericArgument());
 
 
         QString _address;
         QThread *_thread;
         QMutex _firstConnectionMutex;
 
-    };
-
-    class CollectionNamesLoaded : public QEvent
-    {
-    public:
-
-        CollectionNamesLoaded(const QString &databaseName, const QStringList &collectionNames)
-            : _databaseName(databaseName), _collectionNames(collectionNames), QEvent((QEvent::Type)(QEvent::User + 1)) { }
-
-        QString _databaseName;
-        QStringList _collectionNames;
     };
 }
 

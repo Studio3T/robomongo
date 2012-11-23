@@ -19,6 +19,8 @@
 #include "Core.h"
 #include "MainWindow.h"
 #include "mongo/client/dbclient.h"
+#include <QtScript>
+#include <QScriptEngine>
 
 using namespace Robomongo;
 
@@ -39,10 +41,24 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    switch(45)
-    {
-    case MyClass::The: break;
-    }
+    // eda 1!!!!
+    //QScriptEngine *engine = new QScriptEngine();
+    //QScriptValue ebati = engine->evaluate("(function() { return 2 + 56;})");
+    //QString aga = ebati.toString();
+    //int answer = ebati.call().toInt32(); // returns 58
+
+    // eda 2!!!
+//    QScriptEngine *engine = new QScriptEngine();
+//    QScriptValue step1 = engine->evaluate("h = function() {};");
+//    QScriptValue step2 = engine->evaluate("h.one = 23;");
+//    QScriptValue step3 = engine->evaluate("h.two = h.one + 12;");
+//    QScriptValue step4 = engine->evaluate("h.two");
+//    int z = step4.toInt32(); // return 35
+
+    // eda 3!!!
+//    QScriptEngine *engine = new QScriptEngine();
+//    QScriptValue step1 = engine->evaluate("Array.toString()");
+//    QString result = step1.toString(); // returns: "function Array() { [native code] }"
 
 
     qRegisterMetaType<ConnectionRecordPtr>("ConnectionRecordPtr");

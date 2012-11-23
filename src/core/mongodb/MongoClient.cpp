@@ -5,6 +5,7 @@
 #include "mongo/client/dbclient.h"
 #include <QMutexLocker>
 #include <QCoreApplication>
+#include "events/MongoEvents.h"
 
 using namespace Robomongo;
 using namespace std;
@@ -39,34 +40,11 @@ void MongoClient::init()
     _thread->start();
 }
 
-void MongoClient::invoke(char *methodName, QGenericArgument arg1, QGenericArgument arg2, QGenericArgument arg3,
-                                           QGenericArgument arg4,QGenericArgument arg5)
-{
-    QMetaObject::invokeMethod(this, methodName, Qt::QueuedConnection, arg1, arg2, arg3, arg4, arg5);
-}
-
-void MongoClient::establishConnection()
-{
-    invoke("_establishConnection");
-}
-
-/**
- * @brief Load list of all database names
- */
-void MongoClient::loadDatabaseNames()
-{
-    invoke("_loadDatabaseNames");
-}
-
-void MongoClient::loadCollectionNames(QObject *sender, const QString &databaseName)
-{
-    invoke("_loadCollectionNames", Q_ARG(QObject *, sender), Q_ARG(QString, databaseName));
-}
 
 /**
  * @brief Actual implementation of loadDatabaseNames()
  */
-void MongoClient::_loadDatabaseNames()
+void MongoClient::_loadDatabaseNames(QObject *sender)
 {
     try
     {
@@ -79,11 +57,11 @@ void MongoClient::_loadDatabaseNames()
             stringList.append(QString::fromStdString(*i));
         }
 
-        emit databaseNamesLoaded(stringList);
+        reply(sender, new DatabaseNamesLoaded(stringList));
     }
     catch(DBException &ex)
     {
-        emit connectionFailed(_address);
+        reply(sender, new ConnectionFailed(_address));
     }
 }
 
@@ -100,18 +78,16 @@ void MongoClient::_loadCollectionNames(QObject *sender, const QString &databaseN
             stringList.append(QString::fromStdString(*i));
         }
 
-        QCoreApplication::postEvent(sender, new CollectionNamesLoaded(databaseName, stringList));
-
-//        emit collectionNamesLoaded(databaseName, stringList);
+        reply(sender, new CollectionNamesLoaded(databaseName, stringList));
     }
     catch(DBException &ex)
     {
-        emit connectionFailed(_address);
+        reply(sender, new ConnectionFailed(_address));
     }
 }
 
 
-void MongoClient::_establishConnection()
+void MongoClient::_establishConnection(QObject *sender)
 {
     QMutexLocker lock(&_firstConnectionMutex);
 
@@ -120,10 +96,41 @@ void MongoClient::_establishConnection()
         boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
         conn->done();
 
-        emit connectionEstablished(_address);
+        reply(sender, new ConnectionEstablished(_address));
     }
     catch(DBException &ex)
     {
-        emit connectionFailed(_address);
+        reply(sender, new ConnectionFailed(_address));
     }
+}
+
+
+
+void MongoClient::establishConnection(QObject *sender)
+{
+    invoke("_establishConnection", Q_ARG(QObject *, sender));
+}
+
+/**
+ * @brief Load list of all database names
+ */
+void MongoClient::loadDatabaseNames(QObject *sender)
+{
+    invoke("_loadDatabaseNames", Q_ARG(QObject *, sender));
+}
+
+void MongoClient::loadCollectionNames(QObject *sender, const QString &databaseName)
+{
+    invoke("_loadCollectionNames", Q_ARG(QObject *, sender), Q_ARG(QString, databaseName));
+}
+
+void MongoClient::reply(QObject *obj, QEvent *event)
+{
+    QCoreApplication::postEvent(obj, event);
+}
+
+void MongoClient::invoke(char *methodName, QGenericArgument arg1, QGenericArgument arg2, QGenericArgument arg3,
+                                           QGenericArgument arg4,QGenericArgument arg5)
+{
+    QMetaObject::invokeMethod(this, methodName, Qt::QueuedConnection, arg1, arg2, arg3, arg4, arg5);
 }

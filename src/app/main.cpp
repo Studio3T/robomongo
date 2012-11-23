@@ -29,10 +29,20 @@ void insert( mongo::DBClientConnection & conn , const char * name , int num ) {
     conn.insert( "test.people" , obj.obj() );
 }
 
+class MyClass
+{
+public:
+    const static int The = 89;
+};
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+    switch(45)
+    {
+    case MyClass::The: break;
+    }
 
 
     qRegisterMetaType<ConnectionRecordPtr>("ConnectionRecordPtr");

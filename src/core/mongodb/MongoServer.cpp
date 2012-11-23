@@ -34,7 +34,7 @@ MongoServer::~MongoServer()
  */
 void MongoServer::tryConnect()
 {
-    _client->establishConnection();
+    _client->establishConnection(this);
 }
 
 /**
@@ -55,20 +55,28 @@ bool MongoServer::authenticate(const QString &database, const QString &username,
 
 void MongoServer::listDatabases()
 {
-    _client->loadDatabaseNames();
+    _client->loadDatabaseNames(this);
 }
 
-void MongoServer::onDatabaseNameLoaded(const QStringList &names)
+/**
+ * @brief Events dispatcher
+ */
+bool MongoServer::event(QEvent * event)
+{
+    if (event->type() == DatabaseNamesLoaded::EventType)
+        handle(static_cast<DatabaseNamesLoaded *>(event));
+    else if (event->type() == ConnectionEstablished::EventType)
+        handle(static_cast<ConnectionEstablished *>(event));
+    else if (event->type() == ConnectionFailed::EventType)
+        handle(static_cast<ConnectionFailed *>(event));
+}
+
+void MongoServer::handle(const DatabaseNamesLoaded *event)
 {
     QList<MongoDatabasePtr> list;
 
-    foreach(QString name, names)
+    foreach(QString name, event->databaseNames())
     {
-        // this not leaks:
-        //MongoDatabase *ddd = new MongoDatabase(this, name);
-        //delete ddd;
-
-        // this leaks:
         MongoDatabasePtr db(new MongoDatabase(this, name));
         list.append(db);
     }
@@ -76,12 +84,12 @@ void MongoServer::onDatabaseNameLoaded(const QStringList &names)
     emit databaseListLoaded(list);
 }
 
-void MongoServer::onConnectionEstablished(const QString &address)
+void MongoServer::handle(const ConnectionEstablished *event)
 {
-    emit connectionEstablished(shared_from_this(), address);
+    emit connectionEstablished(shared_from_this(), event->address());
 }
 
-void MongoServer::onConnectionFailed(const QString &address)
+void MongoServer::handle(const ConnectionFailed *event)
 {
-    emit connectionFailed(shared_from_this(), address);
+    emit connectionFailed(shared_from_this(), event->address());
 }

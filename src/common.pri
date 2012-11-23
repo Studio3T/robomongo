@@ -2,7 +2,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG  += qt
 CONFIG  -= debug_and_release
-QT      += core gui
+QT      += core gui script
 
 DESTDIR      = $$OUT_PWD/out
 OBJECTS_DIR  = $$OUT_PWD/obj

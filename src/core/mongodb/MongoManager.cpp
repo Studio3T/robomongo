@@ -19,8 +19,6 @@ MongoManager::MongoManager(Dispatcher *dispatcher, QObject *parent) :
 void MongoManager::connectToServer(const ConnectionRecordPtr &connectionRecord)
 {
     MongoServerPtr server(new MongoServer(connectionRecord));
-    connect(server.get(), SIGNAL(connectionEstablished(MongoServerPtr, QString)), this, SLOT(onConnectionEstablished(MongoServerPtr, QString)));
-    connect(server.get(), SIGNAL(connectionFailed(MongoServerPtr, QString)), this, SLOT(onConnectionFailed(MongoServerPtr, QString)));
     _servers.append(server);
 
     _dispatcher->publish(this, new ConnectingEvent(server));
@@ -28,16 +26,6 @@ void MongoManager::connectToServer(const ConnectionRecordPtr &connectionRecord)
 }
 
 
-void MongoManager::onConnectionEstablished(const MongoServerPtr &server, const QString &address)
-{
-    AppRegistry::instance().dispatcher().publish(this, new SomethingHappened("Ebati!!!"));
-    emit connected(server);
-}
-
-void MongoManager::onConnectionFailed(const MongoServerPtr &server, const QString &address)
-{
-    emit connectionFailed(server);
-}
 
 
 

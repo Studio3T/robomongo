@@ -10,14 +10,16 @@
 #include "widgets/explorer/ExplorerWidget.h"
 #include "mongodb/MongoServer.h"
 #include "mongodb/MongoException.h"
+#include "Dispatcher.h"
 
 using namespace Robomongo;
 
 MainWindow::MainWindow() : QMainWindow(),
     _mongoManager(AppRegistry::instance().mongoManager()),
-    _settingsManager(AppRegistry::instance().settingsManager())
+    _settingsManager(AppRegistry::instance().settingsManager()),
+    _dispatcher(AppRegistry::instance().dispatcher())
 {
-    connect(&_mongoManager, SIGNAL(connectionFailed(MongoServerPtr)), this, SLOT(reportFailedConnection(MongoServerPtr)));
+    _dispatcher.subscribe(this, ConnectionFailedEvent::EventType);
 
     // Exit action
     QAction *exitAction = new QAction("&Exit", this);
@@ -65,6 +67,15 @@ MainWindow::MainWindow() : QMainWindow(),
     //connect(_viewModel, SIGNAL(statusMessageUpdated(QString)), SLOT(vm_statusMessageUpdated(QString)));
 }
 
+bool MainWindow::event(QEvent *event)
+{
+    R_HANDLE(event) {
+        R_EVENT(ConnectionFailedEvent);
+    }
+
+    return QMainWindow::event(event);
+}
+
 void MainWindow::manageConnections()
 {
     ConnectionsDialog dialog(&_settingsManager);
@@ -100,9 +111,9 @@ void MainWindow::refreshConnections()
                        ("Refresh not working yet... : <br/>  <b>Ctrl+D</b> : push Button"));
 }
 
-void MainWindow::reportFailedConnection(const MongoServerPtr &server)
+void MainWindow::handle(ConnectionFailedEvent *event)
 {
-    ConnectionRecordPtr connection = server->connectionRecord();
+    ConnectionRecordPtr connection = event->server->connectionRecord();
     QString message = QString("Cannot connect to MongoDB (%1)").arg(connection->getFullAddress());
     QMessageBox::information(this, "Error", message);
 }

@@ -4,23 +4,35 @@
 #include "mongodb/MongoServer.h"
 #include "mongodb/MongoDatabase.h"
 #include "settings/ConnectionRecord.h"
+#include "AppRegistry.h"
+#include "Dispatcher.h"
 
 using namespace Robomongo;
 
 ExplorerServerTreeItem::ExplorerServerTreeItem(const MongoServerPtr &server) : QObject(),
-    _server(server)
+    _server(server),
+    _dispatcher(AppRegistry::instance().dispatcher())
+
 {
+    _dispatcher.subscribe(this, DatabaseListLoadedEvent::EventType, _server.get());
+
     setText(0, _server->connectionRecord()->getReadableName());
     setIcon(0, GuiRegistry::instance().serverIcon());
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-    connect(_server.get(), SIGNAL(databaseListLoaded(QList<MongoDatabasePtr>)), this, SLOT(databaseRefreshed(QList<MongoDatabasePtr>)));
-
-    //connect(_viewModel, SIGNAL(databasesRefreshed(QList<ExplorerDatabaseViewModel *>)), SLOT(databaseRefreshed(QList<ExplorerDatabaseViewModel *>)));
 }
 
 ExplorerServerTreeItem::~ExplorerServerTreeItem()
 {
     int z = 56;
+}
+
+bool ExplorerServerTreeItem::event(QEvent *event)
+{
+    R_HANDLE(event) {
+        R_EVENT(DatabaseListLoadedEvent);
+    }
+
+    return QObject::event(event);
 }
 
 void ExplorerServerTreeItem::expand()
@@ -72,4 +84,9 @@ void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabasePtr> &db
     //{
 
     //}
+}
+
+void ExplorerServerTreeItem::handle(DatabaseListLoadedEvent *event)
+{
+    databaseRefreshed(event->list);
 }

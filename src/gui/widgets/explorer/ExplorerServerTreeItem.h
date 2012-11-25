@@ -4,9 +4,12 @@
 #include <QTreeWidgetItem>
 #include <QObject>
 #include "Core.h"
+#include "events/MongoEvents.h"
 
 namespace Robomongo
 {
+    class Dispatcher;
+
     class ExplorerServerTreeItem : public QObject, public QTreeWidgetItem
     {
         Q_OBJECT
@@ -18,6 +21,8 @@ namespace Robomongo
         */
         ExplorerServerTreeItem(const MongoServerPtr &server);
         ~ExplorerServerTreeItem();
+
+        bool event(QEvent *event);
 
         /*
         ** Expand server tree item;
@@ -34,8 +39,12 @@ namespace Robomongo
 
 
     private:
+        void handle(DatabaseListLoadedEvent *event);
+
+    private:
 
         MongoServerPtr _server;
+        Dispatcher &_dispatcher;
 
     };
 }

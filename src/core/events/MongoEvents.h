@@ -169,6 +169,40 @@ namespace Robomongo
         MongoServerPtr server;
     };
 
+
+    class ConnectionFailedEvent : public QEvent
+    {
+        R_MESSAGE
+
+        ConnectionFailedEvent(const MongoServerPtr &server) :
+            QEvent(EventType),
+            server(server) { }
+
+        MongoServerPtr server;
+    };
+
+    class ConnectionEstablishedEvent : public QEvent
+    {
+        R_MESSAGE
+
+        ConnectionEstablishedEvent(const MongoServerPtr &server) :
+            QEvent(EventType),
+            server(server) { }
+
+        MongoServerPtr server;
+    };
+
+    class DatabaseListLoadedEvent : public QEvent
+    {
+        R_MESSAGE
+
+        DatabaseListLoadedEvent(const QList<MongoDatabasePtr> &list) :
+            QEvent(EventType),
+            list(list) { }
+
+        QList<MongoDatabasePtr> list;
+    };
+
 }
 
 #endif // MONGOEVENTS_H

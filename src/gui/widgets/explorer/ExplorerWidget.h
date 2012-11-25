@@ -31,13 +31,6 @@ namespace Robomongo
         /*
         ** Add server to tree view
         */
-        void addServer(MongoServerPtr server);
-
-        void onConnectionFailed(MongoServerPtr server);
-
-        /*
-        ** Add server to tree view
-        */
         void removeServer();
 
         /*
@@ -57,6 +50,8 @@ namespace Robomongo
 
     private:
         void handle(ConnectingEvent *event);
+        void handle(ConnectionEstablishedEvent *event);
+        void handle(ConnectionFailedEvent *event);
 
     private:
 

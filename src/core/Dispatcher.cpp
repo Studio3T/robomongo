@@ -5,37 +5,42 @@
 
 using namespace Robomongo;
 
-Dispatcher::Dispatcher()
+Dispatcher::Dispatcher() : QObject()
 {
 }
 
 void Dispatcher::publish(QObject *sender, QEvent *event)
 {
-    QList<QObject *> receivers = _receiversByEventType.values(event->type());
-    foreach(QObject *receiver, receivers)
+    QList<Subscriber *> subscribers = _subscribersByEventType.values(event->type());
+    foreach(Subscriber *subscriber, subscribers)
     {
-        QCoreApplication::sendEvent(receiver, event);
+        if (!subscriber->sender || subscriber->sender == sender)
+            QCoreApplication::sendEvent(subscriber->receiver, event);
     }
 
-    QMultiHash<QEvent::Type, QObject *> map = _receiversByEventTypeBySender.value(sender);
-    QList<QObject *> receivers2 = map.values(event->type());
-    foreach(QObject *receiver2, receivers2) {
-        QCoreApplication::sendEvent(receiver2, event);
-    }
+    delete event;
 }
 
 
-void Dispatcher::subscribe(QObject *receiver, QEvent::Type type, QObject *sender)
+void Dispatcher::subscribe(QObject *receiver, QEvent::Type type, QObject *sender /* = NULL */)
 {
-    if (!sender)
-    {
-        _receiversByEventType.insert(type, receiver);
-        return;
+    // subscribe to destroyed signal in order to remove
+    // listener (receiver) from list of subscribers
+    connect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(unsubscibe(QObject*)));
+
+    // add subscriber
+    _subscribersByEventType.insert(type, new Subscriber(receiver, sender));
+}
+
+void Dispatcher::unsubscibe(QObject *receiver)
+{
+    QMutableHashIterator<QEvent::Type, Subscriber *> i(_subscribersByEventType);
+
+    while(i.hasNext()) {
+        i.next();
+        if (i.value()->receiver == receiver) {
+            delete i.value();
+            i.remove();
+        }
     }
-
-    if (!_receiversByEventTypeBySender.contains(sender))
-        _receiversByEventTypeBySender.insert(sender, QMultiHash<QEvent::Type, QObject *>());
-
-    QMultiHash<QEvent::Type, QObject *> map = _receiversByEventTypeBySender.value(sender);
-    map.insert(type, receiver);
 }

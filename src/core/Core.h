@@ -44,5 +44,18 @@ namespace Robomongo
 
 }
 
+#define R_EVENT(EVENT_TYPE) \
+    if (__event->type() == EVENT_TYPE::EventType) \
+        handle(static_cast<EVENT_TYPE *>(__event));
+
+#define R_HANDLE(EVENT) \
+    QEvent *__event = static_cast<QEvent *>((EVENT)); \
+    if (false) ;
+
+#define R_MESSAGE \
+    public: \
+    const static QEvent::Type EventType; \
+    private:
+
 
 #endif // CORE_H

@@ -18,9 +18,9 @@ MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord) : QObject(
     _connection.reset(new mongo::DBClientConnection);
 
     _client.reset(new MongoClient(_address));
-    connect(_client.data(), SIGNAL(databaseNamesLoaded(QStringList)), this, SLOT(onDatabaseNameLoaded(QStringList)));
-    connect(_client.data(), SIGNAL(connectionEstablished(QString)), this, SLOT(onConnectionEstablished(QString)));
-    connect(_client.data(), SIGNAL(connectionFailed(QString)), this, SLOT(onConnectionFailed(QString)));
+//    connect(_client.data(), SIGNAL(databaseNamesLoaded(QStringList)), this, SLOT(onDatabaseNameLoaded(QStringList)));
+//    connect(_client.data(), SIGNAL(connectionEstablished(QString)), this, SLOT(onConnectionEstablished(QString)));
+//    connect(_client.data(), SIGNAL(connectionFailed(QString)), this, SLOT(onConnectionFailed(QString)));
 }
 
 MongoServer::~MongoServer()
@@ -34,7 +34,7 @@ MongoServer::~MongoServer()
  */
 void MongoServer::tryConnect()
 {
-    _client->establishConnection(this);
+    _client->send(new EstablishConnectionRequest(this));
 }
 
 /**
@@ -55,7 +55,7 @@ bool MongoServer::authenticate(const QString &database, const QString &username,
 
 void MongoServer::listDatabases()
 {
-    _client->loadDatabaseNames(this);
+    _client->send(new LoadDatabaseNamesRequest(this));
 }
 
 /**
@@ -63,19 +63,23 @@ void MongoServer::listDatabases()
  */
 bool MongoServer::event(QEvent * event)
 {
-    if (event->type() == DatabaseNamesLoaded::EventType)
-        handle(static_cast<DatabaseNamesLoaded *>(event));
-    else if (event->type() == ConnectionEstablished::EventType)
-        handle(static_cast<ConnectionEstablished *>(event));
-    else if (event->type() == ConnectionFailed::EventType)
-        handle(static_cast<ConnectionFailed *>(event));
+    R_HANDLE(event) {
+        R_EVENT(EstablishConnectionResponse);
+        R_EVENT(LoadDatabaseNamesResponse);
+    }
 }
 
-void MongoServer::handle(const DatabaseNamesLoaded *event)
+void MongoServer::handle(const LoadDatabaseNamesResponse *event)
 {
+    if (event->isError())
+    {
+        emit connectionFailed(shared_from_this(), _address);
+        return;
+    }
+
     QList<MongoDatabasePtr> list;
 
-    foreach(QString name, event->databaseNames())
+    foreach(QString name, event->databaseNames)
     {
         MongoDatabasePtr db(new MongoDatabase(this, name));
         list.append(db);
@@ -84,12 +88,13 @@ void MongoServer::handle(const DatabaseNamesLoaded *event)
     emit databaseListLoaded(list);
 }
 
-void MongoServer::handle(const ConnectionEstablished *event)
+void MongoServer::handle(const EstablishConnectionResponse *event)
 {
-    emit connectionEstablished(shared_from_this(), event->address());
-}
+    if (event->isError())
+    {
+        emit connectionFailed(shared_from_this(), event->address);
+        return;
+    }
 
-void MongoServer::handle(const ConnectionFailed *event)
-{
-    emit connectionFailed(shared_from_this(), event->address());
+    emit connectionEstablished(shared_from_this(), event->address);
 }

@@ -58,10 +58,8 @@ namespace Robomongo
         void connectionFailed(const MongoServerPtr &server, const QString &address);
 
     private:
-
-        void handle(const DatabaseNamesLoaded *event);
-        void handle(const ConnectionEstablished *event);
-        void handle(const ConnectionFailed *event);
+        void handle(const EstablishConnectionResponse *event);
+        void handle(const LoadDatabaseNamesResponse *event);
 
     private:
 

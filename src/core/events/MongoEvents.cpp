@@ -2,7 +2,13 @@
 
 using namespace Robomongo;
 
-const QEvent::Type CollectionNamesLoaded::EventType = static_cast<QEvent::Type>(QEvent::registerEventType());
-const QEvent::Type DatabaseNamesLoaded::EventType = static_cast<QEvent::Type>(QEvent::registerEventType());
-const QEvent::Type ConnectionEstablished::EventType = static_cast<QEvent::Type>(QEvent::registerEventType());
-const QEvent::Type ConnectionFailed::EventType = static_cast<QEvent::Type>(QEvent::registerEventType());
+#define R_REGISTER_EVENT_TYPE(EVENT_TYPE) \
+    const QEvent::Type EVENT_TYPE::EventType = static_cast<QEvent::Type>(QEvent::registerEventType())
+
+R_REGISTER_EVENT_TYPE(EstablishConnectionRequest);
+R_REGISTER_EVENT_TYPE(EstablishConnectionResponse);
+R_REGISTER_EVENT_TYPE(LoadDatabaseNamesRequest);
+R_REGISTER_EVENT_TYPE(LoadDatabaseNamesResponse);
+R_REGISTER_EVENT_TYPE(LoadCollectionNamesRequest);
+R_REGISTER_EVENT_TYPE(LoadCollectionNamesResponse);
+

@@ -1,5 +1,6 @@
 #include "LogWidget.h"
 #include "MainWindow.h"
+#include "Dispatcher.h"
 #include "AppRegistry.h"
 #include "mongodb/MongoServer.h"
 
@@ -24,6 +25,17 @@ LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
     hlayout->addWidget(_logTextEdit);
 
     setLayout(hlayout);
+
+    AppRegistry::instance().dispatcher().subscribe(this, SomethingHappened::EventType);
+}
+
+bool LogWidget::event(QEvent * event)
+{
+    R_HANDLE(event) {
+        R_EVENT(SomethingHappened);
+    }
+
+    QObject::event(event);
 }
 
 void LogWidget::vm_queryExecuted(const QString &query, const QString &result)
@@ -39,6 +51,14 @@ void LogWidget::vm_queryExecuted(const QString &query, const QString &result)
 void LogWidget::onConnecting(const MongoServerPtr &record)
 {
     _logTextEdit->appendPlainText(QString("Connecting to %1...").arg(record->connectionRecord()->getFullAddress()));
+
+    QScrollBar *sb = _logTextEdit->verticalScrollBar();
+    sb->setValue(sb->maximum());
+}
+
+void LogWidget::handle(const SomethingHappened *event)
+{
+    _logTextEdit->appendPlainText(event->something);
 
     QScrollBar *sb = _logTextEdit->verticalScrollBar();
     sb->setValue(sb->maximum());

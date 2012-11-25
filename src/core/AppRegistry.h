@@ -22,6 +22,7 @@ namespace Robomongo
 
         SettingsManager &settingsManager() const { return *_settingsManager.get(); }
         MongoManager &mongoManager() const { return *_mongoManager.get(); }
+        Dispatcher &dispatcher() const { return *_dispatcher.get(); }
 
     private:
         AppRegistry();
@@ -29,6 +30,7 @@ namespace Robomongo
 
         SettingsManager_ScopedPtr _settingsManager;
         MongoManagerScopedPtr _mongoManager;
+        DispatcherScopedPtr _dispatcher;
 
         /**
          * Singleton support

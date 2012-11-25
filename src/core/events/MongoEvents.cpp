@@ -11,4 +11,5 @@ R_REGISTER_EVENT_TYPE(LoadDatabaseNamesRequest);
 R_REGISTER_EVENT_TYPE(LoadDatabaseNamesResponse);
 R_REGISTER_EVENT_TYPE(LoadCollectionNamesRequest);
 R_REGISTER_EVENT_TYPE(LoadCollectionNamesResponse);
+R_REGISTER_EVENT_TYPE(SomethingHappened);
 

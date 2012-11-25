@@ -146,6 +146,17 @@ namespace Robomongo
         QString databaseName;
         QStringList collectionNames;
     };
+
+    class SomethingHappened : public QEvent
+    {
+        R_MESSAGE
+
+        SomethingHappened(const QString &something) :
+            QEvent(EventType),
+            something(something) { }
+
+        QString something;
+    };
 }
 
 #endif // MONGOEVENTS_H

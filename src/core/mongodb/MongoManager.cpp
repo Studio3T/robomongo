@@ -2,6 +2,8 @@
 #include "MongoManager.h"
 #include "MongoServer.h"
 #include "MongoException.h"
+#include "AppRegistry.h"
+#include "Dispatcher.h"
 #include "mongo/client/dbclient.h"
 #include "settings/ConnectionRecord.h"
 
@@ -33,6 +35,7 @@ void MongoManager::connectToServer(const ConnectionRecordPtr &connectionRecord)
 
 void MongoManager::onConnectionEstablished(const MongoServerPtr &server, const QString &address)
 {
+    AppRegistry::instance().dispatcher().publish(this, new SomethingHappened("Ebati!!!"));
     emit connected(server);
 }
 

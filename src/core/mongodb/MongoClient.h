@@ -28,7 +28,7 @@ namespace Robomongo
          */
         virtual bool event(QEvent *event);
 
-    private:
+    private: // handlers:
 
         /**
          * @brief Initiate connection to MongoDB
@@ -55,7 +55,7 @@ namespace Robomongo
         /**
          * @brief Send reply event to object 'obj'
          */
-        void reply(QObject *obj, QEvent *event);
+        void reply(QObject *receiver, QEvent *event);
 
         QString _address;
         QThread *_thread;

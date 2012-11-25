@@ -13,6 +13,9 @@
 
 namespace Robomongo
 {
+    /**
+     * @brief Error class
+     */
     class Error
     {
     public:
@@ -27,6 +30,7 @@ namespace Robomongo
         bool isNull;
     };
 
+
     /**
      * @brief Request & Response
      */
@@ -36,11 +40,9 @@ namespace Robomongo
     public:
         Request(QEvent::Type type, QObject *sender) :
             QEvent(type),
-            _sender(sender) {}
+            sender(sender) {}
 
-        QObject *sender() const { return _sender; }
-    protected:
-        QObject *_sender;
+        QObject *sender;
     };
 
     class Response : public QEvent
@@ -58,6 +60,7 @@ namespace Robomongo
 
         Error error;
     };
+
 
     /**
      * @brief EstablishConnection
@@ -85,6 +88,7 @@ namespace Robomongo
         QString address;
     };
 
+
     /**
      * @brief LoadDatabaseNames
      */
@@ -110,6 +114,7 @@ namespace Robomongo
 
         QStringList databaseNames;
     };
+
 
     /**
      * @brief LoadCollectionNames
@@ -141,10 +146,6 @@ namespace Robomongo
         QString databaseName;
         QStringList collectionNames;
     };
-
-
 }
-
-
 
 #endif // MONGOEVENTS_H

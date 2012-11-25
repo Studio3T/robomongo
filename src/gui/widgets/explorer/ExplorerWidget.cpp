@@ -9,6 +9,7 @@
 #include "ExplorerTreeWidget.h"
 #include "ExplorerServerTreeItem.h"
 #include "mongodb/MongoManager.h"
+#include "Dispatcher.h"
 
 using namespace Robomongo;
 
@@ -16,11 +17,12 @@ using namespace Robomongo;
  * Constructs ExplorerWidget
  */
 ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
-    _mongoManager(AppRegistry::instance().mongoManager()), _progress(0)
+    _mongoManager(AppRegistry::instance().mongoManager()),
+    _progress(0),
+    _dispatcher(AppRegistry::instance().dispatcher())
 {
     //connect(_viewModel, SIGNAL(serverAdded(ExplorerServerViewModel *)), this, SLOT(addServer(ExplorerServerViewModel *)));
     connect(&_mongoManager, SIGNAL(connected(MongoServerPtr)), this, SLOT(addServer(MongoServerPtr)));
-    connect(&_mongoManager, SIGNAL(connecting(MongoServerPtr)), this, SLOT(onConnecting(MongoServerPtr)));
     connect(&_mongoManager, SIGNAL(connectionFailed(MongoServerPtr)), this, SLOT(onConnectionFailed(MongoServerPtr)));
 
 
@@ -46,6 +48,17 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     _progressLabel->setMovie(movie);
     _progressLabel->hide();
     movie->start();
+
+    _dispatcher.subscribe(this, ConnectingEvent::EventType);
+}
+
+bool ExplorerWidget::event(QEvent *event)
+{
+    R_HANDLE(event) {
+        R_EVENT(ConnectingEvent)
+    }
+
+    QObject::event(event);
 }
 
 void ExplorerWidget::ui_disonnectActionTriggered()
@@ -109,7 +122,7 @@ void ExplorerWidget::addServer(MongoServerPtr server)
 //    _treeWidget->setItemWidget(item, 0, yourLabel);
 }
 
-void ExplorerWidget::onConnecting(MongoServerPtr server)
+void ExplorerWidget::handle(ConnectingEvent *event)
 {
     increaseProgress();
 }

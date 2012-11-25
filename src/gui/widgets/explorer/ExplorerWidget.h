@@ -5,6 +5,7 @@
 #include <QWidget>
 #include "Core.h"
 #include <QLabel>
+#include "events/MongoEvents.h"
 
 namespace Robomongo
 {
@@ -23,14 +24,14 @@ namespace Robomongo
         */
         ExplorerWidget(QWidget *parent);
 
+        bool event(QEvent *event);
+
     public slots:
 
         /*
         ** Add server to tree view
         */
         void addServer(MongoServerPtr server);
-
-        void onConnecting(MongoServerPtr server);
 
         void onConnectionFailed(MongoServerPtr server);
 
@@ -55,6 +56,9 @@ namespace Robomongo
         void ui_disonnectActionTriggered();
 
     private:
+        void handle(ConnectingEvent *event);
+
+    private:
 
         int _progress;
         void increaseProgress();
@@ -70,6 +74,8 @@ namespace Robomongo
          * @brief MongoManager
          */
         MongoManager &_mongoManager;
+
+        Dispatcher &_dispatcher;
     };
 }
 

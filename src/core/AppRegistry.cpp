@@ -7,9 +7,9 @@ using namespace Robomongo;
 
 AppRegistry::AppRegistry()
 {
-    _settingsManager.reset(new SettingsManager());
-    _mongoManager.reset(new MongoManager());
     _dispatcher.reset(new Dispatcher());
+    _settingsManager.reset(new SettingsManager());
+    _mongoManager.reset(new MongoManager(_dispatcher.get()));
 }
 
 AppRegistry::~AppRegistry()

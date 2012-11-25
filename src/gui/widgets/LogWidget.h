@@ -34,6 +34,7 @@ namespace Robomongo
          * @brief MongoManager
          */
         MongoManager &_mongoManager;
+        Dispatcher &_dispatcher;
 
     public:
 
@@ -45,14 +46,11 @@ namespace Robomongo
         bool event(QEvent *event);
 
     public slots:
-
-        void vm_queryExecuted(const QString &query, const QString &result);
-
-        void onConnecting(const MongoServerPtr &record);
+        void addMessage(const QString &message);
 
     private:
-
         void handle(const SomethingHappened *event);
+        void handle(const ConnectingEvent *event);
     };
 
 }

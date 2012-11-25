@@ -13,8 +13,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        MongoManager(QObject *parent = 0);
-        ~MongoManager();
+        MongoManager(Dispatcher *dispatcher, QObject *parent = 0);
 
     public slots:
         /**
@@ -23,8 +22,6 @@ namespace Robomongo
         void connectToServer(const ConnectionRecordPtr &connectionRecord);
 
     signals:
-
-        void connecting(const MongoServerPtr &server);
 
         /**
          * @brief Fires when connected
@@ -44,6 +41,7 @@ namespace Robomongo
 
     private:
         QList<MongoServerPtr> _servers;
+        Dispatcher *_dispatcher;
     };
 }
 

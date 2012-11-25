@@ -10,10 +10,9 @@ using namespace Robomongo;
 ** Constructs log widget panel for main window
 */
 LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
-    _mongoManager(AppRegistry::instance().mongoManager())
+    _mongoManager(AppRegistry::instance().mongoManager()),
+    _dispatcher(AppRegistry::instance().dispatcher())
 {
-    connect(&_mongoManager, SIGNAL(connecting(MongoServerPtr)), this, SLOT(onConnecting(MongoServerPtr)));
-
     _mainWindow = mainWindow;
 
     _logTextEdit = new QPlainTextEdit;
@@ -26,31 +25,23 @@ LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
 
     setLayout(hlayout);
 
-    AppRegistry::instance().dispatcher().subscribe(this, SomethingHappened::EventType, &_mongoManager);
+    _dispatcher.subscribe(this, SomethingHappened::EventType, &_mongoManager);
+    _dispatcher.subscribe(this, ConnectingEvent::EventType);
 }
 
 bool LogWidget::event(QEvent * event)
 {
     R_HANDLE(event) {
         R_EVENT(SomethingHappened);
+        R_EVENT(ConnectingEvent);
     }
 
     QObject::event(event);
 }
 
-void LogWidget::vm_queryExecuted(const QString &query, const QString &result)
+void LogWidget::addMessage(const QString &message)
 {
-//    _logTextEdit->append(query);
-//    _logTextEdit->append(result);
-
-    // Scroll to bottom
-    QScrollBar *sb = _logTextEdit->verticalScrollBar();
-    sb->setValue(sb->maximum());
-}
-
-void LogWidget::onConnecting(const MongoServerPtr &record)
-{
-    _logTextEdit->appendPlainText(QString("Connecting to %1...").arg(record->connectionRecord()->getFullAddress()));
+    _logTextEdit->appendPlainText(message);
 
     QScrollBar *sb = _logTextEdit->verticalScrollBar();
     sb->setValue(sb->maximum());
@@ -58,8 +49,10 @@ void LogWidget::onConnecting(const MongoServerPtr &record)
 
 void LogWidget::handle(const SomethingHappened *event)
 {
-    _logTextEdit->appendPlainText(event->something);
+    addMessage(event->something);
+}
 
-    QScrollBar *sb = _logTextEdit->verticalScrollBar();
-    sb->setValue(sb->maximum());
+void LogWidget::handle(const ConnectingEvent *event)
+{
+    addMessage(QString("Connecting to %1...").arg(event->server->connectionRecord()->getFullAddress()));
 }

@@ -157,6 +157,18 @@ namespace Robomongo
 
         QString something;
     };
+
+    class ConnectingEvent : public QEvent
+    {
+        R_MESSAGE
+
+        ConnectingEvent(const MongoServerPtr &server) :
+            QEvent(EventType),
+            server(server) { }
+
+        MongoServerPtr server;
+    };
+
 }
 
 #endif // MONGOEVENTS_H

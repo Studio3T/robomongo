@@ -21,7 +21,6 @@ void Dispatcher::publish(QObject *sender, QEvent *event)
     delete event;
 }
 
-
 void Dispatcher::subscribe(QObject *receiver, QEvent::Type type, QObject *sender /* = NULL */)
 {
     // subscribe to destroyed signal in order to remove

@@ -9,14 +9,9 @@
 
 using namespace Robomongo;
 
-MongoManager::MongoManager(QObject *parent) : QObject(parent)
-{
-}
-
-MongoManager::~MongoManager()
-{
-
-}
+MongoManager::MongoManager(Dispatcher *dispatcher, QObject *parent) :
+    QObject(parent),
+    _dispatcher(dispatcher) {}
 
 /**
  * @brief Connect to MongoDB server
@@ -28,7 +23,7 @@ void MongoManager::connectToServer(const ConnectionRecordPtr &connectionRecord)
     connect(server.get(), SIGNAL(connectionFailed(MongoServerPtr, QString)), this, SLOT(onConnectionFailed(MongoServerPtr, QString)));
     _servers.append(server);
 
-    emit connecting(server);
+    _dispatcher->publish(this, new ConnectingEvent(server));
     server->tryConnect();
 }
 

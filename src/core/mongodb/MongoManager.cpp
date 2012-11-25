@@ -21,7 +21,6 @@ MongoManager::~MongoManager()
  */
 void MongoManager::connectToServer(const ConnectionRecordPtr &connectionRecord)
 {
-    QUuid uid = QUuid::createUuid();
     MongoServerPtr server(new MongoServer(connectionRecord));
     connect(server.get(), SIGNAL(connectionEstablished(MongoServerPtr, QString)), this, SLOT(onConnectionEstablished(MongoServerPtr, QString)));
     connect(server.get(), SIGNAL(connectionFailed(MongoServerPtr, QString)), this, SLOT(onConnectionFailed(MongoServerPtr, QString)));

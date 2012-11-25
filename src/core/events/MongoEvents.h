@@ -4,62 +4,144 @@
 #include <QString>
 #include <QStringList>
 #include <QEvent>
+#include "Core.h"
+
+#define R_MESSAGE \
+    public: \
+        const static QEvent::Type EventType;
+
 
 namespace Robomongo
 {
-    class CollectionNamesLoaded : public QEvent
+    class Error
     {
     public:
-        const static QEvent::Type EventType;
-        CollectionNamesLoaded(const QString &databaseName, const QStringList &collectionNames)
-            : _databaseName(databaseName), _collectionNames(collectionNames), QEvent(EventType) { }
+        Error() :
+            isNull(true) {}
 
-        QString databaseName() const { return _databaseName; }
-        QStringList collectionNames() const { return _collectionNames; }
+        Error(const QString &errorMessage) :
+            isNull(false),
+            errorMessage(errorMessage) {}
 
-    private:
-        QString _databaseName;
-        QStringList _collectionNames;
+        QString errorMessage;
+        bool isNull;
     };
 
-    class DatabaseNamesLoaded : public QEvent
+    /**
+     * @brief Request & Response
+     */
+
+    class Request : public QEvent
     {
     public:
-        const static QEvent::Type EventType;
-        DatabaseNamesLoaded(const QStringList &databaseNames)
-            : _databaseNames(databaseNames), QEvent(EventType) { }
+        Request(QEvent::Type type, QObject *sender) :
+            QEvent(type),
+            _sender(sender) {}
 
-        QStringList databaseNames() const { return _databaseNames; }
-
-    private:
-        QStringList _databaseNames;
+        QObject *sender() const { return _sender; }
+    protected:
+        QObject *_sender;
     };
 
-    class ConnectionEstablished : public QEvent
+    class Response : public QEvent
     {
     public:
-        const static QEvent::Type EventType;
-        ConnectionEstablished(const QString &address)
-            : _address(address), QEvent(EventType) { }
+        Response(QEvent::Type type) :
+            QEvent(type) {}
 
-        QString address() const { return _address; }
+        Response(QEvent::Type type, Error error) :
+            QEvent(type),
+            error(error) {}
 
-    private:
-        QString _address;
+        bool isError() const { return !error.isNull; }
+        QString errorMessage() const { return error.errorMessage; }
+
+        Error error;
     };
 
-    class ConnectionFailed : public QEvent
+    /**
+     * @brief EstablishConnection
+     */
+
+    class EstablishConnectionRequest : public Request
     {
-    public:
-        const static QEvent::Type EventType;
-        ConnectionFailed(const QString &address)
-            : _address(address), QEvent(EventType) { }
+        R_MESSAGE
 
-        QString address() const { return _address; }
-
-    private:
-        QString _address;
+        EstablishConnectionRequest(QObject *sender) :
+            Request(EventType, sender) {}
     };
+
+    class EstablishConnectionResponse : public Response
+    {
+        R_MESSAGE
+
+        EstablishConnectionResponse(const QString &address) :
+            Response(EventType),
+            address(address) {}
+
+        EstablishConnectionResponse(const Error &error) :
+            Response(EventType, error) {}
+
+        QString address;
+    };
+
+    /**
+     * @brief LoadDatabaseNames
+     */
+
+    class LoadDatabaseNamesRequest : public Request
+    {
+        R_MESSAGE
+
+        LoadDatabaseNamesRequest(QObject *sender) :
+            Request(EventType, sender) {}
+    };
+
+    class LoadDatabaseNamesResponse : public Response
+    {
+        R_MESSAGE
+
+        LoadDatabaseNamesResponse(const QStringList &databaseNames) :
+            Response(EventType),
+            databaseNames(databaseNames) {}
+
+        LoadDatabaseNamesResponse(const Error &error) :
+            Response(EventType, error) {}
+
+        QStringList databaseNames;
+    };
+
+    /**
+     * @brief LoadCollectionNames
+     */
+
+    class LoadCollectionNamesRequest : public Request
+    {
+        R_MESSAGE
+
+        LoadCollectionNamesRequest(QObject *sender, const QString &databaseName) :
+            Request(EventType, sender),
+            databaseName(databaseName) {}
+
+        QString databaseName;
+    };
+
+    class LoadCollectionNamesResponse : public Response
+    {
+        R_MESSAGE
+
+        LoadCollectionNamesResponse(const QString &databaseName, const QStringList &collectionNames) :
+            Response(EventType),
+            databaseName(databaseName),
+            collectionNames(collectionNames) { }
+
+        LoadCollectionNamesResponse(const Error &error) :
+            Response(EventType, error) {}
+
+        QString databaseName;
+        QStringList collectionNames;
+    };
+
 
 }
 

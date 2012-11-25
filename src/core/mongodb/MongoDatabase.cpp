@@ -24,7 +24,7 @@ MongoDatabase::~MongoDatabase()
 
 void MongoDatabase::listCollections()
 {
-    _client->loadCollectionNames(this, _name);
+    _client->send(new LoadCollectionNamesRequest(this, _name));
 }
 
 /**
@@ -32,15 +32,16 @@ void MongoDatabase::listCollections()
  */
 bool MongoDatabase::event(QEvent *event)
 {
-    if (CollectionNamesLoaded::EventType == event->type())
-        handle(static_cast<CollectionNamesLoaded *>(event));
+    R_HANDLE(event) {
+        R_EVENT(LoadCollectionNamesResponse);
+    }
 }
 
-void MongoDatabase::handle(const CollectionNamesLoaded *loaded)
+void MongoDatabase::handle(const LoadCollectionNamesResponse *loaded)
 {
     QList<MongoCollectionPtr> list;
 
-    foreach(QString name, loaded->collectionNames())    {
+    foreach(QString name, loaded->collectionNames)    {
         MongoCollectionPtr db(new MongoCollection(this, name));
         list.append(db);
     }

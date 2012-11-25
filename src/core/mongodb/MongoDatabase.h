@@ -46,7 +46,7 @@ namespace Robomongo
 
     private:
 
-        void handle(const CollectionNamesLoaded *collectionNames);
+        void handle(const LoadCollectionNamesResponse *collectionNames);
 
         MongoServer *_server;
         MongoClient *_client;

@@ -5,6 +5,7 @@
 #include <QMutex>
 #include <QEvent>
 #include <QStringList>
+#include "events/MongoEvents.h"
 
 namespace Robomongo
 {
@@ -17,32 +18,44 @@ namespace Robomongo
 
         ~MongoClient();
 
-        void establishConnection(QObject *sender);
+        /**
+         * @brief Send event to this MongoClient
+         */
+        void send(QEvent *event);
+
+        /**
+         * @brief Events dispatcher
+         */
+        virtual bool event(QEvent *event);
+
+    private:
+
+        /**
+         * @brief Initiate connection to MongoDB
+         */
+        void handle(EstablishConnectionRequest *event);
 
         /**
          * @brief Load list of all database names
          */
-        void loadDatabaseNames(QObject *sender);
+        void handle(LoadDatabaseNamesRequest *event);
 
         /**
          * @brief Load list of all collection names
          */
-        void loadCollectionNames(QObject *sender, const QString &databaseName);
-
-    private slots:
-        void _establishConnection(QObject *sender);
-        void _loadDatabaseNames(QObject *sender);
-        void _loadCollectionNames(QObject *sender, const QString &databaseName);
+        void handle(LoadCollectionNamesRequest *event);
 
     private:
 
+        /**
+         * @brief Initialise MongoClient
+         */
         void init();
 
+        /**
+         * @brief Send reply event to object 'obj'
+         */
         void reply(QObject *obj, QEvent *event);
-        void invoke(char *methodName, QGenericArgument arg1 = QGenericArgument(), QGenericArgument arg2 = QGenericArgument(),
-                                      QGenericArgument arg3 = QGenericArgument(), QGenericArgument arg4 = QGenericArgument(),
-                                      QGenericArgument arg5 = QGenericArgument());
-
 
         QString _address;
         QThread *_thread;

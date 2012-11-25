@@ -203,6 +203,17 @@ namespace Robomongo
         QList<MongoDatabasePtr> list;
     };
 
+    class CollectionListLoadedEvent : public QEvent
+    {
+        R_MESSAGE
+
+        CollectionListLoadedEvent(const QList<MongoCollectionPtr> &list) :
+            QEvent(EventType),
+            list(list) { }
+
+        QList<MongoCollectionPtr> list;
+    };
+
 }
 
 #endif // MONGOEVENTS_H

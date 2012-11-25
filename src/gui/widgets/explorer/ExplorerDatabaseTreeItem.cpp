@@ -4,6 +4,9 @@
 #include "ExplorerDatabaseCategoryTreeItem.h"
 #include "mongodb/MongoDatabase.h"
 #include "mongodb/MongoCollection.h"
+#include "AppRegistry.h"
+#include "Dispatcher.h"
+#include "Core.h"
 
 using namespace Robomongo;
 
@@ -11,19 +14,16 @@ using namespace Robomongo;
 ** Constructs DatabaseTreeItem
 */
 ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(const MongoDatabasePtr &database) : QObject(),
-    _database(database)
+    _database(database),
+    _dispatcher(AppRegistry::instance().dispatcher())
 {
-    //_viewModel = viewModel;
+    _dispatcher.subscribe(this, CollectionListLoadedEvent::EventType, _database.get());
 
     setText(0, _database->name());
     setIcon(0, GuiRegistry::instance().databaseIcon());
 	setExpanded(true);
 
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-
-//	connect(_viewModel, SIGNAL(collectionsRefreshed()), SLOT(vm_collectionRefreshed()));
-    connect(_database.get(), SIGNAL(collectionListLoaded(QList<MongoCollectionPtr>)), this, SLOT(vm_collectionRefreshed(QList<MongoCollectionPtr>)));
-
 
     QIcon icon = GuiRegistry::instance().folderIcon();
 
@@ -70,6 +70,15 @@ void ExplorerDatabaseTreeItem::expandCollections()
     //_viewModel->expandCollections();
 }
 
+bool ExplorerDatabaseTreeItem::event(QEvent *event)
+{
+    R_HANDLE(event) {
+        R_EVENT(CollectionListLoadedEvent);
+    }
+
+    return QObject::event(event);
+}
+
 void ExplorerDatabaseTreeItem::vm_collectionRefreshed(const QList<MongoCollectionPtr> &collections)
 {
 	// remove child items
@@ -103,4 +112,9 @@ void ExplorerDatabaseTreeItem::vm_collectionRefreshed(const QList<MongoCollectio
 		ExplorerCollectionTreeItem * collectionItem = new ExplorerCollectionTreeItem(collection);
 		_collectionItem->addChild(collectionItem);
     }
+}
+
+void ExplorerDatabaseTreeItem::handle(CollectionListLoadedEvent *event)
+{
+    vm_collectionRefreshed(event->list);
 }

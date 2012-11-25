@@ -11,6 +11,8 @@
 
 namespace Robomongo
 {
+    class Dispatcher;
+
     class MongoDatabase : public QObject, public boost::enable_shared_from_this<MongoDatabase>
     {
         Q_OBJECT
@@ -52,6 +54,8 @@ namespace Robomongo
         MongoClient *_client;
         QString _name;
         bool _system;
+
+        Dispatcher &_dispatcher;
 
     };
 

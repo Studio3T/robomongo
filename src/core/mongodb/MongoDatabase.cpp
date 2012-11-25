@@ -2,11 +2,14 @@
 #include "MongoServer.h"
 #include "MongoCollection.h"
 #include "events/MongoEvents.h"
+#include "AppRegistry.h"
+#include "Dispatcher.h"
 
 using namespace Robomongo;
 
 MongoDatabase::MongoDatabase(MongoServer *server, const QString &name) : QObject(),
-    _system(false)
+    _system(false),
+    _dispatcher(AppRegistry::instance().dispatcher())
 {
     _server = server;
     _name = name;
@@ -46,5 +49,5 @@ void MongoDatabase::handle(const LoadCollectionNamesResponse *loaded)
         list.append(db);
     }
 
-    emit collectionListLoaded(list);
+    _dispatcher.publish(this, new CollectionListLoadedEvent(list));
 }

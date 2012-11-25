@@ -12,7 +12,6 @@ using namespace Robomongo;
 ExplorerServerTreeItem::ExplorerServerTreeItem(const MongoServerPtr &server) : QObject(),
     _server(server),
     _dispatcher(AppRegistry::instance().dispatcher())
-
 {
     _dispatcher.subscribe(this, DatabaseListLoadedEvent::EventType, _server.get());
 

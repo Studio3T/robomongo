@@ -26,7 +26,7 @@ LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
 
     setLayout(hlayout);
 
-    AppRegistry::instance().dispatcher().subscribe(this, SomethingHappened::EventType);
+    AppRegistry::instance().dispatcher().subscribe(this, SomethingHappened::EventType, &_mongoManager);
 }
 
 bool LogWidget::event(QEvent * event)

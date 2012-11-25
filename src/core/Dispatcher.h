@@ -6,8 +6,21 @@
 
 namespace Robomongo
 {
-    class Dispatcher
+    class Subscriber
     {
+    public:
+        explicit Subscriber(QObject *receiver, QObject *sender = NULL) :
+            receiver(receiver),
+            sender(sender) {}
+
+        QObject *receiver;
+        QObject *sender;
+    };
+
+    class Dispatcher : QObject
+    {
+        Q_OBJECT
+
     public:
         Dispatcher();
 
@@ -22,12 +35,13 @@ namespace Robomongo
          */
         void subscribe(QObject *receiver, QEvent::Type type, QObject *sender = NULL);
 
+    public slots:
+
+        void unsubscibe(QObject *receiver);
+
     private:
 
-        QMultiHash<QEvent::Type, QObject *> _receiversByEventType;
-
-        QHash<QObject *,
-            QMultiHash<QEvent::Type, QObject *> > _receiversByEventTypeBySender;
+        QMultiHash<QEvent::Type, Subscriber *> _subscribersByEventType;
     };
 }
 

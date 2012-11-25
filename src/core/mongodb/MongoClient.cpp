@@ -44,6 +44,20 @@ void MongoClient::init()
 }
 
 /**
+ * @brief Events dispatcher
+ */
+bool MongoClient::event(QEvent *event)
+{
+    R_HANDLE(event) {
+        R_EVENT(EstablishConnectionRequest);
+        R_EVENT(LoadDatabaseNamesRequest);
+        R_EVENT(LoadCollectionNamesRequest);
+    }
+
+    QObject::event(event);
+}
+
+/**
  * @brief Initiate connection to MongoDB
  */
 void MongoClient::handle(EstablishConnectionRequest *event)
@@ -55,11 +69,11 @@ void MongoClient::handle(EstablishConnectionRequest *event)
         boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
         conn->done();
 
-        reply(event->sender(), new EstablishConnectionResponse(_address));
+        reply(event->sender, new EstablishConnectionResponse(_address));
     }
     catch(DBException &ex)
     {
-        reply(event->sender(), new EstablishConnectionResponse(Error("Unable to connect to MongoDB")));
+        reply(event->sender, new EstablishConnectionResponse(Error("Unable to connect to MongoDB")));
     }
 }
 
@@ -79,11 +93,11 @@ void MongoClient::handle(LoadDatabaseNamesRequest *event)
             stringList.append(QString::fromStdString(*i));
         }
 
-        reply(event->sender(), new LoadDatabaseNamesResponse(stringList));
+        reply(event->sender, new LoadDatabaseNamesResponse(stringList));
     }
     catch(DBException &ex)
     {
-        reply(event->sender(), new LoadDatabaseNamesResponse(Error("Unable to load database names.")));
+        reply(event->sender, new LoadDatabaseNamesResponse(Error("Unable to load database names.")));
     }
 }
 
@@ -103,26 +117,12 @@ void MongoClient::handle(LoadCollectionNamesRequest *event)
             stringList.append(QString::fromStdString(*i));
         }
 
-        reply(event->sender(), new LoadCollectionNamesResponse(event->databaseName, stringList));
+        reply(event->sender, new LoadCollectionNamesResponse(event->databaseName, stringList));
     }
     catch(DBException &ex)
     {
-        reply(event->sender(), new LoadCollectionNamesResponse(Error("Unable to load list of collections.")));
+        reply(event->sender, new LoadCollectionNamesResponse(Error("Unable to load list of collections.")));
     }
-}
-
-/**
- * @brief Events dispatcher
- */
-bool MongoClient::event(QEvent *event)
-{
-    R_HANDLE(event) {
-        R_EVENT(EstablishConnectionRequest);
-        R_EVENT(LoadDatabaseNamesRequest);
-        R_EVENT(LoadCollectionNamesRequest);
-    }
-
-    QObject::event(event);
 }
 
 /**
@@ -134,9 +134,9 @@ void MongoClient::send(QEvent *event)
 }
 
 /**
- * @brief Send reply event to object 'obj'
+ * @brief Send reply event to object 'receiver'
  */
-void MongoClient::reply(QObject *obj, QEvent *event)
+void MongoClient::reply(QObject *receiver, QEvent *event)
 {
-    QCoreApplication::postEvent(obj, event);
+    QCoreApplication::postEvent(receiver, event);
 }

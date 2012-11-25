@@ -23,22 +23,6 @@ namespace Robomongo
 
     signals:
 
-        /**
-         * @brief Fires when connected
-         */
-        void connected(const MongoServerPtr &server);
-
-        void connectionFailed(const MongoServerPtr &server);
-
-        /**
-         * @brief Fires when disconnected
-         */
-        void disconnected(const MongoServerPtr &server);
-
-    private slots:
-        void onConnectionEstablished(const MongoServerPtr &server, const QString &address);
-        void onConnectionFailed(const MongoServerPtr &server, const QString &address);
-
     private:
         QList<MongoServerPtr> _servers;
         Dispatcher *_dispatcher;

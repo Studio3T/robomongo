@@ -21,15 +21,9 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     _progress(0),
     _dispatcher(AppRegistry::instance().dispatcher())
 {
-    //connect(_viewModel, SIGNAL(serverAdded(ExplorerServerViewModel *)), this, SLOT(addServer(ExplorerServerViewModel *)));
-    connect(&_mongoManager, SIGNAL(connected(MongoServerPtr)), this, SLOT(addServer(MongoServerPtr)));
-    connect(&_mongoManager, SIGNAL(connectionFailed(MongoServerPtr)), this, SLOT(onConnectionFailed(MongoServerPtr)));
-
-
     _treeWidget = new ExplorerTreeWidget;
     _treeWidget->setIndentation(15);    
     _treeWidget->setHeaderHidden(true);
-
 
     QHBoxLayout *vlaout = new QHBoxLayout();
     vlaout->setMargin(0);
@@ -50,15 +44,19 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     movie->start();
 
     _dispatcher.subscribe(this, ConnectingEvent::EventType);
+    _dispatcher.subscribe(this, ConnectionFailedEvent::EventType);
+    _dispatcher.subscribe(this, ConnectionEstablishedEvent::EventType);
 }
 
 bool ExplorerWidget::event(QEvent *event)
 {
     R_HANDLE(event) {
-        R_EVENT(ConnectingEvent)
+        R_EVENT(ConnectingEvent);
+        R_EVENT(ConnectionFailedEvent);
+        R_EVENT(ConnectionEstablishedEvent);
     }
 
-    QObject::event(event);
+    return QWidget::event(event);
 }
 
 void ExplorerWidget::ui_disonnectActionTriggered()
@@ -109,25 +107,22 @@ void ExplorerWidget::ui_customContextMenuRequested(QPoint p)
     int a = p.rx();
 }
 
-/*
-** Add server to tree view
-*/
-void ExplorerWidget::addServer(MongoServerPtr server)
-{
-    decreaseProgress();
-
-    QTreeWidgetItem *item = new ExplorerServerTreeItem(server);
-    _treeWidget->addTopLevelItem(item);
-
-//    _treeWidget->setItemWidget(item, 0, yourLabel);
-}
-
 void ExplorerWidget::handle(ConnectingEvent *event)
 {
     increaseProgress();
 }
 
-void ExplorerWidget::onConnectionFailed(MongoServerPtr server)
+void ExplorerWidget::handle(ConnectionEstablishedEvent *event)
+{
+    decreaseProgress();
+
+    QTreeWidgetItem *item = new ExplorerServerTreeItem(event->server);
+    _treeWidget->addTopLevelItem(item);
+
+//    _treeWidget->setItemWidget(item, 0, yourLabel);
+}
+
+void ExplorerWidget::handle(ConnectionFailedEvent *event)
 {
     decreaseProgress();
 }

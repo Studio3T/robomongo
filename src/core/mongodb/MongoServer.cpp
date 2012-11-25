@@ -4,12 +4,15 @@
 #include "MongoDatabase.h"
 #include "settings/ConnectionRecord.h"
 #include "MongoClient.h"
+#include "AppRegistry.h"
+#include "Dispatcher.h"
 
 using namespace Robomongo;
 using namespace std;
 
 MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord) : QObject(),
-    _connectionRecord(connectionRecord)
+    _connectionRecord(connectionRecord),
+    _dispatcher(AppRegistry::instance().dispatcher())
 {
     _host = _connectionRecord->databaseAddress();
     _port = QString::number(_connectionRecord->databasePort());
@@ -18,9 +21,6 @@ MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord) : QObject(
     _connection.reset(new mongo::DBClientConnection);
 
     _client.reset(new MongoClient(_address));
-//    connect(_client.data(), SIGNAL(databaseNamesLoaded(QStringList)), this, SLOT(onDatabaseNameLoaded(QStringList)));
-//    connect(_client.data(), SIGNAL(connectionEstablished(QString)), this, SLOT(onConnectionEstablished(QString)));
-//    connect(_client.data(), SIGNAL(connectionFailed(QString)), this, SLOT(onConnectionFailed(QString)));
 }
 
 MongoServer::~MongoServer()
@@ -67,13 +67,15 @@ bool MongoServer::event(QEvent * event)
         R_EVENT(EstablishConnectionResponse);
         R_EVENT(LoadDatabaseNamesResponse);
     }
+
+    return QObject::event(event);
 }
 
 void MongoServer::handle(const LoadDatabaseNamesResponse *event)
 {
     if (event->isError())
     {
-        emit connectionFailed(shared_from_this(), _address);
+        _dispatcher.publish(this, new ConnectionFailedEvent(shared_from_this()));
         return;
     }
 
@@ -85,16 +87,16 @@ void MongoServer::handle(const LoadDatabaseNamesResponse *event)
         list.append(db);
     }
 
-    emit databaseListLoaded(list);
+    _dispatcher.publish(this, new DatabaseListLoadedEvent(list));
 }
 
 void MongoServer::handle(const EstablishConnectionResponse *event)
 {
     if (event->isError())
     {
-        emit connectionFailed(shared_from_this(), event->address);
+        _dispatcher.publish(this, new ConnectionFailedEvent(shared_from_this()));
         return;
     }
 
-    emit connectionEstablished(shared_from_this(), event->address);
+    _dispatcher.publish(this, new ConnectionEstablishedEvent(shared_from_this()));
 }

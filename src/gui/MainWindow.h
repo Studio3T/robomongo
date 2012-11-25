@@ -5,20 +5,22 @@
 #include <QWidget>
 #include "Core.h"
 
+
 namespace Robomongo
 {
     class LogWidget;
     class ExplorerWidget;
     class MongoManager;
     class SettingsManager;
-
+    class Dispatcher;
+    class ConnectionFailedEvent;
 
     class MainWindow : public QMainWindow
     {
         Q_OBJECT
     public:
         explicit MainWindow();
-
+        bool event(QEvent *event);
 
     private:
         /*
@@ -41,6 +43,7 @@ namespace Robomongo
          */
         MongoManager &_mongoManager;
         SettingsManager &_settingsManager;
+        Dispatcher &_dispatcher;
 
         void createDatabaseExplorer();
 
@@ -49,7 +52,9 @@ namespace Robomongo
     public slots:
         void manageConnections();
         void refreshConnections();
-        void reportFailedConnection(const MongoServerPtr &connection);
+
+    private:
+        void handle(ConnectionFailedEvent *event);
     };
 
 }

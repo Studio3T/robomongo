@@ -51,12 +51,6 @@ namespace Robomongo
          */
         virtual bool event(QEvent *event);
 
-    signals:
-
-        void databaseListLoaded(const QList<MongoDatabasePtr> &list);
-        void connectionEstablished(const MongoServerPtr &server, const QString &address);
-        void connectionFailed(const MongoServerPtr &server, const QString &address);
-
     private:
         void handle(const EstablishConnectionResponse *event);
         void handle(const LoadDatabaseNamesResponse *event);
@@ -79,6 +73,7 @@ namespace Robomongo
 
         QList<MongoDatabasePtr> _databases;
         QHash<QString, MongoDatabasePtr> _databasesByName;
+        Dispatcher &_dispatcher;
 
     };
 }

@@ -13,4 +13,7 @@ R_REGISTER_EVENT_TYPE(LoadCollectionNamesRequest);
 R_REGISTER_EVENT_TYPE(LoadCollectionNamesResponse);
 R_REGISTER_EVENT_TYPE(SomethingHappened);
 R_REGISTER_EVENT_TYPE(ConnectingEvent);
+R_REGISTER_EVENT_TYPE(ConnectionFailedEvent);
+R_REGISTER_EVENT_TYPE(ConnectionEstablishedEvent);
+R_REGISTER_EVENT_TYPE(DatabaseListLoadedEvent);
 

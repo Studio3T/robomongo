@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QPlainTextEdit>
 #include "mongodb/MongoManager.h"
+#include "events/MongoEvents.h"
 #include "settings/ConnectionRecord.h"
 
 namespace Robomongo
@@ -41,11 +42,17 @@ namespace Robomongo
         */
         LogWidget(MainWindow *mainWindow);
 
+        bool event(QEvent *event);
+
     public slots:
 
         void vm_queryExecuted(const QString &query, const QString &result);
 
         void onConnecting(const MongoServerPtr &record);
+
+    private:
+
+        void handle(const SomethingHappened *event);
     };
 
 }

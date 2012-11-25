@@ -27,6 +27,9 @@ namespace Robomongo
     class MongoManager;
     typedef boost::scoped_ptr<MongoManager> MongoManagerScopedPtr;
 
+    class Dispatcher;
+    typedef boost::scoped_ptr<Dispatcher> DispatcherScopedPtr;
+
     class MongoServer;
     typedef boost::shared_ptr<MongoServer> MongoServerPtr;
 

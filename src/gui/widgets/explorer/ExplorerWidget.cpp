@@ -1,14 +1,10 @@
+#include <QtGui>
 #include "ExplorerWidget.h"
-//#include "ExplorerServerTreeItem.h"
 #include "ExplorerDatabaseTreeItem.h"
 #include "ExplorerDatabaseCategoryTreeItem.h"
-//#include "ExplorerCollectionTreeItem.h"
-
 #include "AppRegistry.h"
-#include <QtGui>
 #include "ExplorerTreeWidget.h"
 #include "ExplorerServerTreeItem.h"
-#include "domain/MongoManager.h"
 #include "Dispatcher.h"
 #include "ExplorerCollectionTreeItem.h"
 
@@ -18,7 +14,6 @@ using namespace Robomongo;
  * Constructs ExplorerWidget
  */
 ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
-    _mongoManager(AppRegistry::instance().mongoManager()),
     _progress(0),
     _dispatcher(AppRegistry::instance().dispatcher())
 {

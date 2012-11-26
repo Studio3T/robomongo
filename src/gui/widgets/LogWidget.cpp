@@ -10,7 +10,6 @@ using namespace Robomongo;
 ** Constructs log widget panel for main window
 */
 LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
-    _mongoManager(AppRegistry::instance().mongoManager()),
     _dispatcher(AppRegistry::instance().dispatcher())
 {
     _mainWindow = mainWindow;
@@ -25,7 +24,7 @@ LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
 
     setLayout(hlayout);
 
-    _dispatcher.subscribe(this, SomethingHappened::EventType, &_mongoManager);
+    _dispatcher.subscribe(this, SomethingHappened::EventType);
     _dispatcher.subscribe(this, ConnectingEvent::EventType);
 }
 

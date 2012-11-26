@@ -12,7 +12,6 @@ SOURCES += \
     examples/ImplicitlyShared.cpp \
     mongodb/MongoClient.cpp \
     mongodb/MongoService.cpp \
-    domain/MongoManager.cpp \
     domain/MongoServer.cpp \
     domain/MongoDatabase.cpp \
     domain/MongoCollection.cpp \
@@ -21,7 +20,9 @@ SOURCES += \
     domain/MongoDocument.cpp \
     Wrapper.cpp \
     events/MongoEvents.cpp \
-    Dispatcher.cpp
+    Dispatcher.cpp \
+    domain/App.cpp \
+    domain/MongoShell.cpp
 
 
 HEADERS  += \
@@ -33,7 +34,6 @@ HEADERS  += \
     mongodb/MongoException.h \
     mongodb/MongoClient.h \
     mongodb/MongoService.h \
-    domain/MongoManager.h \
     domain/MongoServer.h \
     domain/MongoDatabase.h \
     domain/MongoCollection.h \
@@ -42,7 +42,9 @@ HEADERS  += \
     domain/MongoDocument.h \
     Wrapper.h \
     events/MongoEvents.h \
-    Dispatcher.h
+    Dispatcher.h \
+    domain/App.h \
+    domain/MongoShell.h
 
 # third party libs
 LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson

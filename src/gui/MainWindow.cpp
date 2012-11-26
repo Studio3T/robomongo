@@ -5,18 +5,18 @@
 #include "dialogs/ConnectionsDialog.h"
 #include "settings/SettingsManager.h"
 #include "QMessageBox"
-#include "domain/MongoManager.h"
 #include "widgets/LogWidget.h"
 #include "widgets/explorer/ExplorerWidget.h"
 #include "domain/MongoServer.h"
 #include "mongodb/MongoException.h"
 #include "Dispatcher.h"
 #include "widgets/workarea/WorkAreaWidget.h"
+#include "domain/App.h"
 
 using namespace Robomongo;
 
 MainWindow::MainWindow() : QMainWindow(),
-    _mongoManager(AppRegistry::instance().mongoManager()),
+    _app(AppRegistry::instance().app()),
     _settingsManager(AppRegistry::instance().settingsManager()),
     _dispatcher(AppRegistry::instance().dispatcher())
 {
@@ -91,8 +91,7 @@ void MainWindow::manageConnections()
 
         try
         {
-            _mongoManager.connectToServer(selected);
-            //_mongoManager.invokeConnectToServer(selected);
+            _app.openServer(selected);
         }
         catch(MongoException &ex)
         {

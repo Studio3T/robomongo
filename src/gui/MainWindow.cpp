@@ -11,6 +11,7 @@
 #include "mongodb/MongoServer.h"
 #include "mongodb/MongoException.h"
 #include "Dispatcher.h"
+#include "widgets/workarea/WorkAreaWidget.h"
 
 using namespace Robomongo;
 
@@ -57,10 +58,10 @@ MainWindow::MainWindow() : QMainWindow(),
     _status = new QLabel;
     statusBar()->addPermanentWidget(_status);
 
-    //createTabs();
+    createTabs();
     createDatabaseExplorer();
 
-    setWindowTitle("Robomongo 0.2");
+    setWindowTitle("Robomongo 0.3");
     setWindowIcon(GuiRegistry::instance().databaseIcon());
 
     setCentralWidget(new QWidget(this));
@@ -134,4 +135,10 @@ void MainWindow::createDatabaseExplorer()
     logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
     logDock->setWidget(_log);
     addDockWidget(Qt::BottomDockWidgetArea, logDock);
+}
+
+void MainWindow::createTabs()
+{
+    _workArea = new WorkAreaWidget(this);
+    setCentralWidget(_workArea);
 }

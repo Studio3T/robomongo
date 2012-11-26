@@ -17,7 +17,11 @@ SOURCES += \
     mongodb/MongoClient.cpp \
     mongodb/MongoCollection.cpp \
     events/MongoEvents.cpp \
-    Dispatcher.cpp
+    Dispatcher.cpp \
+    mongodb/MongoService.cpp \
+    mongodb/MongoElement.cpp \
+    mongodb/MongoDocumentIterator.cpp \
+    mongodb/MongoDocument.cpp
 
 HEADERS  += \
     AppRegistry.h \
@@ -33,7 +37,11 @@ HEADERS  += \
     mongodb/MongoClient.h \
     mongodb/MongoCollection.h \
     events/MongoEvents.h \
-    Dispatcher.h
+    Dispatcher.h \
+    mongodb/MongoService.h \
+    mongodb/MongoElement.h \
+    mongodb/MongoDocumentIterator.h \
+    mongodb/MongoDocument.h
 
 message(inside core huevo: $$THIRDPARTY_LIBS_PATH/qjson)
 

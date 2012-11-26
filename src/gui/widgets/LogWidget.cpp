@@ -2,7 +2,7 @@
 #include "MainWindow.h"
 #include "Dispatcher.h"
 #include "AppRegistry.h"
-#include "mongodb/MongoServer.h"
+#include "domain/MongoServer.h"
 
 using namespace Robomongo;
 

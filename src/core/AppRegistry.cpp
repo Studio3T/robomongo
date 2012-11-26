@@ -1,7 +1,7 @@
 #include "AppRegistry.h"
 #include "Dispatcher.h"
 #include "settings/SettingsManager.h"
-#include "mongodb/MongoManager.h"
+#include "domain/MongoManager.h"
 
 using namespace Robomongo;
 

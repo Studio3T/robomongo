@@ -8,7 +8,7 @@
 #include <QtGui>
 #include "ExplorerTreeWidget.h"
 #include "ExplorerServerTreeItem.h"
-#include "mongodb/MongoManager.h"
+#include "domain/MongoManager.h"
 #include "Dispatcher.h"
 #include "ExplorerCollectionTreeItem.h"
 

@@ -24,14 +24,17 @@ namespace Robomongo
     class SettingsManager;
     typedef boost::scoped_ptr<SettingsManager> SettingsManager_ScopedPtr;
 
-    class MongoManager;
-    typedef boost::scoped_ptr<MongoManager> MongoManagerScopedPtr;
+    class App;
+    typedef boost::scoped_ptr<App> AppScopedPtr;
 
     class Dispatcher;
     typedef boost::scoped_ptr<Dispatcher> DispatcherScopedPtr;
 
     class MongoServer;
     typedef boost::shared_ptr<MongoServer> MongoServerPtr;
+
+    class MongoShell;
+    typedef boost::shared_ptr<MongoShell> MongoShellPtr;
 
     class MongoDatabase;
     typedef boost::shared_ptr<MongoDatabase> MongoDatabasePtr;

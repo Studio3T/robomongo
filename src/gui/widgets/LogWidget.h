@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QPlainTextEdit>
-#include "domain/MongoManager.h"
 #include "events/MongoEvents.h"
 #include "settings/ConnectionRecord.h"
 
@@ -30,10 +29,6 @@ namespace Robomongo
         */
         QPlainTextEdit *_logTextEdit;
 
-        /**
-         * @brief MongoManager
-         */
-        MongoManager &_mongoManager;
         Dispatcher &_dispatcher;
 
     public:

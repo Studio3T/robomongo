@@ -44,7 +44,7 @@ namespace Robomongo
         /**
          * @brief MongoManager
          */
-        MongoManager &_mongoManager;
+        App &_app;
         SettingsManager &_settingsManager;
         Dispatcher &_dispatcher;
 

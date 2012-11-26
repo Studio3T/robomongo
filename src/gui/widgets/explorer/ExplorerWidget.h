@@ -65,11 +65,6 @@ namespace Robomongo
         */
         QTreeWidget *_treeWidget;
 
-        /**
-         * @brief MongoManager
-         */
-        MongoManager &_mongoManager;
-
         Dispatcher &_dispatcher;
     };
 }

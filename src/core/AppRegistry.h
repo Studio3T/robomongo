@@ -21,7 +21,7 @@ namespace Robomongo
         }
 
         SettingsManager &settingsManager() const { return *_settingsManager.get(); }
-        MongoManager &mongoManager() const { return *_mongoManager.get(); }
+        App &app() const { return *_app.get(); }
         Dispatcher &dispatcher() const { return *_dispatcher.get(); }
 
     private:
@@ -29,7 +29,7 @@ namespace Robomongo
         ~AppRegistry(void);
 
         SettingsManager_ScopedPtr _settingsManager;
-        MongoManagerScopedPtr _mongoManager;
+        AppScopedPtr _app;
         DispatcherScopedPtr _dispatcher;
 
         /**

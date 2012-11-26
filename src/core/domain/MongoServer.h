@@ -8,7 +8,7 @@
 #include <QList>
 #include <QHash>
 #include <QScopedPointer>
-#include "MongoClient.h"
+#include "mongodb/MongoClient.h"
 #include "events/MongoEvents.h"
 
 namespace Robomongo

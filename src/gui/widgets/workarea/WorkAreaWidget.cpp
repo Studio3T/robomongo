@@ -2,7 +2,7 @@
 #include "MainWindow.h"
 #include "WorkAreaTabWidget.h"
 #include "QueryWidget.h"
-#include "mongodb/MongoCollection.h"
+#include "domain/MongoCollection.h"
 #include "AppRegistry.h"
 #include "GuiRegistry.h"
 

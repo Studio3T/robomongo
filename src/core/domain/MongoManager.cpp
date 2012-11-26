@@ -1,7 +1,7 @@
 #include <QUuid>
 #include "MongoManager.h"
 #include "MongoServer.h"
-#include "MongoException.h"
+#include "mongodb/MongoException.h"
 #include "AppRegistry.h"
 #include "Dispatcher.h"
 #include "mongo/client/dbclient.h"

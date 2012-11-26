@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QPlainTextEdit>
-#include "mongodb/MongoManager.h"
+#include "domain/MongoManager.h"
 #include "events/MongoEvents.h"
 #include "settings/ConnectionRecord.h"
 

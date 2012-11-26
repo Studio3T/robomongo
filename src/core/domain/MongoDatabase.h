@@ -6,7 +6,7 @@
 #include "mongo/client/dbclient.h"
 #include "boost/shared_ptr.hpp"
 #include "events/MongoEvents.h"
-#include "MongoClient.h"
+#include "mongodb/MongoClient.h"
 #include "MongoServer.h"
 
 namespace Robomongo

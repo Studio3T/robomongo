@@ -1,9 +1,9 @@
 #include <QStringList>
 #include "MongoServer.h"
-#include "MongoException.h"
+#include "mongodb/MongoException.h"
 #include "MongoDatabase.h"
 #include "settings/ConnectionRecord.h"
-#include "MongoClient.h"
+#include "mongodb/MongoClient.h"
 #include "AppRegistry.h"
 #include "Dispatcher.h"
 

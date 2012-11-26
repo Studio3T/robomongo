@@ -1,6 +1,6 @@
 #include "ExplorerCollectionTreeItem.h"
 #include "GuiRegistry.h"
-#include "mongodb/MongoCollection.h"
+#include "domain/MongoCollection.h"
 
 using namespace Robomongo;
 

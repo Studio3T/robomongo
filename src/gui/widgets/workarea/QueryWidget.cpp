@@ -3,9 +3,9 @@
 #include "AppRegistry.h"
 #include "mongo/client/dbclient.h"
 #include "mongo/bson/bsonobj.h"
-#include "mongodb/MongoCollection.h"
-#include "mongodb/MongoDatabase.h"
-#include "mongodb/MongoServer.h"
+#include "domain/MongoCollection.h"
+#include "domain/MongoDatabase.h"
+#include "domain/MongoServer.h"
 #include <QApplication>
 #include <QtGui>
 #include "GuiRegistry.h"

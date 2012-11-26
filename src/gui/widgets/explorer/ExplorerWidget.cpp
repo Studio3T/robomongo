@@ -10,6 +10,7 @@
 #include "ExplorerServerTreeItem.h"
 #include "mongodb/MongoManager.h"
 #include "Dispatcher.h"
+#include "ExplorerCollectionTreeItem.h"
 
 using namespace Robomongo;
 
@@ -170,11 +171,10 @@ void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)
 */
 void ExplorerWidget::ui_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
-    /*
     ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
     if (collectionItem)
     {
-        QueryCreatedEvent *evnt = new QueryCreatedEvent(collectionItem->viewModel()->collection());
-        AppRegistry::instance().mediator()->emitQueryCreated(evnt);
-    }*/
+//        QueryCreatedEvent *evnt = new QueryCreatedEvent(collectionItem->viewModel()->collection());
+//        AppRegistry::instance().mediator()->emitQueryCreated(evnt);
+    }
 }

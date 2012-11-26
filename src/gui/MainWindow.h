@@ -14,6 +14,7 @@ namespace Robomongo
     class SettingsManager;
     class Dispatcher;
     class ConnectionFailedEvent;
+    class WorkAreaWidget;
 
     class MainWindow : public QMainWindow
     {
@@ -33,6 +34,8 @@ namespace Robomongo
         */
         LogWidget *_log;
 
+        WorkAreaWidget *_workArea;
+
         /*
         ** The only Explorer in the window
         */
@@ -46,6 +49,7 @@ namespace Robomongo
         Dispatcher &_dispatcher;
 
         void createDatabaseExplorer();
+        void createTabs();
 
     signals:
 

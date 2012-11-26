@@ -1,5 +1,6 @@
 #include "App.h"
 #include "MongoServer.h"
+#include "MongoShell.h"
 #include "Dispatcher.h"
 
 using namespace Robomongo;
@@ -18,4 +19,15 @@ MongoServerPtr App::openServer(const ConnectionRecordPtr &connectionRecord)
     _dispatcher->publish(this, new ConnectingEvent(server));
     server->tryConnect();
     return server;
+}
+
+MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
+{
+    MongoShellPtr shell(new MongoShell());
+    _shells.append(shell);
+
+    _dispatcher->publish(this, new OpeningShellEvent(shell));
+
+    shell->open(collection);
+    return shell;
 }

@@ -2,6 +2,7 @@
 #define MONGOSHELL_H
 
 #include <QObject>
+#include "Core.h"
 
 namespace Robomongo
 {
@@ -11,6 +12,7 @@ namespace Robomongo
     public:
         explicit MongoShell(QObject *parent = 0);
 
+        void open(const MongoCollectionPtr &collection);
     };
 }
 

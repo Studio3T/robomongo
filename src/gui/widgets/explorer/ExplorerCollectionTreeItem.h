@@ -27,6 +27,8 @@ namespace Robomongo
         */
         ExplorerCollectionTreeItem(const MongoCollectionPtr &collection);
 
+        MongoCollectionPtr collection() const { return _collection; }
+
     };
 }
 

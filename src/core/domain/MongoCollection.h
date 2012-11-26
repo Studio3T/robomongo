@@ -11,9 +11,10 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        MongoCollection(const MongoDatabase *database, const QString &name);
+        MongoCollection(MongoDatabase *database, const QString &name);
 
         bool isSystem() const { return _system; }
+
         QString name() const { return _name; }
 
     signals:
@@ -21,8 +22,23 @@ namespace Robomongo
     public slots:
 
     private:
-        const MongoDatabase *_database;
+
+        /**
+         * @brief Database that contains this collection
+         */
+        MongoDatabase *_database;
+
+        /*
+        ** Name of collection (without database prefix)
+        */
         QString _name;
+
+        /*
+        ** Full name of collection (with database prefix)
+        */
+        QString _fullName;
+
+
         bool _system;
 
 

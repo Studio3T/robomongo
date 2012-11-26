@@ -14,6 +14,12 @@ namespace Robomongo
         App(Dispatcher *dispatcher);
 
         MongoServerPtr openServer(const ConnectionRecordPtr &connectionRecord);
+
+        /**
+         * @brief Open new shell based on specified collection
+         */
+        MongoShellPtr openShell(const MongoCollectionPtr &collection);
+
     private:
         QList<MongoServerPtr> _servers;
         QList<MongoShellPtr> _shells;

@@ -7,6 +7,7 @@
 #include "ExplorerServerTreeItem.h"
 #include "Dispatcher.h"
 #include "ExplorerCollectionTreeItem.h"
+#include "domain/App.h"
 
 using namespace Robomongo;
 
@@ -15,7 +16,8 @@ using namespace Robomongo;
  */
 ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     _progress(0),
-    _dispatcher(AppRegistry::instance().dispatcher())
+    _dispatcher(AppRegistry::instance().dispatcher()),
+    _app(AppRegistry::instance().app())
 {
     _treeWidget = new ExplorerTreeWidget;
     _treeWidget->setIndentation(15);    
@@ -169,6 +171,8 @@ void ExplorerWidget::ui_itemDoubleClicked(QTreeWidgetItem *item, int column)
     ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
     if (collectionItem)
     {
+        _app.openShell(collectionItem->collection());
+
 //        QueryCreatedEvent *evnt = new QueryCreatedEvent(collectionItem->viewModel()->collection());
 //        AppRegistry::instance().mediator()->emitQueryCreated(evnt);
     }

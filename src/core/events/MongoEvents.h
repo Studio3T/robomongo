@@ -169,6 +169,16 @@ namespace Robomongo
         MongoServerPtr server;
     };
 
+    class OpeningShellEvent : public QEvent
+    {
+        R_MESSAGE
+
+        OpeningShellEvent(const MongoShellPtr &shell) :
+            QEvent(EventType),
+            shell(shell) { }
+
+        MongoShellPtr shell;
+    };
 
     class ConnectionFailedEvent : public QEvent
     {

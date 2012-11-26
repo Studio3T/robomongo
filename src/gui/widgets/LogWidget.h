@@ -46,6 +46,7 @@ namespace Robomongo
     private:
         void handle(const SomethingHappened *event);
         void handle(const ConnectingEvent *event);
+        void handle(const OpeningShellEvent *event);
     };
 
 }

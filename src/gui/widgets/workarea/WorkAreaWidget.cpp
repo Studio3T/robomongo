@@ -19,6 +19,7 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
 	_mainWindow = mainWindow;
     _tabWidget = new WorkAreaTabWidget(this);
 	_tabWidget->setMovable(true);
+    _tabWidget->setDocumentMode(true);
 
 	QHBoxLayout * hlayout = new QHBoxLayout;
 	hlayout->setMargin(0);

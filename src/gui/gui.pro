@@ -20,7 +20,10 @@ SOURCES += ExampleWindow.cpp \
     widgets/workarea/WorkAreaWidget.cpp \
     widgets/workarea/QueryWidget.cpp \
     widgets/workarea/WorkAreaTabWidget.cpp \
-    widgets/workarea/WorkAreaTabBar.cpp
+    widgets/workarea/WorkAreaTabBar.cpp \
+    widgets/workarea/BsonWidget.cpp \
+    widgets/workarea/BsonTreeWidget.cpp \
+    widgets/workarea/BsonTreeItem.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
@@ -37,7 +40,10 @@ HEADERS  += ExampleWindow.h = \
     widgets/workarea/WorkAreaWidget.h \
     widgets/workarea/QueryWidget.h \
     widgets/workarea/WorkAreaTabWidget.h \
-    widgets/workarea/WorkAreaTabBar.h
+    widgets/workarea/WorkAreaTabBar.h \
+    widgets/workarea/BsonWidget.h \
+    widgets/workarea/BsonTreeWidget.h \
+    widgets/workarea/BsonTreeItem.h
 
 INCLUDEPATH += \
             $$ROOT/src/core

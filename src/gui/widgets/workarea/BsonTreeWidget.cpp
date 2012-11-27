@@ -1,11 +1,11 @@
-#include "StdAfx.h"
 #include "BsonTreeWidget.h"
-#include "Mongo/Mongo.h"
-#include "Mongo/MongoDocument.h"
-#include "Mongo/MongoElement.h"
-#include "Mongo/MongoDocumentIterator.h"
+#include "domain/MongoDocument.h"
+#include "domain/MongoElement.h"
+#include "domain/MongoDocumentIterator.h"
 #include "AppRegistry.h"
 #include "BsonTreeItem.h"
+#include "GuiRegistry.h"
+#include <QtGui>
 
 using namespace Robomongo;
 
@@ -31,7 +31,7 @@ BsonTreeWidget::~BsonTreeWidget()
 	
 }
 
-void BsonTreeWidget::setDocuments(const QList<MongoDocument_Pointer> & documents)
+void BsonTreeWidget::setDocuments(const QList<MongoDocumentPtr> & documents)
 {
 	_documents = documents;
 
@@ -43,7 +43,7 @@ void BsonTreeWidget::setDocuments(const QList<MongoDocument_Pointer> & documents
 	QList<QTreeWidgetItem *> items;
 	for (int i = 0; i < documents.count(); i++)
 	{
-		MongoDocument_Pointer document = documents.at(i);
+        MongoDocumentPtr document = documents.at(i);
 
 		BsonTreeItem * item = new BsonTreeItem(document.get(), i);
 		items.append(item);
@@ -110,13 +110,13 @@ void BsonTreeWidget::ui_itemExpanded(QTreeWidgetItem * treeItem)
 	*/
 }
 
-QIcon BsonTreeWidget::getIcon(MongoElement_Pointer element)
+QIcon BsonTreeWidget::getIcon(MongoElementPtr element)
 {
 	if (element->isArray())
-		return AppRegistry::instance().bsonArrayIcon();
+        return GuiRegistry::instance().bsonArrayIcon();
 	
 	if (element->isDocument())
-		return AppRegistry::instance().bsonObjectIcon();
+        return GuiRegistry::instance().bsonObjectIcon();
 
 	if (element->isSimpleType())
 	{
@@ -124,26 +124,26 @@ QIcon BsonTreeWidget::getIcon(MongoElement_Pointer element)
 			return AppRegistry::instance().bsonIdIcon();*/
 
 		if (element->isString())
-			return AppRegistry::instance().bsonStringIcon();
+            return GuiRegistry::instance().bsonStringIcon();
 
 		if (element->bsonElement().type() == Timestamp || element->bsonElement().type() == Date)
-			return AppRegistry::instance().bsonDateTimeIcon();
+            return GuiRegistry::instance().bsonDateTimeIcon();
 
 		if (element->bsonElement().type() == NumberInt || element->bsonElement().type() == NumberLong)
-			return AppRegistry::instance().bsonIntegerIcon();
+            return GuiRegistry::instance().bsonIntegerIcon();
 
 		if (element->bsonElement().type() == NumberDouble)
-			return AppRegistry::instance().bsonIntegerIcon();
+            return GuiRegistry::instance().bsonIntegerIcon();
 
 		if (element->bsonElement().type() == Bool)
-			return AppRegistry::instance().bsonBooleanIcon();
+            return GuiRegistry::instance().bsonBooleanIcon();
 
 		if (element->bsonElement().type() == BinData)
-			return AppRegistry::instance().bsonBinaryIcon();
+            return GuiRegistry::instance().bsonBinaryIcon();
 	}
 
 	if (element->bsonElement().type() == jstNULL)
-		return AppRegistry::instance().bsonNullIcon();
+        return GuiRegistry::instance().bsonNullIcon();
 
-	return AppRegistry::instance().circleIcon();
+    return GuiRegistry::instance().circleIcon();
 }

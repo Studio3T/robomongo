@@ -129,6 +129,14 @@ QIcon GuiRegistry::bsonBooleanIcon()
     return _bsonBooleanIcon;
 }
 
+QBrush GuiRegistry::typeBrush()
+{
+    if (_typeBrush.style() == Qt::NoBrush)
+        _typeBrush = QBrush(QColor(150,150, 150));
+
+    return _typeBrush;
+}
+
 QIcon GuiRegistry::leftIcon()
 {
     if (_leftIcon.isNull())

@@ -45,6 +45,9 @@ namespace Robomongo
     class MongoDocument;
     typedef boost::shared_ptr<MongoDocument> MongoDocumentPtr;
 
+    class MongoElement;
+    typedef boost::shared_ptr<MongoElement> MongoElementPtr;
+
     class ConnectionRecord;
     typedef boost::ptr_vector<ConnectionRecord> ConnectionRecord_PtrVector;
     typedef QSharedPointer<ConnectionRecord> ConnectionRecordPtr;

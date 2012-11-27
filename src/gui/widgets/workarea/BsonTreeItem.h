@@ -3,70 +3,76 @@
 
 #include <QObject>
 #include <QTreeWidget>
-#include "Mongo/Mongo.h"
-
-using namespace Robomongo;
+#include "Core.h"
 
 
-/*
-** BSON tree item (represents array or object)
-*/
-class BsonTreeItem : public QObject, public QTreeWidgetItem
+namespace Robomongo
 {
-	Q_OBJECT
+    class MongoElement;
 
-private:
-	/*
-	** MongoDocument this tree item represents
-	*/
-	MongoElement * _element;
+    /*
+    ** BSON tree item (represents array or object)
+    */
+    class BsonTreeItem : public QObject, public QTreeWidgetItem
+    {
+        Q_OBJECT
 
-	/*
-	** Document
-	*/ 
-	MongoDocument * _document;
+    private:
+        /*
+        ** MongoDocument this tree item represents
+        */
+        MongoElement *_element;
 
-	/*
-	** Position in array. -1 if not in array
-	*/
-	int _position;
+        /*
+        ** Document
+        */
+        MongoDocument *_document;
 
-	/*
-	** Setup item that represents bson document
-	*/
-	void setupDocument(MongoDocument * document);
+        /*
+        ** Position in array. -1 if not in array
+        */
+        int _position;
 
-	/*
-	** Clean child items
-	*/
-	void cleanChildItems();
+        /*
+        ** Setup item that represents bson document
+        */
+        void setupDocument(MongoDocument *document);
 
-	QString buildObjectFieldName();
-	QString buildFieldName();
-	QString buildArrayFieldName(int itemsCount);
-	QString buildSynopsis(QString text);
+        /*
+        ** Clean child items
+        */
+        void cleanChildItems();
 
-public:
+        QString buildObjectFieldName();
+        QString buildFieldName();
+        QString buildArrayFieldName(int itemsCount);
+        QString buildSynopsis(QString text);
 
-	/*
-	** Constructs BsonTreeItem
-	*/
-	BsonTreeItem(MongoElement * element, int position);
-	~BsonTreeItem();
+    public:
 
-	/*
-	** Constructs BsonTreeItem
-	*/
-	BsonTreeItem(MongoDocument * document, int position);
+        /*
+        ** Constructs BsonTreeItem
+        */
+        BsonTreeItem(MongoElement *element, int position);
+        ~BsonTreeItem();
 
-	/*
-	** MongoDocument this tree item represents
-	*/
-	MongoElement * element() const { return _element; }
+        /*
+        ** Constructs BsonTreeItem
+        */
+        BsonTreeItem(MongoDocument  *document, int position);
 
-	MongoDocument * document() const;
+        /*
+        ** MongoDocument this tree item represents
+        */
+        MongoElement * element() const { return _element; }
 
-	void expand();
-};
+        MongoDocument * document() const;
+
+        void expand();
+    };
+
+}
+
+
 
 #endif // BSONTREEITEM_H

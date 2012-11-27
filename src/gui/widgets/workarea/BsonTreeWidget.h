@@ -2,43 +2,45 @@
 #define BSONTREEWIDGET_H
 
 #include <QTreeWidget>
-#include "Mongo/Mongo.h"
+#include "Core.h"
 
-using namespace Robomongo;
-
-class BsonTreeWidget : public QTreeWidget
+namespace Robomongo
 {
-	Q_OBJECT
+    class BsonTreeWidget : public QTreeWidget
+    {
+        Q_OBJECT
 
-private:
+    private:
 
-	/*
-	** Current set of documents
-	*/
-	QList<MongoDocument_Pointer> _documents;
+        /*
+        ** Current set of documents
+        */
+        QList<MongoDocumentPtr> _documents;
 
-public:
+    public:
 
-	/*
-	** Constructs Bson Tree widget
-	*/
-	BsonTreeWidget(QWidget * parent);
-	~BsonTreeWidget();
+        /*
+        ** Constructs Bson Tree widget
+        */
+        BsonTreeWidget(QWidget * parent);
+        ~BsonTreeWidget();
 
-	/*
-	** Set documents
-	*/
-	void setDocuments(const QList<MongoDocument_Pointer> & documents);
+        /*
+        ** Set documents
+        */
+        void setDocuments(const QList<MongoDocumentPtr> & documents);
 
-	QIcon getIcon(MongoElement_Pointer element);
+        QIcon getIcon(MongoElementPtr element);
 
-public slots:
+    public slots:
 
-	/*
-	** Handle itemExpanded event
-	*/
-	void ui_itemExpanded(QTreeWidgetItem * item);
-};
+        /*
+        ** Handle itemExpanded event
+        */
+        void ui_itemExpanded(QTreeWidgetItem * item);
+    };
+}
+
 
 
 #endif // BSONTREEWIDGET_H

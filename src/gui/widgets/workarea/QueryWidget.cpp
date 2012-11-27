@@ -14,6 +14,7 @@
 #include <QPlainTextEdit>
 #include "Dispatcher.h"
 #include "events/MongoEvents.h"
+#include "BsonWidget.h"
 
 using namespace mongo;
 using namespace Robomongo;
@@ -53,7 +54,7 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
     _pageSizeEdit->setMaximumWidth(31);
 
     // Bson widget
-    //_bsonWidget = new BsonWidget(this);
+    _bsonWidget = new BsonWidget(this);
 
     QVBoxLayout * pageBoxLayout = new QVBoxLayout;
     pageBoxLayout->addSpacing(2);
@@ -71,7 +72,7 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
 
     QVBoxLayout * layout = new QVBoxLayout;
     layout->addLayout(hlayout);
-//	layout->addWidget(_bsonWidget);
+    layout->addWidget(_bsonWidget);
     setLayout(layout);
 
     // Connect to VM
@@ -212,7 +213,7 @@ void QueryWidget::vm_queryUpdated(const QString & query)
 
 void QueryWidget::handle(const DocumentListLoadedEvent *event)
 {
-    QMessageBox::information(NULL, "List of docs!", "Aga!");
+    _bsonWidget->setDocuments(event->list);
 }
 
 /*

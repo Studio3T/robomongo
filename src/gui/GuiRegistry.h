@@ -43,6 +43,8 @@ namespace Robomongo
         QIcon bsonNullIcon();
         QIcon bsonBooleanIcon();
 
+        QBrush typeBrush();
+
 
     private:
         /**
@@ -70,6 +72,11 @@ namespace Robomongo
         QIcon _bsonBinaryIcon;
         QIcon _bsonNullIcon;
         QIcon _bsonBooleanIcon;
+
+        /**
+         * @brief Brushes
+         */
+        QBrush _typeBrush;
     };
 }
 

@@ -99,7 +99,7 @@ namespace Robomongo
         /*
         ** Bson widget
         */
-        //BsonWidget * _bsonWidget;
+        BsonWidget * _bsonWidget;
 
         /*
         ** Paging buttons

@@ -1,8 +1,9 @@
-#include "StdAfx.h"
 #include "BsonTreeItem.h"
-#include "AppRegistry.h"
-#include "Mongo/MongoElement.h"
-#include "Mongo/MongoDocumentIterator.h"
+#include "GuiRegistry.h"
+#include "domain/MongoElement.h"
+#include "domain/MongoDocumentIterator.h"
+
+using namespace Robomongo;
 
 BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 {
@@ -11,7 +12,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	_position = position;
 
 	setText(0, buildFieldName());
-    setForeground(2, AppRegistry::instance().typeBrush());
+    setForeground(2, GuiRegistry::instance().typeBrush());
 
 	switch (element->bsonElement().type())
     {
@@ -19,7 +20,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	case NumberDouble:
         {
             static QString typeDouble("Double");
-            setIcon(0, AppRegistry::instance().bsonIntegerIcon());
+            setIcon(0, GuiRegistry::instance().bsonIntegerIcon());
             setText(1, element->stringValue());
             setText(2, typeDouble);
         }
@@ -32,7 +33,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 			QString text = element->stringValue().left(500);
 			setToolTip(1, text);
 
-            setIcon(0, AppRegistry::instance().bsonStringIcon());
+            setIcon(0, GuiRegistry::instance().bsonStringIcon());
 			setText(1, buildSynopsis(element->stringValue()));
             setText(2, typeString);
 		}
@@ -55,7 +56,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 			int itemsCount = _element->bsonElement().Array().size();
 
 			setText(0, buildArrayFieldName(itemsCount));
-			setIcon(0, AppRegistry::instance().bsonArrayIcon());
+            setIcon(0, GuiRegistry::instance().bsonArrayIcon());
             setText(2, typeArray);
 
 			setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
@@ -66,7 +67,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	case BinData:
         {
             static QString typeBinary("Binary");
-            setIcon(0, AppRegistry::instance().bsonBinaryIcon());
+            setIcon(0, GuiRegistry::instance().bsonBinaryIcon());
             setText(1, element->stringValue());
             setText(2, typeBinary);
         }
@@ -76,7 +77,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	case Undefined:
         {
             static QString typeUndefined("Undefined");
-            setIcon(0, AppRegistry::instance().circleIcon());
+            setIcon(0, GuiRegistry::instance().circleIcon());
             setText(1, "<Undefined>");
             setText(2, typeUndefined);
         }
@@ -86,7 +87,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	case jstOID: 
         {
             static QString typeObjectId("ObjectId");
-            setIcon(0, AppRegistry::instance().circleIcon());
+            setIcon(0, GuiRegistry::instance().circleIcon());
             setText(1, QString("ObjectId(%1)").arg(element->stringValue()));
             setText(2, typeObjectId);
         }
@@ -96,7 +97,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	case Bool:
         {
             static QString typeBoolean("Boolean");
-            setIcon(0, AppRegistry::instance().bsonBooleanIcon());
+            setIcon(0, GuiRegistry::instance().bsonBooleanIcon());
             setText(1, element->stringValue());
             setText(2, typeBoolean);
         }
@@ -106,7 +107,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	case Date:
         {
             static QString typeDate("Date");
-            setIcon(0, AppRegistry::instance().bsonDateTimeIcon());
+            setIcon(0, GuiRegistry::instance().bsonDateTimeIcon());
             setText(1, element->stringValue());
             setText(2, typeDate);
         }
@@ -116,7 +117,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	case jstNULL:
         {
             static QString typeNull("Null");
-            setIcon(0, AppRegistry::instance().bsonNullIcon());
+            setIcon(0, GuiRegistry::instance().bsonNullIcon());
             setText(1, "null");
             setText(2, typeNull);
         }
@@ -126,7 +127,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	case RegEx:
         {
             static QString typeRegExp("Regular Expression");
-            setIcon(0, AppRegistry::instance().circleIcon());
+            setIcon(0, GuiRegistry::instance().circleIcon());
             setText(1, element->stringValue());
             setText(2, typeRegExp);
         }
@@ -136,7 +137,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	case DBRef:
         {
             static QString typeDBRef("DBRef");
-            setIcon(0, AppRegistry::instance().circleIcon());
+            setIcon(0, GuiRegistry::instance().circleIcon());
             setText(1, element->stringValue());
             setText(2, typeDBRef);
         }
@@ -170,7 +171,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	case NumberInt:
         {
             static QString typeInteger("Int32");
-            setIcon(0, AppRegistry::instance().bsonIntegerIcon());
+            setIcon(0, GuiRegistry::instance().bsonIntegerIcon());
             setText(1, element->stringValue());
             setText(2, typeInteger);
         }
@@ -180,7 +181,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	case Timestamp:
         {
             static QString typeTimestamp("Timestamp");
-            setIcon(0, AppRegistry::instance().bsonDateTimeIcon());
+            setIcon(0, GuiRegistry::instance().bsonDateTimeIcon());
             setText(1, element->stringValue());
             setText(2, typeTimestamp);
         }
@@ -190,7 +191,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	case NumberLong:
         {
             static QString typeLong("Int64");
-            setIcon(0, AppRegistry::instance().bsonIntegerIcon());
+            setIcon(0, GuiRegistry::instance().bsonIntegerIcon());
             setText(1, element->stringValue());
             setText(2, typeLong);
         }
@@ -199,7 +200,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	default:
         {
             static QString typeLong("Type is not supported");
-            setIcon(0, AppRegistry::instance().circleIcon());
+            setIcon(0, GuiRegistry::instance().circleIcon());
             setText(1, element->stringValue());
             setText(2, typeLong);
         }
@@ -218,11 +219,11 @@ BsonTreeItem::BsonTreeItem(MongoDocument * document, int position) : QObject()
 void BsonTreeItem::setupDocument(MongoDocument * document)
 {
 	setText(0, buildObjectFieldName());
-	setIcon(0, AppRegistry::instance().bsonObjectIcon());
+    setIcon(0, GuiRegistry::instance().bsonObjectIcon());
 
     static QString typeObject("Object");
     setText(2, typeObject);
-    setForeground(2, AppRegistry::instance().typeBrush());
+    setForeground(2, GuiRegistry::instance().typeBrush());
 
 	setExpanded(true);
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);

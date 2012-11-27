@@ -11,7 +11,7 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        MongoCollection(MongoDatabase *database, const QString &name);
+        MongoCollection(MongoDatabase *database, const QString &fullName);
 
         bool isSystem() const { return _system; }
 

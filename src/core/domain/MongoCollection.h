@@ -16,6 +16,8 @@ namespace Robomongo
         bool isSystem() const { return _system; }
 
         QString name() const { return _name; }
+        QString fullName() const { return _fullName; }
+        MongoDatabase *database() const { return _database; }
 
     signals:
 

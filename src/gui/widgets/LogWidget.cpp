@@ -31,13 +31,11 @@ LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
 
 bool LogWidget::event(QEvent * event)
 {
-    R_HANDLE(event) {
-        R_EVENT(SomethingHappened);
-        R_EVENT(ConnectingEvent);
-        R_EVENT(OpeningShellEvent);
-    }
-
-    return QObject::event(event);
+    R_HANDLE(event)
+    R_EVENT(SomethingHappened)
+    R_EVENT(ConnectingEvent)
+    R_EVENT(OpeningShellEvent)
+    else return QWidget::event(event);
 }
 
 void LogWidget::addMessage(const QString &message)

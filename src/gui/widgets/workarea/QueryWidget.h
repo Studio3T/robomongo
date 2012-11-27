@@ -5,33 +5,17 @@
 #include "Core.h"
 #include <QPushButton>
 #include <QLineEdit>
+#include <QPlainTextEdit>
 
 namespace Robomongo
 {
     class BsonWidget;
+    class Dispatcher;
+    class DocumentListLoadedEvent;
 
     class QueryWidget : public QWidget
     {
         Q_OBJECT
-
-    private:
-
-        /*
-        ** Query text
-        */
-        //QsciScintilla * _queryText;
-
-        /*
-        ** Bson widget
-        */
-        //BsonWidget * _bsonWidget;
-
-        /*
-        ** Paging buttons
-        */
-        QPushButton * _leftButton;
-        QPushButton * _rightButton;
-        QLineEdit * _pageSizeEdit;
 
     private:
 
@@ -46,7 +30,7 @@ namespace Robomongo
         /*
         ** Constructs query widget
         */
-        QueryWidget(QWidget * parent);
+        QueryWidget(const MongoShellPtr &shell, QWidget * parent);
 
         /*
         ** Destructs QueryWidget
@@ -57,6 +41,8 @@ namespace Robomongo
         ** Override event filter
         */
         bool eventFilter(QObject * o, QEvent * e);
+
+        bool event(QEvent *event);
 
     public slots:
 
@@ -99,6 +85,33 @@ namespace Robomongo
         ** Query updated
         */
         void vm_queryUpdated(const QString & query);
+
+    private:
+        void handle(const DocumentListLoadedEvent *event);
+
+    private:
+
+        /*
+        ** Query text
+        */
+        //QsciScintilla * _queryText;
+
+        /*
+        ** Bson widget
+        */
+        //BsonWidget * _bsonWidget;
+
+        /*
+        ** Paging buttons
+        */
+        QPushButton * _leftButton;
+        QPushButton * _rightButton;
+        QLineEdit * _pageSizeEdit;
+
+        QPlainTextEdit *_queryText;
+
+        MongoShellPtr _shell;
+        Dispatcher &_dispatcher;
     };
 }
 

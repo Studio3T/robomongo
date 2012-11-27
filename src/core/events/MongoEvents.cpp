@@ -18,4 +18,7 @@ R_REGISTER_EVENT_TYPE(ConnectionEstablishedEvent);
 R_REGISTER_EVENT_TYPE(DatabaseListLoadedEvent);
 R_REGISTER_EVENT_TYPE(CollectionListLoadedEvent);
 R_REGISTER_EVENT_TYPE(OpeningShellEvent);
+R_REGISTER_EVENT_TYPE(ExecuteQueryRequest);
+R_REGISTER_EVENT_TYPE(ExecuteQueryResponse);
+R_REGISTER_EVENT_TYPE(DocumentListLoadedEvent);
 

@@ -48,13 +48,12 @@ void MongoClient::init()
  */
 bool MongoClient::event(QEvent *event)
 {
-    R_HANDLE(event) {
-        R_EVENT(EstablishConnectionRequest);
-        R_EVENT(LoadDatabaseNamesRequest);
-        R_EVENT(LoadCollectionNamesRequest);
-    }
-
-    QObject::event(event);
+    R_HANDLE(event)
+    R_EVENT(EstablishConnectionRequest)
+    R_EVENT(LoadDatabaseNamesRequest)
+    R_EVENT(LoadCollectionNamesRequest)
+    R_EVENT(ExecuteQueryRequest)
+    else return QObject::event(event);
 }
 
 /**
@@ -122,6 +121,30 @@ void MongoClient::handle(LoadCollectionNamesRequest *event)
     catch(DBException &ex)
     {
         reply(event->sender, new LoadCollectionNamesResponse(Error("Unable to load list of collections.")));
+    }
+}
+
+void MongoClient::handle(ExecuteQueryRequest *event)
+{
+    try
+    {
+        boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
+
+        QList<BSONObj> docs;
+        auto_ptr<DBClientCursor> cursor = conn->get()->query(event->nspace.toStdString(), BSONObj(), 100);
+        while (cursor->more())
+        {
+            BSONObj bsonObj = cursor->next();
+            docs.append(bsonObj);
+        }
+
+        conn->done();
+
+        reply(event->sender, new ExecuteQueryResponse(docs));
+    }
+    catch(DBException &ex)
+    {
+        reply(event->sender, new ExecuteQueryResponse(Error("Unable to complete query.")));
     }
 }
 

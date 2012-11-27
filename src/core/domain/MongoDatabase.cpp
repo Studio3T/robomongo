@@ -35,9 +35,9 @@ void MongoDatabase::listCollections()
  */
 bool MongoDatabase::event(QEvent *event)
 {
-    R_HANDLE(event) {
-        R_EVENT(LoadCollectionNamesResponse);
-    }
+    R_HANDLE(event)
+    R_EVENT(LoadCollectionNamesResponse)
+    else return QObject::event(event);
 }
 
 void MongoDatabase::handle(const LoadCollectionNamesResponse *loaded)

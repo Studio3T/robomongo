@@ -13,6 +13,7 @@ ExplorerServerTreeItem::ExplorerServerTreeItem(const MongoServerPtr &server) : Q
     _server(server),
     _dispatcher(AppRegistry::instance().dispatcher())
 {
+    QObject *z = _server.get();
     _dispatcher.subscribe(this, DatabaseListLoadedEvent::EventType, _server.get());
 
     setText(0, _server->connectionRecord()->getReadableName());
@@ -27,11 +28,9 @@ ExplorerServerTreeItem::~ExplorerServerTreeItem()
 
 bool ExplorerServerTreeItem::event(QEvent *event)
 {
-    R_HANDLE(event) {
-        R_EVENT(DatabaseListLoadedEvent);
-    }
-
-    return QObject::event(event);
+    R_HANDLE(event)
+    R_EVENT(DatabaseListLoadedEvent)
+    else return QObject::event(event);
 }
 
 void ExplorerServerTreeItem::expand()

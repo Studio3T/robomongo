@@ -64,17 +64,14 @@ MainWindow::MainWindow() : QMainWindow(),
     setWindowTitle("Robomongo 0.3");
     setWindowIcon(GuiRegistry::instance().databaseIcon());
 
-    setCentralWidget(new QWidget(this));
     //connect(_viewModel, SIGNAL(statusMessageUpdated(QString)), SLOT(vm_statusMessageUpdated(QString)));
 }
 
 bool MainWindow::event(QEvent *event)
 {
-    R_HANDLE(event) {
-        R_EVENT(ConnectionFailedEvent);
-    }
-
-    return QMainWindow::event(event);
+    R_HANDLE(event)
+    R_EVENT(ConnectionFailedEvent)
+    else return QMainWindow::event(event);
 }
 
 void MainWindow::manageConnections()
@@ -140,4 +137,7 @@ void MainWindow::createTabs()
 {
     _workArea = new WorkAreaWidget(this);
     setCentralWidget(_workArea);
+
+    //QLabel *label = new QLabel("muahahah");
+    //setCentralWidget(label);
 }

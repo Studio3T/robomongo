@@ -3,16 +3,37 @@
 
 #include <QObject>
 #include "Core.h"
+#include "mongodb/MongoClient.h"
 
 namespace Robomongo
 {
+    class Dispatcher;
+
     class MongoShell : public QObject
     {
         Q_OBJECT
     public:
-        explicit MongoShell(QObject *parent = 0);
+        explicit MongoShell(MongoServer *server);
 
         void open(const MongoCollectionPtr &collection);
+
+        bool event(QEvent *event);
+
+    private: //handlers
+        void handle(const ExecuteQueryResponse *event);
+
+    private:
+
+        /**
+         * @brief Current query in the shell
+         */
+        QString _query;
+
+        MongoServer *_server;
+
+        MongoClient *_client;
+
+        Dispatcher *_dispatcher;
     };
 }
 

@@ -6,9 +6,14 @@
 #include "domain/MongoCollection.h"
 #include "domain/MongoDatabase.h"
 #include "domain/MongoServer.h"
+#include "domain/MongoShell.h"
 #include <QApplication>
 #include <QtGui>
 #include "GuiRegistry.h"
+#include "Dispatcher.h"
+#include <QPlainTextEdit>
+#include "Dispatcher.h"
+#include "events/MongoEvents.h"
 
 using namespace mongo;
 using namespace Robomongo;
@@ -16,8 +21,13 @@ using namespace Robomongo;
 /*
 ** Constructs query widget
 */
-QueryWidget::QueryWidget(QWidget * parent) : QWidget(parent)
+QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
+    QWidget(parent),
+    _shell(shell),
+    _dispatcher(AppRegistry::instance().dispatcher())
 {
+    _dispatcher.subscribe(this, DocumentListLoadedEvent::EventType, shell.get());
+
     // Query text widget
     _configureQueryText();
 
@@ -50,20 +60,19 @@ QueryWidget::QueryWidget(QWidget * parent) : QWidget(parent)
     pageBoxLayout->addWidget(_pageSizeEdit, 0, Qt::AlignRight | Qt::AlignTop);
 
     QHBoxLayout * hlayout = new QHBoxLayout;
-//	hlayout->addWidget(_queryText, 0, Qt::AlignTop);
+    hlayout->addWidget(_queryText, 0, Qt::AlignTop);
     hlayout->addSpacing(5);
     hlayout->addWidget(_leftButton, 0, Qt::AlignRight | Qt::AlignTop);
     hlayout->addLayout(pageBoxLayout);
-    //hlayout->addWidget(_pageSizeEdit, 0, Qt::AlignRight | Qt::AlignTop);
     hlayout->addWidget(_rightButton, 0, Qt::AlignRight | Qt::AlignTop);
     hlayout->addSpacing(5);
     hlayout->addWidget(executeButton, 0, Qt::AlignRight | Qt::AlignTop);
     hlayout->setSpacing(1);
 
-//	QVBoxLayout * layout = new QVBoxLayout;
-//	layout->addLayout(hlayout);
+    QVBoxLayout * layout = new QVBoxLayout;
+    layout->addLayout(hlayout);
 //	layout->addWidget(_bsonWidget);
-//	setLayout(layout);
+    setLayout(layout);
 
     // Connect to VM
 //    connect(_viewModel, SIGNAL(documentsRefreshed(QList<MongoDocument_Pointer>)), SLOT(vm_documentsRefreshed(QList<MongoDocument_Pointer>)));
@@ -128,11 +137,23 @@ bool QueryWidget::eventFilter(QObject * o, QEvent * e)
     return false;
 }
 
+bool QueryWidget::event(QEvent *event)
+{
+    R_HANDLE(event)
+    R_EVENT(DocumentListLoadedEvent)
+    else return QWidget::event(event);
+}
+
 /*
 ** Configure QsciScintilla query widget
 */
 void QueryWidget::_configureQueryText()
 {
+    _queryText = new QPlainTextEdit(this);
+    _queryText->setFixedHeight(28);
+    _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
 //    QsciLexerJavaScript * javaScriptLexer = new QsciLexerJavaScript;
 //    javaScriptLexer->setFont(QFont("Courier", 11));
 
@@ -148,7 +169,7 @@ void QueryWidget::_configureQueryText()
 //    _queryText->setMarginWidth(1, 3); // to hide left gray column
 //    _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
 
-//    connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
+    connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
 }
 
 /*
@@ -186,7 +207,12 @@ void QueryWidget::vm_pagingVisibilityChanged(bool show)
 */
 void QueryWidget::vm_queryUpdated(const QString & query)
 {
-   // _queryText->setText(query);
+    // _queryText->setText(query);
+}
+
+void QueryWidget::handle(const DocumentListLoadedEvent *event)
+{
+    QMessageBox::information(NULL, "List of docs!", "Aga!");
 }
 
 /*

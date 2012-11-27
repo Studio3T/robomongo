@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QEvent>
 #include "Core.h"
+#include "mongo/client/dbclient.h"
 
 #define R_MESSAGE \
     public: \
@@ -147,6 +148,39 @@ namespace Robomongo
         QStringList collectionNames;
     };
 
+    /**
+     * @brief Query Mongodb
+     */
+
+    class ExecuteQueryRequest : public Request
+    {
+        R_MESSAGE
+
+        ExecuteQueryRequest(QObject *sender, const QString &nspace, int take = 0, int skip = 0) :
+            Request(EventType, sender),
+            nspace(nspace),
+            take(take),
+            skip(skip) {}
+
+        QString nspace; //namespace of object (i.e. "database_name.collection_name")
+        int take; //
+        int skip;
+    };
+
+    class ExecuteQueryResponse : public Response
+    {
+        R_MESSAGE
+
+        ExecuteQueryResponse(const QList<mongo::BSONObj> &documents) :
+            Response(EventType),
+            documents(documents) { }
+
+        ExecuteQueryResponse(const Error &error) :
+            Response(EventType, error) {}
+
+        QList<mongo::BSONObj> documents;
+    };
+
     class SomethingHappened : public QEvent
     {
         R_MESSAGE
@@ -222,6 +256,17 @@ namespace Robomongo
             list(list) { }
 
         QList<MongoCollectionPtr> list;
+    };
+
+    class DocumentListLoadedEvent : public QEvent
+    {
+        R_MESSAGE
+
+        DocumentListLoadedEvent(const QList<MongoDocumentPtr> &list) :
+            QEvent(EventType),
+            list(list) { }
+
+        QList<MongoDocumentPtr> list;
     };
 
 }

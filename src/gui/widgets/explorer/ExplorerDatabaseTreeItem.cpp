@@ -72,11 +72,9 @@ void ExplorerDatabaseTreeItem::expandCollections()
 
 bool ExplorerDatabaseTreeItem::event(QEvent *event)
 {
-    R_HANDLE(event) {
-        R_EVENT(CollectionListLoadedEvent);
-    }
-
-    return QObject::event(event);
+    R_HANDLE(event)
+    R_EVENT(CollectionListLoadedEvent)
+    else return QObject::event(event);
 }
 
 void ExplorerDatabaseTreeItem::vm_collectionRefreshed(const QList<MongoCollectionPtr> &collections)

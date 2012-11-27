@@ -54,7 +54,7 @@ namespace Robomongo
 }
 
 #define R_EVENT(EVENT_TYPE) \
-    if (__event->type() == EVENT_TYPE::EventType) \
+    else if (__event->type() == EVENT_TYPE::EventType) \
         handle(static_cast<EVENT_TYPE *>(__event));
 
 #define R_HANDLE(EVENT) \

@@ -36,6 +36,8 @@ namespace Robomongo
          */
         bool isSystem() const { return _system; }
 
+        MongoServer *server() const { return _server; }
+
         /**
          * @brief Events dispatcher
          */

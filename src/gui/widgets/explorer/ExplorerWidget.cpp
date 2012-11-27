@@ -48,13 +48,11 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
 
 bool ExplorerWidget::event(QEvent *event)
 {
-    R_HANDLE(event) {
-        R_EVENT(ConnectingEvent);
-        R_EVENT(ConnectionFailedEvent);
-        R_EVENT(ConnectionEstablishedEvent);
-    }
-
-    return QWidget::event(event);
+    R_HANDLE(event)
+    R_EVENT(ConnectingEvent)
+    R_EVENT(ConnectionFailedEvent)
+    R_EVENT(ConnectionEstablishedEvent)
+    else return QWidget::event(event);
 }
 
 void ExplorerWidget::ui_disonnectActionTriggered()

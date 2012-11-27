@@ -33,6 +33,9 @@ void Dispatcher::subscribe(QObject *receiver, QEvent::Type type, QObject *sender
 
 void Dispatcher::unsubscibe(QObject *receiver)
 {
+    QString name = receiver->objectName();
+    QString cname = receiver->metaObject()->className();
+
     QMutableHashIterator<QEvent::Type, Subscriber *> i(_subscribersByEventType);
 
     while(i.hasNext()) {

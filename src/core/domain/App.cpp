@@ -1,6 +1,7 @@
 #include "App.h"
 #include "MongoServer.h"
 #include "MongoShell.h"
+#include "domain/MongoCollection.h"
 #include "Dispatcher.h"
 
 using namespace Robomongo;
@@ -23,7 +24,7 @@ MongoServerPtr App::openServer(const ConnectionRecordPtr &connectionRecord)
 
 MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
 {
-    MongoShellPtr shell(new MongoShell());
+    MongoShellPtr shell(new MongoShell(collection->database()->server()));
     _shells.append(shell);
 
     _dispatcher->publish(this, new OpeningShellEvent(shell));

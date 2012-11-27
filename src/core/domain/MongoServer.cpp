@@ -63,12 +63,10 @@ void MongoServer::listDatabases()
  */
 bool MongoServer::event(QEvent * event)
 {
-    R_HANDLE(event) {
-        R_EVENT(EstablishConnectionResponse);
-        R_EVENT(LoadDatabaseNamesResponse);
-    }
-
-    return QObject::event(event);
+    R_HANDLE(event)
+    R_EVENT(EstablishConnectionResponse)
+    R_EVENT(LoadDatabaseNamesResponse)
+    else return QObject::event(event);
 }
 
 void MongoServer::handle(const LoadDatabaseNamesResponse *event)

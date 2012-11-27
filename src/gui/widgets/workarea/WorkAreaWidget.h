@@ -9,6 +9,8 @@ namespace Robomongo
     class WorkAreaViewModel;
     class WorkAreaTabWidget;
     class QueryWindowViewModel;
+    class Dispatcher;
+    class OpeningShellEvent;
 
     /*
     ** Work Area widget
@@ -16,6 +18,20 @@ namespace Robomongo
     class WorkAreaWidget : public QWidget
     {
         Q_OBJECT
+
+    public:
+
+        /*
+        ** Constructs work area
+        */
+        WorkAreaWidget(MainWindow * mainWindow);
+        ~WorkAreaWidget();
+
+        bool event(QEvent *event);
+
+    private: //handlers:
+        void handle(const OpeningShellEvent *event);
+
 
     private:
 
@@ -29,19 +45,8 @@ namespace Robomongo
         */
         WorkAreaTabWidget * _tabWidget;
 
-    public:
+        Dispatcher *_dispatcher;
 
-        /*
-        ** Constructs work area
-        */
-        WorkAreaWidget(MainWindow * mainWindow);
-
-    public slots:
-
-        /*
-        ** Handle the moment when query created
-        */
-        void vm_queryWindowAdded();
     };
 }
 

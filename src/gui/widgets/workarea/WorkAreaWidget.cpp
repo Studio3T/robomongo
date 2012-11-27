@@ -5,13 +5,16 @@
 #include "domain/MongoCollection.h"
 #include "AppRegistry.h"
 #include "GuiRegistry.h"
+#include "Dispatcher.h"
 
 using namespace Robomongo;
 
 /*
 ** Constructs work area
 */
-WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	: QWidget(mainWindow)
+WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
+    QWidget(),
+    _dispatcher(&AppRegistry::instance().dispatcher())
 {
 	_mainWindow = mainWindow;
     _tabWidget = new WorkAreaTabWidget(this);
@@ -22,16 +25,27 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	: QWidget(mainWindow)
 	hlayout->addWidget(_tabWidget);
 	setLayout(hlayout);
 
-    //connect(_viewModel, SIGNAL(queryWindowAdded(QueryWindowViewModel *)), SLOT(vm_queryWindowAdded(QueryWindowViewModel *)));
+    _dispatcher->subscribe(this, OpeningShellEvent::EventType);
 }
 
-void WorkAreaWidget::vm_queryWindowAdded()
+WorkAreaWidget::~WorkAreaWidget()
 {
-    QLabel * queryWidget = new QLabel("Hello");
-//	QueryWidget * queryWidget = new QueryWidget(viewModel, this);
+    int a = 56;
+}
+
+bool WorkAreaWidget::event(QEvent *event)
+{
+    R_HANDLE(event)
+    R_EVENT(OpeningShellEvent)
+    else return QObject::event(event);
+}
+
+void WorkAreaWidget::handle(const OpeningShellEvent *event)
+{
+//    QLabel * queryWidget = new QLabel("Hello");
+    QueryWidget * queryWidget = new QueryWidget(event->shell, this);
     _tabWidget->addTab(queryWidget, "Robotab" /* viewModel->title()*/);
-	_tabWidget->setCurrentIndex(_tabWidget->count() - 1);
+    _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
 
     _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().collectionIcon());
-	
 }

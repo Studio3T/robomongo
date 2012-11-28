@@ -6,9 +6,12 @@
 #include <QEvent>
 #include <QStringList>
 #include "events/MongoEvents.h"
+#include <QScriptEngine>
 
 namespace Robomongo
 {
+    class Helper;
+
     class MongoClient : public QObject
     {
         Q_OBJECT
@@ -31,6 +34,11 @@ namespace Robomongo
     private: // handlers:
 
         /**
+         * @brief Initialize MongoClient (should be the first request)
+         */
+        void handle(InitRequest *event);
+
+        /**
          * @brief Initiate connection to MongoDB
          */
         void handle(EstablishConnectionRequest *event);
@@ -50,6 +58,11 @@ namespace Robomongo
          */
         void handle(ExecuteQueryRequest *event);
 
+        /**
+         * @brief Execute javascript
+         */
+        void handle(ExecuteScriptRequest *event);
+
     private:
 
         /**
@@ -66,7 +79,31 @@ namespace Robomongo
         QThread *_thread;
         QMutex _firstConnectionMutex;
 
+        QScriptEngine *_scriptEngine;
+        Helper *_helper;
+
     };
+
+    class Helper : public QObject
+    {
+        Q_OBJECT
+    public:
+
+        Helper() : QObject() {}
+        QString text() const { return _text; }
+
+    public slots:
+        void print(const QString &message)
+        {
+            _text.append(message);
+        }
+
+    private:
+        QString _text;
+    };
+
 }
+
+
 
 #endif // MONGOCLIENT_H

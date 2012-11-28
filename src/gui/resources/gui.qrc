@@ -16,5 +16,6 @@
         <file>icons/bson_object_16x16.png</file>
         <file>icons/database_16x16.png</file>
         <file>icons/loading.gif</file>
+        <file>scripts/db.js</file>
     </qresource>
 </RCC>

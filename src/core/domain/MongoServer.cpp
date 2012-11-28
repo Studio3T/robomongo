@@ -21,6 +21,7 @@ MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord) : QObject(
     _connection.reset(new mongo::DBClientConnection);
 
     _client.reset(new MongoClient(_address));
+    _client->send(new InitRequest(this));
 }
 
 MongoServer::~MongoServer()

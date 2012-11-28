@@ -6,6 +6,8 @@
 #include <QMutexLocker>
 #include <QCoreApplication>
 #include "events/MongoEvents.h"
+#include <QFile>
+#include <QTextStream>
 
 using namespace Robomongo;
 using namespace std;
@@ -53,7 +55,32 @@ bool MongoClient::event(QEvent *event)
     R_EVENT(LoadDatabaseNamesRequest)
     R_EVENT(LoadCollectionNamesRequest)
     R_EVENT(ExecuteQueryRequest)
+    R_EVENT(ExecuteScriptRequest)
+    R_EVENT(InitRequest)
     else return QObject::event(event);
+}
+
+void MongoClient::handle(InitRequest *event)
+{
+    try {
+
+        QFile file(":/robomongo/scripts/db.js");
+        if(!file.open(QIODevice::ReadOnly))
+            throw std::runtime_error("Unable to read db.js");
+
+        QTextStream in(&file);
+        QString script = in.readAll();
+
+        _scriptEngine = new QScriptEngine();
+
+        _helper = new Helper();
+        QScriptValue helper = _scriptEngine->newQObject(_helper);
+        _scriptEngine->globalObject().setProperty("helper", helper);
+        _scriptEngine->evaluate(script);
+    }
+    catch (std::exception &ex) {
+        reply(event->sender, new InitResponse(Error("Unable to initialize MongoClient")));
+    }
 }
 
 /**
@@ -145,6 +172,38 @@ void MongoClient::handle(ExecuteQueryRequest *event)
     catch(DBException &ex)
     {
         reply(event->sender, new ExecuteQueryResponse(Error("Unable to complete query.")));
+    }
+}
+
+/**
+ * @brief Execute javascript
+ */
+void MongoClient::handle(ExecuteScriptRequest *event)
+{
+    try
+    {
+        QScriptValue value = _scriptEngine->evaluate(event->script);
+
+        if (!value.isError())
+            reply(event->sender, new ExecuteScriptResponse(_helper->text()));
+
+//        boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
+
+//        QList<BSONObj> docs;
+//        auto_ptr<DBClientCursor> cursor = conn->get()->query(event->nspace.toStdString(), BSONObj(), 100);
+//        while (cursor->more())
+//        {
+//            BSONObj bsonObj = cursor->next();
+//            docs.append(bsonObj);
+//        }
+
+//        conn->done();
+
+//        reply(event->sender, new ExecuteScriptResponse(docs));
+    }
+    catch(DBException &ex)
+    {
+        reply(event->sender, new ExecuteScriptResponse(Error("Unable to complete query.")));
     }
 }
 

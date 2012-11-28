@@ -5,6 +5,8 @@ using namespace Robomongo;
 #define R_REGISTER_EVENT_TYPE(EVENT_TYPE) \
     const QEvent::Type EVENT_TYPE::EventType = static_cast<QEvent::Type>(QEvent::registerEventType())
 
+R_REGISTER_EVENT_TYPE(InitRequest);
+R_REGISTER_EVENT_TYPE(InitResponse);
 R_REGISTER_EVENT_TYPE(EstablishConnectionRequest);
 R_REGISTER_EVENT_TYPE(EstablishConnectionResponse);
 R_REGISTER_EVENT_TYPE(LoadDatabaseNamesRequest);
@@ -21,4 +23,7 @@ R_REGISTER_EVENT_TYPE(OpeningShellEvent);
 R_REGISTER_EVENT_TYPE(ExecuteQueryRequest);
 R_REGISTER_EVENT_TYPE(ExecuteQueryResponse);
 R_REGISTER_EVENT_TYPE(DocumentListLoadedEvent);
+R_REGISTER_EVENT_TYPE(ExecuteScriptRequest);
+R_REGISTER_EVENT_TYPE(ExecuteScriptResponse);
+R_REGISTER_EVENT_TYPE(ScriptExecutedEvent);
 

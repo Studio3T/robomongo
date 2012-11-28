@@ -62,6 +62,29 @@ namespace Robomongo
         Error error;
     };
 
+    /**
+     * @brief Init Request & Response
+     */
+
+    class InitRequest : public Request
+    {
+        R_MESSAGE
+
+        InitRequest(QObject *sender) :
+            Request(EventType, sender) {}
+    };
+
+    class InitResponse : public Response
+    {
+        R_MESSAGE
+
+        InitResponse() :
+            Response(EventType) {}
+
+        InitResponse(const Error &error) :
+            Response(EventType, error) {}
+    };
+
 
     /**
      * @brief EstablishConnection
@@ -148,6 +171,7 @@ namespace Robomongo
         QStringList collectionNames;
     };
 
+
     /**
      * @brief Query Mongodb
      */
@@ -180,6 +204,53 @@ namespace Robomongo
 
         QList<mongo::BSONObj> documents;
     };
+
+
+    /**
+     * @brief ExecuteScript
+     */
+
+    class ExecuteScriptRequest : public Request
+    {
+        R_MESSAGE
+
+        ExecuteScriptRequest(QObject *sender, const QString &script, int take = 0, int skip = 0) :
+            Request(EventType, sender),
+            script(script),
+            take(take),
+            skip(skip) {}
+
+        QString script;
+        int take; //
+        int skip;
+    };
+
+    class ExecuteScriptResponse : public Response
+    {
+        R_MESSAGE
+
+        ExecuteScriptResponse(const QList<mongo::BSONObj> &documents) :
+            Response(EventType),
+            documents(documents),
+            hasDocuments(true),
+            hasResponse(false) { }
+
+        ExecuteScriptResponse(const QString &response = QString()) :
+            Response(EventType),
+            response(response),
+            hasDocuments(false),
+            hasResponse(true) { }
+
+        ExecuteScriptResponse(const Error &error) :
+            Response(EventType, error) {}
+
+        QList<mongo::BSONObj> documents;
+        QString response;
+        bool hasDocuments;
+        bool hasResponse;
+    };
+
+
 
     class SomethingHappened : public QEvent
     {
@@ -267,6 +338,28 @@ namespace Robomongo
             list(list) { }
 
         QList<MongoDocumentPtr> list;
+    };
+
+    class ScriptExecutedEvent : public QEvent
+    {
+        R_MESSAGE
+
+        ScriptExecutedEvent(const QList<MongoDocumentPtr> &list) :
+            QEvent(EventType),
+            documents(list),
+            hasDocuments(true),
+            hasResponse(false) { }
+
+        ScriptExecutedEvent(const QString &response) :
+            QEvent(EventType),
+            response(response),
+            hasDocuments(false),
+            hasResponse(true) { }
+
+        QList<MongoDocumentPtr> documents;
+        QString response;
+        bool hasDocuments;
+        bool hasResponse;
     };
 
 }

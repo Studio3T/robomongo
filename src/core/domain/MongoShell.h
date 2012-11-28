@@ -16,11 +16,13 @@ namespace Robomongo
         explicit MongoShell(MongoServer *server);
 
         void open(const MongoCollectionPtr &collection);
+        void open(const QString &script);
 
         bool event(QEvent *event);
 
     private: //handlers
         void handle(const ExecuteQueryResponse *event);
+        void handle(const ExecuteScriptResponse *event);
 
     private:
 

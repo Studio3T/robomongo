@@ -28,6 +28,7 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
     _dispatcher(AppRegistry::instance().dispatcher())
 {
     _dispatcher.subscribe(this, DocumentListLoadedEvent::EventType, shell.get());
+    _dispatcher.subscribe(this, ScriptExecutedEvent::EventType, shell.get());
 
     // Query text widget
     _configureQueryText();
@@ -111,7 +112,9 @@ void QueryWidget::ui_queryLinesCountChanged()
 */
 void QueryWidget::ui_executeButtonClicked()
 {
-    //QString query = _queryText->selectedText();
+    QString query = _queryText->toPlainText();
+
+    _shell->open(query);
 
 //    if (query.isEmpty())
 //        query = _queryText->text();
@@ -142,6 +145,7 @@ bool QueryWidget::event(QEvent *event)
 {
     R_HANDLE(event)
     R_EVENT(DocumentListLoadedEvent)
+    R_EVENT(ScriptExecutedEvent)
     else return QWidget::event(event);
 }
 
@@ -214,6 +218,11 @@ void QueryWidget::vm_queryUpdated(const QString & query)
 void QueryWidget::handle(const DocumentListLoadedEvent *event)
 {
     _bsonWidget->setDocuments(event->list);
+}
+
+void QueryWidget::handle(const ScriptExecutedEvent *event)
+{
+    QMessageBox::information(NULL, "Answer", event->response);
 }
 
 /*

@@ -36,10 +36,10 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     // eda 1!!!!
-    //QScriptEngine *engine = new QScriptEngine();
-    //QScriptValue ebati = engine->evaluate("(function() { return 2 + 56;})");
-    //QString aga = ebati.toString();
-    //int answer = ebati.call().toInt32(); // returns 58
+//    QScriptEngine *engine = new QScriptEngine();
+//    QScriptValue ebati = engine->evaluate("(function() { return 2 + 56;})");
+//    QString aga = ebati.toString();
+//    int answer = ebati.call().toInt32(); // returns 58
 
     // eda 2!!!
 //    QScriptEngine *engine = new QScriptEngine();
@@ -53,6 +53,13 @@ int main(int argc, char *argv[])
 //    QScriptEngine *engine = new QScriptEngine();
 //    QScriptValue step1 = engine->evaluate("Array.toString()");
 //    QString result = step1.toString(); // returns: "function Array() { [native code] }"
+
+    // eda 4!!!!
+//    QScriptEngine *engine = new QScriptEngine();
+//    QScriptValue ebati = engine->evaluate("(function() { return 2 + 56;})");
+//    QString aga = ebati.toString();
+//    int answer = ebati.call().toInt32(); // returns 58
+
 
 
     qRegisterMetaType<ConnectionRecordPtr>("ConnectionRecordPtr");

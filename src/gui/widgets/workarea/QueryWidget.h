@@ -12,6 +12,7 @@ namespace Robomongo
     class BsonWidget;
     class Dispatcher;
     class DocumentListLoadedEvent;
+    class ScriptExecutedEvent;
 
     class QueryWidget : public QWidget
     {
@@ -88,6 +89,7 @@ namespace Robomongo
 
     private:
         void handle(const DocumentListLoadedEvent *event);
+        void handle(const ScriptExecutedEvent *event);
 
     private:
 

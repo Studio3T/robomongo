@@ -21,10 +21,17 @@ void MongoShell::open(const MongoCollectionPtr &collection)
     _client->send(new ExecuteQueryRequest(this, collection->fullName()));
 }
 
+void MongoShell::open(const QString &script)
+{
+    _query = script;
+    _client->send(new ExecuteScriptRequest(this, _query));
+}
+
 bool MongoShell::event(QEvent *event)
 {
     R_HANDLE(event)
     R_EVENT(ExecuteQueryResponse)
+    R_EVENT(ExecuteScriptResponse)
     else return QObject::event(event);
 }
 
@@ -37,4 +44,12 @@ void MongoShell::handle(const ExecuteQueryResponse *event)
     }
 
     _dispatcher->publish(this, new DocumentListLoadedEvent(list));
+}
+
+void MongoShell::handle(const ExecuteScriptResponse *event)
+{
+//    if (event->hasDocuments)
+//        _dispatcher->publish(this, new ScriptExecutedEvent(event->documents));
+    if (event->hasResponse)
+        _dispatcher->publish(this, new ScriptExecutedEvent(event->response));
 }

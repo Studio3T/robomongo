@@ -45,6 +45,23 @@ void MongoClient::init()
     _thread->start();
 }
 
+void MongoClient::evaluteFile(const QString &path)
+{
+    QFile file(path);
+    if(!file.open(QIODevice::ReadOnly))
+        throw std::runtime_error("Unable to read " + path.toStdString());
+
+    QTextStream in(&file);
+    QString script = in.readAll();
+
+    QScriptValue result = _scriptEngine->evaluate(script);
+
+    if (_scriptEngine->hasUncaughtException()) {
+        QString error = _scriptEngine->uncaughtException().toString();
+        int a = 4545;
+    }
+}
+
 /**
  * @brief Events dispatcher
  */
@@ -63,20 +80,21 @@ bool MongoClient::event(QEvent *event)
 void MongoClient::handle(InitRequest *event)
 {
     try {
-
-        QFile file(":/robomongo/scripts/db.js");
-        if(!file.open(QIODevice::ReadOnly))
-            throw std::runtime_error("Unable to read db.js");
-
-        QTextStream in(&file);
-        QString script = in.readAll();
-
         _scriptEngine = new QScriptEngine();
 
         _helper = new Helper();
         QScriptValue helper = _scriptEngine->newQObject(_helper);
         _scriptEngine->globalObject().setProperty("helper", helper);
-        _scriptEngine->evaluate(script);
+
+        evaluteFile(":/robomongo/scripts/robo.js");
+        //evaluteFile(":/robomongo/scripts/utils.js");
+        evaluteFile(":/robomongo/scripts/db.js");
+        evaluteFile(":/robomongo/scripts/mongo.js");
+        evaluteFile(":/robomongo/scripts/collection.js");
+        evaluteFile(":/robomongo/scripts/query.js");
+        evaluteFile(":/robomongo/scripts/mr.js");
+
+
     }
     catch (std::exception &ex) {
         reply(event->sender, new InitResponse(Error("Unable to initialize MongoClient")));

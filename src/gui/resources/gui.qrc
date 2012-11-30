@@ -16,6 +16,13 @@
         <file>icons/bson_object_16x16.png</file>
         <file>icons/database_16x16.png</file>
         <file>icons/loading.gif</file>
+        <file>scripts/collection.js</file>
         <file>scripts/db.js</file>
+        <file>scripts/mongo.js</file>
+        <file>scripts/mr.js</file>
+        <file>scripts/query.js</file>
+        <file>scripts/robo.js</file>
+        <file>scripts/utils.js</file>
+        <file>scripts/utils_sh.js</file>
     </qresource>
 </RCC>

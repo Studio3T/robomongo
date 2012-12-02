@@ -93,6 +93,7 @@ namespace Robomongo
 
         Helper() : QObject() {}
         QString text() const { return _text; }
+        void clear() { _text = ""; }
 
     public slots:
         void print(const QString &message)

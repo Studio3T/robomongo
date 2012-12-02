@@ -8,8 +8,6 @@ WorkAreaTabWidget::WorkAreaTabWidget(WorkAreaWidget * workAreaWidget) : QTabWidg
 {
     setTabBar(new WorkAreaTabBar());  // Should go before setTabsClosable(true)!
 	setTabsClosable(true);
-
-
 	connect(this, SIGNAL(tabCloseRequested(int)), SLOT(ui_tabCloseRequested(int)));
 }
 

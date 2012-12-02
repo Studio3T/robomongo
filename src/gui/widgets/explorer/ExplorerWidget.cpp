@@ -22,6 +22,7 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     _treeWidget = new ExplorerTreeWidget;
     _treeWidget->setIndentation(15);    
     _treeWidget->setHeaderHidden(true);
+    _treeWidget->setStyleSheet("background-color:#E6E6E6; border: 0px;");
 
     QHBoxLayout *vlaout = new QHBoxLayout();
     vlaout->setMargin(0);

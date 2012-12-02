@@ -33,6 +33,7 @@ namespace Robomongo
         ** Log panel
         */
         LogWidget *_log;
+        QDockWidget *_logDock;
 
         WorkAreaWidget *_workArea;
 
@@ -56,6 +57,7 @@ namespace Robomongo
     public slots:
         void manageConnections();
         void refreshConnections();
+        void toggleLogs(bool show);
 
     private:
         void handle(ConnectionFailedEvent *event);

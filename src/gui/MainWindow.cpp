@@ -51,11 +51,15 @@ MainWindow::MainWindow() : QMainWindow(),
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolBar->addAction(connectAction);
     toolBar->addAction(refreshAction);
-    toolBar->addSeparator();
     toolBar->setShortcutEnabled(1, true);
+    toolBar->setMovable(false);
     addToolBar(toolBar);
 
     _status = new QLabel;
+    QPushButton *log = new QPushButton("Logs", this);
+    log->setCheckable(true);
+    connect(log, SIGNAL(toggled(bool)), this, SLOT(toggleLogs(bool)));
+    statusBar()->insertWidget(0, log);
     statusBar()->addPermanentWidget(_status);
 
     createTabs();
@@ -108,6 +112,11 @@ void MainWindow::refreshConnections()
                        ("Refresh not working yet... : <br/>  <b>Ctrl+D</b> : push Button"));
 }
 
+void MainWindow::toggleLogs(bool show)
+{
+    _logDock->setVisible(show);
+}
+
 void MainWindow::handle(ConnectionFailedEvent *event)
 {
     ConnectionRecordPtr connection = event->server->connectionRecord();
@@ -124,13 +133,18 @@ void MainWindow::createDatabaseExplorer()
     QDockWidget *explorerDock = new QDockWidget(tr(" Database Explorer"));
     explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     explorerDock->setWidget(_explorer);
+
+    QWidget *titleWidget = new QWidget(this);         // this lines simply removes
+    explorerDock->setTitleBarWidget(titleWidget);     // title bar widget.
+
     addDockWidget(Qt::LeftDockWidgetArea, explorerDock);
 
     _log = new LogWidget(this);
-    QDockWidget *logDock = new QDockWidget(tr(" Log"));
-    logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
-    logDock->setWidget(_log);
-    addDockWidget(Qt::BottomDockWidgetArea, logDock);
+    _logDock = new QDockWidget(tr(" Log"));
+    _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+    _logDock->setWidget(_log);
+    _logDock->setVisible(false);
+    addDockWidget(Qt::BottomDockWidgetArea, _logDock);
 }
 
 void MainWindow::createTabs()

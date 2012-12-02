@@ -6,6 +6,8 @@
 #include "domain/MongoDocument.h"
 #include <QtGui>
 
+class QPlainTextEdit;
+
 namespace Robomongo
 {
     class BsonTreeWidget;
@@ -30,11 +32,13 @@ namespace Robomongo
         ** Json text text box
         */
 //        QsciScintilla *_jsonText;
+        QPlainTextEdit *_jsonText;
 
         /*
         ** Log text box
         */
 //        QsciScintilla *_logText;
+        QPlainTextEdit *_logText;
 
         /*
         ** Was text rendered, or not

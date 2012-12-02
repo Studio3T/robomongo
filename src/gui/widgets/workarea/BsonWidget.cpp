@@ -3,6 +3,7 @@
 #include "domain/MongoDocumentIterator.h"
 #include "domain/MongoElement.h"
 #include "domain/MongoDocument.h"
+#include <QPlainTextEdit>
 
 using namespace Robomongo;
 
@@ -10,7 +11,11 @@ BsonWidget::BsonWidget(QWidget * parent) : QWidget(parent)
 {
     _textRendered = false;
 	_modeTabs = new QTabWidget;
+    _modeTabs->setDocumentMode(true);
 	_bsonTree = new BsonTreeWidget(this);
+
+    _jsonText = new QPlainTextEdit(this);
+    _logText = new QPlainTextEdit(this);
 
 //	QsciLexerJavaScript * javaScriptLexer = new QsciLexerJavaScript;
 //	javaScriptLexer->setFont(QFont( "Courier New", 10));
@@ -34,8 +39,8 @@ BsonWidget::BsonWidget(QWidget * parent) : QWidget(parent)
 
 
 	_modeTabs->addTab(_bsonTree, "Tree");
-//	_modeTabs->addTab(_jsonText, "Text");
-//    _modeTabs->addTab(_logText, "Shell");
+    _modeTabs->addTab(_jsonText, "Text");
+    _modeTabs->addTab(_logText, "Shell");
 	_modeTabs->setStyleSheet("BsonTreeWidget, QsciScintilla { border: 0px solid gray;}");
     _modeTabs->setDocumentMode(true);
 	connect(_modeTabs, SIGNAL(currentChanged(int)), this, SLOT(ui_tabPageChanged(int)));
@@ -103,7 +108,7 @@ void BsonWidget::setShellOutput(const QString & output)
 /*    _modeTabs->clear();
     _modeTabs->addTab(_logText, "Shell");
 */
-//    _logText->setText(output);
+    _logText->setPlainText(output);
 
     if (!output.isEmpty() && _documents.count() == 0)
         _modeTabs->setCurrentIndex(2);

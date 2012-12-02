@@ -8,6 +8,7 @@
 #include "events/MongoEvents.h"
 #include <QFile>
 #include <QTextStream>
+#include "scripting/Functions.h"
 
 using namespace Robomongo;
 using namespace std;
@@ -85,6 +86,7 @@ void MongoClient::handle(InitRequest *event)
         _helper = new Helper();
         QScriptValue helper = _scriptEngine->newQObject(_helper);
         _scriptEngine->globalObject().setProperty("helper", helper);
+        _scriptEngine->globalObject().setProperty("Mongo", _scriptEngine->newFunction(Mongo_ctor));
 
         evaluteFile(":/robomongo/scripts/robo.js");
         //evaluteFile(":/robomongo/scripts/utils.js");
@@ -200,9 +202,17 @@ void MongoClient::handle(ExecuteScriptRequest *event)
 {
     try
     {
+        _helper->clear();
+
         QScriptValue value = _scriptEngine->evaluate(event->script);
 
-        if (!value.isError())
+        if (_scriptEngine->hasUncaughtException()) {
+            QString error = _scriptEngine->uncaughtException().toString();
+            int line = _scriptEngine->uncaughtExceptionLineNumber();
+            QString message = QString("Error: %1\nline:%2").arg(error).arg(line);
+            reply(event->sender, new ExecuteScriptResponse(message));
+        }
+        else
             reply(event->sender, new ExecuteScriptResponse(_helper->text()));
 
 //        boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));

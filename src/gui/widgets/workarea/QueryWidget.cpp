@@ -159,6 +159,8 @@ void QueryWidget::_configureQueryText()
     _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
+    _queryText->setFixedHeight(200);
+
 //    QsciLexerJavaScript * javaScriptLexer = new QsciLexerJavaScript;
 //    javaScriptLexer->setFont(QFont("Courier", 11));
 
@@ -222,7 +224,8 @@ void QueryWidget::handle(const DocumentListLoadedEvent *event)
 
 void QueryWidget::handle(const ScriptExecutedEvent *event)
 {
-    QMessageBox::information(NULL, "Answer", event->response);
+    _bsonWidget->setShellOutput(event->response);
+//    QMessageBox::information(NULL, "Answer", event->response);
 }
 
 /*

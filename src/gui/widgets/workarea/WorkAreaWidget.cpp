@@ -20,6 +20,8 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
     _tabWidget = new WorkAreaTabWidget(this);
 	_tabWidget->setMovable(true);
     _tabWidget->setDocumentMode(true);
+//    setStyleSheet("QTabWidget::pane {background: red; }");
+//    _tabWidget->setPalette(*(new QPalette(Qt::green))); // it changes color of line be
 
 	QHBoxLayout * hlayout = new QHBoxLayout;
 	hlayout->setMargin(0);

@@ -13,6 +13,7 @@ namespace Robomongo
     class Dispatcher;
     class DocumentListLoadedEvent;
     class ScriptExecutedEvent;
+    class PlainJavaScriptEditor;
 
     class QueryWidget : public QWidget
     {
@@ -50,7 +51,7 @@ namespace Robomongo
         /*
         ** Handle queryText linesCountChanged event
         */
-        void ui_queryLinesCountChanged();
+        void ui_queryLinesCountChanged(int blockCount);
 
         /*
         ** Execute query
@@ -110,7 +111,7 @@ namespace Robomongo
         QPushButton * _rightButton;
         QLineEdit * _pageSizeEdit;
 
-        QPlainTextEdit *_queryText;
+        PlainJavaScriptEditor *_queryText;
 
         MongoShellPtr _shell;
         Dispatcher &_dispatcher;

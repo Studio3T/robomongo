@@ -11,6 +11,7 @@ using namespace Robomongo;
 ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
     setContextMenuPolicy(Qt::DefaultContextMenu);
+    setObjectName("explorerTree");
 
     // Connect action
     QAction *disconnectAction = new QAction("Disconnect", this);

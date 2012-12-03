@@ -22,6 +22,11 @@ MainWindow::MainWindow() : QMainWindow(),
 {
     _dispatcher.subscribe(this, ConnectionFailedEvent::EventType);
 
+    qApp->setStyleSheet(
+        "Robomongo--ExplorerTreeWidget#explorerTree { padding: 7px 0px 7px 0px; background-color:#E7E5E4; border: 0px; } \n "
+        "QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } "
+    );
+
     // Exit action
     QAction *exitAction = new QAction("&Exit", this);
     exitAction->setShortcut(QKeySequence::Quit);
@@ -46,11 +51,34 @@ MainWindow::MainWindow() : QMainWindow(),
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
+    // Left button
+    QPushButton *_leftButton = new QPushButton();
+    _leftButton->setIcon(GuiRegistry::instance().leftIcon());
+    _leftButton->setMaximumWidth(25);
+    connect(_leftButton, SIGNAL(clicked()), SLOT(ui_leftButtonClicked()));
+
+    // Right button
+    QPushButton *_rightButton = new QPushButton();
+    _rightButton->setIcon(GuiRegistry::instance().rightIcon());
+    _rightButton->setMaximumWidth(25);
+
+    QLineEdit *_pageSizeEdit = new QLineEdit("100");
+    _pageSizeEdit->setMaximumWidth(31);
+
+    // Execute button
+    QPushButton * executeButton = new QPushButton("Execute");
+    executeButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
+
     // Toolbar
     QToolBar *toolBar = new QToolBar("Toolbar", this);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolBar->addAction(connectAction);
     toolBar->addAction(refreshAction);
+    toolBar->addSeparator();
+    toolBar->addWidget(_leftButton);
+    toolBar->addWidget(_pageSizeEdit);
+    toolBar->addWidget(_rightButton);
+    toolBar->addWidget(executeButton);
     toolBar->setShortcutEnabled(1, true);
     toolBar->setMovable(false);
     addToolBar(toolBar);

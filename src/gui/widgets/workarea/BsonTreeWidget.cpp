@@ -19,6 +19,8 @@ BsonTreeWidget::BsonTreeWidget(QWidget * parent) : QTreeWidget(parent)
 	header()->setResizeMode(2, QHeaderView::Stretch);
 	setIndentation(15);	
 
+    setStyleSheet("QTreeWidget { border: 0px; }");
+
 //    header()->setResizeMode(QHeaderView::Interactive);
 
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);

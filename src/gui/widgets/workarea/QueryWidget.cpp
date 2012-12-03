@@ -15,6 +15,7 @@
 #include "Dispatcher.h"
 #include "events/MongoEvents.h"
 #include "BsonWidget.h"
+#include "editors/PlainJavaScriptEditor.h"
 
 using namespace mongo;
 using namespace Robomongo;
@@ -27,6 +28,8 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
     _shell(shell),
     _dispatcher(AppRegistry::instance().dispatcher())
 {
+    setObjectName("queryWidget");
+
     _dispatcher.subscribe(this, DocumentListLoadedEvent::EventType, shell.get());
     _dispatcher.subscribe(this, ScriptExecutedEvent::EventType, shell.get());
 
@@ -63,18 +66,21 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
 
     QHBoxLayout * hlayout = new QHBoxLayout;
     hlayout->addWidget(_queryText, 0, Qt::AlignTop);
-    hlayout->addSpacing(5);
-    hlayout->addWidget(_leftButton, 0, Qt::AlignRight | Qt::AlignTop);
-    hlayout->addLayout(pageBoxLayout);
-    hlayout->addWidget(_rightButton, 0, Qt::AlignRight | Qt::AlignTop);
-    hlayout->addSpacing(5);
-    hlayout->addWidget(executeButton, 0, Qt::AlignRight | Qt::AlignTop);
-    hlayout->setSpacing(1);
+//    hlayout->addSpacing(5);
+//    hlayout->addWidget(_leftButton, 0, Qt::AlignRight | Qt::AlignTop);
+//    hlayout->addLayout(pageBoxLayout);
+//    hlayout->addWidget(_rightButton, 0, Qt::AlignRight | Qt::AlignTop);
+//    hlayout->addSpacing(5);
+//    hlayout->addWidget(executeButton, 0, Qt::AlignRight | Qt::AlignTop);
+//    hlayout->setSpacing(1);
 
     QVBoxLayout * layout = new QVBoxLayout;
+    layout->setContentsMargins(0,1,1,0);
     layout->addLayout(hlayout);
     layout->addWidget(_bsonWidget);
     setLayout(layout);
+
+    ui_queryLinesCountChanged(_queryText->blockCount());
 
     // Connect to VM
 //    connect(_viewModel, SIGNAL(documentsRefreshed(QList<MongoDocument_Pointer>)), SLOT(vm_documentsRefreshed(QList<MongoDocument_Pointer>)));
@@ -96,15 +102,23 @@ QueryWidget::~QueryWidget()
 /*
 ** Handle queryText linesCountChanged event
 */
-void QueryWidget::ui_queryLinesCountChanged()
+void QueryWidget::ui_queryLinesCountChanged(int blockCount)
 {
-//    int h = _queryText->lines();
-//    int height = h * 18 + 3;
+    QFontMetrics m(_queryText->font());
+    int lineHeight = m.lineSpacing() + 1;
 
-//    if (height > 400)
-//        height = 400;
+    int h = _queryText->document()->lineCount();
 
-//    _queryText->setFixedHeight(height);
+    _queryText->document()->defaultFont().pixelSize();
+
+//    int lineHeight = _queryText->document()->size().height() / h;
+
+    int height = h * lineHeight + 8;
+
+    if (height > 400)
+        height = 400;
+
+    _queryText->setFixedHeight(height);
 }
 
 /*
@@ -154,11 +168,15 @@ bool QueryWidget::event(QEvent *event)
 */
 void QueryWidget::_configureQueryText()
 {
-    _queryText = new QPlainTextEdit(this);
+    _queryText = new PlainJavaScriptEditor(this);
     _queryText->setFixedHeight(28);
     _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
+    //_queryText->setSidebarVisible(false);
+    _queryText->setFrameShape(JSEdit::NoFrame);
+    _queryText->setLineNumbersVisible(false);
+    _queryText->setCodeFoldingEnabled(false);
     _queryText->setFixedHeight(200);
 
 //    QsciLexerJavaScript * javaScriptLexer = new QsciLexerJavaScript;
@@ -176,7 +194,7 @@ void QueryWidget::_configureQueryText()
 //    _queryText->setMarginWidth(1, 3); // to hide left gray column
 //    _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
 
-    connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
+    connect(_queryText->document(), SIGNAL(blockCountChanged(int)), SLOT(ui_queryLinesCountChanged(int)));
 }
 
 /*

@@ -23,7 +23,9 @@ SOURCES += ExampleWindow.cpp \
     widgets/workarea/WorkAreaTabBar.cpp \
     widgets/workarea/BsonWidget.cpp \
     widgets/workarea/BsonTreeWidget.cpp \
-    widgets/workarea/BsonTreeItem.cpp
+    widgets/workarea/BsonTreeItem.cpp \
+    editors/jsedit.cpp \
+    editors/PlainJavaScriptEditor.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
@@ -43,7 +45,9 @@ HEADERS  += ExampleWindow.h = \
     widgets/workarea/WorkAreaTabBar.h \
     widgets/workarea/BsonWidget.h \
     widgets/workarea/BsonTreeWidget.h \
-    widgets/workarea/BsonTreeItem.h
+    widgets/workarea/BsonTreeItem.h \
+    editors/jsedit.h \
+    editors/PlainJavaScriptEditor.h
 
 INCLUDEPATH += \
             $$ROOT/src/core

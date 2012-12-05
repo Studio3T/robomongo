@@ -11,7 +11,6 @@ class QPlainTextEdit;
 namespace Robomongo
 {
     class BsonTreeWidget;
-    class QsciScintilla;
 
     /*
     ** Represents list of bson objects

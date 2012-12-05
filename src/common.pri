@@ -42,11 +42,13 @@ LIBS += -L$$OUTPUT_ROOT/core/out
 # include paths:
 INCLUDEPATH += $$ROOT/include
 INCLUDEPATH += $$ROOT/include/boost
+INCLUDEPATH += $$ROOT/include/qscintilla
 
 # third party libs
 LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson
 LIBS += -L$$THIRDPARTY_LIBS_PATH/mongoclient
 LIBS += -L$$THIRDPARTY_LIBS_PATH/boost
-LIBS += -lqjson -lmongoclient -lboost_thread -lboost_filesystem -lboost_system
+LIBS += -L$$THIRDPARTY_LIBS_PATH/qscintilla
+LIBS += -lqjson -lmongoclient -lboost_thread -lboost_filesystem -lboost_system -lqscintilla2
 
 

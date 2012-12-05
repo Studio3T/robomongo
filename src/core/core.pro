@@ -49,5 +49,5 @@ HEADERS  += \
     scripting/Functions.h
 
 # third party libs
-LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson
-LIBS += -lqjsond
+#LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson
+#LIBS += -lqjsond

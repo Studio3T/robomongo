@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QPlainTextEdit>
+#include "Qsci/qsciscintilla.h"
 
 namespace Robomongo
 {
@@ -14,6 +15,7 @@ namespace Robomongo
     class DocumentListLoadedEvent;
     class ScriptExecutedEvent;
     class PlainJavaScriptEditor;
+    class RoboScintilla;
 
     class QueryWidget : public QWidget
     {
@@ -51,7 +53,7 @@ namespace Robomongo
         /*
         ** Handle queryText linesCountChanged event
         */
-        void ui_queryLinesCountChanged(int blockCount);
+        void ui_queryLinesCountChanged();
 
         /*
         ** Execute query
@@ -97,7 +99,7 @@ namespace Robomongo
         /*
         ** Query text
         */
-        //QsciScintilla * _queryText;
+        RoboScintilla * _queryText;
 
         /*
         ** Bson widget
@@ -111,7 +113,7 @@ namespace Robomongo
         QPushButton * _rightButton;
         QLineEdit * _pageSizeEdit;
 
-        PlainJavaScriptEditor *_queryText;
+//        PlainJavaScriptEditor *_queryText;
 
         MongoShellPtr _shell;
         Dispatcher &_dispatcher;

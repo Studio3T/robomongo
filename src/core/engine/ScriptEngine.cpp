@@ -37,6 +37,8 @@ void ScriptEngine::init()
            << _username.toStdString() << "', '"
            << _password.toStdString() << "')";
 
+    mongo::shell_utils::_dbConnect = ss.str();
+
     mongo::ScriptEngine::setConnectCallback( mongo::shell_utils::onConnect );
     mongo::ScriptEngine::setup();
     mongo::globalScriptEngine->setScopeInitCallback( mongo::shell_utils::initScope );

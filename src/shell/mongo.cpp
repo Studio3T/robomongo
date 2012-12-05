@@ -1257,7 +1257,7 @@ const StringData _jscode_raw_utils =
 "if (typeof p == \"function\")\n" 
 "print(x.tojson());\n" 
 "else\n" 
-"print(tojson(x));\n" 
+"print(tojson(x));\n"
 "}\n" 
 "\n" 
 "shellAutocomplete = function ( /*prefix*/ ) { // outer scope function called on init. Actual function at end\n" 

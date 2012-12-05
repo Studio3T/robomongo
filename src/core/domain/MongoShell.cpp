@@ -48,8 +48,17 @@ void MongoShell::handle(const ExecuteQueryResponse *event)
 
 void MongoShell::handle(const ExecuteScriptResponse *event)
 {
-//    if (event->hasDocuments)
-//        _dispatcher->publish(this, new ScriptExecutedEvent(event->documents));
+    if (event->hasDocuments) {
+
+        QList<MongoDocumentPtr> list;
+        foreach(mongo::BSONObj obj, event->documents) {
+            MongoDocumentPtr doc(new MongoDocument(obj));
+            list.append(doc);
+        }
+
+        _dispatcher->publish(this, new ScriptExecutedEvent(list));
+    }
+
     if (event->hasResponse)
         _dispatcher->publish(this, new ScriptExecutedEvent(event->response));
 }

@@ -7,6 +7,7 @@
 #include <QStringList>
 #include "events/MongoEvents.h"
 #include <QScriptEngine>
+#include "engine/ScriptEngine.h"
 
 namespace Robomongo
 {
@@ -16,8 +17,7 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        explicit MongoClient(QString address, QObject *parent = 0);
-        explicit MongoClient(QString host, int port, QObject *parent = 0);
+        explicit MongoClient(QString host, int port, QString database, QString username, QString password, QObject *parent = 0);
 
         ~MongoClient();
 
@@ -81,10 +81,15 @@ namespace Robomongo
         QThread *_thread;
         QMutex _firstConnectionMutex;
 
-        QScriptEngine *_scriptEngine;
+        ScriptEngine *_scriptEngine;
         Helper *_helper;
 
         bool _isAdmin;
+
+        QString _databaseAddress;
+        int _databasePort;
+        QString _userName;
+        QString _userPassword;
         QString _databaseName;
     };
 

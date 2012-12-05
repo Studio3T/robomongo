@@ -22,7 +22,8 @@ SOURCES += \
     util/processinfo_linux2.cpp \
     shell/shell_utils.cpp \
     shell/shell_utils_launcher.cpp \
-    shell/shell_utils_extended.cpp
+    shell/shell_utils_extended.cpp \
+    util/ramlog.cpp
 
 HEADERS +=
 

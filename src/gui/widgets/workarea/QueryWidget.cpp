@@ -16,6 +16,8 @@
 #include "events/MongoEvents.h"
 #include "BsonWidget.h"
 #include "editors/PlainJavaScriptEditor.h"
+#include "Qsci/qsciscintilla.h"
+#include "Qsci/qscilexerjavascript.h"
 
 using namespace mongo;
 using namespace Robomongo;
@@ -75,12 +77,12 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
 //    hlayout->setSpacing(1);
 
     QVBoxLayout * layout = new QVBoxLayout;
-    layout->setContentsMargins(0,1,1,0);
+    layout->setContentsMargins(0,3,3,0);
     layout->addLayout(hlayout);
     layout->addWidget(_bsonWidget);
     setLayout(layout);
 
-    ui_queryLinesCountChanged(_queryText->blockCount());
+    ui_queryLinesCountChanged();
 
     // Connect to VM
 //    connect(_viewModel, SIGNAL(documentsRefreshed(QList<MongoDocument_Pointer>)), SLOT(vm_documentsRefreshed(QList<MongoDocument_Pointer>)));
@@ -102,21 +104,21 @@ QueryWidget::~QueryWidget()
 /*
 ** Handle queryText linesCountChanged event
 */
-void QueryWidget::ui_queryLinesCountChanged(int blockCount)
+void QueryWidget::ui_queryLinesCountChanged()
 {
+//    QPainter painter = QPainter();
+//    painter.drawLine(_queryText->geometry().topLeft(), _queryText->geometry().topRight());
+
     QFontMetrics m(_queryText->font());
     int lineHeight = m.lineSpacing() + 1;
 
-    int h = _queryText->document()->lineCount();
+    int numberOfLines = _queryText->lines();
 
-    _queryText->document()->defaultFont().pixelSize();
+    int height = numberOfLines * lineHeight + 8;
 
-//    int lineHeight = _queryText->document()->size().height() / h;
-
-    int height = h * lineHeight + 8;
-
-    if (height > 400)
-        height = 400;
+    int maxHeight = 18 * lineHeight + 8;
+    if (height > maxHeight)
+        height = maxHeight;
 
     _queryText->setFixedHeight(height);
 }
@@ -126,9 +128,9 @@ void QueryWidget::ui_queryLinesCountChanged(int blockCount)
 */
 void QueryWidget::ui_executeButtonClicked()
 {
-    QString query = _queryText->toPlainText();
+//    QString query = _queryText->text();
 
-    _shell->open(query);
+//    _shell->open(query);
 
 //    if (query.isEmpty())
 //        query = _queryText->text();
@@ -168,33 +170,62 @@ bool QueryWidget::event(QEvent *event)
 */
 void QueryWidget::_configureQueryText()
 {
-    _queryText = new PlainJavaScriptEditor(this);
-    _queryText->setFixedHeight(28);
-    _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-
-    //_queryText->setSidebarVisible(false);
-    _queryText->setFrameShape(JSEdit::NoFrame);
-    _queryText->setLineNumbersVisible(false);
-    _queryText->setCodeFoldingEnabled(false);
-    _queryText->setFixedHeight(200);
-
-//    QsciLexerJavaScript * javaScriptLexer = new QsciLexerJavaScript;
-//    javaScriptLexer->setFont(QFont("Courier", 11));
-
-//    _queryText = new QsciScintilla;
-//    _queryText->setLexer(javaScriptLexer);
+//    _queryText = new PlainJavaScriptEditor(this);
+//    _queryText->setFixedHeight(28);
 //    _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    _queryText->setFixedHeight(23);
-//    _queryText->setAutoIndent(true);
-//    _queryText->setIndentationsUseTabs(false);
-//    _queryText->setIndentationWidth(4);
-//    _queryText->setUtf8(true);
-//    _queryText->installEventFilter(this);
-//    _queryText->setMarginWidth(1, 3); // to hide left gray column
-//    _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
+//    _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+//    _queryText->setFrameShape(JSEdit::NoFrame);
+//    _queryText->setLineNumbersVisible(false);
+//    _queryText->setCodeFoldingEnabled(false);
+//    _queryText->setFixedHeight(200);
 
-    connect(_queryText->document(), SIGNAL(blockCountChanged(int)), SLOT(ui_queryLinesCountChanged(int)));
+    QFont textFont = font();
+#if defined(Q_OS_MAC)
+    textFont.setPointSize(12);
+    textFont.setFamily("Monaco");
+#elif defined(Q_OS_UNIX)
+    textFont.setFamily("Monospace");
+    textFont.setFixedPitch(true);
+    //textFont.setWeight(QFont::Bold);
+//    textFont.setPointSize(12);
+#elif defined(Q_OS_WIN)
+    textFont.setPointSize(12);
+    textFont.setFamily("Courier");
+#endif
+
+    QsciLexerJavaScript * javaScriptLexer = new QsciLexerJavaScript;
+    javaScriptLexer->setFont(textFont);
+
+    _queryText = new RoboScintilla;
+    _queryText->setLexer(javaScriptLexer);
+    _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    _queryText->setFixedHeight(23);
+    _queryText->setAutoIndent(true);
+    _queryText->setIndentationsUseTabs(false);
+    _queryText->setIndentationWidth(4);
+    _queryText->setUtf8(true);
+    _queryText->installEventFilter(this);
+    _queryText->setMarginWidth(1, 0); // to hide left gray column
+    _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
+    _queryText->setFont(textFont);
+    //_queryText->SendScintilla(QsciScintilla::SCI_SETFONTQUALITY, QsciScintilla::SC_EFF_QUALITY_LCD_OPTIMIZED);
+//    _queryText->SendScintilla(QsciScintilla::SCI_STYLESETBOLD, 1);
+//    _queryText->SendScintilla(QsciScintilla::SCI_STYLESETFONT, (unsigned long) 0, "courier");
+//    _queryText->SendScintilla(QsciScintilla::SCI_STYLESETFONT, (unsigned long) 1, "courier");
+//    _queryText->SendScintilla(QsciScintilla::SCI_STYLESETFONT, (unsigned long) 2, "courier");
+//    _queryText->SendScintilla(QsciScintilla::SCI_STYLESETFONT, (unsigned long) 3, "courier");
+//    _queryText->SendScintilla(QsciScintilla::SCI_STYLESETFONT, (unsigned long) 4, "courier");
+
+    //textEdit->SendScintilla (QsciScintillaBase::SCI_SETKEYWORDS, "for if end");
+
+    //_queryText->setFrameShape(QFrame::WinPanel);
+    //_queryText->setFrameShadow(QFrame::Sunken);
+    _queryText->setStyleSheet("QFrame {background-color: white; border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
+    //_queryText->setStyleSheet("QFrame {border-radius: 4px;}");
+
+
+
+    connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
 }
 
 /*

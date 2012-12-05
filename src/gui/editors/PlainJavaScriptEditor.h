@@ -2,6 +2,7 @@
 #define PLAINJAVASCRIPTEDITOR_H
 
 #include "jsedit.h"
+#include "Qsci/qsciscintilla.h"
 
 namespace Robomongo
 {
@@ -11,6 +12,15 @@ namespace Robomongo
         PlainJavaScriptEditor(QWidget *parent=NULL);
     private:
         Q_DISABLE_COPY(PlainJavaScriptEditor)
+    };
+
+    class RoboScintilla : public QsciScintilla
+    {
+    public:
+        RoboScintilla(QWidget *parent = NULL);
+
+    protected:
+        void paintEvent(QPaintEvent *e);
     };
 }
 

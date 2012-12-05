@@ -51,24 +51,18 @@ void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabasePtr> &db
 		delete p;
 	}
 
-    // Add system folder
+    // Add 'System' folder
     QIcon folderIcon = GuiRegistry::instance().folderIcon();
     QTreeWidgetItem * systemFolder = new QTreeWidgetItem();
     systemFolder->setIcon(0, folderIcon);
     systemFolder->setText(0, "System");
     addChild(systemFolder);
 
-// no leaks:
-//    ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(dbs.at(0));
-//    addChild(dbItem);
-
     for (int i = 0; i < dbs.size(); i++)
     {
-        // why leaks??
         MongoDatabasePtr database(dbs.at(i));
 
-        if (database->isSystem())
-        {
+        if (database->isSystem()) {
             ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(database);
             systemFolder->addChild(dbItem);
             continue;
@@ -78,10 +72,8 @@ void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabasePtr> &db
         addChild(dbItem);
     }
 
-   // foreach(MongoDatabasePtr database, dbs)
-    //{
-
-    //}
+    // Show 'System' folder only if it has items
+    systemFolder->setHidden(systemFolder->childCount() == 0);
 }
 
 void ExplorerServerTreeItem::handle(DatabaseListLoadedEvent *event)

@@ -110,6 +110,9 @@ void ExplorerDatabaseTreeItem::vm_collectionRefreshed(const QList<MongoCollectio
 		ExplorerCollectionTreeItem * collectionItem = new ExplorerCollectionTreeItem(collection);
 		_collectionItem->addChild(collectionItem);
     }
+
+    // Show 'System' folder only if it has items
+    systemFolder->setHidden(systemFolder->childCount() == 0);
 }
 
 void ExplorerDatabaseTreeItem::handle(CollectionListLoadedEvent *event)

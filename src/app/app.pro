@@ -15,7 +15,7 @@ INCLUDEPATH += \
             $$ROOT/src/gui \
             $$ROOT/src/core
 
-LIBS += -lgui -lcore -lqjson -lqscintilla2
+LIBS += -lshell -lgui -lcore -lqjson -lqscintilla2
 
 RESOURCES += \
     ../gui/resources/gui.qrc
@@ -24,8 +24,10 @@ RESOURCES += \
 # http://stackoverflow.com/questions/1485435/force-relink-when-building-in-qt-creator
 unix:PRE_TARGETDEPS += $$OUTPUT_ROOT/core/out/libcore.a
 unix:PRE_TARGETDEPS += $$OUTPUT_ROOT/gui/out/libgui.a
+unix:PRE_TARGETDEPS += $$OUTPUT_ROOT/shell/out/libshell.a
 win32:PRE_TARGETDEPS += $$OUTPUT_ROOT/core/out/core.lib
-#win32:PRE_TARGETDEPS += $$OUTPUT_ROOT/core/out/gui.lib
+win32:PRE_TARGETDEPS += $$OUTPUT_ROOT/gui/out/gui.lib
+win32:PRE_TARGETDEPS += $$OUTPUT_ROOT/shell/out/shell.lib
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64) {

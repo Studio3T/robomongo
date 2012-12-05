@@ -3,6 +3,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG  += qt
 CONFIG  -= debug_and_release
 QT      += core gui script
+DEFINES += ROBOMONGO
+
+# Spider Monkey defines:
+win32:DEFINES += XP_WIN
+unix:DEFINES  += XP_UNIX
 
 DESTDIR      = $$OUT_PWD/out
 OBJECTS_DIR  = $$OUT_PWD/obj
@@ -38,6 +43,7 @@ message(THIRDPARTY_LIBS_PATH: $$THIRDPARTY_LIBS_PATH)
 # libs paths:
 LIBS += -L$$OUTPUT_ROOT/gui/out
 LIBS += -L$$OUTPUT_ROOT/core/out
+LIBS += -L$$OUTPUT_ROOT/shell/out
 
 # include paths:
 INCLUDEPATH += $$ROOT/include
@@ -49,6 +55,7 @@ LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson
 LIBS += -L$$THIRDPARTY_LIBS_PATH/mongoclient
 LIBS += -L$$THIRDPARTY_LIBS_PATH/boost
 LIBS += -L$$THIRDPARTY_LIBS_PATH/qscintilla
-LIBS += -lqjson -lmongoclient -lboost_thread -lboost_filesystem -lboost_system -lqscintilla2
+LIBS += -L$$THIRDPARTY_LIBS_PATH/js
+LIBS += -lqjson -lmongoclient -lboost_thread -lboost_filesystem -lboost_system -lqscintilla2 -ljs
 
 

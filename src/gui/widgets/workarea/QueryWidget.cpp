@@ -83,6 +83,7 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
     setLayout(layout);
 
     ui_queryLinesCountChanged();
+    _queryText->setFocus();
 
     // Connect to VM
 //    connect(_viewModel, SIGNAL(documentsRefreshed(QList<MongoDocument_Pointer>)), SLOT(vm_documentsRefreshed(QList<MongoDocument_Pointer>)));
@@ -208,23 +209,11 @@ void QueryWidget::_configureQueryText()
     _queryText->setMarginWidth(1, 0); // to hide left gray column
     _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
     _queryText->setFont(textFont);
+
     //_queryText->SendScintilla(QsciScintilla::SCI_SETFONTQUALITY, QsciScintilla::SC_EFF_QUALITY_LCD_OPTIMIZED);
-//    _queryText->SendScintilla(QsciScintilla::SCI_STYLESETBOLD, 1);
-//    _queryText->SendScintilla(QsciScintilla::SCI_STYLESETFONT, (unsigned long) 0, "courier");
-//    _queryText->SendScintilla(QsciScintilla::SCI_STYLESETFONT, (unsigned long) 1, "courier");
-//    _queryText->SendScintilla(QsciScintilla::SCI_STYLESETFONT, (unsigned long) 2, "courier");
-//    _queryText->SendScintilla(QsciScintilla::SCI_STYLESETFONT, (unsigned long) 3, "courier");
-//    _queryText->SendScintilla(QsciScintilla::SCI_STYLESETFONT, (unsigned long) 4, "courier");
+    //_queryText->SendScintilla (QsciScintillaBase::SCI_SETKEYWORDS, "db");
 
-    //textEdit->SendScintilla (QsciScintillaBase::SCI_SETKEYWORDS, "for if end");
-
-    //_queryText->setFrameShape(QFrame::WinPanel);
-    //_queryText->setFrameShadow(QFrame::Sunken);
     _queryText->setStyleSheet("QFrame {background-color: white; border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
-    //_queryText->setStyleSheet("QFrame {border-radius: 4px;}");
-
-
-
     connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
 }
 

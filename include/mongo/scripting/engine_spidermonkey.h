@@ -22,14 +22,22 @@
 // START inc hacking
 
 #ifdef WIN32
+#ifdef ROBOMONGO
+#include "js/jstypes.h"
+#else
 #include <third_party/js-1.7/jstypes.h>
+#endif
 #undef JS_PUBLIC_API
 #undef JS_PUBLIC_DATA
 #define JS_PUBLIC_API(t)    t __cdecl
 #define JS_PUBLIC_DATA(t)   t
 #endif
 
+#ifdef ROBOMONGO
+#include "js/jsapi.h"
+#else
 #include <third_party/js-1.7/jsapi.h>
+#endif
 
 // END inc hacking
 
@@ -66,7 +74,11 @@ namespace mongo {
     extern JSClass maxkey_class;
 
     // internal things
+    #ifdef ROBOMONGO
+    void dontDeleteScope( SMScope * s );
+    #else
     void dontDeleteScope( SMScope * s ) {}
+    #endif
     void errorReporter( JSContext *cx, const char *message, JSErrorReport *report );
     extern boost::thread_specific_ptr<SMScope> currentScope;
 

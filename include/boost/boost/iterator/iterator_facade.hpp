@@ -14,8 +14,8 @@
 #include <boost/iterator/detail/facade_iterator_category.hpp>
 #include <boost/iterator/detail/enable_if.hpp>
 
+#include <boost/implicit_cast.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/utility/addressof.hpp>
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/add_const.hpp>
@@ -147,7 +147,7 @@ namespace boost
 
         // Returning a mutable reference allows nonsense like
         // (*r++).mutate(), but it imposes fewer assumptions about the
-        // behavior of the value_type.  In particular, recall that
+        // behavior of the value_type.  In particular, recall taht
         // (*r).mutate() is legal if operator* returns by value.
         value_type&
         operator*() const
@@ -294,43 +294,46 @@ namespace boost
 
     // operator->() needs special support for input iterators to strictly meet the
     // standard's requirements. If *i is not a reference type, we must still
-    // produce an lvalue to which a pointer can be formed.  We do that by
-    // returning a proxy object containing an instance of the reference object.
-    template <class Reference, class Pointer>
-    struct operator_arrow_dispatch // proxy references
+    // produce a lvalue to which a pointer can be formed. We do that by
+    // returning an instantiation of this special proxy class template.
+    template <class T>
+    struct operator_arrow_proxy
     {
-        struct proxy
-        {
-            explicit proxy(Reference const & x) : m_ref(x) {}
-            Reference* operator->() { return boost::addressof(m_ref); }
-            // This function is needed for MWCW and BCC, which won't call
-            // operator-> again automatically per 13.3.1.2 para 8
-            operator Reference*() { return boost::addressof(m_ref); }
-            Reference m_ref;
-        };
-        typedef proxy result_type;
-        static result_type apply(Reference const & x)
-        {
-            return result_type(x);
-        }
+        operator_arrow_proxy(T const* px) : m_value(*px) {}
+        T* operator->() const { return &m_value; }
+        // This function is needed for MWCW and BCC, which won't call operator->
+        // again automatically per 13.3.1.2 para 8
+        operator T*() const { return &m_value; }
+        mutable T m_value;
     };
 
-    template <class T, class Pointer>
-    struct operator_arrow_dispatch<T&, Pointer> // "real" references
+    // A metafunction that gets the result type for operator->.  Also
+    // has a static function make() which builds the result from a
+    // Reference
+    template <class ValueType, class Reference, class Pointer>
+    struct operator_arrow_result
     {
-        typedef Pointer result_type;
-        static result_type apply(T& x)
+        // CWPro8.3 won't accept "operator_arrow_result::type", and we
+        // need that type below, so metafunction forwarding would be a
+        // losing proposition here.
+        typedef typename mpl::if_<
+            is_reference<Reference>
+          , Pointer
+          , operator_arrow_proxy<ValueType>
+        >::type type;
+
+        static type make(Reference x)
         {
-            return boost::addressof(x);
+            return boost::implicit_cast<type>(&x);
         }
     };
 
 # if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
     // Deal with ETI
     template<>
-    struct operator_arrow_dispatch<int, int>
+    struct operator_arrow_result<int, int, int>
     {
-        typedef int result_type;
+        typedef int type;
     };
 # endif
 
@@ -615,10 +618,11 @@ namespace boost
          Value, CategoryOrTraversal, Reference, Difference
       > associated_types;
 
-      typedef boost::detail::operator_arrow_dispatch<
-          Reference
+      typedef boost::detail::operator_arrow_result<
+        typename associated_types::value_type
+        , Reference
         , typename associated_types::pointer
-      > operator_arrow_dispatch_;
+      > pointer_;
 
    protected:
       // For use by derived classes
@@ -630,7 +634,7 @@ namespace boost
       typedef Reference reference;
       typedef Difference difference_type;
 
-      typedef typename operator_arrow_dispatch_::result_type pointer;
+      typedef typename pointer_::type pointer;
 
       typedef typename associated_types::iterator_category iterator_category;
 
@@ -641,7 +645,7 @@ namespace boost
 
       pointer operator->() const
       {
-          return operator_arrow_dispatch_::apply(*this->derived());
+          return pointer_::make(*this->derived());
       }
         
       typename boost::detail::operator_brackets_result<Derived,Value,reference>::type

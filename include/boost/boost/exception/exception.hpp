@@ -310,11 +310,6 @@ boost
     namespace
     exception_detail
         {
-#if defined(__GNUC__)
-# if (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
-#  pragma GCC visibility push (default)
-# endif
-#endif
         template <class T>
         struct
         error_info_injector:
@@ -331,11 +326,6 @@ boost
                 {
                 }
             };
-#if defined(__GNUC__)
-# if (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
-#  pragma GCC visibility pop
-# endif
-#endif
 
         struct large_size { char c[256]; };
         large_size dispatch_boost_exception( exception const * );
@@ -383,11 +373,6 @@ boost
     namespace
     exception_detail
         {
-#if defined(__GNUC__)
-# if (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
-#  pragma GCC visibility push (default)
-# endif
-#endif
         class
         clone_base
             {
@@ -401,11 +386,6 @@ boost
                 {
                 }
             };
-#if defined(__GNUC__)
-# if (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) || (__GNUC__ > 4)
-#  pragma GCC visibility pop
-# endif
-#endif
 
         inline
         void
@@ -430,15 +410,8 @@ boost
         class
         clone_impl:
             public T,
-            public virtual clone_base
+            public clone_base
             {
-            struct clone_tag { };
-            clone_impl( clone_impl const & x, clone_tag ):
-                T(x)
-                {
-                copy_boost_exception(this,&x);
-                }
-
             public:
 
             explicit
@@ -457,7 +430,7 @@ boost
             clone_base const *
             clone() const
                 {
-                return new clone_impl(*this,clone_tag());
+                return new clone_impl(*this);
                 }
 
             void

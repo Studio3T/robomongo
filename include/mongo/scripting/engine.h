@@ -199,7 +199,11 @@ namespace mongo {
         static void setGetInterruptSpecCallback( unsigned ( *func )() ) { _getInterruptSpecCallback = func; }
         static bool haveGetInterruptSpecCallback() { return _getInterruptSpecCallback; }
         static unsigned getInterruptSpec() {
+            #ifdef ROBOMONGO
+            //massert( 13474, "no _getInterruptSpecCallback", _getInterruptSpecCallback );
+            #else
             massert( 13474, "no _getInterruptSpecCallback", _getInterruptSpecCallback );
+            #endif
             return _getInterruptSpecCallback();
         }
 

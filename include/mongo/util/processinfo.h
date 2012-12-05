@@ -27,7 +27,11 @@ typedef int pid_t;
 int getpid();
 #endif
 
+#ifdef ROBOMONGO
+#include "mongo/db/jsobj.h"
+#else
 #include <db/jsobj.h>
+#endif
 
 namespace mongo {
 

@@ -1,10 +1,9 @@
 TEMPLATE = subdirs
 
-SUBDIRS = core \
+SUBDIRS = shell \
+          core \
           gui  \
           app
-
-
 
 # Print OS and CPU architecture
 contains(QMAKE_HOST.arch, x86_64) {

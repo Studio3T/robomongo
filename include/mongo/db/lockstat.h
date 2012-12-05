@@ -19,8 +19,13 @@
 
 #pragma once
 
+#ifdef ROBOMONGO
+#include "mongo/util/timer.h"
+#include "mongo/platform/atomic_word.h"
+#else
 #include "util/timer.h"
 #include "mongo/platform/atomic_word.h"
+#endif
 
 namespace mongo { 
 

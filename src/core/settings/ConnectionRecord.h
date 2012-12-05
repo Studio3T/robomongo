@@ -73,6 +73,12 @@ namespace Robomongo
         void setUserPassword(const QString &userPassword) { _userPassword = userPassword; }
 
         /**
+         * Port of database
+         */
+        QString databaseName() const { return _databaseName; }
+        void setDatabaseName(const QString &databaseName) { _databaseName = databaseName; }
+
+        /**
          * @brief Checks that auth required
          */
         bool isAuthNeeded() const {
@@ -108,6 +114,7 @@ namespace Robomongo
         int _databasePort;
         QString _userName;
         QString _userPassword;
+        QString _databaseName;
     };
 }
 

@@ -84,6 +84,8 @@ namespace Robomongo
         QScriptEngine *_scriptEngine;
         Helper *_helper;
 
+        bool _isAdmin;
+        QString _databaseName;
     };
 
     class Helper : public QObject

@@ -94,8 +94,16 @@ namespace Robomongo
     {
         R_MESSAGE
 
-        EstablishConnectionRequest(QObject *sender) :
-            Request(EventType, sender) {}
+        EstablishConnectionRequest(QObject *sender, const QString &databaseName,
+                                   const QString &userName, const QString &userPassword) :
+            Request(EventType, sender),
+            databaseName(databaseName),
+            userName(userName),
+            userPassword(userPassword) {}
+
+        QString databaseName;
+        QString userName;
+        QString userPassword;
     };
 
     class EstablishConnectionResponse : public Response

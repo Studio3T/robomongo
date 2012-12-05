@@ -35,7 +35,10 @@ MongoServer::~MongoServer()
  */
 void MongoServer::tryConnect()
 {
-    _client->send(new EstablishConnectionRequest(this));
+    _client->send(new EstablishConnectionRequest(this,
+        _connectionRecord->databaseName(),
+        _connectionRecord->userName(),
+        _connectionRecord->userPassword()));
 }
 
 /**

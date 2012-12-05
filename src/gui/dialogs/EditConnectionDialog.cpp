@@ -13,12 +13,14 @@ EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDi
 
     QPushButton *saveButton = new QPushButton("&Save");
     saveButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
+    saveButton->setDefault(true);
     connect(saveButton, SIGNAL(clicked()), this, SLOT(accept()));
 
     QPushButton *cancelButton = new QPushButton("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
     QPushButton *testButton = new QPushButton("&Test");
+    testButton->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
     connect(testButton, SIGNAL(clicked()), this, SLOT(testConnection()));
 
     _connectionName = new QLineEdit(_connection->connectionName(), this);
@@ -26,6 +28,9 @@ EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDi
     _serverPort = new QLineEdit(QString::number(_connection->databasePort()), this);
     _userName = new QLineEdit(_connection->userName(), this);
     _userPassword = new QLineEdit(_connection->userPassword(), this);
+    _databaseName = new QLineEdit(_connection->databaseName(), this);
+
+    _serverPort->setFixedWidth(80);
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
@@ -43,9 +48,12 @@ EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDi
     editLayout->addWidget(_userName, 3, 1);
     editLayout->addWidget(new QLabel("Password"), 4, 0);
     editLayout->addWidget(_userPassword, 4, 1);
+    editLayout->addWidget(new QLabel("Database"), 5, 0);
+    editLayout->addWidget(_databaseName, 5, 1);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(editLayout);
+    mainLayout->addSpacing(10);
     mainLayout->addLayout(bottomLayout);
 
     setContentsMargins(7, 7, 7, 7);
@@ -67,6 +75,7 @@ void EditConnectionDialog::accept()
     _connection->setDatabasePort(_serverPort->text().toInt());
     _connection->setUserName(_userName->text());
     _connection->setUserPassword(_userPassword->text());
+    _connection->setDatabaseName(_databaseName->text());
 
     QDialog::accept();
 }
@@ -93,7 +102,8 @@ bool EditConnectionDialog::canBeClosed()
         && _connection->databaseAddress() == _serverAddress->text()
         && QString::number(_connection->databasePort()) == _serverPort->text()
         && _connection->userName() == _userName->text()
-        && _connection->userPassword() == _userPassword->text();
+        && _connection->userPassword() == _userPassword->text()
+        && _connection->databaseName() == _databaseName->text();
 
     // If data was unchanged - simply close dialog
     if (unchanged)

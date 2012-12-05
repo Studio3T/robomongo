@@ -60,7 +60,7 @@ namespace Robomongo
         QLineEdit *_serverPort;
         QLineEdit *_userName;
         QLineEdit *_userPassword;
-        QLineEdit *_databases;
+        QLineEdit *_databaseName;
 
         /**
          * @brief Edited connection

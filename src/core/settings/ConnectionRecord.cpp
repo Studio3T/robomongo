@@ -22,6 +22,7 @@ QVariant ConnectionRecord::toVariant() const
     map.insert("databasePort", databasePort());
     map.insert("userName", userName());
     map.insert("userPassword", userPassword());
+    map.insert("databaseName", databaseName());
     return map;
 }
 
@@ -35,5 +36,6 @@ void ConnectionRecord::fromVariant(QVariantMap map)
     setDatabasePort(map.value("databasePort").toInt());
     setUserName(map.value("userName").toString());
     setUserPassword(map.value("userPassword").toString());
+    setDatabaseName(map.value("databaseName").toString());
 }
 

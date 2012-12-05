@@ -20,7 +20,13 @@ MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord) : QObject(
 
     _connection.reset(new mongo::DBClientConnection);
 
-    _client.reset(new MongoClient(_address));
+    _client.reset(new MongoClient(
+                      connectionRecord->databaseAddress(),
+                      connectionRecord->databasePort(),
+                      connectionRecord->databaseName(),
+                      connectionRecord->userName(),
+                      connectionRecord->userPassword()));
+
     _client->send(new InitRequest(this));
 }
 

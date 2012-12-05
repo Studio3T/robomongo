@@ -39,6 +39,12 @@
 #include <third_party/js-1.7/jsapi.h>
 #endif
 
+#ifdef ROBOMONGO
+extern std::vector<mongo::BSONObj> __objects;
+extern std::stringstream __logs;
+
+#endif
+
 // END inc hacking
 
 // -- SM 1.6 hacks ---

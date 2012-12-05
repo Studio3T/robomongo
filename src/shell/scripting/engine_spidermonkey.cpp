@@ -37,6 +37,17 @@
 
 #include "mongo/util/mongoutils/str.h"
 
+#ifdef ROBOMONGO
+
+std::vector<mongo::BSONObj> __objects;
+std::stringstream __logs;
+
+//QList<QString> __objects;
+//std::stringstream __logs;
+
+
+#endif
+
 #define smuassert( cx , msg , val ) \
     if ( ! ( val ) ){ \
         JS_ReportError( cx , msg ); \
@@ -1158,23 +1169,29 @@ namespace mongo {
     }
 
     JSBool native_print( JSContext * cx, JSObject * obj, uintN argc, jsval *argv, jsval *rval ) {
-        stringstream ss;
+        //stringstream __logs;
         bool someWritten = false;
         try {
             Convertor c( cx );
             for ( uintN i=0; i<argc; i++ ) {
                 if ( i > 0 )
-                    ss << " ";
-                ss << c.toString( argv[i] );
+                    __logs << " ";
+
+                if (JSVAL_IS_OBJECT( argv[i] )) {
+                    BSONObj obj = c.toObject(argv[i]);
+                    __objects.push_back(obj);
+                }
+
+                __logs << c.toString( argv[i] );
                 someWritten = true;
             }
-            ss << "\n";
-            Logstream::logLockless( ss.str() );
+            __logs << "\n";
+            Logstream::logLockless( __logs.str() );
         }
         catch ( const AssertionException& ) {
             if ( someWritten ) {
-                ss << "\n";
-                Logstream::logLockless( ss.str() );
+                __logs << "\n";
+                Logstream::logLockless( __logs.str() );
             }
             return JS_FALSE;
         }

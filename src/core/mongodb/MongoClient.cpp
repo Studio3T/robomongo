@@ -9,19 +9,21 @@
 #include <QFile>
 #include <QTextStream>
 #include "scripting/Functions.h"
+#include "engine/ScriptEngine.h"
+#include "mongo/scripting/engine_spidermonkey.h"
+#include <QVector>
 
 using namespace Robomongo;
 using namespace std;
 using namespace mongo;
 
-MongoClient::MongoClient(QString address, QObject *parent) : QObject(parent)
-{
-    _address = address;
-    init();
-}
 
-
-MongoClient::MongoClient(QString host, int port, QObject *parent) : QObject(parent)
+MongoClient::MongoClient(QString host, int port, QString database, QString username, QString password, QObject *parent) : QObject(parent),
+    _databaseAddress(host),
+    _databasePort(port),
+    _databaseName(database),
+    _userName(username),
+    _userPassword(password)
 {
     _address = QString("%1:%2").arg(host).arg(port);
     init();
@@ -49,6 +51,7 @@ void MongoClient::init()
 
 void MongoClient::evaluteFile(const QString &path)
 {
+    /*
     QFile file(path);
     if(!file.open(QIODevice::ReadOnly))
         throw std::runtime_error("Unable to read " + path.toStdString());
@@ -61,7 +64,7 @@ void MongoClient::evaluteFile(const QString &path)
     if (_scriptEngine->hasUncaughtException()) {
         QString error = _scriptEngine->uncaughtException().toString();
         int a = 4545;
-    }
+    }*/
 }
 
 /**
@@ -82,22 +85,8 @@ bool MongoClient::event(QEvent *event)
 void MongoClient::handle(InitRequest *event)
 {
     try {
-        _scriptEngine = new QScriptEngine();
-
-        _helper = new Helper();
-        QScriptValue helper = _scriptEngine->newQObject(_helper);
-        _scriptEngine->globalObject().setProperty("helper", helper);
-        _scriptEngine->globalObject().setProperty("Mongo", _scriptEngine->newFunction(Mongo_ctor));
-
-        evaluteFile(":/robomongo/scripts/robo.js");
-        //evaluteFile(":/robomongo/scripts/utils.js");
-        evaluteFile(":/robomongo/scripts/db.js");
-        evaluteFile(":/robomongo/scripts/mongo.js");
-        evaluteFile(":/robomongo/scripts/collection.js");
-        evaluteFile(":/robomongo/scripts/query.js");
-        evaluteFile(":/robomongo/scripts/mr.js");
-
-
+        _scriptEngine = new ScriptEngine(_databaseAddress, _databasePort, _userName, _userPassword, _databaseName);
+        _scriptEngine->init();
     }
     catch (std::exception &ex) {
         reply(event->sender, new InitResponse(Error("Unable to initialize MongoClient")));
@@ -235,32 +224,39 @@ void MongoClient::handle(ExecuteScriptRequest *event)
 {
     try
     {
-        _helper->clear();
+        // clear global objects
+        __objects.clear();
+        __logs.str("");
 
-        QScriptValue value = _scriptEngine->evaluate(event->script);
+        _scriptEngine->exec(event->script);
 
-        if (_scriptEngine->hasUncaughtException()) {
-            QString error = _scriptEngine->uncaughtException().toString();
-            int line = _scriptEngine->uncaughtExceptionLineNumber();
-            QString message = QString("Error: %1\nline:%2").arg(error).arg(line);
-            reply(event->sender, new ExecuteScriptResponse(message));
+        QString answer = QString::fromStdString(__logs.str());
+        QVector<BSONObj> objs = QVector<BSONObj>::fromStdVector(__objects);
+        QList<BSONObj> list = QList<BSONObj>::fromVector(objs);
+
+        if (list.length() > 0)
+        {
+            reply(event->sender, new ExecuteScriptResponse(list));
+            return;
         }
         else
-            reply(event->sender, new ExecuteScriptResponse(_helper->text()));
+        {
+            reply(event->sender, new ExecuteScriptResponse(answer));
+        }
 
-//        boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
 
-//        QList<BSONObj> docs;
-//        auto_ptr<DBClientCursor> cursor = conn->get()->query(event->nspace.toStdString(), BSONObj(), 100);
-//        while (cursor->more())
-//        {
-//            BSONObj bsonObj = cursor->next();
-//            docs.append(bsonObj);
+//        _helper->clear();
+
+//        QScriptValue value = _scriptEngine->evaluate(event->script);
+
+//        if (_scriptEngine->hasUncaughtException()) {
+//            QString error = _scriptEngine->uncaughtException().toString();
+//            int line = _scriptEngine->uncaughtExceptionLineNumber();
+//            QString message = QString("Error: %1\nline:%2").arg(error).arg(line);
+//            reply(event->sender, new ExecuteScriptResponse(message));
 //        }
-
-//        conn->done();
-
-//        reply(event->sender, new ExecuteScriptResponse(docs));
+//        else
+//            reply(event->sender, new ExecuteScriptResponse(_helper->text()));
     }
     catch(DBException &ex)
     {

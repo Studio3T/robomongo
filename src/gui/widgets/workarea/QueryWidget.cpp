@@ -129,9 +129,9 @@ void QueryWidget::ui_queryLinesCountChanged()
 */
 void QueryWidget::ui_executeButtonClicked()
 {
-//    QString query = _queryText->text();
+    QString query = _queryText->text();
 
-//    _shell->open(query);
+    _shell->open(query);
 
 //    if (query.isEmpty())
 //        query = _queryText->text();
@@ -262,7 +262,11 @@ void QueryWidget::handle(const DocumentListLoadedEvent *event)
 
 void QueryWidget::handle(const ScriptExecutedEvent *event)
 {
-    _bsonWidget->setShellOutput(event->response);
+    if (event->hasDocuments)
+        _bsonWidget->setDocuments(event->documents);
+
+    if (event->hasResponse)
+        _bsonWidget->setShellOutput(event->response);
 //    QMessageBox::information(NULL, "Answer", event->response);
 }
 

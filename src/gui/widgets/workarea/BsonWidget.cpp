@@ -11,6 +11,7 @@ BsonWidget::BsonWidget(QWidget * parent) : QWidget(parent)
 {
     _textRendered = false;
 	_modeTabs = new QTabWidget;
+    _modeTabs->setTabPosition(QTabWidget::South);
     _modeTabs->setDocumentMode(true);
 	_bsonTree = new BsonTreeWidget(this);
 
@@ -40,8 +41,10 @@ BsonWidget::BsonWidget(QWidget * parent) : QWidget(parent)
 
 	_modeTabs->addTab(_bsonTree, "Tree");
     _modeTabs->addTab(_jsonText, "Text");
-    _modeTabs->addTab(_logText, "Shell");
-	_modeTabs->setStyleSheet("BsonTreeWidget, QsciScintilla { border: 0px solid gray;}");
+    _modeTabs->setStyleSheet(
+        "BsonTreeWidget, QsciScintilla { border: 0px;} "
+    );
+
     _modeTabs->setDocumentMode(true);
 	connect(_modeTabs, SIGNAL(currentChanged(int)), this, SLOT(ui_tabPageChanged(int)));
 

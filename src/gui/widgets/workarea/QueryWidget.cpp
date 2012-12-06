@@ -37,6 +37,7 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
 
     // Query text widget
     _configureQueryText();
+    _configureLogText();
 
     // Execute button
     QPushButton * executeButton = new QPushButton("Execute");
@@ -77,12 +78,15 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
 //    hlayout->setSpacing(1);
 
     QVBoxLayout * layout = new QVBoxLayout;
-    layout->setContentsMargins(0,3,3,0);
+    layout->setContentsMargins(0,4,4,4);
     layout->addLayout(hlayout);
+    layout->addSpacing(-2);
+    layout->addWidget(_logText);
     layout->addWidget(_bsonWidget);
     setLayout(layout);
 
     ui_queryLinesCountChanged();
+    ui_logLinesCountChanged();
     _queryText->setFocus();
 
     // Connect to VM
@@ -107,9 +111,6 @@ QueryWidget::~QueryWidget()
 */
 void QueryWidget::ui_queryLinesCountChanged()
 {
-//    QPainter painter = QPainter();
-//    painter.drawLine(_queryText->geometry().topLeft(), _queryText->geometry().topRight());
-
     QFontMetrics m(_queryText->font());
     int lineHeight = m.lineSpacing() + 1;
 
@@ -122,6 +123,27 @@ void QueryWidget::ui_queryLinesCountChanged()
         height = maxHeight;
 
     _queryText->setFixedHeight(height);
+}
+
+void QueryWidget::ui_logLinesCountChanged()
+{
+    if (_bsonWidget->isHidden())
+    {
+        return;
+    }
+
+    QFontMetrics m(_logText->font());
+    int lineHeight = m.lineSpacing() + 1;
+
+    int numberOfLines = _logText->lines();
+
+    int height = numberOfLines * lineHeight + 8;
+
+    int maxHeight = 18 * lineHeight + 8;
+    if (height > maxHeight)
+        height = maxHeight;
+
+    _logText->setFixedHeight(height);
 }
 
 /*
@@ -171,15 +193,6 @@ bool QueryWidget::event(QEvent *event)
 */
 void QueryWidget::_configureQueryText()
 {
-//    _queryText = new PlainJavaScriptEditor(this);
-//    _queryText->setFixedHeight(28);
-//    _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-//    _queryText->setFrameShape(JSEdit::NoFrame);
-//    _queryText->setLineNumbersVisible(false);
-//    _queryText->setCodeFoldingEnabled(false);
-//    _queryText->setFixedHeight(200);
-
     QFont textFont = font();
 #if defined(Q_OS_MAC)
     textFont.setPointSize(12);
@@ -215,6 +228,43 @@ void QueryWidget::_configureQueryText()
 
     _queryText->setStyleSheet("QFrame {background-color: white; border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
     connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
+}
+
+void QueryWidget::_configureLogText()
+{
+    QFont textFont = font();
+#if defined(Q_OS_MAC)
+    textFont.setPointSize(12);
+    textFont.setFamily("Monaco");
+#elif defined(Q_OS_UNIX)
+    textFont.setFamily("Monospace");
+    textFont.setFixedPitch(true);
+    //textFont.setWeight(QFont::Bold);
+//    textFont.setPointSize(12);
+#elif defined(Q_OS_WIN)
+    textFont.setPointSize(12);
+    textFont.setFamily("Courier");
+#endif
+
+    QsciLexerJavaScript * javaScriptLexer = new QsciLexerJavaScript;
+    javaScriptLexer->setFont(textFont);
+
+    _logText = new RoboScintilla;
+    _logText->setLexer(javaScriptLexer);
+    _logText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    _logText->setFixedHeight(23);
+    _logText->setAutoIndent(true);
+    _logText->setIndentationsUseTabs(false);
+    _logText->setIndentationWidth(4);
+    _logText->setUtf8(true);
+    _logText->installEventFilter(this);
+    _logText->setMarginWidth(1, 0); // to hide left gray column
+    _logText->setBraceMatching(QsciScintilla::StrictBraceMatch);
+    _logText->setFont(textFont);
+    _logText->setVisible(false);
+
+    _logText->setStyleSheet("QFrame {background-color: white; border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
+    connect(_logText, SIGNAL(linesChanged()), SLOT(ui_logLinesCountChanged()));
 }
 
 /*
@@ -257,17 +307,37 @@ void QueryWidget::vm_queryUpdated(const QString & query)
 
 void QueryWidget::handle(const DocumentListLoadedEvent *event)
 {
-    _bsonWidget->setDocuments(event->list);
+    displayData("", event->list);
 }
 
 void QueryWidget::handle(const ScriptExecutedEvent *event)
 {
-    if (event->hasDocuments)
-        _bsonWidget->setDocuments(event->documents);
+    displayData(event->response, event->documents);
+}
 
-    if (event->hasResponse)
-        _bsonWidget->setShellOutput(event->response);
-//    QMessageBox::information(NULL, "Answer", event->response);
+void QueryWidget::displayData(const QString &message, const QList<MongoDocumentPtr> &documents)
+{
+    QString str = message.trimmed();
+
+    if (documents.length() <= 0)
+    {
+        _bsonWidget->setVisible(false);
+        _logText->setFixedSize(QWIDGETSIZE_MAX,QWIDGETSIZE_MAX);
+    }
+    else
+    {
+        _bsonWidget->setVisible(true);
+    }
+
+    _bsonWidget->setDocuments(documents);
+
+    if (str.isEmpty())
+        _logText->setVisible(false);
+    else
+        _logText->setVisible(true);
+
+    _logText->setText(str.trimmed());
+    ui_logLinesCountChanged();
 }
 
 /*

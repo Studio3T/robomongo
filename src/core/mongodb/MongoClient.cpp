@@ -234,15 +234,7 @@ void MongoClient::handle(ExecuteScriptRequest *event)
         QVector<BSONObj> objs = QVector<BSONObj>::fromStdVector(__objects);
         QList<BSONObj> list = QList<BSONObj>::fromVector(objs);
 
-        if (list.length() > 0)
-        {
-            reply(event->sender, new ExecuteScriptResponse(list));
-            return;
-        }
-        else
-        {
-            reply(event->sender, new ExecuteScriptResponse(answer));
-        }
+        reply(event->sender, new ExecuteScriptResponse(answer, list));
 
 
 //        _helper->clear();

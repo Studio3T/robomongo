@@ -243,10 +243,11 @@ namespace Robomongo
             hasDocuments(true),
             hasResponse(false) { }
 
-        ExecuteScriptResponse(const QString &response = QString()) :
+        ExecuteScriptResponse(const QString &response, const QList<mongo::BSONObj> &documents ) :
             Response(EventType),
+            documents(documents),
             response(response),
-            hasDocuments(false),
+            hasDocuments(true),
             hasResponse(true) { }
 
         ExecuteScriptResponse(const Error &error) :
@@ -358,10 +359,11 @@ namespace Robomongo
             hasDocuments(true),
             hasResponse(false) { }
 
-        ScriptExecutedEvent(const QString &response) :
+        ScriptExecutedEvent(const QString &response, const QList<MongoDocumentPtr> &list) :
             QEvent(EventType),
             response(response),
-            hasDocuments(false),
+            documents(list),
+            hasDocuments(true),
             hasResponse(true) { }
 
         QList<MongoDocumentPtr> documents;

@@ -342,11 +342,13 @@ namespace Robomongo
     {
         R_MESSAGE
 
-        DocumentListLoadedEvent(const QList<MongoDocumentPtr> &list) :
+        DocumentListLoadedEvent(const QString &query, const QList<MongoDocumentPtr> &list) :
             QEvent(EventType),
+            query(query),
             list(list) { }
 
         QList<MongoDocumentPtr> list;
+        QString query;
     };
 
     class ScriptExecutedEvent : public QEvent

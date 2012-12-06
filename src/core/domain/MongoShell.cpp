@@ -43,7 +43,7 @@ void MongoShell::handle(const ExecuteQueryResponse *event)
         list.append(doc);
     }
 
-    _dispatcher->publish(this, new DocumentListLoadedEvent(list));
+    _dispatcher->publish(this, new DocumentListLoadedEvent(_query, list));
 }
 
 void MongoShell::handle(const ExecuteScriptResponse *event)

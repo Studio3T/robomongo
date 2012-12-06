@@ -307,6 +307,7 @@ void QueryWidget::vm_queryUpdated(const QString & query)
 
 void QueryWidget::handle(const DocumentListLoadedEvent *event)
 {
+    _queryText->setText(event->query);
     displayData("", event->list);
 }
 

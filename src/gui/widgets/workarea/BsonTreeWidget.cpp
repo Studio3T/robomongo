@@ -19,7 +19,9 @@ BsonTreeWidget::BsonTreeWidget(QWidget * parent) : QTreeWidget(parent)
 	header()->setResizeMode(2, QHeaderView::Stretch);
 	setIndentation(15);	
 
-    setStyleSheet("QTreeWidget { border: 0px; }");
+    setStyleSheet(
+                "QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; border-top-left-radius:4px; }"
+                );
 
 //    header()->setResizeMode(QHeaderView::Interactive);
 

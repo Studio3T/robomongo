@@ -27,6 +27,7 @@ namespace Robomongo
         ** Configure QsciScintilla query widget
         */
         void _configureQueryText();
+        void _configureLogText();
 
         void _showPaging(bool show);
 
@@ -54,6 +55,7 @@ namespace Robomongo
         ** Handle queryText linesCountChanged event
         */
         void ui_queryLinesCountChanged();
+        void ui_logLinesCountChanged();
 
         /*
         ** Execute query
@@ -95,11 +97,13 @@ namespace Robomongo
         void handle(const ScriptExecutedEvent *event);
 
     private:
+        void displayData(const QString &message, const QList<MongoDocumentPtr> &documents);
 
         /*
         ** Query text
         */
         RoboScintilla * _queryText;
+        RoboScintilla * _logText;
 
         /*
         ** Bson widget

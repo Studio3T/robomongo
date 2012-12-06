@@ -15,11 +15,19 @@
  *    limitations under the License.
  */
 
+#ifdef ROBOMONGO
 #include "mongo/pch.h"
 #include "mongo/util/log.h"
 #include "mongo/util/ramlog.h"
 #include "mongo/util/mongoutils/html.h"
 #include "mongo/util/mongoutils/str.h"
+#else
+#include "pch.h"
+#include "log.h"
+#include "ramlog.h"
+#include "mongoutils/html.h"
+#include "mongoutils/str.h"
+#endif
 
 namespace mongo {
 

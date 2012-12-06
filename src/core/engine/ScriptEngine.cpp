@@ -8,6 +8,10 @@
 using namespace Robomongo;
 using namespace std;
 
+namespace mongo {
+    extern bool isShell;
+}
+
 ScriptEngine::ScriptEngine(const QString &host, int port, const QString &username, const QString &password, const QString &database) :
     QObject(),
     _host(host),
@@ -38,6 +42,7 @@ void ScriptEngine::init()
            << _password.toStdString() << "')";
 
     mongo::shell_utils::_dbConnect = ss.str();
+    mongo::isShell = true;
 
     mongo::ScriptEngine::setConnectCallback( mongo::shell_utils::onConnect );
     mongo::ScriptEngine::setup();

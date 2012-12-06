@@ -1177,13 +1177,15 @@ namespace mongo {
                 if ( i > 0 )
                     __logs << " ";
 
-                if (JSVAL_IS_OBJECT( argv[i] )) {
-                    BSONObj obj = c.toObject(argv[i]);
-                    __objects.push_back(obj);
+                if (!(JSVAL_IS_OBJECT(argv[i])))
+                {
+                    __logs << c.toString(argv[i]);
+                    someWritten = true;
+                    continue;
                 }
 
-                __logs << c.toString( argv[i] );
-                someWritten = true;
+                BSONObj obj = c.toObject(argv[i]);
+                __objects.push_back(obj);
             }
             __logs << "\n";
             Logstream::logLockless( __logs.str() );
@@ -1775,8 +1777,8 @@ namespace mongo {
                 jsval v;
                 if ( JS_GetPendingException( _context , &v ) ) {
                     _error = _convertor->toString( v );
-                    if ( reportError )
-                        cout << _error << endl;
+                    //if ( reportError )
+                        //cout << _error << endl;
                 }
             }
 
@@ -1787,7 +1789,7 @@ namespace mongo {
                 _convertor->setProperty( _global , "__lastres__" , ret );
 
             if ( worked && printResult && ! JSVAL_IS_VOID( ret ) )
-                cout << _convertor->toString( ret ) << endl;
+                __logs << _convertor->toString( ret ) << endl;
 
             return worked;
         }
@@ -1961,7 +1963,8 @@ namespace mongo {
         }
 
         if ( !currentScope.get() || currentScope->isReportingErrors() ) {
-            tlog() << ss.str() << endl;
+            __logs << ss.str() << endl;
+            //tlog() << ss.str() << endl;
         }
 
         if ( currentScope.get() ) {

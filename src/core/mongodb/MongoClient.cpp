@@ -85,7 +85,7 @@ bool MongoClient::event(QEvent *event)
 void MongoClient::handle(InitRequest *event)
 {
     try {
-        _scriptEngine = new ScriptEngine(_databaseAddress, _databasePort, _userName, _userPassword, _databaseName);
+        _scriptEngine.reset(new ScriptEngine(_databaseAddress, _databasePort, _userName, _userPassword, _databaseName));
         _scriptEngine->init();
     }
     catch (std::exception &ex) {

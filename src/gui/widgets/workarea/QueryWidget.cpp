@@ -18,6 +18,7 @@
 #include "editors/PlainJavaScriptEditor.h"
 #include "Qsci/qsciscintilla.h"
 #include "Qsci/qscilexerjavascript.h"
+#include "editors/JSLexer.h"
 
 using namespace mongo;
 using namespace Robomongo;
@@ -207,11 +208,11 @@ void QueryWidget::_configureQueryText()
     textFont.setFamily("Courier");
 #endif
 
-    QsciLexerJavaScript * javaScriptLexer = new QsciLexerJavaScript;
+    QsciLexerJavaScript * javaScriptLexer = new JSLexer;
     javaScriptLexer->setFont(textFont);
+//    javaScriptLexer->setPaper(QColor(255, 0, 0, 127));
 
     _queryText = new RoboScintilla;
-    _queryText->setLexer(javaScriptLexer);
     _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _queryText->setFixedHeight(23);
     _queryText->setAutoIndent(true);
@@ -222,11 +223,16 @@ void QueryWidget::_configureQueryText()
     _queryText->setMarginWidth(1, 0); // to hide left gray column
     _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
     _queryText->setFont(textFont);
+    _queryText->setPaper(QColor(255, 0, 0, 127));
+    _queryText->setLexer(javaScriptLexer);
+    _queryText->setCaretForegroundColor(QColor("#FFFFFF"));
+    _queryText->setMatchedBraceBackgroundColor(QColor(48, 10, 36));
+    _queryText->setMatchedBraceForegroundColor(QColor("#1AB0A6"));
 
     //_queryText->SendScintilla(QsciScintilla::SCI_SETFONTQUALITY, QsciScintilla::SC_EFF_QUALITY_LCD_OPTIMIZED);
     //_queryText->SendScintilla (QsciScintillaBase::SCI_SETKEYWORDS, "db");
 
-    _queryText->setStyleSheet("QFrame {background-color: white; border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
+    _queryText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
     connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
 }
 
@@ -246,7 +252,7 @@ void QueryWidget::_configureLogText()
     textFont.setFamily("Courier");
 #endif
 
-    QsciLexerJavaScript * javaScriptLexer = new QsciLexerJavaScript;
+    QsciLexerJavaScript * javaScriptLexer = new JSLexer;
     javaScriptLexer->setFont(textFont);
 
     _logText = new RoboScintilla;
@@ -262,8 +268,9 @@ void QueryWidget::_configureLogText()
     _logText->setBraceMatching(QsciScintilla::StrictBraceMatch);
     _logText->setFont(textFont);
     _logText->setVisible(false);
+    _logText->setReadOnly(true);
 
-    _logText->setStyleSheet("QFrame {background-color: white; border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
+    _logText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
     connect(_logText, SIGNAL(linesChanged()), SLOT(ui_logLinesCountChanged()));
 }
 

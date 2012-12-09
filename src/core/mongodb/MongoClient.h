@@ -81,7 +81,7 @@ namespace Robomongo
         QThread *_thread;
         QMutex _firstConnectionMutex;
 
-        ScriptEngine *_scriptEngine;
+        boost::scoped_ptr<ScriptEngine> _scriptEngine;
         Helper *_helper;
 
         bool _isAdmin;

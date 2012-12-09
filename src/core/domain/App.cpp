@@ -24,7 +24,12 @@ MongoServerPtr App::openServer(const ConnectionRecordPtr &connectionRecord)
 
 MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
 {
-    MongoShellPtr shell(new MongoShell(collection->database()->server()));
+    ConnectionRecordPtr connectionRecord = collection->database()->server()->connectionRecord();
+    MongoServerPtr serverClone(new MongoServer(connectionRecord));
+    serverClone->tryConnect();
+    _servers.append(serverClone);
+
+    MongoShellPtr shell(new MongoShell(serverClone));
     _shells.append(shell);
 
     _dispatcher->publish(this, new OpeningShellEvent(shell));

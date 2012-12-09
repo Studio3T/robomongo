@@ -32,6 +32,7 @@ namespace Robomongo
 
     class MongoServer;
     typedef boost::shared_ptr<MongoServer> MongoServerPtr;
+    typedef boost::weak_ptr<MongoServer> MongoServerWeakPtr;
 
     class MongoShell;
     typedef boost::shared_ptr<MongoShell> MongoShellPtr;

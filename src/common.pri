@@ -3,7 +3,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG  += qt
 CONFIG  -= debug_and_release
 QT      += core gui script
-DEFINES += ROBOMONGO
+DEFINES += ROBOMONGO JS_C_STRINGS_ARE_UTF8
 
 # Spider Monkey defines:
 win32:DEFINES += XP_WIN

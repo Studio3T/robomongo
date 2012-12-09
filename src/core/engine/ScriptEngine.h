@@ -4,6 +4,7 @@
 #include <QObject>
 #include "boost/scoped_ptr.hpp"
 #include "mongo/scripting/engine.h"
+#include "js/jsparse.h"
 
 namespace Robomongo
 {
@@ -21,9 +22,13 @@ namespace Robomongo
         QString _database;
         QString _username;
         QString _password;
+        QStringList statementize(const QString &script);
+        void parseTree(JSParseNode * root, int indent, const QString &script, QStringList &list);
         int _port;
 
         boost::scoped_ptr<mongo::Scope> _scope;
+        QString subb(const QStringList &list, int fline, int fpos, int tline, int tpos);
+
 
     };
 }

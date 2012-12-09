@@ -13,7 +13,7 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        explicit MongoShell(MongoServer *server);
+        explicit MongoShell(const MongoServerPtr server);
 
         void open(const MongoCollectionPtr &collection);
         void open(const QString &script);
@@ -31,7 +31,7 @@ namespace Robomongo
          */
         QString _query;
 
-        MongoServer *_server;
+        MongoServerWeakPtr _server;
 
         MongoClient *_client;
 

@@ -136,7 +136,7 @@ QStringList ScriptEngine::statementize(const QString &script)
 
     JS_DestroyContext(context);
     JS_DestroyRuntime(runtime);
-    return QStringList();
+    return list;
 }
 
 
@@ -167,6 +167,9 @@ void ScriptEngine::parseTree(JSParseNode *root, int indent, const QString &scrip
       printf("UNKNOWN");
     }
     else {
+
+        if (root->pn_arity == PN_NAME)
+            return;
 
         QStringList lines = script.split(QRegExp("[\r\n]"));
 

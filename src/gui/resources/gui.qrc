@@ -24,5 +24,6 @@
         <file>scripts/robo.js</file>
         <file>scripts/utils.js</file>
         <file>scripts/utils_sh.js</file>
+        <file>scripts/esprima.js</file>
     </qresource>
 </RCC>

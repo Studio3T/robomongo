@@ -23,7 +23,7 @@ namespace Robomongo
         QString _username;
         QString _password;
         QStringList statementize(const QString &script);
-        void parseTree(JSParseNode * root, int indent, const QString &script, QStringList &list);
+        void parseTree(JSParseNode * root, int indent, const QString &script, QStringList &list, bool topList);
         int _port;
 
         boost::scoped_ptr<mongo::Scope> _scope;

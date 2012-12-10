@@ -33,6 +33,7 @@ MongoClient::~MongoClient()
 {
     _thread->quit();
     _thread->wait(1000);
+    _thread->terminate();
 
     delete _thread;
 }

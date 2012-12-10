@@ -5,6 +5,8 @@
 #include "mongo/scripting/engine_spidermonkey.h"
 #include "mongo/shell/shell_utils.h"
 #include <QStringList>
+#include <QTextStream>
+#include <QFile>
 
 #include "js/jsapi.h"
 #include "js/jsparse.h"
@@ -56,6 +58,26 @@ void ScriptEngine::init()
     mongo::globalScriptEngine->setScopeInitCallback( mongo::shell_utils::initScope );
 
     _scope.reset(mongo::globalScriptEngine->newScope());
+
+    // -- Esprima --
+
+    QFile file(":/robomongo/scripts/esprima.js");
+    if(!file.open(QIODevice::ReadOnly))
+        throw std::runtime_error("Unable to read esprima.js ");
+
+    QTextStream in(&file);
+    QString esprima = in.readAll();
+
+    QByteArray esprimaBytes = esprima.toUtf8();
+
+    size_t eslength = esprimaBytes.size();
+
+    bool res = _scope->exec(esprima.toStdString(), "(esprima)", true, true, true);
+    mongo::StringData data("esprima.parse('var answer = 42', { loc : true })");
+    bool res2 = _scope->exec(data, "(esprima2)", true, true, true);
+    mongo::BSONObj obj = _scope->getObject("__lastres__");
+    std::string json = obj.jsonString();
+    int a = 56;
 }
 
 void ScriptEngine::exec(const QString &script)
@@ -110,29 +132,79 @@ QStringList ScriptEngine::statementize(const QString &script)
       //exit(EXIT_FAILURE);
     }
 
-    JSTokenStream * token_stream;
+    //-- Esprima --
+
+    QFile file(":/robomongo/scripts/esprima.js");
+    if(!file.open(QIODevice::ReadOnly))
+        throw std::runtime_error("Unable to read esprima.js ");
+
+    QTextStream in(&file);
+    QString esprima = in.readAll();
+
+    QByteArray esprimaBytes = esprima.toUtf8();
+
+    size_t eslength = esprimaBytes.size();
+//    jschar *eschars = js_InflateString(context, esprimaBytes.data(), &eslength);
+
+    jsval ret = JSVAL_VOID;
+    JSBool worked = JS_EvaluateScript(context, global, esprimaBytes, eslength, NULL, 0, &ret);
+
+    jsval ret2 = JSVAL_VOID;
+    mongo::StringData data("esprima.parse('var answer = 42')");
+    //mongo::StringData data("connect()");
+    JSBool worked2 = JS_EvaluateScript(context, global, data.data(), data.size(), NULL, 0, &ret2);
+
+
+    // end
+
+    JSTokenStream * ts;
     JSParseNode * node;
 
     QByteArray str = script.toUtf8();
-//    mongo::StringData str(script.toUtf8());
 
     size_t length = str.size();
     jschar *chars = js_InflateString(context, str.data(), &length);
 
-    token_stream = js_NewTokenStream(context, chars, length, NULL, 0, NULL);
-    if (token_stream == NULL) {
+    ts = js_NewTokenStream(context, chars, length, NULL, 0, NULL);
+    if (ts == NULL) {
       fprintf(stderr, "cannot create token stream from file\n");
       //exit(EXIT_FAILURE);
     }
 
-    node = js_ParseTokenStream(context, global, token_stream);
+    bool more_tokens = true;
+    std::string sanitized_chars;
+    jschar *userbuf_pos = ts->userbuf.ptr; // last copied position
+
+//    while (more_tokens) {
+//        switch (js_GetToken(context, ts)) {
+//        case TOK_NAME:
+//          {
+//            size_t len = ts->userbuf.ptr - userbuf_pos -
+//              (ts->linebuf.limit - ts->linebuf.ptr + 1);
+//            size_t token_len = ts->tokenbuf.ptr - ts->tokenbuf.base;
+//            len -= token_len;
+//            if (len) {
+//              sanitized_chars.append((char*)userbuf_pos, len * sizeof(jschar));
+//              userbuf_pos += len;
+//              if (*(userbuf_pos-1) == '.') break; // properties or methods
+//            }
+////            sanitized_chars.append((char *)prefix, prefix_len);
+////            sanitized_chars.append((char*)userbuf_pos, token_len * sizeof(jschar));
+//            userbuf_pos += token_len;
+//          }
+//          break;
+//        }
+//    }
+
+
+    node = js_ParseTokenStream(context, global, ts);
     if (node == NULL) {
       fprintf(stderr, "parse error in file\n");
       //exit(EXIT_FAILURE);
     }
 
     QStringList list;
-    parseTree(node, 0, script, list);
+    parseTree(node, 0, script, list, true);
 
     JS_DestroyContext(context);
     JS_DestroyRuntime(runtime);
@@ -157,8 +229,10 @@ const char * TOKENS[81] = {
 
 const int NUM_TOKENS = sizeof(TOKENS) / sizeof(TOKENS[0]);
 
-void ScriptEngine::parseTree(JSParseNode *root, int indent, const QString &script, QStringList &list)
+void ScriptEngine::parseTree(JSParseNode *root, int indent, const QString &script, QStringList &list, bool topList)
 {
+    QStringList lines = script.split('\n');
+
     if (root == NULL) {
       return;
     }
@@ -168,10 +242,8 @@ void ScriptEngine::parseTree(JSParseNode *root, int indent, const QString &scrip
     }
     else {
 
-        if (root->pn_arity == PN_NAME)
-            return;
-
-        QStringList lines = script.split(QRegExp("[\r\n]"));
+//        if (root->pn_arity == PN_NAME)
+//            return;
 
         QString s = subb(lines, root->pn_pos.begin.lineno, root->pn_pos.begin.index, root->pn_pos.end.lineno, root->pn_pos.end.index);
         list.append(s);
@@ -180,31 +252,65 @@ void ScriptEngine::parseTree(JSParseNode *root, int indent, const QString &scrip
              TOKENS[root->pn_type],
              root->pn_pos.begin.lineno, root->pn_pos.begin.index,
              root->pn_pos.end.lineno, root->pn_pos.end.index);
+
+//      if (root->pn_arity == PN_NAME)
+//          return;
     }
     printf("\n");
     switch (root->pn_arity) {
     case PN_UNARY:
-      //parseTree(root->pn_kid, indent + 2, script, list);
+    {
+        JSToken token = root->pn_ts->tokens[root->pn_ts->cursor];
+
+    }
+//      parseTree(root->pn_kid, indent + 2, script, list);
       break;
     case PN_BINARY:
-      //parseTree(root->pn_left, indent + 2, script, list);
-     // parseTree(root->pn_right, indent + 2, script, list);
+//      parseTree(root->pn_left, indent + 2, script, list);
+//      parseTree(root->pn_right, indent + 2, script, list);
       break;
     case PN_TERNARY:
-   //   parseTree(root->pn_kid1, indent + 2, script, list);
-     // parseTree(root->pn_kid2, indent + 2, script, list);
-     // parseTree(root->pn_kid3, indent + 2, script, list);
+//      parseTree(root->pn_kid1, indent + 2, script, list);
+//      parseTree(root->pn_kid2, indent + 2, script, list);
+//      parseTree(root->pn_kid3, indent + 2, script, list);
       break;
     case PN_LIST:
       {
-        JSParseNode * p;
-        for (p = root->pn_head; p != NULL; p = p->pn_next) {
-          parseTree(p, indent + 2, script, list);
+        if (topList)
+        {
+            JSParseNode * tail = *root->pn_tail;
+
+            JSParseNode * p;
+            for (p = root->pn_head; p != NULL; p = p->pn_next) {
+              parseTree(p, indent + 2, script, list, false);
+            }
+        }
+        else
+        {
+            JSParseNode * tail = *root->pn_tail;
+
+            QString s = subb(lines,
+                             root->pn_pos.begin.lineno, root->pn_pos.begin.index,
+                             root->pn_expr->pn_pos.end.lineno, root->pn_expr->pn_pos.end.index);
+            list.append(s);
         }
       }
       break;
     case PN_FUNC:
+        {
+            JSParseNode * body = root->pn_body;
+
+            //parseTree(root->pn_body, indent + 2, script, list);
+        }
+        break;
     case PN_NAME:
+        {
+            QString s = subb(lines,
+                             root->pn_pos.begin.lineno, root->pn_pos.begin.index,
+                             root->pn_expr->pn_pos.end.lineno, root->pn_expr->pn_pos.end.index);
+            list.append(s);
+        }
+        break;
     case PN_NULLARY:
       break;
     default:
@@ -225,13 +331,16 @@ QString ScriptEngine::subb(const QStringList &list, int fline, int fpos, int tli
         return "";
 
     for (int i = fline; i <= tline; i++) {
-        if (fline == i)
-            buf.append(list.at(i).mid(fpos));
+        QString line = list.at(i);
+
+        if (fline == i && tline == i)
+            buf.append(line.mid(fpos, tpos - fpos));
+        else if (fline == i)
+            buf.append(line.mid(fpos));
+        else if (tline == i)
+            buf.append(line.mid(0, tpos));
         else
-        if (tline == i)
-            buf.append(list.at(i).mid(0, tpos));
-        else
-            buf.append(list.at(i));
+            buf.append(line);
     }
 
     return buf;

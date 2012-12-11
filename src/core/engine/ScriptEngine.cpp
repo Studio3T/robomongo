@@ -73,34 +73,77 @@ void ScriptEngine::init()
     size_t eslength = esprimaBytes.size();
 
     bool res = _scope->exec(esprima.toStdString(), "(esprima)", true, true, true);
-    mongo::StringData data("esprima.parse('var answer = 42', { loc : true })");
-    bool res2 = _scope->exec(data, "(esprima2)", true, true, true);
-    mongo::BSONObj obj = _scope->getObject("__lastres__");
-    std::string json = obj.jsonString();
-    int a = 56;
 }
 
 void ScriptEngine::exec(const QString &script)
 {
-    statementize(script);
-    QByteArray array = script.toUtf8();
+    QStringList statements = statementize(script);
 
-    if (true /* ! wascmd */) {
-        try {
-            if ( _scope->exec( array.data() , "(shell)" , false , true , false ) )
-                _scope->exec( "shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false );
-        }
-        catch ( std::exception& e ) {
-            std::cout << "error:" << e.what() << endl;
+    foreach(QString statement, statements)
+    {
+        QByteArray array = statement.toUtf8();
+
+        if (true /* ! wascmd */) {
+            try {
+                if ( _scope->exec( array.data() , "(shell)" , false , true , false ) )
+                    _scope->exec( "shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false );
+            }
+            catch ( std::exception& e ) {
+                std::cout << "error:" << e.what() << endl;
+            }
         }
     }
+}
+
+QStringList ScriptEngine::statementize(const QString &script)
+{
+    using namespace mongo;
+
+    QStringList list;
+    QStringList lines = script.split('\n');
+
+    QByteArray array = script.toUtf8();
+    _scope->setString("__robomongoEsprima", array);
+
+
+
+    StringData data("esprima.parse(__robomongoEsprima, { range: true, loc : true })");
+    bool res2 = _scope->exec(data, "(esprima2)", false, true, false);
+    BSONObj obj = _scope->getObject("__lastres__");
+
+    vector<BSONElement> v = obj.getField("body").Array();
+
+    for(vector<BSONElement>::iterator it = v.begin(); it != v.end(); ++it)
+    {
+        BSONObj item = (*it).Obj();
+        BSONObj loc = item.getField("loc").Obj();
+        BSONObj start = loc.getField("start").Obj();
+        BSONObj end = loc.getField("end").Obj();
+
+        int startLine = start.getIntField("line");
+        int startColumn = start.getIntField("column");
+        int endLine = end.getIntField("line");
+        int endColumn = end.getIntField("column");
+
+        vector<BSONElement> range = item.getField("range").Array();
+        int from = (int) range.at(0).number();
+        int till = (int) range.at(1).number();
+
+        QString statement = script.mid(from, till - from);
+        list.append(statement);
+    }
+
+    std::string json = obj.jsonString();
+    int a = 56;
+
+    return list;
 }
 
 void errorReporter( JSContext *cx, const char *message, JSErrorReport *report ) {
     const char *msg = message;
 }
 
-QStringList ScriptEngine::statementize(const QString &script)
+QStringList ScriptEngine::statementize2(const QString &script)
 {
     JSRuntime * runtime;
     JSContext * context;

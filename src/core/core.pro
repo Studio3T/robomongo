@@ -24,7 +24,9 @@ SOURCES += \
     domain/App.cpp \
     domain/MongoShell.cpp \
     scripting/Functions.cpp \
-    engine/ScriptEngine.cpp
+    engine/ScriptEngine.cpp \
+    engine/Result.cpp \
+    domain/MongoShellResult.cpp
 
 
 HEADERS  += \
@@ -48,7 +50,9 @@ HEADERS  += \
     domain/App.h \
     domain/MongoShell.h \
     scripting/Functions.h \
-    engine/ScriptEngine.h
+    engine/ScriptEngine.h \
+    engine/Result.h \
+    domain/MongoShellResult.h
 
 # third party libs
 #LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson

@@ -1,3 +1,4 @@
+#include <QVector>
 #include "ScriptEngine.h"
 #include "js/jsapi.h"
 #include "mongo/util/assert_util.h"
@@ -13,6 +14,9 @@
 #include "js/jsscan.h"
 #include "js/jsstr.h"
 #include "mongo/bson/stringdata.h"
+#include "mongo/client/dbclient.h"
+
+
 
 using namespace Robomongo;
 using namespace std;
@@ -75,24 +79,38 @@ void ScriptEngine::init()
     bool res = _scope->exec(esprima.toStdString(), "(esprima)", true, true, true);
 }
 
-void ScriptEngine::exec(const QString &script)
+QList<Result> ScriptEngine::exec(const QString &script)
 {
+    QList<Result> results;
     QStringList statements = statementize(script);
 
     foreach(QString statement, statements)
     {
+        // clear global objects
+        __objects.clear();
+        __logs.str("");
+
         QByteArray array = statement.toUtf8();
 
         if (true /* ! wascmd */) {
             try {
                 if ( _scope->exec( array.data() , "(shell)" , false , true , false ) )
                     _scope->exec( "shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false );
+
+                std::string logs = __logs.str();
+
+                QString answer = QString::fromUtf8(logs.c_str());
+                QVector<mongo::BSONObj> objs = QVector<mongo::BSONObj>::fromStdVector(__objects);
+                QList<mongo::BSONObj> list = QList<mongo::BSONObj>::fromVector(objs);
+                results.append(Result(answer, list));
             }
             catch ( std::exception& e ) {
                 std::cout << "error:" << e.what() << endl;
             }
         }
     }
+
+    return results;
 }
 
 QStringList ScriptEngine::statementize(const QString &script)

@@ -5,6 +5,7 @@
 #include "boost/scoped_ptr.hpp"
 #include "mongo/scripting/engine.h"
 #include "js/jsparse.h"
+#include "Result.h"
 
 namespace Robomongo
 {
@@ -15,7 +16,7 @@ namespace Robomongo
         ScriptEngine(const QString &host, int port, const QString &username, const QString &password, const QString &database);
 
         void init();
-        void exec(const QString &script);
+        QList<Result> exec(const QString &script);
 
     private:
         QString _host;

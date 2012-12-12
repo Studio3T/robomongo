@@ -3,11 +3,12 @@
 
 #include <QObject>
 #include "Core.h"
-#include "mongodb/MongoClient.h"
+#include "events/MongoEvents.h"
 
 namespace Robomongo
 {
     class Dispatcher;
+    class MongoClient;
 
     class MongoShell : public QObject
     {
@@ -37,6 +38,7 @@ namespace Robomongo
 
         Dispatcher *_dispatcher;
     };
+
 }
 
 #endif // MONGOSHELL_H

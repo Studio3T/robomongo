@@ -1,6 +1,7 @@
 #include "PlainJavaScriptEditor.h"
 #include "jsedit.h"
 #include <QPainter>
+#include <QApplication>
 
 using namespace Robomongo;
 
@@ -53,7 +54,18 @@ void RoboScintilla::paintEvent(QPaintEvent *e)
 //    int y = height() / 2; //Note changed
 //    pen.setWidth(2);
 //    painter.setPen(pen);
-//    painter.drawRoundedRect(0, 0, width(), height(), 5, 5);
+    //    painter.drawRoundedRect(0, 0, width(), height(), 5, 5);
+}
+
+void RoboScintilla::wheelEvent(QWheelEvent *e)
+{
+    if (this->isActiveWindow())
+        QsciScintilla::wheelEvent(e);
+    else
+    {
+        qApp->sendEvent(this->parentWidget(), e);
+        e->accept();
+    }
 }
 
 

@@ -26,7 +26,9 @@ SOURCES += ExampleWindow.cpp \
     widgets/workarea/BsonTreeItem.cpp \
     editors/jsedit.cpp \
     editors/PlainJavaScriptEditor.cpp \
-    editors/JSLexer.cpp
+    editors/JSLexer.cpp \
+    widgets/TestStackPanel.cpp \
+    widgets/workarea/OutputViewer.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
@@ -49,7 +51,9 @@ HEADERS  += ExampleWindow.h = \
     widgets/workarea/BsonTreeItem.h \
     editors/jsedit.h \
     editors/PlainJavaScriptEditor.h \
-    editors/JSLexer.h
+    editors/JSLexer.h \
+    widgets/TestStackPanel.h \
+    widgets/workarea/OutputViewer.h
 
 INCLUDEPATH += \
             $$ROOT/src/core

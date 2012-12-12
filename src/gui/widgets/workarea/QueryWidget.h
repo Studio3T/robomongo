@@ -7,6 +7,8 @@
 #include <QLineEdit>
 #include <QPlainTextEdit>
 #include "Qsci/qsciscintilla.h"
+#include <domain/MongoShellResult.h>
+
 
 namespace Robomongo
 {
@@ -16,6 +18,7 @@ namespace Robomongo
     class ScriptExecutedEvent;
     class PlainJavaScriptEditor;
     class RoboScintilla;
+    class OutputViewer;
 
     class QueryWidget : public QWidget
     {
@@ -97,7 +100,7 @@ namespace Robomongo
         void handle(const ScriptExecutedEvent *event);
 
     private:
-        void displayData(const QString &message, const QList<MongoDocumentPtr> &documents);
+        void displayData(const QList<MongoShellResult> &results);
 
         /*
         ** Query text
@@ -109,6 +112,7 @@ namespace Robomongo
         ** Bson widget
         */
         BsonWidget * _bsonWidget;
+        OutputViewer *_viewer;
 
         /*
         ** Paging buttons

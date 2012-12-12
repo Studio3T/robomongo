@@ -6,6 +6,8 @@
 #include <QEvent>
 #include "Core.h"
 #include "mongo/client/dbclient.h"
+#include <engine/Result.h>
+#include "domain/MongoShellResult.h"
 
 #define R_MESSAGE \
     public: \
@@ -237,26 +239,14 @@ namespace Robomongo
     {
         R_MESSAGE
 
-        ExecuteScriptResponse(const QList<mongo::BSONObj> &documents) :
+        ExecuteScriptResponse(const QList<Result> &results) :
             Response(EventType),
-            documents(documents),
-            hasDocuments(true),
-            hasResponse(false) { }
-
-        ExecuteScriptResponse(const QString &response, const QList<mongo::BSONObj> &documents ) :
-            Response(EventType),
-            documents(documents),
-            response(response),
-            hasDocuments(true),
-            hasResponse(true) { }
+            results(results) { }
 
         ExecuteScriptResponse(const Error &error) :
             Response(EventType, error) {}
 
-        QList<mongo::BSONObj> documents;
-        QString response;
-        bool hasDocuments;
-        bool hasResponse;
+        QList<Result> results;
     };
 
 
@@ -355,23 +345,11 @@ namespace Robomongo
     {
         R_MESSAGE
 
-        ScriptExecutedEvent(const QList<MongoDocumentPtr> &list) :
+        ScriptExecutedEvent(const QList<MongoShellResult> &list) :
             QEvent(EventType),
-            documents(list),
-            hasDocuments(true),
-            hasResponse(false) { }
+            results(list) { }
 
-        ScriptExecutedEvent(const QString &response, const QList<MongoDocumentPtr> &list) :
-            QEvent(EventType),
-            response(response),
-            documents(list),
-            hasDocuments(true),
-            hasResponse(true) { }
-
-        QList<MongoDocumentPtr> documents;
-        QString response;
-        bool hasDocuments;
-        bool hasResponse;
+        QList<MongoShellResult> results;
     };
 
 }

@@ -19,6 +19,7 @@ OutputViewer::OutputViewer(QWidget *parent) :
 
     _splitter = new QSplitter(this);
     _splitter->setOrientation(Qt::Vertical);
+    _splitter->setHandleWidth(4);
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setMargin(0);
@@ -49,6 +50,14 @@ void OutputViewer::doSomething(const QList<MongoShellResult> &results)
             _splitter->addWidget(widget);
         }
     }
+}
+
+void OutputViewer::toggleOrientation()
+{
+    if (_splitter->orientation() == Qt::Horizontal)
+        _splitter->setOrientation(Qt::Vertical);
+    else
+        _splitter->setOrientation(Qt::Horizontal);
 }
 
 RoboScintilla *OutputViewer::_configureLogText()

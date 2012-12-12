@@ -40,7 +40,13 @@ bool WorkAreaWidget::event(QEvent *event)
 {
     R_HANDLE(event)
     R_EVENT(OpeningShellEvent)
-    else return QObject::event(event);
+            else return QObject::event(event);
+}
+
+void WorkAreaWidget::toggleOrientation()
+{
+    QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+    currentWidget->toggleOrientation();
 }
 
 void WorkAreaWidget::handle(const OpeningShellEvent *event)

@@ -51,6 +51,7 @@ namespace Robomongo
         bool eventFilter(QObject * o, QEvent * e);
 
         bool event(QEvent *event);
+        void toggleOrientation();
 
     public slots:
 

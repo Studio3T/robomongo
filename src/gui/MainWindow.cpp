@@ -19,7 +19,8 @@ using namespace Robomongo;
 MainWindow::MainWindow() : QMainWindow(),
     _app(AppRegistry::instance().app()),
     _settingsManager(AppRegistry::instance().settingsManager()),
-    _dispatcher(AppRegistry::instance().dispatcher())
+    _dispatcher(AppRegistry::instance().dispatcher()),
+    _workArea(NULL)
 {
     _dispatcher.subscribe(this, ConnectionFailedEvent::EventType);
 
@@ -40,6 +41,13 @@ MainWindow::MainWindow() : QMainWindow(),
     connectAction->setIconText("Connect");
     connectAction->setToolTip("Connect to MongoDB");
     connect(connectAction, SIGNAL(triggered()), this, SLOT(manageConnections()));
+
+    // Orientation action
+    QAction *orientationAction = new QAction("", this);
+    orientationAction->setIcon(GuiRegistry::instance().serverIcon());
+    //connectAction->setIconText("Connect");
+    orientationAction->setToolTip("Toggle orientation of results view.");
+    connect(orientationAction, SIGNAL(triggered()), this, SLOT(toggleOrientation()));
 
     // Refresh action
     QAction *refreshAction = new QAction("Refresh", this);
@@ -80,6 +88,7 @@ MainWindow::MainWindow() : QMainWindow(),
     toolBar->addWidget(_pageSizeEdit);
     toolBar->addWidget(_rightButton);
     toolBar->addWidget(executeButton);
+    toolBar->addAction(orientationAction);
     toolBar->setShortcutEnabled(1, true);
     toolBar->setMovable(false);
     addToolBar(toolBar);
@@ -133,6 +142,12 @@ void MainWindow::manageConnections()
 
     // on linux focus is lost - we need to activate main window back
     activateWindow();
+}
+
+void MainWindow::toggleOrientation()
+{
+    if (_workArea)
+        _workArea->toggleOrientation();
 }
 
 void MainWindow::refreshConnections()

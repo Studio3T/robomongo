@@ -225,17 +225,10 @@ void MongoClient::handle(ExecuteScriptRequest *event)
 {
     try
     {
-        // clear global objects
-        __objects.clear();
-        __logs.str("");
 
-        _scriptEngine->exec(event->script);
 
-        QString answer = QString::fromStdString(__logs.str());
-        QVector<BSONObj> objs = QVector<BSONObj>::fromStdVector(__objects);
-        QList<BSONObj> list = QList<BSONObj>::fromVector(objs);
-
-        reply(event->sender, new ExecuteScriptResponse(answer, list));
+        QList<Result> results = _scriptEngine->exec(event->script);
+        reply(event->sender, new ExecuteScriptResponse(results));
 
 
 //        _helper->clear();

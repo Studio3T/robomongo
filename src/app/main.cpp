@@ -12,6 +12,7 @@
 #include "mongo/client/dbclient.h"
 #include <QtScript>
 #include <QScriptEngine>
+#include <editors/PlainJavaScriptEditor.h>
 
 using namespace Robomongo;
 
@@ -92,6 +93,27 @@ int main(int argc, char *argv[])
     int y = (screenGeometry.height() - win.height()) / 2;
     win.move(x, y);
     win.show();
+
+//    QFile file("/home/dmitry/dev/tmp/prototype.js");
+//    if(!file.open(QIODevice::ReadOnly));
+
+//    QTextStream in(&file);
+//    QString esprima = in.readAll();
+
+//    RoboScintilla * robo = new RoboScintilla();
+//    robo->setText(esprima);
+////    robo->show();
+
+
+//    QGraphicsScene scene;
+//    QGraphicsProxyWidget *proxy = scene.addWidget(robo);
+//    QTransform transform = proxy->transform();
+//    transform.rotate(-45.0, Qt::YAxis);
+//    transform.translate(200., 75.);
+//    transform.scale(2.5, 2.);
+//    proxy->setTransform(transform);
+//    QGraphicsView view(&scene);
+//    view.show();
 
 //    ConnectionsDialog dialog(&AppRegistry::instance().settingsManager());
 //    dialog.exec();

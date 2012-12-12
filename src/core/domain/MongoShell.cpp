@@ -3,6 +3,8 @@
 #include "MongoDocument.h"
 #include "AppRegistry.h"
 #include "Dispatcher.h"
+#include "engine/Result.h"
+#include "mongodb/MongoClient.h"
 
 using namespace Robomongo;
 
@@ -48,11 +50,16 @@ void MongoShell::handle(const ExecuteQueryResponse *event)
 
 void MongoShell::handle(const ExecuteScriptResponse *event)
 {
+    QList<MongoShellResult> list = MongoShellResult::fromResult(event->results);
+
+    _dispatcher->publish(this, new ScriptExecutedEvent(list));
+
+    /*
     QList<MongoDocumentPtr> list;
-    foreach(mongo::BSONObj obj, event->documents) {
+    foreach(mongo::BSONObj obj, event->results) {
         MongoDocumentPtr doc(new MongoDocument(obj));
         list.append(doc);
     }
 
-    _dispatcher->publish(this, new ScriptExecutedEvent(event->response, list));
+    _dispatcher->publish(this, new ScriptExecutedEvent(event->response, list));*/
 }

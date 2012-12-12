@@ -19,6 +19,8 @@
 #include "Qsci/qsciscintilla.h"
 #include "Qsci/qscilexerjavascript.h"
 #include "editors/JSLexer.h"
+#include "OutputViewer.h"
+#include <QWebView>
 
 using namespace mongo;
 using namespace Robomongo;
@@ -38,7 +40,9 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
 
     // Query text widget
     _configureQueryText();
+    _queryText->setFixedHeight(10);
     _configureLogText();
+    ui_queryLinesCountChanged();
 
     // Execute button
     QPushButton * executeButton = new QPushButton("Execute");
@@ -62,41 +66,17 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
     _pageSizeEdit->setMaximumWidth(31);
 
     // Bson widget
-    _bsonWidget = new BsonWidget(this);
-
-    QVBoxLayout * pageBoxLayout = new QVBoxLayout;
-    pageBoxLayout->addSpacing(2);
-    pageBoxLayout->addWidget(_pageSizeEdit, 0, Qt::AlignRight | Qt::AlignTop);
-
-    QHBoxLayout * hlayout = new QHBoxLayout;
-    hlayout->addWidget(_queryText, 0, Qt::AlignTop);
-//    hlayout->addSpacing(5);
-//    hlayout->addWidget(_leftButton, 0, Qt::AlignRight | Qt::AlignTop);
-//    hlayout->addLayout(pageBoxLayout);
-//    hlayout->addWidget(_rightButton, 0, Qt::AlignRight | Qt::AlignTop);
-//    hlayout->addSpacing(5);
-//    hlayout->addWidget(executeButton, 0, Qt::AlignRight | Qt::AlignTop);
-//    hlayout->setSpacing(1);
+    _bsonWidget = new BsonWidget(NULL);
+    _viewer = new OutputViewer();
 
     QVBoxLayout * layout = new QVBoxLayout;
     layout->setContentsMargins(0,4,4,4);
-    layout->addLayout(hlayout);
-    layout->addSpacing(-2);
-    layout->addWidget(_logText);
-    layout->addWidget(_bsonWidget);
+    layout->addWidget(_queryText, 0, Qt::AlignTop);
+    //layout->addSpacing(-2);
+    layout->addWidget(_viewer, 1);
     setLayout(layout);
 
-    ui_queryLinesCountChanged();
-    ui_logLinesCountChanged();
     _queryText->setFocus();
-
-    // Connect to VM
-//    connect(_viewModel, SIGNAL(documentsRefreshed(QList<MongoDocument_Pointer>)), SLOT(vm_documentsRefreshed(QList<MongoDocument_Pointer>)));
-//    connect(_viewModel, SIGNAL(shellOutputRefreshed(QString)), SLOT(vm_shellOutputRefreshed(QString)));
-//    connect(_viewModel, SIGNAL(pagingVisibilityChanged(bool)), SLOT(vm_pagingVisibilityChanged(bool)));
-//    connect(_viewModel, SIGNAL(queryUpdated(QString)), SLOT(vm_queryUpdated(QString)));
-
-//    _viewModel->done();
 }
 
 /*
@@ -271,7 +251,7 @@ void QueryWidget::_configureLogText()
     _logText->setReadOnly(true);
 
     _logText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
-    connect(_logText, SIGNAL(linesChanged()), SLOT(ui_logLinesCountChanged()));
+    //connect(_logText, SIGNAL(linesChanged()), SLOT(ui_logLinesCountChanged()));
 }
 
 /*
@@ -315,37 +295,19 @@ void QueryWidget::vm_queryUpdated(const QString & query)
 void QueryWidget::handle(const DocumentListLoadedEvent *event)
 {
     _queryText->setText(event->query);
-    displayData("", event->list);
+    QList<MongoShellResult> list;
+    list << MongoShellResult("", event->list);
+    displayData(list);
 }
 
 void QueryWidget::handle(const ScriptExecutedEvent *event)
 {
-    displayData(event->response, event->documents);
+    displayData(event->results);
 }
 
-void QueryWidget::displayData(const QString &message, const QList<MongoDocumentPtr> &documents)
+void QueryWidget::displayData(const QList<MongoShellResult> &results)
 {
-    QString str = message.trimmed();
-
-    if (documents.length() <= 0)
-    {
-        _bsonWidget->setVisible(false);
-        _logText->setFixedSize(QWIDGETSIZE_MAX,QWIDGETSIZE_MAX);
-    }
-    else
-    {
-        _bsonWidget->setVisible(true);
-    }
-
-    _bsonWidget->setDocuments(documents);
-
-    if (str.isEmpty())
-        _logText->setVisible(false);
-    else
-        _logText->setVisible(true);
-
-    _logText->setText(str.trimmed());
-    ui_logLinesCountChanged();
+    _viewer->doSomething(results);
 }
 
 /*

@@ -1188,7 +1188,7 @@ namespace mongo {
                 __objects.push_back(obj);
             }
             __logs << "\n";
-            Logstream::logLockless( __logs.str() );
+            //Logstream::logLockless( __logs.str() );
         }
         catch ( const AssertionException& ) {
             if ( someWritten ) {

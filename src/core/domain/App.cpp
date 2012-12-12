@@ -37,3 +37,15 @@ MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
     shell->open(collection);
     return shell;
 }
+
+MongoShellPtr App::openShell(const MongoServerPtr &server, const QString &script)
+{
+    MongoShellPtr shell(new MongoShell(server));
+    _shells.append(shell);
+
+    _dispatcher->publish(this, new OpeningShellEvent(shell));
+
+    shell->open(script);
+    return shell;
+
+}

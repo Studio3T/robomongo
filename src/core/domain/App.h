@@ -19,6 +19,7 @@ namespace Robomongo
          * @brief Open new shell based on specified collection
          */
         MongoShellPtr openShell(const MongoCollectionPtr &collection);
+        MongoShellPtr openShell(const MongoServerPtr &server, const QString &script);
 
     private:
         QList<MongoServerPtr> _servers;

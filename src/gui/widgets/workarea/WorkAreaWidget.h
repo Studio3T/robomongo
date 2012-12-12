@@ -29,6 +29,8 @@ namespace Robomongo
 
         bool event(QEvent *event);
 
+        void toggleOrientation();
+
     private: //handlers:
         void handle(const OpeningShellEvent *event);
 

@@ -166,7 +166,12 @@ bool QueryWidget::event(QEvent *event)
     R_HANDLE(event)
     R_EVENT(DocumentListLoadedEvent)
     R_EVENT(ScriptExecutedEvent)
-    else return QWidget::event(event);
+            else return QWidget::event(event);
+}
+
+void QueryWidget::toggleOrientation()
+{
+    _viewer->toggleOrientation();
 }
 
 /*

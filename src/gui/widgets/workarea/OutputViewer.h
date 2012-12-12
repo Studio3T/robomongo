@@ -17,6 +17,7 @@ namespace Robomongo
         explicit OutputViewer(QWidget *parent = 0);
 
         void doSomething(const QList<MongoShellResult> &documents);
+        void toggleOrientation();
 
     private:
         QSplitter *_splitter;

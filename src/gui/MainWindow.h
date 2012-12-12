@@ -56,6 +56,7 @@ namespace Robomongo
 
     public slots:
         void manageConnections();
+        void toggleOrientation();
         void refreshConnections();
         void toggleLogs(bool show);
 

@@ -21,6 +21,10 @@ namespace Robomongo
 
         bool event(QEvent *event);
 
+        MongoServerWeakPtr server() const { return _server; }
+        QString query() const { return _query; }
+
+
     private: //handlers
         void handle(const ExecuteQueryResponse *event);
         void handle(const ExecuteScriptResponse *event);

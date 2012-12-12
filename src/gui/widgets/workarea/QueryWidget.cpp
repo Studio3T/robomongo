@@ -21,6 +21,7 @@
 #include "editors/JSLexer.h"
 #include "OutputViewer.h"
 #include <QWebView>
+#include "domain/App.h"
 
 using namespace mongo;
 using namespace Robomongo;
@@ -132,14 +133,12 @@ void QueryWidget::ui_logLinesCountChanged()
 */
 void QueryWidget::ui_executeButtonClicked()
 {
-    QString query = _queryText->text();
+    QString query = _queryText->selectedText();
+
+    if (query.isEmpty())
+        query = _queryText->text();
 
     _shell->open(query);
-
-//    if (query.isEmpty())
-//        query = _queryText->text();
-
-    //_viewModel->execute(query);
 }
 
 /*
@@ -151,11 +150,28 @@ bool QueryWidget::eventFilter(QObject * o, QEvent * e)
 	{
 		QKeyEvent * keyEvent = (QKeyEvent *) e;
 
-		if ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key()==Qt::Key_Return || keyEvent->key()==Qt::Key_Enter) ) 
-		{
+        if ((keyEvent->modifiers() & Qt::ControlModifier) &&
+            (keyEvent->modifiers() & Qt::ShiftModifier) &&
+            (keyEvent->key()==Qt::Key_Return || keyEvent->key()==Qt::Key_Enter) )
+        {
+
+            MongoServerPtr server(_shell->server());
+            QString query = _queryText->selectedText();
+
+            if (query.isEmpty())
+                query = _queryText->text();
+
+            AppRegistry::instance().app().openShell(server, query);
+
+            //QMessageBox::information(0, "jkkj", "kjh", "hhj");
+            return true;
+        }
+        else if ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key()==Qt::Key_Return || keyEvent->key()==Qt::Key_Enter) )
+        {
             ui_executeButtonClicked();
-			return true;
-		}	
+            return true;
+        }
+
 	}
 
     return false;
@@ -166,7 +182,7 @@ bool QueryWidget::event(QEvent *event)
     R_HANDLE(event)
     R_EVENT(DocumentListLoadedEvent)
     R_EVENT(ScriptExecutedEvent)
-            else return QWidget::event(event);
+    else return QWidget::event(event);
 }
 
 void QueryWidget::toggleOrientation()
@@ -307,6 +323,7 @@ void QueryWidget::handle(const DocumentListLoadedEvent *event)
 
 void QueryWidget::handle(const ScriptExecutedEvent *event)
 {
+    _queryText->setText(_shell->query());
     displayData(event->results);
 }
 

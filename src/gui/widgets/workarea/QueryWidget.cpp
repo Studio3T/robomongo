@@ -71,9 +71,9 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
     _viewer = new OutputViewer();
 
     QVBoxLayout * layout = new QVBoxLayout;
+    layout->setSpacing(0);
     layout->setContentsMargins(0,4,4,4);
     layout->addWidget(_queryText, 0, Qt::AlignTop);
-    //layout->addSpacing(-2);
     layout->addWidget(_viewer, 1);
     setLayout(layout);
 

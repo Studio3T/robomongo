@@ -15,7 +15,7 @@ INCLUDEPATH += \
             $$ROOT/src/gui \
             $$ROOT/src/core
 
-LIBS += -lgui -lcore -lqjson -lqscintilla2 -lshell -ljs
+LIBS += -lgui -lcore -lshell -lqjson -lmongoclient -lboost_thread -lboost_filesystem -lboost_system -lqscintilla2 -ljs
 
 RESOURCES += \
     ../gui/resources/gui.qrc

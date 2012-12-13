@@ -40,6 +40,38 @@ QIcon GuiRegistry::collectionIcon()
     return _collectionIcon;
 }
 
+QIcon GuiRegistry::maximizeIcon()
+{
+    if (_maximizeIcon.isNull())
+        _maximizeIcon = QIcon(":/robomongo/icons/maximize.gif");
+
+    return _maximizeIcon;
+}
+
+QIcon GuiRegistry::textIcon()
+{
+    if (_textIcon.isNull())
+        _textIcon = QIcon(":/robomongo/icons/text_16x16.png");
+
+    return _textIcon;
+}
+
+QIcon GuiRegistry::treeIcon()
+{
+    if (_treeIcon.isNull())
+        _treeIcon = QIcon(":/robomongo/icons/tree_16x16.png");
+
+    return _treeIcon;
+}
+
+QIcon GuiRegistry::visualIcon()
+{
+    if (_visualIcon.isNull())
+        _visualIcon = QIcon(":/robomongo/icons/visual_16x16.png");
+
+    return _visualIcon;
+}
+
 QIcon GuiRegistry::circleIcon()
 {
     if (_circleIcon.isNull())

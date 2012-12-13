@@ -9,6 +9,7 @@
 #include <QListView>
 #include <QTreeView>
 #include <domain/MongoShellResult.h>
+#include "GuiRegistry.h"
 
 using namespace Robomongo;
 
@@ -19,10 +20,12 @@ OutputViewer::OutputViewer(QWidget *parent) :
 
     _splitter = new QSplitter(this);
     _splitter->setOrientation(Qt::Vertical);
-    _splitter->setHandleWidth(4);
+    _splitter->setHandleWidth(1);
+    _splitter->setContentsMargins(0, 0, 0, 0);
 
     QVBoxLayout *layout = new QVBoxLayout();
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
     layout->addWidget(_splitter);
     setLayout(layout);
 }
@@ -41,13 +44,13 @@ void OutputViewer::doSomething(const QList<MongoShellResult> &results)
         if (!result.response.trimmed().isEmpty()) {
             RoboScintilla *logText = _configureLogText();
             logText->setText(result.response);
-            _splitter->addWidget(logText);
+            _splitter->addWidget(new OutputResult(logText));
         }
 
         if (result.documents.count() > 0) {
             BsonWidget *widget = _configureBsonWidget();
             widget->setDocuments(result.documents);
-            _splitter->addWidget(widget);
+            _splitter->addWidget(new OutputResult(widget));
         }
     }
 }
@@ -58,6 +61,8 @@ void OutputViewer::toggleOrientation()
         _splitter->setOrientation(Qt::Vertical);
     else
         _splitter->setOrientation(Qt::Horizontal);
+
+    //_splitter->setHandleWidth(0);
 }
 
 RoboScintilla *OutputViewer::_configureLogText()
@@ -102,3 +107,53 @@ BsonWidget *OutputViewer::_configureBsonWidget()
 {
     return new BsonWidget(_splitter);
 }
+
+OutputResult::OutputResult(QWidget *contentWidget, QWidget *parent)
+{
+    setContentsMargins(0, 0, 0, 0);
+    OutputResultHeader *header = new OutputResultHeader;
+
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+    layout->addWidget(header);
+    layout->addWidget(contentWidget, 1);
+    setLayout(layout);
+}
+
+OutputResultHeader::OutputResultHeader(QWidget *parent) : QWidget(parent)
+{
+    setContentsMargins(0,3,0,0);
+
+    QPushButton *max = new QPushButton;
+    max->setIcon(GuiRegistry::instance().maximizeIcon());
+    max->setFixedSize(18, 18);
+    max->setFlat(true);
+
+    QPushButton *tree = new QPushButton;
+    tree->setIcon(GuiRegistry::instance().treeIcon());
+    tree->setFixedSize(18, 18);
+    tree->setFlat(true);
+    tree->setCheckable(true);
+    tree->setChecked(true);
+
+    QPushButton *text = new QPushButton;
+    text->setIcon(GuiRegistry::instance().textIcon());
+    text->setFixedSize(18, 18);
+    text->setFlat(true);
+
+
+    QLabel *l = new QLabel("Loaded in 2 ms");
+    l->setStyleSheet("font-size:12px;");
+
+    QHBoxLayout *layout = new QHBoxLayout();
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+    //layout->addWidget(text);
+    layout->addWidget(tree);
+    layout->addWidget(text);
+    layout->addWidget(max, 0, Qt::AlignRight);
+    setLayout(layout);
+}
+
+

@@ -22,7 +22,7 @@ namespace Robomongo
         /*
         ** Constructs Bson Tree widget
         */
-        BsonTreeWidget(QWidget * parent);
+        BsonTreeWidget(QWidget * parent = NULL);
         ~BsonTreeWidget();
 
         /*

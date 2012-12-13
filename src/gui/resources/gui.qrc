@@ -25,5 +25,8 @@
         <file>scripts/utils.js</file>
         <file>scripts/utils_sh.js</file>
         <file>scripts/esprima.js</file>
+        <file>icons/maximize.gif</file>
+        <file>icons/text_16x16.png</file>
+        <file>icons/tree_16x16.png</file>
     </qresource>
 </RCC>

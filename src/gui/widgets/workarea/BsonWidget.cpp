@@ -13,10 +13,10 @@ BsonWidget::BsonWidget(QWidget * parent) : QWidget(parent)
 	_modeTabs = new QTabWidget;
     _modeTabs->setTabPosition(QTabWidget::South);
     _modeTabs->setDocumentMode(true);
-	_bsonTree = new BsonTreeWidget(this);
+    _bsonTree = new BsonTreeWidget;
 
-    _jsonText = new QPlainTextEdit(this);
-    _logText = new QPlainTextEdit(this);
+//    _jsonText = new QPlainTextEdit(this);
+//    _logText = new QPlainTextEdit(this);
 
 //	QsciLexerJavaScript * javaScriptLexer = new QsciLexerJavaScript;
 //	javaScriptLexer->setFont(QFont( "Courier New", 10));
@@ -39,18 +39,19 @@ BsonWidget::BsonWidget(QWidget * parent) : QWidget(parent)
 //    _logText->setMarginWidth(1, 0);
 
 
-	_modeTabs->addTab(_bsonTree, "Tree");
+/*	_modeTabs->addTab(_bsonTree, "Tree");
     _modeTabs->addTab(_jsonText, "Text");
     _modeTabs->setStyleSheet(
         "BsonTreeWidget, QsciScintilla { border: 0px;} "
-    );
+    );*/
 
-    _modeTabs->setDocumentMode(true);
-	connect(_modeTabs, SIGNAL(currentChanged(int)), this, SLOT(ui_tabPageChanged(int)));
+    //_modeTabs->setDocumentMode(true);
+    //connect(_modeTabs, SIGNAL(currentChanged(int)), this, SLOT(ui_tabPageChanged(int)));
 
 	QHBoxLayout * hlayout = new QHBoxLayout;
+    hlayout->setSpacing(0);
 	hlayout->setMargin(0);
-	hlayout->addWidget(_modeTabs);
+    hlayout->addWidget(_bsonTree);
 
 	setLayout(hlayout);
 }
@@ -111,12 +112,12 @@ void BsonWidget::setShellOutput(const QString & output)
 /*    _modeTabs->clear();
     _modeTabs->addTab(_logText, "Shell");
 */
-    _logText->setPlainText(output);
+/*    _logText->setPlainText(output);
 
     if (!output.isEmpty() && _documents.count() == 0)
         _modeTabs->setCurrentIndex(2);
     else if (!output.isEmpty())
     {
         _modeTabs->setTabText(2, "Shell *");
-    }
+    }*/
 }

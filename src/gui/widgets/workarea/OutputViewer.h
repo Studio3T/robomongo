@@ -10,6 +10,20 @@
 
 namespace Robomongo
 {
+    class OutputResultHeader : public QWidget
+    {
+        Q_OBJECT
+    public:
+        explicit OutputResultHeader(QWidget *parent = 0);
+    };
+
+    class OutputResult : public QWidget
+    {
+        Q_OBJECT
+    public:
+        explicit OutputResult(QWidget *contentHeader, QWidget *parent = 0);
+    };
+
     class OutputViewer : public QWidget
     {
         Q_OBJECT

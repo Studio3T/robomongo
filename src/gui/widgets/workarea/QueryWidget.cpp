@@ -323,7 +323,8 @@ void QueryWidget::handle(const DocumentListLoadedEvent *event)
 
 void QueryWidget::handle(const ScriptExecutedEvent *event)
 {
-    _queryText->setText(_shell->query());
+    if (_queryText->text().isEmpty())
+        _queryText->setText(_shell->query());
     displayData(event->results);
 }
 

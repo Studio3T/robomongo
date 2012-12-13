@@ -5,7 +5,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
 #include "Wrapper.h"
 
 namespace mongo
@@ -50,7 +49,6 @@ namespace Robomongo
     typedef boost::shared_ptr<MongoElement> MongoElementPtr;
 
     class ConnectionRecord;
-    typedef boost::ptr_vector<ConnectionRecord> ConnectionRecord_PtrVector;
     typedef QSharedPointer<ConnectionRecord> ConnectionRecordPtr;
 
     typedef boost::scoped_ptr<mongo::DBClientConnection> DBClientConnection_ScopedPtr;

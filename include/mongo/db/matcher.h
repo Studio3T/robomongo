@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include "jsobj.h"
-#include "pcrecpp.h"
+#include "js/jsobj.h"
+#include <pcrecpp.h>
 
 namespace mongo {
 

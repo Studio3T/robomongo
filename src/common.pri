@@ -6,7 +6,7 @@ QT      += core gui script webkit
 DEFINES += ROBOMONGO JS_C_STRINGS_ARE_UTF8
 
 # Spider Monkey defines:
-win32:DEFINES += XP_WIN
+win32:DEFINES += XP_WIN _UNICODE UNICODE BOOST_ALL_NO_LIB _CRT_SECURE_NO_WARNINGS;
 unix:DEFINES  += XP_UNIX
 
 DESTDIR      = $$OUT_PWD/out
@@ -49,6 +49,7 @@ LIBS += -L$$OUTPUT_ROOT/shell/out
 INCLUDEPATH += $$ROOT/include
 INCLUDEPATH += $$ROOT/include/boost
 INCLUDEPATH += $$ROOT/include/qscintilla
+INCLUDEPATH += d:\Projects\mongo\mongo\src\third_party\pcre-8.30
 
 # third party libs
 LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson
@@ -58,4 +59,5 @@ LIBS += -L$$THIRDPARTY_LIBS_PATH/qscintilla
 LIBS += -L$$THIRDPARTY_LIBS_PATH/js
 LIBS += -lqjson -lmongoclient -lboost_thread -lboost_filesystem -lboost_system -lqscintilla2 -ljs
 
+win32:LIBS += -luser32 -lgdi32 -lwinspool -lcomdlg32 -lshell32 -lole32 -loleaut32
 

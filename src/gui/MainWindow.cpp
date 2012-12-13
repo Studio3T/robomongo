@@ -44,10 +44,19 @@ MainWindow::MainWindow() : QMainWindow(),
 
     // Orientation action
     QAction *orientationAction = new QAction("", this);
+    orientationAction->setShortcut(Qt::Key_F10);
     orientationAction->setIcon(GuiRegistry::instance().serverIcon());
     //connectAction->setIconText("Connect");
     orientationAction->setToolTip("Toggle orientation of results view.");
     connect(orientationAction, SIGNAL(triggered()), this, SLOT(toggleOrientation()));
+
+    // Full screen action
+    QAction *fullScreenAction = new QAction("", this);
+    fullScreenAction->setShortcut(Qt::Key_F12);
+    fullScreenAction->setIcon(GuiRegistry::instance().serverIcon());
+    fullScreenAction->setToolTip("Toggle orientation of results view.");
+    fullScreenAction->setVisible(true);
+    connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2()));
 
     // Refresh action
     QAction *refreshAction = new QAction("Refresh", this);
@@ -59,6 +68,7 @@ MainWindow::MainWindow() : QMainWindow(),
     fileMenu->addAction(connectAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
+    fileMenu->addAction(fullScreenAction);
 
     // Left button
     QPushButton *_leftButton = new QPushButton();
@@ -148,6 +158,14 @@ void MainWindow::toggleOrientation()
 {
     if (_workArea)
         _workArea->toggleOrientation();
+}
+
+void MainWindow::toggleFullScreen2()
+{
+    if (windowState() == Qt::WindowFullScreen)
+        showNormal();
+    else
+        showFullScreen();
 }
 
 void MainWindow::refreshConnections()

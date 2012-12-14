@@ -28,5 +28,6 @@
         <file>icons/maximize.gif</file>
         <file>icons/text_16x16.png</file>
         <file>icons/tree_16x16.png</file>
+        <file>icons/rotate_16x16.png</file>
     </qresource>
 </RCC>

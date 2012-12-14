@@ -43,12 +43,16 @@ MainWindow::MainWindow() : QMainWindow(),
     connect(connectAction, SIGNAL(triggered()), this, SLOT(manageConnections()));
 
     // Orientation action
-    QAction *orientationAction = new QAction("", this);
+    QAction *orientationAction = new QAction("&Rotate", this);
     orientationAction->setShortcut(Qt::Key_F10);
-    orientationAction->setIcon(GuiRegistry::instance().serverIcon());
-    //connectAction->setIconText("Connect");
+    orientationAction->setIcon(GuiRegistry::instance().rotateIcon());
     orientationAction->setToolTip("Toggle orientation of results view.");
     connect(orientationAction, SIGNAL(triggered()), this, SLOT(toggleOrientation()));
+
+    // Execute action
+    QAction *executeAction = new QAction("&Execute", this);
+    executeAction->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
+    executeAction->setIconText("Execute");
 
     // Full screen action
     QAction *fullScreenAction = new QAction("", this);
@@ -94,10 +98,10 @@ MainWindow::MainWindow() : QMainWindow(),
     toolBar->addAction(connectAction);
     toolBar->addAction(refreshAction);
     toolBar->addSeparator();
-    toolBar->addWidget(_leftButton);
-    toolBar->addWidget(_pageSizeEdit);
-    toolBar->addWidget(_rightButton);
-    toolBar->addWidget(executeButton);
+//    toolBar->addWidget(_leftButton);
+//    toolBar->addWidget(_pageSizeEdit);
+//    toolBar->addWidget(_rightButton);
+    toolBar->addAction(executeAction);
     toolBar->addAction(orientationAction);
     toolBar->setShortcutEnabled(1, true);
     toolBar->setMovable(false);

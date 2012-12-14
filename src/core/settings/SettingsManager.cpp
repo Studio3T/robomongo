@@ -9,7 +9,6 @@
 #include "ConnectionRecord.h"
 
 // Third party libs
-#include "boost/ptr_container/ptr_vector.hpp"
 #include "qjson/parser.h"
 #include "qjson/serializer.h"
 

@@ -56,11 +56,11 @@ namespace Robomongo
 }
 
 #define R_EVENT(EVENT_TYPE) \
-    else if (__event->type() == EVENT_TYPE::EventType) \
-        handle(static_cast<EVENT_TYPE *>(__event));
+    else if (_roboevent->type() == EVENT_TYPE::EventType) \
+        handle(static_cast<EVENT_TYPE *>(_roboevent));
 
 #define R_HANDLE(EVENT) \
-    QEvent *__event = static_cast<QEvent *>((EVENT)); \
+    QEvent *_roboevent = static_cast<QEvent *>((EVENT)); \
     if (false) ;
 
 #define R_MESSAGE \

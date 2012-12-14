@@ -36,7 +36,7 @@ namespace mongo {
     // --- StringSplitter ----
 
     /** get next split string fragment */
-    string StringSplitter::next() {
+/*    string StringSplitter::next() {
         const char * foo = strstr( _big , _splitter );
         if ( foo ) {
             string s( _big , foo - _big );
@@ -49,21 +49,23 @@ namespace mongo {
         string s = _big;
         _big += strlen( _big );
         return s;
-    }
+    }*/
 
 
-    void StringSplitter::split( vector<string>& l ) {
+   /* void StringSplitter::split( vector<string>& l ) {
         while ( more() ) {
             l.push_back( next() );
         }
-    }
+    }*/
 
+/*
     vector<string> StringSplitter::split() {
         vector<string> l;
         split( l );
         return l;
-    }
+    }*/
 
+/*
     string StringSplitter::join( vector<string>& l , const string& split ) {
         stringstream ss;
         for ( unsigned i=0; i<l.size(); i++ ) {
@@ -72,12 +74,13 @@ namespace mongo {
             ss << l[i];
         }
         return ss.str();
-    }
+    }*/
 
+/*
     vector<string> StringSplitter::split( const string& big , const string& splitter ) {
         StringSplitter ss( big.c_str() , splitter.c_str() );
         return ss.split();
-    }
+    }*/
     
 
 
@@ -103,6 +106,7 @@ namespace mongo {
 
     }
 
+    /*
     bool isValidUTF8(string s) { 
         return isValidUTF8(s.c_str()); 
     }
@@ -129,7 +133,9 @@ namespace mongo {
         if (left!=0) return false; // string ended mid-codepoint
         return true;
     }
+    */
 
+    /*
     long long parseLL( const char *n ) {
         long long ret;
         uassert( 13307, "cannot convert empty string to long long", *n != 0 );
@@ -153,7 +159,7 @@ namespace mongo {
         uassert( 13310, "could not convert string to long long", (*endPtr == 0) && (ret != _I64_MAX) && (ret != _I64_MIN) );
 #endif // !defined(_WIN32)
         return ret;
-    }
+    }*/
 
 
 #if defined(_WIN32)
@@ -219,7 +225,7 @@ namespace mongo {
      * @param utf8StringSize    Number of bytes in UTF-8 string, no NUL terminator assumed
      * @return                  true if all characters were displayed (including zero characters)
      */
-    bool writeUtf8ToWindowsConsole( const char* utf8String, unsigned int utf8StringSize ) {
+/*    bool writeUtf8ToWindowsConsole( const char* utf8String, unsigned int utf8StringSize ) {
         int bufferSize = MultiByteToWideChar(
                 CP_UTF8,            // Code page
                 0,                  // Flags
@@ -276,7 +282,7 @@ namespace mongo {
         }
         return true;
     }
-
+*/
     WindowsCommandLine::WindowsCommandLine( int argc, wchar_t* argvW[] ) {
         vector < string >   utf8args;
         vector < size_t >   utf8argLength;
@@ -296,9 +302,10 @@ namespace mongo {
         }
     }
 
+    /*
     WindowsCommandLine::~WindowsCommandLine() {
         free( _argv );
-    }
+    }*/
 
 #endif // #if defined(_WIN32)
 

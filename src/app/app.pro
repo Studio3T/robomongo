@@ -15,8 +15,13 @@ INCLUDEPATH += \
             $$ROOT/src/gui \
             $$ROOT/src/core
 
-LIBS += -lgui -lcore -lshell -lqjson -lmongoclient -lboost_thread -lboost_filesystem -lboost_system -lqscintilla2 -ljs
-win32:LIBS += -luser32 -lgdi32 -lwinspool -lcomdlg32 -lshell32 -lole32 -loleaut32
+win32:LIBS += -lws2_32 -lkernel32 -ladvapi32 -lpsapi -ldbghelp -lpcrecpp \
+              -luser32 -lgdi32 -lwinspool -lcomdlg32 \
+              -lshell32 -lole32 -loleaut32 -lodbc32 -lodbccp32 -luuid
+
+LIBS += -lgui -lcore -lshell -lqjson -lmongoclient \
+        -lboost_thread -lboost_filesystem -lboost_system \
+        -lqscintilla2 -ljs
 
 RESOURCES += \
     ../gui/resources/gui.qrc
@@ -30,12 +35,20 @@ win32:PRE_TARGETDEPS += $$OUTPUT_ROOT/core/out/core.lib
 win32:PRE_TARGETDEPS += $$OUTPUT_ROOT/gui/out/gui.lib
 win32:PRE_TARGETDEPS += $$OUTPUT_ROOT/shell/out/shell.lib
 
+#win32:QMAKE_CFLAGS_DEBUG = -MTd
+#win32:QMAKE_CXXFLAGS_DEBUG = -MTd
+#win32:QMAKE_LFLAGS_DEBUG = /NODEFAULTLIB:MSVCPRTD /NODEFAULTLIB:MSVCRTD
+#win32:QMAKE_LFLAGS_DEBUG =  /NODEFAULTLIB:LIBCMTD /NODEFAULTLIB:MSVCPRTD
+
 win32 {
     contains(QMAKE_HOST.arch, x86_64) {
 
     } else {
-        # Copy qjson.dll to to app/out folder
+        # Copy qjson.dll to app/out folder
         QMAKE_POST_LINK += $$quote(xcopy /Y \"$$THIRDPARTY_LIBS_PATH\\qjson\\qjson.dll\" \"$$OUT_PWD\\out\" $$escape_expand(\\n))
+
+        # Copy qscintilla2.dll app/out folder
+        QMAKE_POST_LINK += $$quote(xcopy /Y \"$$THIRDPARTY_LIBS_PATH\\qscintilla\\qscintilla2.dll\" \"$$OUT_PWD\\out\" $$escape_expand(\\n))
     }
 }
 

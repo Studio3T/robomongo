@@ -16,6 +16,7 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
     QWidget(),
     _dispatcher(&AppRegistry::instance().dispatcher())
 {
+    setContentsMargins(0, 3, 0, 0);
 	_mainWindow = mainWindow;
     _tabWidget = new WorkAreaTabWidget(this);
 	_tabWidget->setMovable(true);

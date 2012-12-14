@@ -4,7 +4,6 @@
 #include <QDir>
 #include <QObject>
 #include "ConnectionRecord.h"
-#include "boost/ptr_container/ptr_vector.hpp"
 #include "Core.h"
 
 

@@ -77,7 +77,7 @@ RoboScintilla *OutputViewer::_configureLogText()
     //textFont.setWeight(QFont::Bold);
 //    textFont.setPointSize(12);
 #elif defined(Q_OS_WIN)
-    textFont.setPointSize(12);
+    textFont.setPointSize(10);
     textFont.setFamily("Courier");
 #endif
 

@@ -93,8 +93,21 @@ QueryWidget::~QueryWidget()
 */
 void QueryWidget::ui_queryLinesCountChanged()
 {
+    int pos = _queryText->fontInfo().pointSize();
+    int pis = _queryText->fontInfo().pixelSize();
+    int teh = _queryText->textHeight(0);
+    int exa = _queryText->extraAscent();
+    int exd = _queryText->extraDescent();
+
     QFontMetrics m(_queryText->font());
-    int lineHeight = m.lineSpacing() + 1;
+    int lineHeight = m.lineSpacing();
+
+    #if defined(Q_OS_UNIX)
+    // this fix required to calculate correct height in Linux.
+    // not the best way, but for now it tested on Ubuntu.
+    lineHeight++;
+    #endif
+
 
     int numberOfLines = _queryText->lines();
 
@@ -115,7 +128,7 @@ void QueryWidget::ui_logLinesCountChanged()
     }
 
     QFontMetrics m(_logText->font());
-    int lineHeight = m.lineSpacing() + 1;
+    int lineHeight = m.lineSpacing();
 
     int numberOfLines = _logText->lines();
 
@@ -195,6 +208,8 @@ void QueryWidget::toggleOrientation()
 */
 void QueryWidget::_configureQueryText()
 {
+
+
     QFont textFont = font();
 #if defined(Q_OS_MAC)
     textFont.setPointSize(12);
@@ -205,7 +220,7 @@ void QueryWidget::_configureQueryText()
     //textFont.setWeight(QFont::Bold);
 //    textFont.setPointSize(12);
 #elif defined(Q_OS_WIN)
-    textFont.setPointSize(12);
+    textFont.setPointSize(font().pointSize() + 2);
     textFont.setFamily("Courier");
 #endif
 

@@ -1,8 +1,9 @@
 #include "JSLexer.h"
+#include "Qsci/qscilexerjavascript.h"
 
 using namespace Robomongo;
 
-JSLexer::JSLexer(QObject *parent)
+JSLexer::JSLexer(QObject *parent) : QsciLexerJavaScript(parent)
 {
 }
 

@@ -64,6 +64,14 @@ QIcon GuiRegistry::treeIcon()
     return _treeIcon;
 }
 
+QIcon GuiRegistry::rotateIcon()
+{
+    if (_rotateIcon.isNull())
+        _rotateIcon = QIcon(":/robomongo/icons/rotate_16x16.png");
+
+    return _rotateIcon;
+}
+
 QIcon GuiRegistry::visualIcon()
 {
     if (_visualIcon.isNull())

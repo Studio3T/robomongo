@@ -79,10 +79,18 @@ void ScriptEngine::init()
     bool res = _scope->exec(esprima.toStdString(), "(esprima)", true, true, true);
 }
 
-QList<Result> ScriptEngine::exec(const QString &script)
+QList<Result> ScriptEngine::exec(const QString &script, const QString &dbName)
 {
     QList<Result> results;
     QStringList statements = statementize(script);
+
+    if (!dbName.isEmpty()) {
+        // switch to database
+
+        QString useDb = QString("shellHelper.use('%1');").arg(dbName);
+        QByteArray useDbArray = useDb.toUtf8();
+        _scope->exec(useDbArray.data(), "(usedb)", false, true, false);
+    }
 
     foreach(QString statement, statements)
     {

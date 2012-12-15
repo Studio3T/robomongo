@@ -16,7 +16,7 @@ namespace Robomongo
         ScriptEngine(const QString &host, int port, const QString &username, const QString &password, const QString &database);
 
         void init();
-        QList<Result> exec(const QString &script);
+        QList<Result> exec(const QString &script, const QString &dbName = QString());
 
     private:
         QString _host;

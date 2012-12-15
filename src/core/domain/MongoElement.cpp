@@ -124,8 +124,14 @@ namespace Robomongo
 
 		/** date type */
 		case Date:
-			con->append(QString::fromStdString(_bsonElement.Date().toString()));
+        {
+            unsigned long long millis = _bsonElement.Date().millis;
+            if ((long long)millis >= 0 &&
+               ((long long)millis/1000) < (std::numeric_limits<time_t>::max)()) {
+                con->append(QString::fromStdString(_bsonElement.Date().toString()));
+            }
 			break;
+        }
 
 		/** null type */
 		case jstNULL:

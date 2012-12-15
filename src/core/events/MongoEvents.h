@@ -224,13 +224,15 @@ namespace Robomongo
     {
         R_MESSAGE
 
-        ExecuteScriptRequest(QObject *sender, const QString &script, int take = 0, int skip = 0) :
+        ExecuteScriptRequest(QObject *sender, const QString &script, const QString &dbName, int take = 0, int skip = 0) :
             Request(EventType, sender),
             script(script),
+            databaseName(dbName),
             take(take),
             skip(skip) {}
 
         QString script;
+        QString databaseName;
         int take; //
         int skip;
     };

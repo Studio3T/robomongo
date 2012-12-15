@@ -59,11 +59,11 @@ void BsonTreeWidget::setDocuments(const QList<MongoDocumentPtr> & documents)
 	addTopLevelItems(items);
 	setUpdatesEnabled(true);
 
-/*    if (firstItem)
+    if (firstItem)
     {
         firstItem->expand();
         firstItem->setExpanded(true);
-    }*/
+    }
 }
 
 void BsonTreeWidget::ui_itemExpanded(QTreeWidgetItem * treeItem)

@@ -24,28 +24,31 @@ MongoServerPtr App::openServer(const ConnectionRecordPtr &connectionRecord)
 
 MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
 {
-    ConnectionRecordPtr connectionRecord = collection->database()->server()->connectionRecord();
+    MongoServerPtr server(openServer(collection->database()->server()->connectionRecord()));
+
+/*    ConnectionRecordPtr connectionRecord = collection->database()->server()->connectionRecord();
     MongoServerPtr serverClone(new MongoServer(connectionRecord));
     serverClone->tryConnect();
-    _servers.append(serverClone);
+    _servers.append(serverClone);*/
 
-    MongoShellPtr shell(new MongoShell(serverClone));
+    MongoShellPtr shell(new MongoShell(server));
     _shells.append(shell);
 
     _dispatcher->publish(this, new OpeningShellEvent(shell));
 
-    shell->open(collection);
+//    shell->open(collection);
+    shell->open(QString("db.%1.find()").arg(collection->name()), collection->database()->name());
     return shell;
 }
 
-MongoShellPtr App::openShell(const MongoServerPtr &server, const QString &script)
+MongoShellPtr App::openShell(const MongoServerPtr &server, const QString &script, const QString &dbName)
 {
     MongoShellPtr shell(new MongoShell(server));
     _shells.append(shell);
 
     _dispatcher->publish(this, new OpeningShellEvent(shell));
 
-    shell->open(script);
+    shell->open(script, dbName);
     return shell;
 
 }

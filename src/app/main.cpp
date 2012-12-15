@@ -10,8 +10,6 @@
 #include "Core.h"
 #include "MainWindow.h"
 #include "mongo/client/dbclient.h"
-#include <QtScript>
-#include <QScriptEngine>
 #include <editors/PlainJavaScriptEditor.h>
 #include <GuiRegistry.h>
 

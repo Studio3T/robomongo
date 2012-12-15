@@ -55,7 +55,7 @@ MainWindow::MainWindow() : QMainWindow(),
     executeAction->setIconText("Execute");
 
     // Full screen action
-    QAction *fullScreenAction = new QAction("", this);
+    QAction *fullScreenAction = new QAction("&Full screen", this);
     fullScreenAction->setShortcut(Qt::Key_F12);
     fullScreenAction->setIcon(GuiRegistry::instance().serverIcon());
     fullScreenAction->setToolTip("Toggle orientation of results view.");
@@ -70,9 +70,9 @@ MainWindow::MainWindow() : QMainWindow(),
     // File menu
     QMenu *fileMenu = menuBar()->addMenu("File");
     fileMenu->addAction(connectAction);
+    fileMenu->addAction(fullScreenAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
-    fileMenu->addAction(fullScreenAction);
 
     // Left button
     QPushButton *_leftButton = new QPushButton();

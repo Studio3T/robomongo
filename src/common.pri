@@ -2,7 +2,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG  += qt
 CONFIG  -= debug_and_release
-QT      += core gui script webkit
+QT      += core gui
 DEFINES += ROBOMONGO JS_C_STRINGS_ARE_UTF8
 
 win32:DEFINES += XP_WIN _UNICODE UNICODE BOOST_ALL_NO_LIB _CRT_SECURE_NO_WARNINGS PSAPI_VERSION=1

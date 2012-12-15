@@ -2,7 +2,6 @@
 #define OUTPUTVIEWER_H
 
 #include <QWidget>
-#include <QWebView>
 #include <QSplitter>
 #include <editors/PlainJavaScriptEditor.h>
 #include "BsonWidget.h"
@@ -35,7 +34,6 @@ namespace Robomongo
 
     private:
         QSplitter *_splitter;
-        QWebView *_view;
 
         RoboScintilla *_configureLogText();
         BsonWidget *_configureBsonWidget();

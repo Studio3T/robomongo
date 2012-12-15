@@ -8,7 +8,6 @@
 #include "events/MongoEvents.h"
 #include <QFile>
 #include <QTextStream>
-#include "scripting/Functions.h"
 #include "engine/ScriptEngine.h"
 #include "mongo/scripting/engine_spidermonkey.h"
 #include <QVector>

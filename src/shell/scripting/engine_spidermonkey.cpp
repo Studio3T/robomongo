@@ -1187,7 +1187,10 @@ namespace mongo {
                 BSONObj obj = c.toObject(argv[i]);
                 __objects.push_back(obj);
             }
-            __logs << "\n";
+
+            if ( someWritten )
+                __logs << "\n";
+
             //Logstream::logLockless( __logs.str() );
         }
         catch ( const AssertionException& ) {

@@ -23,10 +23,10 @@ void MongoShell::open(const MongoCollectionPtr &collection)
     _client->send(new ExecuteQueryRequest(this, collection->fullName()));
 }
 
-void MongoShell::open(const QString &script)
+void MongoShell::open(const QString &script, const QString &dbName)
 {
     _query = script;
-    _client->send(new ExecuteScriptRequest(this, _query));
+    _client->send(new ExecuteScriptRequest(this, _query, dbName));
 }
 
 bool MongoShell::event(QEvent *event)

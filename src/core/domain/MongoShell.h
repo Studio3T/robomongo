@@ -17,7 +17,7 @@ namespace Robomongo
         explicit MongoShell(const MongoServerPtr server);
 
         void open(const MongoCollectionPtr &collection);
-        void open(const QString &script);
+        void open(const QString &script, const QString &dbName = QString());
 
         bool event(QEvent *event);
 

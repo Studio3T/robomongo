@@ -227,7 +227,7 @@ void MongoClient::handle(ExecuteScriptRequest *event)
     {
 
 
-        QList<Result> results = _scriptEngine->exec(event->script);
+        QList<Result> results = _scriptEngine->exec(event->script, event->databaseName);
         reply(event->sender, new ExecuteScriptResponse(results));
 
 

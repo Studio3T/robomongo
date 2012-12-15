@@ -6,7 +6,6 @@
 #include <QEvent>
 #include <QStringList>
 #include "events/MongoEvents.h"
-#include <QScriptEngine>
 #include "engine/ScriptEngine.h"
 
 namespace Robomongo

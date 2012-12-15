@@ -20,7 +20,6 @@
 #include "Qsci/qscilexerjavascript.h"
 #include "editors/JSLexer.h"
 #include "OutputViewer.h"
-#include <QWebView>
 #include "domain/App.h"
 
 using namespace mongo;

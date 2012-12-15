@@ -1,8 +1,5 @@
 #include "OutputViewer.h"
-#include <QWebView>
 #include <QHBoxLayout>
-#include <QtWebKit>
-#include <QWebElement>
 #include <Qsci/qscilexerjavascript.h>
 #include <editors/PlainJavaScriptEditor.h>
 #include <editors/JSLexer.h>

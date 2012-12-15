@@ -23,7 +23,6 @@ SOURCES += \
     Dispatcher.cpp \
     domain/App.cpp \
     domain/MongoShell.cpp \
-    scripting/Functions.cpp \
     engine/ScriptEngine.cpp \
     engine/Result.cpp \
     domain/MongoShellResult.cpp
@@ -49,7 +48,6 @@ HEADERS  += \
     Dispatcher.h \
     domain/App.h \
     domain/MongoShell.h \
-    scripting/Functions.h \
     engine/ScriptEngine.h \
     engine/Result.h \
     domain/MongoShellResult.h

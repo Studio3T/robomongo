@@ -6,7 +6,7 @@ using namespace Robomongo;
 WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) : QTabBar(parent)
 {
     setStyleSheet("QTabBar::close-button { "
-                      "image: url(:/robomongo/icons/close_16x16.png);"
+                      "image: url(:/robomongo/icons/close_2_16x16.png);"
                       "width: 13px;"
                       "height: 13px;"
                   "}"

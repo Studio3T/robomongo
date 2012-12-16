@@ -15,13 +15,6 @@
 
 using namespace Robomongo;
 
-void insert( mongo::DBClientConnection & conn , const char * name , int num ) {
-    mongo::BSONObjBuilder obj;
-    obj.append( "name" , name );
-    obj.append( "num" , num );
-    conn.insert( "test.people" , obj.obj() );
-}
-
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);

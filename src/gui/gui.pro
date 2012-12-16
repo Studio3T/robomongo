@@ -27,7 +27,6 @@ SOURCES += ExampleWindow.cpp \
     editors/jsedit.cpp \
     editors/PlainJavaScriptEditor.cpp \
     editors/JSLexer.cpp \
-    widgets/TestStackPanel.cpp \
     widgets/workarea/OutputViewer.cpp
 
 HEADERS  += ExampleWindow.h = \
@@ -52,7 +51,6 @@ HEADERS  += ExampleWindow.h = \
     editors/jsedit.h \
     editors/PlainJavaScriptEditor.h \
     editors/JSLexer.h \
-    widgets/TestStackPanel.h \
     widgets/workarea/OutputViewer.h
 
 INCLUDEPATH += \

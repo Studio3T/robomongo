@@ -53,7 +53,7 @@ void WorkAreaWidget::toggleOrientation()
 void WorkAreaWidget::handle(const OpeningShellEvent *event)
 {
 //    QLabel * queryWidget = new QLabel("Hello");
-    QueryWidget * queryWidget = new QueryWidget(event->shell, this);
+    QueryWidget * queryWidget = new QueryWidget(event->shell, _tabWidget, this);
     _tabWidget->addTab(queryWidget, "Robotab" /* viewModel->title()*/);
     _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
 

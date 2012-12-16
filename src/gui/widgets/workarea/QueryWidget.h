@@ -19,6 +19,7 @@ namespace Robomongo
     class PlainJavaScriptEditor;
     class RoboScintilla;
     class OutputViewer;
+    class WorkAreaTabWidget;
 
     class QueryWidget : public QWidget
     {
@@ -38,7 +39,7 @@ namespace Robomongo
         /*
         ** Constructs query widget
         */
-        QueryWidget(const MongoShellPtr &shell, QWidget * parent);
+        QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidget, QWidget * parent);
 
         /*
         ** Destructs QueryWidget
@@ -121,6 +122,8 @@ namespace Robomongo
         QPushButton * _leftButton;
         QPushButton * _rightButton;
         QLineEdit * _pageSizeEdit;
+
+        WorkAreaTabWidget *_tabWidget;
 
 //        PlainJavaScriptEditor *_queryText;
 

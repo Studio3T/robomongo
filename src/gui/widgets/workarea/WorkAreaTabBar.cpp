@@ -18,18 +18,17 @@ WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) : QTabBar(parent)
               "subcontrol-position: right"
         "}"
 
-        #ifdef Q_OS_WIN32
         "QTabBar::tab {"
             "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                                        "stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,"
-                                        "stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);"
+                                        "stop: 0 #F0F0F0, stop: 0.4 #DEDEDE,"
+                                        "stop: 0.5 #E6E6E6, stop: 1.0 #E1E1E1);"
             "border: 1px solid #C4C4C3;"
             "border-bottom-color: #C2C7CB; /* same as the pane color */"
-            "border-top-left-radius: 8px;"
-            "border-top-right-radius: 8px;"
+            "border-top-left-radius: 6px;"
+            "border-top-right-radius: 6px;"
             "min-width: 8ex;"
             "padding: 5px;"
-            "margin-right: 0px;"
+            "margin-right: -2px;"
         "}"
 
         "QTabBar::tab:selected, QTabBar::tab:hover {"
@@ -46,7 +45,6 @@ WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) : QTabBar(parent)
         "QTabBar::tab:!selected {"
             "margin-top: 2px; /* make non-selected tabs look smaller */"
         "}                "
-        #endif
     ;
 
     setStyleSheet(styles);

@@ -344,10 +344,10 @@ void QueryWidget::handle(const ScriptExecutedEvent *event)
     if (thisTab != -1) {
         _tabWidget->setTabToolTip(thisTab, _shell->query());
         QString tabTitle = _shell->query()
-                .left(25)
+                .left(21)
                 .replace(QRegExp("[\n\r\t]"), " ");
 
-        if (tabTitle.size() == 25)
+        if (tabTitle.size() == 21)
             tabTitle.append("...");
 
         _tabWidget->setTabText(thisTab, tabTitle);

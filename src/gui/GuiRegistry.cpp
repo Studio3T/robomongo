@@ -193,3 +193,11 @@ QIcon GuiRegistry::rightIcon()
     return _rightIcon;
 }
 
+QIcon GuiRegistry::mongodbIcon()
+{
+    if (_mongodbIcon.isNull())
+        _mongodbIcon = QIcon(":/robomongo/icons/mongodb_16x16.png");
+
+    return _mongodbIcon;
+}
+

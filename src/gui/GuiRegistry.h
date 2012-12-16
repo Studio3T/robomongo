@@ -38,6 +38,7 @@ namespace Robomongo
         QIcon circleIcon();
         QIcon leftIcon();
         QIcon rightIcon();
+        QIcon mongodbIcon();
         QIcon bsonObjectIcon();
         QIcon bsonArrayIcon();
         QIcon bsonStringIcon();
@@ -72,6 +73,7 @@ namespace Robomongo
         QIcon _circleIcon;
         QIcon _leftIcon;
         QIcon _rightIcon;
+        QIcon _mongodbIcon;
         QIcon _bsonObjectIcon;
         QIcon _bsonIdIcon;
         QIcon _bsonArrayIcon;

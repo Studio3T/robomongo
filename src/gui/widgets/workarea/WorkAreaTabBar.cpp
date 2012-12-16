@@ -1,10 +1,13 @@
 #include "WorkAreaTabBar.h"
 #include "QMouseEvent"
+#include <QStylePainter>
+#include <QStyleOptionTabV3>
 
 using namespace Robomongo;
 
 WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) : QTabBar(parent)
 {
+    int a = 456;
     QString styles =
         "QTabBar::close-button { "
             "image: url(:/robomongo/icons/close_2_16x16.png);"
@@ -15,9 +18,7 @@ WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) : QTabBar(parent)
               "image: url(:/robomongo/icons/close_hover_16x16.png);"
               "width: 15px;"
               "height: 15px;"
-              "subcontrol-position: right"
         "}"
-
         "QTabBar::tab {"
             "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
                                         "stop: 0 #F0F0F0, stop: 0.4 #DEDEDE,"
@@ -28,6 +29,7 @@ WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) : QTabBar(parent)
             "border-top-right-radius: 6px;"
             "min-width: 8ex;"
             "padding: 5px;"
+            "margin: 0px;"
             "margin-right: -2px;"
         "}"
 
@@ -44,7 +46,7 @@ WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) : QTabBar(parent)
 
         "QTabBar::tab:!selected {"
             "margin-top: 2px; /* make non-selected tabs look smaller */"
-        "}                "
+        "}  "
     ;
 
     setStyleSheet(styles);

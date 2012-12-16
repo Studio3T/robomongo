@@ -57,5 +57,5 @@ void WorkAreaWidget::handle(const OpeningShellEvent *event)
     _tabWidget->addTab(queryWidget, "Robotab" /* viewModel->title()*/);
     _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
 
-    _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().collectionIcon());
+    _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());
 }

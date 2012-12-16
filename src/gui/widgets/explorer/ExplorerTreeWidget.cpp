@@ -10,6 +10,7 @@ using namespace Robomongo;
 
 ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
+    //setVerticalScrollMode()
     setContextMenuPolicy(Qt::DefaultContextMenu);
     setObjectName("explorerTree");
 

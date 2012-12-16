@@ -12,7 +12,6 @@
 #include "Dispatcher.h"
 #include "widgets/workarea/WorkAreaWidget.h"
 #include "domain/App.h"
-#include "widgets/TestStackPanel.h"
 
 using namespace Robomongo;
 

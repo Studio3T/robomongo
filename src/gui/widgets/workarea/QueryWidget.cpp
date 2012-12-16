@@ -21,6 +21,7 @@
 #include "editors/JSLexer.h"
 #include "OutputViewer.h"
 #include "domain/App.h"
+#include "WorkAreaTabWidget.h"
 
 using namespace mongo;
 using namespace Robomongo;
@@ -28,9 +29,10 @@ using namespace Robomongo;
 /*
 ** Constructs query widget
 */
-QueryWidget::QueryWidget(const MongoShellPtr &shell, QWidget *parent) :
+QueryWidget::QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidget, QWidget *parent) :
     QWidget(parent),
     _shell(shell),
+    _tabWidget(tabWidget),
     _dispatcher(AppRegistry::instance().dispatcher())
 {
     setObjectName("queryWidget");
@@ -337,6 +339,20 @@ void QueryWidget::handle(const DocumentListLoadedEvent *event)
 
 void QueryWidget::handle(const ScriptExecutedEvent *event)
 {
+    int thisTab = _tabWidget->indexOf(this);
+
+    if (thisTab != -1) {
+        _tabWidget->setTabToolTip(thisTab, _shell->query());
+        QString tabTitle = _shell->query()
+                .left(25)
+                .replace(QRegExp("[\n\r\t]"), " ");
+
+        if (tabTitle.size() == 25)
+            tabTitle.append("...");
+
+        _tabWidget->setTabText(thisTab, tabTitle);
+    }
+
     if (_queryText->text().isEmpty())
         _queryText->setText(_shell->query());
     displayData(event->results);

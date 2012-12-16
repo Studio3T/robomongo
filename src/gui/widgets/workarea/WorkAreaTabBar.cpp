@@ -29,7 +29,7 @@ WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) : QTabBar(parent)
             "border-top-right-radius: 6px;"
             "min-width: 8ex;"
             "max-width: 200px;"
-            "padding: 4px 0px 4px 0px;"
+            "padding: 4px 0px 4px 2px;"
             "margin: 0px;"
             "margin-right: -2px;"
         "}"

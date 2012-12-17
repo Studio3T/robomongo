@@ -36,7 +36,7 @@ MainWindow::MainWindow() : QMainWindow(),
     // Connect action
     QAction *connectAction = new QAction("&Connect", this);
     connectAction->setShortcut(QKeySequence::Open);
-    connectAction->setIcon(GuiRegistry::instance().serverIcon());
+    connectAction->setIcon(GuiRegistry::instance().connectIcon());
     connectAction->setIconText("Connect");
     connectAction->setToolTip("Connect to MongoDB");
     connect(connectAction, SIGNAL(triggered()), this, SLOT(manageConnections()));
@@ -50,7 +50,7 @@ MainWindow::MainWindow() : QMainWindow(),
 
     // Execute action
     QAction *executeAction = new QAction("&Execute", this);
-    executeAction->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
+    executeAction->setIcon(GuiRegistry::instance().executeIcon());
     executeAction->setIconText("Execute");
 
     // Full screen action
@@ -89,13 +89,13 @@ MainWindow::MainWindow() : QMainWindow(),
 
     // Execute button
     QPushButton * executeButton = new QPushButton("Execute");
-    executeButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
+    executeButton->setIcon(GuiRegistry::instance().executeIcon());
 
     // Toolbar
     QToolBar *toolBar = new QToolBar("Toolbar", this);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolBar->addAction(connectAction);
-    toolBar->addAction(refreshAction);
+//    toolBar->addAction(refreshAction);
     toolBar->addSeparator();
 //    toolBar->addWidget(_leftButton);
 //    toolBar->addWidget(_pageSizeEdit);

@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include "ConnectionsDialog.h"
 #include "dialogs/EditConnectionDialog.h"
+#include "GuiRegistry.h"
 
 using namespace Robomongo;
 
@@ -15,6 +16,8 @@ using namespace Robomongo;
  */
 ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog()
 {
+    setWindowIcon(GuiRegistry::instance().connectIcon());
+
     _settingsManager = settingsManager;
     connect(_settingsManager, SIGNAL(connectionAdded(ConnectionRecordPtr)), this, SLOT(add(ConnectionRecordPtr)));
     connect(_settingsManager, SIGNAL(connectionUpdated(ConnectionRecordPtr)), this, SLOT(update(ConnectionRecordPtr)));

@@ -57,7 +57,6 @@ MainWindow::MainWindow() : QMainWindow(),
     // Full screen action
     QAction *fullScreenAction = new QAction("&Full Screen", this);
     fullScreenAction->setShortcut(Qt::Key_F12);
-    fullScreenAction->setIcon(GuiRegistry::instance().serverIcon());
     fullScreenAction->setVisible(true);
     connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2()));
 

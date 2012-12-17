@@ -217,3 +217,11 @@ QIcon GuiRegistry::executeIcon()
     return _executeIcon;
 }
 
+QIcon GuiRegistry::mainWindowIcon()
+{
+    if (_mainWindowIcon.isNull())
+        _mainWindowIcon = QIcon(":/robomongo/icons/main_window_icon.png");
+
+    return _mainWindowIcon;
+}
+

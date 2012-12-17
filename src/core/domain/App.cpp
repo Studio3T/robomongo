@@ -12,19 +12,21 @@ App::App(Dispatcher *dispatcher) :
 {
 }
 
-MongoServerPtr App::openServer(const ConnectionRecordPtr &connectionRecord)
+MongoServerPtr App::openServer(const ConnectionRecordPtr &connectionRecord, bool visible)
 {
-    MongoServerPtr server(new MongoServer(connectionRecord));
+    MongoServerPtr server(new MongoServer(connectionRecord, visible));
     _servers.append(server);
 
-    _dispatcher->publish(this, new ConnectingEvent(server));
+    if (visible)
+        _dispatcher->publish(this, new ConnectingEvent(server));
+
     server->tryConnect();
     return server;
 }
 
 MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
 {
-    MongoServerPtr server(openServer(collection->database()->server()->connectionRecord()));
+    MongoServerPtr server(openServer(collection->database()->server()->connectionRecord(), false));
 
 /*    ConnectionRecordPtr connectionRecord = collection->database()->server()->connectionRecord();
     MongoServerPtr serverClone(new MongoServer(connectionRecord));

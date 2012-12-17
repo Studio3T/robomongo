@@ -13,7 +13,7 @@ namespace Robomongo
     public:
         App(Dispatcher *dispatcher);
 
-        MongoServerPtr openServer(const ConnectionRecordPtr &connectionRecord);
+        MongoServerPtr openServer(const ConnectionRecordPtr &connectionRecord, bool visible);
 
         /**
          * @brief Open new shell based on specified collection

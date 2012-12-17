@@ -17,7 +17,7 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        explicit MongoServer(const ConnectionRecordPtr &connectionRecord);
+        explicit MongoServer(const ConnectionRecordPtr &connectionRecord, bool visible);
         ~MongoServer();
 
         /**
@@ -70,6 +70,7 @@ namespace Robomongo
         QString _port;
         QString _address;
         QString _lastErrorMessage;
+        bool _visible;
 
         QList<MongoDatabasePtr> _databases;
         QHash<QString, MongoDatabasePtr> _databasesByName;

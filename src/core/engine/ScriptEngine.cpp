@@ -38,12 +38,10 @@ ScriptEngine::ScriptEngine(const QString &host, int port, const QString &usernam
 
 void ScriptEngine::init()
 {
-    QString url;
-
     if (_database.isEmpty())
-        url = QString("%1:%2").arg(_host).arg(_port);
-    else
-        url = QString("%1:%2/%3").arg(_host).arg(_port).arg(_database);
+        _database = "test";
+
+    QString url = QString("%1:%2/%3").arg(_host).arg(_port).arg(_database);
 
     stringstream ss;
 

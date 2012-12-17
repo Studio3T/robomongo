@@ -165,8 +165,15 @@ namespace Robomongo
 
 		/** Updated to a Date with value next OpTime on insert */
 		case Timestamp:
-			con->append(QString::fromStdString(_bsonElement.Date().toString()));
+        {
+            Date_t date = _bsonElement.timestampTime();
+            unsigned long long millis = date.millis;
+            if ((long long)millis >= 0 &&
+               ((long long)millis/1000) < (std::numeric_limits<time_t>::max)()) {
+                con->append(QString::fromStdString(date.toString()));
+            }
 			break;
+        }
 
 		/** 64 bit integer */
 		case NumberLong:

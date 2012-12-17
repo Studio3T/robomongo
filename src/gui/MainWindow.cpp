@@ -54,10 +54,9 @@ MainWindow::MainWindow() : QMainWindow(),
     executeAction->setIconText("Execute");
 
     // Full screen action
-    QAction *fullScreenAction = new QAction("&Full screen", this);
+    QAction *fullScreenAction = new QAction("&Full Screen", this);
     fullScreenAction->setShortcut(Qt::Key_F12);
     fullScreenAction->setIcon(GuiRegistry::instance().serverIcon());
-    fullScreenAction->setToolTip("Toggle orientation of results view.");
     fullScreenAction->setVisible(true);
     connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2()));
 
@@ -143,7 +142,7 @@ void MainWindow::manageConnections()
 
         try
         {
-            _app.openServer(selected);
+            _app.openServer(selected, true);
         }
         catch(MongoException &ex)
         {

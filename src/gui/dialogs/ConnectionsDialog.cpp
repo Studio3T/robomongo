@@ -53,7 +53,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
     QPushButton *connectButton = new QPushButton("C&onnect");
-    connectButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
+    connectButton->setIcon(GuiRegistry::instance().serverIcon());
     connect(connectButton, SIGNAL(clicked()), this, SLOT(accept()));
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;

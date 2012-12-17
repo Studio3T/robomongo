@@ -17,7 +17,7 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
 
     // Connect action
     QAction *disconnectAction = new QAction("Disconnect", this);
-    disconnectAction->setIcon(GuiRegistry::instance().serverIcon());
+    //disconnectAction->setIcon(GuiRegistry::instance().serverIcon());
     disconnectAction->setIconText("Disconnect");
     connect(disconnectAction, SIGNAL(triggered()), SLOT(ui_disconnectServer()));
 

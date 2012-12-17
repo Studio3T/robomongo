@@ -48,6 +48,7 @@ WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) : QTabBar(parent)
         "QTabBar::tab:!selected {"
             "margin-top: 2px;" // make non-selected tabs look smaller
         "}  "
+        "QTabBar::tab:only-one { margin-top: 2px; }"
     ;
 
     setStyleSheet(styles);

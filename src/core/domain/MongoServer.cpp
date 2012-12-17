@@ -10,9 +10,10 @@
 using namespace Robomongo;
 using namespace std;
 
-MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord) : QObject(),
+MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord, bool visible) : QObject(),
     _connectionRecord(connectionRecord),
-    _dispatcher(AppRegistry::instance().dispatcher())
+    _dispatcher(AppRegistry::instance().dispatcher()),
+    _visible(visible)
 {
     _host = _connectionRecord->databaseAddress();
     _port = QString::number(_connectionRecord->databasePort());
@@ -106,5 +107,6 @@ void MongoServer::handle(const EstablishConnectionResponse *event)
         return;
     }
 
-    _dispatcher.publish(this, new ConnectionEstablishedEvent(shared_from_this()));
+    if (_visible)
+        _dispatcher.publish(this, new ConnectionEstablishedEvent(shared_from_this()));
 }

@@ -39,7 +39,7 @@ namespace Robomongo
         /*
         ** Constructs query widget
         */
-        QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidget, QWidget * parent);
+        QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidget, const QString &script, QWidget * parent = NULL);
 
         /*
         ** Destructs QueryWidget

@@ -279,11 +279,13 @@ namespace Robomongo
     {
         R_MESSAGE
 
-        OpeningShellEvent(const MongoShellPtr &shell) :
+        OpeningShellEvent(const MongoShellPtr &shell, const QString &initialScript) :
             QEvent(EventType),
-            shell(shell) { }
+            shell(shell),
+            initialScript(initialScript) { }
 
         MongoShellPtr shell;
+        QString initialScript;
     };
 
     class ConnectionFailedEvent : public QEvent

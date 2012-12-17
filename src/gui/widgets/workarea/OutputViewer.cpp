@@ -15,7 +15,7 @@ OutputViewer::OutputViewer(QWidget *parent) :
 {
     setContentsMargins(0, 0, 0, 0);
 
-    _splitter = new QSplitter(this);
+    _splitter = new QSplitter;
     _splitter->setOrientation(Qt::Vertical);
     _splitter->setHandleWidth(1);
     _splitter->setContentsMargins(0, 0, 0, 0);
@@ -81,7 +81,7 @@ RoboScintilla *OutputViewer::_configureLogText()
     QsciLexerJavaScript * javaScriptLexer = new JSLexer;
     javaScriptLexer->setFont(textFont);
 
-    RoboScintilla *_logText = new RoboScintilla(_splitter);
+    RoboScintilla *_logText = new RoboScintilla;
     _logText->setLexer(javaScriptLexer);
     _logText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _logText->setAutoIndent(true);

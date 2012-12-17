@@ -29,7 +29,7 @@ using namespace Robomongo;
 /*
 ** Constructs query widget
 */
-QueryWidget::QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidget, QWidget *parent) :
+QueryWidget::QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidget, const QString &script, QWidget *parent) :
     QWidget(parent),
     _shell(shell),
     _tabWidget(tabWidget),
@@ -78,6 +78,7 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidge
     layout->addWidget(_viewer, 1);
     setLayout(layout);
 
+    _queryText->setText(script);
     _queryText->setFocus();
 }
 
@@ -339,6 +340,7 @@ void QueryWidget::handle(const DocumentListLoadedEvent *event)
 
 void QueryWidget::handle(const ScriptExecutedEvent *event)
 {
+    setUpdatesEnabled(false);
     int thisTab = _tabWidget->indexOf(this);
 
     if (thisTab != -1) {
@@ -356,6 +358,7 @@ void QueryWidget::handle(const ScriptExecutedEvent *event)
     if (_queryText->text().isEmpty())
         _queryText->setText(_shell->query());
     displayData(event->results);
+    setUpdatesEnabled(true);
 }
 
 void QueryWidget::displayData(const QList<MongoShellResult> &results)

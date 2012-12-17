@@ -61,9 +61,11 @@ void WorkAreaWidget::executeScript()
 void WorkAreaWidget::handle(const OpeningShellEvent *event)
 {
 //    QLabel * queryWidget = new QLabel("Hello");
-    QueryWidget * queryWidget = new QueryWidget(event->shell, _tabWidget, this);
-    _tabWidget->addTab(queryWidget, "Robotab" /* viewModel->title()*/);
+    setUpdatesEnabled(false);
+    QueryWidget * queryWidget = new QueryWidget(event->shell, _tabWidget, event->initialScript);
+    _tabWidget->addTab(queryWidget, "Loading..." /* viewModel->title()*/);
     _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
 
     _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());
+    setUpdatesEnabled(true);
 }

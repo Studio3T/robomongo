@@ -45,7 +45,9 @@ MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
 
 MongoShellPtr App::openShell(const MongoServerPtr &server, const QString &script, const QString &dbName)
 {
-    MongoShellPtr shell(new MongoShell(server));
+    MongoServerPtr serverClone(openServer(server->connectionRecord(), false));
+
+    MongoShellPtr shell(new MongoShell(serverClone));
     _shells.append(shell);
 
     _dispatcher->publish(this, new OpeningShellEvent(shell));

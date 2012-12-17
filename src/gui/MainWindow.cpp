@@ -52,6 +52,7 @@ MainWindow::MainWindow() : QMainWindow(),
     QAction *executeAction = new QAction("&Execute", this);
     executeAction->setIcon(GuiRegistry::instance().executeIcon());
     executeAction->setIconText("Execute");
+    connect(executeAction, SIGNAL(triggered()), SLOT(executeScript()));
 
     // Full screen action
     QAction *fullScreenAction = new QAction("&Full Screen", this);
@@ -160,6 +161,12 @@ void MainWindow::toggleOrientation()
 {
     if (_workArea)
         _workArea->toggleOrientation();
+}
+
+void MainWindow::executeScript()
+{
+    if (_workArea)
+        _workArea->executeScript();
 }
 
 void MainWindow::toggleFullScreen2()

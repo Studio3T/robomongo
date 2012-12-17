@@ -33,6 +33,7 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     connect(_treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(ui_itemClicked(QTreeWidgetItem*,int)));
     connect(_treeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), SLOT(ui_itemDoubleClicked(QTreeWidgetItem *, int)));
     connect(_treeWidget, SIGNAL(disconnectActionTriggered()), SLOT(ui_disonnectActionTriggered()));
+    connect(_treeWidget, SIGNAL(openShellActionTriggered()), SLOT(ui_openShellActionTriggered()));
 
     setLayout(vlaout);
 
@@ -68,15 +69,35 @@ void ExplorerWidget::ui_disonnectActionTriggered()
     if (!item)
         return;
 
-//    ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
-//    if (!serverItem)
-//        return;
+    ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
+    if (!serverItem)
+        return;
 
-//    _viewModel->removeServer(serverItem->viewModel());
+    int index = _treeWidget->indexOfTopLevelItem(serverItem);
+    if (index != -1) {
+        QTreeWidgetItem *removedItem = _treeWidget->takeTopLevelItem(index);
+        if (removedItem)
+            delete removedItem;
+    }
+}
 
-//    int index = _treeWidget->indexOfTopLevelItem(serverItem);
+void ExplorerWidget::ui_openShellActionTriggered()
+{
+    QList<QTreeWidgetItem*> items = _treeWidget->selectedItems();
 
-    //    _treeWidget->takeTopLevelItem(index);
+    if (items.count() != 1)
+        return;
+
+    QTreeWidgetItem *item = items[0];
+
+    if (!item)
+        return;
+
+    ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
+    if (!serverItem)
+        return;
+
+    _app.openShell(serverItem->server(), "db.getMongo()");
 }
 
 void ExplorerWidget::increaseProgress()

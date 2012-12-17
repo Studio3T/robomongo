@@ -57,6 +57,7 @@ namespace Robomongo
     public slots:
         void manageConnections();
         void toggleOrientation();
+        void executeScript();
         void toggleFullScreen2();
         void refreshConnections();
         void toggleLogs(bool show);

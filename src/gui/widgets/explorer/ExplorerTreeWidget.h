@@ -32,11 +32,13 @@ namespace Robomongo
 
         void disconnectActionTriggered();
         void refreshActionTriggered();
+        void openShellActionTriggered();
 
     protected slots:
 
         void ui_disconnectServer();
         void ui_refreshServer();
+        void ui_openShell();
 
     };
 }

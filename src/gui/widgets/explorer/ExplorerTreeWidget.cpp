@@ -5,6 +5,7 @@
 #include <QMenu>
 #include <QtGui>
 #include "GuiRegistry.h"
+#include "ExplorerServerTreeItem.h"
 
 using namespace Robomongo;
 
@@ -25,11 +26,16 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     refreshAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
     connect(refreshAction, SIGNAL(triggered()), SLOT(ui_refreshServer()));
 
+    // Open shell
+    QAction *openShellAction = new QAction("Open Shell", this);
+    openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
+    connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell()));
+
     // File menu
     _serverMenu = new QMenu(this);
-    _serverMenu->addAction(disconnectAction);
+    _serverMenu->addAction(openShellAction);
     _serverMenu->addSeparator();
-    _serverMenu->addAction(refreshAction);
+    _serverMenu->addAction(disconnectAction);
 }
 
 ExplorerTreeWidget::~ExplorerTreeWidget()
@@ -43,11 +49,11 @@ void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
     if (!item)
         return;
 
-//    ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
-//    if (!serverItem)
-//        return;
+    ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
+    if (!serverItem)
+        return;
 
-//    _serverMenu->exec(mapToGlobal(event->pos()));
+    _serverMenu->exec(mapToGlobal(event->pos()));
 }
 
 void ExplorerTreeWidget::ui_disconnectServer()
@@ -58,4 +64,9 @@ void ExplorerTreeWidget::ui_disconnectServer()
 void ExplorerTreeWidget::ui_refreshServer()
 {
     emit refreshActionTriggered();
+}
+
+void ExplorerTreeWidget::ui_openShell()
+{
+    emit openShellActionTriggered();
 }

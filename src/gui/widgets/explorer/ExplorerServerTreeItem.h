@@ -29,6 +29,8 @@ namespace Robomongo
         */
         void expand();
 
+        MongoServerPtr server() const { return _server; }
+
 
     public slots:
 

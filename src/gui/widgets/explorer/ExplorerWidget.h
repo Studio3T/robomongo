@@ -47,6 +47,7 @@ namespace Robomongo
         void ui_customContextMenuRequested(QPoint p);
         void ui_itemClicked(QTreeWidgetItem*,int);
         void ui_disonnectActionTriggered();
+        void ui_openShellActionTriggered();
 
     private:
         void handle(ConnectingEvent *event);

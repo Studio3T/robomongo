@@ -51,6 +51,13 @@ void WorkAreaWidget::toggleOrientation()
         currentWidget->toggleOrientation();
 }
 
+void WorkAreaWidget::executeScript()
+{
+    QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+    if (currentWidget)
+        currentWidget->ui_executeButtonClicked();
+}
+
 void WorkAreaWidget::handle(const OpeningShellEvent *event)
 {
 //    QLabel * queryWidget = new QLabel("Hello");

@@ -19,7 +19,7 @@ GuiRegistry::GuiRegistry()
 QIcon GuiRegistry::serverIcon()
 {
     if (_serverIcon.isNull())
-        _serverIcon = QIcon(":/robomongo/icons/server_16x16.gif");
+        _serverIcon = QIcon(":/robomongo/icons/server_16x16.png");
 
     return _serverIcon;
 }
@@ -199,5 +199,21 @@ QIcon GuiRegistry::mongodbIcon()
         _mongodbIcon = QIcon(":/robomongo/icons/mongodb_16x16.png");
 
     return _mongodbIcon;
+}
+
+QIcon GuiRegistry::connectIcon()
+{
+    if (_connectIcon.isNull())
+        _connectIcon = QIcon(":/robomongo/icons/connect_24x24.png");
+
+    return _connectIcon;
+}
+
+QIcon GuiRegistry::executeIcon()
+{
+    if (_executeIcon.isNull())
+        _executeIcon = QIcon(":/robomongo/icons/execute_24x24.png");
+
+    return _executeIcon;
 }
 

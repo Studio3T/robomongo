@@ -34,5 +34,8 @@
         <file>icons/close_2_16x16.png</file>
         <file>icons/text2_16x16.png</file>
         <file>icons/mongodb_16x16.png</file>
+        <file>icons/connect_24x24.png</file>
+        <file>icons/server_16x16.png</file>
+        <file>icons/execute_24x24.png</file>
     </qresource>
 </RCC>

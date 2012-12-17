@@ -23,8 +23,8 @@ LIBS += -lgui -lcore -lshell -lqjson -lmongoclient \
         -lboost_thread -lboost_filesystem -lboost_system \
         -lqscintilla2 -ljs
 
-RESOURCES += \
-    ../gui/resources/gui.qrc
+RESOURCES += ../gui/resources/gui.qrc
+win32:RC_FILE    = ../gui/resources/win.rc
 
 # This forces the relink when building target
 # http://stackoverflow.com/questions/1485435/force-relink-when-building-in-qt-creator

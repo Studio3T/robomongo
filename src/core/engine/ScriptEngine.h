@@ -23,7 +23,7 @@ namespace Robomongo
         QString _database;
         QString _username;
         QString _password;
-        QStringList statementize(const QString &script);
+        bool statementize(const QString &script, QStringList &outList, QString &outError);
         QStringList statementize2(const QString &script);
         void parseTree(JSParseNode * root, int indent, const QString &script, QStringList &list, bool topList);
         int _port;

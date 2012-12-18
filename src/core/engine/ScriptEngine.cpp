@@ -79,8 +79,15 @@ void ScriptEngine::init()
 
 QList<Result> ScriptEngine::exec(const QString &script, const QString &dbName)
 {
+    QStringList statements;
+    QString error;
+    bool result = statementize(script, statements, error);
+
+    if (!result && statements.count() == 0) {
+        statements.append(QString("print(__robomongoResult.error)"));
+    }
+
     QList<Result> results;
-    QStringList statements = statementize(script);
 
     if (!dbName.isEmpty()) {
         // switch to database
@@ -119,23 +126,34 @@ QList<Result> ScriptEngine::exec(const QString &script, const QString &dbName)
     return results;
 }
 
-QStringList ScriptEngine::statementize(const QString &script)
+bool ScriptEngine::statementize(const QString &script, QStringList &outList, QString &outError)
 {
     using namespace mongo;
-
-    QStringList list;
-    QStringList lines = script.split('\n');
 
     QByteArray array = script.toUtf8();
     _scope->setString("__robomongoEsprima", array);
 
+    StringData data(
+        "var __robomongoResult = {};"
+        "try {"
+            "__robomongoResult.result = esprima.parse(__robomongoEsprima, { range: true, loc : true });"
+        "} catch(e) {"
+            "__robomongoResult.error = e.name + ': ' + e.message;"
+        "}"
+        "__robomongoResult;"
+    );
 
-
-    StringData data("esprima.parse(__robomongoEsprima, { range: true, loc : true })");
     bool res2 = _scope->exec(data, "(esprima2)", false, true, false);
     BSONObj obj = _scope->getObject("__lastres__");
 
-    vector<BSONElement> v = obj.getField("body").Array();
+    if (obj.hasField("error")) {
+        string error = obj.getField("error").str();
+        outError = QString::fromStdString(error);
+        return false;
+    }
+
+    BSONObj result = obj.getField("result").Obj();
+    vector<BSONElement> v = result.getField("body").Array();
 
     for(vector<BSONElement>::iterator it = v.begin(); it != v.end(); ++it)
     {
@@ -154,13 +172,11 @@ QStringList ScriptEngine::statementize(const QString &script)
         int till = (int) range.at(1).number();
 
         QString statement = script.mid(from, till - from);
-        list.append(statement);
+        outList.append(statement);
     }
 
-    std::string json = obj.jsonString();
-    int a = 56;
-
-    return list;
+    std::string json = result.jsonString();
+    return true;
 }
 
 void errorReporter( JSContext *cx, const char *message, JSErrorReport *report ) {

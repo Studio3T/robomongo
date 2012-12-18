@@ -76,8 +76,10 @@ void ExplorerWidget::ui_disonnectActionTriggered()
     int index = _treeWidget->indexOfTopLevelItem(serverItem);
     if (index != -1) {
         QTreeWidgetItem *removedItem = _treeWidget->takeTopLevelItem(index);
-        if (removedItem)
+        if (removedItem) {
             delete removedItem;
+            _app.closeServer(serverItem->server());
+        }
     }
 }
 

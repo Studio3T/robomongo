@@ -32,7 +32,6 @@ namespace Robomongo
         ** Configure QsciScintilla query widget
         */
         void _configureQueryText();
-        void _configureLogText();
 
         void _showPaging(bool show);
 
@@ -56,13 +55,14 @@ namespace Robomongo
         void toggleOrientation();
         void activateTabContent();
 
+        MongoShellPtr shell() const { return _shell; }
+
     public slots:
 
         /*
         ** Handle queryText linesCountChanged event
         */
         void ui_queryLinesCountChanged();
-        void ui_logLinesCountChanged();
 
         /*
         ** Execute query
@@ -110,7 +110,6 @@ namespace Robomongo
         ** Query text
         */
         RoboScintilla * _queryText;
-        RoboScintilla * _logText;
 
         /*
         ** Bson widget

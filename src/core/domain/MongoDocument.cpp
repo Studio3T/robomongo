@@ -40,7 +40,7 @@ namespace Robomongo
 
 	MongoDocument::~MongoDocument()
 	{
-
+        int a = 56;
 	}
 
 	/*
@@ -78,26 +78,26 @@ namespace Robomongo
 	/*
 	** Convert to json string
 	*/
-	void MongoDocument::buildJsonString(Concatenator * con)
+    void MongoDocument::buildJsonString(Concatenator &con)
 	{
 		MongoDocumentIterator i(this);
 
 
-		con->append("{ \n");
+        con.append("{ \n");
 
 		while (i.hasMore())
 		{
-			MongoElement * e = i.next();
+            MongoElementPtr e = i.next();
 
-			con->append("\"");
-			con->append(e->fieldName());
-			con->append("\"");
-			con->append(" : ");
+            con.append("\"");
+            con.append(e->fieldName());
+            con.append("\"");
+            con.append(" : ");
 			e->buildJsonString(con);
-			con->append(", \n");
+            con.append(", \n");
 		}
 
-		con->append("\n}\n\n");
+        con.append("\n}\n\n");
 	}
 
 	/*

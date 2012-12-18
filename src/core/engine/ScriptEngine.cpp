@@ -36,6 +36,11 @@ ScriptEngine::ScriptEngine(const QString &host, int port, const QString &usernam
 
 }
 
+ScriptEngine::~ScriptEngine()
+{
+    int a = 56;
+}
+
 void ScriptEngine::init()
 {
     if (_database.isEmpty())

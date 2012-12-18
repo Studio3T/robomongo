@@ -17,6 +17,11 @@ MongoShell::MongoShell(const MongoServerPtr server) :
 
 }
 
+MongoShell::~MongoShell()
+{
+    int t = 56;
+}
+
 void MongoShell::open(const MongoCollectionPtr &collection)
 {
     _query = QString("db.%1.find()").arg(collection->name());

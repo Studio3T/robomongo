@@ -2,6 +2,8 @@
 #include "WorkAreaWidget.h"
 #include "WorkAreaTabBar.h"
 #include "QueryWidget.h"
+#include "AppRegistry.h"
+#include "domain/App.h"
 
 using namespace Robomongo;
 
@@ -18,11 +20,14 @@ void WorkAreaTabWidget::ui_tabCloseRequested(int index)
 {
 	if (index >= 0)
 	{
-		QWidget * tabWidget = widget(index);
+        QueryWidget *tabWidget = (QueryWidget *) widget(index);
 		removeTab(index);
 
 		if (tabWidget)
+        {
+            AppRegistry::instance().app().closeShell(tabWidget->shell());
 			delete tabWidget;		
+        }
     }
 }
 

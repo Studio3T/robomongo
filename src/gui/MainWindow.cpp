@@ -72,33 +72,11 @@ MainWindow::MainWindow() : QMainWindow(),
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
-    // Left button
-    QPushButton *_leftButton = new QPushButton();
-    _leftButton->setIcon(GuiRegistry::instance().leftIcon());
-    _leftButton->setMaximumWidth(25);
-    connect(_leftButton, SIGNAL(clicked()), SLOT(ui_leftButtonClicked()));
-
-    // Right button
-    QPushButton *_rightButton = new QPushButton();
-    _rightButton->setIcon(GuiRegistry::instance().rightIcon());
-    _rightButton->setMaximumWidth(25);
-
-    QLineEdit *_pageSizeEdit = new QLineEdit("100");
-    _pageSizeEdit->setMaximumWidth(31);
-
-    // Execute button
-    QPushButton * executeButton = new QPushButton("Execute");
-    executeButton->setIcon(GuiRegistry::instance().executeIcon());
-
     // Toolbar
     QToolBar *toolBar = new QToolBar("Toolbar", this);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolBar->addAction(connectAction);
-//    toolBar->addAction(refreshAction);
     toolBar->addSeparator();
-//    toolBar->addWidget(_leftButton);
-//    toolBar->addWidget(_pageSizeEdit);
-//    toolBar->addWidget(_rightButton);
     toolBar->addAction(executeAction);
     toolBar->addAction(orientationAction);
     toolBar->setShortcutEnabled(1, true);
@@ -115,7 +93,7 @@ MainWindow::MainWindow() : QMainWindow(),
     createTabs();
     createDatabaseExplorer();
 
-    setWindowTitle("Robomongo 0.3.3");
+    setWindowTitle("Robomongo 0.3.4");
     setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
     //connect(_viewModel, SIGNAL(statusMessageUpdated(QString)), SLOT(vm_statusMessageUpdated(QString)));

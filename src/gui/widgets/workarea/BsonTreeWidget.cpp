@@ -20,13 +20,10 @@ BsonTreeWidget::BsonTreeWidget(QWidget * parent) : QTreeWidget(parent)
 	setIndentation(15);	
 
     setStyleSheet(
-                "QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; border-top-left-radius:4px; }"
-                );
+        "QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; border-top-left-radius:4px; }"
+    );
 
-//    header()->setResizeMode(QHeaderView::Interactive);
-
-	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-
+    header()->setResizeMode(QHeaderView::Interactive);
 	connect(this, SIGNAL(itemExpanded(QTreeWidgetItem *)), SLOT(ui_itemExpanded(QTreeWidgetItem *)));
 }
 
@@ -150,4 +147,10 @@ QIcon BsonTreeWidget::getIcon(MongoElementPtr element)
         return GuiRegistry::instance().bsonNullIcon();
 
     return GuiRegistry::instance().circleIcon();
+}
+
+void BsonTreeWidget::resizeEvent(QResizeEvent *event)
+{
+    QTreeWidget::resizeEvent(event);
+    header()->resizeSections(QHeaderView::Stretch);
 }

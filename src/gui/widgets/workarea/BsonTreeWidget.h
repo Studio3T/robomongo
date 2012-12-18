@@ -32,6 +32,8 @@ namespace Robomongo
 
         QIcon getIcon(MongoElementPtr element);
 
+        void resizeEvent(QResizeEvent *event);
+
     public slots:
 
         /*

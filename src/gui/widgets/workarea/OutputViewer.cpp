@@ -27,6 +27,11 @@ OutputViewer::OutputViewer(QWidget *parent) :
     setLayout(layout);
 }
 
+OutputViewer::~OutputViewer()
+{
+    int t = 56;
+}
+
 void OutputViewer::doSomething(const QList<MongoShellResult> &results)
 {
     int count = _splitter->count();

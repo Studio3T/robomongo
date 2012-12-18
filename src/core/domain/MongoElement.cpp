@@ -20,9 +20,9 @@ namespace Robomongo
 	{
 		if(_stringValue.isNull())
 		{
-			Concatenator * con = new Concatenator();
+            Concatenator con;
 			buildJsonString(con);
-			_stringValue = con->build();
+            _stringValue = con.build();
 		}
 
 		return _stringValue;
@@ -42,15 +42,16 @@ namespace Robomongo
 	/*
 	** Return MongoDocument of this element (you should check that this IS document before)
 	*/
-	MongoDocument * MongoElement::asDocument()
+    MongoDocumentPtr MongoElement::asDocument()
 	{
-		return new MongoDocument(_bsonElement.Obj());
+        MongoDocument *doc = new MongoDocument(_bsonElement.Obj());
+        return MongoDocumentPtr(doc);
 	}
 
 	/*
 	** Build Json string that represent this element.
 	*/
-	void MongoElement::buildJsonString(Concatenator * con)
+    void MongoElement::buildJsonString(Concatenator &con)
 	{
 //		QString & buff = *pBuff;
 
@@ -58,7 +59,7 @@ namespace Robomongo
 		{
 		/** double precision floating point value */
 		case NumberDouble:
-			con->append(QString::number(_bsonElement.Double()));
+            con.append(QString::number(_bsonElement.Double()));
 			break;
 
 		/** character string, stored in utf8 */
@@ -82,14 +83,14 @@ namespace Robomongo
 				*/
 
 				QString res = QString::fromUtf8(_bsonElement.valuestr(), _bsonElement.valuestrsize() - 1);
-				con->append(res);
+                con.append(res);
 			}
 			break;
 
 		/** an embedded object */
 		case Object:
 			{
-				MongoDocument * doc = asDocument();
+                MongoDocumentPtr doc = asDocument();
 				doc->buildJsonString(con);
 			}
 			break;
@@ -97,29 +98,29 @@ namespace Robomongo
 		/** an embedded array */
 		case Array:
 			{
-				MongoDocument * doc = asDocument();
+                MongoDocumentPtr doc = asDocument();
 				doc->buildJsonString(con);
 			}		
 			break;
 
 		/** binary data */
 		case BinData:
-			con->append("<binary>");
+            con.append("<binary>");
 			break;
 
 		/** Undefined type */
 		case Undefined:
-			con->append("<undefined>");
+            con.append("<undefined>");
 			break;
 
 		/** ObjectId */
 		case jstOID: 
-			con->append(QString::fromStdString(_bsonElement.OID().toString()));
+            con.append(QString::fromStdString(_bsonElement.OID().toString()));
 			break;
 
 		/** boolean type */
 		case Bool:
-			con->append(_bsonElement.Bool() ? "true" : "false");
+            con.append(_bsonElement.Bool() ? "true" : "false");
 			break;
 
 		/** date type */
@@ -128,14 +129,14 @@ namespace Robomongo
             unsigned long long millis = _bsonElement.Date().millis;
             if ((long long)millis >= 0 &&
                ((long long)millis/1000) < (std::numeric_limits<time_t>::max)()) {
-                con->append(QString::fromStdString(_bsonElement.Date().toString()));
+                con.append(QString::fromStdString(_bsonElement.Date().toString()));
             }
 			break;
         }
 
 		/** null type */
 		case jstNULL:
-			con->append(QString("<null>"));
+            con.append(QString("<null>"));
 			break;
 
 		/** regular expression, a pattern with options */
@@ -160,7 +161,7 @@ namespace Robomongo
 
 		/** 32 bit signed integer */
 		case NumberInt:
-			con->append(QString::number(_bsonElement.Int()));
+            con.append(QString::number(_bsonElement.Int()));
 			break;
 
 		/** Updated to a Date with value next OpTime on insert */
@@ -170,18 +171,18 @@ namespace Robomongo
             unsigned long long millis = date.millis;
             if ((long long)millis >= 0 &&
                ((long long)millis/1000) < (std::numeric_limits<time_t>::max)()) {
-                con->append(QString::fromStdString(date.toString()));
+                con.append(QString::fromStdString(date.toString()));
             }
 			break;
         }
 
 		/** 64 bit integer */
 		case NumberLong:
-			con->append(QString::number(_bsonElement.Long()));
+            con.append(QString::number(_bsonElement.Long()));
 			break; 
 
 		default:
-			con->append("<unsupported>");
+            con.append("<unsupported>");
 			break;
 		}
 	}

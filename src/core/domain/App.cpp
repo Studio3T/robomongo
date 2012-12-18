@@ -24,6 +24,11 @@ MongoServerPtr App::openServer(const ConnectionRecordPtr &connectionRecord, bool
     return server;
 }
 
+void App::closeServer(const MongoServerPtr &server)
+{
+    _servers.removeOne(server);
+}
+
 MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
 {
     MongoServerPtr server(openServer(collection->database()->server()->connectionRecord(), false));
@@ -56,4 +61,12 @@ MongoShellPtr App::openShell(const MongoServerPtr &server, const QString &script
     shell->open(script, dbName);
     return shell;
 
+}
+
+void App::closeShell(const MongoShellPtr &shell)
+{
+    _shells.removeOne(shell);
+
+    MongoServerPtr server(shell->server());
+    _servers.removeOne(server);
 }

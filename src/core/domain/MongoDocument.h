@@ -60,7 +60,7 @@ namespace Robomongo
 		/*
 		** Convert to json string
 		*/
-		void buildJsonString(Concatenator * con);
+        void buildJsonString(Concatenator &con);
 
 		/*
 		** Build JsonString from list of documents

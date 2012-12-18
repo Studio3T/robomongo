@@ -43,7 +43,6 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidge
     // Query text widget
     _configureQueryText();
     _queryText->setFixedHeight(10);
-    _configureLogText();
     ui_queryLinesCountChanged();
 
     // Execute button
@@ -92,7 +91,8 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidge
 */
 QueryWidget::~QueryWidget()
 {
-    // delete _viewModel;
+    int a = 67;
+    //delete _viewModel;
 }
 
 /*
@@ -125,27 +125,6 @@ void QueryWidget::ui_queryLinesCountChanged()
         height = maxHeight;
 
     _queryText->setFixedHeight(height);
-}
-
-void QueryWidget::ui_logLinesCountChanged()
-{
-    if (_bsonWidget->isHidden())
-    {
-        return;
-    }
-
-    QFontMetrics m(_logText->font());
-    int lineHeight = m.lineSpacing();
-
-    int numberOfLines = _logText->lines();
-
-    int height = numberOfLines * lineHeight + 8;
-
-    int maxHeight = 18 * lineHeight + 8;
-    if (height > maxHeight)
-        height = maxHeight;
-
-    _logText->setFixedHeight(height);
 }
 
 /*
@@ -236,7 +215,7 @@ void QueryWidget::_configureQueryText()
     textFont.setFamily("Courier");
 #endif
 
-    QsciLexerJavaScript * javaScriptLexer = new JSLexer;
+    QsciLexerJavaScript * javaScriptLexer = new JSLexer(this);
     javaScriptLexer->setFont(textFont);
 //    javaScriptLexer->setPaper(QColor(255, 0, 0, 127));
 
@@ -262,44 +241,6 @@ void QueryWidget::_configureQueryText()
 
     _queryText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
     connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
-}
-
-void QueryWidget::_configureLogText()
-{
-    QFont textFont = font();
-#if defined(Q_OS_MAC)
-    textFont.setPointSize(12);
-    textFont.setFamily("Monaco");
-#elif defined(Q_OS_UNIX)
-    textFont.setFamily("Monospace");
-    textFont.setFixedPitch(true);
-    //textFont.setWeight(QFont::Bold);
-//    textFont.setPointSize(12);
-#elif defined(Q_OS_WIN)
-    textFont.setPointSize(12);
-    textFont.setFamily("Courier");
-#endif
-
-    QsciLexerJavaScript * javaScriptLexer = new JSLexer;
-    javaScriptLexer->setFont(textFont);
-
-    _logText = new RoboScintilla;
-    _logText->setLexer(javaScriptLexer);
-    _logText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    _logText->setFixedHeight(23);
-    _logText->setAutoIndent(true);
-    _logText->setIndentationsUseTabs(false);
-    _logText->setIndentationWidth(4);
-    _logText->setUtf8(true);
-    _logText->installEventFilter(this);
-    _logText->setMarginWidth(1, 0); // to hide left gray column
-    _logText->setBraceMatching(QsciScintilla::StrictBraceMatch);
-    _logText->setFont(textFont);
-    _logText->setVisible(false);
-    _logText->setReadOnly(true);
-
-    _logText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
-    //connect(_logText, SIGNAL(linesChanged()), SLOT(ui_logLinesCountChanged()));
 }
 
 /*

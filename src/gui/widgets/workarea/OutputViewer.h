@@ -28,6 +28,7 @@ namespace Robomongo
         Q_OBJECT
     public:
         explicit OutputViewer(QWidget *parent = 0);
+        ~OutputViewer();
 
         void doSomething(const QList<MongoShellResult> &documents);
         void toggleOrientation();

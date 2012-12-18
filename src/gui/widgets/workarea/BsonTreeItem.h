@@ -21,12 +21,12 @@ namespace Robomongo
         /*
         ** MongoDocument this tree item represents
         */
-        MongoElement *_element;
+        MongoElementPtr _element;
 
         /*
         ** Document
         */
-        MongoDocument *_document;
+        MongoDocumentPtr _document;
 
         /*
         ** Position in array. -1 if not in array
@@ -36,7 +36,7 @@ namespace Robomongo
         /*
         ** Setup item that represents bson document
         */
-        void setupDocument(MongoDocument *document);
+        void setupDocument(MongoDocumentPtr document);
 
         /*
         ** Clean child items
@@ -53,20 +53,18 @@ namespace Robomongo
         /*
         ** Constructs BsonTreeItem
         */
-        BsonTreeItem(MongoElement *element, int position);
+        BsonTreeItem(MongoElementPtr element, int position);
         ~BsonTreeItem();
 
         /*
         ** Constructs BsonTreeItem
         */
-        BsonTreeItem(MongoDocument  *document, int position);
+        BsonTreeItem(MongoDocumentPtr document, int position);
 
         /*
         ** MongoDocument this tree item represents
         */
-        MongoElement * element() const { return _element; }
-
-        MongoDocument * document() const;
+        MongoElementPtr element() const { return _element; }
 
         void expand();
     };

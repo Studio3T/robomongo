@@ -15,6 +15,7 @@ namespace Robomongo
         Q_OBJECT
     public:
         explicit MongoShell(const MongoServerPtr server);
+        ~MongoShell();
 
         void open(const MongoCollectionPtr &collection);
         void open(const QString &script, const QString &dbName = QString());

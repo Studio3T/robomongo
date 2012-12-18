@@ -16,19 +16,18 @@ namespace Robomongo
 
 	private:
 
-		MongoDocument * _document;
-
+        MongoDocument *_document;
 		BSONObjIterator _iterator;
 
 	public:
 		/*
 		**
 		*/
-		MongoDocumentIterator(MongoDocument * document);
+        MongoDocumentIterator(MongoDocument *document);
 
 		bool hasMore();
 
-		MongoElement * next();
+        MongoElementPtr next();
 	};
 }
 

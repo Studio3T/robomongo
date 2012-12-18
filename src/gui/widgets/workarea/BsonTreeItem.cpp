@@ -5,10 +5,9 @@
 
 using namespace Robomongo;
 
-BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
+BsonTreeItem::BsonTreeItem(MongoElementPtr element, int position) : QObject(),
+    _element(element)
 {
-	_document = NULL;
-	_element = element;
 	_position = position;
 
 	setText(0, buildFieldName());
@@ -44,7 +43,7 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 		{
 			setText(0, buildObjectFieldName());
 
-			MongoDocument * mongoDocument = _element->asDocument();
+            MongoDocumentPtr mongoDocument = _element->asDocument();
 			setupDocument(mongoDocument);
 		}
 		break;
@@ -208,15 +207,14 @@ BsonTreeItem::BsonTreeItem(MongoElement * element, int position) : QObject()
 	}
 }
 
-BsonTreeItem::BsonTreeItem(MongoDocument * document, int position) : QObject()
+BsonTreeItem::BsonTreeItem(MongoDocumentPtr document, int position) : QObject(),
+    _document(document)
 {
-    _document = document;
-	_element = NULL;
 	_position = position;
 	setupDocument(document);
 }
 
-void BsonTreeItem::setupDocument(MongoDocument * document)
+void BsonTreeItem::setupDocument(MongoDocumentPtr document)
 {
 	setText(0, buildObjectFieldName());
     setIcon(0, GuiRegistry::instance().bsonObjectIcon());
@@ -229,29 +227,19 @@ void BsonTreeItem::setupDocument(MongoDocument * document)
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 }
 
-MongoDocument * BsonTreeItem::document() const
-{
-	return NULL;
-	/*
-	if (_document)
-		return _document.get();
-
-	return _element->asDocument();*/
-}
-
 void BsonTreeItem::expand()
 {
 	cleanChildItems();
 
-	MongoDocument * document = _document ? _document : _element->asDocument();
+    MongoDocumentPtr document = _document ? _document : _element->asDocument();
 	bool isArray = _element ? _element->isArray() : false;
 
-	MongoDocumentIterator iterator(document);
+    MongoDocumentIterator iterator(document.get());
 
 	int position = 0;
 	while(iterator.hasMore())
 	{
-		MongoElement * element = iterator.next();
+        MongoElementPtr element = iterator.next();
 		BsonTreeItem * childItem = new BsonTreeItem(element, isArray ? position : -1);
 		addChild(childItem);
 		position++;

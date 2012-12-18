@@ -29,7 +29,7 @@ BsonTreeWidget::BsonTreeWidget(QWidget * parent) : QTreeWidget(parent)
 
 BsonTreeWidget::~BsonTreeWidget()
 {
-	
+    int h = 90;
 }
 
 void BsonTreeWidget::setDocuments(const QList<MongoDocumentPtr> & documents)
@@ -46,7 +46,7 @@ void BsonTreeWidget::setDocuments(const QList<MongoDocumentPtr> & documents)
 	{
         MongoDocumentPtr document = documents.at(i);
 
-		BsonTreeItem * item = new BsonTreeItem(document.get(), i);
+        BsonTreeItem * item = new BsonTreeItem(document, i);
 		items.append(item);
 
         if (i == 0)

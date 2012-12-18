@@ -8,9 +8,12 @@ namespace Robomongo
 	/*
 	**
 	*/
-	MongoDocumentIterator::MongoDocumentIterator(MongoDocument * document) : QObject(), _iterator(document->bsonObj())
+    MongoDocumentIterator::MongoDocumentIterator(MongoDocument *document) :
+        QObject(),
+        _document(document),
+        _iterator(document->bsonObj())
 	{
-		_document = document;
+
 	}
 
 	bool MongoDocumentIterator::hasMore()
@@ -18,10 +21,10 @@ namespace Robomongo
 		return _iterator.more();
 	}
 
-	MongoElement * MongoDocumentIterator::next()
+    MongoElementPtr MongoDocumentIterator::next()
 	{
 		BSONElement bsonElement = _iterator.next();
-		return new MongoElement(bsonElement);
+        return MongoElementPtr(new MongoElement(bsonElement));
 	}
 }
 

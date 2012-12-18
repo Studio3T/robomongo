@@ -80,12 +80,12 @@ namespace Robomongo
 		/*
 		** Return MongoDocument of this element (you should check that this IS document before)
 		*/
-		MongoDocument * asDocument();
+        MongoDocumentPtr asDocument();
 
 		/*
 		** Build Json string that represent this element.
 		*/
-		void buildJsonString(Concatenator * con);
+        void buildJsonString(Concatenator &con);
 
 		BSONElement bsonElement() const { return _bsonElement; }
 	};

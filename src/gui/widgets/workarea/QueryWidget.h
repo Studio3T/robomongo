@@ -8,6 +8,7 @@
 #include <QPlainTextEdit>
 #include "Qsci/qsciscintilla.h"
 #include <domain/MongoShellResult.h>
+#include <QLabel>
 
 
 namespace Robomongo
@@ -115,6 +116,7 @@ namespace Robomongo
         */
         BsonWidget * _bsonWidget;
         OutputViewer *_viewer;
+        QLabel *_outputLabel;
 
         /*
         ** Paging buttons

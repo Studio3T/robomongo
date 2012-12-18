@@ -70,11 +70,15 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidge
     // Bson widget
     _bsonWidget = new BsonWidget(NULL);
     _viewer = new OutputViewer();
+    _outputLabel = new QLabel();
+    _outputLabel->setContentsMargins(0, 5, 0, 0);
+    _outputLabel->setVisible(false);
 
     QVBoxLayout * layout = new QVBoxLayout;
     layout->setSpacing(0);
     layout->setContentsMargins(0,4,4,4);
     layout->addWidget(_queryText, 0, Qt::AlignTop);
+    layout->addWidget(_outputLabel, 0, Qt::AlignTop);
     layout->addWidget(_viewer, 1);
     setLayout(layout);
 
@@ -363,6 +367,13 @@ void QueryWidget::handle(const ScriptExecutedEvent *event)
 
 void QueryWidget::displayData(const QList<MongoShellResult> &results)
 {
+    if (results.count() == 0) {
+        _outputLabel->setText("Script executed successfully, but there is no results to show.");
+        _outputLabel->setVisible(true);
+    } else {
+        _outputLabel->setVisible(false);
+    }
+
     _viewer->doSomething(results);
 }
 

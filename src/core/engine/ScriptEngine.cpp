@@ -115,7 +115,9 @@ QList<Result> ScriptEngine::exec(const QString &script, const QString &dbName)
                 QString answer = QString::fromUtf8(logs.c_str());
                 QVector<mongo::BSONObj> objs = QVector<mongo::BSONObj>::fromStdVector(__objects);
                 QList<mongo::BSONObj> list = QList<mongo::BSONObj>::fromVector(objs);
-                results.append(Result(answer, list));
+
+                if (!answer.isEmpty() || list.count() > 0)
+                    results.append(Result(answer, list));
             }
             catch ( std::exception& e ) {
                 std::cout << "error:" << e.what() << endl;

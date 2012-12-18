@@ -77,8 +77,10 @@ void ExplorerWidget::ui_disonnectActionTriggered()
     if (index != -1) {
         QTreeWidgetItem *removedItem = _treeWidget->takeTopLevelItem(index);
         if (removedItem) {
+            MongoServerPtr server(serverItem->server());
+
             delete removedItem;
-            _app.closeServer(serverItem->server());
+            _app.closeServer(server);
         }
     }
 }
@@ -136,7 +138,7 @@ void ExplorerWidget::handle(ConnectionEstablishedEvent *event)
 {
     decreaseProgress();
 
-    QTreeWidgetItem *item = new ExplorerServerTreeItem(event->server);
+    ExplorerServerTreeItem *item = new ExplorerServerTreeItem(event->server);
     _treeWidget->addTopLevelItem(item);
 
 //    _treeWidget->setItemWidget(item, 0, yourLabel);

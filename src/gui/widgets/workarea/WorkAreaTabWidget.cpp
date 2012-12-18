@@ -32,5 +32,7 @@ void WorkAreaTabWidget::ui_currentChanged(int index)
         return;
 
     QueryWidget *tabWidget = (QueryWidget *) widget(index);
-    tabWidget->activateTabContent();
+
+    if (tabWidget)
+        tabWidget->activateTabContent();
 }

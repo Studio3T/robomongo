@@ -24,7 +24,7 @@ BsonTreeWidget::BsonTreeWidget(QWidget * parent) : QTreeWidget(parent)
     );
 
     header()->setResizeMode(QHeaderView::Interactive);
-	connect(this, SIGNAL(itemExpanded(QTreeWidgetItem *)), SLOT(ui_itemExpanded(QTreeWidgetItem *)));
+    connect(this, SIGNAL(itemExpanded(QTreeWidgetItem *)), SLOT(ui_itemExpanded(QTreeWidgetItem *)));
 }
 
 BsonTreeWidget::~BsonTreeWidget()

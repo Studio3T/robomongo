@@ -83,6 +83,7 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidge
     setLayout(layout);
 
     _queryText->setText(script);
+    _queryText->setCursorPosition(15, 1000);
     _queryText->setFocus();
 }
 
@@ -207,6 +208,11 @@ bool QueryWidget::event(QEvent *event)
 void QueryWidget::toggleOrientation()
 {
     _viewer->toggleOrientation();
+}
+
+void QueryWidget::activateTabContent()
+{
+    _queryText->setFocus();
 }
 
 /*
@@ -362,6 +368,7 @@ void QueryWidget::handle(const ScriptExecutedEvent *event)
     if (_queryText->text().isEmpty())
         _queryText->setText(_shell->query());
     displayData(event->results);
+    _queryText->setFocus();
     setUpdatesEnabled(true);
 }
 

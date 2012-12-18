@@ -20,7 +20,7 @@ BsonTreeWidget::BsonTreeWidget(QWidget * parent) : QTreeWidget(parent)
 	setIndentation(15);	
 
     setStyleSheet(
-        "QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; border-top-left-radius:4px; }"
+        "QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }"
     );
 
     header()->setResizeMode(QHeaderView::Interactive);

@@ -23,6 +23,7 @@ namespace Robomongo
     public slots:
 
         void ui_tabCloseRequested(int index);
+        void ui_currentChanged(int index);
     };
 }
 

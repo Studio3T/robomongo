@@ -54,6 +54,7 @@ namespace Robomongo
 
         bool event(QEvent *event);
         void toggleOrientation();
+        void activateTabContent();
 
     public slots:
 

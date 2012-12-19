@@ -23,9 +23,6 @@ MainWindow::MainWindow() : QMainWindow(),
     _connectionsMenu(NULL)
 {
     _dispatcher.subscribe(this, ConnectionFailedEvent::EventType);
-    _connectionsMenu = new ConnectionMenu(this);
-    connect(_connectionsMenu, SIGNAL(triggered(QAction*)), this, SLOT(connectToServer(QAction*)));
-    updateConnectionsMenu();
 
     qApp->setStyleSheet(
         "Robomongo--ExplorerTreeWidget#explorerTree { padding: 7px 0px 7px 0px; background-color:#E7E5E4; border: 0px; } \n "
@@ -38,12 +35,16 @@ MainWindow::MainWindow() : QMainWindow(),
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     // Connect action
-    QAction *connectAction = new QAction("&Connect", this);
-    connectAction->setShortcut(QKeySequence::Open);
-    connectAction->setIcon(GuiRegistry::instance().connectIcon());
-    connectAction->setIconText("Connect");
-    connectAction->setToolTip("Connect to MongoDB");
-    connect(connectAction, SIGNAL(triggered()), this, SLOT(manageConnections()));
+    _connectAction = new QAction("&Connect", this);
+    _connectAction->setShortcut(QKeySequence::Open);
+    _connectAction->setIcon(GuiRegistry::instance().connectIcon());
+    _connectAction->setIconText("Connect");
+    _connectAction->setToolTip("Connect to MongoDB");
+    connect(_connectAction, SIGNAL(triggered()), this, SLOT(manageConnections()));
+
+    _connectionsMenu = new ConnectionMenu(this);
+    connect(_connectionsMenu, SIGNAL(triggered(QAction*)), this, SLOT(connectToServer(QAction*)));
+    updateConnectionsMenu();
 
     QToolButton* connectButton = new QToolButton();
     connectButton->setText("&Connect");
@@ -57,7 +58,6 @@ MainWindow::MainWindow() : QMainWindow(),
 
     QWidgetAction* connectButtonAction = new QWidgetAction(this);
     connectButtonAction->setDefaultWidget(connectButton);
-
 
     // Orientation action
     QAction *orientationAction = new QAction("&Rotate", this);
@@ -85,7 +85,7 @@ MainWindow::MainWindow() : QMainWindow(),
 
     // File menu
     QMenu *fileMenu = menuBar()->addMenu("File");
-    fileMenu->addAction(connectAction);
+    fileMenu->addAction(_connectAction);
     fileMenu->addAction(fullScreenAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
@@ -141,18 +141,30 @@ void MainWindow::updateConnectionsMenu()
 {
     _connectionsMenu->clear();
 
+    int number = 1;
     // Populate list with connections
     foreach(ConnectionRecordPtr connection, _settingsManager.connections()) {
         QAction *action = new QAction(connection->getReadableName(), this);
         action->setData(QVariant::fromValue(connection));
-        _connectionsMenu->addAction(action);
 
+        if (number <= 10)
+            action->setShortcut(QKeySequence(QString("Alt+").append(QString::number(number))));
+
+        _connectionsMenu->addAction(action);
+        ++number;
     }
 
     if (_settingsManager.connections().size() > 0)
         _connectionsMenu->addSeparator();
 
-    _connectionsMenu->addAction("Manage Connections");
+    // Connect action
+    QAction *connectAction = new QAction("&Manage Connections...", this);
+    connectAction->setShortcut(QKeySequence::Open);
+    connectAction->setIcon(GuiRegistry::instance().connectIcon());
+    connectAction->setToolTip("Connect to MongoDB");
+    connect(connectAction, SIGNAL(triggered()), this, SLOT(manageConnections()));
+
+    _connectionsMenu->addAction(connectAction);
 }
 
 void MainWindow::manageConnections()

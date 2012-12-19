@@ -53,6 +53,7 @@ namespace Robomongo
         Dispatcher &_dispatcher;
 
         ConnectionMenu *_connectionsMenu;
+        QAction *_connectAction;
         void updateConnectionsMenu();
 
         void createDatabaseExplorer();

@@ -75,6 +75,8 @@ namespace Robomongo
          */
         void remove();
 
+        void layoutOfItemsChanged();
+
     private:
 
         /**

@@ -146,3 +146,8 @@ void SettingsManager::removeConnection(const ConnectionRecordPtr &connection)
     emit connectionRemoved(connection);
 }
 
+void SettingsManager::reorderConnections(const QList<ConnectionRecordPtr> &connections)
+{
+    _connections = connections;
+}
+

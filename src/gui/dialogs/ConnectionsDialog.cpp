@@ -38,7 +38,9 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     _listWidget->addAction(addAction);
     _listWidget->addAction(editAction);
     _listWidget->addAction(removeAction);
+    _listWidget->setDragDropMode(QAbstractItemView::InternalMove);
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
+    connect(_listWidget->model(), SIGNAL(layoutChanged()), this, SLOT(layoutOfItemsChanged()));
 
     QPushButton *addButton = new QPushButton("&Add");
     connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
@@ -162,6 +164,19 @@ void ConnectionsDialog::remove()
         return;
 
     _settingsManager->removeConnection(connectionModel);
+}
+
+void ConnectionsDialog::layoutOfItemsChanged()
+{
+    int count = _listWidget->count();
+    QList<ConnectionRecordPtr> items;
+    for(int i = 0; i < count; i++)
+    {
+        ConnectionListWidgetItem * item = (ConnectionListWidgetItem *) _listWidget->item(i);
+        items.append(item->connection());
+    }
+
+    _settingsManager->reorderConnections(items);
 }
 
 /**

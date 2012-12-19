@@ -87,6 +87,29 @@ namespace Robomongo
             Response(EventType, error) {}
     };
 
+    /**
+     * @brief Init Request & Response
+     */
+
+    class FinalizeRequest : public Request
+    {
+        R_MESSAGE
+
+        FinalizeRequest(QObject *sender) :
+            Request(EventType, sender) {}
+    };
+
+    class FinalizeResponse : public Response
+    {
+        R_MESSAGE
+
+        FinalizeResponse() :
+            Response(EventType) {}
+
+        FinalizeResponse(const Error &error) :
+            Response(EventType, error) {}
+    };
+
 
     /**
      * @brief EstablishConnection

@@ -57,6 +57,8 @@ namespace Robomongo
          */
         void removeConnection(const ConnectionRecordPtr &connection);
 
+        void reorderConnections(const QList<ConnectionRecordPtr> &connections);
+
         /**
          * @brief Returns list of connections
          */

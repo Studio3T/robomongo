@@ -31,8 +31,8 @@ MongoClient::MongoClient(QString host, int port, QString database, QString usern
 MongoClient::~MongoClient()
 {
     _thread->quit();
-    _thread->wait(1000);
-    _thread->terminate();
+    if (!_thread->wait(1000))
+        _thread->terminate();
 
     delete _thread;
 }
@@ -79,6 +79,7 @@ bool MongoClient::event(QEvent *event)
     R_EVENT(ExecuteQueryRequest)
     R_EVENT(ExecuteScriptRequest)
     R_EVENT(InitRequest)
+    R_EVENT(FinalizeRequest)
     else return QObject::event(event);
 }
 
@@ -90,6 +91,16 @@ void MongoClient::handle(InitRequest *event)
     }
     catch (std::exception &ex) {
         reply(event->sender, new InitResponse(Error("Unable to initialize MongoClient")));
+    }
+}
+
+void MongoClient::handle(FinalizeRequest *event)
+{
+    try {
+
+    }
+    catch (std::exception &ex) {
+
     }
 }
 

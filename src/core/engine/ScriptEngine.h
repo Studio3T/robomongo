@@ -6,6 +6,7 @@
 #include "mongo/scripting/engine.h"
 #include "js/jsparse.h"
 #include "Result.h"
+#include <QMutex>
 
 namespace Robomongo
 {
@@ -29,8 +30,11 @@ namespace Robomongo
         void parseTree(JSParseNode * root, int indent, const QString &script, QStringList &list, bool topList);
         int _port;
 
+        boost::scoped_ptr<mongo::ScriptEngine> _engine;
         boost::scoped_ptr<mongo::Scope> _scope;
         QString subb(const QStringList &list, int fline, int fpos, int tline, int tpos);
+
+        QMutex _mutex;
 
 
     };

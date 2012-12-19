@@ -7,6 +7,8 @@ using namespace Robomongo;
 
 R_REGISTER_EVENT_TYPE(InitRequest);
 R_REGISTER_EVENT_TYPE(InitResponse);
+R_REGISTER_EVENT_TYPE(FinalizeRequest);
+R_REGISTER_EVENT_TYPE(FinalizeResponse);
 R_REGISTER_EVENT_TYPE(EstablishConnectionRequest);
 R_REGISTER_EVENT_TYPE(EstablishConnectionResponse);
 R_REGISTER_EVENT_TYPE(LoadDatabaseNamesRequest);

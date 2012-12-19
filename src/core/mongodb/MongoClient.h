@@ -38,6 +38,11 @@ namespace Robomongo
         void handle(InitRequest *event);
 
         /**
+         * @brief Initialize MongoClient (should be the first request)
+         */
+        void handle(FinalizeRequest *event);
+
+        /**
          * @brief Initiate connection to MongoDB
          */
         void handle(EstablishConnectionRequest *event);

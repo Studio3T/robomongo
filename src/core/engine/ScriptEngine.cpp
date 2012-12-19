@@ -57,14 +57,19 @@ void ScriptEngine::init()
            << _username.toStdString() << "', '"
            << _password.toStdString() << "')";
 
-    mongo::shell_utils::_dbConnect = ss.str();
-    mongo::isShell = true;
+    {
+        QMutexLocker lock(&_mutex);
 
-    mongo::ScriptEngine::setConnectCallback( mongo::shell_utils::onConnect );
-    mongo::ScriptEngine::setup();
-    mongo::globalScriptEngine->setScopeInitCallback( mongo::shell_utils::initScope );
+        mongo::shell_utils::_dbConnect = ss.str();
+        mongo::isShell = true;
 
-    _scope.reset(mongo::globalScriptEngine->newScope());
+        mongo::ScriptEngine::setConnectCallback( mongo::shell_utils::onConnect );
+        mongo::ScriptEngine::setup();
+        mongo::globalScriptEngine->setScopeInitCallback( mongo::shell_utils::initScope );
+
+        _scope.reset(mongo::globalScriptEngine->newScope());
+        //_engine.reset(mongo::globalScriptEngine);
+    }
 
     // -- Esprima --
 

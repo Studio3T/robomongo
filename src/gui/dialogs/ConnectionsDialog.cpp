@@ -38,6 +38,8 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     _listWidget->addAction(addAction);
     _listWidget->addAction(editAction);
     _listWidget->addAction(removeAction);
+    _listWidget->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
+    _listWidget->setDragEnabled(true);
     _listWidget->setDragDropMode(QAbstractItemView::InternalMove);
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
     connect(_listWidget->model(), SIGNAL(layoutChanged()), this, SLOT(layoutOfItemsChanged()));
@@ -184,8 +186,7 @@ void ConnectionsDialog::layoutOfItemsChanged()
  */
 void ConnectionsDialog::add(const ConnectionRecordPtr &connection)
 {
-    ConnectionListWidgetItem *item = new ConnectionListWidgetItem;
-    item->setConnection(connection);
+    ConnectionListWidgetItem *item = new ConnectionListWidgetItem(connection);
     _listWidget->addItem(item);
     _hash.insert(connection, item);
 }

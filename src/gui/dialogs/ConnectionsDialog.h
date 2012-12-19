@@ -108,13 +108,17 @@ namespace Robomongo
     {
     public:
 
+        ConnectionListWidgetItem(ConnectionRecordPtr connection)
+        {
+            setConnection(connection);
+        }
+
         /**
          * @brief Returns attached ConnectionRecord.
          */
         ConnectionRecordPtr connection()
         {
-            QVariant var = data(Qt::UserRole);
-            return var.value<ConnectionRecordPtr>();
+            return _connection;
         }
 
         /**
@@ -123,8 +127,11 @@ namespace Robomongo
         void setConnection(ConnectionRecordPtr connection)
         {
             setText(connection->connectionName());
-            setData(Qt::UserRole, QVariant::fromValue<ConnectionRecordPtr>(connection));
+            _connection = connection;
         }
+
+    private:
+        ConnectionRecordPtr _connection;
     };
 }
 

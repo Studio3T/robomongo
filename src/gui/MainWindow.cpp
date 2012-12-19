@@ -33,6 +33,10 @@ MainWindow::MainWindow() : QMainWindow(),
     exitAction->setShortcut(QKeySequence::Quit);
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
+    // File menu
+    QMenu *connectionsMenu = new QMenu(this);
+    connectionsMenu->addAction(exitAction);
+
     // Connect action
     QAction *connectAction = new QAction("&Connect", this);
     connectAction->setShortcut(QKeySequence::Open);
@@ -40,6 +44,20 @@ MainWindow::MainWindow() : QMainWindow(),
     connectAction->setIconText("Connect");
     connectAction->setToolTip("Connect to MongoDB");
     connect(connectAction, SIGNAL(triggered()), this, SLOT(manageConnections()));
+
+    QToolButton* connectButton = new QToolButton();
+    connectButton->setText("&Connect");
+    connectButton->setIcon(GuiRegistry::instance().connectIcon());
+    connectButton->setFocusPolicy(Qt::NoFocus);
+    connectButton->setMenu(connectionsMenu);
+    connectButton->setToolTip("Connect to MongoDB");
+    connectButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    connectButton->setPopupMode(QToolButton::MenuButtonPopup);
+    connect(connectButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
+
+    QWidgetAction* connectButtonAction = new QWidgetAction(this);
+    connectButtonAction->setDefaultWidget(connectButton);
+
 
     // Orientation action
     QAction *orientationAction = new QAction("&Rotate", this);
@@ -75,7 +93,7 @@ MainWindow::MainWindow() : QMainWindow(),
     // Toolbar
     QToolBar *toolBar = new QToolBar("Toolbar", this);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    toolBar->addAction(connectAction);
+    toolBar->addAction(connectButtonAction);
     toolBar->addSeparator();
     toolBar->addAction(executeAction);
     toolBar->addAction(orientationAction);

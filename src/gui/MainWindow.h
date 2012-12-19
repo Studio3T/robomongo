@@ -15,6 +15,7 @@ namespace Robomongo
     class Dispatcher;
     class ConnectionFailedEvent;
     class WorkAreaWidget;
+    class ConnectionMenu;
 
     class MainWindow : public QMainWindow
     {
@@ -22,6 +23,8 @@ namespace Robomongo
     public:
         explicit MainWindow();
         bool event(QEvent *event);
+
+        void keyPressEvent(QKeyEvent *event);
 
     private:
         /*
@@ -49,7 +52,7 @@ namespace Robomongo
         SettingsManager &_settingsManager;
         Dispatcher &_dispatcher;
 
-        QMenu *_connectionsMenu;
+        ConnectionMenu *_connectionsMenu;
         void updateConnectionsMenu();
 
         void createDatabaseExplorer();
@@ -68,6 +71,14 @@ namespace Robomongo
 
     private:
         void handle(ConnectionFailedEvent *event);
+    };
+
+    class ConnectionMenu : public QMenu
+    {
+        Q_OBJECT
+    public:
+        ConnectionMenu(QWidget *parent) : QMenu(parent) {}
+        void keyPressEvent(QKeyEvent *event);
     };
 
 }

@@ -19,10 +19,11 @@ MainWindow::MainWindow() : QMainWindow(),
     _app(AppRegistry::instance().app()),
     _settingsManager(AppRegistry::instance().settingsManager()),
     _dispatcher(AppRegistry::instance().dispatcher()),
-    _workArea(NULL)
+    _workArea(NULL),
+    _connectionsMenu(NULL)
 {
     _dispatcher.subscribe(this, ConnectionFailedEvent::EventType);
-    _connectionsMenu = new QMenu(this);
+    _connectionsMenu = new ConnectionMenu(this);
     connect(_connectionsMenu, SIGNAL(triggered(QAction*)), this, SLOT(connectToServer(QAction*)));
     updateConnectionsMenu();
 
@@ -73,7 +74,7 @@ MainWindow::MainWindow() : QMainWindow(),
 
     // Full screen action
     QAction *fullScreenAction = new QAction("&Full Screen", this);
-    fullScreenAction->setShortcut(Qt::Key_F12);
+    fullScreenAction->setShortcut(Qt::Key_F11);
     fullScreenAction->setVisible(true);
     connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2()));
 
@@ -121,6 +122,19 @@ bool MainWindow::event(QEvent *event)
     R_HANDLE(event)
     R_EVENT(ConnectionFailedEvent)
             else return QMainWindow::event(event);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_F12)
+    {
+        QRect scr = QApplication::desktop()->screenGeometry();
+        _connectionsMenu->move( scr.center() - _connectionsMenu->rect().center() - QPoint(0, 100));
+        _connectionsMenu->show();
+        return;
+    }
+
+    QMainWindow::keyPressEvent(event);
 }
 
 void MainWindow::updateConnectionsMenu()
@@ -256,4 +270,16 @@ void MainWindow::createTabs()
 
     //QLabel *label = new QLabel("muahahah");
     //setCentralWidget(label);
+}
+
+
+void ConnectionMenu::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_F12)
+    {
+        hide();
+        return;
+    }
+
+    QMenu::keyPressEvent(event);
 }

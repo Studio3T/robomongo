@@ -22,6 +22,7 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     _treeWidget = new ExplorerTreeWidget;
     _treeWidget->setIndentation(15);    
     _treeWidget->setHeaderHidden(true);
+    _treeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     //_treeWidget->setStyleSheet("background-color:#E7E5E4; border: 0px; ");
 
     QHBoxLayout *vlaout = new QHBoxLayout();
@@ -140,6 +141,8 @@ void ExplorerWidget::handle(ConnectionEstablishedEvent *event)
 
     ExplorerServerTreeItem *item = new ExplorerServerTreeItem(event->server);
     _treeWidget->addTopLevelItem(item);
+    _treeWidget->setCurrentItem(item);
+    _treeWidget->setFocus();
 
 //    _treeWidget->setItemWidget(item, 0, yourLabel);
 }

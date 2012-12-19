@@ -49,6 +49,9 @@ namespace Robomongo
         SettingsManager &_settingsManager;
         Dispatcher &_dispatcher;
 
+        QMenu *_connectionsMenu;
+        void updateConnectionsMenu();
+
         void createDatabaseExplorer();
         void createTabs();
 
@@ -61,6 +64,7 @@ namespace Robomongo
         void toggleFullScreen2();
         void refreshConnections();
         void toggleLogs(bool show);
+        void connectToServer(QAction *action);
 
     private:
         void handle(ConnectionFailedEvent *event);

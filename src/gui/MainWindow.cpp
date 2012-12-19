@@ -22,6 +22,9 @@ MainWindow::MainWindow() : QMainWindow(),
     _workArea(NULL)
 {
     _dispatcher.subscribe(this, ConnectionFailedEvent::EventType);
+    _connectionsMenu = new QMenu(this);
+    connect(_connectionsMenu, SIGNAL(triggered(QAction*)), this, SLOT(connectToServer(QAction*)));
+    updateConnectionsMenu();
 
     qApp->setStyleSheet(
         "Robomongo--ExplorerTreeWidget#explorerTree { padding: 7px 0px 7px 0px; background-color:#E7E5E4; border: 0px; } \n "
@@ -32,10 +35,6 @@ MainWindow::MainWindow() : QMainWindow(),
     QAction *exitAction = new QAction("&Exit", this);
     exitAction->setShortcut(QKeySequence::Quit);
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
-
-    // File menu
-    QMenu *connectionsMenu = new QMenu(this);
-    connectionsMenu->addAction(exitAction);
 
     // Connect action
     QAction *connectAction = new QAction("&Connect", this);
@@ -49,7 +48,7 @@ MainWindow::MainWindow() : QMainWindow(),
     connectButton->setText("&Connect");
     connectButton->setIcon(GuiRegistry::instance().connectIcon());
     connectButton->setFocusPolicy(Qt::NoFocus);
-    connectButton->setMenu(connectionsMenu);
+    connectButton->setMenu(_connectionsMenu);
     connectButton->setToolTip("Connect to MongoDB");
     connectButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     connectButton->setPopupMode(QToolButton::MenuButtonPopup);
@@ -121,7 +120,25 @@ bool MainWindow::event(QEvent *event)
 {
     R_HANDLE(event)
     R_EVENT(ConnectionFailedEvent)
-    else return QMainWindow::event(event);
+            else return QMainWindow::event(event);
+}
+
+void MainWindow::updateConnectionsMenu()
+{
+    _connectionsMenu->clear();
+
+    // Populate list with connections
+    foreach(ConnectionRecordPtr connection, _settingsManager.connections()) {
+        QAction *action = new QAction(connection->getReadableName(), this);
+        action->setData(QVariant::fromValue(connection));
+        _connectionsMenu->addAction(action);
+
+    }
+
+    if (_settingsManager.connections().size() > 0)
+        _connectionsMenu->addSeparator();
+
+    _connectionsMenu->addAction("Manage Connections");
 }
 
 void MainWindow::manageConnections()
@@ -129,8 +146,9 @@ void MainWindow::manageConnections()
     ConnectionsDialog dialog(&_settingsManager);
     int result = dialog.exec();
 
-    // save settings
+    // save settings and update connection menu
     _settingsManager.save();
+    updateConnectionsMenu();
 
     if (result == QDialog::Accepted)
     {
@@ -181,6 +199,22 @@ void MainWindow::refreshConnections()
 void MainWindow::toggleLogs(bool show)
 {
     _logDock->setVisible(show);
+}
+
+void MainWindow::connectToServer(QAction *connectionAction)
+{
+    QVariant data = connectionAction->data();
+    ConnectionRecordPtr ptr = data.value<ConnectionRecordPtr>();
+
+    try
+    {
+        _app.openServer(ptr, true);
+    }
+    catch(MongoException &ex)
+    {
+        QString message = QString("Cannot connect to MongoDB (%1)").arg(ptr->getFullAddress());
+        QMessageBox::information(this, "Error", message);
+    }
 }
 
 void MainWindow::handle(ConnectionFailedEvent *event)

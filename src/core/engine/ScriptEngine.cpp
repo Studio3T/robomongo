@@ -126,8 +126,11 @@ QList<Result> ScriptEngine::exec(const QString &script, const QString &dbName)
                 QVector<mongo::BSONObj> objs = QVector<mongo::BSONObj>::fromStdVector(__objects);
                 QList<mongo::BSONObj> list = QList<mongo::BSONObj>::fromVector(objs);
 
+                std::string dbNameStd = _scope->getString("__robomongoDbName");
+                QString dbName = QString::fromUtf8(dbNameStd.c_str());
+
                 if (!answer.isEmpty() || list.count() > 0)
-                    results.append(Result(answer, list));
+                    results.append(Result(answer, list, dbName));
             }
             catch ( std::exception& e ) {
                 std::cout << "error:" << e.what() << endl;

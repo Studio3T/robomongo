@@ -9,10 +9,11 @@ namespace Robomongo
     class Result
     {
     public:
-        Result(const QString &response, const QList<mongo::BSONObj> &documents);
+        Result(const QString &response, const QList<mongo::BSONObj> &documents, const QString &databaseName);
 
         QList<mongo::BSONObj> documents;
         QString response;
+        QString databaseName;
     };
 }
 

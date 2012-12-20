@@ -166,6 +166,7 @@ void ExplorerWidget::handle(ConnectionEstablishedEvent *event)
     decreaseProgress();
 
     ExplorerServerTreeItem *item = new ExplorerServerTreeItem(event->server);
+    item->setExpanded(true);
     _treeWidget->addTopLevelItem(item);
     _treeWidget->setCurrentItem(item);
     _treeWidget->setFocus();

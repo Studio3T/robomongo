@@ -2,8 +2,9 @@
 
 using namespace Robomongo;
 
-Result::Result(const QString &response, const QList<mongo::BSONObj> &documents) :
+Result::Result(const QString &response, const QList<mongo::BSONObj> &documents, const QString &databaseName) :
     response(response),
-    documents(documents)
+    documents(documents),
+    databaseName(databaseName)
 {
 }

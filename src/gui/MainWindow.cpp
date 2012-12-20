@@ -114,6 +114,13 @@ MainWindow::MainWindow() : QMainWindow(),
     setWindowTitle("Robomongo 0.3.4");
     setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
+    if (_settingsManager.connections().count() > 0) {
+        QRect scr = QApplication::desktop()->screenGeometry();
+        _connectionsMenu->move( scr.center() - _connectionsMenu->rect().center() - QPoint(0, 100));
+        _connectionsMenu->setFocus();
+        _connectionsMenu->showNormal();
+    }
+
     //connect(_viewModel, SIGNAL(statusMessageUpdated(QString)), SLOT(vm_statusMessageUpdated(QString)));
 }
 
@@ -147,7 +154,7 @@ void MainWindow::updateConnectionsMenu()
         QAction *action = new QAction(connection->getReadableName(), this);
         action->setData(QVariant::fromValue(connection));
 
-        if (number <= 10)
+        if (number <= 9)
             action->setShortcut(QKeySequence(QString("Alt+").append(QString::number(number))));
 
         _connectionsMenu->addAction(action);

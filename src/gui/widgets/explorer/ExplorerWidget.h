@@ -26,6 +26,9 @@ namespace Robomongo
 
         bool event(QEvent *event);
 
+    protected:
+        void keyPressEvent(QKeyEvent *event);
+
     public slots:
 
         /*

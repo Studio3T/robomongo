@@ -16,6 +16,18 @@ WorkAreaTabWidget::WorkAreaTabWidget(WorkAreaWidget * workAreaWidget) : QTabWidg
     connect(this, SIGNAL(currentChanged(int)), SLOT(ui_currentChanged(int)));
 }
 
+void WorkAreaTabWidget::keyPressEvent(QKeyEvent *keyEvent)
+{
+    if ((keyEvent->modifiers() & Qt::ControlModifier) &&
+        (keyEvent->key()==Qt::Key_F4 || keyEvent->key()==Qt::Key_W))
+    {
+        int index = currentIndex();
+        removeTab(index);
+    }
+
+    QTabWidget::keyPressEvent(keyEvent);
+}
+
 void WorkAreaTabWidget::ui_tabCloseRequested(int index)
 {
 	if (index >= 0)
@@ -33,7 +45,7 @@ void WorkAreaTabWidget::ui_tabCloseRequested(int index)
 
 void WorkAreaTabWidget::ui_currentChanged(int index)
 {
-    if (!index)
+    if (index < 0)
         return;
 
     QueryWidget *tabWidget = (QueryWidget *) widget(index);

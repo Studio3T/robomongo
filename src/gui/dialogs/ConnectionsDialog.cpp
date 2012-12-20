@@ -41,6 +41,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     _listWidget->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
     _listWidget->setDragEnabled(true);
     _listWidget->setDragDropMode(QAbstractItemView::InternalMove);
+    _listWidget->setFixedWidth(350);
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
     connect(_listWidget->model(), SIGNAL(layoutChanged()), this, SLOT(layoutOfItemsChanged()));
 

@@ -55,7 +55,33 @@ bool ExplorerWidget::event(QEvent *event)
     R_EVENT(ConnectingEvent)
     R_EVENT(ConnectionFailedEvent)
     R_EVENT(ConnectionEstablishedEvent)
-    else return QWidget::event(event);
+            else return QWidget::event(event);
+}
+
+void ExplorerWidget::keyPressEvent(QKeyEvent *event)
+{
+    if ((event->key() == Qt::Key_Return) || (event->key() == Qt::Key_Enter))
+    {
+        QList<QTreeWidgetItem*> items = _treeWidget->selectedItems();
+
+        if (items.count() != 1) {
+            QWidget::keyPressEvent(event);
+            return;
+        }
+
+        QTreeWidgetItem *item = items[0];
+
+        if (!item) {
+            QWidget::keyPressEvent(event);
+            return;
+        }
+
+        ui_itemDoubleClicked(item, 0);
+
+        return;
+    }
+
+    QWidget::keyPressEvent(event);
 }
 
 void ExplorerWidget::ui_disonnectActionTriggered()

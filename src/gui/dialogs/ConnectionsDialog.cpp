@@ -128,7 +128,8 @@ void ConnectionsDialog::add()
  */
 void ConnectionsDialog::edit()
 {
-    ConnectionListWidgetItem *currentItem = (ConnectionListWidgetItem *) _listWidget->currentItem();
+    ConnectionListWidgetItem *currentItem =
+        (ConnectionListWidgetItem *) _listWidget->currentItem();
 
     // Do nothing if no item selected
     if (currentItem == 0)
@@ -149,7 +150,8 @@ void ConnectionsDialog::edit()
  */
 void ConnectionsDialog::remove()
 {
-    ConnectionListWidgetItem *currentItem = (ConnectionListWidgetItem *)_listWidget->currentItem();
+    ConnectionListWidgetItem *currentItem =
+        (ConnectionListWidgetItem *)_listWidget->currentItem();
 
     // Do nothing if no item selected
     if (currentItem == 0)

@@ -22,6 +22,7 @@ namespace Robomongo
     protected:
         void paintEvent(QPaintEvent *e);
         void wheelEvent(QWheelEvent *e);
+        void keyPressEvent(QKeyEvent *e);
     };
 }
 

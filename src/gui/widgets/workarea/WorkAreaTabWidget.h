@@ -20,6 +20,9 @@ namespace Robomongo
         */
         WorkAreaTabWidget(WorkAreaWidget * workAreaWidget);
 
+    protected:
+        void keyPressEvent(QKeyEvent *event);
+
     public slots:
 
         void ui_tabCloseRequested(int index);

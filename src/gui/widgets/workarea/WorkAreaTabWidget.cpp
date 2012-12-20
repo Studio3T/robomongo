@@ -9,10 +9,11 @@ using namespace Robomongo;
 
 WorkAreaTabWidget::WorkAreaTabWidget(WorkAreaWidget * workAreaWidget) : QTabWidget(workAreaWidget)
 {
-    setTabBar(new WorkAreaTabBar());  // Should go before setTabsClosable(true)!
+    setTabBar(new WorkAreaTabBar());  // This line should go before setTabsClosable(true)!
 	setTabsClosable(true);
     setElideMode(Qt::ElideRight);
 	connect(this, SIGNAL(tabCloseRequested(int)), SLOT(ui_tabCloseRequested(int)));
+    connect(this, SIGNAL(newTabRequested(int)), SLOT(ui_newTabRequested(int)));
     connect(this, SIGNAL(currentChanged(int)), SLOT(ui_currentChanged(int)));
 }
 
@@ -41,6 +42,11 @@ void WorkAreaTabWidget::ui_tabCloseRequested(int index)
 			delete tabWidget;		
         }
     }
+}
+
+void WorkAreaTabWidget::ui_newTabRequested(int index)
+{
+
 }
 
 void WorkAreaTabWidget::ui_currentChanged(int index)

@@ -34,7 +34,8 @@ namespace Robomongo
         ConnectionsDialog(SettingsManager *manager);
 
         /**
-         * @brief ConnectionRecord, that was selected after pressing on "Connect" button
+         * @brief ConnectionRecord, that was selected after pressing on
+         * "Connect" button
          */
         ConnectionRecordPtr selectedConnection() const { return _selectedConnection; }
 
@@ -66,12 +67,14 @@ namespace Robomongo
         void add();
 
         /**
-         * @brief Initiate 'edit' action, usually when user clicked on Edit button
+         * @brief Initiate 'edit' action, usually when user clicked on Edit
+         * button
          */
         void edit();
 
         /**
-         * @brief Initiate 'remove' action, usually when user clicked on Remove button
+         * @brief Initiate 'remove' action, usually when user clicked on Remove
+         * button
          */
         void remove();
 
@@ -80,7 +83,8 @@ namespace Robomongo
     private:
 
         /**
-         * @brief ConnectionRecord, that was selected after pressing on "Connect" button
+         * @brief ConnectionRecord, that was selected after pressing on
+         * "Connect" button
          */
         ConnectionRecordPtr _selectedConnection;
 
@@ -95,7 +99,8 @@ namespace Robomongo
         SettingsManager *_settingsManager;
 
         /**
-         * @brief Hash that helps to connect ConnectionRecord with ConnectionListWidgetItem*
+         * @brief Hash that helps to connect ConnectionRecord with
+         * ConnectionListWidgetItem*
          */
         QHash<ConnectionRecordPtr, ConnectionListWidgetItem *> _hash;
 

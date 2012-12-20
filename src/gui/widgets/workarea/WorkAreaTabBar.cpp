@@ -5,9 +5,73 @@
 
 using namespace Robomongo;
 
-WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) : QTabBar(parent)
+/**
+ * @brief Creates WorkAreaTabBar, without parent widget. We are
+ * assuming, that tab bar will be installed to (and owned by)
+ * WorkAreaTabWidget, using QTabWidget::setTabBar().
+ */
+WorkAreaTabBar::WorkAreaTabBar() : QTabBar()
 {
-    int a = 456;
+    setStyleSheet(buildStyleSheet());
+
+    _menu = new QMenu(this);
+
+    _newShellAction = new QAction("&New Shell", _menu);
+    _newShellAction->setShortcut(Qt::CTRL + Qt::Key_T);
+
+    _reloadShellAction = new QAction("&Reload", _menu);
+    _duplicateShellAction = new QAction("&Duplicate", _menu);
+    _pinShellAction = new QAction("&Pin Shell", _menu);
+    _closeShellAction = new QAction("&Close Shell", _menu);
+    _closeOtherShellsAction = new QAction("Close &Other Shells", _menu);
+    _closeShellsToTheRightAction = new QAction("Close Shells to the R&ight", _menu);
+
+    _menu->addAction(_newShellAction);
+    _menu->addSeparator();
+    _menu->addAction(_reloadShellAction);
+    _menu->addAction(_duplicateShellAction);
+    _menu->addSeparator();
+    _menu->addAction(_closeShellAction);
+    _menu->addAction(_closeOtherShellsAction);
+    _menu->addAction(_closeShellsToTheRightAction);
+}
+
+/**
+ * @brief Overrides QTabBar::mouseReleaseEvent() in order to support
+ * middle-mouse tab close and to implement tab context menu.
+ */
+void WorkAreaTabBar::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::MidButton)
+    {
+        int tabIndex = tabAt(event->pos());
+
+        if (tabIndex < 0)
+            return;
+
+        emit tabCloseRequested(tabIndex);
+    } else if (event->button() == Qt::RightButton) {
+        int tabIndex = tabAt(event->pos());
+
+        if (tabIndex < 0)
+            return;
+
+        QAction *selected = _menu->exec(QCursor::pos());
+
+        if (!selected)
+            return;
+
+        emitSignalForContextMenuAction(tabIndex, selected);
+    }
+
+    QTabBar::mouseReleaseEvent(event);
+}
+
+/**
+ * @brief Builds stylesheet for this WorkAreaTabBar widget.
+ */
+QString WorkAreaTabBar::buildStyleSheet()
+{
     QString styles =
         "QTabBar::close-button { "
             "image: url(:/robomongo/icons/close_2_16x16.png);"
@@ -51,22 +115,30 @@ WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) : QTabBar(parent)
         "QTabBar::tab:only-one { margin-top: 2px; }"
     ;
 
-    setStyleSheet(styles);
+    return styles;
 }
 
-void WorkAreaTabBar::mouseReleaseEvent(QMouseEvent * event)
+/**
+ * @brief Emits signal, based on specified action. Only actions
+ * specified in this class are supported. If we don't know specified
+ * action - no signal will be emited.
+ * @param tabIndex: index of tab, for which signal will be emited.
+ * @param action: context menu action.
+ */
+void WorkAreaTabBar::emitSignalForContextMenuAction(int tabIndex, QAction *action)
 {
-    if (event->button() == Qt::MidButton)
-    {
-        // * int QTabBar::tabAt ( const QPoint & position ) const
-        // * Returns the index of the tab that covers position or -1 if no tab covers position;
-        int tabIndex = tabAt(event->pos());
-
-        if (tabIndex < 0)
-            return;
-
+    if (action == _newShellAction)
+        emit newTabRequested(tabIndex);
+    else if (action == _reloadShellAction)
+        emit reloadTabRequested(tabIndex);
+    else if (action == _duplicateShellAction)
+        emit duplicateTabRequested(tabIndex);
+    else if (action == _pinShellAction)
+        emit pinTabRequested(tabIndex);
+    else if (action == _closeShellAction)
         emit tabCloseRequested(tabIndex);
-    }
-
-    QTabBar::mouseReleaseEvent(event);
+    else if (action == _closeOtherShellsAction)
+        emit closeOtherTabsRequested(tabIndex);
+    else if (action == _closeShellsToTheRightAction)
+        emit closeTabsToTheRightRequested(tabIndex);
 }

@@ -22,6 +22,7 @@
 #include "OutputViewer.h"
 #include "domain/App.h"
 #include "WorkAreaTabWidget.h"
+#include "settings/ConnectionRecord.h"
 
 using namespace mongo;
 using namespace Robomongo;
@@ -149,20 +150,31 @@ bool QueryWidget::eventFilter(QObject * o, QEvent * e)
 	{
 		QKeyEvent * keyEvent = (QKeyEvent *) e;
 
-        if ((keyEvent->modifiers() & Qt::ControlModifier) &&
-            (keyEvent->modifiers() & Qt::ShiftModifier) &&
-            (keyEvent->key()==Qt::Key_Return || keyEvent->key()==Qt::Key_Enter) )
-        {
+        bool ctrlShiftReturn = (keyEvent->modifiers() & Qt::ControlModifier) &&
+                               (keyEvent->modifiers() & Qt::ShiftModifier) &&
+                               (keyEvent->key()==Qt::Key_Return || keyEvent->key()==Qt::Key_Enter);
 
+        bool ctrlT = (keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key()==Qt::Key_T);
+
+        if (ctrlShiftReturn || ctrlT) {
             MongoServerPtr server(_shell->server());
             QString query = _queryText->selectedText();
 
             if (query.isEmpty())
-                query = _queryText->text();
+                query = "";//_queryText->text();
 
-            AppRegistry::instance().app().openShell(server, query);
+            QString dbName = server->connectionRecord()->databaseName();
+            if (_currentResults.count() > 0) {
+                MongoShellResult lastResult = _currentResults.last();
+                dbName = lastResult.databaseName;
+            }
 
-            //QMessageBox::information(0, "jkkj", "kjh", "hhj");
+            AppRegistry::instance().app().openShell(server, query, dbName);
+
+            return true;
+        }
+        else if (keyEvent->key() == Qt::Key_F6) {
+            _queryText->setFocus();
             return true;
         }
         else if ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key()==Qt::Key_Return || keyEvent->key()==Qt::Key_Enter) )
@@ -199,8 +211,6 @@ void QueryWidget::activateTabContent()
 */
 void QueryWidget::_configureQueryText()
 {
-
-
     QFont textFont = font();
 #if defined(Q_OS_MAC)
     textFont.setPointSize(12);
@@ -285,12 +295,14 @@ void QueryWidget::handle(const DocumentListLoadedEvent *event)
 {
     _queryText->setText(event->query);
     QList<MongoShellResult> list;
-    list << MongoShellResult("", event->list);
+    list << MongoShellResult("", event->list, "");
     displayData(list);
 }
 
 void QueryWidget::handle(const ScriptExecutedEvent *event)
 {
+    _currentResults = event->results;
+
     setUpdatesEnabled(false);
     int thisTab = _tabWidget->indexOf(this);
 
@@ -300,8 +312,7 @@ void QueryWidget::handle(const ScriptExecutedEvent *event)
                 .left(41)
                 .replace(QRegExp("[\n\r\t]"), " ");
 
-//        if (tabTitle.size() == 21)
-//            tabTitle.append("...");
+        tabTitle = tabTitle.isEmpty() ? "New Shell" : tabTitle;
 
         _tabWidget->setTabText(thisTab, tabTitle);
     }
@@ -315,7 +326,7 @@ void QueryWidget::handle(const ScriptExecutedEvent *event)
 
 void QueryWidget::displayData(const QList<MongoShellResult> &results)
 {
-    if (results.count() == 0) {
+    if (results.count() == 0 && !_queryText->text().isEmpty()) {
         _outputLabel->setText("Script executed successfully, but there is no results to show.");
         _outputLabel->setVisible(true);
     } else {

@@ -75,7 +75,7 @@ namespace Robomongo
         /**
          * Port of database
          */
-        QString databaseName() const { return _databaseName; }
+        QString databaseName() const { return _databaseName.isEmpty() ? "test" : _databaseName; }
         void setDatabaseName(const QString &databaseName) { _databaseName = databaseName; }
 
         /**

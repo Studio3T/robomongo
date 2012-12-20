@@ -127,6 +127,8 @@ namespace Robomongo
 
         WorkAreaTabWidget *_tabWidget;
 
+        QList<MongoShellResult> _currentResults;
+
 //        PlainJavaScriptEditor *_queryText;
 
         MongoShellPtr _shell;

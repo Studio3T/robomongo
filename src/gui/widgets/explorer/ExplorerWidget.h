@@ -52,7 +52,7 @@ namespace Robomongo
         void ui_disonnectActionTriggered();
         void ui_openShellActionTriggered();
 
-    private:
+    public slots:
         void handle(ConnectingEvent *event);
         void handle(ConnectionEstablishedEvent *event);
         void handle(ConnectionFailedEvent *event);

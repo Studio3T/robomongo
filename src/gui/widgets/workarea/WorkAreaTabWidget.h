@@ -7,18 +7,20 @@ namespace Robomongo
 {
     class WorkAreaWidget;
 
+    /**
+     * @brief WorkArea tab widget. Each tab represents MongoDB shell.
+     */
     class WorkAreaTabWidget : public QTabWidget
     {
         Q_OBJECT
 
-    private:
-
     public:
 
-        /*
-        ** Constructs tab widget
-        */
-        WorkAreaTabWidget(WorkAreaWidget * workAreaWidget);
+        /**
+         * @brief Creates WorkAreaTabWidget.
+         * @param workAreaWidget: WorkAreaWidget this tab belongs to.
+         */
+        WorkAreaTabWidget(WorkAreaWidget *workAreaWidget);
 
     protected:
 

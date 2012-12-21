@@ -63,10 +63,4 @@ namespace Robomongo
     QEvent *_roboevent = static_cast<QEvent *>((EVENT)); \
     if (false) ;
 
-#define R_MESSAGE \
-    public: \
-    const static QEvent::Type EventType; \
-    private:
-
-
 #endif // CORE_H

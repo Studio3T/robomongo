@@ -71,12 +71,12 @@ namespace Robomongo
     private:
 
         /**
-         * @brief Handles middle-mouse release event.
+         * @brief Handles middle-mouse release event in order to close tab.
          */
         void middleMouseReleaseEvent(QMouseEvent *event);
 
         /**
-         * @brief Handles right-mouse release event
+         * @brief Handles right-mouse release event to show tab context menu.
          */
         void rightMouseReleaseEvent(QMouseEvent *event);
 

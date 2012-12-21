@@ -2,21 +2,30 @@
 #include <QObject>
 #include <QCoreApplication>
 #include "Dispatcher.h"
+#include "events/MongoEvents.h"
 
 using namespace Robomongo;
+
+class SomethingHappened;
 
 Dispatcher::Dispatcher() : QObject()
 {
 }
 
-void Dispatcher::publish(QObject *sender, QEvent *event)
+void Dispatcher::publish(QObject *sender, REvent *event)
 {
     QList<Subscriber *> subscribers = _subscribersByEventType.values(event->type());
     foreach(Subscriber *subscriber, subscribers)
     {
-        if (!subscriber->sender || subscriber->sender == sender)
-            QCoreApplication::sendEvent(subscriber->receiver, event);
+        if (!subscriber->sender || subscriber->sender == sender) {
+            //QCoreApplication::sendEvent(subscriber->receiver, event);
+            //QGenericArgument arg = QGenericArgument("SomethingHappened*", event);
+            const char * typeName = event->typeString();
+            QMetaObject::invokeMethod(subscriber->receiver, "handle", QGenericArgument(typeName, &event));
+        }
     }
+
+    //Q_ARG
 
     delete event;
 }

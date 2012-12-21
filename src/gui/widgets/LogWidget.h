@@ -38,15 +38,13 @@ namespace Robomongo
         */
         LogWidget(MainWindow *mainWindow);
 
-        bool event(QEvent *event);
-
     public slots:
         void addMessage(const QString &message);
 
-    private:
-        void handle(const SomethingHappened *event);
-        void handle(const ConnectingEvent *event);
-        void handle(const OpeningShellEvent *event);
+    public slots:
+        void handle(SomethingHappened *event);
+        void handle(ConnectingEvent *event);
+        void handle(OpeningShellEvent *event);
     };
 
 }

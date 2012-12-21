@@ -7,16 +7,28 @@
 
 using namespace Robomongo;
 
-WorkAreaTabWidget::WorkAreaTabWidget(WorkAreaWidget * workAreaWidget) : QTabWidget(workAreaWidget)
+/**
+ * @brief Creates WorkAreaTabWidget.
+ * @param workAreaWidget: WorkAreaWidget this tab belongs to.
+ */
+WorkAreaTabWidget::WorkAreaTabWidget(WorkAreaWidget * workAreaWidget) :
+    QTabWidget(workAreaWidget)
 {
-    setTabBar(new WorkAreaTabBar());  // This line should go before setTabsClosable(true)!
+    // This line should go before setTabsClosable(true)
+    setTabBar(new WorkAreaTabBar());
+
 	setTabsClosable(true);
     setElideMode(Qt::ElideRight);
+
 	connect(this, SIGNAL(tabCloseRequested(int)), SLOT(ui_tabCloseRequested(int)));
     connect(this, SIGNAL(newTabRequested(int)), SLOT(ui_newTabRequested(int)));
     connect(this, SIGNAL(currentChanged(int)), SLOT(ui_currentChanged(int)));
 }
 
+/**
+ * @brief Overrides QTabWidget::keyPressEvent() in order to intercept
+ * tab close key shortcuts (Ctrl+F4 and Ctrl+W)
+ */
 void WorkAreaTabWidget::keyPressEvent(QKeyEvent *keyEvent)
 {
     if ((keyEvent->modifiers() & Qt::ControlModifier) &&

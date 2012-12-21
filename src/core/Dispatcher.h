@@ -6,6 +6,8 @@
 
 namespace Robomongo
 {
+    class REvent;
+
     class Subscriber
     {
     public:
@@ -28,7 +30,7 @@ namespace Robomongo
          * @brief Publishes event
          * @param sender - object, that emits this event
          */
-        void publish(QObject *sender, QEvent *event);
+        void publish(QObject *sender, REvent *event);
 
         /**
          * @brief Subscribe to specified event

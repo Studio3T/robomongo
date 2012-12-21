@@ -11,7 +11,8 @@
 
 #define R_MESSAGE \
     public: \
-        const static QEvent::Type EventType;
+        const static QEvent::Type EventType; \
+        virtual const char *typeString();
 
 
 namespace Robomongo
@@ -33,34 +34,44 @@ namespace Robomongo
         bool isNull;
     };
 
+    class REvent : public QEvent
+    {
+    public:
+        REvent(QEvent::Type type) :
+            QEvent(type) {}
+
+        virtual const char *typeString() { return NULL; }
+    };
 
     /**
      * @brief Request & Response
      */
 
-    class Request : public QEvent
+    class Request : public REvent
     {
     public:
         Request(QEvent::Type type, QObject *sender) :
-            QEvent(type),
+            REvent(type),
             sender(sender) {}
 
         QObject *sender;
+        virtual const char *typeString() { return NULL; }
     };
 
-    class Response : public QEvent
+    class Response : public REvent
     {
     public:
         Response(QEvent::Type type) :
-            QEvent(type) {}
+            REvent(type) {}
 
         Response(QEvent::Type type, Error error) :
-            QEvent(type),
+            REvent(type),
             error(error) {}
 
         bool isError() const { return !error.isNull; }
         QString errorMessage() const { return error.errorMessage; }
 
+        virtual const char *typeString() { return NULL; }
         Error error;
     };
 
@@ -276,34 +287,34 @@ namespace Robomongo
 
 
 
-    class SomethingHappened : public QEvent
+    class SomethingHappened : public REvent
     {
         R_MESSAGE
 
         SomethingHappened(const QString &something) :
-            QEvent(EventType),
+            REvent(EventType),
             something(something) { }
 
         QString something;
     };
 
-    class ConnectingEvent : public QEvent
+    class ConnectingEvent : public REvent
     {
         R_MESSAGE
 
         ConnectingEvent(const MongoServerPtr &server) :
-            QEvent(EventType),
+            REvent(EventType),
             server(server) { }
 
         MongoServerPtr server;
     };
 
-    class OpeningShellEvent : public QEvent
+    class OpeningShellEvent : public REvent
     {
         R_MESSAGE
 
         OpeningShellEvent(const MongoShellPtr &shell, const QString &initialScript) :
-            QEvent(EventType),
+            REvent(EventType),
             shell(shell),
             initialScript(initialScript) { }
 
@@ -311,56 +322,56 @@ namespace Robomongo
         QString initialScript;
     };
 
-    class ConnectionFailedEvent : public QEvent
+    class ConnectionFailedEvent : public REvent
     {
         R_MESSAGE
 
         ConnectionFailedEvent(const MongoServerPtr &server) :
-            QEvent(EventType),
+            REvent(EventType),
             server(server) { }
 
         MongoServerPtr server;
     };
 
-    class ConnectionEstablishedEvent : public QEvent
+    class ConnectionEstablishedEvent : public REvent
     {
         R_MESSAGE
 
         ConnectionEstablishedEvent(const MongoServerPtr &server) :
-            QEvent(EventType),
+            REvent(EventType),
             server(server) { }
 
         MongoServerPtr server;
     };
 
-    class DatabaseListLoadedEvent : public QEvent
+    class DatabaseListLoadedEvent : public REvent
     {
         R_MESSAGE
 
         DatabaseListLoadedEvent(const QList<MongoDatabasePtr> &list) :
-            QEvent(EventType),
+            REvent(EventType),
             list(list) { }
 
         QList<MongoDatabasePtr> list;
     };
 
-    class CollectionListLoadedEvent : public QEvent
+    class CollectionListLoadedEvent : public REvent
     {
         R_MESSAGE
 
         CollectionListLoadedEvent(const QList<MongoCollectionPtr> &list) :
-            QEvent(EventType),
+            REvent(EventType),
             list(list) { }
 
         QList<MongoCollectionPtr> list;
     };
 
-    class DocumentListLoadedEvent : public QEvent
+    class DocumentListLoadedEvent : public REvent
     {
         R_MESSAGE
 
         DocumentListLoadedEvent(const QString &query, const QList<MongoDocumentPtr> &list) :
-            QEvent(EventType),
+            REvent(EventType),
             query(query),
             list(list) { }
 
@@ -368,12 +379,12 @@ namespace Robomongo
         QString query;
     };
 
-    class ScriptExecutedEvent : public QEvent
+    class ScriptExecutedEvent : public REvent
     {
         R_MESSAGE
 
         ScriptExecutedEvent(const QList<MongoShellResult> &list) :
-            QEvent(EventType),
+            REvent(EventType),
             results(list) { }
 
         QList<MongoShellResult> results;

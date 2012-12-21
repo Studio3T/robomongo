@@ -29,15 +29,6 @@ LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
     _dispatcher.subscribe(this, OpeningShellEvent::EventType);
 }
 
-bool LogWidget::event(QEvent * event)
-{
-    R_HANDLE(event)
-    R_EVENT(SomethingHappened)
-    R_EVENT(ConnectingEvent)
-    R_EVENT(OpeningShellEvent)
-    else return QWidget::event(event);
-}
-
 void LogWidget::addMessage(const QString &message)
 {
     _logTextEdit->appendPlainText(message);
@@ -46,17 +37,17 @@ void LogWidget::addMessage(const QString &message)
     sb->setValue(sb->maximum());
 }
 
-void LogWidget::handle(const SomethingHappened *event)
+void LogWidget::handle(SomethingHappened *event)
 {
     addMessage(event->something);
 }
 
-void LogWidget::handle(const ConnectingEvent *event)
+void LogWidget::handle(ConnectingEvent *event)
 {
     addMessage(QString("Connecting to %1...").arg(event->server->connectionRecord()->getFullAddress()));
 }
 
-void LogWidget::handle(const OpeningShellEvent *event)
+void LogWidget::handle(OpeningShellEvent *event)
 {
     addMessage("Openning shell...");
 }

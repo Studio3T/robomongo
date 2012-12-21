@@ -20,15 +20,13 @@ namespace Robomongo
         void open(const MongoCollectionPtr &collection);
         void open(const QString &script, const QString &dbName = QString());
 
-        bool event(QEvent *event);
-
         MongoServerWeakPtr server() const { return _server; }
         QString query() const { return _query; }
 
 
-    private: //handlers
-        void handle(const ExecuteQueryResponse *event);
-        void handle(const ExecuteScriptResponse *event);
+    protected slots:
+        void handle(ExecuteQueryResponse *event);
+        void handle(ExecuteScriptResponse *event);
 
     private:
 

@@ -46,14 +46,9 @@ namespace Robomongo
 
         MongoClient *client() const { return _client.data(); }
 
-        /**
-         * @brief Events dispatcher
-         */
-        virtual bool event(QEvent *event);
-
-    private:
-        void handle(const EstablishConnectionResponse *event);
-        void handle(const LoadDatabaseNamesResponse *event);
+    protected slots:
+        void handle(EstablishConnectionResponse *event);
+        void handle(LoadDatabaseNamesResponse *event);
 
     private:
 

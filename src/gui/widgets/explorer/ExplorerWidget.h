@@ -24,8 +24,6 @@ namespace Robomongo
         */
         ExplorerWidget(QWidget *parent);
 
-        bool event(QEvent *event);
-
     protected:
         void keyPressEvent(QKeyEvent *event);
 

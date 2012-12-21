@@ -22,8 +22,6 @@ namespace Robomongo
         ExplorerServerTreeItem(const MongoServerPtr &server);
         ~ExplorerServerTreeItem();
 
-        bool event(QEvent *event);
-
         /*
         ** Expand server tree item;
         */
@@ -40,7 +38,7 @@ namespace Robomongo
         void databaseRefreshed(const QList<MongoDatabasePtr> &dbs);
 
 
-    private:
+    public slots:
         void handle(DatabaseListLoadedEvent *event);
 
     private:

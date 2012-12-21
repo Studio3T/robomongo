@@ -37,13 +37,6 @@ WorkAreaWidget::~WorkAreaWidget()
     int a = 56;
 }
 
-bool WorkAreaWidget::event(QEvent *event)
-{
-    R_HANDLE(event)
-    R_EVENT(OpeningShellEvent)
-            else return QObject::event(event);
-}
-
 void WorkAreaWidget::toggleOrientation()
 {
     QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
@@ -58,7 +51,7 @@ void WorkAreaWidget::executeScript()
         currentWidget->ui_executeButtonClicked();
 }
 
-void WorkAreaWidget::handle(const OpeningShellEvent *event)
+void WorkAreaWidget::handle(OpeningShellEvent *event)
 {
 //    QLabel * queryWidget = new QLabel("Hello");
     setUpdatesEnabled(false);

@@ -23,14 +23,9 @@ namespace Robomongo
         /**
          * @brief Send event to this MongoClient
          */
-        void send(QEvent *event);
+        void send(REvent *event);
 
-        /**
-         * @brief Events dispatcher
-         */
-        virtual bool event(QEvent *event);
-
-    private: // handlers:
+    protected slots: // handlers:
 
         /**
          * @brief Initialize MongoClient (should be the first request)
@@ -79,7 +74,7 @@ namespace Robomongo
         /**
          * @brief Send reply event to object 'obj'
          */
-        void reply(QObject *receiver, QEvent *event);
+        void reply(QObject *receiver, REvent *event);
 
         QString _address;
         QThread *_thread;

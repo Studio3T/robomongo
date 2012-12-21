@@ -188,14 +188,6 @@ bool QueryWidget::eventFilter(QObject * o, QEvent * e)
     return false;
 }
 
-bool QueryWidget::event(QEvent *event)
-{
-    R_HANDLE(event)
-    R_EVENT(DocumentListLoadedEvent)
-    R_EVENT(ScriptExecutedEvent)
-    else return QWidget::event(event);
-}
-
 void QueryWidget::toggleOrientation()
 {
     _viewer->toggleOrientation();
@@ -291,7 +283,7 @@ void QueryWidget::vm_queryUpdated(const QString & query)
     // _queryText->setText(query);
 }
 
-void QueryWidget::handle(const DocumentListLoadedEvent *event)
+void QueryWidget::handle(DocumentListLoadedEvent *event)
 {
     _queryText->setText(event->query);
     QList<MongoShellResult> list;
@@ -299,7 +291,7 @@ void QueryWidget::handle(const DocumentListLoadedEvent *event)
     displayData(list);
 }
 
-void QueryWidget::handle(const ScriptExecutedEvent *event)
+void QueryWidget::handle(ScriptExecutedEvent *event)
 {
     _currentResults = event->results;
 

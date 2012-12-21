@@ -26,13 +26,6 @@ ExplorerServerTreeItem::~ExplorerServerTreeItem()
     int z = 56;
 }
 
-bool ExplorerServerTreeItem::event(QEvent *event)
-{
-    R_HANDLE(event)
-    R_EVENT(DatabaseListLoadedEvent)
-    else return QObject::event(event);
-}
-
 void ExplorerServerTreeItem::expand()
 {
     _server->listDatabases();

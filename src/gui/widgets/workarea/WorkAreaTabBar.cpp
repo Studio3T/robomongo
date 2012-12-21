@@ -18,11 +18,12 @@ WorkAreaTabBar::WorkAreaTabBar() : QTabBar()
 
     _newShellAction = new QAction("&New Shell", _menu);
     _newShellAction->setShortcut(Qt::CTRL + Qt::Key_T);
-
     _reloadShellAction = new QAction("&Reload", _menu);
+    _reloadShellAction->setShortcut(Qt::CTRL + Qt::Key_R);
     _duplicateShellAction = new QAction("&Duplicate", _menu);
     _pinShellAction = new QAction("&Pin Shell", _menu);
     _closeShellAction = new QAction("&Close Shell", _menu);
+    _closeShellAction->setShortcut(Qt::CTRL + Qt::Key_W);
     _closeOtherShellsAction = new QAction("Close &Other Shells", _menu);
     _closeShellsToTheRightAction = new QAction("Close Shells to the R&ight", _menu);
 
@@ -43,28 +44,66 @@ WorkAreaTabBar::WorkAreaTabBar() : QTabBar()
 void WorkAreaTabBar::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::MidButton)
-    {
-        int tabIndex = tabAt(event->pos());
+        middleMouseReleaseEvent(event);
+    else if (event->button() == Qt::RightButton)
+        rightMouseReleaseEvent(event);
 
-        if (tabIndex < 0)
-            return;
-
-        emit tabCloseRequested(tabIndex);
-    } else if (event->button() == Qt::RightButton) {
-        int tabIndex = tabAt(event->pos());
-
-        if (tabIndex < 0)
-            return;
-
-        QAction *selected = _menu->exec(QCursor::pos());
-
-        if (!selected)
-            return;
-
-        emitSignalForContextMenuAction(tabIndex, selected);
-    }
-
+    // always calling base event handler, even if we
+    // were interested by this event
     QTabBar::mouseReleaseEvent(event);
+}
+
+/**
+ * @brief Handles middle-mouse release event in order to close tab.
+ */
+void WorkAreaTabBar::middleMouseReleaseEvent(QMouseEvent *event)
+{
+    int tabIndex = tabAt(event->pos());
+    if (tabIndex < 0)
+        return;
+
+    emit tabCloseRequested(tabIndex);
+}
+
+/**
+ * @brief Handles right-mouse release event to show tab context menu.
+ */
+void WorkAreaTabBar::rightMouseReleaseEvent(QMouseEvent *event)
+{
+    int tabIndex = tabAt(event->pos());
+    if (tabIndex < 0)
+        return;
+
+    QAction *selected = _menu->exec(QCursor::pos());
+    if (!selected)
+        return;
+
+    emitSignalForContextMenuAction(tabIndex, selected);
+}
+
+/**
+ * @brief Emits signal, based on specified action. Only actions
+ * specified in this class are supported. If we don't know specified
+ * action - no signal will be emited.
+ * @param tabIndex: index of tab, for which signal will be emited.
+ * @param action: context menu action.
+ */
+void WorkAreaTabBar::emitSignalForContextMenuAction(int tabIndex, QAction *action)
+{
+    if (action == _newShellAction)
+        emit newTabRequested(tabIndex);
+    else if (action == _reloadShellAction)
+        emit reloadTabRequested(tabIndex);
+    else if (action == _duplicateShellAction)
+        emit duplicateTabRequested(tabIndex);
+    else if (action == _pinShellAction)
+        emit pinTabRequested(tabIndex);
+    else if (action == _closeShellAction)
+        emit tabCloseRequested(tabIndex);
+    else if (action == _closeOtherShellsAction)
+        emit closeOtherTabsRequested(tabIndex);
+    else if (action == _closeShellsToTheRightAction)
+        emit closeTabsToTheRightRequested(tabIndex);
 }
 
 /**
@@ -116,29 +155,4 @@ QString WorkAreaTabBar::buildStyleSheet()
     ;
 
     return styles;
-}
-
-/**
- * @brief Emits signal, based on specified action. Only actions
- * specified in this class are supported. If we don't know specified
- * action - no signal will be emited.
- * @param tabIndex: index of tab, for which signal will be emited.
- * @param action: context menu action.
- */
-void WorkAreaTabBar::emitSignalForContextMenuAction(int tabIndex, QAction *action)
-{
-    if (action == _newShellAction)
-        emit newTabRequested(tabIndex);
-    else if (action == _reloadShellAction)
-        emit reloadTabRequested(tabIndex);
-    else if (action == _duplicateShellAction)
-        emit duplicateTabRequested(tabIndex);
-    else if (action == _pinShellAction)
-        emit pinTabRequested(tabIndex);
-    else if (action == _closeShellAction)
-        emit tabCloseRequested(tabIndex);
-    else if (action == _closeOtherShellsAction)
-        emit closeOtherTabsRequested(tabIndex);
-    else if (action == _closeShellsToTheRightAction)
-        emit closeTabsToTheRightRequested(tabIndex);
 }

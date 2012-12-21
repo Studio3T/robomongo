@@ -71,9 +71,14 @@ namespace Robomongo
     private:
 
         /**
-         * @brief Builds stylesheet for this WorkAreaTabBar widget.
+         * @brief Handles middle-mouse release event.
          */
-        QString buildStyleSheet();
+        void middleMouseReleaseEvent(QMouseEvent *event);
+
+        /**
+         * @brief Handles right-mouse release event
+         */
+        void rightMouseReleaseEvent(QMouseEvent *event);
 
         /**
          * @brief Emits signal, based on specified action. Only actions
@@ -83,6 +88,11 @@ namespace Robomongo
          * @param action: context menu action.
          */
         void emitSignalForContextMenuAction(int tabIndex, QAction *action);
+
+        /**
+         * @brief Builds stylesheet for this WorkAreaTabBar widget.
+         */
+        QString buildStyleSheet();
 
     private:
 

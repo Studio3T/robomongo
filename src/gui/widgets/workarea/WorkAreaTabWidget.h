@@ -21,6 +21,11 @@ namespace Robomongo
         WorkAreaTabWidget(WorkAreaWidget * workAreaWidget);
 
     protected:
+
+        /**
+         * @brief Overrides QTabWidget::keyPressEvent() in order to intercept
+         * tab close key shortcuts (Ctrl+F4 and Ctrl+W)
+         */
         void keyPressEvent(QKeyEvent *event);
 
     public slots:

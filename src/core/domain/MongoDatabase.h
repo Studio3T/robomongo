@@ -38,19 +38,15 @@ namespace Robomongo
 
         MongoServer *server() const { return _server; }
 
-        /**
-         * @brief Events dispatcher
-         */
-        virtual bool event(QEvent *);
-
-
     signals:
 
         void collectionListLoaded(const QList<MongoCollectionPtr> &list);
 
-    private:
+    protected slots:
 
-        void handle(const LoadCollectionNamesResponse *collectionNames);
+        void handle(LoadCollectionNamesResponse *collectionNames);
+
+    private:
 
         MongoServer *_server;
         MongoClient *_client;

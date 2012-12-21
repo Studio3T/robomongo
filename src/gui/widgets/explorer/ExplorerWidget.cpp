@@ -49,15 +49,6 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     _dispatcher.subscribe(this, ConnectionEstablishedEvent::EventType);
 }
 
-bool ExplorerWidget::event(QEvent *event)
-{
-    R_HANDLE(event)
-    R_EVENT(ConnectingEvent)
-    R_EVENT(ConnectionFailedEvent)
-    R_EVENT(ConnectionEstablishedEvent)
-            else return QWidget::event(event);
-}
-
 void ExplorerWidget::keyPressEvent(QKeyEvent *event)
 {
     if ((event->key() == Qt::Key_Return) || (event->key() == Qt::Key_Enter))

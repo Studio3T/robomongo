@@ -67,22 +67,6 @@ void MongoClient::evaluteFile(const QString &path)
     }*/
 }
 
-/**
- * @brief Events dispatcher
- */
-bool MongoClient::event(QEvent *event)
-{
-    R_HANDLE(event)
-    R_EVENT(EstablishConnectionRequest)
-    R_EVENT(LoadDatabaseNamesRequest)
-    R_EVENT(LoadCollectionNamesRequest)
-    R_EVENT(ExecuteQueryRequest)
-    R_EVENT(ExecuteScriptRequest)
-    R_EVENT(InitRequest)
-    R_EVENT(FinalizeRequest)
-    else return QObject::event(event);
-}
-
 void MongoClient::handle(InitRequest *event)
 {
     try {
@@ -263,15 +247,23 @@ void MongoClient::handle(ExecuteScriptRequest *event)
 /**
  * @brief Send event to this MongoClient
  */
-void MongoClient::send(QEvent *event)
+void MongoClient::send(REvent *event)
 {
-    QCoreApplication::postEvent(this, event);
+    const char * typeName = event->typeString();
+    QMetaObject::invokeMethod(this, "handle", Qt::QueuedConnection, QGenericArgument(typeName, &event));
+
+    // was:
+    // QCoreApplication::postEvent(this, event);
 }
 
 /**
  * @brief Send reply event to object 'receiver'
  */
-void MongoClient::reply(QObject *receiver, QEvent *event)
+void MongoClient::reply(QObject *receiver, REvent *event)
 {
-    QCoreApplication::postEvent(receiver, event);
+    const char * typeName = event->typeString();
+    QMetaObject::invokeMethod(receiver, "handle", Qt::QueuedConnection, QGenericArgument(typeName, &event));
+
+    // was:
+    // QCoreApplication::postEvent(receiver, event);
 }

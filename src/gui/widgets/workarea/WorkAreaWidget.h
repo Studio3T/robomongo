@@ -27,13 +27,11 @@ namespace Robomongo
         WorkAreaWidget(MainWindow * mainWindow);
         ~WorkAreaWidget();
 
-        bool event(QEvent *event);
-
         void toggleOrientation();
         void executeScript();
 
-    private: //handlers:
-        void handle(const OpeningShellEvent *event);
+    public slots:
+        void handle(OpeningShellEvent *event);
 
 
     private:

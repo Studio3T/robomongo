@@ -124,13 +124,6 @@ MainWindow::MainWindow() : QMainWindow(),
     //connect(_viewModel, SIGNAL(statusMessageUpdated(QString)), SLOT(vm_statusMessageUpdated(QString)));
 }
 
-bool MainWindow::event(QEvent *event)
-{
-    R_HANDLE(event)
-    R_EVENT(ConnectionFailedEvent)
-            else return QMainWindow::event(event);
-}
-
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_F12)

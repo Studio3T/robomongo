@@ -69,18 +69,7 @@ void MongoServer::listDatabases()
     _client->send(new LoadDatabaseNamesRequest(this));
 }
 
-/**
- * @brief Events dispatcher
- */
-bool MongoServer::event(QEvent * event)
-{
-    R_HANDLE(event)
-    R_EVENT(EstablishConnectionResponse)
-    R_EVENT(LoadDatabaseNamesResponse)
-    else return QObject::event(event);
-}
-
-void MongoServer::handle(const LoadDatabaseNamesResponse *event)
+void MongoServer::handle(LoadDatabaseNamesResponse *event)
 {
     if (event->isError())
     {
@@ -99,7 +88,7 @@ void MongoServer::handle(const LoadDatabaseNamesResponse *event)
     _dispatcher.publish(this, new DatabaseListLoadedEvent(list));
 }
 
-void MongoServer::handle(const EstablishConnectionResponse *event)
+void MongoServer::handle(EstablishConnectionResponse *event)
 {
     if (event->isError())
     {

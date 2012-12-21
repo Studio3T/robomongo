@@ -34,15 +34,7 @@ void MongoShell::open(const QString &script, const QString &dbName)
     _client->send(new ExecuteScriptRequest(this, _query, dbName));
 }
 
-bool MongoShell::event(QEvent *event)
-{
-    R_HANDLE(event)
-    R_EVENT(ExecuteQueryResponse)
-    R_EVENT(ExecuteScriptResponse)
-    else return QObject::event(event);
-}
-
-void MongoShell::handle(const ExecuteQueryResponse *event)
+void MongoShell::handle(ExecuteQueryResponse *event)
 {
     QList<MongoDocumentPtr> list;
     foreach(mongo::BSONObj obj, event->documents) {
@@ -53,7 +45,7 @@ void MongoShell::handle(const ExecuteQueryResponse *event)
     _dispatcher->publish(this, new DocumentListLoadedEvent(_query, list));
 }
 
-void MongoShell::handle(const ExecuteScriptResponse *event)
+void MongoShell::handle(ExecuteScriptResponse *event)
 {
     QList<MongoShellResult> list = MongoShellResult::fromResult(event->results);
 

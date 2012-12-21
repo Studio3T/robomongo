@@ -30,17 +30,7 @@ void MongoDatabase::listCollections()
     _client->send(new LoadCollectionNamesRequest(this, _name));
 }
 
-/**
- * @brief Events dispatcher
- */
-bool MongoDatabase::event(QEvent *event)
-{
-    R_HANDLE(event)
-    R_EVENT(LoadCollectionNamesResponse)
-    else return QObject::event(event);
-}
-
-void MongoDatabase::handle(const LoadCollectionNamesResponse *loaded)
+void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
 {
     QList<MongoCollectionPtr> list;
 

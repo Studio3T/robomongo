@@ -51,7 +51,6 @@ namespace Robomongo
         */
         bool eventFilter(QObject * o, QEvent * e);
 
-        bool event(QEvent *event);
         void toggleOrientation();
         void activateTabContent();
 
@@ -99,9 +98,9 @@ namespace Robomongo
         */
         void vm_queryUpdated(const QString & query);
 
-    private:
-        void handle(const DocumentListLoadedEvent *event);
-        void handle(const ScriptExecutedEvent *event);
+    public slots:
+        void handle(DocumentListLoadedEvent *event);
+        void handle(ScriptExecutedEvent *event);
 
     private:
         void displayData(const QList<MongoShellResult> &results);

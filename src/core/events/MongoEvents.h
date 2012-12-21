@@ -8,10 +8,12 @@
 #include "mongo/client/dbclient.h"
 #include <engine/Result.h>
 #include "domain/MongoShellResult.h"
+#include <QMetaType>
 
 #define R_MESSAGE \
     public: \
         const static QEvent::Type EventType; \
+        const static int nothing; \
         virtual const char *typeString();
 
 

@@ -38,13 +38,11 @@ namespace Robomongo
         */
         void expandCollections();
 
-        bool event(QEvent *event);
-
     public slots:
 
         void vm_collectionRefreshed(const QList<MongoCollectionPtr> &collections);
 
-    private:
+    public slots:
         void handle(CollectionListLoadedEvent *event);
 
     private:

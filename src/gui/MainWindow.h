@@ -22,7 +22,6 @@ namespace Robomongo
         Q_OBJECT
     public:
         explicit MainWindow();
-        bool event(QEvent *event);
 
         void keyPressEvent(QKeyEvent *event);
 
@@ -70,7 +69,7 @@ namespace Robomongo
         void toggleLogs(bool show);
         void connectToServer(QAction *action);
 
-    private:
+    public slots:
         void handle(ConnectionFailedEvent *event);
     };
 

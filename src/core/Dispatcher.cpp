@@ -25,8 +25,6 @@ void Dispatcher::publish(Event *event)
         }
     }
 
-    //Q_ARG
-
     delete event;
 }
 

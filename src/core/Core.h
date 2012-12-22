@@ -56,26 +56,4 @@ namespace Robomongo
 
 }
 
-#define R_EVENT(EVENT_TYPE) \
-    else if (_roboevent->type() == EVENT_TYPE::EventType) \
-        handle(static_cast<EVENT_TYPE *>(_roboevent));
-
-#define R_HANDLE(EVENT) \
-    QEvent *_roboevent = static_cast<QEvent *>((EVENT)); \
-    if (false) ;
-
-#define R_MESSAGE \
-    public: \
-        const static QEvent::Type EventType; \
-        const static int nothing; \
-        virtual const char *typeString(); \
-        virtual const QEvent::Type type();
-
-#define R_REGISTER_EVENT_TYPE(EVENT_TYPE) \
-    const QEvent::Type EVENT_TYPE::EventType = static_cast<QEvent::Type>(QEvent::registerEventType()); \
-    const char *EVENT_TYPE::typeString() { return #EVENT_TYPE"*"; } \
-    const QEvent::Type EVENT_TYPE::type() { return EVENT_TYPE::EventType; } \
-    const int EVENT_TYPE::nothing = qRegisterMetaType<EVENT_TYPE*>(#EVENT_TYPE"*");
-
-
 #endif // CORE_H

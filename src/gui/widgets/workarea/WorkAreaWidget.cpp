@@ -29,7 +29,7 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
 	hlayout->addWidget(_tabWidget);
 	setLayout(hlayout);
 
-    _dispatcher->subscribe(this, OpeningShellEvent::EventType);
+    _dispatcher->subscribe(this, OpeningShellEvent::Type);
 }
 
 WorkAreaWidget::~WorkAreaWidget()

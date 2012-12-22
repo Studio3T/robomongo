@@ -44,9 +44,9 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     _progressLabel->hide();
     movie->start();
 
-    _dispatcher.subscribe(this, ConnectingEvent::EventType);
-    _dispatcher.subscribe(this, ConnectionFailedEvent::EventType);
-    _dispatcher.subscribe(this, ConnectionEstablishedEvent::EventType);
+    _dispatcher.subscribe(this, ConnectingEvent::Type);
+    _dispatcher.subscribe(this, ConnectionFailedEvent::Type);
+    _dispatcher.subscribe(this, ConnectionEstablishedEvent::Type);
 }
 
 void ExplorerWidget::keyPressEvent(QKeyEvent *event)

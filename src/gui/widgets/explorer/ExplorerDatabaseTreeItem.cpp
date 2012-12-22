@@ -17,7 +17,7 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(const MongoDatabasePtr &datab
     _database(database),
     _dispatcher(AppRegistry::instance().dispatcher())
 {
-    _dispatcher.subscribe(this, MongoDatabase_CollectionListLoadedEvent::EventType, _database.get());
+    _dispatcher.subscribe(this, MongoDatabase_CollectionListLoadedEvent::Type, _database.get());
 
     setText(0, _database->name());
     setIcon(0, GuiRegistry::instance().databaseIcon());

@@ -7,7 +7,7 @@
 
 using namespace Robomongo;
 
-R_REGISTER_EVENT_TYPE(MongoDatabase_CollectionListLoadedEvent)
+R_REGISTER_EVENT(MongoDatabase_CollectionListLoadedEvent)
 
 MongoDatabase::MongoDatabase(MongoServer *server, const QString &name) : QObject(),
     _system(false),

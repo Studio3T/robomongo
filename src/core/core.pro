@@ -26,7 +26,8 @@ SOURCES += \
     engine/ScriptEngine.cpp \
     engine/Result.cpp \
     domain/MongoShellResult.cpp \
-    Events.cpp
+    EventError.cpp \
+    Event.cpp
 
 
 HEADERS  += \
@@ -52,7 +53,8 @@ HEADERS  += \
     engine/ScriptEngine.h \
     engine/Result.h \
     domain/MongoShellResult.h \
-    Events.h
+    EventError.h \
+    Event.h
 
 # third party libs
 #LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson

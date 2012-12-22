@@ -14,7 +14,7 @@ ExplorerServerTreeItem::ExplorerServerTreeItem(const MongoServerPtr &server) : Q
     _dispatcher(AppRegistry::instance().dispatcher())
 {
     QObject *z = _server.get();
-    _dispatcher.subscribe(this, DatabaseListLoadedEvent::EventType, _server.get());
+    _dispatcher.subscribe(this, DatabaseListLoadedEvent::Type, _server.get());
 
     setText(0, _server->connectionRecord()->getReadableName());
     setIcon(0, GuiRegistry::instance().serverIcon());

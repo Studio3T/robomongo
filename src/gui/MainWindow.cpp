@@ -22,7 +22,7 @@ MainWindow::MainWindow() : QMainWindow(),
     _workArea(NULL),
     _connectionsMenu(NULL)
 {
-    _dispatcher.subscribe(this, ConnectionFailedEvent::EventType);
+    _dispatcher.subscribe(this, ConnectionFailedEvent::Type);
 
     qApp->setStyleSheet(
         "Robomongo--ExplorerTreeWidget#explorerTree { padding: 7px 0px 7px 0px; background-color:#E7E5E4; border: 0px; } \n "

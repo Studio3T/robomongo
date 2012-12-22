@@ -5,14 +5,14 @@
 
 namespace Robomongo
 {
-    class Dispatcher;
+    class EventBus;
 
 
     class App : public QObject
     {
         Q_OBJECT
     public:
-        App(Dispatcher *dispatcher);
+        App(EventBus *bus);
 
         MongoServerPtr openServer(const ConnectionRecordPtr &connectionRecord, bool visible);
         void closeServer(const MongoServerPtr &server);
@@ -28,7 +28,7 @@ namespace Robomongo
         QList<MongoServerPtr> _servers;
         QList<MongoShellPtr> _shells;
 
-        Dispatcher *_dispatcher;
+        EventBus *_bus;
     };
 }
 

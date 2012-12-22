@@ -1,6 +1,6 @@
 #include "LogWidget.h"
 #include "MainWindow.h"
-#include "Dispatcher.h"
+#include "EventBus.h"
 #include "AppRegistry.h"
 #include "domain/MongoServer.h"
 
@@ -10,7 +10,7 @@ using namespace Robomongo;
 ** Constructs log widget panel for main window
 */
 LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
-    _dispatcher(AppRegistry::instance().dispatcher())
+    _bus(AppRegistry::instance().bus())
 {
     _mainWindow = mainWindow;
 
@@ -24,9 +24,9 @@ LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
 
     setLayout(hlayout);
 
-    _dispatcher.subscribe(this, SomethingHappened::Type);
-    _dispatcher.subscribe(this, ConnectingEvent::Type);
-    _dispatcher.subscribe(this, OpeningShellEvent::Type);
+    _bus.subscribe(this, SomethingHappened::Type);
+    _bus.subscribe(this, ConnectingEvent::Type);
+    _bus.subscribe(this, OpeningShellEvent::Type);
 }
 
 void LogWidget::addMessage(const QString &message)

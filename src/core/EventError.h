@@ -57,9 +57,6 @@ namespace Robomongo
          */
         QString _errorMessage;
     };
-
-
-
 }
 
 #endif // EVENTS_H

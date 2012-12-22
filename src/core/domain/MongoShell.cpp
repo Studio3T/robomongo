@@ -2,7 +2,7 @@
 #include "MongoCollection.h"
 #include "MongoDocument.h"
 #include "AppRegistry.h"
-#include "Dispatcher.h"
+#include "EventBus.h"
 #include "engine/Result.h"
 #include "mongodb/MongoClient.h"
 
@@ -12,7 +12,7 @@ MongoShell::MongoShell(const MongoServerPtr server) :
     QObject(),
     _server(server),
     _client(server->client()),
-    _dispatcher(&AppRegistry::instance().dispatcher())
+    _bus(&AppRegistry::instance().bus())
 {
 
 }
@@ -42,14 +42,14 @@ void MongoShell::handle(ExecuteQueryResponse *event)
         list.append(doc);
     }
 
-    _dispatcher->publish(new DocumentListLoadedEvent(this, _query, list));
+    _bus->publish(new DocumentListLoadedEvent(this, _query, list));
 }
 
 void MongoShell::handle(ExecuteScriptResponse *event)
 {
     QList<MongoShellResult> list = MongoShellResult::fromResult(event->results);
 
-    _dispatcher->publish(new ScriptExecutedEvent(this, list));
+    _bus->publish(new ScriptExecutedEvent(this, list));
 
     /*
     QList<MongoDocumentPtr> list;
@@ -58,5 +58,5 @@ void MongoShell::handle(ExecuteScriptResponse *event)
         list.append(doc);
     }
 
-    _dispatcher->publish(this, new ScriptExecutedEvent(event->response, list));*/
+    _bus->publish(this, new ScriptExecutedEvent(event->response, list));*/
 }

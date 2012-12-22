@@ -5,14 +5,14 @@
 #include "settings/ConnectionRecord.h"
 #include "mongodb/MongoClient.h"
 #include "AppRegistry.h"
-#include "Dispatcher.h"
+#include "EventBus.h"
 
 using namespace Robomongo;
 using namespace std;
 
 MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord, bool visible) : QObject(),
     _connectionRecord(connectionRecord),
-    _dispatcher(AppRegistry::instance().dispatcher()),
+    _bus(AppRegistry::instance().bus()),
     _visible(visible)
 {
     _host = _connectionRecord->databaseAddress();
@@ -73,7 +73,7 @@ void MongoServer::handle(LoadDatabaseNamesResponse *event)
 {
     if (event->isError())
     {
-        _dispatcher.publish(new ConnectionFailedEvent(this, shared_from_this()));
+        _bus.publish(new ConnectionFailedEvent(this, shared_from_this()));
         return;
     }
 
@@ -85,17 +85,17 @@ void MongoServer::handle(LoadDatabaseNamesResponse *event)
         list.append(db);
     }
 
-    _dispatcher.publish(new DatabaseListLoadedEvent(this, list));
+    _bus.publish(new DatabaseListLoadedEvent(this, list));
 }
 
 void MongoServer::handle(EstablishConnectionResponse *event)
 {
     if (event->isError())
     {
-        _dispatcher.publish(new ConnectionFailedEvent(this, shared_from_this()));
+        _bus.publish(new ConnectionFailedEvent(this, shared_from_this()));
         return;
     }
 
     if (_visible)
-        _dispatcher.publish(new ConnectionEstablishedEvent(this, shared_from_this()));
+        _bus.publish(new ConnectionEstablishedEvent(this, shared_from_this()));
 }

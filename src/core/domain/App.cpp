@@ -2,13 +2,13 @@
 #include "MongoServer.h"
 #include "MongoShell.h"
 #include "domain/MongoCollection.h"
-#include "Dispatcher.h"
+#include "EventBus.h"
 
 using namespace Robomongo;
 
-App::App(Dispatcher *dispatcher) :
+App::App(EventBus *bus) :
     QObject(),
-    _dispatcher(dispatcher)
+    _bus(bus)
 {
 }
 
@@ -18,7 +18,7 @@ MongoServerPtr App::openServer(const ConnectionRecordPtr &connectionRecord, bool
     _servers.append(server);
 
     if (visible)
-        _dispatcher->publish(new ConnectingEvent(this, server));
+        _bus->publish(new ConnectingEvent(this, server));
 
     server->tryConnect();
     return server;
@@ -43,7 +43,7 @@ MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
 
     QString script = QString("db.%1.find()").arg(collection->name());
 
-    _dispatcher->publish(new OpeningShellEvent(this, shell, script));
+    _bus->publish(new OpeningShellEvent(this, shell, script));
 
     shell->open(script, collection->database()->name());
     return shell;
@@ -56,7 +56,7 @@ MongoShellPtr App::openShell(const MongoServerPtr &server, const QString &script
     MongoShellPtr shell(new MongoShell(serverClone));
     _shells.append(shell);
 
-    _dispatcher->publish(new OpeningShellEvent(this, shell, script));
+    _bus->publish(new OpeningShellEvent(this, shell, script));
 
     shell->open(script, dbName);
     return shell;

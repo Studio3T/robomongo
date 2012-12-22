@@ -7,24 +7,14 @@
 namespace Robomongo
 {
     class Event;
+    class EventBusSubscriber;
 
-    class Subscriber
-    {
-    public:
-        explicit Subscriber(QObject *receiver, QObject *sender = NULL) :
-            receiver(receiver),
-            sender(sender) {}
-
-        QObject *receiver;
-        QObject *sender;
-    };
-
-    class Dispatcher : QObject
+    class EventBus : QObject
     {
         Q_OBJECT
 
     public:
-        Dispatcher();
+        EventBus();
 
         /**
          * @brief Publishes event
@@ -43,7 +33,7 @@ namespace Robomongo
 
     private:
 
-        QMultiHash<QEvent::Type, Subscriber *> _subscribersByEventType;
+        QMultiHash<QEvent::Type, EventBusSubscriber *> _subscribersByEventType;
     };
 }
 

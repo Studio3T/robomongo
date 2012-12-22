@@ -5,7 +5,7 @@
 #include "domain/MongoDatabase.h"
 #include "domain/MongoCollection.h"
 #include "AppRegistry.h"
-#include "Dispatcher.h"
+#include "EventBus.h"
 #include "Core.h"
 
 using namespace Robomongo;
@@ -15,9 +15,9 @@ using namespace Robomongo;
 */
 ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(const MongoDatabasePtr &database) : QObject(),
     _database(database),
-    _dispatcher(AppRegistry::instance().dispatcher())
+    _bus(AppRegistry::instance().bus())
 {
-    _dispatcher.subscribe(this, MongoDatabase_CollectionListLoadedEvent::Type, _database.get());
+    _bus.subscribe(this, MongoDatabase_CollectionListLoadedEvent::Type, _database.get());
 
     setText(0, _database->name());
     setIcon(0, GuiRegistry::instance().databaseIcon());

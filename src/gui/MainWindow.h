@@ -12,7 +12,7 @@ namespace Robomongo
     class ExplorerWidget;
     class MongoManager;
     class SettingsManager;
-    class Dispatcher;
+    class EventBus;
     class ConnectionFailedEvent;
     class WorkAreaWidget;
     class ConnectionMenu;
@@ -49,7 +49,7 @@ namespace Robomongo
          */
         App &_app;
         SettingsManager &_settingsManager;
-        Dispatcher &_dispatcher;
+        EventBus &_bus;
 
         ConnectionMenu *_connectionsMenu;
         QAction *_connectAction;

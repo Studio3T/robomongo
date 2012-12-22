@@ -5,7 +5,7 @@
 #include "domain/MongoCollection.h"
 #include "AppRegistry.h"
 #include "GuiRegistry.h"
-#include "Dispatcher.h"
+#include "EventBus.h"
 
 using namespace Robomongo;
 
@@ -14,7 +14,7 @@ using namespace Robomongo;
 */
 WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
     QWidget(),
-    _dispatcher(&AppRegistry::instance().dispatcher())
+    _bus(&AppRegistry::instance().bus())
 {
     setContentsMargins(0, 3, 0, 0);
 	_mainWindow = mainWindow;
@@ -29,7 +29,7 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
 	hlayout->addWidget(_tabWidget);
 	setLayout(hlayout);
 
-    _dispatcher->subscribe(this, OpeningShellEvent::Type);
+    _bus->subscribe(this, OpeningShellEvent::Type);
 }
 
 WorkAreaWidget::~WorkAreaWidget()

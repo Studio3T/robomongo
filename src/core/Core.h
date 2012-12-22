@@ -27,8 +27,8 @@ namespace Robomongo
     class App;
     typedef boost::scoped_ptr<App> AppScopedPtr;
 
-    class Dispatcher;
-    typedef boost::scoped_ptr<Dispatcher> DispatcherScopedPtr;
+    class EventBus;
+    typedef boost::scoped_ptr<EventBus> EventBusScopedPtr;
 
     class MongoServer;
     typedef boost::shared_ptr<MongoServer> MongoServerPtr;
@@ -53,7 +53,6 @@ namespace Robomongo
     typedef QSharedPointer<ConnectionRecord> ConnectionRecordPtr;
 
     typedef boost::scoped_ptr<mongo::DBClientConnection> DBClientConnection_ScopedPtr;
-
 }
 
 #endif // CORE_H

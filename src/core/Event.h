@@ -27,7 +27,9 @@ namespace Robomongo
          */
         Event(QObject *sender, EventError error) :
             _sender(sender),
-            _error(error) {}
+            _error(error) { int a = 90; }
+
+        virtual ~Event() { int a = 90; }
 
         /**
          * @brief Type identifier of event. We are using QEvent::Type in order to

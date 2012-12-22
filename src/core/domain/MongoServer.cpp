@@ -22,13 +22,15 @@ MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord, bool visib
     _connection.reset(new mongo::DBClientConnection);
 
     _client.reset(new MongoClient(
+                      &_bus,
                       connectionRecord->databaseAddress(),
                       connectionRecord->databasePort(),
                       connectionRecord->databaseName(),
                       connectionRecord->userName(),
                       connectionRecord->userPassword()));
 
-    _client->send(new InitRequest(this));
+    _bus.send(_client.data(), new InitRequest(this));
+    //_client->send(new InitRequest(this));
 }
 
 MongoServer::~MongoServer()

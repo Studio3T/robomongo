@@ -11,18 +11,20 @@
 #include "engine/ScriptEngine.h"
 #include "mongo/scripting/engine_spidermonkey.h"
 #include <QVector>
+#include "EventBus.h"
 
 using namespace Robomongo;
 using namespace std;
 using namespace mongo;
 
 
-MongoClient::MongoClient(QString host, int port, QString database, QString username, QString password, QObject *parent) : QObject(parent),
+MongoClient::MongoClient(EventBus *bus, QString host, int port, QString database, QString username, QString password, QObject *parent) : QObject(parent),
     _databaseAddress(host),
     _databasePort(port),
     _databaseName(database),
     _userName(username),
-    _userPassword(password)
+    _userPassword(password),
+    _bus(bus)
 {
     _address = QString("%1:%2").arg(host).arg(port);
     init();
@@ -249,8 +251,9 @@ void MongoClient::handle(ExecuteScriptRequest *event)
  */
 void MongoClient::send(Event *event)
 {
-    const char * typeName = event->typeString();
-    QMetaObject::invokeMethod(this, "handle", Qt::QueuedConnection, QGenericArgument(typeName, &event));
+    _bus->send(this, event);
+    //const char * typeName = event->typeString();
+    //QMetaObject::invokeMethod(this, "handle", Qt::QueuedConnection, QGenericArgument(typeName, &event));
 
     // was:
     // QCoreApplication::postEvent(this, event);
@@ -261,8 +264,9 @@ void MongoClient::send(Event *event)
  */
 void MongoClient::reply(QObject *receiver, Event *event)
 {
-    const char * typeName = event->typeString();
-    QMetaObject::invokeMethod(receiver, "handle", Qt::QueuedConnection, QGenericArgument(typeName, &event));
+    _bus->send(receiver, event);
+    //const char * typeName = event->typeString();
+    //QMetaObject::invokeMethod(receiver, "handle", Qt::QueuedConnection, QGenericArgument(typeName, &event));
 
     // was:
     // QCoreApplication::postEvent(receiver, event);

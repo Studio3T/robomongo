@@ -3,6 +3,8 @@
 
 #include <QEvent>
 #include <QMultiHash>
+#include "EventBusDispatcher.h"
+#include <QMutex>
 
 namespace Robomongo
 {
@@ -15,6 +17,7 @@ namespace Robomongo
 
     public:
         EventBus();
+        ~EventBus();
 
         /**
          * @brief Publishes event
@@ -22,18 +25,25 @@ namespace Robomongo
          */
         void publish(Event *event);
 
+        void send(QObject *receiver, Event *event);
+        void send(QList<QObject *> receivers, Event *event);
+
         /**
          * @brief Subscribe to specified event
          */
         void subscribe(QObject *receiver, QEvent::Type type, QObject *sender = NULL);
+
+    protected:
+        EventBusDispatcher *dispatcher(QThread *thread);
 
     public slots:
 
         void unsubscibe(QObject *receiver);
 
     private:
-
+        QMutex _lock;
         QMultiHash<QEvent::Type, EventBusSubscriber *> _subscribersByEventType;
+        QHash<QThread *, EventBusDispatcher *> _dispatchersByThread;
     };
 }
 

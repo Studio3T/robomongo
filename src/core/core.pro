@@ -28,7 +28,9 @@ SOURCES += \
     domain/MongoShellResult.cpp \
     EventError.cpp \
     Event.cpp \
-    EventBusSubscriber.cpp
+    EventBusSubscriber.cpp \
+    EventBusDispatcher.cpp \
+    EventWrapper.cpp
 
 
 HEADERS  += \
@@ -56,7 +58,9 @@ HEADERS  += \
     domain/MongoShellResult.h \
     EventError.h \
     Event.h \
-    EventBusSubscriber.h
+    EventBusSubscriber.h \
+    EventBusDispatcher.h \
+    EventWrapper.h
 
 # third party libs
 #LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson

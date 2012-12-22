@@ -11,12 +11,13 @@
 namespace Robomongo
 {
     class Helper;
+    class EventBus;
 
     class MongoClient : public QObject
     {
         Q_OBJECT
     public:
-        explicit MongoClient(QString host, int port, QString database, QString username, QString password, QObject *parent = 0);
+        explicit MongoClient(EventBus *bus, QString host, int port, QString database, QString username, QString password, QObject *parent = 0);
 
         ~MongoClient();
 
@@ -90,6 +91,7 @@ namespace Robomongo
         QString _userName;
         QString _userPassword;
         QString _databaseName;
+        EventBus *_bus;
     };
 
     class Helper : public QObject

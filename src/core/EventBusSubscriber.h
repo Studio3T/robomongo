@@ -2,16 +2,19 @@
 #define EVENTBUSSUBSCRIBER_H
 
 #include <QObject>
+#include "EventBusDispatcher.h"
 
 namespace Robomongo
 {
     class EventBusSubscriber
     {
     public:
-        explicit EventBusSubscriber(QObject *receiver, QObject *sender = NULL) :
+        explicit EventBusSubscriber(EventBusDispatcher *dispatcher, QObject *receiver, QObject *sender = NULL) :
             receiver(receiver),
+            dispatcher(dispatcher),
             sender(sender) {}
 
+        EventBusDispatcher *dispatcher;
         QObject *receiver;
         QObject *sender;
     };

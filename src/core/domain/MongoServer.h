@@ -69,7 +69,7 @@ namespace Robomongo
 
         QList<MongoDatabasePtr> _databases;
         QHash<QString, MongoDatabasePtr> _databasesByName;
-        Dispatcher &_dispatcher;
+        EventBus &_bus;
 
     };
 }

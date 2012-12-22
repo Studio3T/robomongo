@@ -20,14 +20,15 @@ SOURCES += \
     domain/MongoDocument.cpp \
     Wrapper.cpp \
     events/MongoEvents.cpp \
-    Dispatcher.cpp \
+    EventBus.cpp \
     domain/App.cpp \
     domain/MongoShell.cpp \
     engine/ScriptEngine.cpp \
     engine/Result.cpp \
     domain/MongoShellResult.cpp \
     EventError.cpp \
-    Event.cpp
+    Event.cpp \
+    EventBusSubscriber.cpp
 
 
 HEADERS  += \
@@ -47,14 +48,15 @@ HEADERS  += \
     domain/MongoDocument.h \
     Wrapper.h \
     events/MongoEvents.h \
-    Dispatcher.h \
+    EventBus.h \
     domain/App.h \
     domain/MongoShell.h \
     engine/ScriptEngine.h \
     engine/Result.h \
     domain/MongoShellResult.h \
     EventError.h \
-    Event.h
+    Event.h \
+    EventBusSubscriber.h
 
 # third party libs
 #LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson

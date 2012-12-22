@@ -9,7 +9,7 @@ namespace Robomongo
     class WorkAreaViewModel;
     class WorkAreaTabWidget;
     class QueryWindowViewModel;
-    class Dispatcher;
+    class EventBus;
     class OpeningShellEvent;
 
     /*
@@ -46,7 +46,7 @@ namespace Robomongo
         */
         WorkAreaTabWidget * _tabWidget;
 
-        Dispatcher *_dispatcher;
+        EventBus *_bus;
 
     };
 }

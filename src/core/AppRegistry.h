@@ -22,7 +22,7 @@ namespace Robomongo
 
         SettingsManager &settingsManager() const { return *_settingsManager.get(); }
         App &app() const { return *_app.get(); }
-        Dispatcher &dispatcher() const { return *_dispatcher.get(); }
+        EventBus &bus() const { return *_bus.get(); }
 
     private:
         AppRegistry();
@@ -30,7 +30,7 @@ namespace Robomongo
 
         SettingsManager_ScopedPtr _settingsManager;
         AppScopedPtr _app;
-        DispatcherScopedPtr _dispatcher;
+        EventBusScopedPtr _bus;
 
         /**
          * Singleton support

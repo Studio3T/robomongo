@@ -10,9 +10,9 @@
 #include <QApplication>
 #include <QtGui>
 #include "GuiRegistry.h"
-#include "Dispatcher.h"
+#include "EventBus.h"
 #include <QPlainTextEdit>
-#include "Dispatcher.h"
+#include "EventBus.h"
 #include "events/MongoEvents.h"
 #include "BsonWidget.h"
 #include "editors/PlainJavaScriptEditor.h"
@@ -34,12 +34,12 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidge
     QWidget(parent),
     _shell(shell),
     _tabWidget(tabWidget),
-    _dispatcher(AppRegistry::instance().dispatcher())
+    _bus(AppRegistry::instance().bus())
 {
     setObjectName("queryWidget");
 
-    _dispatcher.subscribe(this, DocumentListLoadedEvent::Type, shell.get());
-    _dispatcher.subscribe(this, ScriptExecutedEvent::Type, shell.get());
+    _bus.subscribe(this, DocumentListLoadedEvent::Type, shell.get());
+    _bus.subscribe(this, ScriptExecutedEvent::Type, shell.get());
 
     // Query text widget
     _configureQueryText();

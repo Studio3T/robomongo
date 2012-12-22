@@ -3,7 +3,7 @@
 #include "MongoCollection.h"
 #include "events/MongoEvents.h"
 #include "AppRegistry.h"
-#include "Dispatcher.h"
+#include "EventBus.h"
 
 using namespace Robomongo;
 
@@ -11,7 +11,7 @@ R_REGISTER_EVENT(MongoDatabase_CollectionListLoadedEvent)
 
 MongoDatabase::MongoDatabase(MongoServer *server, const QString &name) : QObject(),
     _system(false),
-    _dispatcher(AppRegistry::instance().dispatcher())
+    _bus(AppRegistry::instance().bus())
 {
     _server = server;
     _name = name;
@@ -41,5 +41,5 @@ void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
         list.append(db);
     }
 
-    _dispatcher.publish(new MongoDatabase_CollectionListLoadedEvent(this, list));
+    _bus.publish(new MongoDatabase_CollectionListLoadedEvent(this, list));
 }

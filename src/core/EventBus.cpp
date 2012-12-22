@@ -1,21 +1,22 @@
 #include <QEvent>
 #include <QObject>
 #include <QCoreApplication>
-#include "Dispatcher.h"
+#include "EventBus.h"
+#include "EventBusSubscriber.h"
 #include "events/MongoEvents.h"
 
 using namespace Robomongo;
 
 class SomethingHappened;
 
-Dispatcher::Dispatcher() : QObject()
+EventBus::EventBus() : QObject()
 {
 }
 
-void Dispatcher::publish(Event *event)
+void EventBus::publish(Event *event)
 {
-    QList<Subscriber *> subscribers = _subscribersByEventType.values(event->type());
-    foreach(Subscriber *subscriber, subscribers)
+    QList<EventBusSubscriber *> subscribers = _subscribersByEventType.values(event->type());
+    foreach(EventBusSubscriber *subscriber, subscribers)
     {
         if (!subscriber->sender || subscriber->sender == event->sender()) {
             //QCoreApplication::sendEvent(subscriber->receiver, event);
@@ -28,22 +29,22 @@ void Dispatcher::publish(Event *event)
     delete event;
 }
 
-void Dispatcher::subscribe(QObject *receiver, QEvent::Type type, QObject *sender /* = NULL */)
+void EventBus::subscribe(QObject *receiver, QEvent::Type type, QObject *sender /* = NULL */)
 {
     // subscribe to destroyed signal in order to remove
     // listener (receiver) from list of subscribers
     connect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(unsubscibe(QObject*)));
 
     // add subscriber
-    _subscribersByEventType.insert(type, new Subscriber(receiver, sender));
+    _subscribersByEventType.insert(type, new EventBusSubscriber(receiver, sender));
 }
 
-void Dispatcher::unsubscibe(QObject *receiver)
+void EventBus::unsubscibe(QObject *receiver)
 {
     QString name = receiver->objectName();
     QString cname = receiver->metaObject()->className();
 
-    QMutableHashIterator<QEvent::Type, Subscriber *> i(_subscribersByEventType);
+    QMutableHashIterator<QEvent::Type, EventBusSubscriber *> i(_subscribersByEventType);
 
     while(i.hasNext()) {
         i.next();

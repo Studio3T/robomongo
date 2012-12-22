@@ -9,7 +9,7 @@ namespace Robomongo
 {
     class ExplorerCollectionTreeItem;
     class ExplorerDatabaseCategoryTreeItem;
-    class Dispatcher;
+    class EventBus;
     class MongoDatabase_CollectionListLoadedEvent;
 
     class ExplorerDatabaseTreeItem : public QObject, public QTreeWidgetItem
@@ -46,7 +46,7 @@ namespace Robomongo
         void handle(MongoDatabase_CollectionListLoadedEvent *event);
 
     private:
-        Dispatcher &_dispatcher;
+        EventBus &_bus;
     };
 }
 

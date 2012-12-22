@@ -67,7 +67,7 @@ namespace Robomongo
         */
         QTreeWidget *_treeWidget;
 
-        Dispatcher &_dispatcher;
+        EventBus &_bus;
         App &_app;
     };
 }

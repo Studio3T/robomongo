@@ -9,7 +9,7 @@
 #include "widgets/explorer/ExplorerWidget.h"
 #include "domain/MongoServer.h"
 #include "mongodb/MongoException.h"
-#include "Dispatcher.h"
+#include "EventBus.h"
 #include "widgets/workarea/WorkAreaWidget.h"
 #include "domain/App.h"
 
@@ -18,11 +18,11 @@ using namespace Robomongo;
 MainWindow::MainWindow() : QMainWindow(),
     _app(AppRegistry::instance().app()),
     _settingsManager(AppRegistry::instance().settingsManager()),
-    _dispatcher(AppRegistry::instance().dispatcher()),
+    _bus(AppRegistry::instance().bus()),
     _workArea(NULL),
     _connectionsMenu(NULL)
 {
-    _dispatcher.subscribe(this, ConnectionFailedEvent::Type);
+    _bus.subscribe(this, ConnectionFailedEvent::Type);
 
     qApp->setStyleSheet(
         "Robomongo--ExplorerTreeWidget#explorerTree { padding: 7px 0px 7px 0px; background-color:#E7E5E4; border: 0px; } \n "

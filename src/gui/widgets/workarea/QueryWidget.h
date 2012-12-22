@@ -14,7 +14,7 @@
 namespace Robomongo
 {
     class BsonWidget;
-    class Dispatcher;
+    class EventBus;
     class DocumentListLoadedEvent;
     class ScriptExecutedEvent;
     class PlainJavaScriptEditor;
@@ -131,7 +131,7 @@ namespace Robomongo
 //        PlainJavaScriptEditor *_queryText;
 
         MongoShellPtr _shell;
-        Dispatcher &_dispatcher;
+        EventBus &_bus;
     };
 }
 

@@ -12,7 +12,7 @@
 
 namespace Robomongo
 {
-    class Dispatcher;
+    class EventBus;
 
     class MongoDatabase : public QObject, public boost::enable_shared_from_this<MongoDatabase>
     {
@@ -54,7 +54,7 @@ namespace Robomongo
         QString _name;
         bool _system;
 
-        Dispatcher &_dispatcher;
+        EventBus &_bus;
 
     };
 

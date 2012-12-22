@@ -8,7 +8,7 @@
 
 namespace Robomongo
 {
-    class Dispatcher;
+    class EventBus;
 
     class ExplorerServerTreeItem : public QObject, public QTreeWidgetItem
     {
@@ -44,7 +44,7 @@ namespace Robomongo
     private:
 
         MongoServerPtr _server;
-        Dispatcher &_dispatcher;
+        EventBus &_bus;
 
     };
 }

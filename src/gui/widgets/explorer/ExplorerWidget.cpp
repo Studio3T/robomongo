@@ -5,7 +5,7 @@
 #include "AppRegistry.h"
 #include "ExplorerTreeWidget.h"
 #include "ExplorerServerTreeItem.h"
-#include "Dispatcher.h"
+#include "EventBus.h"
 #include "ExplorerCollectionTreeItem.h"
 #include "domain/App.h"
 
@@ -16,7 +16,7 @@ using namespace Robomongo;
  */
 ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     _progress(0),
-    _dispatcher(AppRegistry::instance().dispatcher()),
+    _bus(AppRegistry::instance().bus()),
     _app(AppRegistry::instance().app())
 {
     _treeWidget = new ExplorerTreeWidget;
@@ -44,9 +44,9 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     _progressLabel->hide();
     movie->start();
 
-    _dispatcher.subscribe(this, ConnectingEvent::Type);
-    _dispatcher.subscribe(this, ConnectionFailedEvent::Type);
-    _dispatcher.subscribe(this, ConnectionEstablishedEvent::Type);
+    _bus.subscribe(this, ConnectingEvent::Type);
+    _bus.subscribe(this, ConnectionFailedEvent::Type);
+    _bus.subscribe(this, ConnectionEstablishedEvent::Type);
 }
 
 void ExplorerWidget::keyPressEvent(QKeyEvent *event)

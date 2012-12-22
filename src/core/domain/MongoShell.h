@@ -7,7 +7,7 @@
 
 namespace Robomongo
 {
-    class Dispatcher;
+    class EventBus;
     class MongoClient;
 
     class MongoShell : public QObject
@@ -39,7 +39,7 @@ namespace Robomongo
 
         MongoClient *_client;
 
-        Dispatcher *_dispatcher;
+        EventBus *_bus;
     };
 
 }

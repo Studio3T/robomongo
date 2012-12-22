@@ -5,16 +5,16 @@
 #include "domain/MongoDatabase.h"
 #include "settings/ConnectionRecord.h"
 #include "AppRegistry.h"
-#include "Dispatcher.h"
+#include "EventBus.h"
 
 using namespace Robomongo;
 
 ExplorerServerTreeItem::ExplorerServerTreeItem(const MongoServerPtr &server) : QObject(),
     _server(server),
-    _dispatcher(AppRegistry::instance().dispatcher())
+    _bus(AppRegistry::instance().bus())
 {
     QObject *z = _server.get();
-    _dispatcher.subscribe(this, DatabaseListLoadedEvent::Type, _server.get());
+    _bus.subscribe(this, DatabaseListLoadedEvent::Type, _server.get());
 
     setText(0, _server->connectionRecord()->getReadableName());
     setIcon(0, GuiRegistry::instance().serverIcon());

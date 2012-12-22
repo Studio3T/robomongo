@@ -41,5 +41,5 @@ void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
         list.append(db);
     }
 
-    _dispatcher.publish(this, new MongoDatabase_CollectionListLoadedEvent(list));
+    _dispatcher.publish(new MongoDatabase_CollectionListLoadedEvent(this, list));
 }

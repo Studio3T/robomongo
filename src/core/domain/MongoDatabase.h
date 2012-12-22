@@ -58,12 +58,12 @@ namespace Robomongo
 
     };
 
-    class MongoDatabase_CollectionListLoadedEvent : public REvent
+    class MongoDatabase_CollectionListLoadedEvent : public Event
     {
         R_MESSAGE
 
-        MongoDatabase_CollectionListLoadedEvent(const QList<MongoCollectionPtr> &list) :
-            REvent(EventType),
+        MongoDatabase_CollectionListLoadedEvent(QObject *sender, const QList<MongoCollectionPtr> &list) :
+            Event(sender),
             list(list) { }
 
         QList<MongoCollectionPtr> list;

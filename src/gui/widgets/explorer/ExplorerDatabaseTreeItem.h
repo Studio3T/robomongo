@@ -10,7 +10,7 @@ namespace Robomongo
     class ExplorerCollectionTreeItem;
     class ExplorerDatabaseCategoryTreeItem;
     class Dispatcher;
-    class CollectionListLoadedEvent;
+    class MongoDatabase_CollectionListLoadedEvent;
 
     class ExplorerDatabaseTreeItem : public QObject, public QTreeWidgetItem
     {
@@ -43,7 +43,7 @@ namespace Robomongo
         void vm_collectionRefreshed(const QList<MongoCollectionPtr> &collections);
 
     public slots:
-        void handle(CollectionListLoadedEvent *event);
+        void handle(MongoDatabase_CollectionListLoadedEvent *event);
 
     private:
         Dispatcher &_dispatcher;

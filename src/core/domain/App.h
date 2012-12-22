@@ -7,6 +7,7 @@ namespace Robomongo
 {
     class Dispatcher;
 
+
     class App : public QObject
     {
         Q_OBJECT

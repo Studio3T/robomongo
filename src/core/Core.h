@@ -1,6 +1,7 @@
 #ifndef CORE_H
 #define CORE_H
 
+#include <QMetaType>
 #include <QSharedPointer>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
@@ -62,5 +63,17 @@ namespace Robomongo
 #define R_HANDLE(EVENT) \
     QEvent *_roboevent = static_cast<QEvent *>((EVENT)); \
     if (false) ;
+
+#define R_MESSAGE \
+    public: \
+        const static QEvent::Type EventType; \
+        const static int nothing; \
+        virtual const char *typeString();
+
+#define R_REGISTER_EVENT_TYPE(EVENT_TYPE) \
+    const QEvent::Type EVENT_TYPE::EventType = static_cast<QEvent::Type>(QEvent::registerEventType()); \
+    const char *EVENT_TYPE::typeString() { return #EVENT_TYPE"*"; } \
+    const int EVENT_TYPE::nothing = qRegisterMetaType<EVENT_TYPE*>(#EVENT_TYPE"*");
+
 
 #endif // CORE_H

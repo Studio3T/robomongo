@@ -7,6 +7,8 @@
 
 using namespace Robomongo;
 
+R_REGISTER_EVENT_TYPE(MongoDatabase_CollectionListLoadedEvent)
+
 MongoDatabase::MongoDatabase(MongoServer *server, const QString &name) : QObject(),
     _system(false),
     _dispatcher(AppRegistry::instance().dispatcher())
@@ -39,5 +41,5 @@ void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
         list.append(db);
     }
 
-    _dispatcher.publish(this, new CollectionListLoadedEvent(list));
+    _dispatcher.publish(this, new MongoDatabase_CollectionListLoadedEvent(list));
 }

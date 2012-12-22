@@ -2,9 +2,10 @@
 #define MONGODATABASE_H
 
 #include <QObject>
-#include "Core.h"
 #include "mongo/client/dbclient.h"
 #include "boost/shared_ptr.hpp"
+
+#include "Core.h"
 #include "events/MongoEvents.h"
 #include "mongodb/MongoClient.h"
 #include "MongoServer.h"
@@ -21,11 +22,15 @@ namespace Robomongo
 
         /**
          * @brief MongoDatabase
-         * @param server - pointer to parent MongoServer
+         * @param server: pointer to parent MongoServer
          */
         MongoDatabase(MongoServer *server, const QString &name);
         ~MongoDatabase();
 
+        /**
+         * @brief Initiate listCollection asynchronous operation.
+         *
+         */
         void listCollections();
 
         QString name() const { return _name; }
@@ -37,10 +42,6 @@ namespace Robomongo
         bool isSystem() const { return _system; }
 
         MongoServer *server() const { return _server; }
-
-    signals:
-
-        void collectionListLoaded(const QList<MongoCollectionPtr> &list);
 
     protected slots:
 
@@ -57,6 +58,16 @@ namespace Robomongo
 
     };
 
+    class MongoDatabase_CollectionListLoadedEvent : public REvent
+    {
+        R_MESSAGE
+
+        MongoDatabase_CollectionListLoadedEvent(const QList<MongoCollectionPtr> &list) :
+            REvent(EventType),
+            list(list) { }
+
+        QList<MongoCollectionPtr> list;
+    };
 }
 
 #endif // MONGODATABASE_H

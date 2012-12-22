@@ -60,7 +60,7 @@ namespace Robomongo
 
     class MongoDatabase_CollectionListLoadedEvent : public Event
     {
-        R_MESSAGE
+        R_EVENT
 
         MongoDatabase_CollectionListLoadedEvent(QObject *sender, const QList<MongoCollectionPtr> &list) :
             Event(sender),

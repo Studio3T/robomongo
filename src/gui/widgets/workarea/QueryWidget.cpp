@@ -38,8 +38,8 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidge
 {
     setObjectName("queryWidget");
 
-    _dispatcher.subscribe(this, DocumentListLoadedEvent::EventType, shell.get());
-    _dispatcher.subscribe(this, ScriptExecutedEvent::EventType, shell.get());
+    _dispatcher.subscribe(this, DocumentListLoadedEvent::Type, shell.get());
+    _dispatcher.subscribe(this, ScriptExecutedEvent::Type, shell.get());
 
     // Query text widget
     _configureQueryText();

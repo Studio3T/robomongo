@@ -74,7 +74,7 @@ void MongoClient::handle(InitRequest *event)
         _scriptEngine->init();
     }
     catch (std::exception &ex) {
-        reply(event->sender(), new InitResponse(this, Error("Unable to initialize MongoClient")));
+        reply(event->sender(), new InitResponse(this, EventError("Unable to initialize MongoClient")));
     }
 }
 
@@ -127,7 +127,7 @@ void MongoClient::handle(EstablishConnectionRequest *event)
     }
     catch(std::exception &ex)
     {
-        reply(event->sender(), new EstablishConnectionResponse(this, Error("Unable to connect to MongoDB")));
+        reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
     }
 }
 
@@ -160,7 +160,7 @@ void MongoClient::handle(LoadDatabaseNamesRequest *event)
     }
     catch(DBException &ex)
     {
-        reply(event->sender(), new LoadDatabaseNamesResponse(this, Error("Unable to load database names.")));
+        reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError("Unable to load database names.")));
     }
 }
 
@@ -184,7 +184,7 @@ void MongoClient::handle(LoadCollectionNamesRequest *event)
     }
     catch(DBException &ex)
     {
-        reply(event->sender(), new LoadCollectionNamesResponse(this, Error("Unable to load list of collections.")));
+        reply(event->sender(), new LoadCollectionNamesResponse(this, EventError("Unable to load list of collections.")));
     }
 }
 
@@ -208,7 +208,7 @@ void MongoClient::handle(ExecuteQueryRequest *event)
     }
     catch(DBException &ex)
     {
-        reply(event->sender(), new ExecuteQueryResponse(this, Error("Unable to complete query.")));
+        reply(event->sender(), new ExecuteQueryResponse(this, EventError("Unable to complete query.")));
     }
 }
 
@@ -240,7 +240,7 @@ void MongoClient::handle(ExecuteScriptRequest *event)
     }
     catch(DBException &ex)
     {
-        reply(event->sender(), new ExecuteScriptResponse(this, Error("Unable to complete query.")));
+        reply(event->sender(), new ExecuteScriptResponse(this, EventError("Unable to complete query.")));
     }
 }
 

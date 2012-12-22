@@ -23,7 +23,7 @@ namespace Robomongo
         /**
          * @brief Send event to this MongoClient
          */
-        void send(REvent *event);
+        void send(Event *event);
 
     protected slots: // handlers:
 
@@ -74,7 +74,7 @@ namespace Robomongo
         /**
          * @brief Send reply event to object 'obj'
          */
-        void reply(QObject *receiver, REvent *event);
+        void reply(QObject *receiver, Event *event);
 
         QString _address;
         QThread *_thread;

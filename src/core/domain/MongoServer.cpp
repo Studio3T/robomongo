@@ -73,7 +73,7 @@ void MongoServer::handle(LoadDatabaseNamesResponse *event)
 {
     if (event->isError())
     {
-        _dispatcher.publish(this, new ConnectionFailedEvent(shared_from_this()));
+        _dispatcher.publish(new ConnectionFailedEvent(this, shared_from_this()));
         return;
     }
 
@@ -85,17 +85,17 @@ void MongoServer::handle(LoadDatabaseNamesResponse *event)
         list.append(db);
     }
 
-    _dispatcher.publish(this, new DatabaseListLoadedEvent(list));
+    _dispatcher.publish(new DatabaseListLoadedEvent(this, list));
 }
 
 void MongoServer::handle(EstablishConnectionResponse *event)
 {
     if (event->isError())
     {
-        _dispatcher.publish(this, new ConnectionFailedEvent(shared_from_this()));
+        _dispatcher.publish(new ConnectionFailedEvent(this, shared_from_this()));
         return;
     }
 
     if (_visible)
-        _dispatcher.publish(this, new ConnectionEstablishedEvent(shared_from_this()));
+        _dispatcher.publish(new ConnectionEstablishedEvent(this, shared_from_this()));
 }

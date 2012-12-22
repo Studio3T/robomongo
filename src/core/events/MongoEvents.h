@@ -8,111 +8,54 @@
 #include "mongo/client/dbclient.h"
 #include <engine/Result.h>
 #include "domain/MongoShellResult.h"
+#include "Events.h"
 
 namespace Robomongo
 {
     /**
-     * @brief Error class
-     */
-    class Error
-    {
-    public:
-        Error() :
-            isNull(true) {}
-
-        Error(const QString &errorMessage) :
-            isNull(false),
-            errorMessage(errorMessage) {}
-
-        QString errorMessage;
-        bool isNull;
-    };
-
-    class REvent : public QEvent
-    {
-    public:
-        REvent(QEvent::Type type) :
-            QEvent(type) {}
-
-        virtual const char *typeString() = 0;
-    };
-
-    /**
-     * @brief Request & Response
-     */
-
-    class Request : public REvent
-    {
-    public:
-        Request(QEvent::Type type, QObject *sender) :
-            REvent(type),
-            sender(sender) {}
-
-        QObject *sender;
-        virtual const char *typeString() = 0;
-    };
-
-    class Response : public REvent
-    {
-    public:
-        Response(QEvent::Type type) :
-            REvent(type) {}
-
-        Response(QEvent::Type type, Error error) :
-            REvent(type),
-            error(error) {}
-
-        bool isError() const { return !error.isNull; }
-        QString errorMessage() const { return error.errorMessage; }
-
-        virtual const char *typeString() = 0;
-        Error error;
-    };
-
-    /**
      * @brief Init Request & Response
      */
 
-    class InitRequest : public Request
+    class InitRequest : public Event
     {
         R_MESSAGE
 
         InitRequest(QObject *sender) :
-            Request(EventType, sender) {}
+            Event(sender) {}
     };
 
-    class InitResponse : public Response
+    class InitResponse : public Event
     {
         R_MESSAGE
 
-        InitResponse() :
-            Response(EventType) {}
+        InitResponse(QObject *sender) :
+            Event(sender) {}
 
-        InitResponse(const Error &error) :
-            Response(EventType, error) {}
+        InitResponse(QObject *sender, Error error) :
+            Event(sender, error) {}
     };
 
     /**
      * @brief Init Request & Response
      */
 
-    class FinalizeRequest : public Request
+    class FinalizeRequest : public Event
     {
         R_MESSAGE
 
         FinalizeRequest(QObject *sender) :
-            Request(EventType, sender) {}
+            Event(sender) {}
     };
 
-    class FinalizeResponse : public Response
+    class FinalizeResponse : public Event
     {
         R_MESSAGE
 
-        FinalizeResponse() :
-            Response(EventType) {}
+        FinalizeResponse(QObject *sender) :
+            Event(sender) {}
 
-        FinalizeResponse(const Error &error) :
-            Response(EventType, error) {}
+        FinalizeResponse(QObject *sender, Error error) :
+            Event(sender, error) {}
     };
 
 
@@ -120,13 +63,13 @@ namespace Robomongo
      * @brief EstablishConnection
      */
 
-    class EstablishConnectionRequest : public Request
+    class EstablishConnectionRequest : public Event
     {
         R_MESSAGE
 
         EstablishConnectionRequest(QObject *sender, const QString &databaseName,
                                    const QString &userName, const QString &userPassword) :
-            Request(EventType, sender),
+            Event(sender),
             databaseName(databaseName),
             userName(userName),
             userPassword(userPassword) {}
@@ -136,16 +79,16 @@ namespace Robomongo
         QString userPassword;
     };
 
-    class EstablishConnectionResponse : public Response
+    class EstablishConnectionResponse : public Event
     {
         R_MESSAGE
 
-        EstablishConnectionResponse(const QString &address) :
-            Response(EventType),
+        EstablishConnectionResponse(QObject *sender, const QString &address) :
+            Event(sender),
             address(address) {}
 
-        EstablishConnectionResponse(const Error &error) :
-            Response(EventType, error) {}
+        EstablishConnectionResponse(QObject *sender, const Error &error) :
+            Event(sender, error) {}
 
         QString address;
     };
@@ -155,24 +98,24 @@ namespace Robomongo
      * @brief LoadDatabaseNames
      */
 
-    class LoadDatabaseNamesRequest : public Request
+    class LoadDatabaseNamesRequest : public Event
     {
         R_MESSAGE
 
         LoadDatabaseNamesRequest(QObject *sender) :
-            Request(EventType, sender) {}
+            Event(sender) {}
     };
 
-    class LoadDatabaseNamesResponse : public Response
+    class LoadDatabaseNamesResponse : public Event
     {
         R_MESSAGE
 
-        LoadDatabaseNamesResponse(const QStringList &databaseNames) :
-            Response(EventType),
+        LoadDatabaseNamesResponse(QObject *sender, const QStringList &databaseNames) :
+            Event(sender),
             databaseNames(databaseNames) {}
 
-        LoadDatabaseNamesResponse(const Error &error) :
-            Response(EventType, error) {}
+        LoadDatabaseNamesResponse(QObject *sender, const Error &error) :
+            Event(sender, error) {}
 
         QStringList databaseNames;
     };
@@ -182,28 +125,29 @@ namespace Robomongo
      * @brief LoadCollectionNames
      */
 
-    class LoadCollectionNamesRequest : public Request
+    class LoadCollectionNamesRequest : public Event
     {
         R_MESSAGE
 
         LoadCollectionNamesRequest(QObject *sender, const QString &databaseName) :
-            Request(EventType, sender),
+            Event(sender),
             databaseName(databaseName) {}
 
         QString databaseName;
     };
 
-    class LoadCollectionNamesResponse : public Response
+    class LoadCollectionNamesResponse : public Event
     {
         R_MESSAGE
 
-        LoadCollectionNamesResponse(const QString &databaseName, const QStringList &collectionNames) :
-            Response(EventType),
+        LoadCollectionNamesResponse(QObject *sender, const QString &databaseName,
+                                    const QStringList &collectionNames) :
+            Event(sender),
             databaseName(databaseName),
             collectionNames(collectionNames) { }
 
-        LoadCollectionNamesResponse(const Error &error) :
-            Response(EventType, error) {}
+        LoadCollectionNamesResponse(QObject *sender, Error error) :
+            Event(sender, error) {}
 
         QString databaseName;
         QStringList collectionNames;
@@ -214,12 +158,12 @@ namespace Robomongo
      * @brief Query Mongodb
      */
 
-    class ExecuteQueryRequest : public Request
+    class ExecuteQueryRequest : public Event
     {
         R_MESSAGE
 
         ExecuteQueryRequest(QObject *sender, const QString &nspace, int take = 0, int skip = 0) :
-            Request(EventType, sender),
+            Event(sender),
             nspace(nspace),
             take(take),
             skip(skip) {}
@@ -229,16 +173,16 @@ namespace Robomongo
         int skip;
     };
 
-    class ExecuteQueryResponse : public Response
+    class ExecuteQueryResponse : public Event
     {
         R_MESSAGE
 
-        ExecuteQueryResponse(const QList<mongo::BSONObj> &documents) :
-            Response(EventType),
+        ExecuteQueryResponse(QObject *sender, const QList<mongo::BSONObj> &documents) :
+            Event(sender),
             documents(documents) { }
 
-        ExecuteQueryResponse(const Error &error) :
-            Response(EventType, error) {}
+        ExecuteQueryResponse(QObject *sender, const Error &error) :
+            Event(sender, error) {}
 
         QList<mongo::BSONObj> documents;
     };
@@ -248,12 +192,12 @@ namespace Robomongo
      * @brief ExecuteScript
      */
 
-    class ExecuteScriptRequest : public Request
+    class ExecuteScriptRequest : public Event
     {
         R_MESSAGE
 
         ExecuteScriptRequest(QObject *sender, const QString &script, const QString &dbName, int take = 0, int skip = 0) :
-            Request(EventType, sender),
+            Event(sender),
             script(script),
             databaseName(dbName),
             take(take),
@@ -265,50 +209,50 @@ namespace Robomongo
         int skip;
     };
 
-    class ExecuteScriptResponse : public Response
+    class ExecuteScriptResponse : public Event
     {
         R_MESSAGE
 
-        ExecuteScriptResponse(const QList<Result> &results) :
-            Response(EventType),
+        ExecuteScriptResponse(QObject *sender, const QList<Result> &results) :
+            Event(sender),
             results(results) { }
 
-        ExecuteScriptResponse(const Error &error) :
-            Response(EventType, error) {}
+        ExecuteScriptResponse(QObject *sender, const Error &error) :
+            Event(sender, error) {}
 
         QList<Result> results;
     };
 
 
 
-    class SomethingHappened : public REvent
+    class SomethingHappened : public Event
     {
         R_MESSAGE
 
-        SomethingHappened(const QString &something) :
-            REvent(EventType),
+        SomethingHappened(QObject *sender, const QString &something) :
+            Event(sender),
             something(something) { }
 
         QString something;
     };
 
-    class ConnectingEvent : public REvent
+    class ConnectingEvent : public Event
     {
         R_MESSAGE
 
-        ConnectingEvent(const MongoServerPtr &server) :
-            REvent(EventType),
+        ConnectingEvent(QObject *sender, const MongoServerPtr &server) :
+            Event(sender),
             server(server) { }
 
         MongoServerPtr server;
     };
 
-    class OpeningShellEvent : public REvent
+    class OpeningShellEvent : public Event
     {
         R_MESSAGE
 
-        OpeningShellEvent(const MongoShellPtr &shell, const QString &initialScript) :
-            REvent(EventType),
+        OpeningShellEvent(QObject *sender, const MongoShellPtr &shell, const QString &initialScript) :
+            Event(sender),
             shell(shell),
             initialScript(initialScript) { }
 
@@ -316,23 +260,23 @@ namespace Robomongo
         QString initialScript;
     };
 
-    class ConnectionFailedEvent : public REvent
+    class ConnectionFailedEvent : public Event
     {
         R_MESSAGE
 
-        ConnectionFailedEvent(const MongoServerPtr &server) :
-            REvent(EventType),
+        ConnectionFailedEvent(QObject *sender, const MongoServerPtr &server) :
+            Event(sender),
             server(server) { }
 
         MongoServerPtr server;
     };
 
-    class ConnectionEstablishedEvent : public REvent
+    class ConnectionEstablishedEvent : public Event
     {
         R_MESSAGE
 
-        ConnectionEstablishedEvent(const MongoServerPtr &server) :
-            REvent(EventType),
+        ConnectionEstablishedEvent(QObject *sender, const MongoServerPtr &server) :
+            Event(sender),
             server(server) { }
 
         ~ConnectionEstablishedEvent() {
@@ -342,23 +286,23 @@ namespace Robomongo
         MongoServerPtr server;
     };
 
-    class DatabaseListLoadedEvent : public REvent
+    class DatabaseListLoadedEvent : public Event
     {
         R_MESSAGE
 
-        DatabaseListLoadedEvent(const QList<MongoDatabasePtr> &list) :
-            REvent(EventType),
+        DatabaseListLoadedEvent(QObject *sender, const QList<MongoDatabasePtr> &list) :
+            Event(sender),
             list(list) { }
 
         QList<MongoDatabasePtr> list;
     };
 
-    class DocumentListLoadedEvent : public REvent
+    class DocumentListLoadedEvent : public Event
     {
         R_MESSAGE
 
-        DocumentListLoadedEvent(const QString &query, const QList<MongoDocumentPtr> &list) :
-            REvent(EventType),
+        DocumentListLoadedEvent(QObject *sender, const QString &query, const QList<MongoDocumentPtr> &list) :
+            Event(sender),
             query(query),
             list(list) { }
 
@@ -366,12 +310,12 @@ namespace Robomongo
         QString query;
     };
 
-    class ScriptExecutedEvent : public REvent
+    class ScriptExecutedEvent : public Event
     {
         R_MESSAGE
 
-        ScriptExecutedEvent(const QList<MongoShellResult> &list) :
-            REvent(EventType),
+        ScriptExecutedEvent(QObject *sender, const QList<MongoShellResult> &list) :
+            Event(sender),
             results(list) { }
 
         QList<MongoShellResult> results;

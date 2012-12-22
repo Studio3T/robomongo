@@ -12,12 +12,12 @@ Dispatcher::Dispatcher() : QObject()
 {
 }
 
-void Dispatcher::publish(QObject *sender, REvent *event)
+void Dispatcher::publish(Event *event)
 {
     QList<Subscriber *> subscribers = _subscribersByEventType.values(event->type());
     foreach(Subscriber *subscriber, subscribers)
     {
-        if (!subscriber->sender || subscriber->sender == sender) {
+        if (!subscriber->sender || subscriber->sender == event->sender()) {
             //QCoreApplication::sendEvent(subscriber->receiver, event);
             //QGenericArgument arg = QGenericArgument("SomethingHappened*", event);
             const char * typeName = event->typeString();

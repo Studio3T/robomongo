@@ -42,14 +42,14 @@ void MongoShell::handle(ExecuteQueryResponse *event)
         list.append(doc);
     }
 
-    _dispatcher->publish(this, new DocumentListLoadedEvent(_query, list));
+    _dispatcher->publish(new DocumentListLoadedEvent(this, _query, list));
 }
 
 void MongoShell::handle(ExecuteScriptResponse *event)
 {
     QList<MongoShellResult> list = MongoShellResult::fromResult(event->results);
 
-    _dispatcher->publish(this, new ScriptExecutedEvent(list));
+    _dispatcher->publish(new ScriptExecutedEvent(this, list));
 
     /*
     QList<MongoDocumentPtr> list;

@@ -74,7 +74,7 @@ void MongoClient::handle(InitRequest *event)
         _scriptEngine->init();
     }
     catch (std::exception &ex) {
-        reply(event->sender, new InitResponse(Error("Unable to initialize MongoClient")));
+        reply(event->sender(), new InitResponse(this, Error("Unable to initialize MongoClient")));
     }
 }
 
@@ -123,11 +123,11 @@ void MongoClient::handle(EstablishConnectionRequest *event)
         }
 
         conn->done();
-        reply(event->sender, new EstablishConnectionResponse(_address));
+        reply(event->sender(), new EstablishConnectionResponse(this, _address));
     }
     catch(std::exception &ex)
     {
-        reply(event->sender, new EstablishConnectionResponse(Error("Unable to connect to MongoDB")));
+        reply(event->sender(), new EstablishConnectionResponse(this, Error("Unable to connect to MongoDB")));
     }
 }
 
@@ -143,7 +143,7 @@ void MongoClient::handle(LoadDatabaseNamesRequest *event)
         if (!_isAdmin) {
             QStringList dbNames;
             dbNames << _databaseName;
-            reply(event->sender, new LoadDatabaseNamesResponse(dbNames));
+            reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
             return;
         }
 
@@ -156,11 +156,11 @@ void MongoClient::handle(LoadDatabaseNamesRequest *event)
             dbNames.append(QString::fromStdString(*i));
         }
 
-        reply(event->sender, new LoadDatabaseNamesResponse(dbNames));
+        reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
     }
     catch(DBException &ex)
     {
-        reply(event->sender, new LoadDatabaseNamesResponse(Error("Unable to load database names.")));
+        reply(event->sender(), new LoadDatabaseNamesResponse(this, Error("Unable to load database names.")));
     }
 }
 
@@ -180,11 +180,11 @@ void MongoClient::handle(LoadCollectionNamesRequest *event)
             stringList.append(QString::fromStdString(*i));
         }
 
-        reply(event->sender, new LoadCollectionNamesResponse(event->databaseName, stringList));
+        reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName, stringList));
     }
     catch(DBException &ex)
     {
-        reply(event->sender, new LoadCollectionNamesResponse(Error("Unable to load list of collections.")));
+        reply(event->sender(), new LoadCollectionNamesResponse(this, Error("Unable to load list of collections.")));
     }
 }
 
@@ -204,11 +204,11 @@ void MongoClient::handle(ExecuteQueryRequest *event)
 
         conn->done();
 
-        reply(event->sender, new ExecuteQueryResponse(docs));
+        reply(event->sender(), new ExecuteQueryResponse(this, docs));
     }
     catch(DBException &ex)
     {
-        reply(event->sender, new ExecuteQueryResponse(Error("Unable to complete query.")));
+        reply(event->sender(), new ExecuteQueryResponse(this, Error("Unable to complete query.")));
     }
 }
 
@@ -222,7 +222,7 @@ void MongoClient::handle(ExecuteScriptRequest *event)
 
 
         QList<Result> results = _scriptEngine->exec(event->script, event->databaseName);
-        reply(event->sender, new ExecuteScriptResponse(results));
+        reply(event->sender(), new ExecuteScriptResponse(this, results));
 
 
 //        _helper->clear();
@@ -240,14 +240,14 @@ void MongoClient::handle(ExecuteScriptRequest *event)
     }
     catch(DBException &ex)
     {
-        reply(event->sender, new ExecuteScriptResponse(Error("Unable to complete query.")));
+        reply(event->sender(), new ExecuteScriptResponse(this, Error("Unable to complete query.")));
     }
 }
 
 /**
  * @brief Send event to this MongoClient
  */
-void MongoClient::send(REvent *event)
+void MongoClient::send(Event *event)
 {
     const char * typeName = event->typeString();
     QMetaObject::invokeMethod(this, "handle", Qt::QueuedConnection, QGenericArgument(typeName, &event));
@@ -259,7 +259,7 @@ void MongoClient::send(REvent *event)
 /**
  * @brief Send reply event to object 'receiver'
  */
-void MongoClient::reply(QObject *receiver, REvent *event)
+void MongoClient::reply(QObject *receiver, Event *event)
 {
     const char * typeName = event->typeString();
     QMetaObject::invokeMethod(receiver, "handle", Qt::QueuedConnection, QGenericArgument(typeName, &event));

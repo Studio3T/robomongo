@@ -1,11 +1,7 @@
+#include "Core.h"
 #include "MongoEvents.h"
 
 using namespace Robomongo;
-
-#define R_REGISTER_EVENT_TYPE(EVENT_TYPE) \
-    const QEvent::Type EVENT_TYPE::EventType = static_cast<QEvent::Type>(QEvent::registerEventType()); \
-    const char *EVENT_TYPE::typeString() { return #EVENT_TYPE"*"; } \
-    const int EVENT_TYPE::nothing = qRegisterMetaType<EVENT_TYPE*>(#EVENT_TYPE"*");
 
 R_REGISTER_EVENT_TYPE(InitRequest)
 R_REGISTER_EVENT_TYPE(InitResponse)
@@ -22,7 +18,6 @@ R_REGISTER_EVENT_TYPE(ConnectingEvent)
 R_REGISTER_EVENT_TYPE(ConnectionFailedEvent)
 R_REGISTER_EVENT_TYPE(ConnectionEstablishedEvent)
 R_REGISTER_EVENT_TYPE(DatabaseListLoadedEvent)
-R_REGISTER_EVENT_TYPE(CollectionListLoadedEvent)
 R_REGISTER_EVENT_TYPE(OpeningShellEvent)
 R_REGISTER_EVENT_TYPE(ExecuteQueryRequest)
 R_REGISTER_EVENT_TYPE(ExecuteQueryResponse)

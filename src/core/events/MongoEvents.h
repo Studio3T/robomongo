@@ -8,14 +8,6 @@
 #include "mongo/client/dbclient.h"
 #include <engine/Result.h>
 #include "domain/MongoShellResult.h"
-#include <QMetaType>
-
-#define R_MESSAGE \
-    public: \
-        const static QEvent::Type EventType; \
-        const static int nothing; \
-        virtual const char *typeString();
-
 
 namespace Robomongo
 {
@@ -42,7 +34,7 @@ namespace Robomongo
         REvent(QEvent::Type type) :
             QEvent(type) {}
 
-        virtual const char *typeString() { return NULL; }
+        virtual const char *typeString() = 0;
     };
 
     /**
@@ -57,7 +49,7 @@ namespace Robomongo
             sender(sender) {}
 
         QObject *sender;
-        virtual const char *typeString() { return NULL; }
+        virtual const char *typeString() = 0;
     };
 
     class Response : public REvent
@@ -73,7 +65,7 @@ namespace Robomongo
         bool isError() const { return !error.isNull; }
         QString errorMessage() const { return error.errorMessage; }
 
-        virtual const char *typeString() { return NULL; }
+        virtual const char *typeString() = 0;
         Error error;
     };
 
@@ -343,6 +335,10 @@ namespace Robomongo
             REvent(EventType),
             server(server) { }
 
+        ~ConnectionEstablishedEvent() {
+            int a = 56;
+        }
+
         MongoServerPtr server;
     };
 
@@ -355,17 +351,6 @@ namespace Robomongo
             list(list) { }
 
         QList<MongoDatabasePtr> list;
-    };
-
-    class CollectionListLoadedEvent : public REvent
-    {
-        R_MESSAGE
-
-        CollectionListLoadedEvent(const QList<MongoCollectionPtr> &list) :
-            REvent(EventType),
-            list(list) { }
-
-        QList<MongoCollectionPtr> list;
     };
 
     class DocumentListLoadedEvent : public REvent

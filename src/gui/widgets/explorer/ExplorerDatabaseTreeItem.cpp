@@ -17,7 +17,7 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(const MongoDatabasePtr &datab
     _database(database),
     _dispatcher(AppRegistry::instance().dispatcher())
 {
-    _dispatcher.subscribe(this, CollectionListLoadedEvent::EventType, _database.get());
+    _dispatcher.subscribe(this, MongoDatabase_CollectionListLoadedEvent::EventType, _database.get());
 
     setText(0, _database->name());
     setIcon(0, GuiRegistry::instance().databaseIcon());
@@ -108,7 +108,7 @@ void ExplorerDatabaseTreeItem::vm_collectionRefreshed(const QList<MongoCollectio
     systemFolder->setHidden(systemFolder->childCount() == 0);
 }
 
-void ExplorerDatabaseTreeItem::handle(CollectionListLoadedEvent *event)
+void ExplorerDatabaseTreeItem::handle(MongoDatabase_CollectionListLoadedEvent *event)
 {
     vm_collectionRefreshed(event->list);
 }

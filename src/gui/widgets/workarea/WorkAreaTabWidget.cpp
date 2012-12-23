@@ -20,7 +20,7 @@ WorkAreaTabWidget::WorkAreaTabWidget(WorkAreaWidget * workAreaWidget) :
 	setTabsClosable(true);
     setElideMode(Qt::ElideRight);
 
-	connect(this, SIGNAL(tabCloseRequested(int)), SLOT(ui_tabCloseRequested(int)));
+    connect(this, SIGNAL(tabCloseRequested(int)), SLOT(tabBar_tabCloseRequested(int)));
     connect(this, SIGNAL(newTabRequested(int)), SLOT(ui_newTabRequested(int)));
     connect(this, SIGNAL(currentChanged(int)), SLOT(ui_currentChanged(int)));
 }
@@ -41,18 +41,18 @@ void WorkAreaTabWidget::keyPressEvent(QKeyEvent *keyEvent)
     QTabWidget::keyPressEvent(keyEvent);
 }
 
-void WorkAreaTabWidget::ui_tabCloseRequested(int index)
+void WorkAreaTabWidget::tabBar_tabCloseRequested(int index)
 {
-	if (index >= 0)
-	{
-        QueryWidget *tabWidget = (QueryWidget *) widget(index);
-		removeTab(index);
+    if (index < 0)
+        return;
 
-		if (tabWidget)
-        {
-            AppRegistry::instance().app().closeShell(tabWidget->shell());
-			delete tabWidget;		
-        }
+    QueryWidget *tabWidget = (QueryWidget *) widget(index);
+    removeTab(index);
+
+    if (tabWidget)
+    {
+        AppRegistry::instance().app().closeShell(tabWidget->shell());
+        delete tabWidget;
     }
 }
 

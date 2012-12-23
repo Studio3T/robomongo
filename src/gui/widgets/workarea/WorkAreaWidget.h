@@ -30,6 +30,8 @@ namespace Robomongo
         void toggleOrientation();
         void executeScript();
 
+
+
     public slots:
         void handle(OpeningShellEvent *event);
 

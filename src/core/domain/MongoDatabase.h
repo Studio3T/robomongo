@@ -13,6 +13,9 @@ namespace Robomongo
 {
     class EventBus;
 
+    /**
+     * @brief Represents MongoDB database.
+     */
     class MongoDatabase : public QObject, public boost::enable_shared_from_this<MongoDatabase>
     {
         Q_OBJECT
@@ -48,6 +51,7 @@ namespace Robomongo
     private:
 
         MongoServer *_server;
+
         MongoClient *_client;
         QString _name;
         bool _system;

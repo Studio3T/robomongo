@@ -35,7 +35,7 @@ MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord, bool visib
 
 MongoServer::~MongoServer()
 {
-    int z = 80;
+    NO_OP;
 }
 
 /**

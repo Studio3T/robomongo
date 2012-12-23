@@ -8,6 +8,7 @@
 #include "ConnectionsDialog.h"
 #include "dialogs/EditConnectionDialog.h"
 #include "GuiRegistry.h"
+#include <QLabel>
 
 using namespace Robomongo;
 
@@ -190,6 +191,8 @@ void ConnectionsDialog::layoutOfItemsChanged()
 void ConnectionsDialog::add(const ConnectionRecordPtr &connection)
 {
     ConnectionListWidgetItem *item = new ConnectionListWidgetItem(connection);
+    item->setIcon(GuiRegistry::instance().serverIcon());
+
     _listWidget->addItem(item);
     _hash.insert(connection, item);
 }

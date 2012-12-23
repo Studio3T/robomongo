@@ -11,36 +11,62 @@ namespace Robomongo
     class Event;
     class EventBusSubscriber;
 
-    class EventBus : QObject
+    /**
+     * @brief The EventBus class
+     * @threadsafe
+     */
+    class EventBus : public QObject
     {
         Q_OBJECT
 
     public:
+        /**
+         * @brief Creates EventBus.
+         */
         EventBus();
+
+        /**
+         * @brief Cleanups EventBus.
+         */
         ~EventBus();
 
         /**
-         * @brief Publishes event
+         * @brief Publishes specified event.
          * @param sender - object, that emits this event
          */
         void publish(Event *event);
 
+        /**
+         * @brief Sends 'event' to 'receiver'.
+         */
         void send(QObject *receiver, Event *event);
+
+        /**
+         * @brief Sends 'event' to list of 'receivers'.
+         */
         void send(QList<QObject *> receivers, Event *event);
 
         /**
-         * @brief Subscribe to specified event
+         * @brief Subscribes 'receiver' to event of specified 'type'.
+         * Optionally you can specify exact send
          */
         void subscribe(QObject *receiver, QEvent::Type type, QObject *sender = NULL);
-
-    protected:
-        EventBusDispatcher *dispatcher(QThread *thread);
 
     public slots:
 
         void unsubscibe(QObject *receiver);
 
     private:
+
+        /**
+         * @brief Returns dispatcher for specified thread. If there is no dispatcher
+         * for this thread registered, new dispatcher will be created and moved
+         * to 'thread' thread.
+         */
+        EventBusDispatcher *dispatcher(QThread *thread);
+
+    private:
+
         QMutex _lock;
         QMultiHash<QEvent::Type, EventBusSubscriber *> _subscribersByEventType;
         QHash<QThread *, EventBusDispatcher *> _dispatchersByThread;

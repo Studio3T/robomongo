@@ -4,7 +4,9 @@
 #include <QObject>
 #include <QString>
 #include <QEvent>
+#include "Core.h"
 #include <EventError.h>
+
 
 namespace Robomongo
 {
@@ -27,9 +29,9 @@ namespace Robomongo
          */
         Event(QObject *sender, EventError error) :
             _sender(sender),
-            _error(error) { int a = 90; }
+            _error(error) { }
 
-        virtual ~Event() { int a = 90; }
+        virtual ~Event() { }
 
         /**
          * @brief Type identifier of event. We are using QEvent::Type in order to

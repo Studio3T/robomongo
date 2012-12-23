@@ -24,7 +24,7 @@ MongoDatabase::MongoDatabase(MongoServer *server, const QString &name) : QObject
 
 MongoDatabase::~MongoDatabase()
 {
-
+    NO_OP;
 }
 
 void MongoDatabase::listCollections()

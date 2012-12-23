@@ -30,10 +30,7 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
     _bus->subscribe(this, OpeningShellEvent::Type);
 }
 
-WorkAreaWidget::~WorkAreaWidget()
-{
-    NO_OP;
-}
+WorkAreaWidget::~WorkAreaWidget() { }
 
 void WorkAreaWidget::toggleOrientation()
 {

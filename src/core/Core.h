@@ -56,8 +56,9 @@ namespace Robomongo
 }
 
 /**
- * @brief NO_OP macro can be put in places where you need debugger hit, but don't
- * have actual code. For instance, in empty methods and/or destructors.
+ * @brief NO_OP macro does nothing, but it can be put in places where you need
+ * debugger hit, but don't have actual code. Even with NO_OP, you still need to
+ * place breakpoint on it.
  */
 inline void __dummy_function_for_NO_OP () {}
 #define NO_OP __dummy_function_for_NO_OP ()

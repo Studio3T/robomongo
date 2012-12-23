@@ -40,7 +40,7 @@ namespace Robomongo
 
 	MongoDocument::~MongoDocument()
 	{
-        int a = 56;
+        NO_OP;
 	}
 
 	/*

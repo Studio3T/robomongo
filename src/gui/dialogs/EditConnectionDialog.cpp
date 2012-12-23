@@ -7,7 +7,7 @@ using namespace Robomongo;
 /**
  * @brief Constructs dialog with specified connection
  */
-EditConnectionDialog::EditConnectionDialog(ConnectionRecordPtr connection) : QDialog()
+EditConnectionDialog::EditConnectionDialog(ConnectionRecord *connection) : QDialog()
 {
     _connection = connection;
 

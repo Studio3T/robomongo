@@ -7,14 +7,14 @@ namespace Robomongo
 {
     class EventBus;
 
-
     class App : public QObject
     {
         Q_OBJECT
     public:
         App(EventBus *bus);
+        ~App();
 
-        MongoServer *openServer(const ConnectionRecordPtr &connectionRecord, bool visible);
+        MongoServer *openServer(ConnectionRecord *connectionRecord, bool visible);
         void closeServer(MongoServer *server);
 
         /**
@@ -27,7 +27,6 @@ namespace Robomongo
     private:
 
         QList<MongoServer *> _servers;
-
         QList<MongoShellPtr> _shells;
 
         EventBus *_bus;

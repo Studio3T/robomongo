@@ -20,9 +20,9 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     setWindowIcon(GuiRegistry::instance().connectIcon());
 
     _settingsManager = settingsManager;
-    connect(_settingsManager, SIGNAL(connectionAdded(ConnectionRecordPtr)), this, SLOT(add(ConnectionRecordPtr)));
-    connect(_settingsManager, SIGNAL(connectionUpdated(ConnectionRecordPtr)), this, SLOT(update(ConnectionRecordPtr)));
-    connect(_settingsManager, SIGNAL(connectionRemoved(ConnectionRecordPtr)), this, SLOT(remove(ConnectionRecordPtr)));
+    connect(_settingsManager, SIGNAL(connectionAdded(ConnectionRecord *)), this, SLOT(add(ConnectionRecord*)));
+    connect(_settingsManager, SIGNAL(connectionUpdated(ConnectionRecord *)), this, SLOT(update(ConnectionRecord*)));
+    connect(_settingsManager, SIGNAL(connectionRemoved(ConnectionRecord *)), this, SLOT(remove(ConnectionRecord*)));
 
     QAction *addAction = new QAction("&Add", this);
     connect(addAction, SIGNAL(triggered()), this, SLOT(add()));
@@ -87,7 +87,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     // Populate list with connections
-    foreach(ConnectionRecordPtr connectionModel, _settingsManager->connections())
+    foreach(ConnectionRecord *connectionModel, _settingsManager->connections())
         add(connectionModel);
 }
 
@@ -113,7 +113,7 @@ void ConnectionsDialog::accept()
  */
 void ConnectionsDialog::add()
 {
-    ConnectionRecordPtr newModel(new ConnectionRecord);
+    ConnectionRecord *newModel = new ConnectionRecord();
     EditConnectionDialog editDialog(newModel);
 
     // Do nothing if not accepted
@@ -136,7 +136,7 @@ void ConnectionsDialog::edit()
     if (currentItem == 0)
         return;
 
-    ConnectionRecordPtr connection = currentItem->connection();
+    ConnectionRecord *connection = currentItem->connection();
     EditConnectionDialog editDialog(connection);
 
     // Do nothing if not accepted
@@ -158,7 +158,7 @@ void ConnectionsDialog::remove()
     if (currentItem == 0)
         return;
 
-    ConnectionRecordPtr connectionModel = currentItem->connection();
+    ConnectionRecord *connectionModel = currentItem->connection();
 
     // Ask user
     int answer = QMessageBox::question(this,
@@ -175,7 +175,7 @@ void ConnectionsDialog::remove()
 void ConnectionsDialog::layoutOfItemsChanged()
 {
     int count = _listWidget->count();
-    QList<ConnectionRecordPtr> items;
+    QList<ConnectionRecord *> items;
     for(int i = 0; i < count; i++)
     {
         ConnectionListWidgetItem * item = (ConnectionListWidgetItem *) _listWidget->item(i);
@@ -188,7 +188,7 @@ void ConnectionsDialog::layoutOfItemsChanged()
 /**
  * @brief Add connection to the list widget
  */
-void ConnectionsDialog::add(const ConnectionRecordPtr &connection)
+void ConnectionsDialog::add(ConnectionRecord *connection)
 {
     ConnectionListWidgetItem *item = new ConnectionListWidgetItem(connection);
     item->setIcon(GuiRegistry::instance().serverIcon());
@@ -200,7 +200,7 @@ void ConnectionsDialog::add(const ConnectionRecordPtr &connection)
 /**
  * @brief Update specified connection (if it exists for this dialog)
  */
-void ConnectionsDialog::update(const ConnectionRecordPtr &connection)
+void ConnectionsDialog::update(ConnectionRecord *connection)
 {
     ConnectionListWidgetItem *item = _hash.value(connection);
     if (!item)
@@ -212,7 +212,7 @@ void ConnectionsDialog::update(const ConnectionRecordPtr &connection)
 /**
  * @brief Remove specified connection (if it exists for this dialog)
  */
-void ConnectionsDialog::remove(const ConnectionRecordPtr &connection)
+void ConnectionsDialog::remove(ConnectionRecord *connection)
 {
     QListWidgetItem *item = _hash.value(connection);
     if (!item)

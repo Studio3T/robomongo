@@ -10,7 +10,7 @@
 using namespace Robomongo;
 using namespace std;
 
-MongoServer::MongoServer(const ConnectionRecordPtr &connectionRecord, bool visible) : QObject(),
+MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible) : QObject(),
     _connectionRecord(connectionRecord),
     _bus(AppRegistry::instance().bus()),
     _visible(visible)

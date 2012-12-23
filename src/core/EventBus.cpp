@@ -36,26 +36,17 @@ void EventBus::publish(Event *event)
     foreach(EventBusSubscriber *subscriber, subscribers)
     {
         if (!subscriber->sender || subscriber->sender == event->sender()) {
-            //QCoreApplication::sendEvent(subscriber->receiver, event);
-            //QGenericArgument arg = QGenericArgument("SomethingHappened*", event);
-
             theReceivers.append(subscriber->receiver);
 
             if (dis && dis != subscriber->dispatcher)
                 throw "You cannot publish events to subscribers from more than one thread.";
 
             dis = subscriber->dispatcher;
-
-            // was:
-            // const char * typeName = event->typeString();
-            // QMetaObject::invokeMethod(subscriber->receiver, "handle", QGenericArgument(typeName, &event));
         }
     }
 
     QCoreApplication::postEvent(dis,
         new EventWrapper(event, theReceivers));
-
-    //    delete event;
 }
 
 void EventBus::send(QObject *receiver, Event *event)
@@ -104,21 +95,10 @@ void EventBus::subscribe(QObject *receiver, QEvent::Type type, QObject *sender /
     _subscribersByEventType.insert(type, new EventBusSubscriber(dis, receiver, sender));
 }
 
-EventBusDispatcher *EventBus::dispatcher(QThread *thread)
-{
-    EventBusDispatcher *dis = _dispatchersByThread.value(thread);
-
-    if (!dis) {
-        dis = new EventBusDispatcher();
-        dis->moveToThread(thread);
-        _dispatchersByThread.insert(thread, dis);
-    }
-
-    return dis;
-}
-
 void EventBus::unsubscibe(QObject *receiver)
 {
+    QMutexLocker lock(&_lock);
+
     QString name = receiver->objectName();
     QString cname = receiver->metaObject()->className();
 
@@ -132,3 +112,22 @@ void EventBus::unsubscibe(QObject *receiver)
         }
     }
 }
+
+/**
+ * @brief Returns dispatcher for specified thread. If there is no dispatcher
+ * for this thread registered, it will be created and moved to 'thread' thread.
+ */
+EventBusDispatcher *EventBus::dispatcher(QThread *thread)
+{
+    EventBusDispatcher *dis = _dispatchersByThread.value(thread);
+
+    if (!dis) {
+        dis = new EventBusDispatcher();
+        dis->moveToThread(thread);
+        _dispatchersByThread.insert(thread, dis);
+    }
+
+    return dis;
+}
+
+

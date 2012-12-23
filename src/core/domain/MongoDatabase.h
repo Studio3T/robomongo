@@ -8,7 +8,6 @@
 #include "Core.h"
 #include "events/MongoEvents.h"
 #include "mongodb/MongoClient.h"
-#include "MongoServer.h"
 
 namespace Robomongo
 {
@@ -29,15 +28,14 @@ namespace Robomongo
 
         /**
          * @brief Initiate listCollection asynchronous operation.
-         *
          */
         void listCollections();
 
         QString name() const { return _name; }
 
         /**
-         * @brief Checks that this is a system database
-         * @return true if system, false otherwise
+         * @brief Checks that this is a system database.
+         * @return true if system, false otherwise.
          */
         bool isSystem() const { return _system; }
 

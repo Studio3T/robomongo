@@ -29,7 +29,7 @@ MongoDatabase::~MongoDatabase()
 
 void MongoDatabase::listCollections()
 {
-    _client->send(new LoadCollectionNamesRequest(this, _name));
+    _bus.send(_client, new LoadCollectionNamesRequest(this, _name));
 }
 
 void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)

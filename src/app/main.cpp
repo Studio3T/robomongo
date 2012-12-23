@@ -28,14 +28,14 @@ int main(int argc, char *argv[])
 
     qRegisterMetaType<ConnectionRecordPtr>("ConnectionRecordPtr");
 
-    QProcessEnvironment proc = QProcessEnvironment::systemEnvironment();
-    QString str = proc.value("LD_LIBRARY_PATH");
+//    QProcessEnvironment proc = QProcessEnvironment::systemEnvironment();
+//    QString str = proc.value("LD_LIBRARY_PATH");
 
-    qDebug() << str;
+//    qDebug() << str;
 
     AppRegistry::instance().settingsManager().save();
 
-    QRect screenGeometry = QApplication::desktop()->screenGeometry();
+    QRect screenGeometry = QApplication::desktop()->availableGeometry();
     QSize size(screenGeometry.width() - 450, screenGeometry.height() - 165);
 
     MainWindow win;

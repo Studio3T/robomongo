@@ -27,6 +27,7 @@ MainWindow::MainWindow() : QMainWindow(),
     qApp->setStyleSheet(
         "Robomongo--ExplorerTreeWidget#explorerTree { padding: 7px 0px 7px 0px; background-color:#E7E5E4; border: 0px; } \n "
         "QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } "
+        "QMainWindow::separator { background: #E7E5E4; width: 1px; }"
     );
 
     // Exit action

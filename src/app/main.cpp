@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
     QApplication::addLibraryPath(plugins);
 
-    qRegisterMetaType<ConnectionRecordPtr>("ConnectionRecordPtr");
+    //qRegisterMetaType<ConnectionRecordPtr>("ConnectionRecordPtr");
 
 //    QProcessEnvironment proc = QProcessEnvironment::systemEnvironment();
 //    QString str = proc.value("LD_LIBRARY_PATH");

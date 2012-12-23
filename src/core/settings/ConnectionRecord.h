@@ -118,9 +118,6 @@ namespace Robomongo
     };
 }
 
-Q_DECLARE_METATYPE(Robomongo::ConnectionRecordPtr)
-
-
-
+Q_DECLARE_METATYPE(Robomongo::ConnectionRecord *)
 
 #endif // CONNECTIONRECORD_H

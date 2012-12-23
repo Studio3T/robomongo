@@ -3,19 +3,26 @@
 #include "MongoShell.h"
 #include "domain/MongoCollection.h"
 #include "EventBus.h"
+#include "boost/ptr_container/ptr_vector.hpp"
 
 using namespace Robomongo;
 
-App::App(EventBus *bus) :
-    QObject(),
+App::App(EventBus *bus) : QObject(),
     _bus(bus)
 {
 }
 
-MongoServer *App::openServer(const ConnectionRecordPtr &connectionRecord, bool visible)
+App::~App()
+{
+    qDeleteAll(_servers);
+}
+
+MongoServer *App::openServer(ConnectionRecord *connectionRecord, bool visible)
 {
     MongoServer *server = new MongoServer(connectionRecord, visible);
     _servers.append(server);
+
+//    v.push_back(new int(45));
 
     if (visible)
         _bus->publish(new ConnectingEvent(this, server));
@@ -67,8 +74,5 @@ MongoShellPtr App::openShell(MongoServer *server, const QString &script, const Q
 void App::closeShell(const MongoShellPtr &shell)
 {
     _shells.removeOne(shell);
-
-    MongoServer *server = shell->server();
-    _servers.removeOne(server);
-    delete server; // TODO: duplicated logic
+    closeServer(shell->server());
 }

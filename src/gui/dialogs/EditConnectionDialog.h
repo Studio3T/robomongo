@@ -23,7 +23,7 @@ namespace Robomongo
         /**
          * @brief Constructs dialog with specified connection
          */
-        EditConnectionDialog(ConnectionRecordPtr connection);
+        EditConnectionDialog(ConnectionRecord *connection);
 
         /**
          * @brief Accept() is called when user agree with entered data.
@@ -65,7 +65,7 @@ namespace Robomongo
         /**
          * @brief Edited connection
          */
-        ConnectionRecordPtr _connection;
+        ConnectionRecord *_connection;
 
         /**
          * @brief Check that it is okay to close this window

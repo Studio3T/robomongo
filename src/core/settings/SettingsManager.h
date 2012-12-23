@@ -31,6 +31,11 @@ namespace Robomongo
         SettingsManager(QObject *parent=0);
 
         /**
+         * @brief Cleanup owned objects
+         */
+        ~SettingsManager();
+
+        /**
          * @brief Load settings from config file.
          * @return true if success, false otherwise
          */
@@ -45,29 +50,29 @@ namespace Robomongo
         /**
          * @brief Adds connection to the end of list
          */
-        void addConnection(const ConnectionRecordPtr &connection);
+        void addConnection(ConnectionRecord *connection);
 
         /**
          * @brief Update connection
          */
-        void updateConnection(const ConnectionRecordPtr &connection);
+        void updateConnection(ConnectionRecord *connection);
 
         /**
          * @brief Removes connection by index
          */
-        void removeConnection(const ConnectionRecordPtr &connection);
+        void removeConnection(ConnectionRecord *connection);
 
-        void reorderConnections(const QList<ConnectionRecordPtr> &connections);
+        void reorderConnections(const QList<ConnectionRecord *> &connections);
 
         /**
          * @brief Returns list of connections
          */
-        const QList<ConnectionRecordPtr> connections() const { return _connections; }
+        const QList<ConnectionRecord *> connections() const { return _connections; }
 
     signals:
-        void connectionAdded(const ConnectionRecordPtr &connection);
-        void connectionUpdated(const ConnectionRecordPtr &connection);
-        void connectionRemoved(const ConnectionRecordPtr &connection);
+        void connectionAdded(ConnectionRecord *connection);
+        void connectionUpdated(ConnectionRecord *connection);
+        void connectionRemoved(ConnectionRecord *connection);
 
     private:
 
@@ -101,7 +106,7 @@ namespace Robomongo
         /**
          * @brief List of connections
          */
-        QList<ConnectionRecordPtr> _connections;
+        QList<ConnectionRecord *> _connections;
     };
 }
 

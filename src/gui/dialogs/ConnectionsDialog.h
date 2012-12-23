@@ -37,7 +37,7 @@ namespace Robomongo
          * @brief ConnectionRecord, that was selected after pressing on
          * "Connect" button
          */
-        ConnectionRecordPtr selectedConnection() const { return _selectedConnection; }
+        ConnectionRecord *selectedConnection() const { return _selectedConnection; }
 
         /**
          * @brief This function is called when user clicks on "Connect" button.
@@ -49,17 +49,17 @@ namespace Robomongo
         /**
          * @brief Add connection to the list widget
          */
-        void add(const ConnectionRecordPtr &connection);
+        void add(ConnectionRecord *connection);
 
         /**
          * @brief Update specified connection (if it exists for this dialog)
          */
-        void update(const ConnectionRecordPtr &connection);
+        void update(ConnectionRecord *connection);
 
         /**
          * @brief Remove specified connection (if it exists for this dialog)
          */
-        void remove(const ConnectionRecordPtr &connection);
+        void remove(ConnectionRecord *connection);
 
         /**
          * @brief Initiate 'add' action, usually when user clicked on Add button
@@ -86,7 +86,7 @@ namespace Robomongo
          * @brief ConnectionRecord, that was selected after pressing on
          * "Connect" button
          */
-        ConnectionRecordPtr _selectedConnection;
+        ConnectionRecord *_selectedConnection;
 
         /**
          * @brief Main list widget
@@ -102,7 +102,7 @@ namespace Robomongo
          * @brief Hash that helps to connect ConnectionRecord with
          * ConnectionListWidgetItem*
          */
-        QHash<ConnectionRecordPtr, ConnectionListWidgetItem *> _hash;
+        QHash<ConnectionRecord *, ConnectionListWidgetItem *> _hash;
 
     };
 
@@ -113,7 +113,7 @@ namespace Robomongo
     {
     public:
 
-        ConnectionListWidgetItem(ConnectionRecordPtr connection)
+        ConnectionListWidgetItem(ConnectionRecord *connection)
         {
             setConnection(connection);
         }
@@ -121,7 +121,7 @@ namespace Robomongo
         /**
          * @brief Returns attached ConnectionRecord.
          */
-        ConnectionRecordPtr connection()
+        ConnectionRecord *connection()
         {
             return _connection;
         }
@@ -129,14 +129,14 @@ namespace Robomongo
         /**
          * @brief Attach ConnectionRecord to this item
          */
-        void setConnection(ConnectionRecordPtr connection)
+        void setConnection(ConnectionRecord *connection)
         {
             setText(connection->connectionName());
             _connection = connection;
         }
 
     private:
-        ConnectionRecordPtr _connection;
+        ConnectionRecord *_connection;
     };
 }
 

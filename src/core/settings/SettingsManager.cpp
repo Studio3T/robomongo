@@ -29,6 +29,11 @@ SettingsManager::SettingsManager(QObject *parent) : QObject(parent)
     qDebug() << "SettingsManager initialized in " << _configPath;
 }
 
+SettingsManager::~SettingsManager()
+{
+    qDeleteAll(_connections);
+}
+
 /**
  * Load settings from config file.
  * @return true if success, false otherwise
@@ -89,7 +94,7 @@ void SettingsManager::loadFromMap(QVariantMap &map)
 
     QVariantList list = map.value("connections").toList();
     foreach(QVariant var, list) {
-        ConnectionRecordPtr record(new ConnectionRecord);
+        ConnectionRecord *record = new ConnectionRecord();
         record->fromVariant(var.toMap());
         _connections.append(record);
     }
@@ -111,7 +116,7 @@ QVariantMap SettingsManager::convertToMap() const
     // 2. Save connections
     QVariantList list;
 
-    foreach(const ConnectionRecordPtr &record, _connections) {
+    foreach(ConnectionRecord *record, _connections) {
         QVariantMap rm = record->toVariant().toMap();
         list.append(rm);
     }
@@ -123,7 +128,7 @@ QVariantMap SettingsManager::convertToMap() const
 /**
  * Adds connection to the end of list
  */
-void SettingsManager::addConnection(const ConnectionRecordPtr &connection)
+void SettingsManager::addConnection(ConnectionRecord *connection)
 {
     _connections.append(connection);
     emit connectionAdded(connection);
@@ -132,7 +137,7 @@ void SettingsManager::addConnection(const ConnectionRecordPtr &connection)
 /**
  * Update connection
  */
-void SettingsManager::updateConnection(const ConnectionRecordPtr &connection)
+void SettingsManager::updateConnection(ConnectionRecord *connection)
 {
     emit connectionUpdated(connection);
 }
@@ -140,13 +145,14 @@ void SettingsManager::updateConnection(const ConnectionRecordPtr &connection)
 /**
  * Removes connection by index
  */
-void SettingsManager::removeConnection(const ConnectionRecordPtr &connection)
+void SettingsManager::removeConnection(ConnectionRecord *connection)
 {
     _connections.removeOne(connection);
     emit connectionRemoved(connection);
+    delete connection;
 }
 
-void SettingsManager::reorderConnections(const QList<ConnectionRecordPtr> &connections)
+void SettingsManager::reorderConnections(const QList<ConnectionRecord *> &connections)
 {
     _connections = connections;
 }

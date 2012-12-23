@@ -144,7 +144,7 @@ void MainWindow::updateConnectionsMenu()
 
     int number = 1;
     // Populate list with connections
-    foreach(ConnectionRecordPtr connection, _settingsManager.connections()) {
+    foreach(ConnectionRecord *connection, _settingsManager.connections()) {
         QAction *action = new QAction(connection->getReadableName(), this);
         action->setData(QVariant::fromValue(connection));
 
@@ -179,7 +179,7 @@ void MainWindow::manageConnections()
 
     if (result == QDialog::Accepted)
     {
-        ConnectionRecordPtr selected = dialog.selectedConnection();
+        ConnectionRecord *selected = dialog.selectedConnection();
 
         try
         {
@@ -231,7 +231,7 @@ void MainWindow::toggleLogs(bool show)
 void MainWindow::connectToServer(QAction *connectionAction)
 {
     QVariant data = connectionAction->data();
-    ConnectionRecordPtr ptr = data.value<ConnectionRecordPtr>();
+    ConnectionRecord *ptr = data.value<ConnectionRecord *>();
 
     try
     {
@@ -246,7 +246,7 @@ void MainWindow::connectToServer(QAction *connectionAction)
 
 void MainWindow::handle(ConnectionFailedEvent *event)
 {
-    ConnectionRecordPtr connection = event->server->connectionRecord();
+    ConnectionRecord *connection = event->server->connectionRecord();
     QString message = QString("Cannot connect to MongoDB (%1)").arg(connection->getFullAddress());
     QMessageBox::information(this, "Error", message);
 }

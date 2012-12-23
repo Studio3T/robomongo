@@ -5,6 +5,7 @@
 #include "EventBus.h"
 #include "engine/Result.h"
 #include "mongodb/MongoClient.h"
+#include "MongoServer.h"
 
 using namespace Robomongo;
 

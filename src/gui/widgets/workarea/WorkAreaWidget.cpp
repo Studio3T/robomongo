@@ -21,8 +21,6 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
     _tabWidget = new WorkAreaTabWidget(this);
 	_tabWidget->setMovable(true);
     _tabWidget->setDocumentMode(true);
-//    setStyleSheet("QTabWidget::pane {background: red; }");
-//    _tabWidget->setPalette(*(new QPalette(Qt::green))); // it changes color of line be
 
 	QHBoxLayout * hlayout = new QHBoxLayout;
 	hlayout->setMargin(0);
@@ -34,7 +32,7 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
 
 WorkAreaWidget::~WorkAreaWidget()
 {
-    int a = 56;
+    NO_OP;
 }
 
 void WorkAreaWidget::toggleOrientation()
@@ -53,12 +51,10 @@ void WorkAreaWidget::executeScript()
 
 void WorkAreaWidget::handle(OpeningShellEvent *event)
 {
-//    QLabel * queryWidget = new QLabel("Hello");
     setUpdatesEnabled(false);
     QueryWidget * queryWidget = new QueryWidget(event->shell, _tabWidget, event->initialScript);
-    _tabWidget->addTab(queryWidget, "Loading..." /* viewModel->title()*/);
+    _tabWidget->addTab(queryWidget, "Loading...");
     _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
-
     _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());
     setUpdatesEnabled(true);
 }

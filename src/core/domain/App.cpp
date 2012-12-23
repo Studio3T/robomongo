@@ -3,7 +3,6 @@
 #include "MongoShell.h"
 #include "domain/MongoCollection.h"
 #include "EventBus.h"
-#include "boost/ptr_container/ptr_vector.hpp"
 
 using namespace Robomongo;
 

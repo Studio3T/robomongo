@@ -31,11 +31,11 @@ namespace Robomongo
     typedef boost::scoped_ptr<EventBus> EventBusScopedPtr;
 
     class MongoServer;
-    typedef boost::shared_ptr<MongoServer> MongoServerPtr;
-    typedef boost::weak_ptr<MongoServer> MongoServerWeakPtr;
+//    typedef boost::shared_ptr<MongoServer> MongoServerPtr;
+//    typedef boost::weak_ptr<MongoServer> MongoServerWeakPtr;
 
     class MongoShell;
-    typedef boost::shared_ptr<MongoShell> MongoShellPtr;
+//    typedef boost::shared_ptr<MongoShell> MongoShellPtr;
 
     class MongoDatabase;
     typedef boost::shared_ptr<MongoDatabase> MongoDatabasePtr;

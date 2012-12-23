@@ -30,7 +30,7 @@ using namespace Robomongo;
 /*
 ** Constructs query widget
 */
-QueryWidget::QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidget, const QString &script, QWidget *parent) :
+QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const QString &script, QWidget *parent) :
     QWidget(parent),
     _shell(shell),
     _tabWidget(tabWidget),
@@ -38,8 +38,8 @@ QueryWidget::QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidge
 {
     setObjectName("queryWidget");
 
-    _bus.subscribe(this, DocumentListLoadedEvent::Type, shell.get());
-    _bus.subscribe(this, ScriptExecutedEvent::Type, shell.get());
+    _bus.subscribe(this, DocumentListLoadedEvent::Type, shell);
+    _bus.subscribe(this, ScriptExecutedEvent::Type, shell);
 
     // Query text widget
     _configureQueryText();

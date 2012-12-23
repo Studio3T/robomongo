@@ -14,6 +14,7 @@ App::App(EventBus *bus) : QObject(),
 
 App::~App()
 {
+    qDeleteAll(_shells);
     qDeleteAll(_servers);
 }
 
@@ -21,8 +22,6 @@ MongoServer *App::openServer(ConnectionRecord *connectionRecord, bool visible)
 {
     MongoServer *server = new MongoServer(connectionRecord, visible);
     _servers.append(server);
-
-//    v.push_back(new int(45));
 
     if (visible)
         _bus->publish(new ConnectingEvent(this, server));
@@ -37,7 +36,7 @@ void App::closeServer(MongoServer *server)
     delete server;
 }
 
-MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
+MongoShell *App::openShell(const MongoCollectionPtr &collection)
 {
     MongoServer *server = openServer(collection->database()->server()->connectionRecord(), false);
 
@@ -46,7 +45,7 @@ MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
     serverClone->tryConnect();
     _servers.append(serverClone);*/
 
-    MongoShellPtr shell(new MongoShell(server));
+    MongoShell *shell(new MongoShell(server));
     _shells.append(shell);
 
     QString script = QString("db.%1.find()").arg(collection->name());
@@ -57,11 +56,11 @@ MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
     return shell;
 }
 
-MongoShellPtr App::openShell(MongoServer *server, const QString &script, const QString &dbName)
+MongoShell *App::openShell(MongoServer *server, const QString &script, const QString &dbName)
 {
     MongoServer *serverClone = openServer(server->connectionRecord(), false);
 
-    MongoShellPtr shell(new MongoShell(serverClone));
+    MongoShell *shell = new MongoShell(serverClone);
     _shells.append(shell);
 
     _bus->publish(new OpeningShellEvent(this, shell, script));
@@ -71,8 +70,9 @@ MongoShellPtr App::openShell(MongoServer *server, const QString &script, const Q
 
 }
 
-void App::closeShell(const MongoShellPtr &shell)
+void App::closeShell(MongoShell *shell)
 {
     _shells.removeOne(shell);
     closeServer(shell->server());
+    delete shell;
 }

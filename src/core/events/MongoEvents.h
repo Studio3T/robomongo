@@ -251,12 +251,12 @@ namespace Robomongo
     {
         R_EVENT
 
-        OpeningShellEvent(QObject *sender, const MongoShellPtr &shell, const QString &initialScript) :
+        OpeningShellEvent(QObject *sender, MongoShell *shell, const QString &initialScript) :
             Event(sender),
             shell(shell),
             initialScript(initialScript) { }
 
-        MongoShellPtr shell;
+        MongoShell *shell;
         QString initialScript;
     };
 

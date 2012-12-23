@@ -39,7 +39,7 @@ namespace Robomongo
         /*
         ** Constructs query widget
         */
-        QueryWidget(const MongoShellPtr &shell, WorkAreaTabWidget *tabWidget, const QString &script, QWidget * parent = NULL);
+        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const QString &script, QWidget * parent = NULL);
 
         /*
         ** Destructs QueryWidget
@@ -54,7 +54,7 @@ namespace Robomongo
         void toggleOrientation();
         void activateTabContent();
 
-        MongoShellPtr shell() const { return _shell; }
+        MongoShell *shell() const { return _shell; }
 
     public slots:
 
@@ -130,7 +130,7 @@ namespace Robomongo
 
 //        PlainJavaScriptEditor *_queryText;
 
-        MongoShellPtr _shell;
+        MongoShell *_shell;
         EventBus &_bus;
     };
 }

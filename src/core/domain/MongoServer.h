@@ -9,11 +9,14 @@
 #include <QHash>
 #include <QScopedPointer>
 #include "mongodb/MongoClient.h"
-#include "events/MongoEvents.h"
 
 namespace Robomongo
 {
-    class MongoServer : public QObject, public boost::enable_shared_from_this<MongoServer>
+    class MongoClient;
+    class EstablishConnectionResponse;
+    class LoadDatabaseNamesResponse;
+
+    class MongoServer : public QObject
     {
         Q_OBJECT
     public:

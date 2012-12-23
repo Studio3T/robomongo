@@ -240,11 +240,11 @@ namespace Robomongo
     {
         R_EVENT
 
-        ConnectingEvent(QObject *sender, const MongoServerPtr &server) :
+        ConnectingEvent(QObject *sender, MongoServer *server) :
             Event(sender),
             server(server) { }
 
-        MongoServerPtr server;
+        MongoServer *server;
     };
 
     class OpeningShellEvent : public Event
@@ -264,26 +264,22 @@ namespace Robomongo
     {
         R_EVENT
 
-        ConnectionFailedEvent(QObject *sender, const MongoServerPtr &server) :
-            Event(sender),
+        ConnectionFailedEvent(MongoServer *server) :
+            Event((QObject *)server),
             server(server) { }
 
-        MongoServerPtr server;
+        MongoServer *server;
     };
 
     class ConnectionEstablishedEvent : public Event
     {
         R_EVENT
 
-        ConnectionEstablishedEvent(QObject *sender, const MongoServerPtr &server) :
-            Event(sender),
+        ConnectionEstablishedEvent(MongoServer *server) :
+            Event((QObject *)server),
             server(server) { }
 
-        ~ConnectionEstablishedEvent() {
-            int a = 56;
-        }
-
-        MongoServerPtr server;
+        MongoServer *server;
     };
 
     class DatabaseListLoadedEvent : public Event

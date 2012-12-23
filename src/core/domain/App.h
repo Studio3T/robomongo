@@ -14,18 +14,20 @@ namespace Robomongo
     public:
         App(EventBus *bus);
 
-        MongoServerPtr openServer(const ConnectionRecordPtr &connectionRecord, bool visible);
-        void closeServer(const MongoServerPtr &server);
+        MongoServer *openServer(const ConnectionRecordPtr &connectionRecord, bool visible);
+        void closeServer(MongoServer *server);
 
         /**
          * @brief Open new shell based on specified collection
          */
         MongoShellPtr openShell(const MongoCollectionPtr &collection);
-        MongoShellPtr openShell(const MongoServerPtr &server, const QString &script, const QString &dbName = QString());
+        MongoShellPtr openShell(MongoServer *server, const QString &script, const QString &dbName = QString());
         void closeShell(const MongoShellPtr &shell);
 
     private:
-        QList<MongoServerPtr> _servers;
+
+        QList<MongoServer *> _servers;
+
         QList<MongoShellPtr> _shells;
 
         EventBus *_bus;

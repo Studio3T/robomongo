@@ -75,7 +75,7 @@ void MongoServer::handle(LoadDatabaseNamesResponse *event)
 {
     if (event->isError())
     {
-        _bus.publish(new ConnectionFailedEvent(this, shared_from_this()));
+        _bus.publish(new ConnectionFailedEvent(this));
         return;
     }
 
@@ -94,10 +94,10 @@ void MongoServer::handle(EstablishConnectionResponse *event)
 {
     if (event->isError())
     {
-        _bus.publish(new ConnectionFailedEvent(this, shared_from_this()));
+        _bus.publish(new ConnectionFailedEvent(this));
         return;
     }
 
     if (_visible)
-        _bus.publish(new ConnectionEstablishedEvent(this, shared_from_this()));
+        _bus.publish(new ConnectionEstablishedEvent(this));
 }

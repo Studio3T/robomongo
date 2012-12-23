@@ -11,9 +11,9 @@ R_REGISTER_EVENT(MongoDatabase_CollectionListLoadedEvent)
 
 MongoDatabase::MongoDatabase(MongoServer *server, const QString &name) : QObject(),
     _system(false),
+    _server(server),
     _bus(AppRegistry::instance().bus())
 {
-    _server = server;
     _name = name;
     _client = _server->client();
 

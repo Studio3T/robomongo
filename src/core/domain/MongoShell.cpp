@@ -20,7 +20,6 @@ MongoShell::MongoShell(const MongoServerPtr server) :
 
 MongoShell::~MongoShell()
 {
-    NO_OP;
 }
 
 void MongoShell::open(const MongoCollectionPtr &collection)

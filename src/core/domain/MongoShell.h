@@ -14,13 +14,13 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        explicit MongoShell(const MongoServerPtr server);
+        explicit MongoShell(MongoServer *server);
         ~MongoShell();
 
         void open(const MongoCollectionPtr &collection);
         void open(const QString &script, const QString &dbName = QString());
 
-        MongoServerWeakPtr server() const { return _server; }
+        MongoServer *server() const { return _server; }
         QString query() const { return _query; }
 
 
@@ -35,7 +35,7 @@ namespace Robomongo
          */
         QString _query;
 
-        MongoServerWeakPtr _server;
+        MongoServer *_server;
 
         MongoClient *_client;
 

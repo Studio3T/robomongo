@@ -95,7 +95,7 @@ void ExplorerWidget::ui_disonnectActionTriggered()
     if (index != -1) {
         QTreeWidgetItem *removedItem = _treeWidget->takeTopLevelItem(index);
         if (removedItem) {
-            MongoServerPtr server(serverItem->server());
+            MongoServer *server = serverItem->server();
 
             delete removedItem;
             _app.closeServer(server);

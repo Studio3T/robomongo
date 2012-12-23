@@ -12,9 +12,9 @@ App::App(EventBus *bus) :
 {
 }
 
-MongoServerPtr App::openServer(const ConnectionRecordPtr &connectionRecord, bool visible)
+MongoServer *App::openServer(const ConnectionRecordPtr &connectionRecord, bool visible)
 {
-    MongoServerPtr server(new MongoServer(connectionRecord, visible));
+    MongoServer *server = new MongoServer(connectionRecord, visible);
     _servers.append(server);
 
     if (visible)
@@ -24,14 +24,15 @@ MongoServerPtr App::openServer(const ConnectionRecordPtr &connectionRecord, bool
     return server;
 }
 
-void App::closeServer(const MongoServerPtr &server)
+void App::closeServer(MongoServer *server)
 {
     _servers.removeOne(server);
+    delete server;
 }
 
 MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
 {
-    MongoServerPtr server(openServer(collection->database()->server()->connectionRecord(), false));
+    MongoServer *server = openServer(collection->database()->server()->connectionRecord(), false);
 
 /*    ConnectionRecordPtr connectionRecord = collection->database()->server()->connectionRecord();
     MongoServerPtr serverClone(new MongoServer(connectionRecord));
@@ -49,9 +50,9 @@ MongoShellPtr App::openShell(const MongoCollectionPtr &collection)
     return shell;
 }
 
-MongoShellPtr App::openShell(const MongoServerPtr &server, const QString &script, const QString &dbName)
+MongoShellPtr App::openShell(MongoServer *server, const QString &script, const QString &dbName)
 {
-    MongoServerPtr serverClone(openServer(server->connectionRecord(), false));
+    MongoServer *serverClone = openServer(server->connectionRecord(), false);
 
     MongoShellPtr shell(new MongoShell(serverClone));
     _shells.append(shell);
@@ -67,6 +68,7 @@ void App::closeShell(const MongoShellPtr &shell)
 {
     _shells.removeOne(shell);
 
-    MongoServerPtr server(shell->server());
+    MongoServer *server = shell->server();
     _servers.removeOne(server);
+    delete server; // TODO: duplicated logic
 }

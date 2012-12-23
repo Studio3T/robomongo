@@ -19,7 +19,7 @@ namespace Robomongo
         /*
         ** Constructs ExplorerServerTreeItem
         */
-        ExplorerServerTreeItem(const MongoServerPtr &server);
+        ExplorerServerTreeItem(MongoServer *server);
         ~ExplorerServerTreeItem();
 
         /*
@@ -27,7 +27,7 @@ namespace Robomongo
         */
         void expand();
 
-        MongoServerPtr server() const { return _server; }
+        MongoServer *server() const { return _server; }
 
 
     public slots:
@@ -43,7 +43,7 @@ namespace Robomongo
 
     private:
 
-        MongoServerPtr _server;
+        MongoServer *_server;
         EventBus &_bus;
 
     };

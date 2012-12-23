@@ -9,12 +9,11 @@
 
 using namespace Robomongo;
 
-ExplorerServerTreeItem::ExplorerServerTreeItem(const MongoServerPtr &server) : QObject(),
+ExplorerServerTreeItem::ExplorerServerTreeItem(MongoServer *server) : QObject(),
     _server(server),
     _bus(AppRegistry::instance().bus())
 {
-    QObject *z = _server.get();
-    _bus.subscribe(this, DatabaseListLoadedEvent::Type, _server.get());
+    _bus.subscribe(this, DatabaseListLoadedEvent::Type, _server);
 
     setText(0, _server->connectionRecord()->getReadableName());
     setIcon(0, GuiRegistry::instance().serverIcon());

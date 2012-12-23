@@ -9,7 +9,7 @@
 
 using namespace Robomongo;
 
-MongoShell::MongoShell(const MongoServerPtr server) :
+MongoShell::MongoShell(MongoServer *server) :
     QObject(),
     _server(server),
     _client(server->client()),

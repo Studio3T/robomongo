@@ -157,7 +157,7 @@ bool QueryWidget::eventFilter(QObject * o, QEvent * e)
         bool ctrlT = (keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key()==Qt::Key_T);
 
         if (ctrlShiftReturn || ctrlT) {
-            MongoServerPtr server(_shell->server());
+            MongoServer *server = _shell->server();
             QString query = _queryText->selectedText();
 
             if (query.isEmpty())

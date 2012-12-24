@@ -286,11 +286,11 @@ namespace Robomongo
     {
         R_EVENT
 
-        DatabaseListLoadedEvent(QObject *sender, const QList<MongoDatabasePtr> &list) :
+        DatabaseListLoadedEvent(QObject *sender, const QList<MongoDatabase *> &list) :
             Event(sender),
             list(list) { }
 
-        QList<MongoDatabasePtr> list;
+        QList<MongoDatabase *> list;
     };
 
     class DocumentListLoadedEvent : public Event

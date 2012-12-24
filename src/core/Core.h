@@ -38,7 +38,7 @@ namespace Robomongo
 //    typedef boost::shared_ptr<MongoShell> MongoShellPtr;
 
     class MongoDatabase;
-    typedef boost::shared_ptr<MongoDatabase> MongoDatabasePtr;
+//    typedef boost::shared_ptr<MongoDatabase> MongoDatabasePtr;
 
     class MongoCollection;
     typedef boost::shared_ptr<MongoCollection> MongoCollectionPtr;

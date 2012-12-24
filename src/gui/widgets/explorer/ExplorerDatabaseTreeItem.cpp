@@ -13,11 +13,11 @@ using namespace Robomongo;
 /*
 ** Constructs DatabaseTreeItem
 */
-ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(const MongoDatabasePtr &database) : QObject(),
+ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) : QObject(),
     _database(database),
     _bus(AppRegistry::instance().bus())
 {
-    _bus.subscribe(this, MongoDatabase_CollectionListLoadedEvent::Type, _database.get());
+    _bus.subscribe(this, MongoDatabase_CollectionListLoadedEvent::Type, _database);
 
     setText(0, _database->name());
     setIcon(0, GuiRegistry::instance().databaseIcon());

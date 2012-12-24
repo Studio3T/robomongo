@@ -12,6 +12,7 @@ namespace Robomongo
 {
     class Helper;
     class EventBus;
+    class MongoClientThread;
 
     class MongoClient : public QObject
     {
@@ -25,6 +26,7 @@ namespace Robomongo
          * @brief Send event to this MongoClient
          */
         void send(Event *event);
+        ScriptEngine *engine() const { return _scriptEngine; }
 
     protected slots: // handlers:
 
@@ -78,10 +80,10 @@ namespace Robomongo
         void reply(QObject *receiver, Event *event);
 
         QString _address;
-        QThread *_thread;
+        MongoClientThread *_thread;
         QMutex _firstConnectionMutex;
 
-        boost::scoped_ptr<ScriptEngine> _scriptEngine;
+        ScriptEngine *_scriptEngine;
         Helper *_helper;
 
         bool _isAdmin;

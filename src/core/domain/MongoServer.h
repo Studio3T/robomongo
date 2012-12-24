@@ -30,12 +30,6 @@ namespace Robomongo
         void tryConnect();
 
         /**
-         * @brief Try to connect to MongoDB server.
-         * @throws MongoException, if fails
-         */
-        bool authenticate(const QString &database, const QString &username, const QString &password);
-
-        /**
          * @brief Returns last error message
          */
         QString lastErrorMessage() { return _lastErrorMessage; }
@@ -48,6 +42,11 @@ namespace Robomongo
         void listDatabases();
 
         MongoClient *client() const { return _client.data(); }
+
+    private:
+
+        void clearDatabases();
+        void addDatabase(MongoDatabase *database);
 
     protected slots:
         void handle(EstablishConnectionResponse *event);
@@ -70,8 +69,8 @@ namespace Robomongo
         QString _lastErrorMessage;
         bool _visible;
 
-        QList<MongoDatabasePtr> _databases;
-        QHash<QString, MongoDatabasePtr> _databasesByName;
+        QList<MongoDatabase *> _databases;
+
         EventBus &_bus;
 
     };

@@ -12,6 +12,7 @@
 #include "mongo/scripting/engine_spidermonkey.h"
 #include <QVector>
 #include "EventBus.h"
+#include "MongoClientThread.h"
 
 using namespace Robomongo;
 using namespace std;
@@ -24,7 +25,8 @@ MongoClient::MongoClient(EventBus *bus, QString host, int port, QString database
     _databaseName(database),
     _userName(username),
     _userPassword(password),
-    _bus(bus)
+    _bus(bus),
+    _scriptEngine(NULL)
 {
     _address = QString("%1:%2").arg(host).arg(port);
     init();
@@ -45,7 +47,7 @@ MongoClient::~MongoClient()
 void MongoClient::init()
 {
     _isAdmin = true;
-    _thread = new QThread();
+    _thread = new MongoClientThread(this);
     this->moveToThread(_thread);
 
     _thread->start();
@@ -72,7 +74,7 @@ void MongoClient::evaluteFile(const QString &path)
 void MongoClient::handle(InitRequest *event)
 {
     try {
-        _scriptEngine.reset(new ScriptEngine(_databaseAddress, _databasePort, _userName, _userPassword, _databaseName));
+        _scriptEngine = new ScriptEngine(_databaseAddress, _databasePort, _userName, _userPassword, _databaseName);
         _scriptEngine->init();
     }
     catch (std::exception &ex) {

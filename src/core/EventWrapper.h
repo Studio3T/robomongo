@@ -18,7 +18,6 @@ namespace Robomongo
         QList<QObject *> receivers() const { return _receivers; }
 
     private:
-
         boost::scoped_ptr<Event> _event;
         QList<QObject *> _receivers;
     };

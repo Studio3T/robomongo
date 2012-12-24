@@ -30,7 +30,8 @@ SOURCES += \
     Event.cpp \
     EventBusSubscriber.cpp \
     EventBusDispatcher.cpp \
-    EventWrapper.cpp
+    EventWrapper.cpp \
+    mongodb/MongoClientThread.cpp
 
 
 HEADERS  += \
@@ -60,7 +61,8 @@ HEADERS  += \
     Event.h \
     EventBusSubscriber.h \
     EventBusDispatcher.h \
-    EventWrapper.h
+    EventWrapper.h \
+    mongodb/MongoClientThread.h
 
 # third party libs
 #LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson

@@ -9,6 +9,7 @@
 namespace Robomongo
 {
     class Event;
+    class EventWrapper;
     class EventBusSubscriber;
 
     /**
@@ -64,6 +65,8 @@ namespace Robomongo
          * to 'thread' thread.
          */
         EventBusDispatcher *dispatcher(QThread *thread);
+
+        void sendEvent(EventBusDispatcher *dispatcher, EventWrapper *wrapper);
 
     private:
 

@@ -30,12 +30,11 @@ MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible) : QOb
                       connectionRecord->userPassword()));
 
     _bus.send(_client.data(), new InitRequest(this));
-    //_client->send(new InitRequest(this));
 }
 
 MongoServer::~MongoServer()
 {
-    NO_OP;
+    clearDatabases();
 }
 
 /**
@@ -50,44 +49,20 @@ void MongoServer::tryConnect()
         _connectionRecord->userPassword()));
 }
 
-/**
- * @brief Try to connect to MongoDB server.
- * @throws MongoException, if fails
- */
-bool MongoServer::authenticate(const QString &database, const QString &username, const QString &password)
-{
-    std::string errmsg;
-    bool ok = _connection->auth(database.toStdString(), username.toStdString(), password.toStdString(), errmsg);
-
-    if (!ok)
-    {
-        _lastErrorMessage = QString::fromStdString(errmsg);
-        throw MongoException("Unable to authorize");
-    }
-}
-
 void MongoServer::listDatabases()
 {
     _client->send(new LoadDatabaseNamesRequest(this));
 }
 
-void MongoServer::handle(LoadDatabaseNamesResponse *event)
+void MongoServer::clearDatabases()
 {
-    if (event->isError())
-    {
-        _bus.publish(new ConnectionFailedEvent(this));
-        return;
-    }
+    qDeleteAll(_databases);
+    _databases.clear();
+}
 
-    QList<MongoDatabasePtr> list;
-
-    foreach(QString name, event->databaseNames)
-    {
-        MongoDatabasePtr db(new MongoDatabase(this, name));
-        list.append(db);
-    }
-
-    _bus.publish(new DatabaseListLoadedEvent(this, list));
+void MongoServer::addDatabase(MongoDatabase *database)
+{
+    _databases.append(database);
 }
 
 void MongoServer::handle(EstablishConnectionResponse *event)
@@ -100,4 +75,22 @@ void MongoServer::handle(EstablishConnectionResponse *event)
 
     if (_visible)
         _bus.publish(new ConnectionEstablishedEvent(this));
+}
+
+void MongoServer::handle(LoadDatabaseNamesResponse *event)
+{
+    if (event->isError())
+    {
+        _bus.publish(new ConnectionFailedEvent(this));
+        return;
+    }
+
+    clearDatabases();
+    foreach(QString name, event->databaseNames)
+    {
+        MongoDatabase *db  = new MongoDatabase(this, name);
+        addDatabase(db);
+    }
+
+    _bus.publish(new DatabaseListLoadedEvent(this, _databases));
 }

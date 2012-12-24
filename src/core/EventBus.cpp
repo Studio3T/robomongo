@@ -12,7 +12,8 @@ using namespace Robomongo;
 
 class SomethingHappened;
 
-EventBus::EventBus() : QObject()
+EventBus::EventBus() : QObject(),
+    _lock(QMutex::Recursive)
 {
 }
 
@@ -45,8 +46,7 @@ void EventBus::publish(Event *event)
         }
     }
 
-    QCoreApplication::postEvent(dis,
-        new EventWrapper(event, theReceivers));
+    sendEvent(dis, new EventWrapper(event, theReceivers));
 }
 
 void EventBus::send(QObject *receiver, Event *event)
@@ -62,8 +62,7 @@ void EventBus::send(QObject *receiver, Event *event)
     QList<QObject *> receivers;
     receivers << receiver;
 
-    QCoreApplication::postEvent(dis,
-        new EventWrapper(event, receivers));
+    sendEvent(dis, new EventWrapper(event, receivers));
 }
 
 void EventBus::send(QList<QObject *> receivers, Event *event)
@@ -76,8 +75,7 @@ void EventBus::send(QList<QObject *> receivers, Event *event)
     QThread *thread = receivers.last()->thread();
     EventBusDispatcher *dis = dispatcher(thread);
 
-    QCoreApplication::postEvent(dis,
-        new EventWrapper(event, receivers));
+    sendEvent(dis, new EventWrapper(event, receivers));
 }
 
 void EventBus::subscribe(QObject *receiver, QEvent::Type type, QObject *sender /* = NULL */)
@@ -128,6 +126,20 @@ EventBusDispatcher *EventBus::dispatcher(QThread *thread)
     }
 
     return dis;
+}
+
+/**
+ * @brief Sends event synchronousely, if current thread and dispatcher thread are
+ * the same. Sends asynchronousely, if this is cross-thread communication;
+ */
+void EventBus::sendEvent(EventBusDispatcher *dispatcher, EventWrapper *wrapper)
+{
+    if (dispatcher->thread() == QThread::currentThread()) {
+        QCoreApplication::sendEvent(dispatcher, wrapper);
+        delete wrapper;
+    } else {
+        QCoreApplication::postEvent(dispatcher, wrapper);
+    }
 }
 
 

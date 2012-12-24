@@ -23,14 +23,14 @@ namespace Robomongo
         ExplorerDatabaseCategoryTreeItem * _usersItem;
         ExplorerDatabaseCategoryTreeItem * _filesItem;
 
-        MongoDatabasePtr _database;
+        MongoDatabase *_database;
 
     public:
 
         /*
         ** Constructs DatabaseTreeItem
         */
-        ExplorerDatabaseTreeItem(const MongoDatabasePtr &database);
+        ExplorerDatabaseTreeItem(MongoDatabase *database);
         ~ExplorerDatabaseTreeItem();
 
         /*

@@ -51,8 +51,8 @@ namespace Robomongo
     private:
 
         MongoServer *_server;
-
         MongoClient *_client;
+        QList<MongoCollection *> _collections;
         QString _name;
         bool _system;
 

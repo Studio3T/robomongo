@@ -35,7 +35,7 @@ namespace Robomongo
         /*
         **
         */
-        void databaseRefreshed(const QList<MongoDatabasePtr> &dbs);
+        void databaseRefreshed(const QList<MongoDatabase *> &dbs);
 
 
     public slots:

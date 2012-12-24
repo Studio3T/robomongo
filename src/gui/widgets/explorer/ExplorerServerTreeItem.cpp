@@ -32,7 +32,7 @@ void ExplorerServerTreeItem::expand()
     //_viewModel->expand();
 }
 
-void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabasePtr> &dbs)
+void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabase *> &dbs)
 {
     // Remove child items
 	int itemCount = childCount();
@@ -52,7 +52,7 @@ void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabasePtr> &db
 
     for (int i = 0; i < dbs.size(); i++)
     {
-        MongoDatabasePtr database(dbs.at(i));
+        MongoDatabase *database = dbs.at(i);
 
         if (database->isSystem()) {
             ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(database);

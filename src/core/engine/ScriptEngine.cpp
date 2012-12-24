@@ -68,7 +68,7 @@ void ScriptEngine::init()
         mongo::globalScriptEngine->setScopeInitCallback( mongo::shell_utils::initScope );
 
         _scope.reset(mongo::globalScriptEngine->newScope());
-        //_engine.reset(mongo::globalScriptEngine);
+        _engine.reset(mongo::globalScriptEngine);
     }
 
     // -- Esprima --

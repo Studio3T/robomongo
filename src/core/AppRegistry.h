@@ -23,14 +23,16 @@ namespace Robomongo
         SettingsManager *settingsManager() const { return _settingsManager.get(); }
         App *app() const { return _app.get(); }
         EventBus *bus() const { return _bus.get(); }
+        KeyboardManager *keyboard() const { return _keyboard.get(); }
 
     private:
         AppRegistry();
         ~AppRegistry(void);
 
+        EventBusScopedPtr _bus;
         SettingsManager_ScopedPtr _settingsManager;
         AppScopedPtr _app;
-        EventBusScopedPtr _bus;
+        KeyboardManagerScopedPtr _keyboard;
 
         /**
          * Singleton support

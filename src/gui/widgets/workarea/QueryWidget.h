@@ -53,6 +53,9 @@ namespace Robomongo
 
         void toggleOrientation();
         void activateTabContent();
+        void openNewTab();
+        void reload();
+        void duplicate();
 
         MongoShell *shell() const { return _shell; }
 
@@ -132,6 +135,8 @@ namespace Robomongo
 
         MongoShell *_shell;
         EventBus *_bus;
+        App *_app;
+        KeyboardManager *_keyboard;
     };
 }
 

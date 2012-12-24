@@ -5,6 +5,7 @@
 
 namespace Robomongo
 {
+    class QueryWidget;
     class WorkAreaWidget;
 
     /**
@@ -22,6 +23,11 @@ namespace Robomongo
          */
         WorkAreaTabWidget(WorkAreaWidget *workAreaWidget);
 
+        void closeTab(int index);
+
+        QueryWidget *currentQueryWidget();
+        QueryWidget *queryWidget(int index);
+
     protected:
 
         /**
@@ -34,6 +40,10 @@ namespace Robomongo
 
         void tabBar_tabCloseRequested(int index);
         void ui_newTabRequested(int index);
+        void ui_reloadTabRequested(int index);
+        void ui_duplicateTabRequested(int index);
+        void ui_closeOtherTabsRequested(int index);
+        void ui_closeTabsToTheRightRequested(int index);
         void ui_currentChanged(int index);
     };
 }

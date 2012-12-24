@@ -30,6 +30,9 @@ namespace Robomongo
     class EventBus;
     typedef boost::scoped_ptr<EventBus> EventBusScopedPtr;
 
+    class KeyboardManager;
+    typedef boost::scoped_ptr<KeyboardManager> KeyboardManagerScopedPtr;
+
     class MongoServer;
 //    typedef boost::shared_ptr<MongoServer> MongoServerPtr;
 //    typedef boost::weak_ptr<MongoServer> MongoServerWeakPtr;

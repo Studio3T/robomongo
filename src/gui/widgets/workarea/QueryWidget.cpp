@@ -23,6 +23,7 @@
 #include "domain/App.h"
 #include "WorkAreaTabWidget.h"
 #include "settings/ConnectionRecord.h"
+#include "KeyboardManager.h"
 
 using namespace mongo;
 using namespace Robomongo;
@@ -34,7 +35,9 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     QWidget(parent),
     _shell(shell),
     _tabWidget(tabWidget),
-    _bus(AppRegistry::instance().bus())
+    _app(AppRegistry::instance().app()),
+    _bus(AppRegistry::instance().bus()),
+    _keyboard(AppRegistry::instance().keyboard())
 {
     setObjectName("queryWidget");
 
@@ -150,34 +153,15 @@ bool QueryWidget::eventFilter(QObject * o, QEvent * e)
 	{
 		QKeyEvent * keyEvent = (QKeyEvent *) e;
 
-        bool ctrlShiftReturn = (keyEvent->modifiers() & Qt::ControlModifier) &&
-                               (keyEvent->modifiers() & Qt::ShiftModifier) &&
-                               (keyEvent->key()==Qt::Key_Return || keyEvent->key()==Qt::Key_Enter);
-
-        bool ctrlT = (keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key()==Qt::Key_T);
-
-        if (ctrlShiftReturn || ctrlT) {
-            MongoServer *server = _shell->server();
-            QString query = _queryText->selectedText();
-
-            if (query.isEmpty())
-                query = "";//_queryText->text();
-
-            QString dbName = server->connectionRecord()->databaseName();
-            if (_currentResults.count() > 0) {
-                MongoShellResult lastResult = _currentResults.last();
-                dbName = lastResult.databaseName;
-            }
-
-            AppRegistry::instance().app()->openShell(server, query, dbName);
-
+        if (_keyboard->isNewTabShortcut(keyEvent)) {
+            openNewTab();
             return true;
         }
-        else if (keyEvent->key() == Qt::Key_F6) {
+        else if (_keyboard->isSetFocusOnQueryLineShortcut(keyEvent)) {
             _queryText->setFocus();
             return true;
         }
-        else if ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key()==Qt::Key_Return || keyEvent->key()==Qt::Key_Enter) )
+        else if (_keyboard->isExecuteScriptShortcut(keyEvent))
         {
             ui_executeButtonClicked();
             return true;
@@ -196,6 +180,34 @@ void QueryWidget::toggleOrientation()
 void QueryWidget::activateTabContent()
 {
     _queryText->setFocus();
+}
+
+void QueryWidget::openNewTab()
+{
+    MongoServer *server = _shell->server();
+    QString query = _queryText->selectedText();
+
+    if (query.isEmpty())
+        query = "";//_queryText->text();
+
+    QString dbName = server->connectionRecord()->databaseName();
+    if (_currentResults.count() > 0) {
+        MongoShellResult lastResult = _currentResults.last();
+        dbName = lastResult.databaseName;
+    }
+
+    _app->openShell(server, query, dbName);
+}
+
+void QueryWidget::reload()
+{
+    ui_executeButtonClicked();
+}
+
+void QueryWidget::duplicate()
+{
+    _queryText->selectAll();
+    openNewTab();
 }
 
 /*

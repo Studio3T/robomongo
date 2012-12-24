@@ -31,7 +31,8 @@ SOURCES += \
     EventBusSubscriber.cpp \
     EventBusDispatcher.cpp \
     EventWrapper.cpp \
-    mongodb/MongoClientThread.cpp
+    mongodb/MongoClientThread.cpp \
+    KeyboardManager.cpp
 
 
 HEADERS  += \
@@ -62,7 +63,8 @@ HEADERS  += \
     EventBusSubscriber.h \
     EventBusDispatcher.h \
     EventWrapper.h \
-    mongodb/MongoClientThread.h
+    mongodb/MongoClientThread.h \
+    KeyboardManager.h
 
 # third party libs
 #LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson

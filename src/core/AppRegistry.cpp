@@ -2,14 +2,16 @@
 #include "EventBus.h"
 #include "settings/SettingsManager.h"
 #include "domain/App.h"
+#include "KeyboardManager.h"
 
 using namespace Robomongo;
 
-AppRegistry::AppRegistry()
+AppRegistry::AppRegistry() :
+    _bus(new EventBus()),
+    _settingsManager(new SettingsManager()),
+    _app(new App(_bus.get())),
+    _keyboard(new KeyboardManager())
 {
-    _bus.reset(new EventBus());
-    _settingsManager.reset(new SettingsManager());
-    _app.reset(new App(_bus.get()));
 }
 
 AppRegistry::~AppRegistry()

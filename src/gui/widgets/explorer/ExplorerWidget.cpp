@@ -44,9 +44,9 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     _progressLabel->hide();
     movie->start();
 
-    _bus.subscribe(this, ConnectingEvent::Type);
-    _bus.subscribe(this, ConnectionFailedEvent::Type);
-    _bus.subscribe(this, ConnectionEstablishedEvent::Type);
+    _bus->subscribe(this, ConnectingEvent::Type);
+    _bus->subscribe(this, ConnectionFailedEvent::Type);
+    _bus->subscribe(this, ConnectionEstablishedEvent::Type);
 }
 
 void ExplorerWidget::keyPressEvent(QKeyEvent *event)
@@ -98,7 +98,7 @@ void ExplorerWidget::ui_disonnectActionTriggered()
             MongoServer *server = serverItem->server();
 
             delete removedItem;
-            _app.closeServer(server);
+            _app->closeServer(server);
         }
     }
 }
@@ -119,7 +119,7 @@ void ExplorerWidget::ui_openShellActionTriggered()
     if (!serverItem)
         return;
 
-    _app.openShell(serverItem->server(), "db.getMongo()");
+    _app->openShell(serverItem->server(), "db.getMongo()");
 }
 
 void ExplorerWidget::increaseProgress()
@@ -181,10 +181,8 @@ void ExplorerWidget::removeServer()
 void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)
 {
     ExplorerDatabaseCategoryTreeItem *categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
-    if (categoryItem)
-    {
-        switch(categoryItem->category())
-        {
+    if (categoryItem) {
+        switch(categoryItem->category()) {
             case Collections:
                 categoryItem->databaseItem()->expandCollections();
                 break;
@@ -195,14 +193,11 @@ void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)
             case Users:
                 break;
         }
-
         return;
     }
 
-
     ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
-    if (serverItem)
-    {
+    if (serverItem) {
         serverItem->expand();
         return;
     }
@@ -214,11 +209,7 @@ void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)
 void ExplorerWidget::ui_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
     ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
-    if (collectionItem)
-    {
-        _app.openShell(collectionItem->collection());
-
-//        QueryCreatedEvent *evnt = new QueryCreatedEvent(collectionItem->viewModel()->collection());
-//        AppRegistry::instance().mediator()->emitQueryCreated(evnt);
+    if (collectionItem) {
+        _app->openShell(collectionItem->collection());
     }
 }

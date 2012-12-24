@@ -13,7 +13,7 @@ MongoShell::MongoShell(MongoServer *server) :
     QObject(),
     _server(server),
     _client(server->client()),
-    _bus(&AppRegistry::instance().bus())
+    _bus(AppRegistry::instance().bus())
 {
 
 }
@@ -22,7 +22,7 @@ MongoShell::~MongoShell()
 {
 }
 
-void MongoShell::open(const MongoCollectionPtr &collection)
+void MongoShell::open(MongoCollection *collection)
 {
     _query = QString("db.%1.find()").arg(collection->name());
     _client->send(new ExecuteQueryRequest(this, collection->fullName()));

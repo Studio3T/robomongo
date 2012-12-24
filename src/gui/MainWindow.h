@@ -47,9 +47,9 @@ namespace Robomongo
         /**
          * @brief MongoManager
          */
-        App &_app;
-        SettingsManager &_settingsManager;
-        EventBus &_bus;
+        App *_app;
+        SettingsManager *_settingsManager;
+        EventBus *_bus;
 
         ConnectionMenu *_connectionsMenu;
         QAction *_connectAction;

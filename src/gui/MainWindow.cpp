@@ -22,7 +22,7 @@ MainWindow::MainWindow() : QMainWindow(),
     _workArea(NULL),
     _connectionsMenu(NULL)
 {
-    _bus.subscribe(this, ConnectionFailedEvent::Type);
+    _bus->subscribe(this, ConnectionFailedEvent::Type);
 
     qApp->setStyleSheet(
         "Robomongo--ExplorerTreeWidget#explorerTree { padding: 7px 0px 7px 0px; background-color:#E7E5E4; border: 0px; } \n "
@@ -115,7 +115,7 @@ MainWindow::MainWindow() : QMainWindow(),
     setWindowTitle("Robomongo 0.3.5");
     setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
-    if (_settingsManager.connections().count() > 0) {
+    if (_settingsManager->connections().count() > 0) {
         QRect scr = QApplication::desktop()->screenGeometry();
         _connectionsMenu->move( scr.center() - _connectionsMenu->rect().center() - QPoint(0, 100));
         _connectionsMenu->setFocus();
@@ -144,7 +144,7 @@ void MainWindow::updateConnectionsMenu()
 
     int number = 1;
     // Populate list with connections
-    foreach(ConnectionRecord *connection, _settingsManager.connections()) {
+    foreach(ConnectionRecord *connection, _settingsManager->connections()) {
         QAction *action = new QAction(connection->getReadableName(), this);
         action->setData(QVariant::fromValue(connection));
 
@@ -155,7 +155,7 @@ void MainWindow::updateConnectionsMenu()
         ++number;
     }
 
-    if (_settingsManager.connections().size() > 0)
+    if (_settingsManager->connections().size() > 0)
         _connectionsMenu->addSeparator();
 
     // Connect action
@@ -170,11 +170,11 @@ void MainWindow::updateConnectionsMenu()
 
 void MainWindow::manageConnections()
 {
-    ConnectionsDialog dialog(&_settingsManager);
+    ConnectionsDialog dialog(_settingsManager);
     int result = dialog.exec();
 
     // save settings and update connection menu
-    _settingsManager.save();
+    _settingsManager->save();
     updateConnectionsMenu();
 
     if (result == QDialog::Accepted)
@@ -183,7 +183,7 @@ void MainWindow::manageConnections()
 
         try
         {
-            _app.openServer(selected, true);
+            _app->openServer(selected, true);
         }
         catch(MongoException &ex)
         {
@@ -235,7 +235,7 @@ void MainWindow::connectToServer(QAction *connectionAction)
 
     try
     {
-        _app.openServer(ptr, true);
+        _app->openServer(ptr, true);
     }
     catch(MongoException &ex)
     {

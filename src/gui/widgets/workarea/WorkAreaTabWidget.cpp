@@ -51,7 +51,7 @@ void WorkAreaTabWidget::tabBar_tabCloseRequested(int index)
 
     if (tabWidget)
     {
-        AppRegistry::instance().app().closeShell(tabWidget->shell());
+        AppRegistry::instance().app()->closeShell(tabWidget->shell());
         delete tabWidget;
     }
 }

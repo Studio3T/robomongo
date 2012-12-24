@@ -35,7 +35,7 @@ void App::closeServer(MongoServer *server)
     delete server;
 }
 
-MongoShell *App::openShell(const MongoCollectionPtr &collection)
+MongoShell *App::openShell(MongoCollection *collection)
 {
     MongoServer *server = openServer(collection->database()->server()->connectionRecord(), false);
 
@@ -44,7 +44,7 @@ MongoShell *App::openShell(const MongoCollectionPtr &collection)
     serverClone->tryConnect();
     _servers.append(serverClone);*/
 
-    MongoShell *shell(new MongoShell(server));
+    MongoShell *shell = new MongoShell(server);
     _shells.append(shell);
 
     QString script = QString("db.%1.find()").arg(collection->name());

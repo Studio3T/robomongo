@@ -24,9 +24,9 @@ LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
 
     setLayout(hlayout);
 
-    _bus.subscribe(this, SomethingHappened::Type);
-    _bus.subscribe(this, ConnectingEvent::Type);
-    _bus.subscribe(this, OpeningShellEvent::Type);
+    _bus->subscribe(this, SomethingHappened::Type);
+    _bus->subscribe(this, ConnectingEvent::Type);
+    _bus->subscribe(this, OpeningShellEvent::Type);
 }
 
 void LogWidget::addMessage(const QString &message)

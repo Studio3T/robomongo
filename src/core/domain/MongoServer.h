@@ -39,7 +39,10 @@ namespace Robomongo
          */
         ConnectionRecord *connectionRecord() const { return _connectionRecord; }
 
-        void listDatabases();
+        /**
+         * @brief Loads databases of this server asynchronously.
+         */
+        void loadDatabases();
 
         MongoClient *client() const { return _client.data(); }
 
@@ -71,7 +74,7 @@ namespace Robomongo
 
         QList<MongoDatabase *> _databases;
 
-        EventBus &_bus;
+        EventBus *_bus;
 
     };
 }

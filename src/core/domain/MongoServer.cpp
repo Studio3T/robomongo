@@ -22,14 +22,14 @@ MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible) : QOb
     _connection.reset(new mongo::DBClientConnection);
 
     _client.reset(new MongoClient(
-                      &_bus,
+                      _bus,
                       connectionRecord->databaseAddress(),
                       connectionRecord->databasePort(),
                       connectionRecord->databaseName(),
                       connectionRecord->userName(),
                       connectionRecord->userPassword()));
 
-    _bus.send(_client.data(), new InitRequest(this));
+    _bus->send(_client.data(), new InitRequest(this));
 }
 
 MongoServer::~MongoServer()
@@ -49,7 +49,7 @@ void MongoServer::tryConnect()
         _connectionRecord->userPassword()));
 }
 
-void MongoServer::listDatabases()
+void MongoServer::loadDatabases()
 {
     _client->send(new LoadDatabaseNamesRequest(this));
 }
@@ -69,19 +69,19 @@ void MongoServer::handle(EstablishConnectionResponse *event)
 {
     if (event->isError())
     {
-        _bus.publish(new ConnectionFailedEvent(this));
+        _bus->publish(new ConnectionFailedEvent(this));
         return;
     }
 
     if (_visible)
-        _bus.publish(new ConnectionEstablishedEvent(this));
+        _bus->publish(new ConnectionEstablishedEvent(this));
 }
 
 void MongoServer::handle(LoadDatabaseNamesResponse *event)
 {
     if (event->isError())
     {
-        _bus.publish(new ConnectionFailedEvent(this));
+        _bus->publish(new ConnectionFailedEvent(this));
         return;
     }
 
@@ -92,5 +92,5 @@ void MongoServer::handle(LoadDatabaseNamesResponse *event)
         addDatabase(db);
     }
 
-    _bus.publish(new DatabaseListLoadedEvent(this, _databases));
+    _bus->publish(new DatabaseListLoadedEvent(this, _databases));
 }

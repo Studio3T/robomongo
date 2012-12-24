@@ -29,7 +29,7 @@ namespace Robomongo
         */
         QPlainTextEdit *_logTextEdit;
 
-        EventBus &_bus;
+        EventBus *_bus;
 
     public:
 

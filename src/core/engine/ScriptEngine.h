@@ -30,8 +30,10 @@ namespace Robomongo
         void parseTree(JSParseNode * root, int indent, const QString &script, QStringList &list, bool topList);
         int _port;
 
+        // Order is important. mongo::Scope should be destroyed before mongo::ScriptEngine
         boost::scoped_ptr<mongo::ScriptEngine> _engine;
         boost::scoped_ptr<mongo::Scope> _scope;
+
         QString subb(const QStringList &list, int fline, int fpos, int tline, int tpos);
 
         QMutex _mutex;

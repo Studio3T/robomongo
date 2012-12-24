@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
 //    qDebug() << str;
 
-    AppRegistry::instance().settingsManager().save();
+    AppRegistry::instance().settingsManager()->save();
 
     QRect screenGeometry = QApplication::desktop()->availableGeometry();
     QSize size(screenGeometry.width() - 450, screenGeometry.height() - 165);

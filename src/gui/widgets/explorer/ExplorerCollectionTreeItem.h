@@ -13,22 +13,16 @@ namespace Robomongo
 
     private:
 
-        /*
-        ** View model
-        */
-        //ExplorerCollectionViewModel * _viewModel;
-
-        MongoCollectionPtr _collection;
+        MongoCollection *_collection;
 
     public:
 
         /*
         ** Constructs collection tree item
         */
-        ExplorerCollectionTreeItem(const MongoCollectionPtr &collection);
+        ExplorerCollectionTreeItem(MongoCollection *collection);
 
-        MongoCollectionPtr collection() const { return _collection; }
-
+        MongoCollection *collection() const { return _collection; }
     };
 }
 

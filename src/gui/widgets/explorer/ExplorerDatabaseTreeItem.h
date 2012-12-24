@@ -40,13 +40,13 @@ namespace Robomongo
 
     public slots:
 
-        void vm_collectionRefreshed(const QList<MongoCollectionPtr> &collections);
+        void vm_collectionRefreshed(const QList<MongoCollection *> &collections);
 
     public slots:
         void handle(MongoDatabase_CollectionListLoadedEvent *event);
 
     private:
-        EventBus &_bus;
+        EventBus *_bus;
     };
 }
 

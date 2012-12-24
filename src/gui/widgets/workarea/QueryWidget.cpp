@@ -38,8 +38,8 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
 {
     setObjectName("queryWidget");
 
-    _bus.subscribe(this, DocumentListLoadedEvent::Type, shell);
-    _bus.subscribe(this, ScriptExecutedEvent::Type, shell);
+    _bus->subscribe(this, DocumentListLoadedEvent::Type, shell);
+    _bus->subscribe(this, ScriptExecutedEvent::Type, shell);
 
     // Query text widget
     _configureQueryText();
@@ -169,7 +169,7 @@ bool QueryWidget::eventFilter(QObject * o, QEvent * e)
                 dbName = lastResult.databaseName;
             }
 
-            AppRegistry::instance().app().openShell(server, query, dbName);
+            AppRegistry::instance().app()->openShell(server, query, dbName);
 
             return true;
         }

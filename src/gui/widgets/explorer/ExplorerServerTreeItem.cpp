@@ -13,7 +13,7 @@ ExplorerServerTreeItem::ExplorerServerTreeItem(MongoServer *server) : QObject(),
     _server(server),
     _bus(AppRegistry::instance().bus())
 {
-    _bus.subscribe(this, DatabaseListLoadedEvent::Type, _server);
+    _bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
 
     setText(0, _server->connectionRecord()->getReadableName());
     setIcon(0, GuiRegistry::instance().serverIcon());
@@ -27,9 +27,7 @@ ExplorerServerTreeItem::~ExplorerServerTreeItem()
 
 void ExplorerServerTreeItem::expand()
 {
-    _server->listDatabases();
-    //databaseRefreshed(dbs);
-    //_viewModel->expand();
+    _server->loadDatabases();
 }
 
 void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabase *> &dbs)

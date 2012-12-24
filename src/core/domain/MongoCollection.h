@@ -7,7 +7,7 @@
 
 namespace Robomongo
 {
-    class MongoCollection : public QObject, public boost::enable_shared_from_this<MongoCollection>
+    class MongoCollection : public QObject
     {
         Q_OBJECT
     public:

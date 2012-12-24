@@ -14,7 +14,7 @@ using namespace Robomongo;
 */
 WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
     QWidget(),
-    _bus(&AppRegistry::instance().bus())
+    _bus(AppRegistry::instance().bus())
 {
     setContentsMargins(4, 3, 0, 0);
 	_mainWindow = mainWindow;

@@ -17,7 +17,7 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) : QO
     _database(database),
     _bus(AppRegistry::instance().bus())
 {
-    _bus.subscribe(this, MongoDatabase_CollectionListLoadedEvent::Type, _database);
+    _bus->subscribe(this, MongoDatabase_CollectionListLoadedEvent::Type, _database);
 
     setText(0, _database->name());
     setIcon(0, GuiRegistry::instance().databaseIcon());
@@ -66,11 +66,10 @@ ExplorerDatabaseTreeItem::~ExplorerDatabaseTreeItem()
 */
 void ExplorerDatabaseTreeItem::expandCollections()
 {
-    _database->listCollections();
-    //_viewModel->expandCollections();
+    _database->loadCollections();
 }
 
-void ExplorerDatabaseTreeItem::vm_collectionRefreshed(const QList<MongoCollectionPtr> &collections)
+void ExplorerDatabaseTreeItem::vm_collectionRefreshed(const QList<MongoCollection *> &collections)
 {
 	// remove child items
 	int itemCount = _collectionItem->childCount();
@@ -91,7 +90,7 @@ void ExplorerDatabaseTreeItem::vm_collectionRefreshed(const QList<MongoCollectio
 
     for (int i = 0; i < collections.size(); i++)
     {
-        MongoCollectionPtr collection(collections.at(i));
+        MongoCollection *collection = collections.at(i);
 
         if (collection->isSystem())
         {

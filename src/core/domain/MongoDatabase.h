@@ -16,7 +16,7 @@ namespace Robomongo
     /**
      * @brief Represents MongoDB database.
      */
-    class MongoDatabase : public QObject, public boost::enable_shared_from_this<MongoDatabase>
+    class MongoDatabase : public QObject
     {
         Q_OBJECT
 
@@ -32,7 +32,7 @@ namespace Robomongo
         /**
          * @brief Initiate listCollection asynchronous operation.
          */
-        void listCollections();
+        void loadCollections();
 
         QString name() const { return _name; }
 
@@ -50,13 +50,18 @@ namespace Robomongo
 
     private:
 
+        void clearCollections();
+        void addCollection(MongoCollection *collection);
+
+    private:
+
         MongoServer *_server;
         MongoClient *_client;
         QList<MongoCollection *> _collections;
         QString _name;
         bool _system;
 
-        EventBus &_bus;
+        EventBus *_bus;
 
     };
 
@@ -64,11 +69,11 @@ namespace Robomongo
     {
         R_EVENT
 
-        MongoDatabase_CollectionListLoadedEvent(QObject *sender, const QList<MongoCollectionPtr> &list) :
+        MongoDatabase_CollectionListLoadedEvent(QObject *sender, const QList<MongoCollection *> &list) :
             Event(sender),
             list(list) { }
 
-        QList<MongoCollectionPtr> list;
+        QList<MongoCollection *> list;
     };
 }
 

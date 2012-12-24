@@ -24,21 +24,33 @@ MongoDatabase::MongoDatabase(MongoServer *server, const QString &name) : QObject
 
 MongoDatabase::~MongoDatabase()
 {
+    clearCollections();
 }
 
-void MongoDatabase::listCollections()
+void MongoDatabase::loadCollections()
 {
-    _bus.send(_client, new LoadCollectionNamesRequest(this, _name));
+    _bus->send(_client, new LoadCollectionNamesRequest(this, _name));
 }
 
 void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
 {
-    QList<MongoCollectionPtr> list;
+    clearCollections();
 
     foreach(QString name, loaded->collectionNames)    {
-        MongoCollectionPtr db(new MongoCollection(this, name));
-        list.append(db);
+        MongoCollection *collection = new MongoCollection(this, name);
+        addCollection(collection);
     }
 
-    _bus.publish(new MongoDatabase_CollectionListLoadedEvent(this, list));
+    _bus->publish(new MongoDatabase_CollectionListLoadedEvent(this, _collections));
+}
+
+void MongoDatabase::clearCollections()
+{
+    qDeleteAll(_collections);
+    _collections.clear();
+}
+
+void MongoDatabase::addCollection(MongoCollection *collection)
+{
+    _collections.append(collection);
 }

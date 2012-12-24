@@ -44,7 +44,7 @@ namespace Robomongo
     private:
 
         MongoServer *_server;
-        EventBus &_bus;
+        EventBus *_bus;
 
     };
 }

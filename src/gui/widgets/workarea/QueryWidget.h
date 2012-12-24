@@ -131,7 +131,7 @@ namespace Robomongo
 //        PlainJavaScriptEditor *_queryText;
 
         MongoShell *_shell;
-        EventBus &_bus;
+        EventBus *_bus;
     };
 }
 

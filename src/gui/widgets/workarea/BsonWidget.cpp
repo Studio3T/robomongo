@@ -4,6 +4,7 @@
 #include "domain/MongoElement.h"
 #include "domain/MongoDocument.h"
 #include <QPlainTextEdit>
+#include <QStackedWidget>
 
 using namespace Robomongo;
 
@@ -14,6 +15,7 @@ BsonWidget::BsonWidget(QWidget * parent) : QWidget(parent)
     _modeTabs->setTabPosition(QTabWidget::South);
     _modeTabs->setDocumentMode(true);
     _bsonTree = new BsonTreeWidget;
+
 
 //    _jsonText = new QPlainTextEdit(this);
 //    _logText = new QPlainTextEdit(this);

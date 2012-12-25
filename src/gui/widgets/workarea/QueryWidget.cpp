@@ -234,7 +234,6 @@ void QueryWidget::_configureQueryText()
 //    javaScriptLexer->setPaper(QColor(255, 0, 0, 127));
 
     _queryText = new RoboScintilla;
-    _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _queryText->setFixedHeight(23);
     _queryText->setAutoIndent(true);
     _queryText->setIndentationsUseTabs(false);
@@ -249,6 +248,9 @@ void QueryWidget::_configureQueryText()
     _queryText->setCaretForegroundColor(QColor("#FFFFFF"));
     _queryText->setMatchedBraceBackgroundColor(QColor(48, 10, 36));
     _queryText->setMatchedBraceForegroundColor(QColor("#1AB0A6"));
+    _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_WORD);
+    _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     //_queryText->SendScintilla(QsciScintilla::SCI_SETFONTQUALITY, QsciScintilla::SC_EFF_QUALITY_LCD_OPTIMIZED);
     //_queryText->SendScintilla (QsciScintillaBase::SCI_SETKEYWORDS, "db");

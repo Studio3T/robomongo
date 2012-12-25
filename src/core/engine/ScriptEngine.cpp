@@ -99,13 +99,7 @@ QList<Result> ScriptEngine::exec(const QString &script, const QString &dbName)
 
     QList<Result> results;
 
-    if (!dbName.isEmpty()) {
-        // switch to database
-
-        QString useDb = QString("shellHelper.use('%1');").arg(dbName);
-        QByteArray useDbArray = useDb.toUtf8();
-        _scope->exec(useDbArray.data(), "(usedb)", false, true, false);
-    }
+    use(dbName);
 
     foreach(QString statement, statements)
     {
@@ -139,6 +133,17 @@ QList<Result> ScriptEngine::exec(const QString &script, const QString &dbName)
     }
 
     return results;
+}
+
+void ScriptEngine::use(const QString &dbName)
+{
+    if (!dbName.isEmpty()) {
+        // switch to database
+
+        QString useDb = QString("shellHelper.use('%1');").arg(dbName);
+        QByteArray useDbArray = useDb.toUtf8();
+        _scope->exec(useDbArray.data(), "(usedb)", false, true, false);
+    }
 }
 
 bool ScriptEngine::statementize(const QString &script, QStringList &outList, QString &outError)

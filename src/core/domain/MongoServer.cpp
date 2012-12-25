@@ -10,10 +10,11 @@
 using namespace Robomongo;
 using namespace std;
 
-MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible) : QObject(),
+MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible, MongoDatabase *defaultDatabase) : QObject(),
     _connectionRecord(connectionRecord),
     _bus(AppRegistry::instance().bus()),
-    _visible(visible)
+    _visible(visible),
+    _defaultDatabase(defaultDatabase)
 {
     _host = _connectionRecord->databaseAddress();
     _port = QString::number(_connectionRecord->databasePort());
@@ -21,13 +22,16 @@ MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible) : QOb
 
     _connection.reset(new mongo::DBClientConnection);
 
+    QString finalDefaultDatabase = _defaultDatabase ? _defaultDatabase->name() : QString();
+
     _client.reset(new MongoClient(
                       _bus,
                       connectionRecord->databaseAddress(),
                       connectionRecord->databasePort(),
                       connectionRecord->databaseName(),
                       connectionRecord->userName(),
-                      connectionRecord->userPassword()));
+                      connectionRecord->userPassword(),
+                      finalDefaultDatabase));
 
     _bus->send(_client.data(), new InitRequest(this));
 }

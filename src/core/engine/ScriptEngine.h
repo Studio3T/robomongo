@@ -20,6 +20,8 @@ namespace Robomongo
         void init();
         QList<Result> exec(const QString &script, const QString &dbName = QString());
 
+        void use(const QString &dbName);
+
     private:
         QString _host;
         QString _database;

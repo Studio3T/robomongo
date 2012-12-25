@@ -48,9 +48,11 @@ void WorkAreaWidget::executeScript()
 
 void WorkAreaWidget::handle(OpeningShellEvent *event)
 {
+    QString shellName = event->shellName.isEmpty() ? "Loading..." : event->shellName;
+
     setUpdatesEnabled(false);
     QueryWidget * queryWidget = new QueryWidget(event->shell, _tabWidget, event->initialScript);
-    _tabWidget->addTab(queryWidget, "Loading...");
+    _tabWidget->addTab(queryWidget, shellName);
     _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
     _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());
     setUpdatesEnabled(true);

@@ -17,9 +17,9 @@ App::~App()
     qDeleteAll(_servers);
 }
 
-MongoServer *App::openServer(ConnectionRecord *connectionRecord, bool visible)
+MongoServer *App::openServer(ConnectionRecord *connectionRecord, bool visible, MongoDatabase *defaultDatabase)
 {
-    MongoServer *server = new MongoServer(connectionRecord, visible);
+    MongoServer *server = new MongoServer(connectionRecord, visible, defaultDatabase);
     _servers.append(server);
 
     if (visible)
@@ -55,18 +55,35 @@ MongoShell *App::openShell(MongoCollection *collection)
     return shell;
 }
 
-MongoShell *App::openShell(MongoServer *server, const QString &script, const QString &dbName)
+MongoShell *App::openShell(MongoServer *server, const QString &script, const QString &dbName, bool execute, const QString &shellName)
 {
     MongoServer *serverClone = openServer(server->connectionRecord(), false);
 
     MongoShell *shell = new MongoShell(serverClone);
     _shells.append(shell);
 
-    _bus->publish(new OpeningShellEvent(this, shell, script));
+    _bus->publish(new OpeningShellEvent(this, shell, script, shellName));
 
-    shell->open(script, dbName);
+    if (execute)
+        shell->open(script, dbName);
+
     return shell;
 
+}
+
+MongoShell *App::openShell(MongoDatabase *database, const QString &script, bool execute, const QString &shellName)
+{
+    MongoServer *serverClone = openServer(database->server()->connectionRecord(), false, database);
+
+    MongoShell *shell = new MongoShell(serverClone);
+    _shells.append(shell);
+
+    _bus->publish(new OpeningShellEvent(this, shell, script, shellName));
+
+    if (execute)
+        shell->open(script, database->name());
+
+    return shell;
 }
 
 void App::closeShell(MongoShell *shell)

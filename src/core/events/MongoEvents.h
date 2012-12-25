@@ -251,13 +251,16 @@ namespace Robomongo
     {
         R_EVENT
 
-        OpeningShellEvent(QObject *sender, MongoShell *shell, const QString &initialScript) :
+        OpeningShellEvent(QObject *sender, MongoShell *shell, const QString &initialScript,
+                          const QString &shellName = QString()) :
             Event(sender),
             shell(shell),
-            initialScript(initialScript) { }
+            initialScript(initialScript),
+            shellName(shellName) { }
 
         MongoShell *shell;
         QString initialScript;
+        QString shellName;
     };
 
     class ConnectionFailedEvent : public Event

@@ -27,7 +27,9 @@ SOURCES += ExampleWindow.cpp \
     editors/jsedit.cpp \
     editors/PlainJavaScriptEditor.cpp \
     editors/JSLexer.cpp \
-    widgets/workarea/OutputViewer.cpp
+    widgets/workarea/OutputViewer.cpp \
+    widgets/workarea/Outputable.cpp \
+    widgets/workarea/OutputWidget.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
@@ -51,7 +53,9 @@ HEADERS  += ExampleWindow.h = \
     editors/jsedit.h \
     editors/PlainJavaScriptEditor.h \
     editors/JSLexer.h \
-    widgets/workarea/OutputViewer.h
+    widgets/workarea/OutputViewer.h \
+    widgets/workarea/Outputable.h \
+    widgets/workarea/OutputWidget.h
 
 INCLUDEPATH += \
             $$ROOT/src/core

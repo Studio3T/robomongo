@@ -9,18 +9,26 @@
 
 namespace Robomongo
 {
+    class OutputWidget;
+
     class OutputResultHeader : public QWidget
     {
         Q_OBJECT
     public:
-        explicit OutputResultHeader(QWidget *parent = 0);
+        explicit OutputResultHeader(OutputWidget *output, QWidget *parent = 0);
+        OutputWidget *outputWidget;
+
+    protected slots:
+        void showText();
+        void showTree();
     };
 
     class OutputResult : public QWidget
     {
         Q_OBJECT
     public:
-        explicit OutputResult(QWidget *contentHeader, QWidget *parent = 0);
+        explicit OutputResult(OutputWidget *output, QWidget *parent = 0);
+        OutputWidget *outputWidget;
     };
 
     class OutputViewer : public QWidget
@@ -35,10 +43,6 @@ namespace Robomongo
 
     private:
         QSplitter *_splitter;
-
-        RoboScintilla *_configureLogText();
-        BsonWidget *_configureBsonWidget();
-
     };
 }
 

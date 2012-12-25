@@ -48,7 +48,7 @@ namespace Robomongo
         /*
         ** Constructs BsonWidget
         */
-        BsonWidget(QWidget *parent);
+        BsonWidget(QWidget *parent = NULL);
 
         ~BsonWidget();
 

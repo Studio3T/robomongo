@@ -105,15 +105,15 @@ namespace Robomongo
 	*/
     QString MongoDocument::buildJsonString(QList<MongoDocumentPtr> documents)
 	{
-		Concatenator * con = new Concatenator();
+        Concatenator con;
 
 		int position = 0;
         foreach(MongoDocumentPtr doc, documents)
 		{
 			if (position == 0)
-				con->append("/* 0 */\n");
+                con.append("/* 0 */\n");
 			else 
-				con->append(QString("\n\n/* %1 */\n").arg(position));
+                con.append(QString("\n\n/* %1 */\n").arg(position));
 
 			string jsonString = doc->bsonObj().jsonString(TenGen, 1);
 
@@ -121,12 +121,12 @@ namespace Robomongo
  			QTextCodec::setCodecForCStrings(codec);
 
 			QString qJsonString = QString::fromStdString(jsonString);
-			con->append(qJsonString);
+            con.append(qJsonString);
 
 			position++;
 		}
 
-		return con->build();
+        return con.build();
 	}
 
 

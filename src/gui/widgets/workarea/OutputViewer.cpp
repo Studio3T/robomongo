@@ -7,6 +7,7 @@
 #include <QTreeView>
 #include <domain/MongoShellResult.h>
 #include "GuiRegistry.h"
+#include "OutputWidget.h"
 
 using namespace Robomongo;
 
@@ -44,15 +45,15 @@ void OutputViewer::doSomething(const QList<MongoShellResult> &results)
 
     foreach (MongoShellResult result, results) {
         if (!result.response.trimmed().isEmpty()) {
-            RoboScintilla *logText = _configureLogText();
-            logText->setText(result.response);
-            _splitter->addWidget(new OutputResult(logText));
+            OutputWidget *output = new OutputWidget(result.response);
+            _splitter->addWidget(new OutputResult(output));
+            output->showText();
         }
 
         if (result.documents.count() > 0) {
-            BsonWidget *widget = _configureBsonWidget();
-            widget->setDocuments(result.documents);
-            _splitter->addWidget(new OutputResult(widget));
+            OutputWidget *output = new OutputWidget(result.documents);
+            _splitter->addWidget(new OutputResult(output));
+            output->showTree();
         }
     }
 }
@@ -63,67 +64,24 @@ void OutputViewer::toggleOrientation()
         _splitter->setOrientation(Qt::Vertical);
     else
         _splitter->setOrientation(Qt::Horizontal);
-
-    //_splitter->setHandleWidth(0);
 }
 
-RoboScintilla *OutputViewer::_configureLogText()
-{
-    QFont textFont = font();
-#if defined(Q_OS_MAC)
-    textFont.setPointSize(12);
-    textFont.setFamily("Monaco");
-#elif defined(Q_OS_UNIX)
-    textFont.setFamily("Monospace");
-    textFont.setFixedPitch(true);
-    //textFont.setWeight(QFont::Bold);
-//    textFont.setPointSize(12);
-#elif defined(Q_OS_WIN)
-    textFont.setPointSize(10);
-    textFont.setFamily("Courier");
-#endif
-
-    QsciLexerJavaScript * javaScriptLexer = new JSLexer;
-    javaScriptLexer->setFont(textFont);
-
-    RoboScintilla *_logText = new RoboScintilla;
-    _logText->setLexer(javaScriptLexer);
-    _logText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    _logText->setAutoIndent(true);
-    _logText->setIndentationsUseTabs(false);
-    _logText->setIndentationWidth(4);
-    _logText->setUtf8(true);
-    _logText->installEventFilter(this);
-    _logText->setMarginWidth(1, 0); // to hide left gray column
-    _logText->setBraceMatching(QsciScintilla::StrictBraceMatch);
-    _logText->setFont(textFont);
-    _logText->setReadOnly(true);
-
-    _logText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
-    //connect(_logText, SIGNAL(linesChanged()), SLOT(ui_logLinesCountChanged()));
-
-    return _logText;
-}
-
-BsonWidget *OutputViewer::_configureBsonWidget()
-{
-    return new BsonWidget(_splitter);
-}
-
-OutputResult::OutputResult(QWidget *contentWidget, QWidget *parent)
+OutputResult::OutputResult(OutputWidget *output, QWidget *parent) :
+    outputWidget(output)
 {
     setContentsMargins(0, 0, 0, 0);
-    OutputResultHeader *header = new OutputResultHeader;
+    OutputResultHeader *header = new OutputResultHeader(output);
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
     layout->addWidget(header);
-    layout->addWidget(contentWidget, 1);
+    layout->addWidget(output, 1);
     setLayout(layout);
 }
 
-OutputResultHeader::OutputResultHeader(QWidget *parent) : QWidget(parent)
+OutputResultHeader::OutputResultHeader(OutputWidget *output, QWidget *parent) : QWidget(parent),
+  outputWidget(output)
 {
     setContentsMargins(0,3,0,0);
 
@@ -138,12 +96,13 @@ OutputResultHeader::OutputResultHeader(QWidget *parent) : QWidget(parent)
     tree->setFlat(true);
     tree->setCheckable(true);
     tree->setChecked(true);
+    connect(tree, SIGNAL(clicked()), this, SLOT(showTree()));
 
     QPushButton *text = new QPushButton;
     text->setIcon(GuiRegistry::instance().textIcon());
     text->setFixedSize(18, 18);
     text->setFlat(true);
-
+    connect(text, SIGNAL(clicked()), this, SLOT(showText()));
 
     QLabel *l = new QLabel("Loaded in 2 ms");
     l->setStyleSheet("font-size:12px;");
@@ -151,11 +110,25 @@ OutputResultHeader::OutputResultHeader(QWidget *parent) : QWidget(parent)
     QHBoxLayout *layout = new QHBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
-    //layout->addWidget(text);
-    layout->addWidget(tree);
-    layout->addWidget(text);
+
+    if (output->isTreeModeSupported())
+        layout->addWidget(tree);
+
+    if (output->isTextModeSupported())
+        layout->addWidget(text);
+
     layout->addWidget(max, 0, Qt::AlignRight);
     setLayout(layout);
+}
+
+void OutputResultHeader::showText()
+{
+    outputWidget->showText();
+}
+
+void OutputResultHeader::showTree()
+{
+    outputWidget->showTree();
 }
 
 

@@ -59,7 +59,7 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     _serverMenu->addAction(disconnectAction);
 
     QAction *openDbShellAction = new QAction("Open Shell", this);
-    openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
+    openDbShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
     connect(openDbShellAction, SIGNAL(triggered()), SLOT(ui_dbOpenShell()));
 
     QAction *dbStats = new QAction("Statistics", this);

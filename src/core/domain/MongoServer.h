@@ -13,6 +13,7 @@
 namespace Robomongo
 {
     class MongoClient;
+    class MongoDatabase;
     class EstablishConnectionResponse;
     class LoadDatabaseNamesResponse;
 
@@ -20,7 +21,7 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        explicit MongoServer(ConnectionRecord *connectionRecord, bool visible);
+        explicit MongoServer(ConnectionRecord *connectionRecord, bool visible, MongoDatabase *defaultDatabase = NULL);
         ~MongoServer();
 
         /**
@@ -38,6 +39,8 @@ namespace Robomongo
          * @brief Returns associated connection record
          */
         ConnectionRecord *connectionRecord() const { return _connectionRecord; }
+
+
 
         /**
          * @brief Loads databases of this server asynchronously.
@@ -75,6 +78,7 @@ namespace Robomongo
         QList<MongoDatabase *> _databases;
 
         EventBus *_bus;
+        MongoDatabase *_defaultDatabase;
 
     };
 }

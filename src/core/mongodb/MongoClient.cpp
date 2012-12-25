@@ -19,14 +19,15 @@ using namespace std;
 using namespace mongo;
 
 
-MongoClient::MongoClient(EventBus *bus, QString host, int port, QString database, QString username, QString password, QObject *parent) : QObject(parent),
+MongoClient::MongoClient(EventBus *bus, QString host, int port, QString database, QString username, QString password, QString defaultDatabase, QObject *parent) : QObject(parent),
     _databaseAddress(host),
     _databasePort(port),
     _databaseName(database),
     _userName(username),
     _userPassword(password),
     _bus(bus),
-    _scriptEngine(NULL)
+    _scriptEngine(NULL),
+    _defaultDatabase(defaultDatabase)
 {
     _address = QString("%1:%2").arg(host).arg(port);
     init();
@@ -76,6 +77,7 @@ void MongoClient::handle(InitRequest *event)
     try {
         _scriptEngine = new ScriptEngine(_databaseAddress, _databasePort, _userName, _userPassword, _databaseName);
         _scriptEngine->init();
+        _scriptEngine->use(_defaultDatabase);
     }
     catch (std::exception &ex) {
         reply(event->sender(), new InitResponse(this, EventError("Unable to initialize MongoClient")));

@@ -33,6 +33,8 @@ namespace Robomongo
         ExplorerDatabaseTreeItem(MongoDatabase *database);
         ~ExplorerDatabaseTreeItem();
 
+        MongoDatabase *database() const { return _database; }
+
         /*
         ** Expand database tree item to see collections;
         */

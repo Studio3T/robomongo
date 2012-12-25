@@ -3782,7 +3782,7 @@ const StringData _jscode_raw_query =
 "print(\"Fetched \" + n + \" record(s) in \" + time + \"ms\");\n" 
 "}\n" 
 "if ( this.hasNext() ){\n" 
-"print( \"Type \\\"it\\\" for more\" );\n" 
+"//P print( \"Type \\\"it\\\" for more\" );\n"
 "___it___  = this;\n" 
 "}\n" 
 "else {\n" 

@@ -46,14 +46,16 @@ void OutputViewer::doSomething(const QList<MongoShellResult> &results)
     foreach (MongoShellResult result, results) {
         if (!result.response.trimmed().isEmpty()) {
             OutputWidget *output = new OutputWidget(result.response);
-            _splitter->addWidget(new OutputResult(output));
             output->showText();
+            _splitter->addWidget(new OutputResult(output));
+
         }
 
         if (result.documents.count() > 0) {
             OutputWidget *output = new OutputWidget(result.documents);
-            _splitter->addWidget(new OutputResult(output));
             output->showTree();
+            _splitter->addWidget(new OutputResult(output));
+
         }
     }
 }

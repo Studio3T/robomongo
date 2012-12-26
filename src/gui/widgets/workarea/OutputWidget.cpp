@@ -15,7 +15,8 @@ OutputWidget::OutputWidget(const QString &text) :
     _isTreeModeInitialized(false),
     _isCustomModeInitialized(false),
     _text(text),
-    _sourceIsText(true)
+    _sourceIsText(true),
+    _isFirstPartRendered(false)
 {
     setup();
 }
@@ -28,7 +29,8 @@ OutputWidget::OutputWidget(const QList<MongoDocumentPtr> &documents) :
     _isTreeModeInitialized(false),
     _isCustomModeInitialized(false),
     _documents(documents),
-    _sourceIsText(false)
+    _sourceIsText(false),
+    _isFirstPartRendered(false)
 {
     setup();
 }
@@ -58,7 +60,8 @@ void OutputWidget::showText()
         else {
             _log->setText("Loading...");
             JsonPrepareThread *thread = new JsonPrepareThread(_documents);
-            connect(thread, SIGNAL(finished(QString)), this, SLOT(jsonPrepared(QString)));
+            connect(thread, SIGNAL(finished()), this, SLOT(jsonPrepared()));
+            connect(thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
             thread->start();
         }
 
@@ -90,15 +93,25 @@ void OutputWidget::showCustom()
         return;
 }
 
-void OutputWidget::jsonPrepared(const QString &json)
+void OutputWidget::jsonPrepared()
 {
+    // delete thread, that emits this signal
     QThread *thread = static_cast<QThread *>(sender());
+    thread->deleteLater();
+}
 
+void OutputWidget::jsonPartReady(const QString &json)
+{
     _log->setUpdatesEnabled(false);
-    _log->setText(json);
+
+    if (_isFirstPartRendered)
+        _log->append(json);
+    else
+        _log->setText(json);
+
     _log->setUpdatesEnabled(true);
 
-    thread->deleteLater();
+    _isFirstPartRendered = true;
 }
 
 RoboScintilla *Robomongo::OutputWidget::_configureLogText()

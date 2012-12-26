@@ -63,7 +63,7 @@ namespace Robomongo
 	/*
 	** Create list of MongoDocuments from QList<BsonObj>. It will take owned version of BSONObj
 	*/ 
-    QList<MongoDocumentPtr> MongoDocument::fromBsonObj(QList<BSONObj> bsonObjs)
+    QList<MongoDocumentPtr> MongoDocument::fromBsonObj(const QList<BSONObj> &bsonObjs)
 	{
         QList<MongoDocumentPtr> list;
 
@@ -103,31 +103,41 @@ namespace Robomongo
 	/*
 	** Build JsonString from list of documents
 	*/
-    QString MongoDocument::buildJsonString(QList<MongoDocumentPtr> documents)
+    QString MongoDocument::buildJsonString(const QList<MongoDocumentPtr> &documents)
 	{
-        Concatenator con;
+        QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+        QTextCodec::setCodecForCStrings(codec);
+
+        mongo::StringBuilder sb;
 
 		int position = 0;
         foreach(MongoDocumentPtr doc, documents)
 		{
 			if (position == 0)
-                con.append("/* 0 */\n");
+                sb << "/* 0 */\n";
 			else 
-                con.append(QString("\n\n/* %1 */\n").arg(position));
+                sb << "\n\n/* " << position << "*/\n";
 
 			string jsonString = doc->bsonObj().jsonString(TenGen, 1);
 
- 			QTextCodec * codec = QTextCodec::codecForName("UTF-8");
- 			QTextCodec::setCodecForCStrings(codec);
-
-			QString qJsonString = QString::fromStdString(jsonString);
-            con.append(qJsonString);
-
+            sb << jsonString;
 			position++;
 		}
 
-        return con.build();
-	}
+        string final = sb.str();
+        QString qJsonString = QString::fromStdString(final);
+
+        return qJsonString;
+    }
+
+    QString MongoDocument::buildJsonString(const MongoDocumentPtr &doc)
+    {
+        QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+        QTextCodec::setCodecForCStrings(codec);
+        string jsonString = doc->bsonObj().jsonString(TenGen, 1);
+        QString qJsonString = QString::fromStdString(jsonString);
+        return qJsonString;
+    }
 
 
 

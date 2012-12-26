@@ -100,15 +100,37 @@ namespace Robomongo
         */
         void run()
         {
-            QString json = MongoDocument::buildJsonString(_bsonObjects);
-            emit finished(json);
+            int position = 0;
+            foreach(MongoDocumentPtr doc, _bsonObjects)
+            {
+                mongo::StringBuilder sb;
+                if (position == 0)
+                    sb << "/* 0 */\n";
+                else
+                    sb << "\n\n/* " << position << "*/\n";
+
+                string stdJson = doc->bsonObj().jsonString(TenGen, 1);
+
+                sb << stdJson;
+                QString json = QString::fromStdString(sb.str());
+                emit partReady(json);
+
+                position++;
+            }
+
+            emit finished();
         }
 
     signals:
-        /*
-        ** Signals when json prepared
-        */
-        void finished(const QString & text);
+        /**
+         * @brief Signals when all parts prepared
+         */
+        void finished();
+
+        /**
+         * @brief Signals when json part is ready
+         */
+        void partReady(const QString &part);
     };
 }
 

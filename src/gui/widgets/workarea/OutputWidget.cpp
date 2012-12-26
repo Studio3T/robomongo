@@ -74,8 +74,11 @@ void OutputWidget::showText()
 
 void OutputWidget::showTree()
 {
-    if (!_isTreeModeSupported)
+    if (!_isTreeModeSupported) {
+        // try to downgrade to text mode
+        showText();
         return;
+    }
 
     if (!_isTreeModeInitialized) {
         _bson = _configureBsonWidget();

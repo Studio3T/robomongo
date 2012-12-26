@@ -31,14 +31,15 @@ using namespace Robomongo;
 /*
 ** Constructs query widget
 */
-QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const QString &script, QWidget *parent) :
+QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const QString &script, bool textMode, QWidget *parent) :
     QWidget(parent),
     _shell(shell),
     _tabWidget(tabWidget),
     _app(AppRegistry::instance().app()),
     _bus(AppRegistry::instance().bus()),
     _keyboard(AppRegistry::instance().keyboard()),
-    _viewer(NULL)
+    _viewer(NULL),
+    _textMode(textMode)
 {
     setObjectName("queryWidget");
 
@@ -73,7 +74,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
 
     // Bson widget
     _bsonWidget = new BsonWidget(NULL);
-    _viewer = new OutputViewer();
+    _viewer = new OutputViewer(_textMode);
     _outputLabel = new QLabel();
     _outputLabel->setContentsMargins(0, 5, 0, 0);
     _outputLabel->setVisible(false);

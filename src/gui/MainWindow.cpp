@@ -20,8 +20,11 @@ MainWindow::MainWindow() : QMainWindow(),
     _settingsManager(AppRegistry::instance().settingsManager()),
     _bus(AppRegistry::instance().bus()),
     _workArea(NULL),
-    _connectionsMenu(NULL)
+    _connectionsMenu(NULL),
+    _textMode(false)
 {
+    GuiRegistry::instance().setMainWindow(this);
+
     _bus->subscribe(this, ConnectionFailedEvent::Type);
 
     qApp->setStyleSheet(
@@ -40,7 +43,7 @@ MainWindow::MainWindow() : QMainWindow(),
     _connectAction->setShortcut(QKeySequence::Open);
     _connectAction->setIcon(GuiRegistry::instance().connectIcon());
     _connectAction->setIconText("Connect");
-    _connectAction->setToolTip("Connect to MongoDB");
+    _connectAction->setToolTip("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>");
     connect(_connectAction, SIGNAL(triggered()), this, SLOT(manageConnections()));
 
     _connectionsMenu = new ConnectionMenu(this);
@@ -64,25 +67,36 @@ MainWindow::MainWindow() : QMainWindow(),
     QAction *orientationAction = new QAction("&Rotate", this);
     orientationAction->setShortcut(Qt::Key_F10);
     orientationAction->setIcon(GuiRegistry::instance().rotateIcon());
-    orientationAction->setToolTip("Toggle orientation of results view.");
+    orientationAction->setToolTip("Toggle orientation of results view <b>(F10)</b>");
     connect(orientationAction, SIGNAL(triggered()), this, SLOT(toggleOrientation()));
 
     // Text mode action
     QAction *textModeAction = new QAction("&Text Mode", this);
-    textModeAction->setShortcut(Qt::Key_F2);
+    textModeAction->setShortcut(Qt::Key_F4);
     textModeAction->setIcon(GuiRegistry::instance().textHighlightedIcon());
+    textModeAction->setToolTip("Show current tab in text mode, and make this mode default for all subsequent queries <b>(F4)</b>");
+    textModeAction->setCheckable(true);
     connect(textModeAction, SIGNAL(triggered()), this, SLOT(enterTextMode()));
 
     // Text mode action
     QAction *treeModeAction = new QAction("&Tree Mode", this);
     treeModeAction->setShortcut(Qt::Key_F3);
     treeModeAction->setIcon(GuiRegistry::instance().treeHighlightedIcon());
+    treeModeAction->setToolTip("Show current tab in tree mode, and make this mode default for all subsequent queries <b>(F3)</b>");
+    treeModeAction->setCheckable(true);
+    treeModeAction->setChecked(true);
     connect(treeModeAction, SIGNAL(triggered()), this, SLOT(enterTreeMode()));
+
+    QActionGroup *modeGroup = new QActionGroup(this);
+    modeGroup->addAction(textModeAction);
+    modeGroup->addAction(treeModeAction);
 
     // Execute action
     QAction *executeAction = new QAction("&Execute", this);
     executeAction->setIcon(GuiRegistry::instance().executeIcon());
     executeAction->setIconText("Execute");
+    executeAction->setShortcut(Qt::Key_F5);
+    executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5)</b>");
     connect(executeAction, SIGNAL(triggered()), SLOT(executeScript()));
 
     // Full screen action
@@ -110,8 +124,9 @@ MainWindow::MainWindow() : QMainWindow(),
     toolBar->addSeparator();
     toolBar->addAction(executeAction);
     toolBar->addAction(orientationAction);
-    toolBar->addAction(textModeAction);
+    toolBar->addSeparator();
     toolBar->addAction(treeModeAction);
+    toolBar->addAction(textModeAction);
     toolBar->setShortcutEnabled(1, true);
     toolBar->setMovable(false);
     addToolBar(toolBar);
@@ -126,7 +141,7 @@ MainWindow::MainWindow() : QMainWindow(),
     createTabs();
     createDatabaseExplorer();
 
-    setWindowTitle("Robomongo 0.3.5");
+    setWindowTitle("Robomongo 0.4.0");
     setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
     if (_settingsManager->connections().count() > 0) {
@@ -219,12 +234,14 @@ void MainWindow::toggleOrientation()
 
 void MainWindow::enterTextMode()
 {
+    _textMode = true;
     if (_workArea)
         _workArea->enterTextMode();
 }
 
 void MainWindow::enterTreeMode()
 {
+    _textMode = false;
     if (_workArea)
         _workArea->enterTreeMode();
 }

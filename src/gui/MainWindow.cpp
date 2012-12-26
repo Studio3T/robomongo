@@ -67,6 +67,18 @@ MainWindow::MainWindow() : QMainWindow(),
     orientationAction->setToolTip("Toggle orientation of results view.");
     connect(orientationAction, SIGNAL(triggered()), this, SLOT(toggleOrientation()));
 
+    // Text mode action
+    QAction *textModeAction = new QAction("&Text Mode", this);
+    textModeAction->setShortcut(Qt::Key_F2);
+    textModeAction->setIcon(GuiRegistry::instance().textHighlightedIcon());
+    connect(textModeAction, SIGNAL(triggered()), this, SLOT(enterTextMode()));
+
+    // Text mode action
+    QAction *treeModeAction = new QAction("&Tree Mode", this);
+    treeModeAction->setShortcut(Qt::Key_F3);
+    treeModeAction->setIcon(GuiRegistry::instance().treeHighlightedIcon());
+    connect(treeModeAction, SIGNAL(triggered()), this, SLOT(enterTreeMode()));
+
     // Execute action
     QAction *executeAction = new QAction("&Execute", this);
     executeAction->setIcon(GuiRegistry::instance().executeIcon());
@@ -98,6 +110,8 @@ MainWindow::MainWindow() : QMainWindow(),
     toolBar->addSeparator();
     toolBar->addAction(executeAction);
     toolBar->addAction(orientationAction);
+    toolBar->addAction(textModeAction);
+    toolBar->addAction(treeModeAction);
     toolBar->setShortcutEnabled(1, true);
     toolBar->setMovable(false);
     addToolBar(toolBar);
@@ -201,6 +215,18 @@ void MainWindow::toggleOrientation()
 {
     if (_workArea)
         _workArea->toggleOrientation();
+}
+
+void MainWindow::enterTextMode()
+{
+    if (_workArea)
+        _workArea->enterTextMode();
+}
+
+void MainWindow::enterTreeMode()
+{
+    if (_workArea)
+        _workArea->enterTreeMode();
 }
 
 void MainWindow::executeScript()

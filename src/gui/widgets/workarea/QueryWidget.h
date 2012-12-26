@@ -56,6 +56,8 @@ namespace Robomongo
         void openNewTab();
         void reload();
         void duplicate();
+        void enterTreeMode();
+        void enterTextMode();
 
         MongoShell *shell() const { return _shell; }
 

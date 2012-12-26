@@ -46,6 +46,20 @@ void WorkAreaWidget::executeScript()
         currentWidget->ui_executeButtonClicked();
 }
 
+void WorkAreaWidget::enterTextMode()
+{
+    QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+    if (currentWidget)
+        currentWidget->enterTextMode();
+}
+
+void WorkAreaWidget::enterTreeMode()
+{
+    QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+    if (currentWidget)
+        currentWidget->enterTreeMode();
+}
+
 void WorkAreaWidget::handle(OpeningShellEvent *event)
 {
     QString shellName = event->shellName.isEmpty() ? "Loading..." : event->shellName;

@@ -46,16 +46,16 @@ void OutputViewer::doSomething(const QList<MongoShellResult> &results)
     foreach (MongoShellResult result, results) {
         if (!result.response.trimmed().isEmpty()) {
             OutputWidget *output = new OutputWidget(result.response);
-            output->showText();
-            _splitter->addWidget(new OutputResult(output));
-
+            OutputResult *result = new OutputResult(this, output);
+            result->header()->showText();
+            _splitter->addWidget(result);
         }
 
         if (result.documents.count() > 0) {
             OutputWidget *output = new OutputWidget(result.documents);
-            output->showTree();
-            _splitter->addWidget(new OutputResult(output));
-
+            OutputResult *result = new OutputResult(this, output);
+            result->header()->showTree();
+            _splitter->addWidget(result);
         }
     }
 }
@@ -68,43 +68,85 @@ void OutputViewer::toggleOrientation()
         _splitter->setOrientation(Qt::Horizontal);
 }
 
-OutputResult::OutputResult(OutputWidget *output, QWidget *parent) :
-    outputWidget(output)
+void OutputViewer::enterTreeMode()
+{
+    int count = _splitter->count();
+    for (int i = 0; i < count; i++) {
+        OutputResult *widget = (OutputResult *) _splitter->widget(i);
+        widget->header()->showTree();
+    }
+}
+
+void OutputViewer::enterTextMode()
+{
+    int count = _splitter->count();
+    for (int i = 0; i < count; i++) {
+        OutputResult *widget = (OutputResult *) _splitter->widget(i);
+        widget->header()->showText();
+    }
+}
+
+void OutputViewer::maximizePart(OutputResult *result)
+{
+    int count = _splitter->count();
+    for (int i = 0; i < count; i++) {
+        OutputResult *widget = (OutputResult *) _splitter->widget(i);
+
+        if (widget != result)
+            widget->hide();
+    }
+}
+
+void OutputViewer::restoreSize()
+{
+    int count = _splitter->count();
+    for (int i = 0; i < count; i++) {
+        OutputResult *widget = (OutputResult *) _splitter->widget(i);
+        widget->show();
+    }
+}
+
+OutputResult::OutputResult(OutputViewer *viewer, OutputWidget *output, QWidget *parent) :
+    outputWidget(output),
+    outputViewer(viewer)
 {
     setContentsMargins(0, 0, 0, 0);
-    OutputResultHeader *header = new OutputResultHeader(output);
+    _header = new OutputResultHeader(this, output);
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
-    layout->addWidget(header);
+    layout->addWidget(_header);
     layout->addWidget(output, 1);
     setLayout(layout);
 }
 
-OutputResultHeader::OutputResultHeader(OutputWidget *output, QWidget *parent) : QWidget(parent),
-  outputWidget(output)
+OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *output, QWidget *parent) : QWidget(parent),
+  outputWidget(output),
+  outputResult(result),
+  _maximized(false)
 {
     setContentsMargins(0,3,0,0);
 
-    QPushButton *max = new QPushButton;
-    max->setIcon(GuiRegistry::instance().maximizeIcon());
-    max->setFixedSize(18, 18);
-    max->setFlat(true);
+    _maxButton = new QPushButton;
+    _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
+    _maxButton->setFixedSize(18, 18);
+    _maxButton->setFlat(true);
+    connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart()));
 
-    QPushButton *tree = new QPushButton;
-    tree->setIcon(GuiRegistry::instance().treeIcon());
-    tree->setFixedSize(18, 18);
-    tree->setFlat(true);
-    tree->setCheckable(true);
-    tree->setChecked(true);
-    connect(tree, SIGNAL(clicked()), this, SLOT(showTree()));
+    _treeButton = new QPushButton;
+    _treeButton->setIcon(GuiRegistry::instance().treeIcon());
+    _treeButton->setFixedSize(18, 18);
+    _treeButton->setFlat(true);
+    _treeButton->setCheckable(true);
+    _treeButton->setChecked(true);
+    connect(_treeButton, SIGNAL(clicked()), this, SLOT(showTree()));
 
-    QPushButton *text = new QPushButton;
-    text->setIcon(GuiRegistry::instance().textIcon());
-    text->setFixedSize(18, 18);
-    text->setFlat(true);
-    connect(text, SIGNAL(clicked()), this, SLOT(showText()));
+    _textButton = new QPushButton;
+    _textButton->setIcon(GuiRegistry::instance().textIcon());
+    _textButton->setFixedSize(18, 18);
+    _textButton->setFlat(true);
+    connect(_textButton, SIGNAL(clicked()), this, SLOT(showText()));
 
     QLabel *l = new QLabel("Loaded in 2 ms");
     l->setStyleSheet("font-size:12px;");
@@ -114,23 +156,41 @@ OutputResultHeader::OutputResultHeader(OutputWidget *output, QWidget *parent) : 
     layout->setSpacing(0);
 
     if (output->isTreeModeSupported())
-        layout->addWidget(tree);
+        layout->addWidget(_treeButton);
 
     if (output->isTextModeSupported())
-        layout->addWidget(text);
+        layout->addWidget(_textButton);
 
-    layout->addWidget(max, 0, Qt::AlignRight);
+    layout->addWidget(_maxButton, 0, Qt::AlignRight);
     setLayout(layout);
 }
 
 void OutputResultHeader::showText()
 {
+    _textButton->setIcon(GuiRegistry::instance().textHighlightedIcon());
+    _treeButton->setIcon(GuiRegistry::instance().treeIcon());
     outputWidget->showText();
 }
 
 void OutputResultHeader::showTree()
 {
+    _textButton->setIcon(GuiRegistry::instance().textIcon());
+    _treeButton->setIcon(GuiRegistry::instance().treeHighlightedIcon());
     outputWidget->showTree();
+}
+
+void OutputResultHeader::maximizePart()
+{
+    if (_maximized) {
+        outputResult->outputViewer->restoreSize();
+        _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
+    }
+    else {
+        outputResult->outputViewer->maximizePart(outputResult);
+        _maxButton->setIcon(GuiRegistry::instance().maximizeHighlightedIcon());
+    }
+
+    _maximized = !_maximized;
 }
 
 

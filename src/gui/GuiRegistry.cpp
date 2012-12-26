@@ -48,6 +48,14 @@ QIcon GuiRegistry::maximizeIcon()
     return _maximizeIcon;
 }
 
+QIcon GuiRegistry::maximizeHighlightedIcon()
+{
+    if (_maximizeHighlightedIcon.isNull())
+        _maximizeHighlightedIcon = QIcon(":/robomongo/icons/maximize_highlighted_16x16.png");
+
+    return _maximizeHighlightedIcon;
+}
+
 QIcon GuiRegistry::textIcon()
 {
     if (_textIcon.isNull())
@@ -56,12 +64,28 @@ QIcon GuiRegistry::textIcon()
     return _textIcon;
 }
 
+QIcon GuiRegistry::textHighlightedIcon()
+{
+    if (_textHighlightedIcon.isNull())
+        _textHighlightedIcon = QIcon(":/robomongo/icons/text_highlighted_16x16.png");
+
+    return _textHighlightedIcon;
+}
+
 QIcon GuiRegistry::treeIcon()
 {
     if (_treeIcon.isNull())
         _treeIcon = QIcon(":/robomongo/icons/tree_16x16.png");
 
     return _treeIcon;
+}
+
+QIcon GuiRegistry::treeHighlightedIcon()
+{
+    if (_treeHighlightedIcon.isNull())
+        _treeHighlightedIcon = QIcon(":/robomongo/icons/tree_highlighted_16x16.png");
+
+    return _treeHighlightedIcon;
 }
 
 QIcon GuiRegistry::rotateIcon()

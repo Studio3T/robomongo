@@ -21,6 +21,9 @@ namespace Robomongo
         OutputWidget *outputWidget;
         OutputResult *outputResult;
 
+    protected:
+        void mouseDoubleClickEvent(QMouseEvent *);
+
     public slots:
         void showText();
         void showTree();

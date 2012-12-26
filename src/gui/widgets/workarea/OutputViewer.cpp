@@ -171,6 +171,11 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
     setLayout(layout);
 }
 
+void OutputResultHeader::mouseDoubleClickEvent(QMouseEvent *)
+{
+    maximizePart();
+}
+
 void OutputResultHeader::showText()
 {
     _textButton->setIcon(GuiRegistry::instance().textHighlightedIcon());

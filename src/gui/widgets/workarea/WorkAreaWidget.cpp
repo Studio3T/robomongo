@@ -62,10 +62,11 @@ void WorkAreaWidget::enterTreeMode()
 
 void WorkAreaWidget::handle(OpeningShellEvent *event)
 {
+    bool textMode = _mainWindow->textMode();
     QString shellName = event->shellName.isEmpty() ? "Loading..." : event->shellName;
 
     setUpdatesEnabled(false);
-    QueryWidget * queryWidget = new QueryWidget(event->shell, _tabWidget, event->initialScript);
+    QueryWidget * queryWidget = new QueryWidget(event->shell, _tabWidget, event->initialScript, textMode);
     _tabWidget->addTab(queryWidget, shellName);
     _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
     _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());

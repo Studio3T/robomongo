@@ -35,11 +35,13 @@ namespace Robomongo
 
         void _showPaging(bool show);
 
+        bool _textMode;
+
     public:
         /*
         ** Constructs query widget
         */
-        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const QString &script, QWidget * parent = NULL);
+        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const QString &script, bool textMode, QWidget * parent = NULL);
 
         /*
         ** Destructs QueryWidget

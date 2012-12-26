@@ -8,11 +8,13 @@
 #include <domain/MongoShellResult.h>
 #include "GuiRegistry.h"
 #include "OutputWidget.h"
+#include "MainWindow.h"
 
 using namespace Robomongo;
 
-OutputViewer::OutputViewer(QWidget *parent) :
-    QWidget(parent)
+OutputViewer::OutputViewer(bool textMode, QWidget *parent) :
+    QWidget(parent),
+    _textMode(textMode)
 {
     setContentsMargins(0, 0, 0, 0);
 
@@ -43,20 +45,24 @@ void OutputViewer::doSomething(const QList<MongoShellResult> &results)
         widget->deleteLater();
     }
 
-    foreach (MongoShellResult result, results) {
-        if (!result.response.trimmed().isEmpty()) {
-            OutputWidget *output = new OutputWidget(result.response);
-            OutputResult *result = new OutputResult(this, output);
-            result->header()->showText();
-            _splitter->addWidget(result);
+    foreach (MongoShellResult shellResult, results) {
+        OutputWidget *output = NULL;
+
+        if (!shellResult.response.trimmed().isEmpty()) {
+            output = new OutputWidget(shellResult.response);
         }
 
-        if (result.documents.count() > 0) {
-            OutputWidget *output = new OutputWidget(result.documents);
-            OutputResult *result = new OutputResult(this, output);
-            result->header()->showTree();
-            _splitter->addWidget(result);
+        if (shellResult.documents.count() > 0) {
+            output = new OutputWidget(shellResult.documents);
         }
+
+        OutputResult *result = new OutputResult(this, output);
+        if (GuiRegistry::instance().mainWindow()->textMode())
+            result->header()->showText();
+        else
+            result->header()->showTree();
+
+        _splitter->addWidget(result);
     }
 }
 

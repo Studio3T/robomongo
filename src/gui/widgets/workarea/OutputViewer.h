@@ -50,7 +50,7 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        explicit OutputViewer(QWidget *parent = 0);
+        explicit OutputViewer(bool textMode, QWidget *parent = 0);
         ~OutputViewer();
 
         void doSomething(const QList<MongoShellResult> &documents);
@@ -64,6 +64,7 @@ namespace Robomongo
 
     private:
         QSplitter *_splitter;
+        bool _textMode;
     };
 }
 

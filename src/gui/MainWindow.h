@@ -25,11 +25,14 @@ namespace Robomongo
 
         void keyPressEvent(QKeyEvent *event);
 
+        bool textMode() const { return _textMode; }
+
     private:
         /*
         ** Status
         */
         QLabel *_status;
+        bool _textMode;
 
         /*
         ** Log panel

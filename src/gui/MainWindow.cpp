@@ -96,7 +96,7 @@ MainWindow::MainWindow() : QMainWindow(),
     executeAction->setIcon(GuiRegistry::instance().executeIcon());
     executeAction->setIconText("Execute");
     executeAction->setShortcut(Qt::Key_F5);
-    executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5)</b>");
+    executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>");
     connect(executeAction, SIGNAL(triggered()), SLOT(executeScript()));
 
     // Full screen action
@@ -189,7 +189,6 @@ void MainWindow::updateConnectionsMenu()
 
     // Connect action
     QAction *connectAction = new QAction("&Manage Connections...", this);
-    connectAction->setShortcut(QKeySequence::Open);
     connectAction->setIcon(GuiRegistry::instance().connectIcon());
     connectAction->setToolTip("Connect to MongoDB");
     connect(connectAction, SIGNAL(triggered()), this, SLOT(manageConnections()));

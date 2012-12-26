@@ -37,7 +37,8 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     _tabWidget(tabWidget),
     _app(AppRegistry::instance().app()),
     _bus(AppRegistry::instance().bus()),
-    _keyboard(AppRegistry::instance().keyboard())
+    _keyboard(AppRegistry::instance().keyboard()),
+    _viewer(NULL)
 {
     setObjectName("queryWidget");
 
@@ -208,6 +209,18 @@ void QueryWidget::duplicate()
 {
     _queryText->selectAll();
     openNewTab();
+}
+
+void QueryWidget::enterTreeMode()
+{
+    if (_viewer)
+        _viewer->enterTreeMode();
+}
+
+void QueryWidget::enterTextMode()
+{
+    if (_viewer)
+        _viewer->enterTextMode();
 }
 
 /*

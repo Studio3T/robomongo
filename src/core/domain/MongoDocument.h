@@ -50,7 +50,7 @@ namespace Robomongo
 		/*
 		** Create list of MongoDocuments from QList<BsonObj>. It will take owned version of BSONObj
 		*/ 
-        static QList<MongoDocumentPtr> fromBsonObj(QList<BSONObj> bsonObj);
+        static QList<MongoDocumentPtr> fromBsonObj(const QList<BSONObj> &bsonObj);
 		
 		/*
 		** Return "native" BSONObj
@@ -65,7 +65,9 @@ namespace Robomongo
 		/*
 		** Build JsonString from list of documents
 		*/
-        static QString buildJsonString(QList<MongoDocumentPtr> documents);
+        static QString buildJsonString(const QList<MongoDocumentPtr> &documents);
+
+        static QString buildJsonString(const MongoDocumentPtr &documents);
 	};
 
 	class Concatenator : public QObject

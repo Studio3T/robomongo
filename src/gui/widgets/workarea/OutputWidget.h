@@ -32,7 +32,8 @@ namespace Robomongo
         void showCustom();
 
     public slots:
-        void jsonPrepared(const QString &json);
+        void jsonPrepared();
+        void jsonPartReady(const QString &json);
 
     private:
         RoboScintilla *_configureLogText();
@@ -56,6 +57,8 @@ namespace Robomongo
         bool _isTextModeInitialized;
         bool _isTreeModeInitialized;
         bool _isCustomModeInitialized;
+
+        bool _isFirstPartRendered;
     };
 }
 

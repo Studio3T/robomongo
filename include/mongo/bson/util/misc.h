@@ -93,8 +93,10 @@ namespace mongo {
         }
         time_t toTimeT() const {
             // cant use uassert from bson/util
+            #ifndef ROBOMONGO
             verify((long long)millis >= 0); // TODO when millis is signed, delete 
             verify(((long long)millis/1000) < (std::numeric_limits<time_t>::max)());
+            #endif
             return millis / 1000;
         }
     };

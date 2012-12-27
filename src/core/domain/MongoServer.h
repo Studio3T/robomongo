@@ -21,7 +21,7 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        explicit MongoServer(ConnectionRecord *connectionRecord, bool visible, MongoDatabase *defaultDatabase = NULL);
+        MongoServer(ConnectionRecord *connectionRecord, bool visible, MongoDatabase *defaultDatabase = NULL);
         ~MongoServer();
 
         /**
@@ -49,19 +49,17 @@ namespace Robomongo
 
         MongoClient *client() const { return _client.data(); }
 
-    private:
-
-        void clearDatabases();
-        void addDatabase(MongoDatabase *database);
-
     protected slots:
         void handle(EstablishConnectionResponse *event);
         void handle(LoadDatabaseNamesResponse *event);
 
     private:
+        void clearDatabases();
+        void addDatabase(MongoDatabase *database);
+
+    private:
 
         QScopedPointer<MongoClient> _client;
-
         DBClientConnection_ScopedPtr _connection;
 
         /**
@@ -79,7 +77,6 @@ namespace Robomongo
 
         EventBus *_bus;
         MongoDatabase *_defaultDatabase;
-
     };
 }
 

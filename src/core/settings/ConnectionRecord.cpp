@@ -3,7 +3,7 @@
 using namespace Robomongo;
 
 /**
- * Creates ConnectionRecord with default values
+ * @brief Creates ConnectionRecord with default values
  */
 ConnectionRecord::ConnectionRecord() : QObject()
 {
@@ -12,7 +12,22 @@ ConnectionRecord::ConnectionRecord() : QObject()
 }
 
 /**
- * Converts to QVariantMap
+ * @brief Creates completely new ConnectionRecord by cloning this record.
+ */
+ConnectionRecord *ConnectionRecord::clone()
+{
+    ConnectionRecord *record = new ConnectionRecord();
+    record->setConnectionName(connectionName());
+    record->setDatabaseAddress(databaseAddress());
+    record->setDatabasePort(databasePort());
+    record->setUserName(userName());
+    record->setUserPassword(userPassword());
+    record->setDatabaseName(databaseName());
+    return record;
+}
+
+/**
+ * @brief Converts to QVariantMap
  */
 QVariant ConnectionRecord::toVariant() const
 {
@@ -27,7 +42,7 @@ QVariant ConnectionRecord::toVariant() const
 }
 
 /**
- * Converts from QVariantMap (and clean current state)
+ * @brief Converts from QVariantMap (and clean current state)
  */
 void ConnectionRecord::fromVariant(QVariantMap map)
 {

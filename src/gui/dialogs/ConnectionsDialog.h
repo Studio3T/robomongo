@@ -78,6 +78,12 @@ namespace Robomongo
          */
         void remove();
 
+        /**
+         * @brief Initiate 'clone' action, usually when user clicked on Clone
+         * button
+         */
+        void clone();
+
         void layoutOfItemsChanged();
 
     private:

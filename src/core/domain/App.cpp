@@ -39,11 +39,6 @@ MongoShell *App::openShell(MongoCollection *collection)
 {
     MongoServer *server = openServer(collection->database()->server()->connectionRecord(), false);
 
-/*    ConnectionRecordPtr connectionRecord = collection->database()->server()->connectionRecord();
-    MongoServerPtr serverClone(new MongoServer(connectionRecord));
-    serverClone->tryConnect();
-    _servers.append(serverClone);*/
-
     MongoShell *shell = new MongoShell(server);
     _shells.append(shell);
 

@@ -13,7 +13,7 @@ namespace Robomongo
 {
 
     /**
-     * Represents connection record
+     * @brief Represents connection record
      */
     class ConnectionRecord : public QObject
     {
@@ -22,58 +22,63 @@ namespace Robomongo
     public:
 
         /**
-         * Creates ConnectionRecord with default values
+         * @brief Creates ConnectionRecord with default values
          */
         ConnectionRecord();
 
         /**
-         * Converts to QVariantMap
+         * @brief Creates completely new ConnectionRecord by cloning this record.
+         */
+        ConnectionRecord *clone();
+
+        /**
+         * @brief Converts to QVariantMap
          */
         QVariant toVariant() const;
 
         /**
-         * Converts from QVariantMap (and clean current state)
+         * @brief Converts from QVariantMap (and clean current state)
          */
         void fromVariant(QVariantMap map);
 
         /**
-         * Internal ID of connection
+         * @brief Internal ID of connection
          */
         int id() const { return _id; }
         void setId(const int id) { _id = id; }
 
         /**
-         * Name of connection
+         * @brief Name of connection
          */
         QString connectionName() const { return _connectionName; }
         void setConnectionName(const QString &connectionName) { _connectionName = connectionName; }
 
         /**
-         * Database address
+         * @brief Database address
          */
         QString databaseAddress() const { return _databaseAddress; }
         void setDatabaseAddress(const QString &databaseAddress) { _databaseAddress = databaseAddress; }
 
         /**
-         * Port of database
+         * @brief Port of database
          */
         int databasePort() const { return _databasePort; }
         void setDatabasePort(const int port) { _databasePort = port; }
 
         /**
-         * User name
+         * @brief User name
          */
         QString userName() const { return _userName; }
         void setUserName(const QString &userName) { _userName = userName; }
 
         /**
-         * Password
+         * @brief Password
          */
         QString userPassword() const { return _userPassword; }
         void setUserPassword(const QString &userPassword) { _userPassword = userPassword; }
 
         /**
-         * Port of database
+         * @brief Port of database
          */
         QString databaseName() const { return _databaseName.isEmpty() ? "test" : _databaseName; }
         void setDatabaseName(const QString &databaseName) { _databaseName = databaseName; }
@@ -89,7 +94,7 @@ namespace Robomongo
         }
 
         /**
-         * Returns connection full address (i.e. locahost:8090)
+         * @brief Returns connection full address (i.e. locahost:8090)
          */
         QString getFullAddress() const
         {

@@ -139,7 +139,8 @@ void SettingsManager::addConnection(ConnectionRecord *connection)
  */
 void SettingsManager::updateConnection(ConnectionRecord *connection)
 {
-    emit connectionUpdated(connection);
+    if (_connections.contains(connection))
+        emit connectionUpdated(connection);
 }
 
 /**

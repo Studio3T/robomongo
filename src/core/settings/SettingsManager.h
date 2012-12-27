@@ -48,7 +48,8 @@ namespace Robomongo
         bool save();
 
         /**
-         * @brief Adds connection to the end of list
+         * @brief Adds connection to the end of list.
+         * Connection now will be owned by SettingsManager.
          */
         void addConnection(ConnectionRecord *connection);
 

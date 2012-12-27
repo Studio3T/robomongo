@@ -7,6 +7,8 @@
 #include <QMessageBox>
 #include "ConnectionsDialog.h"
 #include "dialogs/EditConnectionDialog.h"
+#include "settings/ConnectionRecord.h"
+#include "settings/SettingsManager.h"
 #include "GuiRegistry.h"
 #include <QLabel>
 
@@ -18,6 +20,9 @@ using namespace Robomongo;
 ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog()
 {
     setWindowIcon(GuiRegistry::instance().connectIcon());
+    setWindowTitle("Connections...");
+    // Remove help button (?)
+    setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     _settingsManager = settingsManager;
     connect(_settingsManager, SIGNAL(connectionAdded(ConnectionRecord *)), this, SLOT(add(ConnectionRecord*)));
@@ -48,7 +53,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     _listWidget->setDragDropMode(QAbstractItemView::InternalMove);
     _listWidget->setFixedWidth(330);
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
-    connect(_listWidget->model(), SIGNAL(layoutChanged()), this, SLOT(layoutOfItemsChanged()));
+    connect(_listWidget->model(), SIGNAL(layoutChanged()), this, SLOT(listWidget_layoutChanged()));
 
     QPushButton *addButton = new QPushButton("&Add");
     connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
@@ -87,12 +92,6 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
     mainLayout->addLayout(firstColumnLayout, 1);
     mainLayout->addLayout(secondColumnLayout);
-
-    setWindowTitle("Connections...");
-    //setWindowIcon(AppRegistry::instance().serverIcon());
-
-    // Remove help button (?)
-    setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     // Populate list with connections
     foreach(ConnectionRecord *connectionModel, _settingsManager->connections())
@@ -189,24 +188,27 @@ void ConnectionsDialog::clone()
     if (currentItem == 0)
         return;
 
-    // clone connection
+    // Clone connection
     ConnectionRecord *connection = currentItem->connection()->clone();
     QString newConnectionName = QString("Copy of %1").arg(connection->connectionName());
     connection->setConnectionName(newConnectionName);
 
     EditConnectionDialog editDialog(connection);
 
-    // cleanup newly created connection and return, if not accepted.
+    // Cleanup newly created connection and return, if not accepted.
     if (editDialog.exec() != QDialog::Accepted) {
         delete connection;
         return;
     }
 
-    // now connection will be owned by SettingsManager
+    // Now connection will be owned by SettingsManager
     _settingsManager->addConnection(connection);
 }
 
-void ConnectionsDialog::layoutOfItemsChanged()
+/**
+ * @brief Handles ListWidget layoutChanged() signal
+ */
+void ConnectionsDialog::listWidget_layoutChanged()
 {
     int count = _listWidget->count();
     QList<ConnectionRecord *> items;
@@ -253,4 +255,13 @@ void ConnectionsDialog::remove(ConnectionRecord *connection)
         return;
 
     delete item;
+}
+
+/**
+ * @brief Attach ConnectionRecord to this item
+ */
+void ConnectionListWidgetItem::setConnection(ConnectionRecord *connection)
+{
+    setText(connection->connectionName());
+    _connection = connection;
 }

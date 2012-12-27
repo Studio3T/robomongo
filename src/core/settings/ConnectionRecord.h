@@ -29,7 +29,7 @@ namespace Robomongo
         /**
          * @brief Creates completely new ConnectionRecord by cloning this record.
          */
-        ConnectionRecord *clone();
+        ConnectionRecord *clone() const;
 
         /**
          * @brief Converts to QVariantMap

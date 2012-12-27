@@ -46,7 +46,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     _listWidget->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
     _listWidget->setDragEnabled(true);
     _listWidget->setDragDropMode(QAbstractItemView::InternalMove);
-    _listWidget->setFixedWidth(350);
+    _listWidget->setFixedWidth(330);
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
     connect(_listWidget->model(), SIGNAL(layoutChanged()), this, SLOT(layoutOfItemsChanged()));
 
@@ -74,7 +74,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     bottomLayout->addWidget(cancelButton);
 
     QVBoxLayout *firstColumnLayout = new QVBoxLayout;
-    firstColumnLayout->addWidget(_listWidget);
+    firstColumnLayout->addWidget(_listWidget, 1);
     firstColumnLayout->addLayout(bottomLayout);
 
     QVBoxLayout *secondColumnLayout = new QVBoxLayout;
@@ -85,7 +85,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     secondColumnLayout->addWidget(removeButton);
 
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
-    mainLayout->addLayout(firstColumnLayout);
+    mainLayout->addLayout(firstColumnLayout, 1);
     mainLayout->addLayout(secondColumnLayout);
 
     setWindowTitle("Connections...");

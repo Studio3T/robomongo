@@ -14,7 +14,7 @@ ConnectionRecord::ConnectionRecord() : QObject()
 /**
  * @brief Creates completely new ConnectionRecord by cloning this record.
  */
-ConnectionRecord *ConnectionRecord::clone()
+ConnectionRecord *ConnectionRecord::clone() const
 {
     ConnectionRecord *record = new ConnectionRecord();
     record->setConnectionName(connectionName());

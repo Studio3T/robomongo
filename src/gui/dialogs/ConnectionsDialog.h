@@ -5,19 +5,13 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QHash>
-#include "settings/ConnectionRecord.h"
-#include "settings/SettingsManager.h"
-#include <boost/scoped_ptr.hpp>
 #include "Core.h"
-
-using namespace boost;
 
 namespace Robomongo
 {
-    /**
-     * @brief Forward declaration
-     */
     class ConnectionListWidgetItem;
+    class SettingsManager;
+    class ConnectionRecord;
 
     /**
      * @brief Dialog allows select/edit/add/delete connections
@@ -25,7 +19,6 @@ namespace Robomongo
     class ConnectionsDialog : public QDialog
     {
         Q_OBJECT
-
     public:
 
         /**
@@ -84,7 +77,10 @@ namespace Robomongo
          */
         void clone();
 
-        void layoutOfItemsChanged();
+        /**
+         * @brief Handles ListWidget layoutChanged() signal
+         */
+        void listWidget_layoutChanged();
 
     private:
 
@@ -109,7 +105,6 @@ namespace Robomongo
          * ConnectionListWidgetItem*
          */
         QHash<ConnectionRecord *, ConnectionListWidgetItem *> _hash;
-
     };
 
     /**
@@ -119,27 +114,20 @@ namespace Robomongo
     {
     public:
 
-        ConnectionListWidgetItem(ConnectionRecord *connection)
-        {
-            setConnection(connection);
-        }
+        /**
+         * @brief Creates ConnectionListWidgetItem with specified ConnectionRecord
+         */
+        ConnectionListWidgetItem(ConnectionRecord *connection) { setConnection(connection); }
 
         /**
          * @brief Returns attached ConnectionRecord.
          */
-        ConnectionRecord *connection()
-        {
-            return _connection;
-        }
+        ConnectionRecord *connection() { return _connection; }
 
         /**
          * @brief Attach ConnectionRecord to this item
          */
-        void setConnection(ConnectionRecord *connection)
-        {
-            setText(connection->connectionName());
-            _connection = connection;
-        }
+        void setConnection(ConnectionRecord *connection);
 
     private:
         ConnectionRecord *_connection;

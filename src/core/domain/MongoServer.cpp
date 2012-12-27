@@ -11,7 +11,7 @@ using namespace Robomongo;
 using namespace std;
 
 MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible, MongoDatabase *defaultDatabase) : QObject(),
-    _connectionRecord(connectionRecord),
+    _connectionRecord(connectionRecord->clone()), // clone connection record
     _bus(AppRegistry::instance().bus()),
     _visible(visible),
     _defaultDatabase(defaultDatabase)

@@ -30,6 +30,9 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     QAction *editAction = new QAction("&Edit", this);
     connect(editAction, SIGNAL(triggered()), this, SLOT(edit()));
 
+    QAction *cloneAction = new QAction("&Clone", this);
+    connect(cloneAction, SIGNAL(triggered()), this, SLOT(clone()));
+
     QAction *removeAction = new QAction("&Remove", this);
     connect(removeAction, SIGNAL(triggered()), this, SLOT(remove()));
 
@@ -38,6 +41,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     _listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
     _listWidget->addAction(addAction);
     _listWidget->addAction(editAction);
+    _listWidget->addAction(cloneAction);
     _listWidget->addAction(removeAction);
     _listWidget->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
     _listWidget->setDragEnabled(true);
@@ -54,6 +58,9 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
 
     QPushButton *removeButton = new QPushButton("&Remove");
     connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
+
+    QPushButton *cloneButton = new QPushButton("&Clone");
+    connect(cloneButton, SIGNAL(clicked()), this, SLOT(clone()));
 
     QPushButton *cancelButton = new QPushButton("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
@@ -74,6 +81,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     secondColumnLayout->setAlignment(Qt::AlignTop);
     secondColumnLayout->addWidget(addButton);
     secondColumnLayout->addWidget(editButton);
+    secondColumnLayout->addWidget(cloneButton);
     secondColumnLayout->addWidget(removeButton);
 
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
@@ -170,6 +178,32 @@ void ConnectionsDialog::remove()
         return;
 
     _settingsManager->removeConnection(connectionModel);
+}
+
+void ConnectionsDialog::clone()
+{
+    ConnectionListWidgetItem *currentItem =
+        (ConnectionListWidgetItem *) _listWidget->currentItem();
+
+    // Do nothing if no item selected
+    if (currentItem == 0)
+        return;
+
+    // clone connection
+    ConnectionRecord *connection = currentItem->connection()->clone();
+    QString newConnectionName = QString("Copy of %1").arg(connection->connectionName());
+    connection->setConnectionName(newConnectionName);
+
+    EditConnectionDialog editDialog(connection);
+
+    // cleanup newly created connection and return, if not accepted.
+    if (editDialog.exec() != QDialog::Accepted) {
+        delete connection;
+        return;
+    }
+
+    // now connection will be owned by SettingsManager
+    _settingsManager->addConnection(connection);
 }
 
 void ConnectionsDialog::layoutOfItemsChanged()

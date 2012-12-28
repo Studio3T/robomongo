@@ -102,7 +102,7 @@ namespace Robomongo
 
 /**
  * @brief R_REGISTER_EVENT macro defines several event's members that are used
- * by Robomongo event subsystem. This macro should be placed to *.cpp file.
+ * by Robomongo simple event subsystem. This macro should be placed in *.cpp file.
  * @param EVENT_CLASS: class name of Event.
  *
  * For SampleEvent shown above, registration will look like this:

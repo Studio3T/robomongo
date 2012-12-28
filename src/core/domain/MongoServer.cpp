@@ -10,7 +10,7 @@
 using namespace Robomongo;
 using namespace std;
 
-MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible, MongoDatabase *defaultDatabase) : QObject(),
+MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible, const QString &defaultDatabase) : QObject(),
     _connectionRecord(connectionRecord->clone()), // clone connection record
     _bus(AppRegistry::instance().bus()),
     _visible(visible),
@@ -22,8 +22,6 @@ MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible, Mongo
 
     _connection.reset(new mongo::DBClientConnection);
 
-    QString finalDefaultDatabase = _defaultDatabase ? _defaultDatabase->name() : QString();
-
     _client.reset(new MongoClient(
                       _bus,
                       connectionRecord->databaseAddress(),
@@ -31,7 +29,7 @@ MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible, Mongo
                       connectionRecord->databaseName(),
                       connectionRecord->userName(),
                       connectionRecord->userPassword(),
-                      finalDefaultDatabase));
+                      _defaultDatabase));
 
     _bus->send(_client.data(), new InitRequest(this));
 }

@@ -28,7 +28,7 @@ namespace Robomongo
          * @brief Creates SettingsManager for config file in default location
          *        (usually ~/.config/robomongo/robomongo.json)
          */
-        SettingsManager(QObject *parent=0);
+        SettingsManager(QObject *parent = 0);
 
         /**
          * @brief Cleanup owned objects

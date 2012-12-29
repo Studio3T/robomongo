@@ -3,7 +3,7 @@
 using namespace Robomongo;
 
 /**
- * Creates ConnectionRecord with default values
+ * Creates ConnectionSettings with default values
  */
 ImplicitlyShared::ImplicitlyShared() : _data(new ImplicitlySharedPrivate)
 {

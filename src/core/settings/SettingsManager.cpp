@@ -6,7 +6,7 @@
 #include <QFile>
 #include <QVariantList>
 
-#include "ConnectionRecord.h"
+#include "ConnectionSettings.h"
 
 // Third party libs
 #include "qjson/parser.h"
@@ -94,7 +94,7 @@ void SettingsManager::loadFromMap(QVariantMap &map)
 
     QVariantList list = map.value("connections").toList();
     foreach(QVariant var, list) {
-        ConnectionRecord *record = new ConnectionRecord();
+        ConnectionSettings *record = new ConnectionSettings();
         record->fromVariant(var.toMap());
         _connections.append(record);
     }
@@ -116,7 +116,7 @@ QVariantMap SettingsManager::convertToMap() const
     // 2. Save connections
     QVariantList list;
 
-    foreach(ConnectionRecord *record, _connections) {
+    foreach(ConnectionSettings *record, _connections) {
         QVariantMap rm = record->toVariant().toMap();
         list.append(rm);
     }
@@ -128,7 +128,7 @@ QVariantMap SettingsManager::convertToMap() const
 /**
  * Adds connection to the end of list
  */
-void SettingsManager::addConnection(ConnectionRecord *connection)
+void SettingsManager::addConnection(ConnectionSettings *connection)
 {
     _connections.append(connection);
     emit connectionAdded(connection);
@@ -137,7 +137,7 @@ void SettingsManager::addConnection(ConnectionRecord *connection)
 /**
  * Update connection
  */
-void SettingsManager::updateConnection(ConnectionRecord *connection)
+void SettingsManager::updateConnection(ConnectionSettings *connection)
 {
     if (_connections.contains(connection))
         emit connectionUpdated(connection);
@@ -146,14 +146,14 @@ void SettingsManager::updateConnection(ConnectionRecord *connection)
 /**
  * Removes connection by index
  */
-void SettingsManager::removeConnection(ConnectionRecord *connection)
+void SettingsManager::removeConnection(ConnectionSettings *connection)
 {
     _connections.removeOne(connection);
     emit connectionRemoved(connection);
     delete connection;
 }
 
-void SettingsManager::reorderConnections(const QList<ConnectionRecord *> &connections)
+void SettingsManager::reorderConnections(const QList<ConnectionSettings *> &connections)
 {
     _connections = connections;
 }

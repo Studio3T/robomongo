@@ -17,7 +17,7 @@ App::~App()
     qDeleteAll(_servers);
 }
 
-MongoServer *App::openServer(ConnectionRecord *connectionRecord,
+MongoServer *App::openServer(ConnectionSettings *connectionRecord,
                              bool visible,
                              const QString &defaultDatabase)
 {

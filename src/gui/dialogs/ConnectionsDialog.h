@@ -11,7 +11,7 @@ namespace Robomongo
 {
     class ConnectionListWidgetItem;
     class SettingsManager;
-    class ConnectionRecord;
+    class ConnectionSettings;
 
     /**
      * @brief Dialog allows select/edit/add/delete connections
@@ -27,10 +27,10 @@ namespace Robomongo
         ConnectionsDialog(SettingsManager *manager);
 
         /**
-         * @brief ConnectionRecord, that was selected after pressing on
+         * @brief ConnectionSettings, that was selected after pressing on
          * "Connect" button
          */
-        ConnectionRecord *selectedConnection() const { return _selectedConnection; }
+        ConnectionSettings *selectedConnection() const { return _selectedConnection; }
 
         /**
          * @brief This function is called when user clicks on "Connect" button.
@@ -42,17 +42,17 @@ namespace Robomongo
         /**
          * @brief Add connection to the list widget
          */
-        void add(ConnectionRecord *connection);
+        void add(ConnectionSettings *connection);
 
         /**
          * @brief Update specified connection (if it exists for this dialog)
          */
-        void update(ConnectionRecord *connection);
+        void update(ConnectionSettings *connection);
 
         /**
          * @brief Remove specified connection (if it exists for this dialog)
          */
-        void remove(ConnectionRecord *connection);
+        void remove(ConnectionSettings *connection);
 
         /**
          * @brief Initiate 'add' action, usually when user clicked on Add button
@@ -85,10 +85,10 @@ namespace Robomongo
     private:
 
         /**
-         * @brief ConnectionRecord, that was selected after pressing on
+         * @brief ConnectionSettings, that was selected after pressing on
          * "Connect" button
          */
-        ConnectionRecord *_selectedConnection;
+        ConnectionSettings *_selectedConnection;
 
         /**
          * @brief Main list widget
@@ -101,10 +101,10 @@ namespace Robomongo
         SettingsManager *_settingsManager;
 
         /**
-         * @brief Hash that helps to connect ConnectionRecord with
+         * @brief Hash that helps to connect ConnectionSettings with
          * ConnectionListWidgetItem*
          */
-        QHash<ConnectionRecord *, ConnectionListWidgetItem *> _hash;
+        QHash<ConnectionSettings *, ConnectionListWidgetItem *> _hash;
     };
 
     /**
@@ -115,22 +115,22 @@ namespace Robomongo
     public:
 
         /**
-         * @brief Creates ConnectionListWidgetItem with specified ConnectionRecord
+         * @brief Creates ConnectionListWidgetItem with specified ConnectionSettings
          */
-        ConnectionListWidgetItem(ConnectionRecord *connection) { setConnection(connection); }
+        ConnectionListWidgetItem(ConnectionSettings *connection) { setConnection(connection); }
 
         /**
-         * @brief Returns attached ConnectionRecord.
+         * @brief Returns attached ConnectionSettings.
          */
-        ConnectionRecord *connection() { return _connection; }
+        ConnectionSettings *connection() { return _connection; }
 
         /**
-         * @brief Attach ConnectionRecord to this item
+         * @brief Attach ConnectionSettings to this item
          */
-        void setConnection(ConnectionRecord *connection);
+        void setConnection(ConnectionSettings *connection);
 
     private:
-        ConnectionRecord *_connection;
+        ConnectionSettings *_connection;
     };
 }
 

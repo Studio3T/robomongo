@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QPlainTextEdit>
 #include "events/MongoEvents.h"
-#include "settings/ConnectionRecord.h"
+#include "settings/ConnectionSettings.h"
 
 namespace Robomongo
 {

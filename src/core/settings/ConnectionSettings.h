@@ -8,6 +8,7 @@
 #include <QSharedData>
 #include <QDebug>
 #include <Core.h>
+#include "CredentialSettings.h"
 
 namespace Robomongo
 {
@@ -15,21 +16,21 @@ namespace Robomongo
     /**
      * @brief Represents connection record
      */
-    class ConnectionRecord : public QObject
+    class ConnectionSettings : public QObject
     {
         Q_OBJECT
 
     public:
 
         /**
-         * @brief Creates ConnectionRecord with default values
+         * @brief Creates ConnectionSettings with default values
          */
-        ConnectionRecord();
+        ConnectionSettings();
 
         /**
-         * @brief Creates completely new ConnectionRecord by cloning this record.
+         * @brief Creates completely new ConnectionSettings by cloning this record.
          */
-        ConnectionRecord *clone() const;
+        ConnectionSettings *clone() const;
 
         /**
          * @brief Converts to QVariantMap
@@ -40,12 +41,6 @@ namespace Robomongo
          * @brief Converts from QVariantMap (and overwrite current state)
          */
         void fromVariant(QVariantMap map);
-
-        /**
-         * @brief Internal ID of connection
-         */
-        int id() const { return _id; }
-        void setId(const int id) { _id = id; }
 
         /**
          * @brief Name of connection
@@ -66,32 +61,29 @@ namespace Robomongo
         void setDatabasePort(const int port) { _databasePort = port; }
 
         /**
-         * @brief User name
+         * @brief Adds credential to this connection
          */
-        QString userName() const { return _userName; }
-        void setUserName(const QString &userName) { _userName = userName; }
+        void addCredential(CredentialSettings *credential);
 
         /**
-         * @brief Password
+         * @brief Returns credential for specified database, or NULL if no such
+         * credential in connection.
          */
-        QString userPassword() const { return _userPassword; }
-        void setUserPassword(const QString &userPassword) { _userPassword = userPassword; }
+        CredentialSettings *credential(QString databaseName);
+        CredentialSettings *credential(int index);
+        int credentialCount() const { return _credentials.count(); }
 
-        /**
-         * @brief Port of database
-         */
-        QString databaseName() const { return _databaseName.isEmpty() ? "test" : _databaseName; }
-        void setDatabaseName(const QString &databaseName) { _databaseName = databaseName; }
+        QList<CredentialSettings *> credentials() const { return _credentials; }
 
         /**
          * @brief Checks that auth required
          */
-        bool isAuthNeeded() const {
+        /*bool isAuthNeeded() const {
             bool userSpecified = !_userName.isEmpty();
             bool passwordSpecified = !_userPassword.isEmpty();
 
             return (userSpecified || passwordSpecified);
-        }
+        }*/
 
         /**
          * @brief Returns connection full address (i.e. locahost:8090)
@@ -113,16 +105,16 @@ namespace Robomongo
 
     private:
 
-        int _id;
         QString _connectionName;
         QString _databaseAddress;
+        QString _defaultDatabase;
         int _databasePort;
-        QString _userName;
-        QString _userPassword;
-        QString _databaseName;
+
+        QList<CredentialSettings *> _credentials;
+        QHash<QString, CredentialSettings *> _credentialsByDatabaseName;
     };
 }
 
-Q_DECLARE_METATYPE(Robomongo::ConnectionRecord *)
+Q_DECLARE_METATYPE(Robomongo::ConnectionSettings *)
 
 #endif // CONNECTIONRECORD_H

@@ -10,7 +10,7 @@
 #include "domain/MongoCollection.h"
 #include "domain/MongoServer.h"
 #include "domain/App.h"
-#include "settings/ConnectionRecord.h"
+#include "settings/ConnectionSettings.h"
 #include "AppRegistry.h"
 #include "ExplorerDatabaseTreeItem.h"
 

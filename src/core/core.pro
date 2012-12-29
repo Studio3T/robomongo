@@ -7,7 +7,7 @@ CONFIG  += staticlib
 
 SOURCES += \
     AppRegistry.cpp \
-    settings/ConnectionRecord.cpp \
+    settings/ConnectionSettings.cpp \
     settings/SettingsManager.cpp \
     examples/ImplicitlyShared.cpp \
     mongodb/MongoClient.cpp \
@@ -32,12 +32,13 @@ SOURCES += \
     EventBusDispatcher.cpp \
     EventWrapper.cpp \
     mongodb/MongoClientThread.cpp \
-    KeyboardManager.cpp
+    KeyboardManager.cpp \
+    settings/CredentialSettings.cpp
 
 
 HEADERS  += \
     AppRegistry.h \
-    settings/ConnectionRecord.h \
+    settings/ConnectionSettings.h \
     settings/SettingsManager.h \
     Core.h \
     examples/ImplicitlyShared.h \
@@ -64,7 +65,8 @@ HEADERS  += \
     EventBusDispatcher.h \
     EventWrapper.h \
     mongodb/MongoClientThread.h \
-    KeyboardManager.h
+    KeyboardManager.h \
+    settings/CredentialSettings.h
 
 # third party libs
 #LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson

@@ -21,7 +21,7 @@ namespace Robomongo
          * @param defaultDatabase:
          * @return
          */
-        MongoServer *openServer(ConnectionRecord *connectionSettings, bool visible,
+        MongoServer *openServer(ConnectionSettings *connectionSettings, bool visible,
                                 const QString &defaultDatabase = QString());
 
         /**

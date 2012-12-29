@@ -52,8 +52,8 @@ namespace Robomongo
     class MongoElement;
     typedef boost::shared_ptr<MongoElement> MongoElementPtr;
 
-    class ConnectionRecord;
-    //typedef QSharedPointer<ConnectionRecord> ConnectionRecordPtr;
+    class ConnectionSettings;
+    //typedef QSharedPointer<ConnectionSettings> ConnectionSettingsPtr;
 
     typedef boost::scoped_ptr<mongo::DBClientConnection> DBClientConnection_ScopedPtr;
 }

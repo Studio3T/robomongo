@@ -26,7 +26,7 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        MongoServer(ConnectionRecord *connectionRecord, bool visible, const QString &defaultDatabase = QString());
+        MongoServer(ConnectionSettings *connectionRecord, bool visible, const QString &defaultDatabase = QString());
         ~MongoServer();
 
         /**
@@ -43,7 +43,7 @@ namespace Robomongo
         /**
          * @brief Returns associated connection record
          */
-        ConnectionRecord *connectionRecord() const { return _connectionRecord; }
+        ConnectionSettings *connectionRecord() const { return _connectionRecord; }
 
 
 
@@ -70,7 +70,7 @@ namespace Robomongo
         /**
          * @brief Associated connection record
          */
-        ConnectionRecord *_connectionRecord;
+        ConnectionSettings *_connectionRecord;
 
         QString _host;
         QString _port;

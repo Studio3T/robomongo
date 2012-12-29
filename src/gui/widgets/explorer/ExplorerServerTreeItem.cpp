@@ -3,7 +3,7 @@
 #include "GuiRegistry.h"
 #include "domain/MongoServer.h"
 #include "domain/MongoDatabase.h"
-#include "settings/ConnectionRecord.h"
+#include "settings/ConnectionSettings.h"
 #include "AppRegistry.h"
 #include "EventBus.h"
 

@@ -6,11 +6,36 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QStyle>
-#include <settings/ConnectionRecord.h>
+#include <settings/ConnectionSettings.h>
 #include "Core.h"
+#include <QTreeWidget>
+#include <QTableView>
+#include <QStandardItemModel>
 
 namespace Robomongo
 {
+    class CredentialModel : public QAbstractTableModel
+    {
+        Q_OBJECT
+    public:
+
+        CredentialModel(QList<CredentialSettings *> credentials) : _credentials(credentials) {}
+
+        int rowCount(const QModelIndex &parent) const;
+        int columnCount(const QModelIndex &parent) const;
+        QVariant data(const QModelIndex &index, int role) const;
+        QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+        bool setData(const QModelIndex &index, const QVariant &value, int role);
+        Qt::ItemFlags flags(const QModelIndex &index) const;
+
+        void updateAll();
+        void remove(int at);
+
+    private:
+        QList<CredentialSettings *> _credentials;
+    };
+
+
     /**
      * @brief This Dialog allows to edit single connection
      */
@@ -23,12 +48,14 @@ namespace Robomongo
         /**
          * @brief Constructs dialog with specified connection
          */
-        EditConnectionDialog(ConnectionRecord *connection);
+        EditConnectionDialog(ConnectionSettings *connection);
 
         /**
          * @brief Accept() is called when user agree with entered data.
          */
         virtual void accept();
+
+        void addCredential(CredentialSettings *credential);
 
     protected:
 
@@ -50,7 +77,11 @@ namespace Robomongo
          */
         void testConnection();
 
+        void deleteCredential();
+
     private:
+
+        void updateCredentialTree();
 
         /**
          * @brief Text boxes
@@ -62,10 +93,16 @@ namespace Robomongo
         QLineEdit *_userPassword;
         QLineEdit *_databaseName;
 
+        QTreeWidget *_credentialsTree;
+
+        QTableView *_credentialsView;
+        CredentialModel *_credentialsModel;
+        QAbstractItemModel *_hdh;
+
         /**
          * @brief Edited connection
          */
-        ConnectionRecord *_connection;
+        ConnectionSettings *_connection;
 
         /**
          * @brief Check that it is okay to close this window

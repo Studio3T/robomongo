@@ -2,7 +2,7 @@
 #include "MongoServer.h"
 #include "mongodb/MongoException.h"
 #include "MongoDatabase.h"
-#include "settings/ConnectionRecord.h"
+#include "settings/ConnectionSettings.h"
 #include "mongodb/MongoClient.h"
 #include "AppRegistry.h"
 #include "EventBus.h"
@@ -10,7 +10,7 @@
 using namespace Robomongo;
 using namespace std;
 
-MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible, const QString &defaultDatabase) : QObject(),
+MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible, const QString &defaultDatabase) : QObject(),
     _connectionRecord(connectionRecord->clone()), // clone connection record
     _bus(AppRegistry::instance().bus()),
     _visible(visible),
@@ -26,9 +26,9 @@ MongoServer::MongoServer(ConnectionRecord *connectionRecord, bool visible, const
                       _bus,
                       connectionRecord->databaseAddress(),
                       connectionRecord->databasePort(),
-                      connectionRecord->databaseName(),
-                      connectionRecord->userName(),
-                      connectionRecord->userPassword(),
+                      "connectionRecord->databaseName()",
+                      "connectionRecord->userName()",
+                      "connectionRecord->userPassword()",
                       _defaultDatabase));
 
     _bus->send(_client.data(), new InitRequest(this));
@@ -46,9 +46,9 @@ MongoServer::~MongoServer()
 void MongoServer::tryConnect()
 {
     _client->send(new EstablishConnectionRequest(this,
-        _connectionRecord->databaseName(),
-        _connectionRecord->userName(),
-        _connectionRecord->userPassword()));
+        "_connectionRecord->databaseName()",
+        "_connectionRecord->userName()",
+        "_connectionRecord->userPassword()"));
 }
 
 void MongoServer::loadDatabases()

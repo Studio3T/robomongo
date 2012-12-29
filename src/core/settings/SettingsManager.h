@@ -3,7 +3,7 @@
 
 #include <QDir>
 #include <QObject>
-#include "ConnectionRecord.h"
+#include "ConnectionSettings.h"
 #include "Core.h"
 
 
@@ -51,29 +51,29 @@ namespace Robomongo
          * @brief Adds connection to the end of list.
          * Connection now will be owned by SettingsManager.
          */
-        void addConnection(ConnectionRecord *connection);
+        void addConnection(ConnectionSettings *connection);
 
         /**
          * @brief Update connection
          */
-        void updateConnection(ConnectionRecord *connection);
+        void updateConnection(ConnectionSettings *connection);
 
         /**
          * @brief Removes connection by index
          */
-        void removeConnection(ConnectionRecord *connection);
+        void removeConnection(ConnectionSettings *connection);
 
-        void reorderConnections(const QList<ConnectionRecord *> &connections);
+        void reorderConnections(const QList<ConnectionSettings *> &connections);
 
         /**
          * @brief Returns list of connections
          */
-        const QList<ConnectionRecord *> connections() const { return _connections; }
+        const QList<ConnectionSettings *> connections() const { return _connections; }
 
     signals:
-        void connectionAdded(ConnectionRecord *connection);
-        void connectionUpdated(ConnectionRecord *connection);
-        void connectionRemoved(ConnectionRecord *connection);
+        void connectionAdded(ConnectionSettings *connection);
+        void connectionUpdated(ConnectionSettings *connection);
+        void connectionRemoved(ConnectionSettings *connection);
 
     private:
 
@@ -107,7 +107,7 @@ namespace Robomongo
         /**
          * @brief List of connections
          */
-        QList<ConnectionRecord *> _connections;
+        QList<ConnectionSettings *> _connections;
     };
 }
 

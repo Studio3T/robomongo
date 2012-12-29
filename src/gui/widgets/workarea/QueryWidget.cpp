@@ -22,7 +22,7 @@
 #include "OutputViewer.h"
 #include "domain/App.h"
 #include "WorkAreaTabWidget.h"
-#include "settings/ConnectionRecord.h"
+#include "settings/ConnectionSettings.h"
 #include "KeyboardManager.h"
 
 using namespace mongo;
@@ -192,7 +192,7 @@ void QueryWidget::openNewTab()
     if (query.isEmpty())
         query = "";//_queryText->text();
 
-    QString dbName = server->connectionRecord()->databaseName();
+    QString dbName = ""; //WAS: server->connectionRecord()->databaseName();
     if (_currentResults.count() > 0) {
         MongoShellResult lastResult = _currentResults.last();
         dbName = lastResult.databaseName;

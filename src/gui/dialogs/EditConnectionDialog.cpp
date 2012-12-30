@@ -31,9 +31,12 @@ EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDi
     _connectionName = new QLineEdit(_connection->connectionName(), this);
     _serverAddress = new QLineEdit(_connection->databaseAddress(), this);
     _serverPort = new QLineEdit(QString::number(_connection->databasePort()), this);
-//    _userName = new QLineEdit(_connection->userName(), this);
-//    _userPassword = new QLineEdit(_connection->userPassword(), this);
-//    _databaseName = new QLineEdit(_connection->databaseName(), this);
+    _defaultDatabaseName = new QLineEdit();
+
+    _userName = new QLineEdit();
+    _userNameLabel = new QLabel("User Name");
+    _userPassword = new QLineEdit();
+    _databaseName = new QLineEdit();
 
     _serverPort->setFixedWidth(80);
 
@@ -61,36 +64,40 @@ EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDi
 
     _credentialsView->installEventFilter(this);
 
-
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
     bottomLayout->addWidget(saveButton, 1, Qt::AlignRight);
     bottomLayout->addWidget(cancelButton);
 
     QGridLayout *editLayout = new QGridLayout;
-    editLayout->addWidget(new QLabel("Name"), 0, 0);
-    editLayout->addWidget(_connectionName, 0, 1);
-    editLayout->addWidget(new QLabel("Server"), 1, 0);
-    editLayout->addWidget(_serverAddress, 1, 1);
-    editLayout->addWidget(new QLabel("Port"), 2, 0);
-    editLayout->addWidget(_serverPort, 2, 1, Qt::AlignLeft);
+    editLayout->addWidget(new QLabel("Connection Name"),      0, 0);
+    editLayout->addWidget(_connectionName,         0, 1);
+    editLayout->addWidget(new QLabel("Server Host"),    1, 0);
+    editLayout->addWidget(_serverAddress,          1, 1);
+    editLayout->addWidget(new QLabel("Server Port"),      2, 0);
+    editLayout->addWidget(_serverPort,             2, 1, Qt::AlignLeft);
+    editLayout->addWidget(new QLabel("Default Database"), 3, 0);
+    editLayout->addWidget(_defaultDatabaseName,    3, 1, Qt::AlignLeft);
 
-/*
-    editLayout->addWidget(_userName, 3, 1);
-    editLayout->addWidget(new QLabel("Password"), 4, 0);
-    editLayout->addWidget(_userPassword, 4, 1);
-    editLayout->addWidget(new QLabel("Database"), 5, 0);
-    editLayout->addWidget(_databaseName, 5, 1);*/
+    _useAuth = new QCheckBox("Authenticate");
+    _useAuth->setStyleSheet("margin-top: 13px");
+    connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool)));
+
+    _auth = new AuthWidget();
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(editLayout);
-    mainLayout->addSpacing(10);
-    mainLayout->addWidget(new QLabel("Authenticate:"));
-    mainLayout->addWidget(_credentialsView);
+    mainLayout->addWidget(_useAuth);
+    mainLayout->addWidget(_auth);
+//    mainLayout->addSpacing(10);
+//    mainLayout->addWidget(new QLabel("Authenticate:"));
+//    mainLayout->addWidget(_credentialsView);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(bottomLayout);
+    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
 
     updateCredentialTree();
+    authChecked(false);
 }
 
 /**
@@ -208,6 +215,17 @@ void EditConnectionDialog::deleteCredential()
     }
 }
 
+void EditConnectionDialog::authChecked(bool checked)
+{
+    _auth->setVisible(checked);
+//    _userName->setVisible(checked);
+//    _userNameLabel->setVisible(checked);
+//    _userPassword->setVisible(checked);
+//    _databaseName->setVisible(checked);
+
+//    layout()->update();
+}
+
 void EditConnectionDialog::updateCredentialTree()
 {
     addCredential(new CredentialSettings("d", "", ""));
@@ -318,4 +336,25 @@ void CredentialModel::updateAll()
 void CredentialModel::remove(int at)
 {
     _credentials.removeAt(at);
+}
+
+
+AuthWidget::AuthWidget()
+{
+    setContentsMargins(0, 0, 0, 0);
+    _userName = new QLineEdit();
+    _userNameLabel = new QLabel("User Name");
+    _userPassword = new QLineEdit();
+    _databaseName = new QLineEdit();
+
+    QGridLayout *_authLayout = new QGridLayout;
+    _authLayout->addWidget(new QLabel("Database"),  1, 0);
+    _authLayout->addWidget(_databaseName,           1, 1);
+    _authLayout->addWidget(_userNameLabel,          2, 0);
+    _authLayout->addWidget(_userName,               2, 1);
+    _authLayout->addWidget(new QLabel("Password"),  3, 0);
+    _authLayout->addWidget(_userPassword,           3, 1);
+    _authLayout->setSizeConstraint(QLayout::SetFixedSize);
+    _authLayout->setContentsMargins(0, 0, 0, 0);
+    setLayout(_authLayout);
 }

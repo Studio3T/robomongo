@@ -11,6 +11,9 @@
 #include <QTreeWidget>
 #include <QTableView>
 #include <QStandardItemModel>
+#include <QCheckBox>
+#include <QLabel>
+#include <QGridLayout>
 
 namespace Robomongo
 {
@@ -33,6 +36,17 @@ namespace Robomongo
 
     private:
         QList<CredentialSettings *> _credentials;
+    };
+
+    class AuthWidget : public QWidget
+    {
+    public:
+        AuthWidget();
+        QLineEdit *_userName;
+        QLabel    *_userNameLabel;
+        QLineEdit *_userPassword;
+        QLineEdit *_databaseName;
+        //QGridLayout *_authLayout;
     };
 
 
@@ -79,6 +93,8 @@ namespace Robomongo
 
         void deleteCredential();
 
+        void authChecked(bool checked);
+
     private:
 
         void updateCredentialTree();
@@ -89,9 +105,16 @@ namespace Robomongo
         QLineEdit *_connectionName;
         QLineEdit *_serverAddress;
         QLineEdit *_serverPort;
+        QLineEdit *_defaultDatabaseName;
+
         QLineEdit *_userName;
+        QLabel    *_userNameLabel;
         QLineEdit *_userPassword;
         QLineEdit *_databaseName;
+
+        QCheckBox *_useAuth;
+        QGridLayout *_authLayout;
+        AuthWidget *_auth;
 
         QTreeWidget *_credentialsTree;
 

@@ -89,8 +89,9 @@ EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDi
     _useAuth->setStyleSheet("margin-top: 13px");
     connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool)));
 
-    _auth = new AuthWidget();
-    _serverTab = new ServerWidget();
+    _auth = new AuthWidget(_connection);
+    _serverTab = new ServerWidget(_connection);
+    _serverTab->setFocus();
     _advancedTab = new AdvancedWidget();
 
 
@@ -241,8 +242,6 @@ void EditConnectionDialog::deleteCredential()
 
 void EditConnectionDialog::authChecked(bool checked)
 {
-    _auth->setVisible(checked);
-    _auth->_databaseName->setFocus();
 //    _userName->setVisible(checked);
 //    _userNameLabel->setVisible(checked);
 //    _userPassword->setVisible(checked);
@@ -379,7 +378,8 @@ void CredentialModel::remove(int at)
 }
 
 
-AuthWidget::AuthWidget()
+AuthWidget::AuthWidget(ConnectionSettings *settings) :
+    _settings(settings)
 {
     _databaseNameDescriptionLabel = new QLabel(
         "<nobr>The <code>admin</code> database is unique in MongoDB.</nobr> Users with normal access "
@@ -399,9 +399,18 @@ AuthWidget::AuthWidget()
     _databaseNameLabel = new QLabel("Database");
 
     _useAuth = new QCheckBox("Perform authentication");
-    //_useAuth->setContentsMargins(0,0,0,13);
     _useAuth->setStyleSheet("margin-bottom: 7px");
     connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool)));
+
+    _useAuth->setChecked(_settings->hasEnabledCredential());
+    authChecked(_settings->hasEnabledCredential());
+
+    if (_settings->credentialCount() > 0) {
+        CredentialSettings *firstCredential = _settings->firstCredential();
+        _userName->setText(firstCredential->userName());
+        _userPassword->setText(firstCredential->userPassword());
+        _databaseName->setText(firstCredential->databaseName());
+    }
 
     QGridLayout *_authLayout = new QGridLayout;
 
@@ -414,12 +423,6 @@ AuthWidget::AuthWidget()
     _authLayout->addWidget(_userPasswordLabel,            4, 0);
     _authLayout->addWidget(_userPassword,                 4, 1);
     _authLayout->setAlignment(Qt::AlignTop);
-
-//    QGroupBox *groupBox = new QGroupBox(tr("Perform Authentication"));
-//    groupBox->setFlat(false);
-//    groupBox->setCheckable(true);
-//    groupBox->setLayout(_authLayout);
-
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(_authLayout);
@@ -441,7 +444,8 @@ void AuthWidget::authChecked(bool checked)
 }
 
 
-ServerWidget::ServerWidget()
+ServerWidget::ServerWidget(ConnectionSettings *settings) :
+    _settings(settings)
 {
     QLabel *authLabel = new QLabel(
         "Choose any connection name that will help you to identify this connection.");
@@ -453,9 +457,9 @@ ServerWidget::ServerWidget()
     serverLabel->setWordWrap(true);
     serverLabel->setContentsMargins(0, -2, 0, 20);
 
-    _connectionName = new QLineEdit("localhost");
-    _serverAddress = new QLineEdit("localhost");
-    _serverPort = new QLineEdit(QString::number(27017));
+    _connectionName = new QLineEdit(_settings->connectionName());
+    _serverAddress = new QLineEdit(_settings->databaseAddress());
+    _serverPort = new QLineEdit(QString::number(_settings->databasePort()));
     _serverPort->setFixedWidth(80);
 
     _defaultDatabaseName = new QLineEdit();
@@ -464,28 +468,18 @@ ServerWidget::ServerWidget()
     connectionLayout->addWidget(new QLabel("Name:"),      1, 0);
     connectionLayout->addWidget(_connectionName,         1, 1, 1, 3);
     connectionLayout->addWidget(authLabel,               2, 1, 1, 3);
-
-    //QGridLayout *serverLayout = new QGridLayout;
     connectionLayout->addWidget(serverLabel, 4, 1, 1, 3);
     connectionLayout->addWidget(new QLabel("Address:"),    3, 0);
     connectionLayout->addWidget(_serverAddress,          3, 1);
     connectionLayout->addWidget(new QLabel(":"),      3, 2);
     connectionLayout->addWidget(_serverPort,             3, 3);
     connectionLayout->setAlignment(Qt::AlignTop);
-//    serverLayout->setSizeConstraint(QLayout::SetMaximumSize);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(connectionLayout);
-//    mainLayout->addSpacing(13);
-//    mainLayout->addLayout(serverLayout);
-
-
-//    editLayout->addWidget(new QLabel("Default Database"), 3, 0);
-//    editLayout->addWidget(_defaultDatabaseName,    3, 1, Qt::AlignLeft);
-
     setLayout(mainLayout);
 
-
+    _connectionName->setFocus();
 }
 
 

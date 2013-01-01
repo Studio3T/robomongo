@@ -91,3 +91,19 @@ CredentialSettings *ConnectionSettings::credential(int index)
     return _credentials.value(index);
 }
 
+bool ConnectionSettings::hasEnabledCredential()
+{
+    if (_credentials.count() == 0)
+        return false;
+
+    return firstCredential()->enabled();
+}
+
+CredentialSettings *ConnectionSettings::firstCredential()
+{
+    if (_credentials.count() == 0)
+        return NULL;
+
+    return _credentials.at(0);
+}
+

@@ -57,10 +57,23 @@ namespace Robomongo
         QString databaseName() const { return _databaseName.isEmpty() ? "admin" : _databaseName; }
         void setDatabaseName(const QString &databaseName) { _databaseName = databaseName; }
 
+        /**
+         * @brief Flag, indecating whether we should use this
+         * credentials to perform authentication, or not.
+         */
+        bool enabled() const { return _enabled; }
+        void setEnabled(bool enabled) { _enabled = enabled; }
+
     private:
         QString _userName;
         QString _userPassword;
         QString _databaseName;
+
+        /**
+         * @brief Flag, indecating whether we should use this
+         * credentials to perform authentication, or not.
+         */
+        bool _enabled;
     };
 }
 

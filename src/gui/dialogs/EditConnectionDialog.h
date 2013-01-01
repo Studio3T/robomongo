@@ -40,17 +40,26 @@ namespace Robomongo
 
     class AuthWidget : public QWidget
     {
+        Q_OBJECT
     public:
         AuthWidget();
         QLineEdit *_userName;
         QLabel    *_userNameLabel;
         QLineEdit *_userPassword;
+        QLabel    *_userPasswordLabel;
         QLineEdit *_databaseName;
+        QLabel    *_databaseNameLabel;
+        QLabel    *_databaseNameDescriptionLabel;
+        QCheckBox *_useAuth;
         //QGridLayout *_authLayout;
+
+    protected slots:
+        void authChecked(bool checked);
     };
 
     class ServerWidget : public QWidget
     {
+        Q_OBJECT
     public:
         ServerWidget();
         QLineEdit *_connectionName;
@@ -62,6 +71,7 @@ namespace Robomongo
 
     class AdvancedWidget : public QWidget
     {
+        Q_OBJECT
     public:
         AdvancedWidget();
         QLineEdit *_defaultDatabaseName;

@@ -5,6 +5,9 @@
 
 using namespace Robomongo;
 
+const QSizePolicy ignored(QSizePolicy::Ignored, QSizePolicy::Ignored);
+const QSizePolicy preferred(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
 /**
  * @brief Constructs dialog with specified connection
  */
@@ -17,6 +20,7 @@ EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDi
     setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     _tabWidget = new QTabWidget;
+    connect(_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabWidget_currentChanged(int)));
 
     QPushButton *saveButton = new QPushButton("&Save");
     saveButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
@@ -86,13 +90,11 @@ EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDi
     connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool)));
 
     _auth = new AuthWidget();
-    ServerWidget *ser = new ServerWidget();
+    _serverTab = new ServerWidget();
+    _advancedTab = new AdvancedWidget();
 
-    _tabWidget->addTab(ser, "Connection");
-    _tabWidget->addTab(_auth, "Authentication");
-    _tabWidget->addTab(new QLabel("advanced"), "Advanced");
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout;
 //    mainLayout->addLayout(editLayout);
 //    mainLayout->addSpacing(10);
     mainLayout->addWidget(_tabWidget);
@@ -104,7 +106,13 @@ EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDi
 //    mainLayout->addWidget(_credentialsView);
 //    mainLayout->addSpacing(10);
     mainLayout->addLayout(bottomLayout);
+    setLayout(mainLayout);
+    //mainLayout->activate();
     //mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+
+    _tabWidget->addTab(_serverTab, "Connection");
+    _tabWidget->addTab(_auth, "Authentication");
+    _tabWidget->addTab(_advancedTab, "Advanced");
 
     updateCredentialTree();
     authChecked(false);
@@ -200,6 +208,12 @@ void EditConnectionDialog::keyPressEvent(QKeyEvent *e)
         QDialog::keyPressEvent(e);
 }
 
+void EditConnectionDialog::showEvent(QShowEvent *e)
+{
+//    tabWidget_currentChanged(0);
+    QDialog::showEvent(e);
+}
+
 /**
  * @brief Test current connection
  */
@@ -234,7 +248,22 @@ void EditConnectionDialog::authChecked(bool checked)
 //    _userPassword->setVisible(checked);
 //    _databaseName->setVisible(checked);
 
-//    layout()->update();
+    //    layout()->update();
+}
+
+void EditConnectionDialog::tabWidget_currentChanged(int index)
+{
+    if (index == 0) {
+        _serverTab->setSizePolicy(preferred);
+        _auth->setSizePolicy(ignored);
+    } else {
+        _serverTab->setSizePolicy(ignored);
+        _auth->setSizePolicy(preferred);
+    }
+
+    layout()->activate();
+//    setFixedSize(minimumSizeHint());
+//    setFixedSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 }
 
 void EditConnectionDialog::updateCredentialTree()
@@ -358,6 +387,7 @@ AuthWidget::AuthWidget()
         "databases</i>.");
 
     authLabel->setWordWrap(true);
+    authLabel->setContentsMargins(0, -2, 0, 20);
 
     _userName = new QLineEdit();
     _userNameLabel = new QLabel("User Name");
@@ -365,15 +395,25 @@ AuthWidget::AuthWidget()
     _databaseName = new QLineEdit();
 
     QGridLayout *_authLayout = new QGridLayout;
-    _authLayout->addWidget(authLabel,  0, 0, 1, 2);
-    _authLayout->addWidget(new QLabel("Database"),  1, 0);
-    _authLayout->addWidget(_databaseName,           1, 1);
+    _authLayout->addWidget(authLabel,  1, 1, 1, 1);
+    _authLayout->addWidget(new QLabel("Database"),  0, 0);
+    _authLayout->addWidget(_databaseName,           0, 1);
     _authLayout->addWidget(_userNameLabel,          2, 0);
     _authLayout->addWidget(_userName,               2, 1);
     _authLayout->addWidget(new QLabel("Password"),  3, 0);
     _authLayout->addWidget(_userPassword,           3, 1);
-//    _authLayout->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(_authLayout);
+    _authLayout->setAlignment(Qt::AlignTop);
+    _authLayout->setSizeConstraint(QLayout::SetFixedSize);
+
+    QGroupBox *groupBox = new QGroupBox(tr("Perform Authentication"));
+    groupBox->setFlat(false);
+    groupBox->setCheckable(true);
+    groupBox->setLayout(_authLayout);
+
+
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(groupBox);
+    setLayout(mainLayout);
 }
 
 
@@ -387,11 +427,12 @@ ServerWidget::ServerWidget()
     QLabel *serverLabel = new QLabel(
         "Specify host and port of MongoDB server. Host can be either IP or domain name.");
     serverLabel->setWordWrap(true);
+    serverLabel->setContentsMargins(0, -2, 0, 20);
 
     _connectionName = new QLineEdit("localhost");
     _serverAddress = new QLineEdit("localhost");
     _serverPort = new QLineEdit(QString::number(27017));
-    _serverPort->setFixedWidth(60);
+    _serverPort->setFixedWidth(80);
 
     _defaultDatabaseName = new QLineEdit();
 
@@ -406,6 +447,7 @@ ServerWidget::ServerWidget()
     connectionLayout->addWidget(_serverAddress,          3, 1);
     connectionLayout->addWidget(new QLabel(":"),      3, 2);
     connectionLayout->addWidget(_serverPort,             3, 3);
+    connectionLayout->setAlignment(Qt::AlignTop);
 //    serverLayout->setSizeConstraint(QLayout::SetMaximumSize);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -419,5 +461,25 @@ ServerWidget::ServerWidget()
 
     setLayout(mainLayout);
 
+
+}
+
+
+AdvancedWidget::AdvancedWidget()
+{
+    QLabel *authLabel = new QLabel(
+        "Choose any connection name that will help you to identify this connection.");
+    authLabel->setWordWrap(true);
+    authLabel->setContentsMargins(0, -2, 0, 20);
+
+    _defaultDatabaseName = new QLineEdit();
+
+    QGridLayout *connectionLayout = new QGridLayout;
+    connectionLayout->setAlignment(Qt::AlignTop);
+    connectionLayout->addWidget(new QLabel("Default Database:"),      1, 0);
+    connectionLayout->addWidget(_defaultDatabaseName,         1, 1, 1, 1);
+    connectionLayout->addWidget(authLabel,               2, 1, 1, 1);
+
+    setLayout(connectionLayout);
 
 }

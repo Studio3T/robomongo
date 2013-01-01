@@ -60,6 +60,14 @@ namespace Robomongo
         //QGridLayout *_authLayout;
     };
 
+    class AdvancedWidget : public QWidget
+    {
+    public:
+        AdvancedWidget();
+        QLineEdit *_defaultDatabaseName;
+        //QGridLayout *_authLayout;
+    };
+
 
     /**
      * @brief This Dialog allows to edit single connection
@@ -94,6 +102,8 @@ namespace Robomongo
          */
         void keyPressEvent(QKeyEvent *e);
 
+        void showEvent(QShowEvent *e);
+
 
     private slots:
 
@@ -105,6 +115,8 @@ namespace Robomongo
         void deleteCredential();
 
         void authChecked(bool checked);
+
+        void tabWidget_currentChanged(int index);
 
     private:
 
@@ -125,7 +137,10 @@ namespace Robomongo
 
         QCheckBox *_useAuth;
         QGridLayout *_authLayout;
+
         AuthWidget *_auth;
+        ServerWidget *_serverTab;
+        AdvancedWidget *_advancedTab;
 
         QTreeWidget *_credentialsTree;
 

@@ -253,15 +253,15 @@ void EditConnectionDialog::authChecked(bool checked)
 
 void EditConnectionDialog::tabWidget_currentChanged(int index)
 {
-    if (index == 0) {
-        _serverTab->setSizePolicy(preferred);
-        _auth->setSizePolicy(ignored);
-    } else {
-        _serverTab->setSizePolicy(ignored);
-        _auth->setSizePolicy(preferred);
-    }
+//    if (index == 0) {
+//        _serverTab->setSizePolicy(preferred);
+//        _auth->setSizePolicy(ignored);
+//    } else {
+//        _serverTab->setSizePolicy(ignored);
+//        _auth->setSizePolicy(preferred);
+//    }
 
-    layout()->activate();
+//    layout()->activate();
 //    setFixedSize(minimumSizeHint());
 //    setFixedSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 }
@@ -388,6 +388,8 @@ AuthWidget::AuthWidget()
 
     authLabel->setWordWrap(true);
     authLabel->setContentsMargins(0, -2, 0, 20);
+    authLabel->setMinimumSize(authLabel->sizeHint());
+//    authLabel->sizePolicy().setHeightForWidth(true);
 
     _userName = new QLineEdit();
     _userNameLabel = new QLabel("User Name");
@@ -403,7 +405,7 @@ AuthWidget::AuthWidget()
     _authLayout->addWidget(new QLabel("Password"),  3, 0);
     _authLayout->addWidget(_userPassword,           3, 1);
     _authLayout->setAlignment(Qt::AlignTop);
-    _authLayout->setSizeConstraint(QLayout::SetFixedSize);
+//    _authLayout->setSizeConstraint(QLayout::SetFixedSize);
 
     QGroupBox *groupBox = new QGroupBox(tr("Perform Authentication"));
     groupBox->setFlat(false);

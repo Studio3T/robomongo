@@ -16,6 +16,8 @@ EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDi
     // Remove help button (?)
     setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
+    _tabWidget = new QTabWidget;
+
     QPushButton *saveButton = new QPushButton("&Save");
     saveButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
     saveButton->setDefault(true);
@@ -28,9 +30,9 @@ EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDi
     testButton->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
     connect(testButton, SIGNAL(clicked()), this, SLOT(testConnection()));
 
-    _connectionName = new QLineEdit(_connection->connectionName(), this);
-    _serverAddress = new QLineEdit(_connection->databaseAddress(), this);
-    _serverPort = new QLineEdit(QString::number(_connection->databasePort()), this);
+    _connectionName = new QLineEdit(_connection->connectionName());
+    _serverAddress = new QLineEdit(_connection->databaseAddress());
+    _serverPort = new QLineEdit(QString::number(_connection->databasePort()));
     _defaultDatabaseName = new QLineEdit();
 
     _userName = new QLineEdit();
@@ -72,23 +74,31 @@ EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDi
     QGridLayout *editLayout = new QGridLayout;
     editLayout->addWidget(new QLabel("Connection Name"),      0, 0);
     editLayout->addWidget(_connectionName,         0, 1);
-    editLayout->addWidget(new QLabel("Server Host"),    1, 0);
-    editLayout->addWidget(_serverAddress,          1, 1);
-    editLayout->addWidget(new QLabel("Server Port"),      2, 0);
-    editLayout->addWidget(_serverPort,             2, 1, Qt::AlignLeft);
-    editLayout->addWidget(new QLabel("Default Database"), 3, 0);
-    editLayout->addWidget(_defaultDatabaseName,    3, 1, Qt::AlignLeft);
+//    editLayout->addWidget(new QLabel("Server Host"),    1, 0);
+//    editLayout->addWidget(_serverAddress,          1, 1);
+//    editLayout->addWidget(new QLabel("Server Port"),      2, 0);
+//    editLayout->addWidget(_serverPort,             2, 1, Qt::AlignLeft);
+//    editLayout->addWidget(new QLabel("Default Database"), 3, 0);
+//    editLayout->addWidget(_defaultDatabaseName,    3, 1, Qt::AlignLeft);
 
     _useAuth = new QCheckBox("Authenticate");
     _useAuth->setStyleSheet("margin-top: 13px");
     connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool)));
 
     _auth = new AuthWidget();
+    ServerWidget *ser = new ServerWidget();
+
+    _tabWidget->addTab(ser, "Server");
+    _tabWidget->addTab(_auth, "Authentication");
+    _tabWidget->addTab(new QLabel("advanced"), "Advanced");
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(editLayout);
-    mainLayout->addWidget(_useAuth);
-    mainLayout->addWidget(_auth);
+    mainLayout->addSpacing(10);
+    mainLayout->addWidget(_tabWidget);
+//    mainLayout->addLayout(editLayout);
+//    mainLayout->addWidget(_useAuth);
+//    mainLayout->addWidget(_auth);
 //    mainLayout->addSpacing(10);
 //    mainLayout->addWidget(new QLabel("Authenticate:"));
 //    mainLayout->addWidget(_credentialsView);
@@ -218,6 +228,7 @@ void EditConnectionDialog::deleteCredential()
 void EditConnectionDialog::authChecked(bool checked)
 {
     _auth->setVisible(checked);
+    _auth->_databaseName->setFocus();
 //    _userName->setVisible(checked);
 //    _userNameLabel->setVisible(checked);
 //    _userPassword->setVisible(checked);
@@ -341,7 +352,6 @@ void CredentialModel::remove(int at)
 
 AuthWidget::AuthWidget()
 {
-    setContentsMargins(0, 0, 0, 0);
     _userName = new QLineEdit();
     _userNameLabel = new QLabel("User Name");
     _userPassword = new QLineEdit();
@@ -355,6 +365,28 @@ AuthWidget::AuthWidget()
     _authLayout->addWidget(new QLabel("Password"),  3, 0);
     _authLayout->addWidget(_userPassword,           3, 1);
     _authLayout->setSizeConstraint(QLayout::SetFixedSize);
-    _authLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(_authLayout);
+}
+
+
+ServerWidget::ServerWidget()
+{
+    _connectionName = new QLineEdit("_connection->connectionName()", this);
+    _serverAddress = new QLineEdit("_connection->databaseAddress()", this);
+    _serverPort = new QLineEdit(QString::number(27017), this);
+    _defaultDatabaseName = new QLineEdit();
+
+    QGridLayout *editLayout = new QGridLayout;
+    editLayout->addWidget(new QLabel("Connection Name"),      0, 0);
+    editLayout->addWidget(_connectionName,         0, 1);
+    editLayout->addWidget(new QLabel("Server Host"),    1, 0);
+    editLayout->addWidget(_serverAddress,          1, 1);
+    editLayout->addWidget(new QLabel("Server Port"),      2, 0);
+    editLayout->addWidget(_serverPort,             2, 1, Qt::AlignLeft);
+    editLayout->addWidget(new QLabel("Default Database"), 3, 0);
+    editLayout->addWidget(_defaultDatabaseName,    3, 1, Qt::AlignLeft);
+
+    setLayout(editLayout);
+
+
 }

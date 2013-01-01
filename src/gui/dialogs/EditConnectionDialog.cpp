@@ -11,7 +11,7 @@ using namespace Robomongo;
 EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDialog(),
     _connection(connection)
 {
-    setContentsMargins(7, 7, 7, 7);
+    //setContentsMargins(7, 7, 7, 7);
     setWindowTitle("Edit connection");
     // Remove help button (?)
     setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -88,13 +88,13 @@ EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDi
     _auth = new AuthWidget();
     ServerWidget *ser = new ServerWidget();
 
-    _tabWidget->addTab(ser, "Server");
+    _tabWidget->addTab(ser, "Connection");
     _tabWidget->addTab(_auth, "Authentication");
     _tabWidget->addTab(new QLabel("advanced"), "Advanced");
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->addLayout(editLayout);
-    mainLayout->addSpacing(10);
+//    mainLayout->addLayout(editLayout);
+//    mainLayout->addSpacing(10);
     mainLayout->addWidget(_tabWidget);
 //    mainLayout->addLayout(editLayout);
 //    mainLayout->addWidget(_useAuth);
@@ -102,9 +102,9 @@ EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDi
 //    mainLayout->addSpacing(10);
 //    mainLayout->addWidget(new QLabel("Authenticate:"));
 //    mainLayout->addWidget(_credentialsView);
-    mainLayout->addSpacing(10);
+//    mainLayout->addSpacing(10);
     mainLayout->addLayout(bottomLayout);
-    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+    //mainLayout->setSizeConstraint(QLayout::SetFixedSize);
 
     updateCredentialTree();
     authChecked(false);
@@ -352,41 +352,72 @@ void CredentialModel::remove(int at)
 
 AuthWidget::AuthWidget()
 {
+    QLabel *authLabel = new QLabel(
+        "<nobr>The <b>admin</b> database is unique in MongoDB.</nobr> Users with normal access "
+        "to the <b>admin</b> database have read and write access to <i>all "
+        "databases</i>.");
+
+    authLabel->setWordWrap(true);
+
     _userName = new QLineEdit();
     _userNameLabel = new QLabel("User Name");
     _userPassword = new QLineEdit();
     _databaseName = new QLineEdit();
 
     QGridLayout *_authLayout = new QGridLayout;
+    _authLayout->addWidget(authLabel,  0, 0, 1, 2);
     _authLayout->addWidget(new QLabel("Database"),  1, 0);
     _authLayout->addWidget(_databaseName,           1, 1);
     _authLayout->addWidget(_userNameLabel,          2, 0);
     _authLayout->addWidget(_userName,               2, 1);
     _authLayout->addWidget(new QLabel("Password"),  3, 0);
     _authLayout->addWidget(_userPassword,           3, 1);
-    _authLayout->setSizeConstraint(QLayout::SetFixedSize);
+//    _authLayout->setSizeConstraint(QLayout::SetFixedSize);
     setLayout(_authLayout);
 }
 
 
 ServerWidget::ServerWidget()
 {
-    _connectionName = new QLineEdit("_connection->connectionName()", this);
-    _serverAddress = new QLineEdit("_connection->databaseAddress()", this);
-    _serverPort = new QLineEdit(QString::number(27017), this);
+    QLabel *authLabel = new QLabel(
+        "Choose any connection name that will help you to identify this connection.");
+    authLabel->setWordWrap(true);
+    authLabel->setContentsMargins(0, -2, 0, 20);
+
+    QLabel *serverLabel = new QLabel(
+        "Specify host and port of MongoDB server. Host can be either IP or domain name.");
+    serverLabel->setWordWrap(true);
+
+    _connectionName = new QLineEdit("localhost");
+    _serverAddress = new QLineEdit("localhost");
+    _serverPort = new QLineEdit(QString::number(27017));
+    _serverPort->setFixedWidth(60);
+
     _defaultDatabaseName = new QLineEdit();
 
-    QGridLayout *editLayout = new QGridLayout;
-    editLayout->addWidget(new QLabel("Connection Name"),      0, 0);
-    editLayout->addWidget(_connectionName,         0, 1);
-    editLayout->addWidget(new QLabel("Server Host"),    1, 0);
-    editLayout->addWidget(_serverAddress,          1, 1);
-    editLayout->addWidget(new QLabel("Server Port"),      2, 0);
-    editLayout->addWidget(_serverPort,             2, 1, Qt::AlignLeft);
-    editLayout->addWidget(new QLabel("Default Database"), 3, 0);
-    editLayout->addWidget(_defaultDatabaseName,    3, 1, Qt::AlignLeft);
+    QGridLayout *connectionLayout = new QGridLayout;
+    connectionLayout->addWidget(new QLabel("Name:"),      1, 0);
+    connectionLayout->addWidget(_connectionName,         1, 1, 1, 3);
+    connectionLayout->addWidget(authLabel,               2, 1, 1, 3);
 
-    setLayout(editLayout);
+    //QGridLayout *serverLayout = new QGridLayout;
+    connectionLayout->addWidget(serverLabel, 4, 1, 1, 3);
+    connectionLayout->addWidget(new QLabel("Address:"),    3, 0);
+    connectionLayout->addWidget(_serverAddress,          3, 1);
+    connectionLayout->addWidget(new QLabel(":"),      3, 2);
+    connectionLayout->addWidget(_serverPort,             3, 3);
+//    serverLayout->setSizeConstraint(QLayout::SetMaximumSize);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addLayout(connectionLayout);
+//    mainLayout->addSpacing(13);
+//    mainLayout->addLayout(serverLayout);
+
+
+//    editLayout->addWidget(new QLabel("Default Database"), 3, 0);
+//    editLayout->addWidget(_defaultDatabaseName,    3, 1, Qt::AlignLeft);
+
+    setLayout(mainLayout);
 
 
 }

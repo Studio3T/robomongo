@@ -71,6 +71,8 @@ namespace Robomongo
          */
         CredentialSettings *credential(QString databaseName);
         CredentialSettings *credential(int index);
+        bool hasEnabledCredential();
+        CredentialSettings *firstCredential();
         int credentialCount() const { return _credentials.count(); }
 
         QList<CredentialSettings *> credentials() const { return _credentials; }

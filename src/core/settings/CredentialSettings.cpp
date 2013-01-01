@@ -5,12 +5,14 @@ using namespace Robomongo;
 CredentialSettings::CredentialSettings(const QString &userName, const QString &userPassword, const QString &databaseName) :
     _userName(userName),
     _userPassword(userPassword),
-    _databaseName(databaseName)
+    _databaseName(databaseName),
+    _enabled(false)
 {
 
 }
 
-CredentialSettings::CredentialSettings(const QVariantMap &map)
+CredentialSettings::CredentialSettings(const QVariantMap &map) :
+    _enabled(false)
 {
     fromVariant(map);
 }
@@ -29,6 +31,7 @@ QVariant CredentialSettings::toVariant() const
     map.insert("userName", userName());
     map.insert("userPassword", userPassword());
     map.insert("databaseName", databaseName());
+    map.insert("enabled", enabled());
     return map;
 }
 
@@ -37,4 +40,5 @@ void CredentialSettings::fromVariant(QVariantMap map)
     setUserName(map.value("userName").toString());
     setUserPassword(map.value("userPassword").toString());
     setDatabaseName(map.value("databaseName").toString());
+    setEnabled(map.value("enabled").toBool());
 }

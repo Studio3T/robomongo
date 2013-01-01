@@ -21,6 +21,8 @@ namespace Robomongo
                            const QString &userPassword,
                            const QString &databaseName = "admin");
 
+        CredentialSettings();
+
         CredentialSettings(const QVariantMap &map);
 
         /**

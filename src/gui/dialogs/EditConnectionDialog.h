@@ -43,6 +43,7 @@ namespace Robomongo
         Q_OBJECT
     public:
         AuthWidget(ConnectionSettings *settings);
+        void accept();
 
     private:
         QLineEdit *_userName;
@@ -66,6 +67,8 @@ namespace Robomongo
         Q_OBJECT
     public:
         ServerWidget(ConnectionSettings *settings);
+
+        void accept();
 
     private:
         QLineEdit *_connectionName;

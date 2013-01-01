@@ -11,6 +11,11 @@ CredentialSettings::CredentialSettings(const QString &userName, const QString &u
 
 }
 
+CredentialSettings::CredentialSettings() :
+    _enabled(false)
+{
+}
+
 CredentialSettings::CredentialSettings(const QVariantMap &map) :
     _enabled(false)
 {

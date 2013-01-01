@@ -124,12 +124,8 @@ EditConnectionDialog::EditConnectionDialog(ConnectionSettings *connection) : QDi
  */
 void EditConnectionDialog::accept()
 {
-    _connection->setConnectionName(_connectionName->text());
-    _connection->setDatabaseAddress(_serverAddress->text());
-    _connection->setDatabasePort(_serverPort->text().toInt());
-//    _connection->setUserName(_userName->text());
-//    _connection->setUserPassword(_userPassword->text());
-//    _connection->setDatabaseName(_databaseName->text());
+    _serverTab->accept();
+    _auth->accept();
 
     QDialog::accept();
 }
@@ -429,6 +425,18 @@ AuthWidget::AuthWidget(ConnectionSettings *settings) :
     setLayout(mainLayout);
 }
 
+void AuthWidget::accept()
+{
+    if (_settings->credentialCount() == 0) {
+        _settings->addCredential(new CredentialSettings());
+    }
+
+    CredentialSettings *credential = _settings->firstCredential();
+    credential->setUserName(_userName->text());
+    credential->setUserPassword(_userPassword->text());
+    credential->setDatabaseName(_databaseName->text());
+}
+
 void AuthWidget::authChecked(bool checked)
 {
     _databaseName->setDisabled(!checked);
@@ -480,6 +488,13 @@ ServerWidget::ServerWidget(ConnectionSettings *settings) :
     setLayout(mainLayout);
 
     _connectionName->setFocus();
+}
+
+void ServerWidget::accept()
+{
+    _settings->setConnectionName(_connectionName->text());
+    _settings->setDatabaseAddress(_serverAddress->text());
+    _settings->setDatabasePort(_serverPort->text().toInt());
 }
 
 

@@ -49,6 +49,17 @@ namespace Robomongo
         //QGridLayout *_authLayout;
     };
 
+    class ServerWidget : public QWidget
+    {
+    public:
+        ServerWidget();
+        QLineEdit *_connectionName;
+        QLineEdit *_serverAddress;
+        QLineEdit *_serverPort;
+        QLineEdit *_defaultDatabaseName;
+        //QGridLayout *_authLayout;
+    };
+
 
     /**
      * @brief This Dialog allows to edit single connection
@@ -121,6 +132,8 @@ namespace Robomongo
         QTableView *_credentialsView;
         CredentialModel *_credentialsModel;
         QAbstractItemModel *_hdh;
+
+        QTabWidget *_tabWidget;
 
         /**
          * @brief Edited connection

@@ -381,41 +381,63 @@ void CredentialModel::remove(int at)
 
 AuthWidget::AuthWidget()
 {
-    QLabel *authLabel = new QLabel(
-        "<nobr>The <b>admin</b> database is unique in MongoDB.</nobr> Users with normal access "
-        "to the <b>admin</b> database have read and write access to <i>all "
-        "databases</i>.");
+    _databaseNameDescriptionLabel = new QLabel(
+        "<nobr>The <code>admin</code> database is unique in MongoDB.</nobr> Users with normal access "
+        "to the <code>admin</code> database have read and write access to <b>all "
+        "databases</b>.");
 
-    authLabel->setWordWrap(true);
-    authLabel->setContentsMargins(0, -2, 0, 20);
-    authLabel->setMinimumSize(authLabel->sizeHint());
-//    authLabel->sizePolicy().setHeightForWidth(true);
+    _databaseNameDescriptionLabel->setWordWrap(true);
+    _databaseNameDescriptionLabel->setAlignment(Qt::AlignTop);
+    _databaseNameDescriptionLabel->setContentsMargins(0, -2, 0, 0);
+    _databaseNameDescriptionLabel->setMinimumSize(_databaseNameDescriptionLabel->sizeHint());
 
     _userName = new QLineEdit();
     _userNameLabel = new QLabel("User Name");
     _userPassword = new QLineEdit();
+    _userPasswordLabel = new QLabel("Password");
     _databaseName = new QLineEdit();
+    _databaseNameLabel = new QLabel("Database");
+
+    _useAuth = new QCheckBox("Perform authentication");
+    //_useAuth->setContentsMargins(0,0,0,13);
+    _useAuth->setStyleSheet("margin-bottom: 7px");
+    connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool)));
 
     QGridLayout *_authLayout = new QGridLayout;
-    _authLayout->addWidget(authLabel,  1, 1, 1, 1);
-    _authLayout->addWidget(new QLabel("Database"),  0, 0);
-    _authLayout->addWidget(_databaseName,           0, 1);
-    _authLayout->addWidget(_userNameLabel,          2, 0);
-    _authLayout->addWidget(_userName,               2, 1);
-    _authLayout->addWidget(new QLabel("Password"),  3, 0);
-    _authLayout->addWidget(_userPassword,           3, 1);
-    _authLayout->setAlignment(Qt::AlignTop);
-//    _authLayout->setSizeConstraint(QLayout::SetFixedSize);
 
-    QGroupBox *groupBox = new QGroupBox(tr("Perform Authentication"));
-    groupBox->setFlat(false);
-    groupBox->setCheckable(true);
-    groupBox->setLayout(_authLayout);
+    _authLayout->addWidget(_useAuth,                      0, 0, 1, 2);
+    _authLayout->addWidget(_databaseNameLabel,            1, 0);
+    _authLayout->addWidget(_databaseName,                 1, 1);
+    _authLayout->addWidget(_databaseNameDescriptionLabel, 2, 1);
+    _authLayout->addWidget(_userNameLabel,                3, 0);
+    _authLayout->addWidget(_userName,                     3, 1);
+    _authLayout->addWidget(_userPasswordLabel,            4, 0);
+    _authLayout->addWidget(_userPassword,                 4, 1);
+    _authLayout->setAlignment(Qt::AlignTop);
+
+//    QGroupBox *groupBox = new QGroupBox(tr("Perform Authentication"));
+//    groupBox->setFlat(false);
+//    groupBox->setCheckable(true);
+//    groupBox->setLayout(_authLayout);
 
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(groupBox);
+    mainLayout->addLayout(_authLayout);
     setLayout(mainLayout);
+}
+
+void AuthWidget::authChecked(bool checked)
+{
+    _databaseName->setDisabled(!checked);
+    _databaseNameLabel->setDisabled(!checked);
+    _databaseNameDescriptionLabel->setDisabled(!checked);
+    _userName->setDisabled(!checked);
+    _userNameLabel->setDisabled(!checked);
+    _userPassword->setDisabled(!checked);
+    _userPasswordLabel->setDisabled(!checked);
+
+    if (checked)
+        _databaseName->setFocus();
 }
 
 
@@ -470,7 +492,7 @@ ServerWidget::ServerWidget()
 AdvancedWidget::AdvancedWidget()
 {
     QLabel *authLabel = new QLabel(
-        "Choose any connection name that will help you to identify this connection.");
+        "Database, that will be default (<code>db</code> shell variable will point to this database).");
     authLabel->setWordWrap(true);
     authLabel->setContentsMargins(0, -2, 0, 20);
 

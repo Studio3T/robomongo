@@ -6,7 +6,7 @@
 #include <QAction>
 #include <QMessageBox>
 #include "ConnectionsDialog.h"
-#include "dialogs/EditConnectionDialog.h"
+#include "dialogs/ConnectionDialog.h"
 #include "settings/ConnectionSettings.h"
 #include "settings/SettingsManager.h"
 #include "GuiRegistry.h"
@@ -121,7 +121,7 @@ void ConnectionsDialog::accept()
 void ConnectionsDialog::add()
 {
     ConnectionSettings *newModel = new ConnectionSettings();
-    EditConnectionDialog editDialog(newModel);
+    ConnectionDialog editDialog(newModel);
 
     // Do nothing if not accepted
     if (editDialog.exec() != QDialog::Accepted)
@@ -144,13 +144,19 @@ void ConnectionsDialog::edit()
         return;
 
     ConnectionSettings *connection = currentItem->connection();
-    EditConnectionDialog editDialog(connection);
+    ConnectionDialog editDialog(connection);
 
     // Do nothing if not accepted
-    if (editDialog.exec() != QDialog::Accepted)
+    if (editDialog.exec() != QDialog::Accepted) {
+        // on linux focus is lost - we need to activate connections dialog
+        activateWindow();
         return;
+    }
 
     _settingsManager->updateConnection(connection);
+
+    // on linux focus is lost - we need to activate connections dialog
+    activateWindow();
 }
 
 /**
@@ -193,7 +199,7 @@ void ConnectionsDialog::clone()
     QString newConnectionName = QString("Copy of %1").arg(connection->connectionName());
     connection->setConnectionName(newConnectionName);
 
-    EditConnectionDialog editDialog(connection);
+    ConnectionDialog editDialog(connection);
 
     // Cleanup newly created connection and return, if not accepted.
     if (editDialog.exec() != QDialog::Accepted) {

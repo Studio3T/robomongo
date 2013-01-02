@@ -28,10 +28,18 @@ namespace Robomongo
         ConnectionSettings();
 
         /**
+         * @brief Cleanup used resources
+         */
+        ~ConnectionSettings();
+
+        /**
          * @brief Creates completely new ConnectionSettings by cloning this record.
          */
         ConnectionSettings *clone() const;
 
+        /**
+         * @brief Discards current state and applies state from 'source' ConnectionSettings.
+         */
         void apply(const ConnectionSettings *source);
 
         /**
@@ -63,21 +71,46 @@ namespace Robomongo
         void setDatabasePort(const int port) { _databasePort = port; }
 
         /**
+         * @brief Default database
+         */
+        QString defaultDatabase() const { return _defaultDatabase; }
+        void setDefaultDatabase(const QString &defaultDatabase) { _defaultDatabase = defaultDatabase; }
+
+        /**
          * @brief Adds credential to this connection
          */
         void addCredential(CredentialSettings *credential);
+
+        /**
+         * @brief Clears and releases memory occupied by credentials
+         */
+        void clearCredentials();
 
         /**
          * @brief Returns credential for specified database, or NULL if no such
          * credential in connection.
          */
         CredentialSettings *credential(QString databaseName);
-        CredentialSettings *credential(int index);
-        bool hasEnabledCredential();
-        CredentialSettings *firstCredential();
-        int credentialCount() const { return _credentials.count(); }
-        void clearCredentials();
 
+        /**
+         * @brief Checks whether this connection has primary credential
+         * which is also enabled.
+         */
+        bool hasEnabledPrimaryCredential();
+
+        /**
+         * @brief Returns primary credential, or NULL if no credentials exists.
+         */
+        CredentialSettings *primaryCredential();
+
+        /**
+         * @brief Returns number of credentials
+         */
+        int credentialCount() const { return _credentials.count(); }
+
+        /**
+         * @brief Returns all credentials
+         */
         QList<CredentialSettings *> credentials() const { return _credentials; }
 
         /**

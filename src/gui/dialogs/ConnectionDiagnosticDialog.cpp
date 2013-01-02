@@ -48,10 +48,10 @@ ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *conne
 
     _connectionLabel->setText(QString("Connecting to <b>%1</b>...").arg(_connection->getFullAddress()));
 
-    if (_connection->hasEnabledCredential()) {
+    if (_connection->hasEnabledPrimaryCredential()) {
         _authLabel->setText(QString("Authorizing on <b>%1</b> database as <b>%2</b>...")
-            .arg(_connection->firstCredential()->databaseName())
-            .arg(_connection->firstCredential()->userName()));
+            .arg(_connection->primaryCredential()->databaseName())
+            .arg(_connection->primaryCredential()->userName()));
     } else {
         _authLabel->setText("Authorization skipped by you");
     }
@@ -94,12 +94,12 @@ void ConnectionDiagnosticDialog::authStatus(QString error, bool authed)
 
     if (authed) {
         _authIconLabel->setPixmap(_yesPixmap);
-        _authLabel->setText(QString("Authorized as <b>%1</b>").arg(_connection->firstCredential()->userName()));
+        _authLabel->setText(QString("Authorized as <b>%1</b>").arg(_connection->primaryCredential()->userName()));
     } else {
 
         _authIconLabel->setPixmap(_noPixmap);
 
-        if (_connection->hasEnabledCredential())
+        if (_connection->hasEnabledPrimaryCredential())
             _authLabel->setText(QString("Authorization failed"));
         else
             _authLabel->setText(QString("Authorization skipped by you"));
@@ -150,9 +150,9 @@ void ConnectionDiagnosticThread::run()
     }
 
     try {
-        if (_connection->hasEnabledCredential())
+        if (_connection->hasEnabledPrimaryCredential())
         {
-            CredentialSettings *credential = _connection->firstCredential();
+            CredentialSettings *credential = _connection->primaryCredential();
             QString database = credential->databaseName();
             QString username = credential->userName();
             QString password = credential->userPassword();

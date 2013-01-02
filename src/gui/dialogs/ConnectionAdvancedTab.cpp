@@ -8,10 +8,10 @@ using namespace Robomongo;
 ConnectionAdvancedTab::ConnectionAdvancedTab(ConnectionSettings *settings) :
     _settings(settings)
 {
-    QLabel *authLabel = new QLabel(
+    QLabel *defaultDatabaseDescriptionLabel = new QLabel(
         "Database, that will be default (<code>db</code> shell variable will point to this database).");
-    authLabel->setWordWrap(true);
-    authLabel->setContentsMargins(0, -2, 0, 20);
+    defaultDatabaseDescriptionLabel->setWordWrap(true);
+    defaultDatabaseDescriptionLabel->setContentsMargins(0, -2, 0, 20);
 
     _defaultDatabaseName = new QLineEdit(_settings->defaultDatabase());
 
@@ -19,10 +19,9 @@ ConnectionAdvancedTab::ConnectionAdvancedTab(ConnectionSettings *settings) :
     connectionLayout->setAlignment(Qt::AlignTop);
     connectionLayout->addWidget(new QLabel("Default Database:"),  1, 0);
     connectionLayout->addWidget(_defaultDatabaseName,             1, 1, 1, 1);
-    connectionLayout->addWidget(authLabel,                        2, 1, 1, 1);
+    connectionLayout->addWidget(defaultDatabaseDescriptionLabel,  2, 1, 1, 1);
 
     setLayout(connectionLayout);
-
 }
 
 void ConnectionAdvancedTab::accept()

@@ -16,15 +16,20 @@ ConnectionSettings::ConnectionSettings() : QObject()
 ConnectionSettings *ConnectionSettings::clone() const
 {
     ConnectionSettings *record = new ConnectionSettings();
-    record->setConnectionName(connectionName());
-    record->setDatabaseAddress(databaseAddress());
-    record->setDatabasePort(databasePort());
-
-    foreach(CredentialSettings *credential, credentials()) {
-        record->addCredential(credential->clone());
-    }
-
+    record->apply(this);
     return record;
+}
+
+void ConnectionSettings::apply(const ConnectionSettings *source)
+{
+    setConnectionName(source->connectionName());
+    setDatabaseAddress(source->databaseAddress());
+    setDatabasePort(source->databasePort());
+
+    clearCredentials();
+    foreach(CredentialSettings *credential, source->credentials()) {
+        addCredential(credential->clone());
+    }
 }
 
 /**
@@ -105,5 +110,11 @@ CredentialSettings *ConnectionSettings::firstCredential()
         return NULL;
 
     return _credentials.at(0);
+}
+
+void ConnectionSettings::clearCredentials()
+{
+    _credentials.clear();
+    _credentialsByDatabaseName.clear();
 }
 

@@ -57,11 +57,18 @@ ConnectionAuthTab::ConnectionAuthTab(ConnectionSettings *settings) :
 
 void ConnectionAuthTab::accept()
 {
-    if (_settings->credentialCount() == 0) {
-        _settings->addCredential(new CredentialSettings());
-    }
+    _settings->clearCredentials();
+
+    // If all fields is empty - do nothing
+    if (_userName->text().isEmpty()     &&
+        _userPassword->text().isEmpty() &&
+        _databaseName->text().isEmpty())
+        return;
+
+    _settings->addCredential(new CredentialSettings());
 
     CredentialSettings *credential = _settings->firstCredential();
+    credential->setEnabled(_useAuth->isChecked());
     credential->setUserName(_userName->text());
     credential->setUserPassword(_userPassword->text());
     credential->setDatabaseName(_databaseName->text());

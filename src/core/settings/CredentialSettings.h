@@ -11,16 +11,6 @@ namespace Robomongo
     {
     public:
 
-        /**
-         * @brief Creates CredentialSettings.
-         * @param userName
-         * @param userPassword
-         * @param databaseName: name of databases, on which authentication is performed.
-         */
-        CredentialSettings(const QString &userName,
-                           const QString &userPassword,
-                           const QString &databaseName = "admin");
-
         CredentialSettings();
 
         CredentialSettings(const QVariantMap &map);

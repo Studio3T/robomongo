@@ -95,6 +95,8 @@ namespace Robomongo
             _bsonObjects = bsonObjects;
         }
 
+    protected:
+
         /*
         ** Overload function
         */

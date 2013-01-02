@@ -144,7 +144,7 @@ void ConnectionsDialog::edit()
         return;
 
     ConnectionSettings *connection = currentItem->connection();
-    ConnectionDialog editDialog(connection);
+    ConnectionDialog editDialog(connection->clone());
 
     // Do nothing if not accepted
     if (editDialog.exec() != QDialog::Accepted) {
@@ -153,6 +153,7 @@ void ConnectionsDialog::edit()
         return;
     }
 
+    connection->apply(editDialog.connection());
     _settingsManager->updateConnection(connection);
 
     // on linux focus is lost - we need to activate connections dialog

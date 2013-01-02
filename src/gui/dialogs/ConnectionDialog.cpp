@@ -6,6 +6,7 @@
 #include "ConnectionAuthTab.h"
 #include "ConnectionBasicTab.h"
 #include "ConnectionAdvancedTab.h"
+#include "ConnectionDiagnosticDialog.h"
 
 using namespace Robomongo;
 
@@ -60,10 +61,14 @@ ConnectionDialog::ConnectionDialog(ConnectionSettings *connection) : QDialog(),
  */
 void ConnectionDialog::accept()
 {
+    apply();
+    QDialog::accept();
+}
+
+void ConnectionDialog::apply()
+{
     _basicTab->accept();
     _authTab->accept();
-
-    QDialog::accept();
 }
 
 /**
@@ -112,6 +117,12 @@ bool ConnectionDialog::canBeClosed()
  */
 void ConnectionDialog::testConnection()
 {
+    apply();
+    ConnectionDiagnosticDialog diag(_connection);
+    diag.exec();
+
+    return;
+
     bool res = true; //_connection->test(_serverAddress->text(), _serverPort->text(), _userName->text(), _userPassword->text());
 
     if (res)

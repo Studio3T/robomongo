@@ -33,7 +33,8 @@ SOURCES += ExampleWindow.cpp \
     examples/CredentialModel.cpp \
     dialogs/ConnectionAuthTab.cpp \
     dialogs/ConnectionBasicTab.cpp \
-    dialogs/ConnectionAdvancedTab.cpp
+    dialogs/ConnectionAdvancedTab.cpp \
+    dialogs/ConnectionDiagnosticDialog.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
@@ -63,7 +64,8 @@ HEADERS  += ExampleWindow.h = \
     examples/CredentialModel.h \
     dialogs/ConnectionAuthTab.h \
     dialogs/ConnectionBasicTab.h \
-    dialogs/ConnectionAdvancedTab.h
+    dialogs/ConnectionAdvancedTab.h \
+    dialogs/ConnectionDiagnosticDialog.h
 
 INCLUDEPATH += \
             $$ROOT/src/core

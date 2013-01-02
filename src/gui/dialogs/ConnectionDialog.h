@@ -29,6 +29,9 @@ namespace Robomongo
          * @brief Accept() is called when user agree with entered data.
          */
         virtual void accept();
+        void apply();
+
+        ConnectionSettings *connection() const { return _connection; }
 
     protected:
 

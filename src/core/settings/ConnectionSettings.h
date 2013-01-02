@@ -32,6 +32,8 @@ namespace Robomongo
          */
         ConnectionSettings *clone() const;
 
+        void apply(const ConnectionSettings *source);
+
         /**
          * @brief Converts to QVariantMap
          */
@@ -74,6 +76,7 @@ namespace Robomongo
         bool hasEnabledCredential();
         CredentialSettings *firstCredential();
         int credentialCount() const { return _credentials.count(); }
+        void clearCredentials();
 
         QList<CredentialSettings *> credentials() const { return _credentials; }
 

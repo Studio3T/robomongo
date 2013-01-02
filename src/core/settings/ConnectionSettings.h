@@ -59,16 +59,16 @@ namespace Robomongo
         void setConnectionName(const QString &connectionName) { _connectionName = connectionName; }
 
         /**
-         * @brief Database address
+         * @brief Server host
          */
-        QString databaseAddress() const { return _databaseAddress; }
-        void setDatabaseAddress(const QString &databaseAddress) { _databaseAddress = databaseAddress; }
+        QString serverHost() const { return _serverHost; }
+        void setServerHost(const QString &serverHost) { _serverHost = serverHost; }
 
         /**
-         * @brief Port of database
+         * @brief Port of server
          */
-        int databasePort() const { return _databasePort; }
-        void setDatabasePort(const int port) { _databasePort = port; }
+        int serverPort() const { return _serverPort; }
+        void setServerPort(const int port) { _serverPort = port; }
 
         /**
          * @brief Default database
@@ -129,8 +129,8 @@ namespace Robomongo
         QString getFullAddress() const
         {
             return QString("%1:%2")
-                .arg(_databaseAddress)
-                .arg(_databasePort);
+                .arg(_serverHost)
+                .arg(_serverPort);
         }
 
         QString getReadableName() const
@@ -144,9 +144,9 @@ namespace Robomongo
     private:
 
         QString _connectionName;
-        QString _databaseAddress;
+        QString _serverHost;
         QString _defaultDatabase;
-        int _databasePort;
+        int _serverPort;
 
         QList<CredentialSettings *> _credentials;
         QHash<QString, CredentialSettings *> _credentialsByDatabaseName;

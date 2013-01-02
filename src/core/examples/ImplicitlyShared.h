@@ -30,8 +30,8 @@ namespace Robomongo
             ImplicitlySharedPrivate() {}
             int id;
             QString connectionName;
-            QString databaseAddress;
-            int databasePort;
+            QString serverHost;
+            int serverPort;
             QString userName;
             QString userPassword;
         };
@@ -82,14 +82,14 @@ namespace Robomongo
         /**
          * Database address
          */
-        QString databaseAddress() const { return _data->databaseAddress; }
-        void setDatabaseAddress(const QString &databaseAddress) { _data->databaseAddress = databaseAddress; }
+        QString serverHost() const { return _data->serverHost; }
+        void setServerHost(const QString &serverHost) { _data->serverHost = serverHost; }
 
         /**
          * Port of database
          */
-        int databasePort() const { return _data->databasePort; }
-        void setDatabasePort(const int port) { _data->databasePort = port; }
+        int serverPort() const { return _data->serverPort; }
+        void setServerPort(const int port) { _data->serverPort = port; }
 
         /**
          * User name
@@ -109,8 +109,8 @@ namespace Robomongo
         QString getFullAddress() const
         {
             return QString("%1:%2")
-                .arg(_data->databaseAddress)
-                .arg(_data->databasePort);
+                .arg(_data->serverHost)
+                .arg(_data->serverPort);
         }
     };
 

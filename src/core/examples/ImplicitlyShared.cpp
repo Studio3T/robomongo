@@ -8,6 +8,6 @@ using namespace Robomongo;
 ImplicitlyShared::ImplicitlyShared() : _data(new ImplicitlySharedPrivate)
 {
     _data->id = 0;
-    _data->databasePort = 27017;
+    _data->serverPort = 27017;
 }
 

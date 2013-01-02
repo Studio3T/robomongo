@@ -20,8 +20,8 @@ using namespace mongo;
 
 
 MongoClient::MongoClient(EventBus *bus, QString host, int port, QString database, QString username, QString password, QString defaultDatabase, QObject *parent) : QObject(parent),
-    _databaseAddress(host),
-    _databasePort(port),
+    _serverHost(host),
+    _serverPort(port),
     _databaseName(database),
     _userName(username),
     _userPassword(password),
@@ -75,7 +75,7 @@ void MongoClient::evaluteFile(const QString &path)
 void MongoClient::handle(InitRequest *event)
 {
     try {
-        _scriptEngine = new ScriptEngine(_databaseAddress, _databasePort, _userName, _userPassword, _databaseName);
+        _scriptEngine = new ScriptEngine(_serverHost, _serverPort, _userName, _userPassword, _databaseName);
         _scriptEngine->init();
         _scriptEngine->use(_defaultDatabase);
     }

@@ -18,9 +18,7 @@ ConnectionDialog::ConnectionDialog(ConnectionSettings *connection) : QDialog(),
 {
     setWindowTitle("Connection Settings");
     setWindowIcon(GuiRegistry::instance().serverIcon());
-
-    // Remove help button (?)
-    setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 
     QPushButton *saveButton = new QPushButton("&Save");
     saveButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
@@ -41,19 +39,20 @@ ConnectionDialog::ConnectionDialog(ConnectionSettings *connection) : QDialog(),
 
     _tabWidget = new QTabWidget;
 
-    _authTab = new ConnectionAuthTab(_connection);
-    _basicTab = new ConnectionBasicTab(_connection);
-    _basicTab->setFocus();
-    _advancedTab = new ConnectionAdvancedTab();
+    _authTab     = new ConnectionAuthTab(_connection);
+    _basicTab    = new ConnectionBasicTab(_connection);
+    _advancedTab = new ConnectionAdvancedTab(_connection);
 
-    _tabWidget->addTab(_basicTab, "Connection");
-    _tabWidget->addTab(_authTab, "Authentication");
+    _tabWidget->addTab(_basicTab,    "Connection");
+    _tabWidget->addTab(_authTab,     "Authentication");
     _tabWidget->addTab(_advancedTab, "Advanced");
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(_tabWidget);
     mainLayout->addLayout(bottomLayout);
     setLayout(mainLayout);
+
+    _basicTab->setFocus();
 }
 
 /**
@@ -69,6 +68,7 @@ void ConnectionDialog::apply()
 {
     _basicTab->accept();
     _authTab->accept();
+    _advancedTab->accept();
 }
 
 /**
@@ -90,8 +90,8 @@ bool ConnectionDialog::canBeClosed()
 {
     bool unchanged = true;
         /*_connection->connectionName() == _connectionName->text()
-        && _connection->databaseAddress() == _serverAddress->text()
-        && QString::number(_connection->databasePort()) == _serverPort->text()
+        && _connection->serverHost() == _serverAddress->text()
+        && QString::number(_connection->serverPort()) == _serverPort->text()
         && _connection->userName() == _userName->text()
         && _connection->userPassword() == _userPassword->text()
         && _connection->databaseName() == _databaseName->text()*/;

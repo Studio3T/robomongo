@@ -19,6 +19,7 @@ ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *conne
     _authStatusReceived(false)
 {
     setWindowTitle("Diagnostic");
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 
     ConnectionDiagnosticThread *thread = new ConnectionDiagnosticThread(_connection);
     connect(thread, SIGNAL(connectionStatus(QString, bool)), this, SLOT(connectionStatus(QString, bool)));
@@ -26,8 +27,6 @@ ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *conne
     connect(thread, SIGNAL(completed()), this, SLOT(completed()));
     thread->start();
 
-//    _yesIcon = qApp->style()->standardIcon(QStyle::SP_DialogOkButton);
-//    _noIcon = qApp->style()->standardIcon(QStyle::SP_DialogNoButton);
     _yesIcon = GuiRegistry::instance().yesMarkIcon();
     _noIcon = GuiRegistry::instance().noMarkIcon();
     _yesPixmap = _yesIcon.pixmap(24, 24);
@@ -68,7 +67,6 @@ ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *conne
     box->addLayout(layout);
     box->addSpacing(10);
     box->addWidget(closeButton, 0, Qt::AlignRight);
-
     setLayout(box);
 }
 
@@ -124,16 +122,13 @@ void ConnectionDiagnosticDialog::completed()
 
 
 ConnectionDiagnosticThread::ConnectionDiagnosticThread(ConnectionSettings *connection) :
-    _connection(connection)
-{
-
-}
+    _connection(connection) { }
 
 void ConnectionDiagnosticThread::run()
 {
     QString address = QString("%1:%2")
-        .arg(_connection->databaseAddress())
-        .arg(_connection->databasePort());
+        .arg(_connection->serverHost())
+        .arg(_connection->serverPort());
 
     boost::scoped_ptr<DBClientConnection> connection;
 

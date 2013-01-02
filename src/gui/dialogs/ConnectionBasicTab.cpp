@@ -20,8 +20,8 @@ ConnectionBasicTab::ConnectionBasicTab(ConnectionSettings *settings) :
     serverLabel->setContentsMargins(0, -2, 0, 20);
 
     _connectionName = new QLineEdit(_settings->connectionName());
-    _serverAddress = new QLineEdit(_settings->databaseAddress());
-    _serverPort = new QLineEdit(QString::number(_settings->databasePort()));
+    _serverAddress = new QLineEdit(_settings->serverHost());
+    _serverPort = new QLineEdit(QString::number(_settings->serverPort()));
     _serverPort->setFixedWidth(80);
 
     QGridLayout *connectionLayout = new QGridLayout;
@@ -45,6 +45,6 @@ ConnectionBasicTab::ConnectionBasicTab(ConnectionSettings *settings) :
 void ConnectionBasicTab::accept()
 {
     _settings->setConnectionName(_connectionName->text());
-    _settings->setDatabaseAddress(_serverAddress->text());
-    _settings->setDatabasePort(_serverPort->text().toInt());
+    _settings->setServerHost(_serverAddress->text());
+    _settings->setServerPort(_serverPort->text().toInt());
 }

@@ -144,7 +144,8 @@ void ConnectionsDialog::edit()
         return;
 
     ConnectionSettings *connection = currentItem->connection();
-    ConnectionDialog editDialog(connection->clone());
+    boost::scoped_ptr<ConnectionSettings> clonedConnection(connection->clone());
+    ConnectionDialog editDialog(clonedConnection.get());
 
     // Do nothing if not accepted
     if (editDialog.exec() != QDialog::Accepted) {

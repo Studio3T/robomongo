@@ -120,13 +120,6 @@ void ConnectionDialog::testConnection()
     apply();
     ConnectionDiagnosticDialog diag(_connection);
     diag.exec();
-
-    return;
-
-    bool res = true; //_connection->test(_serverAddress->text(), _serverPort->text(), _userName->text(), _userPassword->text());
-
-    if (res)
-        QMessageBox::information(NULL, "Success!", "Success! Connection exists.", "Ok");
 }
 
 void ConnectionDialog::tabWidget_currentChanged(int index)

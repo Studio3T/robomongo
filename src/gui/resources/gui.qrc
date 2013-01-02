@@ -41,5 +41,7 @@
         <file>icons/text_highlighted_16x16.png</file>
         <file>icons/tree_highlighted_16x16.png</file>
         <file>icons/maximize_highlighted_16x16.png</file>
+        <file>icons/no_mark_16x16.png</file>
+        <file>icons/yes_mark_16x16.png</file>
     </qresource>
 </RCC>

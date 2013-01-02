@@ -8,6 +8,7 @@
 #include <QIcon>
 #include <QPushButton>
 #include <QtGui>
+#include "GuiRegistry.h"
 
 using namespace Robomongo;
 using namespace mongo;
@@ -25,8 +26,10 @@ ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *conne
     connect(thread, SIGNAL(completed()), this, SLOT(completed()));
     thread->start();
 
-    _yesIcon = qApp->style()->standardIcon(QStyle::SP_DialogOkButton);
-    _noIcon = qApp->style()->standardIcon(QStyle::SP_DialogNoButton);
+//    _yesIcon = qApp->style()->standardIcon(QStyle::SP_DialogOkButton);
+//    _noIcon = qApp->style()->standardIcon(QStyle::SP_DialogNoButton);
+    _yesIcon = GuiRegistry::instance().yesMarkIcon();
+    _noIcon = GuiRegistry::instance().noMarkIcon();
     _yesPixmap = _yesIcon.pixmap(24, 24);
     _noPixmap = _noIcon.pixmap(24, 24);
 

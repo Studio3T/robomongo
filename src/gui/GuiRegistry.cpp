@@ -193,6 +193,22 @@ QIcon GuiRegistry::bsonBooleanIcon()
     return _bsonBooleanIcon;
 }
 
+QIcon GuiRegistry::noMarkIcon()
+{
+    if (_noMarkIcon.isNull())
+        _noMarkIcon = QIcon(":/robomongo/icons/no_mark_16x16.png");
+
+    return _noMarkIcon;
+}
+
+QIcon GuiRegistry::yesMarkIcon()
+{
+    if (_yesMarkIcon.isNull())
+        _yesMarkIcon = QIcon(":/robomongo/icons/yes_mark_16x16.png");
+
+    return _yesMarkIcon;
+}
+
 QBrush GuiRegistry::typeBrush()
 {
     if (_typeBrush.style() == Qt::NoBrush)

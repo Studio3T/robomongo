@@ -72,7 +72,7 @@ bool CredentialModel::setData(const QModelIndex &index, const QVariant &value, i
         CredentialSettings *credential;
         if (index.row() == _credentials.count()) {
             if  (!value.toString().isEmpty()) {
-                credential = new CredentialSettings(value.toString(), "", "");
+                credential = new CredentialSettings(); //value.toString(), "", "");
                 _credentials.append(credential);
             } else
                 return false;

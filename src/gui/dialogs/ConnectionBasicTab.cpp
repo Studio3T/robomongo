@@ -24,8 +24,6 @@ ConnectionBasicTab::ConnectionBasicTab(ConnectionSettings *settings) :
     _serverPort = new QLineEdit(QString::number(_settings->databasePort()));
     _serverPort->setFixedWidth(80);
 
-    _defaultDatabaseName = new QLineEdit();
-
     QGridLayout *connectionLayout = new QGridLayout;
     connectionLayout->addWidget(new QLabel("Name:"),      1, 0);
     connectionLayout->addWidget(_connectionName,         1, 1, 1, 3);

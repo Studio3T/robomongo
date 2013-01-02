@@ -28,14 +28,14 @@ ConnectionAuthTab::ConnectionAuthTab(ConnectionSettings *settings) :
     _useAuth->setStyleSheet("margin-bottom: 7px");
     connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool)));
 
-    _useAuth->setChecked(_settings->hasEnabledCredential());
-    authChecked(_settings->hasEnabledCredential());
+    _useAuth->setChecked(_settings->hasEnabledPrimaryCredential());
+    authChecked(_settings->hasEnabledPrimaryCredential());
 
     if (_settings->credentialCount() > 0) {
-        CredentialSettings *firstCredential = _settings->firstCredential();
-        _userName->setText(firstCredential->userName());
-        _userPassword->setText(firstCredential->userPassword());
-        _databaseName->setText(firstCredential->databaseName());
+        CredentialSettings *primaryCredential = _settings->primaryCredential();
+        _userName->setText(primaryCredential->userName());
+        _userPassword->setText(primaryCredential->userPassword());
+        _databaseName->setText(primaryCredential->databaseName());
     }
 
     QGridLayout *_authLayout = new QGridLayout;
@@ -67,7 +67,7 @@ void ConnectionAuthTab::accept()
 
     _settings->addCredential(new CredentialSettings());
 
-    CredentialSettings *credential = _settings->firstCredential();
+    CredentialSettings *credential = _settings->primaryCredential();
     credential->setEnabled(_useAuth->isChecked());
     credential->setUserName(_userName->text());
     credential->setUserPassword(_userPassword->text());

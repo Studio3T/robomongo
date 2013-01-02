@@ -5,9 +5,16 @@ using namespace Robomongo;
 /**
  * @brief Creates ConnectionSettings with default values
  */
-ConnectionSettings::ConnectionSettings() : QObject()
+ConnectionSettings::ConnectionSettings() : QObject(),
+    _databasePort(27017),
+    _defaultDatabase("test") { }
+
+/**
+ * @brief Cleanup used resources
+ */
+ConnectionSettings::~ConnectionSettings()
 {
-    _databasePort = 27017;
+    clearCredentials();
 }
 
 /**
@@ -20,6 +27,9 @@ ConnectionSettings *ConnectionSettings::clone() const
     return record;
 }
 
+/**
+ * @brief Discards current state and applies state from 'source' ConnectionSettings.
+ */
 void ConnectionSettings::apply(const ConnectionSettings *source)
 {
     setConnectionName(source->connectionName());
@@ -73,6 +83,7 @@ void ConnectionSettings::fromVariant(QVariantMap map)
 void ConnectionSettings::addCredential(CredentialSettings *credential)
 {
     if (_credentialsByDatabaseName.contains(credential->databaseName()))
+        // here we have leak of 'credential'...
         return;
 
     _credentials.append(credential);
@@ -88,23 +99,22 @@ CredentialSettings *ConnectionSettings::credential(QString databaseName)
     return _credentialsByDatabaseName.value(databaseName);
 }
 
-CredentialSettings *ConnectionSettings::credential(int index)
-{
-    if (index >= _credentials.count())
-        return NULL;
-
-    return _credentials.value(index);
-}
-
-bool ConnectionSettings::hasEnabledCredential()
+/**
+ * @brief Checks whether this connection has primary credential
+ * which is also enabled.
+ */
+bool ConnectionSettings::hasEnabledPrimaryCredential()
 {
     if (_credentials.count() == 0)
         return false;
 
-    return firstCredential()->enabled();
+    return primaryCredential()->enabled();
 }
 
-CredentialSettings *ConnectionSettings::firstCredential()
+/**
+ * @brief Returns primary credential, or NULL if no credentials exists.
+ */
+CredentialSettings *ConnectionSettings::primaryCredential()
 {
     if (_credentials.count() == 0)
         return NULL;
@@ -112,8 +122,13 @@ CredentialSettings *ConnectionSettings::firstCredential()
     return _credentials.at(0);
 }
 
+/**
+ * @brief Clears and releases memory occupied by credentials
+ */
 void ConnectionSettings::clearCredentials()
 {
+    qDeleteAll(_credentials);
+
     _credentials.clear();
     _credentialsByDatabaseName.clear();
 }

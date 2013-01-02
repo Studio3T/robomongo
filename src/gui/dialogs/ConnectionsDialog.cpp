@@ -124,8 +124,10 @@ void ConnectionsDialog::add()
     ConnectionDialog editDialog(newModel);
 
     // Do nothing if not accepted
-    if (editDialog.exec() != QDialog::Accepted)
+    if (editDialog.exec() != QDialog::Accepted) {
+        delete newModel;
         return;
+    }
 
     _settingsManager->addConnection(newModel);
     _listWidget->setFocus();

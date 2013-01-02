@@ -143,15 +143,6 @@ MainWindow::MainWindow() : QMainWindow(),
 
     setWindowTitle("Robomongo 0.4.0");
     setWindowIcon(GuiRegistry::instance().mainWindowIcon());
-
-    if (_settingsManager->connections().count() > 0) {
-        QRect scr = QApplication::desktop()->screenGeometry();
-        _connectionsMenu->move( scr.center() - _connectionsMenu->rect().center() - QPoint(0, 100));
-        _connectionsMenu->setFocus();
-        _connectionsMenu->showNormal();
-    }
-
-    //connect(_viewModel, SIGNAL(statusMessageUpdated(QString)), SLOT(vm_statusMessageUpdated(QString)));
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)

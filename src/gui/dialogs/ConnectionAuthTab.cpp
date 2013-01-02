@@ -21,7 +21,7 @@ ConnectionAuthTab::ConnectionAuthTab(ConnectionSettings *settings) :
     _userNameLabel = new QLabel("User Name");
     _userPassword = new QLineEdit();
     _userPasswordLabel = new QLabel("Password");
-    _databaseName = new QLineEdit();
+    _databaseName = new QLineEdit("admin");
     _databaseNameLabel = new QLabel("Database");
 
     _useAuth = new QCheckBox("Perform authentication");

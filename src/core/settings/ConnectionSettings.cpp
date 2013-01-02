@@ -7,7 +7,9 @@ using namespace Robomongo;
  */
 ConnectionSettings::ConnectionSettings() : QObject(),
     _serverPort(27017),
-    _defaultDatabase("test") { }
+    _serverHost("localhost"),
+    _defaultDatabase("test"),
+    _connectionName("New Connection") { }
 
 /**
  * @brief Cleanup used resources

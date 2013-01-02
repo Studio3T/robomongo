@@ -7,7 +7,7 @@ CONFIG  += staticlib
 
 SOURCES += ExampleWindow.cpp \
     dialogs/ConnectionsDialog.cpp \
-    dialogs/EditConnectionDialog.cpp \
+    dialogs/ConnectionDialog.cpp \
     widgets/LogWidget.cpp \
     widgets/explorer/ExplorerWidget.cpp \
     widgets/explorer/ExplorerTreeWidget.cpp \
@@ -29,11 +29,15 @@ SOURCES += ExampleWindow.cpp \
     editors/JSLexer.cpp \
     widgets/workarea/OutputViewer.cpp \
     widgets/workarea/Outputable.cpp \
-    widgets/workarea/OutputWidget.cpp
+    widgets/workarea/OutputWidget.cpp \
+    examples/CredentialModel.cpp \
+    dialogs/ConnectionAuthTab.cpp \
+    dialogs/ConnectionBasicTab.cpp \
+    dialogs/ConnectionAdvancedTab.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
-    dialogs/EditConnectionDialog.h \
+    dialogs/ConnectionDialog.h \
     widgets/LogWidget.h \
     widgets/explorer/ExplorerWidget.h \
     widgets/explorer/ExplorerTreeWidget.h \
@@ -55,7 +59,11 @@ HEADERS  += ExampleWindow.h = \
     editors/JSLexer.h \
     widgets/workarea/OutputViewer.h \
     widgets/workarea/Outputable.h \
-    widgets/workarea/OutputWidget.h
+    widgets/workarea/OutputWidget.h \
+    examples/CredentialModel.h \
+    dialogs/ConnectionAuthTab.h \
+    dialogs/ConnectionBasicTab.h \
+    dialogs/ConnectionAdvancedTab.h
 
 INCLUDEPATH += \
             $$ROOT/src/core

@@ -11,6 +11,8 @@
 #include "settings/SettingsManager.h"
 #include "GuiRegistry.h"
 #include <QLabel>
+#include <QTreeWidgetItem>
+#include <QHeaderView>
 
 using namespace Robomongo;
 
@@ -20,7 +22,7 @@ using namespace Robomongo;
 ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog()
 {
     setWindowIcon(GuiRegistry::instance().connectIcon());
-    setWindowTitle("Connections...");
+    setWindowTitle("Manage Connections");
     // Remove help button (?)
     setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
@@ -41,8 +43,17 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     QAction *removeAction = new QAction("&Remove", this);
     connect(removeAction, SIGNAL(triggered()), this, SLOT(remove()));
 
-    _listWidget = new QListWidget;
-    _listWidget->setViewMode(QListView::ListMode);
+    _listWidget = new QTreeWidget;
+    _listWidget->setIndentation(5);
+
+    QStringList colums;
+    colums << "Name" << "Address" << "Auth. Database / User";
+    _listWidget->setHeaderLabels(colums);
+    _listWidget->header()->setResizeMode(0, QHeaderView::Stretch);
+    _listWidget->header()->setResizeMode(1, QHeaderView::Stretch);
+    _listWidget->header()->setResizeMode(2, QHeaderView::Stretch);
+
+//    _listWidget->setViewMode(QListView::ListMode);
     _listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
     _listWidget->addAction(addAction);
     _listWidget->addAction(editAction);
@@ -51,7 +62,8 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     _listWidget->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
     _listWidget->setDragEnabled(true);
     _listWidget->setDragDropMode(QAbstractItemView::InternalMove);
-    _listWidget->setFixedWidth(330);
+    _listWidget->setMinimumHeight(300);
+    _listWidget->setMinimumWidth(630);
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
     connect(_listWidget->model(), SIGNAL(layoutChanged()), this, SLOT(listWidget_layoutChanged()));
 
@@ -78,12 +90,20 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     bottomLayout->addWidget(connectButton, 1, Qt::AlignRight);
     bottomLayout->addWidget(cancelButton);
 
+    QLabel *intro = new QLabel(
+    "Here you can manage your connections to MongoDB instances.<br/> You can <a href='create'>create</a>, "
+    "<a href='edit'>edit</a>, <a href='remove'>remove</a>, <a href='clone'>clone</a> and reorder connections via drag'n'drop.");
+    intro->setWordWrap(true);
+    connect(intro, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
+
     QVBoxLayout *firstColumnLayout = new QVBoxLayout;
+    firstColumnLayout->addWidget(intro);
     firstColumnLayout->addWidget(_listWidget, 1);
     firstColumnLayout->addLayout(bottomLayout);
 
     QVBoxLayout *secondColumnLayout = new QVBoxLayout;
     secondColumnLayout->setAlignment(Qt::AlignTop);
+    secondColumnLayout->addWidget(new QLabel); // funny placeholder
     secondColumnLayout->addWidget(addButton);
     secondColumnLayout->addWidget(editButton);
     secondColumnLayout->addWidget(cloneButton);
@@ -91,7 +111,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
 
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
     mainLayout->addLayout(firstColumnLayout, 1);
-    mainLayout->addLayout(secondColumnLayout);
+//    mainLayout->addLayout(secondColumnLayout);
 
     // Populate list with connections
     foreach(ConnectionSettings *connectionModel, _settingsManager->connections())
@@ -113,6 +133,18 @@ void ConnectionsDialog::accept()
 
     close();
     QDialog::accept();
+}
+
+void ConnectionsDialog::linkActivated(const QString &link)
+{
+    if (link == "create")
+        add();
+    else if (link == "edit")
+        edit();
+    else if (link == "remove")
+        remove();
+    else if (link == "clone")
+        clone();
 }
 
 /**
@@ -220,11 +252,11 @@ void ConnectionsDialog::clone()
  */
 void ConnectionsDialog::listWidget_layoutChanged()
 {
-    int count = _listWidget->count();
+    int count = _listWidget->topLevelItemCount();
     QList<ConnectionSettings *> items;
     for(int i = 0; i < count; i++)
     {
-        ConnectionListWidgetItem * item = (ConnectionListWidgetItem *) _listWidget->item(i);
+        ConnectionListWidgetItem * item = (ConnectionListWidgetItem *) _listWidget->topLevelItem(i);
         items.append(item->connection());
     }
 
@@ -237,9 +269,9 @@ void ConnectionsDialog::listWidget_layoutChanged()
 void ConnectionsDialog::add(ConnectionSettings *connection)
 {
     ConnectionListWidgetItem *item = new ConnectionListWidgetItem(connection);
-    item->setIcon(GuiRegistry::instance().serverIcon());
+    item->setIcon(0, GuiRegistry::instance().serverIcon());
 
-    _listWidget->addItem(item);
+    _listWidget->addTopLevelItem(item);
     _hash.insert(connection, item);
 }
 
@@ -260,7 +292,7 @@ void ConnectionsDialog::update(ConnectionSettings *connection)
  */
 void ConnectionsDialog::remove(ConnectionSettings *connection)
 {
-    QListWidgetItem *item = _hash.value(connection);
+    QTreeWidgetItem *item = _hash.value(connection);
     if (!item)
         return;
 
@@ -272,6 +304,20 @@ void ConnectionsDialog::remove(ConnectionSettings *connection)
  */
 void ConnectionListWidgetItem::setConnection(ConnectionSettings *connection)
 {
-    setText(connection->connectionName());
+    setText(0, connection->connectionName());
+    setText(1, connection->getFullAddress());
+
+    if (connection->hasEnabledPrimaryCredential()) {
+        QString authString = QString("%1 / %2")
+            .arg(connection->primaryCredential()->databaseName())
+            .arg(connection->primaryCredential()->userName());
+
+        setText(2, authString);
+        setIcon(2, GuiRegistry::instance().yesMarkIcon());
+    } else {
+        setIcon(2, QIcon());
+        setText(2, "");
+    }
+
     _connection = connection;
 }

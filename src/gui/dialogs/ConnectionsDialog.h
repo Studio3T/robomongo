@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QListWidget>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 #include <QListWidgetItem>
 #include <QHash>
 #include "Core.h"
@@ -38,6 +40,8 @@ namespace Robomongo
         virtual void accept();
 
     private slots:
+
+        void linkActivated(const QString &link);
 
         /**
          * @brief Add connection to the list widget
@@ -93,7 +97,7 @@ namespace Robomongo
         /**
          * @brief Main list widget
          */
-        QListWidget *_listWidget;
+        QTreeWidget *_listWidget;
 
         /**
          * @brief Settings manager
@@ -110,7 +114,7 @@ namespace Robomongo
     /**
      * @brief Simple ListWidgetItem that has several convenience methods.
      */
-    class ConnectionListWidgetItem : public QListWidgetItem
+    class ConnectionListWidgetItem : public QTreeWidgetItem
     {
     public:
 

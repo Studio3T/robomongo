@@ -136,6 +136,24 @@ namespace Robomongo
     private:
         ConnectionSettings *_connection;
     };
+
+    class ConnectionsTreeWidget : public QTreeWidget
+    {
+        Q_OBJECT
+    public:
+        ConnectionsTreeWidget();
+
+    signals:
+        void layoutChanged();
+
+    protected:
+//        void dragMoveEvent(QDragMoveEvent * event);
+//        void dragEnterEvent(QDragEnterEvent * event);
+        void dropEvent(QDropEvent * event);
+//        void mousePressEvent(QMouseEvent *event);
+    private:
+        QTreeWidgetItem *draggingItem;
+    };
 }
 
 

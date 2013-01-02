@@ -13,6 +13,7 @@
 #include <QLabel>
 #include <QTreeWidgetItem>
 #include <QHeaderView>
+#include <QMouseEvent>
 
 using namespace Robomongo;
 
@@ -43,7 +44,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     QAction *removeAction = new QAction("&Remove", this);
     connect(removeAction, SIGNAL(triggered()), this, SLOT(remove()));
 
-    _listWidget = new QTreeWidget;
+    _listWidget = new ConnectionsTreeWidget;
     _listWidget->setIndentation(5);
 
     QStringList colums;
@@ -53,7 +54,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     _listWidget->header()->setResizeMode(1, QHeaderView::Stretch);
     _listWidget->header()->setResizeMode(2, QHeaderView::Stretch);
 
-//    _listWidget->setViewMode(QListView::ListMode);
+    //_listWidget->setViewMode(QListView::ListMode);
     _listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
     _listWidget->addAction(addAction);
     _listWidget->addAction(editAction);
@@ -65,7 +66,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     _listWidget->setMinimumHeight(300);
     _listWidget->setMinimumWidth(630);
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
-    connect(_listWidget->model(), SIGNAL(layoutChanged()), this, SLOT(listWidget_layoutChanged()));
+    connect(_listWidget, SIGNAL(layoutChanged()), this, SLOT(listWidget_layoutChanged()));
 
     QPushButton *addButton = new QPushButton("&Add");
     connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
@@ -253,6 +254,22 @@ void ConnectionsDialog::clone()
 void ConnectionsDialog::listWidget_layoutChanged()
 {
     int count = _listWidget->topLevelItemCount();
+
+    // Make childrens toplevel again. This is a bad, but quickiest item reordering
+    // implementation.
+    for(int i = 0; i < count; i++)
+    {
+        ConnectionListWidgetItem * item = (ConnectionListWidgetItem *) _listWidget->topLevelItem(i);
+        if (item->childCount() > 0) {
+            ConnectionListWidgetItem *childItem = (ConnectionListWidgetItem *) item->child(0);
+            item->removeChild(childItem);
+            _listWidget->insertTopLevelItem(++i, childItem);
+            _listWidget->setCurrentItem(childItem);
+            break;
+        }
+    }
+
+    count = _listWidget->topLevelItemCount();
     QList<ConnectionSettings *> items;
     for(int i = 0; i < count; i++)
     {
@@ -321,3 +338,51 @@ void ConnectionListWidgetItem::setConnection(ConnectionSettings *connection)
 
     _connection = connection;
 }
+
+
+ConnectionsTreeWidget::ConnectionsTreeWidget()
+{
+    setDragDropMode(QAbstractItemView::InternalMove);
+    setSelectionMode(QAbstractItemView::SingleSelection);
+    setDragEnabled(true);
+    setAcceptDrops(true);
+}
+/*
+void ConnectionsTreeWidget::dragMoveEvent(QDragMoveEvent *event)
+{
+    event->acceptProposedAction();
+}
+
+void ConnectionsTreeWidget::dragEnterEvent(QDragEnterEvent *event)
+{
+    event->acceptProposedAction();
+}
+*/
+
+void ConnectionsTreeWidget::dropEvent(QDropEvent *event)
+{
+    QTreeWidget::dropEvent(event);
+    emit layoutChanged();
+/*    event->accept();
+    QTreeWidgetItem *dropingOn = itemAt(event->pos());
+    int dropingIndex = indexOfTopLevelItem(dropingOn);
+    takeTopLevelItem(indexOfTopLevelItem(draggingItem));
+    int index = indexOfTopLevelItem(dropingOn);
+
+    if(index < dropingIndex)
+        index++;
+
+    insertTopLevelItem(index, draggingItem);*/
+}
+
+/*
+void ConnectionsTreeWidget::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button()==Qt::LeftButton) {
+        draggingItem = itemAt(event->pos());
+        QDrag *drag = new QDrag(this);
+        drag->exec(Qt::MoveAction | Qt::CopyAction, Qt::CopyAction);
+        event->accept();
+   }
+}
+*/

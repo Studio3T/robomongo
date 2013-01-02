@@ -88,8 +88,8 @@ namespace Robomongo
 
         bool _isAdmin;
 
-        QString _databaseAddress;
-        int _databasePort;
+        QString _serverHost;
+        int _serverPort;
         QString _userName;
         QString _userPassword;
         QString _databaseName;

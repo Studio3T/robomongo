@@ -6,7 +6,7 @@ using namespace Robomongo;
  * @brief Creates ConnectionSettings with default values
  */
 ConnectionSettings::ConnectionSettings() : QObject(),
-    _databasePort(27017),
+    _serverPort(27017),
     _defaultDatabase("test") { }
 
 /**
@@ -33,8 +33,9 @@ ConnectionSettings *ConnectionSettings::clone() const
 void ConnectionSettings::apply(const ConnectionSettings *source)
 {
     setConnectionName(source->connectionName());
-    setDatabaseAddress(source->databaseAddress());
-    setDatabasePort(source->databasePort());
+    setServerHost(source->serverHost());
+    setServerPort(source->serverPort());
+    setDefaultDatabase(source->defaultDatabase());
 
     clearCredentials();
     foreach(CredentialSettings *credential, source->credentials()) {
@@ -49,8 +50,9 @@ QVariant ConnectionSettings::toVariant() const
 {
     QVariantMap map;
     map.insert("connectionName", connectionName());
-    map.insert("databaseAddress", databaseAddress());
-    map.insert("databasePort", databasePort());
+    map.insert("serverHost", serverHost());
+    map.insert("serverPort", serverPort());
+    map.insert("defaultDatabase", defaultDatabase());
 
     QVariantList list;
     foreach(CredentialSettings *credential, credentials()) {
@@ -67,8 +69,9 @@ QVariant ConnectionSettings::toVariant() const
 void ConnectionSettings::fromVariant(QVariantMap map)
 {
     setConnectionName(map.value("connectionName").toString());
-    setDatabaseAddress(map.value("databaseAddress").toString());
-    setDatabasePort(map.value("databasePort").toInt());
+    setServerHost(map.value("serverHost").toString());
+    setServerPort(map.value("serverPort").toInt());
+    setDefaultDatabase(map.value("defaultDatabase").toString());
 
     QVariantList list = map.value("credentials").toList();
     foreach(QVariant var, list) {

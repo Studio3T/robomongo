@@ -16,16 +16,16 @@ MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible, con
     _visible(visible),
     _defaultDatabase(defaultDatabase)
 {
-    _host = _connectionRecord->databaseAddress();
-    _port = QString::number(_connectionRecord->databasePort());
+    _host = _connectionRecord->serverHost();
+    _port = QString::number(_connectionRecord->serverPort());
     _address = QString("%1:%2").arg(_host).arg(_port);
 
     _connection.reset(new mongo::DBClientConnection);
 
     _client.reset(new MongoClient(
                       _bus,
-                      connectionRecord->databaseAddress(),
-                      connectionRecord->databasePort(),
+                      connectionRecord->serverHost(),
+                      connectionRecord->serverPort(),
                       "connectionRecord->databaseName()",
                       "connectionRecord->userName()",
                       "connectionRecord->userPassword()",

@@ -9,13 +9,16 @@
 #include <QTextStream>
 #include <QFile>
 
+#include "settings/ConnectionSettings.h"
+#include "settings/CredentialSettings.h"
+
+
 #include "js/jsapi.h"
 #include "js/jsparse.h"
 #include "js/jsscan.h"
 #include "js/jsstr.h"
 #include "mongo/bson/stringdata.h"
 #include "mongo/client/dbclient.h"
-
 
 
 using namespace Robomongo;
@@ -25,37 +28,34 @@ namespace mongo {
     extern bool isShell;
 }
 
-ScriptEngine::ScriptEngine(const QString &host, int port, const QString &username, const QString &password, const QString &database) :
-    QObject(),
-    _host(host),
-    _port(port),
-    _username(username),
-    _password(password),
-    _database(database)
-{
-
-}
+ScriptEngine::ScriptEngine(ConnectionSettings *connection) : QObject(),
+    _connection(connection) { }
 
 ScriptEngine::~ScriptEngine()
 {
-    int a = 56;
+
 }
 
 void ScriptEngine::init()
 {
-    if (_database.isEmpty())
-        _database = "test";
+    QString connectDatabase = "test";
 
-    QString url = QString("%1:%2/%3").arg(_host).arg(_port).arg(_database);
+    if (_connection->hasEnabledPrimaryCredential())
+        connectDatabase = _connection->primaryCredential()->databaseName();
+
+    QString url = QString("%1:%2/%3")
+        .arg(_connection->serverHost())
+        .arg(_connection->serverPort())
+        .arg(connectDatabase);
 
     stringstream ss;
 
-    if (_username.isEmpty())
+    if (!_connection->hasEnabledPrimaryCredential())
         ss << "db = connect('" << url.toStdString() << "')";
     else
         ss << "db = connect('" << url.toStdString() << "', '"
-           << _username.toStdString() << "', '"
-           << _password.toStdString() << "')";
+           << _connection->primaryCredential()->userName().toStdString() << "', '"
+           << _connection->primaryCredential()->userPassword().toStdString() << "')";
 
     {
         QMutexLocker lock(&_mutex);
@@ -139,7 +139,6 @@ void ScriptEngine::use(const QString &dbName)
 {
     if (!dbName.isEmpty()) {
         // switch to database
-
         QString useDb = QString("shellHelper.use('%1');").arg(dbName);
         QByteArray useDbArray = useDb.toUtf8();
         _scope->exec(useDbArray.data(), "(usedb)", false, true, false);

@@ -9,7 +9,9 @@ ConnectionAdvancedTab::ConnectionAdvancedTab(ConnectionSettings *settings) :
     _settings(settings)
 {
     QLabel *defaultDatabaseDescriptionLabel = new QLabel(
-        "Database, that will be default (<code>db</code> shell variable will point to this database).");
+        "Database, that will be default (<code>db</code> shell variable will point to this database). "
+        "By default, default database will be the one you authenticate on, or <code>test</code> otherwise. "
+        "Leave this field empty, if you want default behaviour.");
     defaultDatabaseDescriptionLabel->setWordWrap(true);
     defaultDatabaseDescriptionLabel->setContentsMargins(0, -2, 0, 20);
 

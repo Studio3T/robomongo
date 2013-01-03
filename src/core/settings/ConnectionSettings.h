@@ -6,7 +6,6 @@
 #include <QVariantMap>
 #include <QSharedDataPointer>
 #include <QSharedData>
-#include <QDebug>
 #include <Core.h>
 #include "CredentialSettings.h"
 

@@ -111,7 +111,7 @@ namespace Robomongo
                 else
                     sb << "\n\n/* " << position << "*/\n";
 
-                string stdJson = doc->bsonObj().jsonString(TenGen, 1);
+                std::string stdJson = doc->bsonObj().jsonString(mongo::TenGen, 1);
 
                 sb << stdJson;
                 QString json = QString::fromStdString(sb.str());

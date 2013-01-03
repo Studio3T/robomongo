@@ -4,6 +4,7 @@
 #include "domain/MongoDocumentIterator.h"
 
 using namespace Robomongo;
+using namespace mongo;
 
 BsonTreeItem::BsonTreeItem(MongoElementPtr element, int position) : QObject(),
     _element(element)

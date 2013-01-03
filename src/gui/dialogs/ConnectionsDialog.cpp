@@ -68,17 +68,17 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
     connect(_listWidget, SIGNAL(layoutChanged()), this, SLOT(listWidget_layoutChanged()));
 
-    QPushButton *addButton = new QPushButton("&Add");
-    connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
+//    QPushButton *addButton = new QPushButton("&Add");
+//    connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
 
-    QPushButton *editButton = new QPushButton("&Edit");
-    connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
+//    QPushButton *editButton = new QPushButton("&Edit");
+//    connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
 
-    QPushButton *removeButton = new QPushButton("&Remove");
-    connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
+//    QPushButton *removeButton = new QPushButton("&Remove");
+//    connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
 
-    QPushButton *cloneButton = new QPushButton("&Clone");
-    connect(cloneButton, SIGNAL(clicked()), this, SLOT(clone()));
+//    QPushButton *cloneButton = new QPushButton("&Clone");
+//    connect(cloneButton, SIGNAL(clicked()), this, SLOT(clone()));
 
     QPushButton *cancelButton = new QPushButton("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
@@ -102,17 +102,16 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     firstColumnLayout->addWidget(_listWidget, 1);
     firstColumnLayout->addLayout(bottomLayout);
 
-    QVBoxLayout *secondColumnLayout = new QVBoxLayout;
-    secondColumnLayout->setAlignment(Qt::AlignTop);
-    secondColumnLayout->addWidget(new QLabel); // funny placeholder
-    secondColumnLayout->addWidget(addButton);
-    secondColumnLayout->addWidget(editButton);
-    secondColumnLayout->addWidget(cloneButton);
-    secondColumnLayout->addWidget(removeButton);
+//    QVBoxLayout *secondColumnLayout = new QVBoxLayout;
+//    secondColumnLayout->setAlignment(Qt::AlignTop);
+//    secondColumnLayout->addWidget(new QLabel); // funny placeholder
+//    secondColumnLayout->addWidget(addButton);
+//    secondColumnLayout->addWidget(editButton);
+//    secondColumnLayout->addWidget(cloneButton);
+//    secondColumnLayout->addWidget(removeButton);
 
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
     mainLayout->addLayout(firstColumnLayout, 1);
-//    mainLayout->addLayout(secondColumnLayout);
 
     // Populate list with connections
     foreach(ConnectionSettings *connectionModel, _settingsManager->connections())

@@ -13,28 +13,25 @@
 #include <QVector>
 #include "EventBus.h"
 #include "MongoClientThread.h"
+#include "settings/ConnectionSettings.h"
 
 using namespace Robomongo;
 using namespace std;
 using namespace mongo;
 
 
-MongoClient::MongoClient(EventBus *bus, QString host, int port, QString database, QString username, QString password, QString defaultDatabase, QObject *parent) : QObject(parent),
-    _serverHost(host),
-    _serverPort(port),
-    _databaseName(database),
-    _userName(username),
-    _userPassword(password),
+MongoClient::MongoClient(EventBus *bus, ConnectionSettings *connection, QObject *parent) : QObject(parent),
+    _connection(connection),
     _bus(bus),
-    _scriptEngine(NULL),
-    _defaultDatabase(defaultDatabase)
+    _scriptEngine(NULL)
 {
-    _address = QString("%1:%2").arg(host).arg(port);
+    _address = _connection->getFullAddress();
     init();
 }
 
 MongoClient::~MongoClient()
 {
+    delete _connection;
     _thread->quit();
     if (!_thread->wait(1000))
         _thread->terminate();
@@ -75,9 +72,9 @@ void MongoClient::evaluteFile(const QString &path)
 void MongoClient::handle(InitRequest *event)
 {
     try {
-        _scriptEngine = new ScriptEngine(_serverHost, _serverPort, _userName, _userPassword, _databaseName);
+        _scriptEngine = new ScriptEngine(_connection);
         _scriptEngine->init();
-        _scriptEngine->use(_defaultDatabase);
+        _scriptEngine->use(_connection->defaultDatabase());
     }
     catch (std::exception &ex) {
         reply(event->sender(), new InitResponse(this, EventError("Unable to initialize MongoClient")));
@@ -105,13 +102,13 @@ void MongoClient::handle(EstablishConnectionRequest *event)
     {
         boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
 
-        if (!event->userName.isEmpty())
+        if (_connection->hasEnabledPrimaryCredential())
         {
             std::string errmsg;
             bool ok = conn->get()->auth(
-                event->databaseName.toStdString(),
-                event->userName.toStdString(),
-                event->userPassword.toStdString(), errmsg);
+                _connection->primaryCredential()->databaseName().toStdString(),
+                _connection->primaryCredential()->userName().toStdString(),
+                _connection->primaryCredential()->userPassword().toStdString(), errmsg);
 
             if (!ok)
             {
@@ -121,11 +118,11 @@ void MongoClient::handle(EstablishConnectionRequest *event)
 
             // If authentication succeed and database name is 'admin' -
             // then user is admin, otherwise user is not admin
-            if (event->databaseName.compare("admin", Qt::CaseInsensitive))
+            if (_connection->primaryCredential()->databaseName().compare("admin", Qt::CaseInsensitive))
                 _isAdmin = false;
 
             // Save name of db on which we authenticated
-            _databaseName = event->databaseName;
+            _authDatabase = _connection->primaryCredential()->databaseName();
         }
 
         conn->done();
@@ -148,7 +145,7 @@ void MongoClient::handle(LoadDatabaseNamesRequest *event)
         // Non admin user has access only to the single database he specified while performing auth.
         if (!_isAdmin) {
             QStringList dbNames;
-            dbNames << _databaseName;
+            dbNames << _authDatabase;
             reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
             return;
         }

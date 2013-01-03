@@ -3,6 +3,7 @@
 #include "MongoShell.h"
 #include "domain/MongoCollection.h"
 #include "EventBus.h"
+#include "settings/ConnectionSettings.h"
 
 using namespace Robomongo;
 
@@ -17,11 +18,10 @@ App::~App()
     qDeleteAll(_servers);
 }
 
-MongoServer *App::openServer(ConnectionSettings *connectionRecord,
-                             bool visible,
-                             const QString &defaultDatabase)
+MongoServer *App::openServer(ConnectionSettings *connection,
+                             bool visible)
 {
-    MongoServer *server = new MongoServer(connectionRecord, visible, defaultDatabase);
+    MongoServer *server = new MongoServer(connection, visible);
     _servers.append(server);
 
     if (visible)
@@ -47,7 +47,10 @@ void App::closeServer(MongoServer *server)
 
 MongoShell *App::openShell(MongoCollection *collection)
 {
-    MongoServer *server = openServer(collection->database()->server()->connectionRecord(), false);
+    ConnectionSettings *connection = collection->database()->server()->connectionRecord()->clone();
+    connection->setDefaultDatabase(collection->database()->name());
+
+    MongoServer *server = openServer(connection, false);
 
     MongoShell *shell = new MongoShell(server);
     _shells.append(shell);
@@ -62,7 +65,12 @@ MongoShell *App::openShell(MongoCollection *collection)
 
 MongoShell *App::openShell(MongoServer *server, const QString &script, const QString &dbName, bool execute, const QString &shellName)
 {
-    MongoServer *serverClone = openServer(server->connectionRecord(), false);
+    ConnectionSettings *connection = server->connectionRecord()->clone();
+
+    if (!dbName.isEmpty())
+        connection->setDefaultDatabase(dbName);
+
+    MongoServer *serverClone = openServer(connection, false);
 
     MongoShell *shell = new MongoShell(serverClone);
     _shells.append(shell);
@@ -78,7 +86,10 @@ MongoShell *App::openShell(MongoServer *server, const QString &script, const QSt
 
 MongoShell *App::openShell(MongoDatabase *database, const QString &script, bool execute, const QString &shellName)
 {
-    MongoServer *serverClone = openServer(database->server()->connectionRecord(), false, database->name());
+    ConnectionSettings *connection = database->server()->connectionRecord()->clone();
+    connection->setDefaultDatabase(database->name());
+
+    MongoServer *serverClone = openServer(connection, false);
 
     MongoShell *shell = new MongoShell(serverClone);
     _shells.append(shell);

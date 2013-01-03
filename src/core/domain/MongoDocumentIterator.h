@@ -6,7 +6,7 @@
 #include "MongoElement.h"
 #include "mongo/client/dbclient.h"
 
-using namespace mongo;
+//using namespace mongo;
 
 namespace Robomongo
 {
@@ -17,7 +17,7 @@ namespace Robomongo
 	private:
 
         MongoDocument *_document;
-		BSONObjIterator _iterator;
+        mongo::BSONObjIterator _iterator;
 
 	public:
 		/*

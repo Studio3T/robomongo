@@ -79,32 +79,12 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     _outputLabel->setContentsMargins(0, 5, 0, 0);
     _outputLabel->setVisible(false);
 
-    QIcon dbIcon = GuiRegistry::instance().databaseIcon();
-    QPixmap dbPixmap = dbIcon.pixmap(16, 16);
-    QLabel *dbIconLabel = new QLabel;
-    dbIconLabel->setPixmap(dbPixmap);
-
-    QIcon serverIcon = GuiRegistry::instance().serverIcon();
-    QPixmap serverPixmap = serverIcon.pixmap(16, 16);
-    QLabel *serverIconLabel = new QLabel;
-    serverIconLabel->setPixmap(serverPixmap);
-    QLabel *currentServerLabel = new QLabel(_shell->server()->connectionRecord()->getReadableName());
-
-    _currentDatabaseLabel = new QLabel();
-    QHBoxLayout *topLayout = new QHBoxLayout;
-    topLayout->addWidget(serverIconLabel, 0, Qt::AlignLeft);
-    topLayout->addSpacing(3);
-    topLayout->addWidget(currentServerLabel, 0, Qt::AlignLeft);
-    topLayout->addSpacing(10);
-    topLayout->addWidget(dbIconLabel, 0, Qt::AlignLeft);
-    topLayout->addSpacing(3);
-    topLayout->addWidget(_currentDatabaseLabel, 0, Qt::AlignLeft);
-    topLayout->addStretch(1);
+    _topStatusBar = new TopStatusBar(_shell);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
     layout->setContentsMargins(0,4,4,4);
-    layout->addLayout(topLayout);
+    layout->addWidget(_topStatusBar);
     layout->addSpacing(2);
     layout->addWidget(_queryText, 0, Qt::AlignTop);
     layout->addWidget(_outputLabel, 0, Qt::AlignTop);
@@ -364,7 +344,7 @@ void QueryWidget::handle(ScriptExecutedEvent *event)
     if (_queryText->text().isEmpty())
         _queryText->setText(_shell->query());
     displayData(event->result.results);
-    _currentDatabaseLabel->setText(event->result.currentDatabase);
+    _topStatusBar->setCurrentDatabase(event->result.currentDatabase);
     _queryText->setFocus();
     setUpdatesEnabled(true);
 }
@@ -412,4 +392,70 @@ void QueryWidget::ui_leftButtonClicked()
 
     //QString query = _queryText->text();
     //_viewModel->loadPreviousPage(query, pageSize);
+}
+
+
+TopStatusBar::TopStatusBar(MongoShell *shell) :
+    _shell(shell)
+{
+    setContentsMargins(0, 0, 0, 0);
+    //setAutoFillBackground(true);
+
+    QPalette p(palette());
+    // Set background colour to black
+    p.setColor(QPalette::Background, Qt::white);
+    setPalette(p);
+
+    _textColor = palette().text().color().lighter(150);
+
+    QIcon dbIcon = GuiRegistry::instance().databaseIcon();
+    QPixmap dbPixmap = dbIcon.pixmap(16, 16, QIcon::Disabled);
+    QLabel *dbIconLabel = new QLabel;
+    dbIconLabel->setPixmap(dbPixmap);
+
+    QIcon serverIcon = GuiRegistry::instance().serverIcon();
+    QPixmap serverPixmap = serverIcon.pixmap(16, 16, QIcon::Disabled);
+    QLabel *serverIconLabel = new QLabel;
+    serverIconLabel->setPixmap(serverPixmap);
+    QLabel *currentServerLabel = new QLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(_shell->server()->connectionRecord()->getReadableName()));
+
+    _currentDatabaseLabel = new QLabel();
+    QHBoxLayout *topLayout = new QHBoxLayout;
+    topLayout->setContentsMargins(0, 0, 0, 0);
+    topLayout->addWidget(serverIconLabel, 0, Qt::AlignLeft);
+    topLayout->addWidget(currentServerLabel, 0, Qt::AlignLeft);
+    topLayout->addSpacing(10);
+    topLayout->addWidget(dbIconLabel, 0, Qt::AlignLeft);
+    topLayout->addWidget(_currentDatabaseLabel, 0, Qt::AlignLeft);
+    topLayout->addStretch(1);
+
+    setLayout(topLayout);
+
+    QColor background = palette().window().color();
+    QColor gradientOne = background.lighter(103);
+    QColor gradientTwo = background.lighter(103);
+    QColor selectedBorder = background.darker(103);
+
+    QString aga1 = gradientOne.name();
+    QString aga2 = gradientTwo.name();
+    QString aga3 = background.name();
+
+    QString styles = QString(
+        "Robomongo--TopStatusBar {"
+            "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                                        "stop: 0 %2, stop: 0.4 %2,"    //#fafafa, #f4f4f4
+                                        "stop: 0.5 %3, stop: 1.0 %1);" //#e7e7e7, #fafafa
+        "}"
+    ).arg(background.name(), gradientOne.name(), gradientTwo.name(), background.name());
+
+    setStyleSheet(styles);
+}
+
+void TopStatusBar::setCurrentDatabase(const QString &database)
+{
+    QString text = QString("<font color='%1'>%2</font>")
+            .arg(_textColor.name())
+            .arg(database);
+
+    _currentDatabaseLabel->setText(text);
 }

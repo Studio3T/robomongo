@@ -22,6 +22,20 @@ namespace Robomongo
     class OutputViewer;
     class WorkAreaTabWidget;
 
+    class TopStatusBar : public QWidget
+    {
+        Q_OBJECT
+    public:
+        TopStatusBar(MongoShell *shell);
+        void setCurrentDatabase(const QString &database);
+
+    private:
+        QLabel *_currentDatabaseLabel;
+        MongoShell *_shell;
+        QColor _textColor;
+
+    };
+
     class QueryWidget : public QWidget
     {
         Q_OBJECT
@@ -131,10 +145,9 @@ namespace Robomongo
         QLineEdit * _pageSizeEdit;
 
         WorkAreaTabWidget *_tabWidget;
+        TopStatusBar *_topStatusBar;
 
         QList<MongoShellResult> _currentResults;
-
-        QLabel *_currentDatabaseLabel;
 
         MongoShell *_shell;
         EventBus *_bus;

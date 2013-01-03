@@ -4,7 +4,7 @@
 #include <QObject>
 #include <mongo/client/dbclient.h>
 
-using namespace mongo;
+//using namespace mongo;
 
 class MongoService : public QObject
 {
@@ -14,16 +14,16 @@ public:
 	MongoService(QObject *parent = NULL);
 	~MongoService();
 
-	DBClientConnection * connect(QString address, QString userName, QString password);
+    mongo::DBClientConnection * connect(QString address, QString userName, QString password);
 
-	QStringList getDatabases(DBClientConnection * connection);
-	QStringList getCollections(DBClientConnection * connection, QString database);
-	QList<BSONObj> getAllObjects(DBClientConnection * connection, QString collection);
+    QStringList getDatabases(mongo::DBClientConnection * connection);
+    QStringList getCollections(mongo::DBClientConnection * connection, QString database);
+    QList<mongo::BSONObj> getAllObjects(mongo::DBClientConnection * connection, QString collection);
 
-	static QString getStringValue(BSONElement & element);
+    static QString getStringValue(mongo::BSONElement & element);
 
-	static QString toJsonString(QList<BSONObj> bsonObjects);
-	static void toJsonString(QString buff, BSONObj bsonObjects);
+    static QString toJsonString(QList<mongo::BSONObj> bsonObjects);
+    static void toJsonString(QString buff, mongo::BSONObj bsonObjects);
 
 private:
 	

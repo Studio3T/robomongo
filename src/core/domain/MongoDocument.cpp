@@ -4,6 +4,8 @@
 #include <QStringBuilder>
 #include <QTextCodec>
 
+using namespace mongo;
+
 namespace Robomongo
 {
 	Concatenator::Concatenator() : QObject()

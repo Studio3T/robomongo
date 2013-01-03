@@ -6,7 +6,7 @@
 #include "mongo/client/dbclient.h"
 #include "Core.h"
 
-using namespace mongo;
+//using namespace mongo;
 
 
 
@@ -26,7 +26,7 @@ namespace Robomongo
 		/*
 		** Owned BSONObj
 		*/
-		BSONObj _bsonObj;
+        mongo::BSONObj _bsonObj;
 
 	public:
 
@@ -40,22 +40,22 @@ namespace Robomongo
 		/*
 		** Create MongoDocument from BsonObj. It will take owned version of BSONObj
 		*/
-		MongoDocument(BSONObj bsonObj);
+        MongoDocument(mongo::BSONObj bsonObj);
 
 		/*
 		** Create MongoDocument from BsonObj. It will take owned version of BSONObj
 		*/ 
-        static MongoDocumentPtr fromBsonObj(BSONObj bsonObj);
+        static MongoDocumentPtr fromBsonObj(mongo::BSONObj bsonObj);
 
 		/*
 		** Create list of MongoDocuments from QList<BsonObj>. It will take owned version of BSONObj
 		*/ 
-        static QList<MongoDocumentPtr> fromBsonObj(const QList<BSONObj> &bsonObj);
+        static QList<MongoDocumentPtr> fromBsonObj(const QList<mongo::BSONObj> &bsonObj);
 		
 		/*
 		** Return "native" BSONObj
 		*/
-		BSONObj bsonObj() const { return _bsonObj; }
+        mongo::BSONObj bsonObj() const { return _bsonObj; }
 
 		/*
 		** Convert to json string

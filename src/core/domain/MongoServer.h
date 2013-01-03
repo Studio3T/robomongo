@@ -26,7 +26,13 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        MongoServer(ConnectionSettings *connectionRecord, bool visible, const QString &defaultDatabase = QString());
+        /**
+         * @brief MongoServer
+         * @param connectionRecord: MongoServer will own this ConnectionSettings.
+         * @param visible
+         * @param defaultDatabase
+         */
+        MongoServer(ConnectionSettings *connectionRecord, bool visible);
         ~MongoServer();
 
         /**
@@ -81,7 +87,6 @@ namespace Robomongo
         QList<MongoDatabase *> _databases;
 
         EventBus *_bus;
-        QString _defaultDatabase;
     };
 }
 

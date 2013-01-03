@@ -8,6 +8,7 @@
 #include <QtGui>
 
 using namespace Robomongo;
+using namespace mongo;
 
 BsonTreeWidget::BsonTreeWidget(QWidget * parent) : QTreeWidget(parent)
 {

@@ -10,11 +10,13 @@
 
 namespace Robomongo
 {
+    class ConnectionSettings;
+
     class ScriptEngine : public QObject
     {
         Q_OBJECT
     public:
-        ScriptEngine(const QString &host, int port, const QString &username, const QString &password, const QString &database);
+        ScriptEngine(ConnectionSettings *connection);
         ~ScriptEngine();
 
         void init();
@@ -23,14 +25,12 @@ namespace Robomongo
         void use(const QString &dbName);
 
     private:
-        QString _host;
-        QString _database;
-        QString _username;
-        QString _password;
+        ConnectionSettings *_connection;
+
         bool statementize(const QString &script, QStringList &outList, QString &outError);
         QStringList statementize2(const QString &script);
         void parseTree(JSParseNode * root, int indent, const QString &script, QStringList &list, bool topList);
-        int _port;
+
 
         // Order is important. mongo::Scope should be destroyed before mongo::ScriptEngine
         boost::scoped_ptr<mongo::ScriptEngine> _engine;

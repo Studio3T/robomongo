@@ -202,7 +202,7 @@ void MainWindow::manageConnections()
 
         try
         {
-            _app->openServer(selected, true);
+            _app->openServer(selected->clone(), true);
         }
         catch(MongoException &ex)
         {
@@ -268,7 +268,7 @@ void MainWindow::connectToServer(QAction *connectionAction)
 
     try
     {
-        _app->openServer(ptr, true);
+        _app->openServer(ptr->clone(), true);
     }
     catch(MongoException &ex)
     {

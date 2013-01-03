@@ -2,13 +2,14 @@
 #include "MongoDocument.h"
 #include <QStringBuilder>
 
+using namespace mongo;
+
 namespace Robomongo
 {
-
-	/*
+    /*
 	** Create instance of MongoElement from BSONElement
 	*/
-	MongoElement::MongoElement(BSONElement bsonElement) : QObject()
+    MongoElement::MongoElement(BSONElement bsonElement) : QObject()
 	{
 		_bsonElement = bsonElement;
 	}

@@ -16,13 +16,11 @@ namespace Robomongo
 
         /**
          * @brief Creates and
-         * @param connectionInfo:
+         * @param connectionInfo: MongoServer will own this connectionInfo.
          * @param visible: should this server be visible in UI (explorer) or not.
-         * @param defaultDatabase:
          * @return
          */
-        MongoServer *openServer(ConnectionSettings *connectionSettings, bool visible,
-                                const QString &defaultDatabase = QString());
+        MongoServer *openServer(ConnectionSettings *connection, bool visible);
 
         /**
          * @brief Closes MongoServer connection and frees all resources, owned

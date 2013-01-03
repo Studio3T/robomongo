@@ -3,6 +3,8 @@
 #include "MongoDocumentIterator.h"
 #include "mongo/client/dbclient.h"
 
+using namespace mongo;
+
 namespace Robomongo
 {
 	/*

@@ -5,7 +5,7 @@
 #include "Core.h"
 #include "mongo/client/dbclient.h"
 
-using namespace mongo;
+//using namespace mongo;
 
 namespace Robomongo
 {
@@ -23,7 +23,7 @@ namespace Robomongo
 		/*
 		** Native BSONElement this MongoElement represents
 		*/
-		BSONElement _bsonElement;
+        mongo::BSONElement _bsonElement;
 
 		/*
 		** Field Name
@@ -40,7 +40,7 @@ namespace Robomongo
 		/*
 		** Create instance of MongoElement from BSONElement
 		*/
-		MongoElement(BSONElement bsonElement);
+        MongoElement(mongo::BSONElement bsonElement);
 
 		/*
 		** String value. Only for Simple types
@@ -65,17 +65,17 @@ namespace Robomongo
 		/*
 		** Check if this element is an BSON array
 		*/
-		bool isArray() const { return _bsonElement.isABSONObj() && _bsonElement.type() == Array; }
+        bool isArray() const { return _bsonElement.isABSONObj() && _bsonElement.type() == mongo::Array; }
 
 		/*
 		** Check if this element is a BSON String
 		*/
-		bool isString() const { return _bsonElement.type() == String; }
+        bool isString() const { return _bsonElement.type() == mongo::String; }
 
 		/*
 		** Return bson type
 		*/
-		BSONType type() const { return _bsonElement.type(); }
+        mongo::BSONType type() const { return _bsonElement.type(); }
 
 		/*
 		** Return MongoDocument of this element (you should check that this IS document before)
@@ -87,7 +87,7 @@ namespace Robomongo
 		*/
         void buildJsonString(Concatenator &con);
 
-		BSONElement bsonElement() const { return _bsonElement; }
+        mongo::BSONElement bsonElement() const { return _bsonElement; }
 	};
 }
 

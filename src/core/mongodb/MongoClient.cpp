@@ -222,24 +222,8 @@ void MongoClient::handle(ExecuteScriptRequest *event)
 {
     try
     {
-
-
-        QList<Result> results = _scriptEngine->exec(event->script, event->databaseName);
-        reply(event->sender(), new ExecuteScriptResponse(this, results));
-
-
-//        _helper->clear();
-
-//        QScriptValue value = _scriptEngine->evaluate(event->script);
-
-//        if (_scriptEngine->hasUncaughtException()) {
-//            QString error = _scriptEngine->uncaughtException().toString();
-//            int line = _scriptEngine->uncaughtExceptionLineNumber();
-//            QString message = QString("Error: %1\nline:%2").arg(error).arg(line);
-//            reply(event->sender, new ExecuteScriptResponse(message));
-//        }
-//        else
-//            reply(event->sender, new ExecuteScriptResponse(_helper->text()));
+        ExecResult result = _scriptEngine->exec(event->script, event->databaseName);
+        reply(event->sender(), new ExecuteScriptResponse(this, result));
     }
     catch(DBException &ex)
     {

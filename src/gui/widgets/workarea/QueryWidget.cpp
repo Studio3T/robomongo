@@ -79,9 +79,33 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     _outputLabel->setContentsMargins(0, 5, 0, 0);
     _outputLabel->setVisible(false);
 
-    QVBoxLayout * layout = new QVBoxLayout;
+    QIcon dbIcon = GuiRegistry::instance().databaseIcon();
+    QPixmap dbPixmap = dbIcon.pixmap(16, 16);
+    QLabel *dbIconLabel = new QLabel;
+    dbIconLabel->setPixmap(dbPixmap);
+
+    QIcon serverIcon = GuiRegistry::instance().serverIcon();
+    QPixmap serverPixmap = serverIcon.pixmap(16, 16);
+    QLabel *serverIconLabel = new QLabel;
+    serverIconLabel->setPixmap(serverPixmap);
+    QLabel *currentServerLabel = new QLabel(_shell->server()->connectionRecord()->getReadableName());
+
+    _currentDatabaseLabel = new QLabel();
+    QHBoxLayout *topLayout = new QHBoxLayout;
+    topLayout->addWidget(serverIconLabel, 0, Qt::AlignLeft);
+    topLayout->addSpacing(3);
+    topLayout->addWidget(currentServerLabel, 0, Qt::AlignLeft);
+    topLayout->addSpacing(10);
+    topLayout->addWidget(dbIconLabel, 0, Qt::AlignLeft);
+    topLayout->addSpacing(3);
+    topLayout->addWidget(_currentDatabaseLabel, 0, Qt::AlignLeft);
+    topLayout->addStretch(1);
+
+    QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
     layout->setContentsMargins(0,4,4,4);
+    layout->addLayout(topLayout);
+    layout->addSpacing(2);
     layout->addWidget(_queryText, 0, Qt::AlignTop);
     layout->addWidget(_outputLabel, 0, Qt::AlignTop);
     layout->addWidget(_viewer, 1);
@@ -321,7 +345,7 @@ void QueryWidget::handle(DocumentListLoadedEvent *event)
 
 void QueryWidget::handle(ScriptExecutedEvent *event)
 {
-    _currentResults = event->results;
+    _currentResults = event->result.results;
 
     setUpdatesEnabled(false);
     int thisTab = _tabWidget->indexOf(this);
@@ -339,7 +363,8 @@ void QueryWidget::handle(ScriptExecutedEvent *event)
 
     if (_queryText->text().isEmpty())
         _queryText->setText(_shell->query());
-    displayData(event->results);
+    displayData(event->result.results);
+    _currentDatabaseLabel->setText(event->result.currentDatabase);
     _queryText->setFocus();
     setUpdatesEnabled(true);
 }

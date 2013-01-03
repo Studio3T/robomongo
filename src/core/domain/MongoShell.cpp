@@ -47,9 +47,10 @@ void MongoShell::handle(ExecuteQueryResponse *event)
 
 void MongoShell::handle(ExecuteScriptResponse *event)
 {
-    QList<MongoShellResult> list = MongoShellResult::fromResult(event->results);
+    QList<MongoShellResult> list = MongoShellResult::fromResult(event->result.results);
+    MongoShellExecResult result(list, event->result.currentDatabaseName);
 
-    _bus->publish(new ScriptExecutedEvent(this, list));
+    _bus->publish(new ScriptExecutedEvent(this, result));
 
     /*
     QList<MongoDocumentPtr> list;

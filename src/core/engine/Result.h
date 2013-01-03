@@ -15,6 +15,18 @@ namespace Robomongo
         QString response;
         QString databaseName;
     };
+
+    class ExecResult
+    {
+    public:
+        ExecResult() {}
+        ExecResult(const QList<Result> &results, const QString &currentDatabaseName) :
+            results(results),
+            currentDatabaseName(currentDatabaseName) {}
+
+        QList<Result> results;
+        QString currentDatabaseName;
+    };
 }
 
 #endif // RESULT_H

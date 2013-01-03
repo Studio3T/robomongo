@@ -26,17 +26,6 @@ namespace Robomongo
     {
         Q_OBJECT
 
-    private:
-
-        /*
-        ** Configure QsciScintilla query widget
-        */
-        void _configureQueryText();
-
-        void _showPaging(bool show);
-
-        bool _textMode;
-
     public:
         /*
         ** Constructs query widget
@@ -110,6 +99,16 @@ namespace Robomongo
         void handle(ScriptExecutedEvent *event);
 
     private:
+
+        /*
+        ** Configure QsciScintilla query widget
+        */
+        void _configureQueryText();
+
+        void _showPaging(bool show);
+
+        bool _textMode;
+
         void displayData(const QList<MongoShellResult> &results);
 
         /*
@@ -135,7 +134,7 @@ namespace Robomongo
 
         QList<MongoShellResult> _currentResults;
 
-//        PlainJavaScriptEditor *_queryText;
+        QLabel *_currentDatabaseLabel;
 
         MongoShell *_shell;
         EventBus *_bus;

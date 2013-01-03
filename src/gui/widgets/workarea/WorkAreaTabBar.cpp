@@ -111,7 +111,16 @@ void WorkAreaTabBar::emitSignalForContextMenuAction(int tabIndex, QAction *actio
  */
 QString WorkAreaTabBar::buildStyleSheet()
 {
-    QString styles =
+    QColor background = palette().window().color();
+    QColor gradientOne = background.darker(104);
+    QColor gradientTwo = background.darker(108);
+    QColor selectedBorder = background.darker(103);
+
+    QString aga1 = gradientOne.name();
+    QString aga2 = gradientTwo.name();
+    QString aga3 = background.name();
+
+    QString styles = QString(
         "QTabBar::close-button { "
             "image: url(:/robomongo/icons/close_2_16x16.png);"
             "width: 10px;"
@@ -139,20 +148,22 @@ QString WorkAreaTabBar::buildStyleSheet()
 
         "QTabBar::tab:selected, QTabBar::tab:hover {"
             "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                                        "stop: 0 #fafafa, stop: 0.4 #f4f4f4,"
-                                        "stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);"
+                                        "stop: 0 %1, stop: 0.4 %2,"    //#fafafa, #f4f4f4
+                                        "stop: 0.5 %3, stop: 1.0 %1);" //#e7e7e7, #fafafa
         "}"
 
         "QTabBar::tab:selected {"
-            "border-color: #9B9B9B;"
-            "border-bottom-color: #fafafa;"
+            "border-color: #9B9B9B;" //
+            "border-bottom-color: %4;" //#fafafa
         "}"
 
         "QTabBar::tab:!selected {"
             "margin-top: 2px;" // make non-selected tabs look smaller
         "}  "
         "QTabBar::tab:only-one { margin-top: 2px; }"
-    ;
+    ).arg(background.name(), gradientOne.name(), gradientTwo.name(), background.name());
+
+    QString aga = palette().window().color().name();
 
     return styles;
 }

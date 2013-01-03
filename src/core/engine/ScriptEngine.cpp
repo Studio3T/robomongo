@@ -87,7 +87,7 @@ void ScriptEngine::init()
     bool res = _scope->exec(esprima.toStdString(), "(esprima)", true, true, true);
 }
 
-QList<Result> ScriptEngine::exec(const QString &script, const QString &dbName)
+ExecResult ScriptEngine::exec(const QString &script, const QString &dbName)
 {
     QStringList statements;
     QString error;
@@ -125,6 +125,8 @@ QList<Result> ScriptEngine::exec(const QString &script, const QString &dbName)
 
                 if (!answer.isEmpty() || list.count() > 0)
                     results.append(Result(answer, list, dbName));
+
+                _currentDatabase = dbName;
             }
             catch ( std::exception& e ) {
                 std::cout << "error:" << e.what() << endl;
@@ -132,7 +134,7 @@ QList<Result> ScriptEngine::exec(const QString &script, const QString &dbName)
         }
     }
 
-    return results;
+    return ExecResult(results, _currentDatabase);
 }
 
 void ScriptEngine::use(const QString &dbName)

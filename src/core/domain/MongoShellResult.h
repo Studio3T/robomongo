@@ -16,6 +16,18 @@ namespace Robomongo
 
         static QList<MongoShellResult> fromResult(QList<Result> result);
     };
+
+    class MongoShellExecResult
+    {
+    public:
+        MongoShellExecResult() {}
+        MongoShellExecResult(const QList<MongoShellResult> &results, const QString &currentDatabase) :
+            results(results),
+            currentDatabase(currentDatabase) {}
+
+        QList<MongoShellResult> results;
+        QString currentDatabase;
+    };
 }
 
 #endif // MONGOSHELLRESULT_H

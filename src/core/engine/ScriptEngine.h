@@ -20,12 +20,13 @@ namespace Robomongo
         ~ScriptEngine();
 
         void init();
-        QList<Result> exec(const QString &script, const QString &dbName = QString());
+        ExecResult exec(const QString &script, const QString &dbName = QString());
 
         void use(const QString &dbName);
 
     private:
         ConnectionSettings *_connection;
+        QString _currentDatabase;
 
         bool statementize(const QString &script, QStringList &outList, QString &outError);
         QStringList statementize2(const QString &script);

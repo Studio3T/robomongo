@@ -112,8 +112,8 @@ void WorkAreaTabBar::emitSignalForContextMenuAction(int tabIndex, QAction *actio
 QString WorkAreaTabBar::buildStyleSheet()
 {
     QColor background = palette().window().color();
-    QColor gradientOne = background.lighter(104);
-    QColor gradientTwo = background.lighter(102);
+    QColor gradientOne = background.lighter(103);
+    QColor gradientTwo = background.lighter(103);
     QColor selectedBorder = background.darker(103);
 
     QString aga1 = gradientOne.name();
@@ -148,7 +148,7 @@ QString WorkAreaTabBar::buildStyleSheet()
 
         "QTabBar::tab:selected, QTabBar::tab:hover {"
             "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                                        "stop: 0 %1, stop: 0.4 %2,"    //#fafafa, #f4f4f4
+                                        "stop: 0 %2, stop: 0.4 %2,"    //#fafafa, #f4f4f4
                                         "stop: 0.5 %3, stop: 1.0 %1);" //#e7e7e7, #fafafa
         "}"
 

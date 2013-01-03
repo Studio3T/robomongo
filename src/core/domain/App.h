@@ -11,14 +11,20 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
+        /**
+         * @brief Creates new App instance.
+         */
         App(EventBus *bus);
+
+        /**
+         * @brief Cleanup resources, owned by this App.
+         */
         ~App();
 
         /**
-         * @brief Creates and
-         * @param connectionInfo: MongoServer will own this connectionInfo.
+         * @brief Creates and opens new server connection.
+         * @param connection: ConnectionSettings, that will be owned by MongoServer.
          * @param visible: should this server be visible in UI (explorer) or not.
-         * @return
          */
         MongoServer *openServer(ConnectionSettings *connection, bool visible);
 
@@ -33,11 +39,14 @@ namespace Robomongo
          */
         MongoShell *openShell(MongoCollection *collection);
 
-        MongoShell *openShell(MongoServer *server, const QString &script,
-                              const QString &dbName = QString(), bool execute = true,
-                              const QString &shellName = QString());
+        MongoShell *openShell(MongoServer *server, const QString &script, const QString &dbName = QString(),
+                              bool execute = true, const QString &shellName = QString());
 
         MongoShell *openShell(MongoDatabase *database, const QString &script,
+                              bool execute = true, const QString &shellName = QString());
+
+
+        MongoShell *openShell(ConnectionSettings *connection, const QString &script,
                               bool execute = true, const QString &shellName = QString());
 
         /**

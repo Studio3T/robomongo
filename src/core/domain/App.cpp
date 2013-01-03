@@ -7,17 +7,26 @@
 
 using namespace Robomongo;
 
+/**
+ * @brief Creates new App instance.
+ */
 App::App(EventBus *bus) : QObject(),
-    _bus(bus)
-{
-}
+    _bus(bus) { }
 
+/**
+ * @brief Cleanup resources, owned by this App.
+ */
 App::~App()
 {
     qDeleteAll(_shells);
     qDeleteAll(_servers);
 }
 
+/**
+ * @brief Creates and opens new server connection.
+ * @param connection: ConnectionSettings, that will be owned by MongoServer.
+ * @param visible: should this server be visible in UI (explorer) or not.
+ */
 MongoServer *App::openServer(ConnectionSettings *connection,
                              bool visible)
 {
@@ -49,18 +58,8 @@ MongoShell *App::openShell(MongoCollection *collection)
 {
     ConnectionSettings *connection = collection->database()->server()->connectionRecord()->clone();
     connection->setDefaultDatabase(collection->database()->name());
-
-    MongoServer *server = openServer(connection, false);
-
-    MongoShell *shell = new MongoShell(server);
-    _shells.append(shell);
-
     QString script = QString("db.%1.find()").arg(collection->name());
-
-    _bus->publish(new OpeningShellEvent(this, shell, script));
-
-    shell->open(script, collection->database()->name());
-    return shell;
+    return openShell(connection, script, true, collection->database()->name());
 }
 
 MongoShell *App::openShell(MongoServer *server, const QString &script, const QString &dbName, bool execute, const QString &shellName)
@@ -70,34 +69,25 @@ MongoShell *App::openShell(MongoServer *server, const QString &script, const QSt
     if (!dbName.isEmpty())
         connection->setDefaultDatabase(dbName);
 
-    MongoServer *serverClone = openServer(connection, false);
-
-    MongoShell *shell = new MongoShell(serverClone);
-    _shells.append(shell);
-
-    _bus->publish(new OpeningShellEvent(this, shell, script, shellName));
-
-    if (execute)
-        shell->open(script, dbName);
-
-    return shell;
-
+    return openShell(connection, script, execute, shellName);
 }
 
 MongoShell *App::openShell(MongoDatabase *database, const QString &script, bool execute, const QString &shellName)
 {
     ConnectionSettings *connection = database->server()->connectionRecord()->clone();
     connection->setDefaultDatabase(database->name());
+    return openShell(connection, script, execute, shellName);
+}
 
-    MongoServer *serverClone = openServer(connection, false);
-
-    MongoShell *shell = new MongoShell(serverClone);
+MongoShell *App::openShell(ConnectionSettings *connection, const QString &script, bool execute, const QString &shellName)
+{
+    MongoServer *server = openServer(connection, false);
+    MongoShell *shell = new MongoShell(server);
     _shells.append(shell);
-
     _bus->publish(new OpeningShellEvent(this, shell, script, shellName));
 
     if (execute)
-        shell->open(script, database->name());
+        shell->open(script);
 
     return shell;
 }

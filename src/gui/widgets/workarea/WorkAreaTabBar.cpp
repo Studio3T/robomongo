@@ -112,8 +112,8 @@ void WorkAreaTabBar::emitSignalForContextMenuAction(int tabIndex, QAction *actio
 QString WorkAreaTabBar::buildStyleSheet()
 {
     QColor background = palette().window().color();
-    QColor gradientOne = background.darker(104);
-    QColor gradientTwo = background.darker(108);
+    QColor gradientOne = background.lighter(104);
+    QColor gradientTwo = background.lighter(102);
     QColor selectedBorder = background.darker(103);
 
     QString aga1 = gradientOne.name();

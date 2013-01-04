@@ -80,6 +80,8 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     _outputLabel->setVisible(false);
 
     _topStatusBar = new TopStatusBar(_shell);
+    _topStatusBar->setFrameShape(QFrame::Box);
+    _topStatusBar->setFrameShadow(QFrame::Sunken);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
@@ -419,8 +421,10 @@ TopStatusBar::TopStatusBar(MongoShell *shell) :
     QLabel *serverIconLabel = new QLabel;
     serverIconLabel->setPixmap(serverPixmap);
     QLabel *currentServerLabel = new ElidedLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(_shell->server()->connectionRecord()->getReadableName()));
+    currentServerLabel->setDisabled(true);
 
     _currentDatabaseLabel = new ElidedLabel();
+    _currentDatabaseLabel->setDisabled(true);
 //    _currentDatabaseLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored);
     QHBoxLayout *topLayout = new QHBoxLayout;
     topLayout->setContentsMargins(0, 0, 0, 0);

@@ -35,7 +35,7 @@ namespace Robomongo
         void paintEvent(QPaintEvent *event);
     };
 
-    class TopStatusBar : public QWidget
+    class TopStatusBar : public QFrame
     {
         Q_OBJECT
     public:

@@ -3,13 +3,12 @@
 
 using namespace Robomongo;
 
-MongoShellResult::MongoShellResult(const QString &response, const QList<MongoDocumentPtr> &documents, const QString &databaseName) :
+MongoShellResult::MongoShellResult(const QString &response, const QList<MongoDocumentPtr> &documents,
+                                   const QString &databaseName, bool isDatabaseValid) :
     response(response),
     documents(documents),
-    databaseName(databaseName)
-{
-
-}
+    databaseName(databaseName),
+    isDatabaseValid(isDatabaseValid) { }
 
 QList<MongoShellResult> MongoShellResult::fromResult(QList<Result> results)
 {
@@ -22,7 +21,7 @@ QList<MongoShellResult> MongoShellResult::fromResult(QList<Result> results)
             list.append(doc);
         }
 
-        shellResults.append(MongoShellResult(result.response, list, result.databaseName));
+        shellResults.append(MongoShellResult(result.response, list, result.databaseName, result.isDatabaseValid));
     }
 
     return shellResults;

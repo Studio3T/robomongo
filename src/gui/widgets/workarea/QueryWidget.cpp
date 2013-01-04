@@ -319,7 +319,7 @@ void QueryWidget::handle(DocumentListLoadedEvent *event)
 {
     _queryText->setText(event->query);
     QList<MongoShellResult> list;
-    list << MongoShellResult("", event->list, "");
+    list << MongoShellResult("", event->list, "", false);
     displayData(list);
 }
 

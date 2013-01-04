@@ -27,6 +27,12 @@ namespace Robomongo
     private:
         ConnectionSettings *_connection;
         QString _currentDatabase;
+        bool _isCurrentDatabaseValid;
+
+        Result prepareResult(const QString &output, const QList<mongo::BSONObj> objects);
+        ExecResult prepareExecResult(const QList<Result> &results);
+
+        QString getString(const char *fieldName);
 
         bool statementize(const QString &script, QStringList &outList, QString &outError);
         QStringList statementize2(const QString &script);

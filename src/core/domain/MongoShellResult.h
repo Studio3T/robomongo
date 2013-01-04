@@ -9,10 +9,13 @@ namespace Robomongo
     class MongoShellResult
     {
     public:
-        MongoShellResult(const QString &response, const QList<MongoDocumentPtr> &documents, const QString &databaseName);
+        MongoShellResult(const QString &response, const QList<MongoDocumentPtr> &documents, const QString &databaseName,
+                         bool isDatabaseValid);
+
         QList<MongoDocumentPtr> documents;
         QString response;
         QString databaseName;
+        bool isDatabaseValid;
 
         static QList<MongoShellResult> fromResult(QList<Result> result);
     };
@@ -20,13 +23,15 @@ namespace Robomongo
     class MongoShellExecResult
     {
     public:
-        MongoShellExecResult() {}
-        MongoShellExecResult(const QList<MongoShellResult> &results, const QString &currentDatabase) :
+        MongoShellExecResult() { }
+        MongoShellExecResult(const QList<MongoShellResult> &results, const QString &currentDatabase, bool isCurrentDatabaseValid) :
             results(results),
-            currentDatabase(currentDatabase) {}
+            currentDatabase(currentDatabase),
+            isCurrentDatabaseValid(isCurrentDatabaseValid) { }
 
         QList<MongoShellResult> results;
         QString currentDatabase;
+        bool isCurrentDatabaseValid;
     };
 }
 

@@ -345,7 +345,7 @@ void QueryWidget::handle(ScriptExecutedEvent *event)
     if (_queryText->text().isEmpty())
         _queryText->setText(_shell->query());
     displayData(event->result.results);
-    _topStatusBar->setCurrentDatabase(event->result.currentDatabase);
+    _topStatusBar->setCurrentDatabase(event->result.currentDatabase, event->result.isCurrentDatabaseValid);
     _queryText->setFocus();
     setUpdatesEnabled(true);
 }
@@ -433,10 +433,12 @@ TopStatusBar::TopStatusBar(MongoShell *shell) :
     setLayout(topLayout);
 }
 
-void TopStatusBar::setCurrentDatabase(const QString &database)
+void TopStatusBar::setCurrentDatabase(const QString &database, bool isValid)
 {
+    QString color = isValid ? _textColor.name() : "red";
+
     QString text = QString("<font color='%1'>%2</font>")
-            .arg(_textColor.name())
+            .arg(color)
             .arg(database);
 
     _currentDatabaseLabel->setText(text);

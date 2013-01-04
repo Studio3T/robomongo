@@ -65,7 +65,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     _listWidget->setDragDropMode(QAbstractItemView::InternalMove);
     _listWidget->setMinimumHeight(300);
     _listWidget->setMinimumWidth(630);
-    connect(_listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(accept()));
+    connect(_listWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept()));
     connect(_listWidget, SIGNAL(layoutChanged()), this, SLOT(listWidget_layoutChanged()));
 
 //    QPushButton *addButton = new QPushButton("&Add");
@@ -116,6 +116,10 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     // Populate list with connections
     foreach(ConnectionSettings *connectionModel, _settingsManager->connections())
         add(connectionModel);
+
+    // Highlight first item
+    if (_listWidget->topLevelItemCount() > 0)
+        _listWidget->setCurrentItem(_listWidget->topLevelItem(0));
 }
 
 /**

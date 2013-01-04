@@ -15,7 +15,6 @@ WorkAreaTabBar::WorkAreaTabBar() : QTabBar()
     setDrawBase(false);
     setStyleSheet(buildStyleSheet());
 
-
     _menu = new QMenu(this);
 
     _newShellAction = new QAction("&New Shell", _menu);
@@ -123,6 +122,7 @@ QString WorkAreaTabBar::buildStyleSheet()
     QString aga3 = background.name();
 
     QString styles = QString(
+        "QTabBar{border-bottom-color: #ffffff;}"
         "QTabBar::pane { "
             "border-bottom-color: red;"
         "}"

@@ -22,6 +22,19 @@ namespace Robomongo
     class OutputViewer;
     class WorkAreaTabWidget;
 
+    class ElidedLabel : public QLabel
+    {
+        Q_OBJECT
+    public:
+        ElidedLabel(){}
+        ElidedLabel(const QString &text) : QLabel(text) { }
+        QSize minimumSizeHint() const;
+        QSize sizeHint() const;
+
+    protected:
+        void paintEvent(QPaintEvent *event);
+    };
+
     class TopStatusBar : public QWidget
     {
         Q_OBJECT

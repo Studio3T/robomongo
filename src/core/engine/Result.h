@@ -9,12 +9,19 @@ namespace Robomongo
     class Result
     {
     public:
-        Result(const QString &response, const QList<mongo::BSONObj> &documents, const QString &databaseName, bool isDatabaseValid);
+        Result(const QString &response, const QList<mongo::BSONObj> &documents,
+               const QString &serverName, bool isServerValid,
+               const QString &databaseName, bool isDatabaseValid,
+               const QString &collectionName, bool isCollectionValid);
 
         QList<mongo::BSONObj> documents;
         QString response;
+        QString serverName;
+        bool isServerValid;
         QString databaseName;
         bool isDatabaseValid;
+        QString collectionName;
+        bool isCollectionValid;
     };
 
     class ExecResult

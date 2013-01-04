@@ -62,6 +62,11 @@ void OutputViewer::doSomething(const QList<MongoShellResult> &results)
         else
             result->header()->showTree();
 
+        result->header()->setTime("0.01 ms");
+
+        if (shellResult.isCollectionValid)
+            result->header()->setCollection(shellResult.collectionName);
+
         _splitter->addWidget(result);
     }
 }
@@ -154,19 +159,42 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
     _textButton->setFlat(true);
     connect(_textButton, SIGNAL(clicked()), this, SLOT(showText()));
 
+    QIcon timeIcon = GuiRegistry::instance().timeIcon();
+    QPixmap timePixmap = timeIcon.pixmap(16, 16);
+    QLabel *timeIconLabel = new QLabel;
+    timeIconLabel->setPixmap(timePixmap);
+
+    QIcon collectionIcon = GuiRegistry::instance().collectionIcon();
+    QPixmap collectionPixmap = collectionIcon.pixmap(16, 16);
+    QLabel *collectionIconLabel = new QLabel;
+    collectionIconLabel->setPixmap(collectionPixmap);
+
+    _timeLabel = new QLabel;
+    _collectionLabel = new QLabel;
+
     QLabel *l = new QLabel("Loaded in 2 ms");
     l->setStyleSheet("font-size:12px;");
 
     QHBoxLayout *layout = new QHBoxLayout();
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(0, 0, 0, 2);
     layout->setSpacing(0);
+    layout->addWidget(collectionIconLabel);
+    layout->addSpacing(5);
+    layout->addWidget(_collectionLabel);
+    layout->addSpacing(10);
+    layout->addWidget(timeIconLabel);
+    layout->addSpacing(5);
+    layout->addWidget(_timeLabel);
+
+    layout->addWidget(new QLabel(), 1); //placeholder
 
     if (output->isTreeModeSupported())
-        layout->addWidget(_treeButton);
+        layout->addWidget(_treeButton, 0, Qt::AlignRight);
 
     if (output->isTextModeSupported())
-        layout->addWidget(_textButton);
+        layout->addWidget(_textButton, 0, Qt::AlignRight);
 
+    layout->addSpacing(5);
     layout->addWidget(_maxButton, 0, Qt::AlignRight);
     setLayout(layout);
 }
@@ -188,6 +216,16 @@ void OutputResultHeader::showTree()
     _textButton->setIcon(GuiRegistry::instance().textIcon());
     _treeButton->setIcon(GuiRegistry::instance().treeHighlightedIcon());
     outputWidget->showTree();
+}
+
+void OutputResultHeader::setTime(const QString &time)
+{
+    _timeLabel->setText(time);
+}
+
+void OutputResultHeader::setCollection(const QString collection)
+{
+    _collectionLabel->setText(collection);
 }
 
 void OutputResultHeader::maximizePart()

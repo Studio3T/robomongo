@@ -209,6 +209,14 @@ QIcon GuiRegistry::yesMarkIcon()
     return _yesMarkIcon;
 }
 
+QIcon GuiRegistry::timeIcon()
+{
+    if (_timeIcon.isNull())
+        _timeIcon = QIcon(":/robomongo/icons/time_16x16.png");
+
+    return _timeIcon;
+}
+
 QBrush GuiRegistry::typeBrush()
 {
     if (_typeBrush.style() == Qt::NoBrush)

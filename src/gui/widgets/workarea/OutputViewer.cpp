@@ -181,7 +181,7 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
     layout->addWidget(collectionIconLabel);
     layout->addSpacing(5);
     layout->addWidget(_collectionLabel);
-    layout->addSpacing(10);
+    layout->addSpacing(13);
     layout->addWidget(timeIconLabel);
     layout->addSpacing(5);
     layout->addWidget(_timeLabel);

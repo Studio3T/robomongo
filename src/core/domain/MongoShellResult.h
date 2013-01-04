@@ -9,13 +9,19 @@ namespace Robomongo
     class MongoShellResult
     {
     public:
-        MongoShellResult(const QString &response, const QList<MongoDocumentPtr> &documents, const QString &databaseName,
-                         bool isDatabaseValid);
+        MongoShellResult(const QString &response, const QList<MongoDocumentPtr> &documents,
+                         const QString &serverName, bool isServerValid,
+                         const QString &databaseName, bool isDatabaseValid,
+                         const QString &collectionName, bool isCollectionValid);
 
         QList<MongoDocumentPtr> documents;
         QString response;
+        QString serverName;
+        bool isServerValid;
         QString databaseName;
         bool isDatabaseValid;
+        QString collectionName;
+        bool isCollectionValid;
 
         static QList<MongoShellResult> fromResult(QList<Result> result);
     };

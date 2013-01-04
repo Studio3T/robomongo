@@ -83,12 +83,12 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
-    layout->setContentsMargins(0,4,4,4);
+    layout->setContentsMargins(0,10,4,4);
     layout->addWidget(_topStatusBar);
     layout->addSpacing(2);
     layout->addWidget(_queryText, 0, Qt::AlignTop);
     layout->addWidget(_outputLabel, 0, Qt::AlignTop);
-    layout->addSpacing(2);
+    layout->addSpacing(8);
     layout->addWidget(_viewer, 1);
     setLayout(layout);
 
@@ -318,10 +318,10 @@ void QueryWidget::vm_queryUpdated(const QString & query)
 
 void QueryWidget::handle(DocumentListLoadedEvent *event)
 {
-    _queryText->setText(event->query);
+/*    _queryText->setText(event->query);
     QList<MongoShellResult> list;
     list << MongoShellResult("", event->list, "", false);
-    displayData(list);
+    displayData(list);*/
 }
 
 void QueryWidget::handle(ScriptExecutedEvent *event)
@@ -418,9 +418,10 @@ TopStatusBar::TopStatusBar(MongoShell *shell) :
     QPixmap serverPixmap = serverIcon.pixmap(16, 16, QIcon::Disabled);
     QLabel *serverIconLabel = new QLabel;
     serverIconLabel->setPixmap(serverPixmap);
-    QLabel *currentServerLabel = new QLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(_shell->server()->connectionRecord()->getReadableName()));
+    QLabel *currentServerLabel = new ElidedLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(_shell->server()->connectionRecord()->getReadableName()));
 
-    _currentDatabaseLabel = new QLabel();
+    _currentDatabaseLabel = new ElidedLabel();
+//    _currentDatabaseLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored);
     QHBoxLayout *topLayout = new QHBoxLayout;
     topLayout->setContentsMargins(0, 0, 0, 0);
     topLayout->addWidget(serverIconLabel, 0, Qt::AlignLeft);
@@ -442,4 +443,29 @@ void TopStatusBar::setCurrentDatabase(const QString &database, bool isValid)
             .arg(database);
 
     _currentDatabaseLabel->setText(text);
+//    _currentDatabaseLabel->setFixedSize(_currentDatabaseLabel->sizeHint());
+}
+
+void ElidedLabel::paintEvent(QPaintEvent *event)
+{
+    QLabel::paintEvent(event);
+
+    return;
+    QPainter painter(this);
+    QFontMetrics metrics(font());
+    QString elided = metrics.elidedText(text(), Qt::ElideRight, width());
+    painter.drawText(rect(), alignment(), elided);
+}
+
+QSize ElidedLabel::minimumSizeHint() const
+{
+    QSize defaultMinSizeHint = QLabel::minimumSizeHint();
+    return QSize(0, defaultMinSizeHint.height());
+}
+
+QSize ElidedLabel::sizeHint() const
+{
+    QSize defaultSizeHint = QLabel::sizeHint();
+    return defaultSizeHint;
+//    return QSize(defaultSizeHint.width() + 20, defaultSizeHint.height());
 }

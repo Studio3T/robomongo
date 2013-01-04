@@ -171,7 +171,7 @@ Result ScriptEngine::prepareResult(const QString &output, const QList<mongo::BSO
     QString collectionName = getString("__robomongoCollectionName");
     bool collectionIsValid = _scope->getBoolean("__robomongoCollectionIsValid");
 
-    return Result(output, objects, dbName, dbIsValid);
+    return Result(output, objects, serverAddress, serverIsValid, dbName, dbIsValid, collectionName, collectionIsValid);
 }
 
 ExecResult ScriptEngine::prepareExecResult(const QList<Result> &results)

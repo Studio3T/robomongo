@@ -61,6 +61,7 @@ namespace Robomongo
         QIcon bsonBooleanIcon();
         QIcon noMarkIcon();
         QIcon yesMarkIcon();
+        QIcon timeIcon();
 
         QBrush typeBrush();
 
@@ -105,6 +106,7 @@ namespace Robomongo
         QIcon _bsonBooleanIcon;
         QIcon _noMarkIcon;
         QIcon _yesMarkIcon;
+        QIcon _timeIcon;
 
         /**
          * @brief Brushes

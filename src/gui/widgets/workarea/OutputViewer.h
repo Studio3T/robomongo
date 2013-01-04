@@ -27,12 +27,16 @@ namespace Robomongo
     public slots:
         void showText();
         void showTree();
+        void setTime(const QString &time);
+        void setCollection(const QString collection);
         void maximizePart();
 
     private:
         QPushButton *_treeButton;
         QPushButton *_textButton;
         QPushButton *_maxButton;
+        QLabel *_timeLabel;
+        QLabel *_collectionLabel;
         bool _maximized;
     };
 

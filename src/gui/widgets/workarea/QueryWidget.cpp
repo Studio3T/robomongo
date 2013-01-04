@@ -88,6 +88,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     layout->addSpacing(2);
     layout->addWidget(_queryText, 0, Qt::AlignTop);
     layout->addWidget(_outputLabel, 0, Qt::AlignTop);
+    layout->addSpacing(2);
     layout->addWidget(_viewer, 1);
     setLayout(layout);
 
@@ -430,25 +431,6 @@ TopStatusBar::TopStatusBar(MongoShell *shell) :
     topLayout->addStretch(1);
 
     setLayout(topLayout);
-
-    QColor background = palette().window().color();
-    QColor gradientOne = background.lighter(103);
-    QColor gradientTwo = background.lighter(103);
-    QColor selectedBorder = background.darker(103);
-
-    QString aga1 = gradientOne.name();
-    QString aga2 = gradientTwo.name();
-    QString aga3 = background.name();
-
-    QString styles = QString(
-        "Robomongo--TopStatusBar {"
-            "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-                                        "stop: 0 %2, stop: 0.4 %2,"    //#fafafa, #f4f4f4
-                                        "stop: 0.5 %3, stop: 1.0 %1);" //#e7e7e7, #fafafa
-        "}"
-    ).arg(background.name(), gradientOne.name(), gradientTwo.name(), background.name());
-
-    setStyleSheet(styles);
 }
 
 void TopStatusBar::setCurrentDatabase(const QString &database)

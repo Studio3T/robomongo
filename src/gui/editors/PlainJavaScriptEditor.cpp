@@ -36,6 +36,7 @@ PlainJavaScriptEditor::PlainJavaScriptEditor(QWidget *parent) : JSEdit(parent)
 
 RoboScintilla::RoboScintilla(QWidget *parent) : QsciScintilla(parent)
 {
+    setContentsMargins(0, 0, 0, 0);
     setViewportMargins(3,3,3,3);
 }
 

@@ -12,7 +12,9 @@ using namespace Robomongo;
  */
 WorkAreaTabBar::WorkAreaTabBar() : QTabBar()
 {
+    setDrawBase(false);
     setStyleSheet(buildStyleSheet());
+
 
     _menu = new QMenu(this);
 
@@ -121,6 +123,9 @@ QString WorkAreaTabBar::buildStyleSheet()
     QString aga3 = background.name();
 
     QString styles = QString(
+        "QTabBar::pane { "
+            "border-bottom-color: red;"
+        "}"
         "QTabBar::close-button { "
             "image: url(:/robomongo/icons/close_2_16x16.png);"
             "width: 10px;"
@@ -136,7 +141,7 @@ QString WorkAreaTabBar::buildStyleSheet()
                                         "stop: 0 #F0F0F0, stop: 0.4 #DEDEDE,"
                                         "stop: 0.5 #E6E6E6, stop: 1.0 #E1E1E1);"
             "border: 1px solid #C4C4C3;"
-            "border-bottom-color: #C2C7CB;" // same as the pane color
+            "border-bottom-color: #E1E1E1;" // #C2C7CB same as the pane color
             "border-top-left-radius: 6px;"
             "border-top-right-radius: 6px;"
             "min-width: 8ex;"

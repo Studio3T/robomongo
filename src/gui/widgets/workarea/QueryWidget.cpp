@@ -80,14 +80,18 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     _outputLabel->setVisible(false);
 
     _topStatusBar = new TopStatusBar(_shell);
-    _topStatusBar->setFrameShape(QFrame::Box);
-    _topStatusBar->setFrameShadow(QFrame::Sunken);
+//    _topStatusBar->setFrameShape(QFrame::StyledPanel);
+//    _topStatusBar->setFrameShadow(QFrame::Raised);
+
+    QFrame *line = new QFrame();
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
-    layout->setContentsMargins(0,10,4,4);
+    layout->setContentsMargins(0, 0, 4, 4);
+    layout->addWidget(line);
     layout->addWidget(_topStatusBar);
-    layout->addSpacing(2);
     layout->addWidget(_queryText, 0, Qt::AlignTop);
     layout->addWidget(_outputLabel, 0, Qt::AlignTop);
     layout->addSpacing(8);
@@ -427,7 +431,7 @@ TopStatusBar::TopStatusBar(MongoShell *shell) :
     _currentDatabaseLabel->setDisabled(true);
 //    _currentDatabaseLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored);
     QHBoxLayout *topLayout = new QHBoxLayout;
-    topLayout->setContentsMargins(0, 0, 0, 0);
+    topLayout->setContentsMargins(0, 2, 0, 2);
     topLayout->addWidget(serverIconLabel, 0, Qt::AlignLeft);
     topLayout->addWidget(currentServerLabel, 0, Qt::AlignLeft);
     topLayout->addSpacing(10);

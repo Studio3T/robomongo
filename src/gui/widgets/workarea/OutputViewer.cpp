@@ -169,6 +169,11 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
     QLabel *collectionIconLabel = new QLabel;
     collectionIconLabel->setPixmap(collectionPixmap);
 
+    QFrame *line = new QFrame();
+    line->setFrameShape(QFrame::VLine);
+    line->setFrameShadow(QFrame::Sunken);
+    line->setFixedWidth(5);
+
     _timeLabel = new QLabel;
     _collectionLabel = new QLabel;
 
@@ -194,7 +199,8 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
     if (output->isTextModeSupported())
         layout->addWidget(_textButton, 0, Qt::AlignRight);
 
-    layout->addSpacing(5);
+    layout->addSpacing(3);
+    layout->addWidget(line);
     layout->addWidget(_maxButton, 0, Qt::AlignRight);
     setLayout(layout);
 }

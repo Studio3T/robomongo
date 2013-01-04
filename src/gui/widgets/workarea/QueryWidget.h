@@ -27,7 +27,7 @@ namespace Robomongo
         Q_OBJECT
     public:
         TopStatusBar(MongoShell *shell);
-        void setCurrentDatabase(const QString &database);
+        void setCurrentDatabase(const QString &database, bool isValid = true);
 
     private:
         QLabel *_currentDatabaseLabel;

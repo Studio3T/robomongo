@@ -112,7 +112,7 @@ ExecResult ScriptEngine::exec(const QString &script, const QString &dbName)
         if (true /* ! wascmd */) {
             try {
                 if ( _scope->exec( array.data() , "(shell)" , false , true , false ) )
-                    _scope->exec( "shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false );
+                    _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false );
 
                 std::string logs = __logs.str();
 
@@ -120,13 +120,8 @@ ExecResult ScriptEngine::exec(const QString &script, const QString &dbName)
                 QVector<mongo::BSONObj> objs = QVector<mongo::BSONObj>::fromStdVector(__objects);
                 QList<mongo::BSONObj> list = QList<mongo::BSONObj>::fromVector(objs);
 
-                std::string dbNameStd = _scope->getString("__robomongoDbName");
-                QString dbName = QString::fromUtf8(dbNameStd.c_str());
-
                 if (!answer.isEmpty() || list.count() > 0)
-                    results.append(Result(answer, list, dbName));
-
-                _currentDatabase = dbName;
+                    results.append(prepareResult(answer, list));
             }
             catch ( std::exception& e ) {
                 std::cout << "error:" << e.what() << endl;
@@ -134,7 +129,7 @@ ExecResult ScriptEngine::exec(const QString &script, const QString &dbName)
         }
     }
 
-    return ExecResult(results, _currentDatabase);
+    return prepareExecResult(results);
 }
 
 void ScriptEngine::use(const QString &dbName)
@@ -145,6 +140,63 @@ void ScriptEngine::use(const QString &dbName)
         QByteArray useDbArray = useDb.toUtf8();
         _scope->exec(useDbArray.data(), "(usedb)", false, true, false);
     }
+}
+
+Result ScriptEngine::prepareResult(const QString &output, const QList<mongo::BSONObj> objects)
+{
+    char *script =
+        "__robomongoDbName = '[invalid database]'; \n"
+        "__robomongoDbIsValid = false; \n"
+        "__robomongoServerAddress = '[invalid connection]'; \n"
+        "__robomongoServerIsValid = false; \n"
+        "__robomongoCollectionName = '[invalid collection]'; \n"
+        "__robomongoCollectionIsValid = false; \n"
+        "if (typeof __robomongoLastRes == 'object' && __robomongoLastRes != null && __robomongoLastRes instanceof DBQuery) { \n"
+        "    __robomongoDbName = __robomongoLastRes._db.getName();\n "
+        "    __robomongoDbIsValid = true; \n "
+        "    __robomongoServerAddress = __robomongoLastRes._mongo.host; \n"
+        "    __robomongoServerIsValid = true; \n"
+        "    __robomongoCollectionName = __robomongoLastRes._collection._shortName; \n"
+        "    __robomongoCollectionIsValid = true; \n"
+        "} \n";
+
+    _scope->exec(script, "(getresultinfo)", false, false, false);
+
+    QString dbName = getString("__robomongoDbName");
+    bool dbIsValid = _scope->getBoolean("__robomongoDbIsValid");
+
+    QString serverAddress = getString("__robomongoServerAddress");
+    bool serverIsValid = _scope->getBoolean("__robomongoServerIsValid");
+
+    QString collectionName = getString("__robomongoCollectionName");
+    bool collectionIsValid = _scope->getBoolean("__robomongoCollectionIsValid");
+
+    return Result(output, objects, dbName, dbIsValid);
+}
+
+ExecResult ScriptEngine::prepareExecResult(const QList<Result> &results)
+{
+    const char *script =
+        "__robomongoDbName = '[invalid database]'; \n"
+        "__robomongoDbIsValid = false; \n"
+        "if (typeof db == 'object' && db != null && db instanceof DB) { \n"
+        "    __robomongoDbName = db.getName();\n "
+        "    __robomongoDbIsValid = true; \n "
+        "} \n";
+
+    _scope->exec(script, "(getdbname)", false, false, false);
+
+    QString dbName = getString("__robomongoDbName");
+    bool dbIsValid = _scope->getBoolean("__robomongoDbIsValid");
+
+    return ExecResult(results, dbName, dbIsValid);
+}
+
+QString ScriptEngine::getString(const char *fieldName)
+{
+    std::string valueStd = _scope->getString(fieldName);
+    QString value = QString::fromUtf8(valueStd.c_str());
+    return value;
 }
 
 bool ScriptEngine::statementize(const QString &script, QStringList &outList, QString &outError)

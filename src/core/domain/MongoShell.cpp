@@ -48,7 +48,7 @@ void MongoShell::handle(ExecuteQueryResponse *event)
 void MongoShell::handle(ExecuteScriptResponse *event)
 {
     QList<MongoShellResult> list = MongoShellResult::fromResult(event->result.results);
-    MongoShellExecResult result(list, event->result.currentDatabaseName);
+    MongoShellExecResult result(list, event->result.currentDatabaseName, event->result.isCurrentDatabaseValid);
 
     _bus->publish(new ScriptExecutedEvent(this, result));
 

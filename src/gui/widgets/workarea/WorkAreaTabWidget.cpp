@@ -14,8 +14,12 @@ using namespace Robomongo;
 WorkAreaTabWidget::WorkAreaTabWidget(WorkAreaWidget * workAreaWidget) :
     QTabWidget(workAreaWidget)
 {
+    //setTabShape(QTabWidget::Triangular);
+    //setStyleSheet("QTabWidget::pane { border-top: 2px solid red; }");
     // This line should go before setTabsClosable(true)
     setTabBar(new WorkAreaTabBar());
+
+
 
 	setTabsClosable(true);
     setElideMode(Qt::ElideRight);

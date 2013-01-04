@@ -85,7 +85,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
 
     QFrame *line = new QFrame();
     line->setFrameShape(QFrame::HLine);
-    line->setFrameShadow(QFrame::Raised);
+    line->setFrameShadow(QFrame::Sunken);
     //line->setStyleSheet("margin-top: 2px;");
 
     QFrame *line2 = new QFrame();
@@ -95,7 +95,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
-    layout->setContentsMargins(0, 0, 4, 4);
+    layout->setContentsMargins(0, 1, 4, 4);
     layout->addWidget(line);
     layout->addWidget(_topStatusBar);
     layout->addWidget(_queryText, 0, Qt::AlignTop);

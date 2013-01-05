@@ -40,7 +40,7 @@ namespace Robomongo
         bool _maximized;
     };
 
-    class OutputResult : public QWidget
+    class OutputResult : public QFrame
     {
         Q_OBJECT
     public:

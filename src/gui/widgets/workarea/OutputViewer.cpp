@@ -121,6 +121,12 @@ OutputResult::OutputResult(OutputViewer *viewer, OutputWidget *output, QWidget *
     outputWidget(output),
     outputViewer(viewer)
 {
+    setAutoFillBackground(true);
+    QPalette p(palette());
+    // Set background colour to black
+    p.setColor(QPalette::Background, QColor("#083047").lighter(670));
+    setPalette(p);
+
     setContentsMargins(0, 0, 0, 0);
     _header = new OutputResultHeader(this, output);
 
@@ -129,9 +135,9 @@ OutputResult::OutputResult(OutputViewer *viewer, OutputWidget *output, QWidget *
     hline->setFrameShadow(QFrame::Sunken);
 
     QVBoxLayout *layout = new QVBoxLayout();
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(0, 5, 0, 0);
     layout->setSpacing(0);
-    layout->addWidget(hline);
+//    layout->addWidget(hline);
     layout->addWidget(_header);
     layout->addWidget(output, 1);
     setLayout(layout);
@@ -186,7 +192,7 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
     l->setStyleSheet("font-size:12px;");
 
     QHBoxLayout *layout = new QHBoxLayout();
-    layout->setContentsMargins(0, 0, 0, 2);
+    layout->setContentsMargins(5, 0, 5, 3);
     layout->setSpacing(0);
     layout->addWidget(collectionIconLabel);
     layout->addSpacing(5);

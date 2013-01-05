@@ -24,6 +24,7 @@
 #include "WorkAreaTabWidget.h"
 #include "settings/ConnectionSettings.h"
 #include "KeyboardManager.h"
+#include "ScriptWidget.h"
 
 using namespace mongo;
 using namespace Robomongo;
@@ -46,10 +47,8 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     _bus->subscribe(this, DocumentListLoadedEvent::Type, shell);
     _bus->subscribe(this, ScriptExecutedEvent::Type, shell);
 
-    // Query text widget
-    _configureQueryText();
-    _queryText->setFixedHeight(10);
-    ui_queryLinesCountChanged();
+    _scriptWidget = new ScriptWidget(_shell);
+    _scriptWidget->setText(script);
 
     // Execute button
     QPushButton * executeButton = new QPushButton("Execute");
@@ -79,7 +78,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     _outputLabel->setContentsMargins(0, 5, 0, 0);
     _outputLabel->setVisible(false);
 
-    _topStatusBar = new TopStatusBar(_shell);
+//    _topStatusBar = new TopStatusBar(_shell);
 //    _topStatusBar->setFrameShape(QFrame::StyledPanel);
 //    _topStatusBar->setFrameShadow(QFrame::Raised);
 
@@ -95,19 +94,13 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
-    layout->setContentsMargins(0, 1, 4, 4);
-//    layout->addWidget(line);
-    layout->addSpacing(1);
-    layout->addWidget(_viewer, 1);
-    layout->addSpacing(4);
-    layout->addWidget(_topStatusBar);
-    layout->addWidget(_queryText, 0, Qt::AlignTop);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(_scriptWidget, 0, Qt::AlignTop);
     layout->addWidget(_outputLabel, 0, Qt::AlignTop);
+    layout->addWidget(line);
+    //layout->addSpacing(2);
+    layout->addWidget(_viewer, 1);
     setLayout(layout);
-
-    _queryText->setText(script);
-    _queryText->setCursorPosition(15, 1000);
-    _queryText->setFocus();
 }
 
 /*
@@ -120,46 +113,14 @@ QueryWidget::~QueryWidget()
 }
 
 /*
-** Handle queryText linesCountChanged event
-*/
-void QueryWidget::ui_queryLinesCountChanged()
-{
-    int pos = _queryText->fontInfo().pointSize();
-    int pis = _queryText->fontInfo().pixelSize();
-    int teh = _queryText->textHeight(0);
-    int exa = _queryText->extraAscent();
-    int exd = _queryText->extraDescent();
-
-    QFontMetrics m(_queryText->font());
-    int lineHeight = m.lineSpacing();
-
-    #if defined(Q_OS_UNIX)
-    // this fix required to calculate correct height in Linux.
-    // not the best way, but for now it tested on Ubuntu.
-    lineHeight++;
-    #endif
-
-
-    int numberOfLines = _queryText->lines();
-
-    int height = numberOfLines * lineHeight + 8;
-
-    int maxHeight = 18 * lineHeight + 8;
-    if (height > maxHeight)
-        height = maxHeight;
-
-    _queryText->setFixedHeight(height);
-}
-
-/*
 ** Execute query
 */
 void QueryWidget::ui_executeButtonClicked()
 {
-    QString query = _queryText->selectedText();
+    QString query = _scriptWidget->selectedText();
 
     if (query.isEmpty())
-        query = _queryText->text();
+        query = _scriptWidget->text();
 
     _shell->open(query);
 }
@@ -178,7 +139,7 @@ bool QueryWidget::eventFilter(QObject * o, QEvent * e)
             return true;
         }
         else if (_keyboard->isSetFocusOnQueryLineShortcut(keyEvent)) {
-            _queryText->setFocus();
+            _scriptWidget->setScriptFocus();
             return true;
         }
         else if (_keyboard->isExecuteScriptShortcut(keyEvent))
@@ -199,13 +160,13 @@ void QueryWidget::toggleOrientation()
 
 void QueryWidget::activateTabContent()
 {
-    _queryText->setFocus();
+    _scriptWidget->setScriptFocus();
 }
 
 void QueryWidget::openNewTab()
 {
     MongoServer *server = _shell->server();
-    QString query = _queryText->selectedText();
+    QString query = _scriptWidget->selectedText();
 
     if (query.isEmpty())
         query = "";//_queryText->text();
@@ -226,7 +187,7 @@ void QueryWidget::reload()
 
 void QueryWidget::duplicate()
 {
-    _queryText->selectAll();
+    _scriptWidget->selectAll();
     openNewTab();
 }
 
@@ -240,55 +201,6 @@ void QueryWidget::enterTextMode()
 {
     if (_viewer)
         _viewer->enterTextMode();
-}
-
-/*
-** Configure QsciScintilla query widget
-*/
-void QueryWidget::_configureQueryText()
-{
-    QFont textFont = font();
-#if defined(Q_OS_MAC)
-    textFont.setPointSize(12);
-    textFont.setFamily("Monaco");
-#elif defined(Q_OS_UNIX)
-    textFont.setFamily("Monospace");
-    textFont.setFixedPitch(true);
-    //textFont.setWeight(QFont::Bold);
-//    textFont.setPointSize(12);
-#elif defined(Q_OS_WIN)
-    textFont.setPointSize(font().pointSize() + 2);
-    textFont.setFamily("Courier");
-#endif
-
-    QsciLexerJavaScript * javaScriptLexer = new JSLexer(this);
-    javaScriptLexer->setFont(textFont);
-//    javaScriptLexer->setPaper(QColor(255, 0, 0, 127));
-
-    _queryText = new RoboScintilla;
-    _queryText->setFixedHeight(23);
-    _queryText->setAutoIndent(true);
-    _queryText->setIndentationsUseTabs(false);
-    _queryText->setIndentationWidth(4);
-    _queryText->setUtf8(true);
-    _queryText->installEventFilter(this);
-    _queryText->setMarginWidth(1, 0); // to hide left gray column
-    _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
-    _queryText->setFont(textFont);
-    _queryText->setPaper(QColor(255, 0, 0, 127));
-    _queryText->setLexer(javaScriptLexer);
-    _queryText->setCaretForegroundColor(QColor("#FFFFFF"));
-    _queryText->setMatchedBraceBackgroundColor(QColor(48, 10, 36));
-    _queryText->setMatchedBraceForegroundColor(QColor("#1AB0A6"));
-    _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_WORD);
-    _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-
-    //_queryText->SendScintilla(QsciScintilla::SCI_SETFONTQUALITY, QsciScintilla::SC_EFF_QUALITY_LCD_OPTIMIZED);
-    //_queryText->SendScintilla (QsciScintillaBase::SCI_SETKEYWORDS, "db");
-
-    _queryText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 3px; margin: 0px; padding: 0px;}");
-    connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
 }
 
 /*
@@ -355,17 +267,18 @@ void QueryWidget::handle(ScriptExecutedEvent *event)
         _tabWidget->setTabText(thisTab, tabTitle);
     }
 
-    if (_queryText->text().isEmpty())
-        _queryText->setText(_shell->query());
+    if (_scriptWidget->text().isEmpty())
+        _scriptWidget->setText(_shell->query());
+
     displayData(event->result.results);
-    _topStatusBar->setCurrentDatabase(event->result.currentDatabase, event->result.isCurrentDatabaseValid);
-    _queryText->setFocus();
+    _scriptWidget->statusBar()->setCurrentDatabase(event->result.currentDatabase, event->result.isCurrentDatabaseValid);
+    _scriptWidget->setScriptFocus();
     setUpdatesEnabled(true);
 }
 
 void QueryWidget::displayData(const QList<MongoShellResult> &results)
 {
-    if (results.count() == 0 && !_queryText->text().isEmpty()) {
+    if (results.count() == 0 && !_scriptWidget->text().isEmpty()) {
         _outputLabel->setText("Script executed successfully, but there is no results to show.");
         _outputLabel->setVisible(true);
     } else {
@@ -406,81 +319,4 @@ void QueryWidget::ui_leftButtonClicked()
 
     //QString query = _queryText->text();
     //_viewModel->loadPreviousPage(query, pageSize);
-}
-
-
-TopStatusBar::TopStatusBar(MongoShell *shell) :
-    _shell(shell)
-{
-    setContentsMargins(0, 0, 0, 0);
-    //setAutoFillBackground(true);
-
-    QPalette p(palette());
-    // Set background colour to black
-    p.setColor(QPalette::Background, Qt::white);
-    setPalette(p);
-
-    _textColor = palette().text().color().lighter(150);
-
-    QIcon dbIcon = GuiRegistry::instance().databaseIcon();
-    QPixmap dbPixmap = dbIcon.pixmap(16, 16, QIcon::Disabled);
-    QLabel *dbIconLabel = new QLabel;
-    dbIconLabel->setPixmap(dbPixmap);
-
-    QIcon serverIcon = GuiRegistry::instance().serverIcon();
-    QPixmap serverPixmap = serverIcon.pixmap(16, 16, QIcon::Disabled);
-    QLabel *serverIconLabel = new QLabel;
-    serverIconLabel->setPixmap(serverPixmap);
-    QLabel *currentServerLabel = new ElidedLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(_shell->server()->connectionRecord()->getReadableName()));
-    currentServerLabel->setDisabled(true);
-
-    _currentDatabaseLabel = new ElidedLabel();
-    _currentDatabaseLabel->setDisabled(true);
-//    _currentDatabaseLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored);
-    QHBoxLayout *topLayout = new QHBoxLayout;
-    topLayout->setContentsMargins(0, 2, 0, 2);
-    topLayout->addWidget(serverIconLabel, 0, Qt::AlignLeft);
-    topLayout->addWidget(currentServerLabel, 0, Qt::AlignLeft);
-    topLayout->addSpacing(10);
-    topLayout->addWidget(dbIconLabel, 0, Qt::AlignLeft);
-    topLayout->addWidget(_currentDatabaseLabel, 0, Qt::AlignLeft);
-    topLayout->addStretch(1);
-
-    setLayout(topLayout);
-}
-
-void TopStatusBar::setCurrentDatabase(const QString &database, bool isValid)
-{
-    QString color = isValid ? _textColor.name() : "red";
-
-    QString text = QString("<font color='%1'>%2</font>")
-            .arg(color)
-            .arg(database);
-
-    _currentDatabaseLabel->setText(text);
-//    _currentDatabaseLabel->setFixedSize(_currentDatabaseLabel->sizeHint());
-}
-
-void ElidedLabel::paintEvent(QPaintEvent *event)
-{
-    QLabel::paintEvent(event);
-
-    return;
-    QPainter painter(this);
-    QFontMetrics metrics(font());
-    QString elided = metrics.elidedText(text(), Qt::ElideRight, width());
-    painter.drawText(rect(), alignment(), elided);
-}
-
-QSize ElidedLabel::minimumSizeHint() const
-{
-    QSize defaultMinSizeHint = QLabel::minimumSizeHint();
-    return QSize(0, defaultMinSizeHint.height());
-}
-
-QSize ElidedLabel::sizeHint() const
-{
-    QSize defaultSizeHint = QLabel::sizeHint();
-    return defaultSizeHint;
-//    return QSize(defaultSizeHint.width() + 20, defaultSizeHint.height());
 }

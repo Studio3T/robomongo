@@ -53,7 +53,7 @@ namespace Robomongo
         OutputResultHeader *_header;
     };
 
-    class OutputViewer : public QWidget
+    class OutputViewer : public QFrame
     {
         Q_OBJECT
     public:

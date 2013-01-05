@@ -84,7 +84,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
 
     QFrame *line = new QFrame();
     line->setFrameShape(QFrame::HLine);
-    line->setFrameShadow(QFrame::Sunken);
+    line->setFrameShadow(QFrame::Raised);
     //line->setStyleSheet("margin-top: 2px;");
 
     QFrame *line2 = new QFrame();

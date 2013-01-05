@@ -23,7 +23,7 @@ ScriptWidget::ScriptWidget(MongoShell *shell)
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
-    layout->setContentsMargins(4, 1, 4, 4);
+    layout->setContentsMargins(5, 1, 5, 5);
     layout->addWidget(_topStatusBar, 0, Qt::AlignTop);
     layout->addWidget(_queryText, 1, Qt::AlignTop);
 //    layout->addWidget(_outputLabel, 0, Qt::AlignTop);

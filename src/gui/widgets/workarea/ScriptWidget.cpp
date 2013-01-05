@@ -16,7 +16,7 @@ using namespace Robomongo;
 
 ScriptWidget::ScriptWidget(MongoShell *shell)
 {
-    setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 6px; margin: 0px; padding: 0px;}");
+    setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
 
     _queryText = new RoboScintilla;
     _topStatusBar = new TopStatusBar(shell);

@@ -16,14 +16,13 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
     QWidget(),
     _bus(AppRegistry::instance().bus())
 {
-    setContentsMargins(4, 3, 0, 0);
 	_mainWindow = mainWindow;
     _tabWidget = new WorkAreaTabWidget(this);
 	_tabWidget->setMovable(true);
     _tabWidget->setDocumentMode(true);
 
 	QHBoxLayout * hlayout = new QHBoxLayout;
-	hlayout->setMargin(0);
+    hlayout->setContentsMargins(0, 0, 0, 0);
 	hlayout->addWidget(_tabWidget);
 	setLayout(hlayout);
 

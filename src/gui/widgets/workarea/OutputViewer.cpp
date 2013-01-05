@@ -13,10 +13,21 @@
 using namespace Robomongo;
 
 OutputViewer::OutputViewer(bool textMode, QWidget *parent) :
-    QWidget(parent),
+    QFrame(parent),
     _textMode(textMode)
 {
-    setContentsMargins(0, 0, 0, 0);
+    QString style = QString("Robomongo--OutputViewer { background-color: %1; border-radius: 6px; }")
+        .arg(QColor("#083047").lighter(660).name());
+//            .arg("white");
+
+    setStyleSheet(style);
+
+/*    setAutoFillBackground(true);
+    QPalette p(palette());
+    // Set background colour to black
+    p.setColor(QPalette::Background, QColor("#083047").lighter(660));
+    setPalette(p);
+    */
 
     _splitter = new QSplitter;
     _splitter->setOrientation(Qt::Vertical);
@@ -24,7 +35,7 @@ OutputViewer::OutputViewer(bool textMode, QWidget *parent) :
     _splitter->setContentsMargins(0, 0, 0, 0);
 
     QVBoxLayout *layout = new QVBoxLayout();
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(4, 3, 4, 4);
     layout->setSpacing(0);
     layout->addWidget(_splitter);
     setLayout(layout);
@@ -121,12 +132,6 @@ OutputResult::OutputResult(OutputViewer *viewer, OutputWidget *output, QWidget *
     outputWidget(output),
     outputViewer(viewer)
 {
-    setAutoFillBackground(true);
-    QPalette p(palette());
-    // Set background colour to black
-    p.setColor(QPalette::Background, QColor("#083047").lighter(670));
-    setPalette(p);
-
     setContentsMargins(0, 0, 0, 0);
     _header = new OutputResultHeader(this, output);
 

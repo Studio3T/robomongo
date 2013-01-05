@@ -122,10 +122,9 @@ QString WorkAreaTabBar::buildStyleSheet()
     QString aga3 = background.name();
 
     QString styles = QString(
-        "QTabBar{border-bottom-color: #ffffff;}"
-        "QTabBar::pane { "
-            "border-bottom-color: red;"
-        "}"
+        "QTabBar::tab:first {"
+            "margin-left: 4px;"
+        "}  "
         "QTabBar::close-button { "
             "image: url(:/robomongo/icons/close_2_16x16.png);"
             "width: 10px;"
@@ -154,7 +153,7 @@ QString WorkAreaTabBar::buildStyleSheet()
         "QTabBar::tab:selected, QTabBar::tab:hover {"
             "background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
                                         "stop: 0 %2, stop: 0.4 %2,"    //#fafafa, #f4f4f4
-                                        "stop: 0.5 %3, stop: 1.0 %1);" //#e7e7e7, #fafafa
+                                        "stop: 0.5 %3, stop: 1.0 %4);" //#e7e7e7, #fafafa
         "}"
 
         "QTabBar::tab:selected {"
@@ -165,8 +164,8 @@ QString WorkAreaTabBar::buildStyleSheet()
         "QTabBar::tab:!selected {"
             "margin-top: 2px;" // make non-selected tabs look smaller
         "}  "
-        "QTabBar::tab:only-one { margin-top: 2px; }"
-    ).arg(background.name(), gradientOne.name(), gradientTwo.name(), background.name());
+        "QTabBar::tab:only-one { margin-top: 2px; margin-left:4px; }"
+    ).arg(/*background.name(), */gradientOne.name(), gradientTwo.name(), "#ffffff");
 
     QString aga = palette().window().color().name();
 

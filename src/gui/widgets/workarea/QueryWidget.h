@@ -21,33 +21,8 @@ namespace Robomongo
     class RoboScintilla;
     class OutputViewer;
     class WorkAreaTabWidget;
-
-    class ElidedLabel : public QLabel
-    {
-        Q_OBJECT
-    public:
-        ElidedLabel(){}
-        ElidedLabel(const QString &text) : QLabel(text) { }
-        QSize minimumSizeHint() const;
-        QSize sizeHint() const;
-
-    protected:
-        void paintEvent(QPaintEvent *event);
-    };
-
-    class TopStatusBar : public QFrame
-    {
-        Q_OBJECT
-    public:
-        TopStatusBar(MongoShell *shell);
-        void setCurrentDatabase(const QString &database, bool isValid = true);
-
-    private:
-        QLabel *_currentDatabaseLabel;
-        MongoShell *_shell;
-        QColor _textColor;
-
-    };
+    class ScriptWidget;
+    class TopStatusBar;
 
     class QueryWidget : public QWidget
     {
@@ -80,11 +55,6 @@ namespace Robomongo
         MongoShell *shell() const { return _shell; }
 
     public slots:
-
-        /*
-        ** Handle queryText linesCountChanged event
-        */
-        void ui_queryLinesCountChanged();
 
         /*
         ** Execute query
@@ -127,21 +97,13 @@ namespace Robomongo
 
     private:
 
-        /*
-        ** Configure QsciScintilla query widget
-        */
-        void _configureQueryText();
+        ScriptWidget *_scriptWidget;
 
         void _showPaging(bool show);
 
         bool _textMode;
 
         void displayData(const QList<MongoShellResult> &results);
-
-        /*
-        ** Query text
-        */
-        RoboScintilla * _queryText;
 
         /*
         ** Bson widget
@@ -158,7 +120,6 @@ namespace Robomongo
         QLineEdit * _pageSizeEdit;
 
         WorkAreaTabWidget *_tabWidget;
-        TopStatusBar *_topStatusBar;
 
         QList<MongoShellResult> _currentResults;
 

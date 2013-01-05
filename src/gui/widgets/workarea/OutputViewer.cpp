@@ -20,7 +20,7 @@ OutputViewer::OutputViewer(bool textMode, QWidget *parent) :
         .arg(QColor("#083047").lighter(660).name());
 //            .arg("white");
 
-    setStyleSheet(style);
+    //setStyleSheet(style);
 
 /*    setAutoFillBackground(true);
     QPalette p(palette());

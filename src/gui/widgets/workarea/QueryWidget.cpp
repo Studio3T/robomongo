@@ -96,12 +96,13 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
     layout->setContentsMargins(0, 1, 4, 4);
-    layout->addWidget(line);
+//    layout->addWidget(line);
+    layout->addSpacing(1);
+    layout->addWidget(_viewer, 1);
+    layout->addSpacing(4);
     layout->addWidget(_topStatusBar);
     layout->addWidget(_queryText, 0, Qt::AlignTop);
     layout->addWidget(_outputLabel, 0, Qt::AlignTop);
-    layout->addSpacing(0);
-    layout->addWidget(_viewer, 1);
     setLayout(layout);
 
     _queryText->setText(script);
@@ -286,7 +287,7 @@ void QueryWidget::_configureQueryText()
     //_queryText->SendScintilla(QsciScintilla::SCI_SETFONTQUALITY, QsciScintilla::SC_EFF_QUALITY_LCD_OPTIMIZED);
     //_queryText->SendScintilla (QsciScintillaBase::SCI_SETKEYWORDS, "db");
 
-    _queryText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
+    _queryText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 3px; margin: 0px; padding: 0px;}");
     connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
 }
 

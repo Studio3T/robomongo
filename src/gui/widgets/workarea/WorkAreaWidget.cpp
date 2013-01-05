@@ -22,7 +22,7 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
     _tabWidget->setDocumentMode(true);
 
 	QHBoxLayout * hlayout = new QHBoxLayout;
-    hlayout->setContentsMargins(0, 1, 0, 0);
+    hlayout->setContentsMargins(0, 3, 0, 0);
 	hlayout->addWidget(_tabWidget);
 	setLayout(hlayout);
 

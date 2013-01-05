@@ -124,20 +124,25 @@ OutputResult::OutputResult(OutputViewer *viewer, OutputWidget *output, QWidget *
     setContentsMargins(0, 0, 0, 0);
     _header = new OutputResultHeader(this, output);
 
+    QFrame *hline = new QFrame();
+    hline->setFrameShape(QFrame::HLine);
+    hline->setFrameShadow(QFrame::Sunken);
+
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
+    layout->addWidget(hline);
     layout->addWidget(_header);
     layout->addWidget(output, 1);
     setLayout(layout);
 }
 
-OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *output, QWidget *parent) : QWidget(parent),
+OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *output, QWidget *parent) : QFrame(parent),
   outputWidget(output),
   outputResult(result),
   _maximized(false)
 {
-    setContentsMargins(0,3,0,0);
+    setContentsMargins(0,0,0,0);
 
     _maxButton = new QPushButton;
     _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());

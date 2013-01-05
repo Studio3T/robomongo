@@ -13,7 +13,7 @@ namespace Robomongo
     class OutputResult;
     class OutputViewer;
 
-    class OutputResultHeader : public QWidget
+    class OutputResultHeader : public QFrame
     {
         Q_OBJECT
     public:

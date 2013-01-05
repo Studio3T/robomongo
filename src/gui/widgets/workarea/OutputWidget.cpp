@@ -149,7 +149,7 @@ RoboScintilla *Robomongo::OutputWidget::_configureLogText()
     _logText->setFont(textFont);
     _logText->setReadOnly(true);
 
-    _logText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
+    _logText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
     //connect(_logText, SIGNAL(linesChanged()), SLOT(ui_logLinesCountChanged()));
 
     return _logText;

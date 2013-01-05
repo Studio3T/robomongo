@@ -150,7 +150,8 @@ QString WorkAreaTabBar::buildStyleSheet()
             "max-width: 200px;"
             "padding: 6px 0px 4px 0px;"
             "margin: 0px;"
-            "margin-right: -5px;"  // it should be -(tab:first:margin-left + tab:last:margin-left) to fix incorrect text elidement
+            "margin-left: 1px;"
+            "margin-right: -3px;"  // it should be -(tab:first:margin-left + tab:last:margin-left) to fix incorrect text elidement
         "}"
 
         "QTabBar::tab:selected, QTabBar::tab:hover {"

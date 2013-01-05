@@ -62,7 +62,7 @@ void WorkAreaWidget::enterTreeMode()
 void WorkAreaWidget::handle(OpeningShellEvent *event)
 {
     bool textMode = _mainWindow->textMode();
-    QString shellName = event->shellName.isEmpty() ? "Loading..." : event->shellName;
+    QString shellName = event->shellName.isEmpty() ? " Loading..." : event->shellName;
 
     setUpdatesEnabled(false);
     QueryWidget * queryWidget = new QueryWidget(event->shell, _tabWidget, event->initialScript, textMode);

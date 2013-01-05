@@ -146,11 +146,11 @@ QString WorkAreaTabBar::buildStyleSheet()
             "border-bottom-color: #B8B7B6;" // #C2C7CB same as the pane color
             "border-top-left-radius: 6px;"
             "border-top-right-radius: 6px;"
-            "min-width: 8ex;"
+//            "min-width: 8ex;"
             "max-width: 200px;"
-            "padding: 6px 0px 4px 2px;"
+            "padding: 6px 0px 4px 0px;"
             "margin: 0px;"
-            "margin-right: -2px;"
+            "margin-right: -5px;"  // it should be -(tab:first:margin-left + tab:last:margin-left) to fix incorrect text elidement
         "}"
 
         "QTabBar::tab:selected, QTabBar::tab:hover {"

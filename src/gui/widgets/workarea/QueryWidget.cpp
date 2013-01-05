@@ -49,6 +49,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
 
     _scriptWidget = new ScriptWidget(_shell);
     _scriptWidget->setText(script);
+    _scriptWidget->installEventFilter(this);
 
     // Execute button
     QPushButton * executeButton = new QPushButton("Execute");

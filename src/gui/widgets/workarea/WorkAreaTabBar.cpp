@@ -149,7 +149,7 @@ QString WorkAreaTabBar::buildStyleSheet()
             "border-top-right-radius: 6px;"
 //            "min-width: 8ex;"
             "max-width: 200px;"
-            "padding: 6px 0px 4px 0px;"
+            "padding: 4px 0px 5px 0px;"
             "margin: 0px;"
             "margin-left: 1px;"
             "margin-right: -3px;"  // it should be -(tab:first:margin-left + tab:last:margin-left) to fix incorrect text elidement

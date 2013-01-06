@@ -27,11 +27,14 @@ MainWindow::MainWindow() : QMainWindow(),
 
     _bus->subscribe(this, ConnectionFailedEvent::Type);
 
-    qApp->setStyleSheet(
-        "Robomongo--ExplorerTreeWidget#explorerTree { padding: 7px 0px 7px 0px; background-color:#E7E5E4; border: 0px; } \n "
+    QColor background = palette().window().color();
+    QString explorerColor = background.darker(103).name();
+
+    qApp->setStyleSheet(QString(
+        "Robomongo--ExplorerTreeWidget#explorerTree { padding: 7px 0px 7px 0px; background-color: %1; border: 0px; } \n " // #E7E5E4
         "QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } "
         "QMainWindow::separator { background: #E7E5E4; width: 1px; }"
-    );
+    ).arg(explorerColor));
 
     // Exit action
     QAction *exitAction = new QAction("&Exit", this);

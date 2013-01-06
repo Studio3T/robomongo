@@ -172,13 +172,15 @@ void QueryWidget::openNewTab()
     if (query.isEmpty())
         query = "";//_queryText->text();
 
+    /*
     QString dbName = ""; //WAS: server->connectionRecord()->databaseName();
     if (_currentResults.count() > 0) {
         MongoShellResult lastResult = _currentResults.last();
         dbName = lastResult.databaseName;
     }
+    */
 
-    _app->openShell(server, query, dbName);
+    _app->openShell(server, query, "New Shell" /*dbName*/);
 }
 
 void QueryWidget::reload()

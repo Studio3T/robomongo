@@ -21,6 +21,7 @@ namespace Robomongo
         explicit OutputResultHeader(OutputResult *result, OutputWidget *output, QWidget *parent = 0);
         OutputWidget *outputWidget;
         OutputResult *outputResult;
+        PagingWidget *paging() const { return _paging; }
 
     protected:
         void mouseDoubleClickEvent(QMouseEvent *);

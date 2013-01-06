@@ -145,33 +145,48 @@ void ScriptEngine::use(const QString &dbName)
 Result ScriptEngine::prepareResult(const QString &output, const QList<mongo::BSONObj> objects)
 {
     char *script =
+        "__robomongoQuery = false; \n"
         "__robomongoDbName = '[invalid database]'; \n"
-        "__robomongoDbIsValid = false; \n"
         "__robomongoServerAddress = '[invalid connection]'; \n"
-        "__robomongoServerIsValid = false; \n"
         "__robomongoCollectionName = '[invalid collection]'; \n"
-        "__robomongoCollectionIsValid = false; \n"
         "if (typeof __robomongoLastRes == 'object' && __robomongoLastRes != null && __robomongoLastRes instanceof DBQuery) { \n"
+        "    __robomongoQuery = true; \n"
         "    __robomongoDbName = __robomongoLastRes._db.getName();\n "
-        "    __robomongoDbIsValid = true; \n "
         "    __robomongoServerAddress = __robomongoLastRes._mongo.host; \n"
-        "    __robomongoServerIsValid = true; \n"
         "    __robomongoCollectionName = __robomongoLastRes._collection._shortName; \n"
-        "    __robomongoCollectionIsValid = true; \n"
+        "    __robomongoQuery = __robomongoLastRes._query; \n"
+        "    __robomongoFields = __robomongoLastRes._fields; \n"
+        "    __robomongoLimit = __robomongoLastRes._limit; \n"
+        "    __robomongoSkip = __robomongoLastRes._skip; \n"
+        "    __robomongoBatchSize = __robomongoLastRes._batchSize; \n"
+        "    __robomongoOptions = __robomongoLastRes._options; \n"
+        "    __robomongoSpecial = __robomongoLastRes._special; \n"
         "} \n";
 
     _scope->exec(script, "(getresultinfo)", false, false, false);
 
-    QString dbName = getString("__robomongoDbName");
-    bool dbIsValid = _scope->getBoolean("__robomongoDbIsValid");
+    bool isQuery = _scope->getBoolean("__robomongoQuery");
 
-    QString serverAddress = getString("__robomongoServerAddress");
-    bool serverIsValid = _scope->getBoolean("__robomongoServerIsValid");
+    if (isQuery) {
+        QString serverAddress = getString("__robomongoServerAddress");
+        QString dbName = getString("__robomongoDbName");
+        QString collectionName = getString("__robomongoCollectionName");
+        mongo::BSONObj query = _scope->getObject("__robomongoQuery");
+        mongo::BSONObj fields = _scope->getObject("__robomongoFields");
 
-    QString collectionName = getString("__robomongoCollectionName");
-    bool collectionIsValid = _scope->getBoolean("__robomongoCollectionIsValid");
+        int limit = _scope->getNumberInt("__robomongoLimit");
+        int skip = _scope->getNumberInt("__robomongoSkip");
+        int batchSize = _scope->getNumberInt("__robomongoBatchSize");
+        int options = _scope->getNumberInt("__robomongoOptions");
 
-    return Result(output, objects, serverAddress, serverIsValid, dbName, dbIsValid, collectionName, collectionIsValid);
+        bool special = _scope->getBoolean("__robomongoSpecial");
+
+        QueryInfo info = QueryInfo(serverAddress, dbName, collectionName,
+                                   query, fields, limit, skip, batchSize, options, special);
+        return Result(output, objects, info);
+    }
+
+    return Result(output, objects, QueryInfo());
 }
 
 ExecResult ScriptEngine::prepareExecResult(const QList<Result> &results)

@@ -6,22 +6,52 @@
 
 namespace Robomongo
 {
+    class QueryInfo
+    {
+    public:
+
+        QueryInfo() :
+            isNull(true) {}
+
+        QueryInfo(const QString &server, const QString &database, const QString &collection,
+                  mongo::BSONObj query, mongo::BSONObj fields, int limit, int skip, int batchSize,
+                  int options, bool special) :
+            serverAddress(server),
+            databaseName(database),
+            collectionName(collection),
+            query(query),
+            fields(fields),
+            limit(limit),
+            skip(skip),
+            batchSize(batchSize),
+            options(options),
+            special(special),
+            isNull(false) {}
+
+        QString serverAddress;
+        QString databaseName;
+        QString collectionName;
+        mongo::BSONObj query;
+        mongo::BSONObj fields;
+        int limit;
+        int skip;
+        int batchSize;
+        int options;
+        bool special; // flag, indicating that `query` contains special fields on
+                      // first level, and query data in `query` field.
+        bool isNull;
+    };
+
     class Result
     {
     public:
-        Result(const QString &response, const QList<mongo::BSONObj> &documents,
-               const QString &serverName, bool isServerValid,
-               const QString &databaseName, bool isDatabaseValid,
-               const QString &collectionName, bool isCollectionValid);
+        Result(const QString &response,
+               const QList<mongo::BSONObj> &documents,
+               const QueryInfo &queryInfo);
 
-        QList<mongo::BSONObj> documents;
         QString response;
-        QString serverName;
-        bool isServerValid;
-        QString databaseName;
-        bool isDatabaseValid;
-        QString collectionName;
-        bool isCollectionValid;
+        QList<mongo::BSONObj> documents;
+        QueryInfo queryInfo;
     };
 
     class ExecResult

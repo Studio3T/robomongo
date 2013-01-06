@@ -17,6 +17,9 @@ namespace Robomongo
         OutputWidget(const QString &text);
         OutputWidget(const QList<MongoDocumentPtr> &documents);
 
+        void update(const QString &text);
+        void update(const QList<MongoDocumentPtr> &documents);
+
         void setup();
 
         bool isTextModeSupported() const { return _isTextModeSupported; }

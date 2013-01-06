@@ -162,28 +162,30 @@ namespace Robomongo
     {
         R_EVENT
 
-        ExecuteQueryRequest(QObject *sender, const QString &nspace, int take = 0, int skip = 0) :
+        ExecuteQueryRequest(QObject *sender, const QueryInfo &queryInfo) :
             Event(sender),
-            nspace(nspace),
-            take(take),
-            skip(skip) {}
+            resultIndex(resultIndex),
+            queryInfo(queryInfo) {}
 
-        QString nspace; //namespace of object (i.e. "database_name.collection_name")
-        int take; //
-        int skip;
+        int resultIndex; //external user data;
+        QueryInfo queryInfo;
     };
 
     class ExecuteQueryResponse : public Event
     {
         R_EVENT
 
-        ExecuteQueryResponse(QObject *sender, const QList<mongo::BSONObj> &documents) :
+        ExecuteQueryResponse(QObject *sender, int resultIndex, const QueryInfo &queryInfo, const QList<mongo::BSONObj> &documents) :
             Event(sender),
+            resultIndex(resultIndex),
+            queryInfo(queryInfo),
             documents(documents) { }
 
         ExecuteQueryResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
 
+        int resultIndex;
+        QueryInfo queryInfo;
         QList<mongo::BSONObj> documents;
     };
 
@@ -300,11 +302,15 @@ namespace Robomongo
     {
         R_EVENT
 
-        DocumentListLoadedEvent(QObject *sender, const QString &query, const QList<MongoDocumentPtr> &list) :
+        DocumentListLoadedEvent(QObject *sender, int resultIndex, const QueryInfo &queryInfo, const QString &query, const QList<MongoDocumentPtr> &list) :
             Event(sender),
+            resultIndex(resultIndex),
+            queryInfo(queryInfo),
             query(query),
             list(list) { }
 
+        int resultIndex;
+        QueryInfo queryInfo;
         QList<MongoDocumentPtr> list;
         QString query;
     };

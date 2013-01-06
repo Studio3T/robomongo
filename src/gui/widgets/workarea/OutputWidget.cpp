@@ -35,6 +35,26 @@ OutputWidget::OutputWidget(const QList<MongoDocumentPtr> &documents) :
     setup();
 }
 
+void OutputWidget::update(const QString &text)
+{
+    _text = text;
+    _isTextModeInitialized = false;
+    _isTreeModeInitialized = false;
+    _isCustomModeInitialized = false;
+    _sourceIsText = true;
+    _isFirstPartRendered = false;
+}
+
+void OutputWidget::update(const QList<MongoDocumentPtr> &documents)
+{
+    _isTextModeInitialized = false;
+    _isTreeModeInitialized = false;
+    _isCustomModeInitialized = false;
+    _documents = documents;
+    _sourceIsText = false;
+    _isFirstPartRendered = false;
+}
+
 void OutputWidget::setup()
 {
     setContentsMargins(0, 0, 0, 0);

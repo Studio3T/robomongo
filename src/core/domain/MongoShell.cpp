@@ -24,14 +24,21 @@ MongoShell::~MongoShell()
 
 void MongoShell::open(MongoCollection *collection)
 {
-    _query = QString("db.%1.find()").arg(collection->name());
-    _client->send(new ExecuteQueryRequest(this, collection->fullName()));
+//    _query = QString("db.%1.find()").arg(collection->name());
+//    _client->send(new ExecuteQueryRequest(this, collection->fullName()));
 }
 
 void MongoShell::open(const QString &script, const QString &dbName)
 {
     _query = script;
     _client->send(new ExecuteScriptRequest(this, _query, dbName));
+}
+
+
+
+void MongoShell::query(int resultIndex, const QueryInfo &info)
+{
+    _client->send(new ExecuteQueryRequest(this, info));
 }
 
 void MongoShell::handle(ExecuteQueryResponse *event)
@@ -42,7 +49,7 @@ void MongoShell::handle(ExecuteQueryResponse *event)
         list.append(doc);
     }
 
-    _bus->publish(new DocumentListLoadedEvent(this, _query, list));
+    _bus->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, _query, list));
 }
 
 void MongoShell::handle(ExecuteScriptResponse *event)
@@ -53,13 +60,4 @@ void MongoShell::handle(ExecuteScriptResponse *event)
                                 event->result.currentDatabaseName, event->result.isCurrentDatabaseValid);
 
     _bus->publish(new ScriptExecutedEvent(this, result));
-
-    /*
-    QList<MongoDocumentPtr> list;
-    foreach(mongo::BSONObj obj, event->results) {
-        MongoDocumentPtr doc(new MongoDocument(obj));
-        list.append(doc);
-    }
-
-    _bus->publish(this, new ScriptExecutedEvent(event->response, list));*/
 }

@@ -28,7 +28,12 @@ MainWindow::MainWindow() : QMainWindow(),
     _bus->subscribe(this, ConnectionFailedEvent::Type);
 
     QColor background = palette().window().color();
-    QString explorerColor = background.darker(103).name();
+
+    #ifdef Q_OS_LINUX
+    QString explorerColor = background.darker(102).name();
+    #else
+    QString explorerColor = background.lighter(103).name();
+    #endif
 
     qApp->setStyleSheet(QString(
         "Robomongo--ExplorerTreeWidget#explorerTree { padding: 7px 0px 7px 0px; background-color: %1; border: 0px; } \n " // #E7E5E4

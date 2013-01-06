@@ -9,6 +9,7 @@
 #include "GuiRegistry.h"
 #include "OutputWidget.h"
 #include "MainWindow.h"
+#include "PagingWidget.h"
 
 using namespace Robomongo;
 
@@ -75,8 +76,11 @@ void OutputViewer::doSomething(const QList<MongoShellResult> &results)
 
         result->header()->setTime("0.01 ms");
 
-        if (shellResult.isCollectionValid)
-            result->header()->setCollection(shellResult.collectionName);
+        if (!shellResult.queryInfo.isNull) {
+            result->header()->setCollection(shellResult.queryInfo.collectionName);
+            result->header()->paging()->setLimit(shellResult.queryInfo.limit);
+            result->header()->paging()->setSkip(shellResult.queryInfo.skip);
+        }
 
         _splitter->addWidget(result);
     }
@@ -158,7 +162,7 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
     // Maximaze button
     _maxButton = new QPushButton;
     _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
-    _maxButton->setFixedSize(24, 24);
+    _maxButton->setFixedSize(18, 18);
     _maxButton->setFlat(true);
     connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart()));
 

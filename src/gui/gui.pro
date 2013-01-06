@@ -35,7 +35,8 @@ SOURCES += ExampleWindow.cpp \
     dialogs/ConnectionBasicTab.cpp \
     dialogs/ConnectionAdvancedTab.cpp \
     dialogs/ConnectionDiagnosticDialog.cpp \
-    widgets/workarea/ScriptWidget.cpp
+    widgets/workarea/ScriptWidget.cpp \
+    widgets/workarea/PagingWidget.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
@@ -67,7 +68,8 @@ HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionBasicTab.h \
     dialogs/ConnectionAdvancedTab.h \
     dialogs/ConnectionDiagnosticDialog.h \
-    widgets/workarea/ScriptWidget.h
+    widgets/workarea/ScriptWidget.h \
+    widgets/workarea/PagingWidget.h
 
 INCLUDEPATH += \
             $$ROOT/src/core

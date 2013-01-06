@@ -6,6 +6,7 @@
 #include <editors/PlainJavaScriptEditor.h>
 #include "BsonWidget.h"
 #include <domain/MongoShellResult.h>
+#include "PagingWidget.h"
 
 namespace Robomongo
 {
@@ -32,11 +33,14 @@ namespace Robomongo
         void maximizePart();
 
     private:
+        QLabel *createLabelWithIcon(const QIcon &icon);
+        QFrame *createVerticalLine();
         QPushButton *_treeButton;
         QPushButton *_textButton;
         QPushButton *_maxButton;
         QLabel *_timeLabel;
         QLabel *_collectionLabel;
+        PagingWidget *_paging;
         bool _maximized;
     };
 

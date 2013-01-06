@@ -35,7 +35,7 @@ OutputViewer::OutputViewer(bool textMode, QWidget *parent) :
     _splitter->setContentsMargins(0, 0, 0, 0);
 
     QVBoxLayout *layout = new QVBoxLayout();
-    layout->setContentsMargins(4, 3, 4, 4);
+    layout->setContentsMargins(4, 0, 4, 4);
     layout->setSpacing(0);
     layout->addWidget(_splitter);
     setLayout(layout);
@@ -140,7 +140,7 @@ OutputResult::OutputResult(OutputViewer *viewer, OutputWidget *output, QWidget *
     hline->setFrameShadow(QFrame::Sunken);
 
     QVBoxLayout *layout = new QVBoxLayout();
-    layout->setContentsMargins(0, 5, 0, 0);
+    layout->setContentsMargins(0, 1, 0, 0);
     layout->setSpacing(0);
 //    layout->addWidget(hline);
     layout->addWidget(_header);
@@ -155,12 +155,14 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
 {
     setContentsMargins(0,0,0,0);
 
+    // Maximaze button
     _maxButton = new QPushButton;
     _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
     _maxButton->setFixedSize(18, 18);
     _maxButton->setFlat(true);
     connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart()));
 
+    // Tree mode button
     _treeButton = new QPushButton;
     _treeButton->setIcon(GuiRegistry::instance().treeIcon());
     _treeButton->setFixedSize(18, 18);
@@ -169,35 +171,22 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
     _treeButton->setChecked(true);
     connect(_treeButton, SIGNAL(clicked()), this, SLOT(showTree()));
 
+    // Text mode button
     _textButton = new QPushButton;
     _textButton->setIcon(GuiRegistry::instance().textIcon());
     _textButton->setFixedSize(18, 18);
     _textButton->setFlat(true);
     connect(_textButton, SIGNAL(clicked()), this, SLOT(showText()));
 
-    QIcon timeIcon = GuiRegistry::instance().timeIcon();
-    QPixmap timePixmap = timeIcon.pixmap(16, 16);
-    QLabel *timeIconLabel = new QLabel;
-    timeIconLabel->setPixmap(timePixmap);
-
-    QIcon collectionIcon = GuiRegistry::instance().collectionIcon();
-    QPixmap collectionPixmap = collectionIcon.pixmap(16, 16);
-    QLabel *collectionIconLabel = new QLabel;
-    collectionIconLabel->setPixmap(collectionPixmap);
-
-    QFrame *line = new QFrame();
-    line->setFrameShape(QFrame::VLine);
-    line->setFrameShadow(QFrame::Sunken);
-    line->setFixedWidth(5);
+    QLabel *timeIconLabel = createLabelWithIcon(GuiRegistry::instance().timeIcon());
+    QLabel *collectionIconLabel = createLabelWithIcon(GuiRegistry::instance().collectionIcon());
 
     _timeLabel = new QLabel;
     _collectionLabel = new QLabel;
-
-    QLabel *l = new QLabel("Loaded in 2 ms");
-    l->setStyleSheet("font-size:12px;");
+    _paging = new PagingWidget();
 
     QHBoxLayout *layout = new QHBoxLayout();
-    layout->setContentsMargins(5, 0, 5, 3);
+    layout->setContentsMargins(5, 0, 5, 1);
     layout->setSpacing(0);
     layout->addWidget(collectionIconLabel);
     layout->addSpacing(5);
@@ -208,6 +197,9 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
     layout->addWidget(_timeLabel);
 
     layout->addWidget(new QLabel(), 1); //placeholder
+    layout->addWidget(_paging);
+    layout->addWidget(createVerticalLine());
+    layout->addSpacing(2);
 
     if (output->isTreeModeSupported())
         layout->addWidget(_treeButton, 0, Qt::AlignRight);
@@ -216,7 +208,7 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
         layout->addWidget(_textButton, 0, Qt::AlignRight);
 
     layout->addSpacing(3);
-    layout->addWidget(line);
+    layout->addWidget(createVerticalLine());
     layout->addWidget(_maxButton, 0, Qt::AlignRight);
     setLayout(layout);
 }
@@ -262,6 +254,23 @@ void OutputResultHeader::maximizePart()
     }
 
     _maximized = !_maximized;
+}
+
+QLabel *OutputResultHeader::createLabelWithIcon(const QIcon &icon)
+{
+    QPixmap pixmap = icon.pixmap(16, 16);
+    QLabel *label = new QLabel;
+    label->setPixmap(pixmap);
+    return label;
+}
+
+QFrame *OutputResultHeader::createVerticalLine()
+{
+    QFrame *vline = new QFrame();
+    vline->setFrameShape(QFrame::VLine);
+    vline->setFrameShadow(QFrame::Sunken);
+    vline->setFixedWidth(5);
+    return vline;
 }
 
 

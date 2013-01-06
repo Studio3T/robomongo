@@ -273,6 +273,7 @@ void QueryWidget::handle(ScriptExecutedEvent *event)
 
     displayData(event->result.results);
     _scriptWidget->statusBar()->setCurrentDatabase(event->result.currentDatabase, event->result.isCurrentDatabaseValid);
+    _scriptWidget->statusBar()->setCurrentServer(event->result.currentServer, event->result.isCurrentServerValid);
     _scriptWidget->setScriptFocus();
     setUpdatesEnabled(true);
 }

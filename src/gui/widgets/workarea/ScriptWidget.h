@@ -58,9 +58,11 @@ namespace Robomongo
     public:
         TopStatusBar(MongoShell *shell);
         void setCurrentDatabase(const QString &database, bool isValid = true);
+        void setCurrentServer(const QString &address, bool isValid = true);
 
     private:
         QLabel *_currentDatabaseLabel;
+        QLabel *_currentServerLabel;
         MongoShell *_shell;
         QColor _textColor;
     };

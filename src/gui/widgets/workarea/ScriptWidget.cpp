@@ -185,7 +185,7 @@ TopStatusBar::TopStatusBar(MongoShell *shell) :
 //    p.setColor(QPalette::Background, Qt::white);
 //    setPalette(p);
 
-    _textColor = palette().text().color().lighter(150);
+    _textColor = palette().text().color().lighter(200);
 
     QIcon dbIcon = GuiRegistry::instance().databaseIcon();
     QPixmap dbPixmap = dbIcon.pixmap(16, 16, QIcon::Disabled);
@@ -196,16 +196,17 @@ TopStatusBar::TopStatusBar(MongoShell *shell) :
     QPixmap serverPixmap = serverIcon.pixmap(16, 16, QIcon::Disabled);
     QLabel *serverIconLabel = new QLabel;
     serverIconLabel->setPixmap(serverPixmap);
-    QLabel *currentServerLabel = new ElidedLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(_shell->server()->connectionRecord()->getReadableName()));
-    currentServerLabel->setDisabled(true);
+
+    _currentServerLabel = new ElidedLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(_shell->server()->connectionRecord()->getFullAddress()));
+    _currentServerLabel->setDisabled(true);
 
     _currentDatabaseLabel = new ElidedLabel();
     _currentDatabaseLabel->setDisabled(true);
-//    _currentDatabaseLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored);
+
     QHBoxLayout *topLayout = new QHBoxLayout;
     topLayout->setContentsMargins(2, 7, 2, 3);
     topLayout->addWidget(serverIconLabel, 0, Qt::AlignLeft);
-    topLayout->addWidget(currentServerLabel, 0, Qt::AlignLeft);
+    topLayout->addWidget(_currentServerLabel, 0, Qt::AlignLeft);
     topLayout->addSpacing(10);
     topLayout->addWidget(dbIconLabel, 0, Qt::AlignLeft);
     topLayout->addWidget(_currentDatabaseLabel, 0, Qt::AlignLeft);
@@ -223,5 +224,16 @@ void TopStatusBar::setCurrentDatabase(const QString &database, bool isValid)
             .arg(database);
 
     _currentDatabaseLabel->setText(text);
-//    _currentDatabaseLabel->setFixedSize(_currentDatabaseLabel->sizeHint());
+    //    _currentDatabaseLabel->setFixedSize(_currentDatabaseLabel->sizeHint());
+}
+
+void TopStatusBar::setCurrentServer(const QString &address, bool isValid)
+{
+    QString color = isValid ? _textColor.name() : "red";
+
+    QString text = QString("<font color='%1'>%2</font>")
+            .arg(color)
+            .arg(address);
+
+    _currentServerLabel->setText(text);
 }

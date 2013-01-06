@@ -30,12 +30,18 @@ namespace Robomongo
     {
     public:
         MongoShellExecResult() { }
-        MongoShellExecResult(const QList<MongoShellResult> &results, const QString &currentDatabase, bool isCurrentDatabaseValid) :
+        MongoShellExecResult(const QList<MongoShellResult> &results,
+                             const QString &currentServer, bool isCurrentServerValid,
+                             const QString &currentDatabase, bool isCurrentDatabaseValid) :
             results(results),
+            currentServer(currentServer),
+            isCurrentServerValid(isCurrentServerValid),
             currentDatabase(currentDatabase),
             isCurrentDatabaseValid(isCurrentDatabaseValid) { }
 
         QList<MongoShellResult> results;
+        QString currentServer;
+        bool isCurrentServerValid;
         QString currentDatabase;
         bool isCurrentDatabaseValid;
     };

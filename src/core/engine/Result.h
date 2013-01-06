@@ -28,12 +28,18 @@ namespace Robomongo
     {
     public:
         ExecResult() {}
-        ExecResult(const QList<Result> &results, const QString &currentDatabaseName, bool isCurrentDatabaseValid) :
+        ExecResult(const QList<Result> &results,
+                   const QString &currentServerName, bool isCurrentServerValid,
+                   const QString &currentDatabaseName, bool isCurrentDatabaseValid) :
             results(results),
+            currentServerName(currentServerName),
+            isCurrentServerValid(isCurrentServerValid),
             currentDatabaseName(currentDatabaseName),
             isCurrentDatabaseValid(isCurrentDatabaseValid){}
 
         QList<Result> results;
+        QString currentServerName;
+        bool isCurrentServerValid;
         QString currentDatabaseName;
         bool isCurrentDatabaseValid;
     };

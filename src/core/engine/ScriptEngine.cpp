@@ -177,19 +177,26 @@ Result ScriptEngine::prepareResult(const QString &output, const QList<mongo::BSO
 ExecResult ScriptEngine::prepareExecResult(const QList<Result> &results)
 {
     const char *script =
+        "__robomongoServerAddress = '[invalid connection]'; \n"
+        "__robomongoServerIsValid = false; \n"
         "__robomongoDbName = '[invalid database]'; \n"
         "__robomongoDbIsValid = false; \n"
         "if (typeof db == 'object' && db != null && db instanceof DB) { \n"
+        "    __robomongoServerAddress = db.getMongo().host; \n"
+        "    __robomongoServerIsValid = true; \n"
         "    __robomongoDbName = db.getName();\n "
         "    __robomongoDbIsValid = true; \n "
         "} \n";
 
     _scope->exec(script, "(getdbname)", false, false, false);
 
+    QString serverName = getString("__robomongoServerAddress");
+    bool serverIsValid = _scope->getBoolean("__robomongoServerIsValid");
+
     QString dbName = getString("__robomongoDbName");
     bool dbIsValid = _scope->getBoolean("__robomongoDbIsValid");
 
-    return ExecResult(results, dbName, dbIsValid);
+    return ExecResult(results, serverName, serverIsValid, dbName, dbIsValid);
 }
 
 QString ScriptEngine::getString(const char *fieldName)

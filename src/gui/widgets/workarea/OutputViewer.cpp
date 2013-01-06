@@ -158,14 +158,14 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
     // Maximaze button
     _maxButton = new QPushButton;
     _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
-    _maxButton->setFixedSize(18, 18);
+    _maxButton->setFixedSize(24, 24);
     _maxButton->setFlat(true);
     connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart()));
 
     // Tree mode button
     _treeButton = new QPushButton;
     _treeButton->setIcon(GuiRegistry::instance().treeIcon());
-    _treeButton->setFixedSize(18, 18);
+    _treeButton->setFixedSize(24, 24);
     _treeButton->setFlat(true);
     _treeButton->setCheckable(true);
     _treeButton->setChecked(true);
@@ -174,8 +174,9 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
     // Text mode button
     _textButton = new QPushButton;
     _textButton->setIcon(GuiRegistry::instance().textIcon());
-    _textButton->setFixedSize(18, 18);
+    _textButton->setFixedSize(24, 24);
     _textButton->setFlat(true);
+    _textButton->setCheckable(true);
     connect(_textButton, SIGNAL(clicked()), this, SLOT(showText()));
 
     QLabel *timeIconLabel = createLabelWithIcon(GuiRegistry::instance().timeIcon());
@@ -221,14 +222,18 @@ void OutputResultHeader::mouseDoubleClickEvent(QMouseEvent *)
 void OutputResultHeader::showText()
 {
     _textButton->setIcon(GuiRegistry::instance().textHighlightedIcon());
+    _textButton->setChecked(true);
     _treeButton->setIcon(GuiRegistry::instance().treeIcon());
+    _treeButton->setChecked(false);
     outputWidget->showText();
 }
 
 void OutputResultHeader::showTree()
 {
     _textButton->setIcon(GuiRegistry::instance().textIcon());
+    _textButton->setChecked(false);
     _treeButton->setIcon(GuiRegistry::instance().treeHighlightedIcon());
+    _treeButton->setChecked(true);
     outputWidget->showTree();
 }
 

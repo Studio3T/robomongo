@@ -14,6 +14,7 @@
 #include "EventBus.h"
 #include "MongoClientThread.h"
 #include "settings/ConnectionSettings.h"
+#include "domain/MongoShellResult.h"
 
 using namespace Robomongo;
 using namespace std;
@@ -197,8 +198,15 @@ void MongoClient::handle(ExecuteQueryRequest *event)
     {
         boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
 
+        QueryInfo &info = event->queryInfo;
+
+        QString ns = QString("%1.%2").arg(info.databaseName, info.collectionName);
+
         QList<BSONObj> docs;
-        auto_ptr<DBClientCursor> cursor = conn->get()->query(event->nspace.toStdString(), BSONObj(), 100);
+        auto_ptr<DBClientCursor> cursor = conn->get()->query(
+            ns.toStdString(), info.query, info.limit, info.skip,
+            info.fields.nFields() ? &info.fields : 0, info.options, info.batchSize);
+
         while (cursor->more())
         {
             BSONObj bsonObj = cursor->next();
@@ -207,7 +215,7 @@ void MongoClient::handle(ExecuteQueryRequest *event)
 
         conn->done();
 
-        reply(event->sender(), new ExecuteQueryResponse(this, docs));
+        reply(event->sender(), new ExecuteQueryResponse(this, event->resultIndex, info, docs));
     }
     catch(DBException &ex)
     {

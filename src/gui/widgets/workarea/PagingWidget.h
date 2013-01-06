@@ -21,6 +21,10 @@ namespace Robomongo
         void leftClicked(int skip, int limit);
         void rightClicked(int skip, int limit);
 
+    private slots:
+        void leftButton_clicked();
+        void rightButton_clicked();
+
     private:
 
         QPushButton *createButtonWithIcon(const QIcon &icon);

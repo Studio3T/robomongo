@@ -10,12 +10,14 @@
 #include "OutputWidget.h"
 #include "MainWindow.h"
 #include "PagingWidget.h"
+#include "domain/MongoShell.h"
 
 using namespace Robomongo;
 
-OutputViewer::OutputViewer(bool textMode, QWidget *parent) :
+OutputViewer::OutputViewer(bool textMode, MongoShell *shell, QWidget *parent) :
     QFrame(parent),
-    _textMode(textMode)
+    _textMode(textMode),
+    _shell(shell)
 {
     QString style = QString("Robomongo--OutputViewer { background-color: %1; border-radius: 6px; }")
         .arg(QColor("#083047").lighter(660).name());
@@ -44,10 +46,10 @@ OutputViewer::OutputViewer(bool textMode, QWidget *parent) :
 
 OutputViewer::~OutputViewer()
 {
-    int t = 56;
+
 }
 
-void OutputViewer::doSomething(const QList<MongoShellResult> &results)
+void OutputViewer::present(const QList<MongoShellResult> &results)
 {
     int count = _splitter->count();
 
@@ -68,7 +70,7 @@ void OutputViewer::doSomething(const QList<MongoShellResult> &results)
             output = new OutputWidget(shellResult.documents);
         }
 
-        OutputResult *result = new OutputResult(this, output);
+        OutputResult *result = new OutputResult(this, output, shellResult.queryInfo);
         if (GuiRegistry::instance().mainWindow()->textMode())
             result->header()->showText();
         else
@@ -84,6 +86,24 @@ void OutputViewer::doSomething(const QList<MongoShellResult> &results)
 
         _splitter->addWidget(result);
     }
+}
+
+void OutputViewer::updatePart(int partIndex, const QueryInfo &queryInfo, const QList<MongoDocumentPtr> &documents)
+{
+    if (partIndex >= _splitter->count())
+        return;
+
+    OutputResult *output = (OutputResult *) _splitter->widget(partIndex);
+
+    //output->header()->paging()->setLimit(queryInfo.limit);
+    output->header()->paging()->setSkip(queryInfo.skip);
+    output->setQueryInfo(queryInfo);
+    output->outputWidget->update(documents);
+
+    if (GuiRegistry::instance().mainWindow()->textMode())
+        output->header()->showText();
+    else
+        output->header()->showTree();
 }
 
 void OutputViewer::toggleOrientation()
@@ -132,9 +152,10 @@ void OutputViewer::restoreSize()
     }
 }
 
-OutputResult::OutputResult(OutputViewer *viewer, OutputWidget *output, QWidget *parent) :
+OutputResult::OutputResult(OutputViewer *viewer, OutputWidget *output, const QueryInfo &info, QWidget *parent) :
     outputWidget(output),
-    outputViewer(viewer)
+    outputViewer(viewer),
+    _queryInfo(info)
 {
     setContentsMargins(0, 0, 0, 0);
     _header = new OutputResultHeader(this, output);
@@ -150,6 +171,38 @@ OutputResult::OutputResult(OutputViewer *viewer, OutputWidget *output, QWidget *
     layout->addWidget(_header);
     layout->addWidget(output, 1);
     setLayout(layout);
+
+    connect(_header->paging(), SIGNAL(leftClicked(int,int)), this, SLOT(paging_leftClicked(int,int)));
+    connect(_header->paging(), SIGNAL(rightClicked(int,int)), this, SLOT(paging_rightClicked(int,int)));
+
+}
+
+void OutputResult::setQueryInfo(const QueryInfo &queryInfo)
+{
+    _queryInfo = queryInfo;
+}
+
+void OutputResult::paging_leftClicked(int skip, int limit)
+{
+    int s = skip - limit;
+
+    if (s < 0)
+        s = 0;
+
+    QueryInfo info(_queryInfo);
+    info.limit = limit;
+    info.skip = s;
+
+    outputViewer->shell()->query(0, info);
+}
+
+void OutputResult::paging_rightClicked(int skip, int limit)
+{
+    QueryInfo info(_queryInfo);
+    info.limit = limit;
+    info.skip = skip + limit;
+
+    outputViewer->shell()->query(0, info);
 }
 
 OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *output, QWidget *parent) : QFrame(parent),

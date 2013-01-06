@@ -74,7 +74,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
 
     // Bson widget
     _bsonWidget = new BsonWidget(NULL);
-    _viewer = new OutputViewer(_textMode);
+    _viewer = new OutputViewer(_textMode, _shell);
     _outputLabel = new QLabel();
     _outputLabel->setContentsMargins(0, 5, 0, 0);
     _outputLabel->setVisible(false);
@@ -246,6 +246,8 @@ void QueryWidget::vm_queryUpdated(const QString & query)
 
 void QueryWidget::handle(DocumentListLoadedEvent *event)
 {
+    _viewer->updatePart(event->resultIndex, event->queryInfo, event->list);
+
 /*    _queryText->setText(event->query);
     QList<MongoShellResult> list;
     list << MongoShellResult("", event->list, "", false);
@@ -289,7 +291,7 @@ void QueryWidget::displayData(const QList<MongoShellResult> &results)
         _outputLabel->setVisible(false);
     }
 
-    _viewer->doSomething(results);
+    _viewer->present(results);
 }
 
 /*

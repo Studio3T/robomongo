@@ -21,6 +21,8 @@ PagingWidget::PagingWidget()
 
     QPushButton *leftButton = createButtonWithIcon(GuiRegistry::instance().leftIcon());
     QPushButton *rightButton = createButtonWithIcon(GuiRegistry::instance().rightIcon());
+    connect(leftButton, SIGNAL(clicked()), this, SLOT(leftButton_clicked()));
+    connect(rightButton, SIGNAL(clicked()), this, SLOT(rightButton_clicked()));
 
     QHBoxLayout *layout = new QHBoxLayout();
     layout->setSpacing(0);
@@ -55,5 +57,16 @@ QPushButton *PagingWidget::createButtonWithIcon(const QIcon &icon)
     return button;
 }
 
+void PagingWidget::leftButton_clicked()
+{
+    int limit = _limitEdit->text().toInt();
+    int skip = _skipEdit->text().toInt();
+    emit leftClicked(skip, limit);
+}
 
-
+void PagingWidget::rightButton_clicked()
+{
+    int limit = _limitEdit->text().toInt();
+    int skip = _skipEdit->text().toInt();
+    emit rightClicked(skip, limit);
+}

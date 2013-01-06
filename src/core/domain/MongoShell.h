@@ -20,9 +20,10 @@ namespace Robomongo
         void open(MongoCollection *collection);
         void open(const QString &script, const QString &dbName = QString());
 
+        void query(int resultIndex, const QueryInfo &info);
+
         MongoServer *server() const { return _server; }
         QString query() const { return _query; }
-
 
     protected slots:
         void handle(ExecuteQueryResponse *event);

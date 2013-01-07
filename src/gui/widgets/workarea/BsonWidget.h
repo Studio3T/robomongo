@@ -90,10 +90,12 @@ namespace Robomongo
         /*
         ** Constructor
         */
-        JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects)
+        JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects) : exit(false)
         {
             _bsonObjects = bsonObjects;
         }
+
+        volatile bool exit;
 
     protected:
 
@@ -113,8 +115,19 @@ namespace Robomongo
 
                 std::string stdJson = doc->bsonObj().jsonString(mongo::TenGen, 1);
 
+                if (exit) {
+                    emit finished();
+                    return;
+                }
+
                 sb << stdJson;
                 QString json = QString::fromStdString(sb.str());
+
+                if (exit) {
+                    emit finished();
+                    return;
+                }
+
                 emit partReady(json);
 
                 position++;

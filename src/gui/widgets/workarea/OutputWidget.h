@@ -8,6 +8,7 @@ namespace Robomongo
 {
     class RoboScintilla;
     class BsonWidget;
+    class JsonPrepareThread;
 
     class OutputWidget : public QWidget
     {
@@ -48,8 +49,8 @@ namespace Robomongo
         QString _text;
         QList<MongoDocumentPtr> _documents;
 
-
         QStackedWidget *_stack;
+        JsonPrepareThread *_thread;
 
         bool _sourceIsText; // if false - source is documents
 

@@ -120,9 +120,6 @@ void OutputWidget::showText()
             if (_documents.count() > 0) {
                 _log->setText("Loading...");
 
-                if (_thread)
-                    _thread->exit = true;
-
                 _thread = new JsonPrepareThread(_documents);
                 connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared()));
                 connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));

@@ -212,7 +212,7 @@ void MongoClient::handle(ExecuteQueryRequest *event)
 
         while (cursor->more())
         {
-            BSONObj &bsonObj = cursor->next();
+            BSONObj bsonObj = cursor->next();
             docs.append(bsonObj.getOwned());
         }
 

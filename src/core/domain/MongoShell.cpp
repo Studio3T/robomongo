@@ -38,7 +38,7 @@ void MongoShell::open(const QString &script, const QString &dbName)
 
 void MongoShell::query(int resultIndex, const QueryInfo &info)
 {
-    _client->send(new ExecuteQueryRequest(this, info));
+    _client->send(new ExecuteQueryRequest(this, resultIndex, info));
 }
 
 void MongoShell::handle(ExecuteQueryResponse *event)

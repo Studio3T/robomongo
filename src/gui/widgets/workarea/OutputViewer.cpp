@@ -17,7 +17,8 @@ using namespace Robomongo;
 OutputViewer::OutputViewer(bool textMode, MongoShell *shell, QWidget *parent) :
     QFrame(parent),
     _textMode(textMode),
-    _shell(shell)
+    _shell(shell),
+    _splitter(NULL)
 {
     QString style = QString("Robomongo--OutputViewer { background-color: %1; border-radius: 6px; }")
         .arg(QColor("#083047").lighter(660).name());
@@ -95,7 +96,6 @@ void OutputViewer::updatePart(int partIndex, const QueryInfo &queryInfo, const Q
 
     OutputResult *output = (OutputResult *) _splitter->widget(partIndex);
 
-    //output->header()->paging()->setLimit(queryInfo.limit);
     output->header()->paging()->setSkip(queryInfo.skip);
     output->setQueryInfo(queryInfo);
     output->outputWidget->update(documents);

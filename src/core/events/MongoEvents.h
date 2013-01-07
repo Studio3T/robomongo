@@ -162,7 +162,7 @@ namespace Robomongo
     {
         R_EVENT
 
-        ExecuteQueryRequest(QObject *sender, const QueryInfo &queryInfo) :
+        ExecuteQueryRequest(QObject *sender, int resultIndex, const QueryInfo &queryInfo) :
             Event(sender),
             resultIndex(resultIndex),
             queryInfo(queryInfo) {}

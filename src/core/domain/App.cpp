@@ -47,7 +47,7 @@ MongoServer *App::openServer(ConnectionSettings *connection,
 void App::closeServer(MongoServer *server)
 {
     // Do nothing, if this server not owned by this App.
-    if (_servers.contains(server))
+    if (!_servers.contains(server))
         return;
 
     _servers.removeOne(server);
@@ -101,7 +101,7 @@ MongoShell *App::openShell(ConnectionSettings *connection, const QString &script
 void App::closeShell(MongoShell *shell)
 {
     // Do nothing, if this shell not owned by this App.
-    if (_shells.contains(shell))
+    if (!_shells.contains(shell))
         return;
 
     _shells.removeOne(shell);

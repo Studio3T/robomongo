@@ -88,6 +88,8 @@ MongoShell *App::openShell(ConnectionSettings *connection, const QString &script
 
     if (execute)
         shell->open(script);
+    else
+        shell->open("");
 
     return shell;
 }

@@ -215,14 +215,16 @@ namespace Robomongo
     {
         R_EVENT
 
-        ExecuteScriptResponse(QObject *sender, const ExecResult &result) :
+        ExecuteScriptResponse(QObject *sender, const ExecResult &result, bool empty) :
             Event(sender),
-            result(result) { }
+            result(result),
+            empty(empty) { }
 
         ExecuteScriptResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
 
         ExecResult result;
+        bool empty;
     };
 
 
@@ -319,11 +321,13 @@ namespace Robomongo
     {
         R_EVENT
 
-        ScriptExecutedEvent(QObject *sender, const MongoShellExecResult &result) :
+        ScriptExecutedEvent(QObject *sender, const MongoShellExecResult &result, bool empty) :
             Event(sender),
-            result(result) { }
+            result(result),
+            empty(empty) { }
 
         MongoShellExecResult result;
+        bool empty;
     };
 
 }

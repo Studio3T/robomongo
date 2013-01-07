@@ -40,7 +40,8 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     _bus(AppRegistry::instance().bus()),
     _keyboard(AppRegistry::instance().keyboard()),
     _viewer(NULL),
-    _textMode(textMode)
+    _textMode(textMode),
+    _initialized(false)
 {
     setObjectName("queryWidget");
 
@@ -97,8 +98,8 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     layout->setSpacing(0);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(_scriptWidget, 0, Qt::AlignTop);
-    layout->addWidget(_outputLabel, 0, Qt::AlignTop);
     layout->addWidget(line);
+    layout->addWidget(_outputLabel, 0, Qt::AlignTop);
     //layout->addSpacing(2);
     layout->addWidget(_viewer, 1);
     setLayout(layout);
@@ -109,8 +110,6 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
 */
 QueryWidget::~QueryWidget()
 {
-    int a = 67;
-    //delete _viewModel;
 }
 
 /*
@@ -275,20 +274,22 @@ void QueryWidget::handle(ScriptExecutedEvent *event)
     if (_scriptWidget->text().isEmpty())
         _scriptWidget->setText(_shell->query());
 
-    displayData(event->result.results);
+    displayData(event->result.results, event->empty);
     _scriptWidget->statusBar()->setCurrentDatabase(event->result.currentDatabase, event->result.isCurrentDatabaseValid);
     _scriptWidget->statusBar()->setCurrentServer(event->result.currentServer, event->result.isCurrentServerValid);
     _scriptWidget->setScriptFocus();
     setUpdatesEnabled(true);
 }
 
-void QueryWidget::displayData(const QList<MongoShellResult> &results)
+void QueryWidget::displayData(const QList<MongoShellResult> &results, bool empty)
 {
-    if (results.count() == 0 && !_scriptWidget->text().isEmpty()) {
-        _outputLabel->setText("Script executed successfully, but there is no results to show.");
-        _outputLabel->setVisible(true);
-    } else {
-        _outputLabel->setVisible(false);
+    if (!empty) {
+        if (results.count() == 0 && !_scriptWidget->text().isEmpty()) {
+            _outputLabel->setText("  Script executed successfully, but there is no results to show.");
+            _outputLabel->setVisible(true);
+        } else {
+            _outputLabel->setVisible(false);
+        }
     }
 
     _viewer->present(results);

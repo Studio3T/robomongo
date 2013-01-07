@@ -29,7 +29,7 @@ namespace Robomongo
         QString _currentDatabase;
         bool _isCurrentDatabaseValid;
 
-        Result prepareResult(const QString &output, const QList<mongo::BSONObj> objects);
+        Result prepareResult(const QString &output, const QList<mongo::BSONObj> objects, qint64 elapsedms);
         ExecResult prepareExecResult(const QList<Result> &results);
 
         QString getString(const char *fieldName);

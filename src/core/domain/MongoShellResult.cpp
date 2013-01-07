@@ -3,10 +3,11 @@
 
 using namespace Robomongo;
 
-MongoShellResult::MongoShellResult(const QString &response, const QList<MongoDocumentPtr> &documents, const QueryInfo &queryInfo) :
+MongoShellResult::MongoShellResult(const QString &response, const QList<MongoDocumentPtr> &documents, const QueryInfo &queryInfo, qint64 elapsedms) :
     response(response),
     documents(documents),
-    queryInfo(queryInfo) { }
+    queryInfo(queryInfo),
+    elapsedms(elapsedms) { }
 
 QList<MongoShellResult> MongoShellResult::fromResult(QList<Result> results)
 {
@@ -19,7 +20,7 @@ QList<MongoShellResult> MongoShellResult::fromResult(QList<Result> results)
             list.append(doc);
         }
 
-        shellResults.append(MongoShellResult(result.response, list, result.queryInfo));
+        shellResults.append(MongoShellResult(result.response, list, result.queryInfo, result.elapsedms));
     }
 
     return shellResults;

@@ -77,7 +77,9 @@ void OutputViewer::present(const QList<MongoShellResult> &results)
         else
             result->header()->showTree();
 
-        result->header()->setTime("0.01 ms");
+        double secs = shellResult.elapsedms / (double) 1000;
+
+        result->header()->setTime(QString("%1 sec.").arg(secs));
 
         if (!shellResult.queryInfo.isNull) {
             result->header()->setCollection(shellResult.queryInfo.collectionName);
@@ -249,24 +251,20 @@ OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *outpu
     _textButton->setCheckable(true);
     connect(_textButton, SIGNAL(clicked()), this, SLOT(showText()));
 
-    QLabel *timeIconLabel = createLabelWithIcon(GuiRegistry::instance().timeIcon());
-    QLabel *collectionIconLabel = createLabelWithIcon(GuiRegistry::instance().collectionIcon());
-
-    _timeLabel = new QLabel;
-    _collectionLabel = new QLabel;
+    _collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon());
+    _timeIndicator = new Indicator(GuiRegistry::instance().timeIcon());
     _paging = new PagingWidget();
 
-    QHBoxLayout *layout = new QHBoxLayout();
-    layout->setContentsMargins(5, 0, 5, 1);
-    layout->setSpacing(0);
-    layout->addWidget(collectionIconLabel);
-    layout->addSpacing(5);
-    layout->addWidget(_collectionLabel);
-    layout->addSpacing(13);
-    layout->addWidget(timeIconLabel);
-    layout->addSpacing(5);
-    layout->addWidget(_timeLabel);
+    _collectionIndicator->hide();
+    _timeIndicator->hide();
+    _paging->hide();
 
+    QHBoxLayout *layout = new QHBoxLayout();
+    layout->setContentsMargins(2, 0, 5, 1);
+    layout->setSpacing(0);
+
+    layout->addWidget(_collectionIndicator);
+    layout->addWidget(_timeIndicator);
     layout->addWidget(new QLabel(), 1); //placeholder
     layout->addWidget(_paging);
     layout->addWidget(createVerticalLine());
@@ -311,12 +309,14 @@ void OutputResultHeader::showTree()
 
 void OutputResultHeader::setTime(const QString &time)
 {
-    _timeLabel->setText(time);
+    _timeIndicator->setVisible(!time.isEmpty());
+    _timeIndicator->setText(time);
 }
 
-void OutputResultHeader::setCollection(const QString collection)
+void OutputResultHeader::setCollection(const QString &collection)
 {
-    _collectionLabel->setText(collection);
+    _collectionIndicator->setVisible(!collection.isEmpty());
+    _collectionIndicator->setText(collection);
 }
 
 void OutputResultHeader::maximizePart()
@@ -350,4 +350,30 @@ QFrame *OutputResultHeader::createVerticalLine()
     return vline;
 }
 
+Indicator::Indicator(const QIcon &icon)
+{
+    QLabel *iconLabel = createLabelWithIcon(icon);
+    _label = new QLabel();
 
+    QHBoxLayout *layout = new QHBoxLayout();
+    layout->setSpacing(0);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(iconLabel);
+    layout->addSpacing(7);
+    layout->addWidget(_label);
+    layout->addSpacing(14);
+    setLayout(layout);
+}
+
+void Indicator::setText(const QString &text)
+{
+    _label->setText(text);
+}
+
+QLabel *Indicator::createLabelWithIcon(const QIcon &icon)
+{
+    QPixmap pixmap = icon.pixmap(16, 16);
+    QLabel *label = new QLabel;
+    label->setPixmap(pixmap);
+    return label;
+}

@@ -47,11 +47,13 @@ namespace Robomongo
     public:
         Result(const QString &response,
                const QList<mongo::BSONObj> &documents,
-               const QueryInfo &queryInfo);
+               const QueryInfo &queryInfo,
+               qint64 elapsedms);
 
         QString response;
         QList<mongo::BSONObj> documents;
         QueryInfo queryInfo;
+        qint64 elapsedms;
     };
 
     class ExecResult

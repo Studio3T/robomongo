@@ -14,6 +14,17 @@ namespace Robomongo
     class OutputResult;
     class OutputViewer;
 
+    class Indicator : public QWidget
+    {
+        Q_OBJECT
+    public:
+        Indicator(const QIcon &icon);
+        void setText(const QString &text);
+    private:
+        QLabel *createLabelWithIcon(const QIcon &icon);
+        QLabel *_label;
+    };
+
     class OutputResultHeader : public QFrame
     {
         Q_OBJECT
@@ -31,7 +42,7 @@ namespace Robomongo
         void showText();
         void showTree();
         void setTime(const QString &time);
-        void setCollection(const QString collection);
+        void setCollection(const QString &collection);
         void maximizePart();
 
     private:
@@ -40,8 +51,8 @@ namespace Robomongo
         QPushButton *_treeButton;
         QPushButton *_textButton;
         QPushButton *_maxButton;
-        QLabel *_timeLabel;
-        QLabel *_collectionLabel;
+        Indicator *_collectionIndicator;
+        Indicator *_timeIndicator;
         PagingWidget *_paging;
         bool _maximized;
         bool _treeMode;

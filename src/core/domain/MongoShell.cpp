@@ -59,5 +59,5 @@ void MongoShell::handle(ExecuteScriptResponse *event)
                                 event->result.currentServerName, event->result.isCurrentServerValid,
                                 event->result.currentDatabaseName, event->result.isCurrentDatabaseValid);
 
-    _bus->publish(new ScriptExecutedEvent(this, result));
+    _bus->publish(new ScriptExecutedEvent(this, result, event->empty));
 }

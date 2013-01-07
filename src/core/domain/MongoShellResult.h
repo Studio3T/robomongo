@@ -10,11 +10,12 @@ namespace Robomongo
     {
     public:
         MongoShellResult(const QString &response, const QList<MongoDocumentPtr> &documents,
-                         const QueryInfo &queryInfo);
+                         const QueryInfo &queryInfo, qint64 elapsedms);
 
         QString response;
         QList<MongoDocumentPtr> documents;
         QueryInfo queryInfo;
+        qint64 elapsedms;
 
         static QList<MongoShellResult> fromResult(QList<Result> result);
     };

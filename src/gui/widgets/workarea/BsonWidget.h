@@ -93,10 +93,7 @@ namespace Robomongo
         */
         JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects) : exit(false)
         {
-            foreach(MongoDocumentPtr doc, bsonObjects) {
-                MongoDocumentPtr owned(new MongoDocument(doc->bsonObj().getOwned()));
-                _bsonObjects.append(owned);
-            }
+            _bsonObjects = bsonObjects;
         }
 
         volatile bool exit;

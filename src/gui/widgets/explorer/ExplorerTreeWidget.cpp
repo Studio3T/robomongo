@@ -385,7 +385,7 @@ void ExplorerTreeWidget::ui_dbRepair()
 
 void ExplorerTreeWidget::ui_dbOpenShell()
 {
-    openCurrentDatabaseShell("db");
+    openCurrentDatabaseShell("");
 }
 
 void ExplorerTreeWidget::ui_serverHostInfo()

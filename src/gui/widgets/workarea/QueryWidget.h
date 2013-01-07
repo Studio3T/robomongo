@@ -103,7 +103,7 @@ namespace Robomongo
 
         bool _textMode;
 
-        void displayData(const QList<MongoShellResult> &results);
+        void displayData(const QList<MongoShellResult> &results, bool empty);
 
         /*
         ** Bson widget
@@ -127,6 +127,11 @@ namespace Robomongo
         EventBus *_bus;
         App *_app;
         KeyboardManager *_keyboard;
+
+        /**
+         * @brief QueryWidget initialized and connected to the shell
+         */
+        bool _initialized;
     };
 }
 

@@ -19,6 +19,7 @@
 #include "js/jsstr.h"
 #include "mongo/bson/stringdata.h"
 #include "mongo/client/dbclient.h"
+#include <QElapsedTimer>
 
 
 using namespace Robomongo;
@@ -111,8 +112,12 @@ ExecResult ScriptEngine::exec(const QString &script, const QString &dbName)
 
         if (true /* ! wascmd */) {
             try {
+                QElapsedTimer timer;
+                timer.start();
                 if ( _scope->exec( array.data() , "(shell)" , false , true , false ) )
                     _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false );
+
+                qint64 elapsed = timer.elapsed();
 
                 std::string logs = __logs.str();
 
@@ -121,7 +126,7 @@ ExecResult ScriptEngine::exec(const QString &script, const QString &dbName)
                 QList<mongo::BSONObj> list = QList<mongo::BSONObj>::fromVector(objs);
 
                 if (!answer.isEmpty() || list.count() > 0)
-                    results.append(prepareResult(answer, list));
+                    results.append(prepareResult(answer, list, elapsed));
             }
             catch ( std::exception& e ) {
                 std::cout << "error:" << e.what() << endl;
@@ -142,7 +147,7 @@ void ScriptEngine::use(const QString &dbName)
     }
 }
 
-Result ScriptEngine::prepareResult(const QString &output, const QList<mongo::BSONObj> objects)
+Result ScriptEngine::prepareResult(const QString &output, const QList<mongo::BSONObj> objects, qint64 elapsedms)
 {
     char *script =
         "__robomongoQuery = false; \n"
@@ -183,10 +188,10 @@ Result ScriptEngine::prepareResult(const QString &output, const QList<mongo::BSO
 
         QueryInfo info = QueryInfo(serverAddress, dbName, collectionName,
                                    query, fields, limit, skip, batchSize, options, special);
-        return Result(output, objects, info);
+        return Result(output, objects, info, elapsedms);
     }
 
-    return Result(output, objects, QueryInfo());
+    return Result(output, objects, QueryInfo(), elapsedms);
 }
 
 ExecResult ScriptEngine::prepareExecResult(const QList<Result> &results)

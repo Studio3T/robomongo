@@ -231,7 +231,7 @@ void MongoClient::handle(ExecuteScriptRequest *event)
     try
     {
         ExecResult result = _scriptEngine->exec(event->script, event->databaseName);
-        reply(event->sender(), new ExecuteScriptResponse(this, result));
+        reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.isEmpty()));
     }
     catch(DBException &ex)
     {

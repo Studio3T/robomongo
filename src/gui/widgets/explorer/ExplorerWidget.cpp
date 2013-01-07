@@ -119,7 +119,7 @@ void ExplorerWidget::ui_openShellActionTriggered()
     if (!serverItem)
         return;
 
-    _app->openShell(serverItem->server(), "db.getMongo()");
+    _app->openShell(serverItem->server(), "");
 }
 
 void ExplorerWidget::increaseProgress()

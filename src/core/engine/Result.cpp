@@ -3,7 +3,8 @@
 using namespace Robomongo;
 
 Result::Result(const QString &response, const QList<mongo::BSONObj> &documents,
-               const QueryInfo &queryInfo) :
+               const QueryInfo &queryInfo, qint64 elapsedms) :
     response(response),
     documents(documents),
-    queryInfo(queryInfo) { }
+    queryInfo(queryInfo),
+    elapsedms(elapsedms) { }

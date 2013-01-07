@@ -41,6 +41,7 @@ PagingWidget::PagingWidget()
 void PagingWidget::setSkip(int skip)
 {
     _skipEdit->setText(QString::number(skip));
+    show();
 }
 
 void PagingWidget::setLimit(int limit)
@@ -49,6 +50,7 @@ void PagingWidget::setLimit(int limit)
         limit = 50;
 
     _limitEdit->setText(QString::number(limit));
+    show();
 }
 
 QPushButton *PagingWidget::createButtonWithIcon(const QIcon &icon)

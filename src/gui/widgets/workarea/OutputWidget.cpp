@@ -110,10 +110,10 @@ void OutputWidget::showText()
 
             if (_documents.count() > 0) {
                 _log->setText("Loading...");
-                JsonPrepareThread *thread = new JsonPrepareThread(_documents);
-                connect(thread, SIGNAL(finished()), this, SLOT(jsonPrepared()));
-                connect(thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
-                thread->start();
+                _thread = new JsonPrepareThread(_documents);
+                connect(_thread, SIGNAL(finished()), this, SLOT(jsonPrepared()));
+                connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
+                _thread->start();
             }
         }
 
@@ -157,6 +157,14 @@ void OutputWidget::jsonPrepared()
 
 void OutputWidget::jsonPartReady(const QString &json)
 {
+    // check that this is our current thread
+    JsonPrepareThread *thread = (JsonPrepareThread *) sender();
+    if (thread != _thread) {
+        // close previous thread
+        thread->exit = true;
+        return;
+    }
+
     _log->setUpdatesEnabled(false);
 
     if (_isFirstPartRendered)

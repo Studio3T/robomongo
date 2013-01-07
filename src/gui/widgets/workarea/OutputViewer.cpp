@@ -97,10 +97,11 @@ void OutputViewer::updatePart(int partIndex, const QueryInfo &queryInfo, const Q
     OutputResult *output = (OutputResult *) _splitter->widget(partIndex);
 
     output->header()->paging()->setSkip(queryInfo.skip);
+    output->header()->paging()->setLimit(queryInfo.limit);
     output->setQueryInfo(queryInfo);
     output->outputWidget->update(documents);
 
-    if (GuiRegistry::instance().mainWindow()->textMode())
+    if (!output->header()->treeMode())
         output->header()->showText();
     else
         output->header()->showTree();
@@ -152,6 +153,11 @@ void OutputViewer::restoreSize()
     }
 }
 
+int OutputViewer::resultIndex(OutputResult *result)
+{
+    return _splitter->indexOf(result);
+}
+
 OutputResult::OutputResult(OutputViewer *viewer, OutputWidget *output, const QueryInfo &info, QWidget *parent) :
     outputWidget(output),
     outputViewer(viewer),
@@ -184,6 +190,9 @@ void OutputResult::setQueryInfo(const QueryInfo &queryInfo)
 
 void OutputResult::paging_leftClicked(int skip, int limit)
 {
+    if (limit > 50)
+        limit = 50;
+
     int s = skip - limit;
 
     if (s < 0)
@@ -193,22 +202,26 @@ void OutputResult::paging_leftClicked(int skip, int limit)
     info.limit = limit;
     info.skip = s;
 
-    outputViewer->shell()->query(0, info);
+    outputViewer->shell()->query(outputViewer->resultIndex(this), info);
 }
 
 void OutputResult::paging_rightClicked(int skip, int limit)
 {
+    if (limit > 50)
+        limit = 50;
+
     QueryInfo info(_queryInfo);
     info.limit = limit;
     info.skip = skip + limit;
 
-    outputViewer->shell()->query(0, info);
+    outputViewer->shell()->query(outputViewer->resultIndex(this), info);
 }
 
 OutputResultHeader::OutputResultHeader(OutputResult *result, OutputWidget *output, QWidget *parent) : QFrame(parent),
-  outputWidget(output),
-  outputResult(result),
-  _maximized(false)
+    outputWidget(output),
+    outputResult(result),
+    _maximized(false),
+    _treeMode(true)
 {
     setContentsMargins(0,0,0,0);
 
@@ -283,6 +296,7 @@ void OutputResultHeader::showText()
     _treeButton->setIcon(GuiRegistry::instance().treeIcon());
     _treeButton->setChecked(false);
     outputWidget->showText();
+    _treeMode = false;
 }
 
 void OutputResultHeader::showTree()
@@ -292,6 +306,7 @@ void OutputResultHeader::showTree()
     _treeButton->setIcon(GuiRegistry::instance().treeHighlightedIcon());
     _treeButton->setChecked(true);
     outputWidget->showTree();
+    _treeMode = true;
 }
 
 void OutputResultHeader::setTime(const QString &time)

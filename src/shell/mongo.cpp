@@ -3797,7 +3797,7 @@ const StringData _jscode_raw_query =
 "return \"DBQuery: \" + this._ns + \" -> \" + tojson( this.query );\n" 
 "}\n" 
 "\n" 
-"DBQuery.shellBatchSize = 20;\n" 
+"DBQuery.shellBatchSize = 50;\n"
 "\n" 
 "/**\n" 
 "* Query option flag bit constants.\n" 

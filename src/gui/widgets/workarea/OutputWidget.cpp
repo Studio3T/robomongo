@@ -16,7 +16,10 @@ OutputWidget::OutputWidget(const QString &text) :
     _isCustomModeInitialized(false),
     _text(text),
     _sourceIsText(true),
-    _isFirstPartRendered(false)
+    _isFirstPartRendered(false),
+    _log(NULL),
+    _bson(NULL)
+
 {
     setup();
 }
@@ -30,7 +33,9 @@ OutputWidget::OutputWidget(const QList<MongoDocumentPtr> &documents) :
     _isCustomModeInitialized(false),
     _documents(documents),
     _sourceIsText(false),
-    _isFirstPartRendered(false)
+    _isFirstPartRendered(false),
+    _log(NULL),
+    _bson(NULL)
 {
     setup();
 }
@@ -43,6 +48,18 @@ void OutputWidget::update(const QString &text)
     _isCustomModeInitialized = false;
     _sourceIsText = true;
     _isFirstPartRendered = false;
+
+    if (_bson) {
+        _stack->removeWidget(_bson);
+        delete _bson;
+        _bson = NULL;
+    }
+
+    if (_log) {
+        _stack->removeWidget(_log);
+        delete _log;
+        _log = NULL;
+    }
 }
 
 void OutputWidget::update(const QList<MongoDocumentPtr> &documents)
@@ -54,8 +71,17 @@ void OutputWidget::update(const QList<MongoDocumentPtr> &documents)
     _sourceIsText = false;
     _isFirstPartRendered = false;
 
-    _stack->removeWidget(_bson);
-    delete _bson;
+    if (_bson) {
+        _stack->removeWidget(_bson);
+        delete _bson;
+        _bson = NULL;
+    }
+
+    if (_log) {
+        _stack->removeWidget(_log);
+        delete _log;
+        _log = NULL;
+    }
 }
 
 void OutputWidget::setup()
@@ -81,11 +107,14 @@ void OutputWidget::showText()
         if (_sourceIsText)
             _log->setText(_text);
         else {
-            _log->setText("Loading...");
-            JsonPrepareThread *thread = new JsonPrepareThread(_documents);
-            connect(thread, SIGNAL(finished()), this, SLOT(jsonPrepared()));
-            connect(thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
-            thread->start();
+
+            if (_documents.count() > 0) {
+                _log->setText("Loading...");
+                JsonPrepareThread *thread = new JsonPrepareThread(_documents);
+                connect(thread, SIGNAL(finished()), this, SLOT(jsonPrepared()));
+                connect(thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
+                thread->start();
+            }
         }
 
         _stack->addWidget(_log);

@@ -22,6 +22,7 @@ namespace Robomongo
         OutputWidget *outputWidget;
         OutputResult *outputResult;
         PagingWidget *paging() const { return _paging; }
+        bool treeMode() const { return _treeMode; }
 
     protected:
         void mouseDoubleClickEvent(QMouseEvent *);
@@ -43,6 +44,7 @@ namespace Robomongo
         QLabel *_collectionLabel;
         PagingWidget *_paging;
         bool _maximized;
+        bool _treeMode;
     };
 
     class OutputResult : public QFrame
@@ -82,6 +84,8 @@ namespace Robomongo
 
         void maximizePart(OutputResult *result);
         void restoreSize();
+
+        int resultIndex(OutputResult *result);
 
         MongoShell *shell() const { return _shell; }
 

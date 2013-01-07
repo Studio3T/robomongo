@@ -5,6 +5,7 @@
 #include "Core.h"
 #include "domain/MongoDocument.h"
 #include <QtGui>
+#include "mongo/client/dbclient.h"
 
 class QPlainTextEdit;
 
@@ -92,7 +93,10 @@ namespace Robomongo
         */
         JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects) : exit(false)
         {
-            _bsonObjects = bsonObjects;
+            foreach(MongoDocumentPtr doc, bsonObjects) {
+                MongoDocumentPtr owned(new MongoDocument(doc->bsonObj().getOwned()));
+                _bsonObjects.append(owned);
+            }
         }
 
         volatile bool exit;
@@ -116,7 +120,7 @@ namespace Robomongo
                 std::string stdJson = doc->bsonObj().jsonString(mongo::TenGen, 1);
 
                 if (exit) {
-                    emit finished();
+                    emit done();
                     return;
                 }
 
@@ -124,7 +128,7 @@ namespace Robomongo
                 QString json = QString::fromStdString(sb.str());
 
                 if (exit) {
-                    emit finished();
+                    emit done();
                     return;
                 }
 
@@ -133,14 +137,14 @@ namespace Robomongo
                 position++;
             }
 
-            emit finished();
+            emit done();
         }
 
     signals:
         /**
          * @brief Signals when all parts prepared
          */
-        void finished();
+        void done();
 
         /**
          * @brief Signals when json part is ready

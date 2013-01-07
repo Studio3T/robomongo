@@ -88,7 +88,7 @@ void BsonWidget::ui_tabPageChanged(int index)
 
 //		_jsonText->setText("Loading...");
 //		JsonPrepareThread * thread = new JsonPrepareThread(_documents);
-//		connect(thread, SIGNAL(finished(QString)), SLOT(thread_jsonPrepared(QString)));
+//		connect(thread, SIGNAL(done(QString)), SLOT(thread_jsonPrepared(QString)));
 //		thread->start();
 //	}
 

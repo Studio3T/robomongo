@@ -17,6 +17,7 @@ namespace Robomongo
     public:
         OutputWidget(const QString &text);
         OutputWidget(const QList<MongoDocumentPtr> &documents);
+        ~OutputWidget();
 
         void update(const QString &text);
         void update(const QList<MongoDocumentPtr> &documents);

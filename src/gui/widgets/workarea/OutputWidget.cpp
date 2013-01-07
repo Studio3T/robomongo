@@ -18,7 +18,8 @@ OutputWidget::OutputWidget(const QString &text) :
     _sourceIsText(true),
     _isFirstPartRendered(false),
     _log(NULL),
-    _bson(NULL)
+    _bson(NULL),
+    _thread(NULL)
 
 {
     setup();
@@ -35,9 +36,16 @@ OutputWidget::OutputWidget(const QList<MongoDocumentPtr> &documents) :
     _sourceIsText(false),
     _isFirstPartRendered(false),
     _log(NULL),
-    _bson(NULL)
+    _bson(NULL),
+    _thread(NULL)
 {
     setup();
+}
+
+OutputWidget::~OutputWidget()
+{
+    if (_thread)
+        _thread->exit = true;
 }
 
 void OutputWidget::update(const QString &text)
@@ -110,6 +118,10 @@ void OutputWidget::showText()
 
             if (_documents.count() > 0) {
                 _log->setText("Loading...");
+
+                if (_thread)
+                    _thread->exit = true;
+
                 _thread = new JsonPrepareThread(_documents);
                 connect(_thread, SIGNAL(finished()), this, SLOT(jsonPrepared()));
                 connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));

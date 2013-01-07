@@ -160,6 +160,8 @@ void MongoClient::handle(LoadDatabaseNamesRequest *event)
             dbNames.append(QString::fromStdString(*i));
         }
 
+        dbNames.sort();
+
         reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
     }
     catch(DBException &ex)
@@ -184,6 +186,7 @@ void MongoClient::handle(LoadCollectionNamesRequest *event)
             stringList.append(QString::fromStdString(*i));
         }
 
+        stringList.sort();
         reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName, stringList));
     }
     catch(DBException &ex)

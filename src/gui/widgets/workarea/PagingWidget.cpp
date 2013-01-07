@@ -45,6 +45,9 @@ void PagingWidget::setSkip(int skip)
 
 void PagingWidget::setLimit(int limit)
 {
+    if (limit <= 0)
+        limit = 50;
+
     _limitEdit->setText(QString::number(limit));
 }
 

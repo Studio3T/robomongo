@@ -53,6 +53,9 @@ void OutputWidget::update(const QList<MongoDocumentPtr> &documents)
     _documents = documents;
     _sourceIsText = false;
     _isFirstPartRendered = false;
+
+    _stack->removeWidget(_bson);
+    delete _bson;
 }
 
 void OutputWidget::setup()

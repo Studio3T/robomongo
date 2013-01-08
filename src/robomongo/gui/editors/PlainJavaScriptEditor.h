@@ -1,7 +1,7 @@
 #ifndef PLAINJAVASCRIPTEDITOR_H
 #define PLAINJAVASCRIPTEDITOR_H
 
-#include "jsedit.h"
+#include "robomongo/gui/editors/jsedit.h"
 #include "Qsci/qsciscintilla.h"
 
 namespace Robomongo

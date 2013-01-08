@@ -1,7 +1,8 @@
-#include "MongoService.h"
-#include "mongo/client/dbclient.h"
 #include <QStringBuilder>
 #include <QStringList>
+#include "mongo/client/dbclient.h"
+
+#include "robomongo/core/mongodb/MongoService.h"
 
 using namespace mongo;
 

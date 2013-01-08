@@ -1,7 +1,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "Core.h"
+#include "robomongo/core/Core.h"
 
 namespace Robomongo
 {

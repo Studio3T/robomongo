@@ -1,11 +1,11 @@
-#include "MongoShell.h"
-#include "MongoCollection.h"
-#include "MongoDocument.h"
-#include "AppRegistry.h"
-#include "EventBus.h"
-#include "engine/Result.h"
-#include "mongodb/MongoClient.h"
-#include "MongoServer.h"
+#include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/core/domain/MongoCollection.h"
+#include "robomongo/core/domain/MongoDocument.h"
+#include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/engine/Result.h"
+#include "robomongo/core/mongodb/MongoClient.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/EventBus.h"
 
 using namespace Robomongo;
 

@@ -1,8 +1,9 @@
 #ifndef OutputItemContentWidget_H
 #define OutputItemContentWidget_H
 
-#include "Core.h"
 #include <QStackedWidget>
+
+#include "robomongo/core/Core.h"
 
 namespace Robomongo
 {

@@ -1,5 +1,6 @@
-#include "CredentialModel.h"
 #include <QModelIndex>
+
+#include "robomongo/gui/examples/CredentialModel.h"
 
 using namespace Robomongo;
 

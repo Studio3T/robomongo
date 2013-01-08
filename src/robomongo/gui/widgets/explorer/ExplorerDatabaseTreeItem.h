@@ -1,9 +1,9 @@
 #ifndef EXPLORERDATABASETREEITEM_H
 #define EXPLORERDATABASETREEITEM_H
 
-#include <QObject>
 #include <QTreeWidgetItem>
-#include "Core.h"
+
+#include "robomongo/core/Core.h"
 
 namespace Robomongo
 {

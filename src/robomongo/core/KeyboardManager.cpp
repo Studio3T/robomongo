@@ -1,4 +1,4 @@
-#include "KeyboardManager.h"
+#include "robomongo/core/KeyboardManager.h"
 
 using namespace Robomongo;
 

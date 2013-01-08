@@ -1,4 +1,4 @@
-#include "JSLexer.h"
+#include "robomongo/gui/editors/JSLexer.h"
 #include "Qsci/qscilexerjavascript.h"
 
 using namespace Robomongo;

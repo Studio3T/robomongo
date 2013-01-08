@@ -1,8 +1,9 @@
 #ifndef RESULT_H
 #define RESULT_H
+
 #include <QList>
-#include "mongo/client/dbclient.h"
 #include <QString>
+#include "mongo/client/dbclient.h"
 
 namespace Robomongo
 {

@@ -1,16 +1,13 @@
-#include "SettingsManager.h"
+#include "robomongo/core/settings/SettingsManager.h"
 
-// Qt libs
 #include <QDir>
 #include <QDebug>
 #include <QFile>
 #include <QVariantList>
-
-#include "ConnectionSettings.h"
-
-// Third party libs
 #include "qjson/parser.h"
 #include "qjson/serializer.h"
+
+#include "robomongo/core/settings/ConnectionSettings.h"
 
 using namespace Robomongo;
 

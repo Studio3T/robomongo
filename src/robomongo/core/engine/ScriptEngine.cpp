@@ -9,8 +9,8 @@
 #include <QTextStream>
 #include <QFile>
 
-#include "settings/ConnectionSettings.h"
-#include "settings/CredentialSettings.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/CredentialSettings.h"
 
 
 #include "js/jsapi.h"

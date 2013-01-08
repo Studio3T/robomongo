@@ -1,8 +1,9 @@
-#include "MongoDocument.h"
-#include "MongoDocumentIterator.h"
-#include "MongoElement.h"
 #include <QStringBuilder>
 #include <QTextCodec>
+
+#include "robomongo/core/domain/MongoDocument.h"
+#include "robomongo/core/domain/MongoDocumentIterator.h"
+#include "robomongo/core/domain/MongoElement.h"
 
 using namespace mongo;
 

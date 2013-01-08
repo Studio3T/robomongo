@@ -2,7 +2,7 @@
 #include <QStyle>
 #include <QIcon>
 
-#include "GuiRegistry.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 using namespace Robomongo;
 

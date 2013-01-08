@@ -1,4 +1,4 @@
-#include "CredentialSettings.h"
+#include "robomongo/core/settings/CredentialSettings.h"
 
 using namespace Robomongo;
 

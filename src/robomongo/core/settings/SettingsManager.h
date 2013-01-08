@@ -3,9 +3,9 @@
 
 #include <QDir>
 #include <QObject>
-#include "ConnectionSettings.h"
-#include "Core.h"
 
+#include "robomongo/core/Core.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
 
 namespace Robomongo
 {

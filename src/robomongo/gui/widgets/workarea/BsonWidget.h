@@ -2,10 +2,11 @@
 #define BSONWIDGET_H
 
 #include <QWidget>
-#include "Core.h"
-#include "domain/MongoDocument.h"
 #include <QtGui>
 #include "mongo/client/dbclient.h"
+
+#include "robomongo/core/Core.h"
+#include "robomongo/core/domain/MongoDocument.h"
 
 class QPlainTextEdit;
 

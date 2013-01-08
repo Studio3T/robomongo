@@ -1,6 +1,7 @@
-#include "ConnectionAuthTab.h"
-#include "settings/ConnectionSettings.h"
 #include <QGridLayout>
+
+#include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/gui/dialogs/ConnectionAuthTab.h"
 
 using namespace Robomongo;
 

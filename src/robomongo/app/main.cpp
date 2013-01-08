@@ -3,15 +3,16 @@
 #include <QList>
 #include <QSharedPointer>
 #include <QProcess>
-#include "settings/SettingsManager.h"
-#include "AppRegistry.h"
-#include "settings/ConnectionSettings.h"
-#include "dialogs/ConnectionsDialog.h"
-#include "Core.h"
-#include "MainWindow.h"
 #include "mongo/client/dbclient.h"
-#include <editors/PlainJavaScriptEditor.h>
-#include <GuiRegistry.h>
+
+#include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/Core.h"
+#include "robomongo/gui/dialogs/ConnectionsDialog.h"
+#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+#include "robomongo/gui/MainWindow.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 using namespace Robomongo;
 

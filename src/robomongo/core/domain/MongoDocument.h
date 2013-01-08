@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QStringList>
 #include "mongo/client/dbclient.h"
-#include "Core.h"
+#include "robomongo/core/Core.h"
 
 //using namespace mongo;
 

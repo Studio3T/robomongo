@@ -3,8 +3,9 @@
 
 #include <QWidget>
 #include <QPlainTextEdit>
-#include "events/MongoEvents.h"
-#include "settings/ConnectionSettings.h"
+
+#include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
 
 namespace Robomongo
 {

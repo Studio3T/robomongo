@@ -1,11 +1,12 @@
 #include <QStringList>
-#include "MongoServer.h"
-#include "mongodb/MongoException.h"
-#include "MongoDatabase.h"
-#include "settings/ConnectionSettings.h"
-#include "mongodb/MongoClient.h"
-#include "AppRegistry.h"
-#include "EventBus.h"
+#include "robomongo/core/mongodb/MongoException.h"
+
+#include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/domain/MongoDatabase.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/mongodb/MongoClient.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/EventBus.h"
 
 using namespace Robomongo;
 using namespace std;

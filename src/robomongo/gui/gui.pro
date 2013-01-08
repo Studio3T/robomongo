@@ -75,5 +75,4 @@ HEADERS  += ExampleWindow.h = \
     widgets/workarea/OutputItemWidget.h \
     widgets/workarea/IndicatorLabel.h
 
-INCLUDEPATH += \
-            $$SRC_ROOT/robomongo/core
+INCLUDEPATH += $$SRC_ROOT

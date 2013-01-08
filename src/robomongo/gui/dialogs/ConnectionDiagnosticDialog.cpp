@@ -1,14 +1,15 @@
-#include "ConnectionDiagnosticDialog.h"
-#include "settings/ConnectionSettings.h"
-#include "settings/CredentialSettings.h"
-#include "mongo/client/dbclient.h"
 #include <QGridLayout>
 #include <QApplication>
 #include <QStyle>
 #include <QIcon>
 #include <QPushButton>
 #include <QtGui>
-#include "GuiRegistry.h"
+#include "mongo/client/dbclient.h"
+
+#include "robomongo/gui/dialogs/ConnectionDiagnosticDialog.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/CredentialSettings.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 using namespace Robomongo;
 using namespace mongo;

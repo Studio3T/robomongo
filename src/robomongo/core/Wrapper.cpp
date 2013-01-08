@@ -1,4 +1,4 @@
-#include "Wrapper.h"
+#include "robomongo/core/Wrapper.h"
 #include <QMetaObject>
 
 using namespace Robomongo;

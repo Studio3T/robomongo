@@ -1,7 +1,6 @@
 #ifndef EXPLORERDATABASECATEGORYTREEITEM_H
 #define EXPLORERDATABASECATEGORYTREEITEM_H
 
-#include <QObject>
 #include <QTreeWidgetItem>
 
 namespace Robomongo

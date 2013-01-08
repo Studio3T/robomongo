@@ -2,6 +2,7 @@
 #define GUIREGISTRY_H
 
 #include <QIcon>
+#include <QBrush>
 
 namespace Robomongo
 {

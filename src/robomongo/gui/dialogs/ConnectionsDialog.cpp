@@ -5,15 +5,16 @@
 #include <QHash>
 #include <QAction>
 #include <QMessageBox>
-#include "ConnectionsDialog.h"
-#include "dialogs/ConnectionDialog.h"
-#include "settings/ConnectionSettings.h"
-#include "settings/SettingsManager.h"
-#include "GuiRegistry.h"
 #include <QLabel>
 #include <QTreeWidgetItem>
 #include <QHeaderView>
 #include <QMouseEvent>
+
+#include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/dialogs/ConnectionsDialog.h"
+#include "robomongo/gui/dialogs/ConnectionDialog.h"
 
 using namespace Robomongo;
 

@@ -5,8 +5,9 @@
 #include <QMutex>
 #include <QEvent>
 #include <QStringList>
-#include "events/MongoEvents.h"
-#include "engine/ScriptEngine.h"
+
+#include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/engine/ScriptEngine.h"
 
 namespace Robomongo
 {

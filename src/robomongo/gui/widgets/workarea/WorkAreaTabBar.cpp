@@ -1,7 +1,8 @@
-#include "WorkAreaTabBar.h"
-#include "QMouseEvent"
+#include <QMouseEvent>
 #include <QStylePainter>
 #include <QStyleOptionTabV3>
+
+#include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 
 using namespace Robomongo;
 

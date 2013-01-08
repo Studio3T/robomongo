@@ -1,8 +1,8 @@
-#include "AppRegistry.h"
-#include "EventBus.h"
-#include "settings/SettingsManager.h"
-#include "domain/App.h"
-#include "KeyboardManager.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/EventBus.h"
+#include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/domain/App.h"
+#include "robomongo/core/KeyboardManager.h"
 
 using namespace Robomongo;
 

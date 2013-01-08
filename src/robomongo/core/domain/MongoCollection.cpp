@@ -1,4 +1,4 @@
-#include "MongoCollection.h"
+#include "robomongo/core/domain/MongoCollection.h"
 
 using namespace Robomongo;
 

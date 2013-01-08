@@ -5,9 +5,9 @@
 #include "mongo/client/dbclient.h"
 #include "boost/shared_ptr.hpp"
 
-#include "Core.h"
-#include "events/MongoEvents.h"
-#include "mongodb/MongoClient.h"
+#include "robomongo/core/Core.h"
+#include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/mongodb/MongoClient.h"
 
 namespace Robomongo
 {

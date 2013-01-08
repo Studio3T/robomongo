@@ -3,8 +3,9 @@
 
 #include <QEvent>
 #include <QMultiHash>
-#include "EventBusDispatcher.h"
 #include <QMutex>
+
+#include "robomongo/core/EventBusDispatcher.h"
 
 namespace Robomongo
 {

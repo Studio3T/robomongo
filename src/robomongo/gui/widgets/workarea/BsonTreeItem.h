@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QTreeWidget>
-#include "Core.h"
 
+#include "robomongo/core/Core.h"
 
 namespace Robomongo
 {

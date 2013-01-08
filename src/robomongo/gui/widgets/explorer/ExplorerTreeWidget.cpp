@@ -1,18 +1,17 @@
-#include "ExplorerTreeWidget.h"
 #include <QContextMenuEvent>
-#include "AppRegistry.h"
-//#include "ExplorerServerTreeItem.h"
 #include <QMenu>
 #include <QtGui>
-#include "GuiRegistry.h"
-#include "ExplorerServerTreeItem.h"
-#include "ExplorerCollectionTreeItem.h"
-#include "domain/MongoCollection.h"
-#include "domain/MongoServer.h"
-#include "domain/App.h"
-#include "settings/ConnectionSettings.h"
-#include "AppRegistry.h"
-#include "ExplorerDatabaseTreeItem.h"
+
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/MongoCollection.h"
+#include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/domain/App.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/widgets/explorer/ExplorerTreeWidget.h"
+#include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 
 using namespace Robomongo;
 

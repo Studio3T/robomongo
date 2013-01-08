@@ -1,9 +1,9 @@
-#include "OutputItemHeaderWidget.h"
-#include "GuiRegistry.h"
-#include "IndicatorLabel.h"
-#include "OutputItemContentWidget.h"
-#include "OutputItemWidget.h"
-#include "OutputWidget.h"
+#include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputWidget.h"
+#include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 
 using namespace Robomongo;
 

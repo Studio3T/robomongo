@@ -28,7 +28,7 @@
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "jsedit.h"
+#include "robomongo/gui/editors/jsedit.h"
 
 #include <QtGui>
 

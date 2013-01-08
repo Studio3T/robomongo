@@ -3,10 +3,11 @@
 
 #include <QWidget>
 #include <QSplitter>
-#include <editors/PlainJavaScriptEditor.h>
-#include "BsonWidget.h"
-#include <domain/MongoShellResult.h>
-#include "PagingWidget.h"
+
+#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+#include "robomongo/gui/widgets/workarea/BsonWidget.h"
+#include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/gui/widgets/workarea/PagingWidget.h"
 
 namespace Robomongo
 {

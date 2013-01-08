@@ -1,7 +1,7 @@
-#include "BsonTreeItem.h"
-#include "GuiRegistry.h"
-#include "domain/MongoElement.h"
-#include "domain/MongoDocumentIterator.h"
+#include "robomongo/core/domain/MongoElement.h"
+#include "robomongo/core/domain/MongoDocumentIterator.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 using namespace Robomongo;
 using namespace mongo;

@@ -1,7 +1,8 @@
-#include "PagingWidget.h"
 #include <QLabel>
 #include <QHBoxLayout>
-#include "GuiRegistry.h"
+
+#include "robomongo/gui/widgets/workarea/PagingWidget.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 using namespace Robomongo;
 

@@ -5,7 +5,6 @@
 
 class QTabWidget;
 
-
 class ExampleWindow : public QMainWindow
 {
     Q_OBJECT
@@ -16,7 +15,6 @@ public:
     
 private:
     QTabWidget *_tabWidget;
-
 };
 
 #endif // EXAMPLEWINDOW_H

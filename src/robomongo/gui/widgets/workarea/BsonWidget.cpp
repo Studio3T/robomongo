@@ -1,10 +1,11 @@
-#include "BsonWidget.h"
-#include "BsonTreeWidget.h"
-#include "domain/MongoDocumentIterator.h"
-#include "domain/MongoElement.h"
-#include "domain/MongoDocument.h"
 #include <QPlainTextEdit>
 #include <QStackedWidget>
+
+#include "robomongo/core/domain/MongoDocumentIterator.h"
+#include "robomongo/core/domain/MongoElement.h"
+#include "robomongo/core/domain/MongoDocument.h"
+#include "robomongo/gui/widgets/workarea/BsonWidget.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
 
 using namespace Robomongo;
 

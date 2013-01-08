@@ -1,7 +1,8 @@
-#include "PlainJavaScriptEditor.h"
-#include "jsedit.h"
 #include <QPainter>
 #include <QApplication>
+
+#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+#include "robomongo/gui/editors/jsedit.h"
 
 using namespace Robomongo;
 

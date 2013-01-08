@@ -2,10 +2,10 @@
 #define EXPLORERWIDGET_H
 
 #include <QTreeWidget>
-#include <QWidget>
-#include "Core.h"
 #include <QLabel>
-#include "events/MongoEvents.h"
+
+#include "robomongo/core/Core.h"
+#include "robomongo/core/events/MongoEvents.h"
 
 namespace Robomongo
 {

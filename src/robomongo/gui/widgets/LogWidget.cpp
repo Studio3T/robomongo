@@ -1,8 +1,8 @@
-#include "LogWidget.h"
-#include "MainWindow.h"
-#include "EventBus.h"
-#include "AppRegistry.h"
-#include "domain/MongoServer.h"
+#include "robomongo/core/EventBus.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/gui/widgets/LogWidget.h"
+#include "robomongo/gui/MainWindow.h"
 
 using namespace Robomongo;
 

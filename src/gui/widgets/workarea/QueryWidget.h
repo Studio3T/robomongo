@@ -19,7 +19,7 @@ namespace Robomongo
     class ScriptExecutedEvent;
     class PlainJavaScriptEditor;
     class RoboScintilla;
-    class OutputViewer;
+    class OutputWidget;
     class WorkAreaTabWidget;
     class ScriptWidget;
     class TopStatusBar;
@@ -109,7 +109,7 @@ namespace Robomongo
         ** Bson widget
         */
         BsonWidget * _bsonWidget;
-        OutputViewer *_viewer;
+        OutputWidget *_viewer;
         QLabel *_outputLabel;
 
         /*

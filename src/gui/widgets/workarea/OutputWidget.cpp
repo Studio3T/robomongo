@@ -1,234 +1,163 @@
 #include "OutputWidget.h"
-#include <QVBoxLayout>
-#include "editors/PlainJavaScriptEditor.h"
-#include "BsonWidget.h"
-#include "Qsci/qscilexerjavascript.h"
-#include "editors/JSLexer.h"
+#include <QHBoxLayout>
+#include <Qsci/qscilexerjavascript.h>
+#include <editors/PlainJavaScriptEditor.h>
+#include <editors/JSLexer.h>
+#include <QListView>
+#include <QTreeView>
+#include <domain/MongoShellResult.h>
+#include "GuiRegistry.h"
+#include "OutputItemContentWidget.h"
+#include "MainWindow.h"
+#include "PagingWidget.h"
+#include "domain/MongoShell.h"
+#include "OutputItemWidget.h"
+#include "OutputItemHeaderWidget.h"
 
 using namespace Robomongo;
 
-OutputWidget::OutputWidget(const QString &text) :
-    _isTextModeSupported(true),
-    _isTreeModeSupported(false),
-    _isCustomModeSupported(false),
-    _isTextModeInitialized(false),
-    _isTreeModeInitialized(false),
-    _isCustomModeInitialized(false),
-    _text(text),
-    _sourceIsText(true),
-    _isFirstPartRendered(false),
-    _log(NULL),
-    _bson(NULL),
-    _thread(NULL)
-
+OutputWidget::OutputWidget(bool textMode, MongoShell *shell, QWidget *parent) :
+    QFrame(parent),
+    _textMode(textMode),
+    _shell(shell),
+    _splitter(NULL)
 {
-    setup();
-}
+    QString style = QString("Robomongo--OutputWidget { background-color: %1; border-radius: 6px; }")
+        .arg(QColor("#083047").lighter(660).name());
+//            .arg("white");
 
-OutputWidget::OutputWidget(const QList<MongoDocumentPtr> &documents) :
-    _isTextModeSupported(true),
-    _isTreeModeSupported(true),
-    _isCustomModeSupported(false),
-    _isTextModeInitialized(false),
-    _isTreeModeInitialized(false),
-    _isCustomModeInitialized(false),
-    _documents(documents),
-    _sourceIsText(false),
-    _isFirstPartRendered(false),
-    _log(NULL),
-    _bson(NULL),
-    _thread(NULL)
-{
-    setup();
+    //setStyleSheet(style);
+
+/*    setAutoFillBackground(true);
+    QPalette p(palette());
+    // Set background colour to black
+    p.setColor(QPalette::Background, QColor("#083047").lighter(660));
+    setPalette(p);
+    */
+
+    _splitter = new QSplitter;
+    _splitter->setOrientation(Qt::Vertical);
+    _splitter->setHandleWidth(1);
+    _splitter->setContentsMargins(0, 0, 0, 0);
+
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->setContentsMargins(4, 0, 4, 4);
+    layout->setSpacing(0);
+    layout->addWidget(_splitter);
+    setLayout(layout);
 }
 
 OutputWidget::~OutputWidget()
 {
-/*    if (_thread)
-        _thread->exit = true;*/
+
 }
 
-void OutputWidget::update(const QString &text)
+void OutputWidget::present(const QList<MongoShellResult> &results)
 {
-    _text = text;
-    _isTextModeInitialized = false;
-    _isTreeModeInitialized = false;
-    _isCustomModeInitialized = false;
-    _sourceIsText = true;
-    _isFirstPartRendered = false;
+    int count = _splitter->count();
 
-    if (_bson) {
-        _stack->removeWidget(_bson);
-        delete _bson;
-        _bson = NULL;
+    for (int i = 0; i < count; i++) {
+        QWidget *widget = _splitter->widget(i);
+        widget->hide();
+        widget->deleteLater();
     }
 
-    if (_log) {
-        _stack->removeWidget(_log);
-        delete _log;
-        _log = NULL;
-    }
-}
+    foreach (MongoShellResult shellResult, results) {
+        OutputItemContentWidget *output = NULL;
 
-void OutputWidget::update(const QList<MongoDocumentPtr> &documents)
-{
-    _isTextModeInitialized = false;
-    _isTreeModeInitialized = false;
-    _isCustomModeInitialized = false;
-    _documents.clear();
-    _documents = documents;
-    _sourceIsText = false;
-    _isFirstPartRendered = false;
-
-    if (_bson) {
-        _stack->removeWidget(_bson);
-        delete _bson;
-        _bson = NULL;
-    }
-
-    if (_log) {
-        _stack->removeWidget(_log);
-        delete _log;
-        _log = NULL;
-    }
-}
-
-void OutputWidget::setup()
-{
-    setContentsMargins(0, 0, 0, 0);
-    _stack = new QStackedWidget;
-
-    QVBoxLayout *layout = new QVBoxLayout();
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
-    layout->addWidget(_stack);
-    setLayout(layout);
-}
-
-void OutputWidget::showText()
-{
-    if (!_isTextModeSupported)
-        return;
-
-    if (!_isTextModeInitialized) {
-        _log = _configureLogText();
-
-        if (_sourceIsText)
-            _log->setText(_text);
-        else {
-
-            if (_documents.count() > 0) {
-                _log->setText("Loading...");
-
-                _thread = new JsonPrepareThread(_documents);
-                connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared()));
-                connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
-                _thread->start();
-            }
+        if (!shellResult.response.trimmed().isEmpty()) {
+            output = new OutputItemContentWidget(shellResult.response);
         }
 
-        _stack->addWidget(_log);
-        _isTextModeInitialized = true;
-    }
+        if (shellResult.documents.count() > 0) {
+            output = new OutputItemContentWidget(shellResult.documents);
+        }
 
-    _stack->setCurrentWidget(_log);
-}
-
-void OutputWidget::showTree()
-{
-    if (!_isTreeModeSupported) {
-        // try to downgrade to text mode
-        showText();
-        return;
-    }
-
-    if (!_isTreeModeInitialized) {
-        _bson = _configureBsonWidget();
-        _bson->setDocuments(_documents);
-        _stack->addWidget(_bson);
-        _isTreeModeInitialized = true;
-    }
-
-    _stack->setCurrentWidget(_bson);
-}
-
-void OutputWidget::showCustom()
-{
-    if (!_isCustomModeSupported)
-        return;
-}
-
-void OutputWidget::jsonPrepared()
-{
-    // delete thread, that emits this signal
-    QThread *thread = static_cast<QThread *>(sender());
-    thread->deleteLater();
-}
-
-void OutputWidget::jsonPartReady(const QString &json)
-{
-    // check that this is our current thread
-    JsonPrepareThread *thread = (JsonPrepareThread *) sender();
-    if (thread != _thread) {
-        // close previous thread
-        thread->exit = true;
-        thread->wait();
-        return;
-    }
-
-    if (_log) {
-        _log->setUpdatesEnabled(false);
-
-        if (_isFirstPartRendered)
-            _log->append(json);
+        OutputItemWidget *result = new OutputItemWidget(this, output, shellResult.queryInfo);
+        if (GuiRegistry::instance().mainWindow()->textMode())
+            result->header()->showText();
         else
-            _log->setText(json);
+            result->header()->showTree();
 
-        _log->setUpdatesEnabled(true);
+        double secs = shellResult.elapsedms / (double) 1000;
 
-        _isFirstPartRendered = true;
+        result->header()->setTime(QString("%1 sec.").arg(secs));
+
+        if (!shellResult.queryInfo.isNull) {
+            result->header()->setCollection(shellResult.queryInfo.collectionName);
+            result->header()->paging()->setLimit(shellResult.queryInfo.limit);
+            result->header()->paging()->setSkip(shellResult.queryInfo.skip);
+        }
+
+        _splitter->addWidget(result);
     }
 }
 
-RoboScintilla *Robomongo::OutputWidget::_configureLogText()
+void OutputWidget::updatePart(int partIndex, const QueryInfo &queryInfo, const QList<MongoDocumentPtr> &documents)
 {
-    QFont textFont = font();
-#if defined(Q_OS_MAC)
-    textFont.setPointSize(12);
-    textFont.setFamily("Monaco");
-#elif defined(Q_OS_UNIX)
-    textFont.setFamily("Monospace");
-    textFont.setFixedPitch(true);
-    //textFont.setWeight(QFont::Bold);
-//    textFont.setPointSize(12);
-#elif defined(Q_OS_WIN)
-    textFont.setPointSize(10);
-    textFont.setFamily("Courier");
-#endif
+    if (partIndex >= _splitter->count())
+        return;
 
-    QsciLexerJavaScript * javaScriptLexer = new JSLexer(this);
-    javaScriptLexer->setFont(textFont);
+    OutputItemWidget *output = (OutputItemWidget *) _splitter->widget(partIndex);
 
-    RoboScintilla *_logText = new RoboScintilla;
-    _logText->setLexer(javaScriptLexer);
-    _logText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    _logText->setAutoIndent(true);
-    _logText->setIndentationsUseTabs(false);
-    _logText->setIndentationWidth(4);
-    _logText->setUtf8(true);
-    _logText->installEventFilter(this);
-    _logText->setMarginWidth(1, 0); // to hide left gray column
-    _logText->setBraceMatching(QsciScintilla::StrictBraceMatch);
-    _logText->setFont(textFont);
-    _logText->setReadOnly(true);
+    output->header()->paging()->setSkip(queryInfo.skip);
+    output->header()->paging()->setLimit(queryInfo.limit);
+    output->setQueryInfo(queryInfo);
+    output->itemContent->update(documents);
 
-    _logText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
-    //connect(_logText, SIGNAL(linesChanged()), SLOT(ui_logLinesCountChanged()));
-
-    return _logText;
+    if (!output->header()->treeMode())
+        output->header()->showText();
+    else
+        output->header()->showTree();
 }
 
-BsonWidget *OutputWidget::_configureBsonWidget()
+void OutputWidget::toggleOrientation()
 {
-    return new BsonWidget;
+    if (_splitter->orientation() == Qt::Horizontal)
+        _splitter->setOrientation(Qt::Vertical);
+    else
+        _splitter->setOrientation(Qt::Horizontal);
+}
+
+void OutputWidget::enterTreeMode()
+{
+    int count = _splitter->count();
+    for (int i = 0; i < count; i++) {
+        OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
+        widget->header()->showTree();
+    }
+}
+
+void OutputWidget::enterTextMode()
+{
+    int count = _splitter->count();
+    for (int i = 0; i < count; i++) {
+        OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
+        widget->header()->showText();
+    }
+}
+
+void OutputWidget::maximizePart(OutputItemWidget *result)
+{
+    int count = _splitter->count();
+    for (int i = 0; i < count; i++) {
+        OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
+
+        if (widget != result)
+            widget->hide();
+    }
+}
+
+void OutputWidget::restoreSize()
+{
+    int count = _splitter->count();
+    for (int i = 0; i < count; i++) {
+        OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
+        widget->show();
+    }
+}
+
+int OutputWidget::resultIndex(OutputItemWidget *result)
+{
+    return _splitter->indexOf(result);
 }

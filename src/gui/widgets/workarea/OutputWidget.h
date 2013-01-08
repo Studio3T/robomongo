@@ -1,71 +1,45 @@
-#ifndef OUTPUTWIDGET_H
-#define OUTPUTWIDGET_H
+#ifndef OutputWidget_H
+#define OutputWidget_H
 
-#include "Core.h"
-#include <QStackedWidget>
+#include <QWidget>
+#include <QSplitter>
+#include <editors/PlainJavaScriptEditor.h>
+#include "BsonWidget.h"
+#include <domain/MongoShellResult.h>
+#include "PagingWidget.h"
 
 namespace Robomongo
 {
-    class RoboScintilla;
-    class BsonWidget;
-    class JsonPrepareThread;
+    class OutputItemContentWidget;
+    class OutputItemWidget;
+    class OutputWidget;
 
-    class OutputWidget : public QWidget
+    class OutputWidget : public QFrame
     {
         Q_OBJECT
-
     public:
-        OutputWidget(const QString &text);
-        OutputWidget(const QList<MongoDocumentPtr> &documents);
+        explicit OutputWidget(bool textMode, MongoShell *shell, QWidget *parent = 0);
         ~OutputWidget();
 
-        void update(const QString &text);
-        void update(const QList<MongoDocumentPtr> &documents);
+        void present(const QList<MongoShellResult> &documents);
+        void updatePart(int partIndex, const QueryInfo &queryInfo, const QList<MongoDocumentPtr> &documents);
+        void toggleOrientation();
 
-        void setup();
+        void enterTreeMode();
+        void enterTextMode();
 
-        bool isTextModeSupported() const { return _isTextModeSupported; }
-        bool isTreeModeSupported() const { return _isTreeModeSupported; }
-        bool isCustomModeSupported() const { return _isCustomModeSupported; }
+        void maximizePart(OutputItemWidget *result);
+        void restoreSize();
 
-        bool setTextModeSupported(bool supported) { _isTextModeSupported = supported; }
-        bool isTreeModeSupported(bool supported) { _isTreeModeSupported = supported; }
-        bool isCustomModeSupported(bool supported) { _isCustomModeSupported = supported; }
+        int resultIndex(OutputItemWidget *result);
 
-        void showText();
-        void showTree();
-        void showCustom();
-
-    public slots:
-        void jsonPrepared();
-        void jsonPartReady(const QString &json);
+        MongoShell *shell() const { return _shell; }
 
     private:
-        RoboScintilla *_configureLogText();
-        BsonWidget *_configureBsonWidget();
-
-        RoboScintilla *_log;
-        BsonWidget *_bson;
-
-        QString _text;
-        QList<MongoDocumentPtr> _documents;
-
-        QStackedWidget *_stack;
-        JsonPrepareThread *_thread;
-
-        bool _sourceIsText; // if false - source is documents
-
-        bool _isTextModeSupported;
-        bool _isTreeModeSupported;
-        bool _isCustomModeSupported;
-
-        bool _isTextModeInitialized;
-        bool _isTreeModeInitialized;
-        bool _isCustomModeInitialized;
-
-        bool _isFirstPartRendered;
+        QSplitter *_splitter;
+        bool _textMode;
+        MongoShell *_shell;
     };
 }
 
-
-#endif // OUTPUTWIDGET_H
+#endif // OutputWidget_H

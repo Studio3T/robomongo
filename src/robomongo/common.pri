@@ -12,8 +12,8 @@ DESTDIR      = $$OUT_PWD/out
 OBJECTS_DIR  = $$OUT_PWD/obj
 RCC_DIR      = $$OUT_PWD/rcc
 UI_DIR       = $$OUT_PWD/ui
-ROOT         = $$PWD/..
-SRC_ROOT     = $$PWD              # root of src/ folder
+ROOT         = $$PWD/../..        # /     - root folder of project
+SRC_ROOT     = $$PWD/..           # /src/ - source folder
 OUTPUT_ROOT  = $$OUT_PWD/..       # root of output folder (usually target/debug or target/release)
 
 message(PWD:          $$PWD)

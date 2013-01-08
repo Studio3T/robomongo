@@ -72,7 +72,7 @@ REM - QMake
 REM -----------------------------------
 
 REM run qmake
-qmake %PROJECT_ROOT%src\robomongo.pro %QMAKE_ARGS%
+qmake %PROJECT_ROOT%src\robomongo\robomongo.pro %QMAKE_ARGS%
 if %ERRORLEVEL% neq 0 (
   echo.
   echo Error when running qmake.

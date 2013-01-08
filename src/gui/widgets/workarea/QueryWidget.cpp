@@ -19,7 +19,7 @@
 #include "Qsci/qsciscintilla.h"
 #include "Qsci/qscilexerjavascript.h"
 #include "editors/JSLexer.h"
-#include "OutputViewer.h"
+#include "OutputWidget.h"
 #include "domain/App.h"
 #include "WorkAreaTabWidget.h"
 #include "settings/ConnectionSettings.h"
@@ -75,7 +75,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
 
     // Bson widget
     _bsonWidget = new BsonWidget(NULL);
-    _viewer = new OutputViewer(_textMode, _shell);
+    _viewer = new OutputWidget(_textMode, _shell);
     _outputLabel = new QLabel();
     _outputLabel->setContentsMargins(0, 5, 0, 0);
     _outputLabel->setVisible(false);

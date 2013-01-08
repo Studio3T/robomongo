@@ -27,15 +27,18 @@ SOURCES += ExampleWindow.cpp \
     editors/jsedit.cpp \
     editors/PlainJavaScriptEditor.cpp \
     editors/JSLexer.cpp \
-    widgets/workarea/OutputViewer.cpp \
     widgets/workarea/OutputWidget.cpp \
+    widgets/workarea/OutputItemContentWidget.cpp \
     examples/CredentialModel.cpp \
     dialogs/ConnectionAuthTab.cpp \
     dialogs/ConnectionBasicTab.cpp \
     dialogs/ConnectionAdvancedTab.cpp \
     dialogs/ConnectionDiagnosticDialog.cpp \
     widgets/workarea/ScriptWidget.cpp \
-    widgets/workarea/PagingWidget.cpp
+    widgets/workarea/PagingWidget.cpp \
+    widgets/workarea/OutputItemHeaderWidget.cpp \
+    widgets/workarea/OutputItemWidget.cpp \
+    widgets/workarea/IndicatorLabel.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
@@ -59,15 +62,18 @@ HEADERS  += ExampleWindow.h = \
     editors/jsedit.h \
     editors/PlainJavaScriptEditor.h \
     editors/JSLexer.h \
-    widgets/workarea/OutputViewer.h \
     widgets/workarea/OutputWidget.h \
+    widgets/workarea/OutputItemContentWidget.h \
     examples/CredentialModel.h \
     dialogs/ConnectionAuthTab.h \
     dialogs/ConnectionBasicTab.h \
     dialogs/ConnectionAdvancedTab.h \
     dialogs/ConnectionDiagnosticDialog.h \
     widgets/workarea/ScriptWidget.h \
-    widgets/workarea/PagingWidget.h
+    widgets/workarea/PagingWidget.h \
+    widgets/workarea/OutputItemHeaderWidget.h \
+    widgets/workarea/OutputItemWidget.h \
+    widgets/workarea/IndicatorLabel.h
 
 INCLUDEPATH += \
             $$ROOT/src/core

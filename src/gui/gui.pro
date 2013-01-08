@@ -28,7 +28,6 @@ SOURCES += ExampleWindow.cpp \
     editors/PlainJavaScriptEditor.cpp \
     editors/JSLexer.cpp \
     widgets/workarea/OutputViewer.cpp \
-    widgets/workarea/Outputable.cpp \
     widgets/workarea/OutputWidget.cpp \
     examples/CredentialModel.cpp \
     dialogs/ConnectionAuthTab.cpp \
@@ -61,7 +60,6 @@ HEADERS  += ExampleWindow.h = \
     editors/PlainJavaScriptEditor.h \
     editors/JSLexer.h \
     widgets/workarea/OutputViewer.h \
-    widgets/workarea/Outputable.h \
     widgets/workarea/OutputWidget.h \
     examples/CredentialModel.h \
     dialogs/ConnectionAuthTab.h \

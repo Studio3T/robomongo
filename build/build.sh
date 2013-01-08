@@ -54,7 +54,7 @@ cd $TARGET
 # qmake
 # ****************
 
-qmake $PROJECT_ROOT/src/robomongo.pro $QMAKE_ARGS
+qmake $PROJECT_ROOT/src/robomongo/robomongo.pro $QMAKE_ARGS
 
 if [ $? != 0 ]; then
 {

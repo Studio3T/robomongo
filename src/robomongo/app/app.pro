@@ -12,8 +12,8 @@ TEMPLATE = app
 SOURCES += main.cpp
         
 INCLUDEPATH += \
-            $$ROOT/src/gui \
-            $$ROOT/src/core
+            $$SRC_ROOT/robomongo/gui \
+            $$SRC_ROOT/robomongo/core
 
 win32:LIBS += -lws2_32 -lkernel32 -ladvapi32 -lpsapi -ldbghelp -lpcrecpp \
               -luser32 -lgdi32 -lwinspool -lcomdlg32 \

@@ -3,6 +3,16 @@ Robomongo
 
 Robomongo is a shell-centric crossplatform MongoDB management tool. 
 
+Download
+========
+
+You can download compiled version at this page:
+
+https://www.dropbox.com/sh/u0s0i8e4m0a8i9f/oxtqKHPUZ8
+
+Only Windows binaries available for now. 
+
+
 Building
 ========
 
@@ -38,12 +48,3 @@ Compiling:
     $ ./build.sh
 
 Executable will be placed to: target/debug/app/out
-
-Download
-========
-
-You can download compiled version at this page
-
-https://github.com/paralect/Robomongo/downloads
-
-Only Windows binaries available for now. 

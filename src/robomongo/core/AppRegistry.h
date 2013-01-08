@@ -1,7 +1,7 @@
 #ifndef APPREGISTRY_H
 #define APPREGISTRY_H
 
-#include "Core.h"
+#include "robomongo/core/Core.h"
 
 namespace Robomongo
 {

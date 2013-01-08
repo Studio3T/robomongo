@@ -3,12 +3,13 @@
 
 #include <QObject>
 #include <QUuid>
-#include "mongo/client/dbclient.h"
-#include "Core.h"
 #include <QList>
 #include <QHash>
 #include <QScopedPointer>
-#include "mongodb/MongoClient.h"
+#include "mongo/client/dbclient.h"
+
+#include "robomongo/core/Core.h"
+#include "robomongo/core/mongodb/MongoClient.h"
 
 namespace Robomongo
 {

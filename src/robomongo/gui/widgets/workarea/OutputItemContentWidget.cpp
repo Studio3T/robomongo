@@ -1,9 +1,10 @@
-#include "OutputItemContentWidget.h"
 #include <QVBoxLayout>
-#include "editors/PlainJavaScriptEditor.h"
-#include "BsonWidget.h"
 #include "Qsci/qscilexerjavascript.h"
-#include "editors/JSLexer.h"
+
+#include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
+#include "robomongo/gui/widgets/workarea/BsonWidget.h"
+#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+#include "robomongo/gui/editors/JSLexer.h"
 
 using namespace Robomongo;
 

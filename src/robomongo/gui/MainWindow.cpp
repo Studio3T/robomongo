@@ -1,17 +1,18 @@
 #include <QtGui>
-#include "MainWindow.h"
-#include "GuiRegistry.h"
-#include "AppRegistry.h"
-#include "dialogs/ConnectionsDialog.h"
-#include "settings/SettingsManager.h"
-#include "QMessageBox"
-#include "widgets/LogWidget.h"
-#include "widgets/explorer/ExplorerWidget.h"
-#include "domain/MongoServer.h"
-#include "mongodb/MongoException.h"
-#include "EventBus.h"
-#include "widgets/workarea/WorkAreaWidget.h"
-#include "domain/App.h"
+#include <QMessageBox>
+
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/EventBus.h"
+#include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/domain/App.h"
+#include "robomongo/core/mongodb/MongoException.h"
+#include "robomongo/gui/MainWindow.h"
+#include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/dialogs/ConnectionsDialog.h"
+#include "robomongo/gui/widgets/LogWidget.h"
+#include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
+#include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
 
 using namespace Robomongo;
 

@@ -1,11 +1,12 @@
-#include "BsonTreeWidget.h"
-#include "domain/MongoDocument.h"
-#include "domain/MongoElement.h"
-#include "domain/MongoDocumentIterator.h"
-#include "AppRegistry.h"
-#include "BsonTreeItem.h"
-#include "GuiRegistry.h"
 #include <QtGui>
+
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/MongoDocument.h"
+#include "robomongo/core/domain/MongoElement.h"
+#include "robomongo/core/domain/MongoDocumentIterator.h"
+#include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 
 using namespace Robomongo;
 using namespace mongo;

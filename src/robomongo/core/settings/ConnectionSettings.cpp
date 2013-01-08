@@ -1,4 +1,4 @@
-#include "ConnectionSettings.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
 
 using namespace Robomongo;
 

@@ -6,8 +6,9 @@
 #include <QVariantMap>
 #include <QSharedDataPointer>
 #include <QSharedData>
-#include <Core.h>
-#include "CredentialSettings.h"
+
+#include "robomongo/core/Core.h"
+#include "robomongo/core/settings/CredentialSettings.h"
 
 namespace Robomongo
 {

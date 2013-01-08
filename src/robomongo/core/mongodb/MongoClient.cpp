@@ -1,20 +1,21 @@
-#include "MongoClient.h"
 #include <QThread>
 #include <QStringList>
-#include "boost/scoped_ptr.hpp"
-#include "mongo/client/dbclient.h"
 #include <QMutexLocker>
 #include <QCoreApplication>
-#include "events/MongoEvents.h"
 #include <QFile>
 #include <QTextStream>
-#include "engine/ScriptEngine.h"
-#include "mongo/scripting/engine_spidermonkey.h"
 #include <QVector>
-#include "EventBus.h"
-#include "MongoClientThread.h"
-#include "settings/ConnectionSettings.h"
-#include "domain/MongoShellResult.h"
+#include "boost/scoped_ptr.hpp"
+#include "mongo/client/dbclient.h"
+#include "mongo/scripting/engine_spidermonkey.h"
+
+#include "robomongo/core/mongodb/MongoClient.h"
+#include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/engine/ScriptEngine.h"
+#include "robomongo/core/EventBus.h"
+#include "robomongo/core/mongodb/MongoClientThread.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/domain/MongoShellResult.h"
 
 using namespace Robomongo;
 using namespace std;

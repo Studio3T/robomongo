@@ -1,8 +1,9 @@
 #ifndef EVENTWRAPPER_H
 #define EVENTWRAPPER_H
 
-#include "Event.h"
 #include "boost/scoped_ptr.hpp"
+
+#include "robomongo/core/Event.h"
 
 namespace Robomongo
 {

@@ -2,8 +2,9 @@
 #define MONGOCOLLECTION_H
 
 #include <QObject>
-#include "Core.h"
-#include "MongoDatabase.h"
+
+#include "robomongo/core/Core.h"
+#include "robomongo/core/domain/MongoDatabase.h"
 
 namespace Robomongo
 {

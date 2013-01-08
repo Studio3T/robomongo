@@ -1,13 +1,14 @@
 #include <QtGui>
-#include "ExplorerWidget.h"
-#include "ExplorerDatabaseTreeItem.h"
-#include "ExplorerDatabaseCategoryTreeItem.h"
-#include "AppRegistry.h"
-#include "ExplorerTreeWidget.h"
-#include "ExplorerServerTreeItem.h"
-#include "EventBus.h"
-#include "ExplorerCollectionTreeItem.h"
-#include "domain/App.h"
+
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/EventBus.h"
+#include "robomongo/core/domain/App.h"
+#include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
+#include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerTreeWidget.h"
+#include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 
 using namespace Robomongo;
 

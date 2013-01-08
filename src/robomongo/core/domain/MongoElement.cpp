@@ -1,6 +1,8 @@
-#include "MongoElement.h"
-#include "MongoDocument.h"
 #include <QStringBuilder>
+
+#include "robomongo/core/domain/MongoElement.h"
+#include "robomongo/core/domain/MongoDocument.h"
+
 
 using namespace mongo;
 

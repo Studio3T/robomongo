@@ -4,9 +4,9 @@
 #include <QObject>
 #include <QString>
 #include <QEvent>
-#include "Core.h"
-#include <EventError.h>
 
+#include "robomongo/core/Core.h"
+#include "robomongo/core/EventError.h"
 
 namespace Robomongo
 {

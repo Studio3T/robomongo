@@ -1,5 +1,5 @@
-#include "MongoClientThread.h"
-#include "MongoClient.h"
+#include "robomongo/core/mongodb/MongoClientThread.h"
+#include "robomongo/core/mongodb/MongoClient.h"
 
 using namespace Robomongo;
 

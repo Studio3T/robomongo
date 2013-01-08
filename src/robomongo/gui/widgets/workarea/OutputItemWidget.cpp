@@ -1,8 +1,8 @@
-#include "OutputWidget.h"
-#include "OutputItemWidget.h"
-#include "OutputItemHeaderWidget.h"
-#include "OutputItemContentWidget.h"
-#include "domain/MongoShell.h"
+#include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/gui/widgets/workarea/OutputWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 
 using namespace Robomongo;
 

@@ -1,7 +1,7 @@
 #ifndef WRAPPER_H
 #define WRAPPER_H
-#include <QObject>
 
+#include <QObject>
 
 namespace Robomongo
 {

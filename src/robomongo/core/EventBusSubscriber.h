@@ -2,7 +2,8 @@
 #define EVENTBUSSUBSCRIBER_H
 
 #include <QObject>
-#include "EventBusDispatcher.h"
+
+#include "robomongo/core/EventBusDispatcher.h"
 
 namespace Robomongo
 {

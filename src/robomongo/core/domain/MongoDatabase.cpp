@@ -1,9 +1,9 @@
-#include "MongoDatabase.h"
-#include "MongoServer.h"
-#include "MongoCollection.h"
-#include "events/MongoEvents.h"
-#include "AppRegistry.h"
-#include "EventBus.h"
+#include "robomongo/core/domain/MongoDatabase.h"
+#include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/domain/MongoCollection.h"
+#include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/EventBus.h"
 
 using namespace Robomongo;
 

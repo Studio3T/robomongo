@@ -2,10 +2,9 @@
 #define MONGOELEMENT_H
 
 #include <QObject>
-#include "Core.h"
 #include "mongo/client/dbclient.h"
 
-//using namespace mongo;
+#include "robomongo/core/Core.h"
 
 namespace Robomongo
 {

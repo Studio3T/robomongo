@@ -2,11 +2,12 @@
 #define SCRIPTENGINE_H
 
 #include <QObject>
+#include <QMutex>
 #include "boost/scoped_ptr.hpp"
 #include "mongo/scripting/engine.h"
 #include "js/jsparse.h"
-#include "Result.h"
-#include <QMutex>
+
+#include "robomongo/core/engine/Result.h"
 
 namespace Robomongo
 {

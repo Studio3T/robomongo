@@ -1,16 +1,16 @@
 #include <QFont>
-
-#include "ScriptWidget.h"
-#include "Qsci/qscilexerjavascript.h"
-#include "editors/JSLexer.h"
-#include "editors/PlainJavaScriptEditor.h"
 #include <QVBoxLayout>
 #include <QPainter>
 #include <QIcon>
-#include "GuiRegistry.h"
-#include "domain/MongoShell.h"
-#include "domain/MongoServer.h"
-#include "settings/ConnectionSettings.h"
+#include "Qsci/qscilexerjavascript.h"
+
+#include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/widgets/workarea/ScriptWidget.h"
+#include "robomongo/gui/editors/JSLexer.h"
+#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 
 using namespace Robomongo;
 

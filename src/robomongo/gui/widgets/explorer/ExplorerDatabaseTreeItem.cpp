@@ -1,12 +1,12 @@
-#include "ExplorerDatabaseTreeItem.h"
-#include "GuiRegistry.h"
-#include "ExplorerCollectionTreeItem.h"
-#include "ExplorerDatabaseCategoryTreeItem.h"
-#include "domain/MongoDatabase.h"
-#include "domain/MongoCollection.h"
-#include "AppRegistry.h"
-#include "EventBus.h"
-#include "Core.h"
+#include "robomongo/core/domain/MongoDatabase.h"
+#include "robomongo/core/domain/MongoCollection.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/Core.h"
+#include "robomongo/core/EventBus.h"
+#include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 using namespace Robomongo;
 

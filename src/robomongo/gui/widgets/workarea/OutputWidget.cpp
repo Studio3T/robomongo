@@ -1,18 +1,19 @@
-#include "OutputWidget.h"
 #include <QHBoxLayout>
 #include <Qsci/qscilexerjavascript.h>
-#include <editors/PlainJavaScriptEditor.h>
-#include <editors/JSLexer.h>
 #include <QListView>
 #include <QTreeView>
-#include <domain/MongoShellResult.h>
-#include "GuiRegistry.h"
-#include "OutputItemContentWidget.h"
-#include "MainWindow.h"
-#include "PagingWidget.h"
-#include "domain/MongoShell.h"
-#include "OutputItemWidget.h"
-#include "OutputItemHeaderWidget.h"
+
+#include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/gui/widgets/workarea/OutputWidget.h"
+#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+#include "robomongo/gui/editors/JSLexer.h"
+#include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
+#include "robomongo/gui/MainWindow.h"
+#include "robomongo/gui/widgets/workarea/PagingWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
 
 using namespace Robomongo;
 

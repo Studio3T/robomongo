@@ -2,8 +2,9 @@
 #define MONGOSHELL_H
 
 #include <QObject>
-#include "Core.h"
-#include "events/MongoEvents.h"
+
+#include "robomongo/core/Core.h"
+#include "robomongo/core/events/MongoEvents.h"
 
 namespace Robomongo
 {

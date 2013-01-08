@@ -2,11 +2,10 @@
 #define MONGODOCUMENTITERATOR_H
 
 #include <QObject>
-#include "Core.h"
-#include "MongoElement.h"
 #include "mongo/client/dbclient.h"
 
-//using namespace mongo;
+#include "robomongo/core/Core.h"
+#include "robomongo/core/domain/MongoElement.h"
 
 namespace Robomongo
 {

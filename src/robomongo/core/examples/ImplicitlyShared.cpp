@@ -1,4 +1,4 @@
-#include "ImplicitlyShared.h"
+#include "robomongo/core/examples/ImplicitlyShared.h"
 
 using namespace Robomongo;
 

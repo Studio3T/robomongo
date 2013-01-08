@@ -4,11 +4,12 @@
 #include <QString>
 #include <QStringList>
 #include <QEvent>
-#include "Core.h"
 #include "mongo/client/dbclient.h"
-#include <engine/Result.h>
-#include "domain/MongoShellResult.h"
-#include "Event.h"
+
+#include "robomongo/core/Core.h"
+#include "robomongo/core/engine/Result.h"
+#include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/core/Event.h"
 
 namespace Robomongo
 {

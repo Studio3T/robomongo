@@ -1,9 +1,9 @@
-#include "WorkAreaTabWidget.h"
-#include "WorkAreaWidget.h"
-#include "WorkAreaTabBar.h"
-#include "QueryWidget.h"
-#include "AppRegistry.h"
-#include "domain/App.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/App.h"
+#include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
+#include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
+#include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 
 using namespace Robomongo;
 

@@ -7,7 +7,8 @@
 #include <QTreeWidgetItem>
 #include <QListWidgetItem>
 #include <QHash>
-#include "Core.h"
+
+#include "robomongo/core/Core.h"
 
 namespace Robomongo
 {

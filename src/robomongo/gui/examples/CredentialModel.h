@@ -1,8 +1,9 @@
 #ifndef CREDENTIALMODEL_H
 #define CREDENTIALMODEL_H
 
-#include <settings/CredentialSettings.h>
 #include <QAbstractTableModel>
+
+#include "robomongo/core/settings/CredentialSettings.h"
 
 namespace Robomongo
 {

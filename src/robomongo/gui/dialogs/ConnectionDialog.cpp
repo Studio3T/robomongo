@@ -1,12 +1,13 @@
 #include <QtGui>
-#include "ConnectionDialog.h"
-#include "AppRegistry.h"
 #include <QList>
-#include "GuiRegistry.h"
-#include "ConnectionAuthTab.h"
-#include "ConnectionBasicTab.h"
-#include "ConnectionAdvancedTab.h"
-#include "ConnectionDiagnosticDialog.h"
+
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/dialogs/ConnectionAuthTab.h"
+#include "robomongo/gui/dialogs/ConnectionBasicTab.h"
+#include "robomongo/gui/dialogs/ConnectionAdvancedTab.h"
+#include "robomongo/gui/dialogs/ConnectionDiagnosticDialog.h"
+#include "robomongo/gui/dialogs/ConnectionDialog.h"
 
 using namespace Robomongo;
 

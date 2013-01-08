@@ -68,6 +68,8 @@ HEADERS  += \
     KeyboardManager.h \
     settings/CredentialSettings.h
 
+INCLUDEPATH += $$SRC_ROOT
+
 # third party libs
 #LIBS += -L$$THIRDPARTY_LIBS_PATH/qjson
 #LIBS += -lqjsond

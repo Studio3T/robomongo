@@ -2,14 +2,14 @@
 #define QUERYWIDGET_H
 
 #include <QWidget>
-#include "Core.h"
 #include <QPushButton>
 #include <QLineEdit>
 #include <QPlainTextEdit>
-#include "Qsci/qsciscintilla.h"
-#include <domain/MongoShellResult.h>
 #include <QLabel>
+#include "Qsci/qsciscintilla.h"
 
+#include "robomongo/core/Core.h"
+#include "robomongo/core/domain/MongoShellResult.h"
 
 namespace Robomongo
 {

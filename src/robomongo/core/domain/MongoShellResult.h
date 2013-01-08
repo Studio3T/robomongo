@@ -1,8 +1,8 @@
 #ifndef MONGOSHELLRESULT_H
 #define MONGOSHELLRESULT_H
 
-#include <engine/Result.h>
-#include "Core.h"
+#include "robomongo/core/Core.h"
+#include "robomongo/core/engine/Result.h"
 
 namespace Robomongo
 {

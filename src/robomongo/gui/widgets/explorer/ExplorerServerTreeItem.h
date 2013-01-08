@@ -2,9 +2,9 @@
 #define EXPLORERSERVERTREEITEM_H
 
 #include <QTreeWidgetItem>
-#include <QObject>
-#include "Core.h"
-#include "events/MongoEvents.h"
+
+#include "robomongo/core/Core.h"
+#include "robomongo/core/events/MongoEvents.h"
 
 namespace Robomongo
 {

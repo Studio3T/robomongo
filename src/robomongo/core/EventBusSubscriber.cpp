@@ -1,3 +1,3 @@
-#include "EventBusSubscriber.h"
+#include "robomongo/core/EventBusSubscriber.h"
 
 using namespace Robomongo;

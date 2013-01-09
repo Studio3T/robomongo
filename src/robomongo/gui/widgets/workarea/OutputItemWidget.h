@@ -1,5 +1,4 @@
-#ifndef OUTPUTITEMWIDGET_H
-#define OUTPUTITEMWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QSplitter>
@@ -38,5 +37,3 @@ namespace Robomongo
     };
 
 }
-
-#endif // OUTPUTITEMWIDGET_H

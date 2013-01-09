@@ -1,5 +1,4 @@
-#ifndef MONGOCLIENT_H
-#define MONGOCLIENT_H
+#pragma once
 
 #include <QObject>
 #include <QMutex>
@@ -114,7 +113,3 @@ namespace Robomongo
     };
 
 }
-
-
-
-#endif // MONGOCLIENT_H

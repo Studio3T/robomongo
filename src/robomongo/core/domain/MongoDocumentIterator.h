@@ -1,8 +1,7 @@
-#ifndef MONGODOCUMENTITERATOR_H
-#define MONGODOCUMENTITERATOR_H
+#pragma once
 
 #include <QObject>
-#include "mongo/client/dbclient.h"
+#include <mongo/client/dbclient.h>
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoElement.h"
@@ -29,5 +28,3 @@ namespace Robomongo
         MongoElementPtr next();
 	};
 }
-
-#endif // MONGODOCUMENTITERATOR_H

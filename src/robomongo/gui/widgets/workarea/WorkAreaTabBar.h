@@ -1,5 +1,4 @@
-#ifndef WORKAREATABBAR_H
-#define WORKAREATABBAR_H
+#pragma once
 
 #include <QTabBar>
 #include <QMenu>
@@ -113,5 +112,3 @@ namespace Robomongo
         QAction *_closeShellsToTheRightAction;
     };
 }
-
-#endif // WORKAREATABBAR_H

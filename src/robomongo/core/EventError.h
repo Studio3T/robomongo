@@ -1,5 +1,4 @@
-#ifndef EVENTS_H
-#define EVENTS_H
+#pragma once
 
 #include <QObject>
 #include <QString>
@@ -58,5 +57,3 @@ namespace Robomongo
         QString _errorMessage;
     };
 }
-
-#endif // EVENTS_H

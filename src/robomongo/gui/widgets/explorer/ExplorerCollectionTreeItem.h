@@ -1,5 +1,4 @@
-#ifndef EXPLORERCOLLECTIONTREEITEM_H
-#define EXPLORERCOLLECTIONTREEITEM_H
+#pragma once
 
 #include <QObject>
 #include <QTreeWidgetItem>
@@ -26,6 +25,3 @@ namespace Robomongo
         MongoCollection *collection() const { return _collection; }
     };
 }
-
-
-#endif // EXPLORERCOLLECTIONTREEITEM_H

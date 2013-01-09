@@ -1,5 +1,4 @@
-#ifndef MONGOCOLLECTION_H
-#define MONGOCOLLECTION_H
+#pragma once
 
 #include <QObject>
 
@@ -47,7 +46,3 @@ namespace Robomongo
 
     };
 }
-
-
-
-#endif // MONGOCOLLECTION_H

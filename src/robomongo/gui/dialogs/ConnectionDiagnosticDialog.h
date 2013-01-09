@@ -1,5 +1,4 @@
-#ifndef CONNECTIONDIAGNOSTICDIALOG_H
-#define CONNECTIONDIAGNOSTICDIALOG_H
+#pragma once
 
 #include <QDialog>
 #include <QThread>
@@ -64,5 +63,3 @@ namespace Robomongo
 
     };
 }
-
-#endif // CONNECTIONDIAGNOSTICDIALOG_H

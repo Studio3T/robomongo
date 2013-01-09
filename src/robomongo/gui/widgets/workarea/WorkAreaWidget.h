@@ -1,5 +1,4 @@
-#ifndef WORKAREAWIDGET_H
-#define WORKAREAWIDGET_H
+#pragma once
 
 #include <QWidget>
 
@@ -54,6 +53,3 @@ namespace Robomongo
 
     };
 }
-
-
-#endif // WORKAREAWIDGET_H

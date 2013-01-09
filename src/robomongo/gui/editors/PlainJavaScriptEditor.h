@@ -1,5 +1,4 @@
-#ifndef PLAINJAVASCRIPTEDITOR_H
-#define PLAINJAVASCRIPTEDITOR_H
+#pragma once
 
 #include "robomongo/gui/editors/jsedit.h"
 #include "Qsci/qsciscintilla.h"
@@ -25,5 +24,3 @@ namespace Robomongo
         void keyPressEvent(QKeyEvent *e);
     };
 }
-
-#endif // PLAINJAVASCRIPTEDITOR_H

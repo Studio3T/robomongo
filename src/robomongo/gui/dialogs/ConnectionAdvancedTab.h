@@ -1,5 +1,4 @@
-#ifndef CONNECTIONADVANCEDTAB_H
-#define CONNECTIONADVANCEDTAB_H
+#pragma once
 
 #include <QWidget>
 #include <QLineEdit>
@@ -20,5 +19,3 @@ namespace Robomongo
         ConnectionSettings *_settings;
     };
 }
-
-#endif // CONNECTIONADVANCEDTAB_H

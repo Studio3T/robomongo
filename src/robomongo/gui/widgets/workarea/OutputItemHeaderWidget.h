@@ -1,5 +1,4 @@
-#ifndef OUTPUTITEMHEADERWIDGET_H
-#define OUTPUTITEMHEADERWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QSplitter>
@@ -49,5 +48,3 @@ namespace Robomongo
         bool _treeMode;
     };
 }
-
-#endif // OUTPUTITEMHEADERWIDGET_H

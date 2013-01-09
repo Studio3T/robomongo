@@ -1,5 +1,4 @@
-#ifndef SETTINGSMANAGER_H
-#define SETTINGSMANAGER_H
+#pragma once
 
 #include <QDir>
 #include <QObject>
@@ -110,5 +109,3 @@ namespace Robomongo
         QList<ConnectionSettings *> _connections;
     };
 }
-
-#endif // SETTINGSMANAGER_H

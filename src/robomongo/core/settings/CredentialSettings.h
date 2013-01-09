@@ -1,5 +1,4 @@
-#ifndef CREDENTIALSETTINGS_H
-#define CREDENTIALSETTINGS_H
+#pragma once
 
 #include <QString>
 #include <QVariant>
@@ -68,6 +67,3 @@ namespace Robomongo
         bool _enabled;
     };
 }
-
-
-#endif // CREDENTIALSETTINGS_H

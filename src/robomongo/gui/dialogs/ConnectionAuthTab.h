@@ -1,5 +1,4 @@
-#ifndef CONNECTIONAUTHTABWIDGET_H
-#define CONNECTIONAUTHTABWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QLineEdit>
@@ -34,5 +33,3 @@ namespace Robomongo
         void authChecked(bool checked);
     };
 }
-
-#endif // CONNECTIONAUTHTABWIDGET_H

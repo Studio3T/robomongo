@@ -1,5 +1,4 @@
-#ifndef MONGOSERVICE_H
-#define MONGOSERVICE_H
+#pragma once
 
 #include <QObject>
 #include <mongo/client/dbclient.h>
@@ -28,5 +27,3 @@ public:
 private:
 	
 };
-
-#endif // MONGOSERVICE_H

@@ -1,5 +1,4 @@
-#ifndef MONGOEVENTS_H
-#define MONGOEVENTS_H
+#pragma once
 
 #include <QString>
 #include <QStringList>
@@ -332,5 +331,3 @@ namespace Robomongo
     };
 
 }
-
-#endif // MONGOEVENTS_H

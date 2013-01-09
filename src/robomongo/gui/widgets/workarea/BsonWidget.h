@@ -1,5 +1,4 @@
-#ifndef BSONWIDGET_H
-#define BSONWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QtGui>
@@ -150,6 +149,3 @@ namespace Robomongo
         void partReady(const QString &part);
     };
 }
-
-
-#endif // BSONWIDGET_H

@@ -1,5 +1,4 @@
-#ifndef LOGWIDGET_H
-#define LOGWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QPlainTextEdit>
@@ -49,6 +48,3 @@ namespace Robomongo
     };
 
 }
-
-
-#endif // LOGWIDGET_H

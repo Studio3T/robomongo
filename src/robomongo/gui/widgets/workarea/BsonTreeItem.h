@@ -1,5 +1,4 @@
-#ifndef BSONTREEITEM_H
-#define BSONTREEITEM_H
+#pragma once
 
 #include <QObject>
 #include <QTreeWidget>
@@ -70,7 +69,3 @@ namespace Robomongo
     };
 
 }
-
-
-
-#endif // BSONTREEITEM_H

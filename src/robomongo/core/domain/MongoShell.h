@@ -1,5 +1,4 @@
-#ifndef MONGOSHELL_H
-#define MONGOSHELL_H
+#pragma once
 
 #include <QObject>
 
@@ -45,5 +44,3 @@ namespace Robomongo
     };
 
 }
-
-#endif // MONGOSHELL_H

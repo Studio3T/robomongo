@@ -1,5 +1,4 @@
-#ifndef INDICATORLABEL_H
-#define INDICATORLABEL_H
+#pragma once
 
 #include <QWidget>
 #include <QIcon>
@@ -22,5 +21,3 @@ namespace Robomongo
         QLabel *_label;
     };
 }
-
-#endif // INDICATORLABEL_H

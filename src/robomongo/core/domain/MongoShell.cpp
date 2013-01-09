@@ -1,4 +1,5 @@
 #include "robomongo/core/domain/MongoShell.h"
+
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoServer.h"

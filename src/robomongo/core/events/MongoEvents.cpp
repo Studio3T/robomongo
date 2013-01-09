@@ -1,5 +1,6 @@
-#include "robomongo/core/Core.h"
 #include "robomongo/core/events/MongoEvents.h"
+
+#include "robomongo/core/Core.h"
 
 using namespace Robomongo;
 

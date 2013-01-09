@@ -1,11 +1,10 @@
-#ifndef SCRIPTENGINE_H
-#define SCRIPTENGINE_H
+#pragma once
 
 #include <QObject>
 #include <QMutex>
-#include "boost/scoped_ptr.hpp"
-#include "mongo/scripting/engine.h"
-#include "js/jsparse.h"
+#include <boost/scoped_ptr.hpp>
+#include <mongo/scripting/engine.h>
+#include <js/jsparse.h>
 
 #include "robomongo/core/engine/Result.h"
 
@@ -51,5 +50,3 @@ namespace Robomongo
 
     };
 }
-
-#endif // SCRIPTENGINE_H

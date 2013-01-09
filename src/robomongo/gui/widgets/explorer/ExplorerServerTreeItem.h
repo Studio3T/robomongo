@@ -1,5 +1,4 @@
-#ifndef EXPLORERSERVERTREEITEM_H
-#define EXPLORERSERVERTREEITEM_H
+#pragma once
 
 #include <QTreeWidgetItem>
 
@@ -48,6 +47,3 @@ namespace Robomongo
 
     };
 }
-
-
-#endif // EXPLORERSERVERTREEITEM_H

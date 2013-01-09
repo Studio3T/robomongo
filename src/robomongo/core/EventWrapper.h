@@ -1,7 +1,6 @@
-#ifndef EVENTWRAPPER_H
-#define EVENTWRAPPER_H
+#pragma once
 
-#include "boost/scoped_ptr.hpp"
+#include <boost/scoped_ptr.hpp>
 
 #include "robomongo/core/Event.h"
 
@@ -23,6 +22,3 @@ namespace Robomongo
         QList<QObject *> _receivers;
     };
 }
-
-
-#endif // EVENTWRAPPER_H

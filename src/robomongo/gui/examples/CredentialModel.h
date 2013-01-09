@@ -1,5 +1,4 @@
-#ifndef CREDENTIALMODEL_H
-#define CREDENTIALMODEL_H
+#pragma once
 
 #include <QAbstractTableModel>
 
@@ -28,5 +27,3 @@ namespace Robomongo
         QList<CredentialSettings *> _credentials;
     };
 }
-
-#endif // CREDENTIALMODEL_H

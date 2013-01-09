@@ -1,5 +1,4 @@
-#ifndef PAGINGWIDGET_H
-#define PAGINGWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QLabel>
@@ -32,6 +31,3 @@ namespace Robomongo
         QLineEdit *_limitEdit;
     };
 }
-
-
-#endif // PAGINGWIDGET_H

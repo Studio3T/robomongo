@@ -1,5 +1,4 @@
-#ifndef OutputWidget_H
-#define OutputWidget_H
+#pragma once
 
 #include <QWidget>
 #include <QSplitter>
@@ -41,5 +40,3 @@ namespace Robomongo
         MongoShell *_shell;
     };
 }
-
-#endif // OutputWidget_H

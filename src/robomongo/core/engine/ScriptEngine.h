@@ -15,6 +15,7 @@ namespace Robomongo
     class ScriptEngine : public QObject
     {
         Q_OBJECT
+
     public:
         ScriptEngine(ConnectionSettings *connection);
         ~ScriptEngine();
@@ -46,7 +47,5 @@ namespace Robomongo
         QString subb(const QStringList &list, int fline, int fpos, int tline, int tpos);
 
         QMutex _mutex;
-
-
     };
 }

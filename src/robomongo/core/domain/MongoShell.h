@@ -13,6 +13,7 @@ namespace Robomongo
     class MongoShell : public QObject
     {
         Q_OBJECT
+
     public:
         explicit MongoShell(MongoServer *server);
         ~MongoShell();
@@ -30,7 +31,6 @@ namespace Robomongo
         void handle(ExecuteScriptResponse *event);
 
     private:
-
         /**
          * @brief Current query in the shell
          */

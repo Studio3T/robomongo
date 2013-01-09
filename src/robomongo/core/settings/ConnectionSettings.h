@@ -20,7 +20,6 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-
         /**
          * @brief Creates ConnectionSettings with default values
          */
@@ -141,7 +140,6 @@ namespace Robomongo
         }
 
     private:
-
         QString _connectionName;
         QString _serverHost;
         QString _defaultDatabase;

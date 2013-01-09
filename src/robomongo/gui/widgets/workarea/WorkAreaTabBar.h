@@ -11,8 +11,8 @@ namespace Robomongo
     class WorkAreaTabBar : public QTabBar
     {
         Q_OBJECT
-    public:
 
+    public:
         /**
          * @brief Creates WorkAreaTabBar, without parent widget. We are
          * assuming, that tab bar will be installed to (and owned by)
@@ -21,7 +21,6 @@ namespace Robomongo
         WorkAreaTabBar();
 
     signals:
-
         /**
          * @brief Emitted when user requests new tab creation.
          * @param tabIndex: index of tab on which context menu was called.
@@ -60,7 +59,6 @@ namespace Robomongo
         void closeTabsToTheRightRequested(int tabIndex);
 
     protected:
-
         /**
          * @brief Overrides QTabBar::mouseReleaseEvent() in order to support
          * middle-mouse tab close and to implement tab context menu.
@@ -68,7 +66,6 @@ namespace Robomongo
         void mouseReleaseEvent(QMouseEvent *event);
 
     private:
-
         /**
          * @brief Handles middle-mouse release event in order to close tab.
          */
@@ -92,8 +89,6 @@ namespace Robomongo
          * @brief Builds stylesheet for this WorkAreaTabBar widget.
          */
         QString buildStyleSheet();
-
-    private:
 
         /**
          * @brief Tab's context menu.

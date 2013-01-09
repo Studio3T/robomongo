@@ -14,6 +14,5 @@ namespace Robomongo
 
     private:
         QObject *_obj;
-
     };
 }

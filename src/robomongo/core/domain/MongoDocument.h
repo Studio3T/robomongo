@@ -22,14 +22,12 @@ namespace Robomongo
 		Q_OBJECT
 
 	private:
-
 		/*
 		** Owned BSONObj
 		*/
         mongo::BSONObj _bsonObj;
 
 	public:
-
 		/*
 		** Constructs empty Document, i.e. { }
 		*/
@@ -74,17 +72,13 @@ namespace Robomongo
 	{
 		Q_OBJECT
 
-	private:
-
-		QStringList _list;
-		int _count;
-
 	public:
-
 		Concatenator();
-
 		void append(const QString & data);
-
 		QString build();
+
+    private:
+        QStringList _list;
+        int _count;
 	};
 }

@@ -17,6 +17,7 @@ namespace Robomongo
     class MongoClient : public QObject
     {
         Q_OBJECT
+
     public:
         explicit MongoClient(EventBus *bus, ConnectionSettings *connection, QObject *parent = 0);
 
@@ -29,7 +30,6 @@ namespace Robomongo
         ScriptEngine *engine() const { return _scriptEngine; }
 
     protected slots: // handlers:
-
         /**
          * @brief Initialize MongoClient (should be the first request)
          */
@@ -66,7 +66,6 @@ namespace Robomongo
         void handle(ExecuteScriptRequest *event);
 
     private:
-
         /**
          * @brief Initialise MongoClient
          */

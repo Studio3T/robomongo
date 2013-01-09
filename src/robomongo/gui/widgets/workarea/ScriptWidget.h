@@ -13,6 +13,7 @@ namespace Robomongo
     class ScriptWidget : public QFrame
     {
         Q_OBJECT
+
     public:
         ScriptWidget(MongoShell *shell);
 
@@ -24,12 +25,10 @@ namespace Robomongo
 
         TopStatusBar *statusBar() const { return _topStatusBar; }
 
-
     private slots:
         void ui_queryLinesCountChanged();
 
     private:
-
         void _configureQueryText();
         /*
         ** Query text
@@ -41,6 +40,7 @@ namespace Robomongo
     class ElidedLabel : public QLabel
     {
         Q_OBJECT
+
     public:
         ElidedLabel(){}
         ElidedLabel(const QString &text) : QLabel(text) { }
@@ -54,6 +54,7 @@ namespace Robomongo
     class TopStatusBar : public QFrame
     {
         Q_OBJECT
+
     public:
         TopStatusBar(MongoShell *shell);
         void setCurrentDatabase(const QString &database, bool isValid = true);

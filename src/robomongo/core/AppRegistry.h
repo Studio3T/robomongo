@@ -9,7 +9,6 @@ namespace Robomongo
     class AppRegistry
     {
     public:
-
         /**
          * @brief Returns single instance of AppRegistry
          */

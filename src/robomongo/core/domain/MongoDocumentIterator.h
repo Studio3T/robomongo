@@ -12,11 +12,6 @@ namespace Robomongo
 	{
 		Q_OBJECT
 
-	private:
-
-        MongoDocument *_document;
-        mongo::BSONObjIterator _iterator;
-
 	public:
 		/*
 		**
@@ -26,5 +21,9 @@ namespace Robomongo
 		bool hasMore();
 
         MongoElementPtr next();
+
+    private:
+        MongoDocument *_document;
+        mongo::BSONObjIterator _iterator;
 	};
 }

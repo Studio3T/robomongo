@@ -54,7 +54,6 @@ namespace Robomongo
         MongoShell *shell() const { return _shell; }
 
     public slots:
-
         /*
         ** Execute query
         */
@@ -95,7 +94,6 @@ namespace Robomongo
         void handle(ScriptExecutedEvent *event);
 
     private:
-
         ScriptWidget *_scriptWidget;
 
         void _showPaging(bool show);

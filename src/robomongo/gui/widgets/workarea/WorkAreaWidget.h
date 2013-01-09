@@ -19,7 +19,6 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-
         /*
         ** Constructs work area
         */
@@ -31,14 +30,10 @@ namespace Robomongo
         void enterTextMode();
         void enterTreeMode();
 
-
-
     public slots:
         void handle(OpeningShellEvent *event);
 
-
     private:
-
         /*
         ** MainWindow this work area belongs to
         */
@@ -50,6 +45,5 @@ namespace Robomongo
         WorkAreaTabWidget * _tabWidget;
 
         EventBus *_bus;
-
     };
 }

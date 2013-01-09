@@ -12,6 +12,7 @@ namespace Robomongo
     class ConnectionAuthTab : public QWidget
     {
         Q_OBJECT
+
     public:
         ConnectionAuthTab(ConnectionSettings *settings);
         void accept();

@@ -15,7 +15,6 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-
         /**
          * @brief Creates WorkAreaTabWidget.
          * @param workAreaWidget: WorkAreaWidget this tab belongs to.
@@ -28,7 +27,6 @@ namespace Robomongo
         QueryWidget *queryWidget(int index);
 
     protected:
-
         /**
          * @brief Overrides QTabWidget::keyPressEvent() in order to intercept
          * tab close key shortcuts (Ctrl+F4 and Ctrl+W)
@@ -36,7 +34,6 @@ namespace Robomongo
         void keyPressEvent(QKeyEvent *event);
 
     public slots:
-
         void tabBar_tabCloseRequested(int index);
         void ui_newTabRequested(int index);
         void ui_reloadTabRequested(int index);

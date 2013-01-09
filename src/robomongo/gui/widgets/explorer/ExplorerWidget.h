@@ -27,7 +27,6 @@ namespace Robomongo
         void keyPressEvent(QKeyEvent *event);
 
     public slots:
-
         /*
         ** Add server to tree view
         */
@@ -55,7 +54,6 @@ namespace Robomongo
         void handle(ConnectionFailedEvent *event);
 
     private:
-
         int _progress;
         void increaseProgress();
         void decreaseProgress();

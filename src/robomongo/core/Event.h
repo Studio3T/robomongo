@@ -15,7 +15,6 @@ namespace Robomongo
     class Event
     {
     public:
-
         /**
          * @brief Creates "non-error" event.
          */
@@ -60,7 +59,6 @@ namespace Robomongo
         EventError error() const { return _error; }
 
     private:
-
         /**
          * @brief Sender that emits this event.
          */

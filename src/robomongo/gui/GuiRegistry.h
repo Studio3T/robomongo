@@ -15,7 +15,6 @@ namespace Robomongo
     class GuiRegistry
     {
     public:
-
         /**
          * @brief Returns single instance of GuiRegistry
          */
@@ -64,7 +63,6 @@ namespace Robomongo
         QIcon timeIcon();
 
         QBrush typeBrush();
-
 
     private:
         /**

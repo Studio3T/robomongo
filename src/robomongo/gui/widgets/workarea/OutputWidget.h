@@ -17,6 +17,7 @@ namespace Robomongo
     class OutputWidget : public QFrame
     {
         Q_OBJECT
+
     public:
         explicit OutputWidget(bool textMode, MongoShell *shell, QWidget *parent = 0);
         ~OutputWidget();

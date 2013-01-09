@@ -9,7 +9,6 @@ namespace Robomongo
     class CredentialSettings
     {
     public:
-
         CredentialSettings();
 
         CredentialSettings(const QVariantMap &map);

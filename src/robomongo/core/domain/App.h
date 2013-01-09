@@ -55,7 +55,6 @@ namespace Robomongo
         void closeShell(MongoShell *shell);
 
     private:
-
         /**
          * @brief List of MongoServers, owned by this App.
          */

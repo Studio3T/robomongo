@@ -21,18 +21,6 @@ namespace Robomongo
     {
         Q_OBJECT
 
-    private:
-
-        /*
-        ** Database category of this tree item
-        */
-        ExplorerDatabaseCategory _category;
-
-        /*
-        ** Database tree item this category belongs to
-        */
-        ExplorerDatabaseTreeItem * _databaseItem;
-
     public:
 
         /*
@@ -50,6 +38,17 @@ namespace Robomongo
         ** Database tree item this category belongs to
         */
         ExplorerDatabaseTreeItem * databaseItem() const { return _databaseItem; }
+
+    private:
+        /*
+        ** Database category of this tree item
+        */
+        ExplorerDatabaseCategory _category;
+
+        /*
+        ** Database tree item this category belongs to
+        */
+        ExplorerDatabaseTreeItem * _databaseItem;
     };
 
 }

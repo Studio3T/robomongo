@@ -10,9 +10,9 @@ namespace Robomongo
     class MongoClientThread : public QThread
     {
         Q_OBJECT
+
     public:
         explicit MongoClientThread(MongoClient *client);
-
         MongoClient *client() const { return _client; }
 
     protected:
@@ -20,6 +20,5 @@ namespace Robomongo
 
     private:
         MongoClient *_client;
-
     };
 }

@@ -1,5 +1,4 @@
-#ifndef APPREGISTRY_H
-#define APPREGISTRY_H
+#pragma once
 
 #include "robomongo/core/Core.h"
 
@@ -41,5 +40,3 @@ namespace Robomongo
         void operator=(AppRegistry const &);    // To protect from copies of singleton
     };
 }
-
-#endif // APPREGISTRY_H

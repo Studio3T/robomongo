@@ -1,5 +1,4 @@
-#ifndef QUERYWIDGET_H
-#define QUERYWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QPushButton>
@@ -134,7 +133,3 @@ namespace Robomongo
         bool _initialized;
     };
 }
-
-
-
-#endif // QUERYWIDGET_H

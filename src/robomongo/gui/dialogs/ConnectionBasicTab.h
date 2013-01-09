@@ -1,5 +1,4 @@
-#ifndef CONNECTIONBASICTABWIDGET_H
-#define CONNECTIONBASICTABWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QLineEdit>
@@ -23,5 +22,3 @@ namespace Robomongo
         ConnectionSettings *_settings;
     };
 }
-
-#endif // CONNECTIONBASICTABWIDGET_H

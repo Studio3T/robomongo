@@ -1,5 +1,4 @@
-#ifndef BSONTREEWIDGET_H
-#define BSONTREEWIDGET_H
+#pragma once
 
 #include <QTreeWidget>
 
@@ -43,7 +42,3 @@ namespace Robomongo
         void ui_itemExpanded(QTreeWidgetItem * item);
     };
 }
-
-
-
-#endif // BSONTREEWIDGET_H

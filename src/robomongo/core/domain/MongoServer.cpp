@@ -1,7 +1,8 @@
-#include <QStringList>
-#include "robomongo/core/mongodb/MongoException.h"
-
 #include "robomongo/core/domain/MongoServer.h"
+
+#include <QStringList>
+
+#include "robomongo/core/mongodb/MongoException.h"
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/mongodb/MongoClient.h"

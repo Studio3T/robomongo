@@ -1,7 +1,8 @@
+#include "robomongo/core/domain/MongoDocument.h"
+
 #include <QStringBuilder>
 #include <QTextCodec>
 
-#include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoDocumentIterator.h"
 #include "robomongo/core/domain/MongoElement.h"
 

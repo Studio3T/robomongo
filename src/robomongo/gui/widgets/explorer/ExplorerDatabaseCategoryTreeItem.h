@@ -1,5 +1,4 @@
-#ifndef EXPLORERDATABASECATEGORYTREEITEM_H
-#define EXPLORERDATABASECATEGORYTREEITEM_H
+#pragma once
 
 #include <QTreeWidgetItem>
 
@@ -54,6 +53,3 @@ namespace Robomongo
     };
 
 }
-
-
-#endif // EXPLORERDATABASECATEGORYTREEITEM_H

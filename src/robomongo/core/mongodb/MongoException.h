@@ -1,5 +1,4 @@
-#ifndef MONGOEXCEPTION_H
-#define MONGOEXCEPTION_H
+#pragma once
 
 #include <iostream>
 #include <QString>
@@ -25,5 +24,3 @@ namespace Robomongo
         QByteArray _bytes;
     };
 }
-
-#endif // MONGOEXCEPTION_H

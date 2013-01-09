@@ -1,5 +1,4 @@
-#ifndef EXPLORERTREEWIDGET_H
-#define EXPLORERTREEWIDGET_H
+#pragma once
 
 #include <QTreeWidget>
 
@@ -79,5 +78,3 @@ namespace Robomongo
         void ui_serverVersion();
     };
 }
-
-#endif // EXPLORERTREEWIDGET_H

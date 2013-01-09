@@ -1,5 +1,4 @@
-#ifndef MONGOSHELLRESULT_H
-#define MONGOSHELLRESULT_H
+#pragma once
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/engine/Result.h"
@@ -40,5 +39,3 @@ namespace Robomongo
         bool isCurrentDatabaseValid;
     };
 }
-
-#endif // MONGOSHELLRESULT_H

@@ -1,5 +1,4 @@
-#ifndef EVENT_H
-#define EVENT_H
+#pragma once
 
 #include <QObject>
 #include <QString>
@@ -113,6 +112,3 @@ namespace Robomongo
     const char *EVENT_CLASS::typeString() { return #EVENT_CLASS"*"; }                                \
     QEvent::Type EVENT_CLASS::type() { return EVENT_CLASS::Type; }                                   \
     const int EVENT_CLASS::metatype = qRegisterMetaType<EVENT_CLASS*>(#EVENT_CLASS"*");
-
-
-#endif // EVENT_H

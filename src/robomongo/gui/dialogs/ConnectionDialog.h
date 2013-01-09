@@ -1,5 +1,4 @@
-#ifndef EDITCONNECTIONDIALOG_H
-#define EDITCONNECTIONDIALOG_H
+#pragma once
 
 #include <QDialog>
 #include <QTreeWidget>
@@ -69,6 +68,3 @@ namespace Robomongo
         bool canBeClosed();
     };
 }
-
-
-#endif // EDITCONNECTIONDIALOG_H

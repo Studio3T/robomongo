@@ -1,5 +1,4 @@
-#ifndef KEYBOARDMANAGER_H
-#define KEYBOARDMANAGER_H
+#pragma once
 
 #include <QObject>
 #include <QKeyEvent>
@@ -16,6 +15,3 @@ namespace Robomongo
         bool isExecuteScriptShortcut(QKeyEvent *keyEvent);
     };
 }
-
-
-#endif // KEYBOARDMANAGER_H

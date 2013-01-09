@@ -1,5 +1,4 @@
-#ifndef EXPLORERDATABASETREEITEM_H
-#define EXPLORERDATABASETREEITEM_H
+#pragma once
 
 #include <QTreeWidgetItem>
 
@@ -51,5 +50,3 @@ namespace Robomongo
         EventBus *_bus;
     };
 }
-
-#endif // EXPLORERDATABASETREEITEM_H

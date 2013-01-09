@@ -1,5 +1,4 @@
-#ifndef OutputItemContentWidget_H
-#define OutputItemContentWidget_H
+#pragma once
 
 #include <QStackedWidget>
 
@@ -67,6 +66,3 @@ namespace Robomongo
         bool _isFirstPartRendered;
     };
 }
-
-
-#endif // OutputItemContentWidget_H

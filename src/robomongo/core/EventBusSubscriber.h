@@ -1,5 +1,4 @@
-#ifndef EVENTBUSSUBSCRIBER_H
-#define EVENTBUSSUBSCRIBER_H
+#pragma once
 
 #include <QObject>
 
@@ -20,5 +19,3 @@ namespace Robomongo
         QObject *sender;
     };
 }
-
-#endif // EVENTBUSSUBSCRIBER_H

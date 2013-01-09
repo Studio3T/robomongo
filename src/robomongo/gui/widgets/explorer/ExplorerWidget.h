@@ -1,5 +1,4 @@
-#ifndef EXPLORERWIDGET_H
-#define EXPLORERWIDGET_H
+#pragma once
 
 #include <QTreeWidget>
 #include <QLabel>
@@ -71,7 +70,3 @@ namespace Robomongo
         App *_app;
     };
 }
-
-
-
-#endif // EXPLORERWIDGET_H

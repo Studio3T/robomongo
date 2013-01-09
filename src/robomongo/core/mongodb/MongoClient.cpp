@@ -1,3 +1,5 @@
+#include "robomongo/core/mongodb/MongoClient.h"
+
 #include <QThread>
 #include <QStringList>
 #include <QMutexLocker>
@@ -9,7 +11,6 @@
 #include "mongo/client/dbclient.h"
 #include "mongo/scripting/engine_spidermonkey.h"
 
-#include "robomongo/core/mongodb/MongoClient.h"
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/engine/ScriptEngine.h"
 #include "robomongo/core/EventBus.h"

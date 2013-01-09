@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QtGui>
 #include <QWidget>
@@ -87,5 +86,3 @@ namespace Robomongo
     };
 
 }
-
-#endif // MAINWINDOW_H

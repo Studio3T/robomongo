@@ -1,5 +1,4 @@
-#ifndef MONGOCLIENTTHREAD_H
-#define MONGOCLIENTTHREAD_H
+#pragma once
 
 #include <QObject>
 #include <QThread>
@@ -24,5 +23,3 @@ namespace Robomongo
 
     };
 }
-
-#endif // MONGOCLIENTTHREAD_H

@@ -1,5 +1,4 @@
-#ifndef SCRIPTWIDGET_H
-#define SCRIPTWIDGET_H
+#pragma once
 
 #include <QFrame>
 #include <QLabel>
@@ -67,5 +66,3 @@ namespace Robomongo
         QColor _textColor;
     };
 }
-
-#endif // SCRIPTWIDGET_H

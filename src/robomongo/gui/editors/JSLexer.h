@@ -1,5 +1,4 @@
-#ifndef JSLEXER_H
-#define JSLEXER_H
+#pragma once
 
 #include <QObject>
 #include <QColor>
@@ -19,5 +18,3 @@ namespace Robomongo
         QColor defaultColor(int style) const;
     };
 }
-
-#endif // JSLEXER_H

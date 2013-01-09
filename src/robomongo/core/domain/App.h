@@ -1,5 +1,4 @@
-#ifndef APPLICATION_H
-#define APPLICATION_H
+#pragma once
 
 #include "robomongo/core/Core.h"
 
@@ -73,6 +72,3 @@ namespace Robomongo
         EventBus *_bus;
     };
 }
-
-
-#endif // APPLICATION_H

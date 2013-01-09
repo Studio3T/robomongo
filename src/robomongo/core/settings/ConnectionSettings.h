@@ -1,5 +1,4 @@
-#ifndef CONNECTIONRECORD_H
-#define CONNECTIONRECORD_H
+#pragma once
 
 #include <QString>
 #include <QVariant>
@@ -154,5 +153,3 @@ namespace Robomongo
 }
 
 Q_DECLARE_METATYPE(Robomongo::ConnectionSettings *)
-
-#endif // CONNECTIONRECORD_H

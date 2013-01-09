@@ -1,5 +1,4 @@
-#ifndef EXAMPLEWINDOW_H
-#define EXAMPLEWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -16,5 +15,3 @@ public:
 private:
     QTabWidget *_tabWidget;
 };
-
-#endif // EXAMPLEWINDOW_H

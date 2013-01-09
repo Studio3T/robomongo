@@ -1,9 +1,8 @@
-#ifndef RESULT_H
-#define RESULT_H
+#pragma once
 
 #include <QList>
 #include <QString>
-#include "mongo/client/dbclient.h"
+#include <mongo/client/dbclient.h>
 
 namespace Robomongo
 {
@@ -77,5 +76,3 @@ namespace Robomongo
         bool isCurrentDatabaseValid;
     };
 }
-
-#endif // RESULT_H

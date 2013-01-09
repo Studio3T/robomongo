@@ -1,5 +1,4 @@
-#ifndef MONGOELEMENT_H
-#define MONGOELEMENT_H
+#pragma once
 
 #include <QObject>
 #include "mongo/client/dbclient.h"
@@ -89,6 +88,3 @@ namespace Robomongo
         mongo::BSONElement bsonElement() const { return _bsonElement; }
 	};
 }
-
-
-#endif // MONGOELEMENT_H

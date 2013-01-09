@@ -1,5 +1,4 @@
-#ifndef EVENTBUSDISPATCHER_H
-#define EVENTBUSDISPATCHER_H
+#pragma once
 
 #include <QObject>
 
@@ -25,5 +24,3 @@ namespace Robomongo
 
     };
 }
-
-#endif // EVENTBUSDISPATCHER_H

@@ -1,9 +1,8 @@
-#ifndef MONGODATABASE_H
-#define MONGODATABASE_H
+#pragma once
 
 #include <QObject>
-#include "mongo/client/dbclient.h"
-#include "boost/shared_ptr.hpp"
+#include <mongo/client/dbclient.h>
+#include <boost/shared_ptr.hpp>
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/events/MongoEvents.h"
@@ -76,5 +75,3 @@ namespace Robomongo
         QList<MongoCollection *> list;
     };
 }
-
-#endif // MONGODATABASE_H

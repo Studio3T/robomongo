@@ -1,5 +1,4 @@
-#ifndef CORE_H
-#define CORE_H
+#pragma once
 
 #include <QMetaType>
 #include <QSharedPointer>
@@ -65,5 +64,3 @@ namespace Robomongo
  */
 inline void __dummy_function_for_NO_OP () {}
 #define NO_OP __dummy_function_for_NO_OP ()
-
-#endif // CORE_H

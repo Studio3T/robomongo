@@ -1,5 +1,4 @@
-#ifndef IMPLICITLYSHARED_H
-#define IMPLICITLYSHARED_H
+#pragma once
 
 #include <QString>
 #include <QVariant>
@@ -121,8 +120,3 @@ namespace Robomongo
 }
 
 Q_DECLARE_METATYPE(Robomongo::ImplicitlyShared)
-
-
-
-
-#endif // IMPLICITLYSHARED_H

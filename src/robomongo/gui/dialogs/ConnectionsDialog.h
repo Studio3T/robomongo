@@ -1,5 +1,4 @@
-#ifndef CONNECTIONSDIALOG_H
-#define CONNECTIONSDIALOG_H
+#pragma once
 
 #include <QDialog>
 #include <QListWidget>
@@ -156,6 +155,3 @@ namespace Robomongo
         QTreeWidgetItem *draggingItem;
     };
 }
-
-
-#endif // CONNECTIONSDIALOG_H

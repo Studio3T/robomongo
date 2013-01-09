@@ -1,5 +1,4 @@
-#ifndef WORKAREATABWIDGET_H
-#define WORKAREATABWIDGET_H
+#pragma once
 
 #include <QTabWidget>
 
@@ -47,5 +46,3 @@ namespace Robomongo
         void ui_currentChanged(int index);
     };
 }
-
-#endif // WORKAREATABWIDGET_H

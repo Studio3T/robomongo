@@ -1,5 +1,4 @@
-#ifndef WRAPPER_H
-#define WRAPPER_H
+#pragma once
 
 #include <QObject>
 
@@ -18,7 +17,3 @@ namespace Robomongo
 
     };
 }
-
-
-
-#endif // WRAPPER_H

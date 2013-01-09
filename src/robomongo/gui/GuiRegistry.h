@@ -1,5 +1,4 @@
-#ifndef GUIREGISTRY_H
-#define GUIREGISTRY_H
+#pragma once
 
 #include <QIcon>
 #include <QBrush>
@@ -117,5 +116,3 @@ namespace Robomongo
         MainWindow *_mainWindow;
     };
 }
-
-#endif // GUIREGISTRY_H

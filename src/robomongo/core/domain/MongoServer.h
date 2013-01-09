@@ -1,5 +1,4 @@
-#ifndef MONGOSERVER_H
-#define MONGOSERVER_H
+#pragma once
 
 #include <QObject>
 #include <QUuid>
@@ -90,5 +89,3 @@ namespace Robomongo
         EventBus *_bus;
     };
 }
-
-#endif // MONGOSERVER_H

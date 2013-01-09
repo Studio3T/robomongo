@@ -1,5 +1,4 @@
-#ifndef DISPATCHER_H
-#define DISPATCHER_H
+#pragma once
 
 #include <QEvent>
 #include <QMultiHash>
@@ -76,5 +75,3 @@ namespace Robomongo
         QHash<QThread *, EventBusDispatcher *> _dispatchersByThread;
     };
 }
-
-#endif // DISPATCHER_H

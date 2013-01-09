@@ -18,6 +18,7 @@ namespace Robomongo
     class OutputItemHeaderWidget : public QFrame
     {
         Q_OBJECT
+
     public:
         explicit OutputItemHeaderWidget(OutputItemWidget *result, OutputItemContentWidget *output, QWidget *parent = 0);
         OutputItemContentWidget *itemContent;

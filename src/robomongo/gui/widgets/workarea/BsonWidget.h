@@ -20,8 +20,33 @@ namespace Robomongo
     {
         Q_OBJECT
 
-    private:
+    public:
+        /*
+        ** Constructs BsonWidget
+        */
+        BsonWidget(QWidget *parent = NULL);
 
+        ~BsonWidget();
+
+        /*
+        ** Set documents to be displayed
+        */
+        void setDocuments(const QList<MongoDocumentPtr> & documents);
+
+        void setShellOutput(const QString & output);
+
+    public slots:
+        /*
+        ** Handle mode tabs (Tree/Text) current page index changed event
+        */
+        void ui_tabPageChanged(int index);
+
+        /*
+        ** Handle moment when json prepared
+        */
+        void thread_jsonPrepared(const QString & json);
+
+    private:
         QTabWidget * _modeTabs;
 
         BsonTreeWidget * _bsonTree;
@@ -44,33 +69,6 @@ namespace Robomongo
         ** Was text rendered, or not
         */
         bool _textRendered;
-
-    public:
-        /*
-        ** Constructs BsonWidget
-        */
-        BsonWidget(QWidget *parent = NULL);
-
-        ~BsonWidget();
-
-        /*
-        ** Set documents to be displayed
-        */
-        void setDocuments(const QList<MongoDocumentPtr> & documents);
-
-        void setShellOutput(const QString & output);
-
-    public slots:
-
-        /*
-        ** Handle mode tabs (Tree/Text) current page index changed event
-        */
-        void ui_tabPageChanged(int index);
-
-        /*
-        ** Handle moment when json prepared
-        */
-        void thread_jsonPrepared(const QString & json);
     };
 
 

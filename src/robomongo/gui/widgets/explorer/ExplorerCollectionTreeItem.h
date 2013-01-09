@@ -12,11 +12,9 @@ namespace Robomongo
         Q_OBJECT
 
     private:
-
         MongoCollection *_collection;
 
     public:
-
         /*
         ** Constructs collection tree item
         */

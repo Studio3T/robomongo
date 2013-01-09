@@ -13,7 +13,6 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-
         ConnectionDiagnosticDialog(ConnectionSettings *connection);
 
     protected slots:
@@ -22,7 +21,6 @@ namespace Robomongo
         void completed();
 
     private:
-
         ConnectionSettings *_connection;
         QIcon _yesIcon;
         QIcon _noIcon;
@@ -45,7 +43,6 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-
         ConnectionDiagnosticThread(ConnectionSettings *connection);
 
     signals:
@@ -54,12 +51,9 @@ namespace Robomongo
         void completed();
 
     protected:
-
         void run();
-
 
     private:
         ConnectionSettings *_connection;
-
     };
 }

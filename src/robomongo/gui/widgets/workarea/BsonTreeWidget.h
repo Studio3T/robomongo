@@ -10,15 +10,7 @@ namespace Robomongo
     {
         Q_OBJECT
 
-    private:
-
-        /*
-        ** Current set of documents
-        */
-        QList<MongoDocumentPtr> _documents;
-
     public:
-
         /*
         ** Constructs Bson Tree widget
         */
@@ -35,10 +27,15 @@ namespace Robomongo
         void resizeEvent(QResizeEvent *event);
 
     public slots:
-
         /*
         ** Handle itemExpanded event
         */
         void ui_itemExpanded(QTreeWidgetItem * item);
+
+    private:
+        /*
+        ** Current set of documents
+        */
+        QList<MongoDocumentPtr> _documents;
     };
 }

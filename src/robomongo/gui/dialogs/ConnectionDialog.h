@@ -19,7 +19,6 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-
         /**
          * @brief Constructs dialog with specified connection
          */
@@ -34,14 +33,12 @@ namespace Robomongo
         ConnectionSettings *connection() const { return _connection; }
 
     protected:
-
         /**
          * @brief Close event handler
          */
         void closeEvent(QCloseEvent *);
 
     private slots:
-
         /**
          * @brief Test current connection
          */
@@ -50,7 +47,6 @@ namespace Robomongo
         void tabWidget_currentChanged(int index);
 
     private:
-
         ConnectionAuthTab *_authTab;
         ConnectionBasicTab *_basicTab;
         ConnectionAdvancedTab *_advancedTab;

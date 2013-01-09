@@ -13,9 +13,7 @@ namespace Robomongo
      */
     class EventError
     {
-
     public:
-
         /**
          * @brief Creates "null" (or, in other words, empty) error.
          * Subsequent call of isNull() on this object will return true.
@@ -45,7 +43,6 @@ namespace Robomongo
         QString errorMessage() const { return _errorMessage; }
 
     private:
-
         /**
          * @brief Flag to support "null" semantic for value object.
          */

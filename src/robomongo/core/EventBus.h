@@ -54,11 +54,9 @@ namespace Robomongo
         void subscribe(QObject *receiver, QEvent::Type type, QObject *sender = NULL);
 
     public slots:
-
         void unsubscibe(QObject *receiver);
 
     private:
-
         /**
          * @brief Returns dispatcher for specified thread. If there is no dispatcher
          * for this thread registered, new dispatcher will be created and moved
@@ -69,7 +67,6 @@ namespace Robomongo
         void sendEvent(EventBusDispatcher *dispatcher, EventWrapper *wrapper);
 
     private:
-
         QMutex _lock;
         QMultiHash<QEvent::Type, EventBusSubscriber *> _subscribersByEventType;
         QHash<QThread *, EventBusDispatcher *> _dispatchersByThread;

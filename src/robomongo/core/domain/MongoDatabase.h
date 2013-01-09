@@ -20,7 +20,6 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-
         /**
          * @brief MongoDatabase
          * @param server: pointer to parent MongoServer
@@ -44,16 +43,13 @@ namespace Robomongo
         MongoServer *server() const { return _server; }
 
     protected slots:
-
         void handle(LoadCollectionNamesResponse *collectionNames);
 
     private:
-
         void clearCollections();
         void addCollection(MongoCollection *collection);
 
     private:
-
         MongoServer *_server;
         MongoClient *_client;
         QList<MongoCollection *> _collections;

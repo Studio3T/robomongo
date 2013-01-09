@@ -25,6 +25,7 @@ namespace Robomongo
     class MongoServer : public QObject
     {
         Q_OBJECT
+
     public:
         /**
          * @brief MongoServer
@@ -51,8 +52,6 @@ namespace Robomongo
          */
         ConnectionSettings *connectionRecord() const { return _connectionRecord; }
 
-
-
         /**
          * @brief Loads databases of this server asynchronously.
          */
@@ -67,8 +66,6 @@ namespace Robomongo
     private:
         void clearDatabases();
         void addDatabase(MongoDatabase *database);
-
-    private:
 
         QScopedPointer<MongoClient> _client;
         DBClientConnection_ScopedPtr _connection;

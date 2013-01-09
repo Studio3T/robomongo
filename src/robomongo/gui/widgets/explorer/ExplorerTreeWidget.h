@@ -12,22 +12,11 @@ namespace Robomongo
     {
         Q_OBJECT
 
-    private:
-
-        /*
-        ** Server context menu
-        */
-        QMenu *_serverMenu;
-        QMenu *_databaseMenu;
-        QMenu *_collectionMenu;
-
     public:
-
         explicit ExplorerTreeWidget(QWidget *parent = 0);
         ~ExplorerTreeWidget();
 
     protected:
-
         /*
         ** Virtual method that used to handle rights clicks
         */
@@ -76,5 +65,13 @@ namespace Robomongo
         void ui_serverHostInfo();
         void ui_serverStatus();
         void ui_serverVersion();
+
+    private:
+        /*
+        ** Server context menu
+        */
+        QMenu *_serverMenu;
+        QMenu *_databaseMenu;
+        QMenu *_collectionMenu;
     };
 }

@@ -16,6 +16,25 @@ namespace Robomongo
     {
         Q_OBJECT
 
+    public:
+        /*
+        ** Constructs BsonTreeItem
+        */
+        BsonTreeItem(MongoElementPtr element, int position);
+        ~BsonTreeItem();
+
+        /*
+        ** Constructs BsonTreeItem
+        */
+        BsonTreeItem(MongoDocumentPtr document, int position);
+
+        /*
+        ** MongoDocument this tree item represents
+        */
+        MongoElementPtr element() const { return _element; }
+
+        void expand();
+
     private:
         /*
         ** MongoDocument this tree item represents
@@ -46,26 +65,5 @@ namespace Robomongo
         QString buildFieldName();
         QString buildArrayFieldName(int itemsCount);
         QString buildSynopsis(QString text);
-
-    public:
-
-        /*
-        ** Constructs BsonTreeItem
-        */
-        BsonTreeItem(MongoElementPtr element, int position);
-        ~BsonTreeItem();
-
-        /*
-        ** Constructs BsonTreeItem
-        */
-        BsonTreeItem(MongoDocumentPtr document, int position);
-
-        /*
-        ** MongoDocument this tree item represents
-        */
-        MongoElementPtr element() const { return _element; }
-
-        void expand();
     };
-
 }

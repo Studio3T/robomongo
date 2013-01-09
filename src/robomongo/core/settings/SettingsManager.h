@@ -75,7 +75,6 @@ namespace Robomongo
         void connectionRemoved(ConnectionSettings *connection);
 
     private:
-
         /**
          * @brief Load settings from the map. Existings settings will be overwritten.
          */

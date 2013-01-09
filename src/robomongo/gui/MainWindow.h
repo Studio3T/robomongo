@@ -19,12 +19,23 @@ namespace Robomongo
     class MainWindow : public QMainWindow
     {
         Q_OBJECT
+
     public:
         explicit MainWindow();
-
         void keyPressEvent(QKeyEvent *event);
-
         bool textMode() const { return _textMode; }
+
+    public slots:
+        void manageConnections();
+        void toggleOrientation();
+        void enterTextMode();
+        void enterTreeMode();
+        void executeScript();
+        void toggleFullScreen2();
+        void refreshConnections();
+        void toggleLogs(bool show);
+        void connectToServer(QAction *action);
+        void handle(ConnectionFailedEvent *event);
 
     private:
         /*
@@ -59,27 +70,12 @@ namespace Robomongo
 
         void createDatabaseExplorer();
         void createTabs();
-
-    signals:
-
-    public slots:
-        void manageConnections();
-        void toggleOrientation();
-        void enterTextMode();
-        void enterTreeMode();
-        void executeScript();
-        void toggleFullScreen2();
-        void refreshConnections();
-        void toggleLogs(bool show);
-        void connectToServer(QAction *action);
-
-    public slots:
-        void handle(ConnectionFailedEvent *event);
     };
 
     class ConnectionMenu : public QMenu
     {
         Q_OBJECT
+
     public:
         ConnectionMenu(QWidget *parent) : QMenu(parent) {}
         void keyPressEvent(QKeyEvent *event);

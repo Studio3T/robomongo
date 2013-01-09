@@ -18,31 +18,7 @@ namespace Robomongo
      */
     class ImplicitlyShared
     {
-    private:
-
-        /**
-         * Private data
-         */
-        class ImplicitlySharedPrivate : public QSharedData
-        {
-        public:
-            ImplicitlySharedPrivate() {}
-            int id;
-            QString connectionName;
-            QString serverHost;
-            int serverPort;
-            QString userName;
-            QString userPassword;
-        };
-
-        /**
-         * Shared data
-         */
-        QExplicitlySharedDataPointer<ImplicitlySharedPrivate> _data;
-        friend uint qHash(const ImplicitlyShared &key);
-
     public:
-
         /**
          * Creates ImplicitlyShared with default values
          */
@@ -111,6 +87,28 @@ namespace Robomongo
                 .arg(_data->serverHost)
                 .arg(_data->serverPort);
         }
+
+    private:
+        /**
+         * Private data
+         */
+        class ImplicitlySharedPrivate : public QSharedData
+        {
+        public:
+            ImplicitlySharedPrivate() {}
+            int id;
+            QString connectionName;
+            QString serverHost;
+            int serverPort;
+            QString userName;
+            QString userPassword;
+        };
+
+        /**
+         * Shared data
+         */
+        QExplicitlySharedDataPointer<ImplicitlySharedPrivate> _data;
+        friend uint qHash(const ImplicitlyShared &key);
     };
 
     inline uint qHash(const ImplicitlyShared &key)

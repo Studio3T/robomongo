@@ -9,7 +9,6 @@ namespace Robomongo
     class QueryInfo
     {
     public:
-
         QueryInfo() :
             isNull(true) {}
 
@@ -59,6 +58,7 @@ namespace Robomongo
     class ExecResult
     {
     public:
+
         ExecResult() {}
         ExecResult(const QList<Result> &results,
                    const QString &currentServerName, bool isCurrentServerValid,

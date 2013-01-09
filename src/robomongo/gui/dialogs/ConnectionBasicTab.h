@@ -10,9 +10,9 @@ namespace Robomongo
     class ConnectionBasicTab : public QWidget
     {
         Q_OBJECT
+
     public:
         ConnectionBasicTab(ConnectionSettings *settings);
-
         void accept();
 
     private:

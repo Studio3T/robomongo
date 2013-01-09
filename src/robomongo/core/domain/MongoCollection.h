@@ -19,12 +19,7 @@ namespace Robomongo
         QString fullName() const { return _fullName; }
         MongoDatabase *database() const { return _database; }
 
-    signals:
-
-    public slots:
-
     private:
-
         /**
          * @brief Database that contains this collection
          */
@@ -40,9 +35,6 @@ namespace Robomongo
         */
         QString _fullName;
 
-
         bool _system;
-
-
     };
 }

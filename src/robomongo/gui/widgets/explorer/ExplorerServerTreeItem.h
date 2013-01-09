@@ -14,7 +14,6 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-
         /*
         ** Constructs ExplorerServerTreeItem
         */
@@ -28,22 +27,14 @@ namespace Robomongo
 
         MongoServer *server() const { return _server; }
 
-
     public slots:
-
-        /*
-        **
-        */
         void databaseRefreshed(const QList<MongoDatabase *> &dbs);
-
 
     public slots:
         void handle(DatabaseListLoadedEvent *event);
 
     private:
-
         MongoServer *_server;
         EventBus *_bus;
-
     };
 }

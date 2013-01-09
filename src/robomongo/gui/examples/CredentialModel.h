@@ -10,7 +10,6 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-
         CredentialModel(QList<CredentialSettings *> credentials) : _credentials(credentials) {}
 
         int rowCount(const QModelIndex &parent) const;

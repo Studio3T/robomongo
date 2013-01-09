@@ -10,17 +10,11 @@ namespace Robomongo
     class EventBusDispatcher : public QObject
     {
         Q_OBJECT
-    public:
 
+    public:
         EventBusDispatcher(QObject *parent = 0);
 
     protected:
-
         bool event(QEvent *qevent);
-
-    signals:
-
-    public slots:
-
     };
 }

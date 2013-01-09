@@ -10,6 +10,7 @@ namespace Robomongo
     {
     public:
         PlainJavaScriptEditor(QWidget *parent=NULL);
+
     private:
         Q_DISABLE_COPY(PlainJavaScriptEditor)
     };

@@ -21,8 +21,8 @@ namespace Robomongo
     class ConnectionsDialog : public QDialog
     {
         Q_OBJECT
-    public:
 
+    public:
         /**
          * @brief Creates dialog
          */
@@ -40,7 +40,6 @@ namespace Robomongo
         virtual void accept();
 
     private slots:
-
         void linkActivated(const QString &link);
 
         /**
@@ -87,7 +86,6 @@ namespace Robomongo
         void listWidget_layoutChanged();
 
     private:
-
         /**
          * @brief ConnectionSettings, that was selected after pressing on
          * "Connect" button
@@ -117,7 +115,6 @@ namespace Robomongo
     class ConnectionListWidgetItem : public QTreeWidgetItem
     {
     public:
-
         /**
          * @brief Creates ConnectionListWidgetItem with specified ConnectionSettings
          */

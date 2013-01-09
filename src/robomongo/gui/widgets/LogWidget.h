@@ -17,8 +17,19 @@ namespace Robomongo
     {
         Q_OBJECT
 
-    private:
+    public:
+        /*
+        ** Constructs log widget panel for main window
+        */
+        LogWidget(MainWindow *mainWindow);
 
+    public slots:
+        void addMessage(const QString &message);
+        void handle(SomethingHappened *event);
+        void handle(ConnectingEvent *event);
+        void handle(OpeningShellEvent *event);
+
+    private:
         /*
         ** Main window this widget belongs to
         */
@@ -30,21 +41,6 @@ namespace Robomongo
         QPlainTextEdit *_logTextEdit;
 
         EventBus *_bus;
-
-    public:
-
-        /*
-        ** Constructs log widget panel for main window
-        */
-        LogWidget(MainWindow *mainWindow);
-
-    public slots:
-        void addMessage(const QString &message);
-
-    public slots:
-        void handle(SomethingHappened *event);
-        void handle(ConnectingEvent *event);
-        void handle(OpeningShellEvent *event);
     };
 
 }

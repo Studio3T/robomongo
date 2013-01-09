@@ -21,7 +21,4 @@ public:
 
     static QString toJsonString(QList<mongo::BSONObj> bsonObjects);
     static void toJsonString(QString buff, mongo::BSONObj bsonObjects);
-
-private:
-	
 };

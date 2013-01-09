@@ -16,25 +16,7 @@ namespace Robomongo
 	{
 		Q_OBJECT
 
-	private:
-
-		/*
-		** Native BSONElement this MongoElement represents
-		*/
-        mongo::BSONElement _bsonElement;
-
-		/*
-		** Field Name
-		*/
-		QString _fieldName;
-
-		/*
-		** String value if this element
-		*/
-		QString _stringValue;
-
 	public:
-		
 		/*
 		** Create instance of MongoElement from BSONElement
 		*/
@@ -86,5 +68,21 @@ namespace Robomongo
         void buildJsonString(Concatenator &con);
 
         mongo::BSONElement bsonElement() const { return _bsonElement; }
+
+    private:
+        /*
+        ** Native BSONElement this MongoElement represents
+        */
+        mongo::BSONElement _bsonElement;
+
+        /*
+        ** Field Name
+        */
+        QString _fieldName;
+
+        /*
+        ** String value if this element
+        */
+        QString _stringValue;
 	};
 }

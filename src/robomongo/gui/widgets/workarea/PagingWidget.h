@@ -11,6 +11,7 @@ namespace Robomongo
     class PagingWidget : public QWidget
     {
         Q_OBJECT
+
     public:
         PagingWidget();
         void setSkip(int skip);

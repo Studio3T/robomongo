@@ -15,17 +15,7 @@ namespace Robomongo
     {
         Q_OBJECT
 
-    private:
-
-        ExplorerDatabaseCategoryTreeItem * _collectionItem;
-        ExplorerDatabaseCategoryTreeItem * _javascriptItem;
-        ExplorerDatabaseCategoryTreeItem * _usersItem;
-        ExplorerDatabaseCategoryTreeItem * _filesItem;
-
-        MongoDatabase *_database;
-
     public:
-
         /*
         ** Constructs DatabaseTreeItem
         */
@@ -40,13 +30,17 @@ namespace Robomongo
         void expandCollections();
 
     public slots:
-
         void vm_collectionRefreshed(const QList<MongoCollection *> &collections);
-
-    public slots:
         void handle(MongoDatabase_CollectionListLoadedEvent *event);
 
     private:
         EventBus *_bus;
+
+        ExplorerDatabaseCategoryTreeItem * _collectionItem;
+        ExplorerDatabaseCategoryTreeItem * _javascriptItem;
+        ExplorerDatabaseCategoryTreeItem * _usersItem;
+        ExplorerDatabaseCategoryTreeItem * _filesItem;
+
+        MongoDatabase *_database;
     };
 }

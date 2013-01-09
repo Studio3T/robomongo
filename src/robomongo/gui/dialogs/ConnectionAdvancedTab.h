@@ -10,6 +10,7 @@ namespace Robomongo
     class ConnectionAdvancedTab : public QWidget
     {
         Q_OBJECT
+
     public:
         ConnectionAdvancedTab(ConnectionSettings *settings);
         QLineEdit *_defaultDatabaseName;

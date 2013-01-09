@@ -1,8 +1,8 @@
+#include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
+
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QIcon>
-
-#include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 
 using namespace Robomongo;
 

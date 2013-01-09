@@ -1,5 +1,6 @@
 #include "robomongo/gui/editors/JSLexer.h"
-#include "Qsci/qscilexerjavascript.h"
+
+#include <Qsci/qscilexerjavascript.h>
 
 using namespace Robomongo;
 

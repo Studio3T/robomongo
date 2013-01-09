@@ -1,10 +1,12 @@
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
+
 #include <QApplication>
 #include <QtGui>
 #include <QPlainTextEdit>
 #include "Qsci/qsciscintilla.h"
-#include "Qsci/qscilexerjavascript.h"
-#include "mongo/client/dbclient.h"
-#include "mongo/bson/bsonobj.h"
+#include <Qsci/qscilexerjavascript.h>
+#include <mongo/client/dbclient.h>
+#include <mongo/bson/bsonobj.h>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
@@ -17,7 +19,6 @@
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/widgets/workarea/BsonWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"

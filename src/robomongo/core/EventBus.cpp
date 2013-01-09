@@ -1,10 +1,11 @@
+#include "robomongo/core/EventBus.h"
+
 #include <QEvent>
 #include <QObject>
 #include <QCoreApplication>
 #include <QThread>
 #include <QMutexLocker>
 
-#include "robomongo/core/EventBus.h"
 #include "robomongo/core/EventBusSubscriber.h"
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/EventWrapper.h"

@@ -1,3 +1,5 @@
+#include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
+
 #include <QtGui>
 
 #include "robomongo/core/AppRegistry.h"
@@ -5,7 +7,6 @@
 #include "robomongo/core/domain/MongoElement.h"
 #include "robomongo/core/domain/MongoDocumentIterator.h"
 #include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 
 using namespace Robomongo;

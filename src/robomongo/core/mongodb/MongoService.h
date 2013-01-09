@@ -3,8 +3,6 @@
 #include <QObject>
 #include <mongo/client/dbclient.h>
 
-//using namespace mongo;
-
 class MongoService : public QObject
 {
 	Q_OBJECT

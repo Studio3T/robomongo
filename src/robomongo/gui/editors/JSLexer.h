@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include <QColor>
-#include "Qsci/qscilexerjavascript.h"
+#include <Qsci/qscilexerjavascript.h>
 
 namespace Robomongo
 {

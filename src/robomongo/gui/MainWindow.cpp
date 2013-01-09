@@ -1,3 +1,5 @@
+#include "robomongo/gui/MainWindow.h"
+
 #include <QtGui>
 #include <QMessageBox>
 
@@ -7,7 +9,6 @@
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/mongodb/MongoException.h"
-#include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 #include "robomongo/gui/widgets/LogWidget.h"

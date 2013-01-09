@@ -1,6 +1,7 @@
+#include "robomongo/core/EventBusDispatcher.h"
+
 #include <QThread>
 
-#include "robomongo/core/EventBusDispatcher.h"
 #include "robomongo/core/EventWrapper.h"
 
 using namespace Robomongo;

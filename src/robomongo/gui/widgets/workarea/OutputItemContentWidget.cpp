@@ -1,7 +1,8 @@
-#include <QVBoxLayout>
-#include "Qsci/qscilexerjavascript.h"
-
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
+
+#include <QVBoxLayout>
+#include <Qsci/qscilexerjavascript.h>
+
 #include "robomongo/gui/widgets/workarea/BsonWidget.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/editors/JSLexer.h"

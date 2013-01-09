@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <QSplitter>
+
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/BsonWidget.h"
 #include "robomongo/core/domain/MongoShellResult.h"

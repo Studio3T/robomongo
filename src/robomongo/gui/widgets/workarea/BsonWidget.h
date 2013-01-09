@@ -2,7 +2,7 @@
 
 #include <QWidget>
 #include <QtGui>
-#include "mongo/client/dbclient.h"
+#include <mongo/client/dbclient.h>
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoDocument.h"

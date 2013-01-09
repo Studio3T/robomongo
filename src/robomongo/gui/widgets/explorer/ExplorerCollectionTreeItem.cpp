@@ -1,5 +1,6 @@
-#include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
+
+#include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/gui/GuiRegistry.h"
 
 using namespace Robomongo;

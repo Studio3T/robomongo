@@ -1,9 +1,10 @@
+#include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
+
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/Core.h"
 #include "robomongo/core/EventBus.h"
-#include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/GuiRegistry.h"

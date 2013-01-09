@@ -1,4 +1,5 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
+
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 
 using namespace Robomongo;

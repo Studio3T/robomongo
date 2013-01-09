@@ -1,3 +1,5 @@
+#include "robomongo/gui/widgets/explorer/ExplorerTreeWidget.h"
+
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QtGui>
@@ -8,7 +10,6 @@
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/gui/widgets/explorer/ExplorerTreeWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"

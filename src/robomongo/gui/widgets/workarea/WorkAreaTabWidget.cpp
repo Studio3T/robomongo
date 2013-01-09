@@ -1,6 +1,7 @@
+#include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
+
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/App.h"
-#include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"

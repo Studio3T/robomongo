@@ -8,7 +8,7 @@
 #include <QTextStream>
 #include <QVector>
 #include "boost/scoped_ptr.hpp"
-#include "mongo/client/dbclient.h"
+#include <mongo/client/dbclient.h>
 #include "mongo/scripting/engine_spidermonkey.h"
 
 #include "robomongo/core/events/MongoEvents.h"

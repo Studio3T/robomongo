@@ -1,6 +1,6 @@
 #include <QStringBuilder>
 #include <QStringList>
-#include "mongo/client/dbclient.h"
+#include <mongo/client/dbclient.h>
 
 #include "robomongo/core/mongodb/MongoService.h"
 

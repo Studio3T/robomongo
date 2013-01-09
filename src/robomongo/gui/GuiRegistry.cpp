@@ -1,8 +1,8 @@
+#include "robomongo/gui/GuiRegistry.h"
+
 #include <QApplication>
 #include <QStyle>
 #include <QIcon>
-
-#include "robomongo/gui/GuiRegistry.h"
 
 using namespace Robomongo;
 

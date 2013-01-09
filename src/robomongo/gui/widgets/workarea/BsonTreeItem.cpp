@@ -1,6 +1,7 @@
+#include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
+
 #include "robomongo/core/domain/MongoElement.h"
 #include "robomongo/core/domain/MongoDocumentIterator.h"
-#include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/gui/GuiRegistry.h"
 
 using namespace Robomongo;

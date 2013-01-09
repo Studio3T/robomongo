@@ -1,7 +1,8 @@
 #pragma once
 
+#include <Qsci/qsciscintilla.h>
+
 #include "robomongo/gui/editors/jsedit.h"
-#include "Qsci/qsciscintilla.h"
 
 namespace Robomongo
 {

@@ -4,7 +4,7 @@
 #include <QIcon>
 #include <QPushButton>
 #include <QtGui>
-#include "mongo/client/dbclient.h"
+#include <mongo/client/dbclient.h>
 
 #include "robomongo/gui/dialogs/ConnectionDiagnosticDialog.h"
 #include "robomongo/core/settings/ConnectionSettings.h"

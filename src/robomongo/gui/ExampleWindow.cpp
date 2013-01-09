@@ -1,11 +1,11 @@
+#include "robomongo/gui/ExampleWindow.h"
+
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QStyle>
 #include <QLayout>
 #include <QPushButton>
 #include <QSettings>
-
-#include "robomongo/gui/ExampleWindow.h"
 
 ExampleWindow::ExampleWindow(QWidget *parent) :
     QMainWindow(parent)

@@ -4,8 +4,8 @@
 #include <QDebug>
 #include <QFile>
 #include <QVariantList>
-#include "qjson/parser.h"
-#include "qjson/serializer.h"
+#include <qjson/parser.h>
+#include <qjson/serializer.h>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 

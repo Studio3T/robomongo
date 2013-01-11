@@ -217,6 +217,14 @@ QIcon GuiRegistry::timeIcon()
     return _timeIcon;
 }
 
+QIcon GuiRegistry::keyIcon()
+{
+    if (_keyIcon.isNull())
+        _keyIcon = QIcon(":/robomongo/icons/key_16x16.png");
+
+    return _keyIcon;
+}
+
 QBrush GuiRegistry::typeBrush()
 {
     if (_typeBrush.style() == Qt::NoBrush)

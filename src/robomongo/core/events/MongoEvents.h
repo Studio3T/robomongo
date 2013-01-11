@@ -141,6 +141,7 @@ namespace Robomongo
     public:
         QString collectionName;
         int sizeBytes;
+        int storageSizeBytes;
         int count;
     };
 

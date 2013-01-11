@@ -11,13 +11,16 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        MongoCollection(MongoDatabase *database, const QString &fullName);
+        MongoCollection(MongoDatabase *database, const CollectionInfo &info);
 
         bool isSystem() const { return _system; }
 
         QString name() const { return _name; }
+        const CollectionInfo &info() const { return _info; }
         QString fullName() const { return _fullName; }
         MongoDatabase *database() const { return _database; }
+
+        QString sizeNice() const;
 
     private:
         /**
@@ -36,5 +39,7 @@ namespace Robomongo
         QString _fullName;
 
         bool _system;
+
+        CollectionInfo _info;
     };
 }

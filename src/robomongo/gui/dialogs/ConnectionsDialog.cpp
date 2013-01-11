@@ -334,7 +334,7 @@ void ConnectionListWidgetItem::setConnection(ConnectionSettings *connection)
             .arg(connection->primaryCredential()->userName());
 
         setText(2, authString);
-        setIcon(2, GuiRegistry::instance().yesMarkIcon());
+        setIcon(2, GuiRegistry::instance().keyIcon());
     } else {
         setIcon(2, QIcon());
         setText(2, "");

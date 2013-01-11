@@ -17,15 +17,15 @@ ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(MongoCollection *collecti
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
     QString tooltip = QString(
+        "%0 "
         "<table>"
-        "<tr><td>Collection:</td> <td><b>%0</b></td></tr>"
-        "<tr><td>Count:</td> <td><b>%1</b></td></tr>"
-        "<tr><td>Size:</td><td><b>%2</b></td></tr>"
+        "<tr><td>Count:</td> <td><b>&nbsp; %1</b></td></tr>"
+        "<tr><td>Size:</td><td><b>&nbsp; %2</b></td></tr>"
         "</table>"
         )
         .arg(collection->name())
         .arg(collection->info().count)
-        .arg(collection->sizeNice());
+        .arg(collection->sizeString());
 
     setToolTip(0, tooltip);
 }

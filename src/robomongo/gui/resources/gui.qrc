@@ -44,5 +44,6 @@
         <file>icons/no_mark_16x16.png</file>
         <file>icons/yes_mark_16x16.png</file>
         <file>icons/time_16x16.png</file>
+        <file>icons/key_16x16.png</file>
     </qresource>
 </RCC>

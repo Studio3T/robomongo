@@ -16,13 +16,16 @@ namespace Robomongo
         bool isSystem() const { return _system; }
 
         QString name() const { return _name; }
-        const CollectionInfo &info() const { return _info; }
+        const CollectionInfo info() const { return _info; }
         QString fullName() const { return _fullName; }
         MongoDatabase *database() const { return _database; }
 
-        QString sizeNice() const;
+        QString sizeString() const;
+        QString storageSizeString() const;
 
     private:
+
+        QString buildNiceSizeString(int size) const;
         /**
          * @brief Database that contains this collection
          */

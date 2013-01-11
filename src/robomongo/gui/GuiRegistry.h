@@ -61,6 +61,7 @@ namespace Robomongo
         QIcon noMarkIcon();
         QIcon yesMarkIcon();
         QIcon timeIcon();
+        QIcon keyIcon();
 
         QBrush typeBrush();
 
@@ -105,6 +106,7 @@ namespace Robomongo
         QIcon _noMarkIcon;
         QIcon _yesMarkIcon;
         QIcon _timeIcon;
+        QIcon _keyIcon;
 
         /**
          * @brief Brushes

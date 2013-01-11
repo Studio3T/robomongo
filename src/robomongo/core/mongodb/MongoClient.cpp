@@ -213,6 +213,7 @@ void MongoClient::handle(LoadCollectionNamesRequest *event)
             info.collectionName = ns;
             info.sizeBytes = obj.getIntField("size");
             info.count = obj.getIntField("count");
+            info.storageSizeBytes = obj.getIntField("storageSize");
             infos.append(info);
         }
 

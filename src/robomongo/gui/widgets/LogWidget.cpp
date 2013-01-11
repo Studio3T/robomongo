@@ -16,7 +16,7 @@ LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
     _mainWindow = mainWindow;
 
     _logTextEdit = new QPlainTextEdit;
-    _logTextEdit->setPlainText("Robomongo 0.4.5 is ready.");
+    _logTextEdit->setPlainText("Robomongo 0.4.6 is ready.");
     //_logTextEdit->setMarginWidth(1, 3); // to hide left gray column
 
     QHBoxLayout *hlayout = new QHBoxLayout;

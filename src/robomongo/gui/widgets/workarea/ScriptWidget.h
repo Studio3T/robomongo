@@ -30,9 +30,6 @@ namespace Robomongo
 
     private:
         void _configureQueryText();
-        /*
-        ** Query text
-        */
         RoboScintilla *_queryText;
         TopStatusBar *_topStatusBar;
     };

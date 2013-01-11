@@ -10,17 +10,11 @@ namespace Robomongo
 {
     class MainWindow;
 
-    /**
-     * Log panel
-     */
     class LogWidget : public QWidget
     {
         Q_OBJECT
 
     public:
-        /*
-        ** Constructs log widget panel for main window
-        */
         LogWidget(MainWindow *mainWindow);
 
     public slots:
@@ -30,16 +24,12 @@ namespace Robomongo
         void handle(OpeningShellEvent *event);
 
     private:
-        /*
-        ** Main window this widget belongs to
-        */
+        /**
+         * @brief Main window this widget belongs to
+         */
         MainWindow *_mainWindow;
 
-        /*
-        ** Log text box
-        */
         QPlainTextEdit *_logTextEdit;
-
         EventBus *_bus;
     };
 

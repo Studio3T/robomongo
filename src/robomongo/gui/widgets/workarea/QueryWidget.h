@@ -5,7 +5,7 @@
 #include <QLineEdit>
 #include <QPlainTextEdit>
 #include <QLabel>
-#include "Qsci/qsciscintilla.h"
+#include <Qsci/qsciscintilla.h>
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoShellResult.h"
@@ -21,26 +21,15 @@ namespace Robomongo
     class OutputWidget;
     class WorkAreaTabWidget;
     class ScriptWidget;
-    class TopStatusBar;
 
     class QueryWidget : public QWidget
     {
         Q_OBJECT
 
     public:
-        /*
-        ** Constructs query widget
-        */
-        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const QString &script, bool textMode, QWidget * parent = NULL);
+        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const QString &script, bool textMode, QWidget *parent = NULL);
+        ~QueryWidget() {}
 
-        /*
-        ** Destructs QueryWidget
-        */
-        ~QueryWidget();
-
-        /*
-        ** Override event filter
-        */
         bool eventFilter(QObject * o, QEvent * e);
 
         void toggleOrientation();
@@ -54,80 +43,25 @@ namespace Robomongo
         MongoShell *shell() const { return _shell; }
 
     public slots:
-        /*
-        ** Execute query
-        */
-        void ui_executeButtonClicked();
-
-        /*
-        ** Paging right clicked
-        */
-        void ui_rightButtonClicked();
-
-        /*
-        ** Paging left clicked
-        */
-        void ui_leftButtonClicked();
-
-        /*
-        ** Documents refreshed
-        */
-        void vm_documentsRefreshed(const QList<MongoDocumentPtr> &documents);
-
-        /*
-        ** Shell output refreshed
-        */
-        void vm_shellOutputRefreshed(const QString &shellOutput);
-
-        /*
-        ** Paging visability changed
-        */
-        void vm_pagingVisibilityChanged(bool show);
-
-        /*
-        ** Query updated
-        */
-        void vm_queryUpdated(const QString &query);
+        void execute();
 
     public slots:
         void handle(DocumentListLoadedEvent *event);
         void handle(ScriptExecutedEvent *event);
 
     private:
-        ScriptWidget *_scriptWidget;
-
-        void _showPaging(bool show);
-
-        bool _textMode;
-
         void displayData(const QList<MongoShellResult> &results, bool empty);
 
-        /*
-        ** Bson widget
-        */
-        BsonWidget * _bsonWidget;
+        App *_app;
+        EventBus *_bus;
+        MongoShell *_shell;
+        KeyboardManager *_keyboard;
         OutputWidget *_viewer;
-        QLabel *_outputLabel;
-
-        /*
-        ** Paging buttons
-        */
-        QPushButton * _leftButton;
-        QPushButton * _rightButton;
-        QLineEdit * _pageSizeEdit;
-
+        ScriptWidget *_scriptWidget;
         WorkAreaTabWidget *_tabWidget;
+        QLabel *_outputLabel;
+        bool _textMode;
 
         QList<MongoShellResult> _currentResults;
-
-        MongoShell *_shell;
-        EventBus *_bus;
-        App *_app;
-        KeyboardManager *_keyboard;
-
-        /**
-         * @brief QueryWidget initialized and connected to the shell
-         */
-        bool _initialized;
     };
 }

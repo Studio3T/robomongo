@@ -20,7 +20,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit OutputItemHeaderWidget(OutputItemWidget *result, OutputItemContentWidget *output, QWidget *parent = 0);
+        OutputItemHeaderWidget(OutputItemWidget *result, OutputItemContentWidget *output, QWidget *parent = 0);
         OutputItemContentWidget *itemContent;
         OutputItemWidget *item;
         PagingWidget *paging() const { return _paging; }

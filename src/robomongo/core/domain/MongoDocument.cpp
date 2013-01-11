@@ -15,7 +15,7 @@ namespace Robomongo
 		_count = 0;
 	}
 
-	void Concatenator::append(const QString & data)
+    void Concatenator::append(const QString &data)
 	{
 		_list.append(data);
 		_count = _count + data.length();

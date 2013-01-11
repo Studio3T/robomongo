@@ -16,31 +16,28 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        /*
-        ** Constructs DatabaseTreeItem
-        */
         ExplorerDatabaseTreeItem(MongoDatabase *database);
-        ~ExplorerDatabaseTreeItem();
+        ~ExplorerDatabaseTreeItem() {}
 
         MongoDatabase *database() const { return _database; }
-
-        /*
-        ** Expand database tree item to see collections;
-        */
         void expandCollections();
 
     public slots:
-        void vm_collectionRefreshed(const QList<MongoCollection *> &collections);
         void handle(MongoDatabase_CollectionListLoadedEvent *event);
 
     private:
+        void clearCollectionFolderItems();
+        void createCollectionSystemFolderItem();
+        void addCollectionItem(MongoCollection *collection);
+        void addSystemCollectionItem(MongoCollection *collection);
+        void showCollectionSystemFolderIfNeeded();
+
         EventBus *_bus;
-
-        ExplorerDatabaseCategoryTreeItem * _collectionItem;
-        ExplorerDatabaseCategoryTreeItem * _javascriptItem;
-        ExplorerDatabaseCategoryTreeItem * _usersItem;
-        ExplorerDatabaseCategoryTreeItem * _filesItem;
-
+        ExplorerDatabaseCategoryTreeItem *_collectionFolderItem;
+        ExplorerDatabaseCategoryTreeItem *_javascriptFolderItem;
+        ExplorerDatabaseCategoryTreeItem *_usersFolderItem;
+        ExplorerDatabaseCategoryTreeItem *_filesFolderItem;
+        QTreeWidgetItem *_collectionSystemFolderItem;
         MongoDatabase *_database;
     };
 }

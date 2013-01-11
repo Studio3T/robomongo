@@ -13,9 +13,6 @@
 
 using namespace Robomongo;
 
-/**
- * Constructs ExplorerWidget
- */
 ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     _progress(0),
     _bus(AppRegistry::instance().bus()),
@@ -25,15 +22,12 @@ ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
     _treeWidget->setIndentation(15);    
     _treeWidget->setHeaderHidden(true);
     _treeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-    //_treeWidget->setStyleSheet("background-color:#E7E5E4; border: 0px; ");
 
     QHBoxLayout *vlaout = new QHBoxLayout();
     vlaout->setMargin(0);
     vlaout->addWidget(_treeWidget, Qt::AlignJustify);
 
     connect(_treeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), SLOT(ui_itemExpanded(QTreeWidgetItem *)));
-    connect(_treeWidget, SIGNAL(customContextMenuRequested(QPoint)), SLOT(ui_customContextMenuRequested(QPoint)));
-    connect(_treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(ui_itemClicked(QTreeWidgetItem*,int)));
     connect(_treeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), SLOT(ui_itemDoubleClicked(QTreeWidgetItem *, int)));
     connect(_treeWidget, SIGNAL(disconnectActionTriggered()), SLOT(ui_disonnectActionTriggered()));
     connect(_treeWidget, SIGNAL(openShellActionTriggered()), SLOT(ui_openShellActionTriggered()));
@@ -139,16 +133,6 @@ void ExplorerWidget::decreaseProgress()
         _progressLabel->hide();
 }
 
-void ExplorerWidget::ui_itemClicked(QTreeWidgetItem* a1 ,int b)
-{
-    int a = b;
-}
-
-void ExplorerWidget::ui_customContextMenuRequested(QPoint p)
-{
-    int a = p.rx();
-}
-
 void ExplorerWidget::handle(ConnectingEvent *event)
 {
     increaseProgress();
@@ -163,8 +147,6 @@ void ExplorerWidget::handle(ConnectionEstablishedEvent *event)
     _treeWidget->addTopLevelItem(item);
     _treeWidget->setCurrentItem(item);
     _treeWidget->setFocus();
-
-//    _treeWidget->setItemWidget(item, 0, yourLabel);
 }
 
 void ExplorerWidget::handle(ConnectionFailedEvent *event)
@@ -172,14 +154,6 @@ void ExplorerWidget::handle(ConnectionFailedEvent *event)
     decreaseProgress();
 }
 
-void ExplorerWidget::removeServer()
-{
-
-}
-
-/*
-** Handle item expanding
-*/
 void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)
 {
     ExplorerDatabaseCategoryTreeItem *categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
@@ -205,9 +179,6 @@ void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)
     }
 }
 
-/*
-** Handle item double clicking
-*/
 void ExplorerWidget::ui_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
     ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);

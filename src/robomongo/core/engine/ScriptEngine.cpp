@@ -126,7 +126,7 @@ namespace Robomongo
                     if (!answer.isEmpty() || list.count() > 0)
                         results.append(prepareResult(answer, list, elapsed));
                 }
-                catch ( std::exception& e ) {
+                catch ( std::exception &e ) {
                     std::cout << "error:" << e.what() << endl;
                 }
             }

@@ -72,12 +72,12 @@ namespace Robomongo
         /*
         ** Documents refreshed
         */
-        void vm_documentsRefreshed(const QList<MongoDocumentPtr> & documents);
+        void vm_documentsRefreshed(const QList<MongoDocumentPtr> &documents);
 
         /*
         ** Shell output refreshed
         */
-        void vm_shellOutputRefreshed(const QString & shellOutput);
+        void vm_shellOutputRefreshed(const QString &shellOutput);
 
         /*
         ** Paging visability changed
@@ -87,7 +87,7 @@ namespace Robomongo
         /*
         ** Query updated
         */
-        void vm_queryUpdated(const QString & query);
+        void vm_queryUpdated(const QString &query);
 
     public slots:
         void handle(DocumentListLoadedEvent *event);

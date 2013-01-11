@@ -74,7 +74,7 @@ namespace Robomongo
 
 	public:
 		Concatenator();
-		void append(const QString & data);
+        void append(const QString &data);
 		QString build();
 
     private:

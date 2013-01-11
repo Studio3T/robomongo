@@ -14,12 +14,9 @@ namespace Robomongo
 
     public:
         explicit ExplorerTreeWidget(QWidget *parent = 0);
-        ~ExplorerTreeWidget();
+        ~ExplorerTreeWidget() {}
 
     protected:
-        /*
-        ** Virtual method that used to handle rights clicks
-        */
         void contextMenuEvent(QContextMenuEvent *event);
 
         ExplorerServerTreeItem *selectedServerItem();
@@ -30,13 +27,11 @@ namespace Robomongo
         void openCurrentServerShell(const QString &script, bool execute = true);
 
     signals:
-
         void disconnectActionTriggered();
         void refreshActionTriggered();
         void openShellActionTriggered();
 
     protected slots:
-
         void ui_disconnectServer();
         void ui_refreshServer();
         void ui_openShell();
@@ -67,11 +62,8 @@ namespace Robomongo
         void ui_serverVersion();
 
     private:
-        /*
-        ** Server context menu
-        */
-        QMenu *_serverMenu;
-        QMenu *_databaseMenu;
-        QMenu *_collectionMenu;
+        QMenu *_serverContextMenu;
+        QMenu *_databaseContextMenu;
+        QMenu *_collectionContextMenu;
     };
 }

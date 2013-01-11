@@ -10,14 +10,7 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        /**
-         * @brief Creates new App instance.
-         */
         App(EventBus *bus);
-
-        /**
-         * @brief Cleanup resources, owned by this App.
-         */
         ~App();
 
         /**
@@ -56,12 +49,12 @@ namespace Robomongo
 
     private:
         /**
-         * @brief List of MongoServers, owned by this App.
+         * @brief MongoServers, owned by this App.
          */
         QList<MongoServer *> _servers;
 
         /**
-         * @brief List of MongoShells, owned by this App.
+         * @brief MongoShells, owned by this App.
          */
         QList<MongoShell *> _shells;
 

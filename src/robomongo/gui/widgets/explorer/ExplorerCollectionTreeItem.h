@@ -11,15 +11,12 @@ namespace Robomongo
     {
         Q_OBJECT
 
-    private:
-        MongoCollection *_collection;
-
     public:
-        /*
-        ** Constructs collection tree item
-        */
         ExplorerCollectionTreeItem(MongoCollection *collection);
-
         MongoCollection *collection() const { return _collection; }
+
+    private:
+        QString buildToolTip(MongoCollection *collection);
+        MongoCollection *_collection;
     };
 }

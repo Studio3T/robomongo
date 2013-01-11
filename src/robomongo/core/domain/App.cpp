@@ -8,15 +8,9 @@
 
 using namespace Robomongo;
 
-/**
- * @brief Creates new App instance.
- */
 App::App(EventBus *bus) : QObject(),
     _bus(bus) { }
 
-/**
- * @brief Cleanup resources, owned by this App.
- */
 App::~App()
 {
     qDeleteAll(_shells);

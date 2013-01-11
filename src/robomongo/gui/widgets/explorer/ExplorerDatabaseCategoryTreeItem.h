@@ -22,33 +22,12 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-
-        /*
-        ** Constructs database category tree item
-        */
-        ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseCategory category, ExplorerDatabaseTreeItem * databaseItem);
-
-
-        /*
-        ** Database category of this tree item
-        */
+        ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseCategory category, ExplorerDatabaseTreeItem *databaseItem);
         ExplorerDatabaseCategory category() const { return _category; }
-
-        /*
-        ** Database tree item this category belongs to
-        */
-        ExplorerDatabaseTreeItem * databaseItem() const { return _databaseItem; }
+        ExplorerDatabaseTreeItem *databaseItem() const { return _databaseItem; }
 
     private:
-        /*
-        ** Database category of this tree item
-        */
         ExplorerDatabaseCategory _category;
-
-        /*
-        ** Database tree item this category belongs to
-        */
-        ExplorerDatabaseTreeItem * _databaseItem;
+        ExplorerDatabaseTreeItem *_databaseItem;
     };
-
 }

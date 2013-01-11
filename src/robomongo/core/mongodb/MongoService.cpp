@@ -69,7 +69,7 @@ QList<BSONObj> MongoService::getAllObjects( DBClientConnection * connection, QSt
 	return bsonList;	
 }
 
-QString MongoService::getStringValue( BSONElement & element )
+QString MongoService::getStringValue(BSONElement &element)
 {
 	switch(element.type())
 	{

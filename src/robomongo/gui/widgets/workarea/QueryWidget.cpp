@@ -216,7 +216,7 @@ void QueryWidget::vm_documentsRefreshed(const QList<MongoDocumentPtr> &documents
 /*
 ** Shell output refreshed
 */
-void QueryWidget::vm_shellOutputRefreshed(const QString & shellOutput)
+void QueryWidget::vm_shellOutputRefreshed(const QString &shellOutput)
 {
     //_bsonWidget->setShellOutput(shellOutput);
 }
@@ -238,7 +238,7 @@ void QueryWidget::vm_pagingVisibilityChanged(bool show)
 /*
 ** Query updated
 */
-void QueryWidget::vm_queryUpdated(const QString & query)
+void QueryWidget::vm_queryUpdated(const QString &query)
 {
     // _queryText->setText(query);
 }

@@ -5,9 +5,6 @@
 
 using namespace Robomongo;
 
-/*
-** Constructs collection tree item
-*/
 ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(MongoCollection *collection) : QObject(),
     _collection(collection)
 {
@@ -15,7 +12,11 @@ ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(MongoCollection *collecti
     setIcon(0, GuiRegistry::instance().collectionIcon());
 	setExpanded(true);
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+    setToolTip(0, buildToolTip(collection));
+}
 
+QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
+{
     QString tooltip = QString(
         "%0 "
         "<table>"
@@ -27,5 +28,5 @@ ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(MongoCollection *collecti
         .arg(collection->info().count)
         .arg(collection->sizeString());
 
-    setToolTip(0, tooltip);
+    return tooltip;
 }

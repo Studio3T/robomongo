@@ -248,12 +248,8 @@ void BsonTreeItem::expand()
 	}
 }
 
-/*
-** Clean child items
-*/
 void BsonTreeItem::cleanChildItems()
 {
-	// remove child items
 	int itemCount = childCount();
 	for (int i = 0; i < itemCount; ++i)
 	{
@@ -262,7 +258,6 @@ void BsonTreeItem::cleanChildItems()
 		delete p;
 	}
 }
-
 
 QString BsonTreeItem::buildFieldName()
 {
@@ -298,9 +293,4 @@ QString BsonTreeItem::buildSynopsis(QString text)
 {
 	QString simplified = text.simplified().left(300);
 	return simplified;
-}
-
-BsonTreeItem::~BsonTreeItem()
-{
-
 }

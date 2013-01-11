@@ -35,7 +35,7 @@ BsonTreeWidget::~BsonTreeWidget()
     int h = 90;
 }
 
-void BsonTreeWidget::setDocuments(const QList<MongoDocumentPtr> & documents)
+void BsonTreeWidget::setDocuments(const QList<MongoDocumentPtr> &documents)
 {
 	_documents = documents;
 

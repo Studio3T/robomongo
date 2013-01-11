@@ -56,8 +56,6 @@ namespace Robomongo
 	*/
     void MongoElement::buildJsonString(Concatenator &con)
 	{
-//		QString & buff = *pBuff;
-
 		switch (_bsonElement.type())
 		{
 		/** double precision floating point value */

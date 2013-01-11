@@ -66,8 +66,8 @@ namespace Robomongo
 
         MongoDatabase_CollectionListLoadedEvent(QObject *sender, const QList<MongoCollection *> &list) :
             Event(sender),
-            list(list) { }
+            collections(list) { }
 
-        QList<MongoCollection *> list;
+        QList<MongoCollection *> collections;
     };
 }

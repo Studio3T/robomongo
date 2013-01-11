@@ -11,31 +11,19 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        /*
-        ** Constructs Bson Tree widget
-        */
         BsonTreeWidget(QWidget * parent = NULL);
         ~BsonTreeWidget();
 
-        /*
-        ** Set documents
-        */
-        void setDocuments(const QList<MongoDocumentPtr> & documents);
-
+        void setDocuments(const QList<MongoDocumentPtr> &documents);
         QIcon getIcon(MongoElementPtr element);
 
-        void resizeEvent(QResizeEvent *event);
-
     public slots:
-        /*
-        ** Handle itemExpanded event
-        */
         void ui_itemExpanded(QTreeWidgetItem * item);
 
+    protected slots:
+        void resizeEvent(QResizeEvent *event);
+
     private:
-        /*
-        ** Current set of documents
-        */
         QList<MongoDocumentPtr> _documents;
     };
 }

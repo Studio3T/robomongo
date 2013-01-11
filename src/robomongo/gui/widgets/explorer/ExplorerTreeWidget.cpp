@@ -18,27 +18,21 @@ using namespace Robomongo;
 
 ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
-    //setVerticalScrollMode()
     setContextMenuPolicy(Qt::DefaultContextMenu);
     setObjectName("explorerTree");
 
-    // Connect action
     QAction *disconnectAction = new QAction("Disconnect", this);
-    //disconnectAction->setIcon(GuiRegistry::instance().serverIcon());
     disconnectAction->setIconText("Disconnect");
     connect(disconnectAction, SIGNAL(triggered()), SLOT(ui_disconnectServer()));
 
-    // Refresh action
     QAction *refreshAction = new QAction("Refresh", this);
     refreshAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
     connect(refreshAction, SIGNAL(triggered()), SLOT(ui_refreshServer()));
 
-    // Open shell
     QAction *openShellAction = new QAction("Open Shell", this);
     openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
     connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell()));
 
-    // Open shell
     QAction *serverHostInfo = new QAction("Host Info", this);
     connect(serverHostInfo, SIGNAL(triggered()), SLOT(ui_serverHostInfo()));
 
@@ -48,15 +42,14 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *serverVersion = new QAction("MongoDB Version", this);
     connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion()));
 
-    // File menu
-    _serverMenu = new QMenu(this);
-    _serverMenu->addAction(openShellAction);
-    _serverMenu->addSeparator();
-    _serverMenu->addAction(serverStatus);
-    _serverMenu->addAction(serverHostInfo);
-    _serverMenu->addAction(serverVersion);
-    _serverMenu->addSeparator();
-    _serverMenu->addAction(disconnectAction);
+    _serverContextMenu = new QMenu(this);
+    _serverContextMenu->addAction(openShellAction);
+    _serverContextMenu->addSeparator();
+    _serverContextMenu->addAction(serverStatus);
+    _serverContextMenu->addAction(serverHostInfo);
+    _serverContextMenu->addAction(serverVersion);
+    _serverContextMenu->addSeparator();
+    _serverContextMenu->addAction(disconnectAction);
 
     QAction *openDbShellAction = new QAction("Open Shell", this);
     openDbShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
@@ -74,14 +67,14 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *dbRepair = new QAction("Repair", this);
     connect(dbRepair, SIGNAL(triggered()), SLOT(ui_dbRepair()));
 
-    _databaseMenu = new QMenu(this);
-    _databaseMenu->addAction(openDbShellAction);
-    _databaseMenu->addAction(dbRepair);
-    _databaseMenu->addSeparator();
-    _databaseMenu->addAction(dbStats);
-    _databaseMenu->addAction(dbCollectionsStats);
-    _databaseMenu->addSeparator();
-    _databaseMenu->addAction(dbDrop);
+    _databaseContextMenu = new QMenu(this);
+    _databaseContextMenu->addAction(openDbShellAction);
+    _databaseContextMenu->addAction(dbRepair);
+    _databaseContextMenu->addSeparator();
+    _databaseContextMenu->addAction(dbStats);
+    _databaseContextMenu->addAction(dbCollectionsStats);
+    _databaseContextMenu->addSeparator();
+    _databaseContextMenu->addAction(dbDrop);
 
     QAction *addDocument = new QAction("Add Document", this);
     connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument()));
@@ -119,24 +112,19 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *shardDistribution = new QAction("Shard Distribution", this);
     connect(shardDistribution, SIGNAL(triggered()), SLOT(ui_shardDistribution()));
 
-    _collectionMenu = new QMenu(this);
-    _collectionMenu->addAction(addDocument);
-    _collectionMenu->addAction(updateDocument);
-    _collectionMenu->addAction(removeDocument);
-    _collectionMenu->addSeparator();
-    _collectionMenu->addAction(addIndex);
-    _collectionMenu->addAction(dropIndex);
-    _collectionMenu->addAction(reIndex);
-    _collectionMenu->addSeparator();
-    _collectionMenu->addAction(collectionStats);
-    _collectionMenu->addSeparator();
-    _collectionMenu->addAction(shardVersion);
-    _collectionMenu->addAction(shardDistribution);
-}
-
-ExplorerTreeWidget::~ExplorerTreeWidget()
-{
-    int a = 67;
+    _collectionContextMenu = new QMenu(this);
+    _collectionContextMenu->addAction(addDocument);
+    _collectionContextMenu->addAction(updateDocument);
+    _collectionContextMenu->addAction(removeDocument);
+    _collectionContextMenu->addSeparator();
+    _collectionContextMenu->addAction(addIndex);
+    _collectionContextMenu->addAction(dropIndex);
+    _collectionContextMenu->addAction(reIndex);
+    _collectionContextMenu->addSeparator();
+    _collectionContextMenu->addAction(collectionStats);
+    _collectionContextMenu->addSeparator();
+    _collectionContextMenu->addAction(shardVersion);
+    _collectionContextMenu->addAction(shardDistribution);
 }
 
 void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
@@ -147,19 +135,19 @@ void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
 
     ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
     if (serverItem) {
-        _serverMenu->exec(mapToGlobal(event->pos()));
+        _serverContextMenu->exec(mapToGlobal(event->pos()));
         return;
     }
 
     ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
     if (collectionItem) {
-        _collectionMenu->exec(mapToGlobal(event->pos()));
+        _collectionContextMenu->exec(mapToGlobal(event->pos()));
         return;
     }
 
     ExplorerDatabaseTreeItem *databaseItem = dynamic_cast<ExplorerDatabaseTreeItem *>(item);
     if (databaseItem) {
-        _databaseMenu->exec(mapToGlobal(event->pos()));
+        _databaseContextMenu->exec(mapToGlobal(event->pos()));
         return;
     }
 }
@@ -231,7 +219,7 @@ void ExplorerTreeWidget::openCurrentCollectionShell(const QString &script, bool 
     QString query = QString(script).arg(collection->name());
 
     AppRegistry::instance().app()->
-            openShell(collection->database(), query, execute, collection->name());
+        openShell(collection->database(), query, execute, collection->name());
 }
 
 void ExplorerTreeWidget::openCurrentDatabaseShell(const QString &script, bool execute)
@@ -243,7 +231,7 @@ void ExplorerTreeWidget::openCurrentDatabaseShell(const QString &script, bool ex
     MongoDatabase *database = collectionItem->database();
 
     AppRegistry::instance().app()->
-            openShell(database, script, execute, database->name());
+        openShell(database, script, execute, database->name());
 }
 
 void ExplorerTreeWidget::openCurrentServerShell(const QString &script, bool execute)
@@ -255,7 +243,7 @@ void ExplorerTreeWidget::openCurrentServerShell(const QString &script, bool exec
     MongoServer *server = serverItem->server();
 
     AppRegistry::instance().app()->
-            openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName());
+        openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName());
 }
 
 void ExplorerTreeWidget::ui_disconnectServer()
@@ -276,28 +264,28 @@ void ExplorerTreeWidget::ui_openShell()
 void ExplorerTreeWidget::ui_addDocument()
 {
     openCurrentCollectionShell(
-                "db.%1.save({\n"
-                "    \"<key>\" : \"<value>\"\n"
-                "});", false);
+        "db.%1.save({\n"
+        "    \"<key>\" : \"<value>\"\n"
+        "});", false);
 }
 
 void ExplorerTreeWidget::ui_removeDocument()
 {
     openCurrentCollectionShell(
-                "db.%1.remove({ \"<field>\" : \"<value>\" });"
-                , false);
+        "db.%1.remove({ \"<field>\" : \"<value>\" });"
+        , false);
 }
 
 void ExplorerTreeWidget::ui_addIndex()
 {
     openCurrentCollectionShell(
-                "db.%1.ensureIndex({ \"<field>\" : 1 }); \n"
-                "\n"
-                "// options: \n"
-                "// { unique : true }   - A unique index causes MongoDB to reject all documents that contain a duplicate value for the indexed field. \n"
-                "// { sparse : true }   - Sparse indexes only contain entries for documents that have the indexed field. \n"
-                "// { dropDups : true } - Sparse indexes only contain entries for documents that have the indexed field. \n"
-                , false);
+        "db.%1.ensureIndex({ \"<field>\" : 1 }); \n"
+        "\n"
+        "// options: \n"
+        "// { unique : true }   - A unique index causes MongoDB to reject all documents that contain a duplicate value for the indexed field. \n"
+        "// { sparse : true }   - Sparse indexes only contain entries for documents that have the indexed field. \n"
+        "// { dropDups : true } - Sparse indexes only contain entries for documents that have the indexed field. \n"
+        , false);
 }
 
 void ExplorerTreeWidget::ui_reIndex()
@@ -308,29 +296,29 @@ void ExplorerTreeWidget::ui_reIndex()
 void ExplorerTreeWidget::ui_dropIndex()
 {
     openCurrentCollectionShell(
-                "db.%1.dropIndex({ \"<field>\" : 1 });"
-                , false);
+        "db.%1.dropIndex({ \"<field>\" : 1 });"
+        , false);
 }
 
 void ExplorerTreeWidget::ui_updateDocument()
 {
     openCurrentCollectionShell(
-                "db.%1.update(\n"
-                "    // query \n"
-                "    {\n"
-                "        \"key\" : \"value\"\n"
-                "    },\n"
-                "    \n"
-                "    // update \n"
-                "    {\n"
-                "    },\n"
-                "    \n"
-                "    // options \n"
-                "    {\n"
-                "        \"multi\" : false,  // update only one document \n"
-                "        \"upsert\" : false  // insert a new document, if no existing document match the query \n"
-                "    }\n"
-                "});", false);
+        "db.%1.update(\n"
+        "    // query \n"
+        "    {\n"
+        "        \"key\" : \"value\"\n"
+        "    },\n"
+        "    \n"
+        "    // update \n"
+        "    {\n"
+        "    },\n"
+        "    \n"
+        "    // options \n"
+        "    {\n"
+        "        \"multi\" : false,  // update only one document \n"
+        "        \"upsert\" : false  // insert a new document, if no existing document match the query \n"
+        "    }\n"
+        "});", false);
 }
 
 void ExplorerTreeWidget::ui_collectionStatistics()

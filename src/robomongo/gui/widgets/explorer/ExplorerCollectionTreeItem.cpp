@@ -19,7 +19,7 @@ ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(MongoCollection *collecti
     QString tooltip = QString(
         "<table>"
         "<tr><td>Collection:</td> <td><b>%0</b></td></tr>"
-        "<tr><td>Documents:</td> <td><b>%1</b></td></tr>"
+        "<tr><td>Count:</td> <td><b>%1</b></td></tr>"
         "<tr><td>Size:</td><td><b>%2</b></td></tr>"
         "</table>"
         )

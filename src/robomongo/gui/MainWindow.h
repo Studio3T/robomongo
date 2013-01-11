@@ -21,7 +21,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit MainWindow();
+        MainWindow();
         void keyPressEvent(QKeyEvent *event);
         bool textMode() const { return _textMode; }
 
@@ -38,15 +38,8 @@ namespace Robomongo
         void handle(ConnectionFailedEvent *event);
 
     private:
-        /*
-        ** Status
-        */
         QLabel *_status;
         bool _textMode;
-
-        /*
-        ** Log panel
-        */
         LogWidget *_log;
         QDockWidget *_logDock;
 
@@ -57,9 +50,6 @@ namespace Robomongo
         */
         ExplorerWidget *_explorer;
 
-        /**
-         * @brief MongoManager
-         */
         App *_app;
         SettingsManager *_settingsManager;
         EventBus *_bus;

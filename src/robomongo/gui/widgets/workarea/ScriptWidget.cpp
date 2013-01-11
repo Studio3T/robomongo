@@ -27,7 +27,6 @@ ScriptWidget::ScriptWidget(MongoShell *shell)
     layout->setContentsMargins(5, 1, 5, 5);
     layout->addWidget(_topStatusBar, 0, Qt::AlignTop);
     layout->addWidget(_queryText, 1, Qt::AlignTop);
-//    layout->addWidget(_outputLabel, 0, Qt::AlignTop);
     setLayout(layout);
 
     // Query text widget
@@ -64,9 +63,6 @@ void ScriptWidget::setScriptFocus()
     _queryText->setFocus();
 }
 
-/*
-** Handle queryText linesCountChanged event
-*/
 void ScriptWidget::ui_queryLinesCountChanged()
 {
     setUpdatesEnabled(false);
@@ -79,11 +75,11 @@ void ScriptWidget::ui_queryLinesCountChanged()
     QFontMetrics m(_queryText->font());
     int lineHeight = m.lineSpacing();
 
-    #if defined(Q_OS_UNIX)
+#if defined(Q_OS_UNIX)
     // this fix required to calculate correct height in Linux.
     // not the best way, but for now it tested on Ubuntu.
     lineHeight++;
-    #endif
+#endif
 
     int numberOfLines = _queryText->lines();
 
@@ -113,8 +109,6 @@ void ScriptWidget::_configureQueryText()
 #elif defined(Q_OS_UNIX)
     textFont.setFamily("Monospace");
     textFont.setFixedPitch(true);
-    //textFont.setWeight(QFont::Bold);
-//    textFont.setPointSize(12);
 #elif defined(Q_OS_WIN)
     textFont.setPointSize(font().pointSize() + 2);
     textFont.setFamily("Courier");
@@ -171,7 +165,6 @@ QSize ElidedLabel::sizeHint() const
 {
     QSize defaultSizeHint = QLabel::sizeHint();
     return defaultSizeHint;
-//    return QSize(defaultSizeHint.width() + 20, defaultSizeHint.height());
 }
 
 
@@ -179,13 +172,6 @@ TopStatusBar::TopStatusBar(MongoShell *shell) :
     _shell(shell)
 {
     setContentsMargins(0, 0, 0, 0);
-//    setAutoFillBackground(true);
-
-//    QPalette p(palette());
-//    // Set background colour to black
-//    p.setColor(QPalette::Background, Qt::white);
-//    setPalette(p);
-
     _textColor = palette().text().color().lighter(200);
 
     QIcon dbIcon = GuiRegistry::instance().databaseIcon();
@@ -225,7 +211,6 @@ void TopStatusBar::setCurrentDatabase(const QString &database, bool isValid)
             .arg(database);
 
     _currentDatabaseLabel->setText(text);
-    //    _currentDatabaseLabel->setFixedSize(_currentDatabaseLabel->sizeHint());
 }
 
 void TopStatusBar::setCurrentServer(const QString &address, bool isValid)

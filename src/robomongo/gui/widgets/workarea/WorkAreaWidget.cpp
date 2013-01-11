@@ -10,9 +10,6 @@
 
 using namespace Robomongo;
 
-/*
-** Constructs work area
-*/
 WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
     QWidget(),
     _bus(AppRegistry::instance().bus())
@@ -30,8 +27,6 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
     _bus->subscribe(this, OpeningShellEvent::Type);
 }
 
-WorkAreaWidget::~WorkAreaWidget() { }
-
 void WorkAreaWidget::toggleOrientation()
 {
     QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
@@ -43,7 +38,7 @@ void WorkAreaWidget::executeScript()
 {
     QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
     if (currentWidget)
-        currentWidget->ui_executeButtonClicked();
+        currentWidget->execute();
 }
 
 void WorkAreaWidget::enterTextMode()

@@ -21,14 +21,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        /**
-         * @brief Creates EventBus.
-         */
         EventBus();
-
-        /**
-         * @brief Cleanups EventBus.
-         */
         ~EventBus();
 
         /**

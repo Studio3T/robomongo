@@ -67,7 +67,7 @@ namespace Robomongo
 
     private:
         /**
-         * @brief Private constructor, because this is singleton
+         * @brief Private, because this is singleton
          */
         GuiRegistry();
 

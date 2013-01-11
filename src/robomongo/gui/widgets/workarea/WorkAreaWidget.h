@@ -19,11 +19,8 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        /*
-        ** Constructs work area
-        */
         WorkAreaWidget(MainWindow * mainWindow);
-        ~WorkAreaWidget();
+        ~WorkAreaWidget() {}
 
         void toggleOrientation();
         void executeScript();

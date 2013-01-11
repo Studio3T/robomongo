@@ -31,11 +31,11 @@ MainWindow::MainWindow() : QMainWindow(),
 
     QColor background = palette().window().color();
 
-    #ifdef Q_OS_LINUX
+#ifdef Q_OS_LINUX
     QString explorerColor = background.darker(103).name();
-    #else
+#else
     QString explorerColor = background.lighter(103).name();
-    #endif
+#endif
 
     qApp->setStyleSheet(QString(
         "Robomongo--ExplorerTreeWidget#explorerTree { padding: 7px 0px 7px 0px; background-color: %1; border: 0px; } \n " // #E7E5E4
@@ -157,8 +157,7 @@ MainWindow::MainWindow() : QMainWindow(),
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_F12)
-    {
+    if (event->key() == Qt::Key_F12) {
         QRect scr = QApplication::desktop()->screenGeometry();
         _connectionsMenu->move( scr.center() - _connectionsMenu->rect().center() - QPoint(0, 100));
         _connectionsMenu->show();
@@ -206,21 +205,16 @@ void MainWindow::manageConnections()
     _settingsManager->save();
     updateConnectionsMenu();
 
-    if (result == QDialog::Accepted)
-    {
+    if (result == QDialog::Accepted) {
         ConnectionSettings *selected = dialog.selectedConnection();
 
-        try
-        {
+        try {
             _app->openServer(selected->clone(), true);
-        }
-        catch(MongoException &ex)
-        {
+        } catch(MongoException &ex) {
             QString message = QString("Cannot connect to MongoDB (%1)").arg(selected->getFullAddress());
             QMessageBox::information(this, "Error", message);
         }
     }
-
 
     // on linux focus is lost - we need to activate main window back
     activateWindow();
@@ -262,8 +256,8 @@ void MainWindow::toggleFullScreen2()
 
 void MainWindow::refreshConnections()
 {
-    QToolTip::showText(QPoint(0,0),QString
-                       ("Refresh not working yet... : <br/>  <b>Ctrl+D</b> : push Button"));
+    QToolTip::showText(QPoint(0,0),
+                       QString("Refresh not working yet... : <br/>  <b>Ctrl+D</b> : push Button"));
 }
 
 void MainWindow::toggleLogs(bool show)
@@ -296,9 +290,6 @@ void MainWindow::handle(ConnectionFailedEvent *event)
 
 void MainWindow::createDatabaseExplorer()
 {
-    /*
-    ** Explorer
-    */
     _explorer = new ExplorerWidget(this);
     QDockWidget *explorerDock = new QDockWidget(tr(" Database Explorer"));
     explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -331,8 +322,7 @@ void MainWindow::createTabs()
 
 void ConnectionMenu::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_F12)
-    {
+    if (event->key() == Qt::Key_F12) {
         hide();
         return;
     }

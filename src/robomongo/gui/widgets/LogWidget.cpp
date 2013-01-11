@@ -7,9 +7,6 @@
 
 using namespace Robomongo;
 
-/*
-** Constructs log widget panel for main window
-*/
 LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
     _bus(AppRegistry::instance().bus())
 {

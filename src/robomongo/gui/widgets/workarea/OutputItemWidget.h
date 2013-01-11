@@ -20,7 +20,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit OutputItemWidget(OutputWidget *viewer, OutputItemContentWidget *output, const QueryInfo &info, QWidget *parent = 0);
+        OutputItemWidget(OutputWidget *viewer, OutputItemContentWidget *output, const QueryInfo &info, QWidget *parent = 0);
         OutputItemContentWidget *itemContent;
         OutputWidget *output;
 

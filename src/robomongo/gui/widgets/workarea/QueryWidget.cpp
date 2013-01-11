@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <QtGui>
 #include <QPlainTextEdit>
-#include "Qsci/qsciscintilla.h"
+#include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerjavascript.h>
 #include <mongo/client/dbclient.h>
 #include <mongo/bson/bsonobj.h>
@@ -29,10 +29,8 @@
 using namespace mongo;
 using namespace Robomongo;
 
-/*
-** Constructs query widget
-*/
-QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const QString &script, bool textMode, QWidget *parent) :
+QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,
+                         const QString &script, bool textMode, QWidget *parent) :
     QWidget(parent),
     _shell(shell),
     _tabWidget(tabWidget),
@@ -40,11 +38,9 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     _bus(AppRegistry::instance().bus()),
     _keyboard(AppRegistry::instance().keyboard()),
     _viewer(NULL),
-    _textMode(textMode),
-    _initialized(false)
+    _textMode(textMode)
 {
     setObjectName("queryWidget");
-
     _bus->subscribe(this, DocumentListLoadedEvent::Type, shell);
     _bus->subscribe(this, ScriptExecutedEvent::Type, shell);
 
@@ -52,47 +48,18 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     _scriptWidget->setText(script);
     _scriptWidget->installEventFilter(this);
 
-    // Execute button
     QPushButton * executeButton = new QPushButton("Execute");
 	executeButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
-    connect(executeButton, SIGNAL(clicked()), this, SLOT(ui_executeButtonClicked()));
+    connect(executeButton, SIGNAL(clicked()), this, SLOT(execute()));
 
-    // Left button
-    _leftButton = new QPushButton();
-    _leftButton->setIcon(GuiRegistry::instance().leftIcon());
-    _leftButton->setMaximumWidth(25);
-    connect(_leftButton, SIGNAL(clicked()), SLOT(ui_leftButtonClicked()));
-
-    // Right button
-    _rightButton = new QPushButton();
-    _rightButton->setIcon(GuiRegistry::instance().rightIcon());
-    _rightButton->setMaximumWidth(25);
-    connect(_rightButton, SIGNAL(clicked()), SLOT(ui_rightButtonClicked()));
-
-    // Page size edit box
-    _pageSizeEdit = new QLineEdit("100");
-    _pageSizeEdit->setMaximumWidth(31);
-
-    // Bson widget
-    _bsonWidget = new BsonWidget(NULL);
     _viewer = new OutputWidget(_textMode, _shell);
     _outputLabel = new QLabel();
     _outputLabel->setContentsMargins(0, 5, 0, 0);
     _outputLabel->setVisible(false);
 
-//    _topStatusBar = new TopStatusBar(_shell);
-//    _topStatusBar->setFrameShape(QFrame::StyledPanel);
-//    _topStatusBar->setFrameShadow(QFrame::Raised);
-
     QFrame *line = new QFrame();
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Raised);
-    //line->setStyleSheet("margin-top: 2px;");
-
-    QFrame *line2 = new QFrame();
-    line2->setFrameShape(QFrame::HLine);
-    line2->setFrameShadow(QFrame::Sunken);
-    //line2->setStyleSheet("margin-top: 1px;");
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
@@ -100,22 +67,11 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const 
     layout->addWidget(_scriptWidget, 0, Qt::AlignTop);
     layout->addWidget(line);
     layout->addWidget(_outputLabel, 0, Qt::AlignTop);
-    //layout->addSpacing(2);
     layout->addWidget(_viewer, 1);
     setLayout(layout);
 }
 
-/*
-** Destructs QueryWidget
-*/
-QueryWidget::~QueryWidget()
-{
-}
-
-/*
-** Execute query
-*/
-void QueryWidget::ui_executeButtonClicked()
+void QueryWidget::execute()
 {
     QString query = _scriptWidget->selectedText();
 
@@ -125,9 +81,6 @@ void QueryWidget::ui_executeButtonClicked()
     _shell->open(query);
 }
 
-/*
-** Override event filter
-*/
 bool QueryWidget::eventFilter(QObject * o, QEvent * e)
 {
 	if (e->type() == QEvent::KeyPress)
@@ -144,7 +97,7 @@ bool QueryWidget::eventFilter(QObject * o, QEvent * e)
         }
         else if (_keyboard->isExecuteScriptShortcut(keyEvent))
         {
-            ui_executeButtonClicked();
+            execute();
             return true;
         }
 
@@ -184,7 +137,7 @@ void QueryWidget::openNewTab()
 
 void QueryWidget::reload()
 {
-    ui_executeButtonClicked();
+    execute();
 }
 
 void QueryWidget::duplicate()
@@ -205,52 +158,9 @@ void QueryWidget::enterTextMode()
         _viewer->enterTextMode();
 }
 
-/*
-** Documents refreshed
-*/
-void QueryWidget::vm_documentsRefreshed(const QList<MongoDocumentPtr> &documents)
-{
-    //_bsonWidget->setDocuments(documents);
-}
-
-/*
-** Shell output refreshed
-*/
-void QueryWidget::vm_shellOutputRefreshed(const QString &shellOutput)
-{
-    //_bsonWidget->setShellOutput(shellOutput);
-}
-
-void QueryWidget::_showPaging(bool show)
-{
-    _leftButton->setVisible(show);
-    _rightButton->setVisible(show);
-}
-
-/*
-** Paging visability changed
-*/
-void QueryWidget::vm_pagingVisibilityChanged(bool show)
-{
-    _showPaging(show);
-}
-
-/*
-** Query updated
-*/
-void QueryWidget::vm_queryUpdated(const QString &query)
-{
-    // _queryText->setText(query);
-}
-
 void QueryWidget::handle(DocumentListLoadedEvent *event)
 {
     _viewer->updatePart(event->resultIndex, event->queryInfo, event->list);
-
-/*    _queryText->setText(event->query);
-    QList<MongoShellResult> list;
-    list << MongoShellResult("", event->list, "", false);
-    displayData(list);*/
 }
 
 void QueryWidget::handle(ScriptExecutedEvent *event)
@@ -293,37 +203,4 @@ void QueryWidget::displayData(const QList<MongoShellResult> &results, bool empty
     }
 
     _viewer->present(results);
-}
-
-/*
-** Paging right clicked
-*/
-void QueryWidget::ui_rightButtonClicked()
-{
-    int pageSize = _pageSizeEdit->text().toInt();
-    if (pageSize == 0)
-    {
-        QMessageBox::information(NULL, "Page size incorrect", "Please specify correct page size");
-        return;
-    }
-
-    //QString query = _queryText->text();
-
-    //_viewModel->loadNextPage(query, pageSize);
-}
-
-/*
-** Paging left clicked
-*/
-void QueryWidget::ui_leftButtonClicked()
-{
-    int pageSize = _pageSizeEdit->text().toInt();
-    if (pageSize <= 0)
-    {
-        QMessageBox::information(NULL, "Page size incorrect", "Please specify correct page size");
-        return;
-    }
-
-    //QString query = _queryText->text();
-    //_viewModel->loadPreviousPage(query, pageSize);
 }

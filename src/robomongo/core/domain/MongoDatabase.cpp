@@ -37,7 +37,7 @@ void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
 {
     clearCollections();
 
-    foreach(QString name, loaded->collectionNames)    {
+    foreach(const CollectionInfo &name, loaded->collectionNames)    {
         MongoCollection *collection = new MongoCollection(this, name);
         addCollection(collection);
     }

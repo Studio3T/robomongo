@@ -136,12 +136,20 @@ namespace Robomongo
         QString databaseName;
     };
 
+    class CollectionInfo
+    {
+    public:
+        QString collectionName;
+        int sizeBytes;
+        int count;
+    };
+
     class LoadCollectionNamesResponse : public Event
     {
         R_EVENT
 
         LoadCollectionNamesResponse(QObject *sender, const QString &databaseName,
-                                    const QStringList &collectionNames) :
+                                    const QList<CollectionInfo> &collectionNames) :
             Event(sender),
             databaseName(databaseName),
             collectionNames(collectionNames) { }
@@ -150,7 +158,7 @@ namespace Robomongo
             Event(sender, error) {}
 
         QString databaseName;
-        QStringList collectionNames;
+        QList<CollectionInfo> collectionNames;
     };
 
 

@@ -181,7 +181,7 @@ void MongoClient::handle(LoadCollectionNamesRequest *event)
     {
         boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
         list<string> dbs = conn->get()->getCollectionNames(event->databaseName.toStdString());
-        conn->done();
+
 
         QStringList stringList;
         for ( list<string>::iterator i = dbs.begin(); i != dbs.end(); i++ ) {
@@ -189,7 +189,36 @@ void MongoClient::handle(LoadCollectionNamesRequest *event)
         }
 
         stringList.sort();
-        reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName, stringList));
+
+        QList<CollectionInfo> infos;
+        foreach (QString ns, stringList) {
+
+            int dot = ns.indexOf('.');
+            QString name = ns.mid(dot + 1);
+
+            // { collStats: "database.collection" , scale : 1024 }
+            mongo::BSONObjBuilder b;
+            b.append("collStats", name.toStdString());
+            b.append("scale", 1);
+            mongo::BSONObj command = b.obj();
+
+            std::string str2 = command.toString(false, true);
+
+            mongo::BSONObj obj;
+            conn->get()->runCommand(event->databaseName.toStdString(), command, obj);
+
+            std::string str = obj.toString(false, true);
+
+            CollectionInfo info;
+            info.collectionName = ns;
+            info.sizeBytes = obj.getIntField("size");
+            info.count = obj.getIntField("count");
+            infos.append(info);
+        }
+
+        conn->done();
+
+        reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName, infos));
     }
     catch(DBException &ex)
     {

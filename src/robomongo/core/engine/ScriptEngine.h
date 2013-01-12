@@ -7,6 +7,7 @@
 #include <js/jsparse.h>
 
 #include "robomongo/core/engine/Result.h"
+#include "robomongo/core/domain/MongoShellResult.h"
 
 namespace Robomongo
 {
@@ -21,7 +22,7 @@ namespace Robomongo
         ~ScriptEngine();
 
         void init();
-        ExecResult exec(const QString &script, const QString &dbName = QString());
+        MongoShellExecResult exec(const QString &script, const QString &dbName = QString());
 
         void use(const QString &dbName);
 
@@ -30,8 +31,8 @@ namespace Robomongo
         QString _currentDatabase;
         bool _isCurrentDatabaseValid;
 
-        Result prepareResult(const QString &output, const QList<mongo::BSONObj> objects, qint64 elapsedms);
-        ExecResult prepareExecResult(const QList<Result> &results);
+        MongoShellResult prepareResult(const QString &output, const QList<MongoDocumentPtr> objects, qint64 elapsedms);
+        MongoShellExecResult prepareExecResult(const QList<MongoShellResult> &results);
 
         QString getString(const char *fieldName);
 

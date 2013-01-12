@@ -32,8 +32,8 @@ namespace Robomongo
 		** Constructs empty Document, i.e. { }
 		*/
 		MongoDocument();
-		~MongoDocument();
 
+		~MongoDocument();
 
 		/*
 		** Create MongoDocument from BsonObj. It will take owned version of BSONObj

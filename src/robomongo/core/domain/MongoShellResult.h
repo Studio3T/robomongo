@@ -2,6 +2,7 @@
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/engine/Result.h"
+#include "robomongo/core/domain/MongoQueryInfo.h"
 
 namespace Robomongo
 {
@@ -9,14 +10,16 @@ namespace Robomongo
     {
     public:
         MongoShellResult(const QString &response, const QList<MongoDocumentPtr> &documents,
-                         const QueryInfo &queryInfo, qint64 elapsedms);
+                         const MongoQueryInfo &queryInfo, qint64 elapsedms) :
+            response(response),
+            documents(documents),
+            queryInfo(queryInfo),
+            elapsedms(elapsedms) { }
 
         QString response;
         QList<MongoDocumentPtr> documents;
-        QueryInfo queryInfo;
+        MongoQueryInfo queryInfo;
         qint64 elapsedms;
-
-        static QList<MongoShellResult> fromResult(QList<Result> result);
     };
 
     class MongoShellExecResult

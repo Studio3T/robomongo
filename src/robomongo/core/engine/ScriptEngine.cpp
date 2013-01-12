@@ -18,6 +18,7 @@
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
+#include "robomongo/core/domain/MongoDocument.h"
 
 using namespace std;
 
@@ -86,7 +87,7 @@ namespace Robomongo
         bool res = _scope->exec(esprima.toStdString(), "(esprima)", true, true, true);
     }
 
-    ExecResult ScriptEngine::exec(const QString &script, const QString &dbName)
+    MongoShellExecResult ScriptEngine::exec(const QString &script, const QString &dbName)
     {
         QStringList statements;
         QString error;
@@ -96,7 +97,7 @@ namespace Robomongo
             statements.append(QString("print(__robomongoResult.error)"));
         }
 
-        QList<Result> results;
+        QList<MongoShellResult> results;
 
         use(dbName);
 
@@ -122,9 +123,10 @@ namespace Robomongo
                     QString answer = QString::fromUtf8(logs.c_str());
                     QVector<mongo::BSONObj> objs = QVector<mongo::BSONObj>::fromStdVector(__objects);
                     QList<mongo::BSONObj> list = QList<mongo::BSONObj>::fromVector(objs);
+                    QList<MongoDocumentPtr> docs = MongoDocument::fromBsonObj(list);
 
-                    if (!answer.isEmpty() || list.count() > 0)
-                        results.append(prepareResult(answer, list, elapsed));
+                    if (!answer.isEmpty() || docs.count() > 0)
+                        results.append(prepareResult(answer, docs, elapsed));
                 }
                 catch ( std::exception &e ) {
                     std::cout << "error:" << e.what() << endl;
@@ -145,7 +147,7 @@ namespace Robomongo
         }
     }
 
-    Result ScriptEngine::prepareResult(const QString &output, const QList<mongo::BSONObj> objects, qint64 elapsedms)
+    MongoShellResult ScriptEngine::prepareResult(const QString &output, const QList<MongoDocumentPtr> objects, qint64 elapsedms)
     {
         char *script =
             "__robomongoQuery = false; \n"
@@ -184,15 +186,15 @@ namespace Robomongo
 
             bool special = _scope->getBoolean("__robomongoSpecial");
 
-            QueryInfo info = QueryInfo(serverAddress, dbName, collectionName,
+            MongoQueryInfo info = MongoQueryInfo(serverAddress, dbName, collectionName,
                                        query, fields, limit, skip, batchSize, options, special);
-            return Result(output, objects, info, elapsedms);
+            return MongoShellResult(output, objects, info, elapsedms);
         }
 
-        return Result(output, objects, QueryInfo(), elapsedms);
+        return MongoShellResult(output, objects, MongoQueryInfo(), elapsedms);
     }
 
-    ExecResult ScriptEngine::prepareExecResult(const QList<Result> &results)
+    MongoShellExecResult ScriptEngine::prepareExecResult(const QList<MongoShellResult> &results)
     {
         const char *script =
             "__robomongoServerAddress = '[invalid connection]'; \n"
@@ -214,7 +216,7 @@ namespace Robomongo
         QString dbName = getString("__robomongoDbName");
         bool dbIsValid = _scope->getBoolean("__robomongoDbIsValid");
 
-        return ExecResult(results, serverName, serverIsValid, dbName, dbIsValid);
+        return MongoShellExecResult(results, serverName, serverIsValid, dbName, dbIsValid);
     }
 
     QString ScriptEngine::getString(const char *fieldName)

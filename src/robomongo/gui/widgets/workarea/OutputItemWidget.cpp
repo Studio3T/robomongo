@@ -7,7 +7,7 @@
 
 using namespace Robomongo;
 
-OutputItemWidget::OutputItemWidget(OutputWidget *viewer, OutputItemContentWidget *output, const QueryInfo &info, QWidget *parent) :
+OutputItemWidget::OutputItemWidget(OutputWidget *viewer, OutputItemContentWidget *output, const MongoQueryInfo &info, QWidget *parent) :
     itemContent(output),
     output(viewer),
     _queryInfo(info)
@@ -32,7 +32,7 @@ OutputItemWidget::OutputItemWidget(OutputWidget *viewer, OutputItemContentWidget
 
 }
 
-void OutputItemWidget::setQueryInfo(const QueryInfo &queryInfo)
+void OutputItemWidget::setQueryInfo(const MongoQueryInfo &queryInfo)
 {
     _queryInfo = queryInfo;
 }
@@ -47,7 +47,7 @@ void OutputItemWidget::paging_leftClicked(int skip, int limit)
     if (s < 0)
         s = 0;
 
-    QueryInfo info(_queryInfo);
+    MongoQueryInfo info(_queryInfo);
     info.limit = limit;
     info.skip = s;
 
@@ -59,7 +59,7 @@ void OutputItemWidget::paging_rightClicked(int skip, int limit)
     if (limit > 50)
         limit = 50;
 
-    QueryInfo info(_queryInfo);
+    MongoQueryInfo info(_queryInfo);
     info.limit = limit;
     info.skip = skip + limit;
 

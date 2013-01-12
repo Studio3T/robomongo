@@ -17,6 +17,7 @@
 #include "robomongo/core/mongodb/MongoClientThread.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/core/domain/MongoDocument.h"
 
 using namespace Robomongo;
 using namespace std;
@@ -178,24 +179,20 @@ void MongoClient::handle(LoadCollectionNamesRequest *event)
             int dot = ns.indexOf('.');
             QString name = ns.mid(dot + 1);
 
-            // { collStats: "database.collection" , scale : 1024 }
+            // { collStats: "database.collection" , scale : 1 }
             mongo::BSONObjBuilder b;
             b.append("collStats", name.toStdString());
             b.append("scale", 1);
             mongo::BSONObj command = b.obj();
 
-            std::string str2 = command.toString(false, true);
-
-            mongo::BSONObj obj;
-            conn->get()->runCommand(event->databaseName.toStdString(), command, obj);
-
-            std::string str = obj.toString(false, true);
+            mongo::BSONObj result;
+            conn->get()->runCommand(event->databaseName.toStdString(), command, result);
 
             CollectionInfo info;
             info.collectionName = ns;
-            info.sizeBytes = obj.getIntField("size");
-            info.count = obj.getIntField("count");
-            info.storageSizeBytes = obj.getIntField("storageSize");
+            info.sizeBytes = result.getIntField("size");
+            info.count = result.getIntField("count");
+            info.storageSizeBytes = result.getIntField("storageSize");
             infos.append(info);
         }
 
@@ -215,11 +212,11 @@ void MongoClient::handle(ExecuteQueryRequest *event)
     {
         boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
 
-        QueryInfo &info = event->queryInfo;
+        MongoQueryInfo &info = event->queryInfo;
 
         QString ns = QString("%1.%2").arg(info.databaseName, info.collectionName);
 
-        QList<BSONObj> docs;
+        QList<MongoDocumentPtr> docs;
         auto_ptr<DBClientCursor> cursor = conn->get()->query(
             ns.toStdString(), info.query, info.limit, info.skip,
             info.fields.nFields() ? &info.fields : 0, info.options, info.batchSize);
@@ -227,7 +224,8 @@ void MongoClient::handle(ExecuteQueryRequest *event)
         while (cursor->more())
         {
             BSONObj bsonObj = cursor->next();
-            docs.append(bsonObj.getOwned());
+            MongoDocumentPtr doc(new MongoDocument(bsonObj.getOwned()));
+            docs.append(doc);
         }
 
         conn->done();
@@ -247,7 +245,7 @@ void MongoClient::handle(ExecuteScriptRequest *event)
 {
     try
     {
-        ExecResult result = _scriptEngine->exec(event->script, event->databaseName);
+        MongoShellExecResult result = _scriptEngine->exec(event->script, event->databaseName);
         reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.isEmpty()));
     }
     catch(DBException &ex)

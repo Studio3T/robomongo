@@ -95,7 +95,7 @@ void OutputWidget::present(const QList<MongoShellResult> &results)
     }
 }
 
-void OutputWidget::updatePart(int partIndex, const QueryInfo &queryInfo, const QList<MongoDocumentPtr> &documents)
+void OutputWidget::updatePart(int partIndex, const MongoQueryInfo &queryInfo, const QList<MongoDocumentPtr> &documents)
 {
     if (partIndex >= _splitter->count())
         return;

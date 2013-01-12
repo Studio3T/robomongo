@@ -71,8 +71,7 @@ namespace Robomongo
 	{
         QList<MongoDocumentPtr> list;
 
-		foreach(BSONObj bsonObj, bsonObjs)
-		{
+        foreach(BSONObj bsonObj, bsonObjs){
 			list.append(fromBsonObj(bsonObj));
 		}
 

@@ -37,28 +37,17 @@ void MongoShell::open(const QString &script, const QString &dbName)
 
 
 
-void MongoShell::query(int resultIndex, const QueryInfo &info)
+void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
 {
     _client->send(new ExecuteQueryRequest(this, resultIndex, info));
 }
 
 void MongoShell::handle(ExecuteQueryResponse *event)
 {
-    QList<MongoDocumentPtr> list;
-    foreach(mongo::BSONObj obj, event->documents) {
-        MongoDocumentPtr doc(new MongoDocument(obj));
-        list.append(doc);
-    }
-
-    _bus->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, _query, list));
+    _bus->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, _query, event->documents));
 }
 
 void MongoShell::handle(ExecuteScriptResponse *event)
 {
-    QList<MongoShellResult> list = MongoShellResult::fromResult(event->result.results);
-    MongoShellExecResult result(list,
-                                event->result.currentServerName, event->result.isCurrentServerValid,
-                                event->result.currentDatabaseName, event->result.isCurrentDatabaseValid);
-
-    _bus->publish(new ScriptExecutedEvent(this, result, event->empty));
+    _bus->publish(new ScriptExecutedEvent(this, event->result, event->empty));
 }

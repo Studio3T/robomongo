@@ -171,20 +171,20 @@ namespace Robomongo
     {
         R_EVENT
 
-        ExecuteQueryRequest(QObject *sender, int resultIndex, const QueryInfo &queryInfo) :
+        ExecuteQueryRequest(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo) :
             Event(sender),
             resultIndex(resultIndex),
             queryInfo(queryInfo) {}
 
         int resultIndex; //external user data;
-        QueryInfo queryInfo;
+        MongoQueryInfo queryInfo;
     };
 
     class ExecuteQueryResponse : public Event
     {
         R_EVENT
 
-        ExecuteQueryResponse(QObject *sender, int resultIndex, const QueryInfo &queryInfo, const QList<mongo::BSONObj> &documents) :
+        ExecuteQueryResponse(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const QList<MongoDocumentPtr> &documents) :
             Event(sender),
             resultIndex(resultIndex),
             queryInfo(queryInfo),
@@ -194,8 +194,8 @@ namespace Robomongo
             Event(sender, error) {}
 
         int resultIndex;
-        QueryInfo queryInfo;
-        QList<mongo::BSONObj> documents;
+        MongoQueryInfo queryInfo;
+        QList<MongoDocumentPtr> documents;
     };
 
 
@@ -224,7 +224,7 @@ namespace Robomongo
     {
         R_EVENT
 
-        ExecuteScriptResponse(QObject *sender, const ExecResult &result, bool empty) :
+        ExecuteScriptResponse(QObject *sender, const MongoShellExecResult &result, bool empty) :
             Event(sender),
             result(result),
             empty(empty) { }
@@ -232,7 +232,7 @@ namespace Robomongo
         ExecuteScriptResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
 
-        ExecResult result;
+        MongoShellExecResult result;
         bool empty;
     };
 
@@ -313,7 +313,7 @@ namespace Robomongo
     {
         R_EVENT
 
-        DocumentListLoadedEvent(QObject *sender, int resultIndex, const QueryInfo &queryInfo, const QString &query, const QList<MongoDocumentPtr> &list) :
+        DocumentListLoadedEvent(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const QString &query, const QList<MongoDocumentPtr> &list) :
             Event(sender),
             resultIndex(resultIndex),
             queryInfo(queryInfo),
@@ -321,7 +321,7 @@ namespace Robomongo
             list(list) { }
 
         int resultIndex;
-        QueryInfo queryInfo;
+        MongoQueryInfo queryInfo;
         QList<MongoDocumentPtr> list;
         QString query;
     };

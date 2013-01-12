@@ -20,7 +20,7 @@ namespace Robomongo
 
         void open(MongoCollection *collection);
         void open(const QString &script, const QString &dbName = QString());
-        void query(int resultIndex, const QueryInfo &info);
+        void query(int resultIndex, const MongoQueryInfo &info);
 
         MongoServer *server() const { return _server; }
         QString query() const { return _query; }

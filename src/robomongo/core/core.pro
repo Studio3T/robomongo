@@ -24,7 +24,6 @@ SOURCES += \
     domain/App.cpp \
     domain/MongoShell.cpp \
     engine/ScriptEngine.cpp \
-    engine/Result.cpp \
     domain/MongoShellResult.cpp \
     EventError.cpp \
     Event.cpp \
@@ -33,7 +32,8 @@ SOURCES += \
     EventWrapper.cpp \
     mongodb/MongoClientThread.cpp \
     KeyboardManager.cpp \
-    settings/CredentialSettings.cpp
+    settings/CredentialSettings.cpp \
+    domain/MongoQueryInfo.cpp
 
 
 HEADERS  += \
@@ -57,7 +57,6 @@ HEADERS  += \
     domain/App.h \
     domain/MongoShell.h \
     engine/ScriptEngine.h \
-    engine/Result.h \
     domain/MongoShellResult.h \
     EventError.h \
     Event.h \
@@ -66,7 +65,8 @@ HEADERS  += \
     EventWrapper.h \
     mongodb/MongoClientThread.h \
     KeyboardManager.h \
-    settings/CredentialSettings.h
+    settings/CredentialSettings.h \
+    domain/MongoQueryInfo.h
 
 INCLUDEPATH += $$SRC_ROOT
 

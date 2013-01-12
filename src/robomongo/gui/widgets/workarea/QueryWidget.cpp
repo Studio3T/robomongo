@@ -168,27 +168,37 @@ void QueryWidget::handle(ScriptExecutedEvent *event)
     _currentResults = event->result.results;
 
     setUpdatesEnabled(false);
-    int thisTab = _tabWidget->indexOf(this);
+    updateCurrentTab();
+    displayData(event->result.results, event->empty);
 
-    if (thisTab != -1) {
-        _tabWidget->setTabToolTip(thisTab, _shell->query());
-        QString tabTitle = _shell->query()
-                .left(41)
-                .replace(QRegExp("[\n\r\t]"), " ");
-
-        tabTitle = tabTitle.isEmpty() ? "New Shell" : tabTitle;
-
-        _tabWidget->setTabText(thisTab, tabTitle);
-    }
+    _scriptWidget->setCurrentDatabase(event->result.currentDatabase, event->result.isCurrentDatabaseValid);
+    _scriptWidget->setCurrentServer(event->result.currentServer, event->result.isCurrentServerValid);
+    _scriptWidget->setScriptFocus();
 
     if (_scriptWidget->text().isEmpty())
         _scriptWidget->setText(_shell->query());
 
-    displayData(event->result.results, event->empty);
-    _scriptWidget->statusBar()->setCurrentDatabase(event->result.currentDatabase, event->result.isCurrentDatabaseValid);
-    _scriptWidget->statusBar()->setCurrentServer(event->result.currentServer, event->result.isCurrentServerValid);
-    _scriptWidget->setScriptFocus();
     setUpdatesEnabled(true);
+}
+
+QString QueryWidget::buildTabTitle(const QString &query)
+{
+    QString tabTitle = query
+            .left(41)
+            .replace(QRegExp("[\n\r\t]"), " ");
+
+    tabTitle = tabTitle.isEmpty() ? "New Shell" : tabTitle;
+    return tabTitle;
+}
+
+void QueryWidget::updateCurrentTab()
+{
+    int thisTab = _tabWidget->indexOf(this);
+
+    if (thisTab != -1) {
+        _tabWidget->setTabToolTip(thisTab, _shell->query());
+        _tabWidget->setTabText(thisTab, buildTabTitle(_shell->query()));
+    }
 }
 
 void QueryWidget::displayData(const QList<MongoShellResult> &results, bool empty)

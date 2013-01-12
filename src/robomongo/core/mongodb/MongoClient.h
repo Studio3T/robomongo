@@ -71,8 +71,6 @@ namespace Robomongo
          */
         void init();
 
-        void evaluteFile(const QString &path);
-
         /**
          * @brief Send reply event to object 'obj'
          */

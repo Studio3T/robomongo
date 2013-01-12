@@ -63,6 +63,16 @@ void ScriptWidget::setScriptFocus()
     _queryText->setFocus();
 }
 
+void ScriptWidget::setCurrentDatabase(const QString &database, bool isValid)
+{
+    _topStatusBar->setCurrentDatabase(database, isValid);
+}
+
+void ScriptWidget::setCurrentServer(const QString &address, bool isValid)
+{
+    _topStatusBar->setCurrentServer(address, isValid);
+}
+
 void ScriptWidget::ui_queryLinesCountChanged()
 {
     setUpdatesEnabled(false);

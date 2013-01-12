@@ -22,6 +22,8 @@ namespace Robomongo
         QString selectedText() const;
         void selectAll();
         void setScriptFocus();
+        void setCurrentDatabase(const QString &database, bool isValid = true);
+        void setCurrentServer(const QString &address, bool isValid = true);
 
         TopStatusBar *statusBar() const { return _topStatusBar; }
 

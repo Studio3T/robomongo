@@ -54,24 +54,6 @@ void MongoClient::init()
     _thread->start();
 }
 
-void MongoClient::evaluteFile(const QString &path)
-{
-    /*
-    QFile file(path);
-    if(!file.open(QIODevice::ReadOnly))
-        throw std::runtime_error("Unable to read " + path.toStdString());
-
-    QTextStream in(&file);
-    QString script = in.readAll();
-
-    QScriptValue result = _scriptEngine->evaluate(script);
-
-    if (_scriptEngine->hasUncaughtException()) {
-        QString error = _scriptEngine->uncaughtException().toString();
-        int a = 4545;
-    }*/
-}
-
 void MongoClient::handle(InitRequest *event)
 {
     try {

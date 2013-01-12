@@ -50,6 +50,8 @@ namespace Robomongo
         void handle(ScriptExecutedEvent *event);
 
     private:
+        QString buildTabTitle(const QString &query);
+        void updateCurrentTab();
         void displayData(const QList<MongoShellResult> &results, bool empty);
 
         App *_app;

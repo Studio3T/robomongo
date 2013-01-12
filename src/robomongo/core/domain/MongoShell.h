@@ -36,9 +36,7 @@ namespace Robomongo
         QString _query;
 
         MongoServer *_server;
-
         MongoClient *_client;
-
         EventBus *_bus;
     };
 

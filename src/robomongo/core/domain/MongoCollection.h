@@ -4,6 +4,7 @@
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoDatabase.h"
+#include "robomongo/core/domain/MongoCollectionInfo.h"
 
 namespace Robomongo
 {
@@ -11,13 +12,13 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        MongoCollection(MongoDatabase *database, const CollectionInfo &info);
+        MongoCollection(MongoDatabase *database, const MongoCollectionInfo &info);
 
         bool isSystem() const { return _system; }
 
-        QString name() const { return _name; }
-        const CollectionInfo info() const { return _info; }
-        QString fullName() const { return _fullName; }
+        QString name() const { return _ns.collectionName(); }
+        const MongoCollectionInfo info() const { return _info; }
+        QString fullName() const { return _ns.toString(); }
         MongoDatabase *database() const { return _database; }
 
         QString sizeString() const;
@@ -26,23 +27,14 @@ namespace Robomongo
     private:
 
         QString buildNiceSizeString(int size) const;
+
         /**
          * @brief Database that contains this collection
          */
         MongoDatabase *_database;
 
-        /*
-        ** Name of collection (without database prefix)
-        */
-        QString _name;
-
-        /*
-        ** Full name of collection (with database prefix)
-        */
-        QString _fullName;
-
         bool _system;
-
-        CollectionInfo _info;
+        MongoCollectionInfo _info;
+        MongoNamespace _ns;
     };
 }

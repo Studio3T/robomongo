@@ -8,11 +8,11 @@
 #include <mongo/client/dbclient.h>
 
 #include "robomongo/core/Core.h"
-#include "robomongo/core/mongodb/MongoClient.h"
+#include "robomongo/core/mongodb/MongoWorker.h"
 
 namespace Robomongo
 {
-    class MongoClient;
+    class MongoWorker;
     class MongoDatabase;
     class EstablishConnectionResponse;
     class LoadDatabaseNamesResponse;
@@ -20,7 +20,7 @@ namespace Robomongo
     /**
      * @brief MongoServer represents active connection to MongoDB server.
      * MongoServer is an Aggregate Root, that manages three internal entities:
-     * MongoDatabase, MongoCollection and MongoClient.
+     * MongoDatabase, MongoCollection and MongoWorker.
      */
     class MongoServer : public QObject
     {
@@ -57,7 +57,7 @@ namespace Robomongo
          */
         void loadDatabases();
 
-        MongoClient *client() const { return _client.data(); }
+        MongoWorker *client() const { return _client.data(); }
 
     protected slots:
         void handle(EstablishConnectionResponse *event);
@@ -67,7 +67,7 @@ namespace Robomongo
         void clearDatabases();
         void addDatabase(MongoDatabase *database);
 
-        QScopedPointer<MongoClient> _client;
+        QScopedPointer<MongoWorker> _client;
         DBClientConnection_ScopedPtr _connection;
 
         /**

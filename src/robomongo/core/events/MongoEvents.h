@@ -6,8 +6,8 @@
 #include <mongo/client/dbclient.h>
 
 #include "robomongo/core/Core.h"
-#include "robomongo/core/engine/Result.h"
 #include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/Event.h"
 
 namespace Robomongo
@@ -129,37 +129,37 @@ namespace Robomongo
     {
         R_EVENT
 
+    public:
         LoadCollectionNamesRequest(QObject *sender, const QString &databaseName) :
             Event(sender),
-            databaseName(databaseName) {}
+            _databaseName(databaseName) {}
 
-        QString databaseName;
-    };
+        QString databaseName() const { return _databaseName; }
 
-    class CollectionInfo
-    {
-    public:
-        QString collectionName;
-        int sizeBytes;
-        int storageSizeBytes;
-        int count;
+    private:
+        QString _databaseName;
     };
 
     class LoadCollectionNamesResponse : public Event
     {
         R_EVENT
 
+    public:
         LoadCollectionNamesResponse(QObject *sender, const QString &databaseName,
-                                    const QList<CollectionInfo> &collectionNames) :
+                                    const QList<MongoCollectionInfo> &collectionInfos) :
             Event(sender),
-            databaseName(databaseName),
-            collectionNames(collectionNames) { }
+            _databaseName(databaseName),
+            _collectionInfos(collectionInfos) { }
 
         LoadCollectionNamesResponse(QObject *sender, EventError error) :
             Event(sender, error) {}
 
-        QString databaseName;
-        QList<CollectionInfo> collectionNames;
+        QString databaseName() const { return _databaseName; }
+        QList<MongoCollectionInfo> collectionInfos() const { return _collectionInfos; }
+
+    private:
+        QString _databaseName;
+        QList<MongoCollectionInfo> _collectionInfos;
     };
 
 
@@ -171,13 +171,18 @@ namespace Robomongo
     {
         R_EVENT
 
+    public:
         ExecuteQueryRequest(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo) :
             Event(sender),
-            resultIndex(resultIndex),
-            queryInfo(queryInfo) {}
+            _resultIndex(resultIndex),
+            _queryInfo(queryInfo) {}
 
-        int resultIndex; //external user data;
-        MongoQueryInfo queryInfo;
+        int resultIndex() const { return _resultIndex; }
+        MongoQueryInfo queryInfo() const { return _queryInfo; }
+
+    private:
+        int _resultIndex; //external user data;
+        MongoQueryInfo _queryInfo;
     };
 
     class ExecuteQueryResponse : public Event

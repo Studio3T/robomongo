@@ -67,28 +67,28 @@ void OutputWidget::present(const QList<MongoShellResult> &results)
     foreach (MongoShellResult shellResult, results) {
         OutputItemContentWidget *output = NULL;
 
-        if (!shellResult.response.trimmed().isEmpty()) {
-            output = new OutputItemContentWidget(shellResult.response);
+        if (!shellResult.response().trimmed().isEmpty()) {
+            output = new OutputItemContentWidget(shellResult.response());
         }
 
-        if (shellResult.documents.count() > 0) {
-            output = new OutputItemContentWidget(shellResult.documents);
+        if (shellResult.documents().count() > 0) {
+            output = new OutputItemContentWidget(shellResult.documents());
         }
 
-        OutputItemWidget *result = new OutputItemWidget(this, output, shellResult.queryInfo);
+        OutputItemWidget *result = new OutputItemWidget(this, output, shellResult.queryInfo());
         if (GuiRegistry::instance().mainWindow()->textMode())
             result->header()->showText();
         else
             result->header()->showTree();
 
-        double secs = shellResult.elapsedms / (double) 1000;
+        double secs = shellResult.elapsedMs() / (double) 1000;
 
         result->header()->setTime(QString("%1 sec.").arg(secs));
 
-        if (!shellResult.queryInfo.isNull) {
-            result->header()->setCollection(shellResult.queryInfo.collectionName);
-            result->header()->paging()->setLimit(shellResult.queryInfo.limit);
-            result->header()->paging()->setSkip(shellResult.queryInfo.skip);
+        if (!shellResult.queryInfo().isNull) {
+            result->header()->setCollection(shellResult.queryInfo().collectionName);
+            result->header()->paging()->setLimit(shellResult.queryInfo().limit);
+            result->header()->paging()->setSkip(shellResult.queryInfo().skip);
         }
 
         _splitter->addWidget(result);

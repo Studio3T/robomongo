@@ -5,7 +5,7 @@
 #include "robomongo/core/mongodb/MongoException.h"
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
-#include "robomongo/core/mongodb/MongoClient.h"
+#include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 
@@ -23,7 +23,7 @@ MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible) : Q
 
     _connection.reset(new mongo::DBClientConnection);
 
-    _client.reset(new MongoClient(_bus, _connectionRecord->clone()));
+    _client.reset(new MongoWorker(_bus, _connectionRecord->clone()));
 
     _bus->send(_client.data(), new InitRequest(this));
 }

@@ -209,7 +209,8 @@ ExplorerDatabaseTreeItem *ExplorerTreeWidget::selectedDatabaseItem()
     return dbtem;
 }
 
-void ExplorerTreeWidget::openCurrentCollectionShell(const QString &script, bool execute)
+void ExplorerTreeWidget::openCurrentCollectionShell(const QString &script, bool execute,
+                                                    const CursorPosition &cursor)
 {
     ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
     if (!collectionItem)
@@ -219,10 +220,11 @@ void ExplorerTreeWidget::openCurrentCollectionShell(const QString &script, bool 
     QString query = QString(script).arg(collection->name());
 
     AppRegistry::instance().app()->
-        openShell(collection->database(), query, execute, collection->name());
+        openShell(collection->database(), query, execute, collection->name(), cursor);
 }
 
-void ExplorerTreeWidget::openCurrentDatabaseShell(const QString &script, bool execute)
+void ExplorerTreeWidget::openCurrentDatabaseShell(const QString &script, bool execute,
+                                                  const CursorPosition &cursor)
 {
     ExplorerDatabaseTreeItem *collectionItem = selectedDatabaseItem();
     if (!collectionItem)
@@ -231,10 +233,11 @@ void ExplorerTreeWidget::openCurrentDatabaseShell(const QString &script, bool ex
     MongoDatabase *database = collectionItem->database();
 
     AppRegistry::instance().app()->
-        openShell(database, script, execute, database->name());
+        openShell(database, script, execute, database->name(), cursor);
 }
 
-void ExplorerTreeWidget::openCurrentServerShell(const QString &script, bool execute)
+void ExplorerTreeWidget::openCurrentServerShell(const QString &script, bool execute,
+                                                const CursorPosition &cursor)
 {
     ExplorerServerTreeItem *serverItem = selectedServerItem();
     if (!serverItem)
@@ -243,7 +246,7 @@ void ExplorerTreeWidget::openCurrentServerShell(const QString &script, bool exec
     MongoServer *server = serverItem->server();
 
     AppRegistry::instance().app()->
-        openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName());
+        openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName(), cursor);
 }
 
 void ExplorerTreeWidget::ui_disconnectServer()
@@ -265,15 +268,16 @@ void ExplorerTreeWidget::ui_addDocument()
 {
     openCurrentCollectionShell(
         "db.%1.save({\n"
-        "    \"<key>\" : \"<value>\"\n"
-        "});", false);
+        "    '' : '',\n"
+        "})"
+    , false, CursorPosition(1, 5));
 }
 
 void ExplorerTreeWidget::ui_removeDocument()
 {
     openCurrentCollectionShell(
-        "db.%1.remove({ \"<field>\" : \"<value>\" });"
-        , false);
+        "db.%1.remove({ '' : '' });"
+    , false, CursorPosition(0, -10));
 }
 
 void ExplorerTreeWidget::ui_addIndex()
@@ -285,7 +289,7 @@ void ExplorerTreeWidget::ui_addIndex()
         "// { unique : true }   - A unique index causes MongoDB to reject all documents that contain a duplicate value for the indexed field. \n"
         "// { sparse : true }   - Sparse indexes only contain entries for documents that have the indexed field. \n"
         "// { dropDups : true } - Sparse indexes only contain entries for documents that have the indexed field. \n"
-        , false);
+    , false);
 }
 
 void ExplorerTreeWidget::ui_reIndex()

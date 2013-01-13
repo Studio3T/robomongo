@@ -17,9 +17,9 @@ MongoService::~MongoService()
 
 }
 
-DBClientConnection * MongoService::connect(QString address, QString userName, QString password)
+DBClientConnection *MongoService::connect(QString address, QString userName, QString password)
 {
-	DBClientConnection * connection = new DBClientConnection;
+    DBClientConnection *connection = new DBClientConnection;
 	connection->connect(address.toStdString());
 
 //	string errmsg;
@@ -29,7 +29,7 @@ DBClientConnection * MongoService::connect(QString address, QString userName, QS
 	return connection;
 }
 
-QStringList MongoService::getDatabases(DBClientConnection * connection)
+QStringList MongoService::getDatabases(DBClientConnection *connection)
 {
 	QStringList stringList;
 
@@ -42,7 +42,7 @@ QStringList MongoService::getDatabases(DBClientConnection * connection)
 	return stringList;
 }
 
-QStringList MongoService::getCollections(DBClientConnection * connection, QString database)
+QStringList MongoService::getCollections(DBClientConnection *connection, QString database)
 {
 	QStringList stringList;
 
@@ -55,7 +55,7 @@ QStringList MongoService::getCollections(DBClientConnection * connection, QStrin
 	return stringList;
 }
 
-QList<BSONObj> MongoService::getAllObjects( DBClientConnection * connection, QString collection )
+QList<BSONObj> MongoService::getAllObjects( DBClientConnection *connection, QString collection )
 {
 	QList<BSONObj> bsonList;
 	auto_ptr<DBClientCursor> cursor = connection->query(collection.toStdString(), BSONObj(), 100);

@@ -30,7 +30,7 @@ using namespace mongo;
 using namespace Robomongo;
 
 QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,
-                         const QString &script, bool textMode, QWidget *parent) :
+                         const ScriptInfo &scriptInfo, bool textMode, QWidget *parent) :
     QWidget(parent),
     _shell(shell),
     _tabWidget(tabWidget),
@@ -45,12 +45,9 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,
     _bus->subscribe(this, ScriptExecutedEvent::Type, shell);
 
     _scriptWidget = new ScriptWidget(_shell);
-    _scriptWidget->setText(script);
+    _scriptWidget->setText(scriptInfo.script());
+    _scriptWidget->setTextCursor(scriptInfo.cursor());
     _scriptWidget->installEventFilter(this);
-
-    QPushButton * executeButton = new QPushButton("Execute");
-	executeButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
-    connect(executeButton, SIGNAL(clicked()), this, SLOT(execute()));
 
     _viewer = new OutputWidget(_textMode, _shell);
     _outputLabel = new QLabel();
@@ -81,28 +78,21 @@ void QueryWidget::execute()
     _shell->open(query);
 }
 
-bool QueryWidget::eventFilter(QObject * o, QEvent * e)
+bool QueryWidget::eventFilter(QObject *o, QEvent *e)
 {
-	if (e->type() == QEvent::KeyPress)
-	{
-		QKeyEvent * keyEvent = (QKeyEvent *) e;
-
+    if (e->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = (QKeyEvent *) e;
         if (_keyboard->isNewTabShortcut(keyEvent)) {
             openNewTab();
             return true;
-        }
-        else if (_keyboard->isSetFocusOnQueryLineShortcut(keyEvent)) {
+        } else if (_keyboard->isSetFocusOnQueryLineShortcut(keyEvent)) {
             _scriptWidget->setScriptFocus();
             return true;
-        }
-        else if (_keyboard->isExecuteScriptShortcut(keyEvent))
-        {
+        } else if (_keyboard->isExecuteScriptShortcut(keyEvent)) {
             execute();
             return true;
         }
-
 	}
-
     return false;
 }
 
@@ -160,23 +150,20 @@ void QueryWidget::enterTextMode()
 
 void QueryWidget::handle(DocumentListLoadedEvent *event)
 {
-    _viewer->updatePart(event->resultIndex, event->queryInfo, event->list);
+    _viewer->updatePart(event->resultIndex(), event->queryInfo(), event->documents()); // this should be in viewer, subscribed
+                                                                                       // to ScriptExecutedEvent
 }
 
 void QueryWidget::handle(ScriptExecutedEvent *event)
 {
-    _currentResults = event->result.results();
+    _currentResults = event->result().results();
 
     setUpdatesEnabled(false);
     updateCurrentTab();
-    displayData(event->result.results(), event->empty);
+    displayData(event->result().results(), event->empty());
 
-    _scriptWidget->setCurrentDatabase(event->result.currentDatabase(), event->result.isCurrentDatabaseValid());
-    _scriptWidget->setCurrentServer(event->result.currentServer(), event->result.isCurrentServerValid());
-    _scriptWidget->setScriptFocus();
-
-    if (_scriptWidget->text().isEmpty())
-        _scriptWidget->setText(_shell->query());
+    _scriptWidget->setup(event->result()); // this should be in ScriptWidget, which is subscribed to ScriptExecutedEvent
+    _scriptWidget->setScriptFocus();       // and this
 
     setUpdatesEnabled(true);
 }
@@ -191,7 +178,8 @@ QString QueryWidget::buildTabTitle(const QString &query)
     return tabTitle;
 }
 
-void QueryWidget::updateCurrentTab()
+void QueryWidget::updateCurrentTab()  // !!!!!!!!!!! this method should be in
+                                      // WorkAreaTabWidget, subscribed to ScriptExecutedEvent
 {
     int thisTab = _tabWidget->indexOf(this);
 

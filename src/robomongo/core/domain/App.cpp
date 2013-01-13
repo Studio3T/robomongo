@@ -54,35 +54,39 @@ MongoShell *App::openShell(MongoCollection *collection)
     ConnectionSettings *connection = collection->database()->server()->connectionRecord()->clone();
     connection->setDefaultDatabase(collection->database()->name());
     QString script = QString("db.%1.find()").arg(collection->name());
-    return openShell(connection, script, true, collection->database()->name());
+    return openShell(connection, ScriptInfo(script, true, CursorPosition(), collection->database()->name()));
 }
 
-MongoShell *App::openShell(MongoServer *server, const QString &script, const QString &dbName, bool execute, const QString &shellName)
+MongoShell *App::openShell(MongoServer *server, const QString &script, const QString &dbName,
+                           bool execute, const QString &shellName,
+                           const CursorPosition &cursorPosition)
 {
     ConnectionSettings *connection = server->connectionRecord()->clone();
 
     if (!dbName.isEmpty())
         connection->setDefaultDatabase(dbName);
 
-    return openShell(connection, script, execute, shellName);
+    return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName));
 }
 
-MongoShell *App::openShell(MongoDatabase *database, const QString &script, bool execute, const QString &shellName)
+MongoShell *App::openShell(MongoDatabase *database, const QString &script,
+                           bool execute, const QString &shellName,
+                           const CursorPosition &cursorPosition)
 {
     ConnectionSettings *connection = database->server()->connectionRecord()->clone();
     connection->setDefaultDatabase(database->name());
-    return openShell(connection, script, execute, shellName);
+    return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName));
 }
 
-MongoShell *App::openShell(ConnectionSettings *connection, const QString &script, bool execute, const QString &shellName)
+MongoShell *App::openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo)
 {
     MongoServer *server = openServer(connection, false);
     MongoShell *shell = new MongoShell(server);
     _shells.append(shell);
-    _bus->publish(new OpeningShellEvent(this, shell, script, shellName));
+    _bus->publish(new OpeningShellEvent(this, shell, scriptInfo));
 
-    if (execute)
-        shell->open(script);
+    if (scriptInfo.execute())
+        shell->open(scriptInfo.script());
     else
         shell->open("");
 

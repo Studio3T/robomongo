@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QTreeWidget>
+#include "robomongo/core/domain/CursorPosition.h"
 
 namespace Robomongo
 {
@@ -22,9 +23,9 @@ namespace Robomongo
         ExplorerServerTreeItem *selectedServerItem();
         ExplorerCollectionTreeItem *selectedCollectionItem();
         ExplorerDatabaseTreeItem *selectedDatabaseItem();
-        void openCurrentCollectionShell(const QString &script, bool execute = true);
-        void openCurrentDatabaseShell(const QString &script, bool execute = true);
-        void openCurrentServerShell(const QString &script, bool execute = true);
+        void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
+        void openCurrentDatabaseShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
+        void openCurrentServerShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
 
     signals:
         void disconnectActionTriggered();

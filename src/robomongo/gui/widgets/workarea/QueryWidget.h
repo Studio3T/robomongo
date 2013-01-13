@@ -9,6 +9,7 @@
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/core/domain/ScriptInfo.h"
 
 namespace Robomongo
 {
@@ -27,10 +28,10 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const QString &script, bool textMode, QWidget *parent = NULL);
+        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const ScriptInfo &scriptInfo, bool textMode, QWidget *parent = NULL);
         ~QueryWidget() {}
 
-        bool eventFilter(QObject * o, QEvent * e);
+        bool eventFilter(QObject *o, QEvent *e);
 
         void toggleOrientation();
         void activateTabContent();

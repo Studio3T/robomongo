@@ -21,7 +21,7 @@ bool EventBusDispatcher::event(QEvent *qevent)
 
     Event *event = wrapper->event();
 
-    const char * typeName = event->typeString();
+    const char *typeName = event->typeString();
 
     foreach(QObject *receiver, wrapper->receivers()) {
         QMetaObject::invokeMethod(receiver, "handle", QGenericArgument(typeName, &event));

@@ -11,7 +11,7 @@ BsonWidget::BsonWidget(QWidget *parent) : QWidget(parent)
 {
     _bsonTree = new BsonTreeWidget;
 
-	QHBoxLayout * hlayout = new QHBoxLayout;
+    QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->setSpacing(0);
 	hlayout->setMargin(0);
     hlayout->addWidget(_bsonTree);

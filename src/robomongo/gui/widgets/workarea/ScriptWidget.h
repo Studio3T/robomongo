@@ -4,6 +4,9 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
+#include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/core/domain/CursorPosition.h"
+
 namespace Robomongo
 {
     class RoboScintilla;
@@ -17,7 +20,9 @@ namespace Robomongo
     public:
         ScriptWidget(MongoShell *shell);
 
+        void setup(const MongoShellExecResult & execResult);
         void setText(const QString &text);
+        void setTextCursor(const CursorPosition &cursor = CursorPosition());
         QString text() const;
         QString selectedText() const;
         void selectAll();

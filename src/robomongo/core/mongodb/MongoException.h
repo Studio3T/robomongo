@@ -14,7 +14,7 @@ namespace Robomongo
         }
 
         ~MongoException() throw() {}
-        virtual const char* what() const throw()
+        virtual const char *what() const throw()
         {
             return _bytes.data();
         }

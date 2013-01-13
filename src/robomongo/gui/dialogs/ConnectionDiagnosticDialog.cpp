@@ -139,7 +139,7 @@ void ConnectionDiagnosticThread::run()
         emit connectionStatus("", true);
     }
     catch(UserException &ex) {
-        const char * what = ex.what();
+        const char *what = ex.what();
         emit connectionStatus(QString(what), false);
         emit completed();
         return;

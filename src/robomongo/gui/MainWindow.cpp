@@ -60,7 +60,7 @@ MainWindow::MainWindow() : QMainWindow(),
     connect(_connectionsMenu, SIGNAL(triggered(QAction*)), this, SLOT(connectToServer(QAction*)));
     updateConnectionsMenu();
 
-    QToolButton* connectButton = new QToolButton();
+    QToolButton *connectButton = new QToolButton();
     connectButton->setText("&Connect");
     connectButton->setIcon(GuiRegistry::instance().connectIcon());
     connectButton->setFocusPolicy(Qt::NoFocus);
@@ -70,7 +70,7 @@ MainWindow::MainWindow() : QMainWindow(),
     connectButton->setPopupMode(QToolButton::MenuButtonPopup);
     connect(connectButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
 
-    QWidgetAction* connectButtonAction = new QWidgetAction(this);
+    QWidgetAction*connectButtonAction = new QWidgetAction(this);
     connectButtonAction->setDefaultWidget(connectButton);
 
     // Orientation action

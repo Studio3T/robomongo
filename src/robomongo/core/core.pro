@@ -37,7 +37,9 @@ SOURCES += \
     domain/MongoCollectionInfo.cpp \
     mongodb/MongoClient.cpp \
     domain/MongoUtils.cpp \
-    domain/MongoNamespace.cpp
+    domain/MongoNamespace.cpp \
+    domain/CursorPosition.cpp \
+    domain/ScriptInfo.cpp
 
 
 HEADERS  += \
@@ -74,7 +76,9 @@ HEADERS  += \
     domain/MongoCollectionInfo.h \
     mongodb/MongoClient.h \
     domain/MongoUtils.h \
-    domain/MongoNamespace.h
+    domain/MongoNamespace.h \
+    domain/CursorPosition.h \
+    domain/ScriptInfo.h
 
 INCLUDEPATH += $$SRC_ROOT
 

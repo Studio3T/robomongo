@@ -33,14 +33,33 @@ ScriptWidget::ScriptWidget(MongoShell *shell)
     _configureQueryText();
     _queryText->setFixedHeight(10);
     ui_queryLinesCountChanged();
-
-    _queryText->setCursorPosition(15, 1000);
     _queryText->setFocus();
+}
+
+void ScriptWidget::setup(const MongoShellExecResult &execResult)
+{
+    setCurrentDatabase(execResult.currentDatabase(), execResult.isCurrentDatabaseValid());
+    setCurrentServer(execResult.currentServer(), execResult.isCurrentServerValid());
 }
 
 void ScriptWidget::setText(const QString &text)
 {
     _queryText->setText(text);
+}
+
+void ScriptWidget::setTextCursor(const CursorPosition &cursor)
+{
+    if (cursor.isNull()) {
+        _queryText->setCursorPosition(15, 1000);
+        return;
+    }
+
+    int column = cursor.column();
+    if (column < 0) {
+        column = _queryText->text(cursor.line()).length() + column;
+    }
+
+    _queryText->setCursorPosition(cursor.line(), column);
 }
 
 QString ScriptWidget::text() const
@@ -124,7 +143,7 @@ void ScriptWidget::_configureQueryText()
     textFont.setFamily("Courier");
 #endif
 
-    QsciLexerJavaScript * javaScriptLexer = new JSLexer(this);
+    QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
     javaScriptLexer->setFont(textFont);
 //    javaScriptLexer->setPaper(QColor(255, 0, 0, 127));
 

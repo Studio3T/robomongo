@@ -1,6 +1,8 @@
 #pragma once
 
 #include "robomongo/core/Core.h"
+#include "robomongo/core/domain/CursorPosition.h"
+#include "robomongo/core/domain/ScriptInfo.h"
 
 namespace Robomongo
 {
@@ -32,14 +34,14 @@ namespace Robomongo
         MongoShell *openShell(MongoCollection *collection);
 
         MongoShell *openShell(MongoServer *server, const QString &script, const QString &dbName = QString(),
-                              bool execute = true, const QString &shellName = QString());
+                              bool execute = true, const QString &shellName = QString(),
+                              const CursorPosition &cursorPosition = CursorPosition());
 
         MongoShell *openShell(MongoDatabase *database, const QString &script,
-                              bool execute = true, const QString &shellName = QString());
+                              bool execute = true, const QString &shellName = QString(),
+                              const CursorPosition &cursorPosition = CursorPosition());
 
-
-        MongoShell *openShell(ConnectionSettings *connection, const QString &script,
-                              bool execute = true, const QString &shellName = QString());
+        MongoShell *openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo);
 
         /**
          * @brief Closes MongoShell and frees all resources, owned by specified MongoShell.

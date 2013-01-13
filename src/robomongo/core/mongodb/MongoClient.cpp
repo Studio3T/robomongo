@@ -1,281 +1,84 @@
 #include "robomongo/core/mongodb/MongoClient.h"
-
-#include <QThread>
-#include <QStringList>
-#include <QMutexLocker>
-#include <QCoreApplication>
-#include <QFile>
-#include <QTextStream>
-#include <QVector>
-#include "boost/scoped_ptr.hpp"
+#include "robomongo/core/domain/MongoNamespace.h"
 #include <mongo/client/dbclient.h>
-#include "mongo/scripting/engine_spidermonkey.h"
-
-#include "robomongo/core/events/MongoEvents.h"
-#include "robomongo/core/engine/ScriptEngine.h"
-#include "robomongo/core/EventBus.h"
-#include "robomongo/core/mongodb/MongoClientThread.h"
-#include "robomongo/core/settings/ConnectionSettings.h"
-#include "robomongo/core/domain/MongoShellResult.h"
-#include "robomongo/core/domain/MongoDocument.h"
 
 using namespace Robomongo;
 using namespace std;
-using namespace mongo;
 
+MongoClient::MongoClient(mongo::ScopedDbConnection *scopedConnection) :
+    _scopedConnection(scopedConnection),
+    _dbclient(scopedConnection->get()){ }
 
-MongoClient::MongoClient(EventBus *bus, ConnectionSettings *connection, QObject *parent) : QObject(parent),
-    _connection(connection),
-    _bus(bus),
-    _scriptEngine(NULL)
+QStringList MongoClient::getCollectionNames(const QString &dbname)
 {
-    _address = _connection->getFullAddress();
-    init();
+    list<string> dbs = _dbclient->getCollectionNames(dbname.toStdString());
+
+    QStringList stringList;
+    for (list<string>::iterator i = dbs.begin(); i != dbs.end(); i++) {
+        stringList.append(QString::fromStdString(*i));
+    }
+
+    stringList.sort();
+    return stringList;
 }
 
-MongoClient::~MongoClient()
+QStringList MongoClient::getDatabaseNames()
 {
-    delete _connection;
-    _thread->quit();
-    if (!_thread->wait(1000))
-        _thread->terminate();
+    list<string> dbs = _dbclient->getDatabaseNames();
 
-    delete _thread;
+    QStringList dbNames;
+    for (list<string>::iterator i = dbs.begin(); i != dbs.end(); ++i) {
+        dbNames.append(QString::fromStdString(*i));
+    }
+
+    dbNames.sort();
+    return dbNames;
 }
 
-/**
- * @brief Initialise MongoClient
- */
-void MongoClient::init()
+QList<MongoDocumentPtr> MongoClient::query(const MongoQueryInfo &info)
 {
-    _isAdmin = true;
-    _thread = new MongoClientThread(this);
-    this->moveToThread(_thread);
+    MongoNamespace ns(info.databaseName, info.collectionName);
 
-    _thread->start();
+    QList<MongoDocumentPtr> docs;
+    auto_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
+        ns.toString().toStdString(), info.query, info.limit, info.skip,
+        info.fields.nFields() ? &info.fields : 0, info.options, info.batchSize);
+
+    while (cursor->more()) {
+        mongo::BSONObj bsonObj = cursor->next();
+        MongoDocumentPtr doc(new MongoDocument(bsonObj.getOwned()));
+        docs.append(doc);
+    }
+
+    return docs;
 }
 
-void MongoClient::handle(InitRequest *event)
+MongoCollectionInfo MongoClient::runCollStatsCommand(const QString &ns)
 {
-    try {
-        _scriptEngine = new ScriptEngine(_connection);
-        _scriptEngine->init();
-        _scriptEngine->use(_connection->defaultDatabase());
-    }
-    catch (std::exception &ex) {
-        reply(event->sender(), new InitResponse(this, EventError("Unable to initialize MongoClient")));
-    }
+    MongoNamespace mongons(ns);
+
+    mongo::BSONObjBuilder command; // { collStats: "db.collection", scale : 1 }
+    command.append("collStats", mongons.collectionName().toStdString());
+    command.append("scale", 1);
+
+    mongo::BSONObj result;
+    _dbclient->runCommand(mongons.databaseName().toStdString(), command.obj(), result);
+
+    MongoCollectionInfo info(result);
+    return info;
 }
 
-void MongoClient::handle(FinalizeRequest *event)
+QList<MongoCollectionInfo> MongoClient::runCollStatsCommand(const QStringList &namespaces)
 {
-    try {
-
+    QList<MongoCollectionInfo> infos;
+    foreach (QString ns, namespaces) {
+        MongoCollectionInfo info = runCollStatsCommand(ns);
+        infos.append(info);
     }
-    catch (std::exception &ex) {
-
-    }
+    return infos;
 }
 
-/**
- * @brief Initiate connection to MongoDB
- */
-void MongoClient::handle(EstablishConnectionRequest *event)
+void MongoClient::done()
 {
-    QMutexLocker lock(&_firstConnectionMutex);
-
-    try
-    {
-        boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
-
-        if (_connection->hasEnabledPrimaryCredential())
-        {
-            std::string errmsg;
-            bool ok = conn->get()->auth(
-                _connection->primaryCredential()->databaseName().toStdString(),
-                _connection->primaryCredential()->userName().toStdString(),
-                _connection->primaryCredential()->userPassword().toStdString(), errmsg);
-
-            if (!ok)
-            {
-                QString lastErrorMessage = QString::fromStdString(errmsg);
-                throw runtime_error("Unable to authorize");
-            }
-
-            // If authentication succeed and database name is 'admin' -
-            // then user is admin, otherwise user is not admin
-            if (_connection->primaryCredential()->databaseName().compare("admin", Qt::CaseInsensitive))
-                _isAdmin = false;
-
-            // Save name of db on which we authenticated
-            _authDatabase = _connection->primaryCredential()->databaseName();
-        }
-
-        conn->done();
-        reply(event->sender(), new EstablishConnectionResponse(this, _address));
-    }
-    catch(std::exception &ex)
-    {
-        reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
-    }
-}
-
-/**
- * @brief Load list of all database names
- */
-void MongoClient::handle(LoadDatabaseNamesRequest *event)
-{
-    try
-    {
-        // If user not an admin - he doesn't have access to mongodb 'listDatabases' command
-        // Non admin user has access only to the single database he specified while performing auth.
-        if (!_isAdmin) {
-            QStringList dbNames;
-            dbNames << _authDatabase;
-            reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
-            return;
-        }
-
-        boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
-        list<string> dbs = conn->get()->getDatabaseNames();
-        conn->done();
-
-        QStringList dbNames;
-        for ( list<string>::iterator i = dbs.begin(); i != dbs.end(); i++ ) {
-            dbNames.append(QString::fromStdString(*i));
-        }
-
-        dbNames.sort();
-
-        reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
-    }
-    catch(DBException &ex)
-    {
-        reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError("Unable to load database names.")));
-    }
-}
-
-/**
- * @brief Load list of all collection names
- */
-void MongoClient::handle(LoadCollectionNamesRequest *event)
-{
-    try
-    {
-        boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
-        list<string> dbs = conn->get()->getCollectionNames(event->databaseName.toStdString());
-
-
-        QStringList stringList;
-        for ( list<string>::iterator i = dbs.begin(); i != dbs.end(); i++ ) {
-            stringList.append(QString::fromStdString(*i));
-        }
-
-        stringList.sort();
-
-        QList<CollectionInfo> infos;
-        foreach (QString ns, stringList) {
-
-            int dot = ns.indexOf('.');
-            QString name = ns.mid(dot + 1);
-
-            // { collStats: "database.collection" , scale : 1 }
-            mongo::BSONObjBuilder b;
-            b.append("collStats", name.toStdString());
-            b.append("scale", 1);
-            mongo::BSONObj command = b.obj();
-
-            mongo::BSONObj result;
-            conn->get()->runCommand(event->databaseName.toStdString(), command, result);
-
-            CollectionInfo info;
-            info.collectionName = ns;
-            info.sizeBytes = result.getIntField("size");
-            info.count = result.getIntField("count");
-            info.storageSizeBytes = result.getIntField("storageSize");
-            infos.append(info);
-        }
-
-        conn->done();
-
-        reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName, infos));
-    }
-    catch(DBException &ex)
-    {
-        reply(event->sender(), new LoadCollectionNamesResponse(this, EventError("Unable to load list of collections.")));
-    }
-}
-
-void MongoClient::handle(ExecuteQueryRequest *event)
-{
-    try
-    {
-        boost::scoped_ptr<ScopedDbConnection> conn(ScopedDbConnection::getScopedDbConnection(_address.toStdString()));
-
-        MongoQueryInfo &info = event->queryInfo;
-
-        QString ns = QString("%1.%2").arg(info.databaseName, info.collectionName);
-
-        QList<MongoDocumentPtr> docs;
-        auto_ptr<DBClientCursor> cursor = conn->get()->query(
-            ns.toStdString(), info.query, info.limit, info.skip,
-            info.fields.nFields() ? &info.fields : 0, info.options, info.batchSize);
-
-        while (cursor->more())
-        {
-            BSONObj bsonObj = cursor->next();
-            MongoDocumentPtr doc(new MongoDocument(bsonObj.getOwned()));
-            docs.append(doc);
-        }
-
-        conn->done();
-
-        reply(event->sender(), new ExecuteQueryResponse(this, event->resultIndex, info, docs));
-    }
-    catch(DBException &ex)
-    {
-        reply(event->sender(), new ExecuteQueryResponse(this, EventError("Unable to complete query.")));
-    }
-}
-
-/**
- * @brief Execute javascript
- */
-void MongoClient::handle(ExecuteScriptRequest *event)
-{
-    try
-    {
-        MongoShellExecResult result = _scriptEngine->exec(event->script, event->databaseName);
-        reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.isEmpty()));
-    }
-    catch(DBException &ex)
-    {
-        reply(event->sender(), new ExecuteScriptResponse(this, EventError("Unable to complete query.")));
-    }
-}
-
-/**
- * @brief Send event to this MongoClient
- */
-void MongoClient::send(Event *event)
-{
-    _bus->send(this, event);
-    //const char * typeName = event->typeString();
-    //QMetaObject::invokeMethod(this, "handle", Qt::QueuedConnection, QGenericArgument(typeName, &event));
-
-    // was:
-    // QCoreApplication::postEvent(this, event);
-}
-
-/**
- * @brief Send reply event to object 'receiver'
- */
-void MongoClient::reply(QObject *receiver, Event *event)
-{
-    _bus->send(receiver, event);
-    //const char * typeName = event->typeString();
-    //QMetaObject::invokeMethod(receiver, "handle", Qt::QueuedConnection, QGenericArgument(typeName, &event));
-
-    // was:
-    // QCoreApplication::postEvent(receiver, event);
+    _scopedConnection->done();
 }

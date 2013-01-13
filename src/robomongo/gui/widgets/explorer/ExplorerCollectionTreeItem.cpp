@@ -25,7 +25,7 @@ QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
         "</table>"
         )
         .arg(collection->name())
-        .arg(collection->info().count)
+        .arg(collection->info().count())
         .arg(collection->sizeString());
 
     return tooltip;

@@ -6,7 +6,7 @@
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/events/MongoEvents.h"
-#include "robomongo/core/mongodb/MongoClient.h"
+#include "robomongo/core/mongodb/MongoWorker.h"
 
 namespace Robomongo
 {
@@ -51,7 +51,7 @@ namespace Robomongo
 
     private:
         MongoServer *_server;
-        MongoClient *_client;
+        MongoWorker *_client;
         QList<MongoCollection *> _collections;
         QString _name;
         bool _system;

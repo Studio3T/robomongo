@@ -6,7 +6,6 @@
 #include <mongo/scripting/engine.h>
 #include <js/jsparse.h>
 
-#include "robomongo/core/engine/Result.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 
 namespace Robomongo

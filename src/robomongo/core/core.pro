@@ -10,7 +10,7 @@ SOURCES += \
     settings/ConnectionSettings.cpp \
     settings/SettingsManager.cpp \
     examples/ImplicitlyShared.cpp \
-    mongodb/MongoClient.cpp \
+    mongodb/MongoWorker.cpp \
     mongodb/MongoService.cpp \
     domain/MongoServer.cpp \
     domain/MongoDatabase.cpp \
@@ -30,10 +30,14 @@ SOURCES += \
     EventBusSubscriber.cpp \
     EventBusDispatcher.cpp \
     EventWrapper.cpp \
-    mongodb/MongoClientThread.cpp \
+    mongodb/MongoWorkerThread.cpp \
     KeyboardManager.cpp \
     settings/CredentialSettings.cpp \
-    domain/MongoQueryInfo.cpp
+    domain/MongoQueryInfo.cpp \
+    domain/MongoCollectionInfo.cpp \
+    mongodb/MongoClient.cpp \
+    domain/MongoUtils.cpp \
+    domain/MongoNamespace.cpp
 
 
 HEADERS  += \
@@ -43,7 +47,7 @@ HEADERS  += \
     Core.h \
     examples/ImplicitlyShared.h \
     mongodb/MongoException.h \
-    mongodb/MongoClient.h \
+    mongodb/MongoWorker.h \
     mongodb/MongoService.h \
     domain/MongoServer.h \
     domain/MongoDatabase.h \
@@ -63,10 +67,14 @@ HEADERS  += \
     EventBusSubscriber.h \
     EventBusDispatcher.h \
     EventWrapper.h \
-    mongodb/MongoClientThread.h \
+    mongodb/MongoWorkerThread.h \
     KeyboardManager.h \
     settings/CredentialSettings.h \
-    domain/MongoQueryInfo.h
+    domain/MongoQueryInfo.h \
+    domain/MongoCollectionInfo.h \
+    mongodb/MongoClient.h \
+    domain/MongoUtils.h \
+    domain/MongoNamespace.h
 
 INCLUDEPATH += $$SRC_ROOT
 

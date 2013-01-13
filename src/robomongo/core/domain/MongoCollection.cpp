@@ -2,30 +2,26 @@
 
 using namespace Robomongo;
 
-MongoCollection::MongoCollection(MongoDatabase *database, const CollectionInfo &info) :
+MongoCollection::MongoCollection(MongoDatabase *database, const MongoCollectionInfo &info) :
     QObject(),
+    _ns(info.ns()),
     _database(database),
     _info(info),
-    _fullName(info.collectionName),
     _system(false)
 {
-    // full name contains db name, so we are extracting name of collection:
-    int dot = _fullName.indexOf('.');
-    _name = _fullName.mid(dot + 1);
-
     // system databases starts from system.*
-    if (_name.startsWith("system."))
+    if (_ns.collectionName().startsWith("system."))
         _system = true;
 }
 
 QString MongoCollection::sizeString() const
 {
-    return buildNiceSizeString(_info.sizeBytes);
+    return buildNiceSizeString(_info.sizeBytes());
 }
 
 QString MongoCollection::storageSizeString() const
 {
-    return buildNiceSizeString(_info.storageSizeBytes);
+    return buildNiceSizeString(_info.storageSizeBytes());
 }
 
 QString MongoCollection::buildNiceSizeString(int size) const

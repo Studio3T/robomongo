@@ -165,14 +165,14 @@ void QueryWidget::handle(DocumentListLoadedEvent *event)
 
 void QueryWidget::handle(ScriptExecutedEvent *event)
 {
-    _currentResults = event->result.results;
+    _currentResults = event->result.results();
 
     setUpdatesEnabled(false);
     updateCurrentTab();
-    displayData(event->result.results, event->empty);
+    displayData(event->result.results(), event->empty);
 
-    _scriptWidget->setCurrentDatabase(event->result.currentDatabase, event->result.isCurrentDatabaseValid);
-    _scriptWidget->setCurrentServer(event->result.currentServer, event->result.isCurrentServerValid);
+    _scriptWidget->setCurrentDatabase(event->result.currentDatabase(), event->result.isCurrentDatabaseValid());
+    _scriptWidget->setCurrentServer(event->result.currentServer(), event->result.isCurrentServerValid());
     _scriptWidget->setScriptFocus();
 
     if (_scriptWidget->text().isEmpty())

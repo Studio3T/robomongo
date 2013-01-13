@@ -3,8 +3,7 @@
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoServer.h"
-#include "robomongo/core/engine/Result.h"
-#include "robomongo/core/mongodb/MongoClient.h"
+#include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 

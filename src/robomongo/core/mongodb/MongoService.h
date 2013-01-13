@@ -11,11 +11,11 @@ public:
 	MongoService(QObject *parent = NULL);
 	~MongoService();
 
-    mongo::DBClientConnection * connect(QString address, QString userName, QString password);
+    mongo::DBClientConnection *connect(QString address, QString userName, QString password);
 
-    QStringList getDatabases(mongo::DBClientConnection * connection);
-    QStringList getCollections(mongo::DBClientConnection * connection, QString database);
-    QList<mongo::BSONObj> getAllObjects(mongo::DBClientConnection * connection, QString collection);
+    QStringList getDatabases(mongo::DBClientConnection *connection);
+    QStringList getCollections(mongo::DBClientConnection *connection, QString database);
+    QList<mongo::BSONObj> getAllObjects(mongo::DBClientConnection *connection, QString collection);
 
     static QString getStringValue(mongo::BSONElement &element);
 

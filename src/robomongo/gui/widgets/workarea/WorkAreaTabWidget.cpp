@@ -12,7 +12,7 @@ using namespace Robomongo;
  * @brief Creates WorkAreaTabWidget.
  * @param workAreaWidget: WorkAreaWidget this tab belongs to.
  */
-WorkAreaTabWidget::WorkAreaTabWidget(WorkAreaWidget * workAreaWidget) :
+WorkAreaTabWidget::WorkAreaTabWidget(WorkAreaWidget *workAreaWidget) :
     QTabWidget(workAreaWidget)
 {
     // This line (setTabBar()) should go before setTabsClosable(true)

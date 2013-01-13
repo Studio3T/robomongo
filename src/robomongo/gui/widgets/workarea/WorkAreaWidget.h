@@ -19,7 +19,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        WorkAreaWidget(MainWindow * mainWindow);
+        WorkAreaWidget(MainWindow *mainWindow);
         ~WorkAreaWidget() {}
 
         void toggleOrientation();
@@ -34,13 +34,9 @@ namespace Robomongo
         /*
         ** MainWindow this work area belongs to
         */
-        MainWindow * _mainWindow;
+        MainWindow *_mainWindow;
 
-        /*
-        ** Tab widget
-        */
-        WorkAreaTabWidget * _tabWidget;
-
+        WorkAreaTabWidget *_tabWidget;
         EventBus *_bus;
     };
 }

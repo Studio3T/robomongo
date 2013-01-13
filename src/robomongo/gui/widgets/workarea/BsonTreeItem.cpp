@@ -242,7 +242,7 @@ void BsonTreeItem::expand()
 	while(iterator.hasMore())
 	{
         MongoElementPtr element = iterator.next();
-		BsonTreeItem * childItem = new BsonTreeItem(element, isArray ? position : -1);
+        BsonTreeItem *childItem = new BsonTreeItem(element, isArray ? position : -1);
 		addChild(childItem);
 		position++;
 	}
@@ -253,7 +253,7 @@ void BsonTreeItem::cleanChildItems()
 	int itemCount = childCount();
 	for (int i = 0; i < itemCount; ++i)
 	{
-		QTreeWidgetItem * p = child(0);
+        QTreeWidgetItem *p = child(0);
 		removeChild(p);
 		delete p;
 	}

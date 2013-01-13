@@ -12,7 +12,7 @@
 using namespace Robomongo;
 using namespace mongo;
 
-BsonTreeWidget::BsonTreeWidget(QWidget * parent) : QTreeWidget(parent)
+BsonTreeWidget::BsonTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
 	QStringList colums;
 	colums << "Key" << "Value" << "Type";
@@ -42,14 +42,14 @@ void BsonTreeWidget::setDocuments(const QList<MongoDocumentPtr> &documents)
 	setUpdatesEnabled(false);
 	clear();
 
-    BsonTreeItem * firstItem = NULL;
+    BsonTreeItem *firstItem = NULL;
 
 	QList<QTreeWidgetItem *> items;
 	for (int i = 0; i < documents.count(); i++)
 	{
         MongoDocumentPtr document = documents.at(i);
 
-        BsonTreeItem * item = new BsonTreeItem(document, i);
+        BsonTreeItem *item = new BsonTreeItem(document, i);
 		items.append(item);
 
         if (i == 0)
@@ -66,9 +66,9 @@ void BsonTreeWidget::setDocuments(const QList<MongoDocumentPtr> &documents)
     }
 }
 
-void BsonTreeWidget::ui_itemExpanded(QTreeWidgetItem * treeItem)
+void BsonTreeWidget::ui_itemExpanded(QTreeWidgetItem *treeItem)
 {
-	BsonTreeItem * item = static_cast<BsonTreeItem *>(treeItem);
+    BsonTreeItem *item = static_cast<BsonTreeItem *>(treeItem);
 	item->expand();
 
 /*	MongoDocumentIterator iterator(item->document());
@@ -79,7 +79,7 @@ void BsonTreeWidget::ui_itemExpanded(QTreeWidgetItem * treeItem)
 		
 		if (element->isSimpleType() || element->bsonElement().isNull())
 		{
-			QTreeWidgetItem * childItem = new QTreeWidgetItem;
+            QTreeWidgetItem *childItem = new QTreeWidgetItem;
 			childItem->setText(0, element->fieldName());
 			childItem->setText(1, element->stringValue());
 			childItem->setIcon(0, getIcon(element));
@@ -87,7 +87,7 @@ void BsonTreeWidget::ui_itemExpanded(QTreeWidgetItem * treeItem)
 		} 
 		else if (element->isDocument())
 		{
-			BsonTreeItem * newitem = new BsonTreeItem(element->asDocument(), element->isArray());
+            BsonTreeItem *newitem = new BsonTreeItem(element->asDocument(), element->isArray());
 
 			if (item->isArray()) //is in array
 			{

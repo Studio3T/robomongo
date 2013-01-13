@@ -22,14 +22,12 @@ OutputItemWidget::OutputItemWidget(OutputWidget *viewer, OutputItemContentWidget
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(0, 1, 0, 0);
     layout->setSpacing(0);
-//    layout->addWidget(hline);
     layout->addWidget(_header);
     layout->addWidget(output, 1);
     setLayout(layout);
 
     connect(_header->paging(), SIGNAL(leftClicked(int,int)), this, SLOT(paging_leftClicked(int,int)));
     connect(_header->paging(), SIGNAL(rightClicked(int,int)), this, SLOT(paging_rightClicked(int,int)));
-
 }
 
 void OutputItemWidget::setQueryInfo(const MongoQueryInfo &queryInfo)

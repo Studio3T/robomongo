@@ -10,7 +10,7 @@
 
 using namespace Robomongo;
 
-WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
+WorkAreaWidget::WorkAreaWidget(MainWindow *mainWindow)	:
     QWidget(),
     _bus(AppRegistry::instance().bus())
 {
@@ -19,7 +19,7 @@ WorkAreaWidget::WorkAreaWidget(MainWindow * mainWindow)	:
 	_tabWidget->setMovable(true);
     _tabWidget->setDocumentMode(true);
 
-	QHBoxLayout * hlayout = new QHBoxLayout;
+    QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->setContentsMargins(0, 3, 0, 0);
 	hlayout->addWidget(_tabWidget);
 	setLayout(hlayout);
@@ -57,11 +57,17 @@ void WorkAreaWidget::enterTreeMode()
 
 void WorkAreaWidget::handle(OpeningShellEvent *event)
 {
-    bool textMode = _mainWindow->textMode();
-    QString shellName = event->shellName.isEmpty() ? " Loading..." : event->shellName;
+    ScriptInfo &info = event->scriptInfo;
+
+    QString shellName = info.title().isEmpty() ? " Loading..." : info.title();
 
     setUpdatesEnabled(false);
-    QueryWidget * queryWidget = new QueryWidget(event->shell, _tabWidget, event->initialScript, textMode);
+    QueryWidget *queryWidget = new QueryWidget(
+        event->shell,
+        _tabWidget,
+        info,
+        _mainWindow->textMode());
+
     _tabWidget->addTab(queryWidget, shellName);
     _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
     _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());

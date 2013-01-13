@@ -8,6 +8,8 @@
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
+#include "robomongo/core/domain/CursorPosition.h"
+#include "robomongo/core/domain/ScriptInfo.h"
 #include "robomongo/core/Event.h"
 
 namespace Robomongo
@@ -269,16 +271,13 @@ namespace Robomongo
     {
         R_EVENT
 
-        OpeningShellEvent(QObject *sender, MongoShell *shell, const QString &initialScript,
-                          const QString &shellName = QString()) :
+        OpeningShellEvent(QObject *sender, MongoShell *shell, const ScriptInfo &scriptInfo) :
             Event(sender),
             shell(shell),
-            initialScript(initialScript),
-            shellName(shellName) { }
+            scriptInfo(scriptInfo) {}
 
         MongoShell *shell;
-        QString initialScript;
-        QString shellName;
+        ScriptInfo scriptInfo;
     };
 
     class ConnectionFailedEvent : public Event
@@ -318,30 +317,42 @@ namespace Robomongo
     {
         R_EVENT
 
-        DocumentListLoadedEvent(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const QString &query, const QList<MongoDocumentPtr> &list) :
+    public:
+        DocumentListLoadedEvent(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const QString &query, const QList<MongoDocumentPtr> &docs) :
             Event(sender),
-            resultIndex(resultIndex),
-            queryInfo(queryInfo),
-            query(query),
-            list(list) { }
+            _resultIndex(resultIndex),
+            _queryInfo(queryInfo),
+            _query(query),
+            _documents(docs) { }
 
-        int resultIndex;
-        MongoQueryInfo queryInfo;
-        QList<MongoDocumentPtr> list;
-        QString query;
+        int resultIndex() const { return _resultIndex; }
+        MongoQueryInfo queryInfo() const { return _queryInfo; }
+        QList<MongoDocumentPtr> documents() const { return _documents; }
+        QString query() const { return _query; }
+
+    private:
+        int _resultIndex;
+        MongoQueryInfo _queryInfo;
+        QList<MongoDocumentPtr> _documents;
+        QString _query;
     };
 
     class ScriptExecutedEvent : public Event
     {
         R_EVENT
 
+    public:
         ScriptExecutedEvent(QObject *sender, const MongoShellExecResult &result, bool empty) :
             Event(sender),
-            result(result),
-            empty(empty) { }
+            _result(result),
+            _empty(empty) { }
 
-        MongoShellExecResult result;
-        bool empty;
+        MongoShellExecResult result() const { return _result; }
+        bool empty() const { return _empty; }
+
+    private:
+        MongoShellExecResult _result;
+        bool _empty;
     };
 
 }

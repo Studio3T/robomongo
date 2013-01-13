@@ -144,9 +144,9 @@ namespace Robomongo
         void layoutChanged();
 
     protected:
-//        void dragMoveEvent(QDragMoveEvent * event);
-//        void dragEnterEvent(QDragEnterEvent * event);
-        void dropEvent(QDropEvent * event);
+//        void dragMoveEvent(QDragMoveEvent *event);
+//        void dragEnterEvent(QDragEnterEvent *event);
+        void dropEvent(QDropEvent *event);
 //        void mousePressEvent(QMouseEvent *event);
     private:
         QTreeWidgetItem *draggingItem;

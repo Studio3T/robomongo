@@ -26,7 +26,7 @@ namespace Robomongo
         void setDocuments(const QList<MongoDocumentPtr> &documents);
 
     private:
-        BsonTreeWidget * _bsonTree;
+        BsonTreeWidget *_bsonTree;
     };
 
 

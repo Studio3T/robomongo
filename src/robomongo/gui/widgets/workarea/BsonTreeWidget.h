@@ -11,14 +11,14 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        BsonTreeWidget(QWidget * parent = NULL);
+        BsonTreeWidget(QWidget *parent = NULL);
         ~BsonTreeWidget();
 
         void setDocuments(const QList<MongoDocumentPtr> &documents);
         QIcon getIcon(MongoElementPtr element);
 
     public slots:
-        void ui_itemExpanded(QTreeWidgetItem * item);
+        void ui_itemExpanded(QTreeWidgetItem *item);
 
     protected slots:
         void resizeEvent(QResizeEvent *event);

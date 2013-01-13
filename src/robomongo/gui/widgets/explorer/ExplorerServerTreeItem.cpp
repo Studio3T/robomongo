@@ -37,14 +37,14 @@ void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabase *> &dbs
 	int itemCount = childCount();
 	for (int i = 0; i < itemCount; ++i)
 	{
-		QTreeWidgetItem * p = child(0);
+        QTreeWidgetItem *p = child(0);
 		removeChild(p);
 		delete p;
 	}
 
     // Add 'System' folder
     QIcon folderIcon = GuiRegistry::instance().folderIcon();
-    QTreeWidgetItem * systemFolder = new QTreeWidgetItem();
+    QTreeWidgetItem *systemFolder = new QTreeWidgetItem();
     systemFolder->setIcon(0, folderIcon);
     systemFolder->setText(0, "System");
     addChild(systemFolder);
@@ -54,12 +54,12 @@ void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabase *> &dbs
         MongoDatabase *database = dbs.at(i);
 
         if (database->isSystem()) {
-            ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(database);
+            ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(database);
             systemFolder->addChild(dbItem);
             continue;
         }
 
-        ExplorerDatabaseTreeItem * dbItem = new ExplorerDatabaseTreeItem(database);
+        ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(database);
         addChild(dbItem);
     }
 

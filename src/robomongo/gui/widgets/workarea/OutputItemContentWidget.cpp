@@ -208,7 +208,7 @@ RoboScintilla *Robomongo::OutputItemContentWidget::_configureLogText()
     textFont.setFamily("Courier");
 #endif
 
-    QsciLexerJavaScript * javaScriptLexer = new JSLexer(this);
+    QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
     javaScriptLexer->setFont(textFont);
 
     RoboScintilla *_logText = new RoboScintilla;

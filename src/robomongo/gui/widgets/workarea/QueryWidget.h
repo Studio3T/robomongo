@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QPlainTextEdit>
 #include <QLabel>
+#include <QGraphicsView>
 #include <Qsci/qsciscintilla.h>
 
 #include "robomongo/core/Core.h"
@@ -40,6 +41,8 @@ namespace Robomongo
         void duplicate();
         void enterTreeMode();
         void enterTextMode();
+        void showProgress();
+        void hideProgress();
 
         MongoShell *shell() const { return _shell; }
 

@@ -3,6 +3,8 @@
 #include <QApplication>
 #include <QtGui>
 #include <QPlainTextEdit>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerjavascript.h>
 #include <mongo/client/dbclient.h>
@@ -43,6 +45,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,
     setObjectName("queryWidget");
     _bus->subscribe(this, DocumentListLoadedEvent::Type, shell);
     _bus->subscribe(this, ScriptExecutedEvent::Type, shell);
+    qDebug() << "Subscribed to ScriptExecutedEvent";
 
     _scriptWidget = new ScriptWidget(_shell);
     _scriptWidget->setText(scriptInfo.script());
@@ -66,6 +69,10 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,
     layout->addWidget(_outputLabel, 0, Qt::AlignTop);
     layout->addWidget(_viewer, 1);
     setLayout(layout);
+
+    if (scriptInfo.execute()) {
+        _scriptWidget->showProgress();
+    }
 }
 
 void QueryWidget::execute()
@@ -75,6 +82,7 @@ void QueryWidget::execute()
     if (query.isEmpty())
         query = _scriptWidget->text();
 
+    showProgress();
     _shell->open(query);
 }
 
@@ -148,14 +156,29 @@ void QueryWidget::enterTextMode()
         _viewer->enterTextMode();
 }
 
+void QueryWidget::showProgress()
+{
+    _viewer->showProgress();
+}
+
+void QueryWidget::hideProgress()
+{
+    _viewer->hideProgress();
+}
+
+
 void QueryWidget::handle(DocumentListLoadedEvent *event)
 {
+    hideProgress();
+    _scriptWidget->hideProgress();
     _viewer->updatePart(event->resultIndex(), event->queryInfo(), event->documents()); // this should be in viewer, subscribed
                                                                                        // to ScriptExecutedEvent
 }
 
 void QueryWidget::handle(ScriptExecutedEvent *event)
 {
+    hideProgress();
+    _scriptWidget->hideProgress();
     _currentResults = event->result().results();
 
     setUpdatesEnabled(false);

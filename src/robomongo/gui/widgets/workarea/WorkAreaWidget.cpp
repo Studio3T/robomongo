@@ -72,4 +72,5 @@ void WorkAreaWidget::handle(OpeningShellEvent *event)
     _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
     _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());
     setUpdatesEnabled(true);
+    queryWidget->showProgress();
 }

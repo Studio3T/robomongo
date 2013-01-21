@@ -1,6 +1,7 @@
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 
 #include <QHBoxLayout>
+#include <QMovie>
 #include <QListView>
 #include <QTreeView>
 #include <Qsci/qscilexerjavascript.h>
@@ -34,8 +35,7 @@ OutputWidget::OutputWidget(bool textMode, MongoShell *shell, QWidget *parent) :
     QPalette p(palette());
     // Set background colour to black
     p.setColor(QPalette::Background, QColor("#083047").lighter(660));
-    setPalette(p);
-    */
+    setPalette(p);*/
 
     _splitter = new QSplitter;
     _splitter->setOrientation(Qt::Vertical);
@@ -47,6 +47,13 @@ OutputWidget::OutputWidget(bool textMode, MongoShell *shell, QWidget *parent) :
     layout->setSpacing(0);
     layout->addWidget(_splitter);
     setLayout(layout);
+
+    QMovie *movie = new QMovie(":robomongo/icons/progress_bar.gif", QByteArray(), this);
+    _progressLabel = new QLabel(this);
+    _progressLabel->setMovie(movie);
+    _progressLabel->setFixedSize(200, 200);
+    _progressLabel->hide();
+    movie->start();
 }
 
 OutputWidget::~OutputWidget()
@@ -162,4 +169,15 @@ void OutputWidget::restoreSize()
 int OutputWidget::resultIndex(OutputItemWidget *result)
 {
     return _splitter->indexOf(result);
+}
+
+void OutputWidget::showProgress()
+{
+    _progressLabel->move(width() / 2 - 100, height() / 2 - 100);
+    _progressLabel->show();
+}
+
+void OutputWidget::hideProgress()
+{
+    _progressLabel->hide();
 }

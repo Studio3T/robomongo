@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <QPainter>
 #include <QIcon>
+#include <QMovie>
 #include <Qsci/qscilexerjavascript.h>
 
 #include "robomongo/core/domain/MongoShell.h"
@@ -90,6 +91,16 @@ void ScriptWidget::setCurrentDatabase(const QString &database, bool isValid)
 void ScriptWidget::setCurrentServer(const QString &address, bool isValid)
 {
     _topStatusBar->setCurrentServer(address, isValid);
+}
+
+void ScriptWidget::showProgress()
+{
+    _topStatusBar->showProgress();
+}
+
+void ScriptWidget::hideProgress()
+{
+    _topStatusBar->hideProgress();
 }
 
 void ScriptWidget::ui_queryLinesCountChanged()
@@ -219,6 +230,12 @@ TopStatusBar::TopStatusBar(MongoShell *shell) :
     _currentDatabaseLabel = new ElidedLabel();
     _currentDatabaseLabel->setDisabled(true);
 
+    QMovie *movie = new QMovie(":robomongo/icons/loading.gif", QByteArray(), this);
+    _progressLabel = new QLabel();
+    _progressLabel->setMovie(movie);
+    _progressLabel->hide();
+    movie->start();
+
     QHBoxLayout *topLayout = new QHBoxLayout;
     topLayout->setContentsMargins(2, 7, 2, 3);
     topLayout->addWidget(serverIconLabel, 0, Qt::AlignLeft);
@@ -227,6 +244,7 @@ TopStatusBar::TopStatusBar(MongoShell *shell) :
     topLayout->addWidget(dbIconLabel, 0, Qt::AlignLeft);
     topLayout->addWidget(_currentDatabaseLabel, 0, Qt::AlignLeft);
     topLayout->addStretch(1);
+    topLayout->addWidget(_progressLabel, 0, Qt::AlignLeft);
 
     setLayout(topLayout);
 }
@@ -251,4 +269,14 @@ void TopStatusBar::setCurrentServer(const QString &address, bool isValid)
             .arg(address);
 
     _currentServerLabel->setText(text);
+}
+
+void TopStatusBar::showProgress()
+{
+    _progressLabel->show();
+}
+
+void TopStatusBar::hideProgress()
+{
+    _progressLabel->hide();
 }

@@ -29,6 +29,8 @@ namespace Robomongo
         void setScriptFocus();
         void setCurrentDatabase(const QString &database, bool isValid = true);
         void setCurrentServer(const QString &address, bool isValid = true);
+        void showProgress();
+        void hideProgress();
 
         TopStatusBar *statusBar() const { return _topStatusBar; }
 
@@ -63,10 +65,13 @@ namespace Robomongo
         TopStatusBar(MongoShell *shell);
         void setCurrentDatabase(const QString &database, bool isValid = true);
         void setCurrentServer(const QString &address, bool isValid = true);
+        void showProgress();
+        void hideProgress();
 
     private:
         QLabel *_currentDatabaseLabel;
         QLabel *_currentServerLabel;
+        QLabel *_progressLabel;
         MongoShell *_shell;
         QColor _textColor;
     };

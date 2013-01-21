@@ -49,6 +49,7 @@ void OutputItemWidget::paging_leftClicked(int skip, int limit)
     info.limit = limit;
     info.skip = s;
 
+    output->showProgress();
     output->shell()->query(output->resultIndex(this), info);
 }
 
@@ -61,5 +62,6 @@ void OutputItemWidget::paging_rightClicked(int skip, int limit)
     info.limit = limit;
     info.skip = skip + limit;
 
+    output->showProgress();
     output->shell()->query(output->resultIndex(this), info);
 }

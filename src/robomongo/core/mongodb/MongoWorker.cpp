@@ -1,5 +1,6 @@
 #include "robomongo/core/mongodb/MongoWorker.h"
 
+#include <QDebug>
 #include <QThread>
 #include <QStringList>
 #include <QMutexLocker>
@@ -50,21 +51,25 @@ MongoWorker::~MongoWorker()
  */
 void MongoWorker::init()
 {
+    qDebug() << "MongoWorker init started";
     _isAdmin = true;
     _thread = new MongoWorkerThread(this);
     this->moveToThread(_thread);
 
     _thread->start();
+    qDebug() << "MongoWorker init finished";
 }
 
 void MongoWorker::handle(InitRequest *event)
 {
     try {
+        qDebug() << "InitRequest received";
         _scriptEngine = new ScriptEngine(_connection);
         _scriptEngine->init();
         _scriptEngine->use(_connection->defaultDatabase());
     }
     catch (std::exception &ex) {
+        qDebug() << "InitRequest handler throw exception: " << ex.what();
         reply(event->sender(), new InitResponse(this, EventError("Unable to initialize MongoWorker")));
     }
 }
@@ -84,9 +89,11 @@ void MongoWorker::handle(FinalizeRequest *event)
  */
 void MongoWorker::handle(EstablishConnectionRequest *event)
 {
+    qDebug() << "EstablishConnectionRequest received";
     QMutexLocker lock(&_firstConnectionMutex);
 
     try {
+        qDebug() << "EstablishConnectionRequest in try block";
         boost::scoped_ptr<ScopedDbConnection> conn(getConnection());
 
         if (_connection->hasEnabledPrimaryCredential())
@@ -114,7 +121,9 @@ void MongoWorker::handle(EstablishConnectionRequest *event)
 
         conn->done();
         reply(event->sender(), new EstablishConnectionResponse(this, _address));
+        qDebug() << "EstablishConnectionResponse sent back";
     } catch(std::exception &ex) {
+        qDebug() << "EstablishConnectionRequest throw exception: " << ex.what();
         reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
     }
 }

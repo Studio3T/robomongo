@@ -1,5 +1,6 @@
 #include "robomongo/core/domain/MongoServer.h"
 
+#include <QDebug>
 #include <QStringList>
 
 #include "robomongo/core/mongodb/MongoException.h"
@@ -26,6 +27,7 @@ MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible) : Q
     _client.reset(new MongoWorker(_bus, _connectionRecord->clone()));
 
     _bus->send(_client.data(), new InitRequest(this));
+    qDebug() << "InitRequest sent";
 }
 
 MongoServer::~MongoServer()
@@ -44,6 +46,8 @@ void MongoServer::tryConnect()
         "_connectionRecord->databaseName()",
         "_connectionRecord->userName()",
         "_connectionRecord->userPassword()"));
+
+    qDebug() << "EstablishConnectionRequest sent";
 }
 
 void MongoServer::loadDatabases()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QLabel>
 #include <QSplitter>
 
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
@@ -34,10 +35,14 @@ namespace Robomongo
 
         int resultIndex(OutputItemWidget *result);
 
+        void showProgress();
+        void hideProgress();
+
         MongoShell *shell() const { return _shell; }
 
     private:
         QSplitter *_splitter;
+        QLabel *_progressLabel;
         bool _textMode;
         MongoShell *_shell;
     };

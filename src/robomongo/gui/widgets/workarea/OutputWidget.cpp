@@ -186,6 +186,10 @@ void OutputWidget::clearAllParts()
 void OutputWidget::tryToMakeAllPartsEqualInSize()
 {
     int resultsCount = _splitter->count();
+
+    if (resultsCount <= 1)
+        return;
+
     int dimension = _splitter->orientation() == Qt::Vertical ? _splitter->height() : _splitter->width();
     int step = dimension / resultsCount;
 

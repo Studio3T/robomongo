@@ -42,6 +42,8 @@ namespace Robomongo
         MongoShell *shell() const { return _shell; }
 
     private:
+        void clearAllParts();
+        void tryToMakeAllPartsEqualInSize();
         QSplitter *_splitter;
         ProgressBarPopup *_progressBarPopup;
         bool _textMode;

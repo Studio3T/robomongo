@@ -45,6 +45,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,
     setObjectName("queryWidget");
     _bus->subscribe(this, DocumentListLoadedEvent::Type, shell);
     _bus->subscribe(this, ScriptExecutedEvent::Type, shell);
+    _bus->subscribe(this, AutocompleteResponse::Type, shell);
     qDebug() << "Subscribed to ScriptExecutedEvent";
 
     _scriptWidget = new ScriptWidget(_shell);
@@ -189,6 +190,11 @@ void QueryWidget::handle(ScriptExecutedEvent *event)
     _scriptWidget->setScriptFocus();       // and this
 
     setUpdatesEnabled(true);
+}
+
+void QueryWidget::handle(AutocompleteResponse *event)
+{
+    _scriptWidget->showAutocompletion(event->list);
 }
 
 QString QueryWidget::buildTabTitle(const QString &query)

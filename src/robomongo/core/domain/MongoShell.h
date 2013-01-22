@@ -21,6 +21,7 @@ namespace Robomongo
         void open(MongoCollection *collection);
         void open(const QString &script, const QString &dbName = QString());
         void query(int resultIndex, const MongoQueryInfo &info);
+        void autocomplete(const QString &prefix);
 
         MongoServer *server() const { return _server; }
         QString query() const { return _query; }
@@ -28,6 +29,7 @@ namespace Robomongo
     protected slots:
         void handle(ExecuteQueryResponse *event);
         void handle(ExecuteScriptResponse *event);
+        void handle(AutocompleteResponse *event);
 
     private:
         /**

@@ -205,6 +205,28 @@ namespace Robomongo
         QList<MongoDocumentPtr> documents;
     };
 
+    class AutocompleteRequest : public Event
+    {
+        R_EVENT
+
+        AutocompleteRequest(QObject *sender, const QString &prefix) :
+            Event(sender),
+            prefix(prefix) {}
+
+        QString prefix;
+    };
+
+    class AutocompleteResponse : public Event
+    {
+        R_EVENT
+
+        AutocompleteResponse(QObject *sender, const QStringList &list) :
+            Event(sender),
+            list(list) {}
+
+        QStringList list;
+    };
+
 
     /**
      * @brief ExecuteScript

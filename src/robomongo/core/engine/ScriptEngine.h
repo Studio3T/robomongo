@@ -24,6 +24,8 @@ namespace Robomongo
         MongoShellExecResult exec(const QString &script, const QString &dbName = QString());
 
         void use(const QString &dbName);
+        QStringList complete(const QString &prefix);
+
 
     private:
         ConnectionSettings *_connection;

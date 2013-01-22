@@ -147,6 +147,35 @@ namespace Robomongo
         }
     }
 
+    QStringList ScriptEngine::complete(const QString &prefix)
+    {
+//        if ( prefix.find( '"' ) != string::npos )
+//            return;
+
+        try {
+            using namespace mongo;
+            QStringList results;
+            mongo::BSONObj args = BSON( "0" << prefix.toStdString() );
+
+            _scope->invokeSafe( "function callShellAutocomplete(x) {shellAutocomplete(x)}", &args, 0, 1000 );
+            mongo::BSONObjBuilder b;
+            _scope->append( b , "" , "__autocomplete__" );
+            mongo::BSONObj res = b.obj();
+            mongo::BSONObj arr = res.firstElement().Obj();
+
+            mongo::BSONObjIterator i( arr );
+            while ( i.more() ) {
+                mongo::BSONElement e = i.next();
+                results.append(QString::fromStdString(e.String()));
+            }
+            return results;
+        }
+        catch ( ... ) {
+            return QStringList();
+        }
+        return QStringList();
+    }
+
     MongoShellResult ScriptEngine::prepareResult(const QString &output, const QList<MongoDocumentPtr> objects, qint64 elapsedms)
     {
         char *script =

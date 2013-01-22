@@ -3,6 +3,7 @@
 #include <QFrame>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QCompleter>
 
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/CursorPosition.h"
@@ -31,16 +32,21 @@ namespace Robomongo
         void setCurrentServer(const QString &address, bool isValid = true);
         void showProgress();
         void hideProgress();
+        void showAutocompletion(const QStringList &list);
 
         TopStatusBar *statusBar() const { return _topStatusBar; }
 
     private slots:
         void ui_queryLinesCountChanged();
+        void onTextChanged();
+        void onUserListActivated(int, QString);
 
     private:
         void _configureQueryText();
         RoboScintilla *_queryText;
         TopStatusBar *_topStatusBar;
+        QCompleter *_completer;
+        MongoShell *_shell;
     };
 
     class ElidedLabel : public QLabel

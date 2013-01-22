@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QIcon>
 #include <QMovie>
+#include <QCompleter>
 #include <Qsci/qscilexerjavascript.h>
 
 #include "robomongo/core/domain/MongoShell.h"
@@ -13,10 +14,12 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+#include <QStringListModel>
 
 using namespace Robomongo;
 
-ScriptWidget::ScriptWidget(MongoShell *shell)
+ScriptWidget::ScriptWidget(MongoShell *shell) :
+    _shell(shell)
 {
     setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
 
@@ -35,6 +38,12 @@ ScriptWidget::ScriptWidget(MongoShell *shell)
     _queryText->setFixedHeight(10);
     ui_queryLinesCountChanged();
     _queryText->setFocus();
+
+    _completer = new QCompleter(this);
+    _completer->setWidget(_queryText);
+    _completer->setCompletionMode(QCompleter::PopupCompletion);
+    _completer->setCaseSensitivity(Qt::CaseInsensitive);
+    _completer->setMaxVisibleItems(20);
 }
 
 void ScriptWidget::setup(const MongoShellExecResult &execResult)
@@ -103,6 +112,13 @@ void ScriptWidget::hideProgress()
     _topStatusBar->hideProgress();
 }
 
+void ScriptWidget::showAutocompletion(const QStringList &list)
+{
+    QStringListModel *model = new QStringListModel(list, this);
+    _completer->setModel(model);
+    _completer->complete();
+}
+
 void ScriptWidget::ui_queryLinesCountChanged()
 {
     setUpdatesEnabled(false);
@@ -135,6 +151,44 @@ void ScriptWidget::ui_queryLinesCountChanged()
     layout()->activate();
 
     setUpdatesEnabled(true);
+}
+
+void ScriptWidget::onTextChanged()
+{
+    if (_queryText->isListActive())
+        return;
+
+    int line_num;
+    int index;
+
+    _queryText->getCursorPosition(&line_num, &index);
+    QString line = _queryText->text(line_num);
+    line = line.trimmed();
+
+    if (line.isEmpty())
+        return;
+
+    _shell->autocomplete(line);
+
+//    QChar curr_char = line.at(index);
+
+//    if (curr_char == '.') {
+//        QStringList list;
+//        list << "onTextChanged";
+//        list << "showUserList";
+//        list << "getCursorPosition";
+//        list << "font";
+//        //_queryText->showUserList(1, list);
+//    }
+}
+
+void ScriptWidget::onUserListActivated(int, QString text)
+{
+    int line_num;
+    int index;
+
+    _queryText->getCursorPosition(&line_num, &index);
+    _queryText->insertAt(text, line_num, index);
 }
 
 /*
@@ -177,11 +231,19 @@ void ScriptWidget::_configureQueryText()
     _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
+//    _queryText->setAutoCompletionFillups(".");
+    _queryText->setAutoCompletionFillupsEnabled(false);
+//    _queryText->setAutoCompletionWordSeparators(QStringList() << ".");
+    _queryText->setAutoCompletionSource(QsciScintilla::AcsNone);
+    _queryText->setAutoCompletionCaseSensitivity(false);
+
     //_queryText->SendScintilla(QsciScintilla::SCI_SETFONTQUALITY, QsciScintilla::SC_EFF_QUALITY_LCD_OPTIMIZED);
     //_queryText->SendScintilla (QsciScintillaBase::SCI_SETKEYWORDS, "db");
 
     _queryText->setStyleSheet("QFrame { background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
     connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
+    connect(_queryText, SIGNAL(textChanged()), SLOT(onTextChanged()));
+    connect(_queryText, SIGNAL(userListActivated(int,QString)), SLOT(onUserListActivated(int,QString)));
 }
 
 void ElidedLabel::paintEvent(QPaintEvent *event)

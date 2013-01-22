@@ -25,5 +25,7 @@ R_REGISTER_EVENT(ExecuteQueryResponse)
 R_REGISTER_EVENT(DocumentListLoadedEvent)
 R_REGISTER_EVENT(ExecuteScriptRequest)
 R_REGISTER_EVENT(ExecuteScriptResponse)
+R_REGISTER_EVENT(AutocompleteRequest)
+R_REGISTER_EVENT(AutocompleteResponse)
 R_REGISTER_EVENT(ScriptExecutedEvent)
 

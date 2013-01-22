@@ -59,13 +59,7 @@ OutputWidget::~OutputWidget()
 
 void OutputWidget::present(const QList<MongoShellResult> &results)
 {
-    int count = _splitter->count();
-
-    for (int i = 0; i < count; i++) {
-        QWidget *widget = _splitter->widget(i);
-        widget->hide();
-        widget->deleteLater();
-    }
+    clearAllParts();
 
     foreach (MongoShellResult shellResult, results) {
         OutputItemContentWidget *output = NULL;
@@ -96,6 +90,8 @@ void OutputWidget::present(const QList<MongoShellResult> &results)
 
         _splitter->addWidget(result);
     }
+
+    tryToMakeAllPartsEqualInSize();
 }
 
 void OutputWidget::updatePart(int partIndex, const MongoQueryInfo &queryInfo, const QList<MongoDocumentPtr> &documents)
@@ -176,4 +172,27 @@ void OutputWidget::showProgress()
 void OutputWidget::hideProgress()
 {
     QTimer::singleShot(100, _progressBarPopup, SLOT(hide()));
+}
+
+void OutputWidget::clearAllParts()
+{
+    while (_splitter->count() > 0) {
+        QWidget *widget = _splitter->widget(0);
+        widget->hide();
+        delete widget;
+    }
+}
+
+void OutputWidget::tryToMakeAllPartsEqualInSize()
+{
+    int resultsCount = _splitter->count();
+    int dimension = _splitter->orientation() == Qt::Vertical ? _splitter->height() : _splitter->width();
+    int step = dimension / resultsCount;
+
+    QList<int> partSizes;
+    for (int i = 0; i < resultsCount; ++i) {
+        partSizes << step;
+    }
+
+    _splitter->setSizes(partSizes);
 }

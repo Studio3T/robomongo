@@ -117,7 +117,10 @@ void ScriptWidget::showAutocompletion(const QStringList &list)
     _completer->widget()->setUpdatesEnabled(false);
     QStringListModel *model = new QStringListModel(list, this);
     _completer->setModel(model);
-    _completer->complete();
+
+    if (!_completer->widget()->isHidden())
+        _completer->complete();
+
     _completer->widget()->setUpdatesEnabled(true);
 }
 

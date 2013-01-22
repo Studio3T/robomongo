@@ -14,6 +14,7 @@ namespace Robomongo
     class OutputItemContentWidget;
     class OutputItemWidget;
     class OutputWidget;
+    class ProgressBarPopup;
 
     class OutputWidget : public QFrame
     {
@@ -42,7 +43,7 @@ namespace Robomongo
 
     private:
         QSplitter *_splitter;
-        QLabel *_progressLabel;
+        ProgressBarPopup *_progressBarPopup;
         bool _textMode;
         MongoShell *_shell;
     };

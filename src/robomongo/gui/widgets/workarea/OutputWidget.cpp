@@ -16,6 +16,7 @@
 #include "robomongo/gui/widgets/workarea/PagingWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
+#include "robomongo/gui/widgets/workarea/ProgressBarPopup.h"
 
 using namespace Robomongo;
 
@@ -48,12 +49,7 @@ OutputWidget::OutputWidget(bool textMode, MongoShell *shell, QWidget *parent) :
     layout->addWidget(_splitter);
     setLayout(layout);
 
-    QMovie *movie = new QMovie(":robomongo/icons/progress_bar.gif", QByteArray(), this);
-    _progressLabel = new QLabel(this);
-    _progressLabel->setMovie(movie);
-    _progressLabel->setFixedSize(200, 200);
-    _progressLabel->hide();
-    movie->start();
+    _progressBarPopup = new ProgressBarPopup(this);
 }
 
 OutputWidget::~OutputWidget()
@@ -173,11 +169,11 @@ int OutputWidget::resultIndex(OutputItemWidget *result)
 
 void OutputWidget::showProgress()
 {
-    _progressLabel->move(width() / 2 - 100, height() / 2 - 100);
-    _progressLabel->show();
+    _progressBarPopup->move(width() / 2 - 84, height() / 2 - 25);
+    _progressBarPopup->show();
 }
 
 void OutputWidget::hideProgress()
 {
-    _progressLabel->hide();
+    QTimer::singleShot(100, _progressBarPopup, SLOT(hide()));
 }

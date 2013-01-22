@@ -67,6 +67,8 @@ namespace Robomongo
          */
         void handle(ExecuteScriptRequest *event);
 
+        void handle(AutocompleteRequest *event);
+
     private:
 
         mongo::ScopedDbConnection *getConnection();

@@ -39,6 +39,11 @@ void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
     _client->send(new ExecuteQueryRequest(this, resultIndex, info));
 }
 
+void MongoShell::autocomplete(const QString &prefix)
+{
+    _client->send(new AutocompleteRequest(this, prefix));
+}
+
 void MongoShell::handle(ExecuteQueryResponse *event)
 {
     _bus->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, _query, event->documents));
@@ -47,4 +52,9 @@ void MongoShell::handle(ExecuteQueryResponse *event)
 void MongoShell::handle(ExecuteScriptResponse *event)
 {
     _bus->publish(new ScriptExecutedEvent(this, event->result, event->empty));
+}
+
+void MongoShell::handle(AutocompleteResponse *event)
+{
+    _bus->publish(new AutocompleteResponse(this, event->list));
 }

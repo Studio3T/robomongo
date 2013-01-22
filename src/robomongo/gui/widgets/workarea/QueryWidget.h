@@ -18,6 +18,7 @@ namespace Robomongo
     class EventBus;
     class DocumentListLoadedEvent;
     class ScriptExecutedEvent;
+    class AutocompleteResponse;
     class PlainJavaScriptEditor;
     class RoboScintilla;
     class OutputWidget;
@@ -52,6 +53,7 @@ namespace Robomongo
     public slots:
         void handle(DocumentListLoadedEvent *event);
         void handle(ScriptExecutedEvent *event);
+        void handle(AutocompleteResponse *event);
 
     private:
         QString buildTabTitle(const QString &query);

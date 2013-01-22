@@ -197,6 +197,16 @@ void MongoWorker::handle(ExecuteScriptRequest *event)
     }
 }
 
+void MongoWorker::handle(AutocompleteRequest *event)
+{
+    try {
+        QStringList list = _scriptEngine->complete(event->prefix);
+        reply(event->sender(), new AutocompleteResponse(this, list));
+    } catch(DBException &ex) {
+        reply(event->sender(), new ExecuteScriptResponse(this, EventError("Unable to autocomplete query.")));
+    }
+}
+
 ScopedDbConnection *MongoWorker::getConnection()
 {
     return ScopedDbConnection::getScopedDbConnection(_address.toStdString());

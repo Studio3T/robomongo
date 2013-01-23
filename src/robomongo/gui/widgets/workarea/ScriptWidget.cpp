@@ -216,10 +216,11 @@ void ScriptWidget::onCompletionActivated(QString text)
     int len = line.length();
 
     // do not select trailing new-line symbols
+    if (line.endsWith("\r\n"))
+        len = len - 2;
+
     if (line.endsWith("\n"))
         --len;
-    else if (line.endsWith("\r\n"))
-        len = len - 2;
 
     _queryText->setSelection(_completionLineBookmark, _completionIndexBookmark,
                              _completionLineBookmark, len);

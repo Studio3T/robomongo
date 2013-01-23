@@ -15,10 +15,6 @@ OutputItemWidget::OutputItemWidget(OutputWidget *viewer, OutputItemContentWidget
     setContentsMargins(0, 0, 0, 0);
     _header = new OutputItemHeaderWidget(this, output);
 
-    QFrame *hline = new QFrame();
-    hline->setFrameShape(QFrame::HLine);
-    hline->setFrameShadow(QFrame::Sunken);
-
     QVBoxLayout *layout = new QVBoxLayout();
     layout->setContentsMargins(0, 1, 0, 0);
     layout->setSpacing(0);

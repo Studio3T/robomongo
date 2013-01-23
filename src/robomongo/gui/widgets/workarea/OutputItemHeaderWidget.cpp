@@ -24,7 +24,8 @@ OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemWidget *result, OutputI
     connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart()));
 
     // Tree mode button
-    _treeButton = new QPushButton;
+    _treeButton = new QPushButton(this);
+    _treeButton->hide();
     _treeButton->setIcon(GuiRegistry::instance().treeIcon());
     _treeButton->setFixedSize(24, 24);
     _treeButton->setFlat(true);

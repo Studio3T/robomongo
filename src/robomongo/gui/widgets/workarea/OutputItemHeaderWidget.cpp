@@ -60,8 +60,10 @@ OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemWidget *result, OutputI
     layout->addWidget(createVerticalLine());
     layout->addSpacing(2);
 
-    if (output->isTreeModeSupported())
+    if (output->isTreeModeSupported()) {
         layout->addWidget(_treeButton, 0, Qt::AlignRight);
+        _treeButton->show();
+    }
 
     if (output->isTextModeSupported())
         layout->addWidget(_textButton, 0, Qt::AlignRight);

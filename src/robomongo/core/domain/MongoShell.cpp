@@ -56,5 +56,5 @@ void MongoShell::handle(ExecuteScriptResponse *event)
 
 void MongoShell::handle(AutocompleteResponse *event)
 {
-    _bus->publish(new AutocompleteResponse(this, event->list));
+    _bus->publish(new AutocompleteResponse(this, event->list, event->prefix));
 }

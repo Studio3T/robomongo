@@ -102,8 +102,10 @@ bool QueryWidget::eventFilter(QObject *o, QEvent *e)
             return true;
         } else if (_keyboard->isAutoCompleteShortcut(keyEvent)) {
             _scriptWidget->showAutocompletion();
+            return true;
         } else if (_keyboard->isHideAutoCompleteShortcut(keyEvent)) {
             _scriptWidget->hideAutocompletion();
+            return true;
         }
 	}
     return false;
@@ -198,7 +200,7 @@ void QueryWidget::handle(ScriptExecutedEvent *event)
 
 void QueryWidget::handle(AutocompleteResponse *event)
 {
-    _scriptWidget->showAutocompletion(event->list);
+    _scriptWidget->showAutocompletion(event->list, event->prefix);
 }
 
 QString QueryWidget::buildTabTitle(const QString &query)

@@ -100,6 +100,8 @@ bool QueryWidget::eventFilter(QObject *o, QEvent *e)
         } else if (_keyboard->isExecuteScriptShortcut(keyEvent)) {
             execute();
             return true;
+        } else if (_keyboard->isAutoCompleteShortcut(keyEvent)) {
+            _scriptWidget->showAutocompletion();
         }
 	}
     return false;

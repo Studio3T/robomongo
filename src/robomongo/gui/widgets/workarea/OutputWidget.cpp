@@ -64,12 +64,10 @@ void OutputWidget::present(const QList<MongoShellResult> &results)
     foreach (MongoShellResult shellResult, results) {
         OutputItemContentWidget *output = NULL;
 
-        if (!shellResult.response().trimmed().isEmpty()) {
-            output = new OutputItemContentWidget(shellResult.response());
-        }
-
         if (shellResult.documents().count() > 0) {
             output = new OutputItemContentWidget(shellResult.documents());
+        } else {
+            output = new OutputItemContentWidget(shellResult.response());
         }
 
         OutputItemWidget *result = new OutputItemWidget(this, output, shellResult.queryInfo());

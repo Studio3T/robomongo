@@ -222,7 +222,7 @@ void ScriptWidget::onCompletionActivated(QString text)
         len = len - 2;
 
     _queryText->setSelection(_completionLineBookmark, _completionIndexBookmark,
-                             _completionLineBookmark, len - _completionIndexBookmark);
+                             _completionLineBookmark, len);
     _queryText->replaceSelectedText(text);
 }
 
@@ -287,10 +287,14 @@ QString ScriptWidget::sanitizeForAutocompletion()
     for (int i = line.length() - 1; i >= 0; --i) {
         const QChar ch = line.at(i);
 
+        // if line contains ' or " - do not show autocompletion for this line
+        if (ch == '\"' ||  ch == '\'')
+            return QString();
+
         if (ch == '='  ||  ch == ';'  ||
             ch == '('  ||  ch == ')'  ||
             ch == '{'  ||  ch == '}'  ||
-            ch == '\"' ||  ch == '\'' || ch == ' ') {
+            ch == ' ') {
             stop = i;
             break;
         }

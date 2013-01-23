@@ -19,10 +19,14 @@ namespace Robomongo
     {
     public:
         RoboScintilla(QWidget *parent = NULL);
+        void setIgnoreEnterKey(bool ignore) { _ignoreEnterKey = ignore; }
 
     protected:
         void paintEvent(QPaintEvent *e);
         void wheelEvent(QWheelEvent *e);
         void keyPressEvent(QKeyEvent *e);
+
+    private:
+        bool _ignoreEnterKey;
     };
 }

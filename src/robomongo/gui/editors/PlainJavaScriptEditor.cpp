@@ -36,7 +36,8 @@ PlainJavaScriptEditor::PlainJavaScriptEditor(QWidget *parent) : JSEdit(parent)
 }
 
 
-RoboScintilla::RoboScintilla(QWidget *parent) : QsciScintilla(parent)
+RoboScintilla::RoboScintilla(QWidget *parent) : QsciScintilla(parent),
+    _ignoreEnterKey(false)
 {
     setContentsMargins(0, 0, 0, 0);
     setViewportMargins(3,3,3,3);
@@ -73,6 +74,14 @@ void RoboScintilla::wheelEvent(QWheelEvent *e)
 
 void RoboScintilla::keyPressEvent(QKeyEvent *keyEvent)
 {
+    if (_ignoreEnterKey) {
+        if (keyEvent->key() == Qt::Key_Return) {
+            keyEvent->ignore();
+            _ignoreEnterKey = false;
+            return;
+        }
+    }
+
     if (((keyEvent->modifiers() & Qt::ControlModifier) &&
         (keyEvent->key()==Qt::Key_F4 || keyEvent->key()==Qt::Key_W ||
          keyEvent->key()==Qt::Key_T || keyEvent->key()==Qt::Key_Space))

@@ -15,5 +15,6 @@ namespace Robomongo
         bool isSetFocusOnQueryLineShortcut(QKeyEvent *keyEvent);
         bool isExecuteScriptShortcut(QKeyEvent *keyEvent);
         bool isAutoCompleteShortcut(QKeyEvent *keyEvent);
+        bool isHideAutoCompleteShortcut(QKeyEvent *keyEvent);
     };
 }

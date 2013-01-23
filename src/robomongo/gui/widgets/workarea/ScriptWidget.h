@@ -34,6 +34,7 @@ namespace Robomongo
         void hideProgress();
         void showAutocompletion(const QStringList &list);
         void showAutocompletion();
+        void hideAutocompletion();
 
         TopStatusBar *statusBar() const { return _topStatusBar; }
 

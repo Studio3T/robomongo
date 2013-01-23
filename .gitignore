@@ -6,3 +6,4 @@ target/
 *.autosave
 
 
+/src/robomongo/robomongo.pro.user.1.3

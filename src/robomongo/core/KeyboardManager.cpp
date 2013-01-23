@@ -29,3 +29,10 @@ bool KeyboardManager::isExecuteScriptShortcut(QKeyEvent *keyEvent)
             &&
            (keyEvent->key()==Qt::Key_Return || keyEvent->key()==Qt::Key_Enter);
 }
+
+bool KeyboardManager::isAutoCompleteShortcut(QKeyEvent *keyEvent)
+{
+    return (keyEvent->modifiers() & Qt::ControlModifier)
+            &&
+           (keyEvent->key()==Qt::Key_Space);
+}

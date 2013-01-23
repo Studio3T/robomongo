@@ -44,6 +44,10 @@ ScriptWidget::ScriptWidget(MongoShell *shell) :
     _completer->setCompletionMode(QCompleter::PopupCompletion);
     _completer->setCaseSensitivity(Qt::CaseInsensitive);
     _completer->setMaxVisibleItems(20);
+    _completer->setWrapAround(false);
+
+    QStringListModel *model = new QStringListModel(_completer);
+    _completer->setModel(model);
 }
 
 void ScriptWidget::setup(const MongoShellExecResult &execResult)
@@ -115,13 +119,32 @@ void ScriptWidget::hideProgress()
 void ScriptWidget::showAutocompletion(const QStringList &list)
 {
     _completer->widget()->setUpdatesEnabled(false);
-    QStringListModel *model = new QStringListModel(list, this);
-    _completer->setModel(model);
 
-    if (!_completer->widget()->isHidden())
-        _completer->complete();
+    QStringListModel * model = static_cast<QStringListModel *>(_completer->model());
+//    model->removeRows(0, model->rowCount());
+    model->setStringList(list);
+    _completer->complete();
+
+//    if (list.count() < 20)
+//        _completer->setMaxVisibleItems(list.count());
+//    else
+//        _completer->setMaxVisibleItems(20);
+
+//    QStringListModel *model = new QStringListModel(list, _completer);
+//    _completer->setModel(model);
+
+//    if (_completer->completionRole())
+//    _completer->complete();
+
+//    if (!_completer->widget()->isHidden())
+//        _completer->complete();
 
     _completer->widget()->setUpdatesEnabled(true);
+}
+
+void ScriptWidget::showAutocompletion()
+{
+    _completer->complete();
 }
 
 void ScriptWidget::ui_queryLinesCountChanged()
@@ -184,6 +207,7 @@ void ScriptWidget::onTextChanged()
 //        list << "getCursorPosition";
 //        list << "font";
 //        //_queryText->showUserList(1, list);
+
 //    }
 }
 

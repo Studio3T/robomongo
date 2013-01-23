@@ -102,6 +102,8 @@ bool QueryWidget::eventFilter(QObject *o, QEvent *e)
             return true;
         } else if (_keyboard->isAutoCompleteShortcut(keyEvent)) {
             _scriptWidget->showAutocompletion();
+        } else if (_keyboard->isHideAutoCompleteShortcut(keyEvent)) {
+            _scriptWidget->hideAutocompletion();
         }
 	}
     return false;

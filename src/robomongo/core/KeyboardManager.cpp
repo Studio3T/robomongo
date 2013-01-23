@@ -34,5 +34,10 @@ bool KeyboardManager::isAutoCompleteShortcut(QKeyEvent *keyEvent)
 {
     return (keyEvent->modifiers() & Qt::ControlModifier)
             &&
-           (keyEvent->key()==Qt::Key_Space);
+            (keyEvent->key()==Qt::Key_Space);
+}
+
+bool KeyboardManager::isHideAutoCompleteShortcut(QKeyEvent *keyEvent)
+{
+    return (keyEvent->key() == Qt::Key_Escape);
 }

@@ -118,33 +118,32 @@ void ScriptWidget::hideProgress()
 
 void ScriptWidget::showAutocompletion(const QStringList &list)
 {
-    _completer->widget()->setUpdatesEnabled(false);
-
     QStringListModel * model = static_cast<QStringListModel *>(_completer->model());
-//    model->removeRows(0, model->rowCount());
     model->setStringList(list);
+    _completer->setCurrentRow(0);
     _completer->complete();
-
-//    if (list.count() < 20)
-//        _completer->setMaxVisibleItems(list.count());
-//    else
-//        _completer->setMaxVisibleItems(20);
-
-//    QStringListModel *model = new QStringListModel(list, _completer);
-//    _completer->setModel(model);
-
-//    if (_completer->completionRole())
-//    _completer->complete();
-
-//    if (!_completer->widget()->isHidden())
-//        _completer->complete();
-
-    _completer->widget()->setUpdatesEnabled(true);
 }
 
 void ScriptWidget::showAutocompletion()
 {
-    _completer->complete();
+    int line_num;
+    int index;
+
+    _queryText->getCursorPosition(&line_num, &index);
+    QString line = _queryText->text(line_num);
+    line = line.trimmed();
+
+    if (line.isEmpty()) {
+        hideAutocompletion();
+        return;
+    }
+
+    _shell->autocomplete(line);
+}
+
+void ScriptWidget::hideAutocompletion()
+{
+    _completer->popup()->hide();
 }
 
 void ScriptWidget::ui_queryLinesCountChanged()
@@ -183,31 +182,9 @@ void ScriptWidget::ui_queryLinesCountChanged()
 
 void ScriptWidget::onTextChanged()
 {
-    if (_queryText->isListActive())
-        return;
-
-    int line_num;
-    int index;
-
-    _queryText->getCursorPosition(&line_num, &index);
-    QString line = _queryText->text(line_num);
-    line = line.trimmed();
-
-    if (line.isEmpty())
-        return;
-
-    _shell->autocomplete(line);
-
+    showAutocompletion();
 //    QChar curr_char = line.at(index);
-
 //    if (curr_char == '.') {
-//        QStringList list;
-//        list << "onTextChanged";
-//        list << "showUserList";
-//        list << "getCursorPosition";
-//        list << "font";
-//        //_queryText->showUserList(1, list);
-
 //    }
 }
 
@@ -259,12 +236,6 @@ void ScriptWidget::_configureQueryText()
     _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_WORD);
     _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-
-//    _queryText->setAutoCompletionFillups(".");
-    _queryText->setAutoCompletionFillupsEnabled(false);
-//    _queryText->setAutoCompletionWordSeparators(QStringList() << ".");
-    _queryText->setAutoCompletionSource(QsciScintilla::AcsNone);
-    _queryText->setAutoCompletionCaseSensitivity(false);
 
     //_queryText->SendScintilla(QsciScintilla::SCI_SETFONTQUALITY, QsciScintilla::SC_EFF_QUALITY_LCD_OPTIMIZED);
     //_queryText->SendScintilla (QsciScintillaBase::SCI_SETKEYWORDS, "db");

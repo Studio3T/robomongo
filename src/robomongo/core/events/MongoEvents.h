@@ -220,11 +220,13 @@ namespace Robomongo
     {
         R_EVENT
 
-        AutocompleteResponse(QObject *sender, const QStringList &list) :
+        AutocompleteResponse(QObject *sender, const QStringList &list, const QString &prefix) :
             Event(sender),
-            list(list) {}
+            list(list),
+            prefix(prefix) {}
 
         QStringList list;
+        QString prefix;
     };
 
 

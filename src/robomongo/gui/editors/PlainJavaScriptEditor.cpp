@@ -73,12 +73,12 @@ void RoboScintilla::wheelEvent(QWheelEvent *e)
 
 void RoboScintilla::keyPressEvent(QKeyEvent *keyEvent)
 {
-    if ((keyEvent->modifiers() & Qt::ControlModifier) &&
-        (keyEvent->key()==Qt::Key_F4 || keyEvent->key()==Qt::Key_W || keyEvent->key()==Qt::Key_T || keyEvent->key()==Qt::Key_Space)
-        || keyEvent->key() == Qt::Key_Escape)
+    if (((keyEvent->modifiers() & Qt::ControlModifier) &&
+        (keyEvent->key()==Qt::Key_F4 || keyEvent->key()==Qt::Key_W ||
+         keyEvent->key()==Qt::Key_T || keyEvent->key()==Qt::Key_Space))
+        || keyEvent->key() == Qt::Key_Escape /*|| keyEvent->key() == Qt::Key_Return*/)
     {
         keyEvent->ignore();
-        //QApplication::sendEvent(parentWidget(), keyEvent);
     } else
         QsciScintilla::keyPressEvent(keyEvent);
 }

@@ -21,6 +21,8 @@ namespace Robomongo
     public:
         ScriptWidget(MongoShell *shell);
 
+        bool eventFilter(QObject *obj, QEvent *e);
+
         void setup(const MongoShellExecResult & execResult);
         void setText(const QString &text);
         void setTextCursor(const CursorPosition &cursor = CursorPosition());
@@ -32,7 +34,7 @@ namespace Robomongo
         void setCurrentServer(const QString &address, bool isValid = true);
         void showProgress();
         void hideProgress();
-        void showAutocompletion(const QStringList &list);
+        void showAutocompletion(const QStringList &list, const QString &prefix);
         void showAutocompletion();
         void hideAutocompletion();
 
@@ -41,14 +43,17 @@ namespace Robomongo
     private slots:
         void ui_queryLinesCountChanged();
         void onTextChanged();
-        void onUserListActivated(int, QString);
+        void onCompletionActivated(QString);
 
     private:
         void _configureQueryText();
+        QString sanitizeForAutocompletion();
         RoboScintilla *_queryText;
         TopStatusBar *_topStatusBar;
         QCompleter *_completer;
         MongoShell *_shell;
+        int _completionLineBookmark;
+        int _completionIndexBookmark;
     };
 
     class ElidedLabel : public QLabel

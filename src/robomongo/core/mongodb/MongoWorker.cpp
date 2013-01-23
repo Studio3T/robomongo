@@ -201,7 +201,7 @@ void MongoWorker::handle(AutocompleteRequest *event)
 {
     try {
         QStringList list = _scriptEngine->complete(event->prefix);
-        reply(event->sender(), new AutocompleteResponse(this, list));
+        reply(event->sender(), new AutocompleteResponse(this, list, event->prefix));
     } catch(DBException &ex) {
         reply(event->sender(), new ExecuteScriptResponse(this, EventError("Unable to autocomplete query.")));
     }

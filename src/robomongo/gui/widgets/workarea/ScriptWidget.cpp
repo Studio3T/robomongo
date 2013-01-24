@@ -155,6 +155,10 @@ void ScriptWidget::showAutocompletion(const QStringList &list, const QString &pr
 
     QStringListModel * model = static_cast<QStringListModel *>(_completer->model());
     model->setStringList(list);
+
+    //_queryText->
+    //_queryText->lineIndexFromPosition();
+
     _completer->complete();
     _queryText->setIgnoreEnterKey(true);
     _completer->popup()->setCurrentIndex(_completer->completionModel()->index(0, 0));
@@ -267,7 +271,7 @@ void ScriptWidget::_configureQueryText()
     _queryText->setCaretForegroundColor(QColor("#FFFFFF"));
     _queryText->setMatchedBraceBackgroundColor(QColor(48, 10, 36));
     _queryText->setMatchedBraceForegroundColor(QColor("#1AB0A6"));
-    _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_WORD);
+    _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
     _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
@@ -285,10 +289,6 @@ QString ScriptWidget::sanitizeForAutocompletion()
     int col = 0;
     _queryText->getCursorPosition(&row, &col);
     QString line = _queryText->text(row);
-
-//    line = line.trimmed();
-//    if (line.isEmpty())
-//        return QString();
 
     int stop = -1;
     for (int i = line.length() - 1; i >= 0; --i) {

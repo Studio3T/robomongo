@@ -151,7 +151,7 @@ MainWindow::MainWindow() : QMainWindow(),
     createTabs();
     createDatabaseExplorer();
 
-    setWindowTitle("Robomongo 0.5.0");
+    setWindowTitle("Robomongo 0.5.1");
     setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 }
 

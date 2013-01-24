@@ -147,6 +147,12 @@ void ScriptWidget::hideProgress()
 
 void ScriptWidget::showAutocompletion(const QStringList &list, const QString &prefix)
 {
+    // do not show single autocompletion which is identical to existing prefix
+    if (list.count() == 1) {
+        if (list.at(0) == prefix)
+            return;
+    }
+
     QStringListModel * model = static_cast<QStringListModel *>(_completer->model());
     model->setStringList(list);
     _completer->complete();
@@ -280,9 +286,9 @@ QString ScriptWidget::sanitizeForAutocompletion()
     _queryText->getCursorPosition(&row, &col);
     QString line = _queryText->text(row);
 
-    line = line.trimmed();
-    if (line.isEmpty())
-        return QString();
+//    line = line.trimmed();
+//    if (line.isEmpty())
+//        return QString();
 
     int stop = -1;
     for (int i = line.length() - 1; i >= 0; --i) {
@@ -295,7 +301,9 @@ QString ScriptWidget::sanitizeForAutocompletion()
         if (ch == '='  ||  ch == ';'  ||
             ch == '('  ||  ch == ')'  ||
             ch == '{'  ||  ch == '}'  ||
-            ch == ' ') {
+            ch == '-'  ||  ch == '/'  ||
+            ch == '+'  ||  ch == '*'  ||
+            ch == ' ' ) {
             stop = i;
             break;
         }

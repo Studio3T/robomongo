@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QFont>
+#include <QRect>
 #include <QVBoxLayout>
 #include <QPainter>
 #include <QIcon>
@@ -38,6 +39,7 @@ ScriptWidget::ScriptWidget(MongoShell *shell) :
     setLayout(layout);
 
     // Query text widget
+    prepareFont();
     _configureQueryText();
     _queryText->setFixedHeight(10);
     ui_queryLinesCountChanged();
@@ -51,6 +53,7 @@ ScriptWidget::ScriptWidget(MongoShell *shell) :
     _completer->setCaseSensitivity(Qt::CaseInsensitive);
     _completer->setMaxVisibleItems(20);
     _completer->setWrapAround(false);
+    _completer->popup()->setFont(_textFont);
     connect(_completer, SIGNAL(activated(QString)), this, SLOT(onCompletionActivated(QString)));
 
     QStringListModel *model = new QStringListModel(_completer);
@@ -156,10 +159,34 @@ void ScriptWidget::showAutocompletion(const QStringList &list, const QString &pr
     QStringListModel * model = static_cast<QStringListModel *>(_completer->model());
     model->setStringList(list);
 
+    QFontMetrics m(_queryText->font());
+    int lineHight = m.lineSpacing() + 1;
+
+    int row = 0;
+    int col = 0;
+    _queryText->getCursorPosition(&row, &col);
+    int firstVisibleLine = _queryText->firstVisibleLine();
+    int totalLines = _queryText->lines();
+
+    int visualLine = row - firstVisibleLine;
+
+    //QRect rect(40, visualLine * lineHight, 330, 330);
+
+//    _queryText->rect()
+
+    int stop = 0;
+    sanitizeForAutocompletion(&stop);
+    stop++;
+
+    QRect rect = _queryText->rect();
+    rect.setWidth(350);
+    rect.setHeight((visualLine + 1) * lineHight + 8);
+    rect.adjust(m.averageCharWidth() * stop + 1, 0, 0, 0);
+
     //_queryText->
     //_queryText->lineIndexFromPosition();
 
-    _completer->complete();
+    _completer->complete(rect);
     _queryText->setIgnoreEnterKey(true);
     _completer->popup()->setCurrentIndex(_completer->completionModel()->index(0, 0));
 }
@@ -242,20 +269,8 @@ void ScriptWidget::onCompletionActivated(QString text)
 */
 void ScriptWidget::_configureQueryText()
 {
-    QFont textFont = font();
-#if defined(Q_OS_MAC)
-    textFont.setPointSize(12);
-    textFont.setFamily("Monaco");
-#elif defined(Q_OS_UNIX)
-    textFont.setFamily("Monospace");
-    textFont.setFixedPitch(true);
-#elif defined(Q_OS_WIN)
-    textFont.setPointSize(font().pointSize() + 2);
-    textFont.setFamily("Courier");
-#endif
-
     QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
-    javaScriptLexer->setFont(textFont);
+    javaScriptLexer->setFont(_textFont);
 
     _queryText->setFixedHeight(23);
     _queryText->setAutoIndent(true);
@@ -265,7 +280,7 @@ void ScriptWidget::_configureQueryText()
     _queryText->installEventFilter(this);
     _queryText->setMarginWidth(1, 0); // to hide left gray column
     _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
-    _queryText->setFont(textFont);
+    _queryText->setFont(_textFont);
     _queryText->setPaper(QColor(255, 0, 0, 127));
     _queryText->setLexer(javaScriptLexer);
     _queryText->setCaretForegroundColor(QColor("#FFFFFF"));
@@ -283,7 +298,22 @@ void ScriptWidget::_configureQueryText()
     connect(_queryText, SIGNAL(textChanged()), SLOT(onTextChanged()));
 }
 
-QString ScriptWidget::sanitizeForAutocompletion()
+void ScriptWidget::prepareFont()
+{
+    _textFont = font();
+#if defined(Q_OS_MAC)
+    _textFont.setPointSize(12);
+    _textFont.setFamily("Monaco");
+#elif defined(Q_OS_UNIX)
+    _textFont.setFamily("Monospace");
+    _textFont.setFixedPitch(true);
+#elif defined(Q_OS_WIN)
+    _textFont.setPointSize(font().pointSize() + 2);
+    _textFont.setFamily("Courier");
+#endif
+}
+
+QString ScriptWidget::sanitizeForAutocompletion(int *stopOut)
 {
     int row = 0;
     int col = 0;
@@ -311,6 +341,9 @@ QString ScriptWidget::sanitizeForAutocompletion()
 
     _completionLineBookmark = row;
     _completionIndexBookmark = stop + 1;
+
+    if (stopOut)
+        *stopOut = stop;
 
     QString final = line.mid(stop + 1).trimmed();
     return final;

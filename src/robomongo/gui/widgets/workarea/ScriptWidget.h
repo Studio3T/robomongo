@@ -47,13 +47,15 @@ namespace Robomongo
 
     private:
         void _configureQueryText();
-        QString sanitizeForAutocompletion();
+        void prepareFont();
+        QString sanitizeForAutocompletion(int *stop = NULL);
         RoboScintilla *_queryText;
         TopStatusBar *_topStatusBar;
         QCompleter *_completer;
         MongoShell *_shell;
         int _completionLineBookmark;
         int _completionIndexBookmark;
+        QFont _textFont;
     };
 
     class ElidedLabel : public QLabel

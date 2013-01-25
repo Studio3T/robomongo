@@ -22,7 +22,9 @@
 using namespace Robomongo;
 
 ScriptWidget::ScriptWidget(MongoShell *shell) :
-    _shell(shell)
+    _shell(shell),
+    _textChanged(false),
+    _disableTextAndCursorNotifications(false)
 {
     setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
 
@@ -218,25 +220,47 @@ void ScriptWidget::ui_queryLinesCountChanged()
 
 void ScriptWidget::onTextChanged()
 {
-    showAutocompletion();
+    if (_disableTextAndCursorNotifications)
+        return;
+
+    _textChanged = true;
+}
+
+void ScriptWidget::onCursorPositionChanged(int line, int index)
+{
+    if (_disableTextAndCursorNotifications)
+        return;
+
+    if (_textChanged) {
+        showAutocompletion();
+        _textChanged = false;
+    }
 }
 
 void ScriptWidget::onCompletionActivated(QString text)
 {
     int row = _currentAutoCompletionInfo.line();
-    int col = _currentAutoCompletionInfo.lineIndexLeft();
+    int colLeft = _currentAutoCompletionInfo.lineIndexLeft();
+    int colRight = _currentAutoCompletionInfo.lineIndexRight();
     QString line = _queryText->text(row);
 
-    int len = line.length();
+    int selectionIndexRight = colRight + 1;
 
-    // do not select trailing new-line symbols
-    if (line.endsWith("\r\n"))
-        len = len - 2;
-    else if (line.endsWith("\n"))
-        --len;
+    // overwrite open parenthesis, if it already exists in text
+    if (text.endsWith('(')) {
+        if (line.length() > colRight + 1) {
+            if (line.at(colRight + 1) == '(') {
+                ++selectionIndexRight;
+            }
+        }
+    }
 
-    _queryText->setSelection(row, col, row, len);
+    _disableTextAndCursorNotifications = true;
+
+    _queryText->setSelection(row, colLeft, row, selectionIndexRight);
     _queryText->replaceSelectedText(text);
+
+    _disableTextAndCursorNotifications = false;
 }
 
 /*
@@ -271,6 +295,7 @@ void ScriptWidget::_configureQueryText()
     _queryText->setStyleSheet("QFrame { background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
     connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
     connect(_queryText, SIGNAL(textChanged()), SLOT(onTextChanged()));
+    connect(_queryText, SIGNAL(cursorPositionChanged(int,int)), SLOT(onCursorPositionChanged(int,int)));
 }
 
 QFont ScriptWidget::chooseTextFont()
@@ -324,16 +349,23 @@ int ScriptWidget::editorHeight(int lines)
     return lines * lineHeight() + 8;
 }
 
-bool ScriptWidget::isStopChar(const QChar &ch)
+bool ScriptWidget::isStopChar(const QChar &ch, bool direction)
 {
     if (ch == '='  ||  ch == ';'  ||
         ch == '('  ||  ch == ')'  ||
         ch == '{'  ||  ch == '}'  ||
         ch == '-'  ||  ch == '/'  ||
         ch == '+'  ||  ch == '*'  ||
+        ch == '\r' ||  ch == '\n' ||
         ch == ' ' ) {
         return true;
     }
+
+    if (direction) { // right direction
+        if (ch == '.')
+            return true;
+    }
+
     return false;
 }
 
@@ -353,21 +385,38 @@ AutoCompletionInfo ScriptWidget::sanitizeForAutocompletion()
     QString line = _queryText->text(row);
 
     int leftStop = -1;
-    for (int i = line.length() - 1; i >= 0; --i) {
+    for (int i = col - 1; i >= 0; --i) {
         const QChar ch = line.at(i);
 
-        // if line contains ' or " - do not show autocompletion for this line
         if (isForbiddenChar(ch))
             return AutoCompletionInfo();
 
-        if (isStopChar(ch)) {
+        if (isStopChar(ch, false)) {
             leftStop = i;
             break;
         }
     }
 
-    QString final = line.mid(leftStop + 1).trimmed();
-    return AutoCompletionInfo(final, row, leftStop + 1);
+    int rightStop = line.length() + 1;
+    for (int i = col; i < line.length(); ++i) {
+        const QChar ch = line.at(i);
+
+        if (isForbiddenChar(ch))
+            return AutoCompletionInfo();
+
+        if (isStopChar(ch, true)) {
+            rightStop = i;
+            break;
+        }
+    }
+
+    leftStop = leftStop + 1;
+    rightStop = rightStop - 1;
+    //int len = ondemand ? col - leftStop : rightStop - leftStop + 1;
+    int len = col - leftStop;
+
+    QString final = line.mid(leftStop, len);
+    return AutoCompletionInfo(final, row, leftStop, rightStop);
 }
 
 void ElidedLabel::paintEvent(QPaintEvent *event)

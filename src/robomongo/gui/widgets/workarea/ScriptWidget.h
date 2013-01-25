@@ -49,6 +49,9 @@ namespace Robomongo
     public:
         ScriptWidget(MongoShell *shell);
 
+        /**
+         * @reimp
+         */
         bool eventFilter(QObject *obj, QEvent *e);
 
         void setup(const MongoShellExecResult & execResult);
@@ -71,6 +74,7 @@ namespace Robomongo
     private slots:
         void ui_queryLinesCountChanged();
         void onTextChanged();
+        void onCursorPositionChanged(int line, int index);
         void onCompletionActivated(QString);
 
     private:
@@ -92,7 +96,12 @@ namespace Robomongo
          */
         int editorHeight(int lines);
 
-        bool isStopChar(const QChar &ch);
+        /**
+         * @brief Checks whether 'ch' is a stop char
+         * @param direction: true for right direction, false for left direction
+         */
+        bool isStopChar(const QChar &ch, bool direction);
+
         bool isForbiddenChar(const QChar &ch);
 
         AutoCompletionInfo sanitizeForAutocompletion();
@@ -102,6 +111,8 @@ namespace Robomongo
         MongoShell *_shell;
         QFont _textFont;
         AutoCompletionInfo _currentAutoCompletionInfo;
+        bool _textChanged;
+        bool _disableTextAndCursorNotifications;
     };
 
     class ElidedLabel : public QLabel

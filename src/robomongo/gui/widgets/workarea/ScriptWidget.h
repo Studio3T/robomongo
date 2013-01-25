@@ -14,6 +14,30 @@ namespace Robomongo
     class TopStatusBar;
     class MongoShell;
 
+    class AutoCompletionInfo
+    {
+    public:
+        AutoCompletionInfo() :
+            _text(""),
+            _line(0),
+            _lineIndexLeft(0) {}
+
+        AutoCompletionInfo(const QString &text, int line, int lineIndexLeft) :
+            _text(text),
+            _line(line),
+            _lineIndexLeft(lineIndexLeft) {}
+
+        QString text() const { return _text; }
+        int line() const { return _line; }
+        int lineIndexLeft() const { return _lineIndexLeft; }
+        bool isEmpty() const { return _text.isEmpty(); }
+
+    private:
+        QString _text;      // text, for which we are trying to find completions
+        int _line;          // line number in editor, where 'text' is located
+        int _lineIndexLeft; // index of first char in the line, where 'text' is started
+    };
+
     class ScriptWidget : public QFrame
     {
         Q_OBJECT
@@ -47,15 +71,30 @@ namespace Robomongo
 
     private:
         void _configureQueryText();
-        void prepareFont();
-        QString sanitizeForAutocompletion(int *stop = NULL);
+        QFont chooseTextFont();
+
+        /**
+         * @brief Calculates line height of text editor
+         */
+        int lineHeight();
+
+        /**
+         * @brief Calculates char width of text editor
+         */
+        int charWidth();
+
+        /**
+         * @brief Calculates preferable editor height for specified number of lines
+         */
+        int editorHeight(int lines);
+
+        AutoCompletionInfo sanitizeForAutocompletion();
         RoboScintilla *_queryText;
         TopStatusBar *_topStatusBar;
         QCompleter *_completer;
         MongoShell *_shell;
-        int _completionLineBookmark;
-        int _completionIndexBookmark;
         QFont _textFont;
+        AutoCompletionInfo _currentAutoCompletionInfo;
     };
 
     class ElidedLabel : public QLabel

@@ -22,9 +22,7 @@
 using namespace Robomongo;
 
 ScriptWidget::ScriptWidget(MongoShell *shell) :
-    _shell(shell),
-    _completionLineBookmark(0),
-    _completionIndexBookmark(0)
+    _shell(shell)
 {
     setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
 
@@ -39,7 +37,7 @@ ScriptWidget::ScriptWidget(MongoShell *shell) :
     setLayout(layout);
 
     // Query text widget
-    prepareFont();
+    _textFont = chooseTextFont();
     _configureQueryText();
     _queryText->setFixedHeight(10);
     ui_queryLinesCountChanged();
@@ -63,23 +61,21 @@ ScriptWidget::ScriptWidget(MongoShell *shell) :
 bool ScriptWidget::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == _queryText) {
-
         if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 
             if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
                 _queryText->setIgnoreEnterKey(false);
+                hideAutocompletion();
                 return false;
             }
             return false;
         } else {
             return false;
         }
-
     } else {
         return QFrame::eventFilter(obj, event);
     }
-
 }
 
 void ScriptWidget::setup(const MongoShellExecResult &execResult)
@@ -156,51 +152,36 @@ void ScriptWidget::showAutocompletion(const QStringList &list, const QString &pr
             return;
     }
 
+    // update list of completions
     QStringListModel * model = static_cast<QStringListModel *>(_completer->model());
     model->setStringList(list);
 
-    QFontMetrics m(_queryText->font());
-    int lineHight = m.lineSpacing() + 1;
-
-    int row = 0;
-    int col = 0;
-    _queryText->getCursorPosition(&row, &col);
-    int firstVisibleLine = _queryText->firstVisibleLine();
-    int totalLines = _queryText->lines();
-
-    int visualLine = row - firstVisibleLine;
-
-    //QRect rect(40, visualLine * lineHight, 330, 330);
-
-//    _queryText->rect()
-
-    int stop = 0;
-    sanitizeForAutocompletion(&stop);
-    stop++;
+    int currentLine = 0;
+    int currentIndex = 0;
+    _queryText->getCursorPosition(&currentLine, &currentIndex);
+    int physicalLine = currentLine - _queryText->firstVisibleLine(); // "physical" line number in text editor (not logical)
+    int lineIndexLeft = _currentAutoCompletionInfo.lineIndexLeft();
 
     QRect rect = _queryText->rect();
-    rect.setWidth(350);
-    rect.setHeight((visualLine + 1) * lineHight + 8);
-    rect.adjust(m.averageCharWidth() * stop + 1, 0, 0, 0);
-
-    //_queryText->
-    //_queryText->lineIndexFromPosition();
+    rect.setWidth(550);
+    rect.setHeight(editorHeight(physicalLine + 1));
+    rect.moveLeft(charWidth() * lineIndexLeft + 1);
 
     _completer->complete(rect);
-    _queryText->setIgnoreEnterKey(true);
     _completer->popup()->setCurrentIndex(_completer->completionModel()->index(0, 0));
+    _queryText->setIgnoreEnterKey(true);
 }
 
 void ScriptWidget::showAutocompletion()
 {
-    QString statement = sanitizeForAutocompletion();
+    _currentAutoCompletionInfo = sanitizeForAutocompletion();
 
-    if (statement.isEmpty()) {
+    if (_currentAutoCompletionInfo.isEmpty()) {
         hideAutocompletion();
         return;
     }
 
-    _shell->autocomplete(statement);
+    _shell->autocomplete(_currentAutoCompletionInfo.text());
 }
 
 void ScriptWidget::hideAutocompletion()
@@ -212,26 +193,18 @@ void ScriptWidget::hideAutocompletion()
 void ScriptWidget::ui_queryLinesCountChanged()
 {
     setUpdatesEnabled(false);
+
+    // Temporal diagnostic info
     int pos = _queryText->fontInfo().pointSize();
     int pis = _queryText->fontInfo().pixelSize();
     int teh = _queryText->textHeight(0);
     int exa = _queryText->extraAscent();
     int exd = _queryText->extraDescent();
 
-    QFontMetrics m(_queryText->font());
-    int lineHeight = m.lineSpacing();
+    int lines = _queryText->lines();
+    int height = editorHeight(lines);
 
-#if defined(Q_OS_UNIX)
-    // this fix required to calculate correct height in Linux.
-    // not the best way, but for now it tested on Ubuntu.
-    lineHeight++;
-#endif
-
-    int numberOfLines = _queryText->lines();
-
-    int height = numberOfLines * lineHeight + 8;
-
-    int maxHeight = 18 * lineHeight + 8;
+    int maxHeight = editorHeight(18);
     if (height > maxHeight)
         height = maxHeight;
 
@@ -250,7 +223,10 @@ void ScriptWidget::onTextChanged()
 
 void ScriptWidget::onCompletionActivated(QString text)
 {
-    QString line = _queryText->text(_completionLineBookmark);
+    int row = _currentAutoCompletionInfo.line();
+    int col = _currentAutoCompletionInfo.lineIndexLeft();
+    QString line = _queryText->text(row);
+
     int len = line.length();
 
     // do not select trailing new-line symbols
@@ -259,8 +235,7 @@ void ScriptWidget::onCompletionActivated(QString text)
     else if (line.endsWith("\n"))
         --len;
 
-    _queryText->setSelection(_completionLineBookmark, _completionIndexBookmark,
-                             _completionLineBookmark, len);
+    _queryText->setSelection(row, col, row, len);
     _queryText->replaceSelectedText(text);
 }
 
@@ -298,22 +273,58 @@ void ScriptWidget::_configureQueryText()
     connect(_queryText, SIGNAL(textChanged()), SLOT(onTextChanged()));
 }
 
-void ScriptWidget::prepareFont()
+QFont ScriptWidget::chooseTextFont()
 {
-    _textFont = font();
+    QFont textFont = font();
 #if defined(Q_OS_MAC)
-    _textFont.setPointSize(12);
-    _textFont.setFamily("Monaco");
+    textFont.setPointSize(12);
+    textFont.setFamily("Monaco");
 #elif defined(Q_OS_UNIX)
-    _textFont.setFamily("Monospace");
-    _textFont.setFixedPitch(true);
+    textFont.setFamily("Monospace");
+    textFont.setFixedPitch(true);
 #elif defined(Q_OS_WIN)
-    _textFont.setPointSize(font().pointSize() + 2);
-    _textFont.setFamily("Courier");
+    textFont.setPointSize(font().pointSize() + 2);
+    textFont.setFamily("Courier");
 #endif
+
+    return textFont;
 }
 
-QString ScriptWidget::sanitizeForAutocompletion(int *stopOut)
+/**
+ * @brief Calculates line height of text editor
+ */
+int ScriptWidget::lineHeight()
+{
+    QFontMetrics m(_queryText->font());
+    int lineHeight = m.lineSpacing();
+
+#if defined(Q_OS_UNIX)
+    // this fix required to calculate correct height in Linux.
+    // not the best way, but for now it at least tested on Ubuntu.
+    lineHeight++;
+#endif
+
+    return lineHeight;
+}
+
+/**
+ * @brief Calculates char width of text editor
+ */
+int ScriptWidget::charWidth()
+{
+    QFontMetrics m(_queryText->font());
+    return m.averageCharWidth();
+}
+
+/**
+ * @brief Calculates preferable editor height for specified number of lines
+ */
+int ScriptWidget::editorHeight(int lines)
+{
+    return lines * lineHeight() + 8;
+}
+
+AutoCompletionInfo ScriptWidget::sanitizeForAutocompletion()
 {
     int row = 0;
     int col = 0;
@@ -326,7 +337,7 @@ QString ScriptWidget::sanitizeForAutocompletion(int *stopOut)
 
         // if line contains ' or " - do not show autocompletion for this line
         if (ch == '\"' ||  ch == '\'')
-            return QString();
+            return AutoCompletionInfo();
 
         if (ch == '='  ||  ch == ';'  ||
             ch == '('  ||  ch == ')'  ||
@@ -339,14 +350,8 @@ QString ScriptWidget::sanitizeForAutocompletion(int *stopOut)
         }
     }
 
-    _completionLineBookmark = row;
-    _completionIndexBookmark = stop + 1;
-
-    if (stopOut)
-        *stopOut = stop;
-
     QString final = line.mid(stop + 1).trimmed();
-    return final;
+    return AutoCompletionInfo(final, row, stop + 1);
 }
 
 void ElidedLabel::paintEvent(QPaintEvent *event)

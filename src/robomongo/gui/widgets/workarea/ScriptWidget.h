@@ -20,22 +20,26 @@ namespace Robomongo
         AutoCompletionInfo() :
             _text(""),
             _line(0),
-            _lineIndexLeft(0) {}
+            _lineIndexLeft(0),
+            _lineIndexRight(0) {}
 
-        AutoCompletionInfo(const QString &text, int line, int lineIndexLeft) :
+        AutoCompletionInfo(const QString &text, int line, int lineIndexLeft, int lineIndexRight = 0) :
             _text(text),
             _line(line),
-            _lineIndexLeft(lineIndexLeft) {}
+            _lineIndexLeft(lineIndexLeft),
+            _lineIndexRight(lineIndexRight) {}
 
         QString text() const { return _text; }
         int line() const { return _line; }
         int lineIndexLeft() const { return _lineIndexLeft; }
+        int lineIndexRight() const { return _lineIndexRight; }
         bool isEmpty() const { return _text.isEmpty(); }
 
     private:
         QString _text;      // text, for which we are trying to find completions
         int _line;          // line number in editor, where 'text' is located
         int _lineIndexLeft; // index of first char in the line, where 'text' is started
+        int _lineIndexRight;// index of last char in the line, where 'text' is ended
     };
 
     class ScriptWidget : public QFrame
@@ -87,6 +91,9 @@ namespace Robomongo
          * @brief Calculates preferable editor height for specified number of lines
          */
         int editorHeight(int lines);
+
+        bool isStopChar(const QChar &ch);
+        bool isForbiddenChar(const QChar &ch);
 
         AutoCompletionInfo sanitizeForAutocompletion();
         RoboScintilla *_queryText;

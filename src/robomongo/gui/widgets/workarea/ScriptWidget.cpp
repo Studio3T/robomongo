@@ -324,6 +324,27 @@ int ScriptWidget::editorHeight(int lines)
     return lines * lineHeight() + 8;
 }
 
+bool ScriptWidget::isStopChar(const QChar &ch)
+{
+    if (ch == '='  ||  ch == ';'  ||
+        ch == '('  ||  ch == ')'  ||
+        ch == '{'  ||  ch == '}'  ||
+        ch == '-'  ||  ch == '/'  ||
+        ch == '+'  ||  ch == '*'  ||
+        ch == ' ' ) {
+        return true;
+    }
+    return false;
+}
+
+bool ScriptWidget::isForbiddenChar(const QChar &ch)
+{
+    if (ch == '\"' ||  ch == '\'')
+        return true;
+
+    return false;
+}
+
 AutoCompletionInfo ScriptWidget::sanitizeForAutocompletion()
 {
     int row = 0;
@@ -331,27 +352,22 @@ AutoCompletionInfo ScriptWidget::sanitizeForAutocompletion()
     _queryText->getCursorPosition(&row, &col);
     QString line = _queryText->text(row);
 
-    int stop = -1;
+    int leftStop = -1;
     for (int i = line.length() - 1; i >= 0; --i) {
         const QChar ch = line.at(i);
 
         // if line contains ' or " - do not show autocompletion for this line
-        if (ch == '\"' ||  ch == '\'')
+        if (isForbiddenChar(ch))
             return AutoCompletionInfo();
 
-        if (ch == '='  ||  ch == ';'  ||
-            ch == '('  ||  ch == ')'  ||
-            ch == '{'  ||  ch == '}'  ||
-            ch == '-'  ||  ch == '/'  ||
-            ch == '+'  ||  ch == '*'  ||
-            ch == ' ' ) {
-            stop = i;
+        if (isStopChar(ch)) {
+            leftStop = i;
             break;
         }
     }
 
-    QString final = line.mid(stop + 1).trimmed();
-    return AutoCompletionInfo(final, row, stop + 1);
+    QString final = line.mid(leftStop + 1).trimmed();
+    return AutoCompletionInfo(final, row, leftStop + 1);
 }
 
 void ElidedLabel::paintEvent(QPaintEvent *event)

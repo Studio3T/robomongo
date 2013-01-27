@@ -304,7 +304,7 @@ namespace Robomongo
             outList.append(statement);
         }
 
-        std::string json = result.jsonString();
+        //std::string json = result.jsonString();
         return true;
     }
 

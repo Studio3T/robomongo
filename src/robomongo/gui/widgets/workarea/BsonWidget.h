@@ -78,7 +78,7 @@ namespace Robomongo
                 }
 
                 sb << stdJson;
-                QString json = QString::fromStdString(sb.str());
+                QString json = QString::fromUtf8(sb.str().data());
 
                 if (exit) {
                     emit done();

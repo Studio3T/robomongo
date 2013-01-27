@@ -76,7 +76,7 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     _databaseContextMenu->addSeparator();
     _databaseContextMenu->addAction(dbDrop);
 
-    QAction *addDocument = new QAction("Add Document", this);
+    QAction *addDocument = new QAction("Insert Document", this);
     connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument()));
 
     QAction *updateDocument = new QAction("Update Document", this);
@@ -267,7 +267,7 @@ void ExplorerTreeWidget::ui_openShell()
 void ExplorerTreeWidget::ui_addDocument()
 {
     openCurrentCollectionShell(
-        "db.%1.save({\n"
+        "db.%1.insert({\n"
         "    '' : '',\n"
         "})"
     , false, CursorPosition(1, 5));

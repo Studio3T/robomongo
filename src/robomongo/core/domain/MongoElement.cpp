@@ -1,6 +1,9 @@
 #include "robomongo/core/domain/MongoElement.h"
 
 #include <QStringBuilder>
+#include "boost/date_time.hpp"
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time_io.hpp>
 
 #include "robomongo/core/domain/MongoDocument.h"
 
@@ -127,12 +130,31 @@ namespace Robomongo
 		/** date type */
 		case Date:
         {
+            long long ms = (long long) _bsonElement.Date().millis;
+
+            boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
+            boost::posix_time::time_duration diff = boost::posix_time::millisec(ms);
+            boost::posix_time::ptime time = epoch + diff;
+
+            std::stringstream strm;
+
+//            boost::date_time::time_facet *timeFacet = new boost::date_time::time_facet("%a, %d %b %Y %H:%M:%S.%f GMT"); // "%Y---%m-%d %H:%M:%S"
+            boost::posix_time::time_facet *facet = new boost::posix_time::time_facet("%Y-%b-%d %H:%M:%S");
+            strm.imbue(std::locale(strm.getloc(), facet));
+            strm << time;
+
+            con.append(QString::fromStdString(strm.str()));
+            break;
+
+            /*
+            // this code is left untill the upper one will stabilize
             unsigned long long millis = _bsonElement.Date().millis;
             if ((long long)millis >= 0 &&
                ((long long)millis/1000) < (std::numeric_limits<time_t>::max)()) {
                 con.append(QString::fromStdString(_bsonElement.Date().toString()));
             }
 			break;
+            */
         }
 
 		/** null type */

@@ -21,6 +21,18 @@ BsonTreeWidget::BsonTreeWidget(QWidget *parent) : QTreeWidget(parent)
 	header()->setResizeMode(1, QHeaderView::Stretch);
 	header()->setResizeMode(2, QHeaderView::Stretch);
 	setIndentation(15);	
+    setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::DoubleClicked);
+    setContextMenuPolicy(Qt::DefaultContextMenu);
+
+    QAction *deleteDocumentAction = new QAction("Delete Document", this);
+    connect(deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument()));
+
+    QAction *editDocumentAction = new QAction("Edit Document", this);
+    connect(editDocumentAction, SIGNAL(triggered()), SLOT(onEditDocument()));
+
+    _documentContextMenu = new QMenu(this);
+    _documentContextMenu->addAction(deleteDocumentAction);
+    _documentContextMenu->addAction(editDocumentAction);
 
     setStyleSheet(
         "QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }"
@@ -152,8 +164,32 @@ QIcon BsonTreeWidget::getIcon(MongoElementPtr element)
     return GuiRegistry::instance().circleIcon();
 }
 
+void BsonTreeWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    QTreeWidgetItem *item = itemAt(event->pos());
+    if (!item)
+        return;
+
+    QPoint menuPoint = mapToGlobal(event->pos());
+    menuPoint.setY(menuPoint.y() + header()->height());
+
+    BsonTreeItem *documentItem = dynamic_cast<BsonTreeItem *>(item);
+    if (documentItem) {
+        _documentContextMenu->exec(menuPoint);
+        return;
+    }
+}
+
 void BsonTreeWidget::resizeEvent(QResizeEvent *event)
 {
     QTreeWidget::resizeEvent(event);
     header()->resizeSections(QHeaderView::Stretch);
+}
+
+void BsonTreeWidget::onDeleteDocument()
+{
+}
+
+void BsonTreeWidget::onEditDocument()
+{
 }

@@ -14,6 +14,7 @@ BsonTreeItem::BsonTreeItem(MongoElementPtr element, int position) : QObject(),
 
 	setText(0, buildFieldName());
     setForeground(2, GuiRegistry::instance().typeBrush());
+    setFlags(flags() | Qt::ItemIsEditable);
 
 	switch (element->bsonElement().type())
     {
@@ -89,7 +90,7 @@ BsonTreeItem::BsonTreeItem(MongoElementPtr element, int position) : QObject(),
         {
             static QString typeObjectId("ObjectId");
             setIcon(0, GuiRegistry::instance().circleIcon());
-            setText(1, QString("ObjectId(%1)").arg(element->stringValue()));
+            setText(1, QString("ObjectId(\"%1\")").arg(element->stringValue()));
             setText(2, typeObjectId);
         }
 		break;

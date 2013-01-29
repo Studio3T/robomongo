@@ -139,7 +139,7 @@ namespace Robomongo
             std::stringstream strm;
 
 //            boost::date_time::time_facet *timeFacet = new boost::date_time::time_facet("%a, %d %b %Y %H:%M:%S.%f GMT"); // "%Y---%m-%d %H:%M:%S"
-            boost::posix_time::time_facet *facet = new boost::posix_time::time_facet("%Y-%b-%d %H:%M:%S");
+            boost::posix_time::time_facet *facet = new boost::posix_time::time_facet("%Y-%m-%d %H:%M:%S");
             strm.imbue(std::locale(strm.getloc(), facet));
             strm << time;
 

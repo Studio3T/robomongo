@@ -71,6 +71,7 @@ namespace Robomongo
                     sb << "\n\n/* " << position << "*/\n";
 
                 std::string stdJson = doc->bsonObj().jsonString(mongo::TenGen, 1);
+                //std::string stdJson = doc->bsonObj().toString(false, true);
 
                 if (exit) {
                     emit done();

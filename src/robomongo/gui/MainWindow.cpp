@@ -14,6 +14,7 @@
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
+#include "robomongo/gui/dialogs/DocumentTextEditor.h"
 
 using namespace Robomongo;
 
@@ -153,6 +154,9 @@ MainWindow::MainWindow() : QMainWindow(),
 
     setWindowTitle("Robomongo 0.5.2");
     setWindowIcon(GuiRegistry::instance().mainWindowIcon());
+
+//    DocumentTextEditor editor("localhost", "abe_read_write", "assignments_high_deleted_and_yes", "{}");
+//    editor.exec();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)

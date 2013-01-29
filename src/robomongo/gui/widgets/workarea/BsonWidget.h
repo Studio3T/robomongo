@@ -6,6 +6,7 @@
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoDocument.h"
+#include "robomongo/core/engine/JsonBuilder.h"
 
 class QPlainTextEdit;
 
@@ -70,8 +71,15 @@ namespace Robomongo
                 else
                     sb << "\n\n/* " << position << "*/\n";
 
-                std::string stdJson = doc->bsonObj().jsonString(mongo::TenGen, 1);
-                //std::string stdJson = doc->bsonObj().toString(false, true);
+                // Approach #1
+                // std::string stdJson = doc->bsonObj().jsonString(mongo::TenGen, 1);
+
+                // Approach #2
+                // std::string stdJson = doc->bsonObj().toString(false, true);
+
+                JsonBuilder builder;
+                mongo::BSONObj obj = doc->bsonObj();
+                std::string stdJson = builder.jsonString(obj, mongo::TenGen, 1);
 
                 if (exit) {
                     emit done();

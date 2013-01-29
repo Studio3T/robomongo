@@ -39,7 +39,8 @@ SOURCES += \
     domain/MongoUtils.cpp \
     domain/MongoNamespace.cpp \
     domain/CursorPosition.cpp \
-    domain/ScriptInfo.cpp
+    domain/ScriptInfo.cpp \
+    engine/JsonBuilder.cpp
 
 
 HEADERS  += \
@@ -78,7 +79,8 @@ HEADERS  += \
     domain/MongoUtils.h \
     domain/MongoNamespace.h \
     domain/CursorPosition.h \
-    domain/ScriptInfo.h
+    domain/ScriptInfo.h \
+    engine/JsonBuilder.h
 
 INCLUDEPATH += $$SRC_ROOT
 

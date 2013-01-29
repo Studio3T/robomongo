@@ -17,6 +17,10 @@
 
 #pragma once
 
+#ifdef ROBOMONGO
+#include "mongo/client/redef_macros.h"
+#endif
+
 namespace mongo {
     namespace base64 {
 

@@ -23,7 +23,8 @@ SOURCES += \
     shell/shell_utils_launcher.cpp \
     shell/shell_utils_extended.cpp \
     util/ramlog.cpp \
-    mongo-server.cpp
+    mongo-server.cpp \
+    util/base64.cpp
 
 unix:SOURCES += util/processinfo_linux2.cpp
 win32:SOURCES += util/processinfo_win32.cpp

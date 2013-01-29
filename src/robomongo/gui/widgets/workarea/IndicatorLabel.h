@@ -15,7 +15,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        Indicator(const QIcon &icon);
+        Indicator(const QIcon &icon, const QString &text = QString());
         void setText(const QString &text);
 
     private:

@@ -6,7 +6,7 @@
 
 using namespace Robomongo;
 
-Indicator::Indicator(const QIcon &icon)
+Indicator::Indicator(const QIcon &icon, const QString &text)
 {
     QLabel *iconLabel = createLabelWithIcon(icon);
     _label = new QLabel();
@@ -19,6 +19,8 @@ Indicator::Indicator(const QIcon &icon)
     layout->addWidget(_label);
     layout->addSpacing(14);
     setLayout(layout);
+
+    setText(text);
 }
 
 void Indicator::setText(const QString &text)

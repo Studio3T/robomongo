@@ -7,8 +7,9 @@
 using namespace Robomongo;
 using namespace mongo;
 
-BsonTreeItem::BsonTreeItem(MongoElementPtr element, int position) : QObject(),
-    _element(element)
+BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position) : QObject(),
+    _element(element),
+    _rootDocument(rootDocument)
 {
 	_position = position;
 
@@ -211,7 +212,8 @@ BsonTreeItem::BsonTreeItem(MongoElementPtr element, int position) : QObject(),
 }
 
 BsonTreeItem::BsonTreeItem(MongoDocumentPtr document, int position) : QObject(),
-    _document(document)
+    _document(document),
+    _rootDocument(document)
 {
 	_position = position;
 	setupDocument(document);
@@ -243,7 +245,7 @@ void BsonTreeItem::expand()
 	while(iterator.hasMore())
 	{
         MongoElementPtr element = iterator.next();
-        BsonTreeItem *childItem = new BsonTreeItem(element, isArray ? position : -1);
+        BsonTreeItem *childItem = new BsonTreeItem(_rootDocument, element, isArray ? position : -1);
 		addChild(childItem);
 		position++;
 	}

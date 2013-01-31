@@ -13,6 +13,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
+#include "robomongo/gui/dialogs/DocumentTextEditor.h"
 
 using namespace Robomongo;
 
@@ -266,11 +267,38 @@ void ExplorerTreeWidget::ui_openShell()
 
 void ExplorerTreeWidget::ui_addDocument()
 {
+    ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
+    if (!collectionItem)
+        return;
+
+    MongoCollection *collection = collectionItem->collection();
+
+    DocumentTextEditor editor(collection->database()->server()->connectionRecord()->getFullAddress(),
+                              collection->database()->name(),
+                              collection->name(), "{\n    \n}");
+    editor.setCursorPosition(1, 4);
+    editor.setWindowTitle("Insert Document");
+    int result = editor.exec();
+
+    if (result == QDialog::Accepted) {
+        QString text = editor.jsonText();
+        QByteArray utf = text.toUtf8();
+        mongo::BSONObj obj;
+        try {
+            obj = mongo::fromjson(utf.data());
+            collection->database()->server()->insertDocument(obj, collection->database()->name(), collection->name());
+        } catch (mongo::MsgAssertionException &ex) {
+            QMessageBox::information(NULL, "Parsing error", "Unable to parse JSON");
+        }
+    }
+
+    /*
     openCurrentCollectionShell(
         "db.%1.insert({\n"
         "    '' : '',\n"
         "})"
     , false, CursorPosition(1, 5));
+    */
 }
 
 void ExplorerTreeWidget::ui_removeDocument()

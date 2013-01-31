@@ -14,6 +14,9 @@ namespace Robomongo
     public:
         explicit DocumentTextEditor(const QString &server, const QString &database, const QString &collection,
                                     const QString &json, QWidget *parent = 0);
+
+        QString jsonText() const;
+        void setCursorPosition(int line, int column);
     private:
         void _configureQueryText();
         QFont chooseTextFont();

@@ -8,6 +8,8 @@
 #include "robomongo/core/domain/MongoDocumentIterator.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
+#include "robomongo/core/engine/JsonBuilder.h"
+#include "robomongo/gui/dialogs/DocumentTextEditor.h"
 
 using namespace Robomongo;
 using namespace mongo;
@@ -192,4 +194,46 @@ void BsonTreeWidget::onDeleteDocument()
 
 void BsonTreeWidget::onEditDocument()
 {
+    QList<QTreeWidgetItem*> items = selectedItems();
+
+    if (items.count() != 1)
+        return;
+
+    QTreeWidgetItem *item = items[0];
+
+    if (!item)
+        return;
+
+    BsonTreeItem *documentItem = dynamic_cast<BsonTreeItem *>(item);
+    if (!documentItem)
+        return;
+
+    mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
+
+    JsonBuilder b;
+    std::string str = b.jsonString(obj, mongo::TenGen, 1);
+
+    QString json = QString::fromUtf8(str.data());
+
+    DocumentTextEditor editor("",
+                              "",
+                              "", json);
+//    editor.setCursorPosition(1, 4);
+    editor.setWindowTitle("Edit Document");
+    int result = editor.exec();
+
+    if (result == QDialog::Accepted) {
+        QString text = editor.jsonText();
+        QByteArray utf = text.toUtf8();
+        mongo::BSONObj obj;
+        try {
+//            obj = mongo::fromjson(utf.data());
+//            collection->database()->server()->insertDocument(obj, collection->database()->name(), collection->name());
+        } catch (mongo::MsgAssertionException &ex) {
+            QMessageBox::information(NULL, "Parsing error", "Unable to parse JSON");
+        }
+    }
+
+
+
 }

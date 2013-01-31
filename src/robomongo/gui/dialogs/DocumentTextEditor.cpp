@@ -15,12 +15,18 @@ DocumentTextEditor::DocumentTextEditor(const QString &server, const QString &dat
                                        const QString &json, QWidget *parent) :
     QDialog(parent)
 {
+    setMinimumWidth(600);
+    setMinimumHeight(450);
+
     Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), collection);
     Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), database);
     Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), server);
 
     QPushButton *cancel = new QPushButton("Cancel");
+    connect(cancel, SIGNAL(clicked()), this, SLOT(close()));
+
     QPushButton *save = new QPushButton("Save");
+    connect(save, SIGNAL(clicked()), this, SLOT(accept()));
 
     _queryText = new RoboScintilla;
     _textFont = chooseTextFont();
@@ -45,6 +51,16 @@ DocumentTextEditor::DocumentTextEditor(const QString &server, const QString &dat
     layout->addWidget(_queryText);
     layout->addLayout(bottomlayout);
     setLayout(layout);
+}
+
+QString DocumentTextEditor::jsonText() const
+{
+    return _queryText->text();
+}
+
+void DocumentTextEditor::setCursorPosition(int line, int column)
+{
+    _queryText->setCursorPosition(line, column);
 }
 
 /*

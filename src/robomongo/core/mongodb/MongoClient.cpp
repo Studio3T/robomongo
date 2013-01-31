@@ -35,6 +35,12 @@ QStringList MongoClient::getDatabaseNames()
     return dbNames;
 }
 
+void MongoClient::insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
+{
+    MongoNamespace ns(db, collection);
+    _dbclient->insert(ns.toString().toStdString(), obj);
+}
+
 QList<MongoDocumentPtr> MongoClient::query(const MongoQueryInfo &info)
 {
     MongoNamespace ns(info.databaseName, info.collectionName);

@@ -166,6 +166,44 @@ namespace Robomongo
 
 
     /**
+     * @brief InsertDocument
+     */
+
+    class InsertDocumentRequest : public Event
+    {
+        R_EVENT
+
+    public:
+        InsertDocumentRequest(QObject *sender, const mongo::BSONObj &obj, const QString &database, const QString &collection) :
+            Event(sender),
+            _obj(obj),
+            _database(database),
+            _collection(collection) {}
+
+        mongo::BSONObj obj() const { return _obj; }
+        QString database() const { return _database; }
+        QString collection() const { return _collection; }
+
+    private:
+        mongo::BSONObj _obj;
+        QString _database;
+        QString _collection;
+    };
+
+    class InsertDocumentResponse : public Event
+    {
+        R_EVENT
+
+    public:
+        InsertDocumentResponse(QObject *sender) :
+            Event(sender) {}
+
+        InsertDocumentResponse(QObject *sender, EventError error) :
+            Event(sender, error) {}
+    };
+
+
+    /**
      * @brief Query Mongodb
      */
 

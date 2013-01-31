@@ -17,11 +17,12 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        BsonTreeItem(MongoElementPtr element, int position);
+        BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position);
         BsonTreeItem(MongoDocumentPtr document, int position);
         ~BsonTreeItem() {}
 
         MongoElementPtr element() const { return _element; }
+        MongoDocumentPtr rootDocument() const { return _rootDocument; }
         void expand();
 
     private:
@@ -34,6 +35,8 @@ namespace Robomongo
 
         MongoElementPtr _element;
         MongoDocumentPtr _document;
+
+        MongoDocumentPtr _rootDocument;
 
         /**
          * @brief Position in array. -1 if not in array

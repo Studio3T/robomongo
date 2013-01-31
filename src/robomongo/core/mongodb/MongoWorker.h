@@ -58,6 +58,11 @@ namespace Robomongo
         void handle(LoadCollectionNamesRequest *event);
 
         /**
+         * @brief Inserts document
+         */
+        void handle(InsertDocumentRequest *event);
+
+        /**
          * @brief Load list of all collection names
          */
         void handle(ExecuteQueryRequest *event);

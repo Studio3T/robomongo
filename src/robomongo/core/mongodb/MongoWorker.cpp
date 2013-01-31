@@ -171,6 +171,20 @@ void MongoWorker::handle(LoadCollectionNamesRequest *event)
     }
 }
 
+void MongoWorker::handle(InsertDocumentRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+
+        client->insertDocument(event->obj(), event->database(), event->collection());
+        client->done();
+
+        reply(event->sender(), new InsertDocumentResponse(this));
+    } catch(DBException &ex) {
+        reply(event->sender(), new InsertDocumentResponse(this, EventError("Unable to insert document.")));
+    }
+}
+
 void MongoWorker::handle(ExecuteQueryRequest *event)
 {
     try {

@@ -19,6 +19,7 @@ namespace Robomongo
 
         QStringList getCollectionNames(const QString &dbname);
         QStringList getDatabaseNames();
+        void insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);
         QList<MongoDocumentPtr> query(const MongoQueryInfo &info);
 
         MongoCollectionInfo runCollStatsCommand(const QString &ns);

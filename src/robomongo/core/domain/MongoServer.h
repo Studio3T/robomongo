@@ -42,6 +42,8 @@ namespace Robomongo
          */
         void tryConnect();
 
+        void insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);
+
         /**
          * @brief Returns last error message
          */

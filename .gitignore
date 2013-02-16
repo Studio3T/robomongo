@@ -1,5 +1,6 @@
 # Ignore *.pro.user files
 *.pro.user
+*.pro.user.*
 
 target/
 *~

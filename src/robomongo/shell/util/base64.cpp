@@ -16,14 +16,8 @@
  *    limitations under the License.
  */
 
-#ifdef ROBOMONGO
 #include "mongo/pch.h"
 #include "mongo/util/base64.h"
-#else
-#include "pch.h"
-#include "base64.h"
-#endif
-
 
 namespace mongo {
     namespace base64 {
@@ -109,6 +103,11 @@ namespace mongo {
             decode( ss , s );
             return ss.str();
         }
+
+        const char* chars =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "0123456789+/=";
 
     }
 }

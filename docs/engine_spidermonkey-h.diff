@@ -1,0 +1,55 @@
+--- libs/mongo/src/mongo/scripting/engine_spidermonkey.h	2013-02-17 22:13:19.100668823 +0300
++++ dev/robomongo/include/mongo/scripting/engine_spidermonkey.h	2012-12-06 00:35:01.722024190 +0300
+@@ -19,20 +19,34 @@
+ 
+ #include "mongo/scripting/engine.h"
+ 
+ // START inc hacking
+ 
+ #ifdef WIN32
++#ifdef ROBOMONGO
++#include "js/jstypes.h"
++#else
+ #include <third_party/js-1.7/jstypes.h>
++#endif
+ #undef JS_PUBLIC_API
+ #undef JS_PUBLIC_DATA
+ #define JS_PUBLIC_API(t)    t __cdecl
+ #define JS_PUBLIC_DATA(t)   t
+ #endif
+ 
++#ifdef ROBOMONGO
++#include "js/jsapi.h"
++#else
+ #include <third_party/js-1.7/jsapi.h>
++#endif
++
++#ifdef ROBOMONGO
++extern std::vector<mongo::BSONObj> __objects;
++extern std::stringstream __logs;
++
++#endif
+ 
+ // END inc hacking
+ 
+ // -- SM 1.6 hacks ---
+ #ifndef JSCLASS_GLOBAL_FLAGS
+ #error old version of spider monkey ( probably 1.6 ) you should upgrade to at least 1.7
+@@ -63,13 +77,17 @@
+     extern JSClass numberlong_class;
+     extern JSClass numberint_class;
+     extern JSClass minkey_class;
+     extern JSClass maxkey_class;
+ 
+     // internal things
++    #ifdef ROBOMONGO
++    void dontDeleteScope( SMScope * s );
++    #else
+     void dontDeleteScope( SMScope * s ) {}
++    #endif
+     void errorReporter( JSContext *cx, const char *message, JSErrorReport *report );
+     extern boost::thread_specific_ptr<SMScope> currentScope;
+ 
+     // bson
+     JSBool resolveBSONField( JSContext *cx, JSObject *obj, jsval id, uintN flags, JSObject **objp );
+ 

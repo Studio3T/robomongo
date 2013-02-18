@@ -1,0 +1,19 @@
+--- libs/mongo/src/mongo/bson/util/misc.h	2013-02-17 22:13:19.028668825 +0300
++++ dev/robomongo/include/mongo/bson/util/misc.h	2012-12-26 16:27:13.909697564 +0300
+@@ -90,14 +90,16 @@
+             char buf[64];
+             time_t_to_String(toTimeT(), buf);
+             return buf;
+         }
+         time_t toTimeT() const {
+             // cant use uassert from bson/util
++            #ifndef ROBOMONGO
+             verify((long long)millis >= 0); // TODO when millis is signed, delete 
+             verify(((long long)millis/1000) < (std::numeric_limits<time_t>::max)());
++            #endif
+             return millis / 1000;
+         }
+     };
+ 
+     // Like strlen, but only scans up to n bytes.
+     // Returns -1 if no '0' found.

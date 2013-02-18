@@ -1,0 +1,11 @@
+--- libs/mongo/build/linux2/normal/mongo/shell/mongo-server.cpp	2013-02-17 03:27:02.502717318 +0300
++++ dev/robomongo/src/robomongo/shell/mongo-server.cpp	2013-01-13 03:00:26.153467039 +0300
+@@ -1,7 +1,7 @@
+-#include "bson/stringdata.h"
++#include "mongo/bson/stringdata.h"
+ namespace mongo {
+ struct JSFile{ const char* name; const StringData& source; };
+ namespace JSFiles{
+ const StringData _jscode_raw_servers = 
+ "_parsePath = function() {\n" 
+ "var dbpath = \"\";\n" 

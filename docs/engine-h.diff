@@ -1,0 +1,20 @@
+--- libs/mongo/src/mongo/scripting/engine.h	2013-02-17 22:13:19.100668823 +0300
++++ dev/robomongo/include/mongo/scripting/engine.h	2012-12-02 23:46:08.000000000 +0300
+@@ -196,13 +196,17 @@
+         virtual void interrupt( unsigned opSpec ) {}
+         virtual void interruptAll() {}
+ 
+         static void setGetInterruptSpecCallback( unsigned ( *func )() ) { _getInterruptSpecCallback = func; }
+         static bool haveGetInterruptSpecCallback() { return _getInterruptSpecCallback; }
+         static unsigned getInterruptSpec() {
++            #ifdef ROBOMONGO
++            //massert( 13474, "no _getInterruptSpecCallback", _getInterruptSpecCallback );
++            #else
+             massert( 13474, "no _getInterruptSpecCallback", _getInterruptSpecCallback );
++            #endif
+             return _getInterruptSpecCallback();
+         }
+ 
+         static void setCheckInterruptCallback( const char * ( *func )() ) { _checkInterruptCallback = func; }
+         static bool haveCheckInterruptCallback() { return _checkInterruptCallback; }
+         static const char * checkInterrupt() {

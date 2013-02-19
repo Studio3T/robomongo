@@ -15,6 +15,8 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 
+#include "robomongo/shell/db/json.h"
+
 using namespace Robomongo;
 
 ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
@@ -272,10 +274,13 @@ void ExplorerTreeWidget::ui_addDocument()
         return;
 
     MongoCollection *collection = collectionItem->collection();
+    MongoDatabase *database = collection->database();
+    MongoServer *server = database->server();
+    ConnectionSettings *settings = server->connectionRecord();
 
-    DocumentTextEditor editor(collection->database()->server()->connectionRecord()->getFullAddress(),
-                              collection->database()->name(),
+    DocumentTextEditor editor(settings->getFullAddress(), database->name(),
                               collection->name(), "{\n    \n}");
+
     editor.setCursorPosition(1, 4);
     editor.setWindowTitle("Insert Document");
     int result = editor.exec();
@@ -285,8 +290,8 @@ void ExplorerTreeWidget::ui_addDocument()
         QByteArray utf = text.toUtf8();
         mongo::BSONObj obj;
         try {
-            obj = mongo::fromjson(utf.data());
-            collection->database()->server()->insertDocument(obj, collection->database()->name(), collection->name());
+            obj = mongo::Robomongo::fromjson(utf.data());
+            server->insertDocument(obj, database->name(), collection->name());
         } catch (mongo::MsgAssertionException &ex) {
             QMessageBox::information(NULL, "Parsing error", "Unable to parse JSON");
         }

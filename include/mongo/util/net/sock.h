@@ -33,11 +33,14 @@
 # include <sys/uio.h>
 #endif
 
-#endif // _WIN32
+#endif // not _WIN32
 
 #ifdef MONGO_SSL
 #include <openssl/ssl.h>
+#include "mongo/util/net/ssl_manager.h"
 #endif
+
+#include "mongo/platform/compiler.h"
 
 namespace mongo {
 
@@ -125,6 +128,8 @@ namespace mongo {
      * will be stale */
     string getHostNameCached();
 
+    string prettyHostName();
+
     /**
      * thrown by Socket and SockAddr
      */
@@ -132,7 +137,7 @@ namespace mongo {
     public:
         const enum Type { CLOSED , RECV_ERROR , SEND_ERROR, RECV_TIMEOUT, SEND_TIMEOUT, FAILED_STATE, CONNECT_ERROR } _type;
         
-        SocketException( Type t , string server , int code = 9001 , string extra="" ) 
+        SocketException( Type t , const std::string& server , int code = 9001 , const std::string& extra="" ) 
             : DBException( (string)"socket exception ["  + _getStringType( t ) + "] for " + server, code ),
               _type(t),
               _server(server),
@@ -143,7 +148,7 @@ namespace mongo {
 
         bool shouldPrint() const { return _type != CLOSED; }
         virtual string toString() const;
-
+        virtual const std::string* server() const { return &_server; }
     private:
 
         // TODO: Allow exceptions better control over their messages
@@ -164,29 +169,6 @@ namespace mongo {
         string _extra;
     };
 
-#ifdef MONGO_SSL
-    class SSLManager : boost::noncopyable {
-    public:
-        SSLManager( bool client );
-        
-        /** @return true if was successful, otherwise false */
-        bool setupPEM( const string& keyFile , const string& password );
-        void setupPubPriv( const string& privateKeyFile , const string& publicKeyFile );
-
-        /**
-         * creates an SSL context to be used for this file descriptor
-         * caller should delete
-         */
-        SSL * secure( int fd );
-        
-        static int password_cb( char *buf,int num, int rwflag,void *userdata );
-
-    private:
-        bool _client;
-        SSL_CTX* _context;
-        string _password;
-    };
-#endif
 
     /**
      * thin wrapped around file descriptor and system calls
@@ -204,9 +186,7 @@ namespace mongo {
         */
         Socket(double so_timeout = 0, int logLevel = 0 );
 
-        ~Socket() {
-            close();
-        }
+        ~Socket();
 
         bool connect(SockAddr& farEnd);
         void close();
@@ -239,25 +219,37 @@ namespace mongo {
 #endif
         
         /**
-         * call this after a fork for server sockets
+         * This function calls SSL_accept() if SSL-encrypted sockets
+         * are desired. SSL_accept() waits until the remote host calls
+         * SSL_connect().
+         * This function may throw SocketException.
          */
-        void postFork();
+        void doSSLHandshake();
         
+        /**
+         * @return the time when the socket was opened.
+         */
+        uint64_t getSockCreationMicroSec() const {
+            return _fdCreationMicroSec;
+        }
+
     private:
         void _init();
 
-        /** raw send, same semantics as ::send */
-    public:
-        int _send( const char * data , int len );
-    private:
-        
         /** sends dumbly, just each buffer at a time */
         void _send( const vector< pair< char *, int > > &data, const char *context );
+
+        /** raw send, same semantics as ::send */
+        int _send( const char * data , int len );
 
         /** raw recv, same semantics as ::recv */
         int _recv( char * buf , int max );
 
+        void _handleRecvError(int ret, int len, int* retries);
+        MONGO_COMPILER_NORETURN void _handleSendError(int ret, const char* context);
+
         int _fd;
+        uint64_t _fdCreationMicroSec;
         SockAddr _remote;
         double _timeout;
 

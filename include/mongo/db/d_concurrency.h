@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "mongo/bson/stringdata.h"
+#include "mongo/base/string_data.h"
 #include "mongo/db/jsobj.h"
 #include "mongo/db/lockstat.h"
 #include "mongo/util/concurrency/mutex.h"
@@ -163,7 +163,7 @@ namespace mongo {
 
             void lockTop(LockState&);
             void lockNestable(Nestable db);
-            void lockOther(const string& db);
+            void lockOther(const StringData& db);
             void lockDB(const string& ns);
             void unlockDB();
 
@@ -197,7 +197,7 @@ namespace mongo {
         class DBRead : public ScopedLock {
             void lockTop(LockState&);
             void lockNestable(Nestable db);
-            void lockOther(const string& db);
+            void lockOther(const StringData& db);
             void lockDB(const string& ns);
             void unlockDB();
 

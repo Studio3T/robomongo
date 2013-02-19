@@ -13,11 +13,11 @@ SOURCES += main.cpp
         
 INCLUDEPATH += $$SRC_ROOT
 
-win32:LIBS += -lws2_32 -lkernel32 -ladvapi32 -lpsapi -ldbghelp -lpcrecpp \
+win32:LIBS += -lws2_32 -lkernel32 -ladvapi32 -lpsapi -ldbghelp \
               -luser32 -lgdi32 -lwinspool -lcomdlg32 \
               -lshell32 -lole32 -loleaut32 -lodbc32 -lodbccp32 -luuid
 
-LIBS += -lgui -lcore -lshell -lqjson -lmongoclient \
+LIBS += -lgui -lcore -lshell -lqjson -lmongoclient -lpcrecpp \
         -lboost_thread -lboost_filesystem -lboost_system \
         -lqscintilla2 -ljs
 

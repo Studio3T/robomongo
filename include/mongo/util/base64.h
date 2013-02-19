@@ -66,6 +66,7 @@ namespace mongo {
         void decode( stringstream& ss , const string& s );
         string decode( const string& s );
 
+        extern const char* chars;
 
         void testAlphabet();
     }

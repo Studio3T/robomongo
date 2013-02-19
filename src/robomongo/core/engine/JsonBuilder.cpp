@@ -173,7 +173,8 @@ string JsonBuilder::jsonString(BSONElement &elem, JsonStringFormat format, bool 
             Date_t d = elem.date();
             if( d == 0 ) s << '0';
             else
-                s << '"' << elem.date().toString() << '"';
+                //P s << '"' << elem.date().toString() << '"';
+                s << '"' << elem.date().millis << '"';
         }
         else
             s << elem.date();

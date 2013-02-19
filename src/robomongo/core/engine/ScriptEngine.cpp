@@ -13,7 +13,7 @@
 #include <mongo/scripting/engine.h>
 #include <mongo/scripting/engine_spidermonkey.h>
 #include <mongo/shell/shell_utils.h>
-#include <mongo/bson/stringdata.h>
+#include <mongo/base/string_data.h>
 #include <mongo/client/dbclient.h>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -60,6 +60,7 @@ namespace Robomongo
         {
             QMutexLocker lock(&_mutex);
 
+            //mongo::shell_utils::_dbConnect = "var z = 56;"; //ss.str();
             mongo::shell_utils::_dbConnect = ss.str();
             mongo::isShell = true;
 
@@ -67,7 +68,9 @@ namespace Robomongo
             mongo::ScriptEngine::setup();
             mongo::globalScriptEngine->setScopeInitCallback( mongo::shell_utils::initScope );
 
-            _scope.reset(mongo::globalScriptEngine->newScope());
+            mongo::Scope *scope = mongo::globalScriptEngine->newScope();
+
+            _scope.reset(scope);
             _engine.reset(mongo::globalScriptEngine);
         }
 
@@ -364,7 +367,7 @@ namespace Robomongo
         jsval ret2 = JSVAL_VOID;
         mongo::StringData data("esprima.parse('var answer = 42')");
         //mongo::StringData data("connect()");
-        JSBool worked2 = JS_EvaluateScript(context, global, data.data(), data.size(), NULL, 0, &ret2);
+        JSBool worked2 = JS_EvaluateScript(context, global, data.rawData(), data.size(), NULL, 0, &ret2);
 
 
         // end

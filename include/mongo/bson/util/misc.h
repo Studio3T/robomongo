@@ -93,10 +93,8 @@ namespace mongo {
         }
         time_t toTimeT() const {
             // cant use uassert from bson/util
-            #ifndef ROBOMONGO
             verify((long long)millis >= 0); // TODO when millis is signed, delete 
             verify(((long long)millis/1000) < (std::numeric_limits<time_t>::max)());
-            #endif
             return millis / 1000;
         }
     };
@@ -108,24 +106,6 @@ namespace mongo {
             if ( !s[ i ] )
                 return i;
         return -1;
-    }
-
-    inline bool isNumber( char c ) {
-        return c >= '0' && c <= '9';
-    }
-
-    inline unsigned stringToNum(const char *str) {
-        unsigned x = 0;
-        const char *p = str;
-        while( 1 ) {
-            if( !isNumber(*p) ) {
-                if( *p == 0 && p != str )
-                    break;
-                throw 0;
-            }
-            x = x * 10 + *p++ - '0';
-        }
-        return x;
     }
 
 }

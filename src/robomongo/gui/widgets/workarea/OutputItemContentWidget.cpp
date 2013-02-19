@@ -222,6 +222,7 @@ RoboScintilla *Robomongo::OutputItemContentWidget::_configureLogText()
     _logText->setMarginWidth(1, 0); // to hide left gray column
     _logText->setBraceMatching(QsciScintilla::StrictBraceMatch);
     _logText->setFont(textFont);
+    //_logText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_WORD);
     _logText->setReadOnly(true);
 
     _logText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");

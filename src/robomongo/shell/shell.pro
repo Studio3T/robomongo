@@ -24,7 +24,10 @@ SOURCES += \
     shell/shell_utils_extended.cpp \
     util/ramlog.cpp \
     mongo-server.cpp \
-    util/base64.cpp
+    util/base64.cpp \
+    util/file.cpp \
+    scripting/bench.cpp \
+    scripting/bson_template_evaluator.cpp
 
 unix:SOURCES += util/processinfo_linux2.cpp
 win32:SOURCES += util/processinfo_win32.cpp

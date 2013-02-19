@@ -9,6 +9,7 @@ TARGET   = shell
 
 TEMPLATE = lib
 CONFIG  += staticlib
+INCLUDEPATH += $$SRC_ROOT
 
 SOURCES += \
     scripting/utils.cpp \
@@ -27,12 +28,14 @@ SOURCES += \
     util/base64.cpp \
     util/file.cpp \
     scripting/bench.cpp \
-    scripting/bson_template_evaluator.cpp
+    scripting/bson_template_evaluator.cpp \
+    db/json.cpp
 
 unix:SOURCES += util/processinfo_linux2.cpp
 win32:SOURCES += util/processinfo_win32.cpp
 
-HEADERS +=
+HEADERS += \
+    db/json.h
 
 #PRECOMPILED_HEADER = mongo/pch.h
 

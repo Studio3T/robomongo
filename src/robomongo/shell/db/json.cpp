@@ -71,8 +71,10 @@ namespace Robomongo {
     Status JParse::parseError(const StringData& msg) {
         std::ostringstream ossmsg;
         ossmsg << msg;
+#ifndef ROBOMONGO // offset will be taken using public offset() method.
         ossmsg << ": offset:";
         ossmsg << offset();
+#endif
         return Status(ErrorCodes::FailedToParse, ossmsg.str());
     }
 
@@ -1041,7 +1043,14 @@ namespace Robomongo {
         if (ret != Status::OK()) {
             ostringstream message;
             message << "code " << ret.code() << ": " << ret.codeString() << ": " << ret.reason();
-            throw MsgAssertionException(16619, message.str());
+
+            /*std::string strReason = ret.reason();
+            char *charReason = new char[strReason.size() + 1];
+            std::copy(strReason.begin(), strReason.end(), charReason);
+            charReason[strReason.size()] = '\0';
+            */
+
+            throw ParseMsgAssertionException(16619, message.str(), jparse.offset(), ret.reason());
         }
         if (len) *len = jparse.offset();
         return builder.obj();

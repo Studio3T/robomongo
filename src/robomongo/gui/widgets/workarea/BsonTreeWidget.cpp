@@ -218,20 +218,15 @@ void BsonTreeWidget::onEditDocument()
     DocumentTextEditor editor("",
                               "",
                               "", json);
-//    editor.setCursorPosition(1, 4);
     editor.setWindowTitle("Edit Document");
     int result = editor.exec();
+    activateWindow();
 
     if (result == QDialog::Accepted) {
         QString text = editor.jsonText();
         QByteArray utf = text.toUtf8();
-        mongo::BSONObj obj;
-        try {
-//            obj = mongo::fromjson(utf.data());
+        mongo::BSONObj obj = editor.bsonObj();
 //            collection->database()->server()->insertDocument(obj, collection->database()->name(), collection->name());
-        } catch (mongo::MsgAssertionException &ex) {
-            QMessageBox::information(NULL, "Parsing error", "Unable to parse JSON");
-        }
     }
 
 

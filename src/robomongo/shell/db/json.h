@@ -192,6 +192,7 @@ namespace Robomongo {
              */
             Status date(const StringData& fieldName, BSONObjBuilder&);
 
+#ifdef ROBOMONGO
             /* The following functions only parse the body of the ISODate function
              * between the parentheses, not including the function name */
             /*
@@ -199,6 +200,7 @@ namespace Robomongo {
              *     ISODate( <date time string in ISO 8601 format> )
              */
             Status isodate(const StringData& fieldName, BSONObjBuilder&);
+#endif
 
             /*
              * TIMESTAMP :

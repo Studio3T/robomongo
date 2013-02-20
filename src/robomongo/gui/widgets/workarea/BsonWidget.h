@@ -7,6 +7,7 @@
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/engine/JsonBuilder.h"
+#include "robomongo/core/domain/MongoQueryInfo.h"
 
 class QPlainTextEdit;
 
@@ -22,12 +23,13 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        BsonWidget(QWidget *parent = NULL);
+        BsonWidget(MongoShell *shell, QWidget *parent = NULL);
         ~BsonWidget() {}
-        void setDocuments(const QList<MongoDocumentPtr> &documents);
+        void setDocuments(const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo = MongoQueryInfo());
 
     private:
         BsonTreeWidget *_bsonTree;
+        MongoShell *_shell;
     };
 
 

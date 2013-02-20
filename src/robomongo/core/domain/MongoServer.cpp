@@ -55,6 +55,16 @@ void MongoServer::insertDocument(const mongo::BSONObj &obj, const QString &db, c
     _client->send(new InsertDocumentRequest(this, obj, db, collection));
 }
 
+void MongoServer::saveDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
+{
+    _client->send(new InsertDocumentRequest(this, obj, db, collection, true));
+}
+
+void MongoServer::removeDocuments(mongo::Query query, const QString &db, const QString &collection, bool justOne)
+{
+    _client->send(new RemoveDocumentRequest(this, query, db, collection, justOne));
+}
+
 void MongoServer::loadDatabases()
 {
     _client->send(new LoadDatabaseNamesRequest(this));

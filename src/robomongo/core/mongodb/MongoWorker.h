@@ -63,6 +63,11 @@ namespace Robomongo
         void handle(InsertDocumentRequest *event);
 
         /**
+         * @brief Remove documents
+         */
+        void handle(RemoveDocumentRequest *event);
+
+        /**
          * @brief Load list of all collection names
          */
         void handle(ExecuteQueryRequest *event);

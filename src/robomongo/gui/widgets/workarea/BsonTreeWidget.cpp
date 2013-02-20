@@ -10,11 +10,14 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/core/engine/JsonBuilder.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
+#include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/core/domain/MongoServer.h"
 
 using namespace Robomongo;
 using namespace mongo;
 
-BsonTreeWidget::BsonTreeWidget(QWidget *parent) : QTreeWidget(parent)
+BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) : QTreeWidget(parent),
+    _shell(shell)
 {
 	QStringList colums;
 	colums << "Key" << "Value" << "Type";
@@ -49,9 +52,11 @@ BsonTreeWidget::~BsonTreeWidget()
     int h = 90;
 }
 
-void BsonTreeWidget::setDocuments(const QList<MongoDocumentPtr> &documents)
+void BsonTreeWidget::setDocuments(const QList<MongoDocumentPtr> &documents,
+                                  const MongoQueryInfo &queryInfo /* = MongoQueryInfo() */)
 {
 	_documents = documents;
+    _queryInfo = queryInfo;
 
 	setUpdatesEnabled(false);
 	clear();
@@ -190,21 +195,40 @@ void BsonTreeWidget::resizeEvent(QResizeEvent *event)
 
 void BsonTreeWidget::onDeleteDocument()
 {
+    if (_queryInfo.isNull)
+        return;
+
+    BsonTreeItem *documentItem = selectedBsonTreeItem();
+    if (!documentItem)
+        return;
+
+    mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
+
+    mongo::BSONElement id = obj.getField("_id");
+    mongo::BSONObjBuilder builder;
+    builder.append(id);
+    mongo::BSONObj bsonQuery = builder.obj();
+    mongo::Query query(bsonQuery);
+
+    // Ask user
+    int answer = QMessageBox::question(this,
+            "Delete Document",
+            QString("Delete document with id:<br><b>%1</b>?").arg(QString::fromStdString(id.toString(false))),
+            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+    if (answer != QMessageBox::Yes)
+        return ;
+
+    _shell->server()->removeDocuments(query, _queryInfo.databaseName, _queryInfo.collectionName);
+    _shell->query(0, _queryInfo);
 }
 
 void BsonTreeWidget::onEditDocument()
 {
-    QList<QTreeWidgetItem*> items = selectedItems();
-
-    if (items.count() != 1)
+    if (_queryInfo.isNull)
         return;
 
-    QTreeWidgetItem *item = items[0];
-
-    if (!item)
-        return;
-
-    BsonTreeItem *documentItem = dynamic_cast<BsonTreeItem *>(item);
+    BsonTreeItem *documentItem = selectedBsonTreeItem();
     if (!documentItem)
         return;
 
@@ -212,23 +236,42 @@ void BsonTreeWidget::onEditDocument()
 
     JsonBuilder b;
     std::string str = b.jsonString(obj, mongo::TenGen, 1);
-
     QString json = QString::fromUtf8(str.data());
 
-    DocumentTextEditor editor("",
-                              "",
-                              "", json);
+    DocumentTextEditor editor(_queryInfo.serverAddress,
+                              _queryInfo.databaseName,
+                              _queryInfo.collectionName,
+                              json);
+
     editor.setWindowTitle("Edit Document");
     int result = editor.exec();
     activateWindow();
 
     if (result == QDialog::Accepted) {
-        QString text = editor.jsonText();
-        QByteArray utf = text.toUtf8();
         mongo::BSONObj obj = editor.bsonObj();
-//            collection->database()->server()->insertDocument(obj, collection->database()->name(), collection->name());
+        _shell->server()->saveDocument(obj, _queryInfo.databaseName, _queryInfo.collectionName);
+        _shell->query(0, _queryInfo);
     }
+}
 
+/**
+ * @returns selected BsonTreeItem, or NULL otherwise
+ */
+BsonTreeItem *BsonTreeWidget::selectedBsonTreeItem()
+{
+    QList<QTreeWidgetItem*> items = selectedItems();
 
+    if (items.count() != 1)
+        return NULL;
 
+    QTreeWidgetItem *item = items[0];
+
+    if (!item)
+        return NULL;
+
+    BsonTreeItem *documentItem = dynamic_cast<BsonTreeItem *>(item);
+    if (!documentItem)
+        return NULL;
+
+    return documentItem;
 }

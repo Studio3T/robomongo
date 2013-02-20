@@ -43,6 +43,8 @@ namespace Robomongo
         void tryConnect();
 
         void insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);
+        void saveDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);
+        void removeDocuments(mongo::Query query, const QString &db, const QString &collection, bool justOne = true);
 
         /**
          * @brief Returns last error message

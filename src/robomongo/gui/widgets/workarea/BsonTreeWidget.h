@@ -3,18 +3,21 @@
 #include <QTreeWidget>
 
 #include "robomongo/core/Core.h"
+#include "robomongo/core/domain/MongoQueryInfo.h"
 
 namespace Robomongo
 {
+    class BsonTreeItem;
+
     class BsonTreeWidget : public QTreeWidget
     {
         Q_OBJECT
 
     public:
-        BsonTreeWidget(QWidget *parent = NULL);
+        BsonTreeWidget(MongoShell *shell, QWidget *parent = NULL);
         ~BsonTreeWidget();
 
-        void setDocuments(const QList<MongoDocumentPtr> &documents);
+        void setDocuments(const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo = MongoQueryInfo());
         QIcon getIcon(MongoElementPtr element);
 
     protected:
@@ -29,7 +32,15 @@ namespace Robomongo
         void onEditDocument();
 
     private:
+
+        /**
+         * @returns selected BsonTreeItem, or NULL otherwise
+         */
+        BsonTreeItem *selectedBsonTreeItem();
+
         QList<MongoDocumentPtr> _documents;
         QMenu *_documentContextMenu;
+        MongoQueryInfo _queryInfo;
+        MongoShell *_shell;
     };
 }

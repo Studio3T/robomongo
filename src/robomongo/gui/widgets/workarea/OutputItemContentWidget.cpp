@@ -9,7 +9,7 @@
 
 using namespace Robomongo;
 
-OutputItemContentWidget::OutputItemContentWidget(const QString &text) :
+OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &text) :
     _isTextModeSupported(true),
     _isTreeModeSupported(false),
     _isCustomModeSupported(false),
@@ -21,13 +21,13 @@ OutputItemContentWidget::OutputItemContentWidget(const QString &text) :
     _isFirstPartRendered(false),
     _log(NULL),
     _bson(NULL),
-    _thread(NULL)
-
+    _thread(NULL),
+    _shell(shell)
 {
     setup();
 }
 
-OutputItemContentWidget::OutputItemContentWidget(const QList<MongoDocumentPtr> &documents) :
+OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
     _isTextModeSupported(true),
     _isTreeModeSupported(true),
     _isCustomModeSupported(false),
@@ -35,11 +35,13 @@ OutputItemContentWidget::OutputItemContentWidget(const QList<MongoDocumentPtr> &
     _isTreeModeInitialized(false),
     _isCustomModeInitialized(false),
     _documents(documents),
+    _queryInfo(queryInfo),
     _sourceIsText(false),
     _isFirstPartRendered(false),
     _log(NULL),
     _bson(NULL),
-    _thread(NULL)
+    _thread(NULL),
+    _shell(shell)
 {
     setup();
 }
@@ -146,7 +148,7 @@ void OutputItemContentWidget::showTree()
 
     if (!_isTreeModeInitialized) {
         _bson = _configureBsonWidget();
-        _bson->setDocuments(_documents);
+        _bson->setDocuments(_documents, _queryInfo);
         _stack->addWidget(_bson);
         _isTreeModeInitialized = true;
     }
@@ -234,5 +236,5 @@ RoboScintilla *Robomongo::OutputItemContentWidget::_configureLogText()
 
 BsonWidget *OutputItemContentWidget::_configureBsonWidget()
 {
-    return new BsonWidget;
+    return new BsonWidget(_shell);
 }

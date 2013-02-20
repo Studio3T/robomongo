@@ -174,20 +174,23 @@ namespace Robomongo
         R_EVENT
 
     public:
-        InsertDocumentRequest(QObject *sender, const mongo::BSONObj &obj, const QString &database, const QString &collection) :
+        InsertDocumentRequest(QObject *sender, const mongo::BSONObj &obj, const QString &database, const QString &collection, bool overwrite = false) :
             Event(sender),
             _obj(obj),
             _database(database),
-            _collection(collection) {}
+            _collection(collection),
+            _overwrite(overwrite) {}
 
         mongo::BSONObj obj() const { return _obj; }
         QString database() const { return _database; }
         QString collection() const { return _collection; }
+        bool overwrite() const { return _overwrite; }
 
     private:
         mongo::BSONObj _obj;
         QString _database;
         QString _collection;
+        bool _overwrite;
     };
 
     class InsertDocumentResponse : public Event
@@ -199,6 +202,46 @@ namespace Robomongo
             Event(sender) {}
 
         InsertDocumentResponse(QObject *sender, EventError error) :
+            Event(sender, error) {}
+    };
+
+    /**
+     * @brief Remove Document
+     */
+
+    class RemoveDocumentRequest : public Event
+    {
+        R_EVENT
+
+    public:
+        RemoveDocumentRequest(QObject *sender, mongo::Query query, const QString &database, const QString &collection, bool justOne = true) :
+            Event(sender),
+            _query(query),
+            _database(database),
+            _collection(collection),
+            _justOne(justOne) {}
+
+        mongo::Query query() const { return _query; }
+        QString database() const { return _database; }
+        QString collection() const { return _collection; }
+        bool justOne() const { return _justOne; }
+
+    private:
+        mongo::Query _query;
+        QString _database;
+        QString _collection;
+        bool _justOne;
+    };
+
+    class RemoveDocumentResponse : public Event
+    {
+        R_EVENT
+
+    public:
+        RemoveDocumentResponse(QObject *sender) :
+            Event(sender) {}
+
+        RemoveDocumentResponse(QObject *sender, EventError error) :
             Event(sender, error) {}
     };
 

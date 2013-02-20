@@ -102,12 +102,14 @@ namespace Robomongo {
                 return ret;
             }
         }
+#ifdef ROBOMONGO
         else if (accept("ISODate")) {
             Status ret = isodate(fieldName, builder);
             if (ret != Status::OK()) {
                 return ret;
             }
         }
+#endif
         else if (accept("Timestamp")) {
             Status ret = timestamp(fieldName, builder);
             if (ret != Status::OK()) {
@@ -597,6 +599,7 @@ namespace Robomongo {
         return Status::OK();
     }
 
+#ifdef ROBOMONGO
     Status JParse::isodate(const StringData& fieldName, BSONObjBuilder& builder) {
         if (!accept(LPAREN)) {
             return parseError("Expecting '('");
@@ -625,6 +628,7 @@ namespace Robomongo {
         builder.appendDate(fieldName, millis);
         return Status::OK();
     }
+#endif
 
     Status JParse::timestamp(const StringData& fieldName, BSONObjBuilder& builder) {
         if (!accept(LPAREN)) {

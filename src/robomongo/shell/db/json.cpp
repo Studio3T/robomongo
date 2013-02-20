@@ -14,6 +14,7 @@
  */
 
 #include "robomongo/shell/db/json.h"
+#include "robomongo/shell/db/ptimeutil.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_io.hpp>
@@ -608,7 +609,13 @@ namespace Robomongo {
         }
 
         boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
-        boost::posix_time::ptime isotime = boost::posix_time::from_iso_string(datestr);
+        boost::posix_time::ptime isotime;
+        try {
+            isotime = miutil::ptimeFromIsoString(datestr);
+        } catch (std::logic_error &er) {
+            return parseError("Invalid date format");
+        }
+
         boost::posix_time::time_duration diff = isotime - epoch;
         int64_t millis = diff.total_milliseconds();
 

@@ -29,13 +29,15 @@ SOURCES += \
     util/file.cpp \
     scripting/bench.cpp \
     scripting/bson_template_evaluator.cpp \
-    db/json.cpp
+    db/json.cpp \
+    db/ptimeutil.cpp
 
 unix:SOURCES += util/processinfo_linux2.cpp
 win32:SOURCES += util/processinfo_win32.cpp
 
 HEADERS += \
-    db/json.h
+    db/json.h \
+    db/ptimeutil.h
 
 #PRECOMPILED_HEADER = mongo/pch.h
 

@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <QDialog>
+#include <mongo/client/dbclient.h>
 
 namespace Robomongo
 {
@@ -16,12 +17,28 @@ namespace Robomongo
                                     const QString &json, QWidget *parent = 0);
 
         QString jsonText() const;
+
+        /**
+         * @brief Use returned BSONObj only if Dialog exec() method returns QDialog::Accepted
+         */
+        mongo::BSONObj bsonObj() const { return _obj; }
+
         void setCursorPosition(int line, int column);
+
+    public slots:
+        virtual void accept();
+        bool validate(bool silentOnSuccess = true);
+
+    private slots:
+        void onQueryTextChanged();
+        void onValidateButtonClicked();
+
     private:
         void _configureQueryText();
         QFont chooseTextFont();
         RoboScintilla *_queryText;
         QFont _textFont;
+        mongo::BSONObj _obj;
     };
 }
 

@@ -284,17 +284,11 @@ void ExplorerTreeWidget::ui_addDocument()
     editor.setCursorPosition(1, 4);
     editor.setWindowTitle("Insert Document");
     int result = editor.exec();
+    activateWindow();
 
     if (result == QDialog::Accepted) {
-        QString text = editor.jsonText();
-        QByteArray utf = text.toUtf8();
-        mongo::BSONObj obj;
-        try {
-            obj = mongo::Robomongo::fromjson(utf.data());
-            server->insertDocument(obj, database->name(), collection->name());
-        } catch (mongo::MsgAssertionException &ex) {
-            QMessageBox::information(NULL, "Parsing error", "Unable to parse JSON");
-        }
+        mongo::BSONObj obj = editor.bsonObj();
+        server->insertDocument(obj, database->name(), collection->name());
     }
 
     /*

@@ -1,13 +1,16 @@
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 
 #include <QHBoxLayout>
+#include <QPushButton>
+#include <QMessageBox>
 #include <Qsci/qscilexerjavascript.h>
 
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"
-#include <QPushButton>
+#include "robomongo/shell/db/json.h"
+
 
 using namespace Robomongo;
 
@@ -28,10 +31,14 @@ DocumentTextEditor::DocumentTextEditor(const QString &server, const QString &dat
     QPushButton *save = new QPushButton("Save");
     connect(save, SIGNAL(clicked()), this, SLOT(accept()));
 
+    QPushButton *validate = new QPushButton("Validate");
+    connect(validate, SIGNAL(clicked()), this, SLOT(onValidateButtonClicked()));
+
     _queryText = new RoboScintilla;
     _textFont = chooseTextFont();
     _configureQueryText();
     _queryText->setText(json);
+    connect(_queryText, SIGNAL(textChanged()), this, SLOT(onQueryTextChanged()));
 
     QHBoxLayout *hlayout = new QHBoxLayout();
     hlayout->setContentsMargins(2, 0, 5, 1);
@@ -42,6 +49,7 @@ DocumentTextEditor::DocumentTextEditor(const QString &server, const QString &dat
     hlayout->addStretch(1);
 
     QHBoxLayout *bottomlayout = new QHBoxLayout();
+    bottomlayout->addWidget(validate);
     bottomlayout->addStretch(1);
     bottomlayout->addWidget(save, 0, Qt::AlignRight);
     bottomlayout->addWidget(cancel, 0, Qt::AlignRight);
@@ -63,6 +71,57 @@ void DocumentTextEditor::setCursorPosition(int line, int column)
     _queryText->setCursorPosition(line, column);
 }
 
+void DocumentTextEditor::accept()
+{
+    if (!validate())
+        return;
+
+    QDialog::accept();
+}
+
+bool DocumentTextEditor::validate(bool silentOnSuccess /* = true */)
+{
+    QString text = jsonText();
+    QByteArray utf = text.toUtf8();
+    try {
+        _obj = mongo::Robomongo::fromjson(utf.data());
+    } catch (mongo::ParseMsgAssertionException &ex) {
+        QString message = QString::fromStdString(ex.reason());
+        int offset = ex.offset();
+
+        int line, pos;
+        _queryText->lineIndexFromPosition(offset, &line, &pos);
+        _queryText->setCursorPosition(line, pos);
+
+        int lineHeight = _queryText->lineLength(line);
+        _queryText->fillIndicatorRange(line, pos, line, lineHeight, 0);
+
+        message = QString("Unable to parse JSON:<br /> <b>%1</b>, at (%2, %3).")
+            .arg(message).arg(line + 1).arg(pos + 1);
+
+        QMessageBox::critical(NULL, "Parsing error", message);
+        _queryText->setFocus();
+        activateWindow();
+        return false;
+    }
+
+    if (!silentOnSuccess) {
+        QMessageBox::information(NULL, "Validation", "JSON is valid!");
+    }
+
+    return true;
+}
+
+void DocumentTextEditor::onQueryTextChanged()
+{
+    _queryText->clearIndicatorRange(0, 0, _queryText->lines(), 40, 0);
+}
+
+void DocumentTextEditor::onValidateButtonClicked()
+{
+    validate(false);
+}
+
 /*
 ** Configure QsciScintilla query widget
 */
@@ -71,7 +130,6 @@ void DocumentTextEditor::_configureQueryText()
     QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
     javaScriptLexer->setFont(_textFont);
 
-//    _queryText->setFixedHeight(23);
     _queryText->setAutoIndent(true);
     _queryText->setIndentationsUseTabs(false);
     _queryText->setIndentationWidth(4);
@@ -88,14 +146,7 @@ void DocumentTextEditor::_configureQueryText()
     _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
     _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-
-    //_queryText->SendScintilla(QsciScintilla::SCI_SETFONTQUALITY, QsciScintilla::SC_EFF_QUALITY_LCD_OPTIMIZED);
-    //_queryText->SendScintilla (QsciScintillaBase::SCI_SETKEYWORDS, "db");
-
     _queryText->setStyleSheet("QFrame { background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
-//    connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
-//    connect(_queryText, SIGNAL(textChanged()), SLOT(onTextChanged()));
-//    connect(_queryText, SIGNAL(cursorPositionChanged(int,int)), SLOT(onCursorPositionChanged(int,int)));
 }
 
 QFont DocumentTextEditor::chooseTextFont()

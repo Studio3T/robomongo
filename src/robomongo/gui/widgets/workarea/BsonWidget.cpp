@@ -7,9 +7,10 @@
 
 using namespace Robomongo;
 
-BsonWidget::BsonWidget(QWidget *parent) : QWidget(parent)
+BsonWidget::BsonWidget(MongoShell *shell, QWidget *parent) : QWidget(parent),
+    _shell(shell)
 {
-    _bsonTree = new BsonTreeWidget;
+    _bsonTree = new BsonTreeWidget(_shell);
 
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->setSpacing(0);
@@ -18,7 +19,7 @@ BsonWidget::BsonWidget(QWidget *parent) : QWidget(parent)
 	setLayout(hlayout);
 }
 
-void BsonWidget::setDocuments(const QList<MongoDocumentPtr> &documents)
+void BsonWidget::setDocuments(const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo)
 {
-	_bsonTree->setDocuments(documents);
+    _bsonTree->setDocuments(documents, queryInfo);
 }

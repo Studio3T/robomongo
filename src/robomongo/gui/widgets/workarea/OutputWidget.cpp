@@ -65,9 +65,9 @@ void OutputWidget::present(const QList<MongoShellResult> &results)
         OutputItemContentWidget *output = NULL;
 
         if (shellResult.documents().count() > 0) {
-            output = new OutputItemContentWidget(shellResult.documents());
+            output = new OutputItemContentWidget(_shell, shellResult.documents(), shellResult.queryInfo());
         } else {
-            output = new OutputItemContentWidget(shellResult.response());
+            output = new OutputItemContentWidget(_shell, shellResult.response());
         }
 
         OutputItemWidget *result = new OutputItemWidget(this, output, shellResult.queryInfo());

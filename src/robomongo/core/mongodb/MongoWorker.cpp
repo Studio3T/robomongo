@@ -176,12 +176,30 @@ void MongoWorker::handle(InsertDocumentRequest *event)
     try {
         boost::scoped_ptr<MongoClient> client(getClient());
 
-        client->insertDocument(event->obj(), event->database(), event->collection());
+        if (event->overwrite())
+            client->saveDocument(event->obj(), event->database(), event->collection());
+        else
+            client->insertDocument(event->obj(), event->database(), event->collection());
+
         client->done();
 
         reply(event->sender(), new InsertDocumentResponse(this));
     } catch(DBException &ex) {
         reply(event->sender(), new InsertDocumentResponse(this, EventError("Unable to insert document.")));
+    }
+}
+
+void MongoWorker::handle(RemoveDocumentRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+
+        client->removeDocuments(event->database(), event->collection(), event->query(), event->justOne());
+        client->done();
+
+        reply(event->sender(), new RemoveDocumentResponse(this));
+    } catch(DBException &ex) {
+        reply(event->sender(), new RemoveDocumentResponse(this, EventError("Unable to remove documents.")));
     }
 }
 

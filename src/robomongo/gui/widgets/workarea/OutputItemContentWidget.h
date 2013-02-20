@@ -3,6 +3,7 @@
 #include <QStackedWidget>
 
 #include "robomongo/core/Core.h"
+#include "robomongo/core/domain/MongoQueryInfo.h"
 
 namespace Robomongo
 {
@@ -15,8 +16,8 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        OutputItemContentWidget(const QString &text);
-        OutputItemContentWidget(const QList<MongoDocumentPtr> &documents);
+        OutputItemContentWidget(MongoShell *shell, const QString &text);
+        OutputItemContentWidget(MongoShell *shell, const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo);
         ~OutputItemContentWidget();
 
         void update(const QString &text);
@@ -49,9 +50,12 @@ namespace Robomongo
 
         QString _text;
         QList<MongoDocumentPtr> _documents;
+        MongoQueryInfo _queryInfo;
 
         QStackedWidget *_stack;
         JsonPrepareThread *_thread;
+
+        MongoShell *_shell;
 
         bool _sourceIsText; // if false - source is documents
 

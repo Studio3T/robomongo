@@ -41,6 +41,26 @@ void MongoClient::insertDocument(const mongo::BSONObj &obj, const QString &db, c
     _dbclient->insert(ns.toString().toStdString(), obj);
 }
 
+void MongoClient::saveDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
+{
+    MongoNamespace ns(db, collection);
+
+    mongo::BSONElement id = obj.getField("_id");
+    mongo::BSONObjBuilder builder;
+    builder.append(id);
+    mongo::BSONObj bsonQuery = builder.obj();
+    mongo::Query query(bsonQuery);
+
+    _dbclient->update(ns.toString().toStdString(), query, obj, true, false);
+    //_dbclient->save(ns.toString().toStdString(), obj);
+}
+
+void MongoClient::removeDocuments(const QString &db, const QString &collection, mongo::Query query, bool justOne /*= true*/)
+{
+    MongoNamespace ns(db, collection);
+    _dbclient->remove(ns.toString().toStdString(), query, justOne);
+}
+
 QList<MongoDocumentPtr> MongoClient::query(const MongoQueryInfo &info)
 {
     MongoNamespace ns(info.databaseName, info.collectionName);

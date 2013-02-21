@@ -32,6 +32,7 @@ namespace Robomongo
         void onDeleteDocument();
         void onEditDocument();
         void onViewDocument();
+        void onInsertDocument();
         void handle(InsertDocumentResponse *event);
 
     private:
@@ -45,6 +46,7 @@ namespace Robomongo
         QAction *_deleteDocumentAction;
         QAction *_editDocumentAction;
         QAction *_viewDocumentAction;
+        QAction *_insertDocumentAction;
 
         QList<MongoDocumentPtr> _documents;
         QMenu *_documentContextMenu;

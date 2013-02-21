@@ -48,7 +48,8 @@ void EventBus::publish(Event *event)
         }
     }
 
-    sendEvent(dis, new EventWrapper(event, theReceivers));
+    if (dis)
+        sendEvent(dis, new EventWrapper(event, theReceivers));
 }
 
 void EventBus::send(QObject *receiver, Event *event)

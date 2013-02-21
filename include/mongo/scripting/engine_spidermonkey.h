@@ -22,7 +22,7 @@
 // START inc hacking
 
 #ifdef WIN32
-#include <third_party/js-1.7/jstypes.h>
+#include <js/jstypes.h>
 #undef JS_PUBLIC_API
 #undef JS_PUBLIC_DATA
 #define JS_PUBLIC_API(t)    t __cdecl

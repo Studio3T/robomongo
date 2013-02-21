@@ -1,6 +1,7 @@
 #include "robomongo/core/engine/JsonBuilder.h"
 
 #include "mongo/util/base64.h"
+#include "robomongo/shell/db/ptimeutil.h"
 
 using namespace Robomongo;
 using namespace mongo;
@@ -15,26 +16,37 @@ std::string JsonBuilder::jsonString(BSONObj &obj, JsonStringFormat format, int p
     if ( obj.isEmpty() ) return "{}";
 
     StringBuilder s;
-    s << "{ ";
+    s << "{";
     BSONObjIterator i(obj);
     BSONElement e = i.next();
     if ( !e.eoo() )
         while ( 1 ) {
-            s << jsonString(e, format, true, pretty?pretty+1:0 );
-            e = i.next();
-            if ( e.eoo() )
-                break;
-            s << ",";
             if ( pretty ) {
                 s << '\n';
                 for( int x = 0; x < pretty; x++ )
-                    s << "  ";
+                    s << "    ";
             }
             else {
                 s << " ";
             }
+            s << jsonString(e, format, true, pretty?pretty+1:0 );
+            e = i.next();
+
+            if (e.eoo()) {
+                s << '\n';
+                for( int x = 0; x < pretty - 1; x++ )
+                    s << "    ";
+                s << "}";
+                break;
+            }
+
+            s << ",";
+
+/*            if ( e.eoo() )
+                break;
+            s << ","; */
         }
-    s << " }";
+    //s << "\n}";
     return s.str();
 }
 
@@ -101,7 +113,7 @@ string JsonBuilder::jsonString(BSONElement &elem, JsonStringFormat format, bool 
                 if( pretty ) {
                     s << '\n';
                     for( int x = 0; x < pretty; x++ )
-                        s << "  ";
+                        s << "    ";
                 }
 
                 if (strtol(e.fieldName(), 0, 10) > count) {
@@ -112,12 +124,17 @@ string JsonBuilder::jsonString(BSONElement &elem, JsonStringFormat format, bool 
                     e = i.next();
                 }
                 count++;
-                if ( e.eoo() )
+                if ( e.eoo() ) {
+                    s << '\n';
+                    for( int x = 0; x < pretty - 1; x++ )
+                        s << "    ";
+                    s << "]";
                     break;
+                }
                 s << ", ";
             }
         }
-        s << " ]";
+        //s << " ]";
         break;
     }
     case DBRef: {
@@ -138,14 +155,14 @@ string JsonBuilder::jsonString(BSONElement &elem, JsonStringFormat format, bool 
     }
     case jstOID:
         if ( format == TenGen ) {
-            s << "ObjectId( ";
+            s << "ObjectId(";
         }
         else {
             s << "{ \"$oid\" : ";
         }
         s << '"' << elem.__oid() << '"';
         if ( format == TenGen ) {
-            s << " )";
+            s << ")";
         }
         else {
             s << " }";
@@ -168,20 +185,29 @@ string JsonBuilder::jsonString(BSONElement &elem, JsonStringFormat format, bool 
         if ( format == Strict )
             s << "{ \"$date\" : ";
         else
-            s << "Date( ";
+            s << "ISODate(";
         if( pretty ) {
             Date_t d = elem.date();
-            if( d == 0 ) s << '0';
+
+            long long ms = (long long) d.millis;
+            boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
+            boost::posix_time::time_duration diff = boost::posix_time::millisec(ms);
+            boost::posix_time::ptime time = epoch + diff;
+            std::string timestr = miutil::isotimeString(time, true, true);
+            s << '"' << timestr << '"';
+
+/*            if( d == 0 ) s << '0';
             else
                 //P s << '"' << elem.date().toString() << '"';
-                s << '"' << elem.date().millis << '"';
+                s << '"' << elem.date().millis << '"';*/
+
         }
         else
             s << elem.date();
         if ( format == Strict )
             s << " }";
         else
-            s << " )";
+            s << ")";
         break;
     case RegEx:
         if ( format == Strict ) {
@@ -218,7 +244,12 @@ string JsonBuilder::jsonString(BSONElement &elem, JsonStringFormat format, bool 
         break;
 
     case Timestamp:
-        s << "{ \"t\" : " << elem.timestampTime() << " , \"i\" : " << elem.timestampInc() << " }";
+        if ( format == TenGen ) {
+            s << "Timestamp(" << ( elem.timestampTime() / 1000 ) << ", " << elem.timestampInc() << ")";
+        }
+        else {
+            s << "{ \"$timestamp\" : { \"t\" : " << ( elem.timestampTime() / 1000 ) << ", \"i\" : " << elem.timestampInc() << " } }";
+        }
         break;
 
     case MinKey:

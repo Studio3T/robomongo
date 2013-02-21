@@ -41,6 +41,9 @@ BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) : QTreeWidget
     _viewDocumentAction = new QAction("View", this);
     connect(_viewDocumentAction, SIGNAL(triggered()), SLOT(onViewDocument()));
 
+    _insertDocumentAction = new QAction("Insert", this);
+    connect(_insertDocumentAction, SIGNAL(triggered()), SLOT(onInsertDocument()));
+
 /*    _documentContextMenu = new QMenu(this);
     _documentContextMenu->addAction(_editDocumentAction);
     _documentContextMenu->addAction(_viewDocumentAction);
@@ -182,16 +185,17 @@ QIcon BsonTreeWidget::getIcon(MongoElementPtr element)
 void BsonTreeWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QTreeWidgetItem *item = itemAt(event->pos());
-    if (!item)
-        return;
+
+    bool isEditable = _queryInfo.isNull ? false : true;
+    bool onItem = item ? true : false;
 
     QMenu menu(this);
-    if (!_queryInfo.isNull)
+    if (isEditable)
         menu.addAction(_editDocumentAction);
 
     menu.addAction(_viewDocumentAction);
 
-    if (!_queryInfo.isNull) {
+    if (isEditable) {
         menu.addSeparator();
         menu.addAction(_deleteDocumentAction);
     }
@@ -296,6 +300,10 @@ void BsonTreeWidget::onViewDocument()
 
     editor->setWindowTitle("View Document");
     editor->show();
+}
+
+void BsonTreeWidget::onInsertDocument()
+{
 }
 
 void BsonTreeWidget::handle(InsertDocumentResponse *event)

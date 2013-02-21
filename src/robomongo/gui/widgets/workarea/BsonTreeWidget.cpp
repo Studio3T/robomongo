@@ -223,7 +223,7 @@ void BsonTreeWidget::onDeleteDocument()
 
     if (id.eoo()) {
         QMessageBox::warning(this, "Cannot delete", "Selected document doesn't have _id field. \n"
-                                   "Maybe this is a system document that should be managed in special way?");
+                                   "Maybe this is a system document that should be managed in a special way?");
         return;
     }
 

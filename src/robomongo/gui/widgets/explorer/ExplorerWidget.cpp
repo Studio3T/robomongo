@@ -129,6 +129,9 @@ void ExplorerWidget::decreaseProgress()
 {
     --_progress;
 
+    if (_progress < 0)
+        _progress = 0;
+
     if (!_progress)
         _progressLabel->hide();
 }

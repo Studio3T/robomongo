@@ -16,7 +16,7 @@ SOURCES += \
     scripting/sm_db.cpp \
     scripting/engine_spidermonkey.cpp \
     scripting/engine.cpp \
-    util/text.cpp \
+    #util/text.cpp \
     mongo.cpp \
     util/version.cpp \
     util/processinfo.cpp \

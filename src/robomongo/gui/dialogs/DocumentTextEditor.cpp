@@ -15,11 +15,12 @@
 using namespace Robomongo;
 
 DocumentTextEditor::DocumentTextEditor(const QString &server, const QString &database, const QString &collection,
-                                       const QString &json, QWidget *parent) :
-    QDialog(parent)
+                                       const QString &json, bool readonly /* = false */, QWidget *parent) :
+    QDialog(parent),
+    _readonly(readonly)
 {
-    setMinimumWidth(600);
-    setMinimumHeight(450);
+    setMinimumWidth(700);
+    setMinimumHeight(550);
 
     Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), collection);
     Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), database);
@@ -55,10 +56,17 @@ DocumentTextEditor::DocumentTextEditor(const QString &server, const QString &dat
     bottomlayout->addWidget(cancel, 0, Qt::AlignRight);
 
     QVBoxLayout *layout = new QVBoxLayout();
-    layout->addLayout(hlayout);
+
+    // show top bar only if we have info for it
+    if (!(server.isEmpty() && database.isEmpty() && collection.isEmpty()))
+        layout->addLayout(hlayout);
+
     layout->addWidget(_queryText);
     layout->addLayout(bottomlayout);
     setLayout(layout);
+
+    if (_readonly)
+        save->hide();
 }
 
 QString DocumentTextEditor::jsonText() const
@@ -107,6 +115,8 @@ bool DocumentTextEditor::validate(bool silentOnSuccess /* = true */)
 
     if (!silentOnSuccess) {
         QMessageBox::information(NULL, "Validation", "JSON is valid!");
+        _queryText->setFocus();
+        activateWindow();
     }
 
     return true;

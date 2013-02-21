@@ -12,12 +12,15 @@
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/EventBus.h"
+#include "robomongo/core/events/MongoEvents.h"
 
 using namespace Robomongo;
 using namespace mongo;
 
 BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) : QTreeWidget(parent),
-    _shell(shell)
+    _shell(shell),
+    _bus(AppRegistry::instance().bus())
 {
 	QStringList colums;
 	colums << "Key" << "Value" << "Type";
@@ -29,15 +32,20 @@ BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) : QTreeWidget
     setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::DoubleClicked);
     setContextMenuPolicy(Qt::DefaultContextMenu);
 
-    QAction *deleteDocumentAction = new QAction("Delete Document", this);
-    connect(deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument()));
+    _deleteDocumentAction = new QAction("Delete", this);
+    connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument()));
 
-    QAction *editDocumentAction = new QAction("Edit Document", this);
-    connect(editDocumentAction, SIGNAL(triggered()), SLOT(onEditDocument()));
+    _editDocumentAction = new QAction("Edit", this);
+    connect(_editDocumentAction, SIGNAL(triggered()), SLOT(onEditDocument()));
 
-    _documentContextMenu = new QMenu(this);
-    _documentContextMenu->addAction(deleteDocumentAction);
-    _documentContextMenu->addAction(editDocumentAction);
+    _viewDocumentAction = new QAction("View", this);
+    connect(_viewDocumentAction, SIGNAL(triggered()), SLOT(onViewDocument()));
+
+/*    _documentContextMenu = new QMenu(this);
+    _documentContextMenu->addAction(_editDocumentAction);
+    _documentContextMenu->addAction(_viewDocumentAction);
+    _documentContextMenu->addSeparator();
+    _documentContextMenu->addAction(_deleteDocumentAction);*/
 
     setStyleSheet(
         "QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }"
@@ -177,12 +185,23 @@ void BsonTreeWidget::contextMenuEvent(QContextMenuEvent *event)
     if (!item)
         return;
 
+    QMenu menu(this);
+    if (!_queryInfo.isNull)
+        menu.addAction(_editDocumentAction);
+
+    menu.addAction(_viewDocumentAction);
+
+    if (!_queryInfo.isNull) {
+        menu.addSeparator();
+        menu.addAction(_deleteDocumentAction);
+    }
+
     QPoint menuPoint = mapToGlobal(event->pos());
     menuPoint.setY(menuPoint.y() + header()->height());
 
     BsonTreeItem *documentItem = dynamic_cast<BsonTreeItem *>(item);
     if (documentItem) {
-        _documentContextMenu->exec(menuPoint);
+        menu.exec(menuPoint);
         return;
     }
 }
@@ -249,9 +268,40 @@ void BsonTreeWidget::onEditDocument()
 
     if (result == QDialog::Accepted) {
         mongo::BSONObj obj = editor.bsonObj();
+        _bus->subscribe(this, InsertDocumentResponse::Type);
         _shell->server()->saveDocument(obj, _queryInfo.databaseName, _queryInfo.collectionName);
-        _shell->query(0, _queryInfo);
     }
+}
+
+void BsonTreeWidget::onViewDocument()
+{
+    BsonTreeItem *documentItem = selectedBsonTreeItem();
+    if (!documentItem)
+        return;
+
+    mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
+
+    JsonBuilder b;
+    std::string str = b.jsonString(obj, mongo::TenGen, 1);
+    QString json = QString::fromUtf8(str.data());
+
+    QString server = _queryInfo.isNull ? "" : _queryInfo.serverAddress;
+    QString database = _queryInfo.isNull ? "" : _queryInfo.databaseName;
+    QString collection = _queryInfo.isNull ? "" : _queryInfo.collectionName;
+
+    DocumentTextEditor *editor = new DocumentTextEditor(server,
+                              database,
+                              collection,
+                              json, true, this);
+
+    editor->setWindowTitle("View Document");
+    editor->show();
+}
+
+void BsonTreeWidget::handle(InsertDocumentResponse *event)
+{
+    _bus->unsubscibe(this);
+    _shell->query(0, _queryInfo);
 }
 
 /**
@@ -274,4 +324,18 @@ BsonTreeItem *BsonTreeWidget::selectedBsonTreeItem()
         return NULL;
 
     return documentItem;
+}
+
+QString BsonTreeWidget::selectedJson()
+{
+    BsonTreeItem *documentItem = selectedBsonTreeItem();
+    if (!documentItem)
+        return "";
+
+    mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
+
+    JsonBuilder b;
+    std::string str = b.jsonString(obj, mongo::TenGen, 1);
+    QString json = QString::fromUtf8(str.data());
+    return json;
 }

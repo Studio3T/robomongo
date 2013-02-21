@@ -15,7 +15,7 @@ BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr elemen
 
 	setText(0, buildFieldName());
     setForeground(2, GuiRegistry::instance().typeBrush());
-    setFlags(flags() | Qt::ItemIsEditable);
+    //setFlags(flags() | Qt::ItemIsEditable);
 
 	switch (element->bsonElement().type())
     {

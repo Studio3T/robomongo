@@ -29,7 +29,8 @@ BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) : QTreeWidget
 	header()->setResizeMode(1, QHeaderView::Stretch);
 	header()->setResizeMode(2, QHeaderView::Stretch);
 	setIndentation(15);	
-    setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::DoubleClicked);
+
+    //setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::DoubleClicked);
     setContextMenuPolicy(Qt::DefaultContextMenu);
 
     _deleteDocumentAction = new QAction("Delete", this);

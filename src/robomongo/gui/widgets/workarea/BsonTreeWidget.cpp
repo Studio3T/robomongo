@@ -220,6 +220,13 @@ void BsonTreeWidget::onDeleteDocument()
     mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
 
     mongo::BSONElement id = obj.getField("_id");
+
+    if (id.eoo()) {
+        QMessageBox::warning(this, "Cannot delete", "Selected document doesn't have _id field. \n"
+                                   "Maybe this is a system document that should be managed in special way?");
+        return;
+    }
+
     mongo::BSONObjBuilder builder;
     builder.append(id);
     mongo::BSONObj bsonQuery = builder.obj();

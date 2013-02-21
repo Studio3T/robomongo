@@ -185,29 +185,21 @@ QIcon BsonTreeWidget::getIcon(MongoElementPtr element)
 void BsonTreeWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     QTreeWidgetItem *item = itemAt(event->pos());
+    BsonTreeItem *documentItem = dynamic_cast<BsonTreeItem *>(item);
 
     bool isEditable = _queryInfo.isNull ? false : true;
-    bool onItem = item ? true : false;
+    bool onItem = documentItem ? true : false;
 
     QMenu menu(this);
-    if (isEditable)
-        menu.addAction(_editDocumentAction);
-
-    menu.addAction(_viewDocumentAction);
-
-    if (isEditable) {
-        menu.addSeparator();
-        menu.addAction(_deleteDocumentAction);
-    }
+    if (onItem && isEditable) menu.addAction(_editDocumentAction);
+    if (onItem)               menu.addAction(_viewDocumentAction);
+    if (isEditable)           menu.addAction(_insertDocumentAction);
+    if (onItem && isEditable) menu.addSeparator();
+    if (onItem && isEditable) menu.addAction(_deleteDocumentAction);
 
     QPoint menuPoint = mapToGlobal(event->pos());
     menuPoint.setY(menuPoint.y() + header()->height());
-
-    BsonTreeItem *documentItem = dynamic_cast<BsonTreeItem *>(item);
-    if (documentItem) {
-        menu.exec(menuPoint);
-        return;
-    }
+    menu.exec(menuPoint);
 }
 
 void BsonTreeWidget::resizeEvent(QResizeEvent *event)
@@ -304,6 +296,24 @@ void BsonTreeWidget::onViewDocument()
 
 void BsonTreeWidget::onInsertDocument()
 {
+    if (_queryInfo.isNull)
+        return;
+
+    DocumentTextEditor editor(_queryInfo.serverAddress,
+                              _queryInfo.databaseName,
+                              _queryInfo.collectionName,
+                              "{\n    \n}");
+
+    editor.setCursorPosition(1, 4);
+    editor.setWindowTitle("Insert Document");
+    int result = editor.exec();
+    activateWindow();
+
+    if (result == QDialog::Accepted) {
+        mongo::BSONObj obj = editor.bsonObj();
+        _shell->server()->insertDocument(obj, _queryInfo.databaseName, _queryInfo.collectionName);
+        _shell->query(0, _queryInfo);
+    }
 }
 
 void BsonTreeWidget::handle(InsertDocumentResponse *event)

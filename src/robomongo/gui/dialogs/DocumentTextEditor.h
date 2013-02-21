@@ -14,7 +14,7 @@ namespace Robomongo
 
     public:
         explicit DocumentTextEditor(const QString &server, const QString &database, const QString &collection,
-                                    const QString &json, QWidget *parent = 0);
+                                    const QString &json, bool readonly = false, QWidget *parent = 0);
 
         QString jsonText() const;
 
@@ -38,6 +38,7 @@ namespace Robomongo
         QFont chooseTextFont();
         RoboScintilla *_queryText;
         QFont _textFont;
+        bool _readonly;
         mongo::BSONObj _obj;
     };
 }

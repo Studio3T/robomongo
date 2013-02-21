@@ -110,3 +110,8 @@ void MongoServer::handle(LoadDatabaseNamesResponse *event)
 
     _bus->publish(new DatabaseListLoadedEvent(this, _databases));
 }
+
+void MongoServer::handle(InsertDocumentResponse *event)
+{
+    _bus->publish(new InsertDocumentResponse(event->sender(), event->error()));
+}

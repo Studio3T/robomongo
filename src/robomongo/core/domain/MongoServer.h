@@ -16,6 +16,7 @@ namespace Robomongo
     class MongoDatabase;
     class EstablishConnectionResponse;
     class LoadDatabaseNamesResponse;
+    class InsertDocumentResponse;
 
     /**
      * @brief MongoServer represents active connection to MongoDB server.
@@ -66,6 +67,7 @@ namespace Robomongo
     protected slots:
         void handle(EstablishConnectionResponse *event);
         void handle(LoadDatabaseNamesResponse *event);
+        void handle(InsertDocumentResponse *event);
 
     private:
         void clearDatabases();

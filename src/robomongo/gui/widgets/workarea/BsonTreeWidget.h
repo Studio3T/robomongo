@@ -8,6 +8,7 @@
 namespace Robomongo
 {
     class BsonTreeItem;
+    class InsertDocumentResponse;
 
     class BsonTreeWidget : public QTreeWidget
     {
@@ -30,6 +31,8 @@ namespace Robomongo
         void resizeEvent(QResizeEvent *event);
         void onDeleteDocument();
         void onEditDocument();
+        void onViewDocument();
+        void handle(InsertDocumentResponse *event);
 
     private:
 
@@ -37,10 +40,16 @@ namespace Robomongo
          * @returns selected BsonTreeItem, or NULL otherwise
          */
         BsonTreeItem *selectedBsonTreeItem();
+        QString selectedJson();
+
+        QAction *_deleteDocumentAction;
+        QAction *_editDocumentAction;
+        QAction *_viewDocumentAction;
 
         QList<MongoDocumentPtr> _documents;
         QMenu *_documentContextMenu;
         MongoQueryInfo _queryInfo;
         MongoShell *_shell;
+        EventBus *_bus;
     };
 }

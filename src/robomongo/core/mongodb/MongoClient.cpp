@@ -65,9 +65,11 @@ QList<MongoDocumentPtr> MongoClient::query(const MongoQueryInfo &info)
 {
     MongoNamespace ns(info.databaseName, info.collectionName);
 
+    int limit = (info.limit == 0 || info.limit > 51) ? 50 : info.limit;
+
     QList<MongoDocumentPtr> docs;
     auto_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
-        ns.toString().toStdString(), info.query, info.limit, info.skip,
+        ns.toString().toStdString(), info.query, limit, info.skip,
         info.fields.nFields() ? &info.fields : 0, info.options, info.batchSize);
 
     while (cursor->more()) {

@@ -1,5 +1,6 @@
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 
+#include <QtGui>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
@@ -30,9 +31,11 @@ DocumentTextEditor::DocumentTextEditor(const QString &server, const QString &dat
     connect(cancel, SIGNAL(clicked()), this, SLOT(close()));
 
     QPushButton *save = new QPushButton("Save");
+    save->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
     connect(save, SIGNAL(clicked()), this, SLOT(accept()));
 
     QPushButton *validate = new QPushButton("Validate");
+    validate->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
     connect(validate, SIGNAL(clicked()), this, SLOT(onValidateButtonClicked()));
 
     _queryText = new RoboScintilla;

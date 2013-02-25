@@ -2,6 +2,7 @@
 #include "robomongo/core/engine/ScriptEngine.h"
 
 #include <QStringList>
+#include <QRegExp>
 #include <QTextStream>
 #include <QFile>
 #include <QElapsedTimer>
@@ -15,6 +16,7 @@
 #include <mongo/shell/shell_utils.h>
 #include <mongo/base/string_data.h>
 #include <mongo/client/dbclient.h>
+#include <pcre/pcrecpp.h>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
@@ -90,8 +92,28 @@ namespace Robomongo
         bool res = _scope->exec(esprima.toStdString(), "(esprima)", true, true, true);
     }
 
-    MongoShellExecResult ScriptEngine::exec(const QString &script, const QString &dbName)
+    MongoShellExecResult ScriptEngine::exec(const QString &originalScript, const QString &dbName)
     {
+        /*
+         * Replace all commands ('show dbs', 'use db' etc.) with call
+         * to shellHelper('show', 'dbs') and so on.
+         */
+        QByteArray bytes = originalScript.toUtf8();
+        std::string stdstr(bytes.constData(), bytes.size());
+
+        pcrecpp::RE re("^(\\w+) (\\w+)$",
+            pcrecpp::RE_Options()
+               .set_utf8(true)
+               .set_caseless(true)
+               .set_multiline(true));
+
+        re.GlobalReplace("shellHelper('\\1', '\\2');", &stdstr);
+        QString script = QString::fromUtf8(stdstr.c_str());
+
+        /*
+         * Statementize (i.e. extract all JavaScript statements from script) and
+         * execute each statement one by one
+         */
         QStringList statements;
         QString error;
         bool result = statementize(script, statements, error);

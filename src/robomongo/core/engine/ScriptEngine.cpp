@@ -102,10 +102,7 @@ namespace Robomongo
         std::string stdstr(bytes.constData(), bytes.size());
 
         pcrecpp::RE re("^(\\w+) (\\w+)$",
-            pcrecpp::RE_Options()
-               .set_utf8(true)
-               .set_caseless(true)
-               .set_multiline(true));
+            pcrecpp::RE_Options(PCRE_CASELESS|PCRE_MULTILINE|PCRE_NEWLINE_ANYCRLF));
 
         re.GlobalReplace("shellHelper('\\1', '\\2');", &stdstr);
         QString script = QString::fromUtf8(stdstr.c_str());

@@ -39,6 +39,7 @@ namespace Robomongo
         void ui_refreshCollections();
         void ui_disconnectServer();
         void ui_refreshServer();
+        void ui_showLog();
         void ui_openShell();
         void ui_addDocument();
         void ui_removeDocument();

@@ -101,7 +101,7 @@ namespace Robomongo
         QByteArray bytes = originalScript.toUtf8();
         std::string stdstr(bytes.constData(), bytes.size());
 
-        pcrecpp::RE re("^(\\w+) (\\w+)$",
+        pcrecpp::RE re("^(show|use|set) (\\w+)$",
             pcrecpp::RE_Options(PCRE_CASELESS|PCRE_MULTILINE|PCRE_NEWLINE_ANYCRLF));
 
         re.GlobalReplace("shellHelper('\\1', '\\2');", &stdstr);

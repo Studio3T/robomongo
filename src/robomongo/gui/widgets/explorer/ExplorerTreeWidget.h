@@ -8,6 +8,7 @@ namespace Robomongo
     class ExplorerCollectionTreeItem;
     class ExplorerDatabaseTreeItem;
     class ExplorerServerTreeItem;
+    class ExplorerDatabaseCategoryTreeItem;
 
     class ExplorerTreeWidget : public QTreeWidget
     {
@@ -23,6 +24,7 @@ namespace Robomongo
         ExplorerServerTreeItem *selectedServerItem();
         ExplorerCollectionTreeItem *selectedCollectionItem();
         ExplorerDatabaseTreeItem *selectedDatabaseItem();
+        ExplorerDatabaseCategoryTreeItem *selectedDatabaseCategoryItem();
         void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
         void openCurrentDatabaseShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
         void openCurrentServerShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
@@ -33,6 +35,8 @@ namespace Robomongo
         void openShellActionTriggered();
 
     protected slots:
+        void ui_refreshDatabase();
+        void ui_refreshCollections();
         void ui_disconnectServer();
         void ui_refreshServer();
         void ui_openShell();
@@ -45,6 +49,7 @@ namespace Robomongo
 
         void ui_updateDocument();
         void ui_collectionStatistics();
+        void ui_dropCollection();
         void ui_storageSize();
         void ui_totalIndexSize();
         void ui_totalSize();
@@ -66,5 +71,6 @@ namespace Robomongo
         QMenu *_serverContextMenu;
         QMenu *_databaseContextMenu;
         QMenu *_collectionContextMenu;
+        QMenu *_collectionCategoryContextMenu;
     };
 }

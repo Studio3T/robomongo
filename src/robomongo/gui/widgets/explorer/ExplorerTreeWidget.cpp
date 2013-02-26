@@ -13,6 +13,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 
 #include "robomongo/shell/db/json.h"
@@ -45,8 +46,12 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *serverVersion = new QAction("MongoDB Version", this);
     connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion()));
 
+    QAction *refreshServer = new QAction("Refresh", this);
+    connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer()));
+
     _serverContextMenu = new QMenu(this);
     _serverContextMenu->addAction(openShellAction);
+    _serverContextMenu->addAction(refreshServer);
     _serverContextMenu->addSeparator();
     _serverContextMenu->addAction(serverStatus);
     _serverContextMenu->addAction(serverHostInfo);
@@ -70,8 +75,12 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *dbRepair = new QAction("Repair", this);
     connect(dbRepair, SIGNAL(triggered()), SLOT(ui_dbRepair()));
 
+    QAction *refreshDatabase = new QAction("Refresh", this);
+    connect(refreshDatabase, SIGNAL(triggered()), SLOT(ui_refreshDatabase()));
+
     _databaseContextMenu = new QMenu(this);
     _databaseContextMenu->addAction(openDbShellAction);
+    _databaseContextMenu->addAction(refreshDatabase);
     _databaseContextMenu->addAction(dbRepair);
     _databaseContextMenu->addSeparator();
     _databaseContextMenu->addAction(dbStats);
@@ -115,6 +124,9 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *shardDistribution = new QAction("Shard Distribution", this);
     connect(shardDistribution, SIGNAL(triggered()), SLOT(ui_shardDistribution()));
 
+    QAction *dropCollection = new QAction("Drop Collection", this);
+    connect(dropCollection, SIGNAL(triggered()), SLOT(ui_dropCollection()));
+
     _collectionContextMenu = new QMenu(this);
     _collectionContextMenu->addAction(addDocument);
     _collectionContextMenu->addAction(updateDocument);
@@ -125,9 +137,17 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     _collectionContextMenu->addAction(reIndex);
     _collectionContextMenu->addSeparator();
     _collectionContextMenu->addAction(collectionStats);
+    _collectionContextMenu->addAction(dropCollection);
     _collectionContextMenu->addSeparator();
     _collectionContextMenu->addAction(shardVersion);
     _collectionContextMenu->addAction(shardDistribution);
+
+
+    QAction *refreshCollections = new QAction("Refresh", this);
+    connect(refreshCollections, SIGNAL(triggered()), SLOT(ui_refreshCollections()));
+
+    _collectionCategoryContextMenu = new QMenu(this);
+    _collectionCategoryContextMenu->addAction(refreshCollections);
 }
 
 void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
@@ -151,6 +171,14 @@ void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
     ExplorerDatabaseTreeItem *databaseItem = dynamic_cast<ExplorerDatabaseTreeItem *>(item);
     if (databaseItem) {
         _databaseContextMenu->exec(mapToGlobal(event->pos()));
+        return;
+    }
+
+    ExplorerDatabaseCategoryTreeItem *collectionCategoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
+    if (collectionCategoryItem) {
+        if (collectionCategoryItem->category() == Collections) {
+            _collectionCategoryContextMenu->exec(mapToGlobal(event->pos()));
+        }
         return;
     }
 }
@@ -212,6 +240,25 @@ ExplorerDatabaseTreeItem *ExplorerTreeWidget::selectedDatabaseItem()
     return dbtem;
 }
 
+ExplorerDatabaseCategoryTreeItem *ExplorerTreeWidget::selectedDatabaseCategoryItem()
+{
+    QList<QTreeWidgetItem*> items = selectedItems();
+
+    if (items.count() != 1)
+        return NULL;
+
+    QTreeWidgetItem *item = items[0];
+
+    if (!item)
+        return NULL;
+
+    ExplorerDatabaseCategoryTreeItem *categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
+    if (!categoryItem)
+        return NULL;
+
+    return categoryItem;
+}
+
 void ExplorerTreeWidget::openCurrentCollectionShell(const QString &script, bool execute,
                                                     const CursorPosition &cursor)
 {
@@ -259,7 +306,11 @@ void ExplorerTreeWidget::ui_disconnectServer()
 
 void ExplorerTreeWidget::ui_refreshServer()
 {
-    emit refreshActionTriggered();
+    ExplorerServerTreeItem *serverItem = selectedServerItem();
+    if (!serverItem)
+        return;
+
+    serverItem->expand();
 }
 
 void ExplorerTreeWidget::ui_openShell()
@@ -357,6 +408,11 @@ void ExplorerTreeWidget::ui_collectionStatistics()
     openCurrentCollectionShell("db.%1.stats()");
 }
 
+void ExplorerTreeWidget::ui_dropCollection()
+{
+    openCurrentCollectionShell("db.%1.drop()", false);
+}
+
 void ExplorerTreeWidget::ui_storageSize()
 {
     openCurrentCollectionShell("db.%1.storageSize()");
@@ -420,4 +476,22 @@ void ExplorerTreeWidget::ui_serverStatus()
 void ExplorerTreeWidget::ui_serverVersion()
 {
     openCurrentServerShell("db.version()");
+}
+
+void ExplorerTreeWidget::ui_refreshDatabase()
+{
+    ExplorerDatabaseTreeItem *databaseItem = selectedDatabaseItem();
+    if (!databaseItem)
+        return;
+
+    databaseItem->expandCollections();
+}
+
+void ExplorerTreeWidget::ui_refreshCollections()
+{
+    ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
+    if (!categoryItem)
+        return;
+
+    categoryItem->databaseItem()->expandCollections();
 }

@@ -46,6 +46,9 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *serverVersion = new QAction("MongoDB Version", this);
     connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion()));
 
+    QAction *showLog = new QAction("Show Log", this);
+    connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog()));
+
     QAction *refreshServer = new QAction("Refresh", this);
     connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer()));
 
@@ -57,6 +60,7 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     _serverContextMenu->addAction(serverHostInfo);
     _serverContextMenu->addAction(serverVersion);
     _serverContextMenu->addSeparator();
+    _serverContextMenu->addAction(showLog);
     _serverContextMenu->addAction(disconnectAction);
 
     QAction *openDbShellAction = new QAction("Open Shell", this);
@@ -311,6 +315,11 @@ void ExplorerTreeWidget::ui_refreshServer()
         return;
 
     serverItem->expand();
+}
+
+void ExplorerTreeWidget::ui_showLog()
+{
+    openCurrentServerShell("show log");
 }
 
 void ExplorerTreeWidget::ui_openShell()

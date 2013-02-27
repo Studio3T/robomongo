@@ -67,7 +67,7 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     openDbShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
     connect(openDbShellAction, SIGNAL(triggered()), SLOT(ui_dbOpenShell()));
 
-    QAction *dbStats = new QAction("Statistics", this);
+    QAction *dbStats = new QAction("Database Statistics", this);
     connect(dbStats, SIGNAL(triggered()), SLOT(ui_dbStatistics()));
 
     QAction *dbDrop = new QAction("Drop Database", this);
@@ -464,7 +464,7 @@ void ExplorerTreeWidget::ui_dbCollectionsStatistics()
 
 void ExplorerTreeWidget::ui_dbRepair()
 {
-    openCurrentDatabaseShell("db.repairDatabase()");
+    openCurrentDatabaseShell("db.repairDatabase()", false);
 }
 
 void ExplorerTreeWidget::ui_dbOpenShell()

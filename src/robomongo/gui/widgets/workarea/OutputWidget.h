@@ -8,6 +8,7 @@
 #include "robomongo/gui/widgets/workarea/BsonWidget.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/gui/widgets/workarea/PagingWidget.h"
+#include "robomongo/gui/ViewMode.h"
 
 namespace Robomongo
 {
@@ -21,7 +22,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit OutputWidget(bool textMode, MongoShell *shell, QWidget *parent = 0);
+        explicit OutputWidget(ViewMode viewMode, MongoShell *shell, QWidget *parent = 0);
         ~OutputWidget();
 
         void present(const QList<MongoShellResult> &documents);
@@ -30,6 +31,7 @@ namespace Robomongo
 
         void enterTreeMode();
         void enterTextMode();
+        void enterCustomMode();
 
         void maximizePart(OutputItemWidget *result);
         void restoreSize();
@@ -46,7 +48,7 @@ namespace Robomongo
         void tryToMakeAllPartsEqualInSize();
         QSplitter *_splitter;
         ProgressBarPopup *_progressBarPopup;
-        bool _textMode;
+        ViewMode _viewMode;
         MongoShell *_shell;
     };
 }

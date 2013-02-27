@@ -32,6 +32,7 @@ namespace Robomongo
     public slots:
         void showText();
         void showTree();
+        void showCustom();
         void setTime(const QString &time);
         void setCollection(const QString &collection);
         void maximizePart();
@@ -41,6 +42,7 @@ namespace Robomongo
         QFrame *createVerticalLine();
         QPushButton *_treeButton;
         QPushButton *_textButton;
+        QPushButton *_customButton;
         QPushButton *_maxButton;
         Indicator *_collectionIndicator;
         Indicator *_timeIndicator;

@@ -39,6 +39,7 @@ namespace Robomongo
         QIcon textHighlightedIcon();
         QIcon treeIcon();
         QIcon treeHighlightedIcon();
+        QIcon customIcon();
         QIcon rotateIcon();
         QIcon visualIcon();
         QIcon folderIcon();
@@ -84,6 +85,7 @@ namespace Robomongo
         QIcon _treeHighlightedIcon;
         QIcon _textIcon;
         QIcon _textHighlightedIcon;
+        QIcon _customIcon;
         QIcon _rotateIcon;
         QIcon _visualIcon;
         QIcon _circleIcon;

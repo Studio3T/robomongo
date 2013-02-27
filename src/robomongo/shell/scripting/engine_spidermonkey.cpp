@@ -32,7 +32,48 @@
 
 #ifdef ROBOMONGO
 std::vector<mongo::BSONObj> __objects;
+std::string __type;     // type of request
+bool __finished;        // typed request is finished
 std::stringstream __logs;
+
+void robomongo_reset_type() {
+    __type == "";
+    __finished == false;
+}
+
+void robomongo_reset() {
+    __objects.clear();
+    __logs.str("");
+    robomongo_reset_type();
+}
+
+void robomongo_add_bsonobj(const mongo::BSONObj &obj) {
+    if (__finished) {
+        robomongo_reset_type();
+    }
+
+    __objects.push_back(obj);
+}
+
+void robomongo_begin(const std::string &type) {
+    if (__objects.size() != 0) {
+        robomongo_reset_type();
+        return;
+    }
+
+    if (__finished) {
+        robomongo_reset_type();
+        return;
+    }
+
+    __type = type;
+    __finished = false;
+}
+
+void robomongo_end() {
+    __finished = true;
+}
+
 #endif
 
 namespace mongo {
@@ -1063,7 +1104,7 @@ namespace spidermonkey {
                 }
 
                 BSONObj obj = c.toObject(argv[i]);
-                __objects.push_back(obj);
+                robomongo_add_bsonobj(obj);
             }
 
             if ( someWritten )
@@ -1080,6 +1121,28 @@ namespace spidermonkey {
         catch ( const std::exception& e ) {
             log() << "unhandled exception: " << e.what() << ", throwing Fatal Assertion" << endl;
             fassertFailed( 16280 );
+        }
+        return JS_TRUE;
+    }
+
+    JSBool robomongo_print( JSContext * cx, JSObject * obj, uintN argc, jsval *argv, jsval *rval ) {
+        try {
+            Convertor c( cx );
+
+            if (!(JSVAL_IS_STRING(argv[0]))) {
+                return JS_TRUE;
+            }
+
+            std::string type = c.toString(argv[0]);
+            if (type.empty()) {
+                robomongo_end();
+            } else {
+                robomongo_begin(type);
+            }
+        }
+        catch ( const std::exception& e ) {
+            log() << "unhandled exception: " << e.what() << ", throwing Fatal Assertion" << endl;
+            fassertFailed( 16281 );
         }
         return JS_TRUE;
     }
@@ -1142,6 +1205,7 @@ namespace spidermonkey {
 
     JSFunctionSpec globalHelpers[] = {
         { "print" , &native_print , 0 , 0 , 0 } ,
+        { "robomongoScope" , &robomongo_print , 0 , 0 , 0 } ,
         { "nativeHelper" , &native_helper , 1 , 0 , 0 } ,
         { "load" , &native_load , 1 , 0 , 0 } ,
         { "gc" , &native_gc , 1 , 0 , 0 } ,

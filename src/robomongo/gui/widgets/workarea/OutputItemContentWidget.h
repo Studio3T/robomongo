@@ -10,6 +10,7 @@ namespace Robomongo
     class RoboScintilla;
     class BsonWidget;
     class JsonPrepareThread;
+    class CollectionStatsTreeWidget;
 
     class OutputItemContentWidget : public QWidget
     {
@@ -18,6 +19,7 @@ namespace Robomongo
     public:
         OutputItemContentWidget(MongoShell *shell, const QString &text);
         OutputItemContentWidget(MongoShell *shell, const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo);
+        OutputItemContentWidget(MongoShell *shell, const QString &type, const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo);
         ~OutputItemContentWidget();
 
         void update(const QString &text);
@@ -37,6 +39,8 @@ namespace Robomongo
         void showTree();
         void showCustom();
 
+        void markUninitialized();
+
     public slots:
         void jsonPrepared();
         void jsonPartReady(const QString &json);
@@ -47,8 +51,10 @@ namespace Robomongo
 
         RoboScintilla *_log;
         BsonWidget *_bson;
+        CollectionStatsTreeWidget *_collectionStats;
 
         QString _text;
+        QString _type; // type of request
         QList<MongoDocumentPtr> _documents;
         MongoQueryInfo _queryInfo;
 

@@ -32,7 +32,7 @@ using namespace mongo;
 using namespace Robomongo;
 
 QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,
-                         const ScriptInfo &scriptInfo, bool textMode, QWidget *parent) :
+                         const ScriptInfo &scriptInfo, ViewMode viewMode, QWidget *parent) :
     QWidget(parent),
     _shell(shell),
     _tabWidget(tabWidget),
@@ -40,7 +40,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,
     _bus(AppRegistry::instance().bus()),
     _keyboard(AppRegistry::instance().keyboard()),
     _viewer(NULL),
-    _textMode(textMode)
+    _viewMode(viewMode)
 {
     setObjectName("queryWidget");
     _bus->subscribe(this, DocumentListLoadedEvent::Type, shell);
@@ -53,7 +53,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,
     _scriptWidget->setTextCursor(scriptInfo.cursor());
     _scriptWidget->installEventFilter(this);
 
-    _viewer = new OutputWidget(_textMode, _shell);
+    _viewer = new OutputWidget(_viewMode, _shell);
     _outputLabel = new QLabel();
     _outputLabel->setContentsMargins(0, 5, 0, 0);
     _outputLabel->setVisible(false);
@@ -161,6 +161,12 @@ void QueryWidget::enterTextMode()
 {
     if (_viewer)
         _viewer->enterTextMode();
+}
+
+void QueryWidget::enterCustomMode()
+{
+    if (_viewer)
+        _viewer->enterCustomMode();
 }
 
 void QueryWidget::showProgress()

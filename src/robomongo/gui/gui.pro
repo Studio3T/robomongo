@@ -40,7 +40,9 @@ SOURCES += ExampleWindow.cpp \
     widgets/workarea/OutputItemWidget.cpp \
     widgets/workarea/IndicatorLabel.cpp \
     widgets/workarea/ProgressBarPopup.cpp \
-    dialogs/DocumentTextEditor.cpp
+    dialogs/DocumentTextEditor.cpp \
+    widgets/workarea/CollectionStatsTreeWidget.cpp \
+    widgets/workarea/CollectionStatsTreeItem.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
@@ -77,6 +79,9 @@ HEADERS  += ExampleWindow.h = \
     widgets/workarea/OutputItemWidget.h \
     widgets/workarea/IndicatorLabel.h \
     widgets/workarea/ProgressBarPopup.h \
-    dialogs/DocumentTextEditor.h
+    dialogs/DocumentTextEditor.h \
+    widgets/workarea/CollectionStatsTreeWidget.h \
+    widgets/workarea/CollectionStatsTreeItem.h \
+    ViewMode.h
 
 INCLUDEPATH += $$SRC_ROOT

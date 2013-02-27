@@ -4,6 +4,7 @@
 #include <QWidget>
 
 #include "robomongo/core/Core.h"
+#include "robomongo/gui/ViewMode.h"
 
 namespace Robomongo
 {
@@ -23,13 +24,14 @@ namespace Robomongo
     public:
         MainWindow();
         void keyPressEvent(QKeyEvent *event);
-        bool textMode() const { return _textMode; }
+        ViewMode viewMode() const { return _viewMode; }
 
     public slots:
         void manageConnections();
         void toggleOrientation();
         void enterTextMode();
         void enterTreeMode();
+        void enterCustomMode();
         void executeScript();
         void toggleFullScreen2();
         void refreshConnections();
@@ -39,7 +41,7 @@ namespace Robomongo
 
     private:
         QLabel *_status;
-        bool _textMode;
+        ViewMode _viewMode;
         LogWidget *_log;
         QDockWidget *_logDock;
 

@@ -26,8 +26,6 @@ namespace Robomongo
 
     private:
 
-        QString buildNiceSizeString(int size) const;
-
         /**
          * @brief Database that contains this collection
          */

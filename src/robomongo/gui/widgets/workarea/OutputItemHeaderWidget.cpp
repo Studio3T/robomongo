@@ -42,7 +42,7 @@ OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemWidget *result, OutputI
     connect(_textButton, SIGNAL(clicked()), this, SLOT(showText()));
 
     // Custom mode button
-    _customButton = new QPushButton;
+    _customButton = new QPushButton(this);
     _customButton->hide();
     _customButton->setIcon(GuiRegistry::instance().customIcon());
     _customButton->setFixedSize(24, 24);

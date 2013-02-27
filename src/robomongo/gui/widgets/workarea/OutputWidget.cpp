@@ -76,11 +76,20 @@ void OutputWidget::present(const QList<MongoShellResult> &results)
 
         OutputItemWidget *result = new OutputItemWidget(this, output, shellResult.queryInfo());
         ViewMode viewMode = GuiRegistry::instance().mainWindow()->viewMode();
-        if (viewMode == Custom)
-            result->header()->showCustom();
-        else if (viewMode == Tree)
-            result->header()->showTree();
-        else
+
+        if (viewMode == Custom) {
+            if (output->isCustomModeSupported())
+                result->header()->showCustom();
+            else if (output->isTreeModeSupported())
+                result->header()->showTree();
+            else if (output->isTextModeSupported())
+                result->header()->showText();
+        } else if (viewMode == Tree) {
+            if (output->isTreeModeSupported())
+                result->header()->showTree();
+            else if (output->isTextModeSupported())
+                result->header()->showText();
+        } else
             result->header()->showText();
 
         double secs = shellResult.elapsedMs() / (double) 1000;

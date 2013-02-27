@@ -47,5 +47,7 @@
         <file>icons/key_16x16.png</file>
         <file>icons/progress_bar.gif</file>
         <file>icons/custom_16x16.gif</file>
+        <file>icons/custom_16x16.png</file>
+        <file>icons/custom_highlighted_16x16.png</file>
     </qresource>
 </RCC>

@@ -14,6 +14,10 @@ CollectionStatsTreeWidget::CollectionStatsTreeWidget(MongoShell *shell, QWidget 
     QStringList colums;
     colums << "Name" << "Count" << "Size" << "Storage" << "Index" << "Average Object" << "Padding";
     setHeaderLabels(colums);
+
+    setStyleSheet(
+        "QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }"
+    );
 }
 
 void CollectionStatsTreeWidget::setDocuments(const QList<MongoDocumentPtr> &documents)

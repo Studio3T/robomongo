@@ -15,6 +15,22 @@ mongo::BSONObj MongoUtils::fromjson(const QString &text)
     return obj;
 }
 
+QString MongoUtils::buildNiceSizeString(int sizeBytes)
+{
+    return buildNiceSizeString((double) sizeBytes);
+}
+
+QString MongoUtils::buildNiceSizeString(double sizeBytes)
+{
+    if (sizeBytes < 1024 * 100) {
+        double kb = ((double) sizeBytes) / 1024;
+        return QString("%1 kb").arg(kb, 2, 'f', 2);
+    }
+
+    double mb = ((double) sizeBytes) / 1024 / 1024;
+    return QString("%1 mb").arg(mb, 2, 'f', 2);
+}
+
 /*
 void print_ptime_in_ms_from_epoch(const boost::posix_time::ptime& pt)
 {

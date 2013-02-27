@@ -20,6 +20,9 @@ namespace Robomongo
          */
         static mongo::BSONObj fromjson(const QString &text);
 
+        static QString buildNiceSizeString(int sizeBytes);
+        static QString buildNiceSizeString(double sizeBytes);
+
 //        static
     };
 }

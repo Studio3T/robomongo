@@ -33,7 +33,16 @@
 
 #ifdef ROBOMONGO
 extern std::vector<mongo::BSONObj> __objects;
+extern std::string __type;     // type of request
+extern bool __finished;        // typed request is finished
 extern std::stringstream __logs;
+
+void robomongo_reset_type();
+void robomongo_reset();
+void robomongo_add_bsonobj(const mongo::BSONObj &obj);
+void robomongo_begin(const std::string &type);
+void robomongo_end();
+
 #endif
 
 // END inc hacking

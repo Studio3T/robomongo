@@ -127,6 +127,8 @@ namespace Robomongo
         {
             // clear global objects
             __objects.clear();
+            __type = "";
+            __finished = false;
             __logs.str("");
 
             QByteArray array = statement.toUtf8();
@@ -141,14 +143,15 @@ namespace Robomongo
                     qint64 elapsed = timer.elapsed();
 
                     std::string logs = __logs.str();
-
                     QString answer = QString::fromUtf8(logs.c_str());
+                    QString type = QString::fromUtf8(__type.c_str());
+
                     QVector<mongo::BSONObj> objs = QVector<mongo::BSONObj>::fromStdVector(__objects);
                     QList<mongo::BSONObj> list = QList<mongo::BSONObj>::fromVector(objs);
                     QList<MongoDocumentPtr> docs = MongoDocument::fromBsonObj(list);
 
                     if (!answer.isEmpty() || docs.count() > 0)
-                        results.append(prepareResult(answer, docs, elapsed));
+                        results.append(prepareResult(type, answer, docs, elapsed));
                 }
                 catch ( std::exception &e ) {
                     std::cout << "error:" << e.what() << endl;
@@ -198,7 +201,7 @@ namespace Robomongo
         return QStringList();
     }
 
-    MongoShellResult ScriptEngine::prepareResult(const QString &output, const QList<MongoDocumentPtr> objects, qint64 elapsedms)
+    MongoShellResult ScriptEngine::prepareResult(const QString &type, const QString &output, const QList<MongoDocumentPtr> objects, qint64 elapsedms)
     {
         char *script =
             "__robomongoQuery = false; \n"
@@ -239,10 +242,10 @@ namespace Robomongo
 
             MongoQueryInfo info = MongoQueryInfo(serverAddress, dbName, collectionName,
                                        query, fields, limit, skip, batchSize, options, special);
-            return MongoShellResult(output, objects, info, elapsedms);
+            return MongoShellResult(type, output, objects, info, elapsedms);
         }
 
-        return MongoShellResult(output, objects, MongoQueryInfo(), elapsedms);
+        return MongoShellResult(type, output, objects, MongoQueryInfo(), elapsedms);
     }
 
     MongoShellExecResult ScriptEngine::prepareExecResult(const QList<MongoShellResult> &results)

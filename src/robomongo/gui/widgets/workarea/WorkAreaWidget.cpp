@@ -55,6 +55,13 @@ void WorkAreaWidget::enterTreeMode()
         currentWidget->enterTreeMode();
 }
 
+void WorkAreaWidget::enterCustomMode()
+{
+    QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+    if (currentWidget)
+        currentWidget->enterCustomMode();
+}
+
 void WorkAreaWidget::handle(OpeningShellEvent *event)
 {
     ScriptInfo &info = event->scriptInfo;
@@ -66,7 +73,7 @@ void WorkAreaWidget::handle(OpeningShellEvent *event)
         event->shell,
         _tabWidget,
         info,
-        _mainWindow->textMode());
+        _mainWindow->viewMode());
 
     _tabWidget->addTab(queryWidget, shellName);
     _tabWidget->setCurrentIndex(_tabWidget->count() - 1);

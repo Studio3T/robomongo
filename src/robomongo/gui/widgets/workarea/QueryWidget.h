@@ -11,6 +11,7 @@
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/ScriptInfo.h"
+#include "robomongo/gui/ViewMode.h"
 
 namespace Robomongo
 {
@@ -30,7 +31,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const ScriptInfo &scriptInfo, bool textMode, QWidget *parent = NULL);
+        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const ScriptInfo &scriptInfo, ViewMode viewMode, QWidget *parent = NULL);
         ~QueryWidget() {}
 
         bool eventFilter(QObject *o, QEvent *e);
@@ -42,6 +43,7 @@ namespace Robomongo
         void duplicate();
         void enterTreeMode();
         void enterTextMode();
+        void enterCustomMode();
         void showProgress();
         void hideProgress();
 
@@ -68,7 +70,7 @@ namespace Robomongo
         ScriptWidget *_scriptWidget;
         WorkAreaTabWidget *_tabWidget;
         QLabel *_outputLabel;
-        bool _textMode;
+        ViewMode _viewMode;
 
         QList<MongoShellResult> _currentResults;
     };

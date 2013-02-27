@@ -26,6 +26,7 @@ namespace Robomongo
         void executeScript();
         void enterTextMode();
         void enterTreeMode();
+        void enterCustomMode();
 
     public slots:
         void handle(OpeningShellEvent *event);

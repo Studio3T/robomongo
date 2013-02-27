@@ -88,6 +88,14 @@ QIcon GuiRegistry::treeHighlightedIcon()
     return _treeHighlightedIcon;
 }
 
+QIcon GuiRegistry::customIcon()
+{
+    if (_customIcon.isNull())
+        _customIcon = QIcon(":/robomongo/icons/custom_16x16.gif");
+
+    return _customIcon;
+}
+
 QIcon GuiRegistry::rotateIcon()
 {
     if (_rotateIcon.isNull())

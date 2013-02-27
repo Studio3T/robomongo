@@ -20,9 +20,9 @@
 
 using namespace Robomongo;
 
-OutputWidget::OutputWidget(bool textMode, MongoShell *shell, QWidget *parent) :
+OutputWidget::OutputWidget(ViewMode viewMode, MongoShell *shell, QWidget *parent) :
     QFrame(parent),
-    _textMode(textMode),
+    _viewMode(viewMode),
     _shell(shell),
     _splitter(NULL)
 {
@@ -65,16 +65,23 @@ void OutputWidget::present(const QList<MongoShellResult> &results)
         OutputItemContentWidget *output = NULL;
 
         if (shellResult.documents().count() > 0) {
-            output = new OutputItemContentWidget(_shell, shellResult.documents(), shellResult.queryInfo());
+
+            if (shellResult.type().isEmpty())
+                output = new OutputItemContentWidget(_shell, shellResult.documents(), shellResult.queryInfo());
+            else
+                output = new OutputItemContentWidget(_shell, shellResult.type(), shellResult.documents(), shellResult.queryInfo());
         } else {
             output = new OutputItemContentWidget(_shell, shellResult.response());
         }
 
         OutputItemWidget *result = new OutputItemWidget(this, output, shellResult.queryInfo());
-        if (GuiRegistry::instance().mainWindow()->textMode())
-            result->header()->showText();
-        else
+        ViewMode viewMode = GuiRegistry::instance().mainWindow()->viewMode();
+        if (viewMode == Custom)
+            result->header()->showCustom();
+        else if (viewMode == Tree)
             result->header()->showTree();
+        else
+            result->header()->showText();
 
         double secs = shellResult.elapsedMs() / (double) 1000;
 
@@ -133,6 +140,15 @@ void OutputWidget::enterTextMode()
     for (int i = 0; i < count; i++) {
         OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
         widget->header()->showText();
+    }
+}
+
+void OutputWidget::enterCustomMode()
+{
+    int count = _splitter->count();
+    for (int i = 0; i < count; i++) {
+        OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
+        widget->header()->showCustom();
     }
 }
 

@@ -5,6 +5,7 @@
 
 #include "robomongo/gui/widgets/workarea/BsonWidget.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+#include "robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h"
 #include "robomongo/gui/editors/JSLexer.h"
 
 using namespace Robomongo;
@@ -13,15 +14,8 @@ OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QStrin
     _isTextModeSupported(true),
     _isTreeModeSupported(false),
     _isCustomModeSupported(false),
-    _isTextModeInitialized(false),
-    _isTreeModeInitialized(false),
-    _isCustomModeInitialized(false),
     _text(text),
     _sourceIsText(true),
-    _isFirstPartRendered(false),
-    _log(NULL),
-    _bson(NULL),
-    _thread(NULL),
     _shell(shell)
 {
     setup();
@@ -31,20 +25,27 @@ OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QList<
     _isTextModeSupported(true),
     _isTreeModeSupported(true),
     _isCustomModeSupported(false),
-    _isTextModeInitialized(false),
-    _isTreeModeInitialized(false),
-    _isCustomModeInitialized(false),
     _documents(documents),
     _queryInfo(queryInfo),
     _sourceIsText(false),
-    _isFirstPartRendered(false),
-    _log(NULL),
-    _bson(NULL),
-    _thread(NULL),
     _shell(shell)
 {
     setup();
 }
+
+OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &type, const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
+    _isTextModeSupported(true),
+    _isTreeModeSupported(true),
+    _isCustomModeSupported(true),
+    _documents(documents),
+    _queryInfo(queryInfo),
+    _sourceIsText(false),
+    _type(type),
+    _shell(shell)
+{
+    setup();
+}
+
 
 OutputItemContentWidget::~OutputItemContentWidget()
 {
@@ -55,11 +56,9 @@ OutputItemContentWidget::~OutputItemContentWidget()
 void OutputItemContentWidget::update(const QString &text)
 {
     _text = text;
-    _isTextModeInitialized = false;
-    _isTreeModeInitialized = false;
-    _isCustomModeInitialized = false;
     _sourceIsText = true;
     _isFirstPartRendered = false;
+    markUninitialized();
 
     if (_bson) {
         _stack->removeWidget(_bson);
@@ -76,13 +75,11 @@ void OutputItemContentWidget::update(const QString &text)
 
 void OutputItemContentWidget::update(const QList<MongoDocumentPtr> &documents)
 {
-    _isTextModeInitialized = false;
-    _isTreeModeInitialized = false;
-    _isCustomModeInitialized = false;
     _documents.clear();
     _documents = documents;
     _sourceIsText = false;
     _isFirstPartRendered = false;
+    markUninitialized();
 
     if (_bson) {
         _stack->removeWidget(_bson);
@@ -99,6 +96,13 @@ void OutputItemContentWidget::update(const QList<MongoDocumentPtr> &documents)
 
 void OutputItemContentWidget::setup()
 {
+    markUninitialized();
+
+    _isFirstPartRendered = false;
+    _log = NULL;
+    _bson = NULL;
+    _thread = NULL;
+
     setContentsMargins(0, 0, 0, 0);
     _stack = new QStackedWidget;
 
@@ -158,8 +162,36 @@ void OutputItemContentWidget::showTree()
 
 void OutputItemContentWidget::showCustom()
 {
-    if (!_isCustomModeSupported)
+    if (!_isCustomModeSupported) {
+        // try to downgrade to tree mode
+        showTree();
         return;
+    }
+
+    QWidget *customWidget = NULL;
+
+    if (!_isCustomModeInitialized) {
+
+        if (_type == "collectionStats") {
+            _collectionStats = new CollectionStatsTreeWidget(_shell);
+            _collectionStats->setDocuments(_documents);
+            customWidget = _collectionStats;
+        }
+
+        if (customWidget)
+            _stack->addWidget(_collectionStats);
+        _isCustomModeInitialized = true;
+    }
+
+    if (_collectionStats)
+        _stack->setCurrentWidget(_collectionStats);
+}
+
+void OutputItemContentWidget::markUninitialized()
+{
+    _isTextModeInitialized = false;
+    _isTreeModeInitialized = false;
+    _isCustomModeInitialized = false;
 }
 
 void OutputItemContentWidget::jsonPrepared()

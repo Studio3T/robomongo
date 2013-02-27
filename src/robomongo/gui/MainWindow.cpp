@@ -24,7 +24,7 @@ MainWindow::MainWindow() : QMainWindow(),
     _bus(AppRegistry::instance().bus()),
     _workArea(NULL),
     _connectionsMenu(NULL),
-    _textMode(false)
+    _viewMode(Custom)
 {
     GuiRegistry::instance().setMainWindow(this);
 
@@ -95,12 +95,21 @@ MainWindow::MainWindow() : QMainWindow(),
     treeModeAction->setIcon(GuiRegistry::instance().treeHighlightedIcon());
     treeModeAction->setToolTip("Show current tab in tree mode, and make this mode default for all subsequent queries <b>(F3)</b>");
     treeModeAction->setCheckable(true);
-    treeModeAction->setChecked(true);
     connect(treeModeAction, SIGNAL(triggered()), this, SLOT(enterTreeMode()));
+
+    // Custom mode action
+    QAction *customModeAction = new QAction("&Custom Mode", this);
+    customModeAction->setShortcut(Qt::Key_F2);
+    customModeAction->setIcon(GuiRegistry::instance().customIcon());
+    customModeAction->setToolTip("Show current tab in custom mode if possible, and make this mode default for all subsequent queries <b>(F2)</b>");
+    customModeAction->setCheckable(true);
+    customModeAction->setChecked(true);
+    connect(customModeAction, SIGNAL(triggered()), this, SLOT(enterCustomMode()));
 
     QActionGroup *modeGroup = new QActionGroup(this);
     modeGroup->addAction(textModeAction);
     modeGroup->addAction(treeModeAction);
+    modeGroup->addAction(customModeAction);
 
     // Execute action
     QAction *executeAction = new QAction("&Execute", this);
@@ -136,6 +145,7 @@ MainWindow::MainWindow() : QMainWindow(),
     toolBar->addAction(executeAction);
     toolBar->addAction(orientationAction);
     toolBar->addSeparator();
+    toolBar->addAction(customModeAction);
     toolBar->addAction(treeModeAction);
     toolBar->addAction(textModeAction);
     toolBar->setShortcutEnabled(1, true);
@@ -232,16 +242,23 @@ void MainWindow::toggleOrientation()
 
 void MainWindow::enterTextMode()
 {
-    _textMode = true;
+    _viewMode = Text;
     if (_workArea)
         _workArea->enterTextMode();
 }
 
 void MainWindow::enterTreeMode()
 {
-    _textMode = false;
+    _viewMode = Tree;
     if (_workArea)
         _workArea->enterTreeMode();
+}
+
+void MainWindow::enterCustomMode()
+{
+    _viewMode = Custom;
+    if (_workArea)
+        _workArea->enterCustomMode();
 }
 
 void MainWindow::executeScript()

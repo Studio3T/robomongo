@@ -41,6 +41,15 @@ OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemWidget *result, OutputI
     _textButton->setCheckable(true);
     connect(_textButton, SIGNAL(clicked()), this, SLOT(showText()));
 
+    // Custom mode button
+    _customButton = new QPushButton;
+    _customButton->hide();
+    _customButton->setIcon(GuiRegistry::instance().customIcon());
+    _customButton->setFixedSize(24, 24);
+    _customButton->setFlat(true);
+    _customButton->setCheckable(true);
+    connect(_customButton, SIGNAL(clicked()), this, SLOT(showCustom()));
+
     _collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon());
     _timeIndicator = new Indicator(GuiRegistry::instance().timeIcon());
     _paging = new PagingWidget();
@@ -59,6 +68,11 @@ OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemWidget *result, OutputI
     layout->addWidget(_paging);
     layout->addWidget(createVerticalLine());
     layout->addSpacing(2);
+
+    if (output->isCustomModeSupported()) {
+        layout->addWidget(_customButton, 0, Qt::AlignRight);
+        _customButton->show();
+    }
 
     if (output->isTreeModeSupported()) {
         layout->addWidget(_treeButton, 0, Qt::AlignRight);
@@ -85,6 +99,7 @@ void OutputItemHeaderWidget::showText()
     _textButton->setChecked(true);
     _treeButton->setIcon(GuiRegistry::instance().treeIcon());
     _treeButton->setChecked(false);
+    _customButton->setChecked(false);
     itemContent->showText();
     _treeMode = false;
 }
@@ -95,7 +110,19 @@ void OutputItemHeaderWidget::showTree()
     _textButton->setChecked(false);
     _treeButton->setIcon(GuiRegistry::instance().treeHighlightedIcon());
     _treeButton->setChecked(true);
+    _customButton->setChecked(false);
     itemContent->showTree();
+    _treeMode = true;
+}
+
+void OutputItemHeaderWidget::showCustom()
+{
+    _textButton->setIcon(GuiRegistry::instance().textIcon());
+    _textButton->setChecked(false);
+    _treeButton->setIcon(GuiRegistry::instance().treeIcon());
+    _treeButton->setChecked(false);
+    _customButton->setChecked(true);
+    itemContent->showCustom();
     _treeMode = true;
 }
 

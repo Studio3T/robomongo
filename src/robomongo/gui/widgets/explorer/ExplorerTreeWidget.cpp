@@ -76,7 +76,7 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *dbCollectionsStats = new QAction("Collections Statistics", this);
     connect(dbCollectionsStats, SIGNAL(triggered()), SLOT(ui_dbCollectionsStatistics()));
 
-    QAction *dbRepair = new QAction("Repair", this);
+    QAction *dbRepair = new QAction("Repair Database", this);
     connect(dbRepair, SIGNAL(triggered()), SLOT(ui_dbRepair()));
 
     QAction *refreshDatabase = new QAction("Refresh", this);
@@ -85,11 +85,11 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     _databaseContextMenu = new QMenu(this);
     _databaseContextMenu->addAction(openDbShellAction);
     _databaseContextMenu->addAction(refreshDatabase);
-    _databaseContextMenu->addAction(dbRepair);
     _databaseContextMenu->addSeparator();
     _databaseContextMenu->addAction(dbStats);
     _databaseContextMenu->addAction(dbCollectionsStats);
     _databaseContextMenu->addSeparator();
+    _databaseContextMenu->addAction(dbRepair);
     _databaseContextMenu->addAction(dbDrop);
 
     QAction *addDocument = new QAction("Insert Document", this);
@@ -131,7 +131,12 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *dropCollection = new QAction("Drop Collection", this);
     connect(dropCollection, SIGNAL(triggered()), SLOT(ui_dropCollection()));
 
+    QAction *viewCollection = new QAction("View Documents", this);
+    connect(viewCollection, SIGNAL(triggered()), SLOT(ui_viewCollection()));
+
     _collectionContextMenu = new QMenu(this);
+    _collectionContextMenu->addAction(viewCollection);
+    _collectionContextMenu->addSeparator();
     _collectionContextMenu->addAction(addDocument);
     _collectionContextMenu->addAction(updateDocument);
     _collectionContextMenu->addAction(removeDocument);
@@ -420,6 +425,11 @@ void ExplorerTreeWidget::ui_collectionStatistics()
 void ExplorerTreeWidget::ui_dropCollection()
 {
     openCurrentCollectionShell("db.%1.drop()", false);
+}
+
+void ExplorerTreeWidget::ui_viewCollection()
+{
+    openCurrentCollectionShell("db.%1.find()");
 }
 
 void ExplorerTreeWidget::ui_storageSize()

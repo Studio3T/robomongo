@@ -91,9 +91,17 @@ QIcon GuiRegistry::treeHighlightedIcon()
 QIcon GuiRegistry::customIcon()
 {
     if (_customIcon.isNull())
-        _customIcon = QIcon(":/robomongo/icons/custom_16x16.gif");
+        _customIcon = QIcon(":/robomongo/icons/custom_16x16.png");
 
     return _customIcon;
+}
+
+QIcon GuiRegistry::customHighlightedIcon()
+{
+    if (_customHighlightedIcon.isNull())
+        _customHighlightedIcon = QIcon(":/robomongo/icons/custom_highlighted_16x16.png");
+
+    return _customHighlightedIcon;
 }
 
 QIcon GuiRegistry::rotateIcon()

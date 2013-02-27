@@ -19,6 +19,7 @@ OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemWidget *result, OutputI
     // Maximaze button
     _maxButton = new QPushButton;
     _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
+    _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");
     _maxButton->setFixedSize(18, 18);
     _maxButton->setFlat(true);
     connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart()));
@@ -27,6 +28,7 @@ OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemWidget *result, OutputI
     _treeButton = new QPushButton(this);
     _treeButton->hide();
     _treeButton->setIcon(GuiRegistry::instance().treeIcon());
+    _treeButton->setToolTip("View results in tree mode");
     _treeButton->setFixedSize(24, 24);
     _treeButton->setFlat(true);
     _treeButton->setCheckable(true);
@@ -36,6 +38,7 @@ OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemWidget *result, OutputI
     // Text mode button
     _textButton = new QPushButton;
     _textButton->setIcon(GuiRegistry::instance().textIcon());
+    _textButton->setToolTip("View results in text mode");
     _textButton->setFixedSize(24, 24);
     _textButton->setFlat(true);
     _textButton->setCheckable(true);
@@ -45,6 +48,7 @@ OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemWidget *result, OutputI
     _customButton = new QPushButton(this);
     _customButton->hide();
     _customButton->setIcon(GuiRegistry::instance().customIcon());
+    _customButton->setToolTip("View results in custom UI");
     _customButton->setFixedSize(24, 24);
     _customButton->setFlat(true);
     _customButton->setCheckable(true);
@@ -99,6 +103,7 @@ void OutputItemHeaderWidget::showText()
     _textButton->setChecked(true);
     _treeButton->setIcon(GuiRegistry::instance().treeIcon());
     _treeButton->setChecked(false);
+    _customButton->setIcon(GuiRegistry::instance().customIcon());
     _customButton->setChecked(false);
     itemContent->showText();
     _treeMode = false;
@@ -110,6 +115,7 @@ void OutputItemHeaderWidget::showTree()
     _textButton->setChecked(false);
     _treeButton->setIcon(GuiRegistry::instance().treeHighlightedIcon());
     _treeButton->setChecked(true);
+    _customButton->setIcon(GuiRegistry::instance().customIcon());
     _customButton->setChecked(false);
     itemContent->showTree();
     _treeMode = true;
@@ -121,6 +127,7 @@ void OutputItemHeaderWidget::showCustom()
     _textButton->setChecked(false);
     _treeButton->setIcon(GuiRegistry::instance().treeIcon());
     _treeButton->setChecked(false);
+    _customButton->setIcon(GuiRegistry::instance().customHighlightedIcon());
     _customButton->setChecked(true);
     itemContent->showCustom();
     _treeMode = true;

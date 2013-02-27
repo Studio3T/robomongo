@@ -100,7 +100,7 @@ MainWindow::MainWindow() : QMainWindow(),
     // Custom mode action
     QAction *customModeAction = new QAction("&Custom Mode", this);
     customModeAction->setShortcut(Qt::Key_F2);
-    customModeAction->setIcon(GuiRegistry::instance().customIcon());
+    customModeAction->setIcon(GuiRegistry::instance().customHighlightedIcon());
     customModeAction->setToolTip("Show current tab in custom mode if possible, and make this mode default for all subsequent queries <b>(F2)</b>");
     customModeAction->setCheckable(true);
     customModeAction->setChecked(true);

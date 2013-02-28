@@ -239,6 +239,19 @@ void MongoWorker::handle(AutocompleteRequest *event)
     }
 }
 
+void MongoWorker::handle(CreateDatabaseRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+        client->createDatabase(event->database());
+        client->done();
+
+        reply(event->sender(), new CreateDatabaseResponse(this));
+    } catch(DBException &ex) {
+        reply(event->sender(), new CreateDatabaseResponse(this, EventError("Unable to complete query.")));
+    }
+}
+
 ScopedDbConnection *MongoWorker::getConnection()
 {
     return ScopedDbConnection::getScopedDbConnection(_address.toStdString());

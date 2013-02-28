@@ -42,7 +42,8 @@ SOURCES += ExampleWindow.cpp \
     widgets/workarea/ProgressBarPopup.cpp \
     dialogs/DocumentTextEditor.cpp \
     widgets/workarea/CollectionStatsTreeWidget.cpp \
-    widgets/workarea/CollectionStatsTreeItem.cpp
+    widgets/workarea/CollectionStatsTreeItem.cpp \
+    dialogs/CreateDatabaseDialog.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
@@ -82,6 +83,7 @@ HEADERS  += ExampleWindow.h = \
     dialogs/DocumentTextEditor.h \
     widgets/workarea/CollectionStatsTreeWidget.h \
     widgets/workarea/CollectionStatsTreeItem.h \
-    ViewMode.h
+    ViewMode.h \
+    dialogs/CreateDatabaseDialog.h
 
 INCLUDEPATH += $$SRC_ROOT

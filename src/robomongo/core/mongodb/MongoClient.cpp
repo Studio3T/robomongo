@@ -35,6 +35,32 @@ QStringList MongoClient::getDatabaseNames()
     return dbNames;
 }
 
+void MongoClient::createDatabase(const QString &dbName)
+{
+    /*
+     *  Here we are going to insert temp document to "<dbName>.temp" collection.
+     *  This will create <dbName> database for us.
+     *  Finally we are dropping just created temporary collection.
+     */
+
+    MongoNamespace ns(dbName, "temp");
+
+    // If <dbName>.temp already exists, stop.
+    if (_dbclient->exists(ns.toString().toStdString()))
+        return;
+
+    // Building { _id : "temp" } document
+    mongo::BSONObjBuilder builder;
+    builder.append("_id", "temp");
+    mongo::BSONObj obj = builder.obj();
+
+    // Insert this document
+    _dbclient->insert(ns.toString().toStdString(), obj);
+
+    // Drop temp collection
+    _dbclient->dropCollection(ns.toString().toStdString());
+}
+
 void MongoClient::insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
 {
     MongoNamespace ns(db, collection);

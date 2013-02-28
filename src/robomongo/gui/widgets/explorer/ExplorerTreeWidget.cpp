@@ -104,11 +104,14 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *addDocument = new QAction("Insert Document", this);
     connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument()));
 
-    QAction *updateDocument = new QAction("Update Document", this);
+    QAction *updateDocument = new QAction("Update Documents", this);
     connect(updateDocument, SIGNAL(triggered()), SLOT(ui_updateDocument()));
 
-    QAction *removeDocument = new QAction("Remove Document", this);
+    QAction *removeDocument = new QAction("Remove Documents", this);
     connect(removeDocument, SIGNAL(triggered()), SLOT(ui_removeDocument()));
+
+    QAction *removeAllDocuments = new QAction("Remove All Documents", this);
+    connect(removeAllDocuments, SIGNAL(triggered()), SLOT(ui_removeAllDocuments()));
 
     QAction *addIndex = new QAction("Add Index", this);
     connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex()));
@@ -152,6 +155,7 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     _collectionContextMenu->addAction(addDocument);
     _collectionContextMenu->addAction(updateDocument);
     _collectionContextMenu->addAction(removeDocument);
+    _collectionContextMenu->addAction(removeAllDocuments);
     _collectionContextMenu->addSeparator();
     _collectionContextMenu->addAction(renameCollection);
     _collectionContextMenu->addAction(dropCollection);
@@ -402,7 +406,34 @@ void ExplorerTreeWidget::ui_removeDocument()
 {
     openCurrentCollectionShell(
         "db.%1.remove({ '' : '' });"
-    , false, CursorPosition(0, -10));
+                , false, CursorPosition(0, -10));
+}
+
+void ExplorerTreeWidget::ui_removeAllDocuments()
+{
+    ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
+    if (!collectionItem)
+        return;
+
+    MongoCollection *collection = collectionItem->collection();
+    MongoDatabase *database = collection->database();
+    MongoServer *server = database->server();
+    ConnectionSettings *settings = server->connectionRecord();
+
+    // Ask user
+    int answer = QMessageBox::question(this,
+            "Remove All Documents",
+            QString("Remove all documents from <b>%1</b> collection?").arg(collection->name()),
+            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+    if (answer != QMessageBox::Yes)
+        return;
+
+    mongo::BSONObjBuilder builder;
+    mongo::BSONObj bsonQuery = builder.obj();
+    mongo::Query query(bsonQuery);
+
+    server->removeDocuments(query, database->name(), collection->name(), false);
 }
 
 void ExplorerTreeWidget::ui_addIndex()

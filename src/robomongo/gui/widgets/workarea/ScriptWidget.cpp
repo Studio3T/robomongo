@@ -292,7 +292,7 @@ void ScriptWidget::_configureQueryText()
     //_queryText->SendScintilla(QsciScintilla::SCI_SETFONTQUALITY, QsciScintilla::SC_EFF_QUALITY_LCD_OPTIMIZED);
     //_queryText->SendScintilla (QsciScintillaBase::SCI_SETKEYWORDS, "db");
 
-    _queryText->setStyleSheet("QFrame { background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
+    _queryText->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
     connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
     connect(_queryText, SIGNAL(textChanged()), SLOT(onTextChanged()));
     connect(_queryText, SIGNAL(cursorPositionChanged(int,int)), SLOT(onCursorPositionChanged(int,int)));

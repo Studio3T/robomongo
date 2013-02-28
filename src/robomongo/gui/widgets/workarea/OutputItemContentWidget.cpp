@@ -262,7 +262,7 @@ RoboScintilla *Robomongo::OutputItemContentWidget::_configureLogText()
     // even for medium size documents.
     _logText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
 
-    _logText->setStyleSheet("QFrame {background-color: rgb(48, 10, 36); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
+    _logText->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
     return _logText;
 }
 

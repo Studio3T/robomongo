@@ -10,7 +10,8 @@ JSLexer::JSLexer(QObject *parent) : QsciLexerJavaScript(parent)
 
 QColor JSLexer::defaultPaper(int style) const
 {
-    return QColor(48, 10, 36);
+    return QColor(73, 76, 78);
+    //return QColor(48, 10, 36); // Ubuntu-style background
 }
 
 QColor JSLexer::defaultColor(int style) const

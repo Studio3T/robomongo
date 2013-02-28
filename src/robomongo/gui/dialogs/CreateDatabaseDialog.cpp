@@ -7,7 +7,8 @@
 
 using namespace Robomongo;
 
-CreateDatabaseDialog::CreateDatabaseDialog(const QString &serverName, QWidget *parent) :
+CreateDatabaseDialog::CreateDatabaseDialog(const QString &serverName, const QString &database,
+                                           const QString &collection, QWidget *parent) :
     QDialog(parent)
 {
     setWindowTitle("Create Database");
@@ -15,36 +16,43 @@ CreateDatabaseDialog::CreateDatabaseDialog(const QString &serverName, QWidget *p
     setMinimumWidth(300);
 
     Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
+    Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), database);
+    Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), collection);
 
     QFrame *hline = new QFrame();
     hline->setFrameShape(QFrame::HLine);
     hline->setFrameShadow(QFrame::Sunken);
 
-    _databaseName = new QLineEdit();
-    QLabel *label = new QLabel("Database Name:");
+    _inputEdit = new QLineEdit();
+    _inputLabel= new QLabel("Database Name:");
 
     QPushButton *cancelButton = new QPushButton("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
-    QPushButton *createButton = new QPushButton("&Create");
-    connect(createButton, SIGNAL(clicked()), this, SLOT(accept()));
+    _okButton = new QPushButton("&Create");
+    connect(_okButton, SIGNAL(clicked()), this, SLOT(accept()));
 
     QHBoxLayout *hlayout = new QHBoxLayout();
     hlayout->addStretch(1);
-    hlayout->addWidget(createButton, 0, Qt::AlignRight);
+    hlayout->addWidget(_okButton, 0, Qt::AlignRight);
     hlayout->addWidget(cancelButton, 0, Qt::AlignRight);
 
-    QVBoxLayout *vlayout = new QVBoxLayout();
-    vlayout->addWidget(serverIndicator, 0, Qt::AlignLeft);
-    vlayout->addWidget(hline);
+    QHBoxLayout *vlayout = new QHBoxLayout();
+    if (!serverName.isEmpty())
+        vlayout->addWidget(serverIndicator, 0, Qt::AlignLeft);
+    if (!database.isEmpty())
+        vlayout->addWidget(databaseIndicator, 0, Qt::AlignLeft);
+    if (!collection.isEmpty())
+        vlayout->addWidget(collectionIndicator, 0, Qt::AlignLeft);
 
     QVBoxLayout *namelayout = new QVBoxLayout();
     namelayout->setContentsMargins(0, 7, 0, 7);
-    namelayout->addWidget(label);
-    namelayout->addWidget(_databaseName);
+    namelayout->addWidget(_inputLabel);
+    namelayout->addWidget(_inputEdit);
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addLayout(vlayout);
+    layout->addWidget(hline);
     layout->addLayout(namelayout);
     layout->addLayout(hlayout);
     setLayout(layout);
@@ -52,12 +60,28 @@ CreateDatabaseDialog::CreateDatabaseDialog(const QString &serverName, QWidget *p
 
 QString CreateDatabaseDialog::databaseName() const
 {
-    return _databaseName->text();
+    return _inputEdit->text();
+}
+
+void CreateDatabaseDialog::setOkButtonText(const QString &text)
+{
+    _okButton->setText(text);
+}
+
+void CreateDatabaseDialog::setInputLabelText(const QString &text)
+{
+    _inputLabel->setText(text);
+}
+
+void CreateDatabaseDialog::setInputText(const QString &text)
+{
+    _inputEdit->setText(text);
+    _inputEdit->selectAll();
 }
 
 void CreateDatabaseDialog::accept()
 {
-    if (_databaseName->text().isEmpty())
+    if (_inputEdit->text().isEmpty())
         return;
 
     QDialog::accept();

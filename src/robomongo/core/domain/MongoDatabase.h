@@ -32,6 +32,10 @@ namespace Robomongo
          */
         void loadCollections();
 
+        void createCollection(const QString &collection);
+        void dropCollection(const QString &collection);
+        void renameCollection(const QString &collection, const QString &newCollection);
+
         QString name() const { return _name; }
 
         /**

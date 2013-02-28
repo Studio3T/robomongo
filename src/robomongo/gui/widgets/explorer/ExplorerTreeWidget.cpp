@@ -87,10 +87,14 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *refreshDatabase = new QAction("Refresh", this);
     connect(refreshDatabase, SIGNAL(triggered()), SLOT(ui_refreshDatabase()));
 
+    QAction *createCollection = new QAction("Create Collection", this);
+    connect(createCollection, SIGNAL(triggered()), SLOT(ui_createCollection()));
+
     _databaseContextMenu = new QMenu(this);
     _databaseContextMenu->addAction(openDbShellAction);
     _databaseContextMenu->addAction(refreshDatabase);
     _databaseContextMenu->addSeparator();
+    _databaseContextMenu->addAction(createCollection);
     _databaseContextMenu->addAction(dbStats);
     _databaseContextMenu->addAction(dbCollectionsStats);
     _databaseContextMenu->addSeparator();
@@ -112,7 +116,7 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *dropIndex = new QAction("Drop Index", this);
     connect(dropIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
 
-    QAction *reIndex = new QAction("Reindex", this);
+    QAction *reIndex = new QAction("Rebuild Indexes", this);
     connect(reIndex, SIGNAL(triggered()), SLOT(ui_reIndex()));
 
     QAction *collectionStats = new QAction("Statistics", this);
@@ -136,6 +140,9 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *dropCollection = new QAction("Drop Collection", this);
     connect(dropCollection, SIGNAL(triggered()), SLOT(ui_dropCollection()));
 
+    QAction *renameCollection = new QAction("Rename Collection", this);
+    connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection()));
+
     QAction *viewCollection = new QAction("View Documents", this);
     connect(viewCollection, SIGNAL(triggered()), SLOT(ui_viewCollection()));
 
@@ -146,12 +153,14 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     _collectionContextMenu->addAction(updateDocument);
     _collectionContextMenu->addAction(removeDocument);
     _collectionContextMenu->addSeparator();
+    _collectionContextMenu->addAction(renameCollection);
+    _collectionContextMenu->addAction(dropCollection);
+    _collectionContextMenu->addSeparator();
     _collectionContextMenu->addAction(addIndex);
     _collectionContextMenu->addAction(dropIndex);
     _collectionContextMenu->addAction(reIndex);
     _collectionContextMenu->addSeparator();
     _collectionContextMenu->addAction(collectionStats);
-    _collectionContextMenu->addAction(dropCollection);
     _collectionContextMenu->addSeparator();
     _collectionContextMenu->addAction(shardVersion);
     _collectionContextMenu->addAction(shardDistribution);
@@ -334,6 +343,8 @@ void ExplorerTreeWidget::ui_createDatabase()
         return;
 
     CreateDatabaseDialog dlg(serverItem->server()->connectionRecord()->getFullAddress());
+    dlg.setOkButtonText("&Create");
+    dlg.setInputLabelText("Database Name");
     int result = dlg.exec();
 
     if (result == QDialog::Accepted) {
@@ -446,7 +457,56 @@ void ExplorerTreeWidget::ui_collectionStatistics()
 
 void ExplorerTreeWidget::ui_dropCollection()
 {
-    openCurrentCollectionShell("db.%1.drop()", false);
+    ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
+    if (!collectionItem)
+        return;
+
+    MongoCollection *collection = collectionItem->collection();
+    MongoDatabase *database = collection->database();
+    MongoServer *server = database->server();
+    ConnectionSettings *settings = server->connectionRecord();
+
+    // Ask user
+    int answer = QMessageBox::question(this,
+            "Drop Collection",
+            QString("Drop <b>%1</b> collection?").arg(collection->name()),
+            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+    if (answer != QMessageBox::Yes)
+        return;
+
+    database->dropCollection(collection->name());
+    database->loadCollections();
+
+    //openCurrentCollectionShell("db.%1.drop()", false);
+}
+
+void ExplorerTreeWidget::ui_renameCollection()
+{
+    ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
+    if (!collectionItem)
+        return;
+
+    MongoCollection *collection = collectionItem->collection();
+    MongoDatabase *database = collection->database();
+    MongoServer *server = database->server();
+    ConnectionSettings *settings = server->connectionRecord();
+
+    CreateDatabaseDialog dlg(settings->getFullAddress(),
+                             database->name(),
+                             collection->name());
+    dlg.setWindowTitle("Rename Collection");
+    dlg.setOkButtonText("&Rename");
+    dlg.setInputLabelText("New Collection Name:");
+    dlg.setInputText(collection->name());
+    int result = dlg.exec();
+
+    if (result == QDialog::Accepted) {
+        database->renameCollection(collection->name(), dlg.databaseName());
+
+        // refresh list of collections
+        database->loadCollections();
+    }
 }
 
 void ExplorerTreeWidget::ui_viewCollection()
@@ -545,6 +605,27 @@ void ExplorerTreeWidget::ui_refreshDatabase()
         return;
 
     databaseItem->expandCollections();
+}
+
+void ExplorerTreeWidget::ui_createCollection()
+{
+    ExplorerDatabaseTreeItem *databaseItem = selectedDatabaseItem();
+    if (!databaseItem)
+        return;
+
+    CreateDatabaseDialog dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
+                             databaseItem->database()->name());
+    dlg.setWindowTitle("Create Collection");
+    dlg.setOkButtonText("&Create");
+    dlg.setInputLabelText("Collection Name");
+    int result = dlg.exec();
+
+    if (result == QDialog::Accepted) {
+        databaseItem->database()->createCollection(dlg.databaseName());
+
+        // refresh list of databases
+        databaseItem->expandCollections();
+    }
 }
 
 void ExplorerTreeWidget::ui_refreshCollections()

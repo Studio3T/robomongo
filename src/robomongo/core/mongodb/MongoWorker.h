@@ -80,6 +80,9 @@ namespace Robomongo
         void handle(AutocompleteRequest *event);
         void handle(CreateDatabaseRequest *event);
         void handle(DropDatabaseRequest *event);
+        void handle(CreateCollectionRequest *event);
+        void handle(DropCollectionRequest *event);
+        void handle(RenameCollectionRequest *event);
 
     private:
 

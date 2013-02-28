@@ -36,6 +36,7 @@ namespace Robomongo
 
     protected slots:
         void ui_refreshDatabase();
+        void ui_createCollection();
         void ui_refreshCollections();
         void ui_disconnectServer();
         void ui_refreshServer();
@@ -52,6 +53,7 @@ namespace Robomongo
         void ui_updateDocument();
         void ui_collectionStatistics();
         void ui_dropCollection();
+        void ui_renameCollection();
         void ui_viewCollection();
         void ui_storageSize();
         void ui_totalIndexSize();

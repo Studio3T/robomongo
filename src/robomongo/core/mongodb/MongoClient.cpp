@@ -61,6 +61,17 @@ void MongoClient::createDatabase(const QString &dbName)
     _dbclient->dropCollection(ns.toString().toStdString());
 }
 
+void MongoClient::dropDatabase(const QString &dbName)
+{
+    _dbclient->dropDatabase(dbName.toStdString());
+}
+
+void MongoClient::dropCollection(const QString &dbName, const QString &collectionName)
+{
+    MongoNamespace ns(dbName, collectionName);
+    _dbclient->dropCollection(ns.toString().toStdString());
+}
+
 void MongoClient::insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
 {
     MongoNamespace ns(db, collection);

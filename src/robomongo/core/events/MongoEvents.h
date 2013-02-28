@@ -277,6 +277,39 @@ namespace Robomongo
     };
 
 
+
+    /**
+     * @brief Drop Database
+     */
+
+    class DropDatabaseRequest : public Event
+    {
+        R_EVENT
+
+    public:
+        DropDatabaseRequest(QObject *sender, const QString &database) :
+            Event(sender),
+            _database(database) {}
+
+        QString database() const { return _database; }
+
+    private:
+        QString _database;
+    };
+
+    class DropDatabaseResponse : public Event
+    {
+        R_EVENT
+
+    public:
+        DropDatabaseResponse(QObject *sender) :
+            Event(sender) {}
+
+        DropDatabaseResponse(QObject *sender, EventError error) :
+            Event(sender, error) {}
+    };
+
+
     /**
      * @brief Query Mongodb
      */

@@ -79,6 +79,7 @@ namespace Robomongo
 
         void handle(AutocompleteRequest *event);
         void handle(CreateDatabaseRequest *event);
+        void handle(DropDatabaseRequest *event);
 
     private:
 

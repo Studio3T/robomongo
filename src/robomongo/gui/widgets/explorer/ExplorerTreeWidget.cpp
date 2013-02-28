@@ -486,7 +486,26 @@ void ExplorerTreeWidget::ui_dbStatistics()
 
 void ExplorerTreeWidget::ui_dbDrop()
 {
-    openCurrentDatabaseShell("db.dropDatabase()", false);
+    ExplorerDatabaseTreeItem *dbItem = selectedDatabaseItem();
+    if (!dbItem)
+        return;
+
+    MongoDatabase *database = dbItem->database();
+    MongoServer *server = database->server();
+
+    // Ask user
+    int answer = QMessageBox::question(this,
+            "Drop Database",
+            QString("Drop <b>%1</b> database?").arg(database->name()),
+            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+    if (answer != QMessageBox::Yes)
+        return;
+
+    server->dropDatabase(database->name());
+    server->loadDatabases(); // refresh list of databases
+
+    //openCurrentDatabaseShell("db.dropDatabase()", false);
 }
 
 void ExplorerTreeWidget::ui_dbCollectionsStatistics()

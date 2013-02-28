@@ -55,6 +55,11 @@ void MongoServer::createDatabase(const QString &dbName)
     _client->send(new CreateDatabaseRequest(this, dbName));
 }
 
+void MongoServer::dropDatabase(const QString &dbName)
+{
+    _client->send(new DropDatabaseRequest(this, dbName));
+}
+
 void MongoServer::insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
 {
     _client->send(new InsertDocumentRequest(this, obj, db, collection));

@@ -248,7 +248,20 @@ void MongoWorker::handle(CreateDatabaseRequest *event)
 
         reply(event->sender(), new CreateDatabaseResponse(this));
     } catch(DBException &ex) {
-        reply(event->sender(), new CreateDatabaseResponse(this, EventError("Unable to complete query.")));
+        reply(event->sender(), new CreateDatabaseResponse(this, EventError("Unable to create database.")));
+    }
+}
+
+void MongoWorker::handle(DropDatabaseRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+        client->dropDatabase(event->database());
+        client->done();
+
+        reply(event->sender(), new DropDatabaseResponse(this));
+    } catch(DBException &ex) {
+        reply(event->sender(), new DropDatabaseResponse(this, EventError("Unable to drop database.")));
     }
 }
 

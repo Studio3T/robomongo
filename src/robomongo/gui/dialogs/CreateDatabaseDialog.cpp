@@ -16,8 +16,6 @@ CreateDatabaseDialog::CreateDatabaseDialog(const QString &serverName, const QStr
     setMinimumWidth(300);
 
     Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
-    Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), database);
-    Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), collection);
 
     QFrame *hline = new QFrame();
     hline->setFrameShape(QFrame::HLine);
@@ -41,9 +39,9 @@ CreateDatabaseDialog::CreateDatabaseDialog(const QString &serverName, const QStr
     if (!serverName.isEmpty())
         vlayout->addWidget(serverIndicator, 0, Qt::AlignLeft);
     if (!database.isEmpty())
-        vlayout->addWidget(databaseIndicator, 0, Qt::AlignLeft);
+        vlayout->addWidget(createDatabaseIndicator(database), 0, Qt::AlignLeft);
     if (!collection.isEmpty())
-        vlayout->addWidget(collectionIndicator, 0, Qt::AlignLeft);
+        vlayout->addWidget(createCollectionIndicator(collection), 0, Qt::AlignLeft);
 
     QVBoxLayout *namelayout = new QVBoxLayout();
     namelayout->setContentsMargins(0, 7, 0, 7);
@@ -85,4 +83,14 @@ void CreateDatabaseDialog::accept()
         return;
 
     QDialog::accept();
+}
+
+Indicator *CreateDatabaseDialog::createDatabaseIndicator(const QString &database)
+{
+    return new Indicator(GuiRegistry::instance().databaseIcon(), database);
+}
+
+Indicator *CreateDatabaseDialog::createCollectionIndicator(const QString &collection)
+{
+    return new Indicator(GuiRegistry::instance().collectionIcon(), collection);
 }

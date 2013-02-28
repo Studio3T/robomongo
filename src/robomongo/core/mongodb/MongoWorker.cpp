@@ -265,6 +265,45 @@ void MongoWorker::handle(DropDatabaseRequest *event)
     }
 }
 
+void MongoWorker::handle(CreateCollectionRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+        client->createCollection(event->database(), event->collection());
+        client->done();
+
+        reply(event->sender(), new CreateCollectionResponse(this));
+    } catch(DBException &ex) {
+        reply(event->sender(), new CreateCollectionResponse(this, EventError("Unable to create collection.")));
+    }
+}
+
+void MongoWorker::handle(DropCollectionRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+        client->dropCollection(event->database(), event->collection());
+        client->done();
+
+        reply(event->sender(), new DropCollectionResponse(this));
+    } catch(DBException &ex) {
+        reply(event->sender(), new DropCollectionResponse(this, EventError("Unable to drop collection.")));
+    }
+}
+
+void MongoWorker::handle(RenameCollectionRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+        client->renameCollection(event->database(), event->collection(), event->newCollection());
+        client->done();
+
+        reply(event->sender(), new DropCollectionResponse(this));
+    } catch(DBException &ex) {
+        reply(event->sender(), new DropCollectionResponse(this, EventError("Unable to rename collection.")));
+    }
+}
+
 ScopedDbConnection *MongoWorker::getConnection()
 {
     return ScopedDbConnection::getScopedDbConnection(_address.toStdString());

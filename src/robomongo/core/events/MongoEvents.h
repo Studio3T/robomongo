@@ -309,6 +309,115 @@ namespace Robomongo
             Event(sender, error) {}
     };
 
+    /**
+     * @brief Create Collection
+     */
+
+    class CreateCollectionRequest : public Event
+    {
+        R_EVENT
+
+    public:
+        CreateCollectionRequest(QObject *sender, const QString &database, const QString &collection) :
+            Event(sender),
+            _database(database),
+            _collection(collection) {}
+
+        QString database() const { return _database; }
+        QString collection() const { return _collection; }
+
+    private:
+        QString _database;
+        QString _collection;
+    };
+
+    class CreateCollectionResponse : public Event
+    {
+        R_EVENT
+
+    public:
+        CreateCollectionResponse(QObject *sender) :
+            Event(sender) {}
+
+        CreateCollectionResponse(QObject *sender, EventError error) :
+            Event(sender, error) {}
+    };
+
+
+
+    /**
+     * @brief Drop Collection
+     */
+
+    class DropCollectionRequest : public Event
+    {
+        R_EVENT
+
+    public:
+        DropCollectionRequest(QObject *sender, const QString &database,
+                              const QString &collection) :
+            Event(sender),
+            _database(database),
+            _collection(collection){}
+
+        QString database() const { return _database; }
+        QString collection() const { return _collection; }
+
+    private:
+        QString _database;
+        QString _collection;
+    };
+
+    class DropCollectionResponse : public Event
+    {
+        R_EVENT
+
+    public:
+        DropCollectionResponse(QObject *sender) :
+            Event(sender) {}
+
+        DropCollectionResponse(QObject *sender, EventError error) :
+            Event(sender, error) {}
+    };
+
+    /**
+     * @brief Rename Collection
+     */
+
+    class RenameCollectionRequest : public Event
+    {
+        R_EVENT
+
+    public:
+        RenameCollectionRequest(QObject *sender, const QString &database,
+                              const QString &collection, const QString &newCollection) :
+            Event(sender),
+            _database(database),
+            _collection(collection),
+            _newCollection(newCollection) {}
+
+        QString database() const { return _database; }
+        QString collection() const { return _collection; }
+        QString newCollection() const { return _newCollection; }
+
+    private:
+        QString _database;
+        QString _collection;
+        QString _newCollection;
+    };
+
+    class RenameCollectionResponse : public Event
+    {
+        R_EVENT
+
+    public:
+        RenameCollectionResponse(QObject *sender) :
+            Event(sender) {}
+
+        RenameCollectionResponse(QObject *sender, EventError error) :
+            Event(sender, error) {}
+    };
+
 
     /**
      * @brief Query Mongodb

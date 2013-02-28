@@ -33,6 +33,21 @@ void MongoDatabase::loadCollections()
     _bus->send(_client, new LoadCollectionNamesRequest(this, _name));
 }
 
+void MongoDatabase::createCollection(const QString &collection)
+{
+    _bus->send(_client, new CreateCollectionRequest(this, _name, collection));
+}
+
+void MongoDatabase::dropCollection(const QString &collection)
+{
+    _bus->send(_client, new DropCollectionRequest(this, _name, collection));
+}
+
+void MongoDatabase::renameCollection(const QString &collection, const QString &newCollection)
+{
+    _bus->send(_client, new RenameCollectionRequest(this, _name, collection, newCollection));
+}
+
 void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
 {
     clearCollections();

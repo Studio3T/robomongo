@@ -66,6 +66,26 @@ void MongoClient::dropDatabase(const QString &dbName)
     _dbclient->dropDatabase(dbName.toStdString());
 }
 
+void MongoClient::createCollection(const QString &dbName, const QString &collectionName)
+{
+    MongoNamespace ns(dbName, collectionName);
+    _dbclient->createCollection(ns.toString().toStdString());
+}
+
+void MongoClient::renameCollection(const QString &dbName, const QString &collectionName, const QString &newCollectionName)
+{
+    MongoNamespace from(dbName, collectionName);
+    MongoNamespace to(dbName, newCollectionName);
+
+    // Building { renameCollection: <source-namespace>, to: <target-namespace> }
+    mongo::BSONObjBuilder command; // { collStats: "db.collection", scale : 1 }
+    command.append("renameCollection", from.toString().toStdString());
+    command.append("to", to.toString().toStdString());
+
+    mongo::BSONObj result;
+    _dbclient->runCommand("admin", command.obj(), result); // this command should be run against "admin" db
+}
+
 void MongoClient::dropCollection(const QString &dbName, const QString &collectionName)
 {
     MongoNamespace ns(dbName, collectionName);

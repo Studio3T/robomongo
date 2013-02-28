@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QDialog>
+#include <QLabel>
 #include <QLineEdit>
 
 namespace Robomongo
@@ -10,13 +11,21 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit CreateDatabaseDialog(const QString &serverName, QWidget *parent = 0);
+        explicit CreateDatabaseDialog(const QString &serverName,
+                                      const QString &database = QString(),
+                                      const QString &collection = QString(), QWidget *parent = 0);
         QString databaseName() const;
+        void setOkButtonText(const QString &text);
+        void setInputLabelText(const QString &text);
+        void setInputText(const QString &text);
+
 
     public slots:
         virtual void accept();
 
     private:
-        QLineEdit *_databaseName;
+        QLineEdit *_inputEdit;
+        QLabel *_inputLabel;
+        QPushButton *_okButton;
     };
 }

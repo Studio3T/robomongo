@@ -45,6 +45,7 @@ namespace Robomongo
         void ui_openShell();
         void ui_addDocument();
         void ui_removeDocument();
+        void ui_removeAllDocuments();
 
         void ui_addIndex();
         void ui_reIndex();

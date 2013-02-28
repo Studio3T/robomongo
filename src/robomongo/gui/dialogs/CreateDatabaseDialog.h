@@ -6,6 +6,8 @@
 
 namespace Robomongo
 {
+    class Indicator;
+
     class CreateDatabaseDialog : public QDialog
     {
         Q_OBJECT
@@ -24,6 +26,8 @@ namespace Robomongo
         virtual void accept();
 
     private:
+        Indicator *createDatabaseIndicator(const QString &database);
+        Indicator *createCollectionIndicator(const QString &collection);
         QLineEdit *_inputEdit;
         QLabel *_inputLabel;
         QPushButton *_okButton;

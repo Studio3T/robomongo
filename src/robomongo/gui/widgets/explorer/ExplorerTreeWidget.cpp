@@ -15,6 +15,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
+#include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 
 #include "robomongo/shell/db/json.h"
 
@@ -52,10 +53,14 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *refreshServer = new QAction("Refresh", this);
     connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer()));
 
+    QAction *createDatabase = new QAction("Create Database", this);
+    connect(createDatabase, SIGNAL(triggered()), SLOT(ui_createDatabase()));
+
     _serverContextMenu = new QMenu(this);
     _serverContextMenu->addAction(openShellAction);
     _serverContextMenu->addAction(refreshServer);
     _serverContextMenu->addSeparator();
+    _serverContextMenu->addAction(createDatabase);
     _serverContextMenu->addAction(serverStatus);
     _serverContextMenu->addAction(serverHostInfo);
     _serverContextMenu->addAction(serverVersion);
@@ -320,6 +325,23 @@ void ExplorerTreeWidget::ui_refreshServer()
         return;
 
     serverItem->expand();
+}
+
+void ExplorerTreeWidget::ui_createDatabase()
+{
+    ExplorerServerTreeItem *serverItem = selectedServerItem();
+    if (!serverItem)
+        return;
+
+    CreateDatabaseDialog dlg(serverItem->server()->connectionRecord()->getFullAddress());
+    int result = dlg.exec();
+
+    if (result == QDialog::Accepted) {
+        serverItem->server()->createDatabase(dlg.databaseName());
+
+        // refresh list of databases
+        serverItem->expand();
+    }
 }
 
 void ExplorerTreeWidget::ui_showLog()

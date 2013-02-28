@@ -245,6 +245,37 @@ namespace Robomongo
             Event(sender, error) {}
     };
 
+    /**
+     * @brief Create Database
+     */
+
+    class CreateDatabaseRequest : public Event
+    {
+        R_EVENT
+
+    public:
+        CreateDatabaseRequest(QObject *sender, const QString &database) :
+            Event(sender),
+            _database(database) {}
+
+        QString database() const { return _database; }
+
+    private:
+        QString _database;
+    };
+
+    class CreateDatabaseResponse : public Event
+    {
+        R_EVENT
+
+    public:
+        CreateDatabaseResponse(QObject *sender) :
+            Event(sender) {}
+
+        CreateDatabaseResponse(QObject *sender, EventError error) :
+            Event(sender, error) {}
+    };
+
 
     /**
      * @brief Query Mongodb

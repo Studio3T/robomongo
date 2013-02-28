@@ -19,6 +19,7 @@ namespace Robomongo
 
         QStringList getCollectionNames(const QString &dbname);
         QStringList getDatabaseNames();
+        void createDatabase(const QString &dbName);
         void insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);
         void saveDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);
         void removeDocuments(const QString &db, const QString &collection, mongo::Query query, bool justOne = true);

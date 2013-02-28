@@ -50,6 +50,11 @@ void MongoServer::tryConnect()
     qDebug() << "EstablishConnectionRequest sent";
 }
 
+void MongoServer::createDatabase(const QString &dbName)
+{
+    _client->send(new CreateDatabaseRequest(this, dbName));
+}
+
 void MongoServer::insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
 {
     _client->send(new InsertDocumentRequest(this, obj, db, collection));

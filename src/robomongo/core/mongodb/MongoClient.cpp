@@ -164,5 +164,6 @@ QList<MongoCollectionInfo> MongoClient::runCollStatsCommand(const QStringList &n
 
 void MongoClient::done()
 {
+    // do nothing here, because we are not using ScopedDbConnection now
     //_scopedConnection->done();
 }

@@ -30,22 +30,28 @@ QColor JSLexer::defaultColor(int style) const
         return QColor("#666666");
 
     case Number:
-        return QColor("#DBF76C");
+        //return QColor("#DBF76C");
+        return QColor("#FFA09E");
 
     case Keyword:
-        return QColor("#FDE15D");
+        //return QColor("#FDE15D");
+        return QColor("#BEE5FF");
 
     case DoubleQuotedString:
     case SingleQuotedString:
     case RawString:
-        return QColor("#5ED363");
+        //return QColor("#5ED363");
+        return QColor("#C6F079");
 
     case PreProcessor:
-        return QColor("#FFFFFF");
+        return QColor("#00FF00");
 
     case Operator:
     case UnclosedString:
-        return QColor("#FF7729");
+        //return QColor("#FF7729");
+        //return QColor("#AFBED4");
+        return QColor("#FFD14D");
+
 
     case Regex:
         return QColor("#FFFFFF");
@@ -99,5 +105,20 @@ QColor JSLexer::defaultColor(int style) const
     }
 
     return QColor("#FFFFFF");
-//    return QsciLexer::defaultColor(style);
+    //    return QsciLexer::defaultColor(style);
+}
+
+const char *JSLexer::keywords(int set) const
+{
+    if (set == 1)
+        return
+            "abstract boolean break byte case catch char class const continue "
+            "debugger default delete do double else enum export extends final "
+            "finally float for function goto if implements import in instanceof "
+            "int interface long native new package private protected public "
+            "return short static super switch synchronized this throw throws "
+            "transient try typeof var void volatile while with "
+            "ISODate Mongo Date NumberInt Number NumberLong Timestamp _id null false true";
+
+    return 0;
 }

@@ -16,5 +16,6 @@ namespace Robomongo
         JSLexer(QObject *parent = 0);
         QColor defaultPaper(int style) const;
         QColor defaultColor(int style) const;
+        const char *keywords(int set) const;
     };
 }

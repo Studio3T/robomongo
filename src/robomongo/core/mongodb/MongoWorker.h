@@ -86,7 +86,8 @@ namespace Robomongo
 
     private:
 
-        mongo::ScopedDbConnection *getConnection();
+        mongo::DBClientBase *_dbclient;
+        mongo::DBClientBase *getConnection();
         MongoClient *getClient();
 
         /**

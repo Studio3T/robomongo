@@ -30,7 +30,8 @@ using namespace mongo;
 MongoWorker::MongoWorker(EventBus *bus, ConnectionSettings *connection, QObject *parent) : QObject(parent),
     _connection(connection),
     _bus(bus),
-    _scriptEngine(NULL)
+    _scriptEngine(NULL),
+    _dbclient(NULL)
 {
     _address = _connection->getFullAddress();
     init();
@@ -38,6 +39,9 @@ MongoWorker::MongoWorker(EventBus *bus, ConnectionSettings *connection, QObject 
 
 MongoWorker::~MongoWorker()
 {
+    if (_dbclient)
+        delete _dbclient;
+
     delete _connection;
     _thread->quit();
     if (!_thread->wait(1000))
@@ -94,12 +98,12 @@ void MongoWorker::handle(EstablishConnectionRequest *event)
 
     try {
         qDebug() << "EstablishConnectionRequest in try block";
-        boost::scoped_ptr<ScopedDbConnection> conn(getConnection());
+        mongo::DBClientBase *conn = getConnection();
 
         if (_connection->hasEnabledPrimaryCredential())
         {
             std::string errmsg;
-            bool ok = conn->get()->auth(
+            bool ok = conn->auth(
                 _connection->primaryCredential()->databaseName().toStdString(),
                 _connection->primaryCredential()->userName().toStdString(),
                 _connection->primaryCredential()->userPassword().toStdString(), errmsg);
@@ -119,7 +123,7 @@ void MongoWorker::handle(EstablishConnectionRequest *event)
             _authDatabase = _connection->primaryCredential()->databaseName();
         }
 
-        conn->done();
+        //conn->done();
         reply(event->sender(), new EstablishConnectionResponse(this, _address));
         qDebug() << "EstablishConnectionResponse sent back";
     } catch(std::exception &ex) {
@@ -304,9 +308,14 @@ void MongoWorker::handle(RenameCollectionRequest *event)
     }
 }
 
-ScopedDbConnection *MongoWorker::getConnection()
+mongo::DBClientBase *MongoWorker::getConnection()
 {
-    return ScopedDbConnection::getScopedDbConnection(_address.toStdString());
+    if (!_dbclient) {
+        mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
+        conn->connect(_address.toStdString());
+        _dbclient = conn;
+    }
+    return _dbclient;
 }
 
 MongoClient *MongoWorker::getClient()

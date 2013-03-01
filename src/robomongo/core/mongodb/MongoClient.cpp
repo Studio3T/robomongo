@@ -5,9 +5,8 @@
 using namespace Robomongo;
 using namespace std;
 
-MongoClient::MongoClient(mongo::ScopedDbConnection *scopedConnection) :
-    _scopedConnection(scopedConnection),
-    _dbclient(scopedConnection->get()){ }
+MongoClient::MongoClient(mongo::DBClientBase *dbclient) :
+    _dbclient(dbclient) { }
 
 QStringList MongoClient::getCollectionNames(const QString &dbname)
 {
@@ -165,5 +164,5 @@ QList<MongoCollectionInfo> MongoClient::runCollStatsCommand(const QStringList &n
 
 void MongoClient::done()
 {
-    _scopedConnection->done();
+    //_scopedConnection->done();
 }

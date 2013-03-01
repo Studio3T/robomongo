@@ -14,7 +14,7 @@ namespace Robomongo
     class MongoClient
     {
     public:
-        MongoClient(mongo::ScopedDbConnection *scopedConnection);
+        MongoClient(mongo::DBClientBase *scopedConnection);
         ~MongoClient() {}
 
         QStringList getCollectionNames(const QString &dbname);
@@ -36,6 +36,6 @@ namespace Robomongo
 
     private:
        mongo::DBClientBase *_dbclient;
-       boost::scoped_ptr<mongo::ScopedDbConnection> _scopedConnection;
+       //boost::scoped_ptr<mongo::ScopedDbConnection> _scopedConnection;
     };
 }

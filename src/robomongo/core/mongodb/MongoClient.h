@@ -36,6 +36,5 @@ namespace Robomongo
 
     private:
        mongo::DBClientBase *_dbclient;
-       //boost::scoped_ptr<mongo::ScopedDbConnection> _scopedConnection;
     };
 }

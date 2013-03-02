@@ -283,8 +283,8 @@ void ScriptWidget::_configureQueryText()
     _queryText->setPaper(QColor(255, 0, 0, 127));
     _queryText->setLexer(javaScriptLexer);
     _queryText->setCaretForegroundColor(QColor("#FFFFFF"));
-    _queryText->setMatchedBraceBackgroundColor(QColor(48, 10, 36));
-    _queryText->setMatchedBraceForegroundColor(QColor("#1AB0A6"));
+    _queryText->setMatchedBraceBackgroundColor(QColor(73, 76, 78));
+    _queryText->setMatchedBraceForegroundColor(QColor("#FF8861")); //1AB0A6
     _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
     _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);

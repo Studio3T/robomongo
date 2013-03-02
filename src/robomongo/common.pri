@@ -38,9 +38,11 @@ CONFIG(release, debug|release) {
 contains(QMAKE_HOST.arch, x86_64) {
     win32:OS_CPU=win-amd64-$$BUILD_TYPE   # will be win-amd64-debug or win-amd64-release
     unix:OS_CPU=unix-amd64-$$BUILD_TYPE
+    mac:OS_CPU=mac-amd64-$$BUILD_TYPE
 } else {
     win32:OS_CPU=win-i386-$$BUILD_TYPE
     unix:OS_CPU=unix-i386-$$BUILD_TYPE
+    mac:OS_CPU=mac-i386-$$BUILD_TYPE
 }
 
 THIRDPARTY_LIBS_PATH=$$ROOT/libs/$$OS_CPU

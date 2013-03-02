@@ -15,10 +15,10 @@
  *    limitations under the License.
  */
 
-#include "../pch.h"
-#include "processinfo.h"
-#include "log.h"
-#include <db/jsobj.h>
+#include "mongo/pch.h"
+#include "mongo/util/processinfo.h"
+#include "mongo/util/log.h"
+#include <mongo/db/jsobj.h>
 
 #include <mach/vm_statistics.h>
 #include <mach/task_info.h>

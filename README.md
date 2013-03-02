@@ -33,7 +33,7 @@ Compiling:
 Executable will be placed to: target/debug/app/out
 
 
-Linux
+Linux and OS X
 -------
 
 Prerequisites:

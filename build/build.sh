@@ -32,11 +32,22 @@ PROJECT_ROOT=`pwd`/..                  # Find project root
 TARGET=${PROJECT_ROOT}/target/$MODE    # Prepare output directory name
 OUTPUT=${TARGET}/out                   # Prepare output directory name
 
+OS=`uname`
+
 if [[ $MODE = "debug" ]]; then
-  QMAKE_ARGS="-r -spec linux-g++ CONFIG+=debug CONFIG+=declarative_debug"
+  if [[ $OS = "Darwin" ]]; then
+    QMAKE_ARGS="-r -spec macx-g++ CONFIG+=debug CONFIG+=declarative_debug"
+  else
+    QMAKE_ARGS="-r -spec linux-g++ CONFIG+=debug CONFIG+=declarative_debug"
+  fi
 fi
+
 if [[ $MODE = "release" ]]; then
-  QMAKE_ARGS="-r -spec linux-g++ CONFIG+=release"
+  if [[ $OS = "Darwin" ]]; then
+    QMAKE_ARGS="-r -spec macx-g++ CONFIG+=release"
+  else
+    QMAKE_ARGS="-r -spec linux-g++ CONFIG+=release"
+  fi
 fi
 
 # ****************

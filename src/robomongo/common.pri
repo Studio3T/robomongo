@@ -7,7 +7,6 @@ DEFINES += ROBOMONGO JS_C_STRINGS_ARE_UTF8 MONGO_EXPOSE_MACROS
 
 win32:DEFINES += XP_WIN _UNICODE UNICODE BOOST_ALL_NO_LIB _CRT_SECURE_NO_WARNINGS PSAPI_VERSION=1
 unix:DEFINES  += XP_UNIX
-mac:DEFINES  += XP_UNIX
 
 QMAKE_CXXFLAGS += -fpermissive
 
@@ -40,12 +39,12 @@ CONFIG(release, debug|release) {
 # Populate $$OS_CPU variable
 contains(QMAKE_HOST.arch, x86_64) {
     win32:OS_CPU=win-amd64-$$BUILD_TYPE   # will be win-amd64-debug or win-amd64-release
-    unix:OS_CPU=unix-amd64-$$BUILD_TYPE
-    mac:OS_CPU=mac-amd64-$$BUILD_TYPE
+    unix:!macx:OS_CPU=unix-amd64-$$BUILD_TYPE
+    macx:OS_CPU=mac-amd64-$$BUILD_TYPE
 } else {
     win32:OS_CPU=win-i386-$$BUILD_TYPE
-    unix:OS_CPU=unix-i386-$$BUILD_TYPE
-    mac:OS_CPU=mac-i386-$$BUILD_TYPE
+    unix:!macx:OS_CPU=unix-i386-$$BUILD_TYPE
+    macx:OS_CPU=mac-i386-$$BUILD_TYPE
 }
 
 THIRDPARTY_LIBS_PATH=$$ROOT/libs/$$OS_CPU

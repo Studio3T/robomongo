@@ -32,8 +32,8 @@ SOURCES += \
     db/json.cpp \
     db/ptimeutil.cpp
 
-unix!mac:SOURCES += util/processinfo_linux2.cpp
-mac:SOURCES += util/processinfo_darwin.cpp
+unix:!macx:SOURCES += util/processinfo_linux2.cpp
+macx:SOURCES += util/processinfo_darwin.cpp
 win32:SOURCES += util/processinfo_win32.cpp
 
 HEADERS += \

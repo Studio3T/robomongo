@@ -50,7 +50,7 @@ win32 {
     }
 }
 
-unix {
+unix:!macx {
     contains(QMAKE_HOST.arch, x86_64) {
         # Copy qjson to to app/out folder
         QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))

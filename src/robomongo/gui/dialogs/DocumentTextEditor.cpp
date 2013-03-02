@@ -159,6 +159,10 @@ void DocumentTextEditor::_configureQueryText()
     _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
     _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    // Wrap mode turned off because it introduces huge performance problems
+    // even for medium size documents.
+    _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
+
     _queryText->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
 }
 

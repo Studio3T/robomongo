@@ -162,7 +162,7 @@ MainWindow::MainWindow() : QMainWindow(),
     createTabs();
     createDatabaseExplorer();
 
-    setWindowTitle("Robomongo 0.6 (pool not used)");
+    setWindowTitle("Robomongo 0.6.1");
     setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
 //    DocumentTextEditor editor("localhost", "abe_read_write", "assignments_high_deleted_and_yes", "{}");

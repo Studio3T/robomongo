@@ -253,7 +253,10 @@ RoboScintilla *Robomongo::OutputItemContentWidget::_configureLogText()
     _logText->setIndentationWidth(4);
     _logText->setUtf8(true);
     _logText->installEventFilter(this);
+    _logText->setCaretForegroundColor(QColor("#FFFFFF"));
     _logText->setMarginWidth(1, 0); // to hide left gray column
+    _logText->setMatchedBraceBackgroundColor(QColor(73, 76, 78));
+    _logText->setMatchedBraceForegroundColor(QColor("#FF8861")); //1AB0A6
     _logText->setBraceMatching(QsciScintilla::StrictBraceMatch);
     _logText->setFont(textFont);
     _logText->setReadOnly(true);

@@ -71,6 +71,26 @@ unix {
     QMAKE_POST_LINK += $$quote(chmod u+x \"$$OUT_PWD/out/run.sh\" $$escape_expand(\\n\\t))
 }
 
+mac {
+    contains(QMAKE_HOST.arch, x86_64) {
+        # Copy qjson to to app/out folder
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.0.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.0.7.1.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+
+        # Copy qscintilla to app/out folder
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.8.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.8.0.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.8.0.2.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+
+    } else {
+
+    }
+
+    QMAKE_POST_LINK += $$quote(cp \"$$ROOT/build/darwin/run.sh\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(chmod u+x \"$$OUT_PWD/out/run.sh\" $$escape_expand(\\n\\t))
+}
 
 
 

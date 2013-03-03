@@ -34,6 +34,52 @@ QStringList MongoClient::getDatabaseNames()
     return dbNames;
 }
 
+QList<MongoUser> MongoClient::getUsers(const QString &dbName)
+{
+    MongoNamespace ns(dbName, "system.users");
+    QList<MongoUser> users;
+
+    auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString().toStdString(), mongo::Query()));
+
+    while (cursor->more()) {
+        mongo::BSONObj bsonObj = cursor->next();
+        MongoUser user(bsonObj);
+        users.append(user);
+    }
+
+    return users;
+}
+
+void MongoClient::createUser(const QString &dbName, const MongoUser &user, bool overwrite)
+{
+    MongoNamespace ns(dbName, "system.users");
+    mongo::BSONObj obj = user.toBson();
+
+    if (!overwrite) {
+        _dbclient->insert(ns.toString().toStdString(), obj);
+    } else {
+        mongo::BSONElement id = obj.getField("_id");
+        mongo::BSONObjBuilder builder;
+        builder.append(id);
+        mongo::BSONObj bsonQuery = builder.obj();
+        mongo::Query query(bsonQuery);
+
+        _dbclient->update(ns.toString().toStdString(), query, obj, true, false);
+    }
+}
+
+void MongoClient::dropUser(const QString &dbName, const mongo::OID &id)
+{
+    MongoNamespace ns(dbName, "system.users");
+
+    mongo::BSONObjBuilder builder;
+    builder.append("_id", id);
+    mongo::BSONObj bsonQuery = builder.obj();
+    mongo::Query query(bsonQuery);
+
+    _dbclient->remove(ns.toString().toStdString(), query);
+}
+
 void MongoClient::createDatabase(const QString &dbName)
 {
     /*

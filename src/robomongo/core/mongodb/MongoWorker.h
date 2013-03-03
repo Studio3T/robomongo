@@ -58,6 +58,11 @@ namespace Robomongo
         void handle(LoadCollectionNamesRequest *event);
 
         /**
+         * @brief Load list of all users
+         */
+        void handle(LoadUsersRequest *event);
+
+        /**
          * @brief Inserts document
          */
         void handle(InsertDocumentRequest *event);
@@ -80,9 +85,13 @@ namespace Robomongo
         void handle(AutocompleteRequest *event);
         void handle(CreateDatabaseRequest *event);
         void handle(DropDatabaseRequest *event);
+
         void handle(CreateCollectionRequest *event);
         void handle(DropCollectionRequest *event);
         void handle(RenameCollectionRequest *event);
+
+        void handle(CreateUserRequest *event);
+        void handle(DropUserRequest *event);
 
     private:
 

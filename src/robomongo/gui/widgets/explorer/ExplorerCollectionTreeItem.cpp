@@ -20,8 +20,8 @@ QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
     QString tooltip = QString(
         "%0 "
         "<table>"
-        "<tr><td>Count:</td> <td><b>&nbsp; %1</b></td></tr>"
-        "<tr><td>Size:</td><td><b>&nbsp; %2</b></td></tr>"
+        "<tr><td>Count:</td> <td><b>&nbsp;&nbsp;%1</b></td></tr>"
+        "<tr><td>Size:</td><td><b>&nbsp;&nbsp;%2</b></td></tr>"
         "</table>"
         )
         .arg(collection->name())

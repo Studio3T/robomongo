@@ -1,5 +1,7 @@
 #include "robomongo/core/domain/MongoUtils.h"
 
+#include "mongo/util/md5.hpp"
+
 using namespace Robomongo;
 
 QString MongoUtils::getName(const QString &fullName)
@@ -29,6 +31,22 @@ QString MongoUtils::buildNiceSizeString(double sizeBytes)
 
     double mb = ((double) sizeBytes) / 1024 / 1024;
     return QString("%1 mb").arg(mb, 2, 'f', 2);
+}
+
+QString MongoUtils::buildPasswordHash(const QString &username, const QString &password)
+{
+    QString sum = username + ":mongo:" + password;
+    QByteArray bytes = sum.toUtf8();
+    const char * s = bytes.constData();
+
+    mongo::md5digest d;
+    md5_state_t st;
+    md5_init(&st);
+    md5_append( &st , (const md5_byte_t*)s , strlen( s ) );
+    md5_finish(&st, d);
+
+    std::string hash = mongo::digestToString(d);
+    return QString::fromUtf8(hash.c_str(), hash.size());
 }
 
 /*

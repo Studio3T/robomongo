@@ -9,6 +9,8 @@ namespace Robomongo
     class ExplorerDatabaseTreeItem;
     class ExplorerServerTreeItem;
     class ExplorerDatabaseCategoryTreeItem;
+    class ExplorerUserTreeItem;
+    class MongoDatabase;
 
     class ExplorerTreeWidget : public QTreeWidget
     {
@@ -23,11 +25,14 @@ namespace Robomongo
 
         ExplorerServerTreeItem *selectedServerItem();
         ExplorerCollectionTreeItem *selectedCollectionItem();
+        ExplorerUserTreeItem *selectedUserItem();
         ExplorerDatabaseTreeItem *selectedDatabaseItem();
         ExplorerDatabaseCategoryTreeItem *selectedDatabaseCategoryItem();
         void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
         void openCurrentDatabaseShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
         void openCurrentServerShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
+
+        void openDatabaseShell(MongoDatabase *database, const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
 
     signals:
         void disconnectActionTriggered();
@@ -37,6 +42,9 @@ namespace Robomongo
     protected slots:
         void ui_refreshDatabase();
         void ui_createCollection();
+        void ui_addUser();
+        void ui_dropUser();
+        void ui_editUser();
         void ui_refreshCollections();
         void ui_disconnectServer();
         void ui_refreshServer();
@@ -73,10 +81,15 @@ namespace Robomongo
         void ui_serverStatus();
         void ui_serverVersion();
 
+        void ui_refreshUsers();
+        void ui_viewUsers();
+
     private:
         QMenu *_serverContextMenu;
         QMenu *_databaseContextMenu;
         QMenu *_collectionContextMenu;
+        QMenu *_userContextMenu;
         QMenu *_collectionCategoryContextMenu;
+        QMenu *_usersCategoryContextMenu;
     };
 }

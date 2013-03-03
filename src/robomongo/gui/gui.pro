@@ -43,7 +43,9 @@ SOURCES += ExampleWindow.cpp \
     dialogs/DocumentTextEditor.cpp \
     widgets/workarea/CollectionStatsTreeWidget.cpp \
     widgets/workarea/CollectionStatsTreeItem.cpp \
-    dialogs/CreateDatabaseDialog.cpp
+    dialogs/CreateDatabaseDialog.cpp \
+    widgets/explorer/ExplorerUserTreeItem.cpp \
+    dialogs/CreateUserDialog.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
@@ -84,6 +86,8 @@ HEADERS  += ExampleWindow.h = \
     widgets/workarea/CollectionStatsTreeWidget.h \
     widgets/workarea/CollectionStatsTreeItem.h \
     ViewMode.h \
-    dialogs/CreateDatabaseDialog.h
+    dialogs/CreateDatabaseDialog.h \
+    widgets/explorer/ExplorerUserTreeItem.h \
+    dialogs/CreateUserDialog.h
 
 INCLUDEPATH += $$SRC_ROOT

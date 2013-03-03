@@ -9,6 +9,7 @@
 using namespace Robomongo;
 
 R_REGISTER_EVENT(MongoDatabase_CollectionListLoadedEvent)
+R_REGISTER_EVENT(MongoDatabase_UsersLoadedEvent)
 
 MongoDatabase::MongoDatabase(MongoServer *server, const QString &name) : QObject(),
     _system(false),
@@ -33,6 +34,11 @@ void MongoDatabase::loadCollections()
     _bus->send(_client, new LoadCollectionNamesRequest(this, _name));
 }
 
+void MongoDatabase::loadUsers()
+{
+    _bus->send(_client, new LoadUsersRequest(this, _name));
+}
+
 void MongoDatabase::createCollection(const QString &collection)
 {
     _bus->send(_client, new CreateCollectionRequest(this, _name, collection));
@@ -48,8 +54,21 @@ void MongoDatabase::renameCollection(const QString &collection, const QString &n
     _bus->send(_client, new RenameCollectionRequest(this, _name, collection, newCollection));
 }
 
+void MongoDatabase::createUser(const MongoUser &user, bool overwrite)
+{
+    _bus->send(_client, new CreateUserRequest(this, _name, user, overwrite));
+}
+
+void MongoDatabase::dropUser(const mongo::OID &id)
+{
+    _bus->send(_client, new DropUserRequest(this, _name, id));
+}
+
 void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
 {
+    if (loaded->isError())
+        return;
+
     clearCollections();
 
     foreach(MongoCollectionInfo info, loaded->collectionInfos())    {
@@ -58,6 +77,14 @@ void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
     }
 
     _bus->publish(new MongoDatabase_CollectionListLoadedEvent(this, _collections));
+}
+
+void MongoDatabase::handle(LoadUsersResponse *event)
+{
+    if (event->isError())
+        return;
+
+    _bus->publish(new MongoDatabase_UsersLoadedEvent(this, this, event->users()));
 }
 
 void MongoDatabase::clearCollections()

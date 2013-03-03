@@ -8,6 +8,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
 
 using namespace Robomongo;
 
@@ -17,6 +18,7 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) :
     _bus(AppRegistry::instance().bus())
 {
     _bus->subscribe(this, MongoDatabase_CollectionListLoadedEvent::Type, _database);
+    _bus->subscribe(this, MongoDatabase_UsersLoadedEvent::Type, _database);
 
     setText(0, _database->name());
     setIcon(0, GuiRegistry::instance().databaseIcon());
@@ -57,11 +59,16 @@ void ExplorerDatabaseTreeItem::expandCollections()
     _database->loadCollections();
 }
 
+void ExplorerDatabaseTreeItem::expandUsers()
+{
+    _database->loadUsers();
+}
+
 void ExplorerDatabaseTreeItem::handle(MongoDatabase_CollectionListLoadedEvent *event)
 {
     QList<MongoCollection *> collections = event->collections;
 
-    clearCollectionFolderItems();
+    clearChildItems(_collectionFolderItem);
     createCollectionSystemFolderItem();
 
     for (int i = 0; i < collections.size(); ++i) {
@@ -77,12 +84,24 @@ void ExplorerDatabaseTreeItem::handle(MongoDatabase_CollectionListLoadedEvent *e
     showCollectionSystemFolderIfNeeded();
 }
 
-void ExplorerDatabaseTreeItem::clearCollectionFolderItems()
+void ExplorerDatabaseTreeItem::handle(MongoDatabase_UsersLoadedEvent *event)
 {
-    int itemCount = _collectionFolderItem->childCount();
+    QList<MongoUser> users = event->users();
+
+    clearChildItems(_usersFolderItem);
+
+    for (int i = 0; i < users.count(); ++i) {
+        MongoUser user = users.at(i);
+        addUserItem(event->database(), user);
+    }
+}
+
+void ExplorerDatabaseTreeItem::clearChildItems(QTreeWidgetItem *root)
+{
+    int itemCount = root->childCount();
     for (int i = 0; i < itemCount; ++i) {
-        QTreeWidgetItem *item = _collectionFolderItem->child(0);
-        _collectionFolderItem->removeChild(item);
+        QTreeWidgetItem *item = root->child(0);
+        root->removeChild(item);
         delete item;
     }
 }
@@ -110,4 +129,10 @@ void ExplorerDatabaseTreeItem::addSystemCollectionItem(MongoCollection *collecti
 void ExplorerDatabaseTreeItem::showCollectionSystemFolderIfNeeded()
 {
     _collectionSystemFolderItem->setHidden(_collectionSystemFolderItem->childCount() == 0);
+}
+
+void ExplorerDatabaseTreeItem::addUserItem(MongoDatabase *database, const MongoUser &user)
+{
+    ExplorerUserTreeItem *collectionItem = new ExplorerUserTreeItem(database, user);
+    _usersFolderItem->addChild(collectionItem);
 }

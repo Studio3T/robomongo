@@ -7,7 +7,7 @@
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/core/domain/MongoDocument.h"
-
+#include "robomongo/core/domain/MongoUser.h"
 
 namespace Robomongo
 {
@@ -19,6 +19,9 @@ namespace Robomongo
 
         QStringList getCollectionNames(const QString &dbname);
         QStringList getDatabaseNames();
+        QList<MongoUser> getUsers(const QString &dbName);
+        void createUser(const QString &dbName, const MongoUser &user, bool overwrite);
+        void dropUser(const QString &dbName, const mongo::OID &id);
         void createDatabase(const QString &dbName);
         void dropDatabase(const QString &dbName);
         void createCollection(const QString &dbName, const QString &collectionName);

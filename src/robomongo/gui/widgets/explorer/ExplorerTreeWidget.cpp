@@ -16,8 +16,11 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
+#include "robomongo/gui/dialogs/CreateUserDialog.h"
+#include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
 
 #include "robomongo/shell/db/json.h"
+
 
 using namespace Robomongo;
 
@@ -90,11 +93,15 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *createCollection = new QAction("Create Collection", this);
     connect(createCollection, SIGNAL(triggered()), SLOT(ui_createCollection()));
 
+    QAction *addUser = new QAction("Add User", this);
+    connect(addUser, SIGNAL(triggered()), SLOT(ui_addUser()));
+
     _databaseContextMenu = new QMenu(this);
     _databaseContextMenu->addAction(openDbShellAction);
     _databaseContextMenu->addAction(refreshDatabase);
     _databaseContextMenu->addSeparator();
     _databaseContextMenu->addAction(createCollection);
+    _databaseContextMenu->addAction(addUser);
     _databaseContextMenu->addAction(dbStats);
     _databaseContextMenu->addAction(dbCollectionsStats);
     _databaseContextMenu->addSeparator();
@@ -170,11 +177,34 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     _collectionContextMenu->addAction(shardDistribution);
 
 
+    QAction *dropUser = new QAction("Remove User", this);
+    connect(dropUser, SIGNAL(triggered()), SLOT(ui_dropUser()));
+
+    QAction *editUser = new QAction("Edit User", this);
+    connect(editUser, SIGNAL(triggered()), SLOT(ui_editUser()));
+
+    _userContextMenu = new QMenu(this);
+    _userContextMenu->addAction(editUser);
+    _userContextMenu->addAction(dropUser);
+
+
     QAction *refreshCollections = new QAction("Refresh", this);
     connect(refreshCollections, SIGNAL(triggered()), SLOT(ui_refreshCollections()));
 
     _collectionCategoryContextMenu = new QMenu(this);
     _collectionCategoryContextMenu->addAction(refreshCollections);
+
+
+    QAction *refreshUsers = new QAction("Refresh", this);
+    connect(refreshUsers, SIGNAL(triggered()), SLOT(ui_refreshUsers()));
+
+    QAction *viewUsers = new QAction("View Users", this);
+    connect(viewUsers, SIGNAL(triggered()), SLOT(ui_viewUsers()));
+
+    _usersCategoryContextMenu = new QMenu(this);
+    _usersCategoryContextMenu->addAction(viewUsers);
+    _usersCategoryContextMenu->addSeparator();
+    _usersCategoryContextMenu->addAction(refreshUsers);
 }
 
 void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
@@ -201,10 +231,18 @@ void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
         return;
     }
 
-    ExplorerDatabaseCategoryTreeItem *collectionCategoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
-    if (collectionCategoryItem) {
-        if (collectionCategoryItem->category() == Collections) {
+    ExplorerUserTreeItem *userItem = dynamic_cast<ExplorerUserTreeItem *>(item);
+    if (userItem) {
+        _userContextMenu->exec(mapToGlobal(event->pos()));
+        return;
+    }
+
+    ExplorerDatabaseCategoryTreeItem *categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
+    if (categoryItem) {
+        if (categoryItem->category() == Collections) {
             _collectionCategoryContextMenu->exec(mapToGlobal(event->pos()));
+        } else if (categoryItem->category() == Users) {
+            _usersCategoryContextMenu->exec(mapToGlobal(event->pos()));
         }
         return;
     }
@@ -246,6 +284,25 @@ ExplorerCollectionTreeItem *ExplorerTreeWidget::selectedCollectionItem()
         return NULL;
 
     return collectionItem;
+}
+
+ExplorerUserTreeItem *ExplorerTreeWidget::selectedUserItem()
+{
+    QList<QTreeWidgetItem*> items = selectedItems();
+
+    if (items.count() != 1)
+        return NULL;
+
+    QTreeWidgetItem *item = items[0];
+
+    if (!item)
+        return NULL;
+
+    ExplorerUserTreeItem *userItem = dynamic_cast<ExplorerUserTreeItem *>(item);
+    if (!userItem)
+        return NULL;
+
+    return userItem;
 }
 
 ExplorerDatabaseTreeItem *ExplorerTreeWidget::selectedDatabaseItem()
@@ -308,9 +365,7 @@ void ExplorerTreeWidget::openCurrentDatabaseShell(const QString &script, bool ex
         return;
 
     MongoDatabase *database = collectionItem->database();
-
-    AppRegistry::instance().app()->
-        openShell(database, script, execute, database->name(), cursor);
+    openDatabaseShell(database, script, execute, cursor);
 }
 
 void ExplorerTreeWidget::openCurrentServerShell(const QString &script, bool execute,
@@ -323,7 +378,13 @@ void ExplorerTreeWidget::openCurrentServerShell(const QString &script, bool exec
     MongoServer *server = serverItem->server();
 
     AppRegistry::instance().app()->
-        openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName(), cursor);
+            openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName(), cursor);
+}
+
+void ExplorerTreeWidget::openDatabaseShell(MongoDatabase *database, const QString &script, bool execute, const CursorPosition &cursor)
+{
+    AppRegistry::instance().app()->
+        openShell(database, script, execute, database->name(), cursor);
 }
 
 void ExplorerTreeWidget::ui_disconnectServer()
@@ -629,6 +690,25 @@ void ExplorerTreeWidget::ui_serverVersion()
     openCurrentServerShell("db.version()");
 }
 
+void ExplorerTreeWidget::ui_refreshUsers()
+{
+    ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
+    if (!categoryItem)
+        return;
+
+    categoryItem->databaseItem()->expandUsers();
+}
+
+void ExplorerTreeWidget::ui_viewUsers()
+{
+    ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
+    if (!categoryItem)
+        return;
+
+    openDatabaseShell(categoryItem->databaseItem()->database(),
+                      "db.system.users.find()");
+}
+
 void ExplorerTreeWidget::ui_refreshDatabase()
 {
     ExplorerDatabaseTreeItem *databaseItem = selectedDatabaseItem();
@@ -656,6 +736,75 @@ void ExplorerTreeWidget::ui_createCollection()
 
         // refresh list of databases
         databaseItem->expandCollections();
+    }
+}
+
+void ExplorerTreeWidget::ui_addUser()
+{
+    ExplorerDatabaseTreeItem *databaseItem = selectedDatabaseItem();
+    if (!databaseItem)
+        return;
+
+    CreateUserDialog dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
+                         databaseItem->database()->name());
+    int result = dlg.exec();
+
+    if (result == QDialog::Accepted) {
+
+        MongoUser user = dlg.user();
+        databaseItem->database()->createUser(user, false);
+
+        // refresh list of users
+        databaseItem->expandUsers();
+    }
+}
+
+void ExplorerTreeWidget::ui_dropUser()
+{
+    ExplorerUserTreeItem *userItem = selectedUserItem();
+    if (!userItem)
+        return;
+
+    MongoUser user = userItem->user();
+    MongoDatabase *database = userItem->database();
+    MongoServer *server = database->server();
+
+    // Ask user
+    int answer = QMessageBox::question(this,
+            "Remove User",
+            QString("Remove <b>%1</b> user?").arg(user.name()),
+            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+    if (answer != QMessageBox::Yes)
+        return;
+
+    database->dropUser(user.id());
+    database->loadUsers(); // refresh list of users
+}
+
+void ExplorerTreeWidget::ui_editUser()
+{
+    ExplorerUserTreeItem *userItem = selectedUserItem();
+    if (!userItem)
+        return;
+
+    MongoUser user = userItem->user();
+    MongoDatabase *database = userItem->database();
+    MongoServer *server = database->server();
+
+    CreateUserDialog dlg(server->connectionRecord()->getFullAddress(),
+                         database->name(),
+                         user);
+    dlg.setWindowTitle("Edit User");
+    int result = dlg.exec();
+
+    if (result == QDialog::Accepted) {
+
+        MongoUser user = dlg.user();
+        database->createUser(user, true);
+
+        // refresh list of users
+        database->loadUsers();
     }
 }
 

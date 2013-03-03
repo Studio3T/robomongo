@@ -40,6 +40,14 @@ QIcon GuiRegistry::collectionIcon()
     return _collectionIcon;
 }
 
+QIcon GuiRegistry::userIcon()
+{
+    if (_userIcon.isNull())
+        _userIcon = QIcon(":/robomongo/icons/user_16x16.png");
+
+    return _userIcon;
+}
+
 QIcon GuiRegistry::maximizeIcon()
 {
     if (_maximizeIcon.isNull())

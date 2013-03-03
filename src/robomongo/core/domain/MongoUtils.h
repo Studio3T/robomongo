@@ -22,6 +22,7 @@ namespace Robomongo
 
         static QString buildNiceSizeString(int sizeBytes);
         static QString buildNiceSizeString(double sizeBytes);
+        static QString buildPasswordHash(const QString &username, const QString &password);
 
 //        static
     };

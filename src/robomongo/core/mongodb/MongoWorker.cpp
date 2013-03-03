@@ -175,6 +175,19 @@ void MongoWorker::handle(LoadCollectionNamesRequest *event)
     }
 }
 
+void MongoWorker::handle(LoadUsersRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+        QList<MongoUser> users = client->getUsers(event->databaseName());
+        client->done();
+
+        reply(event->sender(), new LoadUsersResponse(this, event->databaseName(), users));
+    } catch(DBException &ex) {
+        reply(event->sender(), new LoadUsersResponse(this, EventError("Unable to load list of users.")));
+    }
+}
+
 void MongoWorker::handle(InsertDocumentRequest *event)
 {
     try {
@@ -305,6 +318,32 @@ void MongoWorker::handle(RenameCollectionRequest *event)
         reply(event->sender(), new DropCollectionResponse(this));
     } catch(DBException &ex) {
         reply(event->sender(), new DropCollectionResponse(this, EventError("Unable to rename collection.")));
+    }
+}
+
+void MongoWorker::handle(CreateUserRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+        client->createUser(event->database(), event->user(), event->overwrite());
+        client->done();
+
+        reply(event->sender(), new CreateUserResponse(this));
+    } catch(DBException &ex) {
+        reply(event->sender(), new CreateUserResponse(this, EventError("Unable to create/ovewrite user.")));
+    }
+}
+
+void MongoWorker::handle(DropUserRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+        client->dropUser(event->database(), event->id());
+        client->done();
+
+        reply(event->sender(), new DropUserResponse(this));
+    } catch(DBException &ex) {
+        reply(event->sender(), new DropUserResponse(this, EventError("Unable to drop user.")));
     }
 }
 

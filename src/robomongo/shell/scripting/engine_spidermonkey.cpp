@@ -1630,6 +1630,12 @@ namespace spidermonkey {
     // javascript code; returning false without an exception exits
     // immediately
     JSBool SMScope::_interrupt( JSContext *cx ) {
+#ifdef ROBOMONGO
+            if (Scope::_interruptFlag) {
+                Scope::setInterruptFlag(false);
+                return JS_FALSE;
+            }
+#endif
             TimeoutSpec &spec = *(TimeoutSpec *)( JS_GetContextPrivate( cx ) );
             if ( ++spec.count % 1000 != 0 )
                 return JS_TRUE;
@@ -1645,7 +1651,6 @@ namespace spidermonkey {
                 return JS_TRUE;
             }
             return JS_FALSE;
-
     }
 
     void SMScope::installInterrupt( int timeoutMs ) {

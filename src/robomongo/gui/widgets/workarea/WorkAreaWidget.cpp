@@ -41,6 +41,13 @@ void WorkAreaWidget::executeScript()
         currentWidget->execute();
 }
 
+void WorkAreaWidget::stopScript()
+{
+    QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+    if (currentWidget)
+        currentWidget->stop();
+}
+
 void WorkAreaWidget::enterTextMode()
 {
     QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();

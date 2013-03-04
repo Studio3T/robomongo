@@ -119,6 +119,14 @@ MainWindow::MainWindow() : QMainWindow(),
     executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>");
     connect(executeAction, SIGNAL(triggered()), SLOT(executeScript()));
 
+    // Stop (interrupt) action
+    QAction *stopAction = new QAction("&Stop", this);
+    stopAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserStop));
+    stopAction->setIconText("Stop");
+    stopAction->setShortcut(Qt::Key_F6);
+    stopAction->setToolTip("Stop currently executed script. <b>(F6)</b>");
+    connect(stopAction, SIGNAL(triggered()), SLOT(stopScript()));
+
     // Full screen action
     QAction *fullScreenAction = new QAction("&Full Screen", this);
     fullScreenAction->setShortcut(Qt::Key_F11);
@@ -143,6 +151,7 @@ MainWindow::MainWindow() : QMainWindow(),
     toolBar->addAction(connectButtonAction);
     toolBar->addSeparator();
     toolBar->addAction(executeAction);
+    toolBar->addAction(stopAction);
     toolBar->addAction(orientationAction);
     toolBar->addSeparator();
     toolBar->addAction(customModeAction);
@@ -164,9 +173,6 @@ MainWindow::MainWindow() : QMainWindow(),
 
     setWindowTitle("Robomongo 0.6.2");
     setWindowIcon(GuiRegistry::instance().mainWindowIcon());
-
-//    DocumentTextEditor editor("localhost", "abe_read_write", "assignments_high_deleted_and_yes", "{}");
-//    editor.exec();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -265,6 +271,12 @@ void MainWindow::executeScript()
 {
     if (_workArea)
         _workArea->executeScript();
+}
+
+void MainWindow::stopScript()
+{
+    if (_workArea)
+        _workArea->stopScript();
 }
 
 void MainWindow::toggleFullScreen2()

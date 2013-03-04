@@ -22,6 +22,7 @@ namespace Robomongo
         void open(const QString &script, const QString &dbName = QString());
         void query(int resultIndex, const MongoQueryInfo &info);
         void autocomplete(const QString &prefix);
+        void stop();
 
         MongoServer *server() const { return _server; }
         QString query() const { return _query; }

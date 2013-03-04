@@ -28,6 +28,10 @@
 #include "mongo/util/file.h"
 
 namespace mongo {
+#ifdef ROBOMONGO
+    volatile bool Scope::_interruptFlag = false;
+#endif
+
     long long Scope::_lastVersion = 1;
     static const unsigned kMaxJsFileLength = std::numeric_limits<unsigned>::max() - 1;
 

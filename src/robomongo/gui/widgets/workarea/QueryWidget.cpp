@@ -87,6 +87,11 @@ void QueryWidget::execute()
     _shell->open(query);
 }
 
+void QueryWidget::stop()
+{
+    _shell->stop();
+}
+
 bool QueryWidget::eventFilter(QObject *o, QEvent *e)
 {
     if (e->type() == QEvent::KeyPress) {

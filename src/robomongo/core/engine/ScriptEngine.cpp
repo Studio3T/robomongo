@@ -137,8 +137,8 @@ namespace Robomongo
                 try {
                     QElapsedTimer timer;
                     timer.start();
-                    if ( _scope->exec( array.data() , "(shell)" , false , true , false ) )
-                        _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false );
+                    if ( _scope->exec( array.data() , "(shell)" , false , true , false, 3000 ) )
+                        _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false, 3000);
 
                     qint64 elapsed = timer.elapsed();
 
@@ -160,6 +160,11 @@ namespace Robomongo
         }
 
         return prepareExecResult(results);
+    }
+
+    void ScriptEngine::interrupt()
+    {
+        mongo::Scope::_interruptFlag = true;
     }
 
     void ScriptEngine::use(const QString &dbName)

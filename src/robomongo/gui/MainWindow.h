@@ -33,6 +33,7 @@ namespace Robomongo
         void enterTreeMode();
         void enterCustomMode();
         void executeScript();
+        void stopScript();
         void toggleFullScreen2();
         void refreshConnections();
         void toggleLogs(bool show);

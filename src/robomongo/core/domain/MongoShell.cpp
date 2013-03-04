@@ -44,6 +44,11 @@ void MongoShell::autocomplete(const QString &prefix)
     _client->send(new AutocompleteRequest(this, prefix));
 }
 
+void MongoShell::stop()
+{
+    mongo::Scope::setInterruptFlag(true);
+}
+
 void MongoShell::handle(ExecuteQueryResponse *event)
 {
     _bus->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, _query, event->documents));

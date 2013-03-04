@@ -22,6 +22,7 @@ namespace Robomongo
 
         void init();
         MongoShellExecResult exec(const QString &script, const QString &dbName = QString());
+        void interrupt();
 
         void use(const QString &dbName);
         QStringList complete(const QString &prefix);
@@ -40,7 +41,6 @@ namespace Robomongo
         bool statementize(const QString &script, QStringList &outList, QString &outError);
         QStringList statementize2(const QString &script);
         void parseTree(JSParseNode * root, int indent, const QString &script, QStringList &list, bool topList);
-
 
         // Order is important. mongo::Scope should be destroyed before mongo::ScriptEngine
         boost::scoped_ptr<mongo::ScriptEngine> _engine;

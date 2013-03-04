@@ -251,6 +251,7 @@ RoboScintilla *Robomongo::OutputItemContentWidget::_configureLogText()
     _logText->setAutoIndent(true);
     _logText->setIndentationsUseTabs(false);
     _logText->setIndentationWidth(4);
+    _logText->setTabWidth(4);
     _logText->setUtf8(true);
     _logText->installEventFilter(this);
     _logText->setCaretForegroundColor(QColor("#FFFFFF"));

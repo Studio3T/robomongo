@@ -24,6 +24,7 @@ namespace Robomongo
 
         void toggleOrientation();
         void executeScript();
+        void stopScript();
         void enterTextMode();
         void enterTreeMode();
         void enterCustomMode();

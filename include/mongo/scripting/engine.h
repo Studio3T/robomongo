@@ -163,6 +163,12 @@ namespace mongo {
         static long long _lastVersion;
         map<string, ScriptingFunction> _cachedFunctions;
         int _numTimeUsed;
+
+#ifdef ROBOMONGO
+    public:
+        static void setInterruptFlag(bool flag) { _interruptFlag = flag; }
+        static volatile bool _interruptFlag;
+#endif
     };
 
     class ScriptEngine : boost::noncopyable {

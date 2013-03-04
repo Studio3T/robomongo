@@ -51,6 +51,7 @@ namespace Robomongo
 
     public slots:
         void execute();
+        void stop();
 
     public slots:
         void handle(DocumentListLoadedEvent *event);

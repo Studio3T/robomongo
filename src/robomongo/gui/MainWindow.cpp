@@ -71,7 +71,7 @@ MainWindow::MainWindow() : QMainWindow(),
     connectButton->setFocusPolicy(Qt::NoFocus);
     connectButton->setMenu(_connectionsMenu);
     connectButton->setToolTip("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>");
-    connectButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    connectButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     connectButton->setPopupMode(QToolButton::MenuButtonPopup);
     connect(connectButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
 
@@ -128,6 +128,7 @@ MainWindow::MainWindow() : QMainWindow(),
     fullScreenAction->setShortcut(Qt::Key_F11);
     fullScreenAction->setVisible(true);
     connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2()));
+    fullScreenAction->setVisible(false);
 
     // Refresh action
     QAction *refreshAction = new QAction("Refresh", this);
@@ -149,7 +150,7 @@ MainWindow::MainWindow() : QMainWindow(),
 
     // Toolbar
     QToolBar *toolBar = new QToolBar("Toolbar", this);
-    toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    toolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
     toolBar->addAction(connectButtonAction);
     toolBar->setShortcutEnabled(1, true);
     toolBar->setMovable(false);
@@ -173,12 +174,17 @@ MainWindow::MainWindow() : QMainWindow(),
 //    _miscToolBar->setMovable(false);
 //    addToolBar(_miscToolBar);
 
-    _status = new QLabel;
-    QPushButton *log = new QPushButton("Logs", this);
-    log->setCheckable(true);
-    connect(log, SIGNAL(toggled(bool)), this, SLOT(toggleLogs(bool)));
-    statusBar()->insertWidget(0, log);
-    statusBar()->addPermanentWidget(_status);
+
+
+    // Log Button
+    //_status = new QLabel;
+    //QPushButton *log = new QPushButton("Logs", this);
+    //log->setCheckable(true);
+    //connect(log, SIGNAL(toggled(bool)), this, SLOT(toggleLogs(bool)));
+    //statusBar()->insertWidget(0, log);
+    //statusBar()->addPermanentWidget(_status);
+
+    statusBar();
 
     createTabs();
     createDatabaseExplorer();

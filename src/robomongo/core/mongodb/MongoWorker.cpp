@@ -44,7 +44,7 @@ MongoWorker::~MongoWorker()
 
     delete _connection;
     _thread->quit();
-    if (!_thread->wait(1000))
+    if (!_thread->wait(2000))
         _thread->terminate();
 
     delete _thread;

@@ -14,6 +14,8 @@ namespace Robomongo
     class SettingsManager;
     class EventBus;
     class ConnectionFailedEvent;
+    class ScriptExecutingEvent;
+    class ScriptExecutedEvent;
     class WorkAreaWidget;
     class ConnectionMenu;
 
@@ -39,6 +41,8 @@ namespace Robomongo
         void toggleLogs(bool show);
         void connectToServer(QAction *action);
         void handle(ConnectionFailedEvent *event);
+        void handle(ScriptExecutingEvent *event);
+        void handle(ScriptExecutedEvent *event);
 
     private:
         QLabel *_status;
@@ -59,6 +63,7 @@ namespace Robomongo
 
         ConnectionMenu *_connectionsMenu;
         QAction *_connectAction;
+        QAction *_executeAction;
         void updateConnectionsMenu();
 
         void createDatabaseExplorer();

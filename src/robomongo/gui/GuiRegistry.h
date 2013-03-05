@@ -51,6 +51,7 @@ namespace Robomongo
         QIcon mongodbIcon();
         QIcon connectIcon();
         QIcon executeIcon();
+        QIcon stopIcon();
         QIcon mainWindowIcon();
         QIcon bsonObjectIcon();
         QIcon bsonArrayIcon();
@@ -98,6 +99,7 @@ namespace Robomongo
         QIcon _mongodbIcon;
         QIcon _connectIcon;
         QIcon _executeIcon;
+        QIcon _stopIcon;
         QIcon _mainWindowIcon;
         QIcon _bsonObjectIcon;
         QIcon _bsonIdIcon;

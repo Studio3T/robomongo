@@ -684,6 +684,8 @@ namespace Robomongo
         MongoServer *server;
     };
 
+//    class ScriptExecute
+
     class ConnectionEstablishedEvent : public Event
     {
         R_EVENT
@@ -748,4 +750,12 @@ namespace Robomongo
         bool _empty;
     };
 
+    class ScriptExecutingEvent : public Event
+    {
+        R_EVENT
+
+    public:
+        ScriptExecutingEvent(QObject *sender) :
+            Event(sender) { }
+    };
 }

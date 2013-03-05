@@ -68,6 +68,7 @@ namespace Robomongo
         ConnectionMenu *_connectionsMenu;
         QAction *_connectAction;
         QAction *_executeAction;
+        QAction *_stopAction;
         QAction *_orientationAction;
         QToolBar *_execToolBar;
 

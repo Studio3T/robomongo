@@ -81,29 +81,17 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *dbDrop = new QAction("Drop Database", this);
     connect(dbDrop, SIGNAL(triggered()), SLOT(ui_dbDrop()));
 
-    QAction *dbCollectionsStats = new QAction("Collections Statistics", this);
-    connect(dbCollectionsStats, SIGNAL(triggered()), SLOT(ui_dbCollectionsStatistics()));
-
     QAction *dbRepair = new QAction("Repair Database", this);
     connect(dbRepair, SIGNAL(triggered()), SLOT(ui_dbRepair()));
 
     QAction *refreshDatabase = new QAction("Refresh", this);
     connect(refreshDatabase, SIGNAL(triggered()), SLOT(ui_refreshDatabase()));
 
-    QAction *createCollection = new QAction("Create Collection", this);
-    connect(createCollection, SIGNAL(triggered()), SLOT(ui_createCollection()));
-
-    QAction *addUser = new QAction("Add User", this);
-    connect(addUser, SIGNAL(triggered()), SLOT(ui_addUser()));
-
     _databaseContextMenu = new QMenu(this);
     _databaseContextMenu->addAction(openDbShellAction);
     _databaseContextMenu->addAction(refreshDatabase);
     _databaseContextMenu->addSeparator();
-    _databaseContextMenu->addAction(createCollection);
-    _databaseContextMenu->addAction(addUser);
     _databaseContextMenu->addAction(dbStats);
-    _databaseContextMenu->addAction(dbCollectionsStats);
     _databaseContextMenu->addSeparator();
     _databaseContextMenu->addAction(dbRepair);
     _databaseContextMenu->addAction(dbDrop);
@@ -188,10 +176,19 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     _userContextMenu->addAction(dropUser);
 
 
+    QAction *createCollection = new QAction("Create Collection", this);
+    connect(createCollection, SIGNAL(triggered()), SLOT(ui_createCollection()));
+
+    QAction *dbCollectionsStats = new QAction("Collections Statistics", this);
+    connect(dbCollectionsStats, SIGNAL(triggered()), SLOT(ui_dbCollectionsStatistics()));
+
     QAction *refreshCollections = new QAction("Refresh", this);
     connect(refreshCollections, SIGNAL(triggered()), SLOT(ui_refreshCollections()));
 
     _collectionCategoryContextMenu = new QMenu(this);
+    _collectionCategoryContextMenu->addAction(dbCollectionsStats);
+    _collectionCategoryContextMenu->addAction(createCollection);
+    _collectionCategoryContextMenu->addSeparator();
     _collectionCategoryContextMenu->addAction(refreshCollections);
 
 
@@ -201,8 +198,12 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *viewUsers = new QAction("View Users", this);
     connect(viewUsers, SIGNAL(triggered()), SLOT(ui_viewUsers()));
 
+    QAction *addUser = new QAction("Add User", this);
+    connect(addUser, SIGNAL(triggered()), SLOT(ui_addUser()));
+
     _usersCategoryContextMenu = new QMenu(this);
     _usersCategoryContextMenu->addAction(viewUsers);
+    _usersCategoryContextMenu->addAction(addUser);
     _usersCategoryContextMenu->addSeparator();
     _usersCategoryContextMenu->addAction(refreshUsers);
 }
@@ -662,7 +663,11 @@ void ExplorerTreeWidget::ui_dbDrop()
 
 void ExplorerTreeWidget::ui_dbCollectionsStatistics()
 {
-    openCurrentDatabaseShell("db.printCollectionStats()");
+    ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
+    if (!categoryItem)
+        return;
+
+    openDatabaseShell(categoryItem->databaseItem()->database(), "db.printCollectionStats()");
 }
 
 void ExplorerTreeWidget::ui_dbRepair()
@@ -720,7 +725,11 @@ void ExplorerTreeWidget::ui_refreshDatabase()
 
 void ExplorerTreeWidget::ui_createCollection()
 {
-    ExplorerDatabaseTreeItem *databaseItem = selectedDatabaseItem();
+    ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
+    if (!categoryItem)
+        return;
+
+    ExplorerDatabaseTreeItem *databaseItem = categoryItem->databaseItem();
     if (!databaseItem)
         return;
 
@@ -741,9 +750,11 @@ void ExplorerTreeWidget::ui_createCollection()
 
 void ExplorerTreeWidget::ui_addUser()
 {
-    ExplorerDatabaseTreeItem *databaseItem = selectedDatabaseItem();
-    if (!databaseItem)
+    ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
+    if (!categoryItem)
         return;
+
+    ExplorerDatabaseTreeItem *databaseItem = categoryItem->databaseItem();
 
     CreateUserDialog dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
                          databaseItem->database()->name());

@@ -70,9 +70,8 @@ namespace Robomongo
         QAction *_executeAction;
         QAction *_orientationAction;
         QToolBar *_execToolBar;
-        //QToolBar *_miscToolBar;
-        void updateConnectionsMenu();
 
+        void updateConnectionsMenu();
         void createDatabaseExplorer();
         void createTabs();
     };

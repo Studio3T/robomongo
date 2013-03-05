@@ -24,7 +24,7 @@ using namespace Robomongo;
 ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog()
 {
     setWindowIcon(GuiRegistry::instance().connectIcon());
-    setWindowTitle("Manage Connections");
+    setWindowTitle("MongoDB Connections");
     // Remove help button (?)
     setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 

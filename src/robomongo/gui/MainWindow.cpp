@@ -31,6 +31,8 @@ MainWindow::MainWindow() : QMainWindow(),
     _bus->subscribe(this, ConnectionFailedEvent::Type);
     _bus->subscribe(this, ScriptExecutedEvent::Type);
     _bus->subscribe(this, ScriptExecutingEvent::Type);
+    _bus->subscribe(this, QueryWidgetUpdatedEvent::Type);
+    _bus->subscribe(this, AllTabsClosedEvent::Type);
 
     QColor background = palette().window().color();
 
@@ -77,14 +79,14 @@ MainWindow::MainWindow() : QMainWindow(),
     connectButtonAction->setDefaultWidget(connectButton);
 
     // Orientation action
-    QAction *orientationAction = new QAction("&Rotate", this);
-    orientationAction->setShortcut(Qt::Key_F10);
-    orientationAction->setIcon(GuiRegistry::instance().rotateIcon());
-    orientationAction->setToolTip("Toggle orientation of results view <b>(F10)</b>");
-    connect(orientationAction, SIGNAL(triggered()), this, SLOT(toggleOrientation()));
+    _orientationAction = new QAction("&Rotate", this);
+    _orientationAction->setShortcut(Qt::Key_F10);
+    _orientationAction->setIcon(GuiRegistry::instance().rotateIcon());
+    _orientationAction->setToolTip("Toggle orientation of results view <b>(F10)</b>");
+    connect(_orientationAction, SIGNAL(triggered()), this, SLOT(toggleOrientation()));
 
     // Text mode action
-    QAction *textModeAction = new QAction("&Text", this);
+    QAction *textModeAction = new QAction("&Text Mode", this);
     textModeAction->setShortcut(Qt::Key_F4);
     textModeAction->setIcon(GuiRegistry::instance().textHighlightedIcon());
     textModeAction->setToolTip("Show current tab in text mode, and make this mode default for all subsequent queries <b>(F4)</b>");
@@ -92,7 +94,7 @@ MainWindow::MainWindow() : QMainWindow(),
     connect(textModeAction, SIGNAL(triggered()), this, SLOT(enterTextMode()));
 
     // Text mode action
-    QAction *treeModeAction = new QAction("&Tree", this);
+    QAction *treeModeAction = new QAction("&Tree Mode", this);
     treeModeAction->setShortcut(Qt::Key_F3);
     treeModeAction->setIcon(GuiRegistry::instance().treeHighlightedIcon());
     treeModeAction->setToolTip("Show current tab in tree mode, and make this mode default for all subsequent queries <b>(F3)</b>");
@@ -100,7 +102,7 @@ MainWindow::MainWindow() : QMainWindow(),
     connect(treeModeAction, SIGNAL(triggered()), this, SLOT(enterTreeMode()));
 
     // Custom mode action
-    QAction *customModeAction = new QAction("&Custom", this);
+    QAction *customModeAction = new QAction("&Custom Mode", this);
     customModeAction->setShortcut(Qt::Key_F2);
     customModeAction->setIcon(GuiRegistry::instance().customHighlightedIcon());
     customModeAction->setToolTip("Show current tab in custom mode if possible, and make this mode default for all subsequent queries <b>(F2)</b>");
@@ -139,32 +141,38 @@ MainWindow::MainWindow() : QMainWindow(),
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
+    // Options menu
+    QMenu *optionsMenu = menuBar()->addMenu("Options");
+    optionsMenu->addAction(customModeAction);
+    optionsMenu->addAction(treeModeAction);
+    optionsMenu->addAction(textModeAction);
+
     // Toolbar
     QToolBar *toolBar = new QToolBar("Toolbar", this);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolBar->addAction(connectButtonAction);
-    toolBar->addSeparator();
     toolBar->setShortcutEnabled(1, true);
     toolBar->setMovable(false);
     addToolBar(toolBar);
 
-    QToolBar *execToolBar = new QToolBar("Exec Toolbar", this);
-    execToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    execToolBar->addAction(_executeAction);
-    execToolBar->addAction(orientationAction);
-    execToolBar->addSeparator();
-    execToolBar->setShortcutEnabled(1, true);
-    execToolBar->setMovable(false);
-    addToolBar(execToolBar);
+    _execToolBar = new QToolBar("Exec Toolbar", this);
+    _execToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    _execToolBar->addSeparator();
+    _execToolBar->addAction(_executeAction);
+    _execToolBar->addAction(_orientationAction);
+    _execToolBar->setShortcutEnabled(1, true);
+    _execToolBar->setMovable(false);
+    addToolBar(_execToolBar);
+    _execToolBar->hide();
 
-    QToolBar *miscToolBar = new QToolBar("Misc Toolbar", this);
-    miscToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    miscToolBar->addAction(customModeAction);
-    miscToolBar->addAction(treeModeAction);
-    miscToolBar->addAction(textModeAction);
-    miscToolBar->setShortcutEnabled(1, true);
-    miscToolBar->setMovable(false);
-    addToolBar(miscToolBar);
+//    _miscToolBar = new QToolBar("Misc Toolbar", this);
+//    _miscToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+//    _miscToolBar->addAction(customModeAction);
+//    _miscToolBar->addAction(treeModeAction);
+//    _miscToolBar->addAction(textModeAction);
+//    _miscToolBar->setShortcutEnabled(1, true);
+//    _miscToolBar->setMovable(false);
+//    addToolBar(_miscToolBar);
 
     _status = new QLabel;
     QPushButton *log = new QPushButton("Logs", this);
@@ -348,6 +356,17 @@ void MainWindow::handle(ScriptExecutedEvent *event)
     _executeAction->setIconText("");
     _executeAction->setShortcut(Qt::Key_F5);
     _executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>");
+}
+
+void MainWindow::handle(AllTabsClosedEvent *event)
+{
+    _execToolBar->hide();
+}
+
+void MainWindow::handle(QueryWidgetUpdatedEvent *event)
+{
+    _execToolBar->show();
+    _orientationAction->setVisible(event->numOfResults() > 1);
 }
 
 void MainWindow::createDatabaseExplorer()

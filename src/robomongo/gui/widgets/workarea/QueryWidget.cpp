@@ -123,6 +123,7 @@ void QueryWidget::toggleOrientation()
 
 void QueryWidget::activateTabContent()
 {
+    _bus->publish(new QueryWidgetUpdatedEvent(this, _currentResults.count()));
     _scriptWidget->setScriptFocus();
 }
 
@@ -198,6 +199,7 @@ void QueryWidget::handle(ScriptExecutedEvent *event)
     hideProgress();
     _scriptWidget->hideProgress();
     _currentResults = event->result().results();
+    _bus->publish(new QueryWidgetUpdatedEvent(this, _currentResults.count()));
 
     setUpdatesEnabled(false);
     updateCurrentTab();

@@ -157,7 +157,6 @@ MainWindow::MainWindow() : QMainWindow(),
 
     _execToolBar = new QToolBar("Exec Toolbar", this);
     _execToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    _execToolBar->addSeparator();
     _execToolBar->addAction(_executeAction);
     _execToolBar->addAction(_orientationAction);
     _execToolBar->setShortcutEnabled(1, true);

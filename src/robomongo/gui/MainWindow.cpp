@@ -189,7 +189,7 @@ MainWindow::MainWindow() : QMainWindow(),
     createTabs();
     createDatabaseExplorer();
 
-    setWindowTitle("Robomongo 0.6.2");
+    setWindowTitle("Robomongo 0.6.3");
     setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
     QTimer::singleShot(0, this, SLOT(manageConnections()));

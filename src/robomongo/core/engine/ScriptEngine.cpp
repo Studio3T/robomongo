@@ -31,15 +31,31 @@ namespace mongo {
 namespace Robomongo
 {
     ScriptEngine::ScriptEngine(ConnectionSettings *connection) : QObject(),
-        _connection(connection) { }
+        _connection(connection),
+        _scope(NULL),
+        _engine(NULL),
+        _mutex(QMutex::Recursive)
+    { }
 
     ScriptEngine::~ScriptEngine()
     {
+        QMutexLocker lock(&_mutex);
 
+        if (_scope) {
+            delete _scope;
+            _scope = NULL;
+        }
+
+        if (_engine) {
+            delete _engine;
+            _engine = NULL;
+        }
     }
 
     void ScriptEngine::init()
     {
+        QMutexLocker lock(&_mutex);
+
         QString connectDatabase = "test";
 
         if (_connection->hasEnabledPrimaryCredential())
@@ -72,8 +88,8 @@ namespace Robomongo
 
             mongo::Scope *scope = mongo::globalScriptEngine->newScope();
 
-            _scope.reset(scope);
-            _engine.reset(mongo::globalScriptEngine);
+            _scope = scope;
+            _engine = mongo::globalScriptEngine;
         }
 
         // -- Esprima --
@@ -94,6 +110,8 @@ namespace Robomongo
 
     MongoShellExecResult ScriptEngine::exec(const QString &originalScript, const QString &dbName)
     {
+        QMutexLocker lock(&_mutex);
+
         /*
          * Replace all commands ('show dbs', 'use db' etc.) with call
          * to shellHelper('show', 'dbs') and so on.
@@ -137,8 +155,8 @@ namespace Robomongo
                 try {
                     QElapsedTimer timer;
                     timer.start();
-                    if ( _scope->exec( array.data() , "(shell)" , false , true , false, 3000 ) )
-                        _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false, 3000);
+                    if ( _scope->exec( array.data() , "(shell)" , false , true , false, 3600000 ) )
+                        _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false, 3600000);
 
                     qint64 elapsed = timer.elapsed();
 
@@ -169,6 +187,8 @@ namespace Robomongo
 
     void ScriptEngine::use(const QString &dbName)
     {
+        QMutexLocker lock(&_mutex);
+
         if (!dbName.isEmpty()) {
             // switch to database
             QString useDb = QString("shellHelper.use('%1');").arg(dbName);

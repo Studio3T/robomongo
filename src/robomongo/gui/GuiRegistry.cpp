@@ -297,6 +297,14 @@ QIcon GuiRegistry::executeIcon()
     return _executeIcon;
 }
 
+QIcon GuiRegistry::stopIcon()
+{
+    if (_stopIcon.isNull())
+        _stopIcon = QIcon(":/robomongo/icons/stop_24x24.png");
+
+    return _stopIcon;
+}
+
 QIcon GuiRegistry::mainWindowIcon()
 {
     if (_mainWindowIcon.isNull())

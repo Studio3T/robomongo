@@ -29,6 +29,8 @@ MainWindow::MainWindow() : QMainWindow(),
     GuiRegistry::instance().setMainWindow(this);
 
     _bus->subscribe(this, ConnectionFailedEvent::Type);
+    _bus->subscribe(this, ScriptExecutedEvent::Type);
+    _bus->subscribe(this, ScriptExecutingEvent::Type);
 
     QColor background = palette().window().color();
 
@@ -82,7 +84,7 @@ MainWindow::MainWindow() : QMainWindow(),
     connect(orientationAction, SIGNAL(triggered()), this, SLOT(toggleOrientation()));
 
     // Text mode action
-    QAction *textModeAction = new QAction("&Text Mode", this);
+    QAction *textModeAction = new QAction("&Text", this);
     textModeAction->setShortcut(Qt::Key_F4);
     textModeAction->setIcon(GuiRegistry::instance().textHighlightedIcon());
     textModeAction->setToolTip("Show current tab in text mode, and make this mode default for all subsequent queries <b>(F4)</b>");
@@ -90,7 +92,7 @@ MainWindow::MainWindow() : QMainWindow(),
     connect(textModeAction, SIGNAL(triggered()), this, SLOT(enterTextMode()));
 
     // Text mode action
-    QAction *treeModeAction = new QAction("&Tree Mode", this);
+    QAction *treeModeAction = new QAction("&Tree", this);
     treeModeAction->setShortcut(Qt::Key_F3);
     treeModeAction->setIcon(GuiRegistry::instance().treeHighlightedIcon());
     treeModeAction->setToolTip("Show current tab in tree mode, and make this mode default for all subsequent queries <b>(F3)</b>");
@@ -98,7 +100,7 @@ MainWindow::MainWindow() : QMainWindow(),
     connect(treeModeAction, SIGNAL(triggered()), this, SLOT(enterTreeMode()));
 
     // Custom mode action
-    QAction *customModeAction = new QAction("&Custom Mode", this);
+    QAction *customModeAction = new QAction("&Custom", this);
     customModeAction->setShortcut(Qt::Key_F2);
     customModeAction->setIcon(GuiRegistry::instance().customHighlightedIcon());
     customModeAction->setToolTip("Show current tab in custom mode if possible, and make this mode default for all subsequent queries <b>(F2)</b>");
@@ -112,20 +114,12 @@ MainWindow::MainWindow() : QMainWindow(),
     modeGroup->addAction(customModeAction);
 
     // Execute action
-    QAction *executeAction = new QAction("&Execute", this);
-    executeAction->setIcon(GuiRegistry::instance().executeIcon());
-    executeAction->setIconText("Execute");
-    executeAction->setShortcut(Qt::Key_F5);
-    executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>");
-    connect(executeAction, SIGNAL(triggered()), SLOT(executeScript()));
-
-    // Stop (interrupt) action
-    QAction *stopAction = new QAction("&Stop", this);
-    stopAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserStop));
-    stopAction->setIconText("Stop");
-    stopAction->setShortcut(Qt::Key_F6);
-    stopAction->setToolTip("Stop currently executed script. <b>(F6)</b>");
-    connect(stopAction, SIGNAL(triggered()), SLOT(stopScript()));
+    _executeAction = new QAction("", this);
+    _executeAction->setData("Execute");
+    _executeAction->setIcon(GuiRegistry::instance().executeIcon());
+    _executeAction->setShortcut(Qt::Key_F5);
+    _executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>");
+    connect(_executeAction, SIGNAL(triggered()), SLOT(executeScript()));
 
     // Full screen action
     QAction *fullScreenAction = new QAction("&Full Screen", this);
@@ -150,16 +144,27 @@ MainWindow::MainWindow() : QMainWindow(),
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolBar->addAction(connectButtonAction);
     toolBar->addSeparator();
-    toolBar->addAction(executeAction);
-    toolBar->addAction(stopAction);
-    toolBar->addAction(orientationAction);
-    toolBar->addSeparator();
-    toolBar->addAction(customModeAction);
-    toolBar->addAction(treeModeAction);
-    toolBar->addAction(textModeAction);
     toolBar->setShortcutEnabled(1, true);
     toolBar->setMovable(false);
     addToolBar(toolBar);
+
+    QToolBar *execToolBar = new QToolBar("Exec Toolbar", this);
+    execToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    execToolBar->addAction(_executeAction);
+    execToolBar->addAction(orientationAction);
+    execToolBar->addSeparator();
+    execToolBar->setShortcutEnabled(1, true);
+    execToolBar->setMovable(false);
+    addToolBar(execToolBar);
+
+    QToolBar *miscToolBar = new QToolBar("Misc Toolbar", this);
+    miscToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    miscToolBar->addAction(customModeAction);
+    miscToolBar->addAction(treeModeAction);
+    miscToolBar->addAction(textModeAction);
+    miscToolBar->setShortcutEnabled(1, true);
+    miscToolBar->setMovable(false);
+    addToolBar(miscToolBar);
 
     _status = new QLabel;
     QPushButton *log = new QPushButton("Logs", this);
@@ -269,8 +274,14 @@ void MainWindow::enterCustomMode()
 
 void MainWindow::executeScript()
 {
-    if (_workArea)
-        _workArea->executeScript();
+    QAction *action = static_cast<QAction *>(sender());
+
+    if (action->data().toString() == "Execute") {
+        if (_workArea)
+            _workArea->executeScript();
+    } else {
+        stopScript();
+    }
 }
 
 void MainWindow::stopScript()
@@ -319,6 +330,24 @@ void MainWindow::handle(ConnectionFailedEvent *event)
     ConnectionSettings *connection = event->server->connectionRecord();
     QString message = QString("Cannot connect to MongoDB (%1)").arg(connection->getFullAddress());
     QMessageBox::information(this, "Error", message);
+}
+
+void MainWindow::handle(ScriptExecutingEvent *event)
+{
+    _executeAction->setData("Stop");
+    _executeAction->setIcon(GuiRegistry::instance().stopIcon());
+    _executeAction->setIconText("");
+    _executeAction->setShortcut(Qt::Key_F6);
+    _executeAction->setToolTip("Stop currently executed script. <b>(F6)</b>");
+}
+
+void MainWindow::handle(ScriptExecutedEvent *event)
+{
+    _executeAction->setData("Execute");
+    _executeAction->setIcon(GuiRegistry::instance().executeIcon());
+    _executeAction->setIconText("");
+    _executeAction->setShortcut(Qt::Key_F5);
+    _executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>");
 }
 
 void MainWindow::createDatabaseExplorer()

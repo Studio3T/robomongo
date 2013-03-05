@@ -30,6 +30,7 @@ void MongoShell::open(MongoCollection *collection)
 
 void MongoShell::open(const QString &script, const QString &dbName)
 {
+    _bus->publish(new ScriptExecutingEvent(this));
     _query = script;
     _client->send(new ExecuteScriptRequest(this, _query, dbName));
 }

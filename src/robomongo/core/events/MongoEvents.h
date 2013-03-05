@@ -758,4 +758,28 @@ namespace Robomongo
         ScriptExecutingEvent(QObject *sender) :
             Event(sender) { }
     };
+
+    class QueryWidgetUpdatedEvent : public Event
+    {
+        R_EVENT
+
+    public:
+        QueryWidgetUpdatedEvent(QObject *sender, int numOfResults) :
+            Event(sender),
+          _numOfResults(numOfResults) { }
+
+        int numOfResults() const { return _numOfResults; }
+
+    private:
+        int _numOfResults;
+    };
+
+    class AllTabsClosedEvent : public Event
+    {
+        R_EVENT
+
+    public:
+        AllTabsClosedEvent(QObject *sender) :
+            Event(sender) { }
+    };
 }

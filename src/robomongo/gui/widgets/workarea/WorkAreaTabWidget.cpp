@@ -2,9 +2,11 @@
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/App.h"
+#include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
+#include "robomongo/core/EventBus.h"
 
 using namespace Robomongo;
 
@@ -13,7 +15,8 @@ using namespace Robomongo;
  * @param workAreaWidget: WorkAreaWidget this tab belongs to.
  */
 WorkAreaTabWidget::WorkAreaTabWidget(WorkAreaWidget *workAreaWidget) :
-    QTabWidget(workAreaWidget)
+    QTabWidget(workAreaWidget),
+    _bus(AppRegistry::instance().bus())
 {
     // This line (setTabBar()) should go before setTabsClosable(true)
     setTabBar(new WorkAreaTabBar());
@@ -114,6 +117,10 @@ void WorkAreaTabWidget::ui_closeTabsToTheRightRequested(int index)
 
 void WorkAreaTabWidget::ui_currentChanged(int index)
 {
+    if (index == -1) {
+        _bus->publish(new AllTabsClosedEvent(this));
+    }
+
     if (index < 0)
         return;
 

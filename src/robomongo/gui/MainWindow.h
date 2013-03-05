@@ -16,6 +16,8 @@ namespace Robomongo
     class ConnectionFailedEvent;
     class ScriptExecutingEvent;
     class ScriptExecutedEvent;
+    class QueryWidgetUpdatedEvent;
+    class AllTabsClosedEvent;
     class WorkAreaWidget;
     class ConnectionMenu;
 
@@ -43,6 +45,8 @@ namespace Robomongo
         void handle(ConnectionFailedEvent *event);
         void handle(ScriptExecutingEvent *event);
         void handle(ScriptExecutedEvent *event);
+        void handle(AllTabsClosedEvent *event);
+        void handle(QueryWidgetUpdatedEvent *event);
 
     private:
         QLabel *_status;
@@ -64,6 +68,9 @@ namespace Robomongo
         ConnectionMenu *_connectionsMenu;
         QAction *_connectAction;
         QAction *_executeAction;
+        QAction *_orientationAction;
+        QToolBar *_execToolBar;
+        //QToolBar *_miscToolBar;
         void updateConnectionsMenu();
 
         void createDatabaseExplorer();

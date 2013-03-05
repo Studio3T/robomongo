@@ -23,11 +23,11 @@ QColor JSLexer::defaultColor(int style) const
 
     case Comment:
     case CommentLine:
-        return QColor("#666666");
+        return QColor("#999999");
 
     case CommentDoc:
     case CommentLineDoc:
-        return QColor("#666666");
+        return QColor("#999999");
 
     case Number:
         //return QColor("#DBF76C");

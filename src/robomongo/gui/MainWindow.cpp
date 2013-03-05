@@ -191,6 +191,8 @@ MainWindow::MainWindow() : QMainWindow(),
 
     setWindowTitle("Robomongo 0.6.2");
     setWindowIcon(GuiRegistry::instance().mainWindowIcon());
+
+    QTimer::singleShot(0, this, SLOT(manageConnections()));
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)

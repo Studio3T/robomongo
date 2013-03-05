@@ -93,8 +93,8 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     bottomLayout->addWidget(cancelButton);
 
     QLabel *intro = new QLabel(
-    "Here you can manage your connections to MongoDB instances.<br/> You can <a href='create'>create</a>, "
-    "<a href='edit'>edit</a>, <a href='remove'>remove</a>, <a href='clone'>clone</a> and reorder connections via drag'n'drop.");
+    "<a href='create'>Create</a>, "
+    "<a href='edit'>edit</a>, <a href='remove'>remove</a>, <a href='clone'>clone</a> or reorder connections via drag'n'drop.");
     intro->setWordWrap(true);
     connect(intro, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
 

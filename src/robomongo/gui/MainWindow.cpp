@@ -123,6 +123,15 @@ MainWindow::MainWindow() : QMainWindow(),
     _executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>");
     connect(_executeAction, SIGNAL(triggered()), SLOT(executeScript()));
 
+    // Stop action
+    _stopAction = new QAction("", this);
+    _stopAction->setData("Stop");
+    _stopAction->setIcon(GuiRegistry::instance().stopIcon());
+    _stopAction->setShortcut(Qt::Key_F6);
+    _stopAction->setToolTip("Stop execution of currently running script. <b>(F6)</b>");
+    _stopAction->setDisabled(true);
+    connect(_stopAction, SIGNAL(triggered()), SLOT(stopScript()));
+
     // Full screen action
     QAction *fullScreenAction = new QAction("&Full Screen", this);
     fullScreenAction->setShortcut(Qt::Key_F11);
@@ -159,6 +168,7 @@ MainWindow::MainWindow() : QMainWindow(),
     _execToolBar = new QToolBar("Exec Toolbar", this);
     _execToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
     _execToolBar->addAction(_executeAction);
+    _execToolBar->addAction(_stopAction);
     _execToolBar->addAction(_orientationAction);
     _execToolBar->setShortcutEnabled(1, true);
     _execToolBar->setMovable(false);
@@ -349,20 +359,24 @@ void MainWindow::handle(ConnectionFailedEvent *event)
 
 void MainWindow::handle(ScriptExecutingEvent *event)
 {
-    _executeAction->setData("Stop");
-    _executeAction->setIcon(GuiRegistry::instance().stopIcon());
-    _executeAction->setIconText("");
-    _executeAction->setShortcut(Qt::Key_F6);
-    _executeAction->setToolTip("Stop currently executed script. <b>(F6)</b>");
+    _stopAction->setDisabled(false);
+    _executeAction->setDisabled(true);
+//    _executeAction->setData("Stop");
+//    _executeAction->setIcon(GuiRegistry::instance().stopIcon());
+//    _executeAction->setIconText("");
+//    _executeAction->setShortcut(Qt::Key_F6);
+//    _executeAction->setToolTip("Stop currently executed script. <b>(F6)</b>");
 }
 
 void MainWindow::handle(ScriptExecutedEvent *event)
 {
-    _executeAction->setData("Execute");
-    _executeAction->setIcon(GuiRegistry::instance().executeIcon());
-    _executeAction->setIconText("");
-    _executeAction->setShortcut(Qt::Key_F5);
-    _executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>");
+    _stopAction->setDisabled(true);
+    _executeAction->setDisabled(false);
+//    _executeAction->setData("Execute");
+//    _executeAction->setIcon(GuiRegistry::instance().executeIcon());
+//    _executeAction->setIconText("");
+//    _executeAction->setShortcut(Qt::Key_F5);
+//    _executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>");
 }
 
 void MainWindow::handle(AllTabsClosedEvent *event)

@@ -410,7 +410,7 @@ void ExplorerTreeWidget::ui_createDatabase()
 
     CreateDatabaseDialog dlg(serverItem->server()->connectionRecord()->getFullAddress());
     dlg.setOkButtonText("&Create");
-    dlg.setInputLabelText("Database Name");
+    dlg.setInputLabelText("Database Name:");
     int result = dlg.exec();
 
     if (result == QDialog::Accepted) {
@@ -737,7 +737,7 @@ void ExplorerTreeWidget::ui_createCollection()
                              databaseItem->database()->name());
     dlg.setWindowTitle("Create Collection");
     dlg.setOkButtonText("&Create");
-    dlg.setInputLabelText("Collection Name");
+    dlg.setInputLabelText("Collection Name:");
     int result = dlg.exec();
 
     if (result == QDialog::Accepted) {
@@ -807,6 +807,7 @@ void ExplorerTreeWidget::ui_editUser()
                          database->name(),
                          user);
     dlg.setWindowTitle("Edit User");
+    dlg.setUserPasswordLabelText("New Password:");
     int result = dlg.exec();
 
     if (result == QDialog::Accepted) {

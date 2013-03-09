@@ -26,10 +26,10 @@ CreateUserDialog::CreateUserDialog(const QString &serverName,
     hline->setFrameShape(QFrame::HLine);
     hline->setFrameShadow(QFrame::Sunken);
 
-    _userNameLabel= new QLabel("User Name:");
+    _userNameLabel= new QLabel("Name:");
     _userNameEdit = new QLineEdit();
     _userNameEdit->setText(user.name());
-    _userPassLabel= new QLabel("User Password:");
+    _userPassLabel= new QLabel("Password:");
     _userPassEdit = new QLineEdit();
     _readOnlyCheckBox = new QCheckBox("Read Only");
     _readOnlyCheckBox->setChecked(user.readOnly());
@@ -64,6 +64,11 @@ CreateUserDialog::CreateUserDialog(const QString &serverName,
     layout->addLayout(namelayout);
     layout->addLayout(hlayout);
     setLayout(layout);
+}
+
+void CreateUserDialog::setUserPasswordLabelText(const QString &text)
+{
+    _userPassLabel->setText(text);
 }
 
 void CreateUserDialog::accept()

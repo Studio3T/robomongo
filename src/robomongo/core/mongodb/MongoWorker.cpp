@@ -188,6 +188,19 @@ void MongoWorker::handle(LoadUsersRequest *event)
     }
 }
 
+void MongoWorker::handle(LoadFunctionsRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+        QList<MongoFunction> funs = client->getFunctions(event->databaseName());
+        client->done();
+
+        reply(event->sender(), new LoadFunctionsResponse(this, event->databaseName(), funs));
+    } catch(DBException &ex) {
+        reply(event->sender(), new LoadFunctionsResponse(this, EventError("Unable to load list of functions.")));
+    }
+}
+
 void MongoWorker::handle(InsertDocumentRequest *event)
 {
     try {
@@ -344,6 +357,32 @@ void MongoWorker::handle(DropUserRequest *event)
         reply(event->sender(), new DropUserResponse(this));
     } catch(DBException &ex) {
         reply(event->sender(), new DropUserResponse(this, EventError("Unable to drop user.")));
+    }
+}
+
+void MongoWorker::handle(CreateFunctionRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+        client->createFunction(event->database(), event->function() /*, event->overwrite() */);
+        client->done();
+
+        reply(event->sender(), new CreateFunctionResponse(this));
+    } catch(DBException &ex) {
+        reply(event->sender(), new CreateFunctionResponse(this, EventError("Unable to create/ovewrite function.")));
+    }
+}
+
+void MongoWorker::handle(DropFunctionRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+        client->dropFunction(event->database(), event->name());
+        client->done();
+
+        reply(event->sender(), new DropFunctionResponse(this));
+    } catch(DBException &ex) {
+        reply(event->sender(), new DropFunctionResponse(this, EventError("Unable to drop function.")));
     }
 }
 

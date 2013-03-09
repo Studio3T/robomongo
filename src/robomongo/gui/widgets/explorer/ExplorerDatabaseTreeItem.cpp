@@ -9,6 +9,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
 
 using namespace Robomongo;
 
@@ -19,6 +20,7 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) :
 {
     _bus->subscribe(this, MongoDatabase_CollectionListLoadedEvent::Type, _database);
     _bus->subscribe(this, MongoDatabase_UsersLoadedEvent::Type, _database);
+    _bus->subscribe(this, MongoDatabase_FunctionsLoadedEvent::Type, _database);
 
     setText(0, _database->name());
     setIcon(0, GuiRegistry::instance().databaseIcon());
@@ -44,7 +46,7 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) :
     _filesFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
     _filesFolderItem->setExpanded(true);
     _filesFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-    addChild(_filesFolderItem);
+//    addChild(_filesFolderItem);
 
     _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(Users, this);
     _usersFolderItem->setText(0, "Users");
@@ -62,6 +64,11 @@ void ExplorerDatabaseTreeItem::expandCollections()
 void ExplorerDatabaseTreeItem::expandUsers()
 {
     _database->loadUsers();
+}
+
+void ExplorerDatabaseTreeItem::expandFunctions()
+{
+    _database->loadFunctions();
 }
 
 void ExplorerDatabaseTreeItem::handle(MongoDatabase_CollectionListLoadedEvent *event)
@@ -94,6 +101,19 @@ void ExplorerDatabaseTreeItem::handle(MongoDatabase_UsersLoadedEvent *event)
         MongoUser user = users.at(i);
         addUserItem(event->database(), user);
     }
+}
+
+void ExplorerDatabaseTreeItem::handle(MongoDatabase_FunctionsLoadedEvent *event)
+{
+    QList<MongoFunction> functions = event->functions();
+
+    clearChildItems(_javascriptFolderItem);
+
+    for (int i = 0; i < functions.count(); ++i) {
+        MongoFunction fun = functions.at(i);
+        addFunctionItem(event->database(), fun);
+    }
+
 }
 
 void ExplorerDatabaseTreeItem::clearChildItems(QTreeWidgetItem *root)
@@ -133,6 +153,12 @@ void ExplorerDatabaseTreeItem::showCollectionSystemFolderIfNeeded()
 
 void ExplorerDatabaseTreeItem::addUserItem(MongoDatabase *database, const MongoUser &user)
 {
-    ExplorerUserTreeItem *collectionItem = new ExplorerUserTreeItem(database, user);
-    _usersFolderItem->addChild(collectionItem);
+    ExplorerUserTreeItem *userItem = new ExplorerUserTreeItem(database, user);
+    _usersFolderItem->addChild(userItem);
+}
+
+void ExplorerDatabaseTreeItem::addFunctionItem(MongoDatabase *database, const MongoFunction &function)
+{
+    ExplorerFunctionTreeItem *functionItem = new ExplorerFunctionTreeItem(database, function);
+    _javascriptFolderItem->addChild(functionItem);
 }

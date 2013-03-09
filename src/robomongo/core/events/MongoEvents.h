@@ -11,6 +11,7 @@
 #include "robomongo/core/domain/CursorPosition.h"
 #include "robomongo/core/domain/ScriptInfo.h"
 #include "robomongo/core/domain/MongoUser.h"
+#include "robomongo/core/domain/MongoFunction.h"
 #include "robomongo/core/Event.h"
 
 namespace Robomongo
@@ -167,7 +168,7 @@ namespace Robomongo
 
 
     /**
-     * @brief LoadCollectionNames
+     * @brief Load Users
      */
 
     class LoadUsersRequest : public Event
@@ -207,6 +208,47 @@ namespace Robomongo
         QList<MongoUser> _users;
     };
 
+
+    /**
+     * @brief Load Functions
+     */
+
+    class LoadFunctionsRequest : public Event
+    {
+        R_EVENT
+
+    public:
+        LoadFunctionsRequest(QObject *sender, const QString &databaseName) :
+            Event(sender),
+            _databaseName(databaseName) {}
+
+        QString databaseName() const { return _databaseName; }
+
+    private:
+        QString _databaseName;
+    };
+
+    class LoadFunctionsResponse : public Event
+    {
+        R_EVENT
+
+    public:
+        LoadFunctionsResponse(QObject *sender, const QString &databaseName,
+                                    const QList<MongoFunction> &functions) :
+            Event(sender),
+            _databaseName(databaseName),
+            _functions(functions) { }
+
+        LoadFunctionsResponse(QObject *sender, EventError error) :
+            Event(sender, error) {}
+
+        QString databaseName() const { return _databaseName; }
+        QList<MongoFunction> functions() const { return _functions; }
+
+    private:
+        QString _databaseName;
+        QList<MongoFunction> _functions;
+    };
 
     /**
      * @brief InsertDocument
@@ -533,6 +575,78 @@ namespace Robomongo
             Event(sender, error) {}
     };
 
+
+    /**
+     * @brief Create Function
+     */
+
+    class CreateFunctionRequest : public Event
+    {
+        R_EVENT
+
+    public:
+        CreateFunctionRequest(QObject *sender, const QString &database, const MongoFunction &function, bool overwrite = false) :
+            Event(sender),
+            _database(database),
+            _function(function),
+            _overwrite(overwrite) {}
+
+        QString database() const { return _database; }
+        MongoFunction function() const { return _function; }
+        bool overwrite() const { return _overwrite; }
+
+    private:
+        QString _database;
+        MongoFunction _function;
+        bool _overwrite;
+    };
+
+    class CreateFunctionResponse : public Event
+    {
+        R_EVENT
+
+    public:
+        CreateFunctionResponse(QObject *sender) :
+            Event(sender) {}
+
+        CreateFunctionResponse(QObject *sender, EventError error) :
+            Event(sender, error) {}
+    };
+
+
+    /**
+     * @brief Drop Function
+     */
+
+    class DropFunctionRequest : public Event
+    {
+        R_EVENT
+
+    public:
+        DropFunctionRequest(QObject *sender, const QString &database, const QString &name) :
+            Event(sender),
+            _database(database),
+            _name(name) {}
+
+        QString database() const { return _database; }
+        QString name() const { return _name; }
+
+    private:
+        QString _database;
+        QString _name;
+    };
+
+    class DropFunctionResponse : public Event
+    {
+        R_EVENT
+
+    public:
+        DropFunctionResponse(QObject *sender) :
+            Event(sender) {}
+
+        DropFunctionResponse(QObject *sender, EventError error) :
+            Event(sender, error) {}
+    };
 
     /**
      * @brief Query Mongodb

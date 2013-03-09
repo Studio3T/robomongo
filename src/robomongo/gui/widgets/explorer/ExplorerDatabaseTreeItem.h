@@ -4,6 +4,7 @@
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoUser.h"
+#include "robomongo/core/domain/MongoFunction.h"
 
 namespace Robomongo
 {
@@ -12,6 +13,7 @@ namespace Robomongo
     class EventBus;
     class MongoDatabase_CollectionListLoadedEvent;
     class MongoDatabase_UsersLoadedEvent;
+    class MongoDatabase_FunctionsLoadedEvent;
 
     class ExplorerDatabaseTreeItem : public QObject, public QTreeWidgetItem
     {
@@ -24,10 +26,12 @@ namespace Robomongo
         MongoDatabase *database() const { return _database; }
         void expandCollections();
         void expandUsers();
+        void expandFunctions();
 
     public slots:
         void handle(MongoDatabase_CollectionListLoadedEvent *event);
         void handle(MongoDatabase_UsersLoadedEvent *event);
+        void handle(MongoDatabase_FunctionsLoadedEvent *event);
 
     private:
         void clearChildItems(QTreeWidgetItem *root);
@@ -37,6 +41,7 @@ namespace Robomongo
         void showCollectionSystemFolderIfNeeded();
 
         void addUserItem(MongoDatabase *database, const MongoUser &user);
+        void addFunctionItem(MongoDatabase *database, const MongoFunction &function);
 
         EventBus *_bus;
         ExplorerDatabaseCategoryTreeItem *_collectionFolderItem;

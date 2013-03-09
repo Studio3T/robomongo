@@ -168,6 +168,7 @@ void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)
             case Files:
                 break;
             case Functions:
+                categoryItem->databaseItem()->expandFunctions();
                 break;
             case Users:
                 categoryItem->databaseItem()->expandUsers();

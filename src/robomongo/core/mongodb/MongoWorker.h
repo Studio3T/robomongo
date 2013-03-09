@@ -63,6 +63,11 @@ namespace Robomongo
         void handle(LoadUsersRequest *event);
 
         /**
+         * @brief Load list of all JS functions
+         */
+        void handle(LoadFunctionsRequest *event);
+
+        /**
          * @brief Inserts document
          */
         void handle(InsertDocumentRequest *event);
@@ -92,6 +97,9 @@ namespace Robomongo
 
         void handle(CreateUserRequest *event);
         void handle(DropUserRequest *event);
+
+        void handle(CreateFunctionRequest *event);
+        void handle(DropFunctionRequest *event);
 
     private:
 

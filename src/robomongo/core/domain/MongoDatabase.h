@@ -37,12 +37,17 @@ namespace Robomongo
          */
         void loadUsers();
 
+        void loadFunctions();
+
         void createCollection(const QString &collection);
         void dropCollection(const QString &collection);
         void renameCollection(const QString &collection, const QString &newCollection);
 
         void createUser(const MongoUser &user, bool overwrite);
         void dropUser(const mongo::OID &id);
+
+        void createFunction(const MongoFunction &fun);
+        void dropFunction(const QString &name);
 
         QString name() const { return _name; }
 
@@ -55,8 +60,9 @@ namespace Robomongo
         MongoServer *server() const { return _server; }
 
     protected slots:
-        void handle(LoadCollectionNamesResponse *collectionNames);
-        void handle(LoadUsersResponse *collectionNames);
+        void handle(LoadCollectionNamesResponse *event);
+        void handle(LoadUsersResponse *event);
+        void handle(LoadFunctionsResponse *event);
 
     private:
         void clearCollections();
@@ -98,6 +104,23 @@ namespace Robomongo
 
     private:
         QList<MongoUser> _users;
+        MongoDatabase *_database;
+    };
+
+    class MongoDatabase_FunctionsLoadedEvent : public Event
+    {
+        R_EVENT
+
+        MongoDatabase_FunctionsLoadedEvent(QObject *sender, MongoDatabase *database, const QList<MongoFunction> &list) :
+            Event(sender),
+            _functions(list),
+            _database(database) {}
+
+        QList<MongoFunction> functions() const { return _functions; }
+        MongoDatabase *database() const { return _database; }
+
+    private:
+        QList<MongoFunction> _functions;
         MongoDatabase *_database;
     };
 }

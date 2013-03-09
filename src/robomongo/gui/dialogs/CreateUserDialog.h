@@ -20,6 +20,7 @@ namespace Robomongo
                          QWidget *parent = 0);
 
         MongoUser user() const { return _user; }
+        void setUserPasswordLabelText(const QString &text);
 
     public slots:
         virtual void accept();

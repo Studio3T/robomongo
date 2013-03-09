@@ -165,6 +165,20 @@ namespace Robomongo
 
 		/** regular expression, a pattern with options */
 		case RegEx:
+        {
+            con.append("/" + QString::fromUtf8(_bsonElement.regex()) + "/");
+
+            for ( const char *f = _bsonElement.regexFlags(); *f; ++f ) {
+                switch ( *f ) {
+                case 'g':
+                case 'i':
+                case 'm':
+                    con.append(QString(*f));
+                default:
+                    break;
+                }
+            }
+        }
 			break;
 
 		/** deprecated / will be redesigned */
@@ -173,15 +187,24 @@ namespace Robomongo
 
 		/** deprecated / use CodeWScope */
 		case Code:
+            con.append(QString::fromUtf8(_bsonElement._asCode().data()));
 			break;
 
 		/** a programming language (e.g., Python) symbol */
 		case Symbol:
+            con.append(QString::fromUtf8(_bsonElement.valuestr(), _bsonElement.valuestrsize() - 1));
 			break;
 
 		/** javascript code that can execute on the database server, with SavedContext */
 		case CodeWScope:
-			break;
+        {
+            mongo::BSONObj scope = _bsonElement.codeWScopeObject();
+            if (!scope.isEmpty() ) {
+                con.append(QString::fromUtf8(_bsonElement._asCode().data()));
+                break;
+            }
+        }
+            break;
 
 		/** 32 bit signed integer */
 		case NumberInt:

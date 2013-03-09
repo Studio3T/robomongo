@@ -150,6 +150,12 @@ BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr elemen
 	case Code:
         {
             static QString typeCode("Code");
+
+            QString code = element->stringValue();
+            setToolTip(1, code);
+
+            setIcon(0, GuiRegistry::instance().circleIcon());
+            setText(1, buildSynopsis(code));
             setText(2, typeCode);
         }
 		break;
@@ -166,6 +172,12 @@ BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr elemen
 	case CodeWScope:
         {
             static QString typeCodeWScope("CodeWScope");
+
+            QString code = element->stringValue();
+            setToolTip(1, code);
+
+            setIcon(0, GuiRegistry::instance().circleIcon());
+            setText(1, buildSynopsis(code));
             setText(2, typeCodeWScope);
         }
 		break;

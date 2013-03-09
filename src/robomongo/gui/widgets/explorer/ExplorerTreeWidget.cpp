@@ -7,6 +7,7 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/domain/MongoFunction.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -15,9 +16,11 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
+#include "robomongo/gui/dialogs/FunctionTextEditor.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 #include "robomongo/gui/dialogs/CreateUserDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
 
 #include "robomongo/shell/db/json.h"
 
@@ -206,6 +209,33 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     _usersCategoryContextMenu->addAction(addUser);
     _usersCategoryContextMenu->addSeparator();
     _usersCategoryContextMenu->addAction(refreshUsers);
+
+
+    QAction *dropFunction = new QAction("Remove Function", this);
+    connect(dropFunction, SIGNAL(triggered()), SLOT(ui_dropFunction()));
+
+    QAction *editFunction = new QAction("Edit Function", this);
+    connect(editFunction, SIGNAL(triggered()), SLOT(ui_editFunction()));
+
+    _functionContextMenu = new QMenu(this);
+    _functionContextMenu->addAction(editFunction);
+    _functionContextMenu->addAction(dropFunction);
+
+
+    QAction *refreshFunctions = new QAction("Refresh", this);
+    connect(refreshFunctions, SIGNAL(triggered()), SLOT(ui_refreshFunctions()));
+
+    QAction *viewFunctions = new QAction("View Functions", this);
+    connect(viewFunctions, SIGNAL(triggered()), SLOT(ui_viewFunctions()));
+
+    QAction *addFunction = new QAction("Add Function", this);
+    connect(addFunction, SIGNAL(triggered()), SLOT(ui_addFunction()));
+
+    _functionsCategoryContextMenu = new QMenu(this);
+    _functionsCategoryContextMenu->addAction(viewFunctions);
+    _functionsCategoryContextMenu->addAction(addFunction);
+    _functionsCategoryContextMenu->addSeparator();
+    _functionsCategoryContextMenu->addAction(refreshFunctions);
 }
 
 void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
@@ -238,12 +268,20 @@ void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
         return;
     }
 
+    ExplorerFunctionTreeItem *functionItem = dynamic_cast<ExplorerFunctionTreeItem *>(item);
+    if (functionItem) {
+        _functionContextMenu->exec(mapToGlobal(event->pos()));
+        return;
+    }
+
     ExplorerDatabaseCategoryTreeItem *categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
     if (categoryItem) {
         if (categoryItem->category() == Collections) {
             _collectionCategoryContextMenu->exec(mapToGlobal(event->pos()));
         } else if (categoryItem->category() == Users) {
             _usersCategoryContextMenu->exec(mapToGlobal(event->pos()));
+        } else if (categoryItem->category() == Functions) {
+            _functionsCategoryContextMenu->exec(mapToGlobal(event->pos()));
         }
         return;
     }
@@ -304,6 +342,25 @@ ExplorerUserTreeItem *ExplorerTreeWidget::selectedUserItem()
         return NULL;
 
     return userItem;
+}
+
+ExplorerFunctionTreeItem *ExplorerTreeWidget::selectedFunctionItem()
+{
+    QList<QTreeWidgetItem*> items = selectedItems();
+
+    if (items.count() != 1)
+        return NULL;
+
+    QTreeWidgetItem *item = items[0];
+
+    if (!item)
+        return NULL;
+
+    ExplorerFunctionTreeItem *funItem = dynamic_cast<ExplorerFunctionTreeItem *>(item);
+    if (!funItem)
+        return NULL;
+
+    return funItem;
 }
 
 ExplorerDatabaseTreeItem *ExplorerTreeWidget::selectedDatabaseItem()
@@ -704,6 +761,15 @@ void ExplorerTreeWidget::ui_refreshUsers()
     categoryItem->databaseItem()->expandUsers();
 }
 
+void ExplorerTreeWidget::ui_refreshFunctions()
+{
+    ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
+    if (!categoryItem)
+        return;
+
+    categoryItem->databaseItem()->expandFunctions();
+}
+
 void ExplorerTreeWidget::ui_viewUsers()
 {
     ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
@@ -712,6 +778,16 @@ void ExplorerTreeWidget::ui_viewUsers()
 
     openDatabaseShell(categoryItem->databaseItem()->database(),
                       "db.system.users.find()");
+}
+
+void ExplorerTreeWidget::ui_viewFunctions()
+{
+    ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
+    if (!categoryItem)
+        return;
+
+    openDatabaseShell(categoryItem->databaseItem()->database(),
+                      "db.system.js.find()");
 }
 
 void ExplorerTreeWidget::ui_refreshDatabase()
@@ -770,6 +846,55 @@ void ExplorerTreeWidget::ui_addUser()
     }
 }
 
+void ExplorerTreeWidget::ui_addFunction()
+{
+    ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
+    if (!categoryItem)
+        return;
+
+    ExplorerDatabaseTreeItem *databaseItem = categoryItem->databaseItem();
+
+    FunctionTextEditor dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
+                           databaseItem->database()->name(), MongoFunction());
+    dlg.setWindowTitle("Create Function");
+    int result = dlg.exec();
+
+    if (result == QDialog::Accepted) {
+
+        MongoFunction function = dlg.function();
+        databaseItem->database()->createFunction(function);
+
+        // refresh list of functions
+        databaseItem->expandFunctions();
+    }
+}
+
+void ExplorerTreeWidget::ui_editFunction()
+{
+    ExplorerFunctionTreeItem *functionItem = selectedFunctionItem();
+    if (!functionItem)
+        return;
+
+    MongoFunction function= functionItem->function();
+    MongoDatabase *database = functionItem->database();
+    MongoServer *server = database->server();
+
+    FunctionTextEditor dlg(server->connectionRecord()->getFullAddress(),
+                         database->name(),
+                         function);
+    dlg.setWindowTitle("Edit Function");
+    int result = dlg.exec();
+
+    if (result == QDialog::Accepted) {
+
+        MongoFunction function = dlg.function();
+        database->createFunction(function);
+
+        // refresh list of functions
+        database->loadFunctions();
+    }
+}
+
 void ExplorerTreeWidget::ui_dropUser()
 {
     ExplorerUserTreeItem *userItem = selectedUserItem();
@@ -791,6 +916,28 @@ void ExplorerTreeWidget::ui_dropUser()
 
     database->dropUser(user.id());
     database->loadUsers(); // refresh list of users
+}
+
+void ExplorerTreeWidget::ui_dropFunction()
+{
+    ExplorerFunctionTreeItem *functionItem = selectedFunctionItem();
+    if (!functionItem)
+        return;
+
+    MongoFunction function = functionItem->function();
+    MongoDatabase *database = functionItem->database();
+
+    // Ask user
+    int answer = QMessageBox::question(this,
+            "Remove Function",
+            QString("Remove <b>%1</b> function?").arg(function.name()),
+            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+    if (answer != QMessageBox::Yes)
+        return;
+
+    database->dropFunction(function.name());
+    database->loadFunctions(); // refresh list of functions
 }
 
 void ExplorerTreeWidget::ui_editUser()

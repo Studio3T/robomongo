@@ -41,7 +41,8 @@ SOURCES += \
     domain/CursorPosition.cpp \
     domain/ScriptInfo.cpp \
     engine/JsonBuilder.cpp \
-    domain/MongoUser.cpp
+    domain/MongoUser.cpp \
+    domain/MongoFunction.cpp
 
 
 HEADERS  += \
@@ -82,7 +83,8 @@ HEADERS  += \
     domain/CursorPosition.h \
     domain/ScriptInfo.h \
     engine/JsonBuilder.h \
-    domain/MongoUser.h
+    domain/MongoUser.h \
+    domain/MongoFunction.h
 
 INCLUDEPATH += $$SRC_ROOT
 

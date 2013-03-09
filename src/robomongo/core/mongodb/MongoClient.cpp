@@ -77,7 +77,53 @@ void MongoClient::dropUser(const QString &dbName, const mongo::OID &id)
     mongo::BSONObj bsonQuery = builder.obj();
     mongo::Query query(bsonQuery);
 
-    _dbclient->remove(ns.toString().toStdString(), query);
+    _dbclient->remove(ns.toString().toStdString(), query, true);
+}
+
+QList<MongoFunction> MongoClient::getFunctions(const QString &dbName)
+{
+    MongoNamespace ns(dbName, "system.js");
+    QList<MongoFunction> functions;
+
+    auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString().toStdString(), mongo::Query()));
+
+    while (cursor->more()) {
+        mongo::BSONObj bsonObj = cursor->next();
+        try {
+            MongoFunction user(bsonObj);
+            functions.append(user);
+        } catch (std::exception &ex) {
+            // skip invalid docs
+        }
+    }
+
+    return functions;
+}
+
+void MongoClient::createFunction(const QString &dbName, const MongoFunction &fun)
+{
+    MongoNamespace ns(dbName, "system.js");
+    mongo::BSONObj obj = fun.toBson();
+
+    mongo::BSONElement id = obj.getField("_id");
+    mongo::BSONObjBuilder builder;
+    builder.append(id);
+    mongo::BSONObj bsonQuery = builder.obj();
+    mongo::Query query(bsonQuery);
+
+    _dbclient->update(ns.toString().toStdString(), query, obj, true, false);
+}
+
+void MongoClient::dropFunction(const QString &dbName, const QString &name)
+{
+    MongoNamespace ns(dbName, "system.js");
+
+    mongo::BSONObjBuilder builder;
+    builder.append("_id", name.toStdString());
+    mongo::BSONObj bsonQuery = builder.obj();
+    mongo::Query query(bsonQuery);
+
+    _dbclient->remove(ns.toString().toStdString(), query, true);
 }
 
 void MongoClient::createDatabase(const QString &dbName)

@@ -90,7 +90,7 @@ QString ExplorerServerTreeItem::buildServerName(int *count /* = NULL */)
         return name;
 
     if (*count == -1)
-        return name + "...";
+        return name + " ...";
 
     return QString("%1 (%2)").arg(name).arg(*count);
 }

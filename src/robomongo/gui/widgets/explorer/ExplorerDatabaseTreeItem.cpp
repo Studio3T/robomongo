@@ -183,7 +183,7 @@ QString ExplorerDatabaseTreeItem::buildCollectionsFolderName(int *count /* = NUL
         return "Collections";
 
     if (*count == -1)
-        return "Collections...";
+        return "Collections ...";
 
     return QString("Collections (%1)").arg(*count);
 }
@@ -194,7 +194,7 @@ QString ExplorerDatabaseTreeItem::buildUsersFolderName(int *count)
         return "Users";
 
     if (*count == -1)
-        return "Users...";
+        return "Users ...";
 
     return QString("Users (%1)").arg(*count);
 }
@@ -205,7 +205,7 @@ QString ExplorerDatabaseTreeItem::buildFunctionsFolderName(int *count)
         return "Functions";
 
     if (*count == -1)
-        return "Functions...";
+        return "Functions ...";
 
     return QString("Functions (%1)").arg(*count);
 }

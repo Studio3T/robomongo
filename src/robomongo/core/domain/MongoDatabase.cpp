@@ -78,7 +78,12 @@ void MongoDatabase::dropUser(const mongo::OID &id)
 
 void MongoDatabase::createFunction(const MongoFunction &fun)
 {
-    _bus->send(_client, new CreateFunctionRequest(this, _name, fun, true));
+    _bus->send(_client, new CreateFunctionRequest(this, _name, fun));
+}
+
+void MongoDatabase::updateFunction(const QString &name, const MongoFunction &fun)
+{
+    _bus->send(_client, new CreateFunctionRequest(this, _name, fun, name));
 }
 
 void MongoDatabase::dropFunction(const QString &name)

@@ -878,6 +878,7 @@ void ExplorerTreeWidget::ui_editFunction()
     MongoFunction function= functionItem->function();
     MongoDatabase *database = functionItem->database();
     MongoServer *server = database->server();
+    QString name = function.name();
 
     FunctionTextEditor dlg(server->connectionRecord()->getFullAddress(),
                          database->name(),
@@ -887,8 +888,8 @@ void ExplorerTreeWidget::ui_editFunction()
 
     if (result == QDialog::Accepted) {
 
-        MongoFunction function = dlg.function();
-        database->createFunction(function);
+        MongoFunction editedFunction = dlg.function();
+        database->updateFunction(name, editedFunction);
 
         // refresh list of functions
         database->loadFunctions();

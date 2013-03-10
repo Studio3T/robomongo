@@ -47,6 +47,7 @@ namespace Robomongo
         void dropUser(const mongo::OID &id);
 
         void createFunction(const MongoFunction &fun);
+        void updateFunction(const QString &name, const MongoFunction &fun);
         void dropFunction(const QString &name);
 
         QString name() const { return _name; }

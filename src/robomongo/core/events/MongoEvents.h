@@ -585,18 +585,22 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateFunctionRequest(QObject *sender, const QString &database, const MongoFunction &function, bool overwrite = false) :
+        CreateFunctionRequest(QObject *sender, const QString &database, const MongoFunction &function,
+                              const QString &existingFunctionName = QString(), bool overwrite = false) :
             Event(sender),
             _database(database),
+            _existingFunctionName(existingFunctionName),
             _function(function),
             _overwrite(overwrite) {}
 
         QString database() const { return _database; }
+        QString existingFunctionName() const { return _existingFunctionName; }
         MongoFunction function() const { return _function; }
         bool overwrite() const { return _overwrite; }
 
     private:
         QString _database;
+        QString _existingFunctionName;
         MongoFunction _function;
         bool _overwrite;
     };

@@ -26,7 +26,7 @@ namespace Robomongo
         void dropUser(const QString &dbName, const mongo::OID &id);
 
         QList<MongoFunction> getFunctions(const QString &dbName);
-        void createFunction(const QString &dbName, const MongoFunction &fun);
+        void createFunction(const QString &dbName, const MongoFunction &fun, const QString &existingFunctionName = QString());
         void dropFunction(const QString &dbName, const QString &name);
 
         void createDatabase(const QString &dbName);

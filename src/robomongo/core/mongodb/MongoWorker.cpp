@@ -364,7 +364,7 @@ void MongoWorker::handle(CreateFunctionRequest *event)
 {
     try {
         boost::scoped_ptr<MongoClient> client(getClient());
-        client->createFunction(event->database(), event->function() /*, event->overwrite() */);
+        client->createFunction(event->database(), event->function(), event->existingFunctionName());
         client->done();
 
         reply(event->sender(), new CreateFunctionResponse(this));

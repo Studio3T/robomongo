@@ -100,18 +100,39 @@ QList<MongoFunction> MongoClient::getFunctions(const QString &dbName)
     return functions;
 }
 
-void MongoClient::createFunction(const QString &dbName, const MongoFunction &fun)
+void MongoClient::createFunction(const QString &dbName, const MongoFunction &fun,
+                                 const QString &existingFunctionName /* = QString() */)
 {
     MongoNamespace ns(dbName, "system.js");
     mongo::BSONObj obj = fun.toBson();
 
-    mongo::BSONElement id = obj.getField("_id");
-    mongo::BSONObjBuilder builder;
-    builder.append(id);
-    mongo::BSONObj bsonQuery = builder.obj();
-    mongo::Query query(bsonQuery);
+    if (existingFunctionName.isEmpty()) { // this is insert
+        _dbclient->insert(ns.toString().toStdString(), obj);
+    } else { // this is update
 
-    _dbclient->update(ns.toString().toStdString(), query, obj, true, false);
+        QString name = fun.name();
+
+        if (existingFunctionName == name) {
+            mongo::BSONObjBuilder builder;
+            builder.append("_id", name.toStdString());
+            mongo::BSONObj bsonQuery = builder.obj();
+            mongo::Query query(bsonQuery);
+
+            _dbclient->update(ns.toString().toStdString(), query, obj, true, false);
+        } else {
+            _dbclient->insert(ns.toString().toStdString(), obj);
+            std::string res = _dbclient->getLastError();
+
+            // if no errors
+            if (res.empty()) {
+                mongo::BSONObjBuilder builder;
+                builder.append("_id", existingFunctionName.toStdString());
+                mongo::BSONObj bsonQuery = builder.obj();
+                mongo::Query query(bsonQuery);
+                _dbclient->remove(ns.toString().toStdString(), query, true);
+            }
+        }
+    }
 }
 
 void MongoClient::dropFunction(const QString &dbName, const QString &name)

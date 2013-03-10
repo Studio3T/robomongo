@@ -857,6 +857,12 @@ void ExplorerTreeWidget::ui_addFunction()
     FunctionTextEditor dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
                            databaseItem->database()->name(), MongoFunction());
     dlg.setWindowTitle("Create Function");
+    dlg.setCode(
+        "function() {\n"
+        "    // write your code here\n"
+        "}");
+    dlg.setCursorPosition(1, 4);
+
     int result = dlg.exec();
 
     if (result == QDialog::Accepted) {

@@ -23,6 +23,7 @@ namespace Robomongo
         MongoFunction function() const { return _function; }
 
         void setCursorPosition(int line, int column);
+        void setCode(const QString &code);
 
     public slots:
         virtual void accept();

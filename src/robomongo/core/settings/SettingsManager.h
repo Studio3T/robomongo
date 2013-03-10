@@ -35,6 +35,11 @@ namespace Robomongo
         ~SettingsManager();
 
         /**
+         * @brief Version of schema
+         */
+        const static QString SchemaVersion;
+
+        /**
          * @brief Load settings from config file.
          * @return true if success, false otherwise
          */
@@ -98,7 +103,7 @@ namespace Robomongo
         QString _configDir;
 
         /**
-         * @brief Version of app
+         * @brief Version of settings schema currently loaded
          */
         QString _version;
 

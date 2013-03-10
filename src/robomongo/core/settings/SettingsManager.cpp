@@ -11,6 +11,8 @@
 
 using namespace Robomongo;
 
+const QString SettingsManager::SchemaVersion = "1.0";
+
 /**
  * Creates SettingsManager for config file in default location
  * ~/.config/robomongo/robomongo.json
@@ -107,8 +109,8 @@ QVariantMap SettingsManager::convertToMap() const
 {
     QVariantMap map;
 
-    // 1. Save version
-    map.insert("version", _version);
+    // 1. Save schema version
+    map.insert("version", SchemaVersion);
 
     // 2. Save connections
     QVariantList list;

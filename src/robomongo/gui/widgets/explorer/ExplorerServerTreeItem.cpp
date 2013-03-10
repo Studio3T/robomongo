@@ -15,8 +15,9 @@ ExplorerServerTreeItem::ExplorerServerTreeItem(MongoServer *server) : QObject(),
     _bus(AppRegistry::instance().bus())
 {
     _bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
+    _bus->subscribe(this, MongoServer_LoadingDatabasesEvent::Type, _server);
 
-    setText(0, _server->connectionRecord()->getReadableName());
+    setText(0, buildServerName());
     setIcon(0, GuiRegistry::instance().serverIcon());
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 }
@@ -33,6 +34,9 @@ void ExplorerServerTreeItem::expand()
 
 void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabase *> &dbs)
 {
+    int count = dbs.count();
+    setText(0, buildServerName(&count));
+
     // Remove child items
 	int itemCount = childCount();
 	for (int i = 0; i < itemCount; ++i)
@@ -70,4 +74,23 @@ void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabase *> &dbs
 void ExplorerServerTreeItem::handle(DatabaseListLoadedEvent *event)
 {
     databaseRefreshed(event->list);
+}
+
+void ExplorerServerTreeItem::handle(MongoServer_LoadingDatabasesEvent *event)
+{
+    int count = -1;
+    setText(0, buildServerName(&count));
+}
+
+QString ExplorerServerTreeItem::buildServerName(int *count /* = NULL */)
+{
+    QString name = _server->connectionRecord()->getReadableName();
+
+    if (!count)
+        return name;
+
+    if (*count == -1)
+        return name + "...";
+
+    return QString("%1 (%2)").arg(name).arg(*count);
 }

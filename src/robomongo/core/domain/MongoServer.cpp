@@ -13,6 +13,8 @@
 using namespace Robomongo;
 using namespace std;
 
+R_REGISTER_EVENT(MongoServer_LoadingDatabasesEvent)
+
 MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible) : QObject(),
     _connectionRecord(connectionRecord),
     _bus(AppRegistry::instance().bus()),
@@ -77,6 +79,7 @@ void MongoServer::removeDocuments(mongo::Query query, const QString &db, const Q
 
 void MongoServer::loadDatabases()
 {
+    _bus->publish(new MongoServer_LoadingDatabasesEvent(this));
     _client->send(new LoadDatabaseNamesRequest(this));
 }
 

@@ -3,6 +3,7 @@
 #include <QTreeWidgetItem>
 
 #include "robomongo/core/Core.h"
+#include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/events/MongoEvents.h"
 
 namespace Robomongo
@@ -32,8 +33,18 @@ namespace Robomongo
 
     public slots:
         void handle(DatabaseListLoadedEvent *event);
+        void handle(MongoServer_LoadingDatabasesEvent *event);
 
     private:
+
+        /**
+         * @brief Builds server
+         * @param count: Number of databases.
+         *               If NULL - name will be without count of databases.
+         *               If -1   - name will contain "..." at the end.
+         */
+        QString buildServerName(int *count = NULL);
+
         MongoServer *_server;
         EventBus *_bus;
     };

@@ -48,6 +48,14 @@ QIcon GuiRegistry::userIcon()
     return _userIcon;
 }
 
+QIcon GuiRegistry::functionIcon()
+{
+    if (_functionIcon.isNull())
+        _functionIcon = QIcon(":/robomongo/icons/function_16x16.png");
+
+    return _functionIcon;
+}
+
 QIcon GuiRegistry::maximizeIcon()
 {
     if (_maximizeIcon.isNull())

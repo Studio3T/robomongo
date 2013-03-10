@@ -9,7 +9,7 @@ ExplorerFunctionTreeItem::ExplorerFunctionTreeItem(MongoDatabase *database, cons
     _database(database)
 {
     setText(0, _function.name());
-    setIcon(0, GuiRegistry::instance().userIcon());
+    setIcon(0, GuiRegistry::instance().functionIcon());
     setToolTip(0, buildToolTip(_function));
     setExpanded(false);
 }

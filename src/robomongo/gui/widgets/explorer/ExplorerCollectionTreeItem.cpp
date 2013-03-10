@@ -10,8 +10,8 @@ ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(MongoCollection *collecti
 {
     setText(0, _collection->name());
     setIcon(0, GuiRegistry::instance().collectionIcon());
-	setExpanded(true);
-	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+    //setExpanded(true);
+    //setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     setToolTip(0, buildToolTip(collection));
 }
 

@@ -21,6 +21,9 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) :
     _bus->subscribe(this, MongoDatabase_CollectionListLoadedEvent::Type, _database);
     _bus->subscribe(this, MongoDatabase_UsersLoadedEvent::Type, _database);
     _bus->subscribe(this, MongoDatabase_FunctionsLoadedEvent::Type, _database);
+    _bus->subscribe(this, MongoDatabase_CollectionsLoadingEvent::Type, _database);
+    _bus->subscribe(this, MongoDatabase_FunctionsLoadingEvent::Type, _database);
+    _bus->subscribe(this, MongoDatabase_UsersLoadingEvent::Type, _database);
 
     setText(0, _database->name());
     setIcon(0, GuiRegistry::instance().databaseIcon());
@@ -28,14 +31,14 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) :
 	setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
     _collectionFolderItem = new ExplorerDatabaseCategoryTreeItem(Collections, this);
-    _collectionFolderItem->setText(0, "Collections");
+    _collectionFolderItem->setText(0, buildCollectionsFolderName());
     _collectionFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
     _collectionFolderItem->setExpanded(true);
     _collectionFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     addChild(_collectionFolderItem);
 
     _javascriptFolderItem = new ExplorerDatabaseCategoryTreeItem(Functions, this);
-    _javascriptFolderItem->setText(0, "Functions");
+    _javascriptFolderItem->setText(0, buildFunctionsFolderName());
     _javascriptFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
     _javascriptFolderItem->setExpanded(true);
     _javascriptFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
@@ -49,7 +52,7 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) :
 //    addChild(_filesFolderItem);
 
     _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(Users, this);
-    _usersFolderItem->setText(0, "Users");
+    _usersFolderItem->setText(0, buildUsersFolderName());
     _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
     _usersFolderItem->setExpanded(true);
     _usersFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
@@ -74,6 +77,8 @@ void ExplorerDatabaseTreeItem::expandFunctions()
 void ExplorerDatabaseTreeItem::handle(MongoDatabase_CollectionListLoadedEvent *event)
 {
     QList<MongoCollection *> collections = event->collections;
+    int count = collections.count();
+    _collectionFolderItem->setText(0, buildCollectionsFolderName(&count));
 
     clearChildItems(_collectionFolderItem);
     createCollectionSystemFolderItem();
@@ -94,6 +99,8 @@ void ExplorerDatabaseTreeItem::handle(MongoDatabase_CollectionListLoadedEvent *e
 void ExplorerDatabaseTreeItem::handle(MongoDatabase_UsersLoadedEvent *event)
 {
     QList<MongoUser> users = event->users();
+    int count = users.count();
+    _usersFolderItem->setText(0, buildUsersFolderName(&count));
 
     clearChildItems(_usersFolderItem);
 
@@ -106,6 +113,8 @@ void ExplorerDatabaseTreeItem::handle(MongoDatabase_UsersLoadedEvent *event)
 void ExplorerDatabaseTreeItem::handle(MongoDatabase_FunctionsLoadedEvent *event)
 {
     QList<MongoFunction> functions = event->functions();
+    int count = functions.count();
+    _javascriptFolderItem->setText(0, buildFunctionsFolderName(&count));
 
     clearChildItems(_javascriptFolderItem);
 
@@ -113,7 +122,24 @@ void ExplorerDatabaseTreeItem::handle(MongoDatabase_FunctionsLoadedEvent *event)
         MongoFunction fun = functions.at(i);
         addFunctionItem(event->database(), fun);
     }
+}
 
+void ExplorerDatabaseTreeItem::handle(MongoDatabase_CollectionsLoadingEvent *event)
+{
+    int count = -1;
+    _collectionFolderItem->setText(0, buildCollectionsFolderName(&count));
+}
+
+void ExplorerDatabaseTreeItem::handle(MongoDatabase_FunctionsLoadingEvent *event)
+{
+    int count = -1;
+    _javascriptFolderItem->setText(0, buildFunctionsFolderName(&count));
+}
+
+void ExplorerDatabaseTreeItem::handle(MongoDatabase_UsersLoadingEvent *event)
+{
+    int count = -1;
+    _usersFolderItem->setText(0, buildUsersFolderName(&count));
 }
 
 void ExplorerDatabaseTreeItem::clearChildItems(QTreeWidgetItem *root)
@@ -149,6 +175,39 @@ void ExplorerDatabaseTreeItem::addSystemCollectionItem(MongoCollection *collecti
 void ExplorerDatabaseTreeItem::showCollectionSystemFolderIfNeeded()
 {
     _collectionSystemFolderItem->setHidden(_collectionSystemFolderItem->childCount() == 0);
+}
+
+QString ExplorerDatabaseTreeItem::buildCollectionsFolderName(int *count /* = NULL */)
+{
+    if (!count)
+        return "Collections";
+
+    if (*count == -1)
+        return "Collections...";
+
+    return QString("Collections (%1)").arg(*count);
+}
+
+QString ExplorerDatabaseTreeItem::buildUsersFolderName(int *count)
+{
+    if (!count)
+        return "Users";
+
+    if (*count == -1)
+        return "Users...";
+
+    return QString("Users (%1)").arg(*count);
+}
+
+QString ExplorerDatabaseTreeItem::buildFunctionsFolderName(int *count)
+{
+    if (!count)
+        return "Functions";
+
+    if (*count == -1)
+        return "Functions...";
+
+    return QString("Functions (%1)").arg(*count);
 }
 
 void ExplorerDatabaseTreeItem::addUserItem(MongoDatabase *database, const MongoUser &user)

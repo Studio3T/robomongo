@@ -11,6 +11,9 @@ using namespace Robomongo;
 R_REGISTER_EVENT(MongoDatabase_CollectionListLoadedEvent)
 R_REGISTER_EVENT(MongoDatabase_UsersLoadedEvent)
 R_REGISTER_EVENT(MongoDatabase_FunctionsLoadedEvent)
+R_REGISTER_EVENT(MongoDatabase_UsersLoadingEvent)
+R_REGISTER_EVENT(MongoDatabase_FunctionsLoadingEvent)
+R_REGISTER_EVENT(MongoDatabase_CollectionsLoadingEvent)
 
 MongoDatabase::MongoDatabase(MongoServer *server, const QString &name) : QObject(),
     _system(false),
@@ -32,16 +35,19 @@ MongoDatabase::~MongoDatabase()
 
 void MongoDatabase::loadCollections()
 {
+    _bus->publish(new MongoDatabase_CollectionsLoadingEvent(this));
     _bus->send(_client, new LoadCollectionNamesRequest(this, _name));
 }
 
 void MongoDatabase::loadUsers()
 {
+    _bus->publish(new MongoDatabase_UsersLoadingEvent(this));
     _bus->send(_client, new LoadUsersRequest(this, _name));
 }
 
 void MongoDatabase::loadFunctions()
 {
+    _bus->publish(new MongoDatabase_FunctionsLoadingEvent(this));
     _bus->send(_client, new LoadFunctionsRequest(this, _name));
 }
 

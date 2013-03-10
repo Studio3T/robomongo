@@ -51,5 +51,6 @@
         <file>icons/custom_highlighted_16x16.png</file>
         <file>icons/user_16x16.png</file>
         <file>icons/stop_24x24.png</file>
+        <file>icons/function_16x16.png</file>
     </qresource>
 </RCC>

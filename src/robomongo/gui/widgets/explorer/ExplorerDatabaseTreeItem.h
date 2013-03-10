@@ -14,6 +14,9 @@ namespace Robomongo
     class MongoDatabase_CollectionListLoadedEvent;
     class MongoDatabase_UsersLoadedEvent;
     class MongoDatabase_FunctionsLoadedEvent;
+    class MongoDatabase_CollectionsLoadingEvent;
+    class MongoDatabase_FunctionsLoadingEvent;
+    class MongoDatabase_UsersLoadingEvent;
 
     class ExplorerDatabaseTreeItem : public QObject, public QTreeWidgetItem
     {
@@ -32,6 +35,9 @@ namespace Robomongo
         void handle(MongoDatabase_CollectionListLoadedEvent *event);
         void handle(MongoDatabase_UsersLoadedEvent *event);
         void handle(MongoDatabase_FunctionsLoadedEvent *event);
+        void handle(MongoDatabase_CollectionsLoadingEvent *event);
+        void handle(MongoDatabase_FunctionsLoadingEvent *event);
+        void handle(MongoDatabase_UsersLoadingEvent *event);
 
     private:
         void clearChildItems(QTreeWidgetItem *root);
@@ -39,6 +45,16 @@ namespace Robomongo
         void addCollectionItem(MongoCollection *collection);
         void addSystemCollectionItem(MongoCollection *collection);
         void showCollectionSystemFolderIfNeeded();
+
+        /**
+         * @brief Builds folder names for corresponding categories.
+         * @param count: Number of items.
+         *               If NULL - name will be without count of items.
+         *               If -1   - name will contain "..." at the end.
+         */
+        QString buildCollectionsFolderName(int *count = NULL);
+        QString buildUsersFolderName(int *count = NULL);
+        QString buildFunctionsFolderName(int *count = NULL);
 
         void addUserItem(MongoDatabase *database, const MongoUser &user);
         void addFunctionItem(MongoDatabase *database, const MongoFunction &function);

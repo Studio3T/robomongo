@@ -40,6 +40,7 @@ namespace Robomongo
         void stopScript();
         void toggleFullScreen2();
         void refreshConnections();
+        void aboutRobomongo();
         void toggleLogs(bool show);
         void connectToServer(QAction *action);
         void handle(ConnectionFailedEvent *event);

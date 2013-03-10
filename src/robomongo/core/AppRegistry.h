@@ -9,6 +9,9 @@ namespace Robomongo
     class AppRegistry
     {
     public:
+
+        QString version() const { return "0.6.4"; }
+
         /**
          * @brief Returns single instance of AppRegistry
          */

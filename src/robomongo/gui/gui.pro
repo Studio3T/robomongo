@@ -47,7 +47,8 @@ SOURCES += ExampleWindow.cpp \
     widgets/explorer/ExplorerUserTreeItem.cpp \
     dialogs/CreateUserDialog.cpp \
     widgets/explorer/ExplorerFunctionTreeItem.cpp \
-    dialogs/FunctionTextEditor.cpp
+    dialogs/FunctionTextEditor.cpp \
+    dialogs/AboutDialog.cpp
 
 HEADERS  += ExampleWindow.h = \
     dialogs/ConnectionsDialog.h \
@@ -92,6 +93,7 @@ HEADERS  += ExampleWindow.h = \
     widgets/explorer/ExplorerUserTreeItem.h \
     dialogs/CreateUserDialog.h \
     widgets/explorer/ExplorerFunctionTreeItem.h \
-    dialogs/FunctionTextEditor.h
+    dialogs/FunctionTextEditor.h \
+    dialogs/AboutDialog.h
 
 INCLUDEPATH += $$SRC_ROOT

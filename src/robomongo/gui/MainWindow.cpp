@@ -15,6 +15,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
+#include "robomongo/gui/dialogs/AboutDialog.h"
 
 using namespace Robomongo;
 
@@ -157,6 +158,13 @@ MainWindow::MainWindow() : QMainWindow(),
     optionsMenu->addAction(treeModeAction);
     optionsMenu->addAction(textModeAction);
 
+    QAction *aboutRobomongoAction = new QAction("&About Robomongo", this);
+    connect(aboutRobomongoAction, SIGNAL(triggered()), this, SLOT(aboutRobomongo()));
+
+    // Options menu
+    QMenu *helpMenu = menuBar()->addMenu("Help");
+    helpMenu->addAction(aboutRobomongoAction);
+
     // Toolbar
     QToolBar *toolBar = new QToolBar("Toolbar", this);
     toolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -199,7 +207,7 @@ MainWindow::MainWindow() : QMainWindow(),
     createTabs();
     createDatabaseExplorer();
 
-    setWindowTitle("Robomongo 0.6.3");
+    setWindowTitle("Robomongo " + AppRegistry::instance().version());
     setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
     QTimer::singleShot(0, this, SLOT(manageConnections()));
@@ -327,6 +335,12 @@ void MainWindow::refreshConnections()
 {
     QToolTip::showText(QPoint(0,0),
                        QString("Refresh not working yet... : <br/>  <b>Ctrl+D</b> : push Button"));
+}
+
+void MainWindow::aboutRobomongo()
+{
+    AboutDialog dlg(this);
+    dlg.exec();
 }
 
 void MainWindow::toggleLogs(bool show)

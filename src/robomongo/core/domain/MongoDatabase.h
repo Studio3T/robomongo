@@ -123,4 +123,22 @@ namespace Robomongo
         QList<MongoFunction> _functions;
         MongoDatabase *_database;
     };
+
+    class MongoDatabase_UsersLoadingEvent : public Event
+    {
+        R_EVENT
+        MongoDatabase_UsersLoadingEvent(QObject *sender) : Event(sender) {}
+    };
+
+    class MongoDatabase_FunctionsLoadingEvent : public Event
+    {
+        R_EVENT
+        MongoDatabase_FunctionsLoadingEvent(QObject *sender) : Event(sender) {}
+    };
+
+    class MongoDatabase_CollectionsLoadingEvent : public Event
+    {
+        R_EVENT
+        MongoDatabase_CollectionsLoadingEvent(QObject *sender) : Event(sender) {}
+    };
 }

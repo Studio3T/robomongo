@@ -70,6 +70,11 @@ void FunctionTextEditor::setCursorPosition(int line, int column)
     _queryText->setCursorPosition(line, column);
 }
 
+void FunctionTextEditor::setCode(const QString &code)
+{
+    _queryText->setText(code);
+}
+
 void FunctionTextEditor::accept()
 {
     if (_nameEdit->text().isEmpty() && _queryText->text().isEmpty())

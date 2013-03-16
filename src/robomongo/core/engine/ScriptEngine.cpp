@@ -197,6 +197,15 @@ namespace Robomongo
         }
     }
 
+    void ScriptEngine::ping()
+    {
+        QMutexLocker lock(&_mutex);
+
+        QString pingStatement = QString("if (db) { db.runCommand({ping:1}); }");
+        QByteArray pingArray = pingStatement.toUtf8();
+        _scope->exec(pingArray.data(), "(ping)", false, false, false);
+    }
+
     QStringList ScriptEngine::complete(const QString &prefix)
     {
 //        if ( prefix.find( '"' ) != string::npos )

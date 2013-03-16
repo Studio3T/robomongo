@@ -25,6 +25,7 @@ namespace Robomongo
         void interrupt();
 
         void use(const QString &dbName);
+        void ping();
         QStringList complete(const QString &prefix);
 
 

@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QMutex>
 #include <QEvent>
+#include <QTimer>
 #include <QStringList>
 #include <mongo/client/dbclient.h>
 
@@ -32,6 +33,13 @@ namespace Robomongo
         ScriptEngine *engine() const { return _scriptEngine; }
 
     protected slots: // handlers:
+
+        /**
+         * @brief Every minute we are issuing { ping : 1 } command to every used connection
+         * in order to avoid dropped connections.
+         */
+        void keepAlive();
+
         /**
          * @brief Initialize MongoWorker (should be the first request)
          */
@@ -129,6 +137,12 @@ namespace Robomongo
 
         ConnectionSettings *_connection;
         EventBus *_bus;
+
+        /**
+         * @brief Every minute we are issuing { ping : 1 } command to every used connection
+         * in order to avoid dropped connections.
+         */
+        QTimer *_keepAliveTimer;
     };
 
     class Helper : public QObject

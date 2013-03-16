@@ -71,6 +71,10 @@ void MongoWorker::handle(InitRequest *event)
         _scriptEngine = new ScriptEngine(_connection);
         _scriptEngine->init();
         _scriptEngine->use(_connection->defaultDatabase());
+
+        _keepAliveTimer = new QTimer(this);
+        connect(_keepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
+        _keepAliveTimer->start(60 * 1000); // every minute
     }
     catch (std::exception &ex) {
         qDebug() << "InitRequest handler throw exception: " << ex.what();
@@ -407,6 +411,26 @@ MongoClient *MongoWorker::getClient()
 void MongoWorker::send(Event *event)
 {
     _bus->send(this, event);
+}
+
+void MongoWorker::keepAlive()
+{
+    try {
+        if (_dbclient) {
+            // Building { ping: 1 }
+            mongo::BSONObjBuilder command;
+            command.append("ping", 1);
+            mongo::BSONObj result;
+            _dbclient->runCommand(_authDatabase.toStdString(), command.obj(), result);
+        }
+
+        if (_scriptEngine) {
+            _scriptEngine->ping();
+        }
+
+    } catch(std::exception &ex) {
+        // nothing here
+    }
 }
 
 /**

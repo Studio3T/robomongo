@@ -118,7 +118,8 @@ void ConnectionDiagnosticDialog::completed()
 
     // delete thread, that emits this signal
     QThread *thread = static_cast<QThread *>(sender());
-    thread->deleteLater();
+    connect(thread, SLOT(finished()), thread, SLOT(deleteLater()));
+    thread->quit();
 }
 
 

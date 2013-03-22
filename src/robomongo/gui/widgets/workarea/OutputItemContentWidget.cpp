@@ -198,7 +198,8 @@ void OutputItemContentWidget::jsonPrepared()
 {
     // delete thread, that emits this signal
     QThread *thread = static_cast<QThread *>(sender());
-    thread->deleteLater();
+    connect(thread, SLOT(finished()), thread, SLOT(deleteLater()));
+    thread->quit();
 }
 
 void OutputItemContentWidget::jsonPartReady(const QString &json)

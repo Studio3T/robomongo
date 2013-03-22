@@ -44,12 +44,13 @@ ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) :
     _javascriptFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     addChild(_javascriptFolderItem);
 
-    _filesFolderItem = new ExplorerDatabaseCategoryTreeItem(Files, this);
-    _filesFolderItem->setText(0, "Files");
-    _filesFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-    _filesFolderItem->setExpanded(true);
-    _filesFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-//    addChild(_filesFolderItem);
+    // Files (GridFS) not implemented yet
+    //_filesFolderItem = new ExplorerDatabaseCategoryTreeItem(Files, this);
+    //_filesFolderItem->setText(0, "Files");
+    //_filesFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
+    //_filesFolderItem->setExpanded(true);
+    //_filesFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+    //addChild(_filesFolderItem);
 
     _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(Users, this);
     _usersFolderItem->setText(0, buildUsersFolderName());

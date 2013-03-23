@@ -61,11 +61,20 @@ Build with debug symbols:
 
     $ ./build.sh debug
     
-Build with release symbols:
+Build in release mode:
  
     $ ./build.sh release
     
+Build both in debug and release modes:
+
+    $ ./build.sh all
+    
 ### Rebuild    
+    
+Rebuild script first cleans output, than builds. This is a shortcat for:
+
+    $ ./clean MODE
+    $ ./build MODE
     
 Rebuild with debug symbols:
    
@@ -74,6 +83,10 @@ Rebuild with debug symbols:
 Rebuild with release symbols:
    
     $ ./rebuild.sh release
+    
+Rebuild both in debug and release modes:
+
+    $ ./rebuild.sh all
     
 ### Clean    
     

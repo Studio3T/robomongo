@@ -84,7 +84,9 @@ void WorkAreaWidget::handle(OpeningShellEvent *event)
 
     _tabWidget->addTab(queryWidget, shellName);
     _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
+#if !defined(Q_OS_MAC)
     _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());
+#endif
     setUpdatesEnabled(true);
     queryWidget->showProgress();
 }

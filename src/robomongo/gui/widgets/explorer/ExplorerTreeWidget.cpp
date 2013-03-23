@@ -144,6 +144,9 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     QAction *renameCollection = new QAction("Rename Collection", this);
     connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection()));
 
+    QAction *duplicateCollection = new QAction("Duplicate Collection", this);
+    connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection()));
+
     QAction *viewCollection = new QAction("View Documents", this);
     connect(viewCollection, SIGNAL(triggered()), SLOT(ui_viewCollection()));
 
@@ -156,6 +159,7 @@ ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
     _collectionContextMenu->addAction(removeAllDocuments);
     _collectionContextMenu->addSeparator();
     _collectionContextMenu->addAction(renameCollection);
+    _collectionContextMenu->addAction(duplicateCollection);
     _collectionContextMenu->addAction(dropCollection);
     _collectionContextMenu->addSeparator();
     _collectionContextMenu->addAction(addIndex);
@@ -629,6 +633,34 @@ void ExplorerTreeWidget::ui_dropCollection()
     database->loadCollections();
 
     //openCurrentCollectionShell("db.%1.drop()", false);
+}
+
+void ExplorerTreeWidget::ui_duplicateCollection()
+{
+    ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
+    if (!collectionItem)
+        return;
+
+    MongoCollection *collection = collectionItem->collection();
+    MongoDatabase *database = collection->database();
+    MongoServer *server = database->server();
+    ConnectionSettings *settings = server->connectionRecord();
+
+    CreateDatabaseDialog dlg(settings->getFullAddress(),
+                             database->name(),
+                             collection->name());
+    dlg.setWindowTitle("Duplicate Collection");
+    dlg.setOkButtonText("&Duplicate");
+    dlg.setInputLabelText("New Collection Name:");
+    dlg.setInputText(collection->name() + "_copy");
+    int result = dlg.exec();
+
+    if (result == QDialog::Accepted) {
+        database->duplicateCollection(collection->name(), dlg.databaseName());
+
+        // refresh list of collections
+        database->loadCollections();
+    }
 }
 
 void ExplorerTreeWidget::ui_renameCollection()

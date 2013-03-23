@@ -66,6 +66,11 @@ void MongoDatabase::renameCollection(const QString &collection, const QString &n
     _bus->send(_client, new RenameCollectionRequest(this, _name, collection, newCollection));
 }
 
+void MongoDatabase::duplicateCollection(const QString &collection, const QString &newCollection)
+{
+    _bus->send(_client, new DuplicateCollectionRequest(this, _name, collection, newCollection));
+}
+
 void MongoDatabase::createUser(const MongoUser &user, bool overwrite)
 {
     _bus->send(_client, new CreateUserRequest(this, _name, user, overwrite));

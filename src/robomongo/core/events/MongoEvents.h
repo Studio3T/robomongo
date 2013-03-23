@@ -504,6 +504,44 @@ namespace Robomongo
     };
 
     /**
+     * @brief Clone Collection
+     */
+
+    class DuplicateCollectionRequest : public Event
+    {
+        R_EVENT
+
+    public:
+        DuplicateCollectionRequest(QObject *sender, const QString &database,
+                              const QString &collection, const QString &newCollection) :
+            Event(sender),
+            _database(database),
+            _collection(collection),
+            _newCollection(newCollection) {}
+
+        QString database() const { return _database; }
+        QString collection() const { return _collection; }
+        QString newCollection() const { return _newCollection; }
+
+    private:
+        QString _database;
+        QString _collection;
+        QString _newCollection;
+    };
+
+    class DuplicateCollectionResponse : public Event
+    {
+        R_EVENT
+
+    public:
+        DuplicateCollectionResponse(QObject *sender) :
+            Event(sender) {}
+
+        DuplicateCollectionResponse(QObject *sender, EventError error) :
+            Event(sender, error) {}
+    };
+
+    /**
      * @brief Create User
      */
 

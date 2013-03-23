@@ -102,6 +102,7 @@ namespace Robomongo
         void handle(CreateCollectionRequest *event);
         void handle(DropCollectionRequest *event);
         void handle(RenameCollectionRequest *event);
+        void handle(DuplicateCollectionRequest *event);
 
         void handle(CreateUserRequest *event);
         void handle(DropUserRequest *event);

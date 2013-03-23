@@ -53,6 +53,8 @@ Executable will be placed to: target/debug/app/out
 Build Scripts
 -------------
 
+Build scripts located in ./build folder. For Linux/OSX use `*.sh` scripts, for Windows use `*.bat` scripts.
+
 ### Build
 
 Build with debug symbols:

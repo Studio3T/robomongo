@@ -55,8 +55,14 @@ DocumentTextEditor::DocumentTextEditor(const QString &server, const QString &dat
     QHBoxLayout *bottomlayout = new QHBoxLayout();
     bottomlayout->addWidget(validate);
     bottomlayout->addStretch(1);
+
+#if defined(Q_OS_MAC)
+    bottomlayout->addWidget(cancel, 0, Qt::AlignRight);
+    bottomlayout->addWidget(save, 0, Qt::AlignRight);
+#else
     bottomlayout->addWidget(save, 0, Qt::AlignRight);
     bottomlayout->addWidget(cancel, 0, Qt::AlignRight);
+#endif
 
     QVBoxLayout *layout = new QVBoxLayout();
 

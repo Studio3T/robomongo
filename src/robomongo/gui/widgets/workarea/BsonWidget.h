@@ -71,7 +71,7 @@ namespace Robomongo
                 if (position == 0)
                     sb << "/* 0 */\n";
                 else
-                    sb << "\n\n/* " << position << "*/\n";
+                    sb << "\n\n/* " << position << " */\n";
 
                 // Approach #1
                 // std::string stdJson = doc->bsonObj().jsonString(mongo::TenGen, 1);

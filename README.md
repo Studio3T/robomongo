@@ -33,6 +33,7 @@ Compiling:
 Executable will be placed to: target/debug/app/out
 
 
+
 Linux and OS X
 -------
 
@@ -48,3 +49,34 @@ Compiling:
     $ ./build.sh
 
 Executable will be placed to: target/debug/app/out
+
+Build Scripts
+-------------
+
+Build with debug symbols:
+
+    $ ./build.sh debug
+    
+Build with release symbols:
+ 
+    $ ./build.sh release
+    
+Rebuild with debug symbols:
+   
+    $ ./rebuild.sh debug
+    
+Rebuild with release symbols:
+   
+    $ ./rebuild.sh release
+    
+Clean debug output:
+    
+    $ ./clean.sh debug
+    
+Clean release output:
+
+    $ ./clean.sh release
+    
+Clean all output (both debug and release)
+
+    $ ./clean.sh all

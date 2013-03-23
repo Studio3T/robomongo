@@ -167,6 +167,9 @@ MainWindow::MainWindow() : QMainWindow(),
 
     // Toolbar
     QToolBar *toolBar = new QToolBar("Toolbar", this);
+#if defined(Q_OS_MAC)
+    toolBar->setIconSize(QSize(20, 20));
+#endif
     toolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
     toolBar->addAction(connectButtonAction);
     toolBar->setShortcutEnabled(1, true);
@@ -174,6 +177,9 @@ MainWindow::MainWindow() : QMainWindow(),
     addToolBar(toolBar);
 
     _execToolBar = new QToolBar("Exec Toolbar", this);
+#if defined(Q_OS_MAC)
+    _execToolBar->setIconSize(QSize(20, 20));
+#endif
     _execToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
     _execToolBar->addAction(_executeAction);
     _execToolBar->addAction(_stopAction);

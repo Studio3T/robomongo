@@ -73,8 +73,8 @@ Build both in debug and release modes:
     
 Rebuild script first cleans output, than builds. This is a shortcat for:
 
-    $ ./clean MODE
-    $ ./build MODE
+    $ ./clean.sh MODE
+    $ ./build.sh MODE
     
 Rebuild with debug symbols:
    

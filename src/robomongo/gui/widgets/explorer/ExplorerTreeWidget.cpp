@@ -916,7 +916,7 @@ void ExplorerTreeWidget::ui_editFunction()
     if (!functionItem)
         return;
 
-    MongoFunction function= functionItem->function();
+    MongoFunction function = functionItem->function();
     MongoDatabase *database = functionItem->database();
     MongoServer *server = database->server();
     QString name = function.name();

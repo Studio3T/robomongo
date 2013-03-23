@@ -32,8 +32,14 @@ CreateDatabaseDialog::CreateDatabaseDialog(const QString &serverName, const QStr
 
     QHBoxLayout *hlayout = new QHBoxLayout();
     hlayout->addStretch(1);
+
+#if defined(Q_OS_MAC)
+    hlayout->addWidget(cancelButton, 0, Qt::AlignRight);
+    hlayout->addWidget(_okButton, 0, Qt::AlignRight);
+#else
     hlayout->addWidget(_okButton, 0, Qt::AlignRight);
     hlayout->addWidget(cancelButton, 0, Qt::AlignRight);
+#endif
 
     QHBoxLayout *vlayout = new QHBoxLayout();
     if (!serverName.isEmpty())

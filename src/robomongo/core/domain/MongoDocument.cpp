@@ -119,7 +119,7 @@ namespace Robomongo
 			if (position == 0)
                 sb << "/* 0 */\n";
 			else 
-                sb << "\n\n/* " << position << "*/\n";
+                sb << "\n\n/* " << position << " */\n";
 
 			string jsonString = doc->bsonObj().jsonString(TenGen, 1);
 

@@ -14,7 +14,10 @@ using namespace Robomongo;
 WorkAreaTabBar::WorkAreaTabBar() : QTabBar()
 {
     setDrawBase(false);
+
+#if !defined(Q_OS_MAC)
     setStyleSheet(buildStyleSheet());
+#endif
 
     _menu = new QMenu(this);
 

@@ -323,7 +323,9 @@ int ScriptWidget::lineHeight()
     QFontMetrics m(_queryText->font());
     int lineHeight = m.lineSpacing();
 
-#if defined(Q_OS_UNIX)
+#if defined(Q_OS_MAC)
+    lineHeight--;
+#elif defined(Q_OS_UNIX)
     // this fix required to calculate correct height in Linux.
     // not the best way, but for now it at least tested on Ubuntu.
     lineHeight++;
@@ -472,7 +474,11 @@ TopStatusBar::TopStatusBar(MongoShell *shell) :
     movie->start();
 
     QHBoxLayout *topLayout = new QHBoxLayout;
+#if defined(Q_OS_MAC)
+    topLayout->setContentsMargins(2, 3, 2, 3);
+#else
     topLayout->setContentsMargins(2, 7, 2, 3);
+#endif
     topLayout->addWidget(serverIconLabel, 0, Qt::AlignLeft);
     topLayout->addWidget(_currentServerLabel, 0, Qt::AlignLeft);
     topLayout->addSpacing(10);

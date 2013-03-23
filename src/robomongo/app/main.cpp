@@ -34,7 +34,9 @@ int main(int argc, char *argv[])
 
     MainWindow win;
     win.resize(size);
-
+#if defined(Q_OS_MAC)
+    win.setUnifiedTitleAndToolBarOnMac(true);
+#endif
     int x = (screenGeometry.width() - win.width()) / 2;
     int y = (screenGeometry.height() - win.height()) / 2;
     win.move(x, y);

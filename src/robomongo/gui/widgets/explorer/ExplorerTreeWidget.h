@@ -68,6 +68,7 @@ namespace Robomongo
         void ui_collectionStatistics();
         void ui_dropCollection();
         void ui_renameCollection();
+        void ui_duplicateCollection();
         void ui_viewCollection();
         void ui_storageSize();
         void ui_totalIndexSize();

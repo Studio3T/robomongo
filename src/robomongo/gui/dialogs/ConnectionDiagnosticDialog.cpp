@@ -22,12 +22,6 @@ ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *conne
     setWindowTitle("Diagnostic");
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 
-    ConnectionDiagnosticThread *thread = new ConnectionDiagnosticThread(_connection);
-    connect(thread, SIGNAL(connectionStatus(QString, bool)), this, SLOT(connectionStatus(QString, bool)));
-    connect(thread, SIGNAL(authStatus(QString, bool)), this, SLOT(authStatus(QString, bool)));
-    connect(thread, SIGNAL(completed()), this, SLOT(completed()));
-    thread->start();
-
     _yesIcon = GuiRegistry::instance().yesMarkIcon();
     _noIcon = GuiRegistry::instance().noMarkIcon();
     _yesPixmap = _yesIcon.pixmap(24, 24);
@@ -69,6 +63,13 @@ ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *conne
     box->addSpacing(10);
     box->addWidget(closeButton, 0, Qt::AlignRight);
     setLayout(box);
+
+    ConnectionDiagnosticThread *thread = new ConnectionDiagnosticThread(_connection);
+    connect(thread, SIGNAL(connectionStatus(QString, bool)), this, SLOT(connectionStatus(QString, bool)));
+    connect(thread, SIGNAL(authStatus(QString, bool)), this, SLOT(authStatus(QString, bool)));
+    connect(thread, SIGNAL(completed()), this, SLOT(completed()));
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    thread->start();
 }
 
 void ConnectionDiagnosticDialog::connectionStatus(QString error, bool connected)
@@ -116,10 +117,10 @@ void ConnectionDiagnosticDialog::completed()
     if (!_authStatusReceived)
         authStatus("", false);
 
-    // delete thread, that emits this signal
-    QThread *thread = static_cast<QThread *>(sender());
-    connect(thread, SLOT(finished()), thread, SLOT(deleteLater()));
-    thread->quit();
+    // seems that it is wrong to call any method on thread,
+    // because thread already can be disposed.
+    // QThread *thread = static_cast<QThread *>(sender());
+    // thread->quit();
 }
 
 

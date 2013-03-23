@@ -33,6 +33,7 @@ Compiling:
 Executable will be placed to: target/debug/app/out
 
 
+
 Linux and OS X
 -------
 
@@ -48,3 +49,55 @@ Compiling:
     $ ./build.sh
 
 Executable will be placed to: target/debug/app/out
+
+Build Scripts
+-------------
+
+Build scripts located in ./build folder. For Linux/OSX use `*.sh` scripts, for Windows use `*.bat` scripts.
+
+### Build
+
+Build with debug symbols:
+
+    $ ./build.sh debug
+    
+Build in release mode:
+ 
+    $ ./build.sh release
+    
+Build both in debug and release modes:
+
+    $ ./build.sh all
+    
+### Rebuild    
+    
+Rebuild script first cleans output, than builds. This is a shortcat for:
+
+    $ ./clean.sh MODE
+    $ ./build.sh MODE
+    
+Rebuild with debug symbols:
+   
+    $ ./rebuild.sh debug
+    
+Rebuild with release symbols:
+   
+    $ ./rebuild.sh release
+    
+Rebuild both in debug and release modes:
+
+    $ ./rebuild.sh all
+    
+### Clean    
+    
+Clean debug output:
+    
+    $ ./clean.sh debug
+    
+Clean release output:
+
+    $ ./clean.sh release
+    
+Clean all output (both debug and release)
+
+    $ ./clean.sh all

@@ -42,6 +42,7 @@ namespace Robomongo
         void createCollection(const QString &collection);
         void dropCollection(const QString &collection);
         void renameCollection(const QString &collection, const QString &newCollection);
+        void duplicateCollection(const QString &collection, const QString &newCollection);
 
         void createUser(const MongoUser &user, bool overwrite);
         void dropUser(const mongo::OID &id);

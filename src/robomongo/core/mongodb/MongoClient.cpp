@@ -198,6 +198,18 @@ void MongoClient::renameCollection(const QString &dbName, const QString &collect
     _dbclient->runCommand("admin", command.obj(), result); // this command should be run against "admin" db
 }
 
+void MongoClient::duplicateCollection(const QString &dbName, const QString &collectionName, const QString &newCollectionName)
+{
+    MongoNamespace from(dbName, collectionName);
+    MongoNamespace to(dbName, newCollectionName);
+
+    auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(from.toString().toStdString(), mongo::Query()));
+    while (cursor->more()) {
+        mongo::BSONObj bsonObj = cursor->next();
+        _dbclient->insert(to.toString().toStdString(), bsonObj);
+    }
+}
+
 void MongoClient::dropCollection(const QString &dbName, const QString &collectionName)
 {
     MongoNamespace ns(dbName, collectionName);

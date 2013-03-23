@@ -22,6 +22,9 @@ BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) : QTreeWidget
     _shell(shell),
     _bus(AppRegistry::instance().bus())
 {
+#if defined(Q_OS_MAC)
+    setAttribute(Qt::WA_MacShowFocusRect, false);
+#endif
 	QStringList colums;
 	colums << "Key" << "Value" << "Type";
 	setHeaderLabels(colums);

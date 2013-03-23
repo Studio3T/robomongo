@@ -35,8 +35,14 @@ ConnectionDialog::ConnectionDialog(ConnectionSettings *connection) : QDialog(),
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
+
+#if defined(Q_OS_MAC)
+    bottomLayout->addWidget(cancelButton, 1, Qt::AlignRight);
+    bottomLayout->addWidget(saveButton);
+#else
     bottomLayout->addWidget(saveButton, 1, Qt::AlignRight);
     bottomLayout->addWidget(cancelButton);
+#endif
 
     _tabWidget = new QTabWidget;
 

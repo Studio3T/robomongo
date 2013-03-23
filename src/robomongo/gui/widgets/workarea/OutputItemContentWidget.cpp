@@ -131,6 +131,7 @@ void OutputItemContentWidget::showText()
                 _thread = new JsonPrepareThread(_documents);
                 connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared()));
                 connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
+                connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));
                 _thread->start();
             }
         }
@@ -196,10 +197,10 @@ void OutputItemContentWidget::markUninitialized()
 
 void OutputItemContentWidget::jsonPrepared()
 {
-    // delete thread, that emits this signal
-    QThread *thread = static_cast<QThread *>(sender());
-    connect(thread, SLOT(finished()), thread, SLOT(deleteLater()));
-    thread->quit();
+    // seems that it is wrong to call any method on thread,
+    // because thread already can be disposed.
+    // QThread *thread = static_cast<QThread *>(sender());
+    // thread->quit();
 }
 
 void OutputItemContentWidget::jsonPartReady(const QString &json)

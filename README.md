@@ -53,6 +53,8 @@ Executable will be placed to: target/debug/app/out
 Build Scripts
 -------------
 
+### Build
+
 Build with debug symbols:
 
     $ ./build.sh debug
@@ -61,6 +63,8 @@ Build with release symbols:
  
     $ ./build.sh release
     
+### Rebuild    
+    
 Rebuild with debug symbols:
    
     $ ./rebuild.sh debug
@@ -68,6 +72,8 @@ Rebuild with debug symbols:
 Rebuild with release symbols:
    
     $ ./rebuild.sh release
+    
+### Clean    
     
 Clean debug output:
     

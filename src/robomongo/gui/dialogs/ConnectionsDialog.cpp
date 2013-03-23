@@ -89,8 +89,13 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     connect(connectButton, SIGNAL(clicked()), this, SLOT(accept()));
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
+#if defined(Q_OS_MAC)
+    bottomLayout->addWidget(cancelButton, 1, Qt::AlignRight);
+    bottomLayout->addWidget(connectButton);
+#else
     bottomLayout->addWidget(connectButton, 1, Qt::AlignRight);
     bottomLayout->addWidget(cancelButton);
+#endif
 
     QLabel *intro = new QLabel(
     "<a href='create'>Create</a>, "

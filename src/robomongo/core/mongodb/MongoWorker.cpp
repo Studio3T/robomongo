@@ -332,9 +332,22 @@ void MongoWorker::handle(RenameCollectionRequest *event)
         client->renameCollection(event->database(), event->collection(), event->newCollection());
         client->done();
 
-        reply(event->sender(), new DropCollectionResponse(this));
+        reply(event->sender(), new RenameCollectionResponse(this));
     } catch(DBException &ex) {
-        reply(event->sender(), new DropCollectionResponse(this, EventError("Unable to rename collection.")));
+        reply(event->sender(), new RenameCollectionResponse(this, EventError("Unable to rename collection.")));
+    }
+}
+
+void MongoWorker::handle(DuplicateCollectionRequest *event)
+{
+    try {
+        boost::scoped_ptr<MongoClient> client(getClient());
+        client->duplicateCollection(event->database(), event->collection(), event->newCollection());
+        client->done();
+
+        reply(event->sender(), new DuplicateCollectionResponse(this));
+    } catch(DBException &ex) {
+        reply(event->sender(), new DuplicateCollectionResponse(this, EventError("Unable to duplicate collection.")));
     }
 }
 

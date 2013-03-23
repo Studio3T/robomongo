@@ -34,6 +34,7 @@ namespace Robomongo
 
         void createCollection(const QString &dbName, const QString &collectionName);
         void renameCollection(const QString &dbName, const QString &collectionName, const QString &newCollectionName);
+        void duplicateCollection(const QString &dbName, const QString &collectionName, const QString &newCollectionName);
         void dropCollection(const QString &dbName, const QString &collectionName);
 
         void insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);

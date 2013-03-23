@@ -29,6 +29,9 @@ using namespace Robomongo;
 
 ExplorerTreeWidget::ExplorerTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
+#if defined(Q_OS_MAC)
+    setAttribute(Qt::WA_MacShowFocusRect, false);
+#endif
     setContextMenuPolicy(Qt::DefaultContextMenu);
     setObjectName("explorerTree");
 

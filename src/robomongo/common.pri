@@ -47,7 +47,10 @@ contains(QMAKE_HOST.arch, x86_64) {
     macx:OS_CPU=mac-i386-$$BUILD_TYPE
 }
 
-THIRDPARTY_LIBS_PATH=$$ROOT/libs/$$OS_CPU
+# Use default libs path, if it wasn't specified still
+isEmpty(THIRDPARTY_LIBS_PATH) {
+    THIRDPARTY_LIBS_PATH=$$ROOT/libs/$$OS_CPU
+}
 
 message(THIRDPARTY_LIBS_PATH: $$THIRDPARTY_LIBS_PATH)
 

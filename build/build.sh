@@ -2,11 +2,27 @@
 #  Configuration
 # ****************
 
-MODE=$1
+MODE=debug
+LIBS=
+while getopts ":dral:" opt; do
+  case $opt in
+    d) MODE=debug ;;
+    r) MODE=release ;;
+    a) MODE=all ;;
+    l) LIBS=$OPTARG ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
 
-if [ -z $MODE ]; then
-   MODE=debug
-fi
+echo "Build mode: $MODE"
+echo "Libs path: $LIBS"
 
 if [[ $MODE != "release" ]] && [[ $MODE != "debug" ]] && [[ $MODE != "all" ]]; then
     echo
@@ -23,8 +39,13 @@ fi
 
 # if 'all' specified - build in debug and release mode
 if [[ $MODE = "all" ]]; then
-  $0 debug
-  $0 release
+  LIBS_ARG=
+  if [ ! -z "$LIBS" ]; then
+      LIBS_ARG=" -l $LIBS"
+  fi  
+  
+  $0 -d $LIBS_ARG
+  $0 -r $LIBS_ARG
   exit 0
 fi
 
@@ -36,17 +57,17 @@ OS=`uname`
 
 if [[ $MODE = "debug" ]]; then
   if [[ $OS = "Darwin" ]]; then
-    QMAKE_ARGS="-r -spec macx-g++ CONFIG+=debug CONFIG+=declarative_debug"
+    QMAKE_ARGS="-r -spec macx-g++ CONFIG+=debug CONFIG+=declarative_debug THIRDPARTY_LIBS_PATH=$LIBS"
   else
-    QMAKE_ARGS="-r -spec linux-g++ CONFIG+=debug CONFIG+=declarative_debug"
+    QMAKE_ARGS="-r -spec linux-g++ CONFIG+=debug CONFIG+=declarative_debug THIRDPARTY_LIBS_PATH=$LIBS"
   fi
 fi
 
 if [[ $MODE = "release" ]]; then
   if [[ $OS = "Darwin" ]]; then
-    QMAKE_ARGS="-r -spec macx-g++ CONFIG+=release"
+    QMAKE_ARGS="-r -spec macx-g++ CONFIG+=release THIRDPARTY_LIBS_PATH=$LIBS"
   else
-    QMAKE_ARGS="-r -spec linux-g++ CONFIG+=release"
+    QMAKE_ARGS="-r -spec linux-g++ CONFIG+=release THIRDPARTY_LIBS_PATH=$LIBS"
   fi
 fi
 

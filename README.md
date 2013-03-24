@@ -69,6 +69,12 @@ Build Scripts
 
 Build scripts located in ./build folder. For Linux/OSX use `*.sh` scripts, for Windows use `*.bat` scripts.
 
+This scripts will work only if all dependencies already compiled and located in `libs` folder. 
+Refer to detailed instructions on building Robomongo dependencies for Linux and/or Mac OS X:<br />
+[Building Robomongo and Dependencies (for Linux and Mac OS X)]
+(https://github.com/paralect/robomongo/wiki/Building-Robomongo-and-Dependencies-(for-Linux-and-Mac-OS-X\))
+
+
 ### Build
 
 Build with debug symbols:

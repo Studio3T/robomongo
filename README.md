@@ -59,45 +59,45 @@ Build scripts located in ./build folder. For Linux/OSX use `*.sh` scripts, for W
 
 Build with debug symbols:
 
-    $ ./build.sh debug
+    $ ./build.sh -d
     
 Build in release mode:
  
-    $ ./build.sh release
+    $ ./build.sh -r
     
 Build both in debug and release modes:
 
-    $ ./build.sh all
+    $ ./build.sh -a
     
 ### Rebuild    
     
 Rebuild script first cleans output, than builds. This is a shortcat for:
 
-    $ ./clean.sh MODE
-    $ ./build.sh MODE
+    $ ./clean.sh <ARGS>
+    $ ./build.sh <ARGS>
     
 Rebuild with debug symbols:
    
-    $ ./rebuild.sh debug
+    $ ./rebuild.sh -d
     
-Rebuild with release symbols:
+Rebuild in release mode:
    
-    $ ./rebuild.sh release
+    $ ./rebuild.sh -r
     
 Rebuild both in debug and release modes:
 
-    $ ./rebuild.sh all
+    $ ./rebuild.sh -a
     
 ### Clean    
     
 Clean debug output:
     
-    $ ./clean.sh debug
+    $ ./clean.sh -d
     
 Clean release output:
 
-    $ ./clean.sh release
+    $ ./clean.sh -r
     
 Clean all output (both debug and release)
 
-    $ ./clean.sh all
+    $ ./clean.sh -a

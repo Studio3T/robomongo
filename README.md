@@ -1,7 +1,7 @@
 Robomongo
 =========
 
-Robomongo is a shell-centric crossplatform MongoDB management tool. 
+Robomongo &mdash; is a shell-centric crossplatform MongoDB management tool. 
 
 Download
 ========
@@ -15,6 +15,15 @@ Only Windows binaries available for now.
 
 Building
 ========
+
+You are lucky enough, if prebuild libraries (that are in `libs` folder) are 
+already available and match your OS/Compiler. For most of you it's not &mdash; 
+you need to build Robomongo dependencies, before building Robomongo itself.
+
+Here is a detailed instructions on building Robomongo dependencies for Linux and/or Mac OS X:
+[Building Robomongo and Dependencies (for Linux and Mac OS X)](https://github.com/paralect/robomongo/wiki/Building-Robomongo-and-Dependencies-(for-Linux-and-Mac-OS-X))
+
+
 
 Windows
 -------

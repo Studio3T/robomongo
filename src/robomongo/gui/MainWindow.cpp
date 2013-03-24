@@ -72,10 +72,14 @@ MainWindow::MainWindow() : QMainWindow(),
     connectButton->setText("&Connect");
     connectButton->setIcon(GuiRegistry::instance().connectIcon());
     connectButton->setFocusPolicy(Qt::NoFocus);
-    connectButton->setMenu(_connectionsMenu);
     connectButton->setToolTip("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>");
     connectButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+
+#if !defined(Q_OS_MAC)
+    connectButton->setMenu(_connectionsMenu);
     connectButton->setPopupMode(QToolButton::MenuButtonPopup);
+#endif
+
     connect(connectButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
 
     QWidgetAction*connectButtonAction = new QWidgetAction(this);

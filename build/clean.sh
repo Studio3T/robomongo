@@ -2,11 +2,25 @@
 #  Configuration
 # ****************
 
-MODE=$1
 
-if [ -z $MODE ]; then
-   MODE=debug
-fi
+MODE=debug
+LIBS=
+while getopts ":dral:" opt; do
+  case $opt in
+    d) MODE=debug ;;
+    r) MODE=release ;;
+    a) MODE=all ;;
+    l) LIBS=$OPTARG ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
 
 if [[ $MODE != "release" ]] && [[ $MODE != "debug" ]] && [[ $MODE != "all" ]]; then
     echo
@@ -16,8 +30,8 @@ if [[ $MODE != "release" ]] && [[ $MODE != "debug" ]] && [[ $MODE != "all" ]]; t
 fi
 
 if [[ $MODE = "all" ]]; then
-  $0 debug
-  $0 release
+  $0 -d
+  $0 -r
   exit 0
 fi
 

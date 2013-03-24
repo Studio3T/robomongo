@@ -421,7 +421,12 @@ void MongoWorker::keepAlive()
             mongo::BSONObjBuilder command;
             command.append("ping", 1);
             mongo::BSONObj result;
-            _dbclient->runCommand(_authDatabase.toStdString(), command.obj(), result);
+
+            if (_authDatabase.isEmpty()) {
+                _dbclient->runCommand("admin", command.obj(), result);
+            } else {
+                _dbclient->runCommand(_authDatabase.toStdString(), command.obj(), result);
+            }
         }
 
         if (_scriptEngine) {

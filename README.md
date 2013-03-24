@@ -1,13 +1,13 @@
 Robomongo
 =========
 
-Robomongo &mdash; is a shell-centric crossplatform MongoDB management tool. 
+Robomongo &mdash; is a shell-centric crossplatform MongoDB management tool. <br />
+Visit our site: [www.robomongo.org](http://www.robomongo.org)
 
 Download
 ========
 
-You can download compiled version at this page:
-
+You can download compiled version at this page:<br />
 https://www.dropbox.com/sh/u0s0i8e4m0a8i9f/oxtqKHPUZ8
 
 Only Windows binaries available for now. 
@@ -20,13 +20,15 @@ You are lucky enough, if prebuild libraries (that are in `libs` folder) are
 already available and match your OS/Compiler. For most of you it's not &mdash; 
 you need to build Robomongo dependencies, before building Robomongo itself.
 
-Here is a detailed instructions on building Robomongo dependencies for Linux and/or Mac OS X:
+Here is a detailed instructions on building Robomongo dependencies for Linux and/or Mac OS X:<br />
 [Building Robomongo and Dependencies (for Linux and Mac OS X)](https://github.com/paralect/robomongo/wiki/Building-Robomongo-and-Dependencies-(for-Linux-and-Mac-OS-X))
 
 
 
 Windows
 -------
+
+The following steps assume that all dependencies already compiled.
 
 Prerequisites:
 
@@ -44,7 +46,9 @@ Executable will be placed to: target/debug/app/out
 
 
 Linux and OS X
--------
+---------------
+
+The following steps assume that all dependencies already compiled.
 
 Prerequisites:
 

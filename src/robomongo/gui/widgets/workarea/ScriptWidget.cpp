@@ -149,9 +149,12 @@ void ScriptWidget::hideProgress()
 void ScriptWidget::showAutocompletion(const QStringList &list, const QString &prefix)
 {
     // do not show single autocompletion which is identical to existing prefix
+    // or if it identical to prefix + '('.
     if (list.count() == 1) {
-        if (list.at(0) == prefix)
+        if (list.at(0) == prefix ||
+            list.at(0) == (prefix + "(")) {
             return;
+        }
     }
 
     // update list of completions

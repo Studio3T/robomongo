@@ -68,7 +68,7 @@ void WorkAreaTabWidget::keyPressEvent(QKeyEvent *keyEvent)
         (keyEvent->key()==Qt::Key_F4 || keyEvent->key()==Qt::Key_W))
     {
         int index = currentIndex();
-        removeTab(index);
+        closeTab(index);
     }
 
     QTabWidget::keyPressEvent(keyEvent);

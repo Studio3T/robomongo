@@ -577,7 +577,7 @@ void ExplorerTreeWidget::ui_addIndex()
 
 void ExplorerTreeWidget::ui_reIndex()
 {
-    openCurrentCollectionShell("reIndex()");
+    openCurrentCollectionShell("reIndex()", false);
 }
 
 void ExplorerTreeWidget::ui_dropIndex()

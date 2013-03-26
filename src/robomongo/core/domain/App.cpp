@@ -53,7 +53,7 @@ MongoShell *App::openShell(MongoCollection *collection)
 {
     ConnectionSettings *connection = collection->database()->server()->connectionRecord()->clone();
     connection->setDefaultDatabase(collection->database()->name());
-    QString script = QString("db.%1.find()").arg(collection->name());
+    QString script = buildCollectionQuery(collection->name(), "find()");
     return openShell(connection, ScriptInfo(script, true, CursorPosition(), collection->database()->name()));
 }
 
@@ -91,6 +91,24 @@ MongoShell *App::openShell(ConnectionSettings *connection, const ScriptInfo &scr
         shell->open("");
 
     return shell;
+}
+
+QString App::buildCollectionQuery(const QString collectionName, const QString postfix)
+{
+    QChar firstChar = collectionName.at(0);
+
+    QString pattern;
+    if (firstChar.isDigit()) {
+        pattern = "db[\'%1\'].%2";
+    } else if (collectionName == "help"
+            || collectionName == "stats") { // TODO: this list should be expanded to include
+                                            // all functions of DB JavaScript object
+        pattern = "db.getCollection('%1').%2";
+    } else {
+        pattern = "db.%1.%2";
+    }
+
+    return pattern.arg(collectionName).arg(postfix);
 }
 
 /**

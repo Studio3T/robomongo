@@ -416,7 +416,8 @@ void ExplorerTreeWidget::openCurrentCollectionShell(const QString &script, bool 
         return;
 
     MongoCollection *collection = collectionItem->collection();
-    QString query = QString(script).arg(collection->name());
+    App *app = AppRegistry::instance().app();
+    QString query = app->buildCollectionQuery(collection->name(), script);
 
     AppRegistry::instance().app()->
         openShell(collection->database(), query, execute, collection->name(), cursor);
@@ -521,7 +522,7 @@ void ExplorerTreeWidget::ui_addDocument()
 
     /*
     openCurrentCollectionShell(
-        "db.%1.insert({\n"
+        "insert({\n"
         "    '' : '',\n"
         "})"
     , false, CursorPosition(1, 5));
@@ -531,8 +532,8 @@ void ExplorerTreeWidget::ui_addDocument()
 void ExplorerTreeWidget::ui_removeDocument()
 {
     openCurrentCollectionShell(
-        "db.%1.remove({ '' : '' });"
-                , false, CursorPosition(0, -10));
+        "remove({ '' : '' });"
+        , false, CursorPosition(0, -10));
 }
 
 void ExplorerTreeWidget::ui_removeAllDocuments()
@@ -565,7 +566,7 @@ void ExplorerTreeWidget::ui_removeAllDocuments()
 void ExplorerTreeWidget::ui_addIndex()
 {
     openCurrentCollectionShell(
-        "db.%1.ensureIndex({ \"<field>\" : 1 }); \n"
+        "ensureIndex({ \"<field>\" : 1 }); \n"
         "\n"
         "// options: \n"
         "// { unique : true }   - A unique index causes MongoDB to reject all documents that contain a duplicate value for the indexed field. \n"
@@ -576,20 +577,20 @@ void ExplorerTreeWidget::ui_addIndex()
 
 void ExplorerTreeWidget::ui_reIndex()
 {
-    openCurrentCollectionShell("db.%1.reIndex()");
+    openCurrentCollectionShell("reIndex()");
 }
 
 void ExplorerTreeWidget::ui_dropIndex()
 {
     openCurrentCollectionShell(
-        "db.%1.dropIndex({ \"<field>\" : 1 });"
+        "dropIndex({ \"<field>\" : 1 });"
         , false);
 }
 
 void ExplorerTreeWidget::ui_updateDocument()
 {
     openCurrentCollectionShell(
-        "db.%1.update(\n"
+        "update(\n"
         "    // query \n"
         "    {\n"
         "        \"key\" : \"value\"\n"
@@ -609,7 +610,7 @@ void ExplorerTreeWidget::ui_updateDocument()
 
 void ExplorerTreeWidget::ui_collectionStatistics()
 {
-    openCurrentCollectionShell("db.%1.stats()");
+    openCurrentCollectionShell("stats()");
 }
 
 void ExplorerTreeWidget::ui_dropCollection()
@@ -635,7 +636,7 @@ void ExplorerTreeWidget::ui_dropCollection()
     database->dropCollection(collection->name());
     database->loadCollections();
 
-    //openCurrentCollectionShell("db.%1.drop()", false);
+    //openCurrentCollectionShell("drop()", false);
 }
 
 void ExplorerTreeWidget::ui_duplicateCollection()
@@ -696,32 +697,32 @@ void ExplorerTreeWidget::ui_renameCollection()
 
 void ExplorerTreeWidget::ui_viewCollection()
 {
-    openCurrentCollectionShell("db.%1.find()");
+    openCurrentCollectionShell("find()");
 }
 
 void ExplorerTreeWidget::ui_storageSize()
 {
-    openCurrentCollectionShell("db.%1.storageSize()");
+    openCurrentCollectionShell("storageSize()");
 }
 
 void ExplorerTreeWidget::ui_totalIndexSize()
 {
-    openCurrentCollectionShell("db.%1.totalIndexSize()");
+    openCurrentCollectionShell("totalIndexSize()");
 }
 
 void ExplorerTreeWidget::ui_totalSize()
 {
-    openCurrentCollectionShell("db.%1.totalSize()");
+    openCurrentCollectionShell("totalSize()");
 }
 
 void ExplorerTreeWidget::ui_shardVersion()
 {
-    openCurrentCollectionShell("db.%1.getShardVersion()");
+    openCurrentCollectionShell("getShardVersion()");
 }
 
 void ExplorerTreeWidget::ui_shardDistribution()
 {
-    openCurrentCollectionShell("db.%1.getShardDistribution()");
+    openCurrentCollectionShell("getShardDistribution()");
 }
 
 void ExplorerTreeWidget::ui_dbStatistics()

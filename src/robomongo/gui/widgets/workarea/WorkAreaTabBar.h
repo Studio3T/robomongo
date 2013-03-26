@@ -65,6 +65,12 @@ namespace Robomongo
          */
         void mouseReleaseEvent(QMouseEvent *event);
 
+        /**
+         * @brief Overrides QTabBar::mouseDoubleClickEvent() in order to
+         * open new shell.
+         */
+        void mouseDoubleClickEvent(QMouseEvent *);
+
     private:
         /**
          * @brief Handles middle-mouse release event in order to close tab.

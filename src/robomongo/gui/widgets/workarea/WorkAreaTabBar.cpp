@@ -1,5 +1,6 @@
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QStylePainter>
 #include <QStyleOptionTabV3>
@@ -56,6 +57,22 @@ void WorkAreaTabBar::mouseReleaseEvent(QMouseEvent *event)
     // always calling base event handler, even if we
     // were interested by this event
     QTabBar::mouseReleaseEvent(event);
+}
+
+void WorkAreaTabBar::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    int tabIndex = tabAt(event->pos());
+
+    // if tab was double-clicked, ignore this action
+    if (tabIndex >= 0)
+        return;
+
+    int currentTab = currentIndex();
+    if (currentTab < 0)
+        return;
+
+    emit newTabRequested(currentTab);
+    QTabBar::mouseDoubleClickEvent(event);
 }
 
 /**

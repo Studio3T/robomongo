@@ -73,6 +73,6 @@ namespace Robomongo
         QLabel *_outputLabel;
         ViewMode _viewMode;
 
-        QList<MongoShellResult> _currentResults;
+        MongoShellExecResult _currentResult;
     };
 }

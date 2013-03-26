@@ -123,7 +123,7 @@ void QueryWidget::toggleOrientation()
 
 void QueryWidget::activateTabContent()
 {
-    _bus->publish(new QueryWidgetUpdatedEvent(this, _currentResults.count()));
+    _bus->publish(new QueryWidgetUpdatedEvent(this, _currentResult.results().count()));
     _scriptWidget->setScriptFocus();
 }
 
@@ -143,7 +143,7 @@ void QueryWidget::openNewTab()
     }
     */
 
-    _app->openShell(server, query, "New Shell" /*dbName*/);
+    _app->openShell(server, query, _currentResult.currentDatabase());
 }
 
 void QueryWidget::reload()
@@ -198,8 +198,8 @@ void QueryWidget::handle(ScriptExecutedEvent *event)
 {
     hideProgress();
     _scriptWidget->hideProgress();
-    _currentResults = event->result().results();
-    _bus->publish(new QueryWidgetUpdatedEvent(this, _currentResults.count()));
+    _currentResult = event->result();
+    _bus->publish(new QueryWidgetUpdatedEvent(this, _currentResult.results().count()));
 
     setUpdatesEnabled(false);
     updateCurrentTab();

@@ -48,8 +48,10 @@ contains(QMAKE_HOST.arch, x86_64) {
 }
 
 # Use default libs path, if it wasn't specified still
-isEmpty(THIRDPARTY_LIBS_PATH) {
+isEmpty(LIBS_PATH) {
     THIRDPARTY_LIBS_PATH=$$ROOT/libs/$$OS_CPU
+} else {
+    THIRDPARTY_LIBS_PATH=$$LIBS_PATH/$$OS_CPU
 }
 
 message(THIRDPARTY_LIBS_PATH: $$THIRDPARTY_LIBS_PATH)

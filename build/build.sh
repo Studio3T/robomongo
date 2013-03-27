@@ -57,17 +57,17 @@ OS=`uname`
 
 if [[ $MODE = "debug" ]]; then
   if [[ $OS = "Darwin" ]]; then
-    QMAKE_ARGS="-r -spec macx-g++ CONFIG+=debug CONFIG+=declarative_debug THIRDPARTY_LIBS_PATH=$LIBS"
+    QMAKE_ARGS="-r -spec macx-g++ CONFIG+=debug CONFIG+=declarative_debug LIBS_PATH=$LIBS"
   else
-    QMAKE_ARGS="-r -spec linux-g++ CONFIG+=debug CONFIG+=declarative_debug THIRDPARTY_LIBS_PATH=$LIBS"
+    QMAKE_ARGS="-r -spec linux-g++ CONFIG+=debug CONFIG+=declarative_debug LIBS_PATH=$LIBS"
   fi
 fi
 
 if [[ $MODE = "release" ]]; then
   if [[ $OS = "Darwin" ]]; then
-    QMAKE_ARGS="-r -spec macx-g++ CONFIG+=release THIRDPARTY_LIBS_PATH=$LIBS"
+    QMAKE_ARGS="-r -spec macx-g++ CONFIG+=release LIBS_PATH=$LIBS"
   else
-    QMAKE_ARGS="-r -spec linux-g++ CONFIG+=release THIRDPARTY_LIBS_PATH=$LIBS"
+    QMAKE_ARGS="-r -spec linux-g++ CONFIG+=release LIBS_PATH=$LIBS"
   fi
 fi
 

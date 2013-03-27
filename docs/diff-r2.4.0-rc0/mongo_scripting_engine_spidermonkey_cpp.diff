@@ -1,0 +1,184 @@
+--- /home/dmitry/libs/mongo/src/mongo/scripting/engine_spidermonkey.cpp	2013-02-17 22:49:18.252603371 +0300
++++ /home/dmitry/dev/robomongo/src/robomongo/shell/scripting/engine_spidermonkey.cpp	2013-03-05 00:27:48.373648252 +0300
+@@ -25,11 +25,57 @@
+ #include <boost/date_time/posix_time/posix_time.hpp>
+ #endif
+ 
+-#include <third_party/js-1.7/jsdate.h>
++#include <js/jsdate.h>
+ 
+ #include "mongo/scripting/engine_spidermonkey_internal.h"
+ #include "mongo/util/mongoutils/str.h"
+ 
++#ifdef ROBOMONGO
++std::vector<mongo::BSONObj> __objects;
++std::string __type;     // type of request
++bool __finished;        // typed request is finished
++std::stringstream __logs;
++
++void robomongo_reset_type() {
++    __type == "";
++    __finished == false;
++}
++
++void robomongo_reset() {
++    __objects.clear();
++    __logs.str("");
++    robomongo_reset_type();
++}
++
++void robomongo_add_bsonobj(const mongo::BSONObj &obj) {
++    if (__finished) {
++        robomongo_reset_type();
++    }
++
++    __objects.push_back(obj);
++}
++
++void robomongo_begin(const std::string &type) {
++    if (__objects.size() != 0) {
++        robomongo_reset_type();
++        return;
++    }
++
++    if (__finished) {
++        robomongo_reset_type();
++        return;
++    }
++
++    __type = type;
++    __finished = false;
++}
++
++void robomongo_end() {
++    __finished = true;
++}
++
++#endif
++
+ namespace mongo {
+ 
+     /* used to make the logging not overly chatty in the mongo shell. */
+@@ -1047,17 +1093,28 @@
+             Convertor c( cx );
+             for ( uintN i=0; i<argc; i++ ) {
+                 if ( i > 0 )
+-                    ss << " ";
+-                ss << c.toString( argv[i] );
++                    __logs << " ";
++					
++
++                if (!(JSVAL_IS_OBJECT(argv[i])))
++                {
++                    __logs << c.toString(argv[i]);
+                 someWritten = true;
++                    continue;
+             }
+-            ss << "\n";
+-            Logstream::logLockless( ss.str() );
++
++                BSONObj obj = c.toObject(argv[i]);
++                robomongo_add_bsonobj(obj);
++            }
++
++            if ( someWritten )
++                __logs << "\n";
++
+         }
+         catch ( const AssertionException& ) {
+             if ( someWritten ) {
+-                ss << "\n";
+-                Logstream::logLockless( ss.str() );
++				__logs << "\n";
++                Logstream::logLockless( __logs.str() );
+             }
+             return JS_FALSE;
+         }
+@@ -1068,6 +1125,28 @@
+         return JS_TRUE;
+     }
+ 
++    JSBool robomongo_print( JSContext * cx, JSObject * obj, uintN argc, jsval *argv, jsval *rval ) {
++        try {
++            Convertor c( cx );
++
++            if (!(JSVAL_IS_STRING(argv[0]))) {
++                return JS_TRUE;
++            }
++
++            std::string type = c.toString(argv[0]);
++            if (type.empty()) {
++                robomongo_end();
++            } else {
++                robomongo_begin(type);
++            }
++        }
++        catch ( const std::exception& e ) {
++            log() << "unhandled exception: " << e.what() << ", throwing Fatal Assertion" << endl;
++            fassertFailed( 16281 );
++        }
++        return JS_TRUE;
++    }
++
+     JSBool native_helper( JSContext *cx , JSObject *obj , uintN argc, jsval *argv , jsval *rval ) {
+         try {
+             Convertor c(cx);
+@@ -1126,6 +1205,7 @@
+ 
+     JSFunctionSpec globalHelpers[] = {
+         { "print" , &native_print , 0 , 0 , 0 } ,
++        { "robomongoScope" , &robomongo_print , 0 , 0 , 0 } ,
+         { "nativeHelper" , &native_helper , 1 , 0 , 0 } ,
+         { "load" , &native_load , 1 , 0 , 0 } ,
+         { "gc" , &native_gc , 1 , 0 , 0 } ,
+@@ -1550,6 +1630,12 @@
+     // javascript code; returning false without an exception exits
+     // immediately
+     JSBool SMScope::_interrupt( JSContext *cx ) {
++#ifdef ROBOMONGO
++            if (Scope::_interruptFlag) {
++                Scope::setInterruptFlag(false);
++                return JS_FALSE;
++            }
++#endif
+             TimeoutSpec &spec = *(TimeoutSpec *)( JS_GetContextPrivate( cx ) );
+             if ( ++spec.count % 1000 != 0 )
+                 return JS_TRUE;
+@@ -1565,7 +1651,6 @@
+                 return JS_TRUE;
+             }
+             return JS_FALSE;
+-
+     }
+ 
+     void SMScope::installInterrupt( int timeoutMs ) {
+@@ -1627,8 +1712,8 @@
+                 jsval v;
+                 if ( JS_GetPendingException( _context , &v ) ) {
+                     _error = _convertor->toString( v );
+-                    if ( reportError )
+-                        cout << _error << endl;
++                    // if ( reportError )
++                    //     cout << _error << endl;
+                 }
+             }
+ 
+@@ -1639,7 +1724,7 @@
+                 _convertor->setProperty( _global , "__lastres__" , ret );
+ 
+             if ( worked && printResult && ! JSVAL_IS_VOID( ret ) )
+-                cout << _convertor->toString( ret ) << endl;
++                __logs << _convertor->toString( ret ) << endl;
+ 
+             return worked;
+     }
+@@ -1766,7 +1851,8 @@
+         }
+ 
+         if ( !currentScope.get() || currentScope->isReportingErrors() ) {
+-            tlog() << ss.str() << endl;
++			__logs << ss.str() << endl;
++            //tlog() << ss.str() << endl;
+         }
+ 
+         if ( currentScope.get() ) {

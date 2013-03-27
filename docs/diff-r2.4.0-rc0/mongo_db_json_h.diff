@@ -1,0 +1,33 @@
+--- /home/dmitry/libs/mongo/src/mongo/db/json.h	2013-02-17 22:49:18.200603373 +0300
++++ /home/dmitry/dev/robomongo/src/robomongo/shell/db/json.h	2013-02-20 17:54:08.803608171 +0300
+@@ -22,6 +22,7 @@
+ #include "mongo/base/status.h"
+ 
+ namespace mongo {
++namespace Robomongo {
+ 
+     /**
+      * Create a BSONObj from a JSON <http://www.json.org>,
+@@ -191,6 +192,16 @@
+              */
+             Status date(const StringData& fieldName, BSONObjBuilder&);
+ 
++#ifdef ROBOMONGO
++            /* The following functions only parse the body of the ISODate function
++             * between the parentheses, not including the function name */
++            /*
++             * ISODATE :
++             *     ISODate( <date time string in ISO 8601 format> )
++             */
++            Status isodate(const StringData& fieldName, BSONObjBuilder&);
++#endif
++
+             /*
+              * TIMESTAMP :
+              *     Timestamp( <32 bit unsigned integer for seconds since epoch>,
+@@ -378,4 +389,5 @@
+             const char* const _input_end;
+     };
+ 
++}  /* namespace Robomongo */
+ } // namespace mongo

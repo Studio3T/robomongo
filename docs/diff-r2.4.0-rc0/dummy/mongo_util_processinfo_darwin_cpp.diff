@@ -1,0 +1,17 @@
+--- /home/dmitry/libs/mongo/src/mongo/util/processinfo_darwin.cpp	2013-02-17 22:49:18.268603371 +0300
++++ /home/dmitry/dev/robomongo/src/robomongo/shell/util/processinfo_darwin.cpp	2013-03-02 17:57:14.389301358 +0300
+@@ -15,10 +15,10 @@
+  *    limitations under the License.
+  */
+ 
+-#include "../pch.h"
+-#include "processinfo.h"
+-#include "log.h"
+-#include <db/jsobj.h>
++#include "mongo/pch.h"
++#include "mongo/util/processinfo.h"
++#include "mongo/util/log.h"
++#include <mongo/db/jsobj.h>
+ 
+ #include <mach/vm_statistics.h>
+ #include <mach/task_info.h>

@@ -1,0 +1,13 @@
+--- /home/dmitry/libs/mongo/src/mongo/util/processinfo_win32.cpp	2013-02-17 22:49:18.268603371 +0300
++++ /home/dmitry/dev/robomongo/src/robomongo/shell/util/processinfo_win32.cpp	2013-02-17 22:09:31.108675734 +0300
+@@ -15,8 +15,8 @@
+  *    limitations under the License.
+  */
+ 
+-#include "pch.h"
+-#include "processinfo.h"
++#include "mongo/pch.h"
++#include "mongo/util/processinfo.h"
+ #include <iostream>
+ #include <psapi.h>
+ 

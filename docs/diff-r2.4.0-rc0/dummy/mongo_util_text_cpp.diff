@@ -1,0 +1,14 @@
+--- /home/dmitry/libs/mongo/src/mongo/util/text.cpp	2013-02-17 22:49:18.272603371 +0300
++++ /home/dmitry/dev/robomongo/src/robomongo/shell/util/text.cpp	2013-02-17 22:09:31.108675734 +0300
+@@ -15,7 +15,11 @@
+  *    limitations under the License.
+  */
+ 
++#ifdef ROBOMONGO
++#include "mongo/pch.h"
++#else
+ #include "pch.h"
++#endif
+ 
+ #include <boost/smart_ptr/scoped_array.hpp>
+ #include <sstream>

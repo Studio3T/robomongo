@@ -1,6 +1,7 @@
 #include <QVector> // unable to put this include below. doesn't compile on GCC 4.7.2 and Qt 4.8
 #include "robomongo/core/engine/ScriptEngine.h"
 
+#include <QDir>
 #include <QStringList>
 #include <QRegExp>
 #include <QTextStream>
@@ -87,13 +88,17 @@ namespace Robomongo
             mongo::globalScriptEngine->setScopeInitCallback( mongo::shell_utils::initScope );
 
             mongo::Scope *scope = mongo::globalScriptEngine->newScope();
-
             _scope = scope;
             _engine = mongo::globalScriptEngine;
+
+            // Load '.mongorc.js' from user's home directory
+            // We are not checking whether file exists, because it will be
+            // checked by 'Scope::execFile'.
+            std::string mongorcPath = QString("%1/.mongorc.js").arg(QDir::homePath()).toStdString();
+            scope->execFile(mongorcPath, false, false);
         }
 
         // -- Esprima --
-
         QFile file(":/robomongo/scripts/esprima.js");
         if(!file.open(QIODevice::ReadOnly))
             throw std::runtime_error("Unable to read esprima.js ");

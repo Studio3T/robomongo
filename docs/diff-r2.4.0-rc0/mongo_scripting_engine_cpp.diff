@@ -1,0 +1,13 @@
+--- /home/dmitry/libs/mongo/src/mongo/scripting/engine.cpp	2013-02-17 22:49:18.252603371 +0300
++++ /home/dmitry/dev/robomongo/src/robomongo/shell/scripting/engine.cpp	2013-03-05 00:09:11.245682116 +0300
+@@ -28,6 +28,10 @@
+ #include "mongo/util/file.h"
+ 
+ namespace mongo {
++#ifdef ROBOMONGO
++    volatile bool Scope::_interruptFlag = false;
++#endif
++
+     long long Scope::_lastVersion = 1;
+     static const unsigned kMaxJsFileLength = std::numeric_limits<unsigned>::max() - 1;
+ 

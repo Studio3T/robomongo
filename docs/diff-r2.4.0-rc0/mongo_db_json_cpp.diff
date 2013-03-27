@@ -1,0 +1,109 @@
+--- /home/dmitry/libs/mongo/src/mongo/db/json.cpp	2013-02-17 22:49:18.200603373 +0300
++++ /home/dmitry/dev/robomongo/src/robomongo/shell/db/json.cpp	2013-02-20 21:09:58.347251999 +0300
+@@ -13,7 +13,11 @@
+  *    limitations under the License.
+  */
+ 
+-#include "mongo/db/json.h"
++#include "robomongo/shell/db/json.h"
++#include "robomongo/shell/db/ptimeutil.h"
++
++#include <boost/date_time/posix_time/posix_time.hpp>
++#include <boost/date_time/posix_time/posix_time_io.hpp>
+ 
+ #include "mongo/db/jsobj.h"
+ #include "mongo/platform/cstdint.h"
+@@ -23,6 +27,7 @@
+ #include "mongo/util/mongoutils/str.h"
+ 
+ namespace mongo {
++namespace Robomongo {
+ 
+ #if 0
+ #define MONGO_JSON_DEBUG(message) log() << "JSON DEBUG @ " << __FILE__\
+@@ -66,8 +71,10 @@
+     Status JParse::parseError(const StringData& msg) {
+         std::ostringstream ossmsg;
+         ossmsg << msg;
++#ifndef ROBOMONGO // offset will be taken using public offset() method.
+         ossmsg << ": offset:";
+         ossmsg << offset();
++#endif
+         return Status(ErrorCodes::FailedToParse, ossmsg.str());
+     }
+ 
+@@ -97,6 +104,14 @@
+                 return ret;
+             }
+         }
++#ifdef ROBOMONGO
++        else if (accept("ISODate")) {
++            Status ret = isodate(fieldName, builder);
++            if (ret != Status::OK()) {
++                return ret;
++            }
++        }
++#endif
+         else if (accept("Timestamp")) {
+             Status ret = timestamp(fieldName, builder);
+             if (ret != Status::OK()) {
+@@ -586,6 +601,37 @@
+         return Status::OK();
+     }
+ 
++#ifdef ROBOMONGO
++    Status JParse::isodate(const StringData& fieldName, BSONObjBuilder& builder) {
++        if (!accept(LPAREN)) {
++            return parseError("Expecting '('");
++        }
++
++        std::string datestr;
++        Status ret = quotedString(&datestr);
++        if (ret != Status::OK()) {
++            return ret;
++        }
++
++        boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
++        boost::posix_time::ptime isotime;
++        try {
++            isotime = miutil::ptimeFromIsoString(datestr);
++        } catch (std::logic_error &er) {
++            return parseError("Invalid date format");
++        }
++
++        boost::posix_time::time_duration diff = isotime - epoch;
++        int64_t millis = diff.total_milliseconds();
++
++        if (!accept(RPAREN)) {
++            return parseError("Expecting ')'");
++        }
++        builder.appendDate(fieldName, millis);
++        return Status::OK();
++    }
++#endif
++
+     Status JParse::timestamp(const StringData& fieldName, BSONObjBuilder& builder) {
+         if (!accept(LPAREN)) {
+             return parseError("Expecting '('");
+@@ -997,7 +1043,14 @@
+         if (ret != Status::OK()) {
+             ostringstream message;
+             message << "code " << ret.code() << ": " << ret.codeString() << ": " << ret.reason();
+-            throw MsgAssertionException(16619, message.str());
++
++            /*std::string strReason = ret.reason();
++            char *charReason = new char[strReason.size() + 1];
++            std::copy(strReason.begin(), strReason.end(), charReason);
++            charReason[strReason.size()] = '\0';
++            */
++
++            throw ParseMsgAssertionException(16619, message.str(), jparse.offset(), ret.reason());
+         }
+         if (len) *len = jparse.offset();
+         return builder.obj();
+@@ -1007,4 +1060,5 @@
+         return fromjson( str.c_str() );
+     }
+ 
++}  /* namespace Robomongo */
+ }  /* namespace mongo */

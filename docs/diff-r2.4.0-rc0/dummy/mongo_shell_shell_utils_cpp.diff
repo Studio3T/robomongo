@@ -1,0 +1,11 @@
+--- /home/dmitry/libs/mongo/src/mongo/shell/shell_utils.cpp	2013-02-17 22:49:18.256603371 +0300
++++ /home/dmitry/dev/robomongo/src/robomongo/shell/shell/shell_utils.cpp	2013-02-18 18:48:35.200747338 +0300
+@@ -15,7 +15,7 @@
+  *    limitations under the License.
+  */
+ 
+-#include "pch.h"
++#include "mongo/pch.h"
+ 
+ #include "mongo/shell/shell_utils.h"
+ #include "mongo/shell/shell_utils_extended.h"

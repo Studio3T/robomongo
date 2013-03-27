@@ -1,0 +1,14 @@
+--- /home/dmitry/libs/mongo/src/mongo/util/processinfo_linux2.cpp	2013-02-17 22:49:18.268603371 +0300
++++ /home/dmitry/dev/robomongo/src/robomongo/shell/util/processinfo_linux2.cpp	2013-02-17 22:09:31.108675734 +0300
+@@ -23,9 +23,9 @@
+ #include <gnu/libc-version.h>
+ #include <sys/utsname.h>
+ 
+-#include "processinfo.h"
++#include "mongo/util/processinfo.h"
+ #include "boost/filesystem.hpp"
+-#include <util/file.h>
++#include "mongo/util/file.h"
+ 
+ using namespace std;
+ 

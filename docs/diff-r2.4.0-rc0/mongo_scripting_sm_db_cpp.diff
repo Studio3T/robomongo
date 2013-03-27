@@ -1,0 +1,29 @@
+--- /home/dmitry/libs/mongo/src/mongo/scripting/sm_db.cpp	2013-02-17 22:49:18.252603371 +0300
++++ /home/dmitry/dev/robomongo/src/robomongo/shell/scripting/sm_db.cpp	2013-02-19 20:18:04.893965480 +0300
+@@ -1508,6 +1508,17 @@
+         return JS_TRUE;
+     }
+ 
++#ifdef ROBOMONGO
++    JSFunctionSpec mongo_functions_workaround[] = {
++        { "auth" , mongo_auth , 0 , JSPROP_READONLY | JSPROP_PERMANENT, 0 } ,
++        { "logout", mongo_logout, 0, JSPROP_READONLY | JSPROP_PERMANENT, 0 },
++        { "find" , mongo_find , 0 , JSPROP_READONLY | JSPROP_PERMANENT, 0 } ,
++        { "update" , mongo_update , 0 , JSPROP_READONLY | JSPROP_PERMANENT, 0 } ,
++        { "insert" , mongo_insert , 0 , JSPROP_READONLY | JSPROP_PERMANENT, 0 } ,
++        { "remove" , mongo_remove , 0 , JSPROP_READONLY | JSPROP_PERMANENT, 0 }
++    };
++#endif
++
+     JSFunctionSpec numberint_functions[] = {
+         { "valueOf" , numberint_valueof , 0 , JSPROP_READONLY | JSPROP_PERMANENT, 0 } ,
+         { "toNumber" , numberint_tonumber , 0 , JSPROP_READONLY | JSPROP_PERMANENT, 0 } ,
+@@ -1630,7 +1641,7 @@
+ 
+     void initMongoJS( SMScope * scope , JSContext * cx , JSObject * global , bool local ) {
+ 
+-        verify( JS_InitClass( cx , global , 0 , &mongo_class , local ? mongo_local_constructor : mongo_external_constructor , 0 , 0 , mongo_functions , 0 , 0 ) );
++        verify( JS_InitClass( cx , global , 0 , &mongo_class , local ? mongo_local_constructor : mongo_external_constructor , 0 , 0 , mongo_functions_workaround /*P mongo_functions */, 0 , 0 ) );
+ 
+         verify( JS_InitClass( cx , global , 0 , &object_id_class , object_id_constructor , 0 , 0 , 0 , 0 , 0 ) );
+         verify( JS_InitClass( cx , global , 0 , &db_class , db_constructor , 2 , 0 , 0 , 0 , 0 ) );

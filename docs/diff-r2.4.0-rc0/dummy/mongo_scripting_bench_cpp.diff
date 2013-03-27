@@ -1,0 +1,11 @@
+--- /home/dmitry/libs/mongo/src/mongo/scripting/bench.cpp	2013-02-17 22:49:18.252603371 +0300
++++ /home/dmitry/dev/robomongo/src/robomongo/shell/scripting/bench.cpp	2013-02-18 23:11:46.024268678 +0300
+@@ -18,7 +18,7 @@
+ 
+ 
+ 
+-#include "pch.h"
++#include "mongo/pch.h"
+ 
+ #include "mongo/scripting/bench.h"
+ 

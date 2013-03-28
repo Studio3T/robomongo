@@ -38,7 +38,7 @@ MainWindow::MainWindow() : QMainWindow(),
     QColor background = palette().window().color();
 
 #if defined(Q_OS_MAC)
-    QString explorerColor = "#CED6DF";
+    QString explorerColor = "#DEE3EA"; // was #CED6DF"
 #elif defined(Q_OS_LINUX)
     QString explorerColor = background.darker(103).name();
 #else

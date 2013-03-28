@@ -25,6 +25,9 @@ BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) : QTreeWidget
 #if defined(Q_OS_MAC)
     setAttribute(Qt::WA_MacShowFocusRect, false);
 #endif
+
+    GuiRegistry::instance().setAlternatingColor(this);
+
 	QStringList colums;
 	colums << "Key" << "Value" << "Type";
 	setHeaderLabels(colums);

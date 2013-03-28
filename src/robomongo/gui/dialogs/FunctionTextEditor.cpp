@@ -53,6 +53,7 @@ FunctionTextEditor::FunctionTextEditor(const QString &server, const QString &dat
     bottomlayout->addStretch(1);
 
 #if defined(Q_OS_MAC)
+    save->setDefault(true);
     bottomlayout->addWidget(cancel, 0, Qt::AlignRight);
     bottomlayout->addWidget(save, 0, Qt::AlignRight);
 #else

@@ -170,7 +170,7 @@ void ScriptWidget::showAutocompletion(const QStringList &list, const QString &pr
     QRect rect = _queryText->rect();
     rect.setWidth(550);
     rect.setHeight(editorHeight(physicalLine + 1));
-    rect.moveLeft(charWidth() * lineIndexLeft + 1);
+    rect.moveLeft(charWidth() * lineIndexLeft + autocompletionBoxLeftPosition());
 
     _completer->complete(rect);
     _completer->popup()->setCurrentIndex(_completer->completionModel()->index(0, 0));
@@ -327,6 +327,8 @@ int ScriptWidget::lineHeight()
     int lineHeight = m.lineSpacing();
 
 #if defined(Q_OS_MAC)
+    // this fix required to calculate correct line height in Mac.
+    // not the best way, but for now it at least tested on Mac OS X 10.8.6.
     lineHeight--;
 #elif defined(Q_OS_UNIX)
     // this fix required to calculate correct height in Linux.
@@ -344,6 +346,16 @@ int ScriptWidget::charWidth()
 {
     QFontMetrics m(_queryText->font());
     return m.averageCharWidth();
+}
+
+int ScriptWidget::autocompletionBoxLeftPosition()
+{
+#if defined(Q_OS_MAC)
+    return -1;
+#endif
+
+    // for Linux and Windows it is the same for now
+    return 1;
 }
 
 /**

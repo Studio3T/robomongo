@@ -37,6 +37,7 @@ ConnectionDialog::ConnectionDialog(ConnectionSettings *connection) : QDialog(),
     bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
 
 #if defined(Q_OS_MAC)
+    saveButton->setDefault(true);
     bottomLayout->addWidget(cancelButton, 1, Qt::AlignRight);
     bottomLayout->addWidget(saveButton);
 #else

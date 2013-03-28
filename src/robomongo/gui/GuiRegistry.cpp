@@ -16,6 +16,17 @@ GuiRegistry::GuiRegistry()
 /**
  * @brief Functions that provide access to various icons
  */
+void GuiRegistry::setAlternatingColor(QAbstractItemView *view)
+{
+#if defined(Q_OS_MAC)
+    view->setAlternatingRowColors(true);
+
+    QPalette p = view->palette();
+    p.setColor(QPalette::AlternateBase, QColor(243, 246, 250));
+    view->setPalette(p);
+#endif
+}
+
 QIcon GuiRegistry::serverIcon()
 {
     if (_serverIcon.isNull())

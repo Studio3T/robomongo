@@ -34,6 +34,7 @@ CreateDatabaseDialog::CreateDatabaseDialog(const QString &serverName, const QStr
     hlayout->addStretch(1);
 
 #if defined(Q_OS_MAC)
+    _okButton->setDefault(true);
     hlayout->addWidget(cancelButton, 0, Qt::AlignRight);
     hlayout->addWidget(_okButton, 0, Qt::AlignRight);
 #else

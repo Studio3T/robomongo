@@ -44,7 +44,7 @@ OutputWidget::OutputWidget(ViewMode viewMode, MongoShell *shell, QWidget *parent
     _splitter->setContentsMargins(0, 0, 0, 0);
 
     QVBoxLayout *layout = new QVBoxLayout();
-    layout->setContentsMargins(4, 0, 4, 4);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
     layout->addWidget(_splitter);
     setLayout(layout);

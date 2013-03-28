@@ -69,6 +69,7 @@ void WorkAreaTabWidget::keyPressEvent(QKeyEvent *keyEvent)
     {
         int index = currentIndex();
         closeTab(index);
+        return;
     }
 
     QTabWidget::keyPressEvent(keyEvent);

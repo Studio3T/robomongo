@@ -90,6 +90,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
 #if defined(Q_OS_MAC)
+    connectButton->setDefault(true);
     bottomLayout->addWidget(cancelButton, 1, Qt::AlignRight);
     bottomLayout->addWidget(connectButton);
 #else

@@ -228,7 +228,12 @@ BsonTreeItem::BsonTreeItem(MongoDocumentPtr document, int position) : QObject(),
     _rootDocument(document)
 {
 	_position = position;
-	setupDocument(document);
+    setupDocument(document);
+}
+
+bool BsonTreeItem::isSimpleType()
+{
+    return _element && _element->isSimpleType();
 }
 
 void BsonTreeItem::setupDocument(MongoDocumentPtr document)

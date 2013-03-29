@@ -3,6 +3,7 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QHash>
+#include <QBrush>
 #include <QAction>
 #include <QMessageBox>
 #include <QLabel>
@@ -46,6 +47,7 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     connect(removeAction, SIGNAL(triggered()), this, SLOT(remove()));
 
     _listWidget = new ConnectionsTreeWidget;
+    GuiRegistry::instance().setAlternatingColor(_listWidget);
     _listWidget->setIndentation(5);
 
     QStringList colums;

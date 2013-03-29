@@ -92,6 +92,13 @@ namespace Robomongo
         int charWidth();
 
         /**
+         * @brief Because of different fonts, differents OSes etc. we didn't find
+         * a better way to find required position for autocompletion box.
+         * We just hardcoded it.
+         */
+        int autocompletionBoxLeftPosition();
+
+        /**
          * @brief Calculates preferable editor height for specified number of lines
          */
         int editorHeight(int lines);

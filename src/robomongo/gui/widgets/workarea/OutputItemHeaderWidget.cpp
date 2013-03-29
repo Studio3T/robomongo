@@ -14,7 +14,7 @@ OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemWidget *result, OutputI
     _maximized(false),
     _treeMode(true)
 {
-    setContentsMargins(0,0,0,0);
+    setContentsMargins(5,0,0,0);
 
     // Maximaze button
     _maxButton = new QPushButton;

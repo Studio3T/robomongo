@@ -5,7 +5,8 @@
 
 # This specifies the name of the target file.
 # It will produce an executable named robomongo on unix and robomongo.exe on windows.
-TARGET   = robomongo
+TARGET      = robomongo
+macx:TARGET = Robomongo # For Mac we overwrite target with name starting from capital letter
 
 TEMPLATE = app
 

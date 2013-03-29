@@ -9,11 +9,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Robomongo 0.6.5 beta</string>
+	<string>Robomongo 0.6.8 beta</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleExecutable</key>
-	<string>robomongo</string>
+	<string>Robomongo</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.robomongo</string>
 </dict>

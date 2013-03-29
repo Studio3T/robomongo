@@ -1,6 +1,7 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
 
 #include <QtGui>
+#include <QClipboard>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/MongoDocument.h"
@@ -25,6 +26,9 @@ BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) : QTreeWidget
 #if defined(Q_OS_MAC)
     setAttribute(Qt::WA_MacShowFocusRect, false);
 #endif
+
+    GuiRegistry::instance().setAlternatingColor(this);
+
 	QStringList colums;
 	colums << "Key" << "Value" << "Type";
 	setHeaderLabels(colums);
@@ -47,6 +51,9 @@ BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) : QTreeWidget
 
     _insertDocumentAction = new QAction("Insert", this);
     connect(_insertDocumentAction, SIGNAL(triggered()), SLOT(onInsertDocument()));
+
+    _copyValueAction = new QAction("Copy Value", this);
+    connect(_copyValueAction, SIGNAL(triggered()), SLOT(onCopyDocument()));
 
 /*    _documentContextMenu = new QMenu(this);
     _documentContextMenu->addAction(_editDocumentAction);
@@ -193,11 +200,14 @@ void BsonTreeWidget::contextMenuEvent(QContextMenuEvent *event)
 
     bool isEditable = _queryInfo.isNull ? false : true;
     bool onItem = documentItem ? true : false;
+    bool isSimple = documentItem ? documentItem->isSimpleType() : false;
 
     QMenu menu(this);
     if (onItem && isEditable) menu.addAction(_editDocumentAction);
     if (onItem)               menu.addAction(_viewDocumentAction);
     if (isEditable)           menu.addAction(_insertDocumentAction);
+    if (onItem && isSimple)   menu.addSeparator();
+    if (onItem && isSimple)   menu.addAction(_copyValueAction);
     if (onItem && isEditable) menu.addSeparator();
     if (onItem && isEditable) menu.addAction(_deleteDocumentAction);
 
@@ -325,6 +335,21 @@ void BsonTreeWidget::onInsertDocument()
         _shell->server()->insertDocument(obj, _queryInfo.databaseName, _queryInfo.collectionName);
         _shell->query(0, _queryInfo);
     }
+}
+
+void BsonTreeWidget::onCopyDocument()
+{
+    BsonTreeItem *documentItem = selectedBsonTreeItem();
+    if (!documentItem)
+        return;
+
+    MongoElementPtr element = documentItem->element();
+
+    if (!element->isSimpleType())
+        return;
+
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(element->stringValue());
 }
 
 void BsonTreeWidget::handle(InsertDocumentResponse *event)

@@ -38,7 +38,7 @@ MainWindow::MainWindow() : QMainWindow(),
     QColor background = palette().window().color();
 
 #if defined(Q_OS_MAC)
-    QString explorerColor = "#CED6DF";
+    QString explorerColor = "#DEE3EA"; // was #CED6DF"
 #elif defined(Q_OS_LINUX)
     QString explorerColor = background.darker(103).name();
 #else
@@ -46,7 +46,7 @@ MainWindow::MainWindow() : QMainWindow(),
 #endif
 
     qApp->setStyleSheet(QString(
-        "Robomongo--ExplorerTreeWidget#explorerTree { padding: 7px 0px 7px 0px; background-color: %1; border: 0px; } \n " // #E7E5E4
+        "Robomongo--ExplorerTreeWidget#explorerTree { padding: 1px 0px 0px 0px; background-color: %1; border: 0px; } \n " // #E7E5E4
         "QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } "
         "QMainWindow::separator { background: #E7E5E4; width: 1px; }"
     ).arg(explorerColor));

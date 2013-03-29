@@ -2,6 +2,7 @@
 
 #include <QIcon>
 #include <QBrush>
+#include <QAbstractItemView>
 
 namespace Robomongo
 {
@@ -26,6 +27,8 @@ namespace Robomongo
 
         MainWindow *mainWindow() const { return _mainWindow;}
         void setMainWindow(MainWindow *mainWindow) { _mainWindow = mainWindow; }
+
+        void setAlternatingColor(QAbstractItemView *view);
 
         /**
          * @brief Functions that provide access to various icons

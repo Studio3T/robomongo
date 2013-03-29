@@ -1,7 +1,7 @@
 ; Main params for Robomongo setup 
 ; BASE_DIR and VERSION defines folder, using this schema: {#BASE_DIR}robomongo-win-i386-{#VERSION}
 ; Also, already defined constant {#SourcePath} points to this *.iss file.
-#define VERSION "0.6.6"
+#define VERSION "0.6.7"
 #define BASE_DIR "D:\Apps\robomongo\"
 #define OUTPUT_DIR "D:\Apps\robomongo\installers"
 

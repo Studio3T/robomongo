@@ -18,10 +18,10 @@ CollectionStatsTreeItem::CollectionStatsTreeItem(MongoDocumentPtr document) :
 
     setText(0, value(ns.collectionName()));
     setIcon(0, GuiRegistry::instance().collectionIcon());
-    setText(1, value(QString::number(getInt("count"))));
-    setText(2, value(MongoUtils::buildNiceSizeString(getInt("size"))));
-    setText(3, value(MongoUtils::buildNiceSizeString(getInt("storageSize"))));
-    setText(4, value(MongoUtils::buildNiceSizeString(getInt("totalIndexSize"))));
+    setText(1, value(QString::number(getLongLong("count"))));
+    setText(2, value(MongoUtils::buildNiceSizeString(getDouble("size"))));
+    setText(3, value(MongoUtils::buildNiceSizeString(getDouble("storageSize"))));
+    setText(4, value(MongoUtils::buildNiceSizeString(getDouble("totalIndexSize"))));
     setText(5, value(MongoUtils::buildNiceSizeString(getDouble("avgObjSize"))));
     setText(6, value(QString::number(getDouble("paddingFactor"))));
 }
@@ -36,6 +36,11 @@ QString CollectionStatsTreeItem::getString(const char *name)
 int CollectionStatsTreeItem::getInt(const char *name)
 {
     return _obj.getIntField(name);
+}
+
+long long CollectionStatsTreeItem::getLongLong(const char *name)
+{
+    return _obj.getField(name).safeNumberLong();
 }
 
 double CollectionStatsTreeItem::getDouble(const char *name)

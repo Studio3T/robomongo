@@ -31,6 +31,7 @@ CreateUserDialog::CreateUserDialog(const QString &serverName,
     _userNameEdit->setText(user.name());
     _userPassLabel= new QLabel("Password:");
     _userPassEdit = new QLineEdit();
+    _userPassEdit->setEchoMode(QLineEdit::Password);
     _readOnlyCheckBox = new QCheckBox("Read Only");
     _readOnlyCheckBox->setChecked(user.readOnly());
 

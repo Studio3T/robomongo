@@ -15,6 +15,7 @@ namespace Robomongo
 
         QString getString(const char *name);
         int getInt(const char *name);
+        long long getLongLong(const char *name);
         double getDouble(const char *name);
         QString value(const QString &data);
 

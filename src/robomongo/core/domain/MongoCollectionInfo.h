@@ -16,14 +16,39 @@ namespace Robomongo
         QString fullName() const { return _ns.toString(); }
         MongoNamespace ns() const { return _ns; }
 
-        int sizeBytes() const { return _sizeBytes; }
-        int storageSizeBytes() const { return _storageSizeBytes; }
+        /**
+         * @brief Size in bytes
+         * It is double, because db.stats()'s "size" field may be double
+         * for large values, while Int32 for small.
+         */
+        double sizeBytes() const { return _sizeBytes; }
+
+        /**
+         * @brief Storage size in bytes
+         * It is double, because db.stats()'s "storageSize" field may be double
+         * for large values, while Int32 for small.
+         */
+        double storageSizeBytes() const { return _storageSizeBytes; }
+
         int count() const { return _count; }
 
     private:
         MongoNamespace _ns;
-        int _sizeBytes;
-        int _storageSizeBytes;
+
+        /**
+         * @brief Size in bytes
+         * It is double, because db.stats()'s "size" field may be double
+         * for large values, while Int32 for small.
+         */
+        double _sizeBytes;
+
+        /**
+         * @brief Storage size in bytes
+         * It is double, because db.stats()'s "storageSize" field may be double
+         * for large values, while Int32 for small.
+         */
+        double _storageSizeBytes;
+
         int _count;
     };
 }

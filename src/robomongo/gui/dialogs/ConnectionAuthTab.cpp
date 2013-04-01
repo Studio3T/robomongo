@@ -30,6 +30,9 @@ ConnectionAuthTab::ConnectionAuthTab(ConnectionSettings *settings) :
     _useAuth->setStyleSheet("margin-bottom: 7px");
     connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool)));
 
+    _echoModeButton = new QPushButton("Show");
+    connect(_echoModeButton, SIGNAL(clicked()), this, SLOT(toggleEchoMode()));
+
     _useAuth->setChecked(_settings->hasEnabledPrimaryCredential());
     authChecked(_settings->hasEnabledPrimaryCredential());
 
@@ -41,15 +44,15 @@ ConnectionAuthTab::ConnectionAuthTab(ConnectionSettings *settings) :
     }
 
     QGridLayout *_authLayout = new QGridLayout;
-
-    _authLayout->addWidget(_useAuth,                      0, 0, 1, 2);
+    _authLayout->addWidget(_useAuth,                      0, 0, 1, 3);
     _authLayout->addWidget(_databaseNameLabel,            1, 0);
-    _authLayout->addWidget(_databaseName,                 1, 1);
-    _authLayout->addWidget(_databaseNameDescriptionLabel, 2, 1);
+    _authLayout->addWidget(_databaseName,                 1, 1, 1, 2);
+    _authLayout->addWidget(_databaseNameDescriptionLabel, 2, 1, 1, 2);
     _authLayout->addWidget(_userNameLabel,                3, 0);
-    _authLayout->addWidget(_userName,                     3, 1);
+    _authLayout->addWidget(_userName,                     3, 1, 1, 2);
     _authLayout->addWidget(_userPasswordLabel,            4, 0);
     _authLayout->addWidget(_userPassword,                 4, 1);
+    _authLayout->addWidget(_echoModeButton,               4, 2);
     _authLayout->setAlignment(Qt::AlignTop);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -76,6 +79,18 @@ void ConnectionAuthTab::accept()
     credential->setDatabaseName(_databaseName->text());
 }
 
+void ConnectionAuthTab::toggleEchoMode()
+{
+    if (_userPassword->echoMode() == QLineEdit::Password) {
+        _userPassword->setEchoMode(QLineEdit::Normal);
+        _echoModeButton->setText("Hide");
+        return;
+    }
+
+    _userPassword->setEchoMode(QLineEdit::Password);
+    _echoModeButton->setText("Show");
+}
+
 void ConnectionAuthTab::authChecked(bool checked)
 {
     _databaseName->setDisabled(!checked);
@@ -85,6 +100,7 @@ void ConnectionAuthTab::authChecked(bool checked)
     _userNameLabel->setDisabled(!checked);
     _userPassword->setDisabled(!checked);
     _userPasswordLabel->setDisabled(!checked);
+    _echoModeButton->setDisabled(!checked);
 
     if (checked)
         _databaseName->setFocus();

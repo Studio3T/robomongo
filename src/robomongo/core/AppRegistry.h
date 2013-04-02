@@ -10,7 +10,7 @@ namespace Robomongo
     {
     public:
 
-        QString version() const { return "0.6.8 beta"; }
+        QString version() const { return "0.6.9 beta"; }
 
         /**
          * @brief Returns single instance of AppRegistry

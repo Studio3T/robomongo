@@ -96,13 +96,16 @@ MongoShell *App::openShell(ConnectionSettings *connection, const ScriptInfo &scr
 QString App::buildCollectionQuery(const QString collectionName, const QString postfix)
 {
     QChar firstChar = collectionName.at(0);
+    QRegExp charExp("[^A-Za-z_0-9]"); // valid JS name
 
     QString pattern;
-    if (firstChar.isDigit()) {
+    if (firstChar.isDigit() || collectionName.contains(charExp)) {
         pattern = "db[\'%1\'].%2";
     } else if (collectionName == "help"
-            || collectionName == "stats") { // TODO: this list should be expanded to include
-                                            // all functions of DB JavaScript object
+            || collectionName == "stats"
+            || collectionName == "version"
+            || collectionName == "prototype") { // TODO: this list should be expanded to include
+                                                // all functions of DB JavaScript object
         pattern = "db.getCollection('%1').%2";
     } else {
         pattern = "db.%1.%2";

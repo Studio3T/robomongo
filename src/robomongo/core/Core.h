@@ -7,6 +7,7 @@
 #include <boost/scoped_ptr.hpp>
 
 #include "robomongo/core/Wrapper.h"
+#include "robomongo/core/domain/Enums.h"
 
 namespace mongo
 {

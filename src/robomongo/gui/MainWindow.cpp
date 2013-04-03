@@ -163,6 +163,40 @@ MainWindow::MainWindow() : QMainWindow(),
     optionsMenu->addAction(customModeAction);
     optionsMenu->addAction(treeModeAction);
     optionsMenu->addAction(textModeAction);
+    optionsMenu->addSeparator();
+
+    // UUID encoding
+    QAction *defaultEncodingAction = new QAction("Default Encoding", this);
+    defaultEncodingAction->setCheckable(true);
+    defaultEncodingAction->setChecked(_settingsManager->uuidEncoding() == DefaultEncoding);
+    connect(defaultEncodingAction, SIGNAL(triggered()), this, SLOT(setDefaultUuidEncoding()));
+
+    QAction *javaLegacyEncodingAction = new QAction("Java Legacy Encoding", this);
+    javaLegacyEncodingAction->setCheckable(true);
+    javaLegacyEncodingAction->setChecked(_settingsManager->uuidEncoding() == JavaLegacy);
+    connect(javaLegacyEncodingAction, SIGNAL(triggered()), this, SLOT(setJavaUuidEncoding()));
+
+    QAction *csharpLegacyEncodingAction = new QAction("C# Legacy Encoding", this);
+    csharpLegacyEncodingAction->setCheckable(true);
+    csharpLegacyEncodingAction->setChecked(_settingsManager->uuidEncoding() == CSharpLegacy);
+    connect(csharpLegacyEncodingAction, SIGNAL(triggered()), this, SLOT(setCSharpUuidEncoding()));
+
+    QAction *pythonEncodingAction = new QAction("Python Legacy Encoding", this);
+    pythonEncodingAction->setCheckable(true);
+    pythonEncodingAction->setChecked(_settingsManager->uuidEncoding() == PythonLegacy);
+    connect(pythonEncodingAction, SIGNAL(triggered()), this, SLOT(setPythonUuidEncoding()));
+
+    QMenu *uuidMenu = optionsMenu->addMenu("Display UUIDs in");
+    uuidMenu->addAction(defaultEncodingAction);
+    uuidMenu->addAction(javaLegacyEncodingAction);
+    uuidMenu->addAction(csharpLegacyEncodingAction);
+    uuidMenu->addAction(pythonEncodingAction);
+
+    QActionGroup *uuidEncodingGroup = new QActionGroup(this);
+    uuidEncodingGroup->addAction(defaultEncodingAction);
+    uuidEncodingGroup->addAction(javaLegacyEncodingAction);
+    uuidEncodingGroup->addAction(csharpLegacyEncodingAction);
+    uuidEncodingGroup->addAction(pythonEncodingAction);
 
     QAction *aboutRobomongoAction = new QAction("&About Robomongo", this);
     connect(aboutRobomongoAction, SIGNAL(triggered()), this, SLOT(aboutRobomongo()));
@@ -353,6 +387,30 @@ void MainWindow::aboutRobomongo()
 {
     AboutDialog dlg(this);
     dlg.exec();
+}
+
+void MainWindow::setDefaultUuidEncoding()
+{
+    _settingsManager->setUuidEncoding(DefaultEncoding);
+    _settingsManager->save();
+}
+
+void MainWindow::setJavaUuidEncoding()
+{
+    _settingsManager->setUuidEncoding(JavaLegacy);
+    _settingsManager->save();
+}
+
+void MainWindow::setCSharpUuidEncoding()
+{
+    _settingsManager->setUuidEncoding(CSharpLegacy);
+    _settingsManager->save();
+}
+
+void MainWindow::setPythonUuidEncoding()
+{
+    _settingsManager->setUuidEncoding(PythonLegacy);
+    _settingsManager->save();
 }
 
 void MainWindow::toggleLogs(bool show)

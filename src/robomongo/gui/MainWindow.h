@@ -41,6 +41,12 @@ namespace Robomongo
         void toggleFullScreen2();
         void refreshConnections();
         void aboutRobomongo();
+
+        void setDefaultUuidEncoding();
+        void setJavaUuidEncoding();
+        void setCSharpUuidEncoding();
+        void setPythonUuidEncoding();
+
         void toggleLogs(bool show);
         void connectToServer(QAction *action);
         void handle(ConnectionFailedEvent *event);

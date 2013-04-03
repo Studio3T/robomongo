@@ -42,7 +42,8 @@ SOURCES += \
     domain/ScriptInfo.cpp \
     engine/JsonBuilder.cpp \
     domain/MongoUser.cpp \
-    domain/MongoFunction.cpp
+    domain/MongoFunction.cpp \
+    HexUtils.cpp
 
 
 HEADERS  += \
@@ -84,7 +85,9 @@ HEADERS  += \
     domain/ScriptInfo.h \
     engine/JsonBuilder.h \
     domain/MongoUser.h \
-    domain/MongoFunction.h
+    domain/MongoFunction.h \
+    domain/Enums.h \
+    HexUtils.h
 
 INCLUDEPATH += $$SRC_ROOT
 

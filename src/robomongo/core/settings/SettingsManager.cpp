@@ -22,6 +22,7 @@ SettingsManager::SettingsManager(QObject *parent) : QObject(parent)
     _version = "1.0";
     _configPath = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
     _configDir  = QString("%1/.config/robomongo").arg(QDir::homePath());
+    _uuidEncoding = DefaultEncoding;
 
     load();
 
@@ -88,7 +89,17 @@ bool SettingsManager::save()
  */
 void SettingsManager::loadFromMap(QVariantMap &map)
 {
-    // 1. Load connections
+    // 1. Load version
+    _version = map.value("version").toString();
+
+    // 2. Load UUID encoding
+    int encoding = map.value("uuidEncoding").toInt();
+    if (encoding > 3 || encoding < 0)
+        encoding = 0;
+
+    _uuidEncoding = (UUIDEncoding) encoding;
+
+    // 3. Load connections
     _connections.clear();
 
     QVariantList list = map.value("connections").toList();
@@ -97,9 +108,6 @@ void SettingsManager::loadFromMap(QVariantMap &map)
         record->fromVariant(var.toMap());
         _connections.append(record);
     }
-
-    // 2. Load version
-    _version = map.value("version").toString();
 }
 
 /**
@@ -112,7 +120,10 @@ QVariantMap SettingsManager::convertToMap() const
     // 1. Save schema version
     map.insert("version", SchemaVersion);
 
-    // 2. Save connections
+    // 2. Save UUID encoding
+    map.insert("uuidEncoding", _uuidEncoding);
+
+    // 3. Save connections
     QVariantList list;
 
     foreach(ConnectionSettings *record, _connections) {
@@ -121,6 +132,7 @@ QVariantMap SettingsManager::convertToMap() const
     }
 
     map.insert("connections", list);
+
     return map;
 }
 

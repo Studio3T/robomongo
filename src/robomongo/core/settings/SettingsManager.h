@@ -74,6 +74,9 @@ namespace Robomongo
          */
         const QList<ConnectionSettings *> connections() const { return _connections; }
 
+        void setUuidEncoding(UUIDEncoding encoding) { _uuidEncoding = encoding; }
+        UUIDEncoding uuidEncoding() { return _uuidEncoding; }
+
     signals:
         void connectionAdded(ConnectionSettings *connection);
         void connectionUpdated(ConnectionSettings *connection);
@@ -106,6 +109,11 @@ namespace Robomongo
          * @brief Version of settings schema currently loaded
          */
         QString _version;
+
+        /**
+         * @brief UUID encoding
+         */
+        UUIDEncoding _uuidEncoding;
 
         /**
          * @brief List of connections

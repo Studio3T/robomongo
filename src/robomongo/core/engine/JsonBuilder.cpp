@@ -173,7 +173,7 @@ string JsonBuilder::jsonString(BSONElement &elem, JsonStringFormat format, bool 
         BinDataType type = BinDataType( *(char *)( (int *)( elem.value() ) + 1 ) );
         s << "{ \"$binary\" : \"";
         char *start = ( char * )( elem.value() ) + sizeof( int ) + 1;
-        base64::encode( s , start , len );  //TODO: SIC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        base64::encode( s , start , len );
         s << "\", \"$type\" : \"" << hex;
         s.width( 2 );
         s.fill( '0' );

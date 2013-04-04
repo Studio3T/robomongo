@@ -25,6 +25,8 @@
 #include "mongo/util/base64.h"
 #include "mongo/util/hex.h"
 #include "mongo/util/mongoutils/str.h"
+#include "robomongo/core/domain/Enums.h"
+#include "robomongo/core/HexUtils.h"
 
 namespace mongo {
 namespace Robomongo {
@@ -107,6 +109,36 @@ namespace Robomongo {
 #ifdef ROBOMONGO
         else if (accept("ISODate")) {
             Status ret = isodate(fieldName, builder);
+            if (ret != Status::OK()) {
+                return ret;
+            }
+        }
+        else if (accept("UUID")) {
+            Status ret = uuid(fieldName, builder);
+            if (ret != Status::OK()) {
+                return ret;
+            }
+        }
+        else if (accept("LUUID")) {
+            Status ret = luuid(fieldName, builder);
+            if (ret != Status::OK()) {
+                return ret;
+            }
+        }
+        else if (accept("JUUID")) {
+            Status ret = juuid(fieldName, builder);
+            if (ret != Status::OK()) {
+                return ret;
+            }
+        }
+        else if (accept("NUUID") || accept("CSUUID")) {
+            Status ret = nuuid(fieldName, builder);
+            if (ret != Status::OK()) {
+                return ret;
+            }
+        }
+        else if (accept("PYUUID")) {
+            Status ret = pyuuid(fieldName, builder);
             if (ret != Status::OK()) {
                 return ret;
             }
@@ -628,6 +660,64 @@ namespace Robomongo {
             return parseError("Expecting ')'");
         }
         builder.appendDate(fieldName, millis);
+        return Status::OK();
+    }
+
+    Status JParse::uuid(const StringData &fieldName, BSONObjBuilder &builder)
+    {
+        return parseUuid(fieldName, builder, newUUID, ::Robomongo::DefaultEncoding);
+    }
+
+    Status JParse::luuid(const StringData &fieldName, BSONObjBuilder &builder)
+    {
+        return parseUuid(fieldName, builder, bdtUUID, ::Robomongo::DefaultEncoding);
+    }
+
+    Status JParse::juuid(const StringData &fieldName, BSONObjBuilder &builder)
+    {
+        return parseUuid(fieldName, builder, bdtUUID, ::Robomongo::JavaLegacy);
+    }
+
+    Status JParse::nuuid(const StringData &fieldName, BSONObjBuilder &builder)
+    {
+        return parseUuid(fieldName, builder, bdtUUID, ::Robomongo::CSharpLegacy);
+    }
+
+    Status JParse::pyuuid(const StringData &fieldName, BSONObjBuilder &builder)
+    {
+        return parseUuid(fieldName, builder, bdtUUID, ::Robomongo::PythonLegacy);
+    }
+
+    Status JParse::parseUuid(const StringData &fieldName, BSONObjBuilder &builder, BinDataType binType, ::Robomongo::UUIDEncoding uuidEncoding)
+    {
+        if (!accept(LPAREN)) {
+            return parseError("Expecting '('");
+        }
+
+        std::string datastr;
+        Status ret = quotedString(&datastr);
+        if (ret != Status::OK()) {
+            return ret;
+        }
+
+        std::string hex = ::Robomongo::HexUtils::uuidToHex(datastr, uuidEncoding);
+
+        if (hex.empty() || !::Robomongo::HexUtils::isHexString(hex)) {
+            return parseError("Invalid hex string for UUID");
+        }
+
+        int len;
+        boost::scoped_array<const char> data(::Robomongo::HexUtils::fromHex(hex, &len));
+        if (data == NULL)
+            return parseError("Invalid UUID");
+
+        if (!accept(RPAREN))
+            return parseError("Expecting ')'");
+
+        builder.appendBinData(fieldName, len,
+                binType,
+                data.get());
+
         return Status::OK();
     }
 #endif

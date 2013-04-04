@@ -5,6 +5,9 @@
 #include <boost/date_time/posix_time/posix_time_io.hpp>
 
 #include "robomongo/core/domain/MongoDocument.h"
+#include "robomongo/core/HexUtils.h"
+#include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/AppRegistry.h"
 
 using namespace mongo;
 
@@ -13,7 +16,8 @@ namespace Robomongo
     /*
 	** Create instance of MongoElement from BSONElement
 	*/
-    MongoElement::MongoElement(BSONElement bsonElement) : QObject()
+    MongoElement::MongoElement(BSONElement bsonElement) : QObject(),
+        _settingsManager(AppRegistry::instance().settingsManager())
 	{
 		_bsonElement = bsonElement;
 	}
@@ -108,7 +112,16 @@ namespace Robomongo
 
 		/** binary data */
 		case BinData:
-            con.append("<binary>");
+            {
+                mongo::BinDataType binType = _bsonElement.binDataType();
+                if (binType == mongo::newUUID || binType == mongo::bdtUUID) {
+                    std::string uuid = HexUtils::formatUuid(_bsonElement, _settingsManager->uuidEncoding());
+                    con.append(QString::fromStdString(uuid));
+                    break;
+                }
+
+                con.append("<binary>");
+            }
 			break;
 
 		/** Undefined type */

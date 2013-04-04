@@ -3,13 +3,16 @@
 #include "robomongo/core/domain/MongoElement.h"
 #include "robomongo/core/domain/MongoDocumentIterator.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/settings/SettingsManager.h"
 
 using namespace Robomongo;
 using namespace mongo;
 
 BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position) : QObject(),
     _element(element),
-    _rootDocument(rootDocument)
+    _rootDocument(rootDocument),
+    _settingsManager(AppRegistry::instance().settingsManager())
 {
 	_position = position;
 
@@ -72,7 +75,25 @@ BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr elemen
             static QString typeBinary("Binary");
             setIcon(0, GuiRegistry::instance().bsonBinaryIcon());
             setText(1, element->stringValue());
-            setText(2, typeBinary);
+
+            if (element->bsonElement().binDataType() == mongo::newUUID) {
+                setText(2, "UUID");
+            } else if (element->bsonElement().binDataType() == mongo::bdtUUID) {
+
+                UUIDEncoding uuidEncoding = _settingsManager->uuidEncoding();
+                QString type;
+                switch(uuidEncoding) {
+                case DefaultEncoding: type = "Legacy UUID"; break;
+                case JavaLegacy:      type = "Java UUID (Legacy)"; break;
+                case CSharpLegacy:    type = ".NET UUID (Legacy)"; break;
+                case PythonLegacy:    type = "Python UUID (Legacy)"; break;
+                default:              type = "Legacy UUID"; break;
+                }
+
+                setText(2, type);
+            } else {
+                setText(2, typeBinary);
+            }
         }
 		break;
 

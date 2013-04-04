@@ -15,13 +15,15 @@
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/settings/SettingsManager.h"
 
 using namespace Robomongo;
 using namespace mongo;
 
 BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) : QTreeWidget(parent),
     _shell(shell),
-    _bus(AppRegistry::instance().bus())
+    _bus(AppRegistry::instance().bus()),
+    _settingsManager(AppRegistry::instance().settingsManager())
 {
 #if defined(Q_OS_MAC)
     setAttribute(Qt::WA_MacShowFocusRect, false);
@@ -271,7 +273,7 @@ void BsonTreeWidget::onEditDocument()
     mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
 
     JsonBuilder b;
-    std::string str = b.jsonString(obj, mongo::TenGen, 1);
+    std::string str = b.jsonString(obj, mongo::TenGen, 1, _settingsManager->uuidEncoding());
     QString json = QString::fromUtf8(str.data());
 
     DocumentTextEditor editor(_queryInfo.serverAddress,
@@ -299,7 +301,7 @@ void BsonTreeWidget::onViewDocument()
     mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
 
     JsonBuilder b;
-    std::string str = b.jsonString(obj, mongo::TenGen, 1);
+    std::string str = b.jsonString(obj, mongo::TenGen, 1, _settingsManager->uuidEncoding());
     QString json = QString::fromUtf8(str.data());
 
     QString server = _queryInfo.isNull ? "" : _queryInfo.serverAddress;
@@ -389,7 +391,7 @@ QString BsonTreeWidget::selectedJson()
     mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
 
     JsonBuilder b;
-    std::string str = b.jsonString(obj, mongo::TenGen, 1);
+    std::string str = b.jsonString(obj, mongo::TenGen, 1, _settingsManager->uuidEncoding());
     QString json = QString::fromUtf8(str.data());
     return json;
 }

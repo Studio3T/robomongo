@@ -118,7 +118,8 @@ const char *JSLexer::keywords(int set) const
             "int interface long native new package private protected public "
             "return short static super switch synchronized this throw throws "
             "transient try typeof var void volatile while with "
-            "ISODate ObjectId Mongo Date NumberInt Number NumberLong Timestamp _id null false true";
+            "ISODate ObjectId Mongo Date NumberInt Number NumberLong Timestamp _id null false true "
+            "UUID LUUID PYUUID CSUUID JUUID NUUID ";
 
     return 0;
 }

@@ -166,27 +166,27 @@ MainWindow::MainWindow() : QMainWindow(),
     optionsMenu->addSeparator();
 
     // UUID encoding
-    QAction *defaultEncodingAction = new QAction("Default Encoding", this);
+    QAction *defaultEncodingAction = new QAction("Do not decode (show as is)", this);
     defaultEncodingAction->setCheckable(true);
     defaultEncodingAction->setChecked(_settingsManager->uuidEncoding() == DefaultEncoding);
     connect(defaultEncodingAction, SIGNAL(triggered()), this, SLOT(setDefaultUuidEncoding()));
 
-    QAction *javaLegacyEncodingAction = new QAction("Java Legacy Encoding", this);
+    QAction *javaLegacyEncodingAction = new QAction("Use Java Encoding", this);
     javaLegacyEncodingAction->setCheckable(true);
     javaLegacyEncodingAction->setChecked(_settingsManager->uuidEncoding() == JavaLegacy);
     connect(javaLegacyEncodingAction, SIGNAL(triggered()), this, SLOT(setJavaUuidEncoding()));
 
-    QAction *csharpLegacyEncodingAction = new QAction("C# Legacy Encoding", this);
+    QAction *csharpLegacyEncodingAction = new QAction("Use .NET Encoding", this);
     csharpLegacyEncodingAction->setCheckable(true);
     csharpLegacyEncodingAction->setChecked(_settingsManager->uuidEncoding() == CSharpLegacy);
     connect(csharpLegacyEncodingAction, SIGNAL(triggered()), this, SLOT(setCSharpUuidEncoding()));
 
-    QAction *pythonEncodingAction = new QAction("Python Legacy Encoding", this);
+    QAction *pythonEncodingAction = new QAction("Use Python Encoding", this);
     pythonEncodingAction->setCheckable(true);
     pythonEncodingAction->setChecked(_settingsManager->uuidEncoding() == PythonLegacy);
     connect(pythonEncodingAction, SIGNAL(triggered()), this, SLOT(setPythonUuidEncoding()));
 
-    QMenu *uuidMenu = optionsMenu->addMenu("Display UUIDs in");
+    QMenu *uuidMenu = optionsMenu->addMenu("Legacy UUID Encoding");
     uuidMenu->addAction(defaultEncodingAction);
     uuidMenu->addAction(javaLegacyEncodingAction);
     uuidMenu->addAction(csharpLegacyEncodingAction);

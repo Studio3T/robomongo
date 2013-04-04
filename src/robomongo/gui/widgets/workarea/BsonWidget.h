@@ -46,13 +46,16 @@ namespace Robomongo
         */
         QList<MongoDocumentPtr> _bsonObjects;
 
+        UUIDEncoding _uuidEncoding;
+
     public:
         /*
         ** Constructor
         */
-        JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects) : exit(false)
+        JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects, UUIDEncoding uuidEncoding) : exit(false)
         {
             _bsonObjects = bsonObjects;
+            _uuidEncoding = uuidEncoding;
         }
 
         volatile bool exit;
@@ -81,7 +84,7 @@ namespace Robomongo
 
                 JsonBuilder builder;
                 mongo::BSONObj obj = doc->bsonObj();
-                std::string stdJson = builder.jsonString(obj, mongo::TenGen, 1);
+                std::string stdJson = builder.jsonString(obj, mongo::TenGen, 1, _uuidEncoding);
 
                 if (exit) {
                     emit done();

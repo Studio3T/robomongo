@@ -7,6 +7,8 @@
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h"
 #include "robomongo/gui/editors/JSLexer.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/settings/SettingsManager.h"
 
 using namespace Robomongo;
 
@@ -128,7 +130,8 @@ void OutputItemContentWidget::showText()
             if (_documents.count() > 0) {
                 _log->setText("Loading...");
 
-                _thread = new JsonPrepareThread(_documents);
+                UUIDEncoding uuidEncoding = AppRegistry::instance().settingsManager()->uuidEncoding();
+                _thread = new JsonPrepareThread(_documents, uuidEncoding);
                 connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared()));
                 connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
                 connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));

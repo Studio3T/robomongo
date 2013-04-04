@@ -20,6 +20,7 @@
 
 #include "mongo/bson/bsonobj.h"
 #include "mongo/base/status.h"
+#include "robomongo/core/domain/Enums.h"
 
 namespace mongo {
 namespace Robomongo {
@@ -200,6 +201,14 @@ namespace Robomongo {
              *     ISODate( <date time string in ISO 8601 format> )
              */
             Status isodate(const StringData& fieldName, BSONObjBuilder&);
+
+            Status uuid(const StringData& fieldName, BSONObjBuilder&);
+            Status luuid(const StringData& fieldName, BSONObjBuilder&);
+            Status juuid(const StringData& fieldName, BSONObjBuilder&);
+            Status nuuid(const StringData& fieldName, BSONObjBuilder&);
+            Status pyuuid(const StringData& fieldName, BSONObjBuilder&);
+
+            Status parseUuid(const StringData& fieldName, BSONObjBuilder&, BinDataType binType, ::Robomongo::UUIDEncoding uuidEncoding);
 #endif
 
             /*

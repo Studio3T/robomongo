@@ -8,6 +8,7 @@
 namespace Robomongo
 {
     class MongoElement;
+    class SettingsManager;
 
     /**
      * @brief BSON tree item (represents array or object)
@@ -38,6 +39,8 @@ namespace Robomongo
         MongoDocumentPtr _document;
 
         MongoDocumentPtr _rootDocument;
+
+        SettingsManager *_settingsManager;
 
         /**
          * @brief Position in array. -1 if not in array

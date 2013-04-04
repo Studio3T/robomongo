@@ -202,7 +202,7 @@ void BsonTreeWidget::contextMenuEvent(QContextMenuEvent *event)
 
     bool isEditable = _queryInfo.isNull ? false : true;
     bool onItem = documentItem ? true : false;
-    bool isSimple = documentItem ? documentItem->isSimpleType() : false;
+    bool isSimple = documentItem ? (documentItem->isSimpleType() || documentItem->isUuidType()) : false;
 
     QMenu menu(this);
     if (onItem && isEditable) menu.addAction(_editDocumentAction);
@@ -347,7 +347,7 @@ void BsonTreeWidget::onCopyDocument()
 
     MongoElementPtr element = documentItem->element();
 
-    if (!element->isSimpleType())
+    if (!element->isSimpleType() && !element->isUuidType())
         return;
 
     QClipboard *clipboard = QApplication::clipboard();

@@ -25,6 +25,7 @@ namespace Robomongo
         MongoElementPtr element() const { return _element; }
         MongoDocumentPtr rootDocument() const { return _rootDocument; }
         bool isSimpleType();
+        bool isUuidType();
         void expand();
 
     private:

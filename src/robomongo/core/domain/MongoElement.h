@@ -8,6 +8,7 @@
 namespace Robomongo
 {
 	class Concatenator;
+    class SettingsManager;
 
 	/*
 	** Wrapper around BSONElement
@@ -84,5 +85,7 @@ namespace Robomongo
         ** String value if this element
         */
         QString _stringValue;
+
+        SettingsManager *_settingsManager;
 	};
 }

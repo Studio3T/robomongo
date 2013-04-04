@@ -1,10 +1,13 @@
 #pragma once
 
-
-enum UUIDEncoding
+namespace Robomongo
 {
-    DefaultEncoding = 0,
-    JavaLegacy      = 1,
-    CSharpLegacy    = 2,
-    PythonLegacy    = 3
-};
+    enum UUIDEncoding
+    {
+        DefaultEncoding = 0,
+        JavaLegacy      = 1,
+        CSharpLegacy    = 2,
+        PythonLegacy    = 3
+    };
+}
+

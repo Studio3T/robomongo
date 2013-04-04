@@ -1,7 +1,9 @@
 #include "robomongo/core/engine/JsonBuilder.h"
 
-#include "mongo/util/base64.h"
+#include <mongo/util/base64.h>
+
 #include "robomongo/shell/db/ptimeutil.h"
+#include "robomongo/core/HexUtils.h"
 
 using namespace Robomongo;
 using namespace mongo;
@@ -11,7 +13,7 @@ JsonBuilder::JsonBuilder()
 
 }
 
-std::string JsonBuilder::jsonString(BSONObj &obj, JsonStringFormat format, int pretty) const
+std::string JsonBuilder::jsonString(BSONObj &obj, JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding) const
 {
     if ( obj.isEmpty() ) return "{}";
 
@@ -29,7 +31,7 @@ std::string JsonBuilder::jsonString(BSONObj &obj, JsonStringFormat format, int p
             else {
                 s << " ";
             }
-            s << jsonString(e, format, true, pretty?pretty+1:0 );
+            s << jsonString(e, format, true, pretty?pretty+1:0, uuidEncoding);
             e = i.next();
 
             if (e.eoo()) {
@@ -50,7 +52,7 @@ std::string JsonBuilder::jsonString(BSONObj &obj, JsonStringFormat format, int p
     return s.str();
 }
 
-string JsonBuilder::jsonString(BSONElement &elem, JsonStringFormat format, bool includeFieldNames, int pretty) const
+string JsonBuilder::jsonString(BSONElement &elem, JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding uuidEncoding) const
 {
     BSONType t = elem.type();
     int sign;
@@ -96,7 +98,7 @@ string JsonBuilder::jsonString(BSONElement &elem, JsonStringFormat format, bool 
         break;
     case Object: {
         BSONObj obj = elem.embeddedObject();
-        s << jsonString(obj, format, pretty );
+        s << jsonString(obj, format, pretty, uuidEncoding);
         }
         break;
     case mongo::Array: {
@@ -120,7 +122,7 @@ string JsonBuilder::jsonString(BSONElement &elem, JsonStringFormat format, bool 
                     s << "undefined";
                 }
                 else {
-                    s << jsonString(e, format, false, pretty?pretty+1:0 );
+                    s << jsonString(e, format, false, pretty?pretty+1:0, uuidEncoding);
                     e = i.next();
                 }
                 count++;
@@ -171,6 +173,12 @@ string JsonBuilder::jsonString(BSONElement &elem, JsonStringFormat format, bool 
     case BinData: {
         int len = *(int *)( elem.value() );
         BinDataType type = BinDataType( *(char *)( (int *)( elem.value() ) + 1 ) );
+
+        if (type == mongo::bdtUUID || type == mongo::newUUID) {
+            s << HexUtils::formatUuid(elem, uuidEncoding);
+            break;
+        }
+
         s << "{ \"$binary\" : \"";
         char *start = ( char * )( elem.value() ) + sizeof( int ) + 1;
         base64::encode( s , start , len );

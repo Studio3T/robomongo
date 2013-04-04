@@ -55,5 +55,6 @@ namespace Robomongo
         MongoQueryInfo _queryInfo;
         MongoShell *_shell;
         EventBus *_bus;
+        SettingsManager *_settingsManager;
     };
 }

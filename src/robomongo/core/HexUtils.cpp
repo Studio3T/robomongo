@@ -2,10 +2,23 @@
 
 #include <mongo/util/hex.h>
 #include <pcre/pcrecpp.h>
+#include <iostream>
+
+bool Robomongo::HexUtils::isHexString(const std::string &str)
+{
+    std::size_t i;
+    for (i = 0; i < str.size(); i++) {
+        if (!isxdigit(str[i])) {
+            return false;
+        }
+    }
+    return true;
+}
 
 QString Robomongo::HexUtils::toHexLower(const void *raw, int len)
 {
-    std::string stdstr = mongo::toHexLower(raw, len);
+    const char* in = reinterpret_cast<const char*>(raw);
+    std::string stdstr = toStdHexLower(in, len);
     return QString::fromStdString(stdstr);
 }
 
@@ -13,6 +26,13 @@ QString Robomongo::HexUtils::toHexLower(const char *raw, int len)
 {
     const void* in = reinterpret_cast<const void*>(raw);
     return toHexLower(in, len);
+}
+
+std::string Robomongo::HexUtils::toStdHexLower(const char *raw, int len)
+{
+    const void* in = reinterpret_cast<const void*>(raw);
+    std::string stdstr = mongo::toHexLower(in, len);
+    return stdstr;
 }
 
 const char *Robomongo::HexUtils::fromHex(const std::string &s, int *outBytes)
@@ -38,6 +58,17 @@ const char *Robomongo::HexUtils::fromHex(const QString &str, int *outBytes)
 {
     std::string stdstr = str.toStdString();
     return fromHex(stdstr, outBytes);
+}
+
+std::string Robomongo::HexUtils::hexToUuid(const std::string &hex, UUIDEncoding encoding)
+{
+    switch(encoding) {
+    case DefaultEncoding: return hexToUuid(hex);
+    case JavaLegacy:      return hexToJavaUuid(hex);
+    case CSharpLegacy:    return hexToCSharpUuid(hex);
+    case PythonLegacy:    return hexToPythonUuid(hex);
+    default:              return hexToUuid(hex);
+    }
 }
 
 std::string Robomongo::HexUtils::hexToUuid(const std::string &hex)
@@ -73,12 +104,26 @@ std::string Robomongo::HexUtils::hexToPythonUuid(const std::string &hex)
     return hexToUuid(hex);
 }
 
+std::string Robomongo::HexUtils::uuidToHex(const std::string &uuid, Robomongo::UUIDEncoding encoding)
+{
+    switch(encoding) {
+    case DefaultEncoding: return uuidToHex(uuid);
+    case JavaLegacy:      return javaUuidToHex(uuid);
+    case CSharpLegacy:    return csharpUuidToHex(uuid);
+    case PythonLegacy:    return pythonUuidToHex(uuid);
+    default:              return uuidToHex(uuid);
+    }
+}
+
 std::string Robomongo::HexUtils::uuidToHex(const std::string &uuid)
 {
     // remove extra characters
     std::string hex = uuid;
     pcrecpp::RE re("[{}-]");
     re.GlobalReplace("", &hex);
+
+    if (hex.size() != 32)
+        return "";
 
     return hex;
 }
@@ -89,6 +134,9 @@ std::string Robomongo::HexUtils::csharpUuidToHex(const std::string &uuid)
     std::string hex = uuid;
     pcrecpp::RE re("[{}-]");
     re.GlobalReplace("", &hex);
+
+    if (hex.size() != 32)
+        return "";
 
     std::string a = hex.substr(6, 2) + hex.substr(4, 2) + hex.substr(2, 2) + hex.substr(0, 2);
     std::string b = hex.substr(10, 2) + hex.substr(8, 2);
@@ -105,6 +153,9 @@ std::string Robomongo::HexUtils::javaUuidToHex(const std::string &uuid)
     pcrecpp::RE re("[{}-]");
     re.GlobalReplace("", &hex);
 
+    if (hex.size() != 32)
+        return "";
+
     std::string msb = hex.substr(0, 16);
     std::string lsb = hex.substr(16, 16);
     msb = msb.substr(14, 2) + msb.substr(12, 2) + msb.substr(10, 2) + msb.substr(8, 2) + msb.substr(6, 2) + msb.substr(4, 2) + msb.substr(2, 2) + msb.substr(0, 2);
@@ -116,4 +167,31 @@ std::string Robomongo::HexUtils::javaUuidToHex(const std::string &uuid)
 std::string Robomongo::HexUtils::pythonUuidToHex(const std::string &uuid)
 {
     return uuidToHex(uuid);
+}
+
+std::string Robomongo::HexUtils::formatUuid(mongo::BSONElement &element, Robomongo::UUIDEncoding encoding)
+{
+    mongo::BinDataType binType = element.binDataType();
+
+    if (binType != mongo::newUUID && binType != mongo::bdtUUID)
+        throw new std::invalid_argument("Binary subtype should be 3 (bdtUUID) or 4 (newUUID)");
+
+    int len;
+    const char *data = element.binData(len);
+    std::string hex = HexUtils::toStdHexLower(data, len);
+
+    if (binType == mongo::bdtUUID) {
+        std::string uuid = HexUtils::hexToUuid(hex, encoding);
+
+        switch(encoding) {
+        case DefaultEncoding: return "LUUID(\"" + uuid + "\")";
+        case JavaLegacy:      return "JUUID(\"" + uuid + "\")";
+        case CSharpLegacy:    return "NUUID(\"" + uuid + "\")";
+        case PythonLegacy:    return "PYUUID(\"" + uuid + "\")";
+        default:              return "LUUID(\"" + uuid + "\")";
+        }
+    } else {
+        std::string uuid = HexUtils::hexToUuid(hex, DefaultEncoding);
+        return "UUID(\"" + uuid + "\")";
+    }
 }

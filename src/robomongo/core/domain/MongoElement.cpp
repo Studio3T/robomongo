@@ -130,8 +130,12 @@ namespace Robomongo
 			break;
 
 		/** ObjectId */
-		case jstOID: 
-            con.append(QString::fromStdString(_bsonElement.OID().toString()));
+        case jstOID:
+        {
+            QString idValue = QString::fromStdString(_bsonElement.OID().toString());
+            QString objectId = QString("ObjectId(\"%1\")").arg(idValue);
+            con.append(objectId);
+        }
 			break;
 
 		/** boolean type */

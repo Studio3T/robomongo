@@ -112,7 +112,7 @@ BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr elemen
         {
             static QString typeObjectId("ObjectId");
             setIcon(0, GuiRegistry::instance().circleIcon());
-            setText(1, QString("ObjectId(\"%1\")").arg(element->stringValue()));
+            setText(1, element->stringValue());
             setText(2, typeObjectId);
         }
 		break;
@@ -255,6 +255,11 @@ BsonTreeItem::BsonTreeItem(MongoDocumentPtr document, int position) : QObject(),
 bool BsonTreeItem::isSimpleType()
 {
     return _element && _element->isSimpleType();
+}
+
+bool BsonTreeItem::isUuidType()
+{
+    return _element && _element->isUuidType();
 }
 
 void BsonTreeItem::setupDocument(MongoDocumentPtr document)

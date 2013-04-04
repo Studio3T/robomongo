@@ -38,6 +38,14 @@ namespace Robomongo
 		*/
 		bool isSimpleType() const { return _bsonElement.isSimpleType(); }
 
+        /**
+         * @brief Check if this element is of UUID type
+         */
+        bool isUuidType() const {
+            mongo::BinDataType binType = _bsonElement.binDataType();
+            return (binType == mongo::newUUID || binType == mongo::bdtUUID);
+        }
+
 		/*
 		** Check if this element is a BSON Object
 		*/

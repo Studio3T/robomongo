@@ -605,7 +605,7 @@ void ExplorerTreeWidget::ui_updateDocument()
         "        \"multi\" : false,  // update only one document \n"
         "        \"upsert\" : false  // insert a new document, if no existing document match the query \n"
         "    }\n"
-        "});", false);
+        ");", false);
 }
 
 void ExplorerTreeWidget::ui_collectionStatistics()

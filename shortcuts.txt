@@ -1,0 +1,35 @@
+
+   F5 or Ctrl+Enter
+      Execute query on current tab. If you have selection in query text, only 
+      selected text will be executed.
+      
+   Ctrl+T or Ctrl+Shift+Enter
+      Open new tab, based on current (the same server and database). If you have 
+      selection in query text, selected text will be executed in new tab.
+      
+   Ctrl+F4 or Ctrl+W
+      Closes current tab.
+      
+   Alt+1, Alt+2, ..., Alt+9
+      Connect to server with 'this' number (you can reorder connections in Connections 
+      menu via drag'n'drop)
+
+   F3
+      Enter Tree Mode. Current tab will be immediately displayed in tree mode and all 
+      subsequent requests will be in tree mode.
+      
+   F4
+      Enter Text Mode. Current tab will be immediately displayed in text mode and all 
+      subsequent requests will be in text mode.      
+      
+   F10 
+      Toggle result orientation (between vertical and horizontal).
+
+   F11
+      Toggle fullscreen mode.
+      
+   F12
+      Opens connection popup menu.      
+      
+   Ctrl+0
+      Open Connections dialog.

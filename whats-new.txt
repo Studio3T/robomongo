@@ -1,0 +1,203 @@
+0.7.0 / April 11, 2013
+
+  * Support for UUIDs (read more: http://robomongo.org/articles/uuids.html)
+
+
+0.6.9 / April 3, 2013
+
+  * Password is hidden by default (#65)
+  * Fixed incorrect rendering of large values for the db.stats() results (#70)
+  * Collection names with invalid (for JS var name) characters now rendered correctly (#71)
+
+0.6.8 / April 1, 2013
+
+  * Support for '~/.mongorc.js'
+  * Various Mac OS X UI fixes
+  * Fixed crash when pressing Ctrl + W (#60)
+  * "Copy Value" context menu item for documents in Tree View
+
+
+0.6.7 / March 26, 2013
+
+  * Fixed creation of new tabs based on the current one. Before this fix initial 
+    database for new tab wasn't identical to the "parent". (#56)
+  * Support for collections that starts from digits (#54)
+  * [Sergey Gavruk] Duplicate Collection feature (Collection -> Duplicate Collection
+  * Collection -> Reindex  will not run immediately, as before
+  * Fixed incorrect disposing of tabs resources (connections etc.) (#42)
+  * [Stephen Steneker] Fixed KeepAlive invalid commands, when not authorised (#41) 
+  * [Sergey Gavruk] Various Mac OS X UI fixes.
+
+
+0.6.6 / March 23, 2013
+
+  * Fixed possible crash when viewing results in text mode (#34)
+  * Fixed possible crash when testing connection (Diagnostic window)
+  * Memory leak in explorer's database tree fixed.
+
+
+0.6.5 / March 17, 2013
+
+  * Fixed "Dropped connection" issue (#28).
+  * Windows Installer now be used to destribute Robomongo.
+
+
+0.6.4 / March 10, 2013
+
+  * Support for JS functions. Create/Edit/Remove/View.
+  * Loading indicators (three dots for now) for Server, Collections, Functions and Users.
+  * Count indicators for Server (number of databases), Collections, Functions and Users.
+  * No need to type "functionName.toString()". You can output source of function 
+    by simply typing its name (like in the shell).
+  * Support for RegEx, Code and CodeWScope bson elements. But you still cannot edit 
+    documents which contains Code or CodeWScope bson elements.
+  * About dialog added.  
+
+
+0.6.3 / March 5, 2013
+
+  * Script execution can be stopped (this works only for JS code in SpiderMonkey VM) (#23)
+  * Toolbar buttons shown only if needed (#21, #20)
+  * MongoDB Connections window opens when application starts.
+  * Some changes in menu items locations (#25, #26)
+  * View Mode buttons moved to Options menu.
+  * Full Screen and Logs functionality hidden right now (postponed for versions after Robomongo 1.0)
+  
+
+0.6.2 / March 4, 2013
+
+  * "Users" folder now shows list of users.
+  * User can be added (Database -> Add User)
+  * User can be edited (User -> Edit User)
+  * User can be removed (User -> Remove Users)
+  * Users can be refreshed (Users (folder) -> Refresh Users)
+  * List of users can be viewed in the shell (Users (folder) -> View Users)
+
+
+0.6.1 / March 2, 2013
+
+  * Minor script editor and viewer tweaks
+  
+
+0.6.0 / Feb 28, 2013
+
+  * Database can be created from UI (Server -> Create Database)
+  * Database can be dropped from UI (Database -> Drop Database)
+  * Collection can be created from UI (Database -> Create Collection)
+  * Collection can be dropped from UI (Collection -> Drop Collection)
+  * Collection can be renamed from UI (Collection -> Rename Collection)
+  * All documents can be removed from UI (Collection -> Remove All Documents)
+  * Minor tweaks in naming of context menu items.
+
+
+0.5.7 / Feb 27, 2013
+
+  * Support for Custom View Modes. First custom view implemented for "db.printCollectionStats()" query. You 
+    still can view multiple output results, even if one of them presented in custom mode.
+  * "Show Log" context menu item for servers in Explorer.
+
+
+0.5.6 / Feb 26, 2013
+
+  * Support for one-line MongoDB commands ("show dbs", "show collection", "use somedb" etc.). This commands can
+    be repearted (this will result in multiple output results) or they can be used together with ordinary JavaScript.
+    The only rule: this command should be the only text on the line, starting from the very beginning of the line. 
+  * Refresh of databases and collections via "Refresh" context menu item.
+  * This version of Robomongo is the first version compiled in release mode. It works much more faster and uses lower 
+    amount of memory.
+    
+
+0.5.5 / Feb 22, 2013
+
+  * New document can be added in a more user friendly way. There are two ways to do it:
+    1) Right-click on collection in Explorer and select "Insert Document"
+    2) Right-click at any place of Tree View and select "Insert Document"
+  * Better formatting of JSON with correct indention.
+  * Support for ISODate(...) factory function in JSON parser and builder. Date in JSON mode now always 
+    displayed as ISODate(...), like in the shell. Document Editor accepts dates in two forms:
+    as "new Date(<millisecs>)" and "ISODate(<iso_8601_date_string>)" (this behaviour identical to MongoDB shell behaviour)
+  * Document editor implemented. Right-click on document in Tree View and select "Edit".
+  * Document viwer implemented. Right-click on document in Tree View and select "View".
+  * You can delete selected document in Tree View. (Right-click and select "Delete")
+  * Validation of JSON in Document Editor/Viewer with error report, highlighting of errors and 
+    cursor positioning just where error is.
+  * Fixed problem with "signed" dates (dates before Unix Epoch) (#5)
+  * Fixed problem with UTF-8 (#17)
+  * Fixed problem with loading indicator in Explorer (#18)
+
+
+0.5.2 / Jan 26, 2013
+  
+  In this version autocompletion in Robomongo becomes mostly usable.
+
+  * AutoCompletion box now placed just near text you typed (in correct line and column)
+  * AutoCompletion now works in the middle of the text (not only at the end of line, as before)
+  * Ctrl + Space will trigger autocompletion for symbols under cursor. 
+  * If you select function in autocompletion box, their open parenthesis will overwrite existing in the text, if such available.
+
+
+0.5.1 / Jan 24, 2013
+
+  * Several autocompletion tweaks.
+
+
+0.5.0 / Jan 24, 2013
+
+  * AutoCompletion. First version.
+  * Progress indicator for shells.
+  * Shell result panels now have equal size, if this is possible.
+  * Code cleanuped a bit.
+
+
+0.4.6 / Jan 11, 2013
+
+  * Tooltip for collections with count and size.
+
+
+0.4.5 / Jan 8, 2013
+
+  * WARNING: configuration file schema changed. Some properties will be 
+    empty in Connection Settings Dialog. Please fill them again.
+
+  * Connection test (diagnostic) implemented.
+  * Indicators in the shell: current server, database and collection (if available)
+    This indicators are "real" - they respect your actual query.
+  * Execution time measurement. Displayed for each individual output result.
+  * Paging for each output result with respect to filtering, ordering, fields, 
+    limit, skip etc. of actual text query (pilot version).
+  * Connection cloning support in Connections Dialog.  
+  * Databases and collections now displayed in sorted order.
+  * Batch size extended to 50 documents.
+  * New shape of Shells.  
+  * New shape of Connection Settings Dialog
+  * New shape of Connections Dialog.  
+
+  
+0.4.0 / Dec 26, 2013
+
+  * No more "type 'it' for more results" when we have more than 20 objects in collection.
+  * Two global modes added - text and tree modes. Switch between them using F3 and F4.
+  * Two local modes added - text and tree modes. Switch between them using small 
+    icons on Output panels for each resultset.
+  * Improved performance of json creation (from list of documents). 
+  * Tooltips for tool buttons added.
+  * Maximization of output panel implemented (via small icon at the top right of output panel) 
+    Click second time to restore back.
+  * Fix for not working Ctrl-O key shortcut (that opens Connections menu).
+  
+
+0.3.5 / Dec 25, 2013
+
+  * Context menu for server, database and collection.
+  * Tab management (Ctrl+Tab, Ctrl+Shift+Tab, Ctrl+T, Ctrl+F4)
+  * Context menu for tab
+  * Submenu for Connect button with connections.
+  * Hotkeys for first 9 connections (Alt+1, ..., Alt+9)
+  * Connections reordering via drag'n'drop in Connections dialog.
+  * Correct focus placement when opening new connection and switching tabs.
+  * Bonus: F12 - opens connections menu from any place.
+  * Memory leaks fix.
+    
+    
+  
+  

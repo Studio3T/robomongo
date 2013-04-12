@@ -23,6 +23,8 @@ namespace Robomongo
         WorkAreaTabWidget(WorkAreaWidget *workAreaWidget);
 
         void closeTab(int index);
+        void nextTab();
+        void previousTab();
 
         QueryWidget *currentQueryWidget();
         QueryWidget *queryWidget(int index);

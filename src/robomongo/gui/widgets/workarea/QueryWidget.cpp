@@ -57,6 +57,7 @@ QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,
     _outputLabel = new QLabel();
     _outputLabel->setContentsMargins(0, 5, 0, 0);
     _outputLabel->setVisible(false);
+    _viewer->installEventFilter(this);
 
     QFrame *line = new QFrame();
     line->setFrameShape(QFrame::HLine);
@@ -96,7 +97,13 @@ bool QueryWidget::eventFilter(QObject *o, QEvent *e)
 {
     if (e->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = (QKeyEvent *) e;
-        if (_keyboard->isNewTabShortcut(keyEvent)) {
+        if (_keyboard->isPreviousTabShortcut(keyEvent)) {
+            _tabWidget->previousTab();
+            return true;
+        } else if (_keyboard->isNextTabShortcut(keyEvent)) {
+            _tabWidget->nextTab();
+            return true;
+        } else if (_keyboard->isNewTabShortcut(keyEvent)) {
             openNewTab();
             return true;
         } else if (_keyboard->isSetFocusOnQueryLineShortcut(keyEvent)) {

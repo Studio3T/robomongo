@@ -2,6 +2,7 @@
 
   * Fixed crash when right-clicking on non-primitive elements in Tree View (#85)
   * Alt + Cmd + Arrow for switching tabs on Mac (#82)
+  * Several minor bugs fixed (including #82)
 
 
 0.7.0 / April 4, 2013

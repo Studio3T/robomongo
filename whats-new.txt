@@ -1,3 +1,9 @@
+0.7.1 / April 13, 2013
+
+  * Fixed crash when right-clicking on non-primitive elements in Tree View (#85)
+  * Alt + Cmd + Arrow for switching tabs on Mac (#82)
+
+
 0.7.0 / April 11, 2013
 
   * Support for UUIDs (read more: http://robomongo.org/articles/uuids.html)

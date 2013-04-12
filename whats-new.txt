@@ -4,7 +4,7 @@
   * Alt + Cmd + Arrow for switching tabs on Mac (#82)
 
 
-0.7.0 / April 11, 2013
+0.7.0 / April 4, 2013
 
   * Support for UUIDs (read more: http://robomongo.org/articles/uuids.html)
 

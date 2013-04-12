@@ -86,7 +86,10 @@ void RoboScintilla::keyPressEvent(QKeyEvent *keyEvent)
         (keyEvent->key()==Qt::Key_F4 || keyEvent->key()==Qt::Key_W ||
          keyEvent->key()==Qt::Key_T || keyEvent->key()==Qt::Key_Space))
         || keyEvent->key() == Qt::Key_Escape /*|| keyEvent->key() == Qt::Key_Return*/
-        || ((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key()==Qt::Key_F))
+        || ((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key()==Qt::Key_F)
+        || ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->modifiers() & Qt::AltModifier) && keyEvent->key()==Qt::Key_Left)
+        || ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->modifiers() & Qt::AltModifier) && keyEvent->key()==Qt::Key_Right)
+       )
     {
         keyEvent->ignore();
     } else

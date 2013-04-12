@@ -48,6 +48,20 @@ void WorkAreaTabWidget::closeTab(int index)
     }
 }
 
+void WorkAreaTabWidget::nextTab()
+{
+    int index = currentIndex();
+    if (index >= 0 && index < count() - 1)
+        setCurrentIndex(index + 1);
+}
+
+void WorkAreaTabWidget::previousTab()
+{
+    int index = currentIndex();
+    if (index > 0)
+        setCurrentIndex(index - 1);
+}
+
 QueryWidget *WorkAreaTabWidget::currentQueryWidget()
 {
     return static_cast<QueryWidget *>(currentWidget());

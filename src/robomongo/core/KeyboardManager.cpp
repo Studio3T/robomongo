@@ -41,3 +41,17 @@ bool KeyboardManager::isHideAutoCompleteShortcut(QKeyEvent *keyEvent)
 {
     return (keyEvent->key() == Qt::Key_Escape);
 }
+
+bool KeyboardManager::isNextTabShortcut(QKeyEvent *keyEvent)
+{
+    return (keyEvent->modifiers() & Qt::ControlModifier)
+        && (keyEvent->modifiers() & Qt::AltModifier)
+        && (keyEvent->key()== Qt::Key_Right);
+}
+
+bool KeyboardManager::isPreviousTabShortcut(QKeyEvent *keyEvent)
+{
+    return (keyEvent->modifiers() & Qt::ControlModifier)
+        && (keyEvent->modifiers() & Qt::AltModifier)
+        && (keyEvent->key()== Qt::Key_Left);
+}

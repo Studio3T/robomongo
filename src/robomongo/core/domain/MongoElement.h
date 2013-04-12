@@ -42,6 +42,9 @@ namespace Robomongo
          * @brief Check if this element is of UUID type
          */
         bool isUuidType() const {
+            if (_bsonElement.type() != mongo::BinData)
+                return false;
+
             mongo::BinDataType binType = _bsonElement.binDataType();
             return (binType == mongo::newUUID || binType == mongo::bdtUUID);
         }

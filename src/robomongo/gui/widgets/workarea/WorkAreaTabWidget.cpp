@@ -51,15 +51,32 @@ void WorkAreaTabWidget::closeTab(int index)
 void WorkAreaTabWidget::nextTab()
 {
     int index = currentIndex();
-    if (index >= 0 && index < count() - 1)
+    int tabsCount = count();
+    if (index == tabsCount - 1)
+    {
+        setCurrentIndex(0);
+        return;
+    }
+    if (index >= 0 && index < tabsCount - 1)
+    {
         setCurrentIndex(index + 1);
+        return;
+    }
 }
 
 void WorkAreaTabWidget::previousTab()
 {
     int index = currentIndex();
+    if (index == 0)
+    {
+        setCurrentIndex(count() - 1);
+        return;
+    }
     if (index > 0)
+    {
         setCurrentIndex(index - 1);
+        return;
+    }
 }
 
 QueryWidget *WorkAreaTabWidget::currentQueryWidget()

@@ -180,7 +180,7 @@
   * New shape of Connections Dialog.  
 
   
-0.4.0 / Dec 26, 2013
+0.4.0 / Dec 26, 2012
 
   * No more "type 'it' for more results" when we have more than 20 objects in collection.
   * Two global modes added - text and tree modes. Switch between them using F3 and F4.
@@ -193,7 +193,7 @@
   * Fix for not working Ctrl-O key shortcut (that opens Connections menu).
   
 
-0.3.5 / Dec 25, 2013
+0.3.5 / Dec 25, 2012
 
   * Context menu for server, database and collection.
   * Tab management (Ctrl+Tab, Ctrl+Shift+Tab, Ctrl+T, Ctrl+F4)

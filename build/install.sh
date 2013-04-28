@@ -56,7 +56,6 @@ elif [[ $OS = "Linux" ]]; then
   cd $OUTPUT
   tar cvzf robomongo-$VERSION.tar.gz robomongo-$VERSION/
   
-  echo "Linux... :) "
 else 
   echo "This script works only for Mac OS X and Linux."
 fi

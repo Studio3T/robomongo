@@ -52,21 +52,16 @@ win32 {
 }
 
 unix:!macx {
-    contains(QMAKE_HOST.arch, x86_64) {
-        # Copy qjson to to app/out folder
-        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so.0\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so.0.7.1\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    # Copy qjson to to app/out folder
+    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so.0\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so.0.7.1\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
 
-        # Copy qscintilla to app/out folder
-        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so.8\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so.8.0\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so.8.0.2\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-
-    } else {
-
-    }
+    # Copy qscintilla to app/out folder
+    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so.8\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so.8.0\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so.8.0.2\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
 
     QMAKE_POST_LINK += $$quote(cp \"$$ROOT/build/linux/run.sh\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
     QMAKE_POST_LINK += $$quote(chmod u+x \"$$OUT_PWD/out/run.sh\" $$escape_expand(\\n\\t))

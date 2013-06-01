@@ -46,8 +46,8 @@ elif [[ $OS = "Linux" ]]; then
   
   cp -T $OUTPUT/libqjson.so.0.7.1 $DEPLOY_DIR/lib/libqjson.so.0
   cp -T $OUTPUT/libqscintilla2.so.8.0.2 $DEPLOY_DIR/lib/libqscintilla2.so.8
-  cp -T $QT_BASE_LIB_DIR/libQtCore.so.4.8.4 $DEPLOY_DIR/lib/libQtCore.so.4
-  cp -T $QT_BASE_LIB_DIR/libQtGui.so.4.8.4 $DEPLOY_DIR/lib/libQtGui.so.4
+  cp -T $QT_BASE_LIB_DIR/libQtCore.so.4.8.3 $DEPLOY_DIR/lib/libQtCore.so.4
+  cp -T $QT_BASE_LIB_DIR/libQtGui.so.4.8.3 $DEPLOY_DIR/lib/libQtGui.so.4
   cp -T $QT_BASE_PLUGINS_DIR/imageformats/libqgif.so $DEPLOY_DIR/lib/imageformats/libqgif.so
   cp -T $OUTPUT/robomongo $DEPLOY_DIR/bin/robomongo
   cp -T $LINUX_TEMPLATE/robomongo.sh $DEPLOY_DIR/robomongo.sh

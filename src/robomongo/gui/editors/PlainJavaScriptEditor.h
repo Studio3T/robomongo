@@ -20,6 +20,7 @@ namespace Robomongo
     public:
         RoboScintilla(QWidget *parent = NULL);
         void setIgnoreEnterKey(bool ignore) { _ignoreEnterKey = ignore; }
+        void setIgnoreTabKey(bool ignore) { _ignoreTabKey = ignore; }
 
     protected:
         void paintEvent(QPaintEvent *e);
@@ -28,5 +29,6 @@ namespace Robomongo
 
     private:
         bool _ignoreEnterKey;
+        bool _ignoreTabKey;
     };
 }

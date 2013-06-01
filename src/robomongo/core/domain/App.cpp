@@ -99,14 +99,16 @@ QString App::buildCollectionQuery(const QString collectionName, const QString po
     QRegExp charExp("[^A-Za-z_0-9]"); // valid JS name
 
     QString pattern;
-    if (firstChar.isDigit() || collectionName.contains(charExp)) {
-        pattern = "db[\'%1\'].%2";
-    } else if (collectionName == "help"
-            || collectionName == "stats"
-            || collectionName == "version"
-            || collectionName == "prototype") { // TODO: this list should be expanded to include
-                                                // all functions of DB JavaScript object
+    if  (firstChar == QChar('_')
+         || collectionName == "help"
+         || collectionName == "stats"
+         || collectionName == "version"
+         || collectionName == "prototype") {
+        // TODO: this list should be expanded to include
+        // all functions of DB JavaScript object
         pattern = "db.getCollection('%1').%2";
+    } else if (firstChar.isDigit() || collectionName.contains(charExp)) {
+        pattern = "db[\'%1\'].%2";
     } else {
         pattern = "db.%1.%2";
     }

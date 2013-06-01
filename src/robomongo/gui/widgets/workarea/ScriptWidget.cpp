@@ -66,8 +66,10 @@ bool ScriptWidget::eventFilter(QObject *obj, QEvent *event)
         if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 
-            if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
+            if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter
+                    || keyEvent->key() == Qt::Key_Tab) {
                 _queryText->setIgnoreEnterKey(false);
+                _queryText->setIgnoreTabKey(false);
                 hideAutocompletion();
                 return false;
             }
@@ -175,6 +177,7 @@ void ScriptWidget::showAutocompletion(const QStringList &list, const QString &pr
     _completer->complete(rect);
     _completer->popup()->setCurrentIndex(_completer->completionModel()->index(0, 0));
     _queryText->setIgnoreEnterKey(true);
+    _queryText->setIgnoreTabKey(true);
 }
 
 void ScriptWidget::showAutocompletion()
@@ -193,6 +196,7 @@ void ScriptWidget::hideAutocompletion()
 {
     _completer->popup()->hide();
     _queryText->setIgnoreEnterKey(false);
+    _queryText->setIgnoreTabKey(false);
 }
 
 void ScriptWidget::ui_queryLinesCountChanged()

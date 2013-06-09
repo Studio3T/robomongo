@@ -99,7 +99,14 @@ void SettingsManager::loadFromMap(QVariantMap &map)
 
     _uuidEncoding = (UUIDEncoding) encoding;
 
-    // 3. Load connections
+    // 3. Load view mode
+    int viewMode = map.value("viewMode").toInt();
+    if (viewMode > 2 || encoding < 0)
+        viewMode = 0;
+
+    _viewMode = (ViewMode) viewMode;
+
+    // 4. Load connections
     _connections.clear();
 
     QVariantList list = map.value("connections").toList();
@@ -123,7 +130,10 @@ QVariantMap SettingsManager::convertToMap() const
     // 2. Save UUID encoding
     map.insert("uuidEncoding", _uuidEncoding);
 
-    // 3. Save connections
+    // 3. Save view mode
+    map.insert("viewMode", _viewMode);
+
+    // 4. Save connections
     QVariantList list;
 
     foreach(ConnectionSettings *record, _connections) {

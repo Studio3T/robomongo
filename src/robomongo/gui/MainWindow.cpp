@@ -25,7 +25,7 @@ MainWindow::MainWindow() : QMainWindow(),
     _bus(AppRegistry::instance().bus()),
     _workArea(NULL),
     _connectionsMenu(NULL),
-    _viewMode(Custom)
+    _viewMode(Text)
 {
     GuiRegistry::instance().setMainWindow(this);
 
@@ -92,20 +92,25 @@ MainWindow::MainWindow() : QMainWindow(),
     _orientationAction->setToolTip("Toggle orientation of results view <b>(F10)</b>");
     connect(_orientationAction, SIGNAL(triggered()), this, SLOT(toggleOrientation()));
 
+    // read view mode setting
+    _viewMode = _settingsManager->viewMode();
+
     // Text mode action
     QAction *textModeAction = new QAction("&Text Mode", this);
     textModeAction->setShortcut(Qt::Key_F4);
     textModeAction->setIcon(GuiRegistry::instance().textHighlightedIcon());
     textModeAction->setToolTip("Show current tab in text mode, and make this mode default for all subsequent queries <b>(F4)</b>");
     textModeAction->setCheckable(true);
+    textModeAction->setChecked(_viewMode == Text);
     connect(textModeAction, SIGNAL(triggered()), this, SLOT(enterTextMode()));
 
-    // Text mode action
+    // Tree mode action
     QAction *treeModeAction = new QAction("&Tree Mode", this);
     treeModeAction->setShortcut(Qt::Key_F3);
     treeModeAction->setIcon(GuiRegistry::instance().treeHighlightedIcon());
     treeModeAction->setToolTip("Show current tab in tree mode, and make this mode default for all subsequent queries <b>(F3)</b>");
     treeModeAction->setCheckable(true);
+    treeModeAction->setChecked(_viewMode == Tree);
     connect(treeModeAction, SIGNAL(triggered()), this, SLOT(enterTreeMode()));
 
     // Custom mode action
@@ -114,7 +119,7 @@ MainWindow::MainWindow() : QMainWindow(),
     customModeAction->setIcon(GuiRegistry::instance().customHighlightedIcon());
     customModeAction->setToolTip("Show current tab in custom mode if possible, and make this mode default for all subsequent queries <b>(F2)</b>");
     customModeAction->setCheckable(true);
-    customModeAction->setChecked(true);
+    customModeAction->setChecked(_viewMode == Custom);
     connect(customModeAction, SIGNAL(triggered()), this, SLOT(enterCustomMode()));
 
     QActionGroup *modeGroup = new QActionGroup(this);
@@ -333,6 +338,7 @@ void MainWindow::toggleOrientation()
 void MainWindow::enterTextMode()
 {
     _viewMode = Text;
+    saveViewMode();
     if (_workArea)
         _workArea->enterTextMode();
 }
@@ -340,6 +346,7 @@ void MainWindow::enterTextMode()
 void MainWindow::enterTreeMode()
 {
     _viewMode = Tree;
+    saveViewMode();
     if (_workArea)
         _workArea->enterTreeMode();
 }
@@ -347,8 +354,15 @@ void MainWindow::enterTreeMode()
 void MainWindow::enterCustomMode()
 {
     _viewMode = Custom;
+    saveViewMode();
     if (_workArea)
         _workArea->enterCustomMode();
+}
+
+void MainWindow::saveViewMode()
+{
+    _settingsManager->setViewMode(_viewMode);
+    _settingsManager->save();
 }
 
 void MainWindow::executeScript()

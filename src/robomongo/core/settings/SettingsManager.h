@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include "robomongo/core/Core.h"
+#include "robomongo/gui/ViewMode.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 
 namespace Robomongo
@@ -77,6 +78,9 @@ namespace Robomongo
         void setUuidEncoding(UUIDEncoding encoding) { _uuidEncoding = encoding; }
         UUIDEncoding uuidEncoding() { return _uuidEncoding; }
 
+        void setViewMode(ViewMode viewMode) { _viewMode = viewMode; }
+        ViewMode viewMode() { return _viewMode; }
+
     signals:
         void connectionAdded(ConnectionSettings *connection);
         void connectionUpdated(ConnectionSettings *connection);
@@ -114,6 +118,11 @@ namespace Robomongo
          * @brief UUID encoding
          */
         UUIDEncoding _uuidEncoding;
+
+        /**
+         * @brief view mode
+         */
+        ViewMode _viewMode;
 
         /**
          * @brief List of connections

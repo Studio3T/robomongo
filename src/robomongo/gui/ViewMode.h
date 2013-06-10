@@ -4,8 +4,8 @@ namespace Robomongo
 {
     enum ViewMode
     {
-        Text,
-        Tree,
-        Custom
+        Text = 0,
+        Tree = 1,
+        Custom = 2
     };
 }

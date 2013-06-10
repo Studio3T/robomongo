@@ -36,6 +36,7 @@ namespace Robomongo
         void enterTextMode();
         void enterTreeMode();
         void enterCustomMode();
+        void saveViewMode();
         void executeScript();
         void stopScript();
         void toggleFullScreen2();

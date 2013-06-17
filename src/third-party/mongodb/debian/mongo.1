@@ -1,0 +1,76 @@
+.TH MONGO "1" "June 2009" "10gen" "Mongo Database"
+.SH "NAME"
+mongo \- the Mongo command\-line tool
+.SH "SYNOPSIS"
+\fBmongo [\fIOPTIONS\fR] [\fIDB_ADDRESS\fR] [\fIFILE+\fR]\fR
+.SH "DESCRIPTION"
+.PP
+\fBmongo\fR
+is a JavaScript shell (with GNU
+readline
+capabilities).  It supports interactive and non\-interactive use.  When used interactively, JavaScript can be used to query the database or perform any other function normally available with SpiderMonkey.  Database output is displayed in JSON format.
+.PP
+If JavaScript files are specified on the command line, the shell will run non\-interactively, running each one in sequence and then exiting.
+.SH "EXAMPLES"
+.TP
+.B mongo
+start the shell, connecting to the server at localhost:27017 and using the test database
+.TP
+.B mongo foo
+start the shell using the foo database at localhost:27017
+.TP
+.B mongo 192.169.0.5/foo
+start the shell using the foo database at 192.169.0.5:27017
+.TP
+.B mongo 192.169.0.5:9999/foo
+start the shell using the foo database at 192.169.0.5:9999
+.TP
+.B mongo script1.js script2.js script3.js
+run three scripts and exit
+.SH "OPTIONS"
+.TP
+.B \-\-shell
+run the shell after executing files
+.TP
+.B \-\-help
+show usage information
+.TP
+.B \-\-host HOST
+server to connect to (default HOST=localhost)
+.TP
+.B \-\-port PORT
+port to connect to (default PORT=27017)
+.TP
+.B \-\-nodb 
+do not connect to mongod
+.TP
+.B \-\-eval SCRIPT
+evaluate JavaScript
+.TP
+.B \-\-shell
+run the shell after executing files
+.TP
+.B \-\-quiet
+be less chatty
+.TP
+.B \-\-version
+show version information
+.TP
+.B \-\-verbose
+increase verbosity
+.TP
+.B \-\-ipv6
+enable IPv6 support (disabled by default)
+.TP
+.B \-u|\-\-username USERNAME
+specify user to log in as
+.TP
+.B \-p|\-\-password PASSWORD
+specify password of user
+.SH "COPYRIGHT"
+.PP
+Copyright 2007\-2011 10gen
+.SH "SEE ALSO"
+For more information, please refer to the MongoDB wiki, available at http://www.mongodb.org.
+.SH "AUTHOR"
+Kristina Chodorow

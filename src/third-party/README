@@ -1,0 +1,14 @@
+MongoDB
+-------
+   
+Download and checkout to specified revision:   
+   
+    $ git clone git://github.com/mongodb/mongo.git
+    $ cd mongo
+    $ git checkout r2.4.0-rc0
+    
+Full MongoDB folder is copied (just without `.git` folder, for sure).
+
+
+
+    

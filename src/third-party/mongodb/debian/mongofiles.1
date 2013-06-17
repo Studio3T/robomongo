@@ -1,0 +1,94 @@
+.TH MONGOFILES "1" "June 2009" "10gen" "Mongo Database"
+.SH "NAME"
+mongofiles \- a simple GridFS interface
+.SH "SYNOPSIS"
+\fBmongofiles [\fIOPTIONS\fR] \fICOMMAND\fR \fIFILENAME\fR\fR
+.SH "DESCRIPTION"
+.PP
+\fBmongofiles\fR
+is used to list, get, and insert files in the database.
+.TP
+Commands:
+.TP
+.B list
+list all files.  FILENAME is an optional prefix which listed filenames
+must begin with.
+.TP
+.B search
+search all files. FILENAME is a substring which listed
+filenames must contain.
+.TP
+.B put
+add a file with filename FILENAME
+.TP
+.B get
+get a file with filename FILENAME
+.TP
+.B delete
+delete all files with filename FILENAME
+
+.SH "EXAMPLES"
+.TP
+.B mongofiles list
+lists files in test.fs.files
+.TP
+.B mongofiles put README.txt
+inserts the file README.txt into the collection test.fs.files
+.TP
+.B mongofiles get photo.jpg
+retrieves photo.jpg from test.fs.files and saves it locally
+.SH "OPTIONS"
+.TP
+.B \-\-help
+show usage information
+.TP
+.B \-\-version
+show version information
+.TP
+.B \-v, \-\-verbose
+be more verbose (include multiple times for more verbosity
+e.g. \-vvvvv)
+.TP
+.B \-h, \-\-host HOST
+server to connect to (default HOST=localhost)
+.TP
+.B\-\-port arg
+server port. Can also use \-\-host hostname:port
+.TP
+.B \-\-ipv6
+enable IPv6 support (disabled by default)
+.TP
+.B \-u|\-\-username USERNAME
+specify user to log in as
+.TP
+.B \-p|\-\-password PASSWORD
+specify password of user
+.TP
+.B \-\-dbpath PATH
+directly access mongod data files in this path, instead of connecting to a mongod instance
+.TP
+.B \-\-directoryperdb
+if dbpath specified, each db is in a separate directory
+.TP
+.B \-d, \-\-db DATABASE
+database to use
+.TP
+.B \-c, \-\-c COLLECTION
+collection to use (some commands, default COLLECTION=fs.files)
+.TP
+.B \-l, \-\-local FILENAME
+local filename for put|get (default is to use the same name as the
+FILENAME)
+.TP
+.B \-t, \-\-type arg
+MIME type for put (default is to omit)
+.TP
+.B \-r, \-\-replace
+Remove other files with the same name after PUT
+.SH "COPYRIGHT"
+.PP
+Copyright 2007\-2011 10gen
+.SH "SEE ALSO"
+For more information, please refer to the MongoDB wiki, available at http://www.mongodb.org.
+.SH "AUTHOR"
+Kristina Chodorow

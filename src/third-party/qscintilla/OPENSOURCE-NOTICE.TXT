@@ -1,0 +1,46 @@
+THIS IS THE OPEN SOURCE VERSION OF PyQt, RELEASED UNDER THE GPL
+LICENSE. PLEASE READ THIS FILE TO FIND OUT WHAT THAT MEANS TO YOU.
+
+INTRODUCTION 
+============
+
+PyQt is licensed under two licenses: the GNU General Public License
+(GPL) and a commercial license. You are currently using the Open
+Source (GPL) version of PyQt.  This file explains the principle of dual
+licensing, and which obligations using the GPL version of PyQt implies.
+
+
+ABOUT DUAL LICENSING
+====================
+
+Dual Licensing is based on the principle of Quid Pro Quo - something
+for something. If you, your company or your organization derive
+commercial benefit from Riverbank's products and do not wish to
+release your complete source code, you are required to purchase the
+appropriate number of commercial licenses.
+
+Alternatively, if you are willing to follow the terms of the GPL
+(General Public License), Riverbank software is available to you under
+Open Source licenses which allows you to develop, modify and
+distribute your software freely. If you wish to use an open source
+version of Riverbank's products, you must contribute all your source
+code to the open source community, according to the terms of the
+applicable open source license.
+
+By offering both open source and commercial licenses, Riverbank
+ensures the availability of resources for ongoing development and
+improvement of PyQt. By purchasing commercial licenses, you are no
+longer obligated to publish your source code.
+
+ 
+COMMERCIAL AND OPEN SOURCE LICENSES 
+===================================
+
+Riverbanks's Commercial licenses allow customers to develop, use and
+distribute their applications under standard commercial terms.
+
+Riverbanks's Open Source versions are available under the terms of the
+GPL - General Public License. The main obligation for software
+development under the GPL is that anyone using your PyQt-based software
+must have access to the complete source code, and must be able to
+modify and redistribute that software to anyone free of charge.

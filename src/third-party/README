@@ -11,4 +11,19 @@ Full MongoDB folder is copied (just without `.git` folder, for sure).
 
 
 
+QScintilla
+----------
+
+Download it here:
+http://www.riverbankcomputing.com/software/qscintilla/download
+
+In /Qt4Qt5/qscintilla.pro file remove explicit "release" mode. From this line:
+
+    CONFIG += qt warn_off release dll thread
+
+Make this:    
     
+    CONFIG += qt warn_off dll thread
+    CONFIG  -= debug_and_release
+
+Add .gitignore file with /build folder

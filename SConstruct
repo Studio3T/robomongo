@@ -39,7 +39,10 @@ def has_option( name ):
     x = _has_option(name)
 
     return x
-  
+
+def remove_dir(path):
+    if os.path.exists(path):
+        shutil.rmtree(path)
 
 ###
 ### Options
@@ -51,6 +54,7 @@ add_option( "rebuild" ,  "rebuild target"          , 0 , True, None, False)
 add_option( "check" , "do not build anything, just print check summary" , 0 , True, None, False)
 
 check = has_option("check")
+
 
 ###
 ### "Targets"
@@ -94,11 +98,29 @@ else:
 ###
 num_jobs = GetOption('num_jobs')
 clean = GetOption('clean')
+rebuild = has_option("rebuild")
+build = True
+
+if clean:
+    build = False
+
+if rebuild:
+    clean = True
+    build = True
 
 ##
 ## OS
 ##
 sys_platform = sys.platform
+
+def is_linux():
+    return sys.platform.startswith('linux')
+
+def is_windows():
+    return sys_platform == "windows"
+
+def is_darwin():
+    return sys_platform == "darwin"
 
 ##
 ## CPU architecture
@@ -140,8 +162,14 @@ root_dir = Dir('.').abspath
 ##
 ## MongoDB third party dir
 ##
-mongo_dir = root_dir + '/src/third-party/mongodb'
-mongo_build_dir = mongo_dir + '/build'
+mongo_dir = os.path.join(root_dir, 'src', 'third-party', 'mongodb')
+mongo_build_dir = os.path.join(mongo_dir, 'build')
+qscintilla_dir = os.path.join(root_dir, 'src', 'third-party', 'qscintilla')
+qscintilla_build_dir = os.path.join(qscintilla_dir, 'target')
+
+
+def build_out_path(root_path):
+    return os.path.join(root_path, "%(os)s-%(arch)s-%(mode)s" % { 'os' : sys_platform, 'arch' : cpu_arch_bits, 'mode' : build_mode })
 
 ##
 ## Summary
@@ -152,29 +180,100 @@ print "Build mode: %s" % build_mode
 print "Targets: %s" % target_str
 print "Perform cleanup: %s" % str(clean)
 print "Check: %s" % str(check)
-print "--------------------------------------------"
+#print "--------------------------------------------"
 
 #print "Hello " + mongo_dir + " " + str(x64)
 
-if not check:
-    ## 
-    ## Build MongoDB
-    ##
+## 
+## Build MongoDB
+##
+if mongodb_target:
     os.chdir(mongo_dir)
     mongodb_build_mode = "d" if build_mode == "debug" else "release"
     mongodb_build_platform = sys_platform
     mongodb_scons_command = "scons mongod mongoclient --usesm --%(mode)s --%(arch)s -j%(jobs)s" % \
-	{ 'mode' : mongodb_build_mode, 'arch' : cpu_arch_bits, 'jobs' : num_jobs }
-     
-    mongodb_out_dir = mongo_build_dir + "/%(platform)s/%(arch)s/%(mode)s/usesm" % \
-        { 'platform' : mongodb_build_platform, 'mode' : mongodb_build_mode, 'arch' : cpu_arch_bits }
+        { 'mode' : mongodb_build_mode, 'arch' : cpu_arch_bits, 'jobs' : num_jobs }
+    
+    
+    mongodb_out_dir = os.path.join(mongo_build_dir, mongodb_build_platform, str(cpu_arch_bits), mongodb_build_mode, "usesm")
 
-    print mongodb_scons_command
-    print mongodb_out_dir
-
-    if clean:
-	shutil.rmtree(mongo_build_dir)
-    else:
-	return_code = call(mongodb_scons_command, shell=True)
-	print return_code
+    print "> MongoDB build command: " + mongodb_scons_command
+    print "> MongoDB out dir: " + mongodb_out_dir
+    
+    if not check: # perform action
+        
+        if clean:
+            remove_dir(mongodb_out_dir)
+        
+        if build:
+            # build only if out folder not exists yet
+            if not os.path.exists(mongodb_out_dir):
+                return_code = call(mongodb_scons_command, shell=True)
+                print return_code
+            else:
+                print "> MongoDB already exists. Skipping this step (use --rebuild to force)"
  
+
+ 
+##
+## Build QScintilla
+##
+if qscintilla_target:
+    qscintilla_out_dir = build_out_path(qscintilla_build_dir)
+    print "> QScintilla out dir: " + qscintilla_out_dir
+    
+    qscintilla_pro_path = os.path.join(qscintilla_dir, 'Qt4Qt5', 'qscintilla.pro')
+    print "> QScintilla project file path: " + qscintilla_pro_path
+    
+    qscintilla_qmake_args = ''
+    
+    if is_linux() and is_debug:
+        qscintilla_qmake_args = "-r -spec linux-g++ CONFIG+=debug CONFIG+=declarative_debug"
+    
+    if is_linux() and is_release:
+        qscintilla_qmake_args = "-r -spec linux-g++ CONFIG+=release"
+        
+    if is_darwin() and is_debug:
+        qscintilla_qmake_args = "-r -spec macx-g++ CONFIG+=debug CONFIG+=declarative_debug"
+    
+    if is_darwin() and is_release:
+        qscintilla_qmake_args = "-r -spec macx-g++ CONFIG+=release"
+        
+    if is_windows() and is_debug:
+        qscintilla_qmake_args = "-r -spec win32-msvc2010 \"CONFIG+=debug\" \"CONFIG+=declarative_debug\""
+        
+    if is_windows() and is_release:
+        qscintilla_qmake_args = "-r -spec win32-msvc2010 \"CONFIG+=release\""
+        
+    print "> QScintilla qmake args: " + qscintilla_qmake_args
+    
+    qscintilla_qmake_command = "qmake %s %s" % (qscintilla_pro_path, qscintilla_qmake_args)
+    
+    if not check:
+        
+        if clean:
+            remove_dir(qscintilla_out_dir)
+        
+        if build:
+            # build only if out folder does not exist yet
+            if not os.path.exists(qscintilla_out_dir):  
+                os.makedirs(qscintilla_out_dir)
+                os.chdir(qscintilla_out_dir)            
+                return_code = call(qscintilla_qmake_command, shell=True)
+                
+                if return_code == 0:
+                    print "(*) QScintilla make file generated successfully"
+                else:
+                    print "(!) Error when running qmake."
+                
+                return_code = call("make -w", shell=True)
+
+                if return_code == 0:
+                    print "(*) QScintilla compiled successfully"
+                else:
+                    print "(!) Error when compiling QScintilla"
+                
+            else:
+                print "> QScintilla already exists. Skipping this step (use --rebuild to force)"
+            
+print "--------------------------------------------"

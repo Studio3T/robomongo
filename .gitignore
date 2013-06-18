@@ -6,6 +6,8 @@
 .sconf_temp
 .scons
 
+*.kate-swp
+
 target/
 *~
 *.autosave

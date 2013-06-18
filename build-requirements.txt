@@ -1,0 +1,9 @@
+Linux
+-----
+
+Scons, CMake
+
+Packages:
+
+    build-essential
+    libgl-dev

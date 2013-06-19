@@ -1,9 +1,28 @@
 Linux
 -----
 
-Scons, CMake
+Scons
+CMake 2.8.8 or above
+
 
 Packages:
 
     build-essential
     libgl-dev
+    
+gcc-4.7
+-------
+
+with this version: Ubuntu/Linaro 4.7.3-1ubuntu1, build of QJson failed
+
+    
+gcc-4.8
+-------
+
+GCC 4.8 or above is required.
+
+On Ubuntu:
+
+    sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+    sudo apt-get update
+    sudo apt-get install gcc-4.8

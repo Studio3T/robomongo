@@ -26,4 +26,21 @@ Make this:
     CONFIG += qt warn_off dll thread
     CONFIG  -= debug_and_release
 
-Add .gitignore file with /build folder
+Add .gitignore file with /target folder
+
+
+QJson 
+-----
+
+Add .gitignore file with /target folder
+
+Copy src folder from qjson project to the root of /src/third-party/qjson
+
+    cd src/third-party/qjson
+    qmake -project -o qjson.pro -t lib
+    
+Add version and config properties to generated qjson.pro file:
+
+VERSION = "0.8.1"
+CONFIG += qt warn_off dll thread
+CONFIG  -= debug_and_release

@@ -1,5 +1,7 @@
 #include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
 
+#include <QHBoxLayout>
+
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/domain/MongoCollection.h"

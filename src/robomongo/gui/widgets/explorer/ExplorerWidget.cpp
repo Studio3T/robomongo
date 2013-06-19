@@ -1,6 +1,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 
 #include <QtGui>
+#include <QHBoxLayout>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"

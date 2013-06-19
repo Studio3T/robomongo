@@ -150,6 +150,15 @@ public:
         SloppyBraceMatch
     };
 
+    //! This enum defines the different call tip positions.
+    enum CallTipsPosition {
+        //! Call tips are placed below the text.
+        CallTipsBelowText,
+
+        //! Call tips are placed above the text.
+        CallTipsAboveText,
+    };
+
     //! This enum defines the different call tip styles.
     enum CallTipsStyle {
         //! Call tips are disabled.
@@ -192,10 +201,10 @@ public:
         //! A carriage return/line feed as used on Windows systems.
         EolWindows = SC_EOL_CRLF,
 
-        //! A line feed as used on Unix systems.
+        //! A line feed as used on Unix systems, including OS/X.
         EolUnix = SC_EOL_LF,
 
-        //! A carriage return as used on Mac systems.
+        //! A carriage return as used on Mac systems prior to OS/X.
         EolMac = SC_EOL_CR
     };
 
@@ -265,7 +274,11 @@ public:
 
         //! A dotted rectangle around the text with the interior usually more
         //! transparent than the border.
-        DotBoxIndicator = INDIC_DOTBOX
+        DotBoxIndicator = INDIC_DOTBOX,
+
+        //! A version of SquiggleIndicator that uses a pixmap.  This is quicker
+        //! but may be of lower quality.
+        SquigglePixmapIndicator = INDIC_SQUIGGLEPIXMAP,
     };
 
     //! This enum defines the different margin options.
@@ -431,7 +444,10 @@ public:
         WrapFlagByText,
 
         //! A wrap flag is displayed by the border.
-        WrapFlagByBorder
+        WrapFlagByBorder,
+
+        //! A wrap flag is displayed in the line number margin.
+        WrapFlagInMargin
     };
 
     //! This enum defines the different line wrap indentation modes.
@@ -557,6 +573,11 @@ public:
     //! \sa setBraceMatching()
     BraceMatch braceMatching() const {return braceMode;}
 
+    //! Returns the current call tip position.
+    //!
+    //! \sa setCallTipsPosition()
+    CallTipsPosition callTipsPosition() const {return call_tips_position;}
+
     //! Returns the current call tip style.
     //!
     //! \sa setCallTipsStyle()
@@ -677,7 +698,7 @@ public:
     void fillIndicatorRange(int lineFrom, int indexFrom, int lineTo,
             int indexTo, int indicatorNumber);
 
-    //! Find the next occurrence of the string \a expr and return true if
+    //! Find the first occurrence of the string \a expr and return true if
     //! \a expr was found, otherwise returns false.  If \a expr is found it
     //! becomes the current selection.
     //!
@@ -706,14 +727,45 @@ public:
     //! POSIX compatible manner by interpreting bare ( and ) as tagged sections
     //! rather than \( and \).
     //!
-    //! \sa findNext(), replace()
+    //! \sa findFirstInSelection(), findNext(), replace()
     virtual bool findFirst(const QString &expr, bool re, bool cs, bool wo,
             bool wrap, bool forward = true, int line = -1, int index = -1,
             bool show = true, bool posix = false);
 
-    //! Find the next occurence of the string found using findFirst().
+    //! Find the first occurrence of the string \a expr in the current
+    //! selection and return true if \a expr was found, otherwise returns
+    //! false.  If \a expr is found it becomes the current selection.  The
+    //! original selection is restored when a subsequent call to findNext()
+    //! returns false.
     //!
-    //! \sa findFirst(), replace()
+    //! If \a re is true then \a expr is interpreted as a regular expression
+    //! rather than a simple string.
+    //!
+    //! If \a cs is true then the search is case sensitive.
+    //!
+    //! If \a wo is true then the search looks for whole word matches only,
+    //! otherwise it searches for any matching text.
+    //!
+    //! If \a forward is true (the default) then the search is forward from the
+    //! start to the end of the selection, otherwise it is backwards from the
+    //! end to the start of the selection.
+    //!
+    //! If \a show is true (the default) then any text found is made visible
+    //! (ie. it is unfolded).
+    //!
+    //! If \a posix is true then a regular expression is treated in a more
+    //! POSIX compatible manner by interpreting bare ( and ) as tagged sections
+    //! rather than \( and \).
+    //!
+    //! \sa findFirstInSelection(), findNext(), replace()
+    virtual bool findFirstInSelection(const QString &expr, bool re, bool cs,
+            bool wo, bool forward = true, bool show = true,
+            bool posix = false);
+
+    //! Find the next occurence of the string found using findFirst() or
+    //! findFirstInSelection().
+    //!
+    //! \sa findFirst(), findFirstInSelection(), replace()
     virtual bool findNext();
 
     //! Returns the number of the first visible line.
@@ -978,6 +1030,11 @@ public:
     //! \sa markerFindNext()
     int markerFindPrevious(int linenr, unsigned mask) const;
 
+    //! Returns true if text entered by the user will overwrite existing text.
+    //!
+    //! \sa setOverwriteMode()
+    bool overwriteMode() const;
+
     //! Returns the widget's paper (ie. background) colour.
     //!
     //! \sa setPaper()
@@ -1015,10 +1072,10 @@ public:
     //! \sa clearRegisteredImages(), QsciLexer::apiLoad()
     void registerImage(int id, const QImage &im);
 
-    //! Replace the current selection, set by a previous call to findFirst() or
-    //! findNext(), with \a replaceStr.
+    //! Replace the current selection, set by a previous call to findFirst(),
+    //! findFirstInSelection() or findNext(), with \a replaceStr.
     //!
-    //! \sa findFirst(), findNext()
+    //! \sa findFirst(), findFirstInSelection(), findNext()
     virtual void replace(const QString &replaceStr);
 
     //! Reset the fold margin colours to their defaults.
@@ -1073,6 +1130,11 @@ public:
     //! Set the highlighted colour of call tip text to \a col.  The default is
     //! dark blue.
     void setCallTipsHighlightColor(const QColor &col);
+
+    //! Set the current call tip position.  The default is CallTipsBelowText.
+    //!
+    //! \sa callTipsPosition()
+    void setCallTipsPosition(CallTipsPosition position);
 
     //! Set the current call tip style.  The default is CallTipsNoContext.
     //!
@@ -1266,6 +1328,12 @@ public:
     //! \sa extraDescent(), setExtraAscent()
     void setExtraDescent(int extra);
 
+    //! Text entered by the user will overwrite existing text if \a overwrite
+    //! is true.
+    //!
+    //! \sa overwriteMode()
+    void setOverwriteMode(bool overwrite);
+
     //! Sets the background colour of visible whitespace to \a col.  If \a col
     //! is an invalid color (the default) then the color specified by the
     //! current lexer is used.
@@ -1333,6 +1401,10 @@ public:
     //!
     //! \sa setWhitespaceVisibility()
     WhitespaceVisibility whitespaceVisibility() const;
+
+    //! Returns the word at the \a line line number and \a index character
+    //! index.
+    QString wordAtLineIndex(int line, int index) const;
 
     //! Returns the word at the \a point pixel coordinates.
     QString wordAtPoint(const QPoint &point) const;
@@ -1955,20 +2027,29 @@ private:
     void insertAtPos(const QString &text, int pos);
     static int mapModifiers(int modifiers);
 
+    QString wordAtPosition(int position) const;
+
     ScintillaString styleText(const QList<QsciStyledText> &styled_text,
             char **styles, int style_offset = 0);
 
     struct FindState
     {
-        FindState() : inProgress(0) {}
+        enum Status
+        {
+            Finding,
+            FindingInSelection,
+            Idle
+        };
 
-        bool inProgress;
+        FindState() : status(Idle) {}
+
+        Status status;
         QString expr;
         bool wrap;
         bool forward;
         int flags;
-        long startpos;
-        long endpos;
+        long startpos, startpos_orig;
+        long endpos, endpos_orig;
         bool show;
     };
 
@@ -1987,6 +2068,7 @@ private:
     int acThresh;
     QStringList wseps;
     const char *wchars;
+    CallTipsPosition call_tips_position;
     CallTipsStyle call_tips_style;
     int maxCallTips;
     QStringList ct_entries;

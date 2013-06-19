@@ -1,6 +1,6 @@
 #include "robomongo/gui/dialogs/FunctionTextEditor.h"
 
-#include <QtGui>
+#include <QApplication>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>

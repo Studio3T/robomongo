@@ -95,18 +95,22 @@ public:
 
         //! A keyword defined in keyword set number 5.  The class must be
         //! sub-classed and re-implement keywords() to make use of this style.
+        //! Note that keywords must be defined using lower case.
         KeywordSet5 = 19,
 
         //! A keyword defined in keyword set number 6.  The class must be
         //! sub-classed and re-implement keywords() to make use of this style.
+        //! Note that keywords must be defined using lower case.
         KeywordSet6 = 20,
 
         //! A keyword defined in keyword set number 7.  The class must be
         //! sub-classed and re-implement keywords() to make use of this style.
+        //! Note that keywords must be defined using lower case.
         KeywordSet7 = 21,
 
         //! A keyword defined in keyword set number 8.  The class must be
         //! sub-classed and re-implement keywords() to make use of this style.
+        //! Note that keywords must be defined using lower case.
         KeywordSet8 = 22,
 
         //! A quoted identifier.

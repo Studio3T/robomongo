@@ -109,7 +109,7 @@ namespace Robomongo
     QString MongoDocument::buildJsonString(const QList<MongoDocumentPtr> &documents)
 	{
         QTextCodec *codec = QTextCodec::codecForName("UTF-8");
-        QTextCodec::setCodecForCStrings(codec);
+        //qt4 QTextCodec::setCodecForCStrings(codec);
 
         mongo::StringBuilder sb;
 
@@ -136,7 +136,7 @@ namespace Robomongo
     QString MongoDocument::buildJsonString(const MongoDocumentPtr &doc)
     {
         QTextCodec *codec = QTextCodec::codecForName("UTF-8");
-        QTextCodec::setCodecForCStrings(codec);
+        //qt4 QTextCodec::setCodecForCStrings(codec);
         string jsonString = doc->bsonObj().jsonString(TenGen, 1);
         QString qJsonString = QString::fromStdString(jsonString);
         return qJsonString;

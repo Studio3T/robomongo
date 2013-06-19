@@ -1,5 +1,8 @@
 #include "robomongo/gui/widgets/LogWidget.h"
 
+#include <QHBoxLayout>
+#include <QScrollBar>
+
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/MongoServer.h"

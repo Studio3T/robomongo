@@ -188,6 +188,16 @@ public:
     //! auto-completion words.
     QStringList autoCompletionWordSeparators() const;
 
+    //! \internal Returns a space separated list of words or characters in
+    //! a particular style that define the end of a block for
+    //! auto-indentation.  The styles is returned via \a style.
+    const char *blockEnd(int *style = 0) const;
+
+    //! \internal Returns a space separated list of words or characters in
+    //! a particular style that define the start of a block for
+    //! auto-indentation.  The styles is returned via \a style.
+    const char *blockStart(int *style = 0) const;
+
     //! \internal Returns the style used for braces for brace matching.
     int braceStyle() const;
 

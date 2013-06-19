@@ -1,7 +1,12 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
 
-#include <QtGui>
+#include <QApplication>
 #include <QClipboard>
+#include <QHeaderView>
+#include <QAction>
+#include <QMessageBox>
+#include <QMenu>
+#include <QContextMenuEvent>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/MongoDocument.h"
@@ -34,9 +39,9 @@ BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) : QTreeWidget
 	QStringList colums;
 	colums << "Key" << "Value" << "Type";
 	setHeaderLabels(colums);
-	header()->setResizeMode(0, QHeaderView::Stretch);
-	header()->setResizeMode(1, QHeaderView::Stretch);
-	header()->setResizeMode(2, QHeaderView::Stretch);
+    header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    header()->setSectionResizeMode(1, QHeaderView::Stretch);
+    header()->setSectionResizeMode(2, QHeaderView::Stretch);
 	setIndentation(15);	
 
     //setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::DoubleClicked);
@@ -67,7 +72,7 @@ BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) : QTreeWidget
         "QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }"
     );
 
-    header()->setResizeMode(QHeaderView::Interactive);
+    header()->setSectionResizeMode(QHeaderView::Interactive);
     connect(this, SIGNAL(itemExpanded(QTreeWidgetItem *)), SLOT(ui_itemExpanded(QTreeWidgetItem *)));
 }
 

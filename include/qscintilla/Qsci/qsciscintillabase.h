@@ -224,9 +224,6 @@ public:
         //!
         SCI_SETCODEPAGE = 2037,
 
-        //!
-        SCI_SETUSEPALETTE = 2039,
-
         //! This message sets the symbol used to draw one of 32 markers.  Some
         //! markers have pre-defined uses, see the SC_MARKNUM_* values.
         //! \a wParam is the number of the marker.
@@ -415,6 +412,18 @@ public:
 
         //!
         SCI_STYLESETCASE = 2060,
+
+        //!
+        SCI_STYLESETSIZEFRACTIONAL = 2061,
+
+        //!
+        SCI_STYLEGETSIZEFRACTIONAL = 2062,
+
+        //!
+        SCI_STYLESETWEIGHT = 2063,
+
+        //!
+        SCI_STYLEGETWEIGHT = 2064,
 
         //!
         SCI_STYLESETCHARACTERSET = 2066,
@@ -625,9 +634,6 @@ public:
 
         //!
         SCI_GETCARETFORE = 2138,
-
-        //!
-        SCI_GETUSEPALETTE = 2139,
 
         //! This message returns a non-zero value if the document is read-only.
         //! 
@@ -863,6 +869,9 @@ public:
         SCI_CALLTIPUSESTYLE = 2212,
 
         //!
+        SCI_CALLTIPSETPOSITION = 2213,
+
+        //!
         SCI_VISIBLEFROMDOCLINE = 2220,
 
         //!
@@ -909,6 +918,9 @@ public:
 
         //!
         SCI_WRAPCOUNT = 2235,
+
+        //!
+        SCI_GETALLLINESVISIBLE = 2236,
 
         //!
         SCI_SETTABINDENTS = 2260,
@@ -1991,6 +2003,66 @@ public:
         SCI_SCROLLTOEND = 2629,
 
         //!
+        SCI_SETTECHNOLOGY = 2630,
+
+        //!
+        SCI_GETTECHNOLOGY = 2631,
+
+        //!
+        SCI_CREATELOADER = 2632,
+
+        //!
+        SCI_COUNTCHARACTERS = 2633,
+
+        //!
+        SCI_AUTOCSETCASEINSENSITIVEBEHAVIOUR = 2634,
+
+        //!
+        SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR = 2635,
+
+        //!
+        SCI_FINDINDICATORSHOW = 2640,
+
+        //!
+        SCI_FINDINDICATORFLASH = 2641,
+
+        //!
+        SCI_FINDINDICATORHIDE = 2642,
+
+        //!
+        SCI_GETRANGEPOINTER = 2643,
+
+        //!
+        SCI_GETGAPPOSITION = 2644,
+
+        //!
+        SCI_DELETERANGE = 2645,
+
+        //!
+        SCI_GETWORDCHARS = 2646,
+
+        //!
+        SCI_GETWHITESPACECHARS = 2647,
+
+        //!
+        SCI_SETPUNCTUATIONCHARS = 2648,
+
+        //!
+        SCI_GETPUNCTUATIONCHARS = 2649,
+
+        //!
+        SCI_GETSELECTIONEMPTY = 2650,
+
+        //!
+        SCI_RGBAIMAGESETSCALE = 2651,
+
+        //!
+        SCI_VCHOMEDISPLAY = 2652,
+
+        //!
+        SCI_VCHOMEDISPLAYEXTEND = 2653,
+
+        //!
         SCI_STARTRECORD = 3001,
 
         //!
@@ -2108,7 +2180,8 @@ public:
     {
         SC_WRAPVISUALFLAG_NONE = 0x0000,
         SC_WRAPVISUALFLAG_END = 0x0001,
-        SC_WRAPVISUALFLAG_START = 0x0002
+        SC_WRAPVISUALFLAG_START = 0x0002,
+        SC_WRAPVISUALFLAG_MARGIN = 0x0004
     };
 
     enum
@@ -2388,6 +2461,7 @@ public:
         INDIC_DOTS = 10,
         INDIC_SQUIGGLELOW = 11,
         INDIC_DOTBOX = 12,
+        INDIC_SQUIGGLEPIXMAP = 13,
 
         INDIC_CONTAINER = 8,
         INDIC_MAX = 31,
@@ -2888,7 +2962,49 @@ public:
         SCLEX_A68K = 100,
 
         //! Select the Modula 3 lexer.
-        SCLEX_MODULA = 101
+        SCLEX_MODULA = 101,
+
+        //! Select the CoffeeScript lexer.
+        SCLEX_COFFEESCRIPT = 102,
+
+        //! Select the Take Command lexer.
+        SCLEX_TCMD = 103,
+
+        //! Select the AviSynth lexer.
+        SCLEX_AVS = 104,
+
+        //! Select the ECL lexer.
+        SCLEX_ECL = 105,
+
+        //! Select the OScript lexer.
+        SCLEX_OSCRIPT = 106,
+
+        //! Select the Visual Prolog lexer.
+        SCLEX_VISUALPROLOG = 107,
+    };
+
+    enum
+    {
+        SC_WEIGHT_NORMAL = 400,
+        SC_WEIGHT_SEMIBOLD = 600,
+        SC_WEIGHT_BOLD = 700,
+    };
+
+    enum
+    {
+        SC_TECHNOLOGY_DEFAULT = 0,
+        SC_TECHNOLOGY_DIRECTWRITE = 1,
+    };
+
+    enum
+    {
+        SC_CASEINSENSITIVEBEHAVIOUR_RESPECTCASE = 0,
+        SC_CASEINSENSITIVEBEHAVIOUR_IGNORECASE = 1,
+    };
+
+    enum
+    {
+        SC_FONT_SIZE_MULTIPLIER = 100,
     };
 
     //! Construct an empty QsciScintillaBase with parent \a parent.
@@ -3182,6 +3298,9 @@ protected:
 
     //! \internal Re-implemented to handle scrolling.
     virtual void scrollContentsBy(int dx, int dy);
+
+    //! \internal This helps to work around some Scintilla bugs.
+    void setScrollBars();
 
 private slots:
     void handleTimer();

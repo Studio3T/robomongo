@@ -55,13 +55,14 @@ unix:!macx {
     # Copy qjson to to app/out folder
     QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
     QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so.0\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so.0.7.1\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so.0.8\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.so.0.8.1\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
 
     # Copy qscintilla to app/out folder
     QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so.8\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so.8.0\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so.8.0.2\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so.9\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so.9.0\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+    QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.so.9.0.2\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
 
     QMAKE_POST_LINK += $$quote(cp \"$$ROOT/build/linux/run.sh\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
     QMAKE_POST_LINK += $$quote(chmod u+x \"$$OUT_PWD/out/run.sh\" $$escape_expand(\\n\\t))
@@ -72,13 +73,14 @@ mac {
         # Copy qjson to to app/out folder
         QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
         QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.0.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.0.7.1.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.0.8.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qjson/libqjson.0.8.1.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
 
         # Copy qscintilla to app/out folder
         QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.8.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.8.0.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
-        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.8.0.2.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.9.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.9.0.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
+        QMAKE_POST_LINK += $$quote(cp \"$$THIRDPARTY_LIBS_PATH/qscintilla/libqscintilla2.9.0.2.dylib\" \"$$OUT_PWD/out\" $$escape_expand(\\n\\t))
 
     } else {
 

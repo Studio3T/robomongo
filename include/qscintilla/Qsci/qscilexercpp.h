@@ -110,9 +110,8 @@ public:
         CommentLineDoc = 15,
         InactiveCommentLineDoc = CommentLineDoc + 64,
 
-        //! A keyword defined in keyword set number 2.  The class must
-        //! be sub-classed and re-implement keywords() to make use of
-        //! this style.
+        //! A keyword defined in keyword set number 2.  The class must be
+        //! sub-classed and re-implement keywords() to make use of this style.
         KeywordSet2 = 16,
         InactiveKeywordSet2 = KeywordSet2 + 64,
 
@@ -124,15 +123,27 @@ public:
         CommentDocKeywordError = 18,
         InactiveCommentDocKeywordError = CommentDocKeywordError + 64,
 
-        //! A global class or typedef defined in keyword set number 5.
-        //! The class must be sub-classed and re-implement keywords()
-        //! to make use of this style.
+        //! A global class or typedef defined in keyword set number 5.  The
+        //! class must be sub-classed and re-implement keywords() to make use
+        //! of this style.
         GlobalClass = 19,
         InactiveGlobalClass = GlobalClass + 64,
 
         //! A C++ raw string.
         RawString = 20,
         InactiveRawString = RawString + 20,
+
+        //! A Vala triple-quoted verbatim string.
+        TripleQuotedVerbatimString = 21,
+        InactiveTripleQuotedVerbatimString = TripleQuotedVerbatimString + 21,
+
+        //! A Pike hash-quoted string.
+        HashQuotedString = 22,
+        InactiveHashQuotedString = HashQuotedString + 22,
+
+        //! A pre-processor stream comment.
+        PreProcessorComment = 23,
+        InactivePreProcessorComment = PreProcessorComment + 23,
     };
 
     //! Construct a QsciLexerCPP with parent \a parent.  \a parent is typically
@@ -251,10 +262,21 @@ public:
     //! \sa highlightTripleQuotedStrings()
     void setHighlightTripleQuotedStrings(bool enabled);
 
-    //! Returns true of triple quoted strings should be highlighted.
+    //! Returns true if triple quoted strings should be highlighted.
     //!
     //! \sa setHighlightTripleQuotedStrings()
     bool highlightTripleQuotedStrings() const {return highlight_triple;}
+
+    //! If \a enabled is true then hash quoted strings are highlighted.  The
+    //! default is false.
+    //!
+    //! \sa highlightHashQuotedStrings()
+    void setHighlightHashQuotedStrings(bool enabled);
+
+    //! Returns true if hash quoted strings should be highlighted.
+    //!
+    //! \sa setHighlightHashQuotedStrings()
+    bool highlightHashQuotedStrings() const {return highlight_hash;}
 
 public slots:
     //! If \a fold is true then "} else {" lines can be folded.  The
@@ -310,6 +332,7 @@ private:
     void setStylePreprocProp();
     void setDollarsProp();
     void setHighlightTripleProp();
+    void setHighlightHashProp();
 
     bool fold_atelse;
     bool fold_comments;
@@ -318,6 +341,7 @@ private:
     bool style_preproc;
     bool dollars;
     bool highlight_triple;
+    bool highlight_hash;
 
     bool nocase;
 

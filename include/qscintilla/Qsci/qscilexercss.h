@@ -120,7 +120,10 @@ public:
         ExtendedPseudoElement = 21,
 
         //! A media rule.
-        MediaRule = 22
+        MediaRule = 22,
+
+        //! A variable.
+        Variable = 23,
     };
 
     //! Construct a QsciLexerCSS with parent \a parent.  \a parent is typically
@@ -179,6 +182,39 @@ public:
     //! \sa setFoldCompact()
     bool foldCompact() const;
 
+    //! If \a enabled is true then support for HSS is enabled.  The default is
+    //! false.
+    //!
+    //! \sa HSSLanguage()
+    void setHSSLanguage(bool enabled);
+
+    //! Returns true if support for HSS is enabled.
+    //!
+    //! \sa setHSSLanguage()
+    bool HSSLanguage() const {return hss_language;}
+
+    //! If \a enabled is true then support for Less CSS is enabled.  The
+    //! default is false.
+    //!
+    //! \sa LessLanguage()
+    void setLessLanguage(bool enabled);
+
+    //! Returns true if support for Less CSS is enabled.
+    //!
+    //! \sa setLessLanguage()
+    bool LessLanguage() const {return less_language;}
+
+    //! If \a enabled is true then support for Sassy CSS is enabled.  The
+    //! default is false.
+    //!
+    //! \sa SCSSLanguage()
+    void setSCSSLanguage(bool enabled);
+
+    //! Returns true if support for Sassy CSS is enabled.
+    //!
+    //! \sa setSCSSLanguage()
+    bool SCSSLanguage() const {return scss_language;}
+
 public slots:
     //! If \a fold is true then multi-line comment blocks can be folded.
     //! The default is false.
@@ -208,9 +244,15 @@ protected:
 private:
     void setCommentProp();
     void setCompactProp();
+    void setHSSProp();
+    void setLessProp();
+    void setSCSSProp();
 
     bool fold_comments;
     bool fold_compact;
+    bool hss_language;
+    bool less_language;
+    bool scss_language;
 
     QsciLexerCSS(const QsciLexerCSS &);
     QsciLexerCSS &operator=(const QsciLexerCSS &);

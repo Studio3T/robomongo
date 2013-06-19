@@ -3,6 +3,7 @@
 #include <QList>
 #include <QSharedPointer>
 #include <QProcess>
+#include <QDesktopWidget>
 #include <mongo/client/dbclient.h>
 
 #include "robomongo/core/settings/SettingsManager.h"

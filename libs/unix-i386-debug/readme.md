@@ -1,1 +1,0 @@
-Linux i386 (or x86) libraries.

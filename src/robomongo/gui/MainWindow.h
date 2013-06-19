@@ -2,6 +2,11 @@
 
 #include <QtGui>
 #include <QWidget>
+#include <QMainWindow>
+#include <QLabel>
+#include <QToolBar>
+#include <QDockWidget>
+#include <QMenu>
 
 #include "robomongo/core/Core.h"
 #include "robomongo/gui/ViewMode.h"

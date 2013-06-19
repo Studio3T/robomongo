@@ -122,6 +122,18 @@ def is_windows():
 def is_darwin():
     return sys_platform == "darwin"
 
+def static_lib_name(name):
+    if is_windows():
+        return name + ".lib"
+    else:
+        return "lib" + name + ".a"
+    
+def lib_name(name):
+    if is_windows():
+        return name + ".dll"
+    else:
+        return "lib" + name + ".so"
+
 ##
 ## CPU architecture
 ##
@@ -162,16 +174,28 @@ root_dir = Dir('.').abspath
 ##
 ## MongoDB third party dir
 ##
+def build_out_path(root_path):
+    return os.path.join(root_path, "%(os)s-%(arch)s-%(mode)s" % { 'os' : sys_platform, 'arch' : cpu_arch_bits, 'mode' : build_mode })
+
+def build_robomongo_libs_path(root_path):
+    osname = 'undefined'
+    if is_windows():
+        osname = 'win'
+    elif is_linux():
+        osname = 'unix'
+    elif is_darwin():
+        osname = 'darwin'
+        
+    return os.path.join(root_path, "%(os)s-%(arch)s-%(mode)s" % { 'os' : osname, 'arch' : cpu_arch, 'mode' : build_mode })
+
+libs_dir = os.path.join(root_dir, 'libs')
+libs_out_path = build_robomongo_libs_path(libs_dir)
 mongo_dir = os.path.join(root_dir, 'src', 'third-party', 'mongodb')
 mongo_build_dir = os.path.join(mongo_dir, 'build')
 qscintilla_dir = os.path.join(root_dir, 'src', 'third-party', 'qscintilla')
 qscintilla_build_dir = os.path.join(qscintilla_dir, 'target')
 qjson_dir = os.path.join(root_dir, 'src', 'third-party', 'qjson')
 qjson_build_dir = os.path.join(qjson_dir, 'target')
-
-
-def build_out_path(root_path):
-    return os.path.join(root_path, "%(os)s-%(arch)s-%(mode)s" % { 'os' : sys_platform, 'arch' : cpu_arch_bits, 'mode' : build_mode })
 
 ##
 ## Summary
@@ -195,26 +219,94 @@ if mongodb_target:
     mongodb_build_platform = sys_platform
     mongodb_scons_command = "scons mongod mongoclient --usesm --%(mode)s --%(arch)s -j%(jobs)s" % \
         { 'mode' : mongodb_build_mode, 'arch' : cpu_arch_bits, 'jobs' : num_jobs }
-    
-    
     mongodb_out_dir = os.path.join(mongo_build_dir, mongodb_build_platform, str(cpu_arch_bits), mongodb_build_mode, "usesm")
 
     print "> MongoDB build command: " + mongodb_scons_command
     print "> MongoDB out dir: " + mongodb_out_dir
     
+    boost_dir = os.path.join(mongodb_out_dir, 'third_party', 'boost')
+    boost_filesystem = os.path.join(boost_dir, static_lib_name("boost_filesystem"))
+    boost_program_options = os.path.join(boost_dir, static_lib_name("boost_program_options"))
+    boost_system = os.path.join(boost_dir, static_lib_name("boost_system"))
+    boost_thread = os.path.join(boost_dir, static_lib_name("boost_thread"))
+    
+    boost_dir_target = os.path.join(libs_out_path, 'boost')
+    boost_filesystem_target = os.path.join(boost_dir_target, static_lib_name("boost_filesystem"))
+    boost_program_options_target = os.path.join(boost_dir_target, static_lib_name("boost_program_options"))
+    boost_system_target = os.path.join(boost_dir_target, static_lib_name("boost_system"))
+    boost_thread_target = os.path.join(boost_dir_target, static_lib_name("boost_thread"))
+    
+    js_dir = os.path.join(mongodb_out_dir, 'third_party', 'js-1.7')
+    js_lib = os.path.join(js_dir, static_lib_name("js"))
+    
+    js_dir_target = os.path.join(libs_out_path, 'js')
+    js_lib_target = os.path.join(js_dir_target, static_lib_name("js"))
+    
+    pcre_dir = os.path.join(mongodb_out_dir, 'third_party', 'pcre-8.30')
+    pcre_lib = os.path.join(pcre_dir, static_lib_name("pcrecpp"))
+    
+    pcre_dir_target = os.path.join(libs_out_path, 'pcre')
+    pcre_lib_target = os.path.join(pcre_dir_target, static_lib_name("pcrecpp"))
+    
+    mongoclient_dir = os.path.join(mongodb_out_dir, 'client_build')
+    mongoclient_lib = os.path.join(mongoclient_dir, static_lib_name("mongoclient"))
+    
+    mongoclient_dir_target = os.path.join(libs_out_path, 'mongoclient')
+    mongoclient_lib_target = os.path.join(mongoclient_dir_target, static_lib_name("mongoclient"))
+    
     if not check: # perform action
         
         if clean:
             remove_dir(mongodb_out_dir)
+            remove_dir(boost_dir_target)
+            remove_dir(js_dir_target)
+            remove_dir(pcre_dir_target)
+            remove_dir(mongoclient_dir_target)
         
         if build:
             # build only if out folder not exists yet
             if not os.path.exists(mongodb_out_dir):
                 return_code = call(mongodb_scons_command, shell=True)
                 print return_code
+                
             else:
                 print "> MongoDB already exists. Skipping this step (use --rebuild to force)"
+                
+            if not os.path.exists(boost_dir_target):
+                os.makedirs(boost_dir_target)
+                
+            if not os.path.exists(boost_filesystem_target):
+                shutil.copyfile(boost_filesystem, boost_filesystem_target)
  
+            if not os.path.exists(boost_program_options_target):
+                shutil.copyfile(boost_program_options, boost_program_options_target)
+
+            if not os.path.exists(boost_system_target):
+                shutil.copyfile(boost_system, boost_system_target)
+
+            if not os.path.exists(boost_thread_target):
+                shutil.copyfile(boost_thread, boost_thread_target)
+                
+
+            if not os.path.exists(js_dir_target):
+                os.makedirs(js_dir_target)
+                
+            if not os.path.exists(js_lib_target):
+                shutil.copyfile(js_lib, js_lib_target)
+
+
+            if not os.path.exists(pcre_dir_target):
+                os.makedirs(pcre_dir_target)
+                
+            if not os.path.exists(pcre_lib_target):
+                shutil.copyfile(pcre_lib, pcre_lib_target)
+
+                
+            if not os.path.exists(mongoclient_dir_target):
+                os.makedirs(mongoclient_dir_target)
+                
+            if not os.path.exists(mongoclient_lib_target):
+                shutil.copyfile(mongoclient_lib, mongoclient_lib_target)                
 
  
 ##
@@ -223,6 +315,12 @@ if mongodb_target:
 if qscintilla_target:
     qscintilla_out_dir = build_out_path(qscintilla_build_dir)
     print "> QScintilla out dir: " + qscintilla_out_dir
+    
+    qscintilla_lib = os.path.join(qscintilla_out_dir, lib_name("qscintilla2"))
+    
+    qscintilla_dir_target = os.path.join(libs_out_path, 'qscintilla')
+    qscintilla_lib_target = os.path.join(qscintilla_dir_target, lib_name("qscintilla2"))
+    
     
     qscintilla_pro_path = os.path.join(qscintilla_dir, 'Qt4Qt5', 'qscintilla.pro')
     print "> QScintilla project file path: " + qscintilla_pro_path
@@ -274,13 +372,28 @@ if qscintilla_target:
                     print "(*) QScintilla compiled successfully"
                 else:
                     print "(!) Error when compiling QScintilla"
-                
             else:
                 print "> QScintilla already exists. Skipping this step (use --rebuild to force)"
+                
+                
+            if not os.path.exists(qscintilla_dir_target):
+                os.makedirs(qscintilla_dir_target)
+                
+            if not os.path.exists(qscintilla_lib_target):
+                shutil.copyfile(qscintilla_lib, qscintilla_lib_target)
+                shutil.copyfile(qscintilla_lib + ".9", qscintilla_lib_target + ".9")
+                shutil.copyfile(qscintilla_lib + ".9.0", qscintilla_lib_target + ".9.0")
+                shutil.copyfile(qscintilla_lib + ".9.0.2", qscintilla_lib_target + ".9.0.2")
+                
             
 if qjson_taget:
     qjson_out_dir = build_out_path(qjson_build_dir)
     print "> QJSon out dir: " + qjson_out_dir
+    
+    qjson_lib = os.path.join(qjson_out_dir, lib_name("qjson"))
+    
+    qjson_dir_target = os.path.join(libs_out_path, 'qjson')
+    qjson_lib_target = os.path.join(qjson_dir_target, lib_name("qjson"))
     
     qjson_qmake_project_path = os.path.join(qjson_dir, "qjson.pro")
     print "> QJSon project file path: " + qjson_qmake_project_path
@@ -335,5 +448,21 @@ if qjson_taget:
                 
             else:
                 print "> QJSon already exists. Skipping this step (use --rebuild to force)"    
-            
+                
+            if not os.path.exists(qjson_dir_target):
+                os.makedirs(qjson_dir_target)
+                
+            if not os.path.exists(qjson_lib_target):
+                shutil.copyfile(qjson_lib, qjson_lib_target)
+                shutil.copyfile(qjson_lib + ".0", qjson_lib_target + ".0")
+                shutil.copyfile(qjson_lib + ".0.8", qjson_lib_target + ".0.8")
+                shutil.copyfile(qjson_lib + ".0.8.1", qjson_lib_target + ".0.8.1")                
+
+if robomongo_target:
+    None
+    
+#    if not os.path.exists(boost_filesystem_target
+    
+    #shutil.copyfile(
+        
 print "--------------------------------------------"

@@ -1,6 +1,8 @@
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 
-#include <QtGui>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"

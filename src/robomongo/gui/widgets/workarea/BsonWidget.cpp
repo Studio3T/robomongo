@@ -2,6 +2,7 @@
 
 #include <QPlainTextEdit>
 #include <QStackedWidget>
+#include <QHBoxLayout>
 
 #include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
 

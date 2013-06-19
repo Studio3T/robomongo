@@ -23,16 +23,21 @@
 
 #include "qjson_export.h"
 
+QT_BEGIN_NAMESPACE
 class QIODevice;
 class QVariant;
+QT_END_NAMESPACE
 
+/**
+ * Namespace used by QJson
+ */
 namespace QJson {
 
   class ParserPrivate;
 
   /**
-  * @brief Main class used to convert JSON data to QVariant objects
-  */
+   * @brief Main class used to convert JSON data to QVariant objects
+   */
   class QJSON_EXPORT Parser
   {
     public:

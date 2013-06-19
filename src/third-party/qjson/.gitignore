@@ -1,1 +1,3 @@
-/target
+moc_*
+*.o
+Makefile

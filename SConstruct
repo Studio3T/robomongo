@@ -166,6 +166,8 @@ mongo_dir = os.path.join(root_dir, 'src', 'third-party', 'mongodb')
 mongo_build_dir = os.path.join(mongo_dir, 'build')
 qscintilla_dir = os.path.join(root_dir, 'src', 'third-party', 'qscintilla')
 qscintilla_build_dir = os.path.join(qscintilla_dir, 'target')
+qjson_dir = os.path.join(root_dir, 'src', 'third-party', 'qjson')
+qjson_build_dir = os.path.join(qjson_dir, 'target')
 
 
 def build_out_path(root_path):
@@ -275,5 +277,63 @@ if qscintilla_target:
                 
             else:
                 print "> QScintilla already exists. Skipping this step (use --rebuild to force)"
+            
+if qjson_taget:
+    qjson_out_dir = build_out_path(qjson_build_dir)
+    print "> QJSon out dir: " + qjson_out_dir
+    
+    qjson_qmake_project_path = os.path.join(qjson_dir, "qjson.pro")
+    print "> QJSon project file path: " + qjson_qmake_project_path
+    
+    qjson_qmake_args = ''
+    
+    if is_linux() and is_debug:
+        qjson_qmake_args = "-r -spec linux-g++ CONFIG+=debug CONFIG+=declarative_debug"
+    
+    if is_linux() and is_release:
+        qjson_qmake_args = "-r -spec linux-g++ CONFIG+=release"
+        
+    if is_darwin() and is_debug:
+        qjson_qmake_args = "-r -spec macx-g++ CONFIG+=debug CONFIG+=declarative_debug"
+    
+    if is_darwin() and is_release:
+        qjson_qmake_args = "-r -spec macx-g++ CONFIG+=release"
+        
+    if is_windows() and is_debug:
+        qjson_qmake_args = "-r -spec win32-msvc2010 \"CONFIG+=debug\" \"CONFIG+=declarative_debug\""
+        
+    if is_windows() and is_release:
+        qjson_qmake_args = "-r -spec win32-msvc2010 \"CONFIG+=release\""
+        
+    print "> QJson qmake args: " + qjson_qmake_args
+    
+    qjson_qmake_command = "qmake %s %s" % (qjson_qmake_project_path, qjson_qmake_args)
+    
+    if not check:
+        
+        if clean:
+            remove_dir(qjson_out_dir)
+        
+        if build:
+            # build only if out folder does not exist yet
+            if not os.path.exists(qjson_out_dir):  
+                os.makedirs(qjson_out_dir)
+                os.chdir(qjson_out_dir)            
+                return_code = call(qjson_qmake_command, shell=True)
+                
+                if return_code == 0:
+                    print "(*) QJson make file generated successfully"
+                else:
+                    print "(!) Error when running qmake."
+                
+                return_code = call("make -w", shell=True)
+
+                if return_code == 0:
+                    print "(*) QJSon compiled successfully"
+                else:
+                    print "(!) Error when compiling QJson"
+                
+            else:
+                print "> QJSon already exists. Skipping this step (use --rebuild to force)"    
             
 print "--------------------------------------------"

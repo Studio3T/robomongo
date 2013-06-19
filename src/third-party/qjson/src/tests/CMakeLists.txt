@@ -1,4 +1,0 @@
-ADD_SUBDIRECTORY(cmdline_tester)
-ADD_SUBDIRECTORY(parser)
-ADD_SUBDIRECTORY(qobjecthelper)
-ADD_SUBDIRECTORY(serializer)

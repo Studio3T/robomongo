@@ -1,5 +1,7 @@
 #include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
 
+#include <QHBoxLayout>
+
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemWidget.h"

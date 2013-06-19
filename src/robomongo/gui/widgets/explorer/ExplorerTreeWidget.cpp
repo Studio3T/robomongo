@@ -2,7 +2,9 @@
 
 #include <QContextMenuEvent>
 #include <QMenu>
+#include <QApplication>
 #include <QtGui>
+#include <QMessageBox>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/MongoCollection.h"

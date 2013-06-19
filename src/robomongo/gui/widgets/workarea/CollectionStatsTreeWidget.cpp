@@ -1,6 +1,6 @@
 #include "robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h"
 
-#include <QtGui>
+#include <QHeaderView>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h"

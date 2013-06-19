@@ -53,9 +53,9 @@ ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog
     QStringList colums;
     colums << "Name" << "Address" << "Auth. Database / User";
     _listWidget->setHeaderLabels(colums);
-    _listWidget->header()->setResizeMode(0, QHeaderView::Stretch);
-    _listWidget->header()->setResizeMode(1, QHeaderView::Stretch);
-    _listWidget->header()->setResizeMode(2, QHeaderView::Stretch);
+    _listWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    _listWidget->header()->setSectionResizeMode(1, QHeaderView::Stretch);
+    _listWidget->header()->setSectionResizeMode(2, QHeaderView::Stretch);
 
     //_listWidget->setViewMode(QListView::ListMode);
     _listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);

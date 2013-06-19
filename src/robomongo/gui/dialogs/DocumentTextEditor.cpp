@@ -1,5 +1,6 @@
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 
+#include <QApplication>
 #include <QtGui>
 #include <QHBoxLayout>
 #include <QPushButton>

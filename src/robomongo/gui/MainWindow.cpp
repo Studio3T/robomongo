@@ -1,7 +1,13 @@
 #include "robomongo/gui/MainWindow.h"
 
-#include <QtGui>
+#include <QApplication>
+#include <QToolButton>
 #include <QMessageBox>
+#include <QWidgetAction>
+#include <QMenu>
+#include <QMenuBar>
+#include <QToolTip>
+#include <QDesktopWidget>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
@@ -82,7 +88,7 @@ MainWindow::MainWindow() : QMainWindow(),
 
     connect(connectButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
 
-    QWidgetAction*connectButtonAction = new QWidgetAction(this);
+    QWidgetAction *connectButtonAction = new QWidgetAction(this);
     connectButtonAction->setDefaultWidget(connectButton);
 
     // Orientation action

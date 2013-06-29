@@ -12,7 +12,7 @@ OPTION(MANIFEST_ENABLE "Enable Manifest" OFF)
 #############################################################
 # Configure project
 PROJECT(${PROJECT_NAME_lowercase})
-OPTION(BOOST_ENABLED "Enable boost system support" ON)
+OPTION(BOOST_ENABLED "Enable boost system support" OFF)
 OPTION(BUILD_PCRECPP_LIBRARY "Build pcrecpp library from sources" ON)
 OPTION(QT_ENABLED "Enable Qt support" ON)
 OPTION(UNICODE_ENABLE "Support unicode" OFF)

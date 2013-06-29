@@ -47,7 +47,7 @@ namespace Robomongo
         mongo::ScriptEngine *_engine;
         mongo::Scope *_scope;
 
-        QString subb(const QStringList &list, int fline, int fpos, int tline, int tpos);
+        QString subb(const QStringList &list, int fline, int fpos, int tline, int tpos) const;
 
         QMutex _mutex;
     };

@@ -9,12 +9,7 @@ namespace Robomongo
     {
     public:
         MongoShellResult(const QString &type, const QString &response, const QList<MongoDocumentPtr> &documents,
-                         const MongoQueryInfo &queryInfo, qint64 elapsedms) :
-            _type(type),
-            _response(response),
-            _documents(documents),
-            _queryInfo(queryInfo),
-            _elapsedms(elapsedms) { }
+                         const MongoQueryInfo &queryInfo, qint64 elapsedms);
 
         QString response() const { return _response; }
         QString type() const { return _type; }
@@ -36,12 +31,7 @@ namespace Robomongo
         MongoShellExecResult() { }
         MongoShellExecResult(const QList<MongoShellResult> &results,
                              const QString &currentServer, bool isCurrentServerValid,
-                             const QString &currentDatabase, bool isCurrentDatabaseValid) :
-            _results(results),
-            _currentServer(currentServer),
-            _currentDatabase(currentDatabase),
-            _isCurrentServerValid(isCurrentServerValid),
-            _isCurrentDatabaseValid(isCurrentDatabaseValid) { }
+                             const QString &currentDatabase, bool isCurrentDatabaseValid);
 
         QList<MongoShellResult> results() const { return _results; }
         QString currentServer() const { return _currentServer; }

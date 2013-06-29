@@ -1,7 +1,5 @@
 #pragma once
-
 #include <QString>
-
 #include "robomongo/core/domain/CursorPosition.h"
 
 namespace Robomongo
@@ -9,13 +7,9 @@ namespace Robomongo
     class ScriptInfo
     {
     public:
-        explicit ScriptInfo(const QString &script, bool execute = false,
+         ScriptInfo(const QString &script, bool execute = false,
                    const CursorPosition &position = CursorPosition(),
-                   const QString &title = QString()) :
-            _execute(execute),
-            _script(script),
-            _title(title),
-            _cursor(position) {}
+                   const QString &title = QString());
 
         bool execute() const { return _execute; }
         QString script() const { return _script; }

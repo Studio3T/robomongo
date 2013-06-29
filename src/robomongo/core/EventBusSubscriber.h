@@ -1,19 +1,11 @@
 #pragma once
-
-#include <QObject>
-
-#include "robomongo/core/EventBusDispatcher.h"
-
+class QObject;
 namespace Robomongo
 {
-    class EventBusSubscriber
+    class EventBusDispatcher;
+    struct EventBusSubscriber
     {
-    public:
-        explicit EventBusSubscriber(EventBusDispatcher *dispatcher, QObject *receiver, QObject *sender = NULL) :
-            receiver(receiver),
-            dispatcher(dispatcher),
-            sender(sender) {}
-
+        EventBusSubscriber(EventBusDispatcher *dispatcher, QObject *receiver, QObject *sender = 0);
         EventBusDispatcher *dispatcher;
         QObject *receiver;
         QObject *sender;

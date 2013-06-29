@@ -1,8 +1,6 @@
 #pragma once
-
 #include <QObject>
 #include <mongo/client/dbclient.h>
-
 #include "robomongo/core/Core.h"
 
 namespace Robomongo

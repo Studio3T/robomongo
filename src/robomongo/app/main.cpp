@@ -1,19 +1,10 @@
 #include <QApplication>
-#include <QMessageBox>
-#include <QList>
-#include <QSharedPointer>
-#include <QProcess>
 #include <QDesktopWidget>
 #include <mongo/client/dbclient.h>
 
 #include "robomongo/core/settings/SettingsManager.h"
-#include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/Core.h"
-#include "robomongo/gui/dialogs/ConnectionsDialog.h"
-#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/MainWindow.h"
-#include "robomongo/gui/GuiRegistry.h"
 
 using namespace Robomongo;
 

@@ -16,10 +16,9 @@ namespace Robomongo
     {
     public:
         MongoClient(mongo::DBClientBase *scopedConnection);
-        ~MongoClient() {}
 
-        QStringList getCollectionNames(const QString &dbname);
-        QStringList getDatabaseNames();
+        QStringList getCollectionNames(const QString &dbname) const;
+        QStringList getDatabaseNames()const;
 
         QList<MongoUser> getUsers(const QString &dbName);
         void createUser(const QString &dbName, const MongoUser &user, bool overwrite);

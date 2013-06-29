@@ -1,8 +1,6 @@
 #pragma once
-
 #include <QString>
 #include <mongo/client/dbclient.h>
-
 #include "robomongo/core/Core.h"
 
 namespace Robomongo
@@ -27,42 +25,32 @@ namespace Robomongo
      *  std::string phex  = HexUtils::pythonUuidToHex(puuid);*
      *
      */
-    class HexUtils
+    namespace HexUtils
     {
-    public:
-
-        static bool isHexString(const std::string &hex);
-
-        static QString toHexLower(const void* inRaw, int len);
-        static QString toHexLower(const char* inRaw, int len);
-        static std::string toStdHexLower(const char *raw, int len);
-
+        bool isHexString(const std::string &hex);
+        QString toHexLower(const void* inRaw, int len);
+        QString toHexLower(const char* inRaw, int len);
+        std::string toStdHexLower(const char *raw, int len);
         /**
          * @param str: data in hex format.
          * @param outBytes: out param - number of bytes in array.
          * @return array of bytes, with "outBytes" length.
          */
-        static const char *fromHex(const std::string &str, int *outBytes);
-        static const char *fromHex(const QString &str, int *outBytes);
-
-        static std::string hexToUuid(const std::string &hex, UUIDEncoding encoding);
-        static std::string hexToUuid(const std::string &hex);
-        static std::string hexToCSharpUuid(const std::string &hex);
-        static std::string hexToJavaUuid(const std::string &hex);
-        static std::string hexToPythonUuid(const std::string &hex);
-
+        const char *fromHex(const std::string &str, int *outBytes);
+        const char *fromHex(const QString &str, int *outBytes);
+        std::string hexToUuid(const std::string &hex, UUIDEncoding encoding);
+        std::string hexToUuid(const std::string &hex);
+        std::string hexToCSharpUuid(const std::string &hex);
+        std::string hexToJavaUuid(const std::string &hex);
+        std::string hexToPythonUuid(const std::string &hex);
         /**
          * @return empty string, if invalid UUID.
          */
-        static std::string uuidToHex(const std::string &uuid, UUIDEncoding encoding);
-        static std::string uuidToHex(const std::string &uuid);
-        static std::string csharpUuidToHex(const std::string &uuid);
-        static std::string javaUuidToHex(const std::string &uuid);
-        static std::string pythonUuidToHex(const std::string &uuid);
-
-        static std::string formatUuid(mongo::BSONElement &element, UUIDEncoding encoding);
-
-    private: // use static members
-        HexUtils() {}
-    };
+        std::string uuidToHex(const std::string &uuid, UUIDEncoding encoding);
+        std::string uuidToHex(const std::string &uuid);
+        std::string csharpUuidToHex(const std::string &uuid);
+        std::string javaUuidToHex(const std::string &uuid);
+        std::string pythonUuidToHex(const std::string &uuid);
+        std::string formatUuid(mongo::BSONElement &element, UUIDEncoding encoding);
+    }
 }

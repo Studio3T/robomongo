@@ -6,21 +6,23 @@
 
 #include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
 
-using namespace Robomongo;
-
-BsonWidget::BsonWidget(MongoShell *shell, QWidget *parent) : QWidget(parent),
-    _shell(shell)
+namespace Robomongo
 {
-    _bsonTree = new BsonTreeWidget(_shell);
 
-    QHBoxLayout *hlayout = new QHBoxLayout;
-    hlayout->setSpacing(0);
-	hlayout->setMargin(0);
-    hlayout->addWidget(_bsonTree);
-	setLayout(hlayout);
-}
+    BsonWidget::BsonWidget(MongoShell *shell, QWidget *parent) : QWidget(parent),
+        _shell(shell)
+    {
+        _bsonTree = new BsonTreeWidget(_shell);
 
-void BsonWidget::setDocuments(const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo)
-{
-    _bsonTree->setDocuments(documents, queryInfo);
+        QHBoxLayout *hlayout = new QHBoxLayout;
+        hlayout->setSpacing(0);
+        hlayout->setMargin(0);
+        hlayout->addWidget(_bsonTree);
+        setLayout(hlayout);
+    }
+
+    void BsonWidget::setDocuments(const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo)
+    {
+        _bsonTree->setDocuments(documents, queryInfo);
+    }
 }

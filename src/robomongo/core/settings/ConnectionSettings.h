@@ -65,7 +65,7 @@ namespace Robomongo
         /**
          * @brief Port of server
          */
-        int serverPort() const { return _serverPort; }
+        u_int16_t serverPort() const { return _serverPort; }
         void setServerPort(const int port) { _serverPort = port; }
 
         /**
@@ -143,7 +143,7 @@ namespace Robomongo
         QString _connectionName;
         QString _serverHost;
         QString _defaultDatabase;
-        int _serverPort;
+        u_int16_t _serverPort;
 
         QList<CredentialSettings *> _credentials;
         QHash<QString, CredentialSettings *> _credentialsByDatabaseName;

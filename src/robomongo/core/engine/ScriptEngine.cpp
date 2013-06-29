@@ -242,7 +242,7 @@ namespace Robomongo
 
     MongoShellResult ScriptEngine::prepareResult(const QString &type, const QString &output, const QList<MongoDocumentPtr> objects, qint64 elapsedms)
     {
-        char *script =
+        const char *script =
             "__robomongoQuery = false; \n"
             "__robomongoDbName = '[invalid database]'; \n"
             "__robomongoServerAddress = '[invalid connection]'; \n"

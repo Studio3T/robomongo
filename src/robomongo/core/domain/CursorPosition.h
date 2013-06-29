@@ -5,13 +5,8 @@ namespace Robomongo
     class CursorPosition
     {
     public:
-        CursorPosition() :
-            _isNull(true) {}
-
-        CursorPosition(int line, int column) :
-            _isNull(false),
-            _line(line),
-            _column(column) {}
+        CursorPosition();
+        CursorPosition(int line, int column);
 
         bool isNull() const { return _isNull; }
         int line() const { return _line; }

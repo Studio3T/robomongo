@@ -4,17 +4,20 @@
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/KeyboardManager.h"
 
-using namespace Robomongo;
-
-AppRegistry::AppRegistry() :
-    _bus(new EventBus()),
-    _settingsManager(new SettingsManager()),
-    _app(new App(_bus.get())),
-    _keyboard(new KeyboardManager())
+namespace Robomongo
 {
-}
 
-AppRegistry::~AppRegistry()
-{
+    AppRegistry::AppRegistry() :
+        _bus(new EventBus()),
+        _settingsManager(new SettingsManager()),
+        _app(new App(_bus.get())),
+        _keyboard(new KeyboardManager())
+    {
+    }
+
+    AppRegistry::~AppRegistry()
+    {
+    }
+
 }
 

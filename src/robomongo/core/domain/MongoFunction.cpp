@@ -1,22 +1,23 @@
 #include "robomongo/core/domain/MongoFunction.h"
 
-using namespace Robomongo;
-
-MongoFunction::MongoFunction(const mongo::BSONObj &obj)
+namespace Robomongo
 {
-    _name = QString::fromStdString(obj.getField("_id").String());
-    _code = QString::fromUtf8(obj.getField("value")._asCode().data());
-}
+    MongoFunction::MongoFunction(const mongo::BSONObj &obj)
+    {
+        _name = QString::fromStdString(obj.getField("_id").String());
+        _code = QString::fromUtf8(obj.getField("value")._asCode().data());
+    }
 
-mongo::BSONObj MongoFunction::toBson() const
-{
-    mongo::BSONObjBuilder builder;
+    mongo::BSONObj MongoFunction::toBson() const
+    {
+        mongo::BSONObjBuilder builder;
 
-    QByteArray bytes = _code.toUtf8();
+        QByteArray bytes = _code.toUtf8();
 
-    mongo::BSONCode code = mongo::BSONCode(bytes.constData());
-    builder.append("_id", _name.toStdString());
-    builder.append("value", code);
-    mongo::BSONObj obj = builder.obj();
-    return obj;
+        mongo::BSONCode code = mongo::BSONCode(bytes.constData());
+        builder.append("_id", _name.toStdString());
+        builder.append("value", code);
+        mongo::BSONObj obj = builder.obj();
+        return obj;
+    }
 }

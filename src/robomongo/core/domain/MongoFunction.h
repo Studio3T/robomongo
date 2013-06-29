@@ -1,5 +1,4 @@
 #pragma once
-
 #include <mongo/client/dbclient.h>
 #include <QString>
 

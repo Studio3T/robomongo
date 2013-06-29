@@ -22,7 +22,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit MongoWorker(EventBus *bus, ConnectionSettings *connection, QObject *parent = 0);
+        explicit MongoWorker(EventBus *bus, ConnectionSettings *connection, QObject *parent = NULL);
 
         ~MongoWorker();
 
@@ -31,7 +31,6 @@ namespace Robomongo
          */
         void send(Event *event);
         ScriptEngine *engine() const { return _scriptEngine; }
-
     protected slots: // handlers:
 
         /**

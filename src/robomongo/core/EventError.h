@@ -1,8 +1,5 @@
 #pragma once
-
-#include <QObject>
 #include <QString>
-#include <QEvent>
 
 namespace Robomongo
 {
@@ -18,15 +15,13 @@ namespace Robomongo
          * @brief Creates "null" (or, in other words, empty) error.
          * Subsequent call of isNull() on this object will return true.
          */
-        EventError() :
-            _isNull(true) {}
+        EventError(){}
 
         /**
          * @brief Creates error object with specified error message.
          * Subsequent call of isNull() on this object will return false.
          */
         EventError(const QString &errorMessage) :
-            _isNull(false),
             _errorMessage(errorMessage) {}
 
         /**
@@ -35,7 +30,7 @@ namespace Robomongo
          * way to support "null" semantic for value objects.
          * @return true, if null or false otherwise.
          */
-        bool isNull() const { return _isNull; }
+        bool isNull() const { return _errorMessage.isEmpty(); }
 
         /**
          * @brief Returns error message that describes this error.
@@ -43,11 +38,6 @@ namespace Robomongo
         QString errorMessage() const { return _errorMessage; }
 
     private:
-        /**
-         * @brief Flag to support "null" semantic for value object.
-         */
-        bool _isNull;
-
         /**
          * @brief Error message
          */

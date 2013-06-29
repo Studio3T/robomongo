@@ -2,22 +2,24 @@
 
 #include "robomongo/gui/GuiRegistry.h"
 
-using namespace Robomongo;
-
-ExplorerFunctionTreeItem::ExplorerFunctionTreeItem(MongoDatabase *database, const MongoFunction &function) :
-    _function(function),
-    _database(database)
+namespace Robomongo
 {
-    setText(0, _function.name());
-    setIcon(0, GuiRegistry::instance().functionIcon());
-    setToolTip(0, buildToolTip(_function));
-    setExpanded(false);
-}
 
-QString ExplorerFunctionTreeItem::buildToolTip(const MongoFunction &function)
-{
-    QString tooltip = QString("%0")
-        .arg(function.name());
+    ExplorerFunctionTreeItem::ExplorerFunctionTreeItem(MongoDatabase *database, const MongoFunction &function) :
+        _function(function),
+        _database(database)
+    {
+        setText(0, _function.name());
+        setIcon(0, GuiRegistry::instance().functionIcon());
+        setToolTip(0, buildToolTip(_function));
+        setExpanded(false);
+    }
 
-    return tooltip;
+    QString ExplorerFunctionTreeItem::buildToolTip(const MongoFunction &function)
+    {
+        QString tooltip = QString("%0")
+            .arg(function.name());
+
+        return tooltip;
+    }
 }

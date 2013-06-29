@@ -7,7 +7,7 @@ SET(${PROJECT_NAME}_COPYRIGHT "robomongo Inc.")
 STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_lowercase)
 SET (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 ########################## Options #########################
-OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${ProjectName}" OFF)
+OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
 OPTION(MANIFEST_ENABLE "Enable Manifest" OFF)
 OPTION(ENABLE_SVN "Enable Svn build incrementing" OFF)
 #############################################################
@@ -20,7 +20,7 @@ OPTION(UNICODE_ENABLE "Support unicode" OFF)
 INCLUDE(cmake/config.cmake)
 
 IF(WINDOWS)
-	set(CMAKE_INSTALL_PREFIX "$ENV{PROGRAMFILES}\\${ProjectName_lowercase}")
+	set(CMAKE_INSTALL_PREFIX "$ENV{PROGRAMFILES}\\${PROJECT_NAME_lowercase}")
 ENDIF()
 
 SET(MAJOR "1")
@@ -38,7 +38,7 @@ IF(Subversion_FOUND AND WIN32)
 ENDIF(Subversion_FOUND AND WIN32)
 
 ENDIF(ENABLE_SVN)
-SET(${ProjectName}_VERSION "${MAJOR}.${MINOR}.${PATCH}.${BUILD}" CACHE STRING "${ProjectName} version")
+SET(${PROJECT_NAME}_VERSION "${MAJOR}.${MINOR}.${PATCH}.${BUILD}" CACHE STRING "${PROJECT_NAME} version")
 ##################### Compiler options and definitions ####################
 ADD_DEFINITIONS(
         -DPROJECT_VERSION=${${PROJECT_NAME}_VERSION}

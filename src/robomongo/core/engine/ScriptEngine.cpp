@@ -596,30 +596,25 @@ namespace Robomongo
         }
     }
 
-    QString ScriptEngine::subb(const QStringList &list, int fline, int fpos, int tline, int tpos)
+    QString ScriptEngine::subb(const QStringList &list, int fline, int fpos, int tline, int tpos) const
     {
-        QString buf;
-
-        if (fline >= list.length())
-            return "";
-
-        if (tline >= list.length())
-            return "";
-
-        for (int i = fline; i <= tline; i++) {
-            QString line = list.at(i);
-
-            if (fline == i && tline == i)
-                buf.append(line.mid(fpos, tpos - fpos));
-            else if (fline == i)
-                buf.append(line.mid(fpos));
-            else if (tline == i)
-                buf.append(line.mid(0, tpos));
-            else
-                buf.append(line);
+        QString result;
+        if (fline < list.length() && tline < list.length())
+        {
+            for (int i = fline; i <= tline; ++i)
+            {
+                const QString& line = list.at(i);
+                if (fline == i && tline == i)
+                    result.append(line.mid(fpos, tpos - fpos));
+                else if (fline == i)
+                    result.append(line.mid(fpos));
+                else if (tline == i)
+                    result.append(line.mid(0, tpos));
+                else
+                    result.append(line);
+            }
         }
-
-        return buf;
+        return result;
     }
 
 }

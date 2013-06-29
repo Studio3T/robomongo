@@ -10,121 +10,123 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 
-using namespace Robomongo;
+
 using namespace std;
-
-R_REGISTER_EVENT(MongoServer_LoadingDatabasesEvent)
-
-MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible) : QObject(),
-    _connectionRecord(connectionRecord),
-    _bus(AppRegistry::instance().bus()),
-    _visible(visible)
+namespace Robomongo
 {
-    _host = _connectionRecord->serverHost();
-    _port = QString::number(_connectionRecord->serverPort());
-    _address = QString("%1:%2").arg(_host).arg(_port);
+    R_REGISTER_EVENT(MongoServer_LoadingDatabasesEvent)
 
-    _connection.reset(new mongo::DBClientConnection);
-
-    _client.reset(new MongoWorker(_bus, _connectionRecord->clone()));
-
-    _bus->send(_client.data(), new InitRequest(this));
-    qDebug() << "InitRequest sent";
-}
-
-MongoServer::~MongoServer()
-{
-    clearDatabases();
-    delete _connectionRecord;
-}
-
-/**
- * @brief Try to connect to MongoDB server.
- * @throws MongoException, if fails
- */
-void MongoServer::tryConnect()
-{
-    _client->send(new EstablishConnectionRequest(this,
-        "_connectionRecord->databaseName()",
-        "_connectionRecord->userName()",
-        "_connectionRecord->userPassword()"));
-
-    qDebug() << "EstablishConnectionRequest sent";
-}
-
-void MongoServer::createDatabase(const QString &dbName)
-{
-    _client->send(new CreateDatabaseRequest(this, dbName));
-}
-
-void MongoServer::dropDatabase(const QString &dbName)
-{
-    _client->send(new DropDatabaseRequest(this, dbName));
-}
-
-void MongoServer::insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
-{
-    _client->send(new InsertDocumentRequest(this, obj, db, collection));
-}
-
-void MongoServer::saveDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
-{
-    _client->send(new InsertDocumentRequest(this, obj, db, collection, true));
-}
-
-void MongoServer::removeDocuments(mongo::Query query, const QString &db, const QString &collection, bool justOne)
-{
-    _client->send(new RemoveDocumentRequest(this, query, db, collection, justOne));
-}
-
-void MongoServer::loadDatabases()
-{
-    _bus->publish(new MongoServer_LoadingDatabasesEvent(this));
-    _client->send(new LoadDatabaseNamesRequest(this));
-}
-
-void MongoServer::clearDatabases()
-{
-    qDeleteAll(_databases);
-    _databases.clear();
-}
-
-void MongoServer::addDatabase(MongoDatabase *database)
-{
-    _databases.append(database);
-}
-
-void MongoServer::handle(EstablishConnectionResponse *event)
-{
-    if (event->isError())
+    MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible) : QObject(),
+        _connectionRecord(connectionRecord),
+        _bus(AppRegistry::instance().bus()),
+        _visible(visible)
     {
-        _bus->publish(new ConnectionFailedEvent(this));
-        return;
+        _host = _connectionRecord->serverHost();
+        _port = QString::number(_connectionRecord->serverPort());
+        _address = QString("%1:%2").arg(_host).arg(_port);
+
+        _connection.reset(new mongo::DBClientConnection);
+
+        _client.reset(new MongoWorker(_bus, _connectionRecord->clone()));
+
+        _bus->send(_client.data(), new InitRequest(this));
+        qDebug() << "InitRequest sent";
     }
 
-    if (_visible)
-        _bus->publish(new ConnectionEstablishedEvent(this));
-}
-
-void MongoServer::handle(LoadDatabaseNamesResponse *event)
-{
-    if (event->isError())
+    MongoServer::~MongoServer()
     {
-        _bus->publish(new ConnectionFailedEvent(this));
-        return;
+        clearDatabases();
+        delete _connectionRecord;
     }
 
-    clearDatabases();
-    foreach(QString name, event->databaseNames)
+    /**
+     * @brief Try to connect to MongoDB server.
+     * @throws MongoException, if fails
+     */
+    void MongoServer::tryConnect()
     {
-        MongoDatabase *db  = new MongoDatabase(this, name);
-        addDatabase(db);
+        _client->send(new EstablishConnectionRequest(this,
+            "_connectionRecord->databaseName()",
+            "_connectionRecord->userName()",
+            "_connectionRecord->userPassword()"));
+
+        qDebug() << "EstablishConnectionRequest sent";
     }
 
-    _bus->publish(new DatabaseListLoadedEvent(this, _databases));
-}
+    void MongoServer::createDatabase(const QString &dbName)
+    {
+        _client->send(new CreateDatabaseRequest(this, dbName));
+    }
 
-void MongoServer::handle(InsertDocumentResponse *event)
-{
-    _bus->publish(new InsertDocumentResponse(event->sender(), event->error()));
+    void MongoServer::dropDatabase(const QString &dbName)
+    {
+        _client->send(new DropDatabaseRequest(this, dbName));
+    }
+
+    void MongoServer::insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
+    {
+        _client->send(new InsertDocumentRequest(this, obj, db, collection));
+    }
+
+    void MongoServer::saveDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
+    {
+        _client->send(new InsertDocumentRequest(this, obj, db, collection, true));
+    }
+
+    void MongoServer::removeDocuments(mongo::Query query, const QString &db, const QString &collection, bool justOne)
+    {
+        _client->send(new RemoveDocumentRequest(this, query, db, collection, justOne));
+    }
+
+    void MongoServer::loadDatabases()
+    {
+        _bus->publish(new MongoServer_LoadingDatabasesEvent(this));
+        _client->send(new LoadDatabaseNamesRequest(this));
+    }
+
+    void MongoServer::clearDatabases()
+    {
+        qDeleteAll(_databases);
+        _databases.clear();
+    }
+
+    void MongoServer::addDatabase(MongoDatabase *database)
+    {
+        _databases.append(database);
+    }
+
+    void MongoServer::handle(EstablishConnectionResponse *event)
+    {
+        if (event->isError())
+        {
+            _bus->publish(new ConnectionFailedEvent(this));
+            return;
+        }
+
+        if (_visible)
+            _bus->publish(new ConnectionEstablishedEvent(this));
+    }
+
+    void MongoServer::handle(LoadDatabaseNamesResponse *event)
+    {
+        if (event->isError())
+        {
+            _bus->publish(new ConnectionFailedEvent(this));
+            return;
+        }
+
+        clearDatabases();
+        foreach(QString name, event->databaseNames)
+        {
+            MongoDatabase *db  = new MongoDatabase(this, name);
+            addDatabase(db);
+        }
+
+        _bus->publish(new DatabaseListLoadedEvent(this, _databases));
+    }
+
+    void MongoServer::handle(InsertDocumentResponse *event)
+    {
+        _bus->publish(new InsertDocumentResponse(event->sender(), event->error()));
+    }
 }

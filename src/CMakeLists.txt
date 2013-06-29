@@ -3,12 +3,16 @@ IF(WIN32 AND MINGW)
         #add_definitions(-D_WIN32_WINNT=0x0601 -DCCH_RM_MAX_APP_NAME=256 -DCCH_RM_MAX_SVC_NAME=256)
 ENDIF(WIN32 AND MINGW)
 
-IF(BOOST_ENABLED)
-INTEGRATE_BOOST(system filesystem thread)
-ENDIF(BOOST_ENABLED)
+INTEGRATE_BOOST(thread system filesystem)
 ADD_SUBDIRECTORY(third-party/qjson)
 ADD_SUBDIRECTORY(third-party/qscintilla/Qt4Qt5)
 ADD_SUBDIRECTORY(third-party)
+IF(BUILD_PCRECPP_LIBRARY)
+SET(PCRE_BUILD_TESTS OFF CACHE BOOL "Build the tests pcre tests.")
+SET(PCRE_BUILD_PCREGREP OFF CACHE BOOL "Build pcregrep")
+ADD_SUBDIRECTORY(../include/pcre pcrecpp)
+#FIND_LIBRARY(PCRECPP_LIB pcrecpp)
+ENDIF(BUILD_PCRECPP_LIBRARY)
 SET(HEADERS_GUI_TO_MOC
     robomongo/gui/ExampleWindow.h
     robomongo/gui/dialogs/ConnectionsDialog.h
@@ -258,8 +262,7 @@ SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC})
 QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})
 SET(RESOURCES robomongo/gui/resources/gui.qrc)
 QTX_ADD_RESOURCES(RES_SRC ${RESOURCES})
-
-SET(INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR} ../include ../include/pcre ../include/qscintilla third-party/mongodb/src/mongo)
+SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${CMAKE_CURRENT_LIST_DIR} ../include/pcre ../include ../include/qscintilla third-party third-party/mongodb/src/mongo)
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS} )
 SOURCE_GROUP("Header Files" FILES ${HEADERS})
 SOURCE_GROUP("Source Files" FILES ${SOURCES})
@@ -269,10 +272,9 @@ SOURCE_GROUP("Fileitems Files" FILES ${FILEITEMS_HDRS} ${FILEITEMS_SRCS})
 SOURCE_GROUP("Controls" FILES ${CONTROLS_HDRS} ${CONTROLS_SRCS})
 SOURCE_GROUP("Platform Files" FILES ${PLATFORM_HDRS} ${PLATFORM_SRCS})
 SOURCE_GROUP("Resources" FILES ${RES_SRC})
-FIND_LIBRARY(PCRECPP_LIB libpcrecpp.so.0)
 
 SET(ALL_SOURCES ${HEADERS} ${SOURCES} ${MOC_FILES} ${PLATFORM_HDRS} ${PLATFORM_SRCS} ${RES_SRC})
-SET(ALL_LIBS ${QT_LIBRARIES} ${Boost_LIBRARIES} ${PLATFORM_LIBRARYES} qjson qscintilla2 js ${PCRECPP_LIB})
+SET(ALL_LIBS ${QT_LIBRARIES} ${Boost_LIBRARIES} ${PLATFORM_LIBRARYES} qjson qscintilla2 js pcrecpp)
 
 add_custom_target(BUILD_MONGOCLIENT_RELEASE
 COMMAND scons --use-system-boost --usesm mongoclient

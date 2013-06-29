@@ -5,7 +5,7 @@ SET(${PROJECT_NAME}_PROJECT_DOMAIN "www.robomongo.com" CACHE STRING "Internet do
 SET(${PROJECT_NAME}_COPYRIGHT "robomongo Inc.")
 ##########################################################
 STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_lowercase)
-SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+SET (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 ########################## Options #########################
 OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${ProjectName}" OFF)
 OPTION(MANIFEST_ENABLE "Enable Manifest" OFF)
@@ -13,7 +13,8 @@ OPTION(ENABLE_SVN "Enable Svn build incrementing" OFF)
 #############################################################
 # Configure project
 PROJECT(${PROJECT_NAME_lowercase})
-OPTION(BOOST_ENABLED "Enable boost support" ON)
+OPTION(BOOST_ENABLED "Enable boost system support" ON)
+OPTION(BUILD_PCRECPP_LIBRARY "Build pcrecpp library from sources" ON)
 OPTION(QT_ENABLED "Enable Qt support" ON)
 OPTION(UNICODE_ENABLE "Support unicode" OFF)
 INCLUDE(cmake/config.cmake)

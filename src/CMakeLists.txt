@@ -219,7 +219,7 @@ IF(LINUX)
 ADD_DEFINITIONS(-DXP_UNIX)
 ELSEIF(MAC_OS)
 ELSEIF(WINDOWS)
-ADD_DEFINITIONS(-D_WINSOCKAPI_ -DXP_WIN -DUNICODE -DBOOST_ALL_NO_LIB -DPSAPI_VERSION=1)
+ADD_DEFINITIONS(-D_WINSOCKAPI_ -DXP_WIN -DUNICODE -DPSAPI_VERSION=1)
 ENDIF()
 ADD_DEFINITIONS(-DROBOMONGO -DJS_C_STRINGS_ARE_UTF8 -DMONGO_EXPOSE_MACROS)
 SET(LIBMONGOCLIENT_RELEASE_FILENAME ${CMAKE_STATIC_LIBRARY_PREFIX}mongoclient${CMAKE_STATIC_LIBRARY_SUFFIX})
@@ -246,7 +246,44 @@ SET(SOURCES robomongo/app/main.cpp ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_COR
 IF(BOOST_ENABLED)
     SET(BOOST_LIBRARIES_HACK ${Boost_LIBRARIES})
 ELSE()
-    SET(BOOST_LIBRARIES_HACK )
+    #ADD_DEFINITIONS(-DBOOST_ALL_NO_LIB)
+    INCLUDE_DIRECTORIES(third-party/mongodb/src/third_party/boost)
+    IF(WINDOWS)
+        SET(BOOST_SOURCES_PLATFORM
+         third-party/mongodb/src/third_party/boost/libs/thread/src/win32/thread.cpp
+         third-party/mongodb/src/third_party/boost/libs/thread/src/win32/tss_dll.cpp
+         third-party/mongodb/src/third_party/boost/libs/thread/src/win32/tss_pe.cpp)
+    ELSE()
+        SET(BOOST_SOURCES_PLATFORM
+        third-party/mongodb/src/third_party/boost/libs/thread/src/pthread/once.cpp
+        third-party/mongodb/src/third_party/boost/libs/thread/src/pthread/thread.cpp)
+    ENDIF()
+    SET(BOOST_SOURCES ${BOOST_SOURCES_PLATFORM}
+    third-party/mongodb/src/third_party/boost/libs/program_options/src/cmdline.cpp
+    third-party/mongodb/src/third_party/boost/libs/program_options/src/config_file.cpp
+    third-party/mongodb/src/third_party/boost/libs/program_options/src/convert.cpp
+    third-party/mongodb/src/third_party/boost/libs/program_options/src/options_description.cpp
+    third-party/mongodb/src/third_party/boost/libs/program_options/src/parsers.cpp
+    third-party/mongodb/src/third_party/boost/libs/program_options/src/positional_options.cpp
+    third-party/mongodb/src/third_party/boost/libs/program_options/src/split.cpp
+    third-party/mongodb/src/third_party/boost/libs/program_options/src/utf8_codecvt_facet.cpp
+    third-party/mongodb/src/third_party/boost/libs/program_options/src/value_semantic.cpp
+    third-party/mongodb/src/third_party/boost/libs/program_options/src/variables_map.cpp
+    third-party/mongodb/src/third_party/boost/libs/program_options/src/winmain.cpp
+
+    third-party/mongodb/src/third_party/boost/libs/filesystem/v2/src/v2_operations.cpp
+    third-party/mongodb/src/third_party/boost/libs/filesystem/v2/src/v2_path.cpp
+    third-party/mongodb/src/third_party/boost/libs/filesystem/v2/src/v2_portability.cpp
+    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/codecvt_error_category.cpp
+    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/operations.cpp
+    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/path.cpp
+    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/path_traits.cpp
+    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/portability.cpp
+    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/unique_path.cpp
+    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/utf8_codecvt_facet.cpp
+    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/windows_file_codecvt.cpp
+
+    third-party/mongodb/src/third_party/boost/libs/system/src/error_code.cpp)
 ENDIF()
 
 SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC})
@@ -264,7 +301,7 @@ SOURCE_GROUP("Controls" FILES ${CONTROLS_HDRS} ${CONTROLS_SRCS})
 SOURCE_GROUP("Platform Files" FILES ${PLATFORM_HDRS} ${PLATFORM_SRCS})
 SOURCE_GROUP("Resources" FILES ${RES_SRC})
 
-SET(ALL_SOURCES ${HEADERS} ${SOURCES} ${MOC_FILES} ${PLATFORM_HDRS} ${PLATFORM_SRCS} ${RES_SRC})
+SET(ALL_SOURCES ${HEADERS} ${SOURCES} ${MOC_FILES} ${PLATFORM_HDRS} ${PLATFORM_SRCS} ${RES_SRC} ${BOOST_SOURCES})
 SET(ALL_LIBS ${QT_LIBRARIES} ${BOOST_LIBRARIES_HACK} ${PLATFORM_LIBRARIES} js pcrecpp qscintilla2 qjson)
 SET(ALL_RELEASE_LIBS ${ALL_LIBS} ${MONGOCLIENT_RELEASE_LIBRARY})
 
@@ -288,7 +325,7 @@ ELSE()
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
         COMMENT "Build mongoclient release library")
         add_custom_target(BUILD_MONGOCLIENT_DEBUG
-        COMMAND scons mongoclient
+        COMMAND scons --d mongoclient
         COMMAND ${CMAKE_COMMAND} -E copy ${LIBMONGOCLIENT_DEBUG_FILENAME}  ${MONGOCLIENT_DEBUG_LIBRARY}
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
         COMMENT "Build mongoclient debug library")

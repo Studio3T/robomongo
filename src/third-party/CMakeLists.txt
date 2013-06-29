@@ -6,37 +6,9 @@ IF(LINUX)
 ADD_DEFINITIONS(-DXP_UNIX)
 ELSEIF(MAC_OS)
 ELSEIF(WINDOWS)
-ADD_DEFINITIONS(-DXP_WIN -DEXPORT_JS_API -DJSFILE -DUNICODE -DBOOST_ALL_NO_LIB -D_CRT_SECURE_NO_WARNINGS -DPSAPI_VERSION=1)
+ADD_DEFINITIONS(-DXP_WIN -DEXPORT_JS_API -DJSFILE -DUNICODE -D_CRT_SECURE_NO_WARNINGS -DPSAPI_VERSION=1)
 ENDIF()
 ADD_DEFINITIONS(-DROBOMONGO -DJS_C_STRINGS_ARE_UTF8 -DMONGO_EXPOSE_MACROS)
-IF(NOT BOOST_ENABLED)
-INCLUDE_DIRECTORIES(mongodb/mongodb/src/third_party/boost)
-SET(BOOST_SOURCES mongodb/src/third_party/boost/libs/program_options/src/cmdline.cpp
-mongodb/src/third_party/boost/libs/program_options/src/config_file.cpp
-mongodb/src/third_party/boost/libs/program_options/src/convert.cpp
-mongodb/src/third_party/boost/libs/program_options/src/options_description.cpp
-mongodb/src/third_party/boost/libs/program_options/src/parsers.cpp
-mongodb/src/third_party/boost/libs/program_options/src/positional_options.cpp
-mongodb/src/third_party/boost/libs/program_options/src/split.cpp
-mongodb/src/third_party/boost/libs/program_options/src/utf8_codecvt_facet.cpp
-mongodb/src/third_party/boost/libs/program_options/src/value_semantic.cpp
-mongodb/src/third_party/boost/libs/program_options/src/variables_map.cpp
-mongodb/src/third_party/boost/libs/program_options/src/winmain.cpp
-mongodb/src/third_party/boost/libs/filesystem/v2/src/v2_operations.cpp
-mongodb/src/third_party/boost/libs/filesystem/v2/src/v2_path.cpp
-mongodb/src/third_party/boost/libs/filesystem/v2/src/v2_portability.cpp
-mongodb/src/third_party/boost/libs/filesystem/v3/src/codecvt_error_category.cpp
-mongodb/src/third_party/boost/libs/filesystem/v3/src/operations.cpp
-mongodb/src/third_party/boost/libs/filesystem/v3/src/path.cpp
-mongodb/src/third_party/boost/libs/filesystem/v3/src/path_traits.cpp
-mongodb/src/third_party/boost/libs/filesystem/v3/src/portability.cpp
-mongodb/src/third_party/boost/libs/filesystem/v3/src/unique_path.cpp
-mongodb/src/third_party/boost/libs/filesystem/v3/src/utf8_codecvt_facet.cpp
-mongodb/src/third_party/boost/libs/filesystem/v3/src/windows_file_codecvt.cpp
-mongodb/src/third_party/boost/libs/thread/src/pthread/once.cpp
-mongodb/src/third_party/boost/libs/thread/src/pthread/thread.cpp
-mongodb/src/third_party/boost/libs/system/src/error_code.cpp)
-ENDIF()
 set(HEADERS
 
 )
@@ -83,7 +55,6 @@ mongodb/src/third_party/js-1.7/prmjtime.c
 
 source_group(sources FILES
 	${HEADERS}
-        ${BOOST_SOURCES}
 	${SOURCES}
 )
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -120,5 +91,5 @@ add_custom_command(
 ENDIF()
 add_library(js STATIC
 	${HEADERS}
-        ${SOURCES} ${BOOST_SOURCES} jsautokw.h jsautocfg.h
+        ${SOURCES} jsautokw.h jsautocfg.h
 )

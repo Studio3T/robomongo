@@ -10,7 +10,7 @@ namespace Robomongo
 {
     class Event;
     class EventWrapper;
-    class EventBusSubscriber;
+    struct EventBusSubscriber;
 
     /**
      * @brief The EventBus class

@@ -71,7 +71,7 @@ namespace mongo {
     bool writeUtf8ToWindowsConsole( const char* utf8String, unsigned int utf8StringSize );
 
     /* like toWideString but UNICODE macro sensitive */
-# if !defined(_UNICODE)
+# if !defined(UNICODE)
 #error temp error 
     inline std::string toNativeString(const char *s) { return s; }
 # else

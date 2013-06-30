@@ -6,7 +6,7 @@ IF(LINUX)
 ADD_DEFINITIONS(-DXP_UNIX)
 ELSEIF(MAC_OS)
 ELSEIF(WINDOWS)
-ADD_DEFINITIONS(-DXP_WIN _UNICODE -DUNICODE -DBOOST_ALL_NO_LIB -D_CRT_SECURE_NO_WARNINGS -DPSAPI_VERSION=1)
+ADD_DEFINITIONS(-DXP_WIN -DEXPORT_JS_API -DJSFILE -DUNICODE -DBOOST_ALL_NO_LIB -D_CRT_SECURE_NO_WARNINGS -DPSAPI_VERSION=1)
 ENDIF()
 ADD_DEFINITIONS(-DROBOMONGO -DJS_C_STRINGS_ARE_UTF8 -DMONGO_EXPOSE_MACROS)
 
@@ -57,6 +57,7 @@ source_group(sources FILES
 	${SOURCES}
 )
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX)
 add_custom_command(
     OUTPUT jsautokw.h
     COMMAND gcc ${CMAKE_CURRENT_LIST_DIR}/mongodb/src/third_party/js-1.7/jskwgen.c -o jswgen
@@ -71,6 +72,22 @@ add_custom_command(
     DEPENDS ${CMAKE_CURRENT_LIST_DIR}/mongodb/src/third_party/js-1.7/jscpucfg.c
     COMMENT "Regenerating header file jsautocfg.h..."
 )
+ELSE()
+add_custom_command(
+    OUTPUT jsautokw.h
+    COMMAND cl ${CMAKE_CURRENT_LIST_DIR}/mongodb/src/third_party/js-1.7/jskwgen.c -o jswgen
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/jswgen > jsautokw.h
+    DEPENDS ${CMAKE_CURRENT_LIST_DIR}/mongodb/src/third_party/js-1.7/jskwgen.c
+    COMMENT "Regenerating header file jsautokw.h..."
+)
+add_custom_command(
+    OUTPUT jsautocfg.h
+    COMMAND cl ${CMAKE_CURRENT_LIST_DIR}/mongodb/src/third_party/js-1.7/jscpucfg.c -o jscpucfg
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/jscpucfg > jsautocfg.h
+    DEPENDS ${CMAKE_CURRENT_LIST_DIR}/mongodb/src/third_party/js-1.7/jscpucfg.c
+    COMMENT "Regenerating header file jsautocfg.h..."
+)
+ENDIF()
 add_library(js STATIC
 	${HEADERS}
         ${SOURCES} jsautokw.h jsautocfg.h

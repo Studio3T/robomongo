@@ -3,10 +3,9 @@
 #include <QDir>
 #include <QObject>
 
-#include "robomongo/core/Core.h"
 #include "robomongo/gui/ViewMode.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
-
+#include "robomongo/core/domain/Enums.h"
 namespace Robomongo
 {
     /**

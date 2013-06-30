@@ -3,10 +3,7 @@
 #include <QString>
 #include <QVariant>
 #include <QVariantMap>
-#include <QSharedDataPointer>
-#include <QSharedData>
 
-#include "robomongo/core/Core.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 
 namespace Robomongo

@@ -1,5 +1,5 @@
 #include "robomongo/core/domain/MongoUser.h"
-
+#include <mongo/bson/bsonobjbuilder.h>
 namespace Robomongo
 {
 

@@ -1,12 +1,6 @@
 #pragma once
-#include <QMetaType>
-#include <QSharedPointer>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
-
-#include "robomongo/core/Wrapper.h"
-#include "robomongo/core/domain/Enums.h"
+#include <boost/shared_ptr.hpp>
 
 namespace mongo
 {

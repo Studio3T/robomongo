@@ -1,7 +1,6 @@
 #pragma once
-
-#include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
+#include "robomongo/core/domain/MongoDocument.h"
 
 namespace Robomongo
 {

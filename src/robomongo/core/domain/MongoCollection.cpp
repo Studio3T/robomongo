@@ -1,5 +1,4 @@
 #include "robomongo/core/domain/MongoCollection.h"
-
 #include "robomongo/core/domain/MongoUtils.h"
 
 namespace Robomongo

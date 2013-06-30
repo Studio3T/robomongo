@@ -1,7 +1,7 @@
 #pragma once
 #include <QString>
-#include <mongo/client/dbclient.h>
-#include "robomongo/core/Core.h"
+#include "robomongo/core/domain/Enums.h"
+#include <mongo/bson/bsonelement.h>
 
 namespace Robomongo
 {

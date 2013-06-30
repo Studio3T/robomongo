@@ -1,8 +1,7 @@
 #pragma once
 #include <QObject>
-#include <mongo/client/dbclient.h>
+#include <mongo/bson/bsonobj.h>
 #include "robomongo/core/Core.h"
-
 namespace Robomongo
 {
 	class Concatenator;

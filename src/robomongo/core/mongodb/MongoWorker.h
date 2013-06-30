@@ -4,8 +4,6 @@
 #include <QMutex>
 #include <QEvent>
 #include <QTimer>
-#include <QStringList>
-#include <mongo/client/dbclient.h>
 
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/engine/ScriptEngine.h"

@@ -1,13 +1,7 @@
 #pragma once
-
 #include <QObject>
-#include <QUuid>
 #include <QList>
 #include <QHash>
-#include <QScopedPointer>
-#include <mongo/client/dbclient.h>
-
-#include "robomongo/core/Core.h"
 #include "robomongo/core/mongodb/MongoWorker.h"
 
 namespace Robomongo

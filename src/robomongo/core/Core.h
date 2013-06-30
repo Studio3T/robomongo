@@ -1,5 +1,4 @@
 #pragma once
-
 #include <QMetaType>
 #include <QSharedPointer>
 #include <boost/shared_ptr.hpp>

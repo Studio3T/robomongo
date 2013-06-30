@@ -1,7 +1,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 namespace
 {
-    const u_int16_t port = 27017;
+    const unsigned port = 27017;
 }
 namespace Robomongo
 {

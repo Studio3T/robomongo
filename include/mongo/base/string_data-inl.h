@@ -18,7 +18,6 @@
 // this should never be included directly
 
 #include <stdexcept>
-
 namespace mongo {
 
     inline int StringData::compare(const StringData& other) const {

@@ -9,6 +9,7 @@
 *.kate-swp
 
 target/
+libs/
 *~
 *.autosave
 

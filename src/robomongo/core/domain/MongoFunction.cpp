@@ -1,5 +1,5 @@
 #include "robomongo/core/domain/MongoFunction.h"
-
+#include <mongo/bson/bsonobjbuilder.h>
 namespace Robomongo
 {
     MongoFunction::MongoFunction(const mongo::BSONObj &obj)

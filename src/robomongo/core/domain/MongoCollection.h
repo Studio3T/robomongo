@@ -1,8 +1,5 @@
 #pragma once
-
 #include <QObject>
-
-#include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 

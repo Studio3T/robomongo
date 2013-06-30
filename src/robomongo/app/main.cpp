@@ -1,8 +1,5 @@
 #include <QApplication>
 #include <QDesktopWidget>
-#include <mongo/client/dbclient.h>
-
-#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/gui/MainWindow.h"
 

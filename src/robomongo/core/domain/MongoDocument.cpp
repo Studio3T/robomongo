@@ -1,5 +1,4 @@
 #include "robomongo/core/domain/MongoDocument.h"
-
 #include <QStringBuilder>
 #include <QTextCodec>
 

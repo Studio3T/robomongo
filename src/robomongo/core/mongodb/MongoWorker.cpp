@@ -85,12 +85,6 @@ namespace Robomongo
 
     void MongoWorker::handle(FinalizeRequest *event)
     {
-        try {
-
-        }
-        catch (std::exception &ex) {
-
-        }
     }
 
     /**

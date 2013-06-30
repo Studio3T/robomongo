@@ -1,5 +1,4 @@
 #pragma once
-
 #include <QEvent>
 #include <QMultiHash>
 #include <QMutex>

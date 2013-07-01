@@ -9,7 +9,6 @@ SET (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 ########################## Options #########################
 OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
 OPTION(MANIFEST_ENABLE "Enable Manifest" OFF)
-OPTION(ENABLE_SVN "Enable Svn build incrementing" OFF)
 #############################################################
 # Configure project
 PROJECT(${PROJECT_NAME_lowercase})
@@ -65,13 +64,11 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 ENDIF()
 ELSEIF(MSVC)
 ENDIF()
-
-IF(WIN32 AND MSVC)
-    SET(CMAKE_EXE_LINKER_FLAGS "/VERSION:\"${${PROJECT_NAME}_VERSION}\"" CACHE STRING "Resetting the default linker options." FORCE)
-    STRING(REPLACE "." "," FILEVERSION ${${PROJECT_NAME}_VERSION})
-    SET(VERSION_STR ${${PROJECT_NAME}_VERSION})
-ENDIF()
-
+if(WIN32 OR APPLE)
+	set(CMAKE_INSTALL_PREFIX 
+		"${CMAKE_BINARY_DIR}/bin"
+	)
+endif(WIN32 OR APPLE)
 ############################################################################
 
 IF(MANIFEST_ENABLE)

@@ -19,6 +19,7 @@ SET(CMAKE_MODULE_PATH
         ${CMAKE_MODULE_PATH}
         "${CMAKE_CURRENT_LIST_DIR}/"
 )
+include(cmake/projecthelper.cmake)
 IF(BOOST_ENABLED)
 ADD_DEFINITIONS(-DBOOST_SUPPORT_ENABLED)
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/integrate-boost.cmake)

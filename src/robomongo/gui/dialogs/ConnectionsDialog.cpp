@@ -53,10 +53,11 @@ namespace Robomongo
         QStringList colums;
         colums << "Name" << "Address" << "Auth. Database / User";
         _listWidget->setHeaderLabels(colums);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         _listWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(1, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(2, QHeaderView::Stretch);
-
+#endif
         //_listWidget->setViewMode(QListView::ListMode);
         _listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
         _listWidget->addAction(addAction);

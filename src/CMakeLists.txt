@@ -117,7 +117,7 @@ SET(SOURCES_SHELL
     robomongo/shell/scripting/engine_spidermonkey.cpp
     robomongo/shell/scripting/engine.cpp
     robomongo/shell/mongo.cpp
-    robomongo/shell/util/version.cpp
+    #robomongo/shell/util/version.cpp
     robomongo/shell/util/processinfo.cpp
     robomongo/shell/shell/shell_utils.cpp
     robomongo/shell/shell/shell_utils_launcher.cpp
@@ -232,7 +232,7 @@ IF(LINUX)
 ADD_DEFINITIONS(-DXP_UNIX)
 ELSEIF(MAC_OS)
 ELSEIF(WINDOWS)
-ADD_DEFINITIONS(-D_WINSOCKAPI_ -D_CRT_NONSTDC_NO_WARNINGS -DXP_WIN -DUNICODE -DBOOST_ALL_NO_LIB -D_CRT_SECURE_NO_WARNINGS -DPSAPI_VERSION=1)
+ADD_DEFINITIONS(-D_WINSOCKAPI_ -DXP_WIN -DUNICODE -DBOOST_ALL_NO_LIB -DPSAPI_VERSION=1)
 ENDIF()
 ADD_DEFINITIONS(-DROBOMONGO -DJS_C_STRINGS_ARE_UTF8 -DMONGO_EXPOSE_MACROS)
 SET(LIBMONGOCLIENT_RELEASE_FILENAME ${CMAKE_STATIC_LIBRARY_PREFIX}mongoclient${CMAKE_STATIC_LIBRARY_SUFFIX})
@@ -295,7 +295,7 @@ add_dependencies(${PROJECT_NAME} BUILD_MONGOCLIENT_RELEASE)
 ELSEIF(MSVC)
 SET(ALL_RELEASE_LIBS ${ALL_LIBS} ${MONGOCLIENT_RELEASE_LIBRARY})
 add_custom_target(BUILD_MONGOCLIENT_RELEASE
-COMMAND scons --32 --usesm mongoclient
+COMMAND scons --extrapath=${BOOST_ROOT} --32 --usesm mongoclient
 COMMAND ${CMAKE_COMMAND} -E copy ${LIBMONGOCLIENT_RELEASE_FILENAME} ${MONGOCLIENT_RELEASE_LIBRARY}
 WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
 COMMENT "Build mongoclient release library")

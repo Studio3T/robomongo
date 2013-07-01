@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 #################### Project Settings ####################
 SET(PROJECT_NAME "robomongo" CACHE STRING "Project Name")
 SET(${PROJECT_NAME}_PROJECT_DOMAIN "www.robomongo.com" CACHE STRING "Internet domain name for ${ProjectName}")
-SET(${PROJECT_NAME}_COPYRIGHT "robomongo Inc.")
+SET(PROJECT_COMPANYNAME "paralect")
 ##########################################################
 STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_lowercase)
 SET (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -17,46 +17,28 @@ OPTION(BOOST_ENABLED "Enable boost system support" ON)
 OPTION(BUILD_PCRECPP_LIBRARY "Build pcrecpp library from sources" ON)
 OPTION(QT_ENABLED "Enable Qt support" ON)
 OPTION(UNICODE_ENABLE "Support unicode" OFF)
+option(DEVELOPER_DYNAMIC_RUNTIME "Build with dynamic C++ runtime" ON)
 INCLUDE(cmake/config.cmake)
 
-IF(WINDOWS)
-	set(CMAKE_INSTALL_PREFIX "$ENV{PROGRAMFILES}\\${PROJECT_NAME_lowercase}")
-ENDIF()
+DEFINE_DEFAULT_DEFINITIONS()
+SETUP_COMPILER_SETTINGS(${DEVELOPER_DYNAMIC_RUNTIME})
 
-SET(MAJOR "1")
-SET(MINOR "0")
-SET(PATCH "0")
-SET(BUILD "0")
-
-IF(ENABLE_SVN)
-FIND_PACKAGE(Subversion)
-
-IF(Subversion_FOUND AND WIN32)
-    Subversion_WC_INFO(${PROJECT_SOURCE_DIR}/source Project)
-	SET(BUILD ${Project_WC_REVISION})
-    MESSAGE("Current svn revision is ${Project_WC_REVISION}")
-ENDIF(Subversion_FOUND AND WIN32)
-
-ENDIF(ENABLE_SVN)
-SET(${PROJECT_NAME}_VERSION "${MAJOR}.${MINOR}.${PATCH}.${BUILD}" CACHE STRING "${PROJECT_NAME} version")
-##################### Compiler options and definitions ####################
-ADD_DEFINITIONS(
-        -DPROJECT_VERSION=${${PROJECT_NAME}_VERSION}
-        -DPROJECT_NAME="${PROJECT_NAME}"
-        -DPROJECT_NAME_LOWERCASE="${PROJECT_NAME_lowercase}"
-        -DPROJECT_DOMAIN="${${PROJECT_NAME}_PROJECT_DOMAIN}"
-		-DPROJECT_COPYRIGHT="${${PROJECT_NAME}_COPYRIGHT}"
-)
+# Search libraries
+# use Qt
+DETECT_QT()
 ##################### Libraries search ###################
+if(DEVELOPER_QT5)
 SET(QT_COMPONENTS_TO_USE 
 	Qt5Core 
 	Qt5Gui 
 	Qt5Widgets
 )
-
-# Search libraries
-# use Qt
-DETECT_QT()
+ELSE()
+SET(QT_COMPONENTS_TO_USE 
+	QtCore 
+	QtGui 
+)
+ENDIF()
 INTEGRATE_QT(${QT_COMPONENTS_TO_USE})
 ##########################################################
 

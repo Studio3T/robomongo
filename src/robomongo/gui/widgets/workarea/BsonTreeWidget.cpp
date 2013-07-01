@@ -38,9 +38,11 @@ namespace Robomongo
         QStringList colums;
         colums << "Key" << "Value" << "Type";
         setHeaderLabels(colums);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         header()->setSectionResizeMode(0, QHeaderView::Stretch);
         header()->setSectionResizeMode(1, QHeaderView::Stretch);
         header()->setSectionResizeMode(2, QHeaderView::Stretch);
+#endif
         setIndentation(15);
 
         //setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::DoubleClicked);
@@ -70,8 +72,9 @@ namespace Robomongo
         setStyleSheet(
             "QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }"
         );
-
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         header()->setSectionResizeMode(QHeaderView::Interactive);
+#endif
         connect(this, SIGNAL(itemExpanded(QTreeWidgetItem *)), SLOT(ui_itemExpanded(QTreeWidgetItem *)));
     }
 

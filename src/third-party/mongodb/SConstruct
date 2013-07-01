@@ -419,7 +419,7 @@ def addExtraLibs( s ):
 
 if has_option( "extrapath" ):
     addExtraLibs( GetOption( "extrapath" ) )
-    release = True # this is so we force using .a
+    #release = True # this is so we force using .a
 
 if has_option( "extrapathdyn" ):
     addExtraLibs( GetOption( "extrapathdyn" ) )
@@ -608,7 +608,7 @@ elif "win32" == os.sys.platform:
         # /O2:  optimize for speed (as opposed to size)
         # /Oy-: disable frame pointer optimization (overrides /O2, only affects 32-bit)
         # /MT:  use the multithreaded, static version of the run-time library (LIBCMT.lib)
-        env.Append( CCFLAGS= ["/O2", "/Oy-", "/MT"] )
+        env.Append( CCFLAGS= ["/O2", "/Oy-", "/MD"] )
 
         # TODO: this has caused some linking problems :
         # /GL whole program optimization
@@ -626,7 +626,7 @@ elif "win32" == os.sys.platform:
         #        (implies /Od: no optimizations)
         # /MTd: Defines _DEBUG, _MT, and causes your application to use the
         #       debug multithread version of the run-time library (LIBCMTD.lib)
-        env.Append( CCFLAGS=["/RTC1", "/Od", "/MTd"] )
+        env.Append( CCFLAGS=["/RTC1", "/Od", "/MDd"] )
         if debugBuild:
             # If you build without --d, no debug PDB will be generated, and 
             # linking will be faster. However, you won't be able to debug your code with the debugger.

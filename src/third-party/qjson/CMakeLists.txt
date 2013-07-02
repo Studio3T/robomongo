@@ -13,10 +13,10 @@ set(qjson_MOC_HDRS
   serializerrunnable.h
 )
 
-IF (NOT Qt5Core_FOUND)
-  qt4_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
+IF (Qt5Core_FOUND)
+	qt5_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
 else()
-  qt5_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
+    qt4_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
 ENDIF()
 
 set (qjson_SRCS parser.cpp qobjecthelper.cpp json_scanner.cpp json_parser.cc parserrunnable.cpp serializer.cpp serializerrunnable.cpp)
@@ -24,8 +24,8 @@ set (qjson_HEADERS parser.h parserrunnable.h qobjecthelper.h serializer.h serial
 
 # Required to use the intree copy of FlexLexer.h
 INCLUDE_DIRECTORIES(.)
-
-add_library (qjson STATIC ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
+ADD_DEFINITIONS(-DQJSON_MAKEDLL)
+add_library (qjson SHARED ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
 IF (Qt5Core_FOUND)
   target_link_libraries( qjson ${Qt5Core_LIBRARIES})
 ELSE()
@@ -33,21 +33,21 @@ ELSE()
 ENDIF()
 
 if(NOT android)
-	#set_target_properties(qjson PROPERTIES
-	#                      VERSION ${QJSON_LIB_MAJOR_VERSION}.${QJSON_LIB_MINOR_VERSION}.${QJSON_LIB_PATCH_VERSION}
-        #                      SOVERSION ${QJSON_LIB_MAJOR_VERSION}
-	#                      )
+#	set_target_properties(qjson PROPERTIES
+#	                      VERSION ${QJSON_LIB_MAJOR_VERSION}.${QJSON_LIB_MINOR_VERSION}.${QJSON_LIB_PATCH_VERSION}
+#                             SOVERSION ${QJSON_LIB_MAJOR_VERSION}
+#	                      )
 endif()
 #set_target_properties(qjson PROPERTIES
 #                      DEFINE_SYMBOL QJSON_MAKEDLL
-#                     PUBLIC_HEADER "${qjson_HEADERS}"
-#                      FRAMEWORK ${OSX_FRAMEWORK}
- #                     )
+ #                    PUBLIC_HEADER "${qjson_HEADERS}"
+ #                     FRAMEWORK ${OSX_FRAMEWORK}
+ #                    )
 
-#INSTALL(TARGETS qjson EXPORT qjson-export
-#   LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-#   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-#   ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-#   FRAMEWORK DESTINATION ${FRAMEWORK_INSTALL_DIR}
-#   PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}/qjson
-#)
+INSTALL(TARGETS qjson EXPORT qjson-export
+   LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+   ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+   FRAMEWORK DESTINATION ${FRAMEWORK_INSTALL_DIR}
+   PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}/qjson
+)

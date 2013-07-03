@@ -69,7 +69,7 @@ namespace Robomongo
         layout->addWidget(_viewer, 1);
         setLayout(layout);
 
-		if (shell->execute()) {
+        if (shell->isExecutable()) {
 			showProgress();
 		}
     }

@@ -20,7 +20,7 @@ namespace Robomongo
         {
             return _filePath;
         }
-
+        bool loadFromFile(const QString &filePath);
 		bool loadFromFile();
 		void saveToFileAs();
 		void saveToFile();

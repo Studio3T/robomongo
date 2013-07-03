@@ -1,4 +1,4 @@
-#include "ScriptInfo.h"
+#include "robomongo/core/domain/ScriptInfo.h"
 
 #include <QTextStream>
 #include <QApplication>
@@ -49,22 +49,25 @@ namespace Robomongo
 	{
 
 	}
-
+    bool ScriptInfo::loadFromFile(const QString &filePath)
+    {
+        bool result = false;
+        QString filepath = QFileDialog::getOpenFileName(QApplication::activeWindow(),filePath,QString(),filterForScripts);
+        if (!filepath.isEmpty())
+        {
+            QString out;
+            if(loadFromFileText(filepath,out))
+            {
+                _script = out;
+                _filePath = filepath;
+                result = true;
+            }
+        }
+        return result;
+    }
 	bool ScriptInfo::loadFromFile()
-	{
-		bool result = false;
-		QString filepath = QFileDialog::getOpenFileName(QApplication::activeWindow(),_filePath,QString(),filterForScripts);
-		if (!filepath.isEmpty())
-		{
-			QString out;
-			if(loadFromFileText(filepath,out))
-			{
-				_script = out;
-				_filePath = filepath;
-				result = true;
-			}
-		}
-		return result;
+    {
+        return loadFromFile(_filePath);
 	}
 	void ScriptInfo::saveToFileAs()
 	{
@@ -76,6 +79,13 @@ namespace Robomongo
 	}
 	void ScriptInfo::saveToFile()
 	{
-		saveToFileText(_filePath,_script);
+        if(!_filePath.isEmpty())
+        {
+            saveToFileText(_filePath,_script);
+        }
+        else
+        {
+            saveToFileAs();
+        }
 	}
 }

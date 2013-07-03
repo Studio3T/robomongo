@@ -7,7 +7,7 @@ INTEGRATE_BOOST(thread system filesystem)
 ENDIF()
 ADD_SUBDIRECTORY(third-party/qjson)
 ADD_SUBDIRECTORY(third-party/qscintilla/Qt4Qt5)
-ADD_SUBDIRECTORY(third-party)
+ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/js-1.7)
 IF(BUILD_PCRECPP_LIBRARY)
 SET(PCRE_BUILD_TESTS OFF CACHE BOOL "Build the tests pcre tests.")
 SET(PCRE_BUILD_PCREGREP OFF CACHE BOOL "Build pcregrep")
@@ -246,45 +246,11 @@ SET(HEADERS ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL} ${HEADERS_CORE} ${HE
 SET(SOURCES robomongo/app/main.cpp ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_CORE} ${SOURCES_LINKER_FIXES})
 IF(BOOST_ENABLED)
     SET(ALL_LIBS ${ALL_LIBS} ${Boost_LIBRARIES})
-ELSE()    
-    INCLUDE_DIRECTORIES(third-party/mongodb/src/third_party/boost)
-    IF(WINDOWS)
-		ADD_DEFINITIONS(-DBOOST_ALL_NO_LIB)
-        SET(BOOST_SOURCES_PLATFORM
-         third-party/mongodb/src/third_party/boost/libs/thread/src/win32/thread.cpp
-         third-party/mongodb/src/third_party/boost/libs/thread/src/win32/tss_dll.cpp
-         third-party/mongodb/src/third_party/boost/libs/thread/src/win32/tss_pe.cpp)
-    ELSE()
-        SET(BOOST_SOURCES_PLATFORM
-        third-party/mongodb/src/third_party/boost/libs/thread/src/pthread/once.cpp
-        third-party/mongodb/src/third_party/boost/libs/thread/src/pthread/thread.cpp)
-    ENDIF()
-    SET(BOOST_SOURCES ${BOOST_SOURCES_PLATFORM}
-    third-party/mongodb/src/third_party/boost/libs/program_options/src/cmdline.cpp
-    third-party/mongodb/src/third_party/boost/libs/program_options/src/config_file.cpp
-    third-party/mongodb/src/third_party/boost/libs/program_options/src/convert.cpp
-    third-party/mongodb/src/third_party/boost/libs/program_options/src/options_description.cpp
-    third-party/mongodb/src/third_party/boost/libs/program_options/src/parsers.cpp
-    third-party/mongodb/src/third_party/boost/libs/program_options/src/positional_options.cpp
-    third-party/mongodb/src/third_party/boost/libs/program_options/src/split.cpp
-    third-party/mongodb/src/third_party/boost/libs/program_options/src/utf8_codecvt_facet.cpp
-    third-party/mongodb/src/third_party/boost/libs/program_options/src/value_semantic.cpp
-    third-party/mongodb/src/third_party/boost/libs/program_options/src/variables_map.cpp
-    third-party/mongodb/src/third_party/boost/libs/program_options/src/winmain.cpp
-
-    third-party/mongodb/src/third_party/boost/libs/filesystem/v2/src/v2_operations.cpp
-    third-party/mongodb/src/third_party/boost/libs/filesystem/v2/src/v2_path.cpp
-    third-party/mongodb/src/third_party/boost/libs/filesystem/v2/src/v2_portability.cpp
-    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/codecvt_error_category.cpp
-    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/operations.cpp
-    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/path.cpp
-    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/path_traits.cpp
-    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/portability.cpp
-    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/unique_path.cpp
-    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/utf8_codecvt_facet.cpp
-    third-party/mongodb/src/third_party/boost/libs/filesystem/v3/src/windows_file_codecvt.cpp
-
-    third-party/mongodb/src/third_party/boost/libs/system/src/error_code.cpp)
+ELSE()   
+	ADD_DEFINITIONS(-DBOOST_ALL_NO_LIB) 
+	ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/boost)
+	INCLUDE_DIRECTORIES(third-party/mongodb/src/third_party/boost)
+	SET(ALL_LIBS ${ALL_LIBS} boost_mongo_third_party)
 ENDIF()
 
 SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC})

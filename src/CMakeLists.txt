@@ -54,7 +54,8 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/CreateUserDialog.h
     robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h
     robomongo/gui/dialogs/FunctionTextEditor.h
-    robomongo/gui/dialogs/AboutDialog.h)
+    robomongo/gui/dialogs/AboutDialog.h
+    robomongo/gui/editors/FindFrame.h)
 SET(HEADERS_GUI
     robomongo/gui/GuiRegistry.h
     robomongo/gui/editors/PlainJavaScriptEditor.h
@@ -84,6 +85,7 @@ SET(SOURCES_GUI
     robomongo/gui/editors/jsedit.cpp
     robomongo/gui/editors/PlainJavaScriptEditor.cpp
     robomongo/gui/editors/JSLexer.cpp
+    robomongo/gui/editors/FindFrame.cpp
     robomongo/gui/widgets/workarea/OutputWidget.cpp
     robomongo/gui/widgets/workarea/OutputItemContentWidget.cpp
     robomongo/gui/examples/CredentialModel.cpp

@@ -26,9 +26,6 @@ namespace Robomongo
         _textChanged(false),
         _disableTextAndCursorNotifications(false)
     {
-		setText(shell->query());
-		setTextCursor(shell->cursor());
-        connect(shell, SIGNAL(contentChanged(const QString &)),this, SLOT(setText(const QString &)));
         setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
 
         _queryText = new RoboScintilla;
@@ -61,6 +58,10 @@ namespace Robomongo
 
         QStringListModel *model = new QStringListModel(_completer);
         _completer->setModel(model);
+
+        setText(shell->query());
+        setTextCursor(shell->cursor());
+        connect(shell, SIGNAL(contentChanged(const QString &)),this, SLOT(setText(const QString &)));
     }
 
     bool ScriptWidget::eventFilter(QObject *obj, QEvent *event)

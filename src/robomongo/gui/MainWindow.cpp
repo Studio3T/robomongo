@@ -17,6 +17,7 @@
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/mongodb/MongoException.h"
+#include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 #include "robomongo/gui/widgets/LogWidget.h"
@@ -251,6 +252,8 @@ namespace Robomongo
 		_execToolBar->addAction(_executeAction);
 		_execToolBar->addAction(_stopAction);
 		_execToolBar->addAction(_orientationAction);
+        _execToolBar->addAction(_openAction);
+        _execToolBar->addAction(_saveAction);
 		_execToolBar->setShortcutEnabled(1, true);
 		_execToolBar->setMovable(false);
 		addToolBar(_execToolBar);
@@ -272,46 +275,35 @@ namespace Robomongo
         if(_workArea)
         {
             QueryWidget * wid = _workArea->currentWidget();
-            if(wid)
-            {
+            if(wid){
                 wid->openFile();
             }
             else
             {
                 QList<ConnectionSettings *>  connections = AppRegistry::instance().settingsManager()->connections();
-                if(connections.count()==1)
-                {
+                if(connections.count()==1){
                     ScriptInfo inf = ScriptInfo(QString());
-                    if(inf.loadFromFile())
-                    {
+                    if(inf.loadFromFile()){
                         _app->openShell(connections.at(0)->clone(),inf);
                     }
-                }
-                else
-                {
-
                 }
             }
         }
     }
     void MainWindow::save()
     {
-        if(_workArea)
-        {
+        if(_workArea){
             QueryWidget * wid = _workArea->currentWidget();
-            if(wid)
-            {
+            if(wid){
                 wid->saveToFile();
             }
         }
     }
     void MainWindow::saveAs()
     {
-        if(_workArea)
-        {
+        if(_workArea){
             QueryWidget * wid = _workArea->currentWidget();
-            if(wid)
-            {
+            if(wid){
                 wid->savebToFileAs();
             }
         }
@@ -486,12 +478,10 @@ namespace Robomongo
 	{
 		QVariant data = connectionAction->data();
 		ConnectionSettings *ptr = data.value<ConnectionSettings *>();
-		try
-		{
+		try{
 			_app->openServer(ptr->clone(), true);
 		}
-        catch(const MongoException &)
-		{
+        catch(const MongoException &){
 			QString message = QString("Cannot connect to MongoDB (%1)").arg(ptr->getFullAddress());
 			QMessageBox::information(this, "Error", message);
 		}
@@ -548,18 +538,18 @@ namespace Robomongo
 	}
     void MainWindow::updateMenus()
     {
-        if(_workArea&&_workArea->countTab()>0)
-        {
+        if(_workArea&&_workArea->countTab()>0){
             _openAction->setEnabled(true);
             QueryWidget * wid = _workArea->currentWidget();
-            if(wid)
-            {
-                _saveAction->setEnabled(true);
+            if(wid){
+                const MongoShell *const shell = wid->shell();
+                if(shell&&!shell->filePath().isEmpty()){
+                    _saveAction->setEnabled(true);
+                }
             }
             _saveAsAction->setEnabled(true);
         }
-        else
-        {
+        else{
             _saveAction->setEnabled(false);
             _saveAsAction->setEnabled(false);
             _openAction->setEnabled(AppRegistry::instance().settingsManager()->connections().count()>0);

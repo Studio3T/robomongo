@@ -45,6 +45,10 @@ namespace Robomongo
         void enterCustomMode();
         void showProgress();
         void hideProgress();
+        const MongoShell *const shell() const
+        {
+            return _shell;
+        }
     public Q_SLOTS:
         void execute();
         void stop();

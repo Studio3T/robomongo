@@ -324,9 +324,13 @@ macro(QT_ADD_POSTBUILD_STEP TARGET_NAME libLocation copyToSubdirectory)
 		string(REGEX REPLACE ".so" "d.so" libLocation_debug ${libLocation_release})
 	endif()
 
-	add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND
-		 ${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:${libLocation_debug}> $<$<NOT:$<CONFIG:Debug>>:${libLocation_release}>  $<TARGET_FILE_DIR:${TARGET_NAME}>${copyToSubdirectory}
-	)		
+IF(MSVC OR APPLE)
+        add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND
+                 ${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:${libLocation_debug}> $<$<NOT:$<CONFIG:Debug>>:${libLocation_release}>  $<TARGET_FILE_DIR:${TARGET_NAME}>${copyToSubdirectory})
+ELSE()
+       # add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${libLocation_debug}
+       # add_custom_command(TARGET ${TARGET_NAME}_d POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${libLocation_release}
+ENDIF(MSVC OR APPLE)
 	#message(-------------------------------------------------)
 endmacro(QT_ADD_POSTBUILD_STEP)
 

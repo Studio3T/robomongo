@@ -9,6 +9,7 @@ ADD_DEFINITIONS(-DBOOST_THREAD_BUILD_LIB)
         libs/thread/src/win32/tss_pe.cpp)
     ELSE()
         SET(BOOST_SOURCES_PLATFORM
+        libs/thread/src/pthread/once.cpp
         libs/thread/src/pthread/thread.cpp)
     ENDIF()
 set(HEADERS

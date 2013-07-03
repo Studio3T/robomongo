@@ -3,6 +3,7 @@
 QT_BEGIN_NAMESPACE
 class QTextEdit;
 class QPushButton;
+class QToolButton;
 class QCheckBox;
 QT_END_NAMESPACE
 class QsciScintilla;
@@ -33,7 +34,7 @@ namespace Robomongo
         QsciScintilla * const scin_;
         QFrame * const find_panel_;
         QTextEdit *const find_line_;
-        QPushButton *const close_;
+        QToolButton *const close_;
         QPushButton *const next_;
         QPushButton *const prev_;
         QCheckBox *const  case_sens_;

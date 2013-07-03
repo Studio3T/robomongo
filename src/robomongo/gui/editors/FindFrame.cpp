@@ -1,18 +1,23 @@
 #include "robomongo/gui/editors/FindFrame.h"
-#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QTextEdit>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QToolButton>
 #include <Qsci/qsciscintilla.h>
+#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+
 namespace Robomongo
 {
     FindFrame::FindFrame(QWidget *parent):
         base_class(parent),scin_(new RoboScintilla(this)),
-        find_panel_(new QFrame(this)),close_(new QPushButton("close",this)),
+        find_panel_(new QFrame(this)),close_(new QToolButton(this)),
         find_line_(new QTextEdit(this)),next_(new QPushButton("next",this)),prev_(new QPushButton("prev",this)),case_sens_(new QCheckBox("Match case",this))
     {
+        close_->setIcon(QIcon(":/robomongo/icons/close_2_16x16.png"));
+        close_->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        close_->setIconSize(QSize(16,16));
         find_line_->setAlignment(Qt::AlignLeft|Qt::AlignAbsolute);
         QVBoxLayout *main_layout = new QVBoxLayout();
         main_layout->addWidget(scin_);
@@ -67,10 +72,13 @@ namespace Robomongo
         const QString &text = find_line_->toPlainText();
         if(!text.isEmpty())
         {
-            bool re;
-            bool wo;
-            bool wrap;
-            scin_->findFirst(text,re,case_sens_->checkState()==Qt::Checked,wo,wrap);
+            bool re=false;
+            bool wo=false;
+            bool wrap=false;
+            int index =0;
+            int line =0;
+            scin_->getCursorPosition(&line,&index);
+            scin_->findFirst(text,re,case_sens_->checkState()==Qt::Checked,wo,wrap,true,line,index);
         }
     }
     void FindFrame::GoToPrevElement()
@@ -78,10 +86,14 @@ namespace Robomongo
         const QString &text = find_line_->toPlainText();
         if(!text.isEmpty())
         {
-            bool re;
-            bool wo;
-            bool wrap;
-            scin_->findFirst(text,re,case_sens_->checkState()==Qt::Checked,wo,wrap,false);
+            bool re=false;
+            bool wo=false;
+            bool wrap=false;
+            int index =0;
+            int line =0;
+            scin_->getCursorPosition(&line,&index);
+            index -= scin_->selectedText().length();
+            scin_->findFirst(text,re,case_sens_->checkState()==Qt::Checked,wo,wrap,false,line,index);
         }
     }
 }

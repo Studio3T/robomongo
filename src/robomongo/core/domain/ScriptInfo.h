@@ -15,7 +15,7 @@ namespace Robomongo
         QString script() const { return _script; }
         const QString &title() const { return _title; }
         const CursorPosition &cursor() const { return _cursor; }
-		void setScript(const QString &script){_script = script;};
+        void setScript(const QString &script){_script = script;}
 
 		bool loadFromFile();
 		void saveToFileAs();

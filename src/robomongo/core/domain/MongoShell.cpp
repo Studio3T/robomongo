@@ -50,10 +50,7 @@ namespace Robomongo
     }
 	void MongoShell::loadFromFile()
 	{
-		if(_scriptInfo.loadFromFile())
-		{
-			emit contentChanged(query());  
-		}    
+        _scriptInfo.loadFromFile();
 	}
 	void MongoShell::saveToFileAs()
 	{

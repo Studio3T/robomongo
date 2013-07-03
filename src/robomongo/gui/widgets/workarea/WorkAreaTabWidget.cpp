@@ -47,8 +47,7 @@ namespace Robomongo
             QueryWidget *tabWidget = queryWidget(index);
             removeTab(index);
             if (tabWidget)
-            {
-                AppRegistry::instance().app()->closeShell(tabWidget->shell());
+            {                
                 delete tabWidget;
             }
         }
@@ -171,30 +170,21 @@ namespace Robomongo
     {
         QueryWidget *query = queryWidget(index);
         if (query){
-            MongoShell * shell = query->shell();
-            if(shell){
-                shell->saveToFile();
-            }
+            query->saveToFile();
         }
     }
     void WorkAreaTabWidget::savedTabToFileAs(int index)
     {
         QueryWidget *query = queryWidget(index);
         if (query){
-            MongoShell * shell = query->shell();
-            if(shell){
-                shell->saveToFileAs();
-            }
+            query->savebToFileAs();
         }
     }
     void WorkAreaTabWidget::openedTabFile(int index)
     {
         QueryWidget *query = queryWidget(index);
         if (query){
-            MongoShell * shell = query->shell();
-            if(shell){
-                shell->loadFromFile();
-            }
+            query->openFile();
         }
     }
 }

@@ -146,7 +146,32 @@ namespace Robomongo
 
         _app->openShell(server, query, _currentResult.currentDatabase());
     }
-
+    void QueryWidget::saveToFile()
+    {
+        if(_shell){
+            _shell->setScript(_scriptWidget->text());
+            _shell->saveToFile();
+        }
+    }
+    void QueryWidget::savebToFileAs()
+    {
+        if(_shell){
+            _shell->setScript(_scriptWidget->text());
+            _shell->saveToFileAs();
+        }
+    }
+    void QueryWidget::openFile()
+    {
+        if(_shell){
+            _shell->loadFromFile();
+            _scriptWidget->setText(_shell->query());
+        }
+    }
+    void QueryWidget::closeEvent(QCloseEvent *ev)
+    {
+        AppRegistry::instance().app()->closeShell(_shell);
+        return BaseClass::closeEvent(ev);
+    }
     void QueryWidget::reload()
     {
         execute();

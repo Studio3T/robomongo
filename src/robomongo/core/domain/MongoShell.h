@@ -27,8 +27,7 @@ namespace Robomongo
 		bool execute() const { return _scriptInfo.execute(); }
 		const QString &title() const { return _scriptInfo.title(); }
 		const CursorPosition &cursor() const { return _scriptInfo.cursor(); }
-    Q_SIGNALS:
-        void contentChanged(const QString &text);
+        void setScript(const QString &script){return _scriptInfo.setScript(script);}
     public Q_SLOTS:
         void saveToFile();
         void saveToFileAs();

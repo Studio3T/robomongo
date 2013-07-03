@@ -61,7 +61,6 @@ namespace Robomongo
 
         setText(shell->query());
         setTextCursor(shell->cursor());
-        connect(shell, SIGNAL(contentChanged(const QString &)),this, SLOT(setText(const QString &)));
     }
 
     bool ScriptWidget::eventFilter(QObject *obj, QEvent *event)

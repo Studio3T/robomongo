@@ -269,7 +269,7 @@ if(WIN32)
 	if(NOT CMAKE_BUILD_TYPE)
 		# Visual studio install
 		foreach(buildconfig ${CMAKE_CONFIGURATION_TYPES})
-			message(STATUS "VC configuration install")
+			message(STATUS "VC configuration install for ${buildconfig} ${DLIBS_TO_COPY_RELEASE}")
 			if(${buildconfig} STREQUAL "Debug")
 				set(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_DEBUG})
 			else()
@@ -285,7 +285,7 @@ if(WIN32)
 
 	else(NOT CMAKE_BUILD_TYPE)
 		# Make install
-		message(STATUS "Make configuration install")
+		message(STATUS "Make configuration install ${DLIBS_TO_COPY_RELEASE}")
 		if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 			set(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_DEBUG})
 		else()

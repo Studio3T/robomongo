@@ -54,37 +54,20 @@ source_group(sources FILES
 	${HEADERS}
 	${SOURCES}
 )
-IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX)
 add_custom_command(
     OUTPUT jsautokw.h
-    COMMAND gcc jskwgen.c -o jswgen
+    COMMAND ${CMAKE_C_COMPILER} ${CMAKE_CURRENT_LIST_DIR}/jskwgen.c -o jswgen
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/jswgen > jsautokw.h
     DEPENDS jskwgen.c
     COMMENT "Regenerating header file jsautokw.h..."
 )
 add_custom_command(
     OUTPUT jsautocfg.h
-    COMMAND gcc jscpucfg.c -o jscpucfg
+    COMMAND ${CMAKE_C_COMPILER} ${CMAKE_CURRENT_LIST_DIR}/jscpucfg.c -o jscpucfg
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/jscpucfg > jsautocfg.h
     DEPENDS jscpucfg.c
     COMMENT "Regenerating header file jsautocfg.h..."
 )
-ELSE()
-add_custom_command(
-    OUTPUT jsautokw.h
-    COMMAND cl ${CMAKE_CURRENT_LIST_DIR}/jskwgen.c -o jswgen
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/jswgen > jsautokw.h
-    DEPENDS jskwgen.c
-    COMMENT "Regenerating header file jsautokw.h..."
-)
-add_custom_command(
-    OUTPUT jsautocfg.h
-    COMMAND cl ${CMAKE_CURRENT_LIST_DIR}/jscpucfg.c -o jscpucfg
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/jscpucfg > jsautocfg.h
-    DEPENDS jscpucfg.c
-    COMMENT "Regenerating header file jsautocfg.h..."
-)
-ENDIF()
 MESSAGE(${CMAKE_CURRENT_LIST_DIR})
 add_library(js STATIC
 	${HEADERS}

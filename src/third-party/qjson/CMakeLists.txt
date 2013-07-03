@@ -54,16 +54,3 @@ INSTALL(TARGETS qjson EXPORT qjson-export
    PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}/qjson
 )
 ENDIF()
-macro(ADD_QJSON_TO_POSTBUILD_STEP TARGET_NAME)
-if(WIN32 OR APPLE)
-	get_target_property(targetLocation ${TARGET_NAME} LOCATION)
-	get_filename_component(targetDir ${targetLocation} PATH)
-	get_target_property(qjson_location qjson LOCATION)
-	get_filename_component(qjson_targetdir ${qjson_location} PATH)
-	set(DLIB_QJSON_DEBUG ${qjson_targetdir}/${CMAKE_SHARED_LIBRARY_PREFIX}qjson${CMAKE_SHARED_LIBRARY_SUFFIX})
-	set(DLIB_QJSON_RELEASE ${qjson_targetdir}/${CMAKE_SHARED_LIBRARY_PREFIX}qjson${CMAKE_SHARED_LIBRARY_SUFFIX})
-	add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND
-		 ${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:${DLIB_QJSON_DEBUG}> $<$<NOT:$<CONFIG:Debug>>:${DLIB_QJSON_RELEASE}>  $<TARGET_FILE_DIR:${TARGET_NAME}>${copyToSubdirectory}
-	)	
-endif(WIN32 OR APPLE)	
-endmacro(INSTALL_QT)

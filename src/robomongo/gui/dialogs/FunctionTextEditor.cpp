@@ -99,21 +99,12 @@ namespace Robomongo
     void FunctionTextEditor::_configureQueryText()
     {
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
-        javaScriptLexer->setFont(_textFont);
-
-        _queryText->setAutoIndent(true);
-        _queryText->setIndentationsUseTabs(false);
-        _queryText->setIndentationWidth(4);
-        _queryText->setUtf8(true);
+        javaScriptLexer->setFont(_textFont);        
         _queryText->installEventFilter(this);
-        _queryText->setMarginWidth(1, 0); // to hide left gray column
         _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
         _queryText->setFont(_textFont);
         _queryText->setPaper(QColor(255, 0, 0, 127));
         _queryText->setLexer(javaScriptLexer);
-        _queryText->setCaretForegroundColor(QColor("#FFFFFF"));
-        _queryText->setMatchedBraceBackgroundColor(QColor(73, 76, 78));
-        _queryText->setMatchedBraceForegroundColor(QColor("#FF8861")); //1AB0A6
         _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
         _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);

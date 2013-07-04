@@ -7,7 +7,7 @@
 #include <QMutexLocker>
 
 #include "robomongo/core/EventBusSubscriber.h"
-#include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/Event.h"
 #include "robomongo/core/EventWrapper.h"
 
 using namespace Robomongo;

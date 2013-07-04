@@ -1,13 +1,15 @@
 #pragma once
-
-#include "robomongo/core/Core.h"
-#include "robomongo/core/domain/CursorPosition.h"
+#include <QObject>
 #include "robomongo/core/domain/ScriptInfo.h"
 
 namespace Robomongo
 {
     class EventBus;
-
+	class MongoServer;
+	class ConnectionSettings;
+	class MongoCollection;
+	class MongoShell;
+	class MongoDatabase;
     class App : public QObject
     {
         Q_OBJECT

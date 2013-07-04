@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QString>
 #include <QEvent>
-
+#include <QMetaType>
 #include "robomongo/core/Core.h"
 #include "robomongo/core/EventError.h"
 

@@ -10,85 +10,87 @@
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 
-using namespace Robomongo;
-
-WorkAreaWidget::WorkAreaWidget(MainWindow *mainWindow)	:
-    QWidget(),
-    _bus(AppRegistry::instance().bus())
+namespace Robomongo
 {
-	_mainWindow = mainWindow;
-    _tabWidget = new WorkAreaTabWidget(this);
-	_tabWidget->setMovable(true);
-    _tabWidget->setDocumentMode(true);
 
-    QHBoxLayout *hlayout = new QHBoxLayout;
-    hlayout->setContentsMargins(0, 3, 0, 0);
-	hlayout->addWidget(_tabWidget);
-	setLayout(hlayout);
+    WorkAreaWidget::WorkAreaWidget(MainWindow *mainWindow)	:
+        QWidget(),
+        _bus(AppRegistry::instance().bus())
+    {
+        _mainWindow = mainWindow;
+        _tabWidget = new WorkAreaTabWidget(this);
+        _tabWidget->setMovable(true);
+        _tabWidget->setDocumentMode(true);
 
-    _bus->subscribe(this, OpeningShellEvent::Type);
-}
+        QHBoxLayout *hlayout = new QHBoxLayout;
+        hlayout->setContentsMargins(0, 3, 0, 0);
+        hlayout->addWidget(_tabWidget);
+        setLayout(hlayout);
 
-void WorkAreaWidget::toggleOrientation()
-{
-    QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
-    if (currentWidget)
-        currentWidget->toggleOrientation();
-}
+        _bus->subscribe(this, OpeningShellEvent::Type);
+    }
 
-void WorkAreaWidget::executeScript()
-{
-    QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
-    if (currentWidget)
-        currentWidget->execute();
-}
+    void WorkAreaWidget::toggleOrientation()
+    {
+        QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+        if (currentWidget)
+            currentWidget->toggleOrientation();
+    }
 
-void WorkAreaWidget::stopScript()
-{
-    QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
-    if (currentWidget)
-        currentWidget->stop();
-}
+    void WorkAreaWidget::executeScript()
+    {
+        QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+        if (currentWidget)
+            currentWidget->execute();
+    }
 
-void WorkAreaWidget::enterTextMode()
-{
-    QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
-    if (currentWidget)
-        currentWidget->enterTextMode();
-}
+    void WorkAreaWidget::stopScript()
+    {
+        QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+        if (currentWidget)
+            currentWidget->stop();
+    }
 
-void WorkAreaWidget::enterTreeMode()
-{
-    QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
-    if (currentWidget)
-        currentWidget->enterTreeMode();
-}
+    void WorkAreaWidget::enterTextMode()
+    {
+        QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+        if (currentWidget)
+            currentWidget->enterTextMode();
+    }
 
-void WorkAreaWidget::enterCustomMode()
-{
-    QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
-    if (currentWidget)
-        currentWidget->enterCustomMode();
-}
+    void WorkAreaWidget::enterTreeMode()
+    {
+        QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+        if (currentWidget)
+            currentWidget->enterTreeMode();
+    }
 
-void WorkAreaWidget::handle(OpeningShellEvent *event)
-{
-    ScriptInfo &info = event->scriptInfo;
+    void WorkAreaWidget::enterCustomMode()
+    {
+        QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+        if (currentWidget)
+            currentWidget->enterCustomMode();
+    }
 
-    QString shellName = info.title().isEmpty() ? " Loading..." : info.title();
+    void WorkAreaWidget::handle(OpeningShellEvent *event)
+    {
+        ScriptInfo &info = event->scriptInfo;
 
-    setUpdatesEnabled(false);
-    QueryWidget *queryWidget = new QueryWidget(
-        event->shell,
-        _tabWidget,
-        info,
-        _mainWindow->viewMode());
+        QString shellName = info.title().isEmpty() ? " Loading..." : info.title();
 
-    _tabWidget->addTab(queryWidget, shellName);
-    _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
-#if !defined(Q_OS_MAC)
-    _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());
-#endif
-    setUpdatesEnabled(true);
-    queryWidget->showProgress();
+        setUpdatesEnabled(false);
+        QueryWidget *queryWidget = new QueryWidget(
+            event->shell,
+            _tabWidget,
+            info,
+            _mainWindow->viewMode());
+
+        _tabWidget->addTab(queryWidget, shellName);
+        _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
+    #if !defined(Q_OS_MAC)
+        _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());
+    #endif
+        setUpdatesEnabled(true);
+        queryWidget->showProgress();
+    }
 }

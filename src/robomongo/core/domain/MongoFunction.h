@@ -1,6 +1,5 @@
 #pragma once
-
-#include <mongo/client/dbclient.h>
+#include <mongo/bson/bsonobj.h>
 #include <QString>
 
 namespace Robomongo

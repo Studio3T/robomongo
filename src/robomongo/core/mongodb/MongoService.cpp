@@ -69,7 +69,7 @@ QList<BSONObj> MongoService::getAllObjects( DBClientConnection *connection, QStr
 	return bsonList;	
 }
 
-QString MongoService::getStringValue(BSONElement &element)
+QString MongoService::getStringValue(const BSONElement &element)
 {
 	switch(element.type())
 	{
@@ -110,15 +110,20 @@ QString MongoService::getStringValue(BSONElement &element)
 	}
 }
 
-QString MongoService::toJsonString(QList<BSONObj> bsonObjects)
+QString MongoService::toJsonString(const QList<BSONObj> &bsonObjects)
 {
 	QString str;
-
-	foreach (BSONObj obj, bsonObjects)
+#pragma message ("not use foreach at all")
+    /*foreach (BSONObj obj, bsonObjects)
 	{
 		MongoService::toJsonString(str, obj);
-	}
-
+    }*/
+    typedef QList<BSONObj>::const_iterator c_iterator_t;
+    #pragma message ("auto insted c_iterator_t in future")
+    for(c_iterator_t it = bsonObjects.begin();it!=bsonObjects.end();++it)
+    {
+        MongoService::toJsonString(str, *it);
+    }
 	return str;
 }
 

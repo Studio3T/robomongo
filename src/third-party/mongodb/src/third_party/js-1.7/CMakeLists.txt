@@ -54,15 +54,10 @@ source_group(sources FILES
 	${HEADERS}
 	${SOURCES}
 )
-IF(MSVC)
-SET(BUILD_DIR_JS_GEN )
-ELSE()
-SET(BUILD_DIR_JS_GEN ${CMAKE_CURRENT_BINARY_DIR}/)
-ENDIF()
 add_custom_command(
     OUTPUT jsautokw.h
     COMMAND ${CMAKE_C_COMPILER} jskwgen.c -o jswgen
-    COMMAND ${BUILD_DIR_JS_GEN}jswgen > jsautokw.h
+    COMMAND ${CMAKE_CURRENT_LIST_DIR}/jswgen > jsautokw.h
     DEPENDS jskwgen.c
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
     COMMENT "Regenerating header file jsautokw.h..."
@@ -70,7 +65,7 @@ add_custom_command(
 add_custom_command(
     OUTPUT jsautocfg.h
     COMMAND ${CMAKE_C_COMPILER} jscpucfg.c -o jscpucfg
-    COMMAND ${BUILD_DIR_JS_GEN}jscpucfg > jsautocfg.h
+    COMMAND ${CMAKE_CURRENT_LIST_DIR}/jscpucfg > jsautocfg.h
     DEPENDS jscpucfg.c
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
     COMMENT "Regenerating header file jsautocfg.h..."

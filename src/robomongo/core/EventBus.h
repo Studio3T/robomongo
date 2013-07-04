@@ -1,5 +1,4 @@
 #pragma once
-
 #include <QEvent>
 #include <QMultiHash>
 #include <QMutex>
@@ -10,7 +9,7 @@ namespace Robomongo
 {
     class Event;
     class EventWrapper;
-    class EventBusSubscriber;
+    struct EventBusSubscriber;
 
     /**
      * @brief The EventBus class

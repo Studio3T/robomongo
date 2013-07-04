@@ -82,9 +82,8 @@ namespace Robomongo
                 // Approach #2
                 // std::string stdJson = doc->bsonObj().toString(false, true);
 
-                JsonBuilder builder;
                 mongo::BSONObj obj = doc->bsonObj();
-                std::string stdJson = builder.jsonString(obj, mongo::TenGen, 1, _uuidEncoding);
+                std::string stdJson = JsonBuilder::jsonString(obj, mongo::TenGen, 1, _uuidEncoding);
 
                 if (exit) {
                     emit done();

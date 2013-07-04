@@ -2,13 +2,8 @@
 
 #include <QObject>
 #include <QStringList>
-#include <mongo/client/dbclient.h>
-
+#include <mongo/bson/bsonobj.h>
 #include "robomongo/core/Core.h"
-
-//using namespace mongo;
-
-
 
 namespace Robomongo
 {

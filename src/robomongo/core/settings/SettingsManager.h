@@ -3,10 +3,9 @@
 #include <QDir>
 #include <QObject>
 
-#include "robomongo/core/Core.h"
 #include "robomongo/gui/ViewMode.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
-
+#include "robomongo/core/domain/Enums.h"
 namespace Robomongo
 {
     /**
@@ -28,7 +27,7 @@ namespace Robomongo
          * @brief Creates SettingsManager for config file in default location
          *        (usually ~/.config/robomongo/robomongo.json)
          */
-        SettingsManager(QObject *parent = 0);
+        SettingsManager(QObject *parent = NULL);
 
         /**
          * @brief Cleanup owned objects

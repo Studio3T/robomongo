@@ -3,10 +3,7 @@
 #include <QString>
 #include <QVariant>
 #include <QVariantMap>
-#include <QSharedDataPointer>
-#include <QSharedData>
 
-#include "robomongo/core/Core.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 
 namespace Robomongo
@@ -65,7 +62,7 @@ namespace Robomongo
         /**
          * @brief Port of server
          */
-        int serverPort() const { return _serverPort; }
+        unsigned serverPort() const { return _serverPort; }
         void setServerPort(const int port) { _serverPort = port; }
 
         /**
@@ -143,7 +140,7 @@ namespace Robomongo
         QString _connectionName;
         QString _serverHost;
         QString _defaultDatabase;
-        int _serverPort;
+        unsigned _serverPort;
 
         QList<CredentialSettings *> _credentials;
         QHash<QString, CredentialSettings *> _credentialsByDatabaseName;

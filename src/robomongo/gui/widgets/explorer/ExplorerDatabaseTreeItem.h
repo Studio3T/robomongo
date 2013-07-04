@@ -1,8 +1,6 @@
 #pragma once
-
 #include <QTreeWidgetItem>
-
-#include "robomongo/core/Core.h"
+#include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoUser.h"
 #include "robomongo/core/domain/MongoFunction.h"
 

@@ -8,7 +8,6 @@
 #include <QDockWidget>
 #include <QMenu>
 
-#include "robomongo/core/Core.h"
 #include "robomongo/gui/ViewMode.h"
 
 namespace Robomongo
@@ -25,7 +24,7 @@ namespace Robomongo
     class AllTabsClosedEvent;
     class WorkAreaWidget;
     class ConnectionMenu;
-
+	class App;
     class MainWindow : public QMainWindow
     {
         Q_OBJECT

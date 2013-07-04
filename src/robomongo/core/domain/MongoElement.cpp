@@ -1,5 +1,5 @@
 #include "robomongo/core/domain/MongoElement.h"
-
+#include <mongo/client/dbclient.h>
 #include <QStringBuilder>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_io.hpp>
@@ -52,7 +52,7 @@ namespace Robomongo
 	** Return MongoDocument of this element (you should check that this IS document before)
 	*/
     MongoDocumentPtr MongoElement::asDocument()
-	{
+    {
         MongoDocument *doc = new MongoDocument(_bsonElement.Obj());
         return MongoDocumentPtr(doc);
 	}
@@ -65,12 +65,12 @@ namespace Robomongo
 		switch (_bsonElement.type())
 		{
 		/** double precision floating point value */
-		case NumberDouble:
+        case NumberDouble:
             con.append(QString::number(_bsonElement.Double()));
 			break;
 
 		/** character string, stored in utf8 */
-		case String:
+        case String:
 			{
 				/*
 				** If you'll write:
@@ -95,7 +95,7 @@ namespace Robomongo
 			break;
 
 		/** an embedded object */
-		case Object:
+        case Object:
 			{
                 MongoDocumentPtr doc = asDocument();
 				doc->buildJsonString(con);
@@ -103,7 +103,7 @@ namespace Robomongo
 			break;
 
 		/** an embedded array */
-		case Array:
+        case Array:
 			{
                 MongoDocumentPtr doc = asDocument();
 				doc->buildJsonString(con);
@@ -111,7 +111,7 @@ namespace Robomongo
 			break;
 
 		/** binary data */
-		case BinData:
+        case BinData:
             {
                 mongo::BinDataType binType = _bsonElement.binDataType();
                 if (binType == mongo::newUUID || binType == mongo::bdtUUID) {
@@ -125,7 +125,7 @@ namespace Robomongo
 			break;
 
 		/** Undefined type */
-		case Undefined:
+        case Undefined:
             con.append("<undefined>");
 			break;
 
@@ -139,12 +139,12 @@ namespace Robomongo
 			break;
 
 		/** boolean type */
-		case Bool:
+        case Bool:
             con.append(_bsonElement.Bool() ? "true" : "false");
 			break;
 
 		/** date type */
-		case Date:
+        case Date:
         {
             long long ms = (long long) _bsonElement.Date().millis;
 
@@ -176,12 +176,12 @@ namespace Robomongo
         }
 
 		/** null type */
-		case jstNULL:
+        case jstNULL:
             con.append(QString("<null>"));
 			break;
 
 		/** regular expression, a pattern with options */
-		case RegEx:
+        case RegEx:
         {
             con.append("/" + QString::fromUtf8(_bsonElement.regex()) + "/");
 
@@ -199,21 +199,21 @@ namespace Robomongo
 			break;
 
 		/** deprecated / will be redesigned */
-		case DBRef:
+        case DBRef:
 			break;
 
 		/** deprecated / use CodeWScope */
-		case Code:
+        case Code:
             con.append(QString::fromUtf8(_bsonElement._asCode().data()));
 			break;
 
 		/** a programming language (e.g., Python) symbol */
-		case Symbol:
+        case Symbol:
             con.append(QString::fromUtf8(_bsonElement.valuestr(), _bsonElement.valuestrsize() - 1));
 			break;
 
 		/** javascript code that can execute on the database server, with SavedContext */
-		case CodeWScope:
+        case CodeWScope:
         {
             mongo::BSONObj scope = _bsonElement.codeWScopeObject();
             if (!scope.isEmpty() ) {
@@ -224,12 +224,12 @@ namespace Robomongo
             break;
 
 		/** 32 bit signed integer */
-		case NumberInt:
+        case NumberInt:
             con.append(QString::number(_bsonElement.Int()));
 			break;
 
 		/** Updated to a Date with value next OpTime on insert */
-		case Timestamp:
+        case Timestamp:
         {
             Date_t date = _bsonElement.timestampTime();
             unsigned long long millis = date.millis;
@@ -241,7 +241,7 @@ namespace Robomongo
         }
 
 		/** 64 bit integer */
-		case NumberLong:
+        case NumberLong:
             con.append(QString::number(_bsonElement.Long()));
 			break; 
 

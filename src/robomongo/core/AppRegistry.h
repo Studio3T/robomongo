@@ -1,7 +1,7 @@
 #pragma once
-
+#include <QString>
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/Core.h"
-
 namespace Robomongo
 {
     class SettingsManager;

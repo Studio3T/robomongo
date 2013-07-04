@@ -47,10 +47,10 @@ namespace mongo {
      *      1.2.3-rc4-pre-
      * If you really need to do something else you'll need to fix _versionArray()
      */
-    const char versionString[] = "2.4.0-rc0";
+    static const char versionString[] = "2.4.0-rc0";
 
     // See unit test for example outputs
-    static BSONArray _versionArray(const char* version){
+    BSONArray inline _versionArray(const char* version){
         // this is inefficient, but cached so it doesn't matter
         BSONArrayBuilder b;
         string curPart;
@@ -90,7 +90,7 @@ namespace mongo {
 
     const BSONArray versionArray = _versionArray(versionString);
 
-    string mongodVersion() {
+    string inline mongodVersion() {
         stringstream ss;
         ss << "db version v" << versionString << ", pdfile version " << PDFILE_VERSION << "." << PDFILE_VERSION_MINOR;
         return ss.str();
@@ -105,7 +105,7 @@ namespace mongo {
     const char * compilerFlags() { return ""; }
 #endif
 
-    void printGitVersion() { log() << "git version: " << gitVersion() << endl; }
+    void inline printGitVersion() { log() << "git version: " << gitVersion() << endl; }
 
 #ifndef _SCONS
 #if defined(_WIN32)
@@ -126,15 +126,15 @@ namespace mongo {
 #endif
 #endif
 
-    void printSysInfo() {
+    void inline printSysInfo() {
         log() << "build info: " << sysInfo() << endl;
     }
 
-    void printAllocator() {
+    void inline printAllocator() {
         log() << "allocator: " << allocator() << endl;
     }
 
-    void appendBuildInfo(BSONObjBuilder& result) {
+    void inline appendBuildInfo(BSONObjBuilder& result) {
        result << "version" << versionString
               << "gitVersion" << gitVersion()
               << "sysInfo" << sysInfo()
@@ -156,7 +156,7 @@ namespace mongo {
     //
     // system warnings
     //
-    void show_warnings() {
+    void inline show_warnings() {
         // each message adds a leading and a trailing newline
 
         bool warned = false;

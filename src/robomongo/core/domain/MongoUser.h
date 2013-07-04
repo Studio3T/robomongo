@@ -1,8 +1,6 @@
 #pragma once
-
-#include <mongo/client/dbclient.h>
 #include <QString>
-
+#include <mongo/bson/bsonobj.h>
 namespace Robomongo
 {
     class MongoUser

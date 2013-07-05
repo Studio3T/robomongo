@@ -139,9 +139,6 @@ namespace Robomongo
         MongoServer *server = _shell->server();
         QString query = _scriptWidget->selectedText();
 
-        if (query.isEmpty())
-            query = "";//_queryText->text();
-
         /*
         QString dbName = ""; //WAS: server->connectionRecord()->databaseName();
         if (_currentResults.count() > 0) {

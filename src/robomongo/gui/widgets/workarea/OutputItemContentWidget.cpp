@@ -9,7 +9,7 @@
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
-
+#include "robomongo/gui/editors/FindFrame.h"
 namespace Robomongo
 {
 
@@ -118,33 +118,33 @@ namespace Robomongo
 
     void OutputItemContentWidget::showText()
     {
-        if (!_isTextModeSupported)
-            return;
-
-        if (!_isTextModeInitialized) {
-            _log = _configureLogText();
-
-            if (_sourceIsText)
-                _log->setText(_text);
-            else {
-
-                if (_documents.count() > 0) {
-                    _log->setText("Loading...");
-
-                    UUIDEncoding uuidEncoding = AppRegistry::instance().settingsManager()->uuidEncoding();
-                    _thread = new JsonPrepareThread(_documents, uuidEncoding);
-                    connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared()));
-                    connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
-                    connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));
-                    _thread->start();
+        if (_isTextModeSupported)
+        {
+            if (!_isTextModeInitialized)
+            {
+                _log = _configureLogText();
+                if (_sourceIsText)
+                {
+                    _log->sciScintilla()->setText(_text);
                 }
+                else
+                {
+                    if (_documents.count() > 0)
+                    {
+                        _log->sciScintilla()->setText("Loading...");
+                        UUIDEncoding uuidEncoding = AppRegistry::instance().settingsManager()->uuidEncoding();
+                        _thread = new JsonPrepareThread(_documents, uuidEncoding);
+                        connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared()));
+                        connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
+                        connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));
+                        _thread->start();
+                    }
+                }
+                _stack->addWidget(_log);
+                _isTextModeInitialized = true;
             }
-
-            _stack->addWidget(_log);
-            _isTextModeInitialized = true;
-        }
-
         _stack->setCurrentWidget(_log);
+        }
     }
 
     void OutputItemContentWidget::showTree()
@@ -211,28 +211,28 @@ namespace Robomongo
     {
         // check that this is our current thread
         JsonPrepareThread *thread = (JsonPrepareThread *) sender();
-        if (thread != _thread) {
+        if (thread != _thread)
+        {
             // close previous thread
             thread->exit = true;
             thread->wait();
-            return;
         }
-
-        if (_log) {
-            _log->setUpdatesEnabled(false);
-
-            if (_isFirstPartRendered)
-                _log->append(json);
-            else
-                _log->setText(json);
-
-            _log->setUpdatesEnabled(true);
-
-            _isFirstPartRendered = true;
+        else
+        {
+            if (_log)
+            {
+                _log->setUpdatesEnabled(false);
+                if (_isFirstPartRendered)
+                    _log->sciScintilla()->append(json);
+                else
+                    _log->sciScintilla()->setText(json);
+                _log->setUpdatesEnabled(true);
+                _isFirstPartRendered = true;
+            }
         }
     }
 
-    RoboScintilla *Robomongo::OutputItemContentWidget::_configureLogText()
+    FindFrame *Robomongo::OutputItemContentWidget::_configureLogText()
     {
         QFont textFont = font();
     #if defined(Q_OS_MAC)
@@ -251,28 +251,26 @@ namespace Robomongo
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
         javaScriptLexer->setFont(textFont);
 
-        RoboScintilla *_logText = new RoboScintilla;
-        _logText->setLexer(javaScriptLexer);
-        _logText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        _logText->setAutoIndent(true);
-        _logText->setIndentationsUseTabs(false);
-        _logText->setIndentationWidth(4);
-        _logText->setTabWidth(4);
-        _logText->setUtf8(true);
-        _logText->installEventFilter(this);
-        _logText->setCaretForegroundColor(QColor("#FFFFFF"));
-        _logText->setMarginWidth(1, 0); // to hide left gray column
-        _logText->setMatchedBraceBackgroundColor(QColor(73, 76, 78));
-        _logText->setMatchedBraceForegroundColor(QColor("#FF8861")); //1AB0A6
-        _logText->setBraceMatching(QsciScintilla::StrictBraceMatch);
-        _logText->setFont(textFont);
-        _logText->setReadOnly(true);
+        FindFrame *_logText = new FindFrame(this);
+        _logText->sciScintilla()->setLexer(javaScriptLexer);
+        _logText->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        _logText->sciScintilla()->setAutoIndent(true);
+        _logText->sciScintilla()->setIndentationsUseTabs(false);
+        _logText->sciScintilla()->setIndentationWidth(4);
+        _logText->sciScintilla()->setTabWidth(4);
+        _logText->sciScintilla()->setUtf8(true);
+        _logText->sciScintilla()->setCaretForegroundColor(QColor("#FFFFFF"));
+        _logText->sciScintilla()->setMarginWidth(1, 0); // to hide left gray column
+        _logText->sciScintilla()->setMatchedBraceBackgroundColor(QColor(73, 76, 78));
+        _logText->sciScintilla()->setMatchedBraceForegroundColor(QColor("#FF8861")); //1AB0A6
+        _logText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
+        _logText->sciScintilla()->setFont(textFont);
+        _logText->sciScintilla()->setReadOnly(true);
 
         // Wrap mode turned off because it introduces huge performance problems
         // even for medium size documents.
-        _logText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
-
-        _logText->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
+        _logText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
+        _logText->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
         return _logText;
     }
 

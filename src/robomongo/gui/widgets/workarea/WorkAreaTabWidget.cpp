@@ -36,16 +36,15 @@ namespace Robomongo
 
     void WorkAreaTabWidget::closeTab(int index)
     {
-        if (index < 0)
-            return;
-
-        QueryWidget *tabWidget = (QueryWidget *) widget(index);
-        removeTab(index);
-
-        if (tabWidget)
+        if (index >= 0)
         {
-            AppRegistry::instance().app()->closeShell(tabWidget->shell());
-            delete tabWidget;
+            QueryWidget *tabWidget = (QueryWidget *) widget(index);
+            removeTab(index);
+            if (tabWidget)
+            {
+                AppRegistry::instance().app()->closeShell(tabWidget->shell());
+                delete tabWidget;
+            }
         }
     }
 

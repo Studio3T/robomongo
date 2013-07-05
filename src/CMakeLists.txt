@@ -54,7 +54,8 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/CreateUserDialog.h
     robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h
     robomongo/gui/dialogs/FunctionTextEditor.h
-    robomongo/gui/dialogs/AboutDialog.h)
+    robomongo/gui/dialogs/AboutDialog.h
+    robomongo/gui/editors/FindFrame.h)
 SET(HEADERS_GUI
     robomongo/gui/GuiRegistry.h
     robomongo/gui/editors/PlainJavaScriptEditor.h
@@ -84,6 +85,7 @@ SET(SOURCES_GUI
     robomongo/gui/editors/jsedit.cpp
     robomongo/gui/editors/PlainJavaScriptEditor.cpp
     robomongo/gui/editors/JSLexer.cpp
+    robomongo/gui/editors/FindFrame.cpp
     robomongo/gui/widgets/workarea/OutputWidget.cpp
     robomongo/gui/widgets/workarea/OutputItemContentWidget.cpp
     robomongo/gui/examples/CredentialModel.cpp
@@ -272,8 +274,6 @@ SET(ALL_SOURCES ${HEADERS} ${SOURCES} ${MOC_FILES} ${PLATFORM_HDRS} ${PLATFORM_S
 SET(ALL_LIBS ${ALL_LIBS} ${QT_LIBRARIES} ${PLATFORM_LIBRARIES} js pcrecpp qscintilla2 qjson)
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX)
-        SET(ALL_DEBUG_LIBS ${ALL_LIBS} ${MONGOCLIENT_DEBUG_LIBRARY})
-		SET(ALL_RELEASE_LIBS ${ALL_LIBS} ${MONGOCLIENT_RELEASE_LIBRARY})
 IF(BOOST_ENABLED)
 	add_custom_target(BUILD_MONGOCLIENT_RELEASE
     COMMAND scons --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} mongoclient
@@ -287,16 +287,18 @@ IF(BOOST_ENABLED)
 	COMMENT "Build mongoclient debug library")
 ELSE()
         add_custom_target(BUILD_MONGOCLIENT_RELEASE
-        COMMAND scons --release --${ARCH_TEXT} mongoclient
+        COMMAND scons --release mongoclient
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
         COMMENT "Build mongoclient release library")
         add_custom_target(BUILD_MONGOCLIENT_DEBUG
-        COMMAND scons --d --${ARCH_TEXT} mongoclient
+        COMMAND scons --d mongoclient
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_DEBUG_LIBRARY}
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
         COMMENT "Build mongoclient debug library")
 ENDIF()
+        SET(ALL_DEBUG_LIBS ${ALL_LIBS} ${MONGOCLIENT_DEBUG_LIBRARY})
+        SET(ALL_RELEASE_LIBS ${ALL_LIBS} ${MONGOCLIENT_RELEASE_LIBRARY})
 	ADD_APP_EXECUTABLE(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_RELEASE_LIBS}" "Release" )
 	add_dependencies(${PROJECT_NAME} BUILD_MONGOCLIENT_RELEASE)
 	IF(NOT FORCE_BUILD)

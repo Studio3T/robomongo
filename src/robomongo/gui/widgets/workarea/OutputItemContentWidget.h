@@ -7,7 +7,7 @@
 
 namespace Robomongo
 {
-    class RoboScintilla;
+    class FindFrame;
     class BsonWidget;
     class JsonPrepareThread;
     class CollectionStatsTreeWidget;
@@ -46,10 +46,10 @@ namespace Robomongo
         void jsonPartReady(const QString &json);
 
     private:
-        RoboScintilla *_configureLogText();
+        FindFrame *_configureLogText();
         BsonWidget *_configureBsonWidget();
 
-        RoboScintilla *_log;
+        FindFrame *_log;
         BsonWidget *_bson;
         CollectionStatsTreeWidget *_collectionStats;
 

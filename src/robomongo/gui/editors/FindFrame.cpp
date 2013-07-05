@@ -78,6 +78,7 @@ namespace Robomongo
             int index =0;
             int line =0;
             scin_->getCursorPosition(&line,&index);
+
             scin_->findFirst(text,re,case_sens_->checkState()==Qt::Checked,wo,wrap,true,line,index);
         }
     }

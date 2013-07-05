@@ -1,12 +1,13 @@
 #pragma once
 
-#include <QtGui>
-#include <QWidget>
 #include <QMainWindow>
-#include <QLabel>
-#include <QToolBar>
-#include <QDockWidget>
 #include <QMenu>
+QT_BEGIN_NAMESPACE
+class QLabel;
+class QToolBar;
+class QDockWidget;
+QT_END_NAMESPACE
+
 
 #include "robomongo/gui/ViewMode.h"
 
@@ -15,7 +16,6 @@ namespace Robomongo
     class LogWidget;
     class ExplorerWidget;
     class MongoManager;
-    class SettingsManager;
     class EventBus;
     class ConnectionFailedEvent;
     class ScriptExecutingEvent;
@@ -30,11 +30,15 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef QMainWindow base_class;
         MainWindow();
         void keyPressEvent(QKeyEvent *event);
         ViewMode viewMode() const { return _viewMode; }
 
-    public slots:
+    public Q_SLOTS:
+        void open();
+        void save();
+        void saveAs();
         void manageConnections();
         void toggleOrientation();
         void enterTextMode();
@@ -74,10 +78,12 @@ namespace Robomongo
         ExplorerWidget *_explorer;
 
         App *_app;
-        SettingsManager *_settingsManager;
         EventBus *_bus;
 
         ConnectionMenu *_connectionsMenu;
+        QAction *const _openAction;
+        QAction *const _saveAction;
+        QAction *const _saveAsAction;
         QAction *_connectAction;
         QAction *_executeAction;
         QAction *_stopAction;

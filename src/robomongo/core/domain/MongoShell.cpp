@@ -18,13 +18,32 @@ namespace
         static int sequenceNumber = 1;
         return QString("script%1.js").arg(sequenceNumber++);
     }
+    bool loadFromFileText(const QString &filePath,QString &text)
+    {
+        bool result =false;
+        QFile file(filePath);
+           if (!file.open(QFile::ReadOnly | QFile::Text)) {
+               QMessageBox::warning(QApplication::activeWindow(), QString(PROJECT_NAME),
+                                    QObject::tr("Cannot read file %1:\n%2.")
+                                    .arg(filePath)
+                                    .arg(file.errorString()));
+           }
+           else{
+               QTextStream in(&file);
+               QApplication::setOverrideCursor(Qt::WaitCursor);
+               text = in.readAll();
+               QApplication::restoreOverrideCursor();
+               result=true;
+           }
+           return result;
+    }
     bool saveToFileText(const QString &filePath,const QString &text)
     {
         bool result =false;
         QFile file(filePath);
         if (!file.open(QFile::WriteOnly | QFile::Text)) {
             QMessageBox::warning(QApplication::activeWindow(), QString(PROJECT_NAME),
-                                 QString("Cannot write file %1:\n%2.")
+                                 QObject::tr("Cannot write file %1:\n%2.")
                                  .arg(file.fileName())
                                  .arg(file.errorString()));
         }
@@ -83,12 +102,27 @@ namespace Robomongo
     {
         mongo::Scope::setInterruptFlag(true);
     }
+    void MongoShell::loadFromFile()
+    {
+        QString filepath = QFileDialog::getOpenFileName(QApplication::activeWindow(),_filePath);
+        if (!filepath.isEmpty())
+        {
+            QString out;
+            if(loadFromFileText(filepath,out))
+            {
+                _bus->publish(new ScriptExecutingEvent(this));
+                _query = out;
+                _client->send(new ExecuteScriptRequest(this, _query,QString()));//dbName i don't know
+                _filePath = filepath;
+            }
+        }
+    }
     void MongoShell::saveToFileAs()
     {
-        QString fileName = QFileDialog::getSaveFileName(QApplication::activeWindow(), tr("Save As"),_filePath);
-        if(saveToFileText(fileName,_query))
+        QString filepath = QFileDialog::getSaveFileName(QApplication::activeWindow(), tr("Save As"),_filePath);
+        if(saveToFileText(filepath,_query))
         {
-            _filePath = fileName;
+            _filePath = filepath;
         }
     }
     void MongoShell::saveToFile()

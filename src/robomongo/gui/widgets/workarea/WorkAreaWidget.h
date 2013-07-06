@@ -3,13 +3,10 @@
 
 namespace Robomongo
 {
-    class MainWindow;
-    class WorkAreaViewModel;
     class WorkAreaTabWidget;
-    class QueryWindowViewModel;
     class EventBus;
     class OpeningShellEvent;
-
+    class MainWindow;
     /*
     ** Work Area widget
     */
@@ -18,8 +15,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        WorkAreaWidget(MainWindow *mainWindow);
-        ~WorkAreaWidget() {}
+        explicit WorkAreaWidget(MainWindow *mainWindow);
 
         void toggleOrientation();
         void executeScript();
@@ -32,10 +28,6 @@ namespace Robomongo
         void handle(OpeningShellEvent *event);
 
     private:
-        /*
-        ** MainWindow this work area belongs to
-        */
-        MainWindow *_mainWindow;
 
         WorkAreaTabWidget *_tabWidget;
         EventBus *_bus;

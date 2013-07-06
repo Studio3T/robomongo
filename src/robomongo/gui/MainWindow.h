@@ -36,9 +36,6 @@ namespace Robomongo
         ViewMode viewMode() const { return _viewMode; }
 
     public Q_SLOTS:
-        void open();
-        void save();
-        void saveAs();
         void manageConnections();
         void toggleOrientation();
         void enterTextMode();
@@ -81,9 +78,6 @@ namespace Robomongo
         EventBus *_bus;
 
         ConnectionMenu *_connectionsMenu;
-        QAction *const _openAction;
-        QAction *const _saveAction;
-        QAction *const _saveAsAction;
         QAction *_connectAction;
         QAction *_executeAction;
         QAction *_stopAction;

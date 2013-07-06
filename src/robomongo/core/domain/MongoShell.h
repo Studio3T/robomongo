@@ -26,8 +26,9 @@ namespace Robomongo
         QString query() const { return _query; }
         QString filePathToSave() const { return _filePath; }
     public Q_SLOTS:
-           void saveToFile();
-           void saveToFileAs();
+        void saveToFile();
+        void saveToFileAs();
+        void loadFromFile();
     protected Q_SLOTS:
         void handle(ExecuteQueryResponse *event);
         void handle(ExecuteScriptResponse *event);

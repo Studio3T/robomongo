@@ -33,10 +33,7 @@ namespace Robomongo
 		_bus(AppRegistry::instance().bus()),
 		_workArea(NULL),
 		_connectionsMenu(NULL),
-        _viewMode(Text),
-        _openAction(new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this)),
-        _saveAction(new QAction(GuiRegistry::instance().saveIcon(), tr("&Save"), this)),
-        _saveAsAction(new QAction(tr("Save &As..."), this))
+        _viewMode(Text)
 	{
 		GuiRegistry::instance().setMainWindow(this);
 
@@ -61,17 +58,6 @@ namespace Robomongo
 			"QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } "
 			"QMainWindow::separator { background: #E7E5E4; width: 1px; }"
 		).arg(explorerColor));
-
-        //File actions
-        _openAction->setShortcuts(QKeySequence::Open);
-        _openAction->setStatusTip(tr("Open an existing file"));
-        connect(_openAction, SIGNAL(triggered()), this, SLOT(open()));
-        _saveAction->setShortcuts(QKeySequence::Save);
-        _saveAction->setStatusTip(tr("Save the document to disk"));
-        connect(_saveAction, SIGNAL(triggered()), this, SLOT(save()));
-        _saveAsAction->setShortcuts(QKeySequence::SaveAs);
-        _saveAsAction->setStatusTip(tr("Save the document under a new name"));
-        connect(_saveAsAction, SIGNAL(triggered()), this, SLOT(saveAs()));
 
 		// Exit action
         QAction *exitAction = new QAction("&Exit", this);
@@ -181,11 +167,7 @@ namespace Robomongo
 		// File menu
 		QMenu *fileMenu = menuBar()->addMenu("File");
 		fileMenu->addAction(_connectAction);
-		fileMenu->addAction(fullScreenAction);
-        fileMenu->addSeparator();
-        fileMenu->addAction(_openAction);
-        fileMenu->addAction(_saveAction);
-        fileMenu->addAction(_saveAsAction);
+        fileMenu->addAction(fullScreenAction);
 		fileMenu->addSeparator();
 		fileMenu->addAction(exitAction);
 
@@ -285,9 +267,7 @@ namespace Robomongo
 
 	void MainWindow::updateConnectionsMenu()
 	{
-		_connectionsMenu->clear();        
-        _saveAction->setEnabled(true);
-        _saveAsAction->setEnabled(true);
+        _connectionsMenu->clear();
 		int number = 1;
 		// Populate list with connections
         foreach(ConnectionSettings *connection, AppRegistry::instance().settingsManager()->connections()) {
@@ -312,24 +292,6 @@ namespace Robomongo
 
 		_connectionsMenu->addAction(connectAction);
     }
-    void MainWindow::open()
-    {
-       const QString &fileName = QFileDialog::getOpenFileName(this);
-       if (!fileName.isEmpty()) {
-       }
-    }
-    void MainWindow::save()
-    {
-
-    }
-    void MainWindow::saveAs()
-    {
-       /* QString fileName = QFileDialog::getSaveFileName(this, tr("Save As"),curFile);
-        if (!fileName.isEmpty())
-        {
-            saveFile(fileName);
-        }*/
-    }
     void MainWindow::manageConnections()
 	{
         ConnectionsDialog dialog(AppRegistry::instance().settingsManager());
@@ -344,7 +306,7 @@ namespace Robomongo
 
 			try {
 				_app->openServer(selected->clone(), true);
-			} catch(MongoException &ex) {
+            } catch(const MongoException &) {
 				QString message = QString("Cannot connect to MongoDB (%1)").arg(selected->getFullAddress());
 				QMessageBox::information(this, "Error", message);
 			}
@@ -461,12 +423,11 @@ namespace Robomongo
 	{
 		QVariant data = connectionAction->data();
 		ConnectionSettings *ptr = data.value<ConnectionSettings *>();
-
 		try
 		{
 			_app->openServer(ptr->clone(), true);
 		}
-		catch(MongoException &ex)
+        catch(const MongoException &)
 		{
 			QString message = QString("Cannot connect to MongoDB (%1)").arg(ptr->getFullAddress());
 			QMessageBox::information(this, "Error", message);

@@ -14,10 +14,9 @@ namespace Robomongo
 {
 
     WorkAreaWidget::WorkAreaWidget(MainWindow *mainWindow)	:
-        QWidget(),
+        QWidget(mainWindow),
         _bus(AppRegistry::instance().bus())
     {
-        _mainWindow = mainWindow;
         _tabWidget = new WorkAreaTabWidget(this);
         _tabWidget->setMovable(true);
         _tabWidget->setDocumentMode(true);
@@ -79,18 +78,18 @@ namespace Robomongo
         QString shellName = info.title().isEmpty() ? " Loading..." : info.title();
 
         setUpdatesEnabled(false);
-        QueryWidget *queryWidget = new QueryWidget(
-            event->shell,
-            _tabWidget,
-            info,
-            _mainWindow->viewMode());
+        MainWindow * mainWind = qobject_cast<MainWindow *>(parent());
+        if(mainWind)
+        {
+            QueryWidget *queryWidget = new QueryWidget(event->shell,_tabWidget,info,mainWind->viewMode());
 
-        _tabWidget->addTab(queryWidget, shellName);
-        _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
+            _tabWidget->addTab(queryWidget, shellName);
+            _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
     #if !defined(Q_OS_MAC)
-        _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());
+            _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());
     #endif
-        setUpdatesEnabled(true);
-        queryWidget->showProgress();
+            setUpdatesEnabled(true);
+            queryWidget->showProgress();
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace Robomongo
          * assuming, that tab bar will be installed to (and owned by)
          * WorkAreaTabWidget, using QTabWidget::setTabBar().
          */
-        WorkAreaTabBar();
+        WorkAreaTabBar(QWidget* parent=0);
 
     signals:
         /**
@@ -57,7 +57,21 @@ namespace Robomongo
          * @param tabIndex: index of tab on which context menu was called.
          */
         void closeTabsToTheRightRequested(int tabIndex);
-
+        /**
+         * @brief Emitted when user want to load script from file
+         * @param tabIndex: index of tab on which context menu was called.
+         */
+        void openTabFile(int tabIndex);
+        /**
+         * @brief Emitted when user want to save script text to file
+         * @param tabIndex: index of tab on which context menu was called.
+         */
+        void saveTabToFile(int tabIndex);
+        /**
+         * @brief Emitted when user want to save as script text to file
+         * @param tabIndex: index of tab on which context menu was called.
+         */
+        void saveTabToFileAs(int tabIndex);
     protected:
         /**
          * @brief Overrides QTabBar::mouseReleaseEvent() in order to support
@@ -111,5 +125,8 @@ namespace Robomongo
         QAction *_closeShellAction;
         QAction *_closeOtherShellsAction;
         QAction *_closeShellsToTheRightAction;
+        QAction *_openAction;
+        QAction *_saveAction;
+        QAction *_saveAsAction;
     };
 }

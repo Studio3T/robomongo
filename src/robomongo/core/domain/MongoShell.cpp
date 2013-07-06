@@ -1,17 +1,50 @@
 #include "robomongo/core/domain/MongoShell.h"
 
+#include <QTextStream>
+#include <QApplication>
+#include <QMessageBox>
+#include <QFileDialog>
+
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
-
+namespace
+{
+    QString generateFileName()
+    {
+        static int sequenceNumber = 1;
+        return QString("script%1.js").arg(sequenceNumber++);
+    }
+    bool saveToFileText(const QString &filePath,const QString &text)
+    {
+        bool result =false;
+        QFile file(filePath);
+        if (!file.open(QFile::WriteOnly | QFile::Text)) {
+            QMessageBox::warning(QApplication::activeWindow(), QString(PROJECT_NAME),
+                                 QString("Cannot write file %1:\n%2.")
+                                 .arg(file.fileName())
+                                 .arg(file.errorString()));
+        }
+        else
+        {
+            QTextStream out(&file);
+            QApplication::setOverrideCursor(Qt::WaitCursor);
+            out << text;
+            QApplication::restoreOverrideCursor();
+            result = true;
+        }
+        return result;
+    }
+}
 namespace Robomongo
 {
 
-    MongoShell::MongoShell(MongoServer *server) :
+    MongoShell::MongoShell(MongoServer *server, const QString &filePath) :
         QObject(),
+        _filePath(filePath.isEmpty()?generateFileName():filePath),
         _server(server),
         _client(server->client()),
         _bus(AppRegistry::instance().bus())
@@ -50,7 +83,18 @@ namespace Robomongo
     {
         mongo::Scope::setInterruptFlag(true);
     }
-
+    void MongoShell::saveToFileAs()
+    {
+        QString fileName = QFileDialog::getSaveFileName(QApplication::activeWindow(), tr("Save As"),_filePath);
+        if(saveToFileText(fileName,_query))
+        {
+            _filePath = fileName;
+        }
+    }
+    void MongoShell::saveToFile()
+    {
+        saveToFileText(_filePath,_query);
+    }
     void MongoShell::handle(ExecuteQueryResponse *event)
     {
         _bus->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, _query, event->documents));

@@ -9,6 +9,7 @@
 #include <QToolTip>
 #include <QDockWidget>
 #include <QDesktopWidget>
+#include <QFileDialog>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
@@ -33,8 +34,8 @@ namespace Robomongo
 		_workArea(NULL),
 		_connectionsMenu(NULL),
         _viewMode(Text),
-        _openAction(new QAction(QIcon(":/robomongo/icons/open_32x32.png"), tr("&Open..."), this)),
-        _saveAction(new QAction(QIcon(":/robomongo/icons/save_32x32.png"), tr("&Save"), this)),
+        _openAction(new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this)),
+        _saveAction(new QAction(GuiRegistry::instance().saveIcon(), tr("&Save"), this)),
         _saveAsAction(new QAction(tr("Save &As..."), this))
 	{
 		GuiRegistry::instance().setMainWindow(this);
@@ -313,7 +314,9 @@ namespace Robomongo
     }
     void MainWindow::open()
     {
-
+       const QString &fileName = QFileDialog::getOpenFileName(this);
+       if (!fileName.isEmpty()) {
+       }
     }
     void MainWindow::save()
     {
@@ -321,9 +324,13 @@ namespace Robomongo
     }
     void MainWindow::saveAs()
     {
-
+       /* QString fileName = QFileDialog::getSaveFileName(this, tr("Save As"),curFile);
+        if (!fileName.isEmpty())
+        {
+            saveFile(fileName);
+        }*/
     }
-	void MainWindow::manageConnections()
+    void MainWindow::manageConnections()
 	{
         ConnectionsDialog dialog(AppRegistry::instance().settingsManager());
 		int result = dialog.exec();

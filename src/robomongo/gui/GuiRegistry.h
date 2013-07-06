@@ -34,6 +34,8 @@ namespace Robomongo
          * @brief Functions that provide access to various icons
          */
         QIcon serverIcon();
+        const QIcon &saveIcon()const;
+        const QIcon &openIcon()const;
         QIcon databaseIcon();
         QIcon collectionIcon();
         QIcon userIcon();

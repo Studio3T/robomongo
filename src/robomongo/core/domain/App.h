@@ -1,5 +1,6 @@
 #pragma once
 #include <QObject>
+
 #include "robomongo/core/domain/ScriptInfo.h"
 
 namespace Robomongo
@@ -33,17 +34,17 @@ namespace Robomongo
         /**
          * @brief Open new shell based on specified collection
          */
-        MongoShell *openShell(MongoCollection *collection);
+        MongoShell *openShell(MongoCollection *collection,const QString &filePathToSave=QString());
 
         MongoShell *openShell(MongoServer *server, const QString &script, const QString &dbName = QString(),
                               bool execute = true, const QString &shellName = QString(),
-                              const CursorPosition &cursorPosition = CursorPosition());
+                              const CursorPosition &cursorPosition = CursorPosition(),const QString &file=QString());
 
         MongoShell *openShell(MongoDatabase *database, const QString &script,
                               bool execute = true, const QString &shellName = QString(),
-                              const CursorPosition &cursorPosition = CursorPosition());
+                              const CursorPosition &cursorPosition = CursorPosition(),const QString &filePathToSave=QString());
 
-        MongoShell *openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo);
+        MongoShell *openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo, const QString &filePathToSave=QString());
 
         /**
          * @brief Builds single collection query (i.e. db.my_col.find()) from

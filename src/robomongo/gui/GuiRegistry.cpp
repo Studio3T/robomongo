@@ -34,7 +34,16 @@ QIcon GuiRegistry::serverIcon()
 
     return _serverIcon;
 }
-
+const QIcon &GuiRegistry::openIcon()const
+{
+    static const QIcon openIc =QIcon(":/robomongo/icons/open_32x32.png");
+    return openIc;
+}
+const QIcon &GuiRegistry::saveIcon()const
+{
+    static const QIcon saveIc = QIcon(":/robomongo/icons/save_32x32.png");
+    return saveIc;
+}
 QIcon GuiRegistry::databaseIcon()
 {
     if (_databaseIcon.isNull())

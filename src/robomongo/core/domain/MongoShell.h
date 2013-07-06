@@ -13,7 +13,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit MongoShell(MongoServer *server);
+        explicit MongoShell(MongoServer *server,const QString &filePath);
         ~MongoShell();
 
         void open(MongoCollection *collection);
@@ -24,17 +24,21 @@ namespace Robomongo
 
         MongoServer *server() const { return _server; }
         QString query() const { return _query; }
-
-    protected slots:
+        QString filePathToSave() const { return _filePath; }
+    public Q_SLOTS:
+           void saveToFile();
+           void saveToFileAs();
+    protected Q_SLOTS:
         void handle(ExecuteQueryResponse *event);
         void handle(ExecuteScriptResponse *event);
         void handle(AutocompleteResponse *event);
 
-    private:
+    private:        
         /**
          * @brief Current query in the shell
          */
         QString _query;
+        QString _filePath;
 
         MongoServer *_server;
         MongoWorker *_client;

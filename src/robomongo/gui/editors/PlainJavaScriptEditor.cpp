@@ -1,24 +1,26 @@
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+
 #include <QPainter>
 #include <QApplication>
+
 #include "robomongo/gui/editors/jsedit.h"
 
 namespace Robomongo
 {
     RoboScintilla::RoboScintilla(QWidget *parent) : QsciScintilla(parent),
-        _ignoreEnterKey(false), _ignoreTabKey(false)
+        _ignoreEnterKey(false),
+        _ignoreTabKey(false)
     {
         setContentsMargins(0, 0, 0, 0);
-        setViewportMargins(3,3,3,3);
+        setViewportMargins(3, 3, 3, 3);
     }
 
     void RoboScintilla::wheelEvent(QWheelEvent *e)
     {
-        if (this->isActiveWindow()){
+        if (this->isActiveWindow()) {
             QsciScintilla::wheelEvent(e);
         }
-        else
-        {
+        else {
             qApp->sendEvent(parentWidget(), e);
             e->accept();
         }
@@ -55,7 +57,7 @@ namespace Robomongo
         }
         else
         {
-            base_class::keyPressEvent(keyEvent);
+            BaseClass::keyPressEvent(keyEvent);
         }
     }
 }

@@ -1,6 +1,7 @@
 # Ignore *.pro.user files
 *.pro.user
 *.pro.user.*
+CMakeLists.txt.user
 
 .sconsign.dblite
 .sconf_temp
@@ -15,3 +16,5 @@ libs/
 
 
 /src/robomongo/robomongo.pro.user.1.3
+
+/src/third-party/mongodb/src/third_party/js-1.7/jswgen

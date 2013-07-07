@@ -71,7 +71,7 @@ namespace Robomongo
         void addDatabase(MongoDatabase *database);
 
         QScopedPointer<MongoWorker> _client;
-        DBClientConnection_ScopedPtr _connection;
+        DBClientConnectionScopedPtr _connection;
 
         /**
          * @brief Associated connection record

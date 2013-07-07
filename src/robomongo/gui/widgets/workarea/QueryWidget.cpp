@@ -31,8 +31,7 @@
 using namespace mongo;
 namespace Robomongo
 {
-    QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,
-                             const ScriptInfo &scriptInfo, ViewMode viewMode, QWidget *parent) :
+    QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, ViewMode viewMode, QWidget *parent) :
         QWidget(parent),
         _shell(shell),
         _tabWidget(tabWidget),
@@ -49,8 +48,8 @@ namespace Robomongo
         qDebug() << "Subscribed to ScriptExecutedEvent";
 
         _scriptWidget = new ScriptWidget(_shell);
-        _scriptWidget->setText(scriptInfo.script());
-        _scriptWidget->setTextCursor(scriptInfo.cursor());
+        _scriptWidget->setText(shell->scriptInfo().script());
+        _scriptWidget->setTextCursor(shell->scriptInfo().cursor());
         _scriptWidget->installEventFilter(this);
 
         _viewer = new OutputWidget(_viewMode, _shell);
@@ -59,7 +58,7 @@ namespace Robomongo
         _outputLabel->setVisible(false);
         _viewer->installEventFilter(this);
 
-        QFrame *line = new QFrame();
+        QFrame *line = new QFrame(this);
         line->setFrameShape(QFrame::HLine);
         line->setFrameShadow(QFrame::Raised);
 
@@ -72,7 +71,7 @@ namespace Robomongo
         layout->addWidget(_viewer, 1);
         setLayout(layout);
 
-        if (scriptInfo.execute()) {
+        if (shell->scriptInfo().execute()) {
             _scriptWidget->showProgress();
         }
     }

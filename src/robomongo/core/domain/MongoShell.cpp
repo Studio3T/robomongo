@@ -61,9 +61,10 @@ namespace
 namespace Robomongo
 {
 
-    MongoShell::MongoShell(MongoServer *server, const QString &filePath) :
+    MongoShell::MongoShell(MongoServer *server, const ScriptInfo &scriptInfo, const QString &filePath) :
         QObject(),
         _filePath(filePath.isEmpty()?generateFileName():filePath),
+        _scriptInfo(scriptInfo),
         _server(server),
         _client(server->client()),
         _bus(AppRegistry::instance().bus())
@@ -110,12 +111,11 @@ namespace Robomongo
             QString out;
             if(loadFromFileText(filepath,out))
             {
-                _bus->publish(new ScriptExecutingEvent(this));
                 _query = out;
-                _client->send(new ExecuteScriptRequest(this, _query,QString()));//dbName i don't know
                 _filePath = filepath;
+                emit contentChanged(_query);
             }
-        }
+        }        
     }
     void MongoShell::saveToFileAs()
     {

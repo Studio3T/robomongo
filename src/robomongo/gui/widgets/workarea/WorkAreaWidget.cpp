@@ -9,6 +9,7 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
+#include "robomongo/core/domain/MongoShell.h"
 
 namespace Robomongo
 {
@@ -73,7 +74,7 @@ namespace Robomongo
 
     void WorkAreaWidget::handle(OpeningShellEvent *event)
     {
-        ScriptInfo &info = event->scriptInfo;
+        const ScriptInfo &info = event->shell->scriptInfo();
 
         QString shellName = info.title().isEmpty() ? " Loading..." : info.title();
 
@@ -81,7 +82,7 @@ namespace Robomongo
         MainWindow * mainWind = qobject_cast<MainWindow *>(parent());
         if(mainWind)
         {
-            QueryWidget *queryWidget = new QueryWidget(event->shell,_tabWidget,info,mainWind->viewMode());
+            QueryWidget *queryWidget = new QueryWidget(event->shell,_tabWidget,mainWind->viewMode());
 
             _tabWidget->addTab(queryWidget, shellName);
             _tabWidget->setCurrentIndex(_tabWidget->count() - 1);

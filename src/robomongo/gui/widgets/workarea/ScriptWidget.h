@@ -55,7 +55,6 @@ namespace Robomongo
         bool eventFilter(QObject *obj, QEvent *e);
 
         void setup(const MongoShellExecResult & execResult);
-        void setText(const QString &text);
         void setTextCursor(const CursorPosition &cursor = CursorPosition());
         QString text() const;
         QString selectedText() const;
@@ -70,7 +69,8 @@ namespace Robomongo
         void hideAutocompletion();
 
         TopStatusBar *statusBar() const { return _topStatusBar; }
-
+    public Q_SLOTS:
+        void setText(const QString &text);
     private slots:
         void ui_queryLinesCountChanged();
         void onTextChanged();

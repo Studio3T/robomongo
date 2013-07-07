@@ -82,10 +82,10 @@ namespace Robomongo
     MongoShell *App::openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo, const QString &filePathToSave)
     {
         MongoServer *server = openServer(connection, false);
-        MongoShell *shell = new MongoShell(server,filePathToSave);
+        MongoShell *shell = new MongoShell(server,scriptInfo,filePathToSave);
 
         _shells.append(shell);
-        _bus->publish(new OpeningShellEvent(this, shell, scriptInfo));
+        _bus->publish(new OpeningShellEvent(this, shell));
 
         if (scriptInfo.execute())
             shell->open(scriptInfo.script());

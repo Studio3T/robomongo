@@ -2,18 +2,18 @@
 #include <QObject>
 #include "robomongo/core/Core.h"
 #include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/domain/ScriptInfo.h"
 
 namespace Robomongo
 {
     class EventBus;
     class MongoWorker;
-
     class MongoShell : public QObject
     {
         Q_OBJECT
 
     public:
-        explicit MongoShell(MongoServer *server,const QString &filePath);
+        explicit MongoShell(MongoServer *server,const ScriptInfo &scriptInfo,const QString &filePath);
         ~MongoShell();
 
         void open(MongoCollection *collection);
@@ -25,6 +25,12 @@ namespace Robomongo
         MongoServer *server() const { return _server; }
         QString query() const { return _query; }
         QString filePathToSave() const { return _filePath; }
+        ScriptInfo scriptInfo()const
+        {
+            return _scriptInfo;
+        }
+    Q_SIGNALS:
+        void contentChanged(const QString &text);
     public Q_SLOTS:
         void saveToFile();
         void saveToFileAs();
@@ -40,7 +46,7 @@ namespace Robomongo
          */
         QString _query;
         QString _filePath;
-
+        ScriptInfo _scriptInfo;
         MongoServer *_server;
         MongoWorker *_client;
         EventBus *_bus;

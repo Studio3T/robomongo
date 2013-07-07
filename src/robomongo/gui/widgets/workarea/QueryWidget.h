@@ -10,7 +10,6 @@
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoShellResult.h"
-#include "robomongo/core/domain/ScriptInfo.h"
 #include "robomongo/gui/ViewMode.h"
 
 namespace Robomongo
@@ -31,7 +30,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, const ScriptInfo &scriptInfo, ViewMode viewMode, QWidget *parent = NULL);
+        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, ViewMode viewMode, QWidget *parent = NULL);
         ~QueryWidget() {}
 
         bool eventFilter(QObject *o, QEvent *e);

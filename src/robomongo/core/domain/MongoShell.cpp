@@ -1,17 +1,15 @@
 #include "robomongo/core/domain/MongoShell.h"
 
-#include "robomongo/core/domain/MongoCollection.h"
-#include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
-
 namespace Robomongo
 {
 
-    MongoShell::MongoShell(MongoServer *server) :
+    MongoShell::MongoShell(MongoServer *server, const ScriptInfo &scriptInfo) :
         QObject(),
+        _scriptInfo(scriptInfo),
         _server(server),
         _client(server->client()),
         _bus(AppRegistry::instance().bus())
@@ -32,8 +30,8 @@ namespace Robomongo
     void MongoShell::open(const QString &script, const QString &dbName)
     {
         _bus->publish(new ScriptExecutingEvent(this));
-        _query = script;
-        _client->send(new ExecuteScriptRequest(this, _query, dbName));
+		_scriptInfo.setScript(script);
+        _client->send(new ExecuteScriptRequest(this, query(), dbName));
     }
 
     void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
@@ -50,10 +48,21 @@ namespace Robomongo
     {
         mongo::Scope::setInterruptFlag(true);
     }
-
+	void MongoShell::loadFromFile()
+	{
+        _scriptInfo.loadFromFile();
+	}
+	void MongoShell::saveToFileAs()
+	{
+		_scriptInfo.saveToFileAs();
+	}
+	void MongoShell::saveToFile()
+	{
+		_scriptInfo.saveToFile();
+	}
     void MongoShell::handle(ExecuteQueryResponse *event)
     {
-        _bus->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, _query, event->documents));
+        _bus->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, query(), event->documents));
     }
 
     void MongoShell::handle(ExecuteScriptResponse *event)

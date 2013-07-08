@@ -52,5 +52,7 @@
         <file>icons/user_16x16.png</file>
         <file>icons/stop_24x24.png</file>
         <file>icons/function_16x16.png</file>
+	<file>icons/open_32x32.png</file>
+        <file>icons/save_32x32.png</file>
     </qresource>
 </RCC>

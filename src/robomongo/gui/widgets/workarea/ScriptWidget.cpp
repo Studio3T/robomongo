@@ -58,6 +58,9 @@ namespace Robomongo
 
         QStringListModel *model = new QStringListModel(_completer);
         _completer->setModel(model);
+
+        setText(shell->query());
+        setTextCursor(shell->cursor());
     }
 
     bool ScriptWidget::eventFilter(QObject *obj, QEvent *event)

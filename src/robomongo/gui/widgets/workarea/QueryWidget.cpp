@@ -31,8 +31,7 @@
 using namespace mongo;
 namespace Robomongo
 {
-    QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,
-                             const ScriptInfo &scriptInfo, ViewMode viewMode, QWidget *parent) :
+    QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, ViewMode viewMode, QWidget *parent) :
         QWidget(parent),
         _shell(shell),
         _tabWidget(tabWidget),
@@ -49,17 +48,15 @@ namespace Robomongo
         qDebug() << "Subscribed to ScriptExecutedEvent";
 
         _scriptWidget = new ScriptWidget(_shell);
-        _scriptWidget->setText(scriptInfo.script());
-        _scriptWidget->setTextCursor(scriptInfo.cursor());
         _scriptWidget->installEventFilter(this);
 
         _viewer = new OutputWidget(_viewMode, _shell);
-        _outputLabel = new QLabel();
+        _outputLabel = new QLabel(this);
         _outputLabel->setContentsMargins(0, 5, 0, 0);
         _outputLabel->setVisible(false);
         _viewer->installEventFilter(this);
 
-        QFrame *line = new QFrame();
+        QFrame *line = new QFrame(this);
         line->setFrameShape(QFrame::HLine);
         line->setFrameShadow(QFrame::Raised);
 
@@ -72,9 +69,9 @@ namespace Robomongo
         layout->addWidget(_viewer, 1);
         setLayout(layout);
 
-        if (scriptInfo.execute()) {
-            _scriptWidget->showProgress();
-        }
+		if (shell->execute()) {
+			showProgress();
+		}
     }
 
     void QueryWidget::execute()
@@ -149,7 +146,32 @@ namespace Robomongo
 
         _app->openShell(server, query, _currentResult.currentDatabase());
     }
-
+    void QueryWidget::saveToFile()
+    {
+        if(_shell){
+            _shell->setScript(_scriptWidget->text());
+            _shell->saveToFile();
+        }
+    }
+    void QueryWidget::savebToFileAs()
+    {
+        if(_shell){
+            _shell->setScript(_scriptWidget->text());
+            _shell->saveToFileAs();
+        }
+    }
+    void QueryWidget::openFile()
+    {
+        if(_shell){
+            _shell->loadFromFile();
+            _scriptWidget->setText(_shell->query());
+        }
+    }
+    void QueryWidget::closeEvent(QCloseEvent *ev)
+    {
+        AppRegistry::instance().app()->closeShell(_shell);
+        return BaseClass::closeEvent(ev);
+    }
     void QueryWidget::reload()
     {
         execute();

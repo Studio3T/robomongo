@@ -7,7 +7,6 @@
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/domain/CursorPosition.h"
-#include "robomongo/core/domain/ScriptInfo.h"
 #include "robomongo/core/domain/MongoUser.h"
 #include "robomongo/core/domain/MongoFunction.h"
 #include "robomongo/core/Event.h"
@@ -818,13 +817,11 @@ namespace Robomongo
     {
         R_EVENT
 
-        OpeningShellEvent(QObject *sender, MongoShell *shell, const ScriptInfo &scriptInfo) :
+        OpeningShellEvent(QObject *sender, MongoShell *shell) :
             Event(sender),
-            shell(shell),
-            scriptInfo(scriptInfo) {}
+            shell(shell) {}
 
         MongoShell *shell;
-        ScriptInfo scriptInfo;
     };
 
     class ConnectionFailedEvent : public Event

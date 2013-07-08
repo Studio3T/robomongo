@@ -4,14 +4,19 @@ SET(PROJECT_NAME "robomongo" CACHE STRING "Project Name")
 SET(${PROJECT_NAME}_PROJECT_DOMAIN "www.robomongo.com" CACHE STRING "Internet domain name for ${ProjectName}")
 SET(PROJECT_COMPANYNAME "paralect")
 ##########################################################
-STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_lowercase)
+STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
 SET (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 ########################## Options #########################
 OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
 OPTION(MANIFEST_ENABLE "Enable Manifest" OFF)
 #############################################################
 # Configure project
-PROJECT(${PROJECT_NAME_lowercase})
+PROJECT(${PROJECT_NAME_LOWERCASE})
+set(MAJOR "0")
+set(MINOR "7")
+set(PATCH "1")
+set(BUILD "0")
+set(${PROJECT_NAME}_VERSION "${MAJOR}.${MINOR}.${PATCH}.${BUILD} beta" CACHE STRING "${PROJECT_NAME} version")
 OPTION(BOOST_ENABLED "Enable boost system support" OFF)
 OPTION(BUILD_PCRECPP_LIBRARY "Build pcrecpp library from sources" ON)
 OPTION(QT_ENABLED "Enable Qt support" ON)
@@ -106,7 +111,7 @@ endif(WIN32 OR APPLE)
 
 IF(MANIFEST_ENABLE)
 	IF(WIN32)
-		add_custom_command(TARGET ${ProjectName_lowercase} POST_BUILD COMMAND mt -manifest "${CMAKE_CURRENT_SOURCE_DIR}/resources/win7.manifest" -outputresource:"$(TargetDir)$(TargetFileName)"\;\#1)
+                ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME_LOWERCASE} POST_BUILD COMMAND mt -manifest "${CMAKE_CURRENT_SOURCE_DIR}/resources/win7.manifest" -outputresource:"$(TargetDir)$(TargetFileName)"\;\#1)
 	ENDIF(WIN32)
 ENDIF(MANIFEST_ENABLE)
 

@@ -13,10 +13,10 @@ namespace mongo
 namespace Robomongo
 {
     class AppRegistry;
-    typedef boost::scoped_ptr<AppRegistry> AppRegistry_ScopedPtr;
+    typedef boost::scoped_ptr<AppRegistry> AppRegistryScopedPtr;
 
     class SettingsManager;
-    typedef boost::scoped_ptr<SettingsManager> SettingsManager_ScopedPtr;
+    typedef boost::scoped_ptr<SettingsManager> SettingsManagerScopedPtr;
 
     class App;
     typedef boost::scoped_ptr<App> AppScopedPtr;
@@ -49,7 +49,7 @@ namespace Robomongo
     class ConnectionSettings;
     //typedef QSharedPointer<ConnectionSettings> ConnectionSettingsPtr;
 
-    typedef boost::scoped_ptr<mongo::DBClientConnection> DBClientConnection_ScopedPtr;
+    typedef boost::scoped_ptr<mongo::DBClientConnection> DBClientConnectionScopedPtr;
 }
 
 /**

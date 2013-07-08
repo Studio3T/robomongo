@@ -37,6 +37,7 @@ namespace Robomongo
     {
         clearDatabases();
         delete _connectionRecord;
+        _connectionRecord=NULL;
     }
 
     /**
@@ -97,27 +98,23 @@ namespace Robomongo
 
     void MongoServer::handle(EstablishConnectionResponse *event)
     {
-        if (event->isError())
-        {
+        if (event->isError()){
             _bus->publish(new ConnectionFailedEvent(this));
-            return;
-        }
-
-        if (_visible)
+        }else if (_visible){
             _bus->publish(new ConnectionEstablishedEvent(this));
+        }
     }
 
     void MongoServer::handle(LoadDatabaseNamesResponse *event)
     {
-        if (event->isError())
-        {
+        if (event->isError()){
             _bus->publish(new ConnectionFailedEvent(this));
             return;
         }
 
         clearDatabases();
-        foreach(QString name, event->databaseNames)
-        {
+        for(QStringList::iterator it = event->databaseNames.begin();it!=event->databaseNames.end();++it){
+            const QString &name = *it;
             MongoDatabase *db  = new MongoDatabase(this, name);
             addDatabase(db);
         }

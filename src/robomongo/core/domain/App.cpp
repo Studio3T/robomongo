@@ -50,41 +50,42 @@ namespace Robomongo
         delete server;
     }
 
-    MongoShell *App::openShell(MongoCollection *collection)
+    MongoShell *App::openShell(MongoCollection *collection,const QString &filePathToSave)
     {
         ConnectionSettings *connection = collection->database()->server()->connectionRecord()->clone();
         connection->setDefaultDatabase(collection->database()->name());
         QString script = buildCollectionQuery(collection->name(), "find()");
-        return openShell(connection, ScriptInfo(script, true, CursorPosition(), collection->database()->name()));
+        return openShell(connection, ScriptInfo(script, true, CursorPosition(), collection->database()->name(),filePathToSave));
     }
 
     MongoShell *App::openShell(MongoServer *server, const QString &script, const QString &dbName,
                                bool execute, const QString &shellName,
-                               const CursorPosition &cursorPosition)
+                               const CursorPosition &cursorPosition,const QString &filePathToSave)
     {
         ConnectionSettings *connection = server->connectionRecord()->clone();
 
         if (!dbName.isEmpty())
             connection->setDefaultDatabase(dbName);
 
-        return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName));
+        return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName,filePathToSave));
     }
 
     MongoShell *App::openShell(MongoDatabase *database, const QString &script,
                                bool execute, const QString &shellName,
-                               const CursorPosition &cursorPosition)
+                               const CursorPosition &cursorPosition,const QString &filePathToSave)
     {
         ConnectionSettings *connection = database->server()->connectionRecord()->clone();
         connection->setDefaultDatabase(database->name());
-        return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName));
+        return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName,filePathToSave));
     }
 
     MongoShell *App::openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo)
     {
         MongoServer *server = openServer(connection, false);
-        MongoShell *shell = new MongoShell(server);
+        MongoShell *shell = new MongoShell(server,scriptInfo);
+
         _shells.append(shell);
-        _bus->publish(new OpeningShellEvent(this, shell, scriptInfo));
+        _bus->publish(new OpeningShellEvent(this, shell));
 
         if (scriptInfo.execute())
             shell->open(scriptInfo.script());

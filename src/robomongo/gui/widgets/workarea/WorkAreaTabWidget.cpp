@@ -1,11 +1,12 @@
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/domain/App.h"
-#include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/App.h"
+#include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/EventBus.h"
 
 namespace Robomongo
@@ -20,29 +21,33 @@ namespace Robomongo
         _bus(AppRegistry::instance().bus())
     {
         // This line (setTabBar()) should go before setTabsClosable(true)
-        setTabBar(new WorkAreaTabBar());
+        WorkAreaTabBar * tab = new WorkAreaTabBar(this);
+        setTabBar(tab);
         setTabsClosable(true);
         setElideMode(Qt::ElideRight);
 
         connect(this, SIGNAL(tabCloseRequested(int)), SLOT(tabBar_tabCloseRequested(int)));
         connect(this, SIGNAL(currentChanged(int)), SLOT(ui_currentChanged(int)));
 
-        connect(this->tabBar(), SIGNAL(newTabRequested(int)), SLOT(ui_newTabRequested(int)));
-        connect(this->tabBar(), SIGNAL(reloadTabRequested(int)), SLOT(ui_reloadTabRequested(int)));
-        connect(this->tabBar(), SIGNAL(duplicateTabRequested(int)), SLOT(ui_duplicateTabRequested(int)));
-        connect(this->tabBar(), SIGNAL(closeOtherTabsRequested(int)), SLOT(ui_closeOtherTabsRequested(int)));
-        connect(this->tabBar(), SIGNAL(closeTabsToTheRightRequested(int)), SLOT(ui_closeTabsToTheRightRequested(int)));
+        connect(tab, SIGNAL(newTabRequested(int)), SLOT(ui_newTabRequested(int)));
+        connect(tab, SIGNAL(reloadTabRequested(int)), SLOT(ui_reloadTabRequested(int)));
+        connect(tab, SIGNAL(duplicateTabRequested(int)), SLOT(ui_duplicateTabRequested(int)));
+        connect(tab, SIGNAL(closeOtherTabsRequested(int)), SLOT(ui_closeOtherTabsRequested(int)));
+        connect(tab, SIGNAL(closeTabsToTheRightRequested(int)), SLOT(ui_closeTabsToTheRightRequested(int)));
+
+        connect(tab, SIGNAL(openTabFile(int)), SLOT(openedTabFile(int)));
+        connect(tab, SIGNAL(saveTabToFile(int)), SLOT(savedTabToFile(int)));
+        connect(tab, SIGNAL(saveTabToFileAs(int)), SLOT(savedTabToFileAs(int)));
     }
 
     void WorkAreaTabWidget::closeTab(int index)
     {
         if (index >= 0)
         {
-            QueryWidget *tabWidget = (QueryWidget *) widget(index);
+            QueryWidget *tabWidget = queryWidget(index);
             removeTab(index);
             if (tabWidget)
-            {
-                AppRegistry::instance().app()->closeShell(tabWidget->shell());
+            {                
                 delete tabWidget;
             }
         }
@@ -86,7 +91,7 @@ namespace Robomongo
 
     QueryWidget *WorkAreaTabWidget::queryWidget(int index)
     {
-        return static_cast<QueryWidget *>(widget(index));
+        return qobject_cast<QueryWidget *>(widget(index));
     }
 
     /**
@@ -161,4 +166,26 @@ namespace Robomongo
         if (tabWidget)
             tabWidget->activateTabContent();
     }
+    void WorkAreaTabWidget::savedTabToFile(int index)
+    {
+        QueryWidget *query = queryWidget(index);
+        if (query){
+            query->saveToFile();
+        }
+    }
+    void WorkAreaTabWidget::savedTabToFileAs(int index)
+    {
+        QueryWidget *query = queryWidget(index);
+        if (query){
+            query->savebToFileAs();
+        }
+    }
+    void WorkAreaTabWidget::openedTabFile(int index)
+    {
+        QueryWidget *query = queryWidget(index);
+        if (query){
+            query->openFile();
+        }
+    }
 }
+

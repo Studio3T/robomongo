@@ -10,7 +10,7 @@ namespace Robomongo
     {
     public:
 
-        QString version() const { return "0.7.1 beta"; }
+        QString version() const { return PROJECT_VERSION; }
 
         /**
          * @brief Returns single instance of AppRegistry
@@ -31,7 +31,7 @@ namespace Robomongo
         ~AppRegistry(void);
 
         EventBusScopedPtr _bus;
-        SettingsManager_ScopedPtr _settingsManager;
+        SettingsManagerScopedPtr _settingsManager;
         AppScopedPtr _app;
         KeyboardManagerScopedPtr _keyboard;
 

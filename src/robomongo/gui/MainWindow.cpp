@@ -4,10 +4,12 @@
 #include <QToolButton>
 #include <QMessageBox>
 #include <QWidgetAction>
-#include <QMenu>
 #include <QMenuBar>
+#include <QToolBar>
 #include <QToolTip>
+#include <QDockWidget>
 #include <QDesktopWidget>
+#include <QFileDialog>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
@@ -26,13 +28,12 @@
 namespace Robomongo
 {
 
-	MainWindow::MainWindow() : QMainWindow(),
-		_app(AppRegistry::instance().app()),
-		_settingsManager(AppRegistry::instance().settingsManager()),
+    MainWindow::MainWindow() : base_class(),
+        _app(AppRegistry::instance().app()),
 		_bus(AppRegistry::instance().bus()),
 		_workArea(NULL),
 		_connectionsMenu(NULL),
-		_viewMode(Text)
+        _viewMode(Text)
 	{
 		GuiRegistry::instance().setMainWindow(this);
 
@@ -59,7 +60,7 @@ namespace Robomongo
 		).arg(explorerColor));
 
 		// Exit action
-		QAction *exitAction = new QAction("&Exit", this);
+        QAction *exitAction = new QAction("&Exit", this);
 		exitAction->setShortcut(QKeySequence::Quit);
 		connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -100,7 +101,7 @@ namespace Robomongo
 		connect(_orientationAction, SIGNAL(triggered()), this, SLOT(toggleOrientation()));
 
 		// read view mode setting
-		_viewMode = _settingsManager->viewMode();
+        _viewMode = AppRegistry::instance().settingsManager()->viewMode();
 
 		// Text mode action
 		QAction *textModeAction = new QAction("&Text Mode", this);
@@ -166,7 +167,7 @@ namespace Robomongo
 		// File menu
 		QMenu *fileMenu = menuBar()->addMenu("File");
 		fileMenu->addAction(_connectAction);
-		fileMenu->addAction(fullScreenAction);
+        fileMenu->addAction(fullScreenAction);
 		fileMenu->addSeparator();
 		fileMenu->addAction(exitAction);
 
@@ -180,22 +181,22 @@ namespace Robomongo
 		// UUID encoding
 		QAction *defaultEncodingAction = new QAction("Do not decode (show as is)", this);
 		defaultEncodingAction->setCheckable(true);
-		defaultEncodingAction->setChecked(_settingsManager->uuidEncoding() == DefaultEncoding);
+        defaultEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == DefaultEncoding);
 		connect(defaultEncodingAction, SIGNAL(triggered()), this, SLOT(setDefaultUuidEncoding()));
 
 		QAction *javaLegacyEncodingAction = new QAction("Use Java Encoding", this);
 		javaLegacyEncodingAction->setCheckable(true);
-		javaLegacyEncodingAction->setChecked(_settingsManager->uuidEncoding() == JavaLegacy);
+        javaLegacyEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == JavaLegacy);
 		connect(javaLegacyEncodingAction, SIGNAL(triggered()), this, SLOT(setJavaUuidEncoding()));
 
 		QAction *csharpLegacyEncodingAction = new QAction("Use .NET Encoding", this);
 		csharpLegacyEncodingAction->setCheckable(true);
-		csharpLegacyEncodingAction->setChecked(_settingsManager->uuidEncoding() == CSharpLegacy);
+        csharpLegacyEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == CSharpLegacy);
 		connect(csharpLegacyEncodingAction, SIGNAL(triggered()), this, SLOT(setCSharpUuidEncoding()));
 
 		QAction *pythonEncodingAction = new QAction("Use Python Encoding", this);
 		pythonEncodingAction->setCheckable(true);
-		pythonEncodingAction->setChecked(_settingsManager->uuidEncoding() == PythonLegacy);
+        pythonEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == PythonLegacy);
 		connect(pythonEncodingAction, SIGNAL(triggered()), this, SLOT(setPythonUuidEncoding()));
 
 		QMenu *uuidMenu = optionsMenu->addMenu("Legacy UUID Encoding");
@@ -239,26 +240,7 @@ namespace Robomongo
 		_execToolBar->setShortcutEnabled(1, true);
 		_execToolBar->setMovable(false);
 		addToolBar(_execToolBar);
-		_execToolBar->hide();
-
-	//    _miscToolBar = new QToolBar("Misc Toolbar", this);
-	//    _miscToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-	//    _miscToolBar->addAction(customModeAction);
-	//    _miscToolBar->addAction(treeModeAction);
-	//    _miscToolBar->addAction(textModeAction);
-	//    _miscToolBar->setShortcutEnabled(1, true);
-	//    _miscToolBar->setMovable(false);
-	//    addToolBar(_miscToolBar);
-
-
-
-		// Log Button
-		//_status = new QLabel;
-		//QPushButton *log = new QPushButton("Logs", this);
-		//log->setCheckable(true);
-		//connect(log, SIGNAL(toggled(bool)), this, SLOT(toggleLogs(bool)));
-		//statusBar()->insertWidget(0, log);
-		//statusBar()->addPermanentWidget(_status);
+        _execToolBar->hide();
 
 		statusBar();
 
@@ -280,16 +262,15 @@ namespace Robomongo
 			return;
 		}
 
-		QMainWindow::keyPressEvent(event);
+        base_class::keyPressEvent(event);
 	}
 
 	void MainWindow::updateConnectionsMenu()
 	{
-		_connectionsMenu->clear();
-
+        _connectionsMenu->clear();
 		int number = 1;
 		// Populate list with connections
-		foreach(ConnectionSettings *connection, _settingsManager->connections()) {
+        foreach(ConnectionSettings *connection, AppRegistry::instance().settingsManager()->connections()) {
 			QAction *action = new QAction(connection->getReadableName(), this);
 			action->setData(QVariant::fromValue(connection));
 
@@ -300,7 +281,7 @@ namespace Robomongo
 			++number;
 		}
 
-		if (_settingsManager->connections().size() > 0)
+        if (AppRegistry::instance().settingsManager()->connections().size() > 0)
 			_connectionsMenu->addSeparator();
 
 		// Connect action
@@ -310,15 +291,14 @@ namespace Robomongo
 		connect(connectAction, SIGNAL(triggered()), this, SLOT(manageConnections()));
 
 		_connectionsMenu->addAction(connectAction);
-	}
-
-	void MainWindow::manageConnections()
+    }
+    void MainWindow::manageConnections()
 	{
-		ConnectionsDialog dialog(_settingsManager);
+        ConnectionsDialog dialog(AppRegistry::instance().settingsManager());
 		int result = dialog.exec();
 
 		// save settings and update connection menu
-		_settingsManager->save();
+        AppRegistry::instance().settingsManager()->save();
 		updateConnectionsMenu();
 
 		if (result == QDialog::Accepted) {
@@ -326,7 +306,7 @@ namespace Robomongo
 
 			try {
 				_app->openServer(selected->clone(), true);
-			} catch(MongoException &ex) {
+            } catch(const MongoException &) {
 				QString message = QString("Cannot connect to MongoDB (%1)").arg(selected->getFullAddress());
 				QMessageBox::information(this, "Error", message);
 			}
@@ -368,8 +348,8 @@ namespace Robomongo
 
 	void MainWindow::saveViewMode()
 	{
-		_settingsManager->setViewMode(_viewMode);
-		_settingsManager->save();
+        AppRegistry::instance().settingsManager()->setViewMode(_viewMode);
+        AppRegistry::instance().settingsManager()->save();
 	}
 
 	void MainWindow::executeScript()
@@ -412,26 +392,26 @@ namespace Robomongo
 
 	void MainWindow::setDefaultUuidEncoding()
 	{
-		_settingsManager->setUuidEncoding(DefaultEncoding);
-		_settingsManager->save();
+        AppRegistry::instance().settingsManager()->setUuidEncoding(DefaultEncoding);
+        AppRegistry::instance().settingsManager()->save();
 	}
 
 	void MainWindow::setJavaUuidEncoding()
 	{
-		_settingsManager->setUuidEncoding(JavaLegacy);
-		_settingsManager->save();
+        AppRegistry::instance().settingsManager()->setUuidEncoding(JavaLegacy);
+        AppRegistry::instance().settingsManager()->save();
 	}
 
 	void MainWindow::setCSharpUuidEncoding()
 	{
-		_settingsManager->setUuidEncoding(CSharpLegacy);
-		_settingsManager->save();
+        AppRegistry::instance().settingsManager()->setUuidEncoding(CSharpLegacy);
+        AppRegistry::instance().settingsManager()->save();
 	}
 
 	void MainWindow::setPythonUuidEncoding()
 	{
-		_settingsManager->setUuidEncoding(PythonLegacy);
-		_settingsManager->save();
+        AppRegistry::instance().settingsManager()->setUuidEncoding(PythonLegacy);
+        AppRegistry::instance().settingsManager()->save();
 	}
 
 	void MainWindow::toggleLogs(bool show)
@@ -443,12 +423,11 @@ namespace Robomongo
 	{
 		QVariant data = connectionAction->data();
 		ConnectionSettings *ptr = data.value<ConnectionSettings *>();
-
 		try
 		{
 			_app->openServer(ptr->clone(), true);
 		}
-		catch(MongoException &ex)
+        catch(const MongoException &)
 		{
 			QString message = QString("Cannot connect to MongoDB (%1)").arg(ptr->getFullAddress());
 			QMessageBox::information(this, "Error", message);
@@ -465,24 +444,14 @@ namespace Robomongo
 	void MainWindow::handle(ScriptExecutingEvent *event)
 	{
 		_stopAction->setDisabled(false);
-		_executeAction->setDisabled(true);
-	//    _executeAction->setData("Stop");
-	//    _executeAction->setIcon(GuiRegistry::instance().stopIcon());
-	//    _executeAction->setIconText("");
-	//    _executeAction->setShortcut(Qt::Key_F6);
-	//    _executeAction->setToolTip("Stop currently executed script. <b>(F6)</b>");
+        _executeAction->setDisabled(true);
 	}
 
-	void MainWindow::handle(ScriptExecutedEvent *event)
+    void MainWindow::handle(ScriptExecutedEvent *)
 	{
 		_stopAction->setDisabled(true);
-		_executeAction->setDisabled(false);
-	//    _executeAction->setData("Execute");
-	//    _executeAction->setIcon(GuiRegistry::instance().executeIcon());
-	//    _executeAction->setIconText("");
-	//    _executeAction->setShortcut(Qt::Key_F5);
-	//    _executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>");
-	}
+        _executeAction->setDisabled(false);
+    }
 
 	void MainWindow::handle(AllTabsClosedEvent *event)
 	{
@@ -516,24 +485,19 @@ namespace Robomongo
 	}
 
 	void MainWindow::createTabs()
-	{
-		//TestStackPanel *panel = new TestStackPanel();
-
-		_workArea = new WorkAreaWidget(this);
-		setCentralWidget(_workArea);
-
-		//QLabel *label = new QLabel("muahahah");
-		//setCentralWidget(label);
+    {
+        _workArea = new WorkAreaWidget(this);
+        setCentralWidget(_workArea);
 	}
 
 
 	void ConnectionMenu::keyPressEvent(QKeyEvent *event)
 	{
 		if (event->key() == Qt::Key_F12) {
-			hide();
-			return;
-		}
-
-		QMenu::keyPressEvent(event);
+            hide();
+        }
+        else {
+            QMenu::keyPressEvent(event);
+        }
 	}
 }

@@ -33,101 +33,53 @@ namespace Robomongo
         /**
          * @brief Functions that provide access to various icons
          */
-        QIcon serverIcon();
+        const QIcon &serverIcon()const;
         const QIcon &saveIcon()const;
         const QIcon &openIcon()const;
-        QIcon databaseIcon();
-        QIcon collectionIcon();
-        QIcon userIcon();
-        QIcon functionIcon();
-        QIcon maximizeIcon();
-        QIcon maximizeHighlightedIcon();
-        QIcon textIcon();
-        QIcon textHighlightedIcon();
-        QIcon treeIcon();
-        QIcon treeHighlightedIcon();
-        QIcon customIcon();
-        QIcon customHighlightedIcon();
-        QIcon rotateIcon();
-        QIcon visualIcon();
-        QIcon folderIcon();
-        QIcon circleIcon();
-        QIcon leftIcon();
-        QIcon rightIcon();
-        QIcon mongodbIcon();
-        QIcon connectIcon();
-        QIcon executeIcon();
-        QIcon stopIcon();
-        QIcon mainWindowIcon();
-        QIcon bsonObjectIcon();
-        QIcon bsonArrayIcon();
-        QIcon bsonStringIcon();
-        QIcon bsonIntegerIcon();
-        QIcon bsonDoubleIcon();
-        QIcon bsonDateTimeIcon();
-        QIcon bsonBinaryIcon();
-        QIcon bsonNullIcon();
-        QIcon bsonBooleanIcon();
-        QIcon noMarkIcon();
-        QIcon yesMarkIcon();
-        QIcon timeIcon();
-        QIcon keyIcon();
+        const QIcon &databaseIcon()const;
+        const QIcon &collectionIcon()const;
+        const QIcon &userIcon()const;
+        const QIcon &functionIcon()const;
+        const QIcon &maximizeIcon()const;
+        const QIcon &maximizeHighlightedIcon()const;
+        const QIcon &textIcon()const;
+        const QIcon &textHighlightedIcon()const;
+        const QIcon &treeIcon()const;
+        const QIcon &treeHighlightedIcon()const;
+        const QIcon &customIcon()const;
+        const QIcon &customHighlightedIcon()const;
+        const QIcon &rotateIcon()const;
+        const QIcon &visualIcon()const;
+        const QIcon &folderIcon()const;
+        const QIcon &circleIcon()const;
+        const QIcon &leftIcon()const;
+        const QIcon &rightIcon()const;
+        const QIcon &mongodbIcon()const;
+        const QIcon &connectIcon()const;
+        const QIcon &executeIcon()const;
+        const QIcon &stopIcon()const;
+        const QIcon &mainWindowIcon()const;
+        const QIcon &bsonObjectIcon()const;
+        const QIcon &bsonArrayIcon()const;
+        const QIcon &bsonStringIcon()const;
+        const QIcon &bsonIntegerIcon()const;
+        const QIcon &bsonDoubleIcon()const;
+        const QIcon &bsonDateTimeIcon()const;
+        const QIcon &bsonBinaryIcon()const;
+        const QIcon &bsonNullIcon()const;
+        const QIcon &bsonBooleanIcon()const;
+		const QIcon &noMarkIcon()const;
+		const QIcon &yesMarkIcon()const;
+		const QIcon &timeIcon()const;
+		const QIcon &keyIcon()const;
 
-        QBrush typeBrush();
+		const QBrush &typeBrush() const;
 
     private:
         /**
          * @brief Private, because this is singleton
          */
         GuiRegistry();
-
-        /**
-         * @brief Icons
-         */
-        QIcon _serverIcon;
-        QIcon _databaseIcon;
-        QIcon _folderIcon;
-        QIcon _collectionIcon;
-        QIcon _userIcon;
-        QIcon _functionIcon;
-        QIcon _maximizeIcon;
-        QIcon _maximizeHighlightedIcon;
-        QIcon _treeIcon;
-        QIcon _treeHighlightedIcon;
-        QIcon _textIcon;
-        QIcon _textHighlightedIcon;
-        QIcon _customIcon;
-        QIcon _customHighlightedIcon;
-        QIcon _rotateIcon;
-        QIcon _visualIcon;
-        QIcon _circleIcon;
-        QIcon _leftIcon;
-        QIcon _rightIcon;
-        QIcon _mongodbIcon;
-        QIcon _connectIcon;
-        QIcon _executeIcon;
-        QIcon _stopIcon;
-        QIcon _mainWindowIcon;
-        QIcon _bsonObjectIcon;
-        QIcon _bsonIdIcon;
-        QIcon _bsonArrayIcon;
-        QIcon _bsonStringIcon;
-        QIcon _bsonIntegerIcon;
-        QIcon _bsonDoubleIcon;
-        QIcon _bsonDateTimeIcon;
-        QIcon _bsonBinaryIcon;
-        QIcon _bsonNullIcon;
-        QIcon _bsonBooleanIcon;
-        QIcon _noMarkIcon;
-        QIcon _yesMarkIcon;
-        QIcon _timeIcon;
-        QIcon _keyIcon;
-
-        /**
-         * @brief Brushes
-         */
-        QBrush _typeBrush;
-
         MainWindow *_mainWindow;
     };
 }

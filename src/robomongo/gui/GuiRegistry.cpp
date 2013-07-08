@@ -27,317 +27,242 @@ void GuiRegistry::setAlternatingColor(QAbstractItemView *view)
 #endif
 }
 
-QIcon GuiRegistry::serverIcon()
+const QIcon &GuiRegistry::serverIcon() const
 {
-    if (_serverIcon.isNull())
-        _serverIcon = QIcon(":/robomongo/icons/server_16x16.png");
-
-    return _serverIcon;
+    static const QIcon serverIc = QIcon(":/robomongo/icons/server_16x16.png");
+    return serverIc;
 }
-const QIcon &GuiRegistry::openIcon()const
+const QIcon &GuiRegistry::openIcon() const
 {
     static const QIcon openIc =QIcon(":/robomongo/icons/open_32x32.png");
     return openIc;
 }
-const QIcon &GuiRegistry::saveIcon()const
+const QIcon &GuiRegistry::saveIcon() const
 {
     static const QIcon saveIc = QIcon(":/robomongo/icons/save_32x32.png");
     return saveIc;
 }
-QIcon GuiRegistry::databaseIcon()
+const QIcon &GuiRegistry::databaseIcon() const
 {
-    if (_databaseIcon.isNull())
-        _databaseIcon = QIcon(":/robomongo/icons/database_16x16.png");
-
-    return _databaseIcon;
+    static const QIcon databaseIc = QIcon(":/robomongo/icons/database_16x16.png");
+    return databaseIc;
 }
 
-QIcon GuiRegistry::collectionIcon()
+const QIcon &GuiRegistry::collectionIcon() const
 {
-    if (_collectionIcon.isNull())
-        _collectionIcon = QIcon(":/robomongo/icons/collection_16x16.png");
-
-    return _collectionIcon;
+    static const QIcon collectionIc = QIcon(":/robomongo/icons/collection_16x16.png");
+    return collectionIc;
 }
 
-QIcon GuiRegistry::userIcon()
+const QIcon &GuiRegistry::userIcon() const
 {
-    if (_userIcon.isNull())
-        _userIcon = QIcon(":/robomongo/icons/user_16x16.png");
-
-    return _userIcon;
+    static const QIcon userIc = QIcon(":/robomongo/icons/user_16x16.png");
+    return userIc;
 }
 
-QIcon GuiRegistry::functionIcon()
+const QIcon &GuiRegistry::functionIcon() const
 {
-    if (_functionIcon.isNull())
-        _functionIcon = QIcon(":/robomongo/icons/function_16x16.png");
-
-    return _functionIcon;
+    static const QIcon functionIc = QIcon(":/robomongo/icons/function_16x16.png");
+    return functionIc;
 }
 
-QIcon GuiRegistry::maximizeIcon()
+const QIcon &GuiRegistry::maximizeIcon() const
 {
-    if (_maximizeIcon.isNull())
-        _maximizeIcon = QIcon(":/robomongo/icons/maximize.gif");
-
-    return _maximizeIcon;
+    static const QIcon maximizeIc = QIcon(":/robomongo/icons/maximize.gif");
+    return maximizeIc;
 }
 
-QIcon GuiRegistry::maximizeHighlightedIcon()
+const QIcon &GuiRegistry::maximizeHighlightedIcon() const
 {
-    if (_maximizeHighlightedIcon.isNull())
-        _maximizeHighlightedIcon = QIcon(":/robomongo/icons/maximize_highlighted_16x16.png");
-
-    return _maximizeHighlightedIcon;
+    static const QIcon maximizeHighlightedIc = QIcon(":/robomongo/icons/maximize_highlighted_16x16.png");
+    return maximizeHighlightedIc;
 }
 
-QIcon GuiRegistry::textIcon()
+const QIcon &GuiRegistry::textIcon() const
 {
-    if (_textIcon.isNull())
-        _textIcon = QIcon(":/robomongo/icons/text_16x16.png");
-
-    return _textIcon;
+    static const QIcon textIc = QIcon(":/robomongo/icons/text_16x16.png");
+    return textIc;
 }
 
-QIcon GuiRegistry::textHighlightedIcon()
+const QIcon &GuiRegistry::textHighlightedIcon() const
 {
-    if (_textHighlightedIcon.isNull())
-        _textHighlightedIcon = QIcon(":/robomongo/icons/text_highlighted_16x16.png");
-
-    return _textHighlightedIcon;
+    static const QIcon textHighlightedIc = QIcon(":/robomongo/icons/text_highlighted_16x16.png");
+    return textHighlightedIc;
 }
 
-QIcon GuiRegistry::treeIcon()
+const QIcon &GuiRegistry::treeIcon() const
 {
-    if (_treeIcon.isNull())
-        _treeIcon = QIcon(":/robomongo/icons/tree_16x16.png");
-
-    return _treeIcon;
+    static const QIcon treeIc = QIcon(":/robomongo/icons/tree_16x16.png");
+    return treeIc;
 }
 
-QIcon GuiRegistry::treeHighlightedIcon()
+const QIcon &GuiRegistry::treeHighlightedIcon() const
 {
-    if (_treeHighlightedIcon.isNull())
-        _treeHighlightedIcon = QIcon(":/robomongo/icons/tree_highlighted_16x16.png");
-
-    return _treeHighlightedIcon;
+    static const QIcon treeHighlightedIc = QIcon(":/robomongo/icons/tree_highlighted_16x16.png");
+    return treeHighlightedIc;
 }
 
-QIcon GuiRegistry::customIcon()
+const QIcon &GuiRegistry::customIcon() const
 {
-    if (_customIcon.isNull())
-        _customIcon = QIcon(":/robomongo/icons/custom_16x16.png");
-
-    return _customIcon;
+    static const QIcon customIc = QIcon(":/robomongo/icons/custom_16x16.png");
+    return customIc;
 }
 
-QIcon GuiRegistry::customHighlightedIcon()
+const QIcon &GuiRegistry::customHighlightedIcon() const
 {
-    if (_customHighlightedIcon.isNull())
-        _customHighlightedIcon = QIcon(":/robomongo/icons/custom_highlighted_16x16.png");
-
-    return _customHighlightedIcon;
+    static const QIcon customHighlightedIc = QIcon(":/robomongo/icons/custom_highlighted_16x16.png");
+    return customHighlightedIc;
 }
 
-QIcon GuiRegistry::rotateIcon()
+const QIcon &GuiRegistry::rotateIcon() const
 {
-    if (_rotateIcon.isNull())
-        _rotateIcon = QIcon(":/robomongo/icons/rotate_16x16.png");
-
-    return _rotateIcon;
+    static const QIcon rotateIc = QIcon(":/robomongo/icons/rotate_16x16.png");
+    return rotateIc;
 }
 
-QIcon GuiRegistry::visualIcon()
+const QIcon &GuiRegistry::visualIcon() const
 {
-    if (_visualIcon.isNull())
-        _visualIcon = QIcon(":/robomongo/icons/visual_16x16.png");
-
-    return _visualIcon;
+    static const QIcon visualIc = QIcon(":/robomongo/icons/visual_16x16.png");
+    return visualIc;
 }
 
-QIcon GuiRegistry::circleIcon()
+const QIcon &GuiRegistry::circleIcon() const
 {
-    if (_circleIcon.isNull())
-        _circleIcon = QIcon(":/robomongo/icons/bson_unsupported_16x16.png");
-
-    return _circleIcon;
+    static const QIcon circleIc = QIcon(":/robomongo/icons/bson_unsupported_16x16.png");
+    return circleIc;
 }
 
-QIcon GuiRegistry::bsonArrayIcon()
+const QIcon &GuiRegistry::bsonArrayIcon() const
 {
-    if (_bsonArrayIcon.isNull())
-        _bsonArrayIcon = QIcon(":/robomongo/icons/bson_array_16x16.png");
-
-    return _bsonArrayIcon;
+    static const QIcon bsonArrayIc = QIcon(":/robomongo/icons/bson_array_16x16.png");
+    return bsonArrayIc;
 }
 
 
-QIcon GuiRegistry::bsonObjectIcon()
+const QIcon &GuiRegistry::bsonObjectIcon() const
 {
-    if (_bsonObjectIcon.isNull())
-        _bsonObjectIcon = QIcon(":/robomongo/icons/bson_object_16x16.png");
-
-    return _bsonObjectIcon;
+    static const QIcon bsonObjectIc = QIcon(":/robomongo/icons/bson_object_16x16.png");
+    return bsonObjectIc;
 }
 
-QIcon GuiRegistry::bsonStringIcon()
+const QIcon &GuiRegistry::bsonStringIcon() const
 {
-    if (_bsonStringIcon.isNull())
-        _bsonStringIcon = QIcon(":/robomongo/icons/bson_string_16x16.png");
-
-    return _bsonStringIcon;
+    static const QIcon bsonStringIc = QIcon(":/robomongo/icons/bson_string_16x16.png");
+    return bsonStringIc;
 }
 
-QIcon GuiRegistry::folderIcon()
+const QIcon &GuiRegistry::folderIcon() const
 {
-    if (_folderIcon.isNull())
-        _folderIcon = qApp->style()->standardIcon(QStyle::SP_DirClosedIcon);
-
-    return _folderIcon;
+    static const QIcon folderIc = qApp->style()->standardIcon(QStyle::SP_DirClosedIcon);
+    return folderIc;
 }
 
-QIcon GuiRegistry::bsonIntegerIcon()
+const QIcon &GuiRegistry::bsonIntegerIcon() const
 {
-    if (_bsonIntegerIcon.isNull())
-        _bsonIntegerIcon = QIcon(":/robomongo/icons/bson_integer_16x16.png");
-
-    return _bsonIntegerIcon;
+    static const QIcon bsonIntegerIc = QIcon(":/robomongo/icons/bson_integer_16x16.png");
+    return bsonIntegerIc;
 }
 
-QIcon GuiRegistry::bsonDoubleIcon()
+const QIcon &GuiRegistry::bsonDoubleIcon() const
 {
-    if (_bsonDoubleIcon.isNull())
-        _bsonDoubleIcon = QIcon(":/robomongo/icons/bson_double_16x16.png");
-
-    return _bsonDoubleIcon;
+    static const QIcon bsonDoubleIc = QIcon(":/robomongo/icons/bson_double_16x16.png");
+    return bsonDoubleIc;
 }
 
-QIcon GuiRegistry::bsonDateTimeIcon()
+const QIcon &GuiRegistry::bsonDateTimeIcon() const
 {
-    if (_bsonDateTimeIcon.isNull())
-        _bsonDateTimeIcon = QIcon(":/robomongo/icons/bson_datetime_16x16.png");
-
-    return _bsonDateTimeIcon;
+    static const QIcon bsonDateTimeIc = QIcon(":/robomongo/icons/bson_datetime_16x16.png");
+    return bsonDateTimeIc;
 }
 
-QIcon GuiRegistry::bsonBinaryIcon()
+const QIcon &GuiRegistry::bsonBinaryIcon() const
 {
-    if (_bsonBinaryIcon.isNull())
-        _bsonBinaryIcon = QIcon(":/robomongo/icons/bson_binary_16x16.png");
-
-    return _bsonBinaryIcon;
+    static const QIcon bsonBinaryIc = QIcon(":/robomongo/icons/bson_binary_16x16.png");
+    return bsonBinaryIc;
 }
 
-QIcon GuiRegistry::bsonNullIcon()
+const QIcon &GuiRegistry::bsonNullIcon() const
 {
-    if (_bsonNullIcon.isNull())
-        _bsonNullIcon = QIcon(":/robomongo/icons/bson_null_16x16.png");
-
-    return _bsonNullIcon;
+    static const QIcon bsonNullIc = QIcon(":/robomongo/icons/bson_null_16x16.png");
+    return bsonNullIc;
 }
 
-QIcon GuiRegistry::bsonBooleanIcon()
+const QIcon &GuiRegistry::bsonBooleanIcon() const
 {
-    if (_bsonBooleanIcon.isNull())
-        _bsonBooleanIcon = QIcon(":/robomongo/icons/bson_bool_16x16.png");
-
-    return _bsonBooleanIcon;
+    static const QIcon bsonBooleanIc = QIcon(":/robomongo/icons/bson_bool_16x16.png");
+    return bsonBooleanIc;
 }
 
-QIcon GuiRegistry::noMarkIcon()
+const QIcon &GuiRegistry::noMarkIcon() const
 {
-    if (_noMarkIcon.isNull())
-        _noMarkIcon = QIcon(":/robomongo/icons/no_mark_16x16.png");
-
-    return _noMarkIcon;
+    static const QIcon noMarkIc = QIcon(":/robomongo/icons/no_mark_16x16.png");
+    return noMarkIc;
 }
 
-QIcon GuiRegistry::yesMarkIcon()
+const QIcon &GuiRegistry::yesMarkIcon() const
 {
-    if (_yesMarkIcon.isNull())
-        _yesMarkIcon = QIcon(":/robomongo/icons/yes_mark_16x16.png");
-
-    return _yesMarkIcon;
+    static const QIcon yesMarkIc = QIcon(":/robomongo/icons/yes_mark_16x16.png");
+    return yesMarkIc;
 }
 
-QIcon GuiRegistry::timeIcon()
+const QIcon &GuiRegistry::timeIcon() const
 {
-    if (_timeIcon.isNull())
-        _timeIcon = QIcon(":/robomongo/icons/time_16x16.png");
-
-    return _timeIcon;
+    static const QIcon timeIc = QIcon(":/robomongo/icons/time_16x16.png");
+    return timeIc;
 }
 
-QIcon GuiRegistry::keyIcon()
+const QIcon &GuiRegistry::keyIcon() const
 {
-    if (_keyIcon.isNull())
-        _keyIcon = QIcon(":/robomongo/icons/key_16x16.png");
-
-    return _keyIcon;
+    static const QIcon keyIc = QIcon(":/robomongo/icons/key_16x16.png");
+    return keyIc;
 }
 
-QBrush GuiRegistry::typeBrush()
+const QBrush &GuiRegistry::typeBrush() const
 {
-    if (_typeBrush.style() == Qt::NoBrush)
-        _typeBrush = QBrush(QColor(150,150, 150));
-
-    return _typeBrush;
+    static const QBrush typeBrush = QBrush(QColor(150,150, 150));
+    return typeBrush;
 }
 
-QIcon GuiRegistry::leftIcon()
+const QIcon &GuiRegistry::leftIcon() const
 {
-    if (_leftIcon.isNull())
-        _leftIcon = QIcon(":/robomongo/icons/left_16x16.png");
-
-    return _leftIcon;
+    static const QIcon leftIc = QIcon(":/robomongo/icons/left_16x16.png");
+    return leftIc;
 }
 
-QIcon GuiRegistry::rightIcon()
+const QIcon &GuiRegistry::rightIcon() const
 {
-    if (_rightIcon.isNull())
-        _rightIcon = QIcon(":/robomongo/icons/right_16x16.png");
+    static const QIcon rightIc = QIcon(":/robomongo/icons/right_16x16.png");
 
-    return _rightIcon;
+    return rightIc;
 }
 
-QIcon GuiRegistry::mongodbIcon()
+const QIcon &GuiRegistry::mongodbIcon() const
 {
-    if (_mongodbIcon.isNull())
-        _mongodbIcon = QIcon(":/robomongo/icons/mongodb_16x16.png");
-
-    return _mongodbIcon;
+    static const QIcon mongodbIc = QIcon(":/robomongo/icons/mongodb_16x16.png");
+    return mongodbIc;
 }
 
-QIcon GuiRegistry::connectIcon()
+const QIcon &GuiRegistry::connectIcon() const
 {
-    if (_connectIcon.isNull())
-        _connectIcon = QIcon(":/robomongo/icons/connect_24x24.png");
-
-    return _connectIcon;
+    static const QIcon connectIc = QIcon(":/robomongo/icons/connect_24x24.png");
+    return connectIc;
 }
 
-QIcon GuiRegistry::executeIcon()
+const QIcon &GuiRegistry::executeIcon() const
 {
-    if (_executeIcon.isNull())
-        _executeIcon = QIcon(":/robomongo/icons/execute_24x24.png");
-
-    return _executeIcon;
+    static const QIcon executeIc = QIcon(":/robomongo/icons/execute_24x24.png");
+    return executeIc;
 }
 
-QIcon GuiRegistry::stopIcon()
+const QIcon &GuiRegistry::stopIcon() const
 {
-    if (_stopIcon.isNull())
-        _stopIcon = QIcon(":/robomongo/icons/stop_24x24.png");
-
-    return _stopIcon;
+    static const QIcon stopIc = QIcon(":/robomongo/icons/stop_24x24.png");
+    return stopIc;
 }
 
-QIcon GuiRegistry::mainWindowIcon()
+const QIcon &GuiRegistry::mainWindowIcon() const
 {
-    if (_mainWindowIcon.isNull())
-        _mainWindowIcon = QIcon(":/robomongo/icons/main_window_icon.png");
-
-    return _mainWindowIcon;
+    static const QIcon mainWindowIc = QIcon(":/robomongo/icons/main_window_icon.png");
+    return mainWindowIc;
 }
 

@@ -9,17 +9,22 @@ namespace Robomongo
     public:
          ScriptInfo(const QString &script, bool execute = false,
                    const CursorPosition &position = CursorPosition(),
-                   const QString &title = QString());
+                   const QString &title = QString(),const QString &filePath=QString());
 
         bool execute() const { return _execute; }
         QString script() const { return _script; }
-        QString title() const { return _title; }
-        CursorPosition cursor() const { return _cursor; }
+        const QString &title() const { return _title; }
+        const CursorPosition &cursor() const { return _cursor; }
+		void setScript(const QString &script){_script = script;};
 
+		bool loadFromFile();
+		void saveToFileAs();
+		void saveToFile();
     private:
-        bool _execute;
-        QString _script;
-        QString _title;
-        CursorPosition _cursor;
+		QString _script;
+        const bool _execute;
+        const QString _title;
+        const CursorPosition _cursor;
+		QString _filePath;
     };
 }

@@ -48,12 +48,10 @@ namespace Robomongo
         qDebug() << "Subscribed to ScriptExecutedEvent";
 
         _scriptWidget = new ScriptWidget(_shell);
-        _scriptWidget->setText(shell->scriptInfo().script());
-        _scriptWidget->setTextCursor(shell->scriptInfo().cursor());
         _scriptWidget->installEventFilter(this);
 
         _viewer = new OutputWidget(_viewMode, _shell);
-        _outputLabel = new QLabel();
+        _outputLabel = new QLabel(this);
         _outputLabel->setContentsMargins(0, 5, 0, 0);
         _outputLabel->setVisible(false);
         _viewer->installEventFilter(this);
@@ -71,9 +69,9 @@ namespace Robomongo
         layout->addWidget(_viewer, 1);
         setLayout(layout);
 
-        if (shell->scriptInfo().execute()) {
-            _scriptWidget->showProgress();
-        }
+		if (shell->execute()) {
+			showProgress();
+		}
     }
 
     void QueryWidget::execute()

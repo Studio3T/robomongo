@@ -44,7 +44,7 @@ namespace Robomongo
                               bool execute = true, const QString &shellName = QString(),
                               const CursorPosition &cursorPosition = CursorPosition(),const QString &filePathToSave=QString());
 
-        MongoShell *openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo, const QString &filePathToSave=QString());
+        MongoShell *openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo);
 
         /**
          * @brief Builds single collection query (i.e. db.my_col.find()) from

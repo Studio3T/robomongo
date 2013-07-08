@@ -13,7 +13,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit MongoShell(MongoServer *server,const ScriptInfo &scriptInfo,const QString &filePath);
+        MongoShell(MongoServer *server,const ScriptInfo &scriptInfo);
         ~MongoShell();
 
         void open(MongoCollection *collection);
@@ -23,12 +23,10 @@ namespace Robomongo
         void stop();
 
         MongoServer *server() const { return _server; }
-        QString query() const { return _query; }
-        QString filePathToSave() const { return _filePath; }
-        ScriptInfo scriptInfo()const
-        {
-            return _scriptInfo;
-        }
+        QString query() const { return _scriptInfo.script(); }
+		bool execute() const { return _scriptInfo.execute(); }
+		const QString &title() const { return _scriptInfo.title(); }
+		const CursorPosition &cursor() const { return _scriptInfo.cursor(); }
     Q_SIGNALS:
         void contentChanged(const QString &text);
     public Q_SLOTS:
@@ -41,11 +39,6 @@ namespace Robomongo
         void handle(AutocompleteResponse *event);
 
     private:        
-        /**
-         * @brief Current query in the shell
-         */
-        QString _query;
-        QString _filePath;
         ScriptInfo _scriptInfo;
         MongoServer *_server;
         MongoWorker *_client;

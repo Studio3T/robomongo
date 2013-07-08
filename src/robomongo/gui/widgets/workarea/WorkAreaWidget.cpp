@@ -74,9 +74,9 @@ namespace Robomongo
 
     void WorkAreaWidget::handle(OpeningShellEvent *event)
     {
-        const ScriptInfo &info = event->shell->scriptInfo();
+        const QString &title = event->shell->title();
 
-        QString shellName = info.title().isEmpty() ? " Loading..." : info.title();
+        QString shellName = title.isEmpty() ? " Loading..." : title;
 
         setUpdatesEnabled(false);
         MainWindow * mainWind = qobject_cast<MainWindow *>(parent());

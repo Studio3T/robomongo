@@ -8,11 +8,6 @@
 namespace
 {
 	const QString filterForScripts = QObject::tr("JS (*.js *.txt)");
-	QString generateFileName()
-	{
-		static int sequenceNumber = 1;
-		return QString("script%1.js").arg(sequenceNumber++);
-	}
 	bool loadFromFileText(const QString &filePath,QString &text)
 	{
 		bool result =false;
@@ -36,14 +31,7 @@ namespace
 	{
 		bool result =false;
 		QFile file(filePath);
-		if (!file.open(QFile::WriteOnly | QFile::Text)) {
-			QMessageBox::warning(QApplication::activeWindow(), QString(PROJECT_NAME),
-				QObject::tr("Cannot write file %1:\n%2.")
-				.arg(file.fileName())
-				.arg(file.errorString()));
-		}
-		else
-		{
+        if (file.open(QFile::WriteOnly | QFile::Text)) {
 			QTextStream out(&file);
 			QApplication::setOverrideCursor(Qt::WaitCursor);
 			out << text;
@@ -56,8 +44,8 @@ namespace
 
 namespace Robomongo
 {
- ScriptInfo::ScriptInfo(const QString &script, bool execute,const CursorPosition &position,const QString &title,const QString &filePath) :
-    _script(script),_execute(execute),_title(title),_cursor(position),_filePath(filePath.isEmpty()?generateFileName():filePath)
+    ScriptInfo::ScriptInfo(const QString &script, bool execute,const CursorPosition &position,const QString &title,const QString &filePath) :
+    _script(script),_execute(execute),_title(title),_cursor(position),_filePath(filePath)
 	{
 
 	}

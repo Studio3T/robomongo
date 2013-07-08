@@ -21,7 +21,10 @@ namespace Robomongo
         void query(int resultIndex, const MongoQueryInfo &info);
         void autocomplete(const QString &prefix);
         void stop();
-
+        bool isMaySave() const
+        {
+            return !_scriptInfo.filePath().isEmpty();
+        }
         MongoServer *server() const { return _server; }
         QString query() const { return _scriptInfo.script(); }
 		bool execute() const { return _scriptInfo.execute(); }

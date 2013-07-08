@@ -22,6 +22,7 @@
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/dialogs/AboutDialog.h"
 
@@ -58,6 +59,15 @@ namespace Robomongo
 			"QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } "
 			"QMainWindow::separator { background: #E7E5E4; width: 1px; }"
 		).arg(explorerColor));
+        _openAction = new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this);
+        _openAction->setShortcuts(QKeySequence::Open);
+        connect(_openAction, SIGNAL(triggered()), this, SLOT(open()));
+        _saveAction = new QAction(GuiRegistry::instance().saveIcon(),tr("&Save"), this);
+        _saveAction->setShortcuts(QKeySequence::Save);
+        connect(_saveAction, SIGNAL(triggered()), this, SLOT(save()));
+        _saveAsAction = new QAction(tr("Save &As..."), this);
+        _saveAsAction->setShortcuts(QKeySequence::SaveAs);
+        connect(_saveAsAction, SIGNAL(triggered()), this, SLOT(saveAs()));
 
 		// Exit action
         QAction *exitAction = new QAction("&Exit", this);
@@ -168,6 +178,10 @@ namespace Robomongo
 		QMenu *fileMenu = menuBar()->addMenu("File");
 		fileMenu->addAction(_connectAction);
         fileMenu->addAction(fullScreenAction);
+        fileMenu->addSeparator();
+        fileMenu->addAction(_openAction);
+        fileMenu->addAction(_saveAction);
+        fileMenu->addAction(_saveAsAction);
 		fileMenu->addSeparator();
 		fileMenu->addAction(exitAction);
 
@@ -251,8 +265,41 @@ namespace Robomongo
 		setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
 		QTimer::singleShot(0, this, SLOT(manageConnections()));
+        updateMenus();
 	}
-
+    void MainWindow::open()
+    {
+        if(_workArea)
+        {
+            QueryWidget * wid = _workArea->currentWidget();
+            if(wid)
+            {
+                wid->openFile();
+            }
+        }
+    }
+    void MainWindow::save()
+    {
+        if(_workArea)
+        {
+            QueryWidget * wid = _workArea->currentWidget();
+            if(wid)
+            {
+                wid->saveToFile();
+            }
+        }
+    }
+    void MainWindow::saveAs()
+    {
+        if(_workArea)
+        {
+            QueryWidget * wid = _workArea->currentWidget();
+            if(wid)
+            {
+                wid->savebToFileAs();
+            }
+        }
+    }
 	void MainWindow::keyPressEvent(QKeyEvent *event)
 	{
 		if (event->key() == Qt::Key_F12) {
@@ -266,7 +313,7 @@ namespace Robomongo
 	}
 
 	void MainWindow::updateConnectionsMenu()
-	{
+    {
         _connectionsMenu->clear();
 		int number = 1;
 		// Populate list with connections
@@ -483,10 +530,28 @@ namespace Robomongo
 		_logDock->setVisible(false);
 		addDockWidget(Qt::BottomDockWidgetArea, _logDock);
 	}
-
+    void MainWindow::updateMenus()
+    {
+        if(_workArea&&_workArea->countTab()>0)
+        {
+            QueryWidget * wid = _workArea->currentWidget();
+            if(wid)
+            {
+                _saveAction->setEnabled(true);
+            }
+            _saveAsAction->setEnabled(true);
+        }
+        else
+        {
+            _saveAction->setEnabled(false);
+            _saveAsAction->setEnabled(false);
+        }
+    }
 	void MainWindow::createTabs()
     {
         _workArea = new WorkAreaWidget(this);
+        connect(_workArea, SIGNAL(tabActivated(int)),
+                    this, SLOT(updateMenus()));
         setCentralWidget(_workArea);
 	}
 

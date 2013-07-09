@@ -24,6 +24,7 @@ namespace Robomongo
         _configPath = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
         _configDir  = QString("%1/.config/robomongo").arg(QDir::homePath());
         _uuidEncoding = DefaultEncoding;
+        _viewMode = Robomongo::Tree;
 
         load();
 
@@ -41,7 +42,7 @@ namespace Robomongo
      */
     bool SettingsManager::load()
     {
-        bool result=false;
+        bool result = false;
         if(QFile::exists(_configPath))
         {
             QFile f(_configPath);
@@ -66,7 +67,7 @@ namespace Robomongo
      */
     bool SettingsManager::save()
     {
-        bool result =false;
+        bool result = false;
         QVariantMap map = convertToMap();
         if (QDir().mkpath(_configDir))
         {

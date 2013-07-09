@@ -34,12 +34,14 @@ const QIcon &GuiRegistry::serverIcon() const
 }
 const QIcon &GuiRegistry::openIcon() const
 {
-    static const QIcon openIc =QIcon(":/robomongo/icons/open_32x32.png");
+    static const QIcon openIc = qApp->style()->standardIcon(QStyle::SP_DialogOpenButton);
+    //static const QIcon openIc = QIcon(":/robomongo/icons/open_32x32.png");
     return openIc;
 }
 const QIcon &GuiRegistry::saveIcon() const
 {
-    static const QIcon saveIc = QIcon(":/robomongo/icons/save_32x32.png");
+    static const QIcon saveIc = qApp->style()->standardIcon(QStyle::SP_DialogSaveButton);
+    // static const QIcon saveIc = QIcon(":/robomongo/icons/save_32x32.png");
     return saveIc;
 }
 const QIcon &GuiRegistry::databaseIcon() const

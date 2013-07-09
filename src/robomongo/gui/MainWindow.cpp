@@ -245,6 +245,9 @@ namespace Robomongo
 		addToolBar(toolBar);
 
 		_execToolBar = new QToolBar("Exec Toolbar", this);
+        QToolBar *tabToolBar = new QToolBar("Tab Toolbar", this);
+        tabToolBar->addAction(_openAction);
+        tabToolBar->addAction(_saveAction);
 	#if defined(Q_OS_MAC)
 		_execToolBar->setIconSize(QSize(20, 20));
 	#endif
@@ -252,10 +255,9 @@ namespace Robomongo
 		_execToolBar->addAction(_executeAction);
 		_execToolBar->addAction(_stopAction);
 		_execToolBar->addAction(_orientationAction);
-        _execToolBar->addAction(_openAction);
-        _execToolBar->addAction(_saveAction);
 		_execToolBar->setShortcutEnabled(1, true);
 		_execToolBar->setMovable(false);
+        addToolBar(tabToolBar);
 		addToolBar(_execToolBar);
         _execToolBar->hide();
 
@@ -552,7 +554,7 @@ namespace Robomongo
         else{
             _saveAction->setEnabled(false);
             _saveAsAction->setEnabled(false);
-            _openAction->setEnabled(AppRegistry::instance().settingsManager()->connections().count()>0);
+            _openAction->setEnabled(false);
         }
     }
 	void MainWindow::createTabs()

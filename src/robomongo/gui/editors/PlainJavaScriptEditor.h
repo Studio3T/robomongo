@@ -22,6 +22,7 @@ namespace Robomongo
         void wheelEvent(QWheelEvent *e);
         void keyPressEvent(QKeyEvent *e);
     private:
+        void showOrHideLinesNumbers();
         bool _ignoreEnterKey;
         bool _ignoreTabKey;
     };

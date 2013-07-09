@@ -26,10 +26,7 @@ namespace Robomongo
         setContentsMargins(0, 0, 0, 0);
         setViewportMargins(3, 3, 3, 3);
 
-        // Margin 0 is used for line numbers
-        QFontMetrics fontmetrics = QFontMetrics(font());
         setMarginsFont(font());
-        setMarginWidth(0, fontmetrics.width("00000") + rowNumberWidth);
         setMarginLineNumbers(0, true);
         setMarginsBackgroundColor(marginsBackgroundColor);
 
@@ -46,7 +43,19 @@ namespace Robomongo
             e->accept();
         }
     }
-
+    void RoboScintilla::showOrHideLinesNumbers()
+    {
+        // Margin 0 is used for line numbers
+        QFontMetrics fontmetrics = QFontMetrics(font());
+        if(!marginWidth(0))
+        {
+            setMarginWidth(0, fontmetrics.width("00000") + rowNumberWidth);
+        }
+        else
+        {
+            setMarginWidth(0, 0);
+        }
+    }
     void RoboScintilla::keyPressEvent(QKeyEvent *keyEvent)
     {
         if (_ignoreEnterKey) {
@@ -63,6 +72,13 @@ namespace Robomongo
                 _ignoreTabKey = false;
                 return;
             }
+        }
+
+        if(keyEvent->key() == Qt::Key_F11)
+        {
+            keyEvent->ignore();
+            showOrHideLinesNumbers();
+            return;
         }
 
         if (((keyEvent->modifiers() & Qt::ControlModifier) &&

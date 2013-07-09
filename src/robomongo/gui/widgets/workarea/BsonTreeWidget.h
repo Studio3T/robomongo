@@ -34,10 +34,11 @@ namespace Robomongo
         void onViewDocument();
         void onInsertDocument();
         void onCopyDocument();
+        void onExpandRecursive();
         void handle(InsertDocumentResponse *event);
 
     private:
-
+        void expandNode(QTreeWidgetItem *item);
         /**
          * @returns selected BsonTreeItem, or NULL otherwise
          */
@@ -49,6 +50,7 @@ namespace Robomongo
         QAction *_viewDocumentAction;
         QAction *_insertDocumentAction;
         QAction *_copyValueAction;
+        QAction *_expandRecursive;
 
         QList<MongoDocumentPtr> _documents;
         QMenu *_documentContextMenu;

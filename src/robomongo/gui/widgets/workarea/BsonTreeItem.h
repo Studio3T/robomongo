@@ -8,7 +8,6 @@
 namespace Robomongo
 {
     class MongoElement;
-    class SettingsManager;
 
     /**
      * @brief BSON tree item (represents array or object)
@@ -16,7 +15,6 @@ namespace Robomongo
     class BsonTreeItem : public QObject, public QTreeWidgetItem
     {
         Q_OBJECT
-
     public:
         BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position);
         BsonTreeItem(MongoDocumentPtr document, int position);
@@ -40,9 +38,6 @@ namespace Robomongo
         MongoDocumentPtr _document;
 
         MongoDocumentPtr _rootDocument;
-
-        SettingsManager *_settingsManager;
-
         /**
          * @brief Position in array. -1 if not in array
          */

@@ -47,6 +47,9 @@ namespace Robomongo
         void toggleFullScreen2();
         void refreshConnections();
         void aboutRobomongo();
+        void open();
+        void save();
+        void saveAs();
 
         void setDefaultUuidEncoding();
         void setJavaUuidEncoding();
@@ -60,7 +63,8 @@ namespace Robomongo
         void handle(ScriptExecutedEvent *event);
         void handle(AllTabsClosedEvent *event);
         void handle(QueryWidgetUpdatedEvent *event);
-
+    private Q_SLOTS:
+        void updateMenus();
     private:
         QLabel *_status;
         ViewMode _viewMode;
@@ -79,6 +83,9 @@ namespace Robomongo
 
         ConnectionMenu *_connectionsMenu;
         QAction *_connectAction;
+        QAction *_openAction;
+        QAction *_saveAction;
+        QAction *_saveAsAction;
         QAction *_executeAction;
         QAction *_stopAction;
         QAction *_orientationAction;

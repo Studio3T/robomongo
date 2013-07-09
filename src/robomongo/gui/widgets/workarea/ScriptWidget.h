@@ -78,7 +78,7 @@ namespace Robomongo
         void onCompletionActivated(QString);
 
     private:
-        void _configureQueryText();
+        void configureQueryText();
         QFont chooseTextFont();
 
         /**

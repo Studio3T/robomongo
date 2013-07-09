@@ -10,7 +10,7 @@
 
 namespace Robomongo
 {
-    class RoboScintilla;
+    class FindFrame;
 
     class FunctionTextEditor : public QDialog
     {
@@ -32,7 +32,7 @@ namespace Robomongo
         void _configureQueryText();
         QFont chooseTextFont();
         QLineEdit *_nameEdit;
-        RoboScintilla *_queryText;
+        FindFrame *_queryText;
         QFont _textFont;
         MongoFunction _function;
     };

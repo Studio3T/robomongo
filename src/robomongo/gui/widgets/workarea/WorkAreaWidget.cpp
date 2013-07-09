@@ -19,6 +19,7 @@ namespace Robomongo
         _bus(AppRegistry::instance().bus())
     {
         _tabWidget = new WorkAreaTabWidget(this);
+        connect(_tabWidget, SIGNAL(currentChanged(int)),this, SIGNAL(tabActivated(int)));
         _tabWidget->setMovable(true);
         _tabWidget->setDocumentMode(true);
 
@@ -71,7 +72,14 @@ namespace Robomongo
         if (currentWidget)
             currentWidget->enterCustomMode();
     }
-
+    int WorkAreaWidget::countTab()const
+    {
+        return _tabWidget->count();
+    }
+    QueryWidget *const WorkAreaWidget::currentWidget() const
+    {
+        return _tabWidget->currentQueryWidget();
+    }
     void WorkAreaWidget::handle(OpeningShellEvent *event)
     {
         const QString &title = event->shell->title();

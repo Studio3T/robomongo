@@ -21,19 +21,26 @@ namespace Robomongo
     {
     }
 
-    void MongoShell::open(MongoCollection *collection)
-    {
-    //    _query = QString("db.%1.find()").arg(collection->name());
-    //    _client->send(new ExecuteQueryRequest(this, collection->fullName()));
-    }
-
     void MongoShell::open(const QString &script, const QString &dbName)
     {
         _bus->publish(new ScriptExecutingEvent(this));
 		_scriptInfo.setScript(script);
         _client->send(new ExecuteScriptRequest(this, query(), dbName));
     }
-
+    void MongoShell::execute(const QString &dbName)
+    {
+        if(_scriptInfo.execute())
+        {
+            _bus->publish(new ScriptExecutingEvent(this));
+            _client->send(new ExecuteScriptRequest(this, query(), dbName));
+        }
+        else
+        {
+            _bus->publish(new ScriptExecutingEvent(this));
+            _scriptInfo.setScript("");
+            _client->send(new ExecuteScriptRequest(this,query() , dbName));
+        }
+    }
     void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
     {
         _client->send(new ExecuteQueryRequest(this, resultIndex, info));

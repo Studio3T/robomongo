@@ -7,6 +7,7 @@ namespace Robomongo
     class EventBus;
     class OpeningShellEvent;
     class MainWindow;
+    class QueryWidget;
     /*
     ** Work Area widget
     */
@@ -23,8 +24,11 @@ namespace Robomongo
         void enterTextMode();
         void enterTreeMode();
         void enterCustomMode();
-
-    public slots:
+        int countTab()const;
+        QueryWidget *const currentWidget() const;
+    Q_SIGNALS:
+        void tabActivated(int tab);
+    public Q_SLOTS:
         void handle(OpeningShellEvent *event);
 
     private:

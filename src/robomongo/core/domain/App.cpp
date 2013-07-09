@@ -83,15 +83,9 @@ namespace Robomongo
     {
         MongoServer *server = openServer(connection, false);
         MongoShell *shell = new MongoShell(server,scriptInfo);
-
         _shells.append(shell);
         _bus->publish(new OpeningShellEvent(this, shell));
-
-        if (scriptInfo.execute())
-            shell->open(scriptInfo.script());
-        else
-            shell->open("");
-
+        shell->execute();
         return shell;
     }
 

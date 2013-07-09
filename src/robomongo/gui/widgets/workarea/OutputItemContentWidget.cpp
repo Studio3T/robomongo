@@ -122,7 +122,7 @@ namespace Robomongo
         {
             if (!_isTextModeInitialized)
             {
-                _log = _configureLogText();
+                _log = configureLogText();
                 if (_sourceIsText)
                 {
                     _log->sciScintilla()->setText(_text);
@@ -156,7 +156,7 @@ namespace Robomongo
         }
 
         if (!_isTreeModeInitialized) {
-            _bson = _configureBsonWidget();
+            _bson = configureBsonWidget();
             _bson->setDocuments(_documents, _queryInfo);
             _stack->addWidget(_bson);
             _isTreeModeInitialized = true;
@@ -232,7 +232,7 @@ namespace Robomongo
         }
     }
 
-    FindFrame *Robomongo::OutputItemContentWidget::_configureLogText()
+    FindFrame *Robomongo::OutputItemContentWidget::configureLogText()
     {
         QFont textFont = font();
     #if defined(Q_OS_MAC)
@@ -253,16 +253,8 @@ namespace Robomongo
 
         FindFrame *_logText = new FindFrame(this);
         _logText->sciScintilla()->setLexer(javaScriptLexer);
-        _logText->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        _logText->sciScintilla()->setAutoIndent(true);
-        _logText->sciScintilla()->setIndentationsUseTabs(false);
-        _logText->sciScintilla()->setIndentationWidth(4);
-        _logText->sciScintilla()->setTabWidth(4);
-        _logText->sciScintilla()->setUtf8(true);
-        _logText->sciScintilla()->setCaretForegroundColor(QColor("#FFFFFF"));
-        _logText->sciScintilla()->setMarginWidth(1, 0); // to hide left gray column
-        _logText->sciScintilla()->setMatchedBraceBackgroundColor(QColor(73, 76, 78));
-        _logText->sciScintilla()->setMatchedBraceForegroundColor(QColor("#FF8861")); //1AB0A6
+        _logText->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);        
+        _logText->sciScintilla()->setTabWidth(4);        
         _logText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
         _logText->sciScintilla()->setFont(textFont);
         _logText->sciScintilla()->setReadOnly(true);
@@ -274,7 +266,7 @@ namespace Robomongo
         return _logText;
     }
 
-    BsonWidget *OutputItemContentWidget::_configureBsonWidget()
+    BsonWidget *OutputItemContentWidget::configureBsonWidget()
     {
         return new BsonWidget(_shell);
     }

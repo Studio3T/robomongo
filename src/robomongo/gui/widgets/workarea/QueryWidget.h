@@ -20,7 +20,6 @@ namespace Robomongo
     class ScriptExecutedEvent;
     class AutocompleteResponse;
     class PlainJavaScriptEditor;
-    class RoboScintilla;
     class OutputWidget;
     class WorkAreaTabWidget;
     class ScriptWidget;

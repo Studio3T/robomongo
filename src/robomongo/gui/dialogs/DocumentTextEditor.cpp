@@ -6,9 +6,10 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <Qsci/qscilexerjavascript.h>
+#include <Qsci/qsciscintilla.h>
 
 #include "robomongo/gui/editors/JSLexer.h"
-#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+#include "robomongo/gui/editors/FindFrame.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/shell/db/json.h"
@@ -39,11 +40,11 @@ namespace Robomongo
         validate->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
         connect(validate, SIGNAL(clicked()), this, SLOT(onValidateButtonClicked()));
 
-        _queryText = new RoboScintilla;
+        _queryText = new FindFrame(this);
         _textFont = chooseTextFont();
         _configureQueryText();
-        _queryText->setText(json);
-        connect(_queryText, SIGNAL(textChanged()), this, SLOT(onQueryTextChanged()));
+        _queryText->sciScintilla()->setText(json);
+        connect(_queryText->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onQueryTextChanged()));
 
         QHBoxLayout *hlayout = new QHBoxLayout();
         hlayout->setContentsMargins(2, 0, 5, 1);
@@ -82,12 +83,12 @@ namespace Robomongo
 
     QString DocumentTextEditor::jsonText() const
     {
-        return _queryText->text();
+        return _queryText->sciScintilla()->text();
     }
 
     void DocumentTextEditor::setCursorPosition(int line, int column)
     {
-        _queryText->setCursorPosition(line, column);
+        _queryText->sciScintilla()->setCursorPosition(line, column);
     }
 
     void DocumentTextEditor::accept()
@@ -109,11 +110,11 @@ namespace Robomongo
             int offset = ex.offset();
 
             int line, pos;
-            _queryText->lineIndexFromPosition(offset, &line, &pos);
-            _queryText->setCursorPosition(line, pos);
+            _queryText->sciScintilla()->lineIndexFromPosition(offset, &line, &pos);
+            _queryText->sciScintilla()->setCursorPosition(line, pos);
 
-            int lineHeight = _queryText->lineLength(line);
-            _queryText->fillIndicatorRange(line, pos, line, lineHeight, 0);
+            int lineHeight = _queryText->sciScintilla()->lineLength(line);
+            _queryText->sciScintilla()->fillIndicatorRange(line, pos, line, lineHeight, 0);
 
             message = QString("Unable to parse JSON:<br /> <b>%1</b>, at (%2, %3).")
                 .arg(message).arg(line + 1).arg(pos + 1);
@@ -135,7 +136,7 @@ namespace Robomongo
 
     void DocumentTextEditor::onQueryTextChanged()
     {
-        _queryText->clearIndicatorRange(0, 0, _queryText->lines(), 40, 0);
+        _queryText->sciScintilla()->clearIndicatorRange(0, 0, _queryText->sciScintilla()->lines(), 40, 0);
     }
 
     void DocumentTextEditor::onValidateButtonClicked()
@@ -149,18 +150,17 @@ namespace Robomongo
     void DocumentTextEditor::_configureQueryText()
     {
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
-        javaScriptLexer->setFont(_textFont);        
-        _queryText->installEventFilter(this);
-        _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
-        _queryText->setFont(_textFont);
-        _queryText->setPaper(QColor(255, 0, 0, 127));
-        _queryText->setLexer(javaScriptLexer);
-        _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
-        _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        javaScriptLexer->setFont(_textFont);
+        _queryText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
+        _queryText->sciScintilla()->setFont(_textFont);
+        _queryText->sciScintilla()->setPaper(QColor(255, 0, 0, 127));
+        _queryText->sciScintilla()->setLexer(javaScriptLexer);
+        _queryText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
+        _queryText->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        _queryText->sciScintilla()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         // Wrap mode turned off because it introduces huge performance problems
         // even for medium size documents.
-        _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
+        _queryText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
 
         _queryText->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
     }

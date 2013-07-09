@@ -5,11 +5,13 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <Qsci/qscilexerjavascript.h>
+#include <Qsci/qsciscintilla.h>
 
 #include "robomongo/gui/editors/JSLexer.h"
-#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+#include "robomongo/gui/editors/FindFrame.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"
+
 
 namespace Robomongo
 {
@@ -33,12 +35,12 @@ namespace Robomongo
 
         _nameEdit = new QLineEdit(function.name());
 
-        _queryText = new RoboScintilla;
+        _queryText = new FindFrame(this);
         _textFont = chooseTextFont();
         _configureQueryText();
-        _queryText->setText(_function.code());
+        _queryText->sciScintilla()->setText(_function.code());
 
-        QFrame *hline = new QFrame();
+        QFrame *hline = new QFrame(this);
         hline->setFrameShape(QFrame::HLine);
         hline->setFrameShadow(QFrame::Sunken);
 
@@ -74,21 +76,21 @@ namespace Robomongo
 
     void FunctionTextEditor::setCursorPosition(int line, int column)
     {
-        _queryText->setCursorPosition(line, column);
+        _queryText->sciScintilla()->setCursorPosition(line, column);
     }
 
     void FunctionTextEditor::setCode(const QString &code)
     {
-        _queryText->setText(code);
+        _queryText->sciScintilla()->setText(code);
     }
 
     void FunctionTextEditor::accept()
     {
-        if (_nameEdit->text().isEmpty() && _queryText->text().isEmpty())
+        if (_nameEdit->text().isEmpty() && _queryText->sciScintilla()->text().isEmpty())
             return;
 
         _function.setName(_nameEdit->text());
-        _function.setCode(_queryText->text());
+        _function.setCode(_queryText->sciScintilla()->text());
 
         QDialog::accept();
     }
@@ -100,19 +102,18 @@ namespace Robomongo
     {
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
         javaScriptLexer->setFont(_textFont);        
-        _queryText->installEventFilter(this);
-        _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
-        _queryText->setFont(_textFont);
-        _queryText->setPaper(QColor(255, 0, 0, 127));
-        _queryText->setLexer(javaScriptLexer);
-        _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
-        _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        _queryText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
+        _queryText->sciScintilla()->setFont(_textFont);
+        _queryText->sciScintilla()->setPaper(QColor(255, 0, 0, 127));
+        _queryText->sciScintilla()->setLexer(javaScriptLexer);
+        _queryText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
+        _queryText->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        _queryText->sciScintilla()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         // Wrap mode turned off because it introduces huge performance problems
         // even for medium size documents.
-        _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
+        _queryText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
 
-        _queryText->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
+        _queryText->sciScintilla()->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
     }
 
     QFont FunctionTextEditor::chooseTextFont()

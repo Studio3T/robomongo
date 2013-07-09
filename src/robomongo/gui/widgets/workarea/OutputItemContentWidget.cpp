@@ -122,7 +122,7 @@ namespace Robomongo
         {
             if (!_isTextModeInitialized)
             {
-                _log = _configureLogText();
+                _log = configureLogText();
                 if (_sourceIsText)
                 {
                     _log->sciScintilla()->setText(_text);
@@ -156,7 +156,7 @@ namespace Robomongo
         }
 
         if (!_isTreeModeInitialized) {
-            _bson = _configureBsonWidget();
+            _bson = configureBsonWidget();
             _bson->setDocuments(_documents, _queryInfo);
             _stack->addWidget(_bson);
             _isTreeModeInitialized = true;
@@ -232,7 +232,7 @@ namespace Robomongo
         }
     }
 
-    FindFrame *Robomongo::OutputItemContentWidget::_configureLogText()
+    FindFrame *Robomongo::OutputItemContentWidget::configureLogText()
     {
         QFont textFont = font();
     #if defined(Q_OS_MAC)
@@ -266,7 +266,7 @@ namespace Robomongo
         return _logText;
     }
 
-    BsonWidget *OutputItemContentWidget::_configureBsonWidget()
+    BsonWidget *OutputItemContentWidget::configureBsonWidget()
     {
         return new BsonWidget(_shell);
     }

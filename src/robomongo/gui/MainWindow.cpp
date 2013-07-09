@@ -248,6 +248,7 @@ namespace Robomongo
         QToolBar *tabToolBar = new QToolBar("Tab Toolbar", this);
         tabToolBar->addAction(_openAction);
         tabToolBar->addAction(_saveAction);
+        tabToolBar->setMovable(false);
 	#if defined(Q_OS_MAC)
 		_execToolBar->setIconSize(QSize(20, 20));
 	#endif

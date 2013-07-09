@@ -16,18 +16,21 @@ namespace Robomongo
         MongoShell(MongoServer *server,const ScriptInfo &scriptInfo);
         ~MongoShell();
 
-        void open(MongoCollection *collection);
         void open(const QString &script, const QString &dbName = QString());
         void query(int resultIndex, const MongoQueryInfo &info);
         void autocomplete(const QString &prefix);
         void stop();
-
         MongoServer *server() const { return _server; }
         QString query() const { return _scriptInfo.script(); }
-		bool execute() const { return _scriptInfo.execute(); }
+        void execute(const QString &dbName = QString());
+        bool isExecutable() const {return _scriptInfo.execute(); }
 		const QString &title() const { return _scriptInfo.title(); }
 		const CursorPosition &cursor() const { return _scriptInfo.cursor(); }
         void setScript(const QString &script){return _scriptInfo.setScript(script);}
+        QString filePath() const
+        {
+            return _scriptInfo.filePath();
+        }
     public Q_SLOTS:
         void saveToFile();
         void saveToFileAs();

@@ -6,7 +6,7 @@
 
 namespace Robomongo
 {
-    class RoboScintilla;
+    class FindFrame;
 
     class DocumentTextEditor : public QDialog
     {
@@ -36,7 +36,7 @@ namespace Robomongo
     private:
         void _configureQueryText();
         QFont chooseTextFont();
-        RoboScintilla *_queryText;
+        FindFrame *_queryText;
         QFont _textFont;
         bool _readonly;
         mongo::BSONObj _obj;

@@ -46,8 +46,8 @@ namespace Robomongo
         void jsonPartReady(const QString &json);
 
     private:
-        FindFrame *_configureLogText();
-        BsonWidget *_configureBsonWidget();
+        FindFrame *configureLogText();
+        BsonWidget *configureBsonWidget();
 
         FindFrame *_log;
         BsonWidget *_bson;

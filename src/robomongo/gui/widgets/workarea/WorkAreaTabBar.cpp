@@ -34,13 +34,6 @@ namespace Robomongo
         _closeOtherShellsAction = new QAction("Close &Other Shells", _menu);
         _closeShellsToTheRightAction = new QAction("Close Shells to the R&ight", _menu);
 
-        _openAction = new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), _menu);
-        _openAction->setShortcuts(QKeySequence::Open);
-        _saveAction = new QAction(GuiRegistry::instance().saveIcon(),tr("&Save"), _menu);
-        _saveAction->setShortcuts(QKeySequence::Save);
-        _saveAsAction = new QAction(tr("Save &As..."), _menu);
-        _saveAsAction->setShortcuts(QKeySequence::SaveAs);
-
         _menu->addAction(_newShellAction);
         _menu->addSeparator();
         _menu->addAction(_reloadShellAction);
@@ -49,10 +42,7 @@ namespace Robomongo
         _menu->addAction(_closeShellAction);
         _menu->addAction(_closeOtherShellsAction);
         _menu->addAction(_closeShellsToTheRightAction);
-        _menu->addSeparator();
-        _menu->addAction(_openAction);
-        _menu->addAction(_saveAction);
-        _menu->addAction(_saveAsAction);
+
     }
 
     /**
@@ -138,12 +128,6 @@ namespace Robomongo
             emit closeOtherTabsRequested(tabIndex);
         else if (action == _closeShellsToTheRightAction)
             emit closeTabsToTheRightRequested(tabIndex);
-        else if(action == _openAction)
-            emit openTabFile(tabIndex);
-        else if(action == _saveAction)
-            emit saveTabToFile(tabIndex);
-        else if(action == _saveAsAction)
-            emit saveTabToFileAs(tabIndex);
     }
 
     /**

@@ -20,7 +20,6 @@ namespace Robomongo
     class ScriptExecutedEvent;
     class AutocompleteResponse;
     class PlainJavaScriptEditor;
-    class RoboScintilla;
     class OutputWidget;
     class WorkAreaTabWidget;
     class ScriptWidget;
@@ -45,6 +44,10 @@ namespace Robomongo
         void enterCustomMode();
         void showProgress();
         void hideProgress();
+        const MongoShell *const shell() const
+        {
+            return _shell;
+        }
     public Q_SLOTS:
         void execute();
         void stop();

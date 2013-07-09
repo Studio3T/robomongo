@@ -8,6 +8,8 @@
 #include <QIcon>
 #include <QMovie>
 #include <QCompleter>
+#include <QStringListModel>
+#include <QMessageBox>
 #include <Qsci/qscilexerjavascript.h>
 
 #include "robomongo/core/domain/MongoShell.h"
@@ -16,8 +18,6 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
-#include <QStringListModel>
-#include <QMessageBox>
 
 namespace Robomongo
 {
@@ -40,7 +40,7 @@ namespace Robomongo
 
         // Query text widget
         _textFont = chooseTextFont();
-        _configureQueryText();
+        configureQueryText();
         _queryText->setFixedHeight(10);
         ui_queryLinesCountChanged();
         _queryText->setFocus();
@@ -71,15 +71,10 @@ namespace Robomongo
 
                 if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter
                         || keyEvent->key() == Qt::Key_Tab) {
-                    _queryText->setIgnoreEnterKey(false);
-                    _queryText->setIgnoreTabKey(false);
                     hideAutocompletion();
-                    return false;
                 }
-                return false;
-            } else {
-                return false;
             }
+            return false;
         } else {
             return QFrame::eventFilter(obj, event);
         }
@@ -230,18 +225,13 @@ namespace Robomongo
 
     void ScriptWidget::onTextChanged()
     {
-        if (_disableTextAndCursorNotifications)
-            return;
-
-        _textChanged = true;
+        if (!_disableTextAndCursorNotifications)
+			_textChanged = true;
     }
 
     void ScriptWidget::onCursorPositionChanged(int line, int index)
     {
-        if (_disableTextAndCursorNotifications)
-            return;
-
-        if (_textChanged) {
+        if (!_disableTextAndCursorNotifications&&_textChanged){
             showAutocompletion();
             _textChanged = false;
         }
@@ -276,24 +266,16 @@ namespace Robomongo
     /*
     ** Configure QsciScintilla query widget
     */
-    void ScriptWidget::_configureQueryText()
+    void ScriptWidget::configureQueryText()
     {
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
         javaScriptLexer->setFont(_textFont);
 
         _queryText->setFixedHeight(23);
-        _queryText->setAutoIndent(true);
-        _queryText->setIndentationsUseTabs(false);
-        _queryText->setIndentationWidth(4);
-        _queryText->setUtf8(true);
-        _queryText->installEventFilter(this);
-        _queryText->setMarginWidth(1, 0); // to hide left gray column
         _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
         _queryText->setFont(_textFont);
         _queryText->setPaper(QColor(255, 0, 0, 127));
         _queryText->setLexer(javaScriptLexer);
-        _queryText->setCaretForegroundColor(QColor("#FFFFFF"));
-        _queryText->setMatchedBraceForegroundColor(QColor("#FF8861")); //1AB0A6
         _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
         _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);

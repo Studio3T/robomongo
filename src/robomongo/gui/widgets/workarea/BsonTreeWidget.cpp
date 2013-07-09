@@ -63,6 +63,9 @@ namespace Robomongo
         _copyValueAction = new QAction("Copy Value", this);
         connect(_copyValueAction, SIGNAL(triggered()), SLOT(onCopyDocument()));
 
+        _expandRecursive = new QAction("Expand recursive", this);
+         connect(_expandRecursive, SIGNAL(triggered()), SLOT(onExpandRecursive()));
+
     /*    _documentContextMenu = new QMenu(this);
         _documentContextMenu->addAction(_editDocumentAction);
         _documentContextMenu->addAction(_viewDocumentAction);
@@ -219,7 +222,10 @@ namespace Robomongo
         if (onItem && isSimple)   menu.addAction(_copyValueAction);
         if (onItem && isEditable) menu.addSeparator();
         if (onItem && isEditable) menu.addAction(_deleteDocumentAction);
-
+        if (item&&item->childIndicatorPolicy()==QTreeWidgetItem::ShowIndicator)
+        {
+            menu.addAction(_expandRecursive);
+        }
         QPoint menuPoint = mapToGlobal(event->pos());
         menuPoint.setY(menuPoint.y() + header()->height());
         menu.exec(menuPoint);
@@ -358,7 +364,26 @@ namespace Robomongo
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(element->stringValue());
     }
-
+    void BsonTreeWidget::expandNode(QTreeWidgetItem *item)
+    {
+        if(item)
+        {
+            ui_itemExpanded(item);
+            item->setExpanded(true);
+            for(int i = 0;i<item->childCount();++i)
+            {
+                QTreeWidgetItem *tritem = item->child(i);
+                if(tritem&&tritem->childIndicatorPolicy()==QTreeWidgetItem::ShowIndicator)
+                {
+                    expandNode(tritem);
+                }
+            }
+        }
+    }
+    void BsonTreeWidget::onExpandRecursive()
+    {
+        expandNode(currentItem());
+    }
     void BsonTreeWidget::handle(InsertDocumentResponse *event)
     {
         _bus->unsubscibe(this);
@@ -380,11 +405,7 @@ namespace Robomongo
         if (!item)
             return NULL;
 
-        BsonTreeItem *documentItem = dynamic_cast<BsonTreeItem *>(item);
-        if (!documentItem)
-            return NULL;
-
-        return documentItem;
+        return dynamic_cast<BsonTreeItem *>(item);
     }
 
     QString BsonTreeWidget::selectedJson()

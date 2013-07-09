@@ -12,10 +12,8 @@ namespace Robomongo
     BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position) : QObject(),
         _element(element),
         _rootDocument(rootDocument),
-        _settingsManager(AppRegistry::instance().settingsManager())
+        _position(position)
     {
-        _position = position;
-
         setText(0, buildFieldName());
         setForeground(2, GuiRegistry::instance().typeBrush());
         //setFlags(flags() | Qt::ItemIsEditable);
@@ -80,7 +78,7 @@ namespace Robomongo
                     setText(2, "UUID");
                 } else if (element->bsonElement().binDataType() == mongo::bdtUUID) {
 
-                    UUIDEncoding uuidEncoding = _settingsManager->uuidEncoding();
+                    UUIDEncoding uuidEncoding = AppRegistry::instance().settingsManager()->uuidEncoding();
                     QString type;
                     switch(uuidEncoding) {
                     case DefaultEncoding: type = "Legacy UUID"; break;
@@ -246,9 +244,9 @@ namespace Robomongo
 
     BsonTreeItem::BsonTreeItem(MongoDocumentPtr document, int position) : QObject(),
         _document(document),
-        _rootDocument(document)
+        _rootDocument(document),
+        _position(position)
     {
-        _position = position;
         setupDocument(document);
     }
 
@@ -307,8 +305,6 @@ namespace Robomongo
 
     QString BsonTreeItem::buildFieldName()
     {
-        QString fieldName;
-
         if (_position >= 0)
             return QString("(%1)").arg(_position);
         else
@@ -317,8 +313,6 @@ namespace Robomongo
 
     QString BsonTreeItem::buildObjectFieldName()
     {
-        QString fieldName;
-
         if (_position >= 0)
             return QString("(%1)  {...}").arg(_position);
         else
@@ -327,8 +321,6 @@ namespace Robomongo
 
     QString BsonTreeItem::buildArrayFieldName(int itemsCount)
     {
-        QString fieldName;
-
         if (_position >= 0)
             return QString("(%1) [%2]").arg(_position).arg(itemsCount);
         else

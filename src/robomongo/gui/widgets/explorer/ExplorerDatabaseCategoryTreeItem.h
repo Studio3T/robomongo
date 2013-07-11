@@ -17,10 +17,8 @@ namespace Robomongo
     /*
     ** Database category Tree Item (looks like folder in the UI)
     */
-    class ExplorerDatabaseCategoryTreeItem : public QObject, public QTreeWidgetItem
+    class ExplorerDatabaseCategoryTreeItem : public QTreeWidgetItem
     {
-        Q_OBJECT
-
     public:
         ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseCategory category, ExplorerDatabaseTreeItem *databaseItem);
         ExplorerDatabaseCategory category() const { return _category; }

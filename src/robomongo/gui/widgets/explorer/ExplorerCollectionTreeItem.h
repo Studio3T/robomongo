@@ -7,10 +7,8 @@
 
 namespace Robomongo
 {
-    class ExplorerCollectionTreeItem : public QObject, public QTreeWidgetItem
+    class ExplorerCollectionTreeItem : public QTreeWidgetItem
     {
-        Q_OBJECT
-
     public:
         ExplorerCollectionTreeItem(MongoCollection *collection);
         MongoCollection *collection() const { return _collection; }

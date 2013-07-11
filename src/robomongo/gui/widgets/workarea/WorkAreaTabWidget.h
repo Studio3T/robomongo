@@ -44,9 +44,6 @@ namespace Robomongo
         void ui_closeOtherTabsRequested(int index);
         void ui_closeTabsToTheRightRequested(int index);
         void ui_currentChanged(int index);
-        void openedTabFile(int index);
-        void savedTabToFileAs(int index);
-        void savedTabToFile(int index);
 
     private:
         EventBus *_bus;

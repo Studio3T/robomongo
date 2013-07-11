@@ -34,10 +34,6 @@ namespace Robomongo
         connect(tab, SIGNAL(duplicateTabRequested(int)), SLOT(ui_duplicateTabRequested(int)));
         connect(tab, SIGNAL(closeOtherTabsRequested(int)), SLOT(ui_closeOtherTabsRequested(int)));
         connect(tab, SIGNAL(closeTabsToTheRightRequested(int)), SLOT(ui_closeTabsToTheRightRequested(int)));
-
-        connect(tab, SIGNAL(openTabFile(int)), SLOT(openedTabFile(int)));
-        connect(tab, SIGNAL(saveTabToFile(int)), SLOT(savedTabToFile(int)));
-        connect(tab, SIGNAL(saveTabToFileAs(int)), SLOT(savedTabToFileAs(int)));
     }
 
     void WorkAreaTabWidget::closeTab(int index)
@@ -165,27 +161,6 @@ namespace Robomongo
 
         if (tabWidget)
             tabWidget->activateTabContent();
-    }
-    void WorkAreaTabWidget::savedTabToFile(int index)
-    {
-        QueryWidget *query = queryWidget(index);
-        if (query){
-            query->saveToFile();
-        }
-    }
-    void WorkAreaTabWidget::savedTabToFileAs(int index)
-    {
-        QueryWidget *query = queryWidget(index);
-        if (query){
-            query->savebToFileAs();
-        }
-    }
-    void WorkAreaTabWidget::openedTabFile(int index)
-    {
-        QueryWidget *query = queryWidget(index);
-        if (query){
-            query->openFile();
-        }
     }
 }
 

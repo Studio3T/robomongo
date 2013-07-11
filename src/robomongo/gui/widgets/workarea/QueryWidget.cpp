@@ -37,7 +37,6 @@ namespace Robomongo
         _tabWidget(tabWidget),
         _app(AppRegistry::instance().app()),
         _bus(AppRegistry::instance().bus()),
-        _keyboard(AppRegistry::instance().keyboard()),
         _viewer(NULL),
         _viewMode(viewMode)
     {
@@ -94,25 +93,25 @@ namespace Robomongo
     {
         if (e->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = (QKeyEvent *) e;
-            if (_keyboard->isPreviousTabShortcut(keyEvent)) {
+            if (KeyboardManager::isPreviousTabShortcut(keyEvent)) {
                 _tabWidget->previousTab();
                 return true;
-            } else if (_keyboard->isNextTabShortcut(keyEvent)) {
+            } else if (KeyboardManager::isNextTabShortcut(keyEvent)) {
                 _tabWidget->nextTab();
                 return true;
-            } else if (_keyboard->isNewTabShortcut(keyEvent)) {
+            } else if (KeyboardManager::isNewTabShortcut(keyEvent)) {
                 openNewTab();
                 return true;
-            } else if (_keyboard->isSetFocusOnQueryLineShortcut(keyEvent)) {
+            } else if (KeyboardManager::isSetFocusOnQueryLineShortcut(keyEvent)) {
                 _scriptWidget->setScriptFocus();
                 return true;
-            } else if (_keyboard->isExecuteScriptShortcut(keyEvent)) {
+            } else if (KeyboardManager::isExecuteScriptShortcut(keyEvent)) {
                 execute();
                 return true;
-            } else if (_keyboard->isAutoCompleteShortcut(keyEvent)) {
+            } else if (KeyboardManager::isAutoCompleteShortcut(keyEvent)) {
                 _scriptWidget->showAutocompletion();
                 return true;
-            } else if (_keyboard->isHideAutoCompleteShortcut(keyEvent)) {
+            } else if (KeyboardManager::isHideAutoCompleteShortcut(keyEvent)) {
                 _scriptWidget->hideAutocompletion();
                 return true;
             }

@@ -10,6 +10,10 @@ Download
 You can download compiled version (for Mac OS X and Windows) at this page:<br />
 https://www.dropbox.com/sh/u0s0i8e4m0a8i9f/oxtqKHPUZ8
 
+Contribute
+==========
+
+[Robomongo Coding Style](https://github.com/paralect/robomongo/wiki/Robomongo-Coding-Style)
 
 Building
 ========

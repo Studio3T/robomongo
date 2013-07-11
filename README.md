@@ -14,6 +14,16 @@ https://www.dropbox.com/sh/u0s0i8e4m0a8i9f/oxtqKHPUZ8
 Building
 ========
 
+Since July 8, 2013 we have the new build process based on CMake. 
+Build process is greatly simplified now and will be soon documented.
+
+Outdated build documentation:<br />
+[Building Robomongo and Dependencies (for Linux and Mac OS X)]
+(https://github.com/paralect/robomongo/wiki/Building-Robomongo-and-Dependencies-(for-Linux-and-Mac-OS-X\))
+
+
+<!-- 
+
 You are lucky enough, if prebuild libraries (that are in `libs` folder) are 
 already available and match your OS/Compiler. For most of you it's not &mdash; 
 you need to build Robomongo dependencies, before building Robomongo itself.
@@ -61,3 +71,5 @@ Compiling:
     $ ./build.sh
 
 Executable will be placed to: target/debug/app/out
+
+-->

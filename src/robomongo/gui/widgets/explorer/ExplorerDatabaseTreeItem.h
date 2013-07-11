@@ -22,7 +22,6 @@ namespace Robomongo
 
     public:
         ExplorerDatabaseTreeItem(MongoDatabase *database);
-        ~ExplorerDatabaseTreeItem() {}
 
         MongoDatabase *database() const { return _database; }
         void expandCollections();

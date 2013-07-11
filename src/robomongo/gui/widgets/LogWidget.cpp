@@ -2,20 +2,17 @@
 
 #include <QHBoxLayout>
 #include <QScrollBar>
+#include <QPlainTextEdit>
 
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/MongoServer.h"
-#include "robomongo/gui/MainWindow.h"
 
 namespace Robomongo
 {
-    LogWidget::LogWidget(MainWindow *mainWindow) : QWidget(mainWindow),
-        _bus(AppRegistry::instance().bus())
+    LogWidget::LogWidget(QWidget* parent) : QWidget(parent)
     {
-        _mainWindow = mainWindow;
-
-        _logTextEdit = new QPlainTextEdit;
+        _logTextEdit = new QPlainTextEdit(this);
         _logTextEdit->setPlainText("Robomongo " + AppRegistry::instance().version() + " is ready.");
         //_logTextEdit->setMarginWidth(1, 3); // to hide left gray column
 
@@ -25,15 +22,14 @@ namespace Robomongo
 
         setLayout(hlayout);
 
-        _bus->subscribe(this, SomethingHappened::Type);
-        _bus->subscribe(this, ConnectingEvent::Type);
-        _bus->subscribe(this, OpeningShellEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, SomethingHappened::Type);
+        AppRegistry::instance().bus()->subscribe(this, ConnectingEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, OpeningShellEvent::Type);
     }
 
     void LogWidget::addMessage(const QString &message)
     {
         _logTextEdit->appendPlainText(message);
-
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());
     }

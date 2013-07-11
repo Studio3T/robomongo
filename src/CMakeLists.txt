@@ -24,8 +24,6 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/MainWindow.h
     robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h
     robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h
-    robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h
-    robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h
     robomongo/gui/widgets/workarea/WorkAreaWidget.h
     robomongo/gui/widgets/workarea/QueryWidget.h
     robomongo/gui/widgets/workarea/WorkAreaTabWidget.h
@@ -50,13 +48,15 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/DocumentTextEditor.h
     robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h
     robomongo/gui/dialogs/CreateDatabaseDialog.h
-    robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h
     robomongo/gui/dialogs/CreateUserDialog.h
-    robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h
     robomongo/gui/dialogs/FunctionTextEditor.h
     robomongo/gui/dialogs/AboutDialog.h
     robomongo/gui/editors/FindFrame.h)
 SET(HEADERS_GUI
+    robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h
+    robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h
+    robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h
+	robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h
     robomongo/gui/GuiRegistry.h
     robomongo/gui/editors/PlainJavaScriptEditor.h
     robomongo/gui/editors/JSLexer.h
@@ -148,10 +148,10 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/domain/MongoShell.h
     robomongo/core/engine/ScriptEngine.h
     robomongo/core/EventBusDispatcher.h
-    robomongo/core/mongodb/MongoWorkerThread.h
-    robomongo/core/KeyboardManager.h
+    robomongo/core/mongodb/MongoWorkerThread.h    
     )
 SET(HEADERS_CORE
+	robomongo/core/KeyboardManager.h
     robomongo/core/EventBusSubscriber.h
     robomongo/core/EventWrapper.h
     robomongo/core/EventError.h

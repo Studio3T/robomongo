@@ -69,7 +69,6 @@ namespace Robomongo
         App *_app;
         EventBus *_bus;
         MongoShell *_shell;
-        KeyboardManager *_keyboard;
         OutputWidget *_viewer;
         ScriptWidget *_scriptWidget;
         WorkAreaTabWidget *_tabWidget;

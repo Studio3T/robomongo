@@ -5,7 +5,7 @@
 
 namespace Robomongo
 {
-    ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(MongoCollection *collection) : QObject(),
+    ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(MongoCollection *collection) :
         _collection(collection)
     {
         setText(0, _collection->name());

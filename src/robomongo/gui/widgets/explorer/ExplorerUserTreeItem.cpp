@@ -2,6 +2,15 @@
 
 #include "robomongo/gui/GuiRegistry.h"
 
+namespace
+{
+	const QString tooltipTemplate = QString(
+		"%0 "
+		"<table>"
+		"<tr><td>ID:</td> <td><b>&nbsp;&nbsp;%1</b></td></tr>"
+		"<tr><td>Readonly:</td><td><b>&nbsp;&nbsp;%2</b></td></tr>"
+		"</table>");
+}
 namespace Robomongo
 {
     ExplorerUserTreeItem::ExplorerUserTreeItem(MongoDatabase *database, const MongoUser &user) :
@@ -16,18 +25,7 @@ namespace Robomongo
     }
 
     QString ExplorerUserTreeItem::buildToolTip(const MongoUser &user)
-    {
-        QString tooltip = QString(
-            "%0 "
-            "<table>"
-            "<tr><td>ID:</td> <td><b>&nbsp;&nbsp;%1</b></td></tr>"
-            "<tr><td>Readonly:</td><td><b>&nbsp;&nbsp;%2</b></td></tr>"
-            "</table>"
-            )
-            .arg(user.name())
-            .arg(QString::fromStdString(user.id().toString()))
-            .arg(user.readOnly() ? "Yes" : "No");
-
-        return tooltip;
+    {       
+        return tooltipTemplate.arg(user.name()).arg(QString::fromStdString(user.id().toString())).arg(user.readOnly() ? "Yes" : "No");
     }
 }

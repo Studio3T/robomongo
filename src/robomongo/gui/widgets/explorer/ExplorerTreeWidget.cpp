@@ -25,7 +25,22 @@
 #include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
 
 #include "robomongo/shell/db/json.h"
-
+namespace
+{
+	template<typename type_t>
+	type_t get_item(QList<QTreeWidgetItem*> items)
+	{
+		type_t result = NULL;
+		if (items.count() == 1)
+		{
+			QTreeWidgetItem *item = items[0];
+			if (item){
+				result= dynamic_cast<type_t>(item);
+			}
+		}
+		return result;
+	}
+}
 
 namespace Robomongo
 {
@@ -251,209 +266,115 @@ namespace Robomongo
     void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
     {
         QTreeWidgetItem *item = itemAt(event->pos());
-        if (!item)
-            return;
+        if (item){
+			ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
+			if (serverItem) {
+				_serverContextMenu->exec(mapToGlobal(event->pos()));
+				return;
+			}
 
-        ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
-        if (serverItem) {
-            _serverContextMenu->exec(mapToGlobal(event->pos()));
-            return;
-        }
+			ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
+			if (collectionItem) {
+				_collectionContextMenu->exec(mapToGlobal(event->pos()));
+				return;
+			}
 
-        ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
-        if (collectionItem) {
-            _collectionContextMenu->exec(mapToGlobal(event->pos()));
-            return;
-        }
+			ExplorerDatabaseTreeItem *databaseItem = dynamic_cast<ExplorerDatabaseTreeItem *>(item);
+			if (databaseItem) {
+				_databaseContextMenu->exec(mapToGlobal(event->pos()));
+				return;
+			}
 
-        ExplorerDatabaseTreeItem *databaseItem = dynamic_cast<ExplorerDatabaseTreeItem *>(item);
-        if (databaseItem) {
-            _databaseContextMenu->exec(mapToGlobal(event->pos()));
-            return;
-        }
+			ExplorerUserTreeItem *userItem = dynamic_cast<ExplorerUserTreeItem *>(item);
+			if (userItem) {
+				_userContextMenu->exec(mapToGlobal(event->pos()));
+				return;
+			}
 
-        ExplorerUserTreeItem *userItem = dynamic_cast<ExplorerUserTreeItem *>(item);
-        if (userItem) {
-            _userContextMenu->exec(mapToGlobal(event->pos()));
-            return;
-        }
+			ExplorerFunctionTreeItem *functionItem = dynamic_cast<ExplorerFunctionTreeItem *>(item);
+			if (functionItem) {
+				_functionContextMenu->exec(mapToGlobal(event->pos()));
+				return;
+			}
 
-        ExplorerFunctionTreeItem *functionItem = dynamic_cast<ExplorerFunctionTreeItem *>(item);
-        if (functionItem) {
-            _functionContextMenu->exec(mapToGlobal(event->pos()));
-            return;
-        }
-
-        ExplorerDatabaseCategoryTreeItem *categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
-        if (categoryItem) {
-            if (categoryItem->category() == Collections) {
-                _collectionCategoryContextMenu->exec(mapToGlobal(event->pos()));
-            } else if (categoryItem->category() == Users) {
-                _usersCategoryContextMenu->exec(mapToGlobal(event->pos()));
-            } else if (categoryItem->category() == Functions) {
-                _functionsCategoryContextMenu->exec(mapToGlobal(event->pos()));
-            }
-            return;
-        }
+			ExplorerDatabaseCategoryTreeItem *categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
+			if (categoryItem) {
+				if (categoryItem->category() == Collections) {
+					_collectionCategoryContextMenu->exec(mapToGlobal(event->pos()));
+				} else if (categoryItem->category() == Users) {
+					_usersCategoryContextMenu->exec(mapToGlobal(event->pos()));
+				} else if (categoryItem->category() == Functions) {
+					_functionsCategoryContextMenu->exec(mapToGlobal(event->pos()));
+				}
+			}
+		}
     }
 
     ExplorerServerTreeItem *ExplorerTreeWidget::selectedServerItem()
     {
-        QList<QTreeWidgetItem*> items = selectedItems();
-
-        if (items.count() != 1)
-            return NULL;
-
-        QTreeWidgetItem *item = items[0];
-
-        if (!item)
-            return NULL;
-
-        ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
-        if (!serverItem)
-            return NULL;
-
-        return serverItem;
+        return get_item<ExplorerServerTreeItem*>(selectedItems());
     }
 
     ExplorerCollectionTreeItem *ExplorerTreeWidget::selectedCollectionItem()
     {
-        QList<QTreeWidgetItem*> items = selectedItems();
-
-        if (items.count() != 1)
-            return NULL;
-
-        QTreeWidgetItem *item = items[0];
-
-        if (!item)
-            return NULL;
-
-        ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
-        if (!collectionItem)
-            return NULL;
-
-        return collectionItem;
+        return get_item<ExplorerCollectionTreeItem*>(selectedItems());
     }
 
     ExplorerUserTreeItem *ExplorerTreeWidget::selectedUserItem()
     {
-        QList<QTreeWidgetItem*> items = selectedItems();
-
-        if (items.count() != 1)
-            return NULL;
-
-        QTreeWidgetItem *item = items[0];
-
-        if (!item)
-            return NULL;
-
-        ExplorerUserTreeItem *userItem = dynamic_cast<ExplorerUserTreeItem *>(item);
-        if (!userItem)
-            return NULL;
-
-        return userItem;
+        return get_item<ExplorerUserTreeItem*>(selectedItems());
     }
 
     ExplorerFunctionTreeItem *ExplorerTreeWidget::selectedFunctionItem()
     {
-        QList<QTreeWidgetItem*> items = selectedItems();
-
-        if (items.count() != 1)
-            return NULL;
-
-        QTreeWidgetItem *item = items[0];
-
-        if (!item)
-            return NULL;
-
-        ExplorerFunctionTreeItem *funItem = dynamic_cast<ExplorerFunctionTreeItem *>(item);
-        if (!funItem)
-            return NULL;
-
-        return funItem;
+        return get_item<ExplorerFunctionTreeItem*>(selectedItems());
     }
 
     ExplorerDatabaseTreeItem *ExplorerTreeWidget::selectedDatabaseItem()
     {
-        QList<QTreeWidgetItem*> items = selectedItems();
-
-        if (items.count() != 1)
-            return NULL;
-
-        QTreeWidgetItem *item = items[0];
-
-        if (!item)
-            return NULL;
-
-        ExplorerDatabaseTreeItem *dbtem = dynamic_cast<ExplorerDatabaseTreeItem *>(item);
-        if (!dbtem)
-            return NULL;
-
-        return dbtem;
+        return get_item<ExplorerDatabaseTreeItem*>(selectedItems());
     }
 
     ExplorerDatabaseCategoryTreeItem *ExplorerTreeWidget::selectedDatabaseCategoryItem()
     {
-        QList<QTreeWidgetItem*> items = selectedItems();
-
-        if (items.count() != 1)
-            return NULL;
-
-        QTreeWidgetItem *item = items[0];
-
-        if (!item)
-            return NULL;
-
-        ExplorerDatabaseCategoryTreeItem *categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
-        if (!categoryItem)
-            return NULL;
-
-        return categoryItem;
+        return get_item<ExplorerDatabaseCategoryTreeItem*>(selectedItems());
     }
 
     void ExplorerTreeWidget::openCurrentCollectionShell(const QString &script, bool execute,
                                                         const CursorPosition &cursor)
     {
         ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
-        if (!collectionItem)
-            return;
-
-        MongoCollection *collection = collectionItem->collection();
-        App *app = AppRegistry::instance().app();
-        QString query = app->buildCollectionQuery(collection->name(), script);
-
-        AppRegistry::instance().app()->
-            openShell(collection->database(), query, execute, collection->name(), cursor);
+        if (collectionItem){
+			MongoCollection *collection = collectionItem->collection();
+			QString query = AppRegistry::instance().app()->buildCollectionQuery(collection->name(), script);
+			AppRegistry::instance().app()->openShell(collection->database(), query, execute, collection->name(), cursor);
+		}
     }
 
     void ExplorerTreeWidget::openCurrentDatabaseShell(const QString &script, bool execute,
                                                       const CursorPosition &cursor)
     {
         ExplorerDatabaseTreeItem *collectionItem = selectedDatabaseItem();
-        if (!collectionItem)
-            return;
-
-        MongoDatabase *database = collectionItem->database();
-        openDatabaseShell(database, script, execute, cursor);
+        if (collectionItem){
+			MongoDatabase *database = collectionItem->database();
+			openDatabaseShell(database, script, execute, cursor);
+		}
     }
 
     void ExplorerTreeWidget::openCurrentServerShell(const QString &script, bool execute,
                                                     const CursorPosition &cursor)
     {
         ExplorerServerTreeItem *serverItem = selectedServerItem();
-        if (!serverItem)
-            return;
-
-        MongoServer *server = serverItem->server();
-
-        AppRegistry::instance().app()->
-                openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName(), cursor);
-    }
+        if (serverItem){
+			MongoServer *server = serverItem->server();
+			AppRegistry::instance().app()->
+				openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName(), cursor);
+		}
+	}
 
     void ExplorerTreeWidget::openDatabaseShell(MongoDatabase *database, const QString &script, bool execute, const CursorPosition &cursor)
     {
-        AppRegistry::instance().app()->
-            openShell(database, script, execute, database->name(), cursor);
+		AppRegistry::instance().app()->openShell(database, script, execute, database->name(), cursor);
     }
 
     void ExplorerTreeWidget::ui_disconnectServer()
@@ -464,29 +385,26 @@ namespace Robomongo
     void ExplorerTreeWidget::ui_refreshServer()
     {
         ExplorerServerTreeItem *serverItem = selectedServerItem();
-        if (!serverItem)
-            return;
-
-        serverItem->expand();
+        if (serverItem){
+			serverItem->expand();
+		}
     }
 
     void ExplorerTreeWidget::ui_createDatabase()
     {
         ExplorerServerTreeItem *serverItem = selectedServerItem();
-        if (!serverItem)
-            return;
+        if (serverItem){
+			CreateDatabaseDialog dlg(serverItem->server()->connectionRecord()->getFullAddress());
+			dlg.setOkButtonText("&Create");
+			dlg.setInputLabelText("Database Name:");
+			int result = dlg.exec();
+			if (result == QDialog::Accepted) {
+				serverItem->server()->createDatabase(dlg.databaseName());
 
-        CreateDatabaseDialog dlg(serverItem->server()->connectionRecord()->getFullAddress());
-        dlg.setOkButtonText("&Create");
-        dlg.setInputLabelText("Database Name:");
-        int result = dlg.exec();
-
-        if (result == QDialog::Accepted) {
-            serverItem->server()->createDatabase(dlg.databaseName());
-
-            // refresh list of databases
-            serverItem->expand();
-        }
+				// refresh list of databases
+				serverItem->expand();
+			}
+		}
     }
 
     void ExplorerTreeWidget::ui_showLog()
@@ -502,34 +420,25 @@ namespace Robomongo
     void ExplorerTreeWidget::ui_addDocument()
     {
         ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
-        if (!collectionItem)
-            return;
+        if (collectionItem){
+			MongoCollection *collection = collectionItem->collection();
+			MongoDatabase *database = collection->database();
+			MongoServer *server = database->server();
+			ConnectionSettings *settings = server->connectionRecord();
 
-        MongoCollection *collection = collectionItem->collection();
-        MongoDatabase *database = collection->database();
-        MongoServer *server = database->server();
-        ConnectionSettings *settings = server->connectionRecord();
+			DocumentTextEditor editor(settings->getFullAddress(), database->name(),
+									  collection->name(), "{\n    \n}");
 
-        DocumentTextEditor editor(settings->getFullAddress(), database->name(),
-                                  collection->name(), "{\n    \n}");
+			editor.setCursorPosition(1, 4);
+			editor.setWindowTitle("Insert Document");
+			int result = editor.exec();
+			activateWindow();
 
-        editor.setCursorPosition(1, 4);
-        editor.setWindowTitle("Insert Document");
-        int result = editor.exec();
-        activateWindow();
-
-        if (result == QDialog::Accepted) {
-            mongo::BSONObj obj = editor.bsonObj();
-            server->insertDocument(obj, database->name(), collection->name());
-        }
-
-        /*
-        openCurrentCollectionShell(
-            "insert({\n"
-            "    '' : '',\n"
-            "})"
-        , false, CursorPosition(1, 5));
-        */
+			if (result == QDialog::Accepted) {
+				mongo::BSONObj obj = editor.bsonObj();
+				server->insertDocument(obj, database->name(), collection->name());
+			}
+		}
     }
 
     void ExplorerTreeWidget::ui_removeDocument()
@@ -542,28 +451,23 @@ namespace Robomongo
     void ExplorerTreeWidget::ui_removeAllDocuments()
     {
         ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
-        if (!collectionItem)
-            return;
+        if (collectionItem){
+			MongoCollection *collection = collectionItem->collection();
+			MongoDatabase *database = collection->database();
+			// Ask user
+			int answer = QMessageBox::question(this,
+					"Remove All Documents",
+					QString("Remove all documents from <b>%1</b> collection?").arg(collection->name()),
+					QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
-        MongoCollection *collection = collectionItem->collection();
-        MongoDatabase *database = collection->database();
-        MongoServer *server = database->server();
-        ConnectionSettings *settings = server->connectionRecord();
-
-        // Ask user
-        int answer = QMessageBox::question(this,
-                "Remove All Documents",
-                QString("Remove all documents from <b>%1</b> collection?").arg(collection->name()),
-                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-
-        if (answer != QMessageBox::Yes)
-            return;
-
-        mongo::BSONObjBuilder builder;
-        mongo::BSONObj bsonQuery = builder.obj();
-        mongo::Query query(bsonQuery);
-
-        server->removeDocuments(query, database->name(), collection->name(), false);
+			if (answer == QMessageBox::Yes){
+				MongoServer *server = database->server();
+				mongo::BSONObjBuilder builder;
+				mongo::BSONObj bsonQuery = builder.obj();
+				mongo::Query query(bsonQuery);
+				server->removeDocuments(query, database->name(), collection->name(), false);
+			}
+		}
     }
 
     void ExplorerTreeWidget::ui_addIndex()
@@ -619,83 +523,77 @@ namespace Robomongo
     void ExplorerTreeWidget::ui_dropCollection()
     {
         ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
-        if (!collectionItem)
-            return;
+        if (collectionItem){
+			MongoCollection *collection = collectionItem->collection();
+			MongoDatabase *database = collection->database();
+			MongoServer *server = database->server();
+			ConnectionSettings *settings = server->connectionRecord();
 
-        MongoCollection *collection = collectionItem->collection();
-        MongoDatabase *database = collection->database();
-        MongoServer *server = database->server();
-        ConnectionSettings *settings = server->connectionRecord();
+			// Ask user
+			int answer = QMessageBox::question(this,
+					"Drop Collection",
+					QString("Drop <b>%1</b> collection?").arg(collection->name()),
+					QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
-        // Ask user
-        int answer = QMessageBox::question(this,
-                "Drop Collection",
-                QString("Drop <b>%1</b> collection?").arg(collection->name()),
-                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-
-        if (answer != QMessageBox::Yes)
-            return;
-
-        database->dropCollection(collection->name());
-        database->loadCollections();
-
+			if (answer == QMessageBox::Yes){
+				database->dropCollection(collection->name());
+				database->loadCollections();
+			}
+		}
         //openCurrentCollectionShell("drop()", false);
     }
 
     void ExplorerTreeWidget::ui_duplicateCollection()
     {
         ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
-        if (!collectionItem)
-            return;
+        if (collectionItem){
+			MongoCollection *collection = collectionItem->collection();
+			MongoDatabase *database = collection->database();
+			MongoServer *server = database->server();
+			ConnectionSettings *settings = server->connectionRecord();
 
-        MongoCollection *collection = collectionItem->collection();
-        MongoDatabase *database = collection->database();
-        MongoServer *server = database->server();
-        ConnectionSettings *settings = server->connectionRecord();
+			CreateDatabaseDialog dlg(settings->getFullAddress(),
+									 database->name(),
+									 collection->name());
+			dlg.setWindowTitle("Duplicate Collection");
+			dlg.setOkButtonText("&Duplicate");
+			dlg.setInputLabelText("New Collection Name:");
+			dlg.setInputText(collection->name() + "_copy");
+			int result = dlg.exec();
 
-        CreateDatabaseDialog dlg(settings->getFullAddress(),
-                                 database->name(),
-                                 collection->name());
-        dlg.setWindowTitle("Duplicate Collection");
-        dlg.setOkButtonText("&Duplicate");
-        dlg.setInputLabelText("New Collection Name:");
-        dlg.setInputText(collection->name() + "_copy");
-        int result = dlg.exec();
+			if (result == QDialog::Accepted) {
+				database->duplicateCollection(collection->name(), dlg.databaseName());
 
-        if (result == QDialog::Accepted) {
-            database->duplicateCollection(collection->name(), dlg.databaseName());
-
-            // refresh list of collections
-            database->loadCollections();
-        }
+				// refresh list of collections
+				database->loadCollections();
+			}
+		}
     }
 
     void ExplorerTreeWidget::ui_renameCollection()
     {
         ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
-        if (!collectionItem)
-            return;
+        if (collectionItem){
+			MongoCollection *collection = collectionItem->collection();
+			MongoDatabase *database = collection->database();
+			MongoServer *server = database->server();
+			ConnectionSettings *settings = server->connectionRecord();
 
-        MongoCollection *collection = collectionItem->collection();
-        MongoDatabase *database = collection->database();
-        MongoServer *server = database->server();
-        ConnectionSettings *settings = server->connectionRecord();
+			CreateDatabaseDialog dlg(settings->getFullAddress(),
+									 database->name(),
+									 collection->name());
+			dlg.setWindowTitle("Rename Collection");
+			dlg.setOkButtonText("&Rename");
+			dlg.setInputLabelText("New Collection Name:");
+			dlg.setInputText(collection->name());
+			int result = dlg.exec();
 
-        CreateDatabaseDialog dlg(settings->getFullAddress(),
-                                 database->name(),
-                                 collection->name());
-        dlg.setWindowTitle("Rename Collection");
-        dlg.setOkButtonText("&Rename");
-        dlg.setInputLabelText("New Collection Name:");
-        dlg.setInputText(collection->name());
-        int result = dlg.exec();
-
-        if (result == QDialog::Accepted) {
-            database->renameCollection(collection->name(), dlg.databaseName());
-
-            // refresh list of collections
-            database->loadCollections();
-        }
+			if (result == QDialog::Accepted) {
+				database->renameCollection(collection->name(), dlg.databaseName());
+				// refresh list of collections
+				database->loadCollections();
+			}
+		}
     }
 
     void ExplorerTreeWidget::ui_viewCollection()
@@ -736,34 +634,27 @@ namespace Robomongo
     void ExplorerTreeWidget::ui_dbDrop()
     {
         ExplorerDatabaseTreeItem *dbItem = selectedDatabaseItem();
-        if (!dbItem)
-            return;
-
-        MongoDatabase *database = dbItem->database();
-        MongoServer *server = database->server();
-
-        // Ask user
-        int answer = QMessageBox::question(this,
-                "Drop Database",
-                QString("Drop <b>%1</b> database?").arg(database->name()),
-                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-
-        if (answer != QMessageBox::Yes)
-            return;
-
-        server->dropDatabase(database->name());
-        server->loadDatabases(); // refresh list of databases
-
-        //openCurrentDatabaseShell("db.dropDatabase()", false);
+        if (dbItem){
+			MongoDatabase *database = dbItem->database();
+			// Ask user
+			int answer = QMessageBox::question(this,
+					"Drop Database",
+					QString("Drop <b>%1</b> database?").arg(database->name()),
+					QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+			if (answer == QMessageBox::Yes){
+				MongoServer *server = database->server();
+				server->dropDatabase(database->name());
+				server->loadDatabases(); // refresh list of databases
+			}
+		}
     }
 
     void ExplorerTreeWidget::ui_dbCollectionsStatistics()
     {
         ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
-        if (!categoryItem)
-            return;
-
-        openDatabaseShell(categoryItem->databaseItem()->database(), "db.printCollectionStats()");
+        if (categoryItem){
+			openDatabaseShell(categoryItem->databaseItem()->database(), "db.printCollectionStats()");
+		}
     }
 
     void ExplorerTreeWidget::ui_dbRepair()
@@ -794,174 +685,151 @@ namespace Robomongo
     void ExplorerTreeWidget::ui_refreshUsers()
     {
         ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
-        if (!categoryItem)
-            return;
-
-        categoryItem->databaseItem()->expandUsers();
+        if (categoryItem){
+			categoryItem->databaseItem()->expandUsers();
+		}
     }
 
     void ExplorerTreeWidget::ui_refreshFunctions()
     {
         ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
-        if (!categoryItem)
-            return;
-
-        categoryItem->databaseItem()->expandFunctions();
+        if (categoryItem){
+			categoryItem->databaseItem()->expandFunctions();
+		}
     }
 
     void ExplorerTreeWidget::ui_viewUsers()
     {
         ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
-        if (!categoryItem)
-            return;
-
-        openDatabaseShell(categoryItem->databaseItem()->database(),
-                          "db.system.users.find()");
+        if (categoryItem){
+			openDatabaseShell(categoryItem->databaseItem()->database(),"db.system.users.find()");
+		}
     }
 
     void ExplorerTreeWidget::ui_viewFunctions()
     {
         ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
-        if (!categoryItem)
-            return;
-
-        openDatabaseShell(categoryItem->databaseItem()->database(),
-                          "db.system.js.find()");
+        if (categoryItem){
+			openDatabaseShell(categoryItem->databaseItem()->database(),
+				"db.system.js.find()");
+		}
     }
 
     void ExplorerTreeWidget::ui_refreshDatabase()
     {
         ExplorerDatabaseTreeItem *databaseItem = selectedDatabaseItem();
-        if (!databaseItem)
-            return;
-
-        databaseItem->expandCollections();
+        if (databaseItem){
+			databaseItem->expandCollections();
+		}
     }
 
     void ExplorerTreeWidget::ui_createCollection()
     {
         ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
-        if (!categoryItem)
-            return;
-
-        ExplorerDatabaseTreeItem *databaseItem = categoryItem->databaseItem();
-        if (!databaseItem)
-            return;
-
-        CreateDatabaseDialog dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
-                                 databaseItem->database()->name());
-        dlg.setWindowTitle("Create Collection");
-        dlg.setOkButtonText("&Create");
-        dlg.setInputLabelText("Collection Name:");
-        int result = dlg.exec();
-
-        if (result == QDialog::Accepted) {
-            databaseItem->database()->createCollection(dlg.databaseName());
-
-            // refresh list of databases
-            databaseItem->expandCollections();
-        }
+        if (categoryItem)
+		{
+			ExplorerDatabaseTreeItem *databaseItem = categoryItem->databaseItem();
+			if (databaseItem){
+				CreateDatabaseDialog dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
+										 databaseItem->database()->name());
+				dlg.setWindowTitle("Create Collection");
+				dlg.setOkButtonText("&Create");
+				dlg.setInputLabelText("Collection Name:");
+				int result = dlg.exec();
+				if (result == QDialog::Accepted) {
+					databaseItem->database()->createCollection(dlg.databaseName());
+					// refresh list of databases
+					databaseItem->expandCollections();
+				}
+			}
+		}
     }
 
     void ExplorerTreeWidget::ui_addUser()
     {
         ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
-        if (!categoryItem)
-            return;
-
-        ExplorerDatabaseTreeItem *databaseItem = categoryItem->databaseItem();
-
-        CreateUserDialog dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
-                             databaseItem->database()->name());
-        int result = dlg.exec();
-
-        if (result == QDialog::Accepted) {
-
-            MongoUser user = dlg.user();
-            databaseItem->database()->createUser(user, false);
-
-            // refresh list of users
-            databaseItem->expandUsers();
-        }
+        if (categoryItem){
+			ExplorerDatabaseTreeItem *databaseItem = categoryItem->databaseItem();
+			if(databaseItem){
+				CreateUserDialog dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
+									 databaseItem->database()->name());
+				int result = dlg.exec();
+				if (result == QDialog::Accepted) {
+					MongoUser user = dlg.user();
+					databaseItem->database()->createUser(user, false);
+					// refresh list of users
+					databaseItem->expandUsers();
+				}
+			}
+		}
     }
 
     void ExplorerTreeWidget::ui_addFunction()
     {
         ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
-        if (!categoryItem)
-            return;
-
-        ExplorerDatabaseTreeItem *databaseItem = categoryItem->databaseItem();
-
-        FunctionTextEditor dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
-                               databaseItem->database()->name(), MongoFunction());
-        dlg.setWindowTitle("Create Function");
-        dlg.setCode(
-            "function() {\n"
-            "    // write your code here\n"
-            "}");
-        dlg.setCursorPosition(1, 4);
-
-        int result = dlg.exec();
-
-        if (result == QDialog::Accepted) {
-
-            MongoFunction function = dlg.function();
-            databaseItem->database()->createFunction(function);
-
-            // refresh list of functions
-            databaseItem->expandFunctions();
-        }
+        if (categoryItem){
+			ExplorerDatabaseTreeItem *databaseItem = categoryItem->databaseItem();
+			FunctionTextEditor dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
+								   databaseItem->database()->name(), MongoFunction());
+			dlg.setWindowTitle("Create Function");
+			dlg.setCode(
+				"function() {\n"
+				"    // write your code here\n"
+				"}");
+			dlg.setCursorPosition(1, 4);
+			int result = dlg.exec();
+			if (result == QDialog::Accepted) {
+				MongoFunction function = dlg.function();
+				databaseItem->database()->createFunction(function);
+				// refresh list of functions
+				databaseItem->expandFunctions();
+			}
+		}
     }
 
     void ExplorerTreeWidget::ui_editFunction()
     {
         ExplorerFunctionTreeItem *functionItem = selectedFunctionItem();
-        if (!functionItem)
-            return;
+        if (functionItem){
+			MongoFunction function = functionItem->function();
+			MongoDatabase *database = functionItem->database();
+			MongoServer *server = database->server();
+			QString name = function.name();
 
-        MongoFunction function = functionItem->function();
-        MongoDatabase *database = functionItem->database();
-        MongoServer *server = database->server();
-        QString name = function.name();
+			FunctionTextEditor dlg(server->connectionRecord()->getFullAddress(),
+								 database->name(),
+								 function);
+			dlg.setWindowTitle("Edit Function");
+			int result = dlg.exec();
 
-        FunctionTextEditor dlg(server->connectionRecord()->getFullAddress(),
-                             database->name(),
-                             function);
-        dlg.setWindowTitle("Edit Function");
-        int result = dlg.exec();
+			if (result == QDialog::Accepted) {
 
-        if (result == QDialog::Accepted) {
+				MongoFunction editedFunction = dlg.function();
+				database->updateFunction(name, editedFunction);
 
-            MongoFunction editedFunction = dlg.function();
-            database->updateFunction(name, editedFunction);
-
-            // refresh list of functions
-            database->loadFunctions();
-        }
+				// refresh list of functions
+				database->loadFunctions();
+			}
+		}
     }
 
     void ExplorerTreeWidget::ui_dropUser()
     {
         ExplorerUserTreeItem *userItem = selectedUserItem();
-        if (!userItem)
-            return;
+        if (userItem){
+			MongoUser user = userItem->user();
+			// Ask user
+			int answer = QMessageBox::question(this,
+					"Remove User",
+					QString("Remove <b>%1</b> user?").arg(user.name()),
+					QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
-        MongoUser user = userItem->user();
-        MongoDatabase *database = userItem->database();
-        MongoServer *server = database->server();
-
-        // Ask user
-        int answer = QMessageBox::question(this,
-                "Remove User",
-                QString("Remove <b>%1</b> user?").arg(user.name()),
-                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-
-        if (answer != QMessageBox::Yes)
-            return;
-
-        database->dropUser(user.id());
-        database->loadUsers(); // refresh list of users
+			if (answer == QMessageBox::Yes){
+				MongoDatabase *database = userItem->database();
+				database->dropUser(user.id());
+				database->loadUsers(); // refresh list of users
+			}
+		}
     }
 
     void ExplorerTreeWidget::ui_dropFunction()
@@ -1016,9 +884,7 @@ namespace Robomongo
     void ExplorerTreeWidget::ui_refreshCollections()
     {
         ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
-        if (!categoryItem)
-            return;
-
-        categoryItem->databaseItem()->expandCollections();
+        if (categoryItem){
+			categoryItem->databaseItem()->expandCollections();}
     }
 }

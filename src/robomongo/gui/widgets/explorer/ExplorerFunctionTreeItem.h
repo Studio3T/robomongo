@@ -8,10 +8,8 @@
 
 namespace Robomongo
 {
-    class ExplorerFunctionTreeItem : public QObject, public QTreeWidgetItem
+    class ExplorerFunctionTreeItem : public QTreeWidgetItem
     {
-        Q_OBJECT
-
     public:
         ExplorerFunctionTreeItem(MongoDatabase *database, const MongoFunction &function);
         MongoFunction function() const { return _function; }

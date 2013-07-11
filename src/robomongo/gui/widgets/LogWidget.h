@@ -1,21 +1,20 @@
 #pragma once
 
 #include <QWidget>
-#include <QPlainTextEdit>
+QT_BEGIN_NAMESPACE
+class QPlainTextEdit;
+QT_END_NAMESPACE
 
 #include "robomongo/core/events/MongoEvents.h"
-#include "robomongo/core/settings/ConnectionSettings.h"
 
 namespace Robomongo
 {
-    class MainWindow;
-
     class LogWidget : public QWidget
     {
         Q_OBJECT
 
     public:
-        LogWidget(MainWindow *mainWindow);
+        LogWidget(QWidget* parent = 0);
 
     public slots:
         void addMessage(const QString &message);
@@ -24,13 +23,7 @@ namespace Robomongo
         void handle(OpeningShellEvent *event);
 
     private:
-        /**
-         * @brief Main window this widget belongs to
-         */
-        MainWindow *_mainWindow;
-
         QPlainTextEdit *_logTextEdit;
-        EventBus *_bus;
     };
 
 }

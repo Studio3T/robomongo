@@ -1,4 +1,7 @@
 #include "MongoCollectionInfo.h"
+#include <mongo/client/dbclient.h>
+#include <mongo/bson/bsonobjbuilder.h>
+
 
 namespace Robomongo
 {

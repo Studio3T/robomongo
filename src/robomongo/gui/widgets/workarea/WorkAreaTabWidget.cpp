@@ -162,26 +162,5 @@ namespace Robomongo
         if (tabWidget)
             tabWidget->activateTabContent();
     }
-    void WorkAreaTabWidget::savedTabToFile(int index)
-    {
-        QueryWidget *query = queryWidget(index);
-        if (query){
-            query->saveToFile();
-        }
-    }
-    void WorkAreaTabWidget::savedTabToFileAs(int index)
-    {
-        QueryWidget *query = queryWidget(index);
-        if (query){
-            query->savebToFileAs();
-        }
-    }
-    void WorkAreaTabWidget::openedTabFile(int index)
-    {
-        QueryWidget *query = queryWidget(index);
-        if (query){
-            query->openFile();
-        }
-    }
 }
 

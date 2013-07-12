@@ -1,6 +1,4 @@
 #pragma once
-
-#include <QObject>
 #include <QTreeWidgetItem>
 
 #include "robomongo/core/Core.h"
@@ -12,7 +10,7 @@ namespace Robomongo
     public:
         ExplorerCollectionTreeItem(MongoCollection *collection);
         MongoCollection *collection() const { return _collection; }
-
+		void expand();
     private:
         QString buildToolTip(MongoCollection *collection);
         MongoCollection *_collection;

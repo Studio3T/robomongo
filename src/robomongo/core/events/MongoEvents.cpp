@@ -15,6 +15,8 @@ namespace Robomongo
     R_REGISTER_EVENT(LoadCollectionNamesRequest)
     R_REGISTER_EVENT(LoadCollectionNamesResponse)
     R_REGISTER_EVENT(LoadUsersRequest)
+	R_REGISTER_EVENT(LoadCollectionIndexesRequest)
+	R_REGISTER_EVENT(LoadCollectionIndexesResponse)
     R_REGISTER_EVENT(LoadUsersResponse)
     R_REGISTER_EVENT(LoadFunctionsRequest)
     R_REGISTER_EVENT(LoadFunctionsResponse)

@@ -67,6 +67,11 @@ namespace Robomongo
          */
         void handle(LoadUsersRequest *event);
 
+		 /**
+         * @brief Load indexes in collection
+         */
+        void handle(LoadCollectionIndexesRequest *event);
+
         /**
          * @brief Load list of all JS functions
          */

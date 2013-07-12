@@ -55,7 +55,11 @@ const QIcon &GuiRegistry::collectionIcon() const
     static const QIcon collectionIc = QIcon(":/robomongo/icons/collection_16x16.png");
     return collectionIc;
 }
-
+const QIcon &GuiRegistry::indexIcon()const
+{
+	static const QIcon collectionIc = QIcon(":/robomongo/icons/text2_16x16.png");
+	return collectionIc;	
+}
 const QIcon &GuiRegistry::userIcon() const
 {
     static const QIcon userIc = QIcon(":/robomongo/icons/user_16x16.png");

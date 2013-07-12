@@ -163,6 +163,33 @@ namespace Robomongo
         QList<MongoCollectionInfo> _collectionInfos;
     };
 
+	class LoadCollectionIndexesRequest : public Event
+	{
+		R_EVENT
+
+	public:
+		LoadCollectionIndexesRequest(QObject *sender, const MongoCollectionInfo &collection) :
+		Event(sender),
+			_collection(collection) {}
+
+		MongoCollectionInfo databaseName() const { return _collection; }
+
+	private:
+		MongoCollectionInfo _collection;
+	};
+	class LoadCollectionIndexesResponse : public Event
+	{
+		R_EVENT
+
+	public:
+		LoadCollectionIndexesResponse(QObject *sender,const MongoCollectionInfo &collection, const QList<QString> &indexes) :
+		Event(sender),
+			_indexes(indexes) {}
+		QList<QString> indexes() const { return _indexes; }
+
+	private:
+		QList<QString> _indexes;
+	};
 
     /**
      * @brief Load Users

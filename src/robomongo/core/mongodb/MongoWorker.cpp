@@ -186,7 +186,10 @@ namespace Robomongo
             reply(event->sender(), new LoadUsersResponse(this, EventError("Unable to load list of users.")));
         }
     }
-
+	void MongoWorker::handle(LoadCollectionIndexesRequest *event)
+	{
+		
+	}
     void MongoWorker::handle(LoadFunctionsRequest *event)
     {
         try {

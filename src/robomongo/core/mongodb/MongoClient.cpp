@@ -105,10 +105,10 @@ namespace Robomongo
         auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
         while (cursor->more()) {
             mongo::BSONObj obj = cursor->next();
+            std::string str = obj.toString();
             mongo::BSONElement key = obj.getField("key");
             if(!key.isNull())
             {     
-                int shift = key.size();
                 const char *val = key.valuestr();
                 result.append(QString::fromStdString(val+1));
             }

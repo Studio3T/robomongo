@@ -27,6 +27,7 @@ namespace Robomongo
         void expandCollections();
         void expandUsers();
         void expandFunctions();
+        void expandColection(ExplorerCollectionTreeItem *const item);
 
     public slots:
         void handle(MongoDatabase_CollectionListLoadedEvent *event);
@@ -35,7 +36,7 @@ namespace Robomongo
         void handle(MongoDatabase_CollectionsLoadingEvent *event);
         void handle(MongoDatabase_FunctionsLoadingEvent *event);
         void handle(MongoDatabase_UsersLoadingEvent *event);
-
+        
     private:
         void clearChildItems(QTreeWidgetItem *root);
         void createCollectionSystemFolderItem();

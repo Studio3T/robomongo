@@ -2,7 +2,6 @@
 #include "robomongo/core/domain/MongoNamespace.h"
 #include <mongo/client/dbclient.h>
 
-
 using namespace std;
 namespace Robomongo
 {
@@ -98,6 +97,23 @@ namespace Robomongo
         }
 
         return functions;
+    }
+
+    QList<QString> MongoClient::getIndexes(const MongoCollectionInfo &collection)const
+    {
+        QList<QString> result;
+        auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
+        while (cursor->more()) {
+            mongo::BSONObj obj = cursor->next();
+            mongo::BSONElement key = obj.getField("key");
+            if(!key.isNull())
+            {     
+                int shift = key.size();
+                const char *val = key.valuestr();
+                result.append(QString::fromStdString(val+1));
+            }
+        }
+        return result;
     }
 
     void MongoClient::createFunction(const QString &dbName, const MongoFunction &fun,

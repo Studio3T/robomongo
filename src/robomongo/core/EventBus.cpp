@@ -36,8 +36,9 @@ void EventBus::publish(Event *event)
     QList<EventBusSubscriber *> subscribers = _subscribersByEventType.values(event->type());
     QList<QObject*> theReceivers;
     EventBusDispatcher *dis = NULL;
-    foreach(EventBusSubscriber *subscriber, subscribers)
+	for(QList<EventBusSubscriber *>::iterator it = subscribers.begin();it!=subscribers.end();++it)
     {
+		EventBusSubscriber *subscriber = *it;
         if (!subscriber->sender || subscriber->sender == event->sender()) {
             theReceivers.append(subscriber->receiver);
 
@@ -62,10 +63,7 @@ void EventBus::send(QObject *receiver, Event *event)
     QThread *thread = receiver->thread();
     EventBusDispatcher *dis = dispatcher(thread);
 
-    QList<QObject *> receivers;
-    receivers << receiver;
-
-    sendEvent(dis, new EventWrapper(event, receivers));
+    sendEvent(dis, new EventWrapper(event, receiver));
 }
 
 void EventBus::send(QList<QObject *> receivers, Event *event)

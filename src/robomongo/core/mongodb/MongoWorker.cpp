@@ -188,7 +188,15 @@ namespace Robomongo
     }
 	void MongoWorker::handle(LoadCollectionIndexesRequest *event)
 	{
-		
+        try {
+            boost::scoped_ptr<MongoClient> client(getClient());
+            const QList<QString> &ind = client->getIndexes(event->collection());
+            client->done();
+
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, event->collection(), ind));
+        } catch(DBException &ex) {
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, event->collection(), QList<QString>()));
+        }
 	}
     void MongoWorker::handle(LoadFunctionsRequest *event)
     {

@@ -1,18 +1,23 @@
 #pragma once
 #include <QTreeWidgetItem>
-
+#include <QObject>
 #include "robomongo/core/Core.h"
 
 namespace Robomongo
 {
-    class ExplorerCollectionTreeItem : public QTreeWidgetItem
+    class ExplorerDatabaseTreeItem;
+    class LoadCollectionIndexesResponse;
+    class ExplorerCollectionTreeItem :public QObject, public QTreeWidgetItem
     {
+        Q_OBJECT
     public:
-        ExplorerCollectionTreeItem(MongoCollection *collection);
+        ExplorerCollectionTreeItem(ExplorerDatabaseTreeItem *const parent,MongoCollection *collection);
         MongoCollection *collection() const { return _collection; }
 		void expand();
+    public Q_SLOTS:
+        void handle(LoadCollectionIndexesResponse *event);
     private:
         QString buildToolTip(MongoCollection *collection);
-        MongoCollection *_collection;
+        MongoCollection *const _collection;
     };
 }

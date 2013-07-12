@@ -8,6 +8,7 @@ namespace Robomongo
     {
     public:
         EventWrapper(Event *event, QList<QObject *> receivers);
+		EventWrapper(Event *event, QObject * receiver);
         Event *event() const;
         QList<QObject *> receivers() const;
     private:

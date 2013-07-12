@@ -47,6 +47,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/ProgressBarPopup.h
     robomongo/gui/dialogs/DocumentTextEditor.h
     robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h
+	robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h
     robomongo/gui/dialogs/CreateDatabaseDialog.h
     robomongo/gui/dialogs/CreateUserDialog.h
     robomongo/gui/dialogs/FunctionTextEditor.h
@@ -54,7 +55,6 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/editors/FindFrame.h)
 SET(HEADERS_GUI
     robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h
-    robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h
     robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h
 	robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h
     robomongo/gui/GuiRegistry.h

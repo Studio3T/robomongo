@@ -166,30 +166,24 @@ namespace Robomongo
 	class LoadCollectionIndexesRequest : public Event
 	{
 		R_EVENT
-
-	public:
+    public:
 		LoadCollectionIndexesRequest(QObject *sender, const MongoCollectionInfo &collection) :
-		Event(sender),
-			_collection(collection) {}
-
-		MongoCollectionInfo databaseName() const { return _collection; }
-
-	private:
-		MongoCollectionInfo _collection;
+		Event(sender),_collection(collection) {}
+        MongoCollectionInfo collection() const { return _collection; }
+    private:
+		const MongoCollectionInfo _collection;
 	};
 	class LoadCollectionIndexesResponse : public Event
 	{
 		R_EVENT
-
-	public:
-		LoadCollectionIndexesResponse(QObject *sender,const MongoCollectionInfo &collection, const QList<QString> &indexes) :
-		Event(sender),
-			_indexes(indexes) {}
-		QList<QString> indexes() const { return _indexes; }
-
-	private:
+    public:
+		LoadCollectionIndexesResponse(QObject *sender,const MongoCollectionInfo &collection, const QList<QString> &indexes) :Event(sender),_collection(collection), _indexes(indexes) {}
+        MongoCollectionInfo collection() const { return _collection; };
+        QList<QString> indexes() const { return _indexes; }
+    private:
 		QList<QString> _indexes;
-	};
+        const MongoCollectionInfo _collection;
+    };
 
     /**
      * @brief Load Users

@@ -19,7 +19,6 @@ namespace Robomongo
 
     public:
         explicit ExplorerTreeWidget(QWidget *parent = 0);
-        ~ExplorerTreeWidget() {}
 
     protected:
         void contextMenuEvent(QContextMenuEvent *event);

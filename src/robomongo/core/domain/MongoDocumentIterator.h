@@ -1,27 +1,24 @@
 #pragma once
 #include <QObject>
-#include <mongo/client/dbclient.h>
+#include <mongo/bson/bsonobjiterator.h>
 #include "robomongo/core/Core.h"
-#include "robomongo/core/domain/MongoElement.h"
 
 namespace Robomongo
 {
-	class MongoDocumentIterator : public QObject
+	class MongoDocumentIterator
 	{
-		Q_OBJECT
-
 	public:
 		/*
 		**
 		*/
-        MongoDocumentIterator(MongoDocument *document);
+        MongoDocumentIterator(MongoDocument *const document);
 
 		bool hasMore();
 
         MongoElementPtr next();
 
     private:
-        MongoDocument *_document;
+        MongoDocument *const _document;
         mongo::BSONObjIterator _iterator;
 	};
 }

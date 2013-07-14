@@ -1,19 +1,15 @@
 #include "robomongo/core/domain/MongoDocumentIterator.h"
 
-#include <mongo/client/dbclient.h>
 
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoElement.h"
-
-using namespace mongo;
 
 namespace Robomongo
 {
 	/*
 	**
 	*/
-    MongoDocumentIterator::MongoDocumentIterator(MongoDocument *document) :
-        QObject(),
+    MongoDocumentIterator::MongoDocumentIterator(MongoDocument *const document) :
         _document(document),
         _iterator(document->bsonObj())
 	{
@@ -27,7 +23,7 @@ namespace Robomongo
 
     MongoElementPtr MongoDocumentIterator::next()
 	{
-		BSONElement bsonElement = _iterator.next();
+		mongo::BSONElement bsonElement = _iterator.next();
         return MongoElementPtr(new MongoElement(bsonElement));
 	}
 }

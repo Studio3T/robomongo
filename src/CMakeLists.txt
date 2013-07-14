@@ -174,6 +174,7 @@ SET(HEADERS_CORE
     robomongo/core/engine/JsonBuilder.h
     robomongo/core/domain/MongoUser.h
     robomongo/core/domain/MongoFunction.h
+	robomongo/core/domain/MongoIndex.h
     robomongo/core/domain/Enums.h
     robomongo/core/HexUtils.h
     )
@@ -215,6 +216,7 @@ set(SOURCES_CORE
     robomongo/core/engine/JsonBuilder.cpp
     robomongo/core/domain/MongoUser.cpp
     robomongo/core/domain/MongoFunction.cpp
+	robomongo/core/domain/MongoIndex.cpp
     robomongo/core/HexUtils.cpp)
 
 IF(LINUX)

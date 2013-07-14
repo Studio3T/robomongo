@@ -1,19 +1,18 @@
 #include "robomongo/core/mongodb/MongoClient.h"
-#include "robomongo/core/domain/MongoNamespace.h"
-#include <mongo/client/dbclient.h>
+#include "robomongo/core/domain/MongoIndex.h"
 
-using namespace std;
 namespace Robomongo
 {
     MongoClient::MongoClient(mongo::DBClientBase *dbclient) :
         _dbclient(dbclient) { }
 
     QStringList MongoClient::getCollectionNames(const QString &dbname) const
-    {
-        list<string> dbs = _dbclient->getCollectionNames(dbname.toStdString());
+	{
+		typedef std::list<std::string> cont_string_t;
+        cont_string_t dbs = _dbclient->getCollectionNames(dbname.toStdString());
 
         QStringList stringList;
-        for (list<string>::iterator i = dbs.begin(); i != dbs.end(); i++) {
+        for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); i++) {
             stringList.append(QString::fromStdString(*i));
         }
 
@@ -23,9 +22,10 @@ namespace Robomongo
 
     QStringList MongoClient::getDatabaseNames() const
     {
-        list<string> dbs = _dbclient->getDatabaseNames();
+		typedef std::list<std::string> cont_string_t;
+        cont_string_t dbs = _dbclient->getDatabaseNames();
         QStringList dbNames;
-        for (list<string>::iterator i = dbs.begin(); i != dbs.end(); ++i)
+        for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); ++i)
         {
             dbNames.append(QString::fromStdString(*i));
         }
@@ -38,7 +38,7 @@ namespace Robomongo
         MongoNamespace ns(dbName, "system.users");
         QList<MongoUser> users;
 
-        auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString().toStdString(), mongo::Query()));
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString().toStdString(), mongo::Query()));
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -84,7 +84,7 @@ namespace Robomongo
         MongoNamespace ns(dbName, "system.js");
         QList<MongoFunction> functions;
 
-        auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString().toStdString(), mongo::Query()));
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString().toStdString(), mongo::Query()));
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -102,16 +102,13 @@ namespace Robomongo
     QList<QString> MongoClient::getIndexes(const MongoCollectionInfo &collection)const
     {
         QList<QString> result;
-        auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
         while (cursor->more()) {
-            mongo::BSONObj obj = cursor->next();
-            std::string str = obj.toString();
-            mongo::BSONElement key = obj.getField("key");
-            if(!key.isNull())
-            {     
-                const char *val = key.valuestr();
-                result.append(QString::fromStdString(val+1));
-            }
+			std::string indexString;
+			if(getIndex(cursor->next(),indexString))
+			{
+				result.append(QString::fromStdString(indexString));
+			}
         }
         return result;
     }
@@ -219,7 +216,7 @@ namespace Robomongo
         MongoNamespace from(dbName, collectionName);
         MongoNamespace to(dbName, newCollectionName);
 
-        auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(from.toString().toStdString(), mongo::Query()));
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(from.toString().toStdString(), mongo::Query()));
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
             _dbclient->insert(to.toString().toStdString(), bsonObj);
@@ -265,7 +262,7 @@ namespace Robomongo
         int limit = (info.limit == 0 || info.limit > 51) ? 50 : info.limit;
 
         QList<MongoDocumentPtr> docs;
-        auto_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
+        std::auto_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
             ns.toString().toStdString(), info.query, limit, info.skip,
             info.fields.nFields() ? &info.fields : 0, info.options, info.batchSize);
 
@@ -296,8 +293,8 @@ namespace Robomongo
     QList<MongoCollectionInfo> MongoClient::runCollStatsCommand(const QStringList &namespaces)
     {
         QList<MongoCollectionInfo> infos;
-        foreach (QString ns, namespaces) {
-            MongoCollectionInfo info = runCollStatsCommand(ns);
+		for(QStringList::const_iterator it=namespaces.begin();it!=namespaces.end();++it){
+            MongoCollectionInfo info = runCollStatsCommand(*it);
             infos.append(info);
         }
         return infos;

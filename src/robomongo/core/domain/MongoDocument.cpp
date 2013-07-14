@@ -1,42 +1,34 @@
 #include "robomongo/core/domain/MongoDocument.h"
+
 #include <QStringBuilder>
-#include <QTextCodec>
 
 #include "robomongo/core/domain/MongoDocumentIterator.h"
 #include "robomongo/core/domain/MongoElement.h"
 
-using namespace mongo;
-
 namespace Robomongo
 {
-	Concatenator::Concatenator() : QObject()
+	Concatenator::Concatenator():_count(0)
 	{
-		_count = 0;
 	}
 
     void Concatenator::append(const QString &data)
 	{
 		_list.append(data);
-		_count = _count + data.length();
+		_count += data.length();
 	}
 
 	QString Concatenator::build()
 	{
 		QString text;
 		text.reserve(_count + 10);
-
-		foreach(QString s, _list)
+		for (QStringList::const_iterator it=_list.begin();it!=_list.end();++it)
 		{
-			text = text % s;
+			text = text % (*it);
 		}
-
 		return text;
 	}
 
-
-
-
-	MongoDocument::MongoDocument() : QObject()
+	MongoDocument::MongoDocument()
 	{
 		// test
 	}
@@ -49,15 +41,14 @@ namespace Robomongo
 	/*
 	** Create MongoDocument from BsonObj. It will take owned version of BSONObj
 	*/
-	MongoDocument::MongoDocument(BSONObj bsonObj)
+	MongoDocument::MongoDocument(mongo::BSONObj bsonObj):_bsonObj(bsonObj)
 	{
-		_bsonObj = bsonObj/*.getOwned()*/;
 	}
 
 	/*
 	** Create MongoDocument from BsonObj. It will take owned version of BSONObj
 	*/ 
-    MongoDocumentPtr MongoDocument::fromBsonObj(BSONObj bsonObj)
+    MongoDocumentPtr MongoDocument::fromBsonObj(const mongo::BSONObj &bsonObj)
 	{
 		MongoDocument * doc = new MongoDocument(bsonObj);
         return MongoDocumentPtr(doc);
@@ -66,12 +57,11 @@ namespace Robomongo
 	/*
 	** Create list of MongoDocuments from QList<BsonObj>. It will take owned version of BSONObj
 	*/ 
-    QList<MongoDocumentPtr> MongoDocument::fromBsonObj(const QList<BSONObj> &bsonObjs)
+    QList<MongoDocumentPtr> MongoDocument::fromBsonObj(const QList<mongo::BSONObj> &bsonObjs)
 	{
         QList<MongoDocumentPtr> list;
-
-        foreach(BSONObj bsonObj, bsonObjs){
-			list.append(fromBsonObj(bsonObj));
+		for(QList<mongo::BSONObj>::const_iterator it=bsonObjs.begin();it!=bsonObjs.end();++it){
+			list.append(fromBsonObj(*it));
 		}
 
 		return list;
@@ -107,26 +97,23 @@ namespace Robomongo
 	*/
     QString MongoDocument::buildJsonString(const QList<MongoDocumentPtr> &documents)
 	{
-        QTextCodec *codec = QTextCodec::codecForName("UTF-8");
-        //qt4 QTextCodec::setCodecForCStrings(codec);
-
         mongo::StringBuilder sb;
 
 		int position = 0;
-        foreach(MongoDocumentPtr doc, documents)
+		for(QList<MongoDocumentPtr>::const_iterator it=documents.begin();it!=documents.end();++it)
 		{
 			if (position == 0)
                 sb << "/* 0 */\n";
 			else 
                 sb << "\n\n/* " << position << " */\n";
 
-			string jsonString = doc->bsonObj().jsonString(TenGen, 1);
+			std::string jsonString = (*it)->bsonObj().jsonString(mongo::TenGen, 1);
 
             sb << jsonString;
 			position++;
 		}
 
-        string final = sb.str();
+        std::string final = sb.str();
         QString qJsonString = QString::fromStdString(final);
 
         return qJsonString;
@@ -134,9 +121,8 @@ namespace Robomongo
 
     QString MongoDocument::buildJsonString(const MongoDocumentPtr &doc)
     {
-        QTextCodec *codec = QTextCodec::codecForName("UTF-8");
         //qt4 QTextCodec::setCodecForCStrings(codec);
-        string jsonString = doc->bsonObj().jsonString(TenGen, 1);
+        std::string jsonString = doc->bsonObj().jsonString(mongo::TenGen, 1);
         QString qJsonString = QString::fromStdString(jsonString);
         return qJsonString;
     }

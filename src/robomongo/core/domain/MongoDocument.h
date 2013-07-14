@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QObject>
 #include <QStringList>
 #include <mongo/bson/bsonobj.h>
 #include "robomongo/core/Core.h"
@@ -12,15 +11,13 @@ namespace Robomongo
 	/*
 	** Represents MongoDB object.
 	*/
-	class MongoDocument : public QObject
+	class MongoDocument
 	{
-		Q_OBJECT
-
 	private:
 		/*
 		** Owned BSONObj
 		*/
-        mongo::BSONObj _bsonObj;
+        const mongo::BSONObj _bsonObj;
 
 	public:
 		/*
@@ -38,7 +35,7 @@ namespace Robomongo
 		/*
 		** Create MongoDocument from BsonObj. It will take owned version of BSONObj
 		*/ 
-        static MongoDocumentPtr fromBsonObj(mongo::BSONObj bsonObj);
+        static MongoDocumentPtr fromBsonObj(const mongo::BSONObj &bsonObj);
 
 		/*
 		** Create list of MongoDocuments from QList<BsonObj>. It will take owned version of BSONObj
@@ -63,10 +60,8 @@ namespace Robomongo
         static QString buildJsonString(const MongoDocumentPtr &documents);
 	};
 
-	class Concatenator : public QObject
+	class Concatenator
 	{
-		Q_OBJECT
-
 	public:
 		Concatenator();
         void append(const QString &data);

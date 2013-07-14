@@ -261,6 +261,12 @@ namespace Robomongo
         _functionsCategoryContextMenu->addAction(addFunction);
         _functionsCategoryContextMenu->addSeparator();
         _functionsCategoryContextMenu->addAction(refreshFunctions);
+
+        QAction *deleteIndex = new QAction("Delete index", this);
+        connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_deleteIndex()));
+
+        _indexContextMenu = new QMenu(this);
+        _indexContextMenu->addAction(deleteIndex);
     }
 
     void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
@@ -307,6 +313,11 @@ namespace Robomongo
 					_functionsCategoryContextMenu->exec(mapToGlobal(event->pos()));
 				}
 			}
+
+            Indexes *ind = dynamic_cast<Indexes *>(item);
+            if(ind){
+                _indexContextMenu->exec(mapToGlobal(event->pos()));
+            }
 		}
     }
 
@@ -886,5 +897,16 @@ namespace Robomongo
         ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
         if (categoryItem){
 			categoryItem->databaseItem()->expandCollections();}
+    }
+
+    void ExplorerTreeWidget::ui_deleteIndex()
+    {
+       Indexes *ind = get_item<Indexes*>(selectedItems());
+       if(ind){
+           ExplorerCollectionTreeItem *parent = dynamic_cast<ExplorerCollectionTreeItem *>(ind->parent());
+           if(parent){
+
+           }
+       }
     }
 }

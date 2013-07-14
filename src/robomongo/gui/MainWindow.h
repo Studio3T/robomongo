@@ -30,7 +30,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        typedef QMainWindow base_class;
+        typedef QMainWindow baseClass;
         MainWindow();
         void keyPressEvent(QKeyEvent *event);
         ViewMode viewMode() const { return _viewMode; }

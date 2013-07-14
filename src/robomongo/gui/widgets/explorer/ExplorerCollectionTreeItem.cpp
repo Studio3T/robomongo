@@ -1,5 +1,6 @@
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 
+
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/core/domain/MongoCollection.h"
@@ -24,18 +25,15 @@ namespace
             delete item;
         }
     }
-    class Indexes: public QTreeWidgetItem
-    {
-    public:
-        explicit Indexes(const QString &val)
-        {
-            setText(0, val);
-            setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());
-        }
-    };
 }
 namespace Robomongo
 {
+    Indexes::Indexes(const QString &val,ExplorerCollectionTreeItem *const parent):QTreeWidgetItem(parent)
+    {
+        setText(0, val);
+        setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());
+    }
+    
     ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(ExplorerDatabaseTreeItem *const parent,MongoCollection *collection) :
         QObject(parent),_collection(collection)
     {
@@ -52,7 +50,7 @@ namespace Robomongo
         QList<QString> indexes = event->indexes();
         for(QList<QString>::const_iterator it=indexes.begin();it!=indexes.end();++it)
         {
-            addChild(new Indexes(*it));
+            addChild(new Indexes(*it,this));
         }
     }
     void ExplorerCollectionTreeItem::expand()

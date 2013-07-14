@@ -30,7 +30,7 @@
 namespace Robomongo
 {
 
-    MainWindow::MainWindow() : base_class(),
+    MainWindow::MainWindow() : baseClass(),
         _app(AppRegistry::instance().app()),
 		_bus(AppRegistry::instance().bus()),
 		_workArea(NULL),
@@ -320,7 +320,7 @@ namespace Robomongo
 			return;
 		}
 
-        base_class::keyPressEvent(event);
+        baseClass::keyPressEvent(event);
 	}
 
 	void MainWindow::updateConnectionsMenu()

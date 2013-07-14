@@ -141,8 +141,6 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/domain/MongoDatabase.h
     robomongo/core/domain/MongoCollection.h
     robomongo/core/domain/MongoElement.h
-    robomongo/core/domain/MongoDocumentIterator.h
-    robomongo/core/domain/MongoDocument.h
     robomongo/core/EventBus.h
     robomongo/core/domain/App.h
     robomongo/core/domain/MongoShell.h
@@ -152,6 +150,8 @@ SET(HEADERS_CORE_TO_MOC
     )
 SET(HEADERS_CORE
 	robomongo/core/KeyboardManager.h
+	robomongo/core/domain/MongoDocumentIterator.h
+	robomongo/core/domain/MongoDocument.h
     robomongo/core/EventBusSubscriber.h
     robomongo/core/EventWrapper.h
     robomongo/core/EventError.h

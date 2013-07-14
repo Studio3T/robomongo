@@ -16,15 +16,13 @@ namespace Robomongo
     R_REGISTER_EVENT(MongoDatabase_FunctionsLoadingEvent)
     R_REGISTER_EVENT(MongoDatabase_CollectionsLoadingEvent)
 
-    MongoDatabase::MongoDatabase(MongoServer *server, const QString &name) : QObject(),
-        _system(false),
-        _server(server),
-        _bus(AppRegistry::instance().bus())
+    MongoDatabase::MongoDatabase(MongoServer *server, const QString &name)
+        :QObject(),_system(false),_server(server),_bus(AppRegistry::instance().bus())
     {
         _name = name;
         // Check that this is a system database
         _system = name == "admin" ||
-                  name == "local";
+        name == "local";
     }
 
     MongoDatabase::~MongoDatabase()
@@ -100,9 +98,9 @@ namespace Robomongo
             return;
 
         clearCollections();
-		const QList<MongoCollectionInfo> &colectionsInfos = loaded->collectionInfos();
+        const QList<MongoCollectionInfo> &colectionsInfos = loaded->collectionInfos();
         for(QList<MongoCollectionInfo>::const_iterator it = colectionsInfos.begin() ;it!=colectionsInfos.end();++it)    {
-			const MongoCollectionInfo &info = *it;
+            const MongoCollectionInfo &info = *it;
             MongoCollection *collection = new MongoCollection(this, info);
             addCollection(collection);
         }
@@ -119,7 +117,7 @@ namespace Robomongo
     void MongoDatabase::handle(LoadFunctionsResponse *event)
     {
         if (!event->isError())
-		    _bus->publish(new MongoDatabase_FunctionsLoadedEvent(this, this, event->functions()));
+            _bus->publish(new MongoDatabase_FunctionsLoadedEvent(this, this, event->functions()));
     }
     void MongoDatabase::clearCollections()
     {

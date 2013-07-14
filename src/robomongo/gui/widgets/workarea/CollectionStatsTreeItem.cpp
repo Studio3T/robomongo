@@ -7,16 +7,16 @@
 
 namespace 
 {
-	QString prepareValue(const QString &data)
-	{
-		return data + "     "; // ugly yet simple way to extend size of columns
-	}
+    QString prepareValue(const QString &data)
+    {
+        return data + "     "; // ugly yet simple way to extend size of columns
+    }
 }
 namespace Robomongo
 {
 
     CollectionStatsTreeItem::CollectionStatsTreeItem(MongoDocumentPtr document) :
-        _document(document)
+    _document(document)
     {
         _obj = document->bsonObj();
 

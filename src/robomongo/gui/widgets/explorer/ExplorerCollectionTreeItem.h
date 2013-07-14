@@ -13,9 +13,9 @@ namespace Robomongo
     public:
         ExplorerCollectionTreeItem(ExplorerDatabaseTreeItem *const parent,MongoCollection *collection);
         MongoCollection *collection() const { return _collection; }
-		void expand();
-    public Q_SLOTS:
-        void handle(LoadCollectionIndexesResponse *event);
+        void expand();
+        public Q_SLOTS:
+            void handle(LoadCollectionIndexesResponse *event);
     private:
         QString buildToolTip(MongoCollection *collection);
         MongoCollection *const _collection;

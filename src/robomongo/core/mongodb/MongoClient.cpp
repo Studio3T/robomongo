@@ -7,8 +7,8 @@ namespace Robomongo
         _dbclient(dbclient) { }
 
     QStringList MongoClient::getCollectionNames(const QString &dbname) const
-	{
-		typedef std::list<std::string> cont_string_t;
+    {
+        typedef std::list<std::string> cont_string_t;
         cont_string_t dbs = _dbclient->getCollectionNames(dbname.toStdString());
 
         QStringList stringList;
@@ -22,7 +22,7 @@ namespace Robomongo
 
     QStringList MongoClient::getDatabaseNames() const
     {
-		typedef std::list<std::string> cont_string_t;
+        typedef std::list<std::string> cont_string_t;
         cont_string_t dbs = _dbclient->getDatabaseNames();
         QStringList dbNames;
         for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); ++i)
@@ -88,14 +88,14 @@ namespace Robomongo
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
+
             try {
                 MongoFunction user(bsonObj);
                 functions.append(user);
             } catch (std::exception &ex) {
-                // skip invalid docs
+            // skip invalid docs
             }
         }
-
         return functions;
     }
 
@@ -104,17 +104,16 @@ namespace Robomongo
         QList<QString> result;
         std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
         while (cursor->more()) {
-			std::string indexString;
-			if(getIndex(cursor->next(),indexString))
-			{
-				result.append(QString::fromStdString(indexString));
-			}
+            std::string indexString;
+            if(getIndex(cursor->next(),indexString))
+            {
+                result.append(QString::fromStdString(indexString));
+            }
         }
         return result;
     }
 
-    void MongoClient::createFunction(const QString &dbName, const MongoFunction &fun,
-                                     const QString &existingFunctionName /* = QString() */)
+    void MongoClient::createFunction(const QString &dbName, const MongoFunction &fun, const QString &existingFunctionName /* = QString() */)
     {
         MongoNamespace ns(dbName, "system.js");
         mongo::BSONObj obj = fun.toBson();
@@ -123,18 +122,18 @@ namespace Robomongo
             _dbclient->insert(ns.toString().toStdString(), obj);
         } else { // this is update
 
-            QString name = fun.name();
+        QString name = fun.name();
 
-            if (existingFunctionName == name) {
-                mongo::BSONObjBuilder builder;
-                builder.append("_id", name.toStdString());
-                mongo::BSONObj bsonQuery = builder.obj();
-                mongo::Query query(bsonQuery);
+        if (existingFunctionName == name) {
+            mongo::BSONObjBuilder builder;
+            builder.append("_id", name.toStdString());
+            mongo::BSONObj bsonQuery = builder.obj();
+            mongo::Query query(bsonQuery);
 
-                _dbclient->update(ns.toString().toStdString(), query, obj, true, false);
-            } else {
-                _dbclient->insert(ns.toString().toStdString(), obj);
-                std::string res = _dbclient->getLastError();
+            _dbclient->update(ns.toString().toStdString(), query, obj, true, false);
+        } else {
+            _dbclient->insert(ns.toString().toStdString(), obj);
+            std::string res = _dbclient->getLastError();
 
                 // if no errors
                 if (res.empty()) {
@@ -163,10 +162,10 @@ namespace Robomongo
     void MongoClient::createDatabase(const QString &dbName)
     {
         /*
-         *  Here we are going to insert temp document to "<dbName>.temp" collection.
-         *  This will create <dbName> database for us.
-         *  Finally we are dropping just created temporary collection.
-         */
+        *  Here we are going to insert temp document to "<dbName>.temp" collection.
+        *  This will create <dbName> database for us.
+        *  Finally we are dropping just created temporary collection.
+        */
 
         MongoNamespace ns(dbName, "temp");
 
@@ -293,7 +292,7 @@ namespace Robomongo
     QList<MongoCollectionInfo> MongoClient::runCollStatsCommand(const QStringList &namespaces)
     {
         QList<MongoCollectionInfo> infos;
-		for(QStringList::const_iterator it=namespaces.begin();it!=namespaces.end();++it){
+        for(QStringList::const_iterator it=namespaces.begin();it!=namespaces.end();++it){
             MongoCollectionInfo info = runCollStatsCommand(*it);
             infos.append(info);
         }

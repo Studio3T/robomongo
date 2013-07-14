@@ -38,7 +38,7 @@ namespace Robomongo
         const QIcon &openIcon()const;
         const QIcon &databaseIcon()const;
         const QIcon &collectionIcon()const;
-		const QIcon &indexIcon()const;
+        const QIcon &indexIcon()const;
         const QIcon &userIcon()const;
         const QIcon &functionIcon()const;
         const QIcon &maximizeIcon()const;

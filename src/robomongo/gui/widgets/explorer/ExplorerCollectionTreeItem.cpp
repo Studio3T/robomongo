@@ -8,13 +8,13 @@
 
 namespace
 {
-	const QString tooltipTemplate = QString(
-		"%0 "
-		"<table>"
-		"<tr><td>Count:</td> <td><b>&nbsp;&nbsp;%1</b></td></tr>"
-		"<tr><td>Size:</td><td><b>&nbsp;&nbsp;%2</b></td></tr>"
-		"</table>"
-		);
+    const QString tooltipTemplate = QString(
+        "%0 "
+        "<table>"
+        "<tr><td>Count:</td> <td><b>&nbsp;&nbsp;%1</b></td></tr>"
+        "<tr><td>Size:</td><td><b>&nbsp;&nbsp;%2</b></td></tr>"
+        "</table>"
+        );
     void clearChildren(QTreeWidgetItem *root)
     {
         int itemCount = root->childCount();
@@ -36,8 +36,8 @@ namespace
 }
 namespace Robomongo
 {
-    ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(ExplorerDatabaseTreeItem *const parent,MongoCollection *collection) :QObject(parent),
-        _collection(collection)
+    ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(ExplorerDatabaseTreeItem *const parent,MongoCollection *collection) :
+        QObject(parent),_collection(collection)
     {
         AppRegistry::instance().bus()->subscribe(QObject::parent(), LoadCollectionIndexesResponse::Type, this);
         setText(0, _collection->name());
@@ -55,12 +55,12 @@ namespace Robomongo
             addChild(new Indexes(*it));
         }
     }
-	void ExplorerCollectionTreeItem::expand()
-	{
+    void ExplorerCollectionTreeItem::expand()
+    {
         (static_cast<ExplorerDatabaseTreeItem *const>(QObject::parent()))->expandColection(this);
-	}
+    }
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
     {	
-		return tooltipTemplate.arg(collection->name()).arg(collection->info().count()).arg(collection->sizeString());
+        return tooltipTemplate.arg(collection->name()).arg(collection->info().count()).arg(collection->sizeString());
     }
 }

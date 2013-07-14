@@ -164,25 +164,26 @@ namespace Robomongo
         QList<MongoCollectionInfo> _collectionInfos;
     };
 
-	class LoadCollectionIndexesRequest : public Event
-	{
-		R_EVENT
+    class LoadCollectionIndexesRequest : public Event
+    {
+        R_EVENT
     public:
-		LoadCollectionIndexesRequest(QObject *sender, const MongoCollectionInfo &collection) :
-		Event(sender),_collection(collection) {}
+        LoadCollectionIndexesRequest(QObject *sender, const MongoCollectionInfo &collection) :
+        Event(sender),_collection(collection) {}
         MongoCollectionInfo collection() const { return _collection; }
     private:
-		const MongoCollectionInfo _collection;
-	};
-	class LoadCollectionIndexesResponse : public Event
-	{
-		R_EVENT
+        const MongoCollectionInfo _collection;
+    };
+
+    class LoadCollectionIndexesResponse : public Event
+    {
+        R_EVENT
     public:
-		LoadCollectionIndexesResponse(QObject *sender,const MongoCollectionInfo &collection, const QList<QString> &indexes) :Event(sender),_collection(collection), _indexes(indexes) {}
+        LoadCollectionIndexesResponse(QObject *sender,const MongoCollectionInfo &collection, const QList<QString> &indexes) :Event(sender),_collection(collection), _indexes(indexes) {}
         MongoCollectionInfo collection() const { return _collection; };
         QList<QString> indexes() const { return _indexes; }
     private:
-		QList<QString> _indexes;
+        QList<QString> _indexes;
         const MongoCollectionInfo _collection;
     };
 

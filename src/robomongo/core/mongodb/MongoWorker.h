@@ -67,9 +67,9 @@ namespace Robomongo
          */
         void handle(LoadUsersRequest *event);
 
-		 /**
-         * @brief Load indexes in collection
-         */
+        /**
+        * @brief Load indexes in collection
+        */
         void handle(LoadCollectionIndexesRequest *event);
 
         /**

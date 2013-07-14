@@ -47,6 +47,6 @@ namespace Robomongo
         void done();
 
     private:
-       mongo::DBClientBase *const _dbclient;
+        mongo::DBClientBase *const _dbclient;
     };
 }

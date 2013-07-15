@@ -133,18 +133,6 @@ namespace Robomongo
         QAction *removeAllDocuments = new QAction("Remove All Documents", this);
         connect(removeAllDocuments, SIGNAL(triggered()), SLOT(ui_removeAllDocuments()));
 
-        QAction *addIndex = new QAction("Add Index", this);
-        connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex()));
-
-        QAction *addIndexGui = new QAction("Add Index GUI", this);
-        connect(addIndexGui, SIGNAL(triggered()), SLOT(ui_addIndexGui()));
-
-        QAction *dropIndex = new QAction("Drop Index", this);
-        connect(dropIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
-
-        QAction *reIndex = new QAction("Rebuild Indexes", this);
-        connect(reIndex, SIGNAL(triggered()), SLOT(ui_reIndex()));
-
         QAction *collectionStats = new QAction("Statistics", this);
         connect(collectionStats, SIGNAL(triggered()), SLOT(ui_collectionStatistics()));
 
@@ -187,16 +175,36 @@ namespace Robomongo
         _collectionContextMenu->addAction(duplicateCollection);
         _collectionContextMenu->addAction(dropCollection);
         _collectionContextMenu->addSeparator();
-        _collectionContextMenu->addAction(addIndex);
-        _collectionContextMenu->addAction(addIndexGui);
-        _collectionContextMenu->addAction(dropIndex);
-        _collectionContextMenu->addAction(reIndex);
-        _collectionContextMenu->addSeparator();
         _collectionContextMenu->addAction(collectionStats);
         _collectionContextMenu->addSeparator();
         _collectionContextMenu->addAction(shardVersion);
         _collectionContextMenu->addAction(shardDistribution);
 
+        QAction *addIndex = new QAction("Add Index", this);
+        connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex()));
+
+        QAction *addIndexGui = new QAction("Add Index GUI", this);
+        connect(addIndexGui, SIGNAL(triggered()), SLOT(ui_addIndexGui()));
+
+        QAction *dropIndex = new QAction("Drop Index", this);
+        connect(dropIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
+
+        QAction *reIndex = new QAction("Rebuild Indexes", this);
+        connect(reIndex, SIGNAL(triggered()), SLOT(ui_reIndex()));
+
+        QAction *viewIndex = new QAction("View Indexes", this);
+        connect(viewIndex, SIGNAL(triggered()), SLOT(ui_viewIndex()));
+
+        QAction *refreshIndex = new QAction("Refresh Indexes", this);
+        connect(refreshIndex, SIGNAL(triggered()), SLOT(ui_refreshIndex()));
+
+        _indexDirContextMenu = new QMenu(this);
+        _indexDirContextMenu->addAction(viewIndex);
+        _indexDirContextMenu->addAction(addIndex);
+        _indexDirContextMenu->addAction(addIndexGui);
+        _indexDirContextMenu->addAction(dropIndex);
+        _indexDirContextMenu->addAction(reIndex);
+        _indexDirContextMenu->addAction(refreshIndex);
 
         QAction *dropUser = new QAction("Remove User", this);
         connect(dropUser, SIGNAL(triggered()), SLOT(ui_dropUser()));
@@ -319,7 +327,12 @@ namespace Robomongo
 				}
 			}
 
-            Indexes *ind = dynamic_cast<Indexes *>(item);
+            ExplorerCollectionDirIndexesTreeItem *indDir = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(item);
+            if(indDir){
+                _indexDirContextMenu->exec(mapToGlobal(event->pos()));
+            }
+
+            ExplorerCollectionIndexesTreeItem *ind = dynamic_cast<ExplorerCollectionIndexesTreeItem *>(item);
             if(ind&&ind->text(0)!="_id"){
                 _indexContextMenu->exec(mapToGlobal(event->pos()));
             }
@@ -329,6 +342,11 @@ namespace Robomongo
     ExplorerServerTreeItem *ExplorerTreeWidget::selectedServerItem()
     {
         return get_item<ExplorerServerTreeItem*>(selectedItems());
+    }
+
+    ExplorerCollectionDirIndexesTreeItem *ExplorerTreeWidget::selectedCollectionDirIndexItem()
+    {
+        return get_item<ExplorerCollectionDirIndexesTreeItem*>(selectedItems());
     }
 
     ExplorerCollectionTreeItem *ExplorerTreeWidget::selectedCollectionItem()
@@ -360,11 +378,18 @@ namespace Robomongo
                                                         const CursorPosition &cursor)
     {
         ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
+        if (!collectionItem){
+            ExplorerCollectionDirIndexesTreeItem *collectionDirIndexes = selectedCollectionDirIndexItem();
+            if(collectionDirIndexes)
+            {
+                collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(collectionDirIndexes->parent());
+            }
+        }
         if (collectionItem){
-			MongoCollection *collection = collectionItem->collection();
-			QString query = AppRegistry::instance().app()->buildCollectionQuery(collection->name(), script);
-			AppRegistry::instance().app()->openShell(collection->database(), query, execute, collection->name(), cursor);
-		}
+            MongoCollection *collection = collectionItem->collection();
+            QString query = AppRegistry::instance().app()->buildCollectionQuery(collection->name(), script);
+            AppRegistry::instance().app()->openShell(collection->database(), query, execute, collection->name(), cursor);
+        }
     }
 
     void ExplorerTreeWidget::openCurrentDatabaseShell(const QString &script, bool execute,
@@ -500,12 +525,15 @@ namespace Robomongo
 
     void ExplorerTreeWidget::ui_addIndexGui()
     {
-        ExplorerCollectionTreeItem *item = selectedCollectionItem();
+        ExplorerCollectionDirIndexesTreeItem *item = selectedCollectionDirIndexItem();
         if (item){
-            EditIndexDialog dlg(this,item);
-            int result = dlg.exec();
-            if (result == QDialog::Accepted) {
-                   (static_cast<ExplorerDatabaseTreeItem *const>(item->QObject::parent()))->enshureIndex(item,dlg.getInputText());
+            ExplorerCollectionTreeItem *const parent = dynamic_cast<ExplorerCollectionTreeItem *const>(item->parent());
+            if(parent){
+                EditIndexDialog dlg(this,parent);
+                int result = dlg.exec();
+                if (result == QDialog::Accepted) {
+                    (static_cast<ExplorerDatabaseTreeItem *const>(parent->QObject::parent()))->enshureIndex(parent,dlg.getInputText());
+                }
             }
         }
     }
@@ -918,12 +946,35 @@ namespace Robomongo
 
     void ExplorerTreeWidget::ui_deleteIndex()
     {
-       Indexes *ind = get_item<Indexes*>(selectedItems());
-       if(ind){
-           ExplorerCollectionTreeItem *parent = dynamic_cast<ExplorerCollectionTreeItem *>(ind->parent());
-           if(parent){
-               parent->deleteIndex(ind);
-           }
-       }
+        ExplorerCollectionIndexesTreeItem *ind = get_item<ExplorerCollectionIndexesTreeItem*>(selectedItems());
+        if(ind){
+            ExplorerCollectionDirIndexesTreeItem *parent = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(ind->parent());           
+            if(parent){
+                ExplorerCollectionTreeItem *grandParent = dynamic_cast<ExplorerCollectionTreeItem *>(parent->parent());
+                if(grandParent){
+                    grandParent->deleteIndex(ind);
+                }
+            }
+        }
+    }
+
+    void ExplorerTreeWidget::ui_viewIndex()
+    {
+        openCurrentCollectionShell("getIndexes()");
+    }
+
+    void ExplorerTreeWidget::ui_refreshIndex()
+    {
+        ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
+        if (!collectionItem){
+            ExplorerCollectionDirIndexesTreeItem *collectionDirIndexes = selectedCollectionDirIndexItem();
+            if(collectionDirIndexes)
+            {
+                collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(collectionDirIndexes->parent());
+            }
+        }
+        if(collectionItem){
+            collectionItem->expand();
+        }
     }
 }

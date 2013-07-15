@@ -28,40 +28,52 @@ namespace
 }
 namespace Robomongo
 {
-    Indexes::Indexes(const QString &val,ExplorerCollectionTreeItem *const parent):QTreeWidgetItem(parent)
+    const QString ExplorerCollectionDirIndexesTreeItem::text = "Indexes";
+
+    ExplorerCollectionDirIndexesTreeItem::ExplorerCollectionDirIndexesTreeItem(ExplorerCollectionTreeItem *const parent)
+        :QTreeWidgetItem(parent)
+    {
+        setText(0,text);
+        setIcon(0, Robomongo::GuiRegistry::instance().folderIcon());
+        setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+    }
+
+    ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(const QString &val,ExplorerCollectionDirIndexesTreeItem *const parent)
+        :QTreeWidgetItem(parent)
     {
         setText(0, val);
         setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());
     }
     
     ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(ExplorerDatabaseTreeItem *const parent,MongoCollection *collection) :
-        QObject(parent),_collection(collection)
+        QObject(parent),_indexDir(new ExplorerCollectionDirIndexesTreeItem(this)),_collection(collection)
     {
         AppRegistry::instance().bus()->subscribe(QObject::parent(), LoadCollectionIndexesResponse::Type, this);
         AppRegistry::instance().bus()->subscribe(QObject::parent(), DeleteCollectionIndexResponse::Type, this);
         setText(0, _collection->name());
         setIcon(0, GuiRegistry::instance().collectionIcon());
         //setExpanded(true);
+        addChild(_indexDir);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         setToolTip(0, buildToolTip(collection));
     }
 
     void ExplorerCollectionTreeItem::handle(LoadCollectionIndexesResponse *event)
     {
-        clearChildren(this);
+        clearChildren(_indexDir);
         const QList<QString> &indexes = event->indexes();
         for(QList<QString>::const_iterator it=indexes.begin();it!=indexes.end();++it)
         {
-            addChild(new Indexes(*it,this));
+            _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(*it,_indexDir));
         }
     }
 
     void ExplorerCollectionTreeItem::handle(DeleteCollectionIndexResponse *event)
     {
         if(!event->index().isEmpty()){
-            int itemCount = childCount();
+            int itemCount = _indexDir->childCount();
             for (int i = 0; i < itemCount; ++i) {
-                QTreeWidgetItem *item = child(i);
+                QTreeWidgetItem *item = _indexDir->child(i);
                 if(item->text(0)==event->index())
                 {
                     removeChild(item);

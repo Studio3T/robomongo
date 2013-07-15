@@ -115,7 +115,7 @@ namespace Robomongo
 
     void MongoClient::ensureIndex(const MongoCollectionInfo &collection,const QString &request)const
     {
-        mongo::BSONObj obj = mongo::fromjson(request.toAscii());        
+        mongo::BSONObj obj = mongo::fromjson(request.toUtf8());
         _dbclient->ensureIndex(collection.ns().toString().toStdString(),obj);
     }
 

@@ -33,18 +33,21 @@ namespace Robomongo
         static const QIcon serverIc = QIcon(":/robomongo/icons/server_16x16.png");
         return serverIc;
     }
+
     const QIcon &GuiRegistry::openIcon() const
     {
         static const QIcon openIc = qApp->style()->standardIcon(QStyle::SP_DialogOpenButton);
         //static const QIcon openIc = QIcon(":/robomongo/icons/open_32x32.png");
         return openIc;
     }
+
     const QIcon &GuiRegistry::saveIcon() const
     {
         static const QIcon saveIc = qApp->style()->standardIcon(QStyle::SP_DialogSaveButton);
         // static const QIcon saveIc = QIcon(":/robomongo/icons/save_32x32.png");
         return saveIc;
     }
+
     const QIcon &GuiRegistry::databaseIcon() const
     {
         static const QIcon databaseIc = QIcon(":/robomongo/icons/database_16x16.png");

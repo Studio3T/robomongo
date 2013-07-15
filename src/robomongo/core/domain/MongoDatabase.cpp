@@ -110,15 +110,20 @@ namespace Robomongo
 
     void MongoDatabase::handle(LoadUsersResponse *event)
     {
-        if (!event->isError())
-            _bus->publish(new MongoDatabase_UsersLoadedEvent(this, this, event->users()));
+        if (event->isError())
+            return;
+        
+        _bus->publish(new MongoDatabase_UsersLoadedEvent(this, this, event->users()));
     }
 
     void MongoDatabase::handle(LoadFunctionsResponse *event)
     {
-        if (!event->isError())
-            _bus->publish(new MongoDatabase_FunctionsLoadedEvent(this, this, event->functions()));
+        if (event->isError())
+            return;
+            
+        _bus->publish(new MongoDatabase_FunctionsLoadedEvent(this, this, event->functions()));
     }
+
     void MongoDatabase::clearCollections()
     {
         qDeleteAll(_collections);

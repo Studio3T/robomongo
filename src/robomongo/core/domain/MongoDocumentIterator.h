@@ -5,20 +5,17 @@
 
 namespace Robomongo
 {
-	class MongoDocumentIterator
-	{
-	public:
-		/*
-		**
-		*/
+    class MongoDocumentIterator
+    {
+    public:
         MongoDocumentIterator(MongoDocument *const document);
 
-		bool hasMore();
+        bool hasMore();
 
         MongoElementPtr next();
 
     private:
         MongoDocument *const _document;
         mongo::BSONObjIterator _iterator;
-	};
+    };
 }

@@ -69,10 +69,10 @@ namespace Robomongo
         const QIcon &bsonBinaryIcon()const;
         const QIcon &bsonNullIcon()const;
         const QIcon &bsonBooleanIcon()const;
-		const QIcon &noMarkIcon()const;
-		const QIcon &yesMarkIcon()const;
-		const QIcon &timeIcon()const;
-		const QIcon &keyIcon()const;
+        const QIcon &noMarkIcon()const;
+        const QIcon &yesMarkIcon()const;
+        const QIcon &timeIcon()const;
+        const QIcon &keyIcon()const;
 
 		const QBrush &typeBrush() const;
 

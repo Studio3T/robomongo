@@ -111,6 +111,7 @@ namespace Robomongo
 
         showCollectionSystemFolderIfNeeded();
     }
+
     void ExplorerDatabaseTreeItem::handle(MongoDatabase_UsersLoadedEvent *event)
     {
         QList<MongoUser> users = event->users();

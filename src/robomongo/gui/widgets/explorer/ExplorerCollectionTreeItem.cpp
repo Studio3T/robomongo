@@ -45,6 +45,7 @@ namespace Robomongo
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         setToolTip(0, buildToolTip(collection));
     }
+
     void ExplorerCollectionTreeItem::handle(LoadCollectionIndexesResponse *event)
     {
         clearChildren(this);
@@ -54,6 +55,7 @@ namespace Robomongo
             addChild(new Indexes(*it,this));
         }
     }
+
     void ExplorerCollectionTreeItem::handle(DeleteCollectionIndexResponse *event)
     {
         if(!event->index().isEmpty()){
@@ -69,14 +71,17 @@ namespace Robomongo
             }
         }
     }
+
     void ExplorerCollectionTreeItem::expand()
     {
         (static_cast<ExplorerDatabaseTreeItem *const>(QObject::parent()))->expandColection(this);
     }
+
     void ExplorerCollectionTreeItem::deleteIndex(const QTreeWidgetItem * const ind)
     {
         (static_cast<ExplorerDatabaseTreeItem *const>(QObject::parent()))->deleteIndexFromCollection(this,ind->text(0));
     }
+
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
     {	
         return tooltipTemplate.arg(collection->name()).arg(collection->info().count()).arg(collection->sizeString());

@@ -74,7 +74,7 @@ namespace Robomongo
         const QIcon &timeIcon()const;
         const QIcon &keyIcon()const;
 
-		const QBrush &typeBrush() const;
+        const QBrush &typeBrush() const;
 
     private:
         /**

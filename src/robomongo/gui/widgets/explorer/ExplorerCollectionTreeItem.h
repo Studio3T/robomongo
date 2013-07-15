@@ -8,7 +8,8 @@ namespace Robomongo
     class ExplorerDatabaseTreeItem;
     class LoadCollectionIndexesResponse;
     class DeleteCollectionIndexResponse;
-    
+    class ExplorerCollectionDirIndexesTreeItem;
+
     class ExplorerCollectionTreeItem :public QObject, public QTreeWidgetItem
     {
         Q_OBJECT
@@ -22,12 +23,20 @@ namespace Robomongo
         void handle(DeleteCollectionIndexResponse *event);
     private:
         QString buildToolTip(MongoCollection *collection);
+        ExplorerCollectionDirIndexesTreeItem * const _indexDir;
         MongoCollection *const _collection;
     };
 
-    class Indexes: public QTreeWidgetItem
+    class ExplorerCollectionDirIndexesTreeItem: public QTreeWidgetItem
     {
     public:
-        explicit Indexes(const QString &val,ExplorerCollectionTreeItem *const parent);
+        static const QString text;
+        explicit ExplorerCollectionDirIndexesTreeItem(ExplorerCollectionTreeItem *const parent);
+    };
+
+    class ExplorerCollectionIndexesTreeItem: public QTreeWidgetItem
+    {
+    public:
+        explicit ExplorerCollectionIndexesTreeItem(const QString &val,ExplorerCollectionDirIndexesTreeItem *const parent);
     };
 }

@@ -73,7 +73,10 @@ namespace Robomongo
     {
          _bus->send(_database->server()->client(), new LoadCollectionIndexesRequest(item, item->collection()->info()));
     }
-
+    void ExplorerDatabaseTreeItem::deleteIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& indexText)
+    {
+        _bus->send(_database->server()->client(), new DeleteCollectionIndexRequest(item, item->collection()->info(),indexText));
+    }
     void ExplorerDatabaseTreeItem::expandFunctions()
     {
         _database->loadFunctions();

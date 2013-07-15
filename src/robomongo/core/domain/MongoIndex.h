@@ -1,10 +1,9 @@
 #pragma once
 #include <string>
-namespace mongo
-{
-	class BSONObj;
-}
+#include <mongo/bson/bsonobj.h>
+
 namespace Robomongo
 {
-	bool getIndex(const mongo::BSONObj &ind,std::string &out);
+    bool getIndex(const mongo::BSONObj &ind,std::string &out);
+    mongo::BSONObj generateIndex(const std::string &indName);
 }

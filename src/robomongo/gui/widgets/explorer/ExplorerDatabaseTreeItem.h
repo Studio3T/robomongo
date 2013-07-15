@@ -28,6 +28,7 @@ namespace Robomongo
         void expandUsers();
         void expandFunctions();
         void expandColection(ExplorerCollectionTreeItem *const item);
+        void deleteIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& indexText); 
 
     public slots:
         void handle(MongoDatabase_CollectionListLoadedEvent *event);

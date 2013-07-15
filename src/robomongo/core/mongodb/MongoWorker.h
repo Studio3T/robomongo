@@ -73,6 +73,11 @@ namespace Robomongo
         void handle(LoadCollectionIndexesRequest *event);
 
         /**
+        * @brief delete index from collection
+        */
+        void handle(DeleteCollectionIndexRequest *event);
+
+        /**
          * @brief Load list of all JS functions
          */
         void handle(LoadFunctionsRequest *event);

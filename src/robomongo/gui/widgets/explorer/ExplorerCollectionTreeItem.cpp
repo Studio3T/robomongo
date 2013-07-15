@@ -38,6 +38,7 @@ namespace Robomongo
         QObject(parent),_collection(collection)
     {
         AppRegistry::instance().bus()->subscribe(QObject::parent(), LoadCollectionIndexesResponse::Type, this);
+        AppRegistry::instance().bus()->subscribe(QObject::parent(), DeleteCollectionIndexResponse::Type, this);
         setText(0, _collection->name());
         setIcon(0, GuiRegistry::instance().collectionIcon());
         //setExpanded(true);
@@ -47,15 +48,34 @@ namespace Robomongo
     void ExplorerCollectionTreeItem::handle(LoadCollectionIndexesResponse *event)
     {
         clearChildren(this);
-        QList<QString> indexes = event->indexes();
+        const QList<QString> &indexes = event->indexes();
         for(QList<QString>::const_iterator it=indexes.begin();it!=indexes.end();++it)
         {
             addChild(new Indexes(*it,this));
         }
     }
+    void ExplorerCollectionTreeItem::handle(DeleteCollectionIndexResponse *event)
+    {
+        if(!event->index().isEmpty()){
+            int itemCount = childCount();
+            for (int i = 0; i < itemCount; ++i) {
+                QTreeWidgetItem *item = child(i);
+                if(item->text(0)==event->index())
+                {
+                    removeChild(item);
+                    delete item;
+                    break;
+                }
+            }
+        }
+    }
     void ExplorerCollectionTreeItem::expand()
     {
         (static_cast<ExplorerDatabaseTreeItem *const>(QObject::parent()))->expandColection(this);
+    }
+    void ExplorerCollectionTreeItem::deleteIndex(const QTreeWidgetItem * const ind)
+    {
+        (static_cast<ExplorerDatabaseTreeItem *const>(QObject::parent()))->deleteIndexFromCollection(this,ind->text(0));
     }
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
     {	

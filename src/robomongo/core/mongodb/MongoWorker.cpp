@@ -186,6 +186,7 @@ namespace Robomongo
             reply(event->sender(), new LoadUsersResponse(this, EventError("Unable to load list of users.")));
         }
     }
+
 	void MongoWorker::handle(LoadCollectionIndexesRequest *event)
 	{
         try {
@@ -198,6 +199,20 @@ namespace Robomongo
             reply(event->sender(), new LoadCollectionIndexesResponse(this, event->collection(), QList<QString>()));
         }
 	}
+
+    void MongoWorker::handle(DeleteCollectionIndexRequest *event)
+    {
+        std::string str;
+        try {
+            boost::scoped_ptr<MongoClient> client(getClient());
+            client->deleteIndexFromCollection(event->collection(),event->index());
+            client->done();
+            reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), event->index()));
+        } catch(const DBException &ex) {
+            reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), QString() ));
+        }            
+    }
+
     void MongoWorker::handle(LoadFunctionsRequest *event)
     {
         try {

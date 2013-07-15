@@ -113,6 +113,28 @@ namespace Robomongo
         return result;
     }
 
+    bool MongoClient::deleteIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexText)const
+    {
+        _dbclient->dropIndex(collection.ns().toString().toStdString(),generateIndex(indexText.toStdString()));
+
+        /*std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
+        std::string wantDeleteText = indexText.toStdString();
+        while (cursor->more()) {
+            std::string indexString;
+            mongo::BSONObj index = cursor->next();
+            if(getIndex(index,indexString))
+            {
+                if(indexString==wantDeleteText)
+                {
+                    _dbclient->dropIndex(collection.ns().toString().toStdString(),index);
+                    break;
+                }
+            }
+        }*/
+
+        return true;
+    }
+
     void MongoClient::createFunction(const QString &dbName, const MongoFunction &fun, const QString &existingFunctionName /* = QString() */)
     {
         MongoNamespace ns(dbName, "system.js");

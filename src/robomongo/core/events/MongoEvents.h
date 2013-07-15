@@ -187,6 +187,32 @@ namespace Robomongo
         const MongoCollectionInfo _collection;
     };
 
+    class DeleteCollectionIndexRequest : public Event
+    {
+        R_EVENT
+    public:
+        DeleteCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const QString &index) :
+        Event(sender),_collection(collection),_index(index) {}
+        MongoCollectionInfo collection() const { return _collection; }
+        QString index() const {return _index;}
+    private:
+        const MongoCollectionInfo _collection;
+        QString _index;
+    };
+
+    class DeleteCollectionIndexResponse: public Event
+    {
+        R_EVENT
+    public:
+        DeleteCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection,const QString &index) :
+        Event(sender),_collection(collection),_index(index) {}
+        MongoCollectionInfo collection() const { return _collection; }
+        QString index() const {return _index;}
+    private:
+        const MongoCollectionInfo _collection;
+        QString _index;
+    };
+
     /**
      * @brief Load Users
      */

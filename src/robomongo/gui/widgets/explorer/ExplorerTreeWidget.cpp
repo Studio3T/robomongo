@@ -905,7 +905,7 @@ namespace Robomongo
        if(ind){
            ExplorerCollectionTreeItem *parent = dynamic_cast<ExplorerCollectionTreeItem *>(ind->parent());
            if(parent){
-
+               parent->deleteIndex(ind);
            }
        }
     }

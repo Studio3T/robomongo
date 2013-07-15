@@ -7,7 +7,8 @@ namespace Robomongo
 {
     class ExplorerDatabaseTreeItem;
     class LoadCollectionIndexesResponse;
-
+    class DeleteCollectionIndexResponse;
+    
     class ExplorerCollectionTreeItem :public QObject, public QTreeWidgetItem
     {
         Q_OBJECT
@@ -15,8 +16,10 @@ namespace Robomongo
         ExplorerCollectionTreeItem(ExplorerDatabaseTreeItem *const parent,MongoCollection *collection);
         MongoCollection *collection() const { return _collection; }
         void expand();
+        void deleteIndex(const QTreeWidgetItem * const ind);
     public Q_SLOTS:
         void handle(LoadCollectionIndexesResponse *event);
+        void handle(DeleteCollectionIndexResponse *event);
     private:
         QString buildToolTip(MongoCollection *collection);
         MongoCollection *const _collection;

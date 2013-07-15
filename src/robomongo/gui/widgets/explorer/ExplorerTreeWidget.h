@@ -11,6 +11,7 @@ namespace Robomongo
     class ExplorerDatabaseCategoryTreeItem;
     class ExplorerUserTreeItem;
     class ExplorerFunctionTreeItem;
+    class ExplorerCollectionDirIndexesTreeItem;
     class MongoDatabase;
 
     class ExplorerTreeWidget : public QTreeWidget
@@ -25,6 +26,7 @@ namespace Robomongo
 
         ExplorerServerTreeItem *selectedServerItem();
         ExplorerCollectionTreeItem *selectedCollectionItem();
+        ExplorerCollectionDirIndexesTreeItem *selectedCollectionDirIndexItem();
         ExplorerUserTreeItem *selectedUserItem();
         ExplorerFunctionTreeItem *selectedFunctionItem();
         ExplorerDatabaseTreeItem *selectedDatabaseItem();
@@ -92,6 +94,8 @@ namespace Robomongo
         void ui_viewUsers();
         void ui_viewFunctions();
         void ui_deleteIndex();
+        void ui_viewIndex();
+        void ui_refreshIndex();
 
     private:
         QMenu *_serverContextMenu;
@@ -102,6 +106,7 @@ namespace Robomongo
         QMenu *_collectionCategoryContextMenu;
         QMenu *_usersCategoryContextMenu;
         QMenu *_functionsCategoryContextMenu;
+        QMenu *_indexDirContextMenu;
         QMenu *_indexContextMenu;
     };
 }

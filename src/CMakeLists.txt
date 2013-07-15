@@ -279,13 +279,13 @@ SET(ALL_LIBS ${ALL_LIBS} ${QT_LIBRARIES} ${PLATFORM_LIBRARIES} js pcrecpp qscint
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX)
 	IF(BOOST_ENABLED)
 		IF ("${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
-                                ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT
+                ADD_CUSTOM_TARGET(build_mongoclient
 				COMMAND scons --release --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
 				WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
 				COMMENT "Build mongoclient library")
 		ELSE()
-                                ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT
+                ADD_CUSTOM_TARGET(build_mongoclient
 				COMMAND scons -d --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
 				WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
@@ -293,13 +293,13 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX)
 		ENDIF()
 	ELSE()
 		IF ("${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
-                                ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT
+                ADD_CUSTOM_TARGET(build_mongoclient
 				COMMAND scons --release --${ARCH_TEXT} mongoclient
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
 				WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
 				COMMENT "Build mongoclient library")
 		ELSE()
-                                ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT
+                ADD_CUSTOM_TARGET(build_mongoclient
 				COMMAND scons --d --${ARCH_TEXT} mongoclient 
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
 				WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
@@ -309,26 +309,26 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX)
         SET(ALL_LIBS ${ALL_LIBS} ${MONGOCLIENT_RELEASE_LIBRARY})
 	
 	ADD_APP_EXECUTABLE(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")
-        ADD_DEPENDENCIES(${PROJECT_NAME} BUILD_MONGOCLIENT)
+    ADD_DEPENDENCIES(${PROJECT_NAME} build_mongoclient)
 ELSEIF(MSVC)
 	IF(BOOST_ENABLED)
-            add_custom_target(BUILD_MONGOCLIENT_RELEASE
+            add_custom_target(mongoclient_release
             COMMAND call scons --release --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient release library")
-			ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT_DEBUG
+			ADD_CUSTOM_TARGET(mongoclient_debug
             COMMAND call scons --d --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient debug library")
     ELSE()
-            add_custom_target(BUILD_MONGOCLIENT_RELEASE
+            add_custom_target(mongoclient_release
             COMMAND call scons --release --${ARCH_TEXT} mongoclient
 			COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient release library")
-			ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT_DEBUG
+			ADD_CUSTOM_TARGET(mongoclient_debug
             COMMAND call scons --d --${ARCH_TEXT} mongoclient
 			COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
@@ -336,11 +336,12 @@ ELSEIF(MSVC)
     ENDIF()
     SET(MONGO_LIBRARIES optimized ${MONGOCLIENT_RELEASE_LIBRARY} debug ${MONGOCLIENT_DEBUG_LIBRARY})
 	SET(ALL_LIBS ${ALL_LIBS} ${MONGO_LIBRARIES})
-    ADD_APP_EXECUTABLE_MSVC(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")
-	ADD_DEPENDENCIES(${PROJECT_NAME} BUILD_MONGOCLIENT_RELEASE)
+    
+	ADD_APP_EXECUTABLE_MSVC(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")
+	ADD_DEPENDENCIES(${PROJECT_NAME} mongoclient_release)
 	
 	SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:LIBCMT /DEBUG")
-	ADD_DEPENDENCIES(${PROJECT_NAME} BUILD_MONGOCLIENT_DEBUG)
+	ADD_DEPENDENCIES(${PROJECT_NAME} mongoclient_debug)
 ELSE()
 	MESSAGE(FATAL_ERROR "NOT SUPPORTED COMPILER!!!")
 ENDIF()

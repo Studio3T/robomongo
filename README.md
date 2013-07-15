@@ -1,5 +1,5 @@
-Robomongo
-=========
+About Robomongo
+===============
 
 Robomongo &mdash; is a shell-centric crossplatform MongoDB management tool. <br />
 Visit our site: [www.robomongo.org](http://www.robomongo.org)
@@ -7,26 +7,26 @@ Visit our site: [www.robomongo.org](http://www.robomongo.org)
 Download
 ========
 
-You can download compiled version (for Mac OS X and Windows) at this page:<br />
+You can download compiled version (for Mac OS X, Windows and Linux) at this page:<br />
 https://www.dropbox.com/sh/u0s0i8e4m0a8i9f/oxtqKHPUZ8
 
 Contribute
 ==========
+Contributions are always welcome! Just try to follow our coding style: [Robomongo Coding Style](https://github.com/paralect/robomongo/wiki/Robomongo-Coding-Style)
 
-[Robomongo Coding Style](https://github.com/paralect/robomongo/wiki/Robomongo-Coding-Style)
-
-Building
+Build
 ========
 
-Since July 8, 2013 we have the new build process based on CMake. 
-Build process is greatly simplified now and will be soon documented.
+Build documentation: [Build Robomongo](https://github.com/paralect/robomongo/wiki/Build-Robomongo)
+
+<!-- 
 
 Outdated build documentation:<br />
 [Building Robomongo and Dependencies (for Linux and Mac OS X)]
 (https://github.com/paralect/robomongo/wiki/Building-Robomongo-and-Dependencies-(for-Linux-and-Mac-OS-X\))
 
 
-<!-- 
+
 
 You are lucky enough, if prebuild libraries (that are in `libs` folder) are 
 already available and match your OS/Compiler. For most of you it's not &mdash; 

@@ -19,7 +19,6 @@ namespace Robomongo
 
     public:
         explicit ExplorerTreeWidget(QWidget *parent = 0);
-        ~ExplorerTreeWidget() {}
 
     protected:
         void contextMenuEvent(QContextMenuEvent *event);
@@ -36,12 +35,12 @@ namespace Robomongo
 
         void openDatabaseShell(MongoDatabase *database, const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
 
-    signals:
+    Q_SIGNALS:
         void disconnectActionTriggered();
         void refreshActionTriggered();
         void openShellActionTriggered();
 
-    protected slots:
+    protected Q_SLOTS:
         void ui_refreshDatabase();
         void ui_createCollection();
         void ui_addUser();
@@ -61,6 +60,7 @@ namespace Robomongo
         void ui_removeAllDocuments();
 
         void ui_addIndex();
+        void ui_addIndexGui();
         void ui_reIndex();
         void ui_dropIndex();
 
@@ -91,6 +91,7 @@ namespace Robomongo
         void ui_refreshFunctions();
         void ui_viewUsers();
         void ui_viewFunctions();
+        void ui_deleteIndex();
 
     private:
         QMenu *_serverContextMenu;
@@ -101,5 +102,6 @@ namespace Robomongo
         QMenu *_collectionCategoryContextMenu;
         QMenu *_usersCategoryContextMenu;
         QMenu *_functionsCategoryContextMenu;
+        QMenu *_indexContextMenu;
     };
 }

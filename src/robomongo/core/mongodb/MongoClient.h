@@ -1,8 +1,7 @@
 #pragma once
 
-#include <mongo/client/dbclient.h>
-#include <boost/scoped_ptr.hpp>
 #include <QStringList>
+#include "mongo/client/dbclientinterface.h"
 
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
@@ -15,7 +14,7 @@ namespace Robomongo
     class MongoClient
     {
     public:
-        MongoClient(mongo::DBClientBase *scopedConnection);
+        MongoClient(mongo::DBClientBase *const scopedConnection);
 
         QStringList getCollectionNames(const QString &dbname) const;
         QStringList getDatabaseNames()const;
@@ -25,6 +24,10 @@ namespace Robomongo
         void dropUser(const QString &dbName, const mongo::OID &id);
 
         QList<MongoFunction> getFunctions(const QString &dbName);
+        QList<QString> getIndexes(const MongoCollectionInfo &collection)const;
+        bool deleteIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexText)const;
+        void ensureIndex(const MongoCollectionInfo &collection,const QString &request)const;
+
         void createFunction(const QString &dbName, const MongoFunction &fun, const QString &existingFunctionName = QString());
         void dropFunction(const QString &dbName, const QString &name);
 
@@ -47,6 +50,6 @@ namespace Robomongo
         void done();
 
     private:
-       mongo::DBClientBase *_dbclient;
+        mongo::DBClientBase *const _dbclient;
     };
 }

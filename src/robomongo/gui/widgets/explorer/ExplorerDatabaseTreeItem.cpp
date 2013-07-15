@@ -10,7 +10,7 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
-
+#include "robomongo/core/domain/MongoServer.h"
 namespace Robomongo
 {
     ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) :
@@ -24,7 +24,7 @@ namespace Robomongo
         _bus->subscribe(this, MongoDatabase_CollectionsLoadingEvent::Type, _database);
         _bus->subscribe(this, MongoDatabase_FunctionsLoadingEvent::Type, _database);
         _bus->subscribe(this, MongoDatabase_UsersLoadingEvent::Type, _database);
-
+        
         setText(0, _database->name());
         setIcon(0, GuiRegistry::instance().databaseIcon());
         setExpanded(true);
@@ -68,6 +68,21 @@ namespace Robomongo
     void ExplorerDatabaseTreeItem::expandUsers()
     {
         _database->loadUsers();
+    }
+
+    void ExplorerDatabaseTreeItem::expandColection(ExplorerCollectionTreeItem *const item)
+    {
+         _bus->send(_database->server()->client(), new LoadCollectionIndexesRequest(item, item->collection()->info()));
+    }
+
+    void ExplorerDatabaseTreeItem::deleteIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& indexText)
+    {
+        _bus->send(_database->server()->client(), new DeleteCollectionIndexRequest(item, item->collection()->info(),indexText));
+    }
+
+    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item,const QString& text)
+    {
+        _bus->send(_database->server()->client(), new EnsureIndexRequest(item, item->collection()->info(),text));
     }
 
     void ExplorerDatabaseTreeItem::expandFunctions()
@@ -163,13 +178,13 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::addCollectionItem(MongoCollection *collection)
     {
-        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(collection);
+        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(this,collection);
         _collectionFolderItem->addChild(collectionItem);
     }
 
     void ExplorerDatabaseTreeItem::addSystemCollectionItem(MongoCollection *collection)
     {
-        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(collection);
+        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(this,collection);
         _collectionSystemFolderItem->addChild(collectionItem);
     }
 

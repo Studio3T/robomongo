@@ -163,7 +163,7 @@ namespace Robomongo
                     emit authStatus("", true);
                 }
             }
-        } catch (UserException &ex) {
+        } catch (const UserException &) {
             emit authStatus("", false);
         }
 

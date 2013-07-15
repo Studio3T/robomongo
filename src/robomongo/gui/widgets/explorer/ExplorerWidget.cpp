@@ -188,7 +188,7 @@ namespace Robomongo
         ExplorerCollectionTreeItem * colectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
         if(colectionItem)
         {
-	        colectionItem->expand();
+            colectionItem->expand();
         }
     }
 

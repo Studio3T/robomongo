@@ -10,6 +10,26 @@
 #include <QCheckBox>
 #include <QSpacerItem>
 #include <QTextEdit>
+#include <QMessageBox>
+#include <qjson/parser.h>
+
+namespace
+{
+    bool isValidJson(const QString &text)
+    {
+        bool result= false;
+        if(!text.isEmpty()){
+            QJson::Parser parser;
+            bool ok=false;
+            QVariant var = parser.parse(text.toAscii(), &ok);
+            if(ok){
+               QMap<QString,QVariant> m= var.toMap();
+               result = m.size()!=0;
+            }
+        }
+        return result;
+    }
+}
 
 namespace Robomongo
 {
@@ -24,10 +44,9 @@ namespace Robomongo
         _mainTab = new QTabWidget(this);
         _jsonText = new QTextEdit(this);
         _mainTab->addTab(_jsonText,tr("Json"));
-        _mainTab->addTab(new QWidget(this),tr("Visual"));
+        //_mainTab->addTab(new QWidget(this),tr("Visual"));
         _mainTab->setTabsClosable(false);
        
-        
         QHBoxLayout *checkBoxLayout = new QHBoxLayout;
         QSpacerItem *sp = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
         checkBoxLayout->addItem(sp);
@@ -48,8 +67,26 @@ namespace Robomongo
         vlayout->addLayout(checkBoxLayout);
         vlayout->addWidget(buttonBox);
 
-
         setLayout(vlayout);
         setFixedSize(WidthWidget,HeightWidget);
+    }
+    void EditIndexDialog::accept()
+    {
+        if(_nameLineEdit->text().isEmpty()){
+            QMessageBox::warning(this, "Empty name", "Please input name for index \n");
+            _nameLineEdit->setFocus();
+        }
+        if(isValidJson(_jsonText->toPlainText())){
+            return BaseClass::accept();
+        }
+        else
+        {
+            QMessageBox::warning(this, "Invalid json", "Please check json text.\n");
+            _jsonText->setFocus();
+        }
+    }
+    QString EditIndexDialog::getInputText()const
+    {
+        return QString(" %1 ,{ name: %2 }").arg(_jsonText->toPlainText()).arg(_nameLineEdit->text());
     }
 }

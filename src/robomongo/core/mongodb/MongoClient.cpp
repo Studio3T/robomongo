@@ -92,7 +92,7 @@ namespace Robomongo
             try {
                 MongoFunction user(bsonObj);
                 functions.append(user);
-            } catch (std::exception &ex) {
+            } catch (const std::exception &) {
             // skip invalid docs
             }
         }
@@ -113,25 +113,28 @@ namespace Robomongo
         return result;
     }
 
+    void MongoClient::ensureIndex(const MongoCollectionInfo &collection,const QString &request)const
+    {
+        mongo::BSONObj obj = mongo::fromjson(request.toAscii());        
+        _dbclient->ensureIndex(collection.ns().toString().toStdString(),obj);
+    }
+
     bool MongoClient::deleteIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexText)const
     {
-        _dbclient->dropIndex(collection.ns().toString().toStdString(),generateIndex(indexText.toStdString()));
-
-        /*std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
-        std::string wantDeleteText = indexText.toStdString();
+        
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
+        std::string deleteIndex = indexText.toStdString();
         while (cursor->more()) {
             std::string indexString;
-            mongo::BSONObj index = cursor->next();
-            if(getIndex(index,indexString))
-            {
-                if(indexString==wantDeleteText)
-                {
-                    _dbclient->dropIndex(collection.ns().toString().toStdString(),index);
-                    break;
-                }
+            mongo::BSONObj obj = cursor->next();
+            if(getIndex(obj,indexString)&&deleteIndex==indexString)
+            {             
+                std::string str = obj.toString();
+                mongo::BSONElement name = obj.getField("name");
+                _dbclient->dropIndex(collection.ns().toString().toStdString(),name.valuestr());
+                break;
             }
-        }*/
-
+        }
         return true;
     }
 

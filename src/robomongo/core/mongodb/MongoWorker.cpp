@@ -77,7 +77,7 @@ namespace Robomongo
             connect(_keepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
             _keepAliveTimer->start(60 * 1000); // every minute
         }
-        catch (std::exception &ex) {
+        catch (const std::exception &ex) {
             qDebug() << "InitRequest handler throw exception: " << ex.what();
             reply(event->sender(), new InitResponse(this, EventError("Unable to initialize MongoWorker")));
         }
@@ -125,7 +125,7 @@ namespace Robomongo
             //conn->done();
             reply(event->sender(), new EstablishConnectionResponse(this, _address));
             qDebug() << "EstablishConnectionResponse sent back";
-        } catch(std::exception &ex) {
+        } catch(const std::exception &ex) {
             qDebug() << "EstablishConnectionRequest throw exception: " << ex.what();
             reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
         }
@@ -151,7 +151,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError("Unable to load database names.")));
         }
     }
@@ -169,7 +169,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName(), infos));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new LoadCollectionNamesResponse(this, EventError("Unable to load list of collections.")));
         }
     }
@@ -182,7 +182,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new LoadUsersResponse(this, event->databaseName(), users));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new LoadUsersResponse(this, EventError("Unable to load list of users.")));
         }
     }
@@ -195,10 +195,24 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, event->collection(), ind));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new LoadCollectionIndexesResponse(this, event->collection(), QList<QString>()));
         }
 	}
+
+    void MongoWorker::handle(EnsureIndexRequest *event)
+    {
+        try {
+            boost::scoped_ptr<MongoClient> client(getClient());
+            client->ensureIndex(event->collection(),event->request());
+            const QList<QString> &ind = client->getIndexes(event->collection());
+            client->done();
+
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, event->collection(), ind));
+        } catch(const DBException &) {
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, event->collection(), QList<QString>()));
+        }
+    }
 
     void MongoWorker::handle(DeleteCollectionIndexRequest *event)
     {
@@ -208,7 +222,7 @@ namespace Robomongo
             client->deleteIndexFromCollection(event->collection(),event->index());
             client->done();
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), event->index()));
-        } catch(const DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), QString() ));
         }            
     }
@@ -221,7 +235,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new LoadFunctionsResponse(this, event->databaseName(), funs));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new LoadFunctionsResponse(this, EventError("Unable to load list of functions.")));
         }
     }
@@ -239,7 +253,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new InsertDocumentResponse(this));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new InsertDocumentResponse(this, EventError("Unable to insert document.")));
         }
     }
@@ -253,7 +267,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new RemoveDocumentResponse(this));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new RemoveDocumentResponse(this, EventError("Unable to remove documents.")));
         }
     }
@@ -266,7 +280,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new ExecuteQueryResponse(this, event->resultIndex(), event->queryInfo(), docs));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new ExecuteQueryResponse(this, EventError("Unable to complete query.")));
         }
     }
@@ -279,7 +293,7 @@ namespace Robomongo
         try {
             MongoShellExecResult result = _scriptEngine->exec(event->script, event->databaseName);
             reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.isEmpty()));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new ExecuteScriptResponse(this, EventError("Unable to complete query.")));
         }
     }
@@ -289,7 +303,7 @@ namespace Robomongo
         try {
             QStringList list = _scriptEngine->complete(event->prefix);
             reply(event->sender(), new AutocompleteResponse(this, list, event->prefix));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new ExecuteScriptResponse(this, EventError("Unable to autocomplete query.")));
         }
     }
@@ -302,7 +316,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new CreateDatabaseResponse(this));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new CreateDatabaseResponse(this, EventError("Unable to create database.")));
         }
     }
@@ -315,7 +329,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new DropDatabaseResponse(this));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new DropDatabaseResponse(this, EventError("Unable to drop database.")));
         }
     }
@@ -328,7 +342,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new CreateCollectionResponse(this));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new CreateCollectionResponse(this, EventError("Unable to create collection.")));
         }
     }
@@ -341,7 +355,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new DropCollectionResponse(this));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new DropCollectionResponse(this, EventError("Unable to drop collection.")));
         }
     }
@@ -354,7 +368,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new RenameCollectionResponse(this));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new RenameCollectionResponse(this, EventError("Unable to rename collection.")));
         }
     }
@@ -367,7 +381,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new DuplicateCollectionResponse(this));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new DuplicateCollectionResponse(this, EventError("Unable to duplicate collection.")));
         }
     }
@@ -380,7 +394,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new CreateUserResponse(this));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new CreateUserResponse(this, EventError("Unable to create/ovewrite user.")));
         }
     }
@@ -393,7 +407,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new DropUserResponse(this));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new DropUserResponse(this, EventError("Unable to drop user.")));
         }
     }
@@ -406,7 +420,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new CreateFunctionResponse(this));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new CreateFunctionResponse(this, EventError("Unable to create/ovewrite function.")));
         }
     }
@@ -419,7 +433,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new DropFunctionResponse(this));
-        } catch(DBException &ex) {
+        } catch(const DBException &) {
             reply(event->sender(), new DropFunctionResponse(this, EventError("Unable to drop function.")));
         }
     }
@@ -467,7 +481,7 @@ namespace Robomongo
                 _scriptEngine->ping();
             }
 
-        } catch(std::exception &ex) {
+        } catch(std::exception &) {
             // nothing here
         }
     }

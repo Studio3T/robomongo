@@ -187,6 +187,19 @@ namespace Robomongo
         const MongoCollectionInfo _collection;
     };
 
+    class EnsureIndexRequest : public Event
+    {
+        R_EVENT
+    public:
+        EnsureIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const QString &request) :
+        Event(sender),_collection(collection),_request(request) {}
+        MongoCollectionInfo collection() const { return _collection; }
+        QString request() const {return _request;}
+    private:
+        const MongoCollectionInfo _collection;
+        QString _request;
+    };
+
     class DeleteCollectionIndexRequest : public Event
     {
         R_EVENT

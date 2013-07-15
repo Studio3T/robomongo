@@ -15,11 +15,5 @@ namespace Robomongo
         }
         return result;
     }
-    mongo::BSONObj generateIndex(const std::string &indName)
-    {
-        mongo::BSONObjBuilder builder;
-        builder.append(indName, "1");
-        return builder.obj();
-    }
 }
 

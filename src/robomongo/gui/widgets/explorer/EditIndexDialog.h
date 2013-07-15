@@ -19,6 +19,9 @@ namespace Robomongo
             WidthWidget = 480
         };
         explicit EditIndexDialog(QWidget *parent,ExplorerCollectionTreeItem * const item);
+        QString getInputText()const;
+    public Q_SLOTS:
+        virtual void accept();
     private:
        QLineEdit *_nameLineEdit;
        QTabWidget *_mainTab;

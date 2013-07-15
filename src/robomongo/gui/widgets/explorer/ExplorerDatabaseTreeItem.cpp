@@ -69,14 +69,22 @@ namespace Robomongo
     {
         _database->loadUsers();
     }
+
     void ExplorerDatabaseTreeItem::expandColection(ExplorerCollectionTreeItem *const item)
     {
          _bus->send(_database->server()->client(), new LoadCollectionIndexesRequest(item, item->collection()->info()));
     }
+
     void ExplorerDatabaseTreeItem::deleteIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& indexText)
     {
         _bus->send(_database->server()->client(), new DeleteCollectionIndexRequest(item, item->collection()->info(),indexText));
     }
+
+    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item,const QString& text)
+    {
+        _bus->send(_database->server()->client(), new EnsureIndexRequest(item, item->collection()->info(),text));
+    }
+
     void ExplorerDatabaseTreeItem::expandFunctions()
     {
         _database->loadFunctions();

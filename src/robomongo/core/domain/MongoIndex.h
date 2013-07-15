@@ -5,5 +5,4 @@
 namespace Robomongo
 {
     bool getIndex(const mongo::BSONObj &ind,std::string &out);
-    mongo::BSONObj generateIndex(const std::string &indName);
 }

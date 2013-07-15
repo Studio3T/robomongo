@@ -26,6 +26,7 @@ namespace Robomongo
         QList<MongoFunction> getFunctions(const QString &dbName);
         QList<QString> getIndexes(const MongoCollectionInfo &collection)const;
         bool deleteIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexText)const;
+        void ensureIndex(const MongoCollectionInfo &collection,const QString &request)const;
 
         void createFunction(const QString &dbName, const MongoFunction &fun, const QString &existingFunctionName = QString());
         void dropFunction(const QString &dbName, const QString &name);

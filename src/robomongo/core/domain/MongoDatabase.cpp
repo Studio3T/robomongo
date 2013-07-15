@@ -16,17 +16,13 @@ namespace Robomongo
     R_REGISTER_EVENT(MongoDatabase_FunctionsLoadingEvent)
     R_REGISTER_EVENT(MongoDatabase_CollectionsLoadingEvent)
 
-    MongoDatabase::MongoDatabase(MongoServer *server, const QString &name) : QObject(),
-        _system(false),
-        _server(server),
-        _bus(AppRegistry::instance().bus())
+    MongoDatabase::MongoDatabase(MongoServer *server, const QString &name)
+        :QObject(),_system(false),_server(server),_bus(AppRegistry::instance().bus())
     {
         _name = name;
-        _client = _server->client();
-
         // Check that this is a system database
         _system = name == "admin" ||
-                  name == "local";
+        name == "local";
     }
 
     MongoDatabase::~MongoDatabase()
@@ -37,64 +33,63 @@ namespace Robomongo
     void MongoDatabase::loadCollections()
     {
         _bus->publish(new MongoDatabase_CollectionsLoadingEvent(this));
-        _bus->send(_client, new LoadCollectionNamesRequest(this, _name));
+        _bus->send(_server->client(), new LoadCollectionNamesRequest(this, _name));
     }
 
     void MongoDatabase::loadUsers()
     {
         _bus->publish(new MongoDatabase_UsersLoadingEvent(this));
-        _bus->send(_client, new LoadUsersRequest(this, _name));
+        _bus->send(_server->client(), new LoadUsersRequest(this, _name));
     }
 
     void MongoDatabase::loadFunctions()
     {
         _bus->publish(new MongoDatabase_FunctionsLoadingEvent(this));
-        _bus->send(_client, new LoadFunctionsRequest(this, _name));
+        _bus->send(_server->client(), new LoadFunctionsRequest(this, _name));
     }
-
     void MongoDatabase::createCollection(const QString &collection)
     {
-        _bus->send(_client, new CreateCollectionRequest(this, _name, collection));
+        _bus->send(_server->client(), new CreateCollectionRequest(this, _name, collection));
     }
 
     void MongoDatabase::dropCollection(const QString &collection)
     {
-        _bus->send(_client, new DropCollectionRequest(this, _name, collection));
+        _bus->send(_server->client(), new DropCollectionRequest(this, _name, collection));
     }
 
     void MongoDatabase::renameCollection(const QString &collection, const QString &newCollection)
     {
-        _bus->send(_client, new RenameCollectionRequest(this, _name, collection, newCollection));
+        _bus->send(_server->client(), new RenameCollectionRequest(this, _name, collection, newCollection));
     }
 
     void MongoDatabase::duplicateCollection(const QString &collection, const QString &newCollection)
     {
-        _bus->send(_client, new DuplicateCollectionRequest(this, _name, collection, newCollection));
+        _bus->send(_server->client(), new DuplicateCollectionRequest(this, _name, collection, newCollection));
     }
 
     void MongoDatabase::createUser(const MongoUser &user, bool overwrite)
     {
-        _bus->send(_client, new CreateUserRequest(this, _name, user, overwrite));
+        _bus->send(_server->client(), new CreateUserRequest(this, _name, user, overwrite));
     }
 
     void MongoDatabase::dropUser(const mongo::OID &id)
     {
-        _bus->send(_client, new DropUserRequest(this, _name, id));
+        _bus->send(_server->client(), new DropUserRequest(this, _name, id));
     }
 
     void MongoDatabase::createFunction(const MongoFunction &fun)
     {
-        _bus->send(_client, new CreateFunctionRequest(this, _name, fun));
+        _bus->send(_server->client(), new CreateFunctionRequest(this, _name, fun));
     }
 
     void MongoDatabase::updateFunction(const QString &name, const MongoFunction &fun)
     {
-        _bus->send(_client, new CreateFunctionRequest(this, _name, fun, name));
+        _bus->send(_server->client(), new CreateFunctionRequest(this, _name, fun, name));
     }
 
     void MongoDatabase::dropFunction(const QString &name)
     {
-        _bus->send(_client, new DropFunctionRequest(this, _name, name));
+        _bus->send(_server->client(), new DropFunctionRequest(this, _name, name));
     }
 
     void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
@@ -103,8 +98,9 @@ namespace Robomongo
             return;
 
         clearCollections();
-
-        foreach(MongoCollectionInfo info, loaded->collectionInfos())    {
+        const QList<MongoCollectionInfo> &colectionsInfos = loaded->collectionInfos();
+        for(QList<MongoCollectionInfo>::const_iterator it = colectionsInfos.begin() ;it!=colectionsInfos.end();++it)    {
+            const MongoCollectionInfo &info = *it;
             MongoCollection *collection = new MongoCollection(this, info);
             addCollection(collection);
         }
@@ -116,7 +112,7 @@ namespace Robomongo
     {
         if (event->isError())
             return;
-
+        
         _bus->publish(new MongoDatabase_UsersLoadedEvent(this, this, event->users()));
     }
 
@@ -124,7 +120,7 @@ namespace Robomongo
     {
         if (event->isError())
             return;
-
+            
         _bus->publish(new MongoDatabase_FunctionsLoadedEvent(this, this, event->functions()));
     }
 

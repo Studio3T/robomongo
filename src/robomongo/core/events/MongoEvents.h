@@ -3,6 +3,7 @@
 #include <QString>
 #include <QStringList>
 #include <QEvent>
+#include "mongo/client/dbclientinterface.h"
 
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
@@ -163,6 +164,67 @@ namespace Robomongo
         QList<MongoCollectionInfo> _collectionInfos;
     };
 
+    class LoadCollectionIndexesRequest : public Event
+    {
+        R_EVENT
+    public:
+        LoadCollectionIndexesRequest(QObject *sender, const MongoCollectionInfo &collection) :
+        Event(sender),_collection(collection) {}
+        MongoCollectionInfo collection() const { return _collection; }
+    private:
+        const MongoCollectionInfo _collection;
+    };
+
+    class LoadCollectionIndexesResponse : public Event
+    {
+        R_EVENT
+    public:
+        LoadCollectionIndexesResponse(QObject *sender,const MongoCollectionInfo &collection, const QList<QString> &indexes) :Event(sender),_collection(collection), _indexes(indexes) {}
+        MongoCollectionInfo collection() const { return _collection; };
+        QList<QString> indexes() const { return _indexes; }
+    private:
+        QList<QString> _indexes;
+        const MongoCollectionInfo _collection;
+    };
+
+    class EnsureIndexRequest : public Event
+    {
+        R_EVENT
+    public:
+        EnsureIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const QString &request) :
+        Event(sender),_collection(collection),_request(request) {}
+        MongoCollectionInfo collection() const { return _collection; }
+        QString request() const {return _request;}
+    private:
+        const MongoCollectionInfo _collection;
+        QString _request;
+    };
+
+    class DeleteCollectionIndexRequest : public Event
+    {
+        R_EVENT
+    public:
+        DeleteCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const QString &index) :
+        Event(sender),_collection(collection),_index(index) {}
+        MongoCollectionInfo collection() const { return _collection; }
+        QString index() const {return _index;}
+    private:
+        const MongoCollectionInfo _collection;
+        QString _index;
+    };
+
+    class DeleteCollectionIndexResponse: public Event
+    {
+        R_EVENT
+    public:
+        DeleteCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection,const QString &index) :
+        Event(sender),_collection(collection),_index(index) {}
+        MongoCollectionInfo collection() const { return _collection; }
+        QString index() const {return _index;}
+    private:
+        const MongoCollectionInfo _collection;
+        QString _index;
+    };
 
     /**
      * @brief Load Users

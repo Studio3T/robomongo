@@ -24,6 +24,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/MainWindow.h
     robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h
     robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h
+	robomongo/gui/widgets/explorer/EditIndexDialog.h
     robomongo/gui/widgets/workarea/WorkAreaWidget.h
     robomongo/gui/widgets/workarea/QueryWidget.h
     robomongo/gui/widgets/workarea/WorkAreaTabWidget.h
@@ -47,6 +48,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/ProgressBarPopup.h
     robomongo/gui/dialogs/DocumentTextEditor.h
     robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h
+	robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h
     robomongo/gui/dialogs/CreateDatabaseDialog.h
     robomongo/gui/dialogs/CreateUserDialog.h
     robomongo/gui/dialogs/FunctionTextEditor.h
@@ -54,7 +56,6 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/editors/FindFrame.h)
 SET(HEADERS_GUI
     robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h
-    robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h
     robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h
 	robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h
     robomongo/gui/GuiRegistry.h
@@ -73,6 +74,7 @@ SET(SOURCES_GUI
     robomongo/gui/GuiRegistry.cpp
     robomongo/gui/widgets/explorer/ExplorerServerTreeItem.cpp
     robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp
+	robomongo/gui/widgets/explorer/EditIndexDialog.cpp
     robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp
     robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.cpp
     robomongo/gui/widgets/workarea/WorkAreaWidget.cpp
@@ -141,8 +143,6 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/domain/MongoDatabase.h
     robomongo/core/domain/MongoCollection.h
     robomongo/core/domain/MongoElement.h
-    robomongo/core/domain/MongoDocumentIterator.h
-    robomongo/core/domain/MongoDocument.h
     robomongo/core/EventBus.h
     robomongo/core/domain/App.h
     robomongo/core/domain/MongoShell.h
@@ -152,6 +152,8 @@ SET(HEADERS_CORE_TO_MOC
     )
 SET(HEADERS_CORE
 	robomongo/core/KeyboardManager.h
+	robomongo/core/domain/MongoDocumentIterator.h
+	robomongo/core/domain/MongoDocument.h
     robomongo/core/EventBusSubscriber.h
     robomongo/core/EventWrapper.h
     robomongo/core/EventError.h
@@ -174,6 +176,7 @@ SET(HEADERS_CORE
     robomongo/core/engine/JsonBuilder.h
     robomongo/core/domain/MongoUser.h
     robomongo/core/domain/MongoFunction.h
+	robomongo/core/domain/MongoIndex.h
     robomongo/core/domain/Enums.h
     robomongo/core/HexUtils.h
     )
@@ -215,6 +218,7 @@ set(SOURCES_CORE
     robomongo/core/engine/JsonBuilder.cpp
     robomongo/core/domain/MongoUser.cpp
     robomongo/core/domain/MongoFunction.cpp
+	robomongo/core/domain/MongoIndex.cpp
     robomongo/core/HexUtils.cpp)
 
 IF(LINUX)
@@ -273,37 +277,39 @@ SET(ALL_SOURCES ${HEADERS} ${HEADERS_TOMOC} ${SOURCES} ${MOC_FILES} ${PLATFORM_H
 SET(ALL_LIBS ${ALL_LIBS} ${QT_LIBRARIES} ${PLATFORM_LIBRARIES} js pcrecpp qscintilla2 qjson)
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX)
-IF(BOOST_ENABLED)
-	ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT_RELEASE
-    COMMAND scons --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} mongoclient
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
-	WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
-	COMMENT "Build mongoclient release library")
-	ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT_DEBUG
-    COMMAND scons --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} mongoclient
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_DEBUG_LIBRARY}
-	WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
-	COMMENT "Build mongoclient debug library")
-ELSE()
-        ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT_RELEASE
-        COMMAND scons --release mongoclient
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
-        COMMENT "Build mongoclient release library")
-        ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT_DEBUG
-        COMMAND scons --d mongoclient
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_DEBUG_LIBRARY}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
-        COMMENT "Build mongoclient debug library")
-ENDIF()
-        SET(ALL_DEBUG_LIBS ${ALL_LIBS} ${MONGOCLIENT_DEBUG_LIBRARY})
-        SET(ALL_RELEASE_LIBS ${ALL_LIBS} ${MONGOCLIENT_RELEASE_LIBRARY})
-	ADD_APP_EXECUTABLE(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_RELEASE_LIBS}" "Release" )
-	ADD_DEPENDENCIES(${PROJECT_NAME} BUILD_MONGOCLIENT_RELEASE)
-	IF(NOT FORCE_BUILD)
-		ADD_APP_EXECUTABLE(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_DEBUG_LIBS}" "Debug" )
-		ADD_DEPENDENCIES(${PROJECT_NAME}_d BUILD_MONGOCLIENT_DEBUG)
+	IF(BOOST_ENABLED)
+		IF ("${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
+                                ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT
+				COMMAND scons --release --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
+				WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
+				COMMENT "Build mongoclient library")
+		ELSE()
+                                ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT
+				COMMAND scons -d --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
+				WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
+				COMMENT "Build mongoclient library")
+		ENDIF()
+	ELSE()
+		IF ("${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
+                                ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT
+				COMMAND scons --release --${ARCH_TEXT} mongoclient
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
+				WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
+				COMMENT "Build mongoclient library")
+		ELSE()
+                                ADD_CUSTOM_TARGET(BUILD_MONGOCLIENT
+				COMMAND scons --d --${ARCH_TEXT} mongoclient 
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
+				WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
+				COMMENT "Build mongoclient library")
+		ENDIF()
 	ENDIF()
+        SET(ALL_LIBS ${ALL_LIBS} ${MONGOCLIENT_RELEASE_LIBRARY})
+	
+	ADD_APP_EXECUTABLE(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")
+        ADD_DEPENDENCIES(${PROJECT_NAME} BUILD_MONGOCLIENT)
 ELSEIF(MSVC)
 	IF(BOOST_ENABLED)
             add_custom_target(BUILD_MONGOCLIENT_RELEASE
@@ -332,10 +338,9 @@ ELSEIF(MSVC)
 	SET(ALL_LIBS ${ALL_LIBS} ${MONGO_LIBRARIES})
     ADD_APP_EXECUTABLE_MSVC(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")
 	ADD_DEPENDENCIES(${PROJECT_NAME} BUILD_MONGOCLIENT_RELEASE)
-	IF(NOT FORCE_BUILD)
-		SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:LIBCMT /DEBUG")
-		ADD_DEPENDENCIES(${PROJECT_NAME} BUILD_MONGOCLIENT_DEBUG)
-	ENDIF()
+	
+	SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:LIBCMT /DEBUG")
+	ADD_DEPENDENCIES(${PROJECT_NAME} BUILD_MONGOCLIENT_DEBUG)
 ELSE()
 	MESSAGE(FATAL_ERROR "NOT SUPPORTED COMPILER!!!")
 ENDIF()

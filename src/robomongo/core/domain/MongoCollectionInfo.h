@@ -1,5 +1,4 @@
 #pragma once
-#include <QString>
 #include <mongo/bson/bsonobj.h>
 #include "robomongo/core/domain/MongoNamespace.h"
 

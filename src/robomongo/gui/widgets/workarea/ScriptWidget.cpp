@@ -312,16 +312,12 @@ namespace Robomongo
     int ScriptWidget::lineHeight()
     {
         QFontMetrics m(_queryText->font());
-        int lineHeight = m.lineSpacing();
+        int lineHeight = m.lineSpacing() + 1;
 
-    #if defined(Q_OS_MAC)
-        // this fix required to calculate correct line height in Mac.
-        // not the best way, but for now it at least tested on Mac OS X 10.8.6.
-        lineHeight--;
-    #elif defined(Q_OS_UNIX)
+    #if defined(Q_OS_UNIX)
         // this fix required to calculate correct height in Linux.
         // not the best way, but for now it at least tested on Ubuntu.
-        lineHeight += 2;
+        lineHeight++;
     #endif
 
         return lineHeight;

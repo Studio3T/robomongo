@@ -1,9 +1,6 @@
 #include "robomongo/core/mongodb/MongoClient.h"
-#include "robomongo/core/domain/MongoNamespace.h"
-#include <mongo/client/dbclient.h>
+#include "robomongo/core/domain/MongoIndex.h"
 
-
-using namespace std;
 namespace Robomongo
 {
     MongoClient::MongoClient(mongo::DBClientBase *dbclient) :
@@ -11,10 +8,11 @@ namespace Robomongo
 
     QStringList MongoClient::getCollectionNames(const QString &dbname) const
     {
-        list<string> dbs = _dbclient->getCollectionNames(dbname.toStdString());
+        typedef std::list<std::string> cont_string_t;
+        cont_string_t dbs = _dbclient->getCollectionNames(dbname.toStdString());
 
         QStringList stringList;
-        for (list<string>::iterator i = dbs.begin(); i != dbs.end(); i++) {
+        for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); i++) {
             stringList.append(QString::fromStdString(*i));
         }
 
@@ -24,9 +22,10 @@ namespace Robomongo
 
     QStringList MongoClient::getDatabaseNames() const
     {
-        list<string> dbs = _dbclient->getDatabaseNames();
+        typedef std::list<std::string> cont_string_t;
+        cont_string_t dbs = _dbclient->getDatabaseNames();
         QStringList dbNames;
-        for (list<string>::iterator i = dbs.begin(); i != dbs.end(); ++i)
+        for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); ++i)
         {
             dbNames.append(QString::fromStdString(*i));
         }
@@ -39,7 +38,7 @@ namespace Robomongo
         MongoNamespace ns(dbName, "system.users");
         QList<MongoUser> users;
 
-        auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString().toStdString(), mongo::Query()));
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString().toStdString(), mongo::Query()));
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -85,23 +84,61 @@ namespace Robomongo
         MongoNamespace ns(dbName, "system.js");
         QList<MongoFunction> functions;
 
-        auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString().toStdString(), mongo::Query()));
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString().toStdString(), mongo::Query()));
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
+
             try {
                 MongoFunction user(bsonObj);
                 functions.append(user);
-            } catch (std::exception &ex) {
-                // skip invalid docs
+            } catch (const std::exception &) {
+            // skip invalid docs
             }
         }
-
         return functions;
     }
 
-    void MongoClient::createFunction(const QString &dbName, const MongoFunction &fun,
-                                     const QString &existingFunctionName /* = QString() */)
+    QList<QString> MongoClient::getIndexes(const MongoCollectionInfo &collection)const
+    {
+        QList<QString> result;
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
+        while (cursor->more()) {
+            std::string indexString;
+            if(getIndex(cursor->next(),indexString))
+            {
+                result.append(QString::fromStdString(indexString));
+            }
+        }
+        return result;
+    }
+
+    void MongoClient::ensureIndex(const MongoCollectionInfo &collection,const QString &request)const
+    {
+        mongo::BSONObj obj = mongo::fromjson(request.toAscii());        
+        _dbclient->ensureIndex(collection.ns().toString().toStdString(),obj);
+    }
+
+    bool MongoClient::deleteIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexText)const
+    {
+        
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
+        std::string deleteIndex = indexText.toStdString();
+        while (cursor->more()) {
+            std::string indexString;
+            mongo::BSONObj obj = cursor->next();
+            if(getIndex(obj,indexString)&&deleteIndex==indexString)
+            {             
+                std::string str = obj.toString();
+                mongo::BSONElement name = obj.getField("name");
+                _dbclient->dropIndex(collection.ns().toString().toStdString(),name.valuestr());
+                break;
+            }
+        }
+        return true;
+    }
+
+    void MongoClient::createFunction(const QString &dbName, const MongoFunction &fun, const QString &existingFunctionName /* = QString() */)
     {
         MongoNamespace ns(dbName, "system.js");
         mongo::BSONObj obj = fun.toBson();
@@ -110,18 +147,18 @@ namespace Robomongo
             _dbclient->insert(ns.toString().toStdString(), obj);
         } else { // this is update
 
-            QString name = fun.name();
+        QString name = fun.name();
 
-            if (existingFunctionName == name) {
-                mongo::BSONObjBuilder builder;
-                builder.append("_id", name.toStdString());
-                mongo::BSONObj bsonQuery = builder.obj();
-                mongo::Query query(bsonQuery);
+        if (existingFunctionName == name) {
+            mongo::BSONObjBuilder builder;
+            builder.append("_id", name.toStdString());
+            mongo::BSONObj bsonQuery = builder.obj();
+            mongo::Query query(bsonQuery);
 
-                _dbclient->update(ns.toString().toStdString(), query, obj, true, false);
-            } else {
-                _dbclient->insert(ns.toString().toStdString(), obj);
-                std::string res = _dbclient->getLastError();
+            _dbclient->update(ns.toString().toStdString(), query, obj, true, false);
+        } else {
+            _dbclient->insert(ns.toString().toStdString(), obj);
+            std::string res = _dbclient->getLastError();
 
                 // if no errors
                 if (res.empty()) {
@@ -150,10 +187,10 @@ namespace Robomongo
     void MongoClient::createDatabase(const QString &dbName)
     {
         /*
-         *  Here we are going to insert temp document to "<dbName>.temp" collection.
-         *  This will create <dbName> database for us.
-         *  Finally we are dropping just created temporary collection.
-         */
+        *  Here we are going to insert temp document to "<dbName>.temp" collection.
+        *  This will create <dbName> database for us.
+        *  Finally we are dropping just created temporary collection.
+        */
 
         MongoNamespace ns(dbName, "temp");
 
@@ -203,7 +240,7 @@ namespace Robomongo
         MongoNamespace from(dbName, collectionName);
         MongoNamespace to(dbName, newCollectionName);
 
-        auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(from.toString().toStdString(), mongo::Query()));
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(from.toString().toStdString(), mongo::Query()));
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
             _dbclient->insert(to.toString().toStdString(), bsonObj);
@@ -249,7 +286,7 @@ namespace Robomongo
         int limit = (info.limit == 0 || info.limit > 51) ? 50 : info.limit;
 
         QList<MongoDocumentPtr> docs;
-        auto_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
+        std::auto_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
             ns.toString().toStdString(), info.query, limit, info.skip,
             info.fields.nFields() ? &info.fields : 0, info.options, info.batchSize);
 
@@ -280,8 +317,8 @@ namespace Robomongo
     QList<MongoCollectionInfo> MongoClient::runCollStatsCommand(const QStringList &namespaces)
     {
         QList<MongoCollectionInfo> infos;
-        foreach (QString ns, namespaces) {
-            MongoCollectionInfo info = runCollStatsCommand(ns);
+        for(QStringList::const_iterator it=namespaces.begin();it!=namespaces.end();++it){
+            MongoCollectionInfo info = runCollStatsCommand(*it);
             infos.append(info);
         }
         return infos;

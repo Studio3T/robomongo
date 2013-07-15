@@ -38,6 +38,7 @@ namespace Robomongo
         const QIcon &openIcon()const;
         const QIcon &databaseIcon()const;
         const QIcon &collectionIcon()const;
+        const QIcon &indexIcon()const;
         const QIcon &userIcon()const;
         const QIcon &functionIcon()const;
         const QIcon &maximizeIcon()const;
@@ -68,12 +69,12 @@ namespace Robomongo
         const QIcon &bsonBinaryIcon()const;
         const QIcon &bsonNullIcon()const;
         const QIcon &bsonBooleanIcon()const;
-		const QIcon &noMarkIcon()const;
-		const QIcon &yesMarkIcon()const;
-		const QIcon &timeIcon()const;
-		const QIcon &keyIcon()const;
+        const QIcon &noMarkIcon()const;
+        const QIcon &yesMarkIcon()const;
+        const QIcon &timeIcon()const;
+        const QIcon &keyIcon()const;
 
-		const QBrush &typeBrush() const;
+        const QBrush &typeBrush() const;
 
     private:
         /**

@@ -184,6 +184,12 @@ namespace Robomongo
             serverItem->expand();
             return;
         }
+
+        ExplorerCollectionTreeItem * colectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
+        if(colectionItem)
+        {
+            colectionItem->expand();
+        }
     }
 
     void ExplorerWidget::ui_itemDoubleClicked(QTreeWidgetItem *item, int column)

@@ -13,6 +13,7 @@
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/widgets/explorer/EditIndexDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
@@ -135,6 +136,9 @@ namespace Robomongo
         QAction *addIndex = new QAction("Add Index", this);
         connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex()));
 
+        QAction *addIndexGui = new QAction("Add Index GUI", this);
+        connect(addIndexGui, SIGNAL(triggered()), SLOT(ui_addIndexGui()));
+
         QAction *dropIndex = new QAction("Drop Index", this);
         connect(dropIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
 
@@ -184,6 +188,7 @@ namespace Robomongo
         _collectionContextMenu->addAction(dropCollection);
         _collectionContextMenu->addSeparator();
         _collectionContextMenu->addAction(addIndex);
+        _collectionContextMenu->addAction(addIndexGui);
         _collectionContextMenu->addAction(dropIndex);
         _collectionContextMenu->addAction(reIndex);
         _collectionContextMenu->addSeparator();
@@ -261,6 +266,12 @@ namespace Robomongo
         _functionsCategoryContextMenu->addAction(addFunction);
         _functionsCategoryContextMenu->addSeparator();
         _functionsCategoryContextMenu->addAction(refreshFunctions);
+
+        QAction *deleteIndex = new QAction("Delete index", this);
+        connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_deleteIndex()));
+
+        _indexContextMenu = new QMenu(this);
+        _indexContextMenu->addAction(deleteIndex);
     }
 
     void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
@@ -307,6 +318,11 @@ namespace Robomongo
 					_functionsCategoryContextMenu->exec(mapToGlobal(event->pos()));
 				}
 			}
+
+            Indexes *ind = dynamic_cast<Indexes *>(item);
+            if(ind&&ind->text(0)!="_id"){
+                _indexContextMenu->exec(mapToGlobal(event->pos()));
+            }
 		}
     }
 
@@ -480,6 +496,18 @@ namespace Robomongo
             "// { sparse : true }   - Sparse indexes only contain entries for documents that have the indexed field. \n"
             "// { dropDups : true } - Sparse indexes only contain entries for documents that have the indexed field. \n"
         , false);
+    }
+
+    void ExplorerTreeWidget::ui_addIndexGui()
+    {
+        ExplorerCollectionTreeItem *item = selectedCollectionItem();
+        if (item){
+            EditIndexDialog dlg(this,item);
+            int result = dlg.exec();
+            if (result == QDialog::Accepted) {
+                   (static_cast<ExplorerDatabaseTreeItem *const>(item->QObject::parent()))->enshureIndex(item,dlg.getInputText());
+            }
+        }
     }
 
     void ExplorerTreeWidget::ui_reIndex()
@@ -886,5 +914,16 @@ namespace Robomongo
         ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
         if (categoryItem){
 			categoryItem->databaseItem()->expandCollections();}
+    }
+
+    void ExplorerTreeWidget::ui_deleteIndex()
+    {
+       Indexes *ind = get_item<Indexes*>(selectedItems());
+       if(ind){
+           ExplorerCollectionTreeItem *parent = dynamic_cast<ExplorerCollectionTreeItem *>(ind->parent());
+           if(parent){
+               parent->deleteIndex(ind);
+           }
+       }
     }
 }

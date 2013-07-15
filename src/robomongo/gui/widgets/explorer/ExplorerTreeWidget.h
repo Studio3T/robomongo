@@ -60,6 +60,7 @@ namespace Robomongo
         void ui_removeAllDocuments();
 
         void ui_addIndex();
+        void ui_addIndexGui();
         void ui_reIndex();
         void ui_dropIndex();
 

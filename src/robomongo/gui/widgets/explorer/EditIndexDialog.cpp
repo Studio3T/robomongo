@@ -21,7 +21,7 @@ namespace
         if(!text.isEmpty()){
             QJson::Parser parser;
             bool ok=false;
-            QVariant var = parser.parse(text.toAscii(), &ok);
+            QVariant var = parser.parse(text.toUtf8(), &ok);
             if(ok){
                QMap<QString,QVariant> m= var.toMap();
                result = m.size()!=0;

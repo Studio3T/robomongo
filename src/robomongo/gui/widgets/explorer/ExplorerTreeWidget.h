@@ -40,10 +40,8 @@ namespace Robomongo
         void ui_createCollection();
         void ui_addUser();
         void ui_addFunction();
-        void ui_editFunction();
-        void ui_dropUser();
+        void ui_editFunction();        
         void ui_dropFunction();
-        void ui_editUser();
         void ui_refreshCollections();        
         
         void ui_addDocument();
@@ -85,7 +83,6 @@ namespace Robomongo
     private:
         QMenu *_databaseContextMenu;
         QMenu *_collectionContextMenu;
-        QMenu *_userContextMenu;
         QMenu *_functionContextMenu;
         QMenu *_collectionCategoryContextMenu;
         QMenu *_usersCategoryContextMenu;

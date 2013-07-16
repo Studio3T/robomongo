@@ -20,10 +20,10 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/dialogs/FunctionTextEditor.h"
-#include "robomongo/gui/dialogs/CreateUserDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
+#include "robomongo/gui/dialogs/CreateUserDialog.h"
 #include "robomongo/shell/db/json.h"
 
 namespace
@@ -162,17 +162,7 @@ namespace Robomongo
         _indexDirContextMenu->addAction(addIndexGui);
         _indexDirContextMenu->addAction(dropIndex);
         _indexDirContextMenu->addAction(reIndex);
-        _indexDirContextMenu->addAction(refreshIndex);
-
-        QAction *dropUser = new QAction("Remove User", this);
-        connect(dropUser, SIGNAL(triggered()), SLOT(ui_dropUser()));
-
-        QAction *editUser = new QAction("Edit User", this);
-        connect(editUser, SIGNAL(triggered()), SLOT(ui_editUser()));
-
-        _userContextMenu = new QMenu(this);
-        _userContextMenu->addAction(editUser);
-        _userContextMenu->addAction(dropUser);
+        _indexDirContextMenu->addAction(refreshIndex);        
 
 
         QAction *createCollection = new QAction("Create Collection", this);
@@ -264,7 +254,7 @@ namespace Robomongo
 
 			ExplorerUserTreeItem *userItem = dynamic_cast<ExplorerUserTreeItem *>(item);
 			if (userItem) {
-				_userContextMenu->exec(mapToGlobal(event->pos()));
+				userItem->showContextMenuAtPos(mapToGlobal(event->pos()));
 				return;
 			}
 
@@ -761,25 +751,6 @@ namespace Robomongo
 		}
     }
 
-    void ExplorerTreeWidget::ui_dropUser()
-    {
-        ExplorerUserTreeItem *userItem = selectedUserItem();
-        if (userItem){
-			MongoUser user = userItem->user();
-			// Ask user
-			int answer = QMessageBox::question(this,
-					"Remove User",
-					QString("Remove <b>%1</b> user?").arg(user.name()),
-					QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-
-			if (answer == QMessageBox::Yes){
-				MongoDatabase *database = userItem->database();
-				database->dropUser(user.id());
-				database->loadUsers(); // refresh list of users
-			}
-		}
-    }
-
     void ExplorerTreeWidget::ui_dropFunction()
     {
         ExplorerFunctionTreeItem *functionItem = selectedFunctionItem();
@@ -800,33 +771,6 @@ namespace Robomongo
 
         database->dropFunction(function.name());
         database->loadFunctions(); // refresh list of functions
-    }
-
-    void ExplorerTreeWidget::ui_editUser()
-    {
-        ExplorerUserTreeItem *userItem = selectedUserItem();
-        if (!userItem)
-            return;
-
-        MongoUser user = userItem->user();
-        MongoDatabase *database = userItem->database();
-        MongoServer *server = database->server();
-
-        CreateUserDialog dlg(server->connectionRecord()->getFullAddress(),
-                             database->name(),
-                             user);
-        dlg.setWindowTitle("Edit User");
-        dlg.setUserPasswordLabelText("New Password:");
-        int result = dlg.exec();
-
-        if (result == QDialog::Accepted) {
-
-            MongoUser user = dlg.user();
-            database->createUser(user, true);
-
-            // refresh list of users
-            database->loadUsers();
-        }
     }
 
     void ExplorerTreeWidget::ui_refreshCollections()

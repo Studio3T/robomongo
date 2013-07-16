@@ -13,7 +13,7 @@
 
 namespace Robomongo
 {
-    ExplorerServerTreeItem::ExplorerServerTreeItem(MongoServer *server) : QObject(),BaseClass(),
+    ExplorerServerTreeItem::ExplorerServerTreeItem(MongoServer *server,QTreeWidget *view) : QObject(),BaseClass(view),
         _server(server),
         _bus(AppRegistry::instance().bus())
     {
@@ -161,12 +161,22 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::ui_openShell()
     {
-        emit openShellActionTriggered();
+        AppRegistry::instance().app()->openShell(_server, "");
     }
 
     void ExplorerServerTreeItem::ui_disconnectServer()
     {
-        emit disconnectActionTriggered();
+        QTreeWidget * view = dynamic_cast<QTreeWidget *>(BaseClass::treeWidget());
+        if(view){
+            int index = view->indexOfTopLevelItem(this);
+            if (index != -1) {
+                QTreeWidgetItem *removedItem = view->takeTopLevelItem(index);
+                if (removedItem) {
+                    delete removedItem;
+                    AppRegistry::instance().app()->closeServer(_server);
+                }
+            }
+        }       
     }
 
     void ExplorerServerTreeItem::ui_refreshServer()
@@ -190,7 +200,6 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::openCurrentServerShell(const QString &script, bool execute,const CursorPosition &cursor)
     {
-        MongoServer *server = this->server();
-        AppRegistry::instance().app()->openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName(), cursor);
+        AppRegistry::instance().app()->openShell(_server, script, QString(), execute, _server->connectionRecord()->getReadableName(), cursor);
     }
 }

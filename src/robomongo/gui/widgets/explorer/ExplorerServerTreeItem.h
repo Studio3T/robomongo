@@ -18,7 +18,7 @@ namespace Robomongo
         /*
         ** Constructs ExplorerServerTreeItem
         */
-        ExplorerServerTreeItem(MongoServer *server);
+        ExplorerServerTreeItem(MongoServer *server,QTreeWidget *view);
         ~ExplorerServerTreeItem();
 
         /*
@@ -27,14 +27,11 @@ namespace Robomongo
         void expand();
 
         MongoServer *server() const { return _server; }
-    Q_SIGNALS:
-        void disconnectActionTriggered();
-        void openShellActionTriggered();
 
-    public slots:
+    public Q_SLOTS:
         void databaseRefreshed(const QList<MongoDatabase *> &dbs);
 
-    public slots:
+    public Q_SLOTS:
         void handle(DatabaseListLoadedEvent *event);
         void handle(MongoServerLoadingDatabasesEvent *event);
     private Q_SLOTS:

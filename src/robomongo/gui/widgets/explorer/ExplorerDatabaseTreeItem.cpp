@@ -198,7 +198,7 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::addUserItem(MongoDatabase *database, const MongoUser &user)
     {
-        ExplorerUserTreeItem *userItem = new ExplorerUserTreeItem(database, user);
+        ExplorerUserTreeItem *userItem = new ExplorerUserTreeItem(_usersFolderItem,database, user);
         _usersFolderItem->addChild(userItem);
     }
 

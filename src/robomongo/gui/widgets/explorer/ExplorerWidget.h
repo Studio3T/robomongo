@@ -26,8 +26,6 @@ namespace Robomongo
     public slots:
         void ui_itemExpanded(QTreeWidgetItem *item);
         void ui_itemDoubleClicked(QTreeWidgetItem *item, int column);
-        void ui_disonnectActionTriggered();
-        void ui_openShellActionTriggered();
 
         void handle(ConnectingEvent *event);
         void handle(ConnectionEstablishedEvent *event);

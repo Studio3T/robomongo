@@ -71,53 +71,6 @@ namespace Robomongo
         QWidget::keyPressEvent(event);
     }
 
-    void ExplorerWidget::ui_disonnectActionTriggered()
-    {
-        QList<QTreeWidgetItem*> items = _treeWidget->selectedItems();
-
-        if (items.count() != 1)
-            return;
-
-        QTreeWidgetItem *item = items[0];
-
-        if (!item)
-            return;
-
-        ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
-        if (!serverItem)
-            return;
-
-        int index = _treeWidget->indexOfTopLevelItem(serverItem);
-        if (index != -1) {
-            QTreeWidgetItem *removedItem = _treeWidget->takeTopLevelItem(index);
-            if (removedItem) {
-                MongoServer *server = serverItem->server();
-
-                delete removedItem;
-                _app->closeServer(server);
-            }
-        }
-    }
-
-    void ExplorerWidget::ui_openShellActionTriggered()
-    {
-        QList<QTreeWidgetItem*> items = _treeWidget->selectedItems();
-
-        if (items.count() != 1)
-            return;
-
-        QTreeWidgetItem *item = items[0];
-
-        if (!item)
-            return;
-
-        ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
-        if (!serverItem)
-            return;
-
-        _app->openShell(serverItem->server(), "");
-    }
-
     void ExplorerWidget::increaseProgress()
     {
         ++_progress;
@@ -145,9 +98,7 @@ namespace Robomongo
     {
         decreaseProgress();
 
-        ExplorerServerTreeItem *item = new ExplorerServerTreeItem(event->server);
-        connect(item, SIGNAL(disconnectActionTriggered()), SLOT(ui_disonnectActionTriggered()));
-        connect(item, SIGNAL(openShellActionTriggered()), SLOT(ui_openShellActionTriggered()));
+        ExplorerServerTreeItem *item = new ExplorerServerTreeItem(event->server,_treeWidget);
         _treeWidget->addTopLevelItem(item);
         _treeWidget->setCurrentItem(item);
         _treeWidget->setFocus();

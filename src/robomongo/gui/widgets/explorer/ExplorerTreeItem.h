@@ -8,7 +8,7 @@ namespace Robomongo
     {
     public:
         typedef QTreeWidgetItem BaseClass;
-        ExplorerTreeItem();
+        explicit ExplorerTreeItem(QTreeWidget *view);
         explicit ExplorerTreeItem(QTreeWidgetItem *parent);
         virtual void showContextMenuAtPos(const QPoint &pos);
     protected:

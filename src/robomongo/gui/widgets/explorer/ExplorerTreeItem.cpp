@@ -7,7 +7,7 @@ namespace Robomongo
    {
 
    }
-   ExplorerTreeItem::ExplorerTreeItem():BaseClass(),_contextMenu()
+   ExplorerTreeItem::ExplorerTreeItem(QTreeWidget *view):BaseClass(view),_contextMenu()
    {
 
    }

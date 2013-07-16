@@ -49,22 +49,22 @@ namespace Robomongo
 
     void ExplorerUserTreeItem::ui_dropUser()
     {
-            MongoUser user = this->user();
             // Ask user
+    #pragma message ("TODO: Add parent to modal message")
             int answer = QMessageBox::question(NULL,
                 "Remove User",
-                QString("Remove <b>%1</b> user?").arg(user.name()),
+                QString("Remove <b>%1</b> user?").arg(user().name()),
                 QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
             if (answer == QMessageBox::Yes){
                 MongoDatabase *database = this->database();
-                database->dropUser(user.id());
+                database->dropUser(user().id());
                 database->loadUsers(); // refresh list of users
             }
     }
     void ExplorerUserTreeItem::ui_editUser()
     {
-        MongoDatabase *database = this->database();
+        MongoDatabase *database = ExplorerUserTreeItem::database();
 
         CreateUserDialog dlg(database->server()->connectionRecord()->getFullAddress(),
             database->name(),

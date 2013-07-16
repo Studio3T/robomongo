@@ -7,5 +7,7 @@ namespace Robomongo
 ExplorerDatabaseCategoryTreeItem::ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseCategory category,
                                                                    ExplorerDatabaseTreeItem *databaseItem) :
     _category(category),
-    _databaseItem(databaseItem) {}
+    BaseClass(databaseItem) {}
+
+ExplorerDatabaseTreeItem *ExplorerDatabaseCategoryTreeItem::databaseItem() const { return static_cast<ExplorerDatabaseTreeItem*>(BaseClass::parent()); }
 }

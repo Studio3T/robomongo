@@ -102,12 +102,12 @@ namespace Robomongo
             MongoDatabase *database = dbs.at(i);
 
             if (database->isSystem()) {
-                ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(database);
+                ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(systemFolder,database);
                 systemFolder->addChild(dbItem);
                 continue;
             }
 
-            ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(database);
+            ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(this,database);
             addChild(dbItem);
         }
 

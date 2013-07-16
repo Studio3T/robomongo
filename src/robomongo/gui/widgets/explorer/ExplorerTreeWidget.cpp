@@ -52,91 +52,7 @@ namespace Robomongo
         setAttribute(Qt::WA_MacShowFocusRect, false);
     #endif
         setContextMenuPolicy(Qt::DefaultContextMenu);
-        setObjectName("explorerTree");                             
-
-        QAction *openDbShellAction = new QAction("Open Shell", this);
-        openDbShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
-        connect(openDbShellAction, SIGNAL(triggered()), SLOT(ui_dbOpenShell()));
-
-        QAction *dbStats = new QAction("Database Statistics", this);
-        connect(dbStats, SIGNAL(triggered()), SLOT(ui_dbStatistics()));
-
-        QAction *dbDrop = new QAction("Drop Database", this);
-        connect(dbDrop, SIGNAL(triggered()), SLOT(ui_dbDrop()));
-
-        QAction *dbRepair = new QAction("Repair Database", this);
-        connect(dbRepair, SIGNAL(triggered()), SLOT(ui_dbRepair()));
-
-        QAction *refreshDatabase = new QAction("Refresh", this);
-        connect(refreshDatabase, SIGNAL(triggered()), SLOT(ui_refreshDatabase()));
-
-        _databaseContextMenu = new QMenu(this);
-        _databaseContextMenu->addAction(openDbShellAction);
-        _databaseContextMenu->addAction(refreshDatabase);
-        _databaseContextMenu->addSeparator();
-        _databaseContextMenu->addAction(dbStats);
-        _databaseContextMenu->addSeparator();
-        _databaseContextMenu->addAction(dbRepair);
-        _databaseContextMenu->addAction(dbDrop);
-
-        QAction *addDocument = new QAction("Insert Document", this);
-        connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument()));
-
-        QAction *updateDocument = new QAction("Update Documents", this);
-        connect(updateDocument, SIGNAL(triggered()), SLOT(ui_updateDocument()));
-
-        QAction *removeDocument = new QAction("Remove Documents", this);
-        connect(removeDocument, SIGNAL(triggered()), SLOT(ui_removeDocument()));
-
-        QAction *removeAllDocuments = new QAction("Remove All Documents", this);
-        connect(removeAllDocuments, SIGNAL(triggered()), SLOT(ui_removeAllDocuments()));
-
-        QAction *collectionStats = new QAction("Statistics", this);
-        connect(collectionStats, SIGNAL(triggered()), SLOT(ui_collectionStatistics()));
-
-        QAction *storageSize = new QAction("Storage Size", this);
-        connect(storageSize, SIGNAL(triggered()), SLOT(ui_storageSize()));
-
-        QAction *totalIndexSize = new QAction("Total Index Size", this);
-        connect(totalIndexSize, SIGNAL(triggered()), SLOT(ui_totalIndexSize()));
-
-        QAction *totalSize = new QAction("Total Size", this);
-        connect(totalSize, SIGNAL(triggered()), SLOT(ui_totalSize()));
-
-        QAction *shardVersion = new QAction("Shard Version", this);
-        connect(shardVersion, SIGNAL(triggered()), SLOT(ui_shardVersion()));
-
-        QAction *shardDistribution = new QAction("Shard Distribution", this);
-        connect(shardDistribution, SIGNAL(triggered()), SLOT(ui_shardDistribution()));
-
-        QAction *dropCollection = new QAction("Drop Collection", this);
-        connect(dropCollection, SIGNAL(triggered()), SLOT(ui_dropCollection()));
-
-        QAction *renameCollection = new QAction("Rename Collection", this);
-        connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection()));
-
-        QAction *duplicateCollection = new QAction("Duplicate Collection", this);
-        connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection()));
-
-        QAction *viewCollection = new QAction("View Documents", this);
-        connect(viewCollection, SIGNAL(triggered()), SLOT(ui_viewCollection()));
-
-        _collectionContextMenu = new QMenu(this);
-        _collectionContextMenu->addAction(viewCollection);
-        _collectionContextMenu->addSeparator();
-        _collectionContextMenu->addAction(addDocument);
-        _collectionContextMenu->addAction(updateDocument);
-        _collectionContextMenu->addAction(removeDocument);
-        _collectionContextMenu->addAction(removeAllDocuments);
-        _collectionContextMenu->addSeparator();
-        _collectionContextMenu->addAction(renameCollection);
-        _collectionContextMenu->addAction(duplicateCollection);
-        _collectionContextMenu->addAction(dropCollection);
-        _collectionContextMenu->addSeparator();
-        _collectionContextMenu->addAction(collectionStats);
-        _collectionContextMenu->addSeparator();
-        _collectionContextMenu->addAction(shardVersion);
-        _collectionContextMenu->addAction(shardDistribution);
+        setObjectName("explorerTree");                           
 
         QAction *addIndex = new QAction("Add Index", this);
         connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex()));
@@ -197,17 +113,6 @@ namespace Robomongo
         _usersCategoryContextMenu->addAction(refreshUsers);
 
 
-        QAction *dropFunction = new QAction("Remove Function", this);
-        connect(dropFunction, SIGNAL(triggered()), SLOT(ui_dropFunction()));
-
-        QAction *editFunction = new QAction("Edit Function", this);
-        connect(editFunction, SIGNAL(triggered()), SLOT(ui_editFunction()));
-
-        _functionContextMenu = new QMenu(this);
-        _functionContextMenu->addAction(editFunction);
-        _functionContextMenu->addAction(dropFunction);
-
-
         QAction *refreshFunctions = new QAction("Refresh", this);
         connect(refreshFunctions, SIGNAL(triggered()), SLOT(ui_refreshFunctions()));
 
@@ -242,13 +147,13 @@ namespace Robomongo
 
 			ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
 			if (collectionItem) {
-				_collectionContextMenu->exec(mapToGlobal(event->pos()));
+				collectionItem->showContextMenuAtPos(mapToGlobal(event->pos()));
 				return;
 			}
 
 			ExplorerDatabaseTreeItem *databaseItem = dynamic_cast<ExplorerDatabaseTreeItem *>(item);
 			if (databaseItem) {
-				_databaseContextMenu->exec(mapToGlobal(event->pos()));
+				databaseItem->showContextMenuAtPos(mapToGlobal(event->pos()));
 				return;
 			}
 
@@ -260,7 +165,7 @@ namespace Robomongo
 
 			ExplorerFunctionTreeItem *functionItem = dynamic_cast<ExplorerFunctionTreeItem *>(item);
 			if (functionItem) {
-				_functionContextMenu->exec(mapToGlobal(event->pos()));
+				functionItem->showContextMenuAtPos(mapToGlobal(event->pos()));
 				return;
 			}
 
@@ -323,7 +228,7 @@ namespace Robomongo
     }
 
     void ExplorerTreeWidget::openCurrentCollectionShell(const QString &script, bool execute,
-                                                        const CursorPosition &cursor)
+        const CursorPosition &cursor)
     {
         ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
         if (!collectionItem){
@@ -340,72 +245,9 @@ namespace Robomongo
         }
     }
 
-    void ExplorerTreeWidget::openCurrentDatabaseShell(const QString &script, bool execute,
-                                                      const CursorPosition &cursor)
-    {
-        ExplorerDatabaseTreeItem *collectionItem = selectedDatabaseItem();
-        if (collectionItem){
-			MongoDatabase *database = collectionItem->database();
-			openDatabaseShell(database, script, execute, cursor);
-		}
-    }
-
     void ExplorerTreeWidget::openDatabaseShell(MongoDatabase *database, const QString &script, bool execute, const CursorPosition &cursor)
     {
 		AppRegistry::instance().app()->openShell(database, script, execute, database->name(), cursor);
-    } 
-
-    void ExplorerTreeWidget::ui_addDocument()
-    {
-        ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
-        if (collectionItem){
-			MongoCollection *collection = collectionItem->collection();
-			MongoDatabase *database = collection->database();
-			MongoServer *server = database->server();
-			ConnectionSettings *settings = server->connectionRecord();
-
-			DocumentTextEditor editor(settings->getFullAddress(), database->name(),
-									  collection->name(), "{\n    \n}");
-
-			editor.setCursorPosition(1, 4);
-			editor.setWindowTitle("Insert Document");
-			int result = editor.exec();
-			activateWindow();
-
-			if (result == QDialog::Accepted) {
-				mongo::BSONObj obj = editor.bsonObj();
-				server->insertDocument(obj, database->name(), collection->name());
-			}
-		}
-    }
-
-    void ExplorerTreeWidget::ui_removeDocument()
-    {
-        openCurrentCollectionShell(
-            "remove({ '' : '' });"
-            , false, CursorPosition(0, -10));
-    }
-
-    void ExplorerTreeWidget::ui_removeAllDocuments()
-    {
-        ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
-        if (collectionItem){
-			MongoCollection *collection = collectionItem->collection();
-			MongoDatabase *database = collection->database();
-			// Ask user
-			int answer = QMessageBox::question(this,
-					"Remove All Documents",
-					QString("Remove all documents from <b>%1</b> collection?").arg(collection->name()),
-					QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-
-			if (answer == QMessageBox::Yes){
-				MongoServer *server = database->server();
-				mongo::BSONObjBuilder builder;
-				mongo::BSONObj bsonQuery = builder.obj();
-				mongo::Query query(bsonQuery);
-				server->removeDocuments(query, database->name(), collection->name(), false);
-			}
-		}
     }
 
     void ExplorerTreeWidget::ui_addIndex()
@@ -447,178 +289,13 @@ namespace Robomongo
             , false);
     }
 
-    void ExplorerTreeWidget::ui_updateDocument()
-    {
-        openCurrentCollectionShell(
-            "update(\n"
-            "    // query \n"
-            "    {\n"
-            "        \"key\" : \"value\"\n"
-            "    },\n"
-            "    \n"
-            "    // update \n"
-            "    {\n"
-            "    },\n"
-            "    \n"
-            "    // options \n"
-            "    {\n"
-            "        \"multi\" : false,  // update only one document \n"
-            "        \"upsert\" : false  // insert a new document, if no existing document match the query \n"
-            "    }\n"
-            ");", false);
-    }
-
-    void ExplorerTreeWidget::ui_collectionStatistics()
-    {
-        openCurrentCollectionShell("stats()");
-    }
-
-    void ExplorerTreeWidget::ui_dropCollection()
-    {
-        ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
-        if (collectionItem){
-			MongoCollection *collection = collectionItem->collection();
-			MongoDatabase *database = collection->database();
-			MongoServer *server = database->server();
-			ConnectionSettings *settings = server->connectionRecord();
-
-			// Ask user
-			int answer = QMessageBox::question(this,
-					"Drop Collection",
-					QString("Drop <b>%1</b> collection?").arg(collection->name()),
-					QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-
-			if (answer == QMessageBox::Yes){
-				database->dropCollection(collection->name());
-				database->loadCollections();
-			}
-		}
-        //openCurrentCollectionShell("drop()", false);
-    }
-
-    void ExplorerTreeWidget::ui_duplicateCollection()
-    {
-        ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
-        if (collectionItem){
-			MongoCollection *collection = collectionItem->collection();
-			MongoDatabase *database = collection->database();
-			MongoServer *server = database->server();
-			ConnectionSettings *settings = server->connectionRecord();
-
-			CreateDatabaseDialog dlg(settings->getFullAddress(),
-									 database->name(),
-									 collection->name());
-			dlg.setWindowTitle("Duplicate Collection");
-			dlg.setOkButtonText("&Duplicate");
-			dlg.setInputLabelText("New Collection Name:");
-			dlg.setInputText(collection->name() + "_copy");
-			int result = dlg.exec();
-
-			if (result == QDialog::Accepted) {
-				database->duplicateCollection(collection->name(), dlg.databaseName());
-
-				// refresh list of collections
-				database->loadCollections();
-			}
-		}
-    }
-
-    void ExplorerTreeWidget::ui_renameCollection()
-    {
-        ExplorerCollectionTreeItem *collectionItem = selectedCollectionItem();
-        if (collectionItem){
-			MongoCollection *collection = collectionItem->collection();
-			MongoDatabase *database = collection->database();
-			MongoServer *server = database->server();
-			ConnectionSettings *settings = server->connectionRecord();
-
-			CreateDatabaseDialog dlg(settings->getFullAddress(),
-									 database->name(),
-									 collection->name());
-			dlg.setWindowTitle("Rename Collection");
-			dlg.setOkButtonText("&Rename");
-			dlg.setInputLabelText("New Collection Name:");
-			dlg.setInputText(collection->name());
-			int result = dlg.exec();
-
-			if (result == QDialog::Accepted) {
-				database->renameCollection(collection->name(), dlg.databaseName());
-				// refresh list of collections
-				database->loadCollections();
-			}
-		}
-    }
-
-    void ExplorerTreeWidget::ui_viewCollection()
-    {
-        openCurrentCollectionShell("find()");
-    }
-
-    void ExplorerTreeWidget::ui_storageSize()
-    {
-        openCurrentCollectionShell("storageSize()");
-    }
-
-    void ExplorerTreeWidget::ui_totalIndexSize()
-    {
-        openCurrentCollectionShell("totalIndexSize()");
-    }
-
-    void ExplorerTreeWidget::ui_totalSize()
-    {
-        openCurrentCollectionShell("totalSize()");
-    }
-
-    void ExplorerTreeWidget::ui_shardVersion()
-    {
-        openCurrentCollectionShell("getShardVersion()");
-    }
-
-    void ExplorerTreeWidget::ui_shardDistribution()
-    {
-        openCurrentCollectionShell("getShardDistribution()");
-    }
-
-    void ExplorerTreeWidget::ui_dbStatistics()
-    {
-        openCurrentDatabaseShell("db.stats()");
-    }
-
-    void ExplorerTreeWidget::ui_dbDrop()
-    {
-        ExplorerDatabaseTreeItem *dbItem = selectedDatabaseItem();
-        if (dbItem){
-			MongoDatabase *database = dbItem->database();
-			// Ask user
-			int answer = QMessageBox::question(this,
-					"Drop Database",
-					QString("Drop <b>%1</b> database?").arg(database->name()),
-					QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-			if (answer == QMessageBox::Yes){
-				MongoServer *server = database->server();
-				server->dropDatabase(database->name());
-				server->loadDatabases(); // refresh list of databases
-			}
-		}
-    }
-
     void ExplorerTreeWidget::ui_dbCollectionsStatistics()
     {
         ExplorerDatabaseCategoryTreeItem *categoryItem = selectedDatabaseCategoryItem();
         if (categoryItem){
 			openDatabaseShell(categoryItem->databaseItem()->database(), "db.printCollectionStats()");
 		}
-    }
-
-    void ExplorerTreeWidget::ui_dbRepair()
-    {
-        openCurrentDatabaseShell("db.repairDatabase()", false);
-    }
-
-    void ExplorerTreeWidget::ui_dbOpenShell()
-    {
-        openCurrentDatabaseShell("");
-    }    
+    } 
 
     void ExplorerTreeWidget::ui_refreshUsers()
     {
@@ -650,14 +327,6 @@ namespace Robomongo
         if (categoryItem){
 			openDatabaseShell(categoryItem->databaseItem()->database(),
 				"db.system.js.find()");
-		}
-    }
-
-    void ExplorerTreeWidget::ui_refreshDatabase()
-    {
-        ExplorerDatabaseTreeItem *databaseItem = selectedDatabaseItem();
-        if (databaseItem){
-			databaseItem->expandCollections();
 		}
     }
 
@@ -723,54 +392,6 @@ namespace Robomongo
 				databaseItem->expandFunctions();
 			}
 		}
-    }
-
-    void ExplorerTreeWidget::ui_editFunction()
-    {
-        ExplorerFunctionTreeItem *functionItem = selectedFunctionItem();
-        if (functionItem){
-			MongoFunction function = functionItem->function();
-			MongoDatabase *database = functionItem->database();
-			MongoServer *server = database->server();
-			QString name = function.name();
-
-			FunctionTextEditor dlg(server->connectionRecord()->getFullAddress(),
-								 database->name(),
-								 function);
-			dlg.setWindowTitle("Edit Function");
-			int result = dlg.exec();
-
-			if (result == QDialog::Accepted) {
-
-				MongoFunction editedFunction = dlg.function();
-				database->updateFunction(name, editedFunction);
-
-				// refresh list of functions
-				database->loadFunctions();
-			}
-		}
-    }
-
-    void ExplorerTreeWidget::ui_dropFunction()
-    {
-        ExplorerFunctionTreeItem *functionItem = selectedFunctionItem();
-        if (!functionItem)
-            return;
-
-        MongoFunction function = functionItem->function();
-        MongoDatabase *database = functionItem->database();
-
-        // Ask user
-        int answer = QMessageBox::question(this,
-                "Remove Function",
-                QString("Remove <b>%1</b> function?").arg(function.name()),
-                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-
-        if (answer != QMessageBox::Yes)
-            return;
-
-        database->dropFunction(function.name());
-        database->loadFunctions(); // refresh list of functions
     }
 
     void ExplorerTreeWidget::ui_refreshCollections()

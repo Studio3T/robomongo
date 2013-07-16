@@ -12,22 +12,21 @@
 #include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
 #include "robomongo/core/domain/MongoServer.h"
 
-namespace
-{
-    QString buildName(const QString& text,int *count)
-    {
-        if (!count)
-            return text;
-
-        if (*count == -1)
-            return text.arg(" ...");
-
-        return QString("%1 (%2)").arg(text).arg(*count);
-    }
-}
-
 namespace Robomongo
 {
+    namespace detail
+    {
+        QString buildName(const QString& text,int count)
+        {
+            if (!count)
+                return text;
+
+            if (count == -1)
+                return QString("%1 ...").arg(text);
+
+            return QString("%1 (%2)").arg(text).arg(count);
+        }
+    }
     ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) :
         QObject(),
         _database(database),
@@ -46,21 +45,21 @@ namespace Robomongo
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
         _collectionFolderItem = new ExplorerDatabaseCategoryTreeItem(Collections, this);
-        _collectionFolderItem->setText(0, buildName("Collections",0));
+        _collectionFolderItem->setText(0, detail::buildName("Collections",0));
         _collectionFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         _collectionFolderItem->setExpanded(true);
         _collectionFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         addChild(_collectionFolderItem);
 
         _javascriptFolderItem = new ExplorerDatabaseCategoryTreeItem(Functions, this);
-        _javascriptFolderItem->setText(0, buildName("Functions",0));
+        _javascriptFolderItem->setText(0, detail::buildName("Functions",0));
         _javascriptFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         _javascriptFolderItem->setExpanded(true);
         _javascriptFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         addChild(_javascriptFolderItem);
         
         _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(Users, this);
-        _usersFolderItem->setText(0, buildName("Users",0));
+        _usersFolderItem->setText(0, detail::buildName("Users",0));
         _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         _usersFolderItem->setExpanded(true);
         _usersFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
@@ -78,7 +77,7 @@ namespace Robomongo
     }
 
     void ExplorerDatabaseTreeItem::expandColection(ExplorerCollectionTreeItem *const item)
-    {
+    {        
          _bus->send(_database->server()->client(), new LoadCollectionIndexesRequest(item, item->collection()->info()));
     }
 
@@ -101,7 +100,7 @@ namespace Robomongo
     {
         QList<MongoCollection *> collections = event->collections;
         int count = collections.count();
-        _collectionFolderItem->setText(0, buildName("Collections",&count));
+        _collectionFolderItem->setText(0, detail::buildName("Collections",count));
 
         clearChildItems(_collectionFolderItem);
         createCollectionSystemFolderItem();
@@ -123,7 +122,7 @@ namespace Robomongo
     {
         QList<MongoUser> users = event->users();
         int count = users.count();
-        _usersFolderItem->setText(0, buildName("Users",&count));
+        _usersFolderItem->setText(0, detail::buildName("Users",count));
 
         clearChildItems(_usersFolderItem);
 
@@ -137,7 +136,7 @@ namespace Robomongo
     {
         QList<MongoFunction> functions = event->functions();
         int count = functions.count();
-        _javascriptFolderItem->setText(0,  buildName("Functions",&count));
+        _javascriptFolderItem->setText(0,  detail::buildName("Functions",count));
 
         clearChildItems(_javascriptFolderItem);
 
@@ -149,20 +148,17 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseCollectionsLoadingEvent *event)
     {
-        int count = -1;
-        _collectionFolderItem->setText(0, buildName("Collections",&count));
+        _collectionFolderItem->setText(0, detail::buildName("Collections",-1));
     }
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseFunctionsLoadingEvent *event)
     {
-        int count = -1;
-        _javascriptFolderItem->setText(0, buildName("Functions",&count));
+        _javascriptFolderItem->setText(0, detail::buildName("Functions",-1));
     }
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseUsersLoadingEvent *event)
     {
-        int count = -1;
-        _usersFolderItem->setText(0, buildName("Users",&count));
+        _usersFolderItem->setText(0, detail::buildName("Users",-1));
     }
 
     void ExplorerDatabaseTreeItem::clearChildItems(QTreeWidgetItem *root)

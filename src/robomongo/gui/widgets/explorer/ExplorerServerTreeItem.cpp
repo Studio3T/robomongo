@@ -4,16 +4,61 @@
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/App.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
+#include "robomongo/core/AppRegistry.h"
 
 namespace Robomongo
 {
-    ExplorerServerTreeItem::ExplorerServerTreeItem(MongoServer *server) : QObject(),
+    ExplorerServerTreeItem::ExplorerServerTreeItem(MongoServer *server) : QObject(),BaseClass(),
         _server(server),
         _bus(AppRegistry::instance().bus())
     {
+       // QAction *refreshAction = new QAction("Refresh", this);
+       // refreshAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
+       // connect(refreshAction, SIGNAL(triggered()), SLOT(ui_refreshServer()));   
+        setExpanded(true);
+
+        QAction *openShellAction = new QAction("Open Shell", this);
+        openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
+        connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell()));
+
+        QAction *refreshServer = new QAction("Refresh", this);
+        connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer()));
+
+        QAction *createDatabase = new QAction("Create Database", this);
+        connect(createDatabase, SIGNAL(triggered()), SLOT(ui_createDatabase()));
+
+        QAction *serverStatus = new QAction("Server Status", this);
+        connect(serverStatus, SIGNAL(triggered()), SLOT(ui_serverStatus()));
+
+        QAction *serverVersion = new QAction("MongoDB Version", this);
+        connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion()));
+
+        QAction *serverHostInfo = new QAction("Host Info", this);
+        connect(serverHostInfo, SIGNAL(triggered()), SLOT(ui_serverHostInfo()));        
+
+        QAction *showLog = new QAction("Show Log", this);
+        connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog())); 
+
+        QAction *disconnectAction = new QAction("Disconnect", this);
+        disconnectAction->setIconText("Disconnect");
+        connect(disconnectAction, SIGNAL(triggered()), SLOT(ui_disconnectServer()));
+
+        BaseClass::_contextMenu.addAction(openShellAction);
+        BaseClass::_contextMenu.addAction(refreshServer);
+        BaseClass::_contextMenu.addSeparator();
+        BaseClass::_contextMenu.addAction(createDatabase);
+        BaseClass::_contextMenu.addAction(serverStatus);
+        BaseClass::_contextMenu.addAction(serverHostInfo);
+        BaseClass::_contextMenu.addAction(serverVersion);
+        BaseClass::_contextMenu.addSeparator();
+        BaseClass::_contextMenu.addAction(showLog);
+        BaseClass::_contextMenu.addAction(disconnectAction);
+
         _bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
         _bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
 
@@ -24,7 +69,6 @@ namespace Robomongo
 
     ExplorerServerTreeItem::~ExplorerServerTreeItem()
     {
-        int z = 56;
     }
 
     void ExplorerServerTreeItem::expand()
@@ -93,5 +137,60 @@ namespace Robomongo
             return name + " ...";
 
         return QString("%1 (%2)").arg(name).arg(*count);
+    }
+
+    void ExplorerServerTreeItem::ui_serverHostInfo()
+    {
+        openCurrentServerShell("db.hostInfo()");
+    }
+
+    void ExplorerServerTreeItem::ui_serverStatus()
+    {
+        openCurrentServerShell("db.serverStatus()");
+    }
+
+    void ExplorerServerTreeItem::ui_serverVersion()
+    {
+        openCurrentServerShell("db.version()");
+    }
+
+    void ExplorerServerTreeItem::ui_showLog()
+    {
+        openCurrentServerShell("show log");
+    }
+
+    void ExplorerServerTreeItem::ui_openShell()
+    {
+        emit openShellActionTriggered();
+    }
+
+    void ExplorerServerTreeItem::ui_disconnectServer()
+    {
+        emit disconnectActionTriggered();
+    }
+
+    void ExplorerServerTreeItem::ui_refreshServer()
+    {
+        expand();
+    }
+
+    void ExplorerServerTreeItem::ui_createDatabase()
+    {
+        CreateDatabaseDialog dlg(this->server()->connectionRecord()->getFullAddress());
+        dlg.setOkButtonText("&Create");
+        dlg.setInputLabelText("Database Name:");
+        int result = dlg.exec();
+        if (result == QDialog::Accepted) {
+            this->server()->createDatabase(dlg.databaseName());
+
+            // refresh list of databases
+            expand();
+        }
+    } 
+
+    void ExplorerServerTreeItem::openCurrentServerShell(const QString &script, bool execute,const CursorPosition &cursor)
+    {
+        MongoServer *server = this->server();
+        AppRegistry::instance().app()->openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName(), cursor);
     }
 }

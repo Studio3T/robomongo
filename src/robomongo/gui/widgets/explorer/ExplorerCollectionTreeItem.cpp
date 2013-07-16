@@ -28,12 +28,12 @@ namespace
 }
 namespace Robomongo
 {
+    R_REGISTER_EVENT(CollectionIndexesLoadingEvent)
     const QString ExplorerCollectionDirIndexesTreeItem::text = "Indexes";
-
     ExplorerCollectionDirIndexesTreeItem::ExplorerCollectionDirIndexesTreeItem(ExplorerCollectionTreeItem *const parent)
         :QTreeWidgetItem(parent)
     {
-        setText(0,text);
+        setText(0, detail::buildName(text,0));
         setIcon(0, Robomongo::GuiRegistry::instance().folderIcon());
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }
@@ -50,6 +50,7 @@ namespace Robomongo
     {
         AppRegistry::instance().bus()->subscribe(QObject::parent(), LoadCollectionIndexesResponse::Type, this);
         AppRegistry::instance().bus()->subscribe(QObject::parent(), DeleteCollectionIndexResponse::Type, this);
+        AppRegistry::instance().bus()->subscribe(this, CollectionIndexesLoadingEvent::Type, this);
         setText(0, _collection->name());
         setIcon(0, GuiRegistry::instance().collectionIcon());
         //setExpanded(true);
@@ -66,6 +67,7 @@ namespace Robomongo
         {
             _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(*it,_indexDir));
         }
+        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::text,_indexDir->childCount()));
     }
 
     void ExplorerCollectionTreeItem::handle(DeleteCollectionIndexResponse *event)
@@ -82,10 +84,16 @@ namespace Robomongo
                 }
             }
         }
+        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::text,_indexDir->childCount()));
+    }
+    void ExplorerCollectionTreeItem::handle(CollectionIndexesLoadingEvent *event)
+    {
+        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::text,-1));
     }
 
     void ExplorerCollectionTreeItem::expand()
     {
+         AppRegistry::instance().bus()->publish(new CollectionIndexesLoadingEvent(this));
         (static_cast<ExplorerDatabaseTreeItem *const>(QObject::parent()))->expandColection(this);
     }
 

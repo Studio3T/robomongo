@@ -33,14 +33,7 @@ namespace Robomongo
         ExplorerDatabaseCategoryTreeItem *selectedDatabaseCategoryItem();
         void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
         void openCurrentDatabaseShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
-        void openCurrentServerShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
-
         void openDatabaseShell(MongoDatabase *database, const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
-
-    Q_SIGNALS:
-        void disconnectActionTriggered();
-        void refreshActionTriggered();
-        void openShellActionTriggered();
 
     protected Q_SLOTS:
         void ui_refreshDatabase();
@@ -51,12 +44,8 @@ namespace Robomongo
         void ui_dropUser();
         void ui_dropFunction();
         void ui_editUser();
-        void ui_refreshCollections();
-        void ui_disconnectServer();
-        void ui_refreshServer();
-        void ui_createDatabase();
-        void ui_showLog();
-        void ui_openShell();
+        void ui_refreshCollections();        
+        
         void ui_addDocument();
         void ui_removeDocument();
         void ui_removeAllDocuments();
@@ -85,10 +74,6 @@ namespace Robomongo
         void ui_dbRepair();
         void ui_dbOpenShell();
 
-        void ui_serverHostInfo();
-        void ui_serverStatus();
-        void ui_serverVersion();
-
         void ui_refreshUsers();
         void ui_refreshFunctions();
         void ui_viewUsers();
@@ -98,7 +83,6 @@ namespace Robomongo
         void ui_refreshIndex();
 
     private:
-        QMenu *_serverContextMenu;
         QMenu *_databaseContextMenu;
         QMenu *_collectionContextMenu;
         QMenu *_userContextMenu;

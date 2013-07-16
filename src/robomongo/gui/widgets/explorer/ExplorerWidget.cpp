@@ -31,8 +31,6 @@ namespace Robomongo
 
         connect(_treeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), SLOT(ui_itemExpanded(QTreeWidgetItem *)));
         connect(_treeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), SLOT(ui_itemDoubleClicked(QTreeWidgetItem *, int)));
-        connect(_treeWidget, SIGNAL(disconnectActionTriggered()), SLOT(ui_disonnectActionTriggered()));
-        connect(_treeWidget, SIGNAL(openShellActionTriggered()), SLOT(ui_openShellActionTriggered()));
 
         setLayout(vlaout);
 
@@ -148,7 +146,8 @@ namespace Robomongo
         decreaseProgress();
 
         ExplorerServerTreeItem *item = new ExplorerServerTreeItem(event->server);
-        item->setExpanded(true);
+        connect(item, SIGNAL(disconnectActionTriggered()), SLOT(ui_disonnectActionTriggered()));
+        connect(item, SIGNAL(openShellActionTriggered()), SLOT(ui_openShellActionTriggered()));
         _treeWidget->addTopLevelItem(item);
         _treeWidget->setCurrentItem(item);
         _treeWidget->setFocus();
@@ -184,11 +183,14 @@ namespace Robomongo
             serverItem->expand();
             return;
         }
-
-        ExplorerCollectionTreeItem * colectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
-        if(colectionItem)
-        {
-            colectionItem->expand();
+       
+        ExplorerCollectionDirIndexesTreeItem * dirItem = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(item);
+        if(dirItem){
+            ExplorerCollectionTreeItem * colectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(dirItem->parent());
+            if(colectionItem)
+            {
+                colectionItem->expand();
+            }
         }
     }
 

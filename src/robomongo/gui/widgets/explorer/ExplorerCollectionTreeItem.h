@@ -1,7 +1,7 @@
 #pragma once
 #include <QTreeWidgetItem>
 #include <QObject>
-#include "robomongo/core/Core.h"
+#include "robomongo/core/Event.h"
 
 namespace Robomongo
 {
@@ -9,6 +9,12 @@ namespace Robomongo
     class LoadCollectionIndexesResponse;
     class DeleteCollectionIndexResponse;
     class ExplorerCollectionDirIndexesTreeItem;
+    class CollectionIndexesLoadingEvent : public Event
+    {
+        R_EVENT
+            CollectionIndexesLoadingEvent(QObject *sender) : Event(sender) {}
+    };
+
 
     class ExplorerCollectionTreeItem :public QObject, public QTreeWidgetItem
     {
@@ -21,6 +27,7 @@ namespace Robomongo
     public Q_SLOTS:
         void handle(LoadCollectionIndexesResponse *event);
         void handle(DeleteCollectionIndexResponse *event);
+        void handle(CollectionIndexesLoadingEvent *event);
     private:
         QString buildToolTip(MongoCollection *collection);
         ExplorerCollectionDirIndexesTreeItem * const _indexDir;

@@ -6,6 +6,11 @@
 
 namespace Robomongo
 {
+    namespace detail
+    {
+        QString buildName(const QString& text,int count);
+    }
+
     class ExplorerCollectionTreeItem;
     class ExplorerDatabaseCategoryTreeItem;
     class EventBus;

@@ -20,12 +20,12 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/dialogs/FunctionTextEditor.h"
-#include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 #include "robomongo/gui/dialogs/CreateUserDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
-
+#include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 #include "robomongo/shell/db/json.h"
+
 namespace
 {
 	template<typename type_t>
@@ -52,49 +52,7 @@ namespace Robomongo
         setAttribute(Qt::WA_MacShowFocusRect, false);
     #endif
         setContextMenuPolicy(Qt::DefaultContextMenu);
-        setObjectName("explorerTree");
-
-        QAction *disconnectAction = new QAction("Disconnect", this);
-        disconnectAction->setIconText("Disconnect");
-        connect(disconnectAction, SIGNAL(triggered()), SLOT(ui_disconnectServer()));
-
-        QAction *refreshAction = new QAction("Refresh", this);
-        refreshAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
-        connect(refreshAction, SIGNAL(triggered()), SLOT(ui_refreshServer()));
-
-        QAction *openShellAction = new QAction("Open Shell", this);
-        openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
-        connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell()));
-
-        QAction *serverHostInfo = new QAction("Host Info", this);
-        connect(serverHostInfo, SIGNAL(triggered()), SLOT(ui_serverHostInfo()));
-
-        QAction *serverStatus = new QAction("Server Status", this);
-        connect(serverStatus, SIGNAL(triggered()), SLOT(ui_serverStatus()));
-
-        QAction *serverVersion = new QAction("MongoDB Version", this);
-        connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion()));
-
-        QAction *showLog = new QAction("Show Log", this);
-        connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog()));
-
-        QAction *refreshServer = new QAction("Refresh", this);
-        connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer()));
-
-        QAction *createDatabase = new QAction("Create Database", this);
-        connect(createDatabase, SIGNAL(triggered()), SLOT(ui_createDatabase()));
-
-        _serverContextMenu = new QMenu(this);
-        _serverContextMenu->addAction(openShellAction);
-        _serverContextMenu->addAction(refreshServer);
-        _serverContextMenu->addSeparator();
-        _serverContextMenu->addAction(createDatabase);
-        _serverContextMenu->addAction(serverStatus);
-        _serverContextMenu->addAction(serverHostInfo);
-        _serverContextMenu->addAction(serverVersion);
-        _serverContextMenu->addSeparator();
-        _serverContextMenu->addAction(showLog);
-        _serverContextMenu->addAction(disconnectAction);
+        setObjectName("explorerTree");                             
 
         QAction *openDbShellAction = new QAction("Open Shell", this);
         openDbShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
@@ -287,8 +245,8 @@ namespace Robomongo
         QTreeWidgetItem *item = itemAt(event->pos());
         if (item){
 			ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
-			if (serverItem) {
-				_serverContextMenu->exec(mapToGlobal(event->pos()));
+            if (serverItem) {
+                serverItem->showContextMenuAtPos(mapToGlobal(event->pos()));
 				return;
 			}
 
@@ -402,61 +360,10 @@ namespace Robomongo
 		}
     }
 
-    void ExplorerTreeWidget::openCurrentServerShell(const QString &script, bool execute,
-                                                    const CursorPosition &cursor)
-    {
-        ExplorerServerTreeItem *serverItem = selectedServerItem();
-        if (serverItem){
-			MongoServer *server = serverItem->server();
-			AppRegistry::instance().app()->
-				openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName(), cursor);
-		}
-	}
-
     void ExplorerTreeWidget::openDatabaseShell(MongoDatabase *database, const QString &script, bool execute, const CursorPosition &cursor)
     {
 		AppRegistry::instance().app()->openShell(database, script, execute, database->name(), cursor);
-    }
-
-    void ExplorerTreeWidget::ui_disconnectServer()
-    {
-        emit disconnectActionTriggered();
-    }
-
-    void ExplorerTreeWidget::ui_refreshServer()
-    {
-        ExplorerServerTreeItem *serverItem = selectedServerItem();
-        if (serverItem){
-			serverItem->expand();
-		}
-    }
-
-    void ExplorerTreeWidget::ui_createDatabase()
-    {
-        ExplorerServerTreeItem *serverItem = selectedServerItem();
-        if (serverItem){
-			CreateDatabaseDialog dlg(serverItem->server()->connectionRecord()->getFullAddress());
-			dlg.setOkButtonText("&Create");
-			dlg.setInputLabelText("Database Name:");
-			int result = dlg.exec();
-			if (result == QDialog::Accepted) {
-				serverItem->server()->createDatabase(dlg.databaseName());
-
-				// refresh list of databases
-				serverItem->expand();
-			}
-		}
-    }
-
-    void ExplorerTreeWidget::ui_showLog()
-    {
-        openCurrentServerShell("show log");
-    }
-
-    void ExplorerTreeWidget::ui_openShell()
-    {
-        emit openShellActionTriggered();
-    }
+    } 
 
     void ExplorerTreeWidget::ui_addDocument()
     {
@@ -721,22 +628,7 @@ namespace Robomongo
     void ExplorerTreeWidget::ui_dbOpenShell()
     {
         openCurrentDatabaseShell("");
-    }
-
-    void ExplorerTreeWidget::ui_serverHostInfo()
-    {
-        openCurrentServerShell("db.hostInfo()");
-    }
-
-    void ExplorerTreeWidget::ui_serverStatus()
-    {
-        openCurrentServerShell("db.serverStatus()");
-    }
-
-    void ExplorerTreeWidget::ui_serverVersion()
-    {
-        openCurrentServerShell("db.version()");
-    }
+    }    
 
     void ExplorerTreeWidget::ui_refreshUsers()
     {

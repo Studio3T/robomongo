@@ -11,6 +11,21 @@
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
 #include "robomongo/core/domain/MongoServer.h"
+
+namespace
+{
+    QString buildName(const QString& text,int *count)
+    {
+        if (!count)
+            return text;
+
+        if (*count == -1)
+            return text.arg(" ...");
+
+        return QString("%1 (%2)").arg(text).arg(*count);
+    }
+}
+
 namespace Robomongo
 {
     ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) :
@@ -18,12 +33,12 @@ namespace Robomongo
         _database(database),
         _bus(AppRegistry::instance().bus())
     {
-        _bus->subscribe(this, MongoDatabase_CollectionListLoadedEvent::Type, _database);
-        _bus->subscribe(this, MongoDatabase_UsersLoadedEvent::Type, _database);
-        _bus->subscribe(this, MongoDatabase_FunctionsLoadedEvent::Type, _database);
-        _bus->subscribe(this, MongoDatabase_CollectionsLoadingEvent::Type, _database);
-        _bus->subscribe(this, MongoDatabase_FunctionsLoadingEvent::Type, _database);
-        _bus->subscribe(this, MongoDatabase_UsersLoadingEvent::Type, _database);
+        _bus->subscribe(this, MongoDatabaseCollectionListLoadedEvent::Type, _database);
+        _bus->subscribe(this, MongoDatabaseUsersLoadedEvent::Type, _database);
+        _bus->subscribe(this, MongoDatabaseFunctionsLoadedEvent::Type, _database);
+        _bus->subscribe(this, MongoDatabaseCollectionsLoadingEvent::Type, _database);
+        _bus->subscribe(this, MongoDatabaseFunctionsLoadingEvent::Type, _database);
+        _bus->subscribe(this, MongoDatabaseUsersLoadingEvent::Type, _database);
         
         setText(0, _database->name());
         setIcon(0, GuiRegistry::instance().databaseIcon());
@@ -31,29 +46,21 @@ namespace Robomongo
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
         _collectionFolderItem = new ExplorerDatabaseCategoryTreeItem(Collections, this);
-        _collectionFolderItem->setText(0, buildCollectionsFolderName());
+        _collectionFolderItem->setText(0, buildName("Collections",0));
         _collectionFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         _collectionFolderItem->setExpanded(true);
         _collectionFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         addChild(_collectionFolderItem);
 
         _javascriptFolderItem = new ExplorerDatabaseCategoryTreeItem(Functions, this);
-        _javascriptFolderItem->setText(0, buildFunctionsFolderName());
+        _javascriptFolderItem->setText(0, buildName("Functions",0));
         _javascriptFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         _javascriptFolderItem->setExpanded(true);
         _javascriptFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         addChild(_javascriptFolderItem);
-
-        // Files (GridFS) not implemented yet
-        //_filesFolderItem = new ExplorerDatabaseCategoryTreeItem(Files, this);
-        //_filesFolderItem->setText(0, "Files");
-        //_filesFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        //_filesFolderItem->setExpanded(true);
-        //_filesFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-        //addChild(_filesFolderItem);
-
+        
         _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(Users, this);
-        _usersFolderItem->setText(0, buildUsersFolderName());
+        _usersFolderItem->setText(0, buildName("Users",0));
         _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         _usersFolderItem->setExpanded(true);
         _usersFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
@@ -80,9 +87,9 @@ namespace Robomongo
         _bus->send(_database->server()->client(), new DeleteCollectionIndexRequest(item, item->collection()->info(),indexText));
     }
 
-    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item,const QString& text)
+    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item,const QString& text,bool unique,bool backGround,bool dropDuplicateIndex)
     {
-        _bus->send(_database->server()->client(), new EnsureIndexRequest(item, item->collection()->info(),text));
+        _bus->send(_database->server()->client(), new EnsureIndexRequest(item, item->collection()->info(),text,unique,backGround,dropDuplicateIndex));
     }
 
     void ExplorerDatabaseTreeItem::expandFunctions()
@@ -90,11 +97,11 @@ namespace Robomongo
         _database->loadFunctions();
     }
 
-    void ExplorerDatabaseTreeItem::handle(MongoDatabase_CollectionListLoadedEvent *event)
+    void ExplorerDatabaseTreeItem::handle(MongoDatabaseCollectionListLoadedEvent *event)
     {
         QList<MongoCollection *> collections = event->collections;
         int count = collections.count();
-        _collectionFolderItem->setText(0, buildCollectionsFolderName(&count));
+        _collectionFolderItem->setText(0, buildName("Collections",&count));
 
         clearChildItems(_collectionFolderItem);
         createCollectionSystemFolderItem();
@@ -112,11 +119,11 @@ namespace Robomongo
         showCollectionSystemFolderIfNeeded();
     }
 
-    void ExplorerDatabaseTreeItem::handle(MongoDatabase_UsersLoadedEvent *event)
+    void ExplorerDatabaseTreeItem::handle(MongoDatabaseUsersLoadedEvent *event)
     {
         QList<MongoUser> users = event->users();
         int count = users.count();
-        _usersFolderItem->setText(0, buildUsersFolderName(&count));
+        _usersFolderItem->setText(0, buildName("Users",&count));
 
         clearChildItems(_usersFolderItem);
 
@@ -126,11 +133,11 @@ namespace Robomongo
         }
     }
 
-    void ExplorerDatabaseTreeItem::handle(MongoDatabase_FunctionsLoadedEvent *event)
+    void ExplorerDatabaseTreeItem::handle(MongoDatabaseFunctionsLoadedEvent *event)
     {
         QList<MongoFunction> functions = event->functions();
         int count = functions.count();
-        _javascriptFolderItem->setText(0, buildFunctionsFolderName(&count));
+        _javascriptFolderItem->setText(0,  buildName("Functions",&count));
 
         clearChildItems(_javascriptFolderItem);
 
@@ -140,22 +147,22 @@ namespace Robomongo
         }
     }
 
-    void ExplorerDatabaseTreeItem::handle(MongoDatabase_CollectionsLoadingEvent *event)
+    void ExplorerDatabaseTreeItem::handle(MongoDatabaseCollectionsLoadingEvent *event)
     {
         int count = -1;
-        _collectionFolderItem->setText(0, buildCollectionsFolderName(&count));
+        _collectionFolderItem->setText(0, buildName("Collections",&count));
     }
 
-    void ExplorerDatabaseTreeItem::handle(MongoDatabase_FunctionsLoadingEvent *event)
+    void ExplorerDatabaseTreeItem::handle(MongoDatabaseFunctionsLoadingEvent *event)
     {
         int count = -1;
-        _javascriptFolderItem->setText(0, buildFunctionsFolderName(&count));
+        _javascriptFolderItem->setText(0, buildName("Functions",&count));
     }
 
-    void ExplorerDatabaseTreeItem::handle(MongoDatabase_UsersLoadingEvent *event)
+    void ExplorerDatabaseTreeItem::handle(MongoDatabaseUsersLoadingEvent *event)
     {
         int count = -1;
-        _usersFolderItem->setText(0, buildUsersFolderName(&count));
+        _usersFolderItem->setText(0, buildName("Users",&count));
     }
 
     void ExplorerDatabaseTreeItem::clearChildItems(QTreeWidgetItem *root)
@@ -191,39 +198,6 @@ namespace Robomongo
     void ExplorerDatabaseTreeItem::showCollectionSystemFolderIfNeeded()
     {
         _collectionSystemFolderItem->setHidden(_collectionSystemFolderItem->childCount() == 0);
-    }
-
-    QString ExplorerDatabaseTreeItem::buildCollectionsFolderName(int *count /* = NULL */)
-    {
-        if (!count)
-            return "Collections";
-
-        if (*count == -1)
-            return "Collections ...";
-
-        return QString("Collections (%1)").arg(*count);
-    }
-
-    QString ExplorerDatabaseTreeItem::buildUsersFolderName(int *count)
-    {
-        if (!count)
-            return "Users";
-
-        if (*count == -1)
-            return "Users ...";
-
-        return QString("Users (%1)").arg(*count);
-    }
-
-    QString ExplorerDatabaseTreeItem::buildFunctionsFolderName(int *count)
-    {
-        if (!count)
-            return "Functions";
-
-        if (*count == -1)
-            return "Functions ...";
-
-        return QString("Functions (%1)").arg(*count);
     }
 
     void ExplorerDatabaseTreeItem::addUserItem(MongoDatabase *database, const MongoUser &user)

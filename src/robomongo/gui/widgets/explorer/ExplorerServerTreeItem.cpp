@@ -15,7 +15,7 @@ namespace Robomongo
         _bus(AppRegistry::instance().bus())
     {
         _bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
-        _bus->subscribe(this, MongoServer_LoadingDatabasesEvent::Type, _server);
+        _bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
 
         setText(0, buildServerName());
         setIcon(0, GuiRegistry::instance().serverIcon());
@@ -76,7 +76,7 @@ namespace Robomongo
         databaseRefreshed(event->list);
     }
 
-    void ExplorerServerTreeItem::handle(MongoServer_LoadingDatabasesEvent *event)
+    void ExplorerServerTreeItem::handle(MongoServerLoadingDatabasesEvent *event)
     {
         int count = -1;
         setText(0, buildServerName(&count));

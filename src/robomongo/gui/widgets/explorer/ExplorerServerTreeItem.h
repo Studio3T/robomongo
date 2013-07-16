@@ -33,7 +33,7 @@ namespace Robomongo
 
     public slots:
         void handle(DatabaseListLoadedEvent *event);
-        void handle(MongoServer_LoadingDatabasesEvent *event);
+        void handle(MongoServerLoadingDatabasesEvent *event);
 
     private:
 

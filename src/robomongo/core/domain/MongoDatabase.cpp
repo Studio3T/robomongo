@@ -9,12 +9,12 @@
 namespace Robomongo
 {
 
-    R_REGISTER_EVENT(MongoDatabase_CollectionListLoadedEvent)
-    R_REGISTER_EVENT(MongoDatabase_UsersLoadedEvent)
-    R_REGISTER_EVENT(MongoDatabase_FunctionsLoadedEvent)
-    R_REGISTER_EVENT(MongoDatabase_UsersLoadingEvent)
-    R_REGISTER_EVENT(MongoDatabase_FunctionsLoadingEvent)
-    R_REGISTER_EVENT(MongoDatabase_CollectionsLoadingEvent)
+    R_REGISTER_EVENT(MongoDatabaseCollectionListLoadedEvent)
+    R_REGISTER_EVENT(MongoDatabaseUsersLoadedEvent)
+    R_REGISTER_EVENT(MongoDatabaseFunctionsLoadedEvent)
+    R_REGISTER_EVENT(MongoDatabaseUsersLoadingEvent)
+    R_REGISTER_EVENT(MongoDatabaseFunctionsLoadingEvent)
+    R_REGISTER_EVENT(MongoDatabaseCollectionsLoadingEvent)
 
     MongoDatabase::MongoDatabase(MongoServer *server, const QString &name)
         :QObject(),_system(false),_server(server),_bus(AppRegistry::instance().bus())
@@ -32,19 +32,19 @@ namespace Robomongo
 
     void MongoDatabase::loadCollections()
     {
-        _bus->publish(new MongoDatabase_CollectionsLoadingEvent(this));
+        _bus->publish(new MongoDatabaseCollectionsLoadingEvent(this));
         _bus->send(_server->client(), new LoadCollectionNamesRequest(this, _name));
     }
 
     void MongoDatabase::loadUsers()
     {
-        _bus->publish(new MongoDatabase_UsersLoadingEvent(this));
+        _bus->publish(new MongoDatabaseUsersLoadingEvent(this));
         _bus->send(_server->client(), new LoadUsersRequest(this, _name));
     }
 
     void MongoDatabase::loadFunctions()
     {
-        _bus->publish(new MongoDatabase_FunctionsLoadingEvent(this));
+        _bus->publish(new MongoDatabaseFunctionsLoadingEvent(this));
         _bus->send(_server->client(), new LoadFunctionsRequest(this, _name));
     }
     void MongoDatabase::createCollection(const QString &collection)
@@ -105,7 +105,7 @@ namespace Robomongo
             addCollection(collection);
         }
 
-        _bus->publish(new MongoDatabase_CollectionListLoadedEvent(this, _collections));
+        _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, _collections));
     }
 
     void MongoDatabase::handle(LoadUsersResponse *event)
@@ -113,7 +113,7 @@ namespace Robomongo
         if (event->isError())
             return;
         
-        _bus->publish(new MongoDatabase_UsersLoadedEvent(this, this, event->users()));
+        _bus->publish(new MongoDatabaseUsersLoadedEvent(this, this, event->users()));
     }
 
     void MongoDatabase::handle(LoadFunctionsResponse *event)
@@ -121,7 +121,7 @@ namespace Robomongo
         if (event->isError())
             return;
             
-        _bus->publish(new MongoDatabase_FunctionsLoadedEvent(this, this, event->functions()));
+        _bus->publish(new MongoDatabaseFunctionsLoadedEvent(this, this, event->functions()));
     }
 
     void MongoDatabase::clearCollections()

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QObject>
-#include <mongo/client/dbclient.h>
+#include <mongo/bson/bsonobj.h>
 #include <boost/shared_ptr.hpp>
 
 #include "robomongo/core/Core.h"
@@ -80,22 +80,22 @@ namespace Robomongo
 
     };
 
-    class MongoDatabase_CollectionListLoadedEvent : public Event
+    class MongoDatabaseCollectionListLoadedEvent : public Event
     {
         R_EVENT
 
-        MongoDatabase_CollectionListLoadedEvent(QObject *sender, const QList<MongoCollection *> &list) :
+        MongoDatabaseCollectionListLoadedEvent(QObject *sender, const QList<MongoCollection *> &list) :
             Event(sender),
             collections(list) { }
 
         QList<MongoCollection *> collections;
     };
 
-    class MongoDatabase_UsersLoadedEvent : public Event
+    class MongoDatabaseUsersLoadedEvent : public Event
     {
         R_EVENT
 
-        MongoDatabase_UsersLoadedEvent(QObject *sender, MongoDatabase *database, const QList<MongoUser> &list) :
+        MongoDatabaseUsersLoadedEvent(QObject *sender, MongoDatabase *database, const QList<MongoUser> &list) :
             Event(sender),
             _users(list),
             _database(database) {}
@@ -108,11 +108,11 @@ namespace Robomongo
         MongoDatabase *_database;
     };
 
-    class MongoDatabase_FunctionsLoadedEvent : public Event
+    class MongoDatabaseFunctionsLoadedEvent : public Event
     {
         R_EVENT
 
-        MongoDatabase_FunctionsLoadedEvent(QObject *sender, MongoDatabase *database, const QList<MongoFunction> &list) :
+        MongoDatabaseFunctionsLoadedEvent(QObject *sender, MongoDatabase *database, const QList<MongoFunction> &list) :
             Event(sender),
             _functions(list),
             _database(database) {}
@@ -125,21 +125,21 @@ namespace Robomongo
         MongoDatabase *_database;
     };
 
-    class MongoDatabase_UsersLoadingEvent : public Event
+    class MongoDatabaseUsersLoadingEvent : public Event
     {
         R_EVENT
-        MongoDatabase_UsersLoadingEvent(QObject *sender) : Event(sender) {}
+        MongoDatabaseUsersLoadingEvent(QObject *sender) : Event(sender) {}
     };
 
-    class MongoDatabase_FunctionsLoadingEvent : public Event
+    class MongoDatabaseFunctionsLoadingEvent : public Event
     {
         R_EVENT
-        MongoDatabase_FunctionsLoadingEvent(QObject *sender) : Event(sender) {}
+        MongoDatabaseFunctionsLoadingEvent(QObject *sender) : Event(sender) {}
     };
 
-    class MongoDatabase_CollectionsLoadingEvent : public Event
+    class MongoDatabaseCollectionsLoadingEvent : public Event
     {
         R_EVENT
-        MongoDatabase_CollectionsLoadingEvent(QObject *sender) : Event(sender) {}
+        MongoDatabaseCollectionsLoadingEvent(QObject *sender) : Event(sender) {}
     };
 }

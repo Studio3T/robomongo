@@ -41,7 +41,6 @@ namespace Robomongo
         connect(validate, SIGNAL(clicked()), this, SLOT(onValidateButtonClicked()));
 
         _queryText = new FindFrame(this);
-        _textFont = chooseTextFont();
         _configureQueryText();
         _queryText->sciScintilla()->setText(json);
         connect(_queryText->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onQueryTextChanged()));
@@ -150,9 +149,10 @@ namespace Robomongo
     void DocumentTextEditor::_configureQueryText()
     {
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
-        javaScriptLexer->setFont(_textFont);
+        QFont font = chooseTextFont();
+        javaScriptLexer->setFont(font);
         _queryText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
-        _queryText->sciScintilla()->setFont(_textFont);
+        _queryText->sciScintilla()->setFont(font);
         _queryText->sciScintilla()->setPaper(QColor(255, 0, 0, 127));
         _queryText->sciScintilla()->setLexer(javaScriptLexer);
         _queryText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
@@ -165,7 +165,7 @@ namespace Robomongo
         _queryText->sciScintilla()->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
     }
 
-    QFont DocumentTextEditor::chooseTextFont()
+    QFont DocumentTextEditor::chooseTextFont() const
     {
         QFont textFont = font();
     #if defined(Q_OS_MAC)

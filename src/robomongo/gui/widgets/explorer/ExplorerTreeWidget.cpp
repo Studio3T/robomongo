@@ -532,7 +532,7 @@ namespace Robomongo
                 EditIndexDialog dlg(this,parent);
                 int result = dlg.exec();
                 if (result == QDialog::Accepted) {
-                    (static_cast<ExplorerDatabaseTreeItem *const>(parent->QObject::parent()))->enshureIndex(parent,dlg.getInputText());
+                    (static_cast<ExplorerDatabaseTreeItem *const>(parent->QObject::parent()))->enshureIndex(parent,dlg.getInputText(),dlg.isUnique(),dlg.isBackGround(),dlg.isDropDuplicates());
                 }
             }
         }

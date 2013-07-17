@@ -89,9 +89,9 @@ namespace Robomongo
         EventBus *_bus;
     };
 
-    class MongoServer_LoadingDatabasesEvent : public Event
+    class MongoServerLoadingDatabasesEvent : public Event
     {
         R_EVENT
-        MongoServer_LoadingDatabasesEvent(QObject *sender) : Event(sender) {}
+        MongoServerLoadingDatabasesEvent(QObject *sender) : Event(sender) {}
     };
 }

@@ -1,12 +1,12 @@
 #pragma once
 #include <QDialog>
 QT_BEGIN_NAMESPACE
-class QTabWidget;
 class QLineEdit;
-class QTextEdit;
+class QCheckBox;
 QT_END_NAMESPACE
 namespace Robomongo
 {
+    class FindFrame;
     class ExplorerCollectionTreeItem;
     class EditIndexDialog: public QDialog
     {
@@ -20,12 +20,17 @@ namespace Robomongo
         };
         explicit EditIndexDialog(QWidget *parent,ExplorerCollectionTreeItem * const item);
         QString getInputText()const;
+        bool isUnique() const;
+        bool isBackGround() const;
+        bool isDropDuplicates() const;
     public Q_SLOTS:
         virtual void accept();
     private:
        QLineEdit *_nameLineEdit;
-       QTabWidget *_mainTab;
-       QTextEdit *_jsonText;
+       FindFrame *_jsonText;
        ExplorerCollectionTreeItem * const _item;
+       QCheckBox *_uniqueCheckBox;
+       QCheckBox *_dropDuplicates;
+       QCheckBox *_backGroundCheckBox;
     };
 }

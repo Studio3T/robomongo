@@ -22,7 +22,10 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/explorer/ExplorerWidget.h
     robomongo/gui/widgets/explorer/ExplorerTreeWidget.h
     robomongo/gui/MainWindow.h
+    robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h
     robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h
+	robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h
+    robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h
     robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h
 	robomongo/gui/widgets/explorer/EditIndexDialog.h
     robomongo/gui/widgets/workarea/WorkAreaWidget.h
@@ -55,9 +58,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/AboutDialog.h
     robomongo/gui/editors/FindFrame.h)
 SET(HEADERS_GUI
-    robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h
-    robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h
-	robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h
+    robomongo/gui/widgets/explorer/ExplorerTreeItem.h
     robomongo/gui/GuiRegistry.h
     robomongo/gui/editors/PlainJavaScriptEditor.h
     robomongo/gui/editors/JSLexer.h
@@ -72,6 +73,7 @@ SET(SOURCES_GUI
     robomongo/gui/widgets/explorer/ExplorerTreeWidget.cpp
     robomongo/gui/MainWindow.cpp
     robomongo/gui/GuiRegistry.cpp
+	robomongo/gui/widgets/explorer/ExplorerTreeItem.cpp
     robomongo/gui/widgets/explorer/ExplorerServerTreeItem.cpp
     robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp
 	robomongo/gui/widgets/explorer/EditIndexDialog.cpp

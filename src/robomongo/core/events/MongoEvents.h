@@ -191,13 +191,19 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        EnsureIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const QString &request) :
-        Event(sender),_collection(collection),_request(request) {}
+        EnsureIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const QString &request,bool isUnique,bool isBackGround,bool isDropDuplicates) :
+        Event(sender),_collection(collection),_request(request),_isUnique(isUnique),_isBackGround(isBackGround),_isDropDuplicates(isDropDuplicates) {}
         MongoCollectionInfo collection() const { return _collection; }
         QString request() const {return _request;}
+        bool isUnique() const {return _isUnique;}
+        bool isBackGround() const {return _isBackGround;}
+        bool isDropDuplicates() const {return _isDropDuplicates;}
     private:
         const MongoCollectionInfo _collection;
         QString _request;
+        bool _isUnique;
+        bool _isBackGround;
+        bool _isDropDuplicates;
     };
 
     class DeleteCollectionIndexRequest : public Event

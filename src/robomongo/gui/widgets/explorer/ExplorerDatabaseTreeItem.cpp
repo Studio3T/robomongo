@@ -1,62 +1,112 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 
+#include <QMessageBox>
+#include <QAction>
+#include <QMenu>
+
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoCollection.h"
+#include "robomongo/core/domain/MongoUser.h"
+#include "robomongo/core/domain/MongoFunction.h"
 #include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/Core.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/App.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
-#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
-#include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/gui/GuiRegistry.h"
+
+
+namespace
+{
+    void openCurrentDatabaseShell(Robomongo::MongoDatabase *database,const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
+    {
+        Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, database->name(), cursor);
+    }
+
+    void clearChildItems(QTreeWidgetItem *root)
+    {
+        int itemCount = root->childCount();
+        for (int i = 0; i < itemCount; ++i) {
+            QTreeWidgetItem *item = root->child(0);
+            root->removeChild(item);
+            delete item;
+        }
+    }
+}
+
 namespace Robomongo
 {
-    ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(MongoDatabase *database) :
-        QObject(),
+    namespace detail
+    {
+        QString buildName(const QString& text,int count)
+        {
+            if (!count)
+                return text;
+
+            if (count == -1)
+                return QString("%1 ...").arg(text);
+
+            return QString("%1 (%2)").arg(text).arg(count);
+        }
+    }
+    ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database) :
+        QObject(),BaseClass(parent),
         _database(database),
         _bus(AppRegistry::instance().bus())
     {
-        _bus->subscribe(this, MongoDatabase_CollectionListLoadedEvent::Type, _database);
-        _bus->subscribe(this, MongoDatabase_UsersLoadedEvent::Type, _database);
-        _bus->subscribe(this, MongoDatabase_FunctionsLoadedEvent::Type, _database);
-        _bus->subscribe(this, MongoDatabase_CollectionsLoadingEvent::Type, _database);
-        _bus->subscribe(this, MongoDatabase_FunctionsLoadingEvent::Type, _database);
-        _bus->subscribe(this, MongoDatabase_UsersLoadingEvent::Type, _database);
+        QAction *openDbShellAction = new QAction("Open Shell", this);
+        openDbShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
+        connect(openDbShellAction, SIGNAL(triggered()), SLOT(ui_dbOpenShell()));
+
+        QAction *dbStats = new QAction("Database Statistics", this);
+        connect(dbStats, SIGNAL(triggered()), SLOT(ui_dbStatistics()));
+
+        QAction *dbDrop = new QAction("Drop Database", this);
+        connect(dbDrop, SIGNAL(triggered()), SLOT(ui_dbDrop()));
+
+        QAction *dbRepair = new QAction("Repair Database", this);
+        connect(dbRepair, SIGNAL(triggered()), SLOT(ui_dbRepair()));
+
+        QAction *refreshDatabase = new QAction("Refresh", this);
+        connect(refreshDatabase, SIGNAL(triggered()), SLOT(ui_refreshDatabase()));
+
+        BaseClass::_contextMenu->addAction(openDbShellAction);
+        BaseClass::_contextMenu->addAction(refreshDatabase);
+        BaseClass::_contextMenu->addSeparator();
+        BaseClass::_contextMenu->addAction(dbStats);
+        BaseClass::_contextMenu->addSeparator();
+        BaseClass::_contextMenu->addAction(dbRepair);
+        BaseClass::_contextMenu->addAction(dbDrop);
+
+        _bus->subscribe(this, MongoDatabaseCollectionListLoadedEvent::Type, _database);
+        _bus->subscribe(this, MongoDatabaseUsersLoadedEvent::Type, _database);
+        _bus->subscribe(this, MongoDatabaseFunctionsLoadedEvent::Type, _database);
+        _bus->subscribe(this, MongoDatabaseCollectionsLoadingEvent::Type, _database);
+        _bus->subscribe(this, MongoDatabaseFunctionsLoadingEvent::Type, _database);
+        _bus->subscribe(this, MongoDatabaseUsersLoadingEvent::Type, _database);
         
         setText(0, _database->name());
         setIcon(0, GuiRegistry::instance().databaseIcon());
-        setExpanded(true);
+        setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
-        _collectionFolderItem = new ExplorerDatabaseCategoryTreeItem(Collections, this);
-        _collectionFolderItem->setText(0, buildCollectionsFolderName());
+        _collectionFolderItem = new ExplorerDatabaseCategoryTreeItem(this,Collections);
+        _collectionFolderItem->setText(0, detail::buildName("Collections",0));
         _collectionFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        _collectionFolderItem->setExpanded(true);
-        _collectionFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         addChild(_collectionFolderItem);
 
-        _javascriptFolderItem = new ExplorerDatabaseCategoryTreeItem(Functions, this);
-        _javascriptFolderItem->setText(0, buildFunctionsFolderName());
+        _javascriptFolderItem = new ExplorerDatabaseCategoryTreeItem(this,Functions);
+        _javascriptFolderItem->setText(0, detail::buildName("Functions",0));
         _javascriptFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        _javascriptFolderItem->setExpanded(true);
-        _javascriptFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         addChild(_javascriptFolderItem);
-
-        // Files (GridFS) not implemented yet
-        //_filesFolderItem = new ExplorerDatabaseCategoryTreeItem(Files, this);
-        //_filesFolderItem->setText(0, "Files");
-        //_filesFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        //_filesFolderItem->setExpanded(true);
-        //_filesFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-        //addChild(_filesFolderItem);
-
-        _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(Users, this);
-        _usersFolderItem->setText(0, buildUsersFolderName());
+        
+        _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(this,Users);
+        _usersFolderItem->setText(0, detail::buildName("Users",0));
         _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        _usersFolderItem->setExpanded(true);
-        _usersFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         addChild(_usersFolderItem);
     }
 
@@ -71,7 +121,7 @@ namespace Robomongo
     }
 
     void ExplorerDatabaseTreeItem::expandColection(ExplorerCollectionTreeItem *const item)
-    {
+    {        
          _bus->send(_database->server()->client(), new LoadCollectionIndexesRequest(item, item->collection()->info()));
     }
 
@@ -80,9 +130,9 @@ namespace Robomongo
         _bus->send(_database->server()->client(), new DeleteCollectionIndexRequest(item, item->collection()->info(),indexText));
     }
 
-    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item,const QString& text)
+    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item,const QString& text,bool unique,bool backGround,bool dropDuplicateIndex)
     {
-        _bus->send(_database->server()->client(), new EnsureIndexRequest(item, item->collection()->info(),text));
+        _bus->send(_database->server()->client(), new EnsureIndexRequest(item, item->collection()->info(),text,unique,backGround,dropDuplicateIndex));
     }
 
     void ExplorerDatabaseTreeItem::expandFunctions()
@@ -90,11 +140,11 @@ namespace Robomongo
         _database->loadFunctions();
     }
 
-    void ExplorerDatabaseTreeItem::handle(MongoDatabase_CollectionListLoadedEvent *event)
+    void ExplorerDatabaseTreeItem::handle(MongoDatabaseCollectionListLoadedEvent *event)
     {
         QList<MongoCollection *> collections = event->collections;
         int count = collections.count();
-        _collectionFolderItem->setText(0, buildCollectionsFolderName(&count));
+        _collectionFolderItem->setText(0, detail::buildName("Collections",count));
 
         clearChildItems(_collectionFolderItem);
         createCollectionSystemFolderItem();
@@ -112,11 +162,11 @@ namespace Robomongo
         showCollectionSystemFolderIfNeeded();
     }
 
-    void ExplorerDatabaseTreeItem::handle(MongoDatabase_UsersLoadedEvent *event)
+    void ExplorerDatabaseTreeItem::handle(MongoDatabaseUsersLoadedEvent *event)
     {
         QList<MongoUser> users = event->users();
         int count = users.count();
-        _usersFolderItem->setText(0, buildUsersFolderName(&count));
+        _usersFolderItem->setText(0, detail::buildName("Users",count));
 
         clearChildItems(_usersFolderItem);
 
@@ -126,11 +176,11 @@ namespace Robomongo
         }
     }
 
-    void ExplorerDatabaseTreeItem::handle(MongoDatabase_FunctionsLoadedEvent *event)
+    void ExplorerDatabaseTreeItem::handle(MongoDatabaseFunctionsLoadedEvent *event)
     {
         QList<MongoFunction> functions = event->functions();
         int count = functions.count();
-        _javascriptFolderItem->setText(0, buildFunctionsFolderName(&count));
+        _javascriptFolderItem->setText(0,  detail::buildName("Functions",count));
 
         clearChildItems(_javascriptFolderItem);
 
@@ -140,32 +190,19 @@ namespace Robomongo
         }
     }
 
-    void ExplorerDatabaseTreeItem::handle(MongoDatabase_CollectionsLoadingEvent *event)
+    void ExplorerDatabaseTreeItem::handle(MongoDatabaseCollectionsLoadingEvent *event)
     {
-        int count = -1;
-        _collectionFolderItem->setText(0, buildCollectionsFolderName(&count));
+        _collectionFolderItem->setText(0, detail::buildName("Collections",-1));
     }
 
-    void ExplorerDatabaseTreeItem::handle(MongoDatabase_FunctionsLoadingEvent *event)
+    void ExplorerDatabaseTreeItem::handle(MongoDatabaseFunctionsLoadingEvent *event)
     {
-        int count = -1;
-        _javascriptFolderItem->setText(0, buildFunctionsFolderName(&count));
+        _javascriptFolderItem->setText(0, detail::buildName("Functions",-1));
     }
 
-    void ExplorerDatabaseTreeItem::handle(MongoDatabase_UsersLoadingEvent *event)
+    void ExplorerDatabaseTreeItem::handle(MongoDatabaseUsersLoadingEvent *event)
     {
-        int count = -1;
-        _usersFolderItem->setText(0, buildUsersFolderName(&count));
-    }
-
-    void ExplorerDatabaseTreeItem::clearChildItems(QTreeWidgetItem *root)
-    {
-        int itemCount = root->childCount();
-        for (int i = 0; i < itemCount; ++i) {
-            QTreeWidgetItem *item = root->child(0);
-            root->removeChild(item);
-            delete item;
-        }
+        _usersFolderItem->setText(0, detail::buildName("Users",-1));
     }
 
     void ExplorerDatabaseTreeItem::createCollectionSystemFolderItem()
@@ -178,13 +215,13 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::addCollectionItem(MongoCollection *collection)
     {
-        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(this,collection);
+        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(_collectionFolderItem,this,collection);
         _collectionFolderItem->addChild(collectionItem);
     }
 
     void ExplorerDatabaseTreeItem::addSystemCollectionItem(MongoCollection *collection)
     {
-        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(this,collection);
+        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(_collectionSystemFolderItem,this,collection);
         _collectionSystemFolderItem->addChild(collectionItem);
     }
 
@@ -193,48 +230,47 @@ namespace Robomongo
         _collectionSystemFolderItem->setHidden(_collectionSystemFolderItem->childCount() == 0);
     }
 
-    QString ExplorerDatabaseTreeItem::buildCollectionsFolderName(int *count /* = NULL */)
-    {
-        if (!count)
-            return "Collections";
-
-        if (*count == -1)
-            return "Collections ...";
-
-        return QString("Collections (%1)").arg(*count);
-    }
-
-    QString ExplorerDatabaseTreeItem::buildUsersFolderName(int *count)
-    {
-        if (!count)
-            return "Users";
-
-        if (*count == -1)
-            return "Users ...";
-
-        return QString("Users (%1)").arg(*count);
-    }
-
-    QString ExplorerDatabaseTreeItem::buildFunctionsFolderName(int *count)
-    {
-        if (!count)
-            return "Functions";
-
-        if (*count == -1)
-            return "Functions ...";
-
-        return QString("Functions (%1)").arg(*count);
-    }
-
     void ExplorerDatabaseTreeItem::addUserItem(MongoDatabase *database, const MongoUser &user)
     {
-        ExplorerUserTreeItem *userItem = new ExplorerUserTreeItem(database, user);
+        ExplorerUserTreeItem *userItem = new ExplorerUserTreeItem(_usersFolderItem,database, user);
         _usersFolderItem->addChild(userItem);
     }
 
     void ExplorerDatabaseTreeItem::addFunctionItem(MongoDatabase *database, const MongoFunction &function)
     {
-        ExplorerFunctionTreeItem *functionItem = new ExplorerFunctionTreeItem(database, function);
+        ExplorerFunctionTreeItem *functionItem = new ExplorerFunctionTreeItem(_javascriptFolderItem,database, function);
         _javascriptFolderItem->addChild(functionItem);
+    }
+
+    void ExplorerDatabaseTreeItem::ui_refreshDatabase()
+    {
+        expandCollections();
+    }
+    void ExplorerDatabaseTreeItem::ui_dbStatistics()
+    {
+        openCurrentDatabaseShell(_database,"db.stats()");
+    }
+
+    void ExplorerDatabaseTreeItem::ui_dbDrop()
+    {
+            // Ask user
+            int answer = QMessageBox::question(treeWidget(),
+                "Drop Database",
+                QString("Drop <b>%1</b> database?").arg(_database->name()),
+                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+            if (answer == QMessageBox::Yes){
+                _database->server()->dropDatabase(_database->name());
+                _database->server()->loadDatabases(); // refresh list of databases
+            }
+    }
+
+    void ExplorerDatabaseTreeItem::ui_dbRepair()
+    {
+        openCurrentDatabaseShell(_database,"db.repairDatabase()", false);
+    }
+
+    void ExplorerDatabaseTreeItem::ui_dbOpenShell()
+    {
+        openCurrentDatabaseShell(_database,"");
     }
 }

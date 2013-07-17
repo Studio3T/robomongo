@@ -44,8 +44,8 @@ namespace Robomongo
 {
     EditIndexDialog::EditIndexDialog(QWidget *parent, ExplorerCollectionTreeItem * const item):BaseClass(parent),_item(item)
     {        
-        Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), item->collection()->name());
-        ExplorerDatabaseTreeItem *const database = static_cast<ExplorerDatabaseTreeItem *const>(item->QObject::parent());
+        Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), _item->collection()->name());
+        ExplorerDatabaseTreeItem *const database = dynamic_cast<ExplorerDatabaseTreeItem *const>(_item->databaseItem());
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), database->database()->name());
 
         QHBoxLayout *hlayout = new QHBoxLayout;
@@ -145,8 +145,7 @@ namespace Robomongo
         if(isValidJson(_jsonText->sciScintilla()->text())){
             return BaseClass::accept();
         }
-        else
-        {
+        else{
             QMessageBox::warning(this, "Invalid json", "Please check json text.\n");
             _jsonText->setFocus();
         }

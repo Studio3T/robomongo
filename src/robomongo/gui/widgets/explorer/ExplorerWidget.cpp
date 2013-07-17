@@ -2,6 +2,8 @@
 
 #include <QtGui>
 #include <QHBoxLayout>
+#include <QTreeWidget>
+#include <QLabel>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
@@ -15,12 +17,10 @@
 namespace Robomongo
 {
 
-    ExplorerWidget::ExplorerWidget(QWidget *parent) : QWidget(parent),
-        _progress(0),
-        _bus(AppRegistry::instance().bus()),
-        _app(AppRegistry::instance().app())
+    ExplorerWidget::ExplorerWidget(QWidget *parent) : BaseClass(parent),
+        _progress(0)
     {
-        _treeWidget = new ExplorerTreeWidget;
+        _treeWidget = new ExplorerTreeWidget(this);
         _treeWidget->setIndentation(15);
         _treeWidget->setHeaderHidden(true);
         _treeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -31,8 +31,6 @@ namespace Robomongo
 
         connect(_treeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), SLOT(ui_itemExpanded(QTreeWidgetItem *)));
         connect(_treeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), SLOT(ui_itemDoubleClicked(QTreeWidgetItem *, int)));
-        connect(_treeWidget, SIGNAL(disconnectActionTriggered()), SLOT(ui_disonnectActionTriggered()));
-        connect(_treeWidget, SIGNAL(openShellActionTriggered()), SLOT(ui_openShellActionTriggered()));
 
         setLayout(vlaout);
 
@@ -42,9 +40,9 @@ namespace Robomongo
         _progressLabel->hide();
         movie->start();
 
-        _bus->subscribe(this, ConnectingEvent::Type);
-        _bus->subscribe(this, ConnectionFailedEvent::Type);
-        _bus->subscribe(this, ConnectionEstablishedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, ConnectingEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, ConnectionFailedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, ConnectionEstablishedEvent::Type);
     }
 
     void ExplorerWidget::keyPressEvent(QKeyEvent *event)
@@ -54,14 +52,14 @@ namespace Robomongo
             QList<QTreeWidgetItem*> items = _treeWidget->selectedItems();
 
             if (items.count() != 1) {
-                QWidget::keyPressEvent(event);
+                BaseClass::keyPressEvent(event);
                 return;
             }
 
             QTreeWidgetItem *item = items[0];
 
             if (!item) {
-                QWidget::keyPressEvent(event);
+                BaseClass::keyPressEvent(event);
                 return;
             }
 
@@ -70,54 +68,7 @@ namespace Robomongo
             return;
         }
 
-        QWidget::keyPressEvent(event);
-    }
-
-    void ExplorerWidget::ui_disonnectActionTriggered()
-    {
-        QList<QTreeWidgetItem*> items = _treeWidget->selectedItems();
-
-        if (items.count() != 1)
-            return;
-
-        QTreeWidgetItem *item = items[0];
-
-        if (!item)
-            return;
-
-        ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
-        if (!serverItem)
-            return;
-
-        int index = _treeWidget->indexOfTopLevelItem(serverItem);
-        if (index != -1) {
-            QTreeWidgetItem *removedItem = _treeWidget->takeTopLevelItem(index);
-            if (removedItem) {
-                MongoServer *server = serverItem->server();
-
-                delete removedItem;
-                _app->closeServer(server);
-            }
-        }
-    }
-
-    void ExplorerWidget::ui_openShellActionTriggered()
-    {
-        QList<QTreeWidgetItem*> items = _treeWidget->selectedItems();
-
-        if (items.count() != 1)
-            return;
-
-        QTreeWidgetItem *item = items[0];
-
-        if (!item)
-            return;
-
-        ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
-        if (!serverItem)
-            return;
-
-        _app->openShell(serverItem->server(), "");
+        BaseClass::keyPressEvent(event);
     }
 
     void ExplorerWidget::increaseProgress()
@@ -147,8 +98,7 @@ namespace Robomongo
     {
         decreaseProgress();
 
-        ExplorerServerTreeItem *item = new ExplorerServerTreeItem(event->server);
-        item->setExpanded(true);
+        ExplorerServerTreeItem *item = new ExplorerServerTreeItem(_treeWidget,event->server);
         _treeWidget->addTopLevelItem(item);
         _treeWidget->setCurrentItem(item);
         _treeWidget->setFocus();
@@ -163,19 +113,7 @@ namespace Robomongo
     {
         ExplorerDatabaseCategoryTreeItem *categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
         if (categoryItem) {
-            switch(categoryItem->category()) {
-                case Collections:
-                    categoryItem->databaseItem()->expandCollections();
-                    break;
-                case Files:
-                    break;
-                case Functions:
-                    categoryItem->databaseItem()->expandFunctions();
-                    break;
-                case Users:
-                    categoryItem->databaseItem()->expandUsers();
-                    break;
-            }
+            categoryItem->expand();
             return;
         }
 
@@ -184,11 +122,10 @@ namespace Robomongo
             serverItem->expand();
             return;
         }
-
-        ExplorerCollectionTreeItem * colectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
-        if(colectionItem)
-        {
-            colectionItem->expand();
+       
+        ExplorerCollectionDirIndexesTreeItem * dirItem = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(item);
+        if(dirItem){
+            dirItem->expand();
         }
     }
 
@@ -196,7 +133,7 @@ namespace Robomongo
     {
         ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
         if (collectionItem) {
-            _app->openShell(collectionItem->collection());
+            AppRegistry::instance().app()->openShell(collectionItem->collection());
         }
     }
 }

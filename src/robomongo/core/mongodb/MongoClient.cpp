@@ -113,10 +113,10 @@ namespace Robomongo
         return result;
     }
 
-    void MongoClient::ensureIndex(const MongoCollectionInfo &collection,const QString &request)const
+    void MongoClient::ensureIndex(const MongoCollectionInfo &collection, const QString &request, bool unique, bool backGround, bool dropDuplicates)const
     {
         mongo::BSONObj obj = mongo::fromjson(request.toUtf8());
-        _dbclient->ensureIndex(collection.ns().toString().toStdString(),obj);
+        _dbclient->ensureIndex(collection.ns().toString().toStdString(),obj,unique,"",true,backGround);
     }
 
     bool MongoClient::deleteIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexText)const

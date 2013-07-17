@@ -1,8 +1,7 @@
 #pragma once
 
-#include <QWidget>
 #include <QDialog>
-#include <mongo/client/dbclient.h>
+#include <mongo/bson/bsonobj.h>
 
 namespace Robomongo
 {
@@ -35,9 +34,8 @@ namespace Robomongo
 
     private:
         void _configureQueryText();
-        QFont chooseTextFont();
+        QFont chooseTextFont() const;
         FindFrame *_queryText;
-        QFont _textFont;
         bool _readonly;
         mongo::BSONObj _obj;
     };

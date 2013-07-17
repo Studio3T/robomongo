@@ -14,7 +14,7 @@
 using namespace std;
 namespace Robomongo
 {
-    R_REGISTER_EVENT(MongoServer_LoadingDatabasesEvent)
+    R_REGISTER_EVENT(MongoServerLoadingDatabasesEvent)
 
     MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible) : QObject(),
         _connectionRecord(connectionRecord),
@@ -81,7 +81,7 @@ namespace Robomongo
 
     void MongoServer::loadDatabases()
     {
-        _bus->publish(new MongoServer_LoadingDatabasesEvent(this));
+        _bus->publish(new MongoServerLoadingDatabasesEvent(this));
         _client->send(new LoadDatabaseNamesRequest(this));
     }
 

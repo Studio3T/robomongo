@@ -1,15 +1,16 @@
 #pragma once
 
-#include <QTreeWidget>
-#include <QLabel>
+#include <QWidget>
+QT_BEGIN_NAMESPACE
+class QTreeWidget;
+class QTreeWidgetItem;
+class QLabel;
+QT_END_NAMESPACE
 
-#include "robomongo/core/Core.h"
 #include "robomongo/core/events/MongoEvents.h"
 
 namespace Robomongo
 {
-    class MongoManager;
-
     /**
      * @brief Explorer widget (usually you'll see it at the left of main window)
      */
@@ -18,20 +19,20 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef QWidget BaseClass;
         ExplorerWidget(QWidget *parent);
 
     protected:
-        void keyPressEvent(QKeyEvent *event);
+        virtual void keyPressEvent(QKeyEvent *event);
 
-    public slots:
-        void ui_itemExpanded(QTreeWidgetItem *item);
-        void ui_itemDoubleClicked(QTreeWidgetItem *item, int column);
-        void ui_disonnectActionTriggered();
-        void ui_openShellActionTriggered();
-
+    public Q_SLOTS:
         void handle(ConnectingEvent *event);
         void handle(ConnectionEstablishedEvent *event);
         void handle(ConnectionFailedEvent *event);
+    
+    private Q_SLOTS:
+        void ui_itemExpanded(QTreeWidgetItem *item);
+        void ui_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
     private:
         int _progress;
@@ -39,7 +40,5 @@ namespace Robomongo
         void decreaseProgress();
         QLabel *_progressLabel;
         QTreeWidget *_treeWidget;
-        EventBus *_bus;
-        App *_app;
     };
 }

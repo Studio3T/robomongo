@@ -1,27 +1,33 @@
 #include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
 
+#include <QAction>
+#include <QMenu>
+
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoDatabase.h"
+#include "robomongo/core/domain/App.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/domain/App.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
-#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
-#include "robomongo/core/AppRegistry.h"
+#include "robomongo/gui/GuiRegistry.h"
+
+
+namespace
+{
+     void openCurrentServerShell(Robomongo::MongoServer *const server,const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
+     {
+          Robomongo::AppRegistry::instance().app()->openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName(), cursor);
+     }
+}
 
 namespace Robomongo
 {
-    ExplorerServerTreeItem::ExplorerServerTreeItem(MongoServer *server,QTreeWidget *view) : QObject(),BaseClass(view),
+    ExplorerServerTreeItem::ExplorerServerTreeItem(QTreeWidget *view,MongoServer *const server) : QObject(),BaseClass(view),
         _server(server),
         _bus(AppRegistry::instance().bus())
-    {
-       // QAction *refreshAction = new QAction("Refresh", this);
-       // refreshAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
-       // connect(refreshAction, SIGNAL(triggered()), SLOT(ui_refreshServer()));   
-        setExpanded(false);
-
+    { 
         QAction *openShellAction = new QAction("Open Shell", this);
         openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
         connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell()));
@@ -48,22 +54,23 @@ namespace Robomongo
         disconnectAction->setIconText("Disconnect");
         connect(disconnectAction, SIGNAL(triggered()), SLOT(ui_disconnectServer()));
 
-        BaseClass::_contextMenu.addAction(openShellAction);
-        BaseClass::_contextMenu.addAction(refreshServer);
-        BaseClass::_contextMenu.addSeparator();
-        BaseClass::_contextMenu.addAction(createDatabase);
-        BaseClass::_contextMenu.addAction(serverStatus);
-        BaseClass::_contextMenu.addAction(serverHostInfo);
-        BaseClass::_contextMenu.addAction(serverVersion);
-        BaseClass::_contextMenu.addSeparator();
-        BaseClass::_contextMenu.addAction(showLog);
-        BaseClass::_contextMenu.addAction(disconnectAction);
+        BaseClass::_contextMenu->addAction(openShellAction);
+        BaseClass::_contextMenu->addAction(refreshServer);
+        BaseClass::_contextMenu->addSeparator();
+        BaseClass::_contextMenu->addAction(createDatabase);
+        BaseClass::_contextMenu->addAction(serverStatus);
+        BaseClass::_contextMenu->addAction(serverHostInfo);
+        BaseClass::_contextMenu->addAction(serverVersion);
+        BaseClass::_contextMenu->addSeparator();
+        BaseClass::_contextMenu->addAction(showLog);
+        BaseClass::_contextMenu->addAction(disconnectAction);
 
         _bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
         _bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
 
         setText(0, buildServerName());
         setIcon(0, GuiRegistry::instance().serverIcon());
+        setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }
 
@@ -141,27 +148,27 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::ui_serverHostInfo()
     {
-        openCurrentServerShell("db.hostInfo()");
+        openCurrentServerShell(_server,"db.hostInfo()");
     }
 
     void ExplorerServerTreeItem::ui_serverStatus()
     {
-        openCurrentServerShell("db.serverStatus()");
+        openCurrentServerShell(_server,"db.serverStatus()");
     }
 
     void ExplorerServerTreeItem::ui_serverVersion()
     {
-        openCurrentServerShell("db.version()");
+        openCurrentServerShell(_server,"db.version()");
     }
 
     void ExplorerServerTreeItem::ui_showLog()
     {
-        openCurrentServerShell("show log");
+        openCurrentServerShell(_server,"show log");
     }
 
     void ExplorerServerTreeItem::ui_openShell()
     {
-        AppRegistry::instance().app()->openShell(_server, "");
+        openCurrentServerShell(_server,"");
     }
 
     void ExplorerServerTreeItem::ui_disconnectServer()
@@ -186,20 +193,15 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::ui_createDatabase()
     {
-        CreateDatabaseDialog dlg(this->server()->connectionRecord()->getFullAddress());
+        CreateDatabaseDialog dlg(_server->connectionRecord()->getFullAddress());
         dlg.setOkButtonText("&Create");
         dlg.setInputLabelText("Database Name:");
         int result = dlg.exec();
         if (result == QDialog::Accepted) {
-            this->server()->createDatabase(dlg.databaseName());
+            _server->createDatabase(dlg.databaseName());
 
             // refresh list of databases
             expand();
         }
     } 
-
-    void ExplorerServerTreeItem::openCurrentServerShell(const QString &script, bool execute,const CursorPosition &cursor)
-    {
-        AppRegistry::instance().app()->openShell(_server, script, QString(), execute, _server->connectionRecord()->getReadableName(), cursor);
-    }
 }

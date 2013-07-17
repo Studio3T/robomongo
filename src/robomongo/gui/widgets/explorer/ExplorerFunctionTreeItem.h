@@ -1,14 +1,12 @@
 #pragma once
 
-#include <QObject>
-#include <QTreeWidgetItem>
-
-#include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoFunction.h"
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
 
 namespace Robomongo
 {
+    class MongoDatabase;
+
     class ExplorerFunctionTreeItem :public QObject, public ExplorerTreeItem
     {
         Q_OBJECT

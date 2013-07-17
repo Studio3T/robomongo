@@ -1,6 +1,5 @@
 #pragma once
-#include <QTreeWidgetItem>
-#include <QObject>
+
 #include "robomongo/core/Event.h"
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
 #include "robomongo/core/domain/CursorPosition.h"
@@ -11,12 +10,12 @@ namespace Robomongo
     class DeleteCollectionIndexResponse;
     class ExplorerCollectionDirIndexesTreeItem;
     class ExplorerDatabaseTreeItem;
+
     class CollectionIndexesLoadingEvent : public Event
     {
         R_EVENT
             CollectionIndexesLoadingEvent(QObject *sender) : Event(sender) {}
     };
-
 
     class ExplorerCollectionTreeItem: public QObject, public ExplorerTreeItem
     {
@@ -28,10 +27,12 @@ namespace Robomongo
         void expand();
         void deleteIndex(const QTreeWidgetItem * const ind);
         void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
+
     public Q_SLOTS:
         void handle(LoadCollectionIndexesResponse *event);
         void handle(DeleteCollectionIndexResponse *event);
         void handle(CollectionIndexesLoadingEvent *event);
+
     private Q_SLOTS:
         void ui_addDocument();
         void ui_removeDocument();
@@ -62,6 +63,8 @@ namespace Robomongo
         typedef ExplorerTreeItem BaseClass;
         static const QString text;
         explicit ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent);
+        void expand();
+
     private Q_SLOTS:
         void ui_addIndex();
         void ui_addIndexGui();
@@ -77,6 +80,7 @@ namespace Robomongo
     public:
         typedef ExplorerTreeItem BaseClass;
         explicit ExplorerCollectionIndexesTreeItem(QTreeWidgetItem *parent,const QString &val);
+
     private Q_SLOTS:
         void ui_deleteIndex();
     };

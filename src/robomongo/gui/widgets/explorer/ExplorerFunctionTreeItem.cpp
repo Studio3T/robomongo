@@ -1,7 +1,8 @@
 #include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
 
-#include <QAction>
 #include <QMessageBox>
+#include <QAction>
+#include <QMenu>
 
 #include "robomongo/gui/dialogs/FunctionTextEditor.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -25,8 +26,8 @@ namespace Robomongo
         QAction *editFunction = new QAction("Edit Function", this);
         connect(editFunction, SIGNAL(triggered()), SLOT(ui_editFunction()));
 
-        BaseClass::_contextMenu.addAction(editFunction);
-        BaseClass::_contextMenu.addAction(dropFunction);
+        BaseClass::_contextMenu->addAction(editFunction);
+        BaseClass::_contextMenu->addAction(dropFunction);
 
         setText(0, _function.name());
         setIcon(0, GuiRegistry::instance().functionIcon());
@@ -36,51 +37,41 @@ namespace Robomongo
 
     QString ExplorerFunctionTreeItem::buildToolTip(const MongoFunction &function)
     {
-        QString tooltip = QString("%0")
-            .arg(function.name());
-
-        return tooltip;
+        return QString("%0").arg(function.name());
     }
 
     void ExplorerFunctionTreeItem::ui_editFunction()
     {
-        MongoFunction function = this->function();
-        MongoDatabase *database = this->database();
-        MongoServer *server = database->server();
-        QString name = function.name();
+        QString name = _function.name();
 
-        FunctionTextEditor dlg(server->connectionRecord()->getFullAddress(),
-            database->name(),
-            function);
+        FunctionTextEditor dlg(_database->server()->connectionRecord()->getFullAddress(),
+            _database->name(),
+            _function);
         dlg.setWindowTitle("Edit Function");
         int result = dlg.exec();
 
         if (result == QDialog::Accepted) {
 
             MongoFunction editedFunction = dlg.function();
-            database->updateFunction(name, editedFunction);
+            _database->updateFunction(name, editedFunction);
 
             // refresh list of functions
-            database->loadFunctions();
+            _database->loadFunctions();
         }
     }
 
     void ExplorerFunctionTreeItem::ui_dropFunction()
     {
-        MongoFunction function = this->function();
-        MongoDatabase *database = this->database();
-    
-    #pragma message ("TODO: Add parent to modal message")
         // Ask user
-        int answer = QMessageBox::question(NULL,
+        int answer = QMessageBox::question(treeWidget(),
             "Remove Function",
-            QString("Remove <b>%1</b> function?").arg(function.name()),
+            QString("Remove <b>%1</b> function?").arg(_function.name()),
             QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
         if (answer != QMessageBox::Yes)
             return;
 
-        database->dropFunction(function.name());
-        database->loadFunctions(); // refresh list of functions
+        _database->dropFunction(_function.name());
+        _database->loadFunctions(); // refresh list of functions
     }
 }

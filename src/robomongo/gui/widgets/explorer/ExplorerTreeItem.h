@@ -1,6 +1,9 @@
 #pragma once
+
 #include <QTreeWidgetItem>
-#include <QMenu>
+QT_BEGIN_NAMESPACE
+class QMenu;
+QT_END_NAMESPACE
 
 namespace Robomongo
 {
@@ -11,7 +14,8 @@ namespace Robomongo
         explicit ExplorerTreeItem(QTreeWidget *view);
         explicit ExplorerTreeItem(QTreeWidgetItem *parent);
         virtual void showContextMenuAtPos(const QPoint &pos);
+        virtual ~ExplorerTreeItem();
     protected:
-        QMenu _contextMenu;
+        QMenu *const _contextMenu;
     };
 }

@@ -1,18 +1,20 @@
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 
 #include <QMessageBox>
+#include <QAction>
+#include <QMenu>
 
-#include "robomongo/core/AppRegistry.h"
+#include "robomongo/gui/widgets/explorer/EditIndexDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
-#include "robomongo/core/domain/MongoCollection.h"
-#include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/core/EventBus.h"
-#include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
-#include "robomongo/core/AppRegistry.h"
+#include "robomongo/gui/GuiRegistry.h"
+
+#include "robomongo/core/domain/MongoCollection.h"
+#include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
-#include "robomongo/gui/widgets/explorer/EditIndexDialog.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/EventBus.h"
 
 namespace
 {
@@ -37,6 +39,7 @@ namespace Robomongo
 {
     R_REGISTER_EVENT(CollectionIndexesLoadingEvent)
     const QString ExplorerCollectionDirIndexesTreeItem::text = "Indexes";
+
     ExplorerCollectionDirIndexesTreeItem::ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent)
         :QObject(),BaseClass(parent)
     {
@@ -58,16 +61,26 @@ namespace Robomongo
         QAction *refreshIndex = new QAction("Refresh Indexes", this);
         connect(refreshIndex, SIGNAL(triggered()), SLOT(ui_refreshIndex()));
 
-        BaseClass::_contextMenu.addAction(viewIndex);
-        BaseClass::_contextMenu.addAction(addIndex);
-        BaseClass::_contextMenu.addAction(addIndexGui);
-        BaseClass::_contextMenu.addAction(dropIndex);
-        BaseClass::_contextMenu.addAction(reIndex);
-        BaseClass::_contextMenu.addAction(refreshIndex);      
+        BaseClass::_contextMenu->addAction(viewIndex);
+        BaseClass::_contextMenu->addAction(addIndex);
+        BaseClass::_contextMenu->addAction(addIndexGui);
+        BaseClass::_contextMenu->addAction(dropIndex);
+        BaseClass::_contextMenu->addAction(reIndex);
+        BaseClass::_contextMenu->addAction(refreshIndex);      
 
         setText(0, detail::buildName(text,0));
         setIcon(0, Robomongo::GuiRegistry::instance().folderIcon());
+
+        setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+    }
+
+    void ExplorerCollectionDirIndexesTreeItem::expand()
+    {
+        ExplorerCollectionTreeItem * parent = dynamic_cast<ExplorerCollectionTreeItem *>(BaseClass::parent());
+        if(parent){
+            parent->expand();
+        }
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_viewIndex()
@@ -105,8 +118,7 @@ namespace Robomongo
     {
         ExplorerCollectionTreeItem *const parent = dynamic_cast<ExplorerCollectionTreeItem *const>(BaseClass::parent());
         if(parent){
-    #pragma message ("TODO: Add parent to modal message")
-            EditIndexDialog dlg(NULL,parent);
+            EditIndexDialog dlg(treeWidget(),parent);
             int result = dlg.exec();
             if (result == QDialog::Accepted) {
                 (static_cast<ExplorerDatabaseTreeItem *const>(parent->QObject::parent()))->enshureIndex(parent,dlg.getInputText(),dlg.isUnique(),dlg.isBackGround(),dlg.isDropDuplicates());
@@ -138,7 +150,7 @@ namespace Robomongo
         QAction *deleteIndex = new QAction("Delete index", this);
         connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_deleteIndex()));
 
-        BaseClass::_contextMenu.addAction(deleteIndex);
+        BaseClass::_contextMenu->addAction(deleteIndex);
 
         setText(0, val);
         setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());
@@ -158,7 +170,6 @@ namespace Robomongo
     ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(QTreeWidgetItem *parent,ExplorerDatabaseTreeItem *databaseItem,MongoCollection *collection) :
         QObject(),BaseClass(parent),_indexDir(new ExplorerCollectionDirIndexesTreeItem(this)),_collection(collection),_databaseItem(databaseItem)
     {
-        setExpanded(false);
         QAction *addDocument = new QAction("Insert Document", this);
         connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument()));
 
@@ -201,31 +212,33 @@ namespace Robomongo
         QAction *viewCollection = new QAction("View Documents", this);
         connect(viewCollection, SIGNAL(triggered()), SLOT(ui_viewCollection()));
 
-        BaseClass::_contextMenu.addAction(viewCollection);
-        BaseClass::_contextMenu.addSeparator();
-        BaseClass::_contextMenu.addAction(addDocument);
-        BaseClass::_contextMenu.addAction(updateDocument);
-        BaseClass::_contextMenu.addAction(removeDocument);
-        BaseClass::_contextMenu.addAction(removeAllDocuments);
-        BaseClass::_contextMenu.addSeparator();
-        BaseClass::_contextMenu.addAction(renameCollection);
-        BaseClass::_contextMenu.addAction(duplicateCollection);
-        BaseClass::_contextMenu.addAction(dropCollection);
-        BaseClass::_contextMenu.addSeparator();
-        BaseClass::_contextMenu.addAction(collectionStats);
-        BaseClass::_contextMenu.addSeparator();
-        BaseClass::_contextMenu.addAction(shardVersion);
-        BaseClass::_contextMenu.addAction(shardDistribution);
+        BaseClass::_contextMenu->addAction(viewCollection);
+        BaseClass::_contextMenu->addSeparator();
+        BaseClass::_contextMenu->addAction(addDocument);
+        BaseClass::_contextMenu->addAction(updateDocument);
+        BaseClass::_contextMenu->addAction(removeDocument);
+        BaseClass::_contextMenu->addAction(removeAllDocuments);
+        BaseClass::_contextMenu->addSeparator();
+        BaseClass::_contextMenu->addAction(renameCollection);
+        BaseClass::_contextMenu->addAction(duplicateCollection);
+        BaseClass::_contextMenu->addAction(dropCollection);
+        BaseClass::_contextMenu->addSeparator();
+        BaseClass::_contextMenu->addAction(collectionStats);
+        BaseClass::_contextMenu->addSeparator();
+        BaseClass::_contextMenu->addAction(shardVersion);
+        BaseClass::_contextMenu->addAction(shardDistribution);
 
         AppRegistry::instance().bus()->subscribe(_databaseItem, LoadCollectionIndexesResponse::Type, this);
         AppRegistry::instance().bus()->subscribe(_databaseItem, DeleteCollectionIndexResponse::Type, this);
         AppRegistry::instance().bus()->subscribe(this, CollectionIndexesLoadingEvent::Type, this);
+        
         setText(0, _collection->name());
         setIcon(0, GuiRegistry::instance().collectionIcon());
-        //setExpanded(true);
         addChild(_indexDir);
-        setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         setToolTip(0, buildToolTip(collection));
+
+        setExpanded(false);
+        setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }
 
     void ExplorerCollectionTreeItem::handle(LoadCollectionIndexesResponse *event)
@@ -282,24 +295,23 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::ui_addDocument()
     {
-            MongoCollection *collection = this->collection();
-            MongoDatabase *database = collection->database();
-            MongoServer *server = database->server();
-            ConnectionSettings *settings = server->connectionRecord();
+        MongoDatabase *database = _collection->database();
+        MongoServer *server = database->server();
+        ConnectionSettings *settings = server->connectionRecord();
 
-            DocumentTextEditor editor(settings->getFullAddress(), database->name(),
-                collection->name(), "{\n    \n}");
+        DocumentTextEditor editor(settings->getFullAddress(), database->name(),
+            _collection->name(), "{\n    \n}");
 
-            editor.setCursorPosition(1, 4);
-            editor.setWindowTitle("Insert Document");
-            int result = editor.exec();
-    #pragma message ("TODO: activateWindow")
-            //activateWindow();
+        editor.setCursorPosition(1, 4);
+        editor.setWindowTitle("Insert Document");
+        int result = editor.exec();
 
-            if (result == QDialog::Accepted) {
-                mongo::BSONObj obj = editor.bsonObj();
-                server->insertDocument(obj, database->name(), collection->name());
-            }
+        treeWidget()->activateWindow();
+
+        if (result == QDialog::Accepted) {
+            mongo::BSONObj obj = editor.bsonObj();
+            server->insertDocument(obj, database->name(), _collection->name());
+        }
     }
 
     void ExplorerCollectionTreeItem::ui_removeDocument()
@@ -311,22 +323,20 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::ui_removeAllDocuments()
     {
-            MongoCollection *collection = this->collection();
-            MongoDatabase *database = collection->database();
-            // Ask user
-    #pragma message ("TODO: Add parent to modal message")
-            int answer = QMessageBox::question(NULL,
-                "Remove All Documents",
-                QString("Remove all documents from <b>%1</b> collection?").arg(collection->name()),
-                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+        MongoDatabase *database = _collection->database();
+        // Ask user
+        int answer = QMessageBox::question(treeWidget(),
+            "Remove All Documents",
+            QString("Remove all documents from <b>%1</b> collection?").arg(_collection->name()),
+            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
-            if (answer == QMessageBox::Yes){
-                MongoServer *server = database->server();
-                mongo::BSONObjBuilder builder;
-                mongo::BSONObj bsonQuery = builder.obj();
-                mongo::Query query(bsonQuery);
-                server->removeDocuments(query, database->name(), collection->name(), false);
-            }
+        if (answer == QMessageBox::Yes){
+            MongoServer *server = database->server();
+            mongo::BSONObjBuilder builder;
+            mongo::BSONObj bsonQuery = builder.obj();
+            mongo::Query query(bsonQuery);
+            server->removeDocuments(query, database->name(), _collection->name(), false);
+        }
     }
 
     void ExplorerCollectionTreeItem::ui_updateDocument()
@@ -357,68 +367,64 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::ui_dropCollection()
     {
-            MongoCollection *collection = this->collection();
-            MongoDatabase *database = collection->database();
-            MongoServer *server = database->server();
-            ConnectionSettings *settings = server->connectionRecord();
-    #pragma message ("TODO: Add parent to modal message")
-            // Ask user
-            int answer = QMessageBox::question(NULL,
-                "Drop Collection",
-                QString("Drop <b>%1</b> collection?").arg(collection->name()),
-                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+        MongoDatabase *database = _collection->database();
+        MongoServer *server = database->server();
+        ConnectionSettings *settings = server->connectionRecord();
+        // Ask user
+        int answer = QMessageBox::question(treeWidget(),
+            "Drop Collection",
+            QString("Drop <b>%1</b> collection?").arg(_collection->name()),
+            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
-            if (answer == QMessageBox::Yes){
-                database->dropCollection(collection->name());
-                database->loadCollections();
-            }
+        if (answer == QMessageBox::Yes){
+            database->dropCollection(_collection->name());
+            database->loadCollections();
+        }
     }
 
     void ExplorerCollectionTreeItem::ui_duplicateCollection()
     {
-            MongoCollection *collection = this->collection();
-            MongoDatabase *database = collection->database();
-            MongoServer *server = database->server();
-            ConnectionSettings *settings = server->connectionRecord();
+        MongoDatabase *database = _collection->database();
+        MongoServer *server = database->server();
+        ConnectionSettings *settings = server->connectionRecord();
 
-            CreateDatabaseDialog dlg(settings->getFullAddress(),
-                database->name(),
-                collection->name());
-            dlg.setWindowTitle("Duplicate Collection");
-            dlg.setOkButtonText("&Duplicate");
-            dlg.setInputLabelText("New Collection Name:");
-            dlg.setInputText(collection->name() + "_copy");
-            int result = dlg.exec();
+        CreateDatabaseDialog dlg(settings->getFullAddress(),
+            database->name(),
+            _collection->name());
+        dlg.setWindowTitle("Duplicate Collection");
+        dlg.setOkButtonText("&Duplicate");
+        dlg.setInputLabelText("New Collection Name:");
+        dlg.setInputText(_collection->name() + "_copy");
+        int result = dlg.exec();
 
-            if (result == QDialog::Accepted) {
-                database->duplicateCollection(collection->name(), dlg.databaseName());
+        if (result == QDialog::Accepted) {
+            database->duplicateCollection(_collection->name(), dlg.databaseName());
 
-                // refresh list of collections
-                database->loadCollections();
-            }
+            // refresh list of collections
+            database->loadCollections();
+        }
     }
 
     void ExplorerCollectionTreeItem::ui_renameCollection()
     {
-            MongoCollection *collection = this->collection();
-            MongoDatabase *database = collection->database();
-            MongoServer *server = database->server();
-            ConnectionSettings *settings = server->connectionRecord();
+        MongoDatabase *database = _collection->database();
+        MongoServer *server = database->server();
+        ConnectionSettings *settings = server->connectionRecord();
 
-            CreateDatabaseDialog dlg(settings->getFullAddress(),
-                database->name(),
-                collection->name());
-            dlg.setWindowTitle("Rename Collection");
-            dlg.setOkButtonText("&Rename");
-            dlg.setInputLabelText("New Collection Name:");
-            dlg.setInputText(collection->name());
-            int result = dlg.exec();
+        CreateDatabaseDialog dlg(settings->getFullAddress(),
+            database->name(),
+            _collection->name());
+        dlg.setWindowTitle("Rename Collection");
+        dlg.setOkButtonText("&Rename");
+        dlg.setInputLabelText("New Collection Name:");
+        dlg.setInputText(_collection->name());
+        int result = dlg.exec();
 
-            if (result == QDialog::Accepted) {
-                database->renameCollection(collection->name(), dlg.databaseName());
-                // refresh list of collections
-                database->loadCollections();
-            }
+        if (result == QDialog::Accepted) {
+            database->renameCollection(_collection->name(), dlg.databaseName());
+            // refresh list of collections
+            database->loadCollections();
+        }
     }
 
     void ExplorerCollectionTreeItem::ui_viewCollection()
@@ -451,11 +457,9 @@ namespace Robomongo
         openCurrentCollectionShell("getShardDistribution()");
     }
 
-    void ExplorerCollectionTreeItem::openCurrentCollectionShell(const QString &script, bool execute,
-        const CursorPosition &cursor)
+    void ExplorerCollectionTreeItem::openCurrentCollectionShell(const QString &script, bool execute,const CursorPosition &cursor)
     {
-            MongoCollection *collection = this->collection();
-            QString query = AppRegistry::instance().app()->buildCollectionQuery(collection->name(), script);
-            AppRegistry::instance().app()->openShell(collection->database(), query, execute, collection->name(), cursor);
+        QString query = AppRegistry::instance().app()->buildCollectionQuery(_collection->name(), script);
+        AppRegistry::instance().app()->openShell(_collection->database(), query, execute, _collection->name(), cursor);
     }
 }

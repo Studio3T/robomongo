@@ -1,8 +1,5 @@
 #pragma once
-#include <QTreeWidgetItem>
-#include "robomongo/core/domain/MongoDatabase.h"
-#include "robomongo/core/domain/MongoUser.h"
-#include "robomongo/core/domain/MongoFunction.h"
+
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
 
 namespace Robomongo
@@ -21,6 +18,10 @@ namespace Robomongo
     class MongoDatabaseCollectionsLoadingEvent;
     class MongoDatabaseFunctionsLoadingEvent;
     class MongoDatabaseUsersLoadingEvent;
+    class MongoDatabase;
+    class MongoUser;
+    class MongoFunction;
+    class MongoCollection;
 
     class ExplorerDatabaseTreeItem : public QObject, public ExplorerTreeItem
     {
@@ -28,7 +29,7 @@ namespace Robomongo
 
     public:
         typedef ExplorerTreeItem BaseClass;
-        ExplorerDatabaseTreeItem(QTreeWidgetItem *parent,MongoDatabase *database);
+        ExplorerDatabaseTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database);
 
         MongoDatabase *database() const { return _database; }
         void expandCollections();
@@ -54,12 +55,10 @@ namespace Robomongo
         void ui_refreshDatabase();
 
     private:
-        void clearChildItems(QTreeWidgetItem *root);
         void createCollectionSystemFolderItem();
         void addCollectionItem(MongoCollection *collection);
         void addSystemCollectionItem(MongoCollection *collection);
         void showCollectionSystemFolderIfNeeded();
-        void openCurrentDatabaseShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
 
         void addUserItem(MongoDatabase *database, const MongoUser &user);
         void addFunctionItem(MongoDatabase *database, const MongoFunction &function);
@@ -70,6 +69,6 @@ namespace Robomongo
         ExplorerDatabaseCategoryTreeItem *_usersFolderItem;
         ExplorerDatabaseCategoryTreeItem *_filesFolderItem;
         QTreeWidgetItem *_collectionSystemFolderItem;
-        MongoDatabase *_database;
+        MongoDatabase *const _database;
     };
 }

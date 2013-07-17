@@ -20,7 +20,7 @@ namespace Robomongo
        // QAction *refreshAction = new QAction("Refresh", this);
        // refreshAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
        // connect(refreshAction, SIGNAL(triggered()), SLOT(ui_refreshServer()));   
-        setExpanded(true);
+        setExpanded(false);
 
         QAction *openShellAction = new QAction("Open Shell", this);
         openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());

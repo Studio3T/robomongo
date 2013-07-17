@@ -62,6 +62,7 @@ namespace Robomongo
                 database->loadUsers(); // refresh list of users
             }
     }
+
     void ExplorerUserTreeItem::ui_editUser()
     {
         MongoDatabase *database = ExplorerUserTreeItem::database();

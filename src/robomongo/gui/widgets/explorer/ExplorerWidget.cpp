@@ -20,7 +20,7 @@ namespace Robomongo
         _bus(AppRegistry::instance().bus()),
         _app(AppRegistry::instance().app())
     {
-        _treeWidget = new ExplorerTreeWidget;
+        _treeWidget = new ExplorerTreeWidget(this);
         _treeWidget->setIndentation(15);
         _treeWidget->setHeaderHidden(true);
         _treeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -137,7 +137,7 @@ namespace Robomongo
        
         ExplorerCollectionDirIndexesTreeItem * dirItem = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(item);
         if(dirItem){
-            ExplorerCollectionTreeItem * colectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(dirItem->parent());
+            ExplorerCollectionTreeItem * colectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(dirItem->BaseClass::parent());
             if(colectionItem)
             {
                 colectionItem->expand();

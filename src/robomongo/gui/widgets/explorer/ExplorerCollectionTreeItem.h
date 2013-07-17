@@ -18,7 +18,7 @@ namespace Robomongo
     };
 
 
-    class ExplorerCollectionTreeItem :public QObject, public ExplorerTreeItem
+    class ExplorerCollectionTreeItem: public QObject, public ExplorerTreeItem
     {
         Q_OBJECT
     public:
@@ -27,6 +27,7 @@ namespace Robomongo
         MongoCollection *collection() const { return _collection; }
         void expand();
         void deleteIndex(const QTreeWidgetItem * const ind);
+        void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
     public Q_SLOTS:
         void handle(LoadCollectionIndexesResponse *event);
         void handle(DeleteCollectionIndexResponse *event);
@@ -48,23 +49,35 @@ namespace Robomongo
         void ui_viewCollection();
 
     private:
-        void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
         QString buildToolTip(MongoCollection *collection);
         ExplorerCollectionDirIndexesTreeItem * const _indexDir;
         MongoCollection *const _collection;
         ExplorerDatabaseTreeItem *const _databaseItem;
     };
 
-    class ExplorerCollectionDirIndexesTreeItem: public QTreeWidgetItem
+    class ExplorerCollectionDirIndexesTreeItem: public QObject, public ExplorerTreeItem
     {
+        Q_OBJECT
     public:
+        typedef ExplorerTreeItem BaseClass;
         static const QString text;
-        explicit ExplorerCollectionDirIndexesTreeItem(ExplorerCollectionTreeItem *const parent);
+        explicit ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent);
+    private Q_SLOTS:
+        void ui_addIndex();
+        void ui_addIndexGui();
+        void ui_reIndex();
+        void ui_dropIndex();
+        void ui_viewIndex();
+        void ui_refreshIndex();
     };
 
-    class ExplorerCollectionIndexesTreeItem: public QTreeWidgetItem
+    class ExplorerCollectionIndexesTreeItem: public QObject, public ExplorerTreeItem
     {
+         Q_OBJECT
     public:
-        explicit ExplorerCollectionIndexesTreeItem(const QString &val,ExplorerCollectionDirIndexesTreeItem *const parent);
+        typedef ExplorerTreeItem BaseClass;
+        explicit ExplorerCollectionIndexesTreeItem(QTreeWidgetItem *parent,const QString &val);
+    private Q_SLOTS:
+        void ui_deleteIndex();
     };
 }

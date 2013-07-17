@@ -69,33 +69,33 @@ namespace Robomongo
         
         setText(0, _database->name());
         setIcon(0, GuiRegistry::instance().databaseIcon());
-        setExpanded(true);
+        setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
         _collectionFolderItem = new ExplorerDatabaseCategoryTreeItem(Collections, this);
         _collectionFolderItem->setText(0, detail::buildName("Collections",0));
         _collectionFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        _collectionFolderItem->setExpanded(true);
+        _collectionFolderItem->setExpanded(false);
         _collectionFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         addChild(_collectionFolderItem);
 
         _javascriptFolderItem = new ExplorerDatabaseCategoryTreeItem(Functions, this);
         _javascriptFolderItem->setText(0, detail::buildName("Functions",0));
         _javascriptFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        _javascriptFolderItem->setExpanded(true);
+        _javascriptFolderItem->setExpanded(false);
         _javascriptFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         addChild(_javascriptFolderItem);
         
         _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(Users, this);
         _usersFolderItem->setText(0, detail::buildName("Users",0));
         _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        _usersFolderItem->setExpanded(true);
+        _usersFolderItem->setExpanded(false);
         _usersFolderItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         addChild(_usersFolderItem);
     }
 
-    void ExplorerDatabaseTreeItem::expandCollections()
-    {
+        void ExplorerDatabaseTreeItem::expandCollections()
+        {
         _database->loadCollections();
     }
 

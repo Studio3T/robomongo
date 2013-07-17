@@ -119,9 +119,29 @@ namespace Robomongo
         _dbclient->ensureIndex(collection.ns().toString().toStdString(),obj,unique,"",true,backGround);
     }
 
+    void MongoClient::renameIndexFromCollection(const MongoCollectionInfo &collection, const QString &oldIndexText, const QString &newIndexText)const
+    {
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
+        std::string deleteIndex = oldIndexText.toStdString();
+        std::string newIndex = newIndexText.toStdString();
+        if(newIndex!=deleteIndex){
+            while (cursor->more()) {
+                std::string indexString;
+                mongo::BSONObj jsonIndex;
+                mongo::BSONObj obj = cursor->next();
+                if(getIndex(obj,indexString)&&deleteIndex==indexString&&getJsonIndexAndRename(obj,jsonIndex,deleteIndex,newIndex))
+                { 
+                    mongo::BSONElement name = obj.getField("name");
+                    _dbclient->dropIndex(collection.ns().toString().toStdString(),name.valuestr());
+                    _dbclient->ensureIndex(collection.ns().toString().toStdString(),jsonIndex);
+                    break;
+                }
+            }
+        }
+    }
+
     bool MongoClient::deleteIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexText)const
     {
-        
         std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
         std::string deleteIndex = indexText.toStdString();
         while (cursor->more()) {

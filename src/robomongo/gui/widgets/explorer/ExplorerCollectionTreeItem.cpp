@@ -7,6 +7,7 @@
 #include "robomongo/gui/widgets/explorer/EditIndexDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
+#include "robomongo/gui/dialogs/EditIndexDialog.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/GuiRegistry.h"
 
@@ -83,6 +84,22 @@ namespace Robomongo
         }
     }
 
+    void ExplorerCollectionDirIndexesTreeItem::editIndex(const QString &indexName)
+    {
+        ExplorerCollectionTreeItem *const parent = dynamic_cast<ExplorerCollectionTreeItem *const>(BaseClass::parent());
+        if(parent){
+            ExplorerDatabaseTreeItem  *databaseTreeItem = dynamic_cast<ExplorerDatabaseTreeItem *>(parent->databaseItem());
+            if(databaseTreeItem){
+                EditItemIndexDialog dlg(treeWidget(),indexName,parent->collection()->name(),databaseTreeItem->database()->name());
+                int result = dlg.exec();
+                if (result == QDialog::Accepted) {
+                    const QString newIndexName = dlg.text();
+                    databaseTreeItem->editIndexFromCollection(parent,indexName,newIndexName);
+                }
+            }
+        }
+    }
+
     void ExplorerCollectionDirIndexesTreeItem::ui_viewIndex()
     {
         ExplorerCollectionTreeItem *const parent = dynamic_cast<ExplorerCollectionTreeItem *const>(BaseClass::parent());
@@ -121,7 +138,10 @@ namespace Robomongo
             EditIndexDialog dlg(treeWidget(),parent);
             int result = dlg.exec();
             if (result == QDialog::Accepted) {
-                (static_cast<ExplorerDatabaseTreeItem *const>(parent->QObject::parent()))->enshureIndex(parent,dlg.getInputText(),dlg.isUnique(),dlg.isBackGround(),dlg.isDropDuplicates());
+                ExplorerDatabaseTreeItem *const databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *const>(parent->databaseItem());
+                if(databaseTreeItem){
+                   databaseTreeItem->enshureIndex(parent,dlg.getInputText(),dlg.isUnique(),dlg.isBackGround(),dlg.isDropDuplicates());
+                }
             }
         }
     }
@@ -149,8 +169,11 @@ namespace Robomongo
     {
         QAction *deleteIndex = new QAction("Delete index", this);
         connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_deleteIndex()));
+        QAction *editIndex = new QAction("Edit index", this);
+        connect(editIndex, SIGNAL(triggered()), SLOT(ui_edit()));
 
         BaseClass::_contextMenu->addAction(deleteIndex);
+        BaseClass::_contextMenu->addAction(editIndex);
 
         setText(0, val);
         setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());
@@ -164,6 +187,15 @@ namespace Robomongo
             if(grandParent){
                 grandParent->deleteIndex(this);
             }
+        }
+    }
+
+    void ExplorerCollectionIndexesTreeItem::ui_edit()
+    {
+        QString nameIndex = text(0);
+        ExplorerCollectionDirIndexesTreeItem *parent = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(BaseClass::parent());           
+        if(parent){
+            parent->editIndex(nameIndex);
         }
     }
 

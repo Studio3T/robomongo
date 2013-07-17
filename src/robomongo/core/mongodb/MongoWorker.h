@@ -82,6 +82,11 @@ namespace Robomongo
         */
         void handle(DeleteCollectionIndexRequest *event);
 
+          /**
+        * @brief Edit index
+        */
+        void handle(EditIndexRequest *event);
+
         /**
          * @brief Load list of all JS functions
          */

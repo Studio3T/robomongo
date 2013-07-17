@@ -135,6 +135,11 @@ namespace Robomongo
         _bus->send(_database->server()->client(), new EnsureIndexRequest(item, item->collection()->info(),text,unique,backGround,dropDuplicateIndex));
     }
 
+    void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& oldIndexText,const QString& newIndexText)
+    {
+         _bus->send(_database->server()->client(), new EditIndexRequest(item, item->collection()->info(),oldIndexText,newIndexText));
+    }
+
     void ExplorerDatabaseTreeItem::expandFunctions()
     {
         _database->loadFunctions();

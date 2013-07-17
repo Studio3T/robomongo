@@ -27,7 +27,10 @@ namespace Robomongo
         void expand();
         void deleteIndex(const QTreeWidgetItem * const ind);
         void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
-
+        ExplorerDatabaseTreeItem *const databaseItem()const 
+        {
+            return _databaseItem;
+        }
     public Q_SLOTS:
         void handle(LoadCollectionIndexesResponse *event);
         void handle(DeleteCollectionIndexResponse *event);
@@ -64,6 +67,7 @@ namespace Robomongo
         static const QString text;
         explicit ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent);
         void expand();
+        void editIndex(const QString &indexName);
 
     private Q_SLOTS:
         void ui_addIndex();
@@ -83,5 +87,6 @@ namespace Robomongo
 
     private Q_SLOTS:
         void ui_deleteIndex();
+        void ui_edit();
     };
 }

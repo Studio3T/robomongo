@@ -19,6 +19,7 @@ namespace Robomongo
     R_REGISTER_EVENT(EnsureIndexRequest)
     R_REGISTER_EVENT(DeleteCollectionIndexRequest)
     R_REGISTER_EVENT(DeleteCollectionIndexResponse)
+    R_REGISTER_EVENT(EditIndexRequest)
     R_REGISTER_EVENT(LoadUsersResponse)
     R_REGISTER_EVENT(LoadFunctionsRequest)
     R_REGISTER_EVENT(LoadFunctionsResponse)

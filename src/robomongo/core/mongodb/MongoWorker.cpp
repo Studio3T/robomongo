@@ -216,7 +216,6 @@ namespace Robomongo
 
     void MongoWorker::handle(DeleteCollectionIndexRequest *event)
     {
-        std::string str;
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             client->deleteIndexFromCollection(event->collection(),event->index());
@@ -225,6 +224,20 @@ namespace Robomongo
         } catch(const DBException &) {
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), QString() ));
         }            
+    }
+
+    void MongoWorker::handle(EditIndexRequest *event)
+    {
+        try {
+            boost::scoped_ptr<MongoClient> client(getClient());
+            client->renameIndexFromCollection(event->collection(),event->oldIndex(),event->newIndex());
+            const QList<QString> &ind = client->getIndexes(event->collection());
+            client->done();
+
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, event->collection(), ind));
+        } catch(const DBException &) {
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, event->collection(), QList<QString>()));
+        } 
     }
 
     void MongoWorker::handle(LoadFunctionsRequest *event)

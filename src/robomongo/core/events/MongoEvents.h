@@ -232,6 +232,21 @@ namespace Robomongo
         QString _index;
     };
 
+    class EditIndexRequest : public Event
+    {
+        R_EVENT
+    public:
+        EditIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const QString &oldIndex,const QString &newIndex) :
+            Event(sender),_collection(collection),_oldIndex(oldIndex),_newIndex(newIndex) {}
+        MongoCollectionInfo collection() const { return _collection; }
+        QString oldIndex() const {return _oldIndex;}
+        QString newIndex() const {return _newIndex;}
+    private:
+        const MongoCollectionInfo _collection;
+        QString _oldIndex;
+        QString _newIndex;
+    };
+
     /**
      * @brief Load Users
      */

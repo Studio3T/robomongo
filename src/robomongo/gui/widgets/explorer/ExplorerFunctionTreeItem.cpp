@@ -1,11 +1,12 @@
 #include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
 
-#include <QMessageBox>
 #include <QAction>
 #include <QMenu>
 
 #include "robomongo/gui/dialogs/FunctionTextEditor.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/utils/DialogUtils.h"
+
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -63,10 +64,7 @@ namespace Robomongo
     void ExplorerFunctionTreeItem::ui_dropFunction()
     {
         // Ask user
-        int answer = QMessageBox::question(treeWidget(),
-            "Remove Function",
-            QString("Remove <b>%1</b> function?").arg(_function.name()),
-            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+        int answer = utils::questionDialog(treeWidget(),"Drop","Function",_function.name());
 
         if (answer != QMessageBox::Yes)
             return;

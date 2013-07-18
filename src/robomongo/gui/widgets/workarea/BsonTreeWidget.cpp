@@ -4,23 +4,26 @@
 #include <QClipboard>
 #include <QHeaderView>
 #include <QAction>
-#include <QMessageBox>
 #include <QMenu>
 #include <QContextMenuEvent>
 
-#include "robomongo/core/AppRegistry.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
+#include "robomongo/gui/dialogs/DocumentTextEditor.h"
+#include "robomongo/gui/utils/DialogUtils.h"
+#include "robomongo/gui/GuiRegistry.h"
+
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoElement.h"
 #include "robomongo/core/domain/MongoDocumentIterator.h"
-#include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
-#include "robomongo/core/engine/JsonBuilder.h"
-#include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/domain/MongoServer.h"
-#include "robomongo/core/EventBus.h"
+#include "robomongo/core/engine/JsonBuilder.h"
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/EventBus.h"
+
+
 using namespace mongo;
 namespace Robomongo
 {
@@ -262,10 +265,7 @@ namespace Robomongo
         mongo::Query query(bsonQuery);
 
         // Ask user
-        int answer = QMessageBox::question(this,
-                "Delete Document",
-                QString("Delete document with id:<br><b>%1</b>?").arg(QString::fromStdString(id.toString(false))),
-                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+        int answer = utils::questionDialog(this,"Delete","Document","%1 %2 with id:<br><b>%3</b>?",QString::fromStdString(id.toString(false)));
 
         if (answer != QMessageBox::Yes)
             return ;

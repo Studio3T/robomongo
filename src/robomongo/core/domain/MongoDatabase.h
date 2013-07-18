@@ -61,10 +61,11 @@ namespace Robomongo
 
         MongoServer *server() const { return _server; }
 
-    protected slots:
+    protected Q_SLOTS:
         void handle(LoadCollectionNamesResponse *event);
         void handle(LoadUsersResponse *event);
         void handle(LoadFunctionsResponse *event);
+        void handle(CreateUserResponse *event);
 
     private:
         void clearCollections();

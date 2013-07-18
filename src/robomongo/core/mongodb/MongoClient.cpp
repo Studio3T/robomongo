@@ -1,5 +1,4 @@
 #include "robomongo/core/mongodb/MongoClient.h"
-#include "robomongo/core/domain/MongoIndex.h"
 
 namespace Robomongo
 {
@@ -117,7 +116,8 @@ namespace Robomongo
         return result;
     }
 
-    void MongoClient::ensureIndex(const MongoCollectionInfo &collection, const QString &name, const QString &request, bool unique, bool backGround, bool dropDuplicates) const
+    void MongoClient::ensureIndex(const MongoCollectionInfo &collection, const QString &name, const QString &request, bool unique, bool backGround, bool dropDuplicates,
+        bool sparce,const QString &expireAfter,const QString &defaultLanguage,const QString &languageOverride,const QString &textWeights) const
     {
         // TODO: This function should work for creating and editing of indexes.
         // If index with "name" already exists - drop and create new.
@@ -145,9 +145,7 @@ namespace Robomongo
 
         MongoNamespace ns(collection.ns().databaseName(), "system.indexes");
         std::string systemIndexesNs = ns.toString().toStdString();
-        std::string collectionNs = collection.ns().toString().toStdString();
         std::string oldIndexNameStd = oldIndexName.toStdString();
-        std::string newIndexNameStd = newIndexName.toStdString();
 
         // Building this JSON: { "name" : "oldIndexName" }
         mongo::BSONObj query(mongo::BSONObjBuilder()
@@ -164,6 +162,7 @@ namespace Robomongo
         // changing "name" field's value from "oldIndexText" to "newIndexText":
         mongo::BSONObjBuilder builder;
         mongo::BSONObjIterator i(indexBson);
+        std::string newIndexNameStd = newIndexName.toStdString();
         while (i.more()) {
             mongo::BSONElement element = i.next();
 
@@ -174,51 +173,15 @@ namespace Robomongo
 
             builder.append(element);
         }
+        std::string collectionNs = collection.ns().toString().toStdString();
 
         _dbclient->dropIndex(collectionNs, oldIndexNameStd);
         _dbclient->insert(systemIndexesNs, builder.obj());
-
-
-        /*
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
-        std::string deleteIndex = oldIndexText.toStdString();
-        std::string newIndex = newIndexText.toStdString();
-        if(newIndex!=deleteIndex){
-            while (cursor->more()) {
-                std::string indexString;
-                mongo::BSONObj jsonIndex;
-                mongo::BSONObj obj = cursor->next();
-                if(getIndex(obj,indexString)&&deleteIndex==indexString&&getJsonIndexAndRename(obj,jsonIndex,deleteIndex,newIndex))
-                { 
-                    mongo::BSONElement name = obj.getField("name");
-                    _dbclient->dropIndex(collection.ns().toString().toStdString(),name.valuestr());
-                    _dbclient->ensureIndex(collection.ns().toString().toStdString(),jsonIndex);
-                    break;
-                }
-            }
-        }*/
     }
 
-    bool MongoClient::deleteIndexFromCollection(const MongoCollectionInfo &collection, const QString &indexName)const
+    void MongoClient::deleteIndexFromCollection(const MongoCollectionInfo &collection, const QString &indexName)const
     {
         _dbclient->dropIndex(collection.ns().toString().toStdString(), indexName.toStdString());
-
-        /*
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
-        std::string deleteIndex = indexText.toStdString();
-        while (cursor->more()) {
-            std::string indexString;
-            mongo::BSONObj obj = cursor->next();
-            if(getIndex(obj,indexString)&&deleteIndex==indexString)
-            {             
-                std::string str = obj.toString();
-                mongo::BSONElement name = obj.getField("name");
-                _dbclient->dropIndex(collection.ns().toString().toStdString(),name.valuestr());
-                break;
-            }
-        }
-        return true;
-        */
     }
 
     void MongoClient::createFunction(const QString &dbName, const MongoFunction &fun, const QString &existingFunctionName /* = QString() */)

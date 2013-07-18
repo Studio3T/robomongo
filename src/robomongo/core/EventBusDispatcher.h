@@ -12,6 +12,6 @@ namespace Robomongo
     public:
         EventBusDispatcher(QObject *parent = 0);
     protected:
-        bool event(QEvent *qevent);
+        virtual bool event(QEvent *qevent);
     };
 }

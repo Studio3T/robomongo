@@ -19,6 +19,7 @@ namespace Robomongo
             WidthWidget = 480
         };
         explicit EditIndexDialog(QWidget *parent,ExplorerCollectionTreeItem * const item);
+        QString indexName() const;
         QString getInputText()const;
         bool isUnique() const;
         bool isBackGround() const;

@@ -134,16 +134,19 @@ namespace Robomongo
     void ExplorerCollectionDirIndexesTreeItem::ui_addIndexGui()
     {
         ExplorerCollectionTreeItem *const parent = dynamic_cast<ExplorerCollectionTreeItem *const>(BaseClass::parent());
-        if(parent){
-            EditIndexDialog dlg(treeWidget(),parent);
-            int result = dlg.exec();
-            if (result == QDialog::Accepted) {
-                ExplorerDatabaseTreeItem *const databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *const>(parent->databaseItem());
-                if(databaseTreeItem){
-                   databaseTreeItem->enshureIndex(parent,dlg.getInputText(),dlg.isUnique(),dlg.isBackGround(),dlg.isDropDuplicates());
-                }
-            }
-        }
+        if (!parent)
+            return;
+
+        EditIndexDialog dlg(treeWidget(), parent);
+        int result = dlg.exec();
+        if (result != QDialog::Accepted)
+            return;
+
+        ExplorerDatabaseTreeItem *const databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *const>(parent->databaseItem());
+        if(!databaseTreeItem)
+            return;
+
+        databaseTreeItem->enshureIndex(parent, dlg.indexName(), dlg.getInputText(), dlg.isUnique(), dlg.isBackGround(), dlg.isDropDuplicates());
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_reIndex()
@@ -165,7 +168,7 @@ namespace Robomongo
     }
 
     ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(QTreeWidgetItem *parent,const QString &val)
-        :QObject(),BaseClass(parent)
+        : QObject(), BaseClass(parent)
     {
         QAction *deleteIndex = new QAction("Delete index", this);
         connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_deleteIndex()));
@@ -181,13 +184,15 @@ namespace Robomongo
 
     void ExplorerCollectionIndexesTreeItem::ui_deleteIndex()
     {
-        ExplorerCollectionDirIndexesTreeItem *parent = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(BaseClass::parent());           
-        if(parent){
-            ExplorerCollectionTreeItem *grandParent = dynamic_cast<ExplorerCollectionTreeItem *>(parent->BaseClass::parent());
-            if(grandParent){
-                grandParent->deleteIndex(this);
-            }
-        }
+        ExplorerCollectionDirIndexesTreeItem *parent = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(BaseClass::parent());
+        if (!parent)
+            return;
+
+        ExplorerCollectionTreeItem *grandParent = dynamic_cast<ExplorerCollectionTreeItem *>(parent->BaseClass::parent());
+        if (!grandParent)
+            return;
+
+        grandParent->deleteIndex(this);
     }
 
     void ExplorerCollectionIndexesTreeItem::ui_edit()
@@ -300,6 +305,7 @@ namespace Robomongo
         }
         _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::text,_indexDir->childCount()));
     }
+
     void ExplorerCollectionTreeItem::handle(CollectionIndexesLoadingEvent *event)
     {
         _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::text,-1));
@@ -315,9 +321,10 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::deleteIndex(const QTreeWidgetItem * const ind)
     {
-        if(_databaseItem){
-            _databaseItem->deleteIndexFromCollection(this,ind->text(0));
-        }
+        if (!_databaseItem)
+            return;
+
+        _databaseItem->deleteIndexFromCollection(this, ind->text(0));
     }
 
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)

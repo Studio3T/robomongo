@@ -99,28 +99,87 @@ namespace Robomongo
         return functions;
     }
 
-    QList<QString> MongoClient::getIndexes(const MongoCollectionInfo &collection)const
+    QList<QString> MongoClient::getIndexes(const MongoCollectionInfo &collection) const
     {
         QList<QString> result;
         std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
+
         while (cursor->more()) {
-            std::string indexString;
-            if(getIndex(cursor->next(),indexString))
-            {
-                result.append(QString::fromStdString(indexString));
-            }
+            mongo::BSONObj bsonObj = cursor->next();
+            mongo::BSONElement nameElement = bsonObj.getField("name");
+            if (nameElement.eoo())
+                continue;
+
+            QString indexName(QString::fromUtf8(nameElement.String().data()));
+            result.append(indexName);
         }
+
         return result;
     }
 
-    void MongoClient::ensureIndex(const MongoCollectionInfo &collection, const QString &request, bool unique, bool backGround, bool dropDuplicates)const
+    void MongoClient::ensureIndex(const MongoCollectionInfo &collection, const QString &name, const QString &request, bool unique, bool backGround, bool dropDuplicates) const
     {
+        // TODO: This function should work for creating and editing of indexes.
+        // If index with "name" already exists - drop and create new.
+        // If index with "name doesn't exist - simply create new.
+        //
+        // In this case we do not need MongoClient::renameIndexFromCollection(), because
+        // we will use MongoClient::ensureIndex() even for name changing of Index.
+        // But let's leave MongoClient::renameIndexFromCollection() for future references.
+
         mongo::BSONObj obj = mongo::fromjson(request.toUtf8());
-        _dbclient->ensureIndex(collection.ns().toString().toStdString(),obj,unique,"",true,backGround);
+        _dbclient->ensureIndex(collection.ns().toString().toStdString(), obj, unique, name.toStdString(), true, backGround);
     }
 
-    void MongoClient::renameIndexFromCollection(const MongoCollectionInfo &collection, const QString &oldIndexText, const QString &newIndexText)const
+    void MongoClient::renameIndexFromCollection(const MongoCollectionInfo &collection, const QString &oldIndexName, const QString &newIndexName) const
     {
+        // This is simply an example of how to perform modifications of
+        // BSON objects. Because BSONObj is immutable, you need to create
+        // copy of this object, using BSONObjBuilder and BSONObjIterator.
+        //
+        // But we need to do not just simple renaming of Index name, we
+        // also should allow our users to fully modify Index
+        // (i.e. change name, keys, unique flag, sparse flag etc.)
+        //
+        // This should be done using the same dialog as for "Add Index".
+
+        MongoNamespace ns(collection.ns().databaseName(), "system.indexes");
+        std::string systemIndexesNs = ns.toString().toStdString();
+        std::string collectionNs = collection.ns().toString().toStdString();
+        std::string oldIndexNameStd = oldIndexName.toStdString();
+        std::string newIndexNameStd = newIndexName.toStdString();
+
+        // Building this JSON: { "name" : "oldIndexName" }
+        mongo::BSONObj query(mongo::BSONObjBuilder()
+            .append("name", oldIndexNameStd)
+            .obj());
+
+        // Searching for index with "oldIndexName"
+        // with this query: db.system.indexes.find({ name : "oldIndexName"}
+        mongo::BSONObj indexBson = _dbclient->findOne(systemIndexesNs, mongo::Query(query));
+        if (indexBson.isEmpty())
+            return;
+
+        // Here we are building copy of "indexBson" object and
+        // changing "name" field's value from "oldIndexText" to "newIndexText":
+        mongo::BSONObjBuilder builder;
+        mongo::BSONObjIterator i(indexBson);
+        while (i.more()) {
+            mongo::BSONElement element = i.next();
+
+            if (mongo::StringData(element.fieldName()).compare("name") == 0) {
+                builder.append("name", newIndexNameStd);
+                continue;
+            }
+
+            builder.append(element);
+        }
+
+        _dbclient->dropIndex(collectionNs, oldIndexNameStd);
+        _dbclient->insert(systemIndexesNs, builder.obj());
+
+
+        /*
         std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
         std::string deleteIndex = oldIndexText.toStdString();
         std::string newIndex = newIndexText.toStdString();
@@ -137,11 +196,14 @@ namespace Robomongo
                     break;
                 }
             }
-        }
+        }*/
     }
 
-    bool MongoClient::deleteIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexText)const
+    bool MongoClient::deleteIndexFromCollection(const MongoCollectionInfo &collection, const QString &indexName)const
     {
+        _dbclient->dropIndex(collection.ns().toString().toStdString(), indexName.toStdString());
+
+        /*
         std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
         std::string deleteIndex = indexText.toStdString();
         while (cursor->more()) {
@@ -156,6 +218,7 @@ namespace Robomongo
             }
         }
         return true;
+        */
     }
 
     void MongoClient::createFunction(const QString &dbName, const MongoFunction &fun, const QString &existingFunctionName /* = QString() */)

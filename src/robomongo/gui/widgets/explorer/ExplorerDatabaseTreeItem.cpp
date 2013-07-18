@@ -125,14 +125,16 @@ namespace Robomongo
          _bus->send(_database->server()->client(), new LoadCollectionIndexesRequest(item, item->collection()->info()));
     }
 
-    void ExplorerDatabaseTreeItem::deleteIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& indexText)
+    void ExplorerDatabaseTreeItem::deleteIndexFromCollection(ExplorerCollectionTreeItem *const item, const QString &indexName)
     {
-        _bus->send(_database->server()->client(), new DeleteCollectionIndexRequest(item, item->collection()->info(),indexText));
+        _bus->send(_database->server()->client(), new DeleteCollectionIndexRequest(item, item->collection()->info(), indexName));
     }
 
-    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item,const QString& text,bool unique,bool backGround,bool dropDuplicateIndex)
+    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item, const QString &name, const QString& text,
+                                                bool unique, bool backGround, bool dropDuplicateIndex)
     {
-        _bus->send(_database->server()->client(), new EnsureIndexRequest(item, item->collection()->info(),text,unique,backGround,dropDuplicateIndex));
+        _bus->send(_database->server()->client(),
+            new EnsureIndexRequest(item, item->collection()->info(), name, text, unique, backGround, dropDuplicateIndex));
     }
 
     void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& oldIndexText,const QString& newIndexText)

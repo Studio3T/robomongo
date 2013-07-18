@@ -121,6 +121,11 @@ namespace Robomongo
         setFixedSize(WidthWidget,HeightWidget);
     }
 
+    QString EditIndexDialog::indexName() const
+    {
+        return _nameLineEdit->text();
+    }
+
     bool EditIndexDialog::isUnique() const
     {
         return _uniqueCheckBox->checkState() == Qt::Checked;
@@ -138,14 +143,14 @@ namespace Robomongo
 
     void EditIndexDialog::accept()
     {
-        if(_nameLineEdit->text().isEmpty()){
+        if (_nameLineEdit->text().isEmpty()) {
             QMessageBox::warning(this, "Empty name", "Please input name for index \n");
             _nameLineEdit->setFocus();
         }
-        if(isValidJson(_jsonText->sciScintilla()->text())){
+        if (isValidJson(_jsonText->sciScintilla()->text())) {
             return BaseClass::accept();
         }
-        else{
+        else {
             QMessageBox::warning(this, "Invalid json", "Please check json text.\n");
             _jsonText->setFocus();
         }

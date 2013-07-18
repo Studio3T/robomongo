@@ -191,15 +191,26 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        EnsureIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const QString &request,bool isUnique,bool isBackGround,bool isDropDuplicates) :
-        Event(sender),_collection(collection),_request(request),_isUnique(isUnique),_isBackGround(isBackGround),_isDropDuplicates(isDropDuplicates) {}
+        EnsureIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const QString &name, const QString &request,
+                           bool isUnique, bool isBackGround, bool isDropDuplicates) :
+            Event(sender),
+            _name(name),
+            _collection(collection),
+            _request(request),
+            _isUnique(isUnique),
+            _isBackGround(isBackGround),
+            _isDropDuplicates(isDropDuplicates) {}
+
         MongoCollectionInfo collection() const { return _collection; }
-        QString request() const {return _request;}
-        bool isUnique() const {return _isUnique;}
-        bool isBackGround() const {return _isBackGround;}
-        bool isDropDuplicates() const {return _isDropDuplicates;}
+        QString name() const { return _name; }
+        QString request() const { return _request; }
+        bool isUnique() const { return _isUnique; }
+        bool isBackGround() const { return _isBackGround; }
+        bool isDropDuplicates() const { return _isDropDuplicates; }
+
     private:
         const MongoCollectionInfo _collection;
+        QString _name;
         QString _request;
         bool _isUnique;
         bool _isBackGround;
@@ -210,13 +221,16 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        DeleteCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const QString &index) :
-        Event(sender),_collection(collection),_index(index) {}
+        DeleteCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const QString &name) :
+            Event(sender),
+            _collection(collection),
+            _name(name) {}
+
         MongoCollectionInfo collection() const { return _collection; }
-        QString index() const {return _index;}
+        QString name() const {return _name;}
     private:
         const MongoCollectionInfo _collection;
-        QString _index;
+        QString _name;
     };
 
     class DeleteCollectionIndexResponse: public Event

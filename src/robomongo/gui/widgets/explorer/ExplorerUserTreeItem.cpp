@@ -1,11 +1,12 @@
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
 
-#include <QMessageBox>
 #include <QAction>
 #include <QMenu>
 
-#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/CreateUserDialog.h"
+#include "robomongo/gui/utils/DialogUtils.h"
+#include "robomongo/gui/GuiRegistry.h"
+
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -29,7 +30,7 @@ namespace Robomongo
     ExplorerUserTreeItem::ExplorerUserTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database, const MongoUser &user) :
         QObject(),BaseClass(parent),_user(user),_database(database)
     {
-        QAction *dropUser = new QAction("Remove User", this);
+        QAction *dropUser = new QAction("Drop User", this);
         connect(dropUser, SIGNAL(triggered()), SLOT(ui_dropUser()));
 
         QAction *editUser = new QAction("Edit User", this);
@@ -48,10 +49,7 @@ namespace Robomongo
     void ExplorerUserTreeItem::ui_dropUser()
     {
             // Ask user
-            int answer = QMessageBox::question(treeWidget(),
-                "Remove User",
-                QString("Remove <b>%1</b> user?").arg(_user.name()),
-                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+            int answer = utils::questionDialog(treeWidget(),"Drop","User",_user.name());
 
             if (answer == QMessageBox::Yes){
                 _database->dropUser(_user.id());

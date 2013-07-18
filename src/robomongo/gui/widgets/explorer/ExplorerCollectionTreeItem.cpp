@@ -1,6 +1,5 @@
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 
-#include <QMessageBox>
 #include <QAction>
 #include <QMenu>
 
@@ -10,6 +9,7 @@
 #include "robomongo/gui/dialogs/EditIndexDialog.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/utils/DialogUtils.h"
 
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/domain/MongoServer.h"
@@ -146,7 +146,7 @@ namespace Robomongo
         if(!databaseTreeItem)
             return;
 
-        databaseTreeItem->enshureIndex(parent, dlg.indexName(), dlg.getInputText(), dlg.isUnique(), dlg.isBackGround(), dlg.isDropDuplicates());
+        databaseTreeItem->enshureIndex(parent, dlg.indexName(), dlg.getInputText(), dlg.isUnique(), dlg.isBackGround(), dlg.isDropDuplicates(),dlg.isSparce(),dlg.expireAfter(),dlg.defaultLanguage(),dlg.languageOverride(),dlg.textWeights());
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_reIndex()
@@ -171,7 +171,7 @@ namespace Robomongo
         : QObject(), BaseClass(parent)
     {
         QAction *deleteIndex = new QAction("Delete index", this);
-        connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_deleteIndex()));
+        connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
         QAction *editIndex = new QAction("Edit index", this);
         connect(editIndex, SIGNAL(triggered()), SLOT(ui_edit()));
 
@@ -182,8 +182,14 @@ namespace Robomongo
         setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());
     }
 
-    void ExplorerCollectionIndexesTreeItem::ui_deleteIndex()
+    void ExplorerCollectionIndexesTreeItem::ui_dropIndex()
     {
+        // Ask user
+        int answer = utils::questionDialog(treeWidget(),"Drop","Index",text(0));
+
+        if (answer != QMessageBox::Yes)
+            return;
+
         ExplorerCollectionDirIndexesTreeItem *parent = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(BaseClass::parent());
         if (!parent)
             return;
@@ -406,16 +412,11 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::ui_dropCollection()
     {
-        MongoDatabase *database = _collection->database();
-        MongoServer *server = database->server();
-        ConnectionSettings *settings = server->connectionRecord();
         // Ask user
-        int answer = QMessageBox::question(treeWidget(),
-            "Drop Collection",
-            QString("Drop <b>%1</b> collection?").arg(_collection->name()),
-            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+        int answer = utils::questionDialog(treeWidget(),"Drop","collection",_collection->name());
 
         if (answer == QMessageBox::Yes){
+            MongoDatabase *database = _collection->database();
             database->dropCollection(_collection->name());
             database->loadCollections();
         }

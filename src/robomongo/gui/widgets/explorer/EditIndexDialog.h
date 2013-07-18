@@ -24,14 +24,29 @@ namespace Robomongo
         bool isUnique() const;
         bool isBackGround() const;
         bool isDropDuplicates() const;
+        bool isSparce()const;
+        QString expireAfter() const;
+        QString defaultLanguage() const;
+        QString languageOverride() const;
+        QString textWeights() const;
     public Q_SLOTS:
         virtual void accept();
     private:
+       QWidget* createBasicTab(); 
+       QWidget* createAdvancedTab();
+       QWidget* createTextSearchTab(); 
        QLineEdit *_nameLineEdit;
        FindFrame *_jsonText;
        ExplorerCollectionTreeItem * const _item;
        QCheckBox *_uniqueCheckBox;
+
        QCheckBox *_dropDuplicates;
        QCheckBox *_backGroundCheckBox;
+       QCheckBox *_sparceCheckBox;
+       QLineEdit *_expireAfterLineEdit;
+
+       QLineEdit *_defaultLanguageLineEdit;
+       QLineEdit *_languageOverrideLineEdit;
+       QLineEdit *_textWeightsLineEdit;
     };
 }

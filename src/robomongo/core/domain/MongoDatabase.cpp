@@ -108,6 +108,13 @@ namespace Robomongo
         _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, _collections));
     }
 
+    void MongoDatabase::handle(CreateUserResponse *event)
+    {
+        if (event->isError())
+            return;
+
+    }
+
     void MongoDatabase::handle(LoadUsersResponse *event)
     {
         if (event->isError())

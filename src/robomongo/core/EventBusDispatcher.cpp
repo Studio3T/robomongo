@@ -9,6 +9,7 @@ namespace Robomongo
     {
 
     }
+
     bool EventBusDispatcher::event(QEvent *qevent)
     {
         EventWrapper *wrapper = dynamic_cast<EventWrapper *>(qevent);
@@ -19,9 +20,9 @@ namespace Robomongo
         Event *event = wrapper->event();
 
         const char *typeName = event->typeString();
-
-        foreach(QObject *receiver, wrapper->receivers()) {
-            QMetaObject::invokeMethod(receiver, "handle", QGenericArgument(typeName, &event));
+        QList<QObject*> recivers = wrapper->receivers();
+        for(QList<QObject*>::const_iterator it = recivers.begin();it!=recivers.end();++it){
+            QMetaObject::invokeMethod(*it, "handle", QGenericArgument(typeName, &event));
         }
 
         return true;

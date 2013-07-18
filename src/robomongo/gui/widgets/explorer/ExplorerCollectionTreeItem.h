@@ -86,7 +86,7 @@ namespace Robomongo
         explicit ExplorerCollectionIndexesTreeItem(QTreeWidgetItem *parent,const QString &val);
 
     private Q_SLOTS:
-        void ui_deleteIndex();
+        void ui_dropIndex();
         void ui_edit();
     };
 }

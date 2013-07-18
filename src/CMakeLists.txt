@@ -60,6 +60,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/AboutDialog.h
     robomongo/gui/editors/FindFrame.h)
 SET(HEADERS_GUI
+	robomongo/gui/utils/DialogUtils.h
     robomongo/gui/widgets/explorer/ExplorerTreeItem.h
     robomongo/gui/GuiRegistry.h
     robomongo/gui/editors/PlainJavaScriptEditor.h
@@ -67,6 +68,7 @@ SET(HEADERS_GUI
     robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h
     robomongo/gui/ViewMode.h)
 SET(SOURCES_GUI
+	robomongo/gui/utils/DialogUtils.cpp
     robomongo/gui/ExampleWindow.cpp
     robomongo/gui/dialogs/ConnectionsDialog.cpp
     robomongo/gui/dialogs/ConnectionDialog.cpp

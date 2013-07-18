@@ -284,7 +284,7 @@ namespace Robomongo
 #if defined(Q_OS_MAC)
         static const QFont textFont = QFont("Monaco",12);
 #elif defined(Q_OS_UNIX)
-        static const QFont textFont = QFont("Monospace");
+        static QFont textFont = QFont("Monospace");
         textFont.setFixedPitch(true);        
 #elif defined(Q_OS_WIN)
         static const QFont textFont = QFont("Courier",10);

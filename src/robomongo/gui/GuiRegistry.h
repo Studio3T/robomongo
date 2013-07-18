@@ -76,6 +76,7 @@ namespace Robomongo
 
         const QBrush &typeBrush() const;
 
+        const QFont &font() const;
     private:
         /**
          * @brief Private, because this is singleton

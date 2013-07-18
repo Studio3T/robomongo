@@ -1,19 +1,20 @@
 IF(WIN32 AND MINGW)
-        #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0601")
-        #add_definitions(-D_WIN32_WINNT=0x0601 -DCCH_RM_MAX_APP_NAME=256 -DCCH_RM_MAX_SVC_NAME=256)
+	#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0601")
+	#ADD_DEFINITIONS(-D_WIN32_WINNT=0x0601 -DCCH_RM_MAX_APP_NAME=256 -DCCH_RM_MAX_SVC_NAME=256)
 ENDIF(WIN32 AND MINGW)
 IF(BOOST_ENABLED)
-INTEGRATE_BOOST(thread system filesystem)
+	INTEGRATE_BOOST(thread system filesystem)
 ENDIF()
 ADD_SUBDIRECTORY(third-party/qjson)
 ADD_SUBDIRECTORY(third-party/qscintilla/Qt4Qt5)
 ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/js-1.7)
 IF(BUILD_PCRECPP_LIBRARY)
-SET(PCRE_BUILD_TESTS OFF CACHE BOOL "Build the tests pcre tests.")
-SET(PCRE_BUILD_PCREGREP OFF CACHE BOOL "Build pcregrep")
-ADD_SUBDIRECTORY(../include/pcre pcrecpp)
-#FIND_LIBRARY(PCRECPP_LIB pcrecpp)
+	SET(PCRE_BUILD_TESTS OFF CACHE BOOL "Build the tests pcre tests.")
+	SET(PCRE_BUILD_PCREGREP OFF CACHE BOOL "Build pcregrep")
+	ADD_SUBDIRECTORY(../include/pcre pcrecpp)
+	#FIND_LIBRARY(PCRECPP_LIB pcrecpp)
 ENDIF(BUILD_PCRECPP_LIBRARY)
+
 SET(HEADERS_GUI_TO_MOC
     robomongo/gui/ExampleWindow.h
     robomongo/gui/dialogs/ConnectionsDialog.h
@@ -180,11 +181,10 @@ SET(HEADERS_CORE
     robomongo/core/engine/JsonBuilder.h
     robomongo/core/domain/MongoUser.h
     robomongo/core/domain/MongoFunction.h
-	robomongo/core/domain/MongoIndex.h
     robomongo/core/domain/Enums.h
     robomongo/core/HexUtils.h
     )
-set(SOURCES_CORE
+SET(SOURCES_CORE
     robomongo/core/AppRegistry.cpp
     robomongo/core/settings/ConnectionSettings.cpp
     robomongo/core/settings/SettingsManager.cpp
@@ -222,15 +222,15 @@ set(SOURCES_CORE
     robomongo/core/engine/JsonBuilder.cpp
     robomongo/core/domain/MongoUser.cpp
     robomongo/core/domain/MongoFunction.cpp
-	robomongo/core/domain/MongoIndex.cpp
     robomongo/core/HexUtils.cpp)
 
 IF(LINUX)
-ADD_DEFINITIONS(-DXP_UNIX)
+	ADD_DEFINITIONS(-DXP_UNIX)
 ELSEIF(MAC_OS)
 ELSEIF(WINDOWS)
-ADD_DEFINITIONS(-D_WINSOCKAPI_ -DXP_WIN -DUNICODE -DPSAPI_VERSION=1)
+	ADD_DEFINITIONS(-D_WINSOCKAPI_ -DXP_WIN -DUNICODE -DPSAPI_VERSION=1)
 ENDIF()
+
 ADD_DEFINITIONS(-DROBOMONGO -DJS_C_STRINGS_ARE_UTF8 -DMONGO_EXPOSE_MACROS)
 SET(LIBMONGOCLIENT_RELEASE_FILENAME ${CMAKE_STATIC_LIBRARY_PREFIX}mongoclient${CMAKE_STATIC_LIBRARY_SUFFIX})
 SET(LIBMONGOCLIENT_DEBUG_FILENAME ${CMAKE_STATIC_LIBRARY_PREFIX}mongoclient_d${CMAKE_STATIC_LIBRARY_SUFFIX})
@@ -238,19 +238,18 @@ SET(MONGOCLIENT_DEBUG_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/${LIBMONGOCLIENT_DEBUG
 SET(MONGOCLIENT_RELEASE_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/${LIBMONGOCLIENT_RELEASE_FILENAME})
 
 IF(LINUX)
-SET(PLATFORM_HDRS)
-SET(PLATFORM_SRCS robomongo/shell/util/processinfo_linux2.cpp)
-SET(PLATFORM_LIBRARIES pthread qjson)
-
+	SET(PLATFORM_HDRS)
+	SET(PLATFORM_SRCS robomongo/shell/util/processinfo_linux2.cpp)
+	SET(PLATFORM_LIBRARIES pthread qjson)
 ELSEIF(WINDOWS)
-SET(PLATFORM_HDRS)
-SET(PLATFORM_SRCS robomongo/shell/util/processinfo_win32.cpp)
-SET(PLATFORM_LIBRARIES ws2_32 kernel32 advapi32 psapi dbghelp user32 gdi32 comdlg32 shell32 ole32 oleaut32 odbc32 odbccp32 uuid)
-ELSEIF(MAC_OS)
-SET(PLATFORM_HDRS)
-SET(PLATFORM_SRCS robomongo/shell/util/processinfo_darwin.cpp)
-SET(PLATFORM_LIBRARIES)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
+	SET(PLATFORM_HDRS)
+	SET(PLATFORM_SRCS robomongo/shell/util/processinfo_win32.cpp)
+	SET(PLATFORM_LIBRARIES ws2_32 kernel32 advapi32 psapi dbghelp user32 gdi32 comdlg32 shell32 ole32 oleaut32 odbc32 odbccp32 uuid)
+	ELSEIF(MAC_OS)
+	SET(PLATFORM_HDRS)
+	SET(PLATFORM_SRCS robomongo/shell/util/processinfo_darwin.cpp)
+	SET(PLATFORM_LIBRARIES)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
 ENDIF()
 SET(HEADERS ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
 SET(SOURCES robomongo/app/main.cpp ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_CORE})
@@ -316,7 +315,7 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX)
     ADD_DEPENDENCIES(${PROJECT_NAME} build_mongoclient)
 ELSEIF(MSVC)
 	IF(BOOST_ENABLED)
-            add_custom_target(mongoclient_release
+            ADD_CUSTOM_TARGET(mongoclient_release
             COMMAND call scons --release --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
@@ -327,7 +326,7 @@ ELSEIF(MSVC)
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient debug library")
     ELSE()
-            add_custom_target(mongoclient_release
+            ADD_CUSTOM_TARGET(mongoclient_release
             COMMAND call scons --release --${ARCH_TEXT} mongoclient
 			COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb

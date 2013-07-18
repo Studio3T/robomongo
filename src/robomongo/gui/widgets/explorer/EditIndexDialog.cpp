@@ -11,9 +11,9 @@
 #include <QSpacerItem>
 #include <QTextEdit>
 #include <QMessageBox>
-#include <qjson/parser.h>
 #include <Qsci/qsciscintilla.h>
 
+#include "robomongo/shell/db/json.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/editors/FindFrame.h"
@@ -28,12 +28,12 @@ namespace
     {
         bool result= false;
         if(!text.isEmpty()){
-            QJson::Parser parser;
-            bool ok=false;
-            QVariant var = parser.parse(text.toUtf8(), &ok);
-            if(ok){
-               QMap<QString,QVariant> m= var.toMap();
-               result = m.size()!=0;
+            try {
+                mongo::Robomongo::fromjson(text.toUtf8());
+                result=true;
+            }
+            catch (const mongo::ParseMsgAssertionException &ex) {
+
             }
         }
         return result;
@@ -63,20 +63,7 @@ namespace Robomongo
 
         QTabWidget *mainTab = new QTabWidget(this);
 
-        QFont textFont = font();
-        #if defined(Q_OS_MAC)
-                textFont.setPointSize(12);
-                textFont.setFamily("Monaco");
-        #elif defined(Q_OS_UNIX)
-                textFont.setFamily("Monospace");
-                textFont.setFixedPitch(true);
-                //textFont.setWeight(QFont::Bold);
-                //    textFont.setPointSize(12);
-        #elif defined(Q_OS_WIN)
-                textFont.setPointSize(10);
-                textFont.setFamily("Courier");
-        #endif
-
+        const QFont &textFont = GuiRegistry::instance().font();
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
         javaScriptLexer->setFont(textFont);
 

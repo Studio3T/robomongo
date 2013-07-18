@@ -117,9 +117,13 @@ ELSE()
 	SET(ARCH_TEXT 32)
 ENDIF()
 
-if(WIN32 OR APPLE)
+IF("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
+IF(WIN32)
 	SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/bin")
-endif(WIN32 OR APPLE)
+ELSE()
+	SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
+ENDIF()
+ENDIF()
 ############################################################################
 
 IF(MANIFEST_ENABLE)

@@ -116,7 +116,8 @@ namespace Robomongo
         return result;
     }
 
-    void MongoClient::ensureIndex(const MongoCollectionInfo &collection, const QString &name, const QString &request, bool unique, bool backGround, bool dropDuplicates) const
+    void MongoClient::ensureIndex(const MongoCollectionInfo &collection, const QString &name, const QString &request, bool unique, bool backGround, bool dropDuplicates,
+        bool sparce,const QString &expireAfter,const QString &defaultLanguage,const QString &languageOverride,const QString &textWeights) const
     {
         // TODO: This function should work for creating and editing of indexes.
         // If index with "name" already exists - drop and create new.
@@ -178,10 +179,9 @@ namespace Robomongo
         _dbclient->insert(systemIndexesNs, builder.obj());
     }
 
-    bool MongoClient::deleteIndexFromCollection(const MongoCollectionInfo &collection, const QString &indexName)const
+    void MongoClient::deleteIndexFromCollection(const MongoCollectionInfo &collection, const QString &indexName)const
     {
         _dbclient->dropIndex(collection.ns().toString().toStdString(), indexName.toStdString());
-        return true;
     }
 
     void MongoClient::createFunction(const QString &dbName, const MongoFunction &fun, const QString &existingFunctionName /* = QString() */)

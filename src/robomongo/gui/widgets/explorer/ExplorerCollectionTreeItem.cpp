@@ -146,7 +146,7 @@ namespace Robomongo
         if(!databaseTreeItem)
             return;
 
-        databaseTreeItem->enshureIndex(parent, dlg.indexName(), dlg.getInputText(), dlg.isUnique(), dlg.isBackGround(), dlg.isDropDuplicates());
+        databaseTreeItem->enshureIndex(parent, dlg.indexName(), dlg.getInputText(), dlg.isUnique(), dlg.isBackGround(), dlg.isDropDuplicates(),dlg.isSparce(),dlg.expireAfter(),dlg.defaultLanguage(),dlg.languageOverride(),dlg.textWeights());
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_reIndex()

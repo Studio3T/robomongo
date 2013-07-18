@@ -204,7 +204,8 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->ensureIndex(event->collection(), event->name(), event->request(), event->isUnique(), event->isBackGround(), event->isDropDuplicates());
+            client->ensureIndex(event->collection(), event->name(), event->request(), event->isUnique(), event->isBackGround(), event->isDropDuplicates(),
+                event->isSparce(),event->expireAfter(),event->defaultLanguage(),event->languageOverride(),event->textWeights());
             const QList<QString> &ind = client->getIndexes(event->collection());
             client->done();
 

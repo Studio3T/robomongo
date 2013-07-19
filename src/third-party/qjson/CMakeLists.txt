@@ -45,7 +45,7 @@ endif()
  #                    PUBLIC_HEADER "${qjson_HEADERS}"
  #                     FRAMEWORK ${OSX_FRAMEWORK}
  #                    )
-IF(WIN32 OR APPLE)
+IF(WIN32)
 INSTALL(TARGETS qjson EXPORT qjson-export
    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}

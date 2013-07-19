@@ -27,7 +27,7 @@ namespace Robomongo
         {
             return _scin;
         }
-
+        virtual ~FindFrame();
     protected:
         virtual void wheelEvent(QWheelEvent *e);
         virtual void keyPressEvent(QKeyEvent *e);

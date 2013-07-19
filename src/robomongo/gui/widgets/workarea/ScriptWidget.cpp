@@ -315,7 +315,7 @@ namespace Robomongo
     #if defined(Q_OS_UNIX)
         // this fix required to calculate correct height in Linux.
         // not the best way, but for now it at least tested on Ubuntu.
-        lineHeight++;
+        lineHeight+=2;
     #endif
 
         return lineHeight;

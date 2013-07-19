@@ -13,7 +13,7 @@
 namespace Robomongo
 {
     FindFrame::FindFrame(QWidget *parent) : BaseClass(parent),
-        _scin(new RoboScintilla(this)),
+        _scin(new RoboScintilla()),
         _findPanel(new QFrame(this)),
         _close(new QToolButton(this)),
         _findLine(new QLineEdit(this)),
@@ -99,6 +99,11 @@ namespace Robomongo
 
             _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, wrap, true, line, index);
         }
+    }
+
+    FindFrame::~FindFrame()
+    {
+        delete _scin;
     }
 
     void FindFrame::goToPrevElement()

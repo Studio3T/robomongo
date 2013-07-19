@@ -25,7 +25,7 @@ namespace Robomongo
         ExplorerCollectionTreeItem(QTreeWidgetItem *parent,ExplorerDatabaseTreeItem *databaseItem,MongoCollection *collection);
         MongoCollection *collection() const { return _collection; }
         void expand();
-        void deleteIndex(const QTreeWidgetItem * const ind);
+        void dropIndex(const QTreeWidgetItem * const ind);
         void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
         ExplorerDatabaseTreeItem *const databaseItem()const 
         {

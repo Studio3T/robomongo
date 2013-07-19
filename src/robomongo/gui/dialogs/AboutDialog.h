@@ -1,3 +1,5 @@
+#pragma  once
+
 #include <QDialog>
 
 namespace Robomongo

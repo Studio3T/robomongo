@@ -1,5 +1,8 @@
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QDir>
+
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/gui/MainWindow.h"
 

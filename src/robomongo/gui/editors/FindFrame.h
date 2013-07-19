@@ -29,8 +29,8 @@ namespace Robomongo
         }
 
     protected:
-        void wheelEvent(QWheelEvent *e);
-        void keyPressEvent(QKeyEvent *e);
+        virtual void wheelEvent(QWheelEvent *e);
+        virtual void keyPressEvent(QKeyEvent *e);
 
     private Q_SLOTS:
         void goToNextElement();

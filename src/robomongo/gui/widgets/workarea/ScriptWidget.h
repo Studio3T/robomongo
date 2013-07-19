@@ -79,7 +79,6 @@ namespace Robomongo
 
     private:
         void configureQueryText();
-        QFont chooseTextFont();
 
         /**
          * @brief Calculates line height of text editor
@@ -102,38 +101,15 @@ namespace Robomongo
          * @brief Calculates preferable editor height for specified number of lines
          */
         int editorHeight(int lines);
-
-        /**
-         * @brief Checks whether 'ch' is a stop char
-         * @param direction: true for right direction, false for left direction
-         */
-        bool isStopChar(const QChar &ch, bool direction);
-
-        bool isForbiddenChar(const QChar &ch);
-
+        
         AutoCompletionInfo sanitizeForAutocompletion();
         RoboScintilla *_queryText;
         TopStatusBar *_topStatusBar;
         QCompleter *_completer;
         MongoShell *_shell;
-        QFont _textFont;
         AutoCompletionInfo _currentAutoCompletionInfo;
         bool _textChanged;
         bool _disableTextAndCursorNotifications;
-    };
-
-    class ElidedLabel : public QLabel
-    {
-        Q_OBJECT
-
-    public:
-        ElidedLabel(){}
-        ElidedLabel(const QString &text) : QLabel(text) { }
-        QSize minimumSizeHint() const;
-        QSize sizeHint() const;
-
-    protected:
-        void paintEvent(QPaintEvent *event);
     };
 
     class TopStatusBar : public QFrame

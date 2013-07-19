@@ -1,10 +1,6 @@
 #include "robomongo/gui/widgets/workarea/ScriptWidget.h"
 
-#include <QDebug>
-#include <QFont>
-#include <QRect>
 #include <QVBoxLayout>
-#include <QPainter>
 #include <QIcon>
 #include <QMovie>
 #include <QCompleter>
@@ -19,6 +15,34 @@
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 
+namespace
+{
+    bool isStopChar(const QChar &ch, bool direction)
+    {
+        if (ch == '='  ||  ch == ';'  ||
+            ch == '('  ||  ch == ')'  ||
+            ch == '{'  ||  ch == '}'  ||
+            ch == '-'  ||  ch == '/'  ||
+            ch == '+'  ||  ch == '*'  ||
+            ch == '\r' ||  ch == '\n' ||
+            ch == ' ' ) {
+                return true;
+        }
+
+        if (direction) { // right direction
+            if (ch == '.')
+                return true;
+        }
+
+        return false;
+    }
+
+    bool isForbiddenChar(const QChar &ch)
+    {
+        return ch == '\"' ||  ch == '\'';
+    }
+}
+
 namespace Robomongo
 {
     ScriptWidget::ScriptWidget(MongoShell *shell) :
@@ -28,7 +52,7 @@ namespace Robomongo
     {
         setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
 
-        _queryText = new RoboScintilla;
+        _queryText = new RoboScintilla(this);
         _topStatusBar = new TopStatusBar(shell);
 
         QVBoxLayout *layout = new QVBoxLayout;
@@ -39,7 +63,6 @@ namespace Robomongo
         setLayout(layout);
 
         // Query text widget
-        _textFont = chooseTextFont();
         configureQueryText();
         _queryText->setFixedHeight(10);
         ui_queryLinesCountChanged();
@@ -53,7 +76,7 @@ namespace Robomongo
         _completer->setCaseSensitivity(Qt::CaseInsensitive);
         _completer->setMaxVisibleItems(20);
         _completer->setWrapAround(false);
-        _completer->popup()->setFont(_textFont);
+        _completer->popup()->setFont(GuiRegistry::instance().font());
         connect(_completer, SIGNAL(activated(QString)), this, SLOT(onCompletionActivated(QString)));
 
         QStringListModel *model = new QStringListModel(_completer);
@@ -75,9 +98,8 @@ namespace Robomongo
                 }
             }
             return false;
-        } else {
-            return QFrame::eventFilter(obj, event);
         }
+        return QFrame::eventFilter(obj, event);
     }
 
     void ScriptWidget::setup(const MongoShellExecResult &execResult)
@@ -269,11 +291,11 @@ namespace Robomongo
     void ScriptWidget::configureQueryText()
     {
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
-        javaScriptLexer->setFont(_textFont);
+        javaScriptLexer->setFont(GuiRegistry::instance().font());
 
         _queryText->setFixedHeight(23);
         _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
-        _queryText->setFont(_textFont);
+        _queryText->setFont(GuiRegistry::instance().font());
         _queryText->setPaper(QColor(255, 0, 0, 127));
         _queryText->setLexer(javaScriptLexer);
         _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
@@ -287,23 +309,6 @@ namespace Robomongo
         connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
         connect(_queryText, SIGNAL(textChanged()), SLOT(onTextChanged()));
         connect(_queryText, SIGNAL(cursorPositionChanged(int,int)), SLOT(onCursorPositionChanged(int,int)));
-    }
-
-    QFont ScriptWidget::chooseTextFont()
-    {
-        QFont textFont = font();
-    #if defined(Q_OS_MAC)
-        textFont.setPointSize(12);
-        textFont.setFamily("Monaco");
-    #elif defined(Q_OS_UNIX)
-        textFont.setFamily("Monospace");
-        textFont.setFixedPitch(true);
-    #elif defined(Q_OS_WIN)
-        textFont.setPointSize(font().pointSize() + 2);
-        textFont.setFamily("Courier");
-    #endif
-
-        return textFont;
     }
 
     /**
@@ -337,7 +342,6 @@ namespace Robomongo
     #if defined(Q_OS_MAC)
         return -1;
     #endif
-
         // for Linux and Windows it is the same for now
         return 1;
     }
@@ -348,34 +352,6 @@ namespace Robomongo
     int ScriptWidget::editorHeight(int lines)
     {
         return lines * lineHeight() + 8;
-    }
-
-    bool ScriptWidget::isStopChar(const QChar &ch, bool direction)
-    {
-        if (ch == '='  ||  ch == ';'  ||
-            ch == '('  ||  ch == ')'  ||
-            ch == '{'  ||  ch == '}'  ||
-            ch == '-'  ||  ch == '/'  ||
-            ch == '+'  ||  ch == '*'  ||
-            ch == '\r' ||  ch == '\n' ||
-            ch == ' ' ) {
-            return true;
-        }
-
-        if (direction) { // right direction
-            if (ch == '.')
-                return true;
-        }
-
-        return false;
-    }
-
-    bool ScriptWidget::isForbiddenChar(const QChar &ch)
-    {
-        if (ch == '\"' ||  ch == '\'')
-            return true;
-
-        return false;
     }
 
     AutoCompletionInfo ScriptWidget::sanitizeForAutocompletion()
@@ -420,30 +396,6 @@ namespace Robomongo
         return AutoCompletionInfo(final, row, leftStop, rightStop);
     }
 
-    void ElidedLabel::paintEvent(QPaintEvent *event)
-    {
-        QLabel::paintEvent(event);
-
-        return;
-        QPainter painter(this);
-        QFontMetrics metrics(font());
-        QString elided = metrics.elidedText(text(), Qt::ElideRight, width());
-        painter.drawText(rect(), alignment(), elided);
-    }
-
-    QSize ElidedLabel::minimumSizeHint() const
-    {
-        QSize defaultMinSizeHint = QLabel::minimumSizeHint();
-        return QSize(0, defaultMinSizeHint.height());
-    }
-
-    QSize ElidedLabel::sizeHint() const
-    {
-        QSize defaultSizeHint = QLabel::sizeHint();
-        return defaultSizeHint;
-    }
-
-
     TopStatusBar::TopStatusBar(MongoShell *shell) :
         _shell(shell)
     {
@@ -460,14 +412,14 @@ namespace Robomongo
         QLabel *serverIconLabel = new QLabel;
         serverIconLabel->setPixmap(serverPixmap);
 
-        _currentServerLabel = new ElidedLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(_shell->server()->connectionRecord()->getFullAddress()));
+        _currentServerLabel = new QLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(_shell->server()->connectionRecord()->getFullAddress()),this);
         _currentServerLabel->setDisabled(true);
 
-        _currentDatabaseLabel = new ElidedLabel();
+        _currentDatabaseLabel = new QLabel(this);
         _currentDatabaseLabel->setDisabled(true);
 
         QMovie *movie = new QMovie(":robomongo/icons/loading.gif", QByteArray(), this);
-        _progressLabel = new QLabel();
+        _progressLabel = new QLabel(this);
         _progressLabel->setMovie(movie);
         _progressLabel->hide();
         movie->start();

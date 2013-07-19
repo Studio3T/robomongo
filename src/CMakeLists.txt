@@ -303,13 +303,13 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR MAC_OS)
 	ELSE()
 		IF ("${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
-                                COMMAND /opt/local/bin/scons --release --${ARCH_TEXT} mongoclient
+                                COMMAND scons --release --${ARCH_TEXT} mongoclient
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
 				WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
 				COMMENT "Build mongoclient library")
 		ELSE()
                 ADD_CUSTOM_TARGET(build_mongoclient
-                                COMMAND /opt/local/bin/scons --d --${ARCH_TEXT} mongoclient
+                                COMMAND scons --d --${ARCH_TEXT} mongoclient
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
 				WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
 				COMMENT "Build mongoclient library")

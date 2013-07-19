@@ -279,7 +279,7 @@ namespace Robomongo
 		createTabs();
 		createDatabaseExplorer();
 
-		setWindowTitle("Robomongo " + AppRegistry::instance().version());
+		setWindowTitle(PROJECT_NAME" "PROJECT_VERSION);
 		setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
 		QTimer::singleShot(0, this, SLOT(manageConnections()));

@@ -25,7 +25,7 @@ namespace Robomongo
 
         QList<MongoFunction> getFunctions(const QString &dbName);
         QList<QString> getIndexes(const MongoCollectionInfo &collection)const;
-        void deleteIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexName)const;
+        void dropIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexName)const;
         void ensureIndex(const MongoCollectionInfo &collection, const QString &name, const QString &request, bool unique, bool backGround, bool dropDuplicates,
             bool sparce,const QString &expireAfter,const QString &defaultLanguage,const QString &languageOverride,const QString &textWeights)const;
 

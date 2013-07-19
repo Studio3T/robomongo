@@ -12,14 +12,14 @@
 #include <QMessageBox>
 #include <Qsci/qsciscintilla.h>
 
-#include "robomongo/shell/db/json.h"
-#include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
-#include "robomongo/gui/editors/FindFrame.h"
-#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
+#include "robomongo/gui/editors/JSLexer.h"
+#include "robomongo/gui/editors/FindFrame.h"
+#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/domain/MongoCollection.h"
+#include "robomongo/shell/db/json.h"
 
 namespace
 {
@@ -31,7 +31,7 @@ namespace
                 mongo::Robomongo::fromjson(text.toUtf8());
                 result=true;
             }
-            catch (const mongo::ParseMsgAssertionException &ex) {
+            catch (const mongo::ParseMsgAssertionException &) {
 
             }
         }

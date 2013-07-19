@@ -80,7 +80,7 @@ namespace Robomongo
         /**
         * @brief delete index from collection
         */
-        void handle(DeleteCollectionIndexRequest *event);
+        void handle(DropCollectionIndexRequest *event);
 
           /**
         * @brief Edit index

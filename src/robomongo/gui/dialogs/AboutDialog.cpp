@@ -1,17 +1,29 @@
 #include "AboutDialog.h"
 
-#include <QDate>
-#include <QFile>
-#include <QSysInfo>
-
 #include <QDialogButtonBox>
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
-#include <QTextBrowser>
 
-#include "robomongo/core/AppRegistry.h"
 #include "robomongo/gui/GuiRegistry.h"
+
+namespace
+{
+    const QString description = QObject::tr(
+        "<h3>"PROJECT_NAME" "PROJECT_VERSION"</h3>"
+        "Shell-centric MongoDB management tool."
+        "<br/>"
+        "<br/>"
+        "Visit "PROJECT_NAME" website: <a href=\""PROJECT_DOMAIN"\">"PROJECT_DOMAIN"</a> <br/>"
+        "<br/>"
+        "<a href=\"https://"PROJECT_GITHUB_FORK"\">Fork</a> project or <a href=\""PROJECT_GITHUB_ISSUES"\">submit</a> issues/proposals on GitHub.  <br/>"
+        "<br/>"
+        "Copyright 2013 <a href=\"http://"PROJECT_COMPANYNAME_DOMAIN"\">"PROJECT_COMPANYNAME"</a>. All rights reserved.<br/>"
+        "<br/>"
+        "The program is provided AS IS with NO WARRANTY OF ANY KIND, "
+        "INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A "
+        "PARTICULAR PURPOSE.<br/>");
+}
 
 namespace Robomongo
 {
@@ -20,28 +32,10 @@ namespace Robomongo
     {
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
-        setWindowTitle("About Robomongo");
+        setWindowTitle("About "PROJECT_NAME);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
         QGridLayout *layout = new QGridLayout(this);
         layout->setSizeConstraint(QLayout::SetFixedSize);
-
-        QString version = AppRegistry::instance().version();
-
-         const QString description = tr(
-            "<h3>Robomongo %1</h3>"
-            "Shell-centric MongoDB management tool."
-            "<br/>"
-            "<br/>"
-            "Visit Robomongo website: <a href=\"www.robomongo.org\">www.robomongo.org</a> <br/>"
-            "<br/>"
-            "<a href=\"https://github.com/paralect/robomongo\">Fork</a> project or <a href=\"https://github.com/paralect/robomongo/issues\">submit</a> issues/proposals on GitHub.  <br/>"
-            "<br/>"
-            "Copyright 2013 <a href=\"http://www.paralect.com\">Paralect</a>. All rights reserved.<br/>"
-            "<br/>"
-            "The program is provided AS IS with NO WARRANTY OF ANY KIND, "
-            "INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A "
-            "PARTICULAR PURPOSE.<br/>")
-            .arg(version);
 
         QLabel *copyRightLabel = new QLabel(description);
         copyRightLabel->setWordWrap(true);

@@ -11,6 +11,7 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/utils/DialogUtils.h"
 
+#include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
@@ -170,7 +171,7 @@ namespace Robomongo
     ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(QTreeWidgetItem *parent,const QString &val)
         : QObject(), BaseClass(parent)
     {
-        QAction *deleteIndex = new QAction("Delete index", this);
+        QAction *deleteIndex = new QAction("Drop index", this);
         connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
         QAction *editIndex = new QAction("Edit index", this);
         connect(editIndex, SIGNAL(triggered()), SLOT(ui_edit()));
@@ -198,7 +199,7 @@ namespace Robomongo
         if (!grandParent)
             return;
 
-        grandParent->deleteIndex(this);
+        grandParent->dropIndex(this);
     }
 
     void ExplorerCollectionIndexesTreeItem::ui_edit()
@@ -325,12 +326,12 @@ namespace Robomongo
          }
     }
 
-    void ExplorerCollectionTreeItem::deleteIndex(const QTreeWidgetItem * const ind)
+    void ExplorerCollectionTreeItem::dropIndex(const QTreeWidgetItem * const ind)
     {
         if (!_databaseItem)
             return;
 
-        _databaseItem->deleteIndexFromCollection(this, ind->text(0));
+        _databaseItem->dropIndexFromCollection(this, ind->text(0));
     }
 
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)

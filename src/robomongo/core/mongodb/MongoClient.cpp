@@ -179,7 +179,7 @@ namespace Robomongo
         _dbclient->insert(systemIndexesNs, builder.obj());
     }
 
-    void MongoClient::deleteIndexFromCollection(const MongoCollectionInfo &collection, const QString &indexName)const
+    void MongoClient::dropIndexFromCollection(const MongoCollectionInfo &collection, const QString &indexName)const
     {
         _dbclient->dropIndex(collection.ns().toString().toStdString(), indexName.toStdString());
     }

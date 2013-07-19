@@ -125,9 +125,9 @@ namespace Robomongo
          _bus->send(_database->server()->client(), new LoadCollectionIndexesRequest(item, item->collection()->info()));
     }
 
-    void ExplorerDatabaseTreeItem::deleteIndexFromCollection(ExplorerCollectionTreeItem *const item, const QString &indexName)
+    void ExplorerDatabaseTreeItem::dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const QString &indexName)
     {
-        _bus->send(_database->server()->client(), new DeleteCollectionIndexRequest(item, item->collection()->info(), indexName));
+        _bus->send(_database->server()->client(), new DropCollectionIndexRequest(item, item->collection()->info(), indexName));
     }
 
     void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item, const QString &name, const QString &text, bool unique, bool backGround,

@@ -1,8 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 #################### Project Settings ####################
-SET(PROJECT_NAME "robomongo" CACHE STRING "Project Name")
-SET(${PROJECT_NAME}_PROJECT_DOMAIN "www.robomongo.com" CACHE STRING "Internet domain name for ${ProjectName}")
-SET(PROJECT_COMPANYNAME "paralect")
+SET(PROJECT_NAME "Robomongo" CACHE STRING "Project Name")
+SET(${PROJECT_DOMAIN} "www.robomongo.org" CACHE STRING "Internet domain name for ${PROJECT_NAME}")
+SET(PROJECT_COMPANYNAME "Paralect")
+SET(PROJECT_COMPANYNAME_DOMAIN "www.paralect.com")
+SET(PROJECT_GITHUB_FORK "www.github.com/paralect/robomongo")
+SET(PROJECT_GITHUB_ISSUES "www.github.com/paralect/robomongo/issues")
 ##########################################################
 STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
 SET (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -11,7 +14,7 @@ OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
 OPTION(MANIFEST_ENABLE "Enable Manifest" OFF)
 #############################################################
 # Configure project
-PROJECT(${PROJECT_NAME_LOWERCASE})
+PROJECT(${PROJECT_NAME})
 SET(MAJOR "0")
 SET(MINOR "7")
 SET(PATCH "1")

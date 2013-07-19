@@ -117,12 +117,8 @@ ELSE()
 	SET(ARCH_TEXT 32)
 ENDIF()
 
-IF("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
-IF(WIN32)
-	SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/bin")
-ELSE()
+IF(NOT CMAKE_INSTALL_PREFIX})
 	SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
-ENDIF()
 ENDIF()
 ############################################################################
 

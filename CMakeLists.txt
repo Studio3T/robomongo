@@ -25,7 +25,7 @@ OPTION(BUILD_PCRECPP_LIBRARY "Build pcrecpp library from sources" ON)
 OPTION(QT_ENABLED "Enable Qt support" ON)
 OPTION(UNICODE_ENABLE "Support unicode" OFF)
 OPTION(DEVELOPER_DYNAMIC_RUNTIME "Build with dynamic C++ runtime" ON)
-option(DEVELOPER_FEATURES "use some debug tricks for developers" OFF)
+OPTION(DEVELOPER_FEATURES "use some debug tricks for developers" OFF)
 
 IF(MSVC)
 	IF(CMAKE_CL_64)

@@ -10,7 +10,7 @@
 
 namespace Robomongo
 {
-    class RoboScintilla;
+    class FindFrame;
     class TopStatusBar;
     class MongoShell;
 
@@ -103,7 +103,7 @@ namespace Robomongo
         int editorHeight(int lines);
         
         AutoCompletionInfo sanitizeForAutocompletion();
-        RoboScintilla *_queryText;
+        FindFrame *_queryText;
         TopStatusBar *_topStatusBar;
         QCompleter *_completer;
         MongoShell *_shell;

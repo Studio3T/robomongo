@@ -1,23 +1,50 @@
 #include "robomongo/gui/widgets/workarea/ScriptWidget.h"
 
-#include <QDebug>
-#include <QFont>
-#include <QRect>
 #include <QVBoxLayout>
-#include <QPainter>
 #include <QIcon>
+#include <QKeyEvent>
 #include <QMovie>
 #include <QCompleter>
 #include <QStringListModel>
 #include <QMessageBox>
 #include <Qsci/qscilexerjavascript.h>
+#include <Qsci/qsciscintilla.h>
 
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/JSLexer.h"
+#include "robomongo/gui/editors/FindFrame.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+
+namespace
+{
+    bool isStopChar(const QChar &ch, bool direction)
+    {
+        if (ch == '='  ||  ch == ';'  ||
+            ch == '('  ||  ch == ')'  ||
+            ch == '{'  ||  ch == '}'  ||
+            ch == '-'  ||  ch == '/'  ||
+            ch == '+'  ||  ch == '*'  ||
+            ch == '\r' ||  ch == '\n' ||
+            ch == ' ' ) {
+                return true;
+        }
+
+        if (direction) { // right direction
+            if (ch == '.')
+                return true;
+        }
+
+        return false;
+    }
+
+    bool isForbiddenChar(const QChar &ch)
+    {
+        return ch == '\"' ||  ch == '\'';
+    }
+}
 
 namespace Robomongo
 {
@@ -28,7 +55,7 @@ namespace Robomongo
     {
         setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
 
-        _queryText = new RoboScintilla;
+        _queryText = new FindFrame(this);
         _topStatusBar = new TopStatusBar(shell);
 
         QVBoxLayout *layout = new QVBoxLayout;
@@ -39,21 +66,20 @@ namespace Robomongo
         setLayout(layout);
 
         // Query text widget
-        _textFont = chooseTextFont();
         configureQueryText();
-        _queryText->setFixedHeight(10);
+        _queryText->sciScintilla()->setFixedHeight(10);
         ui_queryLinesCountChanged();
-        _queryText->setFocus();
+        _queryText->sciScintilla()->setFocus();
 
-        _queryText->installEventFilter(this);
+        _queryText->sciScintilla()->installEventFilter(this);
 
         _completer = new QCompleter(this);
-        _completer->setWidget(_queryText);
+        _completer->setWidget(_queryText->sciScintilla());
         _completer->setCompletionMode(QCompleter::PopupCompletion);
         _completer->setCaseSensitivity(Qt::CaseInsensitive);
         _completer->setMaxVisibleItems(20);
         _completer->setWrapAround(false);
-        _completer->popup()->setFont(_textFont);
+        _completer->popup()->setFont(GuiRegistry::instance().font());
         connect(_completer, SIGNAL(activated(QString)), this, SLOT(onCompletionActivated(QString)));
 
         QStringListModel *model = new QStringListModel(_completer);
@@ -65,7 +91,7 @@ namespace Robomongo
 
     bool ScriptWidget::eventFilter(QObject *obj, QEvent *event)
     {
-        if (obj == _queryText) {
+        if (obj == _queryText->sciScintilla()) {
             if (event->type() == QEvent::KeyPress) {
                 QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
 
@@ -75,9 +101,8 @@ namespace Robomongo
                 }
             }
             return false;
-        } else {
-            return QFrame::eventFilter(obj, event);
         }
+        return QFrame::eventFilter(obj, event);
     }
 
     void ScriptWidget::setup(const MongoShellExecResult &execResult)
@@ -88,42 +113,42 @@ namespace Robomongo
 
     void ScriptWidget::setText(const QString &text)
     {
-        _queryText->setText(text);
+        _queryText->sciScintilla()->setText(text);
     }
 
     void ScriptWidget::setTextCursor(const CursorPosition &cursor)
     {
         if (cursor.isNull()) {
-            _queryText->setCursorPosition(15, 1000);
+            _queryText->sciScintilla()->setCursorPosition(15, 1000);
             return;
         }
 
         int column = cursor.column();
         if (column < 0) {
-            column = _queryText->text(cursor.line()).length() + column;
+            column = _queryText->sciScintilla()->text(cursor.line()).length() + column;
         }
 
-        _queryText->setCursorPosition(cursor.line(), column);
+        _queryText->sciScintilla()->setCursorPosition(cursor.line(), column);
     }
 
     QString ScriptWidget::text() const
     {
-        return _queryText->text();
+        return _queryText->sciScintilla()->text();
     }
 
     QString ScriptWidget::selectedText() const
     {
-        return _queryText->selectedText();
+        return _queryText->sciScintilla()->selectedText();
     }
 
     void ScriptWidget::selectAll()
     {
-        _queryText->selectAll();
+        _queryText->sciScintilla()->selectAll();
     }
 
     void ScriptWidget::setScriptFocus()
     {
-        _queryText->setFocus();
+        _queryText->sciScintilla()->setFocus();
     }
 
     void ScriptWidget::setCurrentDatabase(const QString &database, bool isValid)
@@ -163,19 +188,19 @@ namespace Robomongo
 
         int currentLine = 0;
         int currentIndex = 0;
-        _queryText->getCursorPosition(&currentLine, &currentIndex);
-        int physicalLine = currentLine - _queryText->firstVisibleLine(); // "physical" line number in text editor (not logical)
+        _queryText->sciScintilla()->getCursorPosition(&currentLine, &currentIndex);
+        int physicalLine = currentLine - _queryText->sciScintilla()->firstVisibleLine(); // "physical" line number in text editor (not logical)
         int lineIndexLeft = _currentAutoCompletionInfo.lineIndexLeft();
 
-        QRect rect = _queryText->rect();
+        QRect rect = _queryText->sciScintilla()->rect();
         rect.setWidth(550);
         rect.setHeight(editorHeight(physicalLine + 1));
         rect.moveLeft(charWidth() * lineIndexLeft + autocompletionBoxLeftPosition());
 
         _completer->complete(rect);
         _completer->popup()->setCurrentIndex(_completer->completionModel()->index(0, 0));
-        _queryText->setIgnoreEnterKey(true);
-        _queryText->setIgnoreTabKey(true);
+        static_cast<RoboScintilla*>(_queryText->sciScintilla())->setIgnoreEnterKey(true);
+        static_cast<RoboScintilla*>(_queryText->sciScintilla())->setIgnoreTabKey(true);
     }
 
     void ScriptWidget::showAutocompletion()
@@ -193,29 +218,22 @@ namespace Robomongo
     void ScriptWidget::hideAutocompletion()
     {
         _completer->popup()->hide();
-        _queryText->setIgnoreEnterKey(false);
-        _queryText->setIgnoreTabKey(false);
+        static_cast<RoboScintilla*>(_queryText->sciScintilla())->setIgnoreEnterKey(false);
+        static_cast<RoboScintilla*>(_queryText->sciScintilla())->setIgnoreTabKey(false);
     }
 
     void ScriptWidget::ui_queryLinesCountChanged()
     {
         setUpdatesEnabled(false);
 
-        // Temporal diagnostic info
-        int pos = _queryText->fontInfo().pointSize();
-        int pis = _queryText->fontInfo().pixelSize();
-        int teh = _queryText->textHeight(0);
-        int exa = _queryText->extraAscent();
-        int exd = _queryText->extraDescent();
-
-        int lines = _queryText->lines();
+        int lines = _queryText->sciScintilla()->lines();
         int height = editorHeight(lines);
 
         int maxHeight = editorHeight(18);
         if (height > maxHeight)
             height = maxHeight;
 
-        _queryText->setFixedHeight(height);
+        _queryText->sciScintilla()->setFixedHeight(height);
 
         // this line helps eliminate UI flicks (because of background redraw)
         layout()->activate();
@@ -242,7 +260,7 @@ namespace Robomongo
         int row = _currentAutoCompletionInfo.line();
         int colLeft = _currentAutoCompletionInfo.lineIndexLeft();
         int colRight = _currentAutoCompletionInfo.lineIndexRight();
-        QString line = _queryText->text(row);
+        QString line = _queryText->sciScintilla()->text(row);
 
         int selectionIndexRight = colRight + 1;
 
@@ -257,8 +275,8 @@ namespace Robomongo
 
         _disableTextAndCursorNotifications = true;
 
-        _queryText->setSelection(row, colLeft, row, selectionIndexRight);
-        _queryText->replaceSelectedText(text);
+        _queryText->sciScintilla()->setSelection(row, colLeft, row, selectionIndexRight);
+        _queryText->sciScintilla()->replaceSelectedText(text);
 
         _disableTextAndCursorNotifications = false;
     }
@@ -269,41 +287,21 @@ namespace Robomongo
     void ScriptWidget::configureQueryText()
     {
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
-        javaScriptLexer->setFont(_textFont);
+        javaScriptLexer->setFont(GuiRegistry::instance().font());
 
-        _queryText->setFixedHeight(23);
-        _queryText->setBraceMatching(QsciScintilla::StrictBraceMatch);
-        _queryText->setFont(_textFont);
-        _queryText->setPaper(QColor(255, 0, 0, 127));
-        _queryText->setLexer(javaScriptLexer);
-        _queryText->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
-        _queryText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        _queryText->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        _queryText->sciScintilla()->setFixedHeight(23);
+        _queryText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
+        _queryText->sciScintilla()->setFont(GuiRegistry::instance().font());
+        _queryText->sciScintilla()->setPaper(QColor(255, 0, 0, 127));
+        _queryText->sciScintilla()->setLexer(javaScriptLexer);
+        _queryText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
+        _queryText->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        _queryText->sciScintilla()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-        //_queryText->SendScintilla(QsciScintilla::SCI_SETFONTQUALITY, QsciScintilla::SC_EFF_QUALITY_LCD_OPTIMIZED);
-        //_queryText->SendScintilla (QsciScintillaBase::SCI_SETKEYWORDS, "db");
-
-        _queryText->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
-        connect(_queryText, SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
-        connect(_queryText, SIGNAL(textChanged()), SLOT(onTextChanged()));
-        connect(_queryText, SIGNAL(cursorPositionChanged(int,int)), SLOT(onCursorPositionChanged(int,int)));
-    }
-
-    QFont ScriptWidget::chooseTextFont()
-    {
-        QFont textFont = font();
-    #if defined(Q_OS_MAC)
-        textFont.setPointSize(12);
-        textFont.setFamily("Monaco");
-    #elif defined(Q_OS_UNIX)
-        textFont.setFamily("Monospace");
-        textFont.setFixedPitch(true);
-    #elif defined(Q_OS_WIN)
-        textFont.setPointSize(font().pointSize() + 2);
-        textFont.setFamily("Courier");
-    #endif
-
-        return textFont;
+        _queryText->sciScintilla()->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
+        connect(_queryText->sciScintilla(), SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
+        connect(_queryText->sciScintilla(), SIGNAL(textChanged()), SLOT(onTextChanged()));
+        connect(_queryText->sciScintilla(), SIGNAL(cursorPositionChanged(int,int)), SLOT(onCursorPositionChanged(int,int)));
     }
 
     /**
@@ -311,7 +309,7 @@ namespace Robomongo
      */
     int ScriptWidget::lineHeight()
     {
-        QFontMetrics m(_queryText->font());
+        QFontMetrics m(_queryText->sciScintilla()->font());
         int lineHeight = m.lineSpacing() + 1;
 
     #if defined(Q_OS_UNIX)
@@ -328,7 +326,7 @@ namespace Robomongo
      */
     int ScriptWidget::charWidth()
     {
-        QFontMetrics m(_queryText->font());
+        QFontMetrics m(_queryText->sciScintilla()->font());
         return m.averageCharWidth();
     }
 
@@ -337,7 +335,6 @@ namespace Robomongo
     #if defined(Q_OS_MAC)
         return -1;
     #endif
-
         // for Linux and Windows it is the same for now
         return 1;
     }
@@ -350,40 +347,12 @@ namespace Robomongo
         return lines * lineHeight() + 8;
     }
 
-    bool ScriptWidget::isStopChar(const QChar &ch, bool direction)
-    {
-        if (ch == '='  ||  ch == ';'  ||
-            ch == '('  ||  ch == ')'  ||
-            ch == '{'  ||  ch == '}'  ||
-            ch == '-'  ||  ch == '/'  ||
-            ch == '+'  ||  ch == '*'  ||
-            ch == '\r' ||  ch == '\n' ||
-            ch == ' ' ) {
-            return true;
-        }
-
-        if (direction) { // right direction
-            if (ch == '.')
-                return true;
-        }
-
-        return false;
-    }
-
-    bool ScriptWidget::isForbiddenChar(const QChar &ch)
-    {
-        if (ch == '\"' ||  ch == '\'')
-            return true;
-
-        return false;
-    }
-
     AutoCompletionInfo ScriptWidget::sanitizeForAutocompletion()
     {
         int row = 0;
         int col = 0;
-        _queryText->getCursorPosition(&row, &col);
-        QString line = _queryText->text(row);
+        _queryText->sciScintilla()->getCursorPosition(&row, &col);
+        QString line = _queryText->sciScintilla()->text(row);
 
         int leftStop = -1;
         for (int i = col - 1; i >= 0; --i) {
@@ -420,30 +389,6 @@ namespace Robomongo
         return AutoCompletionInfo(final, row, leftStop, rightStop);
     }
 
-    void ElidedLabel::paintEvent(QPaintEvent *event)
-    {
-        QLabel::paintEvent(event);
-
-        return;
-        QPainter painter(this);
-        QFontMetrics metrics(font());
-        QString elided = metrics.elidedText(text(), Qt::ElideRight, width());
-        painter.drawText(rect(), alignment(), elided);
-    }
-
-    QSize ElidedLabel::minimumSizeHint() const
-    {
-        QSize defaultMinSizeHint = QLabel::minimumSizeHint();
-        return QSize(0, defaultMinSizeHint.height());
-    }
-
-    QSize ElidedLabel::sizeHint() const
-    {
-        QSize defaultSizeHint = QLabel::sizeHint();
-        return defaultSizeHint;
-    }
-
-
     TopStatusBar::TopStatusBar(MongoShell *shell) :
         _shell(shell)
     {
@@ -460,14 +405,14 @@ namespace Robomongo
         QLabel *serverIconLabel = new QLabel;
         serverIconLabel->setPixmap(serverPixmap);
 
-        _currentServerLabel = new ElidedLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(_shell->server()->connectionRecord()->getFullAddress()));
+        _currentServerLabel = new QLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(_shell->server()->connectionRecord()->getFullAddress()),this);
         _currentServerLabel->setDisabled(true);
 
-        _currentDatabaseLabel = new ElidedLabel();
+        _currentDatabaseLabel = new QLabel(this);
         _currentDatabaseLabel->setDisabled(true);
 
         QMovie *movie = new QMovie(":robomongo/icons/loading.gif", QByteArray(), this);
-        _progressLabel = new QLabel();
+        _progressLabel = new QLabel(this);
         _progressLabel->setMovie(movie);
         _progressLabel->hide();
         movie->start();
@@ -520,5 +465,4 @@ namespace Robomongo
     {
         _progressLabel->hide();
     }
-
 }

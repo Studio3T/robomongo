@@ -5,30 +5,42 @@
 #include <QMessageBox>
 #include <QWidgetAction>
 #include <QMenuBar>
+#include <QMenu>
 #include <QToolBar>
 #include <QToolTip>
 #include <QDockWidget>
 #include <QDesktopWidget>
-#include <QFileDialog>
 
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
-#include "robomongo/core/mongodb/MongoException.h"
-#include "robomongo/core/domain/MongoShell.h"
-#include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/gui/dialogs/ConnectionsDialog.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/EventBus.h"
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
-#include "robomongo/gui/dialogs/DocumentTextEditor.h"
+#include "robomongo/gui/dialogs/ConnectionsDialog.h"
 #include "robomongo/gui/dialogs/AboutDialog.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 namespace Robomongo
 {
+    class ConnectionMenu : public QMenu
+    {
+    public:
+        ConnectionMenu(QWidget *parent) : QMenu(parent) {}
+    protected:
+        virtual void keyPressEvent(QKeyEvent *event)	
+        {
+            if (event->key() == Qt::Key_F12) {
+                hide();
+            }
+            else {
+                QMenu::keyPressEvent(event);
+            }
+        }
+    };
 
     MainWindow::MainWindow() : baseClass(),
         _app(AppRegistry::instance().app()),
@@ -267,7 +279,7 @@ namespace Robomongo
 		createTabs();
 		createDatabaseExplorer();
 
-		setWindowTitle("Robomongo " + AppRegistry::instance().version());
+		setWindowTitle(PROJECT_NAME" "PROJECT_VERSION);
 		setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
 		QTimer::singleShot(0, this, SLOT(manageConnections()));
@@ -364,7 +376,7 @@ namespace Robomongo
 
 			try {
 				_app->openServer(selected->clone(), true);
-            } catch(const MongoException &) {
+            } catch(const std::exception &) {
 				QString message = QString("Cannot connect to MongoDB (%1)").arg(selected->getFullAddress());
 				QMessageBox::information(this, "Error", message);
 			}
@@ -484,7 +496,7 @@ namespace Robomongo
 		try{
 			_app->openServer(ptr->clone(), true);
 		}
-        catch(const MongoException &){
+        catch(const std::exception &){
 			QString message = QString("Cannot connect to MongoDB (%1)").arg(ptr->getFullAddress());
 			QMessageBox::information(this, "Error", message);
 		}
@@ -541,39 +553,15 @@ namespace Robomongo
 	}
     void MainWindow::updateMenus()
     {
-        if(_workArea&&_workArea->countTab()>0){
-            _openAction->setEnabled(true);
-            QueryWidget * wid = _workArea->currentWidget();
-            if(wid){
-                const MongoShell *const shell = wid->shell();
-                if(shell&&!shell->filePath().isEmpty()){
-                    _saveAction->setEnabled(true);
-                }
-            }
-            _saveAsAction->setEnabled(true);
-        }
-        else{
-            _saveAction->setEnabled(false);
-            _saveAsAction->setEnabled(false);
-            _openAction->setEnabled(false);
-        }
+        bool isEnable = _workArea&&_workArea->countTab()>0;
+        _openAction->setEnabled(isEnable);
+        _saveAction->setEnabled(isEnable);
+        _saveAsAction->setEnabled(isEnable);
     }
 	void MainWindow::createTabs()
     {
         _workArea = new WorkAreaWidget(this);
-        connect(_workArea, SIGNAL(tabActivated(int)),
-                    this, SLOT(updateMenus()));
+        connect(_workArea, SIGNAL(tabActivated(int)),this, SLOT(updateMenus()));
         setCentralWidget(_workArea);
-	}
-
-
-	void ConnectionMenu::keyPressEvent(QKeyEvent *event)
-	{
-		if (event->key() == Qt::Key_F12) {
-            hide();
-        }
-        else {
-            QMenu::keyPressEvent(event);
-        }
 	}
 }

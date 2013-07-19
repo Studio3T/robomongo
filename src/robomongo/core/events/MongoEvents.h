@@ -226,11 +226,11 @@ namespace Robomongo
         QString _textWeights;
     };
 
-    class DeleteCollectionIndexRequest : public Event
+    class DropCollectionIndexRequest : public Event
     {
         R_EVENT
     public:
-        DeleteCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const QString &name) :
+        DropCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const QString &name) :
             Event(sender),
             _collection(collection),
             _name(name) {}

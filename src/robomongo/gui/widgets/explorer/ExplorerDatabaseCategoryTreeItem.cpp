@@ -6,11 +6,13 @@
 #include "robomongo/gui/dialogs/FunctionTextEditor.h"
 #include "robomongo/gui/dialogs/CreateUserDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/domain/App.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
+
+#include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoDatabase.h"
+#include "robomongo/core/domain/App.h"
+#include "robomongo/core/AppRegistry.h"
 
 namespace
 {

@@ -215,11 +215,11 @@ namespace Robomongo
         }
     }
 
-    void MongoWorker::handle(DeleteCollectionIndexRequest *event)
+    void MongoWorker::handle(DropCollectionIndexRequest *event)
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->deleteIndexFromCollection(event->collection(),event->name());
+            client->dropIndexFromCollection(event->collection(),event->name());
             client->done();
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), event->name()));
         } catch(const DBException &) {

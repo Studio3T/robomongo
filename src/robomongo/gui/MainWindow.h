@@ -1,13 +1,11 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QMenu>
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QToolBar;
 class QDockWidget;
 QT_END_NAMESPACE
-
 
 #include "robomongo/gui/ViewMode.h"
 
@@ -15,7 +13,6 @@ namespace Robomongo
 {
     class LogWidget;
     class ExplorerWidget;
-    class MongoManager;
     class EventBus;
     class ConnectionFailedEvent;
     class ScriptExecutingEvent;
@@ -25,6 +22,7 @@ namespace Robomongo
     class WorkAreaWidget;
     class ConnectionMenu;
 	class App;
+
     class MainWindow : public QMainWindow
     {
         Q_OBJECT
@@ -94,15 +92,6 @@ namespace Robomongo
         void updateConnectionsMenu();
         void createDatabaseExplorer();
         void createTabs();
-    };
-
-    class ConnectionMenu : public QMenu
-    {
-        Q_OBJECT
-
-    public:
-        ConnectionMenu(QWidget *parent) : QMenu(parent) {}
-        void keyPressEvent(QKeyEvent *event);
     };
 
 }

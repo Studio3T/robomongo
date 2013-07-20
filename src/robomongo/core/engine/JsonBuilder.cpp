@@ -1,5 +1,7 @@
 #include "robomongo/core/engine/JsonBuilder.h"
+
 #include <mongo/util/base64.h>
+
 #include "robomongo/shell/db/ptimeutil.h"
 #include "robomongo/core/HexUtils.h"
 

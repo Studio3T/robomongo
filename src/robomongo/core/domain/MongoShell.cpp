@@ -1,5 +1,7 @@
 #include "robomongo/core/domain/MongoShell.h"
 
+#include "mongo/scripting/engine.h"
+
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"

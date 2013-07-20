@@ -1,7 +1,8 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
+
 #include "robomongo/core/domain/Enums.h"
 
 namespace Robomongo

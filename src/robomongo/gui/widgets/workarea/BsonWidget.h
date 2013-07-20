@@ -1,15 +1,14 @@
 #pragma once
 
 #include <QWidget>
-#include <QtGui>
-#include <mongo/client/dbclient.h>
+#include <QThread>
+QT_BEGIN_NAMESPACE
+class QPlainTextEdit;
+QT_END_NAMESPACE
 
 #include "robomongo/core/Core.h"
-#include "robomongo/core/domain/MongoDocument.h"
-#include "robomongo/core/engine/JsonBuilder.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
-
-class QPlainTextEdit;
+#include "robomongo/core/domain/Enums.h"
 
 namespace Robomongo
 {
@@ -65,46 +64,7 @@ namespace Robomongo
         /*
         ** Overload function
         */
-        void run()
-        {
-            int position = 0;
-            foreach(MongoDocumentPtr doc, _bsonObjects)
-            {
-                mongo::StringBuilder sb;
-                if (position == 0)
-                    sb << "/* 0 */\n";
-                else
-                    sb << "\n\n/* " << position << " */\n";
-
-                // Approach #1
-                // std::string stdJson = doc->bsonObj().jsonString(mongo::TenGen, 1);
-
-                // Approach #2
-                // std::string stdJson = doc->bsonObj().toString(false, true);
-
-                mongo::BSONObj obj = doc->bsonObj();
-                std::string stdJson = JsonBuilder::jsonString(obj, mongo::TenGen, 1, _uuidEncoding);
-
-                if (exit) {
-                    emit done();
-                    return;
-                }
-
-                sb << stdJson;
-                QString json = QString::fromUtf8(sb.str().data());
-
-                if (exit) {
-                    emit done();
-                    return;
-                }
-
-                emit partReady(json);
-
-                position++;
-            }
-
-            emit done();
-        }
+        virtual void run();
 
     signals:
         /**

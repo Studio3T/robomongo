@@ -1,10 +1,10 @@
 #pragma once
 
-#include <QWidget>
 #include <QDialog>
-#include <QLineEdit>
-#include <QLabel>
-#include <mongo/client/dbclient.h>
+QT_BEGIN_NAMESPACE
+class QLineEdit;
+class QLabel;
+QT_END_NAMESPACE
 
 #include "robomongo/core/domain/MongoFunction.h"
 
@@ -17,6 +17,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef QDialog BaseClass;
         explicit FunctionTextEditor(const QString &server, const QString &database,
                                     const MongoFunction &code, QWidget *parent = 0);
 
@@ -25,15 +26,13 @@ namespace Robomongo
         void setCursorPosition(int line, int column);
         void setCode(const QString &code);
 
-    public slots:
+    public Q_SLOTS:
         virtual void accept();
 
     private:
         void _configureQueryText();
-        QFont chooseTextFont();
         QLineEdit *_nameEdit;
         FindFrame *_queryText;
-        QFont _textFont;
         MongoFunction _function;
     };
 }

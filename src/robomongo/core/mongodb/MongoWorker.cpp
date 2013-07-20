@@ -2,20 +2,14 @@
 
 #include <QDebug>
 #include <QThread>
-#include <QStringList>
-#include <QMutexLocker>
-#include <QCoreApplication>
-#include <QFile>
-#include <QTextStream>
-#include <QVector>
-#include "boost/scoped_ptr.hpp"
-#include <mongo/client/dbclient.h>
+#include <QTimer>
+#include <boost/scoped_ptr.hpp>
 #include <mongo/scripting/engine_spidermonkey.h>
 
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/engine/ScriptEngine.h"
 #include "robomongo/core/EventBus.h"
-#include "robomongo/core/mongodb/MongoWorkerThread.h"
+#include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/mongodb/MongoClient.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/domain/MongoShellResult.h"
@@ -28,13 +22,12 @@ using namespace mongo;
 
 namespace Robomongo
 {
-    MongoWorker::MongoWorker(EventBus *bus, ConnectionSettings *connection, QObject *parent) : QObject(parent),
+    MongoWorker::MongoWorker(ConnectionSettings *connection, QObject *parent) : QObject(parent),
         _connection(connection),
-        _bus(bus),
         _scriptEngine(NULL),
-        _dbclient(NULL)
+        _dbclient(NULL),
+        _address(connection->getFullAddress())
     {
-        _address = _connection->getFullAddress();
         init();
     }
 
@@ -48,6 +41,7 @@ namespace Robomongo
         if (!_thread->wait(2000))
             _thread->terminate();
 
+        delete _scriptEngine;
         delete _thread;
     }
 
@@ -58,8 +52,8 @@ namespace Robomongo
     {
         qDebug() << "MongoWorker init started";
         _isAdmin = true;
-        _thread = new MongoWorkerThread(this);
-        this->moveToThread(_thread);
+        _thread = new QThread(this);
+        moveToThread(_thread);
 
         _thread->start();
         qDebug() << "MongoWorker init finished";
@@ -473,7 +467,7 @@ namespace Robomongo
      */
     void MongoWorker::send(Event *event)
     {
-        _bus->send(this, event);
+        AppRegistry::instance().bus()->send(this, event);
     }
 
     void MongoWorker::keepAlive()
@@ -506,6 +500,6 @@ namespace Robomongo
      */
     void MongoWorker::reply(QObject *receiver, Event *event)
     {
-        _bus->send(receiver, event);
+        AppRegistry::instance().bus()->send(receiver, event);
     }
 }

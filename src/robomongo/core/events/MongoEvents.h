@@ -3,7 +3,7 @@
 #include <QString>
 #include <QStringList>
 #include <QEvent>
-#include "mongo/client/dbclientinterface.h"
+#include <mongo/client/dbclientinterface.h>
 
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"

@@ -187,32 +187,18 @@ namespace Robomongo
         const MongoCollectionInfo _collection;
     };
 
-    class EnsureIndexRequest : public Event
+    struct EnsureIndexInfo
     {
-        R_EVENT
-    public:
-        EnsureIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const QString &name, const QString &request,
-                           bool isUnique, bool isBackGround, bool isDropDuplicates,bool isSparce,const QString &expireAfter,const QString &defaultLanguage,const QString &languageOverride,const QString &textWeights) :
-            Event(sender),
+        EnsureIndexInfo(const MongoCollectionInfo &collection, const QString &name, const QString &request,
+            bool isUnique, bool isBackGround, bool isDropDuplicates,bool isSparce,const QString &expireAfter,
+            const QString &defaultLanguage,const QString &languageOverride,const QString &textWeights) :
             _name(name),
             _collection(collection),
             _request(request),
             _isUnique(isUnique),
             _isBackGround(isBackGround),
-            _isDropDuplicates(isDropDuplicates) {}
+            _isDropDuplicates(isDropDuplicates){}
 
-        MongoCollectionInfo collection() const { return _collection; }
-        QString name() const { return _name; }
-        QString request() const { return _request; }
-        bool isUnique() const { return _isUnique; }
-        bool isBackGround() const { return _isBackGround; }
-        bool isDropDuplicates() const { return _isDropDuplicates; }
-        bool isSparce() const { return _isSparce; }
-        QString expireAfter() const { return _expireAfter; }
-        QString defaultLanguage() const { return _defaultLanguage; }
-        QString languageOverride() const { return _languageOverride; }
-        QString textWeights() const { return _textWeights; }
-    private:
         const MongoCollectionInfo _collection;
         QString _name;
         QString _request;
@@ -225,6 +211,8 @@ namespace Robomongo
         QString _languageOverride;
         QString _textWeights;
     };
+
+    typedef EventBase<EnsureIndexInfo> EnsureIndexRequest;
 
     class DropCollectionIndexRequest : public Event
     {

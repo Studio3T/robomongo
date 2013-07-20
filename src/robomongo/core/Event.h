@@ -110,3 +110,19 @@ namespace Robomongo
     const char *EVENT_CLASS::typeString() { return #EVENT_CLASS"*"; }                                \
     QEvent::Type EVENT_CLASS::type() { return EVENT_CLASS::Type; }                                   \
     const int EVENT_CLASS::metatype = qRegisterMetaType<EVENT_CLASS*>(#EVENT_CLASS"*");
+
+namespace Robomongo
+{
+    template<typename info_t>
+    class EventBase : public Robomongo::Event
+    {
+        R_EVENT
+        EventBase(QObject *sender,const info_t info) : Robomongo::Event(sender),info_(info) {}
+        const info_t &info() const
+        {
+            return info_;
+        }
+    private:
+        const info_t info_;
+    };
+}

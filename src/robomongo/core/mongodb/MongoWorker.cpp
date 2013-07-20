@@ -202,16 +202,17 @@ namespace Robomongo
 
     void MongoWorker::handle(EnsureIndexRequest *event)
     {
+        const EnsureIndexInfo &info = event->info(); 
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->ensureIndex(event->collection(), event->name(), event->request(), event->isUnique(), event->isBackGround(), event->isDropDuplicates(),
-                event->isSparce(),event->expireAfter(),event->defaultLanguage(),event->languageOverride(),event->textWeights());
-            const QList<QString> &ind = client->getIndexes(event->collection());
+            client->ensureIndex(info._collection, info._name, info._request, info._isUnique,info._isBackGround, info._isDropDuplicates,
+                info._isSparce,info._expireAfter,info._defaultLanguage,info._languageOverride,info._textWeights);
+            const QList<QString> &ind = client->getIndexes(info._collection);
             client->done();
 
-            reply(event->sender(), new LoadCollectionIndexesResponse(this, event->collection(), ind));
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, info._collection, ind));
         } catch(const DBException &) {
-            reply(event->sender(), new LoadCollectionIndexesResponse(this, event->collection(), QList<QString>()));
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, info._collection, QList<QString>()));
         }
     }
 

@@ -134,7 +134,7 @@ namespace Robomongo
         bool dropDuplicateIndex,bool sparce,const QString &expireAfter,const QString &defaultLanguage,const QString &languageOverride,const QString &textWeights)
     {
         _bus->send(_database->server()->client(),
-            new EnsureIndexRequest(item, item->collection()->info(), name, text, unique, backGround, dropDuplicateIndex,sparce,expireAfter,defaultLanguage,languageOverride,textWeights));
+            new EnsureIndexRequest(item, EnsureIndexInfo(item->collection()->info(), name, text, unique, backGround, dropDuplicateIndex,sparce,expireAfter,defaultLanguage,languageOverride,textWeights)) );
     }
 
     void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& oldIndexText,const QString& newIndexText)

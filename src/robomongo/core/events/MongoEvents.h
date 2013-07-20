@@ -212,7 +212,17 @@ namespace Robomongo
         QString _textWeights;
     };
 
-    typedef EventBase<EnsureIndexInfo> EnsureIndexRequest;
+    class EnsureIndexRequest : public Event
+    {
+        R_EVENT
+        EnsureIndexRequest(QObject *sender,const EnsureIndexInfo info) : Robomongo::Event(sender),info_(info) {}
+        const EnsureIndexInfo &info() const
+        {
+            return info_;
+        }
+    private:
+        const EnsureIndexInfo info_;
+    };
 
     class DropCollectionIndexRequest : public Event
     {

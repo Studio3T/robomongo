@@ -28,7 +28,7 @@ namespace
 namespace Robomongo
 {
     ExplorerUserTreeItem::ExplorerUserTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database, const MongoUser &user) :
-        QObject(),BaseClass(parent),_user(user),_database(database)
+        BaseClass(parent),_user(user),_database(database)
     {
         QAction *dropUser = new QAction("Drop User", this);
         connect(dropUser, SIGNAL(triggered()), SLOT(ui_dropUser()));

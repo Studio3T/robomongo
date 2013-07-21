@@ -6,7 +6,6 @@
 #include "robomongo/gui/widgets/explorer/EditIndexDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
-#include "robomongo/gui/dialogs/EditIndexDialog.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/utils/DialogUtils.h"
@@ -43,7 +42,7 @@ namespace Robomongo
     const QString ExplorerCollectionDirIndexesTreeItem::text = "Indexes";
 
     ExplorerCollectionDirIndexesTreeItem::ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent)
-        :QObject(),BaseClass(parent)
+        :BaseClass(parent)
     {
         QAction *addIndex = new QAction("Add Index", this);
         connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex()));
@@ -79,49 +78,33 @@ namespace Robomongo
 
     void ExplorerCollectionDirIndexesTreeItem::expand()
     {
-        ExplorerCollectionTreeItem * parent = dynamic_cast<ExplorerCollectionTreeItem *>(BaseClass::parent());
-        if(parent){
-            parent->expand();
-        }
-    }
-
-    void ExplorerCollectionDirIndexesTreeItem::editIndex(const QString &indexName)
-    {
-        ExplorerCollectionTreeItem *const parent = dynamic_cast<ExplorerCollectionTreeItem *const>(BaseClass::parent());
-        if(parent){
-            ExplorerDatabaseTreeItem  *databaseTreeItem = dynamic_cast<ExplorerDatabaseTreeItem *>(parent->databaseItem());
-            if(databaseTreeItem){
-                EditItemIndexDialog dlg(treeWidget(),indexName,parent->collection()->name(),databaseTreeItem->database()->name());
-                int result = dlg.exec();
-                if (result == QDialog::Accepted) {
-                    const QString newIndexName = dlg.text();
-                    databaseTreeItem->editIndexFromCollection(parent,indexName,newIndexName);
-                }
-            }
+        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
+        if(par){
+            par->expand();
         }
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_viewIndex()
     {
-        ExplorerCollectionTreeItem *const parent = dynamic_cast<ExplorerCollectionTreeItem *const>(BaseClass::parent());
-        if(parent){
-            parent->openCurrentCollectionShell("getIndexes()");
+        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
+        if(par){
+            par->openCurrentCollectionShell("getIndexes()");
         }
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_refreshIndex()
     {
-        ExplorerCollectionTreeItem *const parent = dynamic_cast<ExplorerCollectionTreeItem *const>(BaseClass::parent());
-        if(parent){
-            parent->expand();
+        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
+        if(par){
+            par->expand();
         }
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_addIndex()
     {
-        ExplorerCollectionTreeItem *const parent = dynamic_cast<ExplorerCollectionTreeItem *const>(BaseClass::parent());
-        if(parent){
-            parent->openCurrentCollectionShell(
+        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
+        if(par){
+            par->openCurrentCollectionShell(
                 "ensureIndex({ \"<field>\" : 1 }); \n"
                 "\n"
                 "// options: \n"
@@ -134,42 +117,40 @@ namespace Robomongo
 
     void ExplorerCollectionDirIndexesTreeItem::ui_addIndexGui()
     {
-        ExplorerCollectionTreeItem *const parent = dynamic_cast<ExplorerCollectionTreeItem *const>(BaseClass::parent());
-        if (!parent)
+        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *const>(parent());
+        if (!par)
             return;
 
-        EditIndexDialog dlg(treeWidget(), parent);
+        EditIndexDialog dlg(treeWidget(), EnsureIndexInfo(par->collection()->info(),""), par->databaseItem()->database()->name());
         int result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
 
-        ExplorerDatabaseTreeItem *const databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *const>(parent->databaseItem());
+        ExplorerDatabaseTreeItem *databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *>(par->databaseItem());
         if(!databaseTreeItem)
             return;
 
-        databaseTreeItem->enshureIndex(parent, dlg.indexName(), dlg.getInputText(), dlg.isUnique(), dlg.isBackGround(), dlg.isDropDuplicates(),dlg.isSparce(),dlg.expireAfter(),dlg.defaultLanguage(),dlg.languageOverride(),dlg.textWeights());
+        databaseTreeItem->enshureIndex(par, dlg.info());
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_reIndex()
     {
-        ExplorerCollectionTreeItem *const parent = dynamic_cast<ExplorerCollectionTreeItem *const>(BaseClass::parent());
-        if(parent){
-            parent->openCurrentCollectionShell("reIndex()", false);
+        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
+        if(par){
+            par->openCurrentCollectionShell("reIndex()", false);
         }
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_dropIndex()
     {
-        ExplorerCollectionTreeItem *const parent = dynamic_cast<ExplorerCollectionTreeItem *const>(BaseClass::parent());
-        if(parent){
-            parent->openCurrentCollectionShell(
-                "dropIndex({ \"<field>\" : 1 });"
-                , false);
+        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
+        if(par){
+            par->openCurrentCollectionShell("dropIndex({ \"<field>\" : 1 });", false);
         }
     }
 
-    ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(QTreeWidgetItem *parent,const QString &val)
-        : QObject(), BaseClass(parent)
+    ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent,const EnsureIndexInfo &info)
+        : BaseClass(parent),_info(info)
     {
         QAction *deleteIndex = new QAction("Drop index", this);
         connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
@@ -179,7 +160,7 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(deleteIndex);
         BaseClass::_contextMenu->addAction(editIndex);
 
-        setText(0, val);
+        setText(0, _info._name);
         setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());
     }
 
@@ -191,11 +172,11 @@ namespace Robomongo
         if (answer != QMessageBox::Yes)
             return;
 
-        ExplorerCollectionDirIndexesTreeItem *parent = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(BaseClass::parent());
-        if (!parent)
+        ExplorerCollectionDirIndexesTreeItem *par = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(parent());
+        if (!par)
             return;
-
-        ExplorerCollectionTreeItem *grandParent = dynamic_cast<ExplorerCollectionTreeItem *>(parent->BaseClass::parent());
+        
+        ExplorerCollectionTreeItem *grandParent = dynamic_cast<ExplorerCollectionTreeItem *>(par->parent());
         if (!grandParent)
             return;
 
@@ -204,15 +185,27 @@ namespace Robomongo
 
     void ExplorerCollectionIndexesTreeItem::ui_edit()
     {
-        QString nameIndex = text(0);
-        ExplorerCollectionDirIndexesTreeItem *parent = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(BaseClass::parent());           
-        if(parent){
-            parent->editIndex(nameIndex);
+        ExplorerCollectionDirIndexesTreeItem *par = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(parent());           
+        if(par){
+            ExplorerCollectionTreeItem *grPar = dynamic_cast<ExplorerCollectionTreeItem *const>(par->parent());
+            if (!par)
+                return;
+
+            EditIndexDialog dlg(treeWidget(), _info,grPar->databaseItem()->database()->name());
+            int result = dlg.exec();
+            if (result != QDialog::Accepted)
+                return;
+
+            ExplorerDatabaseTreeItem *databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *>(grPar->databaseItem());
+            if(!databaseTreeItem)
+                return;
+
+            databaseTreeItem->enshureIndex(grPar, dlg.info());
         }
     }
 
     ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(QTreeWidgetItem *parent,ExplorerDatabaseTreeItem *databaseItem,MongoCollection *collection) :
-        QObject(),BaseClass(parent),_indexDir(new ExplorerCollectionDirIndexesTreeItem(this)),_collection(collection),_databaseItem(databaseItem)
+        BaseClass(parent),_indexDir(new ExplorerCollectionDirIndexesTreeItem(this)),_collection(collection),_databaseItem(databaseItem)
     {
         QAction *addDocument = new QAction("Insert Document", this);
         connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument()));
@@ -288,8 +281,8 @@ namespace Robomongo
     void ExplorerCollectionTreeItem::handle(LoadCollectionIndexesResponse *event)
     {
         clearChildren(_indexDir);
-        const QList<QString> &indexes = event->indexes();
-        for(QList<QString>::const_iterator it=indexes.begin();it!=indexes.end();++it)
+        const QList<EnsureIndexInfo> &indexes = event->indexes();
+        for(QList<EnsureIndexInfo>::const_iterator it=indexes.begin();it!=indexes.end();++it)
         {
             _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(_indexDir,*it));
         }

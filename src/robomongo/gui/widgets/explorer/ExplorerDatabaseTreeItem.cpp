@@ -54,7 +54,7 @@ namespace Robomongo
         }
     }
     ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database) :
-        QObject(),BaseClass(parent),
+        BaseClass(parent),
         _database(database),
         _bus(AppRegistry::instance().bus())
     {
@@ -130,11 +130,9 @@ namespace Robomongo
         _bus->send(_database->server()->client(), new DropCollectionIndexRequest(item, item->collection()->info(), indexName));
     }
 
-    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item, const QString &name, const QString &text, bool unique, bool backGround,
-        bool dropDuplicateIndex,bool sparce,const QString &expireAfter,const QString &defaultLanguage,const QString &languageOverride,const QString &textWeights)
+    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item,const EnsureIndexInfo &inf)
     {
-        _bus->send(_database->server()->client(),
-            new EnsureIndexRequest(item, EnsureIndexInfo(item->collection()->info(), name, text, unique, backGround, dropDuplicateIndex,sparce,expireAfter,defaultLanguage,languageOverride,textWeights)) );
+        _bus->send(_database->server()->client(), new EnsureIndexRequest(item, inf));
     }
 
     void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& oldIndexText,const QString& newIndexText)

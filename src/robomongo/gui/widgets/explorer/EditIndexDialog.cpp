@@ -41,11 +41,10 @@ namespace
 
 namespace Robomongo
 {
-    EditIndexDialog::EditIndexDialog(QWidget *parent, ExplorerCollectionTreeItem * const item):BaseClass(parent),_item(item)
+    EditIndexDialog::EditIndexDialog(QWidget *parent,const EnsureIndexInfo &info,const QString &databaseName):BaseClass(parent),_info(info)
     {        
-        Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), _item->collection()->name());
-        ExplorerDatabaseTreeItem *const database = dynamic_cast<ExplorerDatabaseTreeItem *const>(_item->databaseItem());
-        Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), database->database()->name());
+        Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), _info._collection.name());
+        Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), databaseName);
 
         QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0, 0, 0, 0);
@@ -83,6 +82,7 @@ namespace Robomongo
 
         QLabel *label = new QLabel(tr("Name:"),basicTab);
         _nameLineEdit = new QLineEdit(basicTab);
+        _nameLineEdit->setText(_info._name);
         QHBoxLayout *nameLayout = new QHBoxLayout;
         nameLayout->addWidget(label);
         nameLayout->addWidget(_nameLineEdit);
@@ -98,10 +98,12 @@ namespace Robomongo
         _jsonText->sciScintilla()->setFont(textFont);
         _jsonText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
         _jsonText->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
+        _jsonText->sciScintilla()->setText(_info._request);
 
         QHBoxLayout *checkBoxLayout = new QHBoxLayout;
         QSpacerItem *sp = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
         _uniqueCheckBox = new QCheckBox(tr("Unique"),basicTab);
+        _uniqueCheckBox->setChecked(_info._isUnique);
         checkBoxLayout->addWidget(_uniqueCheckBox);
         checkBoxLayout->addItem(sp);        
 
@@ -120,12 +122,16 @@ namespace Robomongo
         QWidget *advanced = new QWidget(this);
 
         _sparceCheckBox = new QCheckBox(tr("Sparse"),advanced);
+        _sparceCheckBox->setChecked(_info._isBackGround);
         _dropDuplicates = new QCheckBox(tr("Drop duplicates"),advanced);
+        _dropDuplicates->setChecked(_info._isDropDuplicates);
         _backGroundCheckBox = new QCheckBox(tr("Create index in background"),advanced);
+        _backGroundCheckBox->setChecked(_info._isBackGround);
         
         QHBoxLayout *expireLayout = new QHBoxLayout;
         QLabel *exLabel = new QLabel(tr("Expire after"));
         _expireAfterLineEdit = new QLineEdit(advanced);
+        _expireAfterLineEdit->setText(_info._expireAfter);
         QLabel *secLabel = new QLabel(tr("seconds"),advanced);  
         expireLayout->addWidget(exLabel);
         expireLayout->addWidget(_expireAfterLineEdit);
@@ -148,6 +154,7 @@ namespace Robomongo
 
         QHBoxLayout *defLangLayout = new QHBoxLayout;
         QLabel *defaultLanguage = new QLabel(tr("Default language"),textSearch);
+        defaultLanguage->setText(_info._defaultLanguage);
         _defaultLanguageLineEdit = new QLineEdit(textSearch);
         defLangLayout->addWidget(defaultLanguage);
         defLangLayout->addWidget(_defaultLanguageLineEdit);
@@ -155,11 +162,13 @@ namespace Robomongo
         QHBoxLayout *languageOverrideLayout = new QHBoxLayout;
         QLabel *languageOverrideLabel = new QLabel(tr("Language override"),textSearch);
         _languageOverrideLineEdit = new QLineEdit(textSearch);
+        _languageOverrideLineEdit->setText(_info._languageOverride);
         languageOverrideLayout->addWidget(languageOverrideLabel);
         languageOverrideLayout->addWidget(_languageOverrideLineEdit);
 
         QLabel *textWeights = new QLabel(tr("Text weights"),textSearch);
         _textWeightsLineEdit = new QLineEdit(textSearch);
+        _textWeightsLineEdit->setText(_info._textWeights);
 
         QVBoxLayout *vlayout = new QVBoxLayout;
         vlayout->setContentsMargins(5, 5, 5, 5);
@@ -172,49 +181,13 @@ namespace Robomongo
         return textSearch;
     }
 
-    QString EditIndexDialog::indexName() const
+    EnsureIndexInfo EditIndexDialog::info() const
     {
-        return _nameLineEdit->text();
-    }
-
-    bool EditIndexDialog::isUnique() const
-    {
-        return _uniqueCheckBox->checkState() == Qt::Checked;
-    }
-
-    bool EditIndexDialog::isBackGround() const
-    {
-        return _backGroundCheckBox->checkState() == Qt::Checked;
-    }
-
-    bool EditIndexDialog::isDropDuplicates() const
-    {
-        return _dropDuplicates->checkState() == Qt::Checked;
-    }
-
-    bool EditIndexDialog::isSparce()const
-    {
-        return _sparceCheckBox->checkState() == Qt::Checked;
-    }
-
-    QString EditIndexDialog::expireAfter() const
-    {
-        return _expireAfterLineEdit->text();
-    }
-
-    QString EditIndexDialog::defaultLanguage() const
-    {
-        return _defaultLanguageLineEdit->text();
-    }
-
-    QString EditIndexDialog::languageOverride() const
-    {
-        return _languageOverrideLineEdit->text();
-    }
-
-    QString EditIndexDialog::textWeights() const
-    {
-        return _textWeightsLineEdit->text();
+        return EnsureIndexInfo(_info._collection,_nameLineEdit->text(),QString(" %1 ,{ name: %2 }").arg(_jsonText->sciScintilla()->text()).arg(_nameLineEdit->text()),
+             _uniqueCheckBox->checkState() == Qt::Checked,_backGroundCheckBox->checkState() == Qt::Checked,
+             _dropDuplicates->checkState() == Qt::Checked,_sparceCheckBox->checkState() == Qt::Checked,
+             _expireAfterLineEdit->text(),_defaultLanguageLineEdit->text(),
+             _languageOverrideLineEdit->text(),_textWeightsLineEdit->text());
     }
 
     void EditIndexDialog::accept()
@@ -230,10 +203,5 @@ namespace Robomongo
             QMessageBox::warning(this, "Invalid json", "Please check json text.\n");
             _jsonText->setFocus();
         }
-    }
-
-    QString EditIndexDialog::getInputText() const
-    {
-        return QString(" %1 ,{ name: %2 }").arg(_jsonText->sciScintilla()->text()).arg(_nameLineEdit->text());
     }
 }

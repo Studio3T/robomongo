@@ -1,5 +1,18 @@
 #include "robomongo/core/mongodb/MongoClient.h"
 
+namespace
+{
+    Robomongo::EnsureIndexInfo makeEnsureIndexInfoFromBsonObj(const Robomongo::MongoCollectionInfo &collection,const mongo::BSONObj &obj)
+    {
+        Robomongo::EnsureIndexInfo info(collection);
+        mongo::BSONElement nameElement = obj.getField("name");
+        if (!nameElement.eoo()){
+            info._name = QString::fromUtf8(nameElement.String().data());
+        }            
+        return info;
+    }
+}
+
 namespace Robomongo
 {
     MongoClient::MongoClient(mongo::DBClientBase *dbclient) :
@@ -98,19 +111,14 @@ namespace Robomongo
         return functions;
     }
 
-    QList<QString> MongoClient::getIndexes(const MongoCollectionInfo &collection) const
+    QList<EnsureIndexInfo> MongoClient::getIndexes(const MongoCollectionInfo &collection) const
     {
-        QList<QString> result;
+        QList<EnsureIndexInfo> result;
         std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
-            mongo::BSONElement nameElement = bsonObj.getField("name");
-            if (nameElement.eoo())
-                continue;
-
-            QString indexName(QString::fromUtf8(nameElement.String().data()));
-            result.append(indexName);
+            result.push_back(makeEnsureIndexInfoFromBsonObj(collection,bsonObj));
         }
 
         return result;

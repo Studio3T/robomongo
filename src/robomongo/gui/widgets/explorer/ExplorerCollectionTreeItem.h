@@ -3,6 +3,7 @@
 #include "robomongo/core/Event.h"
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
 #include "robomongo/core/domain/CursorPosition.h"
+#include "robomongo/core/events/MongoEventsInfo.h"
 
 namespace Robomongo
 {
@@ -17,7 +18,7 @@ namespace Robomongo
             CollectionIndexesLoadingEvent(QObject *sender) : Event(sender) {}
     };
 
-    class ExplorerCollectionTreeItem: public QObject, public ExplorerTreeItem
+    class ExplorerCollectionTreeItem: public ExplorerTreeItem
     {
         Q_OBJECT
     public:
@@ -59,7 +60,7 @@ namespace Robomongo
         ExplorerDatabaseTreeItem *const _databaseItem;
     };
 
-    class ExplorerCollectionDirIndexesTreeItem: public QObject, public ExplorerTreeItem
+    class ExplorerCollectionDirIndexesTreeItem: public ExplorerTreeItem
     {
         Q_OBJECT
     public:
@@ -67,7 +68,6 @@ namespace Robomongo
         static const QString text;
         explicit ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent);
         void expand();
-        void editIndex(const QString &indexName);
 
     private Q_SLOTS:
         void ui_addIndex();
@@ -78,15 +78,17 @@ namespace Robomongo
         void ui_refreshIndex();
     };
 
-    class ExplorerCollectionIndexesTreeItem: public QObject, public ExplorerTreeItem
+    class ExplorerCollectionIndexesTreeItem: public ExplorerTreeItem
     {
          Q_OBJECT
     public:
         typedef ExplorerTreeItem BaseClass;
-        explicit ExplorerCollectionIndexesTreeItem(QTreeWidgetItem *parent,const QString &val);
+        explicit ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent,const EnsureIndexInfo &info);
 
     private Q_SLOTS:
         void ui_dropIndex();
         void ui_edit();
+    private:
+        EnsureIndexInfo _info;
     };
 }

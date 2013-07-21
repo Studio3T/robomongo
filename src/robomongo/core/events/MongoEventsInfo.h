@@ -10,7 +10,7 @@ namespace Robomongo
             bool isUnique=false, bool isBackGround=false, bool isDropDuplicates=false, bool isSparce=false, const QString &expireAfter=QString(),
             const QString &defaultLanguage=QString(), const QString &languageOverride=QString(), const QString &textWeights=QString());
 
-        const MongoCollectionInfo _collection;
+        MongoCollectionInfo _collection;
         QString _name;
         QString _request;
         bool _isUnique;

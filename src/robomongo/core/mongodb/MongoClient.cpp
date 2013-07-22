@@ -1,5 +1,79 @@
 #include "robomongo/core/mongodb/MongoClient.h"
 
+namespace
+{
+    namespace detail
+    {
+        template<mongo::BSONType BSONType_t>
+        struct func_traits
+        {
+            typedef std::string type;
+            static type getField(const mongo::BSONElement &elem)
+            {
+                return elem.toString();
+            }
+        };
+        template<>
+        struct func_traits<mongo::Bool>
+        {
+            typedef bool type;
+            static type getField(const mongo::BSONElement &elem)
+            {
+                return elem.Bool();
+            }
+        };
+        template<>
+        struct func_traits<mongo::String>
+        {
+            typedef std::string type;
+            static type getField(const mongo::BSONElement &elem)
+            {
+                return elem.String();
+            }
+        };
+        template<>
+        struct func_traits<mongo::NumberInt>
+        {
+            typedef int type;
+            static type getField(const mongo::BSONElement &elem)
+            {
+                return elem.Int();
+            }
+        };
+    }
+
+    template<mongo::BSONType BSONType_t>
+    typename detail::func_traits<BSONType_t>::type getField(const mongo::BSONObj &obj,const char *data)
+    {
+        typedef typename detail::func_traits<BSONType_t> func_t;
+        func_t::type result=func_t::type();
+        mongo::BSONElement elem = obj.getField(data);
+        if (!elem.eoo()){
+            result = func_t::getField(elem);
+        }  
+        return result;
+    }
+
+    Robomongo::EnsureIndexInfo makeEnsureIndexInfoFromBsonObj(const Robomongo::MongoCollectionInfo &collection,const mongo::BSONObj &obj)
+    {
+        Robomongo::EnsureIndexInfo info(collection);
+        info._name = getField<mongo::String>(obj,"name");
+        const char* key = getField<mongo::Object>(obj,"key").c_str();
+        if(key){
+            info._request = key+5;
+        }
+        info._unique = getField<mongo::Bool>(obj,"unique");
+        info._backGround = getField<mongo::Bool>(obj,"background");
+        info._dropDups = getField<mongo::Bool>(obj,"dropDups"); 
+        info._sparse = getField<mongo::Bool>(obj,"sparse");
+        info._ttl = getField<mongo::NumberInt>(obj,"expireAfterSeconds"); 
+        info._defaultLanguage = getField<mongo::String>(obj,"default_language").c_str();
+        info._languageOverride = getField<mongo::String>(obj,"language_override").c_str();
+        info._textWeights = getField<mongo::String>(obj,"weights").c_str();               
+        return info;
+    }
+}
+
 namespace Robomongo
 {
     MongoClient::MongoClient(mongo::DBClientBase *dbclient) :
@@ -98,37 +172,82 @@ namespace Robomongo
         return functions;
     }
 
-    QList<QString> MongoClient::getIndexes(const MongoCollectionInfo &collection) const
+    QList<EnsureIndexInfo> MongoClient::getIndexes(const MongoCollectionInfo &collection) const
     {
-        QList<QString> result;
+        QList<EnsureIndexInfo> result;
         std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
-            mongo::BSONElement nameElement = bsonObj.getField("name");
-            if (nameElement.eoo())
-                continue;
-
-            QString indexName(QString::fromUtf8(nameElement.String().data()));
-            result.append(indexName);
+            result.push_back(makeEnsureIndexInfoFromBsonObj(collection,bsonObj));
         }
 
         return result;
     }
 
-    void MongoClient::ensureIndex(const MongoCollectionInfo &collection, const QString &name, const QString &request, bool unique, bool backGround, bool dropDuplicates,
-        bool sparce,const QString &expireAfter,const QString &defaultLanguage,const QString &languageOverride,const QString &textWeights) const
-    {
-        // TODO: This function should work for creating and editing of indexes.
-        // If index with "name" already exists - drop and create new.
-        // If index with "name doesn't exist - simply create new.
-        //
-        // In this case we do not need MongoClient::renameIndexFromCollection(), because
-        // we will use MongoClient::ensureIndex() even for name changing of Index.
-        // But let's leave MongoClient::renameIndexFromCollection() for future references.
+    void MongoClient::ensureIndex(const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo) const
+    {   
+        std::string ns = newInfo._collection.ns().toString().toStdString();
+        mongo::BSONObj keys = mongo::fromjson(newInfo._request);
+        mongo::BSONObjBuilder toSave;
+        bool cache=true;
+        int version =-1;
 
-        mongo::BSONObj obj = mongo::fromjson(request.toUtf8());
-        _dbclient->ensureIndex(collection.ns().toString().toStdString(), obj, unique, name.toStdString(), true, backGround);
+        toSave.append( "ns" , ns );
+        toSave.append( "key" , keys );
+
+        std::string cacheKey(ns);
+        cacheKey += "--";
+
+
+        if ( newInfo._name != "" ) {
+            toSave.append( "name" , newInfo._name );
+            cacheKey += newInfo._name;
+        }
+        else {
+            std::string nn =  _dbclient->genIndexName(keys);
+            toSave.append( "name" , nn );
+            cacheKey += nn;
+        }
+
+        if( version >= 0 ) 
+            toSave.append("v", version);
+
+        if(oldInfo._unique!=newInfo._unique)
+            toSave.appendBool( "unique", newInfo._unique );
+
+        if(oldInfo._backGround!=newInfo._backGround)
+            toSave.appendBool( "background", newInfo._backGround );
+
+        if(oldInfo._dropDups!=newInfo._dropDups)
+            toSave.appendBool("dropDups",newInfo._dropDups);
+
+        if(oldInfo._sparse!=newInfo._sparse)
+            toSave.appendBool("sparse",newInfo._sparse);
+
+        if(oldInfo._defaultLanguage!=newInfo._defaultLanguage)
+            toSave.append("default_language",newInfo._defaultLanguage);
+
+        if(oldInfo._languageOverride!=newInfo._languageOverride)
+            toSave.append("language_override",newInfo._languageOverride);
+
+        if(oldInfo._textWeights!=newInfo._textWeights)
+            toSave.append("weights",newInfo._textWeights);
+
+       /* if ( _seenIndexes.count( cacheKey ) )
+            return 0;
+
+        if ( cache )
+            _seenIndexes.insert( cacheKey );*/
+
+        if (oldInfo._ttl!=newInfo._ttl)
+            toSave.append( "expireAfterSeconds", newInfo._ttl );
+
+        MongoNamespace namesp(newInfo._collection.ns().databaseName(), "system.indexes");
+        mongo::BSONObj obj = toSave.obj();
+        if(!oldInfo._name.empty())
+            _dbclient->dropIndex(ns, oldInfo._name);
+        _dbclient->insert(  namesp.toString().toStdString().c_str() , obj ); 
     }
 
     void MongoClient::renameIndexFromCollection(const MongoCollectionInfo &collection, const QString &oldIndexName, const QString &newIndexName) const
@@ -356,8 +475,8 @@ namespace Robomongo
         mongo::BSONObj result;
         _dbclient->runCommand(mongons.databaseName().toStdString(), command.obj(), result);
 
-        MongoCollectionInfo info(result);
-        return info;
+        MongoCollectionInfo newInfo(result);
+        return newInfo;
     }
 
     QList<MongoCollectionInfo> MongoClient::runCollStatsCommand(const QStringList &namespaces)

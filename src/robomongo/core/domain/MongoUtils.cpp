@@ -1,4 +1,6 @@
 #include "robomongo/core/domain/MongoUtils.h"
+#include <mongo/db/json.h>
+using namespace std;
 #include "mongo/util/md5.hpp"
 
 namespace Robomongo

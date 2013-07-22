@@ -7,7 +7,7 @@ namespace Robomongo
 {
     class MongoDatabase;
 
-    class ExplorerFunctionTreeItem :public QObject, public ExplorerTreeItem
+    class ExplorerFunctionTreeItem :public ExplorerTreeItem
     {
         Q_OBJECT
     public:

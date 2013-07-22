@@ -24,7 +24,7 @@ namespace
 
 namespace Robomongo
 {
-    ExplorerServerTreeItem::ExplorerServerTreeItem(QTreeWidget *view,MongoServer *const server) : QObject(),BaseClass(view),
+    ExplorerServerTreeItem::ExplorerServerTreeItem(QTreeWidget *view,MongoServer *const server) : BaseClass(view),
         _server(server),
         _bus(AppRegistry::instance().bus())
     { 

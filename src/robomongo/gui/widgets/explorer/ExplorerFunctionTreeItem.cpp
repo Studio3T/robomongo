@@ -15,7 +15,6 @@ namespace Robomongo
 {
 
     ExplorerFunctionTreeItem::ExplorerFunctionTreeItem(QTreeWidgetItem *parent,MongoDatabase *database, const MongoFunction &function) :
-        QObject(),
         BaseClass(parent),
         _function(function),
         _database(database)

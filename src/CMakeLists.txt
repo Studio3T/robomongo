@@ -23,6 +23,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/explorer/ExplorerWidget.h
     robomongo/gui/widgets/explorer/ExplorerTreeWidget.h
     robomongo/gui/MainWindow.h
+	robomongo/gui/widgets/explorer/ExplorerTreeItem.h
     robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h
     robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h
 	robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h
@@ -54,14 +55,12 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h
 	robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h
     robomongo/gui/dialogs/CreateDatabaseDialog.h
-    robomongo/gui/dialogs/EditIndexDialog.h
     robomongo/gui/dialogs/CreateUserDialog.h
     robomongo/gui/dialogs/FunctionTextEditor.h
     robomongo/gui/dialogs/AboutDialog.h
     robomongo/gui/editors/FindFrame.h)
 SET(HEADERS_GUI
 	robomongo/gui/utils/DialogUtils.h
-    robomongo/gui/widgets/explorer/ExplorerTreeItem.h
     robomongo/gui/GuiRegistry.h
     robomongo/gui/editors/PlainJavaScriptEditor.h
     robomongo/gui/editors/JSLexer.h
@@ -113,7 +112,6 @@ SET(SOURCES_GUI
     robomongo/gui/dialogs/CreateDatabaseDialog.cpp
     robomongo/gui/widgets/explorer/ExplorerUserTreeItem.cpp
     robomongo/gui/dialogs/CreateUserDialog.cpp
-    robomongo/gui/dialogs/EditIndexDialog.cpp
     robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.cpp
     robomongo/gui/dialogs/FunctionTextEditor.cpp
     robomongo/gui/dialogs/AboutDialog.cpp)
@@ -145,7 +143,6 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/settings/ConnectionSettings.h
     robomongo/core/settings/SettingsManager.h
     robomongo/core/mongodb/MongoWorker.h
-    robomongo/core/mongodb/MongoService.h
     robomongo/core/domain/MongoServer.h
     robomongo/core/domain/MongoDatabase.h
     robomongo/core/domain/MongoCollection.h
@@ -154,8 +151,7 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/domain/App.h
     robomongo/core/domain/MongoShell.h
     robomongo/core/engine/ScriptEngine.h
-    robomongo/core/EventBusDispatcher.h
-    robomongo/core/mongodb/MongoWorkerThread.h    
+    robomongo/core/EventBusDispatcher.h  
     )
 SET(HEADERS_CORE
 	robomongo/core/KeyboardManager.h
@@ -167,8 +163,8 @@ SET(HEADERS_CORE
     robomongo/core/Event.h
     robomongo/core/domain/MongoShellResult.h
     robomongo/core/events/MongoEvents.h
+	robomongo/core/events/MongoEventsInfo.h	
     robomongo/core/Wrapper.h
-    robomongo/core/mongodb/MongoException.h
     robomongo/core/AppRegistry.h
     robomongo/core/Core.h
     robomongo/core/examples/ImplicitlyShared.h
@@ -192,7 +188,6 @@ SET(SOURCES_CORE
     robomongo/core/settings/SettingsManager.cpp
     robomongo/core/examples/ImplicitlyShared.cpp
     robomongo/core/mongodb/MongoWorker.cpp
-    robomongo/core/mongodb/MongoService.cpp
     robomongo/core/domain/MongoServer.cpp
     robomongo/core/domain/MongoDatabase.cpp
     robomongo/core/domain/MongoCollection.cpp
@@ -201,6 +196,7 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoDocument.cpp
     robomongo/core/Wrapper.cpp
     robomongo/core/events/MongoEvents.cpp
+	robomongo/core/events/MongoEventsInfo.cpp
     robomongo/core/EventBus.cpp
     robomongo/core/domain/App.cpp
     robomongo/core/domain/MongoShell.cpp
@@ -211,7 +207,6 @@ SET(SOURCES_CORE
     robomongo/core/EventBusSubscriber.cpp
     robomongo/core/EventBusDispatcher.cpp
     robomongo/core/EventWrapper.cpp
-    robomongo/core/mongodb/MongoWorkerThread.cpp
     robomongo/core/KeyboardManager.cpp
     robomongo/core/settings/CredentialSettings.cpp
     robomongo/core/domain/MongoQueryInfo.cpp

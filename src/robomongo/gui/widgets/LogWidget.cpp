@@ -6,14 +6,13 @@
 
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/domain/MongoServer.h"
 
 namespace Robomongo
 {
-    LogWidget::LogWidget(QWidget* parent) : QWidget(parent)
+    LogWidget::LogWidget(QWidget* parent) : QWidget(parent),_logTextEdit(new QPlainTextEdit(this))
     {
-        _logTextEdit = new QPlainTextEdit(this);
         _logTextEdit->setPlainText(PROJECT_NAME " " PROJECT_VERSION " is ready.");
         //_logTextEdit->setMarginWidth(1, 3); // to hide left gray column
 

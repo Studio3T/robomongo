@@ -16,14 +16,14 @@ namespace Robomongo
     public:
         LogWidget(QWidget* parent = 0);
 
-    public slots:
+    public Q_SLOTS:
         void addMessage(const QString &message);
         void handle(SomethingHappened *event);
         void handle(ConnectingEvent *event);
         void handle(OpeningShellEvent *event);
 
     private:
-        QPlainTextEdit *_logTextEdit;
+        QPlainTextEdit *const _logTextEdit;
     };
 
 }

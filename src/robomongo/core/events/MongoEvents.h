@@ -188,13 +188,18 @@ namespace Robomongo
     class EnsureIndexRequest : public Event
     {
         R_EVENT
-        EnsureIndexRequest(QObject *sender,const EnsureIndexInfo info) : Robomongo::Event(sender),info_(info) {}
-        const EnsureIndexInfo &info() const
+        EnsureIndexRequest(QObject *sender,const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo) : Robomongo::Event(sender),oldInfo_(oldInfo),newInfo_(newInfo) {}
+        const EnsureIndexInfo &oldInfo() const
         {
-            return info_;
+            return oldInfo_;
+        }
+        const EnsureIndexInfo &newInfo() const
+        {
+            return newInfo_;
         }
     private:
-        const EnsureIndexInfo info_;
+        const EnsureIndexInfo oldInfo_;
+        const EnsureIndexInfo newInfo_;
     };
 
     class DropCollectionIndexRequest : public Event

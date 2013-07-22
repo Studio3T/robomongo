@@ -38,7 +38,7 @@ namespace Robomongo
         void expandFunctions();
         void expandColection(ExplorerCollectionTreeItem *const item);
         void dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const QString &indexName);
-        void enshureIndex(ExplorerCollectionTreeItem *const item,const EnsureIndexInfo &inf);
+        void enshureIndex(ExplorerCollectionTreeItem *const item, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo);
         void editIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& oldIndexText,const QString& newIndexText);
 
     public Q_SLOTS:

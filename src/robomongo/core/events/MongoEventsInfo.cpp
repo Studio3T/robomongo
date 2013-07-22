@@ -2,17 +2,17 @@
 
 namespace Robomongo
 {
-    EnsureIndexInfo::EnsureIndexInfo(const MongoCollectionInfo &collection, const QString &name, const QString &request,
+    EnsureIndexInfo::EnsureIndexInfo(const MongoCollectionInfo &collection, const std::string &name, const std::string &request,
         bool isUnique, bool isBackGround, bool isDropDuplicates,bool isSparce,int expireAfter,
-        const QString &defaultLanguage,const QString &languageOverride,const QString &textWeights) :
+        const std::string &defaultLanguage,const std::string &languageOverride,const std::string &textWeights) :
         _name(name),
         _collection(collection),
         _request(request),
-        _isUnique(isUnique),
-        _isBackGround(isBackGround),
-        _isDropDuplicates(isDropDuplicates),
-        _isSparce(isSparce),
-        _expireAfter(expireAfter),
+        _unique(isUnique),
+        _backGround(isBackGround),
+        _dropDups(isDropDuplicates),
+        _sparse(isSparce),
+        _ttl(expireAfter),
         _defaultLanguage(defaultLanguage),
         _languageOverride(languageOverride),
         _textWeights(textWeights){}

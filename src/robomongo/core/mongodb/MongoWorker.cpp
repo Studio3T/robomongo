@@ -195,12 +195,12 @@ namespace Robomongo
 
     void MongoWorker::handle(EnsureIndexRequest *event)
     {
-        const EnsureIndexInfo &info = event->info(); 
+        const EnsureIndexInfo &newInfo = event->newInfo();
+        const EnsureIndexInfo &oldInfo = event->oldInfo();
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->ensureIndex(info._collection, info._name, info._request, info._isUnique,info._isBackGround, info._isDropDuplicates,
-                info._isSparce,info._expireAfter,info._defaultLanguage,info._languageOverride,info._textWeights);
-            const QList<EnsureIndexInfo> &ind = client->getIndexes(info._collection);
+            client->ensureIndex(oldInfo,newInfo);
+            const QList<EnsureIndexInfo> &ind = client->getIndexes(newInfo._collection);
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));

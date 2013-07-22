@@ -120,8 +120,8 @@ namespace Robomongo
         ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *const>(parent());
         if (!par)
             return;
-
-        EditIndexDialog dlg(treeWidget(), EnsureIndexInfo(par->collection()->info(),""), par->databaseItem()->database()->name());
+        EnsureIndexInfo fakeInfo(par->collection()->info(),"");
+        EditIndexDialog dlg(treeWidget(), fakeInfo , par->databaseItem()->database()->name());
         int result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
@@ -130,7 +130,7 @@ namespace Robomongo
         if(!databaseTreeItem)
             return;
 
-        databaseTreeItem->enshureIndex(par, dlg.info());
+        databaseTreeItem->enshureIndex(par,fakeInfo, dlg.info());
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_reIndex()
@@ -160,7 +160,7 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(deleteIndex);
         BaseClass::_contextMenu->addAction(editIndex);
 
-        setText(0, _info._name);
+        setText(0, QString::fromUtf8(_info._name.c_str()));
         setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());
     }
 
@@ -200,7 +200,7 @@ namespace Robomongo
             if(!databaseTreeItem)
                 return;
 
-            databaseTreeItem->enshureIndex(grPar, dlg.info());
+            databaseTreeItem->enshureIndex(grPar,_info, dlg.info());
         }
     }
 

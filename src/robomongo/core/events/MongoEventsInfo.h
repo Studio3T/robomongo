@@ -1,25 +1,25 @@
 #pragma once
-#include <QString>
+#include <string>
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 
 namespace Robomongo
 {
     struct EnsureIndexInfo
     {
-        EnsureIndexInfo(const MongoCollectionInfo &collection, const QString &name=QString(), const QString &request=QString(),
+        EnsureIndexInfo(const MongoCollectionInfo &collection, const std::string &name=std::string(), const std::string &request=std::string(),
             bool isUnique=false, bool isBackGround=false, bool isDropDuplicates=false, bool isSparce=false, int expireAfter=0,
-            const QString &defaultLanguage=QString(), const QString &languageOverride=QString(), const QString &textWeights=QString());
+            const std::string &defaultLanguage=std::string(), const std::string &languageOverride=std::string(), const std::string &textWeights=std::string());
 
         MongoCollectionInfo _collection;
-        QString _name;
-        QString _request;
-        bool _isUnique;
-        bool _isBackGround;
-        bool _isDropDuplicates;
-        bool _isSparce;
-        int _expireAfter;
-        QString _defaultLanguage;
-        QString _languageOverride;
-        QString _textWeights;
+        std::string _name;
+        std::string _request;
+        bool _unique;
+        bool _backGround;
+        bool _dropDups;
+        bool _sparse;
+        int _ttl;
+        std::string _defaultLanguage;
+        std::string _languageOverride;
+        std::string _textWeights;
     };
 }

@@ -130,9 +130,9 @@ namespace Robomongo
         _bus->send(_database->server()->client(), new DropCollectionIndexRequest(item, item->collection()->info(), indexName));
     }
 
-    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item,const EnsureIndexInfo &inf)
+    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo)
     {
-        _bus->send(_database->server()->client(), new EnsureIndexRequest(item, inf));
+        _bus->send(_database->server()->client(), new EnsureIndexRequest(item,oldInfo ,newInfo));
     }
 
     void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& oldIndexText,const QString& newIndexText)

@@ -58,9 +58,9 @@ namespace
     {
         Robomongo::EnsureIndexInfo info(collection);
         info._name = getField<mongo::String>(obj,"name");
-        const char* key = getField<mongo::Object>(obj,"key").c_str();
-        if(key){
-            info._request = key+5;
+        std::string  key = getField<mongo::Object>(obj,"key");
+        if(!key.empty()){
+            info._request = key.substr(5);
         }
         info._unique = getField<mongo::Bool>(obj,"unique");
         info._backGround = getField<mongo::Bool>(obj,"background");

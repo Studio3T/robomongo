@@ -3,13 +3,13 @@
 #include <QString>
 #include <QStringList>
 #include <QEvent>
-#include "mongo/client/dbclientinterface.h"
+#include <mongo/client/dbclientinterface.h>
 
 #include "robomongo/core/domain/MongoShellResult.h"
-#include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/domain/CursorPosition.h"
 #include "robomongo/core/domain/MongoUser.h"
 #include "robomongo/core/domain/MongoFunction.h"
+#include "robomongo/core/events/MongoEventsInfo.h"
 #include "robomongo/core/Event.h"
 
 namespace Robomongo
@@ -179,51 +179,27 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        LoadCollectionIndexesResponse(QObject *sender,const MongoCollectionInfo &collection, const QList<QString> &indexes) :Event(sender),_collection(collection), _indexes(indexes) {}
-        MongoCollectionInfo collection() const { return _collection; };
-        QList<QString> indexes() const { return _indexes; }
+        LoadCollectionIndexesResponse(QObject *sender, const QList<EnsureIndexInfo> &indexes) :Event(sender), _indexes(indexes) {}
+        QList<EnsureIndexInfo> indexes() const { return _indexes; }
     private:
-        QList<QString> _indexes;
-        const MongoCollectionInfo _collection;
+        QList<EnsureIndexInfo> _indexes;
     };
 
     class EnsureIndexRequest : public Event
     {
         R_EVENT
-    public:
-        EnsureIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const QString &name, const QString &request,
-                           bool isUnique, bool isBackGround, bool isDropDuplicates,bool isSparce,const QString &expireAfter,const QString &defaultLanguage,const QString &languageOverride,const QString &textWeights) :
-            Event(sender),
-            _name(name),
-            _collection(collection),
-            _request(request),
-            _isUnique(isUnique),
-            _isBackGround(isBackGround),
-            _isDropDuplicates(isDropDuplicates) {}
-
-        MongoCollectionInfo collection() const { return _collection; }
-        QString name() const { return _name; }
-        QString request() const { return _request; }
-        bool isUnique() const { return _isUnique; }
-        bool isBackGround() const { return _isBackGround; }
-        bool isDropDuplicates() const { return _isDropDuplicates; }
-        bool isSparce() const { return _isSparce; }
-        QString expireAfter() const { return _expireAfter; }
-        QString defaultLanguage() const { return _defaultLanguage; }
-        QString languageOverride() const { return _languageOverride; }
-        QString textWeights() const { return _textWeights; }
+        EnsureIndexRequest(QObject *sender,const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo) : Robomongo::Event(sender),oldInfo_(oldInfo),newInfo_(newInfo) {}
+        const EnsureIndexInfo &oldInfo() const
+        {
+            return oldInfo_;
+        }
+        const EnsureIndexInfo &newInfo() const
+        {
+            return newInfo_;
+        }
     private:
-        const MongoCollectionInfo _collection;
-        QString _name;
-        QString _request;
-        bool _isUnique;
-        bool _isBackGround;
-        bool _isDropDuplicates;
-        bool _isSparce;
-        QString _expireAfter;
-        QString _defaultLanguage;
-        QString _languageOverride;
-        QString _textWeights;
+        const EnsureIndexInfo oldInfo_;
+        const EnsureIndexInfo newInfo_;
     };
 
     class DropCollectionIndexRequest : public Event

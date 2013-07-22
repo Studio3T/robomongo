@@ -3,7 +3,6 @@
 #include <QDebug>
 #include <QStringList>
 
-#include "robomongo/core/mongodb/MongoException.h"
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/mongodb/MongoWorker.h"
@@ -27,7 +26,7 @@ namespace Robomongo
 
         _connection.reset(new mongo::DBClientConnection);
 
-        _client.reset(new MongoWorker(_bus, _connectionRecord->clone()));
+        _client.reset(new MongoWorker(_connectionRecord->clone()));
 
         _bus->send(_client.data(), new InitRequest(this));
         qDebug() << "InitRequest sent";

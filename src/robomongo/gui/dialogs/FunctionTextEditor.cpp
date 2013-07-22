@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QHBoxLayout>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QMessageBox>
 #include <Qsci/qscilexerjavascript.h>
@@ -36,7 +37,6 @@ namespace Robomongo
         _nameEdit = new QLineEdit(function.name());
 
         _queryText = new FindFrame(this);
-        _textFont = chooseTextFont();
         _configureQueryText();
         _queryText->sciScintilla()->setText(_function.code());
 
@@ -92,7 +92,7 @@ namespace Robomongo
         _function.setName(_nameEdit->text());
         _function.setCode(_queryText->sciScintilla()->text());
 
-        QDialog::accept();
+        BaseClass::accept();
     }
 
     /*
@@ -100,10 +100,11 @@ namespace Robomongo
     */
     void FunctionTextEditor::_configureQueryText()
     {
+        const QFont &textFont = GuiRegistry::instance().font();
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
-        javaScriptLexer->setFont(_textFont);        
+        javaScriptLexer->setFont(textFont);        
         _queryText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
-        _queryText->sciScintilla()->setFont(_textFont);
+        _queryText->sciScintilla()->setFont(textFont);
         _queryText->sciScintilla()->setPaper(QColor(255, 0, 0, 127));
         _queryText->sciScintilla()->setLexer(javaScriptLexer);
         _queryText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
@@ -114,22 +115,5 @@ namespace Robomongo
         _queryText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
 
         _queryText->sciScintilla()->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
-    }
-
-    QFont FunctionTextEditor::chooseTextFont()
-    {
-        QFont textFont = font();
-    #if defined(Q_OS_MAC)
-        textFont.setPointSize(12);
-        textFont.setFamily("Monaco");
-    #elif defined(Q_OS_UNIX)
-        textFont.setFamily("Monospace");
-        textFont.setFixedPitch(true);
-    #elif defined(Q_OS_WIN)
-        textFont.setPointSize(font().pointSize() + 2);
-        textFont.setFamily("Courier");
-    #endif
-
-        return textFont;
     }
 }

@@ -22,8 +22,9 @@ namespace Robomongo
     class MongoUser;
     class MongoFunction;
     class MongoCollection;
+    struct EnsureIndexInfo;
 
-    class ExplorerDatabaseTreeItem : public QObject, public ExplorerTreeItem
+    class ExplorerDatabaseTreeItem : public ExplorerTreeItem
     {
         Q_OBJECT
 
@@ -37,8 +38,7 @@ namespace Robomongo
         void expandFunctions();
         void expandColection(ExplorerCollectionTreeItem *const item);
         void dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const QString &indexName);
-        void enshureIndex(ExplorerCollectionTreeItem *const item, const QString &name, const QString &text, bool unique, bool backGround,
-            bool dropDuplicateIndex,bool sparce,const QString &expireAfter,const QString &defaultLanguage,const QString &languageOverride,const QString &textWeights);
+        void enshureIndex(ExplorerCollectionTreeItem *const item, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo);
         void editIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& oldIndexText,const QString& newIndexText);
 
     public Q_SLOTS:

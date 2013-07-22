@@ -26,7 +26,7 @@ namespace Robomongo
 {
 
     ExplorerDatabaseCategoryTreeItem::ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseTreeItem *databaseItem,ExplorerDatabaseCategory category) :
-        QObject(),BaseClass(databaseItem) ,_category(category)
+        BaseClass(databaseItem) ,_category(category)
     {
         if(_category==Collections){
             QAction *createCollection = new QAction("Create Collection", this);
@@ -102,7 +102,7 @@ namespace Robomongo
 
     ExplorerDatabaseTreeItem *ExplorerDatabaseCategoryTreeItem::databaseItem() const 
     { 
-        return static_cast<ExplorerDatabaseTreeItem*>(BaseClass::parent()); 
+        return static_cast<ExplorerDatabaseTreeItem*>(parent()); 
     }
 
     void ExplorerDatabaseCategoryTreeItem::ui_dbCollectionsStatistics()

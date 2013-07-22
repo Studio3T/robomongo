@@ -3,11 +3,13 @@
 QT_BEGIN_NAMESPACE
 class QLineEdit;
 class QCheckBox;
+class QTextEdit;
 QT_END_NAMESPACE
+#include "robomongo/core/events/MongoEventsInfo.h"
+
 namespace Robomongo
 {
     class FindFrame;
-    class ExplorerCollectionTreeItem;
     class EditIndexDialog: public QDialog
     {
         Q_OBJECT
@@ -18,26 +20,17 @@ namespace Robomongo
             HeightWidget = 320,
             WidthWidget = 480
         };
-        explicit EditIndexDialog(QWidget *parent,ExplorerCollectionTreeItem * const item);
-        QString indexName() const;
-        QString getInputText()const;
-        bool isUnique() const;
-        bool isBackGround() const;
-        bool isDropDuplicates() const;
-        bool isSparce()const;
-        QString expireAfter() const;
-        QString defaultLanguage() const;
-        QString languageOverride() const;
-        QString textWeights() const;
+        explicit EditIndexDialog(QWidget *parent,const EnsureIndexInfo &info, const QString &databaseName);
+        EnsureIndexInfo info() const;
     public Q_SLOTS:
         virtual void accept();
     private:
        QWidget* createBasicTab(); 
        QWidget* createAdvancedTab();
        QWidget* createTextSearchTab(); 
+       const EnsureIndexInfo _info;
        QLineEdit *_nameLineEdit;
        FindFrame *_jsonText;
-       ExplorerCollectionTreeItem * const _item;
        QCheckBox *_uniqueCheckBox;
 
        QCheckBox *_dropDuplicates;
@@ -47,6 +40,6 @@ namespace Robomongo
 
        QLineEdit *_defaultLanguageLineEdit;
        QLineEdit *_languageOverrideLineEdit;
-       QLineEdit *_textWeightsLineEdit;
+       QTextEdit *_textWeightsLineEdit;
     };
 }

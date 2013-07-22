@@ -8,7 +8,7 @@ namespace Robomongo
     class EventBus;
     class MongoServerLoadingDatabasesEvent;
 
-    class ExplorerServerTreeItem : public QObject, public ExplorerTreeItem
+    class ExplorerServerTreeItem : public ExplorerTreeItem
     {
         Q_OBJECT
 

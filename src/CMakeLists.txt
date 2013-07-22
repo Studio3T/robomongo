@@ -53,21 +53,21 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/ProgressBarPopup.h
     robomongo/gui/dialogs/DocumentTextEditor.h
     robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h
-	robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h
+    robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h
     robomongo/gui/dialogs/CreateDatabaseDialog.h
     robomongo/gui/dialogs/CreateUserDialog.h
     robomongo/gui/dialogs/FunctionTextEditor.h
     robomongo/gui/dialogs/AboutDialog.h
     robomongo/gui/editors/FindFrame.h)
 SET(HEADERS_GUI
-	robomongo/gui/utils/DialogUtils.h
+    robomongo/gui/utils/DialogUtils.h
     robomongo/gui/GuiRegistry.h
     robomongo/gui/editors/PlainJavaScriptEditor.h
     robomongo/gui/editors/JSLexer.h
     robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h
     robomongo/gui/ViewMode.h)
 SET(SOURCES_GUI
-	robomongo/gui/utils/DialogUtils.cpp
+    robomongo/gui/utils/DialogUtils.cpp
     robomongo/gui/ExampleWindow.cpp
     robomongo/gui/dialogs/ConnectionsDialog.cpp
     robomongo/gui/dialogs/ConnectionDialog.cpp
@@ -76,10 +76,10 @@ SET(SOURCES_GUI
     robomongo/gui/widgets/explorer/ExplorerTreeWidget.cpp
     robomongo/gui/MainWindow.cpp
     robomongo/gui/GuiRegistry.cpp
-	robomongo/gui/widgets/explorer/ExplorerTreeItem.cpp
+    robomongo/gui/widgets/explorer/ExplorerTreeItem.cpp
     robomongo/gui/widgets/explorer/ExplorerServerTreeItem.cpp
     robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp
-	robomongo/gui/widgets/explorer/EditIndexDialog.cpp
+    robomongo/gui/widgets/explorer/EditIndexDialog.cpp
     robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp
     robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.cpp
     robomongo/gui/widgets/workarea/WorkAreaWidget.cpp
@@ -154,16 +154,16 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/EventBusDispatcher.h  
     )
 SET(HEADERS_CORE
-	robomongo/core/KeyboardManager.h
-	robomongo/core/domain/MongoDocumentIterator.h
-	robomongo/core/domain/MongoDocument.h
+    robomongo/core/KeyboardManager.h
+    robomongo/core/domain/MongoDocumentIterator.h
+    robomongo/core/domain/MongoDocument.h
     robomongo/core/EventBusSubscriber.h
     robomongo/core/EventWrapper.h
     robomongo/core/EventError.h
     robomongo/core/Event.h
     robomongo/core/domain/MongoShellResult.h
     robomongo/core/events/MongoEvents.h
-	robomongo/core/events/MongoEventsInfo.h	
+    robomongo/core/events/MongoEventsInfo.h
     robomongo/core/Wrapper.h
     robomongo/core/AppRegistry.h
     robomongo/core/Core.h
@@ -196,7 +196,7 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoDocument.cpp
     robomongo/core/Wrapper.cpp
     robomongo/core/events/MongoEvents.cpp
-	robomongo/core/events/MongoEventsInfo.cpp
+    robomongo/core/events/MongoEventsInfo.cpp
     robomongo/core/EventBus.cpp
     robomongo/core/domain/App.cpp
     robomongo/core/domain/MongoShell.cpp
@@ -225,7 +225,6 @@ IF(LINUX)
     ADD_DEFINITIONS(-DXP_UNIX)
 ELSEIF(MAC_OS)
     ADD_DEFINITIONS(-DXP_UNIX)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
 ELSEIF(WINDOWS)
     ADD_DEFINITIONS(-D_WINSOCKAPI_ -DXP_WIN -DUNICODE -DPSAPI_VERSION=1)
 ENDIF()
@@ -250,8 +249,8 @@ ELSEIF(WINDOWS)
 	SET(PLATFORM_HDRS)
 	SET(PLATFORM_SRCS robomongo/shell/util/processinfo_darwin.cpp)
 	SET(PLATFORM_LIBRARIES)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
 ENDIF()
+
 SET(HEADERS ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
 SET(SOURCES robomongo/app/main.cpp ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_CORE})
 IF(BOOST_ENABLED)

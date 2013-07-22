@@ -46,7 +46,7 @@ namespace
     typename detail::func_traits<BSONType_t>::type getField(const mongo::BSONObj &obj,const char *data)
     {
         typedef typename detail::func_traits<BSONType_t> func_t;
-        func_t::type result=func_t::type();
+        typename func_t::type result=typename func_t::type();
         mongo::BSONElement elem = obj.getField(data);
         if (!elem.eoo()){
             result = func_t::getField(elem);

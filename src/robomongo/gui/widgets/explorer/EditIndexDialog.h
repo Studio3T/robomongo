@@ -3,6 +3,7 @@
 QT_BEGIN_NAMESPACE
 class QLineEdit;
 class QCheckBox;
+class QTextEdit;
 QT_END_NAMESPACE
 #include "robomongo/core/events/MongoEventsInfo.h"
 
@@ -39,6 +40,6 @@ namespace Robomongo
 
        QLineEdit *_defaultLanguageLineEdit;
        QLineEdit *_languageOverrideLineEdit;
-       QLineEdit *_textWeightsLineEdit;
+       QTextEdit *_textWeightsLineEdit;
     };
 }

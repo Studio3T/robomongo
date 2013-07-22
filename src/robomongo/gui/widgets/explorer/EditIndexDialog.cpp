@@ -6,6 +6,7 @@
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
 #include <QLineEdit>
+#include <QTextEdit>
 #include <QLabel>
 #include <QCheckBox>
 #include <QSpacerItem>
@@ -81,8 +82,7 @@ namespace Robomongo
         QWidget *basicTab = new QWidget(this);
 
         QLabel *label = new QLabel(tr("Name:"),basicTab);
-        _nameLineEdit = new QLineEdit(basicTab);
-        _nameLineEdit->setText(_info._name);
+        _nameLineEdit = new QLineEdit(_info._name,basicTab);
         QHBoxLayout *nameLayout = new QHBoxLayout;
         nameLayout->addWidget(label);
         nameLayout->addWidget(_nameLineEdit);
@@ -131,7 +131,10 @@ namespace Robomongo
         QHBoxLayout *expireLayout = new QHBoxLayout;
         QLabel *exLabel = new QLabel(tr("Expire after"));
         _expireAfterLineEdit = new QLineEdit(advanced);
-        _expireAfterLineEdit->setText(_info._expireAfter);
+        QRegExp rx("\\d+");
+        _expireAfterLineEdit->setValidator( new QRegExpValidator(rx,this) );
+        if(_info._expireAfter)
+            _expireAfterLineEdit->setText(QString("%1").arg(_info._expireAfter));
         QLabel *secLabel = new QLabel(tr("seconds"),advanced);  
         expireLayout->addWidget(exLabel);
         expireLayout->addWidget(_expireAfterLineEdit);
@@ -153,22 +156,19 @@ namespace Robomongo
         QWidget *textSearch = new QWidget(this);
 
         QHBoxLayout *defLangLayout = new QHBoxLayout;
-        QLabel *defaultLanguage = new QLabel(tr("Default language"),textSearch);
-        defaultLanguage->setText(_info._defaultLanguage);
-        _defaultLanguageLineEdit = new QLineEdit(textSearch);
+        QLabel *defaultLanguage = new QLabel(tr("Default language:"),textSearch);
+         _defaultLanguageLineEdit = new QLineEdit(_info._defaultLanguage,textSearch);
         defLangLayout->addWidget(defaultLanguage);
         defLangLayout->addWidget(_defaultLanguageLineEdit);
 
         QHBoxLayout *languageOverrideLayout = new QHBoxLayout;
-        QLabel *languageOverrideLabel = new QLabel(tr("Language override"),textSearch);
-        _languageOverrideLineEdit = new QLineEdit(textSearch);
-        _languageOverrideLineEdit->setText(_info._languageOverride);
+        QLabel *languageOverrideLabel = new QLabel(tr("Language override:"),textSearch);
+        _languageOverrideLineEdit = new QLineEdit(_info._languageOverride,textSearch);
         languageOverrideLayout->addWidget(languageOverrideLabel);
         languageOverrideLayout->addWidget(_languageOverrideLineEdit);
 
         QLabel *textWeights = new QLabel(tr("Text weights"),textSearch);
-        _textWeightsLineEdit = new QLineEdit(textSearch);
-        _textWeightsLineEdit->setText(_info._textWeights);
+        _textWeightsLineEdit = new QTextEdit(_info._textWeights,textSearch);
 
         QVBoxLayout *vlayout = new QVBoxLayout;
         vlayout->setContentsMargins(5, 5, 5, 5);
@@ -186,8 +186,8 @@ namespace Robomongo
         return EnsureIndexInfo(_info._collection,_nameLineEdit->text(),QString(" %1 ,{ name: %2 }").arg(_jsonText->sciScintilla()->text()).arg(_nameLineEdit->text()),
              _uniqueCheckBox->checkState() == Qt::Checked,_backGroundCheckBox->checkState() == Qt::Checked,
              _dropDuplicates->checkState() == Qt::Checked,_sparceCheckBox->checkState() == Qt::Checked,
-             _expireAfterLineEdit->text(),_defaultLanguageLineEdit->text(),
-             _languageOverrideLineEdit->text(),_textWeightsLineEdit->text());
+             _expireAfterLineEdit->text().toInt(),_defaultLanguageLineEdit->text(),
+             _languageOverrideLineEdit->text(),_textWeightsLineEdit->toPlainText());
     }
 
     void EditIndexDialog::accept()

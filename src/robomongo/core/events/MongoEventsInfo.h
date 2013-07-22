@@ -7,7 +7,7 @@ namespace Robomongo
     struct EnsureIndexInfo
     {
         EnsureIndexInfo(const MongoCollectionInfo &collection, const QString &name=QString(), const QString &request=QString(),
-            bool isUnique=false, bool isBackGround=false, bool isDropDuplicates=false, bool isSparce=false, const QString &expireAfter=QString(),
+            bool isUnique=false, bool isBackGround=false, bool isDropDuplicates=false, bool isSparce=false, int expireAfter=0,
             const QString &defaultLanguage=QString(), const QString &languageOverride=QString(), const QString &textWeights=QString());
 
         MongoCollectionInfo _collection;
@@ -17,7 +17,7 @@ namespace Robomongo
         bool _isBackGround;
         bool _isDropDuplicates;
         bool _isSparce;
-        QString _expireAfter;
+        int _expireAfter;
         QString _defaultLanguage;
         QString _languageOverride;
         QString _textWeights;

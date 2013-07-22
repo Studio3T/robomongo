@@ -63,7 +63,7 @@ namespace Robomongo
                 s << '"' << escape( string(elem.valuestr(), elem.valuestrsize()-1) ) << '"';
                 break;
             case NumberLong:
-                s << elem._numberLong();
+                s << "NumberLong(" << elem._numberLong() << ")";
                 break;
             case NumberInt:
             case NumberDouble:

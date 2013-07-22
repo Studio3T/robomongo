@@ -113,6 +113,12 @@ namespace Robomongo {
                 return ret;
             }
         }
+        else if (accept("NumberLong")) {
+            Status ret = numberLong(fieldName, builder);
+            if (ret != Status::OK()) {
+                return ret;
+            }
+        }
         else if (accept("UUID")) {
             Status ret = uuid(fieldName, builder);
             if (ret != Status::OK()) {
@@ -660,6 +666,57 @@ namespace Robomongo {
             return parseError("Expecting ')'");
         }
         builder.appendDate(fieldName, millis);
+        return Status::OK();
+    }
+
+    Status JParse::numberLong(const StringData &fieldName, BSONObjBuilder &builder)
+    {
+        if (!accept(LPAREN)) {
+            return parseError("Expecting '('");
+        }
+
+        //
+        // Below we have almost exact copy of the JParse::number method.
+        //
+
+        char* endptrll;
+        char* endptrd;
+        long long retll;
+        double retd;
+
+        // reset errno to make sure that we are getting it from strtod
+        errno = 0;
+        retd = strtod(_input, &endptrd);
+        // if pointer does not move, we found no digits
+        if (_input == endptrd) {
+            return parseError("Bad characters in value");
+        }
+        if (errno == ERANGE) {
+            return parseError("Value cannot fit in double");
+        }
+        // reset errno to make sure that we are getting it from strtoll
+        errno = 0;
+        retll = strtoll(_input, &endptrll, 10);
+        if (endptrll < endptrd || errno == ERANGE) {
+            // The number either had characters only meaningful for a double or
+            // could not fit in a 64 bit int
+            MONGO_JSON_DEBUG("Type: double");
+            return parseError("The number either had characters only meaningful for a double or could not fit in a 64 bit int");
+        }
+        else {
+            // The number can fit in a 64 bit int
+            MONGO_JSON_DEBUG("Type: 64 bit int");
+            builder.append(fieldName, retll);
+        }
+        _input = endptrd;
+        if (_input >= _input_end) {
+            return parseError("Trailing number at end of input");
+        }
+
+        if (!accept(RPAREN)) {
+            return parseError("Expecting ')'");
+        }
+
         return Status::OK();
     }
 

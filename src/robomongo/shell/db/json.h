@@ -202,6 +202,14 @@ namespace Robomongo {
              */
             Status isodate(const StringData& fieldName, BSONObjBuilder&);
 
+            /* NUMBERLONG:
+             *     NumberLong(<value>)
+             */
+            Status numberLong(const StringData& fieldName, BSONObjBuilder&);
+
+            /* UUIDs in different formats:
+             *     UUID(), LUUID(), JUUID(), NUUID(), PYUUID()
+             */
             Status uuid(const StringData& fieldName, BSONObjBuilder&);
             Status luuid(const StringData& fieldName, BSONObjBuilder&);
             Status juuid(const StringData& fieldName, BSONObjBuilder&);

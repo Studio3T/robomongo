@@ -25,14 +25,14 @@ namespace Robomongo
         _serverPort->setFixedWidth(80);
 
         QGridLayout *connectionLayout = new QGridLayout;
-        connectionLayout->addWidget(new QLabel("Name:"),      1, 0);
-        connectionLayout->addWidget(_connectionName,         1, 1, 1, 3);
-        connectionLayout->addWidget(connectionDescriptionLabel,               2, 1, 1, 3);
-        connectionLayout->addWidget(serverDescriptionLabel, 4, 1, 1, 3);
-        connectionLayout->addWidget(new QLabel("Address:"),    3, 0);
-        connectionLayout->addWidget(_serverAddress,          3, 1);
-        connectionLayout->addWidget(new QLabel(":"),      3, 2);
-        connectionLayout->addWidget(_serverPort,             3, 3);
+        connectionLayout->addWidget(new QLabel("Name:"),          1, 0);
+        connectionLayout->addWidget(_connectionName,              1, 1, 1, 3);
+        connectionLayout->addWidget(connectionDescriptionLabel,   2, 1, 1, 3);
+        connectionLayout->addWidget(serverDescriptionLabel,       4, 1, 1, 3);
+        connectionLayout->addWidget(new QLabel("Address:"),       3, 0);
+        connectionLayout->addWidget(_serverAddress,               3, 1);
+        connectionLayout->addWidget(new QLabel(":"),              3, 2);
+        connectionLayout->addWidget(_serverPort,                  3, 3);
         connectionLayout->setAlignment(Qt::AlignTop);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;

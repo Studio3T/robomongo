@@ -38,17 +38,51 @@ namespace
         }
         return result;
     }
+
+    QLabel *createHelpLabel(const QString &text, int marginLeft = 0, int marginTop = 0,
+                            int marginRight = 0, int marginBottom = 0)
+    {
+        QLabel *helpLabel = new QLabel(text);
+        helpLabel->setWordWrap(true);
+        helpLabel->setContentsMargins(marginLeft, marginTop, marginRight, marginBottom);
+
+        QPalette palette = helpLabel->palette();
+        palette.setColor(QPalette::WindowText, QColor(110, 110, 110));
+        helpLabel->setPalette(palette);
+
+        return helpLabel;
+    }
+
+    Robomongo::FindFrame *createFindFrame(QWidget *parent = NULL, const QString &text = QString())
+    {
+        const QFont &textFont = Robomongo::GuiRegistry::instance().font();
+        QsciLexerJavaScript *javaScriptLexer = new Robomongo::JSLexer(parent);
+        javaScriptLexer->setFont(textFont);
+        Robomongo::FindFrame *findFrame = new Robomongo::FindFrame(parent);
+        findFrame->sciScintilla()->setLexer(javaScriptLexer);
+        findFrame->sciScintilla()->setTabWidth(4);
+        findFrame->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
+        findFrame->sciScintilla()->setFont(textFont);
+        findFrame->sciScintilla()->setWrapMode((QsciScintilla::WrapMode) QsciScintilla::SC_WRAP_WORD);
+        findFrame->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
+        findFrame->sciScintilla()->setText(text);
+        findFrame->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        findFrame->sciScintilla()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        findFrame->setMaximumHeight(120);
+        return findFrame;
+    }
 }
 
 namespace Robomongo
 {
     EditIndexDialog::EditIndexDialog(QWidget *parent,const EnsureIndexInfo &info,const QString &databaseName):BaseClass(parent),_info(info)
     {        
+        setWindowTitle("Index Properties");
         Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), _info._collection.name());
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), databaseName);
 
         QHBoxLayout *hlayout = new QHBoxLayout;
-        hlayout->setContentsMargins(0, 0, 0, 0);
+        hlayout->setContentsMargins(2, 0, 5, 1);
         hlayout->setSpacing(0);
         hlayout->addWidget(databaseIndicator, 0, Qt::AlignLeft);
         hlayout->addWidget(collectionIndicator, 0, Qt::AlignLeft);
@@ -56,63 +90,60 @@ namespace Robomongo
 
         QTabWidget *mainTab = new QTabWidget(this);
 
-        mainTab->addTab(createBasicTab(),tr("Basic"));
-        mainTab->addTab(createAdvancedTab(),tr("Advanced"));
-        mainTab->addTab(createTextSearchTab(),tr("Text Search"));
+        mainTab->addTab(createBasicTab(), tr("Basic"));
+        mainTab->addTab(createAdvancedTab(), tr("Advanced"));
+        mainTab->addTab(createTextSearchTab(), tr("Text Search"));
         mainTab->setTabsClosable(false);
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox (this);
         buttonBox->setOrientation(Qt::Horizontal);
-        buttonBox->setStandardButtons (QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
+        buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
         connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
         connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
         QVBoxLayout *vlayout = new QVBoxLayout;
-        vlayout->setContentsMargins(0, 0, 0, 0);
         vlayout->addLayout(hlayout);
+        vlayout->addSpacing(5);
         vlayout->addWidget(mainTab);
         vlayout->addWidget(buttonBox);
 
         setLayout(vlayout);
-        setFixedSize(WidthWidget,HeightWidget);
     }
 
     QWidget* EditIndexDialog::createBasicTab()
     {
         QWidget *basicTab = new QWidget(this);
-
-        QLabel *label = new QLabel(tr("Name:"),basicTab);
         _nameLineEdit = new QLineEdit(QString::fromUtf8(_info._name.c_str()),basicTab);
-        QHBoxLayout *nameLayout = new QHBoxLayout;
-        nameLayout->addWidget(label);
-        nameLayout->addWidget(_nameLineEdit);
-
-        const QFont &textFont = GuiRegistry::instance().font();
-        QsciLexerJavaScript *javaScriptLexer = new JSLexer(basicTab);
-        javaScriptLexer->setFont(textFont);
-        _jsonText = new FindFrame(basicTab);
-        _jsonText->sciScintilla()->setLexer(javaScriptLexer);
-        _jsonText->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);        
-        _jsonText->sciScintilla()->setTabWidth(4);        
-        _jsonText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
-        _jsonText->sciScintilla()->setFont(textFont);
-        _jsonText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
-        _jsonText->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
-        _jsonText->sciScintilla()->setText(QString::fromUtf8(_info._request.c_str()));
-
-        QHBoxLayout *checkBoxLayout = new QHBoxLayout;
-        QSpacerItem *sp = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-        _uniqueCheckBox = new QCheckBox(tr("Unique"),basicTab);
+        _nameLineEdit->setFocus();
+        _jsonText = createFindFrame(basicTab, QString::fromUtf8(_info._request.c_str()));
+        _uniqueCheckBox = new QCheckBox(tr("Unique"));
         _uniqueCheckBox->setChecked(_info._unique);
-        checkBoxLayout->addWidget(_uniqueCheckBox);
-        checkBoxLayout->addItem(sp);        
 
-        QVBoxLayout *vlayout = new QVBoxLayout;
-        vlayout->setContentsMargins(5, 5, 5, 5);
-        vlayout->addLayout(nameLayout);
-        vlayout->addWidget(_jsonText);
-        vlayout->addLayout(checkBoxLayout);
-        basicTab->setLayout(vlayout);
+        QLabel *nameHelpLabel = createHelpLabel(
+            "Choose any name that will help you to identify this index.",
+            0, -2, 0, 15);
+
+        QLabel *keyHelpLabel = createHelpLabel(
+            "Document that contains pairs with the name of the field or fields to index "
+            "and order of the index. A 1 specifies ascending and a -1 specifies descending.",
+            0, -2, 0, 20);
+
+        QLabel *uniqueHelpLabel = createHelpLabel(
+            "If set, creates a unique index so that the collection will not accept insertion "
+            "of documents where the index key or keys match an existing value in the index.",
+            20, -2, 0, 20);
+
+        QGridLayout *layout = new QGridLayout;
+        layout->addWidget(new QLabel("Name:   "),       0, 0);
+        layout->addWidget(_nameLineEdit,                0, 1);
+        layout->addWidget(nameHelpLabel,                1, 1, Qt::AlignTop);
+        layout->addWidget(new QLabel("Keys:   "),       2, 0, Qt::AlignTop);
+        layout->addWidget(_jsonText,                    2, 1, Qt::AlignTop);
+        layout->addWidget(keyHelpLabel,                 3, 1, Qt::AlignTop);
+        layout->addWidget(_uniqueCheckBox,              4, 0, 1, 2);
+        layout->addWidget(uniqueHelpLabel,              5, 0, 1, 2, Qt::AlignTop);
+        layout->setAlignment(Qt::AlignTop);
+        basicTab->setLayout(layout);
 
         return basicTab;
     }
@@ -127,26 +158,52 @@ namespace Robomongo
         _dropDuplicates->setChecked(_info._dropDups);
         _backGroundCheckBox = new QCheckBox(tr("Create index in background"),advanced);
         _backGroundCheckBox->setChecked(_info._backGround);
-        
+
         QHBoxLayout *expireLayout = new QHBoxLayout;
-        QLabel *exLabel = new QLabel(tr("Expire after"));
         _expireAfterLineEdit = new QLineEdit(advanced);
+        _expireAfterLineEdit->setMaximumWidth(150);
         QRegExp rx("\\d+");
-        _expireAfterLineEdit->setValidator( new QRegExpValidator(rx,this) );
-        if(_info._ttl)
+        _expireAfterLineEdit->setValidator(new QRegExpValidator(rx, this));
+
+        if (_info._ttl)
             _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
-        QLabel *secLabel = new QLabel(tr("seconds"),advanced);  
-        expireLayout->addWidget(exLabel);
+
+        QLabel *secLabel = new QLabel(tr("seconds"), advanced);
         expireLayout->addWidget(_expireAfterLineEdit);
         expireLayout->addWidget(secLabel);
+        expireLayout->addStretch(1);
 
-        QVBoxLayout *vlayout = new QVBoxLayout;
-        vlayout->setContentsMargins(5, 5, 5, 5);
-        vlayout->addWidget(_sparceCheckBox);
-        vlayout->addWidget(_dropDuplicates);
-        vlayout->addWidget(_backGroundCheckBox);
-        vlayout->addLayout(expireLayout);
-        advanced->setLayout(vlayout);
+        QLabel *sparseHelpLabel = createHelpLabel(
+            "If set, the index only references documents with the specified field. "
+            "These indexes use less space but behave differently in some situations (particularly sorts).",
+            20, -2, 0, 20);
+
+        QLabel *dropDupsHelpLabel = createHelpLabel(
+            "MongoDB cannot create a unique index on a field that has duplicate values. "
+            "To force the creation of a unique index, you can specify the dropDups option, "
+            "which will only index the first occurrence of a value for the key, and delete all subsequent values. ",
+            20, -2, 0, 20);
+
+        QLabel *backgroundHelpLabel = createHelpLabel(
+            "Builds the index in the background so that building an index does not block other database activities.",
+            20, -2, 0, 20);
+
+        QLabel *expireHelpLabel = createHelpLabel(
+            "Specifies a <i>time to live</i>, in seconds, to control how long MongoDB retains documents in this collection",
+            20, -2, 0, 20);
+
+        QGridLayout *layout = new QGridLayout;
+        layout->addWidget(_sparceCheckBox,                     0, 0, 1, 2);
+        layout->addWidget(sparseHelpLabel,                     1, 0, 1, 2);
+        layout->addWidget(_dropDuplicates,                     2, 0, 1, 2);
+        layout->addWidget(dropDupsHelpLabel,                   3, 0, 1, 2);
+        layout->addWidget(_backGroundCheckBox,                 4, 0, 1, 2);
+        layout->addWidget(backgroundHelpLabel,                 5, 0, 1, 2);
+        layout->addWidget(new QLabel(tr("Expire after")),      6, 0);
+        layout->addLayout(expireLayout,                        6, 1);
+        layout->addWidget(expireHelpLabel,                     7, 0, 1, 2);
+        layout->setAlignment(Qt::AlignTop);
+        advanced->setLayout(layout);
 
         return advanced;
     }
@@ -155,28 +212,35 @@ namespace Robomongo
     {
         QWidget *textSearch = new QWidget(this);
 
-        QHBoxLayout *defLangLayout = new QHBoxLayout;
-        QLabel *defaultLanguage = new QLabel(tr("Default language:"),textSearch);
-         _defaultLanguageLineEdit = new QLineEdit(QString::fromUtf8(_info._defaultLanguage.c_str()),textSearch);
-        defLangLayout->addWidget(defaultLanguage);
-        defLangLayout->addWidget(_defaultLanguageLineEdit);
-
-        QHBoxLayout *languageOverrideLayout = new QHBoxLayout;
-        QLabel *languageOverrideLabel = new QLabel(tr("Language override:"),textSearch);
+        _defaultLanguageLineEdit = new QLineEdit(QString::fromUtf8(_info._defaultLanguage.c_str()),textSearch);
         _languageOverrideLineEdit = new QLineEdit(QString::fromUtf8(_info._languageOverride.c_str()),textSearch);
-        languageOverrideLayout->addWidget(languageOverrideLabel);
-        languageOverrideLayout->addWidget(_languageOverrideLineEdit);
+        _textWeightsLineEdit = createFindFrame(textSearch, QString::fromUtf8(_info._textWeights.c_str()));
 
-        QLabel *textWeights = new QLabel(tr("Text weights"),textSearch);
-        _textWeightsLineEdit = new QTextEdit(QString::fromUtf8(_info._textWeights.c_str()),textSearch);
+        QLabel *defaultLanguageHelpLabel = createHelpLabel(
+            "For a <i>text</i> index, the language that determines the list of stop words and the rules for the stemmer and tokenizer.",
+            0, -2, 0, 20);
 
-        QVBoxLayout *vlayout = new QVBoxLayout;
-        vlayout->setContentsMargins(5, 5, 5, 5);
-        vlayout->addLayout(defLangLayout);
-        vlayout->addLayout(languageOverrideLayout);
-        vlayout->addWidget(textWeights);
-        vlayout->addWidget(_textWeightsLineEdit);
-        textSearch->setLayout(vlayout);
+        QLabel *languageOverrideHelpLabel = createHelpLabel(
+            "For a <i>text</i> index, specify the name of the field in the document that contains, for that document, the language to override the default language.",
+            0, -2, 0, 20);
+
+        QLabel *textWeightsHelpLabel = createHelpLabel(
+            "Document that contains field and weight pairs. The weight is a number ranging from 1 to 99,999 "
+            "and denotes the significance of the field relative to the other indexed fields. ",
+            0, -2, 0, 20);
+
+        QGridLayout *layout = new QGridLayout;
+        layout->addWidget(new QLabel(tr("Default language:")),          0, 0);
+        layout->addWidget(_defaultLanguageLineEdit,                     0, 1);
+        layout->addWidget(defaultLanguageHelpLabel,                     1, 1);
+        layout->addWidget(new QLabel(tr("Language override:")),         2, 0, Qt::AlignTop);
+        layout->addWidget(_languageOverrideLineEdit,                    2, 1);
+        layout->addWidget(languageOverrideHelpLabel,                    3, 1);
+        layout->addWidget(new QLabel(tr("Text weights")),               4, 0, Qt::AlignTop);
+        layout->addWidget(_textWeightsLineEdit,                         4, 1, Qt::AlignTop);
+        layout->addWidget(textWeightsHelpLabel,                         5, 1);
+        layout->setAlignment(Qt::AlignTop);
+        textSearch->setLayout(layout);
 
         return textSearch;
     }
@@ -187,7 +251,7 @@ namespace Robomongo
              _uniqueCheckBox->checkState() == Qt::Checked,_backGroundCheckBox->checkState() == Qt::Checked,
              _dropDuplicates->checkState() == Qt::Checked,_sparceCheckBox->checkState() == Qt::Checked,
              _expireAfterLineEdit->text().toInt(),_defaultLanguageLineEdit->text().toStdString(),
-             _languageOverrideLineEdit->text().toStdString(),_textWeightsLineEdit->toPlainText().toStdString());
+             _languageOverrideLineEdit->text().toStdString(),_textWeightsLineEdit->sciScintilla()->text().toStdString());
     }
 
     void EditIndexDialog::accept()

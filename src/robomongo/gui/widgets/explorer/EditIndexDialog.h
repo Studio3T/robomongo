@@ -40,6 +40,6 @@ namespace Robomongo
 
        QLineEdit *_defaultLanguageLineEdit;
        QLineEdit *_languageOverrideLineEdit;
-       QTextEdit *_textWeightsLineEdit;
+       FindFrame *_textWeightsLineEdit;
     };
 }

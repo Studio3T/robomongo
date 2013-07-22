@@ -14,7 +14,7 @@ set(qjson_MOC_HDRS
 )
 
 IF (Qt5Core_FOUND)
-	qt5_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
+    qt5_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
 else()
     qt4_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
 ENDIF()
@@ -25,31 +25,33 @@ set (qjson_HEADERS parser.h parserrunnable.h qobjecthelper.h serializer.h serial
 # Required to use the intree copy of FlexLexer.h
 INCLUDE_DIRECTORIES(.)
 IF(WIN32)
-ADD_DEFINITIONS(-DQJSON_MAKEDLL)
+    ADD_DEFINITIONS(-DQJSON_MAKEDLL)
 ENDIF()
-add_library (qjson SHARED ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
+
+ADD_LIBRARY (qjson SHARED ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
 IF (Qt5Core_FOUND)
   target_link_libraries( qjson ${Qt5Core_LIBRARIES})
 ELSE()
   target_link_libraries( qjson ${QT_LIBRARIES})
 ENDIF()
 
-if(NOT android)
-#	set_target_properties(qjson PROPERTIES
-#	                      VERSION ${QJSON_LIB_MAJOR_VERSION}.${QJSON_LIB_MINOR_VERSION}.${QJSON_LIB_PATCH_VERSION}
-#                             SOVERSION ${QJSON_LIB_MAJOR_VERSION}
-#	                      )
-endif()
-#set_target_properties(qjson PROPERTIES
-#                      DEFINE_SYMBOL QJSON_MAKEDLL
- #                    PUBLIC_HEADER "${qjson_HEADERS}"
- #                     FRAMEWORK ${OSX_FRAMEWORK}
- #                    )
-IF(WIN32)
+#if(NOT android)
+        #set_target_properties(qjson PROPERTIES
+                                #VERSION ${QJSON_LIB_MAJOR_VERSION}.${QJSON_LIB_MINOR_VERSION}.${QJSON_LIB_PATCH_VERSION}
+                                #SOVERSION ${QJSON_LIB_MAJOR_VERSION})
+#endif()
+#IF(APPLE)
+#    set_target_properties(qjson PROPERTIES
+#                          DEFINE_SYMBOL QJSON_MAKEDLL
+#                          PUBLIC_HEADER "${qjson_HEADERS}"
+#                          FRAMEWORK ${OSX_FRAMEWORK})
+#ENDIF()
+
+IF(WIN32 OR APPLE)
 INSTALL(TARGETS qjson EXPORT qjson-export
-   LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+   LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}
    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
-   ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+   ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}
    FRAMEWORK DESTINATION ${FRAMEWORK_INSTALL_DIR}
    PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}/qjson
 )

@@ -265,28 +265,11 @@ ELSE()# Qt5
         ENDFOREACH(qtComponent ${QT_COMPONENTS_TO_USE} ${QT_DEBUG_COMPONENTS_TO_USE})
 ENDIF(NOT DEVELOPER_QT5)
 
-IF(WIN32)
-        IF(NOT CMAKE_BUILD_TYPE)
-		# Visual studio install
-                FOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
-                        MESSAGE(STATUS "VC configuration install for ${buildconfig} ${DLIBS_TO_COPY_RELEASE}")
-                        IF(${buildconfig} STREQUAL "Debug")
-                                SET(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_DEBUG})
-                        ELSE()
-                                SET(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_RELEASE})
-                        ENDIF()
-
-                        INSTALL(FILES
-				${DLIBS_TO_COPY}
-				DESTINATION .
-				CONFIGURATIONS ${buildconfig}
-			)
-                ENDFOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
-
-        ELSE(NOT CMAKE_BUILD_TYPE)
-		# Make install
-                MESSAGE(STATUS "Make configuration install ${DLIBS_TO_COPY_RELEASE}")
-                IF(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+IF(NOT CMAKE_BUILD_TYPE)
+	# Visual studio install
+        FOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
+                MESSAGE(STATUS "VC configuration install for ${buildconfig} ${DLIBS_TO_COPY_RELEASE}")
+                IF(${buildconfig} STREQUAL "Debug")
                         SET(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_DEBUG})
                 ELSE()
                         SET(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_RELEASE})
@@ -295,9 +278,24 @@ IF(WIN32)
                 INSTALL(FILES
 			${DLIBS_TO_COPY}
 			DESTINATION .
+			CONFIGURATIONS ${buildconfig}
 		)
-        ENDIF(NOT CMAKE_BUILD_TYPE)
-ENDIF(WIN32)
+        ENDFOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
+
+ELSE(NOT CMAKE_BUILD_TYPE)
+	# Make install
+        MESSAGE(STATUS "Make configuration install ${DLIBS_TO_COPY_RELEASE}")
+        IF(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+                SET(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_DEBUG})
+        ELSE()
+                SET(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_RELEASE})
+        ENDIF()
+
+        INSTALL(FILES
+		${DLIBS_TO_COPY}
+		DESTINATION .
+	)
+ENDIF(NOT CMAKE_BUILD_TYPE)
 		
 ENDMACRO(INSTALL_QT)
 

@@ -11,7 +11,9 @@ STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
 SET (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 ########################## Options #########################
 OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
-OPTION(MANIFEST_ENABLE "Enable Manifest" OFF)
+IF(WIN32)
+	OPTION(MANIFEST_ENABLE "Enable Manifest" OFF)
+ENDIF(WIN32)
 #############################################################
 # Configure project
 PROJECT(${PROJECT_NAME})
@@ -126,7 +128,7 @@ ENDIF()
 
 IF(MANIFEST_ENABLE)
 	IF(WIN32)
-        ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME_LOWERCASE} POST_BUILD COMMAND mt -manifest "${CMAKE_CURRENT_SOURCE_DIR}/resources/win7.manifest" -outputresource:"$(TargetDir)$(TargetFileName)"\;\#1)
+	ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME_LOWERCASE} POST_BUILD COMMAND mt -manifest "${CMAKE_CURRENT_SOURCE_DIR}/resources/win7.manifest" -outputresource:"$(TargetDir)$(TargetFileName)"\;\#1)
 	ENDIF(WIN32)
 ENDIF(MANIFEST_ENABLE)
 

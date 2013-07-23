@@ -9,6 +9,9 @@ SET(PROJECT_GITHUB_FORK "www.github.com/paralect/robomongo")
 SET(PROJECT_GITHUB_ISSUES "www.github.com/paralect/robomongo/issues")
 ##########################################################
 STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
+IF(UNIX AND NOT APPLE)
+    SET(PROJECT_NAME ${PROJECT_NAME_LOWERCASE})
+ENDIF()
 SET (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 ########################## Options #########################
 OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
@@ -143,30 +146,30 @@ if(WIN32)
 	set(ICON_FILE      "${CMAKE_SOURCE_DIR}/src/robomongo/gui/resources/robo.ico")
 	#set(RESOURCE_OS_IN "${CMAKE_SOURCE_DIR}/src/robomongo/gui/resources/winres.rc.in")
 elseif(APPLE)
-	set(MACOSX_BUNDLE_ICON_FILE 
-		${PROJECT_NAME}.icns
-	)
-	set(MACOSX_APPICON 
-		${CMAKE_CURRENT_SOURCE_DIR}/resources/images/${MACOSX_BUNDLE_ICON_FILE}
-	)
+	#set(MACOSX_BUNDLE_ICON_FILE 
+	#	${PROJECT_NAME}.icns
+	#)
+	#set(MACOSX_APPICON 
+	#	${CMAKE_CURRENT_SOURCE_DIR}/resources/images/${MACOSX_BUNDLE_ICON_FILE}
+	#)
 	
 	#Stub. rewrite on plist required
-	set(RESOURCE_OS
-			${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.desktop
-	)
-	set(RESOURCE_OS_IN
-			${CMAKE_CURRENT_SOURCE_DIR}/resources/${PROJECT_NAME}.desktop.in
-	)
-	set(ICON_FILE
-		${MACOSX_APPICON}
-	)
+	#set(RESOURCE_OS
+	#		${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.desktop
+	#)
+	#set(RESOURCE_OS_IN
+	#		${CMAKE_CURRENT_SOURCE_DIR}/resources/${PROJECT_NAME}.desktop.in
+	#)
+	#set(ICON_FILE
+	#	${MACOSX_APPICON}
+	#)
 elseif(UNIX)
-	set(RESOURCE_OS
-			${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.desktop
-	)
-	set(RESOURCE_OS_IN
-			${CMAKE_CURRENT_SOURCE_DIR}/resources/${PROJECT_NAME}.desktop.in
-	)
+	#set(RESOURCE_OS
+	#		${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.desktop
+	#)
+	#set(RESOURCE_OS_IN
+	#		${CMAKE_CURRENT_SOURCE_DIR}/resources/${PROJECT_NAME}.desktop.in
+	#)
 endif()
 # project sources
 ADD_SUBDIRECTORY(src)
@@ -180,7 +183,6 @@ IF(CPACK_SUPPORT)
     SET(CPACK_PACKAGE_VERSION_MINOR ${MINOR})
     STRING(REGEX REPLACE " " "" BUILD_ESCAPE ${BUILD})
     SET(CPACK_PACKAGE_VERSION_PATCH ${PATCH}${BUILD_ESCAPE})
-    SET(CPACK_PACKAGE_INSTALL_DIRECTORY ${PROJECT_NAME})
     IF(WIN32)
         # There is a bug in NSI that does not handle full unix paths properly. Make
         # sure there is at least one set of four (4) backlasshes.
@@ -196,11 +198,20 @@ IF(CPACK_SUPPORT)
         SET(CPACK_NSIS_CONTACT "me@my-personal-home-page.com")
         SET(CPACK_NSIS_MODIFY_PATH ON)
         SET(CPACK_NSIS_MUI_FINISHPAGE_RUN "..\\\\${PROJECT_NAME}.exe")
-    ELSE()
-        SET(CPACK_STRIP_FILES "bin/${PROJECT_NAME}")
-        SET(CPACK_SOURCE_STRIP_FILES "")
+    ELSEIF(LINUX_OS)
+	    IF(CPACK_GENERATOR STREQUAL "RPM")
+		SET(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+		SET(CPACK_PACKAGE_INSTALL_DIRECTORY ${PROJECT_NAME})
+		SET(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+		SET(CPACK_PACKAGE_RELEASE 1)
+		SET(CPACK_PACKAGE_CONTACT ${PROJECT_NAME})
+		#SET(CPACK_STRIP_FILES "bin/${PROJECT_NAME}")
+		#SET(CPACK_SOURCE_STRIP_FILES "")
+		CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/install/linux/${PROJECT_NAME}.spec.in" "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.spec" @ONLY IMMEDIATE)
+		SET(CPACK_RPM_USER_BINARY_SPECFILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.spec")
+	    ENDIF()
+    ELSE(APPLE)
     ENDIF(WIN32)
-    SET(CPACK_SOURCE_IGNORE_FILES "/include/;/lib/;/bin/;\\\\.cxx;\\\\.cpp;\\\\.h")
     SET(CPACK_PACKAGE_EXECUTABLES ${PROJECT_NAME} ${PROJECT_NAME})
     INCLUDE(CPack)
 ENDIF(CPACK_SUPPORT)

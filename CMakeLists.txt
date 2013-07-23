@@ -156,23 +156,20 @@ IF(CPACK_SUPPORT)
         # sure there is at least one set of four (4) backlasshes.
         SET(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/install/windows\\\\robomongo.ico")
         SET(CPACK_NSIS_INSTALLED_ICON_NAME "\\\\${PROJECT_NAME}.exe")
+		SET(CPACK_NSIS_CREATE_ICONS "CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\${PROJECT_NAME}.lnk\\\" \\\"$INSTDIR\\\\${PROJECT_NAME}.exe\\\"")
+
         SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
         SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.my-project-home-page.org")
         SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.my-personal-home-page.com")
         SET(SIDEBAR_IMAGE ${CMAKE_SOURCE_DIR}/install/windows\\\\database.bmp)
         SET(CPACK_NSIS_INSTALLER_MUI_ICON_CODE "!define MUI_WELCOMEFINISHPAGE_BITMAP \\\"${SIDEBAR_IMAGE}\\\"")
-
         SET(CPACK_NSIS_CONTACT "me@my-personal-home-page.com")
         SET(CPACK_NSIS_MODIFY_PATH ON)
     ELSE()
         SET(CPACK_STRIP_FILES "bin/${PROJECT_NAME}")
         SET(CPACK_SOURCE_STRIP_FILES "")
     ENDIF(WIN32)
-    SET( CPACK_SOURCE_IGNORE_FILES
-     ".*\\\\.cxx"
-     ".*\\\\.cpp"
-     ".*\\\\.h"
-    )
-    SET(CPACK_PACKAGE_EXECUTABLES ${PROJECT_NAME} "Setup")
+    SET(CPACK_SOURCE_IGNORE_FILES "/include/;/lib/;/bin/;\\\\.cxx;\\\\.cpp;\\\\.h")
+    SET(CPACK_PACKAGE_EXECUTABLES ${PROJECT_NAME} ${PROJECT_NAME})
     INCLUDE(CPack)
 ENDIF(CPACK_SUPPORT)

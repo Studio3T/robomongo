@@ -37,6 +37,7 @@ namespace Robomongo
         void goToPrevElement();
 
     private:
+        void findElement(bool forward);
         QsciScintilla *const _scin;
         QFrame *const _findPanel;
         QLineEdit *const _findLine;

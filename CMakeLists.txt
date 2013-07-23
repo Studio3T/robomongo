@@ -140,7 +140,7 @@ ELSEIF(UNIX AND NOT APPLE)
 ELSEIF(APPLE)
 	SET(RESOURCE_OS		"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/robomongo.desktop")
 	SET(RESOURCE_OS_IN	"${CMAKE_SOURCE_DIR}/install/robomongo.desktop.in"	)
-	SET(ICON_FILE		"${CMAKE_SOURCE_DIR}/install/osx/database.icns")
+	SET(ICON_FILE		"${CMAKE_SOURCE_DIR}/install/osx/Robomongo.icns")
 ENDIF()
 # project sources
 ADD_SUBDIRECTORY(src)

@@ -146,9 +146,10 @@ if(WIN32)
 	set(ICON_FILE      "${CMAKE_SOURCE_DIR}/src/robomongo/gui/resources/robo.ico")
 	#set(RESOURCE_OS_IN "${CMAKE_SOURCE_DIR}/src/robomongo/gui/resources/winres.rc.in")
 elseif(APPLE)
-	#set(MACOSX_BUNDLE_ICON_FILE 
-	#	${PROJECT_NAME}.icns
-	#)
+	SET(RESOURCE_OS 
+		${CMAKE_SOURCE_DIR}/install/osx/database.icns
+	)
+	
 	#set(MACOSX_APPICON 
 	#	${CMAKE_CURRENT_SOURCE_DIR}/resources/images/${MACOSX_BUNDLE_ICON_FILE}
 	#)

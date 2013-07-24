@@ -192,8 +192,8 @@ ENDMACRO(SETUP_COMPILER_SETTINGS IS_DYNAMIC)
 MACRO(INSTALL_RUNTIME_LIBRARIES)
 	# Install CRT
         IF(WIN32)
-                SET(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
-		include (InstallRequiredSystemLibraries)
+        SET(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
+        include (InstallRequiredSystemLibraries)
         ENDIF(WIN32)
 
 # TODO: add code for other platforms here
@@ -229,22 +229,28 @@ ENDMACRO(INSTALL_DEBUG_INFO_FILE)
 
 
 MACRO(TARGET_BUNDLEFIX TARGET_NAME)
-        IF(APPLE)
-                GET_TARGET_PROPERTY(PROJECT_LOCATION ${TARGET_NAME} LOCATION)
-                STRING(REPLACE "/Contents/MacOS/${TARGET_NAME}" "" MACOSX_BUNDLE_LOCATION ${PROJECT_LOCATION})
-                STRING(REPLACE "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)" "$(CONFIGURATION)" BUNDLE_ROOT ${MACOSX_BUNDLE_LOCATION})
+IF(APPLE)
+    INSTALL(CODE "
+        INCLUDE(BundleUtilities)
+        STRING(REPLACE \"\${CMAKE_SOURCE_DIR}/src/$(CONFIGURATION)\" \"${CMAKE_INSTALL_PREFIX}\" BUNDLE_LIBRARIES_MOVE \"${BUNDLE_LIBRARIES_MOVE}\")
 
-                INSTALL(CODE "
-			include(BundleUtilities)
-			message(STATUS \"Fixing bundle: ${BUNDLE_ROOT}\")
-			fixup_bundle(
-					\"${BUNDLE_ROOT}\" 
-					\"${BUNDLE_LIBRARIES_MOVE}\" 
-					\"${BUNDLE_DIRECTORY_MOVE}\"
-			)					
-			 " 
-			COMPONENT Runtime
-		)
-        ENDIF(APPLE)
+        find_file(MACOSX_BUNDLE_ROOT ${CLIENT_DATA_DIR} \"${CMAKE_INSTALL_PREFIX}/${BINARY_INSTALL_DIR}/\")
+
+        SET(LIBS_ORIGINAL_DIR \"${QT_LIBRARY_DIR}\"
+            \"${QT_PLUGINS_DIR}/imageformats\")
+            fixup_bundle(
+            \"\${MACOSX_BUNDLE_ROOT}\" 
+            \"\${BUNDLE_LIBRARIES_MOVE}\" 
+            \"\"
+            )
+        execute_process(COMMAND \"cp\" \"libc++abi.dylib\" \"libc++.1.dylib\" \"\${MACOSX_BUNDLE_ROOT}/Contents/MacOS/\"
+        WORKING_DIRECTORY \"${CMAKE_SOURCE_DIR}/imports/libc++10.6/lib/\"
+        OUTPUT_VARIABLE OUTPUT_VAR)
+        execute_process(COMMAND \"install_name_tool\" \"-change\" \"/usr/lib/libc++abi.dylib\" \"@executable_path/../MacOS/libc++abi.dylib\" \"\${MACOSX_BUNDLE_ROOT}/Contents/MacOS/libc++.1.dylib\")
+        execute_process(COMMAND \"install_name_tool\" \"-change\" \"/usr/lib/libc++.1.dylib\" \"@executable_path/../MacOS/libc++.1.dylib\" \"\${MACOSX_BUNDLE_ROOT}/Contents/MacOS/${PROJECT_NAME}\")
+        " 
+        COMPONENT Runtime
+    )
+ENDIF(APPLE)
 ENDMACRO(TARGET_BUNDLEFIX TARGET_NAME)
 

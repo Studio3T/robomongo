@@ -93,6 +93,7 @@ IF(DEVELOPER_QT5)
 			${Qt5OpenGL_INCLUDE_DIRS}
 		)
         ENDIF(DEVELOPER_OPENGL)
+        SETUP_COMPILER_SETTINGS(${USE_QT_DYNAMIC})
 ELSE(DEVELOPER_QT5)
 
         SET(QT_COMPONENTS_TO_USE ${ARGV})
@@ -158,7 +159,7 @@ ELSE(DEVELOPER_QT5)
         ELSE()
                 SET(USE_QT_DYNAMIC ON)
         ENDIF()
-
+        SETUP_COMPILER_SETTINGS(${USE_QT_DYNAMIC})
 	# use jscore
         IF(WIN32 AND NOT USE_QT_DYNAMIC)
                 FIND_LIBRARY(JSCORE_LIB_RELEASE jscore
@@ -341,7 +342,7 @@ MACRO(INSTALL_IMAGEFORMATS_HELPER TYPE)
 			CONFIGURATIONS ${TYPE}
 			COMPONENT Runtime
 		)
-                STRING(REPLACE "${QT_IMAGEFORMATS_PLUGINS_DIR}" "${IMAGEFORMATS_DIR}" QT_IMAGEFORMATS_PLUGIN_LOCAL ${QT_${imgFormatPlugin}_PLUGIN_DEBUG})
+                STRING(REPLACE "${QT_IMAGEFORMATS_PLUGINS_DIR}" "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/MacOS/imageformats" QT_IMAGEFORMATS_PLUGIN_LOCAL ${QT_${imgFormatPlugin}_PLUGIN_DEBUG})
                 LIST(APPEND BUNDLE_LIBRARIES_MOVE ${QT_IMAGEFORMATS_PLUGIN_LOCAL})
         ELSE()
                 INSTALL(FILES
@@ -350,7 +351,7 @@ MACRO(INSTALL_IMAGEFORMATS_HELPER TYPE)
 				CONFIGURATIONS ${TYPE}
 				COMPONENT Runtime
 		)
-                STRING(REPLACE "${QT_IMAGEFORMATS_PLUGINS_DIR}" "${IMAGEFORMATS_DIR}" QT_IMAGEFORMATS_PLUGIN_LOCAL ${QT_${imgFormatPlugin}_PLUGIN_RELEASE})
+                STRING(REPLACE "${QT_IMAGEFORMATS_PLUGINS_DIR}" "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/MacOS/imageformats" QT_IMAGEFORMATS_PLUGIN_LOCAL ${QT_${imgFormatPlugin}_PLUGIN_RELEASE})
                 LIST(APPEND BUNDLE_LIBRARIES_MOVE ${QT_IMAGEFORMATS_PLUGIN_LOCAL})
         ENDIF()
 ENDMACRO(INSTALL_IMAGEFORMATS_HELPER TYPE)
@@ -404,8 +405,8 @@ IF(NOT DEVELOPER_QT5)
 ELSE()
         IF(WIN32 OR APPLE)
                 GET_TARGET_PROPERTY(qtCoreLocation ${Qt5Core_LIBRARIES} LOCATION)
-                STRING(REGEX REPLACE "lib/Qt5Core(.*)" "plugins/imageformats" imageFormatsPath ${qtCoreLocation})
-                STRING(REGEX REPLACE "(.*)lib/Qt5Core." "" dllExtension ${qtCoreLocation})
+                STRING(REGEX REPLACE "(lib|bin)/Qt5Core(.*)" "plugins/imageformats" imageFormatsPath ${qtCoreLocation})
+                STRING(REGEX REPLACE "(.*)(lib|bin)/Qt5Core." "" dllExtension ${qtCoreLocation})
                 SET(MyImageFormats qico qgif qjpeg)
 		
                 IF(APPLE)

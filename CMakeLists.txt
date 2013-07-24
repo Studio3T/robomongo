@@ -52,7 +52,6 @@ ENDIF()
 INCLUDE(cmake/config.cmake)
 
 DEFINE_DEFAULT_DEFINITIONS()
-SETUP_COMPILER_SETTINGS(${DEVELOPER_DYNAMIC_RUNTIME})
 
 # Search libraries
 # use Qt
@@ -137,6 +136,38 @@ ENDIF(MANIFEST_ENABLE)
 IF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 	MESSAGE(SEND_ERROR "In-source builds are not allowed.")
 ENDIF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+
+############################################################################
+if(WIN32)
+	set(RESOURCE_OS    "${CMAKE_SOURCE_DIR}/src/robomongo/gui/resources/win.rc")
+	set(ICON_FILE      "${CMAKE_SOURCE_DIR}/src/robomongo/gui/resources/robo.ico")
+	#set(RESOURCE_OS_IN "${CMAKE_SOURCE_DIR}/src/robomongo/gui/resources/winres.rc.in")
+elseif(APPLE)
+	set(MACOSX_BUNDLE_ICON_FILE 
+		${PROJECT_NAME}.icns
+	)
+	set(MACOSX_APPICON 
+		${CMAKE_CURRENT_SOURCE_DIR}/resources/images/${MACOSX_BUNDLE_ICON_FILE}
+	)
+	
+	#Stub. rewrite on plist required
+	set(RESOURCE_OS
+			${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.desktop
+	)
+	set(RESOURCE_OS_IN
+			${CMAKE_CURRENT_SOURCE_DIR}/resources/${PROJECT_NAME}.desktop.in
+	)
+	set(ICON_FILE
+		${MACOSX_APPICON}
+	)
+elseif(UNIX)
+	set(RESOURCE_OS
+			${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.desktop
+	)
+	set(RESOURCE_OS_IN
+			${CMAKE_CURRENT_SOURCE_DIR}/resources/${PROJECT_NAME}.desktop.in
+	)
+endif()
 # project sources
 ADD_SUBDIRECTORY(src)
 

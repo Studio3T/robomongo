@@ -309,50 +309,52 @@ MACRO(QT_ADD_POSTBUILD_STEP TARGET_NAME libLocation copyToSubdirectory)
         IF(NOT EXISTS "${libLocation_release}")
                 STRING(REGEX REPLACE ${REPLACE_PATTERN} libLocation_release ${libLocation_release})
                 IF(NOT EXISTS "${libLocation_release}")
-                        MESSAGE(FATAL_ERROR "cannot add post_build step to ${libLocation_release}")
+                    MESSAGE(WARNING "cannot add post_build step to ${libLocation_release}")
                 ENDIF()
         ENDIF()
-        SET(DLIBS_TO_COPY_RELEASE ${DLIBS_TO_COPY_RELEASE} ${libLocation_release})
-        SET(DLIBS_TO_COPY_DEBUG ${DLIBS_TO_COPY_DEBUG} ${libLocation_debug})
-	
-        IF(WIN32)
+        IF(EXISTS "${libLocation_release}")
+            SET(DLIBS_TO_COPY_RELEASE ${DLIBS_TO_COPY_RELEASE} ${libLocation_release})
+            SET(DLIBS_TO_COPY_DEBUG ${DLIBS_TO_COPY_DEBUG} ${libLocation_debug})
+        
+            IF(WIN32)
                 STRING(REGEX REPLACE ".dll" "d.dll" libLocation_debug ${libLocation_release})
-        ELSEIF(APPLE)
+            ELSEIF(APPLE)
                 STRING(REGEX REPLACE ".dylib" "d.dylib" libLocation_debug ${libLocation_release})
-        ELSE()
+            ELSE()
                 STRING(REGEX REPLACE ".so" "d.so" libLocation_debug ${libLocation_release})
-        ENDIF()
+            ENDIF()
 
-IF(MSVC OR APPLE)
-        ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
-                 ${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:${libLocation_debug}> $<$<NOT:$<CONFIG:Debug>>:${libLocation_release}>  $<TARGET_FILE_DIR:${TARGET_NAME}>${copyToSubdirectory})
-ELSE()
-       # add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${libLocation_debug}
-       # add_custom_command(TARGET ${TARGET_NAME}_d POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${libLocation_release}
-ENDIF(MSVC OR APPLE)
+            IF(MSVC OR APPLE)
+                    ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
+                             ${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:${libLocation_debug}> $<$<NOT:$<CONFIG:Debug>>:${libLocation_release}>  $<TARGET_FILE_DIR:${TARGET_NAME}>${copyToSubdirectory})
+            ELSE()
+                   # add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${libLocation_debug}
+                   # add_custom_command(TARGET ${TARGET_NAME}_d POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${libLocation_release}
+            ENDIF(MSVC OR APPLE)
+        ENDIF()
 	#message(-------------------------------------------------)
 ENDMACRO(QT_ADD_POSTBUILD_STEP)
 
 
 MACRO(INSTALL_IMAGEFORMATS_HELPER TYPE)
         IF(${TYPE} STREQUAL "Debug")
-                INSTALL(FILES
+            INSTALL(FILES
 			${QT_${imgFormatPlugin}_PLUGIN_DEBUG}
 			DESTINATION ${IMAGEFORMATS_DIR}
 			CONFIGURATIONS ${TYPE}
 			COMPONENT Runtime
-		)
-                STRING(REPLACE "${QT_IMAGEFORMATS_PLUGINS_DIR}" "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/MacOS/imageformats" QT_IMAGEFORMATS_PLUGIN_LOCAL ${QT_${imgFormatPlugin}_PLUGIN_DEBUG})
-                LIST(APPEND BUNDLE_LIBRARIES_MOVE ${QT_IMAGEFORMATS_PLUGIN_LOCAL})
+            )
+            STRING(REPLACE "${QT_IMAGEFORMATS_PLUGINS_DIR}" "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/MacOS/imageformats" QT_IMAGEFORMATS_PLUGIN_LOCAL ${QT_${imgFormatPlugin}_PLUGIN_DEBUG})
+            LIST(APPEND BUNDLE_LIBRARIES_MOVE ${QT_IMAGEFORMATS_PLUGIN_LOCAL})
         ELSE()
-                INSTALL(FILES
+            INSTALL(FILES
 				${QT_${imgFormatPlugin}_PLUGIN_RELEASE}
 				DESTINATION ${IMAGEFORMATS_DIR}
 				CONFIGURATIONS ${TYPE}
 				COMPONENT Runtime
-		)
-                STRING(REPLACE "${QT_IMAGEFORMATS_PLUGINS_DIR}" "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/MacOS/imageformats" QT_IMAGEFORMATS_PLUGIN_LOCAL ${QT_${imgFormatPlugin}_PLUGIN_RELEASE})
-                LIST(APPEND BUNDLE_LIBRARIES_MOVE ${QT_IMAGEFORMATS_PLUGIN_LOCAL})
+            )
+            STRING(REPLACE "${QT_IMAGEFORMATS_PLUGINS_DIR}" "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/MacOS/imageformats" QT_IMAGEFORMATS_PLUGIN_LOCAL ${QT_${imgFormatPlugin}_PLUGIN_RELEASE})
+            LIST(APPEND BUNDLE_LIBRARIES_MOVE ${QT_IMAGEFORMATS_PLUGIN_LOCAL})
         ENDIF()
 ENDMACRO(INSTALL_IMAGEFORMATS_HELPER TYPE)
 
@@ -436,7 +438,6 @@ MACRO(INSTALL_QT5PLUGINS TARGET_NAME)
                 GET_TARGET_PROPERTY(qtCoreLocation ${Qt5Core_LIBRARIES} LOCATION)
                 STRING(REGEX REPLACE "(bin|lib)/Qt5Core(.*)" "plugins" qtPluginsPath ${qtCoreLocation})
                 STRING(REGEX REPLACE "(.*)(bin|lib)/Qt5Core." "" dllExtension ${qtCoreLocation})
-		
 		####### PLATFORMS #######
                 ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND
 			${CMAKE_COMMAND} -E make_directory  $<TARGET_FILE_DIR:${TARGET_NAME}>/platforms
@@ -471,7 +472,7 @@ MACRO(INSTALL_QT5PLUGINS TARGET_NAME)
                 FOREACH(miscLib ${MISC_LIBS})
                         SET(miscLib_release "${qtBinPath}/${miscLib}.${dllExtension}")
                         IF(EXISTS "${miscLib_release}")
-				QT_ADD_POSTBUILD_STEP(${TARGET_NAME} ${miscLib_release} "")
+                            QT_ADD_POSTBUILD_STEP(${TARGET_NAME} ${miscLib_release} "")
                         ENDIF()
                 ENDFOREACH(miscLib ${MISC_LIBS})
 		###########################################

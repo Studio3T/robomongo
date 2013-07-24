@@ -8,31 +8,34 @@
 # To regenerate json_scanner.cc use:
 # flex json_scanner.yy
 
-set(qjson_MOC_HDRS
+SET(qjson_MOC_HDRS
   parserrunnable.h
   serializerrunnable.h
 )
 
 IF (Qt5Core_FOUND)
-    qt5_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
-else()
-    qt4_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
+    QT5_WRAP_CPP(qjson_MOC_SRCS ${qjson_MOC_HDRS})
+ELSE()
+    QT4_WRAP_CPP(qjson_MOC_SRCS ${qjson_MOC_HDRS})
 ENDIF()
 
-set (qjson_SRCS parser.cpp qobjecthelper.cpp json_scanner.cpp json_parser.cc parserrunnable.cpp serializer.cpp serializerrunnable.cpp)
-set (qjson_HEADERS parser.h parserrunnable.h qobjecthelper.h serializer.h serializerrunnable.h qjson_export.h)
+SET (qjson_SRCS parser.cpp qobjecthelper.cpp json_scanner.cpp json_parser.cc parserrunnable.cpp serializer.cpp serializerrunnable.cpp)
+SET (qjson_HEADERS parser.h parserrunnable.h qobjecthelper.h serializer.h serializerrunnable.h qjson_export.h)
 
 # Required to use the intree copy of FlexLexer.h
 INCLUDE_DIRECTORIES(.)
 IF(WIN32)
     ADD_DEFINITIONS(-DQJSON_MAKEDLL)
+    ADD_LIBRARY (qjson SHARED ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
+ELSE()
+    ADD_LIBRARY (qjson STATIC ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
 ENDIF()
 
-ADD_LIBRARY (qjson SHARED ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
+
 IF (Qt5Core_FOUND)
-  target_link_libraries( qjson ${Qt5Core_LIBRARIES})
+  TARGET_LINK_LIBRARIES( qjson ${Qt5Core_LIBRARIES})
 ELSE()
-  target_link_libraries( qjson ${QT_LIBRARIES})
+  TARGET_LINK_LIBRARIES( qjson ${QT_LIBRARIES})
 ENDIF()
 
 #if(NOT android)
@@ -47,12 +50,13 @@ ENDIF()
 #                          FRAMEWORK ${OSX_FRAMEWORK})
 #ENDIF()
 
-IF(WIN32 OR APPLE)
-INSTALL(TARGETS qjson EXPORT qjson-export
-   LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}
-   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
-   ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}
-   FRAMEWORK DESTINATION ${FRAMEWORK_INSTALL_DIR}
-   PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}/qjson
-)
+IF(WIN32)
+INSTALL(TARGETS qjson RUNTIME DESTINATION .)
+#INSTALL(TARGETS qjson EXPORT qjson-export
+#   LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+#   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
+#   ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+#   FRAMEWORK DESTINATION ${FRAMEWORK_INSTALL_DIR}
+#   PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}/qjson
+#)
 ENDIF()

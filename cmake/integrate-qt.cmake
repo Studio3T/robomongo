@@ -1,144 +1,145 @@
-macro(DETECT_QT)
-	find_package( Qt5Core QUIET )
-	if(Qt5Core_FOUND)
-  		set(DEVELOPER_QT5 1)
-	else(Qt5Core_FOUND)
-  		set(DEVELOPER_QT5 0)
-	endif(Qt5Core_FOUND)
-endmacro(DETECT_QT)
+MACRO(DETECT_QT)
+        FIND_PACKAGE( Qt5Core QUIET )
+        IF(Qt5Core_FOUND)
+                SET(DEVELOPER_QT5 1)
+        ELSE(Qt5Core_FOUND)
+                SET(DEVELOPER_QT5 0)
+        ENDIF(Qt5Core_FOUND)
+ENDMACRO(DETECT_QT)
 
-macro(QTX_WRAP_CPP)
-	if(DEVELOPER_QT5)
+MACRO(QTX_WRAP_CPP)
+        IF(DEVELOPER_QT5)
 		QT5_WRAP_CPP(${ARGN})
-	else(DEVELOPER_QT5)
+        ELSE(DEVELOPER_QT5)
 		QT4_WRAP_CPP(${ARGN})
-	endif(DEVELOPER_QT5)
-endmacro(QTX_WRAP_CPP)
+        ENDIF(DEVELOPER_QT5)
+ENDMACRO(QTX_WRAP_CPP)
 
-macro(QTX_GENERATE_MOC)
-	if(DEVELOPER_QT5)
+MACRO(QTX_GENERATE_MOC)
+        IF(DEVELOPER_QT5)
 		QT5_GENERATE_MOC(${ARGN})
-	else(DEVELOPER_QT5)
+        ELSE(DEVELOPER_QT5)
 		QT4_GENERATE_MOC(${ARGN})
-	endif(DEVELOPER_QT5)
-endmacro(QTX_GENERATE_MOC)
+        ENDIF(DEVELOPER_QT5)
+ENDMACRO(QTX_GENERATE_MOC)
 
-macro(QTX_ADD_TRANSLATION)
-	if(DEVELOPER_QT5)
+MACRO(QTX_ADD_TRANSLATION)
+        IF(DEVELOPER_QT5)
 		QT5_ADD_TRANSLATION(${ARGN})
-	else(DEVELOPER_QT5)
+        ELSE(DEVELOPER_QT5)
 		QT4_ADD_TRANSLATION(${ARGN})
-	endif(DEVELOPER_QT5)
-endmacro(QTX_ADD_TRANSLATION)
+        ENDIF(DEVELOPER_QT5)
+ENDMACRO(QTX_ADD_TRANSLATION)
 
-macro(QTX_CREATE_TRANSLATION)
-	if(DEVELOPER_QT5)
+MACRO(QTX_CREATE_TRANSLATION)
+        IF(DEVELOPER_QT5)
 		QT5_CREATE_TRANSLATION(${ARGN})
-	else(DEVELOPER_QT5)
+        ELSE(DEVELOPER_QT5)
 		QT4_CREATE_TRANSLATION(${ARGN})
-	endif(DEVELOPER_QT5)
-endmacro(QTX_CREATE_TRANSLATION)
+        ENDIF(DEVELOPER_QT5)
+ENDMACRO(QTX_CREATE_TRANSLATION)
 
-macro(QTX_WRAP_UI)
-	if(DEVELOPER_QT5)
+MACRO(QTX_WRAP_UI)
+        IF(DEVELOPER_QT5)
 		QT5_WRAP_UI(${ARGN})
-	else(DEVELOPER_QT5)
+        ELSE(DEVELOPER_QT5)
 		QT4_WRAP_UI(${ARGN})
-	endif(DEVELOPER_QT5)
-endmacro(QTX_WRAP_UI)
+        ENDIF(DEVELOPER_QT5)
+ENDMACRO(QTX_WRAP_UI)
 
-macro(QTX_ADD_RESOURCES)
-	if(DEVELOPER_QT5)
+MACRO(QTX_ADD_RESOURCES)
+        IF(DEVELOPER_QT5)
 		QT5_ADD_RESOURCES(${ARGN})
-	else(DEVELOPER_QT5)
+        ELSE(DEVELOPER_QT5)
 		QT4_ADD_RESOURCES(${ARGN})
-	endif(DEVELOPER_QT5)
-endmacro(QTX_ADD_RESOURCES)
+        ENDIF(DEVELOPER_QT5)
+ENDMACRO(QTX_ADD_RESOURCES)
 
 
-macro(INTEGRATE_QT)
+MACRO(INTEGRATE_QT)
 
-if(DEVELOPER_QT5)
-	set(USE_QT_DYNAMIC ON)
-	set(QT_COMPONENTS_TO_USE ${ARGV})
+IF(DEVELOPER_QT5)
+        SET(USE_QT_DYNAMIC ON)
+        SET(QT_COMPONENTS_TO_USE ${ARGV})
 	
-	if(DEVELOPER_BUILD_TESTS)
-		set(QT_COMPONENTS_TO_USE ${QT_COMPONENTS_TO_USE} Qt5Test)
-	endif(DEVELOPER_BUILD_TESTS)	
+        IF(DEVELOPER_BUILD_TESTS)
+                SET(QT_COMPONENTS_TO_USE ${QT_COMPONENTS_TO_USE} Qt5Test)
+        ENDIF(DEVELOPER_BUILD_TESTS)
 	
-	foreach(qtComponent ${QT_COMPONENTS_TO_USE})
-		if(NOT ${qtComponent} STREQUAL "Qt5ScriptTools")
-			find_package(${qtComponent} REQUIRED)
-		else()
-			find_package(${qtComponent} QUIET)
-		endif()		
+        FOREACH(qtComponent ${QT_COMPONENTS_TO_USE})
+                IF(NOT ${qtComponent} STREQUAL "Qt5ScriptTools")
+                        FIND_PACKAGE(${qtComponent} REQUIRED)
+                ELSE()
+                        FIND_PACKAGE(${qtComponent} QUIET)
+                ENDIF()
 		
-		include_directories( ${${qtComponent}_INCLUDE_DIRS} )		
+                INCLUDE_DIRECTORIES( ${${qtComponent}_INCLUDE_DIRS} )
 		#STRING(REGEX REPLACE "Qt5" "" COMPONENT_SHORT_NAME ${qtComponent})		
 		#set(QT_MODULES_TO_USE ${QT_MODULES_TO_USE} ${COMPONENT_SHORT_NAME})
-		if(${${qtComponent}_FOUND} AND NOT(${qtComponent} STREQUAL "Qt5LinguistTools"))
+                IF(${${qtComponent}_FOUND} AND NOT(${qtComponent} STREQUAL "Qt5LinguistTools"))
 			STRING(REGEX REPLACE "Qt5" "" componentShortName ${qtComponent})		
-			set(QT_LIBRARIES ${QT_LIBRARIES} "Qt5::${componentShortName}")
-		endif()
+                        SET(QT_LIBRARIES ${QT_LIBRARIES} "Qt5::${componentShortName}")
+                ENDIF()
 	
-	endforeach(qtComponent ${QT_COMPONENTS_TO_USE})
+        ENDFOREACH(qtComponent ${QT_COMPONENTS_TO_USE})
 
-	if(NOT Qt5ScriptTools_FOUND)
-		add_definitions(-DQT_NO_SCRIPTTOOLS)
-	endif()
+        IF(NOT Qt5ScriptTools_FOUND)
+                ADD_DEFINITIONS(-DQT_NO_SCRIPTTOOLS)
+        ENDIF()
 
-	if(DEVELOPER_OPENGL)
-		find_package(Qt5OpenGL REQUIRED)
-		include_directories(
+        IF(DEVELOPER_OPENGL)
+                FIND_PACKAGE(Qt5OpenGL REQUIRED)
+                INCLUDE_DIRECTORIES(
 			${Qt5OpenGL_INCLUDE_DIRS}
 		)
-        endif(DEVELOPER_OPENGL)	
-else(DEVELOPER_QT5)
+        ENDIF(DEVELOPER_OPENGL)
+        SETUP_COMPILER_SETTINGS(${USE_QT_DYNAMIC})
+ELSE(DEVELOPER_QT5)
 
-	set(QT_COMPONENTS_TO_USE ${ARGV})
+        SET(QT_COMPONENTS_TO_USE ${ARGV})
 	
 	# repeat this for every debug/optional package
-	list(FIND QT_COMPONENTS_TO_USE "QtScriptTools" QT_SCRIPT_TOOLS_INDEX) 
-	if(NOT ${QT_SCRIPT_TOOLS_INDEX} EQUAL -1)
-		list(REMOVE_ITEM QT_COMPONENTS_TO_USE "QtScriptTools")
-		set(QT_DEBUG_COMPONENTS_TO_USE ${QT_DEBUG_COMPONENTS_TO_USE} "QtScriptTools")
-	endif()
+        LIST(FIND QT_COMPONENTS_TO_USE "QtScriptTools" QT_SCRIPT_TOOLS_INDEX)
+        IF(NOT ${QT_SCRIPT_TOOLS_INDEX} EQUAL -1)
+                LIST(REMOVE_ITEM QT_COMPONENTS_TO_USE "QtScriptTools")
+                SET(QT_DEBUG_COMPONENTS_TO_USE ${QT_DEBUG_COMPONENTS_TO_USE} "QtScriptTools")
+        ENDIF()
 
-	if(DEVELOPER_BUILD_TESTS)
-		set(QT_COMPONENTS_TO_USE ${QT_COMPONENTS_TO_USE} QtTest)
-	endif(DEVELOPER_BUILD_TESTS)	
+        IF(DEVELOPER_BUILD_TESTS)
+                SET(QT_COMPONENTS_TO_USE ${QT_COMPONENTS_TO_USE} QtTest)
+        ENDIF(DEVELOPER_BUILD_TESTS)
 
 	
-	find_package(Qt4 COMPONENTS
+        FIND_PACKAGE(Qt4 COMPONENTS
 		${QT_COMPONENTS_TO_USE}
 		REQUIRED
 	)
 	
-	find_package(Qt4 COMPONENTS 
+        FIND_PACKAGE(Qt4 COMPONENTS
 		${QT_DEBUG_COMPONENTS_TO_USE}
 		QUIET
 	)
 	
-	if(NOT QT_QTSCRIPTTOOLS_FOUND)
-		add_definitions(-DQT_NO_SCRIPTTOOLS)
-	endif()
+        IF(NOT QT_QTSCRIPTTOOLS_FOUND)
+                ADD_DEFINITIONS(-DQT_NO_SCRIPTTOOLS)
+        ENDIF()
 	
-	include(${QT_USE_FILE})
+        INCLUDE(${QT_USE_FILE})
 	
-	set(QT_3RDPARTY_DIR
+        SET(QT_3RDPARTY_DIR
 		${QT_BINARY_DIR}/../src/3rdparty
 	)
 
 	#checking is Qt dynamic or statis version will be used
-	get_filename_component(QTCORE_DLL_NAME_WE ${QT_QTCORE_LIBRARY_RELEASE} NAME_WE)
-	get_filename_component(QT_LIB_PATH ${QT_QTCORE_LIBRARY_RELEASE} PATH)
+        GET_FILENAME_COMPONENT(QTCORE_DLL_NAME_WE ${QT_QTCORE_LIBRARY_RELEASE} NAME_WE)
+        GET_FILENAME_COMPONENT(QT_LIB_PATH ${QT_QTCORE_LIBRARY_RELEASE} PATH)
 
-	if(WIN32)
-		set(DLL_EXT dll)
+        IF(WIN32)
+                SET(DLL_EXT dll)
 
 		# message("searching ${QTCORE_DLL_NAME_WE}.${DLL_EXT} in " ${QT_LIB_PATH} ${QT_LIB_PATH}/../bin)
 
-		find_file(QTCORE_DLL_FOUND_PATH ${QTCORE_DLL_NAME_WE}.${DLL_EXT}
+                FIND_FILE(QTCORE_DLL_FOUND_PATH ${QTCORE_DLL_NAME_WE}.${DLL_EXT}
 			PATHS ${QT_LIB_PATH} ${QT_LIB_PATH}/../bin
 
 			NO_DEFAULT_PATH
@@ -147,341 +148,339 @@ else(DEVELOPER_QT5)
 			NO_SYSTEM_ENVIRONMENT_PATH
 			NO_CMAKE_SYSTEM_PATH
 		)
-		message("QTCORE_DLL_FOUND_PATH=" ${QTCORE_DLL_FOUND_PATH})
+                MESSAGE("QTCORE_DLL_FOUND_PATH=" ${QTCORE_DLL_FOUND_PATH})
 			
-		if(EXISTS ${QTCORE_DLL_FOUND_PATH})
-			set(USE_QT_DYNAMIC ON)
-		else(EXISTS ${QTCORE_DLL_FOUND_PATH})
-			set(USE_QT_DYNAMIC OFF)
-		endif(EXISTS ${QTCORE_DLL_FOUND_PATH})
+                IF(EXISTS ${QTCORE_DLL_FOUND_PATH})
+                        SET(USE_QT_DYNAMIC ON)
+                ELSE(EXISTS ${QTCORE_DLL_FOUND_PATH})
+                        SET(USE_QT_DYNAMIC OFF)
+                ENDIF(EXISTS ${QTCORE_DLL_FOUND_PATH})
 
-	else()
-		set(USE_QT_DYNAMIC ON)
-	endif()
-
+        ELSE()
+                SET(USE_QT_DYNAMIC ON)
+        ENDIF()
+        SETUP_COMPILER_SETTINGS(${USE_QT_DYNAMIC})
 	# use jscore
-	if(WIN32 AND NOT USE_QT_DYNAMIC)
-		find_library(JSCORE_LIB_RELEASE jscore
+        IF(WIN32 AND NOT USE_QT_DYNAMIC)
+                FIND_LIBRARY(JSCORE_LIB_RELEASE jscore
 			PATHS
 			${QT_3RDPARTY_DIR}/webkit/Source/JavaScriptCore/release
 			${QT_3RDPARTY_DIR}/webkit/JavaScriptCore/release
 		)
 	
-		find_library(JSCORE_LIB_DEBUG NAMES jscored jscore
+                FIND_LIBRARY(JSCORE_LIB_DEBUG NAMES jscored jscore
 			PATHS
 			${QT_3RDPARTY_DIR}/webkit/Source/JavaScriptCore/debug
 			${QT_3RDPARTY_DIR}/webkit/JavaScriptCore/debug
 		)
 	
-		set(JSCORE_LIBS
+                SET(JSCORE_LIBS
 			optimized ${JSCORE_LIB_RELEASE}
 			debug ${JSCORE_LIB_DEBUG}
 		)
-	endif(WIN32 AND NOT USE_QT_DYNAMIC)
+        ENDIF(WIN32 AND NOT USE_QT_DYNAMIC)
 	# end of use jscore
-endif(DEVELOPER_QT5)	
+ENDIF(DEVELOPER_QT5)
 
-endmacro(INTEGRATE_QT)
+ENDMACRO(INTEGRATE_QT)
 
 
 ##############################################################################
 
-macro(INSTALL_QT TARGET_NAME)
-if(NOT DEVELOPER_QT5)
-if(WIN32 OR APPLE)
-	set(QT_COMPONENTS_TO_USE ${ARGV})
-	list(REMOVE_ITEM QT_COMPONENTS_TO_USE ${TARGET_NAME})
+MACRO(INSTALL_QT TARGET_NAME)
+IF(NOT DEVELOPER_QT5)
+IF(WIN32 OR APPLE)
+        SET(QT_COMPONENTS_TO_USE ${ARGV})
+        LIST(REMOVE_ITEM QT_COMPONENTS_TO_USE ${TARGET_NAME})
 
-	find_package(Qt4 COMPONENTS
+        FIND_PACKAGE(Qt4 COMPONENTS
 		${QT_COMPONENTS_TO_USE}
 		REQUIRED
 	)
-	find_package(Qt4 COMPONENTS
+        FIND_PACKAGE(Qt4 COMPONENTS
 		${QT_DEBUG_COMPONENTS_TO_USE}
 		QUIET
 	)
-	include(${QT_USE_FILE})
+        INCLUDE(${QT_USE_FILE})
 
-	get_target_property(targetLocation ${TARGET_NAME} LOCATION)
-	get_filename_component(targetDir ${targetLocation} PATH)
+        GET_TARGET_PROPERTY(targetLocation ${TARGET_NAME} LOCATION)
+        GET_FILENAME_COMPONENT(targetDir ${targetLocation} PATH)
 
-		if(WIN32)
-			set(REPLACE_IN_LIB ".lib" ".dll")
-			set(REPLACE_IN_LIB2 "/lib/([^/]+)$" "/bin/\\1")
-		elseif(APPLE)
-			set(REPLACE_IN_LIB ".a" ".dylib")
-			set(REPLACE_IN_LIB2 "" "")
-		endif()
+                IF(WIN32)
+                        SET(REPLACE_IN_LIB ".lib" ".dll")
+                        SET(REPLACE_IN_LIB2 "/lib/([^/]+)$" "/bin/\\1")
+                ELSEIF(APPLE)
+                        SET(REPLACE_IN_LIB ".a" ".dylib")
+                        SET(REPLACE_IN_LIB2 "" "")
+                ENDIF()
 
-		foreach(qtComponent ${QT_COMPONENTS_TO_USE} ${QT_DEBUG_COMPONENTS_TO_USE})
-			string(TOUPPER "${qtComponent}" QtComCap)
-			target_link_libraries(${TARGET_NAME} ${QT_${QtComCap}_LIBRARY})
-			if(NOT ${qtComponent} STREQUAL "QtMain")
-				string(REPLACE ${REPLACE_IN_LIB} dllNameDeb "${QT_${QtComCap}_LIBRARY_DEBUG}")
-				if(WIN32)
-					string(REGEX REPLACE ${REPLACE_IN_LIB2} dllNameDeb ${dllNameDeb})
-				endif()
-				set(DLIBS_TO_COPY_DEBUG
+                FOREACH(qtComponent ${QT_COMPONENTS_TO_USE} ${QT_DEBUG_COMPONENTS_TO_USE})
+                        STRING(TOUPPER "${qtComponent}" QtComCap)
+                        TARGET_LINK_LIBRARIES(${TARGET_NAME} ${QT_${QtComCap}_LIBRARY})
+                        IF(NOT ${qtComponent} STREQUAL "QtMain")
+                                STRING(REPLACE ${REPLACE_IN_LIB} dllNameDeb "${QT_${QtComCap}_LIBRARY_DEBUG}")
+                                IF(WIN32)
+                                        STRING(REGEX REPLACE ${REPLACE_IN_LIB2} dllNameDeb ${dllNameDeb})
+                                ENDIF()
+                                SET(DLIBS_TO_COPY_DEBUG
 					${DLIBS_TO_COPY_DEBUG}
 					${dllNameDeb}
 				)
-				if(NOT ${qtComponent} STREQUAL "QtScriptTools")
-					string(REPLACE ${REPLACE_IN_LIB} dllNameRel "${QT_${QtComCap}_LIBRARY_RELEASE}")
-					if(WIN32)
-						string(REGEX REPLACE ${REPLACE_IN_LIB2} dllNameRel ${dllNameRel})
-					endif()
-					set(DLIBS_TO_COPY_RELEASE
+                                IF(NOT ${qtComponent} STREQUAL "QtScriptTools")
+                                        STRING(REPLACE ${REPLACE_IN_LIB} dllNameRel "${QT_${QtComCap}_LIBRARY_RELEASE}")
+                                        IF(WIN32)
+                                                STRING(REGEX REPLACE ${REPLACE_IN_LIB2} dllNameRel ${dllNameRel})
+                                        ENDIF()
+                                        SET(DLIBS_TO_COPY_RELEASE
 						${DLIBS_TO_COPY_RELEASE}
 						${dllNameRel}
 					)
-				endif()
+                                ENDIF()
 				# TODO: check this code @ MAC and *ux
-				add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND
+                                ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
 					${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:${dllNameDeb}> $<$<NOT:$<CONFIG:Debug>>:${dllNameRel}>  $<TARGET_FILE_DIR:${TARGET_NAME}>
 				)
 
-			endif(NOT ${qtComponent} STREQUAL "QtMain")
+                        ENDIF(NOT ${qtComponent} STREQUAL "QtMain")
 			
-		endforeach(qtComponent ${QT_COMPONENTS_TO_USE})
-endif(WIN32 OR APPLE)
-else()# Qt5
+                ENDFOREACH(qtComponent ${QT_COMPONENTS_TO_USE})
+ENDIF(WIN32 OR APPLE)
+ELSE()# Qt5
 
-	list(FIND QT_COMPONENTS_TO_USE "Qt5Xml" QT_XML_INDEX) 
-	if(NOT ${QT_XML_INDEX} EQUAL -1)
-		get_target_property(libLocation ${Qt5Xml_LIBRARIES} LOCATION)
-		string(REGEX REPLACE "Xml" "XmlPatterns" libLocation ${libLocation})
+        LIST(FIND QT_COMPONENTS_TO_USE "Qt5Xml" QT_XML_INDEX)
+        IF(NOT ${QT_XML_INDEX} EQUAL -1)
+                GET_TARGET_PROPERTY(libLocation ${Qt5Xml_LIBRARIES} LOCATION)
+                STRING(REGEX REPLACE "Xml" "XmlPatterns" libLocation ${libLocation})
 		QT_ADD_POSTBUILD_STEP(${TARGET_NAME} ${libLocation} "")
-	endif()
+        ENDIF()
 
-	foreach(qtComponent ${QT_COMPONENTS_TO_USE} ${QT_DEBUG_COMPONENTS_TO_USE})
-		if(NOT ${qtComponent} STREQUAL "Qt5LinguistTools")
-			if(NOT "${${qtComponent}_LIBRARIES}" STREQUAL "")
-			get_target_property(libLocation ${${qtComponent}_LIBRARIES} LOCATION)
+        FOREACH(qtComponent ${QT_COMPONENTS_TO_USE} ${QT_DEBUG_COMPONENTS_TO_USE})
+                IF(NOT ${qtComponent} STREQUAL "Qt5LinguistTools")
+                        IF(NOT "${${qtComponent}_LIBRARIES}" STREQUAL "")
+                        GET_TARGET_PROPERTY(libLocation ${${qtComponent}_LIBRARIES} LOCATION)
 			QT_ADD_POSTBUILD_STEP(${TARGET_NAME} ${libLocation} "")
-			else(NOT "${${qtComponent}_LIBRARIES}" STREQUAL "")
-				message("Canont find library ${qtComponent}_LIBRARIES")
-			endif(NOT "${${qtComponent}_LIBRARIES}" STREQUAL "")
-		endif()
-	endforeach(qtComponent ${QT_COMPONENTS_TO_USE} ${QT_DEBUG_COMPONENTS_TO_USE})	
-endif(NOT DEVELOPER_QT5)
+                        ELSE(NOT "${${qtComponent}_LIBRARIES}" STREQUAL "")
+                        MESSAGE("Canont find library ${qtComponent}_LIBRARIES")
+                        ENDIF(NOT "${${qtComponent}_LIBRARIES}" STREQUAL "")
+                ENDIF()
+        ENDFOREACH(qtComponent ${QT_COMPONENTS_TO_USE} ${QT_DEBUG_COMPONENTS_TO_USE})
+ENDIF(NOT DEVELOPER_QT5)
 
-if(WIN32)
-	if(NOT CMAKE_BUILD_TYPE)
-		# Visual studio install
-		foreach(buildconfig ${CMAKE_CONFIGURATION_TYPES})
-			message(STATUS "VC configuration install for ${buildconfig} ${DLIBS_TO_COPY_RELEASE}")
-			if(${buildconfig} STREQUAL "Debug")
-				set(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_DEBUG})
-			else()
-				set(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_RELEASE})
-			endif()
+IF(NOT CMAKE_BUILD_TYPE)
+	# Visual studio install
+        FOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
+                MESSAGE(STATUS "VC configuration install for ${buildconfig} ${DLIBS_TO_COPY_RELEASE}")
+                IF(${buildconfig} STREQUAL "Debug")
+                        SET(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_DEBUG})
+                ELSE()
+                        SET(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_RELEASE})
+                ENDIF()
 
-			install(FILES
-				${DLIBS_TO_COPY}
-				DESTINATION .
-				CONFIGURATIONS ${buildconfig}
-			)
-		endforeach(buildconfig ${CMAKE_CONFIGURATION_TYPES})
-
-	else(NOT CMAKE_BUILD_TYPE)
-		# Make install
-		message(STATUS "Make configuration install ${DLIBS_TO_COPY_RELEASE}")
-		if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-			set(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_DEBUG})
-		else()
-			set(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_RELEASE})
-		endif()
-
-		install(FILES
+                INSTALL(FILES
 			${DLIBS_TO_COPY}
 			DESTINATION .
+			CONFIGURATIONS ${buildconfig}
 		)
-	endif(NOT CMAKE_BUILD_TYPE)
-endif(WIN32)
-		
-endmacro(INSTALL_QT)
+        ENDFOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
 
-macro(QT_ADD_POSTBUILD_STEP TARGET_NAME libLocation copyToSubdirectory)
-	set(libLocation_release ${libLocation})
+ELSE(NOT CMAKE_BUILD_TYPE)
+	# Make install
+        MESSAGE(STATUS "Make configuration install ${DLIBS_TO_COPY_RELEASE}")
+        IF(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+                SET(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_DEBUG})
+        ELSE()
+                SET(DLIBS_TO_COPY ${DLIBS_TO_COPY_ALL} ${DLIBS_TO_COPY_RELEASE})
+        ENDIF()
+
+        INSTALL(FILES
+		${DLIBS_TO_COPY}
+		DESTINATION .
+	)
+ENDIF(NOT CMAKE_BUILD_TYPE)
+		
+ENDMACRO(INSTALL_QT)
+
+MACRO(QT_ADD_POSTBUILD_STEP TARGET_NAME libLocation copyToSubdirectory)
+        SET(libLocation_release ${libLocation})
 
 	#message(-------------QT_ADD_POSTBUILD_STEP---------------)
-	set(REPLACE_PATTERN "/lib/([^/]+)$" "/bin/\\1") # from lib to bin
+        SET(REPLACE_PATTERN "/lib/([^/]+)$" "/bin/\\1") # from lib to bin
 	
-	if(NOT EXISTS "${libLocation_release}")
-		string(REGEX REPLACE ${REPLACE_PATTERN} libLocation_release ${libLocation_release})
-		if(NOT EXISTS "${libLocation_release}")
-			message(FATAL_ERROR "cannot add post_build step to ${libLocation_release}")
-		endif()
-	endif()	
-	set(DLIBS_TO_COPY_RELEASE ${DLIBS_TO_COPY_RELEASE} ${libLocation_release})
-	set(DLIBS_TO_COPY_DEBUG ${DLIBS_TO_COPY_DEBUG} ${libLocation_debug})
+        IF(NOT EXISTS "${libLocation_release}")
+                STRING(REGEX REPLACE ${REPLACE_PATTERN} libLocation_release ${libLocation_release})
+                IF(NOT EXISTS "${libLocation_release}")
+                        MESSAGE(FATAL_ERROR "cannot add post_build step to ${libLocation_release}")
+                ENDIF()
+        ENDIF()
+        SET(DLIBS_TO_COPY_RELEASE ${DLIBS_TO_COPY_RELEASE} ${libLocation_release})
+        SET(DLIBS_TO_COPY_DEBUG ${DLIBS_TO_COPY_DEBUG} ${libLocation_debug})
 	
-	if(WIN32)
-		string(REGEX REPLACE ".dll" "d.dll" libLocation_debug ${libLocation_release})
-	elseif(APPLE)
-		string(REGEX REPLACE ".dylib" "d.dylib" libLocation_debug ${libLocation_release})
-	else()
-		string(REGEX REPLACE ".so" "d.so" libLocation_debug ${libLocation_release})
-	endif()
+        IF(WIN32)
+                STRING(REGEX REPLACE ".dll" "d.dll" libLocation_debug ${libLocation_release})
+        ELSEIF(APPLE)
+                STRING(REGEX REPLACE ".dylib" "d.dylib" libLocation_debug ${libLocation_release})
+        ELSE()
+                STRING(REGEX REPLACE ".so" "d.so" libLocation_debug ${libLocation_release})
+        ENDIF()
 
 IF(MSVC OR APPLE)
-        add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND
+        ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
                  ${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:${libLocation_debug}> $<$<NOT:$<CONFIG:Debug>>:${libLocation_release}>  $<TARGET_FILE_DIR:${TARGET_NAME}>${copyToSubdirectory})
 ELSE()
        # add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${libLocation_debug}
        # add_custom_command(TARGET ${TARGET_NAME}_d POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${libLocation_release}
 ENDIF(MSVC OR APPLE)
 	#message(-------------------------------------------------)
-endmacro(QT_ADD_POSTBUILD_STEP)
+ENDMACRO(QT_ADD_POSTBUILD_STEP)
 
 
-macro(INSTALL_IMAGEFORMATS_HELPER TYPE)
-	if(${TYPE} STREQUAL "Debug")
-		install(FILES
+MACRO(INSTALL_IMAGEFORMATS_HELPER TYPE)
+        IF(${TYPE} STREQUAL "Debug")
+                INSTALL(FILES
 			${QT_${imgFormatPlugin}_PLUGIN_DEBUG}
 			DESTINATION ${IMAGEFORMATS_DIR}
 			CONFIGURATIONS ${TYPE}
 			COMPONENT Runtime
 		)
-		string(REPLACE "${QT_IMAGEFORMATS_PLUGINS_DIR}" "${IMAGEFORMATS_DIR}" QT_IMAGEFORMATS_PLUGIN_LOCAL ${QT_${imgFormatPlugin}_PLUGIN_DEBUG})
-		list(APPEND BUNDLE_LIBRARIES_MOVE ${QT_IMAGEFORMATS_PLUGIN_LOCAL})
-	else()
-		install(FILES
+                STRING(REPLACE "${QT_IMAGEFORMATS_PLUGINS_DIR}" "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/MacOS/imageformats" QT_IMAGEFORMATS_PLUGIN_LOCAL ${QT_${imgFormatPlugin}_PLUGIN_DEBUG})
+                LIST(APPEND BUNDLE_LIBRARIES_MOVE ${QT_IMAGEFORMATS_PLUGIN_LOCAL})
+        ELSE()
+                INSTALL(FILES
 				${QT_${imgFormatPlugin}_PLUGIN_RELEASE}
 				DESTINATION ${IMAGEFORMATS_DIR}
 				CONFIGURATIONS ${TYPE}
 				COMPONENT Runtime
 		)
-		string(REPLACE "${QT_IMAGEFORMATS_PLUGINS_DIR}" "${IMAGEFORMATS_DIR}" QT_IMAGEFORMATS_PLUGIN_LOCAL ${QT_${imgFormatPlugin}_PLUGIN_RELEASE})
-		list(APPEND BUNDLE_LIBRARIES_MOVE ${QT_IMAGEFORMATS_PLUGIN_LOCAL})
-	endif()
-endmacro(INSTALL_IMAGEFORMATS_HELPER TYPE)
+                STRING(REPLACE "${QT_IMAGEFORMATS_PLUGINS_DIR}" "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/MacOS/imageformats" QT_IMAGEFORMATS_PLUGIN_LOCAL ${QT_${imgFormatPlugin}_PLUGIN_RELEASE})
+                LIST(APPEND BUNDLE_LIBRARIES_MOVE ${QT_IMAGEFORMATS_PLUGIN_LOCAL})
+        ENDIF()
+ENDMACRO(INSTALL_IMAGEFORMATS_HELPER TYPE)
 
-macro(INSTALL_IMAGEFORMATS TARGET_NAME)
-if(NOT DEVELOPER_QT5)
-	if(WIN32 OR APPLE)
-		set(MyImageFormats QICO QGIF QJPEG)		
+MACRO(INSTALL_IMAGEFORMATS TARGET_NAME)
+IF(NOT DEVELOPER_QT5)
+        IF(WIN32 OR APPLE)
+                SET(MyImageFormats QICO QGIF QJPEG)
 
-		if(APPLE)
-			get_target_property(PROJECT_LOCATION ${TARGET_NAME} LOCATION)
-			string(REPLACE "/Contents/MacOS/${TARGET_NAME}" "" MACOSX_BUNDLE_LOCATION ${PROJECT_LOCATION})
-			string(REPLACE "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)" "$(CONFIGURATION)" BUNDLE_ROOT ${MACOSX_BUNDLE_LOCATION})
+                IF(APPLE)
+                        GET_TARGET_PROPERTY(PROJECT_LOCATION ${TARGET_NAME} LOCATION)
+                        STRING(REPLACE "/Contents/MacOS/${TARGET_NAME}" "" MACOSX_BUNDLE_LOCATION ${PROJECT_LOCATION})
+                        STRING(REPLACE "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)" "$(CONFIGURATION)" BUNDLE_ROOT ${MACOSX_BUNDLE_LOCATION})
 
-			set(IMAGEFORMATS_DIR ${BUNDLE_ROOT}/Contents/MacOS/imageformats)
-		else(APPLE)
-			set(IMAGEFORMATS_DIR imageformats)
-		endif(APPLE)
+                        SET(IMAGEFORMATS_DIR ${BUNDLE_ROOT}/Contents/MacOS/imageformats)
+                ELSE(APPLE)
+                        SET(IMAGEFORMATS_DIR imageformats)
+                ENDIF(APPLE)
 
 
-		add_custom_command(TARGET ${PROJECT_NAME} COMMAND
+                ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND
 			${CMAKE_COMMAND} -E make_directory  $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats
 		)
 
-		foreach(imgFormatPlugin ${MyImageFormats})
+                FOREACH(imgFormatPlugin ${MyImageFormats})
 			if(QT_${imgFormatPlugin}_PLUGIN_DEBUG AND QT_${imgFormatPlugin}_PLUGIN_RELEASE)
-			    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND
+                            ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
 				${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:${QT_${imgFormatPlugin}_PLUGIN_DEBUG}> $<$<NOT:$<CONFIG:Debug>>:${QT_${imgFormatPlugin}_PLUGIN_RELEASE}>  $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats/
 			    )
-			elseif(QT_${imgFormatPlugin}_PLUGIN_RELEASE)
-			    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND
+                        ELSEIF(QT_${imgFormatPlugin}_PLUGIN_RELEASE)
+                            ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
 				${CMAKE_COMMAND} -E copy ${QT_${imgFormatPlugin}_PLUGIN_RELEASE} $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats/
 			    )
-			elseif(QT_${imgFormatPlugin}_PLUGIN_DEBUG)
-			    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND
+                        ELSEIF(QT_${imgFormatPlugin}_PLUGIN_DEBUG)
+                            ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
 				${CMAKE_COMMAND} -E copy ${QT_${imgFormatPlugin}_PLUGIN_DEBUG} $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats/
 			    )
-			endif(QT_${imgFormatPlugin}_PLUGIN_DEBUG AND QT_${imgFormatPlugin}_PLUGIN_RELEASE)
+                        ENDIF(QT_${imgFormatPlugin}_PLUGIN_DEBUG AND QT_${imgFormatPlugin}_PLUGIN_RELEASE)
 			
-			if(NOT CMAKE_BUILD_TYPE AND CMAKE_CONFIGURATION_TYPES)
-				foreach(buildconfig ${CMAKE_CONFIGURATION_TYPES})
+                        IF(NOT CMAKE_BUILD_TYPE AND CMAKE_CONFIGURATION_TYPES)
+                                FOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
 					INSTALL_IMAGEFORMATS_HELPER(${buildconfig})
-				endforeach(buildconfig ${CMAKE_CONFIGURATION_TYPES})
-			elseif(CMAKE_BUILD_TYPE)
+                                ENDFOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
+                        ELSEIF(CMAKE_BUILD_TYPE)
 				INSTALL_IMAGEFORMATS_HELPER(${CMAKE_BUILD_TYPE})
-			endif(NOT CMAKE_BUILD_TYPE AND CMAKE_CONFIGURATION_TYPES)
-		endforeach(imgFormatPlugin ${MyImageFormats})
+                        ENDIF(NOT CMAKE_BUILD_TYPE AND CMAKE_CONFIGURATION_TYPES)
+                ENDFOREACH(imgFormatPlugin ${MyImageFormats})
 	
-		message(STATUS ${BUNDLE_LIBRARIES_MOVE})
-	endif(WIN32 OR APPLE)
-else()
-	if(WIN32 OR APPLE)
-		get_target_property(qtCoreLocation ${Qt5Core_LIBRARIES} LOCATION)
-		string(REGEX REPLACE "lib/Qt5Core(.*)" "plugins/imageformats" imageFormatsPath ${qtCoreLocation})
-		string(REGEX REPLACE "(.*)lib/Qt5Core." "" dllExtension ${qtCoreLocation})
-		set(MyImageFormats qico qgif qjpeg)
+                MESSAGE(STATUS ${BUNDLE_LIBRARIES_MOVE})
+        ENDIF(WIN32 OR APPLE)
+ELSE()
+        IF(WIN32 OR APPLE)
+                GET_TARGET_PROPERTY(qtCoreLocation ${Qt5Core_LIBRARIES} LOCATION)
+                STRING(REGEX REPLACE "(lib|bin)/Qt5Core(.*)" "plugins/imageformats" imageFormatsPath ${qtCoreLocation})
+                STRING(REGEX REPLACE "(.*)(lib|bin)/Qt5Core." "" dllExtension ${qtCoreLocation})
+                SET(MyImageFormats qico qgif qjpeg)
 		
-		if(APPLE)
-			get_target_property(PROJECT_LOCATION ${TARGET_NAME} LOCATION)
-			string(REPLACE "/Contents/MacOS/${TARGET_NAME}" "" MACOSX_BUNDLE_LOCATION ${PROJECT_LOCATION})
-			string(REPLACE "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)" "$(CONFIGURATION)" BUNDLE_ROOT ${MACOSX_BUNDLE_LOCATION})
+                IF(APPLE)
+                        GET_TARGET_PROPERTY(PROJECT_LOCATION ${TARGET_NAME} LOCATION)
+                        STRING(REPLACE "/Contents/MacOS/${TARGET_NAME}" "" MACOSX_BUNDLE_LOCATION ${PROJECT_LOCATION})
+                        STRING(REPLACE "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)" "$(CONFIGURATION)" BUNDLE_ROOT ${MACOSX_BUNDLE_LOCATION})
 
-			set(IMAGEFORMATS_DIR ${BUNDLE_ROOT}/Contents/MacOS/imageformats)
-		else(APPLE)
-			set(IMAGEFORMATS_DIR imageformats)
-		endif(APPLE)
+                        SET(IMAGEFORMATS_DIR ${BUNDLE_ROOT}/Contents/MacOS/imageformats)
+                ELSE(APPLE)
+                        SET(IMAGEFORMATS_DIR imageformats)
+                ENDIF(APPLE)
 		
-		add_custom_command(TARGET ${PROJECT_NAME} COMMAND
+                ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND
 			${CMAKE_COMMAND} -E make_directory  $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats
 		)
 
-		foreach(imgFormatPlugin ${MyImageFormats})
-			set(imagePlugin_release "${imageFormatsPath}/${imgFormatPlugin}.${dllExtension}")
+                FOREACH(imgFormatPlugin ${MyImageFormats})
+                        SET(imagePlugin_release "${imageFormatsPath}/${imgFormatPlugin}.${dllExtension}")
 			QT_ADD_POSTBUILD_STEP(${TARGET_NAME} ${imagePlugin_release} "/imageformats/")
-		endforeach(imgFormatPlugin ${MyImageFormats})
-	endif(WIN32 OR APPLE)
-endif(NOT DEVELOPER_QT5)
-endmacro(INSTALL_IMAGEFORMATS TARGET_NAME)
+                ENDFOREACH(imgFormatPlugin ${MyImageFormats})
+        ENDIF(WIN32 OR APPLE)
+ENDIF(NOT DEVELOPER_QT5)
+ENDMACRO(INSTALL_IMAGEFORMATS TARGET_NAME)
 
-macro(INSTALL_QT5PLUGINS TARGET_NAME)
-	if(WIN32 OR APPLE)
-		get_target_property(qtCoreLocation ${Qt5Core_LIBRARIES} LOCATION)
-		string(REGEX REPLACE "(bin|lib)/Qt5Core(.*)" "plugins" qtPluginsPath ${qtCoreLocation})
-		string(REGEX REPLACE "(.*)(bin|lib)/Qt5Core." "" dllExtension ${qtCoreLocation})
+MACRO(INSTALL_QT5PLUGINS TARGET_NAME)
+        IF(WIN32 OR APPLE)
+                GET_TARGET_PROPERTY(qtCoreLocation ${Qt5Core_LIBRARIES} LOCATION)
+                STRING(REGEX REPLACE "(bin|lib)/Qt5Core(.*)" "plugins" qtPluginsPath ${qtCoreLocation})
+                STRING(REGEX REPLACE "(.*)(bin|lib)/Qt5Core." "" dllExtension ${qtCoreLocation})
 		
 		####### PLATFORMS #######
-		add_custom_command(TARGET ${PROJECT_NAME} COMMAND
+                ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND
 			${CMAKE_COMMAND} -E make_directory  $<TARGET_FILE_DIR:${TARGET_NAME}>/platforms
 		)
-		set(platformPlugin_release "${qtPluginsPath}/platforms/qwindows.${dllExtension}")
+                SET(platformPlugin_release "${qtPluginsPath}/platforms/qwindows.${dllExtension}")
 		QT_ADD_POSTBUILD_STEP(${TARGET_NAME} ${platformPlugin_release} "/platforms/")
 		#########################
 		
 		####### accessible #######
-		add_custom_command(TARGET ${PROJECT_NAME} COMMAND
+                ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND
 			${CMAKE_COMMAND} -E make_directory  $<TARGET_FILE_DIR:${TARGET_NAME}>/accessible
 		)
-		set(accessiblePlugin_release "${qtPluginsPath}/accessible/qtaccessiblewidgets.${dllExtension}")
+                SET(accessiblePlugin_release "${qtPluginsPath}/accessible/qtaccessiblewidgets.${dllExtension}")
 		QT_ADD_POSTBUILD_STEP(${TARGET_NAME} ${accessiblePlugin_release} "/accessible/")
 		#########################	
 		
 		######### MISC LIBS ONLY RELEASE ##########
-		string(REGEX REPLACE "(bin|lib)/Qt5Core(.*)" "bin" qtBinPath ${qtCoreLocation})
-		set(MISC_LIBS icuuc49 icuin49 icudt49 icuuc51 icuin51 icudt51 D3DCompiler_43)
-		foreach(miscLib ${MISC_LIBS})
-			set(miscLib_release "${qtBinPath}/${miscLib}.${dllExtension}")
-			if(EXISTS "${miscLib_release}")
-				add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND
+                STRING(REGEX REPLACE "(bin|lib)/Qt5Core(.*)" "bin" qtBinPath ${qtCoreLocation})
+                SET(MISC_LIBS icuuc49 icuin49 icudt49 icuuc51 icuin51 icudt51 D3DCompiler_43)
+                FOREACH(miscLib ${MISC_LIBS})
+                        SET(miscLib_release "${qtBinPath}/${miscLib}.${dllExtension}")
+                        IF(EXISTS "${miscLib_release}")
+                                ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
 					${CMAKE_COMMAND} -E copy ${miscLib_release}  $<TARGET_FILE_DIR:${TARGET_NAME}>
 				)		
-			endif()
-		endforeach(miscLib ${MISC_LIBS})
+                        ENDIF()
+                ENDFOREACH(miscLib ${MISC_LIBS})
 		########################
 		
 		######## MISC LIBS DEBUG AND RELEASE #########
-		set(MISC_LIBS libEGL libGLESv2)
-		foreach(miscLib ${MISC_LIBS})
-			set(miscLib_release "${qtBinPath}/${miscLib}.${dllExtension}")		
-			if(EXISTS "${miscLib_release}")
+                SET(MISC_LIBS libEGL libGLESv2)
+                FOREACH(miscLib ${MISC_LIBS})
+                        SET(miscLib_release "${qtBinPath}/${miscLib}.${dllExtension}")
+                        IF(EXISTS "${miscLib_release}")
 				QT_ADD_POSTBUILD_STEP(${TARGET_NAME} ${miscLib_release} "")
-			endif()
-		endforeach(miscLib ${MISC_LIBS})
+                        ENDIF()
+                ENDFOREACH(miscLib ${MISC_LIBS})
 		###########################################
-	endif(WIN32 OR APPLE)
-endmacro(INSTALL_QT5PLUGINS TARGET_NAME)
+        ENDIF(WIN32 OR APPLE)
+ENDMACRO(INSTALL_QT5PLUGINS TARGET_NAME)
 
-macro(INSTALL_QT_PLUGINS TARGET_NAME)
+MACRO(INSTALL_QT_PLUGINS TARGET_NAME)
 	INSTALL_IMAGEFORMATS(${TARGET_NAME})
-	if(DEVELOPER_QT5)
+        IF(DEVELOPER_QT5)
 		INSTALL_QT5PLUGINS(${TARGET_NAME})
-	endif(DEVELOPER_QT5)
-endmacro(INSTALL_QT_PLUGINS TARGET_NAME)
+        ENDIF(DEVELOPER_QT5)
+ENDMACRO(INSTALL_QT_PLUGINS TARGET_NAME)

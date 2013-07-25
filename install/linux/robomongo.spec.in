@@ -1,7 +1,7 @@
 Buildroot: @CMAKE_CURRENT_BINARY_DIR@/_CPack_Packages/Linux/RPM/@CPACK_PACKAGE_FILE_NAME@
 Summary:        @CPACK_PACKAGE_DESCRIPTION_SUMMARY@
 Name:           @CPACK_PACKAGE_NAME@
-Version:        @CPACK_PACKAGE_VERSION_PATCH@
+Version:        @CPACK_PACKAGE_VERSION@
 Release:        @CPACK_PACKAGE_RELEASE@
 License:        GPL
 Group:          @PROJECT_COMPANYNAME@

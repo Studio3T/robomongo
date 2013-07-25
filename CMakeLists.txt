@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0)
 #CMAKE_POLICY(SET CMP0020 NEW)
 #################### Project Settings ####################
 SET(PROJECT_NAME "Robomongo" CACHE STRING "Project Name")
@@ -25,7 +25,7 @@ SET(MAJOR "0")
 SET(MINOR "7")
 SET(PATCH "2")
 SET(BUILD " beta 1")
-SET(${PROJECT_NAME}_VERSION "${MAJOR}.${MINOR}.${PATCH}${BUILD}" CACHE STRING "${PROJECT_NAME} version")
+SET(PROJECT_NAME_VERSION "${MAJOR}.${MINOR}.${PATCH}${BUILD}" CACHE STRING "${PROJECT_NAME} version")
 OPTION(BOOST_ENABLED "Enable boost system support" OFF)
 OPTION(BUILD_PCRECPP_LIBRARY "Build pcrecpp library from sources" ON)
 OPTION(QT_ENABLED "Enable Qt support" ON)
@@ -61,16 +61,9 @@ DEFINE_DEFAULT_DEFINITIONS()
 DETECT_QT()
 ##################### Libraries search ###################
 if(DEVELOPER_QT5)
-SET(QT_COMPONENTS_TO_USE 
-	Qt5Core 
-	Qt5Gui 
-	Qt5Widgets
-)
+SET(QT_COMPONENTS_TO_USE Qt5Core Qt5Gui Qt5Widgets)
 ELSE()
-SET(QT_COMPONENTS_TO_USE 
-	QtCore 
-	QtGui 
-)
+SET(QT_COMPONENTS_TO_USE QtCore QtGui)
 ENDIF()
 INTEGRATE_QT(${QT_COMPONENTS_TO_USE})
 ##########################################################
@@ -132,52 +125,26 @@ IF(NOT CMAKE_INSTALL_PREFIX})
 ENDIF()
 ############################################################################
 
-IF(MANIFEST_ENABLE)
-	IF(WIN32)
-	    ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} POST_BUILD COMMAND mt -manifest "${CMAKE_CURRENT_SOURCE_DIR}/install/windows/win7.manifest" -outputresource:"$(TargetDir)$(TargetFileName)"\;\#1)
-	ENDIF(WIN32)
-ENDIF(MANIFEST_ENABLE)
-
 IF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 	MESSAGE(SEND_ERROR "In-source builds are not allowed.")
 ENDIF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
 ############################################################################
 if(WIN32)
-	set(RESOURCE_OS    "${CMAKE_SOURCE_DIR}/src/robomongo/gui/resources/win.rc")
-	set(ICON_FILE      "${CMAKE_SOURCE_DIR}/src/robomongo/gui/resources/robo.ico")
-	#set(RESOURCE_OS_IN "${CMAKE_SOURCE_DIR}/src/robomongo/gui/resources/winres.rc.in")
+	SET(RESOURCE_OS    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/win.rc")
+	SET(ICON_FILE      "${CMAKE_SOURCE_DIR}/src/robomongo/gui/resources/robo.ico")
+	SET(RESOURCE_OS_IN "${CMAKE_SOURCE_DIR}/install/windows/winres.rc.in")
 elseif(APPLE)
-	SET(RESOURCE_OS 
-		${CMAKE_SOURCE_DIR}/install/osx/database.icns
-	)
-	
-	#set(MACOSX_APPICON 
-	#	${CMAKE_CURRENT_SOURCE_DIR}/resources/images/${MACOSX_BUNDLE_ICON_FILE}
-	#)
-	
-	#Stub. rewrite on plist required
-	#set(RESOURCE_OS
-	#		${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.desktop
-	#)
-	#set(RESOURCE_OS_IN
-	#		${CMAKE_CURRENT_SOURCE_DIR}/resources/${PROJECT_NAME}.desktop.in
-	#)
-	#set(ICON_FILE
-	#	${MACOSX_APPICON}
-	#)
+	SET(RESOURCE_OS		"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/robomongo.desktop")
+	SET(RESOURCE_OS_IN	"${CMAKE_SOURCE_DIR}/install/robomongo.desktop.in"	)
+	SET(ICON_FILE		"${CMAKE_SOURCE_DIR}/install/osx/database.icns")
 elseif(UNIX)
-	#set(RESOURCE_OS
-	#		${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.desktop
-	#)
-	#set(RESOURCE_OS_IN
-	#		${CMAKE_CURRENT_SOURCE_DIR}/resources/${PROJECT_NAME}.desktop.in
-	#)
+	SET(RESOURCE_OS "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}.desktop")
+	SET(RESOURCE_OS_IN "${CMAKE_SOURCE_DIR}/install/robomongo.desktop.in")
 endif()
 # project sources
 ADD_SUBDIRECTORY(src)
-
-MESSAGE("CMAKE_SYSTEM_PROCESSOR :${CMAKE_SYSTEM_PROCESSOR}")
+MESSAGE("CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
 
 IF(CPACK_SUPPORT)
     SET(CPACK_PACKAGE_DESCRIPTION ${PROJECT_NAME}" description")
@@ -196,11 +163,11 @@ IF(CPACK_SUPPORT)
     SET(CPACK_PACKAGE_VERSION ${CPACK_PACKAGE_VERSION_PATCH})#CPACK_DEBIAN_PACKAGE_VERSION
     SET(CPACK_PACKAGE_NAME ${PROJECT_NAME})#CPACK_DEBIAN_PACKAGE_NAME
     SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}_${ARCH_TEXT_PACKAGE}")#out package name
-    MESSAGE(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_FILE_NAME})  
+    MESSAGE("CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}")  
     SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME} file name")  
     SET(CPACK_PACKAGE_INSTALL_DIRECTORY ${PROJECT_NAME})
 
-    SET(CPACK_COMPONENTS_ALL Libraries ApplicationData)
+    #SET(CPACK_COMPONENTS_ALL Libraries ApplicationData)
     IF(WIN32)
         # There is a bug in NSI that does not handle full unix paths properly. Make
         # sure there is at least one set of four (4) backlasshes.

@@ -188,7 +188,6 @@ ENDMACRO(INTEGRATE_QT)
 ##############################################################################
 
 MACRO(INSTALL_QT TARGET_NAME LIB_DIST)
-MESSAGE("LIB_DIST: ${LIB_DIST}")
 IF(NOT DEVELOPER_QT5)
 IF(WIN32 OR APPLE)
         SET(QT_COMPONENTS_TO_USE ${ARGV})

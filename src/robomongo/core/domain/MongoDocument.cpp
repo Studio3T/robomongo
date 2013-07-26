@@ -1,5 +1,6 @@
 #include "robomongo/core/domain/MongoDocument.h"
 
+#include <mongo/client/dbclient.h>
 #include <QStringBuilder>
 
 #include "robomongo/core/domain/MongoDocumentIterator.h"

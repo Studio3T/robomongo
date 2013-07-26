@@ -91,11 +91,11 @@ namespace Robomongo
             int index = 0;
             int line = 0;
             _scin->getCursorPosition(&line, &index);
-
-            // Without the following line it is possible that searched
-            // text will be selected, but window will not be correctly
-            // scrolled (in case of very long lines). This line fixes it.
-            _scin->setCursorPosition(line, 0);
+            QFontMetrics metrics = _scin->fontMetrics();            
+            int width = metrics.boundingRect(_scin->text(line)).width();
+            if(width>_scin->width()){
+                _scin->setCursorPosition(line, 0);
+            }
 
             _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, wrap, true, line, index);
         }
@@ -118,11 +118,11 @@ namespace Robomongo
             int line = 0;
             _scin->getCursorPosition(&line, &index);
             index -= _scin->selectedText().length();
-
-            // Without the following line it is possible that searched
-            // text will be selected, but window will not be correctly
-            // scrolled (in case of very long lines). This line fixes it.
-            _scin->setCursorPosition(line, 0);
+            QFontMetrics metrics = _scin->fontMetrics();            
+            int width = metrics.boundingRect(_scin->text(line)).width();
+            if(width>_scin->width()){
+                _scin->setCursorPosition(line, 0);
+            }
 
             _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, wrap, false, line, index);
         }

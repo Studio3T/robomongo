@@ -1,4 +1,6 @@
 #include "MongoQueryInfo.h"
+#include <mongo/client/dbclient.h>
+
 namespace Robomongo
 {
     MongoQueryInfo::MongoQueryInfo() :

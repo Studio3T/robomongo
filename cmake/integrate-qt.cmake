@@ -187,7 +187,7 @@ ENDMACRO(INTEGRATE_QT)
 
 ##############################################################################
 
-MACRO(INSTALL_QT TARGET_NAME)
+MACRO(INSTALL_QT TARGET_NAME LIB_DIST)
 IF(NOT DEVELOPER_QT5)
 IF(WIN32 OR APPLE)
         SET(QT_COMPONENTS_TO_USE ${ARGV})
@@ -278,7 +278,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 
                 INSTALL(FILES
 			${DLIBS_TO_COPY}
-			DESTINATION .
+                        DESTINATION ${LIB_DIST}
 			CONFIGURATIONS ${buildconfig}
 		)
         ENDFOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
@@ -294,7 +294,7 @@ ELSE(NOT CMAKE_BUILD_TYPE)
 
         INSTALL(FILES
 		${DLIBS_TO_COPY}
-		DESTINATION .
+                DESTINATION ${LIB_DIST}
 	)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 		

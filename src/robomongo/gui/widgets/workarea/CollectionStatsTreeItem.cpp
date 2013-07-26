@@ -1,5 +1,7 @@
 #include "robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h"
 
+#include <mongo/client/dbclient.h>
+
 #include "robomongo/core/domain/MongoUtils.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoNamespace.h"
@@ -12,6 +14,7 @@ namespace
         return data + "     "; // ugly yet simple way to extend size of columns
     }
 }
+
 namespace Robomongo
 {
 

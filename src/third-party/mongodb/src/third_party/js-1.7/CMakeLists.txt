@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(js)
 
 #include_directories(mongodb/src/third_party/js-1.7 ../../include/js)
-IF(POSIX_OS)
+IF(UNIX)
     ADD_DEFINITIONS(-DXP_UNIX)
 ELSEIF(WINDOWS)
     ADD_DEFINITIONS(-DXP_WIN -DEXPORT_JS_API -DJSFILE -DUNICODE -D_CRT_SECURE_NO_WARNINGS -DPSAPI_VERSION=1)

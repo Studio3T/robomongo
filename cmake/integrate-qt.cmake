@@ -407,7 +407,7 @@ IF(APPLE OR WIN32)
     ###########################################
 ELSEIF(UNIX)
     GET_FILENAME_COMPONENT(qtPluginsPath ${qtCoreLocation} PATH)
-    SET(MISC_LIBS libicuuc.so.49 libicui18n.so.49 libicudata.so.49)
+    SET(MISC_LIBS libicuuc.so.49 libicuuc.so.51 libicui18n.so.49 libicui18n.so.51 libicudata.so.49 libicudata.so.51)
     FOREACH(miscLib ${MISC_LIBS})
         GET_FILENAME_COMPONENT(LibWithoutSymLink ${qtPluginsPath}/${miscLib} REALPATH)	
         IF(EXISTS "${LibWithoutSymLink}")

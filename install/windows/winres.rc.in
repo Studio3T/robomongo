@@ -29,7 +29,7 @@ IDI_ICON1               ICON        "@ICON_FILE@"
 			VALUE "CompanyName", "@COMPANYNAME@\0"
 			VALUE "FileDescription", "@PRODUCTNAME@\0"
 			VALUE "FileVersion", VER_FILEVERSION_STR
-			VALUE "LegalCopyright", "Copyright (C) 2013 @COMPANYNAME@ All Rights Reserved.\0"
+			VALUE "LegalCopyright", "@PRODUCTCOPYRIGHT@\0"
 			VALUE "ProductName", "@PRODUCTNAME@\0"
 			VALUE "ProductVersion", VER_PRODUCTVERSION_STR
 			VALUE "OriginalFilename", "@SHORTPRODUCTNAME@.exe\0"

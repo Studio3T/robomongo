@@ -9,6 +9,7 @@ SET(filecontent "
 	SET(COMPANYNAME ${COMPANYNAME})
 	SET(PRODUCTDOMAIN ${PROJECT_DOMAIN})
     SET(SHORTPRODUCTNAME ${prjName})
+    SET(PRODUCTCOPYRIGHT ${PROJECT_COPYRIGHT})
 	CONFIGURE_FILE(${from_file} ${to_file})   
     ")
 FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/versionConfFile.cmake" "${filecontent}")

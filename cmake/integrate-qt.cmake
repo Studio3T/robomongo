@@ -272,9 +272,7 @@ MACRO(QT_ADD_POSTBUILD_STEP TARGET_NAME libLocation copyToSubdirectory)
 	ENDIF()
 	    IF(WIN32 OR APPLE)
 	        ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
-		        ${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:
-		        ${libLocation_debug}> $<$<NOT:$<CONFIG:Debug>>:
-		        ${libLocation_release}>  $<TARGET_FILE_DIR:${TARGET_NAME}>${copyToSubdirectory})
+                             ${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:${libLocation_debug}> $<$<NOT:$<CONFIG:Debug>>:${libLocation_release}> $<TARGET_FILE_DIR:${TARGET_NAME}>${copyToSubdirectory})
 	    ENDIF()
 	ENDIF()
 ENDMACRO(QT_ADD_POSTBUILD_STEP)

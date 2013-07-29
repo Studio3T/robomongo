@@ -1,4 +1,4 @@
-macro(VersionConf prjName from_file to_file)
+macro(VersionConf prjName from_file to_file iconname)
 SET(COMPANYNAME "\"${PROJECT_COMPANYNAME}\"")
 SET(filecontent "
     SET(ICON_FILE ${ICON_FILE})
@@ -9,6 +9,7 @@ SET(filecontent "
 	SET(COMPANYNAME ${COMPANYNAME})
 	SET(PRODUCTDOMAIN ${PROJECT_DOMAIN})
     SET(SHORTPRODUCTNAME ${prjName})
+    SET(ICONNAME ${iconname})
     SET(PRODUCTCOPYRIGHT ${PROJECT_COPYRIGHT})
 	CONFIGURE_FILE(${from_file} ${to_file})   
     ")

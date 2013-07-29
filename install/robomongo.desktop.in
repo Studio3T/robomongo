@@ -1,11 +1,9 @@
 [Desktop Entry]
-Version=1.0
 Type=Application
+Exec=@SHORTPRODUCTNAME@
 Name=@SHORTPRODUCTNAME@
-GenericName=@PRODUCTNAME@
-Comment=Download video files from sites
-TryExec=@SHORTPRODUCTNAME@ %U
-Exec=@SHORTPRODUCTNAME@ %U
-Categories=Network;FileTransfer;AudioVideo;Qt;
+GenericName=The IDE for mongodb working.
+GenericName[de]=Die IDE der
 Icon=@ICONNAME@
 Terminal=false
+Categories=Development;IDE;mongodb;

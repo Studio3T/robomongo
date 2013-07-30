@@ -218,7 +218,7 @@ ELSE()# Qt5
     ENDFOREACH(qtComponent ${QT_COMPONENTS_TO_USE} ${QT_DEBUG_COMPONENTS_TO_USE})
 ENDIF(NOT DEVELOPER_QT5)
 
-IF(MSVC)
+IF(MSVC OR APPLE)
 	# Visual studio install
     FOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
         MESSAGE(STATUS "VC configuration install for ${buildconfig} ${DLIBS_TO_COPY_RELEASE}")

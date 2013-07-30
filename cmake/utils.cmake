@@ -1,6 +1,5 @@
-macro(VersionConf prjName from_file to_file)
+macro(VersionConf prjName from_file to_file iconname)
 SET(COMPANYNAME "\"${PROJECT_COMPANYNAME}\"")
-
 SET(filecontent "
     SET(ICON_FILE ${ICON_FILE})
 	SET(MAJOR_VER	${MAJOR} ) 	
@@ -10,20 +9,15 @@ SET(filecontent "
 	SET(COMPANYNAME ${COMPANYNAME})
 	SET(PRODUCTDOMAIN ${PROJECT_DOMAIN})
     SET(SHORTPRODUCTNAME ${prjName})
-	configure_file(${from_file} ${to_file})   
-")
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/versionConfFile.cmake" "${filecontent}")
-
-add_custom_target(VersionConf ALL DEPENDS ${to_file})
-add_custom_command(OUTPUT ${to_file}
-    COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR} -P ${CMAKE_CURRENT_BINARY_DIR}/versionConfFile.cmake)
-
-set_source_files_properties(
-	${to_file}
-    PROPERTIES GENERATED TRUE
+    SET(ICONNAME ${iconname})
+    SET(PRODUCTCOPYRIGHT ${PROJECT_COPYRIGHT})
+	CONFIGURE_FILE(${from_file} ${to_file})   
+    ")
+FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/versionConfFile.cmake" "${filecontent}")
+ADD_CUSTOM_TARGET(VersionConf ALL DEPENDS ${to_file})
+ADD_CUSTOM_COMMAND(OUTPUT ${to_file} COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR} -P ${CMAKE_CURRENT_BINARY_DIR}/versionConfFile.cmake)
+SET_SOURCE_FILES_PROPERTIES(${to_file} PROPERTIES GENERATED TRUE 
     #HEADER_FILE_ONLY TRUE
-)
-
-add_dependencies(${prjName} VersionConf)
-
+    )
+ADD_DEPENDENCIES(${prjName} VersionConf)
 endmacro(VersionConf)

@@ -7,6 +7,7 @@
 #include <QCheckBox>
 #include <QToolButton>
 #include <Qsci/qsciscintilla.h>
+#include <QMessageBox>
 
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 
@@ -82,6 +83,16 @@ namespace Robomongo
 
     void FindFrame::goToNextElement()
     {
+        findElement(true);
+    }
+
+    void FindFrame::goToPrevElement()
+    {
+        findElement(false);
+    }
+
+    void FindFrame::findElement(bool forward)
+    {
         const QString &text = _findLine->text();
         if(!text.isEmpty())
         {
@@ -91,40 +102,31 @@ namespace Robomongo
             int index = 0;
             int line = 0;
             _scin->getCursorPosition(&line, &index);
-            QFontMetrics metrics = _scin->fontMetrics();            
+            if(!forward)
+               index -= _scin->selectedText().length();
+            QFontMetrics metrics = _scin->fontMetrics();
             int width = metrics.boundingRect(_scin->text(line)).width();
             if(width>_scin->width()){
                 _scin->setCursorPosition(line, 0);
             }
-
-            _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, wrap, true, line, index);
+            bool isFounded = _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, wrap, forward, line, index);
+            if(!isFounded){
+                int linesCount = 0;
+                int lastIndex=0;
+                if(!forward){
+                    linesCount = _scin->lines()-1;
+                    lastIndex = _scin->text(linesCount).length();
+                }
+                isFounded = _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, wrap, forward, linesCount, lastIndex);
+                if(!isFounded){
+                    QMessageBox::warning(this, tr("Search"),tr("The specified text was not found."));
+                }
+            }
         }
     }
 
     FindFrame::~FindFrame()
     {
         delete _scin;
-    }
-
-    void FindFrame::goToPrevElement()
-    {
-        const QString &text = _findLine->text();
-        if(!text.isEmpty())
-        {
-            bool re = false;
-            bool wo = false;
-            bool wrap = false;
-            int index = 0;
-            int line = 0;
-            _scin->getCursorPosition(&line, &index);
-            index -= _scin->selectedText().length();
-            QFontMetrics metrics = _scin->fontMetrics();            
-            int width = metrics.boundingRect(_scin->text(line)).width();
-            if(width>_scin->width()){
-                _scin->setCursorPosition(line, 0);
-            }
-
-            _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, wrap, false, line, index);
-        }
     }
 }

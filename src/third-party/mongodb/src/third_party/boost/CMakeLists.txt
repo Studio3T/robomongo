@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(boost_mongo_third_party)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR})
 ADD_DEFINITIONS(-DBOOST_THREAD_BUILD_LIB)
- IF(WINDOWS)		
+ IF(WIN32)		
         SET(BOOST_SOURCES_PLATFORM
         libs/thread/src/win32/thread.cpp
         libs/thread/src/win32/tss_dll.cpp

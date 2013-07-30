@@ -1,14 +1,9 @@
 [Desktop Entry]
-Name=@SHORTPRODUCTNAME@
 Type=Application
-Exec=@SHORTPRODUCTNAME@ %U
-Icon=@PRODUCTNAME@
+Exec=@SHORTPRODUCTNAME@
+Name=Robomongo
+GenericName=The IDE for mongodb working.
+GenericName[de]=Die IDE der
+Icon=@ICONNAME@
 Terminal=false
-GenericName=@PRODUCTNAME@
-GenericName[ru]=Бесплатный mongodb клиент
-GenericName[en]=@PRODUCTNAME@
-GenericName[ru_RU]=Бесплатный mongodb клиент
-Comment=Download video files from sites
-Comment[ru]=Пользуйтесь mongodb клентом
-Comment[en]=Use mongodb client
-Categories=Network;FileTransfer;AudioVideo;Qt;
+Categories=Development;IDE;mongodb;

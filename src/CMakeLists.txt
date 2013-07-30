@@ -55,8 +55,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/FunctionTextEditor.h
     robomongo/gui/dialogs/AboutDialog.h
     robomongo/gui/editors/FindFrame.h
-    )
-    
+    )   
 SET(HEADERS_GUI
     robomongo/gui/utils/DialogUtils.h
     robomongo/gui/GuiRegistry.h
@@ -65,7 +64,6 @@ SET(HEADERS_GUI
     robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h
     robomongo/gui/ViewMode.h
     )
-    
 SET(SOURCES_GUI
     robomongo/gui/utils/DialogUtils.cpp
     robomongo/gui/ExampleWindow.cpp
@@ -241,7 +239,7 @@ SET(MONGOCLIENT_RELEASE_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/${LIBMONGOCLIENT_REL
 IF(WIN32)
     SET(PLATFORM_HDRS)
     SET(PLATFORM_SRCS robomongo/shell/util/processinfo_win32.cpp)
-    SET(PLATFORM_LIBRARIES ws2_32 kernel32 advapi32 psapi dbghelp user32 gdi32 comdlg32 shell32 ole32 oleaut32 odbc32 odbccp32 uuid)
+    SET(PLATFORM_LIBRARIES ws2_32 psapi dbghelp user32)
 ELSEIF(APPLE)
     SET(PLATFORM_HDRS)
     SET(PLATFORM_SRCS robomongo/shell/util/processinfo_darwin.cpp)
@@ -317,26 +315,26 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
 ELSEIF(MSVC)
     IF(BOOST_ENABLED)
         ADD_CUSTOM_TARGET(mongoclient_release
-        COMMAND call scons --release --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
-        COMMENT "Build mongoclient release library")
+            COMMAND call scons --release --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
+            COMMENT "Build mongoclient release library")
         ADD_CUSTOM_TARGET(mongoclient_debug
-        COMMAND call scons --d --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
-        COMMENT "Build mongoclient debug library")
+            COMMAND call scons --d --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
+            COMMENT "Build mongoclient debug library")
     ELSE(BOOST_ENABLED)
         ADD_CUSTOM_TARGET(mongoclient_release
-        COMMAND call scons --release --${ARCH_TEXT} mongoclient
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
-        COMMENT "Build mongoclient release library")
+            COMMAND call scons --release --${ARCH_TEXT} mongoclient
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
+            COMMENT "Build mongoclient release library")
         ADD_CUSTOM_TARGET(mongoclient_debug
-        COMMAND call scons --d --${ARCH_TEXT} mongoclient
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
-    COMMENT "Build mongoclient debug library")
+            COMMAND call scons --d --${ARCH_TEXT} mongoclient
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
+            COMMENT "Build mongoclient debug library")
     ENDIF(BOOST_ENABLED)
         SET(MONGO_LIBRARIES optimized ${MONGOCLIENT_RELEASE_LIBRARY} debug ${MONGOCLIENT_DEBUG_LIBRARY})
         SET(ALL_LIBS ${ALL_LIBS} ${MONGO_LIBRARIES})

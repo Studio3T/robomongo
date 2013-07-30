@@ -1,0 +1,6 @@
+#!/bin/sh
+#prerm
+rm /usr/bin/@PROJECT_NAME@
+rm /usr/share/applications/@PROJECT_NAME@.desktop
+rm /usr/share/icons/@PROJECT_NAME@.png
+

@@ -64,6 +64,9 @@ DETECT_QT()
 ##################### Libraries search ###################
 IF(DEVELOPER_QT5)
     SET(QT_COMPONENTS_TO_USE Qt5Core Qt5Gui Qt5Widgets)
+IF(UNIX AND NOT APPLE)
+    SET(QT_COMPONENTS_TO_USE ${QT_COMPONENTS_TO_USE} Qt5DBus) #for libqxcb
+ENDIF(UNIX AND NOT APPLE)
 ELSE()
     SET(QT_COMPONENTS_TO_USE QtCore QtGui)
 ENDIF()

@@ -295,69 +295,69 @@ MACRO(INSTALL_IMAGEFORMATS_HELPER TYPE)
 ENDMACRO(INSTALL_IMAGEFORMATS_HELPER TYPE)
 
 MACRO(INSTALL_IMAGEFORMATS TARGET_NAME LIB_DIST)
-IF(NOT DEVELOPER_QT5)
-    IF(WIN32 OR APPLE)
-        SET(MyImageFormats QICO QGIF QJPEG)
-        IF(APPLE)
-            GET_TARGET_PROPERTY(PROJECT_LOCATION ${TARGET_NAME} LOCATION)
-            STRING(REPLACE "/Contents/MacOS/${TARGET_NAME}" "" MACOSX_BUNDLE_LOCATION ${PROJECT_LOCATION})
-            STRING(REPLACE "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)" "$(CONFIGURATION)" BUNDLE_ROOT ${MACOSX_BUNDLE_LOCATION})
-            SET(IMAGEFORMATS_DIR ${BUNDLE_ROOT}/Contents/MacOS/imageformats)
-        ELSE(APPLE)
-            SET(IMAGEFORMATS_DIR imageformats)
-        ENDIF(APPLE)
-        ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND ${CMAKE_COMMAND} -E make_directory  $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats)
-        
-        FOREACH(imgFormatPlugin ${MyImageFormats})
-            IF(QT_${imgFormatPlugin}_PLUGIN_DEBUG AND QT_${imgFormatPlugin}_PLUGIN_RELEASE)
-                ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
-                    ${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:
-                    ${QT_${imgFormatPlugin}_PLUGIN_DEBUG}> $<$<NOT:$<CONFIG:Debug>>:
-                    ${QT_${imgFormatPlugin}_PLUGIN_RELEASE}>  $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats/
-                    )
-            ELSEIF(QT_${imgFormatPlugin}_PLUGIN_RELEASE)
-                ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
-                    ${CMAKE_COMMAND} -E copy ${QT_${imgFormatPlugin}_PLUGIN_RELEASE} $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats/
-                    )
-            ELSEIF(QT_${imgFormatPlugin}_PLUGIN_DEBUG)
-                ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
-                    ${CMAKE_COMMAND} -E copy ${QT_${imgFormatPlugin}_PLUGIN_DEBUG} $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats/
-                    )
-            ENDIF(QT_${imgFormatPlugin}_PLUGIN_DEBUG AND QT_${imgFormatPlugin}_PLUGIN_RELEASE)
+IF(WIN32 OR APPLE)
+    IF(NOT DEVELOPER_QT5)
+            SET(MyImageFormats QICO QGIF QJPEG)
+            IF(APPLE)
+                GET_TARGET_PROPERTY(PROJECT_LOCATION ${TARGET_NAME} LOCATION)
+                STRING(REPLACE "/Contents/MacOS/${TARGET_NAME}" "" MACOSX_BUNDLE_LOCATION ${PROJECT_LOCATION})
+                STRING(REPLACE "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)" "$(CONFIGURATION)" BUNDLE_ROOT ${MACOSX_BUNDLE_LOCATION})
+                SET(IMAGEFORMATS_DIR ${BUNDLE_ROOT}/Contents/MacOS/imageformats)
+            ELSE(APPLE)
+                SET(IMAGEFORMATS_DIR imageformats)
+            ENDIF(APPLE)
+            ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND ${CMAKE_COMMAND} -E make_directory  $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats)
             
-            IF(NOT CMAKE_BUILD_TYPE AND CMAKE_CONFIGURATION_TYPES)
-                FOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
-                    INSTALL_IMAGEFORMATS_HELPER(${buildconfig})
-                ENDFOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
-            ELSEIF(CMAKE_BUILD_TYPE)
-                    INSTALL_IMAGEFORMATS_HELPER(${CMAKE_BUILD_TYPE})
-            ENDIF(NOT CMAKE_BUILD_TYPE AND CMAKE_CONFIGURATION_TYPES)
-        ENDFOREACH(imgFormatPlugin ${MyImageFormats})
-    MESSAGE(STATUS ${BUNDLE_LIBRARIES_MOVE})
-    ENDIF(WIN32 OR APPLE)
-ELSE()
-    GET_TARGET_PROPERTY(qtCoreLocation ${Qt5Core_LIBRARIES} LOCATION)
-    STRING(REGEX REPLACE "(lib|bin)/Qt5Core(.*)" "plugins/imageformats" imageFormatsPath ${qtCoreLocation})
-    STRING(REGEX REPLACE "(.*)(lib|bin)/Qt5Core." "" dllExtension ${qtCoreLocation})
-    SET(MyImageFormats qico qgif qjpeg)
-
-    IF(APPLE)
-        GET_TARGET_PROPERTY(PROJECT_LOCATION ${TARGET_NAME} LOCATION)
-        STRING(REPLACE "/Contents/MacOS/${TARGET_NAME}" "" MACOSX_BUNDLE_LOCATION ${PROJECT_LOCATION})
-        STRING(REPLACE "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)" "$(CONFIGURATION)" BUNDLE_ROOT ${MACOSX_BUNDLE_LOCATION})
-        SET(IMAGEFORMATS_DIR ${BUNDLE_ROOT}/Contents/MacOS/imageformats)
+            FOREACH(imgFormatPlugin ${MyImageFormats})
+                IF(QT_${imgFormatPlugin}_PLUGIN_DEBUG AND QT_${imgFormatPlugin}_PLUGIN_RELEASE)
+                    ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
+                        ${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:
+                        ${QT_${imgFormatPlugin}_PLUGIN_DEBUG}> $<$<NOT:$<CONFIG:Debug>>:
+                        ${QT_${imgFormatPlugin}_PLUGIN_RELEASE}>  $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats/
+                        )
+                ELSEIF(QT_${imgFormatPlugin}_PLUGIN_RELEASE)
+                    ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
+                        ${CMAKE_COMMAND} -E copy ${QT_${imgFormatPlugin}_PLUGIN_RELEASE} $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats/
+                        )
+                ELSEIF(QT_${imgFormatPlugin}_PLUGIN_DEBUG)
+                    ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
+                        ${CMAKE_COMMAND} -E copy ${QT_${imgFormatPlugin}_PLUGIN_DEBUG} $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats/
+                        )
+                ENDIF(QT_${imgFormatPlugin}_PLUGIN_DEBUG AND QT_${imgFormatPlugin}_PLUGIN_RELEASE)
+                
+                IF(NOT CMAKE_BUILD_TYPE AND CMAKE_CONFIGURATION_TYPES)
+                    FOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
+                        INSTALL_IMAGEFORMATS_HELPER(${buildconfig})
+                    ENDFOREACH(buildconfig ${CMAKE_CONFIGURATION_TYPES})
+                ELSEIF(CMAKE_BUILD_TYPE)
+                        INSTALL_IMAGEFORMATS_HELPER(${CMAKE_BUILD_TYPE})
+                ENDIF(NOT CMAKE_BUILD_TYPE AND CMAKE_CONFIGURATION_TYPES)
+            ENDFOREACH(imgFormatPlugin ${MyImageFormats})
+        MESSAGE(STATUS ${BUNDLE_LIBRARIES_MOVE})
     ELSE()
-        SET(IMAGEFORMATS_DIR imageformats)
-    ENDIF(APPLE)
-    ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND
-        ${CMAKE_COMMAND} -E make_directory  $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats
-        )
+            GET_TARGET_PROPERTY(qtCoreLocation ${Qt5Core_LIBRARIES} LOCATION)
+            STRING(REGEX REPLACE "(lib|bin)/Qt5Core(.*)" "plugins/imageformats" imageFormatsPath ${qtCoreLocation})
+            STRING(REGEX REPLACE "(.*)(lib|bin)/Qt5Core." "" dllExtension ${qtCoreLocation})
+            SET(MyImageFormats qico qgif qjpeg)
 
-    FOREACH(imgFormatPlugin ${MyImageFormats})
-        SET(imagePlugin_release "${imageFormatsPath}/${imgFormatPlugin}.${dllExtension}")
-        QT_ADD_POSTBUILD_STEP(${TARGET_NAME} ${imagePlugin_release} "/imageformats/")
-    ENDFOREACH(imgFormatPlugin ${MyImageFormats})
-ENDIF(NOT DEVELOPER_QT5)
+            IF(APPLE)
+                GET_TARGET_PROPERTY(PROJECT_LOCATION ${TARGET_NAME} LOCATION)
+                STRING(REPLACE "/Contents/MacOS/${TARGET_NAME}" "" MACOSX_BUNDLE_LOCATION ${PROJECT_LOCATION})
+                STRING(REPLACE "$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)" "$(CONFIGURATION)" BUNDLE_ROOT ${MACOSX_BUNDLE_LOCATION})
+                SET(IMAGEFORMATS_DIR ${BUNDLE_ROOT}/Contents/MacOS/imageformats)
+            ELSE()
+                SET(IMAGEFORMATS_DIR imageformats)
+            ENDIF(APPLE)
+            ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND
+                ${CMAKE_COMMAND} -E make_directory  $<TARGET_FILE_DIR:${TARGET_NAME}>/imageformats
+                )
+
+            FOREACH(imgFormatPlugin ${MyImageFormats})
+                SET(imagePlugin_release "${imageFormatsPath}/${imgFormatPlugin}.${dllExtension}")
+                QT_ADD_POSTBUILD_STEP(${TARGET_NAME} ${imagePlugin_release} "/imageformats/")
+            ENDFOREACH(imgFormatPlugin ${MyImageFormats})
+    ENDIF(NOT DEVELOPER_QT5)
+ENDIF(WIN32 OR APPLE)
 ENDMACRO(INSTALL_IMAGEFORMATS TARGET_NAME)
 
 MACRO(INSTALL_QT5PLUGINS TARGET_NAME LIB_DIST)
@@ -408,6 +408,16 @@ IF(APPLE OR WIN32)
     ###########################################
 ELSEIF(UNIX)
     GET_FILENAME_COMPONENT(qtPluginsPath ${qtCoreLocation} PATH)
+    ####### PLATFORMS #######
+    IF(DEFINED ENV{QTDIR})
+        SET(QT5_DIR "$ENV{QTDIR}")
+    ELSE()
+        SET(QT5_DIR "${qtPluginsPath}/..")
+    ENDIF()
+    SET(platformPlugin_release "${QT5_DIR}/plugins/platforms/libqxcb.so")
+    INSTALL(FILES ${platformPlugin_release} DESTINATION ${LIB_DIST}/platforms)
+    ######################### 
+
     SET(MISC_LIBS libicuuc.so.49 libicuuc.so.51 libicui18n.so.49 libicui18n.so.51 libicudata.so.49 libicudata.so.51)
     FOREACH(miscLib ${MISC_LIBS})
         GET_FILENAME_COMPONENT(LibWithoutSymLink ${qtPluginsPath}/${miscLib} REALPATH)	

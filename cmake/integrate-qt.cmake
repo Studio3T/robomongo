@@ -360,18 +360,37 @@ IF(WIN32 OR APPLE)
 ENDIF(WIN32 OR APPLE)
 ENDMACRO(INSTALL_IMAGEFORMATS TARGET_NAME)
 
+function(QUERY_QMAKE VAR RESULT)
+get_target_property(QMAKE_EXECUTABLE Qt5::qmake LOCATION)
+   exec_program(${QMAKE_EXECUTABLE} ARGS "-query ${VAR}" RETURN_VALUE return_code OUTPUT_VARIABLE output )
+      if(NOT return_code)
+     file(TO_CMAKE_PATH "${output}" output)
+          set(${RESULT} ${output} PARENT_SCOPE)
+    endif(NOT return_code)
+  endfunction(QUERY_QMAKE)
+
 MACRO(INSTALL_QT5PLUGINS TARGET_NAME LIB_DIST)
 	GET_TARGET_PROPERTY(qtCoreLocation ${Qt5Core_LIBRARIES} LOCATION)
 IF(APPLE OR WIN32)
     STRING(REGEX REPLACE "(bin|lib)/Qt5Core(.*)" "plugins" qtPluginsPath ${qtCoreLocation})
     STRING(REGEX REPLACE "(.*)(bin|lib)/Qt5Core." "" dllExtension ${qtCoreLocation})
     ####### PLATFORMS #######
+    IF(WIN32)
     ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND
         ${CMAKE_COMMAND} -E make_directory  $<TARGET_FILE_DIR:${TARGET_NAME}>/platforms
         )
     SET(platformPlugin_release "${qtPluginsPath}/platforms/qwindows.${dllExtension}")
     INSTALL(FILES ${platformPlugin_release} DESTINATION ${LIB_DIST}/platforms)
     QT_ADD_POSTBUILD_STEP(${TARGET_NAME} ${platformPlugin_release} "/platforms/")
+    ELSE()
+    ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME} COMMAND
+        ${CMAKE_COMMAND} -E make_directory  $<TARGET_FILE_DIR:${TARGET_NAME}>/platforms
+        )
+    query_qmake(QT_INSTALL_PLUGINS QT_PLUGINS_DIR)
+    SET(platformPlugin_release "${QT_PLUGINS_DIR}/platforms/libqcocoa.dylib")
+    INSTALL(FILES ${platformPlugin_release} DESTINATION ${LIB_DIST}/platforms)
+    QT_ADD_POSTBUILD_STEP(${TARGET_NAME} ${platformPlugin_release} "/platforms/")
+    ENDIF()
     #########################
 
     ####### accessible #######

@@ -72,15 +72,17 @@ namespace
 
 namespace Robomongo
 {
-    EditIndexDialog::EditIndexDialog(QWidget *parent,const EnsureIndexInfo &info,const QString &databaseName):BaseClass(parent),_info(info)
+    EditIndexDialog::EditIndexDialog(QWidget *parent,const EnsureIndexInfo &info,const QString &databaseName,const QString &serverAdress):BaseClass(parent),_info(info)
     {        
         setWindowTitle("Index Properties");
+        Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverAdress);
         Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), _info._collection.name());
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), databaseName);
 
         QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(2, 0, 5, 1);
         hlayout->setSpacing(0);
+        hlayout->addWidget(serverIndicator, 0, Qt::AlignLeft);
         hlayout->addWidget(databaseIndicator, 0, Qt::AlignLeft);
         hlayout->addWidget(collectionIndicator, 0, Qt::AlignLeft);
         hlayout->addStretch(1);

@@ -44,9 +44,6 @@ namespace Robomongo
     {
         QString buildName(const QString& text,int count)
         {
-            if (!count)
-                return text;
-
             if (count == -1)
                 return QString("%1 ...").arg(text);
 
@@ -95,17 +92,17 @@ namespace Robomongo
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
         _collectionFolderItem = new ExplorerDatabaseCategoryTreeItem(this,Collections);
-        _collectionFolderItem->setText(0, detail::buildName("Collections",0));
+        _collectionFolderItem->setText(0, "Collections");
         _collectionFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_collectionFolderItem);
 
         _javascriptFolderItem = new ExplorerDatabaseCategoryTreeItem(this,Functions);
-        _javascriptFolderItem->setText(0, detail::buildName("Functions",0));
+        _javascriptFolderItem->setText(0, "Functions");
         _javascriptFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_javascriptFolderItem);
         
         _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(this,Users);
-        _usersFolderItem->setText(0, detail::buildName("Users",0));
+        _usersFolderItem->setText(0, "Users");
         _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_usersFolderItem);
     }

@@ -32,6 +32,10 @@ namespace Robomongo
 
         SendScintilla(QsciScintilla::SCI_STYLESETFONT, 1, font().family().data() );
         SendScintilla(QsciScintilla::SCI_SETHSCROLLBAR, 0);
+
+        setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); 
+        setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded); 
     }
     void RoboScintilla::wheelEvent(QWheelEvent *e)
     {

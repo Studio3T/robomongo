@@ -10,24 +10,23 @@ SET(PROJECT_GITHUB_FORK "www.github.com/paralect/robomongo")
 SET(PROJECT_GITHUB_ISSUES "www.github.com/paralect/robomongo/issues")
 ##########################################################
 STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
-IF(UNIX AND NOT APPLE)
-    SET(PROJECT_NAME ${PROJECT_NAME_LOWERCASE})
-ENDIF()
-SET (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-########################## Options #########################
-OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
-IF(WIN32)
-	OPTION(MANIFEST_ENABLE "Enable Manifest" ON)
-ENDIF(WIN32)
-#############################################################
-# Configure project
-PROJECT(${PROJECT_NAME})
 SET(MAJOR "0")
 SET(MINOR "7")
 SET(PATCH "2")
 SET(BUILD " beta 1")
 SET(SHORT_VERSION ${MAJOR}.${MINOR}.${PATCH})
 SET(PROJECT_NAME_VERSION "${SHORT_VERSION}${BUILD}" CACHE STRING "${PROJECT_NAME} version")
+IF(UNIX AND NOT APPLE)
+    SET(PROJECT_NAME ${PROJECT_NAME_LOWERCASE})
+ENDIF()
+#############################################################
+# Configure project
+PROJECT(${PROJECT_NAME})
+########################## Options #########################
+OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
+IF(WIN32)
+	OPTION(MANIFEST_ENABLE "Enable Manifest" ON)
+ENDIF(WIN32)
 OPTION(BOOST_ENABLED "Enable boost system support" OFF)
 OPTION(BUILD_PCRECPP_LIBRARY "Build pcrecpp library from sources" ON)
 OPTION(QT_ENABLED "Enable Qt support" ON)

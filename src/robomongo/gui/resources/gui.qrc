@@ -1,7 +1,4 @@
 <RCC>
-<qresource prefix="/">
-    <file alias="qt/etc/qt.conf">qt.conf</file>
-</qresource>
     <qresource prefix="/robomongo">
         <file>icons/collection_16x16.png</file>
         <file>icons/server_16x16.gif</file>

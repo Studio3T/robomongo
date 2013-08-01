@@ -121,7 +121,7 @@ namespace Robomongo
         if (!par)
             return;
         EnsureIndexInfo fakeInfo(par->collection()->info(),"");
-        EditIndexDialog dlg(treeWidget(), fakeInfo , par->databaseItem()->database()->name());
+        EditIndexDialog dlg(treeWidget(), fakeInfo , par->databaseItem()->database()->name(),par->databaseItem()->database()->server()->connectionRecord()->getFullAddress());
         int result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
@@ -191,7 +191,7 @@ namespace Robomongo
             if (!par)
                 return;
 
-            EditIndexDialog dlg(treeWidget(), _info,grPar->databaseItem()->database()->name());
+            EditIndexDialog dlg(treeWidget(), _info,grPar->databaseItem()->database()->name(), grPar->databaseItem()->database()->server()->connectionRecord()->getFullAddress());
             int result = dlg.exec();
             if (result != QDialog::Accepted)
                 return;

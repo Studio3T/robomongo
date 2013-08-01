@@ -62,14 +62,14 @@ namespace Robomongo
     void FindFrame::keyPressEvent(QKeyEvent *keyEvent)
     {
         bool isFocusScin = _scin->isActiveWindow();
-
-        if(Qt::Key_Escape == keyEvent->key() && isFocusScin) {
+        bool isShowFind = _findPanel->isVisible();
+        if(Qt::Key_Escape == keyEvent->key() && isFocusScin && isShowFind) {
             _findPanel->hide();
             _scin->setFocus();
             return keyEvent->accept();
-        } else if (Qt::Key_Return == keyEvent->key() && (keyEvent->modifiers() & Qt::ShiftModifier) && isFocusScin) {
+        } else if (Qt::Key_Return == keyEvent->key() && (keyEvent->modifiers() & Qt::ShiftModifier) && isFocusScin && isShowFind) {
             goToPrevElement();
-        } else if (Qt::Key_Return == keyEvent->key() && isFocusScin) {
+        } else if (Qt::Key_Return == keyEvent->key() && isFocusScin && isShowFind) {
             goToNextElement();
         } else if(((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key()==Qt::Key_F) && isFocusScin) {
             _findPanel->show();

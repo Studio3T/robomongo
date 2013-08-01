@@ -1,4 +1,5 @@
 #include "MongoCollectionInfo.h"
+#include <mongo/client/dbclient.h>
 
 namespace Robomongo
 {

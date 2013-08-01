@@ -7,7 +7,7 @@
 
 namespace
 {
-	const QString filterForScripts = QObject::tr("JS (*.js *.txt)");
+	const QString filterForScripts = QObject::tr("JavaScript (*.js);; All Files (*.*)");
 	bool loadFromFileText(const QString &filePath,QString &text)
 	{
 		bool result =false;

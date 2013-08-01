@@ -185,27 +185,15 @@ ENDMACRO(INSTALL_DEBUG_INFO_FILE)
 
 MACRO(TARGET_BUNDLEFIX TARGET_NAME)
     IF(APPLE)
-        INSTALL(CODE "
-            INCLUDE(BundleUtilities)
-            # STRING(REPLACE \"\${CMAKE_SOURCE_DIR}/src/$(CONFIGURATION)\" \"${CMAKE_INSTALL_PREFIX}\" BUNDLE_LIBRARIES_MOVE \"${BUNDLE_LIBRARIES_MOVE}\")
-
-            find_file(MACOSX_BUNDLE_ROOT ${CLIENT_DATA_DIR} \"${CMAKE_INSTALL_PREFIX}/${TARGET_INSTALL_DESTINATION}/\")
-
-            SET(LIBS_ORIGINAL_DIR \"${QT_LIBRARY_DIR}\"
-                \"${QT_PLUGINS_DIR}/imageformats\")
-                fixup_bundle(
-                \"\${MACOSX_BUNDLE_ROOT}\" 
-                \"\"
-                \"\${LIB_INSTALL_DESTINATION}\" 
-                )
-            # execute_process(COMMAND \"cp\" \"libc++abi.dylib\" \"libc++.1.dylib\" \"\${MACOSX_BUNDLE_ROOT}/Contents/MacOS/\"
-            # WORKING_DIRECTORY \"${CMAKE_SOURCE_DIR}/imports/libc++10.6/lib/\"
-            # OUTPUT_VARIABLE OUTPUT_VAR)
-            # execute_process(COMMAND \"install_name_tool\" \"-change\" \"/usr/lib/libc++abi.dylib\" \"@executable_path/../MacOS/libc++abi.dylib\" \"\${MACOSX_BUNDLE_ROOT}/Contents/MacOS/libc++.1.dylib\")
-            # execute_process(COMMAND \"install_name_tool\" \"-change\" \"/usr/lib/libc++.1.dylib\" \"@executable_path/../MacOS/libc++.1.dylib\" \"\${MACOSX_BUNDLE_ROOT}/Contents/MacOS/${PROJECT_NAME}\")
-            " 
-            COMPONENT Runtime
-        )
+    MESSAGE("LIBS_TO_FIXUP ${LIBS_TO_FIXUP}")
+    SET(BUNDLE_PATH "${CMAKE_INSTALL_PREFIX}/${BUNDLE_NAME}")
+    SET(APPS ${BUNDLE_PATH})
+    INSTALL(CODE "
+file(GLOB_RECURSE QTPLUGINS
+\"\${CMAKE_INSTALL_PREFIX}/*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
+include(BundleUtilities)
+fixup_bundle(\"${APPS}\" \"\${QTPLUGINS}\" \"${LIBS_TO_FIXUP}\")
+" COMPONENT Runtime)
     ENDIF(APPLE)
 ENDMACRO(TARGET_BUNDLEFIX TARGET_NAME)
 

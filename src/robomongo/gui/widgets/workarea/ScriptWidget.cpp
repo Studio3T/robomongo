@@ -304,17 +304,8 @@ namespace Robomongo
      * @brief Calculates line height of text editor
      */
     int ScriptWidget::lineHeight()
-    {
-        QFontMetrics m(_queryText->sciScintilla()->font());
-        int lineHeight = m.lineSpacing() + 1;
-
-    #if defined(Q_OS_UNIX)
-        // this fix required to calculate correct height in Linux.
-        // not the best way, but for now it at least tested on Ubuntu.
-        lineHeight+=2;
-    #endif
-
-        return lineHeight;
+    {  
+        return _queryText->sciScintilla()->textHeight(1);
     }
 
     /**

@@ -21,7 +21,7 @@ namespace Robomongo
     class AllTabsClosedEvent;
     class WorkAreaWidget;
     class ConnectionMenu;
-	class App;
+    class App;
 
     class MainWindow : public QMainWindow
     {

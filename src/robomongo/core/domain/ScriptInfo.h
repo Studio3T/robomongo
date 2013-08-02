@@ -21,14 +21,14 @@ namespace Robomongo
             return _filePath;
         }
         bool loadFromFile(const QString &filePath);
-		bool loadFromFile();
-		void saveToFileAs();
-		void saveToFile();
+        bool loadFromFile();
+        void saveToFileAs();
+        void saveToFile();
     private:
-		QString _script;
+        QString _script;
         const bool _execute;
         const QString _title;
         const CursorPosition _cursor;
-		QString _filePath;
+        QString _filePath;
     };
 }

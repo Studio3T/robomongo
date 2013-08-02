@@ -203,7 +203,6 @@ namespace Robomongo
 
         QAction *updateDocument = new QAction("Update Documents", this);
         connect(updateDocument, SIGNAL(triggered()), SLOT(ui_updateDocument()));
-
         QAction *removeDocument = new QAction("Remove Documents", this);
         connect(removeDocument, SIGNAL(triggered()), SLOT(ui_removeDocument()));
 
@@ -221,7 +220,6 @@ namespace Robomongo
 
         QAction *totalSize = new QAction("Total Size", this);
         connect(totalSize, SIGNAL(triggered()), SLOT(ui_totalSize()));
-
         QAction *shardVersion = new QAction("Shard Version", this);
         connect(shardVersion, SIGNAL(triggered()), SLOT(ui_shardVersion()));
 
@@ -233,7 +231,6 @@ namespace Robomongo
 
         QAction *renameCollection = new QAction("Rename Collection", this);
         connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection()));
-
         QAction *duplicateCollection = new QAction("Duplicate Collection", this);
         connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection()));
 
@@ -321,7 +318,7 @@ namespace Robomongo
     }
 
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
-    {	
+    {
         return tooltipTemplate.arg(collection->name()).arg(collection->info().count()).arg(collection->sizeString());
     }
 

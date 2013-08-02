@@ -38,7 +38,7 @@ namespace Robomongo
         ** Create list of MongoDocuments from QList<BsonObj>. It will take owned version of BSONObj
         */ 
         static QList<MongoDocumentPtr> fromBsonObj(const QList<mongo::BSONObj> &bsonObj);
-		
+
         /*
         ** Return "native" BSONObj
         */

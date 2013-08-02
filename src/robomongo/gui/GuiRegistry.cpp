@@ -63,7 +63,7 @@ namespace Robomongo
     const QIcon &GuiRegistry::indexIcon()const
     {
         static const QIcon collectionIc = QIcon(":/robomongo/icons/text2_16x16.png");
-        return collectionIc;	
+        return collectionIc;
     }
 
     const QIcon &GuiRegistry::userIcon() const

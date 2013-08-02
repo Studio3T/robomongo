@@ -14,16 +14,16 @@ using namespace mongo;
 namespace Robomongo
 {
     /*
-	** Create instance of MongoElement from BSONElement
-	*/
+    ** Create instance of MongoElement from BSONElement
+    */
     MongoElement::MongoElement(BSONElement bsonElement)
     {
         _bsonElement = bsonElement;
     }
 
-	/*
-	** String value. Only for Simple types
-	*/
+    /*
+    ** String value. Only for Simple types
+    */
     QString MongoElement::stringValue()
     {
         if(_stringValue.isNull())
@@ -32,32 +32,31 @@ namespace Robomongo
             buildJsonString(con);
             _stringValue = con.build();
         }
-
         return _stringValue;
     }
 
-	/*
-	** Get field name
-	*/
+    /*
+    ** Get field name
+    */
     QString MongoElement::fieldName()
     {
         return QString::fromUtf8(_bsonElement.fieldName());
     }
 
-	/*
-	** Return MongoDocument of this element (you should check that this IS document before)
-	*/
+    /*
+    ** Return MongoDocument of this element (you should check that this IS document before)
+    */
     MongoDocumentPtr MongoElement::asDocument()
     {
         MongoDocument *doc = new MongoDocument(_bsonElement.Obj());
         return MongoDocumentPtr(doc);
     }
 
-	/*
-	** Build Json string that represent this element.
-	*/
+    /*
+    ** Build Json string that represent this element.
+    */
     void MongoElement::buildJsonString(Concatenator &con)
-	{
+    {
         switch (_bsonElement.type())
         {
         /** double precision floating point value */
@@ -103,7 +102,7 @@ namespace Robomongo
             {
                 MongoDocumentPtr doc = asDocument();
                 doc->buildJsonString(con);
-            }		
+            }
             break;
 
         /** binary data */

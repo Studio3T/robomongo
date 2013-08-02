@@ -22,9 +22,11 @@ namespace Robomongo
         };
         explicit EditIndexDialog(QWidget *parent,const EnsureIndexInfo &info, const QString &databaseName, const QString &serverAdress);
         EnsureIndexInfo info() const;
+
     public Q_SLOTS:
         virtual void accept();
         void uniqueStateChanged(int value);
+
     private:
        QWidget* createBasicTab(); 
        QWidget* createAdvancedTab();

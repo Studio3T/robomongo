@@ -196,7 +196,7 @@ namespace Robomongo
     }
 
     ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(QTreeWidgetItem *parent,ExplorerDatabaseTreeItem *databaseItem,MongoCollection *collection) :
-        BaseClass(parent),_indexDir(new ExplorerCollectionDirIndexesTreeItem(this)),_collection(collection),_databaseItem(databaseItem)
+        BaseClass(parent),_collection(collection),_databaseItem(databaseItem)
     {
         QAction *addDocument = new QAction("Insert Document", this);
         connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument()));
@@ -262,6 +262,8 @@ namespace Robomongo
         
         setText(0, _collection->name());
         setIcon(0, GuiRegistry::instance().collectionIcon());
+
+        _indexDir = new ExplorerCollectionDirIndexesTreeItem(this);
         addChild(_indexDir);
         setToolTip(0, buildToolTip(collection));
 

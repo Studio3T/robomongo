@@ -15,9 +15,11 @@ namespace Robomongo
         ExplorerFunctionTreeItem(QTreeWidgetItem *parent,MongoDatabase *database, const MongoFunction &function);
         MongoFunction function() const { return _function; }
         MongoDatabase *database() const { return _database; }
+
     private Q_SLOTS:
         void ui_editFunction();        
         void ui_dropFunction();
+
     private:
         QString buildToolTip(const MongoFunction &function);
         MongoFunction _function;

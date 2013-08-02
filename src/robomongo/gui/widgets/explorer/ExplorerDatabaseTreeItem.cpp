@@ -43,7 +43,8 @@ namespace Robomongo
     ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database) :
         BaseClass(parent),
         _database(database),
-        _bus(AppRegistry::instance().bus())
+        _bus(AppRegistry::instance().bus()),
+        _collectionSystemFolderItem(NULL)
     {
         QAction *openDbShellAction = new QAction("Open Shell", this);
         openDbShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
@@ -139,7 +140,10 @@ namespace Robomongo
         _collectionFolderItem->setText(0, detail::buildName("Collections",count));
 
         clearChildItems(_collectionFolderItem);
-        createCollectionSystemFolderItem();
+        _collectionSystemFolderItem = new ExplorerTreeItem(_collectionFolderItem);
+        _collectionSystemFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
+        _collectionSystemFolderItem->setText(0, "System");
+        _collectionFolderItem->addChild(_collectionSystemFolderItem);
 
         for (int i = 0; i < collections.size(); ++i) {
             MongoCollection *collection = collections.at(i);
@@ -195,14 +199,6 @@ namespace Robomongo
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseUsersLoadingEvent *event)
     {
         _usersFolderItem->setText(0, detail::buildName("Users",-1));
-    }
-
-    void ExplorerDatabaseTreeItem::createCollectionSystemFolderItem()
-    {
-        _collectionSystemFolderItem = new QTreeWidgetItem();
-        _collectionSystemFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        _collectionSystemFolderItem->setText(0, "System");
-        _collectionFolderItem->addChild(_collectionSystemFolderItem);
     }
 
     void ExplorerDatabaseTreeItem::addCollectionItem(MongoCollection *collection)

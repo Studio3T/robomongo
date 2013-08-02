@@ -21,7 +21,6 @@ namespace Robomongo
     public:
         typedef QWidget BaseClass;
         ExplorerWidget(QWidget *parent);
-
     protected:
         virtual void keyPressEvent(QKeyEvent *event);
 

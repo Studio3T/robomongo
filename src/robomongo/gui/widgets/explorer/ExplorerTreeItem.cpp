@@ -14,7 +14,7 @@ namespace Robomongo
         }
     }
     ExplorerTreeItem::ExplorerTreeItem(QTreeWidgetItem *parent)
-        :QObject(),BaseClass(parent),_contextMenu(new QMenu() )
+        :QObject(),BaseClass(parent),_contextMenu(new QMenu(treeWidget()) )
     {
 
     }

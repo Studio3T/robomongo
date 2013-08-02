@@ -74,10 +74,6 @@ namespace Robomongo
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }
 
-    ExplorerServerTreeItem::~ExplorerServerTreeItem()
-    {
-    }
-
     void ExplorerServerTreeItem::expand()
     {
         _server->loadDatabases();
@@ -93,7 +89,7 @@ namespace Robomongo
 
         // Add 'System' folder
         QIcon folderIcon = GuiRegistry::instance().folderIcon();
-        QTreeWidgetItem *systemFolder = new QTreeWidgetItem();
+        ExplorerTreeItem *systemFolder = new ExplorerTreeItem(this);
         systemFolder->setIcon(0, folderIcon);
         systemFolder->setText(0, "System");
         addChild(systemFolder);

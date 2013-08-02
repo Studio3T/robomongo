@@ -232,9 +232,8 @@ namespace Robomongo
         int maxHeight = editorHeight(18);
         if (height > maxHeight)
             height = maxHeight;
-
+        
         _queryText->sciScintilla()->setFixedHeight(height);
-        _queryText->setFixedHeight(height);
         // this line helps eliminate UI flicks (because of background redraw)
         //layout()->activate();
 

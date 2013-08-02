@@ -74,7 +74,7 @@ namespace Robomongo
 			"QMainWindow::separator { background: #E7E5E4; width: 1px; }"
 		).arg(explorerColor));
         _openAction = new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this);
-        _openAction->setShortcuts(QKeySequence::Open);
+        //_openAction->setShortcuts(QKeySequence::Open);
         connect(_openAction, SIGNAL(triggered()), this, SLOT(open()));
         _saveAction = new QAction(GuiRegistry::instance().saveIcon(),tr("&Save"), this);
         _saveAction->setShortcuts(QKeySequence::Save);

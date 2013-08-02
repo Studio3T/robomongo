@@ -49,7 +49,7 @@ MACRO(DEPLOY_QT_PLUGIN_HELPER _path PATH_WHERE_SEARCH LIB_DIST TYPE)
         #    )
         #LIST(APPEND BUNDLE_LIBRARIES_MOVE ${QT_IMAGEFORMATS_PLUGIN_LOCAL})
     ELSE()
-        MESSAGE(STATUS "Could not deploy ${PLUGIN_${name}} plugin for ${TYPE}")
+        MESSAGE(STATUS "Could not deploy ${PLUGIN_${name}}, required path: ${_path}, plugin for ${TYPE}")
     ENDIF()
 ENDMACRO(DEPLOY_QT_PLUGIN_HELPER)
 

@@ -10,11 +10,11 @@
 namespace
 {
     const QString description = QObject::tr(
-        "<h3>"PROJECT_NAME" "PROJECT_VERSION"</h3>"
+        "<h3>"PROJECT_NAME_TITLE" "PROJECT_VERSION"</h3>"
         "Shell-centric MongoDB management tool."
         "<br/>"
         "<br/>"
-        "Visit "PROJECT_NAME" website: <a href=\""PROJECT_DOMAIN"\">"PROJECT_DOMAIN"</a> <br/>"
+        "Visit "PROJECT_NAME_TITLE" website: <a href=\""PROJECT_DOMAIN"\">"PROJECT_DOMAIN"</a> <br/>"
         "<br/>"
         "<a href=\"https://"PROJECT_GITHUB_FORK"\">Fork</a> project or <a href=\""PROJECT_GITHUB_ISSUES"\">submit</a> issues/proposals on GitHub.  <br/>"
         "<br/>"
@@ -32,7 +32,7 @@ namespace Robomongo
     {
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
-        setWindowTitle("About "PROJECT_NAME);
+        setWindowTitle("About "PROJECT_NAME_TITLE);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
         QGridLayout *layout = new QGridLayout(this);
         layout->setSizeConstraint(QLayout::SetFixedSize);

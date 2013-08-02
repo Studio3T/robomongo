@@ -67,8 +67,6 @@ namespace Robomongo
 
         // Query text widget
         configureQueryText();
-        _queryText->sciScintilla()->setFixedHeight(10);
-        ui_queryLinesCountChanged();
         _queryText->sciScintilla()->setFocus();
 
         _queryText->sciScintilla()->installEventFilter(this);
@@ -224,20 +222,16 @@ namespace Robomongo
 
     void ScriptWidget::ui_queryLinesCountChanged()
     {
-        setUpdatesEnabled(false);
-
         int lines = _queryText->sciScintilla()->lines();
         int height = editorHeight(lines);
 
         int maxHeight = editorHeight(18);
         if (height > maxHeight)
             height = maxHeight;
-        
+        _queryText->setFixedHeight(height);
         _queryText->sciScintilla()->setFixedHeight(height);
-        // this line helps eliminate UI flicks (because of background redraw)
-        //layout()->activate();
-
-        setUpdatesEnabled(true);
+        _queryText->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+        _queryText->setMaximumHeight(height+FindFrame::HeightFindPanel);
     }
 
     void ScriptWidget::onTextChanged()
@@ -287,8 +281,9 @@ namespace Robomongo
     {
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
         javaScriptLexer->setFont(GuiRegistry::instance().font());
-
-        _queryText->sciScintilla()->setFixedHeight(23);
+        int height = editorHeight(1);
+        _queryText->sciScintilla()->setMinimumHeight(height);
+        _queryText->sciScintilla()->setFixedHeight(height);
         _queryText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
         _queryText->sciScintilla()->setFont(GuiRegistry::instance().font());
         _queryText->sciScintilla()->setPaper(QColor(255, 0, 0, 127));
@@ -303,9 +298,9 @@ namespace Robomongo
     /**
      * @brief Calculates line height of text editor
      */
-    int ScriptWidget::lineHeight()
+    int ScriptWidget::lineHeight() const
     {  
-        return _queryText->sciScintilla()->textHeight(1);
+        return _queryText->sciScintilla()->textHeight(-1);
     }
 
     /**
@@ -329,7 +324,7 @@ namespace Robomongo
     /**
      * @brief Calculates preferable editor height for specified number of lines
      */
-    int ScriptWidget::editorHeight(int lines)
+    int ScriptWidget::editorHeight(int lines) const
     {
         return lines * lineHeight() + 8;
     }

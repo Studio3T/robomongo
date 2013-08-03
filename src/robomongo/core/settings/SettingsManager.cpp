@@ -9,25 +9,36 @@
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 
+namespace
+{
+        /**
+         * @brief Version of schema
+         */
+        const QString SchemaVersion = "1.0";
+
+         /**
+         * @brief Config file absolute path
+         *        (usually: /home/user/.config/robomongo/robomongo.json)
+         */
+        const QString _configPath = QString("%1/.config/"PROJECT_NAME_LOWERCASE"/"PROJECT_NAME_LOWERCASE".json").arg(QDir::homePath());
+
+        /**
+         * @brief Config file containing directory path
+         *        (usually: /home/user/.config/robomongo)
+         */
+        const QString _configDir = QString("%1/.config/"PROJECT_NAME_LOWERCASE).arg(QDir::homePath());
+}
+
 namespace Robomongo
 {
-
-    const QString SettingsManager::SchemaVersion = "1.0";
-
     /**
      * Creates SettingsManager for config file in default location
      * ~/.config/robomongo/robomongo.json
      */
-    SettingsManager::SettingsManager(QObject *parent) : QObject(parent)
+    SettingsManager::SettingsManager(QObject *parent) 
+        : QObject(parent),_version(SchemaVersion),_uuidEncoding(DefaultEncoding),_viewMode(Robomongo::Tree)
     {
-        _version = "1.0";
-        _configPath = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
-        _configDir  = QString("%1/.config/robomongo").arg(QDir::homePath());
-        _uuidEncoding = DefaultEncoding;
-        _viewMode = Robomongo::Tree;
-
         load();
-
         qDebug() << "SettingsManager initialized in " << _configPath;
     }
 
@@ -109,9 +120,9 @@ namespace Robomongo
         _connections.clear();
 
         QVariantList list = map.value("connections").toList();
-        foreach(QVariant var, list) {
+        for(QVariantList::iterator it = list.begin();it!=list.end();++it) {
             ConnectionSettings *record = new ConnectionSettings();
-            record->fromVariant(var.toMap());
+            record->fromVariant((*it).toMap());
             _connections.append(record);
         }
     }
@@ -135,8 +146,8 @@ namespace Robomongo
         // 4. Save connections
         QVariantList list;
 
-        foreach(ConnectionSettings *record, _connections) {
-            QVariantMap rm = record->toVariant().toMap();
+        for(QList<ConnectionSettings *>::const_iterator it = _connections.begin();it!=_connections.end();++it) {
+            QVariantMap rm = (*it)->toVariant().toMap();
             list.append(rm);
         }
 
@@ -168,9 +179,10 @@ namespace Robomongo
      */
     void SettingsManager::removeConnection(ConnectionSettings *connection)
     {
-        _connections.removeOne(connection);
-        emit connectionRemoved(connection);
-        delete connection;
+        if(_connections.removeOne(connection)){
+            emit connectionRemoved(connection);
+            delete connection;
+        }
     }
 
     void SettingsManager::reorderConnections(const QList<ConnectionSettings *> &connections)

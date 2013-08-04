@@ -22,6 +22,8 @@ namespace Robomongo
          */
         ConnectionSettings();
 
+        explicit ConnectionSettings(QVariantMap map);
+
         /**
          * @brief Cleanup used resources
          */
@@ -41,11 +43,6 @@ namespace Robomongo
          * @brief Converts to QVariantMap
          */
         QVariant toVariant() const;
-
-        /**
-         * @brief Converts from QVariantMap (and overwrite current state)
-         */
-        void fromVariant(QVariantMap map);
 
         /**
          * @brief Name of connection

@@ -2,16 +2,20 @@
 
 namespace Robomongo
 {
-
     CredentialSettings::CredentialSettings() :
+        _userName(),
+        _userPassword(),
+        _databaseName(),
         _enabled(false)
     {
-    }
 
+    }
     CredentialSettings::CredentialSettings(const QVariantMap &map) :
-        _enabled(false)
+        _userName(map.value("userName").toString()),
+        _userPassword(map.value("userPassword").toString()),
+        _databaseName(map.value("databaseName").toString()),
+        _enabled(map.value("enabled").toBool())
     {
-        fromVariant(map);
     }
 
     /**
@@ -19,11 +23,7 @@ namespace Robomongo
      */
     CredentialSettings *CredentialSettings::clone() const
     {
-        CredentialSettings *cloned = new CredentialSettings();
-        cloned->setUserName(userName());
-        cloned->setUserPassword(userPassword());
-        cloned->setDatabaseName(databaseName());
-        cloned->setEnabled(enabled());
+        CredentialSettings *cloned = new CredentialSettings(*this);
         return cloned;
     }
 
@@ -35,13 +35,5 @@ namespace Robomongo
         map.insert("databaseName", databaseName());
         map.insert("enabled", enabled());
         return map;
-    }
-
-    void CredentialSettings::fromVariant(QVariantMap map)
-    {
-        setUserName(map.value("userName").toString());
-        setUserPassword(map.value("userPassword").toString());
-        setDatabaseName(map.value("databaseName").toString());
-        setEnabled(map.value("enabled").toBool());
     }
 }

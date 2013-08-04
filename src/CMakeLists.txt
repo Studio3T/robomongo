@@ -181,6 +181,7 @@ SET(HEADERS_CORE
     robomongo/core/domain/MongoFunction.h
     robomongo/core/domain/Enums.h
     robomongo/core/HexUtils.h
+    robomongo/core/utils/BsonUtils.h
     )
 SET(SOURCES_CORE
     robomongo/core/AppRegistry.cpp
@@ -220,6 +221,7 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoUser.cpp
     robomongo/core/domain/MongoFunction.cpp
     robomongo/core/HexUtils.cpp
+    robomongo/core/utils/BsonUtils.cpp
     )
 
 IF(WIN32)

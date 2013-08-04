@@ -10,8 +10,7 @@ namespace Robomongo
     {
     public:
         CredentialSettings();
-
-        CredentialSettings(const QVariantMap &map);
+        explicit CredentialSettings(const QVariantMap &map);
 
         /**
          * @brief Clones credential settings.
@@ -22,12 +21,6 @@ namespace Robomongo
          * @brief Converts to QVariantMap
          */
         QVariant toVariant() const;
-
-        /**
-         * @brief Converts from QVariantMap (and overwrite current state)
-         */
-        void fromVariant(QVariantMap map);
-
 
         /**
          * @brief User name

@@ -81,15 +81,6 @@ namespace Robomongo
         void connectionRemoved(ConnectionSettings *connection);
 
     private:
-        /**
-         * @brief Load settings from the map. Existings settings will be overwritten.
-         */
-        void loadFromMap(QVariantMap &map);
-
-        /**
-         * @brief Save all settings to map.
-         */
-        QVariantMap convertToMap() const;
 
         /**
          * @brief Version of settings schema currently loaded

@@ -79,12 +79,6 @@ namespace Robomongo
         void clearCredentials();
 
         /**
-         * @brief Returns credential for specified database, or NULL if no such
-         * credential in connection.
-         */
-        CredentialSettings *credential(QString databaseName);
-
-        /**
          * @brief Checks whether this connection has primary credential
          * which is also enabled.
          */
@@ -134,13 +128,13 @@ namespace Robomongo
         }
 
     private:
+        CredentialSettings *findCredential(const QString &databaseName)const;
         QString _connectionName;
         QString _serverHost;
         QString _defaultDatabase;
         unsigned _serverPort;
 
         QList<CredentialSettings *> _credentials;
-        QHash<QString, CredentialSettings *> _credentialsByDatabaseName;
     };
 }
 

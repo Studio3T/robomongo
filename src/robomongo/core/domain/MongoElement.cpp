@@ -16,8 +16,7 @@ namespace Robomongo
     /*
 	** Create instance of MongoElement from BSONElement
 	*/
-    MongoElement::MongoElement(BSONElement bsonElement) : QObject(),
-        _settingsManager(AppRegistry::instance().settingsManager())
+    MongoElement::MongoElement(BSONElement bsonElement)
 	{
 		_bsonElement = bsonElement;
 	}
@@ -42,10 +41,7 @@ namespace Robomongo
 	*/
 	QString MongoElement::fieldName()
 	{
-		if (_fieldName.isNull())
-			_fieldName = QString::fromUtf8(_bsonElement.fieldName());
-
-		return _fieldName;
+		return QString::fromUtf8(_bsonElement.fieldName());
 	}
 
 	/*
@@ -115,7 +111,7 @@ namespace Robomongo
             {
                 mongo::BinDataType binType = _bsonElement.binDataType();
                 if (binType == mongo::newUUID || binType == mongo::bdtUUID) {
-                    std::string uuid = HexUtils::formatUuid(_bsonElement, _settingsManager->uuidEncoding());
+                    std::string uuid = HexUtils::formatUuid(_bsonElement, AppRegistry::instance().settingsManager()->uuidEncoding());
                     con.append(QString::fromStdString(uuid));
                     break;
                 }

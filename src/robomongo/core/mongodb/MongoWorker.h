@@ -13,6 +13,7 @@ namespace Robomongo
 {
     class MongoClient;
     class ScriptEngine;
+    class ConnectionSettings;
 
     class MongoWorker : public QObject
     {

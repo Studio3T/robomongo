@@ -9,6 +9,7 @@ namespace Robomongo
 {
     class BsonTreeItem;
     class InsertDocumentResponse;
+    class MongoShell;
 
     class BsonTreeWidget : public QTreeWidget
     {

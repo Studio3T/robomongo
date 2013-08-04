@@ -19,10 +19,10 @@ namespace Robomongo
     class DocumentListLoadedEvent;
     class ScriptExecutedEvent;
     class AutocompleteResponse;
-    class PlainJavaScriptEditor;
     class OutputWidget;
     class WorkAreaTabWidget;
     class ScriptWidget;
+    class MongoShell;
 
     class QueryWidget : public QWidget
     {

@@ -1,13 +1,11 @@
 #pragma once
-#include <QObject>
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 
 namespace Robomongo
 {
-    class MongoCollection : public QObject
+    class MongoCollection
     {
-        Q_OBJECT
     public:
         MongoCollection(MongoDatabase *database, const MongoCollectionInfo &info);
 
@@ -27,7 +25,6 @@ namespace Robomongo
          * @brief Database that contains this collection
          */
         MongoDatabase *_database;
-
         bool _system;
         MongoCollectionInfo _info;
         MongoNamespace _ns;

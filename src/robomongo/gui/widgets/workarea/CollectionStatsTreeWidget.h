@@ -6,6 +6,8 @@
 
 namespace Robomongo
 {
+    class MongoShell;
+
     class CollectionStatsTreeWidget : public QTreeWidget
     {
         Q_OBJECT

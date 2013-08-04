@@ -11,6 +11,7 @@ namespace Robomongo
     class BsonWidget;
     class JsonPrepareThread;
     class CollectionStatsTreeWidget;
+    class MongoShell;
 
     class OutputItemContentWidget : public QWidget
     {

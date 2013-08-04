@@ -87,26 +87,27 @@ namespace Robomongo
         return map;
     }
 
+     CredentialSettings *ConnectionSettings::findCredential(const QString &databaseName)const
+     {
+         CredentialSettings *result = NULL;
+         for(QList<CredentialSettings *>::const_iterator it = _credentials.begin();it!=_credentials.end();++it)
+         {
+             CredentialSettings * cred = *it;
+             if(cred->databaseName()==databaseName){
+                 result = cred;
+                 break;
+             }
+         }
+         return result;
+     }
+
     /**
      * @brief Adds credential to this connection
      */
     void ConnectionSettings::addCredential(CredentialSettings *credential)
     {
-        if (_credentialsByDatabaseName.contains(credential->databaseName()))
-            // here we have leak of 'credential'...
-            return;
-
-        _credentials.append(credential);
-        _credentialsByDatabaseName.insert(credential->databaseName(), credential);
-    }
-
-    /**
-     * @brief Returns credential for specified database, or NULL if no such
-     * credential in connection.
-     */
-    CredentialSettings *ConnectionSettings::credential(QString databaseName)
-    {
-        return _credentialsByDatabaseName.value(databaseName);
+        if (!findCredential(credential->databaseName()))
+            _credentials.append(credential);
     }
 
     /**
@@ -138,9 +139,7 @@ namespace Robomongo
     void ConnectionSettings::clearCredentials()
     {
         qDeleteAll(_credentials);
-
         _credentials.clear();
-        _credentialsByDatabaseName.clear();
     }
 
 }

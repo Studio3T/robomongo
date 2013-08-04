@@ -1,19 +1,16 @@
 #pragma once
-#include <QObject>
+#include <QString>
 #include <mongo/bson/bsonobj.h>
 #include "robomongo/core/Core.h"
 namespace Robomongo
 {
 	class Concatenator;
-    class SettingsManager;
 
 	/*
 	** Wrapper around BSONElement
 	*/
-	class MongoElement : public QObject 
+	class MongoElement 
 	{
-		Q_OBJECT
-
 	public:
 		/*
 		** Create instance of MongoElement from BSONElement
@@ -85,15 +82,8 @@ namespace Robomongo
         mongo::BSONElement _bsonElement;
 
         /*
-        ** Field Name
-        */
-        QString _fieldName;
-
-        /*
         ** String value if this element
         */
         QString _stringValue;
-
-        SettingsManager *_settingsManager;
 	};
 }

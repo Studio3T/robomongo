@@ -14,10 +14,13 @@
 
 namespace Robomongo
 {
+    class MongoServer;
+    class MongoShell;
+    class MongoDatabase;
+
     /**
      * @brief Init Request & Response
      */
-
     class InitRequest : public Event
     {
         R_EVENT

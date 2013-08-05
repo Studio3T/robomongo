@@ -26,16 +26,6 @@ namespace
     {
         Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, database->name(), cursor);
     }
-
-    void clearChildItems(QTreeWidgetItem *root)
-    {
-        int itemCount = root->childCount();
-        for (int i = 0; i < itemCount; ++i) {
-            QTreeWidgetItem *item = root->child(0);
-            root->removeChild(item);
-            delete item;
-        }
-    }
 }
 
 namespace Robomongo

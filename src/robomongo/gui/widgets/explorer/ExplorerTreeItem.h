@@ -7,6 +7,7 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
+    void clearChildItems(QTreeWidgetItem *root);
     class ExplorerTreeItem :public QObject, public QTreeWidgetItem
     {
         Q_OBJECT

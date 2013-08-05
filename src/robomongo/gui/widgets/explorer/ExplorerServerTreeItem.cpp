@@ -89,13 +89,7 @@ namespace Robomongo
         setText(0, buildServerName(&count));
 
         // Remove child items
-        int itemCount = childCount();
-        for (int i = 0; i < itemCount; ++i)
-        {
-            QTreeWidgetItem *p = child(0);
-            removeChild(p);
-            delete p;
-        }
+        clearChildItems(this);
 
         // Add 'System' folder
         QIcon folderIcon = GuiRegistry::instance().folderIcon();

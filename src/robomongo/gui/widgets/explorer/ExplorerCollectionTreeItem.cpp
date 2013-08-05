@@ -26,15 +26,6 @@ namespace
         "<tr><td>Size:</td><td><b>&nbsp;&nbsp;%2</b></td></tr>"
         "</table>"
         );
-    void clearChildren(QTreeWidgetItem *root)
-    {
-        int itemCount = root->childCount();
-        for (int i = 0; i < itemCount; ++i) {
-            QTreeWidgetItem *item = root->child(0);
-            root->removeChild(item);
-            delete item;
-        }
-    }
 }
 namespace Robomongo
 {
@@ -280,7 +271,7 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::handle(LoadCollectionIndexesResponse *event)
     {
-        clearChildren(_indexDir);
+        clearChildItems(_indexDir);
         const QList<EnsureIndexInfo> &indexes = event->indexes();
         for(QList<EnsureIndexInfo>::const_iterator it=indexes.begin();it!=indexes.end();++it)
         {

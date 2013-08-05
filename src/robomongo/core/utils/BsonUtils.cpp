@@ -1,4 +1,5 @@
 #include "robomongo/core/utils/BsonUtils.h"
+#include <mongo/client/dbclient.h>
 
 namespace Robomongo
 {

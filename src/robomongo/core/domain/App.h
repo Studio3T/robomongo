@@ -6,11 +6,12 @@
 namespace Robomongo
 {
     class EventBus;
-	class MongoServer;
-	class ConnectionSettings;
-	class MongoCollection;
-	class MongoShell;
-	class MongoDatabase;
+    class MongoServer;
+    class ConnectionSettings;
+    class MongoCollection;
+    class MongoShell;
+    class MongoDatabase;
+
     class App : public QObject
     {
         Q_OBJECT

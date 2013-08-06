@@ -22,6 +22,8 @@ namespace Robomongo
          */
         ConnectionSettings();
 
+        explicit ConnectionSettings(QVariantMap map);
+
         /**
          * @brief Cleanup used resources
          */
@@ -41,11 +43,6 @@ namespace Robomongo
          * @brief Converts to QVariantMap
          */
         QVariant toVariant() const;
-
-        /**
-         * @brief Converts from QVariantMap (and overwrite current state)
-         */
-        void fromVariant(QVariantMap map);
 
         /**
          * @brief Name of connection
@@ -80,12 +77,6 @@ namespace Robomongo
          * @brief Clears and releases memory occupied by credentials
          */
         void clearCredentials();
-
-        /**
-         * @brief Returns credential for specified database, or NULL if no such
-         * credential in connection.
-         */
-        CredentialSettings *credential(QString databaseName);
 
         /**
          * @brief Checks whether this connection has primary credential
@@ -137,13 +128,13 @@ namespace Robomongo
         }
 
     private:
+        CredentialSettings *findCredential(const QString &databaseName)const;
         QString _connectionName;
         QString _serverHost;
         QString _defaultDatabase;
         unsigned _serverPort;
 
         QList<CredentialSettings *> _credentials;
-        QHash<QString, CredentialSettings *> _credentialsByDatabaseName;
     };
 }
 

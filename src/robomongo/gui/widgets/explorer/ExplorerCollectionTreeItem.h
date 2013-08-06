@@ -32,6 +32,7 @@ namespace Robomongo
         {
             return _databaseItem;
         }
+
     public Q_SLOTS:
         void handle(LoadCollectionIndexesResponse *event);
         void handle(DeleteCollectionIndexResponse *event);
@@ -55,7 +56,7 @@ namespace Robomongo
 
     private:
         QString buildToolTip(MongoCollection *collection);
-        ExplorerCollectionDirIndexesTreeItem * const _indexDir;
+        ExplorerCollectionDirIndexesTreeItem *_indexDir;
         MongoCollection *const _collection;
         ExplorerDatabaseTreeItem *const _databaseItem;
     };

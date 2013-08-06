@@ -69,8 +69,8 @@ namespace Robomongo
         setLayout(layout);
 
         if (shell->isExecutable()) {
-			showProgress();
-		}
+            showProgress();
+        }
     }
 
     void QueryWidget::execute()

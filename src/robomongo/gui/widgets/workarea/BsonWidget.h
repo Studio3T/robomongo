@@ -13,6 +13,7 @@ QT_END_NAMESPACE
 namespace Robomongo
 {
     class BsonTreeWidget;
+    class MongoShell;
 
     /*
     ** Represents list of bson objects

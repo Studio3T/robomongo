@@ -1,75 +1,30 @@
 #include "robomongo/core/mongodb/MongoClient.h"
 
+#include "robomongo/core/utils/BsonUtils.h"
+
 namespace
 {
-    namespace detail
-    {
-        template<mongo::BSONType BSONType_t>
-        struct func_traits
-        {
-            typedef std::string type;
-            static type getField(const mongo::BSONElement &elem)
-            {
-                return elem.toString();
-            }
-        };
-        template<>
-        struct func_traits<mongo::Bool>
-        {
-            typedef bool type;
-            static type getField(const mongo::BSONElement &elem)
-            {
-                return elem.Bool();
-            }
-        };
-        template<>
-        struct func_traits<mongo::String>
-        {
-            typedef std::string type;
-            static type getField(const mongo::BSONElement &elem)
-            {
-                return elem.String();
-            }
-        };
-        template<>
-        struct func_traits<mongo::NumberInt>
-        {
-            typedef int type;
-            static type getField(const mongo::BSONElement &elem)
-            {
-                return elem.Int();
-            }
-        };
-    }
-
-    template<mongo::BSONType BSONType_t>
-    typename detail::func_traits<BSONType_t>::type getField(const mongo::BSONObj &obj,const char *data)
-    {
-        typedef typename detail::func_traits<BSONType_t> func_t;
-        typename func_t::type result=typename func_t::type();
-        mongo::BSONElement elem = obj.getField(data);
-        if (!elem.eoo()){
-            result = func_t::getField(elem);
-        }  
-        return result;
-    }
-
     Robomongo::EnsureIndexInfo makeEnsureIndexInfoFromBsonObj(const Robomongo::MongoCollectionInfo &collection,const mongo::BSONObj &obj)
     {
+        using namespace Robomongo::BsonUtils;
         Robomongo::EnsureIndexInfo info(collection);
+        std::string str = obj.toString();
         info._name = getField<mongo::String>(obj,"name");
-        std::string  key = getField<mongo::Object>(obj,"key");
-        if(!key.empty()){
-            info._request = key.substr(5);
+        mongo::BSONObj keyObj = getField<mongo::Object>(obj,"key");
+        if(keyObj.isValid()){
+            std::string key = keyObj.toString();
+            if(!key.empty()){
+                info._request = key.substr(5);
+            }
         }
         info._unique = getField<mongo::Bool>(obj,"unique");
         info._backGround = getField<mongo::Bool>(obj,"background");
         info._dropDups = getField<mongo::Bool>(obj,"dropDups"); 
         info._sparse = getField<mongo::Bool>(obj,"sparse");
         info._ttl = getField<mongo::NumberInt>(obj,"expireAfterSeconds"); 
-        info._defaultLanguage = getField<mongo::String>(obj,"default_language").c_str();
-        info._languageOverride = getField<mongo::String>(obj,"language_override").c_str();
-        info._textWeights = getField<mongo::String>(obj,"weights").c_str();               
+        info._defaultLanguage = getField<mongo::String>(obj,"default_language");
+        info._languageOverride = getField<mongo::String>(obj,"language_override");
+        info._textWeights = getField<mongo::String>(obj,"weights");               
         return info;
     }
 }

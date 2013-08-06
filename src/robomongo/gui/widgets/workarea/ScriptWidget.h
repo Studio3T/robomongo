@@ -83,7 +83,7 @@ namespace Robomongo
         /**
          * @brief Calculates line height of text editor
          */
-        int lineHeight();
+        int lineHeight() const;
 
         /**
          * @brief Calculates char width of text editor
@@ -100,7 +100,7 @@ namespace Robomongo
         /**
          * @brief Calculates preferable editor height for specified number of lines
          */
-        int editorHeight(int lines);
+        int editorHeight(int lines) const;
         
         AutoCompletionInfo sanitizeForAutocompletion();
         FindFrame *_queryText;

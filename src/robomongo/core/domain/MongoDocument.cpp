@@ -36,7 +36,6 @@ namespace Robomongo
 
     MongoDocument::~MongoDocument()
     {
-        NO_OP;
     }
 
     /*

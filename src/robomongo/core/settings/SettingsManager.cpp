@@ -9,25 +9,36 @@
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 
+namespace
+{
+        /**
+         * @brief Version of schema
+         */
+        const QString SchemaVersion = "1.0";
+
+         /**
+         * @brief Config file absolute path
+         *        (usually: /home/user/.config/robomongo/robomongo.json)
+         */
+        const QString _configPath = QString("%1/.config/"PROJECT_NAME_LOWERCASE"/"PROJECT_NAME_LOWERCASE".json").arg(QDir::homePath());
+
+        /**
+         * @brief Config file containing directory path
+         *        (usually: /home/user/.config/robomongo)
+         */
+        const QString _configDir = QString("%1/.config/"PROJECT_NAME_LOWERCASE).arg(QDir::homePath());
+}
+
 namespace Robomongo
 {
-
-    const QString SettingsManager::SchemaVersion = "1.0";
-
     /**
      * Creates SettingsManager for config file in default location
      * ~/.config/robomongo/robomongo.json
      */
-    SettingsManager::SettingsManager(QObject *parent) : QObject(parent)
+    SettingsManager::SettingsManager(QObject *parent) 
+        : QObject(parent),_version(SchemaVersion),_uuidEncoding(DefaultEncoding),_viewMode(Robomongo::Tree)
     {
-        _version = "1.0";
-        _configPath = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
-        _configDir  = QString("%1/.config/robomongo").arg(QDir::homePath());
-        _uuidEncoding = DefaultEncoding;
-        _viewMode = Robomongo::Tree;
-
         load();
-
         qDebug() << "SettingsManager initialized in " << _configPath;
     }
 
@@ -53,7 +64,31 @@ namespace Robomongo
                 QVariantMap map = parser.parse(f.readAll(), &ok).toMap();
                 if(ok)
                 {
-                    loadFromMap(map);
+                    // 1. Load version
+                    _version = map.value("version").toString();
+
+                    // 2. Load UUID encoding
+                    int encoding = map.value("uuidEncoding").toInt();
+                    if (encoding > 3 || encoding < 0)
+                        encoding = 0;
+
+                    _uuidEncoding = (UUIDEncoding) encoding;
+
+                    // 3. Load view mode
+                    int viewMode = map.value("viewMode").toInt();
+                    if (viewMode > 2 || encoding < 0)
+                        viewMode = 0;
+
+                    _viewMode = (ViewMode) viewMode;
+
+                    // 4. Load connections
+                    _connections.clear();
+
+                    QVariantList list = map.value("connections").toList();
+                    for(QVariantList::iterator it = list.begin();it!=list.end();++it) {
+                        ConnectionSettings *record = new ConnectionSettings((*it).toMap());
+                        _connections.append(record);
+                    }
                     result = true;
                 }
             }
@@ -68,59 +103,6 @@ namespace Robomongo
     bool SettingsManager::save()
     {
         bool result = false;
-        QVariantMap map = convertToMap();
-        if (QDir().mkpath(_configDir))
-        {
-            QFile f(_configPath);
-            if(f.open(QIODevice::WriteOnly | QIODevice::Truncate))
-            {
-                QJson::Serializer s;
-                s.setIndentMode(QJson::IndentFull);
-                s.serialize(map, &f, &result);
-                qDebug() << "Settings saved to: " << _configPath;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Load settings from the map. Existings settings will be overwritten.
-     */
-    void SettingsManager::loadFromMap(QVariantMap &map)
-    {
-        // 1. Load version
-        _version = map.value("version").toString();
-
-        // 2. Load UUID encoding
-        int encoding = map.value("uuidEncoding").toInt();
-        if (encoding > 3 || encoding < 0)
-            encoding = 0;
-
-        _uuidEncoding = (UUIDEncoding) encoding;
-
-        // 3. Load view mode
-        int viewMode = map.value("viewMode").toInt();
-        if (viewMode > 2 || encoding < 0)
-            viewMode = 0;
-
-        _viewMode = (ViewMode) viewMode;
-
-        // 4. Load connections
-        _connections.clear();
-
-        QVariantList list = map.value("connections").toList();
-        foreach(QVariant var, list) {
-            ConnectionSettings *record = new ConnectionSettings();
-            record->fromVariant(var.toMap());
-            _connections.append(record);
-        }
-    }
-
-    /**
-     * Save all settings to map.
-     */
-    QVariantMap SettingsManager::convertToMap() const
-    {
         QVariantMap map;
 
         // 1. Save schema version
@@ -135,14 +117,24 @@ namespace Robomongo
         // 4. Save connections
         QVariantList list;
 
-        foreach(ConnectionSettings *record, _connections) {
-            QVariantMap rm = record->toVariant().toMap();
+        for(QList<ConnectionSettings *>::const_iterator it = _connections.begin();it!=_connections.end();++it) {
+            QVariantMap rm = (*it)->toVariant().toMap();
             list.append(rm);
         }
 
         map.insert("connections", list);
-
-        return map;
+        if (QDir().mkpath(_configDir))
+        {
+            QFile f(_configPath);
+            if(f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+            {
+                QJson::Serializer s;
+                s.setIndentMode(QJson::IndentFull);
+                s.serialize(map, &f, &result);
+                qDebug() << "Settings saved to: " << _configPath;
+            }
+        }
+        return result;
     }
 
     /**
@@ -168,9 +160,10 @@ namespace Robomongo
      */
     void SettingsManager::removeConnection(ConnectionSettings *connection)
     {
-        _connections.removeOne(connection);
-        emit connectionRemoved(connection);
-        delete connection;
+        if(_connections.removeOne(connection)){
+            emit connectionRemoved(connection);
+            delete connection;
+        }
     }
 
     void SettingsManager::reorderConnections(const QList<ConnectionSettings *> &connections)

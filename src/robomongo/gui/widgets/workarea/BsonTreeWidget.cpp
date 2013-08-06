@@ -127,7 +127,7 @@ namespace Robomongo
         BsonTreeItem *item = static_cast<BsonTreeItem *>(treeItem);
         item->expand();
 
-    /*	MongoDocumentIterator iterator(item->document());
+        /*MongoDocumentIterator iterator(item->document());
 
         while(iterator.hasMore())
         {
@@ -180,7 +180,7 @@ namespace Robomongo
 
         if (element->isSimpleType())
         {
-    /*		if (element->fieldName() == "_id")
+            /*if (element->fieldName() == "_id")
                 return AppRegistry::instance().bsonIdIcon();*/
 
             if (element->isString())

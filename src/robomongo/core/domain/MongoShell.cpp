@@ -9,8 +9,8 @@
 namespace Robomongo
 {
 
-    MongoShell::MongoShell(MongoServer *server, const ScriptInfo &scriptInfo) :
-        QObject(),
+    MongoShell::MongoShell(MongoServer *server, const ScriptInfo &scriptInfo) 
+        : QObject(),
         _scriptInfo(scriptInfo),
         _server(server),
         _client(server->client()),
@@ -26,7 +26,7 @@ namespace Robomongo
     void MongoShell::open(const QString &script, const QString &dbName)
     {
         _bus->publish(new ScriptExecutingEvent(this));
-		_scriptInfo.setScript(script);
+        _scriptInfo.setScript(script);
         _client->send(new ExecuteScriptRequest(this, query(), dbName));
     }
     void MongoShell::execute(const QString &dbName)
@@ -57,18 +57,18 @@ namespace Robomongo
     {
         mongo::Scope::setInterruptFlag(true);
     }
-	void MongoShell::loadFromFile()
-	{
+    void MongoShell::loadFromFile()
+    {
         _scriptInfo.loadFromFile();
-	}
-	void MongoShell::saveToFileAs()
-	{
-		_scriptInfo.saveToFileAs();
-	}
-	void MongoShell::saveToFile()
-	{
-		_scriptInfo.saveToFile();
-	}
+    }
+    void MongoShell::saveToFileAs()
+    {
+        _scriptInfo.saveToFileAs();
+    }
+    void MongoShell::saveToFile()
+    {
+        _scriptInfo.saveToFile();
+    }
     void MongoShell::handle(ExecuteQueryResponse *event)
     {
         _bus->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, query(), event->documents));

@@ -24,17 +24,19 @@ namespace Robomongo
         QString query() const { return _scriptInfo.script(); }
         void execute(const QString &dbName = QString());
         bool isExecutable() const {return _scriptInfo.execute(); }
-		const QString &title() const { return _scriptInfo.title(); }
-		const CursorPosition &cursor() const { return _scriptInfo.cursor(); }
+        const QString &title() const { return _scriptInfo.title(); }
+        const CursorPosition &cursor() const { return _scriptInfo.cursor(); }
         void setScript(const QString &script){return _scriptInfo.setScript(script);}
         QString filePath() const
         {
             return _scriptInfo.filePath();
         }
+
     public Q_SLOTS:
         void saveToFile();
         void saveToFileAs();
         void loadFromFile();
+
     protected Q_SLOTS:
         void handle(ExecuteQueryResponse *event);
         void handle(ExecuteScriptResponse *event);

@@ -3,6 +3,8 @@
 namespace
 {
     const unsigned port = 27017;
+    const char* defaultServerHost = "localhost";
+    const char* defaultNameConnection = "New Connection";
 }
 
 namespace Robomongo
@@ -11,11 +13,24 @@ namespace Robomongo
     /**
      * @brief Creates ConnectionSettings with default values
      */
-    ConnectionSettings::ConnectionSettings() : QObject(),
+    ConnectionSettings::ConnectionSettings(): QObject(),
         _serverPort(port),
-        _serverHost("localhost"),
-        _defaultDatabase(""),
-        _connectionName("New Connection") { }
+        _serverHost(defaultServerHost),
+        _defaultDatabase(),
+        _connectionName(defaultNameConnection) {}
+
+    ConnectionSettings::ConnectionSettings(QVariantMap map) : QObject(),
+        _serverPort(map.value("serverPort").toInt()),
+        _serverHost(map.value("serverHost").toString()),
+        _defaultDatabase(map.value("defaultDatabase").toString()),
+        _connectionName(map.value("connectionName").toString()) 
+    {
+        QVariantList list = map.value("credentials").toList();
+        foreach(QVariant var, list) {
+            CredentialSettings *credential = new CredentialSettings(var.toMap());
+            addCredential(credential);
+        }
+    }
 
     /**
      * @brief Cleanup used resources
@@ -46,8 +61,9 @@ namespace Robomongo
         setDefaultDatabase(source->defaultDatabase());
 
         clearCredentials();
-        foreach(CredentialSettings *credential, source->credentials()) {
-            addCredential(credential->clone());
+        QList<CredentialSettings *> cred = source->credentials();
+        for(QList<CredentialSettings *>::iterator it = cred.begin();it!=cred.end();++it) {
+            addCredential((*it)->clone());
         }
     }
 
@@ -71,43 +87,27 @@ namespace Robomongo
         return map;
     }
 
-    /**
-     * @brief Converts from QVariantMap (and clean current state)
-     */
-    void ConnectionSettings::fromVariant(QVariantMap map)
-    {
-        setConnectionName(map.value("connectionName").toString());
-        setServerHost(map.value("serverHost").toString());
-        setServerPort(map.value("serverPort").toInt());
-        setDefaultDatabase(map.value("defaultDatabase").toString());
-
-        QVariantList list = map.value("credentials").toList();
-        foreach(QVariant var, list) {
-            CredentialSettings *credential = new CredentialSettings(var.toMap());
-            addCredential(credential);
-        }
-    }
+     CredentialSettings *ConnectionSettings::findCredential(const QString &databaseName)const
+     {
+         CredentialSettings *result = NULL;
+         for(QList<CredentialSettings *>::const_iterator it = _credentials.begin();it!=_credentials.end();++it)
+         {
+             CredentialSettings * cred = *it;
+             if(cred->databaseName()==databaseName){
+                 result = cred;
+                 break;
+             }
+         }
+         return result;
+     }
 
     /**
      * @brief Adds credential to this connection
      */
     void ConnectionSettings::addCredential(CredentialSettings *credential)
     {
-        if (_credentialsByDatabaseName.contains(credential->databaseName()))
-            // here we have leak of 'credential'...
-            return;
-
-        _credentials.append(credential);
-        _credentialsByDatabaseName.insert(credential->databaseName(), credential);
-    }
-
-    /**
-     * @brief Returns credential for specified database, or NULL if no such
-     * credential in connection.
-     */
-    CredentialSettings *ConnectionSettings::credential(QString databaseName)
-    {
-        return _credentialsByDatabaseName.value(databaseName);
+        if (!findCredential(credential->databaseName()))
+            _credentials.append(credential);
     }
 
     /**
@@ -139,9 +139,7 @@ namespace Robomongo
     void ConnectionSettings::clearCredentials()
     {
         qDeleteAll(_credentials);
-
         _credentials.clear();
-        _credentialsByDatabaseName.clear();
     }
 
 }

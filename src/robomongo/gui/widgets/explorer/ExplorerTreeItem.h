@@ -7,6 +7,7 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
+    void clearChildItems(QTreeWidgetItem *root);
     class ExplorerTreeItem :public QObject, public QTreeWidgetItem
     {
         Q_OBJECT
@@ -17,6 +18,7 @@ namespace Robomongo
         virtual void showContextMenuAtPos(const QPoint &pos);
         using BaseClass::parent;
         virtual ~ExplorerTreeItem();
+
     protected:
         QMenu *const _contextMenu;
     };

@@ -323,9 +323,6 @@ namespace Robomongo
     void ConnectionsDialog::remove(ConnectionSettings *connection)
     {
         QTreeWidgetItem *item = _hash.value(connection);
-        if (!item)
-            return;
-
         delete item;
     }
 

@@ -36,8 +36,7 @@ namespace Robomongo
         layout->addWidget(_prev);
         layout->addWidget(_caseSensitive);
 
-        _findPanel->setMaximumHeight(HeightFindPanel);
-        _findPanel->setMinimumHeight(HeightFindPanel);
+        _findPanel->setFixedHeight(HeightFindPanel);
         _findPanel->setLayout(layout);
 
         QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -104,11 +103,6 @@ namespace Robomongo
             _scin->getCursorPosition(&line, &index);
             if(!forward)
                index -= _scin->selectedText().length();
-            QFontMetrics metrics = _scin->fontMetrics();
-            int width = metrics.boundingRect(_scin->text(line)).width();
-            if(width>_scin->width()){
-                _scin->setCursorPosition(line, 0);
-            }
             bool isFounded = _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, wrap, forward, line, index);
             if(!isFounded){
                 int linesCount = 0;
@@ -117,11 +111,13 @@ namespace Robomongo
                     linesCount = _scin->lines()-1;
                     lastIndex = _scin->text(linesCount).length();
                 }
+                _scin->setCursorPosition(linesCount, lastIndex);
                 isFounded = _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, wrap, forward, linesCount, lastIndex);
                 if(!isFounded){
                     QMessageBox::warning(this, tr("Search"),tr("The specified text was not found."));
                 }
             }
+            _scin->ensureCursorVisible();
         }
     }
 

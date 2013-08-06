@@ -26,15 +26,6 @@ namespace
         "<tr><td>Size:</td><td><b>&nbsp;&nbsp;%2</b></td></tr>"
         "</table>"
         );
-    void clearChildren(QTreeWidgetItem *root)
-    {
-        int itemCount = root->childCount();
-        for (int i = 0; i < itemCount; ++i) {
-            QTreeWidgetItem *item = root->child(0);
-            root->removeChild(item);
-            delete item;
-        }
-    }
 }
 namespace Robomongo
 {
@@ -205,14 +196,13 @@ namespace Robomongo
     }
 
     ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(QTreeWidgetItem *parent,ExplorerDatabaseTreeItem *databaseItem,MongoCollection *collection) :
-        BaseClass(parent),_indexDir(new ExplorerCollectionDirIndexesTreeItem(this)),_collection(collection),_databaseItem(databaseItem)
+        BaseClass(parent),_collection(collection),_databaseItem(databaseItem)
     {
         QAction *addDocument = new QAction("Insert Document", this);
         connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument()));
 
         QAction *updateDocument = new QAction("Update Documents", this);
         connect(updateDocument, SIGNAL(triggered()), SLOT(ui_updateDocument()));
-
         QAction *removeDocument = new QAction("Remove Documents", this);
         connect(removeDocument, SIGNAL(triggered()), SLOT(ui_removeDocument()));
 
@@ -230,7 +220,6 @@ namespace Robomongo
 
         QAction *totalSize = new QAction("Total Size", this);
         connect(totalSize, SIGNAL(triggered()), SLOT(ui_totalSize()));
-
         QAction *shardVersion = new QAction("Shard Version", this);
         connect(shardVersion, SIGNAL(triggered()), SLOT(ui_shardVersion()));
 
@@ -242,7 +231,6 @@ namespace Robomongo
 
         QAction *renameCollection = new QAction("Rename Collection", this);
         connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection()));
-
         QAction *duplicateCollection = new QAction("Duplicate Collection", this);
         connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection()));
 
@@ -271,6 +259,8 @@ namespace Robomongo
         
         setText(0, _collection->name());
         setIcon(0, GuiRegistry::instance().collectionIcon());
+
+        _indexDir = new ExplorerCollectionDirIndexesTreeItem(this);
         addChild(_indexDir);
         setToolTip(0, buildToolTip(collection));
 
@@ -280,7 +270,7 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::handle(LoadCollectionIndexesResponse *event)
     {
-        clearChildren(_indexDir);
+        clearChildItems(_indexDir);
         const QList<EnsureIndexInfo> &indexes = event->indexes();
         for(QList<EnsureIndexInfo>::const_iterator it=indexes.begin();it!=indexes.end();++it)
         {
@@ -328,7 +318,7 @@ namespace Robomongo
     }
 
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
-    {	
+    {
         return tooltipTemplate.arg(collection->name()).arg(collection->info().count()).arg(collection->sizeString());
     }
 

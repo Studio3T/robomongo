@@ -74,10 +74,6 @@ namespace Robomongo
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }
 
-    ExplorerServerTreeItem::~ExplorerServerTreeItem()
-    {
-    }
-
     void ExplorerServerTreeItem::expand()
     {
         _server->loadDatabases();
@@ -89,17 +85,11 @@ namespace Robomongo
         setText(0, buildServerName(&count));
 
         // Remove child items
-        int itemCount = childCount();
-        for (int i = 0; i < itemCount; ++i)
-        {
-            QTreeWidgetItem *p = child(0);
-            removeChild(p);
-            delete p;
-        }
+        clearChildItems(this);
 
         // Add 'System' folder
         QIcon folderIcon = GuiRegistry::instance().folderIcon();
-        QTreeWidgetItem *systemFolder = new QTreeWidgetItem();
+        ExplorerTreeItem *systemFolder = new ExplorerTreeItem(this);
         systemFolder->setIcon(0, folderIcon);
         systemFolder->setText(0, "System");
         addChild(systemFolder);

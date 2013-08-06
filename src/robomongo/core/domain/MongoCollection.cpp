@@ -4,7 +4,6 @@
 namespace Robomongo
 {
     MongoCollection::MongoCollection(MongoDatabase *database, const MongoCollectionInfo &info) :
-        QObject(),
         _ns(info.ns()),
         _database(database),
         _info(info),

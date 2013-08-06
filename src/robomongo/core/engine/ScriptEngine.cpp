@@ -77,8 +77,6 @@ namespace Robomongo
                << _connection->primaryCredential()->userPassword().toStdString() << "')";
 
         {
-            QMutexLocker lock(&_mutex);
-
             //mongo::shell_utils::_dbConnect = "var z = 56;"; //ss.str();
             mongo::shell_utils::_dbConnect = ss.str();
             mongo::isShell = true;

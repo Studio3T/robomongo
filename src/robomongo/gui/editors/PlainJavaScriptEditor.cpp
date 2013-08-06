@@ -2,7 +2,7 @@
 
 #include <QPainter>
 #include <QApplication>
-
+#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/jsedit.h"
 
 namespace Robomongo
@@ -25,12 +25,12 @@ namespace Robomongo
         setMatchedBraceBackgroundColor(marginsBackgroundColor);
         setContentsMargins(0, 0, 0, 0);
         setViewportMargins(3, 3, 3, 3);
-
-        setMarginsFont(font());
+        QFont ourFont = GuiRegistry::instance().font();
+        setMarginsFont(ourFont);
         setMarginLineNumbers(0, true);
         setMarginsBackgroundColor(marginsBackgroundColor);
 
-        SendScintilla(QsciScintilla::SCI_STYLESETFONT, 1, font().family().data() );
+        SendScintilla(QsciScintilla::SCI_STYLESETFONT, 1, ourFont.family().data() );
         SendScintilla(QsciScintilla::SCI_SETHSCROLLBAR, 0);
 
         setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);

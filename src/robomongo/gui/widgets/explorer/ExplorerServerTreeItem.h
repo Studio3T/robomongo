@@ -14,11 +14,11 @@ namespace Robomongo
 
     public:
         typedef ExplorerTreeItem BaseClass;
+
         /*
         ** Constructs ExplorerServerTreeItem
         */
         ExplorerServerTreeItem(QTreeWidget *view,MongoServer *const server);
-        ~ExplorerServerTreeItem();
 
         /*
         ** Expand server tree item;

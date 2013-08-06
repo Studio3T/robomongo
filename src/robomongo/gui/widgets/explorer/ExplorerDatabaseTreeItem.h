@@ -57,7 +57,6 @@ namespace Robomongo
         void ui_refreshDatabase();
 
     private:
-        void createCollectionSystemFolderItem();
         void addCollectionItem(MongoCollection *collection);
         void addSystemCollectionItem(MongoCollection *collection);
         void showCollectionSystemFolderIfNeeded();
@@ -69,8 +68,7 @@ namespace Robomongo
         ExplorerDatabaseCategoryTreeItem *_collectionFolderItem;
         ExplorerDatabaseCategoryTreeItem *_javascriptFolderItem;
         ExplorerDatabaseCategoryTreeItem *_usersFolderItem;
-        ExplorerDatabaseCategoryTreeItem *_filesFolderItem;
-        QTreeWidgetItem *_collectionSystemFolderItem;
+        ExplorerTreeItem *_collectionSystemFolderItem;
         MongoDatabase *const _database;
     };
 }

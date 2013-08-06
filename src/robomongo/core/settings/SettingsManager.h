@@ -1,13 +1,13 @@
 #pragma once
 
-#include <QDir>
 #include <QObject>
 
 #include "robomongo/gui/ViewMode.h"
-#include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/domain/Enums.h"
+
 namespace Robomongo
 {
+    class ConnectionSettings;
     /**
      * @brief SettingsManager gives you access to all settings, that is used
      *        by Robomongo. It can load() and save() them. Config file usually
@@ -33,11 +33,6 @@ namespace Robomongo
          * @brief Cleanup owned objects
          */
         ~SettingsManager();
-
-        /**
-         * @brief Version of schema
-         */
-        const static QString SchemaVersion;
 
         /**
          * @brief Load settings from config file.
@@ -86,27 +81,6 @@ namespace Robomongo
         void connectionRemoved(ConnectionSettings *connection);
 
     private:
-        /**
-         * @brief Load settings from the map. Existings settings will be overwritten.
-         */
-        void loadFromMap(QVariantMap &map);
-
-        /**
-         * @brief Save all settings to map.
-         */
-        QVariantMap convertToMap() const;
-
-        /**
-         * @brief Config file absolute path
-         *        (usually: /home/user/.config/robomongo/robomongo.json)
-         */
-        QString _configPath;
-
-        /**
-         * @brief Config file containing directory path
-         *        (usually: /home/user/.config/robomongo)
-         */
-        QString _configDir;
 
         /**
          * @brief Version of settings schema currently loaded

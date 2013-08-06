@@ -13,15 +13,15 @@
 
 namespace
 {
-	const QString tooltipTemplate = QString(
-		"%0 "
-		"<table>"
-		"<tr><td>ID:</td> <td><b>&nbsp;&nbsp;%1</b></td></tr>"
-		"<tr><td>Readonly:</td><td><b>&nbsp;&nbsp;%2</b></td></tr>"
-		"</table>");
+    const QString tooltipTemplate = QString(
+        "%0 "
+        "<table>"
+        "<tr><td>ID:</td> <td><b>&nbsp;&nbsp;%1</b></td></tr>"
+        "<tr><td>Readonly:</td><td><b>&nbsp;&nbsp;%2</b></td></tr>"
+        "</table>");
 
     QString buildToolTip(const Robomongo::MongoUser &user)
-    {       
+    {
         return tooltipTemplate.arg(user.name()).arg(QString::fromStdString(user.id().toString())).arg(user.readOnly() ? "Yes" : "No");
     }
 }

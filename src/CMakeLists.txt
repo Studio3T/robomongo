@@ -145,8 +145,6 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/mongodb/MongoWorker.h
     robomongo/core/domain/MongoServer.h
     robomongo/core/domain/MongoDatabase.h
-    robomongo/core/domain/MongoCollection.h
-    robomongo/core/domain/MongoElement.h
     robomongo/core/EventBus.h
     robomongo/core/domain/App.h
     robomongo/core/domain/MongoShell.h
@@ -163,6 +161,7 @@ SET(HEADERS_CORE
     robomongo/core/Event.h
     robomongo/core/domain/MongoShellResult.h
     robomongo/core/events/MongoEvents.h
+    robomongo/core/domain/MongoElement.h
     robomongo/core/events/MongoEventsInfo.h
     robomongo/core/Wrapper.h
     robomongo/core/AppRegistry.h
@@ -170,6 +169,7 @@ SET(HEADERS_CORE
     robomongo/core/examples/ImplicitlyShared.h
     robomongo/core/settings/CredentialSettings.h
     robomongo/core/domain/MongoQueryInfo.h
+    robomongo/core/domain/MongoCollection.h
     robomongo/core/domain/MongoCollectionInfo.h
     robomongo/core/mongodb/MongoClient.h
     robomongo/core/domain/MongoUtils.h
@@ -181,6 +181,7 @@ SET(HEADERS_CORE
     robomongo/core/domain/MongoFunction.h
     robomongo/core/domain/Enums.h
     robomongo/core/HexUtils.h
+    robomongo/core/utils/BsonUtils.h
     )
 SET(SOURCES_CORE
     robomongo/core/AppRegistry.cpp
@@ -220,6 +221,7 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoUser.cpp
     robomongo/core/domain/MongoFunction.cpp
     robomongo/core/HexUtils.cpp
+    robomongo/core/utils/BsonUtils.cpp
     )
 
 IF(WIN32)
@@ -394,6 +396,7 @@ IF(WIN32)
 ELSEIF(APPLE)
     SET(BUNDLE_NAME ${MACOSX_BUNDLE_BUNDLE_NAME}.app)
     DEPLOY_QT_PLUGIN("platforms/qcocoa" ${QT_PLUGINS_DIR} ${BUNDLE_NAME}/Contents/MacOS)
+    DEPLOY_QT_PLUGIN("accessible/qtaccessiblewidgets" ${QT_PLUGINS_DIR} ${BUNDLE_NAME}/Contents/MacOS)
 ELSEIF(UNIX)
     DEPLOY_QT_PLUGIN("platforms/qxcb" ${QT_PLUGINS_DIR} ${LIB_INSTALL_DESTINATION})
     SET(MISC_LIBS icuuc49 icudata49 icui18n49 icuuc51 icudata51 icui18n51)

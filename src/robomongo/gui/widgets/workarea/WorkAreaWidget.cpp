@@ -13,8 +13,8 @@
 
 namespace Robomongo
 {
-    WorkAreaWidget::WorkAreaWidget(MainWindow *mainWindow)	:
-        QWidget(mainWindow),
+    WorkAreaWidget::WorkAreaWidget(MainWindow *mainWindow)
+        : QWidget(mainWindow),
         _bus(AppRegistry::instance().bus())
     {
         _tabWidget = new WorkAreaTabWidget(this);

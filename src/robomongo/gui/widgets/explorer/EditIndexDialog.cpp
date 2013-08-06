@@ -65,6 +65,9 @@ namespace
         findFrame->sciScintilla()->setFont(textFont);
         findFrame->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
         findFrame->sciScintilla()->setText(text);
+        findFrame->sciScintilla()->setWrapMode((QsciScintilla::WrapMode) QsciScintilla::SC_WRAP_NONE);
+        findFrame->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        findFrame->sciScintilla()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         findFrame->setMaximumHeight(120);
         return findFrame;
     }
@@ -117,6 +120,9 @@ namespace Robomongo
         _jsonText = createFindFrame(basicTab, QString::fromUtf8(_info._request.c_str()));
         _uniqueCheckBox = new QCheckBox(tr("Unique"));
         _uniqueCheckBox->setChecked(_info._unique);
+        _dropDuplicates = new QCheckBox(tr("Drop duplicates"),basicTab);
+        _dropDuplicates->setChecked(_info._dropDups);
+        uniqueStateChanged(_uniqueCheckBox->checkState());
 
         QLabel *nameHelpLabel = createHelpLabel(
             "Choose any name that will help you to identify this index.",
@@ -132,6 +138,12 @@ namespace Robomongo
             "of documents where the index key or keys match an existing value in the index.",
             20, -2, 0, 20);
 
+        QLabel *dropDupsHelpLabel = createHelpLabel(
+            "MongoDB cannot create a unique index on a field that has duplicate values. "
+            "To force the creation of a unique index, you can specify the dropDups option, "
+            "which will only index the first occurrence of a value for the key, and delete all subsequent values. ",
+            20, -2, 0, 20);
+
         QGridLayout *layout = new QGridLayout;
         layout->addWidget(new QLabel("Name:   "),       0, 0);
         layout->addWidget(_nameLineEdit,                0, 1);
@@ -141,10 +153,20 @@ namespace Robomongo
         layout->addWidget(keyHelpLabel,                 3, 1, Qt::AlignTop);
         layout->addWidget(_uniqueCheckBox,              4, 0, 1, 2);
         layout->addWidget(uniqueHelpLabel,              5, 0, 1, 2, Qt::AlignTop);
+        layout->addWidget(_dropDuplicates,              6, 0, 1, 2);
+        layout->addWidget(dropDupsHelpLabel,            7, 0, 1, 2);
         layout->setAlignment(Qt::AlignTop);
         basicTab->setLayout(layout);
-
+        connect(_uniqueCheckBox,SIGNAL(stateChanged(int)),this,SLOT(uniqueStateChanged(int)));
         return basicTab;
+    }
+
+    void EditIndexDialog::uniqueStateChanged(int value)
+    {
+        _dropDuplicates->setEnabled(value);
+        if(!value){
+            _dropDuplicates->setCheckState(Qt::Unchecked);
+        }
     }
 
     QWidget* EditIndexDialog::createAdvancedTab()
@@ -153,8 +175,6 @@ namespace Robomongo
 
         _sparceCheckBox = new QCheckBox(tr("Sparse"),advanced);
         _sparceCheckBox->setChecked(_info._backGround);
-        _dropDuplicates = new QCheckBox(tr("Drop duplicates"),advanced);
-        _dropDuplicates->setChecked(_info._dropDups);
         _backGroundCheckBox = new QCheckBox(tr("Create index in background"),advanced);
         _backGroundCheckBox->setChecked(_info._backGround);
 
@@ -177,12 +197,6 @@ namespace Robomongo
             "These indexes use less space but behave differently in some situations (particularly sorts).",
             20, -2, 0, 20);
 
-        QLabel *dropDupsHelpLabel = createHelpLabel(
-            "MongoDB cannot create a unique index on a field that has duplicate values. "
-            "To force the creation of a unique index, you can specify the dropDups option, "
-            "which will only index the first occurrence of a value for the key, and delete all subsequent values. ",
-            20, -2, 0, 20);
-
         QLabel *backgroundHelpLabel = createHelpLabel(
             "Builds the index in the background so that building an index does not block other database activities.",
             20, -2, 0, 20);
@@ -194,13 +208,11 @@ namespace Robomongo
         QGridLayout *layout = new QGridLayout;
         layout->addWidget(_sparceCheckBox,                     0, 0, 1, 2);
         layout->addWidget(sparseHelpLabel,                     1, 0, 1, 2);
-        layout->addWidget(_dropDuplicates,                     2, 0, 1, 2);
-        layout->addWidget(dropDupsHelpLabel,                   3, 0, 1, 2);
-        layout->addWidget(_backGroundCheckBox,                 4, 0, 1, 2);
-        layout->addWidget(backgroundHelpLabel,                 5, 0, 1, 2);
-        layout->addWidget(new QLabel(tr("Expire after")),      6, 0);
-        layout->addLayout(expireLayout,                        6, 1);
-        layout->addWidget(expireHelpLabel,                     7, 0, 1, 2);
+        layout->addWidget(_backGroundCheckBox,                 2, 0, 1, 2);
+        layout->addWidget(backgroundHelpLabel,                 3, 0, 1, 2);
+        layout->addWidget(new QLabel(tr("Expire after")),      4, 0);
+        layout->addLayout(expireLayout,                        4, 1);
+        layout->addWidget(expireHelpLabel,                     5, 0, 1, 2);
         layout->setAlignment(Qt::AlignTop);
         advanced->setLayout(layout);
 

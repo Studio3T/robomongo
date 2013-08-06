@@ -3,7 +3,6 @@
 #include <QStringList>
 #include "mongo/client/dbclientinterface.h"
 
-#include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoUser.h"

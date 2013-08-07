@@ -66,7 +66,7 @@ namespace Robomongo
         Q_OBJECT
     public:
         typedef ExplorerTreeItem BaseClass;
-        static const QString text;
+        static const QString labelText;
         explicit ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent);
         void expand();
 

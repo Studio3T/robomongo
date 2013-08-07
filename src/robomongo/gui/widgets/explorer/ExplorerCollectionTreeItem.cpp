@@ -30,7 +30,7 @@ namespace
 namespace Robomongo
 {
     R_REGISTER_EVENT(CollectionIndexesLoadingEvent)
-    const QString ExplorerCollectionDirIndexesTreeItem::text = "Indexes";
+    const QString ExplorerCollectionDirIndexesTreeItem::labelText = "Indexes";
 
     ExplorerCollectionDirIndexesTreeItem::ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent)
         :BaseClass(parent)
@@ -60,7 +60,7 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(reIndex);
         BaseClass::_contextMenu->addAction(refreshIndex);      
 
-        setText(0, detail::buildName(text,0));
+        setText(0, labelText);
         setIcon(0, Robomongo::GuiRegistry::instance().folderIcon());
 
         setExpanded(false);
@@ -272,11 +272,10 @@ namespace Robomongo
     {
         clearChildItems(_indexDir);
         const QList<EnsureIndexInfo> &indexes = event->indexes();
-        for(QList<EnsureIndexInfo>::const_iterator it=indexes.begin();it!=indexes.end();++it)
-        {
+        for(QList<EnsureIndexInfo>::const_iterator it=indexes.begin();it!=indexes.end();++it){
             _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(_indexDir,*it));
         }
-        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::text,_indexDir->childCount()));
+        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText,_indexDir->childCount()));
     }
 
     void ExplorerCollectionTreeItem::handle(DeleteCollectionIndexResponse *event)
@@ -285,20 +284,19 @@ namespace Robomongo
             int itemCount = _indexDir->childCount();
             for (int i = 0; i < itemCount; ++i) {
                 QTreeWidgetItem *item = _indexDir->child(i);
-                if(item->text(0)==event->index())
-                {
+                if(item->text(0)==event->index()){
                     removeChild(item);
                     delete item;
                     break;
                 }
             }
         }
-        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::text,_indexDir->childCount()));
+        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText,_indexDir->childCount()));
     }
 
     void ExplorerCollectionTreeItem::handle(CollectionIndexesLoadingEvent *event)
     {
-        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::text,-1));
+        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText,-1));
     }
 
     void ExplorerCollectionTreeItem::expand()

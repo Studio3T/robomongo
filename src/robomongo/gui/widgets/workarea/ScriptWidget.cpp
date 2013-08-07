@@ -236,6 +236,7 @@ namespace Robomongo
 
     void ScriptWidget::onTextChanged()
     {
+        emit textChanged();
         if (!_disableTextAndCursorNotifications)
             _textChanged = true;
     }

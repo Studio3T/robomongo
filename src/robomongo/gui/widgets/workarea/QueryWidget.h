@@ -55,6 +55,7 @@ namespace Robomongo
         void saveToFile();
         void savebToFileAs();
         void openFile();
+        void textChange();
     public Q_SLOTS:
         void handle(DocumentListLoadedEvent *event);
         void handle(ScriptExecutedEvent *event);
@@ -62,7 +63,6 @@ namespace Robomongo
     protected:
          virtual void closeEvent(QCloseEvent *ev);
     private:
-        QString buildTabTitle(const QString &query);
         void updateCurrentTab();
         void displayData(const QList<MongoShellResult> &results, bool empty);
 
@@ -76,5 +76,6 @@ namespace Robomongo
         ViewMode _viewMode;
 
         MongoShellExecResult _currentResult;
+        bool isTextChanged;
     };
 }

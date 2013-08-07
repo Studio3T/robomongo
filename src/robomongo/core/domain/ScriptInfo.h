@@ -22,8 +22,8 @@ namespace Robomongo
         }
         bool loadFromFile(const QString &filePath);
         bool loadFromFile();
-        void saveToFileAs();
-        void saveToFile();
+        bool saveToFileAs();
+        bool saveToFile();
     private:
         QString _script;
         const bool _execute;

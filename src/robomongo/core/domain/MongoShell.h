@@ -32,10 +32,9 @@ namespace Robomongo
             return _scriptInfo.filePath();
         }
 
-    public Q_SLOTS:
-        void saveToFile();
-        void saveToFileAs();
-        void loadFromFile();
+        bool saveToFile();
+        bool saveToFileAs();
+        bool loadFromFile();
 
     protected Q_SLOTS:
         void handle(ExecuteQueryResponse *event);

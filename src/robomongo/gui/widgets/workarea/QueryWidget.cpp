@@ -38,7 +38,8 @@ namespace Robomongo
         _app(AppRegistry::instance().app()),
         _bus(AppRegistry::instance().bus()),
         _viewer(NULL),
-        _viewMode(viewMode)
+        _viewMode(viewMode),
+        isTextChanged(false)
     {
         setObjectName("queryWidget");
         _bus->subscribe(this, DocumentListLoadedEvent::Type, shell);
@@ -47,6 +48,7 @@ namespace Robomongo
         qDebug() << "Subscribed to ScriptExecutedEvent";
 
         _scriptWidget = new ScriptWidget(_shell);
+        connect(_scriptWidget,SIGNAL(textChanged()),this,SLOT(textChange()));
         _scriptWidget->installEventFilter(this);
 
         _viewer = new OutputWidget(_viewMode, _shell);
@@ -134,43 +136,52 @@ namespace Robomongo
     {
         MongoServer *server = _shell->server();
         QString query = _scriptWidget->selectedText();
-
-        /*
-        QString dbName = ""; //WAS: server->connectionRecord()->databaseName();
-        if (_currentResults.count() > 0) {
-            MongoShellResult lastResult = _currentResults.last();
-            dbName = lastResult.databaseName;
-        }
-        */
-
         _app->openShell(server, query, _currentResult.currentDatabase());
     }
+
     void QueryWidget::saveToFile()
     {
         if(_shell){
             _shell->setScript(_scriptWidget->text());
-            _shell->saveToFile();
+            if(_shell->saveToFile()){
+                isTextChanged =false;
+                updateCurrentTab();
+            }
         }
     }
+
     void QueryWidget::savebToFileAs()
     {
         if(_shell){
             _shell->setScript(_scriptWidget->text());
-            _shell->saveToFileAs();
-        }
+            if(_shell->saveToFileAs()){
+                isTextChanged =false;
+                updateCurrentTab();
+            }
+        }        
     }
+
     void QueryWidget::openFile()
     {
-        if(_shell){
-            _shell->loadFromFile();
+        if(_shell && _shell->loadFromFile()){
             _scriptWidget->setText(_shell->query());
+            isTextChanged = false;
+            updateCurrentTab();
         }
     }
+
+    void QueryWidget::textChange()
+    {
+        isTextChanged = true;
+        updateCurrentTab();
+    }
+
     void QueryWidget::closeEvent(QCloseEvent *ev)
     {
         AppRegistry::instance().app()->closeShell(_shell);
         return BaseClass::closeEvent(ev);
     }
+
     void QueryWidget::reload()
     {
         execute();
@@ -241,24 +252,45 @@ namespace Robomongo
         _scriptWidget->showAutocompletion(event->list, event->prefix);
     }
 
-    QString QueryWidget::buildTabTitle(const QString &query)
-    {
-        QString tabTitle = query
-                .left(41)
-                .replace(QRegExp("[\n\r\t]"), " ");
-
-        tabTitle = tabTitle.isEmpty() ? "New Shell" : tabTitle;
-        return tabTitle;
-    }
-
     void QueryWidget::updateCurrentTab()  // !!!!!!!!!!! this method should be in
                                           // WorkAreaTabWidget, subscribed to ScriptExecutedEvent
     {
         int thisTab = _tabWidget->indexOf(this);
 
         if (thisTab != -1) {
-            _tabWidget->setTabToolTip(thisTab, _shell->query());
-            _tabWidget->setTabText(thisTab, buildTabTitle(_shell->query()));
+            const QString &shellQuery = _shell->query();           
+
+            QString tabTitle,toolTipText;
+            if(_shell){
+                QFileInfo fileInfo(_shell->filePath());
+                if(fileInfo.isFile()){
+                     tabTitle = fileInfo.fileName();
+                     toolTipText = fileInfo.filePath();
+                }
+            }
+
+            if(tabTitle.isEmpty()&&shellQuery.isEmpty()){
+                tabTitle = "New Shell";
+            }
+            else{
+
+                if(tabTitle.isEmpty()){
+                    tabTitle = shellQuery.left(41).replace(QRegExp("[\n\r\t]"), " ");;
+                    toolTipText = shellQuery;
+            #pragma message("ShellQuery can be too long for tooltip. Please cut it (approx. 400 symbols)")
+                }
+                else{
+                    //tabTitle = QString("%1 %2").arg(tabTitle).arg(shellQuery);
+                    toolTipText = QString("<b>%1</b><br />%2").arg(toolTipText).arg(shellQuery);
+                }
+            }
+
+            if(isTextChanged){
+                tabTitle = "* " + tabTitle;
+            }
+ 
+            _tabWidget->setTabText(thisTab, tabTitle);
+            _tabWidget->setTabToolTip(thisTab, toolTipText);
         }
     }
 

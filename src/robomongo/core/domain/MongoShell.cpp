@@ -57,18 +57,22 @@ namespace Robomongo
     {
         mongo::Scope::setInterruptFlag(true);
     }
-    void MongoShell::loadFromFile()
+
+    bool MongoShell::loadFromFile()
     {
-        _scriptInfo.loadFromFile();
+        return _scriptInfo.loadFromFile();
     }
-    void MongoShell::saveToFileAs()
+
+    bool MongoShell::saveToFileAs()
     {
-        _scriptInfo.saveToFileAs();
+        return _scriptInfo.saveToFileAs();
     }
-    void MongoShell::saveToFile()
+
+    bool MongoShell::saveToFile()
     {
-        _scriptInfo.saveToFile();
+        return _scriptInfo.saveToFile();
     }
+
     void MongoShell::handle(ExecuteQueryResponse *event)
     {
         _bus->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, query(), event->documents));

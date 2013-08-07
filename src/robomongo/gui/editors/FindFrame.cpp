@@ -104,6 +104,7 @@ namespace Robomongo
             if(!forward)
                index -= _scin->selectedText().length();
 
+            _scin->setCursorPosition(line, 0);
             bool isFounded = _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, looped, forward, line, index);
             if(isFounded){
                 _scin->ensureCursorVisible(); 

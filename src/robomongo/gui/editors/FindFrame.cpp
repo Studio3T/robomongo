@@ -97,27 +97,19 @@ namespace Robomongo
         {
             bool re = false;
             bool wo = false;
-            bool wrap = false;
+            bool looped = true;
             int index = 0;
             int line = 0;
             _scin->getCursorPosition(&line, &index);
             if(!forward)
                index -= _scin->selectedText().length();
-            bool isFounded = _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, wrap, forward, line, index);
-            if(!isFounded){
-                int linesCount = 0;
-                int lastIndex=0;
-                if(!forward){
-                    linesCount = _scin->lines()-1;
-                    lastIndex = _scin->text(linesCount).length();
-                }
-                _scin->setCursorPosition(linesCount, lastIndex);
-                isFounded = _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, wrap, forward, linesCount, lastIndex);
-                if(!isFounded){
-                    QMessageBox::warning(this, tr("Search"),tr("The specified text was not found."));
-                }
-            }
-            _scin->ensureCursorVisible();
+
+            bool isFounded = _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, looped, forward, line, index);
+            if(isFounded){
+                _scin->ensureCursorVisible(); 
+            }else{
+                QMessageBox::warning(this, tr("Search"),tr("The specified text was not found."));
+            }            
         }
     }
 

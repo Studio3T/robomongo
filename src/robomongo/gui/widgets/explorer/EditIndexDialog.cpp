@@ -65,9 +65,6 @@ namespace
         findFrame->sciScintilla()->setFont(textFont);
         findFrame->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
         findFrame->sciScintilla()->setText(text);
-        findFrame->sciScintilla()->setWrapMode((QsciScintilla::WrapMode) QsciScintilla::SC_WRAP_NONE);
-        findFrame->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        findFrame->sciScintilla()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         findFrame->setMaximumHeight(120);
         return findFrame;
     }

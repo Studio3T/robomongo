@@ -257,7 +257,9 @@ namespace Robomongo
         _logText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
         _logText->sciScintilla()->setFont(textFont);
         _logText->sciScintilla()->setReadOnly(true);
-
+        _logText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode) QsciScintilla::SC_WRAP_NONE);
+        _logText->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        _logText->sciScintilla()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         // Wrap mode turned off because it introduces huge performance problems
         // even for medium size documents.    
         _logText->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");

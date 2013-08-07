@@ -74,24 +74,19 @@ namespace Robomongo
         return loadFromFile(_filePath);
     }
 
-    void ScriptInfo::saveToFileAs()
+    bool ScriptInfo::saveToFileAs()
     {
         QString filepath = QFileDialog::getSaveFileName(QApplication::activeWindow(), QObject::tr("Save As"),_filePath,filterForScripts);
         if(saveToFileText(filepath,_script))
         {
             _filePath = filepath;
+            return true;
         }
+        return false;
     }
 
-    void ScriptInfo::saveToFile()
+    bool ScriptInfo::saveToFile()
     {
-        if(!_filePath.isEmpty())
-        {
-            saveToFileText(_filePath,_script);
-        }
-        else
-        {
-            saveToFileAs();
-        }
+        return _filePath.isEmpty()?saveToFileAs(): saveToFileText(_filePath,_script);
     }
 }

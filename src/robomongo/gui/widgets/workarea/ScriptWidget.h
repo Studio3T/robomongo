@@ -69,6 +69,8 @@ namespace Robomongo
         void hideAutocompletion();
 
         TopStatusBar *statusBar() const { return _topStatusBar; }
+    Q_SIGNALS:
+        void textChanged();
     public Q_SLOTS:
         void setText(const QString &text);
     private slots:

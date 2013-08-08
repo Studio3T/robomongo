@@ -15,7 +15,7 @@ namespace
         QFile file(filePath);
         if (!file.open(QFile::ReadOnly | QFile::Text)) {
             QMessageBox::warning(QApplication::activeWindow(), QString(PROJECT_NAME),
-                QObject::tr("Cannot read file %1:\n%2.")
+                QObject::tr(PROJECT_NAME" can't read from %1:\n%2.")
                 .arg(filePath)
                 .arg(file.errorString()));
         }
@@ -39,6 +39,12 @@ namespace
             out << text;
             QApplication::restoreOverrideCursor();
             result = true;
+        }
+        else{
+            QMessageBox::warning(QApplication::activeWindow(), QString(PROJECT_NAME),
+                QObject::tr(PROJECT_NAME" can't save to %1:\n%2.")
+                .arg(filePath)
+                .arg(file.errorString()));
         }
         return result;
     }

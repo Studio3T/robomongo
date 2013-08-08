@@ -12,13 +12,6 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    // Add ./plugins directory to library path
-    QString plugins = QString("%1%2plugins")
-            .arg(QApplication::applicationDirPath())
-            .arg(QDir::separator());
-
-    QApplication::addLibraryPath(plugins);
-
     AppRegistry::instance().settingsManager()->save();
 
     QRect screenGeometry = QApplication::desktop()->availableGeometry();

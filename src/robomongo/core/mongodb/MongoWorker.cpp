@@ -32,9 +32,7 @@ namespace Robomongo
 
     MongoWorker::~MongoWorker()
     {
-        if (_dbclient)
-            delete _dbclient;
-
+        delete _dbclient;
         delete _connection;
         _thread->quit();
         if (!_thread->wait(2000))

@@ -1,5 +1,5 @@
 #!/bin/sh
-#postinst
+set -e
 ln -sf @CPACK_PACKAGING_INSTALL_PREFIX@/@TARGET_INSTALL_DESTINATION@/@PROJECT_NAME@.sh /usr/bin/@PROJECT_NAME@
 chmod +x /usr/bin/@PROJECT_NAME@
 cp @CPACK_PACKAGING_INSTALL_PREFIX@/share/applications/@PROJECT_NAME@.desktop /usr/share/applications/@PROJECT_NAME@.desktop

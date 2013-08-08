@@ -103,12 +103,7 @@ namespace Robomongo
 
         QTextStream in(&file);
         QString esprima = in.readAll();
-
-        QByteArray esprimaBytes = esprima.toUtf8();
-
-        size_t eslength = esprimaBytes.size();
-
-        bool res = _scope->exec(esprima.toStdString(), "(esprima)", true, true, true);
+        _scope->exec(esprima.toStdString(), "(esprima)", true, true, true);
     }
 
     MongoShellExecResult ScriptEngine::exec(const QString &originalScript, const QString &dbName)

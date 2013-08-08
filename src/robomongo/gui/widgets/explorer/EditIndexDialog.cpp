@@ -26,11 +26,11 @@ namespace
 {
     bool isValidJson(const QString &text)
     {
-        bool result= false;
-        if(!text.isEmpty()){
+        bool result = false;
+        if (!text.isEmpty()) {
             try {
                 mongo::Robomongo::fromjson(text.toUtf8());
-                result=true;
+                result = true;
             }
             catch (const mongo::ParseMsgAssertionException &) {
 
@@ -112,12 +112,12 @@ namespace Robomongo
     QWidget* EditIndexDialog::createBasicTab()
     {
         QWidget *basicTab = new QWidget(this);
-        _nameLineEdit = new QLineEdit(QString::fromUtf8(_info._name.c_str()),basicTab);
+        _nameLineEdit = new QLineEdit(QString::fromUtf8(_info._name.c_str()), basicTab);
         _nameLineEdit->setFocus();
         _jsonText = createFindFrame(basicTab, QString::fromUtf8(_info._request.c_str()));
         _uniqueCheckBox = new QCheckBox(tr("Unique"));
         _uniqueCheckBox->setChecked(_info._unique);
-        _dropDuplicates = new QCheckBox(tr("Drop duplicates"),basicTab);
+        _dropDuplicates = new QCheckBox(tr("Drop duplicates"), basicTab);
         _dropDuplicates->setChecked(_info._dropDups);
         uniqueStateChanged(_uniqueCheckBox->checkState());
 
@@ -161,7 +161,7 @@ namespace Robomongo
     void EditIndexDialog::uniqueStateChanged(int value)
     {
         _dropDuplicates->setEnabled(value);
-        if(!value){
+        if (!value) {
             _dropDuplicates->setCheckState(Qt::Unchecked);
         }
     }
@@ -170,9 +170,9 @@ namespace Robomongo
     {
         QWidget *advanced = new QWidget(this);
 
-        _sparceCheckBox = new QCheckBox(tr("Sparse"),advanced);
+        _sparceCheckBox = new QCheckBox(tr("Sparse"), advanced);
         _sparceCheckBox->setChecked(_info._backGround);
-        _backGroundCheckBox = new QCheckBox(tr("Create index in background"),advanced);
+        _backGroundCheckBox = new QCheckBox(tr("Create index in background"), advanced);
         _backGroundCheckBox->setChecked(_info._backGround);
 
         QHBoxLayout *expireLayout = new QHBoxLayout;
@@ -189,6 +189,8 @@ namespace Robomongo
         expireLayout->addWidget(secLabel);
         expireLayout->addStretch(1);
 
+        QCheckBox *expireCheckBox = new QCheckBox(tr("Expire after"));
+
         QLabel *sparseHelpLabel = createHelpLabel(
             "If set, the index only references documents with the specified field. "
             "These indexes use less space but behave differently in some situations (particularly sorts).",
@@ -203,13 +205,13 @@ namespace Robomongo
             20, -2, 0, 20);
 
         QGridLayout *layout = new QGridLayout;
-        layout->addWidget(_sparceCheckBox,                     0, 0, 1, 2);
-        layout->addWidget(sparseHelpLabel,                     1, 0, 1, 2);
-        layout->addWidget(_backGroundCheckBox,                 2, 0, 1, 2);
-        layout->addWidget(backgroundHelpLabel,                 3, 0, 1, 2);
-        layout->addWidget(new QLabel(tr("Expire after")),      4, 0);
-        layout->addLayout(expireLayout,                        4, 1);
-        layout->addWidget(expireHelpLabel,                     5, 0, 1, 2);
+        layout->addWidget(_sparceCheckBox,           0, 0, 1, 2);
+        layout->addWidget(sparseHelpLabel,           1, 0, 1, 2);
+        layout->addWidget(_backGroundCheckBox,       2, 0, 1, 2);
+        layout->addWidget(backgroundHelpLabel,       3, 0, 1, 2);
+        layout->addWidget(expireCheckBox,            4, 0);
+        layout->addLayout(expireLayout,              4, 1);
+        layout->addWidget(expireHelpLabel,           5, 0, 1, 2);
         layout->setAlignment(Qt::AlignTop);
         advanced->setLayout(layout);
 
@@ -220,16 +222,16 @@ namespace Robomongo
     {
         QWidget *textSearch = new QWidget(this);
 
-        _defaultLanguageLineEdit = new QLineEdit(QString::fromUtf8(_info._defaultLanguage.c_str()),textSearch);
-        _languageOverrideLineEdit = new QLineEdit(QString::fromUtf8(_info._languageOverride.c_str()),textSearch);
+        _defaultLanguageLineEdit = new QLineEdit(QString::fromUtf8(_info._defaultLanguage.c_str()), textSearch);
+        _languageOverrideLineEdit = new QLineEdit(QString::fromUtf8(_info._languageOverride.c_str()), textSearch);
         _textWeightsLineEdit = createFindFrame(textSearch, QString::fromUtf8(_info._textWeights.c_str()));
 
         QLabel *defaultLanguageHelpLabel = createHelpLabel(
-            "For a <i>text</i> index, the language that determines the list of stop words and the rules for the stemmer and tokenizer.",
+            "For a <i>text</i> index, the language that determines the list of stop words and the rules for the stemmer and tokenizer. The default value is <b>english</b>",
             0, -2, 0, 20);
 
         QLabel *languageOverrideHelpLabel = createHelpLabel(
-            "For a <i>text</i> index, specify the name of the field in the document that contains, for that document, the language to override the default language.",
+            "For a <i>text</i> index, specify the name of the field in the document that contains, for that document, the language to override the default language. The default value is <b>language</b>",
             0, -2, 0, 20);
 
         QLabel *textWeightsHelpLabel = createHelpLabel(
@@ -255,11 +257,20 @@ namespace Robomongo
 
     EnsureIndexInfo EditIndexDialog::info() const
     {
-        return EnsureIndexInfo(_info._collection,_nameLineEdit->text().toStdString(),QString(" %1 ,{ name: %2 }").arg(_jsonText->sciScintilla()->text()).arg(_nameLineEdit->text()).toStdString(),
-             _uniqueCheckBox->checkState() == Qt::Checked,_backGroundCheckBox->checkState() == Qt::Checked,
-             _dropDuplicates->checkState() == Qt::Checked,_sparceCheckBox->checkState() == Qt::Checked,
-             _expireAfterLineEdit->text().toInt(),_defaultLanguageLineEdit->text().toStdString(),
-             _languageOverrideLineEdit->text().toStdString(),_textWeightsLineEdit->sciScintilla()->text().toStdString());
+        return EnsureIndexInfo(
+            _info._collection,
+            _nameLineEdit->text().toStdString(),
+            QString(" %1 ,{ name: %2 }")
+                .arg(_jsonText->sciScintilla()->text())
+                .arg(_nameLineEdit->text()).toStdString(),
+            _uniqueCheckBox->checkState() == Qt::Checked,
+            _backGroundCheckBox->checkState() == Qt::Checked,
+            _dropDuplicates->checkState() == Qt::Checked,
+            _sparceCheckBox->checkState() == Qt::Checked,
+            _expireAfterLineEdit->text().toInt(),
+            _defaultLanguageLineEdit->text().toStdString(),
+            _languageOverrideLineEdit->text().toStdString(),
+            _textWeightsLineEdit->sciScintilla()->text().toStdString());
     }
 
     void EditIndexDialog::accept()

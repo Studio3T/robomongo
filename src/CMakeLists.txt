@@ -176,7 +176,6 @@ SET(HEADERS_CORE
     robomongo/core/domain/MongoNamespace.h
     robomongo/core/domain/CursorPosition.h
     robomongo/core/domain/ScriptInfo.h
-    robomongo/core/engine/JsonBuilder.h
     robomongo/core/domain/MongoUser.h
     robomongo/core/domain/MongoFunction.h
     robomongo/core/domain/Enums.h
@@ -217,7 +216,6 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoNamespace.cpp
     robomongo/core/domain/CursorPosition.cpp
     robomongo/core/domain/ScriptInfo.cpp
-    robomongo/core/engine/JsonBuilder.cpp
     robomongo/core/domain/MongoUser.cpp
     robomongo/core/domain/MongoFunction.cpp
     robomongo/core/HexUtils.cpp

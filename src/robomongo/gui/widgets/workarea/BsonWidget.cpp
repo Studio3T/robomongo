@@ -6,7 +6,7 @@
 
 #include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
 #include "robomongo/core/domain/MongoDocument.h"
-#include "robomongo/core/engine/JsonBuilder.h"
+#include "robomongo/core/utils/BsonUtils.h"
 
 namespace Robomongo
 {
@@ -47,7 +47,7 @@ namespace Robomongo
             // std::string stdJson = doc->bsonObj().toString(false, true);
 
             mongo::BSONObj obj = doc->bsonObj();
-            std::string stdJson = JsonBuilder::jsonString(obj, mongo::TenGen, 1, _uuidEncoding);
+            std::string stdJson = BsonUtils::jsonString(obj, mongo::TenGen, 1, _uuidEncoding);
 
             if (exit) {
                 emit done();

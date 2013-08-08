@@ -176,7 +176,6 @@ SET(HEADERS_CORE
     robomongo/core/domain/MongoNamespace.h
     robomongo/core/domain/CursorPosition.h
     robomongo/core/domain/ScriptInfo.h
-    robomongo/core/engine/JsonBuilder.h
     robomongo/core/domain/MongoUser.h
     robomongo/core/domain/MongoFunction.h
     robomongo/core/domain/Enums.h
@@ -217,7 +216,6 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoNamespace.cpp
     robomongo/core/domain/CursorPosition.cpp
     robomongo/core/domain/ScriptInfo.cpp
-    robomongo/core/engine/JsonBuilder.cpp
     robomongo/core/domain/MongoUser.cpp
     robomongo/core/domain/MongoFunction.cpp
     robomongo/core/HexUtils.cpp
@@ -360,6 +358,7 @@ IF(WIN32)
 ELSEIF(APPLE)
     SET_SOURCE_FILES_PROPERTIES(${RESOURCE_OS} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
     SET_SOURCE_FILES_PROPERTIES(${ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    #SET_SOURCE_FILES_PROPERTIES(${CMAKE_SOURCE_DIR}/install/qt.conf PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 ENDIF(WIN32)
 
 GET_FILENAME_COMPONENT(ICON_FILE_NAME ${ICON_FILE} NAME)
@@ -385,7 +384,7 @@ INSTALL(TARGETS ${PROJECT_NAME} DESTINATION ${TARGET_INSTALL_DESTINATION})
 INSTALL(FILES ${CMAKE_SOURCE_DIR}/LICENSE DESTINATION .)
 IF(UNIX AND NOT APPLE)
     INSTALL(PROGRAMS ${CMAKE_SOURCE_DIR}/install/linux/${PROJECT_NAME}.sh DESTINATION ${TARGET_INSTALL_DESTINATION})
-    INSTALL(PROGRAMS ${RESOURCE_OS} DESTINATION share/applications)
+    INSTALL(FILES ${RESOURCE_OS} DESTINATION share/applications)
     INSTALL(FILES ${ICON_FILE} DESTINATION share/icons)
 ENDIF()
 INSTALL_QT(${PROJECT_NAME} ${LIB_INSTALL_DESTINATION})
@@ -395,8 +394,9 @@ IF(WIN32)
     SET(PLACE_WHERE_SEARCH ${QT_BINS_DIR})
 ELSEIF(APPLE)
     SET(BUNDLE_NAME ${MACOSX_BUNDLE_BUNDLE_NAME}.app)
-    DEPLOY_QT_PLUGIN("platforms/qcocoa" ${QT_PLUGINS_DIR} ${BUNDLE_NAME}/Contents/MacOS)
-    DEPLOY_QT_PLUGIN("accessible/qtaccessiblewidgets" ${QT_PLUGINS_DIR} ${BUNDLE_NAME}/Contents/MacOS)
+    DEPLOY_QT_PLUGIN("platforms/qcocoa" ${QT_PLUGINS_DIR} ${BUNDLE_NAME}/Contents/plugins)
+    DEPLOY_QT_PLUGIN("accessible/qtaccessiblewidgets" ${QT_PLUGINS_DIR} ${BUNDLE_NAME}/Contents/plugins)
+    INSTALL(FILES ${CMAKE_SOURCE_DIR}/install/qt.conf DESTINATION ${BUNDLE_NAME}/Contents/Resources)
 ELSEIF(UNIX)
     DEPLOY_QT_PLUGIN("platforms/qxcb" ${QT_PLUGINS_DIR} ${LIB_INSTALL_DESTINATION})
     SET(MISC_LIBS icuuc49 icudata49 icui18n49 icuuc51 icudata51 icui18n51)
@@ -406,4 +406,4 @@ FOREACH(miscLib ${MISC_LIBS})
     DEPLOY_QT_PLUGIN(${miscLib} ${PLACE_WHERE_SEARCH} ${LIB_INSTALL_DESTINATION})
 ENDFOREACH(miscLib ${MISC_LIBS})
 INSTALL_RUNTIME_LIBRARIES()
-TARGET_BUNDLEFIX(${PROJECT_NAME})
+TARGET_BUNDLEFIX(${PROJECT_NAME} ${LIB_INSTALL_DESTINATION})

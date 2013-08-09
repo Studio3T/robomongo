@@ -38,19 +38,29 @@ namespace Robomongo
         }
 
         template<typename type_t>
-        type_t bsonelement_cast(const mongo::BSONElement &elem)
+        type_t bsonelement_cast(const mongo::BSONElement &elem,bool &isEoo=false)
         {
             type_t result=type_t();
-            if (!elem.eoo()){
+            isEoo = !elem.eoo();
+            if (isEoo){
                 result = detail::getField<type_t>(elem);
-            }  
+            }
             return result;
         }
+
+        template<mongo::BSONType BSONType_t>
+        typename detail::bson_convert_traits<BSONType_t>::type getField(const mongo::BSONObj &obj,const char *data,bool &isContainField)
+        {
+            mongo::BSONElement elem = obj.getField(data);
+            return bsonelement_cast<typename detail::bson_convert_traits<BSONType_t>::type>(elem,isContainField);
+        }
+
         template<mongo::BSONType BSONType_t>
         typename detail::bson_convert_traits<BSONType_t>::type getField(const mongo::BSONObj &obj,const char *data)
         {
+            bool isContainField=false;
             mongo::BSONElement elem = obj.getField(data);
-            return bsonelement_cast<typename detail::bson_convert_traits<BSONType_t>::type>(elem);
+            return bsonelement_cast<typename detail::bson_convert_traits<BSONType_t>::type>(elem,isContainField);
         }
 
         std::string jsonString(mongo::BSONObj &obj, mongo::JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding);

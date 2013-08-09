@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "robomongo/core/domain/MongoCollectionInfo.h"
+#define INVALD_VALUE -1
 
 namespace Robomongo
 {

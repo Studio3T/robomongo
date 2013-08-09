@@ -15,7 +15,16 @@ namespace Robomongo
             template<>
             mongo::BSONObj getField<mongo::BSONObj>(const mongo::BSONElement &elem) 
             {
-                return elem.Obj();
+                mongo::BSONObj res;
+                try
+                {
+                   res = elem.Obj();
+                }
+                catch(const UserException &ex)
+                {
+
+                }
+                return res;
             }
 
             template<>

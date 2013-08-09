@@ -167,6 +167,14 @@ namespace Robomongo
         }
     }
 
+    void EditIndexDialog::expireStateChanged(int value)
+    {
+        _expireAfterLineEdit->setEnabled(value);
+        if (!value) {
+            _expireAfterLineEdit->setText("");
+        }
+    }
+
     QWidget* EditIndexDialog::createAdvancedTab()
     {
         QWidget *advanced = new QWidget(this);
@@ -182,14 +190,19 @@ namespace Robomongo
         QRegExp rx("\\d+");
         _expireAfterLineEdit->setValidator(new QRegExpValidator(rx, this));
 
-        _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
-
         QLabel *secLabel = new QLabel(tr("seconds"), advanced);
         expireLayout->addWidget(_expireAfterLineEdit);
         expireLayout->addWidget(secLabel);
         expireLayout->addStretch(1);
 
         QCheckBox *expireCheckBox = new QCheckBox(tr("Expire after"));
+        expireCheckBox->setChecked(false);
+        if(_info._ttl!=INVALD_VALUE){
+            expireCheckBox->setChecked(true);
+            _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
+        }
+        expireStateChanged(expireCheckBox->checkState());
+        connect(expireCheckBox,SIGNAL(stateChanged(int)),this,SLOT(expireStateChanged(int)));
 
         QLabel *sparseHelpLabel = createHelpLabel(
             "If set, the index only references documents with the specified field. "
@@ -257,6 +270,11 @@ namespace Robomongo
 
     EnsureIndexInfo EditIndexDialog::info() const
     {
+        const QString &expAft = _expireAfterLineEdit->text();
+        int expAftInt = _info._ttl;
+        if(!expAft.isEmpty()){
+           expAftInt = _expireAfterLineEdit->text().toInt();
+        }
         return EnsureIndexInfo(
             _info._collection,
             _nameLineEdit->text().toStdString(),
@@ -267,7 +285,7 @@ namespace Robomongo
             _backGroundCheckBox->checkState() == Qt::Checked,
             _dropDuplicates->checkState() == Qt::Checked,
             _sparceCheckBox->checkState() == Qt::Checked,
-            _expireAfterLineEdit->text().toInt(),
+            expAftInt,
             _defaultLanguageLineEdit->text().toStdString(),
             _languageOverrideLineEdit->text().toStdString(),
             _textWeightsLineEdit->sciScintilla()->text().toStdString());

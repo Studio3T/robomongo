@@ -29,9 +29,17 @@ namespace
         return result;
     }
 
-    bool saveToFileText(const QString &filePath,const QString &text)
+    bool saveToFileText(QString filePath,const QString &text)
     {
-        bool result =false;
+        if(filePath.isEmpty())
+            return false;
+
+#ifdef Q_OS_LINUX
+        if(QFileInfo(filePath).suffix().isEmpty()){
+            filePath+=".js";
+        }
+#endif
+        bool result = false;
         QFile file(filePath);
         if (file.open(QFile::WriteOnly | QFile::Text)) {
             QTextStream out(&file);

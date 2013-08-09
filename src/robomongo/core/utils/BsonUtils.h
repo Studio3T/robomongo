@@ -38,7 +38,7 @@ namespace Robomongo
         }
 
         template<typename type_t>
-        type_t bsonelement_cast(const mongo::BSONElement &elem,bool &isEoo=false)
+        type_t bsonelement_cast(const mongo::BSONElement &elem,bool &isEoo)
         {
             type_t result=type_t();
             isEoo = !elem.eoo();
@@ -46,6 +46,13 @@ namespace Robomongo
                 result = detail::getField<type_t>(elem);
             }
             return result;
+        }
+
+        template<typename type_t>
+        type_t bsonelement_cast(const mongo::BSONElement &elem)
+        {
+            bool isEoo = false;
+            return bsonelement_cast<type_t>(elem,isEoo);
         }
 
         template<mongo::BSONType BSONType_t>

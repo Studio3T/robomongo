@@ -72,7 +72,8 @@ namespace
 
 namespace Robomongo
 {
-    EditIndexDialog::EditIndexDialog(QWidget *parent,const EnsureIndexInfo &info,const QString &databaseName,const QString &serverAdress):BaseClass(parent),_info(info)
+    EditIndexDialog::EditIndexDialog(QWidget *parent,const EnsureIndexInfo &info,const QString &databaseName,const QString &serverAdress)
+        :BaseClass(parent),_info(info)
     {        
         setWindowTitle("Index Properties");
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverAdress);
@@ -166,12 +167,20 @@ namespace Robomongo
         }
     }
 
+    void EditIndexDialog::expireStateChanged(int value)
+    {
+        _expireAfterLineEdit->setEnabled(value);
+        if (!value) {
+            _expireAfterLineEdit->setText("");
+        }
+    }
+
     QWidget* EditIndexDialog::createAdvancedTab()
     {
         QWidget *advanced = new QWidget(this);
 
         _sparceCheckBox = new QCheckBox(tr("Sparse"), advanced);
-        _sparceCheckBox->setChecked(_info._backGround);
+        _sparceCheckBox->setChecked(_info._sparse);
         _backGroundCheckBox = new QCheckBox(tr("Create index in background"), advanced);
         _backGroundCheckBox->setChecked(_info._backGround);
 
@@ -181,15 +190,19 @@ namespace Robomongo
         QRegExp rx("\\d+");
         _expireAfterLineEdit->setValidator(new QRegExpValidator(rx, this));
 
-        if (_info._ttl)
-            _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
-
         QLabel *secLabel = new QLabel(tr("seconds"), advanced);
         expireLayout->addWidget(_expireAfterLineEdit);
         expireLayout->addWidget(secLabel);
         expireLayout->addStretch(1);
 
         QCheckBox *expireCheckBox = new QCheckBox(tr("Expire after"));
+        expireCheckBox->setChecked(false);
+        if(_info._ttl>0){
+            expireCheckBox->setChecked(true);
+            _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
+        }
+        expireStateChanged(expireCheckBox->checkState());
+        connect(expireCheckBox,SIGNAL(stateChanged(int)),this,SLOT(expireStateChanged(int)));
 
         QLabel *sparseHelpLabel = createHelpLabel(
             "If set, the index only references documents with the specified field. "
@@ -257,6 +270,11 @@ namespace Robomongo
 
     EnsureIndexInfo EditIndexDialog::info() const
     {
+        const QString &expAft = _expireAfterLineEdit->text();
+        int expAftInt = _info._ttl;
+        if(!expAft.isEmpty()){
+           expAftInt = _expireAfterLineEdit->text().toInt();
+        }
         return EnsureIndexInfo(
             _info._collection,
             _nameLineEdit->text().toStdString(),
@@ -267,7 +285,7 @@ namespace Robomongo
             _backGroundCheckBox->checkState() == Qt::Checked,
             _dropDuplicates->checkState() == Qt::Checked,
             _sparceCheckBox->checkState() == Qt::Checked,
-            _expireAfterLineEdit->text().toInt(),
+            expAftInt,
             _defaultLanguageLineEdit->text().toStdString(),
             _languageOverrideLineEdit->text().toStdString(),
             _textWeightsLineEdit->sciScintilla()->text().toStdString());
@@ -276,6 +294,12 @@ namespace Robomongo
     void EditIndexDialog::accept()
     {
         if (isValidJson(_jsonText->sciScintilla()->text())) {
+            const QString &weightText = _textWeightsLineEdit->sciScintilla()->text();
+            if(!weightText.isEmpty()&&!isValidJson(weightText)){
+                QMessageBox::warning(this, "Invalid json", "Please check json text.\n");
+                _textWeightsLineEdit->setFocus();
+                return ;
+            }
             return BaseClass::accept();
         }
         else {

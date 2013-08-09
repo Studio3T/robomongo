@@ -13,25 +13,33 @@ namespace
     {
         bool result =false;
         QFile file(filePath);
-        if (!file.open(QFile::ReadOnly | QFile::Text)) {
-            QMessageBox::warning(QApplication::activeWindow(), QString(PROJECT_NAME),
-                QObject::tr(PROJECT_NAME" can't read from %1:\n%2.")
-                .arg(filePath)
-                .arg(file.errorString()));
-        }
-        else{
+        if (file.open(QFile::ReadOnly | QFile::Text)) {
             QTextStream in(&file);
             QApplication::setOverrideCursor(Qt::WaitCursor);
             text = in.readAll();
             QApplication::restoreOverrideCursor();
             result=true;
         }
+        else{
+            QMessageBox::critical(QApplication::activeWindow(), QString("Error"),
+                QObject::tr(PROJECT_NAME" can't read from %1:\n%2.")
+                .arg(filePath)
+                .arg(file.errorString()));
+        }
         return result;
     }
 
-    bool saveToFileText(const QString &filePath,const QString &text)
+    bool saveToFileText(QString filePath,const QString &text)
     {
-        bool result =false;
+        if(filePath.isEmpty())
+            return false;
+
+#ifdef Q_OS_LINUX
+        if(QFileInfo(filePath).suffix().isEmpty()){
+            filePath+=".js";
+        }
+#endif
+        bool result = false;
         QFile file(filePath);
         if (file.open(QFile::WriteOnly | QFile::Text)) {
             QTextStream out(&file);
@@ -41,7 +49,7 @@ namespace
             result = true;
         }
         else{
-            QMessageBox::warning(QApplication::activeWindow(), QString(PROJECT_NAME),
+            QMessageBox::critical(QApplication::activeWindow(), QString("Error"),
                 QObject::tr(PROJECT_NAME" can't save to %1:\n%2.")
                 .arg(filePath)
                 .arg(file.errorString()));

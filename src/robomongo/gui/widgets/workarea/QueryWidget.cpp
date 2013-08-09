@@ -176,10 +176,9 @@ namespace Robomongo
         updateCurrentTab();
     }
 
-    void QueryWidget::closeEvent(QCloseEvent *ev)
+    QueryWidget::~QueryWidget()
     {
         AppRegistry::instance().app()->closeShell(_shell);
-        return BaseClass::closeEvent(ev);
     }
 
     void QueryWidget::reload()

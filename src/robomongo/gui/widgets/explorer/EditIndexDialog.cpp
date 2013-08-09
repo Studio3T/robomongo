@@ -72,7 +72,8 @@ namespace
 
 namespace Robomongo
 {
-    EditIndexDialog::EditIndexDialog(QWidget *parent,const EnsureIndexInfo &info,const QString &databaseName,const QString &serverAdress):BaseClass(parent),_info(info)
+    EditIndexDialog::EditIndexDialog(QWidget *parent,const EnsureIndexInfo &info,const QString &databaseName,const QString &serverAdress)
+        :BaseClass(parent),_info(info)
     {        
         setWindowTitle("Index Properties");
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverAdress);
@@ -181,8 +182,7 @@ namespace Robomongo
         QRegExp rx("\\d+");
         _expireAfterLineEdit->setValidator(new QRegExpValidator(rx, this));
 
-        if (_info._ttl)
-            _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
+        _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
 
         QLabel *secLabel = new QLabel(tr("seconds"), advanced);
         expireLayout->addWidget(_expireAfterLineEdit);

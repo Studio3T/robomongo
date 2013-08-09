@@ -42,10 +42,7 @@ namespace Robomongo
         {
             QueryWidget *tabWidget = queryWidget(index);
             removeTab(index);
-            if (tabWidget)
-            {                
-                delete tabWidget;
-            }
+            delete tabWidget;
         }
     }
 

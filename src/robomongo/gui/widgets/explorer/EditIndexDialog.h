@@ -26,6 +26,7 @@ namespace Robomongo
     public Q_SLOTS:
         virtual void accept();
         void uniqueStateChanged(int value);
+        void expireStateChanged(int value);
 
     private:
        QWidget *createBasicTab();

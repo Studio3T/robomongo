@@ -48,6 +48,8 @@ namespace Robomongo
         {
             return _shell;
         }
+        ~QueryWidget();
+
     public Q_SLOTS:
         void execute();
         void stop();
@@ -60,8 +62,6 @@ namespace Robomongo
         void handle(DocumentListLoadedEvent *event);
         void handle(ScriptExecutedEvent *event);
         void handle(AutocompleteResponse *event);
-    protected:
-         virtual void closeEvent(QCloseEvent *ev);
     private:
         void updateCurrentTab();
         void displayData(const QList<MongoShellResult> &results, bool empty);

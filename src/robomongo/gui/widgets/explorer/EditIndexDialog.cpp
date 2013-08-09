@@ -180,7 +180,7 @@ namespace Robomongo
         QWidget *advanced = new QWidget(this);
 
         _sparceCheckBox = new QCheckBox(tr("Sparse"), advanced);
-        _sparceCheckBox->setChecked(_info._backGround);
+        _sparceCheckBox->setChecked(_info._sparse);
         _backGroundCheckBox = new QCheckBox(tr("Create index in background"), advanced);
         _backGroundCheckBox->setChecked(_info._backGround);
 
@@ -197,7 +197,7 @@ namespace Robomongo
 
         QCheckBox *expireCheckBox = new QCheckBox(tr("Expire after"));
         expireCheckBox->setChecked(false);
-        if(_info._ttl!=INVALD_VALUE){
+        if(_info._ttl>0){
             expireCheckBox->setChecked(true);
             _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
         }

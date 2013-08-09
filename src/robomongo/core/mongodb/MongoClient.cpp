@@ -18,8 +18,7 @@ namespace
         info._dropDups = getField<mongo::Bool>(obj,"dropDups");
         info._sparse = getField<mongo::Bool>(obj,"sparse");
         bool isContains = false;
-        int ttl = getField<mongo::NumberInt>(obj,"expireAfterSeconds",isContains);
-        info._ttl = isContains ? ttl : INVALD_VALUE;
+        info._ttl = getField<mongo::NumberInt>(obj,"expireAfterSeconds");
         info._defaultLanguage = getField<mongo::String>(obj,"default_language");
         info._languageOverride = getField<mongo::String>(obj,"language_override");
         mongo::BSONObj weightsObj = getField<mongo::Object>(obj,"weights");

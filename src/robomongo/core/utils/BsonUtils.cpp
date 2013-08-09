@@ -20,7 +20,7 @@ namespace Robomongo
                 {
                    res = elem.Obj();
                 }
-                catch(const UserException &ex)
+                catch(const UserException &)
                 {
 
                 }

@@ -276,6 +276,12 @@ namespace Robomongo
     void EditIndexDialog::accept()
     {
         if (isValidJson(_jsonText->sciScintilla()->text())) {
+            const QString &weightText = _textWeightsLineEdit->sciScintilla()->text();
+            if(!weightText.isEmpty()&&!isValidJson(weightText)){
+                QMessageBox::warning(this, "Invalid json", "Please check json text.\n");
+                _textWeightsLineEdit->setFocus();
+                return ;
+            }
             return BaseClass::accept();
         }
         else {

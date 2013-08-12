@@ -655,7 +655,7 @@ namespace Robomongo {
         boost::posix_time::ptime isotime;
         try {
             isotime = miutil::ptimeFromIsoString(datestr);
-        } catch (std::logic_error &er) {
+        } catch (const std::logic_error &) {
             return parseError("Invalid date format");
         }
 

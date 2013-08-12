@@ -37,8 +37,8 @@ bool __finished;        // typed request is finished
 std::stringstream __logs;
 
 void robomongo_reset_type() {
-    __type == "";
-    __finished == false;
+    __type = "";
+    __finished = false;
 }
 
 void robomongo_reset() {

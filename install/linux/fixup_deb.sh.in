@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+mkdir fix_up_deb
+dpkg-deb -x @CPACK_PACKAGE_FILE_NAME@.deb fix_up_deb
+dpkg-deb --control @CPACK_PACKAGE_FILE_NAME@.deb fix_up_deb/DEBIAN
+rm @CPACK_PACKAGE_FILE_NAME@.deb
+chmod 0644 fix_up_deb/DEBIAN/md5sums
+find -type d -print0 |xargs -0 chmod 755
+fakeroot dpkg -b fix_up_deb @CPACK_PACKAGE_FILE_NAME@.deb
+rm -rf fix_up_deb

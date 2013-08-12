@@ -198,6 +198,7 @@ IF(CPACK_SUPPORT)
     SET(CPACK_COMPONENT_QTLIBS_DESCRIPTION "Qt shared libraries")
     #SET(CPACK_COMPONENT_Runtime_REQUIRED ON)
     IF(WIN32)
+        SET(CPACK_MONOLITHIC_INSTALL ON)
         # There is a bug in NSI that does not handle full unix paths properly. Make
         # sure there is at least one set of four (4) backlasshes.
         SET(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/install/windows\\\\database-small.bmp")

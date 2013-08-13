@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include <mongo/client/dbclient.h>
 #include <mongo/bson/bsonobjbuilder.h>
 #include "robomongo/core/utils/BsonUtils.h"
 using namespace Robomongo;

@@ -20,9 +20,8 @@
 
 namespace Robomongo
 {
-    OutputWidget::OutputWidget(ViewMode viewMode, MongoShell *shell, QWidget *parent) :
+    OutputWidget::OutputWidget(MongoShell *shell, QWidget *parent) :
         QFrame(parent),
-        _viewMode(viewMode),
         _shell(shell),
         _splitter(NULL)
     {

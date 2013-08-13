@@ -10,7 +10,6 @@
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoShellResult.h"
-#include "robomongo/gui/ViewMode.h"
 
 namespace Robomongo
 {
@@ -30,7 +29,7 @@ namespace Robomongo
 
     public:
         typedef QWidget BaseClass;
-        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, ViewMode viewMode, QWidget *parent = NULL);
+        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,QWidget *parent = NULL);
 
         bool eventFilter(QObject *o, QEvent *e);
 
@@ -73,7 +72,6 @@ namespace Robomongo
         ScriptWidget *_scriptWidget;
         WorkAreaTabWidget *_tabWidget;
         QLabel *_outputLabel;
-        ViewMode _viewMode;
 
         MongoShellExecResult _currentResult;
         bool isTextChanged;

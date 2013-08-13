@@ -13,13 +13,16 @@ MACRO(SET_DESKTOP_TARGET)
 ENDMACRO(SET_DESKTOP_TARGET)
 
 MACRO(DEFINE_DEFAULT_DEFINITIONS)
-    ADD_DEFINITIONS(
-    -DNOMINMAX # do not define min() and max()
-    -D_CRT_SECURE_NO_WARNINGS 
-    -D_CRT_NONSTDC_NO_WARNINGS 
-    #-D__STDC_CONSTANT_MACROS
-    #-DWIN32_LEAN_AND_MEAN # remove obsolete things from windows headers
-    )
+    IF(WIN32)
+        ADD_DEFINITIONS(
+        -DNOMINMAX # do not define min() and max()
+        -D_CRT_SECURE_NO_WARNINGS 
+        -D_CRT_NONSTDC_NO_WARNINGS 
+        -D_CRT_SECURE_NO_WARNINGS
+        #-D__STDC_CONSTANT_MACROS
+        #-DWIN32_LEAN_AND_MEAN # remove obsolete things from windows headers
+        )
+    ENDIF(WIN32)
     ADD_DEFINITIONS(
         -DPROJECT_NAME="${PROJECT_NAME}"
         -DPROJECT_NAME_TITLE="${PROJECT_NAME_TITLE}"

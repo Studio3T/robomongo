@@ -410,11 +410,14 @@ INSTALL_RUNTIME_LIBRARIES()
 TARGET_BUNDLEFIX(${PROJECT_NAME} ${LIB_INSTALL_DESTINATION})
 
 IF(DEVELOPER_ENABLE_TESTS)
+########## PREPARE GTEST LIBRARY ##########
     IF(MSVC)
         SET(gtest_force_shared_crt ON CACHE BOOL "Build shared gtest library")
     ENDIF(MSVC)
     ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/tests/gtest-1.6.0 gtest)
     INCLUDE_DIRECTORIES(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+########## PREPARE GTEST LIBRARY ##########
+
     ADD_EXECUTABLE(testparser robomongo/core/utils/BsonUtils.cpp robomongo/core/HexUtils.cpp robomongo/shell/db/ptimeutil.cpp ${CMAKE_SOURCE_DIR}/tests/test_parser.cpp)
     TARGET_LINK_LIBRARIES(testparser ${MONGO_LIBRARIES} ${PLATFORM_LIBRARIES} boost_mongo_third_party pcrecpp gtest gtest_main)   
     ADD_TEST(NAME testparser COMMAND testparser)

@@ -232,9 +232,8 @@ namespace Robomongo
                 if( pretty ) {
                     Date_t d = elem.date();
 
-                    long long ms = (long long) d.millis;
                     boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
-                    boost::posix_time::time_duration diff = boost::posix_time::millisec(ms);
+                    boost::posix_time::time_duration diff = boost::posix_time::millisec(d.millis);
                     boost::posix_time::ptime time = epoch + diff;
                     std::string timestr = miutil::isotimeString(time, true, true);
                     s << '"' << timestr << '"';

@@ -2,7 +2,6 @@
 #include <mongo/bson/bsonelement.h>
 #include <mongo/bson/bsonobj.h>
 #include "robomongo/core/domain/Enums.h"
-
 namespace Robomongo
 {
     namespace BsonUtils

@@ -3,39 +3,7 @@
 #include <mongo/client/dbclient.h>
 #include "robomongo/core/HexUtils.h"
 #include "mongo/util/base64.h"
-namespace
-{
-    std::string isotimeStringHack(const mongo::Date_t &dt, bool useTseparator, bool markAsZulu)
-    {
-        boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
-        boost::posix_time::time_duration diff = boost::posix_time::millisec(dt.millis);
-        boost::posix_time::ptime pt = epoch + diff;
-        if( pt.is_special() )
-            return "";
-
-        char buf[32]={0};
-        char sep=' ';         
-
-        if( useTseparator )
-            sep = 'T';
-
-        boost::gregorian::date d( pt.date() );
-        boost::posix_time::time_duration t( pt.time_of_day() );
-
-        unsigned short year = d.year();
-
-        if( markAsZulu )
-            sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03dZ", 
-            year, d.month().as_number(), d.day().as_number(), sep, 
-            t.hours(), t.minutes(), t.seconds() , t.total_milliseconds()%1000 );
-        else
-            sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03d", 
-            year, d.month().as_number(), d.day().as_number(), sep, 
-            t.hours(), t.minutes(), t.seconds(), t.total_milliseconds()%1000 );
-
-        return buf;   
-    }
-}
+#include "robomongo/shell/db/ptimeutil.h"
 
 using namespace mongo;
 namespace Robomongo
@@ -265,7 +233,12 @@ namespace Robomongo
                     s << "ISODate(";
 
                 if( pretty ) {
-                    std::string timestr = isotimeStringHack(elem.date(), true, true);
+                    Date_t d = elem.date();
+
+                    boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
+                    boost::posix_time::time_duration diff = boost::posix_time::millisec(d.millis);
+                    boost::posix_time::ptime time = epoch + diff;
+                    std::string timestr = miutil::isotimeString(time, true, true);
                     s << '"' << timestr << '"';
                 }
                 else

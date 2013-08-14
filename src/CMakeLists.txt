@@ -418,7 +418,7 @@ IF(DEVELOPER_ENABLE_TESTS)
     INCLUDE_DIRECTORIES(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 ########## PREPARE GTEST LIBRARY ##########
 
-    ADD_EXECUTABLE(testparser robomongo/core/utils/BsonUtils.cpp robomongo/core/HexUtils.cpp robomongo/shell/db/ptimeutil.cpp ${CMAKE_SOURCE_DIR}/tests/test_parser.cpp)
+    ADD_EXECUTABLE(testparser robomongo/core/utils/BsonUtils.cpp robomongo/core/HexUtils.cpp ${CMAKE_SOURCE_DIR}/tests/test_parser.cpp)
     TARGET_LINK_LIBRARIES(testparser ${MONGO_LIBRARIES} ${PLATFORM_LIBRARIES} boost_mongo_third_party pcrecpp gtest gtest_main)   
     ADD_TEST(NAME testparser COMMAND testparser)
     SET_PROPERTY(TARGET testparser PROPERTY FOLDER "Tests")

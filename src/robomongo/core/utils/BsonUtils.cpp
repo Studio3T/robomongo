@@ -5,17 +5,16 @@
 #include "mongo/util/base64.h"
 namespace
 {
-    std::string isotimeStringHack(const Date_t &dt, bool useTseparator, bool markAsZulu)
+    std::string isotimeStringHack(const mongo::Date_t &dt, bool useTseparator, bool markAsZulu)
     {
         boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
         boost::posix_time::time_duration diff = boost::posix_time::millisec(dt.millis);
         boost::posix_time::ptime pt = epoch + diff;
-
-        char buf[32]={0};
-        char sep=' '; 
-
         if( pt.is_special() )
             return "";
+
+        char buf[32]={0};
+        char sep=' ';         
 
         if( useTseparator )
             sep = 'T';
@@ -48,16 +47,7 @@ namespace Robomongo
             template<>
             mongo::BSONObj getField<mongo::BSONObj>(const mongo::BSONElement &elem) 
             {
-                mongo::BSONObj res;
-                try
-                {
-                   res = elem.Obj();
-                }
-                catch(const UserException &)
-                {
-
-                }
-                return res;
+                return elem.embeddedObject();
             }
 
             template<>
@@ -329,8 +319,6 @@ namespace Robomongo
                 StringBuilder ss;
                 ss << "Cannot create a properly formatted JSON string with "
                    << "element: " << elem.toString() << " of type: " << elem.type();
-                string message = ss.str();
-                //massert( 10312 ,  message.c_str(), false );
             }
             return s.str();
         }

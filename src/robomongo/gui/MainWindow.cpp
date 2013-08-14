@@ -25,6 +25,11 @@
 #include "robomongo/gui/dialogs/AboutDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 
+namespace
+{
+    void setToolBarIconSize(QToolBar *toolBar);
+}
+
 namespace Robomongo
 {
     class ConnectionMenu : public QMenu
@@ -70,16 +75,18 @@ namespace Robomongo
     #endif
 
         qApp->setStyleSheet(QString(
-        "Robomongo--ExplorerTreeWidget#explorerTree { padding: 1px 0px 0px 0px; background-color: %1; border: 0px; } \n " // #E7E5E4
-        "QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } "
-        "QMainWindow::separator { background: #E7E5E4; width: 1px; }"
+            "Robomongo--ExplorerTreeWidget#explorerTree { padding: 1px 0px 0px 0px; background-color: %1; border: 0px; } \n " // #E7E5E4
+            "QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } "
+            "QMainWindow::separator { background: #E7E5E4; width: 1px; }"
         ).arg(explorerColor));
+
         _openAction = new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this);
-        //_openAction->setShortcuts(QKeySequence::Open);
         connect(_openAction, SIGNAL(triggered()), this, SLOT(open()));
-        _saveAction = new QAction(GuiRegistry::instance().saveIcon(),tr("&Save"), this);
+
+        _saveAction = new QAction(GuiRegistry::instance().saveIcon(), tr("&Save"), this);
         _saveAction->setShortcuts(QKeySequence::Save);
         connect(_saveAction, SIGNAL(triggered()), this, SLOT(save()));
+
         _saveAsAction = new QAction(tr("Save &As..."), this);
         _saveAsAction->setShortcuts(QKeySequence::SaveAs);
         connect(_saveAsAction, SIGNAL(triggered()), this, SLOT(saveAs()));
@@ -248,32 +255,31 @@ namespace Robomongo
         helpMenu->addAction(aboutRobomongoAction);
 
         // Toolbar
-        QToolBar *toolBar = new QToolBar("Toolbar", this);
-    #if defined(Q_OS_MAC)
-        toolBar->setIconSize(QSize(20, 20));
-    #endif
-        toolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        toolBar->addAction(connectButtonAction);
-        toolBar->setShortcutEnabled(1, true);
-        toolBar->setMovable(false);
-        addToolBar(toolBar);
+        QToolBar *connectToolBar = new QToolBar("Toolbar", this);
+        connectToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        connectToolBar->addAction(connectButtonAction);
+        connectToolBar->setShortcutEnabled(1, true);
+        connectToolBar->setMovable(false);
+        setToolBarIconSize(connectToolBar);
+        addToolBar(connectToolBar);
+
+        QToolBar *openSaveToolBar = new QToolBar("Open/Save ToolBar", this);
+        openSaveToolBar->addAction(_openAction);
+        openSaveToolBar->addAction(_saveAction);
+        openSaveToolBar->setMovable(false);
+        setToolBarIconSize(openSaveToolBar);
+        addToolBar(openSaveToolBar);
 
         _execToolBar = new QToolBar("Exec Toolbar", this);
-        QToolBar *tabToolBar = new QToolBar("Tab Toolbar", this);
-        tabToolBar->addAction(_openAction);
-        tabToolBar->addAction(_saveAction);
-        tabToolBar->setMovable(false);
-    #if defined(Q_OS_MAC)
-        _execToolBar->setIconSize(QSize(20, 20));
-    #endif
         _execToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
         _execToolBar->addAction(_executeAction);
         _execToolBar->addAction(_stopAction);
         _execToolBar->addAction(_orientationAction);
         _execToolBar->setShortcutEnabled(1, true);
         _execToolBar->setMovable(false);
-        addToolBar(tabToolBar);
+        setToolBarIconSize(_execToolBar);
         addToolBar(_execToolBar);
+
         _execToolBar->hide();
 
         statusBar();
@@ -570,5 +576,18 @@ namespace Robomongo
         _workArea = new WorkAreaWidget(this);
         connect(_workArea, SIGNAL(tabActivated(int)),this, SLOT(updateMenus()));
         setCentralWidget(_workArea);
+    }
+}
+
+namespace
+{
+    void setToolBarIconSize(QToolBar *toolBar)
+    {
+#if defined(Q_OS_MAC)
+        const int size = 20;
+#else
+        const int size = 24;
+#endif
+        toolBar->setIconSize(QSize(size, size));
     }
 }

@@ -47,8 +47,7 @@ namespace Robomongo
         setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded); 
 
         // Cache width of one digit
-        QFontMetrics fontmetrics = QFontMetrics(font());
-        _lineNumberDigitWidth = fontmetrics.width("0") + 1;
+        _lineNumberDigitWidth = textWidth(STYLE_LINENUMBER, "0");
 
         updateLineNumbersMarginWidth();
 
@@ -58,6 +57,12 @@ namespace Robomongo
     int RoboScintilla::lineNumberMarginWidth()
     {
         return marginWidth(0);
+    }
+
+    int RoboScintilla::textWidth(int style, const QString &text)
+    {
+        const char *byteArray = (text.toUtf8()).constData();
+        return SendScintilla(SCI_TEXTWIDTH, style, byteArray);
     }
 
     void RoboScintilla::wheelEvent(QWheelEvent *e)

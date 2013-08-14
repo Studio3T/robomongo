@@ -55,11 +55,11 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/FunctionTextEditor.h
     robomongo/gui/dialogs/AboutDialog.h
     robomongo/gui/editors/FindFrame.h
+    robomongo/gui/editors/PlainJavaScriptEditor.h
     )   
 SET(HEADERS_GUI
     robomongo/gui/utils/DialogUtils.h
     robomongo/gui/GuiRegistry.h
-    robomongo/gui/editors/PlainJavaScriptEditor.h
     robomongo/gui/editors/JSLexer.h
     robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h
     robomongo/gui/ViewMode.h

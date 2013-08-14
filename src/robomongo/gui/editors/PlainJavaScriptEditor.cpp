@@ -5,14 +5,22 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/jsedit.h"
 
+namespace
+{
+    int getNumberOfDigits(int x);
+}
+
 namespace Robomongo
 {
     const QColor RoboScintilla::marginsBackgroundColor = QColor(73, 76, 78);
-    const QColor RoboScintilla::caretForegroundColor=QColor("#FFFFFF");
-    const QColor RoboScintilla::matchedBraceForegroundColor=QColor("#FF8861");
+    const QColor RoboScintilla::caretForegroundColor = QColor("#FFFFFF");
+    const QColor RoboScintilla::matchedBraceForegroundColor = QColor("#FF8861");
+
     RoboScintilla::RoboScintilla(QWidget *parent) : QsciScintilla(parent),
         _ignoreEnterKey(false),
-        _ignoreTabKey(false)
+        _ignoreTabKey(false),
+        _lineNumberMarginWidth(0),
+        _lineNumberDigitWidth(0)
     {
         setAutoIndent(true);
         setIndentationsUseTabs(false);
@@ -28,15 +36,30 @@ namespace Robomongo
         QFont ourFont = GuiRegistry::instance().font();
         setMarginsFont(ourFont);
         setMarginLineNumbers(0, true);
-        setMarginsBackgroundColor(marginsBackgroundColor);
+        setMarginsBackgroundColor(QColor(53, 56, 58));
+        setMarginsForegroundColor(QColor(173, 176, 178));
 
-        SendScintilla(QsciScintilla::SCI_STYLESETFONT, 1, ourFont.family().data() );
+        SendScintilla(QsciScintilla::SCI_STYLESETFONT, 1, ourFont.family().data());
         SendScintilla(QsciScintilla::SCI_SETHSCROLLBAR, 0);
 
         setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_NONE);
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); 
         setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded); 
+
+        // Cache width of one digit
+        QFontMetrics fontmetrics = QFontMetrics(font());
+        _lineNumberDigitWidth = fontmetrics.width("0") + 1;
+
+        updateLineNumbersMarginWidth();
+
+        connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineNumbersMarginWidth()));
     }
+
+    int RoboScintilla::lineNumberMarginWidth()
+    {
+        return marginWidth(0);
+    }
+
     void RoboScintilla::wheelEvent(QWheelEvent *e)
     {
         if (this->isActiveWindow()) {
@@ -47,19 +70,17 @@ namespace Robomongo
             e->accept();
         }
     }
+
     void RoboScintilla::showOrHideLinesNumbers()
     {
-        // Margin 0 is used for line numbers
-        QFontMetrics fontmetrics = QFontMetrics(font());
-        if(!marginWidth(0))
-        {
-            setMarginWidth(0, fontmetrics.width("00000") + rowNumberWidth);
+        if (!lineNumberMarginWidth()) {
+            setMarginWidth(0, _lineNumberMarginWidth);
         }
-        else
-        {
+        else {
             setMarginWidth(0, 0);
         }
     }
+
     void RoboScintilla::keyPressEvent(QKeyEvent *keyEvent)
     {
         if (_ignoreEnterKey) {
@@ -78,8 +99,7 @@ namespace Robomongo
             }
         }
 
-        if(keyEvent->key() == Qt::Key_F11)
-        {
+        if(keyEvent->key() == Qt::Key_F11) {
             keyEvent->ignore();
             showOrHideLinesNumbers();
             return;
@@ -100,5 +120,53 @@ namespace Robomongo
         {
             BaseClass::keyPressEvent(keyEvent);
         }
+    }
+
+    void RoboScintilla::updateLineNumbersMarginWidth()
+    {
+        int numberOfDigits = getNumberOfDigits(lines());
+        _lineNumberMarginWidth = numberOfDigits * _lineNumberDigitWidth + rowNumberWidth;
+
+        // If line numbers margin already displayed, update its width
+        if (lineNumberMarginWidth()) {
+            setMarginWidth(0, _lineNumberMarginWidth);
+        }
+    }
+}
+
+namespace
+{
+    /**
+     * @brief Returns the number of digits in an 32-bit integer
+     * http://stackoverflow.com/questions/1489830/efficient-way-to-determine-number-of-digits-in-an-integer
+     */
+    int getNumberOfDigits(int x)
+    {
+        if (x < 0) return getNumberOfDigits(-x) + 1;
+
+        if (x >= 10000) {
+            if (x >= 10000000) {
+                if (x >= 100000000) {
+                    if (x >= 1000000000)
+                        return 10;
+                    return 9;
+                }
+                return 8;
+            }
+            if (x >= 100000) {
+                if (x >= 1000000)
+                    return 7;
+                return 6;
+            }
+            return 5;
+        }
+        if (x >= 100) {
+            if (x >= 1000)
+                return 4;
+            return 3;
+        }
+        if (x >= 10)
+            return 2;
+        return 1;
     }
 }

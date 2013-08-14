@@ -193,7 +193,9 @@ namespace Robomongo
         QRect rect = _queryText->sciScintilla()->rect();
         rect.setWidth(550);
         rect.setHeight(editorHeight(physicalLine + 1));
-        rect.moveLeft(charWidth() * lineIndexLeft + autocompletionBoxLeftPosition());
+        rect.moveLeft(charWidth() * lineIndexLeft
+            + autocompletionBoxLeftPosition()
+            + _queryText->sciScintilla()->lineNumberMarginWidth());
 
         _completer->complete(rect);
         _completer->popup()->setCurrentIndex(_completer->completionModel()->index(0, 0));

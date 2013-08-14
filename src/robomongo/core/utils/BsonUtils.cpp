@@ -67,6 +67,18 @@ namespace Robomongo
             {
                 return elem.Int();
             }
+
+            template<>
+            double getField<double>(const mongo::BSONElement &elem)
+            {
+                return elem.numberDouble();
+            }
+
+            template<>
+            long long getField<long long>(const mongo::BSONElement &elem)
+            {
+                return elem.safeNumberLong();
+            }
         }
 
         std::string jsonString(BSONObj &obj, JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding)

@@ -1,6 +1,9 @@
 #include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
 
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QSplitter>
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"

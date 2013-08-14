@@ -1,7 +1,10 @@
 #pragma once
 
 #include <QWidget>
-#include <QSplitter>
+QT_BEGIN_NAMESPACE
+class QLabel;
+class QPushButton;
+QT_END_NAMESPACE
 
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/BsonWidget.h"

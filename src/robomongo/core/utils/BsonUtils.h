@@ -32,6 +32,18 @@ namespace Robomongo
                 typedef int type;
                 enum { mongo_type = mongo::NumberInt };
             };
+            template<>
+            struct bson_convert_traits<mongo::NumberDouble>
+            {
+                typedef double type;
+                enum { mongo_type = mongo::NumberDouble };
+            };
+            template<>
+            struct bson_convert_traits<mongo::NumberLong>
+            {
+                typedef long long type;
+                enum { mongo_type = mongo::NumberLong };
+            };
             template<typename type_t>
             type_t getField(const mongo::BSONElement &elem);                  
         }

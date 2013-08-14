@@ -6,7 +6,6 @@ namespace Robomongo
     class WorkAreaTabWidget;
     class EventBus;
     class OpeningShellEvent;
-    class MainWindow;
     class QueryWidget;
     /*
     ** Work Area widget
@@ -16,7 +15,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit WorkAreaWidget(MainWindow *mainWindow);
+        explicit WorkAreaWidget(QWidget *parent=0);
 
         void toggleOrientation();
         void executeScript();

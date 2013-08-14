@@ -18,19 +18,6 @@ namespace Robomongo
             return true;
         }
 
-        QString toHexLower(const void *raw, int len)
-        {
-            const char* in = reinterpret_cast<const char*>(raw);
-            std::string stdstr = toStdHexLower(in, len);
-            return QString::fromStdString(stdstr);
-        }
-
-        QString toHexLower(const char *raw, int len)
-        {
-            const void* in = reinterpret_cast<const void*>(raw);
-            return toHexLower(in, len);
-        }
-
         std::string toStdHexLower(const char *raw, int len)
         {
             const void* in = reinterpret_cast<const void*>(raw);
@@ -55,12 +42,6 @@ namespace Robomongo
 
             *outBytes = bytes;
             return data;
-        }
-
-        const char *fromHex(const QString &str, int *outBytes)
-        {
-            std::string stdstr = str.toStdString();
-            return fromHex(stdstr, outBytes);
         }
 
         std::string hexToUuid(const std::string &hex, UUIDEncoding encoding)

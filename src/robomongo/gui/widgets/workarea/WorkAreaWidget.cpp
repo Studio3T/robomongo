@@ -5,7 +5,6 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/domain/MongoCollection.h"
-#include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
@@ -13,8 +12,8 @@
 
 namespace Robomongo
 {
-    WorkAreaWidget::WorkAreaWidget(MainWindow *mainWindow)
-        : QWidget(mainWindow),
+    WorkAreaWidget::WorkAreaWidget(QWidget *parent)
+        : QWidget(parent),
         _bus(AppRegistry::instance().bus())
     {
         _tabWidget = new WorkAreaTabWidget(this);
@@ -86,18 +85,14 @@ namespace Robomongo
         QString shellName = title.isEmpty() ? " Loading..." : title;
 
         setUpdatesEnabled(false);
-        MainWindow * mainWind = qobject_cast<MainWindow *>(parent());
-        if(mainWind)
-        {
-            QueryWidget *queryWidget = new QueryWidget(event->shell,_tabWidget,mainWind->viewMode());
+        QueryWidget *queryWidget = new QueryWidget(event->shell,_tabWidget);
 
-            _tabWidget->addTab(queryWidget, shellName);
-            _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
-    #if !defined(Q_OS_MAC)
-            _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());
-    #endif
-            setUpdatesEnabled(true);
-            queryWidget->showProgress();
-        }
+        _tabWidget->addTab(queryWidget, shellName);
+        _tabWidget->setCurrentIndex(_tabWidget->count() - 1);
+#if !defined(Q_OS_MAC)
+        _tabWidget->setTabIcon(_tabWidget->count() - 1, GuiRegistry::instance().mongodbIcon());
+#endif
+        setUpdatesEnabled(true);
+        queryWidget->showProgress();
     }
 }

@@ -54,12 +54,13 @@ namespace Robomongo
             s << "{";
             BSONObjIterator i(obj);
             BSONElement e = i.next();
-            if ( !e.eoo() )
+            if ( !e.eoo() ){
                 while ( 1 ) {
                     if ( pretty ) {
                         s << '\n';
-                        for( int x = 0; x < pretty; x++ )
+                        for( int x = 0; x < pretty; x++ ){
                             s << "    ";
+                        }
                     }
                     else {
                         s << " ";
@@ -69,33 +70,30 @@ namespace Robomongo
 
                     if (e.eoo()) {
                         s << '\n';
-                        for( int x = 0; x < pretty - 1; x++ )
+                        for( int x = 0; x < pretty - 1; x++ ){
                             s << "    ";
+                        }
                         s << "}";
                         break;
                     }
 
                     s << ",";
-
-        /*            if ( e.eoo() )
-                        break;
-                    s << ","; */
                 }
-            //s << "\n}";
+            }
             return s.str();
         }
 
         std::string jsonString(BSONElement &elem, JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding uuidEncoding)
         {
             BSONType t = elem.type();
-            int sign;
             if ( t == Undefined )
                 return "undefined";
 
             stringstream s;
             if ( includeFieldNames )
                 s << '"' << escape( elem.fieldName() ) << "\" : ";
-            switch ( elem.type() ) {
+
+            switch ( t ) {
             case mongo::String:
             case Symbol:
                 s << '"' << escape( string(elem.valuestr(), elem.valuestrsize()-1) ) << '"';
@@ -105,24 +103,27 @@ namespace Robomongo
                 break;
             case NumberInt:
             case NumberDouble:
-                if ( elem.number() >= -numeric_limits< double >::max() &&
-                        elem.number() <= numeric_limits< double >::max() ) {
-                    s.precision( 16 );
-                    s << elem.number();
+                {
+                    int sign=0;
+                    if ( elem.number() >= -numeric_limits< double >::max() &&
+                            elem.number() <= numeric_limits< double >::max() ) {
+                        s.precision( 16 );
+                        s << elem.number();
+                    }
+                    else if ( mongo::isNaN(elem.number()) ) {
+                        s << "NaN";
+                    }
+                    else if ( mongo::isInf(elem.number(), &sign) ) {
+                        s << ( sign == 1 ? "Infinity" : "-Infinity");
+                    }
+                    else {
+                        StringBuilder ss;
+                        ss << "Number " << elem.number() << " cannot be represented in JSON";
+                        string message = ss.str();
+                        //massert( 10311 ,  message.c_str(), false );
+                    }
+                    break;
                 }
-                else if ( mongo::isNaN(elem.number()) ) {
-                    s << "NaN";
-                }
-                else if ( mongo::isInf(elem.number(), &sign) ) {
-                    s << ( sign == 1 ? "Infinity" : "-Infinity");
-                }
-                else {
-                    StringBuilder ss;
-                    ss << "Number " << elem.number() << " cannot be represented in JSON";
-                    string message = ss.str();
-                    //massert( 10311 ,  message.c_str(), false );
-                }
-                break;
             case mongo::Bool:
                 s << ( elem.boolean() ? "true" : "false" );
                 break;
@@ -227,24 +228,19 @@ namespace Robomongo
                     s << "{ \"$date\" : ";
                 else
                     s << "ISODate(";
+
                 if( pretty ) {
                     Date_t d = elem.date();
 
-                    long long ms = (long long) d.millis;
                     boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
-                    boost::posix_time::time_duration diff = boost::posix_time::millisec(ms);
+                    boost::posix_time::time_duration diff = boost::posix_time::millisec(d.millis);
                     boost::posix_time::ptime time = epoch + diff;
                     std::string timestr = miutil::isotimeString(time, true, true);
                     s << '"' << timestr << '"';
-
-        /*            if( d == 0 ) s << '0';
-                    else
-                        //P s << '"' << elem.date().toString() << '"';
-                        s << '"' << elem.date().millis << '"';*/
-
                 }
                 else
                     s << elem.date();
+
                 if ( format == Strict )
                     s << " }";
                 else

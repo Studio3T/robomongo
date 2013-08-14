@@ -31,14 +31,13 @@
 using namespace mongo;
 namespace Robomongo
 {
-    QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, ViewMode viewMode, QWidget *parent) :
+    QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, QWidget *parent) :
         QWidget(parent),
         _shell(shell),
         _tabWidget(tabWidget),
         _app(AppRegistry::instance().app()),
         _bus(AppRegistry::instance().bus()),
         _viewer(NULL),
-        _viewMode(viewMode),
         isTextChanged(false)
     {
         setObjectName("queryWidget");
@@ -51,7 +50,7 @@ namespace Robomongo
         connect(_scriptWidget,SIGNAL(textChanged()),this,SLOT(textChange()));
         _scriptWidget->installEventFilter(this);
 
-        _viewer = new OutputWidget(_viewMode, _shell);
+        _viewer = new OutputWidget(_shell);
         _outputLabel = new QLabel(this);
         _outputLabel->setContentsMargins(0, 5, 0, 0);
         _outputLabel->setVisible(false);

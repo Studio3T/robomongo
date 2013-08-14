@@ -61,7 +61,7 @@ namespace Robomongo
         {
         /** double precision floating point value */
         case NumberDouble:
-            con.append(QString::number(_bsonElement.Double()));
+            con.append(QString::number(_bsonElement.Double(),'g',14));
             break;
 
         /** character string, stored in utf8 */

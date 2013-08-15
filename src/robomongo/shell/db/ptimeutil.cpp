@@ -41,9 +41,7 @@ namespace {
 }
 
 
-std::string 
-miutil::
-rfc1123date( const boost::posix_time::ptime &pt )
+std::string miutil::rfc1123date( const boost::posix_time::ptime &pt )
 {
    
    char buf[64];
@@ -98,16 +96,12 @@ rfc1123date( const boost::posix_time::ptime &pt )
 
 
 
-boost::posix_time::ptime
-miutil::
-rfc1123date( const std::string &rfc1123 )
+boost::posix_time::ptime miutil::rfc1123date( const std::string &rfc1123 )
 {
    return rfc1123date( rfc1123.c_str() );
 }
 
-boost::posix_time::ptime
-miutil::
-rfc1123date( const char *rfc1123 )
+boost::posix_time::ptime miutil::rfc1123date( const char *rfc1123 )
 {
    char gmt[4];
    char sday[4];
@@ -183,10 +177,8 @@ rfc1123date( const char *rfc1123 )
    return date;
 }
 
-std::string
-miutil::
-isotimeString(const boost::posix_time::ptime &pt, bool useTseparator, bool markAsZulu)
-{
+std::string miutil::isotimeString(const boost::posix_time::ptime &pt, bool useTseparator, bool isLocalFormat)
+{ 
    char buf[32];
    char sep=' '; 
       
@@ -198,24 +190,41 @@ isotimeString(const boost::posix_time::ptime &pt, bool useTseparator, bool markA
    
    boost::gregorian::date d( pt.date() );
    boost::posix_time::time_duration t( pt.time_of_day() );
-   
-   unsigned short year = d.year();
-   
-   if( markAsZulu )
-   	sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02dZ", 
-   	         year, d.month().as_number(), d.day().as_number(), sep, 
-   	         t.hours(), t.minutes(), t.seconds() );
-   else
-   	sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d", 
-   			   year, d.month().as_number(), d.day().as_number(), sep, 
-               t.hours(), t.minutes(), t.seconds() );
+
+   if( !isLocalFormat ){
+   	sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03dZ", 
+   	         d.year(), d.month().as_number(), d.day().as_number(), sep, 
+             t.hours(), t.minutes(), t.seconds(),(static_cast<int64_t>(t.total_milliseconds()))%1000 );
+   }
+   else{
+       boost::posix_time::ptime time(d,t);
+
+       char utc_buff[8]={0};
+       time_t rawtime;
+       ::time ( &rawtime );
+       struct tm *ptm = std::gmtime ( &rawtime );
+       int utcH = ptm->tm_hour;
+       int utcM = ptm->tm_min;
+       struct tm *timeinfo = std::localtime (&rawtime);
+       int diffH = timeinfo->tm_hour - utcH;
+       int diffM = timeinfo->tm_min - utcM;
+       boost::posix_time::time_duration diffT = boost::posix_time::minutes(diffH*60+diffM);
+       time += diffT;
+
+       d = time.date();
+       t = time.time_of_day();
+
+       sprintf(utc_buff,diffT.hours()>0?"+%02d:%02d":"%03d:%02d",diffT.hours(),abs(diffM));
+   	   sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03d", 
+   			   d.year(), d.month().as_number(), d.day().as_number(), sep, 
+               t.hours(), t.minutes(), t.seconds(),(static_cast<int64_t>(t.total_milliseconds()))%1000);
+       strcat(buf,utc_buff);
+   }
    
    return buf;   
 }
 
-boost::posix_time::ptime 
-miutil::
-ptimeFromIsoString( const std::string &isoTime )
+boost::posix_time::ptime miutil::ptimeFromIsoString( const std::string &isoTime )
 {
 	struct DEF {
 		int number;
@@ -229,7 +238,8 @@ ptimeFromIsoString( const std::string &isoTime )
 			       {0, 2, "T ", false},//day
 			       {0, 2, ":", false}, //hour
 			       {0, 2, ":", false}, //minute
-			       {0, 2, " ", false}, //second
+			       {0, 2, ".", false}, //second
+                   {0, 3, " ", false}, //msecond
 			       {0, 0, 0, false}    //terminator
 			      };
 	
@@ -330,14 +340,14 @@ ptimeFromIsoString( const std::string &isoTime )
 			hourOffset = getInt( isoTime, iIsoTime, 2 );
 			hourOffset*=sign;
 			
-			if( iIsoTime < isoTime.length() && isdigit( isoTime[iIsoTime] ) ) {
+			if( iIsoTime < isoTime.length() && isdigit( isoTime[++iIsoTime] ) ) {
 				minuteOffset = getInt( isoTime, iIsoTime, 2 );
 			}
 		}
 	}
 						
 	boost::gregorian::date date(def[0].number, def[1].number, def[2].number);
-	boost::posix_time::time_duration td(def[3].number, def[4].number, def[5].number);
+	boost::posix_time::time_duration td(def[3].number, def[4].number, def[5].number,def[6].number*1000);
 	boost::posix_time::ptime pt(date, td);
 	
 	td=boost::posix_time::time_duration(hourOffset, minuteOffset, 0);

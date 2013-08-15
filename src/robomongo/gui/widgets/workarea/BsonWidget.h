@@ -2,9 +2,6 @@
 
 #include <QWidget>
 #include <QThread>
-QT_BEGIN_NAMESPACE
-class QPlainTextEdit;
-QT_END_NAMESPACE
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
@@ -24,12 +21,11 @@ namespace Robomongo
 
     public:
         BsonWidget(MongoShell *shell, QWidget *parent = NULL);
-        ~BsonWidget() {}
         void setDocuments(const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo = MongoQueryInfo());
 
     private:
-        BsonTreeWidget *_bsonTree;
         MongoShell *_shell;
+        BsonTreeWidget *const _bsonTree;
     };
 
 
@@ -40,34 +36,13 @@ namespace Robomongo
     {
         Q_OBJECT
 
-    private:
-        /*
-        ** List of documents
-        */
-        QList<MongoDocumentPtr> _bsonObjects;
-
-        UUIDEncoding _uuidEncoding;
-
     public:
         /*
         ** Constructor
         */
-        JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects, UUIDEncoding uuidEncoding) : exit(false)
-        {
-            _bsonObjects = bsonObjects;
-            _uuidEncoding = uuidEncoding;
-        }
-
-        volatile bool exit;
-
-    protected:
-
-        /*
-        ** Overload function
-        */
-        virtual void run();
-
-    signals:
+        JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects, UUIDEncoding uuidEncoding, SupportedTimes timeZone);
+        void stop();
+   Q_SIGNALS:
         /**
          * @brief Signals when all parts prepared
          */
@@ -77,5 +52,20 @@ namespace Robomongo
          * @brief Signals when json part is ready
          */
         void partReady(const QString &part);
+
+    protected:
+
+        /*
+        ** Overload function
+        */
+        virtual void run();
+    private:
+        /*
+        ** List of documents
+        */
+        const QList<MongoDocumentPtr> _bsonObjects;
+        const UUIDEncoding _uuidEncoding;
+        const SupportedTimes _timeZone;
+        volatile bool _stop;
     };
 }

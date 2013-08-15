@@ -20,11 +20,6 @@ namespace Robomongo
             return obj;
         }
 
-        QString buildNiceSizeString(int sizeBytes)
-        {
-            return buildNiceSizeString((double) sizeBytes);
-        }
-
         QString buildNiceSizeString(double sizeBytes)
         {
             if (sizeBytes < 1024 * 100) {

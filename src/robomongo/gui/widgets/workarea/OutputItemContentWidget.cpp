@@ -6,6 +6,7 @@
 #include "robomongo/gui/widgets/workarea/BsonWidget.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h"
+#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
@@ -132,8 +133,7 @@ namespace Robomongo
                     if (_documents.count() > 0)
                     {
                         _log->sciScintilla()->setText("Loading...");
-                        UUIDEncoding uuidEncoding = AppRegistry::instance().settingsManager()->uuidEncoding();
-                        _thread = new JsonPrepareThread(_documents, uuidEncoding);
+                        _thread = new JsonPrepareThread(_documents, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
                         connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared()));
                         connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
                         connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));
@@ -210,11 +210,11 @@ namespace Robomongo
     void OutputItemContentWidget::jsonPartReady(const QString &json)
     {
         // check that this is our current thread
-        JsonPrepareThread *thread = (JsonPrepareThread *) sender();
-        if (thread != _thread)
+        JsonPrepareThread *thread = qobject_cast<JsonPrepareThread *>(sender());
+        if (thread && thread != _thread)
         {
             // close previous thread
-            thread->exit = true;
+            thread->stop();
             thread->wait();
         }
         else
@@ -234,19 +234,7 @@ namespace Robomongo
 
     FindFrame *Robomongo::OutputItemContentWidget::configureLogText()
     {
-        QFont textFont = font();
-    #if defined(Q_OS_MAC)
-        textFont.setPointSize(12);
-        textFont.setFamily("Monaco");
-    #elif defined(Q_OS_UNIX)
-        textFont.setFamily("Monospace");
-        textFont.setFixedPitch(true);
-        //textFont.setWeight(QFont::Bold);
-    //    textFont.setPointSize(12);
-    #elif defined(Q_OS_WIN)
-        textFont.setPointSize(10);
-        textFont.setFamily("Courier");
-    #endif
+        const QFont &textFont = GuiRegistry::instance().font();
 
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
         javaScriptLexer->setFont(textFont);

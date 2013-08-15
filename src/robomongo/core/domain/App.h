@@ -16,7 +16,7 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        App(EventBus *bus);
+        App(EventBus *const bus);
         ~App();
 
         /**
@@ -81,6 +81,6 @@ namespace Robomongo
         /**
          * @brief EventBus
          */
-        EventBus *_bus;
+        EventBus *const _bus;
     };
 }

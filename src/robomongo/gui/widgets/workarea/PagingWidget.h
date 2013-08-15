@@ -1,10 +1,9 @@
 #pragma once
 
 #include <QWidget>
-#include <QLabel>
-#include <QIcon>
-#include <QLineEdit>
-#include <QPushButton>
+QT_BEGIN_NAMESPACE
+class QLineEdit;
+QT_END_NAMESPACE
 
 namespace Robomongo
 {
@@ -17,17 +16,15 @@ namespace Robomongo
         void setSkip(int skip);
         void setLimit(int limit);
 
-    signals:
+    Q_SIGNALS:
         void leftClicked(int skip, int limit);
         void rightClicked(int skip, int limit);
 
-    private slots:
+    private Q_SLOTS:
         void leftButton_clicked();
         void rightButton_clicked();
 
     private:
-
-        QPushButton *createButtonWithIcon(const QIcon &icon);
         QLineEdit *_skipEdit;
         QLineEdit *_limitEdit;
     };

@@ -32,6 +32,18 @@ namespace Robomongo
                 typedef int type;
                 enum { mongo_type = mongo::NumberInt };
             };
+            template<>
+            struct bson_convert_traits<mongo::NumberDouble>
+            {
+                typedef double type;
+                enum { mongo_type = mongo::NumberDouble };
+            };
+            template<>
+            struct bson_convert_traits<mongo::NumberLong>
+            {
+                typedef long long type;
+                enum { mongo_type = mongo::NumberLong };
+            };
             template<typename type_t>
             type_t getField(const mongo::BSONElement &elem);                  
         }
@@ -54,8 +66,8 @@ namespace Robomongo
             return bsonelement_cast<typename detail::bson_convert_traits<BSONType_t>::type>(elem);
         }
 
-        std::string jsonString(mongo::BSONObj &obj, mongo::JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding);
-        std::string jsonString(mongo::BSONElement &elem, mongo::JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding);
+        std::string jsonString(mongo::BSONObj &obj, mongo::JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat);
+        std::string jsonString(mongo::BSONElement &elem, mongo::JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat);
     }
 }
 

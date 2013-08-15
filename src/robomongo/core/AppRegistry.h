@@ -29,8 +29,8 @@ namespace Robomongo
         AppRegistry(AppRegistry const &);       // To protect from copies of singleton
         void operator=(AppRegistry const &);    // To protect from copies of singleton    
 
-        EventBusScopedPtr _bus;
-        SettingsManagerScopedPtr _settingsManager;
-        AppScopedPtr _app;
+        const EventBusScopedPtr _bus;
+        const SettingsManagerScopedPtr _settingsManager;
+        const AppScopedPtr _app;
     };
 }

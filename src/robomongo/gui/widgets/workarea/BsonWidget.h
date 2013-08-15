@@ -47,15 +47,16 @@ namespace Robomongo
         QList<MongoDocumentPtr> _bsonObjects;
 
         UUIDEncoding _uuidEncoding;
-
+        SupportedTimes _timeZone;
     public:
         /*
         ** Constructor
         */
-        JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects, UUIDEncoding uuidEncoding) : exit(false)
+        JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects, UUIDEncoding uuidEncoding, SupportedTimes timeZone) : exit(false)
         {
             _bsonObjects = bsonObjects;
             _uuidEncoding = uuidEncoding;
+            _timeZone = timeZone;
         }
 
         volatile bool exit;

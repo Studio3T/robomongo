@@ -132,8 +132,7 @@ namespace Robomongo
                     if (_documents.count() > 0)
                     {
                         _log->sciScintilla()->setText("Loading...");
-                        UUIDEncoding uuidEncoding = AppRegistry::instance().settingsManager()->uuidEncoding();
-                        _thread = new JsonPrepareThread(_documents, uuidEncoding);
+                        _thread = new JsonPrepareThread(_documents, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
                         connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared()));
                         connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
                         connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));

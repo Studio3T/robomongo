@@ -49,7 +49,7 @@ namespace Robomongo
             }
         }
 
-        std::string jsonString(BSONObj &obj, JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding)
+        std::string jsonString(BSONObj &obj, JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat)
         {
             if ( obj.isEmpty() ) return "{}";
 
@@ -68,7 +68,7 @@ namespace Robomongo
                     else {
                         s << " ";
                     }
-                    s << jsonString(e, format, true, pretty?pretty+1:0, uuidEncoding);
+                    s << jsonString(e, format, true, pretty?pretty+1:0, uuidEncoding, timeFormat);
                     e = i.next();
 
                     if (e.eoo()) {
@@ -86,7 +86,7 @@ namespace Robomongo
             return s.str();
         }
 
-        std::string jsonString(BSONElement &elem, JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding uuidEncoding)
+        std::string jsonString(BSONElement &elem, JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat)
         {
             BSONType t = elem.type();
             if ( t == Undefined )
@@ -135,7 +135,7 @@ namespace Robomongo
                 break;
             case Object: {
                 BSONObj obj = elem.embeddedObject();
-                s << jsonString(obj, format, pretty, uuidEncoding);
+                s << jsonString(obj, format, pretty, uuidEncoding,timeFormat);
                 }
                 break;
             case mongo::Array: {
@@ -159,7 +159,7 @@ namespace Robomongo
                             s << "undefined";
                         }
                         else {
-                            s << jsonString(e, format, false, pretty?pretty+1:0, uuidEncoding);
+                            s << jsonString(e, format, false, pretty?pretty+1:0, uuidEncoding, timeFormat);
                             e = i.next();
                         }
                         count++;
@@ -238,7 +238,7 @@ namespace Robomongo
                     boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
                     boost::posix_time::time_duration diff = boost::posix_time::millisec(d.millis);
                     boost::posix_time::ptime time = epoch + diff;
-                    std::string timestr = miutil::isotimeString(time, true, true);
+                    std::string timestr = miutil::isotimeString(time, true,timeFormat == Utc);
                     s << '"' << timestr << '"';
                 }
                 else

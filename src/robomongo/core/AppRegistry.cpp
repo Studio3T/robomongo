@@ -1,4 +1,5 @@
 #include "robomongo/core/AppRegistry.h"
+
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/App.h"

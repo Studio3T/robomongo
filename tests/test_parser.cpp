@@ -119,3 +119,14 @@ TEST(DateTests, DateTimezone)
     boost::posix_time::ptime  ptNeg = miutil::ptimeFromIsoString("2013-08-13T01:39:34.411-13:50");
     EXPECT_EQ(ptNeg,timeNeg);
 }
+
+TEST(DateTests, DateRandomTest)
+{
+    boost::posix_time::ptime  pt = miutil::ptimeFromIsoString("2013-08-12T22:39:34.411Z");
+    boost::posix_time::ptime  pt2 = miutil::ptimeFromIsoString("2013-08-13T01:39:34.411+03:00");
+    EXPECT_EQ(pt,pt2);
+
+    boost::posix_time::ptime  pt3 = miutil::ptimeFromIsoString("2013-08-13T09:09:34.001Z");
+    boost::posix_time::ptime  pt4 = miutil::ptimeFromIsoString("2013-08-13T01:39:34.001-07:30");
+    EXPECT_EQ(pt3,pt4);
+}

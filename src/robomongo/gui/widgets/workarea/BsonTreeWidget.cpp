@@ -126,48 +126,6 @@ namespace Robomongo
     {
         BsonTreeItem *item = static_cast<BsonTreeItem *>(treeItem);
         item->expand();
-
-        /*MongoDocumentIterator iterator(item->document());
-
-        while(iterator.hasMore())
-        {
-            MongoElement_Pointer element = iterator.next();
-
-            if (element->isSimpleType() || element->bsonElement().isNull())
-            {
-                QTreeWidgetItem *childItem = new QTreeWidgetItem;
-                childItem->setText(0, element->fieldName());
-                childItem->setText(1, element->stringValue());
-                childItem->setIcon(0, getIcon(element));
-                item->addChild(childItem);
-            }
-            else if (element->isDocument())
-            {
-                BsonTreeItem *newitem = new BsonTreeItem(element->asDocument(), element->isArray());
-
-                if (item->isArray()) //is in array
-                {
-                    newitem->setText(0, QString("[%1]").arg(element->fieldName()));
-                }
-                else
-                {
-                    QString fieldName;
-
-                    if (element->isArray())
-                        fieldName = QString("%1 [%2]").arg(element->fieldName()).arg(element->bsonElement().Array().size());
-                    else
-                        fieldName = QString("%1 {..}").arg(element->fieldName());;
-
-                    newitem->setText(0, fieldName);
-                }
-
-                newitem->setIcon(0, getIcon(element));
-                newitem->setExpanded(true);
-                newitem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-                item->addChild(newitem);
-            }
-        }
-        */
     }
 
     QIcon BsonTreeWidget::getIcon(MongoElementPtr element)

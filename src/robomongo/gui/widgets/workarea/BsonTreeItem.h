@@ -32,7 +32,6 @@ namespace Robomongo
         QString buildObjectFieldName();
         QString buildFieldName();
         QString buildArrayFieldName(int itemsCount);
-        QString buildSynopsis(QString text);
 
         MongoElementPtr _element;
         MongoDocumentPtr _document;

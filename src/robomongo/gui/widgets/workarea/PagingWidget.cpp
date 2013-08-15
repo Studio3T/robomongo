@@ -1,9 +1,23 @@
 #include "robomongo/gui/widgets/workarea/PagingWidget.h"
 
-#include <QLabel>
+#include <QIcon>
 #include <QHBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
 
 #include "robomongo/gui/GuiRegistry.h"
+
+namespace
+{
+    QPushButton *createButtonWithIcon(const QIcon &icon)
+    {
+        QPushButton *button = new QPushButton;
+        button->setIcon(icon);
+        button->setFixedSize(24, 24);
+        button->setFlat(true);
+        return button;
+    }
+}
 
 namespace Robomongo
 {
@@ -53,15 +67,6 @@ namespace Robomongo
 
         _limitEdit->setText(QString::number(limit));
         show();
-    }
-
-    QPushButton *PagingWidget::createButtonWithIcon(const QIcon &icon)
-    {
-        QPushButton *button = new QPushButton;
-        button->setIcon(icon);
-        button->setFixedSize(24, 24);
-        button->setFlat(true);
-        return button;
     }
 
     void PagingWidget::leftButton_clicked()

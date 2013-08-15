@@ -16,7 +16,6 @@ namespace Robomongo
          */
         mongo::BSONObj fromjson(const QString &text);
 
-        QString buildNiceSizeString(int sizeBytes);
         QString buildNiceSizeString(double sizeBytes);
         QString buildPasswordHash(const QString &username, const QString &password);
     }

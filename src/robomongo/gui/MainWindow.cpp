@@ -249,6 +249,24 @@ namespace Robomongo
         uuidEncodingGroup->addAction(csharpLegacyEncodingAction);
         uuidEncodingGroup->addAction(pythonEncodingAction);
 
+        QAction *utcTime = new QAction("Utc", this);
+        utcTime->setCheckable(true);
+        utcTime->setChecked(AppRegistry::instance().settingsManager()->timeZone() == Utc);
+        connect(utcTime, SIGNAL(triggered()), this, SLOT(setUtcTimeZone()));
+
+        QAction *localTime = new QAction("Local timezone", this);
+        localTime->setCheckable(true);
+        localTime->setChecked(AppRegistry::instance().settingsManager()->timeZone() == LocalTime);
+        connect(localTime, SIGNAL(triggered()), this, SLOT(setLocalTimeZone()));
+
+        QMenu *timeMenu = optionsMenu->addMenu("Display Dates in ");
+        timeMenu->addAction(utcTime);
+        timeMenu->addAction(localTime);
+
+        QActionGroup *timeZoneGroup = new QActionGroup(this);
+        timeZoneGroup->addAction(utcTime);
+        timeZoneGroup->addAction(localTime);
+
         QAction *aboutRobomongoAction = new QAction("&About Robomongo", this);
         connect(aboutRobomongoAction, SIGNAL(triggered()), this, SLOT(aboutRobomongo()));
 
@@ -496,6 +514,18 @@ namespace Robomongo
     void MainWindow::setPythonUuidEncoding()
     {
         AppRegistry::instance().settingsManager()->setUuidEncoding(PythonLegacy);
+        AppRegistry::instance().settingsManager()->save();
+    }
+
+    void MainWindow::setUtcTimeZone()
+    {
+        AppRegistry::instance().settingsManager()->setTimeZone(Utc);
+        AppRegistry::instance().settingsManager()->save();
+    }
+
+    void MainWindow::setLocalTimeZone()
+    {
+        AppRegistry::instance().settingsManager()->setTimeZone(LocalTime);
         AppRegistry::instance().settingsManager()->save();
     }
 

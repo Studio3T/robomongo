@@ -8,6 +8,7 @@
 #include "robomongo/core/HexUtils.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
+#include "robomongo/shell/db/ptimeutil.h"
 
 using namespace mongo;
 
@@ -147,16 +148,9 @@ namespace Robomongo
             boost::posix_time::time_duration diff = boost::posix_time::millisec(ms);
             boost::posix_time::ptime time = epoch + diff;
 
+            std::string date = miutil::isotimeString(time,true,AppRegistry::instance().settingsManager()->timeZone()==Utc);
 
-
-            std::stringstream strm;
-
-            //boost::date_time::time_facet *timeFacet = new boost::date_time::time_facet("%a, %d %b %Y %H:%M:%S.%f GMT"); // "%Y---%m-%d %H:%M:%S"
-            boost::posix_time::time_facet *facet = new boost::posix_time::time_facet("%Y-%m-%d %H:%M:%S");
-            strm.imbue(std::locale(strm.getloc(), facet));
-            strm << time;
-
-            con.append(QString::fromStdString(strm.str()));
+            con.append(QString::fromStdString(date));
             break;
 
             /*

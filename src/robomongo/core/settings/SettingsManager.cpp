@@ -36,7 +36,7 @@ namespace Robomongo
      * ~/.config/robomongo/robomongo.json
      */
     SettingsManager::SettingsManager(QObject *parent) 
-        : QObject(parent),_version(SchemaVersion),_uuidEncoding(DefaultEncoding),_viewMode(Robomongo::Tree)
+        : QObject(parent),_version(SchemaVersion),_uuidEncoding(DefaultEncoding),_timeZone(Utc),_viewMode(Robomongo::Tree)
     {
         load();
         qDebug() << "SettingsManager initialized in " << _configPath;
@@ -74,14 +74,21 @@ namespace Robomongo
 
                     _uuidEncoding = (UUIDEncoding) encoding;
 
-                    // 3. Load view mode
+                    // 3. Load TimeZone
+                    int timeZone = map.value("timeZone").toInt();
+                    if (timeZone > 2 || timeZone < 0)
+                        timeZone = 0;
+
+                    _timeZone = (SupportedTimes) timeZone;
+
+                    // 4. Load view mode
                     int viewMode = map.value("viewMode").toInt();
                     if (viewMode > 2 || encoding < 0)
                         viewMode = 0;
 
                     _viewMode = (ViewMode) viewMode;
 
-                    // 4. Load connections
+                    // 5. Load connections
                     _connections.clear();
 
                     QVariantList list = map.value("connections").toList();
@@ -111,10 +118,13 @@ namespace Robomongo
         // 2. Save UUID encoding
         map.insert("uuidEncoding", _uuidEncoding);
 
-        // 3. Save view mode
+        // 3. Save TimeZone encoding
+        map.insert("TimeZone", _timeZone);
+
+        // 4. Save view mode
         map.insert("viewMode", _viewMode);
 
-        // 4. Save connections
+        // 5. Save connections
         QVariantList list;
 
         for(QList<ConnectionSettings *>::const_iterator it = _connections.begin();it!=_connections.end();++it) {

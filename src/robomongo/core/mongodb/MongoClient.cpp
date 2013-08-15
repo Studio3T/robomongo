@@ -11,7 +11,7 @@ namespace
         info._name = getField<mongo::String>(obj,"name");
         mongo::BSONObj keyObj = getField<mongo::Object>(obj,"key");
         if(keyObj.isValid()){
-                info._request = jsonString(keyObj, mongo::TenGen, 1, Robomongo::DefaultEncoding);
+                info._request = jsonString(keyObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
         }
         info._unique = getField<mongo::Bool>(obj,"unique");
         info._backGround = getField<mongo::Bool>(obj,"background");
@@ -23,7 +23,7 @@ namespace
         info._languageOverride = getField<mongo::String>(obj,"language_override");
         mongo::BSONObj weightsObj = getField<mongo::Object>(obj,"weights");
         if(weightsObj.isValid()){
-                info._textWeights = jsonString(weightsObj, mongo::TenGen, 1, Robomongo::DefaultEncoding);
+                info._textWeights = jsonString(weightsObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
         }
         return info;
     }

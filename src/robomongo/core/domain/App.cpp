@@ -9,7 +9,7 @@
 namespace Robomongo
 {
 
-    App::App(EventBus *bus) : QObject(),
+    App::App(EventBus *const bus) : QObject(),
         _bus(bus) { }
 
     App::~App()

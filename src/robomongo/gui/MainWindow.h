@@ -63,6 +63,8 @@ namespace Robomongo
         void handle(QueryWidgetUpdatedEvent *event);
     private Q_SLOTS:
         void updateMenus();
+        void setUtcTimeZone();
+        void setLocalTimeZone();
     private:
         QLabel *_status;
         ViewMode _viewMode;

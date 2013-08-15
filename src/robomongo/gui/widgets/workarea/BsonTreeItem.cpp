@@ -7,6 +7,16 @@
 #include "robomongo/core/settings/SettingsManager.h"
 
 using namespace mongo;
+
+namespace
+{
+    QString buildSynopsis(const QString &text)
+    {
+        QString simplified = text.simplified().left(300);
+        return simplified;
+    }
+}
+
 namespace Robomongo
 {
     BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position) : QObject(),
@@ -23,23 +33,21 @@ namespace Robomongo
         /** double precision floating point value */
         case NumberDouble:
             {
-                static QString typeDouble("Double");
                 setIcon(0, GuiRegistry::instance().bsonIntegerIcon());
                 setText(1, element->stringValue());
-                setText(2, typeDouble);
+                setText(2, "Double");
             }
             break;
 
         /** character string, stored in utf8 */
         case String:
             {
-                static QString typeString("String");
                 QString text = element->stringValue().left(500);
                 setToolTip(1, text);
 
                 setIcon(0, GuiRegistry::instance().bsonStringIcon());
                 setText(1, buildSynopsis(element->stringValue()));
-                setText(2, typeString);
+                setText(2, "String");
             }
             break;
 
@@ -56,12 +64,11 @@ namespace Robomongo
         /** an embedded array */
         case Array:
             {
-                static QString typeArray("Array");
                 int itemsCount = _element->bsonElement().Array().size();
 
                 setText(0, buildArrayFieldName(itemsCount));
                 setIcon(0, GuiRegistry::instance().bsonArrayIcon());
-                setText(2, typeArray);
+                setText(2, "Array");
 
                 setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
             }
@@ -70,7 +77,6 @@ namespace Robomongo
         /** binary data */
         case BinData:
             {
-                static QString typeBinary("Binary");
                 setIcon(0, GuiRegistry::instance().bsonBinaryIcon());
                 setText(1, element->stringValue());
 
@@ -90,7 +96,7 @@ namespace Robomongo
 
                     setText(2, type);
                 } else {
-                    setText(2, typeBinary);
+                    setText(2, "Binary");
                 }
             }
             break;
@@ -98,60 +104,54 @@ namespace Robomongo
         /** Undefined type */
         case Undefined:
             {
-                static QString typeUndefined("Undefined");
                 setIcon(0, GuiRegistry::instance().circleIcon());
                 setText(1, "<Undefined>");
-                setText(2, typeUndefined);
+                setText(2, "Undefined");
             }
             break;
 
         /** ObjectId */
         case jstOID:
             {
-                static QString typeObjectId("ObjectId");
                 setIcon(0, GuiRegistry::instance().circleIcon());
                 setText(1, element->stringValue());
-                setText(2, typeObjectId);
+                setText(2, "ObjectId");
             }
             break;
 
         /** boolean type */
         case Bool:
             {
-                static QString typeBoolean("Boolean");
                 setIcon(0, GuiRegistry::instance().bsonBooleanIcon());
                 setText(1, element->stringValue());
-                setText(2, typeBoolean);
+                setText(2, "Boolean");
             }
             break;
 
         /** date type */
         case Date:
             {
-                static QString typeDate("Date");
                 setIcon(0, GuiRegistry::instance().bsonDateTimeIcon());
                 setText(1, element->stringValue());
-                setText(2, typeDate);
+                setText(2, "Date");
             }
             break;
 
         /** null type */
         case jstNULL:
             {
-                static QString typeNull("Null");
                 setIcon(0, GuiRegistry::instance().bsonNullIcon());
                 setText(1, "null");
-                setText(2, typeNull);
+                setText(2, "Null");
             }
             break;
 
         /** regular expression, a pattern with options */
         case RegEx:
             {
-                static QString typeRegExp("Regular Expression");
                 setIcon(0, GuiRegistry::instance().circleIcon());
                 setText(1, element->stringValue());
-                setText(2, typeRegExp);
+                setText(2, "Regular Expression");
             }
             break;
 
@@ -168,75 +168,66 @@ namespace Robomongo
         /** deprecated / use CodeWScope */
         case Code:
             {
-                static QString typeCode("Code");
-
                 QString code = element->stringValue();
                 setToolTip(1, code);
 
                 setIcon(0, GuiRegistry::instance().circleIcon());
                 setText(1, buildSynopsis(code));
-                setText(2, typeCode);
+                setText(2, "Code");
             }
             break;
 
         /** a programming language (e.g., Python) symbol */
         case Symbol:
             {
-                static QString typeSymbol("Symbol");
-                setText(2, typeSymbol);
+                setText(2, "Symbol");
             }
             break;
 
         /** javascript code that can execute on the database server, with SavedContext */
         case CodeWScope:
             {
-                static QString typeCodeWScope("CodeWScope");
-
                 QString code = element->stringValue();
                 setToolTip(1, code);
 
                 setIcon(0, GuiRegistry::instance().circleIcon());
                 setText(1, buildSynopsis(code));
-                setText(2, typeCodeWScope);
+                setText(2, "CodeWScope");
             }
             break;
 
         /** 32 bit signed integer */
         case NumberInt:
             {
-                static QString typeInteger("Int32");
                 setIcon(0, GuiRegistry::instance().bsonIntegerIcon());
                 setText(1, element->stringValue());
-                setText(2, typeInteger);
+                setText(2, "Int32");
             }
             break;
 
         /** Updated to a Date with value next OpTime on insert */
         case Timestamp:
             {
-                static QString typeTimestamp("Timestamp");
                 setIcon(0, GuiRegistry::instance().bsonDateTimeIcon());
                 setText(1, element->stringValue());
-                setText(2, typeTimestamp);
+                setText(2, "Timestamp");
             }
             break;
 
         /** 64 bit integer */
         case NumberLong:
             {
-                static QString typeLong("Int64");
                 setIcon(0, GuiRegistry::instance().bsonIntegerIcon());
                 setText(1, element->stringValue());
-                setText(2, typeLong);
+                setText(2, "Int64");
             }
             break;
 
         default:
             {
-                static QString typeLong("Type is not supported");
                 setIcon(0, GuiRegistry::instance().circleIcon());
                 setText(1, element->stringValue());
-                setText(2, typeLong);
+                setText(2, "Type is not supported");
             }
             break;
         }
@@ -325,11 +316,5 @@ namespace Robomongo
             return QString("(%1) [%2]").arg(_position).arg(itemsCount);
         else
             return QString("%1 [%2]").arg(_element->fieldName()).arg(itemsCount);
-    }
-
-    QString BsonTreeItem::buildSynopsis(QString text)
-    {
-        QString simplified = text.simplified().left(300);
-        return simplified;
     }
 }

@@ -1,8 +1,5 @@
 #pragma once
-
 #include <QTreeWidgetItem>
-#include <mongo/bson/bsonobj.h>
-
 #include "robomongo/core/Core.h"
 
 namespace Robomongo
@@ -12,13 +9,6 @@ namespace Robomongo
     public:
         CollectionStatsTreeItem(MongoDocumentPtr document);
     private:
-
-        QString getString(const char *name) const;
-        int getInt(const char *name) const;
-        long long getLongLong(const char *name) const;
-        double getDouble(const char *name) const;
-
         MongoDocumentPtr _document;
-        mongo::BSONObj _obj;
     };
 }

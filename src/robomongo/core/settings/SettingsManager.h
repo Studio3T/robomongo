@@ -70,7 +70,9 @@ namespace Robomongo
         const QList<ConnectionSettings *> connections() const { return _connections; }
 
         void setUuidEncoding(UUIDEncoding encoding) { _uuidEncoding = encoding; }
+        void setTimeZone(SupportedTimes timeZ) { _timeZone = timeZ; }
         UUIDEncoding uuidEncoding() { return _uuidEncoding; }
+        SupportedTimes timeZone() { return _timeZone;}
 
         void setViewMode(ViewMode viewMode) { _viewMode = viewMode; }
         ViewMode viewMode() { return _viewMode; }
@@ -91,7 +93,7 @@ namespace Robomongo
          * @brief UUID encoding
          */
         UUIDEncoding _uuidEncoding;
-
+        SupportedTimes _timeZone;
         /**
          * @brief view mode
          */

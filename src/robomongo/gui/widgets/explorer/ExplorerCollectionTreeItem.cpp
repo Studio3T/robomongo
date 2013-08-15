@@ -143,13 +143,13 @@ namespace Robomongo
     ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent,const EnsureIndexInfo &info)
         : BaseClass(parent),_info(info)
     {
-        QAction *deleteIndex = new QAction("Drop index", this);
+        QAction *deleteIndex = new QAction("Drop Index", this);
         connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
-        QAction *editIndex = new QAction("Edit index", this);
+        QAction *editIndex = new QAction("Edit Index", this);
         connect(editIndex, SIGNAL(triggered()), SLOT(ui_edit()));
 
-        BaseClass::_contextMenu->addAction(deleteIndex);
         BaseClass::_contextMenu->addAction(editIndex);
+        BaseClass::_contextMenu->addAction(deleteIndex);
 
         setText(0, QString::fromUtf8(_info._name.c_str()));
         setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());

@@ -38,7 +38,7 @@ namespace Robomongo
         QAction *addIndex = new QAction("Add Index", this);
         connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex()));
 
-        QAction *addIndexGui = new QAction("Add Index GUI", this);
+        QAction *addIndexGui = new QAction("Add Index", this);
         connect(addIndexGui, SIGNAL(triggered()), SLOT(ui_addIndexGui()));
 
         QAction *dropIndex = new QAction("Drop Index", this);
@@ -50,14 +50,15 @@ namespace Robomongo
         QAction *viewIndex = new QAction("View Indexes", this);
         connect(viewIndex, SIGNAL(triggered()), SLOT(ui_viewIndex()));
 
-        QAction *refreshIndex = new QAction("Refresh Indexes", this);
+        QAction *refreshIndex = new QAction("Refresh", this);
         connect(refreshIndex, SIGNAL(triggered()), SLOT(ui_refreshIndex()));
 
         BaseClass::_contextMenu->addAction(viewIndex);
-        BaseClass::_contextMenu->addAction(addIndex);
+        //BaseClass::_contextMenu->addAction(addIndex);
         BaseClass::_contextMenu->addAction(addIndexGui);
-        BaseClass::_contextMenu->addAction(dropIndex);
+        //BaseClass::_contextMenu->addAction(dropIndex);
         BaseClass::_contextMenu->addAction(reIndex);
+        BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(refreshIndex);      
 
         setText(0, labelText);

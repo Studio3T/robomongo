@@ -54,7 +54,7 @@ namespace Robomongo
         _bus(AppRegistry::instance().bus()),
         _workArea(NULL),
         _connectionsMenu(NULL),
-        _viewMode(Text)
+        _viewMode(Custom)
     {
         GuiRegistry::instance().setMainWindow(this);
 

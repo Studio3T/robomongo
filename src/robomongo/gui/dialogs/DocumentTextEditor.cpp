@@ -11,6 +11,7 @@
 
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
+#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/shell/db/json.h"

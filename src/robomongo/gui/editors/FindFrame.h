@@ -13,6 +13,8 @@ class QsciScintilla;
 
 namespace Robomongo
 {
+    class RoboScintilla;
+
     class FindFrame : public QFrame
     {
         Q_OBJECT
@@ -23,7 +25,7 @@ namespace Robomongo
         };
         typedef QFrame BaseClass;
         explicit FindFrame(QWidget *parent);
-        QsciScintilla *const sciScintilla() const
+        RoboScintilla *const sciScintilla() const
         {
             return _scin;
         }
@@ -38,7 +40,7 @@ namespace Robomongo
 
     private:
         void findElement(bool forward);
-        QsciScintilla *const _scin;
+        RoboScintilla *const _scin;
         QFrame *const _findPanel;
         QLineEdit *const _findLine;
         QToolButton *const _close;

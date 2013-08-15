@@ -18,6 +18,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
+#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/shell/db/json.h"

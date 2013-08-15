@@ -51,16 +51,16 @@ namespace Robomongo
         //setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::DoubleClicked);
         setContextMenuPolicy(Qt::DefaultContextMenu);
 
-        _deleteDocumentAction = new QAction("Delete", this);
+        _deleteDocumentAction = new QAction("Delete Document", this);
         connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument()));
 
-        _editDocumentAction = new QAction("Edit", this);
+        _editDocumentAction = new QAction("Edit Document", this);
         connect(_editDocumentAction, SIGNAL(triggered()), SLOT(onEditDocument()));
 
-        _viewDocumentAction = new QAction("View", this);
+        _viewDocumentAction = new QAction("View Document", this);
         connect(_viewDocumentAction, SIGNAL(triggered()), SLOT(onViewDocument()));
 
-        _insertDocumentAction = new QAction("Insert", this);
+        _insertDocumentAction = new QAction("Insert Document", this);
         connect(_insertDocumentAction, SIGNAL(triggered()), SLOT(onInsertDocument()));
 
         _copyValueAction = new QAction("Copy Value", this);

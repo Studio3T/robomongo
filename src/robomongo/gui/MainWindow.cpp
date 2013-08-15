@@ -81,10 +81,12 @@ namespace Robomongo
         ).arg(explorerColor));
 
         _openAction = new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this);
+        _openAction->setToolTip("Load script from the file to the currently opened shell");
         connect(_openAction, SIGNAL(triggered()), this, SLOT(open()));
 
         _saveAction = new QAction(GuiRegistry::instance().saveIcon(), tr("&Save"), this);
         _saveAction->setShortcuts(QKeySequence::Save);
+        _saveAction->setToolTip("Save script of the currently opened shell to the file <b>(Ctrl + S)</b>");
         connect(_saveAction, SIGNAL(triggered()), this, SLOT(save()));
 
         _saveAsAction = new QAction(tr("Save &As..."), this);

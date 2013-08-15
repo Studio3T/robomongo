@@ -97,7 +97,7 @@ namespace miutil {
     * @param markAsZulu Add an Z to the end of the timestring 
     * @return An iso compatible string on success or an empty string if \em t is invalid.
     */
-   std::string  isotimeString(const boost::posix_time::ptime &t, bool useTseparator=false, bool isUtcFormat=false);
+   std::string  isotimeString(const boost::posix_time::ptime &t, bool useTseparator=false, bool isLocalFormat=false);
    
    
    /**

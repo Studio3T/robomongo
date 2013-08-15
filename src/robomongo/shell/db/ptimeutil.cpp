@@ -177,7 +177,7 @@ boost::posix_time::ptime miutil::rfc1123date( const char *rfc1123 )
    return date;
 }
 
-std::string miutil::isotimeString(const boost::posix_time::ptime &pt, bool useTseparator, bool isUtcFormat)
+std::string miutil::isotimeString(const boost::posix_time::ptime &pt, bool useTseparator, bool isLocalFormat)
 { 
    char buf[32];
    char sep=' '; 
@@ -190,11 +190,10 @@ std::string miutil::isotimeString(const boost::posix_time::ptime &pt, bool useTs
    
    boost::gregorian::date d( pt.date() );
    boost::posix_time::time_duration t( pt.time_of_day() );
-   unsigned short year = d.year();
-   
-   if( !isUtcFormat ){
+
+   if( !isLocalFormat ){
    	sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03dZ", 
-   	         year, d.month().as_number(), d.day().as_number(), sep, 
+   	         d.year(), d.month().as_number(), d.day().as_number(), sep, 
              t.hours(), t.minutes(), t.seconds(),(static_cast<int64_t>(t.total_milliseconds()))%1000 );
    }
    else{
@@ -204,16 +203,20 @@ std::string miutil::isotimeString(const boost::posix_time::ptime &pt, bool useTs
        time_t rawtime;
        ::time ( &rawtime );
        struct tm *ptm = std::gmtime ( &rawtime );
-       int utcH = (ptm->tm_hour)%24;
+       int utcH = ptm->tm_hour;
+       int utcM = ptm->tm_min;
        struct tm *timeinfo = std::localtime (&rawtime);
        int diffH = timeinfo->tm_hour - utcH;
-       time += boost::posix_time::hours(diffH);
+       int diffM = timeinfo->tm_min - utcM;
+       boost::posix_time::time_duration diffT = boost::posix_time::minutes(diffH*60+diffM);
+       time += diffT;
+
        d = time.date();
        t = time.time_of_day();
 
-       sprintf(utc_buff,diffH>0?"+%02d:00":"%02d:00",diffH);
+       sprintf(utc_buff,diffT.hours()>0?"+%02d:%02d":"%03d:%02d",diffT.hours(),abs(diffM));
    	   sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03d", 
-   			   year, d.month().as_number(), d.day().as_number(), sep, 
+   			   d.year(), d.month().as_number(), d.day().as_number(), sep, 
                t.hours(), t.minutes(), t.seconds(),(static_cast<int64_t>(t.total_milliseconds()))%1000);
        strcat(buf,utc_buff);
    }

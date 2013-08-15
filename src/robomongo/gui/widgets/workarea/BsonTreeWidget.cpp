@@ -66,7 +66,7 @@ namespace Robomongo
         _copyValueAction = new QAction("Copy Value", this);
         connect(_copyValueAction, SIGNAL(triggered()), SLOT(onCopyDocument()));
 
-        _expandRecursive = new QAction("Expand recursive", this);
+        _expandRecursive = new QAction("Expand Recursively", this);
          connect(_expandRecursive, SIGNAL(triggered()), SLOT(onExpandRecursive()));
 
     /*    _documentContextMenu = new QMenu(this);
@@ -218,6 +218,10 @@ namespace Robomongo
         bool isSimple = documentItem ? (documentItem->isSimpleType() || documentItem->isUuidType()) : false;
 
         QMenu menu(this);
+        if (item && item->childIndicatorPolicy() == QTreeWidgetItem::ShowIndicator) {
+            menu.addAction(_expandRecursive);
+            menu.addSeparator();
+        }
         if (onItem && isEditable) menu.addAction(_editDocumentAction);
         if (onItem)               menu.addAction(_viewDocumentAction);
         if (isEditable)           menu.addAction(_insertDocumentAction);
@@ -225,10 +229,7 @@ namespace Robomongo
         if (onItem && isSimple)   menu.addAction(_copyValueAction);
         if (onItem && isEditable) menu.addSeparator();
         if (onItem && isEditable) menu.addAction(_deleteDocumentAction);
-        if (item&&item->childIndicatorPolicy()==QTreeWidgetItem::ShowIndicator)
-        {
-            menu.addAction(_expandRecursive);
-        }
+
         QPoint menuPoint = mapToGlobal(event->pos());
         menuPoint.setY(menuPoint.y() + header()->height());
         menu.exec(menuPoint);

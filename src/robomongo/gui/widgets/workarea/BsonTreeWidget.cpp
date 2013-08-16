@@ -51,22 +51,22 @@ namespace Robomongo
         //setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::DoubleClicked);
         setContextMenuPolicy(Qt::DefaultContextMenu);
 
-        _deleteDocumentAction = new QAction("Delete", this);
+        _deleteDocumentAction = new QAction("Delete Document", this);
         connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument()));
 
-        _editDocumentAction = new QAction("Edit", this);
+        _editDocumentAction = new QAction("Edit Document", this);
         connect(_editDocumentAction, SIGNAL(triggered()), SLOT(onEditDocument()));
 
-        _viewDocumentAction = new QAction("View", this);
+        _viewDocumentAction = new QAction("View Document", this);
         connect(_viewDocumentAction, SIGNAL(triggered()), SLOT(onViewDocument()));
 
-        _insertDocumentAction = new QAction("Insert", this);
+        _insertDocumentAction = new QAction("Insert Document", this);
         connect(_insertDocumentAction, SIGNAL(triggered()), SLOT(onInsertDocument()));
 
         _copyValueAction = new QAction("Copy Value", this);
         connect(_copyValueAction, SIGNAL(triggered()), SLOT(onCopyDocument()));
 
-        _expandRecursive = new QAction("Expand recursive", this);
+        _expandRecursive = new QAction("Expand Recursively", this);
          connect(_expandRecursive, SIGNAL(triggered()), SLOT(onExpandRecursive()));
 
     /*    _documentContextMenu = new QMenu(this);
@@ -176,6 +176,10 @@ namespace Robomongo
         bool isSimple = documentItem ? (documentItem->isSimpleType() || documentItem->isUuidType()) : false;
 
         QMenu menu(this);
+        if (item && item->childIndicatorPolicy() == QTreeWidgetItem::ShowIndicator) {
+            menu.addAction(_expandRecursive);
+            menu.addSeparator();
+        }
         if (onItem && isEditable) menu.addAction(_editDocumentAction);
         if (onItem)               menu.addAction(_viewDocumentAction);
         if (isEditable)           menu.addAction(_insertDocumentAction);
@@ -183,10 +187,7 @@ namespace Robomongo
         if (onItem && isSimple)   menu.addAction(_copyValueAction);
         if (onItem && isEditable) menu.addSeparator();
         if (onItem && isEditable) menu.addAction(_deleteDocumentAction);
-        if (item&&item->childIndicatorPolicy()==QTreeWidgetItem::ShowIndicator)
-        {
-            menu.addAction(_expandRecursive);
-        }
+
         QPoint menuPoint = mapToGlobal(event->pos());
         menuPoint.setY(menuPoint.y() + header()->height());
         menu.exec(menuPoint);

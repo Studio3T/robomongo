@@ -38,7 +38,7 @@ namespace Robomongo
         QAction *addIndex = new QAction("Add Index", this);
         connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex()));
 
-        QAction *addIndexGui = new QAction("Add Index GUI", this);
+        QAction *addIndexGui = new QAction("Add Index", this);
         connect(addIndexGui, SIGNAL(triggered()), SLOT(ui_addIndexGui()));
 
         QAction *dropIndex = new QAction("Drop Index", this);
@@ -50,14 +50,15 @@ namespace Robomongo
         QAction *viewIndex = new QAction("View Indexes", this);
         connect(viewIndex, SIGNAL(triggered()), SLOT(ui_viewIndex()));
 
-        QAction *refreshIndex = new QAction("Refresh Indexes", this);
+        QAction *refreshIndex = new QAction("Refresh", this);
         connect(refreshIndex, SIGNAL(triggered()), SLOT(ui_refreshIndex()));
 
         BaseClass::_contextMenu->addAction(viewIndex);
-        BaseClass::_contextMenu->addAction(addIndex);
+        //BaseClass::_contextMenu->addAction(addIndex);
         BaseClass::_contextMenu->addAction(addIndexGui);
-        BaseClass::_contextMenu->addAction(dropIndex);
+        //BaseClass::_contextMenu->addAction(dropIndex);
         BaseClass::_contextMenu->addAction(reIndex);
+        BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(refreshIndex);      
 
         setText(0, labelText);
@@ -143,13 +144,13 @@ namespace Robomongo
     ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent,const EnsureIndexInfo &info)
         : BaseClass(parent),_info(info)
     {
-        QAction *deleteIndex = new QAction("Drop index", this);
+        QAction *deleteIndex = new QAction("Drop Index", this);
         connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
-        QAction *editIndex = new QAction("Edit index", this);
+        QAction *editIndex = new QAction("Edit Index", this);
         connect(editIndex, SIGNAL(triggered()), SLOT(ui_edit()));
 
-        BaseClass::_contextMenu->addAction(deleteIndex);
         BaseClass::_contextMenu->addAction(editIndex);
+        BaseClass::_contextMenu->addAction(deleteIndex);
 
         setText(0, QString::fromUtf8(_info._name.c_str()));
         setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());

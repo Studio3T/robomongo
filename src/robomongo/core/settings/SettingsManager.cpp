@@ -74,19 +74,23 @@ namespace Robomongo
 
                     _uuidEncoding = (UUIDEncoding) encoding;
 
-                    // 3. Load TimeZone
+
+                    // 3. Load view mode
+                    if (map.contains("viewMode")) {
+                        int viewMode = map.value("viewMode").toInt();
+                        if (viewMode > 2 || encoding < 0)
+                            viewMode = Custom; // Default View Mode
+                        _viewMode = (ViewMode) viewMode;
+                    } else {
+                        _viewMode = Custom; // Default View Mode
+                    }
+
+                    // 4. Load TimeZone
                     int timeZone = map.value("timeZone").toInt();
                     if (timeZone > 2 || timeZone < 0)
                         timeZone = 0;
 
                     _timeZone = (SupportedTimes) timeZone;
-
-                    // 4. Load view mode
-                    int viewMode = map.value("viewMode").toInt();
-                    if (viewMode > 2 || encoding < 0)
-                        viewMode = 0;
-
-                    _viewMode = (ViewMode) viewMode;
 
                     // 5. Load connections
                     _connections.clear();

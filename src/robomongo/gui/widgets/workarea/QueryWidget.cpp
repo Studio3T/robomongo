@@ -256,7 +256,8 @@ namespace Robomongo
         int thisTab = _tabWidget->indexOf(this);
 
         if (thisTab != -1) {
-            const QString &shellQuery = _shell->query();           
+            const QString &shellQuery = _shell->query();
+            QString toolTipQuery = shellQuery.left(700);
 
             QString tabTitle,toolTipText;
             if(_shell){
@@ -274,12 +275,11 @@ namespace Robomongo
 
                 if(tabTitle.isEmpty()){
                     tabTitle = shellQuery.left(41).replace(QRegExp("[\n\r\t]"), " ");;
-                    toolTipText = shellQuery;
-            #pragma message("ShellQuery can be too long for tooltip. Please cut it (approx. 400 symbols)")
+                    toolTipText = QString("<pre>%1</pre>").arg(toolTipQuery);
                 }
                 else{
                     //tabTitle = QString("%1 %2").arg(tabTitle).arg(shellQuery);
-                    toolTipText = QString("<b>%1</b><br />%2").arg(toolTipText).arg(shellQuery);
+                    toolTipText = QString("<b>%1</b><br/><pre>%2</pre>").arg(toolTipText).arg(toolTipQuery);
                 }
             }
 

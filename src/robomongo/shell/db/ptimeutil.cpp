@@ -33,11 +33,9 @@
 //#include <trimstr.h>
 #include <sstream>
 
-
-using namespace std;
-
-namespace {
-    int getInt( const string &timebuf, string::size_type &index, int numberOfChar,bool &isSuccessfull )
+namespace
+{
+    int getInt( const std::string &timebuf, std::string::size_type &index, int numberOfChar,bool &isSuccessfull )
     {
         int nextN=0;
         char buf[10]={0};
@@ -60,11 +58,8 @@ namespace miutil
 
     std::string rfc1123date( const boost::posix_time::ptime &pt )
     {
-
-        char buf[64];
-        const char *day=0;
-        const char *mon=0;
-        unsigned short year;
+        const char *day = NULL;
+        const char *mon = NULL;
 
         if( pt.is_special() )
             return std::string();
@@ -102,13 +97,12 @@ namespace miutil
         if( !day || !mon )
             return std::string();
 
-        year = d.year();
+        unsigned short year = d.year();
+        char buf[64] = {0};
 
-        sprintf( buf, "%s, %02d %s %04d %02d:%02d:%02d GMT", 
-            day, d.day().as_number(), mon, year,
-            t.hours(), t.minutes(), t.seconds() );
+        sprintf( buf, "%s, %02d %s %04d %02d:%02d:%02d GMT", day, d.day().as_number(), mon, year,t.hours(), t.minutes(), t.seconds() );
 
-        return std::string(buf);
+        return buf;
     }
 
     boost::posix_time::ptime rfc1123date( const std::string &rfc1123 )
@@ -194,11 +188,11 @@ namespace miutil
 
     std::string isotimeString(const boost::posix_time::ptime &pt, bool useTseparator, bool isLocalFormat)
     { 
-        char buf[32];
-        char sep=' '; 
-
         if( pt.is_special() )
             return "";
+
+        char buf[32]={0};
+        char sep=' '; 
 
         if( useTseparator )
             sep = 'T';
@@ -221,7 +215,7 @@ namespace miutil
             struct tm *timeinfo = std::localtime (&rawtime);
             int diffH = timeinfo->tm_hour - utcH;
             int diffM = timeinfo->tm_min - utcM;
-            boost::posix_time::time_duration diffT = boost::posix_time::minutes(diffH*60+diffM);
+            boost::posix_time::time_duration diffT = boost::posix_time::time_duration(diffH, diffM, 0);
             timeP += diffT;
 
             d = timeP.date();
@@ -248,23 +242,22 @@ namespace miutil
     {
         struct DEF {
             int number;
-            int numberOfChars;
+            unsigned char numberOfChars;
             const char *nextSep;
         };
 	
-        DEF def[] = {{0, 4, "-"},  //year
-        {0, 2, "-"},  //Month
-        {0, 2, "T "},//day
-        {0, 2, ":"}, //hour
-        {0, 2, ":"}, //minute
-        {0, 2, ".Z"}, //second
-        {0, 3, "+-Z"}, //msecond
-        {0, 0, 0}    //terminator
-        };
+        DEF def[] = {
+                        {0, 4, "-"},  //year
+                        {0, 2, "-"},  //Month
+                        {0, 2, "T "},//day
+                        {0, 2, ":"}, //hour
+                        {0, 2, ":"}, //minute
+                        {0, 2, ".Z"}, //second
+                        {0, 3, "+-Z"}, //msecond
+                        {0, 0, 0}    //terminator
+                    };
+
         isSuccessfull = true;
-        int hourOffset=0;
-        int minuteOffset=0;
-        string::size_type iIsoTime=0;
 
         if( isoTime == "infinity" )
             return boost::posix_time::ptime( boost::posix_time::pos_infin );
@@ -288,8 +281,8 @@ namespace miutil
             return boost::posix_time::ptime( now.date(), boost::posix_time::time_duration( 0, 0, 0) );
         }
 
-        iIsoTime = isoTime.find_first_not_of( " ", 0 ); //Skip whitespace in front
-        isSuccessfull = iIsoTime != string::npos;
+        std::string::size_type iIsoTime = isoTime.find_first_not_of( " ", 0 ); //Skip whitespace in front
+        isSuccessfull = iIsoTime != std::string::npos;
         assert( isSuccessfull );
 	
         if( ! isdigit( (int)isoTime[iIsoTime] ) ) {
@@ -302,42 +295,41 @@ namespace miutil
 	
         //Decode the YYYY-MM-DDThh:mm:ss part
         //Remeber -, T and : is optional.
-        for( int defIndex=0; def[defIndex].nextSep && iIsoTime < isoTime.length(); ++defIndex ) {
+        for( unsigned short defIndex=0; def[defIndex].nextSep && iIsoTime < isoTime.length(); ++defIndex ) {
             def[defIndex].number = getInt( isoTime, iIsoTime, def[defIndex].numberOfChars, isSuccessfull);	
             iIsoTime = isoTime.find_first_of( def[defIndex].nextSep, iIsoTime );
             if(defIndex!=6)
-                iIsoTime++;
+                ++iIsoTime;
         }
 
+        int hourOffset=0;
+        int minuteOffset=0;
         //Decode the UTC offset part of
         //YYYY-MM-DDThh:mm:ssSHHMM part
         //The UTC offset part is SHHMM
         //Where S is the sign. + or -.
         //      HH the hour offset, mandatory if we have an UTC offset part.
         //      MM the minute offset, otional.
-        if( iIsoTime != string::npos && iIsoTime < isoTime.length() ) {
-        //We have a possible UTC offset.
-        //The format is SHHMM, where S is the sign.
-        char ch = isoTime[iIsoTime];
+        if( iIsoTime < isoTime.length() ) {
+            //We have a possible UTC offset.
+            //The format is SHHMM, where S is the sign.
+            char ch = isoTime[iIsoTime];
 		
-        if( ch == 'z' || ch == 'Z' ) { 
-            iIsoTime = string::npos;
-        } else if( ch == '+' || ch == '-' || isdigit( ch ) ) {
-            int sign=1;
+            if( ch == '+' || ch == '-' || isdigit( ch ) ) {
+                int sign=1;
 
-            if( ! isdigit( ch ) ) {
-                iIsoTime++;
-                if( ch=='-' )
-                    sign=-1;
-                isSuccessfull = isdigit( isoTime[iIsoTime] );
-                assert( isSuccessfull );
-            }
-            hourOffset = getInt( isoTime, iIsoTime, 2, isSuccessfull);
-            hourOffset*=sign;
+                if( ! isdigit( ch ) ) {
+                    if( ch=='-' )
+                        sign=-1;
+                    isSuccessfull = isdigit( isoTime[++iIsoTime] )!=0;
+                    assert( isSuccessfull );
+                }
+                hourOffset = getInt( isoTime, iIsoTime, 2, isSuccessfull);
+                hourOffset*=sign;
 
-            if( iIsoTime < isoTime.length() && isdigit( isoTime[++iIsoTime] ) ) {
-                minuteOffset = getInt( isoTime, iIsoTime, 2, isSuccessfull);
-            }
+                if( iIsoTime < isoTime.length() && isdigit( isoTime[++iIsoTime] ) ) {
+                    minuteOffset = getInt( isoTime, iIsoTime, 2, isSuccessfull);
+                }
             }
         }
 						

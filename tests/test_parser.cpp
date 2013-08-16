@@ -73,7 +73,9 @@ TEST(JsonString, DateConversionMin)
     toCheck.append("Date",mongo::Date_t(miutil::minDate));
     mongo::BSONObj obj = toCheck.obj();
     std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, DefaultEncoding,Utc);
-    EXPECT_EQ("{\n    \"Date\" : Date(18446741864720751616)\n}", str);
+    char buff[64]={0};
+    sprintf(buff,"{\n    \"Date\" : Date(%lld)\n}", miutil::minDate);
+    EXPECT_EQ(buff, str);
 }
 
 TEST(DateTests, DateConversionEpoch)

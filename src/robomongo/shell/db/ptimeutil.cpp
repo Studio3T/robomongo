@@ -193,15 +193,15 @@ std::string miutil::isotimeString(const boost::posix_time::ptime &pt, bool useTs
 
    if( !isLocalFormat ){
    	sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03dZ", 
-   	         d.year(), d.month().as_number(), d.day().as_number(), sep, 
+             static_cast<unsigned short>(d.year()), d.month().as_number(), d.day().as_number(), sep,
              t.hours(), t.minutes(), t.seconds(),(static_cast<int64_t>(t.total_milliseconds()))%1000 );
    }
    else{
-       boost::posix_time::ptime time(d,t);
+       boost::posix_time::ptime timeP(d,t);
 
        char utc_buff[8]={0};
        time_t rawtime;
-       ::time ( &rawtime );
+       time ( &rawtime );
        struct tm *ptm = std::gmtime ( &rawtime );
        int utcH = ptm->tm_hour;
        int utcM = ptm->tm_min;
@@ -209,14 +209,14 @@ std::string miutil::isotimeString(const boost::posix_time::ptime &pt, bool useTs
        int diffH = timeinfo->tm_hour - utcH;
        int diffM = timeinfo->tm_min - utcM;
        boost::posix_time::time_duration diffT = boost::posix_time::minutes(diffH*60+diffM);
-       time += diffT;
+       timeP += diffT;
 
-       d = time.date();
-       t = time.time_of_day();
+       d = timeP.date();
+       t = timeP.time_of_day();
 
        sprintf(utc_buff,diffT.hours()>0?"+%02d:%02d":"%03d:%02d",diffT.hours(),abs(diffM));
    	   sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03d", 
-   			   d.year(), d.month().as_number(), d.day().as_number(), sep, 
+               static_cast<unsigned short>(d.year()), d.month().as_number(), d.day().as_number(), sep,
                t.hours(), t.minutes(), t.seconds(),(static_cast<int64_t>(t.total_milliseconds()))%1000);
        strcat(buf,utc_buff);
    }
@@ -244,8 +244,7 @@ boost::posix_time::ptime miutil::ptimeFromIsoString( const std::string &isoTime 
 	
 	int hourOffset=0;
 	int minuteOffset=0;
-	string::size_type iIsoTime=0;
-	string::size_type iIsoTimePrev=0;
+    string::size_type iIsoTime=0;
 	
 	if( isoTime == "infinity" )
 		return boost::posix_time::ptime( boost::posix_time::pos_infin );

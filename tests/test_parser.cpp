@@ -77,7 +77,6 @@ TEST(DateTests, DateConversionEpoch)
     expectMilliseconds(0, "1970-01-01T00:00:00.000+00:00");
     expectMilliseconds(0, "1970-01-01T03:00:00.000+03:00");
     expectMilliseconds(0, "1969-12-31T21:00:00.000-03:00");
-
 }
 
 TEST(DateTests, DateConversionOne)
@@ -167,6 +166,14 @@ TEST(DateTests, DateRandomTest)
 
     expectEqualIsoDate("2013-08-12T22:39:34.411Z", "2013-08-13T01:39:34.411+03:00");
     expectEqualIsoDate("2013-08-13T09:09:34.001Z", "2013-08-13T01:39:34.001-07:30");
+}
+
+TEST(DateTests, DateMail)
+{
+    boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
+    boost::posix_time::ptime time = epoch + boost::posix_time::millisec(1312291712000);
+    boost::posix_time::ptime  pt3 = miutil::ptimeFromIsoString("2011-08-02T13:28:32Z");
+    EXPECT_EQ(pt3,time);
 }
 
 /**

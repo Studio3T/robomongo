@@ -116,7 +116,6 @@ namespace miutil {
     * 
     * @param isoTime A timestring.
     * @return An ptime.
-    * @exception logic_error
     */
    boost::posix_time::ptime ptimeFromIsoString( const std::string &isoTime );
    

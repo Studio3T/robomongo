@@ -230,22 +230,20 @@ boost::posix_time::ptime miutil::ptimeFromIsoString( const std::string &isoTime 
 		int number;
 		int numberOfChars;
 		const char *nextSep;
-		bool mustHaveNext;
 	};
 	
-	DEF def[] = {{0, 4, "-", true},  //year
-			       {0, 2, "-", true},  //Month
-			       {0, 2, "T ", false},//day
-			       {0, 2, ":", false}, //hour
-			       {0, 2, ":", false}, //minute
-			       {0, 2, ".", false}, //second
-                   {0, 3, " ", false}, //msecond
-			       {0, 0, 0, false}    //terminator
+	DEF def[] = {{0, 4, "-"},  //year
+			       {0, 2, "-"},  //Month
+			       {0, 2, "T "},//day
+			       {0, 2, ":"}, //hour
+			       {0, 2, ":"}, //minute
+			       {0, 2, ".Z"}, //second
+                   {0, 3, "+-Z"}, //msecond
+			       {0, 0, 0}    //terminator
 			      };
 	
 	int hourOffset=0;
 	int minuteOffset=0;
-	bool isUTC=false;
 	string::size_type iIsoTime=0;
 	string::size_type iIsoTimePrev=0;
 	
@@ -273,44 +271,24 @@ boost::posix_time::ptime miutil::ptimeFromIsoString( const std::string &isoTime 
 
 	iIsoTime = isoTime.find_first_not_of( " ", 0 ); //Skip whitespace in front
 	
-	if( iIsoTime == string::npos )
-		throw logic_error("No timestring to decode.");
+	assert( iIsoTime != string::npos );
 	
 	if( ! isdigit( (int)isoTime[iIsoTime] ) ) {
 		//We try to decode it as an rfc1123date.
 		boost::posix_time::ptime pt = rfc1123date( isoTime.c_str() );
 		
-		if( pt.is_special() )
-			throw logic_error("Invalid timeformat '" + isoTime + "'.");
+		assert( !pt.is_special() );
 		
 		return pt;
 	}
 	
 	//Decode the YYYY-MM-DDThh:mm:ss part
 	//Remeber -, T and : is optional.
-	for( int defIndex=0; def[defIndex].nextSep; ++defIndex ) {
-		def[defIndex].number = getInt( isoTime, iIsoTime, def[defIndex].numberOfChars );
-		iIsoTimePrev = iIsoTime;
-		
-		if( iIsoTime >= isoTime.length() ) {
-			if( def[defIndex].mustHaveNext ) 
-				throw logic_error("Invalid timeformat (" + isoTime + "). Expect more characters.");
-		
-			iIsoTime = string::npos;
-			break;
-		}
-			
-		iIsoTime = isoTime.find_first_not_of( def[defIndex].nextSep, iIsoTime );
-		
-		if( iIsoTime == string::npos ) { 
-			if( def[defIndex].mustHaveNext ) {
-				stringstream ost;
-				ost << "Invalid timeformat (" << isoTime << "),  decoded: '" << isoTime.substr(0, iIsoTimePrev ) << "'."; 
-			
-				throw logic_error(ost.str());
-			} else 
-				break;
-		}
+	for( int defIndex=0; def[defIndex].nextSep && iIsoTime < isoTime.length(); ++defIndex ) {
+		def[defIndex].number = getInt( isoTime, iIsoTime, def[defIndex].numberOfChars );	
+		iIsoTime = isoTime.find_first_of( def[defIndex].nextSep, iIsoTime );
+        if(defIndex!=6)
+           iIsoTime++;
 	}
 
 	//Decode the UTC offset part of
@@ -319,13 +297,12 @@ boost::posix_time::ptime miutil::ptimeFromIsoString( const std::string &isoTime 
 	//Where S is the sign. + or -.
 	//      HH the hour offset, mandatory if we have an UTC offset part.
 	//      MM the minute offset, otional.
-	if( iIsoTime != string::npos ) {
+	if( iIsoTime != string::npos && iIsoTime < isoTime.length() ) {
 		//We have a possible UTC offset.
 		//The format is SHHMM, where S is the sign.
 		char ch = isoTime[iIsoTime];
 		
 		if( ch == 'z' || ch == 'Z' ) { 
-			isUTC=true;
 			iIsoTime = string::npos;
 		} else if( ch == '+' || ch == '-' || isdigit( ch ) ) {
 			int sign=1;
@@ -334,8 +311,7 @@ boost::posix_time::ptime miutil::ptimeFromIsoString( const std::string &isoTime 
 				iIsoTime++;
 				if( ch=='-' )
 					sign=-1;
-				if( ! isdigit( isoTime[iIsoTime] ) )
-					throw logic_error("Invallid timeformat, expecting UTC offset");
+				assert( isdigit( isoTime[iIsoTime] ) );
 			}
 			hourOffset = getInt( isoTime, iIsoTime, 2 );
 			hourOffset*=sign;
@@ -360,42 +336,23 @@ namespace {
 	
 	/**
 	 * @return The int on success.
-	 * @exception std::logic_error on fail.
 	 * 
 	 *        0 if there is no more characters to read from timebuf.
 	 *       -1 if an invalid character was encontred.
 	 */
 	int getInt( const string &timebuf, string::size_type &index, int numberOfChar )
 	{
-		char n;
 		int nextN=0;
-		char buf[10];
-		
-		if( numberOfChar > 9 ) {
-			//Buffer overflow
-			throw logic_error("Buffer owerflow.");
-		}
-		
+        char buf[10]={0};
+		assert(numberOfChar < 9);		
 		while( nextN < numberOfChar ) {
-			if( index >= timebuf.length() ) {
-				ostringstream ost;
-				ost << "Invalid timeformat (to few characters). Index: " << index;
-				throw logic_error(ost.str());
-			}
-			n = timebuf[index];
-			
-			if( ! isdigit( n ) ) {
-				ostringstream ost;
-				ost << "Invalid timeformat (expect a digit). Index: " << index;	
-				throw logic_error( ost.str() );
-			}
-			
+			assert( index < timebuf.length() );
+			char n = timebuf[index];			
+			assert(isdigit( n ) );			
 			buf[nextN]=n;
 			nextN++;
 			index++;
 		}
-		
-		buf[nextN]='\0';
 		return atoi( buf );
 	}
 	

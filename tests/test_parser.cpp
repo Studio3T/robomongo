@@ -204,10 +204,10 @@ TEST(DateTests, LongBruteForceTest)
         // possible integer value overflow. We are ensuring,
         // that we are monotonically growing by specified number
         // of minutes (16 minutes by default)
-        //boost::posix_time::time_duration duration(expectedTime - temp);
-        //ASSERT_EQ(minutesStep, duration.minutes());
-        //ASSERT_GT(expectedTime, temp);
-        //temp = expectedTime;
+        boost::posix_time::time_duration duration(expectedTime - temp);
+        ASSERT_EQ(minutesStep, duration.total_seconds() / 60);
+        ASSERT_GT(expectedTime, temp);
+        temp = expectedTime;
 
         std::string actualIsoDate = miutil::isotimeString(expectedTime, true, false);
         boost::posix_time::ptime actualTime = miutil::ptimeFromIsoString(actualIsoDate);

@@ -651,14 +651,13 @@ namespace Robomongo {
             return ret;
         }
 
-        boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
-        boost::posix_time::ptime isotime;
-        try {
-            isotime = miutil::ptimeFromIsoString(datestr);
-        } catch (const std::logic_error &) {
+        bool isSuccessfull = false;
+        boost::posix_time::ptime isotime = miutil::ptimeFromIsoString(datestr,isSuccessfull);
+        if (!isSuccessfull) {
             return parseError("Invalid date format");
         }
 
+        boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
         boost::posix_time::time_duration diff = isotime - epoch;
         int64_t millis = diff.total_milliseconds();
 

@@ -74,6 +74,7 @@ namespace Robomongo
 
                     _uuidEncoding = (UUIDEncoding) encoding;
 
+
                     // 3. Load view mode
                     if (map.contains("viewMode")) {
                         int viewMode = map.value("viewMode").toInt();

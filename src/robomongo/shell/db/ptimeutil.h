@@ -33,7 +33,9 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace miutil {
-   
+
+    extern const long long minDate;
+    extern const long long maxDate;
    /**
     * Takes an ptime and convert it to a time string coded in
     * the RFC 1123 format. This is the date format used by 
@@ -116,9 +118,9 @@ namespace miutil {
     * 
     * @param isoTime A timestring.
     * @return An ptime.
-    * @exception logic_error
     */
-   boost::posix_time::ptime ptimeFromIsoString( const std::string &isoTime );
+   boost::posix_time::ptime ptimeFromIsoString( const std::string &isoTime);
+   boost::posix_time::ptime ptimeFromIsoString( const std::string &isoTime, bool &isSuccessfull);
    
 }
 #endif 

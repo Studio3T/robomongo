@@ -53,8 +53,8 @@ namespace
 }
 namespace miutil 
 {
-    const long long minDate = -2208988800000; // "1900-01-01T00:00:00.000Z"
-    const long long maxDate   = 6977452800000;  // "2191-02-08T13:20:00.000Z"
+    const long long minDate = -9218988800000; // "1677-11-10T17:46:40.001Z"
+    const long long maxDate   = 9218988800000;  // "2262-02-20T06:13:19.999Z"
 
     std::string rfc1123date( const boost::posix_time::ptime &pt )
     {
@@ -191,7 +191,7 @@ namespace miutil
         if( pt.is_special() )
             return "";
 
-        char buf[32]={0};
+        char buf[64]={0};
         char sep=' '; 
 
         if( useTseparator )
@@ -202,7 +202,7 @@ namespace miutil
 
         if( !isLocalFormat ){
             sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03dZ", 
-                static_cast<unsigned short>(d.year()), d.month().as_number(), d.day().as_number(), sep,
+                static_cast<int>(d.year()), d.month().as_number(), d.day().as_number(), sep,
                 t.hours(), t.minutes(), t.seconds(),(static_cast<int64_t>(t.total_milliseconds()))%1000 );
         }
         else{
@@ -224,7 +224,7 @@ namespace miutil
             char utc_buff[8]={0};
             sprintf(utc_buff,diffT.hours()>0?"+%02d:%02d":"%03d:%02d",diffT.hours(),abs(diffM));
             sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03d", 
-                static_cast<unsigned short>(d.year()), d.month().as_number(), d.day().as_number(), sep,
+                static_cast<int>(d.year()), d.month().as_number(), d.day().as_number(), sep,
                 t.hours(), t.minutes(), t.seconds(),(static_cast<int64_t>(t.total_milliseconds()))%1000);
             strcat(buf,utc_buff);
         }

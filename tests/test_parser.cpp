@@ -52,8 +52,28 @@ TEST(JsonString, DateConversion)
     mongo::BSONObjBuilder toCheck;
     toCheck.append("Date",mongo::Date_t(0));
     mongo::BSONObj obj = toCheck.obj();
-    std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, DefaultEncoding,LocalTime);
+    std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, DefaultEncoding,Utc);
     EXPECT_EQ("{\n    \"Date\" : ISODate(\"1970-01-01T00:00:00.000Z\")\n}", str);
+}
+
+TEST(JsonString, DateConversionMax)
+{
+    mongo::BSONObjBuilder toCheck;
+    toCheck.append("Date",mongo::Date_t(miutil::maxDate));
+    mongo::BSONObj obj = toCheck.obj();
+    std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, DefaultEncoding,Utc);
+    char buff[64]={0};
+    sprintf(buff,"{\n    \"Date\" : Date(%lld)\n}",miutil::maxDate);
+    EXPECT_EQ(buff, str);
+}
+
+TEST(JsonString, DateConversionMin)
+{
+    mongo::BSONObjBuilder toCheck;
+    toCheck.append("Date",mongo::Date_t(miutil::minDate));
+    mongo::BSONObj obj = toCheck.obj();
+    std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, DefaultEncoding,Utc);
+    EXPECT_EQ("{\n    \"Date\" : Date(18446741864720751616)\n}", str);
 }
 
 TEST(DateTests, DateConversionEpoch)
@@ -184,14 +204,12 @@ TEST(DateTests, DateMail)
  */
 TEST(DateTests, LongBruteForceTest)
 {
-    const long long from = -2208988800000; // "1900-01-01T00:00:00.000Z"
-    const long long to   = 6977452800000;  // "2191-02-08T13:20:00.000Z"
     const long long step = 60000 * 16;     // 16 minutes
 
     boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
-    boost::posix_time::ptime temp = epoch + boost::posix_time::millisec(from);
+    boost::posix_time::ptime temp = epoch + boost::posix_time::millisec(miutil::minDate);
 
-    for (long long i = from + step; i <= to; i+= step) {
+    for (long long i = miutil::minDate + step; i <= miutil::maxDate; i+= step) {
         boost::posix_time::ptime expectedTime = epoch + boost::posix_time::millisec(i);
 
         // The following 4 lines are used to protect us from

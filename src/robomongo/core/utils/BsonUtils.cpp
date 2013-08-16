@@ -227,28 +227,36 @@ namespace Robomongo
                 break;
             }
             case mongo::Date:
-                if ( format == Strict )
-                    s << "{ \"$date\" : ";
-                else
-                    s << "ISODate(";
-
-                if( pretty ) {
+                {
                     Date_t d = elem.date();
+                    bool isSupportedDate = miutil::minDate<static_cast<long long>(d.millis) && static_cast<long long>(d.millis)<miutil::maxDate;
+                    if ( format == Strict )
+                        s << "{ \"$date\" : ";
+                    else{
+                        if(isSupportedDate){
+                            s << "ISODate(";
+                        }
+                        else{
+                            s << "Date(";
+                        }
+                    }
 
-                    boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
-                    boost::posix_time::time_duration diff = boost::posix_time::millisec(d.millis);
-                    boost::posix_time::ptime time = epoch + diff;
-                    std::string timestr = miutil::isotimeString(time, true,timeFormat == Utc);
-                    s << '"' << timestr << '"';
+                    if( pretty && isSupportedDate) {                
+                        boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
+                        boost::posix_time::time_duration diff = boost::posix_time::millisec(d.millis);
+                        boost::posix_time::ptime time = epoch + diff;
+                        std::string timestr = miutil::isotimeString(time, true,timeFormat == LocalTime);
+                        s << '"' << timestr << '"';
+                    }
+                    else
+                        s << elem.date();
+
+                    if ( format == Strict )
+                        s << " }";
+                    else
+                        s << ")";
+                    break;
                 }
-                else
-                    s << elem.date();
-
-                if ( format == Strict )
-                    s << " }";
-                else
-                    s << ")";
-                break;
             case RegEx:
                 if ( format == Strict ) {
                     s << "{ \"$regex\" : \"" << escape( elem.regex() );

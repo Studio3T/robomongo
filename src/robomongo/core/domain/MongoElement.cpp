@@ -148,7 +148,7 @@ namespace Robomongo
             boost::posix_time::time_duration diff = boost::posix_time::millisec(ms);
             boost::posix_time::ptime time = epoch + diff;
 
-            std::string date = miutil::isotimeString(time,true,AppRegistry::instance().settingsManager()->timeZone()==Utc);
+            std::string date = miutil::isotimeString(time,true,AppRegistry::instance().settingsManager()->timeZone()==LocalTime);
 
             con.append(QString::fromStdString(date));
             break;

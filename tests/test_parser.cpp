@@ -78,21 +78,6 @@ TEST(JsonString, DateConversionMin)
 
 TEST(DateTests, DateConversionEpoch)
 {
-    boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
-    boost::posix_time::ptime time = epoch + boost::posix_time::millisec(0);
-
-    std::string zeroPt = miutil::isotimeString(time,true,true);
-    boost::posix_time::ptime  pt = miutil::ptimeFromIsoString(zeroPt);
-    EXPECT_EQ(pt,time);
-
-    pt = miutil::ptimeFromIsoString(miutil::isotimeString(time,true))- boost::posix_time::hours(3);
-    std::string utcPtI = miutil::isotimeString(pt,true);
-    EXPECT_EQ("1969-12-31T21:00:00.000Z",utcPtI);
-
-    pt = miutil::ptimeFromIsoString(miutil::isotimeString(time,true))+ boost::posix_time::hours(3);
-    utcPtI = miutil::isotimeString(pt,true);
-    EXPECT_EQ("1970-01-01T03:00:00.000Z",utcPtI);
-
     expectMilliseconds(0, "1970-01-01T00:00:00.000Z");
     expectMilliseconds(0, "1970-01-01T00:00:00.000+00:00");
     expectMilliseconds(0, "1970-01-01T03:00:00.000+03:00");

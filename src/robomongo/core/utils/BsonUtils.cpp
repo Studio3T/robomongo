@@ -241,15 +241,17 @@ namespace Robomongo
                         }
                     }
 
+                    long long ms = (long long) d.millis;
+
                     if( pretty && isSupportedDate) {                
                         boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
-                        boost::posix_time::time_duration diff = boost::posix_time::millisec(d.millis);
+                        boost::posix_time::time_duration diff = boost::posix_time::millisec(ms);
                         boost::posix_time::ptime time = epoch + diff;
                         std::string timestr = miutil::isotimeString(time, true,timeFormat == LocalTime);
                         s << '"' << timestr << '"';
                     }
                     else
-                        s << elem.date();
+                        s << ms;
 
                     if ( format == Strict )
                         s << " }";

@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QDialogButtonBox>
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/core/domain/MongoUtils.h"
@@ -35,23 +36,15 @@ namespace Robomongo
         _readOnlyCheckBox = new QCheckBox("Read Only");
         _readOnlyCheckBox->setChecked(user.readOnly());
 
-        QPushButton *cancelButton = new QPushButton("&Cancel");
-        connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-
-        QPushButton *_okButton = new QPushButton("&Create");
-        connect(_okButton, SIGNAL(clicked()), this, SLOT(accept()));
+        QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
+        buttonBox->setOrientation(Qt::Horizontal);
+        buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
+        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
         QHBoxLayout *hlayout = new QHBoxLayout();
         hlayout->addStretch(1);
-
-    #if defined(Q_OS_MAC)
-        _okButton->setDefault(true);
-        hlayout->addWidget(cancelButton, 0, Qt::AlignRight);
-        hlayout->addWidget(_okButton, 0, Qt::AlignRight);
-    #else
-        hlayout->addWidget(_okButton, 0, Qt::AlignRight);
-        hlayout->addWidget(cancelButton, 0, Qt::AlignRight);
-    #endif
+        hlayout->addWidget(buttonBox);
 
         QHBoxLayout *vlayout = new QHBoxLayout();
         vlayout->addWidget(serverIndicator, 0, Qt::AlignLeft);
@@ -72,6 +65,8 @@ namespace Robomongo
         layout->addLayout(namelayout);
         layout->addLayout(hlayout);
         setLayout(layout);
+
+        _userNameEdit->setFocus();
     }
 
     void CreateUserDialog::setUserPasswordLabelText(const QString &text)

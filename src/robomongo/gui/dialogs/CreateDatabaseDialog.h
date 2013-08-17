@@ -3,6 +3,7 @@
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
+#include <QDialogButtonBox>
 
 namespace Robomongo
 {
@@ -30,6 +31,6 @@ namespace Robomongo
         Indicator *createCollectionIndicator(const QString &collection);
         QLineEdit *_inputEdit;
         QLabel *_inputLabel;
-        QPushButton *_okButton;
+        QDialogButtonBox *_buttonBox;
     };
 }

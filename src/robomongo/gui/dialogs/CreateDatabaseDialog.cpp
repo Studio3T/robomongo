@@ -26,23 +26,16 @@ namespace Robomongo
         _inputEdit = new QLineEdit();
         _inputLabel= new QLabel("Database Name:");
 
-        QPushButton *cancelButton = new QPushButton("&Cancel");
-        connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-
-        _okButton = new QPushButton("&Create");
-        connect(_okButton, SIGNAL(clicked()), this, SLOT(accept()));
+        _buttonBox = new QDialogButtonBox(this);
+        _buttonBox->setOrientation(Qt::Horizontal);
+        _buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
+        _buttonBox->button(QDialogButtonBox::Save)->setText("C&reate");
+        connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+        connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
         QHBoxLayout *hlayout = new QHBoxLayout();
         hlayout->addStretch(1);
-
-    #if defined(Q_OS_MAC)
-        _okButton->setDefault(true);
-        hlayout->addWidget(cancelButton, 0, Qt::AlignRight);
-        hlayout->addWidget(_okButton, 0, Qt::AlignRight);
-    #else
-        hlayout->addWidget(_okButton, 0, Qt::AlignRight);
-        hlayout->addWidget(cancelButton, 0, Qt::AlignRight);
-    #endif
+        hlayout->addWidget(_buttonBox);
 
         QHBoxLayout *vlayout = new QHBoxLayout();
         if (!serverName.isEmpty())
@@ -63,6 +56,8 @@ namespace Robomongo
         layout->addLayout(namelayout);
         layout->addLayout(hlayout);
         setLayout(layout);
+
+        _inputEdit->setFocus();
     }
 
     QString CreateDatabaseDialog::databaseName() const
@@ -72,7 +67,7 @@ namespace Robomongo
 
     void CreateDatabaseDialog::setOkButtonText(const QString &text)
     {
-        _okButton->setText(text);
+        _buttonBox->button(QDialogButtonBox::Save)->setText(text);
     }
 
     void CreateDatabaseDialog::setInputLabelText(const QString &text)

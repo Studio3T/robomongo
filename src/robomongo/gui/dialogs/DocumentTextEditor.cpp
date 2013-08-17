@@ -6,6 +6,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QDialogButtonBox>
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qsciscintilla.h>
 
@@ -31,13 +32,6 @@ namespace Robomongo
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), database);
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), server);
 
-        QPushButton *cancel = new QPushButton("Cancel");
-        connect(cancel, SIGNAL(clicked()), this, SLOT(close()));
-
-        QPushButton *save = new QPushButton("Save");
-        save->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
-        connect(save, SIGNAL(clicked()), this, SLOT(accept()));
-
         QPushButton *validate = new QPushButton("Validate");
         validate->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
         connect(validate, SIGNAL(clicked()), this, SLOT(onValidateButtonClicked()));
@@ -55,18 +49,16 @@ namespace Robomongo
         hlayout->addWidget(collectionIndicator, 0, Qt::AlignLeft);
         hlayout->addStretch(1);
 
+        QDialogButtonBox *buttonBox = new QDialogButtonBox (this);
+        buttonBox->setOrientation(Qt::Horizontal);
+        buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
+        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+
         QHBoxLayout *bottomlayout = new QHBoxLayout();
         bottomlayout->addWidget(validate);
         bottomlayout->addStretch(1);
-
-    #if defined(Q_OS_MAC)
-        save->setDefault(true);
-        bottomlayout->addWidget(cancel, 0, Qt::AlignRight);
-        bottomlayout->addWidget(save, 0, Qt::AlignRight);
-    #else
-        bottomlayout->addWidget(save, 0, Qt::AlignRight);
-        bottomlayout->addWidget(cancel, 0, Qt::AlignRight);
-    #endif
+        bottomlayout->addWidget(buttonBox);
 
         QVBoxLayout *layout = new QVBoxLayout();
 
@@ -79,7 +71,7 @@ namespace Robomongo
         setLayout(layout);
 
         if (_readonly)
-            save->hide();
+            buttonBox->button(QDialogButtonBox::Save)->hide();
     }
 
     QString DocumentTextEditor::jsonText() const

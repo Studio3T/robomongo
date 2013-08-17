@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QPushButton>
 
 #include "robomongo/core/domain/MongoUser.h"
 

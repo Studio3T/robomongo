@@ -10,6 +10,7 @@
 #include <QTreeWidgetItem>
 #include <QHeaderView>
 #include <QMouseEvent>
+#include <QDialogButtonBox>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
@@ -26,6 +27,7 @@ namespace Robomongo
     {
         setWindowIcon(GuiRegistry::instance().connectIcon());
         setWindowTitle("MongoDB Connections");
+
         // Remove help button (?)
         setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
@@ -72,38 +74,20 @@ namespace Robomongo
         connect(_listWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept()));
         connect(_listWidget, SIGNAL(layoutChanged()), this, SLOT(listWidget_layoutChanged()));
 
-    //    QPushButton *addButton = new QPushButton("&Add");
-    //    connect(addButton, SIGNAL(clicked()), this, SLOT(add()));
-
-    //    QPushButton *editButton = new QPushButton("&Edit");
-    //    connect(editButton, SIGNAL(clicked()), this, SLOT(edit()));
-
-    //    QPushButton *removeButton = new QPushButton("&Remove");
-    //    connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
-
-    //    QPushButton *cloneButton = new QPushButton("&Clone");
-    //    connect(cloneButton, SIGNAL(clicked()), this, SLOT(clone()));
-
-        QPushButton *cancelButton = new QPushButton("&Cancel");
-        connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
-
-        QPushButton *connectButton = new QPushButton("C&onnect");
-        connectButton->setIcon(GuiRegistry::instance().serverIcon());
-        connect(connectButton, SIGNAL(clicked()), this, SLOT(accept()));
+        QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
+        buttonBox->setOrientation(Qt::Horizontal);
+        buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
+        buttonBox->button(QDialogButtonBox::Save)->setIcon(GuiRegistry::instance().serverIcon());
+        buttonBox->button(QDialogButtonBox::Save)->setText("C&onnect");
+        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
         QHBoxLayout *bottomLayout = new QHBoxLayout;
-    #if defined(Q_OS_MAC)
-        connectButton->setDefault(true);
-        bottomLayout->addWidget(cancelButton, 1, Qt::AlignRight);
-        bottomLayout->addWidget(connectButton);
-    #else
-        bottomLayout->addWidget(connectButton, 1, Qt::AlignRight);
-        bottomLayout->addWidget(cancelButton);
-    #endif
+        bottomLayout->addWidget(buttonBox);
 
         QLabel *intro = new QLabel(
-        "<a href='create'>Create</a>, "
-        "<a href='edit'>edit</a>, <a href='remove'>remove</a>, <a href='clone'>clone</a> or reorder connections via drag'n'drop.");
+            "<a href='create'>Create</a>, "
+            "<a href='edit'>edit</a>, <a href='remove'>remove</a>, <a href='clone'>clone</a> or reorder connections via drag'n'drop.");
         intro->setWordWrap(true);
         connect(intro, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
 
@@ -111,14 +95,6 @@ namespace Robomongo
         firstColumnLayout->addWidget(intro);
         firstColumnLayout->addWidget(_listWidget, 1);
         firstColumnLayout->addLayout(bottomLayout);
-
-    //    QVBoxLayout *secondColumnLayout = new QVBoxLayout;
-    //    secondColumnLayout->setAlignment(Qt::AlignTop);
-    //    secondColumnLayout->addWidget(new QLabel); // funny placeholder
-    //    secondColumnLayout->addWidget(addButton);
-    //    secondColumnLayout->addWidget(editButton);
-    //    secondColumnLayout->addWidget(cloneButton);
-    //    secondColumnLayout->addWidget(removeButton);
 
         QHBoxLayout *mainLayout = new QHBoxLayout(this);
         mainLayout->addLayout(firstColumnLayout, 1);
@@ -130,6 +106,8 @@ namespace Robomongo
         // Highlight first item
         if (_listWidget->topLevelItemCount() > 0)
             _listWidget->setCurrentItem(_listWidget->topLevelItem(0));
+
+        _listWidget->setFocus();
     }
 
     /**

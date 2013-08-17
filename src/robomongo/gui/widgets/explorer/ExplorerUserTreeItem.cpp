@@ -48,13 +48,13 @@ namespace Robomongo
 
     void ExplorerUserTreeItem::ui_dropUser()
     {
-            // Ask user
-            int answer = utils::questionDialog(treeWidget(),"Drop","User",_user.name());
+        // Ask user
+        int answer = utils::questionDialog(treeWidget(),"Drop","User",_user.name());
 
-            if (answer == QMessageBox::Yes){
-                _database->dropUser(_user.id());
-                _database->loadUsers(); // refresh list of users
-            }
+        if (answer == QMessageBox::Yes){
+            _database->dropUser(_user.id());
+            _database->loadUsers(); // refresh list of users
+        }
     }
 
     void ExplorerUserTreeItem::ui_editUser()

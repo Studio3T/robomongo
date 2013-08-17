@@ -1,9 +1,12 @@
+#include "robomongo/gui/dialogs/ConnectionDialog.h"
+
 #include <QtGui>
 #include <QList>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QApplication>
+#include <QDialogButtonBox>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -11,7 +14,6 @@
 #include "robomongo/gui/dialogs/ConnectionBasicTab.h"
 #include "robomongo/gui/dialogs/ConnectionAdvancedTab.h"
 #include "robomongo/gui/dialogs/ConnectionDiagnosticDialog.h"
-#include "robomongo/gui/dialogs/ConnectionDialog.h"
 
 namespace Robomongo
 {
@@ -25,13 +27,12 @@ namespace Robomongo
         setWindowIcon(GuiRegistry::instance().serverIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
 
-        QPushButton *saveButton = new QPushButton("&Save");
-        saveButton->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowRight));
-        saveButton->setDefault(true);
-        connect(saveButton, SIGNAL(clicked()), this, SLOT(accept()));
-
-        QPushButton *cancelButton = new QPushButton("&Cancel");
-        connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+        QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
+        buttonBox->setOrientation(Qt::Horizontal);
+        buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
+        buttonBox->button(QDialogButtonBox::Save)->setText("C&reate");
+        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
         QPushButton *testButton = new QPushButton("&Test");
         testButton->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
@@ -39,15 +40,7 @@ namespace Robomongo
 
         QHBoxLayout *bottomLayout = new QHBoxLayout;
         bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
-
-    #if defined(Q_OS_MAC)
-        saveButton->setDefault(true);
-        bottomLayout->addWidget(cancelButton, 1, Qt::AlignRight);
-        bottomLayout->addWidget(saveButton);
-    #else
-        bottomLayout->addWidget(saveButton, 1, Qt::AlignRight);
-        bottomLayout->addWidget(cancelButton);
-    #endif
+        bottomLayout->addWidget(buttonBox);
 
         _tabWidget = new QTabWidget;
 

@@ -229,7 +229,9 @@ namespace Robomongo
             case mongo::Date:
                 {
                     Date_t d = elem.date();
-                    bool isSupportedDate = miutil::minDate<static_cast<long long>(d.millis) && static_cast<long long>(d.millis)<miutil::maxDate;
+                    long long ms = static_cast<long long>(d.millis);
+                    bool isSupportedDate = miutil::minDate < ms && ms < miutil::maxDate;
+
                     if ( format == Strict )
                         s << "{ \"$date\" : ";
                     else{
@@ -241,13 +243,11 @@ namespace Robomongo
                         }
                     }
 
-                    long long ms = (long long) d.millis;
-
-                    if( pretty && isSupportedDate) {                
+                    if ( pretty && isSupportedDate) {
                         boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
                         boost::posix_time::time_duration diff = boost::posix_time::millisec(ms);
                         boost::posix_time::ptime time = epoch + diff;
-                        std::string timestr = miutil::isotimeString(time, true,timeFormat == LocalTime);
+                        std::string timestr = miutil::isotimeString(time, true, timeFormat == LocalTime);
                         s << '"' << timestr << '"';
                     }
                     else

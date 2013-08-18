@@ -1,8 +1,6 @@
 #include "robomongo/core/domain/MongoElement.h"
 #include <mongo/client/dbclient.h>
 #include <QStringBuilder>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/posix_time/posix_time_io.hpp>
 
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/HexUtils.h"

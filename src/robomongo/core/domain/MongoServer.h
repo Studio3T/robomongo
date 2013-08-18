@@ -2,7 +2,9 @@
 #include <QObject>
 #include <QList>
 #include <QHash>
-#include "robomongo/core/mongodb/MongoWorker.h"
+
+#include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/events/MongoEvents.h"
 
 namespace Robomongo
 {

@@ -11,9 +11,9 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/gui/editors/FindFrame.h"
+
 namespace Robomongo
 {
-
     OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &text) :
         _isTextModeSupported(true),
         _isTreeModeSupported(false),

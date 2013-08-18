@@ -24,11 +24,11 @@ namespace Robomongo
 
         void setCursorPosition(int line, int column);
 
-    public slots:
+    public Q_SLOTS:
         virtual void accept();
         bool validate(bool silentOnSuccess = true);
 
-    private slots:
+    private Q_SLOTS:
         void onQueryTextChanged();
         void onValidateButtonClicked();
 

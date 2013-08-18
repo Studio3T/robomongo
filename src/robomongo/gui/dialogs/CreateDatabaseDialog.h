@@ -1,9 +1,11 @@
 #pragma once
 
 #include <QDialog>
-#include <QLabel>
-#include <QLineEdit>
-#include <QDialogButtonBox>
+QT_BEGIN_NAMESPACE
+class QLabel;
+class QDialogButtonBox;
+class QLineEdit;
+QT_END_NAMESPACE
 
 namespace Robomongo
 {

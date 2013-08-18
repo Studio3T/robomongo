@@ -1,6 +1,7 @@
 #pragma once
 #include <QString>
 #include <mongo/bson/bsonobj.h>
+
 namespace Robomongo
 {
     class MongoUser
@@ -10,7 +11,7 @@ namespace Robomongo
         /**
          * @brief Creates user from "system.users" document
          */
-        MongoUser(const mongo::BSONObj &obj);
+        explicit MongoUser(const mongo::BSONObj &obj);
 
         /**
          * @brief Creates new user with empty attributes

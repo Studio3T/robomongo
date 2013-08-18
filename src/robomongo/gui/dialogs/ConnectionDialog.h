@@ -1,7 +1,9 @@
 #pragma once
 
 #include <QDialog>
-#include <QTreeWidget>
+QT_BEGIN_NAMESPACE
+class QTabWidget;
+QT_END_NAMESPACE
 
 #include "robomongo/core/Core.h"
 

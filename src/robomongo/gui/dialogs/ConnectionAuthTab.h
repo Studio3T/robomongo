@@ -1,10 +1,12 @@
 #pragma once
 
 #include <QWidget>
-#include <QLineEdit>
-#include <QLabel>
-#include <QCheckBox>
-#include <QPushButton>
+QT_BEGIN_NAMESPACE
+class QLineEdit;
+class QLabel;
+class QCheckBox;
+class QPushButton;
+QT_END_NAMESPACE
 
 namespace Robomongo
 {
@@ -18,7 +20,7 @@ namespace Robomongo
         ConnectionAuthTab(ConnectionSettings *settings);
         void accept();
 
-    private slots:
+    private Q_SLOTS:
         void toggleEchoMode();
 
     private:

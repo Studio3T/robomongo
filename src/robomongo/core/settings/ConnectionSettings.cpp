@@ -1,5 +1,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 
+#include "robomongo/core/settings/CredentialSettings.h"
+
 namespace
 {
     const unsigned port = 27017;

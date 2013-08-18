@@ -18,9 +18,9 @@ namespace Robomongo
          * assuming, that tab bar will be installed to (and owned by)
          * WorkAreaTabWidget, using QTabWidget::setTabBar().
          */
-        WorkAreaTabBar(QWidget* parent=0);
+        explicit WorkAreaTabBar(QWidget* parent=0);
 
-    signals:
+    Q_SIGNALS:
         /**
          * @brief Emitted when user requests new tab creation.
          * @param tabIndex: index of tab on which context menu was called.

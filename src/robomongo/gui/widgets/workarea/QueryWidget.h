@@ -1,11 +1,11 @@
 #pragma once
 
 #include <QWidget>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QPlainTextEdit>
-#include <QLabel>
-#include <QGraphicsView>
+
+QT_BEGIN_NAMESPACE
+class QLabel;
+QT_END_NAMESPACE
+
 #include <Qsci/qsciscintilla.h>
 
 #include "robomongo/core/Core.h"

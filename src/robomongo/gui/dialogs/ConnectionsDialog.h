@@ -1,10 +1,8 @@
 #pragma once
 
 #include <QDialog>
-#include <QListWidget>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
-#include <QListWidgetItem>
 #include <QHash>
 
 #include "robomongo/core/Core.h"
@@ -39,7 +37,7 @@ namespace Robomongo
          */
         virtual void accept();
 
-    private slots:
+    private Q_SLOTS:
         void linkActivated(const QString &link);
 
         /**
@@ -140,7 +138,7 @@ namespace Robomongo
     public:
         ConnectionsTreeWidget();
 
-    signals:
+    Q_SIGNALS:
         void layoutChanged();
 
     protected:

@@ -6,6 +6,7 @@
 #include <QWidgetAction>
 #include <QMenuBar>
 #include <QMenu>
+#include <QKeyEvent>
 #include <QToolBar>
 #include <QToolTip>
 #include <QDockWidget>

@@ -4,6 +4,8 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QDialogButtonBox>
+#include <QLabel>
+#include <QLineEdit>
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/core/domain/MongoUtils.h"

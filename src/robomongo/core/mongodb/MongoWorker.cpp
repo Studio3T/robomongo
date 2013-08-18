@@ -15,7 +15,7 @@
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
-
+#include "robomongo/core/settings/CredentialSettings.h"
 
 using namespace std;
 using namespace mongo;

@@ -144,10 +144,10 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/EventBus.h
     robomongo/core/domain/App.h
     robomongo/core/domain/MongoShell.h
-    robomongo/core/engine/ScriptEngine.h
     robomongo/core/EventBusDispatcher.h  
     )
 SET(HEADERS_CORE
+    robomongo/core/engine/ScriptEngine.h
     robomongo/core/KeyboardManager.h
     robomongo/core/domain/MongoDocumentIterator.h
     robomongo/core/domain/MongoDocument.h

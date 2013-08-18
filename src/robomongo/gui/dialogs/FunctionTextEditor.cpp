@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QLabel>
 #include <QDialogButtonBox>
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qsciscintilla.h>

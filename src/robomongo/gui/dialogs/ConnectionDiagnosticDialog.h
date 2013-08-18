@@ -1,9 +1,12 @@
 #pragma once
 
 #include <QDialog>
-#include <QThread>
-#include <QLabel>
 #include <QIcon>
+#include <QThread>
+QT_BEGIN_NAMESPACE
+class QLabel;
+class QMovie;
+QT_END_NAMESPACE
 
 namespace Robomongo
 {
@@ -15,7 +18,7 @@ namespace Robomongo
     public:
         ConnectionDiagnosticDialog(ConnectionSettings *connection);
 
-    protected slots:
+    protected Q_SLOTS:
         void connectionStatus(QString error, bool connected);
         void authStatus(QString error, bool authed);
         void completed();
@@ -45,7 +48,7 @@ namespace Robomongo
     public:
         ConnectionDiagnosticThread(ConnectionSettings *connection);
 
-    signals:
+    Q_SIGNALS:
         void connectionStatus(QString error, bool connected);
         void authStatus(QString error, bool authed);
         void completed();

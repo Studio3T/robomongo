@@ -8,11 +8,12 @@
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/domain/MongoUser.h"
 #include "robomongo/core/domain/MongoFunction.h"
+#include "robomongo/core/domain/App.h"
+#include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
-#include "robomongo/core/domain/MongoServer.h"
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/domain/App.h"
+
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
@@ -139,7 +140,7 @@ namespace Robomongo
         int count = collections.count();
         _collectionFolderItem->setText(0, detail::buildName("Collections",count));
 
-        clearChildItems(_collectionFolderItem);
+        QtUtils::clearChildItems(_collectionFolderItem);
         _collectionSystemFolderItem = new ExplorerTreeItem(_collectionFolderItem);
         _collectionSystemFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         _collectionSystemFolderItem->setText(0, "System");
@@ -164,7 +165,7 @@ namespace Robomongo
         int count = users.count();
         _usersFolderItem->setText(0, detail::buildName("Users",count));
 
-        clearChildItems(_usersFolderItem);
+        QtUtils::clearChildItems(_usersFolderItem);
 
         for (int i = 0; i < users.count(); ++i) {
             MongoUser user = users.at(i);
@@ -178,7 +179,7 @@ namespace Robomongo
         int count = functions.count();
         _javascriptFolderItem->setText(0,  detail::buildName("Functions",count));
 
-        clearChildItems(_javascriptFolderItem);
+        QtUtils::clearChildItems(_javascriptFolderItem);
 
         for (int i = 0; i < functions.count(); ++i) {
             MongoFunction fun = functions.at(i);

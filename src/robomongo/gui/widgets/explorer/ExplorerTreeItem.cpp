@@ -2,17 +2,10 @@
 
 #include <QMenu>
 
+#include "robomongo/core/utils/QtUtils.h"
+
 namespace Robomongo
 {
-    void clearChildItems(QTreeWidgetItem *root)
-    {
-        int itemCount = root->childCount();
-        for (int i = 0; i < itemCount; ++i) {
-            QTreeWidgetItem *item = root->child(0);
-            root->removeChild(item);
-            delete item;
-        }
-    }
     ExplorerTreeItem::ExplorerTreeItem(QTreeWidgetItem *parent)
         :QObject(),BaseClass(parent),_contextMenu(new QMenu(treeWidget()) )
     {
@@ -33,6 +26,6 @@ namespace Robomongo
     ExplorerTreeItem::~ExplorerTreeItem()
     {
         _contextMenu->deleteLater();
-        clearChildItems(this);
+        QtUtils::clearChildItems(this);
     }
 }

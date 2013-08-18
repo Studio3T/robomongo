@@ -13,8 +13,8 @@ namespace Robomongo
         int column() const { return _column; }
 
     private:
-        bool _isNull;
-        int _line;
-        int _column;
+        const bool _isNull;
+        const int _line;
+        const int _column;
     };
 }

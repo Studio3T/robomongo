@@ -5,15 +5,43 @@
 #include <QThread>
 #include <QMutexLocker>
 
+#include "robomongo/core/EventBusDispatcher.h"
 #include "robomongo/core/EventBusSubscriber.h"
 #include "robomongo/core/Event.h"
 #include "robomongo/core/EventWrapper.h"
 
 class SomethingHappened;
 
+namespace
+{
+    struct removeIfReciver : public std::unary_function<const Robomongo::EventBus::subscribersType&, bool> 
+    {
+        removeIfReciver(QObject *receiver):_receiver(receiver){}
+        bool operator()(const Robomongo::EventBus::subscribersType& item) const{
+            if (item.second->receiver == _receiver){
+                delete item.second;
+                return true;
+            }
+            return false;
+        }
+        QObject *_receiver;
+    };
+
+    struct findIfReciver : public std::unary_function<const Robomongo::EventBus::subscribersType&, bool> 
+    {
+        findIfReciver(QThread *thread):_thread(thread){}
+        bool operator()(const Robomongo::EventBus::dispatchersType& item) const{
+            if (item.first == _thread){
+                return true;
+            }
+            return false;
+        }
+        QThread *_thread;
+    };
+}
+
 namespace Robomongo
 {
-
     EventBus::EventBus() : QObject(),
         _lock(QMutex::Recursive)
     {
@@ -46,6 +74,7 @@ namespace Robomongo
                 }
             }
         }
+
         if (dis)
             sendEvent(dis, new EventWrapper(event, theReceivers));
     }
@@ -94,20 +123,6 @@ namespace Robomongo
     void EventBus::unsubscibe(QObject *receiver)
     {
         QMutexLocker lock(&_lock);
-        struct removeIfReciver : public std::unary_function<const subscribersType&, bool> 
-        {
-            removeIfReciver(QObject *receiver):_receiver(receiver){}
-            bool operator()(const subscribersType& item) const
-            {
-                if (item.second->receiver == _receiver)
-                {
-                    delete item.second;
-                    return true;
-                }
-                return false;
-            }
-            const QObject *const _receiver;
-        };
         _subscribersByEventType.erase(std::remove_if(_subscribersByEventType.begin(), _subscribersByEventType.end(), removeIfReciver(receiver)),
             _subscribersByEventType.end());
     }
@@ -118,20 +133,6 @@ namespace Robomongo
      */
     EventBusDispatcher *EventBus::dispatcher(QThread *thread)
     {
-        struct findIfReciver : public std::unary_function<const subscribersType&, bool> 
-        {
-            findIfReciver(QThread *thread):_thread(thread){}
-            bool operator()(const dispatchersType& item) const
-            {
-                if (item.first == _thread)
-                {
-                    return true;
-                }
-                return false;
-            }
-            const QThread *const _thread;
-        };
-
         dispatchersContainerType::iterator disIt = std::find_if(_dispatchersByThread.begin(),_dispatchersByThread.end(),findIfReciver(thread));
        
         if (disIt !=_dispatchersByThread.end()) {

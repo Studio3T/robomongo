@@ -1,14 +1,14 @@
 #pragma once
+#include <QObject>
 #include <QEvent>
-#include <vector>
 #include <QMutex>
-
-#include "robomongo/core/EventBusDispatcher.h"
+#include <vector>
 
 namespace Robomongo
 {
     class Event;
     class EventWrapper;
+    class EventBusDispatcher;
     struct EventBusSubscriber;
 
     /**

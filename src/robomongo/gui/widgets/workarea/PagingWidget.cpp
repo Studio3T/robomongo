@@ -32,6 +32,9 @@ namespace Robomongo
 
         QFontMetrics metrics = _skipEdit->fontMetrics();
         int width = metrics.boundingRect("000000").width();
+        QRegExp rx("\\d+");
+        _skipEdit->setValidator(new QRegExpValidator(rx, this));
+        _limitEdit->setValidator(new QRegExpValidator(rx, this));
         _skipEdit->setFixedWidth(width);
         _limitEdit->setFixedWidth(width);
 
@@ -63,7 +66,7 @@ namespace Robomongo
     void PagingWidget::setLimit(int limit)
     {
         if (limit <= 0)
-            limit = 50;
+            limit = pageLimit;
 
         _limitEdit->setText(QString::number(limit));
         show();

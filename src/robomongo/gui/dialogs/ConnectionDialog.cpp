@@ -1,14 +1,13 @@
 #include "robomongo/gui/dialogs/ConnectionDialog.h"
 
-#include <QtGui>
-#include <QList>
+#include <QPushButton>
+#include <QCloseEvent>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QApplication>
 #include <QDialogButtonBox>
 
-#include "robomongo/core/AppRegistry.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/ConnectionAuthTab.h"
 #include "robomongo/gui/dialogs/ConnectionBasicTab.h"

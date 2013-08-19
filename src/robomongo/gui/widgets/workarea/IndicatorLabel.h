@@ -6,10 +6,6 @@
 
 namespace Robomongo
 {
-    class OutputItemContentWidget;
-    class OutputItemWidget;
-    class OutputWidget;
-
     class Indicator : public QWidget
     {
         Q_OBJECT

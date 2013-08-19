@@ -4,11 +4,9 @@
 #include <QVariant>
 #include <QVariantMap>
 
-#include "robomongo/core/settings/CredentialSettings.h"
-
 namespace Robomongo
 {
-
+    class CredentialSettings;
     /**
      * @brief Represents connection record
      */

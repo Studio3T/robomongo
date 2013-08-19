@@ -1,14 +1,11 @@
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 
 #include <QApplication>
-#include <QtGui>
-#include <QPlainTextEdit>
-#include <QGraphicsScene>
-#include <QGraphicsView>
+#include <QLabel>
+#include <QFileInfo>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerjavascript.h>
 #include <mongo/client/dbclient.h>
-#include <mongo/bson/bsonobj.h>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
@@ -20,6 +17,7 @@
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/BsonWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
@@ -44,7 +42,6 @@ namespace Robomongo
         _bus->subscribe(this, DocumentListLoadedEvent::Type, shell);
         _bus->subscribe(this, ScriptExecutedEvent::Type, shell);
         _bus->subscribe(this, AutocompleteResponse::Type, shell);
-        qDebug() << "Subscribed to ScriptExecutedEvent";
 
         _scriptWidget = new ScriptWidget(_shell);
         connect(_scriptWidget,SIGNAL(textChanged()),this,SLOT(textChange()));

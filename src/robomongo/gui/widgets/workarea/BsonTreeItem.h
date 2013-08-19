@@ -18,7 +18,6 @@ namespace Robomongo
     public:
         BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position);
         BsonTreeItem(MongoDocumentPtr document, int position);
-        ~BsonTreeItem() {}
 
         MongoElementPtr element() const { return _element; }
         MongoDocumentPtr rootDocument() const { return _rootDocument; }
@@ -28,7 +27,6 @@ namespace Robomongo
 
     private:
         void setupDocument(MongoDocumentPtr document);
-        void cleanChildItems();
         QString buildObjectFieldName();
         QString buildFieldName();
         QString buildArrayFieldName(int itemsCount);

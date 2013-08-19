@@ -1,5 +1,7 @@
 #include "robomongo/core/domain/MongoUser.h"
+
 #include <mongo/client/dbclient.h>
+
 namespace Robomongo
 {
 

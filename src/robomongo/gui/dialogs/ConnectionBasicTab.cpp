@@ -1,8 +1,10 @@
+#include "robomongo/gui/dialogs/ConnectionBasicTab.h"
+
 #include <QLabel>
+#include <QLineEdit>
 #include <QGridLayout>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
-#include "robomongo/gui/dialogs/ConnectionBasicTab.h"
 
 namespace Robomongo
 {

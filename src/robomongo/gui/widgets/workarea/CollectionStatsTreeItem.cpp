@@ -5,8 +5,8 @@
 #include "robomongo/core/domain/MongoUtils.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoNamespace.h"
-#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/BsonUtils.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 namespace 
 {
@@ -19,8 +19,8 @@ namespace
 namespace Robomongo
 {
 
-    CollectionStatsTreeItem::CollectionStatsTreeItem(MongoDocumentPtr document) :
-    _document(document)
+    CollectionStatsTreeItem::CollectionStatsTreeItem(MongoDocumentPtr document) 
+        : _document(document)
     {
         mongo::BSONObj _obj = document->bsonObj();
 

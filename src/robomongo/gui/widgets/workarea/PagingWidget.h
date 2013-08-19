@@ -12,6 +12,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        enum {pageLimit=50};
         PagingWidget();
         void setSkip(int skip);
         void setLimit(int limit);

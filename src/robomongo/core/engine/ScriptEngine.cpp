@@ -1,6 +1,6 @@
-#include <QVector> // unable to put this include below. doesn't compile on GCC 4.7.2 and Qt 4.8
 #include "robomongo/core/engine/ScriptEngine.h"
 
+#include <QVector> // unable to put this include below. doesn't compile on GCC 4.7.2 and Qt 4.8
 #include <QDir>
 #include <QStringList>
 #include <QRegExp>
@@ -31,8 +31,8 @@ namespace mongo {
 
 namespace Robomongo
 {
-    ScriptEngine::ScriptEngine(ConnectionSettings *connection) : QObject(),
-        _connection(connection),
+    ScriptEngine::ScriptEngine(ConnectionSettings *connection) 
+        :_connection(connection),
         _scope(NULL),
         _engine(NULL),
         _mutex(QMutex::Recursive)

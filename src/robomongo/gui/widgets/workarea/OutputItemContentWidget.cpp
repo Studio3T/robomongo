@@ -11,9 +11,9 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/gui/editors/FindFrame.h"
+
 namespace Robomongo
 {
-
     OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &text) :
         _isTextModeSupported(true),
         _isTreeModeSupported(false),
@@ -156,7 +156,7 @@ namespace Robomongo
         }
 
         if (!_isTreeModeInitialized) {
-            _bson = configureBsonWidget();
+            _bson = new BsonWidget(_shell);
             _bson->setDocuments(_documents, _queryInfo);
             _stack->addWidget(_bson);
             _isTreeModeInitialized = true;
@@ -252,10 +252,5 @@ namespace Robomongo
         // even for medium size documents.    
         _logText->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
         return _logText;
-    }
-
-    BsonWidget *OutputItemContentWidget::configureBsonWidget()
-    {
-        return new BsonWidget(_shell);
     }
 }

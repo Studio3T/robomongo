@@ -12,8 +12,8 @@ SET(PROJECT_GITHUB_ISSUES "www.github.com/paralect/robomongo/issues")
 ##########################################################
 STRING(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
 SET(MAJOR "0")
-SET(MINOR "7")
-SET(PATCH "2")
+SET(MINOR "8")
+SET(PATCH "1")
 SET(BUILD " beta 1")
 SET(SHORT_VERSION ${MAJOR}.${MINOR}.${PATCH})
 SET(PROJECT_VERSION "${SHORT_VERSION}${BUILD}" CACHE STRING "${PROJECT_NAME} version")
@@ -74,25 +74,14 @@ DETECT_QT()
 ##################### Libraries search ###################
 IF(DEVELOPER_QT5)
     SET(QT_COMPONENTS_TO_USE Qt5Core Qt5Gui Qt5Widgets)
-IF(UNIX AND NOT APPLE)
-    SET(QT_COMPONENTS_TO_USE ${QT_COMPONENTS_TO_USE} Qt5DBus) #for libqxcb
-ENDIF(UNIX AND NOT APPLE)
+    IF(UNIX AND NOT APPLE)
+        SET(QT_COMPONENTS_TO_USE ${QT_COMPONENTS_TO_USE} Qt5DBus) #for libqxcb
+    ENDIF(UNIX AND NOT APPLE)
 ELSE()
     SET(QT_COMPONENTS_TO_USE QtCore QtGui)
 ENDIF()
 INTEGRATE_QT(${QT_COMPONENTS_TO_USE})
 ##########################################################
-
-## Qt static or dinamic detector ##
-
-# enable GIF and ICO support
-IF(WIN32)
-    FIND_LIBRARY(QT_ICO_PLUGIN qico PATHS ${QT_PLUGINS_DIR} PATH_SUFFIXES imageformats)
-    FIND_LIBRARY(QT_ICO_PLUGIN_DEBUG qicod PATHS ${QT_PLUGINS_DIR} PATH_SUFFIXES imageformats)
-ELSEIF(APPLE)
-    FIND_LIBRARY(QT_ICO_PLUGIN qico PATHS ${QT_PLUGINS_DIR} PATH_SUFFIXES imageformats)
-    FIND_LIBRARY(QT_ICO_PLUGIN_DEBUG qico_debug PATHS ${QT_PLUGINS_DIR} PATH_SUFFIXES imageformats)
-ENDIF()
 
 IF(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     IF (NOT CMAKE_BUILD_TYPE)
@@ -192,7 +181,7 @@ IF(CPACK_SUPPORT)
     IF(WIN32)
         # There is a bug in NSI that does not handle full unix paths properly. Make
         # sure there is at least one set of four (4) backlasshes.
-        SET(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/install/windows\\\\database-small.bmp")
+        SET(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/install/windows\\\\nsis-top-logo.bmp")
         SET(CPACK_NSIS_INSTALLED_ICON_NAME "\\\\${PROJECT_NAME}.exe")
         SET(CPACK_NSIS_CREATE_ICONS "CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\${PROJECT_NAME}.lnk\\\" \\\"$INSTDIR\\\\${PROJECT_NAME}.exe\\\"")
 

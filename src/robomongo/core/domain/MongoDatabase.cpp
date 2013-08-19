@@ -2,7 +2,7 @@
 
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoCollection.h"
-#include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 

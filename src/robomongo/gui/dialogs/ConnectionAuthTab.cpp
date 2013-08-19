@@ -1,7 +1,13 @@
+#include "robomongo/gui/dialogs/ConnectionAuthTab.h"
+
 #include <QGridLayout>
+#include <QLineEdit>
+#include <QLabel>
+#include <QCheckBox>
+#include <QPushButton>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
-#include "robomongo/gui/dialogs/ConnectionAuthTab.h"
+#include "robomongo/core/settings/CredentialSettings.h"
 
 namespace Robomongo
 {

@@ -10,9 +10,9 @@ namespace Robomongo
         EventWrapper(Event *event, QList<QObject *> receivers);
         EventWrapper(Event *event, QObject * receiver);
         Event *event() const;
-        QList<QObject *> receivers() const;
+        const QList<QObject *> &receivers() const;
     private:
-        boost::scoped_ptr<Event> _event;
-        QList<QObject *> _receivers;
+        const boost::scoped_ptr<Event> _event;
+        const QList<QObject *> _receivers;
     };
 }

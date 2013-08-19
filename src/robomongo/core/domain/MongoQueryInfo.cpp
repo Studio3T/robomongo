@@ -1,4 +1,4 @@
-#include "MongoQueryInfo.h"
+#include "robomongo/core/domain/MongoQueryInfo.h"
 #include <mongo/client/dbclient.h>
 
 namespace Robomongo

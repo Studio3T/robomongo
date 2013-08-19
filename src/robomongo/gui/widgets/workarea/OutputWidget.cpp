@@ -6,10 +6,10 @@
 #include <QTreeView>
 #include <Qsci/qscilexerjavascript.h>
 
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoShell.h"
-#include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
@@ -74,7 +74,7 @@ namespace Robomongo
             }
 
             OutputItemWidget *result = new OutputItemWidget(this, output, shellResult.queryInfo());
-            ViewMode viewMode = GuiRegistry::instance().mainWindow()->viewMode();
+            ViewMode viewMode = AppRegistry::instance().settingsManager()->viewMode();
 
             if (viewMode == Custom) {
                 if (output->isCustomModeSupported())

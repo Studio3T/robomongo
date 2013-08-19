@@ -42,13 +42,12 @@ namespace Robomongo
 
         void markUninitialized();
 
-    public slots:
+    public Q_SLOTS:
         void jsonPrepared();
         void jsonPartReady(const QString &json);
 
     private:
         FindFrame *configureLogText();
-        BsonWidget *configureBsonWidget();
 
         FindFrame *_log;
         BsonWidget *_bson;

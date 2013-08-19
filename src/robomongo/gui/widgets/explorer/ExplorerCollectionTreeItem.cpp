@@ -14,6 +14,7 @@
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 
@@ -271,7 +272,7 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::handle(LoadCollectionIndexesResponse *event)
     {
-        clearChildItems(_indexDir);
+        QtUtils::clearChildItems(_indexDir);
         const QList<EnsureIndexInfo> &indexes = event->indexes();
         for(QList<EnsureIndexInfo>::const_iterator it=indexes.begin();it!=indexes.end();++it){
             _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(_indexDir,*it));

@@ -1,6 +1,6 @@
 #pragma once
 #include <QEvent>
-#include <QMultiHash>
+#include <vector>
 #include <QMutex>
 
 #include "robomongo/core/EventBusDispatcher.h"
@@ -20,6 +20,10 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef std::pair<QEvent::Type, EventBusSubscriber *> subscribersType;
+        typedef std::vector<subscribersType > subscribersContainerType;
+        typedef std::pair<QThread *, EventBusDispatcher *> dispatchersType;
+        typedef std::vector<dispatchersType> dispatchersContainerType;
         EventBus();
         ~EventBus();
 
@@ -45,7 +49,7 @@ namespace Robomongo
          */
         void subscribe(QObject *receiver, QEvent::Type type, QObject *sender = NULL);
 
-    public slots:
+    public Q_SLOTS:
         void unsubscibe(QObject *receiver);
 
     private:
@@ -60,7 +64,7 @@ namespace Robomongo
 
     private:
         QMutex _lock;
-        QMultiHash<QEvent::Type, EventBusSubscriber *> _subscribersByEventType;
-        QHash<QThread *, EventBusDispatcher *> _dispatchersByThread;
+        subscribersContainerType _subscribersByEventType;
+        dispatchersContainerType _dispatchersByThread;
     };
 }

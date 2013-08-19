@@ -36,7 +36,7 @@ namespace Robomongo
         InitResponse(QObject *sender) :
             Event(sender) {}
 
-        InitResponse(QObject *sender, EventError error) :
+        InitResponse(QObject *sender,const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -59,7 +59,7 @@ namespace Robomongo
         FinalizeResponse(QObject *sender) :
             Event(sender) {}
 
-        FinalizeResponse(QObject *sender, EventError error) :
+        FinalizeResponse(QObject *sender,const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -156,7 +156,7 @@ namespace Robomongo
             _databaseName(databaseName),
             _collectionInfos(collectionInfos) { }
 
-        LoadCollectionNamesResponse(QObject *sender, EventError error) :
+        LoadCollectionNamesResponse(QObject *sender,const EventError &error) :
             Event(sender, error) {}
 
         QString databaseName() const { return _databaseName; }
@@ -279,7 +279,7 @@ namespace Robomongo
             _databaseName(databaseName),
             _users(users) { }
 
-        LoadUsersResponse(QObject *sender, EventError error) :
+        LoadUsersResponse(QObject *sender,const EventError &error) :
             Event(sender, error) {}
 
         QString databaseName() const { return _databaseName; }
@@ -321,7 +321,7 @@ namespace Robomongo
             _databaseName(databaseName),
             _functions(functions) { }
 
-        LoadFunctionsResponse(QObject *sender, EventError error) :
+        LoadFunctionsResponse(QObject *sender,const EventError &error) :
             Event(sender, error) {}
 
         QString databaseName() const { return _databaseName; }
@@ -368,7 +368,7 @@ namespace Robomongo
         InsertDocumentResponse(QObject *sender) :
             Event(sender) {}
 
-        InsertDocumentResponse(QObject *sender, EventError error) :
+        InsertDocumentResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -408,7 +408,7 @@ namespace Robomongo
         RemoveDocumentResponse(QObject *sender) :
             Event(sender) {}
 
-        RemoveDocumentResponse(QObject *sender, EventError error) :
+        RemoveDocumentResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -439,7 +439,7 @@ namespace Robomongo
         CreateDatabaseResponse(QObject *sender) :
             Event(sender) {}
 
-        CreateDatabaseResponse(QObject *sender, EventError error) :
+        CreateDatabaseResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -472,7 +472,7 @@ namespace Robomongo
         DropDatabaseResponse(QObject *sender) :
             Event(sender) {}
 
-        DropDatabaseResponse(QObject *sender, EventError error) :
+        DropDatabaseResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -506,7 +506,7 @@ namespace Robomongo
         CreateCollectionResponse(QObject *sender) :
             Event(sender) {}
 
-        CreateCollectionResponse(QObject *sender, EventError error) :
+        CreateCollectionResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -543,7 +543,7 @@ namespace Robomongo
         DropCollectionResponse(QObject *sender) :
             Event(sender) {}
 
-        DropCollectionResponse(QObject *sender, EventError error) :
+        DropCollectionResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -581,7 +581,7 @@ namespace Robomongo
         RenameCollectionResponse(QObject *sender) :
             Event(sender) {}
 
-        RenameCollectionResponse(QObject *sender, EventError error) :
+        RenameCollectionResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -619,7 +619,7 @@ namespace Robomongo
         DuplicateCollectionResponse(QObject *sender) :
             Event(sender) {}
 
-        DuplicateCollectionResponse(QObject *sender, EventError error) :
+        DuplicateCollectionResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -656,7 +656,7 @@ namespace Robomongo
         CreateUserResponse(QObject *sender) :
             Event(sender) {}
 
-        CreateUserResponse(QObject *sender, EventError error) :
+        CreateUserResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -691,7 +691,7 @@ namespace Robomongo
         DropUserResponse(QObject *sender) :
             Event(sender) {}
 
-        DropUserResponse(QObject *sender, EventError error) :
+        DropUserResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -733,7 +733,7 @@ namespace Robomongo
         CreateFunctionResponse(QObject *sender) :
             Event(sender) {}
 
-        CreateFunctionResponse(QObject *sender, EventError error) :
+        CreateFunctionResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 
@@ -768,7 +768,7 @@ namespace Robomongo
         DropFunctionResponse(QObject *sender) :
             Event(sender) {}
 
-        DropFunctionResponse(QObject *sender, EventError error) :
+        DropFunctionResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 

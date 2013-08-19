@@ -25,7 +25,7 @@ namespace Robomongo
          * @brief Creates "error-event" that highlights that state of this
          * event is invalid because of error.
          */
-        Event(QObject *sender, EventError error) :
+        Event(QObject *sender, const EventError &error) :
             _sender(sender),
             _error(error) { }
 
@@ -56,7 +56,7 @@ namespace Robomongo
         /**
          * @brief Returns Error object.
          */
-        EventError error() const { return _error; }
+        const EventError &error() const { return _error; }
 
     private:
         /**
@@ -67,7 +67,7 @@ namespace Robomongo
         /**
          * @brief Possible error.
          */
-        EventError _error;
+        const EventError _error;
     };
 }
 

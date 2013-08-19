@@ -8,6 +8,7 @@
   * Search capability for any editor in Robomongo - press (Ctrl + F) (#32)
   * Timezone support: UTC or Local (#224)
   * Auto-complete on "Tab" (#95)
+  * Fixed incorrect handling of Dates (#111)
   * Fixed incorrect handling of collections with leading underscore (_) symbol (#109)
   * Fixed incorrect handling of float numbers (#115)
   * Fixed incorrect handling of Int64 numbers (#157)

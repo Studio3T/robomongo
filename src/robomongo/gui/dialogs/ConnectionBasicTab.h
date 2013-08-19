@@ -1,7 +1,9 @@
 #pragma once
 
 #include <QWidget>
-#include <QLineEdit>
+QT_BEGIN_NAMESPACE
+class QLineEdit;
+QT_END_NAMESPACE
 
 namespace Robomongo
 {

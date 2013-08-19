@@ -12,7 +12,6 @@ IF(BUILD_PCRECPP_LIBRARY)
 ENDIF(BUILD_PCRECPP_LIBRARY)
 
 SET(HEADERS_GUI_TO_MOC
-    robomongo/gui/ExampleWindow.h
     robomongo/gui/dialogs/ConnectionsDialog.h
     robomongo/gui/dialogs/ConnectionDialog.h
     robomongo/gui/widgets/LogWidget.h
@@ -36,7 +35,6 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/editors/jsedit.h
     robomongo/gui/widgets/workarea/OutputWidget.h
     robomongo/gui/widgets/workarea/OutputItemContentWidget.h
-    robomongo/gui/examples/CredentialModel.h
     robomongo/gui/dialogs/ConnectionAuthTab.h
     robomongo/gui/dialogs/ConnectionBasicTab.h
     robomongo/gui/dialogs/ConnectionAdvancedTab.h
@@ -66,7 +64,6 @@ SET(HEADERS_GUI
     )
 SET(SOURCES_GUI
     robomongo/gui/utils/DialogUtils.cpp
-    robomongo/gui/ExampleWindow.cpp
     robomongo/gui/dialogs/ConnectionsDialog.cpp
     robomongo/gui/dialogs/ConnectionDialog.cpp
     robomongo/gui/widgets/LogWidget.cpp
@@ -93,7 +90,6 @@ SET(SOURCES_GUI
     robomongo/gui/editors/FindFrame.cpp
     robomongo/gui/widgets/workarea/OutputWidget.cpp
     robomongo/gui/widgets/workarea/OutputItemContentWidget.cpp
-    robomongo/gui/examples/CredentialModel.cpp
     robomongo/gui/dialogs/ConnectionAuthTab.cpp
     robomongo/gui/dialogs/ConnectionBasicTab.cpp
     robomongo/gui/dialogs/ConnectionAdvancedTab.cpp
@@ -148,10 +144,10 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/EventBus.h
     robomongo/core/domain/App.h
     robomongo/core/domain/MongoShell.h
-    robomongo/core/engine/ScriptEngine.h
     robomongo/core/EventBusDispatcher.h  
     )
 SET(HEADERS_CORE
+    robomongo/core/engine/ScriptEngine.h
     robomongo/core/KeyboardManager.h
     robomongo/core/domain/MongoDocumentIterator.h
     robomongo/core/domain/MongoDocument.h
@@ -163,7 +159,6 @@ SET(HEADERS_CORE
     robomongo/core/events/MongoEvents.h
     robomongo/core/domain/MongoElement.h
     robomongo/core/events/MongoEventsInfo.h
-    robomongo/core/Wrapper.h
     robomongo/core/AppRegistry.h
     robomongo/core/Core.h
     robomongo/core/examples/ImplicitlyShared.h
@@ -181,6 +176,7 @@ SET(HEADERS_CORE
     robomongo/core/domain/Enums.h
     robomongo/core/HexUtils.h
     robomongo/core/utils/BsonUtils.h
+    robomongo/core/utils/QtUtils.h
     )
 SET(SOURCES_CORE
     robomongo/core/AppRegistry.cpp
@@ -194,7 +190,6 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoElement.cpp
     robomongo/core/domain/MongoDocumentIterator.cpp
     robomongo/core/domain/MongoDocument.cpp
-    robomongo/core/Wrapper.cpp
     robomongo/core/events/MongoEvents.cpp
     robomongo/core/events/MongoEventsInfo.cpp
     robomongo/core/EventBus.cpp
@@ -220,6 +215,7 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoFunction.cpp
     robomongo/core/HexUtils.cpp
     robomongo/core/utils/BsonUtils.cpp
+    robomongo/core/utils/QtUtils.cpp
     )
 
 IF(WIN32)

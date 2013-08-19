@@ -1,10 +1,12 @@
 #pragma once
 
 #include <QDialog>
-#include <QLabel>
-#include <QLineEdit>
-#include <QCheckBox>
-#include <QPushButton>
+QT_BEGIN_NAMESPACE
+class QTextEdit;
+class QLabel;
+class QCheckBox;
+class QLineEdit;
+QT_END_NAMESPACE
 
 #include "robomongo/core/domain/MongoUser.h"
 

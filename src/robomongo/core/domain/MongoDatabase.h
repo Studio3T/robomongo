@@ -2,11 +2,9 @@
 
 #include <QObject>
 #include <mongo/bson/bsonobj.h>
-#include <boost/shared_ptr.hpp>
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/events/MongoEvents.h"
-#include "robomongo/core/mongodb/MongoWorker.h"
 
 namespace Robomongo
 {

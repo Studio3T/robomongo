@@ -7,8 +7,10 @@
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
+
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -85,7 +87,7 @@ namespace Robomongo
         setText(0, buildServerName(&count));
 
         // Remove child items
-        clearChildItems(this);
+        QtUtils::clearChildItems(this);
 
         // Add 'System' folder
         QIcon folderIcon = GuiRegistry::instance().folderIcon();

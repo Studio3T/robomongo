@@ -1,14 +1,12 @@
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 
-#include <mongo/client/dbclient.h>
 #include <QApplication>
-#include <QtGui>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
 #include <QDialogButtonBox>
 #include <Qsci/qscilexerjavascript.h>
-#include <Qsci/qsciscintilla.h>
+#include <mongo/client/dbclient.h>
 
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"

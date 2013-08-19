@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QObject>
 #include <QMutex>
 #include <boost/scoped_ptr.hpp>
 #include <mongo/scripting/engine.h>
@@ -12,9 +11,8 @@ namespace Robomongo
 {
     class ConnectionSettings;
 
-    class ScriptEngine : public QObject
+    class ScriptEngine
     {
-        Q_OBJECT
 
     public:
         ScriptEngine(ConnectionSettings *connection);

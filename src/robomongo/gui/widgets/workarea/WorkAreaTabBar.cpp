@@ -1,10 +1,10 @@
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
-#include "robomongo/gui/GuiRegistry.h"
 
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QStylePainter>
-#include <QStyleOptionTabV3>
+
+#include "robomongo/gui/GuiRegistry.h"
 
 namespace Robomongo
 {

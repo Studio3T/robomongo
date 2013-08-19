@@ -1,4 +1,5 @@
 #include "robomongo/core/domain/MongoShellResult.h"
+
 namespace Robomongo
 {
     MongoShellResult::MongoShellResult(const QString &type, const QString &response, const QList<MongoDocumentPtr> &documents,

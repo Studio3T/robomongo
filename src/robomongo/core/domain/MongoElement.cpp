@@ -1,8 +1,6 @@
 #include "robomongo/core/domain/MongoElement.h"
 #include <mongo/client/dbclient.h>
 #include <QStringBuilder>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/posix_time/posix_time_io.hpp>
 
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/HexUtils.h"
@@ -148,7 +146,7 @@ namespace Robomongo
             boost::posix_time::time_duration diff = boost::posix_time::millisec(ms);
             boost::posix_time::ptime time = epoch + diff;
 
-            std::string date = miutil::isotimeString(time,true,AppRegistry::instance().settingsManager()->timeZone()==LocalTime);
+            std::string date = miutil::isotimeString(time,false,AppRegistry::instance().settingsManager()->timeZone()==LocalTime);
 
             con.append(QString::fromStdString(date));
             break;

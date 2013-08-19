@@ -2,9 +2,10 @@
 
 #include "robomongo/core/domain/MongoElement.h"
 #include "robomongo/core/domain/MongoDocumentIterator.h"
-#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 using namespace mongo;
 
@@ -158,10 +159,9 @@ namespace Robomongo
         /** deprecated / will be redesigned */
         case DBRef:
             {
-                static QString typeDBRef("DBRef");
                 setIcon(0, GuiRegistry::instance().circleIcon());
                 setText(1, element->stringValue());
-                setText(2, typeDBRef);
+                setText(2, "DBRef");
             }
             break;
 
@@ -256,8 +256,7 @@ namespace Robomongo
         setText(0, buildObjectFieldName());
         setIcon(0, GuiRegistry::instance().bsonObjectIcon());
 
-        static QString typeObject("Object");
-        setText(2, typeObject);
+        setText(2, "Object");
         setForeground(2, GuiRegistry::instance().typeBrush());
 
         setExpanded(true);
@@ -266,8 +265,7 @@ namespace Robomongo
 
     void BsonTreeItem::expand()
     {
-        cleanChildItems();
-
+        QtUtils::clearChildItems(this);
         MongoDocumentPtr document = _document ? _document : _element->asDocument();
         bool isArray = _element ? _element->isArray() : false;
 
@@ -280,17 +278,6 @@ namespace Robomongo
             BsonTreeItem *childItem = new BsonTreeItem(_rootDocument, element, isArray ? position : -1);
             addChild(childItem);
             position++;
-        }
-    }
-
-    void BsonTreeItem::cleanChildItems()
-    {
-        int itemCount = childCount();
-        for (int i = 0; i < itemCount; ++i)
-        {
-            QTreeWidgetItem *p = child(0);
-            removeChild(p);
-            delete p;
         }
     }
 

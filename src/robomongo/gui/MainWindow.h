@@ -31,7 +31,6 @@ namespace Robomongo
         typedef QMainWindow baseClass;
         MainWindow();
         void keyPressEvent(QKeyEvent *event);
-        ViewMode viewMode() const { return _viewMode; }
 
     public Q_SLOTS:
         void manageConnections();

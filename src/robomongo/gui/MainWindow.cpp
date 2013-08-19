@@ -28,7 +28,15 @@
 
 namespace
 {
-    void setToolBarIconSize(QToolBar *toolBar);
+    void setToolBarIconSize(QToolBar *toolBar)
+    {
+#if defined(Q_OS_MAC)
+        const int size = 20;
+#else
+        const int size = 24;
+#endif
+        toolBar->setIconSize(QSize(size, size));
+    }
 }
 
 namespace Robomongo
@@ -57,8 +65,6 @@ namespace Robomongo
         _connectionsMenu(NULL),
         _viewMode(Custom)
     {
-        GuiRegistry::instance().setMainWindow(this);
-
         _bus->subscribe(this, ConnectionFailedEvent::Type);
         _bus->subscribe(this, ScriptExecutedEvent::Type);
         _bus->subscribe(this, ScriptExecutingEvent::Type);
@@ -613,18 +619,5 @@ namespace Robomongo
         _workArea = new WorkAreaWidget(this);
         connect(_workArea, SIGNAL(tabActivated(int)),this, SLOT(updateMenus()));
         setCentralWidget(_workArea);
-    }
-}
-
-namespace
-{
-    void setToolBarIconSize(QToolBar *toolBar)
-    {
-#if defined(Q_OS_MAC)
-        const int size = 20;
-#else
-        const int size = 24;
-#endif
-        toolBar->setIconSize(QSize(size, size));
     }
 }

@@ -6,8 +6,6 @@
 
 namespace Robomongo
 {
-    class MainWindow;
-
     /**
      * @brief GuiRegistry is a simple registry-like singleton, that provides access to
      *        to another various singletons (including access to the data that is stored in
@@ -24,9 +22,6 @@ namespace Robomongo
             static GuiRegistry _instance;
             return _instance;
         }
-
-        MainWindow *mainWindow() const { return _mainWindow;}
-        void setMainWindow(MainWindow *mainWindow) { _mainWindow = mainWindow; }
 
         void setAlternatingColor(QAbstractItemView *view);
 
@@ -82,6 +77,5 @@ namespace Robomongo
          * @brief Private, because this is singleton
          */
         GuiRegistry();
-        MainWindow *_mainWindow;
     };
 }

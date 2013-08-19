@@ -1,3 +1,20 @@
+0.8.0 / August 23, 2013
+
+  * Ability to save and load files for currently opened shell (#96)
+  * MongoDB Index management (#74)
+  * Expand all children recursively  (#106)
+  * Ability to toggle line numbers (press F11) for any editor in Robomongo  (#112)
+  * View Mode settings is persisted now (thanks, Luke Thompson!) (#114)
+  * Search capability for any editor in Robomongo - press (Ctrl + F) (#32)
+  * Timezone support: UTC or Local (#224)
+  * Auto-complete on "Tab" (#95)
+  * Fixed incorrect handling of collections with leading underscore (_) symbol (#109)
+  * Fixed incorrect handling of float numbers (#115)
+  * Fixed incorrect handling of Int64 numbers (#157)
+  * New build system, based on CMake. Greatly simplified build and package process.
+  * Qt updated to 5.1 version.
+  * QScintilla updated to 2.7.2 version.
+
 0.7.1 / April 13, 2013
 
   * Fixed crash when right-clicking on non-primitive elements in Tree View (#85)

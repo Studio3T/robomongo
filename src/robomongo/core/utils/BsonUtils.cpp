@@ -179,13 +179,13 @@ namespace Robomongo
             case DBRef: {
                 mongo::OID *x = (mongo::OID *) (elem.valuestr() + elem.valuestrsize());
                 if ( format == TenGen )
-                    s << "Dbref( ";
+                    s << "DBRef(";
                 else
                     s << "{ \"$ref\" : ";
                 s << '"' << elem.valuestr() << "\", ";
                 if ( format != TenGen )
                     s << "\"$id\" : ";
-                s << '"' << *x << "\" ";
+                s << '"' << *x << "\"";
                 if ( format == TenGen )
                     s << ')';
                 else

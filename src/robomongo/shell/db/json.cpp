@@ -512,8 +512,10 @@ namespace Robomongo {
     }
 
     Status JParse::dbRefObject(const StringData& fieldName, BSONObjBuilder& builder) {
+        BSONObjBuilder subBuilder(builder.subobjStart(fieldName));
+
         if (!accept(COLON)) {
-            return parseError("Expecting ':'");
+            return parseError("DBRef: Expecting ':'");
         }
         std::string ns;
         ns.reserve(NS_RESERVE_SIZE);
@@ -521,52 +523,46 @@ namespace Robomongo {
         if (ret != Status::OK()) {
             return ret;
         }
+        subBuilder.append("$ref", ns);
+
         if (!accept(COMMA)) {
-            return parseError("Expecting ','");
+            return parseError("DBRef: Expecting ','");
         }
 
         if (!acceptField("$id")) {
-            return parseError("Expected field name: \"$id\" in \"$ref\" object");
+            return parseError("DBRef: Expected field name: \"$id\" in \"$ref\" object");
         }
         if (!accept(COLON)) {
-            return parseError("Expecting ':'");
+            return parseError("DBRef: Expecting ':'");
         }
-        if (accept("ObjectId")) {
-            BSONObjBuilder subBuilder(builder.subobjStart(fieldName));
-            subBuilder.append("$ref", ns);
-            objectId("$id", subBuilder);
-            subBuilder.done();
+        Status valueRet = value("$id", subBuilder);
+        if (valueRet != Status::OK()) {
+            return valueRet;
         }
-        else if (accept(LBRACE)) {
-            BSONObjBuilder subBuilder(builder.subobjStart(fieldName));
-            subBuilder.append("$ref", ns);
-            if (!acceptField("$oid")) {
-                return parseError("Expected field name: \"$oid\"");
+
+#ifdef ROBOMONGO
+        // $db field
+        // Optional.
+        // Contains the name of the database where the referenced document resides.
+        // Only some drivers support $db references.
+
+        if (accept(COMMA)) {
+            if (!acceptField("$db")) {
+                return parseError("DBRef: Expected optional field name: \"$db\" in \"$ref\" object. Remove comma after $ref field to make $db field optional.");
             }
-            objectIdObject("$id", subBuilder);
-            subBuilder.done();
-            if (!accept(RBRACE)) {
-                return parseError("Expecting '}'");
+
+            if (!accept(COLON)) {
+                return parseError("DBRef: Expecting ':' after $db field");
+            }
+
+            Status valueRet = value("$db", subBuilder);
+            if (valueRet != Status::OK()) {
+                return valueRet;
             }
         }
-        else {
-            std::string id;
-            id.reserve(ID_RESERVE_SIZE);
-            Status ret = quotedString(&id);
-            if (ret != Status::OK()) {
-                return ret;
-            }
-            if (id.size() != 24) {
-                return parseError("Expecting 24 hex digits: " + id);
-            }
-            if (!isHexString(id)) {
-                return parseError("Expecting hex digits: " + id);
-            }
-            BSONObjBuilder subBuilder(builder.subobjStart(fieldName));
-            subBuilder.append("$ref", ns);
-            subBuilder.append("$id", OID(id));
-            subBuilder.done();
-        }
+#endif
+
+        subBuilder.done();
         return Status::OK();
     }
 
@@ -841,6 +837,8 @@ namespace Robomongo {
     }
 
     Status JParse::dbRef(const StringData& fieldName, BSONObjBuilder& builder) {
+        BSONObjBuilder subBuilder(builder.subobjStart(fieldName));
+
         if (!accept(LPAREN)) {
             return parseError("Expecting '('");
         }
@@ -850,27 +848,21 @@ namespace Robomongo {
         if (refRet != Status::OK()) {
             return refRet;
         }
+        subBuilder.append("$ref", ns);
+
         if (!accept(COMMA)) {
             return parseError("Expecting ','");
         }
-        std::string id;
-        id.reserve(ID_RESERVE_SIZE);
-        Status idRet = quotedString(&id);
-        if (idRet != Status::OK()) {
-            return idRet;
+
+        Status valueRet = value("$id", subBuilder);
+        if (valueRet != Status::OK()) {
+            return valueRet;
         }
-        if (id.size() != 24) {
-            return parseError("Expecting 24 hex digits: " + id);
-        }
-        if (!isHexString(id)) {
-            return parseError("Expecting hex digits: " + id);
-        }
+
         if (!accept(RPAREN)) {
             return parseError("Expecting ')'");
         }
-        BSONObjBuilder subBuilder(builder.subobjStart(fieldName));
-        subBuilder.append("$ref", ns);
-        subBuilder.append("$id", OID(id));
+
         subBuilder.done();
         return Status::OK();
     }

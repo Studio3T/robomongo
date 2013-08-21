@@ -277,7 +277,7 @@ SET(ALL_LIBS ${ALL_LIBS} ${QT_LIBRARIES} ${QT_QTMAIN_LIBRARY} ${Qt5Core_QTMAIN_L
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     IF(BOOST_ENABLED)
-            IF ("${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
+            IF ("${CMAKE_BUILD_TYPE_STABLE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
                     COMMAND scons --release --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
@@ -291,7 +291,7 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
                     COMMENT "Build mongoclient library")
             ENDIF()
         ELSE()
-            IF ("${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
+            IF ("${CMAKE_BUILD_TYPE_STABLE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
                     COMMAND scons --release --${ARCH_TEXT} mongoclient
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}

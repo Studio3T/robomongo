@@ -420,7 +420,9 @@ IF(DEVELOPER_ENABLE_TESTS)
 ########## PREPARE GTEST LIBRARY ##########
 
     ADD_EXECUTABLE(testparser robomongo/core/utils/BsonUtils.cpp robomongo/shell/db/ptimeutil.cpp robomongo/core/HexUtils.cpp ${CMAKE_SOURCE_DIR}/tests/test_parser.cpp)
-    TARGET_LINK_LIBRARIES(testparser ${MONGO_LIBRARIES} ${PLATFORM_LIBRARIES} boost_mongo_third_party pcrecpp gtest gtest_main)   
+    TARGET_LINK_LIBRARIES(testparser ${MONGO_LIBRARIES} ${PLATFORM_LIBRARIES} boost_mongo_third_party pcrecpp gtest gtest_main) 
+    ADD_DEPENDENCIES(testparser mongoclient_release)
+    ADD_DEPENDENCIES(testparser mongoclient_debug)    
     ADD_TEST(NAME testparser COMMAND testparser)
     SET_PROPERTY(TARGET testparser PROPERTY FOLDER "Tests")
 ENDIF(DEVELOPER_ENABLE_TESTS)

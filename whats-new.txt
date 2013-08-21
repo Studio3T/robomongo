@@ -10,8 +10,9 @@
   * Auto-complete on "Tab" (#95)
   * Fixed incorrect handling of Dates (#111)
   * Fixed incorrect handling of collections with leading underscore (_) symbol (#109)
-  * Fixed incorrect handling of float numbers (#115)
+  * Fixed incorrect rendering of float numbers (#115)
   * Fixed incorrect handling of Int64 numbers (#157)
+  * Fixed incorrect parsing of DBRef sub-objects (#113)
   * New build system, based on CMake. Greatly simplified build and package process.
   * Qt updated to 5.1 version.
   * QScintilla updated to 2.7.2 version.

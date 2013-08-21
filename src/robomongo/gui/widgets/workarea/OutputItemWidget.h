@@ -6,7 +6,6 @@
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
-#include "robomongo/gui/widgets/workarea/BsonWidget.h"
 #include "robomongo/gui/widgets/workarea/PagingWidget.h"
 
 namespace Robomongo

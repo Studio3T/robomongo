@@ -1,30 +1,12 @@
-#include "robomongo/gui/widgets/workarea/BsonWidget.h"
+#include "robomongo/gui/widgets/workarea/JsonPrepareThread.h"
 
 #include <QHBoxLayout>
 
-#include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/utils/BsonUtils.h"
 
 namespace Robomongo
 {
-
-    BsonWidget::BsonWidget(MongoShell *shell, QWidget *parent) : QWidget(parent),
-        _shell(shell),
-        _bsonTree(new BsonTreeWidget(shell))
-    {
-        QHBoxLayout *hlayout = new QHBoxLayout;
-        hlayout->setSpacing(0);
-        hlayout->setMargin(0);
-        hlayout->addWidget(_bsonTree);
-        setLayout(hlayout);
-    }
-
-    void BsonWidget::setDocuments(const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo)
-    {
-        _bsonTree->setDocuments(documents, queryInfo);
-    }
-
     JsonPrepareThread::JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects, UUIDEncoding uuidEncoding, SupportedTimes timeZone)
         :_bsonObjects(bsonObjects),
         _uuidEncoding(uuidEncoding),

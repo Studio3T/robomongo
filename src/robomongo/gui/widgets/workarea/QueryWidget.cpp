@@ -19,7 +19,6 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 
 #include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/gui/widgets/workarea/BsonWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 #include "robomongo/gui/widgets/workarea/ScriptWidget.h"

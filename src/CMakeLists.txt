@@ -29,7 +29,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/QueryWidget.h
     robomongo/gui/widgets/workarea/WorkAreaTabWidget.h
     robomongo/gui/widgets/workarea/WorkAreaTabBar.h
-    robomongo/gui/widgets/workarea/BsonWidget.h
+    robomongo/gui/widgets/workarea/JsonPrepareThread.h
     robomongo/gui/widgets/workarea/BsonTreeWidget.h
     robomongo/gui/widgets/workarea/BsonTreeItem.h
     robomongo/gui/editors/jsedit.h
@@ -81,7 +81,7 @@ SET(SOURCES_GUI
     robomongo/gui/widgets/workarea/QueryWidget.cpp
     robomongo/gui/widgets/workarea/WorkAreaTabWidget.cpp
     robomongo/gui/widgets/workarea/WorkAreaTabBar.cpp
-    robomongo/gui/widgets/workarea/BsonWidget.cpp
+    robomongo/gui/widgets/workarea/JsonPrepareThread.cpp
     robomongo/gui/widgets/workarea/BsonTreeWidget.cpp
     robomongo/gui/widgets/workarea/BsonTreeItem.cpp
     robomongo/gui/editors/jsedit.cpp
@@ -277,7 +277,7 @@ SET(ALL_LIBS ${ALL_LIBS} ${QT_LIBRARIES} ${QT_QTMAIN_LIBRARY} ${Qt5Core_QTMAIN_L
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     IF(BOOST_ENABLED)
-            IF ("${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
+            IF ("${CMAKE_BUILD_TYPE_STABLE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
                     COMMAND scons --release --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
@@ -291,7 +291,7 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
                     COMMENT "Build mongoclient library")
             ENDIF()
         ELSE()
-            IF ("${CMAKE_BUILD_TYPE}" STREQUAL "RELEASE")
+            IF ("${CMAKE_BUILD_TYPE_STABLE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
                     COMMAND scons --release --${ARCH_TEXT} mongoclient
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
@@ -339,7 +339,6 @@ ELSEIF(MSVC)
     ADD_APP_EXECUTABLE_MSVC(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")
     ADD_DEPENDENCIES(${PROJECT_NAME} mongoclient_release)
     ADD_DEPENDENCIES(${PROJECT_NAME} mongoclient_debug)
-    SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:LIBCMT /DEBUG")
 ELSE()
 	MESSAGE(FATAL_ERROR "NOT SUPPORTED COMPILER!!!")
 ENDIF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
@@ -421,7 +420,9 @@ IF(DEVELOPER_ENABLE_TESTS)
 ########## PREPARE GTEST LIBRARY ##########
 
     ADD_EXECUTABLE(testparser robomongo/core/utils/BsonUtils.cpp robomongo/shell/db/ptimeutil.cpp robomongo/core/HexUtils.cpp ${CMAKE_SOURCE_DIR}/tests/test_parser.cpp)
-    TARGET_LINK_LIBRARIES(testparser ${MONGO_LIBRARIES} ${PLATFORM_LIBRARIES} boost_mongo_third_party pcrecpp gtest gtest_main)   
+    TARGET_LINK_LIBRARIES(testparser ${MONGO_LIBRARIES} ${PLATFORM_LIBRARIES} boost_mongo_third_party pcrecpp gtest gtest_main) 
+    ADD_DEPENDENCIES(testparser mongoclient_release)
+    ADD_DEPENDENCIES(testparser mongoclient_debug)    
     ADD_TEST(NAME testparser COMMAND testparser)
     SET_PROPERTY(TARGET testparser PROPERTY FOLDER "Tests")
 ENDIF(DEVELOPER_ENABLE_TESTS)

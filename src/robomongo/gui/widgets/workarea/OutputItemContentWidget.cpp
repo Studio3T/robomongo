@@ -2,8 +2,8 @@
 
 #include <QVBoxLayout>
 #include <Qsci/qscilexerjavascript.h>
-
-#include "robomongo/gui/widgets/workarea/BsonWidget.h"
+#include "robomongo/gui/widgets/workarea/JsonPrepareThread.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -156,7 +156,7 @@ namespace Robomongo
         }
 
         if (!_isTreeModeInitialized) {
-            _bson = new BsonWidget(_shell);
+            _bson = new BsonTreeWidget(_shell);
             _bson->setDocuments(_documents, _queryInfo);
             _stack->addWidget(_bson);
             _isTreeModeInitialized = true;

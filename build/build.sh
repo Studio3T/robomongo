@@ -12,8 +12,8 @@ createPackage() {
     cmake ../../ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE -DCPACK_GENERATOR="$cpack_generator"
     make install
     cpack
-    if ["$cpack_generator" -eq "DEB"]; then
-        ./fixup_deb.sh
+    if [ "$cpack_generator"=='DEB' ]; then
+        sh ./fixup_deb.sh
     fi
     cd ../
 }

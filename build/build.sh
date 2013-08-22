@@ -1,9 +1,9 @@
 #!/bin/sh
 set -e
 
-function createPackage(){
-    dir_path = "$1"
-    cpack_generator = "$2"
+createPackage() {
+    dir_path="$1"
+    cpack_generator="$2"
     if [ -d "$dir_path" ]; then
       rm -rf "$dir_path"
     fi
@@ -12,10 +12,20 @@ function createPackage(){
     cmake ../../ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE -DCPACK_GENERATOR="$cpack_generator"
     make install
     cpack
-    
-    if ["$cpack_generator" -eq "DEB"]
-        ./fix_up.sh
+    if ["$cpack_generator" -eq "DEB"]; then
+        ./fixup_deb.sh
     fi
+    cd ../
 }
-createPackage build_rpm RPM
-createPackage build_deb DEB
+
+unamestr=`uname`
+
+if [ "$unamestr"=='Linux' ]; then
+    createPackage build_deb DEB
+    createPackage build_rpm RPM
+    createPackage build_tar TGZ
+elif [ "$unamestr"=='Darwin' ]; then
+    createPackage build_dmg DMG
+    createPackage build_zip ZIP
+fi
+

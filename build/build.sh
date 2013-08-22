@@ -12,7 +12,7 @@ createPackage() {
     cmake ../../ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE -DCPACK_GENERATOR="$cpack_generator"
     make install
     cpack
-    if [ "$cpack_generator"=='DEB' ]; then
+    if [ "$cpack_generator" = 'DEB' ]; then
         sh ./fixup_deb.sh
     fi
     cd ../
@@ -20,11 +20,11 @@ createPackage() {
 
 unamestr=`uname`
 
-if [ "$unamestr"=='Linux' ]; then
+if [ "$unamestr" = 'Linux' ]; then
     createPackage build_deb DEB
     createPackage build_rpm RPM
     createPackage build_tar TGZ
-elif [ "$unamestr"=='Darwin' ]; then
+elif [ "$unamestr" = 'Darwin' ]; then
     createPackage build_dmg DMG
     createPackage build_zip ZIP
 fi

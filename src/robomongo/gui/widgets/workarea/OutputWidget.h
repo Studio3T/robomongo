@@ -5,9 +5,9 @@
 #include <QSplitter>
 
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
-#include "robomongo/gui/widgets/workarea/BsonWidget.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/gui/widgets/workarea/PagingWidget.h"
+#include "robomongo/core/domain/MongoShell.h"
 
 namespace Robomongo
 {

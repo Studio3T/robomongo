@@ -9,25 +9,7 @@
 
 namespace Robomongo
 {
-    class BsonTreeWidget;
     class MongoShell;
-
-    /*
-    ** Represents list of bson objects
-    */
-    class BsonWidget : public QWidget
-    {
-        Q_OBJECT
-
-    public:
-        BsonWidget(MongoShell *shell, QWidget *parent = NULL);
-        void setDocuments(const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo = MongoQueryInfo());
-
-    private:
-        MongoShell *_shell;
-        BsonTreeWidget *const _bsonTree;
-    };
-
 
     /*
     ** In this thread we are running task to prepare JSON string from list of BSON objects

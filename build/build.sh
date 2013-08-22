@@ -25,7 +25,7 @@ if [ "$unamestr" = 'Linux' ]; then
     createPackage build_rpm RPM
     createPackage build_tar TGZ
 elif [ "$unamestr" = 'Darwin' ]; then
-    createPackage build_dmg DMG
+    createPackage build_dmg DragNDrop
     createPackage build_zip ZIP
 fi
 

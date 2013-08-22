@@ -13,7 +13,7 @@ goto :eof
 :deleteDir
     setlocal
         set dir_path=%1
-        if exist %dir_path% rm -rf %dir_path%
+        if exist %dir_path% rmdir %dir_path% /s /q
         if %ERRORLEVEL% neq 0 (
           echo.
           echo Error when removing !TARGET!.

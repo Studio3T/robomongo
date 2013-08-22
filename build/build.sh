@@ -5,7 +5,7 @@ createPackage() {
     dir_path="$1"
     cpack_generator="$2"
     if [ -d "$dir_path" ]; then
-      rm -rf "$dir_path"
+        rm -rf "$dir_path"
     fi
     mkdir "$dir_path"
     cd "$dir_path"

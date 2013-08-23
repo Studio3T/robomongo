@@ -1,0 +1,9 @@
+Robomongo
+---------
+
+To run Robomongo, give Execute rights to "robomongo.sh" script (located in bin folder) 
+and execute it:
+
+   $ cd bin
+   $ chmod u+x robomongo.sh
+   $ ./robomongo.sh

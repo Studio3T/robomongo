@@ -548,7 +548,7 @@ namespace Robomongo {
 
         if (accept(COMMA)) {
             if (!acceptField("$db")) {
-                return parseError("DBRef: Expected optional field name: \"$db\" in \"$ref\" object. Remove comma after $ref field to make $db field optional.");
+                return parseError("DBRef: Expected optional field name: \"$db\" in \"DBRef\" object. Remove comma after $id field to make $db field optional");
             }
 
             if (!accept(COLON)) {

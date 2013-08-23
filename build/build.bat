@@ -17,19 +17,22 @@ goto :eof
         if exist %dir_path% rmdir %dir_path% /s /q
         mkdir %dir_path%
         cd %dir_path%
-        cmake ../../ -G "Visual Studio 11" -DCPACK_GENERATOR=%cpack_generator%
-        if %ERRORLEVEL% neq 0 (
-            cmake ../../ -G "Visual Studio 10" -DCPACK_GENERATOR=%cpack_generator%
+        
+        if exist "%programfiles%\Microsoft Visual Studio 11.0" (
+            cmake ../../ -G "Visual Studio 11" -DCPACK_GENERATOR=%cpack_generator%
+        ) else ( 
+            if exist "%programfiles%\Microsoft Visual Studio 10.0" (
+                cmake ../../ -G "Visual Studio 10" -DCPACK_GENERATOR=%cpack_generator%
+            ) else ( 
+                echo Error Visual Studio not founded.
+                cd ../
+                if exist %dir_path% rmdir %dir_path% /s /q
+            goto:eof
+            )
         )
-        if %ERRORLEVEL% neq 0 ( 
-            echo Error Visual Studio not founded.
-            cd ../
-            if exist %dir_path% rmdir %dir_path% /s /q
-        )
-        else (
-            cmake --build . --target install --config Release
-            cpack
-        )
+        
+        cmake --build . --target install --config Release
+        cpack
     endlocal
 goto:eof
 

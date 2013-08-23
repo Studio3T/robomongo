@@ -26,13 +26,14 @@ goto :eof
             ) else ( 
                 echo Error Visual Studio not founded.
                 cd ../
-                if exist %dir_path% rmdir %dir_path% /s /q
+                if exist %dir_path% rmdir %dir_path% /s /q                
             goto:eof
             )
         )
         
         cmake --build . --target install --config Release
         cpack
+        cd ../
     endlocal
 goto:eof
 

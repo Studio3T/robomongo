@@ -1,6 +1,7 @@
 0.8.0 / August 23, 2013
 
-  WILL BE RELEASED BY THE END OF THIS WEEK (August 24, 2013)
+  Read about updates in this version here:
+  http://robomongo.org/whats-new-in/robomongo-0.8.0.html
 
   * Ability to save and load files for currently opened shell (#96)
   * MongoDB Index management (#74)

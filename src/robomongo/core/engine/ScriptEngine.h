@@ -32,7 +32,7 @@ namespace Robomongo
         QString _currentDatabase;
         bool _isCurrentDatabaseValid;
 
-        MongoShellResult prepareResult(const QString &type, const QString &output, const QList<MongoDocumentPtr> objects, qint64 elapsedms);
+        MongoShellResult prepareResult(const QString &type, const QString &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms);
         MongoShellExecResult prepareExecResult(const QList<MongoShellResult> &results);
 
         QString getString(const char *fieldName);

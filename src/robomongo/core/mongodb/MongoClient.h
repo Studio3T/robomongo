@@ -19,12 +19,12 @@ namespace Robomongo
         QStringList getCollectionNames(const QString &dbname) const;
         QStringList getDatabaseNames()const;
 
-        QList<MongoUser> getUsers(const QString &dbName);
+        std::vector<MongoUser> getUsers(const QString &dbName);
         void createUser(const QString &dbName, const MongoUser &user, bool overwrite);
         void dropUser(const QString &dbName, const mongo::OID &id);
 
-        QList<MongoFunction> getFunctions(const QString &dbName);
-        QList<EnsureIndexInfo> getIndexes(const MongoCollectionInfo &collection)const;
+        std::vector<MongoFunction> getFunctions(const QString &dbName);
+        std::vector<EnsureIndexInfo> getIndexes(const MongoCollectionInfo &collection)const;
         void dropIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexName)const;
         void ensureIndex(const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo)const;
 
@@ -44,10 +44,10 @@ namespace Robomongo
         void insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);
         void saveDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);
         void removeDocuments(const QString &db, const QString &collection, mongo::Query query, bool justOne = true);
-        QList<MongoDocumentPtr> query(const MongoQueryInfo &info);
+        std::vector<MongoDocumentPtr> query(const MongoQueryInfo &info);
 
         MongoCollectionInfo runCollStatsCommand(const QString &ns);
-        QList<MongoCollectionInfo> runCollStatsCommand(const QStringList &namespaces);
+        std::vector<MongoCollectionInfo> runCollStatsCommand(const QStringList &namespaces);
 
         void done();
 

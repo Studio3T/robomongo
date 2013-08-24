@@ -22,10 +22,10 @@ namespace Robomongo
     {
         QString text;
         text.reserve(_count + 10);
-        for (QStringList::const_iterator it=_list.begin();it!=_list.end();++it)
-        {
+        for (QStringList::const_iterator it=_list.begin();it!=_list.end();++it){
             text = text % (*it);
         }
+
         return text;
     }
 
@@ -57,11 +57,11 @@ namespace Robomongo
     /*
     ** Create list of MongoDocuments from QList<BsonObj>. It will take owned version of BSONObj
     */ 
-    QList<MongoDocumentPtr> MongoDocument::fromBsonObj(const QList<mongo::BSONObj> &bsonObjs)
+    std::vector<MongoDocumentPtr> MongoDocument::fromBsonObj(const std::vector<mongo::BSONObj> &bsonObjs)
     {
-        QList<MongoDocumentPtr> list;
-        for(QList<mongo::BSONObj>::const_iterator it=bsonObjs.begin();it!=bsonObjs.end();++it){
-            list.append(fromBsonObj(*it));
+        std::vector<MongoDocumentPtr> list;
+        for(std::vector<mongo::BSONObj>::const_iterator it=bsonObjs.begin();it!=bsonObjs.end();++it){
+            list.push_back(fromBsonObj(*it));
         }
 
         return list;

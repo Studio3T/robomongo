@@ -17,12 +17,8 @@ namespace Robomongo
     R_REGISTER_EVENT(MongoDatabaseCollectionsLoadingEvent)
 
     MongoDatabase::MongoDatabase(MongoServer *server, const QString &name)
-        :QObject(),_system(false),_server(server),_bus(AppRegistry::instance().bus())
+        :QObject(), _system(name == "admin" || name == "local"), _server(server), _bus(AppRegistry::instance().bus()), _name(name)
     {
-        _name = name;
-        // Check that this is a system database
-        _system = name == "admin" ||
-        name == "local";
     }
 
     MongoDatabase::~MongoDatabase()
@@ -98,8 +94,8 @@ namespace Robomongo
             return;
 
         clearCollections();
-        const QList<MongoCollectionInfo> &colectionsInfos = loaded->collectionInfos();
-        for(QList<MongoCollectionInfo>::const_iterator it = colectionsInfos.begin() ;it!=colectionsInfos.end();++it)    {
+        const std::vector<MongoCollectionInfo> &colectionsInfos = loaded->collectionInfos();
+        for(std::vector<MongoCollectionInfo>::const_iterator it = colectionsInfos.begin() ;it!=colectionsInfos.end();++it)    {
             const MongoCollectionInfo &info = *it;
             MongoCollection *collection = new MongoCollection(this, info);
             addCollection(collection);
@@ -139,6 +135,6 @@ namespace Robomongo
 
     void MongoDatabase::addCollection(MongoCollection *collection)
     {
-        _collections.append(collection);
+        _collections.push_back(collection);
     }
 }

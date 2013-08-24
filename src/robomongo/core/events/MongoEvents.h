@@ -151,7 +151,7 @@ namespace Robomongo
 
     public:
         LoadCollectionNamesResponse(QObject *sender, const QString &databaseName,
-                                    const QList<MongoCollectionInfo> &collectionInfos) :
+                                    const std::vector<MongoCollectionInfo> &collectionInfos) :
             Event(sender),
             _databaseName(databaseName),
             _collectionInfos(collectionInfos) { }
@@ -160,11 +160,11 @@ namespace Robomongo
             Event(sender, error) {}
 
         QString databaseName() const { return _databaseName; }
-        QList<MongoCollectionInfo> collectionInfos() const { return _collectionInfos; }
+        std::vector<MongoCollectionInfo> collectionInfos() const { return _collectionInfos; }
 
     private:
         QString _databaseName;
-        QList<MongoCollectionInfo> _collectionInfos;
+        std::vector<MongoCollectionInfo> _collectionInfos;
     };
 
     class LoadCollectionIndexesRequest : public Event
@@ -182,10 +182,10 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        LoadCollectionIndexesResponse(QObject *sender, const QList<EnsureIndexInfo> &indexes) :Event(sender), _indexes(indexes) {}
-        QList<EnsureIndexInfo> indexes() const { return _indexes; }
+        LoadCollectionIndexesResponse(QObject *sender, const std::vector<EnsureIndexInfo> &indexes) :Event(sender), _indexes(indexes) {}
+        std::vector<EnsureIndexInfo> indexes() const { return _indexes; }
     private:
-        QList<EnsureIndexInfo> _indexes;
+        std::vector<EnsureIndexInfo> _indexes;
     };
 
     class EnsureIndexRequest : public Event
@@ -274,7 +274,7 @@ namespace Robomongo
 
     public:
         LoadUsersResponse(QObject *sender, const QString &databaseName,
-                                    const QList<MongoUser> &users) :
+                                    const std::vector<MongoUser> &users) :
             Event(sender),
             _databaseName(databaseName),
             _users(users) { }
@@ -283,11 +283,11 @@ namespace Robomongo
             Event(sender, error) {}
 
         QString databaseName() const { return _databaseName; }
-        QList<MongoUser> users() const { return _users; }
+        std::vector<MongoUser> users() const { return _users; }
 
     private:
         QString _databaseName;
-        QList<MongoUser> _users;
+        std::vector<MongoUser> _users;
     };
 
 
@@ -316,7 +316,7 @@ namespace Robomongo
 
     public:
         LoadFunctionsResponse(QObject *sender, const QString &databaseName,
-                                    const QList<MongoFunction> &functions) :
+                                    const std::vector<MongoFunction> &functions) :
             Event(sender),
             _databaseName(databaseName),
             _functions(functions) { }
@@ -325,11 +325,11 @@ namespace Robomongo
             Event(sender, error) {}
 
         QString databaseName() const { return _databaseName; }
-        QList<MongoFunction> functions() const { return _functions; }
+        std::vector<MongoFunction> functions() const { return _functions; }
 
     private:
         QString _databaseName;
-        QList<MongoFunction> _functions;
+        std::vector<MongoFunction> _functions;
     };
 
     /**
@@ -798,7 +798,7 @@ namespace Robomongo
     {
         R_EVENT
 
-        ExecuteQueryResponse(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const QList<MongoDocumentPtr> &documents) :
+        ExecuteQueryResponse(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents) :
             Event(sender),
             resultIndex(resultIndex),
             queryInfo(queryInfo),
@@ -809,7 +809,7 @@ namespace Robomongo
 
         int resultIndex;
         MongoQueryInfo queryInfo;
-        QList<MongoDocumentPtr> documents;
+        std::vector<MongoDocumentPtr> documents;
     };
 
     class AutocompleteRequest : public Event
@@ -949,7 +949,7 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DocumentListLoadedEvent(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const QString &query, const QList<MongoDocumentPtr> &docs) :
+        DocumentListLoadedEvent(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const QString &query, const std::vector<MongoDocumentPtr> &docs) :
             Event(sender),
             _resultIndex(resultIndex),
             _queryInfo(queryInfo),
@@ -958,13 +958,13 @@ namespace Robomongo
 
         int resultIndex() const { return _resultIndex; }
         MongoQueryInfo queryInfo() const { return _queryInfo; }
-        QList<MongoDocumentPtr> documents() const { return _documents; }
+        std::vector<MongoDocumentPtr> documents() const { return _documents; }
         QString query() const { return _query; }
 
     private:
         int _resultIndex;
         MongoQueryInfo _queryInfo;
-        QList<MongoDocumentPtr> _documents;
+        std::vector<MongoDocumentPtr> _documents;
         QString _query;
     };
 

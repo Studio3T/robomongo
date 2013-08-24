@@ -7,19 +7,20 @@ namespace Robomongo
     class MongoShellResult
     {
     public:
-        MongoShellResult(const QString &type, const QString &response, const QList<MongoDocumentPtr> &documents,
+        typedef std::vector<MongoDocumentPtr> mongoDocumentPtrContainerType;
+        MongoShellResult(const QString &type, const QString &response, const mongoDocumentPtrContainerType &documents,
                          const MongoQueryInfo &queryInfo, qint64 elapsedms);
 
         QString response() const { return _response; }
         QString type() const { return _type; }
-        QList<MongoDocumentPtr> documents() const { return _documents; }
+        mongoDocumentPtrContainerType documents() const { return _documents; }
         MongoQueryInfo queryInfo() const { return _queryInfo; }
         qint64 elapsedMs() const { return _elapsedms; }
 
     private:
         QString _type;
         QString _response;
-        QList<MongoDocumentPtr> _documents;
+        mongoDocumentPtrContainerType _documents;
         MongoQueryInfo _queryInfo;
         qint64 _elapsedms;
     };

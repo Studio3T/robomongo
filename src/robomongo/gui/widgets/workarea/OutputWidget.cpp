@@ -63,7 +63,7 @@ namespace Robomongo
         foreach (MongoShellResult shellResult, results) {
             OutputItemContentWidget *output = NULL;
 
-            if (shellResult.documents().count() > 0) {
+            if (shellResult.documents().size() > 0) {
 
                 if (shellResult.type().isEmpty())
                     output = new OutputItemContentWidget(_shell, shellResult.documents(), shellResult.queryInfo());
@@ -107,7 +107,7 @@ namespace Robomongo
         tryToMakeAllPartsEqualInSize();
     }
 
-    void OutputWidget::updatePart(int partIndex, const MongoQueryInfo &queryInfo, const QList<MongoDocumentPtr> &documents)
+    void OutputWidget::updatePart(int partIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents)
     {
         if (partIndex >= _splitter->count())
             return;

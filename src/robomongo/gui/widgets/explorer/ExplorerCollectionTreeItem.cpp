@@ -273,8 +273,8 @@ namespace Robomongo
     void ExplorerCollectionTreeItem::handle(LoadCollectionIndexesResponse *event)
     {
         QtUtils::clearChildItems(_indexDir);
-        const QList<EnsureIndexInfo> &indexes = event->indexes();
-        for(QList<EnsureIndexInfo>::const_iterator it=indexes.begin();it!=indexes.end();++it){
+        const std::vector<EnsureIndexInfo> &indexes = event->indexes();
+        for(std::vector<EnsureIndexInfo>::const_iterator it=indexes.begin();it!=indexes.end();++it){
             _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(_indexDir,*it));
         }
         _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText,_indexDir->childCount()));

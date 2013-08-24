@@ -2,7 +2,7 @@
 
 namespace Robomongo
 {
-    MongoShellResult::MongoShellResult(const QString &type, const QString &response, const QList<MongoDocumentPtr> &documents,
+    MongoShellResult::MongoShellResult(const QString &type, const QString &response, const mongoDocumentPtrContainerType &documents,
                      const MongoQueryInfo &queryInfo, qint64 elapsedms) :
         _type(type),
         _response(response),

@@ -137,8 +137,8 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseCollectionListLoadedEvent *event)
     {
-        QList<MongoCollection *> collections = event->collections;
-        int count = collections.count();
+        std::vector<MongoCollection *> collections = event->collections;
+        int count = collections.size();
         _collectionFolderItem->setText(0, detail::buildName("Collections",count));
 
         QtUtils::clearChildItems(_collectionFolderItem);
@@ -148,7 +148,7 @@ namespace Robomongo
         _collectionFolderItem->addChild(_collectionSystemFolderItem);
 
         for (int i = 0; i < collections.size(); ++i) {
-            MongoCollection *collection = collections.at(i);
+            MongoCollection *collection = collections[i];
 
             if (collection->isSystem()) {
                 addSystemCollectionItem(collection);
@@ -162,28 +162,28 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseUsersLoadedEvent *event)
     {
-        QList<MongoUser> users = event->users();
-        int count = users.count();
+        std::vector<MongoUser> users = event->users();
+        int count = users.size();
         _usersFolderItem->setText(0, detail::buildName("Users",count));
 
         QtUtils::clearChildItems(_usersFolderItem);
 
-        for (int i = 0; i < users.count(); ++i) {
-            MongoUser user = users.at(i);
+        for (int i = 0; i < users.size(); ++i) {
+            MongoUser user = users[i];
             addUserItem(event->database(), user);
         }
     }
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseFunctionsLoadedEvent *event)
     {
-        QList<MongoFunction> functions = event->functions();
-        int count = functions.count();
+        std::vector<MongoFunction> functions = event->functions();
+        int count = functions.size();
         _javascriptFolderItem->setText(0,  detail::buildName("Functions",count));
 
         QtUtils::clearChildItems(_javascriptFolderItem);
 
-        for (int i = 0; i < functions.count(); ++i) {
-            MongoFunction fun = functions.at(i);
+        for (int i = 0; i < functions.size(); ++i) {
+            MongoFunction fun = functions[i];
             addFunctionItem(event->database(), fun);
         }
     }

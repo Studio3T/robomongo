@@ -161,15 +161,12 @@ namespace Robomongo
                     std::string logs = __logs.str();
                     QString answer = QString::fromUtf8(logs.c_str());
                     QString type = QString::fromUtf8(__type.c_str());
+                    std::vector<MongoDocumentPtr> docs = MongoDocument::fromBsonObj(__objects);
 
-                    QVector<mongo::BSONObj> objs = QVector<mongo::BSONObj>::fromStdVector(__objects);
-                    QList<mongo::BSONObj> list = QList<mongo::BSONObj>::fromVector(objs);
-                    QList<MongoDocumentPtr> docs = MongoDocument::fromBsonObj(list);
-
-                    if (!answer.isEmpty() || docs.count() > 0)
+                    if (!answer.isEmpty() || docs.size() > 0)
                         results.append(prepareResult(type, answer, docs, elapsed));
                 }
-                catch ( std::exception &e ) {
+                catch ( const std::exception &e ) {
                     std::cout << "error:" << e.what() << endl;
                 }
             }
@@ -233,7 +230,7 @@ namespace Robomongo
         return QStringList();
     }
 
-    MongoShellResult ScriptEngine::prepareResult(const QString &type, const QString &output, const QList<MongoDocumentPtr> objects, qint64 elapsedms)
+    MongoShellResult ScriptEngine::prepareResult(const QString &type, const QString &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms)
     {
         const char *script =
             "__robomongoQuery = false; \n"

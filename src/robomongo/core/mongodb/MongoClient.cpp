@@ -61,17 +61,17 @@ namespace Robomongo
         return dbNames;
     }
 
-    QList<MongoUser> MongoClient::getUsers(const QString &dbName)
+    std::vector<MongoUser> MongoClient::getUsers(const QString &dbName)
     {
         MongoNamespace ns(dbName, "system.users");
-        QList<MongoUser> users;
+        std::vector<MongoUser> users;
 
         std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString().toStdString(), mongo::Query()));
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
             MongoUser user(bsonObj);
-            users.append(user);
+            users.push_back(user);
         }
 
         return users;
@@ -107,10 +107,10 @@ namespace Robomongo
         _dbclient->remove(ns.toString().toStdString(), query, true);
     }
 
-    QList<MongoFunction> MongoClient::getFunctions(const QString &dbName)
+    std::vector<MongoFunction> MongoClient::getFunctions(const QString &dbName)
     {
         MongoNamespace ns(dbName, "system.js");
-        QList<MongoFunction> functions;
+        std::vector<MongoFunction> functions;
 
         std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString().toStdString(), mongo::Query()));
 
@@ -119,7 +119,7 @@ namespace Robomongo
 
             try {
                 MongoFunction user(bsonObj);
-                functions.append(user);
+                functions.push_back(user);
             } catch (const std::exception &) {
             // skip invalid docs
             }
@@ -127,9 +127,9 @@ namespace Robomongo
         return functions;
     }
 
-    QList<EnsureIndexInfo> MongoClient::getIndexes(const MongoCollectionInfo &collection) const
+    std::vector<EnsureIndexInfo> MongoClient::getIndexes(const MongoCollectionInfo &collection) const
     {
-        QList<EnsureIndexInfo> result;
+        std::vector<EnsureIndexInfo> result;
         std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString().toStdString()));
 
         while (cursor->more()) {
@@ -399,13 +399,13 @@ namespace Robomongo
         _dbclient->remove(ns.toString().toStdString(), query, justOne);
     }
 
-    QList<MongoDocumentPtr> MongoClient::query(const MongoQueryInfo &info)
+    std::vector<MongoDocumentPtr> MongoClient::query(const MongoQueryInfo &info)
     {
         MongoNamespace ns(info.databaseName, info.collectionName);
 
         int limit = (info.limit == 0 || info.limit > 51) ? 50 : info.limit;
 
-        QList<MongoDocumentPtr> docs;
+        std::vector<MongoDocumentPtr> docs;
         std::auto_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
             ns.toString().toStdString(), info.query, limit, info.skip,
             info.fields.nFields() ? &info.fields : 0, info.options, info.batchSize);
@@ -413,7 +413,7 @@ namespace Robomongo
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
             MongoDocumentPtr doc(new MongoDocument(bsonObj.getOwned()));
-            docs.append(doc);
+            docs.push_back(doc);
         }
 
         return docs;
@@ -434,12 +434,12 @@ namespace Robomongo
         return newInfo;
     }
 
-    QList<MongoCollectionInfo> MongoClient::runCollStatsCommand(const QStringList &namespaces)
+    std::vector<MongoCollectionInfo> MongoClient::runCollStatsCommand(const QStringList &namespaces)
     {
-        QList<MongoCollectionInfo> infos;
+        std::vector<MongoCollectionInfo> infos;
         for(QStringList::const_iterator it=namespaces.begin();it!=namespaces.end();++it){
             MongoCollectionInfo info = runCollStatsCommand(*it);
-            infos.append(info);
+            infos.push_back(info);
         }
         return infos;
     }

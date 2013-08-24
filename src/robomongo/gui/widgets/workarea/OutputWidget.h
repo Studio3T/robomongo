@@ -25,7 +25,7 @@ namespace Robomongo
         ~OutputWidget();
 
         void present(const QList<MongoShellResult> &documents);
-        void updatePart(int partIndex, const MongoQueryInfo &queryInfo, const QList<MongoDocumentPtr> &documents);
+        void updatePart(int partIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents);
         void toggleOrientation();
 
         void enterTreeMode();

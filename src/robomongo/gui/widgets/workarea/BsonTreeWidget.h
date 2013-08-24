@@ -17,19 +17,12 @@ namespace Robomongo
 
     public:
         BsonTreeWidget(MongoShell *shell, QWidget *parent = NULL);
-        ~BsonTreeWidget();
+        void setDocuments(const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo = MongoQueryInfo());    
 
-        void setDocuments(const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo = MongoQueryInfo());
-        QIcon getIcon(MongoElementPtr element);
-
-    protected:
-        void contextMenuEvent(QContextMenuEvent *event);
-
-    public slots:
+    public Q_SLOTS:
         void ui_itemExpanded(QTreeWidgetItem *item);
 
-    protected slots:
-        void resizeEvent(QResizeEvent *event);
+    protected Q_SLOTS:
         void onDeleteDocument();
         void onEditDocument();
         void onViewDocument();
@@ -38,13 +31,16 @@ namespace Robomongo
         void onExpandRecursive();
         void handle(InsertDocumentResponse *event);
 
+    protected:
+        virtual void resizeEvent(QResizeEvent *event);
+        void contextMenuEvent(QContextMenuEvent *event);
+
     private:
         void expandNode(QTreeWidgetItem *item);
         /**
          * @returns selected BsonTreeItem, or NULL otherwise
          */
-        BsonTreeItem *selectedBsonTreeItem();
-        QString selectedJson();
+        BsonTreeItem *selectedBsonTreeItem() const;
 
         QAction *_deleteDocumentAction;
         QAction *_editDocumentAction;
@@ -53,11 +49,7 @@ namespace Robomongo
         QAction *_copyValueAction;
         QAction *_expandRecursive;
 
-        QList<MongoDocumentPtr> _documents;
-        QMenu *_documentContextMenu;
         MongoQueryInfo _queryInfo;
         MongoShell *_shell;
-        EventBus *_bus;
-        SettingsManager *_settingsManager;
     };
 }

@@ -156,7 +156,7 @@ namespace Robomongo
             boost::scoped_ptr<MongoClient> client(getClient());
 
             QStringList stringList = client->getCollectionNames(event->databaseName());
-            QList<MongoCollectionInfo> infos = client->runCollStatsCommand(stringList);
+            const std::vector<MongoCollectionInfo> &infos = client->runCollStatsCommand(stringList);
             client->done();
 
             reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName(), infos));
@@ -169,7 +169,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            QList<MongoUser> users = client->getUsers(event->databaseName());
+            const std::vector<MongoUser> &users = client->getUsers(event->databaseName());
             client->done();
 
             reply(event->sender(), new LoadUsersResponse(this, event->databaseName(), users));
@@ -182,12 +182,12 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            const QList<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
+            const std::vector<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const DBException &) {
-            reply(event->sender(), new LoadCollectionIndexesResponse(this, QList<EnsureIndexInfo>()));
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, std::vector<EnsureIndexInfo>()));
         }
     }
 
@@ -198,12 +198,12 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             client->ensureIndex(oldInfo,newInfo);
-            const QList<EnsureIndexInfo> &ind = client->getIndexes(newInfo._collection);
+            const std::vector<EnsureIndexInfo> &ind = client->getIndexes(newInfo._collection);
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const DBException &) {
-            reply(event->sender(), new LoadCollectionIndexesResponse(this, QList<EnsureIndexInfo>()));
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, std::vector<EnsureIndexInfo>()));
         }
     }
 
@@ -224,12 +224,12 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             client->renameIndexFromCollection(event->collection(),event->oldIndex(),event->newIndex());
-            const QList<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
+            const std::vector<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const DBException &) {
-            reply(event->sender(), new LoadCollectionIndexesResponse(this, QList<EnsureIndexInfo>()));
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, std::vector<EnsureIndexInfo>()));
         } 
     }
 
@@ -237,7 +237,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            QList<MongoFunction> funs = client->getFunctions(event->databaseName());
+            const std::vector<MongoFunction> &funs = client->getFunctions(event->databaseName());
             client->done();
 
             reply(event->sender(), new LoadFunctionsResponse(this, event->databaseName(), funs));
@@ -282,7 +282,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            QList<MongoDocumentPtr> docs = client->query(event->queryInfo());
+            std::vector<MongoDocumentPtr> docs = client->query(event->queryInfo());
             client->done();
 
             reply(event->sender(), new ExecuteQueryResponse(this, event->resultIndex(), event->queryInfo(), docs));

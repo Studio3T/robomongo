@@ -7,7 +7,7 @@
 
 namespace Robomongo
 {
-    JsonPrepareThread::JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects, UUIDEncoding uuidEncoding, SupportedTimes timeZone)
+    JsonPrepareThread::JsonPrepareThread(const std::vector<MongoDocumentPtr> &bsonObjects, UUIDEncoding uuidEncoding, SupportedTimes timeZone)
         :_bsonObjects(bsonObjects),
         _uuidEncoding(uuidEncoding),
         _timeZone(timeZone),
@@ -23,7 +23,7 @@ namespace Robomongo
     void JsonPrepareThread::run()
     {
         int position = 0;
-        for(QList<MongoDocumentPtr>::const_iterator it = _bsonObjects.begin();it!=_bsonObjects.end();++it)
+        for(std::vector<MongoDocumentPtr>::const_iterator it = _bsonObjects.begin();it!=_bsonObjects.end();++it)
         {
             MongoDocumentPtr doc = *it;
             mongo::StringBuilder sb;

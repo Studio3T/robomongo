@@ -20,7 +20,8 @@ namespace
 
 namespace Robomongo
 {
-    BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position) : QObject(),
+    BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position) 
+        : baseClass(),
         _element(element),
         _rootDocument(rootDocument),
         _position(position)
@@ -233,7 +234,8 @@ namespace Robomongo
         }
     }
 
-    BsonTreeItem::BsonTreeItem(MongoDocumentPtr document, int position) : QObject(),
+    BsonTreeItem::BsonTreeItem(MongoDocumentPtr document, int position) 
+        : baseClass(),
         _document(document),
         _rootDocument(document),
         _position(position)
@@ -241,12 +243,12 @@ namespace Robomongo
         setupDocument(document);
     }
 
-    bool BsonTreeItem::isSimpleType()
+    bool BsonTreeItem::isSimpleType() const
     {
         return _element && _element->isSimpleType();
     }
 
-    bool BsonTreeItem::isUuidType()
+    bool BsonTreeItem::isUuidType() const
     {
         return _element && _element->isUuidType();
     }

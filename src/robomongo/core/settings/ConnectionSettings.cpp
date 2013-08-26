@@ -1,5 +1,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 
+#include <stdio.h>
+
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 
@@ -145,4 +147,10 @@ namespace Robomongo
         _credentials.clear();
     }
 
+    std::string ConnectionSettings::getFullAddress() const
+    {
+        char buff[256]={0};
+        sprintf(buff,"%s:%d",_serverHost.c_str(),_serverPort);
+        return buff;
+    }
 }

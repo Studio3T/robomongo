@@ -1,5 +1,7 @@
 #include "MongoNamespace.h"
 
+#include <stdio.h>
+
 namespace Robomongo
 {
     MongoNamespace::MongoNamespace(const std::string &ns) :

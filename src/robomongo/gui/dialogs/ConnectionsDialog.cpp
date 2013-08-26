@@ -1,5 +1,6 @@
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 
+#include <stdio.h>
 #include <QApplication>
 #include <QPushButton>
 #include <QHBoxLayout>

@@ -110,12 +110,7 @@ namespace Robomongo
         /**
          * @brief Returns connection full address (i.e. locahost:8090)
          */
-        std::string getFullAddress() const
-        {
-            char buff[256]={0};
-            sprintf(buff,"%s:%d",_serverHost.c_str(),_serverPort);
-            return buff;
-        }
+        std::string getFullAddress() const;
 
         std::string getReadableName() const
         {

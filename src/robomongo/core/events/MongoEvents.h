@@ -209,44 +209,44 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        DropCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const QString &name) :
+        DropCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const std::string &name) :
             Event(sender),
             _collection(collection),
             _name(name) {}
 
         MongoCollectionInfo collection() const { return _collection; }
-        QString name() const {return _name;}
+        std::string name() const {return _name;}
     private:
         const MongoCollectionInfo _collection;
-        QString _name;
+        std::string _name;
     };
 
     class DeleteCollectionIndexResponse: public Event
     {
         R_EVENT
     public:
-        DeleteCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection,const QString &index) :
+        DeleteCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection,const std::string &index) :
         Event(sender),_collection(collection),_index(index) {}
         MongoCollectionInfo collection() const { return _collection; }
-        QString index() const {return _index;}
+        std::string index() const {return _index;}
     private:
         const MongoCollectionInfo _collection;
-        QString _index;
+        std::string _index;
     };
 
     class EditIndexRequest : public Event
     {
         R_EVENT
     public:
-        EditIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const QString &oldIndex,const QString &newIndex) :
+        EditIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const std::string &oldIndex,const std::string &newIndex) :
             Event(sender),_collection(collection),_oldIndex(oldIndex),_newIndex(newIndex) {}
         MongoCollectionInfo collection() const { return _collection; }
-        QString oldIndex() const {return _oldIndex;}
-        QString newIndex() const {return _newIndex;}
+        std::string oldIndex() const {return _oldIndex;}
+        std::string newIndex() const {return _newIndex;}
     private:
         const MongoCollectionInfo _collection;
-        QString _oldIndex;
-        QString _newIndex;
+        std::string _oldIndex;
+        std::string _newIndex;
     };
 
     /**
@@ -827,7 +827,7 @@ namespace Robomongo
     {
         R_EVENT
 
-        AutocompleteResponse(QObject *sender, const QStringList &list, const QString &prefix) :
+        AutocompleteResponse(QObject *sender,const QStringList &list, const QString &prefix) :
             Event(sender),
             list(list),
             prefix(prefix) {}

@@ -204,7 +204,7 @@ namespace Robomongo
         _dbclient->insert(  namesp.toString().c_str() , obj ); 
     }
 
-    void MongoClient::renameIndexFromCollection(const MongoCollectionInfo &collection, const QString &oldIndexName, const QString &newIndexName) const
+    void MongoClient::renameIndexFromCollection(const MongoCollectionInfo &collection, const std::string &oldIndexName, const std::string &newIndexName) const
     {
         // This is simply an example of how to perform modifications of
         // BSON objects. Because BSONObj is immutable, you need to create
@@ -218,11 +218,10 @@ namespace Robomongo
 
         MongoNamespace ns(collection.ns().databaseName(), "system.indexes");
         std::string systemIndexesNs = ns.toString();
-        std::string oldIndexNameStd = oldIndexName.toStdString();
 
         // Building this JSON: { "name" : "oldIndexName" }
         mongo::BSONObj query(mongo::BSONObjBuilder()
-            .append("name", oldIndexNameStd)
+            .append("name", oldIndexName)
             .obj());
 
         // Searching for index with "oldIndexName"
@@ -235,12 +234,11 @@ namespace Robomongo
         // changing "name" field's value from "oldIndexText" to "newIndexText":
         mongo::BSONObjBuilder builder;
         mongo::BSONObjIterator i(indexBson);
-        std::string newIndexNameStd = newIndexName.toStdString();
         while (i.more()) {
             mongo::BSONElement element = i.next();
 
             if (mongo::StringData(element.fieldName()).compare("name") == 0) {
-                builder.append("name", newIndexNameStd);
+                builder.append("name", newIndexName);
                 continue;
             }
 
@@ -248,13 +246,13 @@ namespace Robomongo
         }
         std::string collectionNs = collection.ns().toString();
 
-        _dbclient->dropIndex(collectionNs, oldIndexNameStd);
+        _dbclient->dropIndex(collectionNs, oldIndexName);
         _dbclient->insert(systemIndexesNs, builder.obj());
     }
 
-    void MongoClient::dropIndexFromCollection(const MongoCollectionInfo &collection, const QString &indexName)const
+    void MongoClient::dropIndexFromCollection(const MongoCollectionInfo &collection, const std::string &indexName)const
     {
-        _dbclient->dropIndex(collection.ns().toString(), indexName.toStdString());
+        _dbclient->dropIndex(collection.ns().toString(), indexName);
     }
 
     void MongoClient::createFunction(const std::string &dbName, const MongoFunction &fun, const std::string &existingFunctionName /* = QString() */)

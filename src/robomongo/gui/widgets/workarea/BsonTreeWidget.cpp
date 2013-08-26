@@ -183,7 +183,7 @@ namespace Robomongo
         mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
 
         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone() );
-        const QString &json = QString::fromUtf8(str.data());
+        const QString &json = QtUtils::toQString(str);
 
         DocumentTextEditor editor(QtUtils::toQString(_queryInfo.serverAddress),
                                   QtUtils::toQString(_queryInfo.databaseName),
@@ -210,7 +210,7 @@ namespace Robomongo
         mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
 
         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
-        const QString &json = QString::fromUtf8(str.data());
+        const QString &json = QtUtils::toQString(str);
 
         std::string server = _queryInfo.isNull ? "" : _queryInfo.serverAddress;
         std::string database = _queryInfo.isNull ? "" : _queryInfo.databaseName;

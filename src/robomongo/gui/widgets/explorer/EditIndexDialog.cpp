@@ -115,9 +115,9 @@ namespace Robomongo
     QWidget* EditIndexDialog::createBasicTab()
     {
         QWidget *basicTab = new QWidget(this);
-        _nameLineEdit = new QLineEdit(QString::fromUtf8(_info._name.c_str()), basicTab);
+        _nameLineEdit = new QLineEdit(QtUtils::toQString(_info._name), basicTab);
         _nameLineEdit->setFocus();
-        _jsonText = createFindFrame(basicTab, QString::fromUtf8(_info._request.c_str()));
+        _jsonText = createFindFrame(basicTab, QtUtils::toQString(_info._request));
         _uniqueCheckBox = new QCheckBox(tr("Unique"));
         _uniqueCheckBox->setChecked(_info._unique);
         _dropDuplicates = new QCheckBox(tr("Drop duplicates"), basicTab);
@@ -237,9 +237,9 @@ namespace Robomongo
     {
         QWidget *textSearch = new QWidget(this);
 
-        _defaultLanguageLineEdit = new QLineEdit(QString::fromUtf8(_info._defaultLanguage.c_str()), textSearch);
-        _languageOverrideLineEdit = new QLineEdit(QString::fromUtf8(_info._languageOverride.c_str()), textSearch);
-        _textWeightsLineEdit = createFindFrame(textSearch, QString::fromUtf8(_info._textWeights.c_str()));
+        _defaultLanguageLineEdit = new QLineEdit(QtUtils::toQString(_info._defaultLanguage), textSearch);
+        _languageOverrideLineEdit = new QLineEdit(QtUtils::toQString(_info._languageOverride), textSearch);
+        _textWeightsLineEdit = createFindFrame(textSearch, QtUtils::toQString(_info._textWeights));
 
         QLabel *defaultLanguageHelpLabel = createHelpLabel(
             "For a <i>text</i> index, the language that determines the list of stop words and the rules for the stemmer and tokenizer. The default value is <b>english</b>",
@@ -279,18 +279,18 @@ namespace Robomongo
         }
         return EnsureIndexInfo(
             _info._collection,
-            _nameLineEdit->text().toStdString(),
-            QString(" %1 ,{ name: %2 }")
+            QtUtils::toStdString<std::string>(_nameLineEdit->text()),
+            QtUtils::toStdString<std::string>(QString(" %1 ,{ name: %2 }")
                 .arg(_jsonText->sciScintilla()->text())
-                .arg(_nameLineEdit->text()).toStdString(),
+                .arg(_nameLineEdit->text())),
             _uniqueCheckBox->checkState() == Qt::Checked,
             _backGroundCheckBox->checkState() == Qt::Checked,
             _dropDuplicates->checkState() == Qt::Checked,
             _sparceCheckBox->checkState() == Qt::Checked,
             expAftInt,
-            _defaultLanguageLineEdit->text().toStdString(),
-            _languageOverrideLineEdit->text().toStdString(),
-            _textWeightsLineEdit->sciScintilla()->text().toStdString());
+            QtUtils::toStdString<std::string>(_defaultLanguageLineEdit->text()),
+            QtUtils::toStdString<std::string>(_languageOverrideLineEdit->text()),
+            QtUtils::toStdString<std::string>(_textWeightsLineEdit->sciScintilla()->text()));
     }
 
     void EditIndexDialog::accept()

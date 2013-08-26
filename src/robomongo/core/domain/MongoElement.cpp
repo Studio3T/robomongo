@@ -6,6 +6,7 @@
 #include "robomongo/core/HexUtils.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/shell/db/ptimeutil.h"
 
 using namespace mongo;
@@ -39,7 +40,7 @@ namespace Robomongo
     */
     QString MongoElement::fieldName()
     {
-        return QString::fromUtf8(_bsonElement.fieldName());
+        return QtUtils::toQString(std::string(_bsonElement.fieldName()));
     }
 
     /*
@@ -170,7 +171,7 @@ namespace Robomongo
         /** regular expression, a pattern with options */
         case RegEx:
             {
-                con.append("/" + QString::fromUtf8(_bsonElement.regex()) + "/");
+                con.append("/" + QtUtils::toQString(std::string(_bsonElement.regex())) + "/");
 
                 for ( const char *f = _bsonElement.regexFlags(); *f; ++f ) {
                     switch ( *f ) {
@@ -191,7 +192,7 @@ namespace Robomongo
 
         /** deprecated / use CodeWScope */
         case Code:
-            con.append(QString::fromUtf8(_bsonElement._asCode().data()));
+            con.append(QtUtils::toQString(_bsonElement._asCode()));
             break;
 
         /** a programming language (e.g., Python) symbol */
@@ -204,7 +205,7 @@ namespace Robomongo
             {
                 mongo::BSONObj scope = _bsonElement.codeWScopeObject();
                 if (!scope.isEmpty() ) {
-                    con.append(QString::fromUtf8(_bsonElement._asCode().data()));
+                    con.append(QtUtils::toQString(_bsonElement._asCode()));
                     break;
                 }
             }

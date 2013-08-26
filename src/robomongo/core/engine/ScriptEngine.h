@@ -37,15 +37,15 @@ namespace Robomongo
 
         std::string getString(const char *fieldName);
 
-        bool statementize(const QString &script, QStringList &outList, QString &outError);
-        QStringList statementize2(const QString &script);
-        void parseTree(JSParseNode * root, int indent, const QString &script, QStringList &list, bool topList);
+        bool statementize(const std::string &script, std::vector<std::string> &outList, std::string &outError);
+        std::vector<std::string> statementize2(const std::string &script);
+        void parseTree(JSParseNode * root, int indent, const std::string &script, std::vector<std::string> &list, bool topList);
 
         // Order is important. mongo::Scope should be destroyed before mongo::ScriptEngine
         mongo::ScriptEngine *_engine;
         mongo::Scope *_scope;
 
-        QString subb(const QStringList &list, int fline, int fpos, int tline, int tpos) const;
+        std::string subb(const std::vector<std::string> &list, int fline, int fpos, int tline, int tpos) const;
 
         QMutex _mutex;
     };

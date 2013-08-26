@@ -217,7 +217,7 @@ namespace Robomongo
             client->done();
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), event->name()));
         } catch(const DBException &) {
-            reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), QString() ));
+            reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), std::string() ));
         }            
     }
 

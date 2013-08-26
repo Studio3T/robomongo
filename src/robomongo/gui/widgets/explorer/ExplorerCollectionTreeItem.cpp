@@ -154,7 +154,7 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(editIndex);
         BaseClass::_contextMenu->addAction(deleteIndex);
 
-        setText(0, QString::fromUtf8(_info._name.c_str()));
+        setText(0, QtUtils::toQString(_info._name));
         setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());
     }
 
@@ -283,11 +283,12 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::handle(DeleteCollectionIndexResponse *event)
     {
-        if(!event->index().isEmpty()){
+        if(!event->index().empty()){
             int itemCount = _indexDir->childCount();
+            QString eventIndex = QtUtils::toQString(event->index());
             for (int i = 0; i < itemCount; ++i) {
                 QTreeWidgetItem *item = _indexDir->child(i);
-                if(item->text(0)==event->index()){
+                if(item->text(0)==eventIndex){
                     removeChild(item);
                     delete item;
                     break;
@@ -315,7 +316,7 @@ namespace Robomongo
         if (!_databaseItem)
             return;
 
-        _databaseItem->dropIndexFromCollection(this, ind->text(0));
+        _databaseItem->dropIndexFromCollection(this, QtUtils::toStdString<std::string>(ind->text(0)));
     }
 
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)

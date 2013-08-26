@@ -25,10 +25,10 @@ namespace Robomongo
 
         std::vector<MongoFunction> getFunctions(const std::string &dbName);
         std::vector<EnsureIndexInfo> getIndexes(const MongoCollectionInfo &collection)const;
-        void dropIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexName)const;
+        void dropIndexFromCollection(const MongoCollectionInfo &collection,const std::string &indexName)const;
         void ensureIndex(const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo)const;
 
-        void renameIndexFromCollection(const MongoCollectionInfo &collection, const QString &oldIndexName, const QString &newIndexName)const;
+        void renameIndexFromCollection(const MongoCollectionInfo &collection, const std::string &oldIndexName, const std::string &newIndexName)const;
 
         void createFunction(const std::string &dbName, const MongoFunction &fun, const std::string &existingFunctionName = std::string());
         void dropFunction(const std::string &dbName, const std::string &name);

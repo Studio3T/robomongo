@@ -7,6 +7,7 @@
 #include "robomongo/core/domain/MongoNamespace.h"
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace 
 {
@@ -26,7 +27,7 @@ namespace Robomongo
 
         MongoNamespace ns(BsonUtils::getField<mongo::String>(_obj,"ns"));
 
-        setText(0, QString::fromUtf8((ns.collectionName() + "     ").c_str()));
+        setText(0, prepareValue(QtUtils::toQString(ns.collectionName())));
         setIcon(0, GuiRegistry::instance().collectionIcon());
         setText(1, prepareValue(QString::number(BsonUtils::getField<mongo::NumberLong>(_obj,"count"))));
         setText(2, prepareValue(MongoUtils::buildNiceSizeString(BsonUtils::getField<mongo::NumberDouble>(_obj,"size"))));

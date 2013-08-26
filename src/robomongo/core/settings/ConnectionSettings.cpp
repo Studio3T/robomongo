@@ -1,6 +1,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 
 #include "robomongo/core/settings/CredentialSettings.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace
 {
@@ -23,9 +24,9 @@ namespace Robomongo
 
     ConnectionSettings::ConnectionSettings(QVariantMap map) : QObject(),
         _serverPort(map.value("serverPort").toInt()),
-        _serverHost(map.value("serverHost").toString()),
-        _defaultDatabase(map.value("defaultDatabase").toString()),
-        _connectionName(map.value("connectionName").toString()) 
+        _serverHost(QtUtils::toStdString<std::string>(map.value("serverHost").toString())),
+        _defaultDatabase(QtUtils::toStdString<std::string>(map.value("defaultDatabase").toString())),
+        _connectionName(QtUtils::toStdString<std::string>(map.value("connectionName").toString())) 
     {
         QVariantList list = map.value("credentials").toList();
         foreach(QVariant var, list) {
@@ -75,10 +76,10 @@ namespace Robomongo
     QVariant ConnectionSettings::toVariant() const
     {
         QVariantMap map;
-        map.insert("connectionName", connectionName());
-        map.insert("serverHost", serverHost());
+        map.insert("connectionName", QtUtils::toQString(connectionName()));
+        map.insert("serverHost", QtUtils::toQString(serverHost()));
         map.insert("serverPort", serverPort());
-        map.insert("defaultDatabase", defaultDatabase());
+        map.insert("defaultDatabase", QtUtils::toQString(defaultDatabase()));
 
         QVariantList list;
         foreach(CredentialSettings *credential, credentials()) {
@@ -89,7 +90,7 @@ namespace Robomongo
         return map;
     }
 
-     CredentialSettings *ConnectionSettings::findCredential(const QString &databaseName)const
+     CredentialSettings *ConnectionSettings::findCredential(const std::string &databaseName)const
      {
          CredentialSettings *result = NULL;
          for(QList<CredentialSettings *>::const_iterator it = _credentials.begin();it!=_credentials.end();++it)

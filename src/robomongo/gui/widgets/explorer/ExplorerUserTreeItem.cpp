@@ -10,6 +10,7 @@
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace
 {
@@ -59,7 +60,7 @@ namespace Robomongo
 
     void ExplorerUserTreeItem::ui_editUser()
     {
-        CreateUserDialog dlg(_database->server()->connectionRecord()->getFullAddress(),_database->name(),_user);
+        CreateUserDialog dlg(QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),QtUtils::toQString(_database->name()),_user);
         dlg.setWindowTitle("Edit User");
         dlg.setUserPasswordLabelText("New Password:");
         int result = dlg.exec();

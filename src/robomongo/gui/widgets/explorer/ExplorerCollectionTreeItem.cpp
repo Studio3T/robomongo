@@ -20,14 +20,15 @@
 
 namespace
 {
-    const QString tooltipTemplate = QString(
-        "%0 "
+    const char *tooltipTemplate =
+        "%s "
         "<table>"
-        "<tr><td>Count:</td> <td><b>&nbsp;&nbsp;%1</b></td></tr>"
-        "<tr><td>Size:</td><td><b>&nbsp;&nbsp;%2</b></td></tr>"
+        "<tr><td>Count:</td> <td><b>&nbsp;&nbsp;%d</b></td></tr>"
+        "<tr><td>Size:</td><td><b>&nbsp;&nbsp;%s</b></td></tr>"
         "</table>"
-        );
+        ;
 }
+
 namespace Robomongo
 {
     R_REGISTER_EVENT(CollectionIndexesLoadingEvent)
@@ -114,7 +115,7 @@ namespace Robomongo
         if (!par)
             return;
         EnsureIndexInfo fakeInfo(par->collection()->info(),"");
-        EditIndexDialog dlg(treeWidget(), fakeInfo , par->databaseItem()->database()->name(),par->databaseItem()->database()->server()->connectionRecord()->getFullAddress());
+        EditIndexDialog dlg(treeWidget(), fakeInfo , QtUtils::toQString(par->databaseItem()->database()->name()),QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()));
         int result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
@@ -184,7 +185,7 @@ namespace Robomongo
             if (!par)
                 return;
 
-            EditIndexDialog dlg(treeWidget(), _info,grPar->databaseItem()->database()->name(), grPar->databaseItem()->database()->server()->connectionRecord()->getFullAddress());
+            EditIndexDialog dlg(treeWidget(), _info,QtUtils::toQString(grPar->databaseItem()->database()->name()), QtUtils::toQString(grPar->databaseItem()->database()->server()->connectionRecord()->getFullAddress()));
             int result = dlg.exec();
             if (result != QDialog::Accepted)
                 return;
@@ -259,7 +260,7 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(_databaseItem, DeleteCollectionIndexResponse::Type, this);
         AppRegistry::instance().bus()->subscribe(this, CollectionIndexesLoadingEvent::Type, this);
         
-        setText(0, _collection->name());
+        setText(0, QtUtils::toQString(_collection->name()));
         setIcon(0, GuiRegistry::instance().collectionIcon());
 
         _indexDir = new ExplorerCollectionDirIndexesTreeItem(this);
@@ -319,7 +320,9 @@ namespace Robomongo
 
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
     {
-        return tooltipTemplate.arg(collection->name()).arg(collection->info().count()).arg(collection->sizeString());
+        char buff[512]={0};
+        sprintf(buff,tooltipTemplate,collection->name().c_str(),collection->info().count(),collection->sizeString().c_str());
+        return buff;
     }
 
     void ExplorerCollectionTreeItem::ui_addDocument()
@@ -328,8 +331,8 @@ namespace Robomongo
         MongoServer *server = database->server();
         ConnectionSettings *settings = server->connectionRecord();
 
-        DocumentTextEditor editor(settings->getFullAddress(), database->name(),
-            _collection->name(), "{\n    \n}");
+        DocumentTextEditor editor(QtUtils::toQString(settings->getFullAddress()), QtUtils::toQString(database->name()),
+            QtUtils::toQString(_collection->name()), "{\n    \n}");
 
         editor.setCursorPosition(1, 4);
         editor.setWindowTitle("Insert Document");
@@ -356,7 +359,7 @@ namespace Robomongo
         // Ask user
         int answer = QMessageBox::question(treeWidget(),
             "Remove All Documents",
-            QString("Remove all documents from <b>%1</b> collection?").arg(_collection->name()),
+            QString("Remove all documents from <b>%1</b> collection?").arg(QtUtils::toQString(_collection->name())),
             QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
         if (answer == QMessageBox::Yes){
@@ -397,7 +400,7 @@ namespace Robomongo
     void ExplorerCollectionTreeItem::ui_dropCollection()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(),"Drop","collection",_collection->name());
+        int answer = utils::questionDialog(treeWidget(),"Drop","collection",QtUtils::toQString(_collection->name()));
 
         if (answer == QMessageBox::Yes){
             MongoDatabase *database = _collection->database();
@@ -412,17 +415,17 @@ namespace Robomongo
         MongoServer *server = database->server();
         ConnectionSettings *settings = server->connectionRecord();
 
-        CreateDatabaseDialog dlg(settings->getFullAddress(),
-            database->name(),
-            _collection->name());
+        CreateDatabaseDialog dlg(QtUtils::toQString(settings->getFullAddress()),
+            QtUtils::toQString(database->name()),
+            QtUtils::toQString(_collection->name()));
         dlg.setWindowTitle("Duplicate Collection");
         dlg.setOkButtonText("&Duplicate");
         dlg.setInputLabelText("New Collection Name:");
-        dlg.setInputText(_collection->name() + "_copy");
+        dlg.setInputText(QtUtils::toQString(_collection->name() + "_copy"));
         int result = dlg.exec();
 
         if (result == QDialog::Accepted) {
-            database->duplicateCollection(_collection->name(), dlg.databaseName());
+            database->duplicateCollection(_collection->name(), QtUtils::toStdString<std::string>(dlg.databaseName()));
 
             // refresh list of collections
             database->loadCollections();
@@ -435,17 +438,17 @@ namespace Robomongo
         MongoServer *server = database->server();
         ConnectionSettings *settings = server->connectionRecord();
 
-        CreateDatabaseDialog dlg(settings->getFullAddress(),
-            database->name(),
-            _collection->name());
+        CreateDatabaseDialog dlg(QtUtils::toQString(settings->getFullAddress()),
+            QtUtils::toQString(database->name()),
+            QtUtils::toQString(_collection->name()));
         dlg.setWindowTitle("Rename Collection");
         dlg.setOkButtonText("&Rename");
         dlg.setInputLabelText("New Collection Name:");
-        dlg.setInputText(_collection->name());
+        dlg.setInputText(QtUtils::toQString(_collection->name()));
         int result = dlg.exec();
 
         if (result == QDialog::Accepted) {
-            database->renameCollection(_collection->name(), dlg.databaseName());
+            database->renameCollection(_collection->name(),QtUtils::toStdString<std::string>( dlg.databaseName()));
             // refresh list of collections
             database->loadCollections();
         }
@@ -484,6 +487,6 @@ namespace Robomongo
     void ExplorerCollectionTreeItem::openCurrentCollectionShell(const QString &script, bool execute,const CursorPosition &cursor)
     {
         QString query = AppRegistry::instance().app()->buildCollectionQuery(_collection->name(), script);
-        AppRegistry::instance().app()->openShell(_collection->database(), query, execute, _collection->name(), cursor);
+        AppRegistry::instance().app()->openShell(_collection->database(), query, execute, QtUtils::toQString(_collection->name()), cursor);
     }
 }

@@ -22,6 +22,7 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/shell/db/json.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace
 {
@@ -78,7 +79,7 @@ namespace Robomongo
     {        
         setWindowTitle("Index Properties");
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverAdress);
-        Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), _info._collection.name());
+        Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(),QtUtils::toQString(_info._collection.name()));
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), databaseName);
 
         QHBoxLayout *hlayout = new QHBoxLayout;

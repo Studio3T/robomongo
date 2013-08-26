@@ -12,6 +12,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/ConnectionDialog.h"
 
@@ -201,7 +202,7 @@ namespace Robomongo
         // Ask user
         int answer = QMessageBox::question(this,
             "Connections",
-            QString("Really delete \"%1\" connection?").arg(connectionModel->getReadableName()),
+            QString("Really delete \"%1\" connection?").arg(QtUtils::toQString(connectionModel->getReadableName())),
             QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
         if (answer != QMessageBox::Yes)
@@ -221,7 +222,8 @@ namespace Robomongo
 
         // Clone connection
         ConnectionSettings *connection = currentItem->connection()->clone();
-        QString newConnectionName = QString("Copy of %1").arg(connection->connectionName());
+        char newConnectionName[512]={0};
+        sprintf(newConnectionName,"Copy of %s",connection->connectionName().c_str());
         connection->setConnectionName(newConnectionName);
 
         ConnectionDialog editDialog(connection);
@@ -306,14 +308,12 @@ namespace Robomongo
      */
     void ConnectionListWidgetItem::setConnection(ConnectionSettings *connection)
     {
-        setText(0, connection->connectionName());
-        setText(1, connection->getFullAddress());
+        setText(0, QtUtils::toQString(connection->connectionName()));
+        setText(1, QtUtils::toQString(connection->getFullAddress()));
 
         if (connection->hasEnabledPrimaryCredential()) {
-            QString authString = QString("%1 / %2")
-                .arg(connection->primaryCredential()->databaseName())
-                .arg(connection->primaryCredential()->userName());
-
+            char authString[512]={0};
+            sprintf(authString,"%s / %s",connection->primaryCredential()->databaseName().c_str(),connection->primaryCredential()->userName().c_str());
             setText(2, authString);
             setIcon(2, GuiRegistry::instance().keyIcon());
         } else {

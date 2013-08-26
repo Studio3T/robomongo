@@ -24,9 +24,9 @@ namespace Robomongo
     {
         mongo::BSONObj _obj = document->bsonObj();
 
-        MongoNamespace ns(QString::fromStdString(BsonUtils::getField<mongo::String>(_obj,"ns")));
+        MongoNamespace ns(BsonUtils::getField<mongo::String>(_obj,"ns"));
 
-        setText(0, prepareValue(ns.collectionName()));
+        setText(0, QString::fromUtf8((ns.collectionName() + "     ").c_str()));
         setIcon(0, GuiRegistry::instance().collectionIcon());
         setText(1, prepareValue(QString::number(BsonUtils::getField<mongo::NumberLong>(_obj,"count"))));
         setText(2, prepareValue(MongoUtils::buildNiceSizeString(BsonUtils::getField<mongo::NumberDouble>(_obj,"size"))));

@@ -13,12 +13,13 @@
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace
 {
     void openDatabaseShell(Robomongo::MongoDatabase *database, const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
     {
-        Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, database->name(), cursor);
+        Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, Robomongo::QtUtils::toQString(database->name()), cursor);
     }
 }
 
@@ -149,14 +150,14 @@ namespace Robomongo
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
         if (databaseItem){
-            CreateDatabaseDialog dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
-                databaseItem->database()->name());
+            CreateDatabaseDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
+                QtUtils::toQString(databaseItem->database()->name()));
             dlg.setWindowTitle("Create Collection");
             dlg.setOkButtonText("&Create");
             dlg.setInputLabelText("Collection Name:");
             int result = dlg.exec();
             if (result == QDialog::Accepted) {
-                databaseItem->database()->createCollection(dlg.databaseName());
+                databaseItem->database()->createCollection(QtUtils::toStdString<std::string>(dlg.databaseName()));
                 // refresh list of databases
                 databaseItem->expandCollections();
             }
@@ -167,8 +168,8 @@ namespace Robomongo
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
         if(databaseItem){
-            CreateUserDialog dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(),
-                databaseItem->database()->name());
+            CreateUserDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
+                QtUtils::toQString(databaseItem->database()->name()));
             int result = dlg.exec();
             if (result == QDialog::Accepted) {
                 MongoUser user = dlg.user();
@@ -183,7 +184,7 @@ namespace Robomongo
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
         if(databaseItem){
-            FunctionTextEditor dlg(databaseItem->database()->server()->connectionRecord()->getFullAddress(), databaseItem->database()->name(), MongoFunction());
+            FunctionTextEditor dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(databaseItem->database()->name()), MongoFunction());
             dlg.setWindowTitle("Create Function");
             dlg.setCode(
                 "function() {\n"

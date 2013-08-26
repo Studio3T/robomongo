@@ -21,7 +21,7 @@ namespace Robomongo
          * @brief Creates error object with specified error message.
          * Subsequent call of isNull() on this object will return false.
          */
-        EventError(const std::string &errorMessage) :
+        explicit EventError(const std::string &errorMessage) :
             _errorMessage(errorMessage) {}
 
         /**

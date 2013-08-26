@@ -16,38 +16,38 @@ namespace Robomongo
     public:
         MongoClient(mongo::DBClientBase *const scopedConnection);
 
-        QStringList getCollectionNames(const QString &dbname) const;
-        QStringList getDatabaseNames()const;
+        std::vector<std::string> getCollectionNames(const std::string &dbname) const;
+        std::vector<std::string> getDatabaseNames()const;
 
-        std::vector<MongoUser> getUsers(const QString &dbName);
-        void createUser(const QString &dbName, const MongoUser &user, bool overwrite);
-        void dropUser(const QString &dbName, const mongo::OID &id);
+        std::vector<MongoUser> getUsers(const std::string &dbName);
+        void createUser(const std::string &dbName, const MongoUser &user, bool overwrite);
+        void dropUser(const std::string &dbName, const mongo::OID &id);
 
-        std::vector<MongoFunction> getFunctions(const QString &dbName);
+        std::vector<MongoFunction> getFunctions(const std::string &dbName);
         std::vector<EnsureIndexInfo> getIndexes(const MongoCollectionInfo &collection)const;
         void dropIndexFromCollection(const MongoCollectionInfo &collection,const QString &indexName)const;
         void ensureIndex(const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo)const;
 
         void renameIndexFromCollection(const MongoCollectionInfo &collection, const QString &oldIndexName, const QString &newIndexName)const;
 
-        void createFunction(const QString &dbName, const MongoFunction &fun, const QString &existingFunctionName = QString());
-        void dropFunction(const QString &dbName, const QString &name);
+        void createFunction(const std::string &dbName, const MongoFunction &fun, const std::string &existingFunctionName = std::string());
+        void dropFunction(const std::string &dbName, const std::string &name);
 
-        void createDatabase(const QString &dbName);
-        void dropDatabase(const QString &dbName);
+        void createDatabase(const std::string &dbName);
+        void dropDatabase(const std::string &dbName);
 
-        void createCollection(const QString &dbName, const QString &collectionName);
-        void renameCollection(const QString &dbName, const QString &collectionName, const QString &newCollectionName);
-        void duplicateCollection(const QString &dbName, const QString &collectionName, const QString &newCollectionName);
-        void dropCollection(const QString &dbName, const QString &collectionName);
+        void createCollection(const std::string &dbName, const std::string &collectionName);
+        void renameCollection(const std::string &dbName, const std::string &collectionName, const std::string &newCollectionName);
+        void duplicateCollection(const std::string &dbName, const std::string &collectionName, const std::string &newCollectionName);
+        void dropCollection(const std::string &dbName, const std::string &collectionName);
 
-        void insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);
-        void saveDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);
-        void removeDocuments(const QString &db, const QString &collection, mongo::Query query, bool justOne = true);
+        void insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
+        void saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
+        void removeDocuments(const std::string &db, const std::string &collection, mongo::Query query, bool justOne = true);
         std::vector<MongoDocumentPtr> query(const MongoQueryInfo &info);
 
-        MongoCollectionInfo runCollStatsCommand(const QString &ns);
-        std::vector<MongoCollectionInfo> runCollStatsCommand(const QStringList &namespaces);
+        MongoCollectionInfo runCollStatsCommand(const std::string &ns);
+        std::vector<MongoCollectionInfo> runCollStatsCommand(const std::vector<std::string> &namespaces);
 
         void done();
 

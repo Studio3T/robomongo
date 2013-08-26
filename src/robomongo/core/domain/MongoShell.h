@@ -15,13 +15,13 @@ namespace Robomongo
         MongoShell(MongoServer *server,const ScriptInfo &scriptInfo);
         ~MongoShell();
 
-        void open(const QString &script, const QString &dbName = QString());
+        void open(const std::string &script, const std::string &dbName = std::string());
         void query(int resultIndex, const MongoQueryInfo &info);
         void autocomplete(const QString &prefix);
         void stop();
         MongoServer *server() const { return _server; }
-        QString query() const { return _scriptInfo.script(); }
-        void execute(const QString &dbName = QString());
+        std::string query() const;
+        void execute(const std::string &dbName = std::string());
         bool isExecutable() const {return _scriptInfo.execute(); }
         const QString &title() const { return _scriptInfo.title(); }
         const CursorPosition &cursor() const { return _scriptInfo.cursor(); }

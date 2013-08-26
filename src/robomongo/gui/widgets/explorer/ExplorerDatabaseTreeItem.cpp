@@ -26,7 +26,7 @@ namespace
 {
     void openCurrentDatabaseShell(Robomongo::MongoDatabase *database,const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
     {
-        Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, database->name(), cursor);
+        Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, Robomongo::QtUtils::toQString(database->name()), cursor);
     }
 }
 
@@ -79,7 +79,7 @@ namespace Robomongo
         _bus->subscribe(this, MongoDatabaseFunctionsLoadingEvent::Type, _database);
         _bus->subscribe(this, MongoDatabaseUsersLoadingEvent::Type, _database);
         
-        setText(0, _database->name());
+        setText(0, QtUtils::toQString(_database->name()));
         setIcon(0, GuiRegistry::instance().databaseIcon());
         setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
@@ -244,9 +244,10 @@ namespace Robomongo
     void ExplorerDatabaseTreeItem::ui_dbDrop()
     {
             // Ask user
+            char buff[256]={0};
+            sprintf(buff,"Drop <b>%s</b> database?",_database->name().c_str());
             int answer = QMessageBox::question(treeWidget(),
-                "Drop Database",
-                QString("Drop <b>%1</b> database?").arg(_database->name()),
+                "Drop Database",buff,
                 QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
             if (answer == QMessageBox::Yes){
                 _database->server()->dropDatabase(_database->name());

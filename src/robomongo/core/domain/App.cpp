@@ -5,6 +5,7 @@
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -55,16 +56,16 @@ namespace Robomongo
         ConnectionSettings *connection = collection->database()->server()->connectionRecord()->clone();
         connection->setDefaultDatabase(collection->database()->name());
         QString script = buildCollectionQuery(collection->name(), "find()");
-        return openShell(connection, ScriptInfo(script, true, CursorPosition(), collection->database()->name(),filePathToSave));
+        return openShell(connection, ScriptInfo(script, true, CursorPosition(), QtUtils::toQString(collection->database()->name()),filePathToSave));
     }
 
-    MongoShell *App::openShell(MongoServer *server, const QString &script, const QString &dbName,
+    MongoShell *App::openShell(MongoServer *server,const QString &script, const std::string &dbName,
                                bool execute, const QString &shellName,
                                const CursorPosition &cursorPosition,const QString &filePathToSave)
     {
         ConnectionSettings *connection = server->connectionRecord()->clone();
 
-        if (!dbName.isEmpty())
+        if (!dbName.empty())
             connection->setDefaultDatabase(dbName);
 
         return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName,filePathToSave));
@@ -89,27 +90,28 @@ namespace Robomongo
         return shell;
     }
 
-    QString App::buildCollectionQuery(const QString collectionName, const QString postfix)
+    QString App::buildCollectionQuery(const std::string &collectionName, const QString &postfix)
     {
-        QChar firstChar = collectionName.at(0);
+        QString qCollectionName = QtUtils::toQString(collectionName);
+        QChar firstChar = qCollectionName.at(0);
         QRegExp charExp("[^A-Za-z_0-9]"); // valid JS name
 
         QString pattern;
         if  (firstChar == QChar('_')
-             || collectionName == "help"
-             || collectionName == "stats"
-             || collectionName == "version"
-             || collectionName == "prototype") {
+             || qCollectionName == "help"
+             || qCollectionName == "stats"
+             || qCollectionName == "version"
+             || qCollectionName == "prototype") {
             // TODO: this list should be expanded to include
             // all functions of DB JavaScript object
             pattern = "db.getCollection('%1').%2";
-        } else if (firstChar.isDigit() || collectionName.contains(charExp)) {
+        } else if (firstChar.isDigit() || qCollectionName.contains(charExp)) {
             pattern = "db[\'%1\'].%2";
         } else {
             pattern = "db.%1.%2";
         }
 
-        return pattern.arg(collectionName).arg(postfix);
+        return pattern.arg(qCollectionName).arg(postfix);
     }
 
     /**

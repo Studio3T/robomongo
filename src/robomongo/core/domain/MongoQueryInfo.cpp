@@ -6,7 +6,7 @@ namespace Robomongo
     MongoQueryInfo::MongoQueryInfo() :
         isNull(true) {}
 
-    MongoQueryInfo::MongoQueryInfo(const QString &server, const QString &database, const QString &collection,
+    MongoQueryInfo::MongoQueryInfo(const std::string &server, const std::string &database, const std::string &collection,
               mongo::BSONObj query, mongo::BSONObj fields, int limit, int skip, int batchSize,
               int options, bool special) :
         serverAddress(server),

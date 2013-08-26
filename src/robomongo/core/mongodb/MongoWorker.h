@@ -142,14 +142,14 @@ namespace Robomongo
          */
         void reply(QObject *receiver, Event *event);
 
-        const QString _address;
+        const std::string _address;
         QThread *_thread;
         QMutex _firstConnectionMutex;
 
         ScriptEngine *_scriptEngine;
 
         bool _isAdmin;
-        QString _authDatabase;
+        std::string _authDatabase;
 
         ConnectionSettings *_connection;
 

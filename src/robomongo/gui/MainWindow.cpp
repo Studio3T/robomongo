@@ -18,6 +18,8 @@
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/core/utils/QtUtils.h"
+
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
@@ -384,7 +386,7 @@ namespace Robomongo
         int number = 1;
         // Populate list with connections
         foreach(ConnectionSettings *connection, AppRegistry::instance().settingsManager()->connections()) {
-            QAction *action = new QAction(connection->getReadableName(), this);
+            QAction *action = new QAction(QtUtils::toQString(connection->getReadableName()), this);
             action->setData(QVariant::fromValue(connection));
 
             if (number <= 9)
@@ -421,7 +423,7 @@ namespace Robomongo
             try {
                 _app->openServer(selected->clone(), true);
             } catch(const std::exception &) {
-                QString message = QString("Cannot connect to MongoDB (%1)").arg(selected->getFullAddress());
+                QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(selected->getFullAddress()));
                 QMessageBox::information(this, "Error", message);
             }
         }
@@ -553,7 +555,7 @@ namespace Robomongo
             _app->openServer(ptr->clone(), true);
         }
         catch(const std::exception &){
-            QString message = QString("Cannot connect to MongoDB (%1)").arg(ptr->getFullAddress());
+            QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(ptr->getFullAddress()));
             QMessageBox::information(this, "Error", message);
         }
     }
@@ -561,7 +563,7 @@ namespace Robomongo
     void MainWindow::handle(ConnectionFailedEvent *event)
     {
         ConnectionSettings *connection = event->server->connectionRecord();
-        QString message = QString("Cannot connect to MongoDB (%1)").arg(connection->getFullAddress());
+        QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(connection->getFullAddress()));
         QMessageBox::information(this, "Error", message);
     }
 

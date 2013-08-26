@@ -17,6 +17,7 @@
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
@@ -78,7 +79,7 @@ namespace Robomongo
             query = _scriptWidget->text();
 
         showProgress();
-        _shell->open(query);
+        _shell->open(QtUtils::toStdString<std::string>(query));
     }
 
     void QueryWidget::stop()
@@ -159,7 +160,7 @@ namespace Robomongo
     void QueryWidget::openFile()
     {
         if(_shell && _shell->loadFromFile()){
-            _scriptWidget->setText(_shell->query());
+            _scriptWidget->setText(QtUtils::toQString(_shell->query()));
             isTextChanged = false;
             updateCurrentTab();
         }
@@ -252,7 +253,7 @@ namespace Robomongo
         int thisTab = _tabWidget->indexOf(this);
 
         if (thisTab != -1) {
-            const QString &shellQuery = _shell->query();
+            const QString &shellQuery = QtUtils::toQString(_shell->query());
             QString toolTipQuery = shellQuery.left(700);
 
             QString tabTitle,toolTipText;

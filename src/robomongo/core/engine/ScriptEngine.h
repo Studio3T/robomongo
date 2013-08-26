@@ -19,10 +19,10 @@ namespace Robomongo
         ~ScriptEngine();
 
         void init();
-        MongoShellExecResult exec(const QString &script, const QString &dbName = QString());
+        MongoShellExecResult exec(const std::string &script, const std::string &dbName = std::string());
         void interrupt();
 
-        void use(const QString &dbName);
+        void use(const std::string &dbName);
         void ping();
         QStringList complete(const QString &prefix);
 
@@ -32,10 +32,10 @@ namespace Robomongo
         QString _currentDatabase;
         bool _isCurrentDatabaseValid;
 
-        MongoShellResult prepareResult(const QString &type, const QString &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms);
+        MongoShellResult prepareResult(const std::string &type, const std::string &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms);
         MongoShellExecResult prepareExecResult(const QList<MongoShellResult> &results);
 
-        QString getString(const char *fieldName);
+        std::string getString(const char *fieldName);
 
         bool statementize(const QString &script, QStringList &outList, QString &outError);
         QStringList statementize2(const QString &script);

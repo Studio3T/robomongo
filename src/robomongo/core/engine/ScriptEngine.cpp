@@ -57,24 +57,22 @@ namespace Robomongo
     {
         QMutexLocker lock(&_mutex);
 
-        QString connectDatabase = "test";
+        std::string connectDatabase = "test";
 
         if (_connection->hasEnabledPrimaryCredential())
             connectDatabase = _connection->primaryCredential()->databaseName();
 
-        QString url = QString("%1:%2/%3")
-            .arg(_connection->serverHost())
-            .arg(_connection->serverPort())
-            .arg(connectDatabase);
+        char url[512] = {0};
+        sprintf(url,"%s:%d/%s",_connection->serverHost().c_str(),_connection->serverPort(),connectDatabase.c_str());
 
         stringstream ss;
 
         if (!_connection->hasEnabledPrimaryCredential())
-            ss << "db = connect('" << url.toStdString() << "')";
+            ss << "db = connect('" << url << "')";
         else
-            ss << "db = connect('" << url.toStdString() << "', '"
-               << _connection->primaryCredential()->userName().toStdString() << "', '"
-               << _connection->primaryCredential()->userPassword().toStdString() << "')";
+            ss << "db = connect('" << url << "', '"
+               << _connection->primaryCredential()->userName() << "', '"
+               << _connection->primaryCredential()->userPassword() << "')";
 
         {
             //mongo::shell_utils::_dbConnect = "var z = 56;"; //ss.str();
@@ -106,7 +104,7 @@ namespace Robomongo
         _scope->exec(esprima.toStdString(), "(esprima)", true, true, true);
     }
 
-    MongoShellExecResult ScriptEngine::exec(const QString &originalScript, const QString &dbName)
+    MongoShellExecResult ScriptEngine::exec(const std::string &originalScript, const std::string &dbName)
     {
         QMutexLocker lock(&_mutex);
 
@@ -114,8 +112,7 @@ namespace Robomongo
          * Replace all commands ('show dbs', 'use db' etc.) with call
          * to shellHelper('show', 'dbs') and so on.
          */
-        QByteArray bytes = originalScript.toUtf8();
-        std::string stdstr(bytes.constData(), bytes.size());
+        std::string stdstr(originalScript);
 
         pcrecpp::RE re("^(show|use|set) (\\w+)$",
             pcrecpp::RE_Options(PCRE_CASELESS|PCRE_MULTILINE|PCRE_NEWLINE_ANYCRLF));
@@ -159,11 +156,11 @@ namespace Robomongo
                     qint64 elapsed = timer.elapsed();
 
                     std::string logs = __logs.str();
-                    QString answer = QString::fromUtf8(logs.c_str());
-                    QString type = QString::fromUtf8(__type.c_str());
+                    std::string answer = logs.c_str();
+                    std::string type = __type.c_str();
                     std::vector<MongoDocumentPtr> docs = MongoDocument::fromBsonObj(__objects);
 
-                    if (!answer.isEmpty() || docs.size() > 0)
+                    if (!answer.empty() || docs.size() > 0)
                         results.append(prepareResult(type, answer, docs, elapsed));
                 }
                 catch ( const std::exception &e ) {
@@ -180,15 +177,15 @@ namespace Robomongo
         mongo::Scope::_interruptFlag = true;
     }
 
-    void ScriptEngine::use(const QString &dbName)
+    void ScriptEngine::use(const std::string &dbName)
     {
         QMutexLocker lock(&_mutex);
 
-        if (!dbName.isEmpty()) {
+        if (!dbName.empty()) {
             // switch to database
-            QString useDb = QString("shellHelper.use('%1');").arg(dbName);
-            QByteArray useDbArray = useDb.toUtf8();
-            _scope->exec(useDbArray.data(), "(usedb)", false, true, false);
+            char useDb[512]={0};
+            sprintf(useDb,"shellHelper.use('%s');",dbName.c_str());
+            _scope->exec(useDb, "(usedb)", false, true, false);
         }
     }
 
@@ -230,7 +227,7 @@ namespace Robomongo
         return QStringList();
     }
 
-    MongoShellResult ScriptEngine::prepareResult(const QString &type, const QString &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms)
+    MongoShellResult ScriptEngine::prepareResult(const std::string &type, const std::string &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms)
     {
         const char *script =
             "__robomongoQuery = false; \n"
@@ -256,9 +253,9 @@ namespace Robomongo
         bool isQuery = _scope->getBoolean("__robomongoQuery");
 
         if (isQuery) {
-            QString serverAddress = getString("__robomongoServerAddress");
-            QString dbName = getString("__robomongoDbName");
-            QString collectionName = getString("__robomongoCollectionName");
+            std::string serverAddress = getString("__robomongoServerAddress");
+            std::string dbName = getString("__robomongoDbName");
+            std::string collectionName = getString("__robomongoCollectionName");
             mongo::BSONObj query = _scope->getObject("__robomongoQuery");
             mongo::BSONObj fields = _scope->getObject("__robomongoFields");
 
@@ -293,20 +290,18 @@ namespace Robomongo
 
         _scope->exec(script, "(getdbname)", false, false, false);
 
-        QString serverName = getString("__robomongoServerAddress");
+        std::string serverName = getString("__robomongoServerAddress");
         bool serverIsValid = _scope->getBoolean("__robomongoServerIsValid");
 
-        QString dbName = getString("__robomongoDbName");
+        std::string dbName = getString("__robomongoDbName");
         bool dbIsValid = _scope->getBoolean("__robomongoDbIsValid");
 
         return MongoShellExecResult(results, serverName, serverIsValid, dbName, dbIsValid);
     }
 
-    QString ScriptEngine::getString(const char *fieldName)
+    std::string ScriptEngine::getString(const char *fieldName)
     {
-        std::string valueStd = _scope->getString(fieldName);
-        QString value = QString::fromUtf8(valueStd.c_str());
-        return value;
+        return _scope->getString(fieldName);
     }
 
     bool ScriptEngine::statementize(const QString &script, QStringList &outList, QString &outError)

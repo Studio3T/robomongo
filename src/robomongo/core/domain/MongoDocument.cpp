@@ -92,7 +92,7 @@ namespace Robomongo
     /*
     ** Build JsonString from list of documents
     */
-    QString MongoDocument::buildJsonString(const QList<MongoDocumentPtr> &documents)
+    std::string MongoDocument::buildJsonString(const QList<MongoDocumentPtr> &documents)
     {
         mongo::StringBuilder sb;
 
@@ -111,17 +111,14 @@ namespace Robomongo
         }
 
         std::string final = sb.str();
-        QString qJsonString = QString::fromStdString(final);
-
-        return qJsonString;
+        return final;
     }
 
-    QString MongoDocument::buildJsonString(const MongoDocumentPtr &doc)
+    std::string MongoDocument::buildJsonString(const MongoDocumentPtr &doc)
     {
         //qt4 QTextCodec::setCodecForCStrings(codec);
         std::string jsonString = doc->bsonObj().jsonString(mongo::TenGen, 1);
-        QString qJsonString = QString::fromStdString(jsonString);
-        return qJsonString;
+        return jsonString;
     }
 
 }

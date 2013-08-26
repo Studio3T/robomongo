@@ -52,9 +52,9 @@ namespace Robomongo
         /*
         ** Build JsonString from list of documents
         */
-        static QString buildJsonString(const QList<MongoDocumentPtr> &documents);
+        static std::string buildJsonString(const QList<MongoDocumentPtr> &documents);
 
-        static QString buildJsonString(const MongoDocumentPtr &documents);
+        static std::string buildJsonString(const MongoDocumentPtr &documents);
     };
 
     class Concatenator

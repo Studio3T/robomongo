@@ -6,6 +6,6 @@ namespace Robomongo
     namespace MongoUtils
     {
         QString buildNiceSizeString(double sizeBytes);
-        QString buildPasswordHash(const QString &username, const QString &password);
+        std::string buildPasswordHash(const std::string &username, const std::string &password);
     }
 }

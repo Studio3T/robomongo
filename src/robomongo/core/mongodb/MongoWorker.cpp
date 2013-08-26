@@ -100,7 +100,6 @@ namespace Robomongo
 
                 if (!ok)
                 {
-                    QString lastErrorMessage = QString::fromStdString(errmsg);
                     throw runtime_error("Unable to authorize");
                 }
 

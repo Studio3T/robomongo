@@ -1,7 +1,6 @@
 #include "robomongo/core/domain/MongoDocument.h"
 
 #include <mongo/client/dbclient.h>
-#include <QStringBuilder>
 
 #include "robomongo/core/domain/MongoDocumentIterator.h"
 #include "robomongo/core/domain/MongoElement.h"
@@ -12,18 +11,18 @@ namespace Robomongo
     {
     }
 
-    void Concatenator::append(const QString &data)
+    void Concatenator::append(const std::string &data)
     {
-        _list.append(data);
+        _list.push_back(data);
         _count += data.length();
     }
 
-    QString Concatenator::build()
+    std::string Concatenator::build() const
     {
-        QString text;
+        std::string text;
         text.reserve(_count + 10);
-        for (QStringList::const_iterator it=_list.begin();it!=_list.end();++it){
-            text = text % (*it);
+        for (std::vector<std::string>::const_iterator it=_list.begin();it!=_list.end();++it){
+            text += *it;
         }
 
         return text;

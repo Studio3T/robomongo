@@ -244,7 +244,7 @@ namespace Robomongo
 
     void QueryWidget::handle(AutocompleteResponse *event)
     {
-        _scriptWidget->showAutocompletion(event->list, event->prefix);
+        _scriptWidget->showAutocompletion(event->list, QtUtils::toQString(event->prefix) );
     }
 
     void QueryWidget::updateCurrentTab()  // !!!!!!!!!!! this method should be in

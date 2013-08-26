@@ -24,7 +24,7 @@ namespace Robomongo
 
         void use(const std::string &dbName);
         void ping();
-        QStringList complete(const QString &prefix);
+        QStringList complete(const std::string &prefix);
 
 
     private:

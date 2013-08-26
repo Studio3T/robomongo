@@ -61,11 +61,11 @@ namespace Robomongo
     {
     public:
         Concatenator();
-        void append(const QString &data);
-        QString build();
+        void append(const std::string &data);
+        std::string build() const;
 
     private:
-        QStringList _list;
+        std::vector<std::string> _list;
         int _count;
     };
 }

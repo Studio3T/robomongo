@@ -53,7 +53,7 @@ namespace Robomongo
         _client->send(new ExecuteQueryRequest(this, resultIndex, info));
     }
 
-    void MongoShell::autocomplete(const QString &prefix)
+    void MongoShell::autocomplete(const std::string &prefix)
     {
         _client->send(new AutocompleteRequest(this, prefix));
     }

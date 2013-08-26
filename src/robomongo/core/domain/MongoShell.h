@@ -17,7 +17,7 @@ namespace Robomongo
 
         void open(const std::string &script, const std::string &dbName = std::string());
         void query(int resultIndex, const MongoQueryInfo &info);
-        void autocomplete(const QString &prefix);
+        void autocomplete(const std::string &prefix);
         void stop();
         MongoServer *server() const { return _server; }
         std::string query() const;

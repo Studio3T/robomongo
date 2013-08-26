@@ -816,24 +816,24 @@ namespace Robomongo
     {
         R_EVENT
 
-        AutocompleteRequest(QObject *sender, const QString &prefix) :
+        AutocompleteRequest(QObject *sender, const std::string &prefix) :
             Event(sender),
             prefix(prefix) {}
 
-        QString prefix;
+        std::string prefix;
     };
 
     class AutocompleteResponse : public Event
     {
         R_EVENT
 
-        AutocompleteResponse(QObject *sender,const QStringList &list, const QString &prefix) :
+        AutocompleteResponse(QObject *sender,const QStringList &list, const std::string &prefix) :
             Event(sender),
             list(list),
             prefix(prefix) {}
 
         QStringList list;
-        QString prefix;
+        std::string prefix;
     };
 
 

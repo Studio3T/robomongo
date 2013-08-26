@@ -211,7 +211,7 @@ namespace Robomongo
         _scope->exec(pingArray.data(), "(ping)", false, false, false);
     }
 
-    QStringList ScriptEngine::complete(const QString &prefix)
+    QStringList ScriptEngine::complete(const std::string &prefix)
     {
 //        if ( prefix.find( '"' ) != string::npos )
 //            return;
@@ -219,7 +219,7 @@ namespace Robomongo
         try {
             using namespace mongo;
             QStringList results;
-            mongo::BSONObj args = BSON( "0" << prefix.toStdString() );
+            mongo::BSONObj args = BSON( "0" << prefix );
 
             _scope->invokeSafe( "function callShellAutocomplete(x) {shellAutocomplete(x)}", &args, 0, 1000 );
             mongo::BSONObjBuilder b;

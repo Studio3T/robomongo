@@ -27,7 +27,7 @@ namespace Robomongo
         /*
         ** Get field name
         */
-        QString fieldName();
+        std::string fieldName() const;
 
         /*
         ** Check if this element is of simple type

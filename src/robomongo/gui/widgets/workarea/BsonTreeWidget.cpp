@@ -162,7 +162,7 @@ namespace Robomongo
         mongo::Query query(bsonQuery);
 
         // Ask user
-        int answer = utils::questionDialog(this,"Delete","Document","%1 %2 with id:<br><b>%3</b>?",QString::fromStdString(id.toString(false)));
+        int answer = utils::questionDialog(this,"Delete","Document","%1 %2 with id:<br><b>%3</b>?",QtUtils::toQString(id.toString(false)));
 
         if (answer != QMessageBox::Yes)
             return ;

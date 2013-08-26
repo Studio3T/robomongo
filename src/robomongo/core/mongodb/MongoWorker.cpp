@@ -94,23 +94,24 @@ namespace Robomongo
             {
                 std::string errmsg;
                 bool ok = conn->auth(
-                    _connection->primaryCredential()->databaseName().toStdString(),
-                    _connection->primaryCredential()->userName().toStdString(),
-                    _connection->primaryCredential()->userPassword().toStdString(), errmsg);
+                    _connection->primaryCredential()->databaseName(),
+                    _connection->primaryCredential()->userName(),
+                    _connection->primaryCredential()->userPassword(), errmsg);
 
                 if (!ok)
                 {
-                    QString lastErrorMessage = QString::fromStdString(errmsg);
                     throw runtime_error("Unable to authorize");
                 }
 
                 // If authentication succeed and database name is 'admin' -
                 // then user is admin, otherwise user is not admin
-                if (_connection->primaryCredential()->databaseName().compare("admin", Qt::CaseInsensitive))
+                std::string dbName = _connection->primaryCredential()->databaseName();
+                std::transform( dbName.begin(), dbName.end(), dbName.begin(), ::tolower );
+                if (dbName.find_first_of("admin")!=std::string::npos)
                     _isAdmin = false;
 
                 // Save name of db on which we authenticated
-                _authDatabase = _connection->primaryCredential()->databaseName();
+                _authDatabase = dbName;
             }
 
             //conn->done();
@@ -131,14 +132,14 @@ namespace Robomongo
             // If user not an admin - he doesn't have access to mongodb 'listDatabases' command
             // Non admin user has access only to the single database he specified while performing auth.
             if (!_isAdmin) {
-                QStringList dbNames;
-                dbNames << _authDatabase;
+                std::vector<std::string> dbNames;
+                dbNames.push_back(_authDatabase);
                 reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
                 return;
             }
 
             boost::scoped_ptr<MongoClient> client(getClient());
-            QStringList dbNames = client->getDatabaseNames();
+            std::vector<std::string> dbNames = client->getDatabaseNames();
             client->done();
 
             reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
@@ -155,8 +156,8 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
 
-            QStringList stringList = client->getCollectionNames(event->databaseName());
-            QList<MongoCollectionInfo> infos = client->runCollStatsCommand(stringList);
+            std::vector<std::string> stringList = client->getCollectionNames(event->databaseName());
+            const std::vector<MongoCollectionInfo> &infos = client->runCollStatsCommand(stringList);
             client->done();
 
             reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName(), infos));
@@ -169,7 +170,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            QList<MongoUser> users = client->getUsers(event->databaseName());
+            const std::vector<MongoUser> &users = client->getUsers(event->databaseName());
             client->done();
 
             reply(event->sender(), new LoadUsersResponse(this, event->databaseName(), users));
@@ -182,12 +183,12 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            const QList<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
+            const std::vector<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const DBException &) {
-            reply(event->sender(), new LoadCollectionIndexesResponse(this, QList<EnsureIndexInfo>()));
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, std::vector<EnsureIndexInfo>()));
         }
     }
 
@@ -198,12 +199,12 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             client->ensureIndex(oldInfo,newInfo);
-            const QList<EnsureIndexInfo> &ind = client->getIndexes(newInfo._collection);
+            const std::vector<EnsureIndexInfo> &ind = client->getIndexes(newInfo._collection);
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const DBException &) {
-            reply(event->sender(), new LoadCollectionIndexesResponse(this, QList<EnsureIndexInfo>()));
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, std::vector<EnsureIndexInfo>()));
         }
     }
 
@@ -215,7 +216,7 @@ namespace Robomongo
             client->done();
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), event->name()));
         } catch(const DBException &) {
-            reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), QString() ));
+            reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), std::string() ));
         }            
     }
 
@@ -224,12 +225,12 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             client->renameIndexFromCollection(event->collection(),event->oldIndex(),event->newIndex());
-            const QList<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
+            const std::vector<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const DBException &) {
-            reply(event->sender(), new LoadCollectionIndexesResponse(this, QList<EnsureIndexInfo>()));
+            reply(event->sender(), new LoadCollectionIndexesResponse(this, std::vector<EnsureIndexInfo>()));
         } 
     }
 
@@ -237,7 +238,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            QList<MongoFunction> funs = client->getFunctions(event->databaseName());
+            const std::vector<MongoFunction> &funs = client->getFunctions(event->databaseName());
             client->done();
 
             reply(event->sender(), new LoadFunctionsResponse(this, event->databaseName(), funs));
@@ -282,7 +283,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            QList<MongoDocumentPtr> docs = client->query(event->queryInfo());
+            std::vector<MongoDocumentPtr> docs = client->query(event->queryInfo());
             client->done();
 
             reply(event->sender(), new ExecuteQueryResponse(this, event->resultIndex(), event->queryInfo(), docs));
@@ -298,7 +299,7 @@ namespace Robomongo
     {
         try {
             MongoShellExecResult result = _scriptEngine->exec(event->script, event->databaseName);
-            reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.isEmpty()));
+            reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty()));
         } catch(const DBException &) {
             reply(event->sender(), new ExecuteScriptResponse(this, EventError("Unable to complete query.")));
         }
@@ -448,7 +449,7 @@ namespace Robomongo
     {
         if (!_dbclient) {
             mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
-            conn->connect(_address.toStdString());
+            conn->connect(_address);
             _dbclient = conn;
         }
         return _dbclient;
@@ -476,10 +477,10 @@ namespace Robomongo
                 command.append("ping", 1);
                 mongo::BSONObj result;
 
-                if (_authDatabase.isEmpty()) {
+                if (_authDatabase.empty()) {
                     _dbclient->runCommand("admin", command.obj(), result);
                 } else {
-                    _dbclient->runCommand(_authDatabase.toStdString(), command.obj(), result);
+                    _dbclient->runCommand(_authDatabase, command.obj(), result);
                 }
             }
 

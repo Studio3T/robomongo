@@ -7,22 +7,20 @@
 
 namespace Robomongo
 {
-    class MongoElement;
-
     /**
      * @brief BSON tree item (represents array or object)
      */
-    class BsonTreeItem : public QObject, public QTreeWidgetItem
+    class BsonTreeItem : public QTreeWidgetItem
     {
-        Q_OBJECT
     public:
+        typedef QTreeWidgetItem baseClass;
         BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position);
         BsonTreeItem(MongoDocumentPtr document, int position);
 
         MongoElementPtr element() const { return _element; }
         MongoDocumentPtr rootDocument() const { return _rootDocument; }
-        bool isSimpleType();
-        bool isUuidType();
+        bool isSimpleType() const;
+        bool isUuidType() const;
         void expand();
 
     private:
@@ -31,13 +29,12 @@ namespace Robomongo
         QString buildFieldName();
         QString buildArrayFieldName(int itemsCount);
 
-        MongoElementPtr _element;
-        MongoDocumentPtr _document;
-
-        MongoDocumentPtr _rootDocument;
+        const MongoElementPtr _element;
+        const MongoDocumentPtr _document;
+        const MongoDocumentPtr _rootDocument;
         /**
          * @brief Position in array. -1 if not in array
          */
-        int _position;
+        const int _position;
     };
 }

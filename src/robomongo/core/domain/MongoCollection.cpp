@@ -10,13 +10,15 @@ namespace Robomongo
         _system(false)
     {
         // system databases starts from system.*
-        if (_ns.collectionName().startsWith("system."))
+        std::string collectionName = _ns.collectionName();
+        size_t pos = collectionName.find_first_of("system.");
+        if (pos!=std::string::npos)
             _system = true;
     }
 
-    QString MongoCollection::sizeString() const
+    std::string MongoCollection::sizeString() const
     {
-        return MongoUtils::buildNiceSizeString(_info.sizeBytes());
+        return MongoUtils::buildNiceSizeString(_info.sizeBytes()).toStdString();
     }
 
     QString MongoCollection::storageSizeString() const

@@ -25,7 +25,7 @@ namespace Robomongo
         setup();
     }
 
-    OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
+    OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
         _isTextModeSupported(true),
         _isTreeModeSupported(true),
         _isCustomModeSupported(false),
@@ -37,7 +37,7 @@ namespace Robomongo
         setup();
     }
 
-    OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &type, const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
+    OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
         _isTextModeSupported(true),
         _isTreeModeSupported(true),
         _isCustomModeSupported(true),
@@ -77,9 +77,8 @@ namespace Robomongo
         }
     }
 
-    void OutputItemContentWidget::update(const QList<MongoDocumentPtr> &documents)
+    void OutputItemContentWidget::update(const std::vector<MongoDocumentPtr> &documents)
     {
-        _documents.clear();
         _documents = documents;
         _sourceIsText = false;
         _isFirstPartRendered = false;
@@ -130,7 +129,7 @@ namespace Robomongo
                 }
                 else
                 {
-                    if (_documents.count() > 0)
+                    if (_documents.size() > 0)
                     {
                         _log->sciScintilla()->setText("Loading...");
                         _thread = new JsonPrepareThread(_documents, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());

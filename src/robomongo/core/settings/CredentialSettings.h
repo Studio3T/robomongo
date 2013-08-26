@@ -25,20 +25,20 @@ namespace Robomongo
         /**
          * @brief User name
          */
-        QString userName() const { return _userName; }
-        void setUserName(const QString &userName) { _userName = userName; }
+        std::string userName() const { return _userName; }
+        void setUserName(const std::string &userName) { _userName = userName; }
 
         /**
          * @brief Password
          */
-        QString userPassword() const { return _userPassword; }
-        void setUserPassword(const QString &userPassword) { _userPassword = userPassword; }
+        std::string userPassword() const { return _userPassword; }
+        void setUserPassword(const std::string &userPassword) { _userPassword = userPassword; }
 
         /**
          * @brief Database name, on which authentication performed
          */
-        QString databaseName() const { return _databaseName.isEmpty() ? "admin" : _databaseName; }
-        void setDatabaseName(const QString &databaseName) { _databaseName = databaseName; }
+        std::string databaseName() const { return _databaseName.empty() ? "admin" : _databaseName; }
+        void setDatabaseName(const std::string &databaseName) { _databaseName = databaseName; }
 
         /**
          * @brief Flag, indecating whether we should use this
@@ -48,9 +48,9 @@ namespace Robomongo
         void setEnabled(bool enabled) { _enabled = enabled; }
 
     private:
-        QString _userName;
-        QString _userPassword;
-        QString _databaseName;
+        std::string _userName;
+        std::string _userPassword;
+        std::string _databaseName;
 
         /**
          * @brief Flag, indecating whether we should use this

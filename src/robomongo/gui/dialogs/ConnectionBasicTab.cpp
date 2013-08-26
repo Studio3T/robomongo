@@ -4,6 +4,7 @@
 #include <QLineEdit>
 #include <QGridLayout>
 
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 
 namespace Robomongo
@@ -21,8 +22,8 @@ namespace Robomongo
         serverDescriptionLabel->setWordWrap(true);
         serverDescriptionLabel->setContentsMargins(0, -2, 0, 20);
 
-        _connectionName = new QLineEdit(_settings->connectionName());
-        _serverAddress = new QLineEdit(_settings->serverHost());
+        _connectionName = new QLineEdit(QtUtils::toQString(_settings->connectionName()));
+        _serverAddress = new QLineEdit(QtUtils::toQString(_settings->serverHost()));
         _serverPort = new QLineEdit(QString::number(_settings->serverPort()));
         _serverPort->setFixedWidth(80);
 
@@ -46,8 +47,8 @@ namespace Robomongo
 
     void ConnectionBasicTab::accept()
     {
-        _settings->setConnectionName(_connectionName->text());
-        _settings->setServerHost(_serverAddress->text());
+        _settings->setConnectionName(QtUtils::toStdString<std::string>(_connectionName->text()));
+        _settings->setServerHost(QtUtils::toStdString<std::string>(_serverAddress->text()));
         _settings->setServerPort(_serverPort->text().toInt());
     }
 }

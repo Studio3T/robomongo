@@ -16,13 +16,9 @@ namespace Robomongo
     R_REGISTER_EVENT(MongoDatabaseFunctionsLoadingEvent)
     R_REGISTER_EVENT(MongoDatabaseCollectionsLoadingEvent)
 
-    MongoDatabase::MongoDatabase(MongoServer *server, const QString &name)
-        :QObject(),_system(false),_server(server),_bus(AppRegistry::instance().bus())
+    MongoDatabase::MongoDatabase(MongoServer *server, const std::string &name)
+        :QObject(), _system(name == "admin" || name == "local"), _server(server), _bus(AppRegistry::instance().bus()), _name(name)
     {
-        _name = name;
-        // Check that this is a system database
-        _system = name == "admin" ||
-        name == "local";
     }
 
     MongoDatabase::~MongoDatabase()
@@ -47,22 +43,22 @@ namespace Robomongo
         _bus->publish(new MongoDatabaseFunctionsLoadingEvent(this));
         _bus->send(_server->client(), new LoadFunctionsRequest(this, _name));
     }
-    void MongoDatabase::createCollection(const QString &collection)
+    void MongoDatabase::createCollection(const std::string &collection)
     {
         _bus->send(_server->client(), new CreateCollectionRequest(this, _name, collection));
     }
 
-    void MongoDatabase::dropCollection(const QString &collection)
+    void MongoDatabase::dropCollection(const std::string &collection)
     {
         _bus->send(_server->client(), new DropCollectionRequest(this, _name, collection));
     }
 
-    void MongoDatabase::renameCollection(const QString &collection, const QString &newCollection)
+    void MongoDatabase::renameCollection(const std::string &collection, const std::string &newCollection)
     {
         _bus->send(_server->client(), new RenameCollectionRequest(this, _name, collection, newCollection));
     }
 
-    void MongoDatabase::duplicateCollection(const QString &collection, const QString &newCollection)
+    void MongoDatabase::duplicateCollection(const std::string &collection, const std::string &newCollection)
     {
         _bus->send(_server->client(), new DuplicateCollectionRequest(this, _name, collection, newCollection));
     }
@@ -82,12 +78,12 @@ namespace Robomongo
         _bus->send(_server->client(), new CreateFunctionRequest(this, _name, fun));
     }
 
-    void MongoDatabase::updateFunction(const QString &name, const MongoFunction &fun)
+    void MongoDatabase::updateFunction(const std::string &name, const MongoFunction &fun)
     {
         _bus->send(_server->client(), new CreateFunctionRequest(this, _name, fun, name));
     }
 
-    void MongoDatabase::dropFunction(const QString &name)
+    void MongoDatabase::dropFunction(const std::string &name)
     {
         _bus->send(_server->client(), new DropFunctionRequest(this, _name, name));
     }
@@ -98,8 +94,8 @@ namespace Robomongo
             return;
 
         clearCollections();
-        const QList<MongoCollectionInfo> &colectionsInfos = loaded->collectionInfos();
-        for(QList<MongoCollectionInfo>::const_iterator it = colectionsInfos.begin() ;it!=colectionsInfos.end();++it)    {
+        const std::vector<MongoCollectionInfo> &colectionsInfos = loaded->collectionInfos();
+        for(std::vector<MongoCollectionInfo>::const_iterator it = colectionsInfos.begin() ;it!=colectionsInfos.end();++it)    {
             const MongoCollectionInfo &info = *it;
             MongoCollection *collection = new MongoCollection(this, info);
             addCollection(collection);
@@ -139,6 +135,6 @@ namespace Robomongo
 
     void MongoDatabase::addCollection(MongoCollection *collection)
     {
-        _collections.append(collection);
+        _collections.push_back(collection);
     }
 }

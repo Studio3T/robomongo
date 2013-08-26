@@ -6,6 +6,7 @@
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -24,13 +25,16 @@ namespace Robomongo
     {
     }
 
-    void MongoShell::open(const QString &script, const QString &dbName)
+    void MongoShell::open(const std::string &script, const std::string &dbName)
     {
         _bus->publish(new ScriptExecutingEvent(this));
-        _scriptInfo.setScript(script);
+        _scriptInfo.setScript(QtUtils::toQString(script));
         _client->send(new ExecuteScriptRequest(this, query(), dbName));
     }
-    void MongoShell::execute(const QString &dbName)
+
+    std::string MongoShell::query() const { return QtUtils::toStdString<std::string>(_scriptInfo.script()); }
+
+    void MongoShell::execute(const std::string &dbName)
     {
         if(_scriptInfo.execute())
         {
@@ -49,7 +53,7 @@ namespace Robomongo
         _client->send(new ExecuteQueryRequest(this, resultIndex, info));
     }
 
-    void MongoShell::autocomplete(const QString &prefix)
+    void MongoShell::autocomplete(const std::string &prefix)
     {
         _client->send(new AutocompleteRequest(this, prefix));
     }

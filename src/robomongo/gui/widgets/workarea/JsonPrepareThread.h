@@ -22,7 +22,7 @@ namespace Robomongo
         /*
         ** Constructor
         */
-        JsonPrepareThread(QList<MongoDocumentPtr> bsonObjects, UUIDEncoding uuidEncoding, SupportedTimes timeZone);
+        JsonPrepareThread(const std::vector<MongoDocumentPtr> &bsonObjects, UUIDEncoding uuidEncoding, SupportedTimes timeZone);
         void stop();
    Q_SIGNALS:
         /**
@@ -45,7 +45,7 @@ namespace Robomongo
         /*
         ** List of documents
         */
-        const QList<MongoDocumentPtr> _bsonObjects;
+        const std::vector<MongoDocumentPtr> _bsonObjects;
         const UUIDEncoding _uuidEncoding;
         const SupportedTimes _timeZone;
         volatile bool _stop;

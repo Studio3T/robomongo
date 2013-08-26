@@ -37,7 +37,7 @@ namespace Robomongo
          */
         MongoShell *openShell(MongoCollection *collection,const QString &filePathToSave=QString());
 
-        MongoShell *openShell(MongoServer *server, const QString &script, const QString &dbName = QString(),
+        MongoShell *openShell(MongoServer *server, const QString &script, const std::string &dbName = std::string(),
                               bool execute = true, const QString &shellName = QString(),
                               const CursorPosition &cursorPosition = CursorPosition(),const QString &file=QString());
 
@@ -59,7 +59,7 @@ namespace Robomongo
          *
          * @param script: query part (without "db.my_col." prefix"
          */
-        QString buildCollectionQuery(const QString collectionName, const QString postfix);
+        QString buildCollectionQuery(const std::string &collectionName, const QString &postfix);
 
         /**
          * @brief Closes MongoShell and frees all resources, owned by specified MongoShell.

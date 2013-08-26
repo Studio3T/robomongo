@@ -10,6 +10,7 @@
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -29,7 +30,7 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(editFunction);
         BaseClass::_contextMenu->addAction(dropFunction);
 
-        setText(0, _function.name());
+        setText(0, QtUtils::toQString(_function.name()));
         setIcon(0, GuiRegistry::instance().functionIcon());
         setToolTip(0, buildToolTip(_function));
         setExpanded(false);
@@ -37,15 +38,15 @@ namespace Robomongo
 
     QString ExplorerFunctionTreeItem::buildToolTip(const MongoFunction &function)
     {
-        return QString("%0").arg(function.name());
+        return QString("%0").arg(QtUtils::toQString(function.name()));
     }
 
     void ExplorerFunctionTreeItem::ui_editFunction()
     {
-        QString name = _function.name();
+        std::string name = _function.name();
 
-        FunctionTextEditor dlg(_database->server()->connectionRecord()->getFullAddress(),
-            _database->name(),
+        FunctionTextEditor dlg(QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),
+            QtUtils::toQString(_database->name()),
             _function);
         dlg.setWindowTitle("Edit Function");
         int result = dlg.exec();
@@ -63,7 +64,7 @@ namespace Robomongo
     void ExplorerFunctionTreeItem::ui_dropFunction()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(),"Drop","Function",_function.name());
+        int answer = utils::questionDialog(treeWidget(),"Drop","Function",QtUtils::toQString(_function.name()));
 
         if (answer != QMessageBox::Yes)
             return;

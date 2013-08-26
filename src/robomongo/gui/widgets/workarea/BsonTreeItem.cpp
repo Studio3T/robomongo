@@ -20,7 +20,8 @@ namespace
 
 namespace Robomongo
 {
-    BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position) : QObject(),
+    BsonTreeItem::BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position) 
+        : baseClass(),
         _element(element),
         _rootDocument(rootDocument),
         _position(position)
@@ -233,7 +234,8 @@ namespace Robomongo
         }
     }
 
-    BsonTreeItem::BsonTreeItem(MongoDocumentPtr document, int position) : QObject(),
+    BsonTreeItem::BsonTreeItem(MongoDocumentPtr document, int position) 
+        : baseClass(),
         _document(document),
         _rootDocument(document),
         _position(position)
@@ -241,12 +243,12 @@ namespace Robomongo
         setupDocument(document);
     }
 
-    bool BsonTreeItem::isSimpleType()
+    bool BsonTreeItem::isSimpleType() const
     {
         return _element && _element->isSimpleType();
     }
 
-    bool BsonTreeItem::isUuidType()
+    bool BsonTreeItem::isUuidType() const
     {
         return _element && _element->isUuidType();
     }
@@ -286,7 +288,7 @@ namespace Robomongo
         if (_position >= 0)
             return QString("(%1)").arg(_position);
         else
-            return _element->fieldName();
+            return QtUtils::toQString(_element->fieldName());
     }
 
     QString BsonTreeItem::buildObjectFieldName()
@@ -294,7 +296,7 @@ namespace Robomongo
         if (_position >= 0)
             return QString("(%1)  {...}").arg(_position);
         else
-            return QString("%1  {...}").arg(_element->fieldName());
+            return QString("%1  {...}").arg(QtUtils::toQString(_element->fieldName()));
     }
 
     QString BsonTreeItem::buildArrayFieldName(int itemsCount)
@@ -302,6 +304,6 @@ namespace Robomongo
         if (_position >= 0)
             return QString("(%1) [%2]").arg(_position).arg(itemsCount);
         else
-            return QString("%1 [%2]").arg(_element->fieldName()).arg(itemsCount);
+            return QString("%1 [%2]").arg(QtUtils::toQString(_element->fieldName())).arg(itemsCount);
     }
 }

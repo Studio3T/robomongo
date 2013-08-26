@@ -18,11 +18,10 @@ namespace Robomongo
             return QString("%1 mb").arg(mb, 2, 'f', 2);
         }
 
-        QString buildPasswordHash(const QString &username, const QString &password)
+        std::string buildPasswordHash(const std::string &username, const std::string &password)
         {
-            QString sum = username + ":mongo:" + password;
-            QByteArray bytes = sum.toUtf8();
-            const char * s = bytes.constData();
+            std::string sum = username + ":mongo:" + password;
+            const char * s = sum.c_str();
 
             mongo::md5digest d;
             md5_state_t st;
@@ -30,8 +29,7 @@ namespace Robomongo
             md5_append( &st , (const md5_byte_t*)s , strlen( s ) );
             md5_finish(&st, d);
 
-            std::string hash = mongo::digestToString(d);
-            return QString::fromUtf8(hash.c_str(), hash.size());
+            return mongo::digestToString(d);
         }
     }
 }

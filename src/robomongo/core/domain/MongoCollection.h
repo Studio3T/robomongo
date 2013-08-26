@@ -11,12 +11,12 @@ namespace Robomongo
 
         bool isSystem() const { return _system; }
 
-        QString name() const { return _ns.collectionName(); }
+        std::string name() const { return _ns.collectionName(); }
         const MongoCollectionInfo info() const { return _info; }
-        QString fullName() const { return _ns.toString(); }
+        std::string fullName() const { return _ns.toString(); }
         MongoDatabase *database() const { return _database; }
 
-        QString sizeString() const;
+        std::string sizeString() const;
         QString storageSizeString() const;
 
     private:

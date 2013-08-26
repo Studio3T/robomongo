@@ -4,6 +4,7 @@
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
+#include <vector>
 
 namespace Robomongo
 {
@@ -19,12 +20,12 @@ namespace Robomongo
 
     public:
         OutputItemContentWidget(MongoShell *shell, const QString &text);
-        OutputItemContentWidget(MongoShell *shell, const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo);
-        OutputItemContentWidget(MongoShell *shell, const QString &type, const QList<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo);
+        OutputItemContentWidget(MongoShell *shell, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo);
+        OutputItemContentWidget(MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo);
         ~OutputItemContentWidget();
 
         void update(const QString &text);
-        void update(const QList<MongoDocumentPtr> &documents);
+        void update(const std::vector<MongoDocumentPtr> &documents);
 
         void setup();
 
@@ -55,7 +56,7 @@ namespace Robomongo
 
         QString _text;
         QString _type; // type of request
-        QList<MongoDocumentPtr> _documents;
+        std::vector<MongoDocumentPtr> _documents;
         MongoQueryInfo _queryInfo;
 
         QStackedWidget *_stack;

@@ -9,8 +9,8 @@ namespace Robomongo
     public:
         MongoCollectionInfo(mongo::BSONObj stats);
 
-        QString name() const { return _ns.collectionName(); }
-        QString fullName() const { return _ns.toString(); }
+        std::string name() const { return _ns.collectionName(); }
+        std::string fullName() const { return _ns.toString(); }
         MongoNamespace ns() const { return _ns; }
 
         /**

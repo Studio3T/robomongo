@@ -8,6 +8,7 @@
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -44,9 +45,9 @@ namespace Robomongo
 
         if (_settings->credentialCount() > 0) {
             CredentialSettings *primaryCredential = _settings->primaryCredential();
-            _userName->setText(primaryCredential->userName());
-            _userPassword->setText(primaryCredential->userPassword());
-            _databaseName->setText(primaryCredential->databaseName());
+            _userName->setText(QtUtils::toQString(primaryCredential->userName()));
+            _userPassword->setText(QtUtils::toQString(primaryCredential->userPassword()));
+            _databaseName->setText(QtUtils::toQString(primaryCredential->databaseName()));
         }
 
         QGridLayout *_authLayout = new QGridLayout;
@@ -80,9 +81,9 @@ namespace Robomongo
 
         CredentialSettings *credential = _settings->primaryCredential();
         credential->setEnabled(_useAuth->isChecked());
-        credential->setUserName(_userName->text());
-        credential->setUserPassword(_userPassword->text());
-        credential->setDatabaseName(_databaseName->text());
+        credential->setUserName(QtUtils::toStdString<std::string>(_userName->text()));
+        credential->setUserPassword(QtUtils::toStdString<std::string>(_userPassword->text()));
+        credential->setDatabaseName(QtUtils::toStdString<std::string>(_databaseName->text()));
     }
 
     void ConnectionAuthTab::toggleEchoMode()

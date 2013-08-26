@@ -17,17 +17,17 @@ namespace Robomongo
          */
         MongoFunction() {}
 
-        QString name() const { return _name; }
-        QString code() const { return _code; }
+        std::string name() const { return _name; }
+        std::string code() const { return _code; }
 
-        void setCode(const QString &code) { _code = code; }
-        void setName(const QString &name) { _name = name; }
+        void setCode(const std::string &code) { _code = code; }
+        void setName(const std::string &name) { _name = name; }
 
         mongo::BSONObj toBson() const;
 
     private:
-        QString _name;
-        QString _code;
+        std::string _name;
+        std::string _code;
     };
 
 }

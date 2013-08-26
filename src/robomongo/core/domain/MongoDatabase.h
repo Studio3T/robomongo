@@ -22,7 +22,7 @@ namespace Robomongo
          * @brief MongoDatabase
          * @param server: pointer to parent MongoServer
          */
-        MongoDatabase(MongoServer *server, const QString &name);
+        MongoDatabase(MongoServer *server, const std::string &name);
         ~MongoDatabase();
 
         /**
@@ -37,19 +37,19 @@ namespace Robomongo
 
         void loadFunctions();
 
-        void createCollection(const QString &collection);
-        void dropCollection(const QString &collection);
-        void renameCollection(const QString &collection, const QString &newCollection);
-        void duplicateCollection(const QString &collection, const QString &newCollection);
+        void createCollection(const std::string &collection);
+        void dropCollection(const std::string &collection);
+        void renameCollection(const std::string &collection, const std::string &newCollection);
+        void duplicateCollection(const std::string &collection, const std::string &newCollection);
 
         void createUser(const MongoUser &user, bool overwrite);
         void dropUser(const mongo::OID &id);
 
         void createFunction(const MongoFunction &fun);
-        void updateFunction(const QString &name, const MongoFunction &fun);
-        void dropFunction(const QString &name);
+        void updateFunction(const std::string &name, const MongoFunction &fun);
+        void dropFunction(const std::string &name);
 
-        QString name() const { return _name; }
+        const std::string &name() const { return _name; }
 
         /**
          * @brief Checks that this is a system database.
@@ -71,39 +71,37 @@ namespace Robomongo
 
     private:
         MongoServer *_server;
-        QList<MongoCollection *> _collections;
-        QString _name;
-        bool _system;
-
+        std::vector<MongoCollection *> _collections;
+        const std::string _name;
+        const bool _system;
         EventBus *_bus;
-
     };
 
     class MongoDatabaseCollectionListLoadedEvent : public Event
     {
         R_EVENT
 
-        MongoDatabaseCollectionListLoadedEvent(QObject *sender, const QList<MongoCollection *> &list) :
+        MongoDatabaseCollectionListLoadedEvent(QObject *sender, const std::vector<MongoCollection *> &list) :
             Event(sender),
             collections(list) { }
 
-        QList<MongoCollection *> collections;
+        std::vector<MongoCollection *> collections;
     };
 
     class MongoDatabaseUsersLoadedEvent : public Event
     {
         R_EVENT
 
-        MongoDatabaseUsersLoadedEvent(QObject *sender, MongoDatabase *database, const QList<MongoUser> &list) :
+        MongoDatabaseUsersLoadedEvent(QObject *sender, MongoDatabase *database, const std::vector<MongoUser> &list) :
             Event(sender),
             _users(list),
             _database(database) {}
 
-        QList<MongoUser> users() const { return _users; }
+        std::vector<MongoUser> users() const { return _users; }
         MongoDatabase *database() const { return _database; }
 
     private:
-        QList<MongoUser> _users;
+        std::vector<MongoUser> _users;
         MongoDatabase *_database;
     };
 
@@ -111,16 +109,16 @@ namespace Robomongo
     {
         R_EVENT
 
-        MongoDatabaseFunctionsLoadedEvent(QObject *sender, MongoDatabase *database, const QList<MongoFunction> &list) :
+        MongoDatabaseFunctionsLoadedEvent(QObject *sender, MongoDatabase *database, const std::vector<MongoFunction> &list) :
             Event(sender),
             _functions(list),
             _database(database) {}
 
-        QList<MongoFunction> functions() const { return _functions; }
+        std::vector<MongoFunction> functions() const { return _functions; }
         MongoDatabase *database() const { return _database; }
 
     private:
-        QList<MongoFunction> _functions;
+        std::vector<MongoFunction> _functions;
         MongoDatabase *_database;
     };
 

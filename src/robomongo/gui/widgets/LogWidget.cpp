@@ -8,6 +8,7 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -41,7 +42,7 @@ namespace Robomongo
 
     void LogWidget::handle(ConnectingEvent *event)
     {
-        addMessage(QString("Connecting to %1...").arg(event->server->connectionRecord()->getFullAddress()));
+        addMessage(QString("Connecting to %1...").arg(QtUtils::toQString(event->server->connectionRecord()->getFullAddress())));
     }
 
     void LogWidget::handle(OpeningShellEvent *event)

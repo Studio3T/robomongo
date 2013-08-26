@@ -26,7 +26,7 @@ namespace
 {
     void openCurrentDatabaseShell(Robomongo::MongoDatabase *database,const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
     {
-        Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, database->name(), cursor);
+        Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, Robomongo::QtUtils::toQString(database->name()), cursor);
     }
 }
 
@@ -79,7 +79,7 @@ namespace Robomongo
         _bus->subscribe(this, MongoDatabaseFunctionsLoadingEvent::Type, _database);
         _bus->subscribe(this, MongoDatabaseUsersLoadingEvent::Type, _database);
         
-        setText(0, _database->name());
+        setText(0, QtUtils::toQString(_database->name()));
         setIcon(0, GuiRegistry::instance().databaseIcon());
         setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
@@ -115,7 +115,7 @@ namespace Robomongo
          _bus->send(_database->server()->client(), new LoadCollectionIndexesRequest(item, item->collection()->info()));
     }
 
-    void ExplorerDatabaseTreeItem::dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const QString &indexName)
+    void ExplorerDatabaseTreeItem::dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &indexName)
     {
         _bus->send(_database->server()->client(), new DropCollectionIndexRequest(item, item->collection()->info(), indexName));
     }
@@ -125,7 +125,7 @@ namespace Robomongo
         _bus->send(_database->server()->client(), new EnsureIndexRequest(item,oldInfo ,newInfo));
     }
 
-    void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& oldIndexText,const QString& newIndexText)
+    void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item,const std::string &oldIndexText,const std::string &newIndexText)
     {
          _bus->send(_database->server()->client(), new EditIndexRequest(item, item->collection()->info(),oldIndexText,newIndexText));
     }
@@ -137,8 +137,8 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseCollectionListLoadedEvent *event)
     {
-        QList<MongoCollection *> collections = event->collections;
-        int count = collections.count();
+        std::vector<MongoCollection *> collections = event->collections;
+        int count = collections.size();
         _collectionFolderItem->setText(0, detail::buildName("Collections",count));
 
         QtUtils::clearChildItems(_collectionFolderItem);
@@ -148,7 +148,7 @@ namespace Robomongo
         _collectionFolderItem->addChild(_collectionSystemFolderItem);
 
         for (int i = 0; i < collections.size(); ++i) {
-            MongoCollection *collection = collections.at(i);
+            MongoCollection *collection = collections[i];
 
             if (collection->isSystem()) {
                 addSystemCollectionItem(collection);
@@ -162,28 +162,28 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseUsersLoadedEvent *event)
     {
-        QList<MongoUser> users = event->users();
-        int count = users.count();
+        std::vector<MongoUser> users = event->users();
+        int count = users.size();
         _usersFolderItem->setText(0, detail::buildName("Users",count));
 
         QtUtils::clearChildItems(_usersFolderItem);
 
-        for (int i = 0; i < users.count(); ++i) {
-            MongoUser user = users.at(i);
+        for (int i = 0; i < users.size(); ++i) {
+            MongoUser user = users[i];
             addUserItem(event->database(), user);
         }
     }
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseFunctionsLoadedEvent *event)
     {
-        QList<MongoFunction> functions = event->functions();
-        int count = functions.count();
+        std::vector<MongoFunction> functions = event->functions();
+        int count = functions.size();
         _javascriptFolderItem->setText(0,  detail::buildName("Functions",count));
 
         QtUtils::clearChildItems(_javascriptFolderItem);
 
-        for (int i = 0; i < functions.count(); ++i) {
-            MongoFunction fun = functions.at(i);
+        for (int i = 0; i < functions.size(); ++i) {
+            MongoFunction fun = functions[i];
             addFunctionItem(event->database(), fun);
         }
     }
@@ -244,9 +244,10 @@ namespace Robomongo
     void ExplorerDatabaseTreeItem::ui_dbDrop()
     {
             // Ask user
+            char buff[256]={0};
+            sprintf(buff,"Drop <b>%s</b> database?",_database->name().c_str());
             int answer = QMessageBox::question(treeWidget(),
-                "Drop Database",
-                QString("Drop <b>%1</b> database?").arg(_database->name()),
+                "Drop Database",buff,
                 QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
             if (answer == QMessageBox::Yes){
                 _database->server()->dropDatabase(_database->name());

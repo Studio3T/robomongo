@@ -1,19 +1,23 @@
 #include "MongoNamespace.h"
 
+#include <stdio.h>
+
 namespace Robomongo
 {
-    MongoNamespace::MongoNamespace(const QString &ns) :
+    MongoNamespace::MongoNamespace(const std::string &ns) :
         _ns(ns)
     {
-        int dot = ns.indexOf('.');
-        _collectionName = ns.mid(dot + 1);
-        _databaseName = ns.mid(0, dot);
+        size_t dot = ns.find_first_of('.');
+        _collectionName = ns.substr(dot + 1);
+        _databaseName = ns.substr(0, dot);
     }
 
-    MongoNamespace::MongoNamespace(const QString &database, const QString &collection) :
+    MongoNamespace::MongoNamespace(const std::string &database, const std::string &collection) :
         _databaseName(database),
         _collectionName(collection)
     {
-        _ns = QString("%1.%2").arg(_databaseName, _collectionName);
+        char buff[512]={0};
+        sprintf(buff,"%s.%s",_databaseName.c_str(), _collectionName.c_str());
+        _ns = buff;
     }
 }

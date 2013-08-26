@@ -1,5 +1,7 @@
 #include "robomongo/core/settings/CredentialSettings.h"
 
+#include "robomongo/core/utils/QtUtils.h"
+
 namespace Robomongo
 {
     CredentialSettings::CredentialSettings() :
@@ -11,9 +13,9 @@ namespace Robomongo
 
     }
     CredentialSettings::CredentialSettings(const QVariantMap &map) :
-        _userName(map.value("userName").toString()),
-        _userPassword(map.value("userPassword").toString()),
-        _databaseName(map.value("databaseName").toString()),
+        _userName(QtUtils::toStdString<std::string>(map.value("userName").toString())),
+        _userPassword(QtUtils::toStdString<std::string>(map.value("userPassword").toString())),
+        _databaseName(QtUtils::toStdString<std::string>(map.value("databaseName").toString())),
         _enabled(map.value("enabled").toBool())
     {
     }
@@ -30,9 +32,9 @@ namespace Robomongo
     QVariant CredentialSettings::toVariant() const
     {
         QVariantMap map;
-        map.insert("userName", userName());
-        map.insert("userPassword", userPassword());
-        map.insert("databaseName", databaseName());
+        map.insert("userName", QtUtils::toQString(userName()));
+        map.insert("userPassword", QtUtils::toQString(userPassword()));
+        map.insert("databaseName", QtUtils::toQString(databaseName()));
         map.insert("enabled", enabled());
         return map;
     }

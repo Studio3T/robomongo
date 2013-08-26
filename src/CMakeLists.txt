@@ -31,7 +31,6 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/WorkAreaTabBar.h
     robomongo/gui/widgets/workarea/JsonPrepareThread.h
     robomongo/gui/widgets/workarea/BsonTreeWidget.h
-    robomongo/gui/widgets/workarea/BsonTreeItem.h
     robomongo/gui/editors/jsedit.h
     robomongo/gui/widgets/workarea/OutputWidget.h
     robomongo/gui/widgets/workarea/OutputItemContentWidget.h
@@ -59,6 +58,7 @@ SET(HEADERS_GUI
     robomongo/gui/utils/DialogUtils.h
     robomongo/gui/GuiRegistry.h
     robomongo/gui/editors/JSLexer.h
+    robomongo/gui/widgets/workarea/BsonTreeItem.h
     robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h
     robomongo/gui/ViewMode.h
     )

@@ -6,8 +6,6 @@
 
 namespace Robomongo
 {
-    class Concatenator;
-
     /*
     ** Represents MongoDB object.
     */
@@ -37,7 +35,7 @@ namespace Robomongo
         /*
         ** Create list of MongoDocuments from QList<BsonObj>. It will take owned version of BSONObj
         */ 
-        static QList<MongoDocumentPtr> fromBsonObj(const QList<mongo::BSONObj> &bsonObj);
+        static std::vector<MongoDocumentPtr> fromBsonObj(const std::vector<mongo::BSONObj> &bsonObj);
 
         /*
         ** Return "native" BSONObj
@@ -47,25 +45,13 @@ namespace Robomongo
         /*
         ** Convert to json string
         */
-        void buildJsonString(Concatenator &con);
+        void buildJsonString(std::string &con);
 
         /*
         ** Build JsonString from list of documents
         */
-        static QString buildJsonString(const QList<MongoDocumentPtr> &documents);
+        static std::string buildJsonString(const QList<MongoDocumentPtr> &documents);
 
-        static QString buildJsonString(const MongoDocumentPtr &documents);
-    };
-
-    class Concatenator
-    {
-    public:
-        Concatenator();
-        void append(const QString &data);
-        QString build();
-
-    private:
-        QStringList _list;
-        int _count;
+        static std::string buildJsonString(const MongoDocumentPtr &documents);
     };
 }

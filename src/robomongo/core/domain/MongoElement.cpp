@@ -6,6 +6,7 @@
 #include "robomongo/core/HexUtils.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/shell/db/ptimeutil.h"
 
 using namespace mongo;
@@ -27,9 +28,9 @@ namespace Robomongo
     {
         if(_stringValue.isNull())
         {
-            Concatenator con;
+            std::string con;
             buildJsonString(con);
-            _stringValue = con.build();
+            _stringValue = QtUtils::toQString(con);
         }
         return _stringValue;
     }
@@ -37,9 +38,9 @@ namespace Robomongo
     /*
     ** Get field name
     */
-    QString MongoElement::fieldName()
+    std::string MongoElement::fieldName() const
     {
-        return QString::fromUtf8(_bsonElement.fieldName());
+        return _bsonElement.fieldName();
     }
 
     /*
@@ -54,13 +55,13 @@ namespace Robomongo
     /*
     ** Build Json string that represent this element.
     */
-    void MongoElement::buildJsonString(Concatenator &con)
+    void MongoElement::buildJsonString(std::string &con)
     {
         switch (_bsonElement.type())
         {
         /** double precision floating point value */
         case NumberDouble:
-            con.append(QString::number(_bsonElement.Double(),'g',14));
+            con.append(QtUtils::toStdString<std::string>(QString::number(_bsonElement.Double(),'g',14)));
             break;
 
         /** character string, stored in utf8 */
@@ -83,8 +84,7 @@ namespace Robomongo
             **
             */
 
-                QString res = QString::fromUtf8(_bsonElement.valuestr(), _bsonElement.valuestrsize() - 1);
-                con.append(res);
+                con.append(_bsonElement.valuestr(), _bsonElement.valuestrsize() - 1);
             }
             break;
 
@@ -110,7 +110,7 @@ namespace Robomongo
                 mongo::BinDataType binType = _bsonElement.binDataType();
                 if (binType == mongo::newUUID || binType == mongo::bdtUUID) {
                     std::string uuid = HexUtils::formatUuid(_bsonElement, AppRegistry::instance().settingsManager()->uuidEncoding());
-                    con.append(QString::fromStdString(uuid));
+                    con.append(uuid);
                     break;
                 }
 
@@ -126,9 +126,10 @@ namespace Robomongo
         /** ObjectId */
         case jstOID:
             {
-                QString idValue = QString::fromStdString(_bsonElement.OID().toString());
-                QString objectId = QString("ObjectId(\"%1\")").arg(idValue);
-                con.append(objectId);
+                std::string idValue = _bsonElement.OID().toString();
+                char buff[256]={0};
+                sprintf(buff,"ObjectId(\"%s\")",idValue.c_str());
+                con.append(buff);
             }
             break;
 
@@ -148,36 +149,26 @@ namespace Robomongo
 
             std::string date = miutil::isotimeString(time,false,AppRegistry::instance().settingsManager()->timeZone()==LocalTime);
 
-            con.append(QString::fromStdString(date));
+            con.append(date);
             break;
-
-            /*
-            // this code is left untill the upper one will stabilize
-            unsigned long long millis = _bsonElement.Date().millis;
-            if ((long long)millis >= 0 &&
-            ((long long)millis/1000) < (std::numeric_limits<time_t>::max)()) {
-            con.append(QString::fromStdString(_bsonElement.Date().toString()));
-            }
-            break;
-            */
         }
 
         /** null type */
         case jstNULL:
-            con.append(QString("<null>"));
+            con.append("<null>");
             break;
 
         /** regular expression, a pattern with options */
         case RegEx:
             {
-                con.append("/" + QString::fromUtf8(_bsonElement.regex()) + "/");
+                con.append("/" + std::string(_bsonElement.regex()) + "/");
 
                 for ( const char *f = _bsonElement.regexFlags(); *f; ++f ) {
                     switch ( *f ) {
                     case 'g':
                     case 'i':
                     case 'm':
-                        con.append(QString(*f));
+                            con+=*f;
                     default:
                         break;
                     }
@@ -191,12 +182,12 @@ namespace Robomongo
 
         /** deprecated / use CodeWScope */
         case Code:
-            con.append(QString::fromUtf8(_bsonElement._asCode().data()));
+            con.append(_bsonElement._asCode());
             break;
 
         /** a programming language (e.g., Python) symbol */
         case Symbol:
-            con.append(QString::fromUtf8(_bsonElement.valuestr(), _bsonElement.valuestrsize() - 1));
+            con.append(_bsonElement.valuestr(), _bsonElement.valuestrsize() - 1);
             break;
 
         /** javascript code that can execute on the database server, with SavedContext */
@@ -204,7 +195,7 @@ namespace Robomongo
             {
                 mongo::BSONObj scope = _bsonElement.codeWScopeObject();
                 if (!scope.isEmpty() ) {
-                    con.append(QString::fromUtf8(_bsonElement._asCode().data()));
+                    con.append(_bsonElement._asCode());
                     break;
                 }
             }
@@ -212,8 +203,12 @@ namespace Robomongo
 
         /** 32 bit signed integer */
         case NumberInt:
-            con.append(QString::number(_bsonElement.Int()));
-            break;
+            {
+                char num[16]={0};
+                sprintf(num,"%d",_bsonElement.Int());
+                con.append(num);
+                break;
+            }           
 
         /** Updated to a Date with value next OpTime on insert */
         case Timestamp:
@@ -222,16 +217,19 @@ namespace Robomongo
                 unsigned long long millis = date.millis;
                 if ((long long)millis >= 0 &&
                     ((long long)millis/1000) < (std::numeric_limits<time_t>::max)()) {
-                        con.append(QString::fromStdString(date.toString()));
+                        con.append(date.toString());
                 }
                 break;
             }
 
         /** 64 bit integer */
         case NumberLong:
-            con.append(QString::number(_bsonElement.Long()));
-            break; 
-
+            {
+                char num[32]={0};
+                sprintf(num,"%lld",_bsonElement.Long());
+                con.append(num);
+                break; 
+            }
         default:
             con.append("<unsupported>");
             break;

@@ -88,14 +88,14 @@ namespace Robomongo
     {
         R_EVENT
 
-        EstablishConnectionResponse(QObject *sender, const QString &address) :
+        EstablishConnectionResponse(QObject *sender, const std::string &address) :
             Event(sender),
             address(address) {}
 
         EstablishConnectionResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
 
-        QString address;
+        std::string address;
     };
 
 
@@ -115,14 +115,14 @@ namespace Robomongo
     {
         R_EVENT
 
-        LoadDatabaseNamesResponse(QObject *sender, const QStringList &databaseNames) :
+        LoadDatabaseNamesResponse(QObject *sender, const std::vector<std::string> &databaseNames) :
             Event(sender),
             databaseNames(databaseNames) {}
 
         LoadDatabaseNamesResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
 
-        QStringList databaseNames;
+        std::vector<std::string> databaseNames;
     };
 
 
@@ -135,14 +135,14 @@ namespace Robomongo
         R_EVENT
 
     public:
-        LoadCollectionNamesRequest(QObject *sender, const QString &databaseName) :
+        LoadCollectionNamesRequest(QObject *sender, const std::string &databaseName) :
             Event(sender),
             _databaseName(databaseName) {}
 
-        QString databaseName() const { return _databaseName; }
+        std::string databaseName() const { return _databaseName; }
 
     private:
-        QString _databaseName;
+        std::string _databaseName;
     };
 
     class LoadCollectionNamesResponse : public Event
@@ -150,8 +150,8 @@ namespace Robomongo
         R_EVENT
 
     public:
-        LoadCollectionNamesResponse(QObject *sender, const QString &databaseName,
-                                    const QList<MongoCollectionInfo> &collectionInfos) :
+        LoadCollectionNamesResponse(QObject *sender, const std::string &databaseName,
+                                    const std::vector<MongoCollectionInfo> &collectionInfos) :
             Event(sender),
             _databaseName(databaseName),
             _collectionInfos(collectionInfos) { }
@@ -159,12 +159,12 @@ namespace Robomongo
         LoadCollectionNamesResponse(QObject *sender,const EventError &error) :
             Event(sender, error) {}
 
-        QString databaseName() const { return _databaseName; }
-        QList<MongoCollectionInfo> collectionInfos() const { return _collectionInfos; }
+        std::string databaseName() const { return _databaseName; }
+        std::vector<MongoCollectionInfo> collectionInfos() const { return _collectionInfos; }
 
     private:
-        QString _databaseName;
-        QList<MongoCollectionInfo> _collectionInfos;
+        std::string _databaseName;
+        std::vector<MongoCollectionInfo> _collectionInfos;
     };
 
     class LoadCollectionIndexesRequest : public Event
@@ -182,10 +182,10 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        LoadCollectionIndexesResponse(QObject *sender, const QList<EnsureIndexInfo> &indexes) :Event(sender), _indexes(indexes) {}
-        QList<EnsureIndexInfo> indexes() const { return _indexes; }
+        LoadCollectionIndexesResponse(QObject *sender, const std::vector<EnsureIndexInfo> &indexes) :Event(sender), _indexes(indexes) {}
+        std::vector<EnsureIndexInfo> indexes() const { return _indexes; }
     private:
-        QList<EnsureIndexInfo> _indexes;
+        std::vector<EnsureIndexInfo> _indexes;
     };
 
     class EnsureIndexRequest : public Event
@@ -209,44 +209,44 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        DropCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const QString &name) :
+        DropCollectionIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const std::string &name) :
             Event(sender),
             _collection(collection),
             _name(name) {}
 
         MongoCollectionInfo collection() const { return _collection; }
-        QString name() const {return _name;}
+        std::string name() const {return _name;}
     private:
         const MongoCollectionInfo _collection;
-        QString _name;
+        std::string _name;
     };
 
     class DeleteCollectionIndexResponse: public Event
     {
         R_EVENT
     public:
-        DeleteCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection,const QString &index) :
+        DeleteCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection,const std::string &index) :
         Event(sender),_collection(collection),_index(index) {}
         MongoCollectionInfo collection() const { return _collection; }
-        QString index() const {return _index;}
+        std::string index() const {return _index;}
     private:
         const MongoCollectionInfo _collection;
-        QString _index;
+        std::string _index;
     };
 
     class EditIndexRequest : public Event
     {
         R_EVENT
     public:
-        EditIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const QString &oldIndex,const QString &newIndex) :
+        EditIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const std::string &oldIndex,const std::string &newIndex) :
             Event(sender),_collection(collection),_oldIndex(oldIndex),_newIndex(newIndex) {}
         MongoCollectionInfo collection() const { return _collection; }
-        QString oldIndex() const {return _oldIndex;}
-        QString newIndex() const {return _newIndex;}
+        std::string oldIndex() const {return _oldIndex;}
+        std::string newIndex() const {return _newIndex;}
     private:
         const MongoCollectionInfo _collection;
-        QString _oldIndex;
-        QString _newIndex;
+        std::string _oldIndex;
+        std::string _newIndex;
     };
 
     /**
@@ -258,14 +258,14 @@ namespace Robomongo
         R_EVENT
 
     public:
-        LoadUsersRequest(QObject *sender, const QString &databaseName) :
+        LoadUsersRequest(QObject *sender, const std::string &databaseName) :
             Event(sender),
             _databaseName(databaseName) {}
 
-        QString databaseName() const { return _databaseName; }
+        std::string databaseName() const { return _databaseName; }
 
     private:
-        QString _databaseName;
+        std::string _databaseName;
     };
 
     class LoadUsersResponse : public Event
@@ -273,8 +273,8 @@ namespace Robomongo
         R_EVENT
 
     public:
-        LoadUsersResponse(QObject *sender, const QString &databaseName,
-                                    const QList<MongoUser> &users) :
+        LoadUsersResponse(QObject *sender, const std::string &databaseName,
+                                    const std::vector<MongoUser> &users) :
             Event(sender),
             _databaseName(databaseName),
             _users(users) { }
@@ -282,12 +282,12 @@ namespace Robomongo
         LoadUsersResponse(QObject *sender,const EventError &error) :
             Event(sender, error) {}
 
-        QString databaseName() const { return _databaseName; }
-        QList<MongoUser> users() const { return _users; }
+        std::string databaseName() const { return _databaseName; }
+        std::vector<MongoUser> users() const { return _users; }
 
     private:
-        QString _databaseName;
-        QList<MongoUser> _users;
+        std::string _databaseName;
+        std::vector<MongoUser> _users;
     };
 
 
@@ -300,14 +300,14 @@ namespace Robomongo
         R_EVENT
 
     public:
-        LoadFunctionsRequest(QObject *sender, const QString &databaseName) :
+        LoadFunctionsRequest(QObject *sender, const std::string &databaseName) :
             Event(sender),
             _databaseName(databaseName) {}
 
-        QString databaseName() const { return _databaseName; }
+        std::string databaseName() const { return _databaseName; }
 
     private:
-        QString _databaseName;
+        std::string _databaseName;
     };
 
     class LoadFunctionsResponse : public Event
@@ -315,8 +315,8 @@ namespace Robomongo
         R_EVENT
 
     public:
-        LoadFunctionsResponse(QObject *sender, const QString &databaseName,
-                                    const QList<MongoFunction> &functions) :
+        LoadFunctionsResponse(QObject *sender, const std::string &databaseName,
+                                    const std::vector<MongoFunction> &functions) :
             Event(sender),
             _databaseName(databaseName),
             _functions(functions) { }
@@ -324,12 +324,12 @@ namespace Robomongo
         LoadFunctionsResponse(QObject *sender,const EventError &error) :
             Event(sender, error) {}
 
-        QString databaseName() const { return _databaseName; }
-        QList<MongoFunction> functions() const { return _functions; }
+        std::string databaseName() const { return _databaseName; }
+        std::vector<MongoFunction> functions() const { return _functions; }
 
     private:
-        QString _databaseName;
-        QList<MongoFunction> _functions;
+        std::string _databaseName;
+        std::vector<MongoFunction> _functions;
     };
 
     /**
@@ -341,7 +341,7 @@ namespace Robomongo
         R_EVENT
 
     public:
-        InsertDocumentRequest(QObject *sender, const mongo::BSONObj &obj, const QString &database, const QString &collection, bool overwrite = false) :
+        InsertDocumentRequest(QObject *sender, const mongo::BSONObj &obj, const std::string &database, const std::string &collection, bool overwrite = false) :
             Event(sender),
             _obj(obj),
             _database(database),
@@ -349,14 +349,14 @@ namespace Robomongo
             _overwrite(overwrite) {}
 
         mongo::BSONObj obj() const { return _obj; }
-        QString database() const { return _database; }
-        QString collection() const { return _collection; }
+        std::string database() const { return _database; }
+        std::string collection() const { return _collection; }
         bool overwrite() const { return _overwrite; }
 
     private:
         mongo::BSONObj _obj;
-        QString _database;
-        QString _collection;
+        std::string _database;
+        std::string _collection;
         bool _overwrite;
     };
 
@@ -381,7 +381,7 @@ namespace Robomongo
         R_EVENT
 
     public:
-        RemoveDocumentRequest(QObject *sender, mongo::Query query, const QString &database, const QString &collection, bool justOne = true) :
+        RemoveDocumentRequest(QObject *sender, mongo::Query query, const std::string &database, const std::string &collection, bool justOne = true) :
             Event(sender),
             _query(query),
             _database(database),
@@ -389,14 +389,14 @@ namespace Robomongo
             _justOne(justOne) {}
 
         mongo::Query query() const { return _query; }
-        QString database() const { return _database; }
-        QString collection() const { return _collection; }
+        std::string database() const { return _database; }
+        std::string collection() const { return _collection; }
         bool justOne() const { return _justOne; }
 
     private:
         mongo::Query _query;
-        QString _database;
-        QString _collection;
+        std::string _database;
+        std::string _collection;
         bool _justOne;
     };
 
@@ -421,14 +421,14 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateDatabaseRequest(QObject *sender, const QString &database) :
+        CreateDatabaseRequest(QObject *sender, const std::string &database) :
             Event(sender),
             _database(database) {}
 
-        QString database() const { return _database; }
+        std::string database() const { return _database; }
 
     private:
-        QString _database;
+        std::string _database;
     };
 
     class CreateDatabaseResponse : public Event
@@ -454,14 +454,14 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DropDatabaseRequest(QObject *sender, const QString &database) :
+        DropDatabaseRequest(QObject *sender, const std::string &database) :
             Event(sender),
             _database(database) {}
 
-        QString database() const { return _database; }
+        std::string database() const { return _database; }
 
     private:
-        QString _database;
+        std::string _database;
     };
 
     class DropDatabaseResponse : public Event
@@ -485,17 +485,17 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateCollectionRequest(QObject *sender, const QString &database, const QString &collection) :
+        CreateCollectionRequest(QObject *sender, const std::string &database, const std::string &collection) :
             Event(sender),
             _database(database),
             _collection(collection) {}
 
-        QString database() const { return _database; }
-        QString collection() const { return _collection; }
+        std::string database() const { return _database; }
+        std::string collection() const { return _collection; }
 
     private:
-        QString _database;
-        QString _collection;
+        std::string _database;
+        std::string _collection;
     };
 
     class CreateCollectionResponse : public Event
@@ -521,18 +521,18 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DropCollectionRequest(QObject *sender, const QString &database,
-                              const QString &collection) :
+        DropCollectionRequest(QObject *sender, const std::string &database,
+                              const std::string &collection) :
             Event(sender),
             _database(database),
             _collection(collection){}
 
-        QString database() const { return _database; }
-        QString collection() const { return _collection; }
+        std::string database() const { return _database; }
+        std::string collection() const { return _collection; }
 
     private:
-        QString _database;
-        QString _collection;
+        std::string _database;
+        std::string _collection;
     };
 
     class DropCollectionResponse : public Event
@@ -556,21 +556,21 @@ namespace Robomongo
         R_EVENT
 
     public:
-        RenameCollectionRequest(QObject *sender, const QString &database,
-                              const QString &collection, const QString &newCollection) :
+        RenameCollectionRequest(QObject *sender, const std::string &database,
+                              const std::string &collection, const std::string &newCollection) :
             Event(sender),
             _database(database),
             _collection(collection),
             _newCollection(newCollection) {}
 
-        QString database() const { return _database; }
-        QString collection() const { return _collection; }
-        QString newCollection() const { return _newCollection; }
+        std::string database() const { return _database; }
+        std::string collection() const { return _collection; }
+        std::string newCollection() const { return _newCollection; }
 
     private:
-        QString _database;
-        QString _collection;
-        QString _newCollection;
+        std::string _database;
+        std::string _collection;
+        std::string _newCollection;
     };
 
     class RenameCollectionResponse : public Event
@@ -594,21 +594,21 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DuplicateCollectionRequest(QObject *sender, const QString &database,
-                              const QString &collection, const QString &newCollection) :
+        DuplicateCollectionRequest(QObject *sender, const std::string &database,
+                              const std::string &collection, const std::string &newCollection) :
             Event(sender),
             _database(database),
             _collection(collection),
             _newCollection(newCollection) {}
 
-        QString database() const { return _database; }
-        QString collection() const { return _collection; }
-        QString newCollection() const { return _newCollection; }
+        std::string database() const { return _database; }
+        std::string collection() const { return _collection; }
+        std::string newCollection() const { return _newCollection; }
 
     private:
-        QString _database;
-        QString _collection;
-        QString _newCollection;
+        std::string _database;
+        std::string _collection;
+        std::string _newCollection;
     };
 
     class DuplicateCollectionResponse : public Event
@@ -632,18 +632,18 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateUserRequest(QObject *sender, const QString &database, const MongoUser &user, bool overwrite = false) :
+        CreateUserRequest(QObject *sender, const std::string &database, const MongoUser &user, bool overwrite = false) :
             Event(sender),
             _database(database),
             _user(user),
             _overwrite(overwrite) {}
 
-        QString database() const { return _database; }
+        std::string database() const { return _database; }
         MongoUser user() const { return _user; }
         bool overwrite() const { return _overwrite; }
 
     private:
-        QString _database;
+        std::string _database;
         MongoUser _user;
         bool _overwrite;
     };
@@ -670,16 +670,16 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DropUserRequest(QObject *sender, const QString &database, const mongo::OID &id) :
+        DropUserRequest(QObject *sender, const std::string &database, const mongo::OID &id) :
             Event(sender),
             _database(database),
             _id(id) {}
 
-        QString database() const { return _database; }
+        std::string database() const { return _database; }
         mongo::OID id() const { return _id; }
 
     private:
-        QString _database;
+        std::string _database;
         mongo::OID _id;
     };
 
@@ -705,22 +705,22 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateFunctionRequest(QObject *sender, const QString &database, const MongoFunction &function,
-                              const QString &existingFunctionName = QString(), bool overwrite = false) :
+        CreateFunctionRequest(QObject *sender, const std::string &database, const MongoFunction &function,
+                              const std::string &existingFunctionName = std::string(), bool overwrite = false) :
             Event(sender),
             _database(database),
             _existingFunctionName(existingFunctionName),
             _function(function),
             _overwrite(overwrite) {}
 
-        QString database() const { return _database; }
-        QString existingFunctionName() const { return _existingFunctionName; }
+        std::string database() const { return _database; }
+        std::string existingFunctionName() const { return _existingFunctionName; }
         MongoFunction function() const { return _function; }
         bool overwrite() const { return _overwrite; }
 
     private:
-        QString _database;
-        QString _existingFunctionName;
+        std::string _database;
+        std::string _existingFunctionName;
         MongoFunction _function;
         bool _overwrite;
     };
@@ -747,17 +747,17 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DropFunctionRequest(QObject *sender, const QString &database, const QString &name) :
+        DropFunctionRequest(QObject *sender, const std::string &database, const std::string &name) :
             Event(sender),
             _database(database),
             _name(name) {}
 
-        QString database() const { return _database; }
-        QString name() const { return _name; }
+        std::string database() const { return _database; }
+        std::string name() const { return _name; }
 
     private:
-        QString _database;
-        QString _name;
+        std::string _database;
+        std::string _name;
     };
 
     class DropFunctionResponse : public Event
@@ -798,7 +798,7 @@ namespace Robomongo
     {
         R_EVENT
 
-        ExecuteQueryResponse(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const QList<MongoDocumentPtr> &documents) :
+        ExecuteQueryResponse(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents) :
             Event(sender),
             resultIndex(resultIndex),
             queryInfo(queryInfo),
@@ -809,31 +809,31 @@ namespace Robomongo
 
         int resultIndex;
         MongoQueryInfo queryInfo;
-        QList<MongoDocumentPtr> documents;
+        std::vector<MongoDocumentPtr> documents;
     };
 
     class AutocompleteRequest : public Event
     {
         R_EVENT
 
-        AutocompleteRequest(QObject *sender, const QString &prefix) :
+        AutocompleteRequest(QObject *sender, const std::string &prefix) :
             Event(sender),
             prefix(prefix) {}
 
-        QString prefix;
+        std::string prefix;
     };
 
     class AutocompleteResponse : public Event
     {
         R_EVENT
 
-        AutocompleteResponse(QObject *sender, const QStringList &list, const QString &prefix) :
+        AutocompleteResponse(QObject *sender,const QStringList &list, const std::string &prefix) :
             Event(sender),
             list(list),
             prefix(prefix) {}
 
         QStringList list;
-        QString prefix;
+        std::string prefix;
     };
 
 
@@ -845,15 +845,15 @@ namespace Robomongo
     {
         R_EVENT
 
-        ExecuteScriptRequest(QObject *sender, const QString &script, const QString &dbName, int take = 0, int skip = 0) :
+        ExecuteScriptRequest(QObject *sender, const std::string &script, const std::string &dbName, int take = 0, int skip = 0) :
             Event(sender),
             script(script),
             databaseName(dbName),
             take(take),
             skip(skip) {}
 
-        QString script;
-        QString databaseName;
+        std::string script;
+        std::string databaseName;
         int take; //
         int skip;
     };
@@ -949,7 +949,7 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DocumentListLoadedEvent(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const QString &query, const QList<MongoDocumentPtr> &docs) :
+        DocumentListLoadedEvent(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const std::string &query, const std::vector<MongoDocumentPtr> &docs) :
             Event(sender),
             _resultIndex(resultIndex),
             _queryInfo(queryInfo),
@@ -958,14 +958,14 @@ namespace Robomongo
 
         int resultIndex() const { return _resultIndex; }
         MongoQueryInfo queryInfo() const { return _queryInfo; }
-        QList<MongoDocumentPtr> documents() const { return _documents; }
-        QString query() const { return _query; }
+        std::vector<MongoDocumentPtr> documents() const { return _documents; }
+        std::string query() const { return _query; }
 
     private:
         int _resultIndex;
         MongoQueryInfo _queryInfo;
-        QList<MongoDocumentPtr> _documents;
-        QString _query;
+        std::vector<MongoDocumentPtr> _documents;
+        std::string _query;
     };
 
     class ScriptExecutedEvent : public Event

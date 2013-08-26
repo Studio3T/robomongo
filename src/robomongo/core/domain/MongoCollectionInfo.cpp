@@ -3,7 +3,7 @@
 
 namespace Robomongo
 {
-    MongoCollectionInfo::MongoCollectionInfo(mongo::BSONObj stats):_ns(QString::fromStdString(stats.getStringField("ns")))
+    MongoCollectionInfo::MongoCollectionInfo(mongo::BSONObj stats):_ns(stats.getStringField("ns"))
     {
         // if "size" and "storageSize" are of type Int32 or Int64, they
         // will be converted to double by "numberDouble()" function.

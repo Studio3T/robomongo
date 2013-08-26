@@ -21,8 +21,13 @@ namespace Robomongo
         _visible(visible)
     {
         _host = _connectionRecord->serverHost();
-        _port = QString::number(_connectionRecord->serverPort());
-        _address = QString("%1:%2").arg(_host).arg(_port);
+        char num[8]={0};
+        sprintf(num,"%d",_connectionRecord->serverPort());
+        _port = num;
+
+        char buf[128]={0};
+        sprintf(buf,"%s:%d",_host.c_str(),_connectionRecord->serverPort());
+        _address = buf;
 
         _connection.reset(new mongo::DBClientConnection);
 
@@ -53,27 +58,27 @@ namespace Robomongo
         qDebug() << "EstablishConnectionRequest sent";
     }
 
-    void MongoServer::createDatabase(const QString &dbName)
+    void MongoServer::createDatabase(const std::string &dbName)
     {
         _client->send(new CreateDatabaseRequest(this, dbName));
     }
 
-    void MongoServer::dropDatabase(const QString &dbName)
+    void MongoServer::dropDatabase(const std::string &dbName)
     {
         _client->send(new DropDatabaseRequest(this, dbName));
     }
 
-    void MongoServer::insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
+    void MongoServer::insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)
     {
         _client->send(new InsertDocumentRequest(this, obj, db, collection));
     }
 
-    void MongoServer::saveDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection)
+    void MongoServer::saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)
     {
         _client->send(new InsertDocumentRequest(this, obj, db, collection, true));
     }
 
-    void MongoServer::removeDocuments(mongo::Query query, const QString &db, const QString &collection, bool justOne)
+    void MongoServer::removeDocuments(mongo::Query query, const std::string &db, const std::string &collection, bool justOne)
     {
         _client->send(new RemoveDocumentRequest(this, query, db, collection, justOne));
     }
@@ -112,8 +117,8 @@ namespace Robomongo
         }
 
         clearDatabases();
-        for(QStringList::iterator it = event->databaseNames.begin();it!=event->databaseNames.end();++it){
-            const QString &name = *it;
+        for(std::vector<std::string>::iterator it = event->databaseNames.begin();it!=event->databaseNames.end();++it){
+            const std::string &name = *it;
             MongoDatabase *db  = new MongoDatabase(this, name);
             addDatabase(db);
         }

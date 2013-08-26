@@ -45,14 +45,14 @@ namespace Robomongo
         /**
          * @brief Name of connection
          */
-        QString connectionName() const { return _connectionName; }
-        void setConnectionName(const QString &connectionName) { _connectionName = connectionName; }
+        std::string connectionName() const { return _connectionName; }
+        void setConnectionName(const std::string &connectionName) { _connectionName = connectionName; }
 
         /**
          * @brief Server host
          */
-        QString serverHost() const { return _serverHost; }
-        void setServerHost(const QString &serverHost) { _serverHost = serverHost; }
+        std::string serverHost() const { return _serverHost; }
+        void setServerHost(const std::string &serverHost) { _serverHost = serverHost; }
 
         /**
          * @brief Port of server
@@ -63,8 +63,8 @@ namespace Robomongo
         /**
          * @brief Default database
          */
-        QString defaultDatabase() const { return _defaultDatabase; }
-        void setDefaultDatabase(const QString &defaultDatabase) { _defaultDatabase = defaultDatabase; }
+        std::string defaultDatabase() const { return _defaultDatabase; }
+        void setDefaultDatabase(const std::string &defaultDatabase) { _defaultDatabase = defaultDatabase; }
 
         /**
          * @brief Adds credential to this connection
@@ -110,26 +110,21 @@ namespace Robomongo
         /**
          * @brief Returns connection full address (i.e. locahost:8090)
          */
-        QString getFullAddress() const
-        {
-            return QString("%1:%2")
-                .arg(_serverHost)
-                .arg(_serverPort);
-        }
+        std::string getFullAddress() const;
 
-        QString getReadableName() const
+        std::string getReadableName() const
         {
-            if (_connectionName.isEmpty())
+            if (_connectionName.empty())
                 return getFullAddress();
 
             return _connectionName;
         }
 
     private:
-        CredentialSettings *findCredential(const QString &databaseName)const;
-        QString _connectionName;
-        QString _serverHost;
-        QString _defaultDatabase;
+        CredentialSettings *findCredential(const std::string &databaseName)const;
+        std::string _connectionName;
+        std::string _serverHost;
+        std::string _defaultDatabase;
         unsigned _serverPort;
 
         QList<CredentialSettings *> _credentials;

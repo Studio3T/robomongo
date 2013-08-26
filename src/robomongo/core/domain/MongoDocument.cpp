@@ -7,27 +7,6 @@
 
 namespace Robomongo
 {
-    Concatenator::Concatenator():_count(0)
-    {
-    }
-
-    void Concatenator::append(const std::string &data)
-    {
-        _list.push_back(data);
-        _count += data.length();
-    }
-
-    std::string Concatenator::build() const
-    {
-        std::string text;
-        text.reserve(_count + 10);
-        for (std::vector<std::string>::const_iterator it=_list.begin();it!=_list.end();++it){
-            text += *it;
-        }
-
-        return text;
-    }
-
     MongoDocument::MongoDocument()
     {
     // test
@@ -69,7 +48,7 @@ namespace Robomongo
     /*
     ** Convert to json string
     */
-    void MongoDocument::buildJsonString(Concatenator &con)
+    void MongoDocument::buildJsonString(std::string &con)
     {
         MongoDocumentIterator i(this);
         con.append("{ \n");

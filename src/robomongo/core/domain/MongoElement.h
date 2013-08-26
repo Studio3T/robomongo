@@ -5,8 +5,6 @@
 
 namespace Robomongo
 {
-    class Concatenator;
-
     /*
     ** Wrapper around BSONElement
     */
@@ -73,7 +71,7 @@ namespace Robomongo
         /*
         ** Build Json string that represent this element.
         */
-        void buildJsonString(Concatenator &con);
+        void buildJsonString(std::string &con);
 
         mongo::BSONElement bsonElement() const { return _bsonElement; }
 

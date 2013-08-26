@@ -28,9 +28,9 @@ namespace Robomongo
     {
         if(_stringValue.isNull())
         {
-            Concatenator con;
+            std::string con;
             buildJsonString(con);
-            _stringValue = QtUtils::toQString(con.build());
+            _stringValue = QtUtils::toQString(con);
         }
         return _stringValue;
     }
@@ -55,7 +55,7 @@ namespace Robomongo
     /*
     ** Build Json string that represent this element.
     */
-    void MongoElement::buildJsonString(Concatenator &con)
+    void MongoElement::buildJsonString(std::string &con)
     {
         switch (_bsonElement.type())
         {
@@ -84,7 +84,7 @@ namespace Robomongo
             **
             */
 
-                con.append(std::string(_bsonElement.valuestr(), _bsonElement.valuestrsize() - 1));
+                con.append(_bsonElement.valuestr(), _bsonElement.valuestrsize() - 1);
             }
             break;
 
@@ -168,11 +168,7 @@ namespace Robomongo
                     case 'g':
                     case 'i':
                     case 'm':
-                        {
-                            std::string str;
-                            str+=*f;
-                            con.append(str);
-                        }
+                            con+=*f;
                     default:
                         break;
                     }
@@ -191,7 +187,7 @@ namespace Robomongo
 
         /** a programming language (e.g., Python) symbol */
         case Symbol:
-            con.append(std::string(_bsonElement.valuestr(), _bsonElement.valuestrsize() - 1));
+            con.append(_bsonElement.valuestr(), _bsonElement.valuestrsize() - 1);
             break;
 
         /** javascript code that can execute on the database server, with SavedContext */
@@ -208,7 +204,7 @@ namespace Robomongo
         /** 32 bit signed integer */
         case NumberInt:
             {
-                char num[8]={0};
+                char num[16]={0};
                 sprintf(num,"%d",_bsonElement.Int());
                 con.append(num);
                 break;
@@ -229,8 +225,8 @@ namespace Robomongo
         /** 64 bit integer */
         case NumberLong:
             {
-                char num[16]={0};
-                sprintf(num,"%d",_bsonElement.Long());
+                char num[32]={0};
+                sprintf(num,"%lld",_bsonElement.Long());
                 con.append(num);
                 break; 
             }

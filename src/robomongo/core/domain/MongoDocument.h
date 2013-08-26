@@ -6,8 +6,6 @@
 
 namespace Robomongo
 {
-    class Concatenator;
-
     /*
     ** Represents MongoDB object.
     */
@@ -47,7 +45,7 @@ namespace Robomongo
         /*
         ** Convert to json string
         */
-        void buildJsonString(Concatenator &con);
+        void buildJsonString(std::string &con);
 
         /*
         ** Build JsonString from list of documents
@@ -55,17 +53,5 @@ namespace Robomongo
         static std::string buildJsonString(const QList<MongoDocumentPtr> &documents);
 
         static std::string buildJsonString(const MongoDocumentPtr &documents);
-    };
-
-    class Concatenator
-    {
-    public:
-        Concatenator();
-        void append(const std::string &data);
-        std::string build() const;
-
-    private:
-        std::vector<std::string> _list;
-        int _count;
     };
 }

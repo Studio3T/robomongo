@@ -10,8 +10,8 @@ namespace Robomongo
         template<>
         QString toQString<std::string>(const std::string &value)
         {
-            static QTextCodec *LOCALECODEC = QTextCodec::codecForLocale();
-            return LOCALECODEC->toUnicode(value.c_str(),value.size());
+            //static QTextCodec *LOCALECODEC = QTextCodec::codecForLocale();
+            return QString::fromUtf8(value.c_str(),value.size());
         }
 
         template<>

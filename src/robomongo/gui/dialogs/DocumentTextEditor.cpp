@@ -13,6 +13,7 @@
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/shell/db/json.h"
 
 
@@ -93,9 +94,8 @@ namespace Robomongo
     bool DocumentTextEditor::validate(bool silentOnSuccess /* = true */)
     {
         QString text = jsonText();
-        QByteArray utf = text.toUtf8();
         try {
-            _obj = mongo::Robomongo::fromjson(utf.data());
+            _obj = mongo::Robomongo::fromjson(QtUtils::toStdString<std::string>(text));
         } catch (mongo::ParseMsgAssertionException &ex) {
             QString message = QString::fromStdString(ex.reason());
             int offset = ex.offset();

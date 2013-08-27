@@ -80,7 +80,7 @@ namespace Robomongo
         _completer->setMaxVisibleItems(20);
         _completer->setWrapAround(false);
         _completer->popup()->setFont(GuiRegistry::instance().font());
-        connect(_completer, SIGNAL(activated(QString)), this, SLOT(onCompletionActivated(QString)));
+        connect(_completer, SIGNAL(activated(const QString &)), this, SLOT(onCompletionActivated(const QString&)));
 
         QStringListModel *model = new QStringListModel(_completer);
         _completer->setModel(model);
@@ -253,7 +253,7 @@ namespace Robomongo
         }
     }
 
-    void ScriptWidget::onCompletionActivated(QString text)
+    void ScriptWidget::onCompletionActivated(const QString &text)
     {
         int row = _currentAutoCompletionInfo.line();
         int colLeft = _currentAutoCompletionInfo.lineIndexLeft();

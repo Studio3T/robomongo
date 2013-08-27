@@ -96,11 +96,11 @@ namespace Robomongo
         QString text = jsonText();
         try {
             _obj = mongo::Robomongo::fromjson(QtUtils::toStdString<std::string>(text));
-        } catch (mongo::ParseMsgAssertionException &ex) {
-            QString message = QString::fromStdString(ex.reason());
+        } catch (const mongo::ParseMsgAssertionException &ex) {
+            QString message = QtUtils::toQString(ex.reason());
             int offset = ex.offset();
 
-            int line, pos;
+            int line=0, pos=0;
             _queryText->sciScintilla()->lineIndexFromPosition(offset, &line, &pos);
             _queryText->sciScintilla()->setCursorPosition(line, pos);
 

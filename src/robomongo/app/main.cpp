@@ -10,6 +10,7 @@ using namespace Robomongo;
 
 int main(int argc, char *argv[])
 {
+    setlocale(LC_NUMERIC,"C");
     QApplication app(argc, argv);
 
     AppRegistry::instance().settingsManager()->save();

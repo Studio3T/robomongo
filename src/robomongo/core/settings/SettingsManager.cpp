@@ -89,9 +89,9 @@ namespace Robomongo
                     int timeZone = map.value("timeZone").toInt();
                     if (timeZone > 2 || timeZone < 0)
                         timeZone = 0;
-
+                    
                     _timeZone = (SupportedTimes) timeZone;
-
+                    _loadInitJs = map.value("loadInitJs").toBool();
                     // 5. Load connections
                     _connections.clear();
 
@@ -128,7 +128,10 @@ namespace Robomongo
         // 4. Save view mode
         map.insert("viewMode", _viewMode);
 
-        // 5. Save connections
+        // 5. Save loadInitJs
+        map.insert("loadInitJs",_loadInitJs);
+
+        // 6. Save connections
         QVariantList list;
 
         for(QList<ConnectionSettings *>::const_iterator it = _connections.begin();it!=_connections.end();++it) {

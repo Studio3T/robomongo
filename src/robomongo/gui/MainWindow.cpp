@@ -274,6 +274,12 @@ namespace Robomongo
         uuidMenu->addAction(csharpLegacyEncodingAction);
         uuidMenu->addAction(pythonEncodingAction);
 
+        QAction *loadInitJs = new QAction("Load ."PROJECT_NAME_LOWERCASE".js",this);
+        loadInitJs->setCheckable(true);
+        loadInitJs->setChecked(AppRegistry::instance().settingsManager()->loadInitJs());
+        VERIFY(connect(loadInitJs, SIGNAL(triggered()), this, SLOT(setLoadInitJs())));
+        optionsMenu->addAction(loadInitJs);
+
         QActionGroup *uuidEncodingGroup = new QActionGroup(this);
         uuidEncodingGroup->addAction(defaultEncodingAction);
         uuidEncodingGroup->addAction(javaLegacyEncodingAction);
@@ -539,6 +545,13 @@ namespace Robomongo
     void MainWindow::setLocalTimeZone()
     {
         AppRegistry::instance().settingsManager()->setTimeZone(LocalTime);
+        AppRegistry::instance().settingsManager()->save();
+    }
+
+    void MainWindow::setLoadInitJs()
+    {
+        QAction *send = qobject_cast<QAction*>(sender());
+        AppRegistry::instance().settingsManager()->setLoadInitJs(send->isChecked());
         AppRegistry::instance().settingsManager()->save();
     }
 

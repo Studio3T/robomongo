@@ -39,8 +39,6 @@ namespace
         output.push_back(s.substr(prev_pos, pos-prev_pos)); // Last word
         return output;
     }
-
-    const std::pair<std::string,std::string> contToReplace[] = { std::make_pair("find().","DBQuery.prototype.") };
 }
 
 namespace mongo {
@@ -105,10 +103,13 @@ namespace Robomongo
             _scope = scope;
             _engine = mongo::globalScriptEngine;
 
+            //protected settings
+            _scope->exec("DBQuery.shellBatchSize = 1000", "(esprima)", true, true, true);
+
             // Load '.mongorc.js' from user's home directory
             // We are not checking whether file exists, because it will be
             // checked by 'Scope::execFile'.
-            std::string mongorcPath = QString("%1/.mongorc.js").arg(QDir::homePath()).toStdString();
+            std::string mongorcPath = QString("%1/."PROJECT_NAME_LOWERCASE".js").arg(QDir::homePath()).toStdString();
             scope->execFile(mongorcPath, false, false);
         }
 
@@ -208,30 +209,20 @@ namespace Robomongo
     {
         QMutexLocker lock(&_mutex);
 
-        _scope->exec("if (db) { db.runCommand({ping:1}); }", "(ping)", false, false, false);
+        QString pingStatement = QString("if (db) { db.runCommand({ping:1}); }");
+        QByteArray pingArray = pingStatement.toUtf8();
+        _scope->exec(pingArray.data(), "(ping)", false, false, false);
     }
 
     QStringList ScriptEngine::complete(const std::string &prefix)
     {
 //        if ( prefix.find( '"' ) != string::npos )
 //            return;
-        std::string replace = prefix;
-        size_t pos = std::string::npos;
-        bool hasExec = prefix.rfind("()")!=std::string::npos;
-        if(hasExec){
-            replace = ".";
-            for (unsigned i = 0; i<sizeof(contToReplace)/sizeof(*contToReplace); ++i){
-                if((pos = prefix.rfind(contToReplace[i].first))!=std::string::npos){
-                    replace = contToReplace[i].second+prefix.substr(pos+contToReplace[i].first.length());
-                    break;
-                }
-            }
-        }       
 
         try {
             using namespace mongo;
             QStringList results;
-            mongo::BSONObj args = BSON( "0" << replace );
+            mongo::BSONObj args = BSON( "0" << prefix );
 
             _scope->invokeSafe( "function callShellAutocomplete(x) {shellAutocomplete(x)}", &args, 0, 1000 );
             mongo::BSONObjBuilder b;
@@ -242,14 +233,7 @@ namespace Robomongo
             mongo::BSONObjIterator i( arr );
             while ( i.more() ) {
                 mongo::BSONElement e = i.next();
-                if(pos==std::string::npos){
-                    results.append(QtUtils::toQString(e.String()));
-                }
-                else{
-                    std::string toCompleate = e.String();
-                    toCompleate = toCompleate.replace(toCompleate.begin(),toCompleate.begin()+replace.length(),prefix);
-                    results.append(QtUtils::toQString(toCompleate));
-                }
+                results.append(QtUtils::toQString(e.String()));
             }
             return results;
         }
@@ -631,6 +615,3 @@ namespace Robomongo
     }
 
 }
-
-
-

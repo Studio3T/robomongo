@@ -25,7 +25,7 @@ namespace
     bool isStopChar(const QChar &ch, bool direction)
     {
         if (ch == '='  ||  ch == ';'  ||
-           // ch == '('  ||  ch == ')'  ||
+            ch == '('  ||  ch == ')'  ||
             ch == '{'  ||  ch == '}'  ||
             ch == '-'  ||  ch == '/'  ||
             ch == '+'  ||  ch == '*'  ||

@@ -28,7 +28,8 @@ namespace Robomongo
         void setQueryInfo(const MongoQueryInfo &queryInfo);
         MongoQueryInfo queryInfo() const { return _queryInfo; }
 
-    private slots:
+    private Q_SLOTS:
+        void refresh(int skip, int limit);
         void paging_leftClicked(int skip, int limit);
         void paging_rightClicked(int skip, int limit);
 

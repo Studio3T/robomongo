@@ -77,6 +77,8 @@ namespace Robomongo
         void setViewMode(ViewMode viewMode) { _viewMode = viewMode; }
         ViewMode viewMode() { return _viewMode; }
 
+        void setLoadInitJs(bool isLoadJs) { _loadInitJs = isLoadJs;}
+        bool loadInitJs() const {return _loadInitJs;}
     signals:
         void connectionAdded(ConnectionSettings *connection);
         void connectionUpdated(ConnectionSettings *connection);
@@ -98,7 +100,7 @@ namespace Robomongo
          * @brief view mode
          */
         ViewMode _viewMode;
-
+        bool _loadInitJs;
         /**
          * @brief List of connections
          */

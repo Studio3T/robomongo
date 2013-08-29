@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QSplitter>
 
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemWidget.h"
@@ -28,7 +29,7 @@ namespace Robomongo
         _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");
         _maxButton->setFixedSize(18, 18);
         _maxButton->setFlat(true);
-        connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart()));
+        VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart())));
 
         // Tree mode button
         _treeButton = new QPushButton(this);
@@ -39,7 +40,7 @@ namespace Robomongo
         _treeButton->setFlat(true);
         _treeButton->setCheckable(true);
         _treeButton->setChecked(true);
-        connect(_treeButton, SIGNAL(clicked()), this, SLOT(showTree()));
+        VERIFY(connect(_treeButton, SIGNAL(clicked()), this, SLOT(showTree())));
 
         // Text mode button
         _textButton = new QPushButton;
@@ -48,7 +49,7 @@ namespace Robomongo
         _textButton->setFixedSize(24, 24);
         _textButton->setFlat(true);
         _textButton->setCheckable(true);
-        connect(_textButton, SIGNAL(clicked()), this, SLOT(showText()));
+        VERIFY(connect(_textButton, SIGNAL(clicked()), this, SLOT(showText())));
 
         // Custom mode button
         _customButton = new QPushButton(this);
@@ -58,7 +59,7 @@ namespace Robomongo
         _customButton->setFixedSize(24, 24);
         _customButton->setFlat(true);
         _customButton->setCheckable(true);
-        connect(_customButton, SIGNAL(clicked()), this, SLOT(showCustom()));
+        VERIFY(connect(_customButton, SIGNAL(clicked()), this, SLOT(showCustom())));
 
         _collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon());
         _timeIndicator = new Indicator(GuiRegistry::instance().timeIcon());

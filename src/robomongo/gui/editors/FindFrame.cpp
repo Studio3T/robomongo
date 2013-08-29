@@ -10,6 +10,7 @@
 #include <QMessageBox>
 
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -48,9 +49,9 @@ namespace Robomongo
 
         _findPanel->hide();
 
-        connect(_close, SIGNAL(clicked()), _findPanel, SLOT(hide()));
-        connect(_next, SIGNAL(clicked()), this, SLOT(goToNextElement()));
-        connect(_prev, SIGNAL(clicked()), this, SLOT(goToPrevElement()));
+        VERIFY(connect(_close, SIGNAL(clicked()), _findPanel, SLOT(hide())));
+        VERIFY(connect(_next, SIGNAL(clicked()), this, SLOT(goToNextElement())));
+        VERIFY(connect(_prev, SIGNAL(clicked()), this, SLOT(goToPrevElement())));
     }
 
     void FindFrame::wheelEvent(QWheelEvent *e)

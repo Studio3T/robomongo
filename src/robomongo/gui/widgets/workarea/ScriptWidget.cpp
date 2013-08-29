@@ -80,7 +80,7 @@ namespace Robomongo
         _completer->setMaxVisibleItems(20);
         _completer->setWrapAround(false);
         _completer->popup()->setFont(GuiRegistry::instance().font());
-        connect(_completer, SIGNAL(activated(QString)), this, SLOT(onCompletionActivated(QString)));
+        VERIFY(connect(_completer, SIGNAL(activated(const QString &)), this, SLOT(onCompletionActivated(const QString&))));
 
         QStringListModel *model = new QStringListModel(_completer);
         _completer->setModel(model);
@@ -253,7 +253,7 @@ namespace Robomongo
         }
     }
 
-    void ScriptWidget::onCompletionActivated(QString text)
+    void ScriptWidget::onCompletionActivated(const QString &text)
     {
         int row = _currentAutoCompletionInfo.line();
         int colLeft = _currentAutoCompletionInfo.lineIndexLeft();
@@ -295,9 +295,9 @@ namespace Robomongo
         _queryText->sciScintilla()->setLexer(javaScriptLexer);
 
         _queryText->sciScintilla()->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
-        connect(_queryText->sciScintilla(), SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
-        connect(_queryText->sciScintilla(), SIGNAL(textChanged()), SLOT(onTextChanged()));
-        connect(_queryText->sciScintilla(), SIGNAL(cursorPositionChanged(int,int)), SLOT(onCursorPositionChanged(int,int)));
+        VERIFY(connect(_queryText->sciScintilla(), SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged())));
+        VERIFY(connect(_queryText->sciScintilla(), SIGNAL(textChanged()), SLOT(onTextChanged())));
+        VERIFY(connect(_queryText->sciScintilla(), SIGNAL(cursorPositionChanged(int,int)), SLOT(onCursorPositionChanged(int,int))));
     }
 
     /**

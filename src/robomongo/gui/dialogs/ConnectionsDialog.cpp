@@ -31,21 +31,21 @@ namespace Robomongo
         setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
         _settingsManager = settingsManager;
-        connect(_settingsManager, SIGNAL(connectionAdded(ConnectionSettings *)), this, SLOT(add(ConnectionSettings*)));
-        connect(_settingsManager, SIGNAL(connectionUpdated(ConnectionSettings *)), this, SLOT(update(ConnectionSettings*)));
-        connect(_settingsManager, SIGNAL(connectionRemoved(ConnectionSettings *)), this, SLOT(remove(ConnectionSettings*)));
+        VERIFY(connect(_settingsManager, SIGNAL(connectionAdded(ConnectionSettings *)), this, SLOT(add(ConnectionSettings*))));
+        VERIFY(connect(_settingsManager, SIGNAL(connectionUpdated(ConnectionSettings *)), this, SLOT(update(ConnectionSettings*))));
+        VERIFY(connect(_settingsManager, SIGNAL(connectionRemoved(ConnectionSettings *)), this, SLOT(remove(ConnectionSettings*))));
 
         QAction *addAction = new QAction("&Add", this);
-        connect(addAction, SIGNAL(triggered()), this, SLOT(add()));
+        VERIFY(connect(addAction, SIGNAL(triggered()), this, SLOT(add())));
 
         QAction *editAction = new QAction("&Edit", this);
-        connect(editAction, SIGNAL(triggered()), this, SLOT(edit()));
+        VERIFY(connect(editAction, SIGNAL(triggered()), this, SLOT(edit())));
 
         QAction *cloneAction = new QAction("&Clone", this);
-        connect(cloneAction, SIGNAL(triggered()), this, SLOT(clone()));
+        VERIFY(connect(cloneAction, SIGNAL(triggered()), this, SLOT(clone())));
 
         QAction *removeAction = new QAction("&Remove", this);
-        connect(removeAction, SIGNAL(triggered()), this, SLOT(remove()));
+        VERIFY(connect(removeAction, SIGNAL(triggered()), this, SLOT(remove())));
 
         _listWidget = new ConnectionsTreeWidget;
         GuiRegistry::instance().setAlternatingColor(_listWidget);
@@ -70,16 +70,16 @@ namespace Robomongo
         _listWidget->setDragDropMode(QAbstractItemView::InternalMove);
         _listWidget->setMinimumHeight(300);
         _listWidget->setMinimumWidth(630);
-        connect(_listWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept()));
-        connect(_listWidget, SIGNAL(layoutChanged()), this, SLOT(listWidget_layoutChanged()));
+        VERIFY(connect(_listWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept())));
+        VERIFY(connect(_listWidget, SIGNAL(layoutChanged()), this, SLOT(listWidget_layoutChanged())));
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
         buttonBox->button(QDialogButtonBox::Save)->setIcon(GuiRegistry::instance().serverIcon());
         buttonBox->button(QDialogButtonBox::Save)->setText("C&onnect");
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+        VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
         QHBoxLayout *bottomLayout = new QHBoxLayout;
         bottomLayout->addWidget(buttonBox);
@@ -88,7 +88,7 @@ namespace Robomongo
             "<a href='create'>Create</a>, "
             "<a href='edit'>edit</a>, <a href='remove'>remove</a>, <a href='clone'>clone</a> or reorder connections via drag'n'drop.");
         intro->setWordWrap(true);
-        connect(intro, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
+        VERIFY(connect(intro, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString))));
 
         QVBoxLayout *firstColumnLayout = new QVBoxLayout;
         firstColumnLayout->addWidget(intro);
@@ -99,8 +99,11 @@ namespace Robomongo
         mainLayout->addLayout(firstColumnLayout, 1);
 
         // Populate list with connections
-        foreach(ConnectionSettings *connectionModel, _settingsManager->connections())
+        QList<ConnectionSettings *> connections = _settingsManager->connections();
+        for(QList<ConnectionSettings *>::iterator it = connections.begin();it!=connections.end();++it ){
+            ConnectionSettings* connectionModel = *it;
             add(connectionModel);
+        }
 
         // Highlight first item
         if (_listWidget->topLevelItemCount() > 0)

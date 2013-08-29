@@ -44,7 +44,7 @@ namespace Robomongo
         _bus->subscribe(this, AutocompleteResponse::Type, shell);
 
         _scriptWidget = new ScriptWidget(_shell);
-        connect(_scriptWidget,SIGNAL(textChanged()),this,SLOT(textChange()));
+        VERIFY(connect(_scriptWidget,SIGNAL(textChanged()),this,SLOT(textChange())));
         _scriptWidget->installEventFilter(this);
 
         _viewer = new OutputWidget(_shell);

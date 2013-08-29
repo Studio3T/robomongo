@@ -29,7 +29,7 @@ namespace Robomongo
         _noPixmap = _noIcon.pixmap(24, 24);
 
         QPushButton *closeButton = new QPushButton("&Close");
-        connect(closeButton, SIGNAL(clicked()), this, SLOT(accept()));
+        VERIFY(connect(closeButton, SIGNAL(clicked()), this, SLOT(accept())));
         _connectionIconLabel = new QLabel;
         _authIconLabel = new QLabel;
         _connectionLabel = new QLabel;
@@ -66,10 +66,10 @@ namespace Robomongo
         setLayout(box);
 
         ConnectionDiagnosticThread *thread = new ConnectionDiagnosticThread(_connection);
-        connect(thread, SIGNAL(connectionStatus(QString, bool)), this, SLOT(connectionStatus(QString, bool)));
-        connect(thread, SIGNAL(authStatus(QString, bool)), this, SLOT(authStatus(QString, bool)));
-        connect(thread, SIGNAL(completed()), this, SLOT(completed()));
-        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+        VERIFY(connect(thread, SIGNAL(connectionStatus(QString, bool)), this, SLOT(connectionStatus(QString, bool))));
+        VERIFY(connect(thread, SIGNAL(authStatus(QString, bool)), this, SLOT(authStatus(QString, bool))));
+        VERIFY(connect(thread, SIGNAL(completed()), this, SLOT(completed())));
+        VERIFY(connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater())));
         thread->start();
     }
 

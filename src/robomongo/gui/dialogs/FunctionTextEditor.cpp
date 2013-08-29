@@ -50,8 +50,8 @@ namespace Robomongo
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+        VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
         QHBoxLayout *bottomlayout = new QHBoxLayout();
         bottomlayout->addStretch(1);

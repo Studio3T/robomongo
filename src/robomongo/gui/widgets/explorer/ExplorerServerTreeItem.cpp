@@ -32,29 +32,29 @@ namespace Robomongo
     { 
         QAction *openShellAction = new QAction("Open Shell", this);
         openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
-        connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell()));
+        VERIFY(connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell())));
 
         QAction *refreshServer = new QAction("Refresh", this);
-        connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer()));
+        VERIFY(connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer())));
 
         QAction *createDatabase = new QAction("Create Database", this);
-        connect(createDatabase, SIGNAL(triggered()), SLOT(ui_createDatabase()));
+        VERIFY(connect(createDatabase, SIGNAL(triggered()), SLOT(ui_createDatabase())));
 
         QAction *serverStatus = new QAction("Server Status", this);
-        connect(serverStatus, SIGNAL(triggered()), SLOT(ui_serverStatus()));
+        VERIFY(connect(serverStatus, SIGNAL(triggered()), SLOT(ui_serverStatus())));
 
         QAction *serverVersion = new QAction("MongoDB Version", this);
-        connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion()));
+        VERIFY(connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion())));
 
         QAction *serverHostInfo = new QAction("Host Info", this);
-        connect(serverHostInfo, SIGNAL(triggered()), SLOT(ui_serverHostInfo()));        
+        VERIFY(connect(serverHostInfo, SIGNAL(triggered()), SLOT(ui_serverHostInfo())));        
 
         QAction *showLog = new QAction("Show Log", this);
-        connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog())); 
+        VERIFY(connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog()))); 
 
         QAction *disconnectAction = new QAction("Disconnect", this);
         disconnectAction->setIconText("Disconnect");
-        connect(disconnectAction, SIGNAL(triggered()), SLOT(ui_disconnectServer()));
+        VERIFY(connect(disconnectAction, SIGNAL(triggered()), SLOT(ui_disconnectServer())));
 
         BaseClass::_contextMenu->addAction(openShellAction);
         BaseClass::_contextMenu->addAction(refreshServer);

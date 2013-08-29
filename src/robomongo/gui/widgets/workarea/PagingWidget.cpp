@@ -4,7 +4,9 @@
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QKeyEvent>
 
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 
 namespace
@@ -40,8 +42,11 @@ namespace Robomongo
 
         QPushButton *leftButton = createButtonWithIcon(GuiRegistry::instance().leftIcon());
         QPushButton *rightButton = createButtonWithIcon(GuiRegistry::instance().rightIcon());
-        connect(leftButton, SIGNAL(clicked()), this, SLOT(leftButton_clicked()));
-        connect(rightButton, SIGNAL(clicked()), this, SLOT(rightButton_clicked()));
+        VERIFY(connect(leftButton, SIGNAL(clicked()), this, SLOT(leftButton_clicked())));
+        VERIFY(connect(rightButton, SIGNAL(clicked()), this, SLOT(rightButton_clicked())));
+
+        VERIFY(connect(_limitEdit, SIGNAL(returnPressed()), this, SLOT(refresh())));
+        VERIFY(connect(_skipEdit, SIGNAL(returnPressed()), this, SLOT(refresh())));
 
         QHBoxLayout *layout = new QHBoxLayout();
         layout->setSpacing(0);
@@ -70,6 +75,13 @@ namespace Robomongo
 
         _limitEdit->setText(QString::number(limit));
         show();
+    }
+
+    void PagingWidget::refresh()
+    {
+        int limit = _limitEdit->text().toInt();
+        int skip = _skipEdit->text().toInt();
+        emit refreshed(skip, limit);
     }
 
     void PagingWidget::leftButton_clicked()

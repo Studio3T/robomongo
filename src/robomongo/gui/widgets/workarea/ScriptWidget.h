@@ -73,11 +73,11 @@ namespace Robomongo
         void textChanged();
     public Q_SLOTS:
         void setText(const QString &text);
-    private slots:
+    private Q_SLOTS:
         void ui_queryLinesCountChanged();
         void onTextChanged();
         void onCursorPositionChanged(int line, int index);
-        void onCompletionActivated(QString);
+        void onCompletionActivated(const QString&);
 
     private:
         void configureQueryText();

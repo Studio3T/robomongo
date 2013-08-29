@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QMutex>
-#include <boost/scoped_ptr.hpp>
 #include <mongo/scripting/engine.h>
 #include <js/jsparse.h>
 
@@ -29,8 +28,6 @@ namespace Robomongo
 
     private:
         ConnectionSettings *_connection;
-        QString _currentDatabase;
-        bool _isCurrentDatabaseValid;
 
         MongoShellResult prepareResult(const std::string &type, const std::string &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms);
         MongoShellExecResult prepareExecResult(const QList<MongoShellResult> &results);

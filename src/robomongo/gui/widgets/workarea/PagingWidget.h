@@ -12,6 +12,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef QWidget BaseClass;
         enum {pageLimit=50};
         PagingWidget();
         void setSkip(int skip);
@@ -20,10 +21,12 @@ namespace Robomongo
     Q_SIGNALS:
         void leftClicked(int skip, int limit);
         void rightClicked(int skip, int limit);
+        void refreshed(int skip, int limit);
 
     private Q_SLOTS:
         void leftButton_clicked();
         void rightButton_clicked();
+        void refresh();
 
     private:
         QLineEdit *_skipEdit;

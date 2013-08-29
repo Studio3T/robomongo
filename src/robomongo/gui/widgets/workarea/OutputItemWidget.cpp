@@ -6,6 +6,7 @@
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -25,8 +26,9 @@ namespace Robomongo
         layout->addWidget(output, 1);
         setLayout(layout);
 
-        connect(_header->paging(), SIGNAL(leftClicked(int,int)), this, SLOT(paging_leftClicked(int,int)));
-        connect(_header->paging(), SIGNAL(rightClicked(int,int)), this, SLOT(paging_rightClicked(int,int)));
+        VERIFY(connect(_header->paging(), SIGNAL(refreshed(int,int)), this, SLOT(refresh(int,int))));
+        VERIFY(connect(_header->paging(), SIGNAL(rightClicked(int,int)), this, SLOT(paging_rightClicked(int,int))));
+        VERIFY(connect(_header->paging(), SIGNAL(rightClicked(int,int)), this, SLOT(paging_rightClicked(int,int))));
     }
 
     void OutputItemWidget::setQueryInfo(const MongoQueryInfo &queryInfo)
@@ -36,30 +38,25 @@ namespace Robomongo
 
     void OutputItemWidget::paging_leftClicked(int skip, int limit)
     {
-        if (limit > 50)
-            limit = 50;
-
         int s = skip - limit;
 
         if (s < 0)
             s = 0;
 
-        MongoQueryInfo info(_queryInfo);
-        info.limit = limit;
-        info.skip = s;
-
-        output->showProgress();
-        output->shell()->query(output->resultIndex(this), info);
+        refresh(s,limit);
     }
 
     void OutputItemWidget::paging_rightClicked(int skip, int limit)
     {
-        if (limit > 50)
-            limit = 50;
+        skip += limit;
+        refresh(skip,limit);
+    }
 
+    void OutputItemWidget::refresh(int skip, int limit)
+    {
         MongoQueryInfo info(_queryInfo);
         info.limit = limit;
-        info.skip = skip + limit;
+        info.skip = skip;
 
         output->showProgress();
         output->shell()->query(output->resultIndex(this), info);

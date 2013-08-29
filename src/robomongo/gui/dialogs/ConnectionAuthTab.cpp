@@ -35,10 +35,10 @@ namespace Robomongo
 
         _useAuth = new QCheckBox("Perform authentication");
         _useAuth->setStyleSheet("margin-bottom: 7px");
-        connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool)));
+        VERIFY(connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool))));
 
         _echoModeButton = new QPushButton("Show");
-        connect(_echoModeButton, SIGNAL(clicked()), this, SLOT(toggleEchoMode()));
+        VERIFY(connect(_echoModeButton, SIGNAL(clicked()), this, SLOT(toggleEchoMode())));
 
         _useAuth->setChecked(_settings->hasEnabledPrimaryCredential());
         authChecked(_settings->hasEnabledPrimaryCredential());

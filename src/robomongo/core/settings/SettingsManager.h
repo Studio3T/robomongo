@@ -87,6 +87,16 @@ namespace Robomongo
     private:
 
         /**
+         * @brief Load settings from the map. Existings settings will be overwritten.
+         */
+        void loadFromMap(QVariantMap &map);
+
+        /**
+         * @brief Save all settings to map.
+         */
+        QVariantMap convertToMap() const;
+
+        /**
          * @brief Version of settings schema currently loaded
          */
         QString _version;

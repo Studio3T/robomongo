@@ -109,7 +109,7 @@ namespace Robomongo
             // Load '.mongorc.js' from user's home directory
             // We are not checking whether file exists, because it will be
             // checked by 'Scope::execFile'.
-            std::string mongorcPath = QString("%1/."PROJECT_NAME_LOWERCASE".js").arg(QDir::homePath()).toStdString();
+            std::string mongorcPath = QString("%1/.mongorc.js").arg(QDir::homePath()).toStdString();
             scope->execFile(mongorcPath, false, false);
         }
 

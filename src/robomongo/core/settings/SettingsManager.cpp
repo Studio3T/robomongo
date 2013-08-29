@@ -53,58 +53,22 @@ namespace Robomongo
      */
     bool SettingsManager::load()
     {
-        bool result = false;
-        if(QFile::exists(_configPath))
-        {
-            QFile f(_configPath);
-            if(f.open(QIODevice::ReadOnly))
-            {
-                QJson::Parser parser;
-                bool ok;
-                QVariantMap map = parser.parse(f.readAll(), &ok).toMap();
-                if(ok)
-                {
-                    // 1. Load version
-                    _version = map.value("version").toString();
+        if (!QFile::exists(_configPath))
+            return false;
 
-                    // 2. Load UUID encoding
-                    int encoding = map.value("uuidEncoding").toInt();
-                    if (encoding > 3 || encoding < 0)
-                        encoding = 0;
+        QFile f(_configPath);
+        if(!f.open(QIODevice::ReadOnly))
+            return false;
 
-                    _uuidEncoding = (UUIDEncoding) encoding;
+        bool ok;
+        QJson::Parser parser;
+        QVariantMap map = parser.parse(f.readAll(), &ok).toMap();
+        if (!ok)
+            return false;
 
+        loadFromMap(map);
 
-                    // 3. Load view mode
-                    if (map.contains("viewMode")) {
-                        int viewMode = map.value("viewMode").toInt();
-                        if (viewMode > 2 || encoding < 0)
-                            viewMode = Custom; // Default View Mode
-                        _viewMode = (ViewMode) viewMode;
-                    } else {
-                        _viewMode = Custom; // Default View Mode
-                    }
-
-                    // 4. Load TimeZone
-                    int timeZone = map.value("timeZone").toInt();
-                    if (timeZone > 2 || timeZone < 0)
-                        timeZone = 0;
-                    
-                    _timeZone = (SupportedTimes) timeZone;
-                    _loadInitJs = map.value("loadInitJs").toBool();
-                    // 5. Load connections
-                    _connections.clear();
-
-                    QVariantList list = map.value("connections").toList();
-                    for(QVariantList::iterator it = list.begin();it!=list.end();++it) {
-                        ConnectionSettings *record = new ConnectionSettings((*it).toMap());
-                        _connections.append(record);
-                    }
-                    result = true;
-                }
-            }
-        }
-        return result;
+        return true;
     }
 
     /**
@@ -113,7 +77,74 @@ namespace Robomongo
      */
     bool SettingsManager::save()
     {
-        bool result = false;
+        QVariantMap map = convertToMap();
+
+        if (!QDir().mkpath(_configDir))
+            return false;
+
+        QFile f(_configPath);
+        if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+            return false;
+
+        bool ok;
+        QJson::Serializer s;
+        s.setIndentMode(QJson::IndentFull);
+        s.serialize(map, &f, &ok);
+
+        qDebug() << "Settings saved to: " << _configPath;
+
+        return ok;
+    }
+
+    /**
+     * Load settings from the map. Existings settings will be overwritten.
+     */
+    void SettingsManager::loadFromMap(QVariantMap &map)
+    {
+        // 1. Load version
+        _version = map.value("version").toString();
+
+        // 2. Load UUID encoding
+        int encoding = map.value("uuidEncoding").toInt();
+        if (encoding > 3 || encoding < 0)
+            encoding = 0;
+
+        _uuidEncoding = (UUIDEncoding) encoding;
+
+
+        // 3. Load view mode
+        if (map.contains("viewMode")) {
+            int viewMode = map.value("viewMode").toInt();
+            if (viewMode > 2 || encoding < 0)
+                viewMode = Custom; // Default View Mode
+            _viewMode = (ViewMode) viewMode;
+        } else {
+            _viewMode = Custom; // Default View Mode
+        }
+
+        // 4. Load TimeZone
+        int timeZone = map.value("timeZone").toInt();
+        if (timeZone > 2 || timeZone < 0)
+            timeZone = 0;
+
+        _timeZone = (SupportedTimes) timeZone;
+        _loadInitJs = map.value("loadInitJs").toBool();
+
+        // 5. Load connections
+        _connections.clear();
+
+        QVariantList list = map.value("connections").toList();
+        for(QVariantList::iterator it = list.begin();it!=list.end();++it) {
+            ConnectionSettings *record = new ConnectionSettings((*it).toMap());
+            _connections.append(record);
+        }
+    }
+
+    /**
+     * Save all settings to map.
+     */
+    QVariantMap SettingsManager::convertToMap() const
+    {
         QVariantMap map;
 
         // 1. Save schema version
@@ -140,18 +171,8 @@ namespace Robomongo
         }
 
         map.insert("connections", list);
-        if (QDir().mkpath(_configDir))
-        {
-            QFile f(_configPath);
-            if(f.open(QIODevice::WriteOnly | QIODevice::Truncate))
-            {
-                QJson::Serializer s;
-                s.setIndentMode(QJson::IndentFull);
-                s.serialize(map, &f, &result);
-                qDebug() << "Settings saved to: " << _configPath;
-            }
-        }
-        return result;
+
+        return map;
     }
 
     /**

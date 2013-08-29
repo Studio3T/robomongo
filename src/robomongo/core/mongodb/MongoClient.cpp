@@ -11,7 +11,7 @@ namespace
         info._name = getField<mongo::String>(obj,"name");
         mongo::BSONObj keyObj = getField<mongo::Object>(obj,"key");
         if(keyObj.isValid()){
-                info._request = jsonString(keyObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
+            info._request = jsonString(keyObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
         }
         info._unique = getField<mongo::Bool>(obj,"unique");
         info._backGround = getField<mongo::Bool>(obj,"background");
@@ -23,7 +23,7 @@ namespace
         info._languageOverride = getField<mongo::String>(obj,"language_override");
         mongo::BSONObj weightsObj = getField<mongo::Object>(obj,"weights");
         if(weightsObj.isValid()){
-                info._textWeights = jsonString(weightsObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
+            info._textWeights = jsonString(weightsObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
         }
         return info;
     }
@@ -120,7 +120,7 @@ namespace Robomongo
                 MongoFunction user(bsonObj);
                 functions.push_back(user);
             } catch (const std::exception &) {
-            // skip invalid docs
+                // skip invalid docs
             }
         }
         return functions;
@@ -264,18 +264,18 @@ namespace Robomongo
             _dbclient->insert(ns.toString(), obj);
         } else { // this is update
 
-        std::string name = fun.name();
+            std::string name = fun.name();
 
-        if (existingFunctionName == name) {
-            mongo::BSONObjBuilder builder;
-            builder.append("_id", name);
-            mongo::BSONObj bsonQuery = builder.obj();
-            mongo::Query query(bsonQuery);
+            if (existingFunctionName == name) {
+                mongo::BSONObjBuilder builder;
+                builder.append("_id", name);
+                mongo::BSONObj bsonQuery = builder.obj();
+                mongo::Query query(bsonQuery);
 
-            _dbclient->update(ns.toString(), query, obj, true, false);
-        } else {
-            _dbclient->insert(ns.toString(), obj);
-            std::string res = _dbclient->getLastError();
+                _dbclient->update(ns.toString(), query, obj, true, false);
+            } else {
+                _dbclient->insert(ns.toString(), obj);
+                std::string res = _dbclient->getLastError();
 
                 // if no errors
                 if (res.empty()) {

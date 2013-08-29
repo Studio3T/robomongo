@@ -9,10 +9,12 @@ namespace Robomongo
         _info(info),
         _system(false)
     {
-        // system databases starts from system.*
+        // System databases starts from system.*
         std::string collectionName = _ns.collectionName();
-        size_t pos = collectionName.find_first_of("system.");
-        if (pos!=std::string::npos)
+        std::string prefix = "system.";
+
+        // Checking whether `collectionName` starts from `system`
+        if (collectionName.compare(0, prefix.length(), prefix) == 0)
             _system = true;
     }
 

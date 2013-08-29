@@ -34,5 +34,6 @@ namespace Robomongo
         bool _ignoreEnterKey;
         bool _ignoreTabKey;
         int _lineNumberMarginWidth;
+        int _lineNumberDigitWidth;
     };
 }

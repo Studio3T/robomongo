@@ -52,6 +52,7 @@ namespace Robomongo
     RoboScintilla::RoboScintilla(QWidget *parent) : QsciScintilla(parent),
         _ignoreEnterKey(false),
         _ignoreTabKey(false),
+        _lineNumberDigitWidth(0),
         _lineNumberMarginWidth(0)
     {
         setAutoIndent(true);
@@ -79,7 +80,7 @@ namespace Robomongo
         setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded); 
 
         // Cache width of one digit
-        //_lineNumberDigitWidth = textWidth(STYLE_LINENUMBER, "0");
+        _lineNumberDigitWidth = textWidth(STYLE_LINENUMBER, "0");
 
         updateLineNumbersMarginWidth();
 
@@ -162,7 +163,7 @@ namespace Robomongo
     void RoboScintilla::updateLineNumbersMarginWidth()
     {
         int numberOfDigits = getNumberOfDigits(lines());
-        _lineNumberMarginWidth = (numberOfDigits+1) * rowNumberWidth;
+        _lineNumberMarginWidth = numberOfDigits * _lineNumberDigitWidth + rowNumberWidth;
 
         // If line numbers margin already displayed, update its width
         if (lineNumberMarginWidth()) {

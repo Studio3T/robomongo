@@ -106,8 +106,8 @@ namespace Robomongo
                 // If authentication succeed and database name is 'admin' -
                 // then user is admin, otherwise user is not admin
                 std::string dbName = _connection->primaryCredential()->databaseName();
-                std::transform( dbName.begin(), dbName.end(), dbName.begin(), ::tolower );
-                if (dbName.find_first_of("admin")!=std::string::npos)
+                std::transform(dbName.begin(), dbName.end(), dbName.begin(), ::tolower);
+                if (dbName.compare("admin") != 0) // dbName is NOT "admin"
                     _isAdmin = false;
 
                 // Save name of db on which we authenticated

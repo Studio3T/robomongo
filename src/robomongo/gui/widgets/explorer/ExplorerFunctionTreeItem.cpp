@@ -22,10 +22,10 @@ namespace Robomongo
     {
 
         QAction *dropFunction = new QAction("Remove Function", this);
-        connect(dropFunction, SIGNAL(triggered()), SLOT(ui_dropFunction()));
+        VERIFY(connect(dropFunction, SIGNAL(triggered()), SLOT(ui_dropFunction())));
 
         QAction *editFunction = new QAction("Edit Function", this);
-        connect(editFunction, SIGNAL(triggered()), SLOT(ui_editFunction()));
+        VERIFY(connect(editFunction, SIGNAL(triggered()), SLOT(ui_editFunction())));
 
         BaseClass::_contextMenu->addAction(editFunction);
         BaseClass::_contextMenu->addAction(dropFunction);

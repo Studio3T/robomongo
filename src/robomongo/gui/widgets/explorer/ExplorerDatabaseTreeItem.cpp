@@ -50,19 +50,19 @@ namespace Robomongo
     {
         QAction *openDbShellAction = new QAction("Open Shell", this);
         openDbShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
-        connect(openDbShellAction, SIGNAL(triggered()), SLOT(ui_dbOpenShell()));
+        VERIFY(connect(openDbShellAction, SIGNAL(triggered()), SLOT(ui_dbOpenShell())));
 
         QAction *dbStats = new QAction("Database Statistics", this);
-        connect(dbStats, SIGNAL(triggered()), SLOT(ui_dbStatistics()));
+        VERIFY(connect(dbStats, SIGNAL(triggered()), SLOT(ui_dbStatistics())));
 
         QAction *dbDrop = new QAction("Drop Database", this);
-        connect(dbDrop, SIGNAL(triggered()), SLOT(ui_dbDrop()));
+        VERIFY(connect(dbDrop, SIGNAL(triggered()), SLOT(ui_dbDrop())));
 
         QAction *dbRepair = new QAction("Repair Database", this);
-        connect(dbRepair, SIGNAL(triggered()), SLOT(ui_dbRepair()));
+        VERIFY(connect(dbRepair, SIGNAL(triggered()), SLOT(ui_dbRepair())));
 
         QAction *refreshDatabase = new QAction("Refresh", this);
-        connect(refreshDatabase, SIGNAL(triggered()), SLOT(ui_refreshDatabase()));
+        VERIFY(connect(refreshDatabase, SIGNAL(triggered()), SLOT(ui_refreshDatabase())));
 
         BaseClass::_contextMenu->addAction(openDbShellAction);
         BaseClass::_contextMenu->addAction(refreshDatabase);

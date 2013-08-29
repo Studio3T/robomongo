@@ -33,12 +33,12 @@ namespace Robomongo
 
         QPushButton *validate = new QPushButton("Validate");
         validate->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
-        connect(validate, SIGNAL(clicked()), this, SLOT(onValidateButtonClicked()));
+        VERIFY(connect(validate, SIGNAL(clicked()), this, SLOT(onValidateButtonClicked())));
 
         _queryText = new FindFrame(this);
         _configureQueryText();
         _queryText->sciScintilla()->setText(json);
-        connect(_queryText->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onQueryTextChanged()));
+        VERIFY(connect(_queryText->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onQueryTextChanged())));
 
         QHBoxLayout *hlayout = new QHBoxLayout();
         hlayout->setContentsMargins(2, 0, 5, 1);
@@ -51,8 +51,8 @@ namespace Robomongo
         QDialogButtonBox *buttonBox = new QDialogButtonBox (this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+        VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
         QHBoxLayout *bottomlayout = new QHBoxLayout();
         bottomlayout->addWidget(validate);

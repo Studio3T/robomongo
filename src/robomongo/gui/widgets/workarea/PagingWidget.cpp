@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 
 namespace
@@ -40,8 +41,8 @@ namespace Robomongo
 
         QPushButton *leftButton = createButtonWithIcon(GuiRegistry::instance().leftIcon());
         QPushButton *rightButton = createButtonWithIcon(GuiRegistry::instance().rightIcon());
-        connect(leftButton, SIGNAL(clicked()), this, SLOT(leftButton_clicked()));
-        connect(rightButton, SIGNAL(clicked()), this, SLOT(rightButton_clicked()));
+        VERIFY(connect(leftButton, SIGNAL(clicked()), this, SLOT(leftButton_clicked())));
+        VERIFY(connect(rightButton, SIGNAL(clicked()), this, SLOT(rightButton_clicked())));
 
         QHBoxLayout *layout = new QHBoxLayout();
         layout->setSpacing(0);

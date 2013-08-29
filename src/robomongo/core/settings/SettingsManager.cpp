@@ -123,7 +123,7 @@ namespace Robomongo
         map.insert("uuidEncoding", _uuidEncoding);
 
         // 3. Save TimeZone encoding
-        map.insert("TimeZone", _timeZone);
+        map.insert("timeZone", _timeZone);
 
         // 4. Save view mode
         map.insert("viewMode", _viewMode);

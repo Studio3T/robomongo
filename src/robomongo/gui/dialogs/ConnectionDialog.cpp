@@ -13,6 +13,7 @@
 #include "robomongo/gui/dialogs/ConnectionBasicTab.h"
 #include "robomongo/gui/dialogs/ConnectionAdvancedTab.h"
 #include "robomongo/gui/dialogs/ConnectionDiagnosticDialog.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -29,12 +30,12 @@ namespace Robomongo
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+        VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
         QPushButton *testButton = new QPushButton("&Test");
         testButton->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
-        connect(testButton, SIGNAL(clicked()), this, SLOT(testConnection()));
+        VERIFY(connect(testButton, SIGNAL(clicked()), this, SLOT(testConnection())));
 
         QHBoxLayout *bottomLayout = new QHBoxLayout;
         bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);

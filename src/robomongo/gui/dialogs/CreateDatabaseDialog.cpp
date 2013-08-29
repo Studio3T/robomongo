@@ -9,6 +9,7 @@
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -33,8 +34,8 @@ namespace Robomongo
         _buttonBox->setOrientation(Qt::Horizontal);
         _buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
         _buttonBox->button(QDialogButtonBox::Save)->setText("C&reate");
-        connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-        connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+        VERIFY(connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+        VERIFY(connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
         QHBoxLayout *hlayout = new QHBoxLayout();
         hlayout->addStretch(1);

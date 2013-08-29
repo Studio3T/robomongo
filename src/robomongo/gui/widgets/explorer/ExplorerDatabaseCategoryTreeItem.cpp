@@ -31,13 +31,13 @@ namespace Robomongo
     {
         if(_category==Collections){
             QAction *createCollection = new QAction("Create Collection", this);
-            connect(createCollection, SIGNAL(triggered()), SLOT(ui_createCollection()));
+            VERIFY(connect(createCollection, SIGNAL(triggered()), SLOT(ui_createCollection())));
 
             QAction *dbCollectionsStats = new QAction("Collections Statistics", this);
-            connect(dbCollectionsStats, SIGNAL(triggered()), SLOT(ui_dbCollectionsStatistics()));
+            VERIFY(connect(dbCollectionsStats, SIGNAL(triggered()), SLOT(ui_dbCollectionsStatistics())));
 
             QAction *refreshCollections = new QAction("Refresh", this);
-            connect(refreshCollections, SIGNAL(triggered()), SLOT(ui_refreshCollections()));
+            VERIFY(connect(refreshCollections, SIGNAL(triggered()), SLOT(ui_refreshCollections())));
 
             BaseClass::_contextMenu->addAction(dbCollectionsStats);
             BaseClass::_contextMenu->addAction(createCollection);
@@ -47,13 +47,13 @@ namespace Robomongo
         else if(_category==Users){
 
             QAction *refreshUsers = new QAction("Refresh", this);
-            connect(refreshUsers, SIGNAL(triggered()), SLOT(ui_refreshUsers()));
+            VERIFY(connect(refreshUsers, SIGNAL(triggered()), SLOT(ui_refreshUsers())));
 
             QAction *viewUsers = new QAction("View Users", this);
-            connect(viewUsers, SIGNAL(triggered()), SLOT(ui_viewUsers()));
+            VERIFY(connect(viewUsers, SIGNAL(triggered()), SLOT(ui_viewUsers())));
 
             QAction *addUser = new QAction("Add User", this);
-            connect(addUser, SIGNAL(triggered()), SLOT(ui_addUser()));
+            VERIFY(connect(addUser, SIGNAL(triggered()), SLOT(ui_addUser())));
 
             BaseClass::_contextMenu->addAction(viewUsers);
             BaseClass::_contextMenu->addAction(addUser);
@@ -63,13 +63,13 @@ namespace Robomongo
         else if(_category==Functions){
 
             QAction *refreshFunctions = new QAction("Refresh", this);
-            connect(refreshFunctions, SIGNAL(triggered()), SLOT(ui_refreshFunctions()));
+            VERIFY(connect(refreshFunctions, SIGNAL(triggered()), SLOT(ui_refreshFunctions())));
 
             QAction *viewFunctions = new QAction("View Functions", this);
-            connect(viewFunctions, SIGNAL(triggered()), SLOT(ui_viewFunctions()));
+            VERIFY(connect(viewFunctions, SIGNAL(triggered()), SLOT(ui_viewFunctions())));
 
             QAction *addFunction = new QAction("Add Function", this);
-            connect(addFunction, SIGNAL(triggered()), SLOT(ui_addFunction()));
+            VERIFY(connect(addFunction, SIGNAL(triggered()), SLOT(ui_addFunction())));
 
             BaseClass::_contextMenu->addAction(viewFunctions);
             BaseClass::_contextMenu->addAction(addFunction);

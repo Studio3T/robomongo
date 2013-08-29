@@ -38,22 +38,22 @@ namespace Robomongo
         :BaseClass(parent)
     {
         QAction *addIndex = new QAction("Add Index", this);
-        connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex()));
+        VERIFY(connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex())));
 
         QAction *addIndexGui = new QAction("Add Index", this);
-        connect(addIndexGui, SIGNAL(triggered()), SLOT(ui_addIndexGui()));
+        VERIFY(connect(addIndexGui, SIGNAL(triggered()), SLOT(ui_addIndexGui())));
 
         QAction *dropIndex = new QAction("Drop Index", this);
-        connect(dropIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
+        VERIFY(connect(dropIndex, SIGNAL(triggered()), SLOT(ui_dropIndex())));
 
         QAction *reIndex = new QAction("Rebuild Indexes", this);
-        connect(reIndex, SIGNAL(triggered()), SLOT(ui_reIndex()));
+        VERIFY(connect(reIndex, SIGNAL(triggered()), SLOT(ui_reIndex())));
 
         QAction *viewIndex = new QAction("View Indexes", this);
-        connect(viewIndex, SIGNAL(triggered()), SLOT(ui_viewIndex()));
+        VERIFY(connect(viewIndex, SIGNAL(triggered()), SLOT(ui_viewIndex())));
 
         QAction *refreshIndex = new QAction("Refresh", this);
-        connect(refreshIndex, SIGNAL(triggered()), SLOT(ui_refreshIndex()));
+        VERIFY(connect(refreshIndex, SIGNAL(triggered()), SLOT(ui_refreshIndex())));
 
         BaseClass::_contextMenu->addAction(viewIndex);
         //BaseClass::_contextMenu->addAction(addIndex);
@@ -202,43 +202,43 @@ namespace Robomongo
         BaseClass(parent),_collection(collection),_databaseItem(databaseItem)
     {
         QAction *addDocument = new QAction("Insert Document", this);
-        connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument()));
+        VERIFY(connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument())));
 
         QAction *updateDocument = new QAction("Update Documents", this);
-        connect(updateDocument, SIGNAL(triggered()), SLOT(ui_updateDocument()));
+        VERIFY(connect(updateDocument, SIGNAL(triggered()), SLOT(ui_updateDocument())));
         QAction *removeDocument = new QAction("Remove Documents", this);
-        connect(removeDocument, SIGNAL(triggered()), SLOT(ui_removeDocument()));
+        VERIFY(connect(removeDocument, SIGNAL(triggered()), SLOT(ui_removeDocument())));
 
         QAction *removeAllDocuments = new QAction("Remove All Documents", this);
-        connect(removeAllDocuments, SIGNAL(triggered()), SLOT(ui_removeAllDocuments()));
+        VERIFY(connect(removeAllDocuments, SIGNAL(triggered()), SLOT(ui_removeAllDocuments())));
 
         QAction *collectionStats = new QAction("Statistics", this);
-        connect(collectionStats, SIGNAL(triggered()), SLOT(ui_collectionStatistics()));
+        VERIFY(connect(collectionStats, SIGNAL(triggered()), SLOT(ui_collectionStatistics())));
 
         QAction *storageSize = new QAction("Storage Size", this);
-        connect(storageSize, SIGNAL(triggered()), SLOT(ui_storageSize()));
+        VERIFY(connect(storageSize, SIGNAL(triggered()), SLOT(ui_storageSize())));
 
         QAction *totalIndexSize = new QAction("Total Index Size", this);
-        connect(totalIndexSize, SIGNAL(triggered()), SLOT(ui_totalIndexSize()));
+        VERIFY(connect(totalIndexSize, SIGNAL(triggered()), SLOT(ui_totalIndexSize())));
 
         QAction *totalSize = new QAction("Total Size", this);
-        connect(totalSize, SIGNAL(triggered()), SLOT(ui_totalSize()));
+        VERIFY(connect(totalSize, SIGNAL(triggered()), SLOT(ui_totalSize())));
         QAction *shardVersion = new QAction("Shard Version", this);
-        connect(shardVersion, SIGNAL(triggered()), SLOT(ui_shardVersion()));
+        VERIFY(connect(shardVersion, SIGNAL(triggered()), SLOT(ui_shardVersion())));
 
         QAction *shardDistribution = new QAction("Shard Distribution", this);
-        connect(shardDistribution, SIGNAL(triggered()), SLOT(ui_shardDistribution()));
+        VERIFY(connect(shardDistribution, SIGNAL(triggered()), SLOT(ui_shardDistribution())));
 
         QAction *dropCollection = new QAction("Drop Collection", this);
-        connect(dropCollection, SIGNAL(triggered()), SLOT(ui_dropCollection()));
+        VERIFY(connect(dropCollection, SIGNAL(triggered()), SLOT(ui_dropCollection())));
 
         QAction *renameCollection = new QAction("Rename Collection", this);
-        connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection()));
+        VERIFY(connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection())));
         QAction *duplicateCollection = new QAction("Duplicate Collection", this);
-        connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection()));
+        VERIFY(connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection())));
 
         QAction *viewCollection = new QAction("View Documents", this);
-        connect(viewCollection, SIGNAL(triggered()), SLOT(ui_viewCollection()));
+        VERIFY(connect(viewCollection, SIGNAL(triggered()), SLOT(ui_viewCollection())));
 
         BaseClass::_contextMenu->addAction(viewCollection);
         BaseClass::_contextMenu->addSeparator();

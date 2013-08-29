@@ -35,10 +35,10 @@ namespace Robomongo
         BaseClass(parent),_user(user),_database(database)
     {
         QAction *dropUser = new QAction("Drop User", this);
-        connect(dropUser, SIGNAL(triggered()), SLOT(ui_dropUser()));
+        VERIFY(connect(dropUser, SIGNAL(triggered()), SLOT(ui_dropUser())));
 
         QAction *editUser = new QAction("Edit User", this);
-        connect(editUser, SIGNAL(triggered()), SLOT(ui_editUser()));
+        VERIFY(connect(editUser, SIGNAL(triggered()), SLOT(ui_editUser())));
 
         BaseClass::_contextMenu->addAction(editUser);
         BaseClass::_contextMenu->addAction(dropUser);

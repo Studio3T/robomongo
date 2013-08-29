@@ -2,14 +2,16 @@
 
 #include <QVBoxLayout>
 #include <Qsci/qscilexerjavascript.h>
+
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/widgets/workarea/JsonPrepareThread.h"
 #include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/JSLexer.h"
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/gui/editors/FindFrame.h"
 
 namespace Robomongo
@@ -133,9 +135,9 @@ namespace Robomongo
                     {
                         _log->sciScintilla()->setText("Loading...");
                         _thread = new JsonPrepareThread(_documents, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
-                        connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared()));
-                        connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString)));
-                        connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater()));
+                        VERIFY(connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared())));
+                        VERIFY(connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString))));
+                        VERIFY(connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater())));
                         _thread->start();
                     }
                 }

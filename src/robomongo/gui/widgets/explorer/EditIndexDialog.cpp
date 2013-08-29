@@ -100,8 +100,8 @@ namespace Robomongo
         QDialogButtonBox *buttonBox = new QDialogButtonBox (this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+        VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
         QVBoxLayout *vlayout = new QVBoxLayout;
         vlayout->addLayout(hlayout);
@@ -157,7 +157,7 @@ namespace Robomongo
         layout->addWidget(dropDupsHelpLabel,            7, 0, 1, 2);
         layout->setAlignment(Qt::AlignTop);
         basicTab->setLayout(layout);
-        connect(_uniqueCheckBox,SIGNAL(stateChanged(int)),this,SLOT(uniqueStateChanged(int)));
+        VERIFY(connect(_uniqueCheckBox,SIGNAL(stateChanged(int)),this,SLOT(uniqueStateChanged(int))));
         return basicTab;
     }
 
@@ -204,7 +204,7 @@ namespace Robomongo
             _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
         }
         expireStateChanged(expireCheckBox->checkState());
-        connect(expireCheckBox,SIGNAL(stateChanged(int)),this,SLOT(expireStateChanged(int)));
+        VERIFY(connect(expireCheckBox,SIGNAL(stateChanged(int)),this,SLOT(expireStateChanged(int))));
 
         QLabel *sparseHelpLabel = createHelpLabel(
             "If set, the index only references documents with the specified field. "

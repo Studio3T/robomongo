@@ -9,6 +9,7 @@
 #include "robomongo/core/EventBusSubscriber.h"
 #include "robomongo/core/Event.h"
 #include "robomongo/core/EventWrapper.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 class SomethingHappened;
 
@@ -114,7 +115,7 @@ namespace Robomongo
 
         // subscribe to destroyed signal in order to remove
         // listener (receiver) from list of subscribers
-        connect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(unsubscibe(QObject*)));
+        VERIFY(connect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(unsubscibe(QObject*))));
 
         // add subscriber
         _subscribersByEventType.push_back(subscribersType(type, new EventBusSubscriber(dis, receiver, sender)));

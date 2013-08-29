@@ -39,6 +39,8 @@ namespace
         output.push_back(s.substr(prev_pos, pos-prev_pos)); // Last word
         return output;
     }
+
+    const std::pair<std::string,std::string> contToReplace[] = { std::make_pair("find().","DBQuery.prototype.") };
 }
 
 namespace mongo {
@@ -215,11 +217,23 @@ namespace Robomongo
     {
 //        if ( prefix.find( '"' ) != string::npos )
 //            return;
+        std::string replace = prefix;
+        size_t pos = std::string::npos;
+        bool hasExec = prefix.rfind("()")!=std::string::npos;
+        if(hasExec){
+            replace = ".";
+            for (unsigned i = 0; i<sizeof(contToReplace)/sizeof(*contToReplace); ++i){
+                if((pos = prefix.rfind(contToReplace[i].first))!=std::string::npos){
+                    replace = contToReplace[i].second+prefix.substr(pos+contToReplace[i].first.length());
+                    break;
+                }
+            }
+        }       
 
         try {
             using namespace mongo;
             QStringList results;
-            mongo::BSONObj args = BSON( "0" << prefix );
+            mongo::BSONObj args = BSON( "0" << replace );
 
             _scope->invokeSafe( "function callShellAutocomplete(x) {shellAutocomplete(x)}", &args, 0, 1000 );
             mongo::BSONObjBuilder b;
@@ -230,7 +244,14 @@ namespace Robomongo
             mongo::BSONObjIterator i( arr );
             while ( i.more() ) {
                 mongo::BSONElement e = i.next();
-                results.append(QtUtils::toQString(e.String()));
+                if(pos==std::string::npos){
+                    results.append(QtUtils::toQString(e.String()));
+                }
+                else{
+                    std::string toCompleate = e.String();
+                    toCompleate = toCompleate.replace(toCompleate.begin(),toCompleate.begin()+replace.length(),prefix);
+                    results.append(QtUtils::toQString(toCompleate));
+                }
             }
             return results;
         }

@@ -130,7 +130,7 @@ namespace Robomongo
     void RoboScintilla::updateLineNumbersMarginWidth()
     {
         int numberOfDigits = getNumberOfDigits(lines());
-        _lineNumberMarginWidth = numberOfDigits * _lineNumberDigitWidth + rowNumberWidth;
+        _lineNumberMarginWidth = (numberOfDigits+1) * rowNumberWidth;
 
         // If line numbers margin already displayed, update its width
         if (lineNumberMarginWidth()) {

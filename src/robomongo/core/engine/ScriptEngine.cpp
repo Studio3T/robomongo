@@ -208,9 +208,7 @@ namespace Robomongo
     {
         QMutexLocker lock(&_mutex);
 
-        QString pingStatement = QString("if (db) { db.runCommand({ping:1}); }");
-        QByteArray pingArray = pingStatement.toUtf8();
-        _scope->exec(pingArray.data(), "(ping)", false, false, false);
+        _scope->exec("if (db) { db.runCommand({ping:1}); }", "(ping)", false, false, false);
     }
 
     QStringList ScriptEngine::complete(const std::string &prefix)

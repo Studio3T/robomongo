@@ -1,34 +1,12 @@
 #include "robomongo/core/domain/MongoDocument.h"
 
 #include <mongo/client/dbclient.h>
-#include <QStringBuilder>
 
 #include "robomongo/core/domain/MongoDocumentIterator.h"
 #include "robomongo/core/domain/MongoElement.h"
 
 namespace Robomongo
 {
-    Concatenator::Concatenator():_count(0)
-    {
-    }
-
-    void Concatenator::append(const QString &data)
-    {
-        _list.append(data);
-        _count += data.length();
-    }
-
-    QString Concatenator::build()
-    {
-        QString text;
-        text.reserve(_count + 10);
-        for (QStringList::const_iterator it=_list.begin();it!=_list.end();++it){
-            text = text % (*it);
-        }
-
-        return text;
-    }
-
     MongoDocument::MongoDocument()
     {
     // test
@@ -70,7 +48,7 @@ namespace Robomongo
     /*
     ** Convert to json string
     */
-    void MongoDocument::buildJsonString(Concatenator &con)
+    void MongoDocument::buildJsonString(std::string &con)
     {
         MongoDocumentIterator i(this);
         con.append("{ \n");
@@ -92,7 +70,7 @@ namespace Robomongo
     /*
     ** Build JsonString from list of documents
     */
-    QString MongoDocument::buildJsonString(const QList<MongoDocumentPtr> &documents)
+    std::string MongoDocument::buildJsonString(const QList<MongoDocumentPtr> &documents)
     {
         mongo::StringBuilder sb;
 
@@ -111,17 +89,14 @@ namespace Robomongo
         }
 
         std::string final = sb.str();
-        QString qJsonString = QString::fromStdString(final);
-
-        return qJsonString;
+        return final;
     }
 
-    QString MongoDocument::buildJsonString(const MongoDocumentPtr &doc)
+    std::string MongoDocument::buildJsonString(const MongoDocumentPtr &doc)
     {
         //qt4 QTextCodec::setCodecForCStrings(codec);
         std::string jsonString = doc->bsonObj().jsonString(mongo::TenGen, 1);
-        QString qJsonString = QString::fromStdString(jsonString);
-        return qJsonString;
+        return jsonString;
     }
 
 }

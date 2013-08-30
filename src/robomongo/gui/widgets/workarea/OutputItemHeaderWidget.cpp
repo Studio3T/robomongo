@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QSplitter>
 
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemWidget.h"
@@ -28,7 +29,16 @@ namespace Robomongo
         _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");
         _maxButton->setFixedSize(18, 18);
         _maxButton->setFlat(true);
-        connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart()));
+        VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart())));
+
+        // Text mode button
+        _textButton = new QPushButton;
+        _textButton->setIcon(GuiRegistry::instance().textIcon());
+        _textButton->setToolTip("View results in text mode");
+        _textButton->setFixedSize(24, 24);
+        _textButton->setFlat(true);
+        _textButton->setCheckable(true);
+        VERIFY(connect(_textButton, SIGNAL(clicked()), this, SLOT(showText())));
 
         // Tree mode button
         _treeButton = new QPushButton(this);
@@ -39,16 +49,18 @@ namespace Robomongo
         _treeButton->setFlat(true);
         _treeButton->setCheckable(true);
         _treeButton->setChecked(true);
-        connect(_treeButton, SIGNAL(clicked()), this, SLOT(showTree()));
+        VERIFY(connect(_treeButton, SIGNAL(clicked()), this, SLOT(showTree())));
 
-        // Text mode button
-        _textButton = new QPushButton;
-        _textButton->setIcon(GuiRegistry::instance().textIcon());
-        _textButton->setToolTip("View results in text mode");
-        _textButton->setFixedSize(24, 24);
-        _textButton->setFlat(true);
-        _textButton->setCheckable(true);
-        connect(_textButton, SIGNAL(clicked()), this, SLOT(showText()));
+        // Table mode button
+        _tableButton = new QPushButton(this);
+        _tableButton->hide();
+        _tableButton->setIcon(GuiRegistry::instance().tableIcon());
+        _tableButton->setToolTip("View results in table mode");
+        _tableButton->setFixedSize(24, 24);
+        _tableButton->setFlat(true);
+        _tableButton->setCheckable(true);
+        _tableButton->setChecked(true);
+        VERIFY(connect(_tableButton, SIGNAL(clicked()), this, SLOT(showTable())));
 
         // Custom mode button
         _customButton = new QPushButton(this);
@@ -58,7 +70,7 @@ namespace Robomongo
         _customButton->setFixedSize(24, 24);
         _customButton->setFlat(true);
         _customButton->setCheckable(true);
-        connect(_customButton, SIGNAL(clicked()), this, SLOT(showCustom()));
+        VERIFY(connect(_customButton, SIGNAL(clicked()), this, SLOT(showCustom())));
 
         _collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon());
         _timeIndicator = new Indicator(GuiRegistry::instance().timeIcon());
@@ -89,6 +101,11 @@ namespace Robomongo
             _treeButton->show();
         }
 
+        if (output->isTableModeSupported()) {
+            layout->addWidget(_tableButton, 0, Qt::AlignRight);
+            _tableButton->show();
+        }
+
         if (output->isTextModeSupported())
             layout->addWidget(_textButton, 0, Qt::AlignRight);
 
@@ -109,6 +126,8 @@ namespace Robomongo
         _textButton->setChecked(true);
         _treeButton->setIcon(GuiRegistry::instance().treeIcon());
         _treeButton->setChecked(false);
+        _tableButton->setIcon(GuiRegistry::instance().tableIcon());
+        _tableButton->setChecked(false);
         _customButton->setIcon(GuiRegistry::instance().customIcon());
         _customButton->setChecked(false);
         itemContent->showText();
@@ -121,9 +140,25 @@ namespace Robomongo
         _textButton->setChecked(false);
         _treeButton->setIcon(GuiRegistry::instance().treeHighlightedIcon());
         _treeButton->setChecked(true);
+        _tableButton->setIcon(GuiRegistry::instance().tableIcon());
+        _tableButton->setChecked(true);
         _customButton->setIcon(GuiRegistry::instance().customIcon());
         _customButton->setChecked(false);
         itemContent->showTree();
+        _treeMode = true;
+    }
+
+    void OutputItemHeaderWidget::showTable()
+    {
+        _textButton->setIcon(GuiRegistry::instance().textIcon());
+        _textButton->setChecked(false);
+        _treeButton->setIcon(GuiRegistry::instance().treeIcon());
+        _treeButton->setChecked(false);
+        _tableButton->setIcon(GuiRegistry::instance().tableHighlightedIcon());
+        _tableButton->setChecked(false);
+        _customButton->setIcon(GuiRegistry::instance().customHighlightedIcon());
+        _customButton->setChecked(true);
+        itemContent->showTable();
         _treeMode = true;
     }
 
@@ -133,6 +168,8 @@ namespace Robomongo
         _textButton->setChecked(false);
         _treeButton->setIcon(GuiRegistry::instance().treeIcon());
         _treeButton->setChecked(false);
+        _tableButton->setIcon(GuiRegistry::instance().tableIcon());
+        _tableButton->setChecked(false);
         _customButton->setIcon(GuiRegistry::instance().customHighlightedIcon());
         _customButton->setChecked(true);
         itemContent->showCustom();

@@ -1,5 +1,7 @@
 #pragma once
+
 #include "robomongo/core/Core.h"
+
 namespace Robomongo
 {
     class SettingsManager;

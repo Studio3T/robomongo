@@ -77,12 +77,24 @@ namespace Robomongo
         void setViewMode(ViewMode viewMode) { _viewMode = viewMode; }
         ViewMode viewMode() { return _viewMode; }
 
+        void setLoadInitJs(bool isLoadJs) { _loadInitJs = isLoadJs;}
+        bool loadInitJs() const {return _loadInitJs;}
     signals:
         void connectionAdded(ConnectionSettings *connection);
         void connectionUpdated(ConnectionSettings *connection);
         void connectionRemoved(ConnectionSettings *connection);
 
     private:
+
+        /**
+         * @brief Load settings from the map. Existings settings will be overwritten.
+         */
+        void loadFromMap(QVariantMap &map);
+
+        /**
+         * @brief Save all settings to map.
+         */
+        QVariantMap convertToMap() const;
 
         /**
          * @brief Version of settings schema currently loaded
@@ -98,7 +110,7 @@ namespace Robomongo
          * @brief view mode
          */
         ViewMode _viewMode;
-
+        bool _loadInitJs;
         /**
          * @brief List of connections
          */

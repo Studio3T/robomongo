@@ -4,18 +4,16 @@ namespace Robomongo
 {
     MongoFunction::MongoFunction(const mongo::BSONObj &obj)
     {
-        _name = QString::fromStdString(obj.getField("_id").String());
-        _code = QString::fromUtf8(obj.getField("value")._asCode().data());
+        _name = obj.getField("_id").String();
+        _code = obj.getField("value")._asCode().data();
     }
 
     mongo::BSONObj MongoFunction::toBson() const
     {
         mongo::BSONObjBuilder builder;
 
-        QByteArray bytes = _code.toUtf8();
-
-        mongo::BSONCode code = mongo::BSONCode(bytes.constData());
-        builder.append("_id", _name.toStdString());
+        mongo::BSONCode code = mongo::BSONCode(_code);
+        builder.append("_id", _name);
         builder.append("value", code);
         mongo::BSONObj obj = builder.obj();
         return obj;

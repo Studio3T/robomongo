@@ -4,6 +4,7 @@
 
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/utils/BsonUtils.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -45,7 +46,7 @@ namespace Robomongo
                 break;
 
             sb << stdJson;
-            QString json = QString::fromUtf8(sb.str().data());
+            QString json = QtUtils::toQString(sb.str());
 
             if (_stop)
                 break;

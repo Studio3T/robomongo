@@ -13,6 +13,8 @@
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/utils/QtUtils.h"
+
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
@@ -78,12 +80,12 @@ namespace Robomongo
         _completer->setMaxVisibleItems(20);
         _completer->setWrapAround(false);
         _completer->popup()->setFont(GuiRegistry::instance().font());
-        connect(_completer, SIGNAL(activated(QString)), this, SLOT(onCompletionActivated(QString)));
+        VERIFY(connect(_completer, SIGNAL(activated(const QString &)), this, SLOT(onCompletionActivated(const QString&))));
 
         QStringListModel *model = new QStringListModel(_completer);
         _completer->setModel(model);
 
-        setText(shell->query());
+        setText(QtUtils::toQString(shell->query()));
         setTextCursor(shell->cursor());
     }
 
@@ -149,12 +151,12 @@ namespace Robomongo
         _queryText->sciScintilla()->setFocus();
     }
 
-    void ScriptWidget::setCurrentDatabase(const QString &database, bool isValid)
+    void ScriptWidget::setCurrentDatabase(const std::string &database, bool isValid)
     {
         _topStatusBar->setCurrentDatabase(database, isValid);
     }
 
-    void ScriptWidget::setCurrentServer(const QString &address, bool isValid)
+    void ScriptWidget::setCurrentServer(const std::string &address, bool isValid)
     {
         _topStatusBar->setCurrentServer(address, isValid);
     }
@@ -212,7 +214,7 @@ namespace Robomongo
             return;
         }
 
-        _shell->autocomplete(_currentAutoCompletionInfo.text());
+        _shell->autocomplete(QtUtils::toStdString<std::string>(_currentAutoCompletionInfo.text()));
     }
 
     void ScriptWidget::hideAutocompletion()
@@ -251,7 +253,7 @@ namespace Robomongo
         }
     }
 
-    void ScriptWidget::onCompletionActivated(QString text)
+    void ScriptWidget::onCompletionActivated(const QString &text)
     {
         int row = _currentAutoCompletionInfo.line();
         int colLeft = _currentAutoCompletionInfo.lineIndexLeft();
@@ -293,9 +295,9 @@ namespace Robomongo
         _queryText->sciScintilla()->setLexer(javaScriptLexer);
 
         _queryText->sciScintilla()->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
-        connect(_queryText->sciScintilla(), SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged()));
-        connect(_queryText->sciScintilla(), SIGNAL(textChanged()), SLOT(onTextChanged()));
-        connect(_queryText->sciScintilla(), SIGNAL(cursorPositionChanged(int,int)), SLOT(onCursorPositionChanged(int,int)));
+        VERIFY(connect(_queryText->sciScintilla(), SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged())));
+        VERIFY(connect(_queryText->sciScintilla(), SIGNAL(textChanged()), SLOT(onTextChanged())));
+        VERIFY(connect(_queryText->sciScintilla(), SIGNAL(cursorPositionChanged(int,int)), SLOT(onCursorPositionChanged(int,int))));
     }
 
     /**
@@ -390,7 +392,7 @@ namespace Robomongo
         QLabel *serverIconLabel = new QLabel;
         serverIconLabel->setPixmap(serverPixmap);
 
-        _currentServerLabel = new QLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(_shell->server()->connectionRecord()->getFullAddress()),this);
+        _currentServerLabel = new QLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(QtUtils::toQString(_shell->server()->connectionRecord()->getFullAddress())),this);
         _currentServerLabel->setDisabled(true);
 
         _currentDatabaseLabel = new QLabel(this);
@@ -419,24 +421,24 @@ namespace Robomongo
         setLayout(topLayout);
     }
 
-    void TopStatusBar::setCurrentDatabase(const QString &database, bool isValid)
+    void TopStatusBar::setCurrentDatabase(const std::string &database, bool isValid)
     {
         QString color = isValid ? _textColor.name() : "red";
 
         QString text = QString("<font color='%1'>%2</font>")
                 .arg(color)
-                .arg(database);
+                .arg(database.c_str());
 
         _currentDatabaseLabel->setText(text);
     }
 
-    void TopStatusBar::setCurrentServer(const QString &address, bool isValid)
+    void TopStatusBar::setCurrentServer(const std::string &address, bool isValid)
     {
         QString color = isValid ? _textColor.name() : "red";
 
         QString text = QString("<font color='%1'>%2</font>")
                 .arg(color)
-                .arg(address);
+                .arg(address.c_str());
 
         _currentServerLabel->setText(text);
     }

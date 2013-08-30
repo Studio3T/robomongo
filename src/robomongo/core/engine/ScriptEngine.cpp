@@ -22,8 +22,24 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/domain/MongoDocument.h"
+#include "robomongo/core/utils/QtUtils.h"
 
-using namespace std;
+namespace
+{
+    std::vector<std::string> split(const std::string& s, char seperator)
+    {
+        std::vector<std::string> output;
+        std::string::size_type prev_pos = 0, pos = 0;
+        while((pos = s.find(seperator, pos)) != std::string::npos)
+        {
+            std::string substring( s.substr(prev_pos, pos-prev_pos) );
+            output.push_back(substring);
+            prev_pos = ++pos;
+        }
+        output.push_back(s.substr(prev_pos, pos-prev_pos)); // Last word
+        return output;
+    }
+}
 
 namespace mongo {
     extern bool isShell;
@@ -57,24 +73,22 @@ namespace Robomongo
     {
         QMutexLocker lock(&_mutex);
 
-        QString connectDatabase = "test";
+        std::string connectDatabase = "test";
 
         if (_connection->hasEnabledPrimaryCredential())
             connectDatabase = _connection->primaryCredential()->databaseName();
 
-        QString url = QString("%1:%2/%3")
-            .arg(_connection->serverHost())
-            .arg(_connection->serverPort())
-            .arg(connectDatabase);
+        char url[512] = {0};
+        sprintf(url,"%s:%d/%s",_connection->serverHost().c_str(),_connection->serverPort(),connectDatabase.c_str());
 
-        stringstream ss;
+        std::stringstream ss;
 
         if (!_connection->hasEnabledPrimaryCredential())
-            ss << "db = connect('" << url.toStdString() << "')";
+            ss << "db = connect('" << url << "')";
         else
-            ss << "db = connect('" << url.toStdString() << "', '"
-               << _connection->primaryCredential()->userName().toStdString() << "', '"
-               << _connection->primaryCredential()->userPassword().toStdString() << "')";
+            ss << "db = connect('" << url << "', '"
+               << _connection->primaryCredential()->userName() << "', '"
+               << _connection->primaryCredential()->userPassword() << "')";
 
         {
             //mongo::shell_utils::_dbConnect = "var z = 56;"; //ss.str();
@@ -89,10 +103,13 @@ namespace Robomongo
             _scope = scope;
             _engine = mongo::globalScriptEngine;
 
+            //protected settings
+            _scope->exec("DBQuery.shellBatchSize = 1000", "(esprima)", true, true, true);
+
             // Load '.mongorc.js' from user's home directory
             // We are not checking whether file exists, because it will be
             // checked by 'Scope::execFile'.
-            std::string mongorcPath = QString("%1/.mongorc.js").arg(QDir::homePath()).toStdString();
+            std::string mongorcPath = QtUtils::toStdString<std::string>(QString("%1/."PROJECT_NAME_LOWERCASE"rc.js").arg(QDir::homePath()));// branding very usfull see Chromium and his brand Chrome, in Chrome some features private
             scope->execFile(mongorcPath, false, false);
         }
 
@@ -103,10 +120,10 @@ namespace Robomongo
 
         QTextStream in(&file);
         QString esprima = in.readAll();
-        _scope->exec(esprima.toStdString(), "(esprima)", true, true, true);
+        _scope->exec(QtUtils::toStdString<std::string>(esprima), "(esprima)", true, true, true);
     }
 
-    MongoShellExecResult ScriptEngine::exec(const QString &originalScript, const QString &dbName)
+    MongoShellExecResult ScriptEngine::exec(const std::string &originalScript, const std::string &dbName)
     {
         QMutexLocker lock(&_mutex);
 
@@ -114,32 +131,30 @@ namespace Robomongo
          * Replace all commands ('show dbs', 'use db' etc.) with call
          * to shellHelper('show', 'dbs') and so on.
          */
-        QByteArray bytes = originalScript.toUtf8();
-        std::string stdstr(bytes.constData(), bytes.size());
+        std::string stdstr(originalScript);
 
         pcrecpp::RE re("^(show|use|set) (\\w+)$",
             pcrecpp::RE_Options(PCRE_CASELESS|PCRE_MULTILINE|PCRE_NEWLINE_ANYCRLF));
 
         re.GlobalReplace("shellHelper('\\1', '\\2');", &stdstr);
-        QString script = QString::fromUtf8(stdstr.c_str());
 
         /*
          * Statementize (i.e. extract all JavaScript statements from script) and
          * execute each statement one by one
          */
-        QStringList statements;
-        QString error;
-        bool result = statementize(script, statements, error);
+        std::vector<std::string> statements;
+        std::string error;
+        bool result = statementize(stdstr, statements, error);
 
-        if (!result && statements.count() == 0) {
-            statements.append(QString("print(__robomongoResult.error)"));
+        if (!result && statements.size() == 0) {
+            statements.push_back("print(__robomongoResult.error)");
         }
 
         QList<MongoShellResult> results;
 
         use(dbName);
 
-        foreach(QString statement, statements)
+        foreach(std::string statement, statements)
         {
             // clear global objects
             __objects.clear();
@@ -147,23 +162,21 @@ namespace Robomongo
             __finished = false;
             __logs.str("");
 
-            QByteArray array = statement.toUtf8();
-
             if (true /* ! wascmd */) {
                 try {
                     QElapsedTimer timer;
                     timer.start();
-                    if ( _scope->exec( array.data() , "(shell)" , false , true , false, 3600000 ) )
+                    if ( _scope->exec( statement , "(shell)" , false , true , false, 3600000 ) )
                         _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false, 3600000);
 
                     qint64 elapsed = timer.elapsed();
 
                     std::string logs = __logs.str();
-                    QString answer = QString::fromUtf8(logs.c_str());
-                    QString type = QString::fromUtf8(__type.c_str());
+                    std::string answer = logs.c_str();
+                    std::string type = __type.c_str();
                     std::vector<MongoDocumentPtr> docs = MongoDocument::fromBsonObj(__objects);
 
-                    if (!answer.isEmpty() || docs.size() > 0)
+                    if (!answer.empty() || docs.size() > 0)
                         results.append(prepareResult(type, answer, docs, elapsed));
                 }
                 catch ( const std::exception &e ) {
@@ -180,15 +193,15 @@ namespace Robomongo
         mongo::Scope::_interruptFlag = true;
     }
 
-    void ScriptEngine::use(const QString &dbName)
+    void ScriptEngine::use(const std::string &dbName)
     {
         QMutexLocker lock(&_mutex);
 
-        if (!dbName.isEmpty()) {
+        if (!dbName.empty()) {
             // switch to database
-            QString useDb = QString("shellHelper.use('%1');").arg(dbName);
-            QByteArray useDbArray = useDb.toUtf8();
-            _scope->exec(useDbArray.data(), "(usedb)", false, true, false);
+            char useDb[512]={0};
+            sprintf(useDb,"shellHelper.use('%s');",dbName.c_str());
+            _scope->exec(useDb, "(usedb)", false, true, false);
         }
     }
 
@@ -201,7 +214,7 @@ namespace Robomongo
         _scope->exec(pingArray.data(), "(ping)", false, false, false);
     }
 
-    QStringList ScriptEngine::complete(const QString &prefix)
+    QStringList ScriptEngine::complete(const std::string &prefix)
     {
 //        if ( prefix.find( '"' ) != string::npos )
 //            return;
@@ -209,7 +222,7 @@ namespace Robomongo
         try {
             using namespace mongo;
             QStringList results;
-            mongo::BSONObj args = BSON( "0" << prefix.toStdString() );
+            mongo::BSONObj args = BSON( "0" << prefix );
 
             _scope->invokeSafe( "function callShellAutocomplete(x) {shellAutocomplete(x)}", &args, 0, 1000 );
             mongo::BSONObjBuilder b;
@@ -220,7 +233,7 @@ namespace Robomongo
             mongo::BSONObjIterator i( arr );
             while ( i.more() ) {
                 mongo::BSONElement e = i.next();
-                results.append(QString::fromStdString(e.String()));
+                results.append(QtUtils::toQString(e.String()));
             }
             return results;
         }
@@ -230,7 +243,7 @@ namespace Robomongo
         return QStringList();
     }
 
-    MongoShellResult ScriptEngine::prepareResult(const QString &type, const QString &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms)
+    MongoShellResult ScriptEngine::prepareResult(const std::string &type, const std::string &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms)
     {
         const char *script =
             "__robomongoQuery = false; \n"
@@ -256,9 +269,9 @@ namespace Robomongo
         bool isQuery = _scope->getBoolean("__robomongoQuery");
 
         if (isQuery) {
-            QString serverAddress = getString("__robomongoServerAddress");
-            QString dbName = getString("__robomongoDbName");
-            QString collectionName = getString("__robomongoCollectionName");
+            std::string serverAddress = getString("__robomongoServerAddress");
+            std::string dbName = getString("__robomongoDbName");
+            std::string collectionName = getString("__robomongoCollectionName");
             mongo::BSONObj query = _scope->getObject("__robomongoQuery");
             mongo::BSONObj fields = _scope->getObject("__robomongoFields");
 
@@ -293,28 +306,25 @@ namespace Robomongo
 
         _scope->exec(script, "(getdbname)", false, false, false);
 
-        QString serverName = getString("__robomongoServerAddress");
+        std::string serverName = getString("__robomongoServerAddress");
         bool serverIsValid = _scope->getBoolean("__robomongoServerIsValid");
 
-        QString dbName = getString("__robomongoDbName");
+        std::string dbName = getString("__robomongoDbName");
         bool dbIsValid = _scope->getBoolean("__robomongoDbIsValid");
 
         return MongoShellExecResult(results, serverName, serverIsValid, dbName, dbIsValid);
     }
 
-    QString ScriptEngine::getString(const char *fieldName)
+    std::string ScriptEngine::getString(const char *fieldName)
     {
-        std::string valueStd = _scope->getString(fieldName);
-        QString value = QString::fromUtf8(valueStd.c_str());
-        return value;
+        return _scope->getString(fieldName);
     }
 
-    bool ScriptEngine::statementize(const QString &script, QStringList &outList, QString &outError)
+    bool ScriptEngine::statementize(const std::string &script, std::vector<std::string> &outList, std::string &outError)
     {
         using namespace mongo;
 
-        QByteArray array = script.toUtf8();
-        _scope->setString("__robomongoEsprima", array);
+        _scope->setString("__robomongoEsprima", script.c_str());
 
         StringData data(
             "var __robomongoResult = {};"
@@ -330,8 +340,7 @@ namespace Robomongo
         BSONObj obj = _scope->getObject("__lastres__");
 
         if (obj.hasField("error")) {
-            string error = obj.getField("error").str();
-            outError = QString::fromStdString(error);
+            outError = obj.getField("error");
             return false;
         }
 
@@ -354,8 +363,8 @@ namespace Robomongo
             int from = (int) range.at(0).number();
             int till = (int) range.at(1).number();
 
-            QString statement = script.mid(from, till - from);
-            outList.append(statement);
+            std::string statement = script.substr(from, till - from);
+            outList.push_back(statement);
         }
 
         //std::string json = result.jsonString();
@@ -366,7 +375,7 @@ namespace Robomongo
         const char *msg = message;
     }
 
-    QStringList ScriptEngine::statementize2(const QString &script)
+    std::vector<std::string> ScriptEngine::statementize2(const std::string &script)
     {
         JSRuntime * runtime;
         JSContext * context;
@@ -426,10 +435,8 @@ namespace Robomongo
         JSTokenStream * ts;
         JSParseNode * node;
 
-        QByteArray str = script.toUtf8();
-
-        size_t length = str.size();
-        jschar *chars = js_InflateString(context, str.data(), &length);
+        size_t length = script.size();
+        jschar *chars = js_InflateString(context, script.c_str(), &length);
 
         ts = js_NewTokenStream(context, chars, length, NULL, 0, NULL);
         if (ts == NULL) {
@@ -469,7 +476,7 @@ namespace Robomongo
           //exit(EXIT_FAILURE);
         }
 
-        QStringList list;
+        std::vector<std::string> list;
         parseTree(node, 0, script, list, true);
 
         JS_DestroyContext(context);
@@ -495,9 +502,9 @@ namespace Robomongo
 
     const int NUM_TOKENS = sizeof(TOKENS) / sizeof(TOKENS[0]);
 
-    void ScriptEngine::parseTree(JSParseNode *root, int indent, const QString &script, QStringList &list, bool topList)
+    void ScriptEngine::parseTree(JSParseNode *root, int indent, const std::string &script, std::vector<std::string> &list, bool topList)
     {
-        QStringList lines = script.split('\n');
+        std::vector<std::string> lines = split(script,'\n');
 
         if (root == NULL) {
           return;
@@ -511,8 +518,8 @@ namespace Robomongo
     //        if (root->pn_arity == PN_NAME)
     //            return;
 
-            QString s = subb(lines, root->pn_pos.begin.lineno, root->pn_pos.begin.index, root->pn_pos.end.lineno, root->pn_pos.end.index);
-            list.append(s);
+            std::string s = subb(lines, root->pn_pos.begin.lineno, root->pn_pos.begin.index, root->pn_pos.end.lineno, root->pn_pos.end.index);
+            list.push_back(s);
 
           printf("%s: starts at line %d, column %d, ends at line %d, column %d",
                  TOKENS[root->pn_type],
@@ -555,10 +562,10 @@ namespace Robomongo
             {
                 JSParseNode * tail = *root->pn_tail;
 
-                QString s = subb(lines,
+                std::string s = subb(lines,
                                  root->pn_pos.begin.lineno, root->pn_pos.begin.index,
                                  root->pn_expr->pn_pos.end.lineno, root->pn_expr->pn_pos.end.index);
-                list.append(s);
+                list.push_back(s);
             }
           }
           break;
@@ -571,10 +578,10 @@ namespace Robomongo
             break;
         case PN_NAME:
             {
-                QString s = subb(lines,
+                std::string s = subb(lines,
                                  root->pn_pos.begin.lineno, root->pn_pos.begin.index,
                                  root->pn_expr->pn_pos.end.lineno, root->pn_expr->pn_pos.end.index);
-                list.append(s);
+                list.push_back(s);
             }
             break;
         case PN_NULLARY:
@@ -586,20 +593,20 @@ namespace Robomongo
         }
     }
 
-    QString ScriptEngine::subb(const QStringList &list, int fline, int fpos, int tline, int tpos) const
+    std::string ScriptEngine::subb(const std::vector<std::string> &list, int fline, int fpos, int tline, int tpos) const
     {
-        QString result;
-        if (fline < list.length() && tline < list.length())
+        std::string result;
+        if (fline < list.size() && tline < list.size())
         {
             for (int i = fline; i <= tline; ++i)
             {
-                const QString& line = list.at(i);
+                const std::string& line = list[i];
                 if (fline == i && tline == i)
-                    result.append(line.mid(fpos, tpos - fpos));
+                    result.append(line.substr(fpos, tpos - fpos));
                 else if (fline == i)
-                    result.append(line.mid(fpos));
+                    result.append(line.substr(fpos));
                 else if (tline == i)
-                    result.append(line.mid(0, tpos));
+                    result.append(line.substr(0, tpos));
                 else
                     result.append(line);
             }
@@ -608,6 +615,3 @@ namespace Robomongo
     }
 
 }
-
-
-

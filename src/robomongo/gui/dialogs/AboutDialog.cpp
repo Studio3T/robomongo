@@ -6,6 +6,7 @@
 #include <QPushButton>
 
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace
 {
@@ -45,7 +46,7 @@ namespace Robomongo
         QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Close);
         QPushButton *closeButton = buttonBox->button(QDialogButtonBox::Close);
         buttonBox->addButton(closeButton, QDialogButtonBox::ButtonRole(QDialogButtonBox::RejectRole | QDialogButtonBox::AcceptRole));
-        connect(buttonBox , SIGNAL(rejected()), this, SLOT(reject()));
+        VERIFY(connect(buttonBox , SIGNAL(rejected()), this, SLOT(reject())));
 
         QIcon icon = GuiRegistry::instance().mainWindowIcon();
         QPixmap iconPixmap = icon.pixmap(48, 48);

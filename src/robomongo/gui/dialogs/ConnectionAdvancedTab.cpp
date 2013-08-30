@@ -5,6 +5,7 @@
 #include <QLineEdit>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -19,7 +20,7 @@ namespace Robomongo
         defaultDatabaseDescriptionLabel->setWordWrap(true);
         defaultDatabaseDescriptionLabel->setContentsMargins(0, -2, 0, 20);
 
-        _defaultDatabaseName = new QLineEdit(_settings->defaultDatabase());
+        _defaultDatabaseName = new QLineEdit(QtUtils::toQString(_settings->defaultDatabase()));
 
         QGridLayout *connectionLayout = new QGridLayout;
         connectionLayout->setAlignment(Qt::AlignTop);
@@ -32,6 +33,6 @@ namespace Robomongo
 
     void ConnectionAdvancedTab::accept()
     {
-        _settings->setDefaultDatabase(_defaultDatabaseName->text());
+        _settings->setDefaultDatabase(QtUtils::toStdString<std::string>(_defaultDatabaseName->text()));
     }
 }

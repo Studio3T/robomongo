@@ -39,17 +39,17 @@ namespace Robomongo
          */
         void tryConnect();
 
-        void createDatabase(const QString &dbName);
-        void dropDatabase(const QString &dbName);
+        void createDatabase(const std::string &dbName);
+        void dropDatabase(const std::string &dbName);
 
-        void insertDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);
-        void saveDocument(const mongo::BSONObj &obj, const QString &db, const QString &collection);
-        void removeDocuments(mongo::Query query, const QString &db, const QString &collection, bool justOne = true);
+        void insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
+        void saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
+        void removeDocuments(mongo::Query query, const std::string &db, const std::string &collection, bool justOne = true);
 
         /**
          * @brief Returns last error message
          */
-        QString lastErrorMessage() { return _lastErrorMessage; }
+        std::string lastErrorMessage() { return _lastErrorMessage; }
 
         /**
          * @brief Returns associated connection record
@@ -80,10 +80,10 @@ namespace Robomongo
          */
         ConnectionSettings *_connectionRecord;
 
-        QString _host;
-        QString _port;
-        QString _address;
-        QString _lastErrorMessage;
+        std::string _host;
+        std::string _port;
+        std::string _address;
+        std::string _lastErrorMessage;
         bool _visible;
 
         QList<MongoDatabase *> _databases;

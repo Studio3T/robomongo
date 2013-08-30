@@ -10,6 +10,8 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/core/utils/QtUtils.h"
+
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
@@ -65,12 +67,12 @@ namespace Robomongo
 
             if (shellResult.documents().size() > 0) {
 
-                if (shellResult.type().isEmpty())
+                if (shellResult.type().empty())
                     output = new OutputItemContentWidget(_shell, shellResult.documents(), shellResult.queryInfo());
                 else
-                    output = new OutputItemContentWidget(_shell, shellResult.type(), shellResult.documents(), shellResult.queryInfo());
+                    output = new OutputItemContentWidget(_shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo());
             } else {
-                output = new OutputItemContentWidget(_shell, shellResult.response());
+                output = new OutputItemContentWidget(_shell, QtUtils::toQString(shellResult.response()));
             }
 
             OutputItemWidget *result = new OutputItemWidget(this, output, shellResult.queryInfo());
@@ -96,7 +98,7 @@ namespace Robomongo
             result->header()->setTime(QString("%1 sec.").arg(secs));
 
             if (!shellResult.queryInfo().isNull) {
-                result->header()->setCollection(shellResult.queryInfo().collectionName);
+                result->header()->setCollection(QtUtils::toQString(shellResult.queryInfo().collectionName));
                 result->header()->paging()->setLimit(shellResult.queryInfo().limit);
                 result->header()->paging()->setSkip(shellResult.queryInfo().skip);
             }

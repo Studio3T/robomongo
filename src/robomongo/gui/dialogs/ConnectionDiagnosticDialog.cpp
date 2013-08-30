@@ -10,6 +10,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 using namespace mongo;
 namespace Robomongo
@@ -28,7 +29,7 @@ namespace Robomongo
         _noPixmap = _noIcon.pixmap(24, 24);
 
         QPushButton *closeButton = new QPushButton("&Close");
-        connect(closeButton, SIGNAL(clicked()), this, SLOT(accept()));
+        VERIFY(connect(closeButton, SIGNAL(clicked()), this, SLOT(accept())));
         _connectionIconLabel = new QLabel;
         _authIconLabel = new QLabel;
         _connectionLabel = new QLabel;
@@ -40,12 +41,12 @@ namespace Robomongo
         _connectionIconLabel->setMovie(_loadingMovie);
         _authIconLabel->setMovie(_loadingMovie);
 
-        _connectionLabel->setText(QString("Connecting to <b>%1</b>...").arg(_connection->getFullAddress()));
+        _connectionLabel->setText(QString("Connecting to <b>%1</b>...").arg(QtUtils::toQString(_connection->getFullAddress())));
 
         if (_connection->hasEnabledPrimaryCredential()) {
             _authLabel->setText(QString("Authorizing on <b>%1</b> database as <b>%2</b>...")
-                .arg(_connection->primaryCredential()->databaseName())
-                .arg(_connection->primaryCredential()->userName()));
+                .arg(QtUtils::toQString(_connection->primaryCredential()->databaseName()))
+                .arg(QtUtils::toQString(_connection->primaryCredential()->userName())));
         } else {
             _authLabel->setText("Authorization skipped by you");
         }
@@ -65,10 +66,10 @@ namespace Robomongo
         setLayout(box);
 
         ConnectionDiagnosticThread *thread = new ConnectionDiagnosticThread(_connection);
-        connect(thread, SIGNAL(connectionStatus(QString, bool)), this, SLOT(connectionStatus(QString, bool)));
-        connect(thread, SIGNAL(authStatus(QString, bool)), this, SLOT(authStatus(QString, bool)));
-        connect(thread, SIGNAL(completed()), this, SLOT(completed()));
-        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+        VERIFY(connect(thread, SIGNAL(connectionStatus(QString, bool)), this, SLOT(connectionStatus(QString, bool))));
+        VERIFY(connect(thread, SIGNAL(authStatus(QString, bool)), this, SLOT(authStatus(QString, bool))));
+        VERIFY(connect(thread, SIGNAL(completed()), this, SLOT(completed())));
+        VERIFY(connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater())));
         thread->start();
     }
 
@@ -78,10 +79,10 @@ namespace Robomongo
 
         if (connected) {
             _connectionIconLabel->setPixmap(_yesPixmap);
-            _connectionLabel->setText(QString("Connected to <b>%1</b>").arg(_connection->getFullAddress()));
+            _connectionLabel->setText(QString("Connected to <b>%1</b>").arg(QtUtils::toQString(_connection->getFullAddress())));
         } else {
             _connectionIconLabel->setPixmap(_noPixmap);
-            _connectionLabel->setText(QString("Unable to connect to <b>%1</b>").arg(_connection->getFullAddress()));
+            _connectionLabel->setText(QString("Unable to connect to <b>%1</b>").arg(QtUtils::toQString(_connection->getFullAddress())));
         }
 
         layout()->activate();
@@ -94,7 +95,7 @@ namespace Robomongo
 
         if (authed) {
             _authIconLabel->setPixmap(_yesPixmap);
-            _authLabel->setText(QString("Authorized as <b>%1</b>").arg(_connection->primaryCredential()->userName()));
+            _authLabel->setText(QString("Authorized as <b>%1</b>").arg(QtUtils::toQString(_connection->primaryCredential()->userName())));
         } else {
 
             _authIconLabel->setPixmap(_noPixmap);
@@ -129,15 +130,14 @@ namespace Robomongo
 
     void ConnectionDiagnosticThread::run()
     {
-        QString address = QString("%1:%2")
-            .arg(_connection->serverHost())
-            .arg(_connection->serverPort());
+        char address[256]={0};
+        sprintf(address,"%s:%d",_connection->serverHost().c_str(),_connection->serverPort());
 
         boost::scoped_ptr<DBClientConnection> connection;
 
         try {
             connection.reset(new DBClientConnection);
-            connection->connect(address.toStdString());
+            connection->connect(address);
             emit connectionStatus("", true);
         }
         catch(UserException &ex) {
@@ -151,12 +151,12 @@ namespace Robomongo
             if (_connection->hasEnabledPrimaryCredential())
             {
                 CredentialSettings *credential = _connection->primaryCredential();
-                QString database = credential->databaseName();
-                QString username = credential->userName();
-                QString password = credential->userPassword();
+                std::string database = credential->databaseName();
+                std::string username = credential->userName();
+                std::string password = credential->userPassword();
 
                 string errmsg;
-                bool ok = connection->auth(database.toStdString(), username.toStdString(), password.toStdString(), errmsg);
+                bool ok = connection->auth(database, username, password, errmsg);
                 if (!ok) {
                     emit authStatus("", false);
                 } else {

@@ -1,21 +1,21 @@
 #pragma once
-#include <QString>
+#include <string>
 
 namespace Robomongo
 {
     class MongoNamespace
     {
     public:
-        MongoNamespace(const QString &ns);
-        MongoNamespace(const QString &database, const QString &collection);
+        MongoNamespace(const std::string &ns);
+        MongoNamespace(const std::string &database, const std::string &collection);
         MongoNamespace() {}
-        QString toString() const { return _ns; }
-        QString databaseName() const { return _databaseName; }
-        QString collectionName() const { return _collectionName; }
+        std::string toString() const { return _ns; }
+        std::string databaseName() const { return _databaseName; }
+        std::string collectionName() const { return _collectionName; }
 
     private:
-        QString _ns;
-        QString _databaseName;
-        QString _collectionName;
+        std::string _ns;
+        std::string _databaseName;
+        std::string _collectionName;
     };
 }

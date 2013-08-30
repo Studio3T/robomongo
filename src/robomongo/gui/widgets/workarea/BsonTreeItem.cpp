@@ -288,7 +288,7 @@ namespace Robomongo
         if (_position >= 0)
             return QString("(%1)").arg(_position);
         else
-            return _element->fieldName();
+            return QtUtils::toQString(_element->fieldName());
     }
 
     QString BsonTreeItem::buildObjectFieldName()
@@ -296,7 +296,7 @@ namespace Robomongo
         if (_position >= 0)
             return QString("(%1)  {...}").arg(_position);
         else
-            return QString("%1  {...}").arg(_element->fieldName());
+            return QString("%1  {...}").arg(QtUtils::toQString(_element->fieldName()));
     }
 
     QString BsonTreeItem::buildArrayFieldName(int itemsCount)
@@ -304,6 +304,6 @@ namespace Robomongo
         if (_position >= 0)
             return QString("(%1) [%2]").arg(_position).arg(itemsCount);
         else
-            return QString("%1 [%2]").arg(_element->fieldName()).arg(itemsCount);
+            return QString("%1 [%2]").arg(QtUtils::toQString(_element->fieldName())).arg(itemsCount);
     }
 }

@@ -19,20 +19,20 @@ namespace Robomongo
         MongoUser() : _readOnly(false) {}
 
         mongo::OID id() const { return _id; }
-        QString name() const { return _name; }
+        std::string name() const { return _name; }
         bool readOnly() const { return _readOnly; }
-        QString passwordHash() const { return _passwordHash; }
+        std::string passwordHash() const { return _passwordHash; }
 
-        void setName(const QString &name) { _name = name; }
+        void setName(const std::string &name) { _name = name; }
         void setReadOnly(bool readonly) { _readOnly = readonly; }
-        void setPasswordHash(const QString &hash) { _passwordHash = hash; }
+        void setPasswordHash(const std::string &hash) { _passwordHash = hash; }
 
         mongo::BSONObj toBson() const;
 
     private:
         mongo::OID _id;
-        QString _name;
+        std::string _name;
         bool _readOnly;
-        QString _passwordHash;
+        std::string _passwordHash;
     };
 }

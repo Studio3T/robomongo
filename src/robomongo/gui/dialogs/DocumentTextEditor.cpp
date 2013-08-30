@@ -13,6 +13,7 @@
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/shell/db/json.h"
 
 
@@ -32,12 +33,12 @@ namespace Robomongo
 
         QPushButton *validate = new QPushButton("Validate");
         validate->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
-        connect(validate, SIGNAL(clicked()), this, SLOT(onValidateButtonClicked()));
+        VERIFY(connect(validate, SIGNAL(clicked()), this, SLOT(onValidateButtonClicked())));
 
         _queryText = new FindFrame(this);
         _configureQueryText();
         _queryText->sciScintilla()->setText(json);
-        connect(_queryText->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onQueryTextChanged()));
+        VERIFY(connect(_queryText->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onQueryTextChanged())));
 
         QHBoxLayout *hlayout = new QHBoxLayout();
         hlayout->setContentsMargins(2, 0, 5, 1);
@@ -50,8 +51,8 @@ namespace Robomongo
         QDialogButtonBox *buttonBox = new QDialogButtonBox (this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+        VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
         QHBoxLayout *bottomlayout = new QHBoxLayout();
         bottomlayout->addWidget(validate);
@@ -93,14 +94,13 @@ namespace Robomongo
     bool DocumentTextEditor::validate(bool silentOnSuccess /* = true */)
     {
         QString text = jsonText();
-        QByteArray utf = text.toUtf8();
         try {
-            _obj = mongo::Robomongo::fromjson(utf.data());
-        } catch (mongo::ParseMsgAssertionException &ex) {
-            QString message = QString::fromStdString(ex.reason());
+            _obj = mongo::Robomongo::fromjson(QtUtils::toStdString<std::string>(text));
+        } catch (const mongo::ParseMsgAssertionException &ex) {
+            QString message = QtUtils::toQString(ex.reason());
             int offset = ex.offset();
 
-            int line, pos;
+            int line=0, pos=0;
             _queryText->sciScintilla()->lineIndexFromPosition(offset, &line, &pos);
             _queryText->sciScintilla()->setCursorPosition(line, pos);
 

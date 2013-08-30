@@ -60,8 +60,8 @@ namespace Robomongo
         QString selectedText() const;
         void selectAll();
         void setScriptFocus();
-        void setCurrentDatabase(const QString &database, bool isValid = true);
-        void setCurrentServer(const QString &address, bool isValid = true);
+        void setCurrentDatabase(const std::string &database, bool isValid = true);
+        void setCurrentServer(const std::string &address, bool isValid = true);
         void showProgress();
         void hideProgress();
         void showAutocompletion(const QStringList &list, const QString &prefix);
@@ -73,11 +73,11 @@ namespace Robomongo
         void textChanged();
     public Q_SLOTS:
         void setText(const QString &text);
-    private slots:
+    private Q_SLOTS:
         void ui_queryLinesCountChanged();
         void onTextChanged();
         void onCursorPositionChanged(int line, int index);
-        void onCompletionActivated(QString);
+        void onCompletionActivated(const QString&);
 
     private:
         void configureQueryText();
@@ -120,8 +120,8 @@ namespace Robomongo
 
     public:
         TopStatusBar(MongoShell *shell);
-        void setCurrentDatabase(const QString &database, bool isValid = true);
-        void setCurrentServer(const QString &address, bool isValid = true);
+        void setCurrentDatabase(const std::string &database, bool isValid = true);
+        void setCurrentServer(const std::string &address, bool isValid = true);
         void showProgress();
         void hideProgress();
 

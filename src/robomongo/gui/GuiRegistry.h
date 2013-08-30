@@ -42,6 +42,8 @@ namespace Robomongo
         const QIcon &textHighlightedIcon()const;
         const QIcon &treeIcon()const;
         const QIcon &treeHighlightedIcon()const;
+        const QIcon &tableIcon()const;
+        const QIcon &tableHighlightedIcon()const;
         const QIcon &customIcon()const;
         const QIcon &customHighlightedIcon()const;
         const QIcon &rotateIcon()const;

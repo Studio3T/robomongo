@@ -9,6 +9,7 @@
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/core/domain/MongoUtils.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 
 namespace Robomongo
@@ -31,7 +32,7 @@ namespace Robomongo
 
         _userNameLabel= new QLabel("Name:");
         _userNameEdit = new QLineEdit();
-        _userNameEdit->setText(user.name());
+        _userNameEdit->setText(QtUtils::toQString(user.name()));
         _userPassLabel= new QLabel("Password:");
         _userPassEdit = new QLineEdit();
         _userPassEdit->setEchoMode(QLineEdit::Password);
@@ -41,8 +42,8 @@ namespace Robomongo
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+        VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
         QHBoxLayout *hlayout = new QHBoxLayout();
         hlayout->addStretch(1);
@@ -78,13 +79,13 @@ namespace Robomongo
 
     void CreateUserDialog::accept()
     {
-        QString username = _userNameEdit->text();
-        QString pass = _userPassEdit->text();
+        std::string username = QtUtils::toStdString<std::string>(_userNameEdit->text());
+        std::string pass = QtUtils::toStdString<std::string>(_userPassEdit->text());
 
-        if (username.isEmpty() || pass.isEmpty())
+        if (username.empty() || pass.empty())
             return;
 
-        QString hash = MongoUtils::buildPasswordHash(username, pass);
+        std::string hash = MongoUtils::buildPasswordHash(username, pass);
 
         _user.setName(username);
         _user.setPasswordHash(hash);

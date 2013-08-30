@@ -5,10 +5,11 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/domain/MongoCollection.h"
+#include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
-#include "robomongo/core/domain/MongoShell.h"
 
 namespace Robomongo
 {
@@ -17,7 +18,7 @@ namespace Robomongo
         _bus(AppRegistry::instance().bus())
     {
         _tabWidget = new WorkAreaTabWidget(this);
-        connect(_tabWidget, SIGNAL(currentChanged(int)),this, SIGNAL(tabActivated(int)));
+        VERIFY(connect(_tabWidget, SIGNAL(currentChanged(int)),this, SIGNAL(tabActivated(int))));
         _tabWidget->setMovable(true);
         _tabWidget->setDocumentMode(true);
 

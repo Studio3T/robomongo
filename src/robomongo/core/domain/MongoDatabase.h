@@ -22,7 +22,7 @@ namespace Robomongo
          * @brief MongoDatabase
          * @param server: pointer to parent MongoServer
          */
-        MongoDatabase(MongoServer *server, const QString &name);
+        MongoDatabase(MongoServer *server, const std::string &name);
         ~MongoDatabase();
 
         /**
@@ -37,19 +37,19 @@ namespace Robomongo
 
         void loadFunctions();
 
-        void createCollection(const QString &collection);
-        void dropCollection(const QString &collection);
-        void renameCollection(const QString &collection, const QString &newCollection);
-        void duplicateCollection(const QString &collection, const QString &newCollection);
+        void createCollection(const std::string &collection);
+        void dropCollection(const std::string &collection);
+        void renameCollection(const std::string &collection, const std::string &newCollection);
+        void duplicateCollection(const std::string &collection, const std::string &newCollection);
 
         void createUser(const MongoUser &user, bool overwrite);
         void dropUser(const mongo::OID &id);
 
         void createFunction(const MongoFunction &fun);
-        void updateFunction(const QString &name, const MongoFunction &fun);
-        void dropFunction(const QString &name);
+        void updateFunction(const std::string &name, const MongoFunction &fun);
+        void dropFunction(const std::string &name);
 
-        const QString &name() const { return _name; }
+        const std::string &name() const { return _name; }
 
         /**
          * @brief Checks that this is a system database.
@@ -72,7 +72,7 @@ namespace Robomongo
     private:
         MongoServer *_server;
         std::vector<MongoCollection *> _collections;
-        const QString _name;
+        const std::string _name;
         const bool _system;
         EventBus *_bus;
     };

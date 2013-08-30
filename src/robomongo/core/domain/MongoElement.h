@@ -5,8 +5,6 @@
 
 namespace Robomongo
 {
-    class Concatenator;
-
     /*
     ** Wrapper around BSONElement
     */
@@ -27,7 +25,7 @@ namespace Robomongo
         /*
         ** Get field name
         */
-        QString fieldName();
+        std::string fieldName() const;
 
         /*
         ** Check if this element is of simple type
@@ -73,10 +71,9 @@ namespace Robomongo
         /*
         ** Build Json string that represent this element.
         */
-        void buildJsonString(Concatenator &con);
+        void buildJsonString(std::string &con);
 
         mongo::BSONElement bsonElement() const { return _bsonElement; }
-
     private:
 
         /*

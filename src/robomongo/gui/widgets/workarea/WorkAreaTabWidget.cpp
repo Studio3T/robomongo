@@ -2,14 +2,15 @@
 
 #include <QKeyEvent>
 
-#include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
-#include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
-#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
+#include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 
 namespace Robomongo
 {
@@ -28,14 +29,14 @@ namespace Robomongo
         setTabsClosable(true);
         setElideMode(Qt::ElideRight);
 
-        connect(this, SIGNAL(tabCloseRequested(int)), SLOT(tabBar_tabCloseRequested(int)));
-        connect(this, SIGNAL(currentChanged(int)), SLOT(ui_currentChanged(int)));
+        VERIFY(connect(this, SIGNAL(tabCloseRequested(int)), SLOT(tabBar_tabCloseRequested(int))));
+        VERIFY(connect(this, SIGNAL(currentChanged(int)), SLOT(ui_currentChanged(int))));
 
-        connect(tab, SIGNAL(newTabRequested(int)), SLOT(ui_newTabRequested(int)));
-        connect(tab, SIGNAL(reloadTabRequested(int)), SLOT(ui_reloadTabRequested(int)));
-        connect(tab, SIGNAL(duplicateTabRequested(int)), SLOT(ui_duplicateTabRequested(int)));
-        connect(tab, SIGNAL(closeOtherTabsRequested(int)), SLOT(ui_closeOtherTabsRequested(int)));
-        connect(tab, SIGNAL(closeTabsToTheRightRequested(int)), SLOT(ui_closeTabsToTheRightRequested(int)));
+        VERIFY(connect(tab, SIGNAL(newTabRequested(int)), SLOT(ui_newTabRequested(int))));
+        VERIFY(connect(tab, SIGNAL(reloadTabRequested(int)), SLOT(ui_reloadTabRequested(int))));
+        VERIFY(connect(tab, SIGNAL(duplicateTabRequested(int)), SLOT(ui_duplicateTabRequested(int))));
+        VERIFY(connect(tab, SIGNAL(closeOtherTabsRequested(int)), SLOT(ui_closeOtherTabsRequested(int))));
+        VERIFY(connect(tab, SIGNAL(closeTabsToTheRightRequested(int)), SLOT(ui_closeTabsToTheRightRequested(int))));
     }
 
     void WorkAreaTabWidget::closeTab(int index)

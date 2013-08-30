@@ -22,6 +22,7 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/shell/db/json.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace
 {
@@ -78,7 +79,7 @@ namespace Robomongo
     {        
         setWindowTitle("Index Properties");
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverAdress);
-        Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), _info._collection.name());
+        Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(),QtUtils::toQString(_info._collection.name()));
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), databaseName);
 
         QHBoxLayout *hlayout = new QHBoxLayout;
@@ -99,8 +100,8 @@ namespace Robomongo
         QDialogButtonBox *buttonBox = new QDialogButtonBox (this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+        VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
         QVBoxLayout *vlayout = new QVBoxLayout;
         vlayout->addLayout(hlayout);
@@ -114,9 +115,9 @@ namespace Robomongo
     QWidget* EditIndexDialog::createBasicTab()
     {
         QWidget *basicTab = new QWidget(this);
-        _nameLineEdit = new QLineEdit(QString::fromUtf8(_info._name.c_str()), basicTab);
+        _nameLineEdit = new QLineEdit(QtUtils::toQString(_info._name), basicTab);
         _nameLineEdit->setFocus();
-        _jsonText = createFindFrame(basicTab, QString::fromUtf8(_info._request.c_str()));
+        _jsonText = createFindFrame(basicTab, QtUtils::toQString(_info._request));
         _uniqueCheckBox = new QCheckBox(tr("Unique"));
         _uniqueCheckBox->setChecked(_info._unique);
         _dropDuplicates = new QCheckBox(tr("Drop duplicates"), basicTab);
@@ -156,7 +157,7 @@ namespace Robomongo
         layout->addWidget(dropDupsHelpLabel,            7, 0, 1, 2);
         layout->setAlignment(Qt::AlignTop);
         basicTab->setLayout(layout);
-        connect(_uniqueCheckBox,SIGNAL(stateChanged(int)),this,SLOT(uniqueStateChanged(int)));
+        VERIFY(connect(_uniqueCheckBox,SIGNAL(stateChanged(int)),this,SLOT(uniqueStateChanged(int))));
         return basicTab;
     }
 
@@ -203,7 +204,7 @@ namespace Robomongo
             _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
         }
         expireStateChanged(expireCheckBox->checkState());
-        connect(expireCheckBox,SIGNAL(stateChanged(int)),this,SLOT(expireStateChanged(int)));
+        VERIFY(connect(expireCheckBox,SIGNAL(stateChanged(int)),this,SLOT(expireStateChanged(int))));
 
         QLabel *sparseHelpLabel = createHelpLabel(
             "If set, the index only references documents with the specified field. "
@@ -236,9 +237,9 @@ namespace Robomongo
     {
         QWidget *textSearch = new QWidget(this);
 
-        _defaultLanguageLineEdit = new QLineEdit(QString::fromUtf8(_info._defaultLanguage.c_str()), textSearch);
-        _languageOverrideLineEdit = new QLineEdit(QString::fromUtf8(_info._languageOverride.c_str()), textSearch);
-        _textWeightsLineEdit = createFindFrame(textSearch, QString::fromUtf8(_info._textWeights.c_str()));
+        _defaultLanguageLineEdit = new QLineEdit(QtUtils::toQString(_info._defaultLanguage), textSearch);
+        _languageOverrideLineEdit = new QLineEdit(QtUtils::toQString(_info._languageOverride), textSearch);
+        _textWeightsLineEdit = createFindFrame(textSearch, QtUtils::toQString(_info._textWeights));
 
         QLabel *defaultLanguageHelpLabel = createHelpLabel(
             "For a <i>text</i> index, the language that determines the list of stop words and the rules for the stemmer and tokenizer. The default value is <b>english</b>",
@@ -278,18 +279,18 @@ namespace Robomongo
         }
         return EnsureIndexInfo(
             _info._collection,
-            _nameLineEdit->text().toStdString(),
-            QString(" %1 ,{ name: %2 }")
+            QtUtils::toStdString<std::string>(_nameLineEdit->text()),
+            QtUtils::toStdString<std::string>(QString(" %1 ,{ name: %2 }")
                 .arg(_jsonText->sciScintilla()->text())
-                .arg(_nameLineEdit->text()).toStdString(),
+                .arg(_nameLineEdit->text())),
             _uniqueCheckBox->checkState() == Qt::Checked,
             _backGroundCheckBox->checkState() == Qt::Checked,
             _dropDuplicates->checkState() == Qt::Checked,
             _sparceCheckBox->checkState() == Qt::Checked,
             expAftInt,
-            _defaultLanguageLineEdit->text().toStdString(),
-            _languageOverrideLineEdit->text().toStdString(),
-            _textWeightsLineEdit->sciScintilla()->text().toStdString());
+            QtUtils::toStdString<std::string>(_defaultLanguageLineEdit->text()),
+            QtUtils::toStdString<std::string>(_languageOverrideLineEdit->text()),
+            QtUtils::toStdString<std::string>(_textWeightsLineEdit->sciScintilla()->text()));
     }
 
     void EditIndexDialog::accept()

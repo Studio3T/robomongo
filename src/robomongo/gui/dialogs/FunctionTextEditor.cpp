@@ -15,7 +15,7 @@
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"
-
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -30,11 +30,11 @@ namespace Robomongo
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), database);
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), server);
 
-        _nameEdit = new QLineEdit(function.name());
+        _nameEdit = new QLineEdit(QtUtils::toQString(function.name()));
 
         _queryText = new FindFrame(this);
         _configureQueryText();
-        _queryText->sciScintilla()->setText(_function.code());
+        _queryText->sciScintilla()->setText(QtUtils::toQString(_function.code()));
 
         QFrame *hline = new QFrame(this);
         hline->setFrameShape(QFrame::HLine);
@@ -50,8 +50,8 @@ namespace Robomongo
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+        VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
+        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
         QHBoxLayout *bottomlayout = new QHBoxLayout();
         bottomlayout->addStretch(1);
@@ -83,8 +83,8 @@ namespace Robomongo
         if (_nameEdit->text().isEmpty() && _queryText->sciScintilla()->text().isEmpty())
             return;
 
-        _function.setName(_nameEdit->text());
-        _function.setCode(_queryText->sciScintilla()->text());
+        _function.setName(QtUtils::toStdString<std::string>(_nameEdit->text()));
+        _function.setCode(QtUtils::toStdString<std::string>(_queryText->sciScintilla()->text()));
 
         BaseClass::accept();
     }

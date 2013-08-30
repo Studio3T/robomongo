@@ -26,7 +26,7 @@ namespace
 {
     void openCurrentDatabaseShell(Robomongo::MongoDatabase *database,const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
     {
-        Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, database->name(), cursor);
+        Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, Robomongo::QtUtils::toQString(database->name()), cursor);
     }
 }
 
@@ -50,19 +50,19 @@ namespace Robomongo
     {
         QAction *openDbShellAction = new QAction("Open Shell", this);
         openDbShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
-        connect(openDbShellAction, SIGNAL(triggered()), SLOT(ui_dbOpenShell()));
+        VERIFY(connect(openDbShellAction, SIGNAL(triggered()), SLOT(ui_dbOpenShell())));
 
         QAction *dbStats = new QAction("Database Statistics", this);
-        connect(dbStats, SIGNAL(triggered()), SLOT(ui_dbStatistics()));
+        VERIFY(connect(dbStats, SIGNAL(triggered()), SLOT(ui_dbStatistics())));
 
         QAction *dbDrop = new QAction("Drop Database", this);
-        connect(dbDrop, SIGNAL(triggered()), SLOT(ui_dbDrop()));
+        VERIFY(connect(dbDrop, SIGNAL(triggered()), SLOT(ui_dbDrop())));
 
         QAction *dbRepair = new QAction("Repair Database", this);
-        connect(dbRepair, SIGNAL(triggered()), SLOT(ui_dbRepair()));
+        VERIFY(connect(dbRepair, SIGNAL(triggered()), SLOT(ui_dbRepair())));
 
         QAction *refreshDatabase = new QAction("Refresh", this);
-        connect(refreshDatabase, SIGNAL(triggered()), SLOT(ui_refreshDatabase()));
+        VERIFY(connect(refreshDatabase, SIGNAL(triggered()), SLOT(ui_refreshDatabase())));
 
         BaseClass::_contextMenu->addAction(openDbShellAction);
         BaseClass::_contextMenu->addAction(refreshDatabase);
@@ -79,7 +79,7 @@ namespace Robomongo
         _bus->subscribe(this, MongoDatabaseFunctionsLoadingEvent::Type, _database);
         _bus->subscribe(this, MongoDatabaseUsersLoadingEvent::Type, _database);
         
-        setText(0, _database->name());
+        setText(0, QtUtils::toQString(_database->name()));
         setIcon(0, GuiRegistry::instance().databaseIcon());
         setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
@@ -115,7 +115,7 @@ namespace Robomongo
          _bus->send(_database->server()->client(), new LoadCollectionIndexesRequest(item, item->collection()->info()));
     }
 
-    void ExplorerDatabaseTreeItem::dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const QString &indexName)
+    void ExplorerDatabaseTreeItem::dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &indexName)
     {
         _bus->send(_database->server()->client(), new DropCollectionIndexRequest(item, item->collection()->info(), indexName));
     }
@@ -125,7 +125,7 @@ namespace Robomongo
         _bus->send(_database->server()->client(), new EnsureIndexRequest(item,oldInfo ,newInfo));
     }
 
-    void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item,const QString& oldIndexText,const QString& newIndexText)
+    void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item,const std::string &oldIndexText,const std::string &newIndexText)
     {
          _bus->send(_database->server()->client(), new EditIndexRequest(item, item->collection()->info(),oldIndexText,newIndexText));
     }
@@ -244,9 +244,10 @@ namespace Robomongo
     void ExplorerDatabaseTreeItem::ui_dbDrop()
     {
             // Ask user
+            char buff[256]={0};
+            sprintf(buff,"Drop <b>%s</b> database?",_database->name().c_str());
             int answer = QMessageBox::question(treeWidget(),
-                "Drop Database",
-                QString("Drop <b>%1</b> database?").arg(_database->name()),
+                "Drop Database",buff,
                 QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
             if (answer == QMessageBox::Yes){
                 _database->server()->dropDatabase(_database->name());

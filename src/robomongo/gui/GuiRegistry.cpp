@@ -114,6 +114,18 @@ namespace Robomongo
         return treeHighlightedIc;
     }
 
+    const QIcon &GuiRegistry::tableIcon()const
+    {
+        static const QIcon treeIc = QIcon(":/robomongo/icons/tree_16x16.png");
+        return treeIc;
+    }
+
+    const QIcon &GuiRegistry::tableHighlightedIcon()const
+    {
+        static const QIcon treeHighlightedIc = QIcon(":/robomongo/icons/tree_highlighted_16x16.png");
+        return treeHighlightedIc;
+    }
+
     const QIcon &GuiRegistry::customIcon() const
     {
         static const QIcon customIc = QIcon(":/robomongo/icons/custom_16x16.png");

@@ -20,7 +20,7 @@ namespace
 {
      void openCurrentServerShell(Robomongo::MongoServer *const server,const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
      {
-          Robomongo::AppRegistry::instance().app()->openShell(server, script, QString(), execute, server->connectionRecord()->getReadableName(), cursor);
+          Robomongo::AppRegistry::instance().app()->openShell(server, script, std::string(), execute, Robomongo::QtUtils::toQString(server->connectionRecord()->getReadableName()), cursor);
      }
 }
 
@@ -32,29 +32,29 @@ namespace Robomongo
     { 
         QAction *openShellAction = new QAction("Open Shell", this);
         openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
-        connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell()));
+        VERIFY(connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell())));
 
         QAction *refreshServer = new QAction("Refresh", this);
-        connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer()));
+        VERIFY(connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer())));
 
         QAction *createDatabase = new QAction("Create Database", this);
-        connect(createDatabase, SIGNAL(triggered()), SLOT(ui_createDatabase()));
+        VERIFY(connect(createDatabase, SIGNAL(triggered()), SLOT(ui_createDatabase())));
 
         QAction *serverStatus = new QAction("Server Status", this);
-        connect(serverStatus, SIGNAL(triggered()), SLOT(ui_serverStatus()));
+        VERIFY(connect(serverStatus, SIGNAL(triggered()), SLOT(ui_serverStatus())));
 
         QAction *serverVersion = new QAction("MongoDB Version", this);
-        connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion()));
+        VERIFY(connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion())));
 
         QAction *serverHostInfo = new QAction("Host Info", this);
-        connect(serverHostInfo, SIGNAL(triggered()), SLOT(ui_serverHostInfo()));        
+        VERIFY(connect(serverHostInfo, SIGNAL(triggered()), SLOT(ui_serverHostInfo())));        
 
         QAction *showLog = new QAction("Show Log", this);
-        connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog())); 
+        VERIFY(connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog()))); 
 
         QAction *disconnectAction = new QAction("Disconnect", this);
         disconnectAction->setIconText("Disconnect");
-        connect(disconnectAction, SIGNAL(triggered()), SLOT(ui_disconnectServer()));
+        VERIFY(connect(disconnectAction, SIGNAL(triggered()), SLOT(ui_disconnectServer())));
 
         BaseClass::_contextMenu->addAction(openShellAction);
         BaseClass::_contextMenu->addAction(refreshServer);
@@ -127,7 +127,7 @@ namespace Robomongo
 
     QString ExplorerServerTreeItem::buildServerName(int *count /* = NULL */)
     {
-        QString name = _server->connectionRecord()->getReadableName();
+        QString name = QtUtils::toQString(_server->connectionRecord()->getReadableName());
 
         if (!count)
             return name;
@@ -185,12 +185,12 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::ui_createDatabase()
     {
-        CreateDatabaseDialog dlg(_server->connectionRecord()->getFullAddress());
+        CreateDatabaseDialog dlg(QtUtils::toQString(_server->connectionRecord()->getFullAddress()));
         dlg.setOkButtonText("&Create");
         dlg.setInputLabelText("Database Name:");
         int result = dlg.exec();
         if (result == QDialog::Accepted) {
-            _server->createDatabase(dlg.databaseName());
+            _server->createDatabase(QtUtils::toStdString<std::string>(dlg.databaseName()));
 
             // refresh list of databases
             expand();

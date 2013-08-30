@@ -7,8 +7,10 @@ Visit our site: [www.robomongo.org](http://www.robomongo.org)
 Download
 ========
 
-You can download compiled version (for Mac OS X, Windows and Linux) at this page:<br />
-https://www.dropbox.com/sh/u0s0i8e4m0a8i9f/oxtqKHPUZ8
+You can download compiled version (for Mac OS X, Windows and Linux) from our site:<br />
+[www.robomongo.org](http://www.robomongo.org)
+
+<!-- https://www.dropbox.com/sh/u0s0i8e4m0a8i9f/oxtqKHPUZ8 -->
 
 Contribute
 ==========

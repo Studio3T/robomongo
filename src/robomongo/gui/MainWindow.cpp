@@ -274,7 +274,7 @@ namespace Robomongo
         uuidMenu->addAction(csharpLegacyEncodingAction);
         uuidMenu->addAction(pythonEncodingAction);
 
-        QAction *loadInitJs = new QAction("Load ."PROJECT_NAME_LOWERCASE".js",this);
+        QAction *loadInitJs = new QAction("Load ."PROJECT_NAME_LOWERCASE"rc.js",this);
         loadInitJs->setCheckable(true);
         loadInitJs->setChecked(AppRegistry::instance().settingsManager()->loadInitJs());
         VERIFY(connect(loadInitJs, SIGNAL(triggered()), this, SLOT(setLoadInitJs())));

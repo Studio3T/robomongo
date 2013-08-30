@@ -80,8 +80,11 @@ namespace Robomongo
         setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded); 
 
         // Cache width of one digit
+#ifdef Q_OS_WIN
+        _lineNumberDigitWidth = rowNumberWidth;
+#else
         _lineNumberDigitWidth = textWidth(STYLE_LINENUMBER, "0");
-
+#endif
         updateLineNumbersMarginWidth();
 
         VERIFY(connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineNumbersMarginWidth())));

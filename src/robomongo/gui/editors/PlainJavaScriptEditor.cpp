@@ -90,7 +90,7 @@ namespace Robomongo
         VERIFY(connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineNumbersMarginWidth())));
     }
 
-    int RoboScintilla::lineNumberMarginWidth()
+    int RoboScintilla::lineNumberMarginWidth() const
     {
         return marginWidth(0);
     }

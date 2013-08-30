@@ -2,7 +2,7 @@
 
 namespace Robomongo
 {
-    BsonTableView::BsonTableView(QWidget *parent) 
+    BsonTableView::BsonTableView(MongoShell *shell, QWidget *parent) 
         :BaseClass(parent)
     {
     }

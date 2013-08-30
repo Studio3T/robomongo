@@ -3,11 +3,12 @@
 
 namespace Robomongo
 {
+    class MongoShell;
     class BsonTableView : public QTableView
     {
         Q_OBJECT
     public:
         typedef QTableView BaseClass;
-        explicit BsonTableView(QWidget *parent = 0);
+        explicit BsonTableView(MongoShell *shell, QWidget *parent = 0);        
     };
 }

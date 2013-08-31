@@ -1,46 +1,60 @@
 #include "robomongo/gui/widgets/workarea/BsonTableItem.h"
 
-#include "robomongo/core/domain/MongoElement.h"
-#include "robomongo/core/domain/MongoDocumentIterator.h"
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/settings/SettingsManager.h"
-#include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/gui/GuiRegistry.h"
-
 using namespace mongo;
-
-namespace
-{
-    QString buildSynopsis(const QString &text)
-    {
-        QString simplified = text.simplified().left(300);
-        return simplified;
-    }
-}
 
 namespace Robomongo
 {
-    BsonTableItem::BsonTableItem(MongoDocumentPtr rootDocument, MongoElementPtr element) 
-        :_element(element),
-        _rootDocument(rootDocument)
+    BsonTableItem::BsonTableItem(QObject *parent) 
+        :BaseClass(parent)
     {
        
     }
 
-    mongo::BSONType BsonTableItem::type() const
-    {
-        return _element->bsonElement().type();
-    }
-
-    BsonTableItem::BsonTableItem(MongoDocumentPtr document) 
-        :_document(document),
-        _rootDocument(document)
-    {
-    }
-
     unsigned BsonTableItem::columnCount() const
     {
-        return _rows.size();
+        return _columns.size();
+    }
+
+    QString BsonTableItem::column(int col) const
+    {
+        return _columns[col];
+    }
+
+    size_t BsonTableItem::findIndexColumn(const QString &col)
+    {
+        for(int i=0; i<_columns.size(); ++i)
+        {
+            if(_columns[i] == col){
+                return i;
+            }
+        }
+        return _columns.size();
+    }
+
+    size_t BsonTableItem::addColumn(const QString &col)
+    {
+        size_t column = findIndexColumn(col);
+        if (column ==_columns.size()){
+            _columns.push_back(col);
+        }
+        return column;
+    }
+
+    void BsonTableItem::addRow(size_t col,const QString &row)
+    {
+        if(_rows.size()<col+1){
+            _rows.resize(col+1);
+        }
+        _rows[col]=row;
+    }
+
+    QString BsonTableItem::row(unsigned col) const
+    {
+        QString res;
+        if(_rows.size()>col){
+            res = _rows[col];
+        }
+        return res;
     }
 
     unsigned BsonTableItem::childrenCount() const

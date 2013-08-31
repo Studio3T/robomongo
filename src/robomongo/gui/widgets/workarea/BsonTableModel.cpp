@@ -1,23 +1,29 @@
 #include "robomongo/gui/widgets/workarea/BsonTableModel.h"
 
+#include "robomongo/core/domain/MongoElement.h"
+#include "robomongo/core/domain/MongoDocumentIterator.h"
 #include "robomongo/gui/widgets/workarea/BsonTableItem.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
-    BsonTableModel::BsonTableModel(const std::vector<MongoDocumentPtr> &documents,QObject *parent) 
-        :BaseClass(parent)
-        ,_root(new BsonTableItem(NULL))
+    BsonTableModel::BsonTableModel(const std::vector<MongoDocumentPtr> &documents, QObject *parent) 
+        : BaseClass(parent) ,
+        _root(new BsonTableItem(this))
     {
-        _headerData.push_back("Key");
-        _headerData.push_back("Value");
-        _headerData.push_back("Type");
-        
-        size_t documentsCount = documents.size();
-        for (int i = 0; i < documentsCount; ++i)
+        for (std::vector<MongoDocumentPtr>::const_iterator it = documents.begin(); it!=documents.end(); ++it)
         {
-            MongoDocumentPtr document = documents[i];
-            BsonTableItem *item = new BsonTableItem(document);
-            _root->addChild(item);
+            MongoDocumentPtr doc = (*it);
+            MongoDocumentIterator iterator(doc.get());
+
+            BsonTableItem *childItem = new BsonTableItem(parent);
+            while(iterator.hasMore())
+            {
+                MongoElementPtr element = iterator.next();
+                size_t col = _root->addColumn(QtUtils::toQString(element->fieldName()));
+                childItem->addRow(col,element->stringValue());                
+            }
+            _root->addChild(childItem);
         }
     }
 
@@ -25,20 +31,14 @@ namespace Robomongo
     {
         if (!index.isValid())
             return QVariant();
+
         int col = index.column();
-        BsonTableItem *node = _root->child(index.row());
         QVariant result;
-        if(node){
-            switch(col)
-            {
-            case 0:
-             //   result = node->text();
-                break;
-            case 1:
-             //   result = node->typeText();
-                break;
-            default:
-                break;
+
+        if (role == Qt::DisplayRole) {
+            BsonTableItem *node = _root->child(index.row());
+            if(node){
+                result = node->row(col);
             }
         }
 
@@ -48,8 +48,6 @@ namespace Robomongo
     bool BsonTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
     {
         if (index.isValid() && role == Qt::EditRole) {
-            
-
             return true;
         }
         return false;
@@ -57,10 +55,6 @@ namespace Robomongo
 
     int BsonTableModel::rowCount(const QModelIndex &parent) const
     {
-        BsonTableItem *item = static_cast<BsonTableItem*>(parent.internalPointer());
-        if(item){
-            return item->childrenCount(); 
-        }
         return _root->childrenCount();
     }
 
@@ -73,8 +67,9 @@ namespace Robomongo
     {
         if(role != Qt::DisplayRole)
             return QVariant();
+
         if(orientation == Qt::Horizontal && role == Qt::DisplayRole){
-            return _headerData[section]; 
+            return _root->column(section); 
         }else{
             return QString("%1").arg( section + 1 ); 
         }

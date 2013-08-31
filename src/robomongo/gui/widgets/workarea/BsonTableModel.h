@@ -9,9 +9,9 @@ namespace Robomongo
     class BsonTableModel : public QAbstractTableModel
     {
         Q_OBJECT
+
     public:
         typedef QAbstractTableModel BaseClass;
-        typedef std::vector<QString> HeaderContainerType;
 
         explicit BsonTableModel(const std::vector<MongoDocumentPtr> &documents,QObject *parent = 0);
         QVariant data(const QModelIndex &index, int role) const;
@@ -22,10 +22,10 @@ namespace Robomongo
 
         QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
         Qt::ItemFlags flags(const QModelIndex &index) const;
+
     public Q_SLOTS:
 
     private:
-        HeaderContainerType _headerData;
-        BsonTableItem *_root;
+        BsonTableItem *const _root;
     };
 }

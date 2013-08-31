@@ -5,26 +5,49 @@
 #include "robomongo/gui/widgets/workarea/BsonTableItem.h"
 #include "robomongo/core/utils/QtUtils.h"
 
-namespace Robomongo
+namespace
 {
-    BsonTableModel::BsonTableModel(const std::vector<MongoDocumentPtr> &documents, QObject *parent) 
-        : BaseClass(parent) ,
-        _root(new BsonTableItem(this))
+    using namespace Robomongo;
+    void parseDocument(BsonTableItem *root,const std::vector<MongoDocumentPtr> &documents)
     {
         for (std::vector<MongoDocumentPtr>::const_iterator it = documents.begin(); it!=documents.end(); ++it)
         {
             MongoDocumentPtr doc = (*it);
             MongoDocumentIterator iterator(doc.get());
 
-            BsonTableItem *childItem = new BsonTableItem(parent);
+            BsonTableItem *childItem = new BsonTableItem(root);
             while(iterator.hasMore())
             {
                 MongoElementPtr element = iterator.next();
-                size_t col = _root->addColumn(QtUtils::toQString(element->fieldName()));
-                childItem->addRow(col,element->stringValue());                
+                size_t col = root->addColumn(QtUtils::toQString(element->fieldName()));
+                if(element->isArray())
+                {
+                    int itemsCount = element->bsonElement().Array().size();
+                    childItem->addRow(col,QString("Array[%1]").arg(itemsCount));
+                }
+                else if (element->isDocument()){
+                    BsonTableItem *docChild = new BsonTableItem(childItem);
+                    size_t colc = childItem->addColumn(QtUtils::toQString(element->fieldName()));
+                    docChild->addRow(colc,element->stringValue());
+                    childItem->addChild(docChild);
+                    childItem->addRow(col,QString("{%1  Keys}").arg(childItem->childrenCount()));
+                }
+                else{
+                    childItem->addRow(col,element->stringValue());
+                }               
             }
-            _root->addChild(childItem);
+            root->addChild(childItem);
         }
+    }
+}
+
+namespace Robomongo
+{
+    BsonTableModel::BsonTableModel(const std::vector<MongoDocumentPtr> &documents, QObject *parent) 
+        : BaseClass(parent) ,
+        _root(new BsonTableItem(this))
+    {
+        parseDocument(_root,documents);
     }
 
     QVariant BsonTableModel::data(const QModelIndex &index, int role) const
@@ -80,6 +103,6 @@ namespace Robomongo
         if (!index.isValid())
             return Qt::ItemIsEnabled;
 
-        return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+        return BaseClass::flags(index) ;
     }
 }

@@ -78,8 +78,8 @@ namespace Robomongo
         if (_connection->hasEnabledPrimaryCredential())
             connectDatabase = _connection->primaryCredential()->databaseName();
 
-        char url[512] = {0};
-        sprintf(url,"%s:%d/%s",_connection->serverHost().c_str(),_connection->serverPort(),connectDatabase.c_str());
+        char url[2048] = {0};
+        sprintf(url,"%s:%u/%s",_connection->serverHost().c_str(),_connection->serverPort(),connectDatabase.c_str());
 
         std::stringstream ss;
 
@@ -199,7 +199,7 @@ namespace Robomongo
 
         if (!dbName.empty()) {
             // switch to database
-            char useDb[512]={0};
+            char useDb[1024]={0};
             sprintf(useDb,"shellHelper.use('%s');",dbName.c_str());
             _scope->exec(useDb, "(usedb)", false, true, false);
         }
@@ -208,10 +208,7 @@ namespace Robomongo
     void ScriptEngine::ping()
     {
         QMutexLocker lock(&_mutex);
-
-        QString pingStatement = QString("if (db) { db.runCommand({ping:1}); }");
-        QByteArray pingArray = pingStatement.toUtf8();
-        _scope->exec(pingArray.data(), "(ping)", false, false, false);
+        _scope->exec("if (db) { db.runCommand({ping:1}); }", "(ping)", false, false, false);
     }
 
     QStringList ScriptEngine::complete(const std::string &prefix)

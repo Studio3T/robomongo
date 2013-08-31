@@ -226,8 +226,8 @@ namespace Robomongo
 
         // Clone connection
         ConnectionSettings *connection = currentItem->connection()->clone();
-        char newConnectionName[512]={0};
-        sprintf(newConnectionName,"Copy of %s",connection->connectionName().c_str());
+        std::string newConnectionName="Copy of "+connection->connectionName();
+
         connection->setConnectionName(newConnectionName);
 
         ConnectionDialog editDialog(connection);
@@ -316,8 +316,7 @@ namespace Robomongo
         setText(1, QtUtils::toQString(connection->getFullAddress()));
 
         if (connection->hasEnabledPrimaryCredential()) {
-            char authString[512]={0};
-            sprintf(authString,"%s / %s",connection->primaryCredential()->databaseName().c_str(),connection->primaryCredential()->userName().c_str());
+            QString authString = QString("%1 / %2").arg(QtUtils::toQString(connection->primaryCredential()->databaseName())).arg(QtUtils::toQString(connection->primaryCredential()->userName()));
             setText(2, authString);
             setIcon(2, GuiRegistry::instance().keyIcon());
         } else {

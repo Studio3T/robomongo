@@ -23,7 +23,7 @@ namespace
 
     std::string buildToolTip(const Robomongo::MongoUser &user)
     {
-        char buff[512]={0};
+        char buff[2048]={0};
         sprintf(buff,tooltipTemplate,user.name().c_str(),user.id().toString().c_str(),user.readOnly() ? "Yes" : "No");
         return buff;
     }

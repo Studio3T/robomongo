@@ -149,8 +149,8 @@ namespace Robomongo
 
     std::string ConnectionSettings::getFullAddress() const
     {
-        char buff[256]={0};
-        sprintf(buff,"%s:%d",_serverHost.c_str(),_serverPort);
+        char buff[1024]={0};
+        sprintf(buff,"%s:%u",_serverHost.c_str(),_serverPort);
         return buff;
     }
 }

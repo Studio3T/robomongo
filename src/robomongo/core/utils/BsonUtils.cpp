@@ -330,6 +330,20 @@ namespace Robomongo
             return elem.isABSONObj();
         }
 
+        bool isSimpleType(const mongo::BSONElement &elem) 
+        {
+            return elem.isSimpleType(); 
+        }
+
+        bool isUuidType(const mongo::BSONElement &elem) 
+        {
+            if (elem.type() != mongo::BinData)
+                return false;
+
+            mongo::BinDataType binType = elem.binDataType();
+            return (binType == mongo::newUUID || binType == mongo::bdtUUID);
+        }
+
         void buildJsonString(const mongo::BSONObj &obj,std::string &con, UUIDEncoding uuid,SupportedTimes tz)
         {
             mongo::BSONObjIterator iterator(obj);

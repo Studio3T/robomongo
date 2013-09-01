@@ -90,7 +90,13 @@ namespace Robomongo
                     result->header()->showTree();
                 else if (output->isTextModeSupported())
                     result->header()->showText();
-            } else
+            } else if (viewMode == Table) {
+                if (output->isTableModeSupported())
+                    result->header()->showTable();
+                else if (output->isTextModeSupported())
+                    result->header()->showText();
+            }
+            else
                 result->header()->showText();
 
             double secs = shellResult.elapsedMs() / (double) 1000;

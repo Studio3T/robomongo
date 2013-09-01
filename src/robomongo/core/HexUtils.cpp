@@ -153,7 +153,7 @@ namespace Robomongo
             return uuidToHex(uuid);
         }
 
-        std::string formatUuid(mongo::BSONElement &element, Robomongo::UUIDEncoding encoding)
+        std::string formatUuid(const mongo::BSONElement &element, Robomongo::UUIDEncoding encoding)
         {
             mongo::BinDataType binType = element.binDataType();
 

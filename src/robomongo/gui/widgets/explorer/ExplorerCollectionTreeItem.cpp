@@ -321,7 +321,7 @@ namespace Robomongo
 
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
     {
-        char buff[512]={0};
+        char buff[2048]={0};
         sprintf(buff,tooltipTemplate,collection->name().c_str(),collection->info().count(),collection->sizeString().c_str());
         return buff;
     }

@@ -8,6 +8,8 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/widgets/workarea/JsonPrepareThread.h"
 #include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
+#include "robomongo/gui/widgets/workarea/BsonTableView.h"
+#include "robomongo/gui/widgets/workarea/BsonTableModel.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -17,8 +19,10 @@
 namespace Robomongo
 {
     OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &text) :
+        _bsonTable(NULL),
         _isTextModeSupported(true),
         _isTreeModeSupported(false),
+        _isTableModeSupported(false),
         _isCustomModeSupported(false),
         _text(text),
         _sourceIsText(true),
@@ -28,8 +32,10 @@ namespace Robomongo
     }
 
     OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
+        _bsonTable(NULL),
         _isTextModeSupported(true),
         _isTreeModeSupported(true),
+        _isTableModeSupported(true),
         _isCustomModeSupported(false),
         _documents(documents),
         _queryInfo(queryInfo),
@@ -40,8 +46,10 @@ namespace Robomongo
     }
 
     OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
+        _bsonTable(NULL),
         _isTextModeSupported(true),
         _isTreeModeSupported(true),
+        _isTableModeSupported(true),
         _isCustomModeSupported(true),
         _documents(documents),
         _queryInfo(queryInfo),
@@ -144,7 +152,7 @@ namespace Robomongo
                 _stack->addWidget(_log);
                 _isTextModeInitialized = true;
             }
-        _stack->setCurrentWidget(_log);
+            _stack->setCurrentWidget(_log);
         }
     }
 
@@ -193,11 +201,31 @@ namespace Robomongo
             _stack->setCurrentWidget(_collectionStats);
     }
 
+    void OutputItemContentWidget::showTable()
+    {
+        if (!_isTableModeSupported) {
+            // try to downgrade to text mode
+            showText();
+            return;
+        }
+
+        if (!_isTableModeInitialized) {
+            _bsonTable = new BsonTableView(NULL);
+            BsonTableModel *mod = new BsonTableModel(_documents,_bsonTable);
+            _bsonTable->setModel(mod);
+            _stack->addWidget(_bsonTable);
+            _isTableModeInitialized = true;
+        }
+
+        _stack->setCurrentWidget(_bsonTable);
+    }
+
     void OutputItemContentWidget::markUninitialized()
     {
         _isTextModeInitialized = false;
         _isTreeModeInitialized = false;
         _isCustomModeInitialized = false;
+        _isTableModeInitialized = false;
     }
 
     void OutputItemContentWidget::jsonPrepared()

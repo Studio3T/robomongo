@@ -16,8 +16,7 @@ namespace Robomongo
         _databaseName(database),
         _collectionName(collection)
     {
-        char buff[512]={0};
-        sprintf(buff,"%s.%s",_databaseName.c_str(), _collectionName.c_str());
-        _ns = buff;
+        _ns = _databaseName+".";
+        _ns += _collectionName;
     }
 }

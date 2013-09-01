@@ -74,7 +74,6 @@ namespace Robomongo
         void buildJsonString(std::string &con);
 
         mongo::BSONElement bsonElement() const { return _bsonElement; }
-
     private:
 
         /*

@@ -98,7 +98,7 @@ namespace Robomongo
 
     const QIcon &GuiRegistry::textHighlightedIcon() const
     {
-        static const QIcon textHighlightedIc = QIcon(":/robomongo/icons/text_highlighted_16x16.png");
+        static const QIcon textHighlightedIc = QIcon(":/robomongo/icons/text_16x16.png");
         return textHighlightedIc;
     }
 
@@ -111,6 +111,18 @@ namespace Robomongo
     const QIcon &GuiRegistry::treeHighlightedIcon() const
     {
         static const QIcon treeHighlightedIc = QIcon(":/robomongo/icons/tree_highlighted_16x16.png");
+        return treeHighlightedIc;
+    }
+
+    const QIcon &GuiRegistry::tableIcon()const
+    {
+        static const QIcon treeIc = QIcon(":/robomongo/icons/table_16x16.png");
+        return treeIc;
+    }
+
+    const QIcon &GuiRegistry::tableHighlightedIcon()const
+    {
+        static const QIcon treeHighlightedIc = QIcon(":/robomongo/icons/table_highlighted_16x16.png");
         return treeHighlightedIc;
     }
 

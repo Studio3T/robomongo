@@ -130,9 +130,10 @@ namespace Robomongo
 
     void ConnectionDiagnosticThread::run()
     {
-        char address[256]={0};
-        sprintf(address,"%s:%d",_connection->serverHost().c_str(),_connection->serverPort());
-
+        char port[8]={0};
+        sprintf(port,":%u",_connection->serverPort());
+        std::string address = _connection->serverHost();
+        address+=port;
         boost::scoped_ptr<DBClientConnection> connection;
 
         try {

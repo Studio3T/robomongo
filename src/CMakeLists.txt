@@ -31,6 +31,9 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/WorkAreaTabBar.h
     robomongo/gui/widgets/workarea/JsonPrepareThread.h
     robomongo/gui/widgets/workarea/BsonTreeWidget.h
+	robomongo/gui/widgets/workarea/BsonTableModel.h
+	robomongo/gui/widgets/workarea/BsonTableView.h
+	robomongo/gui/widgets/workarea/BsonTableItem.h
     robomongo/gui/editors/jsedit.h
     robomongo/gui/widgets/workarea/OutputWidget.h
     robomongo/gui/widgets/workarea/OutputItemContentWidget.h
@@ -84,6 +87,9 @@ SET(SOURCES_GUI
     robomongo/gui/widgets/workarea/JsonPrepareThread.cpp
     robomongo/gui/widgets/workarea/BsonTreeWidget.cpp
     robomongo/gui/widgets/workarea/BsonTreeItem.cpp
+    robomongo/gui/widgets/workarea/BsonTableItem.cpp
+	robomongo/gui/widgets/workarea/BsonTableModel.cpp
+	robomongo/gui/widgets/workarea/BsonTableView.cpp
     robomongo/gui/editors/jsedit.cpp
     robomongo/gui/editors/PlainJavaScriptEditor.cpp
     robomongo/gui/editors/JSLexer.cpp
@@ -149,7 +155,6 @@ SET(HEADERS_CORE_TO_MOC
 SET(HEADERS_CORE
     robomongo/core/engine/ScriptEngine.h
     robomongo/core/KeyboardManager.h
-    robomongo/core/domain/MongoDocumentIterator.h
     robomongo/core/domain/MongoDocument.h
     robomongo/core/EventBusSubscriber.h
     robomongo/core/EventWrapper.h
@@ -188,7 +193,6 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoDatabase.cpp
     robomongo/core/domain/MongoCollection.cpp
     robomongo/core/domain/MongoElement.cpp
-    robomongo/core/domain/MongoDocumentIterator.cpp
     robomongo/core/domain/MongoDocument.cpp
     robomongo/core/events/MongoEvents.cpp
     robomongo/core/events/MongoEventsInfo.cpp

@@ -10,6 +10,7 @@ namespace Robomongo
 {
     class FindFrame;
     class BsonTreeWidget;
+    class BsonTableView;
     class JsonPrepareThread;
     class CollectionStatsTreeWidget;
     class MongoShell;
@@ -32,14 +33,17 @@ namespace Robomongo
         bool isTextModeSupported() const { return _isTextModeSupported; }
         bool isTreeModeSupported() const { return _isTreeModeSupported; }
         bool isCustomModeSupported() const { return _isCustomModeSupported; }
+        bool isTableModeSupported() const { return _isTableModeSupported; }
 
         bool setTextModeSupported(bool supported) { _isTextModeSupported = supported; }
-        bool isTreeModeSupported(bool supported) { _isTreeModeSupported = supported; }
-        bool isCustomModeSupported(bool supported) { _isCustomModeSupported = supported; }
+        bool setTreeModeSupported(bool supported) { _isTreeModeSupported = supported; }
+        bool setCustomModeSupported(bool supported) { _isCustomModeSupported = supported; }
+        bool setTableModeSupported(bool supported) { _isTableModeSupported = supported; }
 
         void showText();
         void showTree();
         void showCustom();
+        void showTable();
 
         void markUninitialized();
 
@@ -52,6 +56,7 @@ namespace Robomongo
 
         FindFrame *_log;
         BsonTreeWidget *_bson;
+        BsonTableView *_bsonTable;
         CollectionStatsTreeWidget *_collectionStats;
 
         QString _text;
@@ -68,10 +73,12 @@ namespace Robomongo
 
         bool _isTextModeSupported;
         bool _isTreeModeSupported;
+        bool _isTableModeSupported;
         bool _isCustomModeSupported;
 
         bool _isTextModeInitialized;
         bool _isTreeModeInitialized;
+        bool _isTableModeInitialized;
         bool _isCustomModeInitialized;
 
         bool _isFirstPartRendered;

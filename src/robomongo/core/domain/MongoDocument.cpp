@@ -1,8 +1,9 @@
 #include "robomongo/core/domain/MongoDocument.h"
 
 #include <mongo/client/dbclient.h>
-
-#include "robomongo/core/domain/MongoDocumentIterator.h"
+#include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/domain/MongoElement.h"
 
 namespace Robomongo
@@ -50,21 +51,7 @@ namespace Robomongo
     */
     void MongoDocument::buildJsonString(std::string &con)
     {
-        MongoDocumentIterator i(this);
-        con.append("{ \n");
-        while (i.hasMore())
-        {
-            MongoElementPtr e = i.next();
-
-            con.append("\"");
-            con.append(e->fieldName());
-            con.append("\"");
-            con.append(" : ");
-            e->buildJsonString(con);
-            con.append(", \n");
-        }
-
-        con.append("\n}\n\n");
+        BsonUtils::buildJsonString(_bsonObj,con,AppRegistry::instance().settingsManager()->uuidEncoding(),AppRegistry::instance().settingsManager()->timeZone());
     }
 
     /*

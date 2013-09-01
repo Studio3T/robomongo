@@ -37,6 +37,7 @@ namespace Robomongo
         void toggleOrientation();
         void enterTextMode();
         void enterTreeMode();
+        void enterTableMode();
         void enterCustomMode();
         void saveViewMode();
         void executeScript();

@@ -6,6 +6,7 @@ namespace Robomongo
     {
         Text = 0,
         Tree = 1,
-        Custom = 2
+        Table = 2,
+        Custom = 3
     };
 }

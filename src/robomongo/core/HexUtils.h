@@ -43,6 +43,6 @@ namespace Robomongo
         std::string csharpUuidToHex(const std::string &uuid);
         std::string javaUuidToHex(const std::string &uuid);
         std::string pythonUuidToHex(const std::string &uuid);
-        std::string formatUuid(mongo::BSONElement &element, UUIDEncoding encoding);
+        std::string formatUuid(const mongo::BSONElement &element, UUIDEncoding encoding);
     }
 }

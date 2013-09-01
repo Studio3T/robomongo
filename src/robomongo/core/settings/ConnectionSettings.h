@@ -57,7 +57,7 @@ namespace Robomongo
         /**
          * @brief Port of server
          */
-        unsigned serverPort() const { return _serverPort; }
+        unsigned short serverPort() const { return _serverPort; }
         void setServerPort(const int port) { _serverPort = port; }
 
         /**
@@ -125,7 +125,7 @@ namespace Robomongo
         std::string _connectionName;
         std::string _serverHost;
         std::string _defaultDatabase;
-        unsigned _serverPort;
+        unsigned short _serverPort;
 
         QList<CredentialSettings *> _credentials;
     };

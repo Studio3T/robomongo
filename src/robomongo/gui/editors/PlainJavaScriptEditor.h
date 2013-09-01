@@ -19,7 +19,7 @@ namespace Robomongo
         RoboScintilla(QWidget *parent = NULL);
         void setIgnoreEnterKey(bool ignore) { _ignoreEnterKey = ignore; }
         void setIgnoreTabKey(bool ignore) { _ignoreTabKey = ignore; }
-        int lineNumberMarginWidth();
+        int lineNumberMarginWidth() const;
         int textWidth(int style, const QString &text);
 
     protected:

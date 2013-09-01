@@ -244,8 +244,7 @@ namespace Robomongo
     void ExplorerDatabaseTreeItem::ui_dbDrop()
     {
             // Ask user
-            char buff[256]={0};
-            sprintf(buff,"Drop <b>%s</b> database?",_database->name().c_str());
+            QString buff = QString("Drop <b>%1</b> database?").arg(QtUtils::toQString(_database->name()));
             int answer = QMessageBox::question(treeWidget(),
                 "Drop Database",buff,
                 QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);

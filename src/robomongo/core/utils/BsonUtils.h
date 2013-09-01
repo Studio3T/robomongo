@@ -68,6 +68,14 @@ namespace Robomongo
 
         std::string jsonString(mongo::BSONObj &obj, mongo::JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat);
         std::string jsonString(mongo::BSONElement &elem, mongo::JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat);
+
+        bool isArray(const mongo::BSONElement &elem);
+        bool isDocument(const mongo::BSONElement &elem);
+        bool isSimpleType(const mongo::BSONElement &elem);
+        bool isUuidType(const mongo::BSONElement &elem);
+
+        void buildJsonString(const mongo::BSONObj &obj,std::string &con, UUIDEncoding uuid,SupportedTimes tz);
+        void buildJsonString(const mongo::BSONElement &elem,std::string &con, UUIDEncoding uuid,SupportedTimes tz);
     }
 }
 

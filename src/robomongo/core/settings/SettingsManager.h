@@ -79,7 +79,8 @@ namespace Robomongo
 
         void setLoadInitJs(bool isLoadJs) { _loadInitJs = isLoadJs;}
         bool loadInitJs() const {return _loadInitJs;}
-    signals:
+
+    Q_SIGNALS:
         void connectionAdded(ConnectionSettings *connection);
         void connectionUpdated(ConnectionSettings *connection);
         void connectionRemoved(ConnectionSettings *connection);

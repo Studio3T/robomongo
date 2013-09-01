@@ -148,7 +148,7 @@ namespace Robomongo
 
         // Text mode action
         QAction *textModeAction = new QAction("&Text Mode", this);
-        textModeAction->setShortcut(Qt::Key_F4);
+        textModeAction->setShortcut(Qt::Key_F5);
         textModeAction->setIcon(GuiRegistry::instance().textHighlightedIcon());
         textModeAction->setToolTip("Show current tab in text mode, and make this mode default for all subsequent queries <b>(F4)</b>");
         textModeAction->setCheckable(true);
@@ -157,12 +157,21 @@ namespace Robomongo
 
         // Tree mode action
         QAction *treeModeAction = new QAction("&Tree Mode", this);
-        treeModeAction->setShortcut(Qt::Key_F3);
+        treeModeAction->setShortcut(Qt::Key_F4);
         treeModeAction->setIcon(GuiRegistry::instance().treeHighlightedIcon());
         treeModeAction->setToolTip("Show current tab in tree mode, and make this mode default for all subsequent queries <b>(F3)</b>");
         treeModeAction->setCheckable(true);
         treeModeAction->setChecked(_viewMode == Tree);
         VERIFY(connect(treeModeAction, SIGNAL(triggered()), this, SLOT(enterTreeMode())));
+
+        // Tree mode action
+        QAction *tableModeAction = new QAction("T&able Mode", this);
+        tableModeAction->setShortcut(Qt::Key_F3);
+        tableModeAction->setIcon(GuiRegistry::instance().tableHighlightedIcon());
+        tableModeAction->setToolTip("Show current tab in table mode, and make this mode default for all subsequent queries <b>(F3)</b>");
+        tableModeAction->setCheckable(true);
+        tableModeAction->setChecked(_viewMode == Table);
+        VERIFY(connect(tableModeAction, SIGNAL(triggered()), this, SLOT(enterTableMode())));
 
         // Custom mode action
         QAction *customModeAction = new QAction("&Custom Mode", this);
@@ -220,6 +229,7 @@ namespace Robomongo
         QMenu *defaultViewModeMenu = optionsMenu->addMenu("Default View Mode");
         defaultViewModeMenu->addAction(customModeAction);
         defaultViewModeMenu->addAction(treeModeAction);
+        defaultViewModeMenu->addAction(tableModeAction);
         defaultViewModeMenu->addAction(textModeAction);
         optionsMenu->addSeparator();
 
@@ -274,7 +284,7 @@ namespace Robomongo
         uuidMenu->addAction(csharpLegacyEncodingAction);
         uuidMenu->addAction(pythonEncodingAction);
 
-        QAction *loadInitJs = new QAction("Load ."PROJECT_NAME_LOWERCASE".js",this);
+        QAction *loadInitJs = new QAction("Load ."PROJECT_NAME_LOWERCASE"rc.js",this);
         loadInitJs->setCheckable(true);
         loadInitJs->setChecked(AppRegistry::instance().settingsManager()->loadInitJs());
         VERIFY(connect(loadInitJs, SIGNAL(triggered()), this, SLOT(setLoadInitJs())));
@@ -455,6 +465,14 @@ namespace Robomongo
     void MainWindow::enterTreeMode()
     {
         _viewMode = Tree;
+        saveViewMode();
+        if (_workArea)
+            _workArea->enterTreeMode();
+    }
+
+    void MainWindow::enterTableMode()
+    {
+        _viewMode = Table;
         saveViewMode();
         if (_workArea)
             _workArea->enterTreeMode();

@@ -1,6 +1,8 @@
 #include "robomongo/core/utils/BsonUtils.h"
 
 #include <mongo/client/dbclient.h>
+#include <mongo/bson/bsonobjiterator.h>
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/HexUtils.h"
 #include "mongo/util/base64.h"
 #include "robomongo/shell/db/ptimeutil.h"
@@ -316,6 +318,178 @@ namespace Robomongo
                    << "element: " << elem.toString() << " of type: " << elem.type();
             }
             return s.str();
+        }
+    
+        bool isArray(const mongo::BSONElement &elem)
+        {
+            return elem.isABSONObj() && elem.type() == mongo::Array;
+        }
+
+        bool isDocument(const mongo::BSONElement &elem)
+        {
+            return elem.isABSONObj();
+        }
+
+        bool isSimpleType(const mongo::BSONElement &elem) 
+        {
+            return elem.isSimpleType(); 
+        }
+
+        bool isUuidType(const mongo::BSONElement &elem) 
+        {
+            if (elem.type() != mongo::BinData)
+                return false;
+
+            mongo::BinDataType binType = elem.binDataType();
+            return (binType == mongo::newUUID || binType == mongo::bdtUUID);
+        }
+
+        void buildJsonString(const mongo::BSONObj &obj,std::string &con, UUIDEncoding uuid,SupportedTimes tz)
+        {
+            mongo::BSONObjIterator iterator(obj);
+            con.append("{ \n");
+            while (iterator.more())
+            {
+                mongo::BSONElement e = iterator.next();
+                con.append("\"");
+                con.append(e.fieldName());
+                con.append("\"");
+                con.append(" : ");
+                buildJsonString(e,con,uuid,tz);
+                con.append(", \n");
+            }
+            con.append("\n}\n\n");
+        }
+
+        void buildJsonString(const mongo::BSONElement &elem,std::string &con, UUIDEncoding uuid,SupportedTimes tz)
+        {
+            switch (elem.type())
+            {
+            case NumberDouble:
+                {
+                    char dob[32]={0};
+                    sprintf(dob,"%f",elem.Double());
+                    con.append(dob);
+                }
+                break;
+            case String:
+                {
+                    con.append(elem.valuestr(), elem.valuestrsize() - 1);
+                }
+                break;
+            case Object:
+                {
+                    buildJsonString(elem.Obj(),con,uuid,tz);
+                }
+                break;
+            case Array:
+                {
+                    buildJsonString(elem.Obj(),con,uuid,tz);
+                }
+                break;
+            case BinData:
+                {
+                    mongo::BinDataType binType = elem.binDataType();
+                    if (binType == mongo::newUUID || binType == mongo::bdtUUID) {
+                        std::string uu = HexUtils::formatUuid(elem, uuid);
+                        con.append(uu);
+                        break;
+                    }
+                    con.append("<binary>");
+                }
+                break;
+            case Undefined:
+                con.append("<undefined>");
+                break;
+            case jstOID:
+                {
+                    std::string idValue = elem.OID().toString();
+                    char buff[256]={0};
+                    sprintf(buff,"ObjectId(\"%s\")",idValue.c_str());
+                    con.append(buff);
+                }
+                break;
+            case Bool:
+                con.append(elem.Bool() ? "true" : "false");
+                break;
+            case Date:
+                {
+                    long long ms = (long long) elem.Date().millis;
+
+                    boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
+                    boost::posix_time::time_duration diff = boost::posix_time::millisec(ms);
+                    boost::posix_time::ptime time = epoch + diff;
+
+                    std::string date = miutil::isotimeString(time,false,tz==LocalTime);
+
+                    con.append(date);
+                    break;
+                }
+            case jstNULL:
+                con.append("<null>");
+                break;
+
+            case RegEx:
+                {
+                    con.append("/" + std::string(elem.regex()) + "/");
+
+                    for ( const char *f = elem.regexFlags(); *f; ++f ) {
+                        switch ( *f ) {
+                        case 'g':
+                        case 'i':
+                        case 'm':
+                            con+=*f;
+                        default:
+                            break;
+                        }
+                    }
+                }
+                break;
+            case DBRef:
+                break;
+            case Code:
+                con.append(elem._asCode());
+                break;
+            case Symbol:
+                con.append(elem.valuestr(), elem.valuestrsize() - 1);
+                break;
+            case CodeWScope:
+                {
+                    mongo::BSONObj scope = elem.codeWScopeObject();
+                    if (!scope.isEmpty() ) {
+                        con.append(elem._asCode());
+                        break;
+                    }
+                }
+                break;
+            case NumberInt:
+                {
+                    char num[16]={0};
+                    sprintf(num,"%d",elem.Int());
+                    con.append(num);
+                    break;
+                }           
+            case Timestamp:
+                {
+                    Date_t date = elem.timestampTime();
+                    unsigned long long millis = date.millis;
+                    if ((long long)millis >= 0 &&
+                        ((long long)millis/1000) < (std::numeric_limits<time_t>::max)()) {
+                            con.append(date.toString());
+                    }
+                    break;
+                }
+            case NumberLong:
+                {
+                    char num[32]={0};
+                    sprintf(num,"%lld",elem.Long());
+                    con.append(num);
+                    break; 
+                }
+            default:
+                con.append("<unsupported>");
+                break;
+            }
         }
     }
 }

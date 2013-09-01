@@ -16,14 +16,6 @@
         <file>icons/bson_object_16x16.png</file>
         <file>icons/database_16x16.png</file>
         <file>icons/loading.gif</file>
-        <file>scripts/collection.js</file>
-        <file>scripts/db.js</file>
-        <file>scripts/mongo.js</file>
-        <file>scripts/mr.js</file>
-        <file>scripts/query.js</file>
-        <file>scripts/robo.js</file>
-        <file>scripts/utils.js</file>
-        <file>scripts/utils_sh.js</file>
         <file>scripts/esprima.js</file>
         <file>icons/maximize.gif</file>
         <file>icons/text_16x16.png</file>
@@ -41,6 +33,8 @@
         <file>icons/text_highlighted_16x16.png</file>
         <file>icons/tree_highlighted_16x16.png</file>
         <file>icons/maximize_highlighted_16x16.png</file>
+        <file>icons/table_16x16.png</file>
+        <file>icons/table_highlighted_16x16.png</file>
         <file>icons/no_mark_16x16.png</file>
         <file>icons/yes_mark_16x16.png</file>
         <file>icons/time_16x16.png</file>

@@ -22,11 +22,11 @@ namespace Robomongo
     {
         _host = _connectionRecord->serverHost();
         char num[8]={0};
-        sprintf(num,"%d",_connectionRecord->serverPort());
+        sprintf(num,"%u",_connectionRecord->serverPort()); //unsigned short range of 0 to 65,535
         _port = num;
 
-        char buf[128]={0};
-        sprintf(buf,"%s:%d",_host.c_str(),_connectionRecord->serverPort());
+        char buf[512]={0};
+        sprintf(buf,"%s:%u",_host.c_str(),_connectionRecord->serverPort());
         _address = buf;
 
         _connection.reset(new mongo::DBClientConnection);

@@ -1,7 +1,8 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 
+#include <mongo/bson/bsonobjiterator.h>
 #include "robomongo/core/domain/MongoElement.h"
-#include "robomongo/core/domain/MongoDocumentIterator.h"
+#include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
@@ -271,12 +272,12 @@ namespace Robomongo
         MongoDocumentPtr document = _document ? _document : _element->asDocument();
         bool isArray = _element ? _element->isArray() : false;
 
-        MongoDocumentIterator iterator(document.get());
-
+        mongo::BSONObjIterator iterator(document->bsonObj());
         int position = 0;
-        while(iterator.hasMore())
+        while(iterator.more())
         {
-            MongoElementPtr element = iterator.next();
+            mongo::BSONElement bsonElement = iterator.next();
+            MongoElementPtr element(new MongoElement(bsonElement));
             BsonTreeItem *childItem = new BsonTreeItem(_rootDocument, element, isArray ? position : -1);
             addChild(childItem);
             position++;

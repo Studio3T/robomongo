@@ -22,6 +22,9 @@ namespace Robomongo
         template<typename T>
         T toStdString(const QString &value);
 
+        template<typename T>
+        T toStdStringSafe(const QString &value);
+
         void cleanUpThread(QThread *const thread);
 
         void clearChildItems(QTreeWidgetItem *root);

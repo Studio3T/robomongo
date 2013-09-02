@@ -33,6 +33,17 @@ namespace Robomongo
             return std::wstring((wchar_t*)value.unicode(), value.length());
         }
 
+        template<>
+        std::string toStdStringSafe<std::string>(const QString &value)
+        {
+#ifdef Q_OS_WIN
+            QByteArray latin = value.toLocal8Bit();
+            return std::string(latin.constData(), latin.length());
+#else
+            QByteArray sUtf8 = value.toUtf8();
+#endif    
+        }
+
         void cleanUpThread(QThread *const thread)
         {
             if(thread&&thread->isRunning())

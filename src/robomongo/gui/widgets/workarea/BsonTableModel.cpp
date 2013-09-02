@@ -1,5 +1,6 @@
 #include "robomongo/gui/widgets/workarea/BsonTableModel.h"
 
+#include <mongo/client/dbclient.h>
 #include <mongo/bson/bsonobjiterator.h>
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"

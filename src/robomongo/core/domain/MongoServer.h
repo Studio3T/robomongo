@@ -63,7 +63,7 @@ namespace Robomongo
 
         MongoWorker *client() const { return _client.data(); }
 
-    protected slots:
+    protected Q_SLOTS:
         void handle(EstablishConnectionResponse *event);
         void handle(LoadDatabaseNamesResponse *event);
         void handle(InsertDocumentResponse *event);

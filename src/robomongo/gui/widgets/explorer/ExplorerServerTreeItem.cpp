@@ -190,7 +190,7 @@ namespace Robomongo
         dlg.setInputLabelText("Database Name:");
         int result = dlg.exec();
         if (result == QDialog::Accepted) {
-            _server->createDatabase(QtUtils::toStdString<std::string>(dlg.databaseName()));
+            _server->createDatabase(QtUtils::toStdStringSafe<std::string>(dlg.databaseName()));
 
             // refresh list of databases
             expand();

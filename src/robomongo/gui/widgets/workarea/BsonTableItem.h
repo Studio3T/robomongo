@@ -3,6 +3,7 @@
 #include <vector>
 #include <QObject>
 
+#include "mongo/bson/bsonelement.h"
 #include "robomongo/core/Core.h"
 
 namespace Robomongo
@@ -17,7 +18,8 @@ namespace Robomongo
     public:
         typedef QObject BaseClass;
         typedef std::vector<BsonTableItem*> childContainerType;
-        typedef std::vector<QString> rowsValuesType;
+        typedef std::pair<QString,mongo::BSONElement> rowType;
+        typedef std::vector<rowType> rowsValuesType;
         typedef std::vector<QString> columnsValuesType;
 
         explicit BsonTableItem(QObject *parent = 0);
@@ -26,8 +28,8 @@ namespace Robomongo
         QString column(int col) const;
         size_t addColumn(const QString &col);
 
-        QString row(unsigned col) const;
-        void addRow(size_t col,const QString &row);
+        rowType row(unsigned col) const;
+        void addRow(size_t col,const rowType &row);
 
         unsigned childrenCount() const;
         void clear();

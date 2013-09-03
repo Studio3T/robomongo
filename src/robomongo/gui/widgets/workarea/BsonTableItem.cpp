@@ -40,7 +40,7 @@ namespace Robomongo
         return column;
     }
 
-    void BsonTableItem::addRow(size_t col,const QString &row)
+    void BsonTableItem::addRow(size_t col,const rowType &row)
     {
         if(_rows.size()<col+1){
             _rows.resize(col+1);
@@ -48,9 +48,9 @@ namespace Robomongo
         _rows[col]=row;
     }
 
-    QString BsonTableItem::row(unsigned col) const
+    BsonTableItem::rowType BsonTableItem::row(unsigned col) const
     {
-        QString res;
+        rowType res;
         if(_rows.size()>col){
             res = _rows[col];
         }

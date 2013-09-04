@@ -27,10 +27,9 @@ namespace Robomongo
     {
         verticalHeader()->setDefaultAlignment(Qt::AlignLeft);
         horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
-        horizontalHeader()->setFixedHeight(25);
-        verticalHeader()->setDefaultSectionSize(25);
+        //horizontalHeader()->setFixedHeight(25);   // commented because we shouldn't depend on heights in pixels - it may vary between platforms
+        setStyleSheet("QTableView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }");
         setShowGrid(false);
-        setStyleSheet("QTableView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; } QTableView::item { border-right: 1px solid #d7d5d4; }");
         
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));

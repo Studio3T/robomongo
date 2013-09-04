@@ -28,8 +28,9 @@ namespace Robomongo
         verticalHeader()->setDefaultAlignment(Qt::AlignLeft);
         horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
         setStyleSheet("QTableView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }");
-
-        VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
+        
+        setContextMenuPolicy(Qt::CustomContextMenu);
+        VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
 
         _deleteDocumentAction = new QAction("Delete Document", this);
         VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument())));
@@ -49,7 +50,8 @@ namespace Robomongo
 
     QModelIndex BsonTableView::selectedIndex() const
     {
-        QModelIndexList indexses = selectionModel()->selectedRows();
+        QModelIndexList indexses = selectionModel()->selectedIndexes();
+        int count = indexses.count();
 
         if (indexses.count() != 1)
             return QModelIndex();
@@ -95,11 +97,7 @@ namespace Robomongo
         if(!documentItem)
             return;
 
-        BsonTableItem *bparent = static_cast<BsonTableItem*>(documentItem->parent());
-        if(!bparent)
-            return;
-
-        mongo::BSONObj obj = bparent->row(selectedInd.row()).second.Obj();
+        mongo::BSONObj obj = documentItem->root();
         mongo::BSONElement id = obj.getField("_id");
 
         if (id.eoo()) {
@@ -136,11 +134,7 @@ namespace Robomongo
         if(!documentItem)
             return;
 
-        BsonTableItem *bparent = static_cast<BsonTableItem*>(documentItem->parent());
-        if(!bparent)
-            return;
-
-        mongo::BSONObj obj = bparent->row(selectedInd.row()).second.Obj();
+        mongo::BSONObj obj = documentItem->root();
 
         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone() );
         const QString &json = QtUtils::toQString(str);
@@ -174,11 +168,7 @@ namespace Robomongo
         if(!documentItem)
             return;
 
-        BsonTableItem *bparent = static_cast<BsonTableItem*>(documentItem->parent());
-        if(!bparent)
-            return;
-
-        mongo::BSONObj obj = bparent->row(selectedInd.row()).second.Obj();
+        mongo::BSONObj obj = documentItem->root();
 
         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
         const QString &json = QtUtils::toQString(str);
@@ -225,7 +215,7 @@ namespace Robomongo
         if(!documentItem)
             return;
 
-        mongo::BSONElement element = documentItem->row(selectedInd.row()).second;
+        mongo::BSONElement element = documentItem->row(selectedInd.column()).second;
 
         if (!BsonUtils::isSimpleType(element) && BsonUtils::isUuidType(element))
             return;

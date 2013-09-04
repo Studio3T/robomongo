@@ -76,4 +76,14 @@ namespace Robomongo
     {
         return _items[pos];
     }
+
+    void BsonTableItem::setRoot(mongo::BSONObj bsonObjRoot)
+    {
+        _root = bsonObjRoot;
+    }
+
+    mongo::BSONObj BsonTableItem::root()const
+    {
+        return _root;
+    }
 }

@@ -16,6 +16,7 @@ namespace
     {            
             mongo::BSONObjIterator iterator(doc);
             BsonTableItem *childItem = new BsonTableItem(root);
+            childItem->setRoot(doc);
             while(iterator.more())
             {
                 mongo::BSONElement element = iterator.next();
@@ -106,5 +107,28 @@ namespace Robomongo
             return Qt::ItemIsEnabled;
 
         return BaseClass::flags(index) ;
+    }
+
+    QModelIndex BsonTableModel::index(int row, int column, const QModelIndex &parent) const
+    {
+        QModelIndex index;	
+        if(hasIndex(row, column, parent))
+        {
+            const BsonTableItem * parentItem=NULL;
+            if (!parent.isValid())
+            {
+                parentItem = _root;
+            }
+            else
+            {
+                parentItem = static_cast<BsonTableItem*>(parent.internalPointer());
+            }
+            BsonTableItem *childItem = parentItem->child(row);
+            if (childItem)
+            {
+                index = createIndex(row, column, childItem);
+            }
+        }
+        return index;
     }
 }

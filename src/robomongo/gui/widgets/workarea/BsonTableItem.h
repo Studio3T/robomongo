@@ -2,8 +2,9 @@
 
 #include <vector>
 #include <QObject>
+#include <mongo/bson/bsonobj.h>
+#include <mongo/bson/bsonelement.h>
 
-#include "mongo/bson/bsonelement.h"
 #include "robomongo/core/Core.h"
 
 namespace Robomongo
@@ -37,7 +38,12 @@ namespace Robomongo
         BsonTableItem* child(unsigned pos)const;
 
         size_t findIndexColumn(const QString &col);
+
+        void setRoot(mongo::BSONObj bsonObjRoot);
+        mongo::BSONObj root()const;
+
     private:
+        mongo::BSONObj _root;
         columnsValuesType _columns;
         rowsValuesType _rows;
         childContainerType _items;

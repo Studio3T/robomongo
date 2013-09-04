@@ -1,5 +1,6 @@
 #pragma once
 #include <QString>
+#include <QModelIndex>
 
 QT_BEGIN_NAMESPACE
 class QThread;
@@ -28,5 +29,11 @@ namespace Robomongo
         void cleanUpThread(QThread *const thread);
 
         void clearChildItems(QTreeWidgetItem *root);
+
+        template<typename Type>
+        inline Type item(const QModelIndex &index)
+        {
+            return static_cast<Type>(index.internalPointer());
+        }
     }
 }

@@ -141,7 +141,7 @@ namespace Robomongo
         _treeButton->setIcon(GuiRegistry::instance().treeHighlightedIcon());
         _treeButton->setChecked(true);
         _tableButton->setIcon(GuiRegistry::instance().tableIcon());
-        _tableButton->setChecked(true);
+        _tableButton->setChecked(false);
         _customButton->setIcon(GuiRegistry::instance().customIcon());
         _customButton->setChecked(false);
         itemContent->showTree();
@@ -155,9 +155,9 @@ namespace Robomongo
         _treeButton->setIcon(GuiRegistry::instance().treeIcon());
         _treeButton->setChecked(false);
         _tableButton->setIcon(GuiRegistry::instance().tableHighlightedIcon());
-        _tableButton->setChecked(false);
-        _customButton->setIcon(GuiRegistry::instance().customHighlightedIcon());
-        _customButton->setChecked(true);
+        _tableButton->setChecked(true);
+        _customButton->setIcon(GuiRegistry::instance().customIcon());
+        _customButton->setChecked(false);
         itemContent->showTable();
         _treeMode = true;
     }

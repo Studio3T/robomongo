@@ -210,7 +210,7 @@ namespace Robomongo
         }
 
         if (!_isTableModeInitialized) {
-            _bsonTable = new BsonTableView(NULL);
+            _bsonTable = new BsonTableView(_shell,_queryInfo);
             BsonTableModel *mod = new BsonTableModel(_documents,_bsonTable);
             _bsonTable->setModel(mod);
             _stack->addWidget(_bsonTable);

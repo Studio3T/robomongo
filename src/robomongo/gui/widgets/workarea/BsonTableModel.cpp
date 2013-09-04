@@ -15,8 +15,7 @@ namespace
     void parseDocument(BsonTableItem *root,const mongo::BSONObj &doc)
     {            
             mongo::BSONObjIterator iterator(doc);
-            BsonTableItem *childItem = new BsonTableItem(root);
-            childItem->setRoot(doc);
+            BsonTableItem *childItem = new BsonTableItem(doc,root);
             while(iterator.more())
             {
                 mongo::BSONElement element = iterator.next();
@@ -121,7 +120,7 @@ namespace Robomongo
             }
             else
             {
-                parentItem = static_cast<BsonTableItem*>(parent.internalPointer());
+                parentItem = QtUtils::item<BsonTableItem*>(parent);
             }
             BsonTableItem *childItem = parentItem->child(row);
             if (childItem)

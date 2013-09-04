@@ -1,4 +1,5 @@
 #include "robomongo/gui/widgets/workarea/BsonTableItem.h"
+#include <mongo/client/dbclient.h>
 
 using namespace mongo;
 
@@ -8,6 +9,13 @@ namespace Robomongo
         :BaseClass(parent)
     {
        
+    }
+
+    BsonTableItem::BsonTableItem(const mongo::BSONObj &bsonObjRoot, QObject *parent)
+        :BaseClass(parent),
+        _root(bsonObjRoot)
+    {
+
     }
 
     unsigned BsonTableItem::columnCount() const
@@ -75,11 +83,6 @@ namespace Robomongo
     BsonTableItem* BsonTableItem::child(unsigned pos)const
     {
         return _items[pos];
-    }
-
-    void BsonTableItem::setRoot(mongo::BSONObj bsonObjRoot)
-    {
-        _root = bsonObjRoot;
     }
 
     mongo::BSONObj BsonTableItem::root()const

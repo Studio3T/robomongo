@@ -61,13 +61,13 @@ namespace Robomongo
 
     void BsonTableView::showContextMenu( const QPoint &point )
     {
-            QModelIndex sourceIndex = selectedIndex();
-            if (sourceIndex.isValid()){                
-                BsonTableItem *documentItem = static_cast<BsonTableItem *>(sourceIndex.internalPointer());
+            QModelIndex selectedInd = selectedIndex();
+            if (selectedInd.isValid()){                
+                BsonTableItem *documentItem = QtUtils::item<BsonTableItem*>(selectedInd);
 
                 bool isEditable = _queryInfo.isNull ? false : true;
                 bool onItem = documentItem ? true : false;
-                bool isSimple = documentItem ? (BsonUtils::isSimpleType(documentItem->row(sourceIndex.row()).second) || BsonUtils::isUuidType(documentItem->row(sourceIndex.row()).second)) : false;
+                bool isSimple = documentItem ? (BsonUtils::isSimpleType(documentItem->row(selectedInd.row()).second) || BsonUtils::isUuidType(documentItem->row(selectedInd.row()).second)) : false;
 
                 QMenu menu(this);
                 if (onItem && isEditable) menu.addAction(_editDocumentAction);
@@ -93,7 +93,7 @@ namespace Robomongo
         if (!selectedInd.isValid())
             return;
 
-        BsonTableItem *documentItem = static_cast<BsonTableItem*>(selectedInd.internalPointer());
+        BsonTableItem *documentItem = QtUtils::item<BsonTableItem*>(selectedInd);
         if(!documentItem)
             return;
 
@@ -130,7 +130,7 @@ namespace Robomongo
         if (!selectedInd.isValid())
             return;
 
-        BsonTableItem *documentItem = static_cast<BsonTableItem*>(selectedInd.internalPointer());
+        BsonTableItem *documentItem = QtUtils::item<BsonTableItem*>(selectedInd);
         if(!documentItem)
             return;
 
@@ -157,14 +157,11 @@ namespace Robomongo
 
     void BsonTableView::onViewDocument()
     {
-        if (_queryInfo.isNull)
-            return;
-
         QModelIndex selectedInd = selectedIndex();
         if (!selectedInd.isValid())
             return;
 
-        BsonTableItem *documentItem = static_cast<BsonTableItem*>(selectedInd.internalPointer());
+        BsonTableItem *documentItem = QtUtils::item<BsonTableItem*>(selectedInd);
         if(!documentItem)
             return;
 
@@ -211,7 +208,7 @@ namespace Robomongo
         if (!selectedInd.isValid())
             return;
 
-        BsonTableItem *documentItem = static_cast<BsonTableItem*>(selectedInd.internalPointer());
+        BsonTableItem *documentItem = QtUtils::item<BsonTableItem*>(selectedInd);
         if(!documentItem)
             return;
 

@@ -24,6 +24,7 @@ namespace Robomongo
         typedef std::vector<QString> columnsValuesType;
 
         explicit BsonTableItem(QObject *parent = 0);
+        explicit BsonTableItem(const mongo::BSONObj &bsonObjRoot, QObject *parent = 0);
 
         unsigned columnCount() const;
         QString column(int col) const;
@@ -38,12 +39,10 @@ namespace Robomongo
         BsonTableItem* child(unsigned pos)const;
 
         size_t findIndexColumn(const QString &col);
-
-        void setRoot(mongo::BSONObj bsonObjRoot);
         mongo::BSONObj root()const;
 
     private:
-        mongo::BSONObj _root;
+        const mongo::BSONObj _root;
         columnsValuesType _columns;
         rowsValuesType _rows;
         childContainerType _items;

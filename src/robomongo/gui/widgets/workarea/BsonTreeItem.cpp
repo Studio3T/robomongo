@@ -7,6 +7,7 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include <mongo/client/dbclient.h>
 
 using namespace mongo;
 

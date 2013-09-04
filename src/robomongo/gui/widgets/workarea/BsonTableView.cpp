@@ -28,7 +28,9 @@ namespace Robomongo
         verticalHeader()->setDefaultAlignment(Qt::AlignLeft);
         horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
         horizontalHeader()->setFixedHeight(25);
-        setStyleSheet("QTableView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }");
+        verticalHeader()->setDefaultSectionSize(25);
+        setShowGrid(false);
+        setStyleSheet("QTableView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; } QTableView::item { border-right: 1px solid #d7d5d4; }");
         
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
@@ -62,27 +64,27 @@ namespace Robomongo
 
     void BsonTableView::showContextMenu( const QPoint &point )
     {
-            QModelIndex selectedInd = selectedIndex();
-            if (selectedInd.isValid()){                
-                BsonTableItem *documentItem = QtUtils::item<BsonTableItem*>(selectedInd);
+        QModelIndex selectedInd = selectedIndex();
+        if (selectedInd.isValid()){
+            BsonTableItem *documentItem = QtUtils::item<BsonTableItem*>(selectedInd);
 
-                bool isEditable = _queryInfo.isNull ? false : true;
-                bool onItem = documentItem ? true : false;
-                bool isSimple = documentItem ? (BsonUtils::isSimpleType(documentItem->row(selectedInd.row()).second) || BsonUtils::isUuidType(documentItem->row(selectedInd.row()).second)) : false;
+            bool isEditable = _queryInfo.isNull ? false : true;
+            bool onItem = documentItem ? true : false;
+            bool isSimple = documentItem ? (BsonUtils::isSimpleType(documentItem->row(selectedInd.row()).second) || BsonUtils::isUuidType(documentItem->row(selectedInd.row()).second)) : false;
 
-                QMenu menu(this);
-                if (onItem && isEditable) menu.addAction(_editDocumentAction);
-                if (onItem)               menu.addAction(_viewDocumentAction);
-                if (isEditable)           menu.addAction(_insertDocumentAction);
-                if (onItem && isSimple)   menu.addSeparator();
-                if (onItem && isSimple)   menu.addAction(_copyValueAction);
-                if (onItem && isEditable) menu.addSeparator();
-                if (onItem && isEditable) menu.addAction(_deleteDocumentAction);
+            QMenu menu(this);
+            if (onItem && isEditable) menu.addAction(_editDocumentAction);
+            if (onItem)               menu.addAction(_viewDocumentAction);
+            if (isEditable)           menu.addAction(_insertDocumentAction);
+            if (onItem && isSimple)   menu.addSeparator();
+            if (onItem && isSimple)   menu.addAction(_copyValueAction);
+            if (onItem && isEditable) menu.addSeparator();
+            if (onItem && isEditable) menu.addAction(_deleteDocumentAction);
 
-                QPoint menuPoint = mapToGlobal(point);
-                menuPoint.setY(menuPoint.y() + horizontalHeader()->height());
-                menu.exec(menuPoint);             
-            }        
+            QPoint menuPoint = mapToGlobal(point);
+            menuPoint.setY(menuPoint.y() + horizontalHeader()->height());
+            menu.exec(menuPoint);
+        }
     }
 
     void BsonTableView::onDeleteDocument()

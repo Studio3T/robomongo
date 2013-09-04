@@ -30,9 +30,8 @@ namespace Robomongo
 
     size_t BsonTableItem::findIndexColumn(const QString &col)
     {
-        for(int i=0; i<_columns.size(); ++i)
-        {
-            if(_columns[i] == col){
+        for (int i = 0; i < _columns.size(); ++i) {
+            if (_columns[i] == col) {
                 return i;
             }
         }
@@ -42,7 +41,7 @@ namespace Robomongo
     size_t BsonTableItem::addColumn(const QString &col)
     {
         size_t column = findIndexColumn(col);
-        if (column ==_columns.size()){
+        if (column == _columns.size()) {
             _columns.push_back(col);
         }
         return column;
@@ -50,16 +49,16 @@ namespace Robomongo
 
     void BsonTableItem::addRow(size_t col,const rowType &row)
     {
-        if(_rows.size()<col+1){
-            _rows.resize(col+1);
+        if (_rows.size() < col + 1) {
+            _rows.resize(col + 1);
         }
-        _rows[col]=row;
+        _rows[col] = row;
     }
 
     BsonTableItem::rowType BsonTableItem::row(unsigned col) const
     {
         rowType res;
-        if(_rows.size()>col){
+        if (_rows.size() > col) {
             res = _rows[col];
         }
         return res;

@@ -1,4 +1,5 @@
 #include "robomongo/gui/widgets/workarea/BsonTableItem.h"
+#include <mongo/client/dbclient.h>
 
 using namespace mongo;
 
@@ -8,6 +9,13 @@ namespace Robomongo
         :BaseClass(parent)
     {
        
+    }
+
+    BsonTableItem::BsonTableItem(const mongo::BSONObj &bsonObjRoot, QObject *parent)
+        :BaseClass(parent),
+        _root(bsonObjRoot)
+    {
+
     }
 
     unsigned BsonTableItem::columnCount() const
@@ -40,7 +48,7 @@ namespace Robomongo
         return column;
     }
 
-    void BsonTableItem::addRow(size_t col,const QString &row)
+    void BsonTableItem::addRow(size_t col,const rowType &row)
     {
         if(_rows.size()<col+1){
             _rows.resize(col+1);
@@ -48,9 +56,9 @@ namespace Robomongo
         _rows[col]=row;
     }
 
-    QString BsonTableItem::row(unsigned col) const
+    BsonTableItem::rowType BsonTableItem::row(unsigned col) const
     {
-        QString res;
+        rowType res;
         if(_rows.size()>col){
             res = _rows[col];
         }
@@ -75,5 +83,10 @@ namespace Robomongo
     BsonTableItem* BsonTableItem::child(unsigned pos)const
     {
         return _items[pos];
+    }
+
+    mongo::BSONObj BsonTableItem::root()const
+    {
+        return _root;
     }
 }

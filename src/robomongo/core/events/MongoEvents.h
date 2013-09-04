@@ -917,6 +917,10 @@ namespace Robomongo
             Event((QObject *)server),
             server(server) { }
 
+        ConnectionFailedEvent(MongoServer *server, const EventError &error) :
+            Event((QObject *)server, error),
+            server(server){}
+
         MongoServer *server;
     };
 

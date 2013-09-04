@@ -15,7 +15,7 @@ namespace
     void parseDocument(BsonTableItem *root,const mongo::BSONObj &doc)
     {            
             mongo::BSONObjIterator iterator(doc);
-            BsonTableItem *childItem = new BsonTableItem(root);
+            BsonTableItem *childItem = new BsonTableItem(doc,root);
             while(iterator.more())
             {
                 mongo::BSONElement element = iterator.next();
@@ -23,16 +23,16 @@ namespace
                 if(BsonUtils::isArray(element))
                 {
                     int itemsCount = element.Array().size();
-                    childItem->addRow(col,QString("Array[%1]").arg(itemsCount));
+                    childItem->addRow(col,std::make_pair(QString("Array[%1]").arg(itemsCount),element));
                 }
                 else if (BsonUtils::isDocument(element)){
                     parseDocument(childItem,element.Obj());
-                    childItem->addRow(col,QString("{%1  Keys}").arg(childItem->columnCount()));
+                    childItem->addRow(col,std::make_pair(QString("{%1  Keys}").arg(childItem->columnCount()),element));
                 }
                 else{
                     std::string result;
                     BsonUtils::buildJsonString(element,result,AppRegistry::instance().settingsManager()->uuidEncoding(),AppRegistry::instance().settingsManager()->timeZone());
-                    childItem->addRow(col,QtUtils::toQString(result));
+                    childItem->addRow(col,std::make_pair(QtUtils::toQString(result),element));
                 }               
             }
             root->addChild(childItem);
@@ -63,7 +63,7 @@ namespace Robomongo
         if (role == Qt::DisplayRole) {
             BsonTableItem *node = _root->child(index.row());
             if(node){
-                result = node->row(col);
+                result = node->row(col).first;
             }
         }
 
@@ -106,5 +106,28 @@ namespace Robomongo
             return Qt::ItemIsEnabled;
 
         return BaseClass::flags(index) ;
+    }
+
+    QModelIndex BsonTableModel::index(int row, int column, const QModelIndex &parent) const
+    {
+        QModelIndex index;	
+        if(hasIndex(row, column, parent))
+        {
+            const BsonTableItem * parentItem=NULL;
+            if (!parent.isValid())
+            {
+                parentItem = _root;
+            }
+            else
+            {
+                parentItem = QtUtils::item<BsonTableItem*>(parent);
+            }
+            BsonTableItem *childItem = parentItem->child(row);
+            if (childItem)
+            {
+                index = createIndex(row, column, childItem);
+            }
+        }
+        return index;
     }
 }

@@ -27,6 +27,7 @@ namespace Robomongo
     {
         verticalHeader()->setDefaultAlignment(Qt::AlignLeft);
         horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
+        horizontalHeader()->setFixedHeight(25);
         setStyleSheet("QTableView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }");
         
         setContextMenuPolicy(Qt::CustomContextMenu);

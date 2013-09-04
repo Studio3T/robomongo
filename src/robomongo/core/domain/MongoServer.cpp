@@ -103,7 +103,7 @@ namespace Robomongo
     void MongoServer::handle(EstablishConnectionResponse *event)
     {
         if (event->isError()){
-            _bus->publish(new ConnectionFailedEvent(this));
+            _bus->publish(new ConnectionFailedEvent(this,event->error()));
         }else if (_visible){
             _bus->publish(new ConnectionEstablishedEvent(this));
         }
@@ -112,7 +112,7 @@ namespace Robomongo
     void MongoServer::handle(LoadDatabaseNamesResponse *event)
     {
         if (event->isError()){
-            _bus->publish(new ConnectionFailedEvent(this));
+            _bus->publish(new ConnectionFailedEvent(this,event->error()));
             return;
         }
 

@@ -69,7 +69,11 @@ namespace Robomongo
 
             bool isEditable = _queryInfo.isNull ? false : true;
             bool onItem = documentItem ? true : false;
-            bool isSimple = documentItem ? (BsonUtils::isSimpleType(documentItem->row(selectedInd.row()).second) || BsonUtils::isUuidType(documentItem->row(selectedInd.row()).second)) : false;
+            bool isSimple = false;
+            if(documentItem){
+                mongo::BSONElement el = documentItem->row(selectedInd.column()).second;
+                isSimple = BsonUtils::isSimpleType(el) || BsonUtils::isUuidType(el);
+            }
 
             QMenu menu(this);
             if (onItem && isEditable) menu.addAction(_editDocumentAction);

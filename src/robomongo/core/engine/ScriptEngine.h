@@ -22,6 +22,7 @@ namespace Robomongo
         void interrupt();
 
         void use(const std::string &dbName);
+        void setBatchSize(int batchSize);
         void ping();
         QStringList complete(const std::string &prefix);
 

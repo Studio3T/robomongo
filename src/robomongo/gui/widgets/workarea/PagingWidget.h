@@ -16,7 +16,7 @@ namespace Robomongo
         enum {pageLimit=50};
         PagingWidget();
         void setSkip(int skip);
-        void setLimit(int limit);
+        void setBatchSize(int limit);
 
     Q_SIGNALS:
         void leftClicked(int skip, int limit);
@@ -30,6 +30,6 @@ namespace Robomongo
 
     private:
         QLineEdit *_skipEdit;
-        QLineEdit *_limitEdit;
+        QLineEdit *_batchSizeEdit;
     };
 }

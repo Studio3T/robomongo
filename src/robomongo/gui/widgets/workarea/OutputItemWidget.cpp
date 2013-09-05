@@ -14,7 +14,9 @@ namespace Robomongo
     OutputItemWidget::OutputItemWidget(OutputWidget *viewer, OutputItemContentWidget *output, const MongoQueryInfo &info, QWidget *parent) :
         itemContent(output),
         output(viewer),
-        _queryInfo(info)
+        _queryInfo(info),
+        _initialSkip(_queryInfo.skip),
+        _initialLimit(_queryInfo.limit)
     {
         setContentsMargins(0, 0, 0, 0);
         _header = new OutputItemHeaderWidget(this, output);
@@ -43,20 +45,41 @@ namespace Robomongo
         if (s < 0)
             s = 0;
 
-        refresh(s,limit);
+        refresh(s, limit);
     }
 
     void OutputItemWidget::paging_rightClicked(int skip, int limit)
     {
         skip += limit;
-        refresh(skip,limit);
+        refresh(skip, limit);
     }
 
-    void OutputItemWidget::refresh(int skip, int limit)
+    void OutputItemWidget::refresh(int skip, int batchSize)
     {
+        // Cannot set skip lower than in the text query
+        if (skip < _initialSkip) {
+            _header->paging()->setSkip(_initialSkip);
+            skip = _initialSkip;
+        }
+
+        int skipDelta = skip - _initialSkip;
+        int limit = batchSize;
+
+        // If limit is set to 0 it means UNLIMITED number of documents (limited only by batch size)
+        // This is according to MongoDB documentation.
+        if (_initialLimit != 0) {
+            limit = _initialLimit - skipDelta;
+            if (limit <= 0)
+                limit = -1; // It means that we do not need to load documents
+
+            if (limit > batchSize)
+                limit = batchSize;
+        }
+
         MongoQueryInfo info(_queryInfo);
         info.limit = limit;
         info.skip = skip;
+        info.batchSize = batchSize;
 
         output->showProgress();
         output->shell()->query(output->resultIndex(this), info);

@@ -63,6 +63,7 @@ namespace Robomongo
             _scriptEngine = new ScriptEngine(_connection);
             _scriptEngine->init(event->isLoadMongoRcJs());
             _scriptEngine->use(_connection->defaultDatabase());
+            _scriptEngine->setBatchSize(event->batchSize());
 
             _keepAliveTimer = new QTimer(this);
             connect(_keepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));

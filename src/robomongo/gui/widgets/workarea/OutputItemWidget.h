@@ -29,13 +29,15 @@ namespace Robomongo
         MongoQueryInfo queryInfo() const { return _queryInfo; }
 
     private Q_SLOTS:
-        void refresh(int skip, int limit);
+        void refresh(int skip, int batchSize);
         void paging_leftClicked(int skip, int limit);
         void paging_rightClicked(int skip, int limit);
 
     private:
         OutputItemHeaderWidget *_header;
         MongoQueryInfo _queryInfo;
+        int _initialSkip;
+        int _initialLimit;
     };
 
 }

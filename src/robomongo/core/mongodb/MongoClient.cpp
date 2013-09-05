@@ -400,11 +400,15 @@ namespace Robomongo
     {
         MongoNamespace ns(info.databaseName, info.collectionName);
 
-        int limit = (info.limit == 0 || info.limit > 51) ? 50 : info.limit;
+        //int limit = (info.limit <= 0) ? 50 : info.limit;
 
         std::vector<MongoDocumentPtr> docs;
+
+        if (info.limit == -1) // it means that we do not need to load any documents
+            return docs;
+
         std::auto_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
-            ns.toString(), info.query, limit, info.skip,
+            ns.toString(), info.query, info.limit, info.skip,
             info.fields.nFields() ? &info.fields : 0, info.options, info.batchSize);
 
         while (cursor->more()) {

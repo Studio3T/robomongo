@@ -77,8 +77,11 @@ namespace Robomongo
         void setViewMode(ViewMode viewMode) { _viewMode = viewMode; }
         ViewMode viewMode() { return _viewMode; }
 
-        void setLoadMongoRcJs(bool isLoadJs) { _loadInitJs = isLoadJs;}
-        bool loadMongoRcJs() const { return _loadInitJs; }
+        void setLoadMongoRcJs(bool isLoadJs) { _loadMongoRcJs = isLoadJs; }
+        bool loadMongoRcJs() const { return _loadMongoRcJs; }
+
+        void setBatchSize(int batchSize) { _batchSize = batchSize; }
+        int batchSize() const { return _batchSize; }
 
     Q_SIGNALS:
         void connectionAdded(ConnectionSettings *connection);
@@ -111,7 +114,9 @@ namespace Robomongo
          * @brief view mode
          */
         ViewMode _viewMode;
-        bool _loadInitJs;
+        bool _loadMongoRcJs;
+
+        int _batchSize;
         /**
          * @brief List of connections
          */

@@ -102,9 +102,6 @@ namespace Robomongo
             _scope = scope;
             _engine = mongo::globalScriptEngine;
 
-            //protected settings
-            _scope->exec("DBQuery.shellBatchSize = 1000", "(shellBatchSize)", true, true, true);
-
             // Load '.mongorc.js' from user's home directory
             // We are not checking whether file exists, because it will be
             // checked by 'Scope::execFile'.
@@ -210,6 +207,16 @@ namespace Robomongo
             sprintf(useDb,"shellHelper.use('%s');",dbName.c_str());
             _scope->exec(useDb, "(usedb)", false, true, false);
         }
+    }
+
+    void ScriptEngine::setBatchSize(int batchSize)
+    {
+        QMutexLocker lock(&_mutex);
+
+        std::string batchSizeString = QtUtils::toStdString<std::string>(
+            QString("DBQuery.shellBatchSize = %1").arg(batchSize));
+
+        _scope->exec(batchSizeString, "(shellBatchSize)", true, true, true);
     }
 
     void ScriptEngine::ping()

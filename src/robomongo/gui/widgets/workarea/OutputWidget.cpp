@@ -105,7 +105,7 @@ namespace Robomongo
 
             if (!shellResult.queryInfo().isNull) {
                 result->header()->setCollection(QtUtils::toQString(shellResult.queryInfo().collectionName));
-                result->header()->paging()->setLimit(shellResult.queryInfo().limit);
+                result->header()->paging()->setBatchSize(shellResult.queryInfo().batchSize);
                 result->header()->paging()->setSkip(shellResult.queryInfo().skip);
             }
 
@@ -123,7 +123,7 @@ namespace Robomongo
         OutputItemWidget *output = (OutputItemWidget *) _splitter->widget(partIndex);
 
         output->header()->paging()->setSkip(queryInfo.skip);
-        output->header()->paging()->setLimit(queryInfo.limit);
+        output->header()->paging()->setBatchSize(queryInfo.batchSize);
         output->setQueryInfo(queryInfo);
         output->itemContent->update(documents);
         output->header()->refreshOutputItem();

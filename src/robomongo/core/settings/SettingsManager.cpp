@@ -128,7 +128,12 @@ namespace Robomongo
             timeZone = 0;
 
         _timeZone = (SupportedTimes) timeZone;
-        _loadInitJs = map.value("loadMongoRcJs").toBool();
+        _loadMongoRcJs = map.value("loadMongoRcJs").toBool();
+
+        // Load Batch Size
+        _batchSize = map.value("batchSize").toInt();
+        if (_batchSize == 0)
+            _batchSize = 50;
 
         // 5. Load connections
         _connections.clear();
@@ -160,9 +165,12 @@ namespace Robomongo
         map.insert("viewMode", _viewMode);
 
         // 5. Save loadInitJs
-        map.insert("loadMongoRcJs",_loadInitJs);
+        map.insert("loadMongoRcJs", _loadMongoRcJs);
 
-        // 6. Save connections
+        // 6. Save batchSize
+        map.insert("batchSize", _batchSize);
+
+        // 7. Save connections
         QVariantList list;
 
         for(QList<ConnectionSettings *>::const_iterator it = _connections.begin();it!=_connections.end();++it) {

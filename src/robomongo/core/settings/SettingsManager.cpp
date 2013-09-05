@@ -124,11 +124,11 @@ namespace Robomongo
 
         // 4. Load TimeZone
         int timeZone = map.value("timeZone").toInt();
-        if (timeZone > 2 || timeZone < 0)
+        if (timeZone > 1 || timeZone < 0)
             timeZone = 0;
 
         _timeZone = (SupportedTimes) timeZone;
-        _loadInitJs = map.value("loadInitJs").toBool();
+        _loadInitJs = map.value("loadMongoRcJs").toBool();
 
         // 5. Load connections
         _connections.clear();
@@ -160,7 +160,7 @@ namespace Robomongo
         map.insert("viewMode", _viewMode);
 
         // 5. Save loadInitJs
-        map.insert("loadInitJs",_loadInitJs);
+        map.insert("loadMongoRcJs",_loadInitJs);
 
         // 6. Save connections
         QVariantList list;

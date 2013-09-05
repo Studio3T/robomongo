@@ -68,7 +68,7 @@ namespace Robomongo
 
         if (element.eoo()) {
             if (role == Qt::BackgroundRole) {
-                return QBrush("#efedec");
+                return QBrush("#f5f3f2");
             }
             return result;
         }

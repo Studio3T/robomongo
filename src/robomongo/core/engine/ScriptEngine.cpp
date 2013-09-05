@@ -69,7 +69,7 @@ namespace Robomongo
         }
     }
 
-    void ScriptEngine::init(bool isLoadMongoJs)
+    void ScriptEngine::init(bool isLoadMongoRcJs)
     {
         QMutexLocker lock(&_mutex);
 
@@ -91,7 +91,6 @@ namespace Robomongo
                << _connection->primaryCredential()->userPassword() << "')";
 
         {
-            //mongo::shell_utils::_dbConnect = "var z = 56;"; //ss.str();
             mongo::shell_utils::_dbConnect = ss.str();
             mongo::isShell = true;
 
@@ -104,20 +103,24 @@ namespace Robomongo
             _engine = mongo::globalScriptEngine;
 
             //protected settings
-            _scope->exec("DBQuery.shellBatchSize = 1000", "(esprima)", true, true, true);
+            _scope->exec("DBQuery.shellBatchSize = 1000", "(shellBatchSize)", true, true, true);
 
             // Load '.mongorc.js' from user's home directory
             // We are not checking whether file exists, because it will be
             // checked by 'Scope::execFile'.
-            if(isLoadMongoJs){
+            if (isLoadMongoRcJs) {
                 std::string mongorcPath = QtUtils::toStdString<std::string>(QString("%1/.mongorc.js").arg(QDir::homePath()));
                 scope->execFile(mongorcPath, false, false);      
-            }   
-            std::string roboMongorcPath = QtUtils::toStdString<std::string>(QString("%1/."PROJECT_NAME_LOWERCASE".js").arg(QDir::homePath()));// branding very usfull see Chromium and his brand Chrome, in Chrome some features private
+            }
+
+            // Load '.robomongorc.js'
+            // Alexander: branding very usfull see Chromium and his brand Chrome, in Chrome some features private
+            // Dmitry: I agree, but we still need to support ".robomongorc.js" even when name of project will change
+            std::string roboMongorcPath = QtUtils::toStdString<std::string>(QString("%1/.robomongorc.js").arg(QDir::homePath()));
             scope->execFile(roboMongorcPath, false, false);
         }
 
-        // -- Esprima --
+        // Esprima
         QFile file(":/robomongo/scripts/esprima.js");
         if(!file.open(QIODevice::ReadOnly))
             throw std::runtime_error("Unable to read esprima.js ");
@@ -368,251 +371,6 @@ namespace Robomongo
             outList.push_back(statement);
         }
 
-        //std::string json = result.jsonString();
         return true;
     }
-
-    void errorReporter( JSContext *cx, const char *message, JSErrorReport *report ) {
-        const char *msg = message;
-    }
-
-    std::vector<std::string> ScriptEngine::statementize2(const std::string &script)
-    {
-        JSRuntime * runtime;
-        JSContext * context;
-        JSObject * global;
-
-        runtime = JS_NewRuntime(8L * 1024L * 1024L);
-        if (runtime == NULL) {
-          fprintf(stderr, "cannot create runtime");
-          //exit(EXIT_FAILURE);
-        }
-
-        context = JS_NewContext(runtime, 8192);
-        if (context == NULL) {
-          fprintf(stderr, "cannot create context");
-          //exit(EXIT_FAILURE);
-        }
-
-        JS_SetOptions( context , JSOPTION_VAROBJFIX);
-        JS_SetErrorReporter( context , errorReporter );
-
-        global = JS_NewObject(context, NULL, NULL, NULL);
-        if (global == NULL) {
-          fprintf(stderr, "cannot create global object");
-          //exit(EXIT_FAILURE);
-        }
-
-        if (! JS_InitStandardClasses(context, global)) {
-          fprintf(stderr, "cannot initialize standard classes");
-          //exit(EXIT_FAILURE);
-        }
-
-        //-- Esprima --
-
-        QFile file(":/robomongo/scripts/esprima.js");
-        if(!file.open(QIODevice::ReadOnly))
-            throw std::runtime_error("Unable to read esprima.js ");
-
-        QTextStream in(&file);
-        QString esprima = in.readAll();
-
-        QByteArray esprimaBytes = esprima.toUtf8();
-
-        size_t eslength = esprimaBytes.size();
-    //    jschar *eschars = js_InflateString(context, esprimaBytes.data(), &eslength);
-
-        jsval ret = JSVAL_VOID;
-        JSBool worked = JS_EvaluateScript(context, global, esprimaBytes, eslength, NULL, 0, &ret);
-
-        jsval ret2 = JSVAL_VOID;
-        mongo::StringData data("esprima.parse('var answer = 42')");
-        //mongo::StringData data("connect()");
-        JSBool worked2 = JS_EvaluateScript(context, global, data.rawData(), data.size(), NULL, 0, &ret2);
-
-
-        // end
-
-        JSTokenStream * ts;
-        JSParseNode * node;
-
-        size_t length = script.size();
-        jschar *chars = js_InflateString(context, script.c_str(), &length);
-
-        ts = js_NewTokenStream(context, chars, length, NULL, 0, NULL);
-        if (ts == NULL) {
-          fprintf(stderr, "cannot create token stream from file\n");
-          //exit(EXIT_FAILURE);
-        }
-
-        bool more_tokens = true;
-        std::string sanitized_chars;
-        jschar *userbuf_pos = ts->userbuf.ptr; // last copied position
-
-    //    while (more_tokens) {
-    //        switch (js_GetToken(context, ts)) {
-    //        case TOK_NAME:
-    //          {
-    //            size_t len = ts->userbuf.ptr - userbuf_pos -
-    //              (ts->linebuf.limit - ts->linebuf.ptr + 1);
-    //            size_t token_len = ts->tokenbuf.ptr - ts->tokenbuf.base;
-    //            len -= token_len;
-    //            if (len) {
-    //              sanitized_chars.append((char*)userbuf_pos, len * sizeof(jschar));
-    //              userbuf_pos += len;
-    //              if (*(userbuf_pos-1) == '.') break; // properties or methods
-    //            }
-    ////            sanitized_chars.append((char *)prefix, prefix_len);
-    ////            sanitized_chars.append((char*)userbuf_pos, token_len * sizeof(jschar));
-    //            userbuf_pos += token_len;
-    //          }
-    //          break;
-    //        }
-    //    }
-
-
-        node = js_ParseTokenStream(context, global, ts);
-        if (node == NULL) {
-          fprintf(stderr, "parse error in file\n");
-          //exit(EXIT_FAILURE);
-        }
-
-        std::vector<std::string> list;
-        parseTree(node, 0, script, list, true);
-
-        JS_DestroyContext(context);
-        JS_DestroyRuntime(runtime);
-        return list;
-    }
-
-
-
-    const char * TOKENS[81] = {
-      "EOF", "EOL", "SEMI", "COMMA", "ASSIGN", "HOOK", "COLON", "OR", "AND",
-      "BITOR", "BITXOR", "BITAND", "EQOP", "RELOP", "SHOP", "PLUS", "MINUS", "STAR",
-      "DIVOP", "UNARYOP", "INC", "DEC", "DOT", "LB", "RB", "LC", "RC", "LP", "RP",
-      "NAME", "NUMBER", "STRING", "OBJECT", "PRIMARY", "FUNCTION", "EXPORT",
-      "IMPORT", "IF", "ELSE", "SWITCH", "CASE", "DEFAULT", "WHILE", "DO", "FOR",
-      "BREAK", "CONTINUE", "IN", "VAR", "WITH", "RETURN", "NEW", "DELETE",
-      "DEFSHARP", "USESHARP", "TRY", "CATCH", "FINALLY", "THROW", "INSTANCEOF",
-      "DEBUGGER", "XMLSTAGO", "XMLETAGO", "XMLPTAGC", "XMLTAGC", "XMLNAME",
-      "XMLATTR", "XMLSPACE", "XMLTEXT", "XMLCOMMENT", "XMLCDATA", "XMLPI", "AT",
-      "DBLCOLON", "ANYNAME", "DBLDOT", "FILTER", "XMLELEM", "XMLLIST", "RESERVED",
-      "LIMIT",
-    };
-
-    const int NUM_TOKENS = sizeof(TOKENS) / sizeof(TOKENS[0]);
-
-    void ScriptEngine::parseTree(JSParseNode *root, int indent, const std::string &script, std::vector<std::string> &list, bool topList)
-    {
-        std::vector<std::string> lines = split(script,'\n');
-
-        if (root == NULL) {
-          return;
-        }
-        printf("%*s", indent, "");
-        if (root->pn_type >= NUM_TOKENS) {
-          printf("UNKNOWN");
-        }
-        else {
-
-    //        if (root->pn_arity == PN_NAME)
-    //            return;
-
-            std::string s = subb(lines, root->pn_pos.begin.lineno, root->pn_pos.begin.index, root->pn_pos.end.lineno, root->pn_pos.end.index);
-            list.push_back(s);
-
-          printf("%s: starts at line %d, column %d, ends at line %d, column %d",
-                 TOKENS[root->pn_type],
-                 root->pn_pos.begin.lineno, root->pn_pos.begin.index,
-                 root->pn_pos.end.lineno, root->pn_pos.end.index);
-
-    //      if (root->pn_arity == PN_NAME)
-    //          return;
-        }
-        printf("\n");
-        switch (root->pn_arity) {
-        case PN_UNARY:
-        {
-            JSToken token = root->pn_ts->tokens[root->pn_ts->cursor];
-
-        }
-    //      parseTree(root->pn_kid, indent + 2, script, list);
-          break;
-        case PN_BINARY:
-    //      parseTree(root->pn_left, indent + 2, script, list);
-    //      parseTree(root->pn_right, indent + 2, script, list);
-          break;
-        case PN_TERNARY:
-    //      parseTree(root->pn_kid1, indent + 2, script, list);
-    //      parseTree(root->pn_kid2, indent + 2, script, list);
-    //      parseTree(root->pn_kid3, indent + 2, script, list);
-          break;
-        case PN_LIST:
-          {
-            if (topList)
-            {
-                JSParseNode * tail = *root->pn_tail;
-
-                JSParseNode * p;
-                for (p = root->pn_head; p != NULL; p = p->pn_next) {
-                  parseTree(p, indent + 2, script, list, false);
-                }
-            }
-            else
-            {
-                JSParseNode * tail = *root->pn_tail;
-
-                std::string s = subb(lines,
-                                 root->pn_pos.begin.lineno, root->pn_pos.begin.index,
-                                 root->pn_expr->pn_pos.end.lineno, root->pn_expr->pn_pos.end.index);
-                list.push_back(s);
-            }
-          }
-          break;
-        case PN_FUNC:
-            {
-                JSParseNode * body = root->pn_body;
-
-                //parseTree(root->pn_body, indent + 2, script, list);
-            }
-            break;
-        case PN_NAME:
-            {
-                std::string s = subb(lines,
-                                 root->pn_pos.begin.lineno, root->pn_pos.begin.index,
-                                 root->pn_expr->pn_pos.end.lineno, root->pn_expr->pn_pos.end.index);
-                list.push_back(s);
-            }
-            break;
-        case PN_NULLARY:
-          break;
-        default:
-          fprintf(stderr, "Unknown node type\n");
-          //exit(EXIT_FAILURE);
-          break;
-        }
-    }
-
-    std::string ScriptEngine::subb(const std::vector<std::string> &list, int fline, int fpos, int tline, int tpos) const
-    {
-        std::string result;
-        if (fline < list.size() && tline < list.size())
-        {
-            for (int i = fline; i <= tline; ++i)
-            {
-                const std::string& line = list[i];
-                if (fline == i && tline == i)
-                    result.append(line.substr(fpos, tpos - fpos));
-                else if (fline == i)
-                    result.append(line.substr(fpos));
-                else if (tline == i)
-                    result.append(line.substr(0, tpos));
-                else
-                    result.append(line);
-            }
-        }
-        return result;
-    }
-
 }

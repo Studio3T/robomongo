@@ -12,8 +12,8 @@ namespace Robomongo
 
     enum SupportedTimes
     {
-        Utc =0,
-        LocalTime=1
+        Utc       = 0,
+        LocalTime = 1
     };
 }
 

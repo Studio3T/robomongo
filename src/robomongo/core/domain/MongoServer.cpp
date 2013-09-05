@@ -34,7 +34,7 @@ namespace Robomongo
 
         _client.reset(new MongoWorker(_connectionRecord->clone()));
 
-        _bus->send(_client.data(), new InitRequest(this,AppRegistry::instance().settingsManager()->loadInitJs()));
+        _bus->send(_client.data(), new InitRequest(this, AppRegistry::instance().settingsManager()->loadMongoRcJs()));
         qDebug() << "InitRequest sent";
     }
 

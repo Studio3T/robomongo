@@ -77,8 +77,8 @@ namespace Robomongo
         void setViewMode(ViewMode viewMode) { _viewMode = viewMode; }
         ViewMode viewMode() { return _viewMode; }
 
-        void setLoadInitJs(bool isLoadJs) { _loadInitJs = isLoadJs;}
-        bool loadInitJs() const {return _loadInitJs;}
+        void setLoadMongoRcJs(bool isLoadJs) { _loadInitJs = isLoadJs;}
+        bool loadMongoRcJs() const { return _loadInitJs; }
 
     Q_SIGNALS:
         void connectionAdded(ConnectionSettings *connection);

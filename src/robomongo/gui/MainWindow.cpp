@@ -285,11 +285,12 @@ namespace Robomongo
         uuidMenu->addAction(csharpLegacyEncodingAction);
         uuidMenu->addAction(pythonEncodingAction);
 
-        QAction *loadInitJs = new QAction("Load ."PROJECT_NAME_LOWERCASE"rc.js",this);
-        loadInitJs->setCheckable(true);
-        loadInitJs->setChecked(AppRegistry::instance().settingsManager()->loadInitJs());
-        VERIFY(connect(loadInitJs, SIGNAL(triggered()), this, SLOT(setLoadInitJs())));
-        optionsMenu->addAction(loadInitJs);
+        QAction *loadMongoRcJs = new QAction("Load .mongorc.js",this);
+        loadMongoRcJs->setCheckable(true);
+        loadMongoRcJs->setChecked(AppRegistry::instance().settingsManager()->loadMongoRcJs());
+        VERIFY(connect(loadMongoRcJs, SIGNAL(triggered()), this, SLOT(setLoadMongoRcJs())));
+        optionsMenu->addSeparator();
+        optionsMenu->addAction(loadMongoRcJs);
 
         QActionGroup *uuidEncodingGroup = new QActionGroup(this);
         uuidEncodingGroup->addAction(defaultEncodingAction);
@@ -567,10 +568,10 @@ namespace Robomongo
         AppRegistry::instance().settingsManager()->save();
     }
 
-    void MainWindow::setLoadInitJs()
+    void MainWindow::setLoadMongoRcJs()
     {
         QAction *send = qobject_cast<QAction*>(sender());
-        AppRegistry::instance().settingsManager()->setLoadInitJs(send->isChecked());
+        AppRegistry::instance().settingsManager()->setLoadMongoRcJs(send->isChecked());
         AppRegistry::instance().settingsManager()->save();
     }
 

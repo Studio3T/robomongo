@@ -5,6 +5,7 @@
 
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
@@ -33,7 +34,7 @@ namespace Robomongo
 
         _client.reset(new MongoWorker(_connectionRecord->clone()));
 
-        _bus->send(_client.data(), new InitRequest(this));
+        _bus->send(_client.data(), new InitRequest(this,AppRegistry::instance().settingsManager()->loadInitJs()));
         qDebug() << "InitRequest sent";
     }
 

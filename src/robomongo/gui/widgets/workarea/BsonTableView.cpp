@@ -82,6 +82,7 @@ namespace Robomongo
 
             QPoint menuPoint = mapToGlobal(point);
             menuPoint.setY(menuPoint.y() + horizontalHeader()->height());
+            menuPoint.setX(menuPoint.x() + verticalHeader()->width());
             menu.exec(menuPoint);
         }
     }

@@ -25,8 +25,15 @@ namespace Robomongo
     {
         R_EVENT
 
-        InitRequest(QObject *sender) :
-            Event(sender) {}
+        InitRequest(QObject *sender, bool isLoadMongoRCJS) :
+            Event(sender),_isLoadMongoRCJS(isLoadMongoRCJS) {}
+
+        bool isLoadMongoRCJS() const
+        {
+            return _isLoadMongoRCJS;
+        }
+    private:
+        const bool _isLoadMongoRCJS;
     };
 
     class InitResponse : public Event

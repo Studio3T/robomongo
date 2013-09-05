@@ -126,11 +126,7 @@ namespace Robomongo
         output->header()->paging()->setLimit(queryInfo.limit);
         output->setQueryInfo(queryInfo);
         output->itemContent->update(documents);
-
-        if (!output->header()->treeMode())
-            output->header()->showText();
-        else
-            output->header()->showTree();
+        output->header()->refreshOutputItem();
     }
 
     void OutputWidget::toggleOrientation()
@@ -156,6 +152,15 @@ namespace Robomongo
         for (int i = 0; i < count; i++) {
             OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
             widget->header()->showText();
+        }
+    }
+
+    void OutputWidget::enterTableMode()
+    {
+        int count = _splitter->count();
+        for (int i = 0; i < count; i++) {
+            OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
+            widget->header()->showTable();
         }
     }
 

@@ -40,6 +40,7 @@ namespace Robomongo
         void duplicate();
         void enterTreeMode();
         void enterTextMode();
+        void enterTableMode();
         void enterCustomMode();
         void showProgress();
         void hideProgress();

@@ -22,6 +22,7 @@ namespace Robomongo
         void stopScript();
         void enterTextMode();
         void enterTreeMode();
+        void enterTableMode();
         void enterCustomMode();
         int countTab()const;
         QueryWidget *const currentWidget() const;

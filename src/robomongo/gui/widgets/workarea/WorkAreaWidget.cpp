@@ -65,6 +65,13 @@ namespace Robomongo
             currentWidget->enterTreeMode();
     }
 
+    void WorkAreaWidget::enterTableMode()
+    {
+        QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();
+        if (currentWidget)
+            currentWidget->enterTableMode();
+    }
+
     void WorkAreaWidget::enterCustomMode()
     {
         QueryWidget *currentWidget = (QueryWidget *)_tabWidget->currentWidget();

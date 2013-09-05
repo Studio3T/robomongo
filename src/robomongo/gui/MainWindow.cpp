@@ -236,6 +236,7 @@ namespace Robomongo
         QActionGroup *modeGroup = new QActionGroup(this);
         modeGroup->addAction(textModeAction);
         modeGroup->addAction(treeModeAction);
+        modeGroup->addAction(tableModeAction);
         modeGroup->addAction(customModeAction);
 
         // Time Zone
@@ -475,7 +476,7 @@ namespace Robomongo
         _viewMode = Table;
         saveViewMode();
         if (_workArea)
-            _workArea->enterTreeMode();
+            _workArea->enterTableMode();
     }
 
     void MainWindow::enterCustomMode()

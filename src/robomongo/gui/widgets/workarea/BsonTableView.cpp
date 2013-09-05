@@ -10,6 +10,7 @@
 #include "robomongo/gui/widgets/workarea/BsonTableItem.h"
 #include "robomongo/gui/utils/DialogUtils.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
+#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/domain/MongoShell.h"
@@ -25,12 +26,18 @@ namespace Robomongo
         _shell(shell),
         _queryInfo(queryInfo)
     {
+#if defined(Q_OS_MAC)
+        setAttribute(Qt::WA_MacShowFocusRect, false);
+#endif
+        GuiRegistry::instance().setAlternatingColor(this);
+
         verticalHeader()->setDefaultAlignment(Qt::AlignLeft);
         horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
         //horizontalHeader()->setFixedHeight(25);   // commented because we shouldn't depend on heights in pixels - it may vary between platforms
         setStyleSheet("QTableView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }");
         setShowGrid(false);
-        
+        setSelectionMode(QAbstractItemView::SingleSelection);
+
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
 

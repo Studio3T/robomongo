@@ -30,6 +30,7 @@ namespace Robomongo
 
         void enterTreeMode();
         void enterTextMode();
+        void enterTableMode();
         void enterCustomMode();
 
         void maximizePart(OutputItemWidget *result);

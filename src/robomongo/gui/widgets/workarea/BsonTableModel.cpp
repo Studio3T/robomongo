@@ -65,8 +65,13 @@ namespace Robomongo
 
         int col = index.column();
         mongo::BSONElement element = node->row(col).second;
-        if (element.eoo())
+
+        if (element.eoo()) {
+            if (role == Qt::BackgroundRole) {
+                return QBrush("#efedec");
+            }
             return result;
+        }
 
         if (role == Qt::DisplayRole) {
             result = node->row(col).first;

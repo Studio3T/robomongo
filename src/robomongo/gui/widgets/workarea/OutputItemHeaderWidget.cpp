@@ -19,7 +19,7 @@ namespace Robomongo
         itemContent(output),
         item(result),
         _maximized(false),
-        _treeMode(true)
+        _viewMode(Tree)
     {
         setContentsMargins(5,0,0,0);
 
@@ -131,7 +131,7 @@ namespace Robomongo
         _customButton->setIcon(GuiRegistry::instance().customIcon());
         _customButton->setChecked(false);
         itemContent->showText();
-        _treeMode = false;
+        _viewMode = Text;
     }
 
     void OutputItemHeaderWidget::showTree()
@@ -145,7 +145,7 @@ namespace Robomongo
         _customButton->setIcon(GuiRegistry::instance().customIcon());
         _customButton->setChecked(false);
         itemContent->showTree();
-        _treeMode = true;
+        _viewMode = Tree;
     }
 
     void OutputItemHeaderWidget::showTable()
@@ -159,7 +159,7 @@ namespace Robomongo
         _customButton->setIcon(GuiRegistry::instance().customIcon());
         _customButton->setChecked(false);
         itemContent->showTable();
-        _treeMode = true;
+        _viewMode = Table;
     }
 
     void OutputItemHeaderWidget::showCustom()
@@ -173,7 +173,23 @@ namespace Robomongo
         _customButton->setIcon(GuiRegistry::instance().customHighlightedIcon());
         _customButton->setChecked(true);
         itemContent->showCustom();
-        _treeMode = true;
+        _viewMode = Custom;
+    }
+
+    void OutputItemHeaderWidget::refreshOutputItem()
+    {
+        showIn(_viewMode);
+    }
+
+    void OutputItemHeaderWidget::showIn(ViewMode mode)
+    {
+        switch(mode) {
+        case Text: showText(); break;
+        case Tree: showTree(); break;
+        case Table: showTable(); break;
+        case Custom: showCustom(); break;
+        default: showTree();
+        }
     }
 
     void OutputItemHeaderWidget::setTime(const QString &time)

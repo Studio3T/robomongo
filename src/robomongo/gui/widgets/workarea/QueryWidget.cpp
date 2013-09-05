@@ -200,6 +200,12 @@ namespace Robomongo
             _viewer->enterTextMode();
     }
 
+    void QueryWidget::enterTableMode()
+    {
+        if (_viewer)
+            _viewer->enterTableMode();
+    }
+
     void QueryWidget::enterCustomMode()
     {
         if (_viewer)

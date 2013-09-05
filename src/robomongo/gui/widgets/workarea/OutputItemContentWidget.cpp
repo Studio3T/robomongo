@@ -128,32 +128,30 @@ namespace Robomongo
 
     void OutputItemContentWidget::showText()
     {
-        if (_isTextModeSupported)
+        if (!_isTextModeSupported)
+            return;
+
+        if (!_isTextModeInitialized)
         {
-            if (!_isTextModeInitialized)
-            {
-                _log = configureLogText();
-                if (_sourceIsText)
-                {
-                    _log->sciScintilla()->setText(_text);
-                }
-                else
-                {
-                    if (_documents.size() > 0)
-                    {
-                        _log->sciScintilla()->setText("Loading...");
-                        _thread = new JsonPrepareThread(_documents, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
-                        VERIFY(connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared())));
-                        VERIFY(connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString))));
-                        VERIFY(connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater())));
-                        _thread->start();
-                    }
-                }
-                _stack->addWidget(_log);
-                _isTextModeInitialized = true;
+            _log = configureLogText();
+            if (_sourceIsText) {
+                _log->sciScintilla()->setText(_text);
             }
-            _stack->setCurrentWidget(_log);
+            else {
+                if (_documents.size() > 0) {
+                    _log->sciScintilla()->setText("Loading...");
+                    _thread = new JsonPrepareThread(_documents, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
+                    VERIFY(connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared())));
+                    VERIFY(connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString))));
+                    VERIFY(connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater())));
+                    _thread->start();
+                }
+            }
+            _stack->addWidget(_log);
+            _isTextModeInitialized = true;
         }
+
+        _stack->setCurrentWidget(_log);
     }
 
     void OutputItemContentWidget::showTree()

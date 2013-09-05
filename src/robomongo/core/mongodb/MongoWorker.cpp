@@ -61,7 +61,7 @@ namespace Robomongo
         try {
             qDebug() << "InitRequest received";
             _scriptEngine = new ScriptEngine(_connection);
-            _scriptEngine->init();
+            _scriptEngine->init(event->isLoadMongoRCJS());
             _scriptEngine->use(_connection->defaultDatabase());
 
             _keepAliveTimer = new QTimer(this);

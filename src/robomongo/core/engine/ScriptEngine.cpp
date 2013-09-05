@@ -69,7 +69,7 @@ namespace Robomongo
         }
     }
 
-    void ScriptEngine::init()
+    void ScriptEngine::init(bool isLoadMongoJs)
     {
         QMutexLocker lock(&_mutex);
 
@@ -109,8 +109,12 @@ namespace Robomongo
             // Load '.mongorc.js' from user's home directory
             // We are not checking whether file exists, because it will be
             // checked by 'Scope::execFile'.
-            std::string mongorcPath = QtUtils::toStdString<std::string>(QString("%1/."PROJECT_NAME_LOWERCASE"rc.js").arg(QDir::homePath()));// branding very usfull see Chromium and his brand Chrome, in Chrome some features private
-            scope->execFile(mongorcPath, false, false);
+            if(isLoadMongoJs){
+                std::string mongorcPath = QtUtils::toStdString<std::string>(QString("%1/.mongorc.js").arg(QDir::homePath()));
+                scope->execFile(mongorcPath, false, false);      
+            }   
+            std::string roboMongorcPath = QtUtils::toStdString<std::string>(QString("%1/."PROJECT_NAME_LOWERCASE".js").arg(QDir::homePath()));// branding very usfull see Chromium and his brand Chrome, in Chrome some features private
+            scope->execFile(roboMongorcPath, false, false);
         }
 
         // -- Esprima --

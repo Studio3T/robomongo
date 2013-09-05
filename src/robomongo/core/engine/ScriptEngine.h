@@ -17,7 +17,7 @@ namespace Robomongo
         ScriptEngine(ConnectionSettings *connection);
         ~ScriptEngine();
 
-        void init();
+        void init(bool isLoadMongoJs);
         MongoShellExecResult exec(const std::string &script, const std::string &dbName = std::string());
         void interrupt();
 

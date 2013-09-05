@@ -98,7 +98,7 @@ namespace Robomongo
 
     const QIcon &GuiRegistry::textHighlightedIcon() const
     {
-        static const QIcon textHighlightedIc = QIcon(":/robomongo/icons/text_16x16.png");
+        static const QIcon textHighlightedIc = QIcon(":/robomongo/icons/text_highlighted_16x16.png");
         return textHighlightedIc;
     }
 

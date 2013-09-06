@@ -1,3 +1,21 @@
+0.8.1 / September 6, 2013
+
+  Read about updates in this version here:
+  http://robomongo.org/whats-new-in/robomongo-0.8.1.html
+
+  * Table Mode (in this version, only for the first-level fields in documents) (#72)
+  * Paging Widget tweaks (#247, #203, #244, #243)
+  * ~/.robomongorc.js file is loaded automatically when new shell is opened 
+    (c:\Users\Name\.robomongorc.js for Windows)
+  * "Load .mongorc.js" menu item in "Options" top-level now allow to enable/disable loading
+    of ~/.mongorc.js file. By default it will not load this file.
+  * Batch Size now configurable (in this version only manually via ~/.config/robomongo.json)
+  * JSON parser doesn't correctly parse numbers when locale isn't en_EN (#246, #253)
+  * "Display Dates In" options doesn't saved/loaded correctly (#261)
+  * [Windows] Desktop icon isn't created despite corresponding checkbox was checked at installation. (#260)
+  * [Windows] Invalid symbols in installer for Windows if display language of system isn't English (#259)
+  
+  
 0.8.0 / August 23, 2013
 
   Read about updates in this version here:
@@ -20,6 +38,7 @@
   * Qt updated to 5.1 version.
   * QScintilla updated to 2.7.2 version.
 
+
 0.7.1 / April 13, 2013
 
   * Fixed crash when right-clicking on non-primitive elements in Tree View (#85)
@@ -37,6 +56,7 @@
   * Password is hidden by default (#65)
   * Fixed incorrect rendering of large values for the db.stats() results (#70)
   * Collection names with invalid (for JS var name) characters now rendered correctly (#71)
+
 
 0.6.8 / April 1, 2013
 

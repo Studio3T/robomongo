@@ -63,7 +63,6 @@ namespace Robomongo
         setStyleSheet("QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         header()->setSectionResizeMode(QHeaderView::Interactive);
-        header()->setFixedHeight(25);
 #endif
         VERIFY(connect(this, SIGNAL(itemExpanded(QTreeWidgetItem *)), SLOT(ui_itemExpanded(QTreeWidgetItem *))));
     }

@@ -35,8 +35,13 @@ namespace Robomongo
      * Creates SettingsManager for config file in default location
      * ~/.config/robomongo/robomongo.json
      */
-    SettingsManager::SettingsManager(QObject *parent) 
-        : QObject(parent),_version(SchemaVersion),_uuidEncoding(DefaultEncoding),_timeZone(Utc),_viewMode(Robomongo::Tree)
+    SettingsManager::SettingsManager(QObject *parent) :
+        QObject(parent),
+        _version(SchemaVersion),
+        _uuidEncoding(DefaultEncoding),
+        _timeZone(Utc),
+        _viewMode(Robomongo::Tree),
+        _batchSize(50)
     {
         load();
         qDebug() << "SettingsManager initialized in " << _configPath;

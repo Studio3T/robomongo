@@ -12,6 +12,8 @@
   * Batch Size now configurable (in this version only manually via ~/.config/robomongo.json)
   * JSON parser doesn't correctly parse numbers when locale isn't en_EN (#246, #253)
   * "Display Dates In" options doesn't saved/loaded correctly (#261)
+  * [Linux] Support for CentOS
+  * [Linux] Linux packages now takes 2x less space (10mb instead of 20mb)
   * [Windows] Desktop icon isn't created despite corresponding checkbox was checked at installation. (#260)
   * [Windows] Invalid symbols in installer for Windows if display language of system isn't English (#259)
   

@@ -1,26 +1,22 @@
 #pragma once
 
-#include <QTreeWidget>
+#include <QTreeView>
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 
 namespace Robomongo
 {
-    class BsonTreeItem;
     class InsertDocumentResponse;
     class MongoShell;
 
-    class BsonTreeWidget : public QTreeWidget
+    class BsonTreeView : public QTreeView
     {
         Q_OBJECT
 
     public:
-        BsonTreeWidget(MongoShell *shell, QWidget *parent = NULL);
-        void setDocuments(const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo = MongoQueryInfo());    
-
-    public Q_SLOTS:
-        void ui_itemExpanded(QTreeWidgetItem *item);
+        typedef QTreeView BaseClass;
+        BsonTreeView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent = NULL);
 
     protected Q_SLOTS:
         void onDeleteDocument();
@@ -28,25 +24,27 @@ namespace Robomongo
         void onViewDocument();
         void onInsertDocument();
         void onCopyDocument();
+
         void onExpandRecursive();
         void handle(InsertDocumentResponse *event);
+    
+    private Q_SLOTS:
+        void showContextMenu(const QPoint &point);
 
     protected:
         virtual void resizeEvent(QResizeEvent *event);
-        void contextMenuEvent(QContextMenuEvent *event);
-
-    private:
-        void expandNode(QTreeWidgetItem *item);
+        void expandNode(const QModelIndex &index);
         /**
          * @returns selected BsonTreeItem, or NULL otherwise
          */
-        BsonTreeItem *selectedBsonTreeItem() const;
+        QModelIndex selectedIndex() const;
 
         QAction *_deleteDocumentAction;
         QAction *_editDocumentAction;
         QAction *_viewDocumentAction;
         QAction *_insertDocumentAction;
         QAction *_copyValueAction;
+
         QAction *_expandRecursive;
 
         MongoQueryInfo _queryInfo;

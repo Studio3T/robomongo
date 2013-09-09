@@ -6,6 +6,7 @@
 #include <mongo/bson/bsonelement.h>
 
 #include "robomongo/core/Core.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 
 namespace Robomongo
 {
@@ -13,11 +14,11 @@ namespace Robomongo
      * @brief BSON tree item (represents array or object)
      */
 
-    class BsonTableItem : public QObject
+    class BsonTableItem : public BsonTreeItem
     {
         Q_OBJECT
     public:
-        typedef QObject BaseClass;
+        typedef BsonTreeItem BaseClass;
         typedef std::vector<BsonTableItem*> childContainerType;
         typedef std::pair<QString,mongo::BSONElement> rowType;
         typedef std::vector<rowType> rowsValuesType;
@@ -33,18 +34,10 @@ namespace Robomongo
         rowType row(unsigned col) const;
         void addRow(size_t col,const rowType &row);
 
-        unsigned childrenCount() const;
-        void clear();
-        void addChild(BsonTableItem *item);
-        BsonTableItem* child(unsigned pos)const;
-
         size_t findIndexColumn(const QString &col);
-        mongo::BSONObj root()const;
 
     private:
-        const mongo::BSONObj _root;
         columnsValuesType _columns;
         rowsValuesType _rows;
-        childContainerType _items;
     };
 }

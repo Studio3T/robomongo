@@ -1,11 +1,10 @@
-#include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeView.h"
 
 #include <QApplication>
 #include <QClipboard>
 #include <QHeaderView>
 #include <QAction>
 #include <QMenu>
-#include <QContextMenuEvent>
 
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
@@ -24,23 +23,28 @@
 #include "robomongo/core/EventBus.h"
 
 using namespace mongo;
+
+namespace
+{
+    bool isSimpleType(Robomongo::BsonTreeItem *item)
+    {
+        return Robomongo::BsonUtils::isSimpleType(item->type()) || Robomongo::BsonUtils::isUuidType(item->type(),item->binType());
+    }
+}
+
 namespace Robomongo
 {
-    BsonTreeWidget::BsonTreeWidget(MongoShell *shell, QWidget *parent) 
-        : QTreeWidget(parent), _shell(shell)
+    BsonTreeView::BsonTreeView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent) 
+        : BaseClass(parent), _shell(shell),_queryInfo(queryInfo)
     {
 #if defined(Q_OS_MAC)
         setAttribute(Qt::WA_MacShowFocusRect, false);
 #endif
         GuiRegistry::instance().setAlternatingColor(this);
-        setHeaderLabels(QStringList() << "Key" << "Value" << "Type");
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-        header()->setSectionResizeMode(0, QHeaderView::Stretch);
-        header()->setSectionResizeMode(1, QHeaderView::Stretch);
-        header()->setSectionResizeMode(2, QHeaderView::Stretch);
-#endif
+       
         setIndentation(15);
-        setContextMenuPolicy(Qt::DefaultContextMenu);
+        setContextMenuPolicy(Qt::CustomContextMenu);
+        VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
 
         _deleteDocumentAction = new QAction("Delete Document", this);
         VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument())));
@@ -60,99 +64,70 @@ namespace Robomongo
         _expandRecursive = new QAction("Expand Recursively", this);
          VERIFY(connect(_expandRecursive, SIGNAL(triggered()), SLOT(onExpandRecursive())));
          
-        setStyleSheet("QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }");
+        setStyleSheet("QTreeView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         header()->setSectionResizeMode(QHeaderView::Interactive);
 #endif
-        VERIFY(connect(this, SIGNAL(itemExpanded(QTreeWidgetItem *)), SLOT(ui_itemExpanded(QTreeWidgetItem *))));
     }
 
-    void BsonTreeWidget::setDocuments(const std::vector<MongoDocumentPtr> &documents,const MongoQueryInfo &queryInfo /* = MongoQueryInfo() */)
+    void BsonTreeView::showContextMenu(const QPoint &point)
     {
-        _queryInfo = queryInfo;
+        QModelIndex selectedInd = selectedIndex();
+        if (selectedInd.isValid()){
+            BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
 
-        setUpdatesEnabled(false);
-        clear();
+            bool isEditable = _queryInfo.isNull ? false : true;
+            bool onItem = documentItem ? true : false;
 
-        BsonTreeItem *firstItem = NULL;
+            QMenu menu(this);
+            bool isSimple = false;
+            if(documentItem){
+                isSimple = isSimpleType(documentItem);
+                if (documentItem->childrenCount()){
+                    menu.addAction(_expandRecursive);
+                    menu.addSeparator();
+                }
+            }
 
-        QList<QTreeWidgetItem *> items;
-        size_t documentsCount = documents.size();
-        for (int i = 0; i < documentsCount; ++i)
-        {
-            MongoDocumentPtr document = documents[i];
+            if (onItem && isEditable) menu.addAction(_editDocumentAction);
+            if (onItem)               menu.addAction(_viewDocumentAction);
+            if (isEditable)           menu.addAction(_insertDocumentAction);
+            if (onItem && isSimple)   menu.addSeparator();
+            if (onItem && isSimple)   menu.addAction(_copyValueAction);
+            if (onItem && isEditable) menu.addSeparator();
+            if (onItem && isEditable) menu.addAction(_deleteDocumentAction);
 
-            BsonTreeItem *item = new BsonTreeItem(document, i);
-            items.append(item);
-
-            if (i == 0)
-                firstItem = item;
+            QPoint menuPoint = mapToGlobal(point);
+            menuPoint.setY(menuPoint.y() + header()->height());
+            menu.exec(menuPoint);
         }
-
-        addTopLevelItems(items);
-        setUpdatesEnabled(true);
-
-        if (firstItem)
-        {
-            firstItem->expand();
-            firstItem->setExpanded(true);
-        }
     }
 
-    void BsonTreeWidget::ui_itemExpanded(QTreeWidgetItem *treeItem)
+    void BsonTreeView::resizeEvent(QResizeEvent *event)
     {
-        BsonTreeItem *item = static_cast<BsonTreeItem *>(treeItem);
-        item->expand();
-    }
-
-    void BsonTreeWidget::contextMenuEvent(QContextMenuEvent *event)
-    {
-        QTreeWidgetItem *item = itemAt(event->pos());
-        BsonTreeItem *documentItem = dynamic_cast<BsonTreeItem *>(item);
-
-        bool isEditable = _queryInfo.isNull ? false : true;
-        bool onItem = documentItem ? true : false;
-        bool isSimple = documentItem ? (documentItem->isSimpleType() || documentItem->isUuidType()) : false;
-
-        QMenu menu(this);
-        if (item && item->childIndicatorPolicy() == QTreeWidgetItem::ShowIndicator) {
-            menu.addAction(_expandRecursive);
-            menu.addSeparator();
-        }
-        if (onItem && isEditable) menu.addAction(_editDocumentAction);
-        if (onItem)               menu.addAction(_viewDocumentAction);
-        if (isEditable)           menu.addAction(_insertDocumentAction);
-        if (onItem && isSimple)   menu.addSeparator();
-        if (onItem && isSimple)   menu.addAction(_copyValueAction);
-        if (onItem && isEditable) menu.addSeparator();
-        if (onItem && isEditable) menu.addAction(_deleteDocumentAction);
-
-        QPoint menuPoint = mapToGlobal(event->pos());
-        menuPoint.setY(menuPoint.y() + header()->height());
-        menu.exec(menuPoint);
-    }
-
-    void BsonTreeWidget::resizeEvent(QResizeEvent *event)
-    {
-        QTreeWidget::resizeEvent(event);
+        BaseClass::resizeEvent(event);
         header()->resizeSections(QHeaderView::Stretch);
     }
 
-    void BsonTreeWidget::onDeleteDocument()
+    void BsonTreeView::onDeleteDocument()
     {
         if (_queryInfo.isNull)
             return;
 
-        BsonTreeItem *documentItem = selectedBsonTreeItem();
-        if (!documentItem)
+        QModelIndex selectedInd = selectedIndex();
+        if (!selectedInd.isValid())
             return;
 
-        mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+        if(!documentItem)
+            return;
+
+        mongo::BSONObj obj = documentItem->root();
         mongo::BSONElement id = obj.getField("_id");
 
         if (id.eoo()) {
             QMessageBox::warning(this, "Cannot delete", "Selected document doesn't have _id field. \n"
-                                       "Maybe this is a system document that should be managed in a special way?");
+                "Maybe this is a system document that should be managed in a special way?");
             return;
         }
 
@@ -171,24 +146,28 @@ namespace Robomongo
         _shell->query(0, _queryInfo);
     }
 
-    void BsonTreeWidget::onEditDocument()
+    void BsonTreeView::onEditDocument()
     {
         if (_queryInfo.isNull)
             return;
 
-        BsonTreeItem *documentItem = selectedBsonTreeItem();
-        if (!documentItem)
+        QModelIndex selectedInd = selectedIndex();
+        if (!selectedInd.isValid())
             return;
 
-        mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+        if(!documentItem)
+            return;
+
+        mongo::BSONObj obj = documentItem->root();
 
         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone() );
         const QString &json = QtUtils::toQString(str);
 
         DocumentTextEditor editor(QtUtils::toQString(_queryInfo.serverAddress),
-                                  QtUtils::toQString(_queryInfo.databaseName),
-                                  QtUtils::toQString(_queryInfo.collectionName),
-                                  json);
+            QtUtils::toQString(_queryInfo.databaseName),
+            QtUtils::toQString(_queryInfo.collectionName),
+            json);
 
         editor.setWindowTitle("Edit Document");
         int result = editor.exec();
@@ -201,13 +180,17 @@ namespace Robomongo
         }
     }
 
-    void BsonTreeWidget::onViewDocument()
+    void BsonTreeView::onViewDocument()
     {
-        BsonTreeItem *documentItem = selectedBsonTreeItem();
-        if (!documentItem)
+        QModelIndex selectedInd = selectedIndex();
+        if (!selectedInd.isValid())
             return;
 
-        mongo::BSONObj obj = documentItem->rootDocument()->bsonObj();
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+        if(!documentItem)
+            return;
+
+        mongo::BSONObj obj = documentItem->root();
 
         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
         const QString &json = QtUtils::toQString(str);
@@ -222,15 +205,15 @@ namespace Robomongo
         editor->show();
     }
 
-    void BsonTreeWidget::onInsertDocument()
+    void BsonTreeView::onInsertDocument()
     {
         if (_queryInfo.isNull)
             return;
 
         DocumentTextEditor editor(QtUtils::toQString(_queryInfo.serverAddress),
-                                  QtUtils::toQString(_queryInfo.databaseName),
-                                  QtUtils::toQString(_queryInfo.collectionName),
-                                  "{\n    \n}");
+            QtUtils::toQString(_queryInfo.databaseName),
+            QtUtils::toQString(_queryInfo.collectionName),
+            "{\n    \n}");
 
         editor.setCursorPosition(1, 4);
         editor.setWindowTitle("Insert Document");
@@ -244,41 +227,43 @@ namespace Robomongo
         }
     }
 
-    void BsonTreeWidget::onCopyDocument()
+    void BsonTreeView::onCopyDocument()
     {
-        BsonTreeItem *documentItem = selectedBsonTreeItem();
-        if (!documentItem)
+        QModelIndex selectedInd = selectedIndex();
+        if (!selectedInd.isValid())
             return;
 
-        MongoElementPtr element = documentItem->element();
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+        if(!documentItem)
+            return;
 
-        if (!element->isSimpleType() && !element->isUuidType())
+        if (!isSimpleType(documentItem))
             return;
 
         QClipboard *clipboard = QApplication::clipboard();
-        clipboard->setText(element->stringValue());
+        clipboard->setText(documentItem->value());
     }
 
-    void BsonTreeWidget::expandNode(QTreeWidgetItem *item)
+    void BsonTreeView::expandNode(const QModelIndex &index)
     {
-        if(item){
-            ui_itemExpanded(item);
-            item->setExpanded(true);
-            for(int i = 0;i<item->childCount();++i){
-                QTreeWidgetItem *tritem = item->child(i);
-                if(tritem&&tritem->childIndicatorPolicy()==QTreeWidgetItem::ShowIndicator){
-                    expandNode(tritem);
+        if(index.isValid()){
+            BaseClass::expand(index);
+            BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(index);
+            for(int i = 0;i<item->childrenCount();++i){
+                BsonTreeItem *tritem = item->child(i);
+                if(tritem&&tritem->childrenCount()){
+                    expandNode(model()->index(i,0,index));
                 }
             }
         }
     }
 
-    void BsonTreeWidget::onExpandRecursive()
+    void BsonTreeView::onExpandRecursive()
     {
-        expandNode(currentItem());
+        expandNode(selectedIndex());
     }
 
-    void BsonTreeWidget::handle(InsertDocumentResponse *event)
+    void BsonTreeView::handle(InsertDocumentResponse *event)
     {
         AppRegistry::instance().bus()->unsubscibe(this);
         _shell->query(0, _queryInfo);
@@ -287,18 +272,14 @@ namespace Robomongo
     /**
      * @returns selected BsonTreeItem, or NULL otherwise
      */
-    BsonTreeItem *BsonTreeWidget::selectedBsonTreeItem() const
+    QModelIndex BsonTreeView::selectedIndex() const
     {
-        QList<QTreeWidgetItem*> items = selectedItems();
+        QModelIndexList indexses = selectionModel()->selectedRows();
+        int count = indexses.count();
 
-        if (items.count() != 1)
-            return NULL;
+        if (indexses.count() != 1)
+            return QModelIndex();
 
-        QTreeWidgetItem *item = items[0];
-
-        if (!item)
-            return NULL;
-
-        return dynamic_cast<BsonTreeItem *>(item);
+        return indexses[0];
     }
 }

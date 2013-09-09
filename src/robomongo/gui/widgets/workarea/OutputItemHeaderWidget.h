@@ -2,7 +2,6 @@
 
 #include <QWidget>
 QT_BEGIN_NAMESPACE
-class QLabel;
 class QPushButton;
 QT_END_NAMESPACE
 
@@ -44,8 +43,6 @@ namespace Robomongo
         void maximizePart();
 
     private:
-        QLabel *createLabelWithIcon(const QIcon &icon);
-        QFrame *createVerticalLine();
         QPushButton *_textButton;
         QPushButton *_treeButton;
         QPushButton *_tableButton;

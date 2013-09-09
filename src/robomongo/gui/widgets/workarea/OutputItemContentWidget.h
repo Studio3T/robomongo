@@ -9,7 +9,7 @@
 namespace Robomongo
 {
     class FindFrame;
-    class BsonTreeWidget;
+    class BsonTreeView;
     class BsonTableView;
     class JsonPrepareThread;
     class CollectionStatsTreeWidget;
@@ -55,7 +55,7 @@ namespace Robomongo
         FindFrame *configureLogText();
 
         FindFrame *_log;
-        BsonTreeWidget *_bson;
+        BsonTreeView *_bson;
         BsonTableView *_bsonTable;
         CollectionStatsTreeWidget *_collectionStats;
 

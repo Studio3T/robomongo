@@ -7,7 +7,8 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/widgets/workarea/JsonPrepareThread.h"
-#include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeView.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
 #include "robomongo/gui/widgets/workarea/BsonTableView.h"
 #include "robomongo/gui/widgets/workarea/BsonTableModel.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
@@ -163,8 +164,9 @@ namespace Robomongo
         }
 
         if (!_isTreeModeInitialized) {
-            _bson = new BsonTreeWidget(_shell);
-            _bson->setDocuments(_documents, _queryInfo);
+            _bson = new BsonTreeView(_shell,_queryInfo);
+            BsonTreeModel *mod = new BsonTreeModel(_documents,_bson);
+            _bson->setModel(mod);
             _stack->addWidget(_bson);
             _isTreeModeInitialized = true;
         }

@@ -12,6 +12,18 @@
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 
+namespace
+{
+    QFrame *createVerticalLine()
+    {
+        QFrame *vline = new QFrame();
+        vline->setFrameShape(QFrame::VLine);
+        vline->setFrameShadow(QFrame::Sunken);
+        vline->setFixedWidth(5);
+        return vline;
+    }
+}
+
 namespace Robomongo
 {
 
@@ -216,23 +228,6 @@ namespace Robomongo
         }
 
         _maximized = !_maximized;
-    }
-
-    QLabel *OutputItemHeaderWidget::createLabelWithIcon(const QIcon &icon)
-    {
-        QPixmap pixmap = icon.pixmap(16, 16);
-        QLabel *label = new QLabel;
-        label->setPixmap(pixmap);
-        return label;
-    }
-
-    QFrame *OutputItemHeaderWidget::createVerticalLine()
-    {
-        QFrame *vline = new QFrame();
-        vline->setFrameShape(QFrame::VLine);
-        vline->setFrameShadow(QFrame::Sunken);
-        vline->setFixedWidth(5);
-        return vline;
     }
 
 }

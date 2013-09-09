@@ -59,7 +59,7 @@ namespace Robomongo
         if (!index.isValid())
             return result;
 
-        BsonTableItem *node = _root->child(index.row());
+        BsonTableItem *node = dynamic_cast<BsonTableItem *>(_root->child(index.row()));
         if (!node)
             return result;
 
@@ -153,7 +153,7 @@ namespace Robomongo
             {
                 parentItem = QtUtils::item<BsonTableItem*>(parent);
             }
-            BsonTableItem *childItem = parentItem->child(row);
+            BsonTableItem *childItem = dynamic_cast<BsonTableItem*>(parentItem->child(row));
             if (childItem)
             {
                 index = createIndex(row, column, childItem);

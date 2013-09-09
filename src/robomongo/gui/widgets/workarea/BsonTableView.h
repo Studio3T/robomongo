@@ -29,6 +29,7 @@ namespace Robomongo
 
     private:
         QModelIndex selectedIndex() const;
+
         QAction *_deleteDocumentAction;
         QAction *_editDocumentAction;
         QAction *_viewDocumentAction;

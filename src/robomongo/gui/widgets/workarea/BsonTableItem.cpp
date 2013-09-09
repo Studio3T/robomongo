@@ -12,8 +12,7 @@ namespace Robomongo
     }
 
     BsonTableItem::BsonTableItem(const mongo::BSONObj &bsonObjRoot, QObject *parent)
-        :BaseClass(parent),
-        _root(bsonObjRoot)
+        :BaseClass(bsonObjRoot,parent)
     {
 
     }
@@ -62,30 +61,5 @@ namespace Robomongo
             res = _rows[col];
         }
         return res;
-    }
-
-    unsigned BsonTableItem::childrenCount() const
-    {
-        return _items.size();
-    }
-
-    void BsonTableItem::clear()
-    {
-        _items.clear();
-    }
-
-    void BsonTableItem::addChild(BsonTableItem *item)
-    {
-        _items.push_back(item);
-    }
-
-    BsonTableItem* BsonTableItem::child(unsigned pos)const
-    {
-        return _items[pos];
-    }
-
-    mongo::BSONObj BsonTableItem::root()const
-    {
-        return _root;
     }
 }

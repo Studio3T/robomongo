@@ -28,6 +28,7 @@ namespace Robomongo
         void insertItem(BsonTreeItem *parent, BsonTreeItem *children);
         void removeitem(BsonTreeItem *children);
     protected:
+        static const QIcon &getIcon(BsonTreeItem *item);
         BsonTreeItem *const _root;
     };
 }

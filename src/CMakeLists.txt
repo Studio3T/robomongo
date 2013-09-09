@@ -150,7 +150,8 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/EventBus.h
     robomongo/core/domain/App.h
     robomongo/core/domain/MongoShell.h
-    robomongo/core/EventBusDispatcher.h  
+    robomongo/core/EventBusDispatcher.h 
+    robomongo/core/domain/Notifier.h 
     )
 SET(HEADERS_CORE
     robomongo/core/engine/ScriptEngine.h
@@ -184,6 +185,7 @@ SET(HEADERS_CORE
     robomongo/core/utils/QtUtils.h
     )
 SET(SOURCES_CORE
+    robomongo/core/domain/Notifier.cpp
     robomongo/core/AppRegistry.cpp
     robomongo/core/settings/ConnectionSettings.cpp
     robomongo/core/settings/SettingsManager.cpp

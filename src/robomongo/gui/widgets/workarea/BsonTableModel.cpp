@@ -53,25 +53,7 @@ namespace Robomongo
             result = child->value();
         }
         else if (role == Qt::DecorationRole) {
-            switch(child->type()) {
-            case mongo::NumberDouble: result = GuiRegistry::instance().bsonIntegerIcon(); break;
-            case mongo::String: result = GuiRegistry::instance().bsonStringIcon(); break;
-            case mongo::Object: result = GuiRegistry::instance().bsonObjectIcon(); break;
-            case mongo::Array: result = GuiRegistry::instance().bsonArrayIcon(); break;
-            case mongo::BinData: result = GuiRegistry::instance().bsonBinaryIcon(); break;
-            case mongo::Undefined: result = GuiRegistry::instance().circleIcon(); break;
-            case mongo::jstOID: result = GuiRegistry::instance().circleIcon(); break;
-            case mongo::Bool: result = GuiRegistry::instance().bsonBooleanIcon(); break;
-            case mongo::Date: result = GuiRegistry::instance().bsonDateTimeIcon(); break;
-            case mongo::jstNULL: result = GuiRegistry::instance().bsonNullIcon(); break;
-            case mongo::RegEx: result = GuiRegistry::instance().circleIcon(); break;
-            case mongo::DBRef: result = GuiRegistry::instance().circleIcon(); break;
-            case mongo::Code: case mongo::CodeWScope: result = GuiRegistry::instance().circleIcon(); break;
-            case mongo::NumberInt: result = GuiRegistry::instance().bsonIntegerIcon(); break;
-            case mongo::Timestamp: result = GuiRegistry::instance().bsonDateTimeIcon(); break;
-            case mongo::NumberLong: result = GuiRegistry::instance().bsonIntegerIcon(); break;
-            default: result = GuiRegistry::instance().circleIcon(); break;
-            }
+            return getIcon(child);
         }
 
         return result;

@@ -3,51 +3,32 @@
 #include <QTreeView>
 
 #include "robomongo/core/Core.h"
-#include "robomongo/core/domain/MongoQueryInfo.h"
+#include "robomongo/core/domain/Notifier.h"
 
 namespace Robomongo
 {
     class InsertDocumentResponse;
-    class MongoShell;
 
-    class BsonTreeView : public QTreeView
+    class BsonTreeView : public QTreeView, public INotifierObserver
     {
         Q_OBJECT
 
     public:
         typedef QTreeView BaseClass;
         BsonTreeView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent = NULL);
+        virtual QModelIndex selectedIndex() const;
 
-    protected Q_SLOTS:
-        void onDeleteDocument();
-        void onEditDocument();
-        void onViewDocument();
-        void onInsertDocument();
-        void onCopyDocument();
-
+    private Q_SLOTS:
         void onExpandRecursive();
         void handle(InsertDocumentResponse *event);
-    
-    private Q_SLOTS:
         void showContextMenu(const QPoint &point);
 
     protected:
         virtual void resizeEvent(QResizeEvent *event);
         void expandNode(const QModelIndex &index);
-        /**
-         * @returns selected BsonTreeItem, or NULL otherwise
-         */
-        QModelIndex selectedIndex() const;
 
-        QAction *_deleteDocumentAction;
-        QAction *_editDocumentAction;
-        QAction *_viewDocumentAction;
-        QAction *_insertDocumentAction;
-        QAction *_copyValueAction;
-
+    private:
+        Notifier _notifier;
         QAction *_expandRecursive;
-
-        MongoQueryInfo _queryInfo;
-        MongoShell *_shell;
     };
 }

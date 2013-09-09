@@ -62,6 +62,29 @@ namespace Robomongo
         }
     }
 
+    const QIcon &BsonTreeModel::getIcon(BsonTreeItem *item)
+    {
+        switch(item->type()) {
+        case mongo::NumberDouble: return GuiRegistry::instance().bsonIntegerIcon();
+        case mongo::String: return GuiRegistry::instance().bsonStringIcon();
+        case mongo::Object: return GuiRegistry::instance().bsonObjectIcon();
+        case mongo::Array: return GuiRegistry::instance().bsonArrayIcon();
+        case mongo::BinData: return GuiRegistry::instance().bsonBinaryIcon();
+        case mongo::Undefined: return GuiRegistry::instance().circleIcon();
+        case mongo::jstOID: return GuiRegistry::instance().circleIcon();
+        case mongo::Bool: return GuiRegistry::instance().bsonBooleanIcon();
+        case mongo::Date: return GuiRegistry::instance().bsonDateTimeIcon();
+        case mongo::jstNULL: return GuiRegistry::instance().bsonNullIcon();
+        case mongo::RegEx: return GuiRegistry::instance().circleIcon();
+        case mongo::DBRef: return GuiRegistry::instance().circleIcon();
+        case mongo::Code: case mongo::CodeWScope: return GuiRegistry::instance().circleIcon();
+        case mongo::NumberInt: return GuiRegistry::instance().bsonIntegerIcon();
+        case mongo::Timestamp: return GuiRegistry::instance().bsonDateTimeIcon();
+        case mongo::NumberLong: return GuiRegistry::instance().bsonIntegerIcon();
+        default: return GuiRegistry::instance().circleIcon();
+        }
+    }
+
     QVariant BsonTreeModel::data(const QModelIndex &index, int role) const
     {
         QVariant result;
@@ -82,25 +105,7 @@ namespace Robomongo
                     result = node->key();
                 }
                 else if (role == Qt::DecorationRole) {
-                    switch(node->type()) {
-                    case mongo::NumberDouble: result = GuiRegistry::instance().bsonIntegerIcon(); break;
-                    case mongo::String: result = GuiRegistry::instance().bsonStringIcon(); break;
-                    case mongo::Object: result = GuiRegistry::instance().bsonObjectIcon(); break;
-                    case mongo::Array: result = GuiRegistry::instance().bsonArrayIcon(); break;
-                    case mongo::BinData: result = GuiRegistry::instance().bsonBinaryIcon(); break;
-                    case mongo::Undefined: result = GuiRegistry::instance().circleIcon(); break;
-                    case mongo::jstOID: result = GuiRegistry::instance().circleIcon(); break;
-                    case mongo::Bool: result = GuiRegistry::instance().bsonBooleanIcon(); break;
-                    case mongo::Date: result = GuiRegistry::instance().bsonDateTimeIcon(); break;
-                    case mongo::jstNULL: result = GuiRegistry::instance().bsonNullIcon(); break;
-                    case mongo::RegEx: result = GuiRegistry::instance().circleIcon(); break;
-                    case mongo::DBRef: result = GuiRegistry::instance().circleIcon(); break;
-                    case mongo::Code: case mongo::CodeWScope: result = GuiRegistry::instance().circleIcon(); break;
-                    case mongo::NumberInt: result = GuiRegistry::instance().bsonIntegerIcon(); break;
-                    case mongo::Timestamp: result = GuiRegistry::instance().bsonDateTimeIcon(); break;
-                    case mongo::NumberLong: result = GuiRegistry::instance().bsonIntegerIcon(); break;
-                    default: result = GuiRegistry::instance().circleIcon(); break;
-                    }
+                    return getIcon(node);
                 }
             }
             else if(col == BsonTreeItem::eValue && role == Qt::DisplayRole){

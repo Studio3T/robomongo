@@ -52,6 +52,28 @@ namespace Robomongo
         return _items[pos];
     }
 
+    BsonTreeItem* BsonTreeItem::childSafe(unsigned pos)const
+    {
+        if(childrenCount()>pos){
+            return _items[pos];
+        }
+        else{
+            return NULL;
+        }
+    }
+
+    BsonTreeItem* BsonTreeItem::childByKey(const QString &val)
+    {
+        for (int i=0;i<_items.size();++i)
+        {
+            if (_items[i]->key()==val)
+            {
+                return _items[i];
+            }
+        }
+        return NULL;
+    }
+
     mongo::BSONObj BsonTreeItem::root()const
     {
         return _root;

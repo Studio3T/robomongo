@@ -27,9 +27,7 @@ namespace Robomongo
 
         void insertItem(BsonTreeItem *parent, BsonTreeItem *children);
         void removeitem(BsonTreeItem *children);
-    public Q_SLOTS:
-        
-    private:
+    protected:
         BsonTreeItem *const _root;
     };
 }

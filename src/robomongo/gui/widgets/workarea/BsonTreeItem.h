@@ -43,6 +43,8 @@ namespace Robomongo
         void addChild(BsonTreeItem *item);
         void removeChild(BsonTreeItem *item);
         BsonTreeItem* child(unsigned pos)const;
+        BsonTreeItem* childSafe(unsigned pos)const;
+        BsonTreeItem* childByKey(const QString &val);
         int indexOf(BsonTreeItem *item) const;
 
         mongo::BSONObj root()const;

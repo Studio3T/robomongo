@@ -25,6 +25,7 @@ namespace
                 if (BsonUtils::isArray(element)) {
                     int itemsCount = element.Array().size();
                     childItemInner->setValue(QString("Array [%1]").arg(itemsCount));
+                    parseDocument(childItemInner,element.Obj());  
                 }
                 else if (BsonUtils::isDocument(element)) {
                     parseDocument(childItemInner,element.Obj());                    

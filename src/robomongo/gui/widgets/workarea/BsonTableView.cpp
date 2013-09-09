@@ -7,7 +7,7 @@
 #include <QApplication>
 #include <QClipboard>
 
-#include "robomongo/gui/widgets/workarea/BsonTableItem.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/gui/utils/DialogUtils.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -18,6 +18,14 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
+
+namespace
+{
+    bool isSimpleType(Robomongo::BsonTreeItem *item)
+    {
+        return Robomongo::BsonUtils::isSimpleType(item->type()) || Robomongo::BsonUtils::isUuidType(item->type(),item->binType());
+    }
+}
 
 namespace Robomongo
 {
@@ -72,17 +80,17 @@ namespace Robomongo
     {
         QModelIndex selectedInd = selectedIndex();
         if (selectedInd.isValid()){
-            BsonTableItem *documentItem = QtUtils::item<BsonTableItem*>(selectedInd);
+            BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
 
             bool isEditable = _queryInfo.isNull ? false : true;
             bool onItem = documentItem ? true : false;
-            bool isSimple = false;
-            if(documentItem){
-                mongo::BSONElement el = documentItem->row(selectedInd.column()).second;
-                isSimple = BsonUtils::isSimpleType(el) || BsonUtils::isUuidType(el);
-            }
 
             QMenu menu(this);
+            bool isSimple = false;
+            if(documentItem){
+                isSimple = isSimpleType(documentItem);
+            }
+
             if (onItem && isEditable) menu.addAction(_editDocumentAction);
             if (onItem)               menu.addAction(_viewDocumentAction);
             if (isEditable)           menu.addAction(_insertDocumentAction);
@@ -107,7 +115,7 @@ namespace Robomongo
         if (!selectedInd.isValid())
             return;
 
-        BsonTableItem *documentItem = QtUtils::item<BsonTableItem*>(selectedInd);
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
         if(!documentItem)
             return;
 
@@ -144,7 +152,7 @@ namespace Robomongo
         if (!selectedInd.isValid())
             return;
 
-        BsonTableItem *documentItem = QtUtils::item<BsonTableItem*>(selectedInd);
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
         if(!documentItem)
             return;
 
@@ -175,7 +183,7 @@ namespace Robomongo
         if (!selectedInd.isValid())
             return;
 
-        BsonTableItem *documentItem = QtUtils::item<BsonTableItem*>(selectedInd);
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
         if(!documentItem)
             return;
 
@@ -222,19 +230,15 @@ namespace Robomongo
         if (!selectedInd.isValid())
             return;
 
-        BsonTableItem *documentItem = QtUtils::item<BsonTableItem*>(selectedInd);
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
         if(!documentItem)
             return;
 
-        mongo::BSONElement element = documentItem->row(selectedInd.column()).second;
-
-        if (!BsonUtils::isSimpleType(element) && BsonUtils::isUuidType(element))
+        if (!isSimpleType(documentItem))
             return;
 
         QClipboard *clipboard = QApplication::clipboard();
-        std::string res;
-        BsonUtils::buildJsonString(element,res,AppRegistry::instance().settingsManager()->uuidEncoding(),AppRegistry::instance().settingsManager()->timeZone());
-        clipboard->setText(QtUtils::toQString(res));
+        clipboard->setText(documentItem->value());
     }
 
 }

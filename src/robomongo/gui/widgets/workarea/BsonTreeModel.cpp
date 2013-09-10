@@ -147,8 +147,8 @@ namespace Robomongo
         Qt::ItemFlags result = 0;
         if (index.isValid()){
             result = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-            if(index.column()==BsonTreeItem::eValue)
-                result |= Qt::ItemIsEditable;
+            //if(index.column()==BsonTreeItem::eValue)
+            //    result |= Qt::ItemIsEditable;
         }
         return result;
     }

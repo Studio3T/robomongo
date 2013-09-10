@@ -21,12 +21,9 @@ namespace Robomongo
 
     public:
         OutputItemContentWidget(MongoShell *shell, const QString &text);
-        OutputItemContentWidget(MongoShell *shell, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo);
         OutputItemContentWidget(MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo);
 
         void update(const std::vector<MongoDocumentPtr> &documents);
-
-        void setup();
 
         bool isTextModeSupported() const { return _isTextModeSupported; }
         bool isTreeModeSupported() const { return _isTreeModeSupported; }
@@ -34,17 +31,17 @@ namespace Robomongo
         bool isTableModeSupported() const { return _isTableModeSupported; }
 
         void showText();
-        void showTree();
-        void showCustom();
+        void showTree();        
         void showTable();
+        void showCustom();
 
         void markUninitialized();
 
     public Q_SLOTS:
-        void jsonPrepared();
         void jsonPartReady(const QString &json);
 
     private:
+        void setup();
         FindFrame *configureLogText();
 
         FindFrame *_textView;
@@ -61,8 +58,6 @@ namespace Robomongo
         JsonPrepareThread *_thread;
 
         MongoShell *_shell;
-
-        bool _sourceIsText; // if false - source is documents
 
         bool _isTextModeSupported;
         bool _isTreeModeSupported;

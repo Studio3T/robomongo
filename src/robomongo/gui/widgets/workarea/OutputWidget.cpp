@@ -67,11 +67,7 @@ namespace Robomongo
             OutputItemContentWidget *output = NULL;
 
             if (shellResult.documents().size() > 0) {
-
-                if (shellResult.type().empty())
-                    output = new OutputItemContentWidget(_shell, shellResult.documents(), shellResult.queryInfo());
-                else
-                    output = new OutputItemContentWidget(_shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo());
+                output = new OutputItemContentWidget(_shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo());
             } else {
                 output = new OutputItemContentWidget(_shell, QtUtils::toQString(shellResult.response()));
             }
@@ -84,16 +80,22 @@ namespace Robomongo
                     result->header()->showCustom();
                 else if (output->isTreeModeSupported())
                     result->header()->showTree();
+                else if (output->isTableModeSupported())
+                    result->header()->showTable();
                 else if (output->isTextModeSupported())
                     result->header()->showText();
             } else if (viewMode == Tree) {
                 if (output->isTreeModeSupported())
                     result->header()->showTree();
+                else if (output->isTableModeSupported())
+                    result->header()->showTable();
                 else if (output->isTextModeSupported())
                     result->header()->showText();
             } else if (viewMode == Table) {
                 if (output->isTableModeSupported())
                     result->header()->showTable();
+                else if (output->isTreeModeSupported())
+                    result->header()->showTree();
                 else if (output->isTextModeSupported())
                     result->header()->showText();
             }
@@ -126,7 +128,7 @@ namespace Robomongo
         output->header()->paging()->setSkip(queryInfo.skip);
         output->header()->paging()->setBatchSize(queryInfo.batchSize);
         output->setQueryInfo(queryInfo);
-        output->itemContent->update(documents);
+        output->header()->itemContent->update(documents);
         output->header()->refreshOutputItem();
     }
 

@@ -26,12 +26,11 @@ namespace Robomongo
         OutputItemContentWidget *itemContent;
         OutputItemWidget *item;
         PagingWidget *paging() const { return _paging; }
-        ViewMode viewMode() const { return _viewMode; }
 
     protected:
-        void mouseDoubleClickEvent(QMouseEvent *);
+        virtual void mouseDoubleClickEvent(QMouseEvent *);
 
-    public slots:
+    public Q_SLOTS:
         void showText();
         void showTree();
         void showTable();

@@ -20,41 +20,41 @@
 namespace Robomongo
 {
     OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &text) :
+        _textView(NULL),
+        _bsonTreeview(NULL),
+        _thread(NULL),
         _bsonTable(NULL),
         _isTextModeSupported(true),
         _isTreeModeSupported(false),
         _isTableModeSupported(false),
         _isCustomModeSupported(false),
+        _isTextModeInitialized(false),
+        _isTreeModeInitialized(false),
+        _isCustomModeInitialized(false),
+        _isTableModeInitialized(false),
+        _isFirstPartRendered(false),
         _text(text),
-        _sourceIsText(true),
-        _shell(shell)
-    {
-        setup();
-    }
-
-    OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
-        _bsonTable(NULL),
-        _isTextModeSupported(true),
-        _isTreeModeSupported(true),
-        _isTableModeSupported(true),
-        _isCustomModeSupported(false),
-        _documents(documents),
-        _queryInfo(queryInfo),
-        _sourceIsText(false),
         _shell(shell)
     {
         setup();
     }
 
     OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
+        _textView(NULL),
+        _bsonTreeview(NULL),
+        _thread(NULL),
         _bsonTable(NULL),
         _isTextModeSupported(true),
         _isTreeModeSupported(true),
         _isTableModeSupported(true),
-        _isCustomModeSupported(true),
+        _isCustomModeSupported(!type.isEmpty()),
+        _isTextModeInitialized(false),
+        _isTreeModeInitialized(false),
+        _isCustomModeInitialized(false),
+        _isTableModeInitialized(false),
+        _isFirstPartRendered(false),
         _documents(documents),
         _queryInfo(queryInfo),
-        _sourceIsText(false),
         _type(type),
         _shell(shell)
     {
@@ -62,15 +62,7 @@ namespace Robomongo
     }
 
     void OutputItemContentWidget::setup()
-    {
-        markUninitialized();
-
-        _isFirstPartRendered = false;
-        _textView = NULL;
-        _bsonTreeview = NULL;
-        _bsonTable=NULL;
-        _thread = NULL;
-
+    {      
         setContentsMargins(0, 0, 0, 0);
         _stack = new QStackedWidget;
 
@@ -84,7 +76,7 @@ namespace Robomongo
     void OutputItemContentWidget::update(const std::vector<MongoDocumentPtr> &documents)
     {
         _documents = documents;
-        _sourceIsText = false;
+        _text.clear();
         _isFirstPartRendered = false;
         markUninitialized();
 
@@ -115,14 +107,13 @@ namespace Robomongo
         if (!_isTextModeInitialized)
         {
             _textView = configureLogText();
-            if (_sourceIsText) {
+            if (!_text.isEmpty()) {
                 _textView->sciScintilla()->setText(_text);
             }
             else {
                 if (_documents.size() > 0) {
                     _textView->sciScintilla()->setText("Loading...");
                     _thread = new JsonPrepareThread(_documents, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
-                    VERIFY(connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared())));
                     VERIFY(connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString))));
                     VERIFY(connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater())));
                     _thread->start();
@@ -206,14 +197,6 @@ namespace Robomongo
         _isTreeModeInitialized = false;
         _isCustomModeInitialized = false;
         _isTableModeInitialized = false;
-    }
-
-    void OutputItemContentWidget::jsonPrepared()
-    {
-        // seems that it is wrong to call any method on thread,
-        // because thread already can be disposed.
-        // QThread *thread = static_cast<QThread *>(sender());
-        // thread->quit();
     }
 
     void OutputItemContentWidget::jsonPartReady(const QString &json)

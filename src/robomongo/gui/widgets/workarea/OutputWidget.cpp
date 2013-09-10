@@ -60,8 +60,7 @@ namespace Robomongo
 
     void OutputWidget::present(const std::vector<MongoShellResult> &results)
     {
-        clearAllParts();
-
+        std::vector<ViewMode> prev = clearAllParts();
         for (std::vector<MongoShellResult>::const_iterator it = results.begin(); it!=results.end(); ++it) {
             MongoShellResult shellResult = *it;
             OutputItemContentWidget *output = NULL;
@@ -74,6 +73,10 @@ namespace Robomongo
 
             OutputItemWidget *result = new OutputItemWidget(this, output, shellResult.queryInfo());
             ViewMode viewMode = AppRegistry::instance().settingsManager()->viewMode();
+            if (prev.size()){
+               viewMode = prev.back();
+               prev.pop_back();
+            }
 
             if (viewMode == Custom) {
                 if (output->isCustomModeSupported())
@@ -102,7 +105,7 @@ namespace Robomongo
             else
                 result->header()->showText();
 
-            double secs = shellResult.elapsedMs() / (double) 1000;
+            double secs = shellResult.elapsedMs() / 1000.f;
 
             result->header()->setTime(QString("%1 sec.").arg(secs));
 
@@ -212,13 +215,16 @@ namespace Robomongo
         QTimer::singleShot(100, _progressBarPopup, SLOT(hide()));
     }
 
-    void OutputWidget::clearAllParts()
+    std::vector<ViewMode> OutputWidget::clearAllParts()
     {
+        std::vector<ViewMode> res;
         while (_splitter->count() > 0) {
-            QWidget *widget = _splitter->widget(0);
+            OutputItemWidget *widget =  (OutputItemWidget *)_splitter->widget(_splitter->count()-1);
+            res.push_back(widget->header()->viewMode());
             widget->hide();
             delete widget;
         }
+        return res;
     }
 
     void OutputWidget::tryToMakeAllPartsEqualInSize()

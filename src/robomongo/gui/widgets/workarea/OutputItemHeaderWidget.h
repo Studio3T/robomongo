@@ -26,7 +26,7 @@ namespace Robomongo
         OutputItemContentWidget *itemContent;
         OutputItemWidget *item;
         PagingWidget *paging() const { return _paging; }
-
+        ViewMode viewMode() const { return _viewMode; }
     protected:
         virtual void mouseDoubleClickEvent(QMouseEvent *);
 

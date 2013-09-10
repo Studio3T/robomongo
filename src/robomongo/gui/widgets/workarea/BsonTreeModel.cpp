@@ -121,10 +121,36 @@ namespace Robomongo
 
     bool BsonTreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
     {
-        if (index.isValid() && role == Qt::EditRole) {
-            return true;
+        if(!index.isValid())
+            return false;
+        if (role != Qt::EditRole)
+            return false;
+        if(index.column()!=BsonTreeItem::eValue)
+            return false;
+        
+        BsonTreeItem *it = QtUtils::item<BsonTreeItem*>(index);
+        QString val =value.toString();
+        bool result=false;
+        if(!val.isEmpty()&&val!=it->value()){
+            result = true;
+            it->setValue(val);
         }
-        return false;
+
+        if (result)
+            emit dataChanged(index, index);
+
+        return result;
+    }
+
+    Qt::ItemFlags BsonTreeModel::flags(const QModelIndex &index) const
+    {
+        Qt::ItemFlags result = 0;
+        if (index.isValid()){
+            result = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+            if(index.column()==BsonTreeItem::eValue)
+                result |= Qt::ItemIsEditable;
+        }
+        return result;
     }
 
     int BsonTreeModel::rowCount(const QModelIndex &parent) const
@@ -161,14 +187,6 @@ namespace Robomongo
         }
 
         return BaseClass::headerData(section,orientation,role);
-    }
-
-    Qt::ItemFlags BsonTreeModel::flags(const QModelIndex &index) const
-    {
-        if (!index.isValid())
-            return Qt::ItemIsEnabled;
-
-        return BaseClass::flags(index) ;
     }
 
     QModelIndex BsonTreeModel::parent(const QModelIndex& index) const

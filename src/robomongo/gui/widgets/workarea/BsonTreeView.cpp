@@ -43,10 +43,7 @@ namespace Robomongo
     {
         QModelIndex selectedInd = selectedIndex();
         if (selectedInd.isValid()){
-            BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-
-            bool isEditable = _notifier._queryInfo.isNull ? false : true;
-            bool onItem = documentItem ? true : false;
+            BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);;
 
             QMenu menu(this);
             bool isSimple = false;
@@ -58,13 +55,7 @@ namespace Robomongo
                 }
             }
 
-            if (onItem && isEditable) menu.addAction(_notifier._editDocumentAction);
-            if (onItem)               menu.addAction(_notifier._viewDocumentAction);
-            if (isEditable)           menu.addAction(_notifier._insertDocumentAction);
-            if (onItem && isSimple)   menu.addSeparator();
-            if (onItem && isSimple)   menu.addAction(_notifier._copyValueAction);
-            if (onItem && isEditable) menu.addSeparator();
-            if (onItem && isEditable) menu.addAction(_notifier._deleteDocumentAction);
+            _notifier.initMenu(&menu,documentItem);
 
             QPoint menuPoint = mapToGlobal(point);
             menuPoint.setY(menuPoint.y() + header()->height());

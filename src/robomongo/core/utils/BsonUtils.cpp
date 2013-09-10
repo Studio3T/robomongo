@@ -330,9 +330,33 @@ namespace Robomongo
             return elem.isABSONObj();
         }
 
+        bool isSimpleType(const mongo::BSONType type)
+        {
+            switch( type ) {
+            case NumberLong:
+            case NumberDouble:
+            case NumberInt:
+            case mongo::String:
+            case mongo::Bool:
+            case mongo::Date:
+            case jstOID:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        bool isUuidType(const mongo::BSONType type, mongo::BinDataType binDataType)
+        {
+            if (type != mongo::BinData)
+                return false;
+
+            return (binDataType == mongo::newUUID || binDataType == mongo::bdtUUID);
+        }
+
         bool isSimpleType(const mongo::BSONElement &elem) 
         {
-            return elem.isSimpleType(); 
+            return isSimpleType(elem.type()); 
         }
 
         bool isUuidType(const mongo::BSONElement &elem) 
@@ -342,6 +366,139 @@ namespace Robomongo
 
             mongo::BinDataType binType = elem.binDataType();
             return (binType == mongo::newUUID || binType == mongo::bdtUUID);
+        }
+
+        const char* BSONTypeToString(mongo::BSONType type, mongo::BinDataType binDataType, UUIDEncoding uuidEncoding)
+        {
+            switch (type)
+            {
+                /** double precision floating point value */
+            case NumberDouble:
+                {
+                    return "Double";
+                }
+                /** character string, stored in utf8 */
+            case String:
+                {
+                    return "String";
+                }
+
+                /** an embedded object */
+            case Object:
+                {
+                    return "Object";
+                }
+                /** an embedded array */
+            case Array:
+                {
+                    return "Array";
+                }
+            case BinData:
+                {
+                    if (binDataType == mongo::newUUID) {
+                        return "UUID";
+                    } else if (binDataType == mongo::bdtUUID) {
+                        const char* type;
+                        switch(uuidEncoding) {
+                        case DefaultEncoding: type = "Legacy UUID"; break;
+                        case JavaLegacy:      type = "Java UUID (Legacy)"; break;
+                        case CSharpLegacy:    type = ".NET UUID (Legacy)"; break;
+                        case PythonLegacy:    type = "Python UUID (Legacy)"; break;
+                        default:              type = "Legacy UUID"; break;
+                        }
+
+                        return type;
+                    } else {
+                        return "Binary";
+                    }
+                }
+
+                /** Undefined type */
+            case Undefined:
+                {
+                    return "Undefined";
+                }
+
+                /** ObjectId */
+            case jstOID:
+                {
+                    return "ObjectId";
+                }
+
+                /** boolean type */
+            case Bool:
+                {
+                    return "Boolean";
+                }
+
+                /** date type */
+            case Date:
+                {
+                    return "Date";
+                }
+
+                /** null type */
+            case jstNULL:
+                {
+                    return "Null";
+                }
+                break;
+
+                /** regular expression, a pattern with options */
+            case RegEx:
+                {
+                    return "Regular Expression";
+                }
+
+                /** deprecated / will be redesigned */
+            case DBRef:
+                {
+                    return "DBRef";
+                }
+
+                /** deprecated / use CodeWScope */
+            case Code:
+                {
+                    return "Code";
+                }
+                break;
+
+                /** a programming language (e.g., Python) symbol */
+            case Symbol:
+                {
+                    return "Symbol";
+                }
+
+                /** javascript code that can execute on the database server, with SavedContext */
+            case CodeWScope:
+                {
+                    return "CodeWScope";
+                }
+
+                /** 32 bit signed integer */
+            case NumberInt:
+                {
+                    return "Int32";
+                }
+
+                /** Updated to a Date with value next OpTime on insert */
+            case Timestamp:
+                {
+                    return "Timestamp";
+                }
+
+                /** 64 bit integer */
+            case NumberLong:
+                {
+                    return "Int64";
+                }
+                break;
+
+            default:
+                {
+                    return "Type is not supported";
+                }
+            }
         }
 
         void buildJsonString(const mongo::BSONObj &obj,std::string &con, UUIDEncoding uuid,SupportedTimes tz)

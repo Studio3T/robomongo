@@ -30,10 +30,11 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/WorkAreaTabWidget.h
     robomongo/gui/widgets/workarea/WorkAreaTabBar.h
     robomongo/gui/widgets/workarea/JsonPrepareThread.h
-    robomongo/gui/widgets/workarea/BsonTreeWidget.h
+    robomongo/gui/widgets/workarea/BsonTreeView.h
+    robomongo/gui/widgets/workarea/BsonTreeModel.h
+    robomongo/gui/widgets/workarea/BsonTreeItem.h
 	robomongo/gui/widgets/workarea/BsonTableModel.h
 	robomongo/gui/widgets/workarea/BsonTableView.h
-	robomongo/gui/widgets/workarea/BsonTableItem.h
     robomongo/gui/editors/jsedit.h
     robomongo/gui/widgets/workarea/OutputWidget.h
     robomongo/gui/widgets/workarea/OutputItemContentWidget.h
@@ -61,7 +62,6 @@ SET(HEADERS_GUI
     robomongo/gui/utils/DialogUtils.h
     robomongo/gui/GuiRegistry.h
     robomongo/gui/editors/JSLexer.h
-    robomongo/gui/widgets/workarea/BsonTreeItem.h
     robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h
     robomongo/gui/ViewMode.h
     )
@@ -85,9 +85,9 @@ SET(SOURCES_GUI
     robomongo/gui/widgets/workarea/WorkAreaTabWidget.cpp
     robomongo/gui/widgets/workarea/WorkAreaTabBar.cpp
     robomongo/gui/widgets/workarea/JsonPrepareThread.cpp
-    robomongo/gui/widgets/workarea/BsonTreeWidget.cpp
+    robomongo/gui/widgets/workarea/BsonTreeView.cpp
+    robomongo/gui/widgets/workarea/BsonTreeModel.cpp
     robomongo/gui/widgets/workarea/BsonTreeItem.cpp
-    robomongo/gui/widgets/workarea/BsonTableItem.cpp
 	robomongo/gui/widgets/workarea/BsonTableModel.cpp
 	robomongo/gui/widgets/workarea/BsonTableView.cpp
     robomongo/gui/editors/jsedit.cpp
@@ -150,7 +150,8 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/EventBus.h
     robomongo/core/domain/App.h
     robomongo/core/domain/MongoShell.h
-    robomongo/core/EventBusDispatcher.h  
+    robomongo/core/EventBusDispatcher.h 
+    robomongo/core/domain/Notifier.h 
     )
 SET(HEADERS_CORE
     robomongo/core/engine/ScriptEngine.h
@@ -184,6 +185,7 @@ SET(HEADERS_CORE
     robomongo/core/utils/QtUtils.h
     )
 SET(SOURCES_CORE
+    robomongo/core/domain/Notifier.cpp
     robomongo/core/AppRegistry.cpp
     robomongo/core/settings/ConnectionSettings.cpp
     robomongo/core/settings/SettingsManager.cpp

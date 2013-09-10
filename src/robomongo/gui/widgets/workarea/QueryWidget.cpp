@@ -124,7 +124,7 @@ namespace Robomongo
 
     void QueryWidget::activateTabContent()
     {
-        _bus->publish(new QueryWidgetUpdatedEvent(this, _currentResult.results().count()));
+        _bus->publish(new QueryWidgetUpdatedEvent(this, _currentResult.results().size()));
         _scriptWidget->setScriptFocus();
     }
 
@@ -236,7 +236,7 @@ namespace Robomongo
         hideProgress();
         _scriptWidget->hideProgress();
         _currentResult = event->result();
-        _bus->publish(new QueryWidgetUpdatedEvent(this, _currentResult.results().count()));
+        _bus->publish(new QueryWidgetUpdatedEvent(this, _currentResult.results().size()));
 
         setUpdatesEnabled(false);
         updateCurrentTab();
@@ -295,10 +295,10 @@ namespace Robomongo
         }
     }
 
-    void QueryWidget::displayData(const QList<MongoShellResult> &results, bool empty)
+    void QueryWidget::displayData(const std::vector<MongoShellResult> &results, bool empty)
     {
         if (!empty) {
-            if (results.count() == 0 && !_scriptWidget->text().isEmpty()) {
+            if (results.size() == 0 && !_scriptWidget->text().isEmpty()) {
                 _outputLabel->setText("  Script executed successfully, but there is no results to show.");
                 _outputLabel->setVisible(true);
             } else {

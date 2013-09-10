@@ -71,8 +71,13 @@ namespace Robomongo
 
         bool isArray(const mongo::BSONElement &elem);
         bool isDocument(const mongo::BSONElement &elem);
+
+        bool isSimpleType(const mongo::BSONType type);
+        bool isUuidType(const mongo::BSONType type, mongo::BinDataType binDataType);
         bool isSimpleType(const mongo::BSONElement &elem);
         bool isUuidType(const mongo::BSONElement &elem);
+
+        const char* BSONTypeToString(mongo::BSONType type, mongo::BinDataType binDataType, UUIDEncoding uuidEncoding);
 
         void buildJsonString(const mongo::BSONObj &obj,std::string &con, UUIDEncoding uuid,SupportedTimes tz);
         void buildJsonString(const mongo::BSONElement &elem,std::string &con, UUIDEncoding uuid,SupportedTimes tz);

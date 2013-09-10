@@ -1,7 +1,9 @@
 #pragma once
 
+#include <vector>
 #include <QObject>
-#include <QTreeWidget>
+#include <mongo/bson/bsonobj.h>
+#include <mongo/bson/bsonelement.h>
 
 #include "robomongo/core/Core.h"
 
@@ -10,31 +12,59 @@ namespace Robomongo
     /**
      * @brief BSON tree item (represents array or object)
      */
-    class BsonTreeItem : public QTreeWidgetItem
+    struct BsonItemFields
     {
+        QString _key;
+        QString _value;
+        mongo::BSONType _type;
+        mongo::BinDataType _binType;
+    };
+
+    class BsonTreeItem : public QObject
+    {
+        Q_OBJECT
     public:
-        typedef QTreeWidgetItem baseClass;
-        BsonTreeItem(MongoDocumentPtr rootDocument, MongoElementPtr element, int position);
-        BsonTreeItem(MongoDocumentPtr document, int position);
+        enum eColumn
+        {
+            eKey = 0,
+            eValue = 1,
+            eType = 2,
+            eCountColumns = 3
+        };
 
-        MongoElementPtr element() const { return _element; }
-        MongoDocumentPtr rootDocument() const { return _rootDocument; }
-        bool isSimpleType() const;
-        bool isUuidType() const;
-        void expand();
+        typedef QObject BaseClass;
+        typedef std::vector<BsonTreeItem*> childContainerType;
 
-    private:
-        void setupDocument(MongoDocumentPtr document);
-        QString buildObjectFieldName();
-        QString buildFieldName();
-        QString buildArrayFieldName(int itemsCount);
+        explicit BsonTreeItem(QObject *parent = 0);
+        explicit BsonTreeItem(const mongo::BSONObj &bsonObjRoot, QObject *parent = 0);
 
-        const MongoElementPtr _element;
-        const MongoDocumentPtr _document;
-        const MongoDocumentPtr _rootDocument;
-        /**
-         * @brief Position in array. -1 if not in array
-         */
-        const int _position;
+        unsigned childrenCount() const;
+        void clear();
+        void addChild(BsonTreeItem *item);
+        void removeChild(BsonTreeItem *item);
+        BsonTreeItem* child(unsigned pos)const;
+        BsonTreeItem* childSafe(unsigned pos)const;
+        BsonTreeItem* childByKey(const QString &val);
+        int indexOf(BsonTreeItem *item) const;
+
+        mongo::BSONObj root()const;
+
+        QString key() const;
+        void setKey(const QString &key);
+
+        QString value() const;
+        void setValue(const QString &value);
+
+        mongo::BSONType type() const;
+        void setType(mongo::BSONType type);
+
+        mongo::BinDataType binType() const;
+        void setBinType(mongo::BinDataType type);
+
+    protected:
+
+        const mongo::BSONObj _root;
+        childContainerType _items;
+        BsonItemFields _fields;
     };
 }

@@ -98,9 +98,9 @@ namespace Robomongo
                 if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter
                         || keyEvent->key() == Qt::Key_Tab) {
                     hideAutocompletion();
-                }
-            }
-            return false;
+                    return false;
+                }                
+            }            
         }
         return QFrame::eventFilter(obj, event);
     }

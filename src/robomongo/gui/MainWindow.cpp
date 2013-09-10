@@ -292,6 +292,13 @@ namespace Robomongo
         optionsMenu->addSeparator();
         optionsMenu->addAction(loadMongoRcJs);
 
+        QAction *disabelConnectionShortcuts = new QAction("Disable connection shortcuts",this);
+        disabelConnectionShortcuts->setCheckable(true);
+        disabelConnectionShortcuts->setChecked(AppRegistry::instance().settingsManager()->disableConnectionShortcuts());
+        VERIFY(connect(disabelConnectionShortcuts, SIGNAL(triggered()), this, SLOT(setDisableConnectionShortcuts())));
+        optionsMenu->addSeparator();
+        optionsMenu->addAction(disabelConnectionShortcuts);
+
         QActionGroup *uuidEncodingGroup = new QActionGroup(this);
         uuidEncodingGroup->addAction(defaultEncodingAction);
         uuidEncodingGroup->addAction(javaLegacyEncodingAction);
@@ -403,12 +410,15 @@ namespace Robomongo
         _connectionsMenu->clear();
         int number = 1;
         // Populate list with connections
-        foreach(ConnectionSettings *connection, AppRegistry::instance().settingsManager()->connections()) {
+        QList<ConnectionSettings *> connections = AppRegistry::instance().settingsManager()->connections();
+        for(QList<ConnectionSettings *>::const_iterator it = connections.begin(); it!= connections.end(); ++it) {
+            ConnectionSettings *connection = *it;
             QAction *action = new QAction(QtUtils::toQString(connection->getReadableName()), this);
             action->setData(QVariant::fromValue(connection));
 
-            if (number <= 9)
+            if (number <= 9 && !AppRegistry::instance().settingsManager()->disableConnectionShortcuts()){
                 action->setShortcut(QKeySequence(QString("Alt+").append(QString::number(number))));
+            }
 
             _connectionsMenu->addAction(action);
             ++number;
@@ -566,6 +576,14 @@ namespace Robomongo
     {
         AppRegistry::instance().settingsManager()->setTimeZone(LocalTime);
         AppRegistry::instance().settingsManager()->save();
+    }
+
+    void MainWindow::setDisableConnectionShortcuts()
+    {
+        QAction *send = qobject_cast<QAction*>(sender());
+        AppRegistry::instance().settingsManager()->setDisableConnectionShortcuts(send->isChecked());
+        AppRegistry::instance().settingsManager()->save();
+        updateConnectionsMenu();
     }
 
     void MainWindow::setLoadMongoRcJs()

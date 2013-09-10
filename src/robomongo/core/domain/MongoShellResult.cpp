@@ -10,7 +10,7 @@ namespace Robomongo
         _queryInfo(queryInfo),
         _elapsedms(elapsedms) { }
 
-    MongoShellExecResult::MongoShellExecResult(const QList<MongoShellResult> &results,
+    MongoShellExecResult::MongoShellExecResult(const std::vector<MongoShellResult> &results,
                          const std::string &currentServer, bool isCurrentServerValid,
                          const std::string &currentDatabase, bool isCurrentDatabaseValid) :
         _results(results),

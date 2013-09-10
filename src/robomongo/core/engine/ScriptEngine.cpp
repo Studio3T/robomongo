@@ -154,12 +154,13 @@ namespace Robomongo
             statements.push_back("print(__robomongoResult.error)");
         }
 
-        QList<MongoShellResult> results;
+        std::vector<MongoShellResult> results;
 
         use(dbName);
 
-        foreach(std::string statement, statements)
+        for(std::vector<std::string>::const_iterator it = statements.begin(); it!=statements.end(); ++it)
         {
+            std::string statement = *it;
             // clear global objects
             __objects.clear();
             __type = "";
@@ -181,7 +182,7 @@ namespace Robomongo
                     std::vector<MongoDocumentPtr> docs = MongoDocument::fromBsonObj(__objects);
 
                     if (!answer.empty() || docs.size() > 0)
-                        results.append(prepareResult(type, answer, docs, elapsed));
+                        results.push_back(prepareResult(type, answer, docs, elapsed));
                 }
                 catch ( const std::exception &e ) {
                     std::cout << "error:" << e.what() << endl;
@@ -301,7 +302,7 @@ namespace Robomongo
         return MongoShellResult(type, output, objects, MongoQueryInfo(), elapsedms);
     }
 
-    MongoShellExecResult ScriptEngine::prepareExecResult(const QList<MongoShellResult> &results)
+    MongoShellExecResult ScriptEngine::prepareExecResult(const std::vector<MongoShellResult> &results)
     {
         const char *script =
             "__robomongoServerAddress = '[invalid connection]'; \n"

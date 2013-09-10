@@ -61,60 +61,14 @@ namespace Robomongo
         setup();
     }
 
-
-    OutputItemContentWidget::~OutputItemContentWidget()
-    {
-    /*    if (_thread)
-            _thread->exit = true;*/
-    }
-
-    void OutputItemContentWidget::update(const QString &text)
-    {
-        _text = text;
-        _sourceIsText = true;
-        _isFirstPartRendered = false;
-        markUninitialized();
-
-        if (_bson) {
-            _stack->removeWidget(_bson);
-            delete _bson;
-            _bson = NULL;
-        }
-
-        if (_log) {
-            _stack->removeWidget(_log);
-            delete _log;
-            _log = NULL;
-        }
-    }
-
-    void OutputItemContentWidget::update(const std::vector<MongoDocumentPtr> &documents)
-    {
-        _documents = documents;
-        _sourceIsText = false;
-        _isFirstPartRendered = false;
-        markUninitialized();
-
-        if (_bson) {
-            _stack->removeWidget(_bson);
-            delete _bson;
-            _bson = NULL;
-        }
-
-        if (_log) {
-            _stack->removeWidget(_log);
-            delete _log;
-            _log = NULL;
-        }
-    }
-
     void OutputItemContentWidget::setup()
     {
         markUninitialized();
 
         _isFirstPartRendered = false;
-        _log = NULL;
-        _bson = NULL;
+        _textView = NULL;
+        _bsonTreeview = NULL;
+        _bsonTable=NULL;
         _thread = NULL;
 
         setContentsMargins(0, 0, 0, 0);
@@ -127,6 +81,32 @@ namespace Robomongo
         setLayout(layout);
     }
 
+    void OutputItemContentWidget::update(const std::vector<MongoDocumentPtr> &documents)
+    {
+        _documents = documents;
+        _sourceIsText = false;
+        _isFirstPartRendered = false;
+        markUninitialized();
+
+        if (_bsonTable) {
+            _stack->removeWidget(_bsonTable);
+            delete _bsonTable;
+            _bsonTable = NULL;
+        }
+
+        if (_bsonTreeview) {
+            _stack->removeWidget(_bsonTreeview);
+            delete _bsonTreeview;
+            _bsonTreeview = NULL;
+        }
+
+        if (_textView) {
+            _stack->removeWidget(_textView);
+            delete _textView;
+            _textView = NULL;
+        }
+    }
+
     void OutputItemContentWidget::showText()
     {
         if (!_isTextModeSupported)
@@ -134,13 +114,13 @@ namespace Robomongo
 
         if (!_isTextModeInitialized)
         {
-            _log = configureLogText();
+            _textView = configureLogText();
             if (_sourceIsText) {
-                _log->sciScintilla()->setText(_text);
+                _textView->sciScintilla()->setText(_text);
             }
             else {
                 if (_documents.size() > 0) {
-                    _log->sciScintilla()->setText("Loading...");
+                    _textView->sciScintilla()->setText("Loading...");
                     _thread = new JsonPrepareThread(_documents, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
                     VERIFY(connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared())));
                     VERIFY(connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString))));
@@ -148,11 +128,11 @@ namespace Robomongo
                     _thread->start();
                 }
             }
-            _stack->addWidget(_log);
+            _stack->addWidget(_textView);
             _isTextModeInitialized = true;
         }
 
-        _stack->setCurrentWidget(_log);
+        _stack->setCurrentWidget(_textView);
     }
 
     void OutputItemContentWidget::showTree()
@@ -164,14 +144,14 @@ namespace Robomongo
         }
 
         if (!_isTreeModeInitialized) {
-            _bson = new BsonTreeView(_shell,_queryInfo);
-            BsonTreeModel *mod = new BsonTreeModel(_documents,_bson);
-            _bson->setModel(mod);
-            _stack->addWidget(_bson);
+            _bsonTreeview = new BsonTreeView(_shell,_queryInfo);
+            BsonTreeModel *mod = new BsonTreeModel(_documents,_bsonTreeview);
+            _bsonTreeview->setModel(mod);
+            _stack->addWidget(_bsonTreeview);
             _isTreeModeInitialized = true;
         }
 
-        _stack->setCurrentWidget(_bson);
+        _stack->setCurrentWidget(_bsonTreeview);
     }
 
     void OutputItemContentWidget::showCustom()
@@ -248,14 +228,14 @@ namespace Robomongo
         }
         else
         {
-            if (_log)
+            if (_textView)
             {
-                _log->setUpdatesEnabled(false);
+                _textView->setUpdatesEnabled(false);
                 if (_isFirstPartRendered)
-                    _log->sciScintilla()->append(json);
+                    _textView->sciScintilla()->append(json);
                 else
-                    _log->sciScintilla()->setText(json);
-                _log->setUpdatesEnabled(true);
+                    _textView->sciScintilla()->setText(json);
+                _textView->setUpdatesEnabled(true);
                 _isFirstPartRendered = true;
             }
         }

@@ -58,11 +58,12 @@ namespace Robomongo
 
     }
 
-    void OutputWidget::present(const QList<MongoShellResult> &results)
+    void OutputWidget::present(const std::vector<MongoShellResult> &results)
     {
         clearAllParts();
 
-        foreach (MongoShellResult shellResult, results) {
+        for (std::vector<MongoShellResult>::const_iterator it = results.begin(); it!=results.end(); ++it) {
+            MongoShellResult shellResult = *it;
             OutputItemContentWidget *output = NULL;
 
             if (shellResult.documents().size() > 0) {

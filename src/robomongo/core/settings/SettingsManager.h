@@ -80,6 +80,9 @@ namespace Robomongo
         void setLoadMongoRcJs(bool isLoadJs) { _loadMongoRcJs = isLoadJs; }
         bool loadMongoRcJs() const { return _loadMongoRcJs; }
 
+        void setDisableConnectionShortcuts(bool isDisable) { _disableConnectionShortcuts = isDisable; }
+        bool disableConnectionShortcuts() const { return _disableConnectionShortcuts; }
+
         void setBatchSize(int batchSize) { _batchSize = batchSize; }
         int batchSize() const { return _batchSize; }
 
@@ -115,7 +118,7 @@ namespace Robomongo
          */
         ViewMode _viewMode;
         bool _loadMongoRcJs;
-
+        bool _disableConnectionShortcuts;
         int _batchSize;
         /**
          * @brief List of connections

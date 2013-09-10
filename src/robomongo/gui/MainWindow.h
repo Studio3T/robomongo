@@ -54,6 +54,7 @@ namespace Robomongo
         void setCSharpUuidEncoding();
         void setPythonUuidEncoding();
         void setLoadMongoRcJs();
+        void setDisableConnectionShortcuts();
 
         void toggleLogs(bool show);
         void connectToServer(QAction *action);

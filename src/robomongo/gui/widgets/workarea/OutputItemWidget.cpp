@@ -11,21 +11,20 @@
 namespace Robomongo
 {
 
-    OutputItemWidget::OutputItemWidget(OutputWidget *viewer, OutputItemContentWidget *output, const MongoQueryInfo &info, QWidget *parent) :
-        itemContent(output),
-        output(viewer),
+    OutputItemWidget::OutputItemWidget(OutputWidget *viewer, OutputItemContentWidget *outputContentWid, const MongoQueryInfo &info, QWidget *parent) :
+        _output(viewer),
         _queryInfo(info),
         _initialSkip(_queryInfo.skip),
         _initialLimit(_queryInfo.limit)
     {
         setContentsMargins(0, 0, 0, 0);
-        _header = new OutputItemHeaderWidget(this, output);
+        _header = new OutputItemHeaderWidget(this, outputContentWid);
 
         QVBoxLayout *layout = new QVBoxLayout();
         layout->setContentsMargins(0, 1, 0, 0);
         layout->setSpacing(0);
         layout->addWidget(_header);
-        layout->addWidget(output, 1);
+        layout->addWidget(outputContentWid, 1);
         setLayout(layout);
 
         VERIFY(connect(_header->paging(), SIGNAL(refreshed(int,int)), this, SLOT(refresh(int,int))));
@@ -81,7 +80,7 @@ namespace Robomongo
         info.skip = skip;
         info.batchSize = batchSize;
 
-        output->showProgress();
-        output->shell()->query(output->resultIndex(this), info);
+        _output->showProgress();
+        _output->shell()->query(_output->resultIndex(this), info);
     }
 }

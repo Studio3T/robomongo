@@ -20,9 +20,8 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        OutputItemWidget(OutputWidget *viewer, OutputItemContentWidget *output, const MongoQueryInfo &info, QWidget *parent = 0);
-        OutputItemContentWidget *itemContent;
-        OutputWidget *output;
+        OutputItemWidget(OutputWidget *viewer, OutputItemContentWidget *outputContentWid, const MongoQueryInfo &info, QWidget *parent = 0);
+        OutputWidget *_output;
 
         OutputItemHeaderWidget *header() const { return _header; }
         void setQueryInfo(const MongoQueryInfo &queryInfo);

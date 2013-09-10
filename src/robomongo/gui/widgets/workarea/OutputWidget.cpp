@@ -58,48 +58,54 @@ namespace Robomongo
 
     }
 
-    void OutputWidget::present(const QList<MongoShellResult> &results)
+    void OutputWidget::present(const std::vector<MongoShellResult> &results)
     {
-        clearAllParts();
-
-        foreach (MongoShellResult shellResult, results) {
+        std::vector<ViewMode> prev = clearAllParts();
+        for (std::vector<MongoShellResult>::const_iterator it = results.begin(); it!=results.end(); ++it) {
+            MongoShellResult shellResult = *it;
             OutputItemContentWidget *output = NULL;
 
             if (shellResult.documents().size() > 0) {
-
-                if (shellResult.type().empty())
-                    output = new OutputItemContentWidget(_shell, shellResult.documents(), shellResult.queryInfo());
-                else
-                    output = new OutputItemContentWidget(_shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo());
+                output = new OutputItemContentWidget(_shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo());
             } else {
                 output = new OutputItemContentWidget(_shell, QtUtils::toQString(shellResult.response()));
             }
 
             OutputItemWidget *result = new OutputItemWidget(this, output, shellResult.queryInfo());
             ViewMode viewMode = AppRegistry::instance().settingsManager()->viewMode();
+            if (prev.size()){
+               viewMode = prev.back();
+               prev.pop_back();
+            }
 
             if (viewMode == Custom) {
                 if (output->isCustomModeSupported())
                     result->header()->showCustom();
                 else if (output->isTreeModeSupported())
                     result->header()->showTree();
+                else if (output->isTableModeSupported())
+                    result->header()->showTable();
                 else if (output->isTextModeSupported())
                     result->header()->showText();
             } else if (viewMode == Tree) {
                 if (output->isTreeModeSupported())
                     result->header()->showTree();
+                else if (output->isTableModeSupported())
+                    result->header()->showTable();
                 else if (output->isTextModeSupported())
                     result->header()->showText();
             } else if (viewMode == Table) {
                 if (output->isTableModeSupported())
                     result->header()->showTable();
+                else if (output->isTreeModeSupported())
+                    result->header()->showTree();
                 else if (output->isTextModeSupported())
                     result->header()->showText();
             }
             else
                 result->header()->showText();
 
-            double secs = shellResult.elapsedMs() / (double) 1000;
+            double secs = shellResult.elapsedMs() / 1000.f;
 
             result->header()->setTime(QString("%1 sec.").arg(secs));
 
@@ -125,7 +131,7 @@ namespace Robomongo
         output->header()->paging()->setSkip(queryInfo.skip);
         output->header()->paging()->setBatchSize(queryInfo.batchSize);
         output->setQueryInfo(queryInfo);
-        output->itemContent->update(documents);
+        output->header()->itemContent->update(documents);
         output->header()->refreshOutputItem();
     }
 
@@ -209,13 +215,16 @@ namespace Robomongo
         QTimer::singleShot(100, _progressBarPopup, SLOT(hide()));
     }
 
-    void OutputWidget::clearAllParts()
+    std::vector<ViewMode> OutputWidget::clearAllParts()
     {
+        std::vector<ViewMode> res;
         while (_splitter->count() > 0) {
-            QWidget *widget = _splitter->widget(0);
+            OutputItemWidget *widget =  (OutputItemWidget *)_splitter->widget(_splitter->count()-1);
+            res.push_back(widget->header()->viewMode());
             widget->hide();
             delete widget;
         }
+        return res;
     }
 
     void OutputWidget::tryToMakeAllPartsEqualInSize()

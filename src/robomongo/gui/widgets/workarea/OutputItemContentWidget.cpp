@@ -7,7 +7,8 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/widgets/workarea/JsonPrepareThread.h"
-#include "robomongo/gui/widgets/workarea/BsonTreeWidget.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeView.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
 #include "robomongo/gui/widgets/workarea/BsonTableView.h"
 #include "robomongo/gui/widgets/workarea/BsonTableModel.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
@@ -19,103 +20,49 @@
 namespace Robomongo
 {
     OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &text) :
+        _textView(NULL),
+        _bsonTreeview(NULL),
+        _thread(NULL),
         _bsonTable(NULL),
         _isTextModeSupported(true),
         _isTreeModeSupported(false),
         _isTableModeSupported(false),
         _isCustomModeSupported(false),
+        _isTextModeInitialized(false),
+        _isTreeModeInitialized(false),
+        _isCustomModeInitialized(false),
+        _isTableModeInitialized(false),
+        _isFirstPartRendered(false),
         _text(text),
-        _sourceIsText(true),
-        _shell(shell)
-    {
-        setup();
-    }
-
-    OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
-        _bsonTable(NULL),
-        _isTextModeSupported(true),
-        _isTreeModeSupported(true),
-        _isTableModeSupported(true),
-        _isCustomModeSupported(false),
-        _documents(documents),
-        _queryInfo(queryInfo),
-        _sourceIsText(false),
         _shell(shell)
     {
         setup();
     }
 
     OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
+        _textView(NULL),
+        _bsonTreeview(NULL),
+        _thread(NULL),
         _bsonTable(NULL),
         _isTextModeSupported(true),
         _isTreeModeSupported(true),
         _isTableModeSupported(true),
-        _isCustomModeSupported(true),
+        _isCustomModeSupported(!type.isEmpty()),
+        _isTextModeInitialized(false),
+        _isTreeModeInitialized(false),
+        _isCustomModeInitialized(false),
+        _isTableModeInitialized(false),
+        _isFirstPartRendered(false),
         _documents(documents),
         _queryInfo(queryInfo),
-        _sourceIsText(false),
         _type(type),
         _shell(shell)
     {
         setup();
     }
 
-
-    OutputItemContentWidget::~OutputItemContentWidget()
-    {
-    /*    if (_thread)
-            _thread->exit = true;*/
-    }
-
-    void OutputItemContentWidget::update(const QString &text)
-    {
-        _text = text;
-        _sourceIsText = true;
-        _isFirstPartRendered = false;
-        markUninitialized();
-
-        if (_bson) {
-            _stack->removeWidget(_bson);
-            delete _bson;
-            _bson = NULL;
-        }
-
-        if (_log) {
-            _stack->removeWidget(_log);
-            delete _log;
-            _log = NULL;
-        }
-    }
-
-    void OutputItemContentWidget::update(const std::vector<MongoDocumentPtr> &documents)
-    {
-        _documents = documents;
-        _sourceIsText = false;
-        _isFirstPartRendered = false;
-        markUninitialized();
-
-        if (_bson) {
-            _stack->removeWidget(_bson);
-            delete _bson;
-            _bson = NULL;
-        }
-
-        if (_log) {
-            _stack->removeWidget(_log);
-            delete _log;
-            _log = NULL;
-        }
-    }
-
     void OutputItemContentWidget::setup()
-    {
-        markUninitialized();
-
-        _isFirstPartRendered = false;
-        _log = NULL;
-        _bson = NULL;
-        _thread = NULL;
-
+    {      
         setContentsMargins(0, 0, 0, 0);
         _stack = new QStackedWidget;
 
@@ -126,6 +73,32 @@ namespace Robomongo
         setLayout(layout);
     }
 
+    void OutputItemContentWidget::update(const std::vector<MongoDocumentPtr> &documents)
+    {
+        _documents = documents;
+        _text.clear();
+        _isFirstPartRendered = false;
+        markUninitialized();
+
+        if (_bsonTable) {
+            _stack->removeWidget(_bsonTable);
+            delete _bsonTable;
+            _bsonTable = NULL;
+        }
+
+        if (_bsonTreeview) {
+            _stack->removeWidget(_bsonTreeview);
+            delete _bsonTreeview;
+            _bsonTreeview = NULL;
+        }
+
+        if (_textView) {
+            _stack->removeWidget(_textView);
+            delete _textView;
+            _textView = NULL;
+        }
+    }
+
     void OutputItemContentWidget::showText()
     {
         if (!_isTextModeSupported)
@@ -133,25 +106,24 @@ namespace Robomongo
 
         if (!_isTextModeInitialized)
         {
-            _log = configureLogText();
-            if (_sourceIsText) {
-                _log->sciScintilla()->setText(_text);
+            _textView = configureLogText();
+            if (!_text.isEmpty()) {
+                _textView->sciScintilla()->setText(_text);
             }
             else {
                 if (_documents.size() > 0) {
-                    _log->sciScintilla()->setText("Loading...");
+                    _textView->sciScintilla()->setText("Loading...");
                     _thread = new JsonPrepareThread(_documents, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
-                    VERIFY(connect(_thread, SIGNAL(done()), this, SLOT(jsonPrepared())));
                     VERIFY(connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString))));
                     VERIFY(connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater())));
                     _thread->start();
                 }
             }
-            _stack->addWidget(_log);
+            _stack->addWidget(_textView);
             _isTextModeInitialized = true;
         }
 
-        _stack->setCurrentWidget(_log);
+        _stack->setCurrentWidget(_textView);
     }
 
     void OutputItemContentWidget::showTree()
@@ -163,13 +135,14 @@ namespace Robomongo
         }
 
         if (!_isTreeModeInitialized) {
-            _bson = new BsonTreeWidget(_shell);
-            _bson->setDocuments(_documents, _queryInfo);
-            _stack->addWidget(_bson);
+            _bsonTreeview = new BsonTreeView(_shell,_queryInfo);
+            BsonTreeModel *mod = new BsonTreeModel(_documents,_bsonTreeview);
+            _bsonTreeview->setModel(mod);
+            _stack->addWidget(_bsonTreeview);
             _isTreeModeInitialized = true;
         }
 
-        _stack->setCurrentWidget(_bson);
+        _stack->setCurrentWidget(_bsonTreeview);
     }
 
     void OutputItemContentWidget::showCustom()
@@ -226,14 +199,6 @@ namespace Robomongo
         _isTableModeInitialized = false;
     }
 
-    void OutputItemContentWidget::jsonPrepared()
-    {
-        // seems that it is wrong to call any method on thread,
-        // because thread already can be disposed.
-        // QThread *thread = static_cast<QThread *>(sender());
-        // thread->quit();
-    }
-
     void OutputItemContentWidget::jsonPartReady(const QString &json)
     {
         // check that this is our current thread
@@ -246,14 +211,14 @@ namespace Robomongo
         }
         else
         {
-            if (_log)
+            if (_textView)
             {
-                _log->setUpdatesEnabled(false);
+                _textView->setUpdatesEnabled(false);
                 if (_isFirstPartRendered)
-                    _log->sciScintilla()->append(json);
+                    _textView->sciScintilla()->append(json);
                 else
-                    _log->sciScintilla()->setText(json);
-                _log->setUpdatesEnabled(true);
+                    _textView->sciScintilla()->setText(json);
+                _textView->setUpdatesEnabled(true);
                 _isFirstPartRendered = true;
             }
         }

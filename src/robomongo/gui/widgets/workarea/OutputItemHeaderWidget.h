@@ -2,7 +2,6 @@
 
 #include <QWidget>
 QT_BEGIN_NAMESPACE
-class QLabel;
 class QPushButton;
 QT_END_NAMESPACE
 
@@ -28,11 +27,10 @@ namespace Robomongo
         OutputItemWidget *item;
         PagingWidget *paging() const { return _paging; }
         ViewMode viewMode() const { return _viewMode; }
-
     protected:
-        void mouseDoubleClickEvent(QMouseEvent *);
+        virtual void mouseDoubleClickEvent(QMouseEvent *);
 
-    public slots:
+    public Q_SLOTS:
         void showText();
         void showTree();
         void showTable();
@@ -44,8 +42,6 @@ namespace Robomongo
         void maximizePart();
 
     private:
-        QLabel *createLabelWithIcon(const QIcon &icon);
-        QFrame *createVerticalLine();
         QPushButton *_textButton;
         QPushButton *_treeButton;
         QPushButton *_tableButton;

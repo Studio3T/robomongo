@@ -41,7 +41,8 @@ namespace Robomongo
         _uuidEncoding(DefaultEncoding),
         _timeZone(Utc),
         _viewMode(Robomongo::Tree),
-        _batchSize(50)
+        _batchSize(50),
+        _disableConnectionShortcuts(false)
     {
         load();
         qDebug() << "SettingsManager initialized in " << _configPath;
@@ -134,6 +135,7 @@ namespace Robomongo
 
         _timeZone = (SupportedTimes) timeZone;
         _loadMongoRcJs = map.value("loadMongoRcJs").toBool();
+        _disableConnectionShortcuts = map.value("disableConnectionShortcuts").toBool();
 
         // Load Batch Size
         _batchSize = map.value("batchSize").toInt();
@@ -172,10 +174,13 @@ namespace Robomongo
         // 5. Save loadInitJs
         map.insert("loadMongoRcJs", _loadMongoRcJs);
 
-        // 6. Save batchSize
+        // 6. Save disableConnectionShortcuts
+        map.insert("disableConnectionShortcuts", _disableConnectionShortcuts);
+        
+        // 7. Save batchSize
         map.insert("batchSize", _batchSize);
 
-        // 7. Save connections
+        // 8. Save connections
         QVariantList list;
 
         for(QList<ConnectionSettings *>::const_iterator it = _connections.begin();it!=_connections.end();++it) {

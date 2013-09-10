@@ -8,6 +8,7 @@
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/gui/widgets/workarea/PagingWidget.h"
 #include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/gui/ViewMode.h"
 
 namespace Robomongo
 {
@@ -24,7 +25,7 @@ namespace Robomongo
         explicit OutputWidget(MongoShell *shell, QWidget *parent = 0);
         ~OutputWidget();
 
-        void present(const QList<MongoShellResult> &documents);
+        void present(const std::vector<MongoShellResult> &documents);
         void updatePart(int partIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents);
         void toggleOrientation();
 
@@ -44,7 +45,7 @@ namespace Robomongo
         MongoShell *shell() const { return _shell; }
 
     private:
-        void clearAllParts();
+        std::vector<ViewMode> clearAllParts();
         void tryToMakeAllPartsEqualInSize();
         QSplitter *_splitter;
         ProgressBarPopup *_progressBarPopup;

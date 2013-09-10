@@ -29,18 +29,18 @@ namespace Robomongo
     {
     public:
         MongoShellExecResult() { }
-        MongoShellExecResult(const QList<MongoShellResult> &results,
+        MongoShellExecResult(const std::vector<MongoShellResult> &results,
                              const std::string &currentServer, bool isCurrentServerValid,
                              const std::string &currentDatabase, bool isCurrentDatabaseValid);
 
-        QList<MongoShellResult> results() const { return _results; }
+        std::vector<MongoShellResult> results() const { return _results; }
         std::string currentServer() const { return _currentServer; }
         std::string currentDatabase() const { return _currentDatabase; }
         bool isCurrentServerValid() const { return _isCurrentServerValid; }
         bool isCurrentDatabaseValid() const { return _isCurrentDatabaseValid; }
 
     private:
-        QList<MongoShellResult> _results;
+        std::vector<MongoShellResult> _results;
         std::string _currentServer;
         std::string _currentDatabase;
         bool _isCurrentServerValid;

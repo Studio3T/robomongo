@@ -11,6 +11,20 @@
 #include "robomongo/gui/widgets/workarea/OutputItemWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/settings/SettingsManager.h"
+
+namespace
+{
+    QFrame *createVerticalLine()
+    {
+        QFrame *vline = new QFrame();
+        vline->setFrameShape(QFrame::VLine);
+        vline->setFrameShadow(QFrame::Sunken);
+        vline->setFixedWidth(5);
+        return vline;
+    }
+}
 
 namespace Robomongo
 {
@@ -19,7 +33,7 @@ namespace Robomongo
         itemContent(output),
         item(result),
         _maximized(false),
-        _viewMode(Tree)
+        _viewMode(AppRegistry::instance().settingsManager()->viewMode())
     {
         setContentsMargins(5,0,0,0);
 
@@ -32,7 +46,7 @@ namespace Robomongo
         VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart())));
 
         // Text mode button
-        _textButton = new QPushButton;
+        _textButton = new QPushButton(this);
         _textButton->setIcon(GuiRegistry::instance().textIcon());
         _textButton->setToolTip("View results in text mode");
         _textButton->setFixedSize(24, 24);
@@ -86,27 +100,28 @@ namespace Robomongo
 
         layout->addWidget(_collectionIndicator);
         layout->addWidget(_timeIndicator);
-        layout->addWidget(new QLabel(), 1); //placeholder
+        QSpacerItem *hSpacer = new QSpacerItem(2000, 24, QSizePolicy::Preferred, QSizePolicy::Minimum);
+        layout->addSpacerItem(hSpacer);
         layout->addWidget(_paging);
         layout->addWidget(createVerticalLine());
         layout->addSpacing(2);
 
-        if (output->isCustomModeSupported()) {
+        if (itemContent->isCustomModeSupported()) {
             layout->addWidget(_customButton, 0, Qt::AlignRight);
             _customButton->show();
         }
 
-        if (output->isTreeModeSupported()) {
+        if (itemContent->isTreeModeSupported()) {
             layout->addWidget(_treeButton, 0, Qt::AlignRight);
             _treeButton->show();
         }
 
-        if (output->isTableModeSupported()) {
+        if (itemContent->isTableModeSupported()) {
             layout->addWidget(_tableButton, 0, Qt::AlignRight);
             _tableButton->show();
         }
 
-        if (output->isTextModeSupported())
+        if (itemContent->isTextModeSupported())
             layout->addWidget(_textButton, 0, Qt::AlignRight);
 
         layout->addSpacing(3);
@@ -207,32 +222,15 @@ namespace Robomongo
     void OutputItemHeaderWidget::maximizePart()
     {
         if (_maximized) {
-            item->output->restoreSize();
+            item->_output->restoreSize();
             _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
         }
         else {
-            item->output->maximizePart(item);
+            item->_output->maximizePart(item);
             _maxButton->setIcon(GuiRegistry::instance().maximizeHighlightedIcon());
         }
 
         _maximized = !_maximized;
-    }
-
-    QLabel *OutputItemHeaderWidget::createLabelWithIcon(const QIcon &icon)
-    {
-        QPixmap pixmap = icon.pixmap(16, 16);
-        QLabel *label = new QLabel;
-        label->setPixmap(pixmap);
-        return label;
-    }
-
-    QFrame *OutputItemHeaderWidget::createVerticalLine()
-    {
-        QFrame *vline = new QFrame();
-        vline->setFrameShape(QFrame::VLine);
-        vline->setFrameShadow(QFrame::Sunken);
-        vline->setFixedWidth(5);
-        return vline;
     }
 
 }

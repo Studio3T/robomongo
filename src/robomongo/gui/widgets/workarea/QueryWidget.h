@@ -64,7 +64,7 @@ namespace Robomongo
         void handle(AutocompleteResponse *event);
     private:
         void updateCurrentTab();
-        void displayData(const QList<MongoShellResult> &results, bool empty);
+        void displayData(const std::vector<MongoShellResult> &results, bool empty);
 
         App *_app;
         EventBus *_bus;

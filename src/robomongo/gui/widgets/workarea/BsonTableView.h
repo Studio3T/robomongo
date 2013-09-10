@@ -1,16 +1,11 @@
 #pragma once
 #include <QTableView>
 
-#include "robomongo/core/domain/MongoQueryInfo.h"
-
-QT_BEGIN_NAMESPACE
-class QAction;
-QT_END_NAMESPACE
+#include "robomongo/core/domain/Notifier.h"
 
 namespace Robomongo
 {
-    class MongoShell;
-    class BsonTableView : public QTableView
+    class BsonTableView : public QTableView , public INotifierObserver
     {
         Q_OBJECT
     public:
@@ -20,22 +15,8 @@ namespace Robomongo
     public Q_SLOTS:
         void showContextMenu(const QPoint &point);
 
-    private Q_SLOTS:
-        void onDeleteDocument();
-        void onEditDocument();
-        void onViewDocument();
-        void onInsertDocument();
-        void onCopyDocument();
-
     private:
-        QModelIndex selectedIndex() const;
-        QAction *_deleteDocumentAction;
-        QAction *_editDocumentAction;
-        QAction *_viewDocumentAction;
-        QAction *_insertDocumentAction;
-        QAction *_copyValueAction;
-
-        MongoShell *_shell;
-        MongoQueryInfo _queryInfo;
+        virtual QModelIndex selectedIndex() const;
+        Notifier _notifier;
     };
 }

@@ -31,7 +31,7 @@ namespace Robomongo
         ConnectionSettings *_connection;
 
         MongoShellResult prepareResult(const std::string &type, const std::string &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms);
-        MongoShellExecResult prepareExecResult(const QList<MongoShellResult> &results);
+        MongoShellExecResult prepareExecResult(const std::vector<MongoShellResult> &results);
 
         std::string getString(const char *fieldName);
 

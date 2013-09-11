@@ -16,7 +16,7 @@ namespace Robomongo
         void showContextMenu(const QPoint &point);
 
     protected:
-        virtual void BsonTableView::keyPressEvent(QKeyEvent *event);
+        virtual void keyPressEvent(QKeyEvent *event);
 
     private:
         virtual QModelIndex selectedIndex() const;

@@ -33,7 +33,7 @@ namespace Robomongo
             }
 
             template<>
-            std::vector<BSONElement> getField<std::vector<BSONElement>>(const mongo::BSONElement &elem)
+            std::vector<BSONElement> getField<std::vector<BSONElement> >(const mongo::BSONElement &elem)
             {
                 return elem.Array();
             }

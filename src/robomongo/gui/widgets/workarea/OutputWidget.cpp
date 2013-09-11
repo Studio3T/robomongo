@@ -11,12 +11,12 @@
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/domain/MongoShell.h"
 
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 #include "robomongo/gui/widgets/workarea/PagingWidget.h"
-#include "robomongo/gui/widgets/workarea/OutputItemWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
 #include "robomongo/gui/widgets/workarea/ProgressBarPopup.h"
 
@@ -49,12 +49,14 @@ namespace Robomongo
             OutputItemContentWidget *output = NULL;
 
             if (shellResult.documents().size() > 0) {
-                output = new OutputItemContentWidget(_shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo());
+                output = new OutputItemContentWidget(this,_shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo());
             } else {
-                output = new OutputItemContentWidget(_shell, QtUtils::toQString(shellResult.response()));
+                output = new OutputItemContentWidget(this,_shell, QtUtils::toQString(shellResult.response()));
             }
 
-            OutputItemWidget *result = new OutputItemWidget(this, output, shellResult.queryInfo());
+            VERIFY(connect(output->header(), SIGNAL(restoredSize()), this, SLOT(restoreSize())));
+            VERIFY(connect(output->header(), SIGNAL(maximizedPart(OutputItemContentWidget *)), this, SLOT(maximizePart(OutputItemContentWidget *))));
+
             ViewMode viewMode = AppRegistry::instance().settingsManager()->viewMode();
             if (prev.size()){
                viewMode = prev.back();
@@ -63,42 +65,42 @@ namespace Robomongo
           
             if (viewMode == Custom) {
                 if (output->isCustomModeSupported())
-                    result->header()->showCustom();
+                    output->header()->showCustom();
                 else if (output->isTreeModeSupported())
-                    result->header()->showTree();
+                    output->header()->showTree();
                 else if (output->isTableModeSupported())
-                    result->header()->showTable();
+                    output->header()->showTable();
                 else if (output->isTextModeSupported())
-                    result->header()->showText();
+                    output->header()->showText();
             } else if (viewMode == Tree) {
                 if (output->isTreeModeSupported())
-                    result->header()->showTree();
+                    output->header()->showTree();
                 else if (output->isTableModeSupported())
-                    result->header()->showTable();
+                    output->header()->showTable();
                 else if (output->isTextModeSupported())
-                    result->header()->showText();
+                    output->header()->showText();
             } else if (viewMode == Table) {
                 if (output->isTableModeSupported())
-                    result->header()->showTable();
+                    output->header()->showTable();
                 else if (output->isTreeModeSupported())
-                    result->header()->showTree();
+                    output->header()->showTree();
                 else if (output->isTextModeSupported())
-                    result->header()->showText();
+                    output->header()->showText();
             }
             else
-                result->header()->showText();
+                output->header()->showText();
 
             double secs = shellResult.elapsedMs() / 1000.f;
 
-            result->header()->setTime(QString("%1 sec.").arg(secs));
+            output->header()->setTime(QString("%1 sec.").arg(secs));
 
             if (!shellResult.queryInfo().isNull) {
-                result->header()->setCollection(QtUtils::toQString(shellResult.queryInfo().collectionName));
-                result->header()->paging()->setBatchSize(shellResult.queryInfo().batchSize);
-                result->header()->paging()->setSkip(shellResult.queryInfo().skip);
+                output->header()->setCollection(QtUtils::toQString(shellResult.queryInfo().collectionName));
+                output->header()->paging()->setBatchSize(shellResult.queryInfo().batchSize);
+                output->header()->paging()->setSkip(shellResult.queryInfo().skip);
             }
 
-            _splitter->addWidget(result);
+            _splitter->addWidget(output);
         }
 
         tryToMakeAllPartsEqualInSize();
@@ -109,7 +111,7 @@ namespace Robomongo
         if (partIndex >= _splitter->count())
             return;
 
-        OutputItemWidget *output = (OutputItemWidget *) _splitter->widget(partIndex);
+        OutputItemContentWidget *output = (OutputItemContentWidget *) _splitter->widget(partIndex);
 
         output->header()->paging()->setSkip(queryInfo.skip);
         output->header()->paging()->setBatchSize(queryInfo.batchSize);
@@ -130,7 +132,7 @@ namespace Robomongo
     {
         int count = _splitter->count();
         for (int i = 0; i < count; i++) {
-            OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
+            OutputItemContentWidget *widget = (OutputItemContentWidget *) _splitter->widget(i);
             widget->header()->showTree();
         }
     }
@@ -139,7 +141,7 @@ namespace Robomongo
     {
         int count = _splitter->count();
         for (int i = 0; i < count; i++) {
-            OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
+            OutputItemContentWidget *widget = (OutputItemContentWidget *) _splitter->widget(i);
             widget->header()->showText();
         }
     }
@@ -148,7 +150,7 @@ namespace Robomongo
     {
         int count = _splitter->count();
         for (int i = 0; i < count; i++) {
-            OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
+            OutputItemContentWidget *widget = (OutputItemContentWidget *) _splitter->widget(i);
             widget->header()->showTable();
         }
     }
@@ -157,16 +159,16 @@ namespace Robomongo
     {
         int count = _splitter->count();
         for (int i = 0; i < count; i++) {
-            OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
+            OutputItemContentWidget *widget = (OutputItemContentWidget *) _splitter->widget(i);
             widget->header()->showCustom();
         }
     }
 
-    void OutputWidget::maximizePart(OutputItemWidget *result)
+    void OutputWidget::maximizePart(OutputItemContentWidget *result)
     {
         int count = _splitter->count();
         for (int i = 0; i < count; i++) {
-            OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
+            OutputItemContentWidget *widget = (OutputItemContentWidget *) _splitter->widget(i);
 
             if (widget != result)
                 widget->hide();
@@ -177,12 +179,12 @@ namespace Robomongo
     {
         int count = _splitter->count();
         for (int i = 0; i < count; i++) {
-            OutputItemWidget *widget = (OutputItemWidget *) _splitter->widget(i);
+            OutputItemContentWidget *widget = (OutputItemContentWidget *) _splitter->widget(i);
             widget->show();
         }
     }
 
-    int OutputWidget::resultIndex(OutputItemWidget *result)
+    int OutputWidget::resultIndex(OutputItemContentWidget *result)
     {
         return _splitter->indexOf(result);
     }
@@ -202,7 +204,7 @@ namespace Robomongo
     {
         std::vector<ViewMode> res;
         while (_splitter->count() > 0) {
-            OutputItemWidget *widget =  (OutputItemWidget *)_splitter->widget(_splitter->count()-1);
+            OutputItemContentWidget *widget =  (OutputItemContentWidget *)_splitter->widget(_splitter->count()-1);
             res.push_back(widget->header()->viewMode());
             widget->hide();
             delete widget;

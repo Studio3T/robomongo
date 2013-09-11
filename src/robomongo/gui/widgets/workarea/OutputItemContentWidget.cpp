@@ -3,6 +3,8 @@
 #include <QVBoxLayout>
 #include <Qsci/qscilexerjavascript.h>
 
+#include "robomongo/gui/widgets/workarea/OutputWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
@@ -16,10 +18,11 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
+#include "robomongo/core/domain/MongoShell.h"
 
 namespace Robomongo
 {
-    OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &text) :
+    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out,MongoShell *shell, const QString &text, QWidget *parent) :
         _textView(NULL),
         _bsonTreeview(NULL),
         _thread(NULL),
@@ -34,12 +37,16 @@ namespace Robomongo
         _isTableModeInitialized(false),
         _isFirstPartRendered(false),
         _text(text),
-        _shell(shell)
+        _shell(shell),
+        _initialSkip(0),
+        _initialLimit(0),
+        BaseClass(parent),
+        _out(out)
     {
         setup();
     }
 
-    OutputItemContentWidget::OutputItemContentWidget(MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo) :
+    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out,MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, QWidget *parent) :
         _textView(NULL),
         _bsonTreeview(NULL),
         _thread(NULL),
@@ -56,7 +63,11 @@ namespace Robomongo
         _documents(documents),
         _queryInfo(queryInfo),
         _type(type),
-        _shell(shell)
+        _shell(shell),
+        _initialSkip(queryInfo.skip),
+        _initialLimit(queryInfo.limit),
+        BaseClass(parent),
+        _out(out)
     {
         setup();
     }
@@ -64,13 +75,71 @@ namespace Robomongo
     void OutputItemContentWidget::setup()
     {      
         setContentsMargins(0, 0, 0, 0);
-        _stack = new QStackedWidget;
+        _header = new OutputItemHeaderWidget(this);       
 
         QVBoxLayout *layout = new QVBoxLayout();
-        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setContentsMargins(0, 1, 0, 0);
         layout->setSpacing(0);
+        layout->addWidget(_header);
+        _stack = new QStackedWidget;
         layout->addWidget(_stack);
         setLayout(layout);
+
+
+        VERIFY(connect(_header->paging(), SIGNAL(refreshed(int,int)), this, SLOT(refresh(int,int))));
+        VERIFY(connect(_header->paging(), SIGNAL(leftClicked(int,int)), this, SLOT(paging_leftClicked(int,int))));
+        VERIFY(connect(_header->paging(), SIGNAL(rightClicked(int,int)), this, SLOT(paging_rightClicked(int,int))));
+    }
+
+    void OutputItemContentWidget::paging_leftClicked(int skip, int limit)
+    {
+        int s = skip - limit;
+
+        if (s < 0)
+            s = 0;
+
+        refresh(s, limit);
+    }
+
+    void OutputItemContentWidget::paging_rightClicked(int skip, int limit)
+    {
+        skip += limit;
+        refresh(skip, limit);
+    }
+
+    void OutputItemContentWidget::refresh(int skip, int batchSize)
+    {
+        OutputItemContentWidget *send = this;
+
+        // Cannot set skip lower than in the text query
+        MongoQueryInfo queryInfo = send->queryInfo();
+        int _initialSkip = send->_initialSkip;
+        int _initialLimit = send->_initialLimit;
+        if (skip <  _initialSkip) {
+            _header->paging()->setSkip(_initialSkip);
+            skip = _initialSkip;
+        }
+
+        int skipDelta = skip - _initialSkip;
+        int limit = batchSize;
+
+        // If limit is set to 0 it means UNLIMITED number of documents (limited only by batch size)
+        // This is according to MongoDB documentation.
+        if (_initialLimit != 0) {
+            limit = _initialLimit - skipDelta;
+            if (limit <= 0)
+                limit = -1; // It means that we do not need to load documents
+
+            if (limit > batchSize)
+                limit = batchSize;
+        }
+
+        MongoQueryInfo info(queryInfo);
+        info.limit = limit;
+        info.skip = skip;
+        info.batchSize = batchSize;
+        _out->showProgress();
+        _shell->query(_out->resultIndex(send), info);
     }
 
     void OutputItemContentWidget::update(const std::vector<MongoDocumentPtr> &documents)

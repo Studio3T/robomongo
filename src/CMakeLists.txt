@@ -45,7 +45,6 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/ScriptWidget.h
     robomongo/gui/widgets/workarea/PagingWidget.h
     robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h
-    robomongo/gui/widgets/workarea/OutputItemWidget.h
     robomongo/gui/widgets/workarea/IndicatorLabel.h
     robomongo/gui/widgets/workarea/ProgressBarPopup.h
     robomongo/gui/dialogs/DocumentTextEditor.h
@@ -103,7 +102,6 @@ SET(SOURCES_GUI
     robomongo/gui/widgets/workarea/ScriptWidget.cpp
     robomongo/gui/widgets/workarea/PagingWidget.cpp
     robomongo/gui/widgets/workarea/OutputItemHeaderWidget.cpp
-    robomongo/gui/widgets/workarea/OutputItemWidget.cpp
     robomongo/gui/widgets/workarea/IndicatorLabel.cpp
     robomongo/gui/widgets/workarea/ProgressBarPopup.cpp
     robomongo/gui/dialogs/DocumentTextEditor.cpp

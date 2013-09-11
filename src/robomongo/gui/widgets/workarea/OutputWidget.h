@@ -7,7 +7,6 @@
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/gui/widgets/workarea/PagingWidget.h"
-#include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/gui/ViewMode.h"
 
 namespace Robomongo
@@ -16,6 +15,7 @@ namespace Robomongo
     class OutputItemWidget;
     class OutputWidget;
     class ProgressBarPopup;
+    class MongoShell;
 
     class OutputWidget : public QFrame
     {
@@ -33,15 +33,15 @@ namespace Robomongo
         void enterTableMode();
         void enterCustomMode();
 
-        void maximizePart(OutputItemWidget *result);
-        void restoreSize();
-
-        int resultIndex(OutputItemWidget *result);
+        int resultIndex(OutputItemContentWidget *result);
 
         void showProgress();
         void hideProgress();
 
-        MongoShell *shell() const { return _shell; }
+    private Q_SLOTS:
+        void maximizePart(OutputItemContentWidget *result);
+        void restoreSize();
+
 
     private:
         std::vector<ViewMode> clearAllParts();

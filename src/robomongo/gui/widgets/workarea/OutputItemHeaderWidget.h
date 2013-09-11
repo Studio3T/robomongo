@@ -13,8 +13,6 @@ QT_END_NAMESPACE
 namespace Robomongo
 {
     class OutputItemContentWidget;
-    class OutputItemWidget;
-    class OutputWidget;
     class Indicator;
 
     class OutputItemHeaderWidget : public QFrame
@@ -22,13 +20,16 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        OutputItemHeaderWidget(OutputItemWidget *result, OutputItemContentWidget *output, QWidget *parent = 0);
+        OutputItemHeaderWidget(OutputItemContentWidget *output, QWidget *parent = 0);
         OutputItemContentWidget *itemContent;
-        OutputItemWidget *item;
         PagingWidget *paging() const { return _paging; }
         ViewMode viewMode() const { return _viewMode; }
     protected:
         virtual void mouseDoubleClickEvent(QMouseEvent *);
+
+    Q_SIGNALS:
+        void restoredSize();
+        void maximizedPart(OutputItemContentWidget *);
 
     public Q_SLOTS:
         void showText();

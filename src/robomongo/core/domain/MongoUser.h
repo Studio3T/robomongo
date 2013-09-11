@@ -28,6 +28,8 @@ namespace Robomongo
         void setRole(const roleType &role) { _role = role; }
         void setPasswordHash(const std::string &hash) { _passwordHash = hash; }
 
+        std::string userSource() const {return _userSource;}
+        void setUserSource(const std::string &source) {_userSource = source;}
         mongo::BSONObj toBson() const;
 
     private:
@@ -35,5 +37,6 @@ namespace Robomongo
         std::string _name;
         roleType _role;
         std::string _passwordHash;
+        std::string _userSource;
     };
 }

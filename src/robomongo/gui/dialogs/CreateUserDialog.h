@@ -36,6 +36,8 @@ namespace Robomongo
         QLineEdit *_userNameEdit;
         QLabel *_userPassLabel;
         QLineEdit *_userPassEdit;
+        QLabel *_userSourceLabel;
+        QLineEdit *_userSourceEdit;
 
         QCheckBox *_rolesArray[RolesCount];
     };

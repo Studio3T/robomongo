@@ -6,6 +6,7 @@
 #include <QDialogButtonBox>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMessageBox>
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/core/domain/MongoUtils.h"
@@ -57,6 +58,9 @@ namespace Robomongo
         _userPassLabel= new QLabel("Password:");
         _userPassEdit = new QLineEdit();
         _userPassEdit->setEchoMode(QLineEdit::Password);
+        _userSourceLabel = new QLabel("UserSource:");
+        _userSourceEdit = new QLineEdit();
+        _userSourceEdit->setText(QtUtils::toQString(user.userSource()));
 
         QGridLayout *gridRoles = new QGridLayout();
         std::string userRoles = user.role();
@@ -90,7 +94,9 @@ namespace Robomongo
         namelayout->addWidget(_userNameEdit,  0, 1);
         namelayout->addWidget(_userPassLabel, 1, 0);
         namelayout->addWidget(_userPassEdit,  1, 1);
-        namelayout->addLayout(gridRoles,  2, 1);
+        namelayout->addWidget(_userSourceLabel, 2, 0);
+        namelayout->addWidget(_userSourceEdit,  2, 1);
+        namelayout->addLayout(gridRoles,  3, 1);
 
         QVBoxLayout *layout = new QVBoxLayout();
         layout->addLayout(vlayout);
@@ -111,14 +117,24 @@ namespace Robomongo
     {
         std::string username = QtUtils::toStdString<std::string>(_userNameEdit->text());
         std::string pass = QtUtils::toStdString<std::string>(_userPassEdit->text());
+        std::string userSource = QtUtils::toStdString<std::string>(_userSourceEdit->text());
 
-        if (username.empty() || pass.empty())
+        if (username.empty())
             return;
-
-        std::string hash = MongoUtils::buildPasswordHash(username, pass);
-
-        _user.setName(username);
+        if(userSource.empty() && pass.empty())
+            return;
+        if(!userSource.empty() && !pass.empty()){
+           QMessageBox::warning(this, "Invalid input", "The userSource field and the pwd field are mutually exclusive. The document cannot contain both.\n");
+           return;
+        }
+        std::string hash;
+        if(!pass.empty()){
+            hash = MongoUtils::buildPasswordHash(username, pass);
+        }
         _user.setPasswordHash(hash);
+        _user.setName(username);        
+        _user.setUserSource(userSource);
+
         std::string roles;
         for (unsigned i = 0; i < RolesCount; ++i)
         {

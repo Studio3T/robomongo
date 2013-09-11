@@ -25,6 +25,7 @@ namespace Robomongo
 
     protected:
         virtual void resizeEvent(QResizeEvent *event);
+        virtual void keyPressEvent(QKeyEvent *event);
         void expandNode(const QModelIndex &index);
 
     private:

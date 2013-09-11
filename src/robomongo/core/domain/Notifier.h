@@ -34,6 +34,8 @@ namespace Robomongo
         void query();
         void initMenu(QMenu *const menu, BsonTreeItem *const item);
 
+        void deleteDocument(BsonTreeItem *const item, bool force);
+
     public Q_SLOTS: 
         void onDeleteDocument();
         void onEditDocument();

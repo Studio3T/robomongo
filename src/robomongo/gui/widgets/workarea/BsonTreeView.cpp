@@ -3,6 +3,7 @@
 #include <QHeaderView>
 #include <QAction>
 #include <QMenu>
+#include <QKeyEvent>
 
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 
@@ -25,7 +26,8 @@ namespace Robomongo
         setAttribute(Qt::WA_MacShowFocusRect, false);
 #endif
         GuiRegistry::instance().setAlternatingColor(this);
-       
+        setSelectionMode(QAbstractItemView::SingleSelection);
+        setSelectionBehavior(QAbstractItemView::SelectRows);
         setIndentation(15);
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
@@ -67,6 +69,20 @@ namespace Robomongo
     {
         BaseClass::resizeEvent(event);
         header()->resizeSections(QHeaderView::Stretch);
+    }
+
+    void BsonTreeView::keyPressEvent(QKeyEvent *event)
+    {
+        if (event->key()==Qt::Key_Delete){
+            QModelIndexList indexses = selectionModel()->selectedRows();
+            for (QModelIndexList::const_iterator it = indexses.begin(); it!= indexses.end(); ++it)
+            {
+                BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
+                bool isForce = event->modifiers() & Qt::ShiftModifier;
+                _notifier.deleteDocument(item,isForce);
+            }
+        }
+        return BaseClass::keyPressEvent(event);
     }
 
     void BsonTreeView::expandNode(const QModelIndex &index)

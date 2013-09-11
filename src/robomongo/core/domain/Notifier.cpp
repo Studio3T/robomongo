@@ -74,16 +74,8 @@ namespace Robomongo
         if (onItem && isEditable) menu->addAction(_deleteDocumentAction);
     }
 
-    void Notifier::onDeleteDocument()
-    {
-        if (_queryInfo.isNull)
-            return;
-
-        QModelIndex selectedInd = _observer->selectedIndex();
-        if (!selectedInd.isValid())
-            return;
-
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+    void Notifier::deleteDocument(BsonTreeItem *const documentItem, bool force)
+    {        
         if(!documentItem)
             return;
 
@@ -101,14 +93,29 @@ namespace Robomongo
         mongo::BSONObj bsonQuery = builder.obj();
         mongo::Query query(bsonQuery);
 
+        if(!force){
         // Ask user
         int answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer),"Delete","Document","%1 %2 with id:<br><b>%3</b>?",QtUtils::toQString(id.toString(false)));
 
         if (answer != QMessageBox::Yes)
             return ;
+        }
 
         _shell->server()->removeDocuments(query, _queryInfo.databaseName, _queryInfo.collectionName);
         _shell->query(0, _queryInfo);
+    }
+
+    void Notifier::onDeleteDocument()
+    {
+        if (_queryInfo.isNull)
+            return;
+
+        QModelIndex selectedInd = _observer->selectedIndex();
+        if (!selectedInd.isValid())
+            return;
+
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+        return deleteDocument(documentItem,false);
     }
 
     void Notifier::onEditDocument()

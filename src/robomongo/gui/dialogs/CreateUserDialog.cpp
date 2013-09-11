@@ -14,6 +14,27 @@
 
 namespace Robomongo
 {
+    const char * rolesText[CreateUserDialog::RolesCount] = {"read","readWrite","dbAdmin","userAdmin","clusterAdmin","readAnyDatabase","readWriteAnyDatabase","userAdminAnyDatabase","dbAdminAnyDatabase"}; 
+
+    bool containsWord(const std::string& sentence, const std::string& word)
+    {
+        size_t pos = 0;
+        while ((pos = sentence.substr(pos).find(word)) != std::string::npos) {
+            if(pos + word.size()<sentence.size()){
+                char c = sentence[pos + word.size()];
+                bool isLastAlpha = isalpha(c);
+                bool isFirstAlpha = false;
+                if(pos){
+                    isFirstAlpha = isalpha(sentence[pos - 1]);
+                }
+                if (!isFirstAlpha&&!isLastAlpha)
+                    return true;
+            }
+            pos++;
+        }
+        return false;
+    }
+
     CreateUserDialog::CreateUserDialog(const QString &serverName,
                                        const QString &database, const MongoUser &user,
                                        QWidget *parent) : QDialog(parent),
@@ -36,8 +57,17 @@ namespace Robomongo
         _userPassLabel= new QLabel("Password:");
         _userPassEdit = new QLineEdit();
         _userPassEdit->setEchoMode(QLineEdit::Password);
-        _readOnlyCheckBox = new QCheckBox("Read Only");
-        _readOnlyCheckBox->setChecked(user.readOnly());
+
+        QGridLayout *gridRoles = new QGridLayout();
+        std::string userRoles = user.role();
+        for (unsigned i=0; i<RolesCount; ++i)
+        {
+            int row = i%3;
+            int col = i/3;
+            _rolesArray[i] = new QCheckBox(rolesText[i],this);
+            _rolesArray[i]->setChecked(containsWord(userRoles,rolesText[i]));
+            gridRoles->addWidget(_rolesArray[i],row,col);
+        }
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
@@ -60,7 +90,7 @@ namespace Robomongo
         namelayout->addWidget(_userNameEdit,  0, 1);
         namelayout->addWidget(_userPassLabel, 1, 0);
         namelayout->addWidget(_userPassEdit,  1, 1);
-        namelayout->addWidget(_readOnlyCheckBox,  2, 1);
+        namelayout->addLayout(gridRoles,  2, 1);
 
         QVBoxLayout *layout = new QVBoxLayout();
         layout->addLayout(vlayout);
@@ -89,7 +119,16 @@ namespace Robomongo
 
         _user.setName(username);
         _user.setPasswordHash(hash);
-        _user.setReadOnly(_readOnlyCheckBox->isChecked());
+        std::string roles;
+        for (unsigned i = 0; i < RolesCount; ++i)
+        {
+            if (_rolesArray[i]->isChecked())
+            {
+                roles.append(rolesText[i]);
+                roles += ",";
+            }
+        }
+        _user.setRole(roles);
 
         QDialog::accept();
     }

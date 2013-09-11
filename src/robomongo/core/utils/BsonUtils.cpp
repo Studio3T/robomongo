@@ -33,6 +33,12 @@ namespace Robomongo
             }
 
             template<>
+            std::vector<BSONElement> getField<std::vector<BSONElement>>(const mongo::BSONElement &elem)
+            {
+                return elem.Array();
+            }
+
+            template<>
             int getField<int>(const mongo::BSONElement &elem)
             {
                 return elem.Int();
@@ -499,6 +505,39 @@ namespace Robomongo
                     return "Type is not supported";
                 }
             }
+        }
+
+        std::string bsonArrayToString(const std::vector<mongo::BSONElement> &ar)
+        {
+            std::string result = "[";
+            for (std::vector<mongo::BSONElement>::const_iterator it = ar.begin();it != ar.end(); ++it)
+            {
+                result += bsonelement_cast<std::string>(*it);
+                result +=",";
+            }
+            result+="]";
+            return result;
+        }
+
+        std::vector<mongo::BSONElement> stringToBsonArray(const std::string &str)
+        {
+            std::vector<mongo::BSONElement> res;
+            const char delimiters = ',';
+            if(str.size() && str[0]=='[' && str[str.length()-1]==']'){
+                std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+                std::string::size_type pos     = str.find_first_of(delimiters, lastPos);
+                while (std::string::npos != pos || std::string::npos != lastPos)
+                {
+                    // Found a token, add it to the vector.
+                    std::string val = str.substr(lastPos, pos - lastPos);
+                    res.push_back(mongo::BSONElement(val.c_str()));
+                    // Skip delimiters.  Note the "not_of"
+                    lastPos = str.find_first_not_of(delimiters, pos);
+                    // Find next "non-delimiter"
+                    pos = str.find_first_of(delimiters, lastPos);
+                }
+            }
+            return res;
         }
 
         void buildJsonString(const mongo::BSONObj &obj,std::string &con, UUIDEncoding uuid,SupportedTimes tz)

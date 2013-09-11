@@ -18,13 +18,13 @@ namespace
         "%s "
         "<table>"
         "<tr><td>ID:</td> <td><b>&nbsp;&nbsp;%s</b></td></tr>"
-        "<tr><td>Readonly:</td><td><b>&nbsp;&nbsp;%s</b></td></tr>"
+        "<tr><td>Roles:</td><td><b>&nbsp;&nbsp;%s</b></td></tr>"
         "</table>";
 
     std::string buildToolTip(const Robomongo::MongoUser &user)
     {
         char buff[2048]={0};
-        sprintf(buff,tooltipTemplate,user.name().c_str(),user.id().toString().c_str(),user.readOnly() ? "Yes" : "No");
+        //sprintf(buff,tooltipTemplate,user.name().c_str(),user.id().toString().c_str(),user.role());
         return buff;
     }
 }

@@ -24,8 +24,9 @@ namespace Robomongo
 
         MongoUser user() const { return _user; }
         void setUserPasswordLabelText(const QString &text);
+        enum { RolesCount = 9};
 
-    public slots:
+    public Q_SLOTS:
         virtual void accept();
 
     private:
@@ -35,7 +36,8 @@ namespace Robomongo
         QLineEdit *_userNameEdit;
         QLabel *_userPassLabel;
         QLineEdit *_userPassEdit;
-        QCheckBox *_readOnlyCheckBox;
+
+        QCheckBox *_rolesArray[RolesCount];
     };
 }
 

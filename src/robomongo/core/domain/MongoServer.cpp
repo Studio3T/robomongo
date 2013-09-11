@@ -71,9 +71,25 @@ namespace Robomongo
         _client->send(new DropDatabaseRequest(this, dbName));
     }
 
+    void MongoServer::insertDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection)
+    {
+        for (std::vector<mongo::BSONObj>::const_iterator it = objCont.begin(); it != objCont.end() ; it++)
+        {
+            insertDocument(*it,db,collection);
+        }
+    }
+
     void MongoServer::insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)
     {
         _client->send(new InsertDocumentRequest(this, obj, db, collection));
+    }
+
+    void MongoServer::saveDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection)
+    {
+        for (std::vector<mongo::BSONObj>::const_iterator it = objCont.begin(); it != objCont.end() ; it++)
+        {
+            saveDocument(*it,db,collection);
+        }
     }
 
     void MongoServer::saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)

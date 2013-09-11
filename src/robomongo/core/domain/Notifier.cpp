@@ -138,9 +138,8 @@ namespace Robomongo
         int result = editor.exec();
 
         if (result == QDialog::Accepted) {
-            mongo::BSONObj obj = editor.bsonObj();
             AppRegistry::instance().bus()->subscribe(this, InsertDocumentResponse::Type);
-            _shell->server()->saveDocument(obj, _queryInfo.databaseName, _queryInfo.collectionName);
+            _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo.databaseName, _queryInfo.collectionName);
         }
     }
 
@@ -184,8 +183,11 @@ namespace Robomongo
         int result = editor.exec();
 
         if (result == QDialog::Accepted) {
-            mongo::BSONObj obj = editor.bsonObj();
-            _shell->server()->insertDocument(obj, _queryInfo.databaseName, _queryInfo.collectionName);
+            DocumentTextEditor::returnType obj = editor.bsonObj();
+            for (DocumentTextEditor::returnType::const_iterator it = obj.begin(); it != obj.end(); ++it)
+            {
+                _shell->server()->insertDocument(*it, _queryInfo.databaseName, _queryInfo.collectionName);
+            }            
             _shell->query(0, _queryInfo);
         }
     }

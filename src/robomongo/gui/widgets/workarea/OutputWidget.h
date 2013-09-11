@@ -23,7 +23,6 @@ namespace Robomongo
 
     public:
         explicit OutputWidget(MongoShell *shell, QWidget *parent = 0);
-        ~OutputWidget();
 
         void present(const std::vector<MongoShellResult> &documents);
         void updatePart(int partIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents);

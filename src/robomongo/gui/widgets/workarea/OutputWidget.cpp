@@ -27,18 +27,6 @@ namespace Robomongo
         _shell(shell),
         _splitter(NULL)
     {
-        QString style = QString("Robomongo--OutputWidget { background-color: %1; border-radius: 6px; }")
-            .arg(QColor("#083047").lighter(660).name());
-    //            .arg("white");
-
-        //setStyleSheet(style);
-
-    /*    setAutoFillBackground(true);
-        QPalette p(palette());
-        // Set background colour to black
-        p.setColor(QPalette::Background, QColor("#083047").lighter(660));
-        setPalette(p);*/
-
         _splitter = new QSplitter;
         _splitter->setOrientation(Qt::Vertical);
         _splitter->setHandleWidth(1);
@@ -51,11 +39,6 @@ namespace Robomongo
         setLayout(layout);
 
         _progressBarPopup = new ProgressBarPopup(this);
-    }
-
-    OutputWidget::~OutputWidget()
-    {
-
     }
 
     void OutputWidget::present(const std::vector<MongoShellResult> &results)
@@ -77,7 +60,7 @@ namespace Robomongo
                viewMode = prev.back();
                prev.pop_back();
             }
-
+          
             if (viewMode == Custom) {
                 if (output->isCustomModeSupported())
                     result->header()->showCustom();
@@ -212,7 +195,7 @@ namespace Robomongo
 
     void OutputWidget::hideProgress()
     {
-        QTimer::singleShot(100, _progressBarPopup, SLOT(hide()));
+        _progressBarPopup->hide();
     }
 
     std::vector<ViewMode> OutputWidget::clearAllParts()

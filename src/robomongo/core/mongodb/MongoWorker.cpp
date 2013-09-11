@@ -112,7 +112,7 @@ namespace Robomongo
                     _isAdmin = false;
 
                 // Save name of db on which we authenticated
-                _authDatabase = dbName;
+                _authDatabase = _connection->primaryCredential()->databaseName();
             }
 
             //conn->done();

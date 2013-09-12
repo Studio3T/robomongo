@@ -148,7 +148,7 @@ namespace Robomongo
 
         // Text mode action
         QAction *textModeAction = new QAction("&Text Mode", this);
-        textModeAction->setShortcut(Qt::Key_F5);
+        textModeAction->setShortcut(Qt::Key_F4);
         textModeAction->setIcon(GuiRegistry::instance().textHighlightedIcon());
         textModeAction->setToolTip("Show current tab in text mode, and make this mode default for all subsequent queries <b>(F4)</b>");
         textModeAction->setCheckable(true);
@@ -157,7 +157,7 @@ namespace Robomongo
 
         // Tree mode action
         QAction *treeModeAction = new QAction("&Tree Mode", this);
-        treeModeAction->setShortcut(Qt::Key_F4);
+        treeModeAction->setShortcut(Qt::Key_F2);
         treeModeAction->setIcon(GuiRegistry::instance().treeHighlightedIcon());
         treeModeAction->setToolTip("Show current tab in tree mode, and make this mode default for all subsequent queries <b>(F3)</b>");
         treeModeAction->setCheckable(true);
@@ -175,7 +175,7 @@ namespace Robomongo
 
         // Custom mode action
         QAction *customModeAction = new QAction("&Custom Mode", this);
-        customModeAction->setShortcut(Qt::Key_F2);
+        //customModeAction->setShortcut(Qt::Key_F2);
         customModeAction->setIcon(GuiRegistry::instance().customHighlightedIcon());
         customModeAction->setToolTip("Show current tab in custom mode if possible, and make this mode default for all subsequent queries <b>(F2)</b>");
         customModeAction->setCheckable(true);
@@ -183,7 +183,7 @@ namespace Robomongo
         VERIFY(connect(customModeAction, SIGNAL(triggered()), this, SLOT(enterCustomMode())));
 
         // Execute action
-        _executeAction = new QAction("", this);
+        _executeAction = new QAction(this);
         _executeAction->setData("Execute");
         _executeAction->setIcon(GuiRegistry::instance().executeIcon());
         _executeAction->setShortcut(Qt::Key_F5);
@@ -191,7 +191,7 @@ namespace Robomongo
         VERIFY(connect(_executeAction, SIGNAL(triggered()), SLOT(executeScript())));
 
         // Stop action
-        _stopAction = new QAction("", this);
+        _stopAction = new QAction(this);
         _stopAction->setData("Stop");
         _stopAction->setIcon(GuiRegistry::instance().stopIcon());
         _stopAction->setShortcut(Qt::Key_F6);

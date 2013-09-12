@@ -168,7 +168,7 @@ namespace Robomongo
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
         if(databaseItem){
-            CreateUserDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
+            CreateUserDialog dlg(databaseItem->database()->server()->getDatabasesNames(), QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
                 QtUtils::toQString(databaseItem->database()->name()));
             int result = dlg.exec();
             if (result == QDialog::Accepted) {

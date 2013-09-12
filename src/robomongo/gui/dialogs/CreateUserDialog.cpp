@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QComboBox>
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/core/domain/MongoUtils.h"
@@ -36,7 +37,7 @@ namespace Robomongo
         return false;
     }
 
-    CreateUserDialog::CreateUserDialog(const QString &serverName,
+    CreateUserDialog::CreateUserDialog(const QStringList &databases,const QString &serverName,
                                        const QString &database, const MongoUser &user,
                                        QWidget *parent) : QDialog(parent),
         _user(user)
@@ -59,8 +60,9 @@ namespace Robomongo
         _userPassEdit = new QLineEdit();
         _userPassEdit->setEchoMode(QLineEdit::Password);
         _userSourceLabel = new QLabel("UserSource:");
-        _userSourceEdit = new QLineEdit();
-        _userSourceEdit->setText(QtUtils::toQString(user.userSource()));
+        _userSourceComboBox = new QComboBox();
+        _userSourceComboBox->addItems(QStringList() << "" << databases); //setText(QtUtils::toQString(user.userSource()));
+        _userSourceComboBox->setCurrentText(QtUtils::toQString(user.userSource()));
 
         QGridLayout *gridRoles = new QGridLayout();
         std::string userRoles = user.role();
@@ -95,7 +97,7 @@ namespace Robomongo
         namelayout->addWidget(_userPassLabel, 1, 0);
         namelayout->addWidget(_userPassEdit,  1, 1);
         namelayout->addWidget(_userSourceLabel, 2, 0);
-        namelayout->addWidget(_userSourceEdit,  2, 1);
+        namelayout->addWidget(_userSourceComboBox,  2, 1);
         namelayout->addLayout(gridRoles,  3, 1);
 
         QVBoxLayout *layout = new QVBoxLayout();
@@ -117,7 +119,7 @@ namespace Robomongo
     {
         std::string username = QtUtils::toStdString<std::string>(_userNameEdit->text());
         std::string pass = QtUtils::toStdString<std::string>(_userPassEdit->text());
-        std::string userSource = QtUtils::toStdString<std::string>(_userSourceEdit->text());
+        std::string userSource = QtUtils::toStdString<std::string>(_userSourceComboBox->currentText());
 
         if (username.empty())
             return;

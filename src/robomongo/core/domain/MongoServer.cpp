@@ -9,7 +9,7 @@
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
-
+#include "robomongo/core/utils/QtUtils.h"
 
 using namespace std;
 namespace Robomongo
@@ -59,6 +59,17 @@ namespace Robomongo
             "_connectionRecord->userPassword()"));
 
         qDebug() << "EstablishConnectionRequest sent";
+    }
+
+    QStringList MongoServer::getDatabasesNames() const
+    {
+        QStringList result;
+        for (databasesContainerType::const_iterator it = _databases.begin(); it!=_databases.end(); ++it)
+        {
+            MongoDatabase *datab = *it;
+            result.append(QtUtils::toQString(datab->name()));
+        }
+        return result;
     }
 
     void MongoServer::createDatabase(const std::string &dbName)

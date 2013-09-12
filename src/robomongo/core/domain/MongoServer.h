@@ -30,6 +30,7 @@ namespace Robomongo
          * @param visible
          * @param defaultDatabase
          */
+        typedef QList<MongoDatabase *> databasesContainerType;
         MongoServer(ConnectionSettings *connectionRecord, bool visible);
         ~MongoServer();
 
@@ -41,6 +42,7 @@ namespace Robomongo
 
         void createDatabase(const std::string &dbName);
         void dropDatabase(const std::string &dbName);
+        QStringList getDatabasesNames() const;
 
         void insertDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection);
         void insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
@@ -88,7 +90,7 @@ namespace Robomongo
         std::string _lastErrorMessage;
         bool _visible;
 
-        QList<MongoDatabase *> _databases;
+        databasesContainerType _databases;
 
         EventBus *_bus;
     };

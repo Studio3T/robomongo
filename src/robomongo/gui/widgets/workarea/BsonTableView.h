@@ -15,6 +15,9 @@ namespace Robomongo
     public Q_SLOTS:
         void showContextMenu(const QPoint &point);
 
+    protected:
+        virtual void keyPressEvent(QKeyEvent *event);
+
     private:
         virtual QModelIndex selectedIndex() const;
         Notifier _notifier;

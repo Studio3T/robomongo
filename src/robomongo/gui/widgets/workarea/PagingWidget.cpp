@@ -25,7 +25,8 @@ namespace
 
 namespace Robomongo
 {
-    PagingWidget::PagingWidget()
+    PagingWidget::PagingWidget(QWidget *parent)
+        :BaseClass(parent)
     {
         _skipEdit = new QLineEdit;
         _batchSizeEdit = new QLineEdit;

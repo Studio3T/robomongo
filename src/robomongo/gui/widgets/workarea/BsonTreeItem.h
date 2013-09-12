@@ -5,8 +5,6 @@
 #include <mongo/bson/bsonobj.h>
 #include <mongo/bson/bsonelement.h>
 
-#include "robomongo/core/Core.h"
-
 namespace Robomongo
 {
     /**

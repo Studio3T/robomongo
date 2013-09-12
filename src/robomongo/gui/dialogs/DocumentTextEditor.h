@@ -12,6 +12,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef std::vector<mongo::BSONObj> returnType;
         explicit DocumentTextEditor(const QString &server, const QString &database, const QString &collection,
                                     const QString &json, bool readonly = false, QWidget *parent = 0);
 
@@ -20,7 +21,7 @@ namespace Robomongo
         /**
          * @brief Use returned BSONObj only if Dialog exec() method returns QDialog::Accepted
          */
-        mongo::BSONObj bsonObj() const { return _obj; }
+        returnType bsonObj() const { return _obj; }
 
         void setCursorPosition(int line, int column);
 
@@ -34,10 +35,9 @@ namespace Robomongo
 
     private:
         void _configureQueryText();
-        QFont chooseTextFont() const;
         FindFrame *_queryText;
         bool _readonly;
-        mongo::BSONObj _obj;
+        returnType _obj;
     };
 }
 

@@ -3,17 +3,11 @@
 #include <QHeaderView>
 #include <QAction>
 #include <QMenu>
-#include <QMessageBox>
-#include <QApplication>
-#include <QClipboard>
+#include <QKeyEvent>
 
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/core/settings/SettingsManager.h"
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
 
 namespace Robomongo
 {
@@ -30,10 +24,26 @@ namespace Robomongo
         //horizontalHeader()->setFixedHeight(25);   // commented because we shouldn't depend on heights in pixels - it may vary between platforms
         setStyleSheet("QTableView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; gridline-color: #edebea;}");
         //setShowGrid(false);
-        setSelectionMode(QAbstractItemView::SingleSelection);
-
+        setSelectionMode(QAbstractItemView::ExtendedSelection);
+        setSelectionBehavior(QAbstractItemView::SelectItems);
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
+    }
+
+    void BsonTableView::keyPressEvent(QKeyEvent *event)
+    {
+        if (event->key()==Qt::Key_Delete){
+            QModelIndexList indexses = selectionModel()->selectedRows();
+            bool isForce = event->modifiers() & Qt::ShiftModifier;
+            std::vector<BsonTreeItem*> items;
+            for (QModelIndexList::const_iterator it = indexses.begin(); it!= indexses.end(); ++it)
+            {
+                BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
+                items.push_back(item);                
+            }
+            _notifier.deleteDocuments(items,isForce);
+        }
+        return BaseClass::keyPressEvent(event);
     }
 
     QModelIndex BsonTableView::selectedIndex() const
@@ -52,7 +62,6 @@ namespace Robomongo
         QModelIndex selectedInd = selectedIndex();
         if (selectedInd.isValid()){
             BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-            documentItem = documentItem->childByKey(model()->headerData(selectedInd.column(),Qt::Horizontal,Qt::DisplayRole).toString());
 
             QMenu menu(this);
             _notifier.initMenu(&menu,documentItem);

@@ -8,8 +8,6 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
-#include "robomongo/gui/widgets/workarea/OutputItemWidget.h"
-#include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
@@ -29,14 +27,13 @@ namespace
 namespace Robomongo
 {
 
-    OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemWidget *result, OutputItemContentWidget *output, QWidget *parent) : QFrame(parent),
+    OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemContentWidget *output, QWidget *parent) : QFrame(parent),
         itemContent(output),
-        item(result),
         _maximized(false),
         _viewMode(AppRegistry::instance().settingsManager()->viewMode())
     {
         setContentsMargins(5,0,0,0);
-
+        
         // Maximaze button
         _maxButton = new QPushButton;
         _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
@@ -222,11 +219,13 @@ namespace Robomongo
     void OutputItemHeaderWidget::maximizePart()
     {
         if (_maximized) {
-            item->_output->restoreSize();
+            //item->_output->restoreSize();
+            emit restoredSize();
             _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
         }
         else {
-            item->_output->maximizePart(item);
+            //item->_output->maximizePart(item);
+            emit maximizedPart(itemContent);
             _maxButton->setIcon(GuiRegistry::instance().maximizeHighlightedIcon());
         }
 

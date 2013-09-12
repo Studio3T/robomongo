@@ -12,12 +12,12 @@
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/domain/MongoServer.h"
 
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/utils/DialogUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/core/domain/MongoServer.h"
 
 namespace Robomongo
 {
@@ -74,6 +74,44 @@ namespace Robomongo
         if (onItem && isEditable) menu->addAction(_deleteDocumentAction);
     }
 
+    void Notifier::deleteDocuments(std::vector<BsonTreeItem*> items, bool force)
+    {
+        bool isNeededRefresh = false;
+        for (std::vector<BsonTreeItem*>::const_iterator it = items.begin(); it != items.end(); ++it)
+        {
+            BsonTreeItem * documentItem = *it;
+            if(!documentItem)
+                break;
+
+            mongo::BSONObj obj = documentItem->root();
+            mongo::BSONElement id = obj.getField("_id");
+
+            if (id.eoo()) {
+                QMessageBox::warning(dynamic_cast<QWidget*>(_observer), "Cannot delete", "Selected document doesn't have _id field. \n"
+                    "Maybe this is a system document that should be managed in a special way?");
+                break;
+            }
+
+            mongo::BSONObjBuilder builder;
+            builder.append(id);
+            mongo::BSONObj bsonQuery = builder.obj();
+            mongo::Query query(bsonQuery);
+
+            if(!force){
+                // Ask user
+                int answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer),"Delete","Document","%1 %2 with id:<br><b>%3</b>?",QtUtils::toQString(id.toString(false)));
+
+                if (answer != QMessageBox::Yes)
+                    break ;
+            }
+            isNeededRefresh=true;
+            _shell->server()->removeDocuments(query, _queryInfo.databaseName, _queryInfo.collectionName);
+        }
+
+        if(isNeededRefresh)
+            _shell->query(0, _queryInfo);
+    }
+
     void Notifier::onDeleteDocument()
     {
         if (_queryInfo.isNull)
@@ -84,31 +122,9 @@ namespace Robomongo
             return;
 
         BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-        if(!documentItem)
-            return;
-
-        mongo::BSONObj obj = documentItem->root();
-        mongo::BSONElement id = obj.getField("_id");
-
-        if (id.eoo()) {
-            QMessageBox::warning(dynamic_cast<QWidget*>(_observer), "Cannot delete", "Selected document doesn't have _id field. \n"
-                "Maybe this is a system document that should be managed in a special way?");
-            return;
-        }
-
-        mongo::BSONObjBuilder builder;
-        builder.append(id);
-        mongo::BSONObj bsonQuery = builder.obj();
-        mongo::Query query(bsonQuery);
-
-        // Ask user
-        int answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer),"Delete","Document","%1 %2 with id:<br><b>%3</b>?",QtUtils::toQString(id.toString(false)));
-
-        if (answer != QMessageBox::Yes)
-            return ;
-
-        _shell->server()->removeDocuments(query, _queryInfo.databaseName, _queryInfo.collectionName);
-        _shell->query(0, _queryInfo);
+        std::vector<BsonTreeItem*> vec;
+        vec.push_back(documentItem);
+        return deleteDocuments(vec,false);
     }
 
     void Notifier::onEditDocument()
@@ -138,9 +154,8 @@ namespace Robomongo
         int result = editor.exec();
 
         if (result == QDialog::Accepted) {
-            mongo::BSONObj obj = editor.bsonObj();
             AppRegistry::instance().bus()->subscribe(this, InsertDocumentResponse::Type);
-            _shell->server()->saveDocument(obj, _queryInfo.databaseName, _queryInfo.collectionName);
+            _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo.databaseName, _queryInfo.collectionName);
         }
     }
 
@@ -184,8 +199,11 @@ namespace Robomongo
         int result = editor.exec();
 
         if (result == QDialog::Accepted) {
-            mongo::BSONObj obj = editor.bsonObj();
-            _shell->server()->insertDocument(obj, _queryInfo.databaseName, _queryInfo.collectionName);
+            DocumentTextEditor::returnType obj = editor.bsonObj();
+            for (DocumentTextEditor::returnType::const_iterator it = obj.begin(); it != obj.end(); ++it)
+            {
+                _shell->server()->insertDocument(*it, _queryInfo.databaseName, _queryInfo.collectionName);
+            }            
             _shell->query(0, _queryInfo);
         }
     }

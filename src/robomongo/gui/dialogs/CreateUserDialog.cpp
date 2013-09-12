@@ -6,6 +6,8 @@
 #include <QDialogButtonBox>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMessageBox>
+#include <QComboBox>
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/core/domain/MongoUtils.h"
@@ -14,7 +16,28 @@
 
 namespace Robomongo
 {
-    CreateUserDialog::CreateUserDialog(const QString &serverName,
+    const char * rolesText[CreateUserDialog::RolesCount] = {"read","readWrite","dbAdmin","userAdmin","clusterAdmin","readAnyDatabase","readWriteAnyDatabase","userAdminAnyDatabase","dbAdminAnyDatabase"}; 
+
+    bool containsWord(const std::string& sentence, const std::string& word)
+    {
+        size_t pos = 0;
+        while ((pos = sentence.substr(pos).find(word)) != std::string::npos) {
+            if(pos + word.size()<sentence.size()){
+                char c = sentence[pos + word.size()];
+                bool isLastAlpha = isalpha(c);
+                bool isFirstAlpha = false;
+                if(pos){
+                    isFirstAlpha = isalpha(sentence[pos - 1]);
+                }
+                if (!isFirstAlpha&&!isLastAlpha)
+                    return true;
+            }
+            pos++;
+        }
+        return false;
+    }
+
+    CreateUserDialog::CreateUserDialog(const QStringList &databases,const QString &serverName,
                                        const QString &database, const MongoUser &user,
                                        QWidget *parent) : QDialog(parent),
         _user(user)
@@ -36,8 +59,21 @@ namespace Robomongo
         _userPassLabel= new QLabel("Password:");
         _userPassEdit = new QLineEdit();
         _userPassEdit->setEchoMode(QLineEdit::Password);
-        _readOnlyCheckBox = new QCheckBox("Read Only");
-        _readOnlyCheckBox->setChecked(user.readOnly());
+        _userSourceLabel = new QLabel("UserSource:");
+        _userSourceComboBox = new QComboBox();
+        _userSourceComboBox->addItems(QStringList() << "" << databases); //setText(QtUtils::toQString(user.userSource()));
+        _userSourceComboBox->setCurrentText(QtUtils::toQString(user.userSource()));
+
+        QGridLayout *gridRoles = new QGridLayout();
+        std::string userRoles = user.role();
+        for (unsigned i=0; i<RolesCount; ++i)
+        {
+            int row = i%3;
+            int col = i/3;
+            _rolesArray[i] = new QCheckBox(rolesText[i],this);
+            _rolesArray[i]->setChecked(containsWord(userRoles,rolesText[i]));
+            gridRoles->addWidget(_rolesArray[i],row,col);
+        }
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
@@ -60,7 +96,9 @@ namespace Robomongo
         namelayout->addWidget(_userNameEdit,  0, 1);
         namelayout->addWidget(_userPassLabel, 1, 0);
         namelayout->addWidget(_userPassEdit,  1, 1);
-        namelayout->addWidget(_readOnlyCheckBox,  2, 1);
+        namelayout->addWidget(_userSourceLabel, 2, 0);
+        namelayout->addWidget(_userSourceComboBox,  2, 1);
+        namelayout->addLayout(gridRoles,  3, 1);
 
         QVBoxLayout *layout = new QVBoxLayout();
         layout->addLayout(vlayout);
@@ -81,15 +119,34 @@ namespace Robomongo
     {
         std::string username = QtUtils::toStdString<std::string>(_userNameEdit->text());
         std::string pass = QtUtils::toStdString<std::string>(_userPassEdit->text());
+        std::string userSource = QtUtils::toStdString<std::string>(_userSourceComboBox->currentText());
 
-        if (username.empty() || pass.empty())
+        if (username.empty())
             return;
-
-        std::string hash = MongoUtils::buildPasswordHash(username, pass);
-
-        _user.setName(username);
+        if(userSource.empty() && pass.empty())
+            return;
+        if(!userSource.empty() && !pass.empty()){
+           QMessageBox::warning(this, "Invalid input", "The userSource field and the pwd field are mutually exclusive. The document cannot contain both.\n");
+           return;
+        }
+        std::string hash;
+        if(!pass.empty()){
+            hash = MongoUtils::buildPasswordHash(username, pass);
+        }
         _user.setPasswordHash(hash);
-        _user.setReadOnly(_readOnlyCheckBox->isChecked());
+        _user.setName(username);        
+        _user.setUserSource(userSource);
+
+        std::string roles;
+        for (unsigned i = 0; i < RolesCount; ++i)
+        {
+            if (_rolesArray[i]->isChecked())
+            {
+                roles.append(rolesText[i]);
+                roles += ",";
+            }
+        }
+        _user.setRole(roles);
 
         QDialog::accept();
     }

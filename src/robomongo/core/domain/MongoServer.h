@@ -1,7 +1,6 @@
 #pragma once
 #include <QObject>
 #include <QList>
-#include <QHash>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/events/MongoEvents.h"
@@ -30,6 +29,7 @@ namespace Robomongo
          * @param visible
          * @param defaultDatabase
          */
+        typedef QList<MongoDatabase *> databasesContainerType;
         MongoServer(ConnectionSettings *connectionRecord, bool visible);
         ~MongoServer();
 
@@ -41,8 +41,11 @@ namespace Robomongo
 
         void createDatabase(const std::string &dbName);
         void dropDatabase(const std::string &dbName);
+        QStringList getDatabasesNames() const;
 
+        void insertDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection);
         void insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
+        void saveDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection);
         void saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
         void removeDocuments(mongo::Query query, const std::string &db, const std::string &collection, bool justOne = true);
 
@@ -86,7 +89,7 @@ namespace Robomongo
         std::string _lastErrorMessage;
         bool _visible;
 
-        QList<MongoDatabase *> _databases;
+        databasesContainerType _databases;
 
         EventBus *_bus;
     };

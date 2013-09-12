@@ -6,6 +6,7 @@ class QTextEdit;
 class QLabel;
 class QCheckBox;
 class QLineEdit;
+class QComboBox;
 QT_END_NAMESPACE
 
 #include "robomongo/core/domain/MongoUser.h"
@@ -17,15 +18,16 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        CreateUserDialog(const QString &serverName,
+        CreateUserDialog(const QStringList &databases, const QString &serverName,
                          const QString &database = QString(),
                          const MongoUser &user = MongoUser(),
                          QWidget *parent = 0);
 
         MongoUser user() const { return _user; }
         void setUserPasswordLabelText(const QString &text);
+        enum { RolesCount = 9};
 
-    public slots:
+    public Q_SLOTS:
         virtual void accept();
 
     private:
@@ -35,7 +37,10 @@ namespace Robomongo
         QLineEdit *_userNameEdit;
         QLabel *_userPassLabel;
         QLineEdit *_userPassEdit;
-        QCheckBox *_readOnlyCheckBox;
+        QLabel *_userSourceLabel;
+        QComboBox *_userSourceComboBox;
+
+        QCheckBox *_rolesArray[RolesCount];
     };
 }
 

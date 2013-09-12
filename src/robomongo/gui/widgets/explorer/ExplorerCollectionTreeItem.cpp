@@ -342,8 +342,7 @@ namespace Robomongo
         treeWidget()->activateWindow();
 
         if (result == QDialog::Accepted) {
-            mongo::BSONObj obj = editor.bsonObj();
-            server->insertDocument(obj, database->name(), _collection->name());
+            server->insertDocuments(editor.bsonObj(), database->name(), _collection->name());
         }
     }
 

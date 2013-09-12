@@ -12,7 +12,7 @@ namespace Robomongo
 
     public:
         typedef QAbstractItemModel BaseClass;
-
+        static const QIcon &getIcon(BsonTreeItem *item);
         explicit BsonTreeModel(const std::vector<MongoDocumentPtr> &documents,QObject *parent = 0);
         QVariant data(const QModelIndex &index, int role) const;
         bool setData(const QModelIndex &index, const QVariant &value, int role);
@@ -28,7 +28,6 @@ namespace Robomongo
         void insertItem(BsonTreeItem *parent, BsonTreeItem *children);
         void removeitem(BsonTreeItem *children);
     protected:
-        static const QIcon &getIcon(BsonTreeItem *item);
         BsonTreeItem *const _root;
     };
 }

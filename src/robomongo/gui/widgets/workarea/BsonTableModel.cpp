@@ -1,15 +1,11 @@
 #include "robomongo/gui/widgets/workarea/BsonTableModel.h"
 
-#include <mongo/client/dbclient.h>
-#include <mongo/bson/bsonobjiterator.h>
-#include "robomongo/core/settings/SettingsManager.h"
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/utils/BsonUtils.h"
-#include "robomongo/core/domain/MongoDocument.h"
+#include <QBrush>
+#include <QIcon>
+
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/gui/GuiRegistry.h"
 
 namespace Robomongo
 {
@@ -27,7 +23,7 @@ namespace Robomongo
 
     QModelIndex BsonTableModelProxy::parent( const QModelIndex& index ) const
     {
-        return QModelIndex();
+        return mapFromSource(sourceModel()->parent( mapToSource(index) ));
     }
 
     int BsonTableModelProxy::columnCount(const QModelIndex &parent) const

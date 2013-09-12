@@ -10,12 +10,8 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/events/MongoEvents.h"
-#include "robomongo/core/settings/SettingsManager.h"
-#include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
-
-using namespace mongo;
 
 namespace Robomongo
 {
@@ -92,7 +88,7 @@ namespace Robomongo
         if(index.isValid()){
             BaseClass::expand(index);
             BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(index);
-            for(int i = 0;i<item->childrenCount();++i){
+            for(unsigned i = 0;i<item->childrenCount();++i){
                 BsonTreeItem *tritem = item->child(i);
                 if(tritem&&tritem->childrenCount()){
                     expandNode(model()->index(i,0,index));

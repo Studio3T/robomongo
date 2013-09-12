@@ -3,18 +3,11 @@
 #include <QHeaderView>
 #include <QAction>
 #include <QMenu>
-#include <QMessageBox>
-#include <QApplication>
-#include <QClipboard>
 #include <QKeyEvent>
 
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/core/settings/SettingsManager.h"
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
 
 namespace Robomongo
 {

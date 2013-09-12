@@ -1,7 +1,6 @@
 #pragma once
 #include <QObject>
 #include <QList>
-#include <QHash>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/events/MongoEvents.h"

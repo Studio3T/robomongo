@@ -12,12 +12,12 @@
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/domain/MongoServer.h"
 
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/utils/DialogUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/core/domain/MongoServer.h"
 
 namespace Robomongo
 {

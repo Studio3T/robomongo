@@ -2,7 +2,6 @@
 
 #include <QTreeView>
 
-#include "robomongo/core/Core.h"
 #include "robomongo/core/domain/Notifier.h"
 
 namespace Robomongo

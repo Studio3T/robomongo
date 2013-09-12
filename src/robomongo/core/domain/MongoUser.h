@@ -1,13 +1,14 @@
 #pragma once
 #include <QString>
 #include <mongo/bson/bsonobj.h>
+#include <mongo/bson/bsonelement.h>
 
 namespace Robomongo
 {
     class MongoUser
     {
     public:
-
+        typedef std::string roleType;
         /**
          * @brief Creates user from "system.users" document
          */
@@ -16,23 +17,26 @@ namespace Robomongo
         /**
          * @brief Creates new user with empty attributes
          */
-        MongoUser() : _readOnly(false) {}
+        MongoUser();
 
         mongo::OID id() const { return _id; }
         std::string name() const { return _name; }
-        bool readOnly() const { return _readOnly; }
+        roleType role() const { return _role; }
         std::string passwordHash() const { return _passwordHash; }
 
         void setName(const std::string &name) { _name = name; }
-        void setReadOnly(bool readonly) { _readOnly = readonly; }
+        void setRole(const roleType &role) { _role = role; }
         void setPasswordHash(const std::string &hash) { _passwordHash = hash; }
 
+        std::string userSource() const {return _userSource;}
+        void setUserSource(const std::string &source) {_userSource = source;}
         mongo::BSONObj toBson() const;
 
     private:
         mongo::OID _id;
         std::string _name;
-        bool _readOnly;
+        roleType _role;
         std::string _passwordHash;
+        std::string _userSource;
     };
 }

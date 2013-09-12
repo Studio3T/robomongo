@@ -64,7 +64,7 @@ namespace Robomongo
 
     BsonTreeItem* BsonTreeItem::childByKey(const QString &val)
     {
-        for (int i=0;i<_items.size();++i)
+        for (unsigned i=0;i<_items.size();++i)
         {
             if (_items[i]->key()==val)
             {
@@ -81,7 +81,7 @@ namespace Robomongo
 
     int BsonTreeItem::indexOf(BsonTreeItem *item) const
     {
-        for (int i=0;i<_items.size();++i)
+        for (unsigned i=0;i<_items.size();++i)
         {
             if (item == _items[i])
             {

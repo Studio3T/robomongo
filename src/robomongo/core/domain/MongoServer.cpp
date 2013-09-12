@@ -9,7 +9,7 @@
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
-
+#include "robomongo/core/utils/QtUtils.h"
 
 using namespace std;
 namespace Robomongo
@@ -61,6 +61,17 @@ namespace Robomongo
         qDebug() << "EstablishConnectionRequest sent";
     }
 
+    QStringList MongoServer::getDatabasesNames() const
+    {
+        QStringList result;
+        for (databasesContainerType::const_iterator it = _databases.begin(); it!=_databases.end(); ++it)
+        {
+            MongoDatabase *datab = *it;
+            result.append(QtUtils::toQString(datab->name()));
+        }
+        return result;
+    }
+
     void MongoServer::createDatabase(const std::string &dbName)
     {
         _client->send(new CreateDatabaseRequest(this, dbName));
@@ -71,9 +82,25 @@ namespace Robomongo
         _client->send(new DropDatabaseRequest(this, dbName));
     }
 
+    void MongoServer::insertDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection)
+    {
+        for (std::vector<mongo::BSONObj>::const_iterator it = objCont.begin(); it != objCont.end() ; it++)
+        {
+            insertDocument(*it,db,collection);
+        }
+    }
+
     void MongoServer::insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)
     {
         _client->send(new InsertDocumentRequest(this, obj, db, collection));
+    }
+
+    void MongoServer::saveDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection)
+    {
+        for (std::vector<mongo::BSONObj>::const_iterator it = objCont.begin(); it != objCont.end() ; it++)
+        {
+            saveDocument(*it,db,collection);
+        }
     }
 
     void MongoServer::saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)

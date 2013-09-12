@@ -3,18 +3,15 @@
 #include <QHeaderView>
 #include <QAction>
 #include <QMenu>
+#include <QKeyEvent>
 
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/events/MongoEvents.h"
-#include "robomongo/core/settings/SettingsManager.h"
-#include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
-
-using namespace mongo;
 
 namespace Robomongo
 {
@@ -25,7 +22,8 @@ namespace Robomongo
         setAttribute(Qt::WA_MacShowFocusRect, false);
 #endif
         GuiRegistry::instance().setAlternatingColor(this);
-       
+        setSelectionMode(QAbstractItemView::ExtendedSelection);
+        setSelectionBehavior(QAbstractItemView::SelectRows);
         setIndentation(15);
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
@@ -69,12 +67,28 @@ namespace Robomongo
         header()->resizeSections(QHeaderView::Stretch);
     }
 
+    void BsonTreeView::keyPressEvent(QKeyEvent *event)
+    {
+        if (event->key()==Qt::Key_Delete){
+            QModelIndexList indexses = selectionModel()->selectedRows();
+            std::vector<BsonTreeItem*> items;
+            bool isForce = event->modifiers() & Qt::ShiftModifier;
+            for (QModelIndexList::const_iterator it = indexses.begin(); it!= indexses.end(); ++it)
+            {
+                BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
+                items.push_back(item);
+            }
+            _notifier.deleteDocuments(items,isForce);
+        }
+        return BaseClass::keyPressEvent(event);
+    }
+
     void BsonTreeView::expandNode(const QModelIndex &index)
     {
         if(index.isValid()){
             BaseClass::expand(index);
             BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(index);
-            for(int i = 0;i<item->childrenCount();++i){
+            for(unsigned i = 0;i<item->childrenCount();++i){
                 BsonTreeItem *tritem = item->child(i);
                 if(tritem&&tritem->childrenCount()){
                     expandNode(model()->index(i,0,index));

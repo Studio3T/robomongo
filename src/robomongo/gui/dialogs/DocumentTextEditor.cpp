@@ -94,8 +94,17 @@ namespace Robomongo
     bool DocumentTextEditor::validate(bool silentOnSuccess /* = true */)
     {
         QString text = jsonText();
-        try {
-            _obj = mongo::Robomongo::fromjson(QtUtils::toStdString<std::string>(text));
+        int len =0;
+        try {  
+            std::string textString = QtUtils::toStdString<std::string>(text);
+            const char *json = textString.c_str();
+            int jsonLen = textString.length();
+            int offset = 0;
+            while(offset!=jsonLen)
+            { 
+                _obj.push_back(mongo::Robomongo::fromjson(json+offset,&len));
+                offset+=len;
+            }
         } catch (const mongo::ParseMsgAssertionException &ex) {
             QString message = QtUtils::toQString(ex.reason());
             int offset = ex.offset();
@@ -141,7 +150,7 @@ namespace Robomongo
     void DocumentTextEditor::_configureQueryText()
     {
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
-        QFont font = chooseTextFont();
+        QFont font = GuiRegistry::instance().font();
         javaScriptLexer->setFont(font);
         _queryText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
         _queryText->sciScintilla()->setFont(font);
@@ -152,22 +161,5 @@ namespace Robomongo
         _queryText->sciScintilla()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
         _queryText->sciScintilla()->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
-    }
-
-    QFont DocumentTextEditor::chooseTextFont() const
-    {
-        QFont textFont = font();
-    #if defined(Q_OS_MAC)
-        textFont.setPointSize(12);
-        textFont.setFamily("Monaco");
-    #elif defined(Q_OS_UNIX)
-        textFont.setFamily("Monospace");
-        textFont.setFixedPitch(true);
-    #elif defined(Q_OS_WIN)
-        textFont.setPointSize(font().pointSize() + 2);
-        textFont.setFamily("Courier");
-    #endif
-
-        return textFont;
     }
 }

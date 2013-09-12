@@ -78,14 +78,17 @@ namespace Robomongo
         if (currentWidget)
             currentWidget->enterCustomMode();
     }
+
     int WorkAreaWidget::countTab()const
     {
         return _tabWidget->count();
     }
+
     QueryWidget *const WorkAreaWidget::currentWidget() const
     {
         return _tabWidget->currentQueryWidget();
     }
+
     void WorkAreaWidget::handle(OpeningShellEvent *event)
     {
         const QString &title = event->shell->title();
@@ -93,7 +96,7 @@ namespace Robomongo
         QString shellName = title.isEmpty() ? " Loading..." : title;
 
         setUpdatesEnabled(false);
-        QueryWidget *queryWidget = new QueryWidget(event->shell,_tabWidget);
+        QueryWidget *queryWidget = new QueryWidget(event->shell,_tabWidget,this);
 
         _tabWidget->addTab(queryWidget, shellName);
         _tabWidget->setCurrentIndex(_tabWidget->count() - 1);

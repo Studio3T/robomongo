@@ -27,6 +27,12 @@ namespace Robomongo
                 enum { mongo_type = mongo::String };
             };
             template<>
+            struct bson_convert_traits<mongo::Array>
+            {
+                typedef std::vector<mongo::BSONElement> type;
+                enum { mongo_type = mongo::Array };
+            };
+            template<>
             struct bson_convert_traits<mongo::NumberInt>
             {
                 typedef int type;
@@ -81,6 +87,9 @@ namespace Robomongo
 
         void buildJsonString(const mongo::BSONObj &obj,std::string &con, UUIDEncoding uuid,SupportedTimes tz);
         void buildJsonString(const mongo::BSONElement &elem,std::string &con, UUIDEncoding uuid,SupportedTimes tz);
+
+        std::string bsonArrayToString(const std::vector<mongo::BSONElement> &ar);
+        std::vector<mongo::BSONElement> stringToBsonArray(const std::string &str);
     }
 }
 

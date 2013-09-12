@@ -26,7 +26,7 @@ namespace Robomongo
         setAttribute(Qt::WA_MacShowFocusRect, false);
 #endif
         GuiRegistry::instance().setAlternatingColor(this);
-        setSelectionMode(QAbstractItemView::SingleSelection);
+        setSelectionMode(QAbstractItemView::ExtendedSelection);
         setSelectionBehavior(QAbstractItemView::SelectRows);
         setIndentation(15);
         setContextMenuPolicy(Qt::CustomContextMenu);
@@ -75,12 +75,14 @@ namespace Robomongo
     {
         if (event->key()==Qt::Key_Delete){
             QModelIndexList indexses = selectionModel()->selectedRows();
+            std::vector<BsonTreeItem*> items;
+            bool isForce = event->modifiers() & Qt::ShiftModifier;
             for (QModelIndexList::const_iterator it = indexses.begin(); it!= indexses.end(); ++it)
             {
                 BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
-                bool isForce = event->modifiers() & Qt::ShiftModifier;
-                _notifier.deleteDocument(item,isForce);
+                items.push_back(item);
             }
+            _notifier.deleteDocuments(items,isForce);
         }
         return BaseClass::keyPressEvent(event);
     }

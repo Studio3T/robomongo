@@ -27,6 +27,7 @@
 #include "robomongo/gui/editors/JSLexer.h"
 
 using namespace mongo;
+
 namespace Robomongo
 {
     QueryWidget::QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget, QWidget *parent) :

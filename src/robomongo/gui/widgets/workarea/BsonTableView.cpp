@@ -31,7 +31,8 @@ namespace Robomongo
         //horizontalHeader()->setFixedHeight(25);   // commented because we shouldn't depend on heights in pixels - it may vary between platforms
         setStyleSheet("QTableView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; gridline-color: #edebea;}");
         //setShowGrid(false);
-        setSelectionMode(QAbstractItemView::SingleSelection);
+        setSelectionMode(QAbstractItemView::ExtendedSelection);
+        setSelectionBehavior(QAbstractItemView::SelectItems);
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
     }
@@ -39,13 +40,15 @@ namespace Robomongo
     void BsonTableView::keyPressEvent(QKeyEvent *event)
     {
         if (event->key()==Qt::Key_Delete){
-            QModelIndexList indexses = selectionModel()->selectedIndexes();
+            QModelIndexList indexses = selectionModel()->selectedRows();
+            bool isForce = event->modifiers() & Qt::ShiftModifier;
+            std::vector<BsonTreeItem*> items;
             for (QModelIndexList::const_iterator it = indexses.begin(); it!= indexses.end(); ++it)
             {
                 BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
-                bool isForce = event->modifiers() & Qt::ShiftModifier;
-                _notifier.deleteDocument(item,isForce);
+                items.push_back(item);                
             }
+            _notifier.deleteDocuments(items,isForce);
         }
         return BaseClass::keyPressEvent(event);
     }

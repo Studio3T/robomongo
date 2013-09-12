@@ -74,35 +74,42 @@ namespace Robomongo
         if (onItem && isEditable) menu->addAction(_deleteDocumentAction);
     }
 
-    void Notifier::deleteDocument(BsonTreeItem *const documentItem, bool force)
-    {        
-        if(!documentItem)
-            return;
+    void Notifier::deleteDocuments(std::vector<BsonTreeItem*> items, bool force)
+    {
+        bool isNeededRefresh = false;
+        for (std::vector<BsonTreeItem*>::const_iterator it = items.begin(); it != items.end(); ++it)
+        {
+            BsonTreeItem * documentItem = *it;
+            if(!documentItem)
+                break;
 
-        mongo::BSONObj obj = documentItem->root();
-        mongo::BSONElement id = obj.getField("_id");
+            mongo::BSONObj obj = documentItem->root();
+            mongo::BSONElement id = obj.getField("_id");
 
-        if (id.eoo()) {
-            QMessageBox::warning(dynamic_cast<QWidget*>(_observer), "Cannot delete", "Selected document doesn't have _id field. \n"
-                "Maybe this is a system document that should be managed in a special way?");
-            return;
+            if (id.eoo()) {
+                QMessageBox::warning(dynamic_cast<QWidget*>(_observer), "Cannot delete", "Selected document doesn't have _id field. \n"
+                    "Maybe this is a system document that should be managed in a special way?");
+                break;
+            }
+
+            mongo::BSONObjBuilder builder;
+            builder.append(id);
+            mongo::BSONObj bsonQuery = builder.obj();
+            mongo::Query query(bsonQuery);
+
+            if(!force){
+                // Ask user
+                int answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer),"Delete","Document","%1 %2 with id:<br><b>%3</b>?",QtUtils::toQString(id.toString(false)));
+
+                if (answer != QMessageBox::Yes)
+                    break ;
+            }
+            isNeededRefresh=true;
+            _shell->server()->removeDocuments(query, _queryInfo.databaseName, _queryInfo.collectionName);
         }
 
-        mongo::BSONObjBuilder builder;
-        builder.append(id);
-        mongo::BSONObj bsonQuery = builder.obj();
-        mongo::Query query(bsonQuery);
-
-        if(!force){
-        // Ask user
-        int answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer),"Delete","Document","%1 %2 with id:<br><b>%3</b>?",QtUtils::toQString(id.toString(false)));
-
-        if (answer != QMessageBox::Yes)
-            return ;
-        }
-
-        _shell->server()->removeDocuments(query, _queryInfo.databaseName, _queryInfo.collectionName);
-        _shell->query(0, _queryInfo);
+        if(isNeededRefresh)
+            _shell->query(0, _queryInfo);
     }
 
     void Notifier::onDeleteDocument()
@@ -115,7 +122,9 @@ namespace Robomongo
             return;
 
         BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-        return deleteDocument(documentItem,false);
+        std::vector<BsonTreeItem*> vec;
+        vec.push_back(documentItem);
+        return deleteDocuments(vec,false);
     }
 
     void Notifier::onEditDocument()

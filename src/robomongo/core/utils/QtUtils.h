@@ -5,6 +5,7 @@
 QT_BEGIN_NAMESPACE
 class QThread;
 class QTreeWidgetItem;
+class QAbstractItemModel;
 QT_END_NAMESPACE
 
 #ifdef QT_NO_DEBUG
@@ -35,5 +36,12 @@ namespace Robomongo
         {
             return static_cast<Type>(index.internalPointer());
         }
+
+        struct HackQModelIndex
+        {
+            int r, c;
+            quintptr i;
+            const QAbstractItemModel *m;
+        };
     }
 }

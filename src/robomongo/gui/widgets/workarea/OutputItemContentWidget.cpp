@@ -251,8 +251,10 @@ namespace Robomongo
 
         if (!_isTableModeInitialized) {
             _bsonTable = new BsonTableView(_shell,_queryInfo);
-            BsonTableModel *mod = new BsonTableModel(_documents,_bsonTable);
-            _bsonTable->setModel(mod);
+            BsonTreeModel *mod = new BsonTreeModel(_documents,_bsonTreeview);
+            BsonTableModelProxy *modp = new BsonTableModelProxy(_bsonTable);
+            modp->setSourceModel(mod);
+            _bsonTable->setModel(modp);
             _stack->addWidget(_bsonTable);
             _isTableModeInitialized = true;
         }

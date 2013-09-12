@@ -7,40 +7,89 @@
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 
 namespace Robomongo
 {
-    BsonTableModel::BsonTableModel(const std::vector<MongoDocumentPtr> &documents, QObject *parent) 
-        : BaseClass(documents,parent)
+    BsonTableModelProxy::BsonTableModelProxy(QObject *parent) 
+        : BaseClass(parent)
     {
-        int count = _root->childrenCount();
-        for (int i=0;i<count;++i)
-        {
-            BsonTreeItem *child = _root->child(i);
-            int countc = child->childrenCount();
-            for (int j=0;j<countc;++j)
-            {
-                addColumn(child->child(j)->key());
-            }
-        }
+       
     }
 
-    QVariant BsonTableModel::data(const QModelIndex &index, int role) const
+    int BsonTableModelProxy::rowCount(const QModelIndex &parent) const
+    {
+        int count = sourceModel()->rowCount(parent);
+        return 	count;
+    }
+
+    QModelIndex BsonTableModelProxy::parent( const QModelIndex& index ) const
+    {
+        return QModelIndex();
+    }
+
+    int BsonTableModelProxy::columnCount(const QModelIndex &parent) const
+    {
+        return _columns.size();
+    }
+
+    QModelIndex BsonTableModelProxy::mapFromSource( const QModelIndex & sourceIndex ) const
+    {
+        return index(sourceIndex.row(),sourceIndex.column(),sourceIndex.parent());
+    }
+
+    QModelIndex BsonTableModelProxy::mapToSource( const QModelIndex &proxyIndex ) const
+    {
+        if ( !proxyIndex.isValid() )
+            return QModelIndex();
+
+        Q_ASSERT( proxyIndex.model() == this );
+
+        QModelIndex sourceIndex;
+       
+        BsonTreeItem *child = static_cast<BsonTreeItem *>(proxyIndex.internalPointer());
+        if(child){
+            QtUtils::HackQModelIndex* hack = reinterpret_cast<QtUtils::HackQModelIndex*>(&sourceIndex);
+            BsonTreeItem *parent = static_cast<BsonTreeItem *>(child->parent());
+            hack->r = proxyIndex.row();
+            hack->c = 0;
+            hack->i = parent;
+            hack->m = sourceModel();
+        }
+        return sourceIndex;
+    }
+
+    void BsonTableModelProxy::setSourceModel( QAbstractItemModel* model )
+    {
+        BsonTreeItem *child = QtUtils::item<BsonTreeItem *>(model->index(0,0));
+        if(child){
+            _root = qobject_cast<BsonTreeItem *>(child->parent());
+            if(_root){
+                int count = _root->childrenCount();
+                for (int i=0;i<count;++i)
+                {
+                    BsonTreeItem *child = _root->child(i);
+                    int countc = child->childrenCount();
+                    for (int j=0;j<countc;++j)
+                    {
+                        addColumn(child->child(j)->key());
+                    }
+                }
+            }
+        }
+        return BaseClass::setSourceModel(model);
+    }
+
+    QVariant BsonTableModelProxy::data(const QModelIndex &index, int role) const
     {
         QVariant result;
 
         if (!index.isValid())
             return result;
 
-        BsonTreeItem *node = dynamic_cast<BsonTreeItem *>(_root->child(index.row()));
-        if (!node)
-            return result;
-
-        int col = index.column();
-
-        BsonTreeItem *child = node->childByKey(_columns[col]);
+        BsonTreeItem *child = QtUtils::item<BsonTreeItem *>(index);
 
         if (!child) {
             if (role == Qt::BackgroundRole) {
@@ -53,31 +102,13 @@ namespace Robomongo
             result = child->value();
         }
         else if (role == Qt::DecorationRole) {
-            return getIcon(child);
+            return BsonTreeModel::getIcon(child);
         }
 
         return result;
     }
 
-    bool BsonTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
-    {
-        if (index.isValid() && role == Qt::EditRole) {
-            return true;
-        }
-        return false;
-    }
-
-    int BsonTableModel::rowCount(const QModelIndex &parent) const
-    {
-        return _root->childrenCount();
-    }
-
-    int BsonTableModel::columnCount(const QModelIndex &parent) const
-    {
-        return _columns.size();
-    }
-
-    QVariant BsonTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+    QVariant BsonTableModelProxy::headerData(int section, Qt::Orientation orientation, int role) const
     {
         if(role != Qt::DisplayRole)
             return QVariant();
@@ -89,12 +120,23 @@ namespace Robomongo
         }
     }
 
-    QString BsonTableModel::column(int col) const
+    QModelIndex BsonTableModelProxy::index( int row, int col, const QModelIndex& parent ) const
+    {
+        BsonTreeItem *node = QtUtils::item<BsonTreeItem *>(sourceModel()->index(row,0,parent));
+        if (!node)
+            return QModelIndex();
+
+        BsonTreeItem *child = node->childByKey(_columns[col]);
+
+        return createIndex( row, col, child );
+    }
+
+    QString BsonTableModelProxy::column(int col) const
     {
         return _columns[col];
     }
 
-    size_t BsonTableModel::findIndexColumn(const QString &col)
+    size_t BsonTableModelProxy::findIndexColumn(const QString &col) const
     {
         for (int i = 0; i < _columns.size(); ++i) {
             if (_columns[i] == col) {
@@ -104,7 +146,7 @@ namespace Robomongo
         return _columns.size();
     }
 
-    size_t BsonTableModel::addColumn(const QString &col)
+    size_t BsonTableModelProxy::addColumn(const QString &col)
     {
         size_t column = findIndexColumn(col);
         if (column == _columns.size()) {

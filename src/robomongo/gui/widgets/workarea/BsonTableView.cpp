@@ -61,16 +61,7 @@ namespace Robomongo
         if (indexses.count() != 1)
             return QModelIndex();
 
-        QModelIndex index = indexses[0];
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(index);
-        if (!documentItem)
-            return QModelIndex();
-
-        documentItem = documentItem->childByKey(model()->headerData(index.column(),Qt::Horizontal,Qt::DisplayRole).toString());
-        QModelIndex m;
-        QtUtils::HackQModelIndex *h = reinterpret_cast<QtUtils::HackQModelIndex*>(&index);
-        h->i = reinterpret_cast<quintptr>(documentItem);
-        return index;
+        return indexses[0];
     }
 
     void BsonTableView::showContextMenu( const QPoint &point )

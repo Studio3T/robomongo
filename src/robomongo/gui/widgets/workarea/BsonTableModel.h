@@ -1,34 +1,38 @@
 #pragma once
 
-#include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
+#include <QAbstractProxyModel>
 #include "robomongo/core/Core.h"
 
 namespace Robomongo
 {
-    class BsonTableItem;
+    class BsonTreeItem;
 
-    class BsonTableModel : public BsonTreeModel
+    class BsonTableModelProxy : public QAbstractProxyModel
     {
         Q_OBJECT
 
     public:
-        typedef BsonTreeModel BaseClass;
+        typedef QAbstractProxyModel BaseClass;
         typedef std::vector<QString> columnsValuesType;
 
-        explicit BsonTableModel(const std::vector<MongoDocumentPtr> &documents,QObject *parent = 0);
+        explicit BsonTableModelProxy(QObject *parent = 0);
         QVariant data(const QModelIndex &index, int role) const;
-        bool setData(const QModelIndex &index, const QVariant &value, int role);
 
         int rowCount(const QModelIndex &parent=QModelIndex()) const;
         int columnCount(const QModelIndex &parent) const;
 
         QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
-
+        QModelIndex index( int row, int col, const QModelIndex& index ) const;
+        virtual QModelIndex mapFromSource( const QModelIndex & sourceIndex ) const;
+        virtual QModelIndex mapToSource( const QModelIndex &proxyIndex ) const;
+        virtual void setSourceModel( QAbstractItemModel* model );
+        virtual QModelIndex parent( const QModelIndex& index ) const;
     private:
         QString column(int col) const;
         size_t addColumn(const QString &col);
-        size_t findIndexColumn(const QString &col);
+        size_t findIndexColumn(const QString &col) const;
 
         columnsValuesType _columns;
+        BsonTreeItem *_root;
     };
 }

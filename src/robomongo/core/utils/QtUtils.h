@@ -40,7 +40,7 @@ namespace Robomongo
         struct HackQModelIndex
         {
             int r, c;
-            quintptr i;
+            void* i;
             const QAbstractItemModel *m;
         };
     }

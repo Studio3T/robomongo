@@ -84,7 +84,7 @@ namespace Robomongo
         EventBus *_bus;
 
         ConnectionMenu *_connectionsMenu;
-        QMenu *_optionsMenu;
+        QMenu *_viewMenu;
         QAction *_connectAction;
         QAction *_openAction;
         QAction *_saveAction;

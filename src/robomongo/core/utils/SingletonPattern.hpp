@@ -11,14 +11,14 @@ namespace Patterns
     protected:
       virtual ~Singleton()
       {
-          _self=nullptr;
+          _self=NULL;
       }
       Singleton()
       {
       }
     };
     template <class T>
-    T*  Singleton<T>::_self = nullptr;
+    T*  Singleton<T>::_self = NULL;
     template <class T>
     T*  Singleton<T>::instance()
     {

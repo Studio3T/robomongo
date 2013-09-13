@@ -6,6 +6,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/utils/Logger.h"
 
 namespace Robomongo
 {
@@ -33,6 +34,7 @@ namespace Robomongo
         if (visible)
             _bus->publish(new ConnectingEvent(this, server));
 
+        LOG_MSG(QString("Connecting to %1...").arg(QtUtils::toQString(server->connectionRecord()->getFullAddress())));
         server->tryConnect();
         return server;
     }
@@ -86,6 +88,7 @@ namespace Robomongo
         MongoShell *shell = new MongoShell(server,scriptInfo);
         _shells.append(shell);
         _bus->publish(new OpeningShellEvent(this, shell));
+        LOG_MSG("Openning shell...");
         shell->execute();
         return shell;
     }

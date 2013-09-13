@@ -3,13 +3,11 @@
 #include <QAction>
 #include <QClipboard>
 #include <QApplication>
-#include <QWidget>
 #include <QMenu>
 
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/MongoServer.h"
@@ -48,11 +46,6 @@ namespace Robomongo
 
         _copyValueAction = new QAction("Copy Value", wid);
         VERIFY(connect(_copyValueAction, SIGNAL(triggered()), SLOT(onCopyDocument())));
-    }
-
-    void Notifier::query()
-    {
-        _shell->query(0, _queryInfo);
     }
 
     void Notifier::initMenu(QMenu *const menu, BsonTreeItem *const item)
@@ -154,7 +147,6 @@ namespace Robomongo
         int result = editor.exec();
 
         if (result == QDialog::Accepted) {
-            AppRegistry::instance().bus()->subscribe(this, InsertDocumentResponse::Type);
             _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo.databaseName, _queryInfo.collectionName);
         }
     }

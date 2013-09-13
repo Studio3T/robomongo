@@ -31,7 +31,6 @@ namespace Robomongo
     public:
         typedef QObject BaseClass;
         Notifier(INotifierObserver *const observer, MongoShell *shell, const MongoQueryInfo &queryInfo,QObject *parent = NULL);
-        void query();
         void initMenu(QMenu *const menu, BsonTreeItem *const item);
 
         void deleteDocuments(std::vector<BsonTreeItem*> items, bool force);

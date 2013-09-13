@@ -11,8 +11,6 @@
 #include "robomongo/core/EventWrapper.h"
 #include "robomongo/core/utils/QtUtils.h"
 
-class SomethingHappened;
-
 namespace
 {
     struct removeIfReciver : public std::unary_function<const Robomongo::EventBus::subscribersType&, bool> 

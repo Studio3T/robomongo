@@ -9,9 +9,7 @@
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/core/events/MongoEvents.h"
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
+
 
 namespace Robomongo
 {
@@ -100,12 +98,6 @@ namespace Robomongo
     void BsonTreeView::onExpandRecursive()
     {
         expandNode(selectedIndex());
-    }
-
-    void BsonTreeView::handle(InsertDocumentResponse *event)
-    {
-        AppRegistry::instance().bus()->unsubscibe(this);
-        _notifier.query();
     }
 
     /**

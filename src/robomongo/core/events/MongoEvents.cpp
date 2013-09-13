@@ -23,7 +23,6 @@ namespace Robomongo
     R_REGISTER_EVENT(LoadUsersResponse)
     R_REGISTER_EVENT(LoadFunctionsRequest)
     R_REGISTER_EVENT(LoadFunctionsResponse)
-    R_REGISTER_EVENT(SomethingHappened)
     R_REGISTER_EVENT(ConnectingEvent)
     R_REGISTER_EVENT(ConnectionFailedEvent)
     R_REGISTER_EVENT(ConnectionEstablishedEvent)

@@ -149,7 +149,8 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/domain/App.h
     robomongo/core/domain/MongoShell.h
     robomongo/core/EventBusDispatcher.h 
-    robomongo/core/domain/Notifier.h 
+    robomongo/core/domain/Notifier.h
+    robomongo/core/utils/Logger.h
     )
 SET(HEADERS_CORE
     robomongo/core/engine/ScriptEngine.h
@@ -165,7 +166,6 @@ SET(HEADERS_CORE
     robomongo/core/events/MongoEventsInfo.h
     robomongo/core/AppRegistry.h
     robomongo/core/Core.h
-    robomongo/core/examples/ImplicitlyShared.h
     robomongo/core/settings/CredentialSettings.h
     robomongo/core/domain/MongoQueryInfo.h
     robomongo/core/domain/MongoCollection.h
@@ -181,13 +181,13 @@ SET(HEADERS_CORE
     robomongo/core/HexUtils.h
     robomongo/core/utils/BsonUtils.h
     robomongo/core/utils/QtUtils.h
+    robomongo/core/utils/SingletonPattern.hpp
     )
 SET(SOURCES_CORE
     robomongo/core/domain/Notifier.cpp
     robomongo/core/AppRegistry.cpp
     robomongo/core/settings/ConnectionSettings.cpp
     robomongo/core/settings/SettingsManager.cpp
-    robomongo/core/examples/ImplicitlyShared.cpp
     robomongo/core/mongodb/MongoWorker.cpp
     robomongo/core/domain/MongoServer.cpp
     robomongo/core/domain/MongoDatabase.cpp
@@ -220,6 +220,7 @@ SET(SOURCES_CORE
     robomongo/core/HexUtils.cpp
     robomongo/core/utils/BsonUtils.cpp
     robomongo/core/utils/QtUtils.cpp
+    robomongo/core/utils/Logger.cpp
     )
 
 IF(WIN32)

@@ -5,8 +5,6 @@ QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
 QT_END_NAMESPACE
 
-#include "robomongo/core/events/MongoEvents.h"
-
 namespace Robomongo
 {
     class LogWidget : public QWidget
@@ -14,15 +12,13 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef QWidget baseClass;
         LogWidget(QWidget* parent = 0);
 
     public Q_SLOTS:
         void addMessage(const QString &message);
-        void handle(SomethingHappened *event);
-        void handle(ConnectingEvent *event);
-        void handle(OpeningShellEvent *event);
 
-    private:
+    private:        
         QPlainTextEdit *const _logTextEdit;
     };
 

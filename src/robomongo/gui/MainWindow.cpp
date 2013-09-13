@@ -19,6 +19,7 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/utils/Logger.h"
 
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
@@ -221,6 +222,9 @@ namespace Robomongo
         fileMenu->addAction(_saveAsAction);
         fileMenu->addSeparator();
         fileMenu->addAction(exitAction);
+
+        // Options menu
+        _viewMenu = menuBar()->addMenu("View");
 
         // Options menu
         QMenu *optionsMenu = menuBar()->addMenu("Options");
@@ -644,22 +648,41 @@ namespace Robomongo
     void MainWindow::createDatabaseExplorer()
     {
         _explorer = new ExplorerWidget(this);
-        QDockWidget *explorerDock = new QDockWidget(tr(" Database Explorer"));
+        QDockWidget *explorerDock = new QDockWidget(tr("Database Explorer"));
         explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+        explorerDock->setFeatures(QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable);
         explorerDock->setWidget(_explorer);
+        QAction *actionExp = explorerDock->toggleViewAction();
 
-        QWidget *titleWidget = new QWidget(this);         // this lines simply removes
-        explorerDock->setTitleBarWidget(titleWidget);     // title bar widget.
+        // Adjust any parameter you want.  
+        actionExp->setText(QString("&Database Explorer"));  
+        actionExp->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));  
+        actionExp->setStatusTip(QString("Press to show/hide Database Explorer widget."));  
+        actionExp->setChecked(true);  
+        // Install action in the menu.  
+        _viewMenu->addAction(actionExp);
 
         addDockWidget(Qt::LeftDockWidgetArea, explorerDock);
 
-        _log = new LogWidget(this);
-        _logDock = new QDockWidget(tr(" Log"));
+        _log = new LogWidget(this);        
+        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&)), _log, SLOT(addMessage(const QString&))));
+        _logDock = new QDockWidget(tr("Log"));
+        QAction *action = _logDock->toggleViewAction();
+
+        // Adjust any parameter you want.  
+        action->setText(QString("&Log"));  
+        action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));  
+        action->setStatusTip(QString("Press to show/hide Log widget."));  
+        action->setChecked(true);  
+        // Install action in the menu.  
+        _viewMenu->addAction(action);
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         _logDock->setWidget(_log);
-        _logDock->setVisible(false);
+        _logDock->setFeatures(QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable);
+        //_logDock->setVisible(false);
         addDockWidget(Qt::BottomDockWidgetArea, _logDock);
     }
+
     void MainWindow::updateMenus()
     {
         bool isEnable = _workArea&&_workArea->countTab()>0;
@@ -667,6 +690,7 @@ namespace Robomongo
         _saveAction->setEnabled(isEnable);
         _saveAsAction->setEnabled(isEnable);
     }
+
     void MainWindow::createTabs()
     {
         _workArea = new WorkAreaWidget(this);

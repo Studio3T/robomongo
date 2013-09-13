@@ -127,7 +127,7 @@ namespace mongo {
 
             if (append && exists){
                 // two blank lines before and after
-                const string msg = "\n\n***** SERVER RESTARTED *****\n\n\n";
+                const string msg = "\n\n***** APPLICATION RESTARTED *****\n\n\n";
                 massert(14036, errnoWithPrefix("couldn't write to log file"),
                         fwrite(msg.data(), 1, msg.size(), test) == msg.size());
             }

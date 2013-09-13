@@ -882,19 +882,6 @@ namespace Robomongo
         bool empty;
     };
 
-
-
-    class SomethingHappened : public Event
-    {
-        R_EVENT
-
-        SomethingHappened(QObject *sender, const QString &something) :
-            Event(sender),
-            something(something) { }
-
-        QString something;
-    };
-
     class ConnectingEvent : public Event
     {
         R_EVENT

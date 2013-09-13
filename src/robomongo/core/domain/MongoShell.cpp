@@ -7,6 +7,7 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/utils/Logger.h"
 
 namespace Robomongo
 {
@@ -18,7 +19,6 @@ namespace Robomongo
         _client(server->client()),
         _bus(AppRegistry::instance().bus())
     {
-
     }
 
     MongoShell::~MongoShell()
@@ -30,6 +30,7 @@ namespace Robomongo
         _bus->publish(new ScriptExecutingEvent(this));
         _scriptInfo.setScript(QtUtils::toQString(script));
         _client->send(new ExecuteScriptRequest(this, query(), dbName));
+        LOG_MSG(query());
     }
 
     std::string MongoShell::query() const { return QtUtils::toStdString<std::string>(_scriptInfo.script()); }
@@ -47,6 +48,7 @@ namespace Robomongo
             _scriptInfo.setScript("");
             _client->send(new ExecuteScriptRequest(this,query() , dbName));
         }
+        LOG_MSG(query());
     }
     void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
     {

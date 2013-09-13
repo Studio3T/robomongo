@@ -19,6 +19,7 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/utils/Logger.h"
 
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
@@ -223,15 +224,15 @@ namespace Robomongo
         fileMenu->addAction(exitAction);
 
         // Options menu
-        QMenu *optionsMenu = menuBar()->addMenu("Options");
+        _optionsMenu = menuBar()->addMenu("Options");
 
         // View Mode
-        QMenu *defaultViewModeMenu = optionsMenu->addMenu("Default View Mode");
+        QMenu *defaultViewModeMenu = _optionsMenu->addMenu("Default View Mode");
         defaultViewModeMenu->addAction(customModeAction);
         defaultViewModeMenu->addAction(treeModeAction);
         defaultViewModeMenu->addAction(tableModeAction);
         defaultViewModeMenu->addAction(textModeAction);
-        optionsMenu->addSeparator();
+        _optionsMenu->addSeparator();
 
         QActionGroup *modeGroup = new QActionGroup(this);
         modeGroup->addAction(textModeAction);
@@ -250,7 +251,7 @@ namespace Robomongo
         localTime->setChecked(AppRegistry::instance().settingsManager()->timeZone() == LocalTime);
         VERIFY(connect(localTime, SIGNAL(triggered()), this, SLOT(setLocalTimeZone())));
 
-        QMenu *timeMenu = optionsMenu->addMenu("Display Dates in ");
+        QMenu *timeMenu = _optionsMenu->addMenu("Display Dates in ");
         timeMenu->addAction(utcTime);
         timeMenu->addAction(localTime);
 
@@ -279,7 +280,7 @@ namespace Robomongo
         pythonEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == PythonLegacy);
         VERIFY(connect(pythonEncodingAction, SIGNAL(triggered()), this, SLOT(setPythonUuidEncoding())));
 
-        QMenu *uuidMenu = optionsMenu->addMenu("Legacy UUID Encoding");
+        QMenu *uuidMenu = _optionsMenu->addMenu("Legacy UUID Encoding");
         uuidMenu->addAction(defaultEncodingAction);
         uuidMenu->addAction(javaLegacyEncodingAction);
         uuidMenu->addAction(csharpLegacyEncodingAction);
@@ -289,15 +290,15 @@ namespace Robomongo
         loadMongoRcJs->setCheckable(true);
         loadMongoRcJs->setChecked(AppRegistry::instance().settingsManager()->loadMongoRcJs());
         VERIFY(connect(loadMongoRcJs, SIGNAL(triggered()), this, SLOT(setLoadMongoRcJs())));
-        optionsMenu->addSeparator();
-        optionsMenu->addAction(loadMongoRcJs);
+        _optionsMenu->addSeparator();
+        _optionsMenu->addAction(loadMongoRcJs);
 
         QAction *disabelConnectionShortcuts = new QAction("Disable connection shortcuts",this);
         disabelConnectionShortcuts->setCheckable(true);
         disabelConnectionShortcuts->setChecked(AppRegistry::instance().settingsManager()->disableConnectionShortcuts());
         VERIFY(connect(disabelConnectionShortcuts, SIGNAL(triggered()), this, SLOT(setDisableConnectionShortcuts())));
-        optionsMenu->addSeparator();
-        optionsMenu->addAction(disabelConnectionShortcuts);
+        _optionsMenu->addSeparator();
+        _optionsMenu->addAction(disabelConnectionShortcuts);
 
         QActionGroup *uuidEncodingGroup = new QActionGroup(this);
         uuidEncodingGroup->addAction(defaultEncodingAction);
@@ -644,22 +645,32 @@ namespace Robomongo
     void MainWindow::createDatabaseExplorer()
     {
         _explorer = new ExplorerWidget(this);
-        QDockWidget *explorerDock = new QDockWidget(tr(" Database Explorer"));
+        QDockWidget *explorerDock = new QDockWidget(tr("Database Explorer"));
         explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+        explorerDock->setFeatures(QDockWidget::DockWidgetMovable);
         explorerDock->setWidget(_explorer);
-
-        QWidget *titleWidget = new QWidget(this);         // this lines simply removes
-        explorerDock->setTitleBarWidget(titleWidget);     // title bar widget.
 
         addDockWidget(Qt::LeftDockWidgetArea, explorerDock);
 
-        _log = new LogWidget(this);
-        _logDock = new QDockWidget(tr(" Log"));
+        _log = new LogWidget(this);        
+        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&)), _log, SLOT(addMessage(const QString&))));
+        _logDock = new QDockWidget(tr("Log"));
+        QAction *action = _logDock->toggleViewAction();
+
+        // Adjust any parameter you want.  
+        action->setText(QString("&Log"));  
+        action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));  
+        action->setStatusTip(QString("Press to show/hide Log widget."));  
+        action->setChecked(true);  
+        // Install action in the menu.  
+        _optionsMenu->addAction(action);
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         _logDock->setWidget(_log);
-        _logDock->setVisible(false);
+        _logDock->setFeatures(QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable);
+        //_logDock->setVisible(false);
         addDockWidget(Qt::BottomDockWidgetArea, _logDock);
     }
+
     void MainWindow::updateMenus()
     {
         bool isEnable = _workArea&&_workArea->countTab()>0;
@@ -667,6 +678,7 @@ namespace Robomongo
         _saveAction->setEnabled(isEnable);
         _saveAsAction->setEnabled(isEnable);
     }
+
     void MainWindow::createTabs()
     {
         _workArea = new WorkAreaWidget(this);

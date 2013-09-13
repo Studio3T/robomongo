@@ -149,7 +149,8 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/domain/App.h
     robomongo/core/domain/MongoShell.h
     robomongo/core/EventBusDispatcher.h 
-    robomongo/core/domain/Notifier.h 
+    robomongo/core/domain/Notifier.h
+    robomongo/core/utils/Logger.h
     )
 SET(HEADERS_CORE
     robomongo/core/engine/ScriptEngine.h
@@ -181,6 +182,7 @@ SET(HEADERS_CORE
     robomongo/core/HexUtils.h
     robomongo/core/utils/BsonUtils.h
     robomongo/core/utils/QtUtils.h
+    robomongo/core/utils/SingletonPattern.hpp
     )
 SET(SOURCES_CORE
     robomongo/core/domain/Notifier.cpp
@@ -220,6 +222,7 @@ SET(SOURCES_CORE
     robomongo/core/HexUtils.cpp
     robomongo/core/utils/BsonUtils.cpp
     robomongo/core/utils/QtUtils.cpp
+    robomongo/core/utils/Logger.cpp
     )
 
 IF(WIN32)

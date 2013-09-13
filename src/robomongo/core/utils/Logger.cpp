@@ -9,7 +9,7 @@ namespace
     mongo::LabeledLevel pc(PROJECT_NAME, mongo::LL_DEBUG );
     std::string getLoggerPath()
     {
-        static std::string path = Robomongo::QtUtils::toStdString<std::string>(QString("%1/"PROJECT_NAME"log.txt").arg(QDir::homePath()));
+        static std::string path = Robomongo::QtUtils::toStdString<std::string>(QString("%1/."PROJECT_NAME"log.txt").arg(QDir::homePath()));
         return path;
     }
 }

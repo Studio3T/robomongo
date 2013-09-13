@@ -166,7 +166,6 @@ SET(HEADERS_CORE
     robomongo/core/events/MongoEventsInfo.h
     robomongo/core/AppRegistry.h
     robomongo/core/Core.h
-    robomongo/core/examples/ImplicitlyShared.h
     robomongo/core/settings/CredentialSettings.h
     robomongo/core/domain/MongoQueryInfo.h
     robomongo/core/domain/MongoCollection.h
@@ -189,7 +188,6 @@ SET(SOURCES_CORE
     robomongo/core/AppRegistry.cpp
     robomongo/core/settings/ConnectionSettings.cpp
     robomongo/core/settings/SettingsManager.cpp
-    robomongo/core/examples/ImplicitlyShared.cpp
     robomongo/core/mongodb/MongoWorker.cpp
     robomongo/core/domain/MongoServer.cpp
     robomongo/core/domain/MongoDatabase.cpp

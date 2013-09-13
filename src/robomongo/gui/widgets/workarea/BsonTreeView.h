@@ -19,7 +19,6 @@ namespace Robomongo
 
     private Q_SLOTS:
         void onExpandRecursive();
-        void handle(InsertDocumentResponse *event);
         void showContextMenu(const QPoint &point);
 
     protected:

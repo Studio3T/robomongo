@@ -3,11 +3,6 @@
 #include <mongo/client/dbclient.h>
 #include "robomongo/core/utils/BsonUtils.h"
 
-namespace
-{
-    const char *emptyArray = "[]";
-}
-
 namespace Robomongo
 {
 
@@ -15,14 +10,14 @@ namespace Robomongo
     {
         _id = obj.getField("_id").OID();
         _name = BsonUtils::getField<mongo::String>(obj,"user");
-        _passwordHash = obj.getStringField("pwd");
+        _passwordHash = BsonUtils::getField<mongo::String>(obj,"pwd");
         _userSource = BsonUtils::getField<mongo::String>(obj,"userSource");
         std::vector<mongo::BSONElement> roles = BsonUtils::getField<mongo::Array>(obj,"roles");
         _role =  BsonUtils::bsonArrayToString(roles);
     }
 
     MongoUser::MongoUser()
-        :_role(emptyArray)
+        :_role("[]")
     {
     }
 

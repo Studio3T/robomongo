@@ -15,49 +15,46 @@ namespace Robomongo
     MongoShell::MongoShell(MongoServer *server, const ScriptInfo &scriptInfo) 
         : QObject(),
         _scriptInfo(scriptInfo),
-        _server(server),
-        _client(server->client()),
-        _bus(AppRegistry::instance().bus())
-    {
-    }
-
-    MongoShell::~MongoShell()
+        _server(server)
     {
     }
 
     void MongoShell::open(const std::string &script, const std::string &dbName)
     {
-        _bus->publish(new ScriptExecutingEvent(this));
+        AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
         _scriptInfo.setScript(QtUtils::toQString(script));
-        _client->send(new ExecuteScriptRequest(this, query(), dbName));
+        _server->client()->send(new ExecuteScriptRequest(this, query(), dbName));
         LOG_MSG(query());
     }
 
-    std::string MongoShell::query() const { return QtUtils::toStdString<std::string>(_scriptInfo.script()); }
+    std::string MongoShell::query() const 
+    {
+        return QtUtils::toStdString<std::string>(_scriptInfo.script()); 
+    }
 
     void MongoShell::execute(const std::string &dbName)
     {
         if(_scriptInfo.execute())
         {
-            _bus->publish(new ScriptExecutingEvent(this));
-            _client->send(new ExecuteScriptRequest(this, query(), dbName));
+            AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
+            _server->client()->send(new ExecuteScriptRequest(this, query(), dbName));
         }
         else
         {
-            _bus->publish(new ScriptExecutingEvent(this));
+            AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             _scriptInfo.setScript("");
-            _client->send(new ExecuteScriptRequest(this,query() , dbName));
+            _server->client()->send(new ExecuteScriptRequest(this,query() , dbName));
         }
         LOG_MSG(query());
     }
     void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
     {
-        _client->send(new ExecuteQueryRequest(this, resultIndex, info));
+        _server->client()->send(new ExecuteQueryRequest(this, resultIndex, info));
     }
 
     void MongoShell::autocomplete(const std::string &prefix)
     {
-        _client->send(new AutocompleteRequest(this, prefix));
+        _server->client()->send(new AutocompleteRequest(this, prefix));
     }
 
     void MongoShell::stop()
@@ -82,16 +79,16 @@ namespace Robomongo
 
     void MongoShell::handle(ExecuteQueryResponse *event)
     {
-        _bus->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, query(), event->documents));
+        AppRegistry::instance().bus()->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, query(), event->documents));
     }
 
     void MongoShell::handle(ExecuteScriptResponse *event)
     {
-        _bus->publish(new ScriptExecutedEvent(this, event->result, event->empty));
+        AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->result, event->empty));
     }
 
     void MongoShell::handle(AutocompleteResponse *event)
     {
-        _bus->publish(new AutocompleteResponse(this, event->list, event->prefix));
+        AppRegistry::instance().bus()->publish(new AutocompleteResponse(this, event->list, event->prefix));
     }
 }

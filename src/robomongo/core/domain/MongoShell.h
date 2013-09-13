@@ -5,15 +5,12 @@
 
 namespace Robomongo
 {
-    class EventBus;
-    class MongoWorker;
     class MongoShell : public QObject
     {
         Q_OBJECT
 
     public:
         MongoShell(MongoServer *server,const ScriptInfo &scriptInfo);
-        ~MongoShell();
 
         void open(const std::string &script, const std::string &dbName = std::string());
         void query(int resultIndex, const MongoQueryInfo &info);
@@ -43,8 +40,6 @@ namespace Robomongo
     private:        
         ScriptInfo _scriptInfo;
         MongoServer *_server;
-        MongoWorker *_client;
-        EventBus *_bus;
     };
 
 }

@@ -1,8 +1,5 @@
 #include "robomongo/core/domain/MongoServer.h"
 
-#include <QDebug>
-#include <QStringList>
-
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
@@ -11,7 +8,6 @@
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
 
-using namespace std;
 namespace Robomongo
 {
     R_REGISTER_EVENT(MongoServerLoadingDatabasesEvent)
@@ -37,7 +33,6 @@ namespace Robomongo
         _bus->send(_client.data(), new InitRequest(this,
                                                    AppRegistry::instance().settingsManager()->loadMongoRcJs(),
                                                    AppRegistry::instance().settingsManager()->batchSize()));
-        qDebug() << "InitRequest sent";
     }
 
     MongoServer::~MongoServer()
@@ -57,8 +52,6 @@ namespace Robomongo
             "_connectionRecord->databaseName()",
             "_connectionRecord->userName()",
             "_connectionRecord->userPassword()"));
-
-        qDebug() << "EstablishConnectionRequest sent";
     }
 
     QStringList MongoServer::getDatabasesNames() const
@@ -154,10 +147,5 @@ namespace Robomongo
         }
 
         _bus->publish(new DatabaseListLoadedEvent(this, _databases));
-    }
-
-    void MongoServer::handle(InsertDocumentResponse *event)
-    {
-        _bus->publish(new InsertDocumentResponse(event->sender(), event->error()));
     }
 }

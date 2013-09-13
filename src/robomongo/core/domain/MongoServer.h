@@ -69,7 +69,6 @@ namespace Robomongo
     protected Q_SLOTS:
         void handle(EstablishConnectionResponse *event);
         void handle(LoadDatabaseNamesResponse *event);
-        void handle(InsertDocumentResponse *event);
 
     private:
         void clearDatabases();

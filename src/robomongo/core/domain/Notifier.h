@@ -1,10 +1,13 @@
 #pragma once
+
 #include <QModelIndex>
+
+#include "robomongo/core/domain/MongoQueryInfo.h"
+
 QT_BEGIN_NAMESPACE
 class QAction;
 class QMenu;
 QT_END_NAMESPACE
-#include "robomongo/core/domain/MongoQueryInfo.h"
 
 namespace Robomongo
 {
@@ -20,8 +23,9 @@ namespace Robomongo
     {
     public:
         virtual QModelIndex selectedIndex() const = 0;
+
     protected:
-        INotifierObserver(){};        
+        INotifierObserver() {}
     };
 
     class Notifier : public QObject
@@ -30,7 +34,7 @@ namespace Robomongo
 
     public:
         typedef QObject BaseClass;
-        Notifier(INotifierObserver *const observer, MongoShell *shell, const MongoQueryInfo &queryInfo,QObject *parent = NULL);
+        Notifier(INotifierObserver *const observer, MongoShell *shell, const MongoQueryInfo &queryInfo, QObject *parent = NULL);
         void initMenu(QMenu *const menu, BsonTreeItem *const item);
 
         void deleteDocuments(std::vector<BsonTreeItem*> items, bool force);

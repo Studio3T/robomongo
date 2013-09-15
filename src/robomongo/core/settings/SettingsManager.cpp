@@ -63,7 +63,7 @@ namespace Robomongo
             return false;
 
         QFile f(_configPath);
-        if(!f.open(QIODevice::ReadOnly))
+        if (!f.open(QIODevice::ReadOnly))
             return false;
 
         bool ok;
@@ -146,7 +146,7 @@ namespace Robomongo
         _connections.clear();
 
         QVariantList list = map.value("connections").toList();
-        for(QVariantList::iterator it = list.begin();it!=list.end();++it) {
+        for (QVariantList::iterator it = list.begin(); it != list.end(); ++it) {
             ConnectionSettings *record = new ConnectionSettings((*it).toMap());
             _connections.append(record);
         }
@@ -183,7 +183,7 @@ namespace Robomongo
         // 8. Save connections
         QVariantList list;
 
-        for(QList<ConnectionSettings *>::const_iterator it = _connections.begin();it!=_connections.end();++it) {
+        for (QList<ConnectionSettings *>::const_iterator it = _connections.begin(); it!=_connections.end(); ++it) {
             QVariantMap rm = (*it)->toVariant().toMap();
             list.append(rm);
         }

@@ -1,5 +1,7 @@
 #include "robomongo/core/domain/MongoFunction.h"
+
 #include <mongo/client/dbclient.h>
+
 namespace Robomongo
 {
     MongoFunction::MongoFunction(const mongo::BSONObj &obj)

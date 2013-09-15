@@ -22,6 +22,7 @@ namespace Robomongo
         SettingsManager *const settingsManager() const { return _settingsManager.get(); }
         App *const app() const { return _app.get(); }
         EventBus *const bus() const { return _bus.get(); }
+
     private:
         AppRegistry();
         ~AppRegistry();

@@ -1,5 +1,7 @@
 #pragma once
+
 #include <QKeyEvent>
+
 namespace Robomongo
 {
     namespace KeyboardManager
@@ -11,5 +13,5 @@ namespace Robomongo
         bool isHideAutoCompleteShortcut(QKeyEvent *keyEvent);
         bool isNextTabShortcut(QKeyEvent *keyEvent);
         bool isPreviousTabShortcut(QKeyEvent *keyEvent);
-    };
+    }
 }

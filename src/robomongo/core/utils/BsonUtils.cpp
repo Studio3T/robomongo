@@ -540,7 +540,7 @@ namespace Robomongo
             return res;
         }
 
-        void buildJsonString(const mongo::BSONObj &obj,std::string &con, UUIDEncoding uuid,SupportedTimes tz)
+        void buildJsonString(const mongo::BSONObj &obj, std::string &con, UUIDEncoding uuid, SupportedTimes tz)
         {
             mongo::BSONObjIterator iterator(obj);
             con.append("{ \n");
@@ -557,14 +557,14 @@ namespace Robomongo
             con.append("\n}\n\n");
         }
 
-        void buildJsonString(const mongo::BSONElement &elem,std::string &con, UUIDEncoding uuid,SupportedTimes tz)
+        void buildJsonString(const mongo::BSONElement &elem,std::string &con, UUIDEncoding uuid, SupportedTimes tz)
         {
             switch (elem.type())
             {
             case NumberDouble:
                 {
-                    char dob[32]={0};
-                    sprintf(dob,"%f",elem.Double());
+                    char dob[32] = {0};
+                    sprintf(dob, "%f", elem.Double());
                     con.append(dob);
                 }
                 break;
@@ -575,12 +575,12 @@ namespace Robomongo
                 break;
             case Object:
                 {
-                    buildJsonString(elem.Obj(),con,uuid,tz);
+                    buildJsonString(elem.Obj(), con, uuid, tz);
                 }
                 break;
             case Array:
                 {
-                    buildJsonString(elem.Obj(),con,uuid,tz);
+                    buildJsonString(elem.Obj(), con, uuid, tz);
                 }
                 break;
             case BinData:
@@ -600,8 +600,8 @@ namespace Robomongo
             case jstOID:
                 {
                     std::string idValue = elem.OID().toString();
-                    char buff[256]={0};
-                    sprintf(buff,"ObjectId(\"%s\")",idValue.c_str());
+                    char buff[256] = {0};
+                    sprintf(buff, "ObjectId(\"%s\")", idValue.c_str());
                     con.append(buff);
                 }
                 break;

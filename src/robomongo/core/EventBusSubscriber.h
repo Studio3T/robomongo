@@ -1,5 +1,7 @@
 #pragma once
+
 #include <QObject>
+
 namespace Robomongo
 {
     class EventBusDispatcher;

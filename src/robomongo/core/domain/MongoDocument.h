@@ -2,6 +2,7 @@
 
 #include <QStringList>
 #include <mongo/bson/bsonobj.h>
+
 #include "robomongo/core/Core.h"
 
 namespace Robomongo

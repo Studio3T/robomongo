@@ -12,7 +12,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        typedef QWidget baseClass;
+        typedef QWidget BaseClass;
         LogWidget(QWidget* parent = 0);
 
     public Q_SLOTS:

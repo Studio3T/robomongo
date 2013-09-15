@@ -11,6 +11,7 @@ namespace Robomongo
         EventWrapper(Event *event, QObject * receiver);
         Event *event() const;
         const QList<QObject *> &receivers() const;
+
     private:
         const boost::scoped_ptr<Event> _event;
         const QList<QObject *> _receivers;

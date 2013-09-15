@@ -6,9 +6,18 @@ namespace Robomongo
 {
     struct EnsureIndexInfo
     {
-        EnsureIndexInfo(const MongoCollectionInfo &collection, const std::string &name=std::string(), const std::string &request=std::string(),
-            bool isUnique=false, bool isBackGround=false, bool isDropDuplicates=false, bool isSparce=false, int expireAfter=0,
-            const std::string &defaultLanguage=std::string(), const std::string &languageOverride=std::string(), const std::string &textWeights=std::string());
+        EnsureIndexInfo(
+            const MongoCollectionInfo &collection,
+            const std::string &name = std::string(),
+            const std::string &request = std::string(),
+            bool isUnique = false,
+            bool isBackGround = false,
+            bool isDropDuplicates = false,
+            bool isSparce = false,
+            int expireAfter = 0,
+            const std::string &defaultLanguage = std::string(),
+            const std::string &languageOverride = std::string(),
+            const std::string &textWeights = std::string());
 
         MongoCollectionInfo _collection;
         std::string _name;

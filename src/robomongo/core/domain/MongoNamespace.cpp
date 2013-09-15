@@ -16,7 +16,7 @@ namespace Robomongo
         _databaseName(database),
         _collectionName(collection)
     {
-        _ns = _databaseName+".";
+        _ns = _databaseName + ".";
         _ns += _collectionName;
     }
 }

@@ -28,7 +28,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        typedef QMainWindow baseClass;
+        typedef QMainWindow BaseClass;
         MainWindow();
         void keyPressEvent(QKeyEvent *event);
 

@@ -1,6 +1,7 @@
 #include "robomongo/core/domain/MongoUser.h"
 
 #include <mongo/client/dbclient.h>
+
 #include "robomongo/core/utils/BsonUtils.h"
 
 namespace Robomongo
@@ -12,14 +13,12 @@ namespace Robomongo
         _name = BsonUtils::getField<mongo::String>(obj,"user");
         _passwordHash = BsonUtils::getField<mongo::String>(obj,"pwd");
         _userSource = BsonUtils::getField<mongo::String>(obj,"userSource");
-        std::vector<mongo::BSONElement> roles = BsonUtils::getField<mongo::Array>(obj,"roles");
+        std::vector<mongo::BSONElement> roles = BsonUtils::getField<mongo::Array>(obj, "roles");
         _role =  BsonUtils::bsonArrayToString(roles);
     }
 
-    MongoUser::MongoUser()
-        :_role("[]")
-    {
-    }
+    MongoUser::MongoUser() :
+        _role("[]") {}
 
     mongo::BSONObj MongoUser::toBson() const
     {
@@ -30,9 +29,10 @@ namespace Robomongo
 
         builder.append("user", _name);
 
-        if(!_passwordHash.empty())
+        if (!_passwordHash.empty())
             builder.append("pwd", _passwordHash);
-        if(!_userSource.empty())
+
+        if (!_userSource.empty())
             builder.append("userSource", _userSource);
 
         mongo::BSONObj arObj = BSON_ARRAY(_role.c_str());

@@ -23,12 +23,16 @@ namespace Robomongo
     {
         bool isSimpleType(Robomongo::BsonTreeItem *item)
         {
-            return Robomongo::BsonUtils::isSimpleType(item->type()) || Robomongo::BsonUtils::isUuidType(item->type(),item->binType());
+            return Robomongo::BsonUtils::isSimpleType(item->type())
+                || Robomongo::BsonUtils::isUuidType(item->type(), item->binType());
         }
     }
 
-    Notifier::Notifier(INotifierObserver *const observer, MongoShell *shell, const MongoQueryInfo &queryInfo, QObject *parent)
-        :BaseClass(parent),_observer(observer),_shell(shell),_queryInfo(queryInfo)
+    Notifier::Notifier(INotifierObserver *const observer, MongoShell *shell, const MongoQueryInfo &queryInfo, QObject *parent) :
+        BaseClass(parent),
+        _observer(observer),
+        _shell(shell),
+        _queryInfo(queryInfo)
     {
         QWidget *wid = dynamic_cast<QWidget*>(_observer);
 
@@ -54,7 +58,7 @@ namespace Robomongo
         bool onItem = item ? true : false;
         
         bool isSimple = false;
-        if(item){
+        if (item) {
             isSimple = detail::isSimpleType(item);
         }
 
@@ -70,10 +74,9 @@ namespace Robomongo
     void Notifier::deleteDocuments(std::vector<BsonTreeItem*> items, bool force)
     {
         bool isNeededRefresh = false;
-        for (std::vector<BsonTreeItem*>::const_iterator it = items.begin(); it != items.end(); ++it)
-        {
+        for (std::vector<BsonTreeItem*>::const_iterator it = items.begin(); it != items.end(); ++it) {
             BsonTreeItem * documentItem = *it;
-            if(!documentItem)
+            if (!documentItem)
                 break;
 
             mongo::BSONObj obj = documentItem->root();
@@ -90,18 +93,20 @@ namespace Robomongo
             mongo::BSONObj bsonQuery = builder.obj();
             mongo::Query query(bsonQuery);
 
-            if(!force){
+            if (!force) {
                 // Ask user
-                int answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer),"Delete","Document","%1 %2 with id:<br><b>%3</b>?",QtUtils::toQString(id.toString(false)));
+                int answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer), "Delete",
+                    "Document", "%1 %2 with id:<br><b>%3</b>?", QtUtils::toQString(id.toString(false)));
 
                 if (answer != QMessageBox::Yes)
-                    break ;
+                    break;
             }
+
             isNeededRefresh=true;
             _shell->server()->removeDocuments(query, _queryInfo.databaseName, _queryInfo.collectionName);
         }
 
-        if(isNeededRefresh)
+        if (isNeededRefresh)
             _shell->query(0, _queryInfo);
     }
 
@@ -110,11 +115,11 @@ namespace Robomongo
         if (_queryInfo.isNull)
             return;
 
-        QModelIndex selectedInd = _observer->selectedIndex();
-        if (!selectedInd.isValid())
+        QModelIndex selectedIndex = _observer->selectedIndex();
+        if (!selectedIndex.isValid())
             return;
 
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedIndex);
         std::vector<BsonTreeItem*> vec;
         vec.push_back(documentItem);
         return deleteDocuments(vec,false);
@@ -130,12 +135,15 @@ namespace Robomongo
             return;
 
         BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-        if(!documentItem)
+        if (!documentItem)
             return;
 
         mongo::BSONObj obj = documentItem->root();
 
-        std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone() );
+        std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
+            AppRegistry::instance().settingsManager()->uuidEncoding(),
+            AppRegistry::instance().settingsManager()->timeZone());
+
         const QString &json = QtUtils::toQString(str);
 
         DocumentTextEditor editor(QtUtils::toQString(_queryInfo.serverAddress),
@@ -153,24 +161,29 @@ namespace Robomongo
 
     void Notifier::onViewDocument()
     {
-        QModelIndex selectedInd = _observer->selectedIndex();
-        if (!selectedInd.isValid())
+        QModelIndex selectedIndex = _observer->selectedIndex();
+        if (!selectedIndex.isValid())
             return;
 
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-        if(!documentItem)
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedIndex);
+        if (!documentItem)
             return;
 
         mongo::BSONObj obj = documentItem->root();
 
-        std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
+        std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
+            AppRegistry::instance().settingsManager()->uuidEncoding(),
+            AppRegistry::instance().settingsManager()->timeZone());
+
         const QString &json = QtUtils::toQString(str);
 
         std::string server = _queryInfo.isNull ? "" : _queryInfo.serverAddress;
         std::string database = _queryInfo.isNull ? "" : _queryInfo.databaseName;
         std::string collection = _queryInfo.isNull ? "" : _queryInfo.collectionName;
 
-        DocumentTextEditor *editor = new DocumentTextEditor(QtUtils::toQString(server),QtUtils::toQString(database), QtUtils::toQString(collection), json, true, dynamic_cast<QWidget*>(_observer));
+        DocumentTextEditor *editor = new DocumentTextEditor(
+            QtUtils::toQString(server), QtUtils::toQString(database), QtUtils::toQString(collection),
+            json, true, dynamic_cast<QWidget*>(_observer));
 
         editor->setWindowTitle("View Document");
         editor->show();
@@ -188,16 +201,17 @@ namespace Robomongo
 
         editor.setCursorPosition(1, 4);
         editor.setWindowTitle("Insert Document");
-        int result = editor.exec();
 
-        if (result == QDialog::Accepted) {
-            DocumentTextEditor::returnType obj = editor.bsonObj();
-            for (DocumentTextEditor::returnType::const_iterator it = obj.begin(); it != obj.end(); ++it)
-            {
-                _shell->server()->insertDocument(*it, _queryInfo.databaseName, _queryInfo.collectionName);
-            }            
-            _shell->query(0, _queryInfo);
+        int result = editor.exec();
+        if (result != QDialog::Accepted)
+            return;
+
+        DocumentTextEditor::ReturnType obj = editor.bsonObj();
+        for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
+            _shell->server()->insertDocument(*it, _queryInfo.databaseName, _queryInfo.collectionName);
         }
+
+        _shell->query(0, _queryInfo);
     }
 
     void Notifier::onCopyDocument()
@@ -207,7 +221,7 @@ namespace Robomongo
             return;
 
         BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-        if(!documentItem)
+        if (!documentItem)
             return;
 
         if (!detail::isSimpleType(documentItem))

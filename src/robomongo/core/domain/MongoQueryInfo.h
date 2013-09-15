@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QString>
 #include <mongo/bson/bsonobj.h>
 

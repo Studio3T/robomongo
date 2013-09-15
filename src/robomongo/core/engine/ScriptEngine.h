@@ -26,7 +26,6 @@ namespace Robomongo
         void ping();
         QStringList complete(const std::string &prefix);
 
-
     private:
         ConnectionSettings *_connection;
 
@@ -39,12 +38,8 @@ namespace Robomongo
         std::vector<std::string> statementize2(const std::string &script);
         void parseTree(JSParseNode * root, int indent, const std::string &script, std::vector<std::string> &list, bool topList);
 
-        // Order is important. mongo::Scope should be destroyed before mongo::ScriptEngine
         mongo::ScriptEngine *_engine;
         mongo::Scope *_scope;
-
-        std::string subb(const std::vector<std::string> &list, int fline, int fpos, int tline, int tpos) const;
-
         QMutex _mutex;
     };
 }

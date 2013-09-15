@@ -4,25 +4,27 @@
 
 namespace
 {
-    Robomongo::EnsureIndexInfo makeEnsureIndexInfoFromBsonObj(const Robomongo::MongoCollectionInfo &collection,const mongo::BSONObj &obj)
+    Robomongo::EnsureIndexInfo makeEnsureIndexInfoFromBsonObj(
+        const Robomongo::MongoCollectionInfo &collection,
+        const mongo::BSONObj &obj)
     {
         using namespace Robomongo::BsonUtils;
         Robomongo::EnsureIndexInfo info(collection);
-        info._name = getField<mongo::String>(obj,"name");
+        info._name = getField<mongo::String>(obj, "name");
         mongo::BSONObj keyObj = getField<mongo::Object>(obj,"key");
-        if(keyObj.isValid()){
+        if (keyObj.isValid()) {
             info._request = jsonString(keyObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
         }
-        info._unique = getField<mongo::Bool>(obj,"unique");
-        info._backGround = getField<mongo::Bool>(obj,"background");
-        info._dropDups = getField<mongo::Bool>(obj,"dropDups");
-        info._sparse = getField<mongo::Bool>(obj,"sparse");
-        bool isContains = false;
-        info._ttl = getField<mongo::NumberInt>(obj,"expireAfterSeconds");
-        info._defaultLanguage = getField<mongo::String>(obj,"default_language");
-        info._languageOverride = getField<mongo::String>(obj,"language_override");
-        mongo::BSONObj weightsObj = getField<mongo::Object>(obj,"weights");
-        if(weightsObj.isValid()){
+
+        info._unique = getField<mongo::Bool>(obj, "unique");
+        info._backGround = getField<mongo::Bool>(obj, "background");
+        info._dropDups = getField<mongo::Bool>(obj, "dropDups");
+        info._sparse = getField<mongo::Bool>(obj, "sparse");
+        info._ttl = getField<mongo::NumberInt>(obj, "expireAfterSeconds");
+        info._defaultLanguage = getField<mongo::String>(obj, "default_language");
+        info._languageOverride = getField<mongo::String>(obj, "language_override");
+        mongo::BSONObj weightsObj = getField<mongo::Object>(obj, "weights");
+        if (weightsObj.isValid()) {
             info._textWeights = jsonString(weightsObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
         }
         return info;
@@ -52,8 +54,7 @@ namespace Robomongo
         typedef std::list<std::string> cont_string_t;
         cont_string_t dbs = _dbclient->getDatabaseNames();
         std::vector<std::string> dbNames;
-        for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); ++i)
-        {
+        for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); ++i) {
             dbNames.push_back(*i);
         }
         std::sort(dbNames.begin(), dbNames.end());
@@ -164,29 +165,29 @@ namespace Robomongo
             cacheKey += nn;
         }
 
-        if( version >= 0 ) 
+        if (version >= 0)
             toSave.append("v", version);
 
-        if(oldInfo._unique!=newInfo._unique)
-            toSave.appendBool( "unique", newInfo._unique );
+        if (oldInfo._unique != newInfo._unique)
+            toSave.appendBool("unique", newInfo._unique);
 
-        if(oldInfo._backGround!=newInfo._backGround)
-            toSave.appendBool( "background", newInfo._backGround );
+        if (oldInfo._backGround != newInfo._backGround)
+            toSave.appendBool("background", newInfo._backGround);
 
-        if(oldInfo._dropDups!=newInfo._dropDups)
-            toSave.appendBool("dropDups",newInfo._dropDups);
+        if (oldInfo._dropDups != newInfo._dropDups)
+            toSave.appendBool("dropDups", newInfo._dropDups);
 
-        if(oldInfo._sparse!=newInfo._sparse)
-            toSave.appendBool("sparse",newInfo._sparse);
+        if (oldInfo._sparse != newInfo._sparse)
+            toSave.appendBool("sparse", newInfo._sparse);
 
-        if(oldInfo._defaultLanguage!=newInfo._defaultLanguage)
-            toSave.append("default_language",newInfo._defaultLanguage);
+        if (oldInfo._defaultLanguage != newInfo._defaultLanguage)
+            toSave.append("default_language", newInfo._defaultLanguage);
 
-        if(oldInfo._languageOverride!=newInfo._languageOverride)
-            toSave.append("language_override",newInfo._languageOverride);
+        if (oldInfo._languageOverride != newInfo._languageOverride)
+            toSave.append("language_override", newInfo._languageOverride);
 
-        if(oldInfo._textWeights!=newInfo._textWeights)
-            toSave.append("weights",newInfo._textWeights);
+        if (oldInfo._textWeights != newInfo._textWeights)
+            toSave.append("weights", newInfo._textWeights);
 
        /* if ( _seenIndexes.count( cacheKey ) )
             return 0;
@@ -194,14 +195,15 @@ namespace Robomongo
         if ( cache )
             _seenIndexes.insert( cacheKey );*/
 
-        if (oldInfo._ttl!=newInfo._ttl)
-            toSave.append( "expireAfterSeconds", newInfo._ttl );
+        if (oldInfo._ttl != newInfo._ttl)
+            toSave.append("expireAfterSeconds", newInfo._ttl);
 
         MongoNamespace namesp(newInfo._collection.ns().databaseName(), "system.indexes");
         mongo::BSONObj obj = toSave.obj();
-        if(!oldInfo._name.empty())
+        if (!oldInfo._name.empty())
             _dbclient->dropIndex(ns, oldInfo._name);
-        _dbclient->insert(  namesp.toString().c_str() , obj ); 
+
+        _dbclient->insert(namesp.toString().c_str(), obj);
     }
 
     void MongoClient::renameIndexFromCollection(const MongoCollectionInfo &collection, const std::string &oldIndexName, const std::string &newIndexName) const

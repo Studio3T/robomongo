@@ -19,6 +19,7 @@
 
 using namespace std;
 using namespace mongo;
+
 namespace Robomongo
 {
     MongoWorker::MongoWorker(ConnectionSettings *connection, QObject *parent) : QObject(parent),
@@ -91,16 +92,14 @@ namespace Robomongo
             qDebug() << "EstablishConnectionRequest in try block";
             mongo::DBClientBase *conn = getConnection();
 
-            if (_connection->hasEnabledPrimaryCredential())
-            {
+            if (_connection->hasEnabledPrimaryCredential()) {
                 std::string errmsg;
                 bool ok = conn->auth(
                     _connection->primaryCredential()->databaseName(),
                     _connection->primaryCredential()->userName(),
                     _connection->primaryCredential()->userPassword(), errmsg);
 
-                if (!ok)
-                {
+                if (!ok) {
                     throw runtime_error("Unable to authorize");
                 }
 

@@ -6,9 +6,9 @@ namespace Robomongo
     {
         bool ctrlShiftReturn = (keyEvent->modifiers() & Qt::ControlModifier) &&
             (keyEvent->modifiers() & Qt::ShiftModifier) &&
-            (keyEvent->key()==Qt::Key_Return || keyEvent->key()==Qt::Key_Enter);
+            (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter);
 
-        bool ctrlT = (keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key()==Qt::Key_T);
+        bool ctrlT = (keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key() == Qt::Key_T);
 
         return ctrlShiftReturn || ctrlT;
     }
@@ -22,14 +22,14 @@ namespace Robomongo
     {
         return (keyEvent->modifiers() & Qt::ControlModifier)
             &&
-            (keyEvent->key()==Qt::Key_Return || keyEvent->key()==Qt::Key_Enter);
+            (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter);
     }
 
     bool KeyboardManager::isAutoCompleteShortcut(QKeyEvent *keyEvent)
     {
         return (keyEvent->modifiers() & Qt::ControlModifier)
             &&
-            (keyEvent->key()==Qt::Key_Space);
+            (keyEvent->key() == Qt::Key_Space);
     }
 
     bool KeyboardManager::isHideAutoCompleteShortcut(QKeyEvent *keyEvent)
@@ -41,13 +41,13 @@ namespace Robomongo
     {
         return (keyEvent->modifiers() & Qt::ControlModifier)
             && (keyEvent->modifiers() & Qt::AltModifier)
-            && (keyEvent->key()== Qt::Key_Right);
+            && (keyEvent->key() == Qt::Key_Right);
     }
 
     bool KeyboardManager::isPreviousTabShortcut(QKeyEvent *keyEvent)
     {
         return (keyEvent->modifiers() & Qt::ControlModifier)
             && (keyEvent->modifiers() & Qt::AltModifier)
-            && (keyEvent->key()== Qt::Key_Left);
+            && (keyEvent->key() == Qt::Key_Left);
     }
 }

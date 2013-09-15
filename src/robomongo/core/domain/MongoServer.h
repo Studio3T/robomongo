@@ -29,7 +29,7 @@ namespace Robomongo
          * @param visible
          * @param defaultDatabase
          */
-        typedef QList<MongoDatabase *> databasesContainerType;
+        typedef QList<MongoDatabase *> DatabasesContainerType;
         MongoServer(ConnectionSettings *connectionRecord, bool visible);
         ~MongoServer();
 
@@ -88,7 +88,7 @@ namespace Robomongo
         std::string _lastErrorMessage;
         bool _visible;
 
-        databasesContainerType _databases;
+        DatabasesContainerType _databases;
 
         EventBus *_bus;
     };

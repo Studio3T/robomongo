@@ -13,7 +13,7 @@ namespace Robomongo
 
     public:
         typedef QAbstractProxyModel BaseClass;
-        typedef std::vector<QString> columnsValuesType;
+        typedef std::vector<QString> ColumnsValuesType;
 
         explicit BsonTableModelProxy(QObject *parent = 0);
         QVariant data(const QModelIndex &index, int role) const;
@@ -32,7 +32,7 @@ namespace Robomongo
         size_t addColumn(const QString &col);
         size_t findIndexColumn(const QString &col) const;
 
-        columnsValuesType _columns;
+        ColumnsValuesType _columns;
         BsonTreeItem *_root;
     };
 }

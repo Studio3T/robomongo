@@ -12,8 +12,8 @@
 namespace Robomongo
 {
 
-    MongoShell::MongoShell(MongoServer *server, const ScriptInfo &scriptInfo) 
-        : QObject(),
+    MongoShell::MongoShell(MongoServer *server, const ScriptInfo &scriptInfo) :
+        QObject(),
         _scriptInfo(scriptInfo),
         _server(server)
     {

@@ -59,18 +59,20 @@ namespace Robomongo
 
     void BsonTableModelProxy::setSourceModel( QAbstractItemModel* model )
     {
-        BsonTreeItem *child = QtUtils::item<BsonTreeItem *>(model->index(0,0));
-        if(child){
-            _root = qobject_cast<BsonTreeItem *>(child->parent());
-            if(_root){
-                int count = _root->childrenCount();
-                for (int i=0;i<count;++i)
-                {
-                    BsonTreeItem *child = _root->child(i);
-                    int countc = child->childrenCount();
-                    for (int j=0;j<countc;++j)
+        if(model){
+            BsonTreeItem *child = QtUtils::item<BsonTreeItem *>(model->index(0,0));
+            if(child){
+                _root = qobject_cast<BsonTreeItem *>(child->parent());
+                if(_root){
+                    int count = _root->childrenCount();
+                    for (int i=0;i<count;++i)
                     {
-                        addColumn(child->child(j)->key());
+                        BsonTreeItem *child = _root->child(i);
+                        int countc = child->childrenCount();
+                        for (int j=0;j<countc;++j)
+                        {
+                            addColumn(child->child(j)->key());
+                        }
                     }
                 }
             }

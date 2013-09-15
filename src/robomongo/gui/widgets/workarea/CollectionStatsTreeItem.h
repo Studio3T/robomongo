@@ -8,7 +8,5 @@ namespace Robomongo
     {
     public:
         CollectionStatsTreeItem(MongoDocumentPtr document);
-    private:
-        MongoDocumentPtr _document;
     };
 }

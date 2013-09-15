@@ -1,6 +1,9 @@
 #pragma once
+#include <QFrame>
 
-#include <QLabel>
+QT_BEGIN_NAMESPACE
+class QLabel;
+QT_END_NAMESPACE
 
 namespace Robomongo
 {

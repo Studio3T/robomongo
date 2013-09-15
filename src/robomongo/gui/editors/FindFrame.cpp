@@ -14,7 +14,8 @@
 
 namespace Robomongo
 {
-    FindFrame::FindFrame(QWidget *parent) : BaseClass(parent),
+    FindFrame::FindFrame(QWidget *parent) : 
+        BaseClass(parent),
         _scin(new RoboScintilla()),
         _findPanel(new QFrame(this)),
         _close(new QToolButton(this)),

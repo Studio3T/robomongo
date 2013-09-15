@@ -21,7 +21,6 @@ namespace Robomongo
 
     public:
         OutputItemHeaderWidget(OutputItemContentWidget *output, QWidget *parent = 0);
-        OutputItemContentWidget *itemContent;
         PagingWidget *paging() const { return _paging; }
         ViewMode viewMode() const { return _viewMode; }
     protected:
@@ -51,6 +50,7 @@ namespace Robomongo
         Indicator *_collectionIndicator;
         Indicator *_timeIndicator;
         PagingWidget *_paging;
+        OutputItemContentWidget *_itemContent;
         bool _maximized;
         ViewMode _viewMode;
     };

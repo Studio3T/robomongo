@@ -1,19 +1,16 @@
 #pragma once
 
-#include <QWidget>
-#include <QLabel>
-#include <QSplitter>
+#include <QFrame>
+QT_BEGIN_NAMESPACE
+class QSplitter;
+QT_END_NAMESPACE
 
-#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/core/domain/MongoShellResult.h"
-#include "robomongo/gui/widgets/workarea/PagingWidget.h"
 #include "robomongo/gui/ViewMode.h"
 
 namespace Robomongo
 {
     class OutputItemContentWidget;
-    class OutputItemWidget;
-    class OutputWidget;
     class ProgressBarPopup;
     class MongoShell;
 
@@ -22,9 +19,9 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit OutputWidget(MongoShell *shell, QWidget *parent = 0);
+        explicit OutputWidget(QWidget *parent = 0);
 
-        void present(const std::vector<MongoShellResult> &documents);
+        void present(MongoShell *shell, const std::vector<MongoShellResult> &documents);
         void updatePart(int partIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents);
         void toggleOrientation();
 
@@ -42,12 +39,10 @@ namespace Robomongo
         void maximizePart(OutputItemContentWidget *result);
         void restoreSize();
 
-
     private:
         std::vector<ViewMode> clearAllParts();
         void tryToMakeAllPartsEqualInSize();
         QSplitter *_splitter;
         ProgressBarPopup *_progressBarPopup;
-        MongoShell *_shell;
     };
 }

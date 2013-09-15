@@ -1,10 +1,8 @@
 #include "robomongo/gui/widgets/workarea/PagingWidget.h"
 
-#include <QIcon>
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QKeyEvent>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"

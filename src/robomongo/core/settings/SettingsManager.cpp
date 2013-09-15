@@ -1,13 +1,13 @@
 #include "robomongo/core/settings/SettingsManager.h"
 
 #include <QDir>
-#include <QDebug>
 #include <QFile>
 #include <QVariantList>
 #include <qjson/parser.h>
 #include <qjson/serializer.h>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/utils/Logger.h"
 
 namespace
 {
@@ -45,7 +45,7 @@ namespace Robomongo
         _disableConnectionShortcuts(false)
     {
         load();
-        qDebug() << "SettingsManager initialized in " << _configPath;
+        LOG_MSG("SettingsManager initialized in " + _configPath,false);
     }
 
     SettingsManager::~SettingsManager()
@@ -97,7 +97,7 @@ namespace Robomongo
         s.setIndentMode(QJson::IndentFull);
         s.serialize(map, &f, &ok);
 
-        qDebug() << "Settings saved to: " << _configPath;
+        LOG_MSG("Settings saved to: " + _configPath);
 
         return ok;
     }

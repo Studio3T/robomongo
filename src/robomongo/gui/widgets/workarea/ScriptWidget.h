@@ -119,7 +119,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        TopStatusBar(MongoShell *shell);
+        TopStatusBar(const std::string &serverName);
         void setCurrentDatabase(const std::string &database, bool isValid = true);
         void setCurrentServer(const std::string &address, bool isValid = true);
         void showProgress();
@@ -129,7 +129,6 @@ namespace Robomongo
         QLabel *_currentDatabaseLabel;
         QLabel *_currentServerLabel;
         QLabel *_progressLabel;
-        MongoShell *_shell;
         QColor _textColor;
     };
 }

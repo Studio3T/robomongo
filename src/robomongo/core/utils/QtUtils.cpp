@@ -38,11 +38,11 @@ namespace Robomongo
         std::string toStdStringSafe<std::string>(const QString &value)
         {
 #ifdef Q_OS_WIN
-            QByteArray latin = value.toLocal8Bit();
-            return std::string(latin.constData(), latin.length());
+            QByteArray sUtf8 = value.toLocal8Bit();            
 #else
             QByteArray sUtf8 = value.toUtf8();
 #endif    
+            return std::string(sUtf8.constData(), sUtf8.length());
         }
 
         void cleanUpThread(QThread *const thread)

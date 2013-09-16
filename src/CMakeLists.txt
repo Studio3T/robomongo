@@ -51,6 +51,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h
     robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h
     robomongo/gui/dialogs/CreateDatabaseDialog.h
+    robomongo/gui/dialogs/CopyCollectionDialog.h
     robomongo/gui/dialogs/CreateUserDialog.h
     robomongo/gui/dialogs/FunctionTextEditor.h
     robomongo/gui/dialogs/AboutDialog.h
@@ -108,6 +109,7 @@ SET(SOURCES_GUI
     robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.cpp
     robomongo/gui/widgets/workarea/CollectionStatsTreeItem.cpp
     robomongo/gui/dialogs/CreateDatabaseDialog.cpp
+    robomongo/gui/dialogs/CopyCollectionDialog.cpp
     robomongo/gui/widgets/explorer/ExplorerUserTreeItem.cpp
     robomongo/gui/dialogs/CreateUserDialog.cpp
     robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.cpp

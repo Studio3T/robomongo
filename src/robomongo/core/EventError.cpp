@@ -1,4 +1,4 @@
-#include "robomongo\core\EventError.h"
+#include "robomongo/core/EventError.h"
 
 namespace Robomongo
 {

@@ -26,19 +26,20 @@ namespace Robomongo
     {
     }
 
-    void Logger::print(const char *mess)
+    void Logger::print(const char *mess, bool notify)
     {
-        print(std::string(mess));
+        print(std::string(mess),notify);
     }
 
-    void Logger::print(const std::string &mess)
+    void Logger::print(const std::string &mess, bool notify)
     {       
-        print(QtUtils::toQString(mess));
+        print(QtUtils::toQString(mess),notify);
     }
 
-    void Logger::print(const QString &mess)
+    void Logger::print(const QString &mess, bool notify)
     {
         LOG(pc) << QtUtils::toStdString<std::string>(mess) << std::endl;
-        emit printed(mess);
+        if(notify)
+            emit printed(mess);
     }
 }

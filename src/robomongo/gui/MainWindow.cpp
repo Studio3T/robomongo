@@ -13,7 +13,6 @@
 #include <QDesktopWidget>
 
 #include "robomongo/core/settings/SettingsManager.h"
-#include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/AppRegistry.h"

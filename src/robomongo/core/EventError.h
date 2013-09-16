@@ -15,14 +15,13 @@ namespace Robomongo
          * @brief Creates "null" (or, in other words, empty) error.
          * Subsequent call of isNull() on this object will return true.
          */
-        EventError(){}
+        EventError();
 
         /**
          * @brief Creates error object with specified error message.
          * Subsequent call of isNull() on this object will return false.
          */
-        explicit EventError(const std::string &errorMessage) :
-            _errorMessage(errorMessage) {}
+        explicit EventError(const std::string &errorMessage);
 
         /**
          * @brief Tests whether error is "null" (or, in other words, empty).
@@ -30,12 +29,12 @@ namespace Robomongo
          * way to support "null" semantic for value objects.
          * @return true, if null or false otherwise.
          */
-        bool isNull() const { return _errorMessage.empty(); }
+        bool isNull() const;
 
         /**
          * @brief Returns error message that describes this error.
          */
-        const std::string &errorMessage() const { return _errorMessage; }
+        const std::string &errorMessage() const;
 
     private:
         /**

@@ -14,10 +14,9 @@ namespace Robomongo
         friend class Patterns::LazySingleton<Logger>;
         Q_OBJECT
     public:
-        void print(const char *mess);
-        void print(const std::string &mess);
-        void print(const QString &mess);        
-
+        void print(const char *mess, bool notify);
+        void print(const std::string &mess, bool notify);
+        void print(const QString &mess, bool notify);        
     Q_SIGNALS:
         void printed(const QString &mess);
 
@@ -27,8 +26,8 @@ namespace Robomongo
     };
 
     template<typename T>
-    inline void LOG_MSG(const T &mess)
+    inline void LOG_MSG(const T &mess, bool notify = true)
     {
-        return Logger::instance().print(mess);
+        return Logger::instance().print(mess,notify);
     }
 }

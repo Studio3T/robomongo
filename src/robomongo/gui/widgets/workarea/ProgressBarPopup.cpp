@@ -1,17 +1,19 @@
 #include "ProgressBarPopup.h"
 
+#include <QLabel>
 #include <QMovie>
 #include <QVBoxLayout>
 
 namespace Robomongo
 {
 
-    ProgressBarPopup::ProgressBarPopup(QWidget *parent) : QFrame(parent)
+    ProgressBarPopup::ProgressBarPopup(QWidget *parent) :
+        QFrame(parent)
     {
-        int w = 163 + 1; // height of progress image
-        int h = 15 + 1;  // width of progress image
-        int lr = 10;     // padding on left and right
-        int tb = 10;      // padding on top and bottom
+        const int w = 163 + 1; // height of progress image
+        const int h = 15 + 1;  // width of progress image
+        const int lr = 10;     // padding on left and right
+        const int tb = 10;      // padding on top and bottom
 
         setStyleSheet("QFrame {background-color: #e1e1e1; border: 0px solid #c7c5c4; border-radius: 6px;}");
 

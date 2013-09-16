@@ -20,8 +20,7 @@ namespace
 namespace Robomongo
 {
 
-    CollectionStatsTreeItem::CollectionStatsTreeItem(MongoDocumentPtr document) 
-        : _document(document)
+    CollectionStatsTreeItem::CollectionStatsTreeItem(MongoDocumentPtr document)
     {
         mongo::BSONObj _obj = document->bsonObj();
 

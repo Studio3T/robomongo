@@ -1,16 +1,14 @@
 #pragma once
 
-#include <QWidget>
 #include <QThread>
+#include <vector>
 
 #include "robomongo/core/Core.h"
-#include "robomongo/core/domain/MongoQueryInfo.h"
+
 #include "robomongo/core/domain/Enums.h"
 
 namespace Robomongo
 {
-    class MongoShell;
-
     /*
     ** In this thread we are running task to prepare JSON string from list of BSON objects
     */

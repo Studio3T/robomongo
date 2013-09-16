@@ -58,7 +58,7 @@ namespace Robomongo
         setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
 
         _queryText = new FindFrame(this);
-        _topStatusBar = new TopStatusBar(shell);
+        _topStatusBar = new TopStatusBar(_shell->server()->connectionRecord()->getFullAddress());
 
         QVBoxLayout *layout = new QVBoxLayout;
         layout->setSpacing(0);
@@ -201,8 +201,9 @@ namespace Robomongo
 
         _completer->complete(rect);
         _completer->popup()->setCurrentIndex(_completer->completionModel()->index(0, 0));
-        static_cast<RoboScintilla*>(_queryText->sciScintilla())->setIgnoreEnterKey(true);
-        static_cast<RoboScintilla*>(_queryText->sciScintilla())->setIgnoreTabKey(true);
+        RoboScintilla* scin = static_cast<RoboScintilla*>(_queryText->sciScintilla());
+        scin->setIgnoreEnterKey(true);
+        scin->setIgnoreTabKey(true);
     }
 
     void ScriptWidget::showAutocompletion()
@@ -220,8 +221,9 @@ namespace Robomongo
     void ScriptWidget::hideAutocompletion()
     {
         _completer->popup()->hide();
-        static_cast<RoboScintilla*>(_queryText->sciScintilla())->setIgnoreEnterKey(false);
-        static_cast<RoboScintilla*>(_queryText->sciScintilla())->setIgnoreTabKey(false);
+        RoboScintilla *scin = static_cast<RoboScintilla*>(_queryText->sciScintilla());
+        scin->setIgnoreEnterKey(false);
+        scin->setIgnoreTabKey(false);
     }
 
     void ScriptWidget::ui_queryLinesCountChanged()
@@ -376,8 +378,7 @@ namespace Robomongo
         return AutoCompletionInfo(final, row, leftStop, rightStop);
     }
 
-    TopStatusBar::TopStatusBar(MongoShell *shell) :
-        _shell(shell)
+    TopStatusBar::TopStatusBar(const std::string &serverName)
     {
         setContentsMargins(0, 0, 0, 0);
         _textColor = palette().text().color().lighter(200);
@@ -392,7 +393,7 @@ namespace Robomongo
         QLabel *serverIconLabel = new QLabel;
         serverIconLabel->setPixmap(serverPixmap);
 
-        _currentServerLabel = new QLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(QtUtils::toQString(_shell->server()->connectionRecord()->getFullAddress())),this);
+        _currentServerLabel = new QLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(serverName.c_str()),this);
         _currentServerLabel->setDisabled(true);
 
         _currentDatabaseLabel = new QLabel(this);

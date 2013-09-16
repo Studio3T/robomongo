@@ -1,5 +1,6 @@
 #pragma once
 #include <QObject>
+#include <vector>
 
 #include "robomongo/core/domain/ScriptInfo.h"
 
@@ -17,6 +18,8 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef std::vector<MongoServer*> MongoServersContainerType;
+        typedef std::vector<MongoShell*> MongoShellsContainerType;
         App(EventBus *const bus);
         ~App();
 
@@ -47,7 +50,7 @@ namespace Robomongo
                               const CursorPosition &cursorPosition = CursorPosition(),const QString &filePathToSave=QString());
 
         MongoShell *openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo);
-
+        MongoServersContainerType getServers() const {return _servers; };
         /**
          * @brief Builds single collection query (i.e. db.my_col.find()) from
          *  string that doesn't contain "db.my_col." prefix.
@@ -72,12 +75,12 @@ namespace Robomongo
         /**
          * @brief MongoServers, owned by this App.
          */
-        QList<MongoServer *> _servers;
+        MongoServersContainerType _servers;
 
         /**
          * @brief MongoShells, owned by this App.
          */
-        QList<MongoShell *> _shells;
+        MongoShellsContainerType _shells;
 
         /**
          * @brief EventBus

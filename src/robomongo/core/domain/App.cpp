@@ -6,6 +6,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/utils/StdUtils.h"
 #include "robomongo/core/utils/Logger.h"
 
 namespace Robomongo
@@ -16,8 +17,8 @@ namespace Robomongo
 
     App::~App()
     {
-        qDeleteAll(_shells);
-        qDeleteAll(_servers);
+        std::for_each(_shells.begin(), _shells.end(), std::default_delete<MongoShell>());
+        std::for_each(_servers.begin(), _servers.end(), std::default_delete<MongoServer>());
     }
 
     /**
@@ -29,7 +30,7 @@ namespace Robomongo
                                  bool visible)
     {
         MongoServer *server = new MongoServer(connection, visible);
-        _servers.append(server);
+        _servers.push_back(server);
 
         if (visible)
             _bus->publish(new ConnectingEvent(this, server));
@@ -45,12 +46,7 @@ namespace Robomongo
      */
     void App::closeServer(MongoServer *server)
     {
-        // Do nothing, if this server not owned by this App.
-        if (!_servers.contains(server))
-            return;
-
-        _servers.removeOne(server);
-        delete server;
+        _servers.erase(std::remove_if(_servers.begin(), _servers.end(), StdUtils::RemoveIfFound<MongoServer*>(server)), _servers.end());
     }
 
     MongoShell *App::openShell(MongoCollection *collection,const QString &filePathToSave)
@@ -86,7 +82,7 @@ namespace Robomongo
     {
         MongoServer *server = openServer(connection, false);
         MongoShell *shell = new MongoShell(server,scriptInfo);
-        _shells.append(shell);
+        _shells.push_back(shell);
         _bus->publish(new OpeningShellEvent(this, shell));
         LOG_MSG("Openning shell...");
         shell->execute();
@@ -124,10 +120,11 @@ namespace Robomongo
     void App::closeShell(MongoShell *shell)
     {
         // Do nothing, if this shell not owned by this App.
-        if (!_shells.contains(shell))
+        MongoShellsContainerType::iterator it = std::find_if(_shells.begin(),_shells.end(),std::bind1st(std::equal_to<MongoShell *>(),shell));
+        if (it == _shells.end())
             return;
 
-        _shells.removeOne(shell);
+        _shells.erase(it);
         closeServer(shell->server());
         delete shell;
     }

@@ -53,6 +53,8 @@ namespace Robomongo
     R_REGISTER_EVENT(RenameCollectionResponse)
     R_REGISTER_EVENT(DuplicateCollectionRequest)
     R_REGISTER_EVENT(DuplicateCollectionResponse)
+    R_REGISTER_EVENT(CopyCollectionToDiffServerRequest)
+    R_REGISTER_EVENT(CopyCollectionToDiffServerResponse)
     R_REGISTER_EVENT(CreateUserRequest)
     R_REGISTER_EVENT(CreateUserResponse)
     R_REGISTER_EVENT(DropUserRequest)

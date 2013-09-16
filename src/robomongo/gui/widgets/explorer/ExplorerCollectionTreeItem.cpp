@@ -438,17 +438,17 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::ui_copyToCollectionToDiffrentServer()
     {
-        MongoDatabase *database = _collection->database();
-        MongoServer *server = database->server();
+        MongoDatabase *databaseFrom = _collection->database();
+        MongoServer *server = databaseFrom->server();
         ConnectionSettings *settings = server->connectionRecord();
 
-        CopyCollection dlg(QtUtils::toQString(settings->getFullAddress()),
-            QtUtils::toQString(database->name()),
-            QtUtils::toQString(_collection->name()));
+        CopyCollection dlg(QtUtils::toQString(settings->getFullAddress()), QtUtils::toQString(databaseFrom->name()), QtUtils::toQString(_collection->name()) );
         int result = dlg.exec();
 
         if (result == QDialog::Accepted) {
-            
+            MongoDatabase *databaseTo = dlg.selectedDatabase();
+            databaseTo->copyCollection(_collection->name(),databaseFrom->name());
+            databaseTo->loadCollections();
         }
     }
 

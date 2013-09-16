@@ -42,6 +42,7 @@ namespace Robomongo
         void renameCollection(const std::string &dbName, const std::string &collectionName, const std::string &newCollectionName);
         void duplicateCollection(const std::string &dbName, const std::string &collectionName, const std::string &newCollectionName);
         void dropCollection(const std::string &dbName, const std::string &collectionName);
+        void copyCollectionToDiffDatabase(const std::string &databaseFrom, const std::string &collection, const std::string &databaseTo);
 
         void insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
         void saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);

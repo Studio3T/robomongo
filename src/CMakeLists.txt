@@ -183,6 +183,7 @@ SET(HEADERS_CORE
     robomongo/core/HexUtils.h
     robomongo/core/utils/BsonUtils.h
     robomongo/core/utils/QtUtils.h
+    robomongo/core/utils/StdUtils.h
     robomongo/core/utils/SingletonPattern.hpp
     )
 SET(SOURCES_CORE
@@ -222,6 +223,7 @@ SET(SOURCES_CORE
     robomongo/core/HexUtils.cpp
     robomongo/core/utils/BsonUtils.cpp
     robomongo/core/utils/QtUtils.cpp
+    robomongo/core/utils/StdUtils.cpp
     robomongo/core/utils/Logger.cpp
     )
 

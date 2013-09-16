@@ -6,6 +6,7 @@
 #include "robomongo/gui/widgets/explorer/EditIndexDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
+#include "robomongo/gui/dialogs/CopyCollectionDialog.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/utils/DialogUtils.h"
@@ -236,6 +237,8 @@ namespace Robomongo
         VERIFY(connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection())));
         QAction *duplicateCollection = new QAction("Duplicate Collection", this);
         VERIFY(connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection())));
+        QAction *copyCollectionToDiffrentServer = new QAction("Copy Collection to different server", this);
+        VERIFY(connect(copyCollectionToDiffrentServer, SIGNAL(triggered()), SLOT(ui_copyToCollectionToDiffrentServer())));
 
         QAction *viewCollection = new QAction("View Documents", this);
         VERIFY(connect(viewCollection, SIGNAL(triggered()), SLOT(ui_viewCollection())));
@@ -249,6 +252,7 @@ namespace Robomongo
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(renameCollection);
         BaseClass::_contextMenu->addAction(duplicateCollection);
+        BaseClass::_contextMenu->addAction(copyCollectionToDiffrentServer);
         BaseClass::_contextMenu->addAction(dropCollection);
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(collectionStats);
@@ -429,6 +433,22 @@ namespace Robomongo
 
             // refresh list of collections
             database->loadCollections();
+        }
+    }
+
+    void ExplorerCollectionTreeItem::ui_copyToCollectionToDiffrentServer()
+    {
+        MongoDatabase *database = _collection->database();
+        MongoServer *server = database->server();
+        ConnectionSettings *settings = server->connectionRecord();
+
+        CopyCollection dlg(QtUtils::toQString(settings->getFullAddress()),
+            QtUtils::toQString(database->name()),
+            QtUtils::toQString(_collection->name()));
+        int result = dlg.exec();
+
+        if (result == QDialog::Accepted) {
+            
         }
     }
 

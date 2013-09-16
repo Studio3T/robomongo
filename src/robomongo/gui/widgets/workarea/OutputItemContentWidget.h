@@ -11,6 +11,7 @@ namespace Robomongo
     class FindFrame;
     class BsonTreeView;
     class BsonTableView;
+    class BsonTreeModel;
     class JsonPrepareThread;
     class CollectionStatsTreeWidget;
     class MongoShell;
@@ -27,15 +28,13 @@ namespace Robomongo
         OutputItemContentWidget(OutputWidget *out,MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo,QWidget *parent = NULL);
         int _initialSkip;
         int _initialLimit;
-        void update(const std::vector<MongoDocumentPtr> &documents);
+        void update(const MongoQueryInfo &inf,const std::vector<MongoDocumentPtr> &documents);
         OutputItemHeaderWidget *header() const {return _header;}
         bool isTextModeSupported() const { return _isTextModeSupported; }
         bool isTreeModeSupported() const { return _isTreeModeSupported; }
         bool isCustomModeSupported() const { return _isCustomModeSupported; }
         bool isTableModeSupported() const { return _isTableModeSupported; }
 
-        void setQueryInfo(const MongoQueryInfo &inf){_queryInfo = inf;}
-        MongoQueryInfo queryInfo() const { return _queryInfo;}
         void showText();
         void showTree();        
         void showTable();
@@ -54,10 +53,12 @@ namespace Robomongo
     private:
         void setup();
         FindFrame *configureLogText();
+        BsonTreeModel *configureModel();
 
         FindFrame *_textView;
         BsonTreeView *_bsonTreeview;
         BsonTableView *_bsonTable;
+        BsonTreeModel *_mod;
         CollectionStatsTreeWidget *_collectionStats;
 
         QString _text;

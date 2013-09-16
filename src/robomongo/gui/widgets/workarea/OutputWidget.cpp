@@ -1,30 +1,20 @@
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 
 #include <QHBoxLayout>
-#include <QMovie>
-#include <QListView>
-#include <QTreeView>
-#include <Qsci/qscilexerjavascript.h>
+#include <QSplitter>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
-#include "robomongo/core/domain/MongoShellResult.h"
-#include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/core/domain/MongoShell.h"
 
-#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
-#include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
-#include "robomongo/gui/widgets/workarea/PagingWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
 #include "robomongo/gui/widgets/workarea/ProgressBarPopup.h"
 
 namespace Robomongo
 {
-    OutputWidget::OutputWidget(MongoShell *shell, QWidget *parent) :
+    OutputWidget::OutputWidget(QWidget *parent) :
         QFrame(parent),
-        _shell(shell),
         _splitter(NULL)
     {
         _splitter = new QSplitter;
@@ -41,7 +31,7 @@ namespace Robomongo
         _progressBarPopup = new ProgressBarPopup(this);
     }
 
-    void OutputWidget::present(const std::vector<MongoShellResult> &results)
+    void OutputWidget::present(MongoShell *shell, const std::vector<MongoShellResult> &results)
     {
         std::vector<ViewMode> prev = clearAllParts();
         for (std::vector<MongoShellResult>::const_iterator it = results.begin(); it!=results.end(); ++it) {
@@ -49,13 +39,10 @@ namespace Robomongo
             OutputItemContentWidget *output = NULL;
 
             if (shellResult.documents().size() > 0) {
-                output = new OutputItemContentWidget(this,_shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo());
+                output = new OutputItemContentWidget(this,shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo());
             } else {
-                output = new OutputItemContentWidget(this,_shell, QtUtils::toQString(shellResult.response()));
+                output = new OutputItemContentWidget(this,shell, QtUtils::toQString(shellResult.response()));
             }
-
-            VERIFY(connect(output->header(), SIGNAL(restoredSize()), this, SLOT(restoreSize())));
-            VERIFY(connect(output->header(), SIGNAL(maximizedPart(OutputItemContentWidget *)), this, SLOT(maximizePart(OutputItemContentWidget *))));
 
             ViewMode viewMode = AppRegistry::instance().settingsManager()->viewMode();
             if (prev.size()){
@@ -91,14 +78,7 @@ namespace Robomongo
                 output->header()->showText();
 
             double secs = shellResult.elapsedMs() / 1000.f;
-
             output->header()->setTime(QString("%1 sec.").arg(secs));
-
-            if (!shellResult.queryInfo().isNull) {
-                output->header()->setCollection(QtUtils::toQString(shellResult.queryInfo().collectionName));
-                output->header()->paging()->setBatchSize(shellResult.queryInfo().batchSize);
-                output->header()->paging()->setSkip(shellResult.queryInfo().skip);
-            }
 
             _splitter->addWidget(output);
         }
@@ -112,11 +92,7 @@ namespace Robomongo
             return;
 
         OutputItemContentWidget *output = (OutputItemContentWidget *) _splitter->widget(partIndex);
-
-        output->header()->paging()->setSkip(queryInfo.skip);
-        output->header()->paging()->setBatchSize(queryInfo.batchSize);
-        output->setQueryInfo(queryInfo);
-        output->header()->itemContent->update(documents);
+        output->update(queryInfo,documents);
         output->header()->refreshOutputItem();
     }
 

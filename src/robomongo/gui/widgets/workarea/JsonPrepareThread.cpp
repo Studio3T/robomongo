@@ -33,12 +33,6 @@ namespace Robomongo
             else
                 sb << "\n\n/* " << position << " */\n";
 
-            // Approach #1
-            // std::string stdJson = doc->bsonObj().jsonString(mongo::TenGen, 1);
-
-            // Approach #2
-            // std::string stdJson = doc->bsonObj().toString(false, true);
-
             mongo::BSONObj obj = doc->bsonObj();
             std::string stdJson = BsonUtils::jsonString(obj, mongo::TenGen, 1, _uuidEncoding, _timeZone);
 

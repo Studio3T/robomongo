@@ -3,6 +3,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QGridLayout>
+#include <QRegExpValidator>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -26,6 +27,8 @@ namespace Robomongo
         _serverAddress = new QLineEdit(QtUtils::toQString(_settings->serverHost()));
         _serverPort = new QLineEdit(QString::number(_settings->serverPort()));
         _serverPort->setFixedWidth(80);
+        QRegExp rx("\\d+");//(0-65554)
+        _serverPort->setValidator(new QRegExpValidator(rx, this));
 
         QGridLayout *connectionLayout = new QGridLayout;
         connectionLayout->addWidget(new QLabel("Name:"),          1, 0);

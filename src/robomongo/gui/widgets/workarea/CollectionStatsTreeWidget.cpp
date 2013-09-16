@@ -7,7 +7,7 @@
 namespace Robomongo
 {
 
-    CollectionStatsTreeWidget::CollectionStatsTreeWidget(MongoShell *shell, QWidget *parent) 
+    CollectionStatsTreeWidget::CollectionStatsTreeWidget(QWidget *parent) 
         : QTreeWidget(parent)
     {
         QStringList colums;

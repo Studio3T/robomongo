@@ -53,6 +53,7 @@ namespace Robomongo
         void ui_dropCollection();
         void ui_renameCollection();
         void ui_duplicateCollection();
+        void ui_copyToCollectionToDiffrentServer();
         void ui_viewCollection();
 
     private:

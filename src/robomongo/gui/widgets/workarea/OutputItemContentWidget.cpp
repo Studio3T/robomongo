@@ -3,11 +3,13 @@
 #include <QVBoxLayout>
 #include <Qsci/qscilexerjavascript.h>
 
-#include "robomongo/gui/widgets/workarea/OutputWidget.h"
-#include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/domain/MongoShell.h"
+
+#include "robomongo/gui/widgets/workarea/OutputWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
 #include "robomongo/gui/widgets/workarea/JsonPrepareThread.h"
 #include "robomongo/gui/widgets/workarea/BsonTreeView.h"
 #include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
@@ -18,11 +20,11 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
-#include "robomongo/core/domain/MongoShell.h"
 
 namespace Robomongo
 {
     OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out,MongoShell *shell, const QString &text, QWidget *parent) :
+        BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
         _thread(NULL),
@@ -40,13 +42,14 @@ namespace Robomongo
         _shell(shell),
         _initialSkip(0),
         _initialLimit(0),
-        BaseClass(parent),
-        _out(out)
+        _out(out),
+        _mod(NULL)
     {
         setup();
     }
 
     OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out,MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, QWidget *parent) :
+        BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
         _thread(NULL),
@@ -66,8 +69,8 @@ namespace Robomongo
         _shell(shell),
         _initialSkip(queryInfo.skip),
         _initialLimit(queryInfo.limit),
-        BaseClass(parent),
-        _out(out)
+        _out(out),
+        _mod(NULL)
     {
         setup();
     }
@@ -77,6 +80,12 @@ namespace Robomongo
         setContentsMargins(0, 0, 0, 0);
         _header = new OutputItemHeaderWidget(this);       
 
+        if (!_queryInfo.isNull) {
+            _header->setCollection(QtUtils::toQString(_queryInfo.collectionName));
+            _header->paging()->setBatchSize(_queryInfo.batchSize);
+            _header->paging()->setSkip(_queryInfo.skip);
+        }
+
         QVBoxLayout *layout = new QVBoxLayout();
         layout->setContentsMargins(0, 1, 0, 0);
         layout->setSpacing(0);
@@ -84,11 +93,13 @@ namespace Robomongo
         _stack = new QStackedWidget;
         layout->addWidget(_stack);
         setLayout(layout);
-
+        configureModel();
 
         VERIFY(connect(_header->paging(), SIGNAL(refreshed(int,int)), this, SLOT(refresh(int,int))));
         VERIFY(connect(_header->paging(), SIGNAL(leftClicked(int,int)), this, SLOT(paging_leftClicked(int,int))));
         VERIFY(connect(_header->paging(), SIGNAL(rightClicked(int,int)), this, SLOT(paging_rightClicked(int,int))));
+        VERIFY(connect(_header, SIGNAL(restoredSize()), _out, SLOT(restoreSize())));
+        VERIFY(connect(_header, SIGNAL(maximizedPart(OutputItemContentWidget *)), _out, SLOT(maximizePart(OutputItemContentWidget *))));
     }
 
     void OutputItemContentWidget::paging_leftClicked(int skip, int limit)
@@ -109,12 +120,7 @@ namespace Robomongo
 
     void OutputItemContentWidget::refresh(int skip, int batchSize)
     {
-        OutputItemContentWidget *send = this;
-
         // Cannot set skip lower than in the text query
-        MongoQueryInfo queryInfo = send->queryInfo();
-        int _initialSkip = send->_initialSkip;
-        int _initialLimit = send->_initialLimit;
         if (skip <  _initialSkip) {
             _header->paging()->setSkip(_initialSkip);
             skip = _initialSkip;
@@ -134,17 +140,22 @@ namespace Robomongo
                 limit = batchSize;
         }
 
-        MongoQueryInfo info(queryInfo);
+        MongoQueryInfo info(_queryInfo);
         info.limit = limit;
         info.skip = skip;
         info.batchSize = batchSize;
         _out->showProgress();
-        _shell->query(_out->resultIndex(send), info);
+        _shell->query(_out->resultIndex(this), info);
     }
 
-    void OutputItemContentWidget::update(const std::vector<MongoDocumentPtr> &documents)
+    void OutputItemContentWidget::update(const MongoQueryInfo &inf,const std::vector<MongoDocumentPtr> &documents)
     {
+        _queryInfo = inf;
         _documents = documents;
+
+        _header->paging()->setSkip(_queryInfo.skip);
+        _header->paging()->setBatchSize(_queryInfo.batchSize);
+
         _text.clear();
         _isFirstPartRendered = false;
         markUninitialized();
@@ -166,6 +177,7 @@ namespace Robomongo
             delete _textView;
             _textView = NULL;
         }
+        configureModel();
     }
 
     void OutputItemContentWidget::showText()
@@ -183,7 +195,7 @@ namespace Robomongo
                 if (_documents.size() > 0) {
                     _textView->sciScintilla()->setText("Loading...");
                     _thread = new JsonPrepareThread(_documents, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
-                    VERIFY(connect(_thread, SIGNAL(partReady(QString)), this, SLOT(jsonPartReady(QString))));
+                    VERIFY(connect(_thread, SIGNAL(partReady(const QString&)), this, SLOT(jsonPartReady(const QString&))));
                     VERIFY(connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater())));
                     _thread->start();
                 }
@@ -205,8 +217,7 @@ namespace Robomongo
 
         if (!_isTreeModeInitialized) {
             _bsonTreeview = new BsonTreeView(_shell,_queryInfo);
-            BsonTreeModel *mod = new BsonTreeModel(_documents,_bsonTreeview);
-            _bsonTreeview->setModel(mod);
+            _bsonTreeview->setModel(_mod);
             _stack->addWidget(_bsonTreeview);
             _isTreeModeInitialized = true;
         }
@@ -222,18 +233,13 @@ namespace Robomongo
             return;
         }
 
-        QWidget *customWidget = NULL;
-
         if (!_isCustomModeInitialized) {
 
             if (_type == "collectionStats") {
-                _collectionStats = new CollectionStatsTreeWidget(_shell);
+                _collectionStats = new CollectionStatsTreeWidget(NULL);
                 _collectionStats->setDocuments(_documents);
-                customWidget = _collectionStats;
-            }
-
-            if (customWidget)
                 _stack->addWidget(_collectionStats);
+            }               
             _isCustomModeInitialized = true;
         }
 
@@ -250,10 +256,9 @@ namespace Robomongo
         }
 
         if (!_isTableModeInitialized) {
-            _bsonTable = new BsonTableView(_shell,_queryInfo);
-            BsonTreeModel *mod = new BsonTreeModel(_documents,_bsonTreeview);
+            _bsonTable = new BsonTableView(_shell,_queryInfo);            
             BsonTableModelProxy *modp = new BsonTableModelProxy(_bsonTable);
-            modp->setSourceModel(mod);
+            modp->setSourceModel(_mod);
             _bsonTable->setModel(modp);
             _stack->addWidget(_bsonTable);
             _isTableModeInitialized = true;
@@ -284,15 +289,20 @@ namespace Robomongo
         {
             if (_textView)
             {
-                _textView->setUpdatesEnabled(false);
                 if (_isFirstPartRendered)
                     _textView->sciScintilla()->append(json);
                 else
                     _textView->sciScintilla()->setText(json);
-                _textView->setUpdatesEnabled(true);
                 _isFirstPartRendered = true;
             }
         }
+    }
+    
+    BsonTreeModel *OutputItemContentWidget::configureModel()
+    {
+        delete _mod;
+        _mod = new BsonTreeModel(_documents,this);
+        return _mod;
     }
 
     FindFrame *Robomongo::OutputItemContentWidget::configureLogText()

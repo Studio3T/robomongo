@@ -7,19 +7,19 @@ namespace Robomongo
     namespace stdutils
     {
         template<typename T>
-        struct RemoveIfFound: public std::unary_function<const T, bool>
+        struct RemoveIfFound: public std::unary_function<T, bool>
         {
-            RemoveIfFound(const T whatSearch) : _whatSearch(whatSearch) {}
+            RemoveIfFound(T whatSearch) : _whatSearch(whatSearch) {}
 
-            bool operator()(const T item) const {
+            bool operator()(T item) const {
                 if (item == _whatSearch){
-                    delete item;
+                    destroy(item);
                     return true;
                 }
                 return false;
             }
 
-            const T _whatSearch;
+            T _whatSearch;
         };
         template<typename T>
         inline void destroy(T *&v)

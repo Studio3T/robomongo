@@ -10,7 +10,7 @@ namespace Robomongo
 {
     MongoDocument::MongoDocument()
     {
-    // test
+
     }
 
     MongoDocument::~MongoDocument()
@@ -20,7 +20,7 @@ namespace Robomongo
     /*
     ** Create MongoDocument from BsonObj. It will take owned version of BSONObj
     */
-    MongoDocument::MongoDocument(mongo::BSONObj bsonObj):_bsonObj(bsonObj)
+    MongoDocument::MongoDocument(mongo::BSONObj bsonObj) :_bsonObj(bsonObj)
     {
     }
 
@@ -29,7 +29,7 @@ namespace Robomongo
     */ 
     MongoDocumentPtr MongoDocument::fromBsonObj(const mongo::BSONObj &bsonObj)
     {
-        MongoDocument * doc = new MongoDocument(bsonObj);
+        MongoDocument *doc = new MongoDocument(bsonObj);
         return MongoDocumentPtr(doc);
     }
 
@@ -39,7 +39,7 @@ namespace Robomongo
     std::vector<MongoDocumentPtr> MongoDocument::fromBsonObj(const std::vector<mongo::BSONObj> &bsonObjs)
     {
         std::vector<MongoDocumentPtr> list;
-        for(std::vector<mongo::BSONObj>::const_iterator it=bsonObjs.begin();it!=bsonObjs.end();++it){
+        for (std::vector<mongo::BSONObj>::const_iterator it=bsonObjs.begin(); it!=bsonObjs.end(); ++it) {
             list.push_back(fromBsonObj(*it));
         }
 
@@ -51,7 +51,9 @@ namespace Robomongo
     */
     void MongoDocument::buildJsonString(std::string &con)
     {
-        BsonUtils::buildJsonString(_bsonObj,con,AppRegistry::instance().settingsManager()->uuidEncoding(),AppRegistry::instance().settingsManager()->timeZone());
+        BsonUtils::buildJsonString(_bsonObj, con,
+            AppRegistry::instance().settingsManager()->uuidEncoding(),
+            AppRegistry::instance().settingsManager()->timeZone());
     }
 
     /*
@@ -62,8 +64,7 @@ namespace Robomongo
         mongo::StringBuilder sb;
 
         int position = 0;
-        for(QList<MongoDocumentPtr>::const_iterator it=documents.begin();it!=documents.end();++it)
-        {
+        for (QList<MongoDocumentPtr>::const_iterator it = documents.begin(); it != documents.end(); ++it) {
             if (position == 0)
                 sb << "/* 0 */\n";
             else 

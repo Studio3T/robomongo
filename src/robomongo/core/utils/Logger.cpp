@@ -1,8 +1,9 @@
 #include "robomongo/core/utils/Logger.h"
 
 #include <QDir>
+#include <mongo/util/log.h>
+
 #include "robomongo/core/utils/QtUtils.h"
-#include "mongo/util/log.h"
 
 namespace
 {

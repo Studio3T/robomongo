@@ -31,7 +31,7 @@ namespace Robomongo
         };
 
         typedef QObject BaseClass;
-        typedef std::vector<BsonTreeItem*> childContainerType;
+        typedef std::vector<BsonTreeItem*> ChildContainerType;
 
         explicit BsonTreeItem(QObject *parent = 0);
         explicit BsonTreeItem(const mongo::BSONObj &bsonObjRoot, QObject *parent = 0);
@@ -62,7 +62,7 @@ namespace Robomongo
     protected:
 
         const mongo::BSONObj _root;
-        childContainerType _items;
+        ChildContainerType _items;
         BsonItemFields _fields;
     };
 }

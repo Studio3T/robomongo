@@ -121,7 +121,7 @@ namespace Robomongo
         }
 
     private:
-        CredentialSettings *findCredential(const std::string &databaseName)const;
+        CredentialSettings *findCredential(const std::string &databaseName) const;
         std::string _connectionName;
         std::string _serverHost;
         std::string _defaultDatabase;

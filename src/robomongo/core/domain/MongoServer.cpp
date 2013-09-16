@@ -18,12 +18,12 @@ namespace Robomongo
         _visible(visible)
     {
         _host = _connectionRecord->serverHost();
-        char num[8]={0};
-        sprintf(num,"%u",_connectionRecord->serverPort()); //unsigned short range of 0 to 65,535
+        char num[8] = {0};
+        sprintf(num, "%u", _connectionRecord->serverPort()); //unsigned short range of 0 to 65,535
         _port = num;
 
-        char buf[512]={0};
-        sprintf(buf,"%s:%u",_host.c_str(),_connectionRecord->serverPort());
+        char buf[512] = {0};
+        sprintf(buf, "%s:%u", _host.c_str(), _connectionRecord->serverPort());
         _address = buf;
 
         _connection.reset(new mongo::DBClientConnection);
@@ -31,8 +31,8 @@ namespace Robomongo
         _client.reset(new MongoWorker(_connectionRecord->clone()));
 
         _bus->send(_client.data(), new InitRequest(this,
-                                                   AppRegistry::instance().settingsManager()->loadMongoRcJs(),
-                                                   AppRegistry::instance().settingsManager()->batchSize()));
+            AppRegistry::instance().settingsManager()->loadMongoRcJs(),
+            AppRegistry::instance().settingsManager()->batchSize()));
     }
 
     MongoServer::~MongoServer()
@@ -57,8 +57,7 @@ namespace Robomongo
     QStringList MongoServer::getDatabasesNames() const
     {
         QStringList result;
-        for (databasesContainerType::const_iterator it = _databases.begin(); it!=_databases.end(); ++it)
-        {
+        for (DatabasesContainerType::const_iterator it = _databases.begin(); it != _databases.end(); ++it) {
             MongoDatabase *datab = *it;
             result.append(QtUtils::toQString(datab->name()));
         }
@@ -77,9 +76,8 @@ namespace Robomongo
 
     void MongoServer::insertDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection)
     {
-        for (std::vector<mongo::BSONObj>::const_iterator it = objCont.begin(); it != objCont.end() ; it++)
-        {
-            insertDocument(*it,db,collection);
+        for (std::vector<mongo::BSONObj>::const_iterator it = objCont.begin(); it != objCont.end(); it++) {
+            insertDocument(*it, db, collection);
         }
     }
 
@@ -90,8 +88,7 @@ namespace Robomongo
 
     void MongoServer::saveDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection)
     {
-        for (std::vector<mongo::BSONObj>::const_iterator it = objCont.begin(); it != objCont.end() ; it++)
-        {
+        for (std::vector<mongo::BSONObj>::const_iterator it = objCont.begin(); it != objCont.end(); it++) {
             saveDocument(*it,db,collection);
         }
     }
@@ -125,22 +122,22 @@ namespace Robomongo
 
     void MongoServer::handle(EstablishConnectionResponse *event)
     {
-        if (event->isError()){
-            _bus->publish(new ConnectionFailedEvent(this,event->error()));
-        }else if (_visible){
+        if (event->isError()) {
+            _bus->publish(new ConnectionFailedEvent(this, event->error()));
+        } else if (_visible) {
             _bus->publish(new ConnectionEstablishedEvent(this));
         }
     }
 
     void MongoServer::handle(LoadDatabaseNamesResponse *event)
     {
-        if (event->isError()){
-            _bus->publish(new ConnectionFailedEvent(this,event->error()));
+        if (event->isError()) {
+            _bus->publish(new ConnectionFailedEvent(this, event->error()));
             return;
         }
 
         clearDatabases();
-        for(std::vector<std::string>::iterator it = event->databaseNames.begin();it!=event->databaseNames.end();++it){
+        for(std::vector<std::string>::iterator it = event->databaseNames.begin(); it != event->databaseNames.end(); ++it) {
             const std::string &name = *it;
             MongoDatabase *db  = new MongoDatabase(this, name);
             addDatabase(db);

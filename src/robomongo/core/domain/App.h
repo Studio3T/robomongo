@@ -15,6 +15,7 @@ namespace Robomongo
     class App : public QObject
     {
         Q_OBJECT
+
     public:
         App(EventBus *const bus);
         ~App();

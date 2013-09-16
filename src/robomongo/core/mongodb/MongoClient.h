@@ -17,22 +17,24 @@ namespace Robomongo
         MongoClient(mongo::DBClientBase *const scopedConnection);
 
         std::vector<std::string> getCollectionNames(const std::string &dbname) const;
-        std::vector<std::string> getDatabaseNames()const;
+        std::vector<std::string> getDatabaseNames() const;
 
         std::vector<MongoUser> getUsers(const std::string &dbName);
         void createUser(const std::string &dbName, const MongoUser &user, bool overwrite);
         void dropUser(const std::string &dbName, const mongo::OID &id);
 
         std::vector<MongoFunction> getFunctions(const std::string &dbName);
-        std::vector<EnsureIndexInfo> getIndexes(const MongoCollectionInfo &collection)const;
-        void dropIndexFromCollection(const MongoCollectionInfo &collection,const std::string &indexName)const;
-        void ensureIndex(const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo)const;
+        std::vector<EnsureIndexInfo> getIndexes(const MongoCollectionInfo &collection) const;
+        void dropIndexFromCollection(const MongoCollectionInfo &collection, const std::string &indexName) const;
+        void ensureIndex(const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo) const;
 
-        void renameIndexFromCollection(const MongoCollectionInfo &collection, const std::string &oldIndexName, const std::string &newIndexName)const;
+        void renameIndexFromCollection(const MongoCollectionInfo &collection, const std::string &oldIndexName,
+                                       const std::string &newIndexName) const;
 
-        void createFunction(const std::string &dbName, const MongoFunction &fun, const std::string &existingFunctionName = std::string());
+        void createFunction(const std::string &dbName, const MongoFunction &fun,
+                            const std::string &existingFunctionName = std::string());
+
         void dropFunction(const std::string &dbName, const std::string &name);
-
         void createDatabase(const std::string &dbName);
         void dropDatabase(const std::string &dbName);
 

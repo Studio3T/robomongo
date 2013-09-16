@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QObject>
 #include <QEvent>
 #include <QMutex>
@@ -20,10 +21,10 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        typedef std::pair<QEvent::Type, EventBusSubscriber *> subscribersType;
-        typedef std::vector<subscribersType > subscribersContainerType;
-        typedef std::pair<QThread *, EventBusDispatcher *> dispatchersType;
-        typedef std::vector<dispatchersType> dispatchersContainerType;
+        typedef std::pair<QEvent::Type, EventBusSubscriber *> SubscribersType;
+        typedef std::vector<SubscribersType > SubscribersContainerType;
+        typedef std::pair<QThread *, EventBusDispatcher *> DispatchersType;
+        typedef std::vector<DispatchersType> DispatchersContainerType;
         EventBus();
         ~EventBus();
 
@@ -64,7 +65,7 @@ namespace Robomongo
 
     private:
         QMutex _lock;
-        subscribersContainerType _subscribersByEventType;
-        dispatchersContainerType _dispatchersByThread;
+        SubscribersContainerType _subscribersByEventType;
+        DispatchersContainerType _dispatchersByThread;
     };
 }

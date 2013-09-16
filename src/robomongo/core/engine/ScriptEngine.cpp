@@ -26,13 +26,12 @@
 
 namespace
 {
-    std::vector<std::string> split(const std::string& s, char seperator)
+    std::vector<std::string> split(const std::string &s, char seperator)
     {
         std::vector<std::string> output;
         std::string::size_type prev_pos = 0, pos = 0;
-        while((pos = s.find(seperator, pos)) != std::string::npos)
-        {
-            std::string substring( s.substr(prev_pos, pos-prev_pos) );
+        while ((pos = s.find(seperator, pos)) != std::string::npos) {
+            std::string substring(s.substr(prev_pos, pos-prev_pos));
             output.push_back(substring);
             prev_pos = ++pos;
         }
@@ -47,12 +46,11 @@ namespace mongo {
 
 namespace Robomongo
 {
-    ScriptEngine::ScriptEngine(ConnectionSettings *connection) 
-        :_connection(connection),
+    ScriptEngine::ScriptEngine(ConnectionSettings *connection) :
+        _connection(connection),
         _scope(NULL),
         _engine(NULL),
-        _mutex(QMutex::Recursive)
-    { }
+        _mutex(QMutex::Recursive) { }
 
     ScriptEngine::~ScriptEngine()
     {
@@ -119,7 +117,7 @@ namespace Robomongo
 
         // Esprima
         QFile file(":/robomongo/scripts/esprima.js");
-        if(!file.open(QIODevice::ReadOnly))
+        if (!file.open(QIODevice::ReadOnly))
             throw std::runtime_error("Unable to read esprima.js ");
 
         QTextStream in(&file);
@@ -158,7 +156,7 @@ namespace Robomongo
 
         use(dbName);
 
-        for(std::vector<std::string>::const_iterator it = statements.begin(); it!=statements.end(); ++it)
+        for(std::vector<std::string>::const_iterator it = statements.begin(); it != statements.end(); ++it)
         {
             std::string statement = *it;
             // clear global objects
@@ -184,7 +182,7 @@ namespace Robomongo
                     if (!answer.empty() || docs.size() > 0)
                         results.push_back(prepareResult(type, answer, docs, elapsed));
                 }
-                catch ( const std::exception &e ) {
+                catch (const std::exception &e) {
                     std::cout << "error:" << e.what() << endl;
                 }
             }
@@ -255,7 +253,8 @@ namespace Robomongo
         return QStringList();
     }
 
-    MongoShellResult ScriptEngine::prepareResult(const std::string &type, const std::string &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms)
+    MongoShellResult ScriptEngine::prepareResult(const std::string &type, const std::string &output,
+                                                 const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms)
     {
         const char *script =
             "__robomongoQuery = false; \n"
@@ -359,7 +358,7 @@ namespace Robomongo
         BSONObj result = obj.getField("result").Obj();
         vector<BSONElement> v = result.getField("body").Array();
 
-        for(vector<BSONElement>::iterator it = v.begin(); it != v.end(); ++it)
+        for (vector<BSONElement>::iterator it = v.begin(); it != v.end(); ++it)
         {
             BSONObj item = (*it).Obj();
             BSONObj loc = item.getField("loc").Obj();

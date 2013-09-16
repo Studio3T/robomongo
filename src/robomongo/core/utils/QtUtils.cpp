@@ -1,4 +1,5 @@
 #include "robomongo/core/utils/QtUtils.h"
+
 #include <QTextCodec>
 #include <QThread>
 #include <QTreeWidgetItem>
@@ -11,7 +12,7 @@ namespace Robomongo
         QString toQString<std::string>(const std::string &value)
         {
             //static QTextCodec *LOCALECODEC = QTextCodec::codecForLocale();
-            return QString::fromUtf8(value.c_str(),value.size());
+            return QString::fromUtf8(value.c_str(), value.size());
         }
 
         template<>
@@ -46,8 +47,7 @@ namespace Robomongo
 
         void cleanUpThread(QThread *const thread)
         {
-            if(thread&&thread->isRunning())
-            {
+            if (thread&&thread->isRunning()) {
                 //thread->stop();
                 thread->wait();
             }

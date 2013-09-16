@@ -8,7 +8,7 @@
 namespace Robomongo
 {
     LogWidget::LogWidget(QWidget* parent) 
-        : baseClass(parent), _logTextEdit(new QPlainTextEdit(this))
+        : BaseClass(parent), _logTextEdit(new QPlainTextEdit(this))
     {
         _logTextEdit->setPlainText(PROJECT_NAME " " PROJECT_VERSION " is ready.");
         //_logTextEdit->setMarginWidth(1, 3); // to hide left gray column

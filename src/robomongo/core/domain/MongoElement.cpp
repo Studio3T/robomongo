@@ -58,7 +58,9 @@ namespace Robomongo
     */
     void MongoElement::buildJsonString(std::string &con)
     {
-       BsonUtils::buildJsonString(_bsonElement,con,AppRegistry::instance().settingsManager()->uuidEncoding(),AppRegistry::instance().settingsManager()->timeZone());
+        BsonUtils::buildJsonString(_bsonElement, con,
+            AppRegistry::instance().settingsManager()->uuidEncoding(),
+            AppRegistry::instance().settingsManager()->timeZone());
     }
 }
 

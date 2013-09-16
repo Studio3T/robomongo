@@ -13,23 +13,25 @@
 
 namespace
 {
-    struct removeIfReciver : public std::unary_function<const Robomongo::EventBus::subscribersType&, bool> 
+    struct RemoveIfReciver : public std::unary_function<const Robomongo::EventBus::SubscribersType&, bool>
     {
-        removeIfReciver(QObject *receiver):_receiver(receiver){}
-        bool operator()(const Robomongo::EventBus::subscribersType& item) const{
+        RemoveIfReciver(QObject *receiver) : _receiver(receiver) {}
+
+        bool operator()(const Robomongo::EventBus::SubscribersType& item) const {
             if (item.second->receiver == _receiver){
                 delete item.second;
                 return true;
             }
             return false;
         }
+
         QObject *_receiver;
     };
 
-    struct findIfReciver : public std::unary_function<const Robomongo::EventBus::subscribersType&, bool> 
+    struct FindIfReciver : public std::unary_function<const Robomongo::EventBus::SubscribersType&, bool>
     {
-        findIfReciver(QThread *thread):_thread(thread){}
-        bool operator()(const Robomongo::EventBus::dispatchersType& item) const{
+        FindIfReciver(QThread *thread):_thread(thread){}
+        bool operator()(const Robomongo::EventBus::DispatchersType& item) const{
             if (item.first == _thread){
                 return true;
             }
@@ -48,8 +50,8 @@ namespace Robomongo
 
     EventBus::~EventBus()
     {
-        for (dispatchersContainerType::iterator it = _dispatchersByThread.begin();it!=_dispatchersByThread.end();++it){
-            dispatchersType item = *it;
+        for (DispatchersContainerType::iterator it = _dispatchersByThread.begin(); it != _dispatchersByThread.end(); ++it) {
+            DispatchersType item = *it;
             delete item.second;
         }
     }
@@ -59,9 +61,9 @@ namespace Robomongo
         QMutexLocker lock(&_lock);
         QList<QObject*> theReceivers;
         EventBusDispatcher *dis = NULL;
-        for (subscribersContainerType::iterator it = _subscribersByEventType.begin();it!=_subscribersByEventType.end();++it){
-            subscribersType item = *it;
-            if(event->type()==item.first){
+        for (SubscribersContainerType::iterator it = _subscribersByEventType.begin(); it != _subscribersByEventType.end(); ++it ) {
+            SubscribersType item = *it;
+            if (event->type() == item.first) {
                 EventBusSubscriber *subscriber = item.second;
                 if (!subscriber->sender || subscriber->sender == event->sender()) {
                     theReceivers.append(subscriber->receiver);
@@ -116,14 +118,14 @@ namespace Robomongo
         VERIFY(connect(receiver, SIGNAL(destroyed(QObject*)), this, SLOT(unsubscibe(QObject*))));
 
         // add subscriber
-        _subscribersByEventType.push_back(subscribersType(type, new EventBusSubscriber(dis, receiver, sender)));
+        _subscribersByEventType.push_back(SubscribersType(type, new EventBusSubscriber(dis, receiver, sender)));
     }
 
     void EventBus::unsubscibe(QObject *receiver)
     {
         QMutexLocker lock(&_lock);
-        _subscribersByEventType.erase(std::remove_if(_subscribersByEventType.begin(), _subscribersByEventType.end(), removeIfReciver(receiver)),
-            _subscribersByEventType.end());
+        _subscribersByEventType.erase(std::remove_if(_subscribersByEventType.begin(), _subscribersByEventType.end(),
+            RemoveIfReciver(receiver)), _subscribersByEventType.end());
     }
 
     /**
@@ -132,15 +134,16 @@ namespace Robomongo
      */
     EventBusDispatcher *EventBus::dispatcher(QThread *thread)
     {
-        dispatchersContainerType::iterator disIt = std::find_if(_dispatchersByThread.begin(),_dispatchersByThread.end(),findIfReciver(thread));
+        DispatchersContainerType::iterator disIt = std::find_if(
+            _dispatchersByThread.begin(), _dispatchersByThread.end(), FindIfReciver(thread));
        
-        if (disIt !=_dispatchersByThread.end()) {
+        if (disIt != _dispatchersByThread.end()) {
             return (*disIt).second;
         }
-        else{
+        else {
             EventBusDispatcher *dis = new EventBusDispatcher();
             dis->moveToThread(thread);
-            _dispatchersByThread.push_back(dispatchersType(thread, dis));
+            _dispatchersByThread.push_back(DispatchersType(thread, dis));
             return dis;
         }        
     }
@@ -154,7 +157,8 @@ namespace Robomongo
         if (dispatcher->thread() == QThread::currentThread()) {
             QCoreApplication::sendEvent(dispatcher, wrapper);
             delete wrapper;
-        } else {
+        }
+        else {
             QCoreApplication::postEvent(dispatcher, wrapper);
         }
     }

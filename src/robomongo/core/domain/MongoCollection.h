@@ -1,4 +1,5 @@
 #pragma once
+
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 
@@ -21,9 +22,6 @@ namespace Robomongo
 
     private:
 
-        /**
-         * @brief Database that contains this collection
-         */
         MongoDatabase *_database;
         bool _system;
         MongoCollectionInfo _info;

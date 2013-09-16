@@ -1,7 +1,9 @@
 #pragma once
+
 #include <QObject>
 #include <QString>
 #include <string>
+
 #include "robomongo/core/utils/SingletonPattern.hpp"
 
 namespace Robomongo
@@ -17,6 +19,7 @@ namespace Robomongo
         void print(const QString &mess, bool notify);        
     Q_SIGNALS:
         void printed(const QString &mess);
+
     private:
         Logger();
         ~Logger();

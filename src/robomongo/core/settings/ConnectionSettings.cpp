@@ -8,8 +8,8 @@
 namespace
 {
     const unsigned port = 27017;
-    const char* defaultServerHost = "localhost";
-    const char* defaultNameConnection = "New Connection";
+    const char *defaultServerHost = "localhost";
+    const char *defaultNameConnection = "New Connection";
 }
 
 namespace Robomongo
@@ -67,7 +67,7 @@ namespace Robomongo
 
         clearCredentials();
         QList<CredentialSettings *> cred = source->credentials();
-        for(QList<CredentialSettings *>::iterator it = cred.begin();it!=cred.end();++it) {
+        for (QList<CredentialSettings *>::iterator it = cred.begin(); it != cred.end(); ++it) {
             addCredential((*it)->clone());
         }
     }
@@ -95,10 +95,9 @@ namespace Robomongo
      CredentialSettings *ConnectionSettings::findCredential(const std::string &databaseName)const
      {
          CredentialSettings *result = NULL;
-         for(QList<CredentialSettings *>::const_iterator it = _credentials.begin();it!=_credentials.end();++it)
-         {
+         for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
              CredentialSettings * cred = *it;
-             if(cred->databaseName()==databaseName){
+             if (cred->databaseName() == databaseName){
                  result = cred;
                  break;
              }
@@ -149,8 +148,8 @@ namespace Robomongo
 
     std::string ConnectionSettings::getFullAddress() const
     {
-        char buff[1024]={0};
-        sprintf(buff,"%s:%u",_serverHost.c_str(),_serverPort);
+        char buff[1024] = {0};
+        sprintf(buff, "%s:%u", _serverHost.c_str(), _serverPort);
         return buff;
     }
 }

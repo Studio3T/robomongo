@@ -2,12 +2,13 @@
 
 #include <QObject>
 #include <QMutex>
+
+#include "robomongo/core/events/MongoEvents.h"
+
 QT_BEGIN_NAMESPACE
 class QThread;
 class QTimer;
 QT_END_NAMESPACE
-
-#include "robomongo/core/events/MongoEvents.h"
 
 namespace Robomongo
 {

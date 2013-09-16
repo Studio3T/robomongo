@@ -21,7 +21,7 @@ namespace Robomongo
 
         const char *typeName = event->typeString();
         const QList<QObject*> &recivers = wrapper->receivers();
-        for(QList<QObject*>::const_iterator it = recivers.begin();it!=recivers.end();++it){
+        for (QList<QObject*>::const_iterator it = recivers.begin(); it != recivers.end(); ++it) {
             QMetaObject::invokeMethod(*it, "handle", QGenericArgument(typeName, &event));
         }
 

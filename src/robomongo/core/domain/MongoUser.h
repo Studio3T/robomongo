@@ -8,7 +8,7 @@ namespace Robomongo
     class MongoUser
     {
     public:
-        typedef std::string roleType;
+        typedef std::string RoleType;
         /**
          * @brief Creates user from "system.users" document
          */
@@ -21,21 +21,21 @@ namespace Robomongo
 
         mongo::OID id() const { return _id; }
         std::string name() const { return _name; }
-        roleType role() const { return _role; }
+        RoleType role() const { return _role; }
         std::string passwordHash() const { return _passwordHash; }
 
         void setName(const std::string &name) { _name = name; }
-        void setRole(const roleType &role) { _role = role; }
+        void setRole(const RoleType &role) { _role = role; }
         void setPasswordHash(const std::string &hash) { _passwordHash = hash; }
 
-        std::string userSource() const {return _userSource;}
-        void setUserSource(const std::string &source) {_userSource = source;}
+        std::string userSource() const { return _userSource; }
+        void setUserSource(const std::string &source) { _userSource = source; }
         mongo::BSONObj toBson() const;
 
     private:
         mongo::OID _id;
         std::string _name;
-        roleType _role;
+        RoleType _role;
         std::string _passwordHash;
         std::string _userSource;
     };

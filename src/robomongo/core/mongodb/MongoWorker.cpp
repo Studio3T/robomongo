@@ -15,7 +15,6 @@
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
-#include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 
 using namespace std;
@@ -400,7 +399,7 @@ namespace Robomongo
             boost::scoped_ptr<MongoClient> client(getClient());
             MongoNamespace from(event->databaseFrom(), event->collection());
             MongoNamespace to(event->databaseTo(), event->collection());
-            MongoWorker *cl = event->server()->client();
+            MongoWorker *cl = event->worker();
             client->copyCollectionToDiffServer(cl->_dbclient,from,to);
             client->done();
 

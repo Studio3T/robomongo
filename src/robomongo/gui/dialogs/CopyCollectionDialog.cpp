@@ -60,13 +60,13 @@ namespace Robomongo
         databaselayout->addWidget(databaseLabel);
         databaselayout->addWidget(_databaseComboBox);        
         VERIFY(connect(_serverComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateDatabaseComboBox(int))));
-
+        QSet<QString> uniqueConnectionsNames;
         for (App::MongoServersContainerType::const_iterator it = _servers.begin(); it != _servers.end(); ++it)
         {
             MongoServer *server = *it;
-            _serverComboBox->addItem(QtUtils::toQString(server->connectionRecord()->connectionName()));
+            uniqueConnectionsNames.insert(QtUtils::toQString(server->connectionRecord()->connectionName()));
         }        
-
+        _serverComboBox->addItems(uniqueConnectionsNames.toList());
         QVBoxLayout *layout = new QVBoxLayout();
         layout->addLayout(vlayout);
         layout->addWidget(hline);

@@ -447,7 +447,7 @@ namespace Robomongo
 
         if (result == QDialog::Accepted) {
             MongoDatabase *databaseTo = dlg.selectedDatabase();
-            databaseTo->copyCollection(_collection->name(),databaseFrom->name());
+            databaseTo->copyCollection(server, databaseFrom->name(), _collection->name());
             databaseTo->loadCollections();
         }
     }

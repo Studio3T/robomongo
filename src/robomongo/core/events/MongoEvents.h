@@ -640,18 +640,21 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CopyCollectionToDiffServerRequest(QObject *sender, const std::string &databaseFrom,
+        CopyCollectionToDiffServerRequest(QObject *sender, MongoServer *server, const std::string &databaseFrom,
             const std::string &collection, const std::string &databaseTo) :
         Event(sender),
+            _server(server),
             _databaseFrom(databaseFrom),
             _collection(collection),
             _databaseTo(databaseTo) {}
 
+        MongoServer *server() const { return _server; }
         std::string databaseFrom() const { return _databaseFrom; }
         std::string collection() const { return _collection; }
         std::string databaseTo() const { return _databaseTo; }
 
     private:
+        MongoServer *_server;
         std::string _databaseFrom;
         std::string _collection;
         std::string _databaseTo;

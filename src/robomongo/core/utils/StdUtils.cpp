@@ -2,7 +2,7 @@
 
 namespace Robomongo
 {
-    namespace StdUtils
+    namespace stdutils
     {
        
     }

@@ -78,6 +78,7 @@ namespace Robomongo
 
     void CopyCollection::updateDatabaseComboBox(int index)
     {
+        _databaseComboBox->clear();
         MongoServer *server = _servers[index];
         _databaseComboBox->addItems(server->getDatabasesNames());
     }

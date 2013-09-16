@@ -67,9 +67,9 @@ namespace Robomongo
         _bus->send(_server->client(), new DuplicateCollectionRequest(this, _name, collection, newCollection));
     }
 
-    void MongoDatabase::copyCollection(const std::string &collection, const std::string &sourceDatabase)
+    void MongoDatabase::copyCollection(MongoServer *server, const std::string &sourceDatabase, const std::string &collection)
     {
-        _bus->send(_server->client(), new CopyCollectionToDiffServerRequest(this, sourceDatabase, collection, _name));
+        _bus->send(_server->client(), new CopyCollectionToDiffServerRequest(this, server, sourceDatabase, collection, _name));
     }
 
     void MongoDatabase::createUser(const MongoUser &user, bool overwrite)

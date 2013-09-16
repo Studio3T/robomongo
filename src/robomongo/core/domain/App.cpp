@@ -17,8 +17,8 @@ namespace Robomongo
 
     App::~App()
     {
-        std::for_each(_shells.begin(), _shells.end(), std::default_delete<MongoShell>());
-        std::for_each(_servers.begin(), _servers.end(), std::default_delete<MongoServer>());
+        std::for_each(_shells.begin(), _shells.end(), stdutils::default_delete<MongoShell*>());
+        std::for_each(_servers.begin(), _servers.end(), stdutils::default_delete<MongoServer*>());
     }
 
     /**
@@ -46,7 +46,7 @@ namespace Robomongo
      */
     void App::closeServer(MongoServer *server)
     {
-        _servers.erase(std::remove_if(_servers.begin(), _servers.end(), StdUtils::RemoveIfFound<MongoServer*>(server)), _servers.end());
+        _servers.erase(std::remove_if(_servers.begin(), _servers.end(), stdutils::RemoveIfFound<MongoServer*>(server)), _servers.end());
     }
 
     MongoShell *App::openShell(MongoCollection *collection,const QString &filePathToSave)

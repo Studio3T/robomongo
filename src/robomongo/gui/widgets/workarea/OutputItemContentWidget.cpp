@@ -23,7 +23,7 @@
 
 namespace Robomongo
 {
-    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out,MongoShell *shell, const QString &text, QWidget *parent) :
+    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &text, double secs, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -43,12 +43,13 @@ namespace Robomongo
         _initialSkip(0),
         _initialLimit(0),
         _out(out),
-        _mod(NULL)
+        _mod(NULL),
+        _viewMode(viewMode)
     {
-        setup();
+        setup(secs);
     }
 
-    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out,MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, QWidget *parent) :
+    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -70,12 +71,13 @@ namespace Robomongo
         _initialSkip(queryInfo.skip),
         _initialLimit(queryInfo.limit),
         _out(out),
-        _mod(NULL)
+        _mod(NULL),
+        _viewMode(viewMode)
     {
-        setup();
+        setup(secs);
     }
 
-    void OutputItemContentWidget::setup()
+    void OutputItemContentWidget::setup(double secs)
     {      
         setContentsMargins(0, 0, 0, 0);
         _header = new OutputItemHeaderWidget(this);       
@@ -86,6 +88,8 @@ namespace Robomongo
             _header->paging()->setSkip(_queryInfo.skip);
         }
 
+        _header->setTime(QString("%1 sec.").arg(secs));
+
         QVBoxLayout *layout = new QVBoxLayout();
         layout->setContentsMargins(0, 1, 0, 0);
         layout->setSpacing(0);
@@ -95,11 +99,13 @@ namespace Robomongo
         setLayout(layout);
         configureModel();
 
-        VERIFY(connect(_header->paging(), SIGNAL(refreshed(int,int)), this, SLOT(refresh(int,int))));
+        VERIFY(connect(_header->paging(), SIGNAL(refreshed(int,int)), this, SLOT(refresh(int,int))));        
         VERIFY(connect(_header->paging(), SIGNAL(leftClicked(int,int)), this, SLOT(paging_leftClicked(int,int))));
         VERIFY(connect(_header->paging(), SIGNAL(rightClicked(int,int)), this, SLOT(paging_rightClicked(int,int))));
-        VERIFY(connect(_header, SIGNAL(restoredSize()), _out, SLOT(restoreSize())));
-        VERIFY(connect(_header, SIGNAL(maximizedPart(OutputItemContentWidget *)), _out, SLOT(maximizePart(OutputItemContentWidget *))));
+        VERIFY(connect(_header, SIGNAL(maximizedPart()), this, SIGNAL(maximizedPart())));
+        VERIFY(connect(_header, SIGNAL(restoredSize()), this, SIGNAL(restoredSize())));
+
+        refreshOutputItem();
     }
 
     void OutputItemContentWidget::paging_leftClicked(int skip, int limit)
@@ -110,6 +116,17 @@ namespace Robomongo
             s = 0;
 
         refresh(s, limit);
+    }
+
+    void OutputItemContentWidget::refreshOutputItem()
+    {
+        switch(_viewMode) {
+        case Text: showText(); break;
+        case Tree: showTree(); break;
+        case Table: showTable(); break;
+        case Custom: showCustom(); break;
+        default: showTree();
+        }
     }
 
     void OutputItemContentWidget::paging_rightClicked(int skip, int limit)
@@ -182,6 +199,8 @@ namespace Robomongo
 
     void OutputItemContentWidget::showText()
     {
+        _viewMode = Text;
+        _header->showText();
         if (!_isTextModeSupported)
             return;
 
@@ -209,6 +228,8 @@ namespace Robomongo
 
     void OutputItemContentWidget::showTree()
     {
+        _viewMode = Tree;
+        _header->showTree();
         if (!_isTreeModeSupported) {
             // try to downgrade to text mode
             showText();
@@ -227,6 +248,9 @@ namespace Robomongo
 
     void OutputItemContentWidget::showCustom()
     {
+        _viewMode = Custom;
+        _header->showCustom();
+
         if (!_isCustomModeSupported) {
             // try to downgrade to tree mode
             showTree();
@@ -249,6 +273,8 @@ namespace Robomongo
 
     void OutputItemContentWidget::showTable()
     {
+        _viewMode = Table;
+        _header->showTable();
         if (!_isTableModeSupported) {
             // try to downgrade to text mode
             showText();

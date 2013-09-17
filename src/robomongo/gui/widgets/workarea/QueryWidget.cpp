@@ -228,8 +228,7 @@ namespace Robomongo
     {
         hideProgress();
         _scriptWidget->hideProgress();
-        _viewer->updatePart(event->resultIndex(), event->queryInfo(), event->documents()); // this should be in viewer, subscribed
-                                                                                           // to ScriptExecutedEvent
+        _viewer->updatePart(event->resultIndex(), event->queryInfo(), event->documents()); // this should be in viewer, subscribed to ScriptExecutedEvent
     }
 
     void QueryWidget::handle(ScriptExecutedEvent *event)

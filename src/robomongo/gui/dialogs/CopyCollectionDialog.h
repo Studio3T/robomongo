@@ -26,6 +26,8 @@ namespace Robomongo
         MongoDatabase *selectedDatabase();
     private:
         App::MongoServersContainerType _servers;
+        const QString _currentServerName;
+        const QString _currentDatabase;
         QComboBox *_serverComboBox;
         QComboBox *_databaseComboBox;
         QDialogButtonBox *_buttonBox;

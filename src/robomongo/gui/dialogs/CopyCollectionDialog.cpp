@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QDialogButtonBox>
+#include <QLabel>
 
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -20,13 +21,15 @@ namespace Robomongo
     CopyCollection::CopyCollection(const QString &serverName, const QString &database,
                                                const QString &collection, QWidget *parent) :
         QDialog(parent),
-        _servers( AppRegistry::instance().app()->getServers())
+        _servers( AppRegistry::instance().app()->getServers()),
+        _currentServerName(serverName),
+        _currentDatabase(database)
     {
         setWindowTitle("Create Database");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumWidth(300);
 
-        Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
+        Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), _currentServerName);
 
         QFrame *hline = new QFrame();
         hline->setFrameShape(QFrame::HLine);
@@ -45,7 +48,7 @@ namespace Robomongo
 
         QHBoxLayout *vlayout = new QHBoxLayout();
         vlayout->addWidget(serverIndicator, 0, Qt::AlignLeft);
-        vlayout->addWidget(new Indicator(GuiRegistry::instance().databaseIcon(), database), 0, Qt::AlignLeft);
+        vlayout->addWidget(new Indicator(GuiRegistry::instance().databaseIcon(), _currentDatabase), 0, Qt::AlignLeft);
         vlayout->addWidget(new Indicator(GuiRegistry::instance().collectionIcon(), collection), 0, Qt::AlignLeft);
 
         QVBoxLayout *serverlayout = new QVBoxLayout();
@@ -81,6 +84,9 @@ namespace Robomongo
         _databaseComboBox->clear();
         MongoServer *server = _servers[index];
         _databaseComboBox->addItems(server->getDatabasesNames());
+        if(_currentServerName==QtUtils::toQString(server->connectionRecord()->getFullAddress())){
+            _databaseComboBox->removeItem(_databaseComboBox->findText(_currentDatabase));
+        }
     }
 
     MongoDatabase *CopyCollection::selectedDatabase()

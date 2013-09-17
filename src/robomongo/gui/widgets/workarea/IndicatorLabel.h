@@ -1,8 +1,10 @@
 #pragma once
 
 #include <QWidget>
-#include <QIcon>
-#include <QLabel>
+QT_BEGIN_NAMESPACE
+class QIcon;
+class QLabel;
+QT_END_NAMESPACE
 
 namespace Robomongo
 {

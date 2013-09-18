@@ -27,6 +27,10 @@ namespace Robomongo
 
         void insertItem(BsonTreeItem *parent, BsonTreeItem *children);
         void removeitem(BsonTreeItem *children);
+
+        virtual void fetchMore(const QModelIndex &parent);
+        virtual bool canFetchMore(const QModelIndex &parent) const;
+        virtual bool hasChildren(const QModelIndex &parent = QModelIndex()) const;
     protected:
         BsonTreeItem *const _root;
     };

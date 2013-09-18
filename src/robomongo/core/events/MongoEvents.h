@@ -17,7 +17,7 @@ namespace Robomongo
     class MongoServer;
     class MongoShell;
     class MongoDatabase;
-
+    class MongoWorker;
     /**
      * @brief Init Request & Response
      */
@@ -628,6 +628,47 @@ namespace Robomongo
             Event(sender) {}
 
         DuplicateCollectionResponse(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
+    };
+
+     /**
+     * @brief Copy collection to diffrent server
+     */
+
+    class CopyCollectionToDiffServerRequest : public Event
+    {
+        R_EVENT
+
+    public:
+        CopyCollectionToDiffServerRequest(QObject *sender, MongoWorker *worker, const std::string &databaseFrom,
+            const std::string &collection, const std::string &databaseTo) :
+        Event(sender),
+            _worker(worker),
+            _databaseFrom(databaseFrom),
+            _collection(collection),
+            _databaseTo(databaseTo) {}
+
+        MongoWorker *worker() const { return _worker; }
+        std::string databaseFrom() const { return _databaseFrom; }
+        std::string collection() const { return _collection; }
+        std::string databaseTo() const { return _databaseTo; }
+
+    private:
+        MongoWorker *_worker;
+        std::string _databaseFrom;
+        std::string _collection;
+        std::string _databaseTo;
+    };
+
+    class CopyCollectionToDiffServerResponse : public Event
+    {
+        R_EVENT
+
+    public:
+        CopyCollectionToDiffServerResponse(QObject *sender) :
+            Event(sender) {}
+
+        CopyCollectionToDiffServerResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
 

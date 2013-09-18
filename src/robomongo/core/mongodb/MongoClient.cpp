@@ -366,6 +366,15 @@ namespace Robomongo
         }
     }
 
+    void MongoClient::copyCollectionToDiffServer(mongo::DBClientBase *const fromServ,const MongoNamespace &from, const MongoNamespace &to)
+    {
+        std::auto_ptr<mongo::DBClientCursor> cursor(fromServ->query(from.toString(), mongo::Query()));
+        while (cursor->more()) {
+            mongo::BSONObj bsonObj = cursor->next();
+            _dbclient->insert(to.toString(), bsonObj);
+        }
+    }
+
     void MongoClient::dropCollection(const std::string &dbName, const std::string &collectionName)
     {
         MongoNamespace ns(dbName, collectionName);

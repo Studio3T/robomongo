@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QDialog>
+#include "robomongo/core/domain/App.h"
 QT_BEGIN_NAMESPACE
 class QDialogButtonBox;
 class QComboBox;
@@ -8,7 +9,7 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
-    class Indicator;
+    class MongoDatabase;
 
     class CopyCollection : public QDialog
     {
@@ -21,10 +22,14 @@ namespace Robomongo
 
     public Q_SLOTS:
         virtual void accept();
-
+        void updateDatabaseComboBox(int index);
+        MongoDatabase *selectedDatabase();
     private:
-        QComboBox *_server;
-        QComboBox *_database;
+        App::MongoServersContainerType _servers;
+        const QString _currentServerName;
+        const QString _currentDatabase;
+        QComboBox *_serverComboBox;
+        QComboBox *_databaseComboBox;
         QDialogButtonBox *_buttonBox;
     };
 }

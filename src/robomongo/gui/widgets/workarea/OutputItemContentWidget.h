@@ -4,6 +4,7 @@
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
+#include "robomongo/gui/ViewMode.h"
 #include <vector>
 
 namespace Robomongo
@@ -24,34 +25,38 @@ namespace Robomongo
 
     public:
         typedef QWidget BaseClass;
-        OutputItemContentWidget(OutputWidget *out,MongoShell *shell, const QString &text,QWidget *parent = NULL);
-        OutputItemContentWidget(OutputWidget *out,MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo,QWidget *parent = NULL);
+        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &text, double secs, QWidget *parent = NULL);
+        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent = NULL);
         int _initialSkip;
         int _initialLimit;
         void update(const MongoQueryInfo &inf,const std::vector<MongoDocumentPtr> &documents);
-        OutputItemHeaderWidget *header() const {return _header;}
         bool isTextModeSupported() const { return _isTextModeSupported; }
         bool isTreeModeSupported() const { return _isTreeModeSupported; }
         bool isCustomModeSupported() const { return _isCustomModeSupported; }
         bool isTableModeSupported() const { return _isTableModeSupported; }
+        ViewMode viewMode() const { return _viewMode; }
 
+        void refreshOutputItem();
+        void markUninitialized();
+
+    Q_SIGNALS:
+        void restoredSize();
+        void maximizedPart();
+
+    public Q_SLOTS:
         void showText();
         void showTree();        
         void showTable();
         void showCustom();
 
-        void markUninitialized();
-
-    public Q_SLOTS:
-        void jsonPartReady(const QString &json);
-
     private Q_SLOTS:
+        void jsonPartReady(const QString &json);
         void refresh(int skip, int batchSize);
-        void paging_leftClicked(int skip, int limit);
-        void paging_rightClicked(int skip, int limit);
+        void paging_rightClicked(int skip, int batchSize);
+        void paging_leftClicked(int skip, int limit);      
 
     private:
-        void setup();
+        void setup(double secs);
         FindFrame *configureLogText();
         BsonTreeModel *configureModel();
 
@@ -83,5 +88,6 @@ namespace Robomongo
         bool _isCustomModeInitialized;
 
         bool _isFirstPartRendered;
+        ViewMode _viewMode;
     };
 }

@@ -25,10 +25,12 @@ namespace
                 if (BsonUtils::isArray(element)) {
                     int itemsCount = element.Array().size();
                     childItemInner->setValue(QString("Array [%1]").arg(itemsCount));
-                    parseDocument(childItemInner,element.Obj());  
+                    //parseDocument(childItemInner,element.Obj());  
                 }
                 else if (BsonUtils::isDocument(element)) {
-                    parseDocument(childItemInner,element.Obj());                    
+                    int count = BsonUtils::elementsCount(element.Obj());
+                    childItemInner->setValue(QString("{%1 Keys}").arg(count));
+                   // parseDocument(childItemInner,element.Obj());                    
                 }
                 else {
                     std::string result;
@@ -60,6 +62,36 @@ namespace Robomongo
             child->setType(mongo::Object);
             _root->addChild(child);
         }
+    }
+
+    void BsonTreeModel::fetchMore(const QModelIndex &parent)
+    {
+        BsonTreeItem *node = QtUtils::item<BsonTreeItem*>(parent);
+        if (node){
+            mongo::BSONElement elem = BsonUtils::indexOf(node->root(),parent.row());
+            if (!elem.isNull()){
+                parseDocument(node,elem.Obj());
+            }            
+        }
+        return BaseClass::fetchMore(parent);
+    }
+
+    bool BsonTreeModel::canFetchMore(const QModelIndex &parent) const
+    {
+        BsonTreeItem *node = QtUtils::item<BsonTreeItem*>(parent);
+        if (node && !node->childrenCount()){
+            return BsonUtils::isDocument(node->type());
+        }
+        return false;
+    }
+
+    bool BsonTreeModel::hasChildren(const QModelIndex &parent) const
+    {
+        BsonTreeItem *node = QtUtils::item<BsonTreeItem*>(parent);
+        if (node){
+            return BsonUtils::isDocument(node->type());
+        }
+        return true;
     }
 
     const QIcon &BsonTreeModel::getIcon(BsonTreeItem *item)

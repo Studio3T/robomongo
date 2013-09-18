@@ -89,7 +89,9 @@ namespace Robomongo
                                UUIDEncoding uuidEncoding, SupportedTimes timeFormat);
 
         bool isArray(const mongo::BSONElement &elem);
+        bool isArray(mongo::BSONType type);
         bool isDocument(const mongo::BSONElement &elem);
+        bool isDocument(mongo::BSONType type);
 
         bool isSimpleType(const mongo::BSONType type);
         bool isUuidType(const mongo::BSONType type, mongo::BinDataType binDataType);
@@ -103,6 +105,9 @@ namespace Robomongo
 
         std::string bsonArrayToString(const std::vector<mongo::BSONElement> &ar);
         std::vector<mongo::BSONElement> stringToBsonArray(const std::string &str);
+
+        mongo::BSONElement indexOf(const mongo::BSONObj &doc, int index);
+        int elementsCount(const mongo::BSONObj &doc);
     }
 }
 

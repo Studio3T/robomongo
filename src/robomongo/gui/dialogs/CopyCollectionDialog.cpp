@@ -25,7 +25,7 @@ namespace Robomongo
         _currentServerName(serverName),
         _currentDatabase(database)
     {
-        setWindowTitle("Create Database");
+        setWindowTitle("Copy Collection");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumWidth(300);
 
@@ -82,7 +82,16 @@ namespace Robomongo
     void CopyCollection::updateDatabaseComboBox(int index)
     {
         _databaseComboBox->clear();
-        MongoServer *server = _servers[index];
+        const QString &curentServerName = _serverComboBox->currentText();
+        MongoServer *server = NULL;
+        for (App::MongoServersContainerType::const_iterator it = _servers.begin(); it != _servers.end(); ++it)
+        {
+            MongoServer *ser = *it;
+            if(curentServerName == QtUtils::toQString(ser->connectionRecord()->connectionName())){
+                server = ser;
+                break;
+            }
+        }  
         _databaseComboBox->addItems(server->getDatabasesNames());
         if(_currentServerName==QtUtils::toQString(server->connectionRecord()->getFullAddress())){
             _databaseComboBox->removeItem(_databaseComboBox->findText(_currentDatabase));

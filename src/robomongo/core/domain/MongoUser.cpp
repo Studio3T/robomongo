@@ -36,9 +36,10 @@ namespace Robomongo
             builder.append("userSource", _userSource);
 
         mongo::BSONObj arObj = BSON_ARRAY(_role.c_str());
+        
         builder.appendArray("roles", arObj);
         mongo::BSONObj obj = builder.obj();
-        
+        std::string str = obj.toString();
         return obj;
     }
 }

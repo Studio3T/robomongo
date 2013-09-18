@@ -393,6 +393,22 @@ namespace Robomongo
         }
     }
 
+    void MongoWorker::handle(CopyCollectionToDiffServerRequest *event)
+    {
+        try {
+            boost::scoped_ptr<MongoClient> client(getClient());
+            MongoNamespace from(event->databaseFrom(), event->collection());
+            MongoNamespace to(event->databaseTo(), event->collection());
+            MongoWorker *cl = event->worker();
+            client->copyCollectionToDiffServer(cl->_dbclient,from,to);
+            client->done();
+
+            reply(event->sender(), new CopyCollectionToDiffServerResponse(this));
+        } catch(const DBException &) {
+            reply(event->sender(), new CopyCollectionToDiffServerResponse(this, EventError("Unable to copy collection.")));
+        }
+    }
+
     void MongoWorker::handle(CreateUserRequest *event)
     {
         try {

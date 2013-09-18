@@ -33,8 +33,8 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/BsonTreeView.h
     robomongo/gui/widgets/workarea/BsonTreeModel.h
     robomongo/gui/widgets/workarea/BsonTreeItem.h
-	robomongo/gui/widgets/workarea/BsonTableModel.h
-	robomongo/gui/widgets/workarea/BsonTableView.h
+    robomongo/gui/widgets/workarea/BsonTableModel.h
+    robomongo/gui/widgets/workarea/BsonTableView.h
     robomongo/gui/editors/jsedit.h
     robomongo/gui/widgets/workarea/OutputWidget.h
     robomongo/gui/widgets/workarea/OutputItemContentWidget.h
@@ -88,8 +88,8 @@ SET(SOURCES_GUI
     robomongo/gui/widgets/workarea/BsonTreeView.cpp
     robomongo/gui/widgets/workarea/BsonTreeModel.cpp
     robomongo/gui/widgets/workarea/BsonTreeItem.cpp
-	robomongo/gui/widgets/workarea/BsonTableModel.cpp
-	robomongo/gui/widgets/workarea/BsonTableView.cpp
+    robomongo/gui/widgets/workarea/BsonTableModel.cpp
+    robomongo/gui/widgets/workarea/BsonTableView.cpp
     robomongo/gui/editors/jsedit.cpp
     robomongo/gui/editors/PlainJavaScriptEditor.cpp
     robomongo/gui/editors/JSLexer.cpp
@@ -183,6 +183,7 @@ SET(HEADERS_CORE
     robomongo/core/HexUtils.h
     robomongo/core/utils/BsonUtils.h
     robomongo/core/utils/QtUtils.h
+    robomongo/core/utils/StdUtils.h
     robomongo/core/utils/SingletonPattern.hpp
     )
 SET(SOURCES_CORE
@@ -222,6 +223,7 @@ SET(SOURCES_CORE
     robomongo/core/HexUtils.cpp
     robomongo/core/utils/BsonUtils.cpp
     robomongo/core/utils/QtUtils.cpp
+    robomongo/core/utils/StdUtils.cpp
     robomongo/core/utils/Logger.cpp
     )
 

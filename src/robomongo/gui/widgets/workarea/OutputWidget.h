@@ -31,14 +31,14 @@ namespace Robomongo
         void enterCustomMode();
 
         int resultIndex(OutputItemContentWidget *result);
+        
 
         void showProgress();
         void hideProgress();
 
     private Q_SLOTS:
-        void maximizePart(OutputItemContentWidget *result);
         void restoreSize();
-
+        void maximizePart();
     private:
         std::vector<ViewMode> clearAllParts();
         void tryToMakeAllPartsEqualInSize();

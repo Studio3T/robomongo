@@ -126,7 +126,7 @@ namespace Robomongo
         if(userSource.empty() && pass.empty())
             return;
         if(!userSource.empty() && !pass.empty()){
-           QMessageBox::warning(this, "Invalid input", "The userSource field and the pwd field are mutually exclusive. The document cannot contain both.\n");
+           QMessageBox::warning(this, "Invalid input", "The UserSourse field and the Password field are mutually exclusive. The document cannot contain both.\n");
            return;
         }
         std::string hash;
@@ -145,6 +145,10 @@ namespace Robomongo
                 roles.append(rolesText[i]);
                 roles += ",";
             }
+        }
+        if(roles.empty()){
+            QMessageBox::warning(this, "Invalid input", "Please select role.\n");
+            return;
         }
         _user.setRole(roles);
 

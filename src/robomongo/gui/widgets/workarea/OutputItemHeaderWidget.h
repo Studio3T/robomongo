@@ -8,7 +8,6 @@ QT_END_NAMESPACE
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/gui/widgets/workarea/PagingWidget.h"
-#include "robomongo/gui/ViewMode.h"
 
 namespace Robomongo
 {
@@ -22,21 +21,19 @@ namespace Robomongo
     public:
         OutputItemHeaderWidget(OutputItemContentWidget *output, QWidget *parent = 0);
         PagingWidget *paging() const { return _paging; }
-        ViewMode viewMode() const { return _viewMode; }
+        void showText();
+        void showTree();
+        void showTable();
+        void showCustom();
+
     protected:
         virtual void mouseDoubleClickEvent(QMouseEvent *);
 
     Q_SIGNALS:
         void restoredSize();
-        void maximizedPart(OutputItemContentWidget *);
+        void maximizedPart();
 
-    public Q_SLOTS:
-        void showText();
-        void showTree();
-        void showTable();
-        void showCustom();
-        void refreshOutputItem();
-        void showIn(ViewMode mode);
+    public Q_SLOTS:        
         void setTime(const QString &time);
         void setCollection(const QString &collection);
         void maximizePart();
@@ -50,8 +47,6 @@ namespace Robomongo
         Indicator *_collectionIndicator;
         Indicator *_timeIndicator;
         PagingWidget *_paging;
-        OutputItemContentWidget *_itemContent;
         bool _maximized;
-        ViewMode _viewMode;
     };
 }

@@ -69,6 +69,17 @@ namespace Robomongo
         _client->send(new CreateDatabaseRequest(this, dbName));
     }
 
+    MongoDatabase *MongoServer::findDatabaseByName(const std::string &dbName) const
+    {
+        for (DatabasesContainerType::const_iterator it = _databases.begin(); it != _databases.end(); ++it) {
+            MongoDatabase *datab = *it;
+            if (datab->name()==dbName){
+                return datab;
+            }
+        }
+        return NULL;
+    }
+
     void MongoServer::dropDatabase(const std::string &dbName)
     {
         _client->send(new DropDatabaseRequest(this, dbName));

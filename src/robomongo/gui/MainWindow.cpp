@@ -204,7 +204,6 @@ namespace Robomongo
         fullScreenAction->setShortcut(Qt::Key_F11);
         fullScreenAction->setVisible(true);
         VERIFY(connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2())));
-        fullScreenAction->setVisible(false);
 
         // Refresh action
         QAction *refreshAction = new QAction("Refresh", this);
@@ -214,7 +213,6 @@ namespace Robomongo
         // File menu
         QMenu *fileMenu = menuBar()->addMenu("File");
         fileMenu->addAction(_connectAction);
-        fileMenu->addAction(fullScreenAction);
         fileMenu->addSeparator();
         fileMenu->addAction(_openAction);
         fileMenu->addAction(_saveAction);
@@ -222,8 +220,9 @@ namespace Robomongo
         fileMenu->addSeparator();
         fileMenu->addAction(exitAction);
 
-        // Options menu
+        // View menu
         _viewMenu = menuBar()->addMenu("View");
+        _viewMenu->addAction(fullScreenAction);
 
         // Options menu
         QMenu *optionsMenu = menuBar()->addMenu("Options");

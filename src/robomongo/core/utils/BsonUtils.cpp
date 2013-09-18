@@ -328,12 +328,28 @@ namespace Robomongo
     
         bool isArray(const mongo::BSONElement &elem)
         {
-            return elem.isABSONObj() && elem.type() == mongo::Array;
+            return isArray(elem.type());
+        }
+
+        bool isArray(mongo::BSONType type)
+        {
+            return type == mongo::Array ; 
         }
 
         bool isDocument(const mongo::BSONElement &elem)
         {
-            return elem.isABSONObj();
+            return isDocument(elem.type());
+        }
+
+        bool isDocument(mongo::BSONType type)
+        {
+            switch( type ) {
+            case mongo::Object:
+            case mongo::Array:
+                return true;
+            default:
+                return false;
+            }
         }
 
         bool isSimpleType(const mongo::BSONType type)
@@ -686,6 +702,30 @@ namespace Robomongo
                 con.append("<unsupported>");
                 break;
             }
+        }
+
+        mongo::BSONElement indexOf(const mongo::BSONObj &doc,int index)
+        {
+            mongo::BSONObjIterator iterator(doc);
+            for (int i = 0; iterator.more(); ++i)
+            {
+                mongo::BSONElement element = iterator.next(); 
+                if(i==index){
+                    return element;
+                }
+            }
+            return mongo::BSONElement();
+        }
+
+        int elementsCount(const mongo::BSONObj &doc)
+        {
+            mongo::BSONObjIterator iterator(doc);
+            int i=0;
+            for (; iterator.more(); ++i)
+            {
+                iterator.next();                
+            }
+            return i;
         }
     }
 }

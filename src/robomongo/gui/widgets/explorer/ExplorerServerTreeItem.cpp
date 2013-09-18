@@ -171,8 +171,8 @@ namespace Robomongo
             if (index != -1) {
                 QTreeWidgetItem *removedItem = view->takeTopLevelItem(index);
                 if (removedItem) {
-                    delete removedItem;
                     AppRegistry::instance().app()->closeServer(_server);
+                    delete removedItem;                    
                 }
             }
         }       

@@ -15,6 +15,7 @@ namespace Robomongo
     MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible) : QObject(),
         _connectionRecord(connectionRecord),
         _bus(AppRegistry::instance().bus()),
+        _version(0.0f),
         _visible(visible)
     {
         _host = _connectionRecord->serverHost();
@@ -138,6 +139,7 @@ namespace Robomongo
         } else if (_visible) {
             _bus->publish(new ConnectionEstablishedEvent(this));
         }
+        _version = event->version();
     }
 
     void MongoServer::handle(LoadDatabaseNamesResponse *event)

@@ -113,9 +113,9 @@ namespace Robomongo
                 // Save name of db on which we authenticated
                 _authDatabase = _connection->primaryCredential()->databaseName();
             }
-
+            boost::scoped_ptr<MongoClient> client(getClient());
             //conn->done();
-            reply(event->sender(), new EstablishConnectionResponse(this, _address));
+            reply(event->sender(), new EstablishConnectionResponse(this, _address,client->getVersion() ));
             qDebug() << "EstablishConnectionResponse sent back";
         } catch(const std::exception &ex) {
             qDebug() << "EstablishConnectionRequest throw exception: " << ex.what();

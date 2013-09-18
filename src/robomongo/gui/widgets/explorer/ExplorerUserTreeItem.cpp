@@ -63,7 +63,7 @@ namespace Robomongo
 
     void ExplorerUserTreeItem::ui_editUser()
     {
-        CreateUserDialog dlg(_database->server()->getDatabasesNames(),QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),QtUtils::toQString(_database->name()),_user);
+        CreateUserNewDialog dlg(_database->server()->getDatabasesNames(),QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),QtUtils::toQString(_database->name()),_user);
         dlg.setWindowTitle("Edit User");
         dlg.setUserPasswordLabelText("New Password:");
         int result = dlg.exec();

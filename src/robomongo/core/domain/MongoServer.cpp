@@ -134,12 +134,19 @@ namespace Robomongo
 
     void MongoServer::handle(EstablishConnectionResponse *event)
     {
+        const ConnectionInfo &info = event->info();
         if (event->isError()) {
             _bus->publish(new ConnectionFailedEvent(this, event->error()));
         } else if (_visible) {
             _bus->publish(new ConnectionEstablishedEvent(this));
-        }
-        _version = event->version();
+            clearDatabases();
+            for(std::vector<std::string>::const_iterator it = info._databases.begin(); it != info._databases.end(); ++it) {
+                const std::string &name = *it;
+                MongoDatabase *db  = new MongoDatabase(this, name);
+                addDatabase(db);
+            }
+        }        
+        _version = info._version;
     }
 
     void MongoServer::handle(LoadDatabaseNamesResponse *event)

@@ -31,4 +31,13 @@ namespace Robomongo
         std::string _languageOverride;
         std::string _textWeights;
     };
+
+    struct ConnectionInfo
+    {
+        ConnectionInfo();
+        ConnectionInfo(const std::string &address, const std::vector<std::string> &databases, float version);
+        const std::string _address;
+        const std::vector<std::string> _databases;
+        const float _version;
+    };
 }

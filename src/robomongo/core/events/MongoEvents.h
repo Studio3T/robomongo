@@ -96,17 +96,17 @@ namespace Robomongo
     {
         R_EVENT
 
-        EstablishConnectionResponse(QObject *sender, const std::string &address, float version) :
+        EstablishConnectionResponse(QObject *sender, const ConnectionInfo &info) :
             Event(sender),
-            address(address),_version(version) {}
+            _info(info) {}
 
         EstablishConnectionResponse(QObject *sender, const EventError &error) :
-            Event(sender, error),_version(0.0f) {}
-        float version() const{
-            return _version;
+            Event(sender, error),_info() {}
+
+        const ConnectionInfo &info() const{
+            return _info;
         }
-        std::string address;
-        float _version;
+        const ConnectionInfo _info;
     };
 
 

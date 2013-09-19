@@ -18,6 +18,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/explorer/ExplorerWidget.h
     robomongo/gui/widgets/explorer/ExplorerTreeWidget.h
     robomongo/gui/MainWindow.h
+    robomongo/gui/AppStyle.h
     robomongo/gui/widgets/explorer/ExplorerTreeItem.h
     robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h
     robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h
@@ -73,6 +74,7 @@ SET(SOURCES_GUI
     robomongo/gui/widgets/explorer/ExplorerWidget.cpp
     robomongo/gui/widgets/explorer/ExplorerTreeWidget.cpp
     robomongo/gui/MainWindow.cpp
+    robomongo/gui/AppStyle.cpp
     robomongo/gui/GuiRegistry.cpp
     robomongo/gui/widgets/explorer/ExplorerTreeItem.cpp
     robomongo/gui/widgets/explorer/ExplorerServerTreeItem.cpp
@@ -164,7 +166,6 @@ SET(HEADERS_CORE
     robomongo/core/Event.h
     robomongo/core/domain/MongoShellResult.h
     robomongo/core/events/MongoEvents.h
-    robomongo/core/domain/MongoElement.h
     robomongo/core/events/MongoEventsInfo.h
     robomongo/core/AppRegistry.h
     robomongo/core/Core.h
@@ -195,7 +196,6 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoServer.cpp
     robomongo/core/domain/MongoDatabase.cpp
     robomongo/core/domain/MongoCollection.cpp
-    robomongo/core/domain/MongoElement.cpp
     robomongo/core/domain/MongoDocument.cpp
     robomongo/core/events/MongoEvents.cpp
     robomongo/core/events/MongoEventsInfo.cpp

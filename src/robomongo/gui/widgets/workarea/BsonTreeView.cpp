@@ -22,14 +22,13 @@ namespace Robomongo
         GuiRegistry::instance().setAlternatingColor(this);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setSelectionBehavior(QAbstractItemView::SelectRows);
-        setIndentation(15);
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
 
         _expandRecursive = new QAction("Expand Recursively", this);
          VERIFY(connect(_expandRecursive, SIGNAL(triggered()), SLOT(onExpandRecursive())));
          
-        setStyleSheet("QTreeView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }");
+        setStyleSheet("QTreeView { border: none; }");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         header()->setSectionResizeMode(QHeaderView::Interactive);
 #endif
@@ -38,6 +37,9 @@ namespace Robomongo
     void BsonTreeView::showContextMenu(const QPoint &point)
     {
         QModelIndex selectedInd = selectedIndex();
+        QPoint menuPoint = mapToGlobal(point);
+        menuPoint.setY(menuPoint.y() + header()->height());
+
         if (selectedInd.isValid()){
             BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);;
 
@@ -52,10 +54,15 @@ namespace Robomongo
             }
 
             _notifier.initMenu(&menu,documentItem);
-
-            QPoint menuPoint = mapToGlobal(point);
-            menuPoint.setY(menuPoint.y() + header()->height());
             menu.exec(menuPoint);
+        }
+        else{
+            QModelIndexList indexes = selectedIndexes();
+            if(detail::isMultySelection(indexes)){
+                QMenu menu(this);
+                _notifier.initMultiSelectionMenu(&menu);
+                menu.exec(menuPoint);
+            }
         }
     }
 
@@ -112,5 +119,10 @@ namespace Robomongo
             return QModelIndex();
 
         return indexses[0];
+    }
+
+    QModelIndexList BsonTreeView::selectedIndexes() const
+    {
+        return selectionModel()->selectedRows();        
     }
 }

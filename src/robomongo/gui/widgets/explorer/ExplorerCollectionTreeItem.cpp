@@ -320,7 +320,7 @@ namespace Robomongo
         if (!_databaseItem)
             return;
 
-        _databaseItem->dropIndexFromCollection(this, QtUtils::toStdString<std::string>(ind->text(0)));
+        _databaseItem->dropIndexFromCollection(this, QtUtils::toStdString(ind->text(0)));
     }
 
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
@@ -429,7 +429,7 @@ namespace Robomongo
         int result = dlg.exec();
 
         if (result == QDialog::Accepted) {
-            database->duplicateCollection(_collection->name(), QtUtils::toStdString<std::string>(dlg.databaseName()));
+            database->duplicateCollection(_collection->name(), QtUtils::toStdString(dlg.databaseName()));
 
             // refresh list of collections
             database->loadCollections();
@@ -468,7 +468,7 @@ namespace Robomongo
         int result = dlg.exec();
 
         if (result == QDialog::Accepted) {
-            database->renameCollection(_collection->name(),QtUtils::toStdString<std::string>( dlg.databaseName()));
+            database->renameCollection(_collection->name(),QtUtils::toStdString( dlg.databaseName()));
             // refresh list of collections
             database->loadCollections();
         }
@@ -506,7 +506,7 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::openCurrentCollectionShell(const QString &script, bool execute,const CursorPosition &cursor)
     {
-        QString query = AppRegistry::instance().app()->buildCollectionQuery(_collection->name(), script);
+        QString query = detail::buildCollectionQuery(_collection->name(), script);
         AppRegistry::instance().app()->openShell(_collection->database(), query, execute, QtUtils::toQString(_collection->name()), cursor);
     }
 }

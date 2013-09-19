@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QAbstractProxyModel>
-#include "robomongo/core/Core.h"
 
 namespace Robomongo
 {

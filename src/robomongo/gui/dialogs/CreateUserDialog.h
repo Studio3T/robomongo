@@ -19,9 +19,14 @@ namespace Robomongo
 
     public:
         CreateUserDialog(const QStringList &databases, const QString &serverName,
-                         const QString &database = QString(),
-                         const MongoUser &user = MongoUser(),
+                         const QString &database,
+                         const MongoUser &user,
                          QWidget *parent = 0);
+
+        CreateUserDialog(const QString &serverName,
+            const QString &database,
+            const MongoUser &user,
+            QWidget *parent = 0);
 
         MongoUser user() const { return _user; }
         void setUserPasswordLabelText(const QString &text);
@@ -39,7 +44,7 @@ namespace Robomongo
         QLineEdit *_userPassEdit;
         QLabel *_userSourceLabel;
         QComboBox *_userSourceComboBox;
-
+        QCheckBox *_readOnlyCheckBox;
         QCheckBox *_rolesArray[RolesCount];
     };
 }

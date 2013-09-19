@@ -1,6 +1,5 @@
 #include "robomongo/core/utils/QtUtils.h"
 
-#include <QTextCodec>
 #include <QThread>
 #include <QTreeWidgetItem>
 
@@ -21,21 +20,13 @@ namespace Robomongo
             return  QString((const QChar*)value.c_str(), value.length());
         }
 
-        template<>
-        std::string toStdString<std::string>(const QString &value)
+        std::string toStdString(const QString &value)
         {
             QByteArray sUtf8 = value.toUtf8();
             return std::string(sUtf8.constData(), sUtf8.length());
         }
 
-        template<>
-        std::wstring toStdString<std::wstring>(const QString &value)
-        {
-            return std::wstring((wchar_t*)value.unicode(), value.length());
-        }
-
-        template<>
-        std::string toStdStringSafe<std::string>(const QString &value)
+        std::string toStdStringSafe(const QString &value)
         {
 #ifdef Q_OS_WIN
             QByteArray sUtf8 = value.toLocal8Bit();            

@@ -6,19 +6,26 @@
 
 namespace Robomongo
 {
+    const float MongoUser::minimumSupportedVersion = 2.4f;
 
-    MongoUser::MongoUser(const mongo::BSONObj &obj)
+    MongoUser::MongoUser(const float version, const mongo::BSONObj &obj):
+        _version(version),_readOnly(false)
     {
         _id = obj.getField("_id").OID();
         _name = BsonUtils::getField<mongo::String>(obj,"user");
         _passwordHash = BsonUtils::getField<mongo::String>(obj,"pwd");
-        _userSource = BsonUtils::getField<mongo::String>(obj,"userSource");
-        std::vector<mongo::BSONElement> roles = BsonUtils::getField<mongo::Array>(obj, "roles");
-        _role =  BsonUtils::bsonArrayToString(roles);
+        if (_version<minimumSupportedVersion){
+            _readOnly = BsonUtils::getField<mongo::Bool>(obj,"readOnly");
+        }     
+        else{
+            _userSource = BsonUtils::getField<mongo::String>(obj,"userSource");
+            std::vector<mongo::BSONElement> roles = BsonUtils::getField<mongo::Array>(obj, "roles");
+            _role =  BsonUtils::bsonArrayToString(roles);
+        }
     }
 
-    MongoUser::MongoUser() :
-        _role("[]") {}
+    MongoUser::MongoUser(const float version) :
+        _version(version),_readOnly(false),_role("[]") {}
 
     mongo::BSONObj MongoUser::toBson() const
     {
@@ -31,15 +38,17 @@ namespace Robomongo
 
         if (!_passwordHash.empty())
             builder.append("pwd", _passwordHash);
-
+        if (_version<minimumSupportedVersion){
+            builder.append("readOnly", _readOnly);
+        }else{
         if (!_userSource.empty())
             builder.append("userSource", _userSource);
 
         mongo::BSONObj arObj = BSON_ARRAY(_role.c_str());
         
-        builder.appendArray("roles", arObj);
-        mongo::BSONObj obj = builder.obj();
-        std::string str = obj.toString();
+        builder.appendArray("roles", arObj);       
+        }
+         mongo::BSONObj obj = builder.obj();
         return obj;
     }
 }

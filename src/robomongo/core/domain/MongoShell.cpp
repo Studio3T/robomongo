@@ -29,7 +29,7 @@ namespace Robomongo
 
     std::string MongoShell::query() const 
     {
-        return QtUtils::toStdString<std::string>(_scriptInfo.script()); 
+        return QtUtils::toStdString(_scriptInfo.script()); 
     }
 
     void MongoShell::execute(const std::string &dbName)

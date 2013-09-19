@@ -105,7 +105,7 @@ namespace Robomongo
         const QString &dataBaseName = _databaseComboBox->currentText();
         if (!serverName.isEmpty()&&!dataBaseName.isEmpty()){
             MongoServer *server = _servers[_serverComboBox->currentIndex()];
-            result = server->findDatabaseByName(QtUtils::toStdString<std::string>(dataBaseName));
+            result = server->findDatabaseByName(QtUtils::toStdString(dataBaseName));
         }
         return result;
     }

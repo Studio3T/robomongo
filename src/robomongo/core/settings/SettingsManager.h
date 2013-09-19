@@ -86,6 +86,9 @@ namespace Robomongo
         void setBatchSize(int batchSize) { _batchSize = batchSize; }
         int batchSize() const { return _batchSize; }
 
+        QString currentStyle() const {return _currentStyle; }
+        void setCurrentStyle(const QString& style);
+
     Q_SIGNALS:
         void connectionAdded(ConnectionSettings *connection);
         void connectionUpdated(ConnectionSettings *connection);
@@ -120,6 +123,7 @@ namespace Robomongo
         bool _loadMongoRcJs;
         bool _disableConnectionShortcuts;
         int _batchSize;
+        QString _currentStyle;
         /**
          * @brief List of connections
          */

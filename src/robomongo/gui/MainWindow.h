@@ -48,6 +48,7 @@ namespace Robomongo
         void open();
         void save();
         void saveAs();
+        void changeStyle(QAction *);
 
         void setDefaultUuidEncoding();
         void setJavaUuidEncoding();
@@ -97,6 +98,7 @@ namespace Robomongo
         void updateConnectionsMenu();
         void createDatabaseExplorer();
         void createTabs();
+        void createStylesMenu();
     };
 
 }

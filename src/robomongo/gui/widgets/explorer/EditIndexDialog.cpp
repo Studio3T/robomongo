@@ -279,8 +279,8 @@ namespace Robomongo
         }
         return EnsureIndexInfo(
             _info._collection,
-            QtUtils::toStdString<std::string>(_nameLineEdit->text()),
-            QtUtils::toStdString<std::string>(QString(" %1 ,{ name: %2 }")
+            QtUtils::toStdString(_nameLineEdit->text()),
+            QtUtils::toStdString(QString(" %1 ,{ name: %2 }")
                 .arg(_jsonText->sciScintilla()->text())
                 .arg(_nameLineEdit->text())),
             _uniqueCheckBox->checkState() == Qt::Checked,
@@ -288,9 +288,9 @@ namespace Robomongo
             _dropDuplicates->checkState() == Qt::Checked,
             _sparceCheckBox->checkState() == Qt::Checked,
             expAftInt,
-            QtUtils::toStdString<std::string>(_defaultLanguageLineEdit->text()),
-            QtUtils::toStdString<std::string>(_languageOverrideLineEdit->text()),
-            QtUtils::toStdString<std::string>(_textWeightsLineEdit->sciScintilla()->text()));
+            QtUtils::toStdString(_defaultLanguageLineEdit->text()),
+            QtUtils::toStdString(_languageOverrideLineEdit->text()),
+            QtUtils::toStdString(_textWeightsLineEdit->sciScintilla()->text()));
     }
 
     void EditIndexDialog::accept()

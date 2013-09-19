@@ -215,7 +215,7 @@ namespace Robomongo
             return;
         }
 
-        _shell->autocomplete(QtUtils::toStdString<std::string>(_currentAutoCompletionInfo.text()));
+        _shell->autocomplete(QtUtils::toStdString(_currentAutoCompletionInfo.text()));
     }
 
     void ScriptWidget::hideAutocompletion()

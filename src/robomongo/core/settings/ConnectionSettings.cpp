@@ -26,9 +26,9 @@ namespace Robomongo
 
     ConnectionSettings::ConnectionSettings(QVariantMap map) : QObject(),
         _serverPort(map.value("serverPort").toInt()),
-        _serverHost(QtUtils::toStdString<std::string>(map.value("serverHost").toString())),
-        _defaultDatabase(QtUtils::toStdString<std::string>(map.value("defaultDatabase").toString())),
-        _connectionName(QtUtils::toStdString<std::string>(map.value("connectionName").toString())) 
+        _serverHost(QtUtils::toStdString(map.value("serverHost").toString())),
+        _defaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString())),
+        _connectionName(QtUtils::toStdString(map.value("connectionName").toString())) 
     {
         QVariantList list = map.value("credentials").toList();
         foreach(QVariant var, list) {

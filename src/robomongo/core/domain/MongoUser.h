@@ -12,12 +12,12 @@ namespace Robomongo
         /**
          * @brief Creates user from "system.users" document
          */
-        explicit MongoUser(const mongo::BSONObj &obj);
+        explicit MongoUser(const float version, const mongo::BSONObj &obj);
 
         /**
          * @brief Creates new user with empty attributes
          */
-        MongoUser();
+        MongoUser(const float version);
 
         mongo::OID id() const { return _id; }
         std::string name() const { return _name; }
@@ -31,10 +31,16 @@ namespace Robomongo
         std::string userSource() const { return _userSource; }
         void setUserSource(const std::string &source) { _userSource = source; }
         mongo::BSONObj toBson() const;
+        bool readOnly() const { return _readOnly; }
+        void setReadOnly(bool readonly) { _readOnly = readonly; }
 
+        float version() const { return _version; }
+        static const float minimumSupportedVersion;
     private:
+        float _version;
         mongo::OID _id;
         std::string _name;
+        bool _readOnly;
         RoleType _role;
         std::string _passwordHash;
         std::string _userSource;

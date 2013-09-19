@@ -11,6 +11,32 @@
 
 namespace Robomongo
 {
+    namespace detail
+    {
+        QString buildCollectionQuery(const std::string &collectionName, const QString &postfix)
+        {
+            QString qCollectionName = QtUtils::toQString(collectionName);
+            QChar firstChar = qCollectionName.at(0);
+            QRegExp charExp("[^A-Za-z_0-9]"); // valid JS name
+
+            QString pattern;
+            if  (firstChar == QChar('_')
+                || qCollectionName == "help"
+                || qCollectionName == "stats"
+                || qCollectionName == "version"
+                || qCollectionName == "prototype") {
+                    // TODO: this list should be expanded to include
+                    // all functions of DB JavaScript object
+                    pattern = "db.getCollection('%1').%2";
+            } else if (firstChar.isDigit() || qCollectionName.contains(charExp)) {
+                pattern = "db[\'%1\'].%2";
+            } else {
+                pattern = "db.%1.%2";
+            }
+
+            return pattern.arg(qCollectionName).arg(postfix);
+        }
+    }
 
     App::App(EventBus *const bus) : QObject(),
         _bus(bus) { }
@@ -53,7 +79,7 @@ namespace Robomongo
     {
         ConnectionSettings *connection = collection->database()->server()->connectionRecord()->clone();
         connection->setDefaultDatabase(collection->database()->name());
-        QString script = buildCollectionQuery(collection->name(), "find()");
+        QString script = detail::buildCollectionQuery(collection->name(), "find()");
         return openShell(connection, ScriptInfo(script, true, CursorPosition(), QtUtils::toQString(collection->database()->name()),filePathToSave));
     }
 
@@ -87,30 +113,6 @@ namespace Robomongo
         LOG_MSG("Openning shell...");
         shell->execute();
         return shell;
-    }
-
-    QString App::buildCollectionQuery(const std::string &collectionName, const QString &postfix)
-    {
-        QString qCollectionName = QtUtils::toQString(collectionName);
-        QChar firstChar = qCollectionName.at(0);
-        QRegExp charExp("[^A-Za-z_0-9]"); // valid JS name
-
-        QString pattern;
-        if  (firstChar == QChar('_')
-             || qCollectionName == "help"
-             || qCollectionName == "stats"
-             || qCollectionName == "version"
-             || qCollectionName == "prototype") {
-            // TODO: this list should be expanded to include
-            // all functions of DB JavaScript object
-            pattern = "db.getCollection('%1').%2";
-        } else if (firstChar.isDigit() || qCollectionName.contains(charExp)) {
-            pattern = "db[\'%1\'].%2";
-        } else {
-            pattern = "db.%1.%2";
-        }
-
-        return pattern.arg(qCollectionName).arg(postfix);
     }
 
     /**

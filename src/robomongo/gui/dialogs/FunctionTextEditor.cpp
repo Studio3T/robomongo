@@ -83,8 +83,8 @@ namespace Robomongo
         if (_nameEdit->text().isEmpty() && _queryText->sciScintilla()->text().isEmpty())
             return;
 
-        _function.setName(QtUtils::toStdString<std::string>(_nameEdit->text()));
-        _function.setCode(QtUtils::toStdString<std::string>(_queryText->sciScintilla()->text()));
+        _function.setName(QtUtils::toStdString(_nameEdit->text()));
+        _function.setCode(QtUtils::toStdString(_queryText->sciScintilla()->text()));
 
         BaseClass::accept();
     }

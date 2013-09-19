@@ -1,23 +1,16 @@
 #pragma once
 
 #include "robomongo/core/Core.h"
+#include "robomongo/core/utils/SingletonPattern.hpp"
 
 namespace Robomongo
 {
     class SettingsManager;
 
-    class AppRegistry
+    class AppRegistry: public Patterns::LazySingleton<AppRegistry>
     {
+        friend class Patterns::LazySingleton<AppRegistry>;
     public:
-
-        /**
-         * @brief Returns single instance of AppRegistry
-         */
-        static AppRegistry &instance()
-        {
-            static AppRegistry _instance;
-            return _instance;
-        }
 
         SettingsManager *const settingsManager() const { return _settingsManager.get(); }
         App *const app() const { return _app.get(); }
@@ -25,12 +18,7 @@ namespace Robomongo
 
     private:
         AppRegistry();
-        ~AppRegistry();
-        /**
-        * Singleton support
-        */
-        AppRegistry(AppRegistry const &);       // To protect from copies of singleton
-        void operator=(AppRegistry const &);    // To protect from copies of singleton    
+        ~AppRegistry();  
 
         const EventBusScopedPtr _bus;
         const SettingsManagerScopedPtr _settingsManager;

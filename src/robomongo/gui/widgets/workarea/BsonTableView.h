@@ -11,6 +11,8 @@ namespace Robomongo
     public:
         typedef QTableView BaseClass;
         explicit BsonTableView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent = 0);     
+        virtual QModelIndex selectedIndex() const;
+        virtual QModelIndexList selectedIndexes() const;
 
     public Q_SLOTS:
         void showContextMenu(const QPoint &point);
@@ -19,7 +21,6 @@ namespace Robomongo
         virtual void keyPressEvent(QKeyEvent *event);
 
     private:
-        virtual QModelIndex selectedIndex() const;
         Notifier _notifier;
     };
 }

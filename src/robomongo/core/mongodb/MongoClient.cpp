@@ -49,6 +49,17 @@ namespace Robomongo
         return stringList;
     }
 
+
+    float MongoClient::getVersion() const
+    {
+        float result = 0.0f;
+        mongo::BSONObj resultObj;
+        _dbclient->runCommand("db", BSON("buildInfo" << "1"), resultObj);
+        std::string resultStr = BsonUtils::getField<mongo::String>(resultObj,"version");
+        result = atof(resultStr.c_str());
+        return result;
+    }
+
     std::vector<std::string> MongoClient::getDatabaseNames() const
     {
         typedef std::list<std::string> cont_string_t;
@@ -67,10 +78,10 @@ namespace Robomongo
         std::vector<MongoUser> users;
 
         std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query()));
-
+        float ver = getVersion();
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
-            MongoUser user(bsonObj);
+            MongoUser user(ver,bsonObj);
             users.push_back(user);
         }
 

@@ -50,8 +50,8 @@ namespace Robomongo
 
     void ConnectionBasicTab::accept()
     {
-        _settings->setConnectionName(QtUtils::toStdString<std::string>(_connectionName->text()));
-        _settings->setServerHost(QtUtils::toStdString<std::string>(_serverAddress->text()));
+        _settings->setConnectionName(QtUtils::toStdString(_connectionName->text()));
+        _settings->setServerHost(QtUtils::toStdString(_serverAddress->text()));
         _settings->setServerPort(_serverPort->text().toInt());
     }
 }

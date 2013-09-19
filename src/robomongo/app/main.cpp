@@ -1,24 +1,19 @@
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QDir>
 
-#include "robomongo/core/settings/SettingsManager.h"
-#include "robomongo/core/AppRegistry.h"
 #include "robomongo/gui/MainWindow.h"
-
-using namespace Robomongo;
+#include "robomongo/gui/AppStyle.h"
 
 int main(int argc, char *argv[])
 {
-    setlocale(LC_NUMERIC,"C");
     QApplication app(argc, argv);
-
-    AppRegistry::instance().settingsManager()->save();
+    Robomongo::detail::initStyle();    
+    setlocale(LC_NUMERIC,"C"); // not move this line!!!
 
     QRect screenGeometry = QApplication::desktop()->availableGeometry();
     QSize size(screenGeometry.width() - 450, screenGeometry.height() - 165);
 
-    MainWindow win;
+    Robomongo::MainWindow win;
     win.resize(size);
 #if defined(Q_OS_MAC)
     win.setUnifiedTitleAndToolBarOnMac(true);

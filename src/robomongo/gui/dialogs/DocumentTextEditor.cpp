@@ -96,7 +96,7 @@ namespace Robomongo
         QString text = jsonText();
         int len =0;
         try {  
-            std::string textString = QtUtils::toStdString<std::string>(text);
+            std::string textString = QtUtils::toStdString(text);
             const char *json = textString.c_str();
             int jsonLen = textString.length();
             int offset = 0;

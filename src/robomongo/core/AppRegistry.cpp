@@ -14,7 +14,7 @@ namespace Robomongo
     }
 
     AppRegistry::~AppRegistry()
-    {
+    {   
     }
 }
 

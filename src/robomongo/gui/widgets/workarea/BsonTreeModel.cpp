@@ -29,7 +29,7 @@ namespace
                 }
                 else if (BsonUtils::isDocument(element)) {
                     int count = BsonUtils::elementsCount(element.Obj());
-                    childItemInner->setValue(QString("{%1 Keys}").arg(count));
+                    childItemInner->setValue(QString("{%1 fields}").arg(count));
                    // parseDocument(childItemInner,element.Obj());                    
                 }
                 else {
@@ -42,7 +42,7 @@ namespace
                     childItemInner->setBinType(element.binDataType());
                 }
                 root->addChild(childItemInner);
-                root->setValue(QString("{%1 Keys}").arg(root->childrenCount()));
+                //root->setValue(QString("{%1 fields}").arg(root->childrenCount()));
             }            
     }
 }
@@ -178,9 +178,9 @@ namespace Robomongo
     {
         Qt::ItemFlags result = 0;
         if (index.isValid()){
-            result = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-            //if(index.column()==BsonTreeItem::eValue)
-            //    result |= Qt::ItemIsEditable;
+            result =  Qt::ItemIsSelectable;
+            if(index.column()!=BsonTreeItem::eType)
+                result |= Qt::ItemIsEnabled;
         }
         return result;
     }

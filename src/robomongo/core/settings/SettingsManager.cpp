@@ -8,6 +8,7 @@
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/utils/Logger.h"
+#include "robomongo/gui/AppStyle.h"
 
 namespace
 {
@@ -141,6 +142,10 @@ namespace Robomongo
         _batchSize = map.value("batchSize").toInt();
         if (_batchSize == 0)
             _batchSize = 50;
+        _currentStyle = map.value("style").toString();
+        if (_currentStyle.isEmpty()){
+            _currentStyle = AppStyle::StyleName;
+        }
 
         // 5. Load connections
         _connections.clear();
@@ -180,7 +185,10 @@ namespace Robomongo
         // 7. Save batchSize
         map.insert("batchSize", _batchSize);
 
-        // 8. Save connections
+        // 8. Save style
+        map.insert("style", _currentStyle);
+
+        // 9. Save connections
         QVariantList list;
 
         for (QList<ConnectionSettings *>::const_iterator it = _connections.begin(); it!=_connections.end(); ++it) {
@@ -220,6 +228,11 @@ namespace Robomongo
             emit connectionRemoved(connection);
             delete connection;
         }
+    }
+
+    void SettingsManager::setCurrentStyle(const QString& style)
+    {
+        _currentStyle = style;
     }
 
     void SettingsManager::reorderConnections(const QList<ConnectionSettings *> &connections)

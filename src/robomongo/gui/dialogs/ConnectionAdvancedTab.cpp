@@ -33,6 +33,6 @@ namespace Robomongo
 
     void ConnectionAdvancedTab::accept()
     {
-        _settings->setDefaultDatabase(QtUtils::toStdString<std::string>(_defaultDatabaseName->text()));
+        _settings->setDefaultDatabase(QtUtils::toStdString(_defaultDatabaseName->text()));
     }
 }

@@ -26,6 +26,16 @@ namespace Robomongo
             return Robomongo::BsonUtils::isSimpleType(item->type())
                 || Robomongo::BsonUtils::isUuidType(item->type(), item->binType());
         }
+
+        bool isMultySelection(const QModelIndexList &indexes)
+        {
+            return indexes.count()!=0;
+        }
+
+        bool isDocumentType(BsonTreeItem *item)
+        {
+            return Robomongo::BsonUtils::isDocument(item->type());
+        }
     }
 
     Notifier::Notifier(INotifierObserver *const observer, MongoShell *shell, const MongoQueryInfo &queryInfo, QObject *parent) :
@@ -39,6 +49,9 @@ namespace Robomongo
         _deleteDocumentAction = new QAction("Delete Document", wid);
         VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument())));
 
+        _deleteDocumentsAction = new QAction("Delete Documents", wid);
+        VERIFY(connect(_deleteDocumentsAction, SIGNAL(triggered()), SLOT(onDeleteDocuments())));
+
         _editDocumentAction = new QAction("Edit Document", wid);
         VERIFY(connect(_editDocumentAction, SIGNAL(triggered()), SLOT(onEditDocument())));
 
@@ -50,6 +63,9 @@ namespace Robomongo
 
         _copyValueAction = new QAction("Copy Value", wid);
         VERIFY(connect(_copyValueAction, SIGNAL(triggered()), SLOT(onCopyDocument())));
+
+        _copyJsonAction = new QAction("Copy Json", wid);
+        VERIFY(connect(_copyJsonAction, SIGNAL(triggered()), SLOT(onCopyJson())));
     }
 
     void Notifier::initMenu(QMenu *const menu, BsonTreeItem *const item)
@@ -58,17 +74,28 @@ namespace Robomongo
         bool onItem = item ? true : false;
         
         bool isSimple = false;
+        bool isDocument = false;
         if (item) {
             isSimple = detail::isSimpleType(item);
-        }
+            isDocument = detail::isDocumentType(item);
+        }         
 
         if (onItem && isEditable) menu->addAction(_editDocumentAction);
         if (onItem)               menu->addAction(_viewDocumentAction);
         if (isEditable)           menu->addAction(_insertDocumentAction);
         if (onItem && isSimple)   menu->addSeparator();
         if (onItem && isSimple)   menu->addAction(_copyValueAction);
+        if (onItem && isDocument) menu->addAction(_copyJsonAction);
         if (onItem && isEditable) menu->addSeparator();
         if (onItem && isEditable) menu->addAction(_deleteDocumentAction);
+    }
+
+    void Notifier::initMultiSelectionMenu(QMenu *const menu)
+    {
+        bool isEditable = _queryInfo.isNull ? false : true;
+
+        if (isEditable) menu->addAction(_insertDocumentAction);
+        if (isEditable) menu->addAction(_deleteDocumentsAction);
     }
 
     void Notifier::deleteDocuments(std::vector<BsonTreeItem*> items, bool force)
@@ -108,6 +135,26 @@ namespace Robomongo
 
         if (isNeededRefresh)
             _shell->query(0, _queryInfo);
+    }
+
+    void Notifier::onDeleteDocuments()
+    {
+        if (_queryInfo.isNull)
+            return;
+
+        QModelIndexList selectedIndexes = _observer->selectedIndexes();
+        if (!detail::isMultySelection(selectedIndexes))
+            return;
+        int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", "Do you want to delete all selected documents?");
+        if (answer == QMessageBox::Yes){
+            std::vector<BsonTreeItem*> items;
+            for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it!= selectedIndexes.end(); ++it)
+            {
+                BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
+                items.push_back(item);                
+            }
+            deleteDocuments(items,true);
+        }
     }
 
     void Notifier::onDeleteDocument()
@@ -230,4 +277,28 @@ namespace Robomongo
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(documentItem->value());
     }
+
+     void Notifier::onCopyJson()
+     {
+         QModelIndex selectedInd = _observer->selectedIndex();
+         if (!selectedInd.isValid())
+             return;
+
+         BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+         if (!documentItem)
+             return;
+
+         if (!detail::isDocumentType(documentItem))
+             return;
+
+         QClipboard *clipboard = QApplication::clipboard();
+         mongo::BSONObj obj = documentItem->root();
+
+         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
+             AppRegistry::instance().settingsManager()->uuidEncoding(),
+             AppRegistry::instance().settingsManager()->timeZone());
+
+         const QString &json = QtUtils::toQString(str);
+         clipboard->setText(json);
+     }
 }

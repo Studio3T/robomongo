@@ -157,7 +157,7 @@ namespace Robomongo
             dlg.setInputLabelText("Collection Name:");
             int result = dlg.exec();
             if (result == QDialog::Accepted) {
-                databaseItem->database()->createCollection(QtUtils::toStdString<std::string>(dlg.databaseName()));
+                databaseItem->database()->createCollection(QtUtils::toStdString(dlg.databaseName()));
                 // refresh list of databases
                 databaseItem->expandCollections();
             }
@@ -168,11 +168,20 @@ namespace Robomongo
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
         if(databaseItem){
-            CreateUserDialog dlg(databaseItem->database()->server()->getDatabasesNames(), QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
-                QtUtils::toQString(databaseItem->database()->name()));
-            int result = dlg.exec();
+            float version = databaseItem->database()->server()->version();
+            CreateUserDialog *dlg = NULL;
+
+            if (version < MongoUser::minimumSupportedVersion){
+                dlg = new CreateUserDialog(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
+                    QtUtils::toQString(databaseItem->database()->name()), MongoUser(version));
+            }
+            else{
+                dlg = new CreateUserDialog(databaseItem->database()->server()->getDatabasesNames(), QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
+                QtUtils::toQString(databaseItem->database()->name()), MongoUser(version));
+            }
+            int result = dlg->exec();
             if (result == QDialog::Accepted) {
-                MongoUser user = dlg.user();
+                MongoUser user = dlg->user();
                 databaseItem->database()->createUser(user, false);
                 // refresh list of users
                 databaseItem->expandUsers();

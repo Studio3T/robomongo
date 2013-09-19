@@ -13,15 +13,20 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
-    class CreateUserNewDialog : public QDialog
+    class CreateUserDialog : public QDialog
     {
         Q_OBJECT
 
     public:
-        CreateUserNewDialog(const QStringList &databases, const QString &serverName,
+        CreateUserDialog(const QStringList &databases, const QString &serverName,
                          const QString &database,
                          const MongoUser &user,
                          QWidget *parent = 0);
+
+        CreateUserDialog(const QString &serverName,
+            const QString &database,
+            const MongoUser &user,
+            QWidget *parent = 0);
 
         MongoUser user() const { return _user; }
         void setUserPasswordLabelText(const QString &text);
@@ -39,34 +44,8 @@ namespace Robomongo
         QLineEdit *_userPassEdit;
         QLabel *_userSourceLabel;
         QComboBox *_userSourceComboBox;
-
-        QCheckBox *_rolesArray[RolesCount];
-    };
-
-    class CreateUserDialog : public QDialog
-    {
-        Q_OBJECT
-
-    public:
-        CreateUserDialog(const QString &serverName,
-            const QString &database,
-            const MongoUser &user,
-            QWidget *parent = 0);
-
-        MongoUser user() const { return _user; }
-        void setUserPasswordLabelText(const QString &text);
-
-    public Q_SLOTS:
-        virtual void accept();
-
-    private:
-        MongoUser _user;
-
-        QLabel *_userNameLabel;
-        QLineEdit *_userNameEdit;
-        QLabel *_userPassLabel;
-        QLineEdit *_userPassEdit;
         QCheckBox *_readOnlyCheckBox;
+        QCheckBox *_rolesArray[RolesCount];
     };
 }
 

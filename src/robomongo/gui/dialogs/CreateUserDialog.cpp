@@ -16,7 +16,7 @@
 
 namespace Robomongo
 {
-    const char * rolesText[CreateUserNewDialog::RolesCount] = {"read","readWrite","dbAdmin","userAdmin","clusterAdmin","readAnyDatabase","readWriteAnyDatabase","userAdminAnyDatabase","dbAdminAnyDatabase"}; 
+    const char * rolesText[CreateUserDialog::RolesCount] = {"read","readWrite","dbAdmin","userAdmin","clusterAdmin","readAnyDatabase","readWriteAnyDatabase","userAdminAnyDatabase","dbAdminAnyDatabase"}; 
 
     bool containsWord(const std::string& sentence, const std::string& word)
     {
@@ -37,11 +37,13 @@ namespace Robomongo
         return false;
     }
 
-    CreateUserNewDialog::CreateUserNewDialog(const QStringList &databases,const QString &serverName,
+    CreateUserDialog::CreateUserDialog(const QStringList &databases,const QString &serverName,
                                        const QString &database, const MongoUser &user,
                                        QWidget *parent) : QDialog(parent),
         _user(user)
     {
+        VERIFY(!user.version() < MongoUser::minimumSupportedVersion);
+
         setWindowTitle("Add User");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumWidth(400);
@@ -110,56 +112,12 @@ namespace Robomongo
         _userNameEdit->setFocus();
     }
 
-    void CreateUserNewDialog::setUserPasswordLabelText(const QString &text)
-    {
-        _userPassLabel->setText(text);
-    }
-
-    void CreateUserNewDialog::accept()
-    {
-        std::string username = QtUtils::toStdString<std::string>(_userNameEdit->text());
-        std::string pass = QtUtils::toStdString<std::string>(_userPassEdit->text());
-        std::string userSource = QtUtils::toStdString<std::string>(_userSourceComboBox->currentText());
-
-        if (username.empty())
-            return;
-        if(userSource.empty() && pass.empty())
-            return;
-        if(!userSource.empty() && !pass.empty()){
-           QMessageBox::warning(this, "Invalid input", "The UserSourse field and the Password field are mutually exclusive. The document cannot contain both.\n");
-           return;
-        }
-        std::string hash;
-        if(!pass.empty()){
-            hash = MongoUtils::buildPasswordHash(username, pass);
-        }
-        _user.setPasswordHash(hash);
-        _user.setName(username);        
-        _user.setUserSource(userSource);
-
-        std::string roles;
-        for (unsigned i = 0; i < RolesCount; ++i)
-        {
-            if (_rolesArray[i]->isChecked())
-            {
-                roles.append(rolesText[i]);
-                roles += ",";
-            }
-        }
-        if(roles.empty()){
-            QMessageBox::warning(this, "Invalid input", "Please select role.\n");
-            return;
-        }
-        _user.setRole(roles);
-
-        QDialog::accept();
-    }
-
     CreateUserDialog::CreateUserDialog(const QString &serverName,
         const QString &database, const MongoUser &user,
         QWidget *parent) : QDialog(parent),
         _user(user)
     {
+        VERIFY(user.version() < MongoUser::minimumSupportedVersion);
         setWindowTitle("Add User");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumWidth(400);
@@ -222,16 +180,52 @@ namespace Robomongo
     {
         std::string username = QtUtils::toStdString<std::string>(_userNameEdit->text());
         std::string pass = QtUtils::toStdString<std::string>(_userPassEdit->text());
+        if(_user.version() < MongoUser::minimumSupportedVersion){
+            if (username.empty() || pass.empty())
+                return;
 
-        if (username.empty() || pass.empty())
-            return;
+            std::string hash = MongoUtils::buildPasswordHash(username, pass);
 
-        std::string hash = MongoUtils::buildPasswordHash(username, pass);
+            _user.setName(username);
+            _user.setPasswordHash(hash);
+            _user.setReadOnly(_readOnlyCheckBox->isChecked());
+        }
+        else{
+            std::string userSource = QtUtils::toStdString<std::string>(_userSourceComboBox->currentText());
 
-        _user.setName(username);
-        _user.setPasswordHash(hash);
-        _user.setReadOnly(_readOnlyCheckBox->isChecked());
+            if (username.empty())
+                return;
+            if(userSource.empty() && pass.empty())
+                return;
+            if(!userSource.empty() && !pass.empty()){
+                QMessageBox::warning(this, "Invalid input", "The UserSourse field and the Password field are mutually exclusive. The document cannot contain both.\n");
+                return;
+            }
+            std::string hash;
+            if(!pass.empty()){
+                hash = MongoUtils::buildPasswordHash(username, pass);
+            }
+            _user.setPasswordHash(hash);
+            _user.setName(username);        
+            _user.setUserSource(userSource);
+
+            std::string roles;
+            for (unsigned i = 0; i < RolesCount; ++i)
+            {
+                if (_rolesArray[i]->isChecked())
+                {
+                    roles.append(rolesText[i]);
+                    roles += ",";
+                }
+            }
+            if(roles.empty()){
+                QMessageBox::warning(this, "Invalid input", "Please select role.\n");
+                return;
+            }
+            _user.setRole(roles);
+        }
 
         QDialog::accept();
     }
+    
 }

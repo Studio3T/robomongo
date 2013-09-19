@@ -34,6 +34,8 @@ namespace Robomongo
         bool readOnly() const { return _readOnly; }
         void setReadOnly(bool readonly) { _readOnly = readonly; }
 
+        float version() const { return _version; }
+        static const float minimumSupportedVersion;
     private:
         float _version;
         mongo::OID _id;

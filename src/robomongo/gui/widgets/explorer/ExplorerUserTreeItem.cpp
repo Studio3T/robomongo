@@ -63,18 +63,28 @@ namespace Robomongo
 
     void ExplorerUserTreeItem::ui_editUser()
     {
-        CreateUserNewDialog dlg(_database->server()->getDatabasesNames(),QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),QtUtils::toQString(_database->name()),_user);
-        dlg.setWindowTitle("Edit User");
-        dlg.setUserPasswordLabelText("New Password:");
-        int result = dlg.exec();
+        float version = _user.version();
+        CreateUserDialog *dlg = NULL;
+
+        if (version < MongoUser::minimumSupportedVersion){
+            dlg = new CreateUserDialog(QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),QtUtils::toQString(_database->name()),_user);
+        }
+        else{
+           dlg = new CreateUserDialog(_database->server()->getDatabasesNames(),QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),QtUtils::toQString(_database->name()),_user);
+        }
+        
+        dlg->setWindowTitle("Edit User");
+        dlg->setUserPasswordLabelText("New Password:");
+        int result = dlg->exec();
 
         if (result == QDialog::Accepted) {
 
-            MongoUser user = dlg.user();
+            MongoUser user = dlg->user();
             _database->createUser(user, true);
 
             // refresh list of users
             _database->loadUsers();
         }
+        delete dlg;
     }
 }

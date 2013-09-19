@@ -384,19 +384,18 @@ namespace Robomongo
 
     void MainWindow::open()
     {
-        if(_workArea)
+        if (_workArea)
         {
-            QueryWidget * wid = _workArea->currentWidget();
-            if(wid){
+            QueryWidget *wid = _workArea->currentWidget();
+            if (wid) {
                 wid->openFile();
             }
-            else
-            {
-                QList<ConnectionSettings *>  connections = AppRegistry::instance().settingsManager()->connections();
-                if(connections.count()==1){
+            else {
+                QList<ConnectionSettings *> connections = AppRegistry::instance().settingsManager()->connections();
+                if (connections.count() == 1) {
                     ScriptInfo inf = ScriptInfo(QString());
-                    if(inf.loadFromFile()){
-                    _app->openShell(connections.at(0)->clone(),inf);
+                    if (inf.loadFromFile()) {
+                        _app->openShell(connections.at(0)->clone(), inf);
                     }
                 }
             }
@@ -405,9 +404,9 @@ namespace Robomongo
 
     void MainWindow::save()
     {
-        if(_workArea){
-            QueryWidget * wid = _workArea->currentWidget();
-            if(wid){
+        if (_workArea) {
+            QueryWidget *wid = _workArea->currentWidget();
+            if (wid) {
                 wid->saveToFile();
             }
         }
@@ -415,9 +414,9 @@ namespace Robomongo
 
     void MainWindow::saveAs()
     {
-        if(_workArea){
-            QueryWidget * wid = _workArea->currentWidget();
-            if(wid){
+        if (_workArea) {
+            QueryWidget *wid = _workArea->currentWidget();
+            if (wid) {
                 wid->savebToFileAs();
             }
         }
@@ -446,7 +445,7 @@ namespace Robomongo
             QAction *action = new QAction(QtUtils::toQString(connection->getReadableName()), this);
             action->setData(QVariant::fromValue(connection));
 
-            if (number <= 9 && !AppRegistry::instance().settingsManager()->disableConnectionShortcuts()){
+            if (number <= 9 && !AppRegistry::instance().settingsManager()->disableConnectionShortcuts()) {
                 action->setShortcut(QKeySequence(QString("Alt+").append(QString::number(number))));
             }
 
@@ -632,10 +631,10 @@ namespace Robomongo
     {
         QVariant data = connectionAction->data();
         ConnectionSettings *ptr = data.value<ConnectionSettings *>();
-        try{
+        try {
             _app->openServer(ptr->clone(), true);
         }
-        catch(const std::exception &){
+        catch(const std::exception &) {
             QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(ptr->getFullAddress()));
             QMessageBox::information(this, "Error", message);
         }

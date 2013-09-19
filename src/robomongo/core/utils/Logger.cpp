@@ -39,7 +39,7 @@ namespace Robomongo
     void Logger::print(const QString &mess, bool notify)
     {
         LOG(pc) << QtUtils::toStdString(mess) << std::endl;
-        if(notify)
+        if (notify)
             emit printed(mess);
     }
 }

@@ -100,8 +100,8 @@ namespace Robomongo
 
         // Populate list with connections
         QList<ConnectionSettings *> connections = _settingsManager->connections();
-        for(QList<ConnectionSettings *>::iterator it = connections.begin();it!=connections.end();++it ){
-            ConnectionSettings* connectionModel = *it;
+        for (QList<ConnectionSettings *>::iterator it = connections.begin(); it != connections.end(); ++it) {
+            ConnectionSettings *connectionModel = *it;
             add(connectionModel);
         }
 

@@ -138,9 +138,9 @@ namespace Robomongo
 
     void QueryWidget::saveToFile()
     {
-        if(_shell){
+        if (_shell) {
             _shell->setScript(_scriptWidget->text());
-            if(_shell->saveToFile()){
+            if (_shell->saveToFile()) {
                 isTextChanged =false;
                 updateCurrentTab();
             }
@@ -149,9 +149,9 @@ namespace Robomongo
 
     void QueryWidget::savebToFileAs()
     {
-        if(_shell){
+        if (_shell) {
             _shell->setScript(_scriptWidget->text());
-            if(_shell->saveToFileAs()){
+            if (_shell->saveToFileAs()) {
                 isTextChanged =false;
                 updateCurrentTab();
             }
@@ -160,7 +160,7 @@ namespace Robomongo
 
     void QueryWidget::openFile()
     {
-        if(_shell && _shell->loadFromFile()){
+        if (_shell && _shell->loadFromFile()) {
             _scriptWidget->setText(QtUtils::toQString(_shell->query()));
             isTextChanged = false;
             updateCurrentTab();
@@ -263,30 +263,30 @@ namespace Robomongo
             QString toolTipQuery = shellQuery.left(700);
 
             QString tabTitle,toolTipText;
-            if(_shell){
+            if (_shell) {
                 QFileInfo fileInfo(_shell->filePath());
-                if(fileInfo.isFile()){
+                if (fileInfo.isFile()) {
                      tabTitle = fileInfo.fileName();
                      toolTipText = fileInfo.filePath();
                 }
             }
 
-            if(tabTitle.isEmpty()&&shellQuery.isEmpty()){
+            if (tabTitle.isEmpty()&&shellQuery.isEmpty()) {
                 tabTitle = "New Shell";
             }
-            else{
+            else {
 
-                if(tabTitle.isEmpty()){
+                if (tabTitle.isEmpty()) {
                     tabTitle = shellQuery.left(41).replace(QRegExp("[\n\r\t]"), " ");;
                     toolTipText = QString("<pre>%1</pre>").arg(toolTipQuery);
                 }
-                else{
+                else {
                     //tabTitle = QString("%1 %2").arg(tabTitle).arg(shellQuery);
                     toolTipText = QString("<b>%1</b><br/><pre>%2</pre>").arg(toolTipText).arg(toolTipQuery);
                 }
             }
 
-            if(isTextChanged){
+            if (isTextChanged) {
                 tabTitle = "* " + tabTitle;
             }
  

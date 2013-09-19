@@ -18,7 +18,7 @@ namespace
         RemoveIfReciver(QObject *receiver) : _receiver(receiver) {}
 
         bool operator()(const Robomongo::EventBus::SubscribersType& item) const {
-            if (item.second->receiver == _receiver){
+            if (item.second->receiver == _receiver) {
                 delete item.second;
                 return true;
             }
@@ -30,9 +30,9 @@ namespace
 
     struct FindIfReciver : public std::unary_function<const Robomongo::EventBus::SubscribersType&, bool>
     {
-        FindIfReciver(QThread *thread):_thread(thread){}
-        bool operator()(const Robomongo::EventBus::DispatchersType& item) const{
-            if (item.first == _thread){
+        FindIfReciver(QThread *thread) : _thread(thread) {}
+        bool operator()(const Robomongo::EventBus::DispatchersType &item) const {
+            if (item.first == _thread) {
                 return true;
             }
             return false;

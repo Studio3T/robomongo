@@ -26,7 +26,7 @@ namespace Robomongo
 
         QList<QTreeWidgetItem *> items;
         size_t documentsCount = documents.size();
-        for (int i = 0; i < documentsCount; i++){
+        for (int i = 0; i < documentsCount; i++) {
             MongoDocumentPtr document = documents[i];
             CollectionStatsTreeItem *item = new CollectionStatsTreeItem(document);
             items.append(item);

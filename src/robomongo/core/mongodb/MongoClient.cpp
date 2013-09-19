@@ -263,7 +263,7 @@ namespace Robomongo
         _dbclient->insert(systemIndexesNs, builder.obj());
     }
 
-    void MongoClient::dropIndexFromCollection(const MongoCollectionInfo &collection, const std::string &indexName)const
+    void MongoClient::dropIndexFromCollection(const MongoCollectionInfo &collection, const std::string &indexName) const
     {
         _dbclient->dropIndex(collection.ns().toString(), indexName);
     }
@@ -460,7 +460,7 @@ namespace Robomongo
     std::vector<MongoCollectionInfo> MongoClient::runCollStatsCommand(const std::vector<std::string> &namespaces)
     {
         std::vector<MongoCollectionInfo> infos;
-        for(std::vector<std::string>::const_iterator it=namespaces.begin();it!=namespaces.end();++it){
+        for (std::vector<std::string>::const_iterator it = namespaces.begin(); it!=namespaces.end(); ++it) {
             MongoCollectionInfo info = runCollStatsCommand(*it);
             infos.push_back(info);
         }

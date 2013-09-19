@@ -22,7 +22,7 @@ namespace Robomongo
         bool isExecutable() const {return _scriptInfo.execute(); }
         const QString &title() const { return _scriptInfo.title(); }
         const CursorPosition &cursor() const { return _scriptInfo.cursor(); }
-        void setScript(const QString &script){return _scriptInfo.setScript(script);}
+        void setScript(const QString &script) { return _scriptInfo.setScript(script); }
         QString filePath() const { return _scriptInfo.filePath(); }
 
         bool saveToFile();

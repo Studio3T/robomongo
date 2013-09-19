@@ -60,7 +60,7 @@ namespace Robomongo
         return collectionIc;
     }
 
-    const QIcon &GuiRegistry::indexIcon()const
+    const QIcon &GuiRegistry::indexIcon() const
     {
         static const QIcon collectionIc = QIcon(":/robomongo/icons/index_16x16.png");
         return collectionIc;
@@ -114,13 +114,13 @@ namespace Robomongo
         return treeHighlightedIc;
     }
 
-    const QIcon &GuiRegistry::tableIcon()const
+    const QIcon &GuiRegistry::tableIcon() const
     {
         static const QIcon treeIc = QIcon(":/robomongo/icons/table_16x16.png");
         return treeIc;
     }
 
-    const QIcon &GuiRegistry::tableHighlightedIcon()const
+    const QIcon &GuiRegistry::tableHighlightedIcon() const
     {
         static const QIcon treeHighlightedIc = QIcon(":/robomongo/icons/table_highlighted_16x16.png");
         return treeHighlightedIc;

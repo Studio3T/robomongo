@@ -6,9 +6,10 @@ namespace
 {
     struct removeIfFound : public std::unary_function<const Robomongo::BsonTreeItem*, bool> 
     {
-        removeIfFound(Robomongo::BsonTreeItem *item):_whatSearch(item){}
-        bool operator()(const Robomongo::BsonTreeItem* item) const{
-            if (item == _whatSearch){
+        removeIfFound(Robomongo::BsonTreeItem *item) :_whatSearch(item) {}
+        bool operator()(const Robomongo::BsonTreeItem* item) const
+        {
+            if (item == _whatSearch) {
                 delete _whatSearch;
                 return true;
             }
@@ -47,44 +48,40 @@ namespace Robomongo
         _items.push_back(item);
     }
 
-    BsonTreeItem* BsonTreeItem::child(unsigned pos)const
+    BsonTreeItem* BsonTreeItem::child(unsigned pos) const
     {
         return _items[pos];
     }
 
-    BsonTreeItem* BsonTreeItem::childSafe(unsigned pos)const
+    BsonTreeItem* BsonTreeItem::childSafe(unsigned pos) const
     {
-        if(childrenCount()>pos){
+        if (childrenCount() > pos) {
             return _items[pos];
         }
-        else{
+        else {
             return NULL;
         }
     }
 
     BsonTreeItem* BsonTreeItem::childByKey(const QString &val)
     {
-        for (unsigned i=0;i<_items.size();++i)
-        {
-            if (_items[i]->key()==val)
-            {
+        for (unsigned i=0; i < _items.size(); ++i) {
+            if (_items[i]->key() == val) {
                 return _items[i];
             }
         }
         return NULL;
     }
 
-    mongo::BSONObj BsonTreeItem::root()const
+    mongo::BSONObj BsonTreeItem::root() const
     {
         return _root;
     }
 
     int BsonTreeItem::indexOf(BsonTreeItem *item) const
     {
-        for (unsigned i=0;i<_items.size();++i)
-        {
-            if (item == _items[i])
-            {
+        for (unsigned i=0; i < _items.size(); ++i) {
+            if (item == _items[i]) {
                 return i;
             }
         }

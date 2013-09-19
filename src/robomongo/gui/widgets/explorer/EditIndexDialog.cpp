@@ -199,7 +199,7 @@ namespace Robomongo
 
         QCheckBox *expireCheckBox = new QCheckBox(tr("Expire after"));
         expireCheckBox->setChecked(false);
-        if(_info._ttl>0){
+        if (_info._ttl > 0) {
             expireCheckBox->setChecked(true);
             _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
         }
@@ -274,7 +274,7 @@ namespace Robomongo
     {
         const QString &expAft = _expireAfterLineEdit->text();
         int expAftInt = _info._ttl;
-        if(!expAft.isEmpty()){
+        if (!expAft.isEmpty()) {
            expAftInt = _expireAfterLineEdit->text().toInt();
         }
         return EnsureIndexInfo(
@@ -297,7 +297,7 @@ namespace Robomongo
     {
         if (isValidJson(_jsonText->sciScintilla()->text())) {
             const QString &weightText = _textWeightsLineEdit->sciScintilla()->text();
-            if(!weightText.isEmpty()&&!isValidJson(weightText)){
+            if (!weightText.isEmpty() && !isValidJson(weightText)) {
                 QMessageBox::warning(this, "Invalid json", "Please check json text.\n");
                 _textWeightsLineEdit->setFocus();
                 return ;

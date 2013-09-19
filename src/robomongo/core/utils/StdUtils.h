@@ -19,7 +19,7 @@ namespace Robomongo
             RemoveIfFound(T whatSearch) : _whatSearch(whatSearch) {}
 
             bool operator()(T item) const {
-                if (item == _whatSearch){
+                if (item == _whatSearch) {
                     destroy(item);
                     return true;
                 }

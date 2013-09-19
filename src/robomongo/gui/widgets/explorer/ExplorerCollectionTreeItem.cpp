@@ -74,15 +74,16 @@ namespace Robomongo
     void ExplorerCollectionDirIndexesTreeItem::expand()
     {
         ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if(par){
-            par->expand();
-        }
+        if (!par)
+            return;
+
+        par->expand();
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_viewIndex()
     {
         ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if(par){
+        if (par) {
             par->openCurrentCollectionShell("getIndexes()");
         }
     }
@@ -90,7 +91,7 @@ namespace Robomongo
     void ExplorerCollectionDirIndexesTreeItem::ui_refreshIndex()
     {
         ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if(par){
+        if (par) {
             par->expand();
         }
     }
@@ -98,7 +99,7 @@ namespace Robomongo
     void ExplorerCollectionDirIndexesTreeItem::ui_addIndex()
     {
         ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if(par){
+        if (par) {
             par->openCurrentCollectionShell(
                 "ensureIndex({ \"<field>\" : 1 }); \n"
                 "\n"
@@ -122,7 +123,7 @@ namespace Robomongo
             return;
 
         ExplorerDatabaseTreeItem *databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *>(par->databaseItem());
-        if(!databaseTreeItem)
+        if (!databaseTreeItem)
             return;
 
         databaseTreeItem->enshureIndex(par,fakeInfo, dlg.info());
@@ -131,7 +132,7 @@ namespace Robomongo
     void ExplorerCollectionDirIndexesTreeItem::ui_reIndex()
     {
         ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if(par){
+        if (par) {
             par->openCurrentCollectionShell("reIndex()", false);
         }
     }
@@ -139,7 +140,7 @@ namespace Robomongo
     void ExplorerCollectionDirIndexesTreeItem::ui_dropIndex()
     {
         ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *>(parent());
-        if(par){
+        if (par) {
             par->openCurrentCollectionShell("dropIndex({ \"<field>\" : 1 });", false);
         }
     }
@@ -181,7 +182,7 @@ namespace Robomongo
     void ExplorerCollectionIndexesTreeItem::ui_edit()
     {
         ExplorerCollectionDirIndexesTreeItem *par = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(parent());           
-        if(par){
+        if (par) {
             ExplorerCollectionTreeItem *grPar = dynamic_cast<ExplorerCollectionTreeItem *const>(par->parent());
             if (!par)
                 return;
@@ -192,15 +193,15 @@ namespace Robomongo
                 return;
 
             ExplorerDatabaseTreeItem *databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *>(grPar->databaseItem());
-            if(!databaseTreeItem)
+            if (!databaseTreeItem)
                 return;
 
-            databaseTreeItem->enshureIndex(grPar,_info, dlg.info());
+            databaseTreeItem->enshureIndex(grPar, _info, dlg.info());
         }
     }
 
-    ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(QTreeWidgetItem *parent,ExplorerDatabaseTreeItem *databaseItem,MongoCollection *collection) :
-        BaseClass(parent),_collection(collection),_databaseItem(databaseItem)
+    ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection) :
+        BaseClass(parent), _collection(collection), _databaseItem(databaseItem)
     {
         QAction *addDocument = new QAction("Insert Document", this);
         VERIFY(connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument())));
@@ -279,7 +280,7 @@ namespace Robomongo
     {
         QtUtils::clearChildItems(_indexDir);
         const std::vector<EnsureIndexInfo> &indexes = event->indexes();
-        for(std::vector<EnsureIndexInfo>::const_iterator it=indexes.begin();it!=indexes.end();++it){
+        for (std::vector<EnsureIndexInfo>::const_iterator it = indexes.begin(); it!=indexes.end(); ++it) {
             _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(_indexDir,*it));
         }
         _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText,_indexDir->childCount()));
@@ -287,30 +288,30 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::handle(DeleteCollectionIndexResponse *event)
     {
-        if(!event->index().empty()){
+        if (!event->index().empty()) {
             int itemCount = _indexDir->childCount();
             QString eventIndex = QtUtils::toQString(event->index());
             for (int i = 0; i < itemCount; ++i) {
                 QTreeWidgetItem *item = _indexDir->child(i);
-                if(item->text(0)==eventIndex){
+                if (item->text(0) == eventIndex) {
                     removeChild(item);
                     delete item;
                     break;
                 }
             }
         }
-        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText,_indexDir->childCount()));
+        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, _indexDir->childCount()));
     }
 
     void ExplorerCollectionTreeItem::handle(CollectionIndexesLoadingEvent *event)
     {
-        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText,-1));
+        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, -1));
     }
 
     void ExplorerCollectionTreeItem::expand()
     {
          AppRegistry::instance().bus()->publish(new CollectionIndexesLoadingEvent(this));
-         if(_databaseItem){
+         if (_databaseItem) {
              _databaseItem->expandColection(this);
          }
     }
@@ -366,7 +367,7 @@ namespace Robomongo
             QString("Remove all documents from <b>%1</b> collection?").arg(QtUtils::toQString(_collection->name())),
             QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
-        if (answer == QMessageBox::Yes){
+        if (answer == QMessageBox::Yes) {
             MongoServer *server = database->server();
             mongo::BSONObjBuilder builder;
             mongo::BSONObj bsonQuery = builder.obj();
@@ -406,7 +407,7 @@ namespace Robomongo
         // Ask user
         int answer = utils::questionDialog(treeWidget(),"Drop","collection",QtUtils::toQString(_collection->name()));
 
-        if (answer == QMessageBox::Yes){
+        if (answer == QMessageBox::Yes) {
             MongoDatabase *database = _collection->database();
             database->dropCollection(_collection->name());
             database->loadCollections();
@@ -468,7 +469,7 @@ namespace Robomongo
         int result = dlg.exec();
 
         if (result == QDialog::Accepted) {
-            database->renameCollection(_collection->name(),QtUtils::toStdString( dlg.databaseName()));
+            database->renameCollection(_collection->name(), QtUtils::toStdString(dlg.databaseName()));
             // refresh list of collections
             database->loadCollections();
         }

@@ -18,7 +18,7 @@ namespace Robomongo
     /**
      * @brief Creates ConnectionSettings with default values
      */
-    ConnectionSettings::ConnectionSettings(): QObject(),
+    ConnectionSettings::ConnectionSettings() : QObject(),
         _serverPort(port),
         _serverHost(defaultServerHost),
         _defaultDatabase(),
@@ -92,12 +92,12 @@ namespace Robomongo
         return map;
     }
 
-     CredentialSettings *ConnectionSettings::findCredential(const std::string &databaseName)const
+     CredentialSettings *ConnectionSettings::findCredential(const std::string &databaseName) const
      {
          CredentialSettings *result = NULL;
          for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
              CredentialSettings * cred = *it;
-             if (cred->databaseName() == databaseName){
+             if (cred->databaseName() == databaseName) {
                  result = cred;
                  break;
              }

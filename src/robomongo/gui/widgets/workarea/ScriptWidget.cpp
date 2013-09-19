@@ -249,7 +249,7 @@ namespace Robomongo
 
     void ScriptWidget::onCursorPositionChanged(int line, int index)
     {
-        if (!_disableTextAndCursorNotifications&&_textChanged){
+        if (!_disableTextAndCursorNotifications&&_textChanged) {
             showAutocompletion();
             _textChanged = false;
         }

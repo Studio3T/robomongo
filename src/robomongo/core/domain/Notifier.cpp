@@ -146,10 +146,9 @@ namespace Robomongo
         if (!detail::isMultySelection(selectedIndexes))
             return;
         int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", "Do you want to delete all selected documents?");
-        if (answer == QMessageBox::Yes){
+        if (answer == QMessageBox::Yes) {
             std::vector<BsonTreeItem*> items;
-            for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it!= selectedIndexes.end(); ++it)
-            {
+            for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it!= selectedIndexes.end(); ++it) {
                 BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
                 items.push_back(item);                
             }

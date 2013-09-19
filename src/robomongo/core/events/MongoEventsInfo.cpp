@@ -15,16 +15,15 @@ namespace Robomongo
         _ttl(expireAfter),
         _defaultLanguage(defaultLanguage),
         _languageOverride(languageOverride),
-        _textWeights(textWeights){}
+        _textWeights(textWeights) {}
 
-        ConnectionInfo::ConnectionInfo():
-            _address(),_databases(),_version(0.0f)
-        {
-       
-        }
-        ConnectionInfo::ConnectionInfo(const std::string &address, const std::vector<std::string> &databases, float version):
-           _address(address),_databases(databases),_version(version)
-        {
+        ConnectionInfo::ConnectionInfo() :
+            _address(),
+            _databases(),
+            _version(0.0f) {}
 
-        }
+        ConnectionInfo::ConnectionInfo(const std::string &address, const std::vector<std::string> &databases, float version) :
+           _address(address),
+           _databases(databases),
+           _version(version) {}
 }

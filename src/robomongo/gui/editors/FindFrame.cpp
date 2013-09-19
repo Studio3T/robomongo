@@ -64,7 +64,7 @@ namespace Robomongo
     {
         bool isFocusScin = _scin->isActiveWindow();
         bool isShowFind = _findPanel->isVisible();
-        if(Qt::Key_Escape == keyEvent->key() && isFocusScin && isShowFind) {
+        if (Qt::Key_Escape == keyEvent->key() && isFocusScin && isShowFind) {
             _findPanel->hide();
             _scin->setFocus();
             return keyEvent->accept();
@@ -72,7 +72,7 @@ namespace Robomongo
             goToPrevElement();
         } else if (Qt::Key_Return == keyEvent->key() && isFocusScin && isShowFind) {
             goToNextElement();
-        } else if(((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key()==Qt::Key_F) && isFocusScin) {
+        } else if (((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key()==Qt::Key_F) && isFocusScin) {
             _findPanel->show();
             _findLine->setFocus();
             _findLine->selectAll();
@@ -95,22 +95,24 @@ namespace Robomongo
     void FindFrame::findElement(bool forward)
     {
         const QString &text = _findLine->text();
-        if(!text.isEmpty())
-        {
+        if (!text.isEmpty()) {
             bool re = false;
             bool wo = false;
             bool looped = true;
             int index = 0;
             int line = 0;
             _scin->getCursorPosition(&line, &index);
-            if(!forward)
+
+            if (!forward)
                index -= _scin->selectedText().length();
 
             _scin->setCursorPosition(line, 0);
             bool isFounded = _scin->findFirst(text, re, _caseSensitive->checkState() == Qt::Checked, wo, looped, forward, line, index);
-            if(isFounded){
+
+            if (isFounded) {
                 _scin->ensureCursorVisible(); 
-            }else{
+            }
+            else {
                 QMessageBox::warning(this, tr("Search"),tr("The specified text was not found."));
             }            
         }

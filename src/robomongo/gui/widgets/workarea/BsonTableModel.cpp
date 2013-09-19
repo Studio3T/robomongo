@@ -46,7 +46,7 @@ namespace Robomongo
         QModelIndex sourceIndex;
        
         BsonTreeItem *child = static_cast<BsonTreeItem *>(proxyIndex.internalPointer());
-        if(child){
+        if (child) {
             QtUtils::HackQModelIndex* hack = reinterpret_cast<QtUtils::HackQModelIndex*>(&sourceIndex);
             BsonTreeItem *parent = static_cast<BsonTreeItem *>(child->parent());
             hack->r = proxyIndex.row();
@@ -59,18 +59,16 @@ namespace Robomongo
 
     void BsonTableModelProxy::setSourceModel( QAbstractItemModel* model )
     {
-        if(model){
+        if (model) {
             BsonTreeItem *child = QtUtils::item<BsonTreeItem *>(model->index(0,0));
-            if(child){
+            if (child) {
                 _root = qobject_cast<BsonTreeItem *>(child->parent());
-                if(_root){
+                if (_root) {
                     int count = _root->childrenCount();
-                    for (int i=0;i<count;++i)
-                    {
+                    for (int i=0; i < count; ++i) {
                         BsonTreeItem *child = _root->child(i);
                         int countc = child->childrenCount();
-                        for (int j=0;j<countc;++j)
-                        {
+                        for (int j = 0; j < countc; ++j) {
                             addColumn(child->child(j)->key());
                         }
                     }
@@ -108,13 +106,13 @@ namespace Robomongo
 
     QVariant BsonTableModelProxy::headerData(int section, Qt::Orientation orientation, int role) const
     {
-        if(role != Qt::DisplayRole)
+        if (role != Qt::DisplayRole)
             return QVariant();
 
-        if(orientation == Qt::Horizontal && role == Qt::DisplayRole){
+        if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
             return column(section); 
-        }else{
-            return QString("%1").arg( section + 1 ); 
+        } else {
+            return QString("%1").arg(section + 1);
         }
     }
 

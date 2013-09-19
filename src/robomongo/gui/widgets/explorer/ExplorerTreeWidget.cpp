@@ -16,7 +16,7 @@ namespace Robomongo
     void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
     {
         QTreeWidgetItem *item = itemAt(event->pos());
-        if (item){
+        if (item) {
             ExplorerTreeItem *expItem = dynamic_cast<ExplorerTreeItem *>(item);
             if (expItem) {
                 expItem->showContextMenuAtPos(mapToGlobal(event->pos()));

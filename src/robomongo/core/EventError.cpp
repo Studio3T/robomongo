@@ -2,7 +2,7 @@
 
 namespace Robomongo
 {
-    EventError::EventError(){}
+    EventError::EventError() {}
 
     EventError::EventError(const std::string &errorMessage) :
         _errorMessage(errorMessage) {}

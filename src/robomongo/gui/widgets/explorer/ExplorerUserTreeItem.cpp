@@ -55,7 +55,7 @@ namespace Robomongo
         // Ask user
         int answer = utils::questionDialog(treeWidget(),"Drop","User",QtUtils::toQString(_user.name()));
 
-        if (answer == QMessageBox::Yes){
+        if (answer == QMessageBox::Yes) {
             _database->dropUser(_user.id());
             _database->loadUsers(); // refresh list of users
         }
@@ -66,10 +66,10 @@ namespace Robomongo
         float version = _user.version();
         CreateUserDialog *dlg = NULL;
 
-        if (version < MongoUser::minimumSupportedVersion){
+        if (version < MongoUser::minimumSupportedVersion) {
             dlg = new CreateUserDialog(QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),QtUtils::toQString(_database->name()),_user);
         }
-        else{
+        else {
            dlg = new CreateUserDialog(_database->server()->getDatabasesNames(),QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),QtUtils::toQString(_database->name()),_user);
         }
         

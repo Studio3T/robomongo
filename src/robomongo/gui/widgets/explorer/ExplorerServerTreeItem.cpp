@@ -166,16 +166,19 @@ namespace Robomongo
     void ExplorerServerTreeItem::ui_disconnectServer()
     {
         QTreeWidget * view = dynamic_cast<QTreeWidget *>(BaseClass::treeWidget());
-        if(view){
-            int index = view->indexOfTopLevelItem(this);
-            if (index != -1) {
-                QTreeWidgetItem *removedItem = view->takeTopLevelItem(index);
-                if (removedItem) {
-                    AppRegistry::instance().app()->closeServer(_server);
-                    delete removedItem;                    
-                }
-            }
-        }       
+        if (!view)
+            return;
+
+        int index = view->indexOfTopLevelItem(this);
+        if (index == -1)
+            return;
+
+        QTreeWidgetItem *removedItem = view->takeTopLevelItem(index);
+        if (!removedItem)
+            return;
+
+        AppRegistry::instance().app()->closeServer(_server);
+        delete removedItem;
     }
 
     void ExplorerServerTreeItem::ui_refreshServer()

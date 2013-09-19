@@ -40,14 +40,14 @@ namespace Robomongo
         QPoint menuPoint = mapToGlobal(point);
         menuPoint.setY(menuPoint.y() + header()->height());
 
-        if (selectedInd.isValid()){
+        if (selectedInd.isValid()) {
             BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);;
 
             QMenu menu(this);
             bool isSimple = false;
-            if(documentItem){
+            if (documentItem) {
                 isSimple = detail::isSimpleType(documentItem);
-                if (documentItem->childrenCount()){
+                if (documentItem->childrenCount()) {
                     menu.addAction(_expandRecursive);
                     menu.addSeparator();
                 }
@@ -56,9 +56,9 @@ namespace Robomongo
             _notifier.initMenu(&menu,documentItem);
             menu.exec(menuPoint);
         }
-        else{
+        else {
             QModelIndexList indexes = selectedIndexes();
-            if(detail::isMultySelection(indexes)){
+            if (detail::isMultySelection(indexes)) {
                 QMenu menu(this);
                 _notifier.initMultiSelectionMenu(&menu);
                 menu.exec(menuPoint);
@@ -74,12 +74,11 @@ namespace Robomongo
 
     void BsonTreeView::keyPressEvent(QKeyEvent *event)
     {
-        if (event->key()==Qt::Key_Delete){
+        if (event->key() == Qt::Key_Delete) {
             QModelIndexList indexses = selectionModel()->selectedRows();
             std::vector<BsonTreeItem*> items;
             bool isForce = event->modifiers() & Qt::ShiftModifier;
-            for (QModelIndexList::const_iterator it = indexses.begin(); it!= indexses.end(); ++it)
-            {
+            for (QModelIndexList::const_iterator it = indexses.begin(); it!= indexses.end(); ++it) {
                 BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
                 items.push_back(item);
             }
@@ -90,13 +89,13 @@ namespace Robomongo
 
     void BsonTreeView::expandNode(const QModelIndex &index)
     {
-        if(index.isValid()){
+        if (index.isValid()) {
             BaseClass::expand(index);
             BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(index);
-            for(unsigned i = 0;i<item->childrenCount();++i){
+            for (unsigned i = 0; i < item->childrenCount(); ++i) {
                 BsonTreeItem *tritem = item->child(i);
-                if(tritem&&tritem->childrenCount()){
-                    expandNode(model()->index(i,0,index));
+                if (tritem && tritem->childrenCount()) {
+                    expandNode(model()->index(i, 0, index));
                 }
             }
         }

@@ -41,7 +41,7 @@ namespace Robomongo
 
             double secs = shellResult.elapsedMs() / 1000.f;
             ViewMode viewMode = AppRegistry::instance().settingsManager()->viewMode();
-            if (prev.size()){
+            if (prev.size()) {
                 viewMode = prev.back();
                 prev.pop_back();
             }

@@ -143,7 +143,7 @@ namespace Robomongo
         if (_batchSize == 0)
             _batchSize = 50;
         _currentStyle = map.value("style").toString();
-        if (_currentStyle.isEmpty()){
+        if (_currentStyle.isEmpty()) {
             _currentStyle = AppStyle::StyleName;
         }
 
@@ -224,7 +224,7 @@ namespace Robomongo
      */
     void SettingsManager::removeConnection(ConnectionSettings *connection)
     {
-        if(_connections.removeOne(connection)){
+        if (_connections.removeOne(connection)) {
             emit connectionRemoved(connection);
             delete connection;
         }

@@ -24,7 +24,7 @@ namespace Robomongo
         void enterTreeMode();
         void enterTableMode();
         void enterCustomMode();
-        int countTab()const;
+        int countTab() const;
         QueryWidget *const currentWidget() const;
     Q_SIGNALS:
         void tabActivated(int tab);

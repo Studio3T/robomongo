@@ -22,11 +22,11 @@ namespace Robomongo
     {
         size_t pos = 0;
         while ((pos = sentence.substr(pos).find(word)) != std::string::npos) {
-            if(pos + word.size()<sentence.size()){
+            if (pos + word.size() < sentence.size()) {
                 char c = sentence[pos + word.size()];
                 bool isLastAlpha = isalpha(c);
                 bool isFirstAlpha = false;
-                if(pos){
+                if (pos) {
                     isFirstAlpha = isalpha(sentence[pos - 1]);
                 }
                 if (!isFirstAlpha&&!isLastAlpha)
@@ -180,7 +180,7 @@ namespace Robomongo
     {
         std::string username = QtUtils::toStdString(_userNameEdit->text());
         std::string pass = QtUtils::toStdString(_userPassEdit->text());
-        if(_user.version() < MongoUser::minimumSupportedVersion){
+        if (_user.version() < MongoUser::minimumSupportedVersion) {
             if (username.empty() || pass.empty())
                 return;
 
@@ -190,35 +190,38 @@ namespace Robomongo
             _user.setPasswordHash(hash);
             _user.setReadOnly(_readOnlyCheckBox->isChecked());
         }
-        else{
+        else {
             std::string userSource = QtUtils::toStdString(_userSourceComboBox->currentText());
 
             if (username.empty())
                 return;
-            if(userSource.empty() && pass.empty())
+
+            if (userSource.empty() && pass.empty())
                 return;
-            if(!userSource.empty() && !pass.empty()){
+
+            if (!userSource.empty() && !pass.empty()) {
                 QMessageBox::warning(this, "Invalid input", "The UserSourse field and the Password field are mutually exclusive. The document cannot contain both.\n");
                 return;
             }
+
             std::string hash;
-            if(!pass.empty()){
+            if (!pass.empty()) {
                 hash = MongoUtils::buildPasswordHash(username, pass);
             }
+
             _user.setPasswordHash(hash);
             _user.setName(username);        
             _user.setUserSource(userSource);
 
             std::string roles;
-            for (unsigned i = 0; i < RolesCount; ++i)
-            {
-                if (_rolesArray[i]->isChecked())
-                {
+            for (unsigned i = 0; i < RolesCount; ++i) {
+                if (_rolesArray[i]->isChecked()) {
                     roles.append(rolesText[i]);
                     roles += ",";
                 }
             }
-            if(roles.empty()){
+
+            if (roles.empty()) {
                 QMessageBox::warning(this, "Invalid input", "Please select role.\n");
                 return;
             }

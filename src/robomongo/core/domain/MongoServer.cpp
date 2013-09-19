@@ -74,7 +74,7 @@ namespace Robomongo
     {
         for (DatabasesContainerType::const_iterator it = _databases.begin(); it != _databases.end(); ++it) {
             MongoDatabase *datab = *it;
-            if (datab->name()==dbName){
+            if (datab->name() == dbName) {
                 return datab;
             }
         }

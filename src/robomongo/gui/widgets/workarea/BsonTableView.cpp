@@ -32,12 +32,11 @@ namespace Robomongo
 
     void BsonTableView::keyPressEvent(QKeyEvent *event)
     {
-        if (event->key()==Qt::Key_Delete){
+        if (event->key() == Qt::Key_Delete) {
             QModelIndexList indexses = selectionModel()->selectedRows();
             bool isForce = event->modifiers() & Qt::ShiftModifier;
             std::vector<BsonTreeItem*> items;
-            for (QModelIndexList::const_iterator it = indexses.begin(); it!= indexses.end(); ++it)
-            {
+            for (QModelIndexList::const_iterator it = indexses.begin(); it!= indexses.end(); ++it) {
                 BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
                 items.push_back(item);                
             }
@@ -69,15 +68,15 @@ namespace Robomongo
         menuPoint.setY(menuPoint.y() + horizontalHeader()->height());
         menuPoint.setX(menuPoint.x() + verticalHeader()->width());
 
-        if (selectedInd.isValid()){
+        if (selectedInd.isValid()) {
             BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
 
             QMenu menu(this);
             _notifier.initMenu(&menu,documentItem);
             menu.exec(menuPoint);
-        }else{
+        } else {
             QModelIndexList indexes = selectedIndexes();
-            if(detail::isMultySelection(indexes)){
+            if (detail::isMultySelection(indexes)) {
                 QMenu menu(this);
                 _notifier.initMultiSelectionMenu(&menu);
                 menu.exec(menuPoint);

@@ -536,7 +536,7 @@ namespace Robomongo
                               const std::string &collection) :
             Event(sender),
             _database(database),
-            _collection(collection){}
+            _collection(collection) {}
 
         std::string database() const { return _database; }
         std::string collection() const { return _collection; }
@@ -958,7 +958,7 @@ namespace Robomongo
 
         ConnectionFailedEvent(MongoServer *server, const EventError &error) :
             Event((QObject *)server, error),
-            server(server){}
+            server(server) {}
 
         MongoServer *server;
     };

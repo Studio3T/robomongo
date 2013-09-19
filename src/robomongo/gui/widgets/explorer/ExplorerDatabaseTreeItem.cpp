@@ -211,7 +211,7 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::addSystemCollectionItem(MongoCollection *collection)
     {
-        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(_collectionSystemFolderItem,this,collection);
+        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(_collectionSystemFolderItem, this, collection);
         _collectionSystemFolderItem->addChild(collectionItem);
     }
 
@@ -222,13 +222,13 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::addUserItem(MongoDatabase *database, const MongoUser &user)
     {
-        ExplorerUserTreeItem *userItem = new ExplorerUserTreeItem(_usersFolderItem,database, user);
+        ExplorerUserTreeItem *userItem = new ExplorerUserTreeItem(_usersFolderItem, database, user);
         _usersFolderItem->addChild(userItem);
     }
 
     void ExplorerDatabaseTreeItem::addFunctionItem(MongoDatabase *database, const MongoFunction &function)
     {
-        ExplorerFunctionTreeItem *functionItem = new ExplorerFunctionTreeItem(_javascriptFolderItem,database, function);
+        ExplorerFunctionTreeItem *functionItem = new ExplorerFunctionTreeItem(_javascriptFolderItem, database, function);
         _javascriptFolderItem->addChild(functionItem);
     }
 
@@ -236,6 +236,7 @@ namespace Robomongo
     {
         expandCollections();
     }
+
     void ExplorerDatabaseTreeItem::ui_dbStatistics()
     {
         openCurrentDatabaseShell(_database,"db.stats()");
@@ -243,24 +244,25 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::ui_dbDrop()
     {
-            // Ask user
-            QString buff = QString("Drop <b>%1</b> database?").arg(QtUtils::toQString(_database->name()));
-            int answer = QMessageBox::question(treeWidget(),
-                "Drop Database",buff,
-                QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
-            if (answer == QMessageBox::Yes){
-                _database->server()->dropDatabase(_database->name());
-                _database->server()->loadDatabases(); // refresh list of databases
-            }
+        // Ask user
+        QString buff = QString("Drop <b>%1</b> database?").arg(QtUtils::toQString(_database->name()));
+        int answer = QMessageBox::question(treeWidget(),
+            "Drop Database",buff,
+            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+        if (answer != QMessageBox::Yes)
+            return;
+
+        _database->server()->dropDatabase(_database->name());
+        _database->server()->loadDatabases(); // refresh list of databases
     }
 
     void ExplorerDatabaseTreeItem::ui_dbRepair()
     {
-        openCurrentDatabaseShell(_database,"db.repairDatabase()", false);
+        openCurrentDatabaseShell(_database, "db.repairDatabase()", false);
     }
 
     void ExplorerDatabaseTreeItem::ui_dbOpenShell()
     {
-        openCurrentDatabaseShell(_database,"");
+        openCurrentDatabaseShell(_database, "");
     }
 }

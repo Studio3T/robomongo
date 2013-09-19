@@ -125,7 +125,7 @@ namespace Robomongo
         }
        
         ExplorerCollectionDirIndexesTreeItem * dirItem = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(item);
-        if(dirItem){
+        if (dirItem) {
             dirItem->expand();
         }
     }

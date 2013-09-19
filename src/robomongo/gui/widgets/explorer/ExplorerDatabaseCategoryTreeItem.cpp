@@ -29,7 +29,7 @@ namespace Robomongo
     ExplorerDatabaseCategoryTreeItem::ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseTreeItem *databaseItem,ExplorerDatabaseCategory category) :
         BaseClass(databaseItem) ,_category(category)
     {
-        if(_category==Collections){
+        if (_category == Collections) {
             QAction *createCollection = new QAction("Create Collection", this);
             VERIFY(connect(createCollection, SIGNAL(triggered()), SLOT(ui_createCollection())));
 
@@ -44,7 +44,7 @@ namespace Robomongo
             BaseClass::_contextMenu->addSeparator();
             BaseClass::_contextMenu->addAction(refreshCollections);
         }
-        else if(_category==Users){
+        else if (_category == Users) {
 
             QAction *refreshUsers = new QAction("Refresh", this);
             VERIFY(connect(refreshUsers, SIGNAL(triggered()), SLOT(ui_refreshUsers())));
@@ -60,7 +60,7 @@ namespace Robomongo
             BaseClass::_contextMenu->addSeparator();
             BaseClass::_contextMenu->addAction(refreshUsers);
         }
-        else if(_category==Functions){
+        else if (_category == Functions) {
 
             QAction *refreshFunctions = new QAction("Refresh", this);
             VERIFY(connect(refreshFunctions, SIGNAL(triggered()), SLOT(ui_refreshFunctions())));
@@ -84,20 +84,21 @@ namespace Robomongo
     void ExplorerDatabaseCategoryTreeItem::expand()
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
-        if(databaseItem){
-            switch(_category) {
-            case Collections:
-                databaseItem->expandCollections();
-                break;
-            case Files:
-                 break;
-            case Functions:
-                databaseItem->expandFunctions();
-                break;
-            case Users:
-                databaseItem->expandUsers();
-                break;
-            }
+        if (!databaseItem)
+            return;
+
+        switch(_category) {
+        case Collections:
+            databaseItem->expandCollections();
+            break;
+        case Files:
+             break;
+        case Functions:
+            databaseItem->expandFunctions();
+            break;
+        case Users:
+            databaseItem->expandUsers();
+            break;
         }
     }
 
@@ -109,7 +110,7 @@ namespace Robomongo
     void ExplorerDatabaseCategoryTreeItem::ui_dbCollectionsStatistics()
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
-        if(databaseItem){
+        if (databaseItem) {
             openDatabaseShell(databaseItem->database(), "db.printCollectionStats()");
         }
     } 
@@ -117,7 +118,7 @@ namespace Robomongo
     void ExplorerDatabaseCategoryTreeItem::ui_refreshUsers()
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
-        if(databaseItem){
+        if (databaseItem) {
             databaseItem->expandUsers();
         }
     }
@@ -125,7 +126,7 @@ namespace Robomongo
     void ExplorerDatabaseCategoryTreeItem::ui_refreshFunctions()
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
-        if(databaseItem){
+        if (databaseItem) {
             databaseItem->expandFunctions();
         }
     }
@@ -133,87 +134,94 @@ namespace Robomongo
     void ExplorerDatabaseCategoryTreeItem::ui_viewUsers()
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
-        if(databaseItem){
-            openDatabaseShell(databaseItem->database(),"db.system.users.find()");
+        if (databaseItem) {
+            openDatabaseShell(databaseItem->database(), "db.system.users.find()");
         }
     }
 
     void ExplorerDatabaseCategoryTreeItem::ui_viewFunctions()
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
-        if(databaseItem){
-            openDatabaseShell(databaseItem->database(),"db.system.js.find()");
+        if (databaseItem) {
+            openDatabaseShell(databaseItem->database(), "db.system.js.find()");
         }
     }
 
     void ExplorerDatabaseCategoryTreeItem::ui_createCollection()
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
-        if (databaseItem){
-            CreateDatabaseDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
-                QtUtils::toQString(databaseItem->database()->name()));
-            dlg.setWindowTitle("Create Collection");
-            dlg.setOkButtonText("&Create");
-            dlg.setInputLabelText("Collection Name:");
-            int result = dlg.exec();
-            if (result == QDialog::Accepted) {
-                databaseItem->database()->createCollection(QtUtils::toStdString(dlg.databaseName()));
-                // refresh list of databases
-                databaseItem->expandCollections();
-            }
-        }
+        if (!databaseItem)
+            return;
+
+        CreateDatabaseDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
+            QtUtils::toQString(databaseItem->database()->name()));
+        dlg.setWindowTitle("Create Collection");
+        dlg.setOkButtonText("&Create");
+        dlg.setInputLabelText("Collection Name:");
+        int result = dlg.exec();
+        if (result != QDialog::Accepted)
+            return;
+
+        databaseItem->database()->createCollection(QtUtils::toStdString(dlg.databaseName()));
+        // refresh list of databases
+        databaseItem->expandCollections();
     }
 
     void ExplorerDatabaseCategoryTreeItem::ui_addUser()
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
-        if(databaseItem){
-            float version = databaseItem->database()->server()->version();
-            CreateUserDialog *dlg = NULL;
+        if (!databaseItem)
+            return;
 
-            if (version < MongoUser::minimumSupportedVersion){
-                dlg = new CreateUserDialog(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
-                    QtUtils::toQString(databaseItem->database()->name()), MongoUser(version));
-            }
-            else{
-                dlg = new CreateUserDialog(databaseItem->database()->server()->getDatabasesNames(), QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
+        float version = databaseItem->database()->server()->version();
+        CreateUserDialog *dlg = NULL;
+
+        if (version < MongoUser::minimumSupportedVersion) {
+            dlg = new CreateUserDialog(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
                 QtUtils::toQString(databaseItem->database()->name()), MongoUser(version));
-            }
-            int result = dlg->exec();
-            if (result == QDialog::Accepted) {
-                MongoUser user = dlg->user();
-                databaseItem->database()->createUser(user, false);
-                // refresh list of users
-                databaseItem->expandUsers();
-            }
         }
+        else {
+            dlg = new CreateUserDialog(databaseItem->database()->server()->getDatabasesNames(), QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
+            QtUtils::toQString(databaseItem->database()->name()), MongoUser(version));
+        }
+
+        int result = dlg->exec();
+        if (result != QDialog::Accepted)
+            return;
+
+        MongoUser user = dlg->user();
+        databaseItem->database()->createUser(user, false);
+        // refresh list of users
+        databaseItem->expandUsers();
     }
 
     void ExplorerDatabaseCategoryTreeItem::ui_addFunction()
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
-        if(databaseItem){
-            FunctionTextEditor dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(databaseItem->database()->name()), MongoFunction());
-            dlg.setWindowTitle("Create Function");
-            dlg.setCode(
-                "function() {\n"
-                "    // write your code here\n"
-                "}");
-            dlg.setCursorPosition(1, 4);
-            int result = dlg.exec();
-            if (result == QDialog::Accepted) {
-                MongoFunction function = dlg.function();
-                databaseItem->database()->createFunction(function);
-                // refresh list of functions
-                databaseItem->expandFunctions();
-            }
-        }
+        if (!databaseItem)
+            return;
+
+        FunctionTextEditor dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(databaseItem->database()->name()), MongoFunction());
+        dlg.setWindowTitle("Create Function");
+        dlg.setCode(
+            "function() {\n"
+            "    // write your code here\n"
+            "}");
+        dlg.setCursorPosition(1, 4);
+        int result = dlg.exec();
+        if (result != QDialog::Accepted)
+            return;
+
+        MongoFunction function = dlg.function();
+        databaseItem->database()->createFunction(function);
+        // refresh list of functions
+        databaseItem->expandFunctions();
     }
 
     void ExplorerDatabaseCategoryTreeItem::ui_refreshCollections()
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
-        if(databaseItem){
+        if (databaseItem) {
             databaseItem->expandCollections();
         }
     }

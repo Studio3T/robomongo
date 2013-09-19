@@ -140,7 +140,7 @@ namespace Robomongo
             }
         }
 
-        if(keyEvent->key() == Qt::Key_F11) {
+        if (keyEvent->key() == Qt::Key_F11) {
             keyEvent->ignore();
             showOrHideLinesNumbers();
             return;

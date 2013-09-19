@@ -34,13 +34,10 @@ namespace Robomongo
 
     void MongoShell::execute(const std::string &dbName)
     {
-        if(_scriptInfo.execute())
-        {
+        if (_scriptInfo.execute()) {
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             _server->client()->send(new ExecuteScriptRequest(this, query(), dbName));
-        }
-        else
-        {
+        } else {
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             _scriptInfo.setScript("");
             _server->client()->send(new ExecuteScriptRequest(this,query() , dbName));

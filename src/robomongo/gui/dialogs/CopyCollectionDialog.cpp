@@ -84,16 +84,15 @@ namespace Robomongo
         _databaseComboBox->clear();
         const QString &curentServerName = _serverComboBox->currentText();
         MongoServer *server = NULL;
-        for (App::MongoServersContainerType::const_iterator it = _servers.begin(); it != _servers.end(); ++it)
-        {
+        for (App::MongoServersContainerType::const_iterator it = _servers.begin(); it != _servers.end(); ++it) {
             MongoServer *ser = *it;
-            if(curentServerName == QtUtils::toQString(ser->connectionRecord()->connectionName())){
+            if (curentServerName == QtUtils::toQString(ser->connectionRecord()->connectionName())) {
                 server = ser;
                 break;
             }
         }  
         _databaseComboBox->addItems(server->getDatabasesNames());
-        if(_currentServerName==QtUtils::toQString(server->connectionRecord()->getFullAddress())){
+        if (_currentServerName==QtUtils::toQString(server->connectionRecord()->getFullAddress())) {
             _databaseComboBox->removeItem(_databaseComboBox->findText(_currentDatabase));
         }
     }
@@ -103,7 +102,7 @@ namespace Robomongo
         MongoDatabase *result = NULL;
         const QString &serverName = _serverComboBox->currentText();
         const QString &dataBaseName = _databaseComboBox->currentText();
-        if (!serverName.isEmpty()&&!dataBaseName.isEmpty()){
+        if (!serverName.isEmpty() && !dataBaseName.isEmpty()) {
             MongoServer *server = _servers[_serverComboBox->currentIndex()];
             result = server->findDatabaseByName(QtUtils::toStdString(dataBaseName));
         }
@@ -112,7 +111,7 @@ namespace Robomongo
 
     void CopyCollection::accept()
     {
-        if(!selectedDatabase())
+        if (!selectedDatabase())
             return;
 
         QDialog::accept();

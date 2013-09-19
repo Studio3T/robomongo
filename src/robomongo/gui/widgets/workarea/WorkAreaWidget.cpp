@@ -79,7 +79,7 @@ namespace Robomongo
             currentWidget->enterCustomMode();
     }
 
-    int WorkAreaWidget::countTab()const
+    int WorkAreaWidget::countTab() const
     {
         return _tabWidget->count();
     }

@@ -29,10 +29,7 @@ namespace Robomongo
         void expand();
         void dropIndex(const QTreeWidgetItem * const ind);
         void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
-        ExplorerDatabaseTreeItem *const databaseItem()const 
-        {
-            return _databaseItem;
-        }
+        ExplorerDatabaseTreeItem *const databaseItem() const { return _databaseItem; }
 
     public Q_SLOTS:
         void handle(LoadCollectionIndexesResponse *event);

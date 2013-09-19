@@ -26,6 +26,11 @@ namespace Robomongo
             return Robomongo::BsonUtils::isSimpleType(item->type())
                 || Robomongo::BsonUtils::isUuidType(item->type(), item->binType());
         }
+
+        bool isMultySelection(const QModelIndexList &indexes)
+        {
+            return indexes.count()!=0;
+        }
     }
 
     Notifier::Notifier(INotifierObserver *const observer, MongoShell *shell, const MongoQueryInfo &queryInfo, QObject *parent) :
@@ -38,6 +43,9 @@ namespace Robomongo
 
         _deleteDocumentAction = new QAction("Delete Document", wid);
         VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument())));
+
+        _deleteDocumentsAction = new QAction("Delete Documents", wid);
+        VERIFY(connect(_deleteDocumentsAction, SIGNAL(triggered()), SLOT(onDeleteDocuments())));
 
         _editDocumentAction = new QAction("Edit Document", wid);
         VERIFY(connect(_editDocumentAction, SIGNAL(triggered()), SLOT(onEditDocument())));
@@ -69,6 +77,14 @@ namespace Robomongo
         if (onItem && isSimple)   menu->addAction(_copyValueAction);
         if (onItem && isEditable) menu->addSeparator();
         if (onItem && isEditable) menu->addAction(_deleteDocumentAction);
+    }
+
+    void Notifier::initMultiSelectionMenu(QMenu *const menu)
+    {
+        bool isEditable = _queryInfo.isNull ? false : true;
+
+        if (isEditable) menu->addAction(_insertDocumentAction);
+        if (isEditable) menu->addAction(_deleteDocumentsAction);
     }
 
     void Notifier::deleteDocuments(std::vector<BsonTreeItem*> items, bool force)
@@ -108,6 +124,26 @@ namespace Robomongo
 
         if (isNeededRefresh)
             _shell->query(0, _queryInfo);
+    }
+
+    void Notifier::onDeleteDocuments()
+    {
+        if (_queryInfo.isNull)
+            return;
+
+        QModelIndexList selectedIndexes = _observer->selectedIndexes();
+        if (!detail::isMultySelection(selectedIndexes))
+            return;
+        int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", "Do you want to delete all selected documents?");
+        if (answer == QMessageBox::Yes){
+            std::vector<BsonTreeItem*> items;
+            for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it!= selectedIndexes.end(); ++it)
+            {
+                BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
+                items.push_back(item);                
+            }
+            deleteDocuments(items,true);
+        }
     }
 
     void Notifier::onDeleteDocument()

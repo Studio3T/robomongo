@@ -49,7 +49,6 @@ namespace Robomongo
     QModelIndex BsonTableView::selectedIndex() const
     {
         QModelIndexList indexses = selectionModel()->selectedIndexes();
-        int count = indexses.count();
 
         if (indexses.count() != 1)
             return QModelIndex();
@@ -57,19 +56,32 @@ namespace Robomongo
         return indexses[0];
     }
 
+    QModelIndexList BsonTableView::selectedIndexes() const
+    {
+        return selectionModel()->selectedRows();
+    }
+
     void BsonTableView::showContextMenu( const QPoint &point )
     {
         QModelIndex selectedInd = selectedIndex();
+
+        QPoint menuPoint = mapToGlobal(point);
+        menuPoint.setY(menuPoint.y() + horizontalHeader()->height());
+        menuPoint.setX(menuPoint.x() + verticalHeader()->width());
+
         if (selectedInd.isValid()){
             BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
 
             QMenu menu(this);
             _notifier.initMenu(&menu,documentItem);
-
-            QPoint menuPoint = mapToGlobal(point);
-            menuPoint.setY(menuPoint.y() + horizontalHeader()->height());
-            menuPoint.setX(menuPoint.x() + verticalHeader()->width());
             menu.exec(menuPoint);
+        }else{
+            QModelIndexList indexes = selectedIndexes();
+            if(detail::isMultySelection(indexes)){
+                QMenu menu(this);
+                _notifier.initMultiSelectionMenu(&menu);
+                menu.exec(menuPoint);
+            }
         }
     }
 

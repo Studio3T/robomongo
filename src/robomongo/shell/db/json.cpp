@@ -923,7 +923,9 @@ namespace Robomongo {
 
         // reset errno to make sure that we are getting it from strtod
         errno = 0;
+        const char * loc = setlocale(LC_NUMERIC,"C");
         retd = strtod(_input, &endptrd);
+        setlocale(LC_NUMERIC, loc);
         // if pointer does not move, we found no digits
         if (_input == endptrd) {
             return parseError("Bad characters in value");

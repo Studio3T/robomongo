@@ -18,6 +18,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/explorer/ExplorerWidget.h
     robomongo/gui/widgets/explorer/ExplorerTreeWidget.h
     robomongo/gui/MainWindow.h
+    robomongo/gui/AppStyle.h
     robomongo/gui/widgets/explorer/ExplorerTreeItem.h
     robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h
     robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h
@@ -73,6 +74,7 @@ SET(SOURCES_GUI
     robomongo/gui/widgets/explorer/ExplorerWidget.cpp
     robomongo/gui/widgets/explorer/ExplorerTreeWidget.cpp
     robomongo/gui/MainWindow.cpp
+    robomongo/gui/AppStyle.cpp
     robomongo/gui/GuiRegistry.cpp
     robomongo/gui/widgets/explorer/ExplorerTreeItem.cpp
     robomongo/gui/widgets/explorer/ExplorerServerTreeItem.cpp

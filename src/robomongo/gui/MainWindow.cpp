@@ -27,6 +27,7 @@
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 #include "robomongo/gui/dialogs/AboutDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/AppStyle.h"
 
 namespace
 {
@@ -84,7 +85,7 @@ namespace Robomongo
     #endif
 
         qApp->setStyleSheet(QString(
-            "Robomongo--ExplorerTreeWidget#explorerTree { padding: 1px 0px 0px 0px; background-color: %1; border: 0px; } \n " // #E7E5E4
+            "Robomongo--ExplorerTreeWidget#explorerTree { padding: 1px 0px 0px 0px; background-color: %1; } \n " // #E7E5E4
             "QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } "
             "QMainWindow::separator { background: #E7E5E4; width: 1px; }"
         ).arg(explorerColor));
@@ -222,8 +223,8 @@ namespace Robomongo
 
         // View menu
         _viewMenu = menuBar()->addMenu("View");
-        _viewMenu->addAction(fullScreenAction);
-
+        _viewMenu->addAction(fullScreenAction);       
+        
         // Options menu
         QMenu *optionsMenu = menuBar()->addMenu("Options");
 
@@ -343,15 +344,42 @@ namespace Robomongo
         _execToolBar->hide();
 
         statusBar();
-
+        
         createTabs();
         createDatabaseExplorer();
-
+        createStylesMenu();
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
         QTimer::singleShot(0, this, SLOT(manageConnections()));
         updateMenus();
+    }
+
+    void MainWindow::createStylesMenu()
+    {
+        _viewMenu->addSeparator();
+         QMenu *styles = _viewMenu->addMenu("Styles");
+         QStringList supportedStyles = detail::getSupportedStyles();
+         QActionGroup *styleGroup = new QActionGroup(this);
+         VERIFY(connect(styleGroup, SIGNAL(triggered(QAction *)), this, SLOT(changeStyle(QAction *))));
+         const QString &currentStyle = AppRegistry::instance().settingsManager()->currentStyle();
+         for (QStringList::const_iterator it = supportedStyles.begin(); it != supportedStyles.end(); ++it)
+         {
+             const QString &style = *it;
+             QAction *styleAction = new QAction(style,this);
+             styleAction->setCheckable(true);
+             styleAction->setChecked(style == currentStyle);
+             styleGroup->addAction(styleAction);
+             styles->addAction(styleAction);             
+         }
+    }
+
+    void MainWindow::changeStyle(QAction *ac)
+    {
+        const QString &text = ac->text();
+        detail::applyStyle(text);
+        AppRegistry::instance().settingsManager()->setCurrentStyle(text);
+        AppRegistry::instance().settingsManager()->save();
     }
 
     void MainWindow::open()

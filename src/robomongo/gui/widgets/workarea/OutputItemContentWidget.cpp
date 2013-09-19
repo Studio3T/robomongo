@@ -91,7 +91,7 @@ namespace Robomongo
         _header->setTime(QString("%1 sec.").arg(secs));
 
         QVBoxLayout *layout = new QVBoxLayout();
-        layout->setContentsMargins(0, 1, 0, 0);
+        layout->setContentsMargins(0, 0, 0, 0);
         layout->setSpacing(0);
         layout->addWidget(_header);
         _stack = new QStackedWidget;
@@ -349,7 +349,7 @@ namespace Robomongo
         _logText->sciScintilla()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         // Wrap mode turned off because it introduces huge performance problems
         // even for medium size documents.    
-        _logText->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
+        _logText->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: none; border-radius: 0px; margin: 0px; padding: 0px;}");
         return _logText;
     }
 }

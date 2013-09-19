@@ -85,10 +85,10 @@ namespace Robomongo
     #endif
 
         qApp->setStyleSheet(QString(
-            "Robomongo--ExplorerTreeWidget#explorerTree { padding: 1px 0px 0px 0px; background-color: %1; } \n " // #E7E5E4
             "QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } "
             "QMainWindow::separator { background: #E7E5E4; width: 1px; }"
-        ).arg(explorerColor));
+                                "QToolBar{border-bottom: 1px solid #c7c5c4;}")
+        );
 
         _openAction = new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this);
         _openAction->setToolTip("Load script from the file to the currently opened shell");
@@ -676,8 +676,8 @@ namespace Robomongo
         _explorer = new ExplorerWidget(this);
         QDockWidget *explorerDock = new QDockWidget(tr("Database Explorer"));
         explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-        explorerDock->setFeatures(QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable);
         explorerDock->setWidget(_explorer);
+        explorerDock->setFeatures(QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable);
         QAction *actionExp = explorerDock->toggleViewAction();
 
         // Adjust any parameter you want.  

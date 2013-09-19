@@ -6,9 +6,9 @@
 
 int main(int argc, char *argv[])
 {
-    setlocale(LC_NUMERIC,"C");
     QApplication app(argc, argv);
     Robomongo::detail::initStyle();    
+    setlocale(LC_NUMERIC,"C"); // not move this line!!!
 
     QRect screenGeometry = QApplication::desktop()->availableGeometry();
     QSize size(screenGeometry.width() - 450, screenGeometry.height() - 165);

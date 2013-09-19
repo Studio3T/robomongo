@@ -21,11 +21,9 @@ namespace Robomongo
         template<typename T>
         QString toQString(const T &value);
 
-        template<typename T>
-        T toStdString(const QString &value);
+        std::string toStdString(const QString &value);
 
-        template<typename T>
-        T toStdStringSafe(const QString &value);
+        std::string toStdStringSafe(const QString &value);
 
         void cleanUpThread(QThread *const thread);
 

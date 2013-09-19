@@ -12,6 +12,22 @@ namespace Robomongo
     class MongoCollection;
     class MongoShell;
     class MongoDatabase;
+    namespace detail
+    {
+                /**
+         * @brief Builds single collection query (i.e. db.my_col.find()) from
+         *  string that doesn't contain "db.my_col." prefix.
+         *
+         *  If you'll call buildCollectionQuery("test", "find()") you'll receive:
+         *  db.test.find()
+         *
+         *  If you'll call buildCollectionQuery("1234", "find()") you'll receive:
+         *  db['1234'].find()
+         *
+         * @param script: query part (without "db.my_col." prefix"
+         */
+        QString buildCollectionQuery(const std::string &collectionName, const QString &postfix);
+    }
 
     class App : public QObject
     {
@@ -51,19 +67,6 @@ namespace Robomongo
 
         MongoShell *openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo);
         MongoServersContainerType getServers() const {return _servers; };
-        /**
-         * @brief Builds single collection query (i.e. db.my_col.find()) from
-         *  string that doesn't contain "db.my_col." prefix.
-         *
-         *  If you'll call buildCollectionQuery("test", "find()") you'll receive:
-         *  db.test.find()
-         *
-         *  If you'll call buildCollectionQuery("1234", "find()") you'll receive:
-         *  db['1234'].find()
-         *
-         * @param script: query part (without "db.my_col." prefix"
-         */
-        QString buildCollectionQuery(const std::string &collectionName, const QString &postfix);
 
         /**
          * @brief Closes MongoShell and frees all resources, owned by specified MongoShell.

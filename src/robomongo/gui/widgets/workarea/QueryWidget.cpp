@@ -80,7 +80,7 @@ namespace Robomongo
             query = _scriptWidget->text();
 
         showProgress();
-        _shell->open(QtUtils::toStdString<std::string>(query));
+        _shell->open(QtUtils::toStdString(query));
     }
 
     void QueryWidget::stop()

@@ -178,8 +178,8 @@ namespace Robomongo
 
     void CreateUserDialog::accept()
     {
-        std::string username = QtUtils::toStdString<std::string>(_userNameEdit->text());
-        std::string pass = QtUtils::toStdString<std::string>(_userPassEdit->text());
+        std::string username = QtUtils::toStdString(_userNameEdit->text());
+        std::string pass = QtUtils::toStdString(_userPassEdit->text());
         if(_user.version() < MongoUser::minimumSupportedVersion){
             if (username.empty() || pass.empty())
                 return;
@@ -191,7 +191,7 @@ namespace Robomongo
             _user.setReadOnly(_readOnlyCheckBox->isChecked());
         }
         else{
-            std::string userSource = QtUtils::toStdString<std::string>(_userSourceComboBox->currentText());
+            std::string userSource = QtUtils::toStdString(_userSourceComboBox->currentText());
 
             if (username.empty())
                 return;

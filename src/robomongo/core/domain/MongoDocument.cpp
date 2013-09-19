@@ -4,7 +4,6 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/utils/BsonUtils.h"
-#include "robomongo/core/domain/MongoElement.h"
 
 namespace Robomongo
 {

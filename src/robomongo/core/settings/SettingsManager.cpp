@@ -8,6 +8,7 @@
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/utils/Logger.h"
+#include "robomongo/gui/AppStyle.h"
 
 namespace
 {
@@ -143,7 +144,7 @@ namespace Robomongo
             _batchSize = 50;
         _currentStyle = map.value("style").toString();
         if (_currentStyle.isEmpty()){
-            _currentStyle = "Native";
+            _currentStyle = AppStyle::StyleName;
         }
 
         // 5. Load connections

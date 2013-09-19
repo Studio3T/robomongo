@@ -104,14 +104,14 @@ namespace Robomongo
             // We are not checking whether file exists, because it will be
             // checked by 'Scope::execFile'.
             if (isLoadMongoRcJs) {
-                std::string mongorcPath = QtUtils::toStdString<std::string>(QString("%1/.mongorc.js").arg(QDir::homePath()));
+                std::string mongorcPath = QtUtils::toStdString(QString("%1/.mongorc.js").arg(QDir::homePath()));
                 scope->execFile(mongorcPath, false, false);      
             }
 
             // Load '.robomongorc.js'
             // Alexander: branding very usfull see Chromium and his brand Chrome, in Chrome some features private
             // Dmitry: I agree, but we still need to support ".robomongorc.js" even when name of project will change
-            std::string roboMongorcPath = QtUtils::toStdString<std::string>(QString("%1/.robomongorc.js").arg(QDir::homePath()));
+            std::string roboMongorcPath = QtUtils::toStdString(QString("%1/.robomongorc.js").arg(QDir::homePath()));
             scope->execFile(roboMongorcPath, false, false);
         }
 
@@ -122,7 +122,7 @@ namespace Robomongo
 
         QTextStream in(&file);
         QString esprima = in.readAll();
-        _scope->exec(QtUtils::toStdString<std::string>(esprima), "(esprima)", true, true, true);
+        _scope->exec(QtUtils::toStdString(esprima), "(esprima)", true, true, true);
     }
 
     MongoShellExecResult ScriptEngine::exec(const std::string &originalScript, const std::string &dbName)
@@ -211,11 +211,10 @@ namespace Robomongo
     void ScriptEngine::setBatchSize(int batchSize)
     {
         QMutexLocker lock(&_mutex);
+        char buff[64]={0};
+        sprintf(buff,"DBQuery.shellBatchSize = %d",batchSize);
 
-        std::string batchSizeString = QtUtils::toStdString<std::string>(
-            QString("DBQuery.shellBatchSize = %1").arg(batchSize));
-
-        _scope->exec(batchSizeString, "(shellBatchSize)", true, true, true);
+        _scope->exec(buff, "(shellBatchSize)", true, true, true);
     }
 
     void ScriptEngine::ping()

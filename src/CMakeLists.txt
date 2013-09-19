@@ -166,7 +166,6 @@ SET(HEADERS_CORE
     robomongo/core/Event.h
     robomongo/core/domain/MongoShellResult.h
     robomongo/core/events/MongoEvents.h
-    robomongo/core/domain/MongoElement.h
     robomongo/core/events/MongoEventsInfo.h
     robomongo/core/AppRegistry.h
     robomongo/core/Core.h
@@ -197,7 +196,6 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoServer.cpp
     robomongo/core/domain/MongoDatabase.cpp
     robomongo/core/domain/MongoCollection.cpp
-    robomongo/core/domain/MongoElement.cpp
     robomongo/core/domain/MongoDocument.cpp
     robomongo/core/events/MongoEvents.cpp
     robomongo/core/events/MongoEventsInfo.cpp

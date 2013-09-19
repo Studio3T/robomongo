@@ -7,6 +7,8 @@
 
 namespace Robomongo
 {
+    const QString AppStyle::StyleName = "Native";
+
     namespace detail
     {
         void applyStyle(const QString &styleName)
@@ -20,9 +22,10 @@ namespace Robomongo
                 QApplication::setStyle(QStyleFactory::create(styleName));
             }
         }
+
         QStringList getSupportedStyles()
         {
-            static QStringList result = QStringList() << "Native" <<QStyleFactory::keys();
+            static QStringList result = QStringList() << AppStyle::StyleName << QStyleFactory::keys();
             return result;
         }
 

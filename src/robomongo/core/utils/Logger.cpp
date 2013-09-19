@@ -10,7 +10,7 @@ namespace
     mongo::LabeledLevel pc(PROJECT_NAME, mongo::LL_DEBUG );
     std::string getLoggerPath()
     {
-        static std::string path = Robomongo::QtUtils::toStdString<std::string>(QString("%1/."PROJECT_NAME"log.txt").arg(QDir::homePath()));
+        static std::string path = Robomongo::QtUtils::toStdString(QString("%1/."PROJECT_NAME"log.txt").arg(QDir::homePath()));
         return path;
     }
 }
@@ -23,7 +23,7 @@ namespace Robomongo
     }
 
     Logger::~Logger()
-    {
+    {   
     }
 
     void Logger::print(const char *mess, bool notify)
@@ -38,7 +38,7 @@ namespace Robomongo
 
     void Logger::print(const QString &mess, bool notify)
     {
-        LOG(pc) << QtUtils::toStdString<std::string>(mess) << std::endl;
+        LOG(pc) << QtUtils::toStdString(mess) << std::endl;
         if(notify)
             emit printed(mess);
     }

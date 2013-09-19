@@ -81,9 +81,9 @@ namespace Robomongo
 
         CredentialSettings *credential = _settings->primaryCredential();
         credential->setEnabled(_useAuth->isChecked());
-        credential->setUserName(QtUtils::toStdString<std::string>(_userName->text()));
-        credential->setUserPassword(QtUtils::toStdString<std::string>(_userPassword->text()));
-        credential->setDatabaseName(QtUtils::toStdString<std::string>(_databaseName->text()));
+        credential->setUserName(QtUtils::toStdString(_userName->text()));
+        credential->setUserPassword(QtUtils::toStdString(_userPassword->text()));
+        credential->setDatabaseName(QtUtils::toStdString(_databaseName->text()));
     }
 
     void ConnectionAuthTab::toggleEchoMode()

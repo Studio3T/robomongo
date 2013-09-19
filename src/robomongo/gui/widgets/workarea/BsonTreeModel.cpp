@@ -42,7 +42,7 @@ namespace
                     childItemInner->setBinType(element.binDataType());
                 }
                 root->addChild(childItemInner);
-                root->setValue(QString("{%1 fields}").arg(root->childrenCount()));
+                //root->setValue(QString("{%1 fields}").arg(root->childrenCount()));
             }            
     }
 }

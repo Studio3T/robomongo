@@ -13,9 +13,9 @@ namespace Robomongo
 
     }
     CredentialSettings::CredentialSettings(const QVariantMap &map) :
-        _userName(QtUtils::toStdString<std::string>(map.value("userName").toString())),
-        _userPassword(QtUtils::toStdString<std::string>(map.value("userPassword").toString())),
-        _databaseName(QtUtils::toStdString<std::string>(map.value("databaseName").toString())),
+        _userName(QtUtils::toStdString(map.value("userName").toString())),
+        _userPassword(QtUtils::toStdString(map.value("userPassword").toString())),
+        _databaseName(QtUtils::toStdString(map.value("databaseName").toString())),
         _enabled(map.value("enabled").toBool())
     {
     }

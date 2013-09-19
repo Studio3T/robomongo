@@ -18,6 +18,7 @@ namespace Robomongo
     {
         bool isSimpleType(BsonTreeItem *item);
         bool isMultySelection(const QModelIndexList &indexes);
+        bool isDocumentType(BsonTreeItem *item);
     }
 
     class INotifierObserver
@@ -49,6 +50,7 @@ namespace Robomongo
         void onViewDocument();
         void onInsertDocument();
         void onCopyDocument();
+        void onCopyJson();
 
     private:
         QAction *_deleteDocumentAction;
@@ -57,6 +59,7 @@ namespace Robomongo
         QAction *_viewDocumentAction;
         QAction *_insertDocumentAction;
         QAction *_copyValueAction;
+        QAction *_copyJsonAction;
         const MongoQueryInfo _queryInfo;
 
         MongoShell *_shell;

@@ -36,6 +36,17 @@ namespace Robomongo
         return index(sourceIndex.row(),sourceIndex.column(),sourceIndex.parent());
     }
 
+    QModelIndex BsonTableModelProxy::index( int row, int col, const QModelIndex& parent ) const
+    {
+        BsonTreeItem *node = QtUtils::item<BsonTreeItem *>(sourceModel()->index(row,0,parent));
+        if (!node)
+            return QModelIndex();
+
+        BsonTreeItem *child = node->childByKey(_columns[col]);
+
+        return createIndex( row, col, child );
+    }
+
     QModelIndex BsonTableModelProxy::mapToSource( const QModelIndex &proxyIndex ) const
     {
         if ( !proxyIndex.isValid() )
@@ -44,7 +55,6 @@ namespace Robomongo
         Q_ASSERT( proxyIndex.model() == this );
 
         QModelIndex sourceIndex;
-       
         BsonTreeItem *child = static_cast<BsonTreeItem *>(proxyIndex.internalPointer());
         if (child) {
             QtUtils::HackQModelIndex* hack = reinterpret_cast<QtUtils::HackQModelIndex*>(&sourceIndex);
@@ -120,17 +130,6 @@ namespace Robomongo
         } else {
             return QString("%1").arg(section + 1);
         }
-    }
-
-    QModelIndex BsonTableModelProxy::index( int row, int col, const QModelIndex& parent ) const
-    {
-        BsonTreeItem *node = QtUtils::item<BsonTreeItem *>(sourceModel()->index(row,0,parent));
-        if (!node)
-            return QModelIndex();
-
-        BsonTreeItem *child = node->childByKey(_columns[col]);
-
-        return createIndex( row, col, child );
     }
 
     QString BsonTableModelProxy::column(int col) const

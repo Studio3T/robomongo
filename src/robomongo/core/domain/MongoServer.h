@@ -64,7 +64,7 @@ namespace Robomongo
          * @brief Loads databases of this server asynchronously.
          */
         void loadDatabases();
-
+        bool visible() const { return _visible; }
         MongoWorker *client() const { return _client.data(); }
 
     protected Q_SLOTS:

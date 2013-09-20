@@ -143,10 +143,10 @@ namespace Robomongo
             else if (col == BsonTreeItem::eValue) {
                 bool isCut = node->type() == mongo::String ||  node->type() == mongo::Code || node->type() == mongo::CodeWScope;  
                 if (role == Qt::ToolTipRole){
-                    result = isCut ? node->value() : node->value().left(500); 
+                    result = isCut ? node->value().left(500) : node->value(); 
                 }
                 else{
-                    result = isCut ? node->value() : node->value().simplified().left(300); 
+                    result = isCut ? node->value().simplified().left(300) : node->value(); 
                 }
             }
             else if (col == BsonTreeItem::eType) {

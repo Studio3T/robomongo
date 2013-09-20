@@ -19,6 +19,7 @@ namespace Robomongo
 #if defined(Q_OS_MAC)
         setAttribute(Qt::WA_MacShowFocusRect, false);
 #endif
+        setUniformRowHeights(true);
         GuiRegistry::instance().setAlternatingColor(this);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setSelectionBehavior(QAbstractItemView::SelectRows);

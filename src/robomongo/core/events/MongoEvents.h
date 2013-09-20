@@ -1052,13 +1052,4 @@ namespace Robomongo
     private:
         int _numOfResults;
     };
-
-    class AllTabsClosedEvent : public Event
-    {
-        R_EVENT
-
-    public:
-        AllTabsClosedEvent(QObject *sender) :
-            Event(sender) { }
-    };
 }

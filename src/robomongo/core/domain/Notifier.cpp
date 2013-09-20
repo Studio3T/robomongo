@@ -292,10 +292,19 @@ namespace Robomongo
 
          QClipboard *clipboard = QApplication::clipboard();
          mongo::BSONObj obj = documentItem->root();
+         if (selectedInd.parent().isValid()){
+             obj = obj[QtUtils::toStdString(documentItem->key())].Obj();
+         }
 
-         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
-             AppRegistry::instance().settingsManager()->uuidEncoding(),
-             AppRegistry::instance().settingsManager()->timeZone());
+         std::string str;
+         if(BsonUtils::isArray(documentItem->type())){      
+              str = obj.toString(true);
+         }
+         else{
+             str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
+                 AppRegistry::instance().settingsManager()->uuidEncoding(),
+                 AppRegistry::instance().settingsManager()->timeZone());
+         }
 
          const QString &json = QtUtils::toQString(str);
          clipboard->setText(json);

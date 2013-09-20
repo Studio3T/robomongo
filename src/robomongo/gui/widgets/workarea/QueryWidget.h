@@ -19,7 +19,6 @@ namespace Robomongo
     class ScriptExecutedEvent;
     class AutocompleteResponse;
     class OutputWidget;
-    class WorkAreaTabWidget;
     class ScriptWidget;
     class MongoShell;
 
@@ -29,9 +28,7 @@ namespace Robomongo
 
     public:
         typedef QWidget BaseClass;
-        QueryWidget(MongoShell *shell, WorkAreaTabWidget *tabWidget,QWidget *parent = NULL);
-
-        bool eventFilter(QObject *o, QEvent *e);
+        QueryWidget(MongoShell *shell, QWidget *parent = NULL);
 
         void toggleOrientation();
         void activateTabContent();
@@ -44,7 +41,15 @@ namespace Robomongo
         void enterCustomMode();
         void showProgress();
         void hideProgress();
+        void setScriptFocus();
+        void showAutocompletion();
+        void hideAutocompletion();
+
         ~QueryWidget();
+
+    Q_SIGNALS:
+        void titleChanged(const QString &text);
+        void toolTipChanged(const QString &text);
 
     public Q_SLOTS:
         void execute();
@@ -58,6 +63,7 @@ namespace Robomongo
         void handle(DocumentListLoadedEvent *event);
         void handle(ScriptExecutedEvent *event);
         void handle(AutocompleteResponse *event);
+
     private:
         void updateCurrentTab();
         void displayData(const std::vector<MongoShellResult> &results, bool empty);
@@ -67,10 +73,9 @@ namespace Robomongo
         MongoShell *_shell;
         OutputWidget *_viewer;
         ScriptWidget *_scriptWidget;
-        WorkAreaTabWidget *_tabWidget;
         QLabel *_outputLabel;
 
         MongoShellExecResult _currentResult;
-        bool isTextChanged;
+        bool _isTextChanged;
     };
 }

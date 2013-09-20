@@ -1,10 +1,6 @@
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 
-#include <QMessageBox>
 #include <QMouseEvent>
-#include <QStylePainter>
-
-#include "robomongo/gui/GuiRegistry.h"
 
 namespace Robomongo
 {
@@ -13,7 +9,8 @@ namespace Robomongo
      * assuming, that tab bar will be installed to (and owned by)
      * WorkAreaTabWidget, using QTabWidget::setTabBar().
      */
-    WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) : QTabBar(parent)
+    WorkAreaTabBar::WorkAreaTabBar(QWidget *parent) 
+        : QTabBar(parent)
     {
         setDrawBase(false);
 

@@ -95,11 +95,6 @@ namespace Robomongo
 
     QString BsonTreeItem::value() const
     {
-        bool isCut = type() == mongo::String || type() == mongo::Code || type() == mongo::CodeWScope;
-        if(isCut){
-            return _fields._value.simplified().left(300);
-        }
-
         return _fields._value;
     }
 

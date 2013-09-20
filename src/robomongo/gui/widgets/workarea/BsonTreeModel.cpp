@@ -127,11 +127,11 @@ namespace Robomongo
         BsonTreeItem *node = QtUtils::item<BsonTreeItem*>(index);
 
         if (!node)
-            return result;
+            return result;  
 
-        int col = index.column();
+        int col = index.column();        
 
-        if (role == Qt::DisplayRole||Qt::DecorationRole) {
+        if (role == Qt::DisplayRole || role == Qt::DecorationRole || role == Qt::ToolTipRole) {
             if (col == BsonTreeItem::eKey) {
                 if (role == Qt::DisplayRole) {
                     result = node->key();
@@ -140,13 +140,19 @@ namespace Robomongo
                     return getIcon(node);
                 }
             }
-            else if (col == BsonTreeItem::eValue && role == Qt::DisplayRole) {
-                result = node->value();
+            else if (col == BsonTreeItem::eValue) {
+                bool isCut = node->type() == mongo::String ||  node->type() == mongo::Code || node->type() == mongo::CodeWScope;  
+                if (role == Qt::ToolTipRole){
+                    result = isCut ? node->value() : node->value().left(500); 
+                }
+                else{
+                    result = isCut ? node->value() : node->value().simplified().left(300); 
+                }
             }
-            else if (col == BsonTreeItem::eType && role == Qt::DisplayRole) {
+            else if (col == BsonTreeItem::eType) {
                 result = BsonUtils::BSONTypeToString(node->type(),node->binType(),AppRegistry::instance().settingsManager()->uuidEncoding());
             }
-        }        
+        }       
 
         return result;
     }

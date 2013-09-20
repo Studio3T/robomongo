@@ -4,7 +4,6 @@
 namespace Robomongo
 {
     class WorkAreaTabWidget;
-    class EventBus;
     class OpeningShellEvent;
     class QueryWidget;
     /*
@@ -34,6 +33,5 @@ namespace Robomongo
     private:
 
         WorkAreaTabWidget *_tabWidget;
-        EventBus *_bus;
     };
 }

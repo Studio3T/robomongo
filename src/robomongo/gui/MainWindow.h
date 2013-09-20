@@ -18,7 +18,6 @@ namespace Robomongo
     class ScriptExecutingEvent;
     class ScriptExecutedEvent;
     class QueryWidgetUpdatedEvent;
-    class AllTabsClosedEvent;
     class WorkAreaWidget;
     class ConnectionMenu;
     class App;
@@ -62,7 +61,6 @@ namespace Robomongo
         void handle(ConnectionFailedEvent *event);
         void handle(ScriptExecutingEvent *event);
         void handle(ScriptExecutedEvent *event);
-        void handle(AllTabsClosedEvent *event);
         void handle(QueryWidgetUpdatedEvent *event);
     private Q_SLOTS:
         void updateMenus();

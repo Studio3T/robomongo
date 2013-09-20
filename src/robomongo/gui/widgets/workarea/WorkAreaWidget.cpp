@@ -2,11 +2,10 @@
 
 #include <QHBoxLayout>
 
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/utils/QtUtils.h"
+
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
@@ -14,8 +13,7 @@
 namespace Robomongo
 {
     WorkAreaWidget::WorkAreaWidget(QWidget *parent)
-        : QWidget(parent),
-        _bus(AppRegistry::instance().bus())
+        : QWidget(parent)
     {
         _tabWidget = new WorkAreaTabWidget(this);
         VERIFY(connect(_tabWidget, SIGNAL(currentChanged(int)),this, SIGNAL(tabActivated(int))));
@@ -26,8 +24,6 @@ namespace Robomongo
         hlayout->setContentsMargins(0, 3, 0, 0);
         hlayout->addWidget(_tabWidget);
         setLayout(hlayout);
-
-        _bus->subscribe(this, OpeningShellEvent::Type);
     }
 
     void WorkAreaWidget::toggleOrientation()

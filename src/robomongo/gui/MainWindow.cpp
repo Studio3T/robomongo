@@ -72,7 +72,6 @@ namespace Robomongo
         _bus->subscribe(this, ScriptExecutedEvent::Type);
         _bus->subscribe(this, ScriptExecutingEvent::Type);
         _bus->subscribe(this, QueryWidgetUpdatedEvent::Type);
-        _bus->subscribe(this, AllTabsClosedEvent::Type);
 
         QColor background = palette().window().color();
 
@@ -659,14 +658,8 @@ namespace Robomongo
         _executeAction->setDisabled(false);
     }
 
-    void MainWindow::handle(AllTabsClosedEvent *)
-    {
-        _execToolBar->hide();
-    }
-
     void MainWindow::handle(QueryWidgetUpdatedEvent *event)
     {
-        _execToolBar->show();
         _orientationAction->setVisible(event->numOfResults() > 1);
     }
 
@@ -710,7 +703,10 @@ namespace Robomongo
 
     void MainWindow::updateMenus()
     {
-        bool isEnable = _workArea&&_workArea->countTab()>0;
+        int contTab = _workArea->countTab();
+        bool isEnable = _workArea&&contTab>0;
+
+        _execToolBar->setVisible(isEnable);
         _openAction->setEnabled(isEnable);
         _saveAction->setEnabled(isEnable);
         _saveAsAction->setEnabled(isEnable);
@@ -719,6 +715,7 @@ namespace Robomongo
     void MainWindow::createTabs()
     {
         _workArea = new WorkAreaWidget(this);
+        AppRegistry::instance().bus()->subscribe(_workArea, OpeningShellEvent::Type);
         VERIFY(connect(_workArea, SIGNAL(tabActivated(int)),this, SLOT(updateMenus())));
         setCentralWidget(_workArea);
     }

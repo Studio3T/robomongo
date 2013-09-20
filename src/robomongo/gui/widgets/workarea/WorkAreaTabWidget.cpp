@@ -2,13 +2,7 @@
 
 #include <QKeyEvent>
 
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/domain/App.h"
-#include "robomongo/core/events/MongoEvents.h"
-#include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/core/EventBus.h"
-#include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 
@@ -19,9 +13,8 @@ namespace Robomongo
      * @brief Creates WorkAreaTabWidget.
      * @param workAreaWidget: WorkAreaWidget this tab belongs to.
      */
-    WorkAreaTabWidget::WorkAreaTabWidget(WorkAreaWidget *workAreaWidget) :
-        QTabWidget(workAreaWidget),
-        _bus(AppRegistry::instance().bus())
+    WorkAreaTabWidget::WorkAreaTabWidget(QWidget *parent) :
+        QTabWidget(parent)
     {
         // This line (setTabBar()) should go before setTabsClosable(true)
         WorkAreaTabBar * tab = new WorkAreaTabBar(this);
@@ -82,7 +75,7 @@ namespace Robomongo
 
     QueryWidget *WorkAreaTabWidget::currentQueryWidget()
     {
-        return static_cast<QueryWidget *>(currentWidget());
+        return qobject_cast<QueryWidget *>(currentWidget());
     }
 
     QueryWidget *WorkAreaTabWidget::queryWidget(int index)
@@ -150,10 +143,6 @@ namespace Robomongo
 
     void WorkAreaTabWidget::ui_currentChanged(int index)
     {
-        if (index == -1) {
-            _bus->publish(new AllTabsClosedEvent(this));
-        }
-
         if (index < 0)
             return;
 

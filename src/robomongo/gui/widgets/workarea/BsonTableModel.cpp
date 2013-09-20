@@ -85,20 +85,26 @@ namespace Robomongo
         if (!index.isValid())
             return result;
 
-        BsonTreeItem *child = QtUtils::item<BsonTreeItem *>(index);
+        BsonTreeItem *node = QtUtils::item<BsonTreeItem *>(index);
 
-        if (!child) {
+        if (!node) {
             if (role == Qt::BackgroundRole) {
                 return QBrush("#f5f3f2");
             }
             return result;
         }
 
-        if (role == Qt::DisplayRole) {
-            result = child->value();
+        if (role == Qt::DisplayRole || role == Qt::ToolTipRole) {
+            bool isCut = node->type() == mongo::String ||  node->type() == mongo::Code || node->type() == mongo::CodeWScope;  
+            if (role == Qt::ToolTipRole){
+                result = isCut ? node->value() : node->value().left(500); 
+            }
+            else{
+                result = isCut ? node->value() : node->value().simplified().left(300); 
+            }
         }
         else if (role == Qt::DecorationRole) {
-            return BsonTreeModel::getIcon(child);
+            return BsonTreeModel::getIcon(node);
         }
 
         return result;

@@ -42,7 +42,6 @@ namespace Robomongo
 
         _scriptWidget = new ScriptWidget(_shell);
         VERIFY(connect(_scriptWidget,SIGNAL(textChanged()),this,SLOT(textChange())));
-        _scriptWidget->installEventFilter(this);
 
         _viewer = new OutputWidget();
         _outputLabel = new QLabel(this);

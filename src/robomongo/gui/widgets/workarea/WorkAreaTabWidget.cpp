@@ -3,10 +3,12 @@
 #include <QKeyEvent>
 
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/KeyboardManager.h"
+#include "robomongo/core/domain/MongoShell.h"
+
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/core/domain/MongoShell.h"
 
 namespace Robomongo
 {
@@ -101,6 +103,29 @@ namespace Robomongo
             return;
         }
 
+        if (KeyboardManager::isPreviousTabShortcut(keyEvent)) {
+            previousTab();
+            return;
+        } else if (KeyboardManager::isNextTabShortcut(keyEvent)) {
+            nextTab();
+            return;
+        } else if (KeyboardManager::isNewTabShortcut(keyEvent)) {
+            currentQueryWidget()->openNewTab();
+            return;
+        } else if (KeyboardManager::isSetFocusOnQueryLineShortcut(keyEvent)) {
+            currentQueryWidget()->setScriptFocus();
+            return;
+        } else if (KeyboardManager::isExecuteScriptShortcut(keyEvent)) {
+            currentQueryWidget()->execute();
+            return;
+        } else if (KeyboardManager::isAutoCompleteShortcut(keyEvent)) {
+            currentQueryWidget()->showAutocompletion();
+            return;
+        } else if (KeyboardManager::isHideAutoCompleteShortcut(keyEvent)) {
+            currentQueryWidget()->hideAutocompletion();
+            return;
+        }
+
         QTabWidget::keyPressEvent(keyEvent);
     }
 
@@ -156,6 +181,24 @@ namespace Robomongo
             tabWidget->activateTabContent();
     }
 
+    void WorkAreaTabWidget::tabTextChange(const QString &text)
+    {
+        QWidget *send = qobject_cast<QWidget*>(sender());
+        if(!send)
+            return;
+
+        setTabText(indexOf(send), text);        
+    }
+
+    void WorkAreaTabWidget::tooltipTextChange(const QString &text)
+    {
+        QWidget *send = qobject_cast<QWidget*>(sender());
+        if(!send)
+            return;
+
+        setTabToolTip(indexOf(send), text);
+    }
+
     void WorkAreaTabWidget::handle(OpeningShellEvent *event)
     {
         const QString &title = event->shell->title();
@@ -164,8 +207,11 @@ namespace Robomongo
 
         setUpdatesEnabled(false);
         QueryWidget *queryWidget = new QueryWidget(event->shell,this);
-
+        VERIFY(connect(queryWidget, SIGNAL(titleChanged(const QString &)), this, SLOT(tabTextChange(const QString &))));
+        VERIFY(connect(queryWidget, SIGNAL(toolTipChanged(const QString &)), this, SLOT(tooltipTextChange(const QString &))));
+        
         addTab(queryWidget, shellName);
+
         setCurrentIndex(count() - 1);
 #if !defined(Q_OS_MAC)
         setTabIcon(count() - 1, GuiRegistry::instance().mongodbIcon());

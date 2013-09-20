@@ -43,5 +43,8 @@ namespace Robomongo
         void ui_closeOtherTabsRequested(int index);
         void ui_closeTabsToTheRightRequested(int index);
         void ui_currentChanged(int index);
+
+        void tabTextChange(const QString &text);
+        void tooltipTextChange(const QString &text);
     };
 }

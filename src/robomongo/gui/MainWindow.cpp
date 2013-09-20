@@ -20,6 +20,7 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/Logger.h"
 
+#include "robomongo/gui/ViewMode.h"
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
@@ -39,6 +40,12 @@ namespace
         const int size = 24;
 #endif
         toolBar->setIconSize(QSize(size, size));
+    }
+
+    void saveViewMode(Robomongo::ViewMode mode)
+    {
+        Robomongo::AppRegistry::instance().settingsManager()->setViewMode(mode);
+        Robomongo::AppRegistry::instance().settingsManager()->save();
     }
 }
 
@@ -63,15 +70,13 @@ namespace Robomongo
     MainWindow::MainWindow()
         : BaseClass(),
         _app(AppRegistry::instance().app()),
-        _bus(AppRegistry::instance().bus()),
         _workArea(NULL),
-        _connectionsMenu(NULL),
-        _viewMode(Custom)
+        _connectionsMenu(NULL)
     {
-        _bus->subscribe(this, ConnectionFailedEvent::Type);
-        _bus->subscribe(this, ScriptExecutedEvent::Type);
-        _bus->subscribe(this, ScriptExecutingEvent::Type);
-        _bus->subscribe(this, QueryWidgetUpdatedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, ConnectionFailedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, ScriptExecutingEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, QueryWidgetUpdatedEvent::Type);
 
         QColor background = palette().window().color();
 
@@ -84,7 +89,6 @@ namespace Robomongo
     #endif
 
         qApp->setStyleSheet(QString(
-            "QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } "
             "QMainWindow::separator { background: #E7E5E4; width: 1px; }"
                                 "QToolBar{border-bottom: 1px solid #c7c5c4;}")
         );
@@ -144,7 +148,7 @@ namespace Robomongo
         VERIFY(connect(_orientationAction, SIGNAL(triggered()), this, SLOT(toggleOrientation())));
 
         // read view mode setting
-        _viewMode = AppRegistry::instance().settingsManager()->viewMode();
+        ViewMode viewMode = AppRegistry::instance().settingsManager()->viewMode();
 
         // Text mode action
         QAction *textModeAction = new QAction("&Text Mode", this);
@@ -152,7 +156,7 @@ namespace Robomongo
         textModeAction->setIcon(GuiRegistry::instance().textHighlightedIcon());
         textModeAction->setToolTip("Show current tab in text mode, and make this mode default for all subsequent queries <b>(F4)</b>");
         textModeAction->setCheckable(true);
-        textModeAction->setChecked(_viewMode == Text);
+        textModeAction->setChecked(viewMode == Text);
         VERIFY(connect(textModeAction, SIGNAL(triggered()), this, SLOT(enterTextMode())));
 
         // Tree mode action
@@ -161,7 +165,7 @@ namespace Robomongo
         treeModeAction->setIcon(GuiRegistry::instance().treeHighlightedIcon());
         treeModeAction->setToolTip("Show current tab in tree mode, and make this mode default for all subsequent queries <b>(F3)</b>");
         treeModeAction->setCheckable(true);
-        treeModeAction->setChecked(_viewMode == Tree);
+        treeModeAction->setChecked(viewMode == Tree);
         VERIFY(connect(treeModeAction, SIGNAL(triggered()), this, SLOT(enterTreeMode())));
 
         // Tree mode action
@@ -170,7 +174,7 @@ namespace Robomongo
         tableModeAction->setIcon(GuiRegistry::instance().tableHighlightedIcon());
         tableModeAction->setToolTip("Show current tab in table mode, and make this mode default for all subsequent queries <b>(F3)</b>");
         tableModeAction->setCheckable(true);
-        tableModeAction->setChecked(_viewMode == Table);
+        tableModeAction->setChecked(viewMode == Table);
         VERIFY(connect(tableModeAction, SIGNAL(triggered()), this, SLOT(enterTableMode())));
 
         // Custom mode action
@@ -179,7 +183,7 @@ namespace Robomongo
         customModeAction->setIcon(GuiRegistry::instance().customHighlightedIcon());
         customModeAction->setToolTip("Show current tab in custom mode if possible, and make this mode default for all subsequent queries <b>(F2)</b>");
         customModeAction->setCheckable(true);
-        customModeAction->setChecked(_viewMode == Custom);
+        customModeAction->setChecked(viewMode == Custom);
         VERIFY(connect(customModeAction, SIGNAL(triggered()), this, SLOT(enterCustomMode())));
 
         // Execute action
@@ -383,19 +387,16 @@ namespace Robomongo
 
     void MainWindow::open()
     {
-        if (_workArea)
-        {
-            QueryWidget *wid = _workArea->currentQueryWidget();
-            if (wid) {
-                wid->openFile();
-            }
-            else {
-                QList<ConnectionSettings *> connections = AppRegistry::instance().settingsManager()->connections();
-                if (connections.count() == 1) {
-                    ScriptInfo inf = ScriptInfo(QString());
-                    if (inf.loadFromFile()) {
-                        _app->openShell(connections.at(0)->clone(), inf);
-                    }
+        QueryWidget *wid = _workArea->currentQueryWidget();
+        if (wid) {
+            wid->openFile();
+        }
+        else {
+            QList<ConnectionSettings *> connections = AppRegistry::instance().settingsManager()->connections();
+            if (connections.count() == 1) {
+                ScriptInfo inf = ScriptInfo(QString());
+                if (inf.loadFromFile()) {
+                    _app->openShell(connections.at(0)->clone(), inf);
                 }
             }
         }
@@ -403,21 +404,17 @@ namespace Robomongo
 
     void MainWindow::save()
     {
-        if (_workArea) {
-            QueryWidget *wid = _workArea->currentQueryWidget();
-            if (wid) {
-                wid->saveToFile();
-            }
+        QueryWidget *wid = _workArea->currentQueryWidget();
+        if (wid) {
+            wid->saveToFile();
         }
     }
 
     void MainWindow::saveAs()
     {
-        if (_workArea) {
-            QueryWidget *wid = _workArea->currentQueryWidget();
-            if (wid) {
-                wid->savebToFileAs();
-            }
+        QueryWidget *wid = _workArea->currentQueryWidget();
+        if (wid) {
+            wid->savebToFileAs();
         }
     }
 
@@ -490,46 +487,46 @@ namespace Robomongo
 
     void MainWindow::toggleOrientation()
     {
-        if (_workArea)
-            _workArea->currentQueryWidget()->toggleOrientation();
+        QueryWidget *wid = _workArea->currentQueryWidget();
+        if(wid){
+            wid->toggleOrientation();
+        }
     }
 
     void MainWindow::enterTextMode()
     {
-        _viewMode = Text;
-        saveViewMode();
-        if (_workArea)
-            _workArea->currentQueryWidget()->enterTextMode();
+        saveViewMode(Text);
+        QueryWidget *wid = _workArea->currentQueryWidget();
+        if(wid){
+            wid->enterTextMode();
+        }        
     }
 
     void MainWindow::enterTreeMode()
     {
-        _viewMode = Tree;
-        saveViewMode();
-        if (_workArea)
-            _workArea->currentQueryWidget()->enterTreeMode();
+        saveViewMode(Tree);
+        QueryWidget *wid = _workArea->currentQueryWidget();
+        if(wid){
+            wid->enterTreeMode();
+        }
     }
 
     void MainWindow::enterTableMode()
     {
-        _viewMode = Table;
-        saveViewMode();
-        if (_workArea)
-            _workArea->currentQueryWidget()->enterTableMode();
+        saveViewMode(Table);
+        QueryWidget *wid = _workArea->currentQueryWidget();
+        if(wid){
+            wid->enterTableMode();
+        }
     }
 
     void MainWindow::enterCustomMode()
     {
-        _viewMode = Custom;
-        saveViewMode();
-        if (_workArea)
-            _workArea->currentQueryWidget()->enterCustomMode();
-    }
-
-    void MainWindow::saveViewMode()
-    {
-        AppRegistry::instance().settingsManager()->setViewMode(_viewMode);
-        AppRegistry::instance().settingsManager()->save();
+        saveViewMode(Custom);
+        QueryWidget *wid = _workArea->currentQueryWidget();
+        if(wid){
+            wid->enterCustomMode();
+        }
     }
 
     void MainWindow::executeScript()
@@ -537,8 +534,10 @@ namespace Robomongo
         QAction *action = static_cast<QAction *>(sender());
 
         if (action->data().toString() == "Execute") {
-            if (_workArea)
-                _workArea->currentQueryWidget()->execute();
+            QueryWidget *wid = _workArea->currentQueryWidget();
+            if(wid){
+                wid->execute();
+            }
         } else {
             stopScript();
         }
@@ -546,8 +545,10 @@ namespace Robomongo
 
     void MainWindow::stopScript()
     {
-        if (_workArea)
-        _workArea->currentQueryWidget()->stop();
+        QueryWidget *wid = _workArea->currentQueryWidget();
+        if(wid){
+            wid->stop();
+        }
     }
 
     void MainWindow::toggleFullScreen2()
@@ -665,10 +666,10 @@ namespace Robomongo
 
     void MainWindow::createDatabaseExplorer()
     {
-        _explorer = new ExplorerWidget(this);
+        ExplorerWidget *explorer = new ExplorerWidget(this);
         QDockWidget *explorerDock = new QDockWidget(tr("Database Explorer"));
         explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-        explorerDock->setWidget(_explorer);
+        explorerDock->setWidget(explorer);
         explorerDock->setFeatures(QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable);
         QAction *actionExp = explorerDock->toggleViewAction();
 
@@ -682,8 +683,8 @@ namespace Robomongo
 
         addDockWidget(Qt::LeftDockWidgetArea, explorerDock);
 
-        _log = new LogWidget(this);        
-        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&)), _log, SLOT(addMessage(const QString&))));
+        LogWidget *log = new LogWidget(this);        
+        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&)), log, SLOT(addMessage(const QString&))));
         _logDock = new QDockWidget(tr("Log"));
         QAction *action = _logDock->toggleViewAction();
 
@@ -695,7 +696,7 @@ namespace Robomongo
         // Install action in the menu.  
         _viewMenu->addAction(action);
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
-        _logDock->setWidget(_log);
+        _logDock->setWidget(log);
         _logDock->setFeatures(QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable);
         //_logDock->setVisible(false);
         addDockWidget(Qt::BottomDockWidgetArea, _logDock);

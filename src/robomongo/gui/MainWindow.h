@@ -7,13 +7,8 @@ class QToolBar;
 class QDockWidget;
 QT_END_NAMESPACE
 
-#include "robomongo/gui/ViewMode.h"
-
 namespace Robomongo
 {
-    class LogWidget;
-    class ExplorerWidget;
-    class EventBus;
     class ConnectionFailedEvent;
     class ScriptExecutingEvent;
     class ScriptExecutedEvent;
@@ -38,7 +33,6 @@ namespace Robomongo
         void enterTreeMode();
         void enterTableMode();
         void enterCustomMode();
-        void saveViewMode();
         void executeScript();
         void stopScript();
         void toggleFullScreen2();
@@ -68,19 +62,11 @@ namespace Robomongo
         void setLocalTimeZone();
     private:
         QLabel *_status;
-        ViewMode _viewMode;
-        LogWidget *_log;
         QDockWidget *_logDock;
 
         WorkAreaTabWidget *_workArea;
 
-        /*
-        ** The only Explorer in the window
-        */
-        ExplorerWidget *_explorer;
-
         App *_app;
-        EventBus *_bus;
 
         ConnectionMenu *_connectionsMenu;
         QMenu *_viewMenu;

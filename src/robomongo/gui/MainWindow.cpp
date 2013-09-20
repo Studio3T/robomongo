@@ -22,7 +22,7 @@
 
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
-#include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
+#include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 #include "robomongo/gui/dialogs/AboutDialog.h"
@@ -385,7 +385,7 @@ namespace Robomongo
     {
         if (_workArea)
         {
-            QueryWidget *wid = _workArea->currentWidget();
+            QueryWidget *wid = _workArea->currentQueryWidget();
             if (wid) {
                 wid->openFile();
             }
@@ -404,7 +404,7 @@ namespace Robomongo
     void MainWindow::save()
     {
         if (_workArea) {
-            QueryWidget *wid = _workArea->currentWidget();
+            QueryWidget *wid = _workArea->currentQueryWidget();
             if (wid) {
                 wid->saveToFile();
             }
@@ -414,7 +414,7 @@ namespace Robomongo
     void MainWindow::saveAs()
     {
         if (_workArea) {
-            QueryWidget *wid = _workArea->currentWidget();
+            QueryWidget *wid = _workArea->currentQueryWidget();
             if (wid) {
                 wid->savebToFileAs();
             }
@@ -491,7 +491,7 @@ namespace Robomongo
     void MainWindow::toggleOrientation()
     {
         if (_workArea)
-            _workArea->toggleOrientation();
+            _workArea->currentQueryWidget()->toggleOrientation();
     }
 
     void MainWindow::enterTextMode()
@@ -499,7 +499,7 @@ namespace Robomongo
         _viewMode = Text;
         saveViewMode();
         if (_workArea)
-            _workArea->enterTextMode();
+            _workArea->currentQueryWidget()->enterTextMode();
     }
 
     void MainWindow::enterTreeMode()
@@ -507,7 +507,7 @@ namespace Robomongo
         _viewMode = Tree;
         saveViewMode();
         if (_workArea)
-            _workArea->enterTreeMode();
+            _workArea->currentQueryWidget()->enterTreeMode();
     }
 
     void MainWindow::enterTableMode()
@@ -515,7 +515,7 @@ namespace Robomongo
         _viewMode = Table;
         saveViewMode();
         if (_workArea)
-            _workArea->enterTableMode();
+            _workArea->currentQueryWidget()->enterTableMode();
     }
 
     void MainWindow::enterCustomMode()
@@ -523,7 +523,7 @@ namespace Robomongo
         _viewMode = Custom;
         saveViewMode();
         if (_workArea)
-            _workArea->enterCustomMode();
+            _workArea->currentQueryWidget()->enterCustomMode();
     }
 
     void MainWindow::saveViewMode()
@@ -538,7 +538,7 @@ namespace Robomongo
 
         if (action->data().toString() == "Execute") {
             if (_workArea)
-                _workArea->executeScript();
+                _workArea->currentQueryWidget()->execute();
         } else {
             stopScript();
         }
@@ -547,7 +547,7 @@ namespace Robomongo
     void MainWindow::stopScript()
     {
         if (_workArea)
-        _workArea->stopScript();
+        _workArea->currentQueryWidget()->stop();
     }
 
     void MainWindow::toggleFullScreen2()
@@ -703,7 +703,7 @@ namespace Robomongo
 
     void MainWindow::updateMenus()
     {
-        int contTab = _workArea->countTab();
+        int contTab = _workArea->count();
         bool isEnable = _workArea&&contTab>0;
 
         _execToolBar->setVisible(isEnable);
@@ -714,9 +714,9 @@ namespace Robomongo
 
     void MainWindow::createTabs()
     {
-        _workArea = new WorkAreaWidget(this);
+        _workArea = new WorkAreaTabWidget(this);
         AppRegistry::instance().bus()->subscribe(_workArea, OpeningShellEvent::Type);
-        VERIFY(connect(_workArea, SIGNAL(tabActivated(int)),this, SLOT(updateMenus())));
+        VERIFY(connect(_workArea, SIGNAL(currentChanged(int)),this, SLOT(updateMenus())));
         setCentralWidget(_workArea);
     }
 }

@@ -18,7 +18,7 @@ namespace Robomongo
     class ScriptExecutingEvent;
     class ScriptExecutedEvent;
     class QueryWidgetUpdatedEvent;
-    class WorkAreaWidget;
+    class WorkAreaTabWidget;
     class ConnectionMenu;
     class App;
 
@@ -72,7 +72,7 @@ namespace Robomongo
         LogWidget *_log;
         QDockWidget *_logDock;
 
-        WorkAreaWidget *_workArea;
+        WorkAreaTabWidget *_workArea;
 
         /*
         ** The only Explorer in the window

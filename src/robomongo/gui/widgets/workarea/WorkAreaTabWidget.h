@@ -5,7 +5,7 @@
 namespace Robomongo
 {
     class QueryWidget;
-
+    class OpeningShellEvent;
     /**
      * @brief WorkArea tab widget. Each tab represents MongoDB shell.
      */
@@ -35,6 +35,7 @@ namespace Robomongo
         virtual void keyPressEvent(QKeyEvent *event);
 
     public Q_SLOTS:
+        void handle(OpeningShellEvent *event);
         void tabBar_tabCloseRequested(int index);
         void ui_newTabRequested(int index);
         void ui_reloadTabRequested(int index);

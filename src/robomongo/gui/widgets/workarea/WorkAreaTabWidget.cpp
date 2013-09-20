@@ -5,6 +5,8 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
+#include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/domain/MongoShell.h"
 
 namespace Robomongo
 {
@@ -21,6 +23,8 @@ namespace Robomongo
         setTabBar(tab);
         setTabsClosable(true);
         setElideMode(Qt::ElideRight);
+        setMovable(true);
+        setDocumentMode(true);
 
         VERIFY(connect(this, SIGNAL(tabCloseRequested(int)), SLOT(tabBar_tabCloseRequested(int))));
         VERIFY(connect(this, SIGNAL(currentChanged(int)), SLOT(ui_currentChanged(int))));
@@ -150,6 +154,24 @@ namespace Robomongo
 
         if (tabWidget)
             tabWidget->activateTabContent();
+    }
+
+    void WorkAreaTabWidget::handle(OpeningShellEvent *event)
+    {
+        const QString &title = event->shell->title();
+
+        QString shellName = title.isEmpty() ? " Loading..." : title;
+
+        setUpdatesEnabled(false);
+        QueryWidget *queryWidget = new QueryWidget(event->shell,this);
+
+        addTab(queryWidget, shellName);
+        setCurrentIndex(count() - 1);
+#if !defined(Q_OS_MAC)
+        setTabIcon(count() - 1, GuiRegistry::instance().mongodbIcon());
+#endif
+        setUpdatesEnabled(true);
+        queryWidget->showProgress();
     }
 }
 

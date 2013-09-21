@@ -67,7 +67,8 @@ namespace Robomongo
         for (App::MongoServersContainerType::const_iterator it = _servers.begin(); it != _servers.end(); ++it)
         {
             MongoServer *server = *it;
-            uniqueConnectionsNames.insert(QtUtils::toQString(server->connectionRecord()->connectionName()));
+            if(server->visible())
+                uniqueConnectionsNames.insert(QtUtils::toQString(server->connectionRecord()->connectionName()));
         }        
         _serverComboBox->addItems(uniqueConnectionsNames.toList());
         QVBoxLayout *layout = new QVBoxLayout();

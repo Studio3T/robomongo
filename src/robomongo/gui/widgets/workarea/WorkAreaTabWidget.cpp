@@ -2,15 +2,13 @@
 
 #include <QKeyEvent>
 
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/domain/App.h"
-#include "robomongo/core/events/MongoEvents.h"
-#include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/core/EventBus.h"
-#include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
+#include "robomongo/core/KeyboardManager.h"
+#include "robomongo/core/domain/MongoShell.h"
+
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 namespace Robomongo
 {
@@ -19,15 +17,16 @@ namespace Robomongo
      * @brief Creates WorkAreaTabWidget.
      * @param workAreaWidget: WorkAreaWidget this tab belongs to.
      */
-    WorkAreaTabWidget::WorkAreaTabWidget(WorkAreaWidget *workAreaWidget) :
-        QTabWidget(workAreaWidget),
-        _bus(AppRegistry::instance().bus())
+    WorkAreaTabWidget::WorkAreaTabWidget(QWidget *parent) :
+        QTabWidget(parent)
     {
         // This line (setTabBar()) should go before setTabsClosable(true)
         WorkAreaTabBar * tab = new WorkAreaTabBar(this);
         setTabBar(tab);
         setTabsClosable(true);
         setElideMode(Qt::ElideRight);
+        setMovable(true);
+        setDocumentMode(true);
 
         VERIFY(connect(this, SIGNAL(tabCloseRequested(int)), SLOT(tabBar_tabCloseRequested(int))));
         VERIFY(connect(this, SIGNAL(currentChanged(int)), SLOT(ui_currentChanged(int))));
@@ -82,7 +81,7 @@ namespace Robomongo
 
     QueryWidget *WorkAreaTabWidget::currentQueryWidget()
     {
-        return static_cast<QueryWidget *>(currentWidget());
+        return qobject_cast<QueryWidget *>(currentWidget());
     }
 
     QueryWidget *WorkAreaTabWidget::queryWidget(int index)
@@ -101,6 +100,29 @@ namespace Robomongo
         {
             int index = currentIndex();
             closeTab(index);
+            return;
+        }
+
+        if (KeyboardManager::isPreviousTabShortcut(keyEvent)) {
+            previousTab();
+            return;
+        } else if (KeyboardManager::isNextTabShortcut(keyEvent)) {
+            nextTab();
+            return;
+        } else if (KeyboardManager::isNewTabShortcut(keyEvent)) {
+            currentQueryWidget()->openNewTab();
+            return;
+        } else if (KeyboardManager::isSetFocusOnQueryLineShortcut(keyEvent)) {
+            currentQueryWidget()->setScriptFocus();
+            return;
+        } else if (KeyboardManager::isExecuteScriptShortcut(keyEvent)) {
+            currentQueryWidget()->execute();
+            return;
+        } else if (KeyboardManager::isAutoCompleteShortcut(keyEvent)) {
+            currentQueryWidget()->showAutocompletion();
+            return;
+        } else if (KeyboardManager::isHideAutoCompleteShortcut(keyEvent)) {
+            currentQueryWidget()->hideAutocompletion();
             return;
         }
 
@@ -150,10 +172,6 @@ namespace Robomongo
 
     void WorkAreaTabWidget::ui_currentChanged(int index)
     {
-        if (index == -1) {
-            _bus->publish(new AllTabsClosedEvent(this));
-        }
-
         if (index < 0)
             return;
 
@@ -161,6 +179,45 @@ namespace Robomongo
 
         if (tabWidget)
             tabWidget->activateTabContent();
+    }
+
+    void WorkAreaTabWidget::tabTextChange(const QString &text)
+    {
+        QWidget *send = qobject_cast<QWidget*>(sender());
+        if(!send)
+            return;
+
+        setTabText(indexOf(send), text);        
+    }
+
+    void WorkAreaTabWidget::tooltipTextChange(const QString &text)
+    {
+        QWidget *send = qobject_cast<QWidget*>(sender());
+        if(!send)
+            return;
+
+        setTabToolTip(indexOf(send), text);
+    }
+
+    void WorkAreaTabWidget::handle(OpeningShellEvent *event)
+    {
+        const QString &title = event->shell->title();
+
+        QString shellName = title.isEmpty() ? " Loading..." : title;
+
+        setUpdatesEnabled(false);
+        QueryWidget *queryWidget = new QueryWidget(event->shell,this);
+        VERIFY(connect(queryWidget, SIGNAL(titleChanged(const QString &)), this, SLOT(tabTextChange(const QString &))));
+        VERIFY(connect(queryWidget, SIGNAL(toolTipChanged(const QString &)), this, SLOT(tooltipTextChange(const QString &))));
+        
+        addTab(queryWidget, shellName);
+
+        setCurrentIndex(count() - 1);
+#if !defined(Q_OS_MAC)
+        setTabIcon(count() - 1, GuiRegistry::instance().mongodbIcon());
+#endif
+        setUpdatesEnabled(true);
+        queryWidget->showProgress();
     }
 }
 

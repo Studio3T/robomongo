@@ -222,8 +222,7 @@ namespace Robomongo
             }
 
             if (roles.empty()) {
-                QMessageBox::warning(this, "Invalid input", "Please select role.\n");
-                return;
+                roles="[]";
             }
             _user.setRole(roles);
         }

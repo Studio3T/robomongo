@@ -64,7 +64,7 @@ namespace Robomongo
             _keepAliveTimer->start(60 * 1000); // every minute
         }
         catch (const std::exception &ex) {
-            reply(event->sender(), new InitResponse(this, EventError("Unable to init")));
+            reply(event->sender(), new InitResponse(this, EventError("Unable to MongoWorker")));
             LOG_MSG(ex.what(), mongo::LL_ERROR);
         }
     }
@@ -109,7 +109,7 @@ namespace Robomongo
             std::vector<std::string> dbNames = client->getDatabaseNames();
             reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_address,dbNames,client->getVersion()) ));
         } catch(const std::exception &ex) {
-            reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to initialize MongoWorker")));
+            reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
             LOG_MSG(ex.what(), mongo::LL_ERROR);
         }
     }

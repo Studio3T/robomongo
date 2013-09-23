@@ -7,7 +7,7 @@
 namespace Robomongo
 {
 
-    CollectionStatsTreeWidget::CollectionStatsTreeWidget(QWidget *parent) 
+    CollectionStatsTreeWidget::CollectionStatsTreeWidget(const std::vector<MongoDocumentPtr> &documents, QWidget *parent) 
         : QTreeWidget(parent)
     {
         QStringList colums;
@@ -17,12 +17,6 @@ namespace Robomongo
         setStyleSheet(
             "QTreeWidget { border: none; }"
         );
-    }
-
-    void CollectionStatsTreeWidget::setDocuments(const std::vector<MongoDocumentPtr> &documents)
-    {
-        setUpdatesEnabled(false);
-        clear();
 
         QList<QTreeWidgetItem *> items;
         size_t documentsCount = documents.size();
@@ -35,6 +29,5 @@ namespace Robomongo
         addTopLevelItems(items);
 
         header()->resizeSections(QHeaderView::ResizeToContents);
-        setUpdatesEnabled(true);
     }
 }

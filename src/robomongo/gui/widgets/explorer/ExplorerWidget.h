@@ -21,17 +21,17 @@ namespace Robomongo
     public:
         typedef QWidget BaseClass;
         ExplorerWidget(QWidget *parent);
-    protected:
-        virtual void keyPressEvent(QKeyEvent *event);
 
-    public Q_SLOTS:
+    protected Q_SLOTS:
         void handle(ConnectingEvent *event);
         void handle(ConnectionEstablishedEvent *event);
         void handle(ConnectionFailedEvent *event);
-    
     private Q_SLOTS:
         void ui_itemExpanded(QTreeWidgetItem *item);
         void ui_itemDoubleClicked(QTreeWidgetItem *item, int column);
+
+    protected:
+        virtual void keyPressEvent(QKeyEvent *event);   
 
     private:
         int _progress;

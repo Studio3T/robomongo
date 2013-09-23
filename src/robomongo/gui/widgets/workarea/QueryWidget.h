@@ -39,8 +39,6 @@ namespace Robomongo
         void enterTextMode();
         void enterTableMode();
         void enterCustomMode();
-        void showProgress();
-        void hideProgress();
         void setScriptFocus();
         void showAutocompletion();
         void hideAutocompletion();
@@ -65,6 +63,8 @@ namespace Robomongo
         void handle(AutocompleteResponse *event);
 
     private:
+        void showProgress();
+        void hideProgress();
         void updateCurrentTab();
         void displayData(const std::vector<MongoShellResult> &results, bool empty);
 

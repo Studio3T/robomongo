@@ -11,6 +11,9 @@ namespace Robomongo
     #endif
         setContextMenuPolicy(Qt::DefaultContextMenu);
         setObjectName("explorerTree");
+        setIndentation(15);
+        setHeaderHidden(true);
+        setSelectionMode(QAbstractItemView::SingleSelection);
     }
 
     void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)

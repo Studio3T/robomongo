@@ -205,7 +205,6 @@ namespace Robomongo
 
         QString shellName = title.isEmpty() ? " Loading..." : title;
 
-        setUpdatesEnabled(false);
         QueryWidget *queryWidget = new QueryWidget(event->shell,this);
         VERIFY(connect(queryWidget, SIGNAL(titleChanged(const QString &)), this, SLOT(tabTextChange(const QString &))));
         VERIFY(connect(queryWidget, SIGNAL(toolTipChanged(const QString &)), this, SLOT(tooltipTextChange(const QString &))));
@@ -216,8 +215,6 @@ namespace Robomongo
 #if !defined(Q_OS_MAC)
         setTabIcon(count() - 1, GuiRegistry::instance().mongodbIcon());
 #endif
-        setUpdatesEnabled(true);
-        queryWidget->showProgress();
     }
 }
 

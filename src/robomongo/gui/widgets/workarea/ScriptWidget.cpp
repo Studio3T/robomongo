@@ -385,7 +385,7 @@ namespace Robomongo
         topLayout->setContentsMargins(2, 7, 2, 3);
     #endif
         topLayout->addWidget(_currentServerLabel, 0, Qt::AlignLeft);
-        topLayout->addSpacing(10);
+        topLayout->addSpacing(5);
         topLayout->addWidget(_currentDatabaseLabel, 0, Qt::AlignLeft);
         topLayout->addStretch(1);
 

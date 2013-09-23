@@ -260,8 +260,7 @@ namespace Robomongo
         if (!_isCustomModeInitialized) {
 
             if (_type == "collectionStats") {
-                _collectionStats = new CollectionStatsTreeWidget(NULL);
-                _collectionStats->setDocuments(_documents);
+                _collectionStats = new CollectionStatsTreeWidget(_documents, NULL);
                 _stack->addWidget(_collectionStats);
             }               
             _isCustomModeInitialized = true;

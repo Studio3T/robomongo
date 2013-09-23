@@ -205,11 +205,9 @@ namespace Robomongo
         hideProgress();
         _currentResult = event->result();        
 
-        setUpdatesEnabled(false);
         updateCurrentTab();
         displayData(event->result().results(), event->empty());
         _scriptWidget->setup(event->result()); // this should be in ScriptWidget, which is subscribed to ScriptExecutedEvent              
-        setUpdatesEnabled(true);
         activateTabContent();
     }
 

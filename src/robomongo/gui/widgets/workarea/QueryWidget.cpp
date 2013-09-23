@@ -32,14 +32,12 @@ namespace Robomongo
     QueryWidget::QueryWidget(MongoShell *shell, QWidget *parent) :
         QWidget(parent),
         _shell(shell),
-        _app(AppRegistry::instance().app()),
-        _bus(AppRegistry::instance().bus()),
         _viewer(NULL),
         _isTextChanged(false)
     {
-        _bus->subscribe(this, DocumentListLoadedEvent::Type, shell);
-        _bus->subscribe(this, ScriptExecutedEvent::Type, shell);
-        _bus->subscribe(this, AutocompleteResponse::Type, shell);
+        AppRegistry::instance().bus()->subscribe(this, DocumentListLoadedEvent::Type, shell);
+        AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type, shell);
+        AppRegistry::instance().bus()->subscribe(this, AutocompleteResponse::Type, shell);
 
         _scriptWidget = new ScriptWidget(_shell);
         VERIFY(connect(_scriptWidget,SIGNAL(textChanged()),this,SLOT(textChange())));
@@ -107,7 +105,7 @@ namespace Robomongo
     {
         MongoServer *server = _shell->server();
         QString query = _scriptWidget->selectedText();
-        _app->openShell(server, query, _currentResult.currentDatabase());
+        AppRegistry::instance().app()->openShell(server, query, _currentResult.currentDatabase());
     }
 
     void QueryWidget::saveToFile()
@@ -213,7 +211,7 @@ namespace Robomongo
 
     void QueryWidget::activateTabContent()
     {
-        _bus->publish(new QueryWidgetUpdatedEvent(this, _currentResult.results().size()));
+        AppRegistry::instance().bus()->publish(new QueryWidgetUpdatedEvent(this, _currentResult.results().size()));
         _scriptWidget->setScriptFocus();
     }
 

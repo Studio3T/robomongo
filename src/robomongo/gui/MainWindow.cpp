@@ -11,6 +11,7 @@
 #include <QToolTip>
 #include <QDockWidget>
 #include <QDesktopWidget>
+#include <QTimer>
 
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/MongoServer.h"

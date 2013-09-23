@@ -16,10 +16,9 @@ namespace Robomongo
         QString buildCollectionQuery(const std::string &collectionName, const QString &postfix)
         {
             QString qCollectionName = QtUtils::toQString(collectionName);
-            QChar firstChar = qCollectionName.at(0);
-            QRegExp charExp("[^A-Za-z_0-9]"); // valid JS name
+            QChar firstChar = qCollectionName[0];
 
-            QString pattern;
+            QString pattern = "db.%1.%2";
             if  (firstChar == QChar('_')
                 || qCollectionName == "help"
                 || qCollectionName == "stats"
@@ -28,10 +27,8 @@ namespace Robomongo
                     // TODO: this list should be expanded to include
                     // all functions of DB JavaScript object
                     pattern = "db.getCollection('%1').%2";
-            } else if (firstChar.isDigit() || qCollectionName.contains(charExp)) {
+            } else if (firstChar.isDigit() || qCollectionName.contains("[^A-Za-z_0-9]")) {
                 pattern = "db[\'%1\'].%2";
-            } else {
-                pattern = "db.%1.%2";
             }
 
             return pattern.arg(qCollectionName).arg(postfix);

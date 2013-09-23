@@ -13,6 +13,7 @@
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"
+
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/shell/db/json.h"
 

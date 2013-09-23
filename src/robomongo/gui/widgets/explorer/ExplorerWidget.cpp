@@ -1,19 +1,19 @@
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 
-#include <QtGui>
 #include <QHBoxLayout>
-#include <QTreeWidget>
 #include <QLabel>
+#include <QMovie>
+#include <QKeyEvent>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
-#include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
+
 #include "robomongo/gui/widgets/explorer/ExplorerTreeWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 
 namespace Robomongo
 {
@@ -22,16 +22,13 @@ namespace Robomongo
         _progress(0)
     {
         _treeWidget = new ExplorerTreeWidget(this);
-        _treeWidget->setIndentation(15);
-        _treeWidget->setHeaderHidden(true);
-        _treeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 
         QHBoxLayout *vlaout = new QHBoxLayout();
         vlaout->setMargin(0);
         vlaout->addWidget(_treeWidget, Qt::AlignJustify);
 
-        VERIFY(connect(_treeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), SLOT(ui_itemExpanded(QTreeWidgetItem *))));
-        VERIFY(connect(_treeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), SLOT(ui_itemDoubleClicked(QTreeWidgetItem *, int))));
+        VERIFY(connect(_treeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(ui_itemExpanded(QTreeWidgetItem *))));
+        VERIFY(connect(_treeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(ui_itemDoubleClicked(QTreeWidgetItem *, int))));
 
         setLayout(vlaout);
 

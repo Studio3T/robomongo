@@ -1,9 +1,10 @@
 #pragma once
 
 #include <QFrame>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QCompleter>
+QT_BEGIN_NAMESPACE
+class QLabel;
+class QCompleter;
+QT_END_NAMESPACE
 
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/CursorPosition.h"
@@ -13,6 +14,7 @@ namespace Robomongo
     class FindFrame;
     class TopStatusBar;
     class MongoShell;
+    class Indicator;
 
     class AutoCompletionInfo
     {
@@ -62,13 +64,10 @@ namespace Robomongo
         void setScriptFocus();
         void setCurrentDatabase(const std::string &database, bool isValid = true);
         void setCurrentServer(const std::string &address, bool isValid = true);
-        void showProgress();
-        void hideProgress();
         void showAutocompletion(const QStringList &list, const QString &prefix);
         void showAutocompletion();
         void hideAutocompletion();
 
-        TopStatusBar *statusBar() const { return _topStatusBar; }
     Q_SIGNALS:
         void textChanged();
     public Q_SLOTS:
@@ -119,16 +118,15 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        TopStatusBar(const std::string &serverName);
+        TopStatusBar(const std::string &serverName, const std::string &dbName);
         void setCurrentDatabase(const std::string &database, bool isValid = true);
         void setCurrentServer(const std::string &address, bool isValid = true);
         void showProgress();
         void hideProgress();
 
     private:
-        QLabel *_currentDatabaseLabel;
-        QLabel *_currentServerLabel;
-        QLabel *_progressLabel;
+        Indicator *_currentDatabaseLabel;
+        Indicator *_currentServerLabel;
         QColor _textColor;
     };
 }

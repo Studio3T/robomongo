@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QString>
 #include <string>
-
+#include <mongo/util/log.h>
 #include "robomongo/core/utils/SingletonPattern.hpp"
 
 namespace Robomongo
@@ -14,11 +14,11 @@ namespace Robomongo
         friend class Patterns::LazySingleton<Logger>;
         Q_OBJECT
     public:
-        void print(const char *mess, bool notify);
-        void print(const std::string &mess, bool notify);
-        void print(const QString &mess, bool notify);        
+        void print(const char *mess, mongo::LogLevel level, bool notify);
+        void print(const std::string &mess, mongo::LogLevel level, bool notify);
+        void print(const QString &mess, mongo::LogLevel level, bool notify);        
     Q_SIGNALS:
-        void printed(const QString &mess);
+        void printed(const QString &mess, mongo::LogLevel level);
 
     private:
         Logger();
@@ -26,8 +26,8 @@ namespace Robomongo
     };
 
     template<typename T>
-    inline void LOG_MSG(const T &mess, bool notify = true)
+    inline void LOG_MSG(const T &mess, mongo::LogLevel level, bool notify = true)
     {
-        return Logger::instance().print(mess,notify);
+        return Logger::instance().print(mess, level, notify);
     }
 }

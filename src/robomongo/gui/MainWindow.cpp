@@ -684,7 +684,7 @@ namespace Robomongo
         addDockWidget(Qt::LeftDockWidgetArea, explorerDock);
 
         LogWidget *log = new LogWidget(this);        
-        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&)), log, SLOT(addMessage(const QString&))));
+        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, mongo::LogLevel)), log, SLOT(addMessage(const QString&, mongo::LogLevel))));
         _logDock = new QDockWidget(tr("Log"));
         QAction *action = _logDock->toggleViewAction();
 

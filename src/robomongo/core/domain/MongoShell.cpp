@@ -24,7 +24,7 @@ namespace Robomongo
         AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
         _scriptInfo.setScript(QtUtils::toQString(script));
         _server->client()->send(new ExecuteScriptRequest(this, query(), dbName));
-        LOG_MSG(query());
+        LOG_MSG(query(), mongo::LL_INFO);
     }
 
     std::string MongoShell::query() const 
@@ -42,7 +42,7 @@ namespace Robomongo
             _scriptInfo.setScript("");
             _server->client()->send(new ExecuteScriptRequest(this,query() , dbName));
         }
-        LOG_MSG(query());
+        LOG_MSG(query(), mongo::LL_INFO);
     }
     void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
     {

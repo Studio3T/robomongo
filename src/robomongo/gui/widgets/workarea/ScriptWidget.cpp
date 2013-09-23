@@ -1,9 +1,7 @@
 #include "robomongo/gui/widgets/workarea/ScriptWidget.h"
 
 #include <QVBoxLayout>
-#include <QIcon>
 #include <QKeyEvent>
-#include <QMovie>
 #include <QCompleter>
 #include <QStringListModel>
 #include <QMessageBox>
@@ -15,6 +13,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 
+#include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
@@ -58,7 +57,7 @@ namespace Robomongo
         setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
 
         _queryText = new FindFrame(this);
-        _topStatusBar = new TopStatusBar(_shell->server()->connectionRecord()->getFullAddress());
+        _topStatusBar = new TopStatusBar(_shell->server()->connectionRecord()->getFullAddress(), "");
 
         QVBoxLayout *layout = new QVBoxLayout;
         layout->setSpacing(0);
@@ -159,16 +158,6 @@ namespace Robomongo
     void ScriptWidget::setCurrentServer(const std::string &address, bool isValid)
     {
         _topStatusBar->setCurrentServer(address, isValid);
-    }
-
-    void ScriptWidget::showProgress()
-    {
-        _topStatusBar->showProgress();
-    }
-
-    void ScriptWidget::hideProgress()
-    {
-        _topStatusBar->hideProgress();
     }
 
     void ScriptWidget::showAutocompletion(const QStringList &list, const QString &prefix)
@@ -378,46 +367,27 @@ namespace Robomongo
         return AutoCompletionInfo(final, row, leftStop, rightStop);
     }
 
-    TopStatusBar::TopStatusBar(const std::string &serverName)
+    TopStatusBar::TopStatusBar(const std::string &serverName, const std::string &dbName)
     {
         setContentsMargins(0, 0, 0, 0);
         _textColor = palette().text().color().lighter(200);
 
-        QIcon dbIcon = GuiRegistry::instance().databaseIcon();
-        QPixmap dbPixmap = dbIcon.pixmap(16, 16, QIcon::Disabled);
-        QLabel *dbIconLabel = new QLabel;
-        dbIconLabel->setPixmap(dbPixmap);
-
-        QIcon serverIcon = GuiRegistry::instance().serverIcon();
-        QPixmap serverPixmap = serverIcon.pixmap(16, 16, QIcon::Disabled);
-        QLabel *serverIconLabel = new QLabel;
-        serverIconLabel->setPixmap(serverPixmap);
-
-        _currentServerLabel = new QLabel(QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(serverName.c_str()),this);
+        _currentServerLabel = new Indicator(GuiRegistry::instance().serverIcon(), QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(serverName.c_str()));
         _currentServerLabel->setDisabled(true);
 
-        _currentDatabaseLabel = new QLabel(this);
+        _currentDatabaseLabel = new Indicator(GuiRegistry::instance().databaseIcon(), QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(dbName.c_str()));
         _currentDatabaseLabel->setDisabled(true);
-
-        QMovie *movie = new QMovie(":robomongo/icons/loading.gif", QByteArray(), this);
-        _progressLabel = new QLabel(this);
-        _progressLabel->setMovie(movie);
-        _progressLabel->hide();
-        movie->start();
-
+        
         QHBoxLayout *topLayout = new QHBoxLayout;
     #if defined(Q_OS_MAC)
         topLayout->setContentsMargins(2, 3, 2, 3);
     #else
         topLayout->setContentsMargins(2, 7, 2, 3);
     #endif
-        topLayout->addWidget(serverIconLabel, 0, Qt::AlignLeft);
         topLayout->addWidget(_currentServerLabel, 0, Qt::AlignLeft);
         topLayout->addSpacing(10);
-        topLayout->addWidget(dbIconLabel, 0, Qt::AlignLeft);
         topLayout->addWidget(_currentDatabaseLabel, 0, Qt::AlignLeft);
         topLayout->addStretch(1);
-        topLayout->addWidget(_progressLabel, 0, Qt::AlignLeft);
 
         setLayout(topLayout);
     }
@@ -442,15 +412,5 @@ namespace Robomongo
                 .arg(address.c_str());
 
         _currentServerLabel->setText(text);
-    }
-
-    void TopStatusBar::showProgress()
-    {
-        _progressLabel->show();
-    }
-
-    void TopStatusBar::hideProgress()
-    {
-        _progressLabel->hide();
     }
 }

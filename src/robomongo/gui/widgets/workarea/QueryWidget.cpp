@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QLabel>
 #include <QFileInfo>
+#include <QVBoxLayout>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerjavascript.h>
 #include <mongo/client/dbclient.h>
@@ -195,15 +196,13 @@ namespace Robomongo
 
     void QueryWidget::handle(DocumentListLoadedEvent *event)
     {
-        hideProgress();
-        _scriptWidget->hideProgress();
+        hideProgress();        
         _viewer->updatePart(event->resultIndex(), event->queryInfo(), event->documents()); // this should be in viewer, subscribed to ScriptExecutedEvent
     }
 
     void QueryWidget::handle(ScriptExecutedEvent *event)
     {
         hideProgress();
-        _scriptWidget->hideProgress();
         _currentResult = event->result();        
 
         setUpdatesEnabled(false);

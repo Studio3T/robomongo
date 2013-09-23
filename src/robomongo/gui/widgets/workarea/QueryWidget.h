@@ -6,15 +6,12 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 QT_END_NAMESPACE
 
-#include <Qsci/qsciscintilla.h>
-
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 
 namespace Robomongo
 {
     class BsonWidget;
-    class EventBus;
     class DocumentListLoadedEvent;
     class ScriptExecutedEvent;
     class AutocompleteResponse;
@@ -39,8 +36,6 @@ namespace Robomongo
         void enterTextMode();
         void enterTableMode();
         void enterCustomMode();
-        void showProgress();
-        void hideProgress();
         void setScriptFocus();
         void showAutocompletion();
         void hideAutocompletion();
@@ -65,11 +60,11 @@ namespace Robomongo
         void handle(AutocompleteResponse *event);
 
     private:
+        void showProgress();
+        void hideProgress();
         void updateCurrentTab();
         void displayData(const std::vector<MongoShellResult> &results, bool empty);
 
-        App *_app;
-        EventBus *_bus;
         MongoShell *_shell;
         OutputWidget *_viewer;
         ScriptWidget *_scriptWidget;

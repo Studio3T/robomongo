@@ -20,9 +20,14 @@ namespace Robomongo
         setLayout(hlayout);      
     }
 
-    void LogWidget::addMessage(const QString &message)
+    void LogWidget::addMessage(const QString &message, mongo::LogLevel level)
     {
-        _logTextEdit->appendPlainText(message);
+        if (level == mongo::LL_ERROR){
+            _logTextEdit->appendHtml(QString("<font color=red>%1</font>").arg(message));
+        }
+        else{
+            _logTextEdit->appendHtml(QString("<font color=black>%1</font>").arg(message));
+        }
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());
     }

@@ -46,7 +46,7 @@ namespace Robomongo
         _disableConnectionShortcuts(false)
     {
         load();
-        LOG_MSG("SettingsManager initialized in " + _configPath,false);
+        LOG_MSG("SettingsManager initialized in " + _configPath, mongo::LL_INFO, false);
     }
 
     SettingsManager::~SettingsManager()
@@ -98,7 +98,7 @@ namespace Robomongo
         s.setIndentMode(QJson::IndentFull);
         s.serialize(map, &f, &ok);
 
-        LOG_MSG("Settings saved to: " + _configPath);
+        LOG_MSG("Settings saved to: " + _configPath, mongo::LL_INFO);
 
         return ok;
     }

@@ -1,13 +1,11 @@
 #include "robomongo/core/utils/Logger.h"
 
 #include <QDir>
-#include <mongo/util/log.h>
-
+#include <QMetaType>
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace
 {
-    mongo::LabeledLevel pc(PROJECT_NAME, mongo::LL_DEBUG );
     std::string getLoggerPath()
     {
         static std::string path = Robomongo::QtUtils::toStdString(QString("%1/."PROJECT_NAME"log.txt").arg(QDir::homePath()));
@@ -19,27 +17,33 @@ namespace Robomongo
 {
     Logger::Logger()
     {
-        mongo::initLogging(getLoggerPath(),true);
+        qRegisterMetaType<mongo::LogLevel>("mongo::LogLevel");
+        std::string path = getLoggerPath();
+        QFile file(QtUtils::toQString(path)); //delete file if it size more than 5mb
+        if (file.exists() && file.size()>5*1024*1024){
+            file.remove();
+        }
+        mongo::initLogging(path,true);
     }
 
     Logger::~Logger()
     {   
     }
 
-    void Logger::print(const char *mess, bool notify)
+    void Logger::print(const char *mess, mongo::LogLevel level, bool notify)
     {
-        print(std::string(mess),notify);
+        print(std::string(mess), level, notify);
     }
 
-    void Logger::print(const std::string &mess, bool notify)
+    void Logger::print(const std::string &mess, mongo::LogLevel level, bool notify)
     {       
-        print(QtUtils::toQString(mess),notify);
+        print(QtUtils::toQString(mess), level, notify);
     }
 
-    void Logger::print(const QString &mess, bool notify)
-    {
-        LOG(pc) << QtUtils::toStdString(mess) << std::endl;
+    void Logger::print(const QString &mess, mongo::LogLevel level, bool notify)
+    {        
+        LOG(level) << "["PROJECT_NAME"] " << QtUtils::toStdString(mess) << std::endl;
         if (notify)
-            emit printed(mess);
+            emit printed(mess, level);
     }
 }

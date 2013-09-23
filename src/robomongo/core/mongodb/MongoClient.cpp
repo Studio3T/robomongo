@@ -370,6 +370,9 @@ namespace Robomongo
         MongoNamespace from(dbName, collectionName);
         MongoNamespace to(dbName, newCollectionName);
 
+        if (!_dbclient->exists(to.toString()))
+            _dbclient->createCollection(to.toString());
+
         std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(from.toString(), mongo::Query()));
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -379,6 +382,9 @@ namespace Robomongo
 
     void MongoClient::copyCollectionToDiffServer(mongo::DBClientBase *const fromServ,const MongoNamespace &from, const MongoNamespace &to)
     {
+        if (!_dbclient->exists(to.toString()))
+            _dbclient->createCollection(to.toString());
+
         std::auto_ptr<mongo::DBClientCursor> cursor(fromServ->query(from.toString(), mongo::Query()));
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();

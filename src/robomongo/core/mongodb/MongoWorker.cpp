@@ -120,7 +120,7 @@ namespace Robomongo
             qDebug() << "EstablishConnectionResponse sent back";
         } catch(const std::exception &ex) {
             qDebug() << "EstablishConnectionRequest throw exception: " << ex.what();
-            reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
+            reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what())));
         }
     }
 

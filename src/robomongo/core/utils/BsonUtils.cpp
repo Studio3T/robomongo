@@ -611,7 +611,7 @@ namespace Robomongo
                 }
                 break;
             case Undefined:
-                con.append("<undefined>");
+                con.append("undefined");
                 break;
             case jstOID:
                 {
@@ -638,7 +638,7 @@ namespace Robomongo
                     break;
                 }
             case jstNULL:
-                con.append("<null>");
+                con.append("null");
                 break;
 
             case RegEx:

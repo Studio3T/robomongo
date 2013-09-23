@@ -64,10 +64,9 @@ namespace Robomongo
         databaselayout->addWidget(_databaseComboBox);        
         VERIFY(connect(_serverComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateDatabaseComboBox(int))));
         QSet<QString> uniqueConnectionsNames;
-        for (App::MongoServersContainerType::const_iterator it = _servers.begin(); it != _servers.end(); ++it)
-        {
+        for (App::MongoServersContainerType::const_iterator it = _servers.begin(); it != _servers.end(); ++it) {
             MongoServer *server = *it;
-            if(server->visible())
+            if (server->visible())
                 uniqueConnectionsNames.insert(QtUtils::toQString(server->connectionRecord()->connectionName()));
         }        
         _serverComboBox->addItems(uniqueConnectionsNames.toList());

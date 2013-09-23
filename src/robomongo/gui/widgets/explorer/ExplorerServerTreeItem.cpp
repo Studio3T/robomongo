@@ -165,7 +165,7 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::ui_disconnectServer()
     {
-        QTreeWidget * view = dynamic_cast<QTreeWidget *>(BaseClass::treeWidget());
+        QTreeWidget *view = dynamic_cast<QTreeWidget *>(BaseClass::treeWidget());
         if (!view)
             return;
 

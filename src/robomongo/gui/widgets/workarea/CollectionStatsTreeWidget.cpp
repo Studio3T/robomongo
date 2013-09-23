@@ -15,7 +15,7 @@ namespace Robomongo
         setHeaderLabels(colums);
 
         setStyleSheet(
-            "QTreeWidget { border: none; }"
+            "QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }"
         );
 
         QList<QTreeWidgetItem *> items;

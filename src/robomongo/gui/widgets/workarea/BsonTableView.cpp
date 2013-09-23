@@ -21,9 +21,8 @@ namespace Robomongo
 
         verticalHeader()->setDefaultAlignment(Qt::AlignLeft);
         horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
-        //horizontalHeader()->setFixedHeight(25);   // commented because we shouldn't depend on heights in pixels - it may vary between platforms
-        setStyleSheet("QTableView { border: none; gridline-color: #edebea;}");
-        //setShowGrid(false);
+        setStyleSheet("QTableView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; gridline-color: #edebea;}");
+
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setSelectionBehavior(QAbstractItemView::SelectItems);
         setContextMenuPolicy(Qt::CustomContextMenu);

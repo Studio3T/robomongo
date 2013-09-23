@@ -20,8 +20,8 @@ namespace Robomongo
     WorkAreaTabWidget::WorkAreaTabWidget(QWidget *parent) :
         QTabWidget(parent)
     {
+        WorkAreaTabBar *tab = new WorkAreaTabBar(this);
         // This line (setTabBar()) should go before setTabsClosable(true)
-        WorkAreaTabBar * tab = new WorkAreaTabBar(this);
         setTabBar(tab);
         setTabsClosable(true);
         setElideMode(Qt::ElideRight);

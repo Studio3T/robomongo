@@ -1,4 +1,5 @@
 #pragma once
+
 #include <algorithm>
 #include <functional>
 
@@ -10,11 +11,11 @@ namespace Robomongo
         inline void destroy(T *&v)
         {
             delete v;
-            v=NULL;
+            v = NULL;
         }
 
         template<typename T>
-        struct RemoveIfFound: public std::unary_function<T, bool>
+        struct RemoveIfFound : public std::unary_function<T, bool>
         {
             RemoveIfFound(T whatSearch) : _whatSearch(whatSearch) {}
 
@@ -31,7 +32,7 @@ namespace Robomongo
 
         template <typename T>
         struct default_delete
-                :public std::unary_function<T,void>
+                : public std::unary_function<T, void>
         {
             inline void operator ()(T *ptr) const
             {
@@ -41,7 +42,7 @@ namespace Robomongo
 
         template <typename T>
         struct default_delete<T*>
-                :public std::unary_function<T*,void>
+                : public std::unary_function<T*, void>
         {
             inline void operator ()(T *ptr) const
             {
@@ -49,9 +50,9 @@ namespace Robomongo
             }
         };
 
-        template<typename T,unsigned int N>
+        template<typename T, unsigned int N>
         struct default_delete<T[N]>
-                :public std::unary_function<const T[N],void>
+                :public std::unary_function<const T[N], void>
         {
             inline void operator ()(const T ptr) const
             {

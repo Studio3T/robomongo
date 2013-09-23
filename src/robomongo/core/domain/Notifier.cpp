@@ -64,7 +64,7 @@ namespace Robomongo
         _copyValueAction = new QAction("Copy Value", wid);
         VERIFY(connect(_copyValueAction, SIGNAL(triggered()), SLOT(onCopyDocument())));
 
-        _copyJsonAction = new QAction("Copy Json", wid);
+        _copyJsonAction = new QAction("Copy JSON", wid);
         VERIFY(connect(_copyJsonAction, SIGNAL(triggered()), SLOT(onCopyJson())));
     }
 
@@ -83,7 +83,9 @@ namespace Robomongo
         if (onItem && isEditable) menu->addAction(_editDocumentAction);
         if (onItem)               menu->addAction(_viewDocumentAction);
         if (isEditable)           menu->addAction(_insertDocumentAction);
-        if (onItem && isSimple)   menu->addSeparator();
+
+        if (onItem && (isSimple || isDocument)) menu->addSeparator();
+
         if (onItem && isSimple)   menu->addAction(_copyValueAction);
         if (onItem && isDocument) menu->addAction(_copyJsonAction);
         if (onItem && isEditable) menu->addSeparator();

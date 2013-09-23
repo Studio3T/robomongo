@@ -90,9 +90,11 @@ namespace Robomongo
     #endif
 
         qApp->setStyleSheet(QString(
-            "QMainWindow::separator { background: #E7E5E4; width: 1px; }"
-                                "QToolBar{border-bottom: 1px solid #c7c5c4;}")
-        );
+            "QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } \n"
+            "Robomongo--ExplorerTreeWidget#explorerTree { padding: 1px 0px 0px 0px; background-color: %1; border: 0px; } \n"
+            "QMainWindow::separator { background: #E7E5E4; width: 1px; } "
+            "QToolBar { border-bottom: 1px solid #c7c5c4; } "
+        ).arg(explorerColor));
 
         _openAction = new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this);
         _openAction->setToolTip("Load script from the file to the currently opened shell");
@@ -488,68 +490,76 @@ namespace Robomongo
 
     void MainWindow::toggleOrientation()
     {
-        QueryWidget *wid = _workArea->currentQueryWidget();
-        if(wid){
-            wid->toggleOrientation();
-        }
+        QueryWidget *widget = _workArea->currentQueryWidget();
+        if (widget)
+            return;
+
+        widget->toggleOrientation();
     }
 
     void MainWindow::enterTextMode()
     {
         saveViewMode(Text);
-        QueryWidget *wid = _workArea->currentQueryWidget();
-        if(wid){
-            wid->enterTextMode();
-        }        
+        QueryWidget *widget = _workArea->currentQueryWidget();
+        if (!widget)
+            return;
+
+        widget->enterTextMode();
     }
 
     void MainWindow::enterTreeMode()
     {
         saveViewMode(Tree);
-        QueryWidget *wid = _workArea->currentQueryWidget();
-        if(wid){
-            wid->enterTreeMode();
-        }
+        QueryWidget *widget = _workArea->currentQueryWidget();
+        if (!widget)
+            return;
+
+        widget->enterTreeMode();
     }
 
     void MainWindow::enterTableMode()
     {
         saveViewMode(Table);
-        QueryWidget *wid = _workArea->currentQueryWidget();
-        if(wid){
-            wid->enterTableMode();
-        }
+        QueryWidget *widget = _workArea->currentQueryWidget();
+        if (!widget)
+            return;
+
+        widget->enterTableMode();
     }
 
     void MainWindow::enterCustomMode()
     {
         saveViewMode(Custom);
-        QueryWidget *wid = _workArea->currentQueryWidget();
-        if(wid){
-            wid->enterCustomMode();
-        }
+        QueryWidget *widget = _workArea->currentQueryWidget();
+        if (!widget)
+            return;
+
+        widget->enterCustomMode();
     }
 
     void MainWindow::executeScript()
     {
         QAction *action = static_cast<QAction *>(sender());
 
-        if (action->data().toString() == "Execute") {
-            QueryWidget *wid = _workArea->currentQueryWidget();
-            if(wid){
-                wid->execute();
-            }
-        } else {
+        if (action->data().toString() != "Execute") {
             stopScript();
+            return;
         }
+
+        QueryWidget *widget = _workArea->currentQueryWidget();
+        if (!widget)
+            return;
+
+        widget->execute();
     }
 
     void MainWindow::stopScript()
     {
-        QueryWidget *wid = _workArea->currentQueryWidget();
-        if(wid){
-            wid->stop();
-        }
+        QueryWidget *widget = _workArea->currentQueryWidget();
+        if (!widget)
+            return;
+
+        widget->stop();
     }
 
     void MainWindow::toggleFullScreen2()
@@ -671,14 +681,18 @@ namespace Robomongo
         QDockWidget *explorerDock = new QDockWidget(tr("Database Explorer"));
         explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
         explorerDock->setWidget(explorer);
-        explorerDock->setFeatures(QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable);
+        explorerDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+
+        QWidget *titleWidget = new QWidget(this);         // this lines simply remove
+        explorerDock->setTitleBarWidget(titleWidget);     // title bar widget.
+
         QAction *actionExp = explorerDock->toggleViewAction();
 
         // Adjust any parameter you want.  
-        actionExp->setText(QString("&Database Explorer"));  
+        actionExp->setText(QString("&Database Explorer"));
         actionExp->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));  
         actionExp->setStatusTip(QString("Press to show/hide Database Explorer widget."));  
-        actionExp->setChecked(true);  
+        actionExp->setChecked(true);
         // Install action in the menu.  
         _viewMenu->addAction(actionExp);
 
@@ -693,20 +707,21 @@ namespace Robomongo
         action->setText(QString("&Log"));  
         action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));  
         action->setStatusTip(QString("Press to show/hide Log widget."));  
-        action->setChecked(true);  
+        action->setChecked(false);
         // Install action in the menu.  
         _viewMenu->addAction(action);
+
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         _logDock->setWidget(log);
-        _logDock->setFeatures(QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable);
-        //_logDock->setVisible(false);
+        _logDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+        _logDock->setVisible(false);
         addDockWidget(Qt::BottomDockWidgetArea, _logDock);
     }
 
     void MainWindow::updateMenus()
     {
         int contTab = _workArea->count();
-        bool isEnable = _workArea&&contTab>0;
+        bool isEnable = _workArea && contTab > 0;
 
         _execToolBar->setVisible(isEnable);
         _openAction->setEnabled(isEnable);
@@ -718,7 +733,7 @@ namespace Robomongo
     {
         _workArea = new WorkAreaTabWidget(this);
         AppRegistry::instance().bus()->subscribe(_workArea, OpeningShellEvent::Type);
-        VERIFY(connect(_workArea, SIGNAL(currentChanged(int)),this, SLOT(updateMenus())));
+        VERIFY(connect(_workArea, SIGNAL(currentChanged(int)), this, SLOT(updateMenus())));
         setCentralWidget(_workArea);
     }
 }

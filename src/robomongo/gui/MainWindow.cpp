@@ -402,8 +402,8 @@ namespace Robomongo
             wid->openFile();
         }
         else {
-            QList<ConnectionSettings *> connections = AppRegistry::instance().settingsManager()->connections();
-            if (connections.count() == 1) {
+            SettingsManager::ConnectionSettingsContainerType connections = AppRegistry::instance().settingsManager()->connections();
+            if (connections.size() == 1) {
                 ScriptInfo inf = ScriptInfo(QString());
                 if (inf.loadFromFile()) {
                     _app->openShell(connections.at(0)->clone(), inf);
@@ -445,8 +445,8 @@ namespace Robomongo
         _connectionsMenu->clear();
         int number = 1;
         // Populate list with connections
-        QList<ConnectionSettings *> connections = AppRegistry::instance().settingsManager()->connections();
-        for(QList<ConnectionSettings *>::const_iterator it = connections.begin(); it!= connections.end(); ++it) {
+        SettingsManager::ConnectionSettingsContainerType connections = AppRegistry::instance().settingsManager()->connections();
+        for(SettingsManager::ConnectionSettingsContainerType::const_iterator it = connections.begin(); it!= connections.end(); ++it) {
             ConnectionSettings *connection = *it;
             QAction *action = new QAction(QtUtils::toQString(connection->getReadableName()), this);
             action->setData(QVariant::fromValue(connection));

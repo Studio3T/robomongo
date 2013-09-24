@@ -99,8 +99,8 @@ namespace Robomongo
         mainLayout->addLayout(firstColumnLayout, 1);
 
         // Populate list with connections
-        QList<ConnectionSettings *> connections = _settingsManager->connections();
-        for (QList<ConnectionSettings *>::iterator it = connections.begin(); it != connections.end(); ++it) {
+        SettingsManager::ConnectionSettingsContainerType connections = _settingsManager->connections();
+        for (SettingsManager::ConnectionSettingsContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
             ConnectionSettings *connectionModel = *it;
             add(connectionModel);
         }
@@ -264,11 +264,11 @@ namespace Robomongo
         }
 
         count = _listWidget->topLevelItemCount();
-        QList<ConnectionSettings *> items;
+        SettingsManager::ConnectionSettingsContainerType items;
         for(int i = 0; i < count; i++)
         {
             ConnectionListWidgetItem * item = (ConnectionListWidgetItem *) _listWidget->topLevelItem(i);
-            items.append(item->connection());
+            items.push_back(item->connection());
         }
 
         _settingsManager->reorderConnections(items);

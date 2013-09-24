@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <vector>
 
 #include "robomongo/core/Enums.h"
 
@@ -22,6 +23,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef std::vector<ConnectionSettings *> ConnectionSettingsContainerType;
         /**
          * @brief Creates SettingsManager for config file in default location
          *        (usually ~/.config/robomongo/robomongo.json)
@@ -61,12 +63,12 @@ namespace Robomongo
          */
         void removeConnection(ConnectionSettings *connection);
 
-        void reorderConnections(const QList<ConnectionSettings *> &connections);
+        void reorderConnections(const ConnectionSettingsContainerType &connections);
 
         /**
          * @brief Returns list of connections
          */
-        const QList<ConnectionSettings *> connections() const { return _connections; }
+        ConnectionSettingsContainerType connections() const { return _connections; }
 
         void setUuidEncoding(UUIDEncoding encoding) { _uuidEncoding = encoding; }
         void setTimeZone(SupportedTimes timeZ) { _timeZone = timeZ; }
@@ -126,6 +128,6 @@ namespace Robomongo
         /**
          * @brief List of connections
          */
-        QList<ConnectionSettings *> _connections;
+        ConnectionSettingsContainerType _connections;
     };
 }

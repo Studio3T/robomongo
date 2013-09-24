@@ -153,7 +153,7 @@ namespace Robomongo
         QVariantList list = map.value("connections").toList();
         for (QVariantList::iterator it = list.begin(); it != list.end(); ++it) {
             ConnectionSettings *record = new ConnectionSettings((*it).toMap());
-            _connections.append(record);
+            _connections.push_back(record);
         }
     }
 
@@ -191,7 +191,7 @@ namespace Robomongo
         // 9. Save connections
         QVariantList list;
 
-        for (QList<ConnectionSettings *>::const_iterator it = _connections.begin(); it!=_connections.end(); ++it) {
+        for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it!=_connections.end(); ++it) {
             QVariantMap rm = (*it)->toVariant().toMap();
             list.append(rm);
         }
@@ -206,7 +206,7 @@ namespace Robomongo
      */
     void SettingsManager::addConnection(ConnectionSettings *connection)
     {
-        _connections.append(connection);
+        _connections.push_back(connection);
         emit connectionAdded(connection);
     }
 
@@ -215,7 +215,8 @@ namespace Robomongo
      */
     void SettingsManager::updateConnection(ConnectionSettings *connection)
     {
-        if (_connections.contains(connection))
+        ConnectionSettingsContainerType::iterator it = std::find(_connections.begin(),_connections.end(),connection);
+        if (it!=_connections.end())
             emit connectionUpdated(connection);
     }
 
@@ -224,7 +225,9 @@ namespace Robomongo
      */
     void SettingsManager::removeConnection(ConnectionSettings *connection)
     {
-        if (_connections.removeOne(connection)) {
+        ConnectionSettingsContainerType::iterator it = std::find(_connections.begin(),_connections.end(),connection);
+        if (it!=_connections.end()) {
+            _connections.erase(it);
             emit connectionRemoved(connection);
             delete connection;
         }
@@ -235,7 +238,7 @@ namespace Robomongo
         _currentStyle = style;
     }
 
-    void SettingsManager::reorderConnections(const QList<ConnectionSettings *> &connections)
+    void SettingsManager::reorderConnections(const ConnectionSettingsContainerType &connections)
     {
         _connections = connections;
     }

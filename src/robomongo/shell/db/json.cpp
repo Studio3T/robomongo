@@ -25,7 +25,6 @@
 #include "mongo/util/base64.h"
 #include "mongo/util/hex.h"
 #include "mongo/util/mongoutils/str.h"
-#include "robomongo/core/domain/Enums.h"
 #include "robomongo/core/HexUtils.h"
 
 namespace mongo {

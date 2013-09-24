@@ -2,8 +2,7 @@
 
 #include <QObject>
 
-#include "robomongo/gui/ViewMode.h"
-#include "robomongo/core/domain/Enums.h"
+#include "robomongo/core/Enums.h"
 
 namespace Robomongo
 {

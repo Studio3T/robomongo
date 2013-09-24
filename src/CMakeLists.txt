@@ -54,6 +54,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/CopyCollectionDialog.h
     robomongo/gui/dialogs/CreateUserDialog.h
     robomongo/gui/dialogs/FunctionTextEditor.h
+    robomongo/gui/dialogs/PreferencesDialog.h
     robomongo/gui/dialogs/AboutDialog.h
     robomongo/gui/editors/FindFrame.h
     robomongo/gui/editors/PlainJavaScriptEditor.h
@@ -63,7 +64,6 @@ SET(HEADERS_GUI
     robomongo/gui/GuiRegistry.h
     robomongo/gui/editors/JSLexer.h
     robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h
-    robomongo/gui/ViewMode.h
     )
 SET(SOURCES_GUI
     robomongo/gui/utils/DialogUtils.cpp
@@ -114,6 +114,7 @@ SET(SOURCES_GUI
     robomongo/gui/dialogs/CreateUserDialog.cpp
     robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.cpp
     robomongo/gui/dialogs/FunctionTextEditor.cpp
+    robomongo/gui/dialogs/PreferencesDialog.cpp
     robomongo/gui/dialogs/AboutDialog.cpp
     )
 
@@ -178,7 +179,7 @@ SET(HEADERS_CORE
     robomongo/core/domain/ScriptInfo.h
     robomongo/core/domain/MongoUser.h
     robomongo/core/domain/MongoFunction.h
-    robomongo/core/domain/Enums.h
+    robomongo/core/Enums.h
     robomongo/core/HexUtils.h
     robomongo/core/utils/BsonUtils.h
     robomongo/core/utils/QtUtils.h
@@ -219,6 +220,7 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoUser.cpp
     robomongo/core/domain/MongoFunction.cpp
     robomongo/core/HexUtils.cpp
+    robomongo/core/Enums.cpp
     robomongo/core/utils/BsonUtils.cpp
     robomongo/core/utils/QtUtils.cpp
     robomongo/core/utils/StdUtils.cpp

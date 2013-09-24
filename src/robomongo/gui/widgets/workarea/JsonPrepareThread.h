@@ -5,7 +5,7 @@
 
 #include "robomongo/core/Core.h"
 
-#include "robomongo/core/domain/Enums.h"
+#include "robomongo/core/Enums.h"
 
 namespace Robomongo
 {

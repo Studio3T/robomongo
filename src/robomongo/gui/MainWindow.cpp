@@ -21,13 +21,13 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/Logger.h"
 
-#include "robomongo/gui/ViewMode.h"
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 #include "robomongo/gui/dialogs/AboutDialog.h"
+#include "robomongo/gui/dialogs/PreferencesDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/AppStyle.h"
 
@@ -249,12 +249,12 @@ namespace Robomongo
         modeGroup->addAction(customModeAction);
 
         // Time Zone
-        QAction *utcTime = new QAction("UTC", this);
+        QAction *utcTime = new QAction(convertTimesToString(Utc), this);
         utcTime->setCheckable(true);
         utcTime->setChecked(AppRegistry::instance().settingsManager()->timeZone() == Utc);
         VERIFY(connect(utcTime, SIGNAL(triggered()), this, SLOT(setUtcTimeZone())));
 
-        QAction *localTime = new QAction("Local Timezone", this);
+        QAction *localTime = new QAction(convertTimesToString(LocalTime), this);
         localTime->setCheckable(true);
         localTime->setChecked(AppRegistry::instance().settingsManager()->timeZone() == LocalTime);
         VERIFY(connect(localTime, SIGNAL(triggered()), this, SLOT(setLocalTimeZone())));
@@ -307,6 +307,11 @@ namespace Robomongo
         VERIFY(connect(disabelConnectionShortcuts, SIGNAL(triggered()), this, SLOT(setDisableConnectionShortcuts())));
         optionsMenu->addSeparator();
         optionsMenu->addAction(disabelConnectionShortcuts);
+
+        QAction *preferencesAction = new QAction("Preferences",this);
+        VERIFY(connect(preferencesAction, SIGNAL(triggered()), this, SLOT(openPreferences())));
+        preferencesAction->setVisible(false);
+        optionsMenu->addAction(preferencesAction);
 
         QActionGroup *uuidEncodingGroup = new QActionGroup(this);
         uuidEncodingGroup->addAction(defaultEncodingAction);
@@ -581,6 +586,12 @@ namespace Robomongo
     void MainWindow::aboutRobomongo()
     {
         AboutDialog dlg(this);
+        dlg.exec();
+    }
+
+    void MainWindow::openPreferences()
+    {
+        PreferencesDialog dlg(this);
         dlg.exec();
     }
 

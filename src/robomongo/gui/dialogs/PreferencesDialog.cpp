@@ -33,7 +33,7 @@ namespace Robomongo
         defLayout->addWidget(defDisplayModeLabel);
         _defDisplayModeComboBox = new QComboBox();
         QStringList modes;
-        for (int i = ViewMode::Text;i<=ViewMode::Custom;++i)
+        for (int i = Text;i<=Custom;++i)
         {
             modes.append(convertViewModeToString(static_cast<ViewMode>(i)));
         }
@@ -46,7 +46,7 @@ namespace Robomongo
         timeZoneLayout->addWidget(timeZoneLabel);
         _timeZoneComboBox = new QComboBox();
         QStringList times;
-        for (int i = SupportedTimes::Utc;i<=SupportedTimes::LocalTime;++i)
+        for (int i = Utc;i<=LocalTime;++i)
         {
             times.append(convertTimesToString(static_cast<SupportedTimes>(i)));
         }
@@ -59,7 +59,7 @@ namespace Robomongo
         uuidEncodingLayout->addWidget(uuidEncodingLabel);
         _uuidEncodingComboBox = new QComboBox();
         QStringList uuids;
-        for (int i = UUIDEncoding::DefaultEncoding;i<=UUIDEncoding::PythonLegacy;++i)
+        for (int i = DefaultEncoding;i<=PythonLegacy;++i)
         {
             uuids.append(convertUUIDEncodingToString(static_cast<UUIDEncoding>(i)));
         }

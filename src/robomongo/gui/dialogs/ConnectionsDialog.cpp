@@ -73,16 +73,16 @@ namespace Robomongo
         // Remove help button (?)
         setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-        QAction *addAction = new QAction("&Add", this);
+        QAction *addAction = new QAction("&Add...", this);
         VERIFY(connect(addAction, SIGNAL(triggered()), this, SLOT(add())));
 
-        QAction *editAction = new QAction("&Edit", this);
+        QAction *editAction = new QAction("&Edit...", this);
         VERIFY(connect(editAction, SIGNAL(triggered()), this, SLOT(edit())));
 
-        QAction *cloneAction = new QAction("&Clone", this);
+        QAction *cloneAction = new QAction("&Clone...", this);
         VERIFY(connect(cloneAction, SIGNAL(triggered()), this, SLOT(clone())));
 
-        QAction *removeAction = new QAction("&Remove", this);
+        QAction *removeAction = new QAction("&Remove...", this);
         VERIFY(connect(removeAction, SIGNAL(triggered()), this, SLOT(remove())));
 
         _listWidget = new ConnectionsTreeWidget;

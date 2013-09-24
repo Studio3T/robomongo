@@ -25,8 +25,9 @@ namespace Robomongo
         QDialog(parent),
         _readonly(readonly)
     {
-        setMinimumWidth(700);
-        setMinimumHeight(550);
+        setMinimumWidth(1000);
+        setMinimumHeight(750);
+        setWindowFlags(Qt::Window | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
 
         Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), collection);
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), database);

@@ -30,7 +30,7 @@ namespace Robomongo
         BaseClass(databaseItem) ,_category(category)
     {
         if (_category == Collections) {
-            QAction *createCollection = new QAction("Create Collection", this);
+            QAction *createCollection = new QAction("Create Collection...", this);
             VERIFY(connect(createCollection, SIGNAL(triggered()), SLOT(ui_createCollection())));
 
             QAction *dbCollectionsStats = new QAction("Collections Statistics", this);
@@ -52,7 +52,7 @@ namespace Robomongo
             QAction *viewUsers = new QAction("View Users", this);
             VERIFY(connect(viewUsers, SIGNAL(triggered()), SLOT(ui_viewUsers())));
 
-            QAction *addUser = new QAction("Add User", this);
+            QAction *addUser = new QAction("Add User...", this);
             VERIFY(connect(addUser, SIGNAL(triggered()), SLOT(ui_addUser())));
 
             BaseClass::_contextMenu->addAction(viewUsers);
@@ -68,7 +68,7 @@ namespace Robomongo
             QAction *viewFunctions = new QAction("View Functions", this);
             VERIFY(connect(viewFunctions, SIGNAL(triggered()), SLOT(ui_viewFunctions())));
 
-            QAction *addFunction = new QAction("Add Function", this);
+            QAction *addFunction = new QAction("Add Function...", this);
             VERIFY(connect(addFunction, SIGNAL(triggered()), SLOT(ui_addFunction())));
 
             BaseClass::_contextMenu->addAction(viewFunctions);

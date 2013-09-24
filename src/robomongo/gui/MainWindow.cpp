@@ -115,7 +115,7 @@ namespace Robomongo
         VERIFY(connect(exitAction, SIGNAL(triggered()), this, SLOT(close())));
 
         // Connect action
-        _connectAction = new QAction("&Connect", this);
+        _connectAction = new QAction("&Connect...", this);
         _connectAction->setShortcut(QKeySequence::Open);
         _connectAction->setIcon(GuiRegistry::instance().connectIcon());
         _connectAction->setIconText("Connect");
@@ -127,7 +127,7 @@ namespace Robomongo
         updateConnectionsMenu();
 
         QToolButton *connectButton = new QToolButton();
-        connectButton->setText("&Connect");
+        connectButton->setText("&Connect...");
         connectButton->setIcon(GuiRegistry::instance().connectIcon());
         connectButton->setFocusPolicy(Qt::NoFocus);
         connectButton->setToolTip("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>");
@@ -319,7 +319,7 @@ namespace Robomongo
         uuidEncodingGroup->addAction(csharpLegacyEncodingAction);
         uuidEncodingGroup->addAction(pythonEncodingAction);
 
-        QAction *aboutRobomongoAction = new QAction("&About Robomongo", this);
+        QAction *aboutRobomongoAction = new QAction("&About Robomongo...", this);
         VERIFY(connect(aboutRobomongoAction, SIGNAL(triggered()), this, SLOT(aboutRobomongo())));
 
         // Options menu

@@ -38,16 +38,16 @@ namespace Robomongo
     ExplorerCollectionDirIndexesTreeItem::ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent)
         :BaseClass(parent)
     {
-        QAction *addIndex = new QAction("Add Index", this);
+        QAction *addIndex = new QAction("Add Index...", this);
         VERIFY(connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex())));
 
-        QAction *addIndexGui = new QAction("Add Index", this);
+        QAction *addIndexGui = new QAction("Add Index...", this);
         VERIFY(connect(addIndexGui, SIGNAL(triggered()), SLOT(ui_addIndexGui())));
 
-        QAction *dropIndex = new QAction("Drop Index", this);
+        QAction *dropIndex = new QAction("Drop Index...", this);
         VERIFY(connect(dropIndex, SIGNAL(triggered()), SLOT(ui_dropIndex())));
 
-        QAction *reIndex = new QAction("Rebuild Indexes", this);
+        QAction *reIndex = new QAction("Rebuild Indexes...", this);
         VERIFY(connect(reIndex, SIGNAL(triggered()), SLOT(ui_reIndex())));
 
         QAction *viewIndex = new QAction("View Indexes", this);
@@ -148,9 +148,9 @@ namespace Robomongo
     ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent,const EnsureIndexInfo &info)
         : BaseClass(parent),_info(info)
     {
-        QAction *deleteIndex = new QAction("Drop Index", this);
+        QAction *deleteIndex = new QAction("Drop Index...", this);
         connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
-        QAction *editIndex = new QAction("Edit Index", this);
+        QAction *editIndex = new QAction("Edit Index...", this);
         connect(editIndex, SIGNAL(triggered()), SLOT(ui_edit()));
 
         BaseClass::_contextMenu->addAction(editIndex);
@@ -203,15 +203,15 @@ namespace Robomongo
     ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection) :
         BaseClass(parent), _collection(collection), _databaseItem(databaseItem)
     {
-        QAction *addDocument = new QAction("Insert Document", this);
+        QAction *addDocument = new QAction("Insert Document...", this);
         VERIFY(connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument())));
 
-        QAction *updateDocument = new QAction("Update Documents", this);
+        QAction *updateDocument = new QAction("Update Documents...", this);
         VERIFY(connect(updateDocument, SIGNAL(triggered()), SLOT(ui_updateDocument())));
-        QAction *removeDocument = new QAction("Remove Documents", this);
+        QAction *removeDocument = new QAction("Remove Documents...", this);
         VERIFY(connect(removeDocument, SIGNAL(triggered()), SLOT(ui_removeDocument())));
 
-        QAction *removeAllDocuments = new QAction("Remove All Documents", this);
+        QAction *removeAllDocuments = new QAction("Remove All Documents...", this);
         VERIFY(connect(removeAllDocuments, SIGNAL(triggered()), SLOT(ui_removeAllDocuments())));
 
         QAction *collectionStats = new QAction("Statistics", this);
@@ -231,14 +231,14 @@ namespace Robomongo
         QAction *shardDistribution = new QAction("Shard Distribution", this);
         VERIFY(connect(shardDistribution, SIGNAL(triggered()), SLOT(ui_shardDistribution())));
 
-        QAction *dropCollection = new QAction("Drop Collection", this);
+        QAction *dropCollection = new QAction("Drop Collection..", this);
         VERIFY(connect(dropCollection, SIGNAL(triggered()), SLOT(ui_dropCollection())));
 
-        QAction *renameCollection = new QAction("Rename Collection", this);
+        QAction *renameCollection = new QAction("Rename Collection...", this);
         VERIFY(connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection())));
-        QAction *duplicateCollection = new QAction("Duplicate Collection", this);
+        QAction *duplicateCollection = new QAction("Duplicate Collection...", this);
         VERIFY(connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection())));
-        QAction *copyCollectionToDiffrentServer = new QAction("Copy Collection to different server", this);
+        QAction *copyCollectionToDiffrentServer = new QAction("Copy Collection to Server...", this);
         VERIFY(connect(copyCollectionToDiffrentServer, SIGNAL(triggered()), SLOT(ui_copyToCollectionToDiffrentServer())));
 
         QAction *viewCollection = new QAction("View Documents", this);

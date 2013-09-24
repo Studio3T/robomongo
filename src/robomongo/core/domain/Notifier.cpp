@@ -46,19 +46,19 @@ namespace Robomongo
     {
         QWidget *wid = dynamic_cast<QWidget*>(_observer);
 
-        _deleteDocumentAction = new QAction("Delete Document", wid);
+        _deleteDocumentAction = new QAction("Delete Document...", wid);
         VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument())));
 
-        _deleteDocumentsAction = new QAction("Delete Documents", wid);
+        _deleteDocumentsAction = new QAction("Delete Documents...", wid);
         VERIFY(connect(_deleteDocumentsAction, SIGNAL(triggered()), SLOT(onDeleteDocuments())));
 
-        _editDocumentAction = new QAction("Edit Document", wid);
+        _editDocumentAction = new QAction("Edit Document...", wid);
         VERIFY(connect(_editDocumentAction, SIGNAL(triggered()), SLOT(onEditDocument())));
 
-        _viewDocumentAction = new QAction("View Document", wid);
+        _viewDocumentAction = new QAction("View Document...", wid);
         VERIFY(connect(_viewDocumentAction, SIGNAL(triggered()), SLOT(onViewDocument())));
 
-        _insertDocumentAction = new QAction("Insert Document", wid);
+        _insertDocumentAction = new QAction("Insert Document...", wid);
         VERIFY(connect(_insertDocumentAction, SIGNAL(triggered()), SLOT(onInsertDocument())));
 
         _copyValueAction = new QAction("Copy Value", wid);

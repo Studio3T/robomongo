@@ -55,10 +55,10 @@ namespace Robomongo
         QAction *dbStats = new QAction("Database Statistics", this);
         VERIFY(connect(dbStats, SIGNAL(triggered()), SLOT(ui_dbStatistics())));
 
-        QAction *dbDrop = new QAction("Drop Database", this);
+        QAction *dbDrop = new QAction("Drop Database..", this);
         VERIFY(connect(dbDrop, SIGNAL(triggered()), SLOT(ui_dbDrop())));
 
-        QAction *dbRepair = new QAction("Repair Database", this);
+        QAction *dbRepair = new QAction("Repair Database...", this);
         VERIFY(connect(dbRepair, SIGNAL(triggered()), SLOT(ui_dbRepair())));
 
         QAction *refreshDatabase = new QAction("Refresh", this);

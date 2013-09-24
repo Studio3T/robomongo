@@ -1,7 +1,5 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 
-#include <stdio.h>
-
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 
@@ -31,7 +29,8 @@ namespace Robomongo
         _connectionName(QtUtils::toStdString(map.value("connectionName").toString())) 
     {
         QVariantList list = map.value("credentials").toList();
-        foreach(QVariant var, list) {
+        for(QVariantList::const_iterator it = list.begin(); it != list.end(); ++it) {
+            QVariant var = *it;
             CredentialSettings *credential = new CredentialSettings(var.toMap());
             addCredential(credential);
         }
@@ -84,7 +83,8 @@ namespace Robomongo
         map.insert("defaultDatabase", QtUtils::toQString(defaultDatabase()));
 
         QVariantList list;
-        foreach(CredentialSettings *credential, credentials()) {
+        for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
+            CredentialSettings *credential = *it;
             list.append(credential->toVariant());
         }
         map.insert("credentials", list);
@@ -96,7 +96,7 @@ namespace Robomongo
      {
          CredentialSettings *result = NULL;
          for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
-             CredentialSettings * cred = *it;
+             CredentialSettings *cred = *it;
              if (cred->databaseName() == databaseName) {
                  result = cred;
                  break;

@@ -4,7 +4,7 @@
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
-#include "robomongo/gui/ViewMode.h"
+#include "robomongo/core/Enums.h"
 #include <vector>
 
 namespace Robomongo

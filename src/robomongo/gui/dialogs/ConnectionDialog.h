@@ -1,9 +1,6 @@
 #pragma once
 
 #include <QDialog>
-QT_BEGIN_NAMESPACE
-class QTabWidget;
-QT_END_NAMESPACE
 
 #include "robomongo/core/Core.h"
 
@@ -26,43 +23,29 @@ namespace Robomongo
          */
         ConnectionDialog(ConnectionSettings *connection);
 
+        ConnectionSettings *const connection() const { return _connection; }
+
+    public Q_SLOTS:
         /**
          * @brief Accept() is called when user agree with entered data.
          */
-        virtual void accept();
-        void apply();
+        virtual void accept();       
 
-        ConnectionSettings *connection() const { return _connection; }
-
-    protected:
-        /**
-         * @brief Close event handler
-         */
-        void closeEvent(QCloseEvent *);
-
-    private slots:
+    private Q_SLOTS:
         /**
          * @brief Test current connection
          */
         void testConnection();
 
-        void tabWidget_currentChanged(int index);
-
     private:
+        void apply();
         ConnectionAuthTab *_authTab;
         ConnectionBasicTab *_basicTab;
         ConnectionAdvancedTab *_advancedTab;
-        QTabWidget *_tabWidget;
 
         /**
          * @brief Edited connection
          */
-        ConnectionSettings *_connection;
-
-        /**
-         * @brief Check that it is okay to close this window
-         *        (there is no modification of data, that we possibly can loose)
-         */
-        bool canBeClosed();
+        ConnectionSettings *const _connection;
     };
 }

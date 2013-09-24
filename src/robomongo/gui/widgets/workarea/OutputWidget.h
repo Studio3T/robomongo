@@ -6,7 +6,7 @@ class QSplitter;
 QT_END_NAMESPACE
 
 #include "robomongo/core/domain/MongoShellResult.h"
-#include "robomongo/gui/ViewMode.h"
+#include "robomongo/core/Enums.h"
 
 namespace Robomongo
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "robomongo/core/domain/Enums.h"
+#include "robomongo/core/Enums.h"
 #include <mongo/bson/bsonelement.h>
 
 namespace Robomongo

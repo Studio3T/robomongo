@@ -58,7 +58,7 @@ namespace Robomongo
             MongoDocumentPtr doc = documents[i]; 
             BsonTreeItem *child = new BsonTreeItem(doc->bsonObj(), _root);
             parseDocument(child,doc->bsonObj());
-            child->setKey(QString("(%1) {...}").arg(i));
+            child->setKey(QString("(%1) %2 {...}").arg(i).arg(child->child(0)->value()));
             child->setType(mongo::Object);
             _root->addChild(child);
         }

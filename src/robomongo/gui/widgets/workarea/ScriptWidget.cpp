@@ -379,13 +379,13 @@ namespace Robomongo
         _currentDatabaseLabel->setDisabled(true);
         
         QHBoxLayout *topLayout = new QHBoxLayout;
+        topLayout->setSpacing(0);
     #if defined(Q_OS_MAC)
         topLayout->setContentsMargins(2, 3, 2, 3);
     #else
         topLayout->setContentsMargins(2, 7, 2, 3);
     #endif
         topLayout->addWidget(_currentServerLabel, 0, Qt::AlignLeft);
-        topLayout->addSpacing(5);
         topLayout->addWidget(_currentDatabaseLabel, 0, Qt::AlignLeft);
         topLayout->addStretch(1);
 

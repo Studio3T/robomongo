@@ -75,27 +75,21 @@ namespace Robomongo
         if (_userName->text().isEmpty()     &&
             _userPassword->text().isEmpty() &&
             _databaseName->text().isEmpty())
-            return;
+            return;       
 
-        _settings->addCredential(new CredentialSettings());
-
-        CredentialSettings *credential = _settings->primaryCredential();
+        CredentialSettings *credential = new CredentialSettings();
         credential->setEnabled(_useAuth->isChecked());
         credential->setUserName(QtUtils::toStdString(_userName->text()));
         credential->setUserPassword(QtUtils::toStdString(_userPassword->text()));
         credential->setDatabaseName(QtUtils::toStdString(_databaseName->text()));
+        _settings->addCredential(credential);
     }
 
     void ConnectionAuthTab::toggleEchoMode()
     {
-        if (_userPassword->echoMode() == QLineEdit::Password) {
-            _userPassword->setEchoMode(QLineEdit::Normal);
-            _echoModeButton->setText("Hide");
-            return;
-        }
-
-        _userPassword->setEchoMode(QLineEdit::Password);
-        _echoModeButton->setText("Show");
+        bool isPassword = _userPassword->echoMode() == QLineEdit::Password;
+        _userPassword->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
+        _echoModeButton->setText(isPassword ? "Hide": "Show");
     }
 
     void ConnectionAuthTab::authChecked(bool checked)

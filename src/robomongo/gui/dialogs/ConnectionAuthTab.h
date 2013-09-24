@@ -22,6 +22,7 @@ namespace Robomongo
 
     private Q_SLOTS:
         void toggleEchoMode();
+        void authChecked(bool checked);
 
     private:
         QLineEdit *_userName;
@@ -34,10 +35,6 @@ namespace Robomongo
         QCheckBox *_useAuth;
         QPushButton *_echoModeButton;
 
-        ConnectionSettings *_settings;
-        //QGridLayout *_authLayout;
-
-    protected slots:
-        void authChecked(bool checked);
+        ConnectionSettings *const _settings;        
     };
 }

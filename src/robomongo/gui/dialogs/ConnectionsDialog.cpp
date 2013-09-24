@@ -245,7 +245,7 @@ namespace Robomongo
             (ConnectionListWidgetItem *)_listWidget->currentItem();
 
         // Do nothing if no item selected
-        if (currentItem == 0)
+        if (!currentItem)
             return;
 
         ConnectionSettings *connectionModel = currentItem->connection();

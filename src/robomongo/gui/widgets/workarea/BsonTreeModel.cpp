@@ -49,16 +49,26 @@ namespace
 
 namespace Robomongo
 {
-    BsonTreeModel::BsonTreeModel(const std::vector<MongoDocumentPtr> &documents, QObject *parent) 
-        : BaseClass(parent) ,
+    BsonTreeModel::BsonTreeModel(const std::vector<MongoDocumentPtr> &documents, QObject *parent) :
+        BaseClass(parent),
         _root(new BsonTreeItem(this))
     {
-        for (int i = 0; i<documents.size(); ++i)
-        {
+        for (int i = 0; i < documents.size(); ++i) {
             MongoDocumentPtr doc = documents[i]; 
             BsonTreeItem *child = new BsonTreeItem(doc->bsonObj(), _root);
-            parseDocument(child,doc->bsonObj());
-            child->setKey(QString("(%1) %2 {...}").arg(i).arg(child->child(0)->value()));
+            parseDocument(child, doc->bsonObj());
+
+            QString idValue;
+            BsonTreeItem *idItem = child->childByKey("_id");
+            if (idItem) {
+                idValue = idItem->value();
+            }
+
+            child->setKey(QString("(%1) %2").arg(i).arg(idValue));
+
+            int count = BsonUtils::elementsCount(doc->bsonObj());
+            child->setValue(QString("{ %1 fields }").arg(count));
+
             child->setType(mongo::Object);
             _root->addChild(child);
         }

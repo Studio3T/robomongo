@@ -93,7 +93,6 @@ namespace Robomongo
             "QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } \n"
             "Robomongo--ExplorerTreeWidget#explorerTree { padding: 1px 0px 0px 0px; background-color: %1; border: 0px; } \n"
             "QMainWindow::separator { background: #E7E5E4; width: 1px; } "
-            "QToolBar { border-bottom: 1px solid #c7c5c4; } "
         ).arg(explorerColor));
 
         _openAction = new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this);

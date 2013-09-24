@@ -1,5 +1,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 
+#include <stdio.h>
+
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 

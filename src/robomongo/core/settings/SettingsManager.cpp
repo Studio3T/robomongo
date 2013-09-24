@@ -36,8 +36,7 @@ namespace Robomongo
      * Creates SettingsManager for config file in default location
      * ~/.config/robomongo/robomongo.json
      */
-    SettingsManager::SettingsManager(QObject *parent) :
-        QObject(parent),
+    SettingsManager::SettingsManager() :
         _version(SchemaVersion),
         _uuidEncoding(DefaultEncoding),
         _timeZone(Utc),
@@ -207,17 +206,6 @@ namespace Robomongo
     void SettingsManager::addConnection(ConnectionSettings *connection)
     {
         _connections.push_back(connection);
-        emit connectionAdded(connection);
-    }
-
-    /**
-     * Update connection
-     */
-    void SettingsManager::updateConnection(ConnectionSettings *connection)
-    {
-        ConnectionSettingsContainerType::iterator it = std::find(_connections.begin(),_connections.end(),connection);
-        if (it!=_connections.end())
-            emit connectionUpdated(connection);
     }
 
     /**
@@ -228,7 +216,6 @@ namespace Robomongo
         ConnectionSettingsContainerType::iterator it = std::find(_connections.begin(),_connections.end(),connection);
         if (it!=_connections.end()) {
             _connections.erase(it);
-            emit connectionRemoved(connection);
             delete connection;
         }
     }

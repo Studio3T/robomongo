@@ -1,8 +1,8 @@
 #pragma once
 
-#include <QObject>
+#include <QString>
+#include <QVariantMap>
 #include <vector>
-
 #include "robomongo/core/Enums.h"
 
 namespace Robomongo
@@ -18,17 +18,15 @@ namespace Robomongo
      *
      * @threadsafe no
      */
-    class SettingsManager : public QObject
+    class SettingsManager
     {
-        Q_OBJECT
-
     public:
         typedef std::vector<ConnectionSettings *> ConnectionSettingsContainerType;
         /**
          * @brief Creates SettingsManager for config file in default location
          *        (usually ~/.config/robomongo/robomongo.json)
          */
-        SettingsManager(QObject *parent = NULL);
+        SettingsManager();
 
         /**
          * @brief Cleanup owned objects
@@ -52,12 +50,7 @@ namespace Robomongo
          * Connection now will be owned by SettingsManager.
          */
         void addConnection(ConnectionSettings *connection);
-
-        /**
-         * @brief Update connection
-         */
-        void updateConnection(ConnectionSettings *connection);
-
+        
         /**
          * @brief Removes connection by index
          */
@@ -90,10 +83,6 @@ namespace Robomongo
         QString currentStyle() const {return _currentStyle; }
         void setCurrentStyle(const QString& style);
 
-    Q_SIGNALS:
-        void connectionAdded(ConnectionSettings *connection);
-        void connectionUpdated(ConnectionSettings *connection);
-        void connectionRemoved(ConnectionSettings *connection);
 
     private:
 

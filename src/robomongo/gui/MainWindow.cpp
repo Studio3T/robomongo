@@ -24,6 +24,7 @@
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
+#include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 #include "robomongo/gui/dialogs/AboutDialog.h"
@@ -744,6 +745,8 @@ namespace Robomongo
         _workArea = new WorkAreaTabWidget(this);
         AppRegistry::instance().bus()->subscribe(_workArea, OpeningShellEvent::Type);
         VERIFY(connect(_workArea, SIGNAL(currentChanged(int)), this, SLOT(updateMenus())));
-        setCentralWidget(_workArea);
+
+        WorkAreaWidget *workAreaWidget = new WorkAreaWidget(_workArea);
+        setCentralWidget(workAreaWidget);
     }
 }

@@ -29,6 +29,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/QueryWidget.h
     robomongo/gui/widgets/workarea/WorkAreaTabWidget.h
     robomongo/gui/widgets/workarea/WorkAreaTabBar.h
+    robomongo/gui/widgets/workarea/WorkAreaWidget.h
     robomongo/gui/widgets/workarea/JsonPrepareThread.h
     robomongo/gui/widgets/workarea/BsonTreeView.h
     robomongo/gui/widgets/workarea/BsonTreeModel.h
@@ -84,6 +85,7 @@ SET(SOURCES_GUI
     robomongo/gui/widgets/workarea/QueryWidget.cpp
     robomongo/gui/widgets/workarea/WorkAreaTabWidget.cpp
     robomongo/gui/widgets/workarea/WorkAreaTabBar.cpp
+    robomongo/gui/widgets/workarea/WorkAreaWidget.cpp
     robomongo/gui/widgets/workarea/JsonPrepareThread.cpp
     robomongo/gui/widgets/workarea/BsonTreeView.cpp
     robomongo/gui/widgets/workarea/BsonTreeModel.cpp

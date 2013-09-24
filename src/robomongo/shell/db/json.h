@@ -20,7 +20,7 @@
 
 #include "mongo/bson/bsonobj.h"
 #include "mongo/base/status.h"
-#include "robomongo/core/domain/Enums.h"
+#include "robomongo/core/Enums.h"
 
 namespace mongo {
 namespace Robomongo {

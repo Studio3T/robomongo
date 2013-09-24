@@ -1,7 +1,5 @@
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 
-#include <stdio.h>
-#include <QApplication>
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QAction>
@@ -9,31 +7,71 @@
 #include <QLabel>
 #include <QHeaderView>
 #include <QDialogButtonBox>
+#include <QTreeWidgetItem>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
+
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/ConnectionDialog.h"
 
 namespace Robomongo
 {
+    
+    /**
+     * @brief Simple ListWidgetItem that has several convenience methods.
+     */
+    class ConnectionListWidgetItem : public QTreeWidgetItem
+    {
+    public:
+        /**
+         * @brief Creates ConnectionListWidgetItem with specified ConnectionSettings
+         */
+        ConnectionListWidgetItem(ConnectionSettings *connection) { setConnection(connection); }
+
+        /**
+         * @brief Returns attached ConnectionSettings.
+         */
+        ConnectionSettings *connection() { return _connection; }
+
+        /**
+         * @brief Attach ConnectionSettings to this item
+         */
+        void setConnection(ConnectionSettings *connection)
+        {
+            setText(0, QtUtils::toQString(connection->connectionName()));
+            setText(1, QtUtils::toQString(connection->getFullAddress()));
+
+            if (connection->hasEnabledPrimaryCredential()) {
+                QString authString = QString("%1 / %2").arg(QtUtils::toQString(connection->primaryCredential()->databaseName())).arg(QtUtils::toQString(connection->primaryCredential()->userName()));
+                setText(2, authString);
+                setIcon(2, GuiRegistry::instance().keyIcon());
+            } else {
+                setIcon(2, QIcon());
+                setText(2, "");
+            }
+
+            _connection = connection;
+            setIcon(0, GuiRegistry::instance().serverIcon());
+        }
+
+    private:
+        ConnectionSettings *_connection;
+    };
+
     /**
      * @brief Creates dialog
      */
-    ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) : QDialog()
+    ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) 
+        : QDialog(), _settingsManager(settingsManager)
     {
         setWindowIcon(GuiRegistry::instance().connectIcon());
         setWindowTitle("MongoDB Connections");
 
         // Remove help button (?)
         setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
-
-        _settingsManager = settingsManager;
-        VERIFY(connect(_settingsManager, SIGNAL(connectionAdded(ConnectionSettings *)), this, SLOT(add(ConnectionSettings*))));
-        VERIFY(connect(_settingsManager, SIGNAL(connectionUpdated(ConnectionSettings *)), this, SLOT(update(ConnectionSettings*))));
-        VERIFY(connect(_settingsManager, SIGNAL(connectionRemoved(ConnectionSettings *)), this, SLOT(remove(ConnectionSettings*))));
 
         QAction *addAction = new QAction("&Add", this);
         VERIFY(connect(addAction, SIGNAL(triggered()), this, SLOT(add())));
@@ -99,8 +137,8 @@ namespace Robomongo
         mainLayout->addLayout(firstColumnLayout, 1);
 
         // Populate list with connections
-        QList<ConnectionSettings *> connections = _settingsManager->connections();
-        for (QList<ConnectionSettings *>::iterator it = connections.begin(); it != connections.end(); ++it) {
+        SettingsManager::ConnectionSettingsContainerType connections = _settingsManager->connections();
+        for (SettingsManager::ConnectionSettingsContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
             ConnectionSettings *connectionModel = *it;
             add(connectionModel);
         }
@@ -120,12 +158,11 @@ namespace Robomongo
         ConnectionListWidgetItem *currentItem = (ConnectionListWidgetItem *) _listWidget->currentItem();
 
         // Do nothing if no item selected
-        if (currentItem == 0)
+        if (!currentItem)
             return;
 
         _selectedConnection = currentItem->connection();
 
-        close();
         QDialog::accept();
     }
 
@@ -157,6 +194,7 @@ namespace Robomongo
 
         _settingsManager->addConnection(newModel);
         _listWidget->setFocus();
+        add(newModel);
     }
 
     /**
@@ -182,11 +220,20 @@ namespace Robomongo
             return;
         }
 
-        connection->apply(editDialog.connection());
-        _settingsManager->updateConnection(connection);
+        connection->apply(editDialog.connection());       
 
         // on linux focus is lost - we need to activate connections dialog
         activateWindow();
+
+        int size = _connectionItems.size();
+        for (int i=0; i<size; ++i)
+        {
+            ConnectionListWidgetItem *item = _connectionItems[i];
+            if(_connectionItems[i]->connection()==connection){
+                item->setConnection(connection);
+                break;
+            }
+        }        
     }
 
     /**
@@ -198,7 +245,7 @@ namespace Robomongo
             (ConnectionListWidgetItem *)_listWidget->currentItem();
 
         // Do nothing if no item selected
-        if (currentItem == 0)
+        if (!currentItem)
             return;
 
         ConnectionSettings *connectionModel = currentItem->connection();
@@ -213,6 +260,7 @@ namespace Robomongo
             return;
 
         _settingsManager->removeConnection(connectionModel);
+        delete currentItem;
     }
 
     void ConnectionsDialog::clone()
@@ -240,6 +288,7 @@ namespace Robomongo
 
         // Now connection will be owned by SettingsManager
         _settingsManager->addConnection(connection);
+        add(connection);
     }
 
     /**
@@ -264,11 +313,11 @@ namespace Robomongo
         }
 
         count = _listWidget->topLevelItemCount();
-        QList<ConnectionSettings *> items;
+        SettingsManager::ConnectionSettingsContainerType items;
         for(int i = 0; i < count; i++)
         {
             ConnectionListWidgetItem * item = (ConnectionListWidgetItem *) _listWidget->topLevelItem(i);
-            items.append(item->connection());
+            items.push_back(item->connection());
         }
 
         _settingsManager->reorderConnections(items);
@@ -280,53 +329,9 @@ namespace Robomongo
     void ConnectionsDialog::add(ConnectionSettings *connection)
     {
         ConnectionListWidgetItem *item = new ConnectionListWidgetItem(connection);
-        item->setIcon(0, GuiRegistry::instance().serverIcon());
-
         _listWidget->addTopLevelItem(item);
-        _hash.insert(connection, item);
+        _connectionItems.push_back(item);
     }
-
-    /**
-     * @brief Update specified connection (if it exists for this dialog)
-     */
-    void ConnectionsDialog::update(ConnectionSettings *connection)
-    {
-        ConnectionListWidgetItem *item = _hash.value(connection);
-        if (!item)
-            return;
-
-        item->setConnection(connection);
-    }
-
-    /**
-     * @brief Remove specified connection (if it exists for this dialog)
-     */
-    void ConnectionsDialog::remove(ConnectionSettings *connection)
-    {
-        QTreeWidgetItem *item = _hash.value(connection);
-        delete item;
-    }
-
-    /**
-     * @brief Attach ConnectionSettings to this item
-     */
-    void ConnectionListWidgetItem::setConnection(ConnectionSettings *connection)
-    {
-        setText(0, QtUtils::toQString(connection->connectionName()));
-        setText(1, QtUtils::toQString(connection->getFullAddress()));
-
-        if (connection->hasEnabledPrimaryCredential()) {
-            QString authString = QString("%1 / %2").arg(QtUtils::toQString(connection->primaryCredential()->databaseName())).arg(QtUtils::toQString(connection->primaryCredential()->userName()));
-            setText(2, authString);
-            setIcon(2, GuiRegistry::instance().keyIcon());
-        } else {
-            setIcon(2, QIcon());
-            setText(2, "");
-        }
-
-        _connection = connection;
-    }
-
 
     ConnectionsTreeWidget::ConnectionsTreeWidget()
     {
@@ -335,43 +340,10 @@ namespace Robomongo
         setDragEnabled(true);
         setAcceptDrops(true);
     }
-    /*
-    void ConnectionsTreeWidget::dragMoveEvent(QDragMoveEvent *event)
-    {
-        event->acceptProposedAction();
-    }
-
-    void ConnectionsTreeWidget::dragEnterEvent(QDragEnterEvent *event)
-    {
-        event->acceptProposedAction();
-    }
-    */
 
     void ConnectionsTreeWidget::dropEvent(QDropEvent *event)
     {
         QTreeWidget::dropEvent(event);
         emit layoutChanged();
-    /*    event->accept();
-        QTreeWidgetItem *dropingOn = itemAt(event->pos());
-        int dropingIndex = indexOfTopLevelItem(dropingOn);
-        takeTopLevelItem(indexOfTopLevelItem(draggingItem));
-        int index = indexOfTopLevelItem(dropingOn);
-
-        if(index < dropingIndex)
-            index++;
-
-        insertTopLevelItem(index, draggingItem);*/
     }
-
-    /*
-    void ConnectionsTreeWidget::mousePressEvent(QMouseEvent *event)
-    {
-        if(event->button()==Qt::LeftButton) {
-            draggingItem = itemAt(event->pos());
-            QDrag *drag = new QDrag(this);
-            drag->exec(Qt::MoveAction | Qt::CopyAction, Qt::CopyAction);
-            event->accept();
-       }
-    }
-    */
 }

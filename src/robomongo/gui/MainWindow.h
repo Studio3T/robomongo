@@ -60,6 +60,8 @@ namespace Robomongo
         void updateMenus();
         void setUtcTimeZone();
         void setLocalTimeZone();
+        void openPreferences();
+
     private:
         QLabel *_status;
         QDockWidget *_logDock;

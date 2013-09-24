@@ -96,15 +96,16 @@ namespace Robomongo
 
         std::string jsonString(BSONElement &elem, JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat)
         {
-            BSONType t = elem.type();
-            if ( t == Undefined )
-                return "undefined";
+            BSONType t = elem.type();            
 
             stringstream s;
             if ( includeFieldNames )
                 s << '"' << escape( elem.fieldName() ) << "\" : ";
 
             switch ( t ) {
+            case Undefined:
+                s << "undefined";
+                break;
             case mongo::String:
             case Symbol:
                 s << '"' << escape( string(elem.valuestr(), elem.valuestrsize()-1) ) << '"';

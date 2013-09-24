@@ -21,13 +21,13 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/Logger.h"
 
-#include "robomongo/gui/ViewMode.h"
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 #include "robomongo/gui/dialogs/AboutDialog.h"
+#include "robomongo/gui/dialogs/PreferencesDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/AppStyle.h"
 
@@ -249,12 +249,12 @@ namespace Robomongo
         modeGroup->addAction(customModeAction);
 
         // Time Zone
-        QAction *utcTime = new QAction("UTC", this);
+        QAction *utcTime = new QAction(convertTimesToString(Utc), this);
         utcTime->setCheckable(true);
         utcTime->setChecked(AppRegistry::instance().settingsManager()->timeZone() == Utc);
         VERIFY(connect(utcTime, SIGNAL(triggered()), this, SLOT(setUtcTimeZone())));
 
-        QAction *localTime = new QAction("Local Timezone", this);
+        QAction *localTime = new QAction(convertTimesToString(LocalTime), this);
         localTime->setCheckable(true);
         localTime->setChecked(AppRegistry::instance().settingsManager()->timeZone() == LocalTime);
         VERIFY(connect(localTime, SIGNAL(triggered()), this, SLOT(setLocalTimeZone())));
@@ -308,6 +308,11 @@ namespace Robomongo
         optionsMenu->addSeparator();
         optionsMenu->addAction(disabelConnectionShortcuts);
 
+        QAction *preferencesAction = new QAction("Preferences",this);
+        VERIFY(connect(preferencesAction, SIGNAL(triggered()), this, SLOT(openPreferences())));
+        preferencesAction->setVisible(false);
+        optionsMenu->addAction(preferencesAction);
+
         QActionGroup *uuidEncodingGroup = new QActionGroup(this);
         uuidEncodingGroup->addAction(defaultEncodingAction);
         uuidEncodingGroup->addAction(javaLegacyEncodingAction);
@@ -325,6 +330,7 @@ namespace Robomongo
         QToolBar *connectToolBar = new QToolBar("Toolbar", this);
         connectToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
         connectToolBar->addAction(connectButtonAction);
+        connectToolBar->addSeparator();
         connectToolBar->setShortcutEnabled(1, true);
         connectToolBar->setMovable(false);
         setToolBarIconSize(connectToolBar);
@@ -333,6 +339,7 @@ namespace Robomongo
         QToolBar *openSaveToolBar = new QToolBar("Open/Save ToolBar", this);
         openSaveToolBar->addAction(_openAction);
         openSaveToolBar->addAction(_saveAction);
+        openSaveToolBar->addSeparator();
         openSaveToolBar->setMovable(false);
         setToolBarIconSize(openSaveToolBar);
         addToolBar(openSaveToolBar);
@@ -395,8 +402,8 @@ namespace Robomongo
             wid->openFile();
         }
         else {
-            QList<ConnectionSettings *> connections = AppRegistry::instance().settingsManager()->connections();
-            if (connections.count() == 1) {
+            SettingsManager::ConnectionSettingsContainerType connections = AppRegistry::instance().settingsManager()->connections();
+            if (connections.size() == 1) {
                 ScriptInfo inf = ScriptInfo(QString());
                 if (inf.loadFromFile()) {
                     _app->openShell(connections.at(0)->clone(), inf);
@@ -438,8 +445,8 @@ namespace Robomongo
         _connectionsMenu->clear();
         int number = 1;
         // Populate list with connections
-        QList<ConnectionSettings *> connections = AppRegistry::instance().settingsManager()->connections();
-        for(QList<ConnectionSettings *>::const_iterator it = connections.begin(); it!= connections.end(); ++it) {
+        SettingsManager::ConnectionSettingsContainerType connections = AppRegistry::instance().settingsManager()->connections();
+        for(SettingsManager::ConnectionSettingsContainerType::const_iterator it = connections.begin(); it!= connections.end(); ++it) {
             ConnectionSettings *connection = *it;
             QAction *action = new QAction(QtUtils::toQString(connection->getReadableName()), this);
             action->setData(QVariant::fromValue(connection));
@@ -579,6 +586,12 @@ namespace Robomongo
     void MainWindow::aboutRobomongo()
     {
         AboutDialog dlg(this);
+        dlg.exec();
+    }
+
+    void MainWindow::openPreferences()
+    {
+        PreferencesDialog dlg(this);
         dlg.exec();
     }
 

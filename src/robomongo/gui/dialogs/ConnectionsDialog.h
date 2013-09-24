@@ -2,8 +2,6 @@
 
 #include <QDialog>
 #include <QTreeWidget>
-#include <QTreeWidgetItem>
-#include <QHash>
 
 #include "robomongo/core/Core.h"
 
@@ -21,6 +19,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef std::vector<ConnectionListWidgetItem *> ConnectionListItemContainerType; 
         /**
          * @brief Creates dialog
          */
@@ -44,16 +43,6 @@ namespace Robomongo
          * @brief Add connection to the list widget
          */
         void add(ConnectionSettings *connection);
-
-        /**
-         * @brief Update specified connection (if it exists for this dialog)
-         */
-        void update(ConnectionSettings *connection);
-
-        /**
-         * @brief Remove specified connection (if it exists for this dialog)
-         */
-        void remove(ConnectionSettings *connection);
 
         /**
          * @brief Initiate 'add' action, usually when user clicked on Add button
@@ -104,33 +93,8 @@ namespace Robomongo
          * @brief Hash that helps to connect ConnectionSettings with
          * ConnectionListWidgetItem*
          */
-        QHash<ConnectionSettings *, ConnectionListWidgetItem *> _hash;
-    };
-
-    /**
-     * @brief Simple ListWidgetItem that has several convenience methods.
-     */
-    class ConnectionListWidgetItem : public QTreeWidgetItem
-    {
-    public:
-        /**
-         * @brief Creates ConnectionListWidgetItem with specified ConnectionSettings
-         */
-        ConnectionListWidgetItem(ConnectionSettings *connection) { setConnection(connection); }
-
-        /**
-         * @brief Returns attached ConnectionSettings.
-         */
-        ConnectionSettings *connection() { return _connection; }
-
-        /**
-         * @brief Attach ConnectionSettings to this item
-         */
-        void setConnection(ConnectionSettings *connection);
-
-    private:
-        ConnectionSettings *_connection;
-    };
+        ConnectionListItemContainerType _connectionItems;
+    };    
 
     class ConnectionsTreeWidget : public QTreeWidget
     {
@@ -142,11 +106,6 @@ namespace Robomongo
         void layoutChanged();
 
     protected:
-//        void dragMoveEvent(QDragMoveEvent *event);
-//        void dragEnterEvent(QDragEnterEvent *event);
         void dropEvent(QDropEvent *event);
-//        void mousePressEvent(QMouseEvent *event);
-    private:
-        QTreeWidgetItem *draggingItem;
     };
 }

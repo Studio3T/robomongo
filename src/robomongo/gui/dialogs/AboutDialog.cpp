@@ -1,4 +1,4 @@
-#include "AboutDialog.h"
+#include "robomongo/gui/dialogs/AboutDialog.h"
 
 #include <QDialogButtonBox>
 #include <QGridLayout>

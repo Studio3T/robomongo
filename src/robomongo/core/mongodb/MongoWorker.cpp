@@ -35,18 +35,18 @@ namespace Robomongo
     {
         if (_timerId==event->timerId())
         {
-            keepAlive();
+           // keepAlive();
         }
     }
 
     void MongoWorker::init()
     {
+        _timerId = startTimer(pingTimeMs);
         try {
             _scriptEngine = new ScriptEngine(_connection);
             _scriptEngine->init(_isLoadMongoRcJs);
             _scriptEngine->use(_connection->defaultDatabase());
             _scriptEngine->setBatchSize(_batchSize);
-            _timerId = startTimer(pingTimeMs);
         }
         catch (const std::exception &ex) {
             LOG_MSG(ex.what(), mongo::LL_ERROR);

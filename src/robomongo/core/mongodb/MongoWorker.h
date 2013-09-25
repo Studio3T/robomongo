@@ -25,10 +25,7 @@ namespace Robomongo
         ConnectionSettings *connectionRecord() const {return _connection;}
         ~MongoWorker();
         enum{pingTimeMs = 60*1000};
-        /**
-         * @brief Send event to this MongoWorker
-         */
-        void send(Event *event);
+        
     protected Q_SLOTS: // handlers:
         void init();
         /**
@@ -122,6 +119,10 @@ namespace Robomongo
         virtual void timerEvent(QTimerEvent *);
 
     private:
+        /**
+         * @brief Send event to this MongoWorker
+         */
+        void send(Event *event);
 
         mongo::DBClientBase *_dbclient;
         mongo::DBClientBase *getConnection();

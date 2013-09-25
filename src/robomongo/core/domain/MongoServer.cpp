@@ -36,7 +36,7 @@ namespace Robomongo
      */
     void MongoServer::tryConnect()
     {
-        _client->send(new EstablishConnectionRequest(this,
+        AppRegistry::instance().bus()->send(_client,new EstablishConnectionRequest(this,
             "_connectionRecord->databaseName()",
             "_connectionRecord->userName()",
             "_connectionRecord->userPassword()"));
@@ -54,7 +54,7 @@ namespace Robomongo
 
     void MongoServer::createDatabase(const std::string &dbName)
     {
-        _client->send(new CreateDatabaseRequest(this, dbName));
+        AppRegistry::instance().bus()->send(_client,new CreateDatabaseRequest(this, dbName));
     }
 
     MongoDatabase *MongoServer::findDatabaseByName(const std::string &dbName) const
@@ -70,7 +70,7 @@ namespace Robomongo
 
     void MongoServer::dropDatabase(const std::string &dbName)
     {
-        _client->send(new DropDatabaseRequest(this, dbName));
+        AppRegistry::instance().bus()->send(_client,new DropDatabaseRequest(this, dbName));
     }
 
     void MongoServer::insertDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection)
@@ -82,7 +82,7 @@ namespace Robomongo
 
     void MongoServer::insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)
     {
-        _client->send(new InsertDocumentRequest(this, obj, db, collection));
+        AppRegistry::instance().bus()->send(_client,new InsertDocumentRequest(this, obj, db, collection));
     }
 
     void MongoServer::saveDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection)
@@ -94,18 +94,18 @@ namespace Robomongo
 
     void MongoServer::saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)
     {
-        _client->send(new InsertDocumentRequest(this, obj, db, collection, true));
+        AppRegistry::instance().bus()->send(_client, new InsertDocumentRequest(this, obj, db, collection, true));
     }
 
     void MongoServer::removeDocuments(mongo::Query query, const std::string &db, const std::string &collection, bool justOne)
     {
-        _client->send(new RemoveDocumentRequest(this, query, db, collection, justOne));
+        AppRegistry::instance().bus()->send(_client, new RemoveDocumentRequest(this, query, db, collection, justOne));
     }
 
     void MongoServer::loadDatabases()
     {
         AppRegistry::instance().bus()->publish(new MongoServerLoadingDatabasesEvent(this));
-        _client->send(new LoadDatabaseNamesRequest(this));
+        AppRegistry::instance().bus()->send(_client, new LoadDatabaseNamesRequest(this));
     }
 
     void MongoServer::clearDatabases()

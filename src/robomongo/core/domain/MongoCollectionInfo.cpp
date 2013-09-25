@@ -1,5 +1,5 @@
 #include "MongoCollectionInfo.h"
-#include <mongo/client/dbclient.h>
+#include "robomongo/core/utils/BsonUtils.h"
 
 namespace Robomongo
 {
@@ -7,10 +7,10 @@ namespace Robomongo
     {
         // if "size" and "storageSize" are of type Int32 or Int64, they
         // will be converted to double by "numberDouble()" function.
-        _sizeBytes = stats.getField("size").numberDouble();
-        _storageSizeBytes = stats.getField("storageSize").numberDouble();
+        _sizeBytes = BsonUtils::getField<mongo::NumberDouble>(stats,"size");
+        _storageSizeBytes = BsonUtils::getField<mongo::NumberDouble>(stats,"storageSize");
 
-        _count = stats.getIntField("count");
+        _count = BsonUtils::getField<mongo::NumberInt>(stats,"count");
     }
 }
 

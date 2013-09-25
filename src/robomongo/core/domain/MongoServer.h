@@ -1,6 +1,5 @@
 #pragma once
 #include <QObject>
-#include <QList>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/events/MongoEvents.h"
@@ -50,22 +49,19 @@ namespace Robomongo
         void saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
         void removeDocuments(mongo::Query query, const std::string &db, const std::string &collection, bool justOne = true);
         float version() const{ return _version; }
-        /**
-         * @brief Returns last error message
-         */
-        std::string lastErrorMessage() { return _lastErrorMessage; }
+
 
         /**
          * @brief Returns associated connection record
          */
-        ConnectionSettings *connectionRecord() const { return _connectionRecord; }
+        ConnectionSettings *connectionRecord() const;
 
         /**
          * @brief Loads databases of this server asynchronously.
          */
         void loadDatabases();
         bool visible() const { return _visible; }
-        MongoWorker *client() const { return _client.data(); }
+        MongoWorker *const client() const { return _client; }
 
     protected Q_SLOTS:
         void handle(EstablishConnectionResponse *event);
@@ -75,24 +71,12 @@ namespace Robomongo
         void clearDatabases();
         void addDatabase(MongoDatabase *database);
 
-        QScopedPointer<MongoWorker> _client;
-        DBClientConnectionScopedPtr _connection;
+        MongoWorker *const _client;
 
-        /**
-         * @brief Associated connection record
-         */
-        ConnectionSettings *_connectionRecord;
-
-        std::string _host;
-        std::string _port;
-        std::string _address;
-        std::string _lastErrorMessage;
         float _version;
         bool _visible;
 
         DatabasesContainerType _databases;
-
-        EventBus *_bus;
     };
 
     class MongoServerLoadingDatabasesEvent : public Event

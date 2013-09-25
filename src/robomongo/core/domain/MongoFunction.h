@@ -1,7 +1,6 @@
 #pragma once
 
 #include <mongo/bson/bsonobj.h>
-#include <QString>
 
 namespace Robomongo
 {

@@ -689,6 +689,10 @@ namespace Robomongo
     void MainWindow::createDatabaseExplorer()
     {
         ExplorerWidget *explorer = new ExplorerWidget(this);
+        AppRegistry::instance().bus()->subscribe(explorer, ConnectingEvent::Type);
+        AppRegistry::instance().bus()->subscribe(explorer, ConnectionFailedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(explorer, ConnectionEstablishedEvent::Type);
+
         QDockWidget *explorerDock = new QDockWidget(tr("Database Explorer"));
         explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
         explorerDock->setWidget(explorer);

@@ -17,7 +17,7 @@ namespace
     const char* tooltipTemplate = 
         "%s "
         "<table>"
-        "<tr><td>ID:</td><td width=\"170\"><b>&nbsp;&nbsp;%s</b></td></tr>"
+        "<tr><td>ID:</td><td width=\"180\"><b>&nbsp;&nbsp;%s</b></td></tr>"
         "</table>";
 
     std::string buildToolTip(const Robomongo::MongoUser &user)

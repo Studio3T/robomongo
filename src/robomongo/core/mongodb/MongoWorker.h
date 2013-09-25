@@ -22,7 +22,7 @@ namespace Robomongo
 
     public:
         explicit MongoWorker(ConnectionSettings *connection, QObject *parent = NULL);
-
+        ConnectionSettings *connectionRecord() const {return _connection;}
         ~MongoWorker();
 
         /**
@@ -41,11 +41,6 @@ namespace Robomongo
          * @brief Initialize MongoWorker (should be the first request)
          */
         void handle(InitRequest *event);
-
-        /**
-         * @brief Initialize MongoWorker (should be the first request)
-         */
-        void handle(FinalizeRequest *event);
 
         /**
          * @brief Initiate connection to MongoDB
@@ -135,16 +130,9 @@ namespace Robomongo
         MongoClient *getClient();
 
         /**
-         * @brief Initialise MongoWorker
-         */
-        void init();
-
-        /**
          * @brief Send reply event to object 'obj'
          */
         void reply(QObject *receiver, Event *event);
-
-        const std::string _address;
         QThread *_thread;
         QMutex _firstConnectionMutex;
 

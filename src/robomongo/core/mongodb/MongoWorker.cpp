@@ -22,9 +22,11 @@ namespace Robomongo
         _connection(connection),
         _scriptEngine(NULL),
         _dbclient(NULL),
-        _address(connection->getFullAddress())
+        _isAdmin(true)
     {
-        init();
+        _thread = new QThread(this);
+        moveToThread(_thread);
+        _thread->start();
     }
 
     MongoWorker::~MongoWorker()
@@ -37,18 +39,6 @@ namespace Robomongo
 
         delete _scriptEngine;
         delete _thread;
-    }
-
-    /**
-     * @brief Initialise MongoWorker
-     */
-    void MongoWorker::init()
-    {
-        _isAdmin = true;
-        _thread = new QThread(this);
-        moveToThread(_thread);
-
-        _thread->start();
     }
 
     void MongoWorker::handle(InitRequest *event)
@@ -64,13 +54,8 @@ namespace Robomongo
             _keepAliveTimer->start(60 * 1000); // every minute
         }
         catch (const std::exception &ex) {
-            reply(event->sender(), new InitResponse(this, EventError("Unable to MongoWorker")));
             LOG_MSG(ex.what(), mongo::LL_ERROR);
         }
-    }
-
-    void MongoWorker::handle(FinalizeRequest *event)
-    {
     }
 
     /**
@@ -107,7 +92,7 @@ namespace Robomongo
             boost::scoped_ptr<MongoClient> client(getClient());
             //conn->done();
             std::vector<std::string> dbNames = client->getDatabaseNames();
-            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_address,dbNames,client->getVersion()) ));
+            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(),dbNames,client->getVersion()) ));
         } catch(const std::exception &ex) {
             reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
             LOG_MSG(ex.what(), mongo::LL_ERROR);
@@ -480,7 +465,7 @@ namespace Robomongo
     {
         if (!_dbclient) {
             mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
-            conn->connect(_address);
+            conn->connect(_connection->getFullAddress());
             _dbclient = conn;
         }
         return _dbclient;

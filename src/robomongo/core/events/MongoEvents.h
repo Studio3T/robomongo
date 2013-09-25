@@ -37,40 +37,6 @@ namespace Robomongo
         int _batchSize;
     };
 
-    class InitResponse : public Event
-    {
-        R_EVENT
-
-        InitResponse(QObject *sender) :
-            Event(sender) {}
-
-        InitResponse(QObject *sender,const EventError &error) :
-            Event(sender, error) {}
-    };
-
-    /**
-     * @brief Init Request & Response
-     */
-
-    class FinalizeRequest : public Event
-    {
-        R_EVENT
-
-        FinalizeRequest(QObject *sender) :
-            Event(sender) {}
-    };
-
-    class FinalizeResponse : public Event
-    {
-        R_EVENT
-
-        FinalizeResponse(QObject *sender) :
-            Event(sender) {}
-
-        FinalizeResponse(QObject *sender,const EventError &error) :
-            Event(sender, error) {}
-    };
-
 
     /**
      * @brief EstablishConnection

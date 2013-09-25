@@ -32,7 +32,7 @@ namespace Robomongo
     void BsonTableView::keyPressEvent(QKeyEvent *event)
     {
         if (event->key() == Qt::Key_Delete) {
-            QModelIndexList indexses = selectionModel()->selectedRows();
+            QModelIndexList indexses = selectedIndexes();
             bool isForce = event->modifiers() & Qt::ShiftModifier;
             std::vector<BsonTreeItem*> items;
             for (QModelIndexList::const_iterator it = indexses.begin(); it!= indexses.end(); ++it) {
@@ -56,7 +56,25 @@ namespace Robomongo
 
     QModelIndexList BsonTableView::selectedIndexes() const
     {
-        return selectionModel()->selectedRows();
+        QModelIndexList indexses = selectionModel()->selectedIndexes();
+        QModelIndexList result;
+        for (QModelIndexList::const_iterator it = indexses.begin(); it != indexses.end(); ++it)
+        {
+            bool isContain = false;
+            QModelIndex iindex = *it;
+            for (QModelIndexList::const_iterator jt = result.begin(); jt != result.end(); ++jt)
+            {
+                QModelIndex jindex = *jt;
+                if (jindex.row() == iindex.row()){
+                    isContain = true;
+                    break;
+                }
+            }
+            if (!isContain){
+                result.append(iindex);
+            }
+        }
+        return result;
     }
 
     void BsonTableView::showContextMenu( const QPoint &point )

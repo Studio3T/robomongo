@@ -12,6 +12,7 @@
 #include <QDockWidget>
 #include <QDesktopWidget>
 #include <QTimer>
+#include <QHBoxLayout>
 
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/MongoServer.h"
@@ -24,7 +25,6 @@
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
-#include "robomongo/gui/widgets/workarea/WorkAreaWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 #include "robomongo/gui/dialogs/AboutDialog.h"
@@ -689,6 +689,10 @@ namespace Robomongo
     void MainWindow::createDatabaseExplorer()
     {
         ExplorerWidget *explorer = new ExplorerWidget(this);
+        AppRegistry::instance().bus()->subscribe(explorer, ConnectingEvent::Type);
+        AppRegistry::instance().bus()->subscribe(explorer, ConnectionFailedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(explorer, ConnectionEstablishedEvent::Type);
+
         QDockWidget *explorerDock = new QDockWidget(tr("Database Explorer"));
         explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
         explorerDock->setWidget(explorer);
@@ -746,7 +750,12 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(_workArea, OpeningShellEvent::Type);
         VERIFY(connect(_workArea, SIGNAL(currentChanged(int)), this, SLOT(updateMenus())));
 
-        WorkAreaWidget *workAreaWidget = new WorkAreaWidget(_workArea);
-        setCentralWidget(workAreaWidget);
+        QHBoxLayout *hlayout = new QHBoxLayout;
+        hlayout->setContentsMargins(0, 3, 0, 0);
+        hlayout->addWidget(_workArea);
+        QWidget *window = new QWidget;
+        window->setLayout(hlayout);
+
+        setCentralWidget(window);
     }
 }

@@ -3,10 +3,6 @@
 
 namespace Robomongo
 {
-    R_REGISTER_EVENT(InitRequest)
-    R_REGISTER_EVENT(InitResponse)
-    R_REGISTER_EVENT(FinalizeRequest)
-    R_REGISTER_EVENT(FinalizeResponse)
     R_REGISTER_EVENT(EstablishConnectionRequest)
     R_REGISTER_EVENT(EstablishConnectionResponse)
     R_REGISTER_EVENT(LoadDatabaseNamesRequest)

@@ -1,5 +1,4 @@
 #pragma once
-#include <QString>
 #include <mongo/bson/bsonobj.h>
 #include <mongo/bson/bsonelement.h>
 
@@ -8,7 +7,7 @@ namespace Robomongo
     class MongoUser
     {
     public:
-        typedef std::string RoleType;
+        typedef std::vector<std::string> RoleType;
         /**
          * @brief Creates user from "system.users" document
          */

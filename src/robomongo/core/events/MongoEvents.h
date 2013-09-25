@@ -18,59 +18,6 @@ namespace Robomongo
     class MongoShell;
     class MongoDatabase;
     class MongoWorker;
-    /**
-     * @brief Init Request & Response
-     */
-    class InitRequest : public Event
-    {
-        R_EVENT
-
-        InitRequest(QObject *sender, bool isLoadMongoRcJs, int batchSize) :
-            Event(sender),
-            _isLoadMongoRcJs(isLoadMongoRcJs),
-            _batchSize(batchSize) {}
-
-        bool isLoadMongoRcJs() const { return _isLoadMongoRcJs; }
-        int batchSize() const { return _batchSize; }
-    private:
-        const bool _isLoadMongoRcJs;
-        int _batchSize;
-    };
-
-    class InitResponse : public Event
-    {
-        R_EVENT
-
-        InitResponse(QObject *sender) :
-            Event(sender) {}
-
-        InitResponse(QObject *sender,const EventError &error) :
-            Event(sender, error) {}
-    };
-
-    /**
-     * @brief Init Request & Response
-     */
-
-    class FinalizeRequest : public Event
-    {
-        R_EVENT
-
-        FinalizeRequest(QObject *sender) :
-            Event(sender) {}
-    };
-
-    class FinalizeResponse : public Event
-    {
-        R_EVENT
-
-        FinalizeResponse(QObject *sender) :
-            Event(sender) {}
-
-        FinalizeResponse(QObject *sender,const EventError &error) :
-            Event(sender, error) {}
-    };
-
 
     /**
      * @brief EstablishConnection

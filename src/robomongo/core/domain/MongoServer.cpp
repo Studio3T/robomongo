@@ -13,34 +13,21 @@ namespace Robomongo
     R_REGISTER_EVENT(MongoServerLoadingDatabasesEvent)
 
     MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible) : QObject(),
-        _connectionRecord(connectionRecord),
-        _bus(AppRegistry::instance().bus()),
         _version(0.0f),
-        _visible(visible)
+        _visible(visible),
+        _client(new MongoWorker(connectionRecord->clone(),AppRegistry::instance().settingsManager()->loadMongoRcJs(),AppRegistry::instance().settingsManager()->batchSize()))
     {
-        _host = _connectionRecord->serverHost();
-        char num[8] = {0};
-        sprintf(num, "%u", _connectionRecord->serverPort()); //unsigned short range of 0 to 65,535
-        _port = num;
+    }
 
-        char buf[512] = {0};
-        sprintf(buf, "%s:%u", _host.c_str(), _connectionRecord->serverPort());
-        _address = buf;
-
-        _connection.reset(new mongo::DBClientConnection);
-
-        _client.reset(new MongoWorker(_connectionRecord->clone()));
-
-        _bus->send(_client.data(), new InitRequest(this,
-            AppRegistry::instance().settingsManager()->loadMongoRcJs(),
-            AppRegistry::instance().settingsManager()->batchSize()));
+    ConnectionSettings *MongoServer::connectionRecord() const 
+    { 
+        return _client->connectionRecord(); 
     }
 
     MongoServer::~MongoServer()
-    {
+    {        
         clearDatabases();
-        delete _connectionRecord;
-        _connectionRecord=NULL;
+        delete _client;
     }
 
     /**
@@ -49,7 +36,7 @@ namespace Robomongo
      */
     void MongoServer::tryConnect()
     {
-        _client->send(new EstablishConnectionRequest(this,
+        AppRegistry::instance().bus()->send(_client,new EstablishConnectionRequest(this,
             "_connectionRecord->databaseName()",
             "_connectionRecord->userName()",
             "_connectionRecord->userPassword()"));
@@ -67,7 +54,7 @@ namespace Robomongo
 
     void MongoServer::createDatabase(const std::string &dbName)
     {
-        _client->send(new CreateDatabaseRequest(this, dbName));
+        AppRegistry::instance().bus()->send(_client,new CreateDatabaseRequest(this, dbName));
     }
 
     MongoDatabase *MongoServer::findDatabaseByName(const std::string &dbName) const
@@ -83,7 +70,7 @@ namespace Robomongo
 
     void MongoServer::dropDatabase(const std::string &dbName)
     {
-        _client->send(new DropDatabaseRequest(this, dbName));
+        AppRegistry::instance().bus()->send(_client,new DropDatabaseRequest(this, dbName));
     }
 
     void MongoServer::insertDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection)
@@ -95,7 +82,7 @@ namespace Robomongo
 
     void MongoServer::insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)
     {
-        _client->send(new InsertDocumentRequest(this, obj, db, collection));
+        AppRegistry::instance().bus()->send(_client,new InsertDocumentRequest(this, obj, db, collection));
     }
 
     void MongoServer::saveDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection)
@@ -107,18 +94,18 @@ namespace Robomongo
 
     void MongoServer::saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)
     {
-        _client->send(new InsertDocumentRequest(this, obj, db, collection, true));
+        AppRegistry::instance().bus()->send(_client, new InsertDocumentRequest(this, obj, db, collection, true));
     }
 
     void MongoServer::removeDocuments(mongo::Query query, const std::string &db, const std::string &collection, bool justOne)
     {
-        _client->send(new RemoveDocumentRequest(this, query, db, collection, justOne));
+        AppRegistry::instance().bus()->send(_client, new RemoveDocumentRequest(this, query, db, collection, justOne));
     }
 
     void MongoServer::loadDatabases()
     {
-        _bus->publish(new MongoServerLoadingDatabasesEvent(this));
-        _client->send(new LoadDatabaseNamesRequest(this));
+        AppRegistry::instance().bus()->publish(new MongoServerLoadingDatabasesEvent(this));
+        AppRegistry::instance().bus()->send(_client, new LoadDatabaseNamesRequest(this));
     }
 
     void MongoServer::clearDatabases()
@@ -136,9 +123,9 @@ namespace Robomongo
     {
         const ConnectionInfo &info = event->info();
         if (event->isError()) {
-            _bus->publish(new ConnectionFailedEvent(this, event->error()));
+            AppRegistry::instance().bus()->publish(new ConnectionFailedEvent(this, event->error()));
         } else if (_visible) {
-            _bus->publish(new ConnectionEstablishedEvent(this));
+            AppRegistry::instance().bus()->publish(new ConnectionEstablishedEvent(this));
             clearDatabases();
             for(std::vector<std::string>::const_iterator it = info._databases.begin(); it != info._databases.end(); ++it) {
                 const std::string &name = *it;
@@ -152,7 +139,7 @@ namespace Robomongo
     void MongoServer::handle(LoadDatabaseNamesResponse *event)
     {
         if (event->isError()) {
-            _bus->publish(new ConnectionFailedEvent(this, event->error()));
+            AppRegistry::instance().bus()->publish(new ConnectionFailedEvent(this, event->error()));
             return;
         }
 
@@ -163,6 +150,6 @@ namespace Robomongo
             addDatabase(db);
         }
 
-        _bus->publish(new DatabaseListLoadedEvent(this, _databases));
+        AppRegistry::instance().bus()->publish(new DatabaseListLoadedEvent(this, _databases));
     }
 }

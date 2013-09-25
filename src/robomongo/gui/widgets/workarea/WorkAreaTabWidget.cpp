@@ -27,7 +27,6 @@ namespace Robomongo
         setElideMode(Qt::ElideRight);
         setMovable(true);
         setDocumentMode(true);
-
         VERIFY(connect(this, SIGNAL(tabCloseRequested(int)), SLOT(tabBar_tabCloseRequested(int))));
         VERIFY(connect(this, SIGNAL(currentChanged(int)), SLOT(ui_currentChanged(int))));
 

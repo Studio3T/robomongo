@@ -6,7 +6,6 @@
 #include <QKeyEvent>
 
 #include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/utils/QtUtils.h"
 
@@ -36,11 +35,7 @@ namespace Robomongo
         _progressLabel = new QLabel(this);
         _progressLabel->setMovie(movie);
         _progressLabel->hide();
-        movie->start();
-
-        AppRegistry::instance().bus()->subscribe(this, ConnectingEvent::Type);
-        AppRegistry::instance().bus()->subscribe(this, ConnectionFailedEvent::Type);
-        AppRegistry::instance().bus()->subscribe(this, ConnectionEstablishedEvent::Type);
+        movie->start();        
     }
 
     void ExplorerWidget::keyPressEvent(QKeyEvent *event)

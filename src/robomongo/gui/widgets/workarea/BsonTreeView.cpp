@@ -75,7 +75,7 @@ namespace Robomongo
     void BsonTreeView::keyPressEvent(QKeyEvent *event)
     {
         if (event->key() == Qt::Key_Delete) {
-            QModelIndexList indexses = selectionModel()->selectedRows();
+            QModelIndexList indexses = selectedIndexes();
             std::vector<BsonTreeItem*> items;
             bool isForce = event->modifiers() & Qt::ShiftModifier;
             for (QModelIndexList::const_iterator it = indexses.begin(); it!= indexses.end(); ++it) {

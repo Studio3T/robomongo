@@ -26,7 +26,7 @@ namespace Robomongo
         layout->setSpacing(0);
         layout->addWidget(_splitter);
         setLayout(layout);
-
+        
         _progressBarPopup = new ProgressBarPopup(this);
     }
 
@@ -141,7 +141,9 @@ namespace Robomongo
 
     void OutputWidget::showProgress()
     {
-        _progressBarPopup->move(width() / 2 - 84, height() / 2 - 25);
+        QSize siz = size();
+        QPoint point(siz.width() / 2 - ProgressBarPopup::width/2, siz.height() / 2 - ProgressBarPopup::height/2);
+        _progressBarPopup->move(point);
         _progressBarPopup->show();
     }
 

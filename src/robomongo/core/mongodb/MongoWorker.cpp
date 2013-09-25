@@ -1,9 +1,6 @@
 #include "robomongo/core/mongodb/MongoWorker.h"
 
 #include <QThread>
-#include <QTimer>
-#include <boost/scoped_ptr.hpp>
-#include <mongo/scripting/engine_spidermonkey.h>
 
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/engine/ScriptEngine.h"
@@ -15,18 +12,45 @@
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/utils/Logger.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
-    MongoWorker::MongoWorker(ConnectionSettings *connection, QObject *parent) : QObject(parent),
+    MongoWorker::MongoWorker(ConnectionSettings *connection,bool isLoadMongoRcJs, int batchSize, QObject *parent) : QObject(parent),
         _connection(connection),
         _scriptEngine(NULL),
         _dbclient(NULL),
-        _isAdmin(true)
-    {
+        _isAdmin(true),
+        _isLoadMongoRcJs(isLoadMongoRcJs),
+        _batchSize(batchSize),
+        _timerId(-1)
+    {         
         _thread = new QThread(this);
         moveToThread(_thread);
+        VERIFY(connect( _thread, SIGNAL(started()), this, SLOT(init()) ));
         _thread->start();
+    }
+
+    void MongoWorker::timerEvent(QTimerEvent *event)
+    {
+        if (_timerId==event->timerId())
+        {
+            keepAlive();
+        }
+    }
+
+    void MongoWorker::init()
+    {
+        try {
+            _scriptEngine = new ScriptEngine(_connection);
+            _scriptEngine->init(_isLoadMongoRcJs);
+            _scriptEngine->use(_connection->defaultDatabase());
+            _scriptEngine->setBatchSize(_batchSize);
+            _timerId = startTimer(pingTimeMs);
+        }
+        catch (const std::exception &ex) {
+            LOG_MSG(ex.what(), mongo::LL_ERROR);
+        }
     }
 
     MongoWorker::~MongoWorker()
@@ -39,23 +63,6 @@ namespace Robomongo
 
         delete _scriptEngine;
         delete _thread;
-    }
-
-    void MongoWorker::handle(InitRequest *event)
-    {
-        try {
-            _scriptEngine = new ScriptEngine(_connection);
-            _scriptEngine->init(event->isLoadMongoRcJs());
-            _scriptEngine->use(_connection->defaultDatabase());
-            _scriptEngine->setBatchSize(event->batchSize());
-
-            _keepAliveTimer = new QTimer(this);
-            connect(_keepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
-            _keepAliveTimer->start(60 * 1000); // every minute
-        }
-        catch (const std::exception &ex) {
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
-        }
     }
 
     /**

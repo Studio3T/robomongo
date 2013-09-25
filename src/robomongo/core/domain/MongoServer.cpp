@@ -15,11 +15,8 @@ namespace Robomongo
     MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible) : QObject(),
         _version(0.0f),
         _visible(visible),
-        _client(new MongoWorker(connectionRecord->clone()))
+        _client(new MongoWorker(connectionRecord->clone(),AppRegistry::instance().settingsManager()->loadMongoRcJs(),AppRegistry::instance().settingsManager()->batchSize()))
     {
-        AppRegistry::instance().bus()->send(_client, new InitRequest(this,
-            AppRegistry::instance().settingsManager()->loadMongoRcJs(),
-            AppRegistry::instance().settingsManager()->batchSize()));
     }
 
     ConnectionSettings *MongoServer::connectionRecord() const 

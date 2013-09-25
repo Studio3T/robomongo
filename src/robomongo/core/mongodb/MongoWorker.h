@@ -21,26 +21,21 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit MongoWorker(ConnectionSettings *connection, QObject *parent = NULL);
+        explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
         ConnectionSettings *connectionRecord() const {return _connection;}
         ~MongoWorker();
-
+        enum{pingTimeMs = 60*1000};
         /**
          * @brief Send event to this MongoWorker
          */
         void send(Event *event);
     protected Q_SLOTS: // handlers:
-
+        void init();
         /**
          * @brief Every minute we are issuing { ping : 1 } command to every used connection
          * in order to avoid dropped connections.
          */
         void keepAlive();
-
-        /**
-         * @brief Initialize MongoWorker (should be the first request)
-         */
-        void handle(InitRequest *event);
 
         /**
          * @brief Initiate connection to MongoDB
@@ -123,6 +118,9 @@ namespace Robomongo
         void handle(CreateFunctionRequest *event);
         void handle(DropFunctionRequest *event);
 
+    protected:
+        virtual void timerEvent(QTimerEvent *);
+
     private:
 
         mongo::DBClientBase *_dbclient;
@@ -139,15 +137,12 @@ namespace Robomongo
         ScriptEngine *_scriptEngine;
 
         bool _isAdmin;
+        const bool _isLoadMongoRcJs;
+        const int _batchSize;
+        int _timerId;
         std::string _authDatabase;
 
         ConnectionSettings *_connection;
-
-        /**
-         * @brief Every minute we are issuing { ping : 1 } command to every used connection
-         * in order to avoid dropped connections.
-         */
-        QTimer *_keepAliveTimer;
     };
 
 }

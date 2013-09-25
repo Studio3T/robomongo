@@ -1,10 +1,9 @@
 #pragma once
 
-#include <QStringList>
 #include "mongo/client/dbclientinterface.h"
 
+#include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
-#include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoUser.h"
 #include "robomongo/core/domain/MongoFunction.h"
 #include "robomongo/core/events/MongoEventsInfo.h"

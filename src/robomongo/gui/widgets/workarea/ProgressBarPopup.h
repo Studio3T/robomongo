@@ -13,7 +13,7 @@ namespace Robomongo
 
     public:
         ProgressBarPopup(QWidget *parent = NULL);
-
+        enum {heightProgress = 16, widthProgress = 164, height = heightProgress+20, width = widthProgress+20  };
     private:
         QLabel *_progressLabel;
     };

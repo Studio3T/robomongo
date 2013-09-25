@@ -1,9 +1,6 @@
 #include "robomongo/core/mongodb/MongoWorker.h"
 
 #include <QThread>
-#include <QTimer>
-#include <boost/scoped_ptr.hpp>
-#include <mongo/scripting/engine_spidermonkey.h>
 
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/engine/ScriptEngine.h"
@@ -15,16 +12,70 @@
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/utils/Logger.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
-    MongoWorker::MongoWorker(ConnectionSettings *connection, QObject *parent) : QObject(parent),
+    MongoWorker::MongoWorker(ConnectionSettings *connection,bool isLoadMongoRcJs, int batchSize, QObject *parent) : QObject(parent),
         _connection(connection),
         _scriptEngine(NULL),
         _dbclient(NULL),
-        _address(connection->getFullAddress())
+        _isAdmin(true),
+        _isLoadMongoRcJs(isLoadMongoRcJs),
+        _batchSize(batchSize),
+        _timerId(-1)
+    {         
+        _thread = new QThread(this);
+        moveToThread(_thread);
+        VERIFY(connect( _thread, SIGNAL(started()), this, SLOT(init()) ));
+        _thread->start();
+    }
+
+    void MongoWorker::timerEvent(QTimerEvent *event)
     {
-        init();
+        if (_timerId==event->timerId())
+        {
+            keepAlive();
+        }
+    }
+
+    void MongoWorker::keepAlive()
+    {
+        try {
+            if (_dbclient) {
+                // Building { ping: 1 }
+                mongo::BSONObjBuilder command;
+                command.append("ping", 1);
+                mongo::BSONObj result;
+
+                if (_authDatabase.empty()) {
+                    _dbclient->runCommand("admin", command.obj(), result);
+                } else {
+                    _dbclient->runCommand(_authDatabase, command.obj(), result);
+                }
+            }
+
+            if (_scriptEngine) {
+                _scriptEngine->ping();
+            }
+
+        } catch(std::exception &) {
+            // nothing here
+        }
+    }
+
+    void MongoWorker::init()
+    {        
+        try {
+            _scriptEngine = new ScriptEngine(_connection);
+            _scriptEngine->init(_isLoadMongoRcJs);
+            _scriptEngine->use(_connection->defaultDatabase());
+            _scriptEngine->setBatchSize(_batchSize);
+            _timerId = startTimer(pingTimeMs);
+        }
+        catch (const std::exception &ex) {
+            LOG_MSG(ex.what(), mongo::LL_ERROR);
+        }
     }
 
     MongoWorker::~MongoWorker()
@@ -37,40 +88,6 @@ namespace Robomongo
 
         delete _scriptEngine;
         delete _thread;
-    }
-
-    /**
-     * @brief Initialise MongoWorker
-     */
-    void MongoWorker::init()
-    {
-        _isAdmin = true;
-        _thread = new QThread(this);
-        moveToThread(_thread);
-
-        _thread->start();
-    }
-
-    void MongoWorker::handle(InitRequest *event)
-    {
-        try {
-            _scriptEngine = new ScriptEngine(_connection);
-            _scriptEngine->init(event->isLoadMongoRcJs());
-            _scriptEngine->use(_connection->defaultDatabase());
-            _scriptEngine->setBatchSize(event->batchSize());
-
-            _keepAliveTimer = new QTimer(this);
-            connect(_keepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
-            _keepAliveTimer->start(60 * 1000); // every minute
-        }
-        catch (const std::exception &ex) {
-            reply(event->sender(), new InitResponse(this, EventError("Unable to MongoWorker")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
-        }
-    }
-
-    void MongoWorker::handle(FinalizeRequest *event)
-    {
     }
 
     /**
@@ -107,7 +124,7 @@ namespace Robomongo
             boost::scoped_ptr<MongoClient> client(getClient());
             //conn->done();
             std::vector<std::string> dbNames = client->getDatabaseNames();
-            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_address,dbNames,client->getVersion()) ));
+            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(),dbNames,client->getVersion()) ));
         } catch(const std::exception &ex) {
             reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
             LOG_MSG(ex.what(), mongo::LL_ERROR);
@@ -480,7 +497,7 @@ namespace Robomongo
     {
         if (!_dbclient) {
             mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
-            conn->connect(_address);
+            conn->connect(_connection->getFullAddress());
             _dbclient = conn;
         }
         return _dbclient;
@@ -497,31 +514,6 @@ namespace Robomongo
     void MongoWorker::send(Event *event)
     {
         AppRegistry::instance().bus()->send(this, event);
-    }
-
-    void MongoWorker::keepAlive()
-    {
-        try {
-            if (_dbclient) {
-                // Building { ping: 1 }
-                mongo::BSONObjBuilder command;
-                command.append("ping", 1);
-                mongo::BSONObj result;
-
-                if (_authDatabase.empty()) {
-                    _dbclient->runCommand("admin", command.obj(), result);
-                } else {
-                    _dbclient->runCommand(_authDatabase, command.obj(), result);
-                }
-            }
-
-            if (_scriptEngine) {
-                _scriptEngine->ping();
-            }
-
-        } catch(std::exception &) {
-            // nothing here
-        }
     }
 
     /**

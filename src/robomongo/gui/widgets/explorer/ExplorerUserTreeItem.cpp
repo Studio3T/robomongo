@@ -17,14 +17,13 @@ namespace
     const char* tooltipTemplate = 
         "%s "
         "<table>"
-        "<tr><td>ID:</td> <td><b>&nbsp;&nbsp;%s</b></td></tr>"
-        "<tr><td>Roles:</td><td><b>&nbsp;&nbsp;%s</b></td></tr>"
+        "<tr><td>ID:</td><td width=\"180\"><b>&nbsp;&nbsp;%s</b></td></tr>"
         "</table>";
 
     std::string buildToolTip(const Robomongo::MongoUser &user)
     {
         char buff[2048]={0};
-        //sprintf(buff,tooltipTemplate,user.name().c_str(),user.id().toString().c_str(),user.role());
+        sprintf(buff,tooltipTemplate,user.name().c_str(),user.id().toString().c_str());
         return buff;
     }
 }

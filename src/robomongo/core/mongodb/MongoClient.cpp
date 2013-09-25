@@ -1,5 +1,6 @@
 #include "robomongo/core/mongodb/MongoClient.h"
 
+#include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/utils/BsonUtils.h"
 
 namespace

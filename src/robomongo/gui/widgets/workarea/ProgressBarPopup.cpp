@@ -10,24 +10,19 @@ namespace Robomongo
     ProgressBarPopup::ProgressBarPopup(QWidget *parent) :
         QFrame(parent)
     {
-        const int w = 163 + 1; // height of progress image
-        const int h = 15 + 1;  // width of progress image
-        const int lr = 10;     // padding on left and right
-        const int tb = 10;      // padding on top and bottom
-
         setStyleSheet("QFrame {background-color: #e1e1e1; border: 0px solid #c7c5c4; border-radius: 6px;}");
 
         QMovie *movie = new QMovie(":robomongo/icons/progress_bar.gif", QByteArray(), this);
         _progressLabel = new QLabel();
         _progressLabel->setMovie(movie);
-        _progressLabel->setFixedWidth(w);
-        _progressLabel->setFixedHeight(h);
+        _progressLabel->setFixedWidth(widthProgress);
+        _progressLabel->setFixedHeight(heightProgress);
         movie->start();
 
-        setFixedSize(w + 2 * lr, h + 2 * tb);
+        setFixedSize(width, height);
 
         QVBoxLayout *layout = new QVBoxLayout();
-        layout->setContentsMargins(lr, tb, lr, tb);
+        layout->setContentsMargins((width-widthProgress)/2, (height-heightProgress)/2, (height-heightProgress)/2, (width-widthProgress)/2);
         layout->setSpacing(0);
         layout->addWidget(_progressLabel);
         setLayout(layout);

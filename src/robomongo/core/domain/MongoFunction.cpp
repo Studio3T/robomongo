@@ -1,13 +1,13 @@
 #include "robomongo/core/domain/MongoFunction.h"
-
+#include "robomongo/core/utils/BsonUtils.h"
 #include <mongo/client/dbclient.h>
 
 namespace Robomongo
 {
     MongoFunction::MongoFunction(const mongo::BSONObj &obj)
     {
-        _name = obj.getField("_id").String();
-        _code = obj.getField("value")._asCode().data();
+        _name = BsonUtils::getField<mongo::String>(obj,"_id");
+        _code = obj.getField("value")._asCode();
     }
 
     mongo::BSONObj MongoFunction::toBson() const

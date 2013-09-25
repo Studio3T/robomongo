@@ -20,12 +20,15 @@ namespace Robomongo
         else {
             _userSource = BsonUtils::getField<mongo::String>(obj,"userSource");
             std::vector<mongo::BSONElement> roles = BsonUtils::getField<mongo::Array>(obj, "roles");
-            _role =  BsonUtils::bsonArrayToString(roles);
+            for (std::vector<mongo::BSONElement>::const_iterator it = roles.begin(); it!= roles.end(); ++it)
+            {
+                _role.push_back(BsonUtils::bsonelement_cast<std::string>(*it));
+            }
         }
     }
 
     MongoUser::MongoUser(const float version) :
-        _version(version),_readOnly(false),_role("[]") {}
+        _version(version),_readOnly(false),_role() {}
 
     mongo::BSONObj MongoUser::toBson() const
     {
@@ -46,8 +49,12 @@ namespace Robomongo
             if (!_userSource.empty())
                 builder.append("userSource", _userSource);
 
-            mongo::BSONObj arObj = BSON_ARRAY(_role.c_str());
-
+            mongo::BSONArrayBuilder builderA;
+            for (RoleType::const_iterator it = _role.begin(); it!=_role.end(); ++it)
+            {
+                builderA << *it;
+            }
+            mongo::BSONObj arObj = builderA.arr();            
             builder.appendArray("roles", arObj);
         }
         mongo::BSONObj obj = builder.obj();

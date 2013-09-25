@@ -8,7 +8,7 @@ namespace Robomongo
     class MongoUser
     {
     public:
-        typedef std::string RoleType;
+        typedef std::vector<std::string> RoleType;
         /**
          * @brief Creates user from "system.users" document
          */

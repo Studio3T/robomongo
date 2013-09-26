@@ -82,11 +82,11 @@ namespace Robomongo
             return bsonelement_cast<typename detail::bson_convert_traits<BSONType_t>::type>(elem);
         }
 
-        std::string jsonString(mongo::BSONObj &obj, mongo::JsonStringFormat format, int pretty,
-                               UUIDEncoding uuidEncoding, SupportedTimes timeFormat);
+        std::string jsonString(const mongo::BSONObj &obj, mongo::JsonStringFormat format, int pretty,
+            UUIDEncoding uuidEncoding, SupportedTimes timeFormat, bool isArray = false);
 
-        std::string jsonString(mongo::BSONElement &elem, mongo::JsonStringFormat format, bool includeFieldNames, int pretty,
-                               UUIDEncoding uuidEncoding, SupportedTimes timeFormat);
+        std::string jsonString(const mongo::BSONElement &elem, mongo::JsonStringFormat format, bool includeFieldNames, int pretty,
+            UUIDEncoding uuidEncoding, SupportedTimes timeFormat, bool isArray = false);
 
         bool isArray(const mongo::BSONElement &elem);
         bool isArray(mongo::BSONType type);

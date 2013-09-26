@@ -297,16 +297,10 @@ namespace Robomongo
          if (selectedInd.parent().isValid()){
              obj = obj[QtUtils::toStdString(documentItem->key())].Obj();
          }
-
-         std::string str;
-         if(BsonUtils::isArray(documentItem->type())){      
-              str = obj.toString(true);
-         }
-         else{
-             str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
+         bool isArray = BsonUtils::isArray(documentItem->type());
+         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
                  AppRegistry::instance().settingsManager()->uuidEncoding(),
-                 AppRegistry::instance().settingsManager()->timeZone());
-         }
+                 AppRegistry::instance().settingsManager()->timeZone(),isArray);
 
          const QString &json = QtUtils::toQString(str);
          clipboard->setText(json);

@@ -530,7 +530,7 @@ namespace Robomongo
     void MainWindow::toggleOrientation()
     {
         QueryWidget *widget = _workArea->currentQueryWidget();
-        if (widget)
+        if (!widget)
             return;
 
         widget->toggleOrientation();

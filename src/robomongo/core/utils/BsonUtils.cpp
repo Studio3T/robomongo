@@ -57,12 +57,12 @@ namespace Robomongo
             }
         }
 
-        std::string jsonString(BSONObj &obj, JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat)
+        std::string jsonString(const BSONObj &obj, JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat, bool isArray)
         {
-            if ( obj.isEmpty() ) return "{}";
+            if ( obj.isEmpty() ) return isArray? "[]" : "{}";           
 
             StringBuilder s;
-            s << "{";
+            s << (isArray ? "[" : "{");
             BSONObjIterator i(obj);
             BSONElement e = i.next();
             if ( !e.eoo() ){
@@ -76,7 +76,7 @@ namespace Robomongo
                     else {
                         s << " ";
                     }
-                    s << jsonString(e, format, true, pretty?pretty+1:0, uuidEncoding, timeFormat);
+                    s << jsonString(e, format, true, pretty?pretty+1:0, uuidEncoding, timeFormat, isArray);
                     e = i.next();
 
                     if (e.eoo()) {
@@ -84,7 +84,7 @@ namespace Robomongo
                         for( int x = 0; x < pretty - 1; x++ ){
                             s << "    ";
                         }
-                        s << "}";
+                        s << (isArray ? "]" : "}");
                         break;
                     }
 
@@ -94,12 +94,12 @@ namespace Robomongo
             return s.str();
         }
 
-        std::string jsonString(BSONElement &elem, JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat)
+        std::string jsonString(const BSONElement &elem, JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat, bool isArray)
         {
             BSONType t = elem.type();            
 
             stringstream s;
-            if ( includeFieldNames )
+            if ( includeFieldNames && !isArray)
                 s << '"' << escape( elem.fieldName() ) << "\" : ";
 
             switch ( t ) {
@@ -168,7 +168,7 @@ namespace Robomongo
                             s << "undefined";
                         }
                         else {
-                            s << jsonString(e, format, false, pretty?pretty+1:0, uuidEncoding, timeFormat);
+                            s << jsonString(e, format, false, pretty?pretty+1:0, uuidEncoding, timeFormat, true);
                             e = i.next();
                         }
                         count++;

@@ -59,8 +59,8 @@ namespace Robomongo
                 _scriptEngine->ping();
             }
 
-        } catch(std::exception &) {
-            // nothing here
+        } catch(std::exception &ex) {
+            LOG_MSG(ex.what(), mongo::LL_ERROR);
         }
     }
 

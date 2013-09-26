@@ -4366,7 +4366,7 @@ const StringData _jscode_raw_collection =
 "ret.dropDups = true;\n" 
 "}\n" 
 "nb++;\n" 
-"}\n"  
+"}\n" 
 "}\n" 
 "}\n" 
 "else {\n" 

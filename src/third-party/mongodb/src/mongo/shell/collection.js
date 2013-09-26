@@ -298,6 +298,9 @@ DBCollection.prototype._indexSpec = function( keys, options ) {
                     }
                     nb++;
                 }
+                else if ( typeof( options[i] ) == "int" ){
+                    ret.expireAfterSeconds = options[i];
+                }
             }
         }
         else {

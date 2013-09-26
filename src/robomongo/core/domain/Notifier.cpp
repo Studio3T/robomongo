@@ -16,6 +16,7 @@
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/utils/DialogUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/EventBus.h"
 
 namespace Robomongo
 {
@@ -45,6 +46,7 @@ namespace Robomongo
         _queryInfo(queryInfo)
     {
         QWidget *wid = dynamic_cast<QWidget*>(_observer);
+        AppRegistry::instance().bus()->subscribe(this, InsertDocumentResponse::Type);
 
         _deleteDocumentAction = new QAction("Delete Document...", wid);
         VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument())));
@@ -65,7 +67,7 @@ namespace Robomongo
         VERIFY(connect(_copyValueAction, SIGNAL(triggered()), SLOT(onCopyDocument())));
 
         _copyJsonAction = new QAction("Copy JSON", wid);
-        VERIFY(connect(_copyJsonAction, SIGNAL(triggered()), SLOT(onCopyJson())));
+        VERIFY(connect(_copyJsonAction, SIGNAL(triggered()), SLOT(onCopyJson())));        
     }
 
     void Notifier::initMenu(QMenu *const menu, BsonTreeItem *const item)
@@ -108,7 +110,7 @@ namespace Robomongo
             if (!documentItem)
                 break;
 
-            mongo::BSONObj obj = documentItem->root();
+            mongo::BSONObj obj = documentItem->superRoot();
             mongo::BSONElement id = obj.getField("_id");
 
             if (id.eoo()) {
@@ -137,6 +139,11 @@ namespace Robomongo
 
         if (isNeededRefresh)
             _shell->query(0, _queryInfo);
+    }
+
+    void Notifier::handle(InsertDocumentResponse *event)
+    {
+        _shell->query(0, _queryInfo);
     }
 
     void Notifier::onDeleteDocuments()
@@ -186,7 +193,7 @@ namespace Robomongo
         if (!documentItem)
             return;
 
-        mongo::BSONObj obj = documentItem->root();
+        mongo::BSONObj obj = documentItem->superRoot();
 
         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
             AppRegistry::instance().settingsManager()->uuidEncoding(),

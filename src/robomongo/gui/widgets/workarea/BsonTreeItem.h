@@ -46,6 +46,7 @@ namespace Robomongo
         int indexOf(BsonTreeItem *item) const;
 
         mongo::BSONObj root() const;
+        mongo::BSONObj superRoot() const;
 
         QString key() const;
         void setKey(const QString &key);

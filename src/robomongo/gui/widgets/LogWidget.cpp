@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include <QScrollBar>
 #include <QMenu>
+#include <QTime>
 #include <QAction>
 #include <QPlainTextEdit>
 #include "robomongo/core/utils/QtUtils.h"
@@ -35,12 +36,8 @@ namespace Robomongo
 
     void LogWidget::addMessage(const QString &message, mongo::LogLevel level)
     {
-        if (level == mongo::LL_ERROR) {
-            _logTextEdit->appendHtml(QString("<font color=red>%1</font>").arg(message));
-        }
-        else {
-            _logTextEdit->appendHtml(QString("<font color=black>%1</font>").arg(message));
-        }
+        QTime time = QTime::currentTime();
+        _logTextEdit->appendHtml(QString(level == mongo::LL_ERROR ? "<font color=red>%1 %2</font>" : "<font color=black>%1 %2</font>").arg(time.toString("h:mm:ss AP:")).arg(message.toHtmlEscaped()));
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());
     }

@@ -63,7 +63,6 @@ namespace Robomongo
         void openPreferences();
 
     private:
-        QLabel *_status;
         QDockWidget *_logDock;
 
         WorkAreaTabWidget *_workArea;
@@ -85,6 +84,7 @@ namespace Robomongo
         void createDatabaseExplorer();
         void createTabs();
         void createStylesMenu();
+        void createStatusBar();
     };
 
 }

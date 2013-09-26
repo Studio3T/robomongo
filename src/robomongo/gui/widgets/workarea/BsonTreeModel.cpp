@@ -64,7 +64,7 @@ namespace Robomongo
                 idValue = idItem->value();
             }
 
-            child->setKey(QString("(%1) %2").arg(i).arg(idValue));
+            child->setKey(QString("(%1) %2").arg(i + 1).arg(idValue));
 
             int count = BsonUtils::elementsCount(doc->bsonObj());
             child->setValue(QString("{ %1 fields }").arg(count));

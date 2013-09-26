@@ -29,7 +29,7 @@ namespace Robomongo
 
         bool isMultySelection(const QModelIndexList &indexes)
         {
-            return indexes.count()!=0;
+            return indexes.count()>1;
         }
 
         bool isDocumentType(BsonTreeItem *item)

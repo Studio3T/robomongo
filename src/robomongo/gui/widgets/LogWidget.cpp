@@ -12,7 +12,6 @@ namespace Robomongo
     LogWidget::LogWidget(QWidget* parent) 
         : BaseClass(parent), _logTextEdit(new QPlainTextEdit(this))
     {
-        _logTextEdit->setPlainText(PROJECT_NAME" "PROJECT_VERSION" is ready.");
         _logTextEdit->setReadOnly(true);
         _logTextEdit->setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(_logTextEdit,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(showContextMenu(const QPoint &))));
@@ -36,10 +35,10 @@ namespace Robomongo
 
     void LogWidget::addMessage(const QString &message, mongo::LogLevel level)
     {
-        if (level == mongo::LL_ERROR){
+        if (level == mongo::LL_ERROR) {
             _logTextEdit->appendHtml(QString("<font color=red>%1</font>").arg(message));
         }
-        else{
+        else {
             _logTextEdit->appendHtml(QString("<font color=black>%1</font>").arg(message));
         }
         QScrollBar *sb = _logTextEdit->verticalScrollBar();

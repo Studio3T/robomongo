@@ -12,6 +12,9 @@
 #include <QDockWidget>
 #include <QDesktopWidget>
 #include <QTimer>
+#include <QPushButton>
+#include <QLabel>
+#include <QStatusBar>
 #include <QHBoxLayout>
 
 #include "robomongo/core/settings/SettingsManager.h"
@@ -229,7 +232,6 @@ namespace Robomongo
 
         // View menu
         _viewMenu = menuBar()->addMenu("View");
-        _viewMenu->addAction(fullScreenAction);       
         
         // Options menu
         QMenu *optionsMenu = menuBar()->addMenu("Options");
@@ -354,11 +356,11 @@ namespace Robomongo
 
         _execToolBar->hide();
 
-        statusBar();
-        
         createTabs();
         createDatabaseExplorer();
         createStylesMenu();
+        createStatusBar();
+        _viewMenu->addAction(fullScreenAction);
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
@@ -369,13 +371,12 @@ namespace Robomongo
     void MainWindow::createStylesMenu()
     {
         _viewMenu->addSeparator();
-         QMenu *styles = _viewMenu->addMenu("Styles");
+         QMenu *styles = _viewMenu->addMenu("Theme");
          QStringList supportedStyles = detail::getSupportedStyles();
          QActionGroup *styleGroup = new QActionGroup(this);
          VERIFY(connect(styleGroup, SIGNAL(triggered(QAction *)), this, SLOT(changeStyle(QAction *))));
          const QString &currentStyle = AppRegistry::instance().settingsManager()->currentStyle();
-         for (QStringList::const_iterator it = supportedStyles.begin(); it != supportedStyles.end(); ++it)
-         {
+         for (QStringList::const_iterator it = supportedStyles.begin(); it != supportedStyles.end(); ++it) {
              const QString &style = *it;
              QAction *styleAction = new QAction(style,this);
              styleAction->setCheckable(true);
@@ -383,6 +384,39 @@ namespace Robomongo
              styleGroup->addAction(styleAction);
              styles->addAction(styleAction);             
          }
+    }
+
+    void MainWindow::createStatusBar()
+    {
+        QColor windowColor = palette().window().color();
+        QColor buttonBgColor = windowColor.lighter(105);
+        QColor buttonBorderBgColor = windowColor.darker(120);
+        QColor buttonPressedColor = windowColor.darker(102);
+
+        QToolButton *log = new QToolButton(this);
+        log->setText("Logs");
+        log->setCheckable(true);
+        log->setDefaultAction(_logDock->toggleViewAction());
+        log->setStyleSheet(QString(
+            "QToolButton {"
+            "   background-color: %1;"
+            "   border-style: outset;"
+            "   border-width: 1px;"
+            "   border-radius: 3px;"
+            "   border-color: %2;"
+            "   padding: 1px 20px 1px 20px;"
+            "} \n"
+            ""
+            "QToolButton:checked, QToolButton:pressed {"
+            "   background-color: %3;"
+            "   border-style: inset;"
+            "}")
+            .arg(buttonBgColor.name())
+            .arg(buttonBorderBgColor.name())
+            .arg(buttonPressedColor.name()));
+
+        statusBar()->insertWidget(0, log);
+        statusBar()->setStyleSheet("QStatusBar::item { border: 0px solid black };");
     }
 
     void MainWindow::changeStyle(QAction *ac)
@@ -704,9 +738,9 @@ namespace Robomongo
         QAction *actionExp = explorerDock->toggleViewAction();
 
         // Adjust any parameter you want.  
-        actionExp->setText(QString("&Database Explorer"));
+        actionExp->setText(QString("&Explorer"));
         actionExp->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));  
-        actionExp->setStatusTip(QString("Press to show/hide Database Explorer widget."));  
+        actionExp->setStatusTip(QString("Press to show/hide Database Explorer panel."));
         actionExp->setChecked(true);
         // Install action in the menu.  
         _viewMenu->addAction(actionExp);
@@ -715,15 +749,14 @@ namespace Robomongo
 
         LogWidget *log = new LogWidget(this);        
         VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, mongo::LogLevel)), log, SLOT(addMessage(const QString&, mongo::LogLevel))));
-        _logDock = new QDockWidget(tr("Log"));
+        _logDock = new QDockWidget(tr("Logs"));
         QAction *action = _logDock->toggleViewAction();
-
         // Adjust any parameter you want.  
-        action->setText(QString("&Log"));  
+        action->setText(QString("&Logs"));
         action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));  
-        action->setStatusTip(QString("Press to show/hide Log widget."));  
+        //action->setStatusTip(QString("Press to show/hide Logs panel."));  //commented for now because this message hides Logs button in status bar :)
         action->setChecked(false);
-        // Install action in the menu.  
+        // Install action in the menu.
         _viewMenu->addAction(action);
 
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);

@@ -59,10 +59,6 @@ namespace Robomongo
         layout->addWidget(_outputLabel, 0, Qt::AlignTop);
         layout->addWidget(_viewer, 1);
         setLayout(layout);
-
-        if (shell->isExecutable()) {
-            showProgress();
-        }
     }
 
     void QueryWidget::setScriptFocus()

@@ -54,13 +54,13 @@ namespace Robomongo
         void savebToFileAs();
         void openFile();
         void textChange();
+        void showProgress();
     public Q_SLOTS:
         void handle(DocumentListLoadedEvent *event);
         void handle(ScriptExecutedEvent *event);
         void handle(AutocompleteResponse *event);
 
-    private:
-        void showProgress();
+    private:        
         void hideProgress();
         void updateCurrentTab();
         void displayData(const std::vector<MongoShellResult> &results, bool empty);

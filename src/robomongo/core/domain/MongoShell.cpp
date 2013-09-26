@@ -44,6 +44,7 @@ namespace Robomongo
         }
         LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
     }
+
     void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
     {
         AppRegistry::instance().bus()->send(_server->client(), new ExecuteQueryRequest(this, resultIndex, info));

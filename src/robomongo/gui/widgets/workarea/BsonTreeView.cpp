@@ -35,13 +35,20 @@ namespace Robomongo
     }
 
     void BsonTreeView::showContextMenu(const QPoint &point)
-    {
-        QModelIndex selectedInd = selectedIndex();
+    {        
         QPoint menuPoint = mapToGlobal(point);
         menuPoint.setY(menuPoint.y() + header()->height());
 
-        if (selectedInd.isValid()) {
-            BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);;
+        QModelIndexList indexes = selectedIndexes();
+        if (detail::isMultySelection(indexes)) {
+            QMenu menu(this);
+            _notifier.initMultiSelectionMenu(&menu);
+            menu.exec(menuPoint);
+        }
+        else{
+
+            QModelIndex selectedInd = selectedIndex();
+            BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
 
             QMenu menu(this);
             bool isSimple = false;
@@ -55,14 +62,6 @@ namespace Robomongo
 
             _notifier.initMenu(&menu,documentItem);
             menu.exec(menuPoint);
-        }
-        else {
-            QModelIndexList indexes = selectedIndexes();
-            if (detail::isMultySelection(indexes)) {
-                QMenu menu(this);
-                _notifier.initMultiSelectionMenu(&menu);
-                menu.exec(menuPoint);
-            }
         }
     }
 

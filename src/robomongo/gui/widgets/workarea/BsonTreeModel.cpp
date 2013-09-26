@@ -141,13 +141,18 @@ namespace Robomongo
 
         int col = index.column();        
 
-        if (role == Qt::DisplayRole || role == Qt::DecorationRole || role == Qt::ToolTipRole) {
+        if(role == Qt::DecorationRole && col == BsonTreeItem::eKey ){
+            return getIcon(node);
+        }
+
+        if(role == Qt::TextColorRole && col == BsonTreeItem::eType){
+            return QColor(Qt::gray);
+        }
+
+        if (role == Qt::DisplayRole || role == Qt::ToolTipRole) {
             if (col == BsonTreeItem::eKey) {
                 if (role == Qt::DisplayRole) {
                     result = node->key();
-                }
-                else if (role == Qt::DecorationRole) {
-                    return getIcon(node);
                 }
             }
             else if (col == BsonTreeItem::eValue) {
@@ -167,36 +172,11 @@ namespace Robomongo
         return result;
     }
 
-    bool BsonTreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
-    {
-        if (!index.isValid())
-            return false;
-        if (role != Qt::EditRole)
-            return false;
-        if (index.column() != BsonTreeItem::eValue)
-            return false;
-        
-        BsonTreeItem *it = QtUtils::item<BsonTreeItem*>(index);
-        QString val =value.toString();
-        bool result=false;
-        if (!val.isEmpty() && val != it->value()) {
-            result = true;
-            it->setValue(val);
-        }
-
-        if (result)
-            emit dataChanged(index, index);
-
-        return result;
-    }
-
     Qt::ItemFlags BsonTreeModel::flags(const QModelIndex &index) const
     {
         Qt::ItemFlags result = 0;
         if (index.isValid()) {
-            result = Qt::ItemIsSelectable;
-            if (index.column() != BsonTreeItem::eType)
-                result |= Qt::ItemIsEnabled;
+            result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
         }
         return result;
     }

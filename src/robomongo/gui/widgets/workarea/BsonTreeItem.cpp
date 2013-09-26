@@ -17,6 +17,18 @@ namespace
         }
         const Robomongo::BsonTreeItem *const _whatSearch;
     };
+
+    const Robomongo::BsonTreeItem * findSuperRoot(const Robomongo::BsonTreeItem *const item)
+    {
+        Robomongo::BsonTreeItem *parent = qobject_cast<Robomongo::BsonTreeItem *>(item->parent());
+        if(parent){
+            Robomongo::BsonTreeItem *grParent = qobject_cast<Robomongo::BsonTreeItem *>(parent->parent());
+            if(grParent){
+               return findSuperRoot(parent);
+            }
+        }
+        return item;
+    }
 }
 namespace Robomongo
 {
@@ -71,6 +83,11 @@ namespace Robomongo
             }
         }
         return NULL;
+    }
+
+    mongo::BSONObj BsonTreeItem::superRoot() const
+    {
+        return findSuperRoot(this)->root();
     }
 
     mongo::BSONObj BsonTreeItem::root() const

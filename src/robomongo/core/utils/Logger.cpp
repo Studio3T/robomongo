@@ -42,7 +42,7 @@ namespace Robomongo
 
     void Logger::print(const QString &mess, mongo::LogLevel level, bool notify)
     {        
-        LOG(level) << "["PROJECT_NAME"] " << QtUtils::toStdString(mess) << std::endl;
+        LOG(level) << "["PROJECT_NAME_TITLE"] " << QtUtils::toStdString(mess) << std::endl;
         if (notify)
             emit printed(mess, level);
     }

@@ -4,6 +4,7 @@
 #include <mongo/util/log.h>
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
+class QAction;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -14,13 +15,17 @@ namespace Robomongo
 
     public:
         typedef QWidget BaseClass;
-        LogWidget(QWidget* parent = 0);
+        LogWidget(QWidget* parent = 0);        
 
     public Q_SLOTS:
         void addMessage(const QString &message, mongo::LogLevel level);
 
+    private Q_SLOTS:
+        void showContextMenu(const QPoint &pt);
+
     private:        
         QPlainTextEdit *const _logTextEdit;
+        QAction *_clear;
     };
 
 }

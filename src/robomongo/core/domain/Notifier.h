@@ -13,6 +13,7 @@ namespace Robomongo
 {
     class MongoShell;
     class BsonTreeItem;
+    class InsertDocumentResponse;
 
     namespace detail
     {
@@ -51,6 +52,7 @@ namespace Robomongo
         void onInsertDocument();
         void onCopyDocument();
         void onCopyJson();
+        void handle(InsertDocumentResponse *event);
 
     private:
         QAction *_deleteDocumentAction;

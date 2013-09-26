@@ -15,7 +15,6 @@ namespace Robomongo
         static const QIcon &getIcon(BsonTreeItem *item);
         explicit BsonTreeModel(const std::vector<MongoDocumentPtr> &documents,QObject *parent = 0);
         QVariant data(const QModelIndex &index, int role) const;
-        bool setData(const QModelIndex &index, const QVariant &value, int role);
 
         int rowCount(const QModelIndex &parent=QModelIndex()) const;
         int columnCount(const QModelIndex &parent) const;

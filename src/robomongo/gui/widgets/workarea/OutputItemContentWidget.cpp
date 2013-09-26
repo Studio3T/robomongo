@@ -86,6 +86,9 @@ namespace Robomongo
             _header->setCollection(QtUtils::toQString(_queryInfo.collectionName));
             _header->paging()->setBatchSize(_queryInfo.batchSize);
             _header->paging()->setSkip(_queryInfo.skip);
+            if(!_queryInfo.limit){
+            _queryInfo.limit=50;
+            }
         }
 
         _header->setTime(QString("%1 sec.").arg(secs));

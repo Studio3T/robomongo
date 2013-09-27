@@ -37,7 +37,8 @@ namespace Robomongo
         if (_scriptInfo.execute()) {
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             AppRegistry::instance().bus()->send(_server->client(), new ExecuteScriptRequest(this, query(), dbName));
-            LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
+            if(!_scriptInfo.script().isEmpty())
+                LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
         } else {
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             _scriptInfo.setScript("");

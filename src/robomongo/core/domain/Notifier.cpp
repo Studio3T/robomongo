@@ -325,7 +325,7 @@ namespace Robomongo
 
          QClipboard *clipboard = QApplication::clipboard();
          mongo::BSONObj obj = documentItem->root();
-         if (selectedInd.parent().isValid()){
+         if (documentItem != documentItem->superParent()){
              obj = obj[QtUtils::toStdString(documentItem->key())].Obj();
          }
          bool isArray = BsonUtils::isArray(documentItem->type());

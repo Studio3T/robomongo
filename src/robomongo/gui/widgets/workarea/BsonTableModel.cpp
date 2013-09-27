@@ -23,7 +23,8 @@ namespace Robomongo
 
     QModelIndex BsonTableModelProxy::parent( const QModelIndex& index ) const
     {
-        return mapFromSource(sourceModel()->parent( mapToSource(index) ));
+        QModelIndex sourceParent = sourceModel()->parent( mapToSource(index) );
+        return sourceParent;
     }
 
     int BsonTableModelProxy::columnCount(const QModelIndex &parent) const
@@ -33,7 +34,21 @@ namespace Robomongo
 
     QModelIndex BsonTableModelProxy::mapFromSource( const QModelIndex & sourceIndex ) const
     {
-        return index(sourceIndex.row(),sourceIndex.column(),sourceIndex.parent());
+        int row = sourceIndex.row();
+        int col = sourceIndex.column();
+
+        BsonTreeItem *node = QtUtils::item<BsonTreeItem *>(sourceIndex);
+        if (!node)
+            return QModelIndex();
+
+        BsonTreeItem *child = node->childByKey(_columns[col]);
+
+        return createIndex( row, col, child );
+    }
+
+    QModelIndex BsonTableModelProxy::sibling(int row, int column, const QModelIndex &idx) const
+    {
+        return BaseClass::sibling(row,0,idx);
     }
 
     QModelIndex BsonTableModelProxy::index( int row, int col, const QModelIndex& parent ) const
@@ -60,7 +75,7 @@ namespace Robomongo
             QtUtils::HackQModelIndex* hack = reinterpret_cast<QtUtils::HackQModelIndex*>(&sourceIndex);
             BsonTreeItem *parent = static_cast<BsonTreeItem *>(child->parent());
             hack->r = proxyIndex.row();
-            hack->c = 0;
+            hack->c = proxyIndex.column();
             hack->i = parent;
             hack->m = sourceModel();
         }

@@ -46,7 +46,7 @@ namespace Robomongo
 
     QModelIndex BsonTableView::selectedIndex() const
     {
-        QModelIndexList indexses = selectionModel()->selectedIndexes();
+        QModelIndexList indexses = detail::uniqueRows(selectionModel()->selectedIndexes());
 
         if (indexses.count() != 1)
             return QModelIndex();
@@ -56,25 +56,7 @@ namespace Robomongo
 
     QModelIndexList BsonTableView::selectedIndexes() const
     {
-        QModelIndexList indexses = selectionModel()->selectedIndexes();
-        QModelIndexList result;
-        for (QModelIndexList::const_iterator it = indexses.begin(); it != indexses.end(); ++it)
-        {
-            bool isContain = false;
-            QModelIndex iindex = *it;
-            for (QModelIndexList::const_iterator jt = result.begin(); jt != result.end(); ++jt)
-            {
-                QModelIndex jindex = *jt;
-                if (jindex.row() == iindex.row()){
-                    isContain = true;
-                    break;
-                }
-            }
-            if (!isContain){
-                result.append(iindex);
-            }
-        }
-        return result;
+        return detail::uniqueRows(selectionModel()->selectedIndexes());
     }
 
     void BsonTableView::showContextMenu( const QPoint &point )

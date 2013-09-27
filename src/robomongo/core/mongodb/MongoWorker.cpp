@@ -123,7 +123,13 @@ namespace Robomongo
             }
             boost::scoped_ptr<MongoClient> client(getClient());
             //conn->done();
-            std::vector<std::string> dbNames = client->getDatabaseNames();
+            std::vector<std::string> dbNames;
+            try {
+                dbNames = client->getDatabaseNames();
+            }
+            catch(const std::exception &ex){
+                LOG_MSG(ex.what(), mongo::LL_ERROR);
+            }
             reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(),dbNames,client->getVersion()) ));
         } catch(const std::exception &ex) {
             reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));

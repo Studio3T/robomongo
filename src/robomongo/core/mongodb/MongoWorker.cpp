@@ -99,8 +99,8 @@ namespace Robomongo
 
         try {
             mongo::DBClientBase *conn = getConnection();
-
-            if (_connection->hasEnabledPrimaryCredential()) {
+            bool hasPrimary = _connection->hasEnabledPrimaryCredential();
+            if (hasPrimary) {
                 std::string errmsg;
                 bool ok = conn->auth(
                     _connection->primaryCredential()->databaseName(),
@@ -128,6 +128,9 @@ namespace Robomongo
                 dbNames = client->getDatabaseNames();
             }
             catch(const std::exception &ex){
+                if(hasPrimary)
+                    dbNames.push_back(_connection->primaryCredential()->databaseName());
+
                 LOG_MSG(ex.what(), mongo::LL_ERROR);
             }
             reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(),dbNames,client->getVersion()) ));

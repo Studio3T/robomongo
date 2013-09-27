@@ -3,7 +3,7 @@
 #include <QWidget>
 #include <mongo/util/log.h>
 QT_BEGIN_NAMESPACE
-class QPlainTextEdit;
+class QTextEdit;
 class QAction;
 QT_END_NAMESPACE
 
@@ -24,7 +24,7 @@ namespace Robomongo
         void showContextMenu(const QPoint &pt);
 
     private:        
-        QPlainTextEdit *const _logTextEdit;
+        QTextEdit *const _logTextEdit;
         QAction *_clear;
     };
 

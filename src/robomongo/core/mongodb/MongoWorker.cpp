@@ -128,8 +128,8 @@ namespace Robomongo
                 dbNames = client->getDatabaseNames();
             }
             catch(const std::exception &ex){
-                if(hasPrimary)
-                    dbNames.push_back(_connection->primaryCredential()->databaseName());
+                if(hasPrimary && !_authDatabase.empty())
+                    dbNames.push_back(_authDatabase);
 
                 LOG_MSG(ex.what(), mongo::LL_ERROR);
             }

@@ -66,7 +66,7 @@ namespace Robomongo
         QSet<QString> uniqueConnectionsNames;
         for (App::MongoServersContainerType::const_iterator it = _servers.begin(); it != _servers.end(); ++it) {
             MongoServer *server = *it;
-            if (server->visible())
+            if (server->visible() && server->isConnected())
                 uniqueConnectionsNames.insert(QtUtils::toQString(server->connectionRecord()->connectionName()));
         }        
         _serverComboBox->addItems(uniqueConnectionsNames.toList());

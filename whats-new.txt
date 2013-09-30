@@ -1,3 +1,34 @@
+0.8.3 / October 1, 2013
+
+  Read about updates in this version here:
+  http://robomongo.org/whats-new-in/robomongo-0.8.3.html
+  
+  * Enable query logging (#108)
+  * Inserting multiple documents from UI (#173)
+  * Removing multiple documents from UI (#174)
+  * Retain current view mode when running search (#93, #79)
+  * Left panel collections/functions/users navigation doesn't work when authenticating against the DB (#282)
+  * A way to disable Alt + number shortcut (#192)
+  * Support mongodb 2.4.x style users (#139)
+  * Add "Copy JSON" menu item to context menu (#298)
+  * JSON list validation (#246)
+  * Crash creating new Database (#291)
+  * Incorrect handling of TTL Indexes (#313)
+  * Add the document _id in the tree view (#142)
+  * BSON Undefined type doesn't rendered to string correctly (#306)
+  * Entering incorrect symbols as database name isn't handled properly (#262)
+  * Ability to select UI theme
+  * We now show number of fields (inside objects) and number of items (inside arrays) in Tree View.
+  * Support for Mac OS X 10.6 (#287)
+  * Support for Mac OS X 10.9 (#254)
+
+  
+0.8.2 / September 13, 2013
+
+  Read about updates in this version here:
+  http://robomongo.org/whats-new-in/robomongo-0.8.2.html  
+
+
 0.8.1 / September 6, 2013
 
   Read about updates in this version here:

@@ -231,7 +231,7 @@ namespace Robomongo
         QAction *shardDistribution = new QAction("Shard Distribution", this);
         VERIFY(connect(shardDistribution, SIGNAL(triggered()), SLOT(ui_shardDistribution())));
 
-        QAction *dropCollection = new QAction("Drop Collection..", this);
+        QAction *dropCollection = new QAction("Drop Collection...", this);
         VERIFY(connect(dropCollection, SIGNAL(triggered()), SLOT(ui_dropCollection())));
 
         QAction *renameCollection = new QAction("Rename Collection...", this);

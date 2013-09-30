@@ -21,6 +21,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef std::vector<std::string> DatabasesContainerType;
         explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
         ConnectionSettings *connectionRecord() const {return _connection;}
         ~MongoWorker();
@@ -123,6 +124,8 @@ namespace Robomongo
          * @brief Send event to this MongoWorker
          */
         void send(Event *event);
+        DatabasesContainerType getDatabaseNamesSafe();
+        std::string getAuthBase() const;
 
         mongo::DBClientBase *_dbclient;
         mongo::DBClientBase *getConnection();
@@ -141,7 +144,6 @@ namespace Robomongo
         const bool _isLoadMongoRcJs;
         const int _batchSize;
         int _timerId;
-        std::string _authDatabase;
 
         ConnectionSettings *_connection;
     };

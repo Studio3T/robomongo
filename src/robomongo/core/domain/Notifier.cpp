@@ -37,6 +37,30 @@ namespace Robomongo
         {
             return Robomongo::BsonUtils::isDocument(item->type());
         }
+
+        QModelIndexList uniqueRows(QModelIndexList indexses)
+        {
+            QModelIndexList result;
+            for (QModelIndexList::const_iterator it = indexses.begin(); it!=indexses.end(); ++it)
+            {
+                QModelIndex isUnique = *it;
+                Robomongo::BsonTreeItem *item = Robomongo::QtUtils::item<Robomongo::BsonTreeItem*>(isUnique);
+                if(item){                
+                    for (QModelIndexList::const_iterator jt = result.begin(); jt!=result.end(); ++jt)
+                    {
+                        Robomongo::BsonTreeItem *jItem = Robomongo::QtUtils::item<Robomongo::BsonTreeItem*>(*jt);
+                        if (jItem && jItem->superParent() == item->superParent()){
+                            isUnique = QModelIndex();
+                            break;
+                        }
+                    }
+                    if (isUnique.isValid()){
+                        result.append(isUnique);
+                    }
+                }
+            }        
+            return result;
+        }
     }
 
     Notifier::Notifier(INotifierObserver *const observer, MongoShell *shell, const MongoQueryInfo &queryInfo, QObject *parent) :
@@ -154,7 +178,7 @@ namespace Robomongo
         QModelIndexList selectedIndexes = _observer->selectedIndexes();
         if (!detail::isMultySelection(selectedIndexes))
             return;
-        int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", "Do you want to delete all selected documents?");
+        int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", QString("Do you want to delete %1 selected documents?").arg(selectedIndexes.count()));
         if (answer == QMessageBox::Yes) {
             std::vector<BsonTreeItem*> items;
             for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it!= selectedIndexes.end(); ++it) {
@@ -301,7 +325,7 @@ namespace Robomongo
 
          QClipboard *clipboard = QApplication::clipboard();
          mongo::BSONObj obj = documentItem->root();
-         if (selectedInd.parent().isValid()){
+         if (documentItem != documentItem->superParent()){
              obj = obj[QtUtils::toStdString(documentItem->key())].Obj();
          }
          bool isArray = BsonUtils::isArray(documentItem->type());

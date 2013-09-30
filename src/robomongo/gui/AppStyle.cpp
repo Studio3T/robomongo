@@ -42,8 +42,12 @@ namespace Robomongo
 
     void AppStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
     {
+#ifdef Q_OS_WIN
+
         if(element==QStyle::PE_FrameFocusRect)
             return;
+
+#endif // Q_OS_WIN
 
         return OsStyle::drawPrimitive(element, option, painter, widget);
     }

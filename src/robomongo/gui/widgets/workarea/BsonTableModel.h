@@ -26,6 +26,7 @@ namespace Robomongo
         virtual QModelIndex mapToSource( const QModelIndex &proxyIndex ) const;
         virtual void setSourceModel( QAbstractItemModel* model );
         virtual QModelIndex parent( const QModelIndex& index ) const;
+        virtual QModelIndex sibling(int row, int column, const QModelIndex &idx) const;
     private:
         QString column(int col) const;
         size_t addColumn(const QString &col);

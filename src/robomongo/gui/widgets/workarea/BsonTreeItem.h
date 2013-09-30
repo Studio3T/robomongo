@@ -45,6 +45,7 @@ namespace Robomongo
         BsonTreeItem* childByKey(const QString &val);
         int indexOf(BsonTreeItem *item) const;
 
+        const BsonTreeItem* superParent() const;
         mongo::BSONObj root() const;
         mongo::BSONObj superRoot() const;
 

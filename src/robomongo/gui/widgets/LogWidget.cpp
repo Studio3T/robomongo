@@ -11,7 +11,7 @@
 namespace Robomongo
 {
     LogWidget::LogWidget(QWidget* parent) 
-        : BaseClass(parent), _logTextEdit(new QPlainTextEdit(this))
+        : BaseClass(parent), _logTextEdit(new QTextEdit(this))
     {
         _logTextEdit->setReadOnly(true);
         _logTextEdit->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -37,7 +37,9 @@ namespace Robomongo
     void LogWidget::addMessage(const QString &message, mongo::LogLevel level)
     {
         QTime time = QTime::currentTime();
-        _logTextEdit->appendHtml(QString(level == mongo::LL_ERROR ? "<font color=red>%1 %2</font>" : "<font color=black>%1 %2</font>").arg(time.toString("h:mm:ss AP:")).arg(message.toHtmlEscaped()));
+        //_logTextEdit->appendHtml(QString(level == mongo::LL_ERROR ? "<font color=red>%1 %2</font>" : "<font color=black>%1 %2</font>").arg(time.toString("h:mm:ss AP:")).arg(message.toHtmlEscaped()));
+        _logTextEdit->setTextColor(level == mongo::LL_ERROR ? QColor(Qt::red):QColor(Qt::black));
+        _logTextEdit->append(time.toString("h:mm:ss AP: ") + message);
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());
     }

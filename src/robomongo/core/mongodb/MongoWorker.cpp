@@ -47,11 +47,11 @@ namespace Robomongo
                 mongo::BSONObjBuilder command;
                 command.append("ping", 1);
                 mongo::BSONObj result;
-
-                if (_authDatabase.empty()) {
+                std::string authBase = getAuthBase();
+                if (authBase.empty()) {
                     _dbclient->runCommand("admin", command.obj(), result);
                 } else {
-                    _dbclient->runCommand(_authDatabase, command.obj(), result);
+                    _dbclient->runCommand(authBase, command.obj(), result);
                 }
             }
 
@@ -99,8 +99,8 @@ namespace Robomongo
 
         try {
             mongo::DBClientBase *conn = getConnection();
-
-            if (_connection->hasEnabledPrimaryCredential()) {
+            bool hasPrimary = _connection->hasEnabledPrimaryCredential();
+            if (hasPrimary) {
                 std::string errmsg;
                 bool ok = conn->auth(
                     _connection->primaryCredential()->databaseName(),
@@ -117,18 +117,46 @@ namespace Robomongo
                 std::transform(dbName.begin(), dbName.end(), dbName.begin(), ::tolower);
                 if (dbName.compare("admin") != 0) // dbName is NOT "admin"
                     _isAdmin = false;
-
-                // Save name of db on which we authenticated
-                _authDatabase = _connection->primaryCredential()->databaseName();
             }
             boost::scoped_ptr<MongoClient> client(getClient());
             //conn->done();
-            std::vector<std::string> dbNames = client->getDatabaseNames();
-            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(),dbNames,client->getVersion()) ));
+            std::vector<std::string> dbNames = getDatabaseNamesSafe();
+            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, client->getVersion()) ));
         } catch(const std::exception &ex) {
             reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
             LOG_MSG(ex.what(), mongo::LL_ERROR);
         }
+    }
+
+    std::string MongoWorker::getAuthBase() const
+    {
+        bool hasPrimary = _connection->hasEnabledPrimaryCredential();
+        if(hasPrimary){
+            return _connection->primaryCredential()->databaseName();
+        }
+        return std::string();
+    }
+
+    MongoWorker::DatabasesContainerType MongoWorker::getDatabaseNamesSafe()
+    {        
+        DatabasesContainerType result;
+        std::string authBase = getAuthBase();
+        if (!_isAdmin && !authBase.empty()) {
+            result.push_back(_connection->primaryCredential()->databaseName());
+            return result;
+        }
+
+        try {
+            boost::scoped_ptr<MongoClient> client(getClient());
+            result = client->getDatabaseNames();
+        }
+        catch(const std::exception &ex)
+        {
+            if(!authBase.empty())
+                result.push_back(authBase);
+            LOG_MSG(ex.what(), mongo::LL_ERROR);
+        }
+        return result;
     }
 
     /**
@@ -136,24 +164,14 @@ namespace Robomongo
      */
     void MongoWorker::handle(LoadDatabaseNamesRequest *event)
     {
-        try {
-            // If user not an admin - he doesn't have access to mongodb 'listDatabases' command
-            // Non admin user has access only to the single database he specified while performing auth.
-            if (!_isAdmin) {
-                std::vector<std::string> dbNames;
-                dbNames.push_back(_authDatabase);
-                reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
-                return;
-            }
-
-            boost::scoped_ptr<MongoClient> client(getClient());
-            std::vector<std::string> dbNames = client->getDatabaseNames();
-            client->done();
-
+        // If user not an admin - he doesn't have access to mongodb 'listDatabases' command
+        // Non admin user has access only to the single database he specified while performing auth.
+        std::vector<std::string> dbNames = getDatabaseNamesSafe();
+            
+        if(dbNames.size()){
             reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
-        } catch(const mongo::DBException &ex) {
+        }else{
             reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError("Unable to load database names.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
         }
     }
 

@@ -16,13 +16,11 @@ namespace
         if (keyObj.isValid()) {
             info._request = jsonString(keyObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
         }
-
         info._unique = getField<mongo::Bool>(obj, "unique");
         info._backGround = getField<mongo::Bool>(obj, "background");
         info._dropDups = getField<mongo::Bool>(obj, "dropDups");
         info._sparse = getField<mongo::Bool>(obj, "sparse");
-        info._ttl = obj.getIntField("expireAfterSeconds");        
-
+        info._ttl = obj.getIntField("expireAfterSeconds");
         info._defaultLanguage = getField<mongo::String>(obj, "default_language");
         info._languageOverride = getField<mongo::String>(obj, "language_override");
         mongo::BSONObj weightsObj = getField<mongo::Object>(obj, "weights");
@@ -460,7 +458,7 @@ namespace Robomongo
 
         mongo::BSONObj result;
         _dbclient->runCommand(mongons.databaseName(), command.obj(), result);
-
+        std::string isCV = result.toString();
         MongoCollectionInfo newInfo(result);
         return newInfo;
     }
@@ -470,7 +468,9 @@ namespace Robomongo
         std::vector<MongoCollectionInfo> infos;
         for (std::vector<std::string>::const_iterator it = namespaces.begin(); it!=namespaces.end(); ++it) {
             MongoCollectionInfo info = runCollStatsCommand(*it);
-            infos.push_back(info);
+            if (info.ns().isValid()){
+                infos.push_back(info);
+            }            
         }
         return infos;
     }

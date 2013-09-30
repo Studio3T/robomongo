@@ -438,7 +438,7 @@ namespace Robomongo
             if (connections.size() == 1) {
                 ScriptInfo inf = ScriptInfo(QString());
                 if (inf.loadFromFile()) {
-                    _app->openShell(connections.at(0)->clone(), inf);
+                    _app->openShell(connections.at(0), inf);
                 }
             }
         }
@@ -516,7 +516,7 @@ namespace Robomongo
             ConnectionSettings *selected = dialog.selectedConnection();
 
             try {
-                _app->openServer(selected->clone(), true);
+                _app->openServer(selected, true);
             } catch(const std::exception &) {
                 QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(selected->getFullAddress()));
                 QMessageBox::information(this, "Error", message);
@@ -688,7 +688,7 @@ namespace Robomongo
         QVariant data = connectionAction->data();
         ConnectionSettings *ptr = data.value<ConnectionSettings *>();
         try {
-            _app->openServer(ptr->clone(), true);
+            _app->openServer(ptr, true);
         }
         catch(const std::exception &) {
             QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(ptr->getFullAddress()));

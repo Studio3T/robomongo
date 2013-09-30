@@ -37,6 +37,7 @@ namespace Robomongo
          * @throws MongoException, if fails
          */
         void tryConnect();
+        bool isConnected()const;
 
         void createDatabase(const std::string &dbName);
         void dropDatabase(const std::string &dbName);
@@ -76,6 +77,7 @@ namespace Robomongo
 
         float _version;
         bool _visible;
+        bool _isConnected;
 
         DatabasesContainerType _databases;
     };

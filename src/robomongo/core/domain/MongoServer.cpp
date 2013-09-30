@@ -15,8 +15,14 @@ namespace Robomongo
     MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible) : QObject(),
         _version(0.0f),
         _visible(visible),
-        _client(new MongoWorker(connectionRecord->clone(),AppRegistry::instance().settingsManager()->loadMongoRcJs(),AppRegistry::instance().settingsManager()->batchSize()))
+        _client(new MongoWorker(connectionRecord->clone(),AppRegistry::instance().settingsManager()->loadMongoRcJs(),AppRegistry::instance().settingsManager()->batchSize())),
+        _isConnected(false)
     {
+    }
+
+    bool MongoServer::isConnected() const
+    {
+        return _isConnected;
     }
 
     ConnectionSettings *MongoServer::connectionRecord() const 
@@ -122,7 +128,8 @@ namespace Robomongo
     void MongoServer::handle(EstablishConnectionResponse *event)
     {
         const ConnectionInfo &info = event->info();
-        if (event->isError()) {
+        _isConnected = !event->isError();
+        if (event->isError()) {            
             AppRegistry::instance().bus()->publish(new ConnectionFailedEvent(this, event->error()));
         } else if (_visible) {
             AppRegistry::instance().bus()->publish(new ConnectionEstablishedEvent(this));

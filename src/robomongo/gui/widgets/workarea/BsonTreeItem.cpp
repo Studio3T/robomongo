@@ -18,7 +18,7 @@ namespace
         const Robomongo::BsonTreeItem *const _whatSearch;
     };
 
-    const Robomongo::BsonTreeItem * findSuperRoot(const Robomongo::BsonTreeItem *const item)
+    const Robomongo::BsonTreeItem *findSuperRoot(const Robomongo::BsonTreeItem *const item)
     {
         Robomongo::BsonTreeItem *parent = qobject_cast<Robomongo::BsonTreeItem *>(item->parent());
         if(parent){
@@ -85,9 +85,14 @@ namespace Robomongo
         return NULL;
     }
 
+    const BsonTreeItem *BsonTreeItem::superParent() const
+    {
+        return findSuperRoot(this);
+    }
+
     mongo::BSONObj BsonTreeItem::superRoot() const
     {
-        return findSuperRoot(this)->root();
+        return superParent()->root();
     }
 
     mongo::BSONObj BsonTreeItem::root() const

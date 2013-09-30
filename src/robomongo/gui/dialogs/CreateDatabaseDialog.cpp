@@ -29,6 +29,7 @@ namespace Robomongo
 
         _inputEdit = new QLineEdit();
         _inputLabel= new QLabel("Database Name:");
+        _inputEdit->setMaxLength(maxLenghtName);
 
         _buttonBox = new QDialogButtonBox(this);
         _buttonBox->setOrientation(Qt::Horizontal);

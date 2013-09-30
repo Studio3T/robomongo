@@ -16,10 +16,11 @@ namespace Robomongo
         QString buildCollectionQuery(const std::string &collectionName, const QString &postfix)
         {
             QString qCollectionName = QtUtils::toQString(collectionName);
-            QChar firstChar = qCollectionName[0];
+            QChar firstChar = qCollectionName.at(0);
+            QRegExp charExp("[^A-Za-z_0-9]"); // valid JS name
 
-            QString pattern = "db.%1.%2";
-            if  (firstChar == QChar('_')
+            QString pattern;
+            if (firstChar == QChar('_')
                 || qCollectionName == "help"
                 || qCollectionName == "stats"
                 || qCollectionName == "version"
@@ -27,8 +28,10 @@ namespace Robomongo
                     // TODO: this list should be expanded to include
                     // all functions of DB JavaScript object
                     pattern = "db.getCollection('%1').%2";
-            } else if (firstChar.isDigit() || qCollectionName.contains("[^A-Za-z_0-9]")) {
+            } else if (firstChar.isDigit() || qCollectionName.contains(charExp)) {
                 pattern = "db[\'%1\'].%2";
+            } else {
+                pattern = "db.%1.%2";
             }
 
             return pattern.arg(qCollectionName).arg(postfix);
@@ -74,7 +77,7 @@ namespace Robomongo
 
     MongoShell *App::openShell(MongoCollection *collection,const QString &filePathToSave)
     {
-        ConnectionSettings *connection = collection->database()->server()->connectionRecord()->clone();
+        ConnectionSettings *connection = collection->database()->server()->connectionRecord();
         connection->setDefaultDatabase(collection->database()->name());
         QString script = detail::buildCollectionQuery(collection->name(), "find()");
         return openShell(connection, ScriptInfo(script, true, CursorPosition(), QtUtils::toQString(collection->database()->name()),filePathToSave));
@@ -84,7 +87,7 @@ namespace Robomongo
                                bool execute, const QString &shellName,
                                const CursorPosition &cursorPosition,const QString &filePathToSave)
     {
-        ConnectionSettings *connection = server->connectionRecord()->clone();
+        ConnectionSettings *connection = server->connectionRecord();
 
         if (!dbName.empty())
             connection->setDefaultDatabase(dbName);
@@ -96,7 +99,7 @@ namespace Robomongo
                                bool execute, const QString &shellName,
                                const CursorPosition &cursorPosition,const QString &filePathToSave)
     {
-        ConnectionSettings *connection = database->server()->connectionRecord()->clone();
+        ConnectionSettings *connection = database->server()->connectionRecord();
         connection->setDefaultDatabase(database->name());
         return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName,filePathToSave));
     }

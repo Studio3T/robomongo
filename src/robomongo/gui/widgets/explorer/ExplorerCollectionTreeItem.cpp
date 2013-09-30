@@ -238,7 +238,7 @@ namespace Robomongo
         VERIFY(connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection())));
         QAction *duplicateCollection = new QAction("Duplicate Collection...", this);
         VERIFY(connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection())));
-        QAction *copyCollectionToDiffrentServer = new QAction("Copy Collection to Server...", this);
+        QAction *copyCollectionToDiffrentServer = new QAction("Copy Collection to Database...", this);
         VERIFY(connect(copyCollectionToDiffrentServer, SIGNAL(triggered()), SLOT(ui_copyToCollectionToDiffrentServer())));
 
         QAction *viewCollection = new QAction("View Documents", this);

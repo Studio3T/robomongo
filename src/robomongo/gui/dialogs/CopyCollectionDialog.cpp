@@ -61,15 +61,25 @@ namespace Robomongo
         vlayout->addWidget(new Indicator(GuiRegistry::instance().collectionIcon(), collection), 0, Qt::AlignLeft);
 
         QVBoxLayout *serverlayout = new QVBoxLayout();
+        serverlayout->setContentsMargins(0, 3, 0, 0);
         _serverComboBox = new QComboBox();
-        QLabel *serverLabel = new QLabel("Select server");
+        QLabel *serverLabel = new QLabel("Select server:");
+        QLabel *description = new QLabel(
+            QString("Copy <b>%1</b> collection to database on this or another server. "
+                "You need to be already connected to destination server, in order to see this server in the list below. "
+                "This operation will <i>not</i> overwrite existing documents with the same _id.")
+                .arg(collection));
+
+        description->setWordWrap(true);
+        serverlayout->addWidget(description);
+        serverlayout->addSpacing(14);
         serverlayout->addWidget(serverLabel);
         serverlayout->addWidget(_serverComboBox);
 
         QVBoxLayout *databaselayout = new QVBoxLayout();
-        databaselayout->setContentsMargins(0, 0, 0, 7);
+        databaselayout->setContentsMargins(0, 8, 0, 7);
         _databaseComboBox = new QComboBox();
-        QLabel *databaseLabel = new QLabel("Select database");
+        QLabel *databaseLabel = new QLabel("Select database:");
         databaselayout->addWidget(databaseLabel);
         databaselayout->addWidget(_databaseComboBox);        
         VERIFY(connect(_serverComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateDatabaseComboBox(int))));

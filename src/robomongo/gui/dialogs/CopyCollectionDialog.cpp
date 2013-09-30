@@ -21,10 +21,19 @@ namespace Robomongo
     CopyCollection::CopyCollection(const QString &serverName, const QString &database,
                                                const QString &collection, QWidget *parent) :
         QDialog(parent),
-        _servers( AppRegistry::instance().app()->getServers()),
         _currentServerName(serverName),
         _currentDatabase(database)
     {
+        App::MongoServersContainerType servers = AppRegistry::instance().app()->getServers();
+        QSet<QString> uniqueConnectionsNames;
+        for(App::MongoServersContainerType::const_iterator it = servers.begin(); it != servers.end(); ++it){
+             MongoServer *server = *it;
+             if (server->isConnected() ){
+                 _servers.push_back(server);
+                 uniqueConnectionsNames.insert(QtUtils::toQString(server->connectionRecord()->connectionName()));
+             }
+        }
+        
         setWindowTitle("Copy Collection");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumWidth(300);
@@ -63,12 +72,7 @@ namespace Robomongo
         databaselayout->addWidget(databaseLabel);
         databaselayout->addWidget(_databaseComboBox);        
         VERIFY(connect(_serverComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateDatabaseComboBox(int))));
-        QSet<QString> uniqueConnectionsNames;
-        for (App::MongoServersContainerType::const_iterator it = _servers.begin(); it != _servers.end(); ++it) {
-            MongoServer *server = *it;
-            if (server->visible() && server->isConnected())
-                uniqueConnectionsNames.insert(QtUtils::toQString(server->connectionRecord()->connectionName()));
-        }        
+
         _serverComboBox->addItems(uniqueConnectionsNames.toList());
         QVBoxLayout *layout = new QVBoxLayout();
         layout->addLayout(vlayout);

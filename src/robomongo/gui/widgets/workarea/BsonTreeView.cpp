@@ -10,7 +10,6 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
 
-
 namespace Robomongo
 {
     BsonTreeView::BsonTreeView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent) 
@@ -110,7 +109,7 @@ namespace Robomongo
      */
     QModelIndex BsonTreeView::selectedIndex() const
     {
-        QModelIndexList indexses = selectionModel()->selectedRows();
+        QModelIndexList indexses = detail::uniqueRows(selectionModel()->selectedRows());
         int count = indexses.count();
 
         if (indexses.count() != 1)
@@ -121,6 +120,6 @@ namespace Robomongo
 
     QModelIndexList BsonTreeView::selectedIndexes() const
     {
-        return selectionModel()->selectedRows();        
+        return detail::uniqueRows(selectionModel()->selectedRows());
     }
 }

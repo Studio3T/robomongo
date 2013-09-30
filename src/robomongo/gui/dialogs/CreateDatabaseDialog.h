@@ -23,9 +23,9 @@ namespace Robomongo
         void setOkButtonText(const QString &text);
         void setInputLabelText(const QString &text);
         void setInputText(const QString &text);
+        enum { maxLenghtName = 60 };
 
-
-    public slots:
+    public Q_SLOTS:
         virtual void accept();
 
     private:

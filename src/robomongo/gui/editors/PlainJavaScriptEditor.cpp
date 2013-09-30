@@ -60,7 +60,6 @@ namespace Robomongo
         setIndentationWidth(indentationWidth);
         setUtf8(true);
         setMarginWidth(1, 0);
-
         setCaretForegroundColor(caretForegroundColor);
         setMatchedBraceForegroundColor(matchedBraceForegroundColor); //1AB0A6
         setMatchedBraceBackgroundColor(marginsBackgroundColor);
@@ -86,7 +85,7 @@ namespace Robomongo
         _lineNumberDigitWidth = textWidth(STYLE_LINENUMBER, "0");
 #endif
         updateLineNumbersMarginWidth();
-
+        setUtf8(true);
         VERIFY(connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineNumbersMarginWidth())));
     }
 

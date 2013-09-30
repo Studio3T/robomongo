@@ -67,6 +67,7 @@ namespace Robomongo
         serverlayout->addWidget(_serverComboBox);
 
         QVBoxLayout *databaselayout = new QVBoxLayout();
+        databaselayout->setContentsMargins(0, 0, 0, 7);
         _databaseComboBox = new QComboBox();
         QLabel *databaseLabel = new QLabel("Select database");
         databaselayout->addWidget(databaseLabel);

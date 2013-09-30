@@ -79,7 +79,7 @@ namespace Robomongo
         BsonTreeItem *node = QtUtils::item<BsonTreeItem*>(parent);
         if (node) {
             mongo::BSONElement elem = BsonUtils::indexOf(node->root(),parent.row());
-            if (!elem.isNull()) {
+            if (!elem.isNull() && elem.isABSONObj()) {
                 parseDocument(node,elem.Obj());
             }            
         }

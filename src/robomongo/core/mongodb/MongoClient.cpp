@@ -458,7 +458,7 @@ namespace Robomongo
 
         mongo::BSONObj result;
         _dbclient->runCommand(mongons.databaseName(), command.obj(), result);
-
+        std::string isCV = result.toString();
         MongoCollectionInfo newInfo(result);
         return newInfo;
     }
@@ -468,7 +468,9 @@ namespace Robomongo
         std::vector<MongoCollectionInfo> infos;
         for (std::vector<std::string>::const_iterator it = namespaces.begin(); it!=namespaces.end(); ++it) {
             MongoCollectionInfo info = runCollStatsCommand(*it);
-            infos.push_back(info);
+            if (info.ns().isValid()){
+                infos.push_back(info);
+            }            
         }
         return infos;
     }

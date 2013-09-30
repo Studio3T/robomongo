@@ -38,7 +38,7 @@ namespace Robomongo
         int col = sourceIndex.column();
 
         BsonTreeItem *node = QtUtils::item<BsonTreeItem *>(sourceIndex);
-        if (!node)
+        if (!node || _columns.size() <= col)
             return QModelIndex();
 
         BsonTreeItem *child = node->childByKey(_columns[col]);
@@ -54,7 +54,7 @@ namespace Robomongo
     QModelIndex BsonTableModelProxy::index( int row, int col, const QModelIndex& parent ) const
     {
         BsonTreeItem *node = QtUtils::item<BsonTreeItem *>(sourceModel()->index(row,0,parent));
-        if (!node)
+        if (!node || _columns.size() <= col)
             return QModelIndex();
 
         BsonTreeItem *child = node->childByKey(_columns[col]);

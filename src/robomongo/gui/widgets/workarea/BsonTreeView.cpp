@@ -53,7 +53,7 @@ namespace Robomongo
             bool isSimple = false;
             if (documentItem) {
                 isSimple = detail::isSimpleType(documentItem);
-                if (documentItem->childrenCount()) {
+                if (detail::isDocumentType(documentItem)) {
                     menu.addAction(_expandRecursive);
                     menu.addSeparator();
                 }
@@ -92,7 +92,7 @@ namespace Robomongo
             BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(index);
             for (unsigned i = 0; i < item->childrenCount(); ++i) {
                 BsonTreeItem *tritem = item->child(i);
-                if (tritem && tritem->childrenCount()) {
+                if (tritem && detail::isDocumentType(tritem)) {
                     expandNode(model()->index(i, 0, index));
                 }
             }

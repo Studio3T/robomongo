@@ -248,7 +248,7 @@ namespace Robomongo
         if (!documentItem)
             return;
 
-        mongo::BSONObj obj = documentItem->root();
+        mongo::BSONObj obj = documentItem->superRoot();
 
         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
             AppRegistry::instance().settingsManager()->uuidEncoding(),

@@ -8,7 +8,7 @@ namespace
 {
     std::string getLoggerPath()
     {
-        static std::string path = Robomongo::QtUtils::toStdString(QString("%1/."PROJECT_NAME"log.txt").arg(QDir::homePath()));
+        static std::string path = Robomongo::QtUtils::toStdString(QString("%1/"PROJECT_NAME_LOWERCASE".log").arg(QDir::tempPath()));
         return path;
     }
 }
@@ -20,7 +20,7 @@ namespace Robomongo
         qRegisterMetaType<mongo::LogLevel>("mongo::LogLevel");
         std::string path = getLoggerPath();
         QFile file(QtUtils::toQString(path)); //delete file if it size more than 5mb
-        if (file.exists() && file.size()>5*1024*1024){
+        if (file.exists() && file.size() > 5 * 1024 * 1024) {
             file.remove();
         }
         mongo::initLogging(path,true);

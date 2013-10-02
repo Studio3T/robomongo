@@ -231,14 +231,14 @@ namespace Robomongo
         QAction *shardDistribution = new QAction("Shard Distribution", this);
         VERIFY(connect(shardDistribution, SIGNAL(triggered()), SLOT(ui_shardDistribution())));
 
-        QAction *dropCollection = new QAction("Drop Collection..", this);
+        QAction *dropCollection = new QAction("Drop Collection...", this);
         VERIFY(connect(dropCollection, SIGNAL(triggered()), SLOT(ui_dropCollection())));
 
         QAction *renameCollection = new QAction("Rename Collection...", this);
         VERIFY(connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection())));
         QAction *duplicateCollection = new QAction("Duplicate Collection...", this);
         VERIFY(connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection())));
-        QAction *copyCollectionToDiffrentServer = new QAction("Copy Collection to Server...", this);
+        QAction *copyCollectionToDiffrentServer = new QAction("Copy Collection to Database...", this);
         VERIFY(connect(copyCollectionToDiffrentServer, SIGNAL(triggered()), SLOT(ui_copyToCollectionToDiffrentServer())));
 
         QAction *viewCollection = new QAction("View Documents", this);

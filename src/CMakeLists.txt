@@ -260,12 +260,29 @@ SET(SOURCES robomongo/app/main.cpp ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_COR
 
 IF(BOOST_ENABLED)
     SET(ALL_LIBS ${ALL_LIBS} ${Boost_LIBRARIES})
+    SET(MONGODB_EXTRAPATH "${MONGODB_EXTRAPATH} ${BOOST_ROOT}")
 ELSE()   
     ADD_DEFINITIONS(-DBOOST_ALL_NO_LIB)
     ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/boost)
-    INCLUDE_DIRECTORIES(third-party/mongodb/src/third_party/boost)
+    SET(INCLUDE_DIRS ${INCLUDE_DIRS} third-party/mongodb/src/third_party/boost)
     SET(ALL_LIBS ${ALL_LIBS} boost_mongo_third_party)
 ENDIF()
+
+IF(OPENSSL_ENABLED)
+    SET(MONGODB_COMMAND ${MONGODB_COMMAND} --ssl)
+    SET(MONGODB_EXTRAPATH "${MONGODB_EXTRAPATH} ${OPENSSL_ROOT_DIR}")
+    SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
+    ADD_DEFINITIONS(-DMONGO_SSL)
+ENDIF(OPENSSL_ENABLED)
+
+IF(NOT MONGODB_EXTRAPATH STREQUAL "")
+    STRING(REGEX REPLACE "[ ]*([a-zA-Z:\\/]+)" "\\1," MONGODB_EXTRAPATH_OUT ${MONGODB_EXTRAPATH})
+    STRING(REGEX REPLACE ",$" "" MONGODB_EXTRAPATH_OUT_CLEAR ${MONGODB_EXTRAPATH_OUT})    
+    SET(MONGODB_COMMAND ${MONGODB_COMMAND} --extrapath=${MONGODB_EXTRAPATH_OUT_CLEAR})
+    SET(ALL_LIBS ${ALL_LIBS} ${OPENSSL_LIBRARIES})
+ENDIF()
+
+SET(MONGODB_COMMAND ${MONGODB_COMMAND} --${ARCH_TEXT} mongoclient)
 
 SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC})
 QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})
@@ -288,13 +305,13 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     IF(BOOST_ENABLED)
             IF ("${CMAKE_BUILD_TYPE_STABLE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --release --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
+                    COMMAND scons --release ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
             ELSE()
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons -d --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
+                    COMMAND scons -d ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
@@ -302,13 +319,13 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
         ELSE()
             IF ("${CMAKE_BUILD_TYPE_STABLE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --release --${ARCH_TEXT} mongoclient
+                    COMMAND scons --release ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
             ELSE()
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --d --${ARCH_TEXT} mongoclient
+                    COMMAND scons --d ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
@@ -321,23 +338,23 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
 ELSEIF(MSVC)
     IF(BOOST_ENABLED)
         ADD_CUSTOM_TARGET(mongoclient_release
-            COMMAND call scons --release --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
+            COMMAND call scons --release ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient release library")
         ADD_CUSTOM_TARGET(mongoclient_debug
-            COMMAND call scons --d --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
+            COMMAND call scons --d ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient debug library")
     ELSE(BOOST_ENABLED)
         ADD_CUSTOM_TARGET(mongoclient_release
-            COMMAND call scons --release --${ARCH_TEXT} mongoclient
+            COMMAND call scons --release ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient release library")
         ADD_CUSTOM_TARGET(mongoclient_debug
-            COMMAND call scons --d --${ARCH_TEXT} mongoclient
+            COMMAND call scons --d ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient debug library")
@@ -431,7 +448,7 @@ IF(DEVELOPER_ENABLE_TESTS)
 ########## PREPARE GTEST LIBRARY ##########
 
     ADD_EXECUTABLE(testparser robomongo/core/utils/BsonUtils.cpp robomongo/shell/db/ptimeutil.cpp robomongo/core/HexUtils.cpp ${CMAKE_SOURCE_DIR}/tests/test_parser.cpp)
-    TARGET_LINK_LIBRARIES(testparser ${MONGO_LIBRARIES} ${PLATFORM_LIBRARIES} boost_mongo_third_party pcrecpp gtest gtest_main) 
+    TARGET_LINK_LIBRARIES(testparser ${MONGO_LIBRARIES} ${PLATFORM_LIBRARIES} ${OPENSSL_LIBRARIES} boost_mongo_third_party pcrecpp gtest gtest_main) 
     ADD_DEPENDENCIES(testparser mongoclient_release)
     ADD_DEPENDENCIES(testparser mongoclient_debug)    
     ADD_TEST(NAME testparser COMMAND testparser)

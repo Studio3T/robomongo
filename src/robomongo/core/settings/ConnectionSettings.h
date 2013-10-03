@@ -123,6 +123,9 @@ namespace Robomongo
         bool isSslSupport() const {return _sslSupport; }
         void setSslSupport(bool isSsl) {_sslSupport = isSsl;}
 
+        std::string sslPEMKeyFile() const { return _sslPEMKeyFile; }
+        void setSslPEMKeyFile(const std::string &sslPEMKeyFile) { _sslPEMKeyFile = sslPEMKeyFile; }
+
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
         std::string _connectionName;
@@ -130,6 +133,7 @@ namespace Robomongo
         std::string _defaultDatabase;
         unsigned short _serverPort;
         bool _sslSupport;
+        std::string _sslPEMKeyFile;
 
         QList<CredentialSettings *> _credentials;
     };

@@ -23,14 +23,16 @@ namespace Robomongo
         _serverHost(defaultServerHost),
         _defaultDatabase(),
         _connectionName(defaultNameConnection),
-        _sslSupport(false){}
+        _sslSupport(false),
+        _sslPEMKeyFile(){}
 
     ConnectionSettings::ConnectionSettings(QVariantMap map) : QObject(),
         _serverPort(map.value("serverPort").toInt()),
         _serverHost(QtUtils::toStdString(map.value("serverHost").toString())),
         _defaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString())),
         _connectionName(QtUtils::toStdString(map.value("connectionName").toString())),
-        _sslSupport(map.value("ssl").toBool())
+        _sslSupport(map.value("ssl").toBool()),
+        _sslPEMKeyFile(QtUtils::toStdString(map.value("sslPEMKeyFile").toString()))
     {
         QVariantList list = map.value("credentials").toList();
         for(QVariantList::const_iterator it = list.begin(); it != list.end(); ++it) {
@@ -68,6 +70,7 @@ namespace Robomongo
         setServerPort(source->serverPort());
         setDefaultDatabase(source->defaultDatabase());
         setSslSupport(source->isSslSupport());
+        setSslPEMKeyFile(source->sslPEMKeyFile());
 
         clearCredentials();
         QList<CredentialSettings *> cred = source->credentials();
@@ -87,6 +90,7 @@ namespace Robomongo
         map.insert("serverPort", serverPort());
         map.insert("defaultDatabase", QtUtils::toQString(defaultDatabase()));
         map.insert("ssl", _sslSupport);
+        map.insert("sslPEMKeyFile", QtUtils::toQString(sslPEMKeyFile()));
 
         QVariantList list;
         for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {

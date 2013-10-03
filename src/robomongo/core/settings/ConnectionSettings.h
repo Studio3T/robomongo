@@ -120,12 +120,16 @@ namespace Robomongo
             return _connectionName;
         }
 
+        bool isSslSupport() const {return _sslSupport; }
+        void setSslSupport(bool isSsl) {_sslSupport = isSsl;}
+
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
         std::string _connectionName;
         std::string _serverHost;
         std::string _defaultDatabase;
         unsigned short _serverPort;
+        bool _sslSupport;
 
         QList<CredentialSettings *> _credentials;
     };

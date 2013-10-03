@@ -2,10 +2,6 @@
 
 #include <QDialog>
 
-QT_BEGIN_NAMESPACE
-class QCheckBox;
-QT_END_NAMESPACE
-
 #include "robomongo/core/Core.h"
 
 namespace Robomongo
@@ -45,8 +41,7 @@ namespace Robomongo
         void apply();
         ConnectionAuthTab *_authTab;
         ConnectionBasicTab *_basicTab;
-        ConnectionAdvancedTab *_advancedTab;
-        QCheckBox *_sslSupport;
+        ConnectionAdvancedTab *_advancedTab;        
 
         /**
          * @brief Edited connection

@@ -17,7 +17,7 @@
 #include <mongo/shell/shell_utils.h>
 #include <mongo/base/string_data.h>
 #include <mongo/client/dbclient.h>
-#include <pcre/pcrecpp.h>
+#include <pcrecpp.h>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"

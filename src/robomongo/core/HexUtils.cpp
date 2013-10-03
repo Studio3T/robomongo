@@ -1,8 +1,9 @@
 #include "robomongo/core/HexUtils.h"
 
 #include <mongo/util/hex.h>
-#include <pcre/pcrecpp.h>
+#include <pcrecpp.h>
 #include <iostream>
+
 namespace Robomongo
 {
     namespace HexUtils

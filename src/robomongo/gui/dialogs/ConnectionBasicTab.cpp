@@ -44,9 +44,9 @@ namespace Robomongo
 #endif // Q_OS_WIN
         _sslPEMKeyFile->setValidator(new QRegExpValidator(pathx, this));
 
-        QPushButton *selectFileB = new QPushButton("...");
-        selectFileB->setFixedSize(20,20);       
-        VERIFY(connect(selectFileB, SIGNAL(clicked()), this, SLOT(setSslPEMKeyFile())));;
+        _selectFileB = new QPushButton("...");
+        _selectFileB->setFixedSize(20,20);       
+        VERIFY(connect(_selectFileB, SIGNAL(clicked()), this, SLOT(setSslPEMKeyFile())));;
 
         QGridLayout *connectionLayout = new QGridLayout;
         connectionLayout->addWidget(new QLabel("Name:"),          1, 0);
@@ -59,12 +59,15 @@ namespace Robomongo
         connectionLayout->addWidget(_serverPort,                  3, 3);
         connectionLayout->setAlignment(Qt::AlignTop);
         connectionLayout->addWidget(_sslSupport,          5, 1);
-        connectionLayout->addWidget(selectFileB,          5, 2);
+        connectionLayout->addWidget(_selectFileB,          5, 2);
         connectionLayout->addWidget(_sslPEMKeyFile,          5, 3);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addLayout(connectionLayout);
         setLayout(mainLayout);
+
+        sslSupportStateChanged(_sslSupport->checkState());
+        VERIFY(connect(_sslSupport,SIGNAL(stateChanged(int)),this,SLOT(sslSupportStateChanged(int))));
 
         _connectionName->setFocus();
     }
@@ -73,6 +76,15 @@ namespace Robomongo
     {
         QString filepath = QFileDialog::getOpenFileName(this,"Select SslPEMKeyFile","",QObject::tr("Pem files (*.pem)"));
         _sslPEMKeyFile->setText(filepath);
+    }
+
+    void ConnectionBasicTab::sslSupportStateChanged(int value)
+    {
+        _sslPEMKeyFile->setEnabled(value);
+        _selectFileB->setEnabled(value);
+        if (!value) {
+            _sslPEMKeyFile->setText("");
+        }
     }
 
     void ConnectionBasicTab::accept()

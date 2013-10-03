@@ -91,11 +91,8 @@ namespace Robomongo
         {
             mongo::shell_utils::_dbConnect = ss.str();
             mongo::isShell = true;
-            if(_connection->isSslSupport()){
-                mongo::cmdLine.sslOnNormalPorts = true;
-                mongo::cmdLine.sslPEMKeyFile = _connection->sslPEMKeyFile();
-                mongo::cmdLine.sslPEMKeyPassword = "";
-            }
+            mongo::cmdLine.sslOnNormalPorts = _connection->isSslSupport();
+            mongo::cmdLine.sslPEMKeyFile = _connection->sslPEMKeyFile();
 
             mongo::ScriptEngine::setConnectCallback( mongo::shell_utils::onConnect );
             mongo::ScriptEngine::setup();

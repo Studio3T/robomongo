@@ -7,12 +7,14 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QDialogButtonBox>
+#include <QCheckBox>
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/ConnectionAuthTab.h"
 #include "robomongo/gui/dialogs/ConnectionBasicTab.h"
 #include "robomongo/gui/dialogs/ConnectionAdvancedTab.h"
 #include "robomongo/gui/dialogs/ConnectionDiagnosticDialog.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
@@ -34,11 +36,16 @@ namespace Robomongo
 
         QHBoxLayout *bottomLayout = new QHBoxLayout;
         bottomLayout->addWidget(testButton, 1, Qt::AlignLeft);
+        
+        _sslSupport = new QCheckBox("Ssl support");
+        bottomLayout->addWidget(_sslSupport);
+        _sslSupport->setChecked(_connection->isSslSupport());
+
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
         VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
-        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
+        VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));        
         bottomLayout->addWidget(buttonBox);
 
         QTabWidget *tabWidget = new QTabWidget;
@@ -73,6 +80,7 @@ namespace Robomongo
         _basicTab->accept();
         _authTab->accept();
         _advancedTab->accept();
+        _connection->setSslSupport(_sslSupport->isChecked());
     }
 
     /**

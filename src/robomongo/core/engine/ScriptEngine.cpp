@@ -7,10 +7,10 @@
 #include <QTextStream>
 #include <QFile>
 #include <QElapsedTimer>
-#include <js/jsapi.h>
-#include <js/jsparse.h>
-#include <js/jsscan.h>
-#include <js/jsstr.h>
+#include <third_party/js-1.7/jsapi.h>
+#include <third_party/js-1.7/jsparse.h>
+#include <third_party/js-1.7/jsscan.h>
+#include <third_party/js-1.7/jsstr.h>
 #include <mongo/util/assert_util.h>
 #include <mongo/scripting/engine.h>
 #include <mongo/scripting/engine_spidermonkey.h>

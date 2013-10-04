@@ -2,7 +2,7 @@
 
 #include <QMutex>
 #include <mongo/scripting/engine.h>
-#include <js/jsparse.h>
+#include <third_party/js-1.7/jsparse.h>
 
 #include "robomongo/core/domain/MongoShellResult.h"
 

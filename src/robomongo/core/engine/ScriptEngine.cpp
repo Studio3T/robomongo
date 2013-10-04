@@ -7,6 +7,7 @@
 #include <QTextStream>
 #include <QFile>
 #include <QElapsedTimer>
+
 #include <third_party/js-1.7/jsapi.h>
 #include <third_party/js-1.7/jsparse.h>
 #include <third_party/js-1.7/jsscan.h>
@@ -38,6 +39,8 @@ namespace
         output.push_back(s.substr(prev_pos, pos-prev_pos)); // Last word
         return output;
     }
+
+    mongo::RecursiveMutex _mutex( "ScriptEngine::_mutex" );
 }
 
 namespace mongo {
@@ -49,27 +52,22 @@ namespace Robomongo
     ScriptEngine::ScriptEngine(ConnectionSettings *connection) :
         _connection(connection),
         _scope(NULL),
-        _engine(NULL),
-        _mutex(QMutex::Recursive) { }
+        _engine(NULL) { }
 
     ScriptEngine::~ScriptEngine()
     {
-        QMutexLocker lock(&_mutex);
+        mongo::RecursiveMutex::scoped_lock lk( _mutex );
 
-        if (_scope) {
-            delete _scope;
-            _scope = NULL;
-        }
+        delete _scope;
+        _scope = NULL;
 
-        if (_engine) {
-            delete _engine;
-            _engine = NULL;
-        }
+        delete _engine;
+        _engine = NULL;
     }
 
     void ScriptEngine::init(bool isLoadMongoRcJs)
     {
-        QMutexLocker lock(&_mutex);
+        mongo::RecursiveMutex::scoped_lock lk( _mutex );
 
         std::string connectDatabase = "test";
 
@@ -129,7 +127,7 @@ namespace Robomongo
 
     MongoShellExecResult ScriptEngine::exec(const std::string &originalScript, const std::string &dbName)
     {
-        QMutexLocker lock(&_mutex);
+        mongo::RecursiveMutex::scoped_lock lk( _mutex );
 
         /*
          * Replace all commands ('show dbs', 'use db' etc.) with call
@@ -200,7 +198,7 @@ namespace Robomongo
 
     void ScriptEngine::use(const std::string &dbName)
     {
-        QMutexLocker lock(&_mutex);
+        mongo::RecursiveMutex::scoped_lock lk( _mutex );
 
         if (!dbName.empty()) {
             // switch to database
@@ -212,7 +210,7 @@ namespace Robomongo
 
     void ScriptEngine::setBatchSize(int batchSize)
     {
-        QMutexLocker lock(&_mutex);
+        mongo::RecursiveMutex::scoped_lock lk( _mutex );
         char buff[64]={0};
         sprintf(buff,"DBQuery.shellBatchSize = %d",batchSize);
 
@@ -221,7 +219,7 @@ namespace Robomongo
 
     void ScriptEngine::ping()
     {
-        QMutexLocker lock(&_mutex);
+        mongo::RecursiveMutex::scoped_lock lk( _mutex );
         _scope->exec("if (db) { db.runCommand({ping:1}); }", "(ping)", false, false, false);
     }
 
@@ -231,7 +229,6 @@ namespace Robomongo
 //            return;
 
         try {
-            using namespace mongo;
             QStringList results;
             mongo::BSONObj args = BSON( "0" << prefix );
 
@@ -334,11 +331,9 @@ namespace Robomongo
 
     bool ScriptEngine::statementize(const std::string &script, std::vector<std::string> &outList, std::string &outError)
     {
-        using namespace mongo;
-
         _scope->setString("__robomongoEsprima", script.c_str());
 
-        StringData data(
+        mongo::StringData data(
             "var __robomongoResult = {};"
             "try {"
                 "__robomongoResult.result = esprima.parse(__robomongoEsprima, { range: true, loc : true });"
@@ -349,29 +344,29 @@ namespace Robomongo
         );
 
         bool res2 = _scope->exec(data, "(esprima2)", false, true, false);
-        BSONObj obj = _scope->getObject("__lastres__");
+        mongo::BSONObj obj = _scope->getObject("__lastres__");
 
         if (obj.hasField("error")) {
             outError = obj.getField("error");
             return false;
         }
 
-        BSONObj result = obj.getField("result").Obj();
-        vector<BSONElement> v = result.getField("body").Array();
+        mongo::BSONObj result = obj.getField("result").Obj();
+        std::vector<mongo::BSONElement> v = result.getField("body").Array();
 
-        for (vector<BSONElement>::iterator it = v.begin(); it != v.end(); ++it)
+        for (std::vector<mongo::BSONElement>::iterator it = v.begin(); it != v.end(); ++it)
         {
-            BSONObj item = (*it).Obj();
-            BSONObj loc = item.getField("loc").Obj();
-            BSONObj start = loc.getField("start").Obj();
-            BSONObj end = loc.getField("end").Obj();
+            mongo::BSONObj item = (*it).Obj();
+            mongo::BSONObj loc = item.getField("loc").Obj();
+            mongo::BSONObj start = loc.getField("start").Obj();
+            mongo::BSONObj end = loc.getField("end").Obj();
 
             int startLine = start.getIntField("line");
             int startColumn = start.getIntField("column");
             int endLine = end.getIntField("line");
             int endColumn = end.getIntField("column");
 
-            vector<BSONElement> range = item.getField("range").Array();
+            std::vector<mongo::BSONElement> range = item.getField("range").Array();
             int from = (int) range.at(0).number();
             int till = (int) range.at(1).number();
 

@@ -3,8 +3,8 @@
 #include <QDir>
 #include <QFile>
 #include <QVariantList>
-#include <qjson/parser.h>
-#include <qjson/serializer.h>
+#include <parser.h>
+#include <serializer.h>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/utils/Logger.h"

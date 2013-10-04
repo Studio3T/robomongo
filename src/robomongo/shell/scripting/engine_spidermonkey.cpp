@@ -25,7 +25,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #endif
 
-#include <js/jsdate.h>
+#include <third_party/js-1.7/jsdate.h>
 
 #include "mongo/scripting/engine_spidermonkey_internal.h"
 #include "mongo/util/mongoutils/str.h"

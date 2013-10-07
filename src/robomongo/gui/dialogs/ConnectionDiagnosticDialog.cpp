@@ -6,13 +6,12 @@
 #include <QPushButton>
 #include <QMovie>
 
-#include <mongo/client/dbclientinterface.h>
+#include "robomongo/core/mongodb/RDBClientConnection.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
 
-using namespace mongo;
 namespace Robomongo
 {
     ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *connection) :
@@ -134,14 +133,14 @@ namespace Robomongo
         sprintf(port,":%u",_connection->serverPort());
         std::string address = _connection->serverHost();
         address+=port;
-        boost::scoped_ptr<DBClientConnection> connection;
+        boost::scoped_ptr<RDBClientConnection> connection;
 
         try {
-            connection.reset(new DBClientConnection);
-            connection->connect(address);
+            connection.reset(new RDBClientConnection);
+            connection->connect(address, _connection->isSslSupport(), _connection->sslPEMKeyFile());
             emit connectionStatus("", true);
         }
-        catch(UserException &ex) {
+        catch(const mongo::UserException &ex) {
             const char *what = ex.what();
             emit connectionStatus(QString(what), false);
             emit completed();
@@ -156,15 +155,11 @@ namespace Robomongo
                 std::string username = credential->userName();
                 std::string password = credential->userPassword();
 
-                string errmsg;
+                std::string errmsg;
                 bool ok = connection->auth(database, username, password, errmsg);
-                if (!ok) {
-                    emit authStatus("", false);
-                } else {
-                    emit authStatus("", true);
-                }
+                emit authStatus("", ok);
             }
-        } catch (const UserException &) {
+        } catch (const mongo::UserException &) {
             emit authStatus("", false);
         }
 

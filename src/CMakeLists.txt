@@ -155,6 +155,7 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/utils/Logger.h
     )
 SET(HEADERS_CORE
+    robomongo/core/mongodb/RDBClientConnection.h
     robomongo/core/settings/SettingsManager.h
     robomongo/core/engine/ScriptEngine.h
     robomongo/core/KeyboardManager.h
@@ -187,6 +188,7 @@ SET(HEADERS_CORE
     robomongo/core/utils/SingletonPattern.hpp
     )
 SET(SOURCES_CORE
+    robomongo/core/mongodb/RDBClientConnection.cpp
     robomongo/core/domain/Notifier.cpp
     robomongo/core/AppRegistry.cpp
     robomongo/core/settings/ConnectionSettings.cpp

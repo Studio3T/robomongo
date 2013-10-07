@@ -511,11 +511,11 @@ namespace Robomongo
         }
     }
 
-    mongo::DBClientBase *MongoWorker::getConnection()
+    RDBClientConnection *MongoWorker::getConnection()
     {
         if (!_dbclient) {
-            mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
-            conn->connect(_connection->getFullAddress());
+            RDBClientConnection *conn = new RDBClientConnection(true);
+            conn->connect(_connection->getFullAddress(),_connection->isSslSupport(), _connection->sslPEMKeyFile());
             _dbclient = conn;
         }
         return _dbclient;

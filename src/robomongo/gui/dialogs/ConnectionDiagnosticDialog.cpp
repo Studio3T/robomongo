@@ -129,15 +129,11 @@ namespace Robomongo
 
     void ConnectionDiagnosticThread::run()
     {
-        char port[8]={0};
-        sprintf(port,":%u",_connection->serverPort());
-        std::string address = _connection->serverHost();
-        address+=port;
         boost::scoped_ptr<RDBClientConnection> connection;
 
         try {
             connection.reset(new RDBClientConnection);
-            connection->connect(address, _connection->isSslSupport(), _connection->sslPEMKeyFile());
+            connection->connect(_connection);
             emit connectionStatus("", true);
         }
         catch(const mongo::UserException &ex) {

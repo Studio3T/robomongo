@@ -27,7 +27,7 @@ namespace Robomongo
     {         
         _thread = new QThread(this);
         moveToThread(_thread);
-        VERIFY(connect( _thread, SIGNAL(started()), this, SLOT(init()) ));
+        //VERIFY(connect( _thread, SIGNAL(started()), this, SLOT(init()) ));
         _thread->start();
     }
 
@@ -515,7 +515,8 @@ namespace Robomongo
     {
         if (!_dbclient) {
             RDBClientConnection *conn = new RDBClientConnection(true);
-            conn->connect(_connection->getFullAddress(),_connection->isSslSupport(), _connection->sslPEMKeyFile());
+            conn->connect(_connection);
+            init();
             _dbclient = conn;
         }
         return _dbclient;

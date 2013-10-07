@@ -41,6 +41,7 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/ConnectionAuthTab.h
     robomongo/gui/dialogs/ConnectionBasicTab.h
     robomongo/gui/dialogs/ConnectionAdvancedTab.h
+    robomongo/gui/dialogs/SSHTunnelTab.h
     robomongo/gui/dialogs/ConnectionDiagnosticDialog.h
     robomongo/gui/widgets/workarea/ScriptWidget.h
     robomongo/gui/widgets/workarea/PagingWidget.h
@@ -99,6 +100,7 @@ SET(SOURCES_GUI
     robomongo/gui/dialogs/ConnectionAuthTab.cpp
     robomongo/gui/dialogs/ConnectionBasicTab.cpp
     robomongo/gui/dialogs/ConnectionAdvancedTab.cpp
+    robomongo/gui/dialogs/SSHTunnelTab.cpp
     robomongo/gui/dialogs/ConnectionDiagnosticDialog.cpp
     robomongo/gui/widgets/workarea/ScriptWidget.cpp
     robomongo/gui/widgets/workarea/PagingWidget.cpp

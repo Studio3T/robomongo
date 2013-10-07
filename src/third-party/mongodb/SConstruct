@@ -373,7 +373,7 @@ if has_option( "libpath" ):
 if has_option( "cpppath" ):
     env["CPPPATH"] = [get_option( "cpppath" )]
 
-env.Prepend( CPPDEFINES=[ "_SCONS" , 
+env.Prepend( CPPDEFINES=[ "_SCONS" , "ROBOMONGO" ,
                           "MONGO_EXPOSE_MACROS" ,
                           "SUPPORT_UTF8" ],  # for pcre
 

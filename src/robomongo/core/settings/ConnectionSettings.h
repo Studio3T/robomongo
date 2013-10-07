@@ -7,6 +7,20 @@
 namespace Robomongo
 {
     class CredentialSettings;
+
+    struct SSHInfo
+    {
+        SSHInfo():_hostName(),_userName(),_port(22),_password(),_publicKey(){}        
+
+        bool isValid() const {return !_password.empty() || !_publicKey.empty(); }
+
+        std::string _hostName;
+        std::string _userName;
+        unsigned _port;
+        std::string _password;
+        std::string _publicKey;
+    };
+
     /**
      * @brief Represents connection record
      */
@@ -126,6 +140,8 @@ namespace Robomongo
         std::string sslPEMKeyFile() const { return _sslPEMKeyFile; }
         void setSslPEMKeyFile(const std::string &sslPEMKeyFile) { _sslPEMKeyFile = sslPEMKeyFile; }
 
+        SSHInfo sshInfo() const {return _sshInfo; }
+        void setSshInfo(const SSHInfo &info) {_sshInfo = info;}
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
         std::string _connectionName;
@@ -134,6 +150,7 @@ namespace Robomongo
         unsigned short _serverPort;
         bool _sslSupport;
         std::string _sslPEMKeyFile;
+        SSHInfo _sshInfo;
 
         QList<CredentialSettings *> _credentials;
     };

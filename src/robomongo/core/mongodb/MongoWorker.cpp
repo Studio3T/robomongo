@@ -27,6 +27,7 @@ namespace Robomongo
     {         
         _thread = new QThread(this);
         moveToThread(_thread);
+#pragma message("init enable!!!")
         //VERIFY(connect( _thread, SIGNAL(started()), this, SLOT(init()) ));
         _thread->start();
     }
@@ -516,7 +517,6 @@ namespace Robomongo
         if (!_dbclient) {
             RDBClientConnection *conn = new RDBClientConnection(true);
             conn->connect(_connection);
-            init();
             _dbclient = conn;
         }
         return _dbclient;

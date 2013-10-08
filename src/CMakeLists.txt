@@ -41,7 +41,6 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/ConnectionAuthTab.h
     robomongo/gui/dialogs/ConnectionBasicTab.h
     robomongo/gui/dialogs/ConnectionAdvancedTab.h
-    robomongo/gui/dialogs/SSHTunnelTab.h
     robomongo/gui/dialogs/ConnectionDiagnosticDialog.h
     robomongo/gui/widgets/workarea/ScriptWidget.h
     robomongo/gui/widgets/workarea/PagingWidget.h
@@ -100,7 +99,6 @@ SET(SOURCES_GUI
     robomongo/gui/dialogs/ConnectionAuthTab.cpp
     robomongo/gui/dialogs/ConnectionBasicTab.cpp
     robomongo/gui/dialogs/ConnectionAdvancedTab.cpp
-    robomongo/gui/dialogs/SSHTunnelTab.cpp
     robomongo/gui/dialogs/ConnectionDiagnosticDialog.cpp
     robomongo/gui/widgets/workarea/ScriptWidget.cpp
     robomongo/gui/widgets/workarea/PagingWidget.cpp
@@ -259,8 +257,6 @@ ELSEIF(UNIX)
     SET(PLATFORM_LIBRARIES pthread)
     #SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 ENDIF()
-SET(HEADERS ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
-SET(SOURCES robomongo/app/main.cpp ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_CORE})
 
 IF(BOOST_ENABLED)
     SET(ALL_LIBS ${ALL_LIBS} ${Boost_LIBRARIES})
@@ -276,8 +272,36 @@ IF(OPENSSL_ENABLED)
     SET(MONGODB_COMMAND ${MONGODB_COMMAND} --ssl)
     SET(MONGODB_EXTRAPATH "${MONGODB_EXTRAPATH} ${OPENSSL_ROOT_DIR}")
     SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
+    SET(HEADERS ${HEADERS} third-party/libssh2/include/libssh2.h)
+    SET(SOURCES ${SOURCES} 
+    third-party/libssh2/src/global.c 
+    third-party/libssh2/src/session.c 
+    third-party/libssh2/src/openssl.c 
+    third-party/libssh2/src/keepalive.c 
+    third-party/libssh2/src/misc.c
+    third-party/libssh2/src/kex.c
+    third-party/libssh2/src/transport.c
+    third-party/libssh2/src/crypt.c
+    third-party/libssh2/src/packet.c
+    third-party/libssh2/src/hostkey.c
+    third-party/libssh2/src/comp.c
+    third-party/libssh2/src/channel.c
+    third-party/libssh2/src/mac.c
+    third-party/libssh2/src/userauth.c)
     ADD_DEFINITIONS(-DMONGO_SSL)
 ENDIF(OPENSSL_ENABLED)
+
+IF(OPENSSH_ENABLED)
+    SET(HEADERS_GUI_TO_MOC ${HEADERS_GUI_TO_MOC}
+    robomongo/gui/dialogs/SSHTunnelTab.h
+    )
+    SET(SOURCES_GUI ${SOURCES_GUI}
+    robomongo/gui/dialogs/SSHTunnelTab.cpp
+    )
+    SET(INCLUDE_DIRS ${INCLUDE_DIRS} third-party/libssh2/src third-party/libssh2/include/)
+    SET(HEADERS ${HEADERS} third-party/libssh2/include/libssh2.h)
+    SET(SOURCES ${SOURCES} third-party/libssh2/src/global.c)
+ENDIF(OPENSSH_ENABLED)
 
 IF(NOT MONGODB_EXTRAPATH STREQUAL "")
     STRING(REGEX REPLACE "[ ]*([a-zA-Z:\\/]+)" "\\1," MONGODB_EXTRAPATH_OUT ${MONGODB_EXTRAPATH})
@@ -288,7 +312,10 @@ ENDIF()
 
 SET(MONGODB_COMMAND ${MONGODB_COMMAND} --${ARCH_TEXT} mongoclient)
 
+SET(HEADERS ${HEADERS} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
+SET(SOURCES ${SOURCES} robomongo/app/main.cpp ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_CORE})
 SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC})
+
 QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})
 SET(RESOURCES robomongo/gui/resources/gui.qrc)
 QTX_ADD_RESOURCES(RES_SRC ${RESOURCES})
@@ -297,8 +324,6 @@ INCLUDE_DIRECTORIES(${INCLUDE_DIRS} )
 SOURCE_GROUP("Header Files" FILES ${HEADERS} ${HEADERS_TOMOC})
 SOURCE_GROUP("Source Files" FILES ${SOURCES})
 SOURCE_GROUP("Generated" FILES ${MOC_FILES})
-SOURCE_GROUP("Fileitems Files" FILES ${FILEITEMS_HDRS} ${FILEITEMS_SRCS})
-SOURCE_GROUP("Controls" FILES ${CONTROLS_HDRS} ${CONTROLS_SRCS})
 SOURCE_GROUP("Platform Files" FILES ${PLATFORM_HDRS} ${PLATFORM_SRCS})
 SOURCE_GROUP("Resources" FILES ${RES_SRC} ${RESOURCE_OS})
 

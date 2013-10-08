@@ -42,8 +42,10 @@ namespace Robomongo
         void apply();
         ConnectionAuthTab *_authTab;
         ConnectionBasicTab *_basicTab;
-        ConnectionAdvancedTab *_advancedTab;        
+        ConnectionAdvancedTab *_advancedTab;
+#ifdef OPENSSH_SUPPORT_ENABLED
         SshTunelTab *_sshTab;
+#endif
         /**
          * @brief Edited connection
          */

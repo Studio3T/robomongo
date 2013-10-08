@@ -34,6 +34,12 @@ namespace Robomongo
         _sslSupport(map.value("ssl").toBool()),
         _sslPEMKeyFile(QtUtils::toStdString(map.value("sslPEMKeyFile").toString()))
     {
+#ifdef OPENSSH_SUPPORT_ENABLED
+        _sshInfo._hostName = QtUtils::toStdString(map.value("sshInfo.host").toString());
+        _sshInfo._userName = QtUtils::toStdString(map.value("sshInfo.username").toString()); 
+        _sshInfo._port = map.value("sshInfo.port").toInt();
+        _sshInfo._password = QtUtils::toStdString(map.value("sshInfo.password").toString());
+#endif
         QVariantList list = map.value("credentials").toList();
         for(QVariantList::const_iterator it = list.begin(); it != list.end(); ++it) {
             QVariant var = *it;
@@ -71,7 +77,9 @@ namespace Robomongo
         setDefaultDatabase(source->defaultDatabase());
         setSslSupport(source->isSslSupport());
         setSslPEMKeyFile(source->sslPEMKeyFile());
-
+#ifdef OPENSSH_SUPPORT_ENABLED
+        setSshInfo(source->sshInfo());
+#endif
         clearCredentials();
         QList<CredentialSettings *> cred = source->credentials();
         for (QList<CredentialSettings *>::iterator it = cred.begin(); it != cred.end(); ++it) {
@@ -91,7 +99,12 @@ namespace Robomongo
         map.insert("defaultDatabase", QtUtils::toQString(defaultDatabase()));
         map.insert("ssl", _sslSupport);
         map.insert("sslPEMKeyFile", QtUtils::toQString(sslPEMKeyFile()));
-
+#ifdef OPENSSH_SUPPORT_ENABLED
+        map.insert("sshInfo.host", QtUtils::toQString(_sshInfo._hostName));
+        map.insert("sshInfo.username", QtUtils::toQString(_sshInfo._userName));
+        map.insert("sshInfo.port", _sshInfo._port);
+        map.insert("sshInfo.password", QtUtils::toQString(_sshInfo._password));
+#endif
         QVariantList list;
         for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
             CredentialSettings *credential = *it;

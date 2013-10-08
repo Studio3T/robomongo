@@ -188,11 +188,12 @@ namespace mongo {
 
 #ifdef ROBOMONGO
         virtual ~Socket();
+        virtual bool connect(SockAddr& farEnd);
 #else
         ~Socket();
-#endif
-
         bool connect(SockAddr& farEnd);
+#endif
+        
         void close();
         
         void send( const char * data , int len, const char *context );

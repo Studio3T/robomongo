@@ -69,8 +69,8 @@ namespace Robomongo
         SSHInfo info;
         info._hostName = QtUtils::toStdString(_sshHostName->text());
         info._userName = QtUtils::toStdString(_userName->text()); 
-        info._port = _userName->text().toInt();
-        info._password = _userName->text().toInt();
+        info._port = _sshPort->text().toInt();
+        info._password = QtUtils::toStdString(_passwordBox->text());
 
         _settings->setSshInfo(info);
     }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "robomongo/core/mongodb/RDBClientConnection.h"
+#include <mongo/client/dbclientinterface.h>
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/core/domain/MongoUser.h"
@@ -12,7 +12,7 @@ namespace Robomongo
     class MongoClient
     {
     public:
-        MongoClient(RDBClientConnection *const scopedConnection);
+        MongoClient(mongo::DBClientConnection *const scopedConnection);
 
         std::vector<std::string> getCollectionNames(const std::string &dbname) const;
         std::vector<std::string> getDatabaseNames() const;
@@ -41,7 +41,7 @@ namespace Robomongo
         void renameCollection(const std::string &dbName, const std::string &collectionName, const std::string &newCollectionName);
         void duplicateCollection(const std::string &dbName, const std::string &collectionName, const std::string &newCollectionName);
         void dropCollection(const std::string &dbName, const std::string &collectionName);
-        void copyCollectionToDiffServer(RDBClientConnection *const,const MongoNamespace &from, const MongoNamespace &to);
+        void copyCollectionToDiffServer(mongo::DBClientConnection *const,const MongoNamespace &from, const MongoNamespace &to);
 
         void insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
         void saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
@@ -54,6 +54,6 @@ namespace Robomongo
         void done();
 
     private:
-        RDBClientConnection *const _dbclient;
+        mongo::DBClientConnection *const _dbclient;
     };
 }

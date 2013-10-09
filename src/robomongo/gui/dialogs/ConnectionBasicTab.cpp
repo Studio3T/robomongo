@@ -34,9 +34,9 @@ namespace Robomongo
         _serverPort->setValidator(new QRegExpValidator(rx, this));
 
         _sslSupport = new QCheckBox("Ssl support");
-        _sslSupport->setChecked(_settings->isSslSupport());
+        _sslSupport->setChecked(_settings->sslInfo()._sslSupport);
 
-        _sslPEMKeyFile = new QLineEdit(QtUtils::toQString(_settings->sslPEMKeyFile()));
+        _sslPEMKeyFile = new QLineEdit(QtUtils::toQString(_settings->sslInfo()._sslPEMKeyFile));
 #ifdef Q_OS_WIN
         QRegExp pathx("([a-zA-Z]:)?(\\\\[a-zA-Z0-9_.-]+)+\\\\?");
 #else
@@ -92,7 +92,9 @@ namespace Robomongo
         _settings->setConnectionName(QtUtils::toStdString(_connectionName->text()));
         _settings->setServerHost(QtUtils::toStdString(_serverAddress->text()));
         _settings->setServerPort(_serverPort->text().toInt());
-        _settings->setSslSupport(_sslSupport->isChecked());
-        _settings->setSslPEMKeyFile(QtUtils::toStdString(_sslPEMKeyFile->text()));
+#ifdef MONGO_SSL
+        SSLInfo inf(_sslSupport->isChecked(),QtUtils::toStdString(_sslPEMKeyFile->text()));
+        _settings->setSslInfo(inf);
+#endif // MONGO_SSL
     }
 }

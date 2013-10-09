@@ -19,26 +19,31 @@ namespace Robomongo
      * @brief Creates ConnectionSettings with default values
      */
     ConnectionSettings::ConnectionSettings() : QObject(),
-        _serverPort(port),
-        _serverHost(defaultServerHost),
-        _defaultDatabase(),
-        _connectionName(defaultNameConnection),
-        _sslSupport(false),
-        _sslPEMKeyFile(){}
+         _connectionName(defaultNameConnection),
+        _info(defaultServerHost,port)
+    {
+
+    }
 
     ConnectionSettings::ConnectionSettings(QVariantMap map) : QObject(),
-        _serverPort(map.value("serverPort").toInt()),
-        _serverHost(QtUtils::toStdString(map.value("serverHost").toString())),
-        _defaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString())),
         _connectionName(QtUtils::toStdString(map.value("connectionName").toString())),
-        _sslSupport(map.value("ssl").toBool()),
-        _sslPEMKeyFile(QtUtils::toStdString(map.value("sslPEMKeyFile").toString()))
+        _info( QtUtils::toStdString(map.value("serverHost").toString()), map.value("serverPort").toInt()
+#ifdef MONGO_SSL
+        ,SSLInfo(map.value("ssl").toBool(),QtUtils::toStdString(map.value("sslPEMKeyFile").toString()))
+#endif
+#ifdef SSH_SUPPORT_ENABLED
+        ,SSHInfo()
+#endif        
+        )
+        ,_defaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString()))
     {
-#ifdef OPENSSH_SUPPORT_ENABLED
-        _sshInfo._hostName = QtUtils::toStdString(map.value("sshInfo.host").toString());
-        _sshInfo._userName = QtUtils::toStdString(map.value("sshInfo.username").toString()); 
-        _sshInfo._port = map.value("sshInfo.port").toInt();
-        _sshInfo._password = QtUtils::toStdString(map.value("sshInfo.password").toString());
+#ifdef SSH_SUPPORT_ENABLED
+        SSHInfo inf;
+        inf._hostName = QtUtils::toStdString(map.value("sshInfo.host").toString());
+        inf._userName = QtUtils::toStdString(map.value("sshInfo.username").toString()); 
+        inf._port = map.value("sshInfo.port").toInt();
+        inf._password = QtUtils::toStdString(map.value("sshInfo.password").toString());
+        setSshInfo(inf);
 #endif
         QVariantList list = map.value("credentials").toList();
         for(QVariantList::const_iterator it = list.begin(); it != list.end(); ++it) {
@@ -75,9 +80,8 @@ namespace Robomongo
         setServerHost(source->serverHost());
         setServerPort(source->serverPort());
         setDefaultDatabase(source->defaultDatabase());
-        setSslSupport(source->isSslSupport());
-        setSslPEMKeyFile(source->sslPEMKeyFile());
-#ifdef OPENSSH_SUPPORT_ENABLED
+        setSslInfo(source->sslInfo());
+#ifdef SSH_SUPPORT_ENABLED
         setSshInfo(source->sshInfo());
 #endif
         clearCredentials();
@@ -97,13 +101,17 @@ namespace Robomongo
         map.insert("serverHost", QtUtils::toQString(serverHost()));
         map.insert("serverPort", serverPort());
         map.insert("defaultDatabase", QtUtils::toQString(defaultDatabase()));
-        map.insert("ssl", _sslSupport);
-        map.insert("sslPEMKeyFile", QtUtils::toQString(sslPEMKeyFile()));
-#ifdef OPENSSH_SUPPORT_ENABLED
-        map.insert("sshInfo.host", QtUtils::toQString(_sshInfo._hostName));
-        map.insert("sshInfo.username", QtUtils::toQString(_sshInfo._userName));
-        map.insert("sshInfo.port", _sshInfo._port);
-        map.insert("sshInfo.password", QtUtils::toQString(_sshInfo._password));
+#ifdef MONGO_SSL
+        SSLInfo infl = _info.sslInfo();
+        map.insert("ssl", infl._sslSupport);
+        map.insert("sslPEMKeyFile", QtUtils::toQString(infl._sslPEMKeyFile));
+#endif
+#ifdef SSH_SUPPORT_ENABLED
+        SSHInfo inf = _info.sshInfo();
+        map.insert("sshInfo.host", QtUtils::toQString(inf._hostName));
+        map.insert("sshInfo.username", QtUtils::toQString(inf._userName));
+        map.insert("sshInfo.port", inf._port);
+        map.insert("sshInfo.password", QtUtils::toQString(inf._password));
 #endif
         QVariantList list;
         for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
@@ -172,7 +180,7 @@ namespace Robomongo
     std::string ConnectionSettings::getFullAddress() const
     {
         char buff[1024] = {0};
-        sprintf(buff, "%s:%u", _serverHost.c_str(), _serverPort);
+        sprintf(buff, "%s:%u", _info.host().c_str(), _info.port());
         return buff;
     }
 }

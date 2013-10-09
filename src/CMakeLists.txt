@@ -155,7 +155,6 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/utils/Logger.h
     )
 SET(HEADERS_CORE
-    robomongo/core/mongodb/RDBClientConnection.h
     robomongo/core/settings/SettingsManager.h
     robomongo/core/engine/ScriptEngine.h
     robomongo/core/KeyboardManager.h
@@ -188,7 +187,6 @@ SET(HEADERS_CORE
     robomongo/core/utils/SingletonPattern.hpp
     )
 SET(SOURCES_CORE
-    robomongo/core/mongodb/RDBClientConnection.cpp
     robomongo/core/domain/Notifier.cpp
     robomongo/core/AppRegistry.cpp
     robomongo/core/settings/ConnectionSettings.cpp
@@ -272,36 +270,20 @@ IF(OPENSSL_ENABLED)
     SET(MONGODB_COMMAND ${MONGODB_COMMAND} --ssl)
     SET(MONGODB_EXTRAPATH "${MONGODB_EXTRAPATH} ${OPENSSL_ROOT_DIR}")
     SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
-    SET(HEADERS ${HEADERS} third-party/libssh2/include/libssh2.h)
-    SET(SOURCES ${SOURCES} 
-    third-party/libssh2/src/global.c 
-    third-party/libssh2/src/session.c 
-    third-party/libssh2/src/openssl.c 
-    third-party/libssh2/src/keepalive.c 
-    third-party/libssh2/src/misc.c
-    third-party/libssh2/src/kex.c
-    third-party/libssh2/src/transport.c
-    third-party/libssh2/src/crypt.c
-    third-party/libssh2/src/packet.c
-    third-party/libssh2/src/hostkey.c
-    third-party/libssh2/src/comp.c
-    third-party/libssh2/src/channel.c
-    third-party/libssh2/src/mac.c
-    third-party/libssh2/src/userauth.c)
     ADD_DEFINITIONS(-DMONGO_SSL)
 ENDIF(OPENSSL_ENABLED)
 
-IF(OPENSSH_ENABLED)
+IF(SSH_ENABLED)
+    SET(MONGODB_COMMAND ${MONGODB_COMMAND} --ssh)
     SET(HEADERS_GUI_TO_MOC ${HEADERS_GUI_TO_MOC}
     robomongo/gui/dialogs/SSHTunnelTab.h
     )
     SET(SOURCES_GUI ${SOURCES_GUI}
     robomongo/gui/dialogs/SSHTunnelTab.cpp
     )
-    SET(INCLUDE_DIRS ${INCLUDE_DIRS} third-party/libssh2/src third-party/libssh2/include/)
-    SET(HEADERS ${HEADERS} third-party/libssh2/include/libssh2.h)
-    SET(SOURCES ${SOURCES} third-party/libssh2/src/global.c)
-ENDIF(OPENSSH_ENABLED)
+    ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/libssh2)
+    SET(ALL_LIBS ${ALL_LIBS} libssh2_third_party)    
+ENDIF(SSH_ENABLED)
 
 IF(NOT MONGODB_EXTRAPATH STREQUAL "")
     STRING(REGEX REPLACE "[ ]*([a-zA-Z:\\/]+)" "\\1," MONGODB_EXTRAPATH_OUT ${MONGODB_EXTRAPATH})
@@ -482,4 +464,11 @@ IF(DEVELOPER_ENABLE_TESTS)
     ADD_DEPENDENCIES(testparser mongoclient_debug)    
     ADD_TEST(NAME testparser COMMAND testparser)
     SET_PROPERTY(TARGET testparser PROPERTY FOLDER "Tests")
+    
+    ADD_EXECUTABLE(testconnectionstrings ${CMAKE_SOURCE_DIR}/tests/test_connection_string.cpp)
+    TARGET_LINK_LIBRARIES(testconnectionstrings ${MONGO_LIBRARIES} ${PLATFORM_LIBRARIES} ${OPENSSL_LIBRARIES} boost_mongo_third_party pcrecpp gtest gtest_main) 
+    ADD_DEPENDENCIES(testconnectionstrings mongoclient_release)
+    ADD_DEPENDENCIES(testconnectionstrings mongoclient_debug)    
+    ADD_TEST(NAME testconnectionstrings COMMAND testconnectionstrings)
+    SET_PROPERTY(TARGET testconnectionstrings PROPERTY FOLDER "Tests")
 ENDIF(DEVELOPER_ENABLE_TESTS)

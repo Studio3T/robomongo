@@ -74,15 +74,15 @@ namespace Robomongo
         if (_connection->hasEnabledPrimaryCredential())
             connectDatabase = _connection->primaryCredential()->databaseName();
 
-        char url[2048] = {0};
-        sprintf(url,"%s:%u/%s",_connection->serverHost().c_str(),_connection->serverPort(),connectDatabase.c_str());
+        std::stringstream urlStream;
+        urlStream << _connection->serverHost() << ":" << _connection->serverPort() << _connection->sslInfo() << _connection->sshInfo() << "/" << connectDatabase;
 
         std::stringstream ss;
 
         if (!_connection->hasEnabledPrimaryCredential())
-            ss << "db = connect('" << url << "')";
+            ss << "db = connect('" << urlStream.str() << "')";
         else
-            ss << "db = connect('" << url << "', '"
+            ss << "db = connect('" << urlStream.str() << "', '"
                << _connection->primaryCredential()->userName() << "', '"
                << _connection->primaryCredential()->userPassword() << "')";
 

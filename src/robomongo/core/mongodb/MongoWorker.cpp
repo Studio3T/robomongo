@@ -27,8 +27,7 @@ namespace Robomongo
     {         
         _thread = new QThread(this);
         moveToThread(_thread);
-#pragma message("init enable!!!")
-        //VERIFY(connect( _thread, SIGNAL(started()), this, SLOT(init()) ));
+        VERIFY(connect( _thread, SIGNAL(started()), this, SLOT(init()) ));
         _thread->start();
     }
 
@@ -512,11 +511,11 @@ namespace Robomongo
         }
     }
 
-    RDBClientConnection *MongoWorker::getConnection()
+    mongo::DBClientConnection *MongoWorker::getConnection()
     {
         if (!_dbclient) {
-            RDBClientConnection *conn = new RDBClientConnection(true);
-            conn->connect(_connection);
+            mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
+            conn->connect(_connection->info());
             _dbclient = conn;
         }
         return _dbclient;

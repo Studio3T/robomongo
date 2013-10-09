@@ -3,24 +3,11 @@
 #include <QString>
 #include <QVariant>
 #include <QVariantMap>
+#include <mongo/client/dbclientinterface.h>
 
 namespace Robomongo
 {
     class CredentialSettings;
-#ifdef OPENSSH_SUPPORT_ENABLED
-    struct SSHInfo
-    {
-        SSHInfo():_hostName(),_userName(),_port(22),_password(),_publicKey(){}        
-
-        bool isValid() const {return !_password.empty() || !_publicKey.empty(); }
-
-        std::string _hostName;
-        std::string _userName;
-        unsigned _port;
-        std::string _password;
-        std::string _publicKey;
-    };
-#endif
     /**
      * @brief Represents connection record
      */
@@ -65,14 +52,14 @@ namespace Robomongo
         /**
          * @brief Server host
          */
-        std::string serverHost() const { return _serverHost; }
-        void setServerHost(const std::string &serverHost) { _serverHost = serverHost; }
+        std::string serverHost() const { return _info.host(); }
+        void setServerHost(const std::string &serverHost) { _info.setHost(serverHost); }
 
         /**
          * @brief Port of server
          */
-        unsigned short serverPort() const { return _serverPort; }
-        void setServerPort(const int port) { _serverPort = port; }
+        unsigned short serverPort() const { return _info.port(); }
+        void setServerPort(const int port) { _info.setPort(port); }
 
         /**
          * @brief Default database
@@ -104,7 +91,7 @@ namespace Robomongo
         /**
          * @brief Returns number of credentials
          */
-        int credentialCount() const { return _credentials.count(); }
+        int credentialCount() const { return _credentials.size(); }
 
         /**
          * @brief Returns all credentials
@@ -134,26 +121,21 @@ namespace Robomongo
             return _connectionName;
         }
 
-        bool isSslSupport() const {return _sslSupport; }
-        void setSslSupport(bool isSsl) {_sslSupport = isSsl;}
+        mongo::HostAndPort info() const {return _info;}
+#ifdef MONGO_SSL
+        SSLInfo sslInfo() const {return _info.sslInfo(); }
+        void setSslInfo(const SSLInfo &info) {_info.setSslInfo(info);}
+#endif // MONGO_SSL
+#ifdef SSH_SUPPORT_ENABLED
+       SSHInfo sshInfo() const {return _info.sshInfo(); }
+       void setSshInfo(const SSHInfo &info) {_info.setSshInfo(info);}
+#endif // SSH_SUPPORT_ENABLED
 
-        std::string sslPEMKeyFile() const { return _sslPEMKeyFile; }
-        void setSslPEMKeyFile(const std::string &sslPEMKeyFile) { _sslPEMKeyFile = sslPEMKeyFile; }
-#ifdef OPENSSH_SUPPORT_ENABLED
-        SSHInfo sshInfo() const {return _sshInfo; }
-        void setSshInfo(const SSHInfo &info) {_sshInfo = info;}
-#endif
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
         std::string _connectionName;
-        std::string _serverHost;
+        mongo::HostAndPort _info;
         std::string _defaultDatabase;
-        unsigned short _serverPort;
-        bool _sslSupport;
-        std::string _sslPEMKeyFile;
-#ifdef OPENSSH_SUPPORT_ENABLED
-        SSHInfo _sshInfo;
-#endif
         QList<CredentialSettings *> _credentials;
     };
 }

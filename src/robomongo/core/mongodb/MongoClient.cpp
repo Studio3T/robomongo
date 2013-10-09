@@ -33,7 +33,7 @@ namespace
 
 namespace Robomongo
 {
-    MongoClient::MongoClient(RDBClientConnection *const dbclient) :
+    MongoClient::MongoClient(mongo::DBClientConnection *const dbclient) :
         _dbclient(dbclient) { }
 
     std::vector<std::string> MongoClient::getCollectionNames(const std::string &dbname) const
@@ -380,7 +380,7 @@ namespace Robomongo
         }
     }
 
-    void MongoClient::copyCollectionToDiffServer(RDBClientConnection *const fromServ,const MongoNamespace &from, const MongoNamespace &to)
+    void MongoClient::copyCollectionToDiffServer(mongo::DBClientConnection *const fromServ,const MongoNamespace &from, const MongoNamespace &to)
     {
         if (!_dbclient->exists(to.toString()))
             _dbclient->createCollection(to.toString());

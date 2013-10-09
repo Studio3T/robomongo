@@ -43,7 +43,7 @@ namespace Robomongo
         ConnectionAuthTab *_authTab;
         ConnectionBasicTab *_basicTab;
         ConnectionAdvancedTab *_advancedTab;
-#ifdef OPENSSH_SUPPORT_ENABLED
+#ifdef SSH_SUPPORT_ENABLED
         SshTunelTab *_sshTab;
 #endif
         /**

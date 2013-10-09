@@ -6,7 +6,7 @@
 #include <QPushButton>
 #include <QMovie>
 
-#include "robomongo/core/mongodb/RDBClientConnection.h"
+#include <mongo/client/dbclientinterface.h>
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -129,11 +129,11 @@ namespace Robomongo
 
     void ConnectionDiagnosticThread::run()
     {
-        boost::scoped_ptr<RDBClientConnection> connection;
+        boost::scoped_ptr<mongo::DBClientConnection> connection;
 
         try {
-            connection.reset(new RDBClientConnection);
-            connection->connect(_connection);
+            connection.reset(new mongo::DBClientConnection);
+            connection->connect(_connection->info());
             emit connectionStatus("", true);
         }
         catch(const mongo::UserException &ex) {

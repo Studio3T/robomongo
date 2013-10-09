@@ -169,6 +169,7 @@ add_option( "no-glibc-check" , "don't check for new versions of glibc" , 0 , Fal
 add_option( "mm", "use main memory instead of memory mapped files" , 0 , True )
 add_option( "asio" , "Use Asynchronous IO (NOT READY YET)" , 0 , True )
 add_option( "ssl" , "Enable SSL" , 0 , True )
+add_option( "ssh" , "Enable SSH" , 0 , True )
 
 # library choices
 add_option( "usesm" , "use spider monkey for javascript" , 0 , True )
@@ -767,7 +768,11 @@ try:
     umask = os.umask(022)
 except OSError:
     pass
-
+    
+if has_option( "ssh" ):
+    env.Prepend(CPPPATH=['$BUILD_DIR/third_party/libssh2/include'],
+                CPPDEFINES=['SSH_SUPPORT_ENABLED'])
+                
 if not windows:
     for keysuffix in [ "1" , "2" ]:
         keyfile = "jstests/libs/key%s" % keysuffix

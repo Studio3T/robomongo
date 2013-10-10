@@ -13,17 +13,17 @@ namespace Robomongo
                   mongo::BSONObj query, mongo::BSONObj fields, int limit, int skip, int batchSize,
                   int options, bool special);
 
-        std::string serverAddress;
-        std::string databaseName;
-        std::string collectionName;
-        mongo::BSONObj query;
-        mongo::BSONObj fields;
-        int limit;
-        int skip;
-        int batchSize;
-        int options;
-        bool special; // flag, indicating that `query` contains special fields on
+        std::string _serverAddress;
+        std::string _databaseName;
+        std::string _collectionName;
+        mongo::BSONObj _query;
+        mongo::BSONObj _fields;
+        int _limit;
+        int _skip;
+        int _batchSize;
+        int _options;
+        bool _special; // flag, indicating that `query` contains special fields on
                       // first level, and query data in `query` field.
-        bool isNull;
+        bool _isNull;
     };
 }

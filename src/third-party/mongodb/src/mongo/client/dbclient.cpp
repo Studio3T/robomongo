@@ -96,30 +96,30 @@ namespace Robomongo
             if (auth_pw & 1) {
                 /* We could authenticate via password */ 
                 if (libssh2_userauth_password(_session, username, password)) {
-                    //LOG_MSG("Authentication by password failed!",mongo::LL_ERROR);
+                    LOG(mongo::LL_ERROR) << "Authentication by password failed!";
                     return false;
                 }
             } else if (auth_pw & 2) {
                 /* Or via keyboard-interactive */ 
                 if (libssh2_userauth_keyboard_interactive(_session, username, &kbd_callback) ) 
                 {
-                    //LOG_MSG("Authentication by keyboard-interactive failed!",mongo::LL_ERROR);
+                    LOG(mongo::LL_ERROR) << "Authentication by keyboard-interactive failed!";
                     return false;
                 }
             } else if (auth_pw & 4) {
                 /* Or by public key */ 
                 //if (libssh2_userauth_publickey_fromfile(_session, username, keyfile1, keyfile2, password)) 
                 {
-                    //LOG_MSG("Authentication by public key failed!",mongo::LL_ERROR);
+                    LOG(mongo::LL_ERROR) << "Authentication by public key failed!";
                     return false;
                 }
             } else {
-                //LOG_MSG("No supported authentication methods found!",mongo::LL_ERROR);
+                LOG(mongo::LL_ERROR) << "No supported authentication methods found!";
                 return false;
             }
             /* Request a shell */ 
             if (!(_channel = libssh2_channel_direct_tcpip(_session,address,port))) {
-                //LOG_MSG("Unable to open a session",mongo::LL_ERROR);
+                LOG(mongo::LL_ERROR) << "Unable to open a ssh session";
                 return false;
             }
 

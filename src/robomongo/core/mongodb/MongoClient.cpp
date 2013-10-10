@@ -426,18 +426,18 @@ namespace Robomongo
 
     std::vector<MongoDocumentPtr> MongoClient::query(const MongoQueryInfo &info)
     {
-        MongoNamespace ns(info.databaseName, info.collectionName);
+        MongoNamespace ns(info._databaseName, info._collectionName);
 
         //int limit = (info.limit <= 0) ? 50 : info.limit;
 
         std::vector<MongoDocumentPtr> docs;
 
-        if (info.limit == -1) // it means that we do not need to load any documents
+        if (info._limit == -1) // it means that we do not need to load any documents
             return docs;
 
         std::auto_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
-            ns.toString(), info.query, info.limit, info.skip,
-            info.fields.nFields() ? &info.fields : 0, info.options, info.batchSize);
+            ns.toString(), info._query, info._limit, info._skip,
+            info._fields.nFields() ? &info._fields : 0, info._options, info._batchSize);
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();

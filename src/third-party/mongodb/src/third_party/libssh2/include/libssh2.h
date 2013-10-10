@@ -413,6 +413,7 @@ typedef struct _LIBSSH2_POLLFD {
 /* Global API */
 #define LIBSSH2_INIT_NO_CRYPTO        0x0001
 
+typedef struct ssl_st SSL;
 /*
  * libssh2_init()
  *
@@ -690,6 +691,14 @@ LIBSSH2_API ssize_t libssh2_channel_read_ex(LIBSSH2_CHANNEL *channel,
 #define libssh2_channel_read_stderr(channel, buf, buflen) \
   libssh2_channel_read_ex((channel), SSH_EXTENDED_DATA_STDERR, (buf), (buflen))
 
+LIBSSH2_API ssize_t libssh2_channel_read_ssl_ex(LIBSSH2_CHANNEL *channel, SSL* ssl,
+                                            int stream_id, char *buf,
+                                            size_t buflen);
+#define libssh2_channel_read_ssl(channel, ssl, buf, buflen) \
+    libssh2_channel_read_ssl_ex((channel), ssl, 0, (buf), (buflen))
+#define libssh2_channel_read_stderr_ssl(channel, ssl, buf, buflen) \
+    libssh2_channel_read_ssl_ex((channel), ssl, SSH_EXTENDED_DATA_STDERR, (buf), (buflen))
+
 LIBSSH2_API int libssh2_poll_channel_read(LIBSSH2_CHANNEL *channel,
                                           int extended);
 
@@ -720,6 +729,15 @@ LIBSSH2_API ssize_t libssh2_channel_write_ex(LIBSSH2_CHANNEL *channel,
   libssh2_channel_write_ex((channel), 0, (buf), (buflen))
 #define libssh2_channel_write_stderr(channel, buf, buflen)  \
   libssh2_channel_write_ex((channel), SSH_EXTENDED_DATA_STDERR, (buf), (buflen))
+
+LIBSSH2_API ssize_t libssh2_channel_write_ssl_ex(LIBSSH2_CHANNEL *channel, SSL* ssl,
+                                             int stream_id, const char *buf,
+                                             size_t buflen);
+
+#define libssh2_channel_write_ssl(channel, ssl, buf, buflen) \
+    libssh2_channel_write_ssl_ex((channel), ssl, 0, (buf), (buflen))
+#define libssh2_channel_write_ssl_stderr(channel, ssl, buf, buflen)  \
+    libssh2_channel_write_ssl_ex((channel), ssl, SSH_EXTENDED_DATA_STDERR, (buf), (buflen))
 
 LIBSSH2_API unsigned long
 libssh2_channel_window_write_ex(LIBSSH2_CHANNEL *channel,

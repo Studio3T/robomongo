@@ -1907,6 +1907,13 @@ libssh2_channel_read_ex(LIBSSH2_CHANNEL *channel, int stream_id, char *buf,
     return rc;
 }
 
+LIBSSH2_API ssize_t
+    libssh2_channel_read_ssl_ex(LIBSSH2_CHANNEL *channel, SSL* ssl, int stream_id, char *buf,
+    size_t buflen)
+{
+    return libssh2_channel_read_ex(channel,stream_id,buf,buflen);
+}
+
 /*
  * _libssh2_channel_packet_data_len
  *
@@ -2109,6 +2116,13 @@ libssh2_channel_write_ex(LIBSSH2_CHANNEL *channel, int stream_id,
                  _libssh2_channel_write(channel, stream_id,
                                         (unsigned char *)buf, buflen));
     return rc;
+}
+
+LIBSSH2_API ssize_t libssh2_channel_write_ssl_ex(LIBSSH2_CHANNEL *channel, SSL* ssl,
+                                                 int stream_id, const char *buf,
+                                                 size_t buflen)
+{
+    return libssh2_channel_write_ex(channel,stream_id,buf,buflen);
 }
 
 /*

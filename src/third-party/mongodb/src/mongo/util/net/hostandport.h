@@ -23,7 +23,7 @@
 #include "mongo/util/net/sock.h"
 
 #ifdef ROBOMONGO
-#define  DEFAULT_SSH_PORT 22
+#define  DEFAULT_SSH_PORT 27017
 namespace Robomongo
 {
 #ifdef MONGO_SSL

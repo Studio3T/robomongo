@@ -68,8 +68,8 @@ namespace Robomongo
         _queryInfo(queryInfo),
         _type(type),
         _shell(shell),
-        _initialSkip(queryInfo.skip),
-        _initialLimit(queryInfo.limit),
+        _initialSkip(queryInfo._skip),
+        _initialLimit(queryInfo._limit),
         _out(out),
         _mod(NULL),
         _viewMode(viewMode)
@@ -82,12 +82,12 @@ namespace Robomongo
         setContentsMargins(0, 0, 0, 0);
         _header = new OutputItemHeaderWidget(this);       
 
-        if (!_queryInfo.isNull) {
-            _header->setCollection(QtUtils::toQString(_queryInfo.collectionName));
-            _header->paging()->setBatchSize(_queryInfo.batchSize);
-            _header->paging()->setSkip(_queryInfo.skip);
-            if(!_queryInfo.limit){
-            _queryInfo.limit=50;
+        if (!_queryInfo._isNull) {
+            _header->setCollection(QtUtils::toQString(_queryInfo._collectionName));
+            _header->paging()->setBatchSize(_queryInfo._batchSize);
+            _header->paging()->setSkip(_queryInfo._skip);
+            if(!_queryInfo._limit){
+            _queryInfo._limit=50;
             }
         }
 
@@ -161,9 +161,9 @@ namespace Robomongo
         }
 
         MongoQueryInfo info(_queryInfo);
-        info.limit = limit;
-        info.skip = skip;
-        info.batchSize = batchSize;
+        info._limit = limit;
+        info._skip = skip;
+        info._batchSize = batchSize;
         _out->showProgress();
         _shell->query(_out->resultIndex(this), info);
     }
@@ -173,8 +173,8 @@ namespace Robomongo
         _queryInfo = inf;
         _documents = documents;
 
-        _header->paging()->setSkip(_queryInfo.skip);
-        _header->paging()->setBatchSize(_queryInfo.batchSize);
+        _header->paging()->setSkip(_queryInfo._skip);
+        _header->paging()->setBatchSize(_queryInfo._batchSize);
 
         _text.clear();
         _isFirstPartRendered = false;

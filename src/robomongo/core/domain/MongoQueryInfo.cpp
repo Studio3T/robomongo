@@ -5,20 +5,20 @@
 namespace Robomongo
 {
     MongoQueryInfo::MongoQueryInfo() :
-        isNull(true) {}
+        _isNull(true) {}
 
     MongoQueryInfo::MongoQueryInfo(const std::string &server, const std::string &database, const std::string &collection,
               mongo::BSONObj query, mongo::BSONObj fields, int limit, int skip, int batchSize,
               int options, bool special) :
-        serverAddress(server),
-        databaseName(database),
-        collectionName(collection),
-        query(query),
-        fields(fields),
-        limit(limit),
-        skip(skip),
-        batchSize(batchSize),
-        options(options),
-        special(special),
-        isNull(false) {}
+        _serverAddress(server),
+        _databaseName(database),
+        _collectionName(collection),
+        _query(query),
+        _fields(fields),
+        _limit(limit),
+        _skip(skip),
+        _batchSize(batchSize),
+        _options(options),
+        _special(special),
+        _isNull(false) {}
 }

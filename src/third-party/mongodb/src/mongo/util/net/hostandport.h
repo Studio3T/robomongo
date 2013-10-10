@@ -295,7 +295,16 @@ namespace mongo {
             ss << p;
 #endif
         }
-
+#ifdef ROBOMONGO
+        std::stringstream urlStream;
+#ifdef MONGO_SSL
+        urlStream << _sslInfo;
+#endif // MONGO_SSL
+#ifdef SSH_SUPPORT_ENABLED
+        urlStream << _sshInfo;
+#endif
+        ss << urlStream.str();
+#endif
     }
 
 

@@ -128,11 +128,21 @@ namespace Robomongo
     private:
         virtual int _send( const char * data , int len )
         {
+#ifdef MONGO_SSL
+            if ( _ssl ) {
+                return libssh2_channel_write_ssl(_channel, _ssl, data, len );
+            }
+#endif
             return libssh2_channel_write(_channel,data,len);
         }
 
         virtual int _recv( char * buf , int max )
         {
+#ifdef MONGO_SSL
+            if ( _ssl ){
+                return libssh2_channel_read_ssl(_channel, _ssl, buf, max );
+            }
+#endif
             return libssh2_channel_read(_channel,buf,max);
         }
 
@@ -831,16 +841,19 @@ namespace mongo {
         return v.empty() ? BSONObj() : v[0];
     }
 
+    bool DBClientConnection::connect(const HostAndPort& server, string& errmsg) {
+        _server = server;
+        _serverString = _server.toString();
+        return _connect( errmsg );
+    }
+    
 #ifdef ROBOMONGO
-    bool DBClientConnection::connect(const HostAndPort &connectionInfo, string& errmsg)
+    bool DBClientConnection::_connect( string& errmsg )
     {
-        _server = connectionInfo;
         _serverString = _server.toString();
-        _serverString = _server.toString();
-
         server.reset(new mongo::SockAddr(_server.host().c_str(), _server.port()));
 #ifdef SSH_SUPPORT_ENABLED
-        Robomongo::SSHInfo info = connectionInfo.sshInfo();
+        Robomongo::SSHInfo info = _server.sshInfo();
 
         if(info.isValid()){
             boost::shared_ptr<mongo::Socket> sock(new Robomongo::SSHSocket(info, _so_timeout, _logLevel ));
@@ -860,22 +873,18 @@ namespace mongo {
             _failed = true;
             return false;
         }
-
+        mongo::scoped_lock lk(_mutex);
+        cmdLine.sslOnNormalPorts = _server.sslInfo()._sslSupport;
+        cmdLine.sslPEMKeyFile = _server.sslInfo()._sslPEMKeyFile; 
 #ifdef MONGO_SSL
-        if ( connectionInfo.sslInfo()._sslSupport ) {
+        if ( _server.sslInfo()._sslSupport ) {
             p->secure( sslManager() );
         }
 #endif
-
         return true;
     }
+
 #else
-    bool DBClientConnection::connect(const HostAndPort& server, string& errmsg) {
-        _server = server;
-        _serverString = _server.toString();
-        return _connect( errmsg );
-    }
-#endif
 
     bool DBClientConnection::_connect( string& errmsg ) {
         _serverString = _server.toString();
@@ -911,6 +920,7 @@ namespace mongo {
         return true;
     }
 
+#endif
 
     inline bool DBClientConnection::runCommand(const string &dbname,
                                                const BSONObj& cmd,

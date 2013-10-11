@@ -33,7 +33,7 @@ namespace Robomongo
         connectionLayout->addWidget(new QLabel("SSH Host:"),          1, 0);
         connectionLayout->addWidget(_sshHostName,              1, 1);
 
-        connectionLayout->addWidget(new QLabel("UserName:"),       2, 0);
+        connectionLayout->addWidget(new QLabel("Username:"),       2, 0);
         connectionLayout->addWidget(_userName,               2, 1);
 
         connectionLayout->addWidget(new QLabel("Port"),              3, 0);

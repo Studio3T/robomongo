@@ -23,7 +23,8 @@
 #include "mongo/util/net/sock.h"
 
 #ifdef ROBOMONGO
-#define  DEFAULT_SSH_PORT 27017
+#define DEFAULT_SSH_PORT 27017
+#define DEFAULT_SSH_HOST "localhost" 
 namespace Robomongo
 {
 #ifdef MONGO_SSL
@@ -64,7 +65,7 @@ namespace Robomongo
 #ifdef SSH_SUPPORT_ENABLED
     struct SSHInfo
     {
-        SSHInfo():_hostName(),_userName(),_port(DEFAULT_SSH_PORT),_password(),_publicKey()
+        SSHInfo():_hostName(DEFAULT_SSH_HOST),_userName(),_port(DEFAULT_SSH_PORT),_password(),_publicKey()
         {
 
         }
@@ -72,7 +73,7 @@ namespace Robomongo
         {
 
         }    
-        explicit SSHInfo(const std::string &connectionString):_hostName(),_userName(),_port(DEFAULT_SSH_PORT),_password(),_publicKey() //username[:password]@hostname[:port]
+        explicit SSHInfo(const std::string &connectionString):_hostName(DEFAULT_SSH_HOST),_userName(),_port(DEFAULT_SSH_PORT),_password(),_publicKey() //username[:password]@hostname[:port]
         {
             int firstSu = 0;
             int len = connectionString.length();

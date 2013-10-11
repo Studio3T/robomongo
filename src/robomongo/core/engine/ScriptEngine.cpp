@@ -327,6 +327,7 @@ namespace Robomongo
 
     bool ScriptEngine::statementize(const std::string &script, std::vector<std::string> &outList, std::string &outError)
     {
+        QString qScript = QtUtils::toQString(script);
         _scope->setString("__robomongoEsprima", script.c_str());
 
         mongo::StringData data(
@@ -349,7 +350,7 @@ namespace Robomongo
 
         mongo::BSONObj result = obj.getField("result").Obj();
         std::vector<mongo::BSONElement> v = result.getField("body").Array();
-
+        std::string str = result.getField("body").toString();
         for (std::vector<mongo::BSONElement>::iterator it = v.begin(); it != v.end(); ++it)
         {
             mongo::BSONObj item = (*it).Obj();
@@ -366,7 +367,7 @@ namespace Robomongo
             int from = (int) range.at(0).number();
             int till = (int) range.at(1).number();
 
-            std::string statement = script.substr(from, till - from);
+            std::string statement = QtUtils::toStdString(qScript.mid(from, till - from));
             outList.push_back(statement);
         }
 

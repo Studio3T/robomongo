@@ -409,7 +409,7 @@ namespace Robomongo
 
         QString text = QString("<font color='%1'>%2</font>")
                 .arg(color)
-                .arg(address.c_str());
+                .arg(detail::prepareServerAddress(address).c_str());
 
         _currentServerLabel->setText(text);
     }

@@ -96,7 +96,7 @@ namespace Robomongo
 
     void Notifier::initMenu(QMenu *const menu, BsonTreeItem *const item)
     {
-        bool isEditable = _queryInfo._isNull ? false : true;
+        bool isEditable = _queryInfo.isValid();
         bool onItem = item ? true : false;
         
         bool isSimple = false;
@@ -120,7 +120,7 @@ namespace Robomongo
 
     void Notifier::initMultiSelectionMenu(QMenu *const menu)
     {
-        bool isEditable = _queryInfo._isNull ? false : true;
+        bool isEditable = _queryInfo.isValid();
 
         if (isEditable) menu->addAction(_insertDocumentAction);
         if (isEditable) menu->addAction(_deleteDocumentsAction);
@@ -172,7 +172,7 @@ namespace Robomongo
 
     void Notifier::onDeleteDocuments()
     {
-        if (_queryInfo._isNull)
+        if (!_queryInfo.isValid())
             return;
 
         QModelIndexList selectedIndexes = _observer->selectedIndexes();
@@ -191,7 +191,7 @@ namespace Robomongo
 
     void Notifier::onDeleteDocument()
     {
-        if (_queryInfo._isNull)
+        if (!_queryInfo.isValid())
             return;
 
         QModelIndex selectedIndex = _observer->selectedIndex();
@@ -206,7 +206,7 @@ namespace Robomongo
 
     void Notifier::onEditDocument()
     {
-        if (_queryInfo._isNull)
+        if (!_queryInfo.isValid())
             return;
 
         QModelIndex selectedInd = _observer->selectedIndex();
@@ -225,7 +225,7 @@ namespace Robomongo
 
         const QString &json = QtUtils::toQString(str);
 
-        DocumentTextEditor editor(QtUtils::toQString(_queryInfo._serverAddress),
+        DocumentTextEditor editor(QtUtils::toQString(detail::prepareServerAddress(_queryInfo._serverAddress)),
             QtUtils::toQString(_queryInfo._databaseName),
             QtUtils::toQString(_queryInfo._collectionName),
             json);
@@ -256,9 +256,9 @@ namespace Robomongo
 
         const QString &json = QtUtils::toQString(str);
 
-        std::string server = _queryInfo._isNull ? "" : _queryInfo._serverAddress;
-        std::string database = _queryInfo._isNull ? "" : _queryInfo._databaseName;
-        std::string collection = _queryInfo._isNull ? "" : _queryInfo._collectionName;
+        std::string server = detail::prepareServerAddress(_queryInfo._serverAddress);
+        std::string database = _queryInfo._databaseName;
+        std::string collection = _queryInfo._collectionName;
 
         DocumentTextEditor *editor = new DocumentTextEditor(
             QtUtils::toQString(server), QtUtils::toQString(database), QtUtils::toQString(collection),
@@ -270,10 +270,10 @@ namespace Robomongo
 
     void Notifier::onInsertDocument()
     {
-        if (_queryInfo._isNull)
+        if (!_queryInfo.isValid())
             return;
 
-        DocumentTextEditor editor(QtUtils::toQString(_queryInfo._serverAddress),
+        DocumentTextEditor editor(QtUtils::toQString(detail::prepareServerAddress(_queryInfo._serverAddress)),
             QtUtils::toQString(_queryInfo._databaseName),
             QtUtils::toQString(_queryInfo._collectionName),
             "{\n    \n}");

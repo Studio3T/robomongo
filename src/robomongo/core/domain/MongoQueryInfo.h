@@ -5,6 +5,11 @@
 
 namespace Robomongo
 {
+    namespace detail
+    {
+        std::string prepareServerAddress(const std::string &address);
+    }
+
     struct MongoQueryInfo
     {
         MongoQueryInfo();
@@ -12,6 +17,7 @@ namespace Robomongo
         MongoQueryInfo(const std::string &server, const std::string &database, const std::string &collection,
                   mongo::BSONObj query, mongo::BSONObj fields, int limit, int skip, int batchSize,
                   int options, bool special);
+        bool isValid() const;
 
         std::string _serverAddress;
         std::string _databaseName;
@@ -24,6 +30,6 @@ namespace Robomongo
         int _options;
         bool _special; // flag, indicating that `query` contains special fields on
                       // first level, and query data in `query` field.
-        bool _isNull;
+        
     };
 }

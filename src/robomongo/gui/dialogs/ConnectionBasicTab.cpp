@@ -33,7 +33,7 @@ namespace Robomongo
         QRegExp rx("\\d+");//(0-65554)
         _serverPort->setValidator(new QRegExpValidator(rx, this));
 
-        _sslSupport = new QCheckBox("Ssl support");
+        _sslSupport = new QCheckBox("SSL support");
         _sslSupport->setChecked(_settings->sslInfo()._sslSupport);
 
         _sslPEMKeyFile = new QLineEdit(QtUtils::toQString(_settings->sslInfo()._sslPEMKeyFile));

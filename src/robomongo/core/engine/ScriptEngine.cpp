@@ -350,7 +350,6 @@ namespace Robomongo
 
         mongo::BSONObj result = obj.getField("result").Obj();
         std::vector<mongo::BSONElement> v = result.getField("body").Array();
-        std::string str = result.getField("body").toString();
         for (std::vector<mongo::BSONElement>::iterator it = v.begin(); it != v.end(); ++it)
         {
             mongo::BSONObj item = (*it).Obj();

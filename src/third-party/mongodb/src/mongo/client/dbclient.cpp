@@ -322,7 +322,8 @@ namespace mongo {
     ConnectionString ConnectionString::parse( const string& host , string& errmsg ) {
 
         string::size_type i = host.find( '/' );
-        if ( i != string::npos && i != 0) {
+        string::size_type j = host.find( '[' );
+        if ( i != string::npos && i != 0 && i < j) {
             // replica set
             return ConnectionString( SET , host.substr( i + 1 ) , host.substr( 0 , i ) );
         }

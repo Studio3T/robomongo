@@ -17,7 +17,8 @@ namespace Robomongo
         BsonTreeView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent = NULL);
         virtual QModelIndex selectedIndex() const;
         virtual QModelIndexList selectedIndexes() const;
-
+        void expandNode(const QModelIndex &index);
+        
     private Q_SLOTS:
         void onExpandRecursive();
         void showContextMenu(const QPoint &point);
@@ -25,8 +26,7 @@ namespace Robomongo
     protected:
         virtual void resizeEvent(QResizeEvent *event);
         virtual void keyPressEvent(QKeyEvent *event);
-        void expandNode(const QModelIndex &index);
-
+        
     private:
         Notifier _notifier;
         QAction *_expandRecursive;

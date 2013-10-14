@@ -43,6 +43,9 @@ namespace Robomongo
         inf._userName = QtUtils::toStdString(map.value("sshInfo.username").toString()); 
         inf._port = map.value("sshInfo.port").toInt();
         inf._password = QtUtils::toStdString(map.value("sshInfo.password").toString());
+        inf._publicKey._publicKey = QtUtils::toStdString(map.value("sshInfo.publicKey").toString());
+        inf._publicKey._privateKey = QtUtils::toStdString(map.value("sshInfo.privateKey").toString());
+        inf._publicKey._passphrase = QtUtils::toStdString(map.value("sshInfo.passphrase").toString());
         setSshInfo(inf);
 #endif
         QVariantList list = map.value("credentials").toList();
@@ -112,6 +115,9 @@ namespace Robomongo
         map.insert("sshInfo.username", QtUtils::toQString(inf._userName));
         map.insert("sshInfo.port", inf._port);
         map.insert("sshInfo.password", QtUtils::toQString(inf._password));
+        map.insert("sshInfo.publicKey", QtUtils::toQString(inf._publicKey._publicKey));
+        map.insert("sshInfo.privateKey", QtUtils::toQString(inf._publicKey._privateKey));
+        map.insert("sshInfo.passphrase", QtUtils::toQString(inf._publicKey._passphrase));
 #endif
         QVariantList list;
         for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {

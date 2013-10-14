@@ -46,7 +46,7 @@ namespace Robomongo
 
         _selectFileB = new QPushButton("...");
         _selectFileB->setFixedSize(20,20);       
-        VERIFY(connect(_selectFileB, SIGNAL(clicked()), this, SLOT(setSslPEMKeyFile())));;
+        VERIFY(connect(_selectFileB, SIGNAL(clicked()), this, SLOT(setSslPEMKeyFile())));
 
         QGridLayout *connectionLayout = new QGridLayout;
         connectionLayout->addWidget(new QLabel("Name:"),          1, 0);

@@ -15,7 +15,7 @@ namespace
         "Shell-centric MongoDB management tool."
         "<br/>"
         "<br/>"
-        "Visit "PROJECT_NAME_TITLE" website: <a href=\""PROJECT_DOMAIN"\">"PROJECT_DOMAIN"</a> <br/>"
+        "Visit "PROJECT_NAME_TITLE" website: <a href=\"http://"PROJECT_DOMAIN"\">"PROJECT_DOMAIN"</a> <br/>"
         "<br/>"
         "<a href=\"https://"PROJECT_GITHUB_FORK"\">Fork</a> project or <a href=\""PROJECT_GITHUB_ISSUES"\">submit</a> issues/proposals on GitHub.  <br/>"
         "<br/>"

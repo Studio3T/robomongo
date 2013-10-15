@@ -17,7 +17,7 @@ namespace
         "<br/>"
         "Visit "PROJECT_NAME_TITLE" website: <a href=\"http://"PROJECT_DOMAIN"\">"PROJECT_DOMAIN"</a> <br/>"
         "<br/>"
-        "<a href=\"https://"PROJECT_GITHUB_FORK"\">Fork</a> project or <a href=\""PROJECT_GITHUB_ISSUES"\">submit</a> issues/proposals on GitHub.  <br/>"
+        "<a href=\"https://"PROJECT_GITHUB_FORK"\">Fork</a> project or <a href=\"https://"PROJECT_GITHUB_ISSUES"\">submit</a> issues/proposals on GitHub.  <br/>"
         "<br/>"
         "Copyright 2013 <a href=\"http://"PROJECT_COMPANYNAME_DOMAIN"\">"PROJECT_COMPANYNAME"</a>. All rights reserved.<br/>"
         "<br/>"

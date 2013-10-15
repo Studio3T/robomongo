@@ -12,6 +12,9 @@
 #include "robomongo/gui/dialogs/ConnectionAuthTab.h"
 #include "robomongo/gui/dialogs/ConnectionBasicTab.h"
 #include "robomongo/gui/dialogs/ConnectionAdvancedTab.h"
+#ifdef SSH_SUPPORT_ENABLED
+#include "robomongo/gui/dialogs/SSHTunnelTab.h"
+#endif
 #include "robomongo/gui/dialogs/ConnectionDiagnosticDialog.h"
 #include "robomongo/core/utils/QtUtils.h"
 
@@ -46,10 +49,16 @@ namespace Robomongo
         _basicTab    = new ConnectionBasicTab(_connection);
         _authTab     = new ConnectionAuthTab(_connection);
         _advancedTab = new ConnectionAdvancedTab(_connection);
+#ifdef SSH_SUPPORT_ENABLED
+        _sshTab = new SshTunelTab(_connection);
+#endif
 
         tabWidget->addTab(_basicTab,    "Connection");
         tabWidget->addTab(_authTab,     "Authentication");
         tabWidget->addTab(_advancedTab, "Advanced");
+#ifdef SSH_SUPPORT_ENABLED
+        tabWidget->addTab(_sshTab, "SSH Tunnel");
+#endif
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addWidget(tabWidget);
@@ -73,6 +82,9 @@ namespace Robomongo
         _basicTab->accept();
         _authTab->accept();
         _advancedTab->accept();
+#ifdef SSH_SUPPORT_ENABLED
+        _sshTab->accept();
+#endif
     }
 
     /**

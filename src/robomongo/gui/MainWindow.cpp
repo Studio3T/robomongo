@@ -52,6 +52,12 @@ namespace
         Robomongo::AppRegistry::instance().settingsManager()->setViewMode(mode);
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
+    
+    void saveAutoExpand(bool isExpand)
+    {
+        Robomongo::AppRegistry::instance().settingsManager()->setAutoExpand(isExpand);
+        Robomongo::AppRegistry::instance().settingsManager()->save();
+    }
 }
 
 namespace Robomongo
@@ -242,6 +248,13 @@ namespace Robomongo
         defaultViewModeMenu->addAction(treeModeAction);
         defaultViewModeMenu->addAction(tableModeAction);
         defaultViewModeMenu->addAction(textModeAction);
+        
+        QAction *autoExpand = new QAction("Auto expand first document in Tree Mode", this);
+        autoExpand->setCheckable(true);
+        autoExpand->setChecked(AppRegistry::instance().settingsManager()->autoExpand());
+        VERIFY(connect(autoExpand, SIGNAL(triggered()), this, SLOT(toggleAutoExpand())));
+        optionsMenu->addAction(autoExpand);
+        
         optionsMenu->addSeparator();
 
         QActionGroup *modeGroup = new QActionGroup(this);
@@ -576,6 +589,12 @@ namespace Robomongo
         widget->enterCustomMode();
     }
 
+    void MainWindow::toggleAutoExpand()
+    {
+        QAction *send = qobject_cast<QAction*>(sender());
+        saveAutoExpand(send->isChecked());
+    }
+    
     void MainWindow::executeScript()
     {
         QAction *action = static_cast<QAction *>(sender());

@@ -243,6 +243,8 @@ namespace Robomongo
             _bsonTreeview = new BsonTreeView(_shell,_queryInfo);
             _bsonTreeview->setModel(_mod);
             _stack->addWidget(_bsonTreeview);
+            if (true == AppRegistry::instance().settingsManager()->autoExpand())
+                _bsonTreeview->expandNode(_mod->index(0, 0, QModelIndex()));
             _isTreeModeInitialized = true;
         }
 

@@ -71,6 +71,9 @@ namespace Robomongo
         void setViewMode(ViewMode viewMode) { _viewMode = viewMode; }
         ViewMode viewMode() { return _viewMode; }
 
+        void setAutoExpand(bool isExpand) { _autoExpand = isExpand; }
+        bool autoExpand() { return _autoExpand; }
+        
         void setLoadMongoRcJs(bool isLoadJs) { _loadMongoRcJs = isLoadJs; }
         bool loadMongoRcJs() const { return _loadMongoRcJs; }
 
@@ -111,6 +114,7 @@ namespace Robomongo
          */
         ViewMode _viewMode;
         bool _loadMongoRcJs;
+        bool _autoExpand;
         bool _disableConnectionShortcuts;
         int _batchSize;
         QString _currentStyle;

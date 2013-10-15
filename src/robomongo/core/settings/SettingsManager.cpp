@@ -127,6 +127,7 @@ namespace Robomongo
         } else {
             _viewMode = Custom; // Default View Mode
         }
+        _autoExpand = map.value("autoExpand").toBool();
 
         // 4. Load TimeZone
         int timeZone = map.value("timeZone").toInt();
@@ -174,6 +175,7 @@ namespace Robomongo
 
         // 4. Save view mode
         map.insert("viewMode", _viewMode);
+        map.insert("autoExpand", _autoExpand);
 
         // 5. Save loadInitJs
         map.insert("loadMongoRcJs", _loadMongoRcJs);

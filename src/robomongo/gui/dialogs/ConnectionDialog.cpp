@@ -73,18 +73,27 @@ namespace Robomongo
      */
     void ConnectionDialog::accept()
     {
-        apply();
-        QDialog::accept();
+        if(validateAndApply()){
+            QDialog::accept();
+        }
     }
 
-    void ConnectionDialog::apply()
+    bool ConnectionDialog::validateAndApply()
     {
+#ifdef SSH_SUPPORT_ENABLED
+        bool isSshAndSsl = _basicTab->isSslSupported() && _sshTab->isSshSupported();
+        if(isSshAndSsl){
+            QMessageBox::warning(this, "Internal error", "Now not supported SSL+SSH.");
+            return false;
+        }
+#endif
         _basicTab->accept();
         _authTab->accept();
         _advancedTab->accept();
 #ifdef SSH_SUPPORT_ENABLED
         _sshTab->accept();
 #endif
+        return true;
     }
 
     /**
@@ -92,8 +101,9 @@ namespace Robomongo
      */
     void ConnectionDialog::testConnection()
     {
-        apply();
-        ConnectionDiagnosticDialog diag(_connection);
-        diag.exec();
+        if(validateAndApply()){
+            ConnectionDiagnosticDialog diag(_connection);
+            diag.exec();
+        }
     }
 }

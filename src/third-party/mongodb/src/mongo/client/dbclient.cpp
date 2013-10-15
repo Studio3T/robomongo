@@ -68,7 +68,7 @@ namespace Robomongo
             const char *username = _info._userName.c_str();
             const char *password = _info._password.c_str();
             const char *address = _info._hostName.c_str();
-            const char *publicKey = _info._publicKey._publicKey.c_str();
+            const char *publicKey = _info._publicKey._publicKey.empty() ? NULL : _info._publicKey._publicKey.c_str();
             const char *privateKey = _info._publicKey._privateKey.c_str();
             const char *passphrase = _info._publicKey._passphrase.c_str();
             int port = _info._port; 
@@ -96,8 +96,8 @@ namespace Robomongo
             if (strstr(userauthlist, "publickey") != NULL) {
                 auth_pw |= 4;
             }
-
-            if (auth_pw & 1 && !_info.isPublicKey()) {
+            SSHInfo::SupportedAuthenticationMetods curMethod = _info.authMethod();
+            if (auth_pw & 1 && curMethod == SSHInfo::PASSWORD) {
                 /* We could authenticate via password */ 
                 if (libssh2_userauth_password(_session, username, password)) {
                     LOG(mongo::LL_ERROR) << "Authentication by password failed!";
@@ -110,7 +110,7 @@ namespace Robomongo
                     LOG(mongo::LL_ERROR) << "Authentication by keyboard-interactive failed!";
                     return false;
                 }
-            } else if (auth_pw & 4 && _info.isPublicKey()) {
+            } else if (auth_pw & 4 && curMethod == SSHInfo::PUBLICKEY) {
                 /* Or by public key */ 
                 if (libssh2_userauth_publickey_fromfile(_session, username, publicKey, privateKey, passphrase)) 
                 {

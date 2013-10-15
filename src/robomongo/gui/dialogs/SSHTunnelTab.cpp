@@ -31,14 +31,14 @@ namespace Robomongo
 
         _security = new QComboBox();
         _security->addItems(QStringList() << "Password" << "PublicKey");
-        VERIFY(connect(_security,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(securityChanged(const QString&))));
+        VERIFY(connect(_security,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(securityChange(const QString&))));
 
         _passwordBox = new QLineEdit(QtUtils::toQString(info._password));
         _publicKeyBox = new QLineEdit(QtUtils::toQString(info._publicKey._publicKey));
         _privateKeyBox = new QLineEdit(QtUtils::toQString(info._publicKey._privateKey));
         _passphraseBox = new QLineEdit(QtUtils::toQString(info._publicKey._passphrase));
 #ifdef Q_OS_WIN
-        QRegExp pathx("([a-zA-Z]:)?(\\\\[a-zA-Z0-9_.-]+)+\\\\?");
+        QRegExp pathx("([a-zA-Z]:)?([\\\\/][a-zA-Z0-9_.-]+)+[\\\\/]?");
 #else
         QRegExp pathx("^\\/?([\\d\\w\\.]+)(/([\\d\\w\\.]+))*\\/?$");
 #endif // Q_OS_WIN
@@ -66,8 +66,7 @@ namespace Robomongo
         pivL1->addWidget(_publicKeyBox);
         QPushButton *selectPublicFile = new QPushButton("...");
         selectPublicFile->setFixedSize(20,20);       
-        pivL1->addWidget(selectPublicFile);
-        VERIFY(connect(selectPublicFile, SIGNAL(clicked()), this, SLOT(setPublicFile())));
+        pivL1->addWidget(selectPublicFile);        
        
         QHBoxLayout *pivL2 = new QHBoxLayout;
         pivL2->addWidget(new QLabel("Private key:"));
@@ -99,39 +98,39 @@ namespace Robomongo
         mainLayout->addWidget(_pivateKeyFrame);
         setLayout(mainLayout);
 
-        if(info.isPublicKey()){         
+        if(info.authMethod()==SSHInfo::PUBLICKEY){         
             _security->setCurrentText("PublicKey");
         }
         else{           
             _security->setCurrentText("Password");
         }
 
-        securityChanged(_security->currentText());
+        securityChange(_security->currentText());
         VERIFY(connect(selectPrivateFile, SIGNAL(clicked()), this, SLOT(setPrivateFile())));
+        VERIFY(connect(selectPublicFile, SIGNAL(clicked()), this, SLOT(setPublicFile())));
 
-        sshSupportStateChanged(_sshSupport->checkState());
-        VERIFY(connect(_sshSupport,SIGNAL(stateChanged(int)),this,SLOT(sshSupportStateChanged(int))));
+        sshSupportStateChange(_sshSupport->checkState());
+        VERIFY(connect(_sshSupport,SIGNAL(stateChanged(int)),this,SLOT(sshSupportStateChange(int))));
 
         _sshHostName->setFocus();
     }
 
-    void SshTunelTab::sshSupportStateChanged(int value)
+    bool SshTunelTab::isSshSupported() const
+    {
+        return _sshSupport->isChecked();
+    }
+
+    void SshTunelTab::sshSupportStateChange(int value)
     {
         _sshHostName->setEnabled(value);
         _userName->setEnabled(value);
-        _sshPort->setEnabled(value);
-        _passwordBox->setEnabled(value);   
-        _publicKeyBox->setEnabled(value);
-        _privateKeyBox->setEnabled(value);
-        if (!value) {
-            _passwordBox->setText("");
-            _publicKeyBox->setText("");
-            _privateKeyBox->setText("");
-            _passphraseBox->setText("");
-        }
+        _sshPort->setEnabled(value);       
+        _security->setEnabled(value);
+        _pivateKeyFrame->setEnabled(value);
+        _passwordFrame->setEnabled(value);   
     }
 
-    void SshTunelTab::securityChanged(const QString& val)
+    void SshTunelTab::securityChange(const QString& val)
     {
         bool isPrivate = val == "PublicKey";        
 
@@ -141,13 +140,13 @@ namespace Robomongo
 
     void SshTunelTab::setPublicFile()
     {
-        QString filepath = QFileDialog::getOpenFileName(this,"Select SslPEMKeyFile","",QObject::tr("Public key files (*.*)"));
+        QString filepath = QFileDialog::getOpenFileName(this,"Select SslPEMKeyFile",_publicKeyBox->text(),QObject::tr("Public key files (*.*)"));
         _publicKeyBox->setText(filepath);
     }
 
     void SshTunelTab::setPrivateFile()
     {
-        QString filepath = QFileDialog::getOpenFileName(this,"Select SslPEMKeyFile","",QObject::tr("Private key files (*.*)"));
+        QString filepath = QFileDialog::getOpenFileName(this,"Select SslPEMKeyFile",_privateKeyBox->text(),QObject::tr("Private key files (*.*)"));
         _privateKeyBox->setText(filepath);
     }
 
@@ -157,11 +156,22 @@ namespace Robomongo
         info._hostName = QtUtils::toStdString(_sshHostName->text());
         info._userName = QtUtils::toStdString(_userName->text()); 
         info._port = _sshPort->text().toInt();
+        if(_passwordFrame->isEnabled()){
+            info._password = QtUtils::toStdString(_passwordBox->text());
+        }
+        if(_passphraseBox->isEnabled()){
+            info._publicKey._publicKey = QtUtils::toStdString(_publicKeyBox->text());
+            info._publicKey._privateKey = QtUtils::toStdString(_privateKeyBox->text());
+            info._publicKey._passphrase = QtUtils::toStdString(_passphraseBox->text());
+        }
 
-        info._password = QtUtils::toStdString(_passwordBox->text());
-        info._publicKey._publicKey = QtUtils::toStdString(_publicKeyBox->text());
-        info._publicKey._privateKey = QtUtils::toStdString(_privateKeyBox->text());
-        info._publicKey._passphrase = QtUtils::toStdString(_passphraseBox->text());
+        if (_passwordFrame->isVisible()){
+            info._currentMethod = SSHInfo::PASSWORD;
+        }
+        else if(_passphraseBox->isVisible()){
+            info._currentMethod = SSHInfo::PUBLICKEY;
+        }
+        
         _settings->setSshInfo(info);
     }
 }

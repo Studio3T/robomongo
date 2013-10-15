@@ -23,15 +23,14 @@ namespace Robomongo
          * @brief Constructs dialog with specified connection
          */
         ConnectionDialog(ConnectionSettings *connection);
-
-        ConnectionSettings *const connection() const { return _connection; }
+        ConnectionSettings *const connection() const { return _connection; }        
 
     public Q_SLOTS:
         /**
          * @brief Accept() is called when user agree with entered data.
          */
         virtual void accept();       
-
+        
     private Q_SLOTS:
         /**
          * @brief Test current connection
@@ -39,7 +38,7 @@ namespace Robomongo
         void testConnection();
 
     private:
-        void apply();
+        bool validateAndApply();
         ConnectionAuthTab *_authTab;
         ConnectionBasicTab *_basicTab;
         ConnectionAdvancedTab *_advancedTab;

@@ -38,7 +38,7 @@ namespace Robomongo
 
         _sslPEMKeyFile = new QLineEdit(QtUtils::toQString(_settings->sslInfo()._sslPEMKeyFile));
 #ifdef Q_OS_WIN
-        QRegExp pathx("([a-zA-Z]:)?(\\\\[a-zA-Z0-9_.-]+)+\\\\?");
+        QRegExp pathx("([a-zA-Z]:)?([\\\\/][a-zA-Z0-9_.-]+)+[\\\\/]?");
 #else
         QRegExp pathx("^\\/?([\\d\\w\\.]+)(/([\\d\\w\\.]+))*\\/?$");
 #endif // Q_OS_WIN
@@ -66,8 +66,8 @@ namespace Robomongo
         mainLayout->addLayout(connectionLayout);
         setLayout(mainLayout);
 
-        sslSupportStateChanged(_sslSupport->checkState());
-        VERIFY(connect(_sslSupport,SIGNAL(stateChanged(int)),this,SLOT(sslSupportStateChanged(int))));
+        sslSupportStateChange(_sslSupport->checkState());
+        VERIFY(connect(_sslSupport,SIGNAL(stateChanged(int)),this,SLOT(sslSupportStateChange(int))));
 
         _connectionName->setFocus();
     }
@@ -78,13 +78,22 @@ namespace Robomongo
         _sslPEMKeyFile->setText(filepath);
     }
 
-    void ConnectionBasicTab::sslSupportStateChanged(int value)
+    void ConnectionBasicTab::sslSupportStateChange(int value)
     {
         _sslPEMKeyFile->setEnabled(value);
         _selectFileB->setEnabled(value);
         if (!value) {
             _sslPEMKeyFile->setText("");
         }
+    }
+
+    bool ConnectionBasicTab::isSslSupported() const
+    {
+        bool result = true;
+#ifdef MONGO_SSL
+        result = _sslSupport->isChecked();
+#endif
+      return result;
     }
 
     void ConnectionBasicTab::accept()

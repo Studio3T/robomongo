@@ -51,6 +51,7 @@ namespace Robomongo
         bool _sslSupport;
         std::string _sslPEMKeyFile;
     };
+
     inline std::ostream& operator<< (std::ostream& stream, const SSLInfo& info)
     {
         //[true:Pem]
@@ -68,7 +69,7 @@ namespace Robomongo
     {
         static const char delemitr = '+';
         PublicKey():_publicKey(),_privateKey(),_passphrase(){}
-        PublicKey(const std::string &publicKey, const std::string &privateKey, const std::string &passphrase):_publicKey(publicKey),_privateKey(privateKey),_passphrase(passphrase){}
+        PublicKey(const std::string &publicKey, const std::string &privateKey, const std::string &passphrase = ""):_publicKey(publicKey),_privateKey(privateKey),_passphrase(passphrase){}
         explicit PublicKey(const std::string &keysString):_publicKey(),_privateKey()//abc+dsc+passphrase
         {
             size_t pos = keysString.find_first_of(delemitr);
@@ -84,22 +85,25 @@ namespace Robomongo
                         posPriv = i;
                     }
                     else if(isFirstDelemitr==1){
-                        _privateKey = keysString.substr(posPriv+1,i);
+                        _privateKey = keysString.substr(posPriv+1,i-posPriv-1);
                         _passphrase = keysString.substr(i+1);
                     }
                     isFirstDelemitr++;
                 }
             }
         }
+
         bool isValid() const {return !_privateKey.empty(); }
         std::string _publicKey;
         std::string _privateKey;
         std::string _passphrase;
     };
+
     inline bool operator==(const PublicKey& r,const PublicKey& l) 
     { 
         return r._publicKey == l._publicKey && r._privateKey == l._privateKey && r._passphrase == l._passphrase;
     }
+
     inline std::ostream& operator<< (std::ostream& stream, const PublicKey& key)
     {
         stream << key._publicKey << PublicKey::delemitr << key._privateKey << PublicKey::delemitr << key._passphrase; 
@@ -108,22 +112,29 @@ namespace Robomongo
 
     struct SSHInfo
     {
-        SSHInfo():_hostName(DEFAULT_SSH_HOST),_userName(),_port(DEFAULT_SSH_PORT),_password(),_publicKey()
+        enum SupportedAuthenticationMetods
+        {
+            UNKNOWN = 0,
+            PASSWORD = 1,
+            PUBLICKEY = 2
+        };
+
+        SSHInfo():_hostName(DEFAULT_SSH_HOST),_userName(),_port(DEFAULT_SSH_PORT),_password(),_publicKey(),_currentMethod(UNKNOWN)
         {
 
         }
-        SSHInfo(const std::string &hostName, const std::string &userName, int port, const std::string &password, const PublicKey &publicKey)
-            :_hostName(hostName),_userName(userName),_port(port),_password(password),_publicKey(publicKey)
-        {
 
-        }    
-        explicit SSHInfo(const std::string &connectionString):_hostName(DEFAULT_SSH_HOST),_userName(),_port(DEFAULT_SSH_PORT),_password(),_publicKey() //username(pass|publ)[password]@hostname[:port]
+        SSHInfo(const std::string &hostName, const std::string &userName, int port, const std::string &password, const PublicKey &publicKey, SupportedAuthenticationMetods method)
+            :_hostName(hostName),_userName(userName),_port(port),_password(password),_publicKey(publicKey),_currentMethod(method)
+        {
+           
+        }
+
+        explicit SSHInfo(const std::string &connectionString):_hostName(DEFAULT_SSH_HOST),_userName(),_port(DEFAULT_SSH_PORT),_password(),_publicKey(),_currentMethod(UNKNOWN) //username(0|1|2)[password]@hostname[:port]
         {
             int len = connectionString.length();
             int firstSu = 0;
-            bool isPass = false;
             bool isPubl = false;
-            static const int protLang = 4;
             for (int i=0; i<len; ++i)
             {
                 char ch = connectionString[i];
@@ -131,27 +142,21 @@ namespace Robomongo
                     firstSu = i;
                 }
                 else if(firstSu && ch == ')' ){
-                    std::string prot = connectionString.substr(firstSu+1,protLang);
-                    if (prot == "publ"){
-                        isPubl = true;
-                    }
-                    else if(prot == "pass"){
-                        isPass = true;
-                    }                    
+                    _currentMethod = static_cast<SupportedAuthenticationMetods>(connectionString[firstSu+1]-'0');                  
                     break;
                 }
             }
-            for (int i=firstSu; i<len && (isPubl || isPass); ++i)
+            for (int i=firstSu; i<len; ++i)
             {
                 char ch = connectionString[i];
                 if (ch=='@' && firstSu)
                 {
                     _userName = connectionString.substr(0,firstSu);
-                    std::string passOrKeys = connectionString.substr(firstSu+protLang+3,i-firstSu-protLang-4);
-                    if(isPass){
+                    std::string passOrKeys = connectionString.substr(firstSu+4,i-firstSu-5);
+                    if(_currentMethod==PASSWORD){
                         _password = passOrKeys;
                     }
-                    else if(isPubl){
+                    else if(_currentMethod==PUBLICKEY){
                         _publicKey = PublicKey(passOrKeys);
                     }
                     std::string after = connectionString.substr(i+1,len-i);
@@ -164,25 +169,28 @@ namespace Robomongo
                 }
             }
         }
-        bool isValid() const {return !_password.empty() || _publicKey.isValid(); }
-        bool isPublicKey() const {return _publicKey.isValid(); }
+
+        bool isValid() const { return _currentMethod != UNKNOWN; }
+        SupportedAuthenticationMetods authMethod() const { return _currentMethod; }
 
         std::string _hostName;
         std::string _userName;
         int _port;
         std::string _password;
         PublicKey _publicKey;
+        SupportedAuthenticationMetods _currentMethod;
     };
 
     inline std::ostream& operator<< (std::ostream& stream, const SSHInfo& info)
     {
-        //[username(pass|publ)[password]@hostname[:port]]
-        if(info.isPublicKey()){
-            stream << "[" << info._userName << "(publ)[" << info._publicKey << "]@" << info._hostName << "[:" << info._port << "]" << "]";
+        //[username(0|1|2)[password]@hostname[:port]]
+        stream << "[" << info._userName << "(" << info._currentMethod << ")[";
+        if(info._currentMethod == SSHInfo::PUBLICKEY){
+           stream << info._publicKey; 
+        }else if(info._currentMethod == SSHInfo::PASSWORD){
+           stream << info._password; 
         }
-        else{
-            stream << "[" << info._userName << "(pass)[" << info._password << "]@" << info._hostName << "[:" << info._port << "]" << "]";
-        }        
+        stream << "]@" << info._hostName << "[:" << info._port << "]" << "]";
         return stream;
     }
 

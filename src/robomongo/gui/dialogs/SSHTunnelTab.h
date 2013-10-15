@@ -20,10 +20,11 @@ namespace Robomongo
     public:
         SshTunelTab(ConnectionSettings *settings);
         void accept();
+        bool isSshSupported() const;
 
     private Q_SLOTS:
-        void sshSupportStateChanged(int val);
-        void securityChanged(const QString& val);
+        void sshSupportStateChange(int val);
+        void securityChange(const QString& val);
         void setPublicFile();
         void setPrivateFile();
         

@@ -140,13 +140,13 @@ namespace Robomongo
 
     void SshTunelTab::setPublicFile()
     {
-        QString filepath = QFileDialog::getOpenFileName(this,"Select SslPEMKeyFile",_publicKeyBox->text(),QObject::tr("Public key files (*.*)"));
+        QString filepath = QFileDialog::getOpenFileName(this,"Select public key file",_publicKeyBox->text(),QObject::tr("Public key files (*.*)"));
         _publicKeyBox->setText(filepath);
     }
 
     void SshTunelTab::setPrivateFile()
     {
-        QString filepath = QFileDialog::getOpenFileName(this,"Select SslPEMKeyFile",_privateKeyBox->text(),QObject::tr("Private key files (*.*)"));
+        QString filepath = QFileDialog::getOpenFileName(this,"Select private key file",_privateKeyBox->text(),QObject::tr("Private key files (*.*)"));
         _privateKeyBox->setText(filepath);
     }
 

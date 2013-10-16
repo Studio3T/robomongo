@@ -8,7 +8,7 @@ namespace Robomongo
     {
         std::string prepareServerAddress(const std::string &address)
         {
-            size_t pos = address.find_first_of("[");
+            size_t pos = address.find_first_of("{");
             if (pos!=std::string::npos){
                 return address.substr(0,pos);
             }       

@@ -327,19 +327,21 @@ namespace mongo {
 
         string::size_type i = host.find( '/' );
 #ifdef ROBOMONGO
-        string::size_type j = host.find( ':' );
-        if ( i != string::npos && i != 0 && i < j) {
-            // replica set
-            return ConnectionString( SET , host.substr( i + 1 ) , host.substr( 0 , i ) );
+        string hostWithoutOptions = host;
+        string::size_type s = host.find_first_of( '{' );
+        if(s!= string::npos){
+            hostWithoutOptions = host.substr(0,s);
         }
-#else
+#endif
         if ( i != string::npos && i != 0 ) {
             // replica set
             return ConnectionString( SET , host.substr( i + 1 ) , host.substr( 0 , i ) );
         }
-#endif
+#ifdef ROBOMONGO
+        int numCommas = str::count( hostWithoutOptions , ',' );
+#else
         int numCommas = str::count( host , ',' );
-
+#endif
         if( numCommas == 0 )
             return ConnectionString( HostAndPort( host ) );
 

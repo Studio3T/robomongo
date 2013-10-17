@@ -14,7 +14,8 @@ libs/
 *~
 *.autosave
 .DS_Store
-
+/build
+/build2
 
 /src/robomongo/robomongo.pro.user.1.3
 

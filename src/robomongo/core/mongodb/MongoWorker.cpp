@@ -511,11 +511,11 @@ namespace Robomongo
         }
     }
 
-    mongo::DBClientBase *MongoWorker::getConnection()
+    mongo::DBClientConnection *MongoWorker::getConnection()
     {
         if (!_dbclient) {
             mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
-            conn->connect(_connection->getFullAddress());
+            conn->connect(_connection->info());
             _dbclient = conn;
         }
         return _dbclient;

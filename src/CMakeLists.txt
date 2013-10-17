@@ -7,7 +7,7 @@ ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/js-1.7)
 IF(BUILD_PCRECPP_LIBRARY)
     SET(PCRE_BUILD_TESTS OFF CACHE BOOL "Build the tests pcre tests.")
     SET(PCRE_BUILD_PCREGREP OFF CACHE BOOL "Build pcregrep")	
-    ADD_SUBDIRECTORY(../include/pcre pcrecpp)
+    ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/pcre-8.30 pcrecpp)
     #FIND_LIBRARY(PCRECPP_LIB pcrecpp)
 ENDIF(BUILD_PCRECPP_LIBRARY)
 
@@ -228,7 +228,7 @@ SET(SOURCES_CORE
     )
 
 IF(WIN32)
-    ADD_DEFINITIONS(-D_WINSOCKAPI_ -DXP_WIN -DUNICODE)
+    ADD_DEFINITIONS(-D_WINSOCKAPI_ -DXP_WIN -DUNICODE -D_UNICODE)
 ELSEIF(UNIX)
     ADD_DEFINITIONS(-DXP_UNIX)
 ENDIF()
@@ -255,29 +255,57 @@ ELSEIF(UNIX)
     SET(PLATFORM_LIBRARIES pthread)
     #SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 ENDIF()
-SET(HEADERS ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
-SET(SOURCES robomongo/app/main.cpp ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_CORE})
 
 IF(BOOST_ENABLED)
     SET(ALL_LIBS ${ALL_LIBS} ${Boost_LIBRARIES})
+    SET(MONGODB_EXTRAPATH "${MONGODB_EXTRAPATH} ${BOOST_ROOT}")
 ELSE()   
     ADD_DEFINITIONS(-DBOOST_ALL_NO_LIB)
     ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/boost)
-    INCLUDE_DIRECTORIES(third-party/mongodb/src/third_party/boost)
+    SET(INCLUDE_DIRS ${INCLUDE_DIRS} third-party/mongodb/src/third_party/boost)
     SET(ALL_LIBS ${ALL_LIBS} boost_mongo_third_party)
 ENDIF()
 
+IF(OPENSSL_ENABLED)
+    SET(MONGODB_COMMAND ${MONGODB_COMMAND} --ssl)
+    SET(MONGODB_EXTRAPATH "${MONGODB_EXTRAPATH} ${OPENSSL_ROOT_DIR}")
+    SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
+    ADD_DEFINITIONS(-DMONGO_SSL)
+ENDIF(OPENSSL_ENABLED)
+
+IF(SSH_ENABLED)
+    SET(MONGODB_COMMAND ${MONGODB_COMMAND} --ssh)
+    SET(HEADERS_GUI_TO_MOC ${HEADERS_GUI_TO_MOC}
+    robomongo/gui/dialogs/SSHTunnelTab.h
+    )
+    SET(SOURCES_GUI ${SOURCES_GUI}
+    robomongo/gui/dialogs/SSHTunnelTab.cpp
+    )
+    ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/libssh2)
+    SET(ALL_LIBS ${ALL_LIBS} libssh2_third_party)    
+ENDIF(SSH_ENABLED)
+
+IF(NOT MONGODB_EXTRAPATH STREQUAL "")
+    STRING(REGEX REPLACE "[ ]*([a-zA-Z:\\/]+)" "\\1," MONGODB_EXTRAPATH_OUT ${MONGODB_EXTRAPATH})
+    STRING(REGEX REPLACE ",$" "" MONGODB_EXTRAPATH_OUT_CLEAR ${MONGODB_EXTRAPATH_OUT})    
+    SET(MONGODB_COMMAND ${MONGODB_COMMAND} --extrapath=${MONGODB_EXTRAPATH_OUT_CLEAR})
+    SET(ALL_LIBS ${ALL_LIBS} ${OPENSSL_LIBRARIES})
+ENDIF()
+
+SET(MONGODB_COMMAND ${MONGODB_COMMAND} --${ARCH_TEXT} mongoclient)
+
+SET(HEADERS ${HEADERS} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
+SET(SOURCES ${SOURCES} robomongo/app/main.cpp ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_CORE})
 SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC})
+
 QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})
 SET(RESOURCES robomongo/gui/resources/gui.qrc)
 QTX_ADD_RESOURCES(RES_SRC ${RESOURCES})
-SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${CMAKE_CURRENT_LIST_DIR} ../include/pcre ../include third-party/qscintilla/Qt4Qt5 third-party third-party/mongodb/src/mongo)
+SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${CMAKE_CURRENT_LIST_DIR} third-party/mongodb/src/third_party/pcre-8.30 third-party/qscintilla/Qt4Qt5 third-party/qjson third-party/mongodb/src)
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS} )
 SOURCE_GROUP("Header Files" FILES ${HEADERS} ${HEADERS_TOMOC})
 SOURCE_GROUP("Source Files" FILES ${SOURCES})
 SOURCE_GROUP("Generated" FILES ${MOC_FILES})
-SOURCE_GROUP("Fileitems Files" FILES ${FILEITEMS_HDRS} ${FILEITEMS_SRCS})
-SOURCE_GROUP("Controls" FILES ${CONTROLS_HDRS} ${CONTROLS_SRCS})
 SOURCE_GROUP("Platform Files" FILES ${PLATFORM_HDRS} ${PLATFORM_SRCS})
 SOURCE_GROUP("Resources" FILES ${RES_SRC} ${RESOURCE_OS})
 
@@ -288,13 +316,13 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     IF(BOOST_ENABLED)
             IF ("${CMAKE_BUILD_TYPE_STABLE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --release --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
+                    COMMAND scons --release ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
             ELSE()
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons -d --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
+                    COMMAND scons -d ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
@@ -302,13 +330,13 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
         ELSE()
             IF ("${CMAKE_BUILD_TYPE_STABLE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --release --${ARCH_TEXT} mongoclient
+                    COMMAND scons --release ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
             ELSE()
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --d --${ARCH_TEXT} mongoclient
+                    COMMAND scons --d ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
@@ -321,23 +349,23 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
 ELSEIF(MSVC)
     IF(BOOST_ENABLED)
         ADD_CUSTOM_TARGET(mongoclient_release
-            COMMAND call scons --release --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
+            COMMAND call scons --release ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient release library")
         ADD_CUSTOM_TARGET(mongoclient_debug
-            COMMAND call scons --d --extrapath=${BOOST_ROOT} --cxx=${CMAKE_CXX_COMPILER} --cc=${CMAKE_C_COMPILER} --${ARCH_TEXT} mongoclient
+            COMMAND call scons --d ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient debug library")
     ELSE(BOOST_ENABLED)
         ADD_CUSTOM_TARGET(mongoclient_release
-            COMMAND call scons --release --${ARCH_TEXT} mongoclient
+            COMMAND call scons --release ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient release library")
         ADD_CUSTOM_TARGET(mongoclient_debug
-            COMMAND call scons --d --${ARCH_TEXT} mongoclient
+            COMMAND call scons --d ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient debug library")
@@ -406,6 +434,12 @@ ELSEIF(UNIX)
     INSTALL(PROGRAMS ${CMAKE_SOURCE_DIR}/install/linux/${PROJECT_NAME}.sh DESTINATION ${TARGET_INSTALL_DESTINATION})
     INSTALL(FILES ${RESOURCE_OS} DESTINATION share/applications COMPONENT RESOURCES)
     INSTALL(FILES ${ICON_FILE} DESTINATION share/icons COMPONENT RESOURCES)
+IF(OPENSSL_ENABLED)
+    FOREACH(opensslLib ${OPENSSL_LIBRARIES})
+        GET_FILENAME_COMPONENT(LibWithoutSymLink ${opensslLib} REALPATH)
+        INSTALL(FILES ${LibWithoutSymLink} DESTINATION ${LIB_INSTALL_DESTINATION} COMPONENT OPENSSL)
+    ENDFOREACH(opensslLib ${OPENSSL_LIBRARIES})
+ENDIF(OPENSSL_ENABLED)
     DEPLOY_QT_PLUGIN("platforms/qxcb" ${QT_PLUGINS_DIR} ${LIB_INSTALL_DESTINATION})
     DEPLOY_QT_PLUGIN("platformthemes/qgtk2" ${QT_PLUGINS_DIR} ${LIB_INSTALL_DESTINATION})
     DEPLOY_QT_PLUGIN("imageformats/qgif" ${QT_PLUGINS_DIR} ${LIB_INSTALL_DESTINATION})
@@ -431,9 +465,16 @@ IF(DEVELOPER_ENABLE_TESTS)
 ########## PREPARE GTEST LIBRARY ##########
 
     ADD_EXECUTABLE(testparser robomongo/core/utils/BsonUtils.cpp robomongo/shell/db/ptimeutil.cpp robomongo/core/HexUtils.cpp ${CMAKE_SOURCE_DIR}/tests/test_parser.cpp)
-    TARGET_LINK_LIBRARIES(testparser ${MONGO_LIBRARIES} ${PLATFORM_LIBRARIES} boost_mongo_third_party pcrecpp gtest gtest_main) 
+    TARGET_LINK_LIBRARIES(testparser ${MONGO_LIBRARIES} ${PLATFORM_LIBRARIES} ${OPENSSL_LIBRARIES} boost_mongo_third_party pcrecpp gtest gtest_main) 
     ADD_DEPENDENCIES(testparser mongoclient_release)
     ADD_DEPENDENCIES(testparser mongoclient_debug)    
     ADD_TEST(NAME testparser COMMAND testparser)
     SET_PROPERTY(TARGET testparser PROPERTY FOLDER "Tests")
+    
+    ADD_EXECUTABLE(testconnectionstrings ${CMAKE_SOURCE_DIR}/tests/test_connection_string.cpp)
+    TARGET_LINK_LIBRARIES(testconnectionstrings ${MONGO_LIBRARIES} ${PLATFORM_LIBRARIES} ${OPENSSL_LIBRARIES} boost_mongo_third_party pcrecpp gtest gtest_main) 
+    ADD_DEPENDENCIES(testconnectionstrings mongoclient_release)
+    ADD_DEPENDENCIES(testconnectionstrings mongoclient_debug)    
+    ADD_TEST(NAME testconnectionstrings COMMAND testconnectionstrings)
+    SET_PROPERTY(TARGET testconnectionstrings PROPERTY FOLDER "Tests")
 ENDIF(DEVELOPER_ENABLE_TESTS)

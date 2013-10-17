@@ -1,8 +1,7 @@
 #pragma once
 
-#include <QMutex>
 #include <mongo/scripting/engine.h>
-#include <js/jsparse.h>
+#include <third_party/js-1.7/jsparse.h>
 
 #include "robomongo/core/domain/MongoShellResult.h"
 
@@ -40,6 +39,5 @@ namespace Robomongo
 
         mongo::ScriptEngine *_engine;
         mongo::Scope *_scope;
-        QMutex _mutex;
     };
 }

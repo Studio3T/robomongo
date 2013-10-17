@@ -22,7 +22,7 @@
 #pragma once
 
 #ifdef MONGO_EXPOSE_MACROS
-#error dbclient.h is for C++ driver consumer use only
+//#error dbclient.h is for C++ driver consumer use only
 #endif
 
 #include "mongo/client/redef_macros.h"

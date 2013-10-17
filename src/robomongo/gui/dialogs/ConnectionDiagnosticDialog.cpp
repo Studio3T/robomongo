@@ -12,7 +12,6 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
 
-using namespace mongo;
 namespace Robomongo
 {
     ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *connection) :
@@ -130,18 +129,14 @@ namespace Robomongo
 
     void ConnectionDiagnosticThread::run()
     {
-        char port[8]={0};
-        sprintf(port,":%u",_connection->serverPort());
-        std::string address = _connection->serverHost();
-        address+=port;
-        boost::scoped_ptr<DBClientConnection> connection;
+        boost::scoped_ptr<mongo::DBClientConnection> connection;
 
         try {
-            connection.reset(new DBClientConnection);
-            connection->connect(address);
+            connection.reset(new mongo::DBClientConnection);
+            connection->connect(_connection->info());
             emit connectionStatus("", true);
         }
-        catch(UserException &ex) {
+        catch(const mongo::UserException &ex) {
             const char *what = ex.what();
             emit connectionStatus(QString(what), false);
             emit completed();
@@ -156,15 +151,11 @@ namespace Robomongo
                 std::string username = credential->userName();
                 std::string password = credential->userPassword();
 
-                string errmsg;
+                std::string errmsg;
                 bool ok = connection->auth(database, username, password, errmsg);
-                if (!ok) {
-                    emit authStatus("", false);
-                } else {
-                    emit authStatus("", true);
-                }
+                emit authStatus("", ok);
             }
-        } catch (const UserException &) {
+        } catch (const mongo::UserException &) {
             emit authStatus("", false);
         }
 

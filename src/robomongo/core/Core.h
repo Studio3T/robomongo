@@ -30,6 +30,4 @@ namespace Robomongo
 
     class MongoDocument;
     typedef boost::shared_ptr<MongoDocument> MongoDocumentPtr;
-
-    typedef boost::scoped_ptr<mongo::DBClientConnection> DBClientConnectionScopedPtr;
 }

@@ -83,7 +83,7 @@ namespace Robomongo
 #ifdef SSH_SUPPORT_ENABLED
         bool isSshAndSsl = _basicTab->isSslSupported() && _sshTab->isSshSupported();
         if(isSshAndSsl){
-            QMessageBox::warning(this, "Internal error", "Now not supported SSL+SSH.");
+            QMessageBox::warning(this, "Internal error", "SSH and SSL cannot be enabled simultaneously. Please uncheck one of them.");
             return false;
         }
 #endif

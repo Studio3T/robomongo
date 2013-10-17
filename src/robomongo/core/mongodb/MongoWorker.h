@@ -15,6 +15,7 @@ namespace Robomongo
     class MongoClient;
     class ScriptEngine;
     class ConnectionSettings;
+    class RDBClientConnection;
 
     class MongoWorker : public QObject
     {
@@ -127,8 +128,8 @@ namespace Robomongo
         DatabasesContainerType getDatabaseNamesSafe();
         std::string getAuthBase() const;
 
-        mongo::DBClientBase *_dbclient;
-        mongo::DBClientBase *getConnection();
+        mongo::DBClientConnection *_dbclient;
+        mongo::DBClientConnection *getConnection();
         MongoClient *getClient();
 
         /**

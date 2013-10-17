@@ -27,7 +27,7 @@ typedef int pid_t;
 int getpid();
 #endif
 
-#include <db/jsobj.h>
+#include <mongo/db/jsobj.h>
 
 namespace mongo {
 

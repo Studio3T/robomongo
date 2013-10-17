@@ -1067,7 +1067,7 @@ namespace mongo {
            Connect timeout is fixed, but short, at 5 seconds.
          */
         DBClientConnection(bool _autoReconnect=false, DBClientReplicaSet* cp=0, double so_timeout=0) :
-            clientSet(cp), _failed(false), autoReconnect(_autoReconnect), lastReconnectTry(0), _so_timeout(so_timeout) {
+            clientSet(cp), _failed(false), autoReconnect(_autoReconnect), lastReconnectTry(0), _so_timeout(so_timeout){
             _numConnections++;
         }
 
@@ -1215,6 +1215,11 @@ namespace mongo {
 
 #ifdef MONGO_SSL
         SSLManager* sslManager();
+#endif
+#ifdef ROBOMONGO
+#ifdef MONGO_SSL
+         boost::scoped_ptr<SSLManager> _sslManager;
+#endif
 #endif
     };
 

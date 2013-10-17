@@ -186,9 +186,14 @@ namespace mongo {
         */
         Socket(double so_timeout = 0, int logLevel = 0 );
 
+#ifdef ROBOMONGO
+        virtual ~Socket();
+        virtual bool connect(SockAddr& farEnd);
+#else
         ~Socket();
-
         bool connect(SockAddr& farEnd);
+#endif
+        
         void close();
         
         void send( const char * data , int len, const char *context );
@@ -232,18 +237,28 @@ namespace mongo {
         uint64_t getSockCreationMicroSec() const {
             return _fdCreationMicroSec;
         }
-
-    private:
+#ifdef ROBOMONGO
+        protected:
+#else
+        private:
+#endif
         void _init();
 
         /** sends dumbly, just each buffer at a time */
         void _send( const vector< pair< char *, int > > &data, const char *context );
+#ifdef ROBOMONGO
+        /** raw send, same semantics as ::send */
+        virtual int _send( const char * data , int len );
 
+        /** raw recv, same semantics as ::recv */
+        virtual int _recv( char * buf , int max );
+#else
         /** raw send, same semantics as ::send */
         int _send( const char * data , int len );
 
         /** raw recv, same semantics as ::recv */
         int _recv( char * buf , int max );
+#endif // ROBOMONGO
 
         void _handleRecvError(int ret, int len, int* retries);
         MONGO_COMPILER_NORETURN void _handleSendError(int ret, const char* context);

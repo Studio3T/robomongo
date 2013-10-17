@@ -96,7 +96,7 @@ namespace Robomongo
 
     void Notifier::initMenu(QMenu *const menu, BsonTreeItem *const item)
     {
-        bool isEditable = _queryInfo.isNull ? false : true;
+        bool isEditable = _queryInfo.isValid();
         bool onItem = item ? true : false;
         
         bool isSimple = false;
@@ -120,7 +120,7 @@ namespace Robomongo
 
     void Notifier::initMultiSelectionMenu(QMenu *const menu)
     {
-        bool isEditable = _queryInfo.isNull ? false : true;
+        bool isEditable = _queryInfo.isValid();
 
         if (isEditable) menu->addAction(_insertDocumentAction);
         if (isEditable) menu->addAction(_deleteDocumentsAction);
@@ -158,7 +158,7 @@ namespace Robomongo
             }
 
             isNeededRefresh=true;
-            _shell->server()->removeDocuments(query, _queryInfo.databaseName, _queryInfo.collectionName);
+            _shell->server()->removeDocuments(query, _queryInfo._databaseName, _queryInfo._collectionName);
         }
 
         if (isNeededRefresh)
@@ -172,7 +172,7 @@ namespace Robomongo
 
     void Notifier::onDeleteDocuments()
     {
-        if (_queryInfo.isNull)
+        if (!_queryInfo.isValid())
             return;
 
         QModelIndexList selectedIndexes = _observer->selectedIndexes();
@@ -191,7 +191,7 @@ namespace Robomongo
 
     void Notifier::onDeleteDocument()
     {
-        if (_queryInfo.isNull)
+        if (!_queryInfo.isValid())
             return;
 
         QModelIndex selectedIndex = _observer->selectedIndex();
@@ -206,7 +206,7 @@ namespace Robomongo
 
     void Notifier::onEditDocument()
     {
-        if (_queryInfo.isNull)
+        if (!_queryInfo.isValid())
             return;
 
         QModelIndex selectedInd = _observer->selectedIndex();
@@ -225,16 +225,16 @@ namespace Robomongo
 
         const QString &json = QtUtils::toQString(str);
 
-        DocumentTextEditor editor(QtUtils::toQString(_queryInfo.serverAddress),
-            QtUtils::toQString(_queryInfo.databaseName),
-            QtUtils::toQString(_queryInfo.collectionName),
+        DocumentTextEditor editor(QtUtils::toQString(detail::prepareServerAddress(_queryInfo._serverAddress)),
+            QtUtils::toQString(_queryInfo._databaseName),
+            QtUtils::toQString(_queryInfo._collectionName),
             json);
 
         editor.setWindowTitle("Edit Document");
         int result = editor.exec();
 
         if (result == QDialog::Accepted) {
-            _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo.databaseName, _queryInfo.collectionName);
+            _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo._databaseName, _queryInfo._collectionName);
         }
     }
 
@@ -256,9 +256,9 @@ namespace Robomongo
 
         const QString &json = QtUtils::toQString(str);
 
-        std::string server = _queryInfo.isNull ? "" : _queryInfo.serverAddress;
-        std::string database = _queryInfo.isNull ? "" : _queryInfo.databaseName;
-        std::string collection = _queryInfo.isNull ? "" : _queryInfo.collectionName;
+        std::string server = detail::prepareServerAddress(_queryInfo._serverAddress);
+        std::string database = _queryInfo._databaseName;
+        std::string collection = _queryInfo._collectionName;
 
         DocumentTextEditor *editor = new DocumentTextEditor(
             QtUtils::toQString(server), QtUtils::toQString(database), QtUtils::toQString(collection),
@@ -270,12 +270,12 @@ namespace Robomongo
 
     void Notifier::onInsertDocument()
     {
-        if (_queryInfo.isNull)
+        if (!_queryInfo.isValid())
             return;
 
-        DocumentTextEditor editor(QtUtils::toQString(_queryInfo.serverAddress),
-            QtUtils::toQString(_queryInfo.databaseName),
-            QtUtils::toQString(_queryInfo.collectionName),
+        DocumentTextEditor editor(QtUtils::toQString(detail::prepareServerAddress(_queryInfo._serverAddress)),
+            QtUtils::toQString(_queryInfo._databaseName),
+            QtUtils::toQString(_queryInfo._collectionName),
             "{\n    \n}");
 
         editor.setCursorPosition(1, 4);
@@ -287,7 +287,7 @@ namespace Robomongo
 
         DocumentTextEditor::ReturnType obj = editor.bsonObj();
         for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
-            _shell->server()->insertDocument(*it, _queryInfo.databaseName, _queryInfo.collectionName);
+            _shell->server()->insertDocument(*it, _queryInfo._databaseName, _queryInfo._collectionName);
         }
 
         _shell->query(0, _queryInfo);

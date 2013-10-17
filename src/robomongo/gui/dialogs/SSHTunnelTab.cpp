@@ -165,13 +165,14 @@ namespace Robomongo
             info._publicKey._passphrase = QtUtils::toStdString(_passphraseBox->text());
         }
 
-        if (_passwordFrame->isVisible()){
-            info._currentMethod = SSHInfo::PASSWORD;
+        if(_sshSupport->isChecked()){
+            if (_passwordFrame->isVisible()){
+                info._currentMethod = SSHInfo::PASSWORD;
+            }
+            else if(_passphraseBox->isVisible()){
+                info._currentMethod = SSHInfo::PUBLICKEY;
+            }
         }
-        else if(_passphraseBox->isVisible()){
-            info._currentMethod = SSHInfo::PUBLICKEY;
-        }
-        
         _settings->setSshInfo(info);
     }
 }

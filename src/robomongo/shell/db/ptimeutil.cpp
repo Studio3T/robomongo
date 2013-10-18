@@ -295,12 +295,16 @@ namespace miutil
 	
         //Decode the YYYY-MM-DDThh:mm:ss part
         //Remeber -, T and : is optional.
-        for( unsigned short defIndex=0; def[defIndex].nextSep && iIsoTime < isoTime.length(); ++defIndex ) {
+        for( unsigned short defIndex=0; def[defIndex].nextSep && iIsoTime < isoTime.length() && isSuccessfull; ++defIndex ) {
             def[defIndex].number = getInt( isoTime, iIsoTime, def[defIndex].numberOfChars, isSuccessfull);	
             iIsoTime = isoTime.find_first_of( def[defIndex].nextSep, iIsoTime );
             if(defIndex!=6)
                 ++iIsoTime;
         }
+
+        if(!isSuccessfull){
+            return boost::posix_time::ptime();
+        } 
 
         int hourOffset=0;
         int minuteOffset=0;

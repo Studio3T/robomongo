@@ -156,14 +156,10 @@ namespace Robomongo
         info._hostName = QtUtils::toStdString(_sshHostName->text());
         info._userName = QtUtils::toStdString(_userName->text()); 
         info._port = _sshPort->text().toInt();
-        if(_passwordFrame->isEnabled()){
-            info._password = QtUtils::toStdString(_passwordBox->text());
-        }
-        if(_passphraseBox->isEnabled()){
-            info._publicKey._publicKey = QtUtils::toStdString(_publicKeyBox->text());
-            info._publicKey._privateKey = QtUtils::toStdString(_privateKeyBox->text());
-            info._publicKey._passphrase = QtUtils::toStdString(_passphraseBox->text());
-        }
+        info._password = QtUtils::toStdString(_passwordBox->text());
+        info._publicKey._publicKey = QtUtils::toStdString(_publicKeyBox->text());
+        info._publicKey._privateKey = QtUtils::toStdString(_privateKeyBox->text());
+        info._publicKey._passphrase = QtUtils::toStdString(_passphraseBox->text());
 
         if(_sshSupport->isChecked()){
             if (_passwordFrame->isVisible()){

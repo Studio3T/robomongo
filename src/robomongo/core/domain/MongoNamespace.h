@@ -13,7 +13,7 @@ namespace Robomongo
         std::string toString() const { return _ns; }
         std::string databaseName() const { return _databaseName; }
         std::string collectionName() const { return _collectionName; }
-        bool isValid() { return !_ns.empty(); }
+        bool isValid() const { return !_ns.empty(); }
     private:
         std::string _ns;
         std::string _databaseName;

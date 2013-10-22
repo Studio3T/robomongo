@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QString>
 #include <mongo/bson/bsonobj.h>
+#include "robomongo/core/domain/MongoNamespace.h"
 
 namespace Robomongo
 {
@@ -10,18 +10,25 @@ namespace Robomongo
         std::string prepareServerAddress(const std::string &address);
     }
 
+    struct CollectionInfo
+    {
+        CollectionInfo();
+        CollectionInfo(const std::string &server, const std::string &database, const std::string &collection);
+        bool isValid() const;
+
+        std::string _serverAddress;
+        MongoNamespace _ns;
+    };
+
     struct MongoQueryInfo
     {
         MongoQueryInfo();
 
-        MongoQueryInfo(const std::string &server, const std::string &database, const std::string &collection,
+        MongoQueryInfo(const CollectionInfo &info,
                   mongo::BSONObj query, mongo::BSONObj fields, int limit, int skip, int batchSize,
                   int options, bool special);
-        bool isValid() const;
 
-        std::string _serverAddress;
-        std::string _databaseName;
-        std::string _collectionName;
+        CollectionInfo _info;
         mongo::BSONObj _query;
         mongo::BSONObj _fields;
         int _limit;

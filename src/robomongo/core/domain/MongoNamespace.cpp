@@ -1,4 +1,4 @@
-#include "MongoNamespace.h"
+#include "robomongo/core/domain/MongoNamespace.h"
 
 #include <stdio.h>
 

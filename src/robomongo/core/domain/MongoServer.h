@@ -44,11 +44,11 @@ namespace Robomongo
         QStringList getDatabasesNames() const;
         MongoDatabase *findDatabaseByName(const std::string &dbName) const;
 
-        void insertDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection);
-        void insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
-        void saveDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection);
-        void saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
-        void removeDocuments(mongo::Query query, const std::string &db, const std::string &collection, bool justOne = true);
+        void insertDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns);
+        void insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
+        void saveDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns);
+        void saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
+        void removeDocuments(mongo::Query query, const MongoNamespace &ns, bool justOne = true);
         float version() const{ return _version; }
 
 

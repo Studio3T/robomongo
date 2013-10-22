@@ -49,22 +49,22 @@ namespace Robomongo
     }
     void MongoDatabase::createCollection(const std::string &collection)
     {
-        _bus->send(_server->client(), new CreateCollectionRequest(this, _name, collection));
+        _bus->send(_server->client(), new CreateCollectionRequest(this, MongoNamespace(_name, collection)));
     }
 
     void MongoDatabase::dropCollection(const std::string &collection)
     {
-        _bus->send(_server->client(), new DropCollectionRequest(this, _name, collection));
+        _bus->send(_server->client(), new DropCollectionRequest(this, MongoNamespace(_name, collection)));
     }
 
     void MongoDatabase::renameCollection(const std::string &collection, const std::string &newCollection)
     {
-        _bus->send(_server->client(), new RenameCollectionRequest(this, _name, collection, newCollection));
+        _bus->send(_server->client(), new RenameCollectionRequest(this, MongoNamespace(_name, collection), newCollection));
     }
 
     void MongoDatabase::duplicateCollection(const std::string &collection, const std::string &newCollection)
     {
-        _bus->send(_server->client(), new DuplicateCollectionRequest(this, _name, collection, newCollection));
+        _bus->send(_server->client(), new DuplicateCollectionRequest(this, MongoNamespace(_name, collection), newCollection));
     }
 
     void MongoDatabase::copyCollection(MongoServer *server, const std::string &sourceDatabase, const std::string &collection)

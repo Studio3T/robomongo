@@ -287,7 +287,7 @@ namespace Robomongo
 
             bool special = _scope->getBoolean("__robomongoSpecial");
 
-            MongoQueryInfo info = MongoQueryInfo(serverAddress, dbName, collectionName,
+            MongoQueryInfo info = MongoQueryInfo(CollectionInfo(serverAddress, dbName, collectionName),
                                        query, fields, limit, skip, batchSize, options, special);
             return MongoShellResult(type, output, objects, info, elapsedms);
         }

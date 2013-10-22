@@ -337,8 +337,7 @@ namespace Robomongo
         MongoServer *server = database->server();
         ConnectionSettings *settings = server->connectionRecord();
 
-        DocumentTextEditor editor(QtUtils::toQString(settings->getFullAddress()), QtUtils::toQString(database->name()),
-            QtUtils::toQString(_collection->name()), "{\n    \n}");
+        DocumentTextEditor editor(CollectionInfo(settings->getFullAddress(), database->name(), _collection->name()), "{\n    \n}");
 
         editor.setCursorPosition(1, 4);
         editor.setWindowTitle("Insert Document");
@@ -347,7 +346,7 @@ namespace Robomongo
         treeWidget()->activateWindow();
 
         if (result == QDialog::Accepted) {
-            server->insertDocuments(editor.bsonObj(), database->name(), _collection->name());
+            server->insertDocuments(editor.bsonObj(), MongoNamespace(database->name(), _collection->name()) );
         }
     }
 
@@ -372,7 +371,7 @@ namespace Robomongo
             mongo::BSONObjBuilder builder;
             mongo::BSONObj bsonQuery = builder.obj();
             mongo::Query query(bsonQuery);
-            server->removeDocuments(query, database->name(), _collection->name(), false);
+            server->removeDocuments(query, MongoNamespace(database->name(), _collection->name()), false);
         }
     }
 

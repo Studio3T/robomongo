@@ -299,22 +299,19 @@ namespace Robomongo
         R_EVENT
 
     public:
-        InsertDocumentRequest(QObject *sender, const mongo::BSONObj &obj, const std::string &database, const std::string &collection, bool overwrite = false) :
+        InsertDocumentRequest(QObject *sender, const mongo::BSONObj &obj, const MongoNamespace &ns, bool overwrite = false) :
             Event(sender),
             _obj(obj),
-            _database(database),
-            _collection(collection),
+            _ns(ns),
             _overwrite(overwrite) {}
 
         mongo::BSONObj obj() const { return _obj; }
-        std::string database() const { return _database; }
-        std::string collection() const { return _collection; }
+        MongoNamespace ns() const { return _ns; }
         bool overwrite() const { return _overwrite; }
 
     private:
         mongo::BSONObj _obj;
-        std::string _database;
-        std::string _collection;
+        const MongoNamespace _ns;
         bool _overwrite;
     };
 
@@ -339,22 +336,19 @@ namespace Robomongo
         R_EVENT
 
     public:
-        RemoveDocumentRequest(QObject *sender, mongo::Query query, const std::string &database, const std::string &collection, bool justOne = true) :
+        RemoveDocumentRequest(QObject *sender, mongo::Query query, const MongoNamespace &ns, bool justOne = true) :
             Event(sender),
             _query(query),
-            _database(database),
-            _collection(collection),
+            _ns(ns),
             _justOne(justOne) {}
 
         mongo::Query query() const { return _query; }
-        std::string database() const { return _database; }
-        std::string collection() const { return _collection; }
+        MongoNamespace ns() const { return _ns; }
         bool justOne() const { return _justOne; }
 
     private:
         mongo::Query _query;
-        std::string _database;
-        std::string _collection;
+        const MongoNamespace _ns;
         bool _justOne;
     };
 
@@ -443,17 +437,14 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateCollectionRequest(QObject *sender, const std::string &database, const std::string &collection) :
+        CreateCollectionRequest(QObject *sender, const MongoNamespace &ns) :
             Event(sender),
-            _database(database),
-            _collection(collection) {}
+            _ns(ns) {}
 
-        std::string database() const { return _database; }
-        std::string collection() const { return _collection; }
+        MongoNamespace ns() const { return _ns; }
 
     private:
-        std::string _database;
-        std::string _collection;
+        const MongoNamespace _ns;
     };
 
     class CreateCollectionResponse : public Event
@@ -479,18 +470,14 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DropCollectionRequest(QObject *sender, const std::string &database,
-                              const std::string &collection) :
+        DropCollectionRequest(QObject *sender, const MongoNamespace &ns) :
             Event(sender),
-            _database(database),
-            _collection(collection) {}
+            _ns(ns) {}
 
-        std::string database() const { return _database; }
-        std::string collection() const { return _collection; }
+        MongoNamespace ns() const { return _ns; }
 
     private:
-        std::string _database;
-        std::string _collection;
+        MongoNamespace _ns;
     };
 
     class DropCollectionResponse : public Event
@@ -514,20 +501,16 @@ namespace Robomongo
         R_EVENT
 
     public:
-        RenameCollectionRequest(QObject *sender, const std::string &database,
-                              const std::string &collection, const std::string &newCollection) :
+        RenameCollectionRequest(QObject *sender, const MongoNamespace &ns, const std::string &newCollection) :
             Event(sender),
-            _database(database),
-            _collection(collection),
+            _ns(ns),
             _newCollection(newCollection) {}
 
-        std::string database() const { return _database; }
-        std::string collection() const { return _collection; }
+        MongoNamespace ns() const { return _ns; }
         std::string newCollection() const { return _newCollection; }
 
     private:
-        std::string _database;
-        std::string _collection;
+        MongoNamespace _ns;
         std::string _newCollection;
     };
 
@@ -552,20 +535,16 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DuplicateCollectionRequest(QObject *sender, const std::string &database,
-                              const std::string &collection, const std::string &newCollection) :
+        DuplicateCollectionRequest(QObject *sender, const MongoNamespace &ns, const std::string &newCollection) :
             Event(sender),
-            _database(database),
-            _collection(collection),
+            _ns(ns),
             _newCollection(newCollection) {}
 
-        std::string database() const { return _database; }
-        std::string collection() const { return _collection; }
+        MongoNamespace ns() const { return _ns; }
         std::string newCollection() const { return _newCollection; }
 
     private:
-        std::string _database;
-        std::string _collection;
+        MongoNamespace _ns;
         std::string _newCollection;
     };
 
@@ -594,20 +573,16 @@ namespace Robomongo
             const std::string &collection, const std::string &databaseTo) :
         Event(sender),
             _worker(worker),
-            _databaseFrom(databaseFrom),
-            _collection(collection),
-            _databaseTo(databaseTo) {}
+            _from(databaseFrom, collection),
+            _to(databaseTo, collection) {}
 
         MongoWorker *worker() const { return _worker; }
-        std::string databaseFrom() const { return _databaseFrom; }
-        std::string collection() const { return _collection; }
-        std::string databaseTo() const { return _databaseTo; }
-
+        MongoNamespace from() const { return _from;}
+        MongoNamespace to() const { return _to; }
     private:
         MongoWorker *_worker;
-        std::string _databaseFrom;
-        std::string _collection;
-        std::string _databaseTo;
+        const MongoNamespace _from;
+        const MongoNamespace _to;
     };
 
     class CopyCollectionToDiffServerResponse : public Event

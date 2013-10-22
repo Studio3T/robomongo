@@ -22,17 +22,17 @@ namespace Robomongo
 {
     const QSize DocumentTextEditor::minimumSize = QSize(640,480);
 
-    DocumentTextEditor::DocumentTextEditor(const QString &server, const QString &database, const QString &collection,
-                                           const QString &json, bool readonly /* = false */, QWidget *parent) :
+    DocumentTextEditor::DocumentTextEditor(const CollectionInfo &info, const QString &json, bool readonly /* = false */, QWidget *parent) :
         QDialog(parent),
+        _info(info),
         _readonly(readonly)
     {
         setMinimumSize(minimumSize);       
         setWindowFlags(Qt::Window | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
 
-        Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), collection);
-        Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), database);
-        Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), server);
+        Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), QtUtils::toQString(_info._ns.collectionName()));
+        Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), QtUtils::toQString(_info._ns.databaseName()));
+        Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), QtUtils::toQString(detail::prepareServerAddress(_info._serverAddress)));
 
         QPushButton *validate = new QPushButton("Validate");
         validate->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
@@ -65,7 +65,7 @@ namespace Robomongo
         QVBoxLayout *layout = new QVBoxLayout();
 
         // show top bar only if we have info for it
-        if (!(server.isEmpty() && database.isEmpty() && collection.isEmpty()))
+        if (_info.isValid())
             layout->addLayout(hlayout);
 
         layout->addWidget(_queryText);
@@ -97,7 +97,7 @@ namespace Robomongo
     bool DocumentTextEditor::validate(bool silentOnSuccess /* = true */)
     {
         QString text = jsonText();
-        int len =0;
+        int len = 0;
         try {  
             std::string textString = QtUtils::toStdString(text);
             const char *json = textString.c_str();

@@ -82,8 +82,8 @@ namespace Robomongo
         setContentsMargins(0, 0, 0, 0);
         _header = new OutputItemHeaderWidget(this);       
 
-        if (_queryInfo.isValid()) {
-            _header->setCollection(QtUtils::toQString(_queryInfo._collectionName));
+        if (_queryInfo._info.isValid()) {
+            _header->setCollection(QtUtils::toQString(_queryInfo._info._ns.collectionName()));
             _header->paging()->setBatchSize(_queryInfo._batchSize);
             _header->paging()->setSkip(_queryInfo._skip);
             if(!_queryInfo._limit){

@@ -74,7 +74,7 @@ namespace
 
 namespace Robomongo
 {
-    EditIndexDialog::EditIndexDialog(QWidget *parent,const EnsureIndexInfo &info,const QString &databaseName,const QString &serverAdress)
+    EditIndexDialog::EditIndexDialog(const EnsureIndexInfo &info, const QString &databaseName, const QString &serverAdress, QWidget *parent)
         :BaseClass(parent),_info(info)
     {        
         setWindowTitle("Index Properties");

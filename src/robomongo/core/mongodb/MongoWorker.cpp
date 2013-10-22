@@ -287,9 +287,9 @@ namespace Robomongo
             boost::scoped_ptr<MongoClient> client(getClient());
 
             if (event->overwrite())
-                client->saveDocument(event->obj(), event->database(), event->collection());
+                client->saveDocument(event->obj(), event->ns());
             else
-                client->insertDocument(event->obj(), event->database(), event->collection());
+                client->insertDocument(event->obj(), event->ns());
 
             client->done();
 
@@ -305,7 +305,7 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
 
-            client->removeDocuments(event->database(), event->collection(), event->query(), event->justOne());
+            client->removeDocuments(event->ns(), event->query(), event->justOne());
             client->done();
 
             reply(event->sender(), new RemoveDocumentResponse(this));
@@ -386,7 +386,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->createCollection(event->database(), event->collection());
+            client->createCollection(event->ns());
             client->done();
 
             reply(event->sender(), new CreateCollectionResponse(this));
@@ -400,7 +400,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->dropCollection(event->database(), event->collection());
+            client->dropCollection(event->ns());
             client->done();
 
             reply(event->sender(), new DropCollectionResponse(this));
@@ -414,7 +414,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->renameCollection(event->database(), event->collection(), event->newCollection());
+            client->renameCollection(event->ns(), event->newCollection());
             client->done();
 
             reply(event->sender(), new RenameCollectionResponse(this));
@@ -428,7 +428,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->duplicateCollection(event->database(), event->collection(), event->newCollection());
+            client->duplicateCollection(event->ns(), event->newCollection());
             client->done();
 
             reply(event->sender(), new DuplicateCollectionResponse(this));
@@ -442,10 +442,8 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            MongoNamespace from(event->databaseFrom(), event->collection());
-            MongoNamespace to(event->databaseTo(), event->collection());
             MongoWorker *cl = event->worker();
-            client->copyCollectionToDiffServer(cl->_dbclient,from,to);
+            client->copyCollectionToDiffServer(cl->_dbclient,event->from(),event->to());
             client->done();
 
             reply(event->sender(), new CopyCollectionToDiffServerResponse(this));

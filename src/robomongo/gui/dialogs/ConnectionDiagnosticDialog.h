@@ -16,7 +16,9 @@ namespace Robomongo
     {
         Q_OBJECT
     public:
-        ConnectionDiagnosticDialog(ConnectionSettings *connection);
+        typedef QDialog BaseClass;
+        static const QSize dialogSize;        
+        ConnectionDiagnosticDialog(ConnectionSettings *connection, QWidget *parent = 0);
 
     protected Q_SLOTS:
         void connectionStatus(QString error, bool connected);

@@ -16,6 +16,8 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        static const QSize minimumSize;
+
         explicit CopyCollection(const QString &serverName,
                                       const QString &database,
                                       const QString &collection, QWidget *parent = 0);

@@ -79,33 +79,33 @@ namespace Robomongo
         AppRegistry::instance().bus()->send(_client,new DropDatabaseRequest(this, dbName));
     }
 
-    void MongoServer::insertDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection)
+    void MongoServer::insertDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns)
     {
         for (std::vector<mongo::BSONObj>::const_iterator it = objCont.begin(); it != objCont.end(); it++) {
-            insertDocument(*it, db, collection);
+            insertDocument(*it, ns);
         }
     }
 
-    void MongoServer::insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)
+    void MongoServer::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
-        AppRegistry::instance().bus()->send(_client,new InsertDocumentRequest(this, obj, db, collection));
+        AppRegistry::instance().bus()->send(_client,new InsertDocumentRequest(this, obj, ns));
     }
 
-    void MongoServer::saveDocuments(const std::vector<mongo::BSONObj> &objCont, const std::string &db, const std::string &collection)
+    void MongoServer::saveDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns)
     {
         for (std::vector<mongo::BSONObj>::const_iterator it = objCont.begin(); it != objCont.end(); it++) {
-            saveDocument(*it,db,collection);
+            saveDocument(*it,ns);
         }
     }
 
-    void MongoServer::saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)
+    void MongoServer::saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
-        AppRegistry::instance().bus()->send(_client, new InsertDocumentRequest(this, obj, db, collection, true));
+        AppRegistry::instance().bus()->send(_client, new InsertDocumentRequest(this, obj, ns, true));
     }
 
-    void MongoServer::removeDocuments(mongo::Query query, const std::string &db, const std::string &collection, bool justOne)
+    void MongoServer::removeDocuments(mongo::Query query, const MongoNamespace &ns, bool justOne)
     {
-        AppRegistry::instance().bus()->send(_client, new RemoveDocumentRequest(this, query, db, collection, justOne));
+        AppRegistry::instance().bus()->send(_client, new RemoveDocumentRequest(this, query, ns, justOne));
     }
 
     void MongoServer::loadDatabases()

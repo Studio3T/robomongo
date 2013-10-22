@@ -64,8 +64,8 @@ namespace Robomongo
     /**
      * @brief Creates dialog
      */
-    ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager) 
-        : QDialog(), _settingsManager(settingsManager)
+    ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager, QWidget *parent) 
+        : QDialog(parent), _settingsManager(settingsManager)
     {
         setWindowIcon(GuiRegistry::instance().connectIcon());
         setWindowTitle("MongoDB Connections");

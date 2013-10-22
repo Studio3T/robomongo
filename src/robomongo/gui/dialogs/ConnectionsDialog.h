@@ -23,7 +23,7 @@ namespace Robomongo
         /**
          * @brief Creates dialog
          */
-        ConnectionsDialog(SettingsManager *manager);
+        ConnectionsDialog(SettingsManager *manager, QWidget *parent = 0);
 
         /**
          * @brief ConnectionSettings, that was selected after pressing on

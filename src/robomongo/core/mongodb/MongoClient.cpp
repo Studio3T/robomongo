@@ -345,16 +345,15 @@ namespace Robomongo
         _dbclient->dropDatabase(dbName);
     }
 
-    void MongoClient::createCollection(const std::string &dbName, const std::string &collectionName)
+    void MongoClient::createCollection(const MongoNamespace &ns)
     {
-        MongoNamespace ns(dbName, collectionName);
         _dbclient->createCollection(ns.toString());
     }
 
-    void MongoClient::renameCollection(const std::string &dbName, const std::string &collectionName, const std::string &newCollectionName)
+    void MongoClient::renameCollection(const MongoNamespace &ns, const std::string &newCollectionName)
     {
-        MongoNamespace from(dbName, collectionName);
-        MongoNamespace to(dbName, newCollectionName);
+        MongoNamespace from(ns);
+        MongoNamespace to(ns.databaseName(), newCollectionName);
 
         // Building { renameCollection: <source-namespace>, to: <target-namespace> }
         mongo::BSONObjBuilder command; // { collStats: "db.collection", scale : 1 }
@@ -365,10 +364,10 @@ namespace Robomongo
         _dbclient->runCommand("admin", command.obj(), result); // this command should be run against "admin" db
     }
 
-    void MongoClient::duplicateCollection(const std::string &dbName, const std::string &collectionName, const std::string &newCollectionName)
+    void MongoClient::duplicateCollection(const MongoNamespace &ns, const std::string &newCollectionName)
     {
-        MongoNamespace from(dbName, collectionName);
-        MongoNamespace to(dbName, newCollectionName);
+        MongoNamespace from(ns);
+        MongoNamespace to(ns.databaseName(), newCollectionName);
 
         if (!_dbclient->exists(to.toString()))
             _dbclient->createCollection(to.toString());
@@ -392,21 +391,18 @@ namespace Robomongo
         }
     }
 
-    void MongoClient::dropCollection(const std::string &dbName, const std::string &collectionName)
+    void MongoClient::dropCollection(const MongoNamespace &ns)
     {
-        MongoNamespace ns(dbName, collectionName);
         _dbclient->dropCollection(ns.toString());
     }
 
-    void MongoClient::insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)
+    void MongoClient::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
-        MongoNamespace ns(db, collection);
         _dbclient->insert(ns.toString(), obj);
     }
 
-    void MongoClient::saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection)
+    void MongoClient::saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
-        MongoNamespace ns(db, collection);
 
         mongo::BSONElement id = obj.getField("_id");
         mongo::BSONObjBuilder builder;
@@ -418,15 +414,14 @@ namespace Robomongo
         //_dbclient->save(ns.toString().toStdString(), obj);
     }
 
-    void MongoClient::removeDocuments(const std::string &db, const std::string &collection, mongo::Query query, bool justOne /*= true*/)
+    void MongoClient::removeDocuments(const MongoNamespace &ns, mongo::Query query, bool justOne /*= true*/)
     {
-        MongoNamespace ns(db, collection);
         _dbclient->remove(ns.toString(), query, justOne);
     }
 
     std::vector<MongoDocumentPtr> MongoClient::query(const MongoQueryInfo &info)
     {
-        MongoNamespace ns(info._databaseName, info._collectionName);
+        MongoNamespace ns(info._info._ns);
 
         //int limit = (info.limit <= 0) ? 50 : info.limit;
 

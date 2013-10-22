@@ -518,7 +518,7 @@ namespace Robomongo
 
     void MainWindow::manageConnections()
     {
-        ConnectionsDialog dialog(AppRegistry::instance().settingsManager());
+        ConnectionsDialog dialog(AppRegistry::instance().settingsManager(), this);
         int result = dialog.exec();
 
         // save settings and update connection menu

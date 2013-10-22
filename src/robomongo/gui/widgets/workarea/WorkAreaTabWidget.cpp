@@ -101,6 +101,7 @@ namespace Robomongo
             closeTab(index);
             return;
         }
+        QueryWidget *widget = currentQueryWidget();
 
         if (KeyboardManager::isPreviousTabShortcut(keyEvent)) {
             previousTab();
@@ -108,20 +109,20 @@ namespace Robomongo
         } else if (KeyboardManager::isNextTabShortcut(keyEvent)) {
             nextTab();
             return;
-        } else if (KeyboardManager::isNewTabShortcut(keyEvent)) {
-            currentQueryWidget()->openNewTab();
+        } else if (KeyboardManager::isNewTabShortcut(keyEvent) && widget) {
+            widget->openNewTab();
             return;
-        } else if (KeyboardManager::isSetFocusOnQueryLineShortcut(keyEvent)) {
-            currentQueryWidget()->setScriptFocus();
+        } else if (KeyboardManager::isSetFocusOnQueryLineShortcut(keyEvent) && widget) {
+            widget->setScriptFocus();
             return;
-        } else if (KeyboardManager::isExecuteScriptShortcut(keyEvent)) {
-            currentQueryWidget()->execute();
+        } else if (KeyboardManager::isExecuteScriptShortcut(keyEvent) && widget) {
+            widget->execute();
             return;
-        } else if (KeyboardManager::isAutoCompleteShortcut(keyEvent)) {
-            currentQueryWidget()->showAutocompletion();
+        } else if (KeyboardManager::isAutoCompleteShortcut(keyEvent) && widget) {
+            widget->showAutocompletion();
             return;
-        } else if (KeyboardManager::isHideAutoCompleteShortcut(keyEvent)) {
-            currentQueryWidget()->hideAutocompletion();
+        } else if (KeyboardManager::isHideAutoCompleteShortcut(keyEvent) && widget) {
+            widget->hideAutocompletion();
             return;
         }
 

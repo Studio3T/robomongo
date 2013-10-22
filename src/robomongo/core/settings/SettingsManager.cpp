@@ -8,6 +8,7 @@
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/utils/Logger.h"
+#include "robomongo/core/utils/StdUtils.h"
 #include "robomongo/gui/AppStyle.h"
 
 namespace
@@ -50,7 +51,7 @@ namespace Robomongo
 
     SettingsManager::~SettingsManager()
     {
-        qDeleteAll(_connections);
+        std::for_each(_connections.begin(),_connections.end(),stdutils::default_delete<ConnectionSettings *>());
     }
 
     /**

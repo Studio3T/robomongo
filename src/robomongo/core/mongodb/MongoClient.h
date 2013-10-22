@@ -37,15 +37,15 @@ namespace Robomongo
         void createDatabase(const std::string &dbName);
         void dropDatabase(const std::string &dbName);
 
-        void createCollection(const std::string &dbName, const std::string &collectionName);
-        void renameCollection(const std::string &dbName, const std::string &collectionName, const std::string &newCollectionName);
-        void duplicateCollection(const std::string &dbName, const std::string &collectionName, const std::string &newCollectionName);
-        void dropCollection(const std::string &dbName, const std::string &collectionName);
+        void createCollection(const MongoNamespace &ns);
+        void renameCollection(const MongoNamespace &ns, const std::string &newCollectionName);
+        void duplicateCollection(const MongoNamespace &ns, const std::string &newCollectionName);
+        void dropCollection(const MongoNamespace &ns);
         void copyCollectionToDiffServer(mongo::DBClientConnection *const,const MongoNamespace &from, const MongoNamespace &to);
 
-        void insertDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
-        void saveDocument(const mongo::BSONObj &obj, const std::string &db, const std::string &collection);
-        void removeDocuments(const std::string &db, const std::string &collection, mongo::Query query, bool justOne = true);
+        void insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
+        void saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
+        void removeDocuments(const MongoNamespace &ns, mongo::Query query, bool justOne = true);
         std::vector<MongoDocumentPtr> query(const MongoQueryInfo &info);
 
         MongoCollectionInfo runCollStatsCommand(const std::string &ns);

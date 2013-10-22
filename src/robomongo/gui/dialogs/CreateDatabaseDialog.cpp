@@ -13,13 +13,15 @@
 
 namespace Robomongo
 {
+    const QSize CreateDatabaseDialog::dialogSize = QSize(300,150);
+
     CreateDatabaseDialog::CreateDatabaseDialog(const QString &serverName, const QString &database,
                                                const QString &collection, QWidget *parent) :
         QDialog(parent)
     {
         setWindowTitle("Create Database");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
-        setMinimumWidth(300);
+        setFixedSize(dialogSize);
 
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
 

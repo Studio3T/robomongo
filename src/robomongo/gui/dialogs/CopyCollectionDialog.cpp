@@ -18,6 +18,8 @@
 
 namespace Robomongo
 {
+    const QSize CopyCollection::minimumSize = QSize(300,150);
+
     CopyCollection::CopyCollection(const QString &serverName, const QString &database,
                                                const QString &collection, QWidget *parent) :
         QDialog(parent),
@@ -36,7 +38,7 @@ namespace Robomongo
         
         setWindowTitle("Copy Collection");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
-        setMinimumWidth(300);
+        setMinimumSize(minimumSize);
 
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), _currentServerName);
 

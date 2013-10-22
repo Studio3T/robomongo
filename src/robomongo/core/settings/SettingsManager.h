@@ -64,15 +64,16 @@ namespace Robomongo
         ConnectionSettingsContainerType connections() const { return _connections; }
 
         void setUuidEncoding(UUIDEncoding encoding) { _uuidEncoding = encoding; }
+        UUIDEncoding uuidEncoding() const { return _uuidEncoding; }
+
         void setTimeZone(SupportedTimes timeZ) { _timeZone = timeZ; }
-        UUIDEncoding uuidEncoding() { return _uuidEncoding; }
-        SupportedTimes timeZone() { return _timeZone;}
+        SupportedTimes timeZone() const { return _timeZone;}
 
         void setViewMode(ViewMode viewMode) { _viewMode = viewMode; }
-        ViewMode viewMode() { return _viewMode; }
+        ViewMode viewMode() const { return _viewMode; }
 
         void setAutoExpand(bool isExpand) { _autoExpand = isExpand; }
-        bool autoExpand() { return _autoExpand; }
+        bool autoExpand() const { return _autoExpand; }
         
         void setLoadMongoRcJs(bool isLoadJs) { _loadMongoRcJs = isLoadJs; }
         bool loadMongoRcJs() const { return _loadMongoRcJs; }

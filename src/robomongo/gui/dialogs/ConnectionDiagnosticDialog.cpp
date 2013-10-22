@@ -14,13 +14,17 @@
 
 namespace Robomongo
 {
-    ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *connection) :
+    const QSize ConnectionDiagnosticDialog::dialogSize = QSize(300,200);
+
+    ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *connection, QWidget *parent) :
+        BaseClass(parent),
         _connection(connection),
         _connectionStatusReceived(false),
         _authStatusReceived(false)
     {
         setWindowTitle("Diagnostic");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
+        setFixedSize(dialogSize);
 
         _yesIcon = GuiRegistry::instance().yesMarkIcon();
         _noIcon = GuiRegistry::instance().noMarkIcon();

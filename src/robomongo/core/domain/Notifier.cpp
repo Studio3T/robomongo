@@ -228,7 +228,7 @@ namespace Robomongo
         DocumentTextEditor editor(QtUtils::toQString(detail::prepareServerAddress(_queryInfo._serverAddress)),
             QtUtils::toQString(_queryInfo._databaseName),
             QtUtils::toQString(_queryInfo._collectionName),
-            json);
+            json, false, dynamic_cast<QWidget*>(_observer));
 
         editor.setWindowTitle("Edit Document");
         int result = editor.exec();
@@ -276,7 +276,7 @@ namespace Robomongo
         DocumentTextEditor editor(QtUtils::toQString(detail::prepareServerAddress(_queryInfo._serverAddress)),
             QtUtils::toQString(_queryInfo._databaseName),
             QtUtils::toQString(_queryInfo._collectionName),
-            "{\n    \n}");
+            "{\n    \n}", false, dynamic_cast<QWidget*>(_observer));
 
         editor.setCursorPosition(1, 4);
         editor.setWindowTitle("Insert Document");

@@ -117,7 +117,7 @@ namespace Robomongo
         if (!par)
             return;
         EnsureIndexInfo fakeInfo(par->collection()->info(),"");
-        EditIndexDialog dlg(treeWidget(), fakeInfo , QtUtils::toQString(par->databaseItem()->database()->name()),QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()));
+        EditIndexDialog dlg(fakeInfo , QtUtils::toQString(par->databaseItem()->database()->name()),QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()), treeWidget());
         int result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
@@ -187,7 +187,7 @@ namespace Robomongo
             if (!par)
                 return;
 
-            EditIndexDialog dlg(treeWidget(), _info,QtUtils::toQString(grPar->databaseItem()->database()->name()), QtUtils::toQString(grPar->databaseItem()->database()->server()->connectionRecord()->getFullAddress()));
+            EditIndexDialog dlg(_info, QtUtils::toQString(grPar->databaseItem()->database()->name()), QtUtils::toQString(grPar->databaseItem()->database()->server()->connectionRecord()->getFullAddress()), treeWidget());
             int result = dlg.exec();
             if (result != QDialog::Accepted)
                 return;
@@ -422,7 +422,7 @@ namespace Robomongo
 
         CreateDatabaseDialog dlg(QtUtils::toQString(settings->getFullAddress()),
             QtUtils::toQString(database->name()),
-            QtUtils::toQString(_collection->name()));
+            QtUtils::toQString(_collection->name()), treeWidget());
         dlg.setWindowTitle("Duplicate Collection");
         dlg.setOkButtonText("&Duplicate");
         dlg.setInputLabelText("New Collection Name:");
@@ -461,7 +461,7 @@ namespace Robomongo
 
         CreateDatabaseDialog dlg(QtUtils::toQString(settings->getFullAddress()),
             QtUtils::toQString(database->name()),
-            QtUtils::toQString(_collection->name()));
+            QtUtils::toQString(_collection->name()), treeWidget());
         dlg.setWindowTitle("Rename Collection");
         dlg.setOkButtonText("&Rename");
         dlg.setInputLabelText("New Collection Name:");

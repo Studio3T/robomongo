@@ -13,11 +13,7 @@ namespace Robomongo
 
     public:
         typedef std::vector<mongo::BSONObj> ReturnType;
-        enum
-        {
-            MinWidthWidget = 640,
-            MinHeightWidget = 480      
-        };
+        static const QSize minimumSize;
 
         explicit DocumentTextEditor(const QString &server, const QString &database, const QString &collection,
                                     const QString &json, bool readonly = false, QWidget *parent = 0);

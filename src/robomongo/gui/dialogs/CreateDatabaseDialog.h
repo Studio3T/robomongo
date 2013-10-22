@@ -24,6 +24,7 @@ namespace Robomongo
         void setInputLabelText(const QString &text);
         void setInputText(const QString &text);
         enum { maxLenghtName = 60 };
+        const static QSize dialogSize;
 
     public Q_SLOTS:
         virtual void accept();

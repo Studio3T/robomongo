@@ -154,7 +154,7 @@ namespace Robomongo
             return;
 
         CreateDatabaseDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
-            QtUtils::toQString(databaseItem->database()->name()));
+            QtUtils::toQString(databaseItem->database()->name()), QString(), treeWidget());
         dlg.setWindowTitle("Create Collection");
         dlg.setOkButtonText("&Create");
         dlg.setInputLabelText("Collection Name:");
@@ -178,11 +178,11 @@ namespace Robomongo
 
         if (version < MongoUser::minimumSupportedVersion) {
             dlg = new CreateUserDialog(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
-                QtUtils::toQString(databaseItem->database()->name()), MongoUser(version));
+                QtUtils::toQString(databaseItem->database()->name()), MongoUser(version), treeWidget());
         }
         else {
             dlg = new CreateUserDialog(databaseItem->database()->server()->getDatabasesNames(), QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
-            QtUtils::toQString(databaseItem->database()->name()), MongoUser(version));
+            QtUtils::toQString(databaseItem->database()->name()), MongoUser(version), treeWidget());
         }
 
         int result = dlg->exec();

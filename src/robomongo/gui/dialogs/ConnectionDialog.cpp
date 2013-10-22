@@ -102,7 +102,7 @@ namespace Robomongo
     void ConnectionDialog::testConnection()
     {
         if(validateAndApply()){
-            ConnectionDiagnosticDialog diag(_connection);
+            ConnectionDiagnosticDialog diag(_connection,this);
             diag.exec();
         }
     }

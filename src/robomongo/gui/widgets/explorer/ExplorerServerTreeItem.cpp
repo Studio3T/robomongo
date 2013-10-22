@@ -188,7 +188,7 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::ui_createDatabase()
     {
-        CreateDatabaseDialog dlg(QtUtils::toQString(_server->connectionRecord()->getFullAddress()));
+        CreateDatabaseDialog dlg(QtUtils::toQString(_server->connectionRecord()->getFullAddress()), QString(), QString(), treeWidget());
         dlg.setOkButtonText("&Create");
         dlg.setInputLabelText("Database Name:");
         int result = dlg.exec();

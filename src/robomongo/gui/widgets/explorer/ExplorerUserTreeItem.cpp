@@ -66,10 +66,10 @@ namespace Robomongo
         CreateUserDialog *dlg = NULL;
 
         if (version < MongoUser::minimumSupportedVersion) {
-            dlg = new CreateUserDialog(QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),QtUtils::toQString(_database->name()),_user);
+            dlg = new CreateUserDialog(QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(_database->name()), _user, treeWidget());
         }
         else {
-           dlg = new CreateUserDialog(_database->server()->getDatabasesNames(),QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),QtUtils::toQString(_database->name()),_user);
+           dlg = new CreateUserDialog(_database->server()->getDatabasesNames(), QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(_database->name()), _user, treeWidget());
         }
         
         dlg->setWindowTitle("Edit User");

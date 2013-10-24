@@ -23,8 +23,10 @@
 #include "mongo/util/net/sock.h"
 
 #ifdef ROBOMONGO
-#define DEFAULT_SSH_PORT 27017
-#define DEFAULT_SSH_HOST "localhost" 
+#define DEFAULT_SSH_PORT 22
+#define DEFAULT_SSH_HOST ""
+#include "mongo/db/json.h"
+
 namespace Robomongo
 {
 #ifdef MONGO_SSL
@@ -32,28 +34,29 @@ namespace Robomongo
     {
         SSLInfo():_sslSupport(false),_sslPEMKeyFile(){}
         SSLInfo(bool ssl,const std::string &key):_sslSupport(ssl),_sslPEMKeyFile(key){}
-        explicit SSLInfo(const std::string &sslString):_sslSupport(false),_sslPEMKeyFile() //true:Pem
+        explicit SSLInfo(const mongo::BSONElement &elem):_sslSupport(false),_sslPEMKeyFile()
         {
-            for (int i=0; i<sslString.length(); ++i)
-            {
-                char ch = sslString[i];
-                if (ch==':')
-                {
-                    std::string sslSupport = sslString.substr(0,i);
-                    _sslSupport = sslSupport == "1";
-                    _sslPEMKeyFile = sslString.substr(i+1);
-                    break;
-                }
+            if(!elem.eoo()){
+                mongo::BSONObj obj = elem.Obj();
+                _sslSupport = obj.getField("sslSupport").Bool();
+                _sslPEMKeyFile = obj.getField("sslPEMKeyFile").String();
             }
+        }
+
+        mongo::BSONObj toBSONObj() const
+        {
+            mongo::BSONObjBuilder b;
+            b.append("SSL",BSON("sslSupport" << _sslSupport  << "sslPEMKeyFile" << _sslPEMKeyFile));
+            return b.obj();
         }
         bool isValid() const {return _sslSupport;}
         bool _sslSupport;
         std::string _sslPEMKeyFile;
     };
+
     inline std::ostream& operator<< (std::ostream& stream, const SSLInfo& info)
     {
-        //[true:Pem]
-        stream << "[" << info._sslSupport << ":" << info._sslPEMKeyFile << "]";
+        stream << info.toBSONObj().toString();      
         return stream;
     }
 
@@ -63,60 +66,97 @@ namespace Robomongo
     }
 #endif
 #ifdef SSH_SUPPORT_ENABLED
+    struct PublicKey
+    {
+        PublicKey():_publicKey(),_privateKey(),_passphrase(){}
+        PublicKey(const std::string &publicKey, const std::string &privateKey, const std::string &passphrase = ""):_publicKey(publicKey),_privateKey(privateKey),_passphrase(passphrase){}
+        explicit PublicKey(const mongo::BSONObj &obj):_publicKey(),_privateKey()//abc+dsc+passphrase
+        {
+            _publicKey = obj.getField("publicKey").String();
+            _privateKey = obj.getField("privateKey").String();
+            _passphrase = obj.getField("passphrase").String();
+        }
+
+        mongo::BSONObj toBSONObj() const
+        {
+            return BSON( "publicKey" << _publicKey << "privateKey" << _privateKey << "passphrase" << _passphrase);
+        }
+        bool isValid() const {return !_privateKey.empty(); }
+        std::string _publicKey;
+        std::string _privateKey;
+        std::string _passphrase;
+    };
+
+    inline bool operator==(const PublicKey& r,const PublicKey& l) 
+    { 
+        return r._publicKey == l._publicKey && r._privateKey == l._privateKey && r._passphrase == l._passphrase;
+    }
+
+    inline std::ostream& operator<< (std::ostream& stream, const PublicKey& key)
+    {
+        stream << key.toBSONObj().toString();   
+        return stream;
+    }
+
     struct SSHInfo
     {
-        SSHInfo():_hostName(DEFAULT_SSH_HOST),_userName(),_port(DEFAULT_SSH_PORT),_password(),_publicKey()
+        enum SupportedAuthenticationMetods
+        {
+            UNKNOWN = 0,
+            PASSWORD = 1,
+            PUBLICKEY = 2
+        };
+
+        SSHInfo():_hostName(DEFAULT_SSH_HOST),_userName(),_port(DEFAULT_SSH_PORT),_password(),_publicKey(),_currentMethod(UNKNOWN)
         {
 
         }
-        SSHInfo(const std::string &hostName,const std::string &userName,int port,const std::string &password,const std::string &publicKey):_hostName(hostName),_userName(userName),_port(port),_password(password),_publicKey(publicKey)
-        {
 
-        }    
-        explicit SSHInfo(const std::string &connectionString):_hostName(DEFAULT_SSH_HOST),_userName(),_port(DEFAULT_SSH_PORT),_password(),_publicKey() //username[:password]@hostname[:port]
+        SSHInfo(const std::string &hostName, int port, const std::string &userName,  const std::string &password, const PublicKey &publicKey, SupportedAuthenticationMetods method)
+            :_hostName(hostName),_port(port),_userName(userName),_password(password),_publicKey(publicKey),_currentMethod(method)
         {
-            int firstSu = 0;
-            int len = connectionString.length();
-            for (int i=0; i<len; ++i)
-            {
-                char ch = connectionString[i];
-                if (!firstSu && ch == '['){
-                    firstSu = i;
-                }
+           
+        }
 
-                if (ch=='@' && firstSu)
-                {
-                    _userName = connectionString.substr(0,firstSu);
-                    _password = connectionString.substr(firstSu+2,i-firstSu-3);
-                    std::string after = connectionString.substr(i+1,len-i);
-                    size_t pos = after.find_first_of("[:");
-                    if(pos!=std::string::npos){
-                        _hostName = after.substr(0,pos);
-                        _port = atoi(after.substr(pos+2).c_str());
-                    }
-                    break;
-                }
+        explicit SSHInfo(const mongo::BSONElement &elem):_hostName(DEFAULT_SSH_HOST),_userName(),_port(DEFAULT_SSH_PORT),_password(),_publicKey(),_currentMethod(UNKNOWN)
+        {
+            if(!elem.eoo()){
+                mongo::BSONObj obj = elem.Obj();
+                _hostName = obj.getField("host").String();            
+                _port = obj.getField("port").Int();
+                _userName = obj.getField("user").String();
+                _password = obj.getField("password").String();
+                _publicKey = PublicKey(obj.getField("publicKey").Obj());
+                _currentMethod = static_cast<SupportedAuthenticationMetods>(obj.getField("currentMethod").Int());
             }
         }
-        bool isValid() const {return !_password.empty() || !_publicKey.empty(); }
+
+        mongo::BSONObj toBSONObj() const
+        {
+            mongo::BSONObjBuilder b;
+            b.append("SSH",BSON("host" << _hostName << "port" << _port << "user" << _userName << "password" << _password << "publicKey" << _publicKey.toBSONObj() << "currentMethod" << _currentMethod ));
+            return b.obj();
+        }
+        bool isValid() const { return _currentMethod != UNKNOWN; }
+        SupportedAuthenticationMetods authMethod() const { return _currentMethod; }
 
         std::string _hostName;
-        std::string _userName;
         int _port;
+        std::string _userName;        
         std::string _password;
-        std::string _publicKey;
+        PublicKey _publicKey;
+        SupportedAuthenticationMetods _currentMethod;
     };
 
     inline std::ostream& operator<< (std::ostream& stream, const SSHInfo& info)
     {
-        //[username[:password]@hostname[:port]]
-        stream << "[" << info._userName << "[:" << info._password << "]@" << info._hostName << "[:" << info._port << "]" << "]";
+        stream << info.toBSONObj().toString();
         return stream;
     }
 
     inline bool operator==(const SSHInfo& r,const SSHInfo& l) 
     { 
-        return r._hostName == l._hostName && r._password == l._password && r._port == l._port && r._publicKey==l._publicKey && r._userName == l._userName;
+        return r._hostName == l._hostName && r._password == l._password && r._port == l._port && r._publicKey==l._publicKey && r._userName == l._userName && r._publicKey == l._publicKey;
     }
 #endif
 }
@@ -336,30 +376,33 @@ namespace mongo {
             if (ch==':')
             {
                 _host = string(p, i);
-                int j = i+1;
-                int port = 0;
-                for (; j < len; ++j)
-                {
-                    if(isdigit(p[j]))
-                        port = port *10 +p[j]-'0';
-                    else
-                        break;
-                }
-                _port = port;
-                options = p+j;
+                _port = atoi(p+i+1);
+            }
+            if (ch=='{')
+            {
+                options = p+i;
                 break;
             }
         }
         if (!options)
             return;
 
-        const char *endSSL = strchr(options, ']');
-
-        if(endSSL&&*endSSL==']'){
-            _sslInfo = Robomongo::SSLInfo(string(options+1,endSSL));
-            if(endSSL!=p+lastH)
-            _sshInfo = Robomongo::SSHInfo(string(endSSL+2,p+lastH-1));
+        int jsonLen = strlen(options);
+        int offset = 0;
+        while(offset!=jsonLen)
+        { 
+            mongo::BSONObj main = mongo::fromjson(options+offset,&len);
+            mongo::BSONElement ssl = main.getField("SSL");
+            mongo::BSONElement ssh = main.getField("SSH");
+            if(!ssl.eoo()){
+                _sslInfo = Robomongo::SSLInfo(ssl);
+            }
+            else if(!ssh.eoo()){
+                _sshInfo = Robomongo::SSHInfo(ssh);
+            }
+            offset+=len;
         }
+        
 #else
         const char *colon = strrchr(p, ':');
         if( colon ) {

@@ -8,7 +8,7 @@ namespace Robomongo
     {
         std::string prepareServerAddress(const std::string &address)
         {
-            size_t pos = address.find_first_of("[");
+            size_t pos = address.find_first_of("{");
             if (pos!=std::string::npos){
                 return address.substr(0,pos);
             }       
@@ -16,14 +16,24 @@ namespace Robomongo
         }
     }
 
+    CollectionInfo::CollectionInfo() {}
+
+    CollectionInfo::CollectionInfo(const std::string &server, const std::string &database, const std::string &collection)
+        :_serverAddress(server),
+        _ns(database,collection)
+    {}
+
+    bool CollectionInfo::isValid() const
+    {
+        return !_serverAddress.empty() && _ns.isValid();
+    }
+
     MongoQueryInfo::MongoQueryInfo() {}
 
-    MongoQueryInfo::MongoQueryInfo(const std::string &server, const std::string &database, const std::string &collection,
+    MongoQueryInfo::MongoQueryInfo(const CollectionInfo &info,
               mongo::BSONObj query, mongo::BSONObj fields, int limit, int skip, int batchSize,
               int options, bool special) :
-        _serverAddress(server),
-        _databaseName(database),
-        _collectionName(collection),
+        _info(info),
         _query(query),
         _fields(fields),
         _limit(limit),
@@ -32,9 +42,4 @@ namespace Robomongo
         _options(options),
         _special(special)
         {}
-
-    bool MongoQueryInfo::isValid() const
-    {
-        return !_serverAddress.empty() && !_databaseName.empty() && !_collectionName.empty();
-    }
 }

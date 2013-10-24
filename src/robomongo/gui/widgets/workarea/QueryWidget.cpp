@@ -99,9 +99,11 @@ namespace Robomongo
 
     void QueryWidget::openNewTab()
     {
-        MongoServer *server = _shell->server();
-        QString query = _scriptWidget->selectedText();
-        AppRegistry::instance().app()->openShell(server, query, _currentResult.currentDatabase());
+        if(_shell){
+            MongoServer *server = _shell->server();
+            QString query = _scriptWidget->selectedText();
+            AppRegistry::instance().app()->openShell(server, query, _currentResult.currentDatabase());
+        }
     }
 
     void QueryWidget::saveToFile()

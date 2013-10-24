@@ -18,10 +18,11 @@ namespace Robomongo
     public:
         ConnectionBasicTab(ConnectionSettings *settings);
         void accept();
+        bool isSslSupported() const;
 
     private Q_SLOTS:
         void setSslPEMKeyFile();
-        void sslSupportStateChanged(int val);
+        void sslSupportStateChange(int val);
 
     private:
         QLineEdit *_connectionName;

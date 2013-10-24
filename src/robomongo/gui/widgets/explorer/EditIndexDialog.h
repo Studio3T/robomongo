@@ -20,7 +20,7 @@ namespace Robomongo
             HeightWidget = 320,
             WidthWidget = 480
         };
-        explicit EditIndexDialog(QWidget *parent, const EnsureIndexInfo &info, const QString &databaseName, const QString &serverAdress);
+        explicit EditIndexDialog(const EnsureIndexInfo &info, const QString &databaseName, const QString &serverAdress, QWidget *parent=0);
         EnsureIndexInfo info() const;
 
     public Q_SLOTS:

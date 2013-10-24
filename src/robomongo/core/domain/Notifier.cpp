@@ -96,7 +96,7 @@ namespace Robomongo
 
     void Notifier::initMenu(QMenu *const menu, BsonTreeItem *const item)
     {
-        bool isEditable = _queryInfo.isValid();
+        bool isEditable = _queryInfo._info.isValid();
         bool onItem = item ? true : false;
         
         bool isSimple = false;
@@ -120,7 +120,7 @@ namespace Robomongo
 
     void Notifier::initMultiSelectionMenu(QMenu *const menu)
     {
-        bool isEditable = _queryInfo.isValid();
+        bool isEditable = _queryInfo._info.isValid();
 
         if (isEditable) menu->addAction(_insertDocumentAction);
         if (isEditable) menu->addAction(_deleteDocumentsAction);
@@ -158,7 +158,7 @@ namespace Robomongo
             }
 
             isNeededRefresh=true;
-            _shell->server()->removeDocuments(query, _queryInfo._databaseName, _queryInfo._collectionName);
+            _shell->server()->removeDocuments(query, _queryInfo._info._ns);
         }
 
         if (isNeededRefresh)
@@ -172,7 +172,7 @@ namespace Robomongo
 
     void Notifier::onDeleteDocuments()
     {
-        if (!_queryInfo.isValid())
+        if (!_queryInfo._info.isValid())
             return;
 
         QModelIndexList selectedIndexes = _observer->selectedIndexes();
@@ -191,7 +191,7 @@ namespace Robomongo
 
     void Notifier::onDeleteDocument()
     {
-        if (!_queryInfo.isValid())
+        if (!_queryInfo._info.isValid())
             return;
 
         QModelIndex selectedIndex = _observer->selectedIndex();
@@ -206,7 +206,7 @@ namespace Robomongo
 
     void Notifier::onEditDocument()
     {
-        if (!_queryInfo.isValid())
+        if (!_queryInfo._info.isValid())
             return;
 
         QModelIndex selectedInd = _observer->selectedIndex();
@@ -225,16 +225,14 @@ namespace Robomongo
 
         const QString &json = QtUtils::toQString(str);
 
-        DocumentTextEditor editor(QtUtils::toQString(detail::prepareServerAddress(_queryInfo._serverAddress)),
-            QtUtils::toQString(_queryInfo._databaseName),
-            QtUtils::toQString(_queryInfo._collectionName),
-            json);
+        DocumentTextEditor editor(_queryInfo._info,
+            json, false, dynamic_cast<QWidget*>(_observer));
 
         editor.setWindowTitle("Edit Document");
         int result = editor.exec();
 
         if (result == QDialog::Accepted) {
-            _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo._databaseName, _queryInfo._collectionName);
+            _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo._info._ns);
         }
     }
 
@@ -256,12 +254,7 @@ namespace Robomongo
 
         const QString &json = QtUtils::toQString(str);
 
-        std::string server = detail::prepareServerAddress(_queryInfo._serverAddress);
-        std::string database = _queryInfo._databaseName;
-        std::string collection = _queryInfo._collectionName;
-
-        DocumentTextEditor *editor = new DocumentTextEditor(
-            QtUtils::toQString(server), QtUtils::toQString(database), QtUtils::toQString(collection),
+        DocumentTextEditor *editor = new DocumentTextEditor(_queryInfo._info,
             json, true, dynamic_cast<QWidget*>(_observer));
 
         editor->setWindowTitle("View Document");
@@ -270,13 +263,11 @@ namespace Robomongo
 
     void Notifier::onInsertDocument()
     {
-        if (!_queryInfo.isValid())
+        if (!_queryInfo._info.isValid())
             return;
 
-        DocumentTextEditor editor(QtUtils::toQString(detail::prepareServerAddress(_queryInfo._serverAddress)),
-            QtUtils::toQString(_queryInfo._databaseName),
-            QtUtils::toQString(_queryInfo._collectionName),
-            "{\n    \n}");
+        DocumentTextEditor editor(_queryInfo._info,
+            "{\n    \n}", false, dynamic_cast<QWidget*>(_observer));
 
         editor.setCursorPosition(1, 4);
         editor.setWindowTitle("Insert Document");
@@ -287,7 +278,7 @@ namespace Robomongo
 
         DocumentTextEditor::ReturnType obj = editor.bsonObj();
         for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
-            _shell->server()->insertDocument(*it, _queryInfo._databaseName, _queryInfo._collectionName);
+            _shell->server()->insertDocument(*it, _queryInfo._info._ns);
         }
 
         _shell->query(0, _queryInfo);

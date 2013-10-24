@@ -2,6 +2,7 @@
 
 #include <QDialog>
 #include <mongo/bson/bsonobj.h>
+#include "robomongo/core/domain/MongoQueryInfo.h"
 
 namespace Robomongo
 {
@@ -13,8 +14,9 @@ namespace Robomongo
 
     public:
         typedef std::vector<mongo::BSONObj> ReturnType;
-        explicit DocumentTextEditor(const QString &server, const QString &database, const QString &collection,
-                                    const QString &json, bool readonly = false, QWidget *parent = 0);
+        static const QSize minimumSize;
+
+        explicit DocumentTextEditor(const CollectionInfo &info, const QString &json, bool readonly = false, QWidget *parent = 0);
 
         QString jsonText() const;
 
@@ -35,6 +37,7 @@ namespace Robomongo
 
     private:
         void _configureQueryText();
+        const CollectionInfo _info;
         FindFrame *_queryText;
         bool _readonly;
         ReturnType _obj;

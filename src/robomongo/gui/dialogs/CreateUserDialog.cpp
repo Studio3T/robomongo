@@ -17,6 +17,7 @@
 namespace Robomongo
 {
     const char * rolesText[CreateUserDialog::RolesCount] = {"read","readWrite","dbAdmin","userAdmin","clusterAdmin","readAnyDatabase","readWriteAnyDatabase","userAdminAnyDatabase","dbAdminAnyDatabase"}; 
+    const QSize CreateUserDialog::minimumSize = QSize(400,200);
 
     bool containsWord(const std::string& sentence, const std::string& word)
     {
@@ -46,7 +47,7 @@ namespace Robomongo
 
         setWindowTitle("Add User");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
-        setMinimumWidth(400);
+        setMinimumSize(minimumSize);
 
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), database);
@@ -121,7 +122,7 @@ namespace Robomongo
         VERIFY(user.version() < MongoUser::minimumSupportedVersion);
         setWindowTitle("Add User");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
-        setMinimumWidth(400);
+        setMinimumSize(minimumSize);
 
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), database);

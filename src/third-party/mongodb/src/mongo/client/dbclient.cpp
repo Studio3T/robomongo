@@ -38,7 +38,6 @@
 #include "libssh2.h"
 namespace
 {
-    mongo::mutex _mutex( "RDBClientConnection::_mutex" );
     static void kbd_callback(const char *name, int name_len,
         const char *instruction, int instruction_len,
         int num_prompts,
@@ -69,10 +68,15 @@ namespace Robomongo
             const char *username = _info._userName.c_str();
             const char *password = _info._password.c_str();
             const char *address = _info._hostName.c_str();
-            int port = _info._port;
+            const char *publicKey = _info._publicKey._publicKey.empty() ? NULL : _info._publicKey._publicKey.c_str();
+            const char *privateKey = _info._publicKey._privateKey.c_str();
+            const char *passphrase = _info._publicKey._passphrase.c_str();
+            int port = _info._port; 
 
-            bool connectToSSh = BaseClass::connect(farEnd);
-            if(!connectToSSh)
+            mongo::SockAddr sshAdr(address,port);
+
+            bool connected = BaseClass::connect(sshAdr);
+            if(!connected)
                 return false;
 
             _session = libssh2_session_init();
@@ -92,8 +96,8 @@ namespace Robomongo
             if (strstr(userauthlist, "publickey") != NULL) {
                 auth_pw |= 4;
             }
-
-            if (auth_pw & 1) {
+            SSHInfo::SupportedAuthenticationMetods curMethod = _info.authMethod();
+            if (auth_pw & 1 && curMethod == SSHInfo::PASSWORD) {
                 /* We could authenticate via password */ 
                 if (libssh2_userauth_password(_session, username, password)) {
                     LOG(mongo::LL_ERROR) << "Authentication by password failed!";
@@ -106,9 +110,9 @@ namespace Robomongo
                     LOG(mongo::LL_ERROR) << "Authentication by keyboard-interactive failed!";
                     return false;
                 }
-            } else if (auth_pw & 4) {
+            } else if (auth_pw & 4 && curMethod == SSHInfo::PUBLICKEY) {
                 /* Or by public key */ 
-                //if (libssh2_userauth_publickey_fromfile(_session, username, keyfile1, keyfile2, password)) 
+                if (libssh2_userauth_publickey_fromfile(_session, username, publicKey, privateKey, passphrase)) 
                 {
                     LOG(mongo::LL_ERROR) << "Authentication by public key failed!";
                     return false;
@@ -118,11 +122,11 @@ namespace Robomongo
                 return false;
             }
             /* Request a shell */ 
-            if (!(_channel = libssh2_channel_direct_tcpip(_session,address,port))) {
+            if (!(_channel = libssh2_channel_direct_tcpip(_session,farEnd.getAddr().c_str(),farEnd.getPort()))) {
                 LOG(mongo::LL_ERROR) << "Unable to open a ssh session";
                 return false;
             }
-
+            
             return true;
         }
     private:
@@ -322,14 +326,29 @@ namespace mongo {
     ConnectionString ConnectionString::parse( const string& host , string& errmsg ) {
 
         string::size_type i = host.find( '/' );
-        string::size_type j = host.find( '[' );
-        if ( i != string::npos && i != 0 && i < j) {
+#ifdef ROBOMONGO
+        string hostWithoutOptions = host;
+        string::size_type s = host.find_first_of( '{' );
+        string::size_type j = host.find( ':' ); 
+        if(s!= string::npos){
+            hostWithoutOptions = host.substr(0,s);
+        }
+        if ( i != string::npos  && i != 0 && i < j ) {
             // replica set
             return ConnectionString( SET , host.substr( i + 1 ) , host.substr( 0 , i ) );
         }
+#else
+        if ( i != string::npos && i != 0 ) {
+            // replica set
+            return ConnectionString( SET , host.substr( i + 1 ) , host.substr( 0 , i ) );
+        }
+#endif
 
+#ifdef ROBOMONGO
+        int numCommas = str::count( hostWithoutOptions , ',' );
+#else
         int numCommas = str::count( host , ',' );
-
+#endif
         if( numCommas == 0 )
             return ConnectionString( HostAndPort( host ) );
 
@@ -874,12 +893,15 @@ namespace mongo {
             _failed = true;
             return false;
         }
-        mongo::scoped_lock lk(_mutex);
-        cmdLine.sslOnNormalPorts = _server.sslInfo()._sslSupport;
-        cmdLine.sslPEMKeyFile = _server.sslInfo()._sslPEMKeyFile; 
 #ifdef MONGO_SSL
         if ( _server.sslInfo()._sslSupport ) {
-            p->secure( sslManager() );
+            const SSLParams params(_server.sslInfo()._sslPEMKeyFile, 
+                cmdLine.sslPEMKeyPassword,
+                cmdLine.sslCAFile,
+                cmdLine.sslCRLFile,
+                cmdLine.sslWeakCertificateValidation);
+            _sslManager.reset(new SSLManager(params));
+            p->secure( _sslManager.get() );
         }
 #endif
         return true;

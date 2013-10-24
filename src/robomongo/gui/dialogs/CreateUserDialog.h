@@ -18,6 +18,8 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        static const QSize minimumSize;
+
         CreateUserDialog(const QStringList &databases, const QString &serverName,
                          const QString &database,
                          const MongoUser &user,

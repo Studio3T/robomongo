@@ -371,6 +371,8 @@ namespace Robomongo
 
         createTabs();
         createDatabaseExplorer();
+        _viewMenu->addSeparator();
+        createLanguageMenu();
         createStylesMenu();
         createStatusBar();
         _viewMenu->addAction(fullScreenAction);
@@ -383,7 +385,6 @@ namespace Robomongo
 
     void MainWindow::createStylesMenu()
     {
-        _viewMenu->addSeparator();
          QMenu *styles = _viewMenu->addMenu(tr("Theme"));
          QStringList supportedStyles = detail::getSupportedStyles();
          QActionGroup *styleGroup = new QActionGroup(this);
@@ -397,6 +398,23 @@ namespace Robomongo
              styleGroup->addAction(styleAction);
              styles->addAction(styleAction);             
          }
+    }
+    
+    void MainWindow::createLanguageMenu()
+    {
+         //QMenu *styles = _viewMenu->addMenu(tr("Language"));
+//         QStringList supportedStyles = detail::getSupportedStyles();
+//         QActionGroup *styleGroup = new QActionGroup(this);
+//         VERIFY(connect(styleGroup, SIGNAL(triggered(QAction *)), this, SLOT(changeStyle(QAction *))));
+//         const QString &currentStyle = AppRegistry::instance().settingsManager()->currentStyle();
+//         for (QStringList::const_iterator it = supportedStyles.begin(); it != supportedStyles.end(); ++it) {
+//             const QString &style = *it;
+//             QAction *styleAction = new QAction(style,this);
+//             styleAction->setCheckable(true);
+//             styleAction->setChecked(style == currentStyle);
+//             styleGroup->addAction(styleAction);
+//             styles->addAction(styleAction);             
+//         }
     }
 
     void MainWindow::createStatusBar()
@@ -630,8 +648,8 @@ namespace Robomongo
 
     void MainWindow::refreshConnections()
     {
-        QToolTip::showText(QPoint(0,0),
-        QString(tr("Refresh not working yet... : <br/>  <b>Ctrl+D</b> : push Button"));
+        QToolTip::showText(QPoint(0, 0),
+                           QString(tr("Refresh not working yet... : <br/>  <b>Ctrl+D</b> : push Button")));
     }
 
     void MainWindow::aboutRobomongo()

@@ -85,6 +85,7 @@ namespace Robomongo
         void createDatabaseExplorer();
         void createTabs();
         void createStylesMenu();
+        void createLanguageMenu();
         void createStatusBar();
     };
 

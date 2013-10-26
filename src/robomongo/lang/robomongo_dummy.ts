@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ru_RU" sourcelanguage="en_US">
+<TS version="2.0">
 <context>
-    <name>EditIndexDialog</name>
+    <name>Robomongo::EditIndexDialog</name>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="95"/>
         <source>Basic</source>
@@ -65,7 +65,7 @@
     </message>
 </context>
 <context>
-    <name>FindFrame</name>
+    <name>Robomongo::FindFrame</name>
     <message>
         <location filename="../gui/editors/FindFrame.cpp" line="116"/>
         <source>Search</source>
@@ -78,22 +78,21 @@
     </message>
 </context>
 <context>
-    <name>MainWindow</name>
+    <name>Robomongo::MainWindow</name>
     <message>
         <location filename="../gui/MainWindow.cpp" line="108"/>
         <source>&amp;Open...</source>
-        <translatorcomment>Зато акселератор должен сработать ;)</translatorcomment>
-        <translation type="unfinished">Рас&amp;щеперить...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="109"/>
         <source>Load script from the file to the currently opened shell</source>
-        <translation type="unfinished">Загрузить скрипт из файла в открытую консоль</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="112"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">Прошу запис&amp;ывать</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="114"/>
@@ -130,7 +129,7 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="156"/>
         <source>&amp;Rotate</source>
-        <translation type="unfinished">&amp;Крутить</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="159"/>
@@ -200,17 +199,17 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="219"/>
         <source>&amp;Full Screen</source>
-        <translation>На весь экр&amp;ан</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="225"/>
         <source>Refresh</source>
-        <translation type="unfinished">Обновить</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="230"/>
         <source>File</source>
-        <translation>Файл</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="240"/>
@@ -220,7 +219,7 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="243"/>
         <source>Options</source>
-        <translation type="unfinished">Опции</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="246"/>
@@ -230,7 +229,7 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="252"/>
         <source>Auto expand first document in Tree Mode</source>
-        <translation type="unfinished">Разворачивать первый документ в Режиме Дерева</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="277"/>
@@ -265,7 +264,7 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="312"/>
         <source>Load .mongorc.js</source>
-        <translation type="unfinished">Выполнять .mongorc.js</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="319"/>
@@ -275,17 +274,17 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="326"/>
         <source>Preferences</source>
-        <translation type="unfinished">Настройки</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="337"/>
         <source>&amp;About Robomongo...</source>
-        <translation>О Robomongo...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="341"/>
         <source>Help</source>
-        <translation>Помощь</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="345"/>
@@ -303,34 +302,62 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="387"/>
+        <location filename="../gui/MainWindow.cpp" line="388"/>
         <source>Theme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="511"/>
+        <location filename="../gui/MainWindow.cpp" line="405"/>
+        <source>Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="428"/>
+        <location filename="../gui/MainWindow.cpp" line="789"/>
+        <source>Logs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="529"/>
         <source>&amp;Manage Connections...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="513"/>
+        <location filename="../gui/MainWindow.cpp" line="531"/>
         <source>Connect to MongoDB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="535"/>
+        <location filename="../gui/MainWindow.cpp" line="553"/>
+        <location filename="../gui/MainWindow.cpp" line="732"/>
+        <location filename="../gui/MainWindow.cpp" line="740"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="634"/>
+        <location filename="../gui/MainWindow.cpp" line="652"/>
         <source>Refresh not working yet... : &lt;br/&gt;  &lt;b&gt;Ctrl+D&lt;/b&gt; : push Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="410"/>
-        <source>Logs</source>
-        <translation type="unfinished">Журнал</translation>
+        <location filename="../gui/MainWindow.cpp" line="767"/>
+        <source>Database Explorer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="778"/>
+        <source>&amp;Explorer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="780"/>
+        <source>Press to show/hide Database Explorer panel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="792"/>
+        <source>&amp;Logs</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -363,40 +390,6 @@
     <message>
         <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="149"/>
         <source>Private key files (*.*)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Robomongo</name>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="714"/>
-        <location filename="../gui/MainWindow.cpp" line="722"/>
-        <source>Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="749"/>
-        <source>Database Explorer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="760"/>
-        <source>&amp;Explorer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="762"/>
-        <source>Press to show/hide Database Explorer panel.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="771"/>
-        <source>Logs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="774"/>
-        <source>&amp;Logs</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

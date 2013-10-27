@@ -86,7 +86,12 @@ namespace Robomongo
 
         QString currentStyle() const {return _currentStyle; }
         void setCurrentStyle(const QString& style);
+        
+        QString getQmPath() const {return _qmPath; }
+        QString currentTranslation() const {return _currentTranslation; }
+        void setCurrentTranslation(const QString& langName);
 
+        QHash<QString, QString> getTranslations() const {return _translations; }
 
     private:
 
@@ -119,6 +124,11 @@ namespace Robomongo
         bool _disableConnectionShortcuts;
         int _batchSize;
         QString _currentStyle;
+       
+        QString _currentTranslation;
+        QString _qmPath;
+        QHash<QString, QString> _translations;
+        void loadProvidedTranslations();
         /**
          * @brief List of connections
          */

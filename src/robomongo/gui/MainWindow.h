@@ -43,6 +43,7 @@ namespace Robomongo
         void save();
         void saveAs();
         void changeStyle(QAction *);
+        void changeTranslation(QAction *);
 
         void setDefaultUuidEncoding();
         void setJavaUuidEncoding();

@@ -3,6 +3,9 @@
 #include <QDir>
 #include <QFile>
 #include <QVariantList>
+#include <QTranslator>
+#include <QApplication>
+#include <QDirIterator>
 #include <parser.h>
 #include <serializer.h>
 
@@ -46,6 +49,8 @@ namespace Robomongo
         _disableConnectionShortcuts(false)
     {
         load();
+        _qmPath = QCoreApplication::applicationDirPath() + "/../lib/translations";
+        loadProvidedTranslations();
         LOG_MSG("SettingsManager initialized in " + _configPath, mongo::LL_INFO, false);
     }
 
@@ -156,6 +161,8 @@ namespace Robomongo
             ConnectionSettings *record = new ConnectionSettings((*it).toMap());
             _connections.push_back(record);
         }
+        
+        _currentTranslation = map.value("translation").toString();
     }
 
     /**
@@ -199,6 +206,9 @@ namespace Robomongo
         }
 
         map.insert("connections", list);
+        
+        //10. Save translsation
+        map.insert("translation", _currentTranslation);
 
         return map;
     }
@@ -231,6 +241,28 @@ namespace Robomongo
     void SettingsManager::reorderConnections(const ConnectionSettingsContainerType &connections)
     {
         _connections = connections;
+    }
+    
+    void SettingsManager::setCurrentTranslation(const QString& langName)
+    {
+        _currentTranslation = _translations.value(langName, "");
+    }
+    
+    void SettingsManager::loadProvidedTranslations()
+    {
+        //: Language based on system locale
+        static const char * locale = QT_TR_NOOP("System locale");
+        _translations[locale] = "";
+        QDirIterator qmIt(_qmPath, QStringList() << "*.qm", QDir::Files);
+        while (qmIt.hasNext()) {
+            qmIt.next();
+            QFileInfo finfo = qmIt.fileInfo();
+            QTranslator translator;
+            translator.load(finfo.baseName(), _qmPath);
+            //: Native language name
+            QT_TR_NOOP("__LANGUAGE_NAME__");
+            _translations[translator.translate("Robomongo::SettingsManager", "__LANGUAGE_NAME__")] = finfo.baseName();
+        }
     }
 
 }

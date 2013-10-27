@@ -402,19 +402,19 @@ namespace Robomongo
     
     void MainWindow::createLanguageMenu()
     {
-         //QMenu *styles = _viewMenu->addMenu(tr("Language"));
-//         QStringList supportedStyles = detail::getSupportedStyles();
-//         QActionGroup *styleGroup = new QActionGroup(this);
-//         VERIFY(connect(styleGroup, SIGNAL(triggered(QAction *)), this, SLOT(changeStyle(QAction *))));
-//         const QString &currentStyle = AppRegistry::instance().settingsManager()->currentStyle();
-//         for (QStringList::const_iterator it = supportedStyles.begin(); it != supportedStyles.end(); ++it) {
-//             const QString &style = *it;
-//             QAction *styleAction = new QAction(style,this);
-//             styleAction->setCheckable(true);
-//             styleAction->setChecked(style == currentStyle);
-//             styleGroup->addAction(styleAction);
-//             styles->addAction(styleAction);             
-//         }
+         QMenu *langs = _viewMenu->addMenu(tr("Language"));
+         QHash<QString, QString> providedTranslations = AppRegistry::instance().settingsManager()->getTranslations();
+         const QString &currentTranslation = AppRegistry::instance().settingsManager()->currentTranslation();
+         QActionGroup *langGroup = new QActionGroup(this);
+         VERIFY(connect(langGroup, SIGNAL(triggered(QAction *)), this, SLOT(changeTranslation(QAction *))));
+         for (QHash<QString, QString>::const_iterator it = providedTranslations.begin(); it != providedTranslations.end(); ++it) {
+             const QString &language = it.key();
+             QAction *langAction = new QAction(language,this);
+             langAction->setCheckable(true);
+             langAction->setChecked(it.value() == currentTranslation);
+             langGroup->addAction(langAction);
+             langs->addAction(langAction);             
+         }
     }
 
     void MainWindow::createStatusBar()
@@ -455,6 +455,13 @@ namespace Robomongo
         const QString &text = ac->text();
         detail::applyStyle(text);
         AppRegistry::instance().settingsManager()->setCurrentStyle(text);
+        AppRegistry::instance().settingsManager()->save();
+    }
+    
+    void MainWindow::changeTranslation(QAction *ac)
+    {
+        const QString &text = ac->text();
+        AppRegistry::instance().settingsManager()->setCurrentTranslation(text);
         AppRegistry::instance().settingsManager()->save();
     }
 

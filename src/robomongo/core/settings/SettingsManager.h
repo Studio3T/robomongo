@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QObject>
 #include <QString>
 #include <QVariantMap>
 #include <vector>
@@ -92,6 +93,7 @@ namespace Robomongo
         void setCurrentTranslation(const QString& langName);
 
         QHash<QString, QString> getTranslations() const {return _translations; }
+        void retranslateLocale(const QString &key);
 
     private:
 

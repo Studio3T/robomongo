@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
         Robomongo::LOG_MSG("Translation loading failed", mongo::LL_INFO);
     if (!app.installTranslator(&translator))
         Robomongo::LOG_MSG("Translator installation failed", mongo::LL_INFO);
-
+    
     QRect screenGeometry = QApplication::desktop()->availableGeometry();
     QSize size(screenGeometry.width() - 450, screenGeometry.height() - 165);
 

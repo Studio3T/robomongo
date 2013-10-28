@@ -247,12 +247,17 @@ namespace Robomongo
     {
         _currentTranslation = _translations.value(langName, "");
     }
+
+    void SettingsManager::retranslateLocale(const QString &key)
+    {
+        QString old_key = _translations.key("");
+        if (old_key != "")
+            _translations.remove(old_key);
+        _translations[key] = "";
+    }
     
     void SettingsManager::loadProvidedTranslations()
     {
-        //: Language based on system locale
-        static const char * locale = QT_TR_NOOP("System locale");
-        _translations[locale] = "";
         QDirIterator qmIt(_qmPath, QStringList() << "*.qm", QDir::Files);
         while (qmIt.hasNext()) {
             qmIt.next();

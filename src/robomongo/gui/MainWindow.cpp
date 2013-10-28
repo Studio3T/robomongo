@@ -403,6 +403,8 @@ namespace Robomongo
     void MainWindow::createLanguageMenu()
     {
          QMenu *langs = _viewMenu->addMenu(tr("Language"));
+         //: Language based on system locale
+         AppRegistry::instance().settingsManager()->retranslateLocale(tr("System locale"));
          QHash<QString, QString> providedTranslations = AppRegistry::instance().settingsManager()->getTranslations();
          const QString &currentTranslation = AppRegistry::instance().settingsManager()->currentTranslation();
          QActionGroup *langGroup = new QActionGroup(this);
@@ -457,12 +459,18 @@ namespace Robomongo
         AppRegistry::instance().settingsManager()->setCurrentStyle(text);
         AppRegistry::instance().settingsManager()->save();
     }
-    
+
     void MainWindow::changeTranslation(QAction *ac)
     {
         const QString &text = ac->text();
         AppRegistry::instance().settingsManager()->setCurrentTranslation(text);
         AppRegistry::instance().settingsManager()->save();
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setText(tr("You need to restart program for language change take effect"));
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
     }
 
     void MainWindow::open()

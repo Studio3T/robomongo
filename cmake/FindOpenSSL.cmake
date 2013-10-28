@@ -217,7 +217,7 @@ IF(OPENSSL_USE_STATIC)
     PATH_SUFFIXES
       lib
   )
-ELSE()
+ENDIF(OPENSSL_USE_STATIC)
   find_library(OPENSSL_SSL_LIBRARY
     NAMES
       ssl
@@ -239,7 +239,7 @@ ELSE()
     PATH_SUFFIXES
       lib
   )
-ENDIF(OPENSSL_USE_STATIC)
+
   mark_as_advanced(OPENSSL_CRYPTO_LIBRARY OPENSSL_SSL_LIBRARY)
 
   # compat defines

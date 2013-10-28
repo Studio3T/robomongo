@@ -21,7 +21,7 @@ namespace Robomongo
     {
         setWindowTitle("Create Database");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
-        setFixedSize(dialogSize);
+        //setFixedSize(dialogSize);
 
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
 

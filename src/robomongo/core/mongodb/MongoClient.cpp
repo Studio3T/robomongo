@@ -2,6 +2,7 @@
 
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/utils/BsonUtils.h"
+#include "robomongo/shell/db/json.h"
 
 namespace
 {
@@ -154,7 +155,7 @@ namespace Robomongo
     void MongoClient::ensureIndex(const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo) const
     {   
         std::string ns = newInfo._collection.ns().toString();
-        mongo::BSONObj keys = mongo::fromjson(newInfo._request);
+        mongo::BSONObj keys = mongo::Robomongo::fromjson(newInfo._request);
         mongo::BSONObjBuilder toSave;
         bool cache=true;
         int version =-1;

@@ -123,6 +123,9 @@ namespace Robomongo
 
     MongoShellExecResult ScriptEngine::exec(const std::string &originalScript, const std::string &dbName)
     {
+        if(!_scope)
+            return MongoShellExecResult();
+
         mongo::RecursiveMutex::scoped_lock lk( _mutex );
 
         /*

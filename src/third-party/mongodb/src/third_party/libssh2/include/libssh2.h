@@ -412,8 +412,8 @@ typedef struct _LIBSSH2_POLLFD {
 
 /* Global API */
 #define LIBSSH2_INIT_NO_CRYPTO        0x0001
-
-typedef struct ssl_st SSL;
+#include <openssl/ossl_typ.h>
+//typedef struct ssl_st SSL;
 /*
  * libssh2_init()
  *

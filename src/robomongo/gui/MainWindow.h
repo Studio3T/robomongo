@@ -5,6 +5,7 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 class QToolBar;
 class QDockWidget;
+class QToolButton;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -71,6 +72,7 @@ namespace Robomongo
         App *_app;
 
         ConnectionMenu *_connectionsMenu;
+        QToolButton *_connectButton;
         QMenu *_viewMenu;
         QAction *_connectAction;
         QAction *_openAction;

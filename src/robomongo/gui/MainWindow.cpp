@@ -135,22 +135,22 @@ namespace Robomongo
         VERIFY(connect(_connectionsMenu, SIGNAL(triggered(QAction*)), this, SLOT(connectToServer(QAction*))));
         updateConnectionsMenu();
 
-        QToolButton *connectButton = new QToolButton();
-        connectButton->setText("&Connect...");
-        connectButton->setIcon(GuiRegistry::instance().connectIcon());
-        connectButton->setFocusPolicy(Qt::NoFocus);
-        connectButton->setToolTip("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>");
-        connectButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-
+        _connectButton = new QToolButton();
+        _connectButton->setText("&Connect...");
+        _connectButton->setIcon(GuiRegistry::instance().connectIcon());
+        _connectButton->setFocusPolicy(Qt::NoFocus);
+        _connectButton->setToolTip("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>");
+        _connectButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        
     #if !defined(Q_OS_MAC)
-        connectButton->setMenu(_connectionsMenu);
-        connectButton->setPopupMode(QToolButton::MenuButtonPopup);
+        _connectButton->setMenu(_connectionsMenu);
+        _connectButton->setPopupMode(QToolButton::MenuButtonPopup);
     #endif
 
-        VERIFY(connect(connectButton, SIGNAL(clicked()), this, SLOT(manageConnections())));
+        VERIFY(connect(_connectButton, SIGNAL(clicked()), this, SLOT(manageConnections())));
 
         QWidgetAction *connectButtonAction = new QWidgetAction(this);
-        connectButtonAction->setDefaultWidget(connectButton);
+        connectButtonAction->setDefaultWidget(_connectButton);
 
         // Orientation action
         _orientationAction = new QAction("&Rotate", this);
@@ -476,9 +476,7 @@ namespace Robomongo
     void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         if (event->key() == Qt::Key_F12) {
-            QRect scr = QApplication::desktop()->screenGeometry();
-            _connectionsMenu->move( scr.center() - _connectionsMenu->rect().center() - QPoint(0, 100));
-            _connectionsMenu->show();
+           _connectButton->showMenu();
             return;
         }
 

@@ -134,7 +134,7 @@ if(WIN32 AND NOT CYGWIN)
     set(SSL_EAY_LIBRARY_DEBUG "${SSL_EAY_DEBUG}")
     set(SSL_EAY_LIBRARY_RELEASE "${SSL_EAY_RELEASE}")
 
-    include(${CMAKE_CURRENT_LIST_DIR}/SelectLibraryConfigurations.cmake)
+    include(SelectLibraryConfigurations)
     select_library_configurations(LIB_EAY)
     select_library_configurations(SSL_EAY)
 
@@ -143,7 +143,7 @@ if(WIN32 AND NOT CYGWIN)
     # same player, for MinGW
     set(LIB_EAY_NAMES libeay32)
     set(SSL_EAY_NAMES ssleay32)
-    if(CMAKE_CROSSCOMPILING)
+    if(CMAKE_CROSS_COMPILING)
       list(APPEND LIB_EAY_NAMES crypto)
       list(APPEND SSL_EAY_NAMES ssl)
     endif()
@@ -195,7 +195,6 @@ if(WIN32 AND NOT CYGWIN)
     set( OPENSSL_LIBRARIES ${SSL_EAY} ${LIB_EAY} )
   endif()
 else()
-
 IF(OPENSSL_USE_STATIC)
   find_library(OPENSSL_SSL_LIBRARY
     NAMES

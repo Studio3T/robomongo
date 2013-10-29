@@ -13,9 +13,7 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
-    class MongoClient;
     class ScriptEngine;
-    class RDBClientConnection;
 
     class MongoWorker : public QObject
     {
@@ -129,8 +127,8 @@ namespace Robomongo
         std::string getAuthBase() const;
 
         mongo::DBClientBase *_dbclient;
+        bool _isConnected;
         mongo::DBClientBase *getConnection();
-        MongoClient *getClient();
 
         /**
          * @brief Send reply event to object 'obj'

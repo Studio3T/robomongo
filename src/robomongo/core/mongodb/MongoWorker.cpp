@@ -19,6 +19,7 @@ namespace Robomongo
         _connection(connection),
         _scriptEngine(NULL),
         _dbclient(NULL),
+        _isConnected(false),
         _isAdmin(true),
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
@@ -115,10 +116,8 @@ namespace Robomongo
                 if (dbName.compare("admin") != 0) // dbName is NOT "admin"
                     _isAdmin = false;
             }
-            boost::scoped_ptr<MongoClient> client(getClient());
-            //conn->done();
             std::vector<std::string> dbNames = getDatabaseNamesSafe();
-            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, client->getVersion()) ));
+            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, MongoClient::getVersion(conn)) ));
         } catch(const std::exception &ex) {
             reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
             LOG_MSG(ex.what(), mongo::LL_ERROR);
@@ -145,8 +144,8 @@ namespace Robomongo
         }
 
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            result = client->getDatabaseNames();
+            mongo::DBClientBase *con = getConnection();
+            result = MongoClient::getDatabaseNames(con);
         }
         catch(const std::exception &ex)
         {
@@ -179,11 +178,10 @@ namespace Robomongo
     void MongoWorker::handle(LoadCollectionNamesRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
+            mongo::DBClientBase *con = getConnection();
 
-            std::vector<std::string> stringList = client->getCollectionNames(event->databaseName());
-            const std::vector<MongoCollectionInfo> &infos = client->runCollStatsCommand(stringList);
-            client->done();
+            std::vector<std::string> stringList = MongoClient::getCollectionNames(con, event->databaseName());
+            const std::vector<MongoCollectionInfo> &infos = MongoClient::runCollStatsCommand(con, stringList);
 
             reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName(), infos));
         } catch(const mongo::DBException &ex) {
@@ -195,9 +193,8 @@ namespace Robomongo
     void MongoWorker::handle(LoadUsersRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            const std::vector<MongoUser> &users = client->getUsers(event->databaseName());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            const std::vector<MongoUser> &users = MongoClient::getUsers(con, event->databaseName());
 
             reply(event->sender(), new LoadUsersResponse(this, event->databaseName(), users));
         } catch(const mongo::DBException &ex) {
@@ -209,9 +206,8 @@ namespace Robomongo
     void MongoWorker::handle(LoadCollectionIndexesRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            const std::vector<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            const std::vector<EnsureIndexInfo> &ind = MongoClient::getIndexes(con, event->collection());
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const mongo::DBException &ex) {
@@ -225,10 +221,9 @@ namespace Robomongo
         const EnsureIndexInfo &newInfo = event->newInfo();
         const EnsureIndexInfo &oldInfo = event->oldInfo();
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->ensureIndex(oldInfo,newInfo);
-            const std::vector<EnsureIndexInfo> &ind = client->getIndexes(newInfo._collection);
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::ensureIndex(con, oldInfo,newInfo);
+            const std::vector<EnsureIndexInfo> &ind = MongoClient::getIndexes(con, newInfo._collection);
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const mongo::DBException &ex) {
@@ -240,9 +235,8 @@ namespace Robomongo
     void MongoWorker::handle(DropCollectionIndexRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->dropIndexFromCollection(event->collection(),event->name());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::dropIndexFromCollection(con, event->collection(),event->name());
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), event->name()));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), std::string() ));
@@ -253,10 +247,9 @@ namespace Robomongo
     void MongoWorker::handle(EditIndexRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->renameIndexFromCollection(event->collection(),event->oldIndex(),event->newIndex());
-            const std::vector<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::renameIndexFromCollection(con, event->collection(),event->oldIndex(),event->newIndex());
+            const std::vector<EnsureIndexInfo> &ind = MongoClient::getIndexes(con, event->collection());
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const mongo::DBException &ex) {
@@ -268,9 +261,8 @@ namespace Robomongo
     void MongoWorker::handle(LoadFunctionsRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            const std::vector<MongoFunction> &funs = client->getFunctions(event->databaseName());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            const std::vector<MongoFunction> &funs = MongoClient::getFunctions(con, event->databaseName());
 
             reply(event->sender(), new LoadFunctionsResponse(this, event->databaseName(), funs));
         } catch(const mongo::DBException &ex) {
@@ -282,14 +274,12 @@ namespace Robomongo
     void MongoWorker::handle(InsertDocumentRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
+            mongo::DBClientBase *con = getConnection();
 
             if (event->overwrite())
-                client->saveDocument(event->obj(), event->ns());
+                MongoClient::saveDocument(con, event->obj(), event->ns());
             else
-                client->insertDocument(event->obj(), event->ns());
-
-            client->done();
+                MongoClient::insertDocument(con, event->obj(), event->ns());
 
             reply(event->sender(), new InsertDocumentResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -301,10 +291,8 @@ namespace Robomongo
     void MongoWorker::handle(RemoveDocumentRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-
-            client->removeDocuments(event->ns(), event->query(), event->justOne());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::removeDocuments(con, event->ns(), event->query(), event->justOne());
 
             reply(event->sender(), new RemoveDocumentResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -316,9 +304,8 @@ namespace Robomongo
     void MongoWorker::handle(ExecuteQueryRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            std::vector<MongoDocumentPtr> docs = client->query(event->queryInfo());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            std::vector<MongoDocumentPtr> docs = MongoClient::query(con, event->queryInfo());
 
             reply(event->sender(), new ExecuteQueryResponse(this, event->resultIndex(), event->queryInfo(), docs));
         } catch(const mongo::DBException &ex) {
@@ -355,9 +342,8 @@ namespace Robomongo
     void MongoWorker::handle(CreateDatabaseRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->createDatabase(event->database());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::createDatabase(con, event->database());
 
             reply(event->sender(), new CreateDatabaseResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -369,9 +355,8 @@ namespace Robomongo
     void MongoWorker::handle(DropDatabaseRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->dropDatabase(event->database());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::dropDatabase(con, event->database());
 
             reply(event->sender(), new DropDatabaseResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -383,9 +368,8 @@ namespace Robomongo
     void MongoWorker::handle(CreateCollectionRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->createCollection(event->ns());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::createCollection(con, event->ns());
 
             reply(event->sender(), new CreateCollectionResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -397,9 +381,8 @@ namespace Robomongo
     void MongoWorker::handle(DropCollectionRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->dropCollection(event->ns());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::dropCollection(con, event->ns());
 
             reply(event->sender(), new DropCollectionResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -411,9 +394,8 @@ namespace Robomongo
     void MongoWorker::handle(RenameCollectionRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->renameCollection(event->ns(), event->newCollection());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::renameCollection(con, event->ns(), event->newCollection());
 
             reply(event->sender(), new RenameCollectionResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -425,9 +407,8 @@ namespace Robomongo
     void MongoWorker::handle(DuplicateCollectionRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->duplicateCollection(event->ns(), event->newCollection());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::duplicateCollection(con, event->ns(), event->newCollection());
 
             reply(event->sender(), new DuplicateCollectionResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -439,10 +420,9 @@ namespace Robomongo
     void MongoWorker::handle(CopyCollectionToDiffServerRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
+            mongo::DBClientBase *con = getConnection();
             MongoWorker *cl = event->worker();
-            client->copyCollectionToDiffServer(cl->_dbclient,event->from(),event->to());
-            client->done();
+            MongoClient::copyCollectionToDiffServer(con, cl->_dbclient,event->from(),event->to());
 
             reply(event->sender(), new CopyCollectionToDiffServerResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -454,9 +434,8 @@ namespace Robomongo
     void MongoWorker::handle(CreateUserRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->createUser(event->database(), event->user(), event->overwrite());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::createUser(con, event->database(), event->user(), event->overwrite());
 
             reply(event->sender(), new CreateUserResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -468,9 +447,8 @@ namespace Robomongo
     void MongoWorker::handle(DropUserRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->dropUser(event->database(), event->id());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::dropUser(con, event->database(), event->id());
 
             reply(event->sender(), new DropUserResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -482,9 +460,8 @@ namespace Robomongo
     void MongoWorker::handle(CreateFunctionRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->createFunction(event->database(), event->function(), event->existingFunctionName());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::createFunction(con, event->database(), event->function(), event->existingFunctionName());
 
             reply(event->sender(), new CreateFunctionResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -496,9 +473,8 @@ namespace Robomongo
     void MongoWorker::handle(DropFunctionRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->dropFunction(event->database(), event->name());
-            client->done();
+            mongo::DBClientBase *con = getConnection();
+            MongoClient::dropFunction(con, event->database(), event->name());
 
             reply(event->sender(), new DropFunctionResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -509,26 +485,31 @@ namespace Robomongo
 
     mongo::DBClientBase *MongoWorker::getConnection()
     {
-        if (!_dbclient) {
+        if (!_dbclient) {  
             ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings *>(_connection);
             ConnectionSettings *con = dynamic_cast<ConnectionSettings *>(_connection);
             if(con){
                 mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
-                conn->connect(con->info());
                 _dbclient = conn;
             }
             else if(set){
-                mongo::DBClientReplicaSet *conn = new mongo::DBClientReplicaSet(set->replicaName(),set->serversHostsInfo());
-                conn->connect();
+                mongo::DBClientReplicaSet *conn = new mongo::DBClientReplicaSet(set->replicaName(),set->serversHostsInfo());           
                 _dbclient = conn;
             }
         }
+        if(_dbclient && !_isConnected){ //try to connect
+            mongo::DBClientConnection *conCon = dynamic_cast<mongo::DBClientConnection *>(_dbclient);
+            mongo::DBClientReplicaSet *setCon = dynamic_cast<mongo::DBClientReplicaSet *>(_dbclient);
+            if(conCon){
+                std::string err;
+                ConnectionSettings *con = dynamic_cast<ConnectionSettings *>(_connection);
+                _isConnected = conCon->connect(con->info(), err);
+            }
+            else if(setCon){
+                _isConnected = setCon->connect();
+            }
+        }
         return _dbclient;
-    }
-
-    MongoClient *MongoWorker::getClient()
-    {
-        return new MongoClient(getConnection());
     }
 
     /**

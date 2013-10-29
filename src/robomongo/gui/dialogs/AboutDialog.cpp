@@ -8,24 +8,6 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
 
-namespace
-{
-    const QString description = QObject::tr(
-        "<h3>"PROJECT_NAME_TITLE" "PROJECT_VERSION"</h3>"
-        "Shell-centric MongoDB management tool."
-        "<br/>"
-        "<br/>"
-        "Visit "PROJECT_NAME_TITLE" website: <a href=\"http://"PROJECT_DOMAIN"\">"PROJECT_DOMAIN"</a> <br/>"
-        "<br/>"
-        "<a href=\"https://"PROJECT_GITHUB_FORK"\">Fork</a> project or <a href=\"https://"PROJECT_GITHUB_ISSUES"\">submit</a> issues/proposals on GitHub.  <br/>"
-        "<br/>"
-        "Copyright 2013 <a href=\"http://"PROJECT_COMPANYNAME_DOMAIN"\">"PROJECT_COMPANYNAME"</a>. All rights reserved.<br/>"
-        "<br/>"
-        "The program is provided AS IS with NO WARRANTY OF ANY KIND, "
-        "INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A "
-        "PARTICULAR PURPOSE.<br/>");
-}
-
 namespace Robomongo
 {
     AboutDialog::AboutDialog(QWidget *parent)
@@ -33,11 +15,26 @@ namespace Robomongo
     {
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
-        setWindowTitle("About "PROJECT_NAME_TITLE);
+        setWindowTitle(tr("About ")+PROJECT_NAME_TITLE);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
         QGridLayout *layout = new QGridLayout(this);
         layout->setSizeConstraint(QLayout::SetFixedSize);
 
+        const QString description = 
+        "<h3>"PROJECT_NAME_TITLE" "PROJECT_VERSION"</h3>" + 
+        tr("Shell-centric MongoDB management tool.") +
+        "<br/>"
+        "<br/>" + 
+        tr("Visit %1 %2", "project title, 'website' word").arg(PROJECT_NAME_TITLE).arg(tr(" website")) + ": <a href=\"http://"PROJECT_DOMAIN"\">"PROJECT_DOMAIN"</a> <br/>"
+        "<br/>"
+        "<a href=\"https://"PROJECT_GITHUB_FORK"\">" + tr("Fork") + "</a> " + tr("project or ") + "<a href=\"https://"PROJECT_GITHUB_ISSUES"\">" + tr("submit") + "</a> " + tr("issues/proposals on GitHub.") + "  <br/>" 
+        "<br/>"
+        "Copyright 2013 <a href=\"http://"PROJECT_COMPANYNAME_DOMAIN"\">"PROJECT_COMPANYNAME"</a>. " + tr("All rights reserved") + ".<br/>"
+        "<br/>" + 
+        tr("The program is provided AS IS with NO WARRANTY OF ANY KIND, "
+        "INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A "
+        "PARTICULAR PURPOSE.") + "<br/>";
+        
         QLabel *copyRightLabel = new QLabel(description);
         copyRightLabel->setWordWrap(true);
         copyRightLabel->setOpenExternalLinks(true);

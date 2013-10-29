@@ -1,6 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.0" language="ru_RU">
+<context>
+    <name>AboutDialog</name>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="18"/>
+        <source>About </source>
+        <translation>О </translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="25"/>
+        <source>Shell-centric MongoDB management tool.</source>
+        <translation>Консоль-ориентированный инструмент управления MongoDB.</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="28"/>
+        <source> website</source>
+        <translation> сайт</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="28"/>
+        <source>Visit %1 %2</source>
+        <comment>project title, &apos;website&apos; word</comment>
+        <translation>Посетите %2 %1</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="30"/>
+        <source>Fork</source>
+        <translation>Клонируйте</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="30"/>
+        <source>project or </source>
+        <translation>проект или </translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="30"/>
+        <source>submit</source>
+        <translation>отправьте</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="30"/>
+        <source>issues/proposals on GitHub.</source>
+        <translation>вопросы/предложения на GitHub.</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="34"/>
+        <source>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="32"/>
+        <source>All rights reserved</source>
+        <translation>Все права защищены</translation>
+    </message>
+</context>
 <context>
     <name>EditIndexDialog</name>
     <message>
@@ -69,12 +123,12 @@
     <message>
         <location filename="../gui/editors/FindFrame.cpp" line="116"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск</translation>
     </message>
     <message>
         <location filename="../gui/editors/FindFrame.cpp" line="116"/>
         <source>The specified text was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Указанный текст не найден.</translation>
     </message>
 </context>
 <context>
@@ -82,38 +136,38 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="108"/>
         <source>&amp;Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Открыть...</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="109"/>
         <source>Load script from the file to the currently opened shell</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузить скрипт из файла в текущую консоль</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="112"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Сохранить</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="114"/>
         <source>Save script of the currently opened shell to the file &lt;b&gt;(Ctrl + S)&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить скрипт из консоли в файл &lt;b&gt;(Ctrl + S)&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="117"/>
         <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить &amp;как...</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="122"/>
         <source>&amp;Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Выход</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="127"/>
         <location filename="../gui/MainWindow.cpp" line="139"/>
         <source>&amp;Connect...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Подключиться...</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="130"/>
@@ -134,37 +188,37 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="159"/>
         <source>Toggle orientation of results view &lt;b&gt;(F10)&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Сменить ориентацию окна результатов &lt;b&gt;(F10)&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="166"/>
         <source>&amp;Text Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Текстовый режим</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="169"/>
         <source>Show current tab in text mode, and make this mode default for all subsequent queries &lt;b&gt;(F4)&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Текстовый режим для этой вкладки и дочерних &lt;b&gt;(F4)&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="175"/>
         <source>&amp;Tree Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим &amp;Дерева</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="178"/>
         <source>Show current tab in tree mode, and make this mode default for all subsequent queries &lt;b&gt;(F3)&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим Дерева для этой вкладки и дочерних &lt;b&gt;(F3)&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="184"/>
         <source>T&amp;able Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Та&amp;бличный режим</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="187"/>
         <source>Show current tab in table mode, and make this mode default for all subsequent queries &lt;b&gt;(F3)&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Табличный режим для этой вкладки и дочерних &lt;b&gt;(F3)&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="193"/>
@@ -179,82 +233,82 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="203"/>
         <source>Execute</source>
-        <translation type="unfinished"></translation>
+        <translation>Выполнить</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="206"/>
         <source>Execute query for current tab. If you have some selection in query text - only selection will be executed &lt;b&gt;(F5 &lt;/b&gt; or &lt;b&gt;Ctrl + Enter)&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Выполнить выделенный текст или скрипт из текущей консоли.целиком &lt;b&gt;(F5 &lt;/b&gt; or &lt;b&gt;Ctrl + Enter)&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="211"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Остановить</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="214"/>
         <source>Stop execution of currently running script. &lt;b&gt;(F6)&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Остановить выполнение скрипта &lt;b&gt;(F6)&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="219"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;На весь экран</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="225"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="230"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="240"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>Вид</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="243"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Опции</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="246"/>
         <source>Default View Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим по умолчанию</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="252"/>
         <source>Auto expand first document in Tree Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Разворачивать первый документ в режиме Дерева</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="277"/>
         <source>Display Dates in </source>
-        <translation type="unfinished"></translation>
+        <translation>Отображать даты</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="286"/>
         <source>Do not decode (show as is)</source>
-        <translation type="unfinished"></translation>
+        <translation>Не декодировать (показывать как есть)</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="291"/>
         <source>Use Java Encoding</source>
-        <translation type="unfinished"></translation>
+        <translation>Кодировка Java</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="296"/>
         <source>Use .NET Encoding</source>
-        <translation type="unfinished"></translation>
+        <translation>Кодировка .NET</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="301"/>
         <source>Use Python Encoding</source>
-        <translation type="unfinished"></translation>
+        <translation>Кодировка Python</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="306"/>
@@ -264,7 +318,7 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="312"/>
         <source>Load .mongorc.js</source>
-        <translation type="unfinished"></translation>
+        <translation>Выполнять .mongorc.js</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="319"/>
@@ -279,17 +333,17 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="337"/>
         <source>&amp;About Robomongo...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;О Robomongo...</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="341"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Помощь</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="345"/>
         <source>Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель инструментов</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="353"/>
@@ -304,60 +358,71 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="388"/>
         <source>Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Тема</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="405"/>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <translation>Язык</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="428"/>
-        <location filename="../gui/MainWindow.cpp" line="796"/>
+        <location filename="../gui/MainWindow.cpp" line="407"/>
+        <source>System locale</source>
+        <extracomment>Language based on system locale</extracomment>
+        <translation>Язык системы</translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="430"/>
+        <location filename="../gui/MainWindow.cpp" line="804"/>
         <source>Logs</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="536"/>
+        <location filename="../gui/MainWindow.cpp" line="470"/>
+        <source>You need to restart program for language change take effect</source>
+        <translation>Нужно перезапустить программу, чтобы изменения языка вступили в силу</translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="544"/>
         <source>&amp;Manage Connections...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Настройки соединений...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="538"/>
+        <location filename="../gui/MainWindow.cpp" line="546"/>
         <source>Connect to MongoDB</source>
-        <translation type="unfinished"></translation>
+        <translation>Подключиться к MongoDB</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="560"/>
-        <location filename="../gui/MainWindow.cpp" line="739"/>
+        <location filename="../gui/MainWindow.cpp" line="568"/>
         <location filename="../gui/MainWindow.cpp" line="747"/>
+        <location filename="../gui/MainWindow.cpp" line="755"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="659"/>
+        <location filename="../gui/MainWindow.cpp" line="667"/>
         <source>Refresh not working yet... : &lt;br/&gt;  &lt;b&gt;Ctrl+D&lt;/b&gt; : push Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="774"/>
+        <location filename="../gui/MainWindow.cpp" line="782"/>
         <source>Database Explorer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="785"/>
+        <location filename="../gui/MainWindow.cpp" line="793"/>
         <source>&amp;Explorer</source>
-        <translation type="unfinished"></translation>
+        <translation>П&amp;роводник</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="787"/>
+        <location filename="../gui/MainWindow.cpp" line="795"/>
         <source>Press to show/hide Database Explorer panel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нажмите, чтобы показать/спрятать панель Проводника Базы данных.</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="799"/>
+        <location filename="../gui/MainWindow.cpp" line="807"/>
         <source>&amp;Logs</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Журнал</translation>
     </message>
 </context>
 <context>
@@ -365,17 +430,12 @@
     <message>
         <location filename="../core/domain/ScriptInfo.cpp" line="10"/>
         <source>JavaScript (*.js);; All Files (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>JavaScript (*.js);; Все файлы (*.*)</translation>
     </message>
     <message>
         <location filename="../core/domain/ScriptInfo.cpp" line="96"/>
         <source>Save As</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/dialogs/AboutDialog.cpp" line="13"/>
-        <source>&lt;h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить как</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionBasicTab.cpp" line="77"/>
@@ -396,14 +456,10 @@
 <context>
     <name>SettingsManager</name>
     <message>
-        <location filename="../core/settings/SettingsManager.cpp" line="254"/>
-        <source>System locale</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../core/settings/SettingsManager.cpp" line="263"/>
+        <location filename="../core/settings/SettingsManager.cpp" line="268"/>
         <source>__LANGUAGE_NAME__</source>
-        <translation type="unfinished"></translation>
+        <extracomment>Native language name</extracomment>
+        <translation>Русский</translation>
     </message>
 </context>
 </TS>

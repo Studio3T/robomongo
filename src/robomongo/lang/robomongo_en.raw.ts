@@ -2,6 +2,60 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="en">
 <context>
+    <name>AboutDialog</name>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="18"/>
+        <source>About </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="25"/>
+        <source>Shell-centric MongoDB management tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="28"/>
+        <source>Visit %1 %2</source>
+        <comment>project title, &apos;website&apos; word</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="28"/>
+        <source> website</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="30"/>
+        <source>Fork</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="30"/>
+        <source>project or </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="30"/>
+        <source>submit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="30"/>
+        <source>issues/proposals on GitHub.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="32"/>
+        <source>All rights reserved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/AboutDialog.cpp" line="34"/>
+        <source>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>EditIndexDialog</name>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="95"/>
@@ -312,50 +366,61 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="428"/>
-        <location filename="../gui/MainWindow.cpp" line="796"/>
+        <location filename="../gui/MainWindow.cpp" line="407"/>
+        <source>System locale</source>
+        <extracomment>Language based on system locale</extracomment>
+        <translation type="unfinished">System locale</translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="430"/>
+        <location filename="../gui/MainWindow.cpp" line="804"/>
         <source>Logs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="536"/>
+        <location filename="../gui/MainWindow.cpp" line="470"/>
+        <source>You need to restart program for language change take effect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="544"/>
         <source>&amp;Manage Connections...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="538"/>
+        <location filename="../gui/MainWindow.cpp" line="546"/>
         <source>Connect to MongoDB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="560"/>
-        <location filename="../gui/MainWindow.cpp" line="739"/>
+        <location filename="../gui/MainWindow.cpp" line="568"/>
         <location filename="../gui/MainWindow.cpp" line="747"/>
+        <location filename="../gui/MainWindow.cpp" line="755"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="659"/>
+        <location filename="../gui/MainWindow.cpp" line="667"/>
         <source>Refresh not working yet... : &lt;br/&gt;  &lt;b&gt;Ctrl+D&lt;/b&gt; : push Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="774"/>
+        <location filename="../gui/MainWindow.cpp" line="782"/>
         <source>Database Explorer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="785"/>
+        <location filename="../gui/MainWindow.cpp" line="793"/>
         <source>&amp;Explorer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="787"/>
+        <location filename="../gui/MainWindow.cpp" line="795"/>
         <source>Press to show/hide Database Explorer panel.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="799"/>
+        <location filename="../gui/MainWindow.cpp" line="807"/>
         <source>&amp;Logs</source>
         <translation type="unfinished"></translation>
     </message>
@@ -370,11 +435,6 @@
     <message>
         <location filename="../core/domain/ScriptInfo.cpp" line="96"/>
         <source>Save As</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/dialogs/AboutDialog.cpp" line="13"/>
-        <source>&lt;h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -396,13 +456,9 @@
 <context>
     <name>SettingsManager</name>
     <message>
-        <location filename="../core/settings/SettingsManager.cpp" line="254"/>
-        <source>System locale</source>
-        <translation>System locale</translation>
-    </message>
-    <message>
-        <location filename="../core/settings/SettingsManager.cpp" line="263"/>
+        <location filename="../core/settings/SettingsManager.cpp" line="268"/>
         <source>__LANGUAGE_NAME__</source>
+        <extracomment>Native language name</extracomment>
         <translation>English</translation>
     </message>
 </context>

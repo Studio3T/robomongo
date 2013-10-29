@@ -143,7 +143,6 @@ SET(SOURCES_SHELL
     )
 
 SET(HEADERS_CORE_TO_MOC
-    robomongo/core/settings/ConnectionSettings.h
     robomongo/core/mongodb/MongoWorker.h
     robomongo/core/domain/MongoServer.h
     robomongo/core/domain/MongoDatabase.h
@@ -155,6 +154,7 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/utils/Logger.h
     )
 SET(HEADERS_CORE
+    robomongo/core/settings/ConnectionSettings.h
     robomongo/core/settings/SettingsManager.h
     robomongo/core/engine/ScriptEngine.h
     robomongo/core/KeyboardManager.h

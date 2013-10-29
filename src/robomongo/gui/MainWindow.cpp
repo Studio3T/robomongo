@@ -58,6 +58,11 @@ namespace
         Robomongo::AppRegistry::instance().settingsManager()->setAutoExpand(isExpand);
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
+
+    void openServer(const Robomongo::ConnectionSettings &connection, bool visible)
+    {
+       Robomongo::AppRegistry::instance().app()->openServer(connection, visible);
+    }
 }
 
 namespace Robomongo
@@ -80,7 +85,6 @@ namespace Robomongo
 
     MainWindow::MainWindow()
         : BaseClass(),
-        _app(AppRegistry::instance().app()),
         _workArea(NULL),
         _connectionsMenu(NULL)
     {
@@ -451,7 +455,7 @@ namespace Robomongo
             if (connections.size() == 1) {
                 ScriptInfo inf = ScriptInfo(QString());
                 if (inf.loadFromFile()) {
-                    _app->openShell(connections.at(0), inf);
+                    AppRegistry::instance().app()->openShell(*connections.at(0), inf);
                 }
             }
         }
@@ -525,13 +529,7 @@ namespace Robomongo
 
         if (result == QDialog::Accepted) {
             ConnectionSettings *selected = dialog.selectedConnection();
-
-            try {
-                _app->openServer(selected, true);
-            } catch(const std::exception &) {
-                QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(selected->getFullAddress()));
-                QMessageBox::information(this, "Error", message);
-            }
+            openServer(*selected, true);
         }
 
         // on linux focus is lost - we need to activate main window back
@@ -703,20 +701,14 @@ namespace Robomongo
     void MainWindow::connectToServer(QAction *connectionAction)
     {
         QVariant data = connectionAction->data();
-        ConnectionSettings *ptr = data.value<ConnectionSettings *>();
-        try {
-            _app->openServer(ptr, true);
-        }
-        catch(const std::exception &) {
-            QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(ptr->getFullAddress()));
-            QMessageBox::information(this, "Error", message);
-        }
+        ConnectionSettings *ptr = qvariant_cast<ConnectionSettings *>(data);
+        openServer(*ptr, true);
     }
 
     void MainWindow::handle(ConnectionFailedEvent *event)
     {
-        ConnectionSettings *connection = event->server->connectionRecord();
-        QString message = QString("Cannot connect to MongoDB (%1),\nerror: %2").arg(QtUtils::toQString(connection->getFullAddress())).arg(QtUtils::toQString(event->error().errorMessage()));
+        ConnectionSettings connection = event->server->connectionRecord();
+        QString message = QString("Cannot connect to MongoDB (%1),\nerror: %2").arg(QtUtils::toQString(connection.getFullAddress())).arg(QtUtils::toQString(event->error().errorMessage()));
         QMessageBox::information(this, "Error", message);
     }
 

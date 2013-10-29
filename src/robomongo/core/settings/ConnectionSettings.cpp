@@ -2,8 +2,23 @@
 
 #include <stdio.h>
 
-#include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
+
+#define CONNECTIONNAME "connectionName"
+#define SSLSUPPORT "ssl"
+#define SSLPEMKEYFILE "sslPEMKeyFile"
+#define SERVERHOST "serverHost"
+#define SERVERPORT "serverPort"
+#define DEFAULTDATABASE "defaultDatabase"
+#define SSHINFO_HOST "sshInfo.host"
+#define SSHINFO_USERNAME "sshInfo.username"
+#define SSHINFO_PORT "sshInfo.port"
+#define SSHINFO_PASSWORD "sshInfo.password"
+#define SSHINFO_PUBLICKEY "sshInfo.publicKey"
+#define SSHINFO_PRIVATEKEY "sshInfo.privateKey"
+#define SSHINFO_PASSPHARASE "sshInfo.passphrase"
+#define SSHINFO_AUTHMETHOD "sshInfo.authMethod"
+#define CREDENTIALS "credentials"
 
 namespace
 {
@@ -18,81 +33,62 @@ namespace Robomongo
     /**
      * @brief Creates ConnectionSettings with default values
      */
-    ConnectionSettings::ConnectionSettings() : QObject(),
+    ConnectionSettings::ConnectionSettings() :
          _connectionName(defaultNameConnection),
         _info(defaultServerHost,port)
     {
 
     }
 
-    ConnectionSettings::ConnectionSettings(QVariantMap map) : QObject(),
-        _connectionName(QtUtils::toStdString(map.value("connectionName").toString())),
-        _info( QtUtils::toStdString(map.value("serverHost").toString()), map.value("serverPort").toInt()
+    ConnectionSettings::ConnectionSettings(QVariantMap map) :
+        _connectionName(QtUtils::toStdString(map.value(CONNECTIONNAME).toString()))
+        ,_defaultDatabase(QtUtils::toStdString(map.value(DEFAULTDATABASE).toString())),
+        _info( QtUtils::toStdString(map.value(SERVERHOST).toString()), map.value(SERVERPORT).toInt()
 #ifdef MONGO_SSL
-        ,SSLInfo(map.value("ssl").toBool(),QtUtils::toStdString(map.value("sslPEMKeyFile").toString()))
+        ,SSLInfo(map.value(SSLSUPPORT).toBool(),QtUtils::toStdString(map.value(SSLPEMKEYFILE).toString()))
 #endif
 #ifdef SSH_SUPPORT_ENABLED
         ,SSHInfo()
 #endif        
         )
-        ,_defaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString()))
     {
 #ifdef SSH_SUPPORT_ENABLED
         SSHInfo inf;
-        inf._hostName = QtUtils::toStdString(map.value("sshInfo.host").toString());
-        inf._userName = QtUtils::toStdString(map.value("sshInfo.username").toString()); 
-        inf._port = map.value("sshInfo.port").toInt();
-        inf._password = QtUtils::toStdString(map.value("sshInfo.password").toString());
-        inf._publicKey._publicKey = QtUtils::toStdString(map.value("sshInfo.publicKey").toString());
-        inf._publicKey._privateKey = QtUtils::toStdString(map.value("sshInfo.privateKey").toString());
-        inf._publicKey._passphrase = QtUtils::toStdString(map.value("sshInfo.passphrase").toString());
-        inf._currentMethod = static_cast<SSHInfo::SupportedAuthenticationMetods>(map.value("sshInfo.authMethod").toInt());
-        setSshInfo(inf);
+        inf._hostName = QtUtils::toStdString(map.value(SSHINFO_HOST).toString());
+        inf._userName = QtUtils::toStdString(map.value(SSHINFO_USERNAME).toString()); 
+        inf._port = map.value(SSHINFO_PORT).toInt();
+        inf._password = QtUtils::toStdString(map.value(SSHINFO_PASSWORD).toString());
+        inf._publicKey._publicKey = QtUtils::toStdString(map.value(SSHINFO_PUBLICKEY).toString());
+        inf._publicKey._privateKey = QtUtils::toStdString(map.value(SSHINFO_PRIVATEKEY).toString());
+        inf._publicKey._passphrase = QtUtils::toStdString(map.value(SSHINFO_PASSPHARASE).toString());
+        inf._currentMethod = static_cast<SSHInfo::SupportedAuthenticationMetods>(map.value(SSHINFO_AUTHMETHOD).toInt());
+        _info.setSshInfo(inf);
 #endif
-        QVariantList list = map.value("credentials").toList();
-        for(QVariantList::const_iterator it = list.begin(); it != list.end(); ++it) {
-            QVariant var = *it;
-            CredentialSettings *credential = new CredentialSettings(var.toMap());
-            addCredential(credential);
+        //delete this after some releases
+        QList<QVariant> oldVersion = map.value(CREDENTIALS).toList();
+        if(oldVersion.count()==1){
+            CredentialSettings credential(oldVersion[0].toMap());
+            setPrimaryCredential(credential);
         }
+        else{
+            CredentialSettings credential(map.value(CREDENTIALS).toMap());
+            setPrimaryCredential(credential);
+    }
     }
 
-    /**
-     * @brief Cleanup used resources
-     */
-    ConnectionSettings::~ConnectionSettings()
+    ConnectionSettings::ConnectionSettings(const ConnectionSettings &old)
     {
-        clearCredentials();
-    }
-
-    /**
-     * @brief Creates completely new ConnectionSettings by cloning this record.
-     */
-    ConnectionSettings *ConnectionSettings::clone() const
-    {
-        ConnectionSettings *record = new ConnectionSettings();
-        record->apply(this);
-        return record;
-    }
-
-    /**
-     * @brief Discards current state and applies state from 'source' ConnectionSettings.
-     */
-    void ConnectionSettings::apply(const ConnectionSettings *source)
-    {
-        setConnectionName(source->connectionName());
-        setServerHost(source->serverHost());
-        setServerPort(source->serverPort());
-        setDefaultDatabase(source->defaultDatabase());
-        setSslInfo(source->sslInfo());
+        setConnectionName(old.connectionName());
+        setServerHost(old.serverHost());
+        setServerPort(old.serverPort());
+        setDefaultDatabase(old.defaultDatabase());
+#ifdef MONGO_SSL
+        _info.setSslInfo(old.sslInfo());
+#endif
 #ifdef SSH_SUPPORT_ENABLED
-        setSshInfo(source->sshInfo());
+        _info.setSshInfo(old.sshInfo());
 #endif
-        clearCredentials();
-        QList<CredentialSettings *> cred = source->credentials();
-        for (QList<CredentialSettings *>::iterator it = cred.begin(); it != cred.end(); ++it) {
-            addCredential((*it)->clone());
-        }
+        setPrimaryCredential(old._credential);
     }
 
     /**
@@ -101,88 +97,45 @@ namespace Robomongo
     QVariant ConnectionSettings::toVariant() const
     {
         QVariantMap map;
-        map.insert("connectionName", QtUtils::toQString(connectionName()));
-        map.insert("serverHost", QtUtils::toQString(serverHost()));
-        map.insert("serverPort", serverPort());
-        map.insert("defaultDatabase", QtUtils::toQString(defaultDatabase()));
+        map.insert(CONNECTIONNAME, QtUtils::toQString(connectionName()));
+        map.insert(SERVERHOST, QtUtils::toQString(serverHost()));
+        map.insert(SERVERPORT, serverPort());
+        map.insert(DEFAULTDATABASE, QtUtils::toQString(defaultDatabase()));
 #ifdef MONGO_SSL
         SSLInfo infl = _info.sslInfo();
-        map.insert("ssl", infl._sslSupport);
-        map.insert("sslPEMKeyFile", QtUtils::toQString(infl._sslPEMKeyFile));
+        map.insert(SSLSUPPORT, infl._sslSupport);
+        map.insert(SSLPEMKEYFILE, QtUtils::toQString(infl._sslPEMKeyFile));
 #endif
 #ifdef SSH_SUPPORT_ENABLED
         SSHInfo inf = _info.sshInfo();
-        map.insert("sshInfo.host", QtUtils::toQString(inf._hostName));
-        map.insert("sshInfo.username", QtUtils::toQString(inf._userName));
-        map.insert("sshInfo.port", inf._port);
-        map.insert("sshInfo.password", QtUtils::toQString(inf._password));
-        map.insert("sshInfo.publicKey", QtUtils::toQString(inf._publicKey._publicKey));
-        map.insert("sshInfo.privateKey", QtUtils::toQString(inf._publicKey._privateKey));
-        map.insert("sshInfo.passphrase", QtUtils::toQString(inf._publicKey._passphrase));
-        map.insert("sshInfo.authMethod", inf._currentMethod);
+        map.insert(SSHINFO_HOST, QtUtils::toQString(inf._hostName));
+        map.insert(SSHINFO_USERNAME, QtUtils::toQString(inf._userName));
+        map.insert(SSHINFO_PORT, inf._port);
+        map.insert(SSHINFO_PASSWORD, QtUtils::toQString(inf._password));
+        map.insert(SSHINFO_PUBLICKEY, QtUtils::toQString(inf._publicKey._publicKey));
+        map.insert(SSHINFO_PRIVATEKEY, QtUtils::toQString(inf._publicKey._privateKey));
+        map.insert(SSHINFO_PASSPHARASE, QtUtils::toQString(inf._publicKey._passphrase));
+        map.insert(SSHINFO_AUTHMETHOD, inf._currentMethod);
 #endif
-        QVariantList list;
-        for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
-            CredentialSettings *credential = *it;
-            list.append(credential->toVariant());
-        }
-        map.insert("credentials", list);
+        map.insert(CREDENTIALS, _credential.toVariant());
 
         return map;
     }
 
-     CredentialSettings *ConnectionSettings::findCredential(const std::string &databaseName) const
-     {
-         CredentialSettings *result = NULL;
-         for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
-             CredentialSettings *cred = *it;
-             if (cred->databaseName() == databaseName) {
-                 result = cred;
-                 break;
-             }
-         }
-         return result;
-     }
-
     /**
      * @brief Adds credential to this connection
      */
-    void ConnectionSettings::addCredential(CredentialSettings *credential)
+    void ConnectionSettings::setPrimaryCredential(const CredentialSettings &credential)
     {
-        if (!findCredential(credential->databaseName()))
-            _credentials.append(credential);
-    }
-
-    /**
-     * @brief Checks whether this connection has primary credential
-     * which is also enabled.
-     */
-    bool ConnectionSettings::hasEnabledPrimaryCredential()
-    {
-        if (_credentials.count() == 0)
-            return false;
-
-        return primaryCredential()->enabled();
+        _credential = credential;
     }
 
     /**
      * @brief Returns primary credential, or NULL if no credentials exists.
      */
-    CredentialSettings *ConnectionSettings::primaryCredential()
+    CredentialSettings ConnectionSettings::primaryCredential() const
     {
-        if (_credentials.count() == 0)
-            return NULL;
-
-        return _credentials.at(0);
-    }
-
-    /**
-     * @brief Clears and releases memory occupied by credentials
-     */
-    void ConnectionSettings::clearCredentials()
-    {
-        qDeleteAll(_credentials);
-        _credentials.clear();
+        return _credential;
     }
 
     std::string ConnectionSettings::getFullAddress() const

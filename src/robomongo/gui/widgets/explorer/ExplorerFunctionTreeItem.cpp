@@ -45,7 +45,7 @@ namespace Robomongo
     {
         std::string name = _function.name();
 
-        FunctionTextEditor dlg(QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),
+        FunctionTextEditor dlg(QtUtils::toQString(_database->server()->connectionRecord().getFullAddress()),
             QtUtils::toQString(_database->name()),
             _function);
         dlg.setWindowTitle("Edit Function");

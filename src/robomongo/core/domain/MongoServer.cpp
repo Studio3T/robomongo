@@ -12,10 +12,10 @@ namespace Robomongo
 {
     R_REGISTER_EVENT(MongoServerLoadingDatabasesEvent)
 
-    MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible) : QObject(),
+    MongoServer::MongoServer(const ConnectionSettings &connectionRecord, bool visible) : QObject(),
         _version(0.0f),
         _visible(visible),
-        _client(new MongoWorker(connectionRecord->clone(),AppRegistry::instance().settingsManager()->loadMongoRcJs(),AppRegistry::instance().settingsManager()->batchSize())),
+        _client(new MongoWorker(connectionRecord,AppRegistry::instance().settingsManager()->loadMongoRcJs(),AppRegistry::instance().settingsManager()->batchSize())),
         _isConnected(false)
     {
     }
@@ -25,7 +25,7 @@ namespace Robomongo
         return _isConnected;
     }
 
-    ConnectionSettings *MongoServer::connectionRecord() const 
+    ConnectionSettings MongoServer::connectionRecord() const 
     { 
         return _client->connectionRecord(); 
     }

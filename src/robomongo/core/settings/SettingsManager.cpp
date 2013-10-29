@@ -11,6 +11,17 @@
 #include "robomongo/core/utils/StdUtils.h"
 #include "robomongo/gui/AppStyle.h"
 
+#define VERSION_CONFIG "version"
+#define UUIDENCODING "uuidEncoding"
+#define TIMEZONE "timeZone"
+#define VIEWMODE "viewMode"
+#define AUTOEXPAND "autoExpand"
+#define LOADMONGORCJS "loadMongoRcJs"
+#define DISABLECONNECTIONSHORTCUTS "disableConnectionShortcuts"
+#define BATCHSIZE "batchSize"
+#define STYLE "style"
+#define CONNECTIONS "connections"
+
 namespace
 {
         /**
@@ -109,10 +120,10 @@ namespace Robomongo
     void SettingsManager::loadFromMap(QVariantMap &map)
     {
         // 1. Load version
-        _version = map.value("version").toString();
+        _version = map.value(VERSION_CONFIG).toString();
 
         // 2. Load UUID encoding
-        int encoding = map.value("uuidEncoding").toInt();
+        int encoding = map.value(UUIDENCODING).toInt();
         if (encoding > 3 || encoding < 0)
             encoding = 0;
 
@@ -120,30 +131,30 @@ namespace Robomongo
 
 
         // 3. Load view mode
-        if (map.contains("viewMode")) {
-            int viewMode = map.value("viewMode").toInt();
+        if (map.contains(VIEWMODE)) {
+            int viewMode = map.value(VIEWMODE).toInt();
             if (viewMode > 2 || encoding < 0)
                 viewMode = Custom; // Default View Mode
             _viewMode = (ViewMode) viewMode;
         } else {
             _viewMode = Custom; // Default View Mode
         }
-        _autoExpand = map.value("autoExpand").toBool();
+        _autoExpand = map.value(AUTOEXPAND).toBool();
 
         // 4. Load TimeZone
-        int timeZone = map.value("timeZone").toInt();
+        int timeZone = map.value(TIMEZONE).toInt();
         if (timeZone > 1 || timeZone < 0)
             timeZone = 0;
 
         _timeZone = (SupportedTimes) timeZone;
-        _loadMongoRcJs = map.value("loadMongoRcJs").toBool();
-        _disableConnectionShortcuts = map.value("disableConnectionShortcuts").toBool();
+        _loadMongoRcJs = map.value(LOADMONGORCJS).toBool();
+        _disableConnectionShortcuts = map.value(DISABLECONNECTIONSHORTCUTS).toBool();
 
         // Load Batch Size
-        _batchSize = map.value("batchSize").toInt();
+        _batchSize = map.value(BATCHSIZE).toInt();
         if (_batchSize == 0)
             _batchSize = 50;
-        _currentStyle = map.value("style").toString();
+        _currentStyle = map.value(STYLE).toString();
         if (_currentStyle.isEmpty()) {
             _currentStyle = AppStyle::StyleName;
         }
@@ -151,7 +162,7 @@ namespace Robomongo
         // 5. Load connections
         _connections.clear();
 
-        QVariantList list = map.value("connections").toList();
+        QVariantList list = map.value(CONNECTIONS).toList();
         for (QVariantList::iterator it = list.begin(); it != list.end(); ++it) {
             ConnectionSettings *record = new ConnectionSettings((*it).toMap());
             _connections.push_back(record);
@@ -166,29 +177,29 @@ namespace Robomongo
         QVariantMap map;
 
         // 1. Save schema version
-        map.insert("version", SchemaVersion);
+        map.insert(VERSION_CONFIG, SchemaVersion);
 
         // 2. Save UUID encoding
-        map.insert("uuidEncoding", _uuidEncoding);
+        map.insert(UUIDENCODING, _uuidEncoding);
 
         // 3. Save TimeZone encoding
-        map.insert("timeZone", _timeZone);
+        map.insert(TIMEZONE, _timeZone);
 
         // 4. Save view mode
-        map.insert("viewMode", _viewMode);
-        map.insert("autoExpand", _autoExpand);
+        map.insert(VIEWMODE, _viewMode);
+        map.insert(AUTOEXPAND, _autoExpand);
 
         // 5. Save loadInitJs
-        map.insert("loadMongoRcJs", _loadMongoRcJs);
+        map.insert(LOADMONGORCJS, _loadMongoRcJs);
 
         // 6. Save disableConnectionShortcuts
-        map.insert("disableConnectionShortcuts", _disableConnectionShortcuts);
+        map.insert(DISABLECONNECTIONSHORTCUTS, _disableConnectionShortcuts);
         
         // 7. Save batchSize
-        map.insert("batchSize", _batchSize);
+        map.insert(BATCHSIZE, _batchSize);
 
         // 8. Save style
-        map.insert("style", _currentStyle);
+        map.insert(STYLE, _currentStyle);
 
         // 9. Save connections
         QVariantList list;
@@ -198,7 +209,7 @@ namespace Robomongo
             list.append(rm);
         }
 
-        map.insert("connections", list);
+        map.insert(CONNECTIONS, list);
 
         return map;
     }

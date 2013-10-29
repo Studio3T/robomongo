@@ -2,40 +2,50 @@
 
 #include "robomongo/core/utils/QtUtils.h"
 
+#define USERNAME "userName"
+#define USERPASSWORD "userPassword"
+#define DATABASENAME "databaseName"
+#define AUTOTENTIFICATION "enabled"
+
 namespace Robomongo
 {
-    CredentialSettings::CredentialSettings() :
+   
+    CredentialSettings::CredentialInfo::CredentialInfo():
         _userName(),
         _userPassword(),
-        _databaseName(),
+        _databaseName()
+    {
+    }
+
+    CredentialSettings::CredentialInfo::CredentialInfo(const std::string &userName, const std::string &userPassword, const std::string &databaseName):
+        _userName(userName),
+        _userPassword(userPassword),
+        _databaseName(databaseName.empty() ? "admin" : databaseName )
+    {
+    }
+
+    CredentialSettings::CredentialSettings() :
+        _credentialInfo(),
         _enabled(false)
     {
-
     }
+
     CredentialSettings::CredentialSettings(const QVariantMap &map) :
-        _userName(QtUtils::toStdString(map.value("userName").toString())),
-        _userPassword(QtUtils::toStdString(map.value("userPassword").toString())),
-        _databaseName(QtUtils::toStdString(map.value("databaseName").toString())),
-        _enabled(map.value("enabled").toBool())
+        _credentialInfo(QtUtils::toStdString(map.value(USERNAME).toString()),
+        QtUtils::toStdString(map.value(USERPASSWORD).toString()),
+        QtUtils::toStdString(map.value(DATABASENAME).toString())),
+        _enabled(map.value(AUTOTENTIFICATION).toBool())
     {
     }
 
-    /**
-     * @brief Clones credential settings.
-     */
-    CredentialSettings *CredentialSettings::clone() const
-    {
-        CredentialSettings *cloned = new CredentialSettings(*this);
-        return cloned;
-    }
 
-    QVariant CredentialSettings::toVariant() const
+    QVariantMap CredentialSettings::toVariant() const
     {
         QVariantMap map;
-        map.insert("userName", QtUtils::toQString(userName()));
-        map.insert("userPassword", QtUtils::toQString(userPassword()));
-        map.insert("databaseName", QtUtils::toQString(databaseName()));
-        map.insert("enabled", enabled());
+        map.insert(USERNAME, QtUtils::toQString(_credentialInfo._userName));
+        map.insert(USERPASSWORD, QtUtils::toQString(_credentialInfo._userPassword));
+        map.insert(DATABASENAME, QtUtils::toQString(_credentialInfo._databaseName));
+        map.insert(AUTOTENTIFICATION, _enabled);
         return map;
     }
 }

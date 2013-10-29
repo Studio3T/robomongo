@@ -4,6 +4,7 @@
 #include <QMutex>
 
 #include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
 
 QT_BEGIN_NAMESPACE
 class QThread;
@@ -14,7 +15,6 @@ namespace Robomongo
 {
     class MongoClient;
     class ScriptEngine;
-    class ConnectionSettings;
     class RDBClientConnection;
 
     class MongoWorker : public QObject
@@ -23,8 +23,8 @@ namespace Robomongo
 
     public:
         typedef std::vector<std::string> DatabasesContainerType;
-        explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
-        ConnectionSettings *connectionRecord() const {return _connection;}
+        explicit MongoWorker(const ConnectionSettings &connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
+        ConnectionSettings connectionRecord() const {return _connection;}
         ~MongoWorker();
         enum{pingTimeMs = 60*1000};
         
@@ -146,7 +146,7 @@ namespace Robomongo
         const int _batchSize;
         int _timerId;
 
-        ConnectionSettings *_connection;
+        const ConnectionSettings _connection;
     };
 
 }

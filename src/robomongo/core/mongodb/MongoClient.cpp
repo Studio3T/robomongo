@@ -422,7 +422,7 @@ namespace Robomongo
 
     std::vector<MongoDocumentPtr> MongoClient::query(const MongoQueryInfo &info)
     {
-        MongoNamespace ns(info._info._ns);
+        MongoNamespace ns(info._collectionInfo._ns);
 
         //int limit = (info.limit <= 0) ? 50 : info.limit;
 

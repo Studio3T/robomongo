@@ -16,7 +16,6 @@ namespace Robomongo
     class QueryWidgetUpdatedEvent;
     class WorkAreaTabWidget;
     class ConnectionMenu;
-    class App;
 
     class MainWindow : public QMainWindow
     {
@@ -58,6 +57,7 @@ namespace Robomongo
         void handle(ScriptExecutingEvent *event);
         void handle(ScriptExecutedEvent *event);
         void handle(QueryWidgetUpdatedEvent *event);
+
     private Q_SLOTS:
         void updateMenus();
         void setUtcTimeZone();
@@ -68,8 +68,6 @@ namespace Robomongo
         QDockWidget *_logDock;
 
         WorkAreaTabWidget *_workArea;
-
-        App *_app;
 
         ConnectionMenu *_connectionsMenu;
         QToolButton *_connectButton;

@@ -117,7 +117,7 @@ namespace Robomongo
         if (!par)
             return;
         EnsureIndexInfo fakeInfo(par->collection()->info(),"");
-        EditIndexDialog dlg(fakeInfo , QtUtils::toQString(par->databaseItem()->database()->name()),QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()), treeWidget());
+        EditIndexDialog dlg(fakeInfo , QtUtils::toQString(par->databaseItem()->database()->name()),QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord().getFullAddress()), treeWidget());
         int result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
@@ -187,7 +187,7 @@ namespace Robomongo
             if (!par)
                 return;
 
-            EditIndexDialog dlg(_info, QtUtils::toQString(grPar->databaseItem()->database()->name()), QtUtils::toQString(grPar->databaseItem()->database()->server()->connectionRecord()->getFullAddress()), treeWidget());
+            EditIndexDialog dlg(_info, QtUtils::toQString(grPar->databaseItem()->database()->name()), QtUtils::toQString(grPar->databaseItem()->database()->server()->connectionRecord().getFullAddress()), treeWidget());
             int result = dlg.exec();
             if (result != QDialog::Accepted)
                 return;
@@ -335,9 +335,9 @@ namespace Robomongo
     {
         MongoDatabase *database = _collection->database();
         MongoServer *server = database->server();
-        ConnectionSettings *settings = server->connectionRecord();
+        ConnectionSettings settings = server->connectionRecord();
 
-        DocumentTextEditor editor(CollectionInfo(settings->getFullAddress(), database->name(), _collection->name()), "{\n    \n}");
+        DocumentTextEditor editor(CollectionInfo(settings.getFullAddress(), database->name(), _collection->name()), "{\n    \n}");
 
         editor.setCursorPosition(1, 4);
         editor.setWindowTitle("Insert Document");
@@ -417,9 +417,9 @@ namespace Robomongo
     {
         MongoDatabase *database = _collection->database();
         MongoServer *server = database->server();
-        ConnectionSettings *settings = server->connectionRecord();
+        ConnectionSettings settings = server->connectionRecord();
 
-        CreateDatabaseDialog dlg(QtUtils::toQString(settings->getFullAddress()),
+        CreateDatabaseDialog dlg(QtUtils::toQString(settings.getFullAddress()),
             QtUtils::toQString(database->name()),
             QtUtils::toQString(_collection->name()), treeWidget());
         dlg.setWindowTitle("Duplicate Collection");
@@ -440,9 +440,9 @@ namespace Robomongo
     {
         MongoDatabase *databaseFrom = _collection->database();
         MongoServer *server = databaseFrom->server();
-        ConnectionSettings *settings = server->connectionRecord();
+        ConnectionSettings settings = server->connectionRecord();
 
-        CopyCollection dlg(QtUtils::toQString(settings->getFullAddress()), QtUtils::toQString(databaseFrom->name()), QtUtils::toQString(_collection->name()) );
+        CopyCollection dlg(QtUtils::toQString(settings.getFullAddress()), QtUtils::toQString(databaseFrom->name()), QtUtils::toQString(_collection->name()) );
         int result = dlg.exec();
 
         if (result == QDialog::Accepted) {
@@ -456,9 +456,9 @@ namespace Robomongo
     {
         MongoDatabase *database = _collection->database();
         MongoServer *server = database->server();
-        ConnectionSettings *settings = server->connectionRecord();
+        ConnectionSettings settings = server->connectionRecord();
 
-        CreateDatabaseDialog dlg(QtUtils::toQString(settings->getFullAddress()),
+        CreateDatabaseDialog dlg(QtUtils::toQString(settings.getFullAddress()),
             QtUtils::toQString(database->name()),
             QtUtils::toQString(_collection->name()), treeWidget());
         dlg.setWindowTitle("Rename Collection");

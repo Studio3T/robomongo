@@ -20,8 +20,6 @@
 #include <mongo/client/dbclient.h>
 #include <pcrecpp.h>
 
-#include "robomongo/core/settings/ConnectionSettings.h"
-#include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/utils/QtUtils.h"
 
@@ -49,7 +47,7 @@ namespace mongo {
 
 namespace Robomongo
 {
-    ScriptEngine::ScriptEngine(ConnectionSettings *connection) :
+    ScriptEngine::ScriptEngine(const ConnectionSettings &connection) :
         _connection(connection),
         _scope(NULL),
         _engine(NULL) { }
@@ -68,21 +66,17 @@ namespace Robomongo
     void ScriptEngine::init(bool isLoadMongoRcJs)
     {
         mongo::RecursiveMutex::scoped_lock lk( _mutex );
-
-        std::string connectDatabase = "test";
-
-        if (_connection->hasEnabledPrimaryCredential())
-            connectDatabase = _connection->primaryCredential()->databaseName();
-
         std::stringstream ss;
-        ss << "db = connect('" << _connection->serverHost() << ":" << _connection->serverPort() << _connection->sslInfo() << _connection->sshInfo() << "/" << connectDatabase;
+        CredentialSettings primCred = _connection.primaryCredential();
+        if (primCred.isValidAnEnabled()){
+            CredentialSettings::CredentialInfo info = primCred.info();
+            ss << "db = connect('" << _connection.serverHost() << ":" << _connection.serverPort() << _connection.sslInfo() << _connection.sshInfo() << "/" << info._databaseName;
+            ss << "', '" << info._userName << "', '" << info._userPassword << "')";
+        }
+        else{
+            ss << "db = connect('" << _connection.serverHost() << ":" << _connection.serverPort() << _connection.sslInfo() << _connection.sshInfo() << "/test')";
+        }
 
-        if (!_connection->hasEnabledPrimaryCredential())
-            ss << "')";
-        else
-            ss << "', '"
-               << _connection->primaryCredential()->userName() << "', '"
-               << _connection->primaryCredential()->userPassword() << "')";
 
         {
             mongo::shell_utils::_dbConnect = ss.str();

@@ -4,6 +4,7 @@
 #include <QTreeWidget>
 
 #include "robomongo/core/Core.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
 
 namespace Robomongo
 {

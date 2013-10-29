@@ -7,16 +7,14 @@
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/mongodb/MongoClient.h"
-#include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
-#include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
-    MongoWorker::MongoWorker(ConnectionSettings *connection,bool isLoadMongoRcJs, int batchSize, QObject *parent) : QObject(parent),
+    MongoWorker::MongoWorker(const ConnectionSettings &connection,bool isLoadMongoRcJs, int batchSize, QObject *parent) : QObject(parent),
         _connection(connection),
         _scriptEngine(NULL),
         _dbclient(NULL),
@@ -69,7 +67,7 @@ namespace Robomongo
         try {
             _scriptEngine = new ScriptEngine(_connection);
             _scriptEngine->init(_isLoadMongoRcJs);
-            _scriptEngine->use(_connection->defaultDatabase());
+            _scriptEngine->use(_connection.defaultDatabase());
             _scriptEngine->setBatchSize(_batchSize);
             _timerId = startTimer(pingTimeMs);
         }
@@ -81,7 +79,6 @@ namespace Robomongo
     MongoWorker::~MongoWorker()
     {
         delete _dbclient;
-        delete _connection;
         _thread->quit();
         if (!_thread->wait(2000))
             _thread->terminate();
@@ -99,13 +96,11 @@ namespace Robomongo
 
         try {
             mongo::DBClientBase *conn = getConnection();
-            bool hasPrimary = _connection->hasEnabledPrimaryCredential();
-            if (hasPrimary) {
+            CredentialSettings primCred = _connection.primaryCredential();
+            if (primCred.isValidAnEnabled()) {
                 std::string errmsg;
-                bool ok = conn->auth(
-                    _connection->primaryCredential()->databaseName(),
-                    _connection->primaryCredential()->userName(),
-                    _connection->primaryCredential()->userPassword(), errmsg);
+                CredentialSettings::CredentialInfo inf = primCred.info();
+                bool ok = conn->auth(inf._databaseName, inf._userName, inf._userPassword, errmsg);
 
                 if (!ok) {
                     throw std::runtime_error("Unable to authorize");
@@ -113,7 +108,7 @@ namespace Robomongo
 
                 // If authentication succeed and database name is 'admin' -
                 // then user is admin, otherwise user is not admin
-                std::string dbName = _connection->primaryCredential()->databaseName();
+                std::string dbName = inf._databaseName;
                 std::transform(dbName.begin(), dbName.end(), dbName.begin(), ::tolower);
                 if (dbName.compare("admin") != 0) // dbName is NOT "admin"
                     _isAdmin = false;
@@ -121,7 +116,7 @@ namespace Robomongo
             boost::scoped_ptr<MongoClient> client(getClient());
             //conn->done();
             std::vector<std::string> dbNames = getDatabaseNamesSafe();
-            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, client->getVersion()) ));
+            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection.getFullAddress(), dbNames, client->getVersion()) ));
         } catch(const std::exception &ex) {
             reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
             LOG_MSG(ex.what(), mongo::LL_ERROR);
@@ -130,9 +125,10 @@ namespace Robomongo
 
     std::string MongoWorker::getAuthBase() const
     {
-        bool hasPrimary = _connection->hasEnabledPrimaryCredential();
-        if(hasPrimary){
-            return _connection->primaryCredential()->databaseName();
+        CredentialSettings primCred = _connection.primaryCredential();
+        if (primCred.isValidAnEnabled()) {
+            CredentialSettings::CredentialInfo inf = primCred.info();
+            return inf._databaseName;
         }
         return std::string();
     }
@@ -142,7 +138,7 @@ namespace Robomongo
         DatabasesContainerType result;
         std::string authBase = getAuthBase();
         if (!_isAdmin && !authBase.empty()) {
-            result.push_back(_connection->primaryCredential()->databaseName());
+            result.push_back(authBase);
             return result;
         }
 
@@ -513,7 +509,7 @@ namespace Robomongo
     {
         if (!_dbclient) {
             mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
-            conn->connect(_connection->info());
+            conn->connect(_connection.info());
             _dbclient = conn;
         }
         return _dbclient;

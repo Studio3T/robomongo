@@ -29,31 +29,30 @@ namespace Robomongo
         /**
          * @brief Creates ConnectionListWidgetItem with specified ConnectionSettings
          */
-        ConnectionListWidgetItem(ConnectionSettings *connection) { setConnection(connection); }
+        ConnectionListWidgetItem(ConnectionSettings *connection): _connection(connection) { refreshFields(); }
 
         /**
          * @brief Returns attached ConnectionSettings.
          */
         ConnectionSettings *connection() { return _connection; }
-
         /**
          * @brief Attach ConnectionSettings to this item
          */
-        void setConnection(ConnectionSettings *connection)
+        void refreshFields()
         {
-            setText(0, QtUtils::toQString(connection->connectionName()));
-            setText(1, QtUtils::toQString(connection->getFullAddress()));
+            setText(0, QtUtils::toQString(_connection->connectionName()));
+            setText(1, QtUtils::toQString(_connection->getFullAddress()));
 
-            if (connection->hasEnabledPrimaryCredential()) {
-                QString authString = QString("%1 / %2").arg(QtUtils::toQString(connection->primaryCredential()->databaseName())).arg(QtUtils::toQString(connection->primaryCredential()->userName()));
+            CredentialSettings primCred = _connection->primaryCredential();
+            if (primCred.isValidAnEnabled()) {
+                CredentialSettings::CredentialInfo info = primCred.info();
+                QString authString = QString("%1 / %2").arg(QtUtils::toQString(info._databaseName)).arg(QtUtils::toQString(info._userName));
                 setText(2, authString);
                 setIcon(2, GuiRegistry::instance().keyIcon());
             } else {
                 setIcon(2, QIcon());
                 setText(2, "");
             }
-
-            _connection = connection;
             setIcon(0, GuiRegistry::instance().serverIcon());
         }
 
@@ -65,7 +64,7 @@ namespace Robomongo
      * @brief Creates dialog
      */
     ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager, QWidget *parent) 
-        : QDialog(parent), _settingsManager(settingsManager)
+        : QDialog(parent), _settingsManager(settingsManager), _selectedConnection(NULL)
     {
         setWindowIcon(GuiRegistry::instance().connectIcon());
         setWindowTitle("MongoDB Connections");
@@ -203,37 +202,20 @@ namespace Robomongo
     void ConnectionsDialog::edit()
     {
         ConnectionListWidgetItem *currentItem =
-            (ConnectionListWidgetItem *) _listWidget->currentItem();
+            dynamic_cast<ConnectionListWidgetItem *>(_listWidget->currentItem());
 
         // Do nothing if no item selected
-        if (currentItem == 0)
+        if (!currentItem)
             return;
 
-        ConnectionSettings *connection = currentItem->connection();
-        boost::scoped_ptr<ConnectionSettings> clonedConnection(connection->clone());
-        ConnectionDialog editDialog(clonedConnection.get());
+        ConnectionSettings connection(*currentItem->connection());
+        ConnectionDialog editDialog(&connection);
 
         // Do nothing if not accepted
-        if (editDialog.exec() != QDialog::Accepted) {
-            // on linux focus is lost - we need to activate connections dialog
-            activateWindow();
-            return;
+        if (editDialog.exec() == QDialog::Accepted) {
+            *currentItem->connection() = connection;
+            currentItem->refreshFields();
         }
-
-        connection->apply(editDialog.connection());       
-
-        // on linux focus is lost - we need to activate connections dialog
-        activateWindow();
-
-        int size = _connectionItems.size();
-        for (int i=0; i<size; ++i)
-        {
-            ConnectionListWidgetItem *item = _connectionItems[i];
-            if(_connectionItems[i]->connection()==connection){
-                item->setConnection(connection);
-                break;
-            }
-        }        
     }
 
     /**
@@ -273,7 +255,7 @@ namespace Robomongo
             return;
 
         // Clone connection
-        ConnectionSettings *connection = currentItem->connection()->clone();
+        ConnectionSettings *connection = new ConnectionSettings(*currentItem->connection());
         std::string newConnectionName="Copy of "+connection->connectionName();
 
         connection->setConnectionName(newConnectionName);

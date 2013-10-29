@@ -1,7 +1,5 @@
 #pragma once
 
-#include <QString>
-#include <QVariant>
 #include <QVariantMap>
 
 namespace Robomongo
@@ -9,37 +7,25 @@ namespace Robomongo
     class CredentialSettings
     {
     public:
+        struct CredentialInfo
+        {
+            CredentialInfo();
+            CredentialInfo(const std::string &userName, const std::string &userPassword, const std::string &databaseName);
+            bool isValid() const { return !_userName.empty() && !_databaseName.empty(); }
+            std::string _userName;
+            std::string _userPassword;
+            std::string _databaseName;
+        };
+
         CredentialSettings();
         explicit CredentialSettings(const QVariantMap &map);
 
         /**
-         * @brief Clones credential settings.
-         */
-        CredentialSettings *clone() const;
-
-        /**
          * @brief Converts to QVariantMap
          */
-        QVariant toVariant() const;
+        QVariantMap toVariant() const;
 
-        /**
-         * @brief User name
-         */
-        std::string userName() const { return _userName; }
-        void setUserName(const std::string &userName) { _userName = userName; }
-
-        /**
-         * @brief Password
-         */
-        std::string userPassword() const { return _userPassword; }
-        void setUserPassword(const std::string &userPassword) { _userPassword = userPassword; }
-
-        /**
-         * @brief Database name, on which authentication performed
-         */
-        std::string databaseName() const { return _databaseName.empty() ? "admin" : _databaseName; }
-        void setDatabaseName(const std::string &databaseName) { _databaseName = databaseName; }
-
+        bool isValidAnEnabled() const { return _credentialInfo.isValid() && _enabled; }
         /**
          * @brief Flag, indecating whether we should use this
          * credentials to perform authentication, or not.
@@ -47,15 +33,20 @@ namespace Robomongo
         bool enabled() const { return _enabled; }
         void setEnabled(bool enabled) { _enabled = enabled; }
 
-    private:
-        std::string _userName;
-        std::string _userPassword;
-        std::string _databaseName;
+        CredentialInfo info() const { return _credentialInfo; }
+        void setInfo(const CredentialInfo &info) { _credentialInfo = info; }
 
+    private:
+        CredentialInfo _credentialInfo;
         /**
          * @brief Flag, indecating whether we should use this
          * credentials to perform authentication, or not.
          */
         bool _enabled;
     };
+
+    inline bool operator==(const CredentialSettings::CredentialInfo& r,const CredentialSettings::CredentialInfo& l) 
+    { 
+        return r._databaseName == l._databaseName && r._userName == l._userName && r._userPassword == l._userPassword;
+    }
 }

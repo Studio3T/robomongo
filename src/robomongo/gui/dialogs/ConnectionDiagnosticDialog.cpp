@@ -46,10 +46,12 @@ namespace Robomongo
 
         _connectionLabel->setText(QString("Connecting to <b>%1</b>...").arg(QtUtils::toQString(_connection->getFullAddress())));
 
-        if (_connection->hasEnabledPrimaryCredential()) {
+        CredentialSettings primCred = _connection->primaryCredential();
+        if (primCred.isValidAnEnabled()) {
+            CredentialSettings::CredentialInfo info = primCred.info();
             _authLabel->setText(QString("Authorizing on <b>%1</b> database as <b>%2</b>...")
-                .arg(QtUtils::toQString(_connection->primaryCredential()->databaseName()))
-                .arg(QtUtils::toQString(_connection->primaryCredential()->userName())));
+                .arg(QtUtils::toQString(info._databaseName))
+                .arg(QtUtils::toQString(info._userName)));
         } else {
             _authLabel->setText("Authorization skipped by you");
         }
@@ -98,12 +100,14 @@ namespace Robomongo
 
         if (authed) {
             _authIconLabel->setPixmap(_yesPixmap);
-            _authLabel->setText(QString("Authorized as <b>%1</b>").arg(QtUtils::toQString(_connection->primaryCredential()->userName())));
+            CredentialSettings::CredentialInfo info = _connection->primaryCredential().info();
+            _authLabel->setText(QString("Authorized as <b>%1</b>").arg(QtUtils::toQString(info._userName)));
         } else {
 
             _authIconLabel->setPixmap(_noPixmap);
 
-            if (_connection->hasEnabledPrimaryCredential())
+            CredentialSettings primCred = _connection->primaryCredential();
+            if (primCred.isValidAnEnabled())
                 _authLabel->setText(QString("Authorization failed"));
             else
                 _authLabel->setText(QString("Authorization skipped by you"));
@@ -147,16 +151,14 @@ namespace Robomongo
             return;
         }
 
-        try {
-            if (_connection->hasEnabledPrimaryCredential())
-            {
-                CredentialSettings *credential = _connection->primaryCredential();
-                std::string database = credential->databaseName();
-                std::string username = credential->userName();
-                std::string password = credential->userPassword();
+        CredentialSettings primCred = _connection->primaryCredential();
 
+        try {
+            if (primCred.isValidAnEnabled())
+            {
+                CredentialSettings::CredentialInfo info = primCred.info();
                 std::string errmsg;
-                bool ok = connection->auth(database, username, password, errmsg);
+                bool ok = connection->auth(info._databaseName, info._userName, info._userPassword, errmsg);
                 emit authStatus("", ok);
             }
         } catch (const mongo::UserException &) {

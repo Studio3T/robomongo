@@ -4,6 +4,7 @@
 #include <third_party/js-1.7/jsparse.h>
 
 #include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/core/settings/ConnectionSettings.h"
 
 namespace Robomongo
 {
@@ -13,7 +14,7 @@ namespace Robomongo
     {
 
     public:
-        ScriptEngine(ConnectionSettings *connection);
+        ScriptEngine(const ConnectionSettings &connection);
         ~ScriptEngine();
 
         void init(bool isLoadMongoJs);
@@ -26,7 +27,7 @@ namespace Robomongo
         QStringList complete(const std::string &prefix);
 
     private:
-        ConnectionSettings *_connection;
+        const ConnectionSettings _connection;
 
         MongoShellResult prepareResult(const std::string &type, const std::string &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms);
         MongoShellExecResult prepareExecResult(const std::vector<MongoShellResult> &results);

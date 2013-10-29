@@ -33,7 +33,7 @@ namespace Robomongo
     MongoQueryInfo::MongoQueryInfo(const CollectionInfo &info,
               mongo::BSONObj query, mongo::BSONObj fields, int limit, int skip, int batchSize,
               int options, bool special) :
-        _info(info),
+        _collectionInfo(info),
         _query(query),
         _fields(fields),
         _limit(limit),

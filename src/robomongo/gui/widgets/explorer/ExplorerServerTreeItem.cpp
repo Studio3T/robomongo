@@ -20,7 +20,7 @@ namespace
 {
      void openCurrentServerShell(Robomongo::MongoServer *const server,const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
      {
-          Robomongo::AppRegistry::instance().app()->openShell(server, script, std::string(), execute, Robomongo::QtUtils::toQString(server->connectionRecord()->getReadableName()), cursor);
+          Robomongo::AppRegistry::instance().app()->openShell(server, script, std::string(), execute, Robomongo::QtUtils::toQString(server->connectionRecord().getReadableName()), cursor);
      }
 }
 
@@ -127,7 +127,7 @@ namespace Robomongo
 
     QString ExplorerServerTreeItem::buildServerName(int *count /* = NULL */)
     {
-        QString name = QtUtils::toQString(_server->connectionRecord()->getReadableName());
+        QString name = QtUtils::toQString(_server->connectionRecord().getReadableName());
 
         if (!count)
             return name;
@@ -188,7 +188,7 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::ui_createDatabase()
     {
-        CreateDatabaseDialog dlg(QtUtils::toQString(_server->connectionRecord()->getFullAddress()), QString(), QString(), treeWidget());
+        CreateDatabaseDialog dlg(QtUtils::toQString(_server->connectionRecord().getFullAddress()), QString(), QString(), treeWidget());
         dlg.setOkButtonText("&Create");
         dlg.setInputLabelText("Database Name:");
         int result = dlg.exec();

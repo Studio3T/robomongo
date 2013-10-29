@@ -39,15 +39,15 @@ namespace Robomongo
 
         _echoModeButton = new QPushButton("Show");
         VERIFY(connect(_echoModeButton, SIGNAL(clicked()), this, SLOT(toggleEchoMode())));
+        CredentialSettings primCred = _settings->primaryCredential();
+        _useAuth->setChecked(primCred.isValidAnEnabled());
+        authChecked(primCred.isValidAnEnabled());
 
-        _useAuth->setChecked(_settings->hasEnabledPrimaryCredential());
-        authChecked(_settings->hasEnabledPrimaryCredential());
-
-        if (_settings->credentialCount() > 0) {
-            CredentialSettings *primaryCredential = _settings->primaryCredential();
-            _userName->setText(QtUtils::toQString(primaryCredential->userName()));
-            _userPassword->setText(QtUtils::toQString(primaryCredential->userPassword()));
-            _databaseName->setText(QtUtils::toQString(primaryCredential->databaseName()));
+        if (primCred.info().isValid()) {
+            CredentialSettings::CredentialInfo info = primCred.info();
+            _userName->setText(QtUtils::toQString(info._userName));
+            _userPassword->setText(QtUtils::toQString(info._userPassword));
+            _databaseName->setText(QtUtils::toQString(info._databaseName));
         }
 
         QGridLayout *_authLayout = new QGridLayout;
@@ -69,20 +69,16 @@ namespace Robomongo
 
     void ConnectionAuthTab::accept()
     {
-        _settings->clearCredentials();
 
-        // If all fields is empty - do nothing
-        if (_userName->text().isEmpty()     &&
-            _userPassword->text().isEmpty() &&
-            _databaseName->text().isEmpty())
-            return;       
+        CredentialSettings result;
+        CredentialSettings::CredentialInfo info(QtUtils::toStdString(_userName->text()),QtUtils::toStdString(_userPassword->text()),QtUtils::toStdString(_databaseName->text()));
 
-        CredentialSettings *credential = new CredentialSettings();
-        credential->setEnabled(_useAuth->isChecked());
-        credential->setUserName(QtUtils::toStdString(_userName->text()));
-        credential->setUserPassword(QtUtils::toStdString(_userPassword->text()));
-        credential->setDatabaseName(QtUtils::toStdString(_databaseName->text()));
-        _settings->addCredential(credential);
+        if (info.isValid()){      
+            result.setEnabled(_useAuth->isChecked());        
+            result.setInfo(info);
+        }       
+
+        _settings->setPrimaryCredential(result);
     }
 
     void ConnectionAuthTab::toggleEchoMode()

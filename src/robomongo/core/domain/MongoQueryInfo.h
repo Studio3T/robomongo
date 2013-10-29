@@ -28,7 +28,7 @@ namespace Robomongo
                   mongo::BSONObj query, mongo::BSONObj fields, int limit, int skip, int batchSize,
                   int options, bool special);
 
-        CollectionInfo _info;
+        CollectionInfo _collectionInfo;
         mongo::BSONObj _query;
         mongo::BSONObj _fields;
         int _limit;

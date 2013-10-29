@@ -8,13 +8,11 @@
 
 namespace Robomongo
 {
-    class ConnectionSettings;
-
     class ScriptEngine
     {
 
     public:
-        ScriptEngine(const ConnectionSettings &connection);
+        ScriptEngine(IConnectionSettingsBase *connection);
         ~ScriptEngine();
 
         void init(bool isLoadMongoJs);
@@ -27,7 +25,7 @@ namespace Robomongo
         QStringList complete(const std::string &prefix);
 
     private:
-        const ConnectionSettings _connection;
+        IConnectionSettingsBase *_connection;
 
         MongoShellResult prepareResult(const std::string &type, const std::string &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms);
         MongoShellExecResult prepareExecResult(const std::vector<MongoShellResult> &results);

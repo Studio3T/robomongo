@@ -22,7 +22,7 @@ namespace Robomongo
         /**
          * @brief Constructs dialog with specified connection
          */
-        ConnectionDialog(ConnectionSettings *connection);
+        ConnectionDialog(ConnectionSettings *connection, QWidget *parent = 0);
         ConnectionSettings *const connection() const { return _connection; }        
 
     public Q_SLOTS:

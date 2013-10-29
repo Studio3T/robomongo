@@ -13,6 +13,7 @@ ENDIF(BUILD_PCRECPP_LIBRARY)
 
 SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/ConnectionsDialog.h
+    robomongo/gui/dialogs/ReplicaSetDialog.h
     robomongo/gui/dialogs/ConnectionDialog.h
     robomongo/gui/widgets/LogWidget.h
     robomongo/gui/widgets/explorer/ExplorerWidget.h
@@ -68,6 +69,7 @@ SET(HEADERS_GUI
 SET(SOURCES_GUI
     robomongo/gui/utils/DialogUtils.cpp
     robomongo/gui/dialogs/ConnectionsDialog.cpp
+    robomongo/gui/dialogs/ReplicaSetDialog.cpp
     robomongo/gui/dialogs/ConnectionDialog.cpp
     robomongo/gui/widgets/LogWidget.cpp
     robomongo/gui/widgets/explorer/ExplorerWidget.cpp

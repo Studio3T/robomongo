@@ -7,7 +7,7 @@
 
 namespace Robomongo
 {
-    class ConnectionSettings;
+    class IConnectionSettingsBase;
     /**
      * @brief SettingsManager gives you access to all settings, that is used
      *        by Robomongo. It can load() and save() them. Config file usually
@@ -21,7 +21,7 @@ namespace Robomongo
     class SettingsManager
     {
     public:
-        typedef std::vector<ConnectionSettings *> ConnectionSettingsContainerType;
+        typedef std::vector<IConnectionSettingsBase *> ConnectionSettingsContainerType;
         /**
          * @brief Creates SettingsManager for config file in default location
          *        (usually ~/.config/robomongo/robomongo.json)
@@ -49,12 +49,12 @@ namespace Robomongo
          * @brief Adds connection to the end of list.
          * Connection now will be owned by SettingsManager.
          */
-        void addConnection(ConnectionSettings *connection);
+        void addConnection(IConnectionSettingsBase *connection);
         
         /**
          * @brief Removes connection by index
          */
-        void removeConnection(ConnectionSettings *connection);
+        void removeConnection(IConnectionSettingsBase *connection);
 
         void reorderConnections(const ConnectionSettingsContainerType &connections);
 

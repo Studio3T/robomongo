@@ -47,7 +47,7 @@ namespace mongo {
 
 namespace Robomongo
 {
-    ScriptEngine::ScriptEngine(const ConnectionSettings &connection) :
+    ScriptEngine::ScriptEngine(IConnectionSettingsBase *connection) :
         _connection(connection),
         _scope(NULL),
         _engine(NULL) { }
@@ -67,14 +67,14 @@ namespace Robomongo
     {
         mongo::RecursiveMutex::scoped_lock lk( _mutex );
         std::stringstream ss;
-        CredentialSettings primCred = _connection.primaryCredential();
+        CredentialSettings primCred = _connection->primaryCredential();
         if (primCred.isValidAnEnabled()){
             CredentialSettings::CredentialInfo info = primCred.info();
-            ss << "db = connect('" << _connection.serverHost() << ":" << _connection.serverPort() << _connection.sslInfo() << _connection.sshInfo() << "/" << info._databaseName;
+            ss << "db = connect('" << _connection->connectionString() << "/" << info._databaseName;
             ss << "', '" << info._userName << "', '" << info._userPassword << "')";
         }
         else{
-            ss << "db = connect('" << _connection.serverHost() << ":" << _connection.serverPort() << _connection.sslInfo() << _connection.sshInfo() << "/test')";
+            ss << "db = connect('" << _connection->connectionString() << "/test')";
         }
 
 

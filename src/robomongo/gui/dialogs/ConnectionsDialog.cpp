@@ -16,6 +16,7 @@
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/ConnectionDialog.h"
+#include "robomongo/gui/dialogs/ReplicaSetDialog.h"
 
 namespace Robomongo
 {
@@ -29,35 +30,47 @@ namespace Robomongo
         /**
          * @brief Creates ConnectionListWidgetItem with specified ConnectionSettings
          */
-        ConnectionListWidgetItem(ConnectionSettings *connection): _connection(connection) { refreshFields(); }
+        ConnectionListWidgetItem(IConnectionSettingsBase *connection): _connection(connection) { refreshFields(); }
 
         /**
          * @brief Returns attached ConnectionSettings.
          */
-        ConnectionSettings *connection() { return _connection; }
+        IConnectionSettingsBase *connection() { return _connection; }
         /**
          * @brief Attach ConnectionSettings to this item
          */
         void refreshFields()
         {
             setText(0, QtUtils::toQString(_connection->connectionName()));
-            setText(1, QtUtils::toQString(_connection->getFullAddress()));
-
-            CredentialSettings primCred = _connection->primaryCredential();
-            if (primCred.isValidAnEnabled()) {
-                CredentialSettings::CredentialInfo info = primCred.info();
-                QString authString = QString("%1 / %2").arg(QtUtils::toQString(info._databaseName)).arg(QtUtils::toQString(info._userName));
-                setText(2, authString);
-                setIcon(2, GuiRegistry::instance().keyIcon());
-            } else {
-                setIcon(2, QIcon());
-                setText(2, "");
+            ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings*>(_connection);
+            ConnectionSettings *con = dynamic_cast<ConnectionSettings*>(_connection);
+            if(set){
+                // Populate list with connections
+                ReplicasetConnectionSettings::ServerContainerType connections = set->servers();
+                for (ReplicasetConnectionSettings::ServerContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
+                    ConnectionSettings *connection = *it;
+                    QTreeWidgetItem::addChild(new ConnectionListWidgetItem(connection));
+                }
             }
-            setIcon(0, GuiRegistry::instance().serverIcon());
+            else if(con){
+                setText(1, QtUtils::toQString(con->getFullAddress()));
+
+                CredentialSettings primCred = con->primaryCredential();
+                if (primCred.isValidAnEnabled()) {
+                    CredentialSettings::CredentialInfo info = primCred.info();
+                    QString authString = QString("%1 / %2").arg(QtUtils::toQString(info._databaseName)).arg(QtUtils::toQString(info._userName));
+                    setText(2, authString);
+                    setIcon(2, GuiRegistry::instance().keyIcon());
+                } else {
+                    setIcon(2, QIcon());
+                    setText(2, "");
+                }
+                setIcon(0, GuiRegistry::instance().serverIcon());
+            }
         }
 
     private:
-        ConnectionSettings *_connection;
+        IConnectionSettingsBase *_connection;
     };
 
     /**
@@ -122,7 +135,7 @@ namespace Robomongo
         bottomLayout->addWidget(buttonBox);
 
         QLabel *intro = new QLabel(
-            "<a href='create'>Create</a>, "
+            "<a href='create'>Create</a>, <a href='create replica set'>Create Replicaset</a>,"
             "<a href='edit'>edit</a>, <a href='remove'>remove</a>, <a href='clone'>clone</a> or reorder connections via drag'n'drop.");
         intro->setWordWrap(true);
         VERIFY(connect(intro, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString))));
@@ -138,7 +151,7 @@ namespace Robomongo
         // Populate list with connections
         SettingsManager::ConnectionSettingsContainerType connections = _settingsManager->connections();
         for (SettingsManager::ConnectionSettingsContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
-            ConnectionSettings *connectionModel = *it;
+            IConnectionSettingsBase *connectionModel = *it;
             add(connectionModel);
         }
 
@@ -169,6 +182,8 @@ namespace Robomongo
     {
         if (link == "create")
             add();
+        else if(link == "create replica set")
+            addReplicaSet();
         else if (link == "edit")
             edit();
         else if (link == "remove")
@@ -183,7 +198,23 @@ namespace Robomongo
     void ConnectionsDialog::add()
     {
         ConnectionSettings *newModel = new ConnectionSettings();
-        ConnectionDialog editDialog(newModel);
+        ConnectionDialog editDialog(newModel, this);
+
+        // Do nothing if not accepted
+        if (editDialog.exec() != QDialog::Accepted) {
+            delete newModel;
+            return;
+        }
+
+        _settingsManager->addConnection(newModel);
+        _listWidget->setFocus();
+        add(newModel);
+    }
+
+    void ConnectionsDialog::addReplicaSet()
+    {
+        ReplicasetConnectionSettings *newModel = new ReplicasetConnectionSettings();
+        ReplicasetDialog editDialog(newModel, this);
 
         // Do nothing if not accepted
         if (editDialog.exec() != QDialog::Accepted) {
@@ -208,14 +239,29 @@ namespace Robomongo
         if (!currentItem)
             return;
 
-        ConnectionSettings connection(*currentItem->connection());
-        ConnectionDialog editDialog(&connection);
+        ConnectionSettings *curCon = dynamic_cast<ConnectionSettings*>(currentItem->connection());
+        ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings*>(currentItem->connection());
 
-        // Do nothing if not accepted
-        if (editDialog.exec() == QDialog::Accepted) {
-            *currentItem->connection() = connection;
-            currentItem->refreshFields();
+        if(curCon){
+            ConnectionSettings connection(*curCon);
+            ConnectionDialog editDialog(&connection, this);
+
+            // Do nothing if not accepted
+            if (editDialog.exec() == QDialog::Accepted) {
+                *curCon = connection;
+                currentItem->refreshFields();
+            }
         }
+        else if(set){
+            ReplicasetConnectionSettings connection(*set);
+            ReplicasetDialog editDialog(&connection, this);
+
+            // Do nothing if not accepted
+            if (editDialog.exec() == QDialog::Accepted) {
+                *set = connection;
+                currentItem->refreshFields();
+            }
+        }        
     }
 
     /**
@@ -224,13 +270,13 @@ namespace Robomongo
     void ConnectionsDialog::remove()
     {
         ConnectionListWidgetItem *currentItem =
-            (ConnectionListWidgetItem *)_listWidget->currentItem();
+            dynamic_cast<ConnectionListWidgetItem *>(_listWidget->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
             return;
 
-        ConnectionSettings *connectionModel = currentItem->connection();
+        IConnectionSettingsBase *connectionModel = currentItem->connection();
 
         // Ask user
         int answer = QMessageBox::question(this,
@@ -251,26 +297,51 @@ namespace Robomongo
             (ConnectionListWidgetItem *) _listWidget->currentItem();
 
         // Do nothing if no item selected
-        if (currentItem == 0)
+        if (!currentItem)
             return;
 
-        // Clone connection
-        ConnectionSettings *connection = new ConnectionSettings(*currentItem->connection());
-        std::string newConnectionName="Copy of "+connection->connectionName();
+        ConnectionSettings *curCon = dynamic_cast<ConnectionSettings*>(currentItem->connection());
+        ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings*>(currentItem->connection());
 
-        connection->setConnectionName(newConnectionName);
+        if(curCon){
+            // Clone connection
+            ConnectionSettings *connection = new ConnectionSettings(*curCon);
+            std::string newConnectionName="Copy of "+connection->connectionName();
 
-        ConnectionDialog editDialog(connection);
+            connection->setConnectionName(newConnectionName);
 
-        // Cleanup newly created connection and return, if not accepted.
-        if (editDialog.exec() != QDialog::Accepted) {
-            delete connection;
-            return;
+            ConnectionDialog editDialog(connection, this);
+
+            // Cleanup newly created connection and return, if not accepted.
+            if (editDialog.exec() != QDialog::Accepted) {
+                delete connection;
+                return;
+            }
+
+            // Now connection will be owned by SettingsManager
+            _settingsManager->addConnection(connection);
+            add(connection);
         }
+        else if(set){
+            // Clone connection
+            ReplicasetConnectionSettings *connection = new ReplicasetConnectionSettings(*set);
+            std::string newConnectionName="Copy of "+connection->connectionName();
 
-        // Now connection will be owned by SettingsManager
-        _settingsManager->addConnection(connection);
-        add(connection);
+            connection->setConnectionName(newConnectionName);
+
+            ReplicasetDialog editDialog(connection, this);
+
+            // Cleanup newly created connection and return, if not accepted.
+            if (editDialog.exec() != QDialog::Accepted) {
+                delete connection;
+                return;
+            }
+
+            // Now connection will be owned by SettingsManager
+            _settingsManager->addConnection(connection);
+            add(connection);
+        }
+        
     }
 
     /**
@@ -284,8 +355,8 @@ namespace Robomongo
         // implementation.
         for(int i = 0; i < count; i++)
         {
-            ConnectionListWidgetItem * item = (ConnectionListWidgetItem *) _listWidget->topLevelItem(i);
-            if (item->childCount() > 0) {
+            ConnectionListWidgetItem * item = dynamic_cast<ConnectionListWidgetItem *>(_listWidget->topLevelItem(i));
+            if (item && item->childCount() > 0) {
                 ConnectionListWidgetItem *childItem = (ConnectionListWidgetItem *) item->child(0);
                 item->removeChild(childItem);
                 _listWidget->insertTopLevelItem(++i, childItem);
@@ -308,7 +379,7 @@ namespace Robomongo
     /**
      * @brief Add connection to the list widget
      */
-    void ConnectionsDialog::add(ConnectionSettings *connection)
+    void ConnectionsDialog::add(IConnectionSettingsBase *connection)
     {
         ConnectionListWidgetItem *item = new ConnectionListWidgetItem(connection);
         _listWidget->addTopLevelItem(item);

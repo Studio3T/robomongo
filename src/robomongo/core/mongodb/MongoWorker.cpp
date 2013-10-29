@@ -11,10 +11,11 @@
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include <mongo/client/dbclient_rs.h>
 
 namespace Robomongo
 {
-    MongoWorker::MongoWorker(const ConnectionSettings &connection,bool isLoadMongoRcJs, int batchSize, QObject *parent) : QObject(parent),
+    MongoWorker::MongoWorker(IConnectionSettingsBase *connection,bool isLoadMongoRcJs, int batchSize, QObject *parent) : QObject(parent),
         _connection(connection),
         _scriptEngine(NULL),
         _dbclient(NULL),
@@ -67,7 +68,7 @@ namespace Robomongo
         try {
             _scriptEngine = new ScriptEngine(_connection);
             _scriptEngine->init(_isLoadMongoRcJs);
-            _scriptEngine->use(_connection.defaultDatabase());
+            _scriptEngine->use(_connection->defaultDatabase());
             _scriptEngine->setBatchSize(_batchSize);
             _timerId = startTimer(pingTimeMs);
         }
@@ -79,6 +80,7 @@ namespace Robomongo
     MongoWorker::~MongoWorker()
     {
         delete _dbclient;
+        delete _connection;
         _thread->quit();
         if (!_thread->wait(2000))
             _thread->terminate();
@@ -96,7 +98,7 @@ namespace Robomongo
 
         try {
             mongo::DBClientBase *conn = getConnection();
-            CredentialSettings primCred = _connection.primaryCredential();
+            CredentialSettings primCred = _connection->primaryCredential();
             if (primCred.isValidAnEnabled()) {
                 std::string errmsg;
                 CredentialSettings::CredentialInfo inf = primCred.info();
@@ -116,7 +118,7 @@ namespace Robomongo
             boost::scoped_ptr<MongoClient> client(getClient());
             //conn->done();
             std::vector<std::string> dbNames = getDatabaseNamesSafe();
-            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection.getFullAddress(), dbNames, client->getVersion()) ));
+            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, client->getVersion()) ));
         } catch(const std::exception &ex) {
             reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
             LOG_MSG(ex.what(), mongo::LL_ERROR);
@@ -125,7 +127,7 @@ namespace Robomongo
 
     std::string MongoWorker::getAuthBase() const
     {
-        CredentialSettings primCred = _connection.primaryCredential();
+        CredentialSettings primCred = _connection->primaryCredential();
         if (primCred.isValidAnEnabled()) {
             CredentialSettings::CredentialInfo inf = primCred.info();
             return inf._databaseName;
@@ -505,12 +507,21 @@ namespace Robomongo
         }
     }
 
-    mongo::DBClientConnection *MongoWorker::getConnection()
+    mongo::DBClientBase *MongoWorker::getConnection()
     {
         if (!_dbclient) {
-            mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
-            conn->connect(_connection.info());
-            _dbclient = conn;
+            ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings *>(_connection);
+            ConnectionSettings *con = dynamic_cast<ConnectionSettings *>(_connection);
+            if(con){
+                mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
+                conn->connect(con->info());
+                _dbclient = conn;
+            }
+            else if(set){
+                mongo::DBClientReplicaSet *conn = new mongo::DBClientReplicaSet(set->replicaName(),set->serversHostsInfo());
+                conn->connect();
+                _dbclient = conn;
+            }
         }
         return _dbclient;
     }

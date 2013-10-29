@@ -153,7 +153,7 @@ namespace Robomongo
         if (!databaseItem)
             return;
 
-        CreateDatabaseDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord().getFullAddress()),
+        CreateDatabaseDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
             QtUtils::toQString(databaseItem->database()->name()), QString(), treeWidget());
         dlg.setWindowTitle("Create Collection");
         dlg.setOkButtonText("&Create");
@@ -177,11 +177,11 @@ namespace Robomongo
         CreateUserDialog *dlg = NULL;
 
         if (version < MongoUser::minimumSupportedVersion) {
-            dlg = new CreateUserDialog(QtUtils::toQString(databaseItem->database()->server()->connectionRecord().getFullAddress()),
+            dlg = new CreateUserDialog(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
                 QtUtils::toQString(databaseItem->database()->name()), MongoUser(version), treeWidget());
         }
         else {
-            dlg = new CreateUserDialog(databaseItem->database()->server()->getDatabasesNames(), QtUtils::toQString(databaseItem->database()->server()->connectionRecord().getFullAddress()),
+            dlg = new CreateUserDialog(databaseItem->database()->server()->getDatabasesNames(), QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
             QtUtils::toQString(databaseItem->database()->name()), MongoUser(version), treeWidget());
         }
 
@@ -201,7 +201,7 @@ namespace Robomongo
         if (!databaseItem)
             return;
 
-        FunctionTextEditor dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord().getFullAddress()), QtUtils::toQString(databaseItem->database()->name()), MongoFunction());
+        FunctionTextEditor dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(databaseItem->database()->name()), MongoFunction());
         dlg.setWindowTitle("Create Function");
         dlg.setCode(
             "function() {\n"

@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/utils/StdUtils.h"
 
 #define CONNECTIONNAME "connectionName"
 #define SSLSUPPORT "ssl"
@@ -20,6 +21,9 @@
 #define SSHINFO_AUTHMETHOD "sshInfo.authMethod"
 #define CREDENTIALS "credentials"
 
+#define REPLICASETSERVERS "replicasetservers"
+#define REPLICASETNAME "replicasetname"
+
 namespace
 {
     const unsigned port = 27017;
@@ -29,21 +33,30 @@ namespace
 
 namespace Robomongo
 {
+    IConnectionSettingsBase::IConnectionSettingsBase():
+                 _connectionName(defaultNameConnection), _defaultDatabase(), _credential()
+    {
 
+    }
+
+    IConnectionSettingsBase::IConnectionSettingsBase(const std::string &name, const std::string &defdatabase, const CredentialSettings &cred):
+        _connectionName(name), _defaultDatabase(defdatabase), _credential(cred)
+    {
+
+    }
     /**
      * @brief Creates ConnectionSettings with default values
      */
     ConnectionSettings::ConnectionSettings() :
-         _connectionName(defaultNameConnection),
+        IConnectionSettingsBase(),
         _info(defaultServerHost,port)
     {
 
     }
 
     ConnectionSettings::ConnectionSettings(QVariantMap map) :
-        _connectionName(QtUtils::toStdString(map.value(CONNECTIONNAME).toString()))
-        ,_defaultDatabase(QtUtils::toStdString(map.value(DEFAULTDATABASE).toString())),
-        _info( QtUtils::toStdString(map.value(SERVERHOST).toString()), map.value(SERVERPORT).toInt()
+        IConnectionSettingsBase(QtUtils::toStdString(map.value(CONNECTIONNAME).toString()), QtUtils::toStdString(map.value(DEFAULTDATABASE).toString()), CredentialSettings() )
+        ,_info( QtUtils::toStdString(map.value(SERVERHOST).toString()), map.value(SERVERPORT).toInt()
 #ifdef MONGO_SSL
         ,SSLInfo(map.value(SSLSUPPORT).toBool(),QtUtils::toStdString(map.value(SSLPEMKEYFILE).toString()))
 #endif
@@ -73,22 +86,7 @@ namespace Robomongo
         else{
             CredentialSettings credential(map.value(CREDENTIALS).toMap());
             setPrimaryCredential(credential);
-    }
-    }
-
-    ConnectionSettings::ConnectionSettings(const ConnectionSettings &old)
-    {
-        setConnectionName(old.connectionName());
-        setServerHost(old.serverHost());
-        setServerPort(old.serverPort());
-        setDefaultDatabase(old.defaultDatabase());
-#ifdef MONGO_SSL
-        _info.setSslInfo(old.sslInfo());
-#endif
-#ifdef SSH_SUPPORT_ENABLED
-        _info.setSshInfo(old.sshInfo());
-#endif
-        setPrimaryCredential(old._credential);
+        }
     }
 
     /**
@@ -122,20 +120,43 @@ namespace Robomongo
         return map;
     }
 
-    /**
-     * @brief Adds credential to this connection
-     */
-    void ConnectionSettings::setPrimaryCredential(const CredentialSettings &credential)
+    IConnectionSettingsBase *ConnectionSettings::clone() const
     {
-        _credential = credential;
+        ConnectionSettings *set = new ConnectionSettings(*this);
+        return set;
     }
 
-    /**
-     * @brief Returns primary credential, or NULL if no credentials exists.
-     */
-    CredentialSettings ConnectionSettings::primaryCredential() const
+    std::string ConnectionSettings::connectionString() const
     {
-        return _credential;
+        std::stringstream ss;
+        ss << serverHost() << ":" << serverPort() 
+#ifdef MONGO_SSL
+            << sslInfo()
+#endif
+#ifdef SSH_SUPPORT_ENABLED
+            << sshInfo()
+#endif
+            ;
+        return ss.str();
+    }
+
+    ReplicasetConnectionSettings::ReplicasetConnectionSettings() :
+        IConnectionSettingsBase()
+    {
+    }
+
+    ReplicasetConnectionSettings::ReplicasetConnectionSettings(QVariantMap map):
+        IConnectionSettingsBase(QtUtils::toStdString(map.value(CONNECTIONNAME).toString()), QtUtils::toStdString(map.value(DEFAULTDATABASE).toString()), CredentialSettings() ),
+        _replicaName(QtUtils::toStdString(map.value(REPLICASETNAME).toString()))
+    {
+        CredentialSettings credential(map.value(CREDENTIALS).toMap());
+        setPrimaryCredential(credential);
+        QList<QVariant> servers = map.value(REPLICASETSERVERS).toList();
+        for (QList<QVariant>::const_iterator it = servers.begin(); it!= servers.end(); ++it)
+        {
+            QVariant var = *it;
+            addServer(new ConnectionSettings(var.toMap()));
+        }
     }
 
     std::string ConnectionSettings::getFullAddress() const
@@ -143,5 +164,74 @@ namespace Robomongo
         char buff[1024] = {0};
         sprintf(buff, "%s:%u", _info.host().c_str(), _info.port());
         return buff;
+    }
+
+    std::string ReplicasetConnectionSettings::getFullAddress() const
+    {
+        std::string res;
+        for (ServerContainerType::const_iterator it = _servers.begin(); it!= _servers.end(); ++it)
+        {
+            ConnectionSettings *ser = *it;
+            res += ser->getFullAddress();
+        }
+        return res;
+    }
+
+    QVariant ReplicasetConnectionSettings::toVariant() const
+    {
+        QVariantMap map;
+        map.insert(CONNECTIONNAME, QtUtils::toQString(connectionName()));
+        map.insert(DEFAULTDATABASE, QtUtils::toQString(defaultDatabase()));
+        map.insert(REPLICASETNAME, QtUtils::toQString(replicaName()));
+        map.insert(CREDENTIALS, _credential.toVariant());
+        QVariantList listS;
+        for (ServerContainerType::const_iterator it = _servers.begin(); it!= _servers.end(); ++it)
+        {
+            ConnectionSettings *ser = *it;
+            listS.append(ser->toVariant());
+        }
+        map.insert(REPLICASETSERVERS,listS);
+        return map;
+    }
+
+    IConnectionSettingsBase *ReplicasetConnectionSettings::clone() const
+    {
+        ReplicasetConnectionSettings *set = new ReplicasetConnectionSettings(*this);
+        return set;
+    }
+
+    void ReplicasetConnectionSettings::addServer(ConnectionSettings *server)
+    {
+        _servers.push_back(server);
+    }
+
+    void ReplicasetConnectionSettings::removeServer(ConnectionSettings *server)
+    {
+        _servers.erase(std::remove_if(_servers.begin(), _servers.end(), stdutils::RemoveIfFound<ConnectionSettings*>(server)),_servers.end());
+    }
+
+    std::string ReplicasetConnectionSettings::connectionString() const
+    {
+        std::string result;
+        int count = _servers.size();
+        for (int i = 0; i<count; ++i )
+        {
+            result+=_servers[i]->connectionString();
+            if(i<count-1){
+                result+=',';
+            }
+        }
+        return result;
+    }
+
+    std::vector<ConnectionSettings::hostInfoType> ReplicasetConnectionSettings::serversHostsInfo() const
+    {
+        std::vector<ConnectionSettings::hostInfoType> result;
+        int count = _servers.size();
+        for (int i = 0; i<count; ++i)
+        {
+            result.push_back(_servers[i]->info());
+        }
+        return result;
     }
 }

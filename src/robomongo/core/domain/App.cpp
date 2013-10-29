@@ -52,7 +52,7 @@ namespace Robomongo
      * @param connection: ConnectionSettings, that will be owned by MongoServer.
      * @param visible: should this server be visible in UI (explorer) or not.
      */
-    MongoServer *App::openServer(const ConnectionSettings &connection,
+    MongoServer *App::openServer(IConnectionSettingsBase *connection,
                                  bool visible)
     {
         MongoServer *server = new MongoServer(connection, visible);
@@ -61,7 +61,7 @@ namespace Robomongo
         if (visible)
             _bus->publish(new ConnectingEvent(this, server));
 
-        LOG_MSG(QString("Connecting to %1...").arg(QtUtils::toQString(server->connectionRecord().getFullAddress())), mongo::LL_INFO);
+        LOG_MSG(QString("Connecting to %1...").arg(QtUtils::toQString(server->connectionRecord()->getFullAddress())), mongo::LL_INFO);
         server->tryConnect();
         return server;
     }
@@ -77,8 +77,8 @@ namespace Robomongo
 
     MongoShell *App::openShell(MongoCollection *collection,const QString &filePathToSave)
     {
-        ConnectionSettings connection = collection->database()->server()->connectionRecord();
-        connection.setDefaultDatabase(collection->database()->name());
+        IConnectionSettingsBase *connection = collection->database()->server()->connectionRecord();
+        connection->setDefaultDatabase(collection->database()->name());
         QString script = detail::buildCollectionQuery(collection->name(), "find()");
         return openShell(connection, ScriptInfo(script, true, CursorPosition(), QtUtils::toQString(collection->database()->name()),filePathToSave));
     }
@@ -87,10 +87,10 @@ namespace Robomongo
                                bool execute, const QString &shellName,
                                const CursorPosition &cursorPosition,const QString &filePathToSave)
     {
-        ConnectionSettings connection = server->connectionRecord();
+        IConnectionSettingsBase *connection = server->connectionRecord();
 
         if (!dbName.empty())
-            connection.setDefaultDatabase(dbName);
+            connection->setDefaultDatabase(dbName);
 
         return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName,filePathToSave));
     }
@@ -99,12 +99,12 @@ namespace Robomongo
                                bool execute, const QString &shellName,
                                const CursorPosition &cursorPosition,const QString &filePathToSave)
     {
-        ConnectionSettings connection = database->server()->connectionRecord();
-        connection.setDefaultDatabase(database->name());
+        IConnectionSettingsBase *connection = database->server()->connectionRecord();
+        connection->setDefaultDatabase(database->name());
         return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName,filePathToSave));
     }
 
-    MongoShell *App::openShell(const ConnectionSettings &connection, const ScriptInfo &scriptInfo)
+    MongoShell *App::openShell(IConnectionSettingsBase *connection, const ScriptInfo &scriptInfo)
     {
         MongoServer *server = openServer(connection, false);
         MongoShell *shell = new MongoShell(server,scriptInfo);

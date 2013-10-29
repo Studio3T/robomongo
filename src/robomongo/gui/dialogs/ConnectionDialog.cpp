@@ -23,8 +23,8 @@ namespace Robomongo
     /**
      * @brief Constructs dialog with specified connection
      */
-    ConnectionDialog::ConnectionDialog(ConnectionSettings *connection) 
-        : QDialog(),
+    ConnectionDialog::ConnectionDialog(ConnectionSettings *connection, QWidget *parent) 
+        : QDialog(parent),
         _connection(connection)
     {
         setWindowTitle("Connection Settings");

@@ -23,8 +23,8 @@ namespace Robomongo
 
     public:
         typedef std::vector<std::string> DatabasesContainerType;
-        explicit MongoWorker(const ConnectionSettings &connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
-        ConnectionSettings connectionRecord() const {return _connection;}
+        explicit MongoWorker(IConnectionSettingsBase *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
+        IConnectionSettingsBase *connectionRecord() const {return _connection;}
         ~MongoWorker();
         enum{pingTimeMs = 60*1000};
         
@@ -128,8 +128,8 @@ namespace Robomongo
         DatabasesContainerType getDatabaseNamesSafe();
         std::string getAuthBase() const;
 
-        mongo::DBClientConnection *_dbclient;
-        mongo::DBClientConnection *getConnection();
+        mongo::DBClientBase *_dbclient;
+        mongo::DBClientBase *getConnection();
         MongoClient *getClient();
 
         /**
@@ -146,7 +146,7 @@ namespace Robomongo
         const int _batchSize;
         int _timerId;
 
-        const ConnectionSettings _connection;
+        IConnectionSettingsBase *_connection;
     };
 
 }

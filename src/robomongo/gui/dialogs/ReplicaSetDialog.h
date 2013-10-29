@@ -2,39 +2,30 @@
 
 #include <QDialog>
 #include <QTreeWidget>
+QT_BEGIN_NAMESPACE
+class QLineEdit;
+QT_END_NAMESPACE
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 
 namespace Robomongo
 {
-    class ConnectionListWidgetItem;
-    class SettingsManager;
-    class IConnectionSettingsBase;
+    class ReplicasetConnectionSettings;
 
     /**
      * @brief Dialog allows select/edit/add/delete connections
      */
-    class ConnectionsDialog : public QDialog
+    class ReplicasetDialog : public QDialog
     {
         Q_OBJECT
 
     public:
-        typedef std::vector<ConnectionListWidgetItem *> ConnectionListItemContainerType; 
+        typedef std::vector<QTreeWidgetItem*> ConnectionListItemContainerType; 
         /**
          * @brief Creates dialog
          */
-        ConnectionsDialog(SettingsManager *manager, QWidget *parent = 0);
-
-        /**
-         * @brief ConnectionSettings, that was selected after pressing on
-         * "Connect" button
-         */
-        IConnectionSettingsBase *selectedConnection() const { return _selectedConnection; }
-
-        /**
-         * @brief This function is called when user clicks on "Connect" button.
-         */
+        ReplicasetDialog(ReplicasetConnectionSettings *connection, QWidget *parent = 0);
         virtual void accept();
 
     private Q_SLOTS:
@@ -43,17 +34,12 @@ namespace Robomongo
         /**
          * @brief Add connection to the list widget
          */
-        void add(IConnectionSettingsBase *connection);
+        void add(ConnectionSettings *connection);
 
         /**
          * @brief Initiate 'add' action, usually when user clicked on Add button
          */
         void add();
-
-        /**
-         * @brief Initiate 'add' action, usually when user clicked on Add button
-         */
-        void addReplicaSet();
 
         /**
          * @brief Initiate 'edit' action, usually when user clicked on Edit
@@ -77,36 +63,19 @@ namespace Robomongo
          * @brief Handles ListWidget layoutChanged() signal
          */
         void listWidget_layoutChanged();
-
     private:
-        /**
-         * @brief ConnectionSettings, that was selected after pressing on
-         * "Connect" button
-         */
-        IConnectionSettingsBase *_selectedConnection;
-
-        /**
-         * @brief Main list widget
-         */
+        QLineEdit *_nameConnection;
+        QLineEdit *_replicasetName;
         QTreeWidget *_listWidget;
-
-        /**
-         * @brief Settings manager
-         */
-        SettingsManager *_settingsManager;
-
-        /**
-         * @brief Hash that helps to connect ConnectionSettings with
-         * ConnectionListWidgetItem*
-         */
         ConnectionListItemContainerType _connectionItems;
+        ReplicasetConnectionSettings *_repConnection;
     };    
 
-    class ConnectionsTreeWidget : public QTreeWidget
+    class ReplicaSetConnectionsTreeWidget : public QTreeWidget
     {
         Q_OBJECT
     public:
-        ConnectionsTreeWidget();
+        ReplicaSetConnectionsTreeWidget();
 
     Q_SIGNALS:
         void layoutChanged();

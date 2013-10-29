@@ -32,7 +32,7 @@ namespace Robomongo
              MongoServer *server = *it;
              if (server->isConnected() ){
                  _servers.push_back(server);
-                 uniqueConnectionsNames.insert(QtUtils::toQString(server->connectionRecord().connectionName()));
+                 uniqueConnectionsNames.insert(QtUtils::toQString(server->connectionRecord()->connectionName()));
              }
         }
         
@@ -103,13 +103,13 @@ namespace Robomongo
         MongoServer *server = NULL;
         for (App::MongoServersContainerType::const_iterator it = _servers.begin(); it != _servers.end(); ++it) {
             MongoServer *ser = *it;
-            if (curentServerName == QtUtils::toQString(ser->connectionRecord().connectionName())) {
+            if (curentServerName == QtUtils::toQString(ser->connectionRecord()->connectionName())) {
                 server = ser;
                 break;
             }
         }  
         _databaseComboBox->addItems(server->getDatabasesNames());
-        if (_currentServerName==QtUtils::toQString(server->connectionRecord().getFullAddress())) {
+        if (_currentServerName==QtUtils::toQString(server->connectionRecord()->getFullAddress())) {
             _databaseComboBox->removeItem(_databaseComboBox->findText(_currentDatabase));
         }
     }

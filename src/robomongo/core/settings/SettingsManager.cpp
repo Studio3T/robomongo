@@ -21,6 +21,7 @@
 #define BATCHSIZE "batchSize"
 #define STYLE "style"
 #define CONNECTIONS "connections"
+#define REPLICASETS "replicasets"
 
 namespace
 {
@@ -62,7 +63,7 @@ namespace Robomongo
 
     SettingsManager::~SettingsManager()
     {
-        std::for_each(_connections.begin(),_connections.end(),stdutils::default_delete<ConnectionSettings *>());
+        std::for_each(_connections.begin(),_connections.end(),stdutils::default_delete<IConnectionSettingsBase *>());
     }
 
     /**
@@ -162,9 +163,15 @@ namespace Robomongo
         // 5. Load connections
         _connections.clear();
 
-        QVariantList list = map.value(CONNECTIONS).toList();
-        for (QVariantList::iterator it = list.begin(); it != list.end(); ++it) {
+        QVariantList listc = map.value(CONNECTIONS).toList();
+        for (QVariantList::iterator it = listc.begin(); it != listc.end(); ++it) {
             ConnectionSettings *record = new ConnectionSettings((*it).toMap());
+            _connections.push_back(record);
+        }
+
+        QVariantList listr = map.value(REPLICASETS).toList();
+        for (QVariantList::iterator it = listr.begin(); it != listr.end(); ++it) {
+            ReplicasetConnectionSettings *record = new ReplicasetConnectionSettings((*it).toMap());
             _connections.push_back(record);
         }
     }
@@ -202,14 +209,23 @@ namespace Robomongo
         map.insert(STYLE, _currentStyle);
 
         // 9. Save connections
-        QVariantList list;
+        QVariantList listc;
+        QVariantList listr;
 
         for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it!=_connections.end(); ++it) {
-            QVariantMap rm = (*it)->toVariant().toMap();
-            list.append(rm);
+            IConnectionSettingsBase *base = *it;
+            QVariantMap rm = base->toVariant().toMap();
+
+            ConnectionSettings *con = dynamic_cast<ConnectionSettings*>(base);
+            ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings*>(base);
+            if(con)
+                listc.append(rm);
+            else if(set)
+                listr.append(rm);
         }
 
-        map.insert(CONNECTIONS, list);
+        map.insert(CONNECTIONS, listc);
+        map.insert(REPLICASETS, listr);
 
         return map;
     }
@@ -217,7 +233,7 @@ namespace Robomongo
     /**
      * Adds connection to the end of list
      */
-    void SettingsManager::addConnection(ConnectionSettings *connection)
+    void SettingsManager::addConnection(IConnectionSettingsBase *connection)
     {
         _connections.push_back(connection);
     }
@@ -225,7 +241,7 @@ namespace Robomongo
     /**
      * Removes connection by index
      */
-    void SettingsManager::removeConnection(ConnectionSettings *connection)
+    void SettingsManager::removeConnection(IConnectionSettingsBase *connection)
     {
         ConnectionSettingsContainerType::iterator it = std::find(_connections.begin(),_connections.end(),connection);
         if (it!=_connections.end()) {

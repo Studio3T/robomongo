@@ -1,7 +1,18 @@
 #!/bin/bash
-if [[ -z $1 ]] 
+ARGC=$#
+i=2  
+lupdate_params=""
+while [ $i -le $ARGC ]; do 
+    lupdate_params="$lupdate_params ${!i}"
+    i=$((i+1))
+done
+
+if [[ (-z $1) || ($1 == "all")]]
 then
-    lupdate ./.. -ts ./robomongo_dummy.raw.ts
+    for file in `find ./ -name "*.raw.ts"`
+    do
+        lupdate $lupdate_params ./.. -ts $file
+    done
 else 
-    lupdate ./.. -ts ./robomongo_$1.raw.ts
+    lupdate $lupdate_params ./.. -ts ./robomongo_$1.raw.ts
 fi

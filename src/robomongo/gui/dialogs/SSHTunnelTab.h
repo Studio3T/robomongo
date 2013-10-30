@@ -1,7 +1,11 @@
 #pragma once
 
 #include <QWidget>
+
+#include "robomongo/core/settings/ConnectionSettings.h"
+
 QT_BEGIN_NAMESPACE
+class QLabel;
 class QLineEdit;
 class QCheckBox;
 class QPushButton;
@@ -27,6 +31,9 @@ namespace Robomongo
         void securityChange(const QString& val);
         void setPublicFile();
         void setPrivateFile();
+
+    private:
+        SSHInfo::SupportedAuthenticationMetods selectedAuthMethod();
         
     private:        
         QCheckBox *_sshSupport;
@@ -34,11 +41,15 @@ namespace Robomongo
         QLineEdit *_userName;
         QLineEdit *_sshPort;
         QComboBox *_security;
+        QLabel *_sshPublicKeyLabel;
+        QLabel *_sshPrivateKeyLabel;
+        QLabel *_sshPassphraseLabel;
 
-        QFrame *_passwordFrame;
-        QFrame *_pivateKeyFrame;
+        QPushButton *_selectPublicFileButton;
+        QPushButton *_selectPrivateFileButton;
 
         QLineEdit *_passwordBox;
+        QLabel *_passwordLabel;
 
         QLineEdit *_publicKeyBox; 
         QLineEdit *_privateKeyBox; 

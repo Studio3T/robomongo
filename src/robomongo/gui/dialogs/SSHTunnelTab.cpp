@@ -19,11 +19,13 @@ namespace Robomongo
         _settings(settings)
     {
         SSHInfo info = _settings->sshInfo();
-        _sshSupport = new QCheckBox("SSH support");
+        _sshSupport = new QCheckBox("Use SSH tunnel");
+        _sshSupport->setStyleSheet("margin-bottom: 7px");
         _sshSupport->setChecked(info.isValid());
 
         _sshHostName = new QLineEdit(QtUtils::toQString(info._hostName));
         _userName = new QLineEdit(QtUtils::toQString(info._userName));
+
         _sshPort = new QLineEdit(QString::number(info._port));
         _sshPort->setFixedWidth(80);
         QRegExp rx("\\d+");//(0-65554)
@@ -31,12 +33,22 @@ namespace Robomongo
 
         _security = new QComboBox();
         _security->addItems(QStringList() << "Password" << "PublicKey");
-        VERIFY(connect(_security,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(securityChange(const QString&))));
+        VERIFY(connect(_security, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(securityChange(const QString&))));
 
         _passwordBox = new QLineEdit(QtUtils::toQString(info._password));
         _publicKeyBox = new QLineEdit(QtUtils::toQString(info._publicKey._publicKey));
         _privateKeyBox = new QLineEdit(QtUtils::toQString(info._publicKey._privateKey));
         _passphraseBox = new QLineEdit(QtUtils::toQString(info._publicKey._passphrase));
+
+        _passwordLabel = new QLabel("User Password:");
+        _sshPublicKeyLabel = new QLabel("Public key:");
+        _sshPrivateKeyLabel = new QLabel("Private key:");
+        _sshPassphraseLabel = new QLabel("Passphrase:");
+
+/*
+// Commented because of this:
+// https://github.com/paralect/robomongo/issues/391
+
 #ifdef Q_OS_WIN
         QRegExp pathx("([a-zA-Z]:)?([\\\\/][a-zA-Z0-9_.-]+)+[\\\\/]?");
 #else
@@ -44,73 +56,64 @@ namespace Robomongo
 #endif // Q_OS_WIN
         _publicKeyBox->setValidator(new QRegExpValidator(pathx, this));
         _privateKeyBox->setValidator(new QRegExpValidator(pathx, this));
+*/
+
+        QHBoxLayout *hostAndPasswordLayout = new QHBoxLayout;
+        hostAndPasswordLayout->addWidget(_sshHostName);
+        hostAndPasswordLayout->addWidget(new QLabel(":"));
+        hostAndPasswordLayout->addWidget(_sshPort);
 
         QGridLayout *connectionLayout = new QGridLayout;
-        connectionLayout->addWidget(new QLabel("SSH Host:"),          1, 0);
-        connectionLayout->addWidget(_sshHostName,              1, 1);
+        connectionLayout->setAlignment(Qt::AlignTop);
+        connectionLayout->setColumnStretch(1, 1);
+        connectionLayout->setColumnMinimumWidth(0, _passwordLabel->sizeHint().width() + 5);
 
-        connectionLayout->addWidget(new QLabel("Username:"),       2, 0);
-        connectionLayout->addWidget(_userName,               2, 1);
+        connectionLayout->addWidget(new QLabel("SSH Host:"),       1, 0);
+        connectionLayout->addLayout(hostAndPasswordLayout,         1, 1, 1, 2);
 
-        connectionLayout->addWidget(new QLabel("Port:"),              3, 0);
-        connectionLayout->addWidget(_sshPort,                  3, 1);
+        connectionLayout->addWidget(new QLabel("User Name:"),      2, 0);
+        connectionLayout->addWidget(_userName,                     2, 1, 1, 2);
 
-        connectionLayout->addWidget(new QLabel("Security:"),              4, 0);
-        connectionLayout->addWidget(_security,          4, 1);
-        
-        _pivateKeyFrame = new QFrame;
-        QVBoxLayout *pivL = new QVBoxLayout;
-        pivL->setContentsMargins(0,0,0,0);
-        QHBoxLayout *pivL1 = new QHBoxLayout;
-        pivL1->addWidget(new QLabel("Public key:"));
-        pivL1->addWidget(_publicKeyBox);
-        QPushButton *selectPublicFile = new QPushButton("...");
-        selectPublicFile->setFixedSize(20,20);       
-        pivL1->addWidget(selectPublicFile);        
-       
-        QHBoxLayout *pivL2 = new QHBoxLayout;
-        pivL2->addWidget(new QLabel("Private key:"));
-        pivL2->addWidget(_privateKeyBox);
-        QPushButton *selectPrivateFile = new QPushButton("...");
-        selectPrivateFile->setFixedSize(20,20);       
-        pivL2->addWidget(selectPrivateFile);
-        
-        QHBoxLayout *pivL3 = new QHBoxLayout;
-        pivL3->addWidget(new QLabel("Passphrase:"));
-        pivL3->addWidget(_passphraseBox);
+        connectionLayout->addWidget(new QLabel("Auth Method:"),    4, 0);
+        connectionLayout->addWidget(_security,                     4, 1, 1, 2);
 
-        pivL->addLayout(pivL1);
-        pivL->addLayout(pivL2);
-        pivL->addLayout(pivL3);
-        _pivateKeyFrame->setLayout(pivL);
+        connectionLayout->addWidget(_passwordLabel,                5, 0);
+        connectionLayout->addWidget(_passwordBox,                  5, 1, 1, 2);
 
-        _passwordFrame = new QFrame;
-        QHBoxLayout *pasL = new QHBoxLayout;
-        pasL->setContentsMargins(0,0,0,0);
-        pasL->addWidget(new QLabel("Password:"));
-        pasL->addWidget(_passwordBox);
-        _passwordFrame->setLayout(pasL);        
+        _selectPublicFileButton = new QPushButton("...");
+        _selectPublicFileButton->setFixedSize(20, 20);
+
+        _selectPrivateFileButton = new QPushButton("...");
+        _selectPrivateFileButton->setFixedSize(20, 20);
+
+        connectionLayout->addWidget(_sshPublicKeyLabel,            6, 0);
+        connectionLayout->addWidget(_publicKeyBox,                 6, 1);
+        connectionLayout->addWidget(_selectPublicFileButton,       6, 2);
+
+        connectionLayout->addWidget(_sshPrivateKeyLabel,           7, 0);
+        connectionLayout->addWidget(_privateKeyBox,                7, 1);
+        connectionLayout->addWidget(_selectPrivateFileButton,      7, 2);
+
+        connectionLayout->addWidget(_sshPassphraseLabel,           8, 0);
+        connectionLayout->addWidget(_passphraseBox,                8, 1, 1, 2);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addWidget(_sshSupport);
         mainLayout->addLayout(connectionLayout);
-        mainLayout->addWidget(_passwordFrame);
-        mainLayout->addWidget(_pivateKeyFrame);
         setLayout(mainLayout);
 
-        if(info.authMethod()==SSHInfo::PUBLICKEY){         
+        if (info.authMethod() == SSHInfo::PUBLICKEY) {
             _security->setCurrentText("PublicKey");
-        }
-        else{           
+        } else {
             _security->setCurrentText("Password");
         }
 
         securityChange(_security->currentText());
-        VERIFY(connect(selectPrivateFile, SIGNAL(clicked()), this, SLOT(setPrivateFile())));
-        VERIFY(connect(selectPublicFile, SIGNAL(clicked()), this, SLOT(setPublicFile())));
+        VERIFY(connect(_selectPrivateFileButton, SIGNAL(clicked()), this, SLOT(setPrivateFile())));
+        VERIFY(connect(_selectPublicFileButton, SIGNAL(clicked()), this, SLOT(setPublicFile())));
 
         sshSupportStateChange(_sshSupport->checkState());
-        VERIFY(connect(_sshSupport,SIGNAL(stateChanged(int)),this,SLOT(sshSupportStateChange(int))));
+        VERIFY(connect(_sshSupport, SIGNAL(stateChanged(int)), this, SLOT(sshSupportStateChange(int))));
 
         _sshHostName->setFocus();
     }
@@ -126,28 +129,63 @@ namespace Robomongo
         _userName->setEnabled(value);
         _sshPort->setEnabled(value);       
         _security->setEnabled(value);
-        _pivateKeyFrame->setEnabled(value);
-        _passwordFrame->setEnabled(value);   
+
+        _sshPublicKeyLabel->setEnabled(value);
+        _publicKeyBox->setEnabled(value);
+        _selectPublicFileButton->setEnabled(value);
+
+        _sshPrivateKeyLabel->setEnabled(value);
+        _privateKeyBox->setEnabled(value);
+        _selectPrivateFileButton->setEnabled(value);
+
+        _sshPassphraseLabel->setEnabled(value);
+        _passphraseBox->setEnabled(value);
+
+        _passwordBox->setEnabled(value);
+        _passwordLabel->setEnabled(value);
     }
 
-    void SshTunelTab::securityChange(const QString& val)
+    void SshTunelTab::securityChange(const QString&)
     {
-        bool isPrivate = val == "PublicKey";        
+        bool isKey = selectedAuthMethod() == SSHInfo::PUBLICKEY;
 
-        _pivateKeyFrame->setVisible(isPrivate);
-        _passwordFrame->setVisible(!isPrivate);
+        _sshPublicKeyLabel->setVisible(isKey);
+        _publicKeyBox->setVisible(isKey);
+        _selectPublicFileButton->setVisible(isKey);
+
+        _sshPrivateKeyLabel->setVisible(isKey);
+        _privateKeyBox->setVisible(isKey);
+        _selectPrivateFileButton->setVisible(isKey);
+
+        _sshPassphraseLabel->setVisible(isKey);
+        _passphraseBox->setVisible(isKey);
+
+        _passwordBox->setVisible(!isKey);
+        _passwordLabel->setVisible(!isKey);
     }
 
     void SshTunelTab::setPublicFile()
     {
-        QString filepath = QFileDialog::getOpenFileName(this,"Select public key file",_publicKeyBox->text(),QObject::tr("Public key files (*.*)"));
+        QString filepath = QFileDialog::getOpenFileName(this, "Select public key file",
+            _publicKeyBox->text(), QObject::tr("Public key files (*.*)"));
+
         _publicKeyBox->setText(filepath);
     }
 
     void SshTunelTab::setPrivateFile()
     {
-        QString filepath = QFileDialog::getOpenFileName(this,"Select private key file",_privateKeyBox->text(),QObject::tr("Private key files (*.*)"));
+        QString filepath = QFileDialog::getOpenFileName(this, "Select private key file",
+            _privateKeyBox->text(), QObject::tr("Private key files (*.*)"));
+
         _privateKeyBox->setText(filepath);
+    }
+
+    SSHInfo::SupportedAuthenticationMetods SshTunelTab::selectedAuthMethod()
+    {
+        if (_security->currentText() == "PublicKey")
+            return SSHInfo::PUBLICKEY;
+
+        return SSHInfo::PASSWORD;
     }
 
     void SshTunelTab::accept()
@@ -161,15 +199,9 @@ namespace Robomongo
         info._publicKey._privateKey = QtUtils::toStdString(_privateKeyBox->text());
         info._publicKey._passphrase = QtUtils::toStdString(_passphraseBox->text());
 
-        if(_sshSupport->isChecked()){
-            if (_passwordFrame->isVisible()){
-                info._currentMethod = SSHInfo::PASSWORD;
-            }
-            else if(_passphraseBox->isVisible()){
-                info._currentMethod = SSHInfo::PUBLICKEY;
-            }
-        }
-        else{
+        if (_sshSupport->isChecked()) {
+            info._currentMethod = selectedAuthMethod();
+        } else {
             info._currentMethod = SSHInfo::UNKNOWN;
         }
         

@@ -24,7 +24,7 @@ namespace Robomongo
     {
         setWindowTitle("Diagnostic");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
-        setFixedSize(dialogSize);
+        //setFixedSize(dialogSize);
 
         _yesIcon = GuiRegistry::instance().yesMarkIcon();
         _noIcon = GuiRegistry::instance().noMarkIcon();

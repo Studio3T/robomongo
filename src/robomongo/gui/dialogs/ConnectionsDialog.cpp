@@ -229,7 +229,7 @@ namespace Robomongo
         for (int i=0; i<size; ++i)
         {
             ConnectionListWidgetItem *item = _connectionItems[i];
-            if(_connectionItems[i]->connection()==connection){
+            if (_connectionItems[i]->connection() == connection) {
                 item->setConnection(connection);
                 break;
             }

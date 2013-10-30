@@ -12,6 +12,7 @@
 #include "robomongo/gui/dialogs/ConnectionAuthTab.h"
 #include "robomongo/gui/dialogs/ConnectionBasicTab.h"
 #include "robomongo/gui/dialogs/ConnectionAdvancedTab.h"
+#include "robomongo/gui/dialogs/ConnectionSslTab.h"
 #ifdef SSH_SUPPORT_ENABLED
 #include "robomongo/gui/dialogs/SSHTunnelTab.h"
 #endif
@@ -30,6 +31,7 @@ namespace Robomongo
         setWindowTitle("Connection Settings");
         setWindowIcon(GuiRegistry::instance().serverIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
+        setMinimumWidth(450);
 
         QPushButton *testButton = new QPushButton("&Test");
         testButton->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
@@ -49,6 +51,8 @@ namespace Robomongo
         _basicTab    = new ConnectionBasicTab(_connection);
         _authTab     = new ConnectionAuthTab(_connection);
         _advancedTab = new ConnectionAdvancedTab(_connection);
+        _sslTab      = new ConnectionSslTab(_connection);
+
 #ifdef SSH_SUPPORT_ENABLED
         _sshTab = new SshTunelTab(_connection);
 #endif
@@ -56,8 +60,9 @@ namespace Robomongo
         tabWidget->addTab(_basicTab,    "Connection");
         tabWidget->addTab(_authTab,     "Authentication");
         tabWidget->addTab(_advancedTab, "Advanced");
+        tabWidget->addTab(_sslTab,      "SSL");
 #ifdef SSH_SUPPORT_ENABLED
-        tabWidget->addTab(_sshTab, "SSH Tunnel");
+        tabWidget->addTab(_sshTab,      "SSH");
 #endif
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -81,15 +86,16 @@ namespace Robomongo
     bool ConnectionDialog::validateAndApply()
     {
 #ifdef SSH_SUPPORT_ENABLED
-        bool isSshAndSsl = _basicTab->isSslSupported() && _sshTab->isSshSupported();
-        if(isSshAndSsl){
-            QMessageBox::warning(this, "Internal error", "SSH and SSL cannot be enabled simultaneously. Please uncheck one of them.");
+        bool isSshAndSsl = _sslTab->isSslSupported() && _sshTab->isSshSupported();
+        if (isSshAndSsl) {
+            QMessageBox::warning(this, "Invalid Transport", "SSH and SSL cannot be enabled simultaneously. Please uncheck one of them.");
             return false;
         }
 #endif
         _basicTab->accept();
         _authTab->accept();
         _advancedTab->accept();
+        _sslTab->accept();
 #ifdef SSH_SUPPORT_ENABLED
         _sshTab->accept();
 #endif

@@ -152,7 +152,7 @@ namespace Robomongo
 
     void SshTunelTab::accept()
     {
-        SSHInfo info;
+        SSHInfo info = _settings->sshInfo();
         info._hostName = QtUtils::toStdString(_sshHostName->text());
         info._userName = QtUtils::toStdString(_userName->text()); 
         info._port = _sshPort->text().toInt();
@@ -169,6 +169,10 @@ namespace Robomongo
                 info._currentMethod = SSHInfo::PUBLICKEY;
             }
         }
+        else{
+            info._currentMethod = SSHInfo::UNKNOWN;
+        }
+        
         _settings->setSshInfo(info);
     }
 }

@@ -18,7 +18,6 @@ SET(HEADERS ${HEADERS}
 include/libssh2.h
 )
 SET(SOURCES ${SOURCES} 
-src/global.c
 src/global.c 
 src/session.c 
 src/openssl.c 

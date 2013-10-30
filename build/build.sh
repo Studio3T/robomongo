@@ -9,7 +9,7 @@ createPackage() {
     fi
     mkdir "$dir_path"
     cd "$dir_path"
-    cmake ../../ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE -DCPACK_GENERATOR="$cpack_generator"
+    cmake ../../ -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE -DCPACK_GENERATOR="$cpack_generator" -DOPENSSL_USE_STATIC=1
     make install
     cpack -G "$cpack_generator"
     if [ "$cpack_generator" = 'DEB' ]; then

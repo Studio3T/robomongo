@@ -67,8 +67,9 @@ namespace mongo {
 
         // _secOkCmdList was not initialized! mongo::runGlobalInitializersOrDie
         // probably was not called.
+#ifndef ROBOMONGO
         fassert(16464, !_secOkCmdList.empty());
-
+#endif
         if (!hasReadPreference(queryObj)) {
             return false;
         }

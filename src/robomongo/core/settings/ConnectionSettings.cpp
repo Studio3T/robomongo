@@ -33,14 +33,14 @@ namespace
 
 namespace Robomongo
 {
-    IConnectionSettingsBase::IConnectionSettingsBase():
-                 _connectionName(defaultNameConnection), _defaultDatabase(), _credential()
+    IConnectionSettingsBase::IConnectionSettingsBase(ConnectionType connectionType):
+                 _connectionType(connectionType), _connectionName(defaultNameConnection), _defaultDatabase(), _credential()
     {
 
     }
 
-    IConnectionSettingsBase::IConnectionSettingsBase(const std::string &name, const std::string &defdatabase, const CredentialSettings &cred):
-        _connectionName(name), _defaultDatabase(defdatabase), _credential(cred)
+    IConnectionSettingsBase::IConnectionSettingsBase(ConnectionType connectionType, const std::string &name, const std::string &defdatabase, const CredentialSettings &cred):
+        _connectionType(connectionType), _connectionName(name), _defaultDatabase(defdatabase), _credential(cred)
     {
 
     }
@@ -48,14 +48,14 @@ namespace Robomongo
      * @brief Creates ConnectionSettings with default values
      */
     ConnectionSettings::ConnectionSettings() :
-        IConnectionSettingsBase(),
+        IConnectionSettingsBase(DIRECT),
         _info(defaultServerHost,port)
     {
 
     }
 
     ConnectionSettings::ConnectionSettings(QVariantMap map) :
-        IConnectionSettingsBase(QtUtils::toStdString(map.value(CONNECTIONNAME).toString()), QtUtils::toStdString(map.value(DEFAULTDATABASE).toString()), CredentialSettings() )
+        IConnectionSettingsBase(DIRECT,QtUtils::toStdString(map.value(CONNECTIONNAME).toString()), QtUtils::toStdString(map.value(DEFAULTDATABASE).toString()), CredentialSettings() )
         ,_info( QtUtils::toStdString(map.value(SERVERHOST).toString()), map.value(SERVERPORT).toInt()
 #ifdef MONGO_SSL
         ,SSLInfo(map.value(SSLSUPPORT).toBool(),QtUtils::toStdString(map.value(SSLPEMKEYFILE).toString()))
@@ -141,12 +141,12 @@ namespace Robomongo
     }
 
     ReplicasetConnectionSettings::ReplicasetConnectionSettings() :
-        IConnectionSettingsBase()
+        IConnectionSettingsBase(REPLICASET)
     {
     }
 
     ReplicasetConnectionSettings::ReplicasetConnectionSettings(QVariantMap map):
-        IConnectionSettingsBase(QtUtils::toStdString(map.value(CONNECTIONNAME).toString()), QtUtils::toStdString(map.value(DEFAULTDATABASE).toString()), CredentialSettings() ),
+        IConnectionSettingsBase(REPLICASET, QtUtils::toStdString(map.value(CONNECTIONNAME).toString()), QtUtils::toStdString(map.value(DEFAULTDATABASE).toString()), CredentialSettings() ),
         _replicaName(QtUtils::toStdString(map.value(REPLICASETNAME).toString()))
     {
         CredentialSettings credential(map.value(CREDENTIALS).toMap());
@@ -208,6 +208,11 @@ namespace Robomongo
     void ReplicasetConnectionSettings::removeServer(ConnectionSettings *server)
     {
         _servers.erase(std::remove_if(_servers.begin(), _servers.end(), stdutils::RemoveIfFound<ConnectionSettings*>(server)),_servers.end());
+    }
+
+    void ReplicasetConnectionSettings::clearServers()
+    {
+        _servers.clear();
     }
 
     std::string ReplicasetConnectionSettings::connectionString() const

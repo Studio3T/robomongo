@@ -128,7 +128,7 @@ namespace Robomongo
 
         mongo::DBClientBase *_dbclient;
         bool _isConnected;
-        mongo::DBClientBase *getConnection();
+        mongo::DBClientBase *getConnection(); //may throw exception
 
         /**
          * @brief Send reply event to object 'obj'

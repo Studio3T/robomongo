@@ -41,20 +41,25 @@ namespace Robomongo
          */
         void refreshFields()
         {
-            setText(0, QtUtils::toQString(_connection->connectionName()));
-            ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings*>(_connection);
-            ConnectionSettings *con = dynamic_cast<ConnectionSettings*>(_connection);
-            if(set){
-                // Populate list with connections
+            setText(0, QtUtils::toQString(_connection->connectionName()));              
+            IConnectionSettingsBase::ConnectionType conType = _connection->connectionType();
+            if(conType == IConnectionSettingsBase::REPLICASET){
+                ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings*>(_connection); 
+                VERIFY(set);
+
+                // Populate list with connections                
                 ReplicasetConnectionSettings::ServerContainerType connections = set->servers();
+                QtUtils::clearChildItems(this);
                 for (ReplicasetConnectionSettings::ServerContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
                     ConnectionSettings *connection = *it;
                     QTreeWidgetItem::addChild(new ConnectionListWidgetItem(connection));
                 }
             }
-            else if(con){
-                setText(1, QtUtils::toQString(con->getFullAddress()));
+            else if(conType == IConnectionSettingsBase::DIRECT){
+                ConnectionSettings *con = dynamic_cast<ConnectionSettings*>(_connection);
+                VERIFY(con);
 
+                setText(1, QtUtils::toQString(con->getFullAddress()));
                 CredentialSettings primCred = con->primaryCredential();
                 if (primCred.isValidAnEnabled()) {
                     CredentialSettings::CredentialInfo info = primCred.info();
@@ -239,10 +244,12 @@ namespace Robomongo
         if (!currentItem)
             return;
 
-        ConnectionSettings *curCon = dynamic_cast<ConnectionSettings*>(currentItem->connection());
-        ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings*>(currentItem->connection());
+        IConnectionSettingsBase::ConnectionType conType = currentItem->connection()->connectionType();
 
-        if(curCon){
+        if(conType == IConnectionSettingsBase::DIRECT){
+            ConnectionSettings *curCon = dynamic_cast<ConnectionSettings*>(currentItem->connection());
+            VERIFY(curCon);
+
             ConnectionSettings connection(*curCon);
             ConnectionDialog editDialog(&connection, this);
 
@@ -252,7 +259,10 @@ namespace Robomongo
                 currentItem->refreshFields();
             }
         }
-        else if(set){
+        else if(conType == IConnectionSettingsBase::REPLICASET){
+            ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings*>(currentItem->connection());
+            VERIFY(set);
+
             ReplicasetConnectionSettings connection(*set);
             ReplicasetDialog editDialog(&connection, this);
 
@@ -298,12 +308,14 @@ namespace Robomongo
 
         // Do nothing if no item selected
         if (!currentItem)
-            return;
+            return;        
+        
+        IConnectionSettingsBase::ConnectionType conType = currentItem->connection()->connectionType();
 
-        ConnectionSettings *curCon = dynamic_cast<ConnectionSettings*>(currentItem->connection());
-        ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings*>(currentItem->connection());
+        if(conType == IConnectionSettingsBase::DIRECT){
+            ConnectionSettings *curCon = dynamic_cast<ConnectionSettings*>(currentItem->connection());
+            VERIFY(curCon);
 
-        if(curCon){
             // Clone connection
             ConnectionSettings *connection = new ConnectionSettings(*curCon);
             std::string newConnectionName="Copy of "+connection->connectionName();
@@ -322,7 +334,10 @@ namespace Robomongo
             _settingsManager->addConnection(connection);
             add(connection);
         }
-        else if(set){
+        else if(conType == IConnectionSettingsBase::REPLICASET){
+            ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings*>(currentItem->connection());
+            VERIFY(set);
+
             // Clone connection
             ReplicasetConnectionSettings *connection = new ReplicasetConnectionSettings(*set);
             std::string newConnectionName="Copy of "+connection->connectionName();

@@ -485,29 +485,40 @@ namespace Robomongo
 
     mongo::DBClientBase *MongoWorker::getConnection()
     {
-        if (!_dbclient) {  
-            ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings *>(_connection);
-            ConnectionSettings *con = dynamic_cast<ConnectionSettings *>(_connection);
-            if(con){
+        IConnectionSettingsBase::ConnectionType conType = _connection->connectionType();
+        if (!_dbclient) {            
+            if(conType == IConnectionSettingsBase::DIRECT){
                 mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
                 _dbclient = conn;
             }
-            else if(set){
+            else if(conType == IConnectionSettingsBase::REPLICASET){
+                ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings *>(_connection);
+                VERIFY(set);
+
                 mongo::DBClientReplicaSet *conn = new mongo::DBClientReplicaSet(set->replicaName(),set->serversHostsInfo());           
                 _dbclient = conn;
             }
         }
         if(_dbclient && !_isConnected){ //try to connect
-            mongo::DBClientConnection *conCon = dynamic_cast<mongo::DBClientConnection *>(_dbclient);
-            mongo::DBClientReplicaSet *setCon = dynamic_cast<mongo::DBClientReplicaSet *>(_dbclient);
-            if(conCon){
-                std::string err;
+            if(conType == IConnectionSettingsBase::DIRECT){
                 ConnectionSettings *con = dynamic_cast<ConnectionSettings *>(_connection);
+                VERIFY(con);
+
+                mongo::DBClientConnection *conCon = dynamic_cast<mongo::DBClientConnection *>(_dbclient);
+                VERIFY(conCon);
+
+                std::string err;
                 _isConnected = conCon->connect(con->info(), err);
             }
-            else if(setCon){
+            else if(conType == IConnectionSettingsBase::REPLICASET){
+                mongo::DBClientReplicaSet *setCon = dynamic_cast<mongo::DBClientReplicaSet *>(_dbclient);
+                VERIFY(setCon);
+
                 _isConnected = setCon->connect();
             }
+        }
+        if(!_isConnected){
+            throw std::runtime_error("Unable to connect");
         }
         return _dbclient;
     }

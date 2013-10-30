@@ -186,13 +186,23 @@ namespace mongo {
                 if( _type != CUSTOM ) _type = SET;
             }
         }
-
+#ifdef ROBOMONGO
+        string::size_type idx;
+        static const char *whatSearch = "} },";
+        while ( ( idx = s.find( whatSearch ) ) != string::npos ) {
+            std::string connectionString = s.substr( 0 , idx + strlen(whatSearch)-1 );
+            _servers.push_back( connectionString );
+            s = s.substr( idx + strlen(whatSearch) );
+        }
+        _servers.push_back( s );
+#else
         string::size_type idx;
         while ( ( idx = s.find( ',' ) ) != string::npos ) {
             _servers.push_back( s.substr( 0 , idx ) );
             s = s.substr( idx + 1 );
         }
         _servers.push_back( s );
+#endif
 
     }
     
@@ -322,11 +332,11 @@ namespace mongo {
         }
         verify( false );
     }
-
+#ifdef ROBOMONGO
     ConnectionString ConnectionString::parse( const string& host , string& errmsg ) {
 
         string::size_type i = host.find( '/' );
-#ifdef ROBOMONGO
+
         string hostWithoutOptions = host;
         string::size_type s = host.find_first_of( '{' );
         string::size_type j = host.find( ':' ); 
@@ -337,18 +347,9 @@ namespace mongo {
             // replica set
             return ConnectionString( SET , host.substr( i + 1 ) , host.substr( 0 , i ) );
         }
-#else
-        if ( i != string::npos && i != 0 ) {
-            // replica set
-            return ConnectionString( SET , host.substr( i + 1 ) , host.substr( 0 , i ) );
-        }
-#endif
 
-#ifdef ROBOMONGO
         int numCommas = str::count( hostWithoutOptions , ',' );
-#else
-        int numCommas = str::count( host , ',' );
-#endif
+
         if( numCommas == 0 )
             return ConnectionString( HostAndPort( host ) );
 
@@ -361,6 +362,30 @@ namespace mongo {
         errmsg = (string)"invalid hostname [" + host + "]";
         return ConnectionString(); // INVALID
     }
+#else
+    ConnectionString ConnectionString::parse( const string& host , string& errmsg ) {
+
+        string::size_type i = host.find( '/' );
+        if ( i != string::npos && i != 0) {
+            // replica set
+            return ConnectionString( SET , host.substr( i + 1 ) , host.substr( 0 , i ) );
+        }
+
+        int numCommas = str::count( host , ',' );
+
+        if( numCommas == 0 )
+            return ConnectionString( HostAndPort( host ) );
+
+        if ( numCommas == 1 )
+            return ConnectionString( PAIR , host );
+
+        if ( numCommas == 2 )
+            return ConnectionString( SYNC , host );
+
+        errmsg = (string)"invalid hostname [" + host + "]";
+        return ConnectionString(); // INVALID
+    }
+#endif
 
     string ConnectionString::typeToString( ConnectionType type ) {
         switch ( type ) {

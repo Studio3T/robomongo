@@ -162,6 +162,7 @@ namespace Robomongo
     {
         _repConnection->setConnectionName(QtUtils::toStdString(_nameConnection->text()));
         _repConnection->setReplicaName(QtUtils::toStdString(_replicasetName->text()));
+        _repConnection->clearServers();
 
         for (ConnectionListItemContainerType::const_iterator it = _connectionItems.begin(); it != _connectionItems.end(); ++it) {
             ConnectionSettingsListWidgetItem *item = dynamic_cast<ConnectionSettingsListWidgetItem*>(*it);
@@ -246,7 +247,11 @@ namespace Robomongo
 
         if (answer != QMessageBox::Yes)
             return;
-
+    
+        ConnectionListItemContainerType::const_iterator it = std::find(_connectionItems.begin(),_connectionItems.end(),currentItem);
+        if(it!=_connectionItems.end()){
+            _connectionItems.erase(it);
+        }
         delete currentItem;
     }
 

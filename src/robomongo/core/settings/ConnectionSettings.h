@@ -10,8 +10,14 @@ namespace Robomongo
     class IConnectionSettingsBase
     {
     public:
-        IConnectionSettingsBase();
-        IConnectionSettingsBase(const std::string &name, const std::string &defdatabase, const CredentialSettings &cred);
+        enum ConnectionType
+        {
+            UNKNOWN,
+            DIRECT,
+            REPLICASET
+        };
+        IConnectionSettingsBase(ConnectionType connectionType);
+        IConnectionSettingsBase(ConnectionType connectionType, const std::string &name, const std::string &defdatabase, const CredentialSettings &cred);
          /**
          * @brief Name of connection
          */
@@ -40,10 +46,12 @@ namespace Robomongo
         virtual QVariant toVariant() const = 0;
         virtual IConnectionSettingsBase *clone() const = 0;
         virtual std::string connectionString() const = 0;
+        ConnectionType connectionType() const { return _connectionType; }
     protected:
         std::string _connectionName;
         std::string _defaultDatabase;
         CredentialSettings _credential;
+        ConnectionType _connectionType;
     };
 
     /**
@@ -116,6 +124,7 @@ namespace Robomongo
         ServerContainerType servers() const { return _servers; }
         void addServer(ConnectionSettings *server);
         void removeServer(ConnectionSettings *server);
+        void clearServers();
         virtual std::string connectionString() const;
 
         std::string replicaName() const { return _replicaName; }

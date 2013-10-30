@@ -36,7 +36,7 @@ namespace Robomongo
 {
     namespace MongoClient
     {
-        std::vector<std::string> MongoClient::getCollectionNames(mongo::DBClientBase *connection, const std::string &dbname)
+        std::vector<std::string> getCollectionNames(mongo::DBClientBase *connection, const std::string &dbname)
         {
             typedef std::list<std::string> cont_string_t;
             cont_string_t dbs = connection->getCollectionNames(dbname);
@@ -50,7 +50,7 @@ namespace Robomongo
         }
 
 
-        float MongoClient::getVersion(mongo::DBClientBase *connection)
+        float getVersion(mongo::DBClientBase *connection)
         {
             float result = 0.0f;
             mongo::BSONObj resultObj;
@@ -60,7 +60,7 @@ namespace Robomongo
             return result;
         }
 
-        std::vector<std::string> MongoClient::getDatabaseNames(mongo::DBClientBase *connection)
+        std::vector<std::string> getDatabaseNames(mongo::DBClientBase *connection)
         {
             typedef std::list<std::string> cont_string_t;
             std::vector<std::string> dbNames;
@@ -72,7 +72,7 @@ namespace Robomongo
             return dbNames;
         }
 
-        std::vector<MongoUser> MongoClient::getUsers(mongo::DBClientBase *connection, const std::string &dbName)
+        std::vector<MongoUser> getUsers(mongo::DBClientBase *connection, const std::string &dbName)
         {
             MongoNamespace ns(dbName, "system.users");
             std::vector<MongoUser> users;
@@ -88,7 +88,7 @@ namespace Robomongo
             return users;
         }
 
-        void MongoClient::createUser(mongo::DBClientBase *connection, const std::string &dbName, const MongoUser &user, bool overwrite)
+        void createUser(mongo::DBClientBase *connection, const std::string &dbName, const MongoUser &user, bool overwrite)
         {
             MongoNamespace ns(dbName, "system.users");
             mongo::BSONObj obj = user.toBson();
@@ -106,7 +106,7 @@ namespace Robomongo
             }
         }
 
-        void MongoClient::dropUser(mongo::DBClientBase *connection, const std::string &dbName, const mongo::OID &id)
+        void dropUser(mongo::DBClientBase *connection, const std::string &dbName, const mongo::OID &id)
         {
             MongoNamespace ns(dbName, "system.users");
 
@@ -118,7 +118,7 @@ namespace Robomongo
             connection->remove(ns.toString(), query, true);
         }
 
-        std::vector<MongoFunction> MongoClient::getFunctions(mongo::DBClientBase *connection, const std::string &dbName)
+        std::vector<MongoFunction> getFunctions(mongo::DBClientBase *connection, const std::string &dbName)
         {
             MongoNamespace ns(dbName, "system.js");
             std::vector<MongoFunction> functions;
@@ -138,7 +138,7 @@ namespace Robomongo
             return functions;
         }
 
-        std::vector<EnsureIndexInfo> MongoClient::getIndexes(mongo::DBClientBase *connection, const MongoCollectionInfo &collection)
+        std::vector<EnsureIndexInfo> getIndexes(mongo::DBClientBase *connection, const MongoCollectionInfo &collection)
         {
             std::vector<EnsureIndexInfo> result;
             std::auto_ptr<mongo::DBClientCursor> cursor(connection->getIndexes(collection.ns().toString()));
@@ -151,7 +151,7 @@ namespace Robomongo
             return result;
         }
 
-        void MongoClient::ensureIndex(mongo::DBClientBase *connection, const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo)
+        void ensureIndex(mongo::DBClientBase *connection, const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo)
         {   
             std::string ns = newInfo._collection.ns().toString();
             mongo::BSONObj keys = mongo::Robomongo::fromjson(newInfo._request);
@@ -217,7 +217,7 @@ namespace Robomongo
             connection->insert(namesp.toString().c_str(), obj);
         }
 
-        void MongoClient::renameIndexFromCollection(mongo::DBClientBase *connection, const MongoCollectionInfo &collection, const std::string &oldIndexName, const std::string &newIndexName)
+        void renameIndexFromCollection(mongo::DBClientBase *connection, const MongoCollectionInfo &collection, const std::string &oldIndexName, const std::string &newIndexName)
         {
             // This is simply an example of how to perform modifications of
             // BSON objects. Because BSONObj is immutable, you need to create
@@ -263,12 +263,12 @@ namespace Robomongo
             connection->insert(systemIndexesNs, builder.obj());
         }
 
-        void MongoClient::dropIndexFromCollection(mongo::DBClientBase *connection, const MongoCollectionInfo &collection, const std::string &indexName)
+        void dropIndexFromCollection(mongo::DBClientBase *connection, const MongoCollectionInfo &collection, const std::string &indexName)
         {
             connection->dropIndex(collection.ns().toString(), indexName);
         }
 
-        void MongoClient::createFunction(mongo::DBClientBase *connection, const std::string &dbName, const MongoFunction &fun, const std::string &existingFunctionName /* = QString() */)
+        void createFunction(mongo::DBClientBase *connection, const std::string &dbName, const MongoFunction &fun, const std::string &existingFunctionName /* = QString() */)
         {
             MongoNamespace ns(dbName, "system.js");
             mongo::BSONObj obj = fun.toBson();
@@ -302,7 +302,7 @@ namespace Robomongo
             }
         }
 
-        void MongoClient::dropFunction(mongo::DBClientBase *connection, const std::string &dbName, const std::string &name)
+        void dropFunction(mongo::DBClientBase *connection, const std::string &dbName, const std::string &name)
         {
             MongoNamespace ns(dbName, "system.js");
 
@@ -314,7 +314,7 @@ namespace Robomongo
             connection->remove(ns.toString(), query, true);
         }
 
-        void MongoClient::createDatabase(mongo::DBClientBase *connection, const std::string &dbName)
+        void createDatabase(mongo::DBClientBase *connection, const std::string &dbName)
         {
             /*
             *  Here we are going to insert temp document to "<dbName>.temp" collection.
@@ -340,17 +340,17 @@ namespace Robomongo
             connection->dropCollection(ns.toString());
         }
 
-        void MongoClient::dropDatabase(mongo::DBClientBase *connection, const std::string &dbName)
+        void dropDatabase(mongo::DBClientBase *connection, const std::string &dbName)
         {
             connection->dropDatabase(dbName);
         }
 
-        void MongoClient::createCollection(mongo::DBClientBase *connection, const MongoNamespace &ns)
+        void createCollection(mongo::DBClientBase *connection, const MongoNamespace &ns)
         {
             connection->createCollection(ns.toString());
         }
 
-        void MongoClient::renameCollection(mongo::DBClientBase *connection, const MongoNamespace &ns, const std::string &newCollectionName)
+        void renameCollection(mongo::DBClientBase *connection, const MongoNamespace &ns, const std::string &newCollectionName)
         {
             MongoNamespace from(ns);
             MongoNamespace to(ns.databaseName(), newCollectionName);
@@ -364,7 +364,7 @@ namespace Robomongo
             connection->runCommand("admin", command.obj(), result); // this command should be run against "admin" db
         }
 
-        void MongoClient::duplicateCollection(mongo::DBClientBase *connection, const MongoNamespace &ns, const std::string &newCollectionName)
+        void duplicateCollection(mongo::DBClientBase *connection, const MongoNamespace &ns, const std::string &newCollectionName)
         {
             MongoNamespace from(ns);
             MongoNamespace to(ns.databaseName(), newCollectionName);
@@ -379,7 +379,7 @@ namespace Robomongo
             }
         }
 
-        void MongoClient::copyCollectionToDiffServer(mongo::DBClientBase *connectionTo, mongo::DBClientBase *const connectionFrom,const MongoNamespace &from, const MongoNamespace &to)
+        void copyCollectionToDiffServer(mongo::DBClientBase *connectionTo, mongo::DBClientBase *const connectionFrom,const MongoNamespace &from, const MongoNamespace &to)
         {
             if (!connectionTo->exists(to.toString()))
                 connectionTo->createCollection(to.toString());
@@ -391,7 +391,7 @@ namespace Robomongo
             }
         }
 
-        void MongoClient::dropCollection(mongo::DBClientBase *connection, const MongoNamespace &ns)
+        void dropCollection(mongo::DBClientBase *connection, const MongoNamespace &ns)
         {
             connection->dropCollection(ns.toString());
         }
@@ -401,7 +401,7 @@ namespace Robomongo
             connection->insert(ns.toString(), obj);
         }
 
-        void MongoClient::saveDocument(mongo::DBClientBase *connection, const mongo::BSONObj &obj, const MongoNamespace &ns)
+        void saveDocument(mongo::DBClientBase *connection, const mongo::BSONObj &obj, const MongoNamespace &ns)
         {
 
             mongo::BSONElement id = obj.getField("_id");
@@ -414,12 +414,12 @@ namespace Robomongo
             //_dbclient->save(ns.toString().toStdString(), obj);
         }
 
-        void MongoClient::removeDocuments(mongo::DBClientBase *connection, const MongoNamespace &ns, mongo::Query query, bool justOne /*= true*/)
+        void removeDocuments(mongo::DBClientBase *connection, const MongoNamespace &ns, mongo::Query query, bool justOne /*= true*/)
         {
             connection->remove(ns.toString(), query, justOne);
         }
 
-        std::vector<MongoDocumentPtr> MongoClient::query(mongo::DBClientBase *connection, const MongoQueryInfo &info)
+        std::vector<MongoDocumentPtr> query(mongo::DBClientBase *connection, const MongoQueryInfo &info)
         {
             MongoNamespace ns(info._collectionInfo._ns);
 
@@ -443,7 +443,7 @@ namespace Robomongo
             return docs;
         }
 
-        MongoCollectionInfo MongoClient::runCollStatsCommand(mongo::DBClientBase *connection, const std::string &ns)
+        MongoCollectionInfo runCollStatsCommand(mongo::DBClientBase *connection, const std::string &ns)
         {
             MongoNamespace mongons(ns);
 
@@ -458,7 +458,7 @@ namespace Robomongo
             return newInfo;
         }
 
-        std::vector<MongoCollectionInfo> MongoClient::runCollStatsCommand(mongo::DBClientBase *connection, const std::vector<std::string> &namespaces)
+        std::vector<MongoCollectionInfo> runCollStatsCommand(mongo::DBClientBase *connection, const std::vector<std::string> &namespaces)
         {
             std::vector<MongoCollectionInfo> infos;
             for (std::vector<std::string>::const_iterator it = namespaces.begin(); it!=namespaces.end(); ++it) {

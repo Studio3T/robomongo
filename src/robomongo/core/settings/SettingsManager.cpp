@@ -216,11 +216,10 @@ namespace Robomongo
             IConnectionSettingsBase *base = *it;
             QVariantMap rm = base->toVariant().toMap();
 
-            ConnectionSettings *con = dynamic_cast<ConnectionSettings*>(base);
-            ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings*>(base);
-            if(con)
+            IConnectionSettingsBase::ConnectionType conType = base->connectionType();
+            if(conType == IConnectionSettingsBase::DIRECT)
                 listc.append(rm);
-            else if(set)
+            else if(conType == IConnectionSettingsBase::REPLICASET)
                 listr.append(rm);
         }
 

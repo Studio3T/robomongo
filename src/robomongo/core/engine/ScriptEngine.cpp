@@ -67,14 +67,22 @@ namespace Robomongo
     {
         mongo::RecursiveMutex::scoped_lock lk( _mutex );
         std::stringstream ss;
+        ss << "db = connect('";
+        IConnectionSettingsBase::ConnectionType conType = _connection->connectionType();
+        if (conType == IConnectionSettingsBase::REPLICASET){
+            ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings *>(_connection);
+            VERIFY(set);
+
+            ss << set->replicaName() << "/";
+        }
         CredentialSettings primCred = _connection->primaryCredential();
         if (primCred.isValidAnEnabled()){
             CredentialSettings::CredentialInfo info = primCred.info();
-            ss << "db = connect('" << _connection->connectionString() << "/" << info._databaseName;
+            ss << _connection->connectionString() << "/" << info._databaseName;
             ss << "', '" << info._userName << "', '" << info._userPassword << "')";
         }
         else{
-            ss << "db = connect('" << _connection->connectionString() << "/test')";
+            ss << _connection->connectionString() << "/test')";
         }
 
 

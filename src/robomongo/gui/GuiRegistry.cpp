@@ -34,6 +34,12 @@ namespace Robomongo
         return serverIc;
     }
 
+    const QIcon &GuiRegistry::replicaSetIcon() const
+    {
+        static const QIcon serverIc = QIcon(":/robomongo/icons/replicaset.png");
+        return serverIc;
+    }
+
     const QIcon &GuiRegistry::openIcon() const
     {
         static const QIcon openIc = qApp->style()->standardIcon(QStyle::SP_DialogOpenButton);

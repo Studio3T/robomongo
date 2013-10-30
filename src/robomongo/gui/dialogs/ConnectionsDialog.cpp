@@ -54,6 +54,8 @@ namespace Robomongo
                     IConnectionSettingsBase *connection = *it;
                     QTreeWidgetItem::addChild(new ConnectionListWidgetItem(connection));
                 }
+                setText(1, QtUtils::toQString(set->getFullAddress()));
+                setIcon(0, GuiRegistry::instance().replicaSetIcon());
             }
             else if(conType == IConnectionSettingsBase::DIRECT){
                 ConnectionSettings *con = dynamic_cast<ConnectionSettings*>(_connection);
@@ -120,6 +122,7 @@ namespace Robomongo
         _listWidget->addAction(editAction);
         _listWidget->addAction(cloneAction);
         _listWidget->addAction(removeAction);
+        _listWidget->setIndentation(15);
         _listWidget->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
         _listWidget->setDragEnabled(true);
         _listWidget->setDragDropMode(QAbstractItemView::InternalMove);

@@ -503,6 +503,7 @@ namespace Robomongo
                 _dbclient = conn;
             }
         }
+
         if(_dbclient && !_isConnected){ //try to connect
             if(conType == IConnectionSettingsBase::DIRECT){
                 ConnectionSettings *con = dynamic_cast<ConnectionSettings *>(_connection);
@@ -521,6 +522,7 @@ namespace Robomongo
                 _isConnected = setCon->connect();
             }
         }
+
         if(!_isConnected){
             throw std::runtime_error("Unable to connect");
         }

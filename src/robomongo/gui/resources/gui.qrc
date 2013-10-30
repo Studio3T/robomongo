@@ -28,6 +28,7 @@
         <file>icons/mongodb_16x16.png</file>
         <file>icons/connect_24x24.png</file>
         <file>icons/server_16x16.png</file>
+        <file>icons/replicaset.png</file>
         <file>icons/execute_24x24.png</file>
         <file>icons/main_window_icon.png</file>
         <file>icons/text_highlighted_16x16.png</file>

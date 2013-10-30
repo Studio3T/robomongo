@@ -168,13 +168,16 @@ namespace Robomongo
 
     std::string ReplicasetConnectionSettings::getFullAddress() const
     {
-        std::string res;
-        for (ServerContainerType::const_iterator it = _servers.begin(); it!= _servers.end(); ++it)
+        std::string result = _replicaName + "/";
+        int count = _servers.size();
+        for (int i = 0; i<count; ++i )
         {
-            IConnectionSettingsBase *ser = *it;
-            res += ser->getFullAddress();
+            result+=_servers[i]->getFullAddress();
+            if(i<count-1){
+                result+=',';
+            }
         }
-        return res;
+        return result;
     }
 
     QVariant ReplicasetConnectionSettings::toVariant() const

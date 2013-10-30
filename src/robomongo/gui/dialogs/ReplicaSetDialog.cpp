@@ -222,7 +222,7 @@ namespace Robomongo
 
         // Do nothing if not accepted
         if (editDialog.exec() == QDialog::Accepted) {
-            *currentItem->connection() = connection;
+            *connectionSetting = connection;
             currentItem->refreshFields();
         }       
     }

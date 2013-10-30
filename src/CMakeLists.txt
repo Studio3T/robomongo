@@ -268,6 +268,12 @@ ENDIF()
 
 IF(OPENSSL_ENABLED)
     SET(MONGODB_COMMAND ${MONGODB_COMMAND} --ssl)
+    SET(HEADERS_GUI_TO_MOC ${HEADERS_GUI_TO_MOC}
+        robomongo/gui/dialogs/ConnectionSslTab.h
+    )
+    SET(SOURCES_GUI ${SOURCES_GUI}
+        robomongo/gui/dialogs/ConnectionSslTab.cpp
+    )
     SET(MONGODB_EXTRAPATH "${MONGODB_EXTRAPATH} ${OPENSSL_ROOT_DIR}")
     SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
     ADD_DEFINITIONS(-DMONGO_SSL)
@@ -276,10 +282,10 @@ ENDIF(OPENSSL_ENABLED)
 IF(SSH_ENABLED)
     SET(MONGODB_COMMAND ${MONGODB_COMMAND} --ssh)
     SET(HEADERS_GUI_TO_MOC ${HEADERS_GUI_TO_MOC}
-    robomongo/gui/dialogs/SSHTunnelTab.h
+        robomongo/gui/dialogs/SSHTunnelTab.h
     )
     SET(SOURCES_GUI ${SOURCES_GUI}
-    robomongo/gui/dialogs/SSHTunnelTab.cpp
+        robomongo/gui/dialogs/SSHTunnelTab.cpp
     )
     ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/libssh2)
     SET(ALL_LIBS ${ALL_LIBS} libssh2_third_party)    

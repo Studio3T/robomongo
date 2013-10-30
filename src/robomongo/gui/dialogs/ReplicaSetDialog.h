@@ -34,7 +34,7 @@ namespace Robomongo
         /**
          * @brief Add connection to the list widget
          */
-        void add(ConnectionSettings *connection);
+        void add(IConnectionSettingsBase *connection);
 
         /**
          * @brief Initiate 'add' action, usually when user clicked on Add button

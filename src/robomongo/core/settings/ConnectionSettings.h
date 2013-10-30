@@ -112,7 +112,7 @@ namespace Robomongo
     class ReplicasetConnectionSettings : public IConnectionSettingsBase
     {
     public:
-        typedef std::vector<ConnectionSettings *> ServerContainerType;
+        typedef std::vector<IConnectionSettingsBase *> ServerContainerType;
         
         ReplicasetConnectionSettings();
         explicit ReplicasetConnectionSettings(QVariantMap map);
@@ -122,8 +122,8 @@ namespace Robomongo
         virtual IConnectionSettingsBase *clone() const;
 
         ServerContainerType servers() const { return _servers; }
-        void addServer(ConnectionSettings *server);
-        void removeServer(ConnectionSettings *server);
+        void addServer(IConnectionSettingsBase *server);
+        void removeServer(IConnectionSettingsBase *server);
         void clearServers();
         virtual std::string connectionString() const;
 

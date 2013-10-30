@@ -80,7 +80,11 @@ namespace Robomongo
 
     MongoWorker::~MongoWorker()
     {
-        delete _dbclient;
+        ReplicasetConnectionSettings *repSettings = dynamic_cast<ReplicasetConnectionSettings *>(_connection);
+        if(repSettings){
+            mongo::ReplicaSetMonitor::remove(repSettings->replicaName());// fix crash on exit
+        }
+        delete _dbclient;        
         delete _connection;
         _thread->quit();
         if (!_thread->wait(2000))

@@ -171,7 +171,7 @@ namespace Robomongo
         std::string res;
         for (ServerContainerType::const_iterator it = _servers.begin(); it!= _servers.end(); ++it)
         {
-            ConnectionSettings *ser = *it;
+            IConnectionSettingsBase *ser = *it;
             res += ser->getFullAddress();
         }
         return res;
@@ -187,7 +187,7 @@ namespace Robomongo
         QVariantList listS;
         for (ServerContainerType::const_iterator it = _servers.begin(); it!= _servers.end(); ++it)
         {
-            ConnectionSettings *ser = *it;
+            IConnectionSettingsBase *ser = *it;
             listS.append(ser->toVariant());
         }
         map.insert(REPLICASETSERVERS,listS);
@@ -200,14 +200,14 @@ namespace Robomongo
         return set;
     }
 
-    void ReplicasetConnectionSettings::addServer(ConnectionSettings *server)
+    void ReplicasetConnectionSettings::addServer(IConnectionSettingsBase *server)
     {
         _servers.push_back(server);
     }
 
-    void ReplicasetConnectionSettings::removeServer(ConnectionSettings *server)
+    void ReplicasetConnectionSettings::removeServer(IConnectionSettingsBase *server)
     {
-        _servers.erase(std::remove_if(_servers.begin(), _servers.end(), stdutils::RemoveIfFound<ConnectionSettings*>(server)),_servers.end());
+        _servers.erase(std::remove_if(_servers.begin(), _servers.end(), stdutils::RemoveIfFound<IConnectionSettingsBase*>(server)),_servers.end());
     }
 
     void ReplicasetConnectionSettings::clearServers()
@@ -235,7 +235,9 @@ namespace Robomongo
         int count = _servers.size();
         for (int i = 0; i<count; ++i)
         {
-            result.push_back(_servers[i]->info());
+            ConnectionSettings *ser = dynamic_cast<ConnectionSettings *>(_servers[i]);
+            VERIFY(ser);
+            result.push_back(ser->info());
         }
         return result;
     }

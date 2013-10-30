@@ -51,7 +51,7 @@ namespace Robomongo
                 ReplicasetConnectionSettings::ServerContainerType connections = set->servers();
                 QtUtils::clearChildItems(this);
                 for (ReplicasetConnectionSettings::ServerContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
-                    ConnectionSettings *connection = *it;
+                    IConnectionSettingsBase *connection = *it;
                     QTreeWidgetItem::addChild(new ConnectionListWidgetItem(connection));
                 }
             }
@@ -296,6 +296,16 @@ namespace Robomongo
 
         if (answer != QMessageBox::Yes)
             return;
+
+        ConnectionListWidgetItem *maybeReplica =
+            dynamic_cast<ConnectionListWidgetItem *>(_listWidget->currentItem()->parent());
+        
+        if(maybeReplica){
+            ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings*>(maybeReplica->connection());
+            VERIFY(set);
+            
+            set->removeServer(currentItem->connection());
+        }
 
         _settingsManager->removeConnection(connectionModel);
         delete currentItem;

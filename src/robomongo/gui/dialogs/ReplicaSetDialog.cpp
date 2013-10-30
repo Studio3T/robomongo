@@ -29,12 +29,12 @@ namespace Robomongo
         /**
          * @brief Creates ConnectionListWidgetItem with specified ConnectionSettings
          */
-        ConnectionSettingsListWidgetItem(ConnectionSettings *connection): _connection(connection) { refreshFields(); }
+        ConnectionSettingsListWidgetItem(IConnectionSettingsBase *connection): _connection(connection) { refreshFields(); }
 
         /**
          * @brief Returns attached ConnectionSettings.
          */
-        ConnectionSettings *connection() { return _connection; }
+        IConnectionSettingsBase *connection() { return _connection; }
         /**
          * @brief Attach ConnectionSettings to this item
          */
@@ -57,7 +57,7 @@ namespace Robomongo
         }
 
     private:
-        ConnectionSettings *_connection;
+        IConnectionSettingsBase *_connection;
     };
 
     /**
@@ -144,7 +144,7 @@ namespace Robomongo
         // Populate list with connections
         ReplicasetConnectionSettings::ServerContainerType connections = _repConnection->servers();
         for (ReplicasetConnectionSettings::ServerContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
-            ConnectionSettings *connection = *it;
+            IConnectionSettingsBase *connection = *it;
             add(connection);
         }
 
@@ -214,8 +214,10 @@ namespace Robomongo
         // Do nothing if no item selected
         if (!currentItem)
             return;
+        ConnectionSettings *connectionSetting = dynamic_cast<ConnectionSettings*>(currentItem->connection());
+        VERIFY(connectionSetting);
 
-        ConnectionSettings connection(*currentItem->connection());
+        ConnectionSettings connection(*connectionSetting);
         ConnectionDialog editDialog(&connection);
 
         // Do nothing if not accepted
@@ -237,7 +239,7 @@ namespace Robomongo
         if (!currentItem)
             return;
 
-        ConnectionSettings *connectionModel = currentItem->connection();
+        IConnectionSettingsBase *connectionModel = currentItem->connection();
 
         // Ask user
         int answer = QMessageBox::question(this,
@@ -248,7 +250,7 @@ namespace Robomongo
         if (answer != QMessageBox::Yes)
             return;
     
-        ConnectionListItemContainerType::const_iterator it = std::find(_connectionItems.begin(),_connectionItems.end(),currentItem);
+        ConnectionListItemContainerType::iterator it = std::find(_connectionItems.begin(),_connectionItems.end(),currentItem);
         if(it!=_connectionItems.end()){
             _connectionItems.erase(it);
         }
@@ -264,8 +266,11 @@ namespace Robomongo
         if (!currentItem)
             return;
 
+        ConnectionSettings *connectionSetting = dynamic_cast<ConnectionSettings*>(currentItem->connection());
+        VERIFY(connectionSetting);
+
         // Clone connection
-        ConnectionSettings *connection = new ConnectionSettings(*currentItem->connection());
+        ConnectionSettings *connection = new ConnectionSettings(*connectionSetting);
         std::string newConnectionName="Copy of "+connection->connectionName();
 
         connection->setConnectionName(newConnectionName);
@@ -292,7 +297,7 @@ namespace Robomongo
     /**
      * @brief Add connection to the list widget
      */
-    void ReplicasetDialog::add(ConnectionSettings *connection)
+    void ReplicasetDialog::add(IConnectionSettingsBase *connection)
     {
         ConnectionSettingsListWidgetItem *item = new ConnectionSettingsListWidgetItem(connection);
         _listWidget->addTopLevelItem(item);

@@ -396,7 +396,7 @@ namespace Robomongo
             connection->dropCollection(ns.toString());
         }
 
-        void MongoClient::insertDocument(mongo::DBClientBase *connection, const mongo::BSONObj &obj, const MongoNamespace &ns)
+        void insertDocument(mongo::DBClientBase *connection, const mongo::BSONObj &obj, const MongoNamespace &ns)
         {
             connection->insert(ns.toString(), obj);
         }

@@ -263,7 +263,7 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="230"/>
         <source>File</source>
-        <translation>File</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="240"/>
@@ -373,7 +373,7 @@
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="430"/>
-        <location filename="../gui/MainWindow.cpp" line="804"/>
+        <location filename="../gui/MainWindow.cpp" line="802"/>
         <source>Logs</source>
         <translation type="unfinished"></translation>
     </message>
@@ -383,44 +383,44 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="544"/>
+        <location filename="../gui/MainWindow.cpp" line="542"/>
         <source>&amp;Manage Connections...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="546"/>
+        <location filename="../gui/MainWindow.cpp" line="544"/>
         <source>Connect to MongoDB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="568"/>
-        <location filename="../gui/MainWindow.cpp" line="747"/>
-        <location filename="../gui/MainWindow.cpp" line="755"/>
+        <location filename="../gui/MainWindow.cpp" line="566"/>
+        <location filename="../gui/MainWindow.cpp" line="745"/>
+        <location filename="../gui/MainWindow.cpp" line="753"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="667"/>
+        <location filename="../gui/MainWindow.cpp" line="665"/>
         <source>Refresh not working yet... : &lt;br/&gt;  &lt;b&gt;Ctrl+D&lt;/b&gt; : push Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="782"/>
+        <location filename="../gui/MainWindow.cpp" line="780"/>
         <source>Database Explorer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="793"/>
+        <location filename="../gui/MainWindow.cpp" line="791"/>
         <source>&amp;Explorer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="795"/>
+        <location filename="../gui/MainWindow.cpp" line="793"/>
         <source>Press to show/hide Database Explorer panel.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="807"/>
+        <location filename="../gui/MainWindow.cpp" line="805"/>
         <source>&amp;Logs</source>
         <translation type="unfinished"></translation>
     </message>
@@ -438,11 +438,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/ConnectionBasicTab.cpp" line="77"/>
-        <source>Pem files (*.pem)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="143"/>
         <source>Public key files (*.*)</source>
         <translation type="unfinished"></translation>
@@ -450,6 +445,11 @@
     <message>
         <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="149"/>
         <source>Private key files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionSslTab.cpp" line="77"/>
+        <source>PEM files (*.pem)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

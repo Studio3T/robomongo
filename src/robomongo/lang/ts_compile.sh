@@ -19,4 +19,5 @@ do
 	sed -i -e "s/<name>$index<\/name>/<name>${mapping[$index]}::$index<\/name>/g" $right_name
     done
     lrelease $right_name
+    rm $right_name
 done

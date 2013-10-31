@@ -56,6 +56,94 @@
     </message>
 </context>
 <context>
+    <name>ConnectionsDialog</name>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="71"/>
+        <source>MongoDB Connections</source>
+        <translation>Подключения к MongoDB</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="76"/>
+        <source>&amp;Add...</source>
+        <translation>&amp;Добавить...</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="79"/>
+        <source>&amp;Edit...</source>
+        <translation>&amp;Править...</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="82"/>
+        <source>&amp;Clone...</source>
+        <translation>С&amp;копировать...</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="85"/>
+        <source>&amp;Remove...</source>
+        <translation>&amp;Удалить...</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="93"/>
+        <source>Name</source>
+        <translation>Имя</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="93"/>
+        <source>Address</source>
+        <translation>Адрес</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="93"/>
+        <source>Auth. Database / User</source>
+        <translation>БД аутентификации / Пользователь</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="118"/>
+        <source>C&amp;onnect</source>
+        <translation>Подклю&amp;чить</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="126"/>
+        <source>Create</source>
+        <translation>Создать</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="127"/>
+        <source>edit</source>
+        <translation>изменить</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="127"/>
+        <source>remove</source>
+        <translation>удалить</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="127"/>
+        <source>clone</source>
+        <translation>скопировать</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="127"/>
+        <source>or reorder connections via drag&apos;n&apos;drop.</source>
+        <translation>или переупорядочить подключения, перетаскивая их.</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="255"/>
+        <source>Connections</source>
+        <translation>Подключения</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="256"/>
+        <source>Really delete &quot;%1&quot; connection?</source>
+        <translation>Действительно удалить подключение %1?</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="277"/>
+        <source>Copy of %1</source>
+        <translation>Копия %1</translation>
+    </message>
+</context>
+<context>
     <name>EditIndexDialog</name>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="95"/>
@@ -323,12 +411,12 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="319"/>
         <source>Disable connection shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключить горячие клавиши подключений</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="326"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>Предпочтения</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="337"/>
@@ -367,9 +455,14 @@
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="407"/>
+        <source>System locale (if available)</source>
+        <extracomment>Language based on system locale</extracomment>
+        <translation>Язык системы (если доступен)</translation>
+    </message>
+    <message>
         <source>System locale</source>
         <extracomment>Language based on system locale</extracomment>
-        <translation>Язык системы</translation>
+        <translation type="obsolete">Язык системы</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="430"/>
@@ -407,7 +500,7 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="780"/>
         <source>Database Explorer</source>
-        <translation type="unfinished"></translation>
+        <translation>Проводник базы данных</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="791"/>

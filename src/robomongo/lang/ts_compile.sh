@@ -9,6 +9,7 @@ mapping[SettingsManager]=Robomongo
 mapping[EditIndexDialog]=Robomongo
 mapping[FindFrame]=Robomongo
 mapping[AboutDialog]=Robomongo
+mapping[ConnectionsDialog]=Robomongo
 
 for file in `find ./ -name "*.raw.ts"`
 do

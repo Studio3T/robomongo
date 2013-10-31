@@ -56,6 +56,79 @@
     </message>
 </context>
 <context>
+    <name>ConnectionsDialog</name>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="71"/>
+        <source>MongoDB Connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="76"/>
+        <source>&amp;Add...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="93"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="93"/>
+        <source>Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="93"/>
+        <source>Auth. Database / User</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="118"/>
+        <source>C&amp;onnect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="126"/>
+        <source>Create</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="127"/>
+        <source>edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="127"/>
+        <source>remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="127"/>
+        <source>clone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="127"/>
+        <source>or reorder connections via drag&apos;n&apos;drop.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="255"/>
+        <source>Connections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="256"/>
+        <source>Really delete &quot;%1&quot; connection?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="277"/>
+        <source>Copy of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>EditIndexDialog</name>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="95"/>
@@ -367,9 +440,14 @@
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="407"/>
+        <source>System locale (if available)</source>
+        <extracomment>Language based on system locale</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>System locale</source>
         <extracomment>Language based on system locale</extracomment>
-        <translation type="unfinished">System locale</translation>
+        <translation type="obsolete">System locale</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="430"/>

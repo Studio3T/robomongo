@@ -404,7 +404,7 @@ namespace Robomongo
     {
          QMenu *langs = _viewMenu->addMenu(tr("Language"));
          //: Language based on system locale
-         AppRegistry::instance().settingsManager()->retranslateLocale(tr("System locale"));
+         AppRegistry::instance().settingsManager()->retranslateLocale(tr("System locale (if available)"));
          QHash<QString, QString> providedTranslations = AppRegistry::instance().settingsManager()->getTranslations();
          const QString &currentTranslation = AppRegistry::instance().settingsManager()->currentTranslation();
          QActionGroup *langGroup = new QActionGroup(this);

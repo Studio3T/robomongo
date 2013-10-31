@@ -14,7 +14,7 @@ namespace Robomongo
         _id = obj.getField("_id").OID();
         _name = BsonUtils::getField<mongo::String>(obj,"user");
         _passwordHash = BsonUtils::getField<mongo::String>(obj,"pwd");
-        if (_version<minimumSupportedVersion) {
+        if (_version <= minimumSupportedVersion) {
             _readOnly = BsonUtils::getField<mongo::Bool>(obj,"readOnly");
         }     
         else {
@@ -42,7 +42,7 @@ namespace Robomongo
         if (!_passwordHash.empty())
             builder.append("pwd", _passwordHash);
 
-        if (_version<minimumSupportedVersion) {
+        if (_version <= minimumSupportedVersion) {
             builder.append("readOnly", _readOnly);
         }
         else {

@@ -176,7 +176,7 @@ namespace Robomongo
         float version = databaseItem->database()->server()->version();
         CreateUserDialog *dlg = NULL;
 
-        if (version < MongoUser::minimumSupportedVersion) {
+        if (version <= MongoUser::minimumSupportedVersion) {
             dlg = new CreateUserDialog(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
                 QtUtils::toQString(databaseItem->database()->name()), MongoUser(version), treeWidget());
         }

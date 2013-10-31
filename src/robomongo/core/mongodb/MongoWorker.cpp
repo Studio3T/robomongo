@@ -157,6 +157,25 @@ namespace Robomongo
                 result.push_back(authBase);
             LOG_MSG(ex.what(), mongo::LL_ERROR);
         }
+
+        std::string defDataBase = _connection->defaultDatabase();
+        float version = MongoClient::getVersion(_dbclient);
+        if(!defDataBase.empty() && MongoUser::minimumSupportedVersion <= version){
+            bool foundDefaultDatabase = false;
+            for (DatabasesContainerType::const_iterator it = result.begin(); it != result.end();++it)
+            {
+                std::string databaseName = *it;
+                if (databaseName == defDataBase)
+                {
+                    foundDefaultDatabase = true;
+                    break;
+                }
+            }
+            if (!foundDefaultDatabase){
+                result.push_back(defDataBase);
+            }
+        }
+
         return result;
     }
 

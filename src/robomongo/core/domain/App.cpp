@@ -122,7 +122,7 @@ namespace Robomongo
     void App::closeShell(MongoShell *shell)
     {
         // Do nothing, if this shell not owned by this App.
-        MongoShellsContainerType::iterator it = std::find_if(_shells.begin(),_shells.end(),std::bind1st(std::equal_to<MongoShell *>(),shell));
+        MongoShellsContainerType::iterator it = std::find(_shells.begin(),_shells.end(),shell);
         if (it == _shells.end())
             return;
 

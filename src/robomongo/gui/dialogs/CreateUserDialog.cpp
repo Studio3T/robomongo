@@ -43,7 +43,7 @@ namespace Robomongo
                                        QWidget *parent) : QDialog(parent),
         _user(user)
     {
-        VERIFY(!user.version() < MongoUser::minimumSupportedVersion);
+        VERIFY(!user.version() <= MongoUser::minimumSupportedVersion);
 
         setWindowTitle("Add User");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
@@ -119,7 +119,7 @@ namespace Robomongo
         QWidget *parent) : QDialog(parent),
         _user(user)
     {
-        VERIFY(user.version() < MongoUser::minimumSupportedVersion);
+        VERIFY(user.version() <= MongoUser::minimumSupportedVersion);
         setWindowTitle("Add User");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumSize(minimumSize);
@@ -182,7 +182,7 @@ namespace Robomongo
     {
         std::string username = QtUtils::toStdString(_userNameEdit->text());
         std::string pass = QtUtils::toStdString(_userPassEdit->text());
-        if (_user.version() < MongoUser::minimumSupportedVersion) {
+        if (_user.version() <= MongoUser::minimumSupportedVersion) {
             if (username.empty() || pass.empty())
                 return;
 

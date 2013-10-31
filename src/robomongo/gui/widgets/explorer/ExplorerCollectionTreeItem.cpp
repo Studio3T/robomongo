@@ -38,22 +38,22 @@ namespace Robomongo
     ExplorerCollectionDirIndexesTreeItem::ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent)
         :BaseClass(parent)
     {
-        QAction *addIndex = new QAction("Add Index...", this);
+        QAction *addIndex = new QAction(tr("Add Index..."), this);
         VERIFY(connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex())));
 
-        QAction *addIndexGui = new QAction("Add Index...", this);
+        QAction *addIndexGui = new QAction(tr("Add Index..."), this);
         VERIFY(connect(addIndexGui, SIGNAL(triggered()), SLOT(ui_addIndexGui())));
 
-        QAction *dropIndex = new QAction("Drop Index...", this);
+        QAction *dropIndex = new QAction(tr("Drop Index..."), this);
         VERIFY(connect(dropIndex, SIGNAL(triggered()), SLOT(ui_dropIndex())));
 
-        QAction *reIndex = new QAction("Rebuild Indexes...", this);
+        QAction *reIndex = new QAction(tr("Rebuild Indexes..."), this);
         VERIFY(connect(reIndex, SIGNAL(triggered()), SLOT(ui_reIndex())));
 
-        QAction *viewIndex = new QAction("View Indexes", this);
+        QAction *viewIndex = new QAction(tr("View Indexes"), this);
         VERIFY(connect(viewIndex, SIGNAL(triggered()), SLOT(ui_viewIndex())));
 
-        QAction *refreshIndex = new QAction("Refresh", this);
+        QAction *refreshIndex = new QAction(tr("Refresh"), this);
         VERIFY(connect(refreshIndex, SIGNAL(triggered()), SLOT(ui_refreshIndex())));
 
         BaseClass::_contextMenu->addAction(viewIndex);
@@ -104,9 +104,9 @@ namespace Robomongo
                 "ensureIndex({ \"<field>\" : 1 }); \n"
                 "\n"
                 "// options: \n"
-                "// { unique : true }   - A unique index causes MongoDB to reject all documents that contain a duplicate value for the indexed field. \n"
-                "// { sparse : true }   - Sparse indexes only contain entries for documents that have the indexed field. \n"
-                "// { dropDups : true } - Sparse indexes only contain entries for documents that have the indexed field. \n"
+                "// { unique : true }   - " + tr("A unique index causes MongoDB to reject all documents that contain a duplicate value for the indexed field.") + " \n"
+                "// { sparse : true }   - " + tr("Sparse indexes only contain entries for documents that have the indexed field.") + " \n"
+                "// { dropDups : true } - " + tr("") + "http://docs.mongodb.org/manual/core/index-creation/#index-creation-duplicate-dropping \n"
                 , false);
         }
     }
@@ -148,9 +148,9 @@ namespace Robomongo
     ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent,const EnsureIndexInfo &info)
         : BaseClass(parent),_info(info)
     {
-        QAction *deleteIndex = new QAction("Drop Index...", this);
+        QAction *deleteIndex = new QAction(tr("Drop Index..."), this);
         connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
-        QAction *editIndex = new QAction("Edit Index...", this);
+        QAction *editIndex = new QAction(tr("Edit Index..."), this);
         connect(editIndex, SIGNAL(triggered()), SLOT(ui_edit()));
 
         BaseClass::_contextMenu->addAction(editIndex);
@@ -163,7 +163,7 @@ namespace Robomongo
     void ExplorerCollectionIndexesTreeItem::ui_dropIndex()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(),"Drop","Index",text(0));
+        int answer = utils::questionDialog(treeWidget(),tr("Drop"),tr("Index"),text(0));
 
         if (answer != QMessageBox::Yes)
             return;
@@ -203,45 +203,45 @@ namespace Robomongo
     ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection) :
         BaseClass(parent), _collection(collection), _databaseItem(databaseItem)
     {
-        QAction *addDocument = new QAction("Insert Document...", this);
+        QAction *addDocument = new QAction(tr("Insert Document..."), this);
         VERIFY(connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument())));
 
-        QAction *updateDocument = new QAction("Update Documents...", this);
+        QAction *updateDocument = new QAction(tr("Update Documents..."), this);
         VERIFY(connect(updateDocument, SIGNAL(triggered()), SLOT(ui_updateDocument())));
-        QAction *removeDocument = new QAction("Remove Documents...", this);
+        QAction *removeDocument = new QAction(tr("Remove Documents..."), this);
         VERIFY(connect(removeDocument, SIGNAL(triggered()), SLOT(ui_removeDocument())));
 
-        QAction *removeAllDocuments = new QAction("Remove All Documents...", this);
+        QAction *removeAllDocuments = new QAction(tr("Remove All Documents..."), this);
         VERIFY(connect(removeAllDocuments, SIGNAL(triggered()), SLOT(ui_removeAllDocuments())));
 
-        QAction *collectionStats = new QAction("Statistics", this);
+        QAction *collectionStats = new QAction(tr("Statistics"), this);
         VERIFY(connect(collectionStats, SIGNAL(triggered()), SLOT(ui_collectionStatistics())));
 
-        QAction *storageSize = new QAction("Storage Size", this);
+        QAction *storageSize = new QAction(tr("Storage Size"), this);
         VERIFY(connect(storageSize, SIGNAL(triggered()), SLOT(ui_storageSize())));
 
-        QAction *totalIndexSize = new QAction("Total Index Size", this);
+        QAction *totalIndexSize = new QAction(tr("Total Index Size"), this);
         VERIFY(connect(totalIndexSize, SIGNAL(triggered()), SLOT(ui_totalIndexSize())));
 
-        QAction *totalSize = new QAction("Total Size", this);
+        QAction *totalSize = new QAction(tr("Total Size"), this);
         VERIFY(connect(totalSize, SIGNAL(triggered()), SLOT(ui_totalSize())));
-        QAction *shardVersion = new QAction("Shard Version", this);
+        QAction *shardVersion = new QAction(tr("Shard Version"), this);
         VERIFY(connect(shardVersion, SIGNAL(triggered()), SLOT(ui_shardVersion())));
 
-        QAction *shardDistribution = new QAction("Shard Distribution", this);
+        QAction *shardDistribution = new QAction(tr("Shard Distribution"), this);
         VERIFY(connect(shardDistribution, SIGNAL(triggered()), SLOT(ui_shardDistribution())));
 
-        QAction *dropCollection = new QAction("Drop Collection...", this);
+        QAction *dropCollection = new QAction(tr("Drop Collection..."), this);
         VERIFY(connect(dropCollection, SIGNAL(triggered()), SLOT(ui_dropCollection())));
 
-        QAction *renameCollection = new QAction("Rename Collection...", this);
+        QAction *renameCollection = new QAction(tr("Rename Collection..."), this);
         VERIFY(connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection())));
-        QAction *duplicateCollection = new QAction("Duplicate Collection...", this);
+        QAction *duplicateCollection = new QAction(tr("Duplicate Collection..."), this);
         VERIFY(connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection())));
-        QAction *copyCollectionToDiffrentServer = new QAction("Copy Collection to Database...", this);
+        QAction *copyCollectionToDiffrentServer = new QAction(tr("Copy Collection to Database..."), this);
         VERIFY(connect(copyCollectionToDiffrentServer, SIGNAL(triggered()), SLOT(ui_copyToCollectionToDiffrentServer())));
 
-        QAction *viewCollection = new QAction("View Documents", this);
+        QAction *viewCollection = new QAction(tr("View Documents"), this);
         VERIFY(connect(viewCollection, SIGNAL(triggered()), SLOT(ui_viewCollection())));
 
         BaseClass::_contextMenu->addAction(viewCollection);
@@ -340,7 +340,7 @@ namespace Robomongo
         DocumentTextEditor editor(CollectionInfo(settings->getFullAddress(), database->name(), _collection->name()), "{\n    \n}");
 
         editor.setCursorPosition(1, 4);
-        editor.setWindowTitle("Insert Document");
+        editor.setWindowTitle(tr("Insert Document"));
         int result = editor.exec();
 
         treeWidget()->activateWindow();
@@ -362,8 +362,8 @@ namespace Robomongo
         MongoDatabase *database = _collection->database();
         // Ask user
         int answer = QMessageBox::question(treeWidget(),
-            "Remove All Documents",
-            QString("Remove all documents from <b>%1</b> collection?").arg(QtUtils::toQString(_collection->name())),
+            tr("Remove All Documents"),
+            tr("Remove all documents from <b>%1</b> collection?").arg(QtUtils::toQString(_collection->name())),
             QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
         if (answer == QMessageBox::Yes) {
@@ -390,8 +390,8 @@ namespace Robomongo
             "    \n"
             "    // options \n"
             "    {\n"
-            "        \"multi\" : false,  // update only one document \n"
-            "        \"upsert\" : false  // insert a new document, if no existing document match the query \n"
+            "        \"multi\" : false,  // " + tr("update only one document") + " \n"
+            "        \"upsert\" : false  // " + tr("insert a new document, if no existing document match the query") + " \n"
             "    }\n"
             ");", false);
     }
@@ -404,7 +404,7 @@ namespace Robomongo
     void ExplorerCollectionTreeItem::ui_dropCollection()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(),"Drop","collection",QtUtils::toQString(_collection->name()));
+        int answer = utils::questionDialog(treeWidget(),tr("Drop"),tr("collection"),QtUtils::toQString(_collection->name()));
 
         if (answer == QMessageBox::Yes) {
             MongoDatabase *database = _collection->database();
@@ -422,9 +422,9 @@ namespace Robomongo
         CreateDatabaseDialog dlg(QtUtils::toQString(settings->getFullAddress()),
             QtUtils::toQString(database->name()),
             QtUtils::toQString(_collection->name()), treeWidget());
-        dlg.setWindowTitle("Duplicate Collection");
-        dlg.setOkButtonText("&Duplicate");
-        dlg.setInputLabelText("New Collection Name:");
+        dlg.setWindowTitle(tr("Duplicate Collection"));
+        dlg.setOkButtonText(tr("&Duplicate"));
+        dlg.setInputLabelText(tr("New Collection Name:"));
         dlg.setInputText(QtUtils::toQString(_collection->name() + "_copy"));
         int result = dlg.exec();
 
@@ -461,9 +461,9 @@ namespace Robomongo
         CreateDatabaseDialog dlg(QtUtils::toQString(settings->getFullAddress()),
             QtUtils::toQString(database->name()),
             QtUtils::toQString(_collection->name()), treeWidget());
-        dlg.setWindowTitle("Rename Collection");
-        dlg.setOkButtonText("&Rename");
-        dlg.setInputLabelText("New Collection Name:");
+        dlg.setWindowTitle(tr("Rename Collection"));
+        dlg.setOkButtonText(tr("&Rename"));
+        dlg.setInputLabelText(tr("New Collection Name:"));
         dlg.setInputText(QtUtils::toQString(_collection->name()));
         int result = dlg.exec();
 

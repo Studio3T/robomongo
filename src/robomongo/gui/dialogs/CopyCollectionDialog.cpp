@@ -36,7 +36,7 @@ namespace Robomongo
              }
         }
         
-        setWindowTitle("Copy Collection");
+        setWindowTitle(tr("Copy Collection"));
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumSize(minimumSize);
 
@@ -49,7 +49,7 @@ namespace Robomongo
         _buttonBox = new QDialogButtonBox(this);
         _buttonBox->setOrientation(Qt::Horizontal);
         _buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        _buttonBox->button(QDialogButtonBox::Save)->setText("Copy");
+        _buttonBox->button(QDialogButtonBox::Save)->setText(tr("Copy"));
         VERIFY(connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
         VERIFY(connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
@@ -65,9 +65,9 @@ namespace Robomongo
         QVBoxLayout *serverlayout = new QVBoxLayout();
         serverlayout->setContentsMargins(0, 3, 0, 0);
         _serverComboBox = new QComboBox();
-        QLabel *serverLabel = new QLabel("Select server:");
+        QLabel *serverLabel = new QLabel(tr("Select server:"));
         QLabel *description = new QLabel(
-            QString("Copy <b>%1</b> collection to database on this or another server. "
+            tr("Copy <b>%1</b> collection to database on this or another server. "
                 "You need to be already connected to destination server, in order to see this server in the list below. "
                 "This operation will <i>not</i> overwrite existing documents with the same _id.")
                 .arg(collection));
@@ -81,7 +81,7 @@ namespace Robomongo
         QVBoxLayout *databaselayout = new QVBoxLayout();
         databaselayout->setContentsMargins(0, 8, 0, 7);
         _databaseComboBox = new QComboBox();
-        QLabel *databaseLabel = new QLabel("Select database:");
+        QLabel *databaseLabel = new QLabel(tr("Select database:"));
         databaselayout->addWidget(databaseLabel);
         databaselayout->addWidget(_databaseComboBox);        
         VERIFY(connect(_serverComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateDatabaseComboBox(int))));

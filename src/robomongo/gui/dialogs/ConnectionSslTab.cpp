@@ -31,7 +31,7 @@ namespace Robomongo
 
         _sslPemFilePath->setValidator(new QRegExpValidator(pathx, this));
 */
-        _sslSupport = new QCheckBox("Use SSL protocol");
+        _sslSupport = new QCheckBox(tr("Use SSL protocol"));
         _sslSupport->setStyleSheet("margin-bottom: 7px");
         _sslSupport->setChecked(_settings->sslInfo()._sslSupport);
 
@@ -39,18 +39,18 @@ namespace Robomongo
         _selectPemFileButton->setFixedSize(20,20);
         VERIFY(connect(_selectPemFileButton, SIGNAL(clicked()), this, SLOT(setSslPEMKeyFile())));
 
-        _sslPemLabel = new QLabel("SSL Certificate:");
+        _sslPemLabel = new QLabel(tr("SSL Certificate:"));
 
         _sslPemDescriptionLabel = new QLabel(
-            "<nobr>SSL Certificate and SSL Private Key combined into one file (*.pem)");
+            tr("<nobr>SSL Certificate and SSL Private Key combined into one file (*.pem)"));
         _sslPemDescriptionLabel->setWordWrap(true);
         _sslPemDescriptionLabel->setAlignment(Qt::AlignTop);
         _sslPemDescriptionLabel->setContentsMargins(0, -2, 0, 0);
         _sslPemDescriptionLabel->setMinimumSize(_sslPemDescriptionLabel->sizeHint());
 
         QLabel *sslNoteLabel = new QLabel(
-            "<b>Note:</b> Support for Certificate Authority (CA) file and "
-            "encrypted SSL Private Keys are planned for future releases.");
+            tr("<b>Note:</b> Support for Certificate Authority (CA) file and "
+            "encrypted SSL Private Keys are planned for future releases."));
         sslNoteLabel->setWordWrap(true);
         sslNoteLabel->setAlignment(Qt::AlignTop);
         sslNoteLabel->setContentsMargins(0, 20, 0, 0);
@@ -74,7 +74,7 @@ namespace Robomongo
 
     void ConnectionSslTab::setSslPEMKeyFile()
     {
-        QString filepath = QFileDialog::getOpenFileName(this, "Select SSL Key File (PEM)", "", QObject::tr("PEM files (*.pem)"));
+        QString filepath = QFileDialog::getOpenFileName(this, tr("Select SSL Key File (PEM)"), "", tr("PEM files (*.pem)"));
         if (filepath.isNull())
             return;
 

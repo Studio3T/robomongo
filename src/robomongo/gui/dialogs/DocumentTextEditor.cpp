@@ -34,7 +34,7 @@ namespace Robomongo
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), QtUtils::toQString(_info._ns.databaseName()));
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), QtUtils::toQString(detail::prepareServerAddress(_info._serverAddress)));
 
-        QPushButton *validate = new QPushButton("Validate");
+        QPushButton *validate = new QPushButton(tr("Validate"));
         validate->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
         VERIFY(connect(validate, SIGNAL(clicked()), this, SLOT(onValidateButtonClicked())));
 
@@ -119,17 +119,17 @@ namespace Robomongo
             int lineHeight = _queryText->sciScintilla()->lineLength(line);
             _queryText->sciScintilla()->fillIndicatorRange(line, pos, line, lineHeight, 0);
 
-            message = QString("Unable to parse JSON:<br /> <b>%1</b>, at (%2, %3).")
+            message = tr("Unable to parse JSON:<br /> <b>%1</b>, at (%2, %3).")
                 .arg(message).arg(line + 1).arg(pos + 1);
 
-            QMessageBox::critical(NULL, "Parsing error", message);
+            QMessageBox::critical(NULL, tr("Parsing error"), message);
             _queryText->setFocus();
             activateWindow();
             return false;
         }
 
         if (!silentOnSuccess) {
-            QMessageBox::information(NULL, "Validation", "JSON is valid!");
+            QMessageBox::information(NULL, tr("Validation"), tr("JSON is valid!"));
             _queryText->setFocus();
             activateWindow();
         }

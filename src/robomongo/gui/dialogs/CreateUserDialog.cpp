@@ -45,7 +45,7 @@ namespace Robomongo
     {
         VERIFY(!user.version() < MongoUser::minimumSupportedVersion);
 
-        setWindowTitle("Add User");
+        setWindowTitle(tr("Add User"));
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumSize(minimumSize);
 
@@ -56,13 +56,13 @@ namespace Robomongo
         hline->setFrameShape(QFrame::HLine);
         hline->setFrameShadow(QFrame::Sunken);
 
-        _userNameLabel= new QLabel("Name:");
+        _userNameLabel= new QLabel(tr("Name:"));
         _userNameEdit = new QLineEdit();
         _userNameEdit->setText(QtUtils::toQString(user.name()));
-        _userPassLabel= new QLabel("Password:");
+        _userPassLabel= new QLabel(tr("Password:"));
         _userPassEdit = new QLineEdit();
         _userPassEdit->setEchoMode(QLineEdit::Password);
-        _userSourceLabel = new QLabel("UserSource:");
+        _userSourceLabel = new QLabel(tr("UserSource:"));
         _userSourceComboBox = new QComboBox();
         _userSourceComboBox->addItems(QStringList() << "" << databases); //setText(QtUtils::toQString(user.userSource()));
         _userSourceComboBox->setCurrentText(QtUtils::toQString(user.userSource()));
@@ -120,7 +120,7 @@ namespace Robomongo
         _user(user)
     {
         VERIFY(user.version() < MongoUser::minimumSupportedVersion);
-        setWindowTitle("Add User");
+        setWindowTitle(tr("Add User"));
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumSize(minimumSize);
 
@@ -131,13 +131,13 @@ namespace Robomongo
         hline->setFrameShape(QFrame::HLine);
         hline->setFrameShadow(QFrame::Sunken);
 
-        _userNameLabel= new QLabel("Name:");
+        _userNameLabel= new QLabel(tr("Name:"));
         _userNameEdit = new QLineEdit();
         _userNameEdit->setText(QtUtils::toQString(user.name()));
-        _userPassLabel= new QLabel("Password:");
+        _userPassLabel= new QLabel(tr("Password:"));
         _userPassEdit = new QLineEdit();
         _userPassEdit->setEchoMode(QLineEdit::Password);
-        _readOnlyCheckBox = new QCheckBox("Read Only");
+        _readOnlyCheckBox = new QCheckBox(tr("Read Only"));
         _readOnlyCheckBox->setChecked(user.readOnly());
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
@@ -202,7 +202,7 @@ namespace Robomongo
                 return;
 
             if (!userSource.empty() && !pass.empty()) {
-                QMessageBox::warning(this, "Invalid input", "The UserSourse field and the Password field are mutually exclusive. The document cannot contain both.\n");
+                QMessageBox::warning(this, tr("Invalid input"), tr("The UserSourse field and the Password field are mutually exclusive. The document cannot contain both.\n"));
                 return;
             }
 

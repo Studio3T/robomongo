@@ -10,6 +10,20 @@ mapping[EditIndexDialog]=Robomongo
 mapping[FindFrame]=Robomongo
 mapping[AboutDialog]=Robomongo
 mapping[ConnectionsDialog]=Robomongo
+mapping[ConnectionAuthTab]=Robomongo
+mapping[ConnectionBasicTab]=Robomongo
+mapping[ConnectionAdvancedTab]=Robomongo
+mapping[ConnectionDiagnosticDialog]=Robomongo
+mapping[ConnectionDialog]=Robomongo
+mapping[ConnectionSslTab]=Robomongo
+mapping[ConnectionsDialog]=Robomongo
+mapping[CopyCollection]=Robomongo
+mapping[CreateDatabaseDialog]=Robomongo
+mapping[CreateUserDialog]=Robomongo
+mapping[DocumentTextEditor]=Robomongo
+mapping[FunctionTextEditor]=Robomongo
+mapping[SshTunelTab]=Robomongo
+mapping[ExplorerCollectionTreeItem]=Robomongo
 
 for file in `find ./ -name "*.raw.ts"`
 do

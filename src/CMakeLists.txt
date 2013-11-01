@@ -35,7 +35,6 @@ SET(HEADERS_GUI_TO_MOC
     robomongo/gui/widgets/workarea/BsonTreeItem.h
     robomongo/gui/widgets/workarea/BsonTableModel.h
     robomongo/gui/widgets/workarea/BsonTableView.h
-    robomongo/gui/editors/jsedit.h
     robomongo/gui/widgets/workarea/OutputWidget.h
     robomongo/gui/widgets/workarea/OutputItemContentWidget.h
     robomongo/gui/dialogs/ConnectionAuthTab.h
@@ -90,7 +89,6 @@ SET(SOURCES_GUI
     robomongo/gui/widgets/workarea/BsonTreeItem.cpp
     robomongo/gui/widgets/workarea/BsonTableModel.cpp
     robomongo/gui/widgets/workarea/BsonTableView.cpp
-    robomongo/gui/editors/jsedit.cpp
     robomongo/gui/editors/PlainJavaScriptEditor.cpp
     robomongo/gui/editors/JSLexer.cpp
     robomongo/gui/editors/FindFrame.cpp

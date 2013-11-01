@@ -108,9 +108,11 @@ namespace Robomongo
             const char *json = textString.c_str();
             int jsonLen = textString.length();
             int offset = 0;
+            _obj.clear();
             while(offset!=jsonLen)
             { 
-                _obj.push_back(mongo::Robomongo::fromjson(json+offset,&len));
+                mongo::BSONObj doc = mongo::Robomongo::fromjson(json+offset,&len);
+                _obj.push_back(doc);
                 offset+=len;
             }
         } catch (const mongo::ParseMsgAssertionException &ex) {

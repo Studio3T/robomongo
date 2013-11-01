@@ -8,6 +8,7 @@
 #include <QToolButton>
 #include <Qsci/qsciscintilla.h>
 #include <QMessageBox>
+#include <QKeyEvent>
 
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/core/utils/QtUtils.h"

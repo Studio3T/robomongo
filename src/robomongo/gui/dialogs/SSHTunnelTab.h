@@ -29,7 +29,6 @@ namespace Robomongo
     private Q_SLOTS:
         void sshSupportStateChange(int val);
         void securityChange(const QString& val);
-        void setPublicFile();
         void setPrivateFile();
 
     private:
@@ -41,17 +40,17 @@ namespace Robomongo
         QLineEdit *_userName;
         QLineEdit *_sshPort;
         QComboBox *_security;
-        QLabel *_sshPublicKeyLabel;
         QLabel *_sshPrivateKeyLabel;
         QLabel *_sshPassphraseLabel;
+        QLabel *_sshAddressLabel;
+        QLabel *_sshUserNameLabel;
+        QLabel *_sshAuthMethodLabel;
 
-        QPushButton *_selectPublicFileButton;
         QPushButton *_selectPrivateFileButton;
 
         QLineEdit *_passwordBox;
         QLabel *_passwordLabel;
 
-        QLineEdit *_publicKeyBox; 
         QLineEdit *_privateKeyBox; 
         QLineEdit *_passphraseBox;
 

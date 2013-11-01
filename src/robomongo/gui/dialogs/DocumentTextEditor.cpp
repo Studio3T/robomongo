@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QDialogButtonBox>
+#include <QDesktopWidget>
 #include <Qsci/qscilexerjavascript.h>
 #include <mongo/client/dbclient.h>
 
@@ -20,14 +21,18 @@
 
 namespace Robomongo
 {
-    const QSize DocumentTextEditor::minimumSize = QSize(640,480);
+    const QSize DocumentTextEditor::minimumSize = QSize(800, 600);
 
     DocumentTextEditor::DocumentTextEditor(const CollectionInfo &info, const QString &json, bool readonly /* = false */, QWidget *parent) :
         QDialog(parent),
         _info(info),
         _readonly(readonly)
     {
-        setMinimumSize(minimumSize);       
+        QRect screenGeometry = QApplication::desktop()->availableGeometry();
+        QSize size(screenGeometry.width() - 650, screenGeometry.height() - 265);
+        size.expandedTo(minimumSize);
+
+        setMinimumSize(size);
         setWindowFlags(Qt::Window | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
 
         Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), QtUtils::toQString(_info._ns.collectionName()));

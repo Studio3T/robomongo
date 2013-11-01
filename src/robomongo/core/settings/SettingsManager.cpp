@@ -128,7 +128,9 @@ namespace Robomongo
         } else {
             _viewMode = Custom; // Default View Mode
         }
-        _autoExpand = map.value("autoExpand").toBool();
+
+        _autoExpand = map.contains("autoExpand") ?
+            map.value("autoExpand").toBool() : true;
 
         // 4. Load TimeZone
         int timeZone = map.value("timeZone").toInt();

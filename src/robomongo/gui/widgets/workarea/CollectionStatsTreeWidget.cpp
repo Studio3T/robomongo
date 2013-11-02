@@ -11,7 +11,7 @@ namespace Robomongo
         : QTreeWidget(parent)
     {
         QStringList colums;
-        colums << "Name" << "Count" << "Size" << "Storage" << "Index" << "Average Object" << "Padding";
+        colums << tr("Name") << tr("Count") << tr("Size") << tr("Storage") << tr("Index") << tr("Average Object") << tr("Padding");
         setHeaderLabels(colums);
 
         setStyleSheet(

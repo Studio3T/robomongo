@@ -72,25 +72,25 @@ namespace Robomongo
         QWidget *wid = dynamic_cast<QWidget*>(_observer);
         AppRegistry::instance().bus()->subscribe(this, InsertDocumentResponse::Type);
 
-        _deleteDocumentAction = new QAction("Delete Document...", wid);
+        _deleteDocumentAction = new QAction(tr("Delete Document..."), wid);
         VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument())));
 
-        _deleteDocumentsAction = new QAction("Delete Documents...", wid);
+        _deleteDocumentsAction = new QAction(tr("Delete Documents..."), wid);
         VERIFY(connect(_deleteDocumentsAction, SIGNAL(triggered()), SLOT(onDeleteDocuments())));
 
-        _editDocumentAction = new QAction("Edit Document...", wid);
+        _editDocumentAction = new QAction(tr("Edit Document..."), wid);
         VERIFY(connect(_editDocumentAction, SIGNAL(triggered()), SLOT(onEditDocument())));
 
-        _viewDocumentAction = new QAction("View Document...", wid);
+        _viewDocumentAction = new QAction(tr("View Document..."), wid);
         VERIFY(connect(_viewDocumentAction, SIGNAL(triggered()), SLOT(onViewDocument())));
 
-        _insertDocumentAction = new QAction("Insert Document...", wid);
+        _insertDocumentAction = new QAction(tr("Insert Document..."), wid);
         VERIFY(connect(_insertDocumentAction, SIGNAL(triggered()), SLOT(onInsertDocument())));
 
-        _copyValueAction = new QAction("Copy Value", wid);
+        _copyValueAction = new QAction(tr("Copy Value"), wid);
         VERIFY(connect(_copyValueAction, SIGNAL(triggered()), SLOT(onCopyDocument())));
 
-        _copyJsonAction = new QAction("Copy JSON", wid);
+        _copyJsonAction = new QAction(tr("Copy JSON"), wid);
         VERIFY(connect(_copyJsonAction, SIGNAL(triggered()), SLOT(onCopyJson())));        
     }
 
@@ -138,8 +138,8 @@ namespace Robomongo
             mongo::BSONElement id = obj.getField("_id");
 
             if (id.eoo()) {
-                QMessageBox::warning(dynamic_cast<QWidget*>(_observer), "Cannot delete", "Selected document doesn't have _id field. \n"
-                    "Maybe this is a system document that should be managed in a special way?");
+                QMessageBox::warning(dynamic_cast<QWidget*>(_observer), tr("Cannot delete"), tr("Selected document doesn't have _id field. \n"
+                    "Maybe this is a system document that should be managed in a special way?"));
                 break;
             }
 
@@ -150,8 +150,8 @@ namespace Robomongo
 
             if (!force) {
                 // Ask user
-                int answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer), "Delete",
-                    "Document", "%1 %2 with id:<br><b>%3</b>?", QtUtils::toQString(id.toString(false)));
+                int answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer), tr("Delete"),
+                    tr("Document", "%1 %2 with id:<br><b>%3</b>?"), QtUtils::toQString(id.toString(false)));
 
                 if (answer != QMessageBox::Yes)
                     break;
@@ -178,7 +178,7 @@ namespace Robomongo
         QModelIndexList selectedIndexes = _observer->selectedIndexes();
         if (!detail::isMultySelection(selectedIndexes))
             return;
-        int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", QString("Do you want to delete %1 selected documents?").arg(selectedIndexes.count()));
+        int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), tr("Delete"), tr("Do you want to delete %1 selected documents?").arg(selectedIndexes.count()));
         if (answer == QMessageBox::Yes) {
             std::vector<BsonTreeItem*> items;
             for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it!= selectedIndexes.end(); ++it) {
@@ -228,7 +228,7 @@ namespace Robomongo
         DocumentTextEditor editor(_queryInfo._info,
             json, false, dynamic_cast<QWidget*>(_observer));
 
-        editor.setWindowTitle("Edit Document");
+        editor.setWindowTitle(tr("Edit Document"));
         int result = editor.exec();
 
         if (result == QDialog::Accepted) {
@@ -257,7 +257,7 @@ namespace Robomongo
         DocumentTextEditor *editor = new DocumentTextEditor(_queryInfo._info,
             json, true, dynamic_cast<QWidget*>(_observer));
 
-        editor->setWindowTitle("View Document");
+        editor->setWindowTitle(tr("View Document"));
         editor->show();
     }
 
@@ -270,7 +270,7 @@ namespace Robomongo
             "{\n    \n}", false, dynamic_cast<QWidget*>(_observer));
 
         editor.setCursorPosition(1, 4);
-        editor.setWindowTitle("Insert Document");
+        editor.setWindowTitle(tr("Insert Document"));
 
         int result = editor.exec();
         if (result != QDialog::Accepted)

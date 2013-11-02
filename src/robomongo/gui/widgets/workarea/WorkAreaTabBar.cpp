@@ -20,16 +20,16 @@ namespace Robomongo
 
         _menu = new QMenu(this);
 
-        _newShellAction = new QAction("&New Shell", _menu);
+        _newShellAction = new QAction(tr("&New Shell"), _menu);
         _newShellAction->setShortcut(Qt::CTRL + Qt::Key_T);
-        _reloadShellAction = new QAction("&Reload", _menu);
+        _reloadShellAction = new QAction(tr("&Reload"), _menu);
         _reloadShellAction->setShortcut(Qt::CTRL + Qt::Key_R);
-        _duplicateShellAction = new QAction("&Duplicate", _menu);
-        _pinShellAction = new QAction("&Pin Shell", _menu);
-        _closeShellAction = new QAction("&Close Shell", _menu);
+        _duplicateShellAction = new QAction(tr("&Duplicate"), _menu);
+        _pinShellAction = new QAction(tr("&Pin Shell"), _menu);
+        _closeShellAction = new QAction(tr("&Close Shell"), _menu);
         _closeShellAction->setShortcut(Qt::CTRL + Qt::Key_W);
-        _closeOtherShellsAction = new QAction("Close &Other Shells", _menu);
-        _closeShellsToTheRightAction = new QAction("Close Shells to the R&ight", _menu);
+        _closeOtherShellsAction = new QAction(tr("Close &Other Shells"), _menu);
+        _closeShellsToTheRightAction = new QAction(tr("Close Shells to the R&ight"), _menu);
 
         _menu->addAction(_newShellAction);
         _menu->addSeparator();

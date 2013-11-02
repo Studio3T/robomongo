@@ -29,9 +29,9 @@ namespace Robomongo
         _skipEdit = new QLineEdit;
         _batchSizeEdit = new QLineEdit;
         _skipEdit->setAlignment(Qt::AlignHCenter);
-        _skipEdit->setToolTip("Skip");
+        _skipEdit->setToolTip(tr("Skip"));
         _batchSizeEdit->setAlignment(Qt::AlignHCenter);
-        _batchSizeEdit->setToolTip("Batch Size (number of documents shown at once)");
+        _batchSizeEdit->setToolTip(tr("Batch Size (number of documents shown at once)"));
 
         QFontMetrics metrics = _skipEdit->fontMetrics();
         int width = metrics.boundingRect("000000").width();

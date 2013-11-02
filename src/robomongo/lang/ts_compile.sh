@@ -26,9 +26,22 @@ mapping[SshTunelTab]=Robomongo
 mapping[ExplorerServerTreeItem]=Robomongo
 mapping[ExplorerDatabaseTreeItem]=Robomongo
 mapping[ExplorerCollectionTreeItem]=Robomongo
+mapping[ExplorerDatabaseCategoryTreeItem]=Robomongo
 mapping[ExplorerFunctionTreeItem]=Robomongo
 mapping[ExplorerUserTreeItem]=Robomongo
+mapping[BsonTreeModel]=Robomongo
+mapping[BsonTreeView]=Robomongo
+mapping[CollectionStatsTreeWidget]=Robomongo
+mapping[OutputItemContentWidget]=Robomongo
+mapping[OutputItemHeaderWidget]=Robomongo
+mapping[PagingWidget]=Robomongo
+mapping[QueryWidget]=Robomongo
+mapping[ScriptWidget]=Robomongo
+mapping[WorkAreaTabBar]=Robomongo
+mapping[WorkAreaTabWidget]=Robomongo
 mapping[LogWidget]=Robomongo
+mapping[FindFrame]=Robomongo
+mapping[Notifier]=Robomongo
 
 for file in `find ./ -name "*.raw.ts"`
 do

@@ -200,7 +200,7 @@ namespace Robomongo
 
         // Execute action
         _executeAction = new QAction(this);
-        _executeAction->setData(tr("Execute"));
+        _executeAction->setData("Execute");
         _executeAction->setIcon(GuiRegistry::instance().executeIcon());
         _executeAction->setShortcut(Qt::Key_F5);
         _executeAction->setToolTip(tr("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>"));
@@ -208,7 +208,7 @@ namespace Robomongo
 
         // Stop action
         _stopAction = new QAction(this);
-        _stopAction->setData(tr("Stop"));
+        _stopAction->setData("Stop");
         _stopAction->setIcon(GuiRegistry::instance().stopIcon());
         _stopAction->setShortcut(Qt::Key_F6);
         _stopAction->setToolTip(tr("Stop execution of currently running script. <b>(F6)</b>"));
@@ -318,7 +318,7 @@ namespace Robomongo
         VERIFY(connect(autoExpand, SIGNAL(triggered()), this, SLOT(toggleAutoExpand())));
         optionsMenu->addAction(autoExpand);
 
-        QAction *disabelConnectionShortcuts = new QAction("Disable Connection Shortcuts",this);
+        QAction *disabelConnectionShortcuts = new QAction(tr("Disable Connection Shortcuts"),this);
         disabelConnectionShortcuts->setCheckable(true);
         disabelConnectionShortcuts->setChecked(AppRegistry::instance().settingsManager()->disableConnectionShortcuts());
         VERIFY(connect(disabelConnectionShortcuts, SIGNAL(triggered()), this, SLOT(setDisableConnectionShortcuts())));
@@ -466,12 +466,11 @@ namespace Robomongo
         const QString &text = ac->text();
         AppRegistry::instance().settingsManager()->setCurrentTranslation(text);
         AppRegistry::instance().settingsManager()->save();
-        QMessageBox msgBox;
-        msgBox.setIcon(QMessageBox::Information);
-        msgBox.setText(tr("You need to restart program for language change take effect"));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.setDefaultButton(QMessageBox::Ok);
-        msgBox.exec();
+        QMessageBox::information(this, PROJECT_NAME_TITLE, 
+                tr("You need to restart %1 for language change take effect").arg(PROJECT_NAME_TITLE), 
+                QMessageBox::Ok, 
+                QMessageBox::Ok
+        );
     }
 
     void MainWindow::open()
@@ -563,7 +562,7 @@ namespace Robomongo
             try {
                 _app->openServer(selected, true);
             } catch(const std::exception &) {
-                QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(selected->getFullAddress()));
+                QString message = tr("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(selected->getFullAddress()));
                 QMessageBox::information(this, tr("Error"), message);
             }
         }
@@ -742,7 +741,7 @@ namespace Robomongo
             _app->openServer(ptr, true);
         }
         catch(const std::exception &) {
-            QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(ptr->getFullAddress()));
+            QString message = tr("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(ptr->getFullAddress()));
             QMessageBox::information(this, tr("Error"), message);
         }
     }
@@ -750,7 +749,7 @@ namespace Robomongo
     void MainWindow::handle(ConnectionFailedEvent *event)
     {
         ConnectionSettings *connection = event->server->connectionRecord();
-        QString message = QString("Cannot connect to MongoDB (%1),\nerror: %2").arg(QtUtils::toQString(connection->getFullAddress())).arg(QtUtils::toQString(event->error().errorMessage()));
+        QString message = tr("Cannot connect to MongoDB (%1),\nerror: %2").arg(QtUtils::toQString(connection->getFullAddress())).arg(QtUtils::toQString(event->error().errorMessage()));
         QMessageBox::information(this, tr("Error"), message);
     }
 

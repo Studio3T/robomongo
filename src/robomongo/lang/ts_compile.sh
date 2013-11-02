@@ -26,6 +26,7 @@ mapping[SshTunelTab]=Robomongo
 mapping[ExplorerDatabaseTreeItem]=Robomongo
 mapping[ExplorerCollectionTreeItem]=Robomongo
 mapping[ExplorerFunctionTreeItem]=Robomongo
+mapping[ExplorerUserTreeItem]=Robomongo
 
 for file in `find ./ -name "*.raw.ts"`
 do

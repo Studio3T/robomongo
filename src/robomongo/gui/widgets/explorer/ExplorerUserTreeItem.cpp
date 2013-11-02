@@ -33,10 +33,10 @@ namespace Robomongo
     ExplorerUserTreeItem::ExplorerUserTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database, const MongoUser &user) :
         BaseClass(parent),_user(user),_database(database)
     {
-        QAction *dropUser = new QAction("Drop User", this);
+        QAction *dropUser = new QAction(tr("Drop User"), this);
         VERIFY(connect(dropUser, SIGNAL(triggered()), SLOT(ui_dropUser())));
 
-        QAction *editUser = new QAction("Edit User", this);
+        QAction *editUser = new QAction(tr("Edit User"), this);
         VERIFY(connect(editUser, SIGNAL(triggered()), SLOT(ui_editUser())));
 
         BaseClass::_contextMenu->addAction(editUser);
@@ -52,7 +52,7 @@ namespace Robomongo
     void ExplorerUserTreeItem::ui_dropUser()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(),"Drop","User",QtUtils::toQString(_user.name()));
+        int answer = utils::questionDialog(treeWidget(), tr("Drop"), tr("User"), QtUtils::toQString(_user.name()));
 
         if (answer == QMessageBox::Yes) {
             _database->dropUser(_user.id());
@@ -72,8 +72,8 @@ namespace Robomongo
            dlg = new CreateUserDialog(_database->server()->getDatabasesNames(), QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(_database->name()), _user, treeWidget());
         }
         
-        dlg->setWindowTitle("Edit User");
-        dlg->setUserPasswordLabelText("New Password:");
+        dlg->setWindowTitle(tr("Edit User"));
+        dlg->setUserPasswordLabelText(tr("New Password:"));
         int result = dlg->exec();
 
         if (result == QDialog::Accepted) {

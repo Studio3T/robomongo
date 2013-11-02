@@ -1255,7 +1255,7 @@
         <translation>Отключить горячие клавиши подключений</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="470"/>
+        <location filename="../gui/MainWindow.cpp" line="472"/>
         <source>You need to restart %1 for language change take effect</source>
         <translation>Нужно перезапустить %1, чтобы изменения языка вступили в силу</translation>
     </message>
@@ -1365,42 +1365,42 @@
         <translation>Предпочтения</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="338"/>
+        <location filename="../gui/MainWindow.cpp" line="341"/>
         <source>&amp;About Robomongo...</source>
         <translation>&amp;О Robomongo...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="342"/>
+        <location filename="../gui/MainWindow.cpp" line="345"/>
         <source>Help</source>
         <translation>Помощь</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="346"/>
+        <location filename="../gui/MainWindow.cpp" line="349"/>
         <source>Toolbar</source>
         <translation>Панель инструментов</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="354"/>
+        <location filename="../gui/MainWindow.cpp" line="357"/>
         <source>Open/Save ToolBar</source>
         <translation>Панель загрузки/сохранения</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="361"/>
+        <location filename="../gui/MainWindow.cpp" line="364"/>
         <source>Exec Toolbar</source>
         <translation>Панель выполнения</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="389"/>
+        <location filename="../gui/MainWindow.cpp" line="391"/>
         <source>Theme</source>
         <translation>Тема</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="406"/>
+        <location filename="../gui/MainWindow.cpp" line="408"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="408"/>
+        <location filename="../gui/MainWindow.cpp" line="410"/>
         <source>System locale (if available)</source>
         <extracomment>Language based on system locale</extracomment>
         <translation>Язык системы (если доступен)</translation>
@@ -1411,8 +1411,8 @@
         <translation type="obsolete">Язык системы</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="431"/>
-        <location filename="../gui/MainWindow.cpp" line="802"/>
+        <location filename="../gui/MainWindow.cpp" line="433"/>
+        <location filename="../gui/MainWindow.cpp" line="804"/>
         <source>Logs</source>
         <translation>Журнал</translation>
     </message>
@@ -1421,56 +1421,56 @@
         <translation type="obsolete">Нужно перезапустить программу, чтобы изменения языка вступили в силу</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="542"/>
+        <location filename="../gui/MainWindow.cpp" line="544"/>
         <source>&amp;Manage Connections...</source>
         <translation>&amp;Настройки соединений...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="544"/>
+        <location filename="../gui/MainWindow.cpp" line="546"/>
         <source>Connect to MongoDB</source>
         <translation>Подключиться к MongoDB</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="565"/>
-        <location filename="../gui/MainWindow.cpp" line="744"/>
+        <location filename="../gui/MainWindow.cpp" line="567"/>
+        <location filename="../gui/MainWindow.cpp" line="746"/>
         <source>Cannot connect to MongoDB (%1)</source>
         <translation>Не удаётся подкючиться к MongoDB (%1)</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="566"/>
-        <location filename="../gui/MainWindow.cpp" line="745"/>
-        <location filename="../gui/MainWindow.cpp" line="753"/>
+        <location filename="../gui/MainWindow.cpp" line="568"/>
+        <location filename="../gui/MainWindow.cpp" line="747"/>
+        <location filename="../gui/MainWindow.cpp" line="755"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="665"/>
+        <location filename="../gui/MainWindow.cpp" line="667"/>
         <source>Refresh not working yet... : &lt;br/&gt;  &lt;b&gt;Ctrl+D&lt;/b&gt; : push Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="752"/>
+        <location filename="../gui/MainWindow.cpp" line="754"/>
         <source>Cannot connect to MongoDB (%1),
 error: %2</source>
         <translation>Не удаётся подкючиться к MongoDB (%1), ошибка: %2</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="780"/>
+        <location filename="../gui/MainWindow.cpp" line="782"/>
         <source>Database Explorer</source>
         <translation>Проводник базы данных</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="791"/>
+        <location filename="../gui/MainWindow.cpp" line="793"/>
         <source>&amp;Explorer</source>
         <translation>П&amp;роводник</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="793"/>
+        <location filename="../gui/MainWindow.cpp" line="795"/>
         <source>Press to show/hide Database Explorer panel.</source>
         <translation>Нажмите, чтобы показать/спрятать панель Проводника Базы данных.</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="805"/>
+        <location filename="../gui/MainWindow.cpp" line="807"/>
         <source>&amp;Logs</source>
         <translation>&amp;Журнал</translation>
     </message>

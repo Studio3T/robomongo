@@ -328,6 +328,9 @@ namespace Robomongo
         VERIFY(connect(preferencesAction, SIGNAL(triggered()), this, SLOT(openPreferences())));
         preferencesAction->setVisible(false);
         optionsMenu->addAction(preferencesAction);
+        
+        optionsMenu->addSeparator();
+        createLanguageMenu(optionsMenu);
 
         QActionGroup *uuidEncodingGroup = new QActionGroup(this);
         uuidEncodingGroup->addAction(defaultEncodingAction);
@@ -373,7 +376,6 @@ namespace Robomongo
         createTabs();
         createDatabaseExplorer();
         _viewMenu->addSeparator();
-        createLanguageMenu();
         createStylesMenu();
         createStatusBar();
         _viewMenu->addAction(fullScreenAction);
@@ -401,9 +403,9 @@ namespace Robomongo
          }
     }
     
-    void MainWindow::createLanguageMenu()
+    void MainWindow::createLanguageMenu(QMenu *parentMenu)
     {
-         QMenu *langs = _viewMenu->addMenu(tr("Language"));
+         QMenu *langs = parentMenu->addMenu(tr("Language"));
          //: Language based on system locale
          AppRegistry::instance().settingsManager()->retranslateLocale(tr("System locale (if available)"));
          QHash<QString, QString> providedTranslations = AppRegistry::instance().settingsManager()->getTranslations();

@@ -23,6 +23,7 @@ mapping[CreateUserDialog]=Robomongo
 mapping[DocumentTextEditor]=Robomongo
 mapping[FunctionTextEditor]=Robomongo
 mapping[SshTunelTab]=Robomongo
+mapping[ExplorerServerTreeItem]=Robomongo
 mapping[ExplorerDatabaseTreeItem]=Robomongo
 mapping[ExplorerCollectionTreeItem]=Robomongo
 mapping[ExplorerFunctionTreeItem]=Robomongo

@@ -30,30 +30,30 @@ namespace Robomongo
         _server(server),
         _bus(AppRegistry::instance().bus())
     { 
-        QAction *openShellAction = new QAction("Open Shell", this);
+        QAction *openShellAction = new QAction(tr("Open Shell"), this);
         openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
         VERIFY(connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell())));
 
-        QAction *refreshServer = new QAction("Refresh", this);
+        QAction *refreshServer = new QAction(tr("Refresh"), this);
         VERIFY(connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer())));
 
-        QAction *createDatabase = new QAction("Create Database", this);
+        QAction *createDatabase = new QAction(tr("Create Database"), this);
         VERIFY(connect(createDatabase, SIGNAL(triggered()), SLOT(ui_createDatabase())));
 
-        QAction *serverStatus = new QAction("Server Status", this);
+        QAction *serverStatus = new QAction(tr("Server Status"), this);
         VERIFY(connect(serverStatus, SIGNAL(triggered()), SLOT(ui_serverStatus())));
 
-        QAction *serverVersion = new QAction("MongoDB Version", this);
+        QAction *serverVersion = new QAction(tr("MongoDB Version"), this);
         VERIFY(connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion())));
 
-        QAction *serverHostInfo = new QAction("Host Info", this);
+        QAction *serverHostInfo = new QAction(tr("Host Info"), this);
         VERIFY(connect(serverHostInfo, SIGNAL(triggered()), SLOT(ui_serverHostInfo())));        
 
-        QAction *showLog = new QAction("Show Log", this);
+        QAction *showLog = new QAction(tr("Show Log"), this);
         VERIFY(connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog()))); 
 
-        QAction *disconnectAction = new QAction("Disconnect", this);
-        disconnectAction->setIconText("Disconnect");
+        QAction *disconnectAction = new QAction(tr("Disconnect"), this);
+        disconnectAction->setIconText(tr("Disconnect"));
         VERIFY(connect(disconnectAction, SIGNAL(triggered()), SLOT(ui_disconnectServer())));
 
         BaseClass::_contextMenu->addAction(openShellAction);
@@ -93,7 +93,7 @@ namespace Robomongo
         QIcon folderIcon = GuiRegistry::instance().folderIcon();
         ExplorerTreeItem *systemFolder = new ExplorerTreeItem(this);
         systemFolder->setIcon(0, folderIcon);
-        systemFolder->setText(0, "System");
+        systemFolder->setText(0, tr("System"));
         addChild(systemFolder);
 
         for (int i = 0; i < dbs.size(); i++)
@@ -189,8 +189,8 @@ namespace Robomongo
     void ExplorerServerTreeItem::ui_createDatabase()
     {
         CreateDatabaseDialog dlg(QtUtils::toQString(_server->connectionRecord()->getFullAddress()), QString(), QString(), treeWidget());
-        dlg.setOkButtonText("&Create");
-        dlg.setInputLabelText("Database Name:");
+        dlg.setOkButtonText(tr("&Create"));
+        dlg.setInputLabelText(tr("Database Name:"));
         int result = dlg.exec();
         if (result == QDialog::Accepted) {
             _server->createDatabase(QtUtils::toStdStringSafe(dlg.databaseName()));

@@ -21,10 +21,10 @@ namespace Robomongo
         _database(database)
     {
 
-        QAction *dropFunction = new QAction("Remove Function", this);
+        QAction *dropFunction = new QAction(tr("Remove Function"), this);
         VERIFY(connect(dropFunction, SIGNAL(triggered()), SLOT(ui_dropFunction())));
 
-        QAction *editFunction = new QAction("Edit Function", this);
+        QAction *editFunction = new QAction(tr("Edit Function"), this);
         VERIFY(connect(editFunction, SIGNAL(triggered()), SLOT(ui_editFunction())));
 
         BaseClass::_contextMenu->addAction(editFunction);
@@ -48,7 +48,7 @@ namespace Robomongo
         FunctionTextEditor dlg(QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),
             QtUtils::toQString(_database->name()),
             _function);
-        dlg.setWindowTitle("Edit Function");
+        dlg.setWindowTitle(tr("Edit Function"));
         int result = dlg.exec();
 
         if (result == QDialog::Accepted) {
@@ -64,7 +64,7 @@ namespace Robomongo
     void ExplorerFunctionTreeItem::ui_dropFunction()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(),"Drop","Function",QtUtils::toQString(_function.name()));
+        int answer = utils::questionDialog(treeWidget(),tr("Drop"),tr("Function"),QtUtils::toQString(_function.name()));
 
         if (answer != QMessageBox::Yes)
             return;

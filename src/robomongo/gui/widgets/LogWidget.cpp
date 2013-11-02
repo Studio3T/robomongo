@@ -19,7 +19,7 @@ namespace Robomongo
         QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0,0,0,0);
         hlayout->addWidget(_logTextEdit);
-        _clear = new QAction("Clear All", this);
+        _clear = new QAction(tr("Clear All"), this);
         VERIFY(connect(_clear, SIGNAL(triggered()),_logTextEdit, SLOT(clear())));
         setLayout(hlayout);      
     }

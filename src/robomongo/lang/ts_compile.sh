@@ -28,6 +28,7 @@ mapping[ExplorerDatabaseTreeItem]=Robomongo
 mapping[ExplorerCollectionTreeItem]=Robomongo
 mapping[ExplorerFunctionTreeItem]=Robomongo
 mapping[ExplorerUserTreeItem]=Robomongo
+mapping[LogWidget]=Robomongo
 
 for file in `find ./ -name "*.raw.ts"`
 do

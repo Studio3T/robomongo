@@ -662,7 +662,7 @@ namespace Robomongo
     void MainWindow::refreshConnections()
     {
         QToolTip::showText(QPoint(0, 0),
-                           QString(tr("Refresh not working yet... : <br/>  <b>Ctrl+D</b> : push Button")));
+                           tr("Refresh not working yet... : <br/>  <b>Ctrl+D</b> : push Button"));
     }
 
     void MainWindow::aboutRobomongo()
@@ -788,9 +788,9 @@ namespace Robomongo
         QAction *actionExp = explorerDock->toggleViewAction();
 
         // Adjust any parameter you want.  
-        actionExp->setText(QString(tr("&Explorer")));
+        actionExp->setText(tr("&Explorer"));
         actionExp->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));  
-        actionExp->setStatusTip(QString(tr("Press to show/hide Database Explorer panel.")));
+        actionExp->setStatusTip(tr("Press to show/hide Database Explorer panel."));
         actionExp->setChecked(true);
         // Install action in the menu.  
         _viewMenu->addAction(actionExp);
@@ -802,7 +802,7 @@ namespace Robomongo
         _logDock = new QDockWidget(tr("Logs"));
         QAction *action = _logDock->toggleViewAction();
         // Adjust any parameter you want.  
-        action->setText(QString(tr("&Logs")));
+        action->setText(tr("&Logs"));
         action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));  
         //action->setStatusTip(QString("Press to show/hide Logs panel."));  //commented for now because this message hides Logs button in status bar :)
         action->setChecked(false);

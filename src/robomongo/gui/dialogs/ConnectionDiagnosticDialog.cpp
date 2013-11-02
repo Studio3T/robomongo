@@ -44,10 +44,10 @@ namespace Robomongo
         _connectionIconLabel->setMovie(_loadingMovie);
         _authIconLabel->setMovie(_loadingMovie);
 
-        _connectionLabel->setText(QString(tr("Connecting to <b>%1</b>...")).arg(QtUtils::toQString(_connection->getFullAddress())));
+        _connectionLabel->setText(tr("Connecting to <b>%1</b>...").arg(QtUtils::toQString(_connection->getFullAddress())));
 
         if (_connection->hasEnabledPrimaryCredential()) {
-            _authLabel->setText(QString(tr("Authorizing on <b>%1</b> database as <b>%2</b>..."))
+            _authLabel->setText(tr("Authorizing on <b>%1</b> database as <b>%2</b>...")
                 .arg(QtUtils::toQString(_connection->primaryCredential()->databaseName()))
                 .arg(QtUtils::toQString(_connection->primaryCredential()->userName())));
         } else {
@@ -82,10 +82,10 @@ namespace Robomongo
 
         if (connected) {
             _connectionIconLabel->setPixmap(_yesPixmap);
-            _connectionLabel->setText(QString(tr("Connected to <b>%1</b>")).arg(QtUtils::toQString(_connection->getFullAddress())));
+            _connectionLabel->setText(tr("Connected to <b>%1</b>").arg(QtUtils::toQString(_connection->getFullAddress())));
         } else {
             _connectionIconLabel->setPixmap(_noPixmap);
-            _connectionLabel->setText(QString(tr("Unable to connect to <b>%1</b>")).arg(QtUtils::toQString(_connection->getFullAddress())));
+            _connectionLabel->setText(tr("Unable to connect to <b>%1</b>").arg(QtUtils::toQString(_connection->getFullAddress())));
         }
 
         layout()->activate();
@@ -98,15 +98,15 @@ namespace Robomongo
 
         if (authed) {
             _authIconLabel->setPixmap(_yesPixmap);
-            _authLabel->setText(QString(tr("Authorized as <b>%1</b>")).arg(QtUtils::toQString(_connection->primaryCredential()->userName())));
+            _authLabel->setText(tr("Authorized as <b>%1</b>").arg(QtUtils::toQString(_connection->primaryCredential()->userName())));
         } else {
 
             _authIconLabel->setPixmap(_noPixmap);
 
             if (_connection->hasEnabledPrimaryCredential())
-                _authLabel->setText(QString(tr("Authorization failed")));
+                _authLabel->setText(tr("Authorization failed"));
             else
-                _authLabel->setText(QString(tr("Authorization skipped by you")));
+                _authLabel->setText(tr("Authorization skipped by you"));
         }
 
         layout()->activate();

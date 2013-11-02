@@ -285,7 +285,7 @@
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="93"/>
         <source>Auth. Database / User</source>
-        <translation>БД аутентификации / Пользователь</translation>
+        <translation>База аутентификации / Пользователь</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="118"/>
@@ -295,27 +295,27 @@
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="126"/>
         <source>Create</source>
-        <translation>Создать</translation>
+        <translation>Создайте</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="127"/>
         <source>edit</source>
-        <translation>изменить</translation>
+        <translation>измените</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="127"/>
         <source>remove</source>
-        <translation>удалить</translation>
+        <translation>удалите</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="127"/>
         <source>clone</source>
-        <translation>скопировать</translation>
+        <translation>скопируйте</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="127"/>
         <source>or reorder connections via drag&apos;n&apos;drop.</source>
-        <translation>или переупорядочить подключения, перетаскивая их.</translation>
+        <translation>или переупорядчьте подключения, перетаскивая их.</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="255"/>

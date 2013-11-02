@@ -249,12 +249,6 @@ namespace Robomongo
         defaultViewModeMenu->addAction(tableModeAction);
         defaultViewModeMenu->addAction(textModeAction);
         
-        QAction *autoExpand = new QAction(tr("Auto expand first document in Tree Mode"), this);
-        autoExpand->setCheckable(true);
-        autoExpand->setChecked(AppRegistry::instance().settingsManager()->autoExpand());
-        VERIFY(connect(autoExpand, SIGNAL(triggered()), this, SLOT(toggleAutoExpand())));
-        optionsMenu->addAction(autoExpand);
-        
         optionsMenu->addSeparator();
 
         QActionGroup *modeGroup = new QActionGroup(this);
@@ -274,7 +268,7 @@ namespace Robomongo
         localTime->setChecked(AppRegistry::instance().settingsManager()->timeZone() == LocalTime);
         VERIFY(connect(localTime, SIGNAL(triggered()), this, SLOT(setLocalTimeZone())));
 
-        QMenu *timeMenu = optionsMenu->addMenu(tr("Display Dates in "));
+        QMenu *timeMenu = optionsMenu->addMenu(tr("Display Dates In..."));
         timeMenu->addAction(utcTime);
         timeMenu->addAction(localTime);
 
@@ -316,11 +310,18 @@ namespace Robomongo
         optionsMenu->addSeparator();
         optionsMenu->addAction(loadMongoRcJs);
 
-        QAction *disabelConnectionShortcuts = new QAction(tr("Disable connection shortcuts"),this);
+        optionsMenu->addSeparator();
+
+        QAction *autoExpand = new QAction(tr("Auto Expand First Document"), this);
+        autoExpand->setCheckable(true);
+        autoExpand->setChecked(AppRegistry::instance().settingsManager()->autoExpand());
+        VERIFY(connect(autoExpand, SIGNAL(triggered()), this, SLOT(toggleAutoExpand())));
+        optionsMenu->addAction(autoExpand);
+
+        QAction *disabelConnectionShortcuts = new QAction("Disable Connection Shortcuts",this);
         disabelConnectionShortcuts->setCheckable(true);
         disabelConnectionShortcuts->setChecked(AppRegistry::instance().settingsManager()->disableConnectionShortcuts());
         VERIFY(connect(disabelConnectionShortcuts, SIGNAL(triggered()), this, SLOT(setDisableConnectionShortcuts())));
-        optionsMenu->addSeparator();
         optionsMenu->addAction(disabelConnectionShortcuts);
 
         QAction *preferencesAction = new QAction(tr("Preferences"),this);

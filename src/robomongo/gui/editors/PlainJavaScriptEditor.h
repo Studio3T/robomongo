@@ -2,8 +2,6 @@
 
 #include <Qsci/qsciscintilla.h>
 
-#include "robomongo/gui/editors/jsedit.h"
-
 namespace Robomongo
 {
     class RoboScintilla : public QsciScintilla

@@ -32,14 +32,7 @@ namespace Robomongo
     void BsonTableView::keyPressEvent(QKeyEvent *event)
     {
         if (event->key() == Qt::Key_Delete) {
-            QModelIndexList indexses = selectedIndexes();
-            bool isForce = event->modifiers() & Qt::ShiftModifier;
-            std::vector<BsonTreeItem*> items;
-            for (QModelIndexList::const_iterator it = indexses.begin(); it!= indexses.end(); ++it) {
-                BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
-                items.push_back(item);                
-            }
-            _notifier.deleteDocuments(items,isForce);
+            _notifier.onDeleteDocuments();
         }
         return BaseClass::keyPressEvent(event);
     }

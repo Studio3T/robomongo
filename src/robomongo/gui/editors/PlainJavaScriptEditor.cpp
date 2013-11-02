@@ -2,8 +2,8 @@
 
 #include <QPainter>
 #include <QApplication>
+#include <QKeyEvent>
 #include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/gui/editors/jsedit.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace

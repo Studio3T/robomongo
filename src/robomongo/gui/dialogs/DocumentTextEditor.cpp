@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QDialogButtonBox>
+#include <QDesktopWidget>
 #include <Qsci/qscilexerjavascript.h>
 #include <mongo/client/dbclient.h>
 
@@ -20,14 +21,18 @@
 
 namespace Robomongo
 {
-    const QSize DocumentTextEditor::minimumSize = QSize(640,480);
+    const QSize DocumentTextEditor::minimumSize = QSize(800, 600);
 
     DocumentTextEditor::DocumentTextEditor(const CollectionInfo &info, const QString &json, bool readonly /* = false */, QWidget *parent) :
         QDialog(parent),
         _info(info),
         _readonly(readonly)
     {
-        setMinimumSize(minimumSize);       
+        QRect screenGeometry = QApplication::desktop()->availableGeometry();
+        QSize size(screenGeometry.width() - 650, screenGeometry.height() - 265);
+        size.expandedTo(minimumSize);
+
+        setMinimumSize(size);
         setWindowFlags(Qt::Window | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
 
         Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), QtUtils::toQString(_info._ns.collectionName()));
@@ -103,9 +108,11 @@ namespace Robomongo
             const char *json = textString.c_str();
             int jsonLen = textString.length();
             int offset = 0;
+            _obj.clear();
             while(offset!=jsonLen)
             { 
-                _obj.push_back(mongo::Robomongo::fromjson(json+offset,&len));
+                mongo::BSONObj doc = mongo::Robomongo::fromjson(json+offset,&len);
+                _obj.push_back(doc);
                 offset+=len;
             }
         } catch (const mongo::ParseMsgAssertionException &ex) {

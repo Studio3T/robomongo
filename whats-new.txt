@@ -1,3 +1,18 @@
+0.8.4 / November 3, 2013
+
+  Read about updates in this version here:
+  http://robomongo.org/whats-new-in/robomongo-0.8.4.html
+
+  * SSH support (#117)
+  * SSL support (first steps) (#100)
+  * Create or edit index problem (#341)
+  * Regexp error (with non-latin symbols) (#351)
+  * Support for latin characters in edit document console (#347)
+  * Robomongo fails to execute shell "comments" if the comment contains a non-latin character! (#334)
+  * Crash when add ISODate field (#350)
+  * Crash at executing several disconnections in a row (#290)  
+
+
 0.8.3 / October 1, 2013
 
   Read about updates in this version here:

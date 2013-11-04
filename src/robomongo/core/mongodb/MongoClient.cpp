@@ -396,12 +396,13 @@ namespace Robomongo
             connection->dropCollection(ns.toString());
         }
 
-        void insertDocument(mongo::DBClientBase *connection, const mongo::BSONObj &obj, const MongoNamespace &ns)
+        bool insertDocument(mongo::DBClientBase *connection, const mongo::BSONObj &obj, const MongoNamespace &ns)
         {
             connection->insert(ns.toString(), obj);
+            return true;
         }
 
-        void saveDocument(mongo::DBClientBase *connection, const mongo::BSONObj &obj, const MongoNamespace &ns)
+        bool saveDocument(mongo::DBClientBase *connection, const mongo::BSONObj &obj, const MongoNamespace &ns)
         {
 
             mongo::BSONElement id = obj.getField("_id");
@@ -411,7 +412,7 @@ namespace Robomongo
             mongo::Query query(bsonQuery);
 
             connection->update(ns.toString(), query, obj, true, false);
-            //_dbclient->save(ns.toString().toStdString(), obj);
+            return true;
         }
 
         void removeDocuments(mongo::DBClientBase *connection, const MongoNamespace &ns, mongo::Query query, bool justOne /*= true*/)

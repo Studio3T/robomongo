@@ -13,7 +13,7 @@
 namespace Robomongo
 {
     BsonTreeView::BsonTreeView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent) 
-        : BaseClass(parent),_notifier(this,shell,queryInfo)
+        : BaseClass(parent), _notifier(this, shell, queryInfo)
     {
 #if defined(Q_OS_MAC)
         setAttribute(Qt::WA_MacShowFocusRect, false);

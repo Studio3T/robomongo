@@ -1,10 +1,12 @@
 #pragma once
 #include <QAbstractItemModel>
 #include "robomongo/core/Core.h"
+#include "robomongo/core/domain/MongoNamespace.h"
 
 namespace Robomongo
 {
     class BsonTreeItem;
+    class MongoWorker;
 
     class BsonTreeModel : public QAbstractItemModel
     {
@@ -13,8 +15,9 @@ namespace Robomongo
     public:
         typedef QAbstractItemModel BaseClass;
         static const QIcon &getIcon(BsonTreeItem *item);
-        explicit BsonTreeModel(const std::vector<MongoDocumentPtr> &documents,QObject *parent = 0);
-        QVariant data(const QModelIndex &index, int role) const;
+        explicit BsonTreeModel(const std::vector<MongoDocumentPtr> &documents, MongoWorker *worker, const MongoNamespace ns, QObject *parent = 0);
+        virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+        virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
         int rowCount(const QModelIndex &parent=QModelIndex()) const;
         int columnCount(const QModelIndex &parent) const;
@@ -32,5 +35,7 @@ namespace Robomongo
         virtual bool hasChildren(const QModelIndex &parent = QModelIndex()) const;
     protected:
         BsonTreeItem *const _root;
+        MongoWorker *_worker;
+        const MongoNamespace _ns;
     };
 }

@@ -40,8 +40,8 @@ namespace Robomongo
         void dropCollection(mongo::DBClientBase *connection, const MongoNamespace &ns);
         void copyCollectionToDiffServer(mongo::DBClientBase *connectionFrom, mongo::DBClientBase *connectionTo,const MongoNamespace &from, const MongoNamespace &to);
 
-        void insertDocument(mongo::DBClientBase *connection, const mongo::BSONObj &obj, const MongoNamespace &ns);
-        void saveDocument(mongo::DBClientBase *connection, const mongo::BSONObj &obj, const MongoNamespace &ns);
+        bool insertDocument(mongo::DBClientBase *connection, const mongo::BSONObj &obj, const MongoNamespace &ns);
+        bool saveDocument(mongo::DBClientBase *connection, const mongo::BSONObj &obj, const MongoNamespace &ns);
         void removeDocuments(mongo::DBClientBase *connection, const MongoNamespace &ns, mongo::Query query, bool justOne = true);
         std::vector<MongoDocumentPtr> query(mongo::DBClientBase *connection, const MongoQueryInfo &info);
 

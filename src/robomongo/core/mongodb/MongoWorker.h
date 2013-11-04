@@ -8,7 +8,6 @@
 
 QT_BEGIN_NAMESPACE
 class QThread;
-class QTimer;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -22,6 +21,8 @@ namespace Robomongo
     public:
         typedef std::vector<std::string> DatabasesContainerType;
         explicit MongoWorker(IConnectionSettingsBase *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
+        bool insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns, bool overwrite);
+
         IConnectionSettingsBase *connectionRecord() const {return _connection;}
         ~MongoWorker();
         enum{pingTimeMs = 60*1000};

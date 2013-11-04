@@ -294,16 +294,24 @@ namespace Robomongo
         }
     }
 
+    bool MongoWorker::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns, bool overwrite)
+    {
+        bool result = false;
+        if(_dbclient && _isConnected){
+            if (overwrite)
+                result = MongoClient::saveDocument(_dbclient, obj, ns);
+            else
+                result = MongoClient::insertDocument(_dbclient, obj, ns);
+        }
+
+        return result;
+    }
+
     void MongoWorker::handle(InsertDocumentRequest *event)
     {
         try {
             mongo::DBClientBase *con = getConnection();
-
-            if (event->overwrite())
-                MongoClient::saveDocument(con, event->obj(), event->ns());
-            else
-                MongoClient::insertDocument(con, event->obj(), event->ns());
-
+            insertDocument(event->obj(), event->ns(), event->overwrite() );
             reply(event->sender(), new InsertDocumentResponse(this));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new InsertDocumentResponse(this, EventError("Unable to insert document.")));

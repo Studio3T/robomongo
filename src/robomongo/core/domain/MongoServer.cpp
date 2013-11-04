@@ -88,7 +88,7 @@ namespace Robomongo
 
     void MongoServer::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
-        AppRegistry::instance().bus()->send(_client,new InsertDocumentRequest(this, obj, ns));
+        AppRegistry::instance().bus()->send(_client, new InsertDocumentRequest(this, obj, ns));
     }
 
     void MongoServer::saveDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns)

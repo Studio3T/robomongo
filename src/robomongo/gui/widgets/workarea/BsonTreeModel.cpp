@@ -9,6 +9,7 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/mongodb/MongoWorker.h"
 
 namespace
 {
@@ -45,13 +46,38 @@ namespace
                 //root->setValue(QString("{ %1 fields }").arg(root->childrenCount()));
             }            
     }
+
+    void editBsonByKey(mongo::BSONObjBuilder &b, const mongo::BSONObj &search ,const mongo::BSONObj &doc, const std::string &key, const mongo::BSONElement &newElem)
+    {
+        mongo::BSONObjIterator iterator(doc);
+        while (iterator.more())
+        {
+            mongo::BSONElement element = iterator.next();            
+            if(BsonUtils::isDocument(element)){
+                mongo::BSONObj obj = element.Obj();
+                mongo::BSONObjBuilder b2;
+                editBsonByKey(b2, search, obj, key, newElem);
+                b.append(element.fieldName(),b2.obj());
+            }
+            else{
+                if(search == doc && element.fieldName() == key){
+                    b.append(newElem);
+                }
+                else {
+                    b.append(element);
+                }
+            }
+        }
+    }
 }
 
 namespace Robomongo
 {
-    BsonTreeModel::BsonTreeModel(const std::vector<MongoDocumentPtr> &documents, QObject *parent) :
+    BsonTreeModel::BsonTreeModel(const std::vector<MongoDocumentPtr> &documents, MongoWorker *worker, const MongoNamespace ns, QObject *parent) :
         BaseClass(parent),
-        _root(new BsonTreeItem(this))
+        _root(new BsonTreeItem(this)),
+        _worker(worker),
+        _ns(ns)
     {
         for (int i = 0; i < documents.size(); ++i) {
             MongoDocumentPtr doc = documents[i]; 
@@ -107,23 +133,23 @@ namespace Robomongo
     const QIcon &BsonTreeModel::getIcon(BsonTreeItem *item)
     {
         switch(item->type()) {
-        case mongo::NumberDouble: return GuiRegistry::instance().bsonIntegerIcon();
-        case mongo::String: return GuiRegistry::instance().bsonStringIcon();
-        case mongo::Object: return GuiRegistry::instance().bsonObjectIcon();
-        case mongo::Array: return GuiRegistry::instance().bsonArrayIcon();
-        case mongo::BinData: return GuiRegistry::instance().bsonBinaryIcon();
-        case mongo::Undefined: return GuiRegistry::instance().circleIcon();
-        case mongo::jstOID: return GuiRegistry::instance().circleIcon();
-        case mongo::Bool: return GuiRegistry::instance().bsonBooleanIcon();
-        case mongo::Date: return GuiRegistry::instance().bsonDateTimeIcon();
-        case mongo::jstNULL: return GuiRegistry::instance().bsonNullIcon();
-        case mongo::RegEx: return GuiRegistry::instance().circleIcon();
-        case mongo::DBRef: return GuiRegistry::instance().circleIcon();
-        case mongo::Code: case mongo::CodeWScope: return GuiRegistry::instance().circleIcon();
-        case mongo::NumberInt: return GuiRegistry::instance().bsonIntegerIcon();
-        case mongo::Timestamp: return GuiRegistry::instance().bsonDateTimeIcon();
-        case mongo::NumberLong: return GuiRegistry::instance().bsonIntegerIcon();
-        default: return GuiRegistry::instance().circleIcon();
+            case mongo::NumberDouble: return GuiRegistry::instance().bsonIntegerIcon();
+            case mongo::String: return GuiRegistry::instance().bsonStringIcon();
+            case mongo::Object: return GuiRegistry::instance().bsonObjectIcon();
+            case mongo::Array: return GuiRegistry::instance().bsonArrayIcon();
+            case mongo::BinData: return GuiRegistry::instance().bsonBinaryIcon();
+            case mongo::Undefined: return GuiRegistry::instance().circleIcon();
+            case mongo::jstOID: return GuiRegistry::instance().circleIcon();
+            case mongo::Bool: return GuiRegistry::instance().bsonBooleanIcon();
+            case mongo::Date: return GuiRegistry::instance().bsonDateTimeIcon();
+            case mongo::jstNULL: return GuiRegistry::instance().bsonNullIcon();
+            case mongo::RegEx: return GuiRegistry::instance().circleIcon();
+            case mongo::DBRef: return GuiRegistry::instance().circleIcon();
+            case mongo::Code: case mongo::CodeWScope: return GuiRegistry::instance().circleIcon();
+            case mongo::NumberInt: return GuiRegistry::instance().bsonIntegerIcon();
+            case mongo::Timestamp: return GuiRegistry::instance().bsonDateTimeIcon();
+            case mongo::NumberLong: return GuiRegistry::instance().bsonIntegerIcon();
+            default: return GuiRegistry::instance().circleIcon();
         }
     }
 
@@ -177,7 +203,61 @@ namespace Robomongo
         Qt::ItemFlags result = 0;
         if (index.isValid()) {
             result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+            if(index.column()!=BsonTreeItem::eType)
+                result |= Qt::ItemIsEditable;
         }
+        return result;
+    }
+
+    bool BsonTreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
+    {
+        if (!index.isValid())
+            return false;
+
+        if (role != Qt::EditRole)
+            return false;
+
+        if(index.column() == BsonTreeItem::eType)
+            return false;
+
+        BsonTreeItem *node = QtUtils::item<BsonTreeItem*>(index);
+        QString val = value.toString();
+        bool result = false;
+        int col = index.column();
+        mongo::BSONObj obj = node->root();
+
+        if(col == BsonTreeItem::eKey){
+            std::string key = QtUtils::toStdString(node->key());
+            mongo::BSONObj sroot = node->superRoot();
+            mongo::BSONObj root = node->root();
+
+            mongo::BSONObjBuilder b;
+            editBsonByKey(b, root, sroot, key, BSON(QtUtils::toStdString(val) << QtUtils::toStdString(node->value())  ).firstElement() );
+
+            mongo::BSONObj obj = b.obj();
+            result = _worker->insertDocument(obj,_ns,true);
+            if(result){
+                node->setKey(val);
+            }            
+        }
+        else if (col == BsonTreeItem::eValue){
+            std::string key = QtUtils::toStdString(node->key());
+            mongo::BSONObj sroot = node->superRoot();
+            mongo::BSONObj root = node->root();
+
+            mongo::BSONObjBuilder b;
+            editBsonByKey(b,root,sroot,key, BSON(key << QtUtils::toStdString(val) ).firstElement() );
+
+            mongo::BSONObj obj = b.obj();
+            result = _worker->insertDocument(obj,_ns,true);
+            if(result){
+                node->setValue(val);
+            }
+        }
+
+        if (result)
+            emit dataChanged(index, index);
+
         return result;
     }
 
@@ -253,11 +333,13 @@ namespace Robomongo
 
     void BsonTreeModel::insertItem(BsonTreeItem *parent, BsonTreeItem *children)
     {
-        QModelIndex index = createIndex(0,0,parent);
-        unsigned child_count = parent->childrenCount();
-        beginInsertRows(index,child_count,child_count);
-        parent->addChild(children);
-        endInsertRows();
+        if (parent) {
+            QModelIndex index = createIndex(0,0,parent);
+            unsigned child_count = parent->childrenCount();
+            beginInsertRows(index,child_count,child_count);
+            parent->addChild(children);
+            endInsertRows();
+        }
     }
 
     void BsonTreeModel::removeitem(BsonTreeItem *children)

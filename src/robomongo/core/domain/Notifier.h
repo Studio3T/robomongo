@@ -21,6 +21,7 @@ namespace Robomongo
         bool isMultySelection(const QModelIndexList &indexes);
         bool isDocumentType(BsonTreeItem *item);
         QModelIndexList uniqueRows(QModelIndexList indexses);
+
     }
 
     class INotifierObserver

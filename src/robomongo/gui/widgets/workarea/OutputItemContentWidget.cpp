@@ -7,6 +7,7 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/core/domain/MongoServer.h"
 
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
@@ -243,7 +244,7 @@ namespace Robomongo
             _bsonTreeview = new BsonTreeView(_shell,_queryInfo);
             _bsonTreeview->setModel(_mod);
             _stack->addWidget(_bsonTreeview);
-            if (true == AppRegistry::instance().settingsManager()->autoExpand())
+            if (AppRegistry::instance().settingsManager()->autoExpand())
                 _bsonTreeview->expandNode(_mod->index(0, 0, QModelIndex()));
             _isTreeModeInitialized = true;
         }
@@ -331,7 +332,7 @@ namespace Robomongo
     BsonTreeModel *OutputItemContentWidget::configureModel()
     {
         delete _mod;
-        _mod = new BsonTreeModel(_documents,this);
+        _mod = new BsonTreeModel(_documents, _shell->server()->client(), _queryInfo._collectionInfo._ns, this);
         return _mod;
     }
 

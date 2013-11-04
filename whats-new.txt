@@ -11,6 +11,9 @@
   * Robomongo fails to execute shell "comments" if the comment contains a non-latin character! (#334)
   * Crash when add ISODate field (#350)
   * Crash at executing several disconnections in a row (#290)  
+  * Deleting multiple documents prompts for each document (#386)
+  * Connection context menu appears independently of position of Robomongo instance.
+  * Crash at pressing "Ctrl+T" without any connection.  
 
 
 0.8.3 / October 1, 2013

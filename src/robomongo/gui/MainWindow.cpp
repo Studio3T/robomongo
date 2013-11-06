@@ -708,7 +708,7 @@ namespace Robomongo
     void MainWindow::handle(ConnectionFailedEvent *event)
     {
         IConnectionSettingsBase *connection = event->server->connectionRecord();
-        QString message = QString("Cannot connect to MongoDB (%1),\nerror: %2").arg(QtUtils::toQString(connection->getFullAddress())).arg(QtUtils::toQString(event->error().errorMessage()));
+        QString message = QString("Cannot connect to MongoDB (%1),\nerror: %2").arg(QtUtils::toQString(connection->getFullAddress())).arg(QtUtils::toQString(event->error()._description));
         QMessageBox::information(this, "Error", message);
     }
 

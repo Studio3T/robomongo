@@ -8,6 +8,7 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/mongodb/MongoWorker.h"
 
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"

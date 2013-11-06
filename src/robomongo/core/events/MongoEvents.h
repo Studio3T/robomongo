@@ -43,12 +43,9 @@ namespace Robomongo
     {
         R_EVENT
 
-        EstablishConnectionResponse(QObject *sender, const ConnectionInfo &info) :
-            Event(sender),
+        EstablishConnectionResponse(QObject *sender, const ConnectionInfo &info, const ErrorInfo &error) :
+            Event(sender,error),
             _info(info) {}
-
-        EstablishConnectionResponse(QObject *sender, const EventError &error) :
-            Event(sender, error),_info() {}
 
         const ConnectionInfo &info() const{
             return _info;
@@ -73,12 +70,9 @@ namespace Robomongo
     {
         R_EVENT
 
-        LoadDatabaseNamesResponse(QObject *sender, const std::vector<std::string> &databaseNames) :
-            Event(sender),
+        LoadDatabaseNamesResponse(QObject *sender, const std::vector<std::string> &databaseNames, const ErrorInfo &error) :
+            Event(sender,error),
             databaseNames(databaseNames) {}
-
-        LoadDatabaseNamesResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
 
         std::vector<std::string> databaseNames;
     };
@@ -109,13 +103,10 @@ namespace Robomongo
 
     public:
         LoadCollectionNamesResponse(QObject *sender, const std::string &databaseName,
-                                    const std::vector<MongoCollectionInfo> &collectionInfos) :
-            Event(sender),
+                                    const std::vector<MongoCollectionInfo> &collectionInfos, const ErrorInfo &error) :
+            Event(sender, error),
             _databaseName(databaseName),
             _collectionInfos(collectionInfos) { }
-
-        LoadCollectionNamesResponse(QObject *sender,const EventError &error) :
-            Event(sender, error) {}
 
         std::string databaseName() const { return _databaseName; }
         std::vector<MongoCollectionInfo> collectionInfos() const { return _collectionInfos; }
@@ -140,7 +131,7 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        LoadCollectionIndexesResponse(QObject *sender, const std::vector<EnsureIndexInfo> &indexes) :Event(sender), _indexes(indexes) {}
+        LoadCollectionIndexesResponse(QObject *sender, const std::vector<EnsureIndexInfo> &indexes, const ErrorInfo &error) :Event(sender, error), _indexes(indexes) {}
         std::vector<EnsureIndexInfo> indexes() const { return _indexes; }
     private:
         std::vector<EnsureIndexInfo> _indexes;
@@ -179,12 +170,12 @@ namespace Robomongo
         std::string _name;
     };
 
-    class DeleteCollectionIndexResponse: public Event
+    class DropCollectionIndexResponse: public Event
     {
         R_EVENT
     public:
-        DeleteCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection,const std::string &index) :
-        Event(sender),_collection(collection),_index(index) {}
+        DropCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection,const std::string &index, const ErrorInfo &error) :
+        Event(sender, error),_collection(collection),_index(index) {}
         MongoCollectionInfo collection() const { return _collection; }
         std::string index() const {return _index;}
     private:
@@ -232,13 +223,10 @@ namespace Robomongo
 
     public:
         LoadUsersResponse(QObject *sender, const std::string &databaseName,
-                                    const std::vector<MongoUser> &users) :
-            Event(sender),
+                                    const std::vector<MongoUser> &users, const ErrorInfo &error) :
+            Event(sender,error),
             _databaseName(databaseName),
             _users(users) { }
-
-        LoadUsersResponse(QObject *sender,const EventError &error) :
-            Event(sender, error) {}
 
         std::string databaseName() const { return _databaseName; }
         std::vector<MongoUser> users() const { return _users; }
@@ -274,13 +262,10 @@ namespace Robomongo
 
     public:
         LoadFunctionsResponse(QObject *sender, const std::string &databaseName,
-                                    const std::vector<MongoFunction> &functions) :
-            Event(sender),
+                                    const std::vector<MongoFunction> &functions, const ErrorInfo &error) :
+            Event(sender,error),
             _databaseName(databaseName),
             _functions(functions) { }
-
-        LoadFunctionsResponse(QObject *sender,const EventError &error) :
-            Event(sender, error) {}
 
         std::string databaseName() const { return _databaseName; }
         std::vector<MongoFunction> functions() const { return _functions; }
@@ -320,10 +305,7 @@ namespace Robomongo
         R_EVENT
 
     public:
-        InsertDocumentResponse(QObject *sender) :
-            Event(sender) {}
-
-        InsertDocumentResponse(QObject *sender, const EventError &error) :
+        InsertDocumentResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -357,10 +339,8 @@ namespace Robomongo
         R_EVENT
 
     public:
-        RemoveDocumentResponse(QObject *sender) :
-            Event(sender) {}
 
-        RemoveDocumentResponse(QObject *sender, const EventError &error) :
+        RemoveDocumentResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -388,10 +368,7 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateDatabaseResponse(QObject *sender) :
-            Event(sender) {}
-
-        CreateDatabaseResponse(QObject *sender, const EventError &error) :
+        CreateDatabaseResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -421,10 +398,7 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DropDatabaseResponse(QObject *sender) :
-            Event(sender) {}
-
-        DropDatabaseResponse(QObject *sender, const EventError &error) :
+         DropDatabaseResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -452,10 +426,7 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateCollectionResponse(QObject *sender) :
-            Event(sender) {}
-
-        CreateCollectionResponse(QObject *sender, const EventError &error) :
+        CreateCollectionResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -485,10 +456,8 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DropCollectionResponse(QObject *sender) :
-            Event(sender) {}
 
-        DropCollectionResponse(QObject *sender, const EventError &error) :
+        DropCollectionResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -519,10 +488,7 @@ namespace Robomongo
         R_EVENT
 
     public:
-        RenameCollectionResponse(QObject *sender) :
-            Event(sender) {}
-
-        RenameCollectionResponse(QObject *sender, const EventError &error) :
+        RenameCollectionResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -553,10 +519,8 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DuplicateCollectionResponse(QObject *sender) :
-            Event(sender) {}
 
-        DuplicateCollectionResponse(QObject *sender, const EventError &error) :
+        DuplicateCollectionResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -590,10 +554,8 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CopyCollectionToDiffServerResponse(QObject *sender) :
-            Event(sender) {}
 
-        CopyCollectionToDiffServerResponse(QObject *sender, const EventError &error) :
+        CopyCollectionToDiffServerResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -627,10 +589,8 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateUserResponse(QObject *sender) :
-            Event(sender) {}
 
-        CreateUserResponse(QObject *sender, const EventError &error) :
+        CreateUserResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -662,10 +622,8 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DropUserResponse(QObject *sender) :
-            Event(sender) {}
 
-        DropUserResponse(QObject *sender, const EventError &error) :
+        DropUserResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -704,10 +662,8 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateFunctionResponse(QObject *sender) :
-            Event(sender) {}
 
-        CreateFunctionResponse(QObject *sender, const EventError &error) :
+        CreateFunctionResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -739,10 +695,8 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DropFunctionResponse(QObject *sender) :
-            Event(sender) {}
 
-        DropFunctionResponse(QObject *sender, const EventError &error) :
+        DropFunctionResponse(QObject *sender, const ErrorInfo &error) :
             Event(sender, error) {}
     };
 
@@ -772,14 +726,11 @@ namespace Robomongo
     {
         R_EVENT
 
-        ExecuteQueryResponse(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents) :
-            Event(sender),
+        ExecuteQueryResponse(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents, const ErrorInfo &error) :
+            Event(sender, error),
             resultIndex(resultIndex),
             queryInfo(queryInfo),
             documents(documents) { }
-
-        ExecuteQueryResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
 
         int resultIndex;
         MongoQueryInfo queryInfo;
@@ -801,8 +752,8 @@ namespace Robomongo
     {
         R_EVENT
 
-        AutocompleteResponse(QObject *sender,const QStringList &list, const std::string &prefix) :
-            Event(sender),
+        AutocompleteResponse(QObject *sender,const QStringList &list, const std::string &prefix, const ErrorInfo &error) :
+            Event(sender, error),
             list(list),
             prefix(prefix) {}
 
@@ -836,13 +787,10 @@ namespace Robomongo
     {
         R_EVENT
 
-        ExecuteScriptResponse(QObject *sender, const MongoShellExecResult &result, bool empty) :
-            Event(sender),
+        ExecuteScriptResponse(QObject *sender, const MongoShellExecResult &result, bool empty, const ErrorInfo &error) :
+            Event(sender, error),
             result(result),
             empty(empty) { }
-
-        ExecuteScriptResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
 
         MongoShellExecResult result;
         bool empty;
@@ -878,7 +826,7 @@ namespace Robomongo
             Event((QObject *)server),
             server(server) { }
 
-        ConnectionFailedEvent(MongoServer *server, const EventError &error) :
+        ConnectionFailedEvent(MongoServer *server, const ErrorInfo &error) :
             Event((QObject *)server, error),
             server(server) {}
 

@@ -88,6 +88,6 @@ namespace Robomongo
 
     void MongoShell::handle(AutocompleteResponse *event)
     {
-        AppRegistry::instance().bus()->publish(new AutocompleteResponse(this, event->list, event->prefix));
+        AppRegistry::instance().bus()->publish(new AutocompleteResponse(this, event->list, event->prefix, ErrorInfo() ));
     }
 }

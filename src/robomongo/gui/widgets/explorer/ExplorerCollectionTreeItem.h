@@ -9,7 +9,7 @@
 namespace Robomongo
 {
     class LoadCollectionIndexesResponse;
-    class DeleteCollectionIndexResponse;
+    class DropCollectionIndexResponse;
     class ExplorerCollectionDirIndexesTreeItem;
     class ExplorerDatabaseTreeItem;
 
@@ -33,7 +33,7 @@ namespace Robomongo
 
     public Q_SLOTS:
         void handle(LoadCollectionIndexesResponse *event);
-        void handle(DeleteCollectionIndexResponse *event);
+        void handle(DropCollectionIndexResponse *event);
         void handle(CollectionIndexesLoadingEvent *event);
 
     private Q_SLOTS:

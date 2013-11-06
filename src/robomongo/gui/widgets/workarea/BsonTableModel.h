@@ -16,6 +16,8 @@ namespace Robomongo
 
         explicit BsonTableModelProxy(QObject *parent = 0);
         QVariant data(const QModelIndex &index, int role) const;
+        virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+        virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 
         int rowCount(const QModelIndex &parent=QModelIndex()) const;
         int columnCount(const QModelIndex &parent) const;

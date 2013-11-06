@@ -163,10 +163,10 @@ SET(HEADERS_CORE
     robomongo/core/domain/MongoDocument.h
     robomongo/core/EventBusSubscriber.h
     robomongo/core/EventWrapper.h
-    robomongo/core/EventError.h
     robomongo/core/Event.h
     robomongo/core/domain/MongoShellResult.h
     robomongo/core/events/MongoEvents.h
+    robomongo/core/events/MongoEventsGui.hpp
     robomongo/core/events/MongoEventsInfo.h
     robomongo/core/AppRegistry.h
     robomongo/core/Core.h
@@ -184,6 +184,7 @@ SET(HEADERS_CORE
     robomongo/core/Enums.h
     robomongo/core/HexUtils.h
     robomongo/core/utils/BsonUtils.h
+    robomongo/core/utils/ErrorInfo.hpp
     robomongo/core/utils/QtUtils.h
     robomongo/core/utils/StdUtils.h
     robomongo/core/utils/SingletonPattern.hpp
@@ -205,7 +206,6 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoShell.cpp
     robomongo/core/engine/ScriptEngine.cpp
     robomongo/core/domain/MongoShellResult.cpp
-    robomongo/core/EventError.cpp
     robomongo/core/Event.cpp
     robomongo/core/EventBusSubscriber.cpp
     robomongo/core/EventBusDispatcher.cpp

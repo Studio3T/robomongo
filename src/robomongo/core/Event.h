@@ -5,7 +5,7 @@
 #include <QEvent>
 #include <QMetaType>
 
-#include "robomongo/core/EventError.h"
+#include "robomongo/core/utils/ErrorInfo.hpp"
 
 namespace Robomongo
 {
@@ -25,7 +25,7 @@ namespace Robomongo
          * @brief Creates "error-event" that highlights that state of this
          * event is invalid because of error.
          */
-        Event(QObject *sender, const EventError &error) :
+        Event(QObject *sender, const ErrorInfo &error) :
             _sender(sender),
             _error(error) { }
 
@@ -51,12 +51,12 @@ namespace Robomongo
         /**
          * @brief Tests whether this event is "error-event".
          */
-        bool isError() const { return !_error.isNull(); }
+        bool isError() const { return _error.isError(); }
 
         /**
          * @brief Returns Error object.
          */
-        const EventError &error() const { return _error; }
+        const ErrorInfo &error() const { return _error; }
 
     private:
         /**
@@ -67,7 +67,7 @@ namespace Robomongo
         /**
          * @brief Possible error.
          */
-        const EventError _error;
+        const ErrorInfo _error;
     };
 }
 

@@ -1,5 +1,6 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
 
+#include <QApplication>
 #include <mongo/client/dbclient.h>
 #include <mongo/bson/bsonobjiterator.h>
 #include "robomongo/core/settings/SettingsManager.h"
@@ -10,6 +11,7 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/mongodb/MongoWorker.h"
+#include "robomongo/core/events/MongoEventsGui.hpp"
 
 namespace
 {
@@ -47,8 +49,10 @@ namespace
             }            
     }
 
-    void editBsonByKey(mongo::BSONObjBuilder &b, const mongo::BSONObj &search ,const mongo::BSONObj &doc, const std::string &key, const mongo::BSONElement &newElem)
+    void editBsonByKey(mongo::BSONObjBuilder &b, const mongo::BSONObj &search, const mongo::BSONObj &doc, const std::string &key, const mongo::BSONElement &newElem)
     {
+        using namespace Robomongo;
+
         mongo::BSONObjIterator iterator(doc);
         while (iterator.more())
         {
@@ -73,10 +77,10 @@ namespace
 
 namespace Robomongo
 {
-    BsonTreeModel::BsonTreeModel(const std::vector<MongoDocumentPtr> &documents, MongoWorker *worker, const MongoNamespace ns, QObject *parent) :
+    BsonTreeModel::BsonTreeModel(const std::vector<MongoDocumentPtr> &documents, QObject *const reciver, const MongoNamespace &ns, QObject *parent) :
         BaseClass(parent),
         _root(new BsonTreeItem(this)),
-        _worker(worker),
+        _reciver(reciver),
         _ns(ns)
     {
         for (int i = 0; i < documents.size(); ++i) {
@@ -203,7 +207,9 @@ namespace Robomongo
         Qt::ItemFlags result = 0;
         if (index.isValid()) {
             result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-            if(index.column()!=BsonTreeItem::eType)
+            BsonTreeItem *node = QtUtils::item<BsonTreeItem*>(index);
+
+            if(index.column()!=BsonTreeItem::eType && !BsonUtils::isDocument(node->type()))
                 result |= Qt::ItemIsEditable;
         }
         return result;
@@ -232,13 +238,14 @@ namespace Robomongo
             mongo::BSONObj root = node->root();
 
             mongo::BSONObjBuilder b;
-            editBsonByKey(b, root, sroot, key, BSON(QtUtils::toStdString(val) << QtUtils::toStdString(node->value())  ).firstElement() );
+            mongo::BSONObj objN = BSON(QtUtils::toStdString(val) << QtUtils::toStdString(node->value())  );
+            editBsonByKey(b, root, sroot, key, objN.firstElement());
 
             mongo::BSONObj obj = b.obj();
-            result = _worker->insertDocument(obj,_ns,true);
-            if(result){
-                node->setKey(val);
-            }            
+            SaveObjectInfo inf = {obj, _ns, true};
+            qApp->postEvent(_reciver,new SaveObjectEvent(this, inf));
+
+            node->setKey(val);           
         }
         else if (col == BsonTreeItem::eValue){
             std::string key = QtUtils::toStdString(node->key());
@@ -246,19 +253,28 @@ namespace Robomongo
             mongo::BSONObj root = node->root();
 
             mongo::BSONObjBuilder b;
-            editBsonByKey(b,root,sroot,key, BSON(key << QtUtils::toStdString(val) ).firstElement() );
+            mongo::BSONObj objN = BSON(key << QtUtils::toStdString(val) );
+            editBsonByKey(b,root,sroot,key, objN.firstElement() );
 
             mongo::BSONObj obj = b.obj();
-            result = _worker->insertDocument(obj,_ns,true);
-            if(result){
-                node->setValue(val);
-            }
+            SaveObjectInfo inf = {obj, _ns, true};
+            qApp->postEvent(_reciver,new SaveObjectEvent(this, inf));
+
+            node->setValue(val);
         }
 
-        if (result)
-            emit dataChanged(index, index);
+        return true;
+    }
 
-        return result;
+    void BsonTreeModel::customEvent(QEvent *event)
+    {
+        QEvent::Type type = event->type();
+        if (type==static_cast<QEvent::Type>(SaveObjectEvent::EventType)){
+            SaveObjectEvent *ev = static_cast<SaveObjectEvent*>(event);
+            SaveObjectEvent::value_type v = ev->value();
+            
+        }
+        return BaseClass::customEvent(event);
     }
 
     int BsonTreeModel::rowCount(const QModelIndex &parent) const
@@ -302,11 +318,13 @@ namespace Robomongo
         QModelIndex result;
         if (index.isValid()) {
             BsonTreeItem *const childItem = QtUtils::item<BsonTreeItem*const>(index);
-            BsonTreeItem *const parentItem = static_cast<BsonTreeItem*const>(childItem->parent());
-            if (parentItem && parentItem!=_root) {
-                BsonTreeItem *const grandParent = static_cast<BsonTreeItem*const>(parentItem->parent());
-                int row = grandParent->indexOf(parentItem);
-                result= createIndex(row, 0, parentItem);
+            if(childItem){
+                BsonTreeItem *const parentItem = static_cast<BsonTreeItem*const>(childItem->parent());
+                if (parentItem && parentItem!=_root) {
+                    BsonTreeItem *const grandParent = static_cast<BsonTreeItem*const>(parentItem->parent());
+                    int row = grandParent->indexOf(parentItem);
+                    result= createIndex(row, 0, parentItem);
+                }
             }
         }
         return result;

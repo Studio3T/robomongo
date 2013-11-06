@@ -20,21 +20,15 @@ namespace Robomongo
 
     public:
         typedef std::vector<std::string> DatabasesContainerType;
+        typedef QObject BaseClass;
         explicit MongoWorker(IConnectionSettingsBase *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
-        bool insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns, bool overwrite);
 
         IConnectionSettingsBase *connectionRecord() const {return _connection;}
         ~MongoWorker();
         enum{pingTimeMs = 60*1000};
-        
-    protected Q_SLOTS: // handlers:
-        void init();
-        /**
-         * @brief Every minute we are issuing { ping : 1 } command to every used connection
-         * in order to avoid dropped connections.
-         */
-        void keepAlive();
+        virtual void customEvent(QEvent *);      
 
+    protected Q_SLOTS: // handlers:
         /**
          * @brief Initiate connection to MongoDB
          */
@@ -116,6 +110,16 @@ namespace Robomongo
         void handle(CreateFunctionRequest *event);
         void handle(DropFunctionRequest *event);
 
+    private Q_SLOTS:
+
+         void init();
+
+         /**
+         * @brief Every minute we are issuing { ping : 1 } command to every used connection
+         * in order to avoid dropped connections.
+         */
+        void keepAlive(ErrorInfo &er);
+
     protected:
         virtual void timerEvent(QTimerEvent *);
 
@@ -124,12 +128,14 @@ namespace Robomongo
          * @brief Send event to this MongoWorker
          */
         void send(Event *event);
-        DatabasesContainerType getDatabaseNamesSafe();
+        void saveObject(const mongo::BSONObj &obj, const MongoNamespace &ns, bool overwrite, ErrorInfo &er);
+
+        DatabasesContainerType getDatabaseNamesSafe(ErrorInfo &er);
         std::string getAuthBase() const;
 
         mongo::DBClientBase *_dbclient;
         bool _isConnected;
-        mongo::DBClientBase *getConnection(); //may throw exception
+        mongo::DBClientBase *getConnection(ErrorInfo &er);
 
         /**
          * @brief Send reply event to object 'obj'
@@ -146,6 +152,5 @@ namespace Robomongo
         int _timerId;
 
         IConnectionSettingsBase *_connection;
-    };
-
+    };    
 }

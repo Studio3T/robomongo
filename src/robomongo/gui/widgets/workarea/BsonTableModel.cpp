@@ -23,8 +23,7 @@ namespace Robomongo
 
     QModelIndex BsonTableModelProxy::parent( const QModelIndex& index ) const
     {
-        QModelIndex sourceParent = sourceModel()->parent( mapToSource(index) );
-        return sourceParent;
+        return sourceModel()->parent( mapToSource(index) );
     }
 
     int BsonTableModelProxy::columnCount(const QModelIndex &parent) const
@@ -70,16 +69,39 @@ namespace Robomongo
         Q_ASSERT( proxyIndex.model() == this );
 
         QModelIndex sourceIndex;
+        QModelIndex parentIndex = sourceModel()->parent(proxyIndex);
         BsonTreeItem *child = static_cast<BsonTreeItem *>(proxyIndex.internalPointer());
         if (child) {
-            QtUtils::HackQModelIndex* hack = reinterpret_cast<QtUtils::HackQModelIndex*>(&sourceIndex);
             BsonTreeItem *parent = static_cast<BsonTreeItem *>(child->parent());
+            QtUtils::HackQModelIndex* hack = reinterpret_cast<QtUtils::HackQModelIndex*>(&sourceIndex);
+            
             hack->r = proxyIndex.row();
             hack->c = proxyIndex.column();
             hack->i = parent;
             hack->m = sourceModel();
         }
         return sourceIndex;
+    }
+
+    Qt::ItemFlags BsonTableModelProxy::flags(const QModelIndex &index) const
+    {
+        QModelIndex ind;
+        QModelIndex parent = sourceModel()->parent(index);
+        BsonTreeItem *child = static_cast<BsonTreeItem *>(index.internalPointer());
+        if(child){
+            BsonTreeItem *par = static_cast<BsonTreeItem *>(child->parent());
+            ind = sourceModel()->index(par->indexOf(child),1,parent);
+        }
+        return sourceModel()->flags(ind);
+    }
+
+    bool BsonTableModelProxy::setData(const QModelIndex &index, const QVariant &value, int role)
+    {
+        QModelIndex parent = sourceModel()->parent(index);
+        BsonTreeItem *child = static_cast<BsonTreeItem *>(index.internalPointer());
+        BsonTreeItem *par = static_cast<BsonTreeItem *>(child->parent());
+        QModelIndex ind = sourceModel()->index(par->indexOf(child),1,parent);
+        return sourceModel()->setData(ind,value,role);
     }
 
     void BsonTableModelProxy::setSourceModel( QAbstractItemModel* model )

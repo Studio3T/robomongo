@@ -174,7 +174,6 @@ SET(HEADERS_CORE
     robomongo/core/domain/MongoQueryInfo.h
     robomongo/core/domain/MongoCollection.h
     robomongo/core/domain/MongoCollectionInfo.h
-    robomongo/core/mongodb/MongoClient.h
     robomongo/core/domain/MongoUtils.h
     robomongo/core/domain/MongoNamespace.h
     robomongo/core/domain/CursorPosition.h
@@ -214,7 +213,6 @@ SET(SOURCES_CORE
     robomongo/core/settings/CredentialSettings.cpp
     robomongo/core/domain/MongoQueryInfo.cpp
     robomongo/core/domain/MongoCollectionInfo.cpp
-    robomongo/core/mongodb/MongoClient.cpp
     robomongo/core/domain/MongoUtils.cpp
     robomongo/core/domain/MongoNamespace.cpp
     robomongo/core/domain/CursorPosition.cpp

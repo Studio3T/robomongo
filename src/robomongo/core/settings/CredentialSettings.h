@@ -25,7 +25,7 @@ namespace Robomongo
          */
         QVariantMap toVariant() const;
 
-        bool isValidAnEnabled() const { return _credentialInfo.isValid() && _enabled; }
+        bool isValidAndEnabled() const { return _credentialInfo.isValid() && _enabled; }
         /**
          * @brief Flag, indecating whether we should use this
          * credentials to perform authentication, or not.

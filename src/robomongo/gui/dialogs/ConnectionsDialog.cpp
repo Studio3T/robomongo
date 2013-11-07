@@ -63,7 +63,7 @@ namespace Robomongo
 
                 setText(1, QtUtils::toQString(con->getFullAddress()));
                 CredentialSettings primCred = con->primaryCredential();
-                if (primCred.isValidAnEnabled()) {
+                if (primCred.isValidAndEnabled()) {
                     CredentialSettings::CredentialInfo info = primCred.info();
                     QString authString = QString("%1 / %2").arg(QtUtils::toQString(info._databaseName)).arg(QtUtils::toQString(info._userName));
                     setText(2, authString);

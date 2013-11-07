@@ -40,8 +40,8 @@ namespace Robomongo
         _echoModeButton = new QPushButton("Show");
         VERIFY(connect(_echoModeButton, SIGNAL(clicked()), this, SLOT(toggleEchoMode())));
         CredentialSettings primCred = _settings->primaryCredential();
-        _useAuth->setChecked(primCred.isValidAnEnabled());
-        authChecked(primCred.isValidAnEnabled());
+        _useAuth->setChecked(primCred.isValidAndEnabled());
+        authChecked(primCred.isValidAndEnabled());
 
         if (primCred.info().isValid()) {
             CredentialSettings::CredentialInfo info = primCred.info();

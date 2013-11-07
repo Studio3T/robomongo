@@ -47,7 +47,7 @@ namespace Robomongo
         _connectionLabel->setText(QString("Connecting to <b>%1</b>...").arg(QtUtils::toQString(_connection->getFullAddress())));
 
         CredentialSettings primCred = _connection->primaryCredential();
-        if (primCred.isValidAnEnabled()) {
+        if (primCred.isValidAndEnabled()) {
             CredentialSettings::CredentialInfo info = primCred.info();
             _authLabel->setText(QString("Authorizing on <b>%1</b> database as <b>%2</b>...")
                 .arg(QtUtils::toQString(info._databaseName))
@@ -107,7 +107,7 @@ namespace Robomongo
             _authIconLabel->setPixmap(_noPixmap);
 
             CredentialSettings primCred = _connection->primaryCredential();
-            if (primCred.isValidAnEnabled())
+            if (primCred.isValidAndEnabled())
                 _authLabel->setText(QString("Authorization failed"));
             else
                 _authLabel->setText(QString("Authorization skipped by you"));
@@ -154,7 +154,7 @@ namespace Robomongo
         CredentialSettings primCred = _connection->primaryCredential();
 
         try {
-            if (primCred.isValidAnEnabled())
+            if (primCred.isValidAndEnabled())
             {
                 CredentialSettings::CredentialInfo info = primCred.info();
                 std::string errmsg;

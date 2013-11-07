@@ -76,7 +76,7 @@ namespace Robomongo
             ss << set->replicaName() << "/";
         }
         CredentialSettings primCred = _connection->primaryCredential();
-        if (primCred.isValidAnEnabled()){
+        if (primCred.isValidAndEnabled()){
             CredentialSettings::CredentialInfo info = primCred.info();
             ss << _connection->connectionString() << "/" << info._databaseName;
             ss << "', '" << info._userName << "', '" << info._userPassword << "')";

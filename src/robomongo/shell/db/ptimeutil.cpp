@@ -54,7 +54,7 @@ namespace
 namespace miutil 
 {
     const long long minDate = -9218988800000; // "1677-11-10T17:46:40.001Z"
-    const long long maxDate   = 9218988800000;  // "2262-02-20T06:13:19.999Z"
+    const long long maxDate = 9218988800000;  // "2262-02-20T06:13:19.999Z"
 
     std::string rfc1123date( const boost::posix_time::ptime &pt )
     {
@@ -343,8 +343,13 @@ namespace miutil
             boost::posix_time::ptime pt(date, td);
 
             td = boost::posix_time::time_duration(hourOffset, minuteOffset, 0);
-
-            return pt - td;
+            boost::posix_time::ptime res = pt - td;
+            boost::posix_time::time_duration range = res.time_of_day();
+            long long validRange = range.total_microseconds();
+            if(validRange > maxDate || validRange < minDate){
+                throw std::out_of_range("Robomongo limits");
+            }
+            return res;
         }
         catch(const std::out_of_range &ex)
         {

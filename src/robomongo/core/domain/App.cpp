@@ -34,7 +34,7 @@ namespace Robomongo
                 pattern = "db.%1.%2";
             }
 
-            return pattern.arg(qCollectionName).arg(postfix);
+            return pattern.arg(qCollectionName.replace("\\","\\\\")).arg(postfix);
         }
     }
 

@@ -336,14 +336,21 @@ namespace miutil
                 }
             }
         }
-						
-        boost::gregorian::date date(def[0].number, def[1].number, def[2].number);
-        boost::posix_time::time_duration td(def[3].number, def[4].number, def[5].number,def[6].number*1000);
-        boost::posix_time::ptime pt(date, td);
 
-        td=boost::posix_time::time_duration(hourOffset, minuteOffset, 0);
+        try{
+            boost::gregorian::date date(def[0].number, def[1].number, def[2].number);
+            boost::posix_time::time_duration td(def[3].number, def[4].number, def[5].number,def[6].number*1000);
+            boost::posix_time::ptime pt(date, td);
 
-        return pt - td;
+            td = boost::posix_time::time_duration(hourOffset, minuteOffset, 0);
+
+            return pt - td;
+        }
+        catch(const std::out_of_range &ex)
+        {
+            isSuccessfull = false;
+            return boost::posix_time::ptime();
+        }
     }
 
 }

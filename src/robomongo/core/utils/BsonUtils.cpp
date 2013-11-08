@@ -605,7 +605,7 @@ namespace Robomongo
                     if(isSupportedDate)
                         date = miutil::isotimeString(time,false,tz==LocalTime);
                     else
-                        date = std::to_string(ms);
+                        date = boost::lexical_cast<std::string>(ms);
 
                     con.append(date);
                     break;

@@ -332,8 +332,6 @@ namespace Robomongo
 
                 //int limit = (info.limit <= 0) ? 50 : info.limit;
 
-                std::vector<MongoDocumentPtr> docs;
-
                 if (info._limit == -1) // it means that we do not need to load any documents
                     return docs;
 

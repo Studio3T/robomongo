@@ -16,8 +16,8 @@ Contribute
 ==========
 Contributions are always welcome! Just try to follow our coding style: [Robomongo Coding Style](https://github.com/paralect/robomongo/wiki/Robomongo-Coding-Style)
 
-Vote for Feature or Donate
-==========
+Vote for the Feature
+====================
 Please view our [Backlog](http://robomongo.org/backlog). Here we are all together building priorities for the
 next versions of Robomongo.
 

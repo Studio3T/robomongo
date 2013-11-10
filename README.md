@@ -12,14 +12,14 @@ You can download compiled version (for Mac OS X, Windows and Linux) from our sit
 
 <!-- https://www.dropbox.com/sh/u0s0i8e4m0a8i9f/oxtqKHPUZ8 -->
 
-Contribute
-==========
-Contributions are always welcome! Just try to follow our coding style: [Robomongo Coding Style](https://github.com/paralect/robomongo/wiki/Robomongo-Coding-Style)
-
 Vote for the Feature
 ====================
 Please view our [Backlog](http://robomongo.org/backlog). Here we are all together building priorities for the
 next versions of Robomongo.
+
+Contribute
+==========
+Contributions are always welcome! Just try to follow our coding style: [Robomongo Coding Style](https://github.com/paralect/robomongo/wiki/Robomongo-Coding-Style)
 
 Build
 =====

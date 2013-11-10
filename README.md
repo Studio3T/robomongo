@@ -14,8 +14,8 @@ You can download compiled version (for Mac OS X, Windows and Linux) from our sit
 
 Vote for the Feature
 ====================
-Please view our [Backlog](http://robomongo.org/backlog). Here we are all together building priorities for the
-next versions of Robomongo.
+Please view our [Magic Backlog](http://robomongo.org/backlog). Here we are all together 
+building priorities for the next versions of Robomongo.
 
 Contribute
 ==========

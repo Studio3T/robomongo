@@ -242,7 +242,7 @@ namespace Robomongo
             editBsonByKey(b, root, sroot, key, objN.firstElement());
 
             mongo::BSONObj obj = b.obj();
-            SaveObjectInfo inf = {obj, _ns, true};
+            SaveObjectInfo inf(obj, _ns, true);
             qApp->postEvent(_reciver,new SaveObjectEvent(this, inf));
 
             node->setKey(val);           
@@ -257,7 +257,7 @@ namespace Robomongo
             editBsonByKey(b,root,sroot,key, objN.firstElement() );
 
             mongo::BSONObj obj = b.obj();
-            SaveObjectInfo inf = {obj, _ns, true};
+            SaveObjectInfo inf(obj, _ns, true);
             qApp->postEvent(_reciver,new SaveObjectEvent(this, inf));
 
             node->setValue(val);

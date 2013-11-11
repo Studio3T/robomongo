@@ -661,6 +661,7 @@ namespace Robomongo
                 mongo::BSONObj resultObj;
                 con->runCommand("db", BSON("buildInfo" << "1"), resultObj);
                 std::string resultStr = BsonUtils::getField<mongo::String>(resultObj,"version");
+                resultStr.erase(std::remove(resultStr.begin()+2 ,resultStr.end(),'.'));
                 result = atof(resultStr.c_str());          
             } catch(const mongo::DBException &ex) {
                 er = ErrorInfo("Unable to load list of users.", ErrorInfo::_EXCEPTION);
@@ -700,6 +701,110 @@ namespace Robomongo
             saveDocument(v._obj, v._ns, v._overwrite, er);            
             qApp->postEvent(ev->sender(), new SaveObjectEvent(this, ev->value(), er));
         }
+        else if(type==static_cast<QEvent::Type>(DropFunctionEvent::EventType))
+        {
+            DropFunctionEvent *ev = static_cast<DropFunctionEvent*>(event);
+            DropFunctionEvent::value_type v = ev->value();
+
+            ErrorInfo er;
+            dropFunction(v._database, v._name, er);
+            qApp->postEvent(ev->sender(), new DropFunctionEvent(this, ev->value(), er));
+        }
+        else if(type==static_cast<QEvent::Type>(CreateFunctionEvent::EventType))
+        {
+            CreateFunctionEvent *ev = static_cast<CreateFunctionEvent*>(event);
+            CreateFunctionEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            createFunction(v._database, v._function, v._existingFunctionName, er);
+            qApp->postEvent(ev->sender(), new CreateFunctionEvent(this, ev->value(), er));
+        }
+        else if(type==static_cast<QEvent::Type>(LoadFunctionEvent::EventType))
+        {
+            LoadFunctionEvent *ev = static_cast<LoadFunctionEvent*>(event);
+            LoadFunctionEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            v._functions = getFunctions(v._database, er);
+            qApp->postEvent(ev->sender(), new LoadFunctionEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(CreateUserEvent::EventType))
+        {
+            CreateUserEvent *ev = static_cast<CreateUserEvent*>(event);
+            CreateUserEvent::value_type v = ev->value();  
+            
+            ErrorInfo er;
+            createUser(v._database, v._user, v._overwrite, er);
+            qApp->postEvent(ev->sender(), new CreateUserEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(DropUserEvent::EventType))
+        {
+            DropUserEvent *ev = static_cast<DropUserEvent*>(event);
+            DropUserEvent::value_type v = ev->value();  
+
+            ErrorInfo er;
+            dropUser(v._database, v._id, er);
+            qApp->postEvent(ev->sender(), new DropUserEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(LoadUserEvent::EventType))
+        {
+            LoadUserEvent *ev = static_cast<LoadUserEvent*>(event);
+            LoadUserEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            v._users = getUsers(v._database, er);
+            qApp->postEvent(ev->sender(), new LoadUserEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(CreateCollectionEvent::EventType)){
+            CreateCollectionEvent *ev = static_cast<CreateCollectionEvent*>(event);
+            CreateCollectionEvent::value_type v = ev->value();  
+
+            ErrorInfo er;
+            createCollection(v._ns, er);
+            qApp->postEvent(ev->sender(), new CreateCollectionEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(DropCollectionEvent::EventType)){
+            DropCollectionEvent *ev = static_cast<DropCollectionEvent*>(event);
+            DropCollectionEvent::value_type v = ev->value();  
+
+            ErrorInfo er;
+            dropCollection(v._ns, er);
+            qApp->postEvent(ev->sender(), new DropCollectionEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(RenameCollectionEvent::EventType)){
+            RenameCollectionEvent *ev = static_cast<RenameCollectionEvent*>(event);
+            RenameCollectionEvent::value_type v = ev->value();  
+
+            ErrorInfo er;
+            renameCollection(v._ns, v._name, er);
+            qApp->postEvent(ev->sender(), new RenameCollectionEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(LoadCollectionEvent::EventType))
+        {
+            LoadCollectionEvent *ev = static_cast<LoadCollectionEvent*>(event);
+            LoadCollectionEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            v._infos = getCollectionInfos(v._database, er);
+            qApp->postEvent(ev->sender(), new LoadCollectionEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(DuplicateCollectionEvent::EventType)){
+            DuplicateCollectionEvent *ev = static_cast<DuplicateCollectionEvent*>(event);
+            DuplicateCollectionEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            duplicateCollection(v._ns, v._name, er);
+            qApp->postEvent(ev->sender(), new DuplicateCollectionEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(CopyCollectionToDiffServerEvent::EventType)){
+            CopyCollectionToDiffServerEvent *ev = static_cast<CopyCollectionToDiffServerEvent*>(event);
+            CopyCollectionToDiffServerEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            copyCollectionToDiffServer(v._worker, v._from, v._to, er);
+            qApp->postEvent(ev->sender(), new CopyCollectionToDiffServerEvent(this, v, er));
+        }
+
         return BaseClass::customEvent(event);
     }
 
@@ -841,23 +946,6 @@ namespace Robomongo
         reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames, er));
     }
 
-    /**
-     * @brief Load list of all collection names
-     */
-    void MongoWorker::handle(LoadCollectionNamesRequest *event)
-    {
-        ErrorInfo er;
-        std::vector<MongoCollectionInfo> infos = getCollectionInfos(event->databaseName(), er);
-        reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName(), infos, er));
-    }
-
-    void MongoWorker::handle(LoadUsersRequest *event)
-    {
-        ErrorInfo er;
-        std::vector<MongoUser> users = getUsers(event->databaseName(), er);
-        reply(event->sender(), new LoadUsersResponse(this, event->databaseName(), users, er));
-    }
-
     void MongoWorker::handle(LoadCollectionIndexesRequest *event)
     {
         ErrorInfo er;
@@ -894,13 +982,6 @@ namespace Robomongo
             ind = getIndexes(event->collection(),er);
         }
         reply(event->sender(), new LoadCollectionIndexesResponse(this, ind, er));
-    }
-
-    void MongoWorker::handle(LoadFunctionsRequest *event)
-    {
-        ErrorInfo er;
-        std::vector<MongoFunction> funs = getFunctions(event->databaseName(), er);
-        reply(event->sender(), new LoadFunctionsResponse(this,event->databaseName(), funs, er));
     }
 
     void MongoWorker::handle(InsertDocumentRequest *event)
@@ -965,69 +1046,6 @@ namespace Robomongo
         ErrorInfo er;
         dropDatabase(event->database(), er);
         reply(event->sender(), new DropDatabaseResponse(this, er));
-    }
-
-    void MongoWorker::handle(CreateCollectionRequest *event)
-    {
-        ErrorInfo er;
-        createCollection(event->ns(), er);
-        reply(event->sender(), new CreateCollectionResponse(this, er));
-    }
-
-    void MongoWorker::handle(DropCollectionRequest *event)
-    {
-        ErrorInfo er;        
-        dropCollection(event->ns(), er);
-        reply(event->sender(), new DropCollectionResponse(this, er));
-    }
-
-    void MongoWorker::handle(RenameCollectionRequest *event)
-    {
-        ErrorInfo er;        
-        renameCollection(event->ns(), event->newCollection(), er);
-        reply(event->sender(), new RenameCollectionResponse(this, er));
-    }
-
-    void MongoWorker::handle(DuplicateCollectionRequest *event)
-    {
-        ErrorInfo er;
-        duplicateCollection(event->ns(), event->newCollection(), er);
-        reply(event->sender(), new DuplicateCollectionResponse(this, er));
-    }
-
-    void MongoWorker::handle(CopyCollectionToDiffServerRequest *event)
-    {
-        ErrorInfo er;
-        copyCollectionToDiffServer(event->worker(), event->from(), event->to(), er);
-        reply(event->sender(), new CopyCollectionToDiffServerResponse(this, er));
-    }
-
-    void MongoWorker::handle(CreateUserRequest *event)
-    {
-        ErrorInfo er;
-        createUser(event->database(), event->user(), event->overwrite(), er);
-        reply(event->sender(), new CreateUserResponse(this, er));
-    }
-
-    void MongoWorker::handle(DropUserRequest *event)
-    {
-        ErrorInfo er;
-        dropUser(event->database(), event->id(), er);
-        reply(event->sender(), new DropUserResponse(this, er));
-    }
-
-    void MongoWorker::handle(CreateFunctionRequest *event)
-    {
-        ErrorInfo er;
-        createFunction(event->database(), event->function(), event->existingFunctionName(), er);
-        reply(event->sender(), new CreateFunctionResponse(this, er));
-    }
-
-    void MongoWorker::handle(DropFunctionRequest *event)
-    {
-        ErrorInfo er;
-        dropFunction(event->database(), event->name(), er);
-        reply(event->sender(), new DropFunctionResponse(this, er));
     }
 
     mongo::DBClientBase *MongoWorker::getConnection(ErrorInfo &er)

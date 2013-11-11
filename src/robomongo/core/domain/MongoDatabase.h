@@ -59,12 +59,7 @@ namespace Robomongo
         bool isSystem() const { return _system; }
 
         MongoServer *server() const { return _server; }
-
-    protected Q_SLOTS:
-        void handle(LoadCollectionNamesResponse *event);
-        void handle(LoadUsersResponse *event);
-        void handle(LoadFunctionsResponse *event);
-        void handle(CreateUserResponse *event);
+        virtual void customEvent(QEvent *);
 
     private:
         void clearCollections();

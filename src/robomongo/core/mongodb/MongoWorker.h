@@ -40,16 +40,6 @@ namespace Robomongo
         void handle(LoadDatabaseNamesRequest *event);
 
         /**
-         * @brief Load list of all collection names
-         */
-        void handle(LoadCollectionNamesRequest *event);
-
-        /**
-         * @brief Load list of all users
-         */
-        void handle(LoadUsersRequest *event);
-
-        /**
         * @brief Load indexes in collection
         */
         void handle(LoadCollectionIndexesRequest *event);
@@ -68,11 +58,6 @@ namespace Robomongo
         * @brief Edit index
         */
         void handle(EditIndexRequest *event);
-
-        /**
-         * @brief Load list of all JS functions
-         */
-        void handle(LoadFunctionsRequest *event);
 
         /**
          * @brief Inserts document
@@ -97,18 +82,6 @@ namespace Robomongo
         void handle(AutocompleteRequest *event);
         void handle(CreateDatabaseRequest *event);
         void handle(DropDatabaseRequest *event);
-
-        void handle(CreateCollectionRequest *event);
-        void handle(DropCollectionRequest *event);
-        void handle(RenameCollectionRequest *event);
-        void handle(DuplicateCollectionRequest *event);
-        void handle(CopyCollectionToDiffServerRequest *event);
-
-        void handle(CreateUserRequest *event);
-        void handle(DropUserRequest *event);
-
-        void handle(CreateFunctionRequest *event);
-        void handle(DropFunctionRequest *event);
 
     private Q_SLOTS:
 

@@ -1,10 +1,13 @@
 #include "robomongo/core/domain/MongoDatabase.h"
 
+#include <QApplication>
+
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/core/events/MongoEventsGui.hpp"
 
 namespace Robomongo
 {
@@ -33,107 +36,151 @@ namespace Robomongo
     void MongoDatabase::loadCollections()
     {
         _bus->publish(new MongoDatabaseCollectionsLoadingEvent(this));
-        _bus->send(_server->client(), new LoadCollectionNamesRequest(this, _name));
+        LoadCollectionInfo inf(_name);
+        qApp->postEvent(_server->client(), new LoadCollectionEvent(this, inf));
     }
 
     void MongoDatabase::loadUsers()
     {
         _bus->publish(new MongoDatabaseUsersLoadingEvent(this));
-        _bus->send(_server->client(), new LoadUsersRequest(this, _name));
+        LoadUserInfo inf(_name);
+        qApp->postEvent(_server->client(), new LoadUserEvent(this, inf));
     }
 
     void MongoDatabase::loadFunctions()
     {
         _bus->publish(new MongoDatabaseFunctionsLoadingEvent(this));
-        _bus->send(_server->client(), new LoadFunctionsRequest(this, _name));
+        LoadFunctionInfo inf(_name);
+        qApp->postEvent(_server->client(), new LoadFunctionEvent(this, inf));
     }
     void MongoDatabase::createCollection(const std::string &collection)
     {
-        _bus->send(_server->client(), new CreateCollectionRequest(this, MongoNamespace(_name, collection)));
+        CreateCollectionInfo inf(MongoNamespace(_name, collection));
+        qApp->postEvent(_server->client(), new CreateCollectionEvent(this, inf));
     }
 
     void MongoDatabase::dropCollection(const std::string &collection)
     {
-        _bus->send(_server->client(), new DropCollectionRequest(this, MongoNamespace(_name, collection)));
+        DropCollectionInfo inf(MongoNamespace(_name, collection));
+        qApp->postEvent(_server->client(), new DropCollectionEvent(this, inf));
     }
 
     void MongoDatabase::renameCollection(const std::string &collection, const std::string &newCollection)
     {
-        _bus->send(_server->client(), new RenameCollectionRequest(this, MongoNamespace(_name, collection), newCollection));
+        RenameCollectionInfo inf(MongoNamespace(_name, collection), newCollection);
+        qApp->postEvent(_server->client(), new RenameCollectionEvent(this, inf));
     }
 
     void MongoDatabase::duplicateCollection(const std::string &collection, const std::string &newCollection)
     {
-        _bus->send(_server->client(), new DuplicateCollectionRequest(this, MongoNamespace(_name, collection), newCollection));
+        DuplicateCollectionInfo inf(MongoNamespace(_name, collection), newCollection);
+        qApp->postEvent(_server->client(), new DuplicateCollectionEvent(this, inf));
     }
 
     void MongoDatabase::copyCollection(MongoServer *server, const std::string &sourceDatabase, const std::string &collection)
     {
-        _bus->send(_server->client(), new CopyCollectionToDiffServerRequest(this, server->client(), sourceDatabase, collection, _name));
+        CopyCollectionToDiffServerInfo inf(server->client(),MongoNamespace(sourceDatabase, collection), MongoNamespace(_name, collection));
+        qApp->postEvent(_server->client(), new CopyCollectionToDiffServerEvent(this, inf));  
     }
 
     void MongoDatabase::createUser(const MongoUser &user, bool overwrite)
     {
-        _bus->send(_server->client(), new CreateUserRequest(this, _name, user, overwrite));
+        CreateUserInfo inf(_name, user, overwrite);
+        qApp->postEvent(_server->client(), new CreateUserEvent(this, inf));
     }
 
     void MongoDatabase::dropUser(const mongo::OID &id)
     {
-        _bus->send(_server->client(), new DropUserRequest(this, _name, id));
+        DropUserInfo inf(_name, id);
+        qApp->postEvent(_server->client(), new DropUserEvent(this, inf));
     }
 
     void MongoDatabase::createFunction(const MongoFunction &fun)
-    {
-        _bus->send(_server->client(), new CreateFunctionRequest(this, _name, fun));
+    {       
+        CreateFunctionInfo inf(_name, fun);
+        qApp->postEvent(_server->client(), new CreateFunctionEvent(this, inf));
     }
 
     void MongoDatabase::updateFunction(const std::string &name, const MongoFunction &fun)
     {
-        _bus->send(_server->client(), new CreateFunctionRequest(this, _name, fun, name));
+        CreateFunctionInfo inf(_name, fun, name);
+        qApp->postEvent(_server->client(), new CreateFunctionEvent(this, inf));
     }
 
     void MongoDatabase::dropFunction(const std::string &name)
     {
-        _bus->send(_server->client(), new DropFunctionRequest(this, _name, name));
+        DropFunctionInfo inf(_name, name);
+        qApp->postEvent(_server->client(), new DropFunctionEvent(this, inf));
     }
 
-    void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
+    void MongoDatabase::customEvent(QEvent *event)
     {
-        if (loaded->isError())
-            return;
-
-        clearCollections();
-        const std::vector<MongoCollectionInfo> &colectionsInfos = loaded->collectionInfos();
-        for (std::vector<MongoCollectionInfo>::const_iterator it = colectionsInfos.begin(); it != colectionsInfos.end(); ++it) {
-            const MongoCollectionInfo &info = *it;
-            MongoCollection *collection = new MongoCollection(this, info);
-            addCollection(collection);
+        QEvent::Type type = event->type();
+        if(type==static_cast<QEvent::Type>(DropFunctionEvent::EventType))
+        {
+            DropFunctionEvent *ev = static_cast<DropFunctionEvent*>(event);
         }
+        else if(type==static_cast<QEvent::Type>(CreateFunctionEvent::EventType))
+        {
+            CreateFunctionEvent *ev = static_cast<CreateFunctionEvent*>(event);
+        }
+        else if(type==static_cast<QEvent::Type>(LoadFunctionEvent::EventType)){
+            LoadFunctionEvent *ev = static_cast<LoadFunctionEvent*>(event);
+            ErrorInfo er = ev->errorInfo();
+            if (!er.isError()){
+                _bus->publish(new MongoDatabaseFunctionsLoadedEvent(this, this, ev->value()._functions));
+            }
+        }
+        else if(type==static_cast<QEvent::Type>(CreateUserEvent::EventType))
+        {
+            CreateUserEvent *ev = static_cast<CreateUserEvent*>(event);
+        }
+        else if(type==static_cast<QEvent::Type>(DropUserEvent::EventType))
+        {
+            DropUserEvent *ev = static_cast<DropUserEvent*>(event);
+        }
+        else if(type==static_cast<QEvent::Type>(LoadUserEvent::EventType)){
+            LoadUserEvent *ev = static_cast<LoadUserEvent*>(event);
+            ErrorInfo er = ev->errorInfo();
+            if (!er.isError()){
+                _bus->publish(new MongoDatabaseUsersLoadedEvent(this, this, ev->value()._users ));
+            }
+        }
+        else if(type==static_cast<QEvent::Type>(CreateCollectionEvent::EventType))
+        {
+            CreateCollectionEvent *ev = static_cast<CreateCollectionEvent*>(event);
+        }
+        else if(type==static_cast<QEvent::Type>(DropCollectionEvent::EventType))
+        {
+            DropCollectionEvent *ev = static_cast<DropCollectionEvent*>(event);
+        }
+        else if(type==static_cast<QEvent::Type>(RenameCollectionEvent::EventType))
+        {
+            RenameCollectionEvent *ev = static_cast<RenameCollectionEvent*>(event);
+        }
+        else if(type==static_cast<QEvent::Type>(LoadCollectionEvent::EventType)){
+            LoadCollectionEvent *ev = static_cast<LoadCollectionEvent*>(event);
+            ErrorInfo er = ev->errorInfo();
+            LoadCollectionInfo inf = ev->value();
+            if (!er.isError()){
+                clearCollections();
+                for (std::vector<MongoCollectionInfo>::const_iterator it = inf._infos.begin(); it != inf._infos.end(); ++it) {
+                    const MongoCollectionInfo &info = *it;
+                    MongoCollection *collection = new MongoCollection(this, info);
+                    addCollection(collection);
+                }
 
-        _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, _collections));
-    }
-
-    void MongoDatabase::handle(CreateUserResponse *event)
-    {
-        if (event->isError())
-            return;
-
-    }
-
-    void MongoDatabase::handle(LoadUsersResponse *event)
-    {
-        if (event->isError())
-            return;
-        
-        _bus->publish(new MongoDatabaseUsersLoadedEvent(this, this, event->users()));
-    }
-
-    void MongoDatabase::handle(LoadFunctionsResponse *event)
-    {
-        if (event->isError())
-            return;
-            
-        _bus->publish(new MongoDatabaseFunctionsLoadedEvent(this, this, event->functions()));
+                _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, _collections));
+            }            
+        }
+        else if(type==static_cast<QEvent::Type>(DuplicateCollectionEvent::EventType))
+        {
+            DuplicateCollectionEvent *ev = static_cast<DuplicateCollectionEvent*>(event);
+        }
+        else if(type==static_cast<QEvent::Type>(CopyCollectionToDiffServerEvent::EventType))
+        {
+            CopyCollectionToDiffServerEvent *ev = static_cast<CopyCollectionToDiffServerEvent*>(event);
+        }
     }
 
     void MongoDatabase::clearCollections()

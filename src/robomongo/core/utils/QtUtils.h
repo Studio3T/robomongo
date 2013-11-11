@@ -49,7 +49,7 @@ namespace Robomongo
         {
         public:
             typedef value_t value_type;
-            enum { EventType = User+1 };
+            //enum { EventType = User };
 
             Event(QObject *const sender, const value_t &initValue, ErrorInfo er)
                 :QEvent((QEvent::Type)derived_t::EventType),_sender(sender), _value(initValue), _errorInfo(er){};

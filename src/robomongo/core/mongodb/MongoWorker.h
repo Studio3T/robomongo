@@ -25,7 +25,7 @@ namespace Robomongo
 
         IConnectionSettingsBase *connectionRecord() const {return _connection;}
         ~MongoWorker();
-        enum{pingTimeMs = 60*1000};
+        enum{ pingTimeMs = 60*1000 };
         virtual void customEvent(QEvent *);      
 
     protected Q_SLOTS: // handlers:
@@ -33,31 +33,6 @@ namespace Robomongo
          * @brief Initiate connection to MongoDB
          */
         void handle(EstablishConnectionRequest *event);
-
-        /**
-         * @brief Load list of all database names
-         */
-        void handle(LoadDatabaseNamesRequest *event);
-
-        /**
-        * @brief Load indexes in collection
-        */
-        void handle(LoadCollectionIndexesRequest *event);
-
-        /**
-        * @brief Load indexes in collection
-        */
-        void handle(EnsureIndexRequest *event);
-
-        /**
-        * @brief delete index from collection
-        */
-        void handle(DropCollectionIndexRequest *event);
-
-          /**
-        * @brief Edit index
-        */
-        void handle(EditIndexRequest *event);
 
         /**
          * @brief Inserts document
@@ -80,6 +55,11 @@ namespace Robomongo
         void handle(ExecuteScriptRequest *event);
 
         void handle(AutocompleteRequest *event);
+
+         /**
+         * @brief Load list of all database names
+         */
+        void handle(LoadDatabaseNamesRequest *event);
         void handle(CreateDatabaseRequest *event);
         void handle(DropDatabaseRequest *event);
 
@@ -112,8 +92,8 @@ namespace Robomongo
         std::vector<MongoDocumentPtr> MongoWorker::query(const MongoQueryInfo &info, ErrorInfo &er); //nothrow
         void dropIndexFromCollection(const MongoCollectionInfo &collection, const std::string &indexName, ErrorInfo &er); //nothrow
         void renameIndexFromCollection(const MongoCollectionInfo &collection, const std::string &oldIndexName, const std::string &newIndexName, ErrorInfo &er); //nothrow
-        void ensureIndex(const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo, ErrorInfo &er); //nothrow
-        std::vector<EnsureIndexInfo> getIndexes(const MongoCollectionInfo &collection, ErrorInfo &er); //nothrow
+        void ensureIndex(const EnsureIndex &oldInfo,const EnsureIndex &newInfo, ErrorInfo &er); //nothrow
+        std::vector<EnsureIndex> getIndexes(const MongoCollectionInfo &collection, ErrorInfo &er); //nothrow
         std::vector<MongoFunction> getFunctions(const std::string &dbName, ErrorInfo &er); //nothrow
         void createFunction(const std::string &dbName, const MongoFunction &fun, const std::string &existingFunctionName, ErrorInfo &er); //nothrow
         void dropFunction(const std::string &dbName, const std::string &name, ErrorInfo &er); //nothrow

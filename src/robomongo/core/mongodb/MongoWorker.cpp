@@ -19,12 +19,12 @@
 
 namespace
 {
-    Robomongo::EnsureIndexInfo makeEnsureIndexInfoFromBsonObj(
+    Robomongo::EnsureIndex makeEnsureIndexInfoFromBsonObj(
         const Robomongo::MongoCollectionInfo &collection,
         const mongo::BSONObj &obj)
     {
         using namespace Robomongo::BsonUtils;
-        Robomongo::EnsureIndexInfo info(collection);
+        Robomongo::EnsureIndex info(collection);
         info._name = getField<mongo::String>(obj, "name");
         mongo::BSONObj keyObj = getField<mongo::Object>(obj,"key");
         if (keyObj.isValid()) {
@@ -366,10 +366,10 @@ namespace Robomongo
         }
     }
 
-    std::vector<EnsureIndexInfo> MongoWorker::getIndexes(const MongoCollectionInfo &collection, ErrorInfo &er)
+    std::vector<EnsureIndex> MongoWorker::getIndexes(const MongoCollectionInfo &collection, ErrorInfo &er)
     {
         mongo::DBClientBase *con = getConnection(er);
-        std::vector<EnsureIndexInfo> result;
+        std::vector<EnsureIndex> result;
         if (!er.isError()){
             try {                
                 std::auto_ptr<mongo::DBClientCursor> cursor(con->getIndexes(collection.ns().toString()));
@@ -440,7 +440,7 @@ namespace Robomongo
         }        
     }
 
-    void MongoWorker::ensureIndex(const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo, ErrorInfo &er)
+    void MongoWorker::ensureIndex(const EnsureIndex &oldInfo,const EnsureIndex &newInfo, ErrorInfo &er)
     {   
         mongo::DBClientBase *con = getConnection(er);
         if (!er.isError()) {
@@ -804,6 +804,30 @@ namespace Robomongo
             copyCollectionToDiffServer(v._worker, v._from, v._to, er);
             qApp->postEvent(ev->sender(), new CopyCollectionToDiffServerEvent(this, v, er));
         }
+        else if(type==static_cast<QEvent::Type>(LoadCollectionIndexEvent::EventType)){
+            LoadCollectionIndexEvent *ev = static_cast<LoadCollectionIndexEvent*>(event);
+            LoadCollectionIndexEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            v._indexes = getIndexes(v._collection, er);
+            qApp->postEvent(ev->sender(), new LoadCollectionIndexEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(CreateIndexEvent::EventType)){
+            CreateIndexEvent *ev = static_cast<CreateIndexEvent*>(event);
+            CreateIndexEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            ensureIndex(v._oldIndex, v._newIndex, er);
+            qApp->postEvent(ev->sender(), new CreateIndexEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(DeleteIndexEvent::EventType)){
+            DeleteIndexEvent *ev = static_cast<DeleteIndexEvent*>(event);
+            DeleteIndexEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            dropIndexFromCollection(v._collection, v._name, er);
+            qApp->postEvent(ev->sender(), new DeleteIndexEvent(this, v, er));
+        }
 
         return BaseClass::customEvent(event);
     }
@@ -944,44 +968,6 @@ namespace Robomongo
         ErrorInfo er;
         std::vector<std::string> dbNames = getDatabaseNames(er);
         reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames, er));
-    }
-
-    void MongoWorker::handle(LoadCollectionIndexesRequest *event)
-    {
-        ErrorInfo er;
-        std::vector<EnsureIndexInfo> ind = getIndexes(event->collection(), er);
-        reply(event->sender(), new LoadCollectionIndexesResponse(this, ind, er));
-    }
-
-    void MongoWorker::handle(EnsureIndexRequest *event)
-    {
-        const EnsureIndexInfo &newInfo = event->newInfo();
-        const EnsureIndexInfo &oldInfo = event->oldInfo();
-        ErrorInfo er;
-        std::vector<EnsureIndexInfo> ind;
-        ensureIndex(oldInfo, newInfo, er);
-        if(er.isError()){
-            ind = getIndexes(newInfo._collection, er);
-        }
-        reply(event->sender(), new LoadCollectionIndexesResponse(this, ind, er));
-    }
-
-    void MongoWorker::handle(DropCollectionIndexRequest *event)
-    {
-        ErrorInfo er;
-        dropIndexFromCollection(event->collection(),event->name(), er);
-        reply(event->sender(), new DropCollectionIndexResponse(this, event->collection(), event->name(), er));
-    }
-
-    void MongoWorker::handle(EditIndexRequest *event)
-    {
-        ErrorInfo er;
-        renameIndexFromCollection(event->collection(), event->oldIndex(), event->newIndex(), er);
-        std::vector<EnsureIndexInfo> ind;
-        if (!er.isError()){
-            ind = getIndexes(event->collection(),er);
-        }
-        reply(event->sender(), new LoadCollectionIndexesResponse(this, ind, er));
     }
 
     void MongoWorker::handle(InsertDocumentRequest *event)

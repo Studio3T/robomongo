@@ -110,26 +110,6 @@ namespace Robomongo
         _database->loadUsers();
     }
 
-    void ExplorerDatabaseTreeItem::expandColection(ExplorerCollectionTreeItem *const item)
-    {        
-         _bus->send(_database->server()->client(), new LoadCollectionIndexesRequest(item, item->collection()->info()));
-    }
-
-    void ExplorerDatabaseTreeItem::dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &indexName)
-    {
-        _bus->send(_database->server()->client(), new DropCollectionIndexRequest(item, item->collection()->info(), indexName));
-    }
-
-    void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo)
-    {
-        _bus->send(_database->server()->client(), new EnsureIndexRequest(item,oldInfo ,newInfo));
-    }
-
-    void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item,const std::string &oldIndexText,const std::string &newIndexText)
-    {
-         _bus->send(_database->server()->client(), new EditIndexRequest(item, item->collection()->info(),oldIndexText,newIndexText));
-    }
-
     void ExplorerDatabaseTreeItem::expandFunctions()
     {
         _database->loadFunctions();
@@ -205,13 +185,13 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::addCollectionItem(MongoCollection *collection)
     {
-        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(_collectionFolderItem,this,collection);
+        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(_database->server()->client(), _collectionFolderItem, this, collection);
         _collectionFolderItem->addChild(collectionItem);
     }
 
     void ExplorerDatabaseTreeItem::addSystemCollectionItem(MongoCollection *collection)
     {
-        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(_collectionSystemFolderItem, this, collection);
+        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(_database->server()->client(), _collectionSystemFolderItem, this, collection);
         _collectionSystemFolderItem->addChild(collectionItem);
     }
 

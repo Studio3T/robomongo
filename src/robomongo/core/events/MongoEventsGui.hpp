@@ -245,4 +245,55 @@ namespace Robomongo
         CopyCollectionToDiffServerEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
+
+    struct LoadCollectionIndexesInfo
+    {
+        LoadCollectionIndexesInfo(const MongoCollectionInfo &collection,const std::vector<EnsureIndex> &indexes = std::vector<EnsureIndex>())
+            :_collection(collection),_indexes(indexes){}
+        MongoCollectionInfo _collection;
+        std::vector<EnsureIndex> _indexes;
+    };
+
+    struct LoadCollectionIndexEvent
+        : public QtUtils::Event<LoadCollectionIndexEvent, LoadCollectionIndexesInfo>
+    {
+        typedef QtUtils::Event<LoadCollectionIndexEvent, LoadCollectionIndexesInfo> BaseClass;
+        enum{ EventType = User+14 };
+        LoadCollectionIndexEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
+            : BaseClass(sender, val, er) {}
+    };
+
+    struct EnsureIndexInfo
+    {
+        EnsureIndexInfo(const EnsureIndex &oldIndex, const EnsureIndex &newIndex)
+            :_oldIndex(oldIndex), _newIndex(newIndex){}
+        const EnsureIndex _oldIndex;
+        const EnsureIndex _newIndex;
+    };
+
+    struct CreateIndexEvent
+        : public QtUtils::Event<CreateIndexEvent, EnsureIndexInfo>
+    {
+        typedef QtUtils::Event<CreateIndexEvent, EnsureIndexInfo> BaseClass;
+        enum{ EventType = User+15 };
+        CreateIndexEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
+            : BaseClass(sender, val, er) {}
+    };
+
+    struct DeleteIndexInfo
+    {
+        DeleteIndexInfo(const MongoCollectionInfo &collection, const std::string &name) 
+            : _collection(collection), _name(name) {}
+        const MongoCollectionInfo _collection;
+        std::string _name;
+    };
+
+    struct DeleteIndexEvent
+        : public QtUtils::Event<DeleteIndexEvent, DeleteIndexInfo>
+    {
+        typedef QtUtils::Event<DeleteIndexEvent, DeleteIndexInfo> BaseClass;
+        enum{ EventType = User+16 };
+        DeleteIndexEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
+            : BaseClass(sender, val, er) {}
+    };
 }

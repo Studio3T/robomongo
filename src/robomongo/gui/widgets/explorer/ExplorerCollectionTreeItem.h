@@ -24,16 +24,16 @@ namespace Robomongo
         Q_OBJECT
     public:
         typedef ExplorerTreeItem BaseClass;
-        ExplorerCollectionTreeItem(QTreeWidgetItem *parent,ExplorerDatabaseTreeItem *databaseItem,MongoCollection *collection);
+        ExplorerCollectionTreeItem(QObject *reciver, QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection);
         MongoCollection *collection() const { return _collection; }
         void expand();
-        void dropIndex(const QTreeWidgetItem * const ind);
         void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
         ExplorerDatabaseTreeItem *const databaseItem() const { return _databaseItem; }
+        virtual void customEvent(QEvent *); 
+        void createIndex(const EnsureIndex &oldInfo, const EnsureIndex &newInfo);
+        void deleteIndex(const std::string &indexName);
 
     public Q_SLOTS:
-        void handle(LoadCollectionIndexesResponse *event);
-        void handle(DropCollectionIndexResponse *event);
         void handle(CollectionIndexesLoadingEvent *event);
 
     private Q_SLOTS:
@@ -54,10 +54,12 @@ namespace Robomongo
         void ui_viewCollection();
 
     private:
+        void loadIndexes();
         QString buildToolTip(MongoCollection *collection);
         ExplorerCollectionDirIndexesTreeItem *_indexDir;
         MongoCollection *const _collection;
         ExplorerDatabaseTreeItem *const _databaseItem;
+        QObject *_reciver;
     };
 
     class ExplorerCollectionDirIndexesTreeItem: public ExplorerTreeItem
@@ -83,12 +85,12 @@ namespace Robomongo
          Q_OBJECT
     public:
         typedef ExplorerTreeItem BaseClass;
-        explicit ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent,const EnsureIndexInfo &info);
+        explicit ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent,const EnsureIndex &info);
 
     private Q_SLOTS:
         void ui_dropIndex();
         void ui_edit();
     private:
-        EnsureIndexInfo _info;
+        EnsureIndex _info;
     };
 }

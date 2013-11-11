@@ -20,8 +20,8 @@ namespace Robomongo
             HeightWidget = 320,
             WidthWidget = 480
         };
-        explicit EditIndexDialog(const EnsureIndexInfo &info, const QString &databaseName, const QString &serverAdress, QWidget *parent=0);
-        EnsureIndexInfo info() const;
+        explicit EditIndexDialog(const EnsureIndex &info, const QString &databaseName, const QString &serverAdress, QWidget *parent=0);
+        EnsureIndex info() const;
 
     public Q_SLOTS:
         virtual void accept();
@@ -32,7 +32,7 @@ namespace Robomongo
        QWidget *createBasicTab();
        QWidget *createAdvancedTab();
        QWidget *createTextSearchTab();
-       const EnsureIndexInfo _info;
+       const EnsureIndex _info;
        QLineEdit *_nameLineEdit;
        FindFrame *_jsonText;
        QCheckBox *_uniqueCheckBox;

@@ -2,7 +2,7 @@
 
 namespace Robomongo
 {
-    EnsureIndexInfo::EnsureIndexInfo(const MongoCollectionInfo &collection, const std::string &name, const std::string &request,
+    EnsureIndex::EnsureIndex(const MongoCollectionInfo &collection, const std::string &name, const std::string &request,
         bool isUnique, bool isBackGround, bool isDropDuplicates, bool isSparce, int expireAfter,
         const std::string &defaultLanguage, const std::string &languageOverride, const std::string &textWeights) :
         _name(name),

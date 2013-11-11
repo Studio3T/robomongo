@@ -4,9 +4,9 @@
 
 namespace Robomongo
 {
-    struct EnsureIndexInfo
+    struct EnsureIndex
     {
-        EnsureIndexInfo(
+        EnsureIndex(
             const MongoCollectionInfo &collection,
             const std::string &name = std::string(),
             const std::string &request = std::string(),

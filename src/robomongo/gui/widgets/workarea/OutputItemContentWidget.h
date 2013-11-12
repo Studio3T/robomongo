@@ -2,8 +2,14 @@
 
 #include <QStackedWidget>
 
+QT_BEGIN_NAMESPACE
+class QAction;
+class QMenu;
+QT_END_NAMESPACE
+
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
+#include "robomongo/core/domain/Notifier.h"
 #include "robomongo/core/Enums.h"
 #include <vector>
 
@@ -18,8 +24,9 @@ namespace Robomongo
     class MongoShell;
     class OutputItemHeaderWidget;
     class OutputWidget;
+    class BsonTreeItem;
 
-    class OutputItemContentWidget : public QWidget
+    class OutputItemContentWidget : public QWidget, public IWatcher
     {
         Q_OBJECT
 
@@ -39,6 +46,8 @@ namespace Robomongo
         void refreshOutputItem();
         void markUninitialized();
 
+        virtual void customEvent(QEvent *);
+
     Q_SIGNALS:
         void restoredSize();
         void maximizedPart();
@@ -53,10 +62,22 @@ namespace Robomongo
         void jsonPartReady(const QString &json);
         void refresh(int skip, int batchSize);
         void paging_rightClicked(int skip, int batchSize);
-        void paging_leftClicked(int skip, int limit);      
+        void paging_leftClicked(int skip, int limit);
+
+        void onDeleteDocument();
+        void onDeleteDocuments();
+        void onEditDocument();
+        void onViewDocument();
+        void onInsertDocument();
+        void onCopyDocument();
+        void onCopyJson();
+
+        void refresh();
 
     private:
         void setup(double secs);
+        void deleteDocuments(std::vector<BsonTreeItem*> items, bool force);
+
         FindFrame *configureLogText();
         BsonTreeModel *configureModel();
 

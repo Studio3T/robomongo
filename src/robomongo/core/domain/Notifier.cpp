@@ -1,21 +1,10 @@
 #include "robomongo/core/domain/Notifier.h"
-
-#include <QAction>
-#include <QClipboard>
-#include <QApplication>
+#include <QACtion>
 #include <QMenu>
 
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/utils/BsonUtils.h"
-#include "robomongo/core/settings/SettingsManager.h"
-#include "robomongo/core/domain/MongoServer.h"
-
+#include "robomongo/core/utils/BsonUtils.h" 
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
-#include "robomongo/gui/dialogs/DocumentTextEditor.h"
-#include "robomongo/gui/utils/DialogUtils.h"
-#include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/core/EventBus.h"
 
 namespace Robomongo
 {
@@ -61,43 +50,47 @@ namespace Robomongo
             return result;
         }
     }
-
-    Notifier::Notifier(INotifierObserver *const observer, MongoServer *server, const MongoQueryInfo &queryInfo, QObject *parent) :
-        BaseClass(parent),
-        _observer(observer),
-        _server(server),
-        _queryInfo(queryInfo)
+    INotifier::INotifier(IWatcher *watcher)
     {
-        QWidget *wid = dynamic_cast<QWidget*>(_observer);
-        VERIFY(connect(_server, SIGNAL(documentInserted()), this, SLOT(refresh())));
+        //VERIFY(connect(_shell->server(), SIGNAL(documentInserted()), this, SLOT(refresh())));
+        QObject *qWatcher = dynamic_cast<QObject*>(watcher);
+        VERIFY(qWatcher);
 
-        _deleteDocumentAction = new QAction("Delete Document...", wid);
-        VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), this, SLOT(onDeleteDocument())));
+        QObject *qThis = dynamic_cast<QObject*>(this);
+        //VERIFY(qThis);
 
-        _deleteDocumentsAction = new QAction("Delete Documents...", wid);
-        VERIFY(connect(_deleteDocumentsAction, SIGNAL(triggered()), this, SLOT(onDeleteDocuments())));
+        _deleteDocumentAction = new QAction("Delete Document...", qThis);
+        VERIFY(QObject::connect(_deleteDocumentAction, SIGNAL(triggered()), qWatcher, SLOT(onDeleteDocument())));
 
-        _editDocumentAction = new QAction("Edit Document...", wid);
-        VERIFY(connect(_editDocumentAction, SIGNAL(triggered()), this, SLOT(onEditDocument())));
+        _deleteDocumentsAction = new QAction("Delete Documents...", qThis);
+        VERIFY(QObject::connect(_deleteDocumentsAction, SIGNAL(triggered()), qWatcher, SLOT(onDeleteDocuments())));
 
-        _viewDocumentAction = new QAction("View Document...", wid);
-        VERIFY(connect(_viewDocumentAction, SIGNAL(triggered()), this, SLOT(onViewDocument())));
+        _editDocumentAction = new QAction("Edit Document...", qThis);
+        VERIFY(QObject::connect(_editDocumentAction, SIGNAL(triggered()), qWatcher, SLOT(onEditDocument())));
 
-        _insertDocumentAction = new QAction("Insert Document...", wid);
-        VERIFY(connect(_insertDocumentAction, SIGNAL(triggered()), this, SLOT(onInsertDocument())));
+        _viewDocumentAction = new QAction("View Document...", qThis);
+        VERIFY(QObject::connect(_viewDocumentAction, SIGNAL(triggered()), qWatcher, SLOT(onViewDocument())));
 
-        _copyValueAction = new QAction("Copy Value", wid);
-        VERIFY(connect(_copyValueAction, SIGNAL(triggered()), this, SLOT(onCopyDocument())));
+        _insertDocumentAction = new QAction("Insert Document...", qThis);
+        VERIFY(QObject::connect(_insertDocumentAction, SIGNAL(triggered()), qWatcher, SLOT(onInsertDocument())));
 
-        _copyJsonAction = new QAction("Copy JSON", wid);
-        VERIFY(connect(_copyJsonAction, SIGNAL(triggered()), this, SLOT(onCopyJson())));        
+        _copyValueAction = new QAction("Copy Value", qThis);
+        VERIFY(QObject::connect(_copyValueAction, SIGNAL(triggered()), qWatcher, SLOT(onCopyDocument())));
+
+        _copyJsonAction = new QAction("Copy JSON", qThis);
+        VERIFY(QObject::connect(_copyJsonAction, SIGNAL(triggered()), qWatcher, SLOT(onCopyJson()))); 
     }
 
-    void Notifier::initMenu(QMenu *const menu, BsonTreeItem *const item)
+    void INotifier::initMultiSelectionMenu(bool isEditable, QMenu *const menu)
     {
-        bool isEditable = _queryInfo._collectionInfo.isValid();
+        if (isEditable) menu->addAction(_insertDocumentAction);
+        if (isEditable) menu->addAction(_deleteDocumentsAction);
+    }
+
+    void INotifier::initMenu(bool isEditable, QMenu *const menu, BsonTreeItem *const item)
+    {
         bool onItem = item ? true : false;
-        
+
         bool isSimple = false;
         bool isDocument = false;
         if (item) {
@@ -116,214 +109,4 @@ namespace Robomongo
         if (onItem && isEditable) menu->addSeparator();
         if (onItem && isEditable) menu->addAction(_deleteDocumentAction);
     }
-
-    void Notifier::initMultiSelectionMenu(QMenu *const menu)
-    {
-        bool isEditable = _queryInfo._collectionInfo.isValid();
-
-        if (isEditable) menu->addAction(_insertDocumentAction);
-        if (isEditable) menu->addAction(_deleteDocumentsAction);
-    }
-
-    void Notifier::deleteDocuments(std::vector<BsonTreeItem*> items, bool force)
-    {
-        bool isNeededRefresh = false;
-        for (std::vector<BsonTreeItem*>::const_iterator it = items.begin(); it != items.end(); ++it) {
-            BsonTreeItem * documentItem = *it;
-            if (!documentItem)
-                break;
-
-            mongo::BSONObj obj = documentItem->superRoot();
-            mongo::BSONElement id = obj.getField("_id");
-
-            if (id.eoo()) {
-                QMessageBox::warning(dynamic_cast<QWidget*>(_observer), "Cannot delete", "Selected document doesn't have _id field. \n"
-                    "Maybe this is a system document that should be managed in a special way?");
-                break;
-            }
-
-            mongo::BSONObjBuilder builder;
-            builder.append(id);
-            mongo::BSONObj bsonQuery = builder.obj();
-            mongo::Query query(bsonQuery);
-
-            if (!force) {
-                // Ask user
-                int answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer), "Delete",
-                    "Document", "%1 %2 with id:<br><b>%3</b>?", QtUtils::toQString(id.toString(false)));
-
-                if (answer != QMessageBox::Yes)
-                    break;
-            }
-
-            isNeededRefresh=true;
-            _server->removeDocuments(query, _queryInfo._collectionInfo._ns);
-        }
-
-        if (isNeededRefresh)
-            refresh();
-    }
-
-    void Notifier::refresh()
-    {
-        _server->query(0, _queryInfo);
-    }
-
-    void Notifier::onDeleteDocuments()
-    {
-        if (!_queryInfo._collectionInfo.isValid())
-            return;
-
-        QModelIndexList selectedIndexes = _observer->selectedIndexes();
-        if (!detail::isMultySelection(selectedIndexes))
-            return;
-        int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", QString("Do you want to delete %1 selected documents?").arg(selectedIndexes.count()));
-        if (answer == QMessageBox::Yes) {
-            std::vector<BsonTreeItem*> items;
-            for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it!= selectedIndexes.end(); ++it) {
-                BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
-                items.push_back(item);                
-            }
-            deleteDocuments(items,true);
-        }
-    }
-
-    void Notifier::onDeleteDocument()
-    {
-        if (!_queryInfo._collectionInfo.isValid())
-            return;
-
-        QModelIndex selectedIndex = _observer->selectedIndex();
-        if (!selectedIndex.isValid())
-            return;
-
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedIndex);
-        std::vector<BsonTreeItem*> vec;
-        vec.push_back(documentItem);
-        return deleteDocuments(vec,false);
-    }
-
-    void Notifier::onEditDocument()
-    {
-        if (!_queryInfo._collectionInfo.isValid())
-            return;
-
-        QModelIndex selectedInd = _observer->selectedIndex();
-        if (!selectedInd.isValid())
-            return;
-
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-        if (!documentItem)
-            return;
-
-        mongo::BSONObj obj = documentItem->superRoot();
-
-        std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
-            AppRegistry::instance().settingsManager()->uuidEncoding(),
-            AppRegistry::instance().settingsManager()->timeZone());
-
-        const QString &json = QtUtils::toQString(str);
-
-        DocumentTextEditor editor(_queryInfo._collectionInfo,
-            json, false, dynamic_cast<QWidget*>(_observer));
-
-        editor.setWindowTitle("Edit Document");
-        int result = editor.exec();
-
-        if (result == QDialog::Accepted) {
-            _server->saveDocuments(editor.bsonObj(), _queryInfo._collectionInfo._ns);
-        }
-    }
-
-    void Notifier::onViewDocument()
-    {
-        QModelIndex selectedIndex = _observer->selectedIndex();
-        if (!selectedIndex.isValid())
-            return;
-
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedIndex);
-        if (!documentItem)
-            return;
-
-        mongo::BSONObj obj = documentItem->superRoot();
-
-        std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
-            AppRegistry::instance().settingsManager()->uuidEncoding(),
-            AppRegistry::instance().settingsManager()->timeZone());
-
-        const QString &json = QtUtils::toQString(str);
-
-        DocumentTextEditor *editor = new DocumentTextEditor(_queryInfo._collectionInfo,
-            json, true, dynamic_cast<QWidget*>(_observer));
-
-        editor->setWindowTitle("View Document");
-        editor->show();
-    }
-
-    void Notifier::onInsertDocument()
-    {
-        if (!_queryInfo._collectionInfo.isValid())
-            return;
-
-        DocumentTextEditor editor(_queryInfo._collectionInfo,
-            "{\n    \n}", false, dynamic_cast<QWidget*>(_observer));
-
-        editor.setCursorPosition(1, 4);
-        editor.setWindowTitle("Insert Document");
-
-        int result = editor.exec();
-        if (result != QDialog::Accepted)
-            return;
-
-        DocumentTextEditor::ReturnType obj = editor.bsonObj();
-        for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
-            _server->insertDocument(*it, _queryInfo._collectionInfo._ns);
-        }
-
-        refresh();
-    }
-
-    void Notifier::onCopyDocument()
-    {
-        QModelIndex selectedInd = _observer->selectedIndex();
-        if (!selectedInd.isValid())
-            return;
-
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-        if (!documentItem)
-            return;
-
-        if (!detail::isSimpleType(documentItem))
-            return;
-
-        QClipboard *clipboard = QApplication::clipboard();
-        clipboard->setText(documentItem->value());
-    }
-
-     void Notifier::onCopyJson()
-     {
-         QModelIndex selectedInd = _observer->selectedIndex();
-         if (!selectedInd.isValid())
-             return;
-
-         BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-         if (!documentItem)
-             return;
-
-         if (!detail::isDocumentType(documentItem))
-             return;
-
-         QClipboard *clipboard = QApplication::clipboard();
-         mongo::BSONObj obj = documentItem->root();
-         if (documentItem != documentItem->superParent()){
-             obj = obj[QtUtils::toStdString(documentItem->key())].Obj();
-         }
-         bool isArray = BsonUtils::isArray(documentItem->type());
-         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
-                 AppRegistry::instance().settingsManager()->uuidEncoding(),
-                 AppRegistry::instance().settingsManager()->timeZone(),isArray);
-
-         const QString &json = QtUtils::toQString(str);
-         clipboard->setText(json);
-     }
 }

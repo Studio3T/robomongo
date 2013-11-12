@@ -11,8 +11,8 @@
 
 namespace Robomongo
 {
-    BsonTableView::BsonTableView(MongoServer *server, const MongoQueryInfo &queryInfo, QWidget *parent) 
-        :BaseClass(parent),_notifier(this,server,queryInfo)
+    BsonTableView::BsonTableView(IWatcher *watcher, QWidget *parent) 
+        :BaseClass(parent), INotifier(watcher)
     {
 #if defined(Q_OS_MAC)
         setAttribute(Qt::WA_MacShowFocusRect, false);
@@ -39,7 +39,7 @@ namespace Robomongo
                 BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
                 items.push_back(item);                
             }
-            _notifier.deleteDocuments(items,isForce);
+            //_notifier.deleteDocuments(items,isForce);
         }
         return BaseClass::keyPressEvent(event);
     }
@@ -68,14 +68,14 @@ namespace Robomongo
         QModelIndexList indexes = selectedIndexes();
         if (detail::isMultySelection(indexes)) {
             QMenu menu(this);
-            _notifier.initMultiSelectionMenu(&menu);
+            initMultiSelectionMenu(true, &menu);
             menu.exec(menuPoint);
         }
         else{
             QModelIndex selectedInd = selectedIndex();
             BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
             QMenu menu(this);
-            _notifier.initMenu(&menu,documentItem);
+            initMenu(true, &menu,documentItem);
             menu.exec(menuPoint);
         }
     }

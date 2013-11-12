@@ -1,6 +1,5 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
 
-#include <QApplication>
 #include <mongo/client/dbclient.h>
 #include <mongo/bson/bsonobjiterator.h>
 #include "robomongo/core/settings/SettingsManager.h"
@@ -77,11 +76,9 @@ namespace
 
 namespace Robomongo
 {
-    BsonTreeModel::BsonTreeModel(const std::vector<MongoDocumentPtr> &documents, QObject *const reciver, const MongoNamespace &ns, QObject *parent) :
+    BsonTreeModel::BsonTreeModel(const std::vector<MongoDocumentPtr> &documents, QObject *parent) :
         BaseClass(parent),
-        _root(new BsonTreeItem(this)),
-        _reciver(reciver),
-        _ns(ns)
+        _root(new BsonTreeItem(this))
     {
         for (int i = 0; i < documents.size(); ++i) {
             MongoDocumentPtr doc = documents[i]; 
@@ -242,8 +239,8 @@ namespace Robomongo
             editBsonByKey(b, root, sroot, key, objN.firstElement());
 
             mongo::BSONObj obj = b.obj();
-            SaveDocumentInfo inf(obj, _ns, true);
-            qApp->postEvent(_reciver,new SaveDocumentEvent(this, inf));
+            //SaveDocumentInfo inf(obj, _ns, true);
+            //qApp->postEvent(_reciver,new SaveDocumentEvent(this, inf));
 
             node->setKey(val);           
         }
@@ -257,8 +254,8 @@ namespace Robomongo
             editBsonByKey(b,root,sroot,key, objN.firstElement() );
 
             mongo::BSONObj obj = b.obj();
-            SaveDocumentInfo inf(obj, _ns, true);
-            qApp->postEvent(_reciver,new SaveDocumentEvent(this, inf));
+            //SaveDocumentInfo inf(obj, _ns, true);
+            //qApp->postEvent(_reciver,new SaveDocumentEvent(this, inf));
 
             node->setValue(val);
         }

@@ -6,16 +6,15 @@
 
 namespace Robomongo
 {
-    class InsertDocumentResponse;
     class MongoServer;
 
-    class BsonTreeView : public QTreeView, public INotifierObserver
+    class BsonTreeView : public QTreeView, public INotifier
     {
         Q_OBJECT
 
     public:
         typedef QTreeView BaseClass;
-        BsonTreeView(MongoServer *server, const MongoQueryInfo &queryInfo, QWidget *parent = NULL);
+        BsonTreeView(IWatcher *watcher, QWidget *parent = NULL);
         virtual QModelIndex selectedIndex() const;
         virtual QModelIndexList selectedIndexes() const;
         void expandNode(const QModelIndex &index);
@@ -29,7 +28,6 @@ namespace Robomongo
         virtual void keyPressEvent(QKeyEvent *event);
         
     private:
-        Notifier _notifier;
         QAction *_expandRecursive;
     };
 }

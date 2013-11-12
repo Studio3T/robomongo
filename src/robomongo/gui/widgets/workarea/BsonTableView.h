@@ -5,12 +5,12 @@
 
 namespace Robomongo
 {
-    class BsonTableView : public QTableView , public INotifierObserver
+    class BsonTableView : public QTableView , public INotifier
     {
         Q_OBJECT
     public:
         typedef QTableView BaseClass;
-        explicit BsonTableView(MongoServer *server, const MongoQueryInfo &queryInfo, QWidget *parent = 0);     
+        explicit BsonTableView(IWatcher *watcher, QWidget *parent = 0);     
         virtual QModelIndex selectedIndex() const;
         virtual QModelIndexList selectedIndexes() const;
 
@@ -19,8 +19,5 @@ namespace Robomongo
 
     protected:
         virtual void keyPressEvent(QKeyEvent *event);
-
-    private:
-        Notifier _notifier;
     };
 }

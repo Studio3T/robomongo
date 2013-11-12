@@ -26,42 +26,7 @@ namespace Robomongo
         IConnectionSettingsBase *connectionRecord() const {return _connection;}
         ~MongoWorker();
         enum{ pingTimeMs = 60*1000 };
-        virtual void customEvent(QEvent *);      
-
-    protected Q_SLOTS: // handlers:
-        /**
-         * @brief Initiate connection to MongoDB
-         */
-        void handle(EstablishConnectionRequest *event);
-
-        /**
-         * @brief Inserts document
-         */
-        void handle(InsertDocumentRequest *event);
-
-        /**
-         * @brief Remove documents
-         */
-        void handle(RemoveDocumentRequest *event);
-
-        /**
-         * @brief Load list of all collection names
-         */
-        void handle(ExecuteQueryRequest *event);
-
-        /**
-         * @brief Execute javascript
-         */
-        void handle(ExecuteScriptRequest *event);
-
-        void handle(AutocompleteRequest *event);
-
-         /**
-         * @brief Load list of all database names
-         */
-        void handle(LoadDatabaseNamesRequest *event);
-        void handle(CreateDatabaseRequest *event);
-        void handle(DropDatabaseRequest *event);
+        virtual void customEvent(QEvent *);
 
     private Q_SLOTS:
 
@@ -100,7 +65,8 @@ namespace Robomongo
         std::vector<MongoUser> getUsers(const std::string &dbName, ErrorInfo &er); //nothrow
         void createUser(const std::string &dbName, const MongoUser &user, bool overwrite, ErrorInfo &er); //nothrow
         void dropUser(const std::string &dbName, const mongo::OID &id, ErrorInfo &er); //nothrow
-        float getVersion(ErrorInfo &er);
+        float getVersion(ErrorInfo &er); //nothrow
+        ConnectionInfo establishConnection(ErrorInfo &er); //nothrow
 
         std::string getAuthBase() const;        
         mongo::DBClientBase *getConnection(ErrorInfo &er);

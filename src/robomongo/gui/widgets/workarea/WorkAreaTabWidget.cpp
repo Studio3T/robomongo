@@ -9,6 +9,7 @@
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/events/MongoEvents.h"
 
 namespace Robomongo
 {

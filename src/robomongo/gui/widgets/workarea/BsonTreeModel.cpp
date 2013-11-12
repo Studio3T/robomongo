@@ -242,8 +242,8 @@ namespace Robomongo
             editBsonByKey(b, root, sroot, key, objN.firstElement());
 
             mongo::BSONObj obj = b.obj();
-            SaveObjectInfo inf(obj, _ns, true);
-            qApp->postEvent(_reciver,new SaveObjectEvent(this, inf));
+            SaveDocumentInfo inf(obj, _ns, true);
+            qApp->postEvent(_reciver,new SaveDocumentEvent(this, inf));
 
             node->setKey(val);           
         }
@@ -257,8 +257,8 @@ namespace Robomongo
             editBsonByKey(b,root,sroot,key, objN.firstElement() );
 
             mongo::BSONObj obj = b.obj();
-            SaveObjectInfo inf(obj, _ns, true);
-            qApp->postEvent(_reciver,new SaveObjectEvent(this, inf));
+            SaveDocumentInfo inf(obj, _ns, true);
+            qApp->postEvent(_reciver,new SaveDocumentEvent(this, inf));
 
             node->setValue(val);
         }
@@ -269,9 +269,9 @@ namespace Robomongo
     void BsonTreeModel::customEvent(QEvent *event)
     {
         QEvent::Type type = event->type();
-        if (type==static_cast<QEvent::Type>(SaveObjectEvent::EventType)){
-            SaveObjectEvent *ev = static_cast<SaveObjectEvent*>(event);
-            SaveObjectEvent::value_type v = ev->value();
+        if (type==static_cast<QEvent::Type>(SaveDocumentEvent::EventType)){
+            SaveDocumentEvent *ev = static_cast<SaveDocumentEvent*>(event);
+            SaveDocumentEvent::value_type v = ev->value();
             
         }
         return BaseClass::customEvent(event);

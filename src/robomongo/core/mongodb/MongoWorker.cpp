@@ -691,15 +691,67 @@ namespace Robomongo
         }        
     }
 
+    ConnectionInfo MongoWorker::establishConnection(ErrorInfo &er)
+    {
+        QMutexLocker lock(&_firstConnectionMutex);
+
+        mongo::DBClientBase *con = getConnection(er);
+        std::vector<std::string> dbNames;
+        float vers = 0.0f;
+
+        if(!er.isError()){
+            try {
+                CredentialSettings primCred = _connection->primaryCredential();
+                if (primCred.isValidAndEnabled()) {
+                    std::string errmsg;
+                    CredentialSettings::CredentialInfo inf = primCred.info();
+                    bool ok = con->auth(inf._databaseName, inf._userName, inf._userPassword, errmsg);
+
+                    if (ok) {
+                        // If authentication succeed and database name is 'admin' -
+                        // then user is admin, otherwise user is not admin
+                        std::string dbName = inf._databaseName;
+                        std::transform(dbName.begin(), dbName.end(), dbName.begin(), ::tolower);
+                        if (dbName.compare("admin") != 0) // dbName is NOT "admin"
+                            _isAdmin = false;                                             
+                    }
+                    else{
+                        er = ErrorInfo("Unable to authorize", ErrorInfo::_ERROR);
+                        LOG_MSG(er._description, mongo::LL_ERROR); 
+                    }                    
+                }
+
+                if(!er.isError()){
+                    dbNames = getDatabaseNames(er);
+                    vers = getVersion(er);
+                }
+            } catch(const std::exception &ex) {
+                er = ErrorInfo("Unable to connect to MongoDB", ErrorInfo::_EXCEPTION);
+                LOG_MSG(ex.what(), mongo::LL_ERROR);
+            }
+        }
+
+        return ConnectionInfo(_connection->getFullAddress(), dbNames, vers);
+    }
+
     void MongoWorker::customEvent(QEvent *event)
     {
         QEvent::Type type = event->type();
-        if (type==static_cast<QEvent::Type>(SaveObjectEvent::EventType)){
-            SaveObjectEvent *ev = static_cast<SaveObjectEvent*>(event);
-            SaveObjectEvent::value_type v = ev->value();
+        if (type==static_cast<QEvent::Type>(RemoveDocumentEvent::EventType)){
+            RemoveDocumentEvent *ev = static_cast<RemoveDocumentEvent*>(event);
+            RemoveDocumentEvent::value_type v = ev->value();
+    
+            ErrorInfo er;
+            removeDocuments(v._ns, v._query, v._justOne, er);
+            qApp->postEvent(ev->sender(), new RemoveDocumentEvent(this, ev->value(), er));
+        }
+        else if (type==static_cast<QEvent::Type>(SaveDocumentEvent::EventType)){
+            SaveDocumentEvent *ev = static_cast<SaveDocumentEvent*>(event);
+            SaveDocumentEvent::value_type v = ev->value();
+
             ErrorInfo er;
             saveDocument(v._obj, v._ns, v._overwrite, er);            
-            qApp->postEvent(ev->sender(), new SaveObjectEvent(this, ev->value(), er));
+            qApp->postEvent(ev->sender(), new SaveDocumentEvent(this, ev->value(), er));
         }
         else if(type==static_cast<QEvent::Type>(DropFunctionEvent::EventType))
         {
@@ -828,6 +880,73 @@ namespace Robomongo
             dropIndexFromCollection(v._collection, v._name, er);
             qApp->postEvent(ev->sender(), new DeleteIndexEvent(this, v, er));
         }
+        else if(type==static_cast<QEvent::Type>(CreateDataBaseEvent::EventType)){
+            CreateDataBaseEvent *ev = static_cast<CreateDataBaseEvent*>(event);
+            CreateDataBaseEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            createDatabase(v._database, er);
+            qApp->postEvent(ev->sender(), new CreateDataBaseEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(DropDatabaseEvent::EventType)){
+            DropDatabaseEvent *ev = static_cast<DropDatabaseEvent*>(event);
+            DropDatabaseEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            dropDatabase(v._database, er);
+            qApp->postEvent(ev->sender(), new DropDatabaseEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(LoadDatabaseNamesEvent::EventType)){
+            LoadDatabaseNamesEvent *ev = static_cast<LoadDatabaseNamesEvent*>(event);
+            LoadDatabaseNamesEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            v._databaseNames = getDatabaseNames(er);
+            qApp->postEvent(ev->sender(), new LoadDatabaseNamesEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(AutoCompleteEvent::EventType)){
+            AutoCompleteEvent *ev = static_cast<AutoCompleteEvent*>(event);
+            AutoCompleteEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            try {
+                v._list = _scriptEngine->complete(v._prefix);            
+            } catch(const mongo::DBException &ex) {
+                er = ErrorInfo("Unable to autocomplete query.", ErrorInfo::_EXCEPTION);
+                LOG_MSG(ex.what(), mongo::LL_ERROR);
+            }
+            qApp->postEvent(ev->sender(), new AutoCompleteEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(ExecuteQueryEvent::EventType)){
+            ExecuteQueryEvent *ev = static_cast<ExecuteQueryEvent*>(event);
+            ExecuteQueryEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            v._documents = query(v._queryInfo, er);
+            qApp->postEvent(ev->sender(), new ExecuteQueryEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(ExecuteScriptEvent::EventType)){
+            ExecuteScriptEvent *ev = static_cast<ExecuteScriptEvent*>(event);
+            ExecuteScriptEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            try {
+                v._result = _scriptEngine->exec(v._script, v._databaseName);   
+            } catch(const mongo::DBException &ex) {
+                er = ErrorInfo("Unable to complete query.", ErrorInfo::_EXCEPTION);
+                LOG_MSG(ex.what(), mongo::LL_ERROR);
+            }
+            qApp->postEvent(ev->sender(), new ExecuteScriptEvent(this, v, er));
+        }
+        else if(type==static_cast<QEvent::Type>(EstablishConnectionEvent::EventType)){
+            EstablishConnectionEvent *ev = static_cast<EstablishConnectionEvent*>(event);
+            EstablishConnectionEvent::value_type v = ev->value();            
+
+            ErrorInfo er;
+            v._info = establishConnection(er);            
+
+            qApp->postEvent(ev->sender(), new EstablishConnectionEvent(this, v , er));
+        }
 
         return BaseClass::customEvent(event);
     }
@@ -900,54 +1019,6 @@ namespace Robomongo
         delete _thread;
     }
 
-    /**
-     * @brief Initiate connection to MongoDB
-     */
-    void MongoWorker::handle(EstablishConnectionRequest *event)
-    {
-        QMutexLocker lock(&_firstConnectionMutex);
-        ErrorInfo er;
-        ConnectionInfo inf;
-        
-        mongo::DBClientBase *con = getConnection(er);
-        std::vector<std::string> dbNames;
-        float vers = 0.0f;
-
-        if(!er.isError()){
-            try {
-                CredentialSettings primCred = _connection->primaryCredential();
-                if (primCred.isValidAndEnabled()) {
-                    std::string errmsg;
-                    CredentialSettings::CredentialInfo inf = primCred.info();
-                    bool ok = con->auth(inf._databaseName, inf._userName, inf._userPassword, errmsg);
-
-                    if (ok) {
-                        // If authentication succeed and database name is 'admin' -
-                        // then user is admin, otherwise user is not admin
-                        std::string dbName = inf._databaseName;
-                        std::transform(dbName.begin(), dbName.end(), dbName.begin(), ::tolower);
-                        if (dbName.compare("admin") != 0) // dbName is NOT "admin"
-                            _isAdmin = false;                                             
-                    }
-                    else{
-                        er = ErrorInfo("Unable to authorize", ErrorInfo::_ERROR);
-                        LOG_MSG(er._description, mongo::LL_ERROR); 
-                    }                    
-                }
-                
-                if(!er.isError()){
-                    dbNames = getDatabaseNames(er);
-                    vers = getVersion(er);
-                }
-            } catch(const std::exception &ex) {
-                er = ErrorInfo("Unable to connect to MongoDB", ErrorInfo::_EXCEPTION);
-                LOG_MSG(ex.what(), mongo::LL_ERROR);
-            }
-        }
-
-        reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, vers), er));
-    }
-
     std::string MongoWorker::getAuthBase() const
     {
         CredentialSettings primCred = _connection->primaryCredential();
@@ -956,83 +1027,7 @@ namespace Robomongo
             return inf._databaseName;
         }
         return std::string();
-    }
-
-    /**
-     * @brief Load list of all database names
-     */
-    void MongoWorker::handle(LoadDatabaseNamesRequest *event)
-    {
-        // If user not an admin - he doesn't have access to mongodb 'listDatabases' command
-        // Non admin user has access only to the single database he specified while performing auth.
-        ErrorInfo er;
-        std::vector<std::string> dbNames = getDatabaseNames(er);
-        reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames, er));
-    }
-
-    void MongoWorker::handle(InsertDocumentRequest *event)
-    {
-        ErrorInfo er;
-        saveDocument(event->obj(), event->ns(), event->overwrite(), er);
-        reply(event->sender(), new InsertDocumentResponse(this,er));
-    }
-
-    void MongoWorker::handle(RemoveDocumentRequest *event)
-    {
-        ErrorInfo er;
-        removeDocuments(event->ns(), event->query(), event->justOne(),er);
-        reply(event->sender(), new RemoveDocumentResponse(this, er));
-    }
-
-    void MongoWorker::handle(ExecuteQueryRequest *event)
-    {
-        ErrorInfo er;
-        std::vector<MongoDocumentPtr> docs = query(event->queryInfo(), er);
-        reply(event->sender(), new ExecuteQueryResponse(this, event->resultIndex(), event->queryInfo(), docs, er));
-    }
-
-    /**
-     * @brief Execute javascript
-     */
-    void MongoWorker::handle(ExecuteScriptRequest *event)
-    {
-        ErrorInfo er;
-        MongoShellExecResult result;
-        try {
-            result = _scriptEngine->exec(event->script, event->databaseName);   
-        } catch(const mongo::DBException &ex) {
-            er = ErrorInfo("Unable to complete query.", ErrorInfo::_EXCEPTION);
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
-        }
-        reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty(), er));
-    }
-
-    void MongoWorker::handle(AutocompleteRequest *event)
-    {
-        ErrorInfo er;
-        QStringList list;
-        try {
-            list = _scriptEngine->complete(event->prefix);            
-        } catch(const mongo::DBException &ex) {
-            er = ErrorInfo("Unable to autocomplete query.", ErrorInfo::_EXCEPTION);
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
-        }
-        reply(event->sender(), new AutocompleteResponse(this, list, event->prefix, er));
-    }
-
-    void MongoWorker::handle(CreateDatabaseRequest *event)
-    {
-        ErrorInfo er;
-        createDatabase(event->database(), er);
-        reply(event->sender(), new CreateDatabaseResponse(this, er));
-    }
-
-    void MongoWorker::handle(DropDatabaseRequest *event)
-    {
-        ErrorInfo er;
-        dropDatabase(event->database(), er);
-        reply(event->sender(), new DropDatabaseResponse(this, er));
-    }
+    }    
 
     mongo::DBClientBase *MongoWorker::getConnection(ErrorInfo &er)
     {

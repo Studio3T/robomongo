@@ -70,28 +70,28 @@ namespace Robomongo
         _queryInfo(queryInfo)
     {
         QWidget *wid = dynamic_cast<QWidget*>(_observer);
-        AppRegistry::instance().bus()->subscribe(this, InsertDocumentResponse::Type);
+        VERIFY(connect(_shell->server(), SIGNAL(documentInserted()), this, SLOT(refresh())));
 
         _deleteDocumentAction = new QAction("Delete Document...", wid);
-        VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument())));
+        VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), this, SLOT(onDeleteDocument())));
 
         _deleteDocumentsAction = new QAction("Delete Documents...", wid);
-        VERIFY(connect(_deleteDocumentsAction, SIGNAL(triggered()), SLOT(onDeleteDocuments())));
+        VERIFY(connect(_deleteDocumentsAction, SIGNAL(triggered()), this, SLOT(onDeleteDocuments())));
 
         _editDocumentAction = new QAction("Edit Document...", wid);
-        VERIFY(connect(_editDocumentAction, SIGNAL(triggered()), SLOT(onEditDocument())));
+        VERIFY(connect(_editDocumentAction, SIGNAL(triggered()), this, SLOT(onEditDocument())));
 
         _viewDocumentAction = new QAction("View Document...", wid);
-        VERIFY(connect(_viewDocumentAction, SIGNAL(triggered()), SLOT(onViewDocument())));
+        VERIFY(connect(_viewDocumentAction, SIGNAL(triggered()), this, SLOT(onViewDocument())));
 
         _insertDocumentAction = new QAction("Insert Document...", wid);
-        VERIFY(connect(_insertDocumentAction, SIGNAL(triggered()), SLOT(onInsertDocument())));
+        VERIFY(connect(_insertDocumentAction, SIGNAL(triggered()), this, SLOT(onInsertDocument())));
 
         _copyValueAction = new QAction("Copy Value", wid);
-        VERIFY(connect(_copyValueAction, SIGNAL(triggered()), SLOT(onCopyDocument())));
+        VERIFY(connect(_copyValueAction, SIGNAL(triggered()), this, SLOT(onCopyDocument())));
 
         _copyJsonAction = new QAction("Copy JSON", wid);
-        VERIFY(connect(_copyJsonAction, SIGNAL(triggered()), SLOT(onCopyJson())));        
+        VERIFY(connect(_copyJsonAction, SIGNAL(triggered()), this, SLOT(onCopyJson())));        
     }
 
     void Notifier::initMenu(QMenu *const menu, BsonTreeItem *const item)
@@ -162,10 +162,10 @@ namespace Robomongo
         }
 
         if (isNeededRefresh)
-            _shell->query(0, _queryInfo);
+            refresh();
     }
 
-    void Notifier::handle(InsertDocumentResponse *event)
+    void Notifier::refresh()
     {
         _shell->query(0, _queryInfo);
     }
@@ -281,7 +281,7 @@ namespace Robomongo
             _shell->server()->insertDocument(*it, _queryInfo._collectionInfo._ns);
         }
 
-        _shell->query(0, _queryInfo);
+        refresh();
     }
 
     void Notifier::onCopyDocument()

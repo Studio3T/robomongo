@@ -9,8 +9,6 @@ namespace Robomongo
     class MongoWorker;
     class MongoDatabase;
     class EstablishConnectionResponse;
-    class LoadDatabaseNamesResponse;
-    class InsertDocumentResponse;
 
     /**
      * @brief MongoServer represents active connection to MongoDB server.
@@ -28,6 +26,7 @@ namespace Robomongo
          * @param visible
          * @param defaultDatabase
          */
+        typedef QObject BaseClass;
         typedef QList<MongoDatabase *> DatabasesContainerType;
         MongoServer(IConnectionSettingsBase *connectionRecord, bool visible);
         ~MongoServer();
@@ -63,11 +62,10 @@ namespace Robomongo
         void loadDatabases();
         bool visible() const { return _visible; }
         MongoWorker *const client() const { return _client; }
-
-    protected Q_SLOTS:
-        void handle(EstablishConnectionResponse *event);
-        void handle(LoadDatabaseNamesResponse *event);
-        void handle(InsertDocumentResponse *event);
+        virtual void customEvent(QEvent *); 
+    
+    Q_SIGNALS:
+        void documentInserted();
 
     private:
         void clearDatabases();

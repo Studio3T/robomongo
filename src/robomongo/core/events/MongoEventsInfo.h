@@ -36,8 +36,8 @@ namespace Robomongo
     {
         ConnectionInfo();
         ConnectionInfo(const std::string &address, const std::vector<std::string> &databases, float version);
-        const std::string _address;
-        const std::vector<std::string> _databases;
-        const float _version;
+        std::string _address;
+        std::vector<std::string> _databases;
+        float _version;
     };
 }

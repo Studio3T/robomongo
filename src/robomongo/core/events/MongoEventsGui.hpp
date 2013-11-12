@@ -6,9 +6,28 @@
 
 namespace Robomongo
 {
-    struct SaveObjectInfo 
+    struct RemoveDocumentInfo 
     {
-        SaveObjectInfo(const mongo::BSONObj &obj, const MongoNamespace &ns, bool overwrite)
+        RemoveDocumentInfo(const mongo::Query &query, const MongoNamespace &ns, bool justOne)
+            :_query(query), _ns(ns), _justOne(justOne){}
+
+        mongo::Query _query;
+        const MongoNamespace _ns;
+        bool _justOne;
+    };
+
+    struct RemoveDocumentEvent 
+        : public QtUtils::Event<RemoveDocumentEvent, RemoveDocumentInfo>
+    {
+        typedef QtUtils::Event<RemoveDocumentEvent, RemoveDocumentInfo> BaseClass;
+        enum{ EventType = User+1 };
+        RemoveDocumentEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
+            : BaseClass(sender, val, er) {}
+    };
+
+    struct SaveDocumentInfo 
+    {
+        SaveDocumentInfo(const mongo::BSONObj &obj, const MongoNamespace &ns, bool overwrite)
             :_obj(obj), _ns(ns), _overwrite(overwrite){}
 
         mongo::BSONObj _obj;
@@ -16,12 +35,12 @@ namespace Robomongo
         bool _overwrite;
     };
 
-    struct SaveObjectEvent 
-        : public QtUtils::Event<SaveObjectEvent, SaveObjectInfo>
+    struct SaveDocumentEvent 
+        : public QtUtils::Event<SaveDocumentEvent, SaveDocumentInfo>
     {
-        typedef QtUtils::Event<SaveObjectEvent, SaveObjectInfo> BaseClass;
-        enum{ EventType = User+1 };
-        SaveObjectEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
+        typedef QtUtils::Event<SaveDocumentEvent, SaveDocumentInfo> BaseClass;
+        enum{ EventType = User+2 };
+        SaveDocumentEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
 
@@ -37,7 +56,7 @@ namespace Robomongo
         : public QtUtils::Event<DropFunctionEvent, DropFunctionInfo>
     {
         typedef QtUtils::Event<DropFunctionEvent, DropFunctionInfo> BaseClass;
-        enum{ EventType = User+2 };
+        enum{ EventType = User+3 };
         DropFunctionEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -61,7 +80,7 @@ namespace Robomongo
         : public QtUtils::Event<CreateFunctionEvent, CreateFunctionInfo>
     {
         typedef QtUtils::Event<CreateFunctionEvent, CreateFunctionInfo> BaseClass;
-        enum{ EventType = User+3 };
+        enum{ EventType = User+4 };
         CreateFunctionEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -78,7 +97,7 @@ namespace Robomongo
         : public QtUtils::Event<LoadFunctionEvent, LoadFunctionInfo>
     {
         typedef QtUtils::Event<LoadFunctionEvent, LoadFunctionInfo> BaseClass;
-        enum{ EventType = User+4 };
+        enum{ EventType = User+5 };
         LoadFunctionEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -96,7 +115,7 @@ namespace Robomongo
         : public QtUtils::Event<CreateUserEvent, CreateUserInfo>
     {
         typedef QtUtils::Event<CreateUserEvent, CreateUserInfo> BaseClass;
-        enum{ EventType = User+5 };
+        enum{ EventType = User+6 };
         CreateUserEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -115,7 +134,7 @@ namespace Robomongo
         : public QtUtils::Event<DropUserEvent, DropUserInfo>
     {
         typedef QtUtils::Event<DropUserEvent, DropUserInfo> BaseClass;
-        enum{ EventType = User+6 };
+        enum{ EventType = User+7 };
         DropUserEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -134,7 +153,7 @@ namespace Robomongo
         : public QtUtils::Event<LoadUserEvent, LoadUserInfo>
     {
         typedef QtUtils::Event<LoadUserEvent, LoadUserInfo> BaseClass;
-        enum{ EventType = User+7 };
+        enum{ EventType = User+8 };
         LoadUserEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -151,7 +170,7 @@ namespace Robomongo
         : public QtUtils::Event<CreateCollectionEvent, CreateCollectionInfo>
     {
         typedef QtUtils::Event<CreateCollectionEvent, CreateCollectionInfo> BaseClass;
-        enum{ EventType = User+8 };
+        enum{ EventType = User+9 };
         CreateCollectionEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -168,7 +187,7 @@ namespace Robomongo
         : public QtUtils::Event<DropCollectionEvent, DropCollectionInfo>
     {
         typedef QtUtils::Event<DropCollectionEvent, DropCollectionInfo> BaseClass;
-        enum{ EventType = User+9 };
+        enum{ EventType = User+10 };
         DropCollectionEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -186,7 +205,7 @@ namespace Robomongo
         : public QtUtils::Event<RenameCollectionEvent, RenameCollectionInfo>
     {
         typedef QtUtils::Event<RenameCollectionEvent, RenameCollectionInfo> BaseClass;
-        enum{ EventType = User+10 };
+        enum{ EventType = User+11 };
         RenameCollectionEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -205,7 +224,7 @@ namespace Robomongo
         : public QtUtils::Event<LoadCollectionEvent, LoadCollectionInfo>
     {
         typedef QtUtils::Event<LoadCollectionEvent, LoadCollectionInfo> BaseClass;
-        enum{ EventType = User+11 };
+        enum{ EventType = User+12 };
         LoadCollectionEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -223,7 +242,7 @@ namespace Robomongo
         : public QtUtils::Event<DuplicateCollectionEvent, DuplicateCollectionInfo>
     {
         typedef QtUtils::Event<DuplicateCollectionEvent, DuplicateCollectionInfo> BaseClass;
-        enum{ EventType = User+12 };
+        enum{ EventType = User+13 };
         DuplicateCollectionEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -241,7 +260,7 @@ namespace Robomongo
         : public QtUtils::Event<CopyCollectionToDiffServerEvent, CopyCollectionToDiffServerInfo>
     {
         typedef QtUtils::Event<CopyCollectionToDiffServerEvent, CopyCollectionToDiffServerInfo> BaseClass;
-        enum{ EventType = User+13 };
+        enum{ EventType = User+14 };
         CopyCollectionToDiffServerEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -258,7 +277,7 @@ namespace Robomongo
         : public QtUtils::Event<LoadCollectionIndexEvent, LoadCollectionIndexesInfo>
     {
         typedef QtUtils::Event<LoadCollectionIndexEvent, LoadCollectionIndexesInfo> BaseClass;
-        enum{ EventType = User+14 };
+        enum{ EventType = User+15 };
         LoadCollectionIndexEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -275,7 +294,7 @@ namespace Robomongo
         : public QtUtils::Event<CreateIndexEvent, EnsureIndexInfo>
     {
         typedef QtUtils::Event<CreateIndexEvent, EnsureIndexInfo> BaseClass;
-        enum{ EventType = User+15 };
+        enum{ EventType = User+16 };
         CreateIndexEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
@@ -292,8 +311,137 @@ namespace Robomongo
         : public QtUtils::Event<DeleteIndexEvent, DeleteIndexInfo>
     {
         typedef QtUtils::Event<DeleteIndexEvent, DeleteIndexInfo> BaseClass;
-        enum{ EventType = User+16 };
+        enum{ EventType = User+17 };
         DeleteIndexEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
+            : BaseClass(sender, val, er) {}
+    };
+
+    struct CreateDataBaseInfo
+    {
+        CreateDataBaseInfo(const std::string &database)
+            : _database(database){}
+        std::string _database;
+    };
+
+    struct CreateDataBaseEvent
+        : public QtUtils::Event<CreateDataBaseEvent, CreateDataBaseInfo>
+    {
+        typedef QtUtils::Event<CreateDataBaseEvent, CreateDataBaseInfo> BaseClass;
+        enum{ EventType = User+18 };
+        CreateDataBaseEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
+            : BaseClass(sender, val, er) {}
+    };
+
+    struct DropDatabaseInfo
+    {
+        DropDatabaseInfo(const std::string &database)
+            : _database(database){}
+        std::string _database;
+    };
+
+    struct DropDatabaseEvent
+        : public QtUtils::Event<DropDatabaseEvent, DropDatabaseInfo>
+    {
+        typedef QtUtils::Event<DropDatabaseEvent, DropDatabaseInfo> BaseClass;
+        enum{ EventType = User+19 };
+        DropDatabaseEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
+            : BaseClass(sender, val, er) {}
+    };
+    
+    struct LoadDatabaseNamesInfo
+    {
+        LoadDatabaseNamesInfo(const std::vector<std::string> &database = std::vector<std::string>())
+            : _databaseNames(database){}
+        std::vector<std::string> _databaseNames;
+    };
+
+    struct LoadDatabaseNamesEvent
+        : public QtUtils::Event<LoadDatabaseNamesEvent, LoadDatabaseNamesInfo>
+    {
+        typedef QtUtils::Event<LoadDatabaseNamesEvent, LoadDatabaseNamesInfo> BaseClass;
+        enum{ EventType = User+20 };
+        LoadDatabaseNamesEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
+            : BaseClass(sender, val, er) {}
+    };
+
+    struct AutoCompleteInfo
+    {
+        AutoCompleteInfo(const std::string &prefix, const QStringList &list = QStringList())
+            : _prefix(prefix), _list(list){}
+
+        std::string _prefix;
+        QStringList _list;   //replace QStringList to std::vector    
+    };
+
+    struct AutoCompleteEvent
+        : public QtUtils::Event<AutoCompleteEvent, AutoCompleteInfo>
+    {
+        typedef QtUtils::Event<AutoCompleteEvent, AutoCompleteInfo> BaseClass;
+        enum{ EventType = User+21 };
+        AutoCompleteEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
+            : BaseClass(sender, val, er) {}
+    };
+
+    struct ExecuteQueryInfo
+    {
+        ExecuteQueryInfo(int resultIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents = std::vector<MongoDocumentPtr>()) 
+            : _resultIndex(resultIndex), _queryInfo(queryInfo), _documents(documents){}
+
+        int _resultIndex;
+        MongoQueryInfo _queryInfo;
+        std::vector<MongoDocumentPtr> _documents;   
+    };
+
+    struct ExecuteQueryEvent
+        : public QtUtils::Event<ExecuteQueryEvent, ExecuteQueryInfo>
+    {
+        typedef QtUtils::Event<ExecuteQueryEvent, ExecuteQueryInfo> BaseClass;
+        enum{ EventType = User+22 };
+        ExecuteQueryEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
+            : BaseClass(sender, val, er) {}
+    };
+
+    struct ExecuteScriptInfo
+    {
+        ExecuteScriptInfo(const std::string &script, const std::string &dbName, int take, int skip, const MongoShellExecResult &result = MongoShellExecResult(), bool empty = false) :
+            _script(script),
+            _databaseName(dbName),
+            _take(take),
+            _skip(skip),
+            _result(result),
+            _empty(empty) {}
+
+        std::string _script;
+        std::string _databaseName;
+        int _take; //
+        int _skip;
+
+        MongoShellExecResult _result;
+        bool _empty;
+    };
+
+    struct ExecuteScriptEvent
+        : public QtUtils::Event<ExecuteScriptEvent, ExecuteScriptInfo>
+    {
+        typedef QtUtils::Event<ExecuteScriptEvent, ExecuteScriptInfo> BaseClass;
+        enum{ EventType = User+23 };
+        ExecuteScriptEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
+            : BaseClass(sender, val, er) {}
+    };
+    
+    struct EstablishConnectionInfo
+    {
+        EstablishConnectionInfo(const ConnectionInfo &info = ConnectionInfo())
+            :_info(info){}
+        ConnectionInfo _info;
+    };
+
+    struct EstablishConnectionEvent
+        : public QtUtils::Event<EstablishConnectionEvent, EstablishConnectionInfo>
+    {
+        typedef QtUtils::Event<EstablishConnectionEvent, EstablishConnectionInfo> BaseClass;
+        enum{ EventType = User+24 };
+        EstablishConnectionEvent(QObject *const sender, const BaseClass::value_type &val, ErrorInfo er = ErrorInfo())
             : BaseClass(sender, val, er) {}
     };
 }

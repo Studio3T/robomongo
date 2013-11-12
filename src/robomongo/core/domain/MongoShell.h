@@ -1,15 +1,17 @@
 #pragma once
 #include <QObject>
-#include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/domain/ScriptInfo.h"
+#include "robomongo/core/domain/MongoQueryInfo.h"
 
 namespace Robomongo
 {
+    class MongoServer;
     class MongoShell : public QObject
     {
         Q_OBJECT
 
     public:
+        typedef QObject BaseClass;
         MongoShell(MongoServer *server,const ScriptInfo &scriptInfo);
 
         void open(const std::string &script, const std::string &dbName = std::string());
@@ -29,10 +31,10 @@ namespace Robomongo
         bool saveToFileAs();
         bool loadFromFile();
 
-    protected Q_SLOTS:
-        void handle(ExecuteQueryResponse *event);
-        void handle(ExecuteScriptResponse *event);
-        void handle(AutocompleteResponse *event);
+        virtual void customEvent(QEvent *);
+
+    Q_SIGNALS:
+        void autoCompleateResponced(const QString &prefix,const QStringList &list);
 
     private:        
         ScriptInfo _scriptInfo;

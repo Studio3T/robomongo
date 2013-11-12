@@ -1,5 +1,7 @@
 #include "robomongo/core/domain/MongoShell.h"
 
+#include <QApplication>
+
 #include "mongo/scripting/engine.h"
 
 #include "robomongo/core/domain/MongoServer.h"
@@ -8,6 +10,7 @@
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/Logger.h"
+#include "robomongo/core/events/MongoEventsGui.hpp"
 
 namespace Robomongo
 {
@@ -23,7 +26,10 @@ namespace Robomongo
     {
         AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
         _scriptInfo.setScript(QtUtils::toQString(script));
-        AppRegistry::instance().bus()->send(_server->client(), new ExecuteScriptRequest(this, query(), dbName));
+
+        ExecuteScriptInfo inf(query(), dbName, 0, 0);
+        qApp->postEvent(_server->client(), new ExecuteScriptEvent(this,inf));
+
         LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
     }
 
@@ -36,24 +42,28 @@ namespace Robomongo
     {
         if (_scriptInfo.execute()) {
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
-            AppRegistry::instance().bus()->send(_server->client(), new ExecuteScriptRequest(this, query(), dbName));
+            ExecuteScriptInfo inf(query(), dbName, 0, 0);
+            qApp->postEvent(_server->client(), new ExecuteScriptEvent(this,inf));
             if(!_scriptInfo.script().isEmpty())
                 LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
         } else {
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             _scriptInfo.setScript("");
-            AppRegistry::instance().bus()->send(_server->client(), new ExecuteScriptRequest(this,query() , dbName));
+            ExecuteScriptInfo inf(query(), dbName, 0, 0);
+            qApp->postEvent(_server->client(), new ExecuteScriptEvent(this,inf));
         }        
     }
 
     void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
     {
-        AppRegistry::instance().bus()->send(_server->client(), new ExecuteQueryRequest(this, resultIndex, info));
+        ExecuteQueryInfo inf(resultIndex,info);
+        qApp->postEvent(_server->client(), new ExecuteQueryEvent(this,inf));
     }
 
     void MongoShell::autocomplete(const std::string &prefix)
     {
-        AppRegistry::instance().bus()->send(_server->client(), new AutocompleteRequest(this, prefix));
+        AutoCompleteInfo inf(prefix);
+        qApp->postEvent(_server->client(), new AutoCompleteEvent(this,inf));
     }
 
     void MongoShell::stop()
@@ -76,18 +86,27 @@ namespace Robomongo
         return _scriptInfo.saveToFile();
     }
 
-    void MongoShell::handle(ExecuteQueryResponse *event)
+    void MongoShell::customEvent(QEvent *event)
     {
-        AppRegistry::instance().bus()->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, query(), event->documents));
-    }
+        QEvent::Type type = event->type();
+        if(type==static_cast<QEvent::Type>(AutoCompleteEvent::EventType)){
+            AutoCompleteEvent *ev = static_cast<AutoCompleteEvent*>(event);
+            AutoCompleteEvent::value_type v = ev->value();
+            emit autoCompleateResponced(QtUtils::toQString(v._prefix), v._list);
+        }
+        else if(type==static_cast<QEvent::Type>(ExecuteQueryEvent::EventType)){
+            ExecuteQueryEvent *ev = static_cast<ExecuteQueryEvent*>(event);
+            ExecuteQueryEvent::value_type v = ev->value();
 
-    void MongoShell::handle(ExecuteScriptResponse *event)
-    {
-        AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->result, event->empty));
-    }
+            AppRegistry::instance().bus()->publish(new DocumentListLoadedEvent(this, v._resultIndex, v._queryInfo, query(), v._documents));
+        }
+        else if(type==static_cast<QEvent::Type>(ExecuteScriptEvent::EventType)){
+            ExecuteScriptEvent *ev = static_cast<ExecuteScriptEvent*>(event);
+            ExecuteScriptEvent::value_type v = ev->value();
 
-    void MongoShell::handle(AutocompleteResponse *event)
-    {
-        AppRegistry::instance().bus()->publish(new AutocompleteResponse(this, event->list, event->prefix, ErrorInfo() ));
+            AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, v._result, v._empty));
+        }
+
+        return BaseClass::customEvent(event);
     }
 }

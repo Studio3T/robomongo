@@ -55,10 +55,11 @@ namespace Robomongo
         void openFile();
         void textChange();
         void showProgress();
+        void autoCompleateResponce(const QString &prefix,const QStringList &list);
+
     public Q_SLOTS:
         void handle(DocumentListLoadedEvent *event);
         void handle(ScriptExecutedEvent *event);
-        void handle(AutocompleteResponse *event);
 
     private:        
         void hideProgress();

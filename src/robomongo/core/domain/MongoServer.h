@@ -48,6 +48,7 @@ namespace Robomongo
         void saveDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns);
         void saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
         void removeDocuments(mongo::Query query, const MongoNamespace &ns, bool justOne = true);
+        void query(int resultIndex, const MongoQueryInfo &info);
         float version() const{ return _version; }
 
 

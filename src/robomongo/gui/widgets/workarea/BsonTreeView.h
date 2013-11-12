@@ -7,6 +7,7 @@
 namespace Robomongo
 {
     class InsertDocumentResponse;
+    class MongoServer;
 
     class BsonTreeView : public QTreeView, public INotifierObserver
     {
@@ -14,7 +15,7 @@ namespace Robomongo
 
     public:
         typedef QTreeView BaseClass;
-        BsonTreeView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent = NULL);
+        BsonTreeView(MongoServer *server, const MongoQueryInfo &queryInfo, QWidget *parent = NULL);
         virtual QModelIndex selectedIndex() const;
         virtual QModelIndexList selectedIndexes() const;
         void expandNode(const QModelIndex &index);

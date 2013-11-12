@@ -167,7 +167,7 @@ namespace Robomongo
         info._skip = skip;
         info._batchSize = batchSize;
         _out->showProgress();
-        _shell->query(_out->resultIndex(this), info);
+        _shell->server()->query(_out->resultIndex(this), info);
     }
 
     void OutputItemContentWidget::update(const MongoQueryInfo &inf,const std::vector<MongoDocumentPtr> &documents)
@@ -242,7 +242,7 @@ namespace Robomongo
         }
 
         if (!_isTreeModeInitialized) {
-            _bsonTreeview = new BsonTreeView(_shell,_queryInfo);
+            _bsonTreeview = new BsonTreeView(_shell->server(), _queryInfo);
             _bsonTreeview->setModel(_mod);
             _stack->addWidget(_bsonTreeview);
             if (AppRegistry::instance().settingsManager()->autoExpand())
@@ -288,7 +288,7 @@ namespace Robomongo
         }
 
         if (!_isTableModeInitialized) {
-            _bsonTable = new BsonTableView(_shell,_queryInfo);            
+            _bsonTable = new BsonTableView(_shell->server(), _queryInfo);            
             BsonTableModelProxy *modp = new BsonTableModelProxy(_bsonTable);
             modp->setSourceModel(_mod);
             _bsonTable->setModel(modp);

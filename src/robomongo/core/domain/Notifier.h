@@ -11,7 +11,7 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
-    class MongoShell;
+    class MongoServer;
     class BsonTreeItem;
 
     namespace detail
@@ -39,7 +39,7 @@ namespace Robomongo
 
     public:
         typedef QObject BaseClass;
-        Notifier(INotifierObserver *const observer, MongoShell *shell, const MongoQueryInfo &queryInfo, QObject *parent = NULL);
+        Notifier(INotifierObserver *const observer, MongoServer *server, const MongoQueryInfo &queryInfo, QObject *parent = NULL);
         void initMenu(QMenu *const menu, BsonTreeItem *const item);
         void initMultiSelectionMenu(QMenu *const menu);
 
@@ -65,7 +65,7 @@ namespace Robomongo
         QAction *_copyJsonAction;
         const MongoQueryInfo _queryInfo;
 
-        MongoShell *_shell;
+        MongoServer *_server;
         INotifierObserver *const _observer;
     };
 }

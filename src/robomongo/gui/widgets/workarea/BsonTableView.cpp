@@ -11,8 +11,8 @@
 
 namespace Robomongo
 {
-    BsonTableView::BsonTableView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent) 
-        :BaseClass(parent),_notifier(this,shell,queryInfo)
+    BsonTableView::BsonTableView(MongoServer *server, const MongoQueryInfo &queryInfo, QWidget *parent) 
+        :BaseClass(parent),_notifier(this,server,queryInfo)
     {
 #if defined(Q_OS_MAC)
         setAttribute(Qt::WA_MacShowFocusRect, false);

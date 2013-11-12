@@ -10,7 +10,7 @@ namespace Robomongo
         Q_OBJECT
     public:
         typedef QTableView BaseClass;
-        explicit BsonTableView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent = 0);     
+        explicit BsonTableView(MongoServer *server, const MongoQueryInfo &queryInfo, QWidget *parent = 0);     
         virtual QModelIndex selectedIndex() const;
         virtual QModelIndexList selectedIndexes() const;
 

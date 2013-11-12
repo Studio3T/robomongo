@@ -5,7 +5,6 @@
 #include <QApplication>
 #include <QMenu>
 
-#include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/utils/BsonUtils.h"
@@ -63,14 +62,14 @@ namespace Robomongo
         }
     }
 
-    Notifier::Notifier(INotifierObserver *const observer, MongoShell *shell, const MongoQueryInfo &queryInfo, QObject *parent) :
+    Notifier::Notifier(INotifierObserver *const observer, MongoServer *server, const MongoQueryInfo &queryInfo, QObject *parent) :
         BaseClass(parent),
         _observer(observer),
-        _shell(shell),
+        _server(server),
         _queryInfo(queryInfo)
     {
         QWidget *wid = dynamic_cast<QWidget*>(_observer);
-        VERIFY(connect(_shell->server(), SIGNAL(documentInserted()), this, SLOT(refresh())));
+        VERIFY(connect(_server, SIGNAL(documentInserted()), this, SLOT(refresh())));
 
         _deleteDocumentAction = new QAction("Delete Document...", wid);
         VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), this, SLOT(onDeleteDocument())));
@@ -158,7 +157,7 @@ namespace Robomongo
             }
 
             isNeededRefresh=true;
-            _shell->server()->removeDocuments(query, _queryInfo._collectionInfo._ns);
+            _server->removeDocuments(query, _queryInfo._collectionInfo._ns);
         }
 
         if (isNeededRefresh)
@@ -167,7 +166,7 @@ namespace Robomongo
 
     void Notifier::refresh()
     {
-        _shell->query(0, _queryInfo);
+        _server->query(0, _queryInfo);
     }
 
     void Notifier::onDeleteDocuments()
@@ -232,7 +231,7 @@ namespace Robomongo
         int result = editor.exec();
 
         if (result == QDialog::Accepted) {
-            _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo._collectionInfo._ns);
+            _server->saveDocuments(editor.bsonObj(), _queryInfo._collectionInfo._ns);
         }
     }
 
@@ -278,7 +277,7 @@ namespace Robomongo
 
         DocumentTextEditor::ReturnType obj = editor.bsonObj();
         for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
-            _shell->server()->insertDocument(*it, _queryInfo._collectionInfo._ns);
+            _server->insertDocument(*it, _queryInfo._collectionInfo._ns);
         }
 
         refresh();

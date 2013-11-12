@@ -54,7 +54,7 @@ namespace Robomongo
         std::vector<std::string> getCollectionNames(const std::string &dbname, ErrorInfo &er); //nothrow
         std::vector<MongoCollectionInfo> getCollectionInfos(const std::string &dbname, ErrorInfo &er); //nothrow
         void renameCollection(const MongoNamespace &ns, const std::string &newCollectionName, ErrorInfo &er); //nothrow
-        std::vector<MongoDocumentPtr> MongoWorker::query(const MongoQueryInfo &info, ErrorInfo &er); //nothrow
+        std::vector<MongoDocumentPtr> query(const MongoQueryInfo &info, ErrorInfo &er); //nothrow
         void dropIndexFromCollection(const MongoCollectionInfo &collection, const std::string &indexName, ErrorInfo &er); //nothrow
         void renameIndexFromCollection(const MongoCollectionInfo &collection, const std::string &oldIndexName, const std::string &newIndexName, ErrorInfo &er); //nothrow
         void ensureIndex(const EnsureIndex &oldInfo,const EnsureIndex &newInfo, ErrorInfo &er); //nothrow

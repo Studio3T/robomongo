@@ -169,6 +169,12 @@ namespace Robomongo
         qApp->postEvent(_client, new RemoveDocumentEvent(this, inf));
     }
 
+    void MongoServer::query(int resultIndex, const MongoQueryInfo &info)
+    {
+        ExecuteQueryInfo inf(resultIndex,info);
+        qApp->postEvent(_client, new ExecuteQueryEvent(this,inf));
+    }
+
     void MongoServer::loadDatabases()
     {
         AppRegistry::instance().bus()->publish(new MongoServerLoadingDatabasesEvent(this));

@@ -54,12 +54,6 @@ namespace Robomongo
         }        
     }
 
-    void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
-    {
-        ExecuteQueryInfo inf(resultIndex,info);
-        qApp->postEvent(_server->client(), new ExecuteQueryEvent(this,inf));
-    }
-
     void MongoShell::autocomplete(const std::string &prefix)
     {
         AutoCompleteInfo inf(prefix);

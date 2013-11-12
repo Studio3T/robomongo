@@ -55,8 +55,6 @@ namespace Robomongo
         MongoServer *server;
     };
 
-//    class ScriptExecute
-
     class ConnectionEstablishedEvent : public Event
     {
         R_EVENT

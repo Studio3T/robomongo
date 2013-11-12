@@ -3,8 +3,6 @@
 #include <QThread>
 #include <QApplication>
 
-#include "robomongo/core/EventBus.h"
-#include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
@@ -734,7 +732,7 @@ namespace Robomongo
         return ConnectionInfo(_connection->getFullAddress(), dbNames, vers);
     }
 
-    void MongoWorker::customEvent(QEvent *event)
+    void MongoWorker::customEvent(QEvent *event)// handlers
     {
         QEvent::Type type = event->type();
         if (type==static_cast<QEvent::Type>(RemoveDocumentEvent::EventType)){
@@ -1070,13 +1068,5 @@ namespace Robomongo
             er._description = "Unable to connect " + _connection->getFullAddress();
         }
         return _dbclient;
-    }
-
-    /**
-     * @brief Send reply event to object 'receiver'
-     */
-    void MongoWorker::reply(QObject *receiver, Event *event)
-    {
-        AppRegistry::instance().bus()->send(receiver, event);
     }
 }

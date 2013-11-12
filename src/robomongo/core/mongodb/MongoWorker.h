@@ -70,10 +70,6 @@ namespace Robomongo
 
         std::string getAuthBase() const;        
         mongo::DBClientBase *getConnection(ErrorInfo &er);
-        /**
-         * @brief Send reply event to object 'obj'
-         */
-        void reply(QObject *receiver, Event *event);
 
         mongo::DBClientBase *_dbclient;
         bool _isConnected;

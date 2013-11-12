@@ -64,7 +64,6 @@ namespace Robomongo
         void setScriptFocus();
         void setCurrentDatabase(const std::string &database, bool isValid = true);
         void setCurrentServer(const std::string &address, bool isValid = true);
-        void showAutocompletion(const QStringList &list, const QString &prefix);
         void showAutocompletion();
         void hideAutocompletion();
 
@@ -72,6 +71,7 @@ namespace Robomongo
         void textChanged();
     public Q_SLOTS:
         void setText(const QString &text);
+        void showAutocompletion(const QString &prefix, const QStringList &list);
     private Q_SLOTS:
         void ui_queryLinesCountChanged();
         void onTextChanged();

@@ -34,7 +34,7 @@ namespace Robomongo
         virtual void customEvent(QEvent *);
 
     Q_SIGNALS:
-        void autoCompleateResponced(const QString &prefix,const QStringList &list);
+        void autoCompleteResponced(const QString &prefix,const QStringList &list);
 
     private:        
         ScriptInfo _scriptInfo;

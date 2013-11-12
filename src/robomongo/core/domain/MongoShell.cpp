@@ -92,7 +92,7 @@ namespace Robomongo
         if(type==static_cast<QEvent::Type>(AutoCompleteEvent::EventType)){
             AutoCompleteEvent *ev = static_cast<AutoCompleteEvent*>(event);
             AutoCompleteEvent::value_type v = ev->value();
-            emit autoCompleateResponced(QtUtils::toQString(v._prefix), v._list);
+            emit autoCompleteResponced(QtUtils::toQString(v._prefix), v._list);
         }
         else if(type==static_cast<QEvent::Type>(ExecuteQueryEvent::EventType)){
             ExecuteQueryEvent *ev = static_cast<ExecuteQueryEvent*>(event);

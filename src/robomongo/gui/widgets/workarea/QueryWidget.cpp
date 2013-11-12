@@ -39,8 +39,8 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type, shell);
 
         _scriptWidget = new ScriptWidget(_shell);
-        VERIFY(connect(_scriptWidget,SIGNAL(textChanged()),this,SLOT(textChange())));
-        VERIFY(connect(_shell,SIGNAL(autoCompleateResponced(const QString &,const QStringList &)),this,SLOT(autoCompleateResponce(const QString &,const QStringList &))));
+        VERIFY(connect(_scriptWidget, SIGNAL(textChanged()), this, SLOT(textChange())));
+        VERIFY(connect(_shell, SIGNAL(autoCompleteResponced(const QString &,const QStringList &)), _scriptWidget, SLOT(showAutocompletion(const QString &,const QStringList &))));
 
         _viewer = new OutputWidget();
         _outputLabel = new QLabel(this);
@@ -211,11 +211,6 @@ namespace Robomongo
     {
         AppRegistry::instance().bus()->publish(new QueryWidgetUpdatedEvent(this, _currentResult.results().size()));
         _scriptWidget->setScriptFocus();
-    }
-
-    void QueryWidget::autoCompleateResponce(const QString &prefix,const QStringList &list)
-    {
-        _scriptWidget->showAutocompletion(list, prefix);
     }
 
     void QueryWidget::updateCurrentTab()

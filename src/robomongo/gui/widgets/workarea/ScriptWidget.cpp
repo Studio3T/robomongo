@@ -160,7 +160,7 @@ namespace Robomongo
         _topStatusBar->setCurrentServer(address, isValid);
     }
 
-    void ScriptWidget::showAutocompletion(const QStringList &list, const QString &prefix)
+    void ScriptWidget::showAutocompletion(const QString &prefix, const QStringList &list)
     {
         // do not show single autocompletion which is identical to existing prefix
         // or if it identical to prefix + '('.

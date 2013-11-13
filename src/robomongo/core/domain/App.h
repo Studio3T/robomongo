@@ -73,6 +73,9 @@ namespace Robomongo
          * Finally, specified MongoShell will also be deleted.
          */
         void closeShell(MongoShell *shell);
+    
+    Q_SIGNALS:
+        void shellOpened(MongoShell *shell);
 
     private:
         /**

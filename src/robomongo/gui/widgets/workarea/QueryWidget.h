@@ -18,6 +18,8 @@ namespace Robomongo
     class OutputWidget;
     class ScriptWidget;
     class MongoShell;
+    struct ExecuteQueryInfo;
+    struct ExecuteScriptInfo;
 
     class QueryWidget : public QWidget
     {
@@ -45,6 +47,8 @@ namespace Robomongo
     Q_SIGNALS:
         void titleChanged(const QString &text);
         void toolTipChanged(const QString &text);
+        void scriptExecuted(const ExecuteScriptInfo &inf);
+        void windowCountChanged(int count);
 
     public Q_SLOTS:
         void execute();
@@ -57,8 +61,8 @@ namespace Robomongo
         void showProgress();
 
     public Q_SLOTS:
-        void handle(DocumentListLoadedEvent *event);
-        void handle(ScriptExecutedEvent *event);
+        void documentListLoad(const ExecuteQueryInfo &inf);
+        void scriptExecute(const ExecuteScriptInfo &inf);        
 
     private:        
         void hideProgress();

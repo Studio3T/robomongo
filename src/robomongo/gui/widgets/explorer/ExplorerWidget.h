@@ -11,6 +11,7 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
+    class MongoServer;
     /**
      * @brief Explorer widget (usually you'll see it at the left of main window)
      */
@@ -22,10 +23,11 @@ namespace Robomongo
         typedef QWidget BaseClass;
         ExplorerWidget(QWidget *parent);
 
-    protected Q_SLOTS:
-        void handle(ConnectingEvent *event);
-        void handle(ConnectionEstablishedEvent *event);
-        void handle(ConnectionFailedEvent *event);
+    public Q_SLOTS:
+        void addServer(MongoServer *server);
+        void decreaseProgress();
+        void increaseProgress();
+
     private Q_SLOTS:
         void ui_itemExpanded(QTreeWidgetItem *item);
         void ui_itemDoubleClicked(QTreeWidgetItem *item, int column);
@@ -35,8 +37,6 @@ namespace Robomongo
 
     private:
         int _progress;
-        void increaseProgress();
-        void decreaseProgress();
         QLabel *_progressLabel;
         QTreeWidget *_treeWidget;
     };

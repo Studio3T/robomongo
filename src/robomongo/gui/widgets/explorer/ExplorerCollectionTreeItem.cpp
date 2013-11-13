@@ -2,7 +2,6 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QApplication>
 
 #include "robomongo/gui/widgets/explorer/EditIndexDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
@@ -34,7 +33,6 @@ namespace
 
 namespace Robomongo
 {
-    R_REGISTER_EVENT(CollectionIndexesLoadingEvent)
     const QString ExplorerCollectionDirIndexesTreeItem::labelText = "Indexes";
 
     ExplorerCollectionDirIndexesTreeItem::ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent)
@@ -194,8 +192,8 @@ namespace Robomongo
         }
     }
 
-    ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(QObject *reciver, QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection) :
-        BaseClass(parent), _reciver(reciver), _collection(collection), _databaseItem(databaseItem)
+    ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(MongoServer *server, QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection) :
+        BaseClass(parent), _server(server), _collection(collection), _databaseItem(databaseItem)
     {
         QAction *addDocument = new QAction("Insert Document...", this);
         VERIFY(connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument())));
@@ -254,8 +252,6 @@ namespace Robomongo
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(shardVersion);
         BaseClass::_contextMenu->addAction(shardDistribution);
-
-        AppRegistry::instance().bus()->subscribe(this, CollectionIndexesLoadingEvent::Type, this);
         
         setText(0, QtUtils::toQString(_collection->name()));
         setIcon(0, GuiRegistry::instance().collectionIcon());
@@ -271,14 +267,14 @@ namespace Robomongo
     void ExplorerCollectionTreeItem::createIndex(const EnsureIndex &oldInfo, const EnsureIndex &newInfo)
     {
         EnsureIndexInfo inf(oldInfo, newInfo);
-        qApp->postEvent(_reciver, new CreateIndexEvent(this, inf));
+        _server->postEventToDataBase(new CreateIndexEvent(this, inf));
         loadIndexes();
     }
 
     void ExplorerCollectionTreeItem::deleteIndex(const std::string &indexName)
     {
         DeleteIndexInfo inf(_collection->info(), indexName);
-        qApp->postEvent(_reciver, new DeleteIndexEvent(this, inf));
+        _server->postEventToDataBase(new DeleteIndexEvent(this, inf));
         loadIndexes();
     }
 
@@ -301,16 +297,11 @@ namespace Robomongo
         return BaseClass::customEvent(event);
     }
 
-    void ExplorerCollectionTreeItem::handle(CollectionIndexesLoadingEvent *event)
-    {
-        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, -1));
-    }
-
     void ExplorerCollectionTreeItem::loadIndexes()
     {
-        AppRegistry::instance().bus()->publish(new CollectionIndexesLoadingEvent(this));
+        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, -1));
         LoadCollectionIndexesInfo inf(_collection->info());
-        qApp->postEvent(_reciver, new LoadCollectionIndexEvent(this, inf));
+        _server->postEventToDataBase(new LoadCollectionIndexEvent(this, inf));
     }
 
     void ExplorerCollectionTreeItem::expand()

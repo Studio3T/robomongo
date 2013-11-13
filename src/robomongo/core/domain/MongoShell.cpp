@@ -5,12 +5,10 @@
 #include "mongo/scripting/engine.h"
 
 #include "robomongo/core/domain/MongoServer.h"
-#include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/Logger.h"
-#include "robomongo/core/events/MongoEventsGui.hpp"
 
 namespace Robomongo
 {
@@ -24,12 +22,11 @@ namespace Robomongo
 
     void MongoShell::open(const std::string &script, const std::string &dbName)
     {
-        AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
+        emit startScriptExecuted();
         _scriptInfo.setScript(QtUtils::toQString(script));
 
         ExecuteScriptInfo inf(query(), dbName, 0, 0);
-        qApp->postEvent(_server->client(), new ExecuteScriptEvent(this,inf));
-
+        _server->postEventToDataBase(new ExecuteScriptEvent(this,inf));
         LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
     }
 
@@ -40,24 +37,23 @@ namespace Robomongo
 
     void MongoShell::execute(const std::string &dbName)
     {
+        emit startScriptExecuted();
         if (_scriptInfo.execute()) {
-            AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             ExecuteScriptInfo inf(query(), dbName, 0, 0);
-            qApp->postEvent(_server->client(), new ExecuteScriptEvent(this,inf));
+            _server->postEventToDataBase(new ExecuteScriptEvent(this,inf));
             if(!_scriptInfo.script().isEmpty())
                 LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
         } else {
-            AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             _scriptInfo.setScript("");
             ExecuteScriptInfo inf(query(), dbName, 0, 0);
-            qApp->postEvent(_server->client(), new ExecuteScriptEvent(this,inf));
+            _server->postEventToDataBase(new ExecuteScriptEvent(this,inf));
         }        
     }
 
     void MongoShell::autocomplete(const std::string &prefix)
     {
         AutoCompleteInfo inf(prefix);
-        qApp->postEvent(_server->client(), new AutoCompleteEvent(this,inf));
+        _server->postEventToDataBase(new AutoCompleteEvent(this,inf));
     }
 
     void MongoShell::stop()
@@ -91,8 +87,7 @@ namespace Robomongo
         else if(type==static_cast<QEvent::Type>(ExecuteScriptEvent::EventType)){
             ExecuteScriptEvent *ev = static_cast<ExecuteScriptEvent*>(event);
             ExecuteScriptEvent::value_type v = ev->value();
-
-            AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, v._result, v._empty));
+            emit scriptExecuted(v);
         }
 
         return BaseClass::customEvent(event);

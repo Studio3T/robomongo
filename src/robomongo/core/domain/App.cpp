@@ -52,17 +52,11 @@ namespace Robomongo
      * @param connection: ConnectionSettings, that will be owned by MongoServer.
      * @param visible: should this server be visible in UI (explorer) or not.
      */
-    MongoServer *App::openServer(IConnectionSettingsBase *connection,
-                                 bool visible)
+    MongoServer *App::openServer(IConnectionSettingsBase *connection, bool visible)
     {
         MongoServer *server = new MongoServer(connection, visible);
         _servers.push_back(server);
-
-        if (visible)
-            _bus->publish(new ConnectingEvent(this, server));
-
         LOG_MSG(QString("Connecting to %1...").arg(QtUtils::toQString(server->connectionRecord()->getFullAddress())), mongo::LL_INFO);
-        server->tryConnect();
         return server;
     }
 
@@ -109,7 +103,7 @@ namespace Robomongo
         MongoServer *server = openServer(connection, false);
         MongoShell *shell = new MongoShell(server,scriptInfo);
         _shells.push_back(shell);
-        _bus->publish(new OpeningShellEvent(this, shell));
+        emit shellOpened(shell);
         LOG_MSG("Openning shell...", mongo::LL_INFO);
         shell->execute();
         return shell;

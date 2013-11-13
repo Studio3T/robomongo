@@ -37,14 +37,6 @@ namespace Robomongo
         void expandUsers();
         void expandFunctions();
 
-    public Q_SLOTS:
-        void handle(MongoDatabaseCollectionListLoadedEvent *event);
-        void handle(MongoDatabaseUsersLoadedEvent *event);
-        void handle(MongoDatabaseFunctionsLoadedEvent *event);
-        void handle(MongoDatabaseCollectionsLoadingEvent *event);
-        void handle(MongoDatabaseFunctionsLoadingEvent *event);
-        void handle(MongoDatabaseUsersLoadingEvent *event);
-
     private Q_SLOTS:
         void ui_dbStatistics();
         void ui_dbDrop();
@@ -52,6 +44,12 @@ namespace Robomongo
         void ui_dbOpenShell();
         void ui_refreshDatabase();
 
+        void collectionListLoad(const std::vector<MongoCollection *>&);
+        void startCollectionListLoad();
+        void startUsersLoad();
+        void userListLoad(const std::vector<MongoUser>&);
+        void startFunctionsLoad();
+        void functionsListLoad(const std::vector<MongoFunction>&);
     private:
         void addCollectionItem(MongoCollection *collection);
         void addSystemCollectionItem(MongoCollection *collection);

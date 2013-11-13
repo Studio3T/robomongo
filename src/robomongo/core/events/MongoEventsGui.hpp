@@ -1,11 +1,23 @@
 #pragma once
 
+#include <vector>
+
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoNamespace.h"
+#include "robomongo/core/domain/MongoCollectionInfo.h"
+#include "robomongo/core/events/MongoEventsInfo.h"
+#include "robomongo/core/domain/MongoFunction.h"
+#include "robomongo/core/domain/MongoUser.h"
+#include "robomongo/core/domain/MongoQueryInfo.h"
+#include "robomongo/core/domain/MongoShellResult.h"
 #include <mongo/bson/bsonobj.h>
+#include <mongo/client/dbclientinterface.h>
 
 namespace Robomongo
 {
+    class MongoServer;
+
     struct RemoveDocumentInfo 
     {
         RemoveDocumentInfo(const mongo::Query &query, const MongoNamespace &ns, bool justOne)
@@ -249,9 +261,9 @@ namespace Robomongo
 
     struct CopyCollectionToDiffServerInfo
     {
-        CopyCollectionToDiffServerInfo(MongoWorker *worker, const MongoNamespace &from, const MongoNamespace &to)
-            :_worker(worker),_from(from),_to(to){}
-        MongoWorker *_worker;
+        CopyCollectionToDiffServerInfo(MongoServer *server, const MongoNamespace &from, const MongoNamespace &to)
+            :_server(server),_from(from),_to(to){}
+        MongoServer *_server;
         const MongoNamespace _from;
         const MongoNamespace _to;
     };

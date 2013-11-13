@@ -9,7 +9,7 @@
 namespace Robomongo
 {
     class EventBus;
-
+    class MongoServer;
     /**
      * @brief Represents MongoDB database.
      */
@@ -61,6 +61,13 @@ namespace Robomongo
         MongoServer *server() const { return _server; }
         virtual void customEvent(QEvent *);
 
+    Q_SIGNALS:
+        void startedCollectionListLoad();
+        void collectionListLoaded(std::vector<MongoCollection *>);
+        void startedUsersLoad();
+        void userListLoaded(std::vector<MongoUser>);
+        void startedFunctionsLoad();
+        void functionsListLoaded(std::vector<MongoFunction>);
     private:
         void clearCollections();
         void addCollection(MongoCollection *collection);
@@ -71,68 +78,5 @@ namespace Robomongo
         const std::string _name;
         const bool _system;
         EventBus *_bus;
-    };
-
-    class MongoDatabaseCollectionListLoadedEvent : public Event
-    {
-        R_EVENT
-
-        MongoDatabaseCollectionListLoadedEvent(QObject *sender, const std::vector<MongoCollection *> &list) :
-            Event(sender),
-            collections(list) { }
-
-        std::vector<MongoCollection *> collections;
-    };
-
-    class MongoDatabaseUsersLoadedEvent : public Event
-    {
-        R_EVENT
-
-        MongoDatabaseUsersLoadedEvent(QObject *sender, MongoDatabase *database, const std::vector<MongoUser> &list) :
-            Event(sender),
-            _users(list),
-            _database(database) {}
-
-        std::vector<MongoUser> users() const { return _users; }
-        MongoDatabase *database() const { return _database; }
-
-    private:
-        std::vector<MongoUser> _users;
-        MongoDatabase *_database;
-    };
-
-    class MongoDatabaseFunctionsLoadedEvent : public Event
-    {
-        R_EVENT
-
-        MongoDatabaseFunctionsLoadedEvent(QObject *sender, MongoDatabase *database, const std::vector<MongoFunction> &list) :
-            Event(sender),
-            _functions(list),
-            _database(database) {}
-
-        std::vector<MongoFunction> functions() const { return _functions; }
-        MongoDatabase *database() const { return _database; }
-
-    private:
-        std::vector<MongoFunction> _functions;
-        MongoDatabase *_database;
-    };
-
-    class MongoDatabaseUsersLoadingEvent : public Event
-    {
-        R_EVENT
-        MongoDatabaseUsersLoadingEvent(QObject *sender) : Event(sender) {}
-    };
-
-    class MongoDatabaseFunctionsLoadingEvent : public Event
-    {
-        R_EVENT
-        MongoDatabaseFunctionsLoadingEvent(QObject *sender) : Event(sender) {}
-    };
-
-    class MongoDatabaseCollectionsLoadingEvent : public Event
-    {
-        R_EVENT
-        MongoDatabaseCollectionsLoadingEvent(QObject *sender) : Event(sender) {}
     };
 }

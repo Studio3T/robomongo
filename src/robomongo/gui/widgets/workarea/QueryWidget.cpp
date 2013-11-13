@@ -35,8 +35,8 @@ namespace Robomongo
         _viewer(NULL),
         _isTextChanged(false)
     {
-        AppRegistry::instance().bus()->subscribe(this, DocumentListLoadedEvent::Type, shell->server());
-        AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type, shell);
+        VERIFY(connect(shell->server(), SIGNAL(documentListLoaded(const ExecuteQueryInfo &)), this, SLOT(documentListLoad(const ExecuteQueryInfo &)), Qt::DirectConnection));
+        VERIFY(connect(shell, SIGNAL(scriptExecuted(const ExecuteScriptInfo &)), this, SLOT(scriptExecute(const ExecuteScriptInfo &)), Qt::DirectConnection));
 
         _scriptWidget = new ScriptWidget(_shell);
         VERIFY(connect(_scriptWidget, SIGNAL(textChanged()), this, SLOT(textChange())));
@@ -189,27 +189,27 @@ namespace Robomongo
         _viewer->hideProgress();
     }
 
-
-    void QueryWidget::handle(DocumentListLoadedEvent *event)
+    void QueryWidget::documentListLoad(const ExecuteQueryInfo &inf)
     {
         hideProgress();        
-        _viewer->updatePart(event->resultIndex(), event->queryInfo(), event->documents()); // this should be in viewer, subscribed to ScriptExecutedEvent
+        _viewer->updatePart(inf._resultIndex, inf._queryInfo, inf._documents);
     }
 
-    void QueryWidget::handle(ScriptExecutedEvent *event)
+    void QueryWidget::scriptExecute(const ExecuteScriptInfo &inf)
     {
         hideProgress();
-        _currentResult = event->result();        
+        _currentResult = inf._result;        
 
         updateCurrentTab();
-        displayData(event->result().results(), event->empty());
-        _scriptWidget->setup(event->result()); // this should be in ScriptWidget, which is subscribed to ScriptExecutedEvent              
+        displayData(inf._result.results(), inf._empty);
+        _scriptWidget->setup(inf._result);         
         activateTabContent();
+        emit scriptExecuted(inf);
     }
 
     void QueryWidget::activateTabContent()
     {
-        AppRegistry::instance().bus()->publish(new QueryWidgetUpdatedEvent(this, _currentResult.results().size()));
+        windowCountChanged(_currentResult.results().size());
         _scriptWidget->setScriptFocus();
     }
 
@@ -260,6 +260,6 @@ namespace Robomongo
             _outputLabel->setVisible(isOutVisible);
         }
 
-        _viewer->present(_shell,results);
+        _viewer->present(_shell->server(), results);
     }
 }

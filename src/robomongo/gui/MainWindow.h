@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QToolBar;
@@ -10,12 +11,11 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
-    class ConnectionFailedEvent;
-    class ScriptExecutingEvent;
-    class ScriptExecutedEvent;
-    class QueryWidgetUpdatedEvent;
     class WorkAreaTabWidget;
     class ConnectionMenu;
+    struct ErrorInfo;
+    struct ExecuteScriptInfo;
+    class ExplorerWidget;
 
     class MainWindow : public QMainWindow
     {
@@ -53,22 +53,22 @@ namespace Robomongo
 
         void toggleLogs(bool show);
         void connectToServer(QAction *action);
-        void handle(ConnectionFailedEvent *event);
-        void handle(ScriptExecutingEvent *event);
-        void handle(ScriptExecutedEvent *event);
-        void handle(QueryWidgetUpdatedEvent *event);
+        void startScriptExecute();
+        void scriptExecute(const ExecuteScriptInfo &inf);
+        void queryWidgetWindowCountChange(int windowCount);
 
     private Q_SLOTS:
         void updateMenus();
         void setUtcTimeZone();
         void setLocalTimeZone();
         void openPreferences();
+        void connectToServer(const ErrorInfo &error);
 
     private:
         QDockWidget *_logDock;
 
         WorkAreaTabWidget *_workArea;
-
+        ExplorerWidget *_explorer;
         ConnectionMenu *_connectionsMenu;
         QToolButton *_connectButton;
         QMenu *_viewMenu;

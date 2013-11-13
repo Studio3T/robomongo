@@ -1,4 +1,4 @@
-#include "MongoCollectionInfo.h"
+#include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/utils/BsonUtils.h"
 #include <mongo/client/dbclient.h>
 

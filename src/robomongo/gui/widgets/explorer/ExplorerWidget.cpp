@@ -82,24 +82,12 @@ namespace Robomongo
             _progressLabel->hide();
     }
 
-    void ExplorerWidget::handle(ConnectingEvent *event)
+    void ExplorerWidget::addServer(MongoServer *server)
     {
-        increaseProgress();
-    }
-
-    void ExplorerWidget::handle(ConnectionEstablishedEvent *event)
-    {
-        decreaseProgress();
-
-        ExplorerServerTreeItem *item = new ExplorerServerTreeItem(_treeWidget,event->server);
+        ExplorerServerTreeItem *item = new ExplorerServerTreeItem(_treeWidget, server);
         _treeWidget->addTopLevelItem(item);
         _treeWidget->setCurrentItem(item);
         _treeWidget->setFocus();
-    }
-
-    void ExplorerWidget::handle(ConnectionFailedEvent *event)
-    {
-        decreaseProgress();
     }
 
     void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)

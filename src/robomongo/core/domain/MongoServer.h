@@ -3,6 +3,7 @@
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/events/MongoEventsGui.hpp"
 
 namespace Robomongo
 {
@@ -18,7 +19,7 @@ namespace Robomongo
     class MongoServer : public QObject
     {
         Q_OBJECT
-
+        friend class MongoWorker;
     public:
         /**
          * @brief MongoServer
@@ -49,8 +50,8 @@ namespace Robomongo
         void saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
         void removeDocuments(mongo::Query query, const MongoNamespace &ns, bool justOne = true);
         void query(int resultIndex, const MongoQueryInfo &info);
-        float version() const{ return _version; }
 
+        float version() const{ return _version; }
 
         /**
          * @brief Returns associated connection record
@@ -62,11 +63,18 @@ namespace Robomongo
          */
         void loadDatabases();
         bool visible() const { return _visible; }
-        MongoWorker *const client() const { return _client; }
-        virtual void customEvent(QEvent *); 
+        void postEventToDataBase(QEvent *event, int priority = Qt::NormalEventPriority) const;
     
     Q_SIGNALS:
-        void documentInserted();
+        void connectedStatus(const ErrorInfo& er);
+        void startConnected();
+        void finishConnected();
+        void databaseListLoaded(const QList<MongoDatabase *> &dbs);
+        void documentListLoaded(const ExecuteQueryInfo &inf);
+        void startedLoadDatabases();
+
+    protected:
+        virtual void customEvent(QEvent *);
 
     private:
         void clearDatabases();
@@ -79,11 +87,5 @@ namespace Robomongo
         bool _isConnected;
 
         DatabasesContainerType _databases;
-    };
-
-    class MongoServerLoadingDatabasesEvent : public Event
-    {
-        R_EVENT
-        MongoServerLoadingDatabasesEvent(QObject *sender) : Event(sender) {}
     };
 }

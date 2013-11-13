@@ -7,7 +7,7 @@ namespace Robomongo
 {
     class EventBus;
     class MongoServerLoadingDatabasesEvent;
-
+    
     class ExplorerServerTreeItem : public ExplorerTreeItem
     {
         Q_OBJECT
@@ -26,9 +26,8 @@ namespace Robomongo
         void expand();
 
     public Q_SLOTS:
-        void databaseRefreshed(const QList<MongoDatabase *> &dbs);
-        void handle(DatabaseListLoadedEvent *event);
-        void handle(MongoServerLoadingDatabasesEvent *event);
+        void addDatabases(const QList<MongoDatabase *> &dbs);
+        void startLoadDatabases();
 
     private Q_SLOTS:
         void ui_showLog();

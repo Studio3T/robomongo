@@ -12,19 +12,14 @@ namespace Robomongo
     class DropCollectionIndexResponse;
     class ExplorerCollectionDirIndexesTreeItem;
     class ExplorerDatabaseTreeItem;
-
-    class CollectionIndexesLoadingEvent : public Event
-    {
-        R_EVENT
-            CollectionIndexesLoadingEvent(QObject *sender) : Event(sender) {}
-    };
+    class MongoServer;
 
     class ExplorerCollectionTreeItem: public ExplorerTreeItem
     {
         Q_OBJECT
     public:
         typedef ExplorerTreeItem BaseClass;
-        ExplorerCollectionTreeItem(QObject *reciver, QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection);
+        ExplorerCollectionTreeItem(MongoServer *server, QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection);
         MongoCollection *collection() const { return _collection; }
         void expand();
         void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
@@ -32,10 +27,7 @@ namespace Robomongo
         virtual void customEvent(QEvent *); 
         void createIndex(const EnsureIndex &oldInfo, const EnsureIndex &newInfo);
         void deleteIndex(const std::string &indexName);
-
-    public Q_SLOTS:
-        void handle(CollectionIndexesLoadingEvent *event);
-
+        
     private Q_SLOTS:
         void ui_addDocument();
         void ui_removeDocument();
@@ -59,7 +51,7 @@ namespace Robomongo
         ExplorerCollectionDirIndexesTreeItem *_indexDir;
         MongoCollection *const _collection;
         ExplorerDatabaseTreeItem *const _databaseItem;
-        QObject *_reciver;
+        const MongoServer *const _server;
     };
 
     class ExplorerCollectionDirIndexesTreeItem: public ExplorerTreeItem

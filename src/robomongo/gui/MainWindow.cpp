@@ -34,6 +34,7 @@
 #include "robomongo/gui/dialogs/PreferencesDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/AppStyle.h"
+#include "robomongo/core/domain/MongoServer.h"
 
 namespace
 {
@@ -57,11 +58,6 @@ namespace
     {
         Robomongo::AppRegistry::instance().settingsManager()->setAutoExpand(isExpand);
         Robomongo::AppRegistry::instance().settingsManager()->save();
-    }
-
-    void openServer(Robomongo::IConnectionSettingsBase *connection, bool visible)
-    {
-       Robomongo::AppRegistry::instance().app()->openServer(connection, visible);
     }
 }
 
@@ -88,11 +84,6 @@ namespace Robomongo
         _workArea(NULL),
         _connectionsMenu(NULL)
     {
-        AppRegistry::instance().bus()->subscribe(this, ConnectionFailedEvent::Type);
-        AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type);
-        AppRegistry::instance().bus()->subscribe(this, ScriptExecutingEvent::Type);
-        AppRegistry::instance().bus()->subscribe(this, QueryWidgetUpdatedEvent::Type);
-
         QColor background = palette().window().color();
 
     #if defined(Q_OS_MAC)
@@ -529,7 +520,11 @@ namespace Robomongo
 
         if (result == QDialog::Accepted) {
             IConnectionSettingsBase *selected = dialog.selectedConnection();
-            openServer(selected, true);
+            Robomongo::MongoServer *server = Robomongo::AppRegistry::instance().app()->openServer(selected, true);
+            VERIFY(connect(server, SIGNAL(startConnected()), _explorer, SLOT(increaseProgress()), Qt::DirectConnection));
+            VERIFY(connect(server, SIGNAL(finishConnected()), _explorer, SLOT(decreaseProgress()), Qt::DirectConnection));
+            VERIFY(connect(server, SIGNAL(connectedStatus(const ErrorInfo&)), this, SLOT(connectToServer(const ErrorInfo&)), Qt::DirectConnection));
+            server->tryConnect();            
         }
 
         // on linux focus is lost - we need to activate main window back
@@ -702,43 +697,54 @@ namespace Robomongo
     {
         QVariant data = connectionAction->data();
         IConnectionSettingsBase *ptr = qvariant_cast<IConnectionSettingsBase *>(data);
-        openServer(ptr, true);
+        Robomongo::MongoServer *server = Robomongo::AppRegistry::instance().app()->openServer(ptr, true);
+        VERIFY(connect(server, SIGNAL(startConnected()), _explorer, SLOT(increaseProgress()), Qt::DirectConnection));
+        VERIFY(connect(server, SIGNAL(finishConnected()), _explorer, SLOT(decreaseProgress()), Qt::DirectConnection));
+        VERIFY(connect(server, SIGNAL(connectedStatus(const ErrorInfo&)), this, SLOT(connectToServer(const ErrorInfo&)), Qt::DirectConnection));
+        server->tryConnect();
     }
 
-    void MainWindow::handle(ConnectionFailedEvent *event)
-    {
-        IConnectionSettingsBase *connection = event->server->connectionRecord();
-        QString message = QString("Cannot connect to MongoDB (%1),\nerror: %2").arg(QtUtils::toQString(connection->getFullAddress())).arg(QtUtils::toQString(event->error()._description));
-        QMessageBox::information(this, "Error", message);
-    }
-
-    void MainWindow::handle(ScriptExecutingEvent *)
+    void MainWindow::startScriptExecute()
     {
         _stopAction->setDisabled(false);
         _executeAction->setDisabled(true);
     }
 
-    void MainWindow::handle(ScriptExecutedEvent *)
+    void MainWindow::scriptExecute(const ExecuteScriptInfo &inf)
     {
         _stopAction->setDisabled(true);
         _executeAction->setDisabled(false);
     }
 
-    void MainWindow::handle(QueryWidgetUpdatedEvent *event)
+    void MainWindow::queryWidgetWindowCountChange(int windowCount)
     {
-        _orientationAction->setVisible(event->numOfResults() > 1);
+        _orientationAction->setVisible(windowCount > 1);
+    }
+
+    void MainWindow::connectToServer(const ErrorInfo &error)
+    {
+        MongoServer *server = qobject_cast<MongoServer*>(sender());
+        VERIFY(server);
+
+        if(error.isError()){
+            IConnectionSettingsBase *connection = server->connectionRecord();
+            QString message = QString("Cannot connect to MongoDB (%1),\nerror: %2").arg(QtUtils::toQString(connection->getFullAddress())).arg(QtUtils::toQString(error._description));
+            QMessageBox::information(this, "Error", message);
+        }
+        else{
+            if(server->visible()){
+                _explorer->addServer(server);
+            }
+        }
     }
 
     void MainWindow::createDatabaseExplorer()
     {
-        ExplorerWidget *explorer = new ExplorerWidget(this);
-        AppRegistry::instance().bus()->subscribe(explorer, ConnectingEvent::Type);
-        AppRegistry::instance().bus()->subscribe(explorer, ConnectionFailedEvent::Type);
-        AppRegistry::instance().bus()->subscribe(explorer, ConnectionEstablishedEvent::Type);
+        _explorer = new ExplorerWidget(this);
 
         QDockWidget *explorerDock = new QDockWidget(tr("Database Explorer"));
         explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-        explorerDock->setWidget(explorer);
+        explorerDock->setWidget(_explorer);
         explorerDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
 
         QWidget *titleWidget = new QWidget(this);         // this lines simply remove
@@ -789,7 +795,11 @@ namespace Robomongo
     void MainWindow::createTabs()
     {
         _workArea = new WorkAreaTabWidget(this);
-        AppRegistry::instance().bus()->subscribe(_workArea, OpeningShellEvent::Type);
+        VERIFY(connect(_workArea, SIGNAL(scriptExecuted(const ExecuteScriptInfo &)), this, SLOT(scriptExecute(const ExecuteScriptInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_workArea, SIGNAL(windowCountChanged(int)), this, SLOT(queryWidgetWindowCountChange(int)), Qt::DirectConnection));
+        VERIFY(connect(_workArea, SIGNAL(startScriptExecuted()), this, SLOT(startScriptExecute()), Qt::DirectConnection));
+
+        VERIFY(connect(AppRegistry::instance().app(), SIGNAL(shellOpened(MongoShell*)), _workArea, SLOT(shellOpen(MongoShell*))));
         VERIFY(connect(_workArea, SIGNAL(currentChanged(int)), this, SLOT(updateMenus())));
 
         QHBoxLayout *hlayout = new QHBoxLayout;

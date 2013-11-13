@@ -67,8 +67,8 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(showLog);
         BaseClass::_contextMenu->addAction(disconnectAction);
 
-        _bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
-        _bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
+        VERIFY(connect(_server, SIGNAL(databaseListLoaded(const QList<MongoDatabase *>& )), this, SLOT(addDatabases(const QList<MongoDatabase *>& )), Qt::DirectConnection));
+        VERIFY(connect(_server, SIGNAL(startedLoadDatabases()), this, SLOT(startLoadDatabases()), Qt::DirectConnection));
 
         setText(0, buildServerName());
         setIcon(0, GuiRegistry::instance().serverIcon());
@@ -81,7 +81,7 @@ namespace Robomongo
         _server->loadDatabases();
     }
 
-    void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabase *> &dbs)
+    void ExplorerServerTreeItem::addDatabases(const QList<MongoDatabase *> &dbs)
     {
         int count = dbs.count();
         setText(0, buildServerName(&count));
@@ -114,12 +114,7 @@ namespace Robomongo
         systemFolder->setHidden(systemFolder->childCount() == 0);
     }
 
-    void ExplorerServerTreeItem::handle(DatabaseListLoadedEvent *event)
-    {
-        databaseRefreshed(event->list);
-    }
-
-    void ExplorerServerTreeItem::handle(MongoServerLoadingDatabasesEvent *event)
+    void ExplorerServerTreeItem::startLoadDatabases()
     {
         int count = -1;
         setText(0, buildServerName(&count));

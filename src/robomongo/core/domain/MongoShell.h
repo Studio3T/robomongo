@@ -2,6 +2,8 @@
 #include <QObject>
 #include "robomongo/core/domain/ScriptInfo.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
+#include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/core/events/MongoEventsGui.hpp"
 
 namespace Robomongo
 {
@@ -34,6 +36,8 @@ namespace Robomongo
 
     Q_SIGNALS:
         void autoCompleteResponced(const QString &prefix,const QStringList &list);
+        void scriptExecuted(const ExecuteScriptInfo &inf);
+        void startScriptExecuted();
 
     private:        
         ScriptInfo _scriptInfo;

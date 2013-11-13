@@ -11,9 +11,7 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/domain/MongoServer.h"
-#include "robomongo/core/mongodb/MongoWorker.h"
 
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
@@ -34,7 +32,7 @@
 
 namespace Robomongo
 {
-    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &text, double secs, QWidget *parent) :
+    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoServer *server, const QString &text, double secs, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -50,7 +48,7 @@ namespace Robomongo
         _isTableModeInitialized(false),
         _isFirstPartRendered(false),
         _text(text),
-        _shell(shell),
+        _server(server),
         _initialSkip(0),
         _initialLimit(0),
         _out(out),
@@ -60,7 +58,7 @@ namespace Robomongo
         setup(secs);
     }
 
-    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent) :
+    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoServer *server, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -78,7 +76,7 @@ namespace Robomongo
         _documents(documents),
         _queryInfo(queryInfo),
         _type(type),
-        _shell(shell),
+        _server(server),
         _initialSkip(queryInfo._skip),
         _initialLimit(queryInfo._limit),
         _out(out),
@@ -176,7 +174,7 @@ namespace Robomongo
         info._skip = skip;
         info._batchSize = batchSize;
         _out->showProgress();
-        _shell->server()->query(_out->resultIndex(this), info);
+        _server->query(_out->resultIndex(this), info);
     }
 
     void OutputItemContentWidget::update(const MongoQueryInfo &inf,const std::vector<MongoDocumentPtr> &documents)
@@ -388,7 +386,7 @@ namespace Robomongo
 
     void OutputItemContentWidget::refresh()
     {
-        _shell->server()->query(0, _queryInfo);
+        _server->query(0, _queryInfo);
     }
 
     void OutputItemContentWidget::createDocument()
@@ -408,7 +406,7 @@ namespace Robomongo
 
         DocumentTextEditor::ReturnType obj = editor.bsonObj();
         for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
-            _shell->server()->insertDocument(*it, _queryInfo._collectionInfo._ns);
+            _server->insertDocument(*it, _queryInfo._collectionInfo._ns);
         }
         refresh();
     }
@@ -433,7 +431,7 @@ namespace Robomongo
         int result = editor.exec();
 
         if (result == QDialog::Accepted) {
-            _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo._collectionInfo._ns);      
+            _server->saveDocuments(editor.bsonObj(), _queryInfo._collectionInfo._ns);      
         }
     }
 
@@ -482,7 +480,7 @@ namespace Robomongo
                 return;
         }
 
-        _shell->server()->removeDocuments(query, _queryInfo._collectionInfo._ns);
+        _server->removeDocuments(query, _queryInfo._collectionInfo._ns);
     }
 
     void OutputItemContentWidget::deleteDocuments(std::vector<BsonTreeItem *> items, bool force)

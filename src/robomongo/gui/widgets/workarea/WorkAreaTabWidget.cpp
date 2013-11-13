@@ -200,23 +200,28 @@ namespace Robomongo
         setTabToolTip(indexOf(send), text);
     }
 
-    void WorkAreaTabWidget::handle(OpeningShellEvent *event)
+    void WorkAreaTabWidget::shellOpen(MongoShell *shell)
     {
-        const QString &title = event->shell->title();
+        VERIFY(connect(shell, SIGNAL(startScriptExecuted()), this, SIGNAL(startScriptExecuted()), Qt::DirectConnection));
+
+        const QString &title = shell->title();
 
         QString shellName = title.isEmpty() ? " Loading..." : title;
 
-        QueryWidget *queryWidget = new QueryWidget(event->shell,this);
+        QueryWidget *queryWidget = new QueryWidget(shell,this);
         VERIFY(connect(queryWidget, SIGNAL(titleChanged(const QString &)), this, SLOT(tabTextChange(const QString &))));
         VERIFY(connect(queryWidget, SIGNAL(toolTipChanged(const QString &)), this, SLOT(tooltipTextChange(const QString &))));
-        
+
+        VERIFY(connect(queryWidget, SIGNAL(scriptExecuted(const ExecuteScriptInfo &)), this, SIGNAL(scriptExecuted(const ExecuteScriptInfo &)), Qt::DirectConnection));
+        VERIFY(connect(queryWidget, SIGNAL(windowCountChanged(int)), this, SIGNAL(windowCountChanged(int)), Qt::DirectConnection));
+
         addTab(queryWidget, shellName);
 
         setCurrentIndex(count() - 1);
 #if !defined(Q_OS_MAC)
         setTabIcon(count() - 1, GuiRegistry::instance().mongodbIcon());
 #endif
-        if (event->shell->isExecutable()) {
+        if (shell->isExecutable()) {
             queryWidget->showProgress();
         }
     }

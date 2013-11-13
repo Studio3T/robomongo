@@ -21,7 +21,7 @@ namespace Robomongo
     class BsonTreeModel;
     class JsonPrepareThread;
     class CollectionStatsTreeWidget;
-    class MongoShell;
+    class MongoServer;
     class OutputItemHeaderWidget;
     class OutputWidget;
     class BsonTreeItem;
@@ -32,8 +32,8 @@ namespace Robomongo
 
     public:
         typedef QWidget BaseClass;
-        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &text, double secs, QWidget *parent = NULL);
-        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent = NULL);
+        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoServer *shell, const QString &text, double secs, QWidget *parent = NULL);
+        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoServer *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent = NULL);
         int _initialSkip;
         int _initialLimit;
         void update(const MongoQueryInfo &inf,const std::vector<MongoDocumentPtr> &documents);
@@ -63,7 +63,6 @@ namespace Robomongo
         void refresh(int skip, int batchSize);
         void paging_rightClicked(int skip, int batchSize);
         void paging_leftClicked(int skip, int limit);
-        void refresh();
 
         void editDocument(BsonTreeItem *item);
         void createDocument();
@@ -73,6 +72,7 @@ namespace Robomongo
 
     private:
         void setup(double secs);
+        void refresh();
 
         FindFrame *configureLogText();
         BsonTreeModel *configureModel();
@@ -91,7 +91,7 @@ namespace Robomongo
         QStackedWidget *_stack;
         JsonPrepareThread *_thread;
 
-        MongoShell *_shell;
+        MongoServer *_server;
         OutputItemHeaderWidget *_header;
         OutputWidget *_out;
         bool _isTextModeSupported;

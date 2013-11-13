@@ -30,7 +30,7 @@ namespace Robomongo
         _progressBarPopup = new ProgressBarPopup(this);
     }
 
-    void OutputWidget::present(MongoShell *shell, const std::vector<MongoShellResult> &results)
+    void OutputWidget::present(MongoServer *server, const std::vector<MongoShellResult> &results)
     {
         std::vector<ViewMode> prev = clearAllParts();
         int count = results.size();
@@ -47,9 +47,9 @@ namespace Robomongo
             }
 
             if (shellResult.documents().size() > 0) {
-                output = new OutputItemContentWidget(this, viewMode, shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo(),secs);
+                output = new OutputItemContentWidget(this, viewMode, server, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo(),secs);
             } else {
-                output = new OutputItemContentWidget(this, viewMode, shell, QtUtils::toQString(shellResult.response()),secs);
+                output = new OutputItemContentWidget(this, viewMode, server, QtUtils::toQString(shellResult.response()),secs);
             }
             VERIFY(connect(output, SIGNAL(maximizedPart()), this, SLOT(maximizePart())));
             VERIFY(connect(output, SIGNAL(restoredSize()), this, SLOT(restoreSize())));

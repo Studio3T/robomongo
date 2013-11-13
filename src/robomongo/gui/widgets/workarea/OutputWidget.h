@@ -12,7 +12,7 @@ namespace Robomongo
 {
     class OutputItemContentWidget;
     class ProgressBarPopup;
-    class MongoShell;
+    class MongoServer;
 
     class OutputWidget : public QFrame
     {
@@ -21,7 +21,7 @@ namespace Robomongo
     public:
         explicit OutputWidget(QWidget *parent = 0);
 
-        void present(MongoShell *shell, const std::vector<MongoShellResult> &documents);
+        void present(MongoServer *server, const std::vector<MongoShellResult> &documents);
         void updatePart(int partIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents);
         void toggleOrientation();
 
@@ -30,8 +30,7 @@ namespace Robomongo
         void enterTableMode();
         void enterCustomMode();
 
-        int resultIndex(OutputItemContentWidget *result);
-        
+        int resultIndex(OutputItemContentWidget *result);        
 
         void showProgress();
         void hideProgress();

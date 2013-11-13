@@ -5,7 +5,8 @@
 namespace Robomongo
 {
     class QueryWidget;
-    class OpeningShellEvent;
+    class MongoShell;
+    struct ExecuteScriptInfo;
     /**
      * @brief WorkArea tab widget. Each tab represents MongoDB shell.
      */
@@ -27,6 +28,11 @@ namespace Robomongo
         QueryWidget *currentQueryWidget();
         QueryWidget *queryWidget(int index);
 
+    Q_SIGNALS:
+        void scriptExecuted(const ExecuteScriptInfo &inf);
+        void windowCountChanged(int count);
+        void startScriptExecuted();
+
     protected:
         /**
          * @brief Overrides QTabWidget::keyPressEvent() in order to intercept
@@ -35,7 +41,7 @@ namespace Robomongo
         virtual void keyPressEvent(QKeyEvent *event);
 
     public Q_SLOTS:
-        void handle(OpeningShellEvent *event);
+        void shellOpen(MongoShell *shell);
         void tabBar_tabCloseRequested(int index);
         void ui_newTabRequested(int index);
         void ui_reloadTabRequested(int index);

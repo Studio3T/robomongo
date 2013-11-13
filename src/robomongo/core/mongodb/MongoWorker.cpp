@@ -11,6 +11,7 @@
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/BsonUtils.h"
+#include "robomongo/core/domain/MongoServer.h"
 
 #include "robomongo/shell/db/json.h"
 #include <mongo/client/dbclient_rs.h>
@@ -851,7 +852,7 @@ namespace Robomongo
             CopyCollectionToDiffServerEvent::value_type v = ev->value();            
 
             ErrorInfo er;
-            copyCollectionToDiffServer(v._worker, v._from, v._to, er);
+            copyCollectionToDiffServer(v._server->_client, v._from, v._to, er);
             qApp->postEvent(ev->sender(), new CopyCollectionToDiffServerEvent(this, v, er));
         }
         else if(type==static_cast<QEvent::Type>(LoadCollectionIndexEvent::EventType)){

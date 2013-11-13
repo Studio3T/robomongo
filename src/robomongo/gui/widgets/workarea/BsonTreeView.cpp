@@ -12,8 +12,8 @@
 
 namespace Robomongo
 {
-    BsonTreeView::BsonTreeView(IWatcher *watcher, QWidget *parent) 
-        : BaseClass(parent), INotifier(watcher)
+    BsonTreeView::BsonTreeView(QWidget *parent) 
+        : BaseClass(parent) 
     {
 #if defined(Q_OS_MAC)
         setAttribute(Qt::WA_MacShowFocusRect, false);
@@ -41,7 +41,7 @@ namespace Robomongo
         QModelIndexList indexes = selectedIndexes();
         if (detail::isMultySelection(indexes)) {
             QMenu menu(this);
-            initMultiSelectionMenu(true, &menu);
+            _notifier.initMultiSelectionMenu(true, &menu);
             menu.exec(menuPoint);
         }
         else{
@@ -59,7 +59,7 @@ namespace Robomongo
                 }
             }
 
-            initMenu(true, &menu,documentItem);
+            _notifier.initMenu(true, &menu,documentItem);
             menu.exec(menuPoint);
         }
     }

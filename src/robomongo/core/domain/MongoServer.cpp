@@ -72,6 +72,12 @@ namespace Robomongo
             emit documentInserted();
             //AppRegistry::instance().bus()->publish(new InsertDocumentResponse(event->sender(), event->error()));
         }
+        else if(type==static_cast<QEvent::Type>(ExecuteQueryEvent::EventType)){
+            ExecuteQueryEvent *ev = static_cast<ExecuteQueryEvent*>(event);
+            ExecuteQueryEvent::value_type v = ev->value();
+
+            AppRegistry::instance().bus()->publish(new DocumentListLoadedEvent(this, v._resultIndex, v._queryInfo, v._documents));
+        }
         else if(type==static_cast<QEvent::Type>(EstablishConnectionEvent::EventType)){
             EstablishConnectionEvent *ev = static_cast<EstablishConnectionEvent*>(event);
             EstablishConnectionEvent::value_type v = ev->value();

@@ -5,7 +5,6 @@
 #include <QAction>
 #include <QMenu>
 #include <QApplication>
-#include <QClipboard>
 #include <QDialog>
 #include <QMessageBox>
 
@@ -29,8 +28,8 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
+#include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
-#include "robomongo/core/utils/BsonUtils.h" 
 #include "robomongo/gui/utils/DialogUtils.h"
 
 namespace Robomongo
@@ -253,6 +252,12 @@ namespace Robomongo
 
         if (!_isTreeModeInitialized) {
             _bsonTreeview = new BsonTreeView(this);
+            const Notifier &not = _bsonTreeview->notifier();
+            VERIFY(connect(&not, SIGNAL(deletedDocument(BsonTreeItem *, bool)), this, SLOT(deleteDocument(BsonTreeItem *, bool)), Qt::DirectConnection ));
+            VERIFY(connect(&not, SIGNAL(deletedDocuments(std::vector<BsonTreeItem *>, bool)), this, SLOT(deleteDocuments(std::vector<BsonTreeItem *>, bool)), Qt::DirectConnection ));
+            VERIFY(connect(&not, SIGNAL(editedDocument(BsonTreeItem *)), this, SLOT(editDocument(BsonTreeItem *)), Qt::DirectConnection ));
+            VERIFY(connect(&not, SIGNAL(viewDocument(BsonTreeItem *)), this, SLOT(viewDocument(BsonTreeItem *)), Qt::DirectConnection ));
+            VERIFY(connect(&not, SIGNAL(createdDocument()), this, SLOT(createDocument()), Qt::DirectConnection ));
             _bsonTreeview->setModel(_mod);
             _stack->addWidget(_bsonTreeview);
             if (AppRegistry::instance().settingsManager()->autoExpand())
@@ -298,7 +303,14 @@ namespace Robomongo
         }
 
         if (!_isTableModeInitialized) {
-            _bsonTable = new BsonTableView(this);            
+            _bsonTable = new BsonTableView(this);
+            const Notifier &not = _bsonTable->notifier();
+            VERIFY(connect(&not, SIGNAL(deletedDocument(BsonTreeItem *, bool)), this, SLOT(deleteDocument(BsonTreeItem *, bool)), Qt::DirectConnection ));
+            VERIFY(connect(&not, SIGNAL(deletedDocuments(std::vector<BsonTreeItem *>, bool)), this, SLOT(deleteDocuments(std::vector<BsonTreeItem *>, bool)), Qt::DirectConnection ));
+            VERIFY(connect(&not, SIGNAL(editedDocument(BsonTreeItem *)), this, SLOT(editDocument(BsonTreeItem *)), Qt::DirectConnection ));
+            VERIFY(connect(&not, SIGNAL(viewDocument(BsonTreeItem *)), this, SLOT(viewDocument(BsonTreeItem *)), Qt::DirectConnection ));
+            VERIFY(connect(&not, SIGNAL(createdDocument()), this, SLOT(createDocument()), Qt::DirectConnection ));
+
             BsonTableModelProxy *modp = new BsonTableModelProxy(_bsonTable);
             modp->setSourceModel(_mod);
             _bsonTable->setModel(modp);
@@ -379,121 +391,13 @@ namespace Robomongo
         _shell->server()->query(0, _queryInfo);
     }
 
-    void OutputItemContentWidget::onDeleteDocuments()
-    {
-        INotifier *observer = dynamic_cast<INotifier*>(sender());
-        if(!observer)
-            return;
-
-        if (!_queryInfo._collectionInfo.isValid())
-            return;
-
-        QModelIndexList selectedIndexes = observer->selectedIndexes();
-        if (!detail::isMultySelection(selectedIndexes))
-            return;
-
-        int answer = QMessageBox::question(dynamic_cast<QWidget*>(observer), "Delete", QString("Do you want to delete %1 selected documents?").arg(selectedIndexes.count()));
-        if (answer == QMessageBox::Yes) {
-            std::vector<BsonTreeItem*> items;
-            for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it!= selectedIndexes.end(); ++it) {
-                BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
-                items.push_back(item);                
-            }
-            deleteDocuments(items,true);
-        }
-    }
-
-    void OutputItemContentWidget::onDeleteDocument()
-    {
-        INotifier *observer = dynamic_cast<INotifier*>(sender());
-        if(!observer)
-            return;
-
-        if (!_queryInfo._collectionInfo.isValid())
-            return;
-
-        QModelIndex selectedIndex = observer->selectedIndex();
-        if (!selectedIndex.isValid())
-            return;
-
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedIndex);
-        std::vector<BsonTreeItem*> vec;
-        vec.push_back(documentItem);
-        return deleteDocuments(vec,false);
-    }
-
-    void OutputItemContentWidget::onEditDocument()
-    {
-        INotifier *observer = dynamic_cast<INotifier*>(sender());
-        if(!observer)
-            return;
-
-        if (!_queryInfo._collectionInfo.isValid())
-            return;
-
-        QModelIndex selectedInd = observer->selectedIndex();
-        if (!selectedInd.isValid())
-            return;
-
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-        if (!documentItem)
-            return;
-
-        mongo::BSONObj obj = documentItem->superRoot();
-
-        std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
-            AppRegistry::instance().settingsManager()->uuidEncoding(),
-            AppRegistry::instance().settingsManager()->timeZone());
-
-        const QString &json = QtUtils::toQString(str);
-
-        DocumentTextEditor editor(_queryInfo._collectionInfo,
-            json, false, dynamic_cast<QWidget*>(observer));
-
-        editor.setWindowTitle("Edit Document");
-        int result = editor.exec();
-
-        if (result == QDialog::Accepted) {
-            _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo._collectionInfo._ns);
-        }
-    }
-
-    void OutputItemContentWidget::onViewDocument()
-    {
-        INotifier *observer = dynamic_cast<INotifier*>(sender());
-        if(!observer)
-            return;
-
-        QModelIndex selectedIndex = observer->selectedIndex();
-        if (!selectedIndex.isValid())
-            return;
-
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedIndex);
-        if (!documentItem)
-            return;
-
-        mongo::BSONObj obj = documentItem->superRoot();
-
-        std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
-            AppRegistry::instance().settingsManager()->uuidEncoding(),
-            AppRegistry::instance().settingsManager()->timeZone());
-
-        const QString &json = QtUtils::toQString(str);
-
-        DocumentTextEditor *editor = new DocumentTextEditor(_queryInfo._collectionInfo,
-            json, true, dynamic_cast<QWidget*>(observer));
-
-        editor->setWindowTitle("View Document");
-        editor->show();
-    }
-
-    void OutputItemContentWidget::onInsertDocument()
-    {
+    void OutputItemContentWidget::createDocument()
+    {        
         if (!_queryInfo._collectionInfo.isValid())
             return;
 
         DocumentTextEditor editor(_queryInfo._collectionInfo,
-            "{\n    \n}", false, dynamic_cast<QWidget*>(parent()));
+            "{\n    \n}", false, this);
 
         editor.setCursorPosition(1, 4);
         editor.setWindowTitle("Insert Document");
@@ -506,98 +410,93 @@ namespace Robomongo
         for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
             _shell->server()->insertDocument(*it, _queryInfo._collectionInfo._ns);
         }
-
         refresh();
     }
 
-    void OutputItemContentWidget::onCopyDocument()
+    void OutputItemContentWidget::editDocument(BsonTreeItem *item)
     {
-        INotifier *observer = dynamic_cast<INotifier*>(sender());
-        if(!observer)
+        if (!_queryInfo._collectionInfo.isValid())
             return;
 
-        QModelIndex selectedInd = observer->selectedIndex();
-        if (!selectedInd.isValid())
-            return;
+        mongo::BSONObj obj = item->superRoot();
 
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-        if (!documentItem)
-            return;
-
-        if (!detail::isSimpleType(documentItem))
-            return;
-
-        QClipboard *clipboard = QApplication::clipboard();
-        clipboard->setText(documentItem->value());
-    }
-
-    void OutputItemContentWidget::onCopyJson()
-    {
-        INotifier *observer = dynamic_cast<INotifier*>(sender());
-        if(!observer)
-            return;
-
-        QModelIndex selectedInd = observer->selectedIndex();
-        if (!selectedInd.isValid())
-            return;
-
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-        if (!documentItem)
-            return;
-
-        if (!detail::isDocumentType(documentItem))
-            return;
-
-        QClipboard *clipboard = QApplication::clipboard();
-        mongo::BSONObj obj = documentItem->root();
-        if (documentItem != documentItem->superParent()){
-            obj = obj[QtUtils::toStdString(documentItem->key())].Obj();
-        }
-        bool isArray = BsonUtils::isArray(documentItem->type());
         std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
             AppRegistry::instance().settingsManager()->uuidEncoding(),
-            AppRegistry::instance().settingsManager()->timeZone(),isArray);
+            AppRegistry::instance().settingsManager()->timeZone());
 
         const QString &json = QtUtils::toQString(str);
-        clipboard->setText(json);
+
+        DocumentTextEditor editor(_queryInfo._collectionInfo,
+            json, false, this);
+
+        editor.setWindowTitle("Edit Document");
+        int result = editor.exec();
+
+        if (result == QDialog::Accepted) {
+            _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo._collectionInfo._ns);      
+        }
     }
 
-    void OutputItemContentWidget::deleteDocuments(std::vector<BsonTreeItem*> items, bool force)
+    void OutputItemContentWidget::viewDocument(BsonTreeItem *item)
     {
-        bool isNeededRefresh = false;
-        for (std::vector<BsonTreeItem*>::const_iterator it = items.begin(); it != items.end(); ++it) {
-            BsonTreeItem * documentItem = *it;
-            if (!documentItem)
-                break;
+        if (!_queryInfo._collectionInfo.isValid())
+            return;
 
-            mongo::BSONObj obj = documentItem->superRoot();
-            mongo::BSONElement id = obj.getField("_id");
+        mongo::BSONObj obj = item->superRoot();
 
-            if (id.eoo()) {
-                QMessageBox::warning(dynamic_cast<QWidget*>(parent()), "Cannot delete", "Selected document doesn't have _id field. \n"
-                    "Maybe this is a system document that should be managed in a special way?");
-                break;
-            }
+        std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
+            AppRegistry::instance().settingsManager()->uuidEncoding(),
+            AppRegistry::instance().settingsManager()->timeZone());
 
-            mongo::BSONObjBuilder builder;
-            builder.append(id);
-            mongo::BSONObj bsonQuery = builder.obj();
-            mongo::Query query(bsonQuery);
+        const QString &json = QtUtils::toQString(str);
 
-            if (!force) {
-                // Ask user
-                int answer = utils::questionDialog(dynamic_cast<QWidget*>(parent()), "Delete",
-                    "Document", "%1 %2 with id:<br><b>%3</b>?", QtUtils::toQString(id.toString(false)));
+        DocumentTextEditor *editor = new DocumentTextEditor(_queryInfo._collectionInfo,
+            json, true, this);
 
-                if (answer != QMessageBox::Yes)
-                    break;
-            }
+        editor->setWindowTitle("View Document");
+        editor->show();
+    }
 
-            isNeededRefresh=true;
-            _shell->server()->removeDocuments(query, _queryInfo._collectionInfo._ns);
+    void OutputItemContentWidget::deleteDocument(BsonTreeItem *item, bool force)
+    {
+        mongo::BSONObj obj = item->superRoot();
+        mongo::BSONElement id = obj.getField("_id");
+
+        if (id.eoo()) {
+            QMessageBox::warning(this, "Cannot delete", "Selected document doesn't have _id field. \n"
+                "Maybe this is a system document that should be managed in a special way?");
+            return;
         }
 
-        if (isNeededRefresh)
+        mongo::BSONObjBuilder builder;
+        builder.append(id);
+        mongo::BSONObj bsonQuery = builder.obj();
+        mongo::Query query(bsonQuery);
+
+        if (!force){
+            // Ask user
+            int answer = utils::questionDialog(this, "Delete",
+                "Document", "%1 %2 with id:<br><b>%3</b>?", QtUtils::toQString(id.toString(false)));
+
+            if (answer != QMessageBox::Yes)
+                return;
+        }
+
+        _shell->server()->removeDocuments(query, _queryInfo._collectionInfo._ns);
+    }
+
+    void OutputItemContentWidget::deleteDocuments(std::vector<BsonTreeItem *> items, bool force)
+    {
+        int answer = QMessageBox::question(this, "Delete", QString("Do you want to delete %1 selected documents?").arg(items.size()));
+        if (answer == QMessageBox::Yes) {
+            for (std::vector<BsonTreeItem*>::const_iterator it = items.begin(); it != items.end(); ++it) {
+                BsonTreeItem * documentItem = *it;
+                if (!documentItem)
+                    break;
+
+                deleteDocument(documentItem, force);
+            }
             refresh();
+        }
     }
 }

@@ -35,7 +35,7 @@ namespace Robomongo
         _viewer(NULL),
         _isTextChanged(false)
     {
-        AppRegistry::instance().bus()->subscribe(this, DocumentListLoadedEvent::Type, shell);
+        AppRegistry::instance().bus()->subscribe(this, DocumentListLoadedEvent::Type, shell->server());
         AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type, shell);
 
         _scriptWidget = new ScriptWidget(_shell);

@@ -2,8 +2,6 @@
 
 #include <QModelIndex>
 
-#include "robomongo/core/domain/MongoQueryInfo.h"
-
 QT_BEGIN_NAMESPACE
 class QAction;
 class QMenu;
@@ -11,7 +9,6 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
-    class MongoServer;
     class BsonTreeItem;
 
     namespace detail
@@ -21,31 +18,35 @@ namespace Robomongo
         bool isDocumentType(BsonTreeItem *item);
         QModelIndexList uniqueRows(QModelIndexList indexses);
     }
-    class IWatcher
+
+    class IViewObserver;
+    class Notifier :public QObject
     {
+        Q_OBJECT
     public:
-        virtual void onDeleteDocument() = 0;
-        virtual void onDeleteDocuments() = 0;
-        virtual void onEditDocument() = 0;
-        virtual void onViewDocument() = 0;
-        virtual void onInsertDocument() = 0;
-        virtual void onCopyDocument() = 0;
-        virtual void onCopyJson() = 0;
+        Notifier(IViewObserver *observer);
+        void initMenu(bool isEditable, QMenu *const menu, BsonTreeItem *const item) const;
+        void initMultiSelectionMenu(bool isEditable, QMenu *const menu) const;
+    
+Q_SIGNALS:
+        void deletedDocument(BsonTreeItem* item, bool force);
+        void deletedDocuments(std::vector<BsonTreeItem *> items, bool force);
+        void editedDocument(BsonTreeItem *item);
+        void viewDocument(BsonTreeItem *item);
+        void createdDocument();
+
+    private Q_SLOTS:
+        void onDeleteDocument();
+        void onDeleteDocuments();
+        void onEditDocument();
+        void onViewDocument();
+        void onInsertDocument();
+        void onCopyDocument();
+        void onCopyJson();
+
     protected:
-        IWatcher(){};
-    };
 
-    class INotifier
-    {
-    public:
-        virtual QModelIndex selectedIndex() const = 0;
-        virtual QModelIndexList selectedIndexes() const = 0;
-
-    protected:
-        void initMenu(bool isEditable, QMenu *const menu, BsonTreeItem *const item);
-        void initMultiSelectionMenu(bool isEditable, QMenu *const menu);
-        INotifier(IWatcher *watcher);
-
+        IViewObserver *_observer;
         QAction *_deleteDocumentAction;
         QAction *_deleteDocumentsAction;
         QAction *_editDocumentAction;
@@ -53,5 +54,19 @@ namespace Robomongo
         QAction *_insertDocumentAction;
         QAction *_copyValueAction;
         QAction *_copyJsonAction;
+    };
+
+    class IViewObserver
+    {
+    public:
+        virtual QModelIndex selectedIndex() const = 0;
+        virtual QModelIndexList selectedIndexes() const = 0;
+        const Notifier &notifier() const
+        {
+            return _notifier;
+        }
+    protected:
+        IViewObserver();
+        const Notifier _notifier;  
     };
 }

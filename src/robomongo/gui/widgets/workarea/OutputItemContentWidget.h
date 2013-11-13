@@ -26,7 +26,7 @@ namespace Robomongo
     class OutputWidget;
     class BsonTreeItem;
 
-    class OutputItemContentWidget : public QWidget, public IWatcher
+    class OutputItemContentWidget : public QWidget
     {
         Q_OBJECT
 
@@ -63,20 +63,16 @@ namespace Robomongo
         void refresh(int skip, int batchSize);
         void paging_rightClicked(int skip, int batchSize);
         void paging_leftClicked(int skip, int limit);
-
-        void onDeleteDocument();
-        void onDeleteDocuments();
-        void onEditDocument();
-        void onViewDocument();
-        void onInsertDocument();
-        void onCopyDocument();
-        void onCopyJson();
-
         void refresh();
+
+        void editDocument(BsonTreeItem *item);
+        void createDocument();
+        void viewDocument(BsonTreeItem *item);
+        void deleteDocument(BsonTreeItem *item, bool force);
+        void deleteDocuments(std::vector<BsonTreeItem *> items, bool force);
 
     private:
         void setup(double secs);
-        void deleteDocuments(std::vector<BsonTreeItem*> items, bool force);
 
         FindFrame *configureLogText();
         BsonTreeModel *configureModel();

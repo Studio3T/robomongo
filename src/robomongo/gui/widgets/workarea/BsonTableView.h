@@ -5,12 +5,12 @@
 
 namespace Robomongo
 {
-    class BsonTableView : public QTableView , public INotifier
+    class BsonTableView : public QTableView , public IViewObserver
     {
         Q_OBJECT
     public:
         typedef QTableView BaseClass;
-        explicit BsonTableView(IWatcher *watcher, QWidget *parent = 0);     
+        explicit BsonTableView(QWidget *parent = 0);     
         virtual QModelIndex selectedIndex() const;
         virtual QModelIndexList selectedIndexes() const;
 

@@ -82,23 +82,20 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DocumentListLoadedEvent(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const std::string &query, const std::vector<MongoDocumentPtr> &docs) :
+        DocumentListLoadedEvent(QObject *sender, int resultIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &docs) :
             Event(sender),
             _resultIndex(resultIndex),
             _queryInfo(queryInfo),
-            _query(query),
             _documents(docs) { }
 
         int resultIndex() const { return _resultIndex; }
         MongoQueryInfo queryInfo() const { return _queryInfo; }
         std::vector<MongoDocumentPtr> documents() const { return _documents; }
-        std::string query() const { return _query; }
 
     private:
         int _resultIndex;
         MongoQueryInfo _queryInfo;
         std::vector<MongoDocumentPtr> _documents;
-        std::string _query;
     };
 
     class ScriptExecutedEvent : public Event

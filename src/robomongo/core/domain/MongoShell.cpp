@@ -88,12 +88,6 @@ namespace Robomongo
             AutoCompleteEvent::value_type v = ev->value();
             emit autoCompleteResponced(QtUtils::toQString(v._prefix), v._list);
         }
-        else if(type==static_cast<QEvent::Type>(ExecuteQueryEvent::EventType)){
-            ExecuteQueryEvent *ev = static_cast<ExecuteQueryEvent*>(event);
-            ExecuteQueryEvent::value_type v = ev->value();
-
-            AppRegistry::instance().bus()->publish(new DocumentListLoadedEvent(this, v._resultIndex, v._queryInfo, query(), v._documents));
-        }
         else if(type==static_cast<QEvent::Type>(ExecuteScriptEvent::EventType)){
             ExecuteScriptEvent *ev = static_cast<ExecuteScriptEvent*>(event);
             ExecuteScriptEvent::value_type v = ev->value();

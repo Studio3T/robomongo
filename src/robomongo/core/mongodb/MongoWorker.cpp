@@ -6,7 +6,7 @@
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
-#include "robomongo/core/events/MongoEventsGui.hpp"
+#include "robomongo/core/events/MongoEvents.hpp"
 #include "robomongo/core/engine/ScriptEngine.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"

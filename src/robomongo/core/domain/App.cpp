@@ -4,7 +4,6 @@
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
-#include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/StdUtils.h"
 #include "robomongo/core/utils/Logger.h"
@@ -38,8 +37,8 @@ namespace Robomongo
         }
     }
 
-    App::App(EventBus *const bus) : QObject(),
-        _bus(bus) { }
+    App::App() 
+        : QObject() { }
 
     App::~App()
     {

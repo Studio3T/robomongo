@@ -3,8 +3,7 @@
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
-#include "robomongo/core/events/MongoEventsGui.hpp"
+#include "robomongo/core/events/MongoEvents.hpp"
 
 namespace Robomongo
 {
@@ -12,7 +11,6 @@ namespace Robomongo
         QObject(),
         _system(name == "admin" || name == "local"),
         _server(server),
-        _bus(AppRegistry::instance().bus()),
         _name(name)
     {
     }

@@ -6,7 +6,6 @@
 
 namespace Robomongo
 {
-    class EventBus;
     class MongoServer;
     class IConnectionSettingsBase;
     class MongoCollection;
@@ -36,7 +35,7 @@ namespace Robomongo
     public:
         typedef std::vector<MongoServer*> MongoServersContainerType;
         typedef std::vector<MongoShell*> MongoShellsContainerType;
-        App(EventBus *const bus);
+        App();
         ~App();
 
         /**
@@ -87,10 +86,5 @@ namespace Robomongo
          * @brief MongoShells, owned by this App.
          */
         MongoShellsContainerType _shells;
-
-        /**
-         * @brief EventBus
-         */
-        EventBus *const _bus;
     };
 }

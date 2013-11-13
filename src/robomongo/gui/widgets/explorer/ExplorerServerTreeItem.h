@@ -1,11 +1,11 @@
 #pragma once
 
-#include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
 
 namespace Robomongo
 {
-    class EventBus;
+    class MongoDatabase;
+    class MongoServer;
     class MongoServerLoadingDatabasesEvent;
     
     class ExplorerServerTreeItem : public ExplorerTreeItem
@@ -50,6 +50,5 @@ namespace Robomongo
         QString buildServerName(int *count = NULL);
 
         MongoServer *const _server;
-        EventBus *_bus;
     };
 }

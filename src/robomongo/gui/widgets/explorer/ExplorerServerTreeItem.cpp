@@ -9,12 +9,10 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
 
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
-
 
 namespace
 {
@@ -27,8 +25,7 @@ namespace
 namespace Robomongo
 {
     ExplorerServerTreeItem::ExplorerServerTreeItem(QTreeWidget *view,MongoServer *const server) : BaseClass(view),
-        _server(server),
-        _bus(AppRegistry::instance().bus())
+        _server(server)
     { 
         QAction *openShellAction = new QAction("Open Shell", this);
         openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());

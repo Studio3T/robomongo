@@ -9,13 +9,11 @@
 #include <mongo/client/dbclient.h>
 
 #include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoShell.h"
-#include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 

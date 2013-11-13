@@ -3,7 +3,7 @@
 #include "robomongo/core/domain/ScriptInfo.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/core/domain/MongoShellResult.h"
-#include "robomongo/core/events/MongoEventsGui.hpp"
+#include "robomongo/core/events/MongoEvents.hpp"
 
 namespace Robomongo
 {

@@ -21,10 +21,7 @@ namespace Robomongo
 
     class App;
     typedef boost::scoped_ptr<App> AppScopedPtr;
-
-    class EventBus;
-    typedef boost::scoped_ptr<EventBus> EventBusScopedPtr;
-
+    
     class MongoCollection;
     typedef boost::shared_ptr<MongoCollection> MongoCollectionPtr;
 

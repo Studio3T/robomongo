@@ -4,11 +4,10 @@
 #include <mongo/bson/bsonobj.h>
 
 #include "robomongo/core/Core.h"
-#include "robomongo/core/events/MongoEvents.h"
+#include "robomongo/core/events/MongoEvents.hpp"
 
 namespace Robomongo
 {
-    class EventBus;
     class MongoServer;
     /**
      * @brief Represents MongoDB database.
@@ -77,6 +76,5 @@ namespace Robomongo
         std::vector<MongoCollection *> _collections;
         const std::string _name;
         const bool _system;
-        EventBus *_bus;
     };
 }

@@ -9,7 +9,7 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
-#include "robomongo/core/events/MongoEventsGui.hpp"
+#include "robomongo/core/events/MongoEvents.hpp"
 
 namespace
 {

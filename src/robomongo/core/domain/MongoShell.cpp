@@ -6,7 +6,6 @@
 
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/Logger.h"
 

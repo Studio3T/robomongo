@@ -12,7 +12,6 @@
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
 
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
@@ -44,7 +43,6 @@ namespace Robomongo
     ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database) :
         BaseClass(parent),
         _database(database),
-        _bus(AppRegistry::instance().bus()),
         _collectionSystemFolderItem(NULL)
     {
         QAction *openDbShellAction = new QAction("Open Shell", this);

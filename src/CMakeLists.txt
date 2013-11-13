@@ -149,10 +149,8 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/mongodb/MongoWorker.h
     robomongo/core/domain/MongoServer.h
     robomongo/core/domain/MongoDatabase.h
-    robomongo/core/EventBus.h
     robomongo/core/domain/App.h
     robomongo/core/domain/MongoShell.h
-    robomongo/core/EventBusDispatcher.h 
     robomongo/core/utils/Logger.h
     )
 SET(HEADERS_CORE
@@ -161,12 +159,8 @@ SET(HEADERS_CORE
     robomongo/core/engine/ScriptEngine.h
     robomongo/core/KeyboardManager.h
     robomongo/core/domain/MongoDocument.h
-    robomongo/core/EventBusSubscriber.h
-    robomongo/core/EventWrapper.h
-    robomongo/core/Event.h
     robomongo/core/domain/MongoShellResult.h
-    robomongo/core/events/MongoEvents.h
-    robomongo/core/events/MongoEventsGui.hpp
+    robomongo/core/events/MongoEvents.hpp
     robomongo/core/events/MongoEventsInfo.h
     robomongo/core/AppRegistry.h
     robomongo/core/Core.h
@@ -198,17 +192,11 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoDatabase.cpp
     robomongo/core/domain/MongoCollection.cpp
     robomongo/core/domain/MongoDocument.cpp
-    robomongo/core/events/MongoEvents.cpp
     robomongo/core/events/MongoEventsInfo.cpp
-    robomongo/core/EventBus.cpp
     robomongo/core/domain/App.cpp
     robomongo/core/domain/MongoShell.cpp
     robomongo/core/engine/ScriptEngine.cpp
     robomongo/core/domain/MongoShellResult.cpp
-    robomongo/core/Event.cpp
-    robomongo/core/EventBusSubscriber.cpp
-    robomongo/core/EventBusDispatcher.cpp
-    robomongo/core/EventWrapper.cpp
     robomongo/core/KeyboardManager.cpp
     robomongo/core/settings/CredentialSettings.cpp
     robomongo/core/domain/MongoQueryInfo.cpp

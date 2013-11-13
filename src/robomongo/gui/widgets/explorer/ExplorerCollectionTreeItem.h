@@ -1,6 +1,5 @@
 #pragma once
 
-#include "robomongo/core/Event.h"
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
 #include "robomongo/core/domain/CursorPosition.h"
 #include "robomongo/core/events/MongoEventsInfo.h"

@@ -7,8 +7,6 @@ class QTreeWidgetItem;
 class QLabel;
 QT_END_NAMESPACE
 
-#include "robomongo/core/events/MongoEvents.h"
-
 namespace Robomongo
 {
     class MongoServer;

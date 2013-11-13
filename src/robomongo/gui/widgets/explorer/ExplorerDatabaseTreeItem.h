@@ -11,7 +11,6 @@ namespace Robomongo
 
     class ExplorerCollectionTreeItem;
     class ExplorerDatabaseCategoryTreeItem;
-    class EventBus;
     class MongoDatabaseCollectionListLoadedEvent;
     class MongoDatabaseUsersLoadedEvent;
     class MongoDatabaseFunctionsLoadedEvent;
@@ -58,7 +57,6 @@ namespace Robomongo
         void addUserItem(MongoDatabase *database, const MongoUser &user);
         void addFunctionItem(MongoDatabase *database, const MongoFunction &function);
 
-        EventBus *_bus;
         ExplorerDatabaseCategoryTreeItem *_collectionFolderItem;
         ExplorerDatabaseCategoryTreeItem *_javascriptFolderItem;
         ExplorerDatabaseCategoryTreeItem *_usersFolderItem;

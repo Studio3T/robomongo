@@ -7,7 +7,6 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/EventBus.h"
 
 namespace Robomongo
 {

@@ -3,8 +3,8 @@
 #include <QObject>
 #include <QMutex>
 
-#include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/events/MongoEvents.hpp"
 
 QT_BEGIN_NAMESPACE
 class QThread;

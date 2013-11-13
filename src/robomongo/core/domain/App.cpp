@@ -24,7 +24,6 @@ namespace Robomongo
             // This case is covered by buildCollectionQuery() function.
             QHash<QString, int> names;
             names.insert("prototype", 0);
-            names.insert("one", 0);
             names.insert("system.indexes", 0);
             names.insert("getMongo", 0);
             names.insert("getSiblingDB", 0);
@@ -96,22 +95,22 @@ namespace Robomongo
 
             QString qCollectionName = QtUtils::toQString(collectionName);
             QChar firstChar = qCollectionName.at(0);
-            QRegExp charExp("[^A-Za-z_0-9]"); // valid JS name
+
+            // Regexp for invalid JS name, which
+            // does not contain the following characters:
+            QRegExp charExp("[^A-Za-z_0-9]");
 
             QString pattern;
-            if (firstChar == QChar('_') || reserved.contains(qCollectionName)
-                || qCollectionName == "help"
-                || qCollectionName == "stats"
-                || qCollectionName == "version"
-                || qCollectionName == "prototype") {
-                    // TODO: this list should be expanded to include
-                    // all functions of DB JavaScript object
-                    pattern = "db.getCollection('%1').%2";
+            if (firstChar == QChar('_') || reserved.contains(qCollectionName)) {
+                pattern = "db.getCollection('%1').%2";
             } else if (firstChar.isDigit() || qCollectionName.contains(charExp)) {
                 pattern = "db[\'%1\'].%2";
             } else {
                 pattern = "db.%1.%2";
             }
+
+            // Escape '\' symbol
+            qCollectionName.replace(QChar('\\'), "\\\\");
 
             return pattern.arg(qCollectionName).arg(postfix);
         }

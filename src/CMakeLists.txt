@@ -479,7 +479,8 @@ IF(DEVELOPER_ENABLE_TESTS)
 
     ADD_EXECUTABLE(tests
         ${CMAKE_SOURCE_DIR}/tests/test_parser.cpp
-        ${CMAKE_SOURCE_DIR}/tests/test_connection_string.cpp)
+        ${CMAKE_SOURCE_DIR}/tests/test_connection_string.cpp
+        ${CMAKE_SOURCE_DIR}/tests/test_build_collection_query.cpp)
 
     TARGET_LINK_LIBRARIES(tests ${ROBOMONGO_LIB} gtest gtest_main)
     ADD_TEST(NAME tests COMMAND tests)

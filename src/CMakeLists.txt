@@ -388,9 +388,9 @@ ELSEIF(MSVC)
     SET(ALL_LIBS ${MONGO_LIBRARIES} ${ALL_LIBS})
 
     # Creating lib without main.cpp
-    ADD_APP_LIBRARY_MSVC(${PROJECT_NAME} "${ALL_SOURCES}" "${ALL_LIBS}")
-    ADD_DEPENDENCIES(${PROJECT_NAME} mongoclient_release)
-    ADD_DEPENDENCIES(${PROJECT_NAME} mongoclient_debug)
+    ADD_APP_LIBRARY_MSVC(${ROBOMONGO_LIB} "${ALL_SOURCES}" "${ALL_LIBS}")
+    ADD_DEPENDENCIES(${ROBOMONGO_LIB} mongoclient_release)
+    ADD_DEPENDENCIES(${ROBOMONGO_LIB} mongoclient_debug)
 
     # Creating executable
     ADD_APP_EXECUTABLE_MSVC(${PROJECT_NAME} "${ROBOMONGO_EXECUTABLE_SOURCES}" "${ALL_LIBS}")

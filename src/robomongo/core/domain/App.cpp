@@ -1,4 +1,5 @@
 #include "robomongo/core/domain/App.h"
+#include <QHash>
 
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoShell.h"
@@ -13,14 +14,92 @@ namespace Robomongo
 {
     namespace detail
     {
+        QHash<QString, int> reservedNames()
+        {
+            // To get list of this names, execute the following
+            // query in the mongo shell:
+            // for (var field in db) { print(field) }
+            //
+            // We omited all fields that start with '_' symbol.
+            // This case is covered by buildCollectionQuery() function.
+            QHash<QString, int> names;
+            names.insert("prototype", 0);
+            names.insert("one", 0);
+            names.insert("system.indexes", 0);
+            names.insert("getMongo", 0);
+            names.insert("getSiblingDB", 0);
+            names.insert("getSisterDB", 0);
+            names.insert("getName", 0);
+            names.insert("stats", 0);
+            names.insert("getCollection", 0);
+            names.insert("commandHelp", 0);
+            names.insert("runCommand", 0);
+            names.insert("adminCommand", 0);
+            names.insert("addUser", 0);
+            names.insert("changeUserPassword", 0);
+            names.insert("logout", 0);
+            names.insert("removeUser", 0);
+            names.insert("auth", 0);
+            names.insert("createCollection", 0);
+            names.insert("getProfilingLevel", 0);
+            names.insert("getProfilingStatus", 0);
+            names.insert("dropDatabase", 0);
+            names.insert("shutdownServer", 0);
+            names.insert("cloneDatabase", 0);
+            names.insert("cloneCollection", 0);
+            names.insert("copyDatabase", 0);
+            names.insert("repairDatabase", 0);
+            names.insert("help", 0);
+            names.insert("printCollectionStats", 0);
+            names.insert("setProfilingLevel", 0);
+            names.insert("eval", 0);
+            names.insert("dbEval", 0);
+            names.insert("groupeval", 0);
+            names.insert("groupcmd", 0);
+            names.insert("group", 0);
+            names.insert("resetError", 0);
+            names.insert("forceError", 0);
+            names.insert("getLastError", 0);
+            names.insert("getLastErrorObj", 0);
+            names.insert("getLastErrorCmd", 0);
+            names.insert("getPrevError", 0);
+            names.insert("getCollectionNames", 0);
+            names.insert("tojson", 0);
+            names.insert("toString", 0);
+            names.insert("isMaster", 0);
+            names.insert("currentOp", 0);
+            names.insert("currentOP", 0);
+            names.insert("killOp", 0);
+            names.insert("killOP", 0);
+            names.insert("getReplicationInfo", 0);
+            names.insert("printReplicationInfo", 0);
+            names.insert("printSlaveReplicationInfo", 0);
+            names.insert("serverBuildInfo", 0);
+            names.insert("serverStatus", 0);
+            names.insert("hostInfo", 0);
+            names.insert("serverCmdLineOpts", 0);
+            names.insert("version", 0);
+            names.insert("serverBits", 0);
+            names.insert("listCommands", 0);
+            names.insert("printShardingStatus", 0);
+            names.insert("fsyncLock", 0);
+            names.insert("fsyncUnlock", 0);
+            names.insert("setSlaveOk", 0);
+            names.insert("getSlaveOk", 0);
+            names.insert("loadServerScripts", 0);
+            return names;
+        }
+
         QString buildCollectionQuery(const std::string &collectionName, const QString &postfix)
         {
+            static QHash<QString, int> reserved = reservedNames();
+
             QString qCollectionName = QtUtils::toQString(collectionName);
             QChar firstChar = qCollectionName.at(0);
             QRegExp charExp("[^A-Za-z_0-9]"); // valid JS name
 
             QString pattern;
-            if (firstChar == QChar('_')
+            if (firstChar == QChar('_') || reserved.contains(qCollectionName)
                 || qCollectionName == "help"
                 || qCollectionName == "stats"
                 || qCollectionName == "version"

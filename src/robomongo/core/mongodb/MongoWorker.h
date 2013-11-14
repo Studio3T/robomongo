@@ -63,12 +63,12 @@ namespace Robomongo
         void getUsers(EventsInfo::LoadUserInfo &inf); //nothrow
         void createUser(EventsInfo::CreateUserInfo &inf); //nothrow
         void dropUser(EventsInfo::DropUserInfo &inf); //nothrow
+        void executeScript(EventsInfo::ExecuteScriptInfo &inf); //nothrow
+        void getAutoCompleteList(EventsInfo::AutoCompleteInfo &inf); //nothrow
+        void getDatabaseNames(EventsInfo::LoadDatabaseNamesInfo &inf); //nothrow
 
-        std::vector<std::string> getDatabaseNames(ErrorInfo &er); //nothrow
-        std::vector<std::string> getCollectionNames(const std::string &dbname, ErrorInfo &er); //nothrow  
-        
+        std::vector<std::string> getCollectionNames(const std::string &dbname, ErrorInfo &er); //nothrow          
         float getVersion(ErrorInfo &er); //nothrow
-
         std::string getAuthBase() const;        
         mongo::DBClientBase *getConnection(ErrorInfo &er);
 

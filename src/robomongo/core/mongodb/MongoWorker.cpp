@@ -259,7 +259,9 @@ namespace Robomongo
                 }
 
                 if(!er.isError()){
-                    dbNames = getDatabaseNames(er);
+                    EventsInfo::LoadDatabaseNamesInfo inf;
+                    getDatabaseNames(inf);
+                    er = inf._errorInfo;
                     vers = getVersion(er);
                 }
             } catch(const std::exception &ex) {
@@ -628,28 +630,29 @@ namespace Robomongo
         }        
     }
 
-    std::vector<std::string> MongoWorker::getCollectionNames(const std::string &dbname, ErrorInfo &er)
+    void MongoWorker::executeScript(EventsInfo::ExecuteScriptInfo &inf)
     {
-        std::vector<std::string> stringList;
-        mongo::DBClientBase *con = getConnection(er);
-        if (!er.isError()){
-            try {
-                typedef std::list<std::string> cont_string_t;
-                cont_string_t dbs = con->getCollectionNames(dbname);                
-                for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); i++) {
-                    stringList.push_back(*i);
-                }
-                std::sort(stringList.begin(), stringList.end());
-            } catch(const mongo::DBException &ex) {
-                er = ErrorInfo("Unable to load list of collections.", ErrorInfo::_EXCEPTION);
-                LOG_MSG(ex.what(), mongo::LL_ERROR);
-            }
+        try {
+            inf._result = _scriptEngine->exec(inf._script, inf._databaseName);   
+        } catch(const mongo::DBException &ex) {
+            inf._errorInfo = ErrorInfo("Unable to complete query.", ErrorInfo::_EXCEPTION);
+            LOG_MSG(ex.what(), mongo::LL_ERROR);
         }
-        return stringList;
     }
 
-    std::vector<std::string> MongoWorker::getDatabaseNames(ErrorInfo &er)
-    {            
+    void MongoWorker::getAutoCompleteList(EventsInfo::AutoCompleteInfo &inf)
+    {
+        try {
+            inf._list = _scriptEngine->complete(inf._prefix);            
+        } catch(const mongo::DBException &ex) {
+            inf._errorInfo = ErrorInfo("Unable to autocomplete query.", ErrorInfo::_EXCEPTION);
+            LOG_MSG(ex.what(), mongo::LL_ERROR);
+        }
+    }
+
+    void MongoWorker::getDatabaseNames(EventsInfo::LoadDatabaseNamesInfo &inf)
+    {       
+        ErrorInfo &er = inf._errorInfo;
         std::vector<std::string> dbNames;
         mongo::DBClientBase *con = getConnection(er);
         if (!er.isError()){
@@ -657,7 +660,7 @@ namespace Robomongo
             std::string authBase = getAuthBase();
             if (!_isAdmin && !authBase.empty()) {
                 dbNames.push_back(authBase);
-                return dbNames;
+                inf._databaseNames = dbNames;
             }
 
             try { 
@@ -678,7 +681,27 @@ namespace Robomongo
             }    
         }
 
-        return dbNames;
+        inf._databaseNames = dbNames;
+    }
+
+    std::vector<std::string> MongoWorker::getCollectionNames(const std::string &dbname, ErrorInfo &er)
+    {
+        std::vector<std::string> stringList;
+        mongo::DBClientBase *con = getConnection(er);
+        if (!er.isError()){
+            try {
+                typedef std::list<std::string> cont_string_t;
+                cont_string_t dbs = con->getCollectionNames(dbname);                
+                for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); i++) {
+                    stringList.push_back(*i);
+                }
+                std::sort(stringList.begin(), stringList.end());
+            } catch(const mongo::DBException &ex) {
+                er = ErrorInfo("Unable to load list of collections.", ErrorInfo::_EXCEPTION);
+                LOG_MSG(ex.what(), mongo::LL_ERROR);
+            }
+        }
+        return stringList;
     }
 
     float MongoWorker::getVersion(ErrorInfo &er)
@@ -755,7 +778,6 @@ namespace Robomongo
             DropUserEvent *ev = static_cast<DropUserEvent*>(event);
             DropUserEvent::value_type v = ev->value();  
 
-            ErrorInfo er;
             dropUser(v);
             qApp->postEvent(ev->sender(), new DropUserEvent(this, v));
         }
@@ -800,7 +822,6 @@ namespace Robomongo
             DuplicateCollectionEvent *ev = static_cast<DuplicateCollectionEvent*>(event);
             DuplicateCollectionEvent::value_type v = ev->value();            
 
-            ErrorInfo er;
             duplicateCollection(v);
             qApp->postEvent(ev->sender(), new DuplicateCollectionEvent(this, v));
         }
@@ -850,20 +871,14 @@ namespace Robomongo
             LoadDatabaseNamesEvent *ev = static_cast<LoadDatabaseNamesEvent*>(event);
             LoadDatabaseNamesEvent::value_type v = ev->value();            
 
-            ErrorInfo er;
-            v._databaseNames = getDatabaseNames(er);
+            getDatabaseNames(v);
             qApp->postEvent(ev->sender(), new LoadDatabaseNamesEvent(this, v));
         }
         else if(type==static_cast<QEvent::Type>(AutoCompleteEvent::EventType)){
             AutoCompleteEvent *ev = static_cast<AutoCompleteEvent*>(event);
             AutoCompleteEvent::value_type v = ev->value();            
 
-            try {
-                v._list = _scriptEngine->complete(v._prefix);            
-            } catch(const mongo::DBException &ex) {
-                v._errorInfo = ErrorInfo("Unable to autocomplete query.", ErrorInfo::_EXCEPTION);
-                LOG_MSG(ex.what(), mongo::LL_ERROR);
-            }
+            getAutoCompleteList(v);
             qApp->postEvent(ev->sender(), new AutoCompleteEvent(this, v));
         }
         else if(type==static_cast<QEvent::Type>(ExecuteQueryEvent::EventType)){
@@ -877,12 +892,7 @@ namespace Robomongo
             ExecuteScriptEvent *ev = static_cast<ExecuteScriptEvent*>(event);
             ExecuteScriptEvent::value_type v = ev->value();            
 
-            try {
-                v._result = _scriptEngine->exec(v._script, v._databaseName);   
-            } catch(const mongo::DBException &ex) {
-                v._errorInfo = ErrorInfo("Unable to complete query.", ErrorInfo::_EXCEPTION);
-                LOG_MSG(ex.what(), mongo::LL_ERROR);
-            }
+            executeScript(v);
             qApp->postEvent(ev->sender(), new ExecuteScriptEvent(this, v));
         }
         else if(type==static_cast<QEvent::Type>(EstablishConnectionEvent::EventType)){

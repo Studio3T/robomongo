@@ -250,12 +250,12 @@ namespace Robomongo
 
         if (!_isTreeModeInitialized) {
             _bsonTreeview = new BsonTreeView(this);
-            const Notifier &not = _bsonTreeview->notifier();
-            VERIFY(connect(&not, SIGNAL(deletedDocument(BsonTreeItem *, bool)), this, SLOT(deleteDocument(BsonTreeItem *, bool)), Qt::DirectConnection ));
-            VERIFY(connect(&not, SIGNAL(deletedDocuments(std::vector<BsonTreeItem *>, bool)), this, SLOT(deleteDocuments(std::vector<BsonTreeItem *>, bool)), Qt::DirectConnection ));
-            VERIFY(connect(&not, SIGNAL(editedDocument(BsonTreeItem *)), this, SLOT(editDocument(BsonTreeItem *)), Qt::DirectConnection ));
-            VERIFY(connect(&not, SIGNAL(viewDocument(BsonTreeItem *)), this, SLOT(viewDocument(BsonTreeItem *)), Qt::DirectConnection ));
-            VERIFY(connect(&not, SIGNAL(createdDocument()), this, SLOT(createDocument()), Qt::DirectConnection ));
+            const Notifier &notif = _bsonTreeview->notifier();
+            VERIFY(connect(&notif, SIGNAL(deletedDocument(BsonTreeItem *, bool)), this, SLOT(deleteDocument(BsonTreeItem *, bool)), Qt::DirectConnection ));
+            VERIFY(connect(&notif, SIGNAL(deletedDocuments(std::vector<BsonTreeItem *>, bool)), this, SLOT(deleteDocuments(std::vector<BsonTreeItem *>, bool)), Qt::DirectConnection ));
+            VERIFY(connect(&notif, SIGNAL(editedDocument(BsonTreeItem *)), this, SLOT(editDocument(BsonTreeItem *)), Qt::DirectConnection ));
+            VERIFY(connect(&notif, SIGNAL(viewDocument(BsonTreeItem *)), this, SLOT(viewDocument(BsonTreeItem *)), Qt::DirectConnection ));
+            VERIFY(connect(&notif, SIGNAL(createdDocument()), this, SLOT(createDocument()), Qt::DirectConnection ));
             _bsonTreeview->setModel(_mod);
             _stack->addWidget(_bsonTreeview);
             if (AppRegistry::instance().settingsManager()->autoExpand())
@@ -302,12 +302,12 @@ namespace Robomongo
 
         if (!_isTableModeInitialized) {
             _bsonTable = new BsonTableView(this);
-            const Notifier &not = _bsonTable->notifier();
-            VERIFY(connect(&not, SIGNAL(deletedDocument(BsonTreeItem *, bool)), this, SLOT(deleteDocument(BsonTreeItem *, bool)), Qt::DirectConnection ));
-            VERIFY(connect(&not, SIGNAL(deletedDocuments(std::vector<BsonTreeItem *>, bool)), this, SLOT(deleteDocuments(std::vector<BsonTreeItem *>, bool)), Qt::DirectConnection ));
-            VERIFY(connect(&not, SIGNAL(editedDocument(BsonTreeItem *)), this, SLOT(editDocument(BsonTreeItem *)), Qt::DirectConnection ));
-            VERIFY(connect(&not, SIGNAL(viewDocument(BsonTreeItem *)), this, SLOT(viewDocument(BsonTreeItem *)), Qt::DirectConnection ));
-            VERIFY(connect(&not, SIGNAL(createdDocument()), this, SLOT(createDocument()), Qt::DirectConnection ));
+            const Notifier &notif = _bsonTable->notifier();
+            VERIFY(connect(&notif, SIGNAL(deletedDocument(BsonTreeItem *, bool)), this, SLOT(deleteDocument(BsonTreeItem *, bool)), Qt::DirectConnection ));
+            VERIFY(connect(&notif, SIGNAL(deletedDocuments(std::vector<BsonTreeItem *>, bool)), this, SLOT(deleteDocuments(std::vector<BsonTreeItem *>, bool)), Qt::DirectConnection ));
+            VERIFY(connect(&notif, SIGNAL(editedDocument(BsonTreeItem *)), this, SLOT(editDocument(BsonTreeItem *)), Qt::DirectConnection ));
+            VERIFY(connect(&notif, SIGNAL(viewDocument(BsonTreeItem *)), this, SLOT(viewDocument(BsonTreeItem *)), Qt::DirectConnection ));
+            VERIFY(connect(&notif, SIGNAL(createdDocument()), this, SLOT(createDocument()), Qt::DirectConnection ));
 
             BsonTableModelProxy *modp = new BsonTableModelProxy(_bsonTable);
             modp->setSourceModel(_mod);

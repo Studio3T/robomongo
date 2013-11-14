@@ -1,14 +1,12 @@
 #pragma once
 
 #include <QObject>
-#include <mongo/bson/bsonobj.h>
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/events/MongoEvents.hpp"
 
 namespace Robomongo
 {
-    class MongoServer;
     /**
      * @brief Represents MongoDB database.
      */

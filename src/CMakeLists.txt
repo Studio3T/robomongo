@@ -160,8 +160,8 @@ SET(HEADERS_CORE
     robomongo/core/KeyboardManager.h
     robomongo/core/domain/MongoDocument.h
     robomongo/core/domain/MongoShellResult.h
+    robomongo/core/events/MongoEventsInfo.hpp
     robomongo/core/events/MongoEvents.hpp
-    robomongo/core/events/MongoEventsInfo.h
     robomongo/core/AppRegistry.h
     robomongo/core/Core.h
     robomongo/core/settings/CredentialSettings.h
@@ -192,7 +192,6 @@ SET(SOURCES_CORE
     robomongo/core/domain/MongoDatabase.cpp
     robomongo/core/domain/MongoCollection.cpp
     robomongo/core/domain/MongoDocument.cpp
-    robomongo/core/events/MongoEventsInfo.cpp
     robomongo/core/domain/App.cpp
     robomongo/core/domain/MongoShell.cpp
     robomongo/core/engine/ScriptEngine.cpp

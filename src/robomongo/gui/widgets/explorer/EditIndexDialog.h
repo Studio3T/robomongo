@@ -5,7 +5,7 @@ class QLineEdit;
 class QCheckBox;
 class QTextEdit;
 QT_END_NAMESPACE
-#include "robomongo/core/events/MongoEventsInfo.h"
+#include "robomongo/core/events/MongoEventsInfo.hpp"
 
 namespace Robomongo
 {

@@ -32,7 +32,6 @@ namespace Robomongo
         virtual void fetchMore(const QModelIndex &parent);
         virtual bool canFetchMore(const QModelIndex &parent) const;
         virtual bool hasChildren(const QModelIndex &parent = QModelIndex()) const;
-        virtual void customEvent(QEvent *);
 
     protected:
         BsonTreeItem *const _root;

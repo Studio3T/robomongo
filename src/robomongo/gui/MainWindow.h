@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include "robomongo/core/events/MongoEventsInfo.hpp"
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -13,8 +14,6 @@ namespace Robomongo
 {
     class WorkAreaTabWidget;
     class ConnectionMenu;
-    struct ErrorInfo;
-    struct ExecuteScriptInfo;
     class ExplorerWidget;
 
     class MainWindow : public QMainWindow
@@ -54,7 +53,7 @@ namespace Robomongo
         void toggleLogs(bool show);
         void connectToServer(QAction *action);
         void startScriptExecute();
-        void scriptExecute(const ExecuteScriptInfo &inf);
+        void scriptExecute(const EventsInfo::ExecuteScriptInfo &inf);
         void queryWidgetWindowCountChange(int windowCount);
 
     private Q_SLOTS:
@@ -62,7 +61,7 @@ namespace Robomongo
         void setUtcTimeZone();
         void setLocalTimeZone();
         void openPreferences();
-        void connectToServer(const ErrorInfo &error);
+        void connectToServer(const EventsInfo::EstablishConnectionInfo &inf);
 
     private:
         QDockWidget *_logDock;

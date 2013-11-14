@@ -262,17 +262,6 @@ namespace Robomongo
         return true;
     }
 
-    void BsonTreeModel::customEvent(QEvent *event)
-    {
-        QEvent::Type type = event->type();
-        if (type==static_cast<QEvent::Type>(SaveDocumentEvent::EventType)){
-            SaveDocumentEvent *ev = static_cast<SaveDocumentEvent*>(event);
-            SaveDocumentEvent::value_type v = ev->value();
-            
-        }
-        return BaseClass::customEvent(event);
-    }
-
     int BsonTreeModel::rowCount(const QModelIndex &parent) const
     {
         const BsonTreeItem *parentItem=NULL;

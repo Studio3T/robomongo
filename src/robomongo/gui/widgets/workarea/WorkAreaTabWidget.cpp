@@ -211,7 +211,7 @@ namespace Robomongo
         VERIFY(connect(queryWidget, SIGNAL(titleChanged(const QString &)), this, SLOT(tabTextChange(const QString &))));
         VERIFY(connect(queryWidget, SIGNAL(toolTipChanged(const QString &)), this, SLOT(tooltipTextChange(const QString &))));
 
-        VERIFY(connect(queryWidget, SIGNAL(scriptExecuted(const ExecuteScriptInfo &)), this, SIGNAL(scriptExecuted(const ExecuteScriptInfo &)), Qt::DirectConnection));
+        VERIFY(connect(queryWidget, SIGNAL(scriptExecuted(const EventsInfo::ExecuteScriptInfo &)), this, SIGNAL(scriptExecuted(const EventsInfo::ExecuteScriptInfo &)), Qt::DirectConnection));
         VERIFY(connect(queryWidget, SIGNAL(windowCountChanged(int)), this, SIGNAL(windowCountChanged(int)), Qt::DirectConnection));
 
         addTab(queryWidget, shellName);

@@ -265,33 +265,33 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::createIndex(const EnsureIndex &oldInfo, const EnsureIndex &newInfo)
     {
-        EnsureIndexInfo inf(oldInfo, newInfo);
-        _server->postEventToDataBase(new CreateIndexEvent(this, inf));
+        EventsInfo::CreateIndexInfo inf(oldInfo, newInfo);
+        _server->postEventToDataBase(new Events::CreateIndexEvent(this, inf));
         loadIndexes();
     }
 
     void ExplorerCollectionTreeItem::deleteIndex(const std::string &indexName)
     {
-        DeleteIndexInfo inf(_collection->info(), indexName);
-        _server->postEventToDataBase(new DeleteIndexEvent(this, inf));
+        EventsInfo::DeleteIndexInfo inf(_collection->info(), indexName);
+        _server->postEventToDataBase(new Events::DeleteIndexEvent(this, inf));
         loadIndexes();
     }
 
     void ExplorerCollectionTreeItem::customEvent(QEvent *event)
     {
         QEvent::Type type = event->type();
-        if(type==static_cast<QEvent::Type>(LoadCollectionIndexEvent::EventType)){
-            LoadCollectionIndexEvent *ev = static_cast<LoadCollectionIndexEvent*>(event);
-            LoadCollectionIndexEvent::value_type v = ev->value();            
+        if(type==static_cast<QEvent::Type>(Events::LoadCollectionIndexEvent::EventType)){
+            Events::LoadCollectionIndexEvent *ev = static_cast<Events::LoadCollectionIndexEvent*>(event);
+            Events::LoadCollectionIndexEvent::value_type inf = ev->value();            
 
             QtUtils::clearChildItems(_indexDir);
-            for (std::vector<EnsureIndex>::const_iterator it = v._indexes.begin(); it!=v._indexes.end(); ++it) {
+            for (std::vector<EnsureIndex>::const_iterator it = inf._indexes.begin(); it!=inf._indexes.end(); ++it) {
                 _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(_indexDir,*it));
             }
             _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText,_indexDir->childCount()));
         }
-        else if(type==static_cast<QEvent::Type>(DeleteIndexEvent::EventType)){
-            DeleteIndexEvent *ev = static_cast<DeleteIndexEvent*>(event);
+        else if(type==static_cast<QEvent::Type>(Events::DeleteIndexEvent::EventType)){
+            Events::DeleteIndexEvent *ev = static_cast<Events::DeleteIndexEvent*>(event);
         }
         return BaseClass::customEvent(event);
     }
@@ -299,8 +299,8 @@ namespace Robomongo
     void ExplorerCollectionTreeItem::loadIndexes()
     {
         _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, -1));
-        LoadCollectionIndexesInfo inf(_collection->info());
-        _server->postEventToDataBase(new LoadCollectionIndexEvent(this, inf));
+        EventsInfo::LoadCollectionIndexesInfo inf(_collection->info());
+        _server->postEventToDataBase(new Events::LoadCollectionIndexEvent(this, inf));
     }
 
     void ExplorerCollectionTreeItem::expand()

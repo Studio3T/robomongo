@@ -1,12 +1,12 @@
 #pragma once
 
 #include <QTabWidget>
+#include "robomongo/core/events/MongoEventsInfo.hpp"
 
 namespace Robomongo
 {
     class QueryWidget;
     class MongoShell;
-    struct ExecuteScriptInfo;
     /**
      * @brief WorkArea tab widget. Each tab represents MongoDB shell.
      */
@@ -29,7 +29,7 @@ namespace Robomongo
         QueryWidget *queryWidget(int index);
 
     Q_SIGNALS:
-        void scriptExecuted(const ExecuteScriptInfo &inf);
+        void scriptExecuted(const EventsInfo::ExecuteScriptInfo &inf);
         void windowCountChanged(int count);
         void startScriptExecuted();
 

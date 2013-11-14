@@ -36,7 +36,7 @@ namespace Robomongo
 
     Q_SIGNALS:
         void autoCompleteResponced(const QString &prefix,const QStringList &list);
-        void scriptExecuted(const ExecuteScriptInfo &inf);
+        void scriptExecuted(const EventsInfo::ExecuteScriptInfo &inf);
         void startScriptExecuted();
 
     private:        

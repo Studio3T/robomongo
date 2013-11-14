@@ -8,6 +8,7 @@ QT_END_NAMESPACE
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/core/events/MongoEventsInfo.hpp"
 
 namespace Robomongo
 {
@@ -18,8 +19,6 @@ namespace Robomongo
     class OutputWidget;
     class ScriptWidget;
     class MongoShell;
-    struct ExecuteQueryInfo;
-    struct ExecuteScriptInfo;
 
     class QueryWidget : public QWidget
     {
@@ -47,7 +46,7 @@ namespace Robomongo
     Q_SIGNALS:
         void titleChanged(const QString &text);
         void toolTipChanged(const QString &text);
-        void scriptExecuted(const ExecuteScriptInfo &inf);
+        void scriptExecuted(const EventsInfo::ExecuteScriptInfo &inf);
         void windowCountChanged(int count);
 
     public Q_SLOTS:
@@ -61,8 +60,8 @@ namespace Robomongo
         void showProgress();
 
     public Q_SLOTS:
-        void documentListLoad(const ExecuteQueryInfo &inf);
-        void scriptExecute(const ExecuteScriptInfo &inf);        
+        void documentListLoad(const EventsInfo::ExecuteQueryInfo &inf);
+        void scriptExecute(const EventsInfo::ExecuteScriptInfo &inf);        
 
     private:        
         void hideProgress();

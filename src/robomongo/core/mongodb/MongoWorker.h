@@ -4,7 +4,7 @@
 #include <QMutex>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
-#include "robomongo/core/events/MongoEvents.hpp"
+#include "robomongo/core/events/MongoEventsInfo.hpp"
 
 QT_BEGIN_NAMESPACE
 class QThread;
@@ -42,31 +42,32 @@ namespace Robomongo
         virtual void timerEvent(QTimerEvent *);
 
     private:
-        void saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns, bool overwrite, ErrorInfo &er); //nothrow
-        void removeDocuments(const MongoNamespace &ns, mongo::Query query, bool justOne, ErrorInfo &er); //nothrow
-        void dropCollection(const MongoNamespace &ns, ErrorInfo &er); //nothrow
-        void duplicateCollection(const MongoNamespace &ns, const std::string &newCollectionName, ErrorInfo &er); //nothrow
-        void copyCollectionToDiffServer(MongoWorker *cl, const MongoNamespace &from, const MongoNamespace &to, ErrorInfo &er); //nothrow
-        void createCollection(const MongoNamespace &ns, ErrorInfo &er); //nothrow
-        void dropDatabase(const std::string &dbName, ErrorInfo &er); //nothrow
-        void createDatabase(const std::string &dbName, ErrorInfo &er); //nothrow
+        void saveDocument(EventsInfo::SaveDocumentInfo &inf); //nothrow
+        void removeDocuments(EventsInfo::RemoveDocumentInfo &inf); //nothrow
+        void dropCollection(EventsInfo::DropCollectionInfo &inf); //nothrow
+        void duplicateCollection(EventsInfo::DuplicateCollectionInfo &inf); //nothrow
+        void copyCollectionToDiffServer(EventsInfo::CopyCollectionToDiffServerInfo &inf); //nothrow
+        void createCollection(EventsInfo::CreateCollectionInfo &inf); //nothrow
+        void dropDatabase(EventsInfo::DropDatabaseInfo &inf); //nothrow
+        void createDatabase(EventsInfo::CreateDataBaseInfo &inf); //nothrow
+        void establishConnection(EventsInfo::EstablishConnectionInfo &inf); //nothrow
+        void getCollectionInfos(EventsInfo::LoadCollectionInfo &inf); //nothrow
+        void renameCollection(EventsInfo::RenameCollectionInfo &inf); //nothrow
+        void query(EventsInfo::ExecuteQueryInfo &inf); //nothrow
+        void dropIndexFromCollection(EventsInfo::DeleteIndexInfo &inf); //nothrow        
+        void ensureIndex(EventsInfo::CreateIndexInfo &inf); //nothrow
+        void getIndexes(EventsInfo::LoadCollectionIndexesInfo &inf); //nothrow
+        void getFunctions(EventsInfo::LoadFunctionInfo &inf); //nothrow
+        void createFunction(EventsInfo::CreateFunctionInfo &inf); //nothrow
+        void dropFunction(EventsInfo::DropFunctionInfo &inf); //nothrow
+        void getUsers(EventsInfo::LoadUserInfo &inf); //nothrow
+        void createUser(EventsInfo::CreateUserInfo &inf); //nothrow
+        void dropUser(EventsInfo::DropUserInfo &inf); //nothrow
+
         std::vector<std::string> getDatabaseNames(ErrorInfo &er); //nothrow
-        std::vector<std::string> getCollectionNames(const std::string &dbname, ErrorInfo &er); //nothrow
-        std::vector<MongoCollectionInfo> getCollectionInfos(const std::string &dbname, ErrorInfo &er); //nothrow
-        void renameCollection(const MongoNamespace &ns, const std::string &newCollectionName, ErrorInfo &er); //nothrow
-        std::vector<MongoDocumentPtr> query(const MongoQueryInfo &info, ErrorInfo &er); //nothrow
-        void dropIndexFromCollection(const MongoCollectionInfo &collection, const std::string &indexName, ErrorInfo &er); //nothrow
-        void renameIndexFromCollection(const MongoCollectionInfo &collection, const std::string &oldIndexName, const std::string &newIndexName, ErrorInfo &er); //nothrow
-        void ensureIndex(const EnsureIndex &oldInfo,const EnsureIndex &newInfo, ErrorInfo &er); //nothrow
-        std::vector<EnsureIndex> getIndexes(const MongoCollectionInfo &collection, ErrorInfo &er); //nothrow
-        std::vector<MongoFunction> getFunctions(const std::string &dbName, ErrorInfo &er); //nothrow
-        void createFunction(const std::string &dbName, const MongoFunction &fun, const std::string &existingFunctionName, ErrorInfo &er); //nothrow
-        void dropFunction(const std::string &dbName, const std::string &name, ErrorInfo &er); //nothrow
-        std::vector<MongoUser> getUsers(const std::string &dbName, ErrorInfo &er); //nothrow
-        void createUser(const std::string &dbName, const MongoUser &user, bool overwrite, ErrorInfo &er); //nothrow
-        void dropUser(const std::string &dbName, const mongo::OID &id, ErrorInfo &er); //nothrow
+        std::vector<std::string> getCollectionNames(const std::string &dbname, ErrorInfo &er); //nothrow  
+        
         float getVersion(ErrorInfo &er); //nothrow
-        ConnectionInfo establishConnection(ErrorInfo &er); //nothrow
 
         std::string getAuthBase() const;        
         mongo::DBClientBase *getConnection(ErrorInfo &er);

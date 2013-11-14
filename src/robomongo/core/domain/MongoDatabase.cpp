@@ -22,22 +22,22 @@ namespace Robomongo
 
     void MongoDatabase::loadCollections()
     {
-        emit startedCollectionListLoad();
         EventsInfo::LoadCollectionInfo inf(_name);
+        emit startedCollectionListLoad(inf);   
         _server->postEventToDataBase(new Events::LoadCollectionEvent(this, inf));
     }
 
     void MongoDatabase::loadUsers()
     {
-        emit startedUsersLoad();
         EventsInfo::LoadUserInfo inf(_name);
+        emit startedUserListLoad(inf);
         _server->postEventToDataBase(new Events::LoadUserEvent(this, inf));
     }
 
     void MongoDatabase::loadFunctions()
     {
-        emit startedFunctionsLoad();
         EventsInfo::LoadFunctionInfo inf(_name);
+        emit startedFunctionListLoad(inf);
         _server->postEventToDataBase(new Events::LoadFunctionEvent(this, inf));
     }
     void MongoDatabase::createCollection(const std::string &collection)
@@ -114,10 +114,7 @@ namespace Robomongo
         else if(type==static_cast<QEvent::Type>(Events::LoadFunctionEvent::EventType)){
             Events::LoadFunctionEvent *ev = static_cast<Events::LoadFunctionEvent*>(event);
             Events::LoadFunctionEvent::value_type inf = ev->value();
-            ErrorInfo er = inf.errorInfo();
-            if (!er.isError()){
-                emit functionsListLoaded(ev->value()._functions);
-            }
+            emit finishedFunctionListLoad(inf);
         }
         else if(type==static_cast<QEvent::Type>(Events::CreateUserEvent::EventType))
         {
@@ -130,10 +127,7 @@ namespace Robomongo
         else if(type==static_cast<QEvent::Type>(Events::LoadUserEvent::EventType)){
             Events::LoadUserEvent *ev = static_cast<Events::LoadUserEvent*>(event);
             Events::LoadUserEvent::value_type inf = ev->value();
-            ErrorInfo er = inf.errorInfo();
-            if (!er.isError()){
-                emit userListLoaded(ev->value()._users);
-            }
+            emit finishedUserListLoad(inf);
         }
         else if(type==static_cast<QEvent::Type>(Events::CreateCollectionEvent::EventType))
         {
@@ -151,15 +145,15 @@ namespace Robomongo
             Events::LoadCollectionEvent *ev = static_cast<Events::LoadCollectionEvent*>(event);            
             EventsInfo::LoadCollectionInfo inf = ev->value();
             ErrorInfo er = inf.errorInfo();
+            clearCollections();
             if (!er.isError()){
-                clearCollections();
                 for (std::vector<MongoCollectionInfo>::const_iterator it = inf._infos.begin(); it != inf._infos.end(); ++it) {
                     const MongoCollectionInfo &info = *it;
                     MongoCollection *collection = new MongoCollection(this, info);
-                    addCollection(collection);
-                }
-                emit collectionListLoaded(_collections);
-            }            
+                    _collections.push_back(collection);
+                }                
+            }
+            emit finishedCollectionListLoad(inf);
         }
         else if(type==static_cast<QEvent::Type>(Events::DuplicateCollectionEvent::EventType))
         {
@@ -175,10 +169,5 @@ namespace Robomongo
     {
         qDeleteAll(_collections);
         _collections.clear();
-    }
-
-    void MongoDatabase::addCollection(MongoCollection *collection)
-    {
-        _collections.push_back(collection);
     }
 }

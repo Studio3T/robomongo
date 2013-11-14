@@ -15,6 +15,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef std::vector<MongoCollection *> CollectionsContainerType;
         /**
          * @brief MongoDatabase
          * @param server: pointer to parent MongoServer
@@ -57,21 +58,24 @@ namespace Robomongo
 
         MongoServer *server() const { return _server; }
         virtual void customEvent(QEvent *);
+        CollectionsContainerType collections() const { return _collections; }
 
     Q_SIGNALS:
-        void startedCollectionListLoad();
-        void collectionListLoaded(std::vector<MongoCollection *>);
-        void startedUsersLoad();
-        void userListLoaded(std::vector<MongoUser>);
-        void startedFunctionsLoad();
-        void functionsListLoaded(std::vector<MongoFunction>);
+        void startedCollectionListLoad(const EventsInfo::LoadCollectionInfo &inf);
+        void finishedCollectionListLoad(const EventsInfo::LoadCollectionInfo &inf);
+
+        void startedUserListLoad(const EventsInfo::LoadUserInfo &inf);
+        void finishedUserListLoad(const EventsInfo::LoadUserInfo &inf);
+
+        void startedFunctionListLoad(const EventsInfo::LoadFunctionInfo &inf);
+        void finishedFunctionListLoad(const EventsInfo::LoadFunctionInfo &inf);
+
     private:
         void clearCollections();
-        void addCollection(MongoCollection *collection);
 
     private:
         MongoServer *_server;
-        std::vector<MongoCollection *> _collections;
+        CollectionsContainerType _collections;
         const std::string _name;
         const bool _system;
     };

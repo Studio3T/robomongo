@@ -69,12 +69,14 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(dbRepair);
         BaseClass::_contextMenu->addAction(dbDrop);
         
-        VERIFY(connect(_database, SIGNAL(startedCollectionListLoad()), this, SLOT(startCollectionListLoad()), Qt::DirectConnection ));
-        VERIFY(connect(_database, SIGNAL(collectionListLoaded(const std::vector<MongoCollection *>&)), this, SLOT(collectionListLoad(const std::vector<MongoCollection *>&)), Qt::DirectConnection ));
-        VERIFY(connect(_database, SIGNAL(startedUsersLoad()), this, SLOT(startUsersLoad()), Qt::DirectConnection ));
-        VERIFY(connect(_database, SIGNAL(userListLoaded(const std::vector<MongoUser>&)), this, SLOT(userListLoad(const std::vector<MongoUser>&)), Qt::DirectConnection ));        
-        VERIFY(connect(_database, SIGNAL(startedFunctionsLoad()), this, SLOT(startFunctionsLoad()), Qt::DirectConnection ));
-        VERIFY(connect(_database, SIGNAL(functionsListLoaded(std::vector<MongoFunction>)), this, SLOT(functionsListLoad(const std::vector<MongoFunction>&)), Qt::DirectConnection ));
+        VERIFY(connect(_database, SIGNAL(startedCollectionListLoad(const EventsInfo::LoadCollectionInfo &)), this, SLOT(startCollectionListLoad(const EventsInfo::LoadCollectionInfo &)), Qt::DirectConnection ));
+        VERIFY(connect(_database, SIGNAL(finishedCollectionListLoad(const EventsInfo::LoadCollectionInfo &)), this, SLOT(finishCollectionListLoad(const EventsInfo::LoadCollectionInfo &)), Qt::DirectConnection ));
+
+        VERIFY(connect(_database, SIGNAL(startedUserListLoad(const EventsInfo::LoadUserInfo &)), this, SLOT(startUserListLoad(const EventsInfo::LoadUserInfo &)), Qt::DirectConnection ));
+        VERIFY(connect(_database, SIGNAL(finishedUserListLoad(const EventsInfo::LoadUserInfo &)), this, SLOT(finishUserListLoad(const EventsInfo::LoadUserInfo &)), Qt::DirectConnection )); 
+
+        VERIFY(connect(_database, SIGNAL(startedFunctionListLoad(const EventsInfo::LoadFunctionInfo &)), this, SLOT(startFunctionListLoad(const EventsInfo::LoadFunctionInfo &)), Qt::DirectConnection ));
+        VERIFY(connect(_database, SIGNAL(finishedFunctionListLoad(const EventsInfo::LoadFunctionInfo &)), this, SLOT(finishFunctionListLoad(const EventsInfo::LoadFunctionInfo &)), Qt::DirectConnection ));
 
         setText(0, QtUtils::toQString(_database->name()));
         setIcon(0, GuiRegistry::instance().databaseIcon());
@@ -112,69 +114,74 @@ namespace Robomongo
         _database->loadFunctions();
     }
 
-    void ExplorerDatabaseTreeItem::collectionListLoad(const std::vector<MongoCollection *> &collections)
-    {
-        int count = collections.size();
-        _collectionFolderItem->setText(0, detail::buildName("Collections",count));
-
-        QtUtils::clearChildItems(_collectionFolderItem);
-        _collectionSystemFolderItem = new ExplorerTreeItem(_collectionFolderItem);
-        _collectionSystemFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        _collectionSystemFolderItem->setText(0, "System");
-        _collectionFolderItem->addChild(_collectionSystemFolderItem);
-
-        for (int i = 0; i < collections.size(); ++i) {
-            MongoCollection *collection = collections[i];
-
-            if (collection->isSystem()) {
-                addSystemCollectionItem(collection);
-            } else {
-                addCollectionItem(collection);
-            }
-        }
-
-        showCollectionSystemFolderIfNeeded();
-    }
-
-    void ExplorerDatabaseTreeItem::userListLoad(const std::vector<MongoUser>& users)
-    {
-        int count = users.size();
-        _usersFolderItem->setText(0, detail::buildName("Users",count));
-
-        QtUtils::clearChildItems(_usersFolderItem);
-
-        for (int i = 0; i < users.size(); ++i) {
-            MongoUser user = users[i];
-            addUserItem(_database, user);
-        }
-    }
-
-    void ExplorerDatabaseTreeItem::functionsListLoad(const std::vector<MongoFunction> &functions)
-    {
-        int count = functions.size();
-        _javascriptFolderItem->setText(0,  detail::buildName("Functions",count));
-
-        QtUtils::clearChildItems(_javascriptFolderItem);
-
-        for (int i = 0; i < functions.size(); ++i) {
-            MongoFunction fun = functions[i];
-            addFunctionItem(_database, fun);
-        }
-    }
-
-    void ExplorerDatabaseTreeItem::startCollectionListLoad()
+    void ExplorerDatabaseTreeItem::startCollectionListLoad(const EventsInfo::LoadCollectionInfo &)
     {
         _collectionFolderItem->setText(0, detail::buildName("Collections",-1));
     }
 
-    void ExplorerDatabaseTreeItem::startFunctionsLoad()
+    void ExplorerDatabaseTreeItem::finishCollectionListLoad(const EventsInfo::LoadCollectionInfo &inf)
     {
-        _javascriptFolderItem->setText(0, detail::buildName("Functions",-1));
+        ErrorInfo er = inf._errorInfo;
+        QtUtils::clearChildItems(_collectionFolderItem);
+        MongoDatabase::CollectionsContainerType collections = _database->collections();
+        int count = collections.size();
+        _collectionFolderItem->setText(0, detail::buildName("Collections",count));
+
+        if (!er.isError()){            
+            _collectionSystemFolderItem = new ExplorerTreeItem(_collectionFolderItem);
+            _collectionSystemFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
+            _collectionSystemFolderItem->setText(0, "System");
+            _collectionFolderItem->addChild(_collectionSystemFolderItem);
+
+            for (size_t i = 0; i < collections.size(); ++i) {
+                MongoCollection *collection = collections[i];
+
+                if (collection->isSystem()) {
+                    addSystemCollectionItem(collection);
+                } else {
+                    addCollectionItem(collection);
+                }
+            }
+            showCollectionSystemFolderIfNeeded();
+        }
     }
 
-    void ExplorerDatabaseTreeItem::startUsersLoad()
+    void ExplorerDatabaseTreeItem::startUserListLoad(const EventsInfo::LoadUserInfo &inf)
     {
         _usersFolderItem->setText(0, detail::buildName("Users",-1));
+    }
+
+    void ExplorerDatabaseTreeItem::finishUserListLoad(const EventsInfo::LoadUserInfo &inf)
+    {        
+        ErrorInfo er = inf.errorInfo();
+        QtUtils::clearChildItems(_usersFolderItem);
+        int count = inf._users.size();
+        _usersFolderItem->setText(0, detail::buildName("Users",count));
+        if(!er.isError()){
+            for (size_t i = 0; i < inf._users.size(); ++i) {
+                MongoUser user = inf._users[i];
+                addUserItem(_database, user);
+            }
+        }
+    }
+
+    void ExplorerDatabaseTreeItem::finishFunctionListLoad(const EventsInfo::LoadFunctionInfo &inf)
+    {
+        ErrorInfo er = inf.errorInfo();
+        QtUtils::clearChildItems(_javascriptFolderItem);
+        int count = inf._functions.size();
+        _javascriptFolderItem->setText(0,  detail::buildName("Functions",count));
+        if(!er.isError()){
+            for (size_t i = 0; i < inf._functions.size(); ++i) {
+                MongoFunction fun = inf._functions[i];
+                addFunctionItem(_database, fun);
+            }
+        }
+    }
+
+    void ExplorerDatabaseTreeItem::startFunctionListLoad(const EventsInfo::LoadFunctionInfo &)
+    {
+        _javascriptFolderItem->setText(0, detail::buildName("Functions",-1));
     }
 
     void ExplorerDatabaseTreeItem::addCollectionItem(MongoCollection *collection)

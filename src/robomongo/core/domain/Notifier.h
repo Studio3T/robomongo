@@ -28,7 +28,7 @@ namespace Robomongo
         void initMenu(bool isEditable, QMenu *const menu, BsonTreeItem *const item) const;
         void initMultiSelectionMenu(bool isEditable, QMenu *const menu) const;
     
-Q_SIGNALS:
+    Q_SIGNALS:
         void deletedDocument(BsonTreeItem* item, bool force);
         void deletedDocuments(std::vector<BsonTreeItem *> items, bool force);
         void editedDocument(BsonTreeItem *item);

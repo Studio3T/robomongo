@@ -1,5 +1,5 @@
 #include "robomongo/core/domain/Notifier.h"
-#include <QACtion>
+#include <QAction>
 #include <QMenu>
 #include <QClipboard>
 #include <QDialog>

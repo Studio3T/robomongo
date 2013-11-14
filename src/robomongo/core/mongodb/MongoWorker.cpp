@@ -356,7 +356,7 @@ namespace Robomongo
         inf._documents = docs;
     }
 
-    void MongoWorker::dropIndexFromCollection(EventsInfo::DeleteIndexInfo &inf)
+    void MongoWorker::dropIndexFromCollection(EventsInfo::DropIndexInfo &inf)
     {
         ErrorInfo &er = inf._errorInfo;
         mongo::DBClientBase *con = getConnection(er);

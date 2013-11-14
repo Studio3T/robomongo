@@ -1,6 +1,7 @@
 #pragma once
 
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
+#include "robomongo/core/events/MongoEventsInfo.hpp"
 
 namespace Robomongo
 {
@@ -18,7 +19,7 @@ namespace Robomongo
         /*
         ** Constructs ExplorerServerTreeItem
         */
-        ExplorerServerTreeItem(QTreeWidget *view,MongoServer *const server);
+        ExplorerServerTreeItem(QTreeWidget *view, MongoServer *const server);
 
         /*
         ** Expand server tree item;
@@ -26,8 +27,8 @@ namespace Robomongo
         void expand();
 
     public Q_SLOTS:
-        void addDatabases(const QList<MongoDatabase *> &dbs);
-        void startLoadDatabases();
+        void addDatabases(const EventsInfo::LoadDatabaseNamesInfo &inf);
+        void startLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &inf);
 
     private Q_SLOTS:
         void ui_showLog();

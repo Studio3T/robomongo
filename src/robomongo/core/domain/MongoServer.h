@@ -65,15 +65,17 @@ namespace Robomongo
         void loadDatabases();
         bool visible() const { return _visible; }
         void postEventToDataBase(QEvent *event, int priority = Qt::NormalEventPriority) const;
-    
+        DatabasesContainerType databases() const { return _databases; }
+
     Q_SIGNALS:
         void startConnected(const EventsInfo::EstablishConnectionInfo &inf);
         void finishConnected(const EventsInfo::EstablishConnectionInfo &inf);
 
-        void startedLoadDatabases();
-        void databaseListLoaded(const QList<MongoDatabase *> &dbs);
+        void startLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &inf);
+        void finishLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &inf);
 
         void documentListLoaded(const EventsInfo::ExecuteQueryInfo &inf);
+
     protected:
         virtual void customEvent(QEvent *);
 

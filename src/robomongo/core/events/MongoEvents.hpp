@@ -23,7 +23,7 @@ namespace Robomongo
         typedef QtUtils::Event<EventsInfo::CopyCollectionToDiffServerInfo, QEvent::User+14> CopyCollectionToDiffServerEvent;
         typedef QtUtils::Event<EventsInfo::LoadCollectionIndexesInfo, QEvent::User+15> LoadCollectionIndexEvent;
         typedef QtUtils::Event<EventsInfo::CreateIndexInfo, QEvent::User+16> CreateIndexEvent;
-        typedef QtUtils::Event<EventsInfo::DeleteIndexInfo, QEvent::User+17> DeleteIndexEvent;
+        typedef QtUtils::Event<EventsInfo::DropIndexInfo, QEvent::User+17> DeleteIndexEvent;
         typedef QtUtils::Event<EventsInfo::CreateDataBaseInfo, QEvent::User+18> CreateDataBaseEvent;
         typedef QtUtils::Event<EventsInfo::DropDatabaseInfo, QEvent::User+19> DropDatabaseEvent;
         typedef QtUtils::Event<EventsInfo::LoadDatabaseNamesInfo, QEvent::User+20> LoadDatabaseNamesEvent;

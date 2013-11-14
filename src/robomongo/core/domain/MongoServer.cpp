@@ -62,7 +62,7 @@ namespace Robomongo
                     MongoDatabase *db  = new MongoDatabase(this, name);
                     addDatabase(db);
                 }
-                emit databaseListLoaded(_databases);
+                emit finishLoadDatabases(v);
             }
         }
         else if(type==static_cast<QEvent::Type>(Events::SaveDocumentEvent::EventType)){
@@ -184,8 +184,8 @@ namespace Robomongo
 
     void MongoServer::loadDatabases()
     {
-        emit startedLoadDatabases();
         EventsInfo::LoadDatabaseNamesInfo inf;
+        emit startLoadDatabases(inf);
         qApp->postEvent(_client, new Events::LoadDatabaseNamesEvent(this, inf));
     }
 

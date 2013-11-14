@@ -1,6 +1,7 @@
 #pragma once
 
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
+#include "robomongo/core/events/MongoEventsInfo.hpp"
 
 namespace Robomongo
 {
@@ -11,17 +12,7 @@ namespace Robomongo
 
     class ExplorerCollectionTreeItem;
     class ExplorerDatabaseCategoryTreeItem;
-    class MongoDatabaseCollectionListLoadedEvent;
-    class MongoDatabaseUsersLoadedEvent;
-    class MongoDatabaseFunctionsLoadedEvent;
-    class MongoDatabaseCollectionsLoadingEvent;
-    class MongoDatabaseFunctionsLoadingEvent;
-    class MongoDatabaseUsersLoadingEvent;
     class MongoDatabase;
-    class MongoUser;
-    class MongoFunction;
-    class MongoCollection;
-    struct EnsureIndex;
 
     class ExplorerDatabaseTreeItem : public ExplorerTreeItem
     {
@@ -43,12 +34,14 @@ namespace Robomongo
         void ui_dbOpenShell();
         void ui_refreshDatabase();
 
-        void collectionListLoad(const std::vector<MongoCollection *>&);
-        void startCollectionListLoad();
-        void startUsersLoad();
-        void userListLoad(const std::vector<MongoUser>&);
-        void startFunctionsLoad();
-        void functionsListLoad(const std::vector<MongoFunction>&);
+        void startCollectionListLoad(const EventsInfo::LoadCollectionInfo &inf);
+        void finishCollectionListLoad(const EventsInfo::LoadCollectionInfo &inf);
+        
+        void startUserListLoad(const EventsInfo::LoadUserInfo &inf);
+        void finishUserListLoad(const EventsInfo::LoadUserInfo &inf);
+
+        void startFunctionListLoad(const EventsInfo::LoadFunctionInfo &inf);
+        void finishFunctionListLoad(const EventsInfo::LoadFunctionInfo &inf);
     private:
         void addCollectionItem(MongoCollection *collection);
         void addSystemCollectionItem(MongoCollection *collection);

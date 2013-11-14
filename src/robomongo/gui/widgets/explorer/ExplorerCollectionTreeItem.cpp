@@ -272,7 +272,7 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::deleteIndex(const std::string &indexName)
     {
-        EventsInfo::DeleteIndexInfo inf(_collection->info(), indexName);
+        EventsInfo::DropIndexInfo inf(_collection->info(), indexName);
         _server->postEventToDataBase(new Events::DeleteIndexEvent(this, inf));
         loadIndexes();
     }

@@ -272,11 +272,11 @@ namespace Robomongo
             const EnsureIndex _newIndex;
         };
 
-        struct DeleteIndexInfo
+        struct DropIndexInfo
             : public EventInfoBase
         {
             typedef EventInfoBase BaseClass;
-            DeleteIndexInfo(const MongoCollectionInfo &collection, const std::string &name, const ErrorInfo &er = ErrorInfo()) 
+            DropIndexInfo(const MongoCollectionInfo &collection, const std::string &name, const ErrorInfo &er = ErrorInfo()) 
                 :BaseClass(er),_collection(collection), _name(name) {}
             const MongoCollectionInfo _collection;
             std::string _name;

@@ -54,7 +54,7 @@ namespace Robomongo
         void getCollectionInfos(EventsInfo::LoadCollectionInfo &inf); //nothrow
         void renameCollection(EventsInfo::RenameCollectionInfo &inf); //nothrow
         void query(EventsInfo::ExecuteQueryInfo &inf); //nothrow
-        void dropIndexFromCollection(EventsInfo::DeleteIndexInfo &inf); //nothrow        
+        void dropIndexFromCollection(EventsInfo::DropIndexInfo &inf); //nothrow        
         void ensureIndex(EventsInfo::CreateIndexInfo &inf); //nothrow
         void getIndexes(EventsInfo::LoadCollectionIndexesInfo &inf); //nothrow
         void getFunctions(EventsInfo::LoadFunctionInfo &inf); //nothrow

@@ -64,9 +64,9 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(showLog);
         BaseClass::_contextMenu->addAction(disconnectAction);
 
-        VERIFY(connect(_server, SIGNAL(databaseListLoaded(const QList<MongoDatabase *>& )), this, SLOT(addDatabases(const QList<MongoDatabase *>& )), Qt::DirectConnection));
-        VERIFY(connect(_server, SIGNAL(startedLoadDatabases()), this, SLOT(startLoadDatabases()), Qt::DirectConnection));
-
+        VERIFY(connect(_server, SIGNAL(startLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_server, SIGNAL(finishLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &)), this, SLOT(addDatabases(const EventsInfo::LoadDatabaseNamesInfo &)), Qt::DirectConnection));
+        
         setText(0, buildServerName());
         setIcon(0, GuiRegistry::instance().serverIcon());
         setExpanded(false);
@@ -78,40 +78,43 @@ namespace Robomongo
         _server->loadDatabases();
     }
 
-    void ExplorerServerTreeItem::addDatabases(const QList<MongoDatabase *> &dbs)
+    void ExplorerServerTreeItem::addDatabases(const EventsInfo::LoadDatabaseNamesInfo &inf)
     {
-        int count = dbs.count();
-        setText(0, buildServerName(&count));
-
+        ErrorInfo er = inf.errorInfo();
         // Remove child items
         QtUtils::clearChildItems(this);
+        if(!er.isError()){
+            MongoServer::DatabasesContainerType mongoDb = _server->databases();
+            int count = mongoDb.size();
+            setText(0, buildServerName(&count));       
 
-        // Add 'System' folder
-        QIcon folderIcon = GuiRegistry::instance().folderIcon();
-        ExplorerTreeItem *systemFolder = new ExplorerTreeItem(this);
-        systemFolder->setIcon(0, folderIcon);
-        systemFolder->setText(0, "System");
-        addChild(systemFolder);
+            // Add 'System' folder
+            QIcon folderIcon = GuiRegistry::instance().folderIcon();
+            ExplorerTreeItem *systemFolder = new ExplorerTreeItem(this);
+            systemFolder->setIcon(0, folderIcon);
+            systemFolder->setText(0, "System");
+            addChild(systemFolder);
 
-        for (int i = 0; i < dbs.size(); i++)
-        {
-            MongoDatabase *database = dbs.at(i);
+            for (MongoServer::DatabasesContainerType::iterator it = mongoDb.begin(); it != mongoDb.end(); ++it)
+            {
+                MongoDatabase *database = *it;
 
-            if (database->isSystem()) {
-                ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(systemFolder,database);
-                systemFolder->addChild(dbItem);
-                continue;
+                if (database->isSystem()) {
+                    ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(systemFolder,database);
+                    systemFolder->addChild(dbItem);
+                    continue;
+                }
+
+                ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(this,database);
+                addChild(dbItem);
             }
 
-            ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(this,database);
-            addChild(dbItem);
-        }
-
-        // Show 'System' folder only if it has items
-        systemFolder->setHidden(systemFolder->childCount() == 0);
+            // Show 'System' folder only if it has items
+            systemFolder->setHidden(systemFolder->childCount() == 0);
+        }   
     }
 
-    void ExplorerServerTreeItem::startLoadDatabases()
+    void ExplorerServerTreeItem::startLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &inf)
     {
         int count = -1;
         setText(0, buildServerName(&count));

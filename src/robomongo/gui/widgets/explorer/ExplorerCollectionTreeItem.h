@@ -23,9 +23,6 @@ namespace Robomongo
         void expand();
         void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
         ExplorerDatabaseTreeItem *const databaseItem() const { return _databaseItem; }
-        virtual void customEvent(QEvent *); 
-        void createIndex(const EnsureIndex &oldInfo, const EnsureIndex &newInfo);
-        void deleteIndex(const std::string &indexName);
         
     private Q_SLOTS:
         void ui_addDocument();
@@ -44,8 +41,10 @@ namespace Robomongo
         void ui_copyToCollectionToDiffrentServer();
         void ui_viewCollection();
 
+        void startIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &inf);
+        void finishIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &inf);
+
     private:
-        void loadIndexes();
         QString buildToolTip(MongoCollection *collection);
         ExplorerCollectionDirIndexesTreeItem *_indexDir;
         MongoCollection *const _collection;

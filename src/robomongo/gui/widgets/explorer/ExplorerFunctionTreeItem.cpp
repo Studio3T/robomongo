@@ -15,10 +15,8 @@
 namespace Robomongo
 {
 
-    ExplorerFunctionTreeItem::ExplorerFunctionTreeItem(QTreeWidgetItem *parent,MongoDatabase *database, const MongoFunction &function) :
-        BaseClass(parent),
-        _function(function),
-        _database(database)
+    ExplorerFunctionTreeItem::ExplorerFunctionTreeItem(QTreeWidgetItem *parent,MongoDatabase *database, const MongoFunction &function) 
+        : BaseClass(parent),_function(function),_database(database)
     {
 
         QAction *dropFunction = new QAction("Remove Function", this);

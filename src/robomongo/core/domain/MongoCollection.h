@@ -1,13 +1,17 @@
 #pragma once
+#include <QObject>
 
-#include "robomongo/core/domain/MongoDatabase.h"
-#include "robomongo/core/domain/MongoCollectionInfo.h"
+#include "robomongo/core/events/MongoEventsInfo.hpp"
 
 namespace Robomongo
 {
-    class MongoCollection
+    class MongoDatabase;
+
+    class MongoCollection : public QObject
     {
+        Q_OBJECT
     public:
+        typedef QObject BaseClass;
         MongoCollection(MongoDatabase *database, const MongoCollectionInfo &info);
 
         bool isSystem() const { return _system; }
@@ -19,6 +23,16 @@ namespace Robomongo
 
         std::string sizeString() const;
         QString storageSizeString() const;
+        void loadIndexes();
+        void createIndex(const EnsureIndex &oldInfo, const EnsureIndex &newInfo);
+        void dropIndex(const std::string &indexName);
+
+    Q_SIGNALS:
+        void startedIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &inf);
+        void finishedIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &inf);
+
+    protected:
+       virtual void customEvent(QEvent *);
 
     private:
 

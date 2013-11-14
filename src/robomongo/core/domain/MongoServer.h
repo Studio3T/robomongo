@@ -2,7 +2,7 @@
 #include <QObject>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
-#include "robomongo/core/events/MongoEvents.hpp"
+#include "robomongo/core/events/MongoEventsInfo.hpp"
 
 namespace Robomongo
 {

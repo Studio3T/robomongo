@@ -14,6 +14,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
@@ -121,7 +122,7 @@ namespace Robomongo
         if (result != QDialog::Accepted)
             return;
 
-        par->createIndex(fakeInfo, dlg.info());
+        par->collection()->createIndex(fakeInfo, dlg.info());
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_reIndex()
@@ -171,7 +172,7 @@ namespace Robomongo
         if (!grandParent)
             return;
 
-        grandParent->deleteIndex(QtUtils::toStdString(text(0)));
+        grandParent->collection()->dropIndex(QtUtils::toStdString(text(0)));
     }
 
     void ExplorerCollectionIndexesTreeItem::ui_edit()
@@ -187,13 +188,16 @@ namespace Robomongo
             if (result != QDialog::Accepted)
                 return;
 
-            grPar->createIndex(_info, dlg.info());
+            grPar->collection()->createIndex(_info, dlg.info());
         }
     }
 
     ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(MongoServer *server, QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection) :
         BaseClass(parent), _server(server), _collection(collection), _databaseItem(databaseItem)
     {
+        VERIFY(connect(_collection, SIGNAL(startedIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &)), this, SLOT(startIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_collection, SIGNAL(finishedIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &)), this, SLOT(finishIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &)), Qt::DirectConnection));
+
         QAction *addDocument = new QAction("Insert Document...", this);
         VERIFY(connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument())));
 
@@ -263,49 +267,26 @@ namespace Robomongo
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }
 
-    void ExplorerCollectionTreeItem::createIndex(const EnsureIndex &oldInfo, const EnsureIndex &newInfo)
+    void ExplorerCollectionTreeItem::startIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &inf)
     {
-        EventsInfo::CreateIndexInfo inf(oldInfo, newInfo);
-        _server->postEventToDataBase(new Events::CreateIndexEvent(this, inf));
-        loadIndexes();
+        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, -1));
     }
 
-    void ExplorerCollectionTreeItem::deleteIndex(const std::string &indexName)
+    void ExplorerCollectionTreeItem::finishIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &inf)
     {
-        EventsInfo::DropIndexInfo inf(_collection->info(), indexName);
-        _server->postEventToDataBase(new Events::DeleteIndexEvent(this, inf));
-        loadIndexes();
-    }
-
-    void ExplorerCollectionTreeItem::customEvent(QEvent *event)
-    {
-        QEvent::Type type = event->type();
-        if(type==static_cast<QEvent::Type>(Events::LoadCollectionIndexEvent::EventType)){
-            Events::LoadCollectionIndexEvent *ev = static_cast<Events::LoadCollectionIndexEvent*>(event);
-            Events::LoadCollectionIndexEvent::value_type inf = ev->value();            
-
-            QtUtils::clearChildItems(_indexDir);
+        ErrorInfo er = inf.errorInfo();
+        QtUtils::clearChildItems(_indexDir);
+        if(!er.isError()){
             for (std::vector<EnsureIndex>::const_iterator it = inf._indexes.begin(); it!=inf._indexes.end(); ++it) {
                 _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(_indexDir,*it));
             }
             _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText,_indexDir->childCount()));
-        }
-        else if(type==static_cast<QEvent::Type>(Events::DeleteIndexEvent::EventType)){
-            Events::DeleteIndexEvent *ev = static_cast<Events::DeleteIndexEvent*>(event);
-        }
-        return BaseClass::customEvent(event);
-    }
-
-    void ExplorerCollectionTreeItem::loadIndexes()
-    {
-        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, -1));
-        EventsInfo::LoadCollectionIndexesInfo inf(_collection->info());
-        _server->postEventToDataBase(new Events::LoadCollectionIndexEvent(this, inf));
+        }  
     }
 
     void ExplorerCollectionTreeItem::expand()
-    {
-         loadIndexes();
+    {         
+         _collection->loadIndexes();
     }
 
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)

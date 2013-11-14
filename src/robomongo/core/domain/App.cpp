@@ -2,6 +2,7 @@
 
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/utils/QtUtils.h"

@@ -3,7 +3,7 @@
 #include <QObject>
 
 #include "robomongo/core/Core.h"
-#include "robomongo/core/events/MongoEvents.hpp"
+#include "robomongo/core/events/MongoEventsInfo.hpp"
 
 namespace Robomongo
 {

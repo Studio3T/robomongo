@@ -149,6 +149,7 @@ SET(HEADERS_CORE_TO_MOC
     robomongo/core/mongodb/MongoWorker.h
     robomongo/core/domain/MongoServer.h
     robomongo/core/domain/MongoDatabase.h
+    robomongo/core/domain/MongoCollection.h
     robomongo/core/domain/App.h
     robomongo/core/domain/MongoShell.h
     robomongo/core/utils/Logger.h
@@ -166,7 +167,6 @@ SET(HEADERS_CORE
     robomongo/core/Core.h
     robomongo/core/settings/CredentialSettings.h
     robomongo/core/domain/MongoQueryInfo.h
-    robomongo/core/domain/MongoCollection.h
     robomongo/core/domain/MongoCollectionInfo.h
     robomongo/core/domain/MongoUtils.h
     robomongo/core/domain/MongoNamespace.h

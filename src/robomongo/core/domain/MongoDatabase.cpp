@@ -40,6 +40,7 @@ namespace Robomongo
         emit startedFunctionListLoad(inf);
         _server->postEventToDataBase(new Events::LoadFunctionEvent(this, inf));
     }
+
     void MongoDatabase::createCollection(const std::string &collection)
     {
         EventsInfo::CreateCollectionInfo inf(MongoNamespace(_name, collection));

@@ -300,7 +300,7 @@ namespace Robomongo
     {
         MongoDatabase *database = _collection->database();
         MongoServer *server = database->server();
-        IConnectionSettingsBase *settings = server->connectionRecord();
+        const IConnectionSettingsBase *settings = server->connectionRecord();
 
         DocumentTextEditor editor(CollectionInfo(settings->getFullAddress(), database->name(), _collection->name()), "{\n    \n}");
 
@@ -382,7 +382,7 @@ namespace Robomongo
     {
         MongoDatabase *database = _collection->database();
         MongoServer *server = database->server();
-        IConnectionSettingsBase *settings = server->connectionRecord();
+        const IConnectionSettingsBase *settings = server->connectionRecord();
 
         CreateDatabaseDialog dlg(QtUtils::toQString(settings->getFullAddress()),
             QtUtils::toQString(database->name()),
@@ -405,7 +405,7 @@ namespace Robomongo
     {
         MongoDatabase *databaseFrom = _collection->database();
         MongoServer *server = databaseFrom->server();
-        IConnectionSettingsBase *settings = server->connectionRecord();
+        const IConnectionSettingsBase *settings = server->connectionRecord();
 
         CopyCollection dlg(QtUtils::toQString(settings->getFullAddress()), QtUtils::toQString(databaseFrom->name()), QtUtils::toQString(_collection->name()) );
         int result = dlg.exec();
@@ -421,7 +421,7 @@ namespace Robomongo
     {
         MongoDatabase *database = _collection->database();
         MongoServer *server = database->server();
-        IConnectionSettingsBase *settings = server->connectionRecord();
+        const IConnectionSettingsBase *settings = server->connectionRecord();
 
         CreateDatabaseDialog dlg(QtUtils::toQString(settings->getFullAddress()),
             QtUtils::toQString(database->name()),

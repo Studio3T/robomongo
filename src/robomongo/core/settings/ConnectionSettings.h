@@ -34,7 +34,7 @@ namespace Robomongo
          * @brief Default database
          */
         std::string defaultDatabase() const { return _defaultDatabase; }
-        void setDefaultDatabase(const std::string &defaultDatabase) { _defaultDatabase = defaultDatabase; }
+        void setDefaultDatabase(const std::string &defaultDatabase) const { _defaultDatabase = defaultDatabase; }
 
          /**
          * @brief Returns primary credential, or NULL if no credentials exists.
@@ -49,7 +49,7 @@ namespace Robomongo
         ConnectionType connectionType() const { return _connectionType; }
     protected:
         std::string _connectionName;
-        std::string _defaultDatabase;
+        mutable std::string _defaultDatabase;
         CredentialSettings _credential;
         ConnectionType _connectionType;
     };

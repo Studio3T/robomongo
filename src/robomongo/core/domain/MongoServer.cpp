@@ -11,7 +11,7 @@
 
 namespace Robomongo
 {
-    MongoServer::MongoServer(IConnectionSettingsBase *connectionRecord, bool visible) : QObject(),
+    MongoServer::MongoServer(const IConnectionSettingsBase *connectionRecord, bool visible) : QObject(),
         _version(0.0f),
         _visible(visible),
         _client(new MongoWorker(connectionRecord->clone(),AppRegistry::instance().settingsManager()->loadMongoRcJs(),AppRegistry::instance().settingsManager()->batchSize())),
@@ -24,7 +24,7 @@ namespace Robomongo
         return _isConnected;
     }
 
-    IConnectionSettingsBase *MongoServer::connectionRecord() const 
+    const IConnectionSettingsBase *MongoServer::connectionRecord() const 
     { 
         return _client->connectionRecord(); 
     }

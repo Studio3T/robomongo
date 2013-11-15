@@ -205,8 +205,8 @@ namespace Robomongo
             result = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
             BsonTreeItem *node = QtUtils::item<BsonTreeItem*>(index);
 
-            if(index.column()!=BsonTreeItem::eType && !BsonUtils::isDocument(node->type()))
-                result |= Qt::ItemIsEditable;
+            //if(index.column()!=BsonTreeItem::eType && !BsonUtils::isDocument(node->type()))
+            //    result |= Qt::ItemIsEditable;
         }
         return result;
     }

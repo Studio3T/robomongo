@@ -28,7 +28,7 @@ namespace Robomongo
          */
         typedef QObject BaseClass;
         typedef QList<MongoDatabase *> DatabasesContainerType;
-        MongoServer(IConnectionSettingsBase *connectionRecord, bool visible);
+        MongoServer(const IConnectionSettingsBase *connectionRecord, bool visible);
         ~MongoServer();
 
         /**
@@ -56,7 +56,7 @@ namespace Robomongo
         /**
          * @brief Returns associated connection record
          */
-        IConnectionSettingsBase *connectionRecord() const;
+        const IConnectionSettingsBase *connectionRecord() const;
 
         /**
          * @brief Loads databases of this server asynchronously.

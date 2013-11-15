@@ -727,7 +727,7 @@ namespace Robomongo
 
         ErrorInfo er = inf.errorInfo();
         if(er.isError()){
-            IConnectionSettingsBase *connection = server->connectionRecord();
+            const IConnectionSettingsBase *connection = server->connectionRecord();
             QString message = QString("Cannot connect to MongoDB (%1),\nerror: %2").arg(QtUtils::toQString(connection->getFullAddress())).arg(QtUtils::toQString(er._description));
             QMessageBox::information(this, "Error", message);
         }

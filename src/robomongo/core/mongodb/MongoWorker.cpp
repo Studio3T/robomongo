@@ -46,7 +46,7 @@ namespace
 
 namespace Robomongo
 {
-    MongoWorker::MongoWorker(IConnectionSettingsBase *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent) 
+    MongoWorker::MongoWorker(const IConnectionSettingsBase *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent) 
         : QObject(parent),
         _connection(connection),
         _scriptEngine(NULL),
@@ -969,7 +969,7 @@ namespace Robomongo
 
     MongoWorker::~MongoWorker()
     {
-        ReplicasetConnectionSettings *repSettings = dynamic_cast<ReplicasetConnectionSettings *>(_connection);
+        const ReplicasetConnectionSettings *repSettings = dynamic_cast<const ReplicasetConnectionSettings *>(_connection);
         if(repSettings){
             mongo::ReplicaSetMonitor::remove(repSettings->replicaName());// fix crash on exit
         }
@@ -1003,7 +1003,7 @@ namespace Robomongo
                 _dbclient = conn;
             }
             else if(conType == IConnectionSettingsBase::REPLICASET){
-                ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings *>(_connection);
+                const ReplicasetConnectionSettings *set = dynamic_cast<const ReplicasetConnectionSettings *>(_connection);
                 VERIFY(set);
 
                 mongo::DBClientReplicaSet *conn = new mongo::DBClientReplicaSet(set->replicaName(),set->serversHostsInfo());           
@@ -1013,7 +1013,7 @@ namespace Robomongo
 
         if(_dbclient && !_isConnected){ //try to connect
             if(conType == IConnectionSettingsBase::DIRECT){
-                ConnectionSettings *con = dynamic_cast<ConnectionSettings *>(_connection);
+                const ConnectionSettings *con = dynamic_cast<const ConnectionSettings *>(_connection);
                 VERIFY(con);
 
                 mongo::DBClientConnection *conCon = dynamic_cast<mongo::DBClientConnection *>(_dbclient);

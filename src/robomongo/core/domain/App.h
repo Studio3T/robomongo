@@ -43,7 +43,7 @@ namespace Robomongo
          * @param connection: ConnectionSettings, that will be owned by MongoServer.
          * @param visible: should this server be visible in UI (explorer) or not.
          */
-        MongoServer *openServer(IConnectionSettingsBase *connection, bool visible);
+        MongoServer *openServer(const IConnectionSettingsBase *connection, bool visible);
 
         /**
          * @brief Closes MongoServer connection and frees all resources, owned
@@ -64,7 +64,7 @@ namespace Robomongo
                               bool execute = true, const QString &shellName = QString(),
                               const CursorPosition &cursorPosition = CursorPosition(),const QString &filePathToSave=QString());
 
-        MongoShell *openShell(IConnectionSettingsBase *connection, const ScriptInfo &scriptInfo);
+        MongoShell *openShell(const IConnectionSettingsBase *connection, const ScriptInfo &scriptInfo);
         MongoServersContainerType getServers() const {return _servers; };
 
         /**

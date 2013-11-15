@@ -52,7 +52,7 @@ namespace Robomongo
      * @param connection: ConnectionSettings, that will be owned by MongoServer.
      * @param visible: should this server be visible in UI (explorer) or not.
      */
-    MongoServer *App::openServer(IConnectionSettingsBase *connection, bool visible)
+    MongoServer *App::openServer(const IConnectionSettingsBase *connection, bool visible)
     {
         MongoServer *server = new MongoServer(connection, visible);
         _servers.push_back(server);
@@ -71,7 +71,7 @@ namespace Robomongo
 
     MongoShell *App::openShell(MongoCollection *collection,const QString &filePathToSave)
     {
-        IConnectionSettingsBase *connection = collection->database()->server()->connectionRecord();
+        const IConnectionSettingsBase *connection = collection->database()->server()->connectionRecord();
         connection->setDefaultDatabase(collection->database()->name());
         QString script = detail::buildCollectionQuery(collection->name(), "find()");
         return openShell(connection, ScriptInfo(script, true, CursorPosition(), QtUtils::toQString(collection->database()->name()),filePathToSave));
@@ -81,7 +81,7 @@ namespace Robomongo
                                bool execute, const QString &shellName,
                                const CursorPosition &cursorPosition,const QString &filePathToSave)
     {
-        IConnectionSettingsBase *connection = server->connectionRecord();
+        const IConnectionSettingsBase *connection = server->connectionRecord();
 
         if (!dbName.empty())
             connection->setDefaultDatabase(dbName);
@@ -93,12 +93,12 @@ namespace Robomongo
                                bool execute, const QString &shellName,
                                const CursorPosition &cursorPosition,const QString &filePathToSave)
     {
-        IConnectionSettingsBase *connection = database->server()->connectionRecord();
+        const IConnectionSettingsBase *connection = database->server()->connectionRecord();
         connection->setDefaultDatabase(database->name());
         return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName,filePathToSave));
     }
 
-    MongoShell *App::openShell(IConnectionSettingsBase *connection, const ScriptInfo &scriptInfo)
+    MongoShell *App::openShell(const IConnectionSettingsBase *connection, const ScriptInfo &scriptInfo)
     {
         MongoServer *server = openServer(connection, false);
         MongoShell *shell = new MongoShell(server,scriptInfo);

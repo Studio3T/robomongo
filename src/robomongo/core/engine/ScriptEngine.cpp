@@ -47,7 +47,7 @@ namespace mongo {
 
 namespace Robomongo
 {
-    ScriptEngine::ScriptEngine(IConnectionSettingsBase *connection) :
+    ScriptEngine::ScriptEngine(const IConnectionSettingsBase *connection) :
         _connection(connection),
         _scope(NULL),
         _engine(NULL) { }
@@ -70,7 +70,7 @@ namespace Robomongo
         ss << "db = connect('";
         IConnectionSettingsBase::ConnectionType conType = _connection->connectionType();
         if (conType == IConnectionSettingsBase::REPLICASET){
-            ReplicasetConnectionSettings *set = dynamic_cast<ReplicasetConnectionSettings *>(_connection);
+            const ReplicasetConnectionSettings *set = dynamic_cast<const ReplicasetConnectionSettings *>(_connection);
             VERIFY(set);
 
             ss << set->replicaName() << "/";

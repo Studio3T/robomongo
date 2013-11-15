@@ -34,35 +34,35 @@ namespace Robomongo
 
     void MongoCollection::loadIndexes()
     {
-        EventsInfo::LoadCollectionIndexesInfo inf(_info);
+        EventsInfo::LoadCollectionIndexesRequestInfo inf(_info);
         emit startedIndexListLoad(inf);
-        _database->server()->postEventToDataBase(new Events::LoadCollectionIndexEvent(this, inf));
+        _database->server()->postEventToDataBase(new Events::LoadCollectionIndexRequestEvent(this, inf));
     }
 
     void MongoCollection::createIndex(const EnsureIndex &oldInfo, const EnsureIndex &newInfo)
     {
         EventsInfo::CreateIndexInfo inf(oldInfo, newInfo);
-        _database->server()->postEventToDataBase(new Events::CreateIndexEvent(this, inf));
+        _database->server()->postEventToDataBase(new Events::CreateIndexRequestEvent(this, inf));
         loadIndexes();
     }
 
     void MongoCollection::dropIndex(const std::string &indexName)
     {
         EventsInfo::DropIndexInfo inf(_info, indexName);
-        _database->server()->postEventToDataBase(new Events::DeleteIndexEvent(this, inf));
+        _database->server()->postEventToDataBase(new Events::DropIndexRequestEvent(this, inf));
         loadIndexes();
     }
 
     void MongoCollection::customEvent(QEvent *event)
     {
         QEvent::Type type = event->type();
-        if(type==static_cast<QEvent::Type>(Events::LoadCollectionIndexEvent::EventType)){
-            Events::LoadCollectionIndexEvent *ev = static_cast<Events::LoadCollectionIndexEvent*>(event);
-            Events::LoadCollectionIndexEvent::value_type inf = ev->value();            
+        if(type==static_cast<QEvent::Type>(Events::LoadCollectionIndexResponceEvent::EventType)){
+            Events::LoadCollectionIndexResponceEvent *ev = static_cast<Events::LoadCollectionIndexResponceEvent*>(event);
+            Events::LoadCollectionIndexResponceEvent::value_type inf = ev->value();            
             emit finishedIndexListLoad(inf);
         }
-        else if(type==static_cast<QEvent::Type>(Events::DeleteIndexEvent::EventType)){
-            Events::DeleteIndexEvent *ev = static_cast<Events::DeleteIndexEvent*>(event);
+        else if(type==static_cast<QEvent::Type>(Events::DropIndexRequestEvent::EventType)){
+            Events::DropIndexRequestEvent *ev = static_cast<Events::DropIndexRequestEvent*>(event);
         }
         return BaseClass::customEvent(event);
     }

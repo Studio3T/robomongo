@@ -520,9 +520,9 @@ namespace Robomongo
         if (result == QDialog::Accepted) {
             IConnectionSettingsBase *selected = dialog.selectedConnection();
             Robomongo::MongoServer *server = Robomongo::AppRegistry::instance().app()->openServer(selected, true);
-            VERIFY(connect(server, SIGNAL(startConnected(const EventsInfo::EstablishConnectionInfo &)), _explorer, SLOT(increaseProgress()), Qt::DirectConnection));
-            VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionInfo &)), _explorer, SLOT(decreaseProgress()), Qt::DirectConnection));
-            VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionInfo &)), this, SLOT(connectToServer(const EventsInfo::EstablishConnectionInfo &)), Qt::DirectConnection));
+            VERIFY(connect(server, SIGNAL(startConnected(const EventsInfo::EstablishConnectionRequestInfo &)), _explorer, SLOT(increaseProgress()), Qt::DirectConnection));
+            VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionResponceInfo &)), _explorer, SLOT(decreaseProgress()), Qt::DirectConnection));
+            VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionResponceInfo &)), this, SLOT(connectToServer(const EventsInfo::EstablishConnectionResponceInfo &)), Qt::DirectConnection));
             server->tryConnect();            
         }
 
@@ -697,9 +697,9 @@ namespace Robomongo
         QVariant data = connectionAction->data();
         IConnectionSettingsBase *ptr = qvariant_cast<IConnectionSettingsBase *>(data);
         Robomongo::MongoServer *server = Robomongo::AppRegistry::instance().app()->openServer(ptr, true);
-        VERIFY(connect(server, SIGNAL(startConnected(const EventsInfo::EstablishConnectionInfo &)), _explorer, SLOT(increaseProgress()), Qt::DirectConnection));
-        VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionInfo &)), _explorer, SLOT(decreaseProgress()), Qt::DirectConnection));
-        VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionInfo &)), this, SLOT(connectToServer(const EventsInfo::EstablishConnectionInfo &)), Qt::DirectConnection));
+        VERIFY(connect(server, SIGNAL(startConnected(const EventsInfo::EstablishConnectionRequestInfo &)), _explorer, SLOT(increaseProgress()), Qt::DirectConnection));
+        VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionRequestInfo &)), _explorer, SLOT(decreaseProgress()), Qt::DirectConnection));
+        VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionResponceInfo &)), this, SLOT(connectToServer(const EventsInfo::EstablishConnectionResponceInfo &)), Qt::DirectConnection));
         server->tryConnect();
     }
 
@@ -709,7 +709,7 @@ namespace Robomongo
         _executeAction->setDisabled(true);
     }
 
-    void MainWindow::scriptExecute(const EventsInfo::ExecuteScriptInfo &inf)
+    void MainWindow::scriptExecute(const EventsInfo::ExecuteScriptResponceInfo &inf)
     {
         _stopAction->setDisabled(true);
         _executeAction->setDisabled(false);
@@ -720,10 +720,11 @@ namespace Robomongo
         _orientationAction->setVisible(windowCount > 1);
     }
 
-    void MainWindow::connectToServer(const EventsInfo::EstablishConnectionInfo &inf)
+    void MainWindow::connectToServer(const EventsInfo::EstablishConnectionResponceInfo &inf)
     {
         MongoServer *server = qobject_cast<MongoServer*>(sender());
         VERIFY(server);
+
         ErrorInfo er = inf.errorInfo();
         if(er.isError()){
             IConnectionSettingsBase *connection = server->connectionRecord();
@@ -794,7 +795,7 @@ namespace Robomongo
     void MainWindow::createTabs()
     {
         _workArea = new WorkAreaTabWidget(this);
-        VERIFY(connect(_workArea, SIGNAL(scriptExecuted(const EventsInfo::ExecuteScriptInfo &)), this, SLOT(scriptExecute(const EventsInfo::ExecuteScriptInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_workArea, SIGNAL(scriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &)), this, SLOT(scriptExecute(const EventsInfo::ExecuteScriptResponceInfo &)), Qt::DirectConnection));
         VERIFY(connect(_workArea, SIGNAL(windowCountChanged(int)), this, SLOT(queryWidgetWindowCountChange(int)), Qt::DirectConnection));
         VERIFY(connect(_workArea, SIGNAL(startScriptExecuted()), this, SLOT(startScriptExecute()), Qt::DirectConnection));
 

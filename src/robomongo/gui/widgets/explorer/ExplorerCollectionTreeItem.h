@@ -41,8 +41,8 @@ namespace Robomongo
         void ui_copyToCollectionToDiffrentServer();
         void ui_viewCollection();
 
-        void startIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &inf);
-        void finishIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &inf);
+        void startIndexListLoad(const EventsInfo::LoadCollectionIndexesRequestInfo &inf);
+        void finishIndexListLoad(const EventsInfo::LoadCollectionIndexesResponceInfo &inf);
 
     private:
         QString buildToolTip(MongoCollection *collection);

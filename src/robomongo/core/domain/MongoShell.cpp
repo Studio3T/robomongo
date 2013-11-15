@@ -24,8 +24,8 @@ namespace Robomongo
         emit startScriptExecuted();
         _scriptInfo.setScript(QtUtils::toQString(script));
 
-        EventsInfo::ExecuteScriptInfo inf(query(), dbName, 0, 0);
-        _server->postEventToDataBase(new Events::ExecuteScriptEvent(this,inf));
+        EventsInfo::ExecuteScriptRequestInfo inf(query(), dbName, 0, 0);
+        _server->postEventToDataBase(new Events::ExecuteScriptRequestEvent(this,inf));
         LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
     }
 
@@ -38,21 +38,21 @@ namespace Robomongo
     {
         emit startScriptExecuted();
         if (_scriptInfo.execute()) {
-            EventsInfo::ExecuteScriptInfo inf(query(), dbName, 0, 0);
-            _server->postEventToDataBase(new Events::ExecuteScriptEvent(this,inf));
+            EventsInfo::ExecuteScriptRequestInfo inf(query(), dbName, 0, 0);
+            _server->postEventToDataBase(new Events::ExecuteScriptRequestEvent(this,inf));
             if(!_scriptInfo.script().isEmpty())
                 LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
         } else {
             _scriptInfo.setScript("");
-            EventsInfo::ExecuteScriptInfo inf(query(), dbName, 0, 0);
-            _server->postEventToDataBase(new Events::ExecuteScriptEvent(this,inf));
+            EventsInfo::ExecuteScriptRequestInfo inf(query(), dbName, 0, 0);
+            _server->postEventToDataBase(new Events::ExecuteScriptRequestEvent(this,inf));
         }        
     }
 
     void MongoShell::autocomplete(const std::string &prefix)
     {
-        EventsInfo::AutoCompleteInfo inf(prefix);
-        _server->postEventToDataBase(new Events::AutoCompleteEvent(this,inf));
+        EventsInfo::AutoCompleteRequestInfo inf(prefix);
+        _server->postEventToDataBase(new Events::AutoCompleteRequestEvent(this,inf));
     }
 
     void MongoShell::stop()
@@ -78,14 +78,14 @@ namespace Robomongo
     void MongoShell::customEvent(QEvent *event)
     {
         QEvent::Type type = event->type();
-        if(type==static_cast<QEvent::Type>(Events::AutoCompleteEvent::EventType)){
-            Events::AutoCompleteEvent *ev = static_cast<Events::AutoCompleteEvent*>(event);
-            Events::AutoCompleteEvent::value_type v = ev->value();
+        if(type==static_cast<QEvent::Type>(Events::AutoCompleteResponceEvent::EventType)){
+            Events::AutoCompleteResponceEvent *ev = static_cast<Events::AutoCompleteResponceEvent*>(event);
+            Events::AutoCompleteResponceEvent::value_type v = ev->value();
             emit autoCompleteResponced(QtUtils::toQString(v._prefix), v._list);
         }
-        else if(type==static_cast<QEvent::Type>(Events::ExecuteScriptEvent::EventType)){
-            Events::ExecuteScriptEvent *ev = static_cast<Events::ExecuteScriptEvent*>(event);
-            Events::ExecuteScriptEvent::value_type v = ev->value();
+        else if(type==static_cast<QEvent::Type>(Events::ExecuteScriptResponceEvent::EventType)){
+            Events::ExecuteScriptResponceEvent *ev = static_cast<Events::ExecuteScriptResponceEvent*>(event);
+            Events::ExecuteScriptResponceEvent::value_type v = ev->value();
             emit scriptExecuted(v);
         }
 

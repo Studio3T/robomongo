@@ -5,72 +5,18 @@
 #include "robomongo/core/utils/ErrorInfo.hpp"
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoNamespace.h"
-#include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/domain/MongoFunction.h"
 #include "robomongo/core/domain/MongoUser.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/core/EnsureIndex.h"
 #include <mongo/bson/bsonobj.h>
 #include <mongo/client/dbclientinterface.h>
+
 
 namespace Robomongo
 {   
     class MongoServer;
-
-    struct EnsureIndex
-    {
-        EnsureIndex(
-            const MongoCollectionInfo &collection,
-            const std::string &name = std::string(),
-            const std::string &request = std::string(),
-            bool isUnique = false,
-            bool isBackGround = false,
-            bool isDropDuplicates = false,
-            bool isSparce = false,
-            int expireAfter = 0,
-            const std::string &defaultLanguage = std::string(),
-            const std::string &languageOverride = std::string(),
-            const std::string &textWeights = std::string()):
-        _name(name),
-            _collection(collection),
-            _request(request),
-            _unique(isUnique),
-            _backGround(isBackGround),
-            _dropDups(isDropDuplicates),
-            _sparse(isSparce),
-            _ttl(expireAfter),
-            _defaultLanguage(defaultLanguage),
-            _languageOverride(languageOverride),
-            _textWeights(textWeights) {}
-
-        MongoCollectionInfo _collection;
-        std::string _name;
-        std::string _request;
-        bool _unique;
-        bool _backGround;
-        bool _dropDups;
-        bool _sparse;
-        int _ttl;
-        std::string _defaultLanguage;
-        std::string _languageOverride;
-        std::string _textWeights;
-    };
-
-    struct ConnectionInfo
-    {
-        ConnectionInfo():
-            _address(),
-            _databases(),
-            _version(0.0f) {}
-        ConnectionInfo(const std::string &address, const std::vector<std::string> &databases, float version):
-            _address(address),
-            _databases(databases),
-            _version(version) {}
-
-        std::string _address;
-        std::vector<std::string> _databases;
-        float _version;
-    };
 
     namespace EventsInfo
     {
@@ -87,11 +33,11 @@ namespace Robomongo
             ErrorInfo _errorInfo;
         };
 
-        struct RemoveDocumentInfo 
+        struct RemoveDocumenInfo 
             : public EventInfoBase
         {
             typedef EventInfoBase BaseClass;
-            RemoveDocumentInfo(const mongo::Query &query, const MongoNamespace &ns, bool justOne, const ErrorInfo &er = ErrorInfo())
+            RemoveDocumenInfo(const mongo::Query &query, const MongoNamespace &ns, bool justOne, const ErrorInfo &er = ErrorInfo())
                 :BaseClass(er), _query(query), _ns(ns), _justOne(justOne){}
 
             mongo::Query _query;
@@ -137,17 +83,6 @@ namespace Robomongo
             bool _overwrite;
         };
 
-        struct LoadFunctionInfo
-            : public EventInfoBase
-        {
-            typedef EventInfoBase BaseClass;
-            LoadFunctionInfo(const std::string &database, const std::vector<MongoFunction> &func = std::vector<MongoFunction>(), const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_database(database), _functions(func){}
-
-            std::string _database;
-            std::vector<MongoFunction> _functions;
-        };
-
         struct CreateUserInfo
             : public EventInfoBase
         {
@@ -171,19 +106,6 @@ namespace Robomongo
 
             std::string _database;
             mongo::OID _id;
-        };
-
-        struct LoadUserInfo
-            : public EventInfoBase
-        {
-            typedef EventInfoBase BaseClass;
-            LoadUserInfo(const std::string &database, const std::vector<MongoUser> &users = std::vector<MongoUser>(), const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_database(database),_users(users)
-            {
-            }
-
-            std::string _database;
-            std::vector<MongoUser> _users;
         };
 
         struct CreateCollectionInfo
@@ -217,19 +139,6 @@ namespace Robomongo
             std::string _name;
         };
 
-        struct LoadCollectionInfo
-            : public EventInfoBase
-        {
-            typedef EventInfoBase BaseClass;
-            LoadCollectionInfo(const std::string &database, const std::vector<MongoCollectionInfo> &infos = std::vector<MongoCollectionInfo>(), const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_database(database),_infos(infos)
-            {
-            }
-
-            std::string _database;
-            std::vector<MongoCollectionInfo> _infos;
-        };
-
         struct DuplicateCollectionInfo
             : public EventInfoBase
         {
@@ -250,16 +159,6 @@ namespace Robomongo
             MongoServer *_server;
             const MongoNamespace _from;
             const MongoNamespace _to;
-        };
-
-        struct LoadCollectionIndexesInfo
-            : public EventInfoBase
-        {
-            typedef EventInfoBase BaseClass;
-            LoadCollectionIndexesInfo(const MongoCollectionInfo &collection,const std::vector<EnsureIndex> &indexes = std::vector<EnsureIndex>(), const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_collection(collection),_indexes(indexes){}
-            MongoCollectionInfo _collection;
-            std::vector<EnsureIndex> _indexes;
         };
 
         struct CreateIndexInfo
@@ -300,65 +199,224 @@ namespace Robomongo
             std::string _database;
         };
 
-        struct LoadDatabaseNamesInfo
+//////////////////////////////////////////////////////////////////////////
+        
+        struct ExecuteQueryRequestInfo
             : public EventInfoBase
         {
             typedef EventInfoBase BaseClass;
-            LoadDatabaseNamesInfo(const std::vector<std::string> &database = std::vector<std::string>(), const ErrorInfo &er = ErrorInfo())
-                : BaseClass(er),_databaseNames(database){}
-            std::vector<std::string> _databaseNames;
+            ExecuteQueryRequestInfo(int resultIndex, const MongoQueryInfo &queryInfo, const ErrorInfo &er = ErrorInfo()) 
+                : BaseClass(er),_resultIndex(resultIndex), _queryInfo(queryInfo){}
+
+            const int _resultIndex;
+            const MongoQueryInfo _queryInfo;   
         };
 
-        struct AutoCompleteInfo
-            : public EventInfoBase
+        struct ExecuteQueryResponceInfo
+            : public ExecuteQueryRequestInfo
         {
-            typedef EventInfoBase BaseClass;
-            AutoCompleteInfo(const std::string &prefix, const QStringList &list = QStringList(), const ErrorInfo &er = ErrorInfo())
-                : BaseClass(er),_prefix(prefix), _list(list){}
+            typedef ExecuteQueryRequestInfo BaseClass;
+            explicit ExecuteQueryResponceInfo(const ExecuteQueryRequestInfo& req)
+                :BaseClass(req),_documents(){}
 
-            std::string _prefix;
-            QStringList _list;   //replace QStringList to std::vector    
-        };
+            ExecuteQueryResponceInfo(int resultIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents, const ErrorInfo &er = ErrorInfo()) 
+                : BaseClass(resultIndex, queryInfo, er), _documents(documents){}
 
-        struct ExecuteQueryInfo
-            : public EventInfoBase
-        {
-            typedef EventInfoBase BaseClass;
-            ExecuteQueryInfo(int resultIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents = std::vector<MongoDocumentPtr>(), const ErrorInfo &er = ErrorInfo()) 
-                : BaseClass(er),_resultIndex(resultIndex), _queryInfo(queryInfo), _documents(documents){}
-
-            int _resultIndex;
-            MongoQueryInfo _queryInfo;
             std::vector<MongoDocumentPtr> _documents;   
         };
 
-        struct ExecuteScriptInfo
+        struct ExecuteScriptRequestInfo
             : public EventInfoBase
         {
             typedef EventInfoBase BaseClass;
-            ExecuteScriptInfo(const std::string &script, const std::string &dbName, int take, int skip, const MongoShellExecResult &result = MongoShellExecResult(), bool empty = false, const ErrorInfo &er = ErrorInfo()) 
+            ExecuteScriptRequestInfo(const std::string &script, const std::string &dbName, int take, int skip, const ErrorInfo &er = ErrorInfo()) 
                 :BaseClass(er),_script(script),
                 _databaseName(dbName), _take(take),
-                _skip(skip),_result(result),
-                _empty(empty) {}
+                _skip(skip) {}
 
-            std::string _script;
-            std::string _databaseName;
-            int _take; //
-            int _skip;
+            const std::string _script;
+            const std::string _databaseName;
+            const int _take; //
+            const int _skip;
+        };
+
+        struct ExecuteScriptResponceInfo
+            : public ExecuteScriptRequestInfo
+        {
+            typedef ExecuteScriptRequestInfo BaseClass;
+            explicit ExecuteScriptResponceInfo(const ExecuteScriptRequestInfo& req)
+                :BaseClass(req),_result(),_empty() {}
+
+            ExecuteScriptResponceInfo(const std::string &script, const std::string &dbName, int take, int skip, const MongoShellExecResult &result, bool empty, const ErrorInfo &er = ErrorInfo()) 
+                :BaseClass(script, dbName, take, skip, er), _result(result), _empty(empty) {}
 
             MongoShellExecResult _result;
             bool _empty;
         };
 
-        struct EstablishConnectionInfo
+        struct EstablishConnectionRequestInfo
             : public EventInfoBase
         {
             typedef EventInfoBase BaseClass;
-            EstablishConnectionInfo(const ConnectionInfo &info = ConnectionInfo(), const ErrorInfo &er = ErrorInfo())
+            EstablishConnectionRequestInfo(const ErrorInfo &er = ErrorInfo())
+                :BaseClass(er){}
+        };
+
+        struct EstablishConnectionResponceInfo
+            : public EstablishConnectionRequestInfo
+        {
+            typedef EstablishConnectionRequestInfo BaseClass;
+            explicit EstablishConnectionResponceInfo(const EstablishConnectionRequestInfo& req)
+                :BaseClass(req),_info(){}
+
+            EstablishConnectionResponceInfo(const ConnectionInfo &info, const ErrorInfo &er = ErrorInfo())
                 :BaseClass(er),_info(info){}
 
             ConnectionInfo _info;
+        };
+
+        struct LoadFunctionRequestInfo
+            : public EventInfoBase
+        {
+            typedef EventInfoBase BaseClass;
+            LoadFunctionRequestInfo(const std::string &database, const ErrorInfo &er = ErrorInfo())
+                :BaseClass(er),_database(database){}
+
+            std::string _database;
+        };
+
+        struct LoadFunctionResponceInfo
+            : public LoadFunctionRequestInfo
+        {
+            typedef LoadFunctionRequestInfo BaseClass;
+            explicit LoadFunctionResponceInfo(const LoadFunctionRequestInfo& req)
+                :BaseClass(req),_functions(){}
+
+            LoadFunctionResponceInfo(const std::string &database, const std::vector<MongoFunction> &func, const ErrorInfo &er = ErrorInfo())
+                :BaseClass(database, er), _functions(func){}
+
+            std::vector<MongoFunction> _functions;
+        };
+
+        struct LoadUserRequestInfo
+            : public EventInfoBase
+        {
+            typedef EventInfoBase BaseClass;
+            LoadUserRequestInfo(const std::string &database, const ErrorInfo &er = ErrorInfo())
+                :BaseClass(er),_database(database)
+            {
+            }
+
+            const std::string _database;
+        };
+
+        struct LoadUserResponceInfo
+            : public LoadUserRequestInfo
+        {
+            typedef LoadUserRequestInfo BaseClass;
+            explicit LoadUserResponceInfo(const LoadUserRequestInfo& req)
+                :BaseClass(req),_users(){}
+
+            LoadUserResponceInfo(const std::string &database, const std::vector<MongoUser> &users, const ErrorInfo &er = ErrorInfo())
+                :BaseClass(database, er),_users(users)
+            {
+            }
+
+            std::vector<MongoUser> _users;
+        };
+
+        struct LoadCollectionRequestInfo
+            : public EventInfoBase
+        {
+            typedef EventInfoBase BaseClass;
+            LoadCollectionRequestInfo(const std::string &database, const ErrorInfo &er = ErrorInfo())
+                :BaseClass(er),_database(database)
+            {
+            }
+
+            const std::string _database;
+        };
+
+        struct LoadCollectionResponceInfo
+            : public LoadCollectionRequestInfo
+        {
+            typedef LoadCollectionRequestInfo BaseClass;
+
+            explicit LoadCollectionResponceInfo(const LoadCollectionRequestInfo& req)
+                :BaseClass(req),_infos(){}
+
+            LoadCollectionResponceInfo(const std::string &database, const std::vector<MongoCollectionInfo> &infos, const ErrorInfo &er = ErrorInfo())
+                :BaseClass(database, er),_infos(infos)
+            {
+            }
+
+            std::vector<MongoCollectionInfo> _infos;
+        };
+
+        struct LoadCollectionIndexesRequestInfo
+            : public EventInfoBase
+        {
+            typedef EventInfoBase BaseClass;
+            LoadCollectionIndexesRequestInfo(const MongoCollectionInfo &collection, const ErrorInfo &er = ErrorInfo())
+                :BaseClass(er),_collection(collection){}
+
+            const MongoCollectionInfo _collection;
+        };
+
+        struct LoadCollectionIndexesResponceInfo
+            : public LoadCollectionIndexesRequestInfo
+        {
+            typedef LoadCollectionIndexesRequestInfo BaseClass;
+            explicit LoadCollectionIndexesResponceInfo(const LoadCollectionIndexesRequestInfo& req)
+                :BaseClass(req),_indexes(){}
+
+            LoadCollectionIndexesResponceInfo(const MongoCollectionInfo &collection, const std::vector<EnsureIndex> &indexes, const ErrorInfo &er = ErrorInfo())
+                :BaseClass(collection,er),_indexes(indexes){}
+
+            std::vector<EnsureIndex> _indexes;
+        };
+
+        struct LoadDatabaseNamesRequestInfo
+            : public EventInfoBase
+        {
+            typedef EventInfoBase BaseClass;
+            LoadDatabaseNamesRequestInfo(const ErrorInfo &er = ErrorInfo())
+                : BaseClass(er){}
+        };
+
+        struct LoadDatabaseNamesResponceInfo
+            : public LoadDatabaseNamesRequestInfo
+        {
+            typedef LoadDatabaseNamesRequestInfo BaseClass;
+            explicit LoadDatabaseNamesResponceInfo(const LoadDatabaseNamesRequestInfo &req):BaseClass(req), _databases(){}
+
+            LoadDatabaseNamesResponceInfo(const std::vector<std::string> &databases, const ErrorInfo &er = ErrorInfo())
+                : BaseClass(er),_databases(databases){}
+
+            std::vector<std::string> _databases;
+        };
+
+        struct AutoCompleteRequestInfo
+            : public EventInfoBase
+        {
+            typedef EventInfoBase BaseClass;
+            AutoCompleteRequestInfo(const std::string &prefix, const ErrorInfo &er = ErrorInfo())
+                : BaseClass(er),_prefix(prefix){}
+
+            const std::string _prefix;  
+        };
+
+        struct AutoCompleteResponceInfo
+            : public AutoCompleteRequestInfo
+        {
+            typedef AutoCompleteRequestInfo BaseClass;
+            explicit AutoCompleteResponceInfo(const AutoCompleteRequestInfo& req)
+                :BaseClass(req),_list(){}
+
+            AutoCompleteResponceInfo(const std::string &prefix, const QStringList &list, const ErrorInfo &er = ErrorInfo())
+                : BaseClass(prefix, er), _list(list){}
+
+            QStringList _list;   //replace QStringList to std::vector    
         };
     }
 }

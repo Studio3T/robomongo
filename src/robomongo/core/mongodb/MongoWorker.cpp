@@ -88,7 +88,7 @@ namespace Robomongo
         }
     }
 
-    void MongoWorker::removeDocuments(EventsInfo::RemoveDocumentInfo &inf)
+    void MongoWorker::removeDocuments(EventsInfo::RemoveDocumenInfo &inf)
     {
         ErrorInfo &er = inf._errorInfo;
         mongo::DBClientBase *con = getConnection(er);
@@ -227,7 +227,7 @@ namespace Robomongo
         }
     }
 
-    void MongoWorker::establishConnection(EventsInfo::EstablishConnectionInfo &inf)
+    void MongoWorker::establishConnection(EventsInfo::EstablishConnectionResponceInfo &inf)
     {
         ErrorInfo &er = inf._errorInfo;
         QMutexLocker lock(&_firstConnectionMutex);
@@ -259,7 +259,8 @@ namespace Robomongo
                 }
 
                 if(!er.isError()){
-                    EventsInfo::LoadDatabaseNamesInfo inf;
+                    EventsInfo::LoadDatabaseNamesRequestInfo tmp;
+                    EventsInfo::LoadDatabaseNamesResponceInfo inf(tmp);
                     getDatabaseNames(inf);
                     er = inf._errorInfo;
                     vers = getVersion(er);
@@ -273,7 +274,7 @@ namespace Robomongo
         inf._info = ConnectionInfo(_connection->getFullAddress(), dbNames, vers);
     }
 
-    void MongoWorker::getCollectionInfos(EventsInfo::LoadCollectionInfo &inf)
+    void MongoWorker::getCollectionInfos(EventsInfo::LoadCollectionResponceInfo &inf)
     {
         ErrorInfo &er = inf._errorInfo;
         std::vector<std::string> namespaces = getCollectionNames(inf._database, er);
@@ -324,7 +325,7 @@ namespace Robomongo
         }       
     }  
 
-    void MongoWorker::query(EventsInfo::ExecuteQueryInfo &inf)
+    void MongoWorker::query(EventsInfo::ExecuteQueryResponceInfo &inf)
     {
         ErrorInfo &er = inf._errorInfo;
         mongo::DBClientBase *con = getConnection(er);
@@ -445,7 +446,7 @@ namespace Robomongo
         }
     }
 
-    void MongoWorker::getIndexes(EventsInfo::LoadCollectionIndexesInfo &inf)
+    void MongoWorker::getIndexes(EventsInfo::LoadCollectionIndexesResponceInfo &inf)
     {
         ErrorInfo &er = inf._errorInfo;
         mongo::DBClientBase *con = getConnection(er);
@@ -466,7 +467,7 @@ namespace Robomongo
         inf._indexes = result;
     }
 
-    void MongoWorker::getFunctions(EventsInfo::LoadFunctionInfo &inf)
+    void MongoWorker::getFunctions(EventsInfo::LoadFunctionResponceInfo &inf)
     {
         ErrorInfo &er = inf._errorInfo;
         mongo::DBClientBase *con = getConnection(er);
@@ -558,7 +559,7 @@ namespace Robomongo
         }
     }
 
-    void MongoWorker::getUsers(EventsInfo::LoadUserInfo &inf)
+    void MongoWorker::getUsers(EventsInfo::LoadUserResponceInfo &inf)
     {
         ErrorInfo &er = inf._errorInfo;
         MongoNamespace ns(inf._database, "system.users");
@@ -630,7 +631,7 @@ namespace Robomongo
         }        
     }
 
-    void MongoWorker::executeScript(EventsInfo::ExecuteScriptInfo &inf)
+    void MongoWorker::executeScript(EventsInfo::ExecuteScriptResponceInfo &inf)
     {
         try {
             inf._result = _scriptEngine->exec(inf._script, inf._databaseName);   
@@ -640,7 +641,7 @@ namespace Robomongo
         }
     }
 
-    void MongoWorker::getAutoCompleteList(EventsInfo::AutoCompleteInfo &inf)
+    void MongoWorker::getAutoCompleteList(EventsInfo::AutoCompleteResponceInfo &inf)
     {
         try {
             inf._list = _scriptEngine->complete(inf._prefix);            
@@ -650,7 +651,7 @@ namespace Robomongo
         }
     }
 
-    void MongoWorker::getDatabaseNames(EventsInfo::LoadDatabaseNamesInfo &inf)
+    void MongoWorker::getDatabaseNames(EventsInfo::LoadDatabaseNamesResponceInfo &inf)
     {       
         ErrorInfo &er = inf._errorInfo;
         std::vector<std::string> dbNames;
@@ -660,7 +661,7 @@ namespace Robomongo
             std::string authBase = getAuthBase();
             if (!_isAdmin && !authBase.empty()) {
                 dbNames.push_back(authBase);
-                inf._databaseNames = dbNames;
+                inf._databases = dbNames;
             }
 
             try { 
@@ -681,7 +682,7 @@ namespace Robomongo
             }    
         }
 
-        inf._databaseNames = dbNames;
+        inf._databases = dbNames;
     }
 
     std::vector<std::string> MongoWorker::getCollectionNames(const std::string &dbname, ErrorInfo &er)
@@ -727,180 +728,189 @@ namespace Robomongo
     {
         using namespace Events;
         QEvent::Type type = event->type();
-        if (type==static_cast<QEvent::Type>(RemoveDocumentEvent::EventType)){
-            RemoveDocumentEvent *ev = static_cast<RemoveDocumentEvent*>(event);
-            RemoveDocumentEvent::value_type v = ev->value();
+        if (type==static_cast<QEvent::Type>(RemoveDocumentRequestEvent::EventType)){
+            RemoveDocumentRequestEvent *ev = static_cast<RemoveDocumentRequestEvent*>(event);
+            RemoveDocumentRequestEvent::value_type v = ev->value();
     
             removeDocuments(v);
-            qApp->postEvent(ev->sender(), new RemoveDocumentEvent(this, v));
+            qApp->postEvent(ev->sender(), new RemoveDocumentResponceEvent(this, v));
         }
-        else if (type==static_cast<QEvent::Type>(SaveDocumentEvent::EventType)){
-            SaveDocumentEvent *ev = static_cast<SaveDocumentEvent*>(event);
-            SaveDocumentEvent::value_type v = ev->value();
+        else if (type==static_cast<QEvent::Type>(SaveDocumentRequestEvent::EventType)){
+            SaveDocumentRequestEvent *ev = static_cast<SaveDocumentRequestEvent*>(event);
+            SaveDocumentRequestEvent::value_type v = ev->value();
 
             saveDocument(v);            
-            qApp->postEvent(ev->sender(), new SaveDocumentEvent(this, v));
+            qApp->postEvent(ev->sender(), new SaveDocumentResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(DropFunctionEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(DropFunctionRequestEvent::EventType))
         {
-            DropFunctionEvent *ev = static_cast<DropFunctionEvent*>(event);
-            DropFunctionEvent::value_type v = ev->value();
+            DropFunctionRequestEvent *ev = static_cast<DropFunctionRequestEvent*>(event);
+            DropFunctionRequestEvent::value_type v = ev->value();
 
             dropFunction(v);
-            qApp->postEvent(ev->sender(), new DropFunctionEvent(this, v));
+            qApp->postEvent(ev->sender(), new DropFunctionResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(CreateFunctionEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(CreateFunctionRequestEvent::EventType))
         {
-            CreateFunctionEvent *ev = static_cast<CreateFunctionEvent*>(event);
-            CreateFunctionEvent::value_type v = ev->value();            
+            CreateFunctionRequestEvent *ev = static_cast<CreateFunctionRequestEvent*>(event);
+            CreateFunctionRequestEvent::value_type v = ev->value();            
 
             createFunction(v);
-            qApp->postEvent(ev->sender(), new CreateFunctionEvent(this, v));
+            qApp->postEvent(ev->sender(), new CreateFunctionResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(LoadFunctionEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(LoadFunctionRequestEvent::EventType))
         {
-            LoadFunctionEvent *ev = static_cast<LoadFunctionEvent*>(event);
-            LoadFunctionEvent::value_type v = ev->value();            
+            LoadFunctionRequestEvent *ev = static_cast<LoadFunctionRequestEvent*>(event);
+            LoadFunctionRequestEvent::value_type v = ev->value();            
 
-            getFunctions(v);
-            qApp->postEvent(ev->sender(), new LoadFunctionEvent(this, v));
+            LoadFunctionResponceEvent::value_type res(v);
+            getFunctions(res);
+            qApp->postEvent(ev->sender(), new LoadFunctionResponceEvent(this, res));
         }
-        else if(type==static_cast<QEvent::Type>(CreateUserEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(CreateUserRequestEvent::EventType))
         {
-            CreateUserEvent *ev = static_cast<CreateUserEvent*>(event);
-            CreateUserEvent::value_type v = ev->value();  
+            CreateUserRequestEvent *ev = static_cast<CreateUserRequestEvent*>(event);
+            CreateUserRequestEvent::value_type v = ev->value();  
             
             createUser(v);
-            qApp->postEvent(ev->sender(), new CreateUserEvent(this, v));
+            qApp->postEvent(ev->sender(), new CreateUserResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(DropUserEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(DropUserRequestEvent::EventType))
         {
-            DropUserEvent *ev = static_cast<DropUserEvent*>(event);
-            DropUserEvent::value_type v = ev->value();  
+            DropUserRequestEvent *ev = static_cast<DropUserRequestEvent*>(event);
+            DropUserRequestEvent::value_type v = ev->value();  
 
             dropUser(v);
-            qApp->postEvent(ev->sender(), new DropUserEvent(this, v));
+            qApp->postEvent(ev->sender(), new DropUserResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(LoadUserEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(LoadUserRequestEvent::EventType))
         {
-            LoadUserEvent *ev = static_cast<LoadUserEvent*>(event);
-            LoadUserEvent::value_type v = ev->value();            
+            LoadUserRequestEvent *ev = static_cast<LoadUserRequestEvent*>(event);
+            LoadUserRequestEvent::value_type v = ev->value();            
 
-            getUsers(v);
-            qApp->postEvent(ev->sender(), new LoadUserEvent(this, v));
+            LoadUserResponceEvent::value_type res(v);
+            getUsers(res);
+            qApp->postEvent(ev->sender(), new LoadUserResponceEvent(this, res));
         }
-        else if(type==static_cast<QEvent::Type>(CreateCollectionEvent::EventType)){
-            CreateCollectionEvent *ev = static_cast<CreateCollectionEvent*>(event);
-            CreateCollectionEvent::value_type v = ev->value();  
+        else if(type==static_cast<QEvent::Type>(CreateCollectionRequestEvent::EventType)){
+            CreateCollectionRequestEvent *ev = static_cast<CreateCollectionRequestEvent*>(event);
+            CreateCollectionRequestEvent::value_type v = ev->value();  
 
             createCollection(v);
-            qApp->postEvent(ev->sender(), new CreateCollectionEvent(this, v));
+            qApp->postEvent(ev->sender(), new CreateCollectionResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(DropCollectionEvent::EventType)){
-            DropCollectionEvent *ev = static_cast<DropCollectionEvent*>(event);
-            DropCollectionEvent::value_type v = ev->value();  
+        else if(type==static_cast<QEvent::Type>(DropCollectionRequestEvent::EventType)){
+            DropCollectionRequestEvent *ev = static_cast<DropCollectionRequestEvent*>(event);
+            DropCollectionRequestEvent::value_type v = ev->value();  
 
             dropCollection(v);
-            qApp->postEvent(ev->sender(), new DropCollectionEvent(this, v));
+            qApp->postEvent(ev->sender(), new DropCollectionResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(RenameCollectionEvent::EventType)){
-            RenameCollectionEvent *ev = static_cast<RenameCollectionEvent*>(event);
-            RenameCollectionEvent::value_type v = ev->value();  
+        else if(type==static_cast<QEvent::Type>(RenameCollectionRequestEvent::EventType)){
+            RenameCollectionRequestEvent *ev = static_cast<RenameCollectionRequestEvent*>(event);
+            RenameCollectionRequestEvent::value_type v = ev->value();  
 
             renameCollection(v);
-            qApp->postEvent(ev->sender(), new RenameCollectionEvent(this, v));
+            qApp->postEvent(ev->sender(), new RenameCollectionResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(LoadCollectionEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(LoadCollectionRequestEvent::EventType))
         {
-            LoadCollectionEvent *ev = static_cast<LoadCollectionEvent*>(event);
-            LoadCollectionEvent::value_type v = ev->value();            
+            LoadCollectionRequestEvent *ev = static_cast<LoadCollectionRequestEvent*>(event);
+            LoadCollectionRequestEvent::value_type v = ev->value();            
 
-            getCollectionInfos(v);
-            qApp->postEvent(ev->sender(), new LoadCollectionEvent(this, v));
+            LoadCollectionResponceEvent::value_type res(v);
+            getCollectionInfos(res);
+            qApp->postEvent(ev->sender(), new LoadCollectionResponceEvent(this, res));
         }
-        else if(type==static_cast<QEvent::Type>(DuplicateCollectionEvent::EventType)){
-            DuplicateCollectionEvent *ev = static_cast<DuplicateCollectionEvent*>(event);
-            DuplicateCollectionEvent::value_type v = ev->value();            
+        else if(type==static_cast<QEvent::Type>(DuplicateCollectionRequestEvent::EventType)){
+            DuplicateCollectionRequestEvent *ev = static_cast<DuplicateCollectionRequestEvent*>(event);
+            DuplicateCollectionRequestEvent::value_type v = ev->value();            
 
             duplicateCollection(v);
-            qApp->postEvent(ev->sender(), new DuplicateCollectionEvent(this, v));
+            qApp->postEvent(ev->sender(), new DuplicateCollectionResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(CopyCollectionToDiffServerEvent::EventType)){
-            CopyCollectionToDiffServerEvent *ev = static_cast<CopyCollectionToDiffServerEvent*>(event);
-            CopyCollectionToDiffServerEvent::value_type v = ev->value();            
+        else if(type==static_cast<QEvent::Type>(CopyCollectionToDiffServerRequestEvent::EventType)){
+            CopyCollectionToDiffServerRequestEvent *ev = static_cast<CopyCollectionToDiffServerRequestEvent*>(event);
+            CopyCollectionToDiffServerRequestEvent::value_type v = ev->value();            
 
             copyCollectionToDiffServer(v);
-            qApp->postEvent(ev->sender(), new CopyCollectionToDiffServerEvent(this, v));
+            qApp->postEvent(ev->sender(), new CopyCollectionToDiffServerResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(LoadCollectionIndexEvent::EventType)){
-            LoadCollectionIndexEvent *ev = static_cast<LoadCollectionIndexEvent*>(event);
-            LoadCollectionIndexEvent::value_type v = ev->value();            
+        else if(type==static_cast<QEvent::Type>(LoadCollectionIndexRequestEvent::EventType)){
+            LoadCollectionIndexRequestEvent *ev = static_cast<LoadCollectionIndexRequestEvent*>(event);
+            LoadCollectionIndexRequestEvent::value_type v = ev->value();            
 
-            getIndexes(v);
-            qApp->postEvent(ev->sender(), new LoadCollectionIndexEvent(this, v));
+            LoadCollectionIndexResponceEvent::value_type res(v);
+            getIndexes(res);
+            qApp->postEvent(ev->sender(), new LoadCollectionIndexResponceEvent(this, res));
         }
-        else if(type==static_cast<QEvent::Type>(CreateIndexEvent::EventType)){
-            CreateIndexEvent *ev = static_cast<CreateIndexEvent*>(event);
-            CreateIndexEvent::value_type v = ev->value();            
+        else if(type==static_cast<QEvent::Type>(CreateIndexRequestEvent::EventType)){
+            CreateIndexRequestEvent *ev = static_cast<CreateIndexRequestEvent*>(event);
+            CreateIndexRequestEvent::value_type v = ev->value();            
 
             ensureIndex(v);
-            qApp->postEvent(ev->sender(), new CreateIndexEvent(this, v));
+            qApp->postEvent(ev->sender(), new CreateIndexResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(DeleteIndexEvent::EventType)){
-            DeleteIndexEvent *ev = static_cast<DeleteIndexEvent*>(event);
-            DeleteIndexEvent::value_type v = ev->value();            
+        else if(type==static_cast<QEvent::Type>(DropIndexRequestEvent::EventType)){
+            DropIndexRequestEvent *ev = static_cast<DropIndexRequestEvent*>(event);
+            DropIndexRequestEvent::value_type v = ev->value();            
 
             dropIndexFromCollection(v);
-            qApp->postEvent(ev->sender(), new DeleteIndexEvent(this, v));
+            qApp->postEvent(ev->sender(), new DropIndexResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(CreateDataBaseEvent::EventType)){
-            CreateDataBaseEvent *ev = static_cast<CreateDataBaseEvent*>(event);
-            CreateDataBaseEvent::value_type v = ev->value();            
+        else if(type==static_cast<QEvent::Type>(CreateDataBaseRequestEvent::EventType)){
+            CreateDataBaseRequestEvent *ev = static_cast<CreateDataBaseRequestEvent*>(event);
+            CreateDataBaseRequestEvent::value_type v = ev->value();            
 
             createDatabase(v);
-            qApp->postEvent(ev->sender(), new CreateDataBaseEvent(this, v));
+            qApp->postEvent(ev->sender(), new CreateDataBaseResponceEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(DropDatabaseEvent::EventType)){
-            DropDatabaseEvent *ev = static_cast<DropDatabaseEvent*>(event);
-            DropDatabaseEvent::value_type v = ev->value();            
+        else if(type==static_cast<QEvent::Type>(DropDatabaseRequestEvent::EventType)){
+            DropDatabaseRequestEvent *ev = static_cast<DropDatabaseRequestEvent*>(event);
+            DropDatabaseRequestEvent::value_type v = ev->value();            
 
             dropDatabase(v);
-            qApp->postEvent(ev->sender(), new DropDatabaseEvent(this, v));
+            qApp->postEvent(ev->sender(), new DropDatabaseRequestEvent(this, v));
         }
-        else if(type==static_cast<QEvent::Type>(LoadDatabaseNamesEvent::EventType)){
-            LoadDatabaseNamesEvent *ev = static_cast<LoadDatabaseNamesEvent*>(event);
-            LoadDatabaseNamesEvent::value_type v = ev->value();            
+        else if(type==static_cast<QEvent::Type>(LoadDatabaseNamesRequestEvent::EventType)){
+            LoadDatabaseNamesRequestEvent *ev = static_cast<LoadDatabaseNamesRequestEvent*>(event);
+            LoadDatabaseNamesRequestEvent::value_type v = ev->value();            
 
-            getDatabaseNames(v);
-            qApp->postEvent(ev->sender(), new LoadDatabaseNamesEvent(this, v));
+            LoadDatabaseNamesResponceEvent::value_type res(v);
+            getDatabaseNames(res);
+            qApp->postEvent(ev->sender(), new LoadDatabaseNamesResponceEvent(this, res));
         }
-        else if(type==static_cast<QEvent::Type>(AutoCompleteEvent::EventType)){
-            AutoCompleteEvent *ev = static_cast<AutoCompleteEvent*>(event);
-            AutoCompleteEvent::value_type v = ev->value();            
+        else if(type==static_cast<QEvent::Type>(AutoCompleteRequestEvent::EventType)){
+            AutoCompleteRequestEvent *ev = static_cast<AutoCompleteRequestEvent*>(event);
+            AutoCompleteRequestEvent::value_type v = ev->value();
 
-            getAutoCompleteList(v);
-            qApp->postEvent(ev->sender(), new AutoCompleteEvent(this, v));
+            AutoCompleteResponceEvent::value_type res(v);
+            getAutoCompleteList(res);
+            qApp->postEvent(ev->sender(), new AutoCompleteResponceEvent(this, res));
         }
-        else if(type==static_cast<QEvent::Type>(ExecuteQueryEvent::EventType)){
-            ExecuteQueryEvent *ev = static_cast<ExecuteQueryEvent*>(event);
-            ExecuteQueryEvent::value_type v = ev->value();            
+        else if(type==static_cast<QEvent::Type>(ExecuteQueryRequestEvent::EventType)){
+            ExecuteQueryRequestEvent *ev = static_cast<ExecuteQueryRequestEvent*>(event);
+            ExecuteQueryRequestEvent::value_type v = ev->value();            
 
-            query(v);
-            qApp->postEvent(ev->sender(), new ExecuteQueryEvent(this, v));
+            ExecuteQueryResponceEvent::value_type res(v);
+            query(res);
+            qApp->postEvent(ev->sender(), new ExecuteQueryResponceEvent(this, res));
         }
-        else if(type==static_cast<QEvent::Type>(ExecuteScriptEvent::EventType)){
-            ExecuteScriptEvent *ev = static_cast<ExecuteScriptEvent*>(event);
-            ExecuteScriptEvent::value_type v = ev->value();            
+        else if(type==static_cast<QEvent::Type>(ExecuteScriptRequestEvent::EventType)){
+            ExecuteScriptRequestEvent *ev = static_cast<ExecuteScriptRequestEvent*>(event);
+            ExecuteScriptRequestEvent::value_type v = ev->value();  
 
-            executeScript(v);
-            qApp->postEvent(ev->sender(), new ExecuteScriptEvent(this, v));
+            ExecuteScriptResponceEvent::value_type res(v);
+            executeScript(res);
+            qApp->postEvent(ev->sender(), new ExecuteScriptResponceEvent(this, res));
         }
-        else if(type==static_cast<QEvent::Type>(EstablishConnectionEvent::EventType)){
-            EstablishConnectionEvent *ev = static_cast<EstablishConnectionEvent*>(event);
-            EstablishConnectionEvent::value_type v = ev->value();            
+        else if(type==static_cast<QEvent::Type>(EstablishConnectionRequestEvent::EventType)){
+            EstablishConnectionRequestEvent *ev = static_cast<EstablishConnectionRequestEvent*>(event);
+            EstablishConnectionRequestEvent::value_type v = ev->value();
 
-            establishConnection(v);
-            qApp->postEvent(ev->sender(), new EstablishConnectionEvent(this, v));
+            EstablishConnectionResponceEvent::value_type res(v);
+            establishConnection(res);
+            qApp->postEvent(ev->sender(), new EstablishConnectionResponceEvent(this, res));
         }
 
         return BaseClass::customEvent(event);

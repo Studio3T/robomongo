@@ -28,8 +28,8 @@ namespace Robomongo
         void dropIndex(const std::string &indexName);
 
     Q_SIGNALS:
-        void startedIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &inf);
-        void finishedIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &inf);
+        void startedIndexListLoad(const EventsInfo::LoadCollectionIndexesRequestInfo &inf);
+        void finishedIndexListLoad(const EventsInfo::LoadCollectionIndexesResponceInfo &inf);
 
     protected:
        virtual void customEvent(QEvent *);

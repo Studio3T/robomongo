@@ -40,7 +40,6 @@ namespace Robomongo
 
         void createDatabase(const std::string &dbName);
         void dropDatabase(const std::string &dbName);
-        void copyCollectionToDiffServer(const EventsInfo::CopyCollectionToDiffServerInfo &inf);
 
         QStringList getDatabasesNames() const;
         MongoDatabase *findDatabaseByName(const std::string &dbName) const;
@@ -68,13 +67,13 @@ namespace Robomongo
         DatabasesContainerType databases() const { return _databases; }
 
     Q_SIGNALS:
-        void startConnected(const EventsInfo::EstablishConnectionInfo &inf);
-        void finishConnected(const EventsInfo::EstablishConnectionInfo &inf);
+        void startConnected(const EventsInfo::EstablishConnectionRequestInfo &inf);
+        void finishConnected(const EventsInfo::EstablishConnectionResponceInfo &inf);
 
-        void startLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &inf);
-        void finishLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &inf);
+        void startLoadDatabases(const EventsInfo::LoadDatabaseNamesRequestInfo &inf);
+        void finishLoadDatabases(const EventsInfo::LoadDatabaseNamesResponceInfo &inf);
 
-        void documentListLoaded(const EventsInfo::ExecuteQueryInfo &inf);
+        void documentListLoaded(const EventsInfo::ExecuteQueryResponceInfo &inf);
 
     protected:
         virtual void customEvent(QEvent *);

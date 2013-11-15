@@ -34,14 +34,14 @@ namespace Robomongo
         void ui_dbOpenShell();
         void ui_refreshDatabase();
 
-        void startCollectionListLoad(const EventsInfo::LoadCollectionInfo &inf);
-        void finishCollectionListLoad(const EventsInfo::LoadCollectionInfo &inf);
+        void startCollectionListLoad(const EventsInfo::LoadCollectionRequestInfo &inf);
+        void finishCollectionListLoad(const EventsInfo::LoadCollectionResponceInfo &inf);
         
-        void startUserListLoad(const EventsInfo::LoadUserInfo &inf);
-        void finishUserListLoad(const EventsInfo::LoadUserInfo &inf);
+        void startUserListLoad(const EventsInfo::LoadUserRequestInfo &inf);
+        void finishUserListLoad(const EventsInfo::LoadUserResponceInfo &inf);
 
-        void startFunctionListLoad(const EventsInfo::LoadFunctionInfo &inf);
-        void finishFunctionListLoad(const EventsInfo::LoadFunctionInfo &inf);
+        void startFunctionListLoad(const EventsInfo::LoadFunctionRequestInfo &inf);
+        void finishFunctionListLoad(const EventsInfo::LoadFunctionResponceInfo &inf);
     private:
         void addCollectionItem(MongoCollection *collection);
         void addSystemCollectionItem(MongoCollection *collection);

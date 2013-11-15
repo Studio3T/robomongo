@@ -53,7 +53,7 @@ namespace Robomongo
         void toggleLogs(bool show);
         void connectToServer(QAction *action);
         void startScriptExecute();
-        void scriptExecute(const EventsInfo::ExecuteScriptInfo &inf);
+        void scriptExecute(const EventsInfo::ExecuteScriptResponceInfo &inf);
         void queryWidgetWindowCountChange(int windowCount);
 
     private Q_SLOTS:
@@ -61,7 +61,7 @@ namespace Robomongo
         void setUtcTimeZone();
         void setLocalTimeZone();
         void openPreferences();
-        void connectToServer(const EventsInfo::EstablishConnectionInfo &inf);
+        void connectToServer(const EventsInfo::EstablishConnectionResponceInfo &inf);
 
     private:
         QDockWidget *_logDock;

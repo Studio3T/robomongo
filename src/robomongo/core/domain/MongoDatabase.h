@@ -61,14 +61,14 @@ namespace Robomongo
         CollectionsContainerType collections() const { return _collections; }
 
     Q_SIGNALS:
-        void startedCollectionListLoad(const EventsInfo::LoadCollectionInfo &inf);
-        void finishedCollectionListLoad(const EventsInfo::LoadCollectionInfo &inf);
+        void startedCollectionListLoad(const EventsInfo::LoadCollectionRequestInfo &inf);
+        void finishedCollectionListLoad(const EventsInfo::LoadCollectionResponceInfo &inf);
 
-        void startedUserListLoad(const EventsInfo::LoadUserInfo &inf);
-        void finishedUserListLoad(const EventsInfo::LoadUserInfo &inf);
+        void startedUserListLoad(const EventsInfo::LoadUserRequestInfo &inf);
+        void finishedUserListLoad(const EventsInfo::LoadUserResponceInfo &inf);
 
-        void startedFunctionListLoad(const EventsInfo::LoadFunctionInfo &inf);
-        void finishedFunctionListLoad(const EventsInfo::LoadFunctionInfo &inf);
+        void startedFunctionListLoad(const EventsInfo::LoadFunctionRequestInfo &inf);
+        void finishedFunctionListLoad(const EventsInfo::LoadFunctionResponceInfo &inf);
 
     private:
         void clearCollections();

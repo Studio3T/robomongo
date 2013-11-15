@@ -22,129 +22,129 @@ namespace Robomongo
 
     void MongoDatabase::loadCollections()
     {
-        EventsInfo::LoadCollectionInfo inf(_name);
+        EventsInfo::LoadCollectionRequestInfo inf(_name);
         emit startedCollectionListLoad(inf);   
-        _server->postEventToDataBase(new Events::LoadCollectionEvent(this, inf));
+        _server->postEventToDataBase(new Events::LoadCollectionRequestEvent(this, inf));
     }
 
     void MongoDatabase::loadUsers()
     {
-        EventsInfo::LoadUserInfo inf(_name);
+        EventsInfo::LoadUserRequestInfo inf(_name);
         emit startedUserListLoad(inf);
-        _server->postEventToDataBase(new Events::LoadUserEvent(this, inf));
+        _server->postEventToDataBase(new Events::LoadUserRequestEvent(this, inf));
     }
 
     void MongoDatabase::loadFunctions()
     {
-        EventsInfo::LoadFunctionInfo inf(_name);
+        EventsInfo::LoadFunctionRequestInfo inf(_name);
         emit startedFunctionListLoad(inf);
-        _server->postEventToDataBase(new Events::LoadFunctionEvent(this, inf));
+        _server->postEventToDataBase(new Events::LoadFunctionRequestEvent(this, inf));
     }
 
     void MongoDatabase::createCollection(const std::string &collection)
     {
         EventsInfo::CreateCollectionInfo inf(MongoNamespace(_name, collection));
-        _server->postEventToDataBase(new Events::CreateCollectionEvent(this, inf));
+        _server->postEventToDataBase(new Events::CreateCollectionRequestEvent(this, inf));
     }
 
     void MongoDatabase::dropCollection(const std::string &collection)
     {
         EventsInfo::DropCollectionInfo inf(MongoNamespace(_name, collection));
-        _server->postEventToDataBase(new Events::DropCollectionEvent(this, inf));
+        _server->postEventToDataBase(new Events::DropCollectionRequestEvent(this, inf));
     }
 
     void MongoDatabase::renameCollection(const std::string &collection, const std::string &newCollection)
     {
         EventsInfo::RenameCollectionInfo inf(MongoNamespace(_name, collection), newCollection);
-        _server->postEventToDataBase(new Events::RenameCollectionEvent(this, inf));
+        _server->postEventToDataBase(new Events::RenameCollectionRequestEvent(this, inf));
     }
 
     void MongoDatabase::duplicateCollection(const std::string &collection, const std::string &newCollection)
     {
         EventsInfo::DuplicateCollectionInfo inf(MongoNamespace(_name, collection), newCollection);
-        _server->postEventToDataBase(new Events::DuplicateCollectionEvent(this, inf));
+        _server->postEventToDataBase(new Events::DuplicateCollectionRequestEvent(this, inf));
     }
 
     void MongoDatabase::copyCollection(MongoServer *server, const std::string &sourceDatabase, const std::string &collection)
     {
         EventsInfo::CopyCollectionToDiffServerInfo inf(server, MongoNamespace(sourceDatabase, collection), MongoNamespace(_name, collection));
-        _server->postEventToDataBase(new Events::CopyCollectionToDiffServerEvent(this, inf));  
+        _server->postEventToDataBase(new Events::CopyCollectionToDiffServerRequestEvent(this, inf));  
     }
 
     void MongoDatabase::createUser(const MongoUser &user, bool overwrite)
     {
         EventsInfo::CreateUserInfo inf(_name, user, overwrite);
-        _server->postEventToDataBase(new Events::CreateUserEvent(this, inf));
+        _server->postEventToDataBase(new Events::CreateUserRequestEvent(this, inf));
     }
 
     void MongoDatabase::dropUser(const mongo::OID &id)
     {
         EventsInfo::DropUserInfo inf(_name, id);
-        _server->postEventToDataBase(new Events::DropUserEvent(this, inf));
+        _server->postEventToDataBase(new Events::DropUserRequestEvent(this, inf));
     }
 
     void MongoDatabase::createFunction(const MongoFunction &fun)
     {       
         EventsInfo::CreateFunctionInfo inf(_name, fun);
-        _server->postEventToDataBase(new Events::CreateFunctionEvent(this, inf));
+        _server->postEventToDataBase(new Events::CreateFunctionRequestEvent(this, inf));
     }
 
     void MongoDatabase::updateFunction(const std::string &name, const MongoFunction &fun)
     {
         EventsInfo::CreateFunctionInfo inf(_name, fun, name);
-        _server->postEventToDataBase(new Events::CreateFunctionEvent(this, inf));
+        _server->postEventToDataBase(new Events::CreateFunctionRequestEvent(this, inf));
     }
 
     void MongoDatabase::dropFunction(const std::string &name)
     {
         EventsInfo::DropFunctionInfo inf(_name, name);
-        _server->postEventToDataBase(new Events::DropFunctionEvent(this, inf));
+        _server->postEventToDataBase(new Events::DropFunctionRequestEvent(this, inf));
     }
 
     void MongoDatabase::customEvent(QEvent *event)
     {
         QEvent::Type type = event->type();
-        if(type==static_cast<QEvent::Type>(Events::DropFunctionEvent::EventType))
+        if(type==static_cast<QEvent::Type>(Events::DropFunctionResponceEvent::EventType))
         {
-            Events::DropFunctionEvent *ev = static_cast<Events::DropFunctionEvent*>(event);
+            Events::DropFunctionResponceEvent *ev = static_cast<Events::DropFunctionResponceEvent*>(event);
         }
-        else if(type==static_cast<QEvent::Type>(Events::CreateFunctionEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(Events::CreateFunctionResponceEvent::EventType))
         {
-            Events::CreateFunctionEvent *ev = static_cast<Events::CreateFunctionEvent*>(event);
+            Events::CreateFunctionResponceEvent *ev = static_cast<Events::CreateFunctionResponceEvent*>(event);
         }
-        else if(type==static_cast<QEvent::Type>(Events::LoadFunctionEvent::EventType)){
-            Events::LoadFunctionEvent *ev = static_cast<Events::LoadFunctionEvent*>(event);
-            Events::LoadFunctionEvent::value_type inf = ev->value();
+        else if(type==static_cast<QEvent::Type>(Events::LoadFunctionResponceEvent::EventType)){
+            Events::LoadFunctionResponceEvent *ev = static_cast<Events::LoadFunctionResponceEvent*>(event);
+            Events::LoadFunctionResponceEvent::value_type inf = ev->value();
             emit finishedFunctionListLoad(inf);
         }
-        else if(type==static_cast<QEvent::Type>(Events::CreateUserEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(Events::CreateUserResponceEvent::EventType))
         {
-            Events::CreateUserEvent *ev = static_cast<Events::CreateUserEvent*>(event);
+            Events::CreateUserResponceEvent *ev = static_cast<Events::CreateUserResponceEvent*>(event);
         }
-        else if(type==static_cast<QEvent::Type>(Events::DropUserEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(Events::DropUserResponceEvent::EventType))
         {
-            Events::DropUserEvent *ev = static_cast<Events::DropUserEvent*>(event);
+            Events::DropUserResponceEvent *ev = static_cast<Events::DropUserResponceEvent*>(event);
         }
-        else if(type==static_cast<QEvent::Type>(Events::LoadUserEvent::EventType)){
-            Events::LoadUserEvent *ev = static_cast<Events::LoadUserEvent*>(event);
-            Events::LoadUserEvent::value_type inf = ev->value();
+        else if(type==static_cast<QEvent::Type>(Events::LoadUserResponceEvent::EventType)){
+            Events::LoadUserResponceEvent *ev = static_cast<Events::LoadUserResponceEvent*>(event);
+            Events::LoadUserResponceEvent::value_type inf = ev->value();
             emit finishedUserListLoad(inf);
         }
-        else if(type==static_cast<QEvent::Type>(Events::CreateCollectionEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(Events::CreateCollectionResponceEvent::EventType))
         {
-            Events::CreateCollectionEvent *ev = static_cast<Events::CreateCollectionEvent*>(event);
+            Events::CreateCollectionResponceEvent *ev = static_cast<Events::CreateCollectionResponceEvent*>(event);
         }
-        else if(type==static_cast<QEvent::Type>(Events::DropCollectionEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(Events::DropCollectionResponceEvent::EventType))
         {
-            Events::DropCollectionEvent *ev = static_cast<Events::DropCollectionEvent*>(event);
+            Events::DropCollectionResponceEvent *ev = static_cast<Events::DropCollectionResponceEvent*>(event);
         }
-        else if(type==static_cast<QEvent::Type>(Events::RenameCollectionEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(Events::RenameCollectionResponceEvent::EventType))
         {
-            Events::RenameCollectionEvent *ev = static_cast<Events::RenameCollectionEvent*>(event);
+            Events::RenameCollectionResponceEvent *ev = static_cast<Events::RenameCollectionResponceEvent*>(event);
         }
-        else if(type==static_cast<QEvent::Type>(Events::LoadCollectionEvent::EventType)){
-            Events::LoadCollectionEvent *ev = static_cast<Events::LoadCollectionEvent*>(event);            
-            EventsInfo::LoadCollectionInfo inf = ev->value();
+        else if(type==static_cast<QEvent::Type>(Events::LoadCollectionResponceEvent::EventType)){
+            Events::LoadCollectionResponceEvent *ev = static_cast<Events::LoadCollectionResponceEvent*>(event);            
+            EventsInfo::LoadCollectionResponceInfo inf = ev->value();
             ErrorInfo er = inf.errorInfo();
             clearCollections();
             if (!er.isError()){
@@ -156,13 +156,13 @@ namespace Robomongo
             }
             emit finishedCollectionListLoad(inf);
         }
-        else if(type==static_cast<QEvent::Type>(Events::DuplicateCollectionEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(Events::DuplicateCollectionResponceEvent::EventType))
         {
-            Events::DuplicateCollectionEvent *ev = static_cast<Events::DuplicateCollectionEvent*>(event);
+            Events::DuplicateCollectionResponceEvent *ev = static_cast<Events::DuplicateCollectionResponceEvent*>(event);
         }
-        else if(type==static_cast<QEvent::Type>(Events::CopyCollectionToDiffServerEvent::EventType))
+        else if(type==static_cast<QEvent::Type>(Events::CopyCollectionToDiffServerResponceEvent::EventType))
         {
-            Events::CopyCollectionToDiffServerEvent *ev = static_cast<Events::CopyCollectionToDiffServerEvent*>(event);
+            Events::CopyCollectionToDiffServerResponceEvent *ev = static_cast<Events::CopyCollectionToDiffServerResponceEvent*>(event);
         }
     }
 

@@ -64,8 +64,8 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(showLog);
         BaseClass::_contextMenu->addAction(disconnectAction);
 
-        VERIFY(connect(_server, SIGNAL(startLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &)), Qt::DirectConnection));
-        VERIFY(connect(_server, SIGNAL(finishLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &)), this, SLOT(addDatabases(const EventsInfo::LoadDatabaseNamesInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_server, SIGNAL(startLoadDatabases(const EventsInfo::LoadDatabaseNamesRequestInfo &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabaseNamesRequestInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_server, SIGNAL(finishLoadDatabases(const EventsInfo::LoadDatabaseNamesResponceInfo &)), this, SLOT(addDatabases(const EventsInfo::LoadDatabaseNamesResponceInfo &)), Qt::DirectConnection));
         
         setText(0, buildServerName());
         setIcon(0, GuiRegistry::instance().serverIcon());
@@ -78,7 +78,7 @@ namespace Robomongo
         _server->loadDatabases();
     }
 
-    void ExplorerServerTreeItem::addDatabases(const EventsInfo::LoadDatabaseNamesInfo &inf)
+    void ExplorerServerTreeItem::addDatabases(const EventsInfo::LoadDatabaseNamesResponceInfo &inf)
     {
         ErrorInfo er = inf.errorInfo();
         // Remove child items
@@ -114,7 +114,7 @@ namespace Robomongo
         }   
     }
 
-    void ExplorerServerTreeItem::startLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &inf)
+    void ExplorerServerTreeItem::startLoadDatabases(const EventsInfo::LoadDatabaseNamesRequestInfo &inf)
     {
         int count = -1;
         setText(0, buildServerName(&count));

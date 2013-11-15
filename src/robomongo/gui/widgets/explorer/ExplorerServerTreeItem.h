@@ -26,9 +26,9 @@ namespace Robomongo
         */
         void expand();
 
-    public Q_SLOTS:
-        void addDatabases(const EventsInfo::LoadDatabaseNamesInfo &inf);
-        void startLoadDatabases(const EventsInfo::LoadDatabaseNamesInfo &inf);
+    public Q_SLOTS:        
+        void startLoadDatabases(const EventsInfo::LoadDatabaseNamesRequestInfo &inf);
+        void addDatabases(const EventsInfo::LoadDatabaseNamesResponceInfo &inf);
 
     private Q_SLOTS:
         void ui_showLog();

@@ -4,6 +4,11 @@
 
 namespace Robomongo
 {
+    MongoCollectionInfo::MongoCollectionInfo()
+    {
+
+    }
+
     MongoCollectionInfo::MongoCollectionInfo(mongo::BSONObj stats) : _ns(stats.getStringField("ns"))
     {
         // if "size" and "storageSize" are of type Int32 or Int64, they

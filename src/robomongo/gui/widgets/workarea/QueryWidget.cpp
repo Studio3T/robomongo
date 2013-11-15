@@ -33,8 +33,8 @@ namespace Robomongo
         _viewer(NULL),
         _isTextChanged(false)
     {
-        VERIFY(connect(shell->server(), SIGNAL(documentListLoaded(const EventsInfo::ExecuteQueryInfo &)), this, SLOT(documentListLoad(const EventsInfo::ExecuteQueryInfo &)), Qt::DirectConnection));
-        VERIFY(connect(shell, SIGNAL(scriptExecuted(const EventsInfo::ExecuteScriptInfo &)), this, SLOT(scriptExecute(const EventsInfo::ExecuteScriptInfo &)), Qt::DirectConnection));
+        VERIFY(connect(shell->server(), SIGNAL(documentListLoaded(const EventsInfo::ExecuteQueryResponceInfo &)), this, SLOT(documentListLoad(const EventsInfo::ExecuteQueryResponceInfo &)), Qt::DirectConnection));
+        VERIFY(connect(shell, SIGNAL(scriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &)), this, SLOT(scriptExecute(const EventsInfo::ExecuteScriptResponceInfo &)), Qt::DirectConnection));
 
         _scriptWidget = new ScriptWidget(_shell);
         VERIFY(connect(_scriptWidget, SIGNAL(textChanged()), this, SLOT(textChange())));
@@ -186,14 +186,14 @@ namespace Robomongo
     {
         _viewer->hideProgress();
     }
-
-    void QueryWidget::documentListLoad(const EventsInfo::ExecuteQueryInfo &inf)
+   
+    void QueryWidget::documentListLoad(const EventsInfo::ExecuteQueryResponceInfo &inf)
     {
         hideProgress();        
         _viewer->updatePart(inf._resultIndex, inf._queryInfo, inf._documents);
     }
 
-    void QueryWidget::scriptExecute(const EventsInfo::ExecuteScriptInfo &inf)
+    void QueryWidget::scriptExecute(const EventsInfo::ExecuteScriptResponceInfo &inf)
     {
         hideProgress();
         _currentResult = inf._result;        

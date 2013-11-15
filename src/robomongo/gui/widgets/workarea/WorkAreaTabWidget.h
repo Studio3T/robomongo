@@ -29,7 +29,7 @@ namespace Robomongo
         QueryWidget *queryWidget(int index);
 
     Q_SIGNALS:
-        void scriptExecuted(const EventsInfo::ExecuteScriptInfo &inf);
+        void scriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &inf);
         void windowCountChanged(int count);
         void startScriptExecuted();
 

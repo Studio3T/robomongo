@@ -69,14 +69,14 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(dbRepair);
         BaseClass::_contextMenu->addAction(dbDrop);
         
-        VERIFY(connect(_database, SIGNAL(startedCollectionListLoad(const EventsInfo::LoadCollectionInfo &)), this, SLOT(startCollectionListLoad(const EventsInfo::LoadCollectionInfo &)), Qt::DirectConnection ));
-        VERIFY(connect(_database, SIGNAL(finishedCollectionListLoad(const EventsInfo::LoadCollectionInfo &)), this, SLOT(finishCollectionListLoad(const EventsInfo::LoadCollectionInfo &)), Qt::DirectConnection ));
+        VERIFY(connect(_database, SIGNAL(startedCollectionListLoad(const EventsInfo::LoadCollectionRequestInfo &)), this, SLOT(startCollectionListLoad(const EventsInfo::LoadCollectionRequestInfo &)), Qt::DirectConnection ));
+        VERIFY(connect(_database, SIGNAL(finishedCollectionListLoad(const EventsInfo::LoadCollectionResponceInfo &)), this, SLOT(finishCollectionListLoad(const EventsInfo::LoadCollectionResponceInfo &)), Qt::DirectConnection ));
 
-        VERIFY(connect(_database, SIGNAL(startedUserListLoad(const EventsInfo::LoadUserInfo &)), this, SLOT(startUserListLoad(const EventsInfo::LoadUserInfo &)), Qt::DirectConnection ));
-        VERIFY(connect(_database, SIGNAL(finishedUserListLoad(const EventsInfo::LoadUserInfo &)), this, SLOT(finishUserListLoad(const EventsInfo::LoadUserInfo &)), Qt::DirectConnection )); 
+        VERIFY(connect(_database, SIGNAL(startedUserListLoad(const EventsInfo::LoadUserRequestInfo &)), this, SLOT(startUserListLoad(const EventsInfo::LoadUserRequestInfo &)), Qt::DirectConnection ));
+        VERIFY(connect(_database, SIGNAL(finishedUserListLoad(const EventsInfo::LoadUserResponceInfo &)), this, SLOT(finishUserListLoad(const EventsInfo::LoadUserResponceInfo &)), Qt::DirectConnection )); 
 
-        VERIFY(connect(_database, SIGNAL(startedFunctionListLoad(const EventsInfo::LoadFunctionInfo &)), this, SLOT(startFunctionListLoad(const EventsInfo::LoadFunctionInfo &)), Qt::DirectConnection ));
-        VERIFY(connect(_database, SIGNAL(finishedFunctionListLoad(const EventsInfo::LoadFunctionInfo &)), this, SLOT(finishFunctionListLoad(const EventsInfo::LoadFunctionInfo &)), Qt::DirectConnection ));
+        VERIFY(connect(_database, SIGNAL(startedFunctionListLoad(const EventsInfo::LoadFunctionRequestInfo &)), this, SLOT(startFunctionListLoad(const EventsInfo::LoadFunctionRequestInfo &)), Qt::DirectConnection ));
+        VERIFY(connect(_database, SIGNAL(finishedFunctionListLoad(const EventsInfo::LoadFunctionResponceInfo &)), this, SLOT(finishFunctionListLoad(const EventsInfo::LoadFunctionResponceInfo &)), Qt::DirectConnection ));
 
         setText(0, QtUtils::toQString(_database->name()));
         setIcon(0, GuiRegistry::instance().databaseIcon());
@@ -114,12 +114,12 @@ namespace Robomongo
         _database->loadFunctions();
     }
 
-    void ExplorerDatabaseTreeItem::startCollectionListLoad(const EventsInfo::LoadCollectionInfo &)
+    void ExplorerDatabaseTreeItem::startCollectionListLoad(const EventsInfo::LoadCollectionRequestInfo &)
     {
         _collectionFolderItem->setText(0, detail::buildName("Collections",-1));
     }
 
-    void ExplorerDatabaseTreeItem::finishCollectionListLoad(const EventsInfo::LoadCollectionInfo &inf)
+    void ExplorerDatabaseTreeItem::finishCollectionListLoad(const EventsInfo::LoadCollectionResponceInfo &inf)
     {
         ErrorInfo er = inf._errorInfo;
         QtUtils::clearChildItems(_collectionFolderItem);
@@ -146,12 +146,12 @@ namespace Robomongo
         }
     }
 
-    void ExplorerDatabaseTreeItem::startUserListLoad(const EventsInfo::LoadUserInfo &inf)
+    void ExplorerDatabaseTreeItem::startUserListLoad(const EventsInfo::LoadUserRequestInfo &inf)
     {
         _usersFolderItem->setText(0, detail::buildName("Users",-1));
     }
 
-    void ExplorerDatabaseTreeItem::finishUserListLoad(const EventsInfo::LoadUserInfo &inf)
+    void ExplorerDatabaseTreeItem::finishUserListLoad(const EventsInfo::LoadUserResponceInfo &inf)
     {        
         ErrorInfo er = inf.errorInfo();
         QtUtils::clearChildItems(_usersFolderItem);
@@ -165,7 +165,7 @@ namespace Robomongo
         }
     }
 
-    void ExplorerDatabaseTreeItem::finishFunctionListLoad(const EventsInfo::LoadFunctionInfo &inf)
+    void ExplorerDatabaseTreeItem::finishFunctionListLoad(const EventsInfo::LoadFunctionResponceInfo &inf)
     {
         ErrorInfo er = inf.errorInfo();
         QtUtils::clearChildItems(_javascriptFolderItem);
@@ -179,7 +179,7 @@ namespace Robomongo
         }
     }
 
-    void ExplorerDatabaseTreeItem::startFunctionListLoad(const EventsInfo::LoadFunctionInfo &)
+    void ExplorerDatabaseTreeItem::startFunctionListLoad(const EventsInfo::LoadFunctionRequestInfo &)
     {
         _javascriptFolderItem->setText(0, detail::buildName("Functions",-1));
     }

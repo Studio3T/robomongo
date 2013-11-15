@@ -181,6 +181,7 @@ SET(HEADERS_CORE
     robomongo/core/utils/QtUtils.h
     robomongo/core/utils/StdUtils.h
     robomongo/core/utils/SingletonPattern.hpp
+    robomongo/core/EnsureIndex.h
     )
 SET(SOURCES_CORE
     robomongo/core/domain/Notifier.cpp
@@ -212,6 +213,7 @@ SET(SOURCES_CORE
     robomongo/core/utils/QtUtils.cpp
     robomongo/core/utils/StdUtils.cpp
     robomongo/core/utils/Logger.cpp
+    robomongo/core/EnsureIndex.cpp
     )
 
 IF(WIN32)

@@ -46,7 +46,7 @@ namespace Robomongo
     Q_SIGNALS:
         void titleChanged(const QString &text);
         void toolTipChanged(const QString &text);
-        void scriptExecuted(const EventsInfo::ExecuteScriptInfo &inf);
+        void scriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &inf);
         void windowCountChanged(int count);
 
     public Q_SLOTS:
@@ -60,8 +60,8 @@ namespace Robomongo
         void showProgress();
 
     public Q_SLOTS:
-        void documentListLoad(const EventsInfo::ExecuteQueryInfo &inf);
-        void scriptExecute(const EventsInfo::ExecuteScriptInfo &inf);        
+        void documentListLoad(const EventsInfo::ExecuteQueryResponceInfo &inf);
+        void scriptExecute(const EventsInfo::ExecuteScriptResponceInfo &inf);        
 
     private:        
         void hideProgress();

@@ -35,6 +35,7 @@ namespace Robomongo
 
         float version() const { return _version; }
         static const float minimumSupportedVersion;
+
     private:
         float _version;
         mongo::OID _id;

@@ -43,29 +43,29 @@ namespace Robomongo
 
     private:
         void saveDocument(EventsInfo::SaveDocumentInfo &inf); //nothrow
-        void removeDocuments(EventsInfo::RemoveDocumentInfo &inf); //nothrow
+        void removeDocuments(EventsInfo::RemoveDocumenInfo &inf); //nothrow
         void dropCollection(EventsInfo::DropCollectionInfo &inf); //nothrow
         void duplicateCollection(EventsInfo::DuplicateCollectionInfo &inf); //nothrow
         void copyCollectionToDiffServer(EventsInfo::CopyCollectionToDiffServerInfo &inf); //nothrow
         void createCollection(EventsInfo::CreateCollectionInfo &inf); //nothrow
         void dropDatabase(EventsInfo::DropDatabaseInfo &inf); //nothrow
         void createDatabase(EventsInfo::CreateDataBaseInfo &inf); //nothrow
-        void establishConnection(EventsInfo::EstablishConnectionInfo &inf); //nothrow
-        void getCollectionInfos(EventsInfo::LoadCollectionInfo &inf); //nothrow
+        void establishConnection(EventsInfo::EstablishConnectionResponceInfo &inf); //nothrow
+        void getCollectionInfos(EventsInfo::LoadCollectionResponceInfo &inf); //nothrow
         void renameCollection(EventsInfo::RenameCollectionInfo &inf); //nothrow
-        void query(EventsInfo::ExecuteQueryInfo &inf); //nothrow
+        void query(EventsInfo::ExecuteQueryResponceInfo &inf); //nothrow
         void dropIndexFromCollection(EventsInfo::DropIndexInfo &inf); //nothrow        
         void ensureIndex(EventsInfo::CreateIndexInfo &inf); //nothrow
-        void getIndexes(EventsInfo::LoadCollectionIndexesInfo &inf); //nothrow
-        void getFunctions(EventsInfo::LoadFunctionInfo &inf); //nothrow
+        void getIndexes(EventsInfo::LoadCollectionIndexesResponceInfo &inf); //nothrow
+        void getFunctions(EventsInfo::LoadFunctionResponceInfo &inf); //nothrow
         void createFunction(EventsInfo::CreateFunctionInfo &inf); //nothrow
         void dropFunction(EventsInfo::DropFunctionInfo &inf); //nothrow
-        void getUsers(EventsInfo::LoadUserInfo &inf); //nothrow
+        void getUsers(EventsInfo::LoadUserResponceInfo &inf); //nothrow
         void createUser(EventsInfo::CreateUserInfo &inf); //nothrow
         void dropUser(EventsInfo::DropUserInfo &inf); //nothrow
-        void executeScript(EventsInfo::ExecuteScriptInfo &inf); //nothrow
-        void getAutoCompleteList(EventsInfo::AutoCompleteInfo &inf); //nothrow
-        void getDatabaseNames(EventsInfo::LoadDatabaseNamesInfo &inf); //nothrow
+        void executeScript(EventsInfo::ExecuteScriptResponceInfo &inf); //nothrow
+        void getAutoCompleteList(EventsInfo::AutoCompleteResponceInfo &inf); //nothrow
+        void getDatabaseNames(EventsInfo::LoadDatabaseNamesResponceInfo &inf); //nothrow
 
         std::vector<std::string> getCollectionNames(const std::string &dbname, ErrorInfo &er); //nothrow          
         float getVersion(ErrorInfo &er); //nothrow

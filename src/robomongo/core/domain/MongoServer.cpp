@@ -43,22 +43,22 @@ namespace Robomongo
     void MongoServer::customEvent(QEvent *event)
     {
         QEvent::Type type = event->type();
-        if(type==static_cast<QEvent::Type>(Events::CreateDataBaseEvent::EventType)){
-            Events::CreateDataBaseEvent *ev = static_cast<Events::CreateDataBaseEvent*>(event);
+        if(type==static_cast<QEvent::Type>(Events::CreateDataBaseResponceEvent::EventType)){
+            Events::CreateDataBaseResponceEvent *ev = static_cast<Events::CreateDataBaseResponceEvent*>(event);
         }
-        else if(type==static_cast<QEvent::Type>(Events::DropDatabaseEvent::EventType)){
-            Events::DropDatabaseEvent *ev = static_cast<Events::DropDatabaseEvent*>(event);
+        else if(type==static_cast<QEvent::Type>(Events::DropDatabaseResponceEvent::EventType)){
+            Events::DropDatabaseResponceEvent *ev = static_cast<Events::DropDatabaseResponceEvent*>(event);
         }
-        else if(type==static_cast<QEvent::Type>(Events::LoadDatabaseNamesEvent::EventType)){
-            Events::LoadDatabaseNamesEvent *ev = static_cast<Events::LoadDatabaseNamesEvent*>(event);
-            Events::LoadDatabaseNamesEvent::value_type inf = ev->value();
+        else if(type==static_cast<QEvent::Type>(Events::LoadDatabaseNamesResponceEvent::EventType)){
+            Events::LoadDatabaseNamesResponceEvent *ev = static_cast<Events::LoadDatabaseNamesResponceEvent*>(event);
+            Events::LoadDatabaseNamesResponceEvent::value_type inf = ev->value();
             ErrorInfo er = inf.errorInfo();
 
             if (!er.isError()) {
-                Events::LoadDatabaseNamesEvent::value_type v = ev->value();
+                Events::LoadDatabaseNamesResponceEvent::value_type v = ev->value();
 
                 clearDatabases();
-                for(std::vector<std::string>::iterator it = v._databaseNames.begin(); it != v._databaseNames.end(); ++it) {
+                for(std::vector<std::string>::iterator it = v._databases.begin(); it != v._databases.end(); ++it) {
                     const std::string &name = *it;
                     MongoDatabase *db  = new MongoDatabase(this, name);
                     addDatabase(db);
@@ -66,17 +66,17 @@ namespace Robomongo
                 emit finishLoadDatabases(v);
             }
         }
-        else if(type==static_cast<QEvent::Type>(Events::SaveDocumentEvent::EventType)){
-            Events::SaveDocumentEvent *ev = static_cast<Events::SaveDocumentEvent*>(event);
+        else if(type==static_cast<QEvent::Type>(Events::SaveDocumentResponceEvent::EventType)){
+            Events::SaveDocumentResponceEvent *ev = static_cast<Events::SaveDocumentResponceEvent*>(event);
         }
-        else if(type==static_cast<QEvent::Type>(Events::ExecuteQueryEvent::EventType)){
-            Events::ExecuteQueryEvent *ev = static_cast<Events::ExecuteQueryEvent*>(event);
-            Events::ExecuteQueryEvent::value_type v = ev->value();
+        else if(type==static_cast<QEvent::Type>(Events::ExecuteQueryResponceEvent::EventType)){
+            Events::ExecuteQueryResponceEvent *ev = static_cast<Events::ExecuteQueryResponceEvent*>(event);
+            Events::ExecuteQueryResponceEvent::value_type v = ev->value();
             emit documentListLoaded(v);
         }
-        else if(type==static_cast<QEvent::Type>(Events::EstablishConnectionEvent::EventType)){
-            Events::EstablishConnectionEvent *ev = static_cast<Events::EstablishConnectionEvent*>(event);
-            Events::EstablishConnectionEvent::value_type inf = ev->value();
+        else if(type==static_cast<QEvent::Type>(Events::EstablishConnectionResponceEvent::EventType)){
+            Events::EstablishConnectionResponceEvent *ev = static_cast<Events::EstablishConnectionResponceEvent*>(event);
+            Events::EstablishConnectionResponceEvent::value_type inf = ev->value();
             ErrorInfo er = inf.errorInfo();
 
             _isConnected = !er.isError();
@@ -111,16 +111,16 @@ namespace Robomongo
     void MongoServer::tryConnect()
     {
         if(!_isConnected){            
-            EventsInfo::EstablishConnectionInfo inf;
+            EventsInfo::EstablishConnectionRequestInfo inf;
             emit startConnected(inf);
-            qApp->postEvent(_client, new Events::EstablishConnectionEvent(this, inf));
+            qApp->postEvent(_client, new Events::EstablishConnectionRequestEvent(this, inf));
         }
     }
 
     void MongoServer::createDatabase(const std::string &dbName)
     {
         EventsInfo::CreateDataBaseInfo inf(dbName);
-        qApp->postEvent(_client, new Events::CreateDataBaseEvent(this, inf));
+        qApp->postEvent(_client, new Events::CreateDataBaseRequestEvent(this, inf));
     }
 
     MongoDatabase *MongoServer::findDatabaseByName(const std::string &dbName) const
@@ -137,7 +137,7 @@ namespace Robomongo
     void MongoServer::dropDatabase(const std::string &dbName)
     {
         EventsInfo::DropDatabaseInfo inf(dbName);
-        qApp->postEvent(_client, new Events::DropDatabaseEvent(this, inf));
+        qApp->postEvent(_client, new Events::DropDatabaseRequestEvent(this, inf));
     }
 
     void MongoServer::insertDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns)
@@ -146,16 +146,11 @@ namespace Robomongo
             insertDocument(*it, ns);
         }
     }
-
-    void MongoServer::copyCollectionToDiffServer(const EventsInfo::CopyCollectionToDiffServerInfo &inf)
-    {
-        qApp->postEvent(_client, new Events::CopyCollectionToDiffServerEvent(this, inf));
-    }
     
     void MongoServer::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
         EventsInfo::SaveDocumentInfo inf(obj, ns, false);
-        qApp->postEvent(_client, new Events::SaveDocumentEvent(this, inf));
+        qApp->postEvent(_client, new Events::SaveDocumentRequestEvent(this, inf));
     }
 
     void MongoServer::saveDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns)
@@ -168,26 +163,26 @@ namespace Robomongo
     void MongoServer::saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
         EventsInfo::SaveDocumentInfo inf(obj, ns, true);
-        qApp->postEvent(_client, new Events::SaveDocumentEvent(this, inf));
+        qApp->postEvent(_client, new Events::SaveDocumentRequestEvent(this, inf));
     }
 
     void MongoServer::removeDocuments(mongo::Query query, const MongoNamespace &ns, bool justOne)
     {
-        EventsInfo::RemoveDocumentInfo inf(query, ns, justOne);
-        qApp->postEvent(_client, new Events::RemoveDocumentEvent(this, inf));
+        EventsInfo::RemoveDocumenInfo inf(query, ns, justOne);
+        qApp->postEvent(_client, new Events::RemoveDocumentRequestEvent(this, inf));
     }
 
     void MongoServer::query(int resultIndex, const MongoQueryInfo &info)
     {
-        EventsInfo::ExecuteQueryInfo inf(resultIndex,info);
-        qApp->postEvent(_client, new Events::ExecuteQueryEvent(this, inf));
+        EventsInfo::ExecuteQueryRequestInfo inf(resultIndex,info);
+        qApp->postEvent(_client, new Events::ExecuteQueryRequestEvent(this, inf));
     }
 
     void MongoServer::loadDatabases()
     {
-        EventsInfo::LoadDatabaseNamesInfo inf;
+        EventsInfo::LoadDatabaseNamesRequestInfo inf;
         emit startLoadDatabases(inf);
-        qApp->postEvent(_client, new Events::LoadDatabaseNamesEvent(this, inf));
+        qApp->postEvent(_client, new Events::LoadDatabaseNamesRequestEvent(this, inf));
     }
 
     void MongoServer::clearDatabases()

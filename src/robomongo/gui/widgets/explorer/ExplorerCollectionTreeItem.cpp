@@ -195,8 +195,8 @@ namespace Robomongo
     ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(MongoServer *server, QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection) :
         BaseClass(parent), _server(server), _collection(collection), _databaseItem(databaseItem)
     {
-        VERIFY(connect(_collection, SIGNAL(startedIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &)), this, SLOT(startIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &)), Qt::DirectConnection));
-        VERIFY(connect(_collection, SIGNAL(finishedIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &)), this, SLOT(finishIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_collection, SIGNAL(startedIndexListLoad(const EventsInfo::LoadCollectionIndexesRequestInfo &)), this, SLOT(startIndexListLoad(const EventsInfo::LoadCollectionIndexesRequestInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_collection, SIGNAL(finishedIndexListLoad(const EventsInfo::LoadCollectionIndexesResponceInfo &)), this, SLOT(finishIndexListLoad(const EventsInfo::LoadCollectionIndexesResponceInfo &)), Qt::DirectConnection));
 
         QAction *addDocument = new QAction("Insert Document...", this);
         VERIFY(connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument())));
@@ -267,12 +267,12 @@ namespace Robomongo
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }
 
-    void ExplorerCollectionTreeItem::startIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &inf)
+    void ExplorerCollectionTreeItem::startIndexListLoad(const EventsInfo::LoadCollectionIndexesRequestInfo &inf)
     {
         _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, -1));
     }
 
-    void ExplorerCollectionTreeItem::finishIndexListLoad(const EventsInfo::LoadCollectionIndexesInfo &inf)
+    void ExplorerCollectionTreeItem::finishIndexListLoad(const EventsInfo::LoadCollectionIndexesResponceInfo &inf)
     {
         ErrorInfo er = inf.errorInfo();
         QtUtils::clearChildItems(_indexDir);
@@ -292,7 +292,7 @@ namespace Robomongo
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
     {
         char buff[2048]={0};
-        sprintf(buff,tooltipTemplate,collection->name().c_str(),collection->info().count(),collection->sizeString().c_str());
+        sprintf(buff, tooltipTemplate, collection->name().c_str(), collection->info().count(), collection->sizeString().c_str());
         return buff;
     }
 

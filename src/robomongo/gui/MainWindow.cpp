@@ -698,7 +698,7 @@ namespace Robomongo
         IConnectionSettingsBase *ptr = qvariant_cast<IConnectionSettingsBase *>(data);
         Robomongo::MongoServer *server = Robomongo::AppRegistry::instance().app()->openServer(ptr, true);
         VERIFY(connect(server, SIGNAL(startConnected(const EventsInfo::EstablishConnectionRequestInfo &)), _explorer, SLOT(increaseProgress()), Qt::DirectConnection));
-        VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionRequestInfo &)), _explorer, SLOT(decreaseProgress()), Qt::DirectConnection));
+        VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionResponceInfo &)), _explorer, SLOT(decreaseProgress()), Qt::DirectConnection));
         VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionResponceInfo &)), this, SLOT(connectToServer(const EventsInfo::EstablishConnectionResponceInfo &)), Qt::DirectConnection));
         server->tryConnect();
     }

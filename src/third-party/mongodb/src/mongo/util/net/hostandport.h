@@ -363,8 +363,6 @@ namespace mongo {
         massert(13110, "HostAndPort: host is empty", *p);
 #ifdef ROBOMONGO
         int len = strlen(p);
-        int lastH = len-1;
-        int member = 0;
         _host = p;
         _port = -1;
         _sslInfo = Robomongo::SSLInfo();

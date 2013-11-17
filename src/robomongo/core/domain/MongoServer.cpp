@@ -68,6 +68,13 @@ namespace Robomongo
         }
         else if(type==static_cast<QEvent::Type>(Events::SaveDocumentResponceEvent::EventType)){
             Events::SaveDocumentResponceEvent *ev = static_cast<Events::SaveDocumentResponceEvent*>(event);
+            Events::SaveDocumentResponceEvent::value_type inf = ev->value();
+            //ErrorInfo er = inf.errorInfo();
+
+            emit finishInsertedDocument(inf);
+        }
+        else if(type==static_cast<QEvent::Type>(Events::RemoveDocumentResponceEvent::EventType)){
+            Events::RemoveDocumentResponceEvent *ev = static_cast<Events::RemoveDocumentResponceEvent*>(event);
         }
         else if(type==static_cast<QEvent::Type>(Events::ExecuteQueryResponceEvent::EventType)){
             Events::ExecuteQueryResponceEvent *ev = static_cast<Events::ExecuteQueryResponceEvent*>(event);
@@ -150,6 +157,7 @@ namespace Robomongo
     void MongoServer::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
         EventsInfo::SaveDocumentInfo inf(obj, ns, false);
+        emit startInsertedDocument(inf);
         qApp->postEvent(_client, new Events::SaveDocumentRequestEvent(this, inf));
     }
 
@@ -163,6 +171,7 @@ namespace Robomongo
     void MongoServer::saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
         EventsInfo::SaveDocumentInfo inf(obj, ns, true);
+        emit startInsertedDocument(inf);
         qApp->postEvent(_client, new Events::SaveDocumentRequestEvent(this, inf));
     }
 

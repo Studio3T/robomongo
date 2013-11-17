@@ -1,4 +1,3 @@
-#pragma once
 #include "robomongo/core/EnsureIndex.h"
 
 namespace Robomongo

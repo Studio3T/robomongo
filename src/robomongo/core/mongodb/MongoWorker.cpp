@@ -78,10 +78,10 @@ namespace Robomongo
                 mongo::BSONObj bsonQuery = builder.obj();
                 mongo::Query query(bsonQuery);
 
-                con->update(inf._obj.toString(), query, inf._obj, true, false);
+                con->update(inf._ns.toString(), query, inf._obj, true, false);
             }                    
             else{
-                con->insert(inf._obj.toString(), inf._obj);
+                con->insert(inf._ns.toString(), inf._obj);
             }
         } catch(const mongo::DBException &ex) {
             er = ErrorInfo(ex.what(), ErrorInfo::_EXCEPTION);

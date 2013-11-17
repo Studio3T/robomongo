@@ -48,6 +48,7 @@ namespace Robomongo
         void insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
         void saveDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns);
         void saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
+
         void removeDocuments(mongo::Query query, const MongoNamespace &ns, bool justOne = true);
         void query(int resultIndex, const MongoQueryInfo &info);
 
@@ -67,6 +68,9 @@ namespace Robomongo
         DatabasesContainerType databases() const { return _databases; }
 
     Q_SIGNALS:
+        void startInsertedDocument(const EventsInfo::SaveDocumentInfo &inf);
+        void finishInsertedDocument(const EventsInfo::SaveDocumentInfo &inf);
+
         void startConnected(const EventsInfo::EstablishConnectionRequestInfo &inf);
         void finishConnected(const EventsInfo::EstablishConnectionResponceInfo &inf);
 

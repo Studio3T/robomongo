@@ -117,6 +117,9 @@ namespace Robomongo
         VERIFY(connect(_header, SIGNAL(maximizedPart()), this, SIGNAL(maximizedPart())));
         VERIFY(connect(_header, SIGNAL(restoredSize()), this, SIGNAL(restoredSize())));
 
+        VERIFY(connect(_server, SIGNAL(finishInsertedDocument(const EventsInfo::SaveDocumentInfo &)), this,
+                       SLOT(finishInsertDocument(const EventsInfo::SaveDocumentInfo &)), Qt::DirectConnection));
+
         refreshOutputItem(); 
     }
 
@@ -496,5 +499,11 @@ namespace Robomongo
             }
             refresh();
         }
+    }
+
+    void OutputItemContentWidget::finishInsertDocument(const EventsInfo::SaveDocumentInfo &inf)
+    {
+        ErrorInfo er = inf.errorInfo();
+
     }
 }

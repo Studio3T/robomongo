@@ -9,6 +9,7 @@ QT_END_NAMESPACE
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
+#include "robomongo/core/events/MongoEventsInfo.hpp"
 #include "robomongo/core/domain/Notifier.h"
 #include "robomongo/core/Enums.h"
 #include <vector>
@@ -70,6 +71,7 @@ namespace Robomongo
         void deleteDocument(BsonTreeItem *item, bool force);
         void deleteDocuments(std::vector<BsonTreeItem *> items, bool force);
 
+        void finishInsertDocument(const EventsInfo::SaveDocumentInfo &);
     private:
         void setup(double secs);
         void refresh();

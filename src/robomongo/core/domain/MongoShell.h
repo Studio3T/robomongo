@@ -4,12 +4,13 @@
 #include "robomongo/core/domain/ScriptInfo.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/core/domain/MongoShellResult.h"
-#include "robomongo/core/events/MongoEvents.hpp"
+#include "robomongo/core/events/MongoEventsInfo.hpp"
 
 namespace Robomongo
 {
     class MongoServer;
-    class MongoShell : public QObject
+    class MongoShell 
+        : public QObject
     {
         Q_OBJECT
 

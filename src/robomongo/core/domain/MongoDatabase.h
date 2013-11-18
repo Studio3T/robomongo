@@ -10,7 +10,8 @@ namespace Robomongo
     /**
      * @brief Represents MongoDB database.
      */
-    class MongoDatabase : public QObject
+    class MongoDatabase 
+        : public QObject
     {
         Q_OBJECT
 

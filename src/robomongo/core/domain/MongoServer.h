@@ -8,14 +8,14 @@ namespace Robomongo
 {
     class MongoWorker;
     class MongoDatabase;
-    class EstablishConnectionResponse;
 
     /**
      * @brief MongoServer represents active connection to MongoDB server.
      * MongoServer is an Aggregate Root, that manages three internal entities:
      * MongoDatabase, MongoCollection and MongoWorker.
      */
-    class MongoServer : public QObject
+    class MongoServer 
+        : public QObject
     {
         Q_OBJECT
         friend class MongoWorker;
@@ -64,6 +64,7 @@ namespace Robomongo
          */
         void loadDatabases();
         bool visible() const { return _visible; }
+
         void postEventToDataBase(QEvent *event, int priority = Qt::NormalEventPriority) const;
         DatabasesContainerType databases() const { return _databases; }
 

@@ -7,7 +7,8 @@ namespace Robomongo
 {
     class MongoDatabase;
 
-    class MongoCollection : public QObject
+    class MongoCollection 
+        : public QObject
     {
         Q_OBJECT
     public:

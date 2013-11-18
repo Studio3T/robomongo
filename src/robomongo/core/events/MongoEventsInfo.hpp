@@ -38,7 +38,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             RemoveDocumenInfo(const mongo::Query &query, const MongoNamespace &ns, bool justOne, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er), _query(query), _ns(ns), _justOne(justOne){}
+                : BaseClass(er), _query(query), _ns(ns), _justOne(justOne){}
 
             mongo::Query _query;
             const MongoNamespace _ns;
@@ -50,7 +50,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             SaveDocumentInfo(const mongo::BSONObj &obj, const MongoNamespace &ns, bool overwrite, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er), _obj(obj), _ns(ns), _overwrite(overwrite){}
+                : BaseClass(er), _obj(obj), _ns(ns), _overwrite(overwrite){}
 
             mongo::BSONObj _obj;
             MongoNamespace _ns;
@@ -62,7 +62,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             DropFunctionInfo(const std::string &database, const std::string &name, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_database(database),_name(name){}
+                : BaseClass(er),_database(database),_name(name){}
 
             std::string _database;
             std::string _name;
@@ -74,7 +74,7 @@ namespace Robomongo
             typedef EventInfoBase BaseClass;
             CreateFunctionInfo(const std::string &database, const MongoFunction &function, const std::string &existingFunctionName = std::string(),
                 bool overwrite = false, const ErrorInfo &er = ErrorInfo()) 
-                :BaseClass(er),_database(database),_existingFunctionName(existingFunctionName),
+                : BaseClass(er),_database(database),_existingFunctionName(existingFunctionName),
                 _function(function),_overwrite(overwrite) {}
 
             std::string _database;
@@ -88,7 +88,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             CreateUserInfo(const std::string &database, const MongoUser &user, bool overwrite, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_database(database), _user(user), _overwrite(overwrite){}
+                : BaseClass(er),_database(database), _user(user), _overwrite(overwrite){}
 
             std::string _database;
             MongoUser _user;
@@ -100,7 +100,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             DropUserInfo(const std::string &database, const mongo::OID &id, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_database(database),_id(id)
+                : BaseClass(er),_database(database),_id(id)
             {
             }
 
@@ -113,7 +113,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             CreateCollectionInfo(const MongoNamespace &ns, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_ns(ns){}
+                : BaseClass(er),_ns(ns){}
 
             const MongoNamespace _ns;
         };
@@ -123,7 +123,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             DropCollectionInfo(const MongoNamespace &ns, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_ns(ns){}
+                : BaseClass(er),_ns(ns){}
 
             const MongoNamespace _ns;
         };
@@ -133,7 +133,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             RenameCollectionInfo(const MongoNamespace &ns, const std::string &name, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_ns(ns),_name(name){}
+                : BaseClass(er),_ns(ns),_name(name){}
 
             MongoNamespace _ns;
             std::string _name;
@@ -144,7 +144,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             DuplicateCollectionInfo(const MongoNamespace &ns, const std::string &name, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_ns(ns),_name(name){}
+                : BaseClass(er),_ns(ns),_name(name){}
 
             MongoNamespace _ns;
             std::string _name;
@@ -155,7 +155,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             CopyCollectionToDiffServerInfo(MongoServer *server, const MongoNamespace &from, const MongoNamespace &to, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_server(server),_from(from),_to(to){}
+                : BaseClass(er),_server(server),_from(from),_to(to){}
             MongoServer *_server;
             const MongoNamespace _from;
             const MongoNamespace _to;
@@ -166,7 +166,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             CreateIndexInfo(const EnsureIndex &oldIndex, const EnsureIndex &newIndex, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_oldIndex(oldIndex), _newIndex(newIndex){}
+                : BaseClass(er),_oldIndex(oldIndex), _newIndex(newIndex){}
             const EnsureIndex _oldIndex;
             const EnsureIndex _newIndex;
         };
@@ -176,7 +176,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             DropIndexInfo(const MongoCollectionInfo &collection, const std::string &name, const ErrorInfo &er = ErrorInfo()) 
-                :BaseClass(er),_collection(collection), _name(name) {}
+                : BaseClass(er),_collection(collection), _name(name) {}
             const MongoCollectionInfo _collection;
             std::string _name;
         };
@@ -186,7 +186,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             CreateDataBaseInfo(const std::string &database, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_database(database){}
+                : BaseClass(er),_database(database){}
             std::string _database;
         };
 
@@ -217,7 +217,7 @@ namespace Robomongo
         {
             typedef ExecuteQueryRequestInfo BaseClass;
             explicit ExecuteQueryResponceInfo(const ExecuteQueryRequestInfo& req)
-                :BaseClass(req),_documents(){}
+                : BaseClass(req),_documents(){}
 
             ExecuteQueryResponceInfo(int resultIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents, const ErrorInfo &er = ErrorInfo()) 
                 : BaseClass(resultIndex, queryInfo, er), _documents(documents){}
@@ -230,7 +230,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             ExecuteScriptRequestInfo(const std::string &script, const std::string &dbName, int take, int skip, const ErrorInfo &er = ErrorInfo()) 
-                :BaseClass(er),_script(script),
+                : BaseClass(er),_script(script),
                 _databaseName(dbName), _take(take),
                 _skip(skip) {}
 
@@ -245,10 +245,10 @@ namespace Robomongo
         {
             typedef ExecuteScriptRequestInfo BaseClass;
             explicit ExecuteScriptResponceInfo(const ExecuteScriptRequestInfo& req)
-                :BaseClass(req),_result(),_empty() {}
+                : BaseClass(req),_result(),_empty() {}
 
             ExecuteScriptResponceInfo(const std::string &script, const std::string &dbName, int take, int skip, const MongoShellExecResult &result, bool empty, const ErrorInfo &er = ErrorInfo()) 
-                :BaseClass(script, dbName, take, skip, er), _result(result), _empty(empty) {}
+                : BaseClass(script, dbName, take, skip, er), _result(result), _empty(empty) {}
 
             MongoShellExecResult _result;
             bool _empty;
@@ -259,7 +259,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             EstablishConnectionRequestInfo(const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er){}
+                : BaseClass(er){}
         };
 
         struct EstablishConnectionResponceInfo
@@ -267,10 +267,10 @@ namespace Robomongo
         {
             typedef EstablishConnectionRequestInfo BaseClass;
             explicit EstablishConnectionResponceInfo(const EstablishConnectionRequestInfo& req)
-                :BaseClass(req),_info(){}
+                : BaseClass(req),_info(){}
 
             EstablishConnectionResponceInfo(const ConnectionInfo &info, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_info(info){}
+                : BaseClass(er),_info(info){}
 
             ConnectionInfo _info;
         };
@@ -280,7 +280,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             LoadFunctionRequestInfo(const std::string &database, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_database(database){}
+                : BaseClass(er),_database(database){}
 
             std::string _database;
         };
@@ -290,10 +290,10 @@ namespace Robomongo
         {
             typedef LoadFunctionRequestInfo BaseClass;
             explicit LoadFunctionResponceInfo(const LoadFunctionRequestInfo& req)
-                :BaseClass(req),_functions(){}
+                : BaseClass(req),_functions(){}
 
             LoadFunctionResponceInfo(const std::string &database, const std::vector<MongoFunction> &func, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(database, er), _functions(func){}
+                : BaseClass(database, er), _functions(func){}
 
             std::vector<MongoFunction> _functions;
         };
@@ -303,7 +303,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             LoadUserRequestInfo(const std::string &database, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_database(database)
+                : BaseClass(er),_database(database)
             {
             }
 
@@ -315,10 +315,10 @@ namespace Robomongo
         {
             typedef LoadUserRequestInfo BaseClass;
             explicit LoadUserResponceInfo(const LoadUserRequestInfo& req)
-                :BaseClass(req),_users(){}
+                : BaseClass(req),_users(){}
 
             LoadUserResponceInfo(const std::string &database, const std::vector<MongoUser> &users, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(database, er),_users(users)
+                : BaseClass(database, er),_users(users)
             {
             }
 
@@ -330,7 +330,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             LoadCollectionRequestInfo(const std::string &database, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_database(database)
+                : BaseClass(er),_database(database)
             {
             }
 
@@ -343,10 +343,10 @@ namespace Robomongo
             typedef LoadCollectionRequestInfo BaseClass;
 
             explicit LoadCollectionResponceInfo(const LoadCollectionRequestInfo& req)
-                :BaseClass(req),_infos(){}
+                : BaseClass(req),_infos(){}
 
             LoadCollectionResponceInfo(const std::string &database, const std::vector<MongoCollectionInfo> &infos, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(database, er),_infos(infos)
+                : BaseClass(database, er),_infos(infos)
             {
             }
 
@@ -358,7 +358,7 @@ namespace Robomongo
         {
             typedef EventInfoBase BaseClass;
             LoadCollectionIndexesRequestInfo(const MongoCollectionInfo &collection, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(er),_collection(collection){}
+                : BaseClass(er),_collection(collection){}
 
             const MongoCollectionInfo _collection;
         };
@@ -368,10 +368,10 @@ namespace Robomongo
         {
             typedef LoadCollectionIndexesRequestInfo BaseClass;
             explicit LoadCollectionIndexesResponceInfo(const LoadCollectionIndexesRequestInfo& req)
-                :BaseClass(req),_indexes(){}
+                : BaseClass(req),_indexes(){}
 
             LoadCollectionIndexesResponceInfo(const MongoCollectionInfo &collection, const std::vector<EnsureIndex> &indexes, const ErrorInfo &er = ErrorInfo())
-                :BaseClass(collection,er),_indexes(indexes){}
+                : BaseClass(collection,er),_indexes(indexes){}
 
             std::vector<EnsureIndex> _indexes;
         };
@@ -411,7 +411,7 @@ namespace Robomongo
         {
             typedef AutoCompleteRequestInfo BaseClass;
             explicit AutoCompleteResponceInfo(const AutoCompleteRequestInfo& req)
-                :BaseClass(req),_list(){}
+                : BaseClass(req),_list(){}
 
             AutoCompleteResponceInfo(const std::string &prefix, const QStringList &list, const ErrorInfo &er = ErrorInfo())
                 : BaseClass(prefix, er), _list(list){}

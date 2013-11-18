@@ -119,6 +119,8 @@ namespace Robomongo
 
         VERIFY(connect(_server, SIGNAL(finishInsertedDocument(const EventsInfo::SaveDocumentInfo &)), this,
                        SLOT(finishInsertDocument(const EventsInfo::SaveDocumentInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_server, SIGNAL(finishRemovedDocument(const EventsInfo::RemoveDocumenInfo &)), this,
+            SLOT(finishRemoveDocument(const EventsInfo::RemoveDocumenInfo &)), Qt::DirectConnection));
 
         refreshOutputItem(); 
     }
@@ -255,7 +257,6 @@ namespace Robomongo
             _bsonTreeview = new BsonTreeView(this);
             const Notifier &notif = _bsonTreeview->notifier();
             VERIFY(connect(&notif, SIGNAL(deletedDocument(BsonTreeItem *, bool)), this, SLOT(deleteDocument(BsonTreeItem *, bool)), Qt::DirectConnection ));
-            VERIFY(connect(&notif, SIGNAL(deletedDocuments(std::vector<BsonTreeItem *>, bool)), this, SLOT(deleteDocuments(std::vector<BsonTreeItem *>, bool)), Qt::DirectConnection ));
             VERIFY(connect(&notif, SIGNAL(editedDocument(BsonTreeItem *)), this, SLOT(editDocument(BsonTreeItem *)), Qt::DirectConnection ));
             VERIFY(connect(&notif, SIGNAL(viewDocument(BsonTreeItem *)), this, SLOT(viewDocument(BsonTreeItem *)), Qt::DirectConnection ));
             VERIFY(connect(&notif, SIGNAL(createdDocument()), this, SLOT(createDocument()), Qt::DirectConnection ));
@@ -307,7 +308,6 @@ namespace Robomongo
             _bsonTable = new BsonTableView(this);
             const Notifier &notif = _bsonTable->notifier();
             VERIFY(connect(&notif, SIGNAL(deletedDocument(BsonTreeItem *, bool)), this, SLOT(deleteDocument(BsonTreeItem *, bool)), Qt::DirectConnection ));
-            VERIFY(connect(&notif, SIGNAL(deletedDocuments(std::vector<BsonTreeItem *>, bool)), this, SLOT(deleteDocuments(std::vector<BsonTreeItem *>, bool)), Qt::DirectConnection ));
             VERIFY(connect(&notif, SIGNAL(editedDocument(BsonTreeItem *)), this, SLOT(editDocument(BsonTreeItem *)), Qt::DirectConnection ));
             VERIFY(connect(&notif, SIGNAL(viewDocument(BsonTreeItem *)), this, SLOT(viewDocument(BsonTreeItem *)), Qt::DirectConnection ));
             VERIFY(connect(&notif, SIGNAL(createdDocument()), this, SLOT(createDocument()), Qt::DirectConnection ));
@@ -411,7 +411,6 @@ namespace Robomongo
         for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
             _server->insertDocument(*it, _queryInfo._collectionInfo._ns);
         }
-        refresh();
     }
 
     void OutputItemContentWidget::editDocument(BsonTreeItem *item)
@@ -486,24 +485,15 @@ namespace Robomongo
         _server->removeDocuments(query, _queryInfo._collectionInfo._ns);
     }
 
-    void OutputItemContentWidget::deleteDocuments(std::vector<BsonTreeItem *> items, bool force)
+    void OutputItemContentWidget::finishRemoveDocument(const EventsInfo::RemoveDocumenInfo &inf)
     {
-        int answer = QMessageBox::question(this, "Delete", QString("Do you want to delete %1 selected documents?").arg(items.size()));
-        if (answer == QMessageBox::Yes) {
-            for (std::vector<BsonTreeItem*>::const_iterator it = items.begin(); it != items.end(); ++it) {
-                BsonTreeItem * documentItem = *it;
-                if (!documentItem)
-                    break;
-
-                deleteDocument(documentItem, force);
-            }
-            refresh();
-        }
+        ErrorInfo er = inf.errorInfo();
+        refresh();
     }
 
     void OutputItemContentWidget::finishInsertDocument(const EventsInfo::SaveDocumentInfo &inf)
     {
         ErrorInfo er = inf.errorInfo();
-
+        refresh();
     }
 }

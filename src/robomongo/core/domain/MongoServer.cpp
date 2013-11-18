@@ -70,11 +70,12 @@ namespace Robomongo
             Events::SaveDocumentResponceEvent *ev = static_cast<Events::SaveDocumentResponceEvent*>(event);
             Events::SaveDocumentResponceEvent::value_type inf = ev->value();
             //ErrorInfo er = inf.errorInfo();
-
             emit finishInsertedDocument(inf);
         }
         else if(type==static_cast<QEvent::Type>(Events::RemoveDocumentResponceEvent::EventType)){
             Events::RemoveDocumentResponceEvent *ev = static_cast<Events::RemoveDocumentResponceEvent*>(event);
+            Events::RemoveDocumentResponceEvent::value_type v = ev->value();
+            emit finishRemovedDocument(v);
         }
         else if(type==static_cast<QEvent::Type>(Events::ExecuteQueryResponceEvent::EventType)){
             Events::ExecuteQueryResponceEvent *ev = static_cast<Events::ExecuteQueryResponceEvent*>(event);
@@ -178,6 +179,7 @@ namespace Robomongo
     void MongoServer::removeDocuments(mongo::Query query, const MongoNamespace &ns, bool justOne)
     {
         EventsInfo::RemoveDocumenInfo inf(query, ns, justOne);
+        emit startRemovedDocument(inf);
         qApp->postEvent(_client, new Events::RemoveDocumentRequestEvent(this, inf));
     }
 

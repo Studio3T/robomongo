@@ -69,9 +69,10 @@ namespace Robomongo
         void createDocument();
         void viewDocument(BsonTreeItem *item);
         void deleteDocument(BsonTreeItem *item, bool force);
-        void deleteDocuments(std::vector<BsonTreeItem *> items, bool force);
 
         void finishInsertDocument(const EventsInfo::SaveDocumentInfo &);
+        void finishRemoveDocument(const EventsInfo::RemoveDocumenInfo &);
+
     private:
         void setup(double secs);
         void refresh();

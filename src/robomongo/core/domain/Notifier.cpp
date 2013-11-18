@@ -119,6 +119,17 @@ namespace Robomongo
         if (onItem && isEditable) menu->addAction(_deleteDocumentAction);
     }
 
+    void Notifier::inPorcessDeleteDocument(bool force)
+    {
+        QModelIndexList selectedIndexes = _observer->selectedIndexes();
+        if (detail::isMultySelection(selectedIndexes)){
+            onDeleteDocuments();
+        }
+        else {
+            onDeleteDocument();
+        }
+    }
+
     void Notifier::onDeleteDocuments()
     {
         QModelIndexList selectedIndexes = _observer->selectedIndexes();
@@ -130,7 +141,21 @@ namespace Robomongo
             BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
             items.push_back(item);                
         }
-        emit deletedDocuments(items, true);
+
+        deleteDocumentsImpl(items, true);
+    }
+
+    void Notifier::onEditDocument()
+    {
+        QModelIndex selectedInd = _observer->selectedIndex();
+        if (!selectedInd.isValid())
+            return;
+
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+        if (!documentItem)
+            return;
+
+        emit editedDocument(documentItem);       
     }
 
     void Notifier::onDeleteDocument()
@@ -146,17 +171,22 @@ namespace Robomongo
         emit deletedDocument(documentItem, false);
     }
 
-    void Notifier::onEditDocument()
+    void Notifier::deleteDocumentsImpl(std::vector<BsonTreeItem *> items, bool force)
     {
-        QModelIndex selectedInd = _observer->selectedIndex();
-        if (!selectedInd.isValid())
-            return;
+        QWidget *wid = dynamic_cast<QWidget*>(_observer);
+        VERIFY(wid);
 
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
-        if (!documentItem)
-            return;
+        int answer = QMessageBox::question(wid, "Delete", QString("Do you want to delete %1 selected documents?").arg(items.size()));
+        if (answer == QMessageBox::Yes) {
+            for (std::vector<BsonTreeItem*>::const_iterator it = items.begin(); it != items.end(); ++it) {
+                
+                BsonTreeItem * documentItem = *it;
+                if (!documentItem)
+                    break;
 
-        emit editedDocument(documentItem);       
+                emit deletedDocument(documentItem, force);
+            }
+        }
     }
 
     void Notifier::onViewDocument()

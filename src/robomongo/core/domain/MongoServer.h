@@ -71,6 +71,9 @@ namespace Robomongo
         void startInsertedDocument(const EventsInfo::SaveDocumentInfo &inf);
         void finishInsertedDocument(const EventsInfo::SaveDocumentInfo &inf);
 
+        void startRemovedDocument(const EventsInfo::RemoveDocumenInfo &inf);
+        void finishRemovedDocument(const EventsInfo::RemoveDocumenInfo &inf);
+
         void startConnected(const EventsInfo::EstablishConnectionRequestInfo &inf);
         void finishConnected(const EventsInfo::EstablishConnectionResponceInfo &inf);
 

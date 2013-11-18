@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QObject>
 #include "robomongo/core/domain/ScriptInfo.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
@@ -36,8 +37,9 @@ namespace Robomongo
 
     Q_SIGNALS:
         void autoCompleteResponced(const QString &prefix,const QStringList &list);
-        void scriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &inf);
-        void startScriptExecuted();
+        
+        void startedScriptExecuted(const EventsInfo::ExecuteScriptRequestInfo &);
+        void finishedScriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &);
 
     private:        
         ScriptInfo _scriptInfo;

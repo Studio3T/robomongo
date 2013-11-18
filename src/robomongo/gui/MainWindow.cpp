@@ -703,13 +703,13 @@ namespace Robomongo
         server->tryConnect();
     }
 
-    void MainWindow::startScriptExecute()
+    void MainWindow::startScriptExecute(const EventsInfo::ExecuteScriptRequestInfo &inf)
     {
         _stopAction->setDisabled(false);
         _executeAction->setDisabled(true);
     }
 
-    void MainWindow::scriptExecute(const EventsInfo::ExecuteScriptResponceInfo &inf)
+    void MainWindow::finishScriptExecute(const EventsInfo::ExecuteScriptResponceInfo &inf)
     {
         _stopAction->setDisabled(true);
         _executeAction->setDisabled(false);
@@ -795,9 +795,10 @@ namespace Robomongo
     void MainWindow::createTabs()
     {
         _workArea = new WorkAreaTabWidget(this);
-        VERIFY(connect(_workArea, SIGNAL(scriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &)), this, SLOT(scriptExecute(const EventsInfo::ExecuteScriptResponceInfo &)), Qt::DirectConnection));
-        VERIFY(connect(_workArea, SIGNAL(windowCountChanged(int)), this, SLOT(queryWidgetWindowCountChange(int)), Qt::DirectConnection));
-        VERIFY(connect(_workArea, SIGNAL(startScriptExecuted()), this, SLOT(startScriptExecute()), Qt::DirectConnection));
+        VERIFY(connect(_workArea, SIGNAL(startedScriptExecuted(const EventsInfo::ExecuteScriptRequestInfo &)), this, SLOT(startScriptExecute(const EventsInfo::ExecuteScriptRequestInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_workArea, SIGNAL(finishedScriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &)), this, SLOT(finishScriptExecute(const EventsInfo::ExecuteScriptResponceInfo &)), Qt::DirectConnection));
+
+        VERIFY(connect(_workArea, SIGNAL(windowCountChanged(int)), this, SLOT(queryWidgetWindowCountChange(int)), Qt::DirectConnection));        
 
         VERIFY(connect(AppRegistry::instance().app(), SIGNAL(shellOpened(MongoShell*)), _workArea, SLOT(shellOpen(MongoShell*))));
         VERIFY(connect(_workArea, SIGNAL(currentChanged(int)), this, SLOT(updateMenus())));

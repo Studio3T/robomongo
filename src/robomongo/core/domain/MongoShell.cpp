@@ -20,11 +20,11 @@ namespace Robomongo
     }
 
     void MongoShell::open(const std::string &script, const std::string &dbName)
-    {
-        emit startScriptExecuted();
+    {        
         _scriptInfo.setScript(QtUtils::toQString(script));
 
         EventsInfo::ExecuteScriptRequestInfo inf(query(), dbName, 0, 0);
+        emit startedScriptExecuted(inf);
         _server->postEventToDataBase(new Events::ExecuteScriptRequestEvent(this,inf));
         LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
     }
@@ -36,15 +36,16 @@ namespace Robomongo
 
     void MongoShell::execute(const std::string &dbName)
     {
-        emit startScriptExecuted();
         if (_scriptInfo.execute()) {
             EventsInfo::ExecuteScriptRequestInfo inf(query(), dbName, 0, 0);
+            emit startedScriptExecuted(inf);
             _server->postEventToDataBase(new Events::ExecuteScriptRequestEvent(this,inf));
             if(!_scriptInfo.script().isEmpty())
                 LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
         } else {
             _scriptInfo.setScript("");
             EventsInfo::ExecuteScriptRequestInfo inf(query(), dbName, 0, 0);
+            emit startedScriptExecuted(inf);
             _server->postEventToDataBase(new Events::ExecuteScriptRequestEvent(this,inf));
         }        
     }
@@ -86,7 +87,7 @@ namespace Robomongo
         else if(type==static_cast<QEvent::Type>(Events::ExecuteScriptResponceEvent::EventType)){
             Events::ExecuteScriptResponceEvent *ev = static_cast<Events::ExecuteScriptResponceEvent*>(event);
             Events::ExecuteScriptResponceEvent::value_type v = ev->value();
-            emit scriptExecuted(v);
+            emit finishedScriptExecuted(v);
         }
 
         return BaseClass::customEvent(event);

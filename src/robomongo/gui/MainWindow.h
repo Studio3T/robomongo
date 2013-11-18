@@ -52,8 +52,9 @@ namespace Robomongo
 
         void toggleLogs(bool show);
         void connectToServer(QAction *action);
-        void startScriptExecute();
-        void scriptExecute(const EventsInfo::ExecuteScriptResponceInfo &inf);
+
+        void startScriptExecute(const EventsInfo::ExecuteScriptRequestInfo &inf);
+        void finishScriptExecute(const EventsInfo::ExecuteScriptResponceInfo &inf);
         void queryWidgetWindowCountChange(int windowCount);
 
     private Q_SLOTS:

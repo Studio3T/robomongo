@@ -34,7 +34,7 @@ namespace Robomongo
         _isTextChanged(false)
     {
         VERIFY(connect(shell->server(), SIGNAL(documentListLoaded(const EventsInfo::ExecuteQueryResponceInfo &)), this, SLOT(documentListLoad(const EventsInfo::ExecuteQueryResponceInfo &)), Qt::DirectConnection));
-        VERIFY(connect(shell, SIGNAL(scriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &)), this, SLOT(scriptExecute(const EventsInfo::ExecuteScriptResponceInfo &)), Qt::DirectConnection));
+        VERIFY(connect(shell, SIGNAL(finishedScriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &)), this, SLOT(scriptExecute(const EventsInfo::ExecuteScriptResponceInfo &)), Qt::DirectConnection));
 
         _scriptWidget = new ScriptWidget(_shell);
         VERIFY(connect(_scriptWidget, SIGNAL(textChanged()), this, SLOT(textChange())));
@@ -202,7 +202,6 @@ namespace Robomongo
         displayData(inf._result.results(), inf._empty);
         _scriptWidget->setup(inf._result);         
         activateTabContent();
-        emit scriptExecuted(inf);
     }
 
     void QueryWidget::activateTabContent()

@@ -46,7 +46,6 @@ namespace Robomongo
     Q_SIGNALS:
         void titleChanged(const QString &text);
         void toolTipChanged(const QString &text);
-        void scriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &inf);
         void windowCountChanged(int count);
 
     public Q_SLOTS:

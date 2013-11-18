@@ -201,22 +201,19 @@ namespace Robomongo
 
     void WorkAreaTabWidget::shellOpen(MongoShell *shell)
     {
-        VERIFY(connect(shell, SIGNAL(startScriptExecuted()), this, SIGNAL(startScriptExecuted()), Qt::DirectConnection));
-
-        const QString &title = shell->title();
-
-        QString shellName = title.isEmpty() ? " Loading..." : title;
+        VERIFY(connect(shell, SIGNAL(startedScriptExecuted(const EventsInfo::ExecuteScriptRequestInfo &)), this, SIGNAL(startedScriptExecuted(const EventsInfo::ExecuteScriptRequestInfo &)), Qt::DirectConnection));
+        VERIFY(connect(shell, SIGNAL(finishedScriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &)), this, SIGNAL(finishedScriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &)), Qt::DirectConnection));
 
         QueryWidget *queryWidget = new QueryWidget(shell,this);
         VERIFY(connect(queryWidget, SIGNAL(titleChanged(const QString &)), this, SLOT(tabTextChange(const QString &))));
         VERIFY(connect(queryWidget, SIGNAL(toolTipChanged(const QString &)), this, SLOT(tooltipTextChange(const QString &))));
-
-        VERIFY(connect(queryWidget, SIGNAL(scriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &)), this, SIGNAL(scriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &)), Qt::DirectConnection));
         VERIFY(connect(queryWidget, SIGNAL(windowCountChanged(int)), this, SIGNAL(windowCountChanged(int)), Qt::DirectConnection));
 
+        const QString &title = shell->title();  
+        QString shellName = title.isEmpty() ? " Loading..." : title;
         addTab(queryWidget, shellName);
 
-        setCurrentIndex(count() - 1);
+        setCurrentWidget(queryWidget);
 #if !defined(Q_OS_MAC)
         setTabIcon(count() - 1, GuiRegistry::instance().mongodbIcon());
 #endif

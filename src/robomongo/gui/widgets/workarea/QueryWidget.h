@@ -12,10 +12,6 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
-    class BsonWidget;
-    class DocumentListLoadedEvent;
-    class ScriptExecutedEvent;
-    class AutocompleteResponse;
     class OutputWidget;
     class ScriptWidget;
     class MongoShell;

@@ -5,9 +5,7 @@
 
 namespace Robomongo
 {
-    class MongoDatabase;
     class MongoServer;
-    class MongoServerLoadingDatabasesEvent;
     
     class ExplorerServerTreeItem : public ExplorerTreeItem
     {

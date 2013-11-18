@@ -33,7 +33,7 @@ namespace Robomongo
         _viewer(NULL),
         _isTextChanged(false)
     {
-        VERIFY(connect(shell->server(), SIGNAL(documentListLoaded(const EventsInfo::ExecuteQueryResponceInfo &)), this, SLOT(documentListLoad(const EventsInfo::ExecuteQueryResponceInfo &)), Qt::DirectConnection));
+        VERIFY(connect(shell->server(), SIGNAL(finishedDocumentListLoad(const EventsInfo::ExecuteQueryResponceInfo &)), this, SLOT(documentListLoad(const EventsInfo::ExecuteQueryResponceInfo &)), Qt::DirectConnection));
         VERIFY(connect(shell, SIGNAL(finishedScriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &)), this, SLOT(scriptExecute(const EventsInfo::ExecuteScriptResponceInfo &)), Qt::DirectConnection));
 
         _scriptWidget = new ScriptWidget(_shell);

@@ -21,20 +21,16 @@ namespace Robomongo
         friend class MongoWorker;
     public:
         /**
-         * @brief MongoServer
-         * @param connectionRecord: MongoServer will own this ConnectionSettings.
-         * @param visible
-         * @param defaultDatabase
-         */
+        * @brief MongoServer
+        * @param connectionRecord: MongoServer will own this ConnectionSettings.
+        * @param visible
+        * @param defaultDatabase
+        */
         typedef QObject BaseClass;
         typedef QList<MongoDatabase *> DatabasesContainerType;
         MongoServer(const IConnectionSettingsBase *connectionRecord, bool visible);
         ~MongoServer();
 
-        /**
-         * @brief Try to connect to MongoDB server.
-         * @throws MongoException, if fails
-         */
         void tryConnect();
         bool isConnected()const;
 
@@ -81,20 +77,19 @@ namespace Robomongo
         void startedLoadDatabases(const EventsInfo::LoadDatabaseNamesRequestInfo &inf);
         void finishedLoadDatabases(const EventsInfo::LoadDatabaseNamesResponceInfo &inf);
 
-        void documentListLoaded(const EventsInfo::ExecuteQueryResponceInfo &inf);
+        void finishedDocumentListLoad(const EventsInfo::ExecuteQueryResponceInfo &inf);
 
     protected:
         virtual void customEvent(QEvent *ev);
 
     private:
+        void refreshDatabase(const std::vector<std::string> &dbs);
         void clearDatabases();
-        void addDatabase(MongoDatabase *database);
 
         MongoWorker *const _client;
 
         float _version;
         bool _visible;
-        bool _isConnected;
 
         DatabasesContainerType _databases;
     };

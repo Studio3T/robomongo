@@ -24,10 +24,11 @@ namespace Robomongo
         typedef QObject BaseClass;
         explicit MongoWorker(const IConnectionSettingsBase *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
 
-        const IConnectionSettingsBase *connectionRecord() const {return _connection;}
+        const IConnectionSettingsBase *connectionRecord() const { return _connection; }
         ~MongoWorker();
         enum{ pingTimeMs = 60*1000 };
         virtual void customEvent(QEvent *);
+        bool isConnected() const { return _isConnected; }
 
     private Q_SLOTS:
 

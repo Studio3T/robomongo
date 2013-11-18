@@ -14,14 +14,13 @@ namespace Robomongo
     MongoServer::MongoServer(const IConnectionSettingsBase *connectionRecord, bool visible) : QObject(),
         _version(0.0f),
         _visible(visible),
-        _client(new MongoWorker(connectionRecord->clone(),AppRegistry::instance().settingsManager()->loadMongoRcJs(),AppRegistry::instance().settingsManager()->batchSize())),
-        _isConnected(false)
+        _client(new MongoWorker(connectionRecord->clone(),AppRegistry::instance().settingsManager()->loadMongoRcJs(),AppRegistry::instance().settingsManager()->batchSize()))
     {
     }
 
     bool MongoServer::isConnected() const
     {
-        return _isConnected;
+        return _client->isConnected();
     }
 
     const IConnectionSettingsBase *MongoServer::connectionRecord() const 
@@ -53,18 +52,12 @@ namespace Robomongo
             Events::LoadDatabaseNamesResponceEvent *ev = static_cast<Events::LoadDatabaseNamesResponceEvent*>(event);
             Events::LoadDatabaseNamesResponceEvent::value_type v = ev->value();
 
-            clearDatabases();
-            for(std::vector<std::string>::iterator it = v._databases.begin(); it != v._databases.end(); ++it) {
-                const std::string &name = *it;
-                MongoDatabase *db  = new MongoDatabase(this, name);
-                addDatabase(db);
-            }
+            refreshDatabase(v._databases);
             emit finishedLoadDatabases(v);
         }
         else if(type==static_cast<QEvent::Type>(Events::SaveDocumentResponceEvent::EventType)){
             Events::SaveDocumentResponceEvent *ev = static_cast<Events::SaveDocumentResponceEvent*>(event);
             Events::SaveDocumentResponceEvent::value_type v = ev->value();
-            //ErrorInfo er = inf.errorInfo();
             emit finishedInsertDocument(v);
         }
         else if(type==static_cast<QEvent::Type>(Events::RemoveDocumentResponceEvent::EventType)){
@@ -75,26 +68,30 @@ namespace Robomongo
         else if(type==static_cast<QEvent::Type>(Events::ExecuteQueryResponceEvent::EventType)){
             Events::ExecuteQueryResponceEvent *ev = static_cast<Events::ExecuteQueryResponceEvent*>(event);
             Events::ExecuteQueryResponceEvent::value_type v = ev->value();
-            emit documentListLoaded(v);
+            emit finishedDocumentListLoad(v);
         }
         else if(type==static_cast<QEvent::Type>(Events::EstablishConnectionResponceEvent::EventType)){
             Events::EstablishConnectionResponceEvent *ev = static_cast<Events::EstablishConnectionResponceEvent*>(event);
-            Events::EstablishConnectionResponceEvent::value_type inf = ev->value();
-            ErrorInfo er = inf.errorInfo();
+            Events::EstablishConnectionResponceEvent::value_type v = ev->value();
+            ErrorInfo er = v.errorInfo();
 
-            _isConnected = !er.isError();
             if (_visible) {
-                clearDatabases();
-                for(std::vector<std::string>::const_iterator it = inf._info._databases.begin(); it != inf._info._databases.end(); ++it) {
-                    const std::string &name = *it;
-                    MongoDatabase *db  = new MongoDatabase(this, name);
-                    addDatabase(db);
-                }
+                refreshDatabase(v._info._databases);
             }
-            emit finishedConnect(inf);
-            _version = inf._info._version;
+            _version = v._info._version;
+            emit finishedConnect(v);            
         }
         return BaseClass::customEvent(event);
+    }
+
+    void MongoServer::refreshDatabase(const std::vector<std::string> &dbs)
+    {
+        clearDatabases();
+        for(std::vector<std::string>::const_iterator it = dbs.begin(); it != dbs.end(); ++it) {
+            const std::string &name = *it;
+            MongoDatabase *database  = new MongoDatabase(this, name);
+             _databases.append(database);
+        }
     }
 
     QStringList MongoServer::getDatabasesNames() const
@@ -107,13 +104,13 @@ namespace Robomongo
         return result;
     }
     
-     /**
-     * @brief Try to connect to MongoDB server.
-     * @throws MongoException, if fails
-     */
+    /**
+    * @brief Try to connect to MongoDB server.
+    * @throws MongoException, if fails
+    */
     void MongoServer::tryConnect()
     {
-        if(!_isConnected){            
+        if(!isConnected()){            
             EventsInfo::EstablishConnectionRequestInfo inf;
             emit startedConnect(inf);
             qApp->postEvent(_client, new Events::EstablishConnectionRequestEvent(this, inf));
@@ -195,10 +192,5 @@ namespace Robomongo
     {
         qDeleteAll(_databases);
         _databases.clear();
-    }
-
-    void MongoServer::addDatabase(MongoDatabase *database)
-    {
-        _databases.append(database);
     }
 }

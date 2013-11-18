@@ -7,8 +7,6 @@
 
 namespace Robomongo
 {
-    class LoadCollectionIndexesResponse;
-    class DropCollectionIndexResponse;
     class ExplorerCollectionDirIndexesTreeItem;
     class ExplorerDatabaseTreeItem;
     class MongoServer;

@@ -10,7 +10,6 @@ namespace Robomongo
         QString buildName(const QString& text,int count);
     }
 
-    class ExplorerCollectionTreeItem;
     class ExplorerDatabaseCategoryTreeItem;
     class MongoDatabase;
     class MongoCollection;
@@ -23,7 +22,7 @@ namespace Robomongo
         typedef ExplorerTreeItem BaseClass;
         ExplorerDatabaseTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database);
 
-        MongoDatabase *database() const { return _database; }
+        MongoDatabase *const database() const { return _database; }
         void expandCollections();
         void expandUsers();
         void expandFunctions();

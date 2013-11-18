@@ -5,7 +5,8 @@
 
 namespace Robomongo
 {
-    class BsonTableView : public QTableView , public IViewObserver
+    class BsonTableView 
+        : public QTableView , public IViewObserver
     {
         Q_OBJECT
     public:

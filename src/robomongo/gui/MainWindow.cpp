@@ -520,9 +520,9 @@ namespace Robomongo
         if (result == QDialog::Accepted) {
             IConnectionSettingsBase *selected = dialog.selectedConnection();
             Robomongo::MongoServer *server = Robomongo::AppRegistry::instance().app()->openServer(selected, true);
-            VERIFY(connect(server, SIGNAL(startConnected(const EventsInfo::EstablishConnectionRequestInfo &)), _explorer, SLOT(increaseProgress()), Qt::DirectConnection));
-            VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionResponceInfo &)), _explorer, SLOT(decreaseProgress()), Qt::DirectConnection));
-            VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionResponceInfo &)), this, SLOT(connectToServer(const EventsInfo::EstablishConnectionResponceInfo &)), Qt::DirectConnection));
+            VERIFY(connect(server, SIGNAL(startedConnect(const EventsInfo::EstablishConnectionRequestInfo &)), _explorer, SLOT(increaseProgress()), Qt::DirectConnection));
+            VERIFY(connect(server, SIGNAL(finishedConnect(const EventsInfo::EstablishConnectionResponceInfo &)), _explorer, SLOT(decreaseProgress()), Qt::DirectConnection));
+            VERIFY(connect(server, SIGNAL(finishedConnect(const EventsInfo::EstablishConnectionResponceInfo &)), this, SLOT(connectToServer(const EventsInfo::EstablishConnectionResponceInfo &)), Qt::DirectConnection));
             server->tryConnect();            
         }
 
@@ -697,9 +697,9 @@ namespace Robomongo
         QVariant data = connectionAction->data();
         IConnectionSettingsBase *ptr = qvariant_cast<IConnectionSettingsBase *>(data);
         Robomongo::MongoServer *server = Robomongo::AppRegistry::instance().app()->openServer(ptr, true);
-        VERIFY(connect(server, SIGNAL(startConnected(const EventsInfo::EstablishConnectionRequestInfo &)), _explorer, SLOT(increaseProgress()), Qt::DirectConnection));
-        VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionResponceInfo &)), _explorer, SLOT(decreaseProgress()), Qt::DirectConnection));
-        VERIFY(connect(server, SIGNAL(finishConnected(const EventsInfo::EstablishConnectionResponceInfo &)), this, SLOT(connectToServer(const EventsInfo::EstablishConnectionResponceInfo &)), Qt::DirectConnection));
+        VERIFY(connect(server, SIGNAL(startedConnect(const EventsInfo::EstablishConnectionRequestInfo &)), _explorer, SLOT(increaseProgress()), Qt::DirectConnection));
+        VERIFY(connect(server, SIGNAL(finishedConnect(const EventsInfo::EstablishConnectionResponceInfo &)), _explorer, SLOT(decreaseProgress()), Qt::DirectConnection));
+        VERIFY(connect(server, SIGNAL(finishedConnect(const EventsInfo::EstablishConnectionResponceInfo &)), this, SLOT(connectToServer(const EventsInfo::EstablishConnectionResponceInfo &)), Qt::DirectConnection));
         server->tryConnect();
     }
 

@@ -14,6 +14,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+
         typedef QObject BaseClass;
         MongoShell(MongoServer *server,const ScriptInfo &scriptInfo);
 
@@ -36,7 +37,7 @@ namespace Robomongo
         virtual void customEvent(QEvent *);
 
     Q_SIGNALS:
-        void autoCompleteResponced(const QString &prefix,const QStringList &list);
+        void autoCompleteResponced(const QString &prefix, const QStringList &list);
         
         void startedScriptExecuted(const EventsInfo::ExecuteScriptRequestInfo &);
         void finishedScriptExecuted(const EventsInfo::ExecuteScriptResponceInfo &);

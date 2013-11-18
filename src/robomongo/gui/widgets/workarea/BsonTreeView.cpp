@@ -59,7 +59,7 @@ namespace Robomongo
                 }
             }
 
-            _notifier.initMenu(true, &menu,documentItem);
+            _notifier.initMenu(true, &menu, documentItem);
             menu.exec(menuPoint);
         }
     }
@@ -74,7 +74,7 @@ namespace Robomongo
     {
         if (event->key() == Qt::Key_Delete) {
             bool isForce = event->modifiers() & Qt::ShiftModifier;
-            _notifier.inPorcessDeleteDocument(isForce);          
+            _notifier.inProcessDeleteDocument(isForce);          
         }
         return BaseClass::keyPressEvent(event);
     }

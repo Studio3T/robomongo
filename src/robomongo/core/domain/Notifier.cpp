@@ -119,7 +119,7 @@ namespace Robomongo
         if (onItem && isEditable) menu->addAction(_deleteDocumentAction);
     }
 
-    void Notifier::inPorcessDeleteDocument(bool force)
+    void Notifier::inProcessDeleteDocument(bool force)
     {
         QModelIndexList selectedIndexes = _observer->selectedIndexes();
         if (detail::isMultySelection(selectedIndexes)){

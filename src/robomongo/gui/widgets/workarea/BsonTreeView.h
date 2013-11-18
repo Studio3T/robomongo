@@ -8,7 +8,8 @@ namespace Robomongo
 {
     class MongoServer;
 
-    class BsonTreeView : public QTreeView, public IViewObserver
+    class BsonTreeView 
+        : public QTreeView, public IViewObserver
     {
         Q_OBJECT
 

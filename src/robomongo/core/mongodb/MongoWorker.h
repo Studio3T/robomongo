@@ -14,7 +14,8 @@ namespace Robomongo
 {
     class ScriptEngine;
 
-    class MongoWorker : public QObject
+    class MongoWorker 
+        : public QObject
     {
         Q_OBJECT
 
@@ -50,19 +51,20 @@ namespace Robomongo
         void createCollection(EventsInfo::CreateCollectionInfo &inf); //nothrow
         void dropDatabase(EventsInfo::DropDatabaseInfo &inf); //nothrow
         void createDatabase(EventsInfo::CreateDataBaseInfo &inf); //nothrow
-        void establishConnection(EventsInfo::EstablishConnectionResponceInfo &inf); //nothrow
-        void getCollectionInfos(EventsInfo::LoadCollectionResponceInfo &inf); //nothrow
         void renameCollection(EventsInfo::RenameCollectionInfo &inf); //nothrow
-        void query(EventsInfo::ExecuteQueryResponceInfo &inf); //nothrow
         void dropIndexFromCollection(EventsInfo::DropIndexInfo &inf); //nothrow        
         void ensureIndex(EventsInfo::CreateIndexInfo &inf); //nothrow
-        void getIndexes(EventsInfo::LoadCollectionIndexesResponceInfo &inf); //nothrow
-        void getFunctions(EventsInfo::LoadFunctionResponceInfo &inf); //nothrow
         void createFunction(EventsInfo::CreateFunctionInfo &inf); //nothrow
-        void dropFunction(EventsInfo::DropFunctionInfo &inf); //nothrow
-        void getUsers(EventsInfo::LoadUserResponceInfo &inf); //nothrow
+        void dropFunction(EventsInfo::DropFunctionInfo &inf); //nothrow        
         void createUser(EventsInfo::CreateUserInfo &inf); //nothrow
         void dropUser(EventsInfo::DropUserInfo &inf); //nothrow
+
+        void getCollectionInfos(EventsInfo::LoadCollectionResponceInfo &inf); //nothrow
+        void establishConnection(EventsInfo::EstablishConnectionResponceInfo &inf); //nothrow
+        void query(EventsInfo::ExecuteQueryResponceInfo &inf); //nothrow
+        void getIndexes(EventsInfo::LoadCollectionIndexesResponceInfo &inf); //nothrow
+        void getFunctions(EventsInfo::LoadFunctionResponceInfo &inf); //nothrow
+        void getUsers(EventsInfo::LoadUserResponceInfo &inf); //nothrow
         void executeScript(EventsInfo::ExecuteScriptResponceInfo &inf); //nothrow
         void getAutoCompleteList(EventsInfo::AutoCompleteResponceInfo &inf); //nothrow
         void getDatabaseNames(EventsInfo::LoadDatabaseNamesResponceInfo &inf); //nothrow

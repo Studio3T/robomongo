@@ -2,11 +2,11 @@
 
 #include <QObject>
 
-#include "robomongo/core/Core.h"
 #include "robomongo/core/events/MongoEventsInfo.hpp"
 
 namespace Robomongo
 {
+    class MongoCollection;
     /**
      * @brief Represents MongoDB database.
      */

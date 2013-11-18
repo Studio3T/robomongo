@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <QStackedWidget>
 
 QT_BEGIN_NAMESPACE
@@ -10,9 +11,7 @@ QT_END_NAMESPACE
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/core/events/MongoEventsInfo.hpp"
-#include "robomongo/core/domain/Notifier.h"
 #include "robomongo/core/Enums.h"
-#include <vector>
 
 namespace Robomongo
 {
@@ -35,8 +34,6 @@ namespace Robomongo
         typedef QWidget BaseClass;
         OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoServer *shell, const QString &text, double secs, QWidget *parent = NULL);
         OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoServer *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent = NULL);
-        int _initialSkip;
-        int _initialLimit;
         void update(const MongoQueryInfo &inf,const std::vector<MongoDocumentPtr> &documents);
         bool isTextModeSupported() const { return _isTextModeSupported; }
         bool isTreeModeSupported() const { return _isTreeModeSupported; }
@@ -46,8 +43,6 @@ namespace Robomongo
 
         void refreshOutputItem();
         void markUninitialized();
-
-        virtual void customEvent(QEvent *);
 
     Q_SIGNALS:
         void restoredSize();
@@ -109,5 +104,8 @@ namespace Robomongo
 
         bool _isFirstPartRendered;
         ViewMode _viewMode;
+
+        int _initialSkip;
+        int _initialLimit;
     };
 }

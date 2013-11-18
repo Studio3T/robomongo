@@ -3,11 +3,6 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
-namespace mongo
-{
-    class DBClientConnection;
-}
-
 /*
 ** Smart pointers for Mongo* staff
 */
@@ -21,9 +16,6 @@ namespace Robomongo
 
     class App;
     typedef boost::scoped_ptr<App> AppScopedPtr;
-    
-    class MongoCollection;
-    typedef boost::shared_ptr<MongoCollection> MongoCollectionPtr;
 
     class MongoDocument;
     typedef boost::shared_ptr<MongoDocument> MongoDocumentPtr;

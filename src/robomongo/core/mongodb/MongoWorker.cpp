@@ -240,8 +240,8 @@ namespace Robomongo
     {
         ErrorInfo &er = inf._errorInfo;
         QMutexLocker lock(&_firstConnectionMutex);
-
         mongo::DBClientBase *con = getConnection(er);
+
         std::vector<std::string> dbNames;
         float vers = 0.0f;
 
@@ -948,8 +948,7 @@ namespace Robomongo
 
     void MongoWorker::timerEvent(QTimerEvent *event)
     {
-        if (_timerId==event->timerId())
-        {
+        if (_timerId==event->timerId()){
             ErrorInfo er;
             keepAlive(er);
         }

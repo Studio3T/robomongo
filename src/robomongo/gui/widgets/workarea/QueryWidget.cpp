@@ -109,7 +109,7 @@ namespace Robomongo
         if (_shell) {
             _shell->setScript(_scriptWidget->text());
             if (_shell->saveToFile()) {
-                _isTextChanged =false;
+                _isTextChanged = false;
                 updateCurrentTab();
             }
         }
@@ -120,7 +120,7 @@ namespace Robomongo
         if (_shell) {
             _shell->setScript(_scriptWidget->text());
             if (_shell->saveToFileAs()) {
-                _isTextChanged =false;
+                _isTextChanged = false;
                 updateCurrentTab();
             }
         }        

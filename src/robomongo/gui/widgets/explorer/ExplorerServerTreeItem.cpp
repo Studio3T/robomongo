@@ -64,8 +64,8 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(showLog);
         BaseClass::_contextMenu->addAction(disconnectAction);
 
-        VERIFY(connect(_server, SIGNAL(startLoadDatabases(const EventsInfo::LoadDatabaseNamesRequestInfo &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabaseNamesRequestInfo &)), Qt::DirectConnection));
-        VERIFY(connect(_server, SIGNAL(finishLoadDatabases(const EventsInfo::LoadDatabaseNamesResponceInfo &)), this, SLOT(addDatabases(const EventsInfo::LoadDatabaseNamesResponceInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_server, SIGNAL(startedLoadDatabases(const EventsInfo::LoadDatabaseNamesRequestInfo &)), this, SLOT(startLoadDatabases(const EventsInfo::LoadDatabaseNamesRequestInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_server, SIGNAL(finishedLoadDatabases(const EventsInfo::LoadDatabaseNamesResponceInfo &)), this, SLOT(addDatabases(const EventsInfo::LoadDatabaseNamesResponceInfo &)), Qt::DirectConnection));
         
         setText(0, buildServerName());
         setIcon(0, GuiRegistry::instance().serverIcon());

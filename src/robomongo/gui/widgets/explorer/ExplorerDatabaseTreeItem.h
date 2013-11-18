@@ -13,6 +13,7 @@ namespace Robomongo
     class ExplorerCollectionTreeItem;
     class ExplorerDatabaseCategoryTreeItem;
     class MongoDatabase;
+    class MongoCollection;
 
     class ExplorerDatabaseTreeItem : public ExplorerTreeItem
     {

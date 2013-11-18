@@ -2,14 +2,14 @@
 
 #include <vector>
 
-#include "robomongo/core/utils/ErrorInfo.hpp"
 #include "robomongo/core/Core.h"
+#include "robomongo/core/EnsureIndex.h"
+#include "robomongo/core/utils/ErrorInfo.hpp"
 #include "robomongo/core/domain/MongoNamespace.h"
 #include "robomongo/core/domain/MongoFunction.h"
 #include "robomongo/core/domain/MongoUser.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/core/domain/MongoShellResult.h"
-#include "robomongo/core/EnsureIndex.h"
 #include <mongo/bson/bsonobj.h>
 #include <mongo/client/dbclientinterface.h>
 

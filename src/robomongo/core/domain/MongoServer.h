@@ -68,22 +68,22 @@ namespace Robomongo
         DatabasesContainerType databases() const { return _databases; }
 
     Q_SIGNALS:
-        void startInsertedDocument(const EventsInfo::SaveDocumentInfo &inf);
-        void finishInsertedDocument(const EventsInfo::SaveDocumentInfo &inf);
+        void startedInsertDocument(const EventsInfo::SaveDocumentInfo &inf);
+        void finishedInsertDocument(const EventsInfo::SaveDocumentInfo &inf);
 
-        void startRemovedDocument(const EventsInfo::RemoveDocumenInfo &inf);
-        void finishRemovedDocument(const EventsInfo::RemoveDocumenInfo &inf);
+        void startedRemoveDocument(const EventsInfo::RemoveDocumenInfo &inf);
+        void finishedRemoveDocument(const EventsInfo::RemoveDocumenInfo &inf);
 
-        void startConnected(const EventsInfo::EstablishConnectionRequestInfo &inf);
-        void finishConnected(const EventsInfo::EstablishConnectionResponceInfo &inf);
+        void startedConnect(const EventsInfo::EstablishConnectionRequestInfo &inf);
+        void finishedConnect(const EventsInfo::EstablishConnectionResponceInfo &inf);
 
-        void startLoadDatabases(const EventsInfo::LoadDatabaseNamesRequestInfo &inf);
-        void finishLoadDatabases(const EventsInfo::LoadDatabaseNamesResponceInfo &inf);
+        void startedLoadDatabases(const EventsInfo::LoadDatabaseNamesRequestInfo &inf);
+        void finishedLoadDatabases(const EventsInfo::LoadDatabaseNamesResponceInfo &inf);
 
         void documentListLoaded(const EventsInfo::ExecuteQueryResponceInfo &inf);
 
     protected:
-        virtual void customEvent(QEvent *);
+        virtual void customEvent(QEvent *ev);
 
     private:
         void clearDatabases();

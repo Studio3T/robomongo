@@ -27,7 +27,7 @@ namespace Robomongo
         Notifier(IViewObserver *observer);
         void initMenu(bool isEditable, QMenu *const menu, BsonTreeItem *const item) const;
         void initMultiSelectionMenu(bool isEditable, QMenu *const menu) const;
-        void inPorcessDeleteDocument(bool force);
+        void inProcessDeleteDocument(bool force);
 
     Q_SIGNALS:
         void deletedDocument(BsonTreeItem* item, bool force);
@@ -45,7 +45,7 @@ namespace Robomongo
         void onCopyJson();
 
     protected:
-        void deleteDocumentsImpl(std::vector<BsonTreeItem *> items, bool force);
+        void deleteDocumentsImpl(std::vector<BsonTreeItem*> items, bool force);
 
         IViewObserver *_observer;
         QAction *_deleteDocumentAction;

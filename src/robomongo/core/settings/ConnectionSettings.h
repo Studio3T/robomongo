@@ -46,6 +46,7 @@ namespace Robomongo
         virtual QVariant toVariant() const = 0;
         virtual IConnectionSettingsBase *clone() const = 0;
         virtual std::string connectionString() const = 0;
+
         ConnectionType connectionType() const { return _connectionType; }
     protected:
         std::string _connectionName;
@@ -57,7 +58,8 @@ namespace Robomongo
     /**
      * @brief Represents connection record
      */
-    class ConnectionSettings : public IConnectionSettingsBase
+    class ConnectionSettings 
+        : public IConnectionSettingsBase
     {
     public:
         typedef mongo::HostAndPort hostInfoType;
@@ -96,12 +98,12 @@ namespace Robomongo
 
         hostInfoType info() const { return _info; }
 #ifdef MONGO_SSL
-        SSLInfo sslInfo() const {return _info.sslInfo(); }
-        void setSslInfo(const SSLInfo &info) {_info.setSslInfo(info);}
+        SSLInfo sslInfo() const { return _info.sslInfo(); }
+        void setSslInfo(const SSLInfo &info) { _info.setSslInfo(info); }
 #endif // MONGO_SSL
 #ifdef SSH_SUPPORT_ENABLED
-       SSHInfo sshInfo() const {return _info.sshInfo(); }
-       void setSshInfo(const SSHInfo &info) {_info.setSshInfo(info);}
+       SSHInfo sshInfo() const { return _info.sshInfo(); }
+       void setSshInfo(const SSHInfo &info) { _info.setSshInfo(info); }
 #endif // SSH_SUPPORT_ENABLED
 
     private:

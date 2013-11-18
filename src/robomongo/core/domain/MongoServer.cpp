@@ -51,31 +51,26 @@ namespace Robomongo
         }
         else if(type==static_cast<QEvent::Type>(Events::LoadDatabaseNamesResponceEvent::EventType)){
             Events::LoadDatabaseNamesResponceEvent *ev = static_cast<Events::LoadDatabaseNamesResponceEvent*>(event);
-            Events::LoadDatabaseNamesResponceEvent::value_type inf = ev->value();
-            ErrorInfo er = inf.errorInfo();
+            Events::LoadDatabaseNamesResponceEvent::value_type v = ev->value();
 
-            if (!er.isError()) {
-                Events::LoadDatabaseNamesResponceEvent::value_type v = ev->value();
-
-                clearDatabases();
-                for(std::vector<std::string>::iterator it = v._databases.begin(); it != v._databases.end(); ++it) {
-                    const std::string &name = *it;
-                    MongoDatabase *db  = new MongoDatabase(this, name);
-                    addDatabase(db);
-                }
-                emit finishLoadDatabases(v);
+            clearDatabases();
+            for(std::vector<std::string>::iterator it = v._databases.begin(); it != v._databases.end(); ++it) {
+                const std::string &name = *it;
+                MongoDatabase *db  = new MongoDatabase(this, name);
+                addDatabase(db);
             }
+            emit finishedLoadDatabases(v);
         }
         else if(type==static_cast<QEvent::Type>(Events::SaveDocumentResponceEvent::EventType)){
             Events::SaveDocumentResponceEvent *ev = static_cast<Events::SaveDocumentResponceEvent*>(event);
-            Events::SaveDocumentResponceEvent::value_type inf = ev->value();
+            Events::SaveDocumentResponceEvent::value_type v = ev->value();
             //ErrorInfo er = inf.errorInfo();
-            emit finishInsertedDocument(inf);
+            emit finishedInsertDocument(v);
         }
         else if(type==static_cast<QEvent::Type>(Events::RemoveDocumentResponceEvent::EventType)){
             Events::RemoveDocumentResponceEvent *ev = static_cast<Events::RemoveDocumentResponceEvent*>(event);
             Events::RemoveDocumentResponceEvent::value_type v = ev->value();
-            emit finishRemovedDocument(v);
+            emit finishedRemoveDocument(v);
         }
         else if(type==static_cast<QEvent::Type>(Events::ExecuteQueryResponceEvent::EventType)){
             Events::ExecuteQueryResponceEvent *ev = static_cast<Events::ExecuteQueryResponceEvent*>(event);
@@ -96,7 +91,7 @@ namespace Robomongo
                     addDatabase(db);
                 }
             }
-            emit finishConnected(inf);
+            emit finishedConnect(inf);
             _version = inf._info._version;
         }
         return BaseClass::customEvent(event);
@@ -120,7 +115,7 @@ namespace Robomongo
     {
         if(!_isConnected){            
             EventsInfo::EstablishConnectionRequestInfo inf;
-            emit startConnected(inf);
+            emit startedConnect(inf);
             qApp->postEvent(_client, new Events::EstablishConnectionRequestEvent(this, inf));
         }
     }
@@ -158,7 +153,7 @@ namespace Robomongo
     void MongoServer::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
         EventsInfo::SaveDocumentInfo inf(obj, ns, false);
-        emit startInsertedDocument(inf);
+        emit startedInsertDocument(inf);
         qApp->postEvent(_client, new Events::SaveDocumentRequestEvent(this, inf));
     }
 
@@ -172,14 +167,14 @@ namespace Robomongo
     void MongoServer::saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
         EventsInfo::SaveDocumentInfo inf(obj, ns, true);
-        emit startInsertedDocument(inf);
+        emit startedInsertDocument(inf);
         qApp->postEvent(_client, new Events::SaveDocumentRequestEvent(this, inf));
     }
 
     void MongoServer::removeDocuments(mongo::Query query, const MongoNamespace &ns, bool justOne)
     {
         EventsInfo::RemoveDocumenInfo inf(query, ns, justOne);
-        emit startRemovedDocument(inf);
+        emit startedRemoveDocument(inf);
         qApp->postEvent(_client, new Events::RemoveDocumentRequestEvent(this, inf));
     }
 
@@ -192,7 +187,7 @@ namespace Robomongo
     void MongoServer::loadDatabases()
     {
         EventsInfo::LoadDatabaseNamesRequestInfo inf;
-        emit startLoadDatabases(inf);
+        emit startedLoadDatabases(inf);
         qApp->postEvent(_client, new Events::LoadDatabaseNamesRequestEvent(this, inf));
     }
 

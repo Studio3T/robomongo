@@ -1,18 +1,21 @@
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 
 #include <QVBoxLayout>
-#include <Qsci/qscilexerjavascript.h>
 #include <QAction>
 #include <QMenu>
 #include <QApplication>
 #include <QDialog>
 #include <QMessageBox>
+#include <Qsci/qscilexerjavascript.h>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/domain/Notifier.h"
+#include "robomongo/core/utils/BsonUtils.h"
 
+#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
@@ -21,12 +24,10 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
 #include "robomongo/gui/widgets/workarea/BsonTableView.h"
 #include "robomongo/gui/widgets/workarea/BsonTableModel.h"
-#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h"
-#include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
-#include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/utils/DialogUtils.h"
 
@@ -117,9 +118,9 @@ namespace Robomongo
         VERIFY(connect(_header, SIGNAL(maximizedPart()), this, SIGNAL(maximizedPart())));
         VERIFY(connect(_header, SIGNAL(restoredSize()), this, SIGNAL(restoredSize())));
 
-        VERIFY(connect(_server, SIGNAL(finishInsertedDocument(const EventsInfo::SaveDocumentInfo &)), this,
-                       SLOT(finishInsertDocument(const EventsInfo::SaveDocumentInfo &)), Qt::DirectConnection));
-        VERIFY(connect(_server, SIGNAL(finishRemovedDocument(const EventsInfo::RemoveDocumenInfo &)), this,
+        VERIFY(connect(_server, SIGNAL(finishedInsertDocument(const EventsInfo::SaveDocumentInfo &)), this,
+            SLOT(finishInsertDocument(const EventsInfo::SaveDocumentInfo &)), Qt::DirectConnection));
+        VERIFY(connect(_server, SIGNAL(finishedRemoveDocument(const EventsInfo::RemoveDocumenInfo &)), this,
             SLOT(finishRemoveDocument(const EventsInfo::RemoveDocumenInfo &)), Qt::DirectConnection));
 
         refreshOutputItem(); 
@@ -380,12 +381,7 @@ namespace Robomongo
         // even for medium size documents.    
         _logText->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
         return _logText;
-    }
-
-    void OutputItemContentWidget::customEvent(QEvent *event)
-    {
-        return BaseClass::customEvent(event);
-    }    
+    }   
 
     void OutputItemContentWidget::refresh()
     {

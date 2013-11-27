@@ -1,8 +1,10 @@
-0.8.4 / November 3, 2013
+0.8.4 / November 27, 2013
 
   Read about updates in this version here:
   http://robomongo.org/whats-new-in/robomongo-0.8.4.html
 
+  RC1:
+  
   * SSH support (#117)
   * SSL support (first steps) (#100)
   * Create or edit index problem (#341)
@@ -14,6 +16,15 @@
   * Deleting multiple documents prompts for each document (#386)
   * Connection context menu appears independently of position of Robomongo instance.
   * Crash at pressing "Ctrl+T" without any connection.  
+  
+  RC2:
+  
+  * SSH now works on Mac OS X Mavericks (#401)
+  * Fixed crash when parsing date (#356)
+  
+  Final:
+  
+  * Selected view mode of result panels now preserved between executions. Implemented by Vladimir Belozyorov (github.com/VBelozyorov) (#402)
 
 
 0.8.3 / October 1, 2013

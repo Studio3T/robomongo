@@ -29,3 +29,14 @@ SET_SOURCE_FILES_PROPERTIES(${to_file} PROPERTIES GENERATED TRUE
     )
 ADD_DEPENDENCIES(${prjName} VersionConf)
 endmacro(VersionConf)
+
+###
+# Prints all CMake variables.
+# Usefull only for debug needs.
+#
+macro(print_all_vars)
+    get_cmake_property(NAMES VARIABLES)
+    foreach (NAME ${NAMES})
+        message(STATUS "${NAME}=${${NAME}}")
+    endforeach()
+endmacro()

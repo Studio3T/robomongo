@@ -11,6 +11,7 @@
 #include <QFrame>
 
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/gui/utils/ComboBoxUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 
 namespace Robomongo
@@ -97,9 +98,9 @@ namespace Robomongo
         setLayout(mainLayout);
 
         if (info.authMethod() == SSHInfo::PUBLICKEY) {
-            _security->setCurrentText("Private Key");
+            utils::setCurrentText(_security, "Private Key");
         } else {
-            _security->setCurrentText("Password");
+            utils::setCurrentText(_security, "Password");
         }
 
         securityChange(_security->currentText());

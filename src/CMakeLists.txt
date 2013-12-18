@@ -60,12 +60,14 @@ SET(HEADERS_GUI_TO_MOC
     )   
 SET(HEADERS_GUI
     robomongo/gui/utils/DialogUtils.h
+    robomongo/gui/utils/ComboBoxUtils.h
     robomongo/gui/GuiRegistry.h
     robomongo/gui/editors/JSLexer.h
     robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h
     )
 SET(SOURCES_GUI
     robomongo/gui/utils/DialogUtils.cpp
+    robomongo/gui/utils/ComboBoxUtils.cpp
     robomongo/gui/dialogs/ConnectionsDialog.cpp
     robomongo/gui/dialogs/ConnectionDialog.cpp
     robomongo/gui/widgets/LogWidget.cpp
@@ -461,7 +463,9 @@ ELSEIF(UNIX)
 ENDIF()
 
 FOREACH(miscLib ${MISC_LIBS})
-    DEPLOY_QT_PLUGIN(${miscLib} ${PLACE_WHERE_SEARCH} ${LIB_INSTALL_DESTINATION})
+    IF(DEVELOPER_QT5)
+        DEPLOY_QT_PLUGIN(${miscLib} ${PLACE_WHERE_SEARCH} ${LIB_INSTALL_DESTINATION})
+    ENDIF()
 ENDFOREACH(miscLib ${MISC_LIBS})
 
 INSTALL_RUNTIME_LIBRARIES()

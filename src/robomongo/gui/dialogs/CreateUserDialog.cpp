@@ -10,6 +10,7 @@
 #include <QComboBox>
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
+#include "robomongo/gui/utils/ComboBoxUtils.h"
 #include "robomongo/core/domain/MongoUtils.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -65,7 +66,7 @@ namespace Robomongo
         _userSourceLabel = new QLabel("UserSource:");
         _userSourceComboBox = new QComboBox();
         _userSourceComboBox->addItems(QStringList() << "" << databases); //setText(QtUtils::toQString(user.userSource()));
-        _userSourceComboBox->setCurrentText(QtUtils::toQString(user.userSource()));
+        utils::setCurrentText(_userSourceComboBox, QtUtils::toQString(user.userSource()));
 
         QGridLayout *gridRoles = new QGridLayout();
         MongoUser::RoleType userRoles = user.role();

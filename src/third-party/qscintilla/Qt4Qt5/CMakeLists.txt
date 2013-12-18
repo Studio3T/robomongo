@@ -1,19 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
 project(qscintilla2)
 INCLUDE(../../../../cmake/integrate-qt.cmake)
+
 DETECT_QT()
 IF(DEVELOPER_QT5)
-SET(QT_COMPONENTS_TO_USE
-        Qt5Widgets
-        Qt5PrintSupport
-)
+    SET(QT_COMPONENTS_TO_USE Qt5Widgets Qt5PrintSupport)
 ELSE()
-SET(QT_COMPONENTS_TO_USE
-    QtCore
-	QtGui
-)
+    SET(QT_COMPONENTS_TO_USE QtCore	QtGui)
 ENDIF()
 INTEGRATE_QT(${QT_COMPONENTS_TO_USE})
+
 include_directories(. ../include ../lexlib ../src)
 add_definitions(-DQSCINTILLA_MAKE_DLL -DQT -DSCI_LEXER)
 

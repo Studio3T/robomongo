@@ -4,12 +4,10 @@ ENDIF()
 ADD_SUBDIRECTORY(third-party/qjson)
 ADD_SUBDIRECTORY(third-party/qscintilla/Qt4Qt5)
 ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/js-1.7)
-IF(BUILD_PCRECPP_LIBRARY)
-    SET(PCRE_BUILD_TESTS OFF CACHE BOOL "Build the tests pcre tests.")
-    SET(PCRE_BUILD_PCREGREP OFF CACHE BOOL "Build pcregrep")	
-    ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/pcre-8.30 pcrecpp)
-    #FIND_LIBRARY(PCRECPP_LIB pcrecpp)
-ENDIF(BUILD_PCRECPP_LIBRARY)
+
+SET(PCRE_BUILD_TESTS OFF CACHE BOOL "Build the tests pcre tests.")
+SET(PCRE_BUILD_PCREGREP OFF CACHE BOOL "Build pcregrep")
+ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/pcre-8.30 pcrecpp)
 
 SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/ConnectionsDialog.h
@@ -327,8 +325,6 @@ SET(ALL_LIBS ${ALL_LIBS} ${QT_LIBRARIES} ${QT_QTMAIN_LIBRARY} ${Qt5Core_QTMAIN_L
 
 SET(ROBOMONGO_LIB "${PROJECT_NAME}_lib")
 SET(ROBOMONGO_EXECUTABLE_SOURCES robomongo/app/main.cpp ${RES_SRC} ${ICON_FILE} ${RESOURCE_OS})
-
-print_all_vars()
 
 IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     IF(BOOST_ENABLED)

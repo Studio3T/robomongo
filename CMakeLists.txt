@@ -36,12 +36,12 @@ PROJECT(${PROJECT_NAME})
 
 ###
 # Options
-OPTION(GENERATE_TRANSLATIONS "Generate ts-files for ${PROJECT_NAME}" OFF)
 
 IF(WIN32)
     OPTION(MANIFEST_ENABLE "Enable Manifest" ON)
 ENDIF(WIN32)
 
+set(ROBOMONGO_QT_VERSION 5 CACHE STRING "Qt version to use when building Robomongo (can be 4 or 5)")
 OPTION(BOOST_ENABLED "Enable boost system support" OFF)
 OPTION(OPENSSL_ENABLED "Enable openssl support" ON)
 OPTION(SSH_ENABLED "Enable ssh support" ON)

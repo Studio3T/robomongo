@@ -1,5 +1,5 @@
 MACRO(SET_DESKTOP_TARGET)
-	# Set default target to build (under win32 its allows console debug)
+    # Set default target to build (under win32 its allows console debug)
     IF(WIN32)
         OPTION(DEVELOPER_WINCONSOLE "Enable windows console windows for debug" OFF)
         IF(DEVELOPER_FEATURES AND DEVELOPER_WINCONSOLE)
@@ -49,7 +49,7 @@ ENDMACRO(DEFINE_DEFAULT_DEFINITIONS)
 MACRO(SETUP_COMPILER_SETTINGS IS_DYNAMIC)
     IF(MSVC)
         SET(ADDITIONAL_CL_OPTIMIZATION_OPTIONS
-        #	/Gr # fastcall
+            #/Gr # fastcall
             /Gy # function level linking
             /GF # string pooling
             /GL # whole program optimization
@@ -63,7 +63,7 @@ MACRO(SETUP_COMPILER_SETTINGS IS_DYNAMIC)
         )
 
         SET(ADDITIONAL_CL_OPTIMIZATION_OPTIONS_PROJECTNAME
-        #	/Gd  # cdecl
+            #/Gd  # cdecl
             /Os  # small code
             /Og  # Turn on loop, common subexpression and register optimizations
             /Ob0 # do not inline
@@ -84,22 +84,22 @@ MACRO(SETUP_COMPILER_SETTINGS IS_DYNAMIC)
     IF(IS_DYNAMIC)
         SET(makeRulesOwerrideContent "
             IF(MSVC)
-                SET(CMAKE_C_FLAGS_DEBUG_INIT 			\"/D_DEBUG /MDd /Zi /Ob0 /Od /RTC1\")
-                SET(CMAKE_C_FLAGS_MINSIZEREL_INIT     	\"/MD /O1 /Ob1 /D NDEBUG\")
-                SET(CMAKE_C_FLAGS_RELEASE_INIT       	\"/MD /O2 /Ob2 /D NDEBUG\")
-                SET(CMAKE_C_FLAGS_RELWITHDEBINFO_INIT 	\"/MD /Zi /O2 /Ob1 /D NDEBUG\")
+                SET(CMAKE_C_FLAGS_DEBUG_INIT            \"/D_DEBUG /MDd /Zi /Ob0 /Od /RTC1\")
+                SET(CMAKE_C_FLAGS_MINSIZEREL_INIT       \"/MD /O1 /Ob1 /D NDEBUG\")
+                SET(CMAKE_C_FLAGS_RELEASE_INIT          \"/MD /O2 /Ob2 /D NDEBUG\")
+                SET(CMAKE_C_FLAGS_RELWITHDEBINFO_INIT   \"/MD /Zi /O2 /Ob1 /D NDEBUG\")
                 
-                SET(CMAKE_CXX_FLAGS_DEBUG_INIT 			\"/D_DEBUG /MDd /Zi /Ob0 /Od /EHsc /RTC1\")
+                SET(CMAKE_CXX_FLAGS_DEBUG_INIT          \"/D_DEBUG /MDd /Zi /Ob0 /Od /EHsc /RTC1\")
                 SET(CMAKE_CXX_FLAGS_MINSIZEREL_INIT     \"/MD /O1 ${cmake_cl_release_init_str}\")
                 SET(CMAKE_CXX_FLAGS_RELEASE_INIT        \"/MD /O2 ${cmake_cl_release_init_str}\")
                 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT \"/MD /Zi /O2 /Ob1 /D NDEBUG /EHsc\")
 
-                SET(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL_INIT		\"${cmake_linker_release_init_str}\")
-                SET(CMAKE_EXE_LINKER_FLAGS_RELEASE_INIT			\"${cmake_linker_release_init_str}\")
-                SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO_INIT	\"${cmake_linker_release_init_str}\")
+                SET(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL_INIT      \"${cmake_linker_release_init_str}\")
+                SET(CMAKE_EXE_LINKER_FLAGS_RELEASE_INIT         \"${cmake_linker_release_init_str}\")
+                SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO_INIT  \"${cmake_linker_release_init_str}\")
             
             ENDIF(MSVC)
-        "		)
+        ")
 
         IF(MSVC)
             SET(CMAKE_CXX_FLAGS_DEBUG "/MDd /D_DEBUG /Zi /Ob0 /Od /RTC1")
@@ -118,21 +118,21 @@ MACRO(SETUP_COMPILER_SETTINGS IS_DYNAMIC)
             SET(CMAKE_C_FLAGS_INIT \"/MT\")
             SET(CMAKE_CXX_FLAGS_INIT \"/MT /EHsc\")
 
-            SET(CMAKE_C_FLAGS_DEBUG_INIT 			\"/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1\")
-            SET(CMAKE_C_FLAGS_MINSIZEREL_INIT     	\"/MT /O1 /Ob1 /D NDEBUG\")
-            SET(CMAKE_C_FLAGS_RELEASE_INIT       	\"/MT /O2 /Ob2 /D NDEBUG\")
-            SET(CMAKE_C_FLAGS_RELWITHDEBINFO_INIT 	\"/MT /Zi /O2 /Ob1 /D NDEBUG\")
+            SET(CMAKE_C_FLAGS_DEBUG_INIT                \"/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1\")
+            SET(CMAKE_C_FLAGS_MINSIZEREL_INIT           \"/MT /O1 /Ob1 /D NDEBUG\")
+            SET(CMAKE_C_FLAGS_RELEASE_INIT              \"/MT /O2 /Ob2 /D NDEBUG\")
+            SET(CMAKE_C_FLAGS_RELWITHDEBINFO_INIT       \"/MT /Zi /O2 /Ob1 /D NDEBUG\")
 
-            SET(CMAKE_CXX_FLAGS_DEBUG_INIT 			\"/D_DEBUG /MTd /Zi /Ob0 /Od /EHsc /RTC1\")
+            SET(CMAKE_CXX_FLAGS_DEBUG_INIT          \"/D_DEBUG /MTd /Zi /Ob0 /Od /EHsc /RTC1\")
             SET(CMAKE_CXX_FLAGS_MINSIZEREL_INIT     \"/MT /O1 ${cmake_cl_release_init_str}\")
             SET(CMAKE_CXX_FLAGS_RELEASE_INIT        \"/MT /O2 ${cmake_cl_release_init_str}\")
             SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT \"/MT /Zi /O2 /Ob1 /D NDEBUG /EHsc\")
 
-            SET(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL_INIT		\"${cmake_linker_release_init_str}\")
-            SET(CMAKE_EXE_LINKER_FLAGS_RELEASE_INIT			\"${cmake_linker_release_init_str}\")
-            SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO_INIT	\"${cmake_linker_release_init_str}\")
+            SET(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL_INIT          \"${cmake_linker_release_init_str}\")
+            SET(CMAKE_EXE_LINKER_FLAGS_RELEASE_INIT             \"${cmake_linker_release_init_str}\")
+            SET(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO_INIT      \"${cmake_linker_release_init_str}\")
         ENDIF(MSVC)
-        "		)
+        ")
 
         IF(MSVC)
             SET(CMAKE_CXX_FLAGS_DEBUG "/MTd /D_DEBUG /Zi /Ob0 /Od /RTC1")
@@ -153,7 +153,7 @@ MACRO(SETUP_COMPILER_SETTINGS IS_DYNAMIC)
     SET(CMAKE_USER_MAKE_RULES_OVERRIDE ${CMAKE_CURRENT_BINARY_DIR}/makeRulesOwerride.cmake)
 
     IF(APPLE)
-        #set(LIBCXX_DIR	${CMAKE_CURRENT_SOURCE_DIR}/imports/libc++10.7)
+        #set(LIBCXX_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imports/libc++10.7)
         #set(CMAKE_OSX_ARCHITECTURES i386)
         #set(CMAKE_OSX_ARCHITECTURES_DEBUG i368)
         #set(CMAKE_CXX_FLAGS "-arch i386")
@@ -176,7 +176,7 @@ ENDMACRO(SETUP_COMPILER_SETTINGS IS_DYNAMIC)
 
 
 MACRO(INSTALL_RUNTIME_LIBRARIES)
-	# Install CRT
+    # Install CRT
     IF(WIN32)
         SET(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
         include (InstallRequiredSystemLibraries)
@@ -191,7 +191,7 @@ IF(MSVC OR APPLE)
         SET(DLIB_DEBUG ${dlib_targetdir}/${CMAKE_SHARED_LIBRARY_PREFIX}${DLIB_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX})
         SET(DLIB_RELEASE ${dlib_targetdir}/${CMAKE_SHARED_LIBRARY_PREFIX}${DLIB_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX})
         ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD COMMAND
-		 ${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:${DLIB_DEBUG}> $<$<NOT:$<CONFIG:Debug>>:${DLIB_RELEASE}>  $<TARGET_FILE_DIR:${TARGET_NAME}>
+            ${CMAKE_COMMAND} -E copy $<$<CONFIG:Debug>:${DLIB_DEBUG}> $<$<NOT:$<CONFIG:Debug>>:${DLIB_RELEASE}>  $<TARGET_FILE_DIR:${TARGET_NAME}>
         )
 ENDIF(MSVC OR APPLE)
 ENDMACRO(ADD_DLIB_TO_POSTBUILD_STEP)

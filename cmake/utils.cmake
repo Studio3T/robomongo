@@ -1,34 +1,29 @@
 macro(VersionConf prjName from_file to_file iconname)
-SET(COMPANYNAME "\"${PROJECT_COMPANYNAME}\"")
-SET(filecontent "
-    SET(ICON_FILE   ${ICON_FILE})
-    SET(MAJOR_VER   ${MAJOR} )
-    SET(MINOR_VER1  ${MINOR})
-    SET(MINOR_VER2  ${PATCH})
-    SET(PRODUCTNAME ${prjName})
-    SET(COMPANYNAME ${COMPANYNAME})
-    SET(PRODUCTDOMAIN ${PROJECT_DOMAIN})
-    SET(SHORTPRODUCTNAME ${prjName})
-    SET(ICONNAME ${iconname})
-    SET(PRODUCTCOPYRIGHT ${PROJECT_COPYRIGHT})
-    CONFIGURE_FILE(${from_file} ${to_file})
-")
+    set(COMPANYNAME "\"${PROJECT_COMPANYNAME}\"")
+    set(filecontent "
+        SET(ICON_FILE   ${ICON_FILE})
+        SET(MAJOR_VER   ${MAJOR} )
+        SET(MINOR_VER1  ${MINOR})
+        SET(MINOR_VER2  ${PATCH})
+        SET(PRODUCTNAME ${prjName})
+        SET(COMPANYNAME ${COMPANYNAME})
+        SET(PRODUCTDOMAIN ${PROJECT_DOMAIN})
+        SET(SHORTPRODUCTNAME ${prjName})
+        SET(ICONNAME ${iconname})
+        SET(PRODUCTCOPYRIGHT ${PROJECT_COPYRIGHT})
+        CONFIGURE_FILE(${from_file} ${to_file})
+    ")
 
-FILE(WRITE "${CMAKE_CURRENT_BINARY_DIR}/versionConfFile.cmake" "${filecontent}")
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/versionConfFile.cmake" "${filecontent}")
+    add_custom_target(VersionConf ALL DEPENDS ${to_file})
 
-ADD_CUSTOM_TARGET(VersionConf
-    ALL
-    DEPENDS ${to_file})
+    add_custom_command(
+        OUTPUT ${to_file}
+        COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR} -P ${CMAKE_CURRENT_BINARY_DIR}/versionConfFile.cmake)
 
-ADD_CUSTOM_COMMAND(
-    OUTPUT ${to_file}
-    COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR} -P ${CMAKE_CURRENT_BINARY_DIR}/versionConfFile.cmake)
-
-SET_SOURCE_FILES_PROPERTIES(${to_file} PROPERTIES GENERATED TRUE 
-    #HEADER_FILE_ONLY TRUE
-    )
-ADD_DEPENDENCIES(${prjName} VersionConf)
-endmacro(VersionConf)
+    set_source_files_properties(${to_file} PROPERTIES GENERATED TRUE)
+    add_dependencies(${prjName} VersionConf)
+endmacro()
 
 ###
 # Prints all CMake variables.

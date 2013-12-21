@@ -18,7 +18,7 @@ namespace Robomongo
     int BsonTableModelProxy::rowCount(const QModelIndex &parent) const
     {
         int count = sourceModel()->rowCount(parent);
-        return 	count;
+        return count;
     }
 
     QModelIndex BsonTableModelProxy::parent( const QModelIndex& index ) const

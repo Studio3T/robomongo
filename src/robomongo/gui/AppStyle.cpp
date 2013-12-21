@@ -35,7 +35,7 @@ namespace Robomongo
         }
     }
 
-    void AppStyle::drawControl(ControlElement element,	const QStyleOption * option,	QPainter * painter,	const QWidget * widget) const
+    void AppStyle::drawControl(ControlElement element, const QStyleOption * option, QPainter * painter, const QWidget * widget) const
     {
         return OsStyle::drawControl(element, option, painter, widget);
     }

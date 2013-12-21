@@ -595,12 +595,17 @@ namespace Robomongo
             case Date:
                 {
                     long long ms = (long long) elem.Date().millis;
+                    bool isSupportedDate = miutil::minDate < ms && ms < miutil::maxDate;
 
                     boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
                     boost::posix_time::time_duration diff = boost::posix_time::millisec(ms);
                     boost::posix_time::ptime time = epoch + diff;
 
-                    std::string date = miutil::isotimeString(time,false,tz==LocalTime);
+                    std::string date;
+                    if(isSupportedDate)
+                        date = miutil::isotimeString(time,false,tz==LocalTime);
+                    else
+                        date = boost::lexical_cast<std::string>(ms);
 
                     con.append(date);
                     break;

@@ -218,7 +218,7 @@ namespace Robomongo
     }
 
     QModelIndex BsonTreeModel::parent(const QModelIndex& index) const
-    {	
+    {
         QModelIndex result;
         if (index.isValid()) {
             BsonTreeItem *const childItem = QtUtils::item<BsonTreeItem*const>(index);
@@ -234,7 +234,7 @@ namespace Robomongo
 
     QModelIndex BsonTreeModel::index(int row, int column, const QModelIndex &parent) const
     {
-        QModelIndex index;	
+        QModelIndex index;
         if (hasIndex(row, column, parent)) {
             const BsonTreeItem * parentItem=NULL;
             if (!parent.isValid()) {
@@ -266,7 +266,7 @@ namespace Robomongo
         if (parent) {
             QModelIndex index = createIndex(0, 0, parent);
             int row = parent->indexOf(children);
-            beginRemoveRows(index, row, row);	
+            beginRemoveRows(index, row, row);
             parent->removeChild(children);
             endRemoveRows();
         }

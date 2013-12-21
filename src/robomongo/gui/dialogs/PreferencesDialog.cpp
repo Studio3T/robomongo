@@ -10,7 +10,7 @@
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/AppStyle.h"
-
+#include "robomongo/gui/utils/ComboBoxUtils.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
@@ -94,12 +94,13 @@ namespace Robomongo
 
     void PreferencesDialog::syncWithSettings()
     {
-        _defDisplayModeComboBox->setCurrentText(convertViewModeToString(Robomongo::AppRegistry::instance().settingsManager()->viewMode()));
-        _timeZoneComboBox->setCurrentText(convertTimesToString(Robomongo::AppRegistry::instance().settingsManager()->timeZone()));
-        _uuidEncodingComboBox->setCurrentText(convertUUIDEncodingToString(Robomongo::AppRegistry::instance().settingsManager()->uuidEncoding()));
+
+        utils::setCurrentText(_defDisplayModeComboBox, convertViewModeToString(Robomongo::AppRegistry::instance().settingsManager()->viewMode()));
+        utils::setCurrentText(_timeZoneComboBox, convertTimesToString(Robomongo::AppRegistry::instance().settingsManager()->timeZone()));
+        utils::setCurrentText(_uuidEncodingComboBox, convertUUIDEncodingToString(Robomongo::AppRegistry::instance().settingsManager()->uuidEncoding()));
         _loadMongoRcJsCheckBox->setChecked(AppRegistry::instance().settingsManager()->loadMongoRcJs());
         _disabelConnectionShortcutsCheckBox->setChecked(AppRegistry::instance().settingsManager()->disableConnectionShortcuts());
-        _stylesComboBox->setCurrentText(Robomongo::AppRegistry::instance().settingsManager()->currentStyle());
+        utils::setCurrentText(_stylesComboBox, Robomongo::AppRegistry::instance().settingsManager()->currentStyle());
     }
 
     void PreferencesDialog::accept()

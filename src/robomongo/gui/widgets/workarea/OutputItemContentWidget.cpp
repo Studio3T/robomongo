@@ -236,6 +236,7 @@ namespace Robomongo
         if (!_isTreeModeSupported) {
             // try to downgrade to text mode
             showText();
+            _viewMode = Tree;
             return;
         }
 
@@ -263,6 +264,7 @@ namespace Robomongo
         if (!_isCustomModeSupported) {
             // try to downgrade to tree mode
             showTree();
+            _viewMode = Custom;
             return;
         }
 
@@ -286,6 +288,7 @@ namespace Robomongo
         if (!_isTableModeSupported) {
             // try to downgrade to text mode
             showText();
+            _viewMode = Table;
             return;
         }
 

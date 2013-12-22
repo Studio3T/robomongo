@@ -13,6 +13,7 @@ target/
 libs/
 *~
 *.autosave
+*.orig
 .DS_Store
 /build
 /build2

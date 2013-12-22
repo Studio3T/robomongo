@@ -415,7 +415,7 @@ namespace Robomongo
         //_dbclient->save(ns.toString().toStdString(), obj);
     }
 
-    void MongoClient::removeDocuments(const MongoNamespace &ns, mongo::Query query, bool justOne /*= true*/)
+    void MongoClient::removeDocuments(const MongoNamespace &ns, mongo::Query query, bool justOne /* = true */)
     {
         _dbclient->remove(ns.toString(), query, justOne);
     }

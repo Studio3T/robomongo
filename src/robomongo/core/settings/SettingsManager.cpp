@@ -3,8 +3,6 @@
 #include <QDir>
 #include <QFile>
 #include <QVariantList>
-#include <QTranslator>
-#include <QApplication>
 #include <QDirIterator>
 #include <parser.h>
 #include <serializer.h>
@@ -13,40 +11,42 @@
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/StdUtils.h"
 #include "robomongo/gui/AppStyle.h"
+#include "robomongo/core/AppRegistry.h"
 
 namespace
 {
-        /**
-         * @brief Version of schema
-         */
-        const QString SchemaVersion = "1.0";
+    /**
+     * @brief Version of schema
+     */
+    const QString SchemaVersion = "1.0";
 
-         /**
-         * @brief Config file absolute path
-         *        (usually: /home/user/.config/robomongo/robomongo.json)
-         */
-        const QString _configPath = QString("%1/.config/"PROJECT_NAME_LOWERCASE"/"PROJECT_NAME_LOWERCASE".json").arg(QDir::homePath());
+    /**
+     * @brief Config file absolute path
+     *        (usually: /home/user/.config/robomongo/robomongo.json)
+     */
+    const QString _configPath = QString("%1/.config/"PROJECT_NAME_LOWERCASE"/"PROJECT_NAME_LOWERCASE".json").arg(QDir::homePath());
 
-        /**
-         * @brief Config file containing directory path
-         *        (usually: /home/user/.config/robomongo)
-         */
-        const QString _configDir = QString("%1/.config/"PROJECT_NAME_LOWERCASE).arg(QDir::homePath());
+    /**
+     * @brief Config file containing directory path
+     *        (usually: /home/user/.config/robomongo)
+     */
+    const QString _configDir = QString("%1/.config/"PROJECT_NAME_LOWERCASE).arg(QDir::homePath());
 }
 
 namespace Robomongo
 {
+
     /**
      * Creates SettingsManager for config file in default location
      * ~/.config/robomongo/robomongo.json
      */
     SettingsManager::SettingsManager() :
-        _version(SchemaVersion),
-        _uuidEncoding(DefaultEncoding),
-        _timeZone(Utc),
-        _viewMode(Robomongo::Tree),
-        _batchSize(50),
-        _disableConnectionShortcuts(false)
+    _version(SchemaVersion),
+    _uuidEncoding(DefaultEncoding),
+    _timeZone(Utc),
+    _viewMode(Robomongo::Tree),
+    _batchSize(50),
+    _disableConnectionShortcuts(false)
     {
         load();
         _qmPath = QCoreApplication::applicationDirPath() + "/../lib/translations";
@@ -56,7 +56,7 @@ namespace Robomongo
 
     SettingsManager::~SettingsManager()
     {
-        std::for_each(_connections.begin(),_connections.end(),stdutils::default_delete<ConnectionSettings *>());
+        std::for_each(_connections.begin(), _connections.end(), stdutils::default_delete<ConnectionSettings *>());
     }
 
     /**
@@ -135,7 +135,7 @@ namespace Robomongo
         }
 
         _autoExpand = map.contains("autoExpand") ?
-            map.value("autoExpand").toBool() : true;
+                map.value("autoExpand").toBool() : true;
 
         // 4. Load TimeZone
         int timeZone = map.value("timeZone").toInt();
@@ -163,7 +163,7 @@ namespace Robomongo
             ConnectionSettings *record = new ConnectionSettings((*it).toMap());
             _connections.push_back(record);
         }
-        
+
         _currentTranslation = map.value("translation").toString();
     }
 
@@ -192,7 +192,7 @@ namespace Robomongo
 
         // 6. Save disableConnectionShortcuts
         map.insert("disableConnectionShortcuts", _disableConnectionShortcuts);
-        
+
         // 7. Save batchSize
         map.insert("batchSize", _batchSize);
 
@@ -202,13 +202,13 @@ namespace Robomongo
         // 9. Save connections
         QVariantList list;
 
-        for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it!=_connections.end(); ++it) {
+        for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it != _connections.end(); ++it) {
             QVariantMap rm = (*it)->toVariant().toMap();
             list.append(rm);
         }
 
         map.insert("connections", list);
-        
+
         //10. Save translsation
         map.insert("translation", _currentTranslation);
 
@@ -228,8 +228,8 @@ namespace Robomongo
      */
     void SettingsManager::removeConnection(ConnectionSettings *connection)
     {
-        ConnectionSettingsContainerType::iterator it = std::find(_connections.begin(),_connections.end(),connection);
-        if (it!=_connections.end()) {
+        ConnectionSettingsContainerType::iterator it = std::find(_connections.begin(), _connections.end(), connection);
+        if (it != _connections.end()) {
             _connections.erase(it);
             delete connection;
         }
@@ -244,20 +244,17 @@ namespace Robomongo
     {
         _connections = connections;
     }
-    
-    void SettingsManager::setCurrentTranslation(const QString& langName)
+
+    void SettingsManager::setCurrentTranslation(const QString& translation)
     {
-        _currentTranslation = _translations.value(langName, "");
+        _currentTranslation = _translations.contains(translation) == true ? translation : "";
     }
 
-    void SettingsManager::retranslateLocale(const QString &key)
+    void SettingsManager::retranslateLocale(const QString &text)
     {
-        QString old_key = _translations.key("");
-        if (old_key != "")
-            _translations.remove(old_key);
-        _translations[key] = "";
+        _translations[""] = text;
     }
-    
+
     void SettingsManager::loadProvidedTranslations()
     {
         QDirIterator qmIt(_qmPath, QStringList() << "*.qm", QDir::Files);
@@ -268,7 +265,25 @@ namespace Robomongo
             translator.load(finfo.baseName(), _qmPath);
             //: Native language name
             QT_TR_NOOP("__LANGUAGE_NAME__");
-            _translations[translator.translate("Robomongo::SettingsManager", "__LANGUAGE_NAME__")] = finfo.baseName();
+            _translations[finfo.baseName()] = translator.translate("Robomongo::SettingsManager", "__LANGUAGE_NAME__");
+        }
+    }
+
+    void SettingsManager::switchTranslator(const QString& translation, bool forced)
+    {
+        if (forced == true || translation != _currentTranslation) {
+            QTranslator *tr = new QTranslator();
+            QString basename = translation.isEmpty() ? PROJECT_NAME_LOWERCASE"_" + QLocale::system().name() : translation;
+            if (tr->load(basename + ".qm", _qmPath)) {
+                setCurrentTranslation(translation);
+                save();
+                AppRegistry::instance().application->removeTranslator(_translator);
+                free(_translator);
+                _translator = tr;
+                AppRegistry::instance().application->installTranslator(_translator);
+                /** @REMOVE */
+                LOG_MSG("Translation switched to " + _currentTranslation, mongo::LL_INFO, false);
+            }
         }
     }
 

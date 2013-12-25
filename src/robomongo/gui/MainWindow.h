@@ -90,6 +90,9 @@ namespace Robomongo
         void createStylesMenu();
         void createLanguageMenu(QMenu *parentMenu);
         void createStatusBar();
+        
+    protected:
+        void changeEvent(QEvent*);
     };
 
 }

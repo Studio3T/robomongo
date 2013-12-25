@@ -13,18 +13,9 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     Robomongo::detail::initStyle();
     setlocale(LC_NUMERIC, "C"); // do not move this line!!!
-
-    QString translation = Robomongo::AppRegistry::instance().settingsManager()->currentTranslation();
-    QString qmPath = Robomongo::AppRegistry::instance().settingsManager()->getQmPath();
     
-    if (translation.isEmpty())
-        translation = PROJECT_NAME_LOWERCASE"_" + QLocale::system().name();
-    Robomongo::LOG_MSG("Attempt to load: " + translation + " from " + qmPath, mongo::LL_INFO);
-    QTranslator translator;
-    if (!translator.load(translation, qmPath))
-        Robomongo::LOG_MSG("Translation loading failed", mongo::LL_INFO);
-    if (!app.installTranslator(&translator))
-        Robomongo::LOG_MSG("Translator installation failed", mongo::LL_INFO);
+    Robomongo::AppRegistry::instance().application = &app;
+    Robomongo::AppRegistry::instance().settingsManager()->switchTranslator(Robomongo::AppRegistry::instance().settingsManager()->currentTranslation(), true);
     
     QRect screenGeometry = QApplication::desktop()->availableGeometry();
     QSize size(screenGeometry.width() - 450, screenGeometry.height() - 165);

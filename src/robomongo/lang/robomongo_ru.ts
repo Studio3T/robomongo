@@ -162,7 +162,7 @@
     <message>
         <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="14"/>
         <source>Average Object</source>
-        <translation type="unfinished">Средний объект</translation>
+        <translation type="unfinished">Усредненный объект</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="14"/>
@@ -304,27 +304,27 @@
     <message>
         <location filename="../gui/dialogs/ConnectionDialog.cpp" line="60"/>
         <source>Connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Подключение</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionDialog.cpp" line="61"/>
         <source>Authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Аутентификация</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionDialog.cpp" line="62"/>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Дополнительно</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionDialog.cpp" line="91"/>
         <source>Invalid Transport</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Неверный транспорт</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionDialog.cpp" line="91"/>
         <source>SSH and SSL cannot be enabled simultaneously. Please uncheck one of them.</source>
-        <translation type="unfinished"></translation>
+        <translation>SSH и SSL не могут быть активированы одновременно. Оставьте, пожалуйста, что-то одно.</translation>
     </message>
 </context>
 <context>

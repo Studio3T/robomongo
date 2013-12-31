@@ -105,30 +105,28 @@ namespace Robomongo
             "QMainWindow::separator { background: #E7E5E4; width: 1px; } "
         ).arg(explorerColor));
 
-        _openAction = new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this);
-        _openAction->setToolTip(tr("Load script from the file to the currently opened shell"));
+        _openAction = new QAction(this);
+        _openAction->setIcon(GuiRegistry::instance().openIcon());
         VERIFY(connect(_openAction, SIGNAL(triggered()), this, SLOT(open())));
 
-        _saveAction = new QAction(GuiRegistry::instance().saveIcon(), tr("&Save"), this);
+        _saveAction = new QAction(this);
+        _saveAction->setIcon(GuiRegistry::instance().saveIcon());
         _saveAction->setShortcuts(QKeySequence::Save);
-        _saveAction->setToolTip(tr("Save script of the currently opened shell to the file <b>(Ctrl + S)</b>"));
         VERIFY(connect(_saveAction, SIGNAL(triggered()), this, SLOT(save())));
 
-        _saveAsAction = new QAction(tr("Save &As..."), this);
+        _saveAsAction = new QAction(this);
         _saveAsAction->setShortcuts(QKeySequence::SaveAs);
         VERIFY(connect(_saveAsAction, SIGNAL(triggered()), this, SLOT(saveAs())));
 
         // Exit action
-        QAction *exitAction = new QAction(tr("&Exit"), this);
-        exitAction->setShortcut(QKeySequence::Quit);
-        VERIFY(connect(exitAction, SIGNAL(triggered()), this, SLOT(close())));
+        _exitAction = new QAction(this);
+        _exitAction->setShortcut(QKeySequence::Quit);
+        VERIFY(connect(_exitAction, SIGNAL(triggered()), this, SLOT(close())));
 
         // Connect action
-        _connectAction = new QAction(tr("&Connect..."), this);
+        _connectAction = new QAction(this);
         _connectAction->setShortcut(QKeySequence::Open);
         _connectAction->setIcon(GuiRegistry::instance().connectIcon());
-        _connectAction->setIconText(tr("Connect"));
-        _connectAction->setToolTip(tr("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>"));
         VERIFY(connect(_connectAction, SIGNAL(triggered()), this, SLOT(manageConnections())));
 
         _connectionsMenu = new ConnectionMenu(this);
@@ -136,10 +134,8 @@ namespace Robomongo
         updateConnectionsMenu();
 
         _connectButton = new QToolButton();
-        _connectButton->setText(tr("&Connect..."));
         _connectButton->setIcon(GuiRegistry::instance().connectIcon());
         _connectButton->setFocusPolicy(Qt::NoFocus);
-        _connectButton->setToolTip(tr("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>"));
         _connectButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
         
     #if !defined(Q_OS_MAC)
@@ -153,57 +149,51 @@ namespace Robomongo
         connectButtonAction->setDefaultWidget(_connectButton);
 
         // Orientation action
-        _orientationAction = new QAction(tr("&Rotate"), this);
+        _orientationAction = new QAction(this);
         _orientationAction->setShortcut(Qt::Key_F10);
         _orientationAction->setIcon(GuiRegistry::instance().rotateIcon());
-        _orientationAction->setToolTip(tr("Toggle orientation of results view <b>(F10)</b>"));
         VERIFY(connect(_orientationAction, SIGNAL(triggered()), this, SLOT(toggleOrientation())));
 
         // read view mode setting
         ViewMode viewMode = AppRegistry::instance().settingsManager()->viewMode();
 
         // Text mode action
-        QAction *textModeAction = new QAction(tr("&Text Mode"), this);
-        textModeAction->setShortcut(Qt::Key_F4);
-        textModeAction->setIcon(GuiRegistry::instance().textHighlightedIcon());
-        textModeAction->setToolTip(tr("Show current tab in text mode, and make this mode default for all subsequent queries <b>(F4)</b>"));
-        textModeAction->setCheckable(true);
-        textModeAction->setChecked(viewMode == Text);
-        VERIFY(connect(textModeAction, SIGNAL(triggered()), this, SLOT(enterTextMode())));
+        _textModeAction = new QAction(this);
+        _textModeAction->setShortcut(Qt::Key_F4);
+        _textModeAction->setIcon(GuiRegistry::instance().textHighlightedIcon());
+        _textModeAction->setCheckable(true);
+        _textModeAction->setChecked(viewMode == Text);
+        VERIFY(connect(_textModeAction, SIGNAL(triggered()), this, SLOT(enterTextMode())));
 
         // Tree mode action
-        QAction *treeModeAction = new QAction(tr("&Tree Mode"), this);
-        treeModeAction->setShortcut(Qt::Key_F2);
-        treeModeAction->setIcon(GuiRegistry::instance().treeHighlightedIcon());
-        treeModeAction->setToolTip(tr("Show current tab in tree mode, and make this mode default for all subsequent queries <b>(F3)</b>"));
-        treeModeAction->setCheckable(true);
-        treeModeAction->setChecked(viewMode == Tree);
-        VERIFY(connect(treeModeAction, SIGNAL(triggered()), this, SLOT(enterTreeMode())));
+        _treeModeAction = new QAction(this);
+        _treeModeAction->setShortcut(Qt::Key_F2);
+        _treeModeAction->setIcon(GuiRegistry::instance().treeHighlightedIcon());
+        _treeModeAction->setCheckable(true);
+        _treeModeAction->setChecked(viewMode == Tree);
+        VERIFY(connect(_treeModeAction, SIGNAL(triggered()), this, SLOT(enterTreeMode())));
 
         // Tree mode action
-        QAction *tableModeAction = new QAction(tr("T&able Mode"), this);
-        tableModeAction->setShortcut(Qt::Key_F3);
-        tableModeAction->setIcon(GuiRegistry::instance().tableHighlightedIcon());
-        tableModeAction->setToolTip(tr("Show current tab in table mode, and make this mode default for all subsequent queries <b>(F3)</b>"));
-        tableModeAction->setCheckable(true);
-        tableModeAction->setChecked(viewMode == Table);
-        VERIFY(connect(tableModeAction, SIGNAL(triggered()), this, SLOT(enterTableMode())));
+        _tableModeAction = new QAction(this);
+        _tableModeAction->setShortcut(Qt::Key_F3);
+        _tableModeAction->setIcon(GuiRegistry::instance().tableHighlightedIcon());
+        _tableModeAction->setCheckable(true);
+        _tableModeAction->setChecked(viewMode == Table);
+        VERIFY(connect(_tableModeAction, SIGNAL(triggered()), this, SLOT(enterTableMode())));
 
         // Custom mode action
-        QAction *customModeAction = new QAction(tr("&Custom Mode"), this);
-        //customModeAction->setShortcut(Qt::Key_F2);
-        customModeAction->setIcon(GuiRegistry::instance().customHighlightedIcon());
-        customModeAction->setToolTip(tr("Show current tab in custom mode if possible, and make this mode default for all subsequent queries <b>(F2)</b>"));
-        customModeAction->setCheckable(true);
-        customModeAction->setChecked(viewMode == Custom);
-        VERIFY(connect(customModeAction, SIGNAL(triggered()), this, SLOT(enterCustomMode())));
+        _customModeAction = new QAction(this);
+        //_customModeAction->setShortcut(Qt::Key_F2);
+        _customModeAction->setIcon(GuiRegistry::instance().customHighlightedIcon());
+        _customModeAction->setCheckable(true);
+        _customModeAction->setChecked(viewMode == Custom);
+        VERIFY(connect(_customModeAction, SIGNAL(triggered()), this, SLOT(enterCustomMode())));
 
         // Execute action
         _executeAction = new QAction(this);
         _executeAction->setData("Execute");
         _executeAction->setIcon(GuiRegistry::instance().executeIcon());
         _executeAction->setShortcut(Qt::Key_F5);
-        _executeAction->setToolTip(tr("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>"));
         VERIFY(connect(_executeAction, SIGNAL(triggered()), SLOT(executeScript())));
 
         // Stop action
@@ -211,157 +201,163 @@ namespace Robomongo
         _stopAction->setData("Stop");
         _stopAction->setIcon(GuiRegistry::instance().stopIcon());
         _stopAction->setShortcut(Qt::Key_F6);
-        _stopAction->setToolTip(tr("Stop execution of currently running script. <b>(F6)</b>"));
         _stopAction->setDisabled(true);
         VERIFY(connect(_stopAction, SIGNAL(triggered()), SLOT(stopScript())));
 
         // Full screen action
-        QAction *fullScreenAction = new QAction(tr("&Full Screen"), this);
-        fullScreenAction->setShortcut(Qt::Key_F11);
-        fullScreenAction->setVisible(true);
-        VERIFY(connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2())));
+        _fullScreenAction = new QAction(this);
+        _fullScreenAction->setShortcut(Qt::Key_F11);
+        _fullScreenAction->setVisible(true);
+        VERIFY(connect(_fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2())));
 
         // Refresh action
-        QAction *refreshAction = new QAction(tr("Refresh"), this);
-        refreshAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
-        VERIFY(connect(refreshAction, SIGNAL(triggered()), this, SLOT(refreshConnections())));
+        _refreshAction = new QAction(this);
+        _refreshAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
+        VERIFY(connect(_refreshAction, SIGNAL(triggered()), this, SLOT(refreshConnections())));
 
         // File menu
-        QMenu *fileMenu = menuBar()->addMenu(tr("File"));
-        fileMenu->addAction(_connectAction);
-        fileMenu->addSeparator();
-        fileMenu->addAction(_openAction);
-        fileMenu->addAction(_saveAction);
-        fileMenu->addAction(_saveAsAction);
-        fileMenu->addSeparator();
-        fileMenu->addAction(exitAction);
+        _fileMenu = new QMenu(this);
+        _fileMenu->addAction(_connectAction);
+        _fileMenu->addSeparator();
+        _fileMenu->addAction(_openAction);
+        _fileMenu->addAction(_saveAction);
+        _fileMenu->addAction(_saveAsAction);
+        _fileMenu->addSeparator();
+        _fileMenu->addAction(_exitAction);
+        menuBar()->addMenu(_fileMenu);
 
         // View menu
-        _viewMenu = menuBar()->addMenu(tr("View"));
+        _viewMenu = new QMenu(this) ;
+        menuBar()->addMenu(_viewMenu);
         
         // Options menu
-        QMenu *optionsMenu = menuBar()->addMenu(tr("Options"));
+        _optionsMenu = new QMenu(this);
+        menuBar()->addMenu(_optionsMenu);
 
         // View Mode
-        QMenu *defaultViewModeMenu = optionsMenu->addMenu(tr("Default View Mode"));
-        defaultViewModeMenu->addAction(customModeAction);
-        defaultViewModeMenu->addAction(treeModeAction);
-        defaultViewModeMenu->addAction(tableModeAction);
-        defaultViewModeMenu->addAction(textModeAction);
+        _defaultViewModeMenu = new QMenu(this);
+        _defaultViewModeMenu->addAction(_customModeAction);
+        _defaultViewModeMenu->addAction(_treeModeAction);
+        _defaultViewModeMenu->addAction(_tableModeAction);
+        _defaultViewModeMenu->addAction(_textModeAction);
+        _optionsMenu->addMenu(_defaultViewModeMenu);
         
-        optionsMenu->addSeparator();
+        _optionsMenu->addSeparator();
 
-        QActionGroup *modeGroup = new QActionGroup(this);
-        modeGroup->addAction(textModeAction);
-        modeGroup->addAction(treeModeAction);
-        modeGroup->addAction(tableModeAction);
-        modeGroup->addAction(customModeAction);
+        _modeGroup = new QActionGroup(this);
+        _modeGroup->addAction(_textModeAction);
+        _modeGroup->addAction(_treeModeAction);
+        _modeGroup->addAction(_tableModeAction);
+        _modeGroup->addAction(_customModeAction);
 
         // Time Zone
-        QAction *utcTime = new QAction(convertTimesToString(Utc), this);
-        utcTime->setCheckable(true);
-        utcTime->setChecked(AppRegistry::instance().settingsManager()->timeZone() == Utc);
-        VERIFY(connect(utcTime, SIGNAL(triggered()), this, SLOT(setUtcTimeZone())));
+        _utcTimeAction = new QAction(this);
+        _utcTimeAction->setCheckable(true);
+        _utcTimeAction->setChecked(AppRegistry::instance().settingsManager()->timeZone() == Utc);
+        VERIFY(connect(_utcTimeAction, SIGNAL(triggered()), this, SLOT(setUtcTimeZone())));
 
-        QAction *localTime = new QAction(convertTimesToString(LocalTime), this);
-        localTime->setCheckable(true);
-        localTime->setChecked(AppRegistry::instance().settingsManager()->timeZone() == LocalTime);
-        VERIFY(connect(localTime, SIGNAL(triggered()), this, SLOT(setLocalTimeZone())));
+        _localTimeAction = new QAction(this);
+        _localTimeAction->setCheckable(true);
+        _localTimeAction->setChecked(AppRegistry::instance().settingsManager()->timeZone() == LocalTime);
+        VERIFY(connect(_localTimeAction, SIGNAL(triggered()), this, SLOT(setLocalTimeZone())));
 
-        QMenu *timeMenu = optionsMenu->addMenu(tr("Display Dates In..."));
-        timeMenu->addAction(utcTime);
-        timeMenu->addAction(localTime);
+        _timeMenu = new QMenu(this);
+        _timeMenu->addAction(_utcTimeAction);
+        _timeMenu->addAction(_localTimeAction);
+        _optionsMenu->addMenu(_timeMenu);
 
-        QActionGroup *timeZoneGroup = new QActionGroup(this);
-        timeZoneGroup->addAction(utcTime);
-        timeZoneGroup->addAction(localTime);
+        _timeZoneGroup = new QActionGroup(this);
+        _timeZoneGroup->addAction(_utcTimeAction);
+        _timeZoneGroup->addAction(_localTimeAction);
 
         // UUID encoding
-        QAction *defaultEncodingAction = new QAction(tr("Do not decode (show as is)"), this);
-        defaultEncodingAction->setCheckable(true);
-        defaultEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == DefaultEncoding);
-        VERIFY(connect(defaultEncodingAction, SIGNAL(triggered()), this, SLOT(setDefaultUuidEncoding())));
+        _defaultEncodingAction = new QAction(this);
+        _defaultEncodingAction->setCheckable(true);
+        _defaultEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == DefaultEncoding);
+        VERIFY(connect(_defaultEncodingAction, SIGNAL(triggered()), this, SLOT(setDefaultUuidEncoding())));
 
-        QAction *javaLegacyEncodingAction = new QAction(tr("Use Java Encoding"), this);
-        javaLegacyEncodingAction->setCheckable(true);
-        javaLegacyEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == JavaLegacy);
-        VERIFY(connect(javaLegacyEncodingAction, SIGNAL(triggered()), this, SLOT(setJavaUuidEncoding())));
+        _javaLegacyEncodingAction = new QAction(this);
+        _javaLegacyEncodingAction->setCheckable(true);
+        _javaLegacyEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == JavaLegacy);
+        VERIFY(connect(_javaLegacyEncodingAction, SIGNAL(triggered()), this, SLOT(setJavaUuidEncoding())));
 
-        QAction *csharpLegacyEncodingAction = new QAction(tr("Use .NET Encoding"), this);
-        csharpLegacyEncodingAction->setCheckable(true);
-        csharpLegacyEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == CSharpLegacy);
-        VERIFY(connect(csharpLegacyEncodingAction, SIGNAL(triggered()), this, SLOT(setCSharpUuidEncoding())));
+        _csharpLegacyEncodingAction = new QAction(this);
+        _csharpLegacyEncodingAction->setCheckable(true);
+        _csharpLegacyEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == CSharpLegacy);
+        VERIFY(connect(_csharpLegacyEncodingAction, SIGNAL(triggered()), this, SLOT(setCSharpUuidEncoding())));
 
-        QAction *pythonEncodingAction = new QAction(tr("Use Python Encoding"), this);
-        pythonEncodingAction->setCheckable(true);
-        pythonEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == PythonLegacy);
-        VERIFY(connect(pythonEncodingAction, SIGNAL(triggered()), this, SLOT(setPythonUuidEncoding())));
+        _pythonEncodingAction = new QAction(this);
+        _pythonEncodingAction->setCheckable(true);
+        _pythonEncodingAction->setChecked(AppRegistry::instance().settingsManager()->uuidEncoding() == PythonLegacy);
+        VERIFY(connect(_pythonEncodingAction, SIGNAL(triggered()), this, SLOT(setPythonUuidEncoding())));
 
-        QMenu *uuidMenu = optionsMenu->addMenu(tr("Legacy UUID Encoding"));
-        uuidMenu->addAction(defaultEncodingAction);
-        uuidMenu->addAction(javaLegacyEncodingAction);
-        uuidMenu->addAction(csharpLegacyEncodingAction);
-        uuidMenu->addAction(pythonEncodingAction);
+        _uuidMenu = new QMenu(this);
+        _uuidMenu->addAction(_defaultEncodingAction);
+        _uuidMenu->addAction(_javaLegacyEncodingAction);
+        _uuidMenu->addAction(_csharpLegacyEncodingAction);
+        _uuidMenu->addAction(_pythonEncodingAction);
+        _optionsMenu->addMenu(_uuidMenu);
 
-        QAction *loadMongoRcJs = new QAction(tr("Load .mongorc.js"),this);
-        loadMongoRcJs->setCheckable(true);
-        loadMongoRcJs->setChecked(AppRegistry::instance().settingsManager()->loadMongoRcJs());
-        VERIFY(connect(loadMongoRcJs, SIGNAL(triggered()), this, SLOT(setLoadMongoRcJs())));
-        optionsMenu->addSeparator();
-        optionsMenu->addAction(loadMongoRcJs);
+        _loadMongoRcJsAction = new QAction(this);
+        _loadMongoRcJsAction->setCheckable(true);
+        _loadMongoRcJsAction->setChecked(AppRegistry::instance().settingsManager()->loadMongoRcJs());
+        VERIFY(connect(_loadMongoRcJsAction, SIGNAL(triggered()), this, SLOT(setLoadMongoRcJs())));
+        _optionsMenu->addSeparator();
+        _optionsMenu->addAction(_loadMongoRcJsAction);
 
-        optionsMenu->addSeparator();
+        _optionsMenu->addSeparator();
 
-        QAction *autoExpand = new QAction(tr("Auto Expand First Document"), this);
-        autoExpand->setCheckable(true);
-        autoExpand->setChecked(AppRegistry::instance().settingsManager()->autoExpand());
-        VERIFY(connect(autoExpand, SIGNAL(triggered()), this, SLOT(toggleAutoExpand())));
-        optionsMenu->addAction(autoExpand);
+        _autoExpandAction = new QAction(this);
+        _autoExpandAction->setCheckable(true);
+        _autoExpandAction->setChecked(AppRegistry::instance().settingsManager()->autoExpand());
+        VERIFY(connect(_autoExpandAction, SIGNAL(triggered()), this, SLOT(toggleAutoExpand())));
+        _optionsMenu->addAction(_autoExpandAction);
 
-        QAction *disabelConnectionShortcuts = new QAction(tr("Disable Connection Shortcuts"),this);
-        disabelConnectionShortcuts->setCheckable(true);
-        disabelConnectionShortcuts->setChecked(AppRegistry::instance().settingsManager()->disableConnectionShortcuts());
-        VERIFY(connect(disabelConnectionShortcuts, SIGNAL(triggered()), this, SLOT(setDisableConnectionShortcuts())));
-        optionsMenu->addAction(disabelConnectionShortcuts);
+        _disabelConnectionShortcutsAction = new QAction(this);
+        _disabelConnectionShortcutsAction->setCheckable(true);
+        _disabelConnectionShortcutsAction->setChecked(AppRegistry::instance().settingsManager()->disableConnectionShortcuts());
+        VERIFY(connect(_disabelConnectionShortcutsAction, SIGNAL(triggered()), this, SLOT(setDisableConnectionShortcuts())));
+        _optionsMenu->addAction(_disabelConnectionShortcutsAction);
 
-        QAction *preferencesAction = new QAction(tr("Preferences"),this);
-        VERIFY(connect(preferencesAction, SIGNAL(triggered()), this, SLOT(openPreferences())));
-        preferencesAction->setVisible(false);
-        optionsMenu->addAction(preferencesAction);
+        _preferencesAction = new QAction(this);
+        VERIFY(connect(_preferencesAction, SIGNAL(triggered()), this, SLOT(openPreferences())));
+        _preferencesAction->setVisible(false);
+        _optionsMenu->addAction(_preferencesAction);
         
-        optionsMenu->addSeparator();
-        createLanguageMenu(optionsMenu);
+        _optionsMenu->addSeparator();
+        createLanguageMenu(_optionsMenu);
 
-        QActionGroup *uuidEncodingGroup = new QActionGroup(this);
-        uuidEncodingGroup->addAction(defaultEncodingAction);
-        uuidEncodingGroup->addAction(javaLegacyEncodingAction);
-        uuidEncodingGroup->addAction(csharpLegacyEncodingAction);
-        uuidEncodingGroup->addAction(pythonEncodingAction);
+        _uuidEncodingGroup = new QActionGroup(this);
+        _uuidEncodingGroup->addAction(_defaultEncodingAction);
+        _uuidEncodingGroup->addAction(_javaLegacyEncodingAction);
+        _uuidEncodingGroup->addAction(_csharpLegacyEncodingAction);
+        _uuidEncodingGroup->addAction(_pythonEncodingAction);
 
-        QAction *aboutRobomongoAction = new QAction(tr("&About Robomongo..."), this);
-        VERIFY(connect(aboutRobomongoAction, SIGNAL(triggered()), this, SLOT(aboutRobomongo())));
+        _aboutRobomongoAction = new QAction(this);
+        VERIFY(connect(_aboutRobomongoAction, SIGNAL(triggered()), this, SLOT(aboutRobomongo())));
 
         // Options menu
-        QMenu *helpMenu = menuBar()->addMenu(tr("Help"));
-        helpMenu->addAction(aboutRobomongoAction);
+        _helpMenu = new QMenu(this);
+        _helpMenu->addAction(_aboutRobomongoAction);
+        menuBar()->addMenu(_helpMenu);
 
         // Toolbar
-        QToolBar *connectToolBar = new QToolBar(tr("Toolbar"), this);
-        connectToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        connectToolBar->addAction(connectButtonAction);
-        connectToolBar->setShortcutEnabled(1, true);
-        connectToolBar->setMovable(false);
-        setToolBarIconSize(connectToolBar);
-        addToolBar(connectToolBar);
+        _connectToolBar = new QToolBar(this);
+        _connectToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        _connectToolBar->addAction(connectButtonAction);
+        _connectToolBar->setShortcutEnabled(1, true);
+        _connectToolBar->setMovable(false);
+        setToolBarIconSize(_connectToolBar);
+        addToolBar(_connectToolBar);
 
-        QToolBar *openSaveToolBar = new QToolBar(tr("Open/Save ToolBar"), this);
-        openSaveToolBar->addAction(_openAction);
-        openSaveToolBar->addAction(_saveAction);
-        openSaveToolBar->setMovable(false);
-        setToolBarIconSize(openSaveToolBar);
-        addToolBar(openSaveToolBar);
+        _openSaveToolBar = new QToolBar(this);
+        _openSaveToolBar->addAction(_openAction);
+        _openSaveToolBar->addAction(_saveAction);
+        _openSaveToolBar->setMovable(false);
+        setToolBarIconSize(_openSaveToolBar);
+        addToolBar(_openSaveToolBar);
 
-        _execToolBar = new QToolBar(tr("Exec Toolbar"), this);
+        _execToolBar = new QToolBar(this);
         _execToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
         _execToolBar->addAction(_executeAction);
         _execToolBar->addAction(_stopAction);
@@ -378,17 +374,119 @@ namespace Robomongo
         _viewMenu->addSeparator();
         createStylesMenu();
         createStatusBar();
-        _viewMenu->addAction(fullScreenAction);
+        _viewMenu->addAction(_fullScreenAction);
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
         QTimer::singleShot(0, this, SLOT(manageConnections()));
         updateMenus();
+        
+        retranslateUI();
     }
 
+//    void MainWindow::addTranslatable(void (QAction::*method) (const QString &), const QString &text)
+//    {
+//        QtUtils::Translatable * t = new QtUtils::Translatable;
+//        t->object = object;
+//        t->method = method;
+//        t->text = text;
+//        _translatables.push_back(t);
+//    }
+    
+    void MainWindow::retranslateUI()
+    {
+        _explorerDock->setWindowTitle(tr("Database Explorer"));
+        _logDock->setWindowTitle(tr("Logs")); 
+        
+        _logButton->setText(tr("Logs"));
+        
+        _openAction->setText(tr("&Open..."));
+        _openAction->setToolTip(tr("Load script from the file to the currently opened shell"));
+        
+        _saveAction->setText(tr("&Save"));
+        _saveAction->setToolTip(tr("Save script of the currently opened shell to the file <b>(Ctrl + S)</b>"));
+        
+        _saveAsAction->setText(tr("Save &As..."));
+
+        _exitAction->setText(tr("&Exit"));
+        
+        _connectAction->setText(tr("&Connect..."));
+        _connectAction->setIconText(tr("Connect"));
+        _connectAction->setToolTip(tr("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>"));
+        
+        _connectButton->setText(tr("&Connect..."));
+        _connectButton->setToolTip(tr("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>"));
+        
+        _orientationAction->setText(tr("&Rotate"));
+        _orientationAction->setToolTip(tr("Toggle orientation of results view <b>(F10)</b>"));
+        
+        _textModeAction->setText(tr("&Text Mode"));
+        _textModeAction->setToolTip(tr("Show current tab in text mode, and make this mode default for all subsequent queries <b>(F4)</b>"));
+        
+        _treeModeAction->setText(tr("&Tree Mode"));
+        _treeModeAction->setToolTip(tr("Show current tab in tree mode, and make this mode default for all subsequent queries <b>(F3)</b>"));
+
+        _tableModeAction->setText(tr("T&able Mode"));
+        _tableModeAction->setToolTip(tr("Show current tab in table mode, and make this mode default for all subsequent queries <b>(F3)</b>"));
+
+        _customModeAction->setText(tr("&Custom Mode"));
+        _customModeAction->setToolTip(tr("Show current tab in custom mode if possible, and make this mode default for all subsequent queries <b>(F2)</b>"));
+
+        _executeAction->setToolTip(tr("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>"));
+        
+        _stopAction->setToolTip(tr("Stop execution of currently running script. <b>(F6)</b>"));
+
+        _fullScreenAction->setText(tr("&Full Screen"));
+        
+        _refreshAction->setText(tr("Refresh"));
+        
+        _utcTimeAction->setText(convertTimesToString(Utc));
+        _localTimeAction->setText(convertTimesToString(LocalTime));
+        
+        _defaultEncodingAction->setText(tr("Do not decode (show as is)"));
+        _javaLegacyEncodingAction->setText(tr("Use Java Encoding"));
+        _csharpLegacyEncodingAction->setText(tr("Use .NET Encoding"));
+        _pythonEncodingAction->setText(tr("Use Python Encoding"));
+        
+        _loadMongoRcJsAction->setText(tr("Load .mongorc.js"));
+        
+        _autoExpandAction->setText(tr("Auto Expand First Document"));
+        
+        _disabelConnectionShortcutsAction->setText(tr("Disable Connection Shortcuts"));
+        
+        _preferencesAction->setText(tr("Preferences"));
+        
+        _aboutRobomongoAction->setText(tr("&About Robomongo..."));
+        
+        _explorerAction->setText(tr("&Explorer"));
+        _explorerAction->setStatusTip(tr("Press to show/hide Database Explorer panel."));
+        _logAction->setText(tr("&Logs"));
+        //_logAction->setStatusTip(QString("Press to show/hide Logs panel."));  //commented for now because this message hides Logs button in status bar :)
+        
+        _fileMenu->setTitle(tr("File"));
+        _viewMenu->setTitle(tr("View"));
+        _stylesMenu->setTitle(tr("Theme"));
+        _optionsMenu->setTitle(tr("Options"));
+        _defaultViewModeMenu->setTitle(tr("Default View Mode"));
+        _timeMenu->setTitle(tr("Display Dates In..."));
+        _uuidMenu->setTitle(tr("Legacy UUID Encoding"));
+        
+        _languagesMenu->setTitle(tr("Language"));
+        //: Language based on system locale
+        AppRegistry::instance().settingsManager()->retranslateLocale(tr("System locale (if available)"));
+        
+        _helpMenu->setTitle(tr("Help"));
+        
+        _connectToolBar->setWindowTitle(tr("Toolbar"));
+        _openSaveToolBar->setWindowTitle(tr("Open/Save ToolBar"));
+        _execToolBar->setWindowTitle(tr("Exec Toolbar"));
+        
+        updateConnectionsMenu();
+    }
+    
     void MainWindow::createStylesMenu()
     {
-         QMenu *styles = _viewMenu->addMenu(tr("Theme"));
+         _stylesMenu = new QMenu(this);
          QStringList supportedStyles = detail::getSupportedStyles();
          QActionGroup *styleGroup = new QActionGroup(this);
          VERIFY(connect(styleGroup, SIGNAL(triggered(QAction *)), this, SLOT(changeStyle(QAction *))));
@@ -399,15 +497,14 @@ namespace Robomongo
              styleAction->setCheckable(true);
              styleAction->setChecked(style == currentStyle);
              styleGroup->addAction(styleAction);
-             styles->addAction(styleAction);             
+             _stylesMenu->addAction(styleAction);             
          }
+         _viewMenu->addMenu(_stylesMenu);
     }
     
     void MainWindow::createLanguageMenu(QMenu *parentMenu)
     {
-         QMenu *langs = parentMenu->addMenu(tr("Language"));
-         //: Language based on system locale
-         AppRegistry::instance().settingsManager()->retranslateLocale(tr("System locale (if available)"));
+         _languagesMenu = new QMenu(this);
          QMap<QString, QString> providedTranslations = AppRegistry::instance().settingsManager()->getTranslations();
          const QString &currentTranslation = AppRegistry::instance().settingsManager()->currentTranslation();
          QActionGroup *langGroup = new QActionGroup(this);
@@ -419,8 +516,9 @@ namespace Robomongo
              langAction->setChecked(it.key() == currentTranslation);
              langAction->setData(it.key());
              langGroup->addAction(langAction);
-             langs->addAction(langAction);             
+             _languagesMenu->addAction(langAction);             
          }
+         parentMenu->addMenu(_languagesMenu);
     }
 
     void MainWindow::createStatusBar()
@@ -430,11 +528,10 @@ namespace Robomongo
         QColor buttonBorderBgColor = windowColor.darker(120);
         QColor buttonPressedColor = windowColor.darker(102);
 
-        QToolButton *log = new QToolButton(this);
-        log->setText(tr("Logs"));
-        log->setCheckable(true);
-        log->setDefaultAction(_logDock->toggleViewAction());
-        log->setStyleSheet(QString(
+        _logButton = new QToolButton(this);
+        _logButton->setCheckable(true);
+        _logButton->setDefaultAction(_logDock->toggleViewAction());
+        _logButton->setStyleSheet(QString(
             "QToolButton {"
             "   background-color: %1;"
             "   border-style: outset;"
@@ -452,7 +549,7 @@ namespace Robomongo
             .arg(buttonBorderBgColor.name())
             .arg(buttonPressedColor.name()));
 
-        statusBar()->insertWidget(0, log);
+        statusBar()->insertWidget(0, _logButton);
         statusBar()->setStyleSheet("QStatusBar::item { border: 0px solid black };");
     }
 
@@ -469,11 +566,11 @@ namespace Robomongo
         const QString &text = ac->text();
         const QString &translation = ac->data().toString();
         AppRegistry::instance().settingsManager()->switchTranslator(translation);
-        QMessageBox::information(this, PROJECT_NAME_TITLE, 
-                tr("You need to restart %1 for language change take effect").arg(PROJECT_NAME_TITLE), 
-                QMessageBox::Ok, 
-                QMessageBox::Ok
-        );
+//        QMessageBox::information(this, PROJECT_NAME_TITLE, 
+//                tr("You need to restart %1 for language change take effect").arg(PROJECT_NAME_TITLE), 
+//                QMessageBox::Ok, 
+//                QMessageBox::Ok
+//        );
     }
 
     void MainWindow::open()
@@ -780,38 +877,34 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(explorer, ConnectionFailedEvent::Type);
         AppRegistry::instance().bus()->subscribe(explorer, ConnectionEstablishedEvent::Type);
 
-        QDockWidget *explorerDock = new QDockWidget(tr("Database Explorer"));
-        explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-        explorerDock->setWidget(explorer);
-        explorerDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+        _explorerDock = new QDockWidget(this);
+        _explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+        _explorerDock->setWidget(explorer);
+        _explorerDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
 
         QWidget *titleWidget = new QWidget(this);         // this lines simply remove
-        explorerDock->setTitleBarWidget(titleWidget);     // title bar widget.
+        _explorerDock->setTitleBarWidget(titleWidget);     // title bar widget.
 
-        QAction *actionExp = explorerDock->toggleViewAction();
-
+        _explorerAction = _explorerDock->toggleViewAction();
+        
         // Adjust any parameter you want.  
-        actionExp->setText(tr("&Explorer"));
-        actionExp->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));  
-        actionExp->setStatusTip(tr("Press to show/hide Database Explorer panel."));
-        actionExp->setChecked(true);
+        _explorerAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));  
+        _explorerAction->setChecked(true);
         // Install action in the menu.  
-        _viewMenu->addAction(actionExp);
+        _viewMenu->addAction(_explorerAction);
 
-        addDockWidget(Qt::LeftDockWidgetArea, explorerDock);
+        addDockWidget(Qt::LeftDockWidgetArea, _explorerDock);
 
         LogWidget *log = new LogWidget(this);        
         VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, mongo::LogLevel)), log, SLOT(addMessage(const QString&, mongo::LogLevel))));
-        _logDock = new QDockWidget(tr("Logs"));
-        QAction *action = _logDock->toggleViewAction();
+        _logDock = new QDockWidget();
+        _logAction = _logDock->toggleViewAction();
         // Adjust any parameter you want.  
-        action->setText(tr("&Logs"));
-        action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));  
-        //action->setStatusTip(QString("Press to show/hide Logs panel."));  //commented for now because this message hides Logs button in status bar :)
-        action->setChecked(false);
+        _logAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));  
+        _logAction->setChecked(false);
         // Install action in the menu.
-        _viewMenu->addAction(action);
-
+        _viewMenu->addAction(_logAction);
+        
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         _logDock->setWidget(log);
         _logDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
@@ -851,7 +944,7 @@ namespace Robomongo
             switch (event->type()) {
                 // this event is send if a translator is loaded
             case QEvent::LanguageChange:
-                //                    ui.retranslateUi(this);
+                retranslateUI();
                 Robomongo::LOG_MSG("QEvent::LanguageChange", mongo::LL_INFO);
                 break;
                 // this event is send, if the system, language changes

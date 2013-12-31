@@ -278,7 +278,7 @@ namespace Robomongo
                 setCurrentTranslation(translation);
                 save();
                 AppRegistry::instance().application->removeTranslator(_translator);
-                free(_translator);
+                delete _translator;
                 _translator = tr;
                 AppRegistry::instance().application->installTranslator(_translator);
                 /** @REMOVE */

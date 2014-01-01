@@ -17,6 +17,7 @@ namespace Robomongo
         virtual void showContextMenuAtPos(const QPoint &pos);
         using BaseClass::parent;
         virtual ~ExplorerTreeItem();
+        virtual void retranslateUI(){};
 
     protected:
         QMenu *const _contextMenu;

@@ -131,6 +131,7 @@ namespace Robomongo
         QString _currentStyle;
 
         QTranslator *_translator;
+        QTranslator *_translatorQt;
         QString _currentTranslation;
         QString _qmPath;
         QMap<QString, QString> _translations;

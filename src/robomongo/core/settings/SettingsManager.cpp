@@ -252,7 +252,7 @@ namespace Robomongo
 
     void SettingsManager::loadProvidedTranslations()
     {
-        QDirIterator qmIt(_qmPath, QStringList() << "*.qm", QDir::Files);
+        QDirIterator qmIt(_qmPath, QStringList() << PROJECT_NAME_LOWERCASE"_*.qm", QDir::Files);
         _translations[""] = "locale";
         while (qmIt.hasNext()) {
             qmIt.next();
@@ -269,15 +269,24 @@ namespace Robomongo
     {
         if (forced == true || translation != _currentTranslation) {
             QTranslator *tr = new QTranslator();
+            QTranslator *trQt = new QTranslator();
             QString basename = translation.isEmpty() ? PROJECT_NAME_LOWERCASE"_" + QLocale::system().name() : translation;
+            AppRegistry::instance().application->removeTranslator(_translator);
+            delete _translator; _translator = NULL;
             if (tr->load(basename + ".qm", _qmPath)) {
-                setCurrentTranslation(translation);
-                save();
-                AppRegistry::instance().application->removeTranslator(_translator);
-                delete _translator;
                 _translator = tr;
                 AppRegistry::instance().application->installTranslator(_translator);
-                /** @REMOVE */
+            }
+            AppRegistry::instance().application->removeTranslator(_translatorQt);
+            delete _translatorQt; _translatorQt = NULL;
+            if (trQt->load(basename.replace(PROJECT_NAME_LOWERCASE, "qt") + ".qm", _qmPath)) {
+                _translatorQt = trQt;
+                AppRegistry::instance().application->installTranslator(_translatorQt);
+            }
+            if (!forced) {
+                setCurrentTranslation(translation);
+                save();
+                /** @TODO REMOVE */
                 LOG_MSG("Translation switched to " + _currentTranslation, mongo::LL_INFO, false);
             }
         }

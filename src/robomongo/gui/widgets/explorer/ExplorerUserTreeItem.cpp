@@ -33,20 +33,28 @@ namespace Robomongo
     ExplorerUserTreeItem::ExplorerUserTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database, const MongoUser &user) :
         BaseClass(parent),_user(user),_database(database)
     {
-        QAction *dropUser = new QAction(tr("Drop User"), this);
-        VERIFY(connect(dropUser, SIGNAL(triggered()), SLOT(ui_dropUser())));
+        _dropUserAction = new QAction(this);
+        VERIFY(connect(_dropUserAction, SIGNAL(triggered()), SLOT(ui_dropUser())));
 
-        QAction *editUser = new QAction(tr("Edit User"), this);
-        VERIFY(connect(editUser, SIGNAL(triggered()), SLOT(ui_editUser())));
+        _editUserAction = new QAction(this);
+        VERIFY(connect(_editUserAction, SIGNAL(triggered()), SLOT(ui_editUser())));
 
-        BaseClass::_contextMenu->addAction(editUser);
-        BaseClass::_contextMenu->addAction(dropUser);
+        BaseClass::_contextMenu->addAction(_editUserAction);
+        BaseClass::_contextMenu->addAction(_dropUserAction);
 
         setText(0, QtUtils::toQString(_user.name()));
         setIcon(0, GuiRegistry::instance().userIcon());
         setExpanded(false);
         //setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
         setToolTip(0, QtUtils::toQString(buildToolTip(user)));
+        
+        retranslateUI();
+    }
+    
+    void ExplorerUserTreeItem::retranslateUI()
+    {
+        _dropUserAction->setText(tr("Drop User"));
+        _editUserAction->setText(tr("Edit User"));
     }
 
     void ExplorerUserTreeItem::ui_dropUser()

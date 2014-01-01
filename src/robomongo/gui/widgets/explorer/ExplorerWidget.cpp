@@ -129,4 +129,29 @@ namespace Robomongo
             AppRegistry::instance().app()->openShell(collectionItem->collection());
         }
     }
+
+    void ExplorerWidget::retranslateUI()
+    {
+        QTreeWidgetItemIterator it(_treeWidget);
+        while (*it) {
+            ((ExplorerTreeItem *) *it)->retranslateUI();
+            ++it;
+        }
+    }
+
+    void ExplorerWidget::changeEvent(QEvent* event)
+    {
+        if (0 != event) {
+            switch (event->type()) {
+                // this event is send if a translator is loaded
+            case QEvent::LanguageChange:
+                retranslateUI();
+                break;
+                // this event is send, if the system, language changes
+            case QEvent::LocaleChange:
+                break;
+            }
+        }
+        BaseClass::changeEvent(event);
+    }
 }

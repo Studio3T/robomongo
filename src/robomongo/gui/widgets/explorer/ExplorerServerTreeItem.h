@@ -24,6 +24,7 @@ namespace Robomongo
         ** Expand server tree item;
         */
         void expand();
+        void retranslateUI();
 
     public Q_SLOTS:
         void databaseRefreshed(const QList<MongoDatabase *> &dbs);
@@ -42,6 +43,15 @@ namespace Robomongo
 
     private:
 
+        QAction *_openShellAction;
+        QAction *_refreshServerAction;
+        QAction *_createDatabaseAction;
+        QAction *_serverStatusAction;
+        QAction *_serverVersionAction;
+        QAction *_serverHostInfoAction;
+        QAction *_showLogAction;
+        QAction *_disconnectAction;
+        
         /**
          * @brief Builds server
          * @param count: Number of databases.
@@ -49,7 +59,7 @@ namespace Robomongo
          *               If -1   - name will contain "..." at the end.
          */
         QString buildServerName(int *count = NULL);
-
+        
         MongoServer *const _server;
         EventBus *_bus;
     };

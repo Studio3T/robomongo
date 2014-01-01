@@ -30,42 +30,41 @@ namespace Robomongo
         _server(server),
         _bus(AppRegistry::instance().bus())
     { 
-        QAction *openShellAction = new QAction(tr("Open Shell"), this);
-        openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
-        VERIFY(connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell())));
+        _openShellAction = new QAction(this);
+        _openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
+        VERIFY(connect(_openShellAction, SIGNAL(triggered()), SLOT(ui_openShell())));
 
-        QAction *refreshServer = new QAction(tr("Refresh"), this);
-        VERIFY(connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer())));
+        _refreshServerAction = new QAction(this);
+        VERIFY(connect(_refreshServerAction, SIGNAL(triggered()), SLOT(ui_refreshServer())));
 
-        QAction *createDatabase = new QAction(tr("Create Database"), this);
-        VERIFY(connect(createDatabase, SIGNAL(triggered()), SLOT(ui_createDatabase())));
+        _createDatabaseAction = new QAction(this);
+        VERIFY(connect(_createDatabaseAction, SIGNAL(triggered()), SLOT(ui_createDatabase())));
 
-        QAction *serverStatus = new QAction(tr("Server Status"), this);
-        VERIFY(connect(serverStatus, SIGNAL(triggered()), SLOT(ui_serverStatus())));
+        _serverStatusAction = new QAction(this);
+        VERIFY(connect(_serverStatusAction, SIGNAL(triggered()), SLOT(ui_serverStatus())));
 
-        QAction *serverVersion = new QAction(tr("MongoDB Version"), this);
-        VERIFY(connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion())));
+        _serverVersionAction = new QAction(this);
+        VERIFY(connect(_serverVersionAction, SIGNAL(triggered()), SLOT(ui_serverVersion())));
 
-        QAction *serverHostInfo = new QAction(tr("Host Info"), this);
-        VERIFY(connect(serverHostInfo, SIGNAL(triggered()), SLOT(ui_serverHostInfo())));        
+        _serverHostInfoAction = new QAction(this);
+        VERIFY(connect(_serverHostInfoAction, SIGNAL(triggered()), SLOT(ui_serverHostInfo())));        
 
-        QAction *showLog = new QAction(tr("Show Log"), this);
-        VERIFY(connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog()))); 
+        _showLogAction = new QAction(this);
+        VERIFY(connect(_showLogAction, SIGNAL(triggered()), SLOT(ui_showLog()))); 
 
-        QAction *disconnectAction = new QAction(tr("Disconnect"), this);
-        disconnectAction->setIconText(tr("Disconnect"));
-        VERIFY(connect(disconnectAction, SIGNAL(triggered()), SLOT(ui_disconnectServer())));
+        _disconnectAction = new QAction(this);
+        VERIFY(connect(_disconnectAction, SIGNAL(triggered()), SLOT(ui_disconnectServer())));
 
-        BaseClass::_contextMenu->addAction(openShellAction);
-        BaseClass::_contextMenu->addAction(refreshServer);
+        BaseClass::_contextMenu->addAction(_openShellAction);
+        BaseClass::_contextMenu->addAction(_refreshServerAction);
         BaseClass::_contextMenu->addSeparator();
-        BaseClass::_contextMenu->addAction(createDatabase);
-        BaseClass::_contextMenu->addAction(serverStatus);
-        BaseClass::_contextMenu->addAction(serverHostInfo);
-        BaseClass::_contextMenu->addAction(serverVersion);
+        BaseClass::_contextMenu->addAction(_createDatabaseAction);
+        BaseClass::_contextMenu->addAction(_serverStatusAction);
+        BaseClass::_contextMenu->addAction(_serverHostInfoAction);
+        BaseClass::_contextMenu->addAction(_serverVersionAction);
         BaseClass::_contextMenu->addSeparator();
-        BaseClass::_contextMenu->addAction(showLog);
-        BaseClass::_contextMenu->addAction(disconnectAction);
+        BaseClass::_contextMenu->addAction(_showLogAction);
+        BaseClass::_contextMenu->addAction(_disconnectAction);
 
         _bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
         _bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
@@ -74,6 +73,8 @@ namespace Robomongo
         setIcon(0, GuiRegistry::instance().serverIcon());
         setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+        
+        retranslateUI();
     }
 
     void ExplorerServerTreeItem::expand()
@@ -199,4 +200,19 @@ namespace Robomongo
             expand();
         }
     } 
+    
+    void ExplorerServerTreeItem::retranslateUI()
+    {
+        _openShellAction->setText(tr("Open Shell"));
+        _refreshServerAction->setText(tr("Refresh"));
+        _createDatabaseAction->setText(tr("Create Database"));
+        _serverStatusAction->setText(tr("Server Status"));
+        _serverVersionAction->setText(tr("MongoDB Version"));
+        _serverHostInfoAction->setText(tr("Host Info"));
+        _showLogAction->setText(tr("Show Log"));
+        _disconnectAction->setText(tr("Disconnect"));
+        _disconnectAction->setIconText(tr("Disconnect"));
+    }
+    
+    
 }

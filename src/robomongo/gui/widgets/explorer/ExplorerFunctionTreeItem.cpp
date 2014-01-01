@@ -21,19 +21,27 @@ namespace Robomongo
         _database(database)
     {
 
-        QAction *dropFunction = new QAction(tr("Remove Function"), this);
-        VERIFY(connect(dropFunction, SIGNAL(triggered()), SLOT(ui_dropFunction())));
+        _dropFunctionAction = new QAction(this);
+        VERIFY(connect(_dropFunctionAction, SIGNAL(triggered()), SLOT(ui_dropFunction())));
 
-        QAction *editFunction = new QAction(tr("Edit Function"), this);
-        VERIFY(connect(editFunction, SIGNAL(triggered()), SLOT(ui_editFunction())));
+        _editFunctionAction = new QAction(this);
+        VERIFY(connect(_editFunctionAction, SIGNAL(triggered()), SLOT(ui_editFunction())));
 
-        BaseClass::_contextMenu->addAction(editFunction);
-        BaseClass::_contextMenu->addAction(dropFunction);
+        BaseClass::_contextMenu->addAction(_editFunctionAction);
+        BaseClass::_contextMenu->addAction(_dropFunctionAction);
 
         setText(0, QtUtils::toQString(_function.name()));
         setIcon(0, GuiRegistry::instance().functionIcon());
         setToolTip(0, buildToolTip(_function));
         setExpanded(false);
+        
+        retranslateUI();
+    }
+    
+    void ExplorerFunctionTreeItem::retranslateUI()
+    {
+        _dropFunctionAction->setText(tr("Remove Function"));
+        _editFunctionAction->setText(tr("Edit Function"));
     }
 
     QString ExplorerFunctionTreeItem::buildToolTip(const MongoFunction &function)

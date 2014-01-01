@@ -38,37 +38,49 @@ namespace Robomongo
     ExplorerCollectionDirIndexesTreeItem::ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent)
         :BaseClass(parent)
     {
-        QAction *addIndex = new QAction(tr("Add Index..."), this);
-        VERIFY(connect(addIndex, SIGNAL(triggered()), SLOT(ui_addIndex())));
+        _addIndexAction = new QAction(this);
+        VERIFY(connect(_addIndexAction, SIGNAL(triggered()), SLOT(ui_addIndex())));
 
-        QAction *addIndexGui = new QAction(tr("Add Index..."), this);
-        VERIFY(connect(addIndexGui, SIGNAL(triggered()), SLOT(ui_addIndexGui())));
+        _addIndexGuiAction = new QAction(this);
+        VERIFY(connect(_addIndexGuiAction, SIGNAL(triggered()), SLOT(ui_addIndexGui())));
 
-        QAction *dropIndex = new QAction(tr("Drop Index..."), this);
-        VERIFY(connect(dropIndex, SIGNAL(triggered()), SLOT(ui_dropIndex())));
+        _dropIndexAction = new QAction(this);
+        VERIFY(connect(_dropIndexAction, SIGNAL(triggered()), SLOT(ui_dropIndex())));
 
-        QAction *reIndex = new QAction(tr("Rebuild Indexes..."), this);
-        VERIFY(connect(reIndex, SIGNAL(triggered()), SLOT(ui_reIndex())));
+        _reIndexAction = new QAction(this);
+        VERIFY(connect(_reIndexAction, SIGNAL(triggered()), SLOT(ui_reIndex())));
 
-        QAction *viewIndex = new QAction(tr("View Indexes"), this);
-        VERIFY(connect(viewIndex, SIGNAL(triggered()), SLOT(ui_viewIndex())));
+        _viewIndexAction = new QAction(this);
+        VERIFY(connect(_viewIndexAction, SIGNAL(triggered()), SLOT(ui_viewIndex())));
 
-        QAction *refreshIndex = new QAction(tr("Refresh"), this);
-        VERIFY(connect(refreshIndex, SIGNAL(triggered()), SLOT(ui_refreshIndex())));
+        _refreshIndexAction = new QAction(this);
+        VERIFY(connect(_refreshIndexAction, SIGNAL(triggered()), SLOT(ui_refreshIndex())));
 
-        BaseClass::_contextMenu->addAction(viewIndex);
+        BaseClass::_contextMenu->addAction(_viewIndexAction);
         //BaseClass::_contextMenu->addAction(addIndex);
-        BaseClass::_contextMenu->addAction(addIndexGui);
+        BaseClass::_contextMenu->addAction(_addIndexGuiAction);
         //BaseClass::_contextMenu->addAction(dropIndex);
-        BaseClass::_contextMenu->addAction(reIndex);
+        BaseClass::_contextMenu->addAction(_reIndexAction);
         BaseClass::_contextMenu->addSeparator();
-        BaseClass::_contextMenu->addAction(refreshIndex);      
+        BaseClass::_contextMenu->addAction(_refreshIndexAction);      
 
-        setText(0, labelText);
         setIcon(0, Robomongo::GuiRegistry::instance().folderIcon());
 
         setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+        
+        retranslateUI();
+    }
+    
+    void ExplorerCollectionDirIndexesTreeItem::retranslateUI()
+    {
+        _addIndexAction->setText(tr("Add Index..."));
+        _addIndexGuiAction->setText(tr("Add Index..."));
+        _dropIndexAction->setText(tr("Drop Index..."));
+        _reIndexAction->setText(tr("Rebuild Indexes..."));
+        _viewIndexAction->setText(tr("View Indexes"));
+        _refreshIndexAction->setText(tr("Refresh"));
+        setText(0, tr("Indexes"));
     }
 
     void ExplorerCollectionDirIndexesTreeItem::expand()
@@ -148,16 +160,24 @@ namespace Robomongo
     ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent,const EnsureIndexInfo &info)
         : BaseClass(parent),_info(info)
     {
-        QAction *deleteIndex = new QAction(tr("Drop Index..."), this);
-        connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
-        QAction *editIndex = new QAction(tr("Edit Index..."), this);
-        connect(editIndex, SIGNAL(triggered()), SLOT(ui_edit()));
+        _deleteIndexAction = new QAction(this);
+        connect(_deleteIndexAction, SIGNAL(triggered()), SLOT(ui_dropIndex()));
+        _editIndexAction = new QAction(this);
+        connect(_editIndexAction, SIGNAL(triggered()), SLOT(ui_edit()));
 
-        BaseClass::_contextMenu->addAction(editIndex);
-        BaseClass::_contextMenu->addAction(deleteIndex);
+        BaseClass::_contextMenu->addAction(_editIndexAction);
+        BaseClass::_contextMenu->addAction(_deleteIndexAction);
 
         setText(0, QtUtils::toQString(_info._name));
         setIcon(0, Robomongo::GuiRegistry::instance().indexIcon());
+
+        retranslateUI();
+    }
+    
+    void ExplorerCollectionIndexesTreeItem::retranslateUI()
+    {
+        _deleteIndexAction->setText(tr("Drop Index..."));
+        _editIndexAction->setText(tr("Edit Index..."));
     }
 
     void ExplorerCollectionIndexesTreeItem::ui_dropIndex()
@@ -203,63 +223,59 @@ namespace Robomongo
     ExplorerCollectionTreeItem::ExplorerCollectionTreeItem(QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection) :
         BaseClass(parent), _collection(collection), _databaseItem(databaseItem)
     {
-        QAction *addDocument = new QAction(tr("Insert Document..."), this);
-        VERIFY(connect(addDocument, SIGNAL(triggered()), SLOT(ui_addDocument())));
+        _addDocumentAction = new QAction(this);
+        VERIFY(connect(_addDocumentAction, SIGNAL(triggered()), SLOT(ui_addDocument())));
 
-        QAction *updateDocument = new QAction(tr("Update Documents..."), this);
-        VERIFY(connect(updateDocument, SIGNAL(triggered()), SLOT(ui_updateDocument())));
-        QAction *removeDocument = new QAction(tr("Remove Documents..."), this);
-        VERIFY(connect(removeDocument, SIGNAL(triggered()), SLOT(ui_removeDocument())));
+        _updateDocumentAction = new QAction(this);
+        VERIFY(connect(_updateDocumentAction, SIGNAL(triggered()), SLOT(ui_updateDocument())));
+        
+        _removeDocumentAction = new QAction(this);
+        VERIFY(connect(_removeDocumentAction, SIGNAL(triggered()), SLOT(ui_removeDocument())));
+        _removeAllDocumentsAction = new QAction(this);
+        VERIFY(connect(_removeAllDocumentsAction, SIGNAL(triggered()), SLOT(ui_removeAllDocuments())));
 
-        QAction *removeAllDocuments = new QAction(tr("Remove All Documents..."), this);
-        VERIFY(connect(removeAllDocuments, SIGNAL(triggered()), SLOT(ui_removeAllDocuments())));
+        _collectionStatsAction = new QAction(this);
+        VERIFY(connect(_collectionStatsAction, SIGNAL(triggered()), SLOT(ui_collectionStatistics())));
 
-        QAction *collectionStats = new QAction(tr("Statistics"), this);
-        VERIFY(connect(collectionStats, SIGNAL(triggered()), SLOT(ui_collectionStatistics())));
+        _storageSizeAction = new QAction(this);
+        VERIFY(connect(_storageSizeAction, SIGNAL(triggered()), SLOT(ui_storageSize())));
+        _totalIndexSizeAction = new QAction(this);
+        VERIFY(connect(_totalIndexSizeAction, SIGNAL(triggered()), SLOT(ui_totalIndexSize())));
+        _totalSizeAction = new QAction(this);
+        VERIFY(connect(_totalSizeAction, SIGNAL(triggered()), SLOT(ui_totalSize())));
+        
+        _shardVersionAction = new QAction(this);
+        VERIFY(connect(_shardVersionAction, SIGNAL(triggered()), SLOT(ui_shardVersion())));
+        _shardDistributionAction = new QAction(this);
+        VERIFY(connect(_shardDistributionAction, SIGNAL(triggered()), SLOT(ui_shardDistribution())));
 
-        QAction *storageSize = new QAction(tr("Storage Size"), this);
-        VERIFY(connect(storageSize, SIGNAL(triggered()), SLOT(ui_storageSize())));
+        _dropCollectionAction = new QAction(this);
+        VERIFY(connect(_dropCollectionAction, SIGNAL(triggered()), SLOT(ui_dropCollection())));
+        _renameCollectionAction = new QAction(this);
+        VERIFY(connect(_renameCollectionAction, SIGNAL(triggered()), SLOT(ui_renameCollection())));
+        _duplicateCollectionAction = new QAction(this);
+        VERIFY(connect(_duplicateCollectionAction, SIGNAL(triggered()), SLOT(ui_duplicateCollection())));
+        _copyCollectionToDiffrentServerAction = new QAction(this);
+        VERIFY(connect(_copyCollectionToDiffrentServerAction, SIGNAL(triggered()), SLOT(ui_copyToCollectionToDiffrentServer())));
+        _viewCollectionAction = new QAction(this);
+        VERIFY(connect(_viewCollectionAction, SIGNAL(triggered()), SLOT(ui_viewCollection())));
 
-        QAction *totalIndexSize = new QAction(tr("Total Index Size"), this);
-        VERIFY(connect(totalIndexSize, SIGNAL(triggered()), SLOT(ui_totalIndexSize())));
-
-        QAction *totalSize = new QAction(tr("Total Size"), this);
-        VERIFY(connect(totalSize, SIGNAL(triggered()), SLOT(ui_totalSize())));
-        QAction *shardVersion = new QAction(tr("Shard Version"), this);
-        VERIFY(connect(shardVersion, SIGNAL(triggered()), SLOT(ui_shardVersion())));
-
-        QAction *shardDistribution = new QAction(tr("Shard Distribution"), this);
-        VERIFY(connect(shardDistribution, SIGNAL(triggered()), SLOT(ui_shardDistribution())));
-
-        QAction *dropCollection = new QAction(tr("Drop Collection..."), this);
-        VERIFY(connect(dropCollection, SIGNAL(triggered()), SLOT(ui_dropCollection())));
-
-        QAction *renameCollection = new QAction(tr("Rename Collection..."), this);
-        VERIFY(connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection())));
-        QAction *duplicateCollection = new QAction(tr("Duplicate Collection..."), this);
-        VERIFY(connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection())));
-        QAction *copyCollectionToDiffrentServer = new QAction(tr("Copy Collection to Database..."), this);
-        VERIFY(connect(copyCollectionToDiffrentServer, SIGNAL(triggered()), SLOT(ui_copyToCollectionToDiffrentServer())));
-
-        QAction *viewCollection = new QAction(tr("View Documents"), this);
-        VERIFY(connect(viewCollection, SIGNAL(triggered()), SLOT(ui_viewCollection())));
-
-        BaseClass::_contextMenu->addAction(viewCollection);
+        BaseClass::_contextMenu->addAction(_viewCollectionAction);
         BaseClass::_contextMenu->addSeparator();
-        BaseClass::_contextMenu->addAction(addDocument);
-        BaseClass::_contextMenu->addAction(updateDocument);
-        BaseClass::_contextMenu->addAction(removeDocument);
-        BaseClass::_contextMenu->addAction(removeAllDocuments);
+        BaseClass::_contextMenu->addAction(_addDocumentAction);
+        BaseClass::_contextMenu->addAction(_updateDocumentAction);
+        BaseClass::_contextMenu->addAction(_removeDocumentAction);
+        BaseClass::_contextMenu->addAction(_removeAllDocumentsAction);
         BaseClass::_contextMenu->addSeparator();
-        BaseClass::_contextMenu->addAction(renameCollection);
-        BaseClass::_contextMenu->addAction(duplicateCollection);
-        BaseClass::_contextMenu->addAction(copyCollectionToDiffrentServer);
-        BaseClass::_contextMenu->addAction(dropCollection);
+        BaseClass::_contextMenu->addAction(_renameCollectionAction);
+        BaseClass::_contextMenu->addAction(_duplicateCollectionAction);
+        BaseClass::_contextMenu->addAction(_copyCollectionToDiffrentServerAction);
+        BaseClass::_contextMenu->addAction(_dropCollectionAction);
         BaseClass::_contextMenu->addSeparator();
-        BaseClass::_contextMenu->addAction(collectionStats);
+        BaseClass::_contextMenu->addAction(_collectionStatsAction);
         BaseClass::_contextMenu->addSeparator();
-        BaseClass::_contextMenu->addAction(shardVersion);
-        BaseClass::_contextMenu->addAction(shardDistribution);
+        BaseClass::_contextMenu->addAction(_shardVersionAction);
+        BaseClass::_contextMenu->addAction(_shardDistributionAction);
 
         AppRegistry::instance().bus()->subscribe(_databaseItem, LoadCollectionIndexesResponse::Type, this);
         AppRegistry::instance().bus()->subscribe(_databaseItem, DeleteCollectionIndexResponse::Type, this);
@@ -274,6 +290,27 @@ namespace Robomongo
 
         setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+        
+        retranslateUI();
+    }
+    
+    void ExplorerCollectionTreeItem::retranslateUI()
+    {
+        _addDocumentAction->setText(tr("Insert Document..."));
+        _updateDocumentAction->setText(tr("Update Documents..."));
+        _removeDocumentAction->setText(tr("Remove Documents..."));
+        _removeAllDocumentsAction->setText(tr("Remove All Documents..."));
+        _collectionStatsAction->setText(tr("Statistics"));
+        _storageSizeAction->setText(tr("Storage Size"));
+        _totalIndexSizeAction->setText(tr("Total Index Size"));
+        _totalSizeAction->setText(tr("Total Size"));
+        _shardVersionAction->setText(tr("Shard Version"));
+        _shardDistributionAction->setText(tr("Shard Distribution"));
+        _dropCollectionAction->setText(tr("Drop Collection..."));
+        _renameCollectionAction->setText(tr("Rename Collection..."));
+        _duplicateCollectionAction->setText(tr("Duplicate Collection..."));
+        _copyCollectionToDiffrentServerAction->setText(tr("Copy Collection to Database..."));
+        _viewCollectionAction->setText(tr("View Documents"));
     }
 
     void ExplorerCollectionTreeItem::handle(LoadCollectionIndexesResponse *event)

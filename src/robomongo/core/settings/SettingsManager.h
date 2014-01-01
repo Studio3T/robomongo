@@ -96,7 +96,6 @@ namespace Robomongo
         QString currentTranslation() const {return _currentTranslation; }
         void setCurrentTranslation(const QString& langName);
         QMap<QString, QString> getTranslations() const {return _translations; }
-        void retranslateLocale(const QString &key);
         void switchTranslator(const QString& langName, bool forced = false);
 
     private:

@@ -325,7 +325,7 @@ namespace Robomongo
         _optionsMenu->addAction(_preferencesAction);
         
         _optionsMenu->addSeparator();
-        createLanguageMenu(_optionsMenu);
+        createLanguagesMenu(_optionsMenu);
 
         _uuidEncodingGroup = new QActionGroup(this);
         _uuidEncodingGroup->addAction(_defaultEncodingAction);
@@ -383,15 +383,6 @@ namespace Robomongo
         
         retranslateUI();
     }
-
-//    void MainWindow::addTranslatable(void (QAction::*method) (const QString &), const QString &text)
-//    {
-//        QtUtils::Translatable * t = new QtUtils::Translatable;
-//        t->object = object;
-//        t->method = method;
-//        t->text = text;
-//        _translatables.push_back(t);
-//    }
     
     void MainWindow::retranslateUI()
     {
@@ -473,8 +464,8 @@ namespace Robomongo
         
         _languagesMenu->setTitle(tr("Language"));
         //: Language based on system locale
-        AppRegistry::instance().settingsManager()->retranslateLocale(tr("System locale (if available)"));
-        
+        _localeLanguageAction->setText(tr("System locale (if available)"));
+       
         _helpMenu->setTitle(tr("Help"));
         
         _connectToolBar->setWindowTitle(tr("Toolbar"));
@@ -502,7 +493,7 @@ namespace Robomongo
          _viewMenu->addMenu(_stylesMenu);
     }
     
-    void MainWindow::createLanguageMenu(QMenu *parentMenu)
+    void MainWindow::createLanguagesMenu(QMenu *parentMenu)
     {
          _languagesMenu = new QMenu(this);
          QMap<QString, QString> providedTranslations = AppRegistry::instance().settingsManager()->getTranslations();
@@ -512,6 +503,9 @@ namespace Robomongo
          for (QMap<QString, QString>::const_iterator it = providedTranslations.begin(); it != providedTranslations.end(); ++it) {
              const QString &language = it.value();
              QAction *langAction = new QAction(language,this);
+             if (it.key() == "") {
+                 _localeLanguageAction = langAction;
+             }
              langAction->setCheckable(true);
              langAction->setChecked(it.key() == currentTranslation);
              langAction->setData(it.key());
@@ -945,15 +939,10 @@ namespace Robomongo
                 // this event is send if a translator is loaded
             case QEvent::LanguageChange:
                 retranslateUI();
-                Robomongo::LOG_MSG("QEvent::LanguageChange", mongo::LL_INFO);
+//                Robomongo::LOG_MSG("QEvent::LanguageChange", mongo::LL_INFO);
                 break;
                 // this event is send, if the system, language changes
             case QEvent::LocaleChange:
-                //                {
-                //                    QString locale = QLocale::system().name();
-                //                    locale.truncate(locale.lastIndexOf('_'));
-                //                    loadLanguage(locale);
-                //                }
                 Robomongo::LOG_MSG("QEvent::LocaleChange", mongo::LL_INFO);
                 break;
             }

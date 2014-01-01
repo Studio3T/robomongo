@@ -106,6 +106,7 @@ namespace Robomongo
         QAction *_autoExpandAction;
         QAction *_disabelConnectionShortcutsAction;
         QAction *_preferencesAction;
+        QAction *_localeLanguageAction;
         QAction *_aboutRobomongoAction;
         
         QAction *_explorerAction;
@@ -128,17 +129,14 @@ namespace Robomongo
         QToolBar *_execToolBar;
         QToolBar *_connectToolBar;
         QToolBar *_openSaveToolBar;
-        
-//        std::vector<QtUtils::Translatable *> _translatables;
 
-//        void addTranslatable(void (QAction::*method) (const QString &), const QString &text);
         void retranslateUI();
         
         void updateConnectionsMenu();
         void createDatabaseExplorer();
         void createTabs();
         void createStylesMenu();
-        void createLanguageMenu(QMenu *parentMenu);
+        void createLanguagesMenu(QMenu *parentMenu);
         void createStatusBar();
         
     protected:

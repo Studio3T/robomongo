@@ -24,6 +24,7 @@ namespace Robomongo
         typedef ExplorerTreeItem BaseClass;
         ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseTreeItem *databaseItem,ExplorerDatabaseCategory category);        
         void expand();
+        void retranslateUI();
 
     private Q_SLOTS:
         void ui_createCollection();
@@ -39,5 +40,17 @@ namespace Robomongo
     private:
         ExplorerDatabaseTreeItem *databaseItem() const;
         const ExplorerDatabaseCategory _category;
+        
+        QAction *_createCollectionAction;
+        QAction *_dbCollectionsStatsAction;
+        QAction *_refreshCollectionsAction;
+        
+        QAction *_refreshUsersAction;
+        QAction *_viewUsersAction;
+        QAction *_addUserAction;
+
+        QAction *_refreshFunctionsAction;
+        QAction *_viewFunctionsAction;
+        QAction *_addFunctionAction;
     };
 }

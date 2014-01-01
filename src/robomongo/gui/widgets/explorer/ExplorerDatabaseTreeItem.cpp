@@ -1,7 +1,6 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 
 #include <QMessageBox>
-#include <QAction>
 #include <QMenu>
 
 #include "robomongo/core/domain/MongoDatabase.h"
@@ -48,29 +47,29 @@ namespace Robomongo
         _bus(AppRegistry::instance().bus()),
         _collectionSystemFolderItem(NULL)
     {
-        QAction *openDbShellAction = new QAction(tr("Open Shell"), this);
-        openDbShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
-        VERIFY(connect(openDbShellAction, SIGNAL(triggered()), SLOT(ui_dbOpenShell())));
+        _openDbShellAction = new QAction(this);
+        _openDbShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
+        VERIFY(connect(_openDbShellAction, SIGNAL(triggered()), SLOT(ui_dbOpenShell())));
 
-        QAction *dbStats = new QAction(tr("Database Statistics"), this);
-        VERIFY(connect(dbStats, SIGNAL(triggered()), SLOT(ui_dbStatistics())));
+        _dbStatsAction = new QAction(this);
+        VERIFY(connect(_dbStatsAction, SIGNAL(triggered()), SLOT(ui_dbStatistics())));
 
-        QAction *dbDrop = new QAction(tr("Drop Database.."), this);
-        VERIFY(connect(dbDrop, SIGNAL(triggered()), SLOT(ui_dbDrop())));
+        _dbDropAction = new QAction(this);
+        VERIFY(connect(_dbDropAction, SIGNAL(triggered()), SLOT(ui_dbDrop())));
 
-        QAction *dbRepair = new QAction(tr("Repair Database..."), this);
-        VERIFY(connect(dbRepair, SIGNAL(triggered()), SLOT(ui_dbRepair())));
+        _dbRepairAction = new QAction(this);
+        VERIFY(connect(_dbRepairAction, SIGNAL(triggered()), SLOT(ui_dbRepair())));
 
-        QAction *refreshDatabase = new QAction(tr("Refresh"), this);
-        VERIFY(connect(refreshDatabase, SIGNAL(triggered()), SLOT(ui_refreshDatabase())));
+        _refreshDatabaseAction = new QAction(this);
+        VERIFY(connect(_refreshDatabaseAction, SIGNAL(triggered()), SLOT(ui_refreshDatabase())));
 
-        BaseClass::_contextMenu->addAction(openDbShellAction);
-        BaseClass::_contextMenu->addAction(refreshDatabase);
+        BaseClass::_contextMenu->addAction(_openDbShellAction);
+        BaseClass::_contextMenu->addAction(_refreshDatabaseAction);
         BaseClass::_contextMenu->addSeparator();
-        BaseClass::_contextMenu->addAction(dbStats);
+        BaseClass::_contextMenu->addAction(_dbStatsAction);
         BaseClass::_contextMenu->addSeparator();
-        BaseClass::_contextMenu->addAction(dbRepair);
-        BaseClass::_contextMenu->addAction(dbDrop);
+        BaseClass::_contextMenu->addAction(_dbRepairAction);
+        BaseClass::_contextMenu->addAction(_dbDropAction);
 
         _bus->subscribe(this, MongoDatabaseCollectionListLoadedEvent::Type, _database);
         _bus->subscribe(this, MongoDatabaseUsersLoadedEvent::Type, _database);
@@ -85,19 +84,31 @@ namespace Robomongo
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
         _collectionFolderItem = new ExplorerDatabaseCategoryTreeItem(this,Collections);
-        _collectionFolderItem->setText(0, tr("Collections"));
         _collectionFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_collectionFolderItem);
 
         _javascriptFolderItem = new ExplorerDatabaseCategoryTreeItem(this,Functions);
-        _javascriptFolderItem->setText(0, tr("Functions"));
         _javascriptFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_javascriptFolderItem);
         
         _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(this,Users);
-        _usersFolderItem->setText(0, tr("Users"));
         _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_usersFolderItem);
+        
+        retranslateUI();
+    }
+    
+    void ExplorerDatabaseTreeItem::retranslateUI()
+    {
+        _openDbShellAction->setText(tr("Open Shell"));
+        _dbStatsAction->setText(tr("Database Statistics"));
+        _dbDropAction->setText(tr("Drop Database.."));
+        _dbRepairAction->setText(tr("Repair Database..."));
+        _refreshDatabaseAction->setText(tr("Refresh"));
+        
+        _collectionFolderItem->setText(0, tr("Collections"));
+        _javascriptFolderItem->setText(0, tr("Functions"));
+        _usersFolderItem->setText(0, tr("Users"));
     }
 
     void ExplorerDatabaseTreeItem::expandCollections()

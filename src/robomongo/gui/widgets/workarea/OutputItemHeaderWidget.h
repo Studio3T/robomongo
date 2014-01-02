@@ -19,6 +19,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef QFrame BaseClass;
         OutputItemHeaderWidget(OutputItemContentWidget *output, QWidget *parent = 0);
         PagingWidget *paging() const { return _paging; }
         void showText();
@@ -28,6 +29,7 @@ namespace Robomongo
 
     protected:
         virtual void mouseDoubleClickEvent(QMouseEvent *);
+        void changeEvent(QEvent *event);
 
     Q_SIGNALS:
         void restoredSize();
@@ -39,6 +41,8 @@ namespace Robomongo
         void maximizePart();
 
     private:
+        void retranslateUI();
+        
         QPushButton *_textButton;
         QPushButton *_treeButton;
         QPushButton *_tableButton;

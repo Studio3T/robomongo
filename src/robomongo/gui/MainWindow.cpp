@@ -947,6 +947,6 @@ namespace Robomongo
                 break;
             }
         }
-        QMainWindow::changeEvent(event);
+        BaseClass::changeEvent(event);
     }
 }

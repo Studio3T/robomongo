@@ -12,7 +12,7 @@ class QDockWidget;
 class QToolButton;
 QT_END_NAMESPACE
 
-namespace Robomongo
+        namespace Robomongo
 {
     class ConnectionFailedEvent;
     class ScriptExecutingEvent;
@@ -63,6 +63,10 @@ namespace Robomongo
         void handle(ScriptExecutingEvent *event);
         void handle(ScriptExecutedEvent *event);
         void handle(QueryWidgetUpdatedEvent *event);
+
+    protected:
+        void changeEvent(QEvent* event);
+
     private Q_SLOTS:
         void updateMenus();
         void setUtcTimeZone();
@@ -78,10 +82,10 @@ namespace Robomongo
         App *_app;
 
         ConnectionMenu *_connectionsMenu;
-        
+
         QToolButton *_connectButton;
         QToolButton *_logButton;
-        
+
         QAction *_connectAction;
         QAction *_openAction;
         QAction *_saveAction;
@@ -108,10 +112,10 @@ namespace Robomongo
         QAction *_preferencesAction;
         QAction *_localeLanguageAction;
         QAction *_aboutRobomongoAction;
-        
+
         QAction *_explorerAction;
         QAction *_logAction;
-        
+
         QActionGroup *_modeGroup;
         QActionGroup *_timeZoneGroup;
         QActionGroup *_uuidEncodingGroup;
@@ -125,22 +129,19 @@ namespace Robomongo
         QMenu *_uuidMenu;
         QMenu *_languagesMenu;
         QMenu *_helpMenu;
-        
+
         QToolBar *_execToolBar;
         QToolBar *_connectToolBar;
         QToolBar *_openSaveToolBar;
 
         void retranslateUI();
-        
+
         void updateConnectionsMenu();
         void createDatabaseExplorer();
         void createTabs();
         void createStylesMenu();
         void createLanguagesMenu(QMenu *parentMenu);
         void createStatusBar();
-        
-    protected:
-        void changeEvent(QEvent*);
     };
 
 }

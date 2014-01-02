@@ -49,6 +49,9 @@ namespace Robomongo
         void showTable();
         void showCustom();
 
+    protected:
+        void changeEvent(QEvent *event);
+        
     private Q_SLOTS:
         void jsonPartReady(const QString &json);
         void refresh(int skip, int batchSize);
@@ -57,6 +60,8 @@ namespace Robomongo
 
     private:
         void setup(double secs);
+        void retranslateUI();
+        
         FindFrame *configureLogText();
         BsonTreeModel *configureModel();
 

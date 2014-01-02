@@ -110,6 +110,29 @@ namespace Robomongo
 
         refreshOutputItem();
     }
+    
+    void OutputItemContentWidget::retranslateUI()
+    {
+        configureModel();
+        markUninitialized();
+        refreshOutputItem();
+    }
+    
+    void OutputItemContentWidget::changeEvent(QEvent* event)
+    {
+        if (0 != event) {
+            switch (event->type()) {
+                // this event is send if a translator is loaded
+            case QEvent::LanguageChange:
+                retranslateUI();
+                break;
+                // this event is send, if the system, language changes
+            case QEvent::LocaleChange:
+                break;
+            }
+        }
+        BaseClass::changeEvent(event);
+    }
 
     void OutputItemContentWidget::paging_leftClicked(int skip, int limit)
     {

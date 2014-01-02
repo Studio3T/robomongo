@@ -29,9 +29,8 @@ namespace Robomongo
         _skipEdit = new QLineEdit;
         _batchSizeEdit = new QLineEdit;
         _skipEdit->setAlignment(Qt::AlignHCenter);
-        _skipEdit->setToolTip(tr("Skip"));
+
         _batchSizeEdit->setAlignment(Qt::AlignHCenter);
-        _batchSizeEdit->setToolTip(tr("Batch Size (number of documents shown at once)"));
 
         QFontMetrics metrics = _skipEdit->fontMetrics();
         int width = metrics.boundingRect("000000").width();
@@ -61,6 +60,31 @@ namespace Robomongo
         layout->addSpacing(0);
         layout->addWidget(rightButton);
         setLayout(layout);
+
+        retranslateUI();
+    }
+
+    void PagingWidget::retranslateUI()
+    {
+        _skipEdit->setToolTip(tr("Skip"));
+        _batchSizeEdit->setToolTip(tr("Batch Size (number of documents shown at once)"));
+
+    }
+
+    void PagingWidget::changeEvent(QEvent* event)
+    {
+        if (0 != event) {
+            switch (event->type()) {
+                // this event is send if a translator is loaded
+            case QEvent::LanguageChange:
+                retranslateUI();
+                break;
+                // this event is send, if the system, language changes
+            case QEvent::LocaleChange:
+                break;
+            }
+        }
+        BaseClass::changeEvent(event);
     }
 
     void PagingWidget::setSkip(int skip)

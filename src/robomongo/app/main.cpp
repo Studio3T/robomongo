@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
     Robomongo::detail::initStyle();
     setlocale(LC_NUMERIC, "C"); // do not move this line!!!
     
-    Robomongo::AppRegistry::instance().application = &app;
     Robomongo::AppRegistry::instance().settingsManager()->switchTranslator(Robomongo::AppRegistry::instance().settingsManager()->currentTranslation(), true);
     
     QRect screenGeometry = QApplication::desktop()->availableGeometry();

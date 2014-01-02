@@ -19,9 +19,16 @@ namespace Robomongo
         QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0,0,0,0);
         hlayout->addWidget(_logTextEdit);
-        _clear = new QAction(tr("Clear All"), this);
+        _clear = new QAction(this);
         VERIFY(connect(_clear, SIGNAL(triggered()),_logTextEdit, SLOT(clear())));
         setLayout(hlayout);      
+        
+        retranslateUI();
+    }
+    
+    void LogWidget::retranslateUI()
+    {
+        _clear->setText(tr("Clear All"));
     }
 
     void LogWidget::showContextMenu(const QPoint &pt)
@@ -42,5 +49,23 @@ namespace Robomongo
         _logTextEdit->append(time.toString("h:mm:ss AP: ") + message);
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());
+    }
+    
+    void LogWidget::changeEvent(QEvent* event)
+    {
+        if (0 != event) {
+            switch (event->type()) {
+                // this event is send if a translator is loaded
+            case QEvent::LanguageChange:
+                retranslateUI();
+//                Robomongo::LOG_MSG("QEvent::LanguageChange", mongo::LL_INFO);
+                break;
+                // this event is send, if the system, language changes
+            case QEvent::LocaleChange:
+//                Robomongo::LOG_MSG("QEvent::LocaleChange", mongo::LL_INFO);
+                break;
+            }
+        }
+        BaseClass::changeEvent(event);
     }
 }

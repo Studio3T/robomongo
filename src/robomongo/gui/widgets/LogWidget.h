@@ -20,12 +20,17 @@ namespace Robomongo
     public Q_SLOTS:
         void addMessage(const QString &message, mongo::LogLevel level);
 
+    protected:
+        void changeEvent(QEvent* event);
+        
     private Q_SLOTS:
         void showContextMenu(const QPoint &pt);
 
     private:        
         QTextEdit *const _logTextEdit;
         QAction *_clear;
+        
+        void retranslateUI();
     };
 
 }

@@ -92,7 +92,6 @@ namespace Robomongo
         QString currentStyle() const {return _currentStyle; }
         void setCurrentStyle(const QString& style);
         
-        QString getQmPath() const {return _qmPath; }
         QString currentTranslation() const {return _currentTranslation; }
         void setCurrentTranslation(const QString& langName);
         QMap<QString, QString> getTranslations() const {return _translations; }

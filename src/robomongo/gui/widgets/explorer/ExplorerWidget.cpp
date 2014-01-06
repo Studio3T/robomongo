@@ -133,8 +133,12 @@ namespace Robomongo
     void ExplorerWidget::retranslateUI()
     {
         QTreeWidgetItemIterator it(_treeWidget);
+        ExplorerTreeItem *item;
         while (*it) {
-            ((ExplorerTreeItem *) *it)->retranslateUI();
+            item = dynamic_cast<ExplorerTreeItem *> (*it);
+            if (item) {
+                item->retranslateUI();
+            }
             ++it;
         }
     }

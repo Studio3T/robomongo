@@ -75,21 +75,38 @@ namespace Robomongo
         if (event->key() == Qt::Key_Delete) {
             _notifier.onDeleteDocuments();
         }
+
+        if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+            onExpandToggle();
+        }
+
         return BaseClass::keyPressEvent(event);
     }
 
     void BsonTreeView::expandNode(const QModelIndex &index)
     {
-        if (index.isValid()) {
-            BaseClass::expand(index);
-            BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(index);
-            for (unsigned i = 0; i < item->childrenCount(); ++i) {
-                BsonTreeItem *tritem = item->child(i);
-                if (tritem && detail::isDocumentType(tritem)) {
-                    expandNode(model()->index(i, 0, index));
-                }
+        if (!index.isValid())
+            return;
+
+        BaseClass::expand(index);
+
+        BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(index);
+        for (unsigned i = 0; i < item->childrenCount(); ++i) {
+            BsonTreeItem *tritem = item->child(i);
+            if (tritem && detail::isDocumentType(tritem)) {
+                expandNode(model()->index(i, 0, index));
             }
         }
+    }
+
+    void BsonTreeView::onExpandToggle()
+    {
+        QModelIndex index = selectedIndex();
+
+        if (!index.isValid())
+            return;
+
+        BaseClass::isExpanded(index) ? BaseClass::collapse(index) : expandNode(index);
     }
 
     void BsonTreeView::onExpandRecursive()
@@ -99,11 +116,11 @@ namespace Robomongo
 
     /**
      * @returns selected BsonTreeItem, or NULL otherwise
+     * @todo move selectedIndex and selectedIndexes to sub-cluss BsonView(?)
      */
     QModelIndex BsonTreeView::selectedIndex() const
     {
-        QModelIndexList indexses = detail::uniqueRows(selectionModel()->selectedRows());
-        int count = indexses.count();
+        QModelIndexList indexses = selectedIndexes();
 
         if (indexses.count() != 1)
             return QModelIndex();

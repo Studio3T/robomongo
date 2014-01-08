@@ -129,6 +129,8 @@ namespace Robomongo
     void Notifier::deleteDocuments(std::vector<BsonTreeItem*> items, bool force)
     {
         bool isNeededRefresh = false;
+        bool isMultiDelete = (items.size() > 1);
+
         for (std::vector<BsonTreeItem*>::const_iterator it = items.begin(); it != items.end(); ++it) {
             BsonTreeItem * documentItem = *it;
             if (!documentItem)
@@ -149,15 +151,26 @@ namespace Robomongo
             mongo::Query query(bsonQuery);
 
             if (!force) {
-                // Ask user
-                int answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer), "Delete",
-                    "Document", "%1 %2 with id:<br><b>%3</b>?", QtUtils::toQString(id.toString(false)));
+                int answer = QMessageBox::No;
+
+                // ask an user
+                if (!isMultiDelete) {
+                    answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer), "Delete",
+                        "Document", "%1 %2 with id:<br><b>%3</b>?", QtUtils::toQString(id.toString(false)));
+                }
+                else {
+                    answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer), "Do you want to delete",
+                        "Documents", "%1 %3 selected %2?", QString::number(items.size()));
+                }
 
                 if (answer != QMessageBox::Yes)
                     break;
+
+                if (isMultiDelete)
+                    force = true;
             }
 
-            isNeededRefresh=true;
+            isNeededRefresh = true;
             _shell->server()->removeDocuments(query, _queryInfo._info._ns);
         }
 
@@ -176,32 +189,23 @@ namespace Robomongo
             return;
 
         QModelIndexList selectedIndexes = _observer->selectedIndexes();
-        if (!detail::isMultySelection(selectedIndexes))
+
+        if (!selectedIndexes.count())
             return;
-        int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", QString("Do you want to delete %1 selected documents?").arg(selectedIndexes.count()));
-        if (answer == QMessageBox::Yes) {
-            std::vector<BsonTreeItem*> items;
-            for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it!= selectedIndexes.end(); ++it) {
-                BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
-                items.push_back(item);                
-            }
-            deleteDocuments(items,true);
+
+        std::vector<BsonTreeItem*> items;
+        for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it!= selectedIndexes.end(); ++it) {
+            BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
+            items.push_back(item);
         }
+
+        deleteDocuments(items, false);
     }
 
+    // useless one, duplicates previous
     void Notifier::onDeleteDocument()
     {
-        if (!_queryInfo._info.isValid())
-            return;
-
-        QModelIndex selectedIndex = _observer->selectedIndex();
-        if (!selectedIndex.isValid())
-            return;
-
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedIndex);
-        std::vector<BsonTreeItem*> vec;
-        vec.push_back(documentItem);
-        return deleteDocuments(vec,false);
+        onDeleteDocuments();
     }
 
     void Notifier::onEditDocument()

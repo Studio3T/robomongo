@@ -1769,7 +1769,7 @@ Vielleicht ist dies ein Systemdokument das auf spezielle Weise verwaltet werden 
         <location filename="../core/settings/SettingsManager.cpp" line="270"/>
         <source>__LANGUAGE_NAME__</source>
         <extracomment>Native language name</extracomment>
-        <translation>English</translation>
+        <translation>Deutsch</translation>
     </message>
 </context>
 <context>

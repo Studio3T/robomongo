@@ -1,4 +1,5 @@
 SET(TRANSLATIONS
+    robomongo_de.ts
     robomongo_en.ts
     robomongo_ru.ts
 )

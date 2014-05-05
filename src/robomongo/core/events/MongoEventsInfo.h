@@ -14,7 +14,7 @@ namespace Robomongo
             bool isBackGround = false,
             bool isDropDuplicates = false,
             bool isSparce = false,
-            int expireAfter = 0,
+            int expireAfter = -1,
             const std::string &defaultLanguage = std::string(),
             const std::string &languageOverride = std::string(),
             const std::string &textWeights = std::string());

@@ -199,7 +199,7 @@ namespace Robomongo
 
         QCheckBox *expireCheckBox = new QCheckBox(tr("Expire after"));
         expireCheckBox->setChecked(false);
-        if (_info._ttl > 0) {
+        if (_info._ttl >= 0) {
             expireCheckBox->setChecked(true);
             _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
         }

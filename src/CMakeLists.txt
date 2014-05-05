@@ -482,7 +482,7 @@ IF(DEVELOPER_ENABLE_TESTS)
         SET(gtest_force_shared_crt ON CACHE BOOL "Build shared gtest library")
         ADD_DEFINITIONS(-D_VARIADIC_MAX=10)
     ENDIF(MSVC)
-    ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/tests/gtest-1.6.0 gtest)
+    ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/tests/gtest-1.7.0 gtest)
     INCLUDE_DIRECTORIES(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 ########## PREPARE GTEST LIBRARY ##########
 

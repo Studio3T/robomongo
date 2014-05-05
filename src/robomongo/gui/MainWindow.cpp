@@ -90,9 +90,11 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(this, QueryWidgetUpdatedEvent::Type);
 
         QColor background = palette().window().color();
+        QString controlKey = "Ctrl";
 
     #if defined(Q_OS_MAC)
         QString explorerColor = "#DEE3EA"; // was #CED6DF"
+        controlKey = QChar(0x2318); // "Command" key aka Cauliflower
     #elif defined(Q_OS_LINUX)
         QString explorerColor = background.darker(103).name();
     #else
@@ -111,7 +113,7 @@ namespace Robomongo
 
         _saveAction = new QAction(GuiRegistry::instance().saveIcon(), tr("&Save"), this);
         _saveAction->setShortcuts(QKeySequence::Save);
-        _saveAction->setToolTip("Save script of the currently opened shell to the file <b>(Ctrl + S)</b>");
+        _saveAction->setToolTip(QString("Save script of the currently opened shell to the file <b>(%1 + S)</b>").arg(controlKey));
         VERIFY(connect(_saveAction, SIGNAL(triggered()), this, SLOT(save())));
 
         _saveAsAction = new QAction(tr("Save &As..."), this);
@@ -128,7 +130,7 @@ namespace Robomongo
         _connectAction->setShortcut(QKeySequence::Open);
         _connectAction->setIcon(GuiRegistry::instance().connectIcon());
         _connectAction->setIconText("Connect");
-        _connectAction->setToolTip("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>");
+        _connectAction->setToolTip(QString("Connect to local or remote MongoDB instance <b>(%1 + O)</b>").arg(controlKey));
         VERIFY(connect(_connectAction, SIGNAL(triggered()), this, SLOT(manageConnections())));
 
         _connectionsMenu = new ConnectionMenu(this);
@@ -139,7 +141,7 @@ namespace Robomongo
         _connectButton->setText("&Connect...");
         _connectButton->setIcon(GuiRegistry::instance().connectIcon());
         _connectButton->setFocusPolicy(Qt::NoFocus);
-        _connectButton->setToolTip("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>");
+        _connectButton->setToolTip(QString("Connect to local or remote MongoDB instance <b>(%1 + O)</b>").arg(controlKey));
         _connectButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
         
     #if !defined(Q_OS_MAC)
@@ -203,7 +205,7 @@ namespace Robomongo
         _executeAction->setData("Execute");
         _executeAction->setIcon(GuiRegistry::instance().executeIcon());
         _executeAction->setShortcut(Qt::Key_F5);
-        _executeAction->setToolTip("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>");
+        _executeAction->setToolTip(QString("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>%1 + Enter)</b>").arg(controlKey));
         VERIFY(connect(_executeAction, SIGNAL(triggered()), SLOT(executeScript())));
 
         // Stop action

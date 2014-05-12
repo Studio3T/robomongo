@@ -157,7 +157,7 @@ namespace Robomongo
     {
         ConnectionSettings *connection = collection->database()->server()->connectionRecord();
         connection->setDefaultDatabase(collection->database()->name());
-        QString script = detail::buildCollectionQuery(collection->name(), "find()");
+        QString script = detail::buildCollectionQuery(collection->name(), "find({})");
         return openShell(connection, ScriptInfo(script, true, CursorPosition(), QtUtils::toQString(collection->database()->name()),filePathToSave));
     }
 

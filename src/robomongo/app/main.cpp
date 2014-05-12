@@ -1,6 +1,8 @@
 #include <QApplication>
 #include <QDesktopWidget>
 
+#include <locale.h>
+
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/AppStyle.h"
 

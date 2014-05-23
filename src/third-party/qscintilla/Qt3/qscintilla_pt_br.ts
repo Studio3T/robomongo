@@ -61,17 +61,17 @@
     <message>
         <location filename="qscicommandset.cpp" line="118"/>
         <source>Scroll to start of document</source>
-        <translation type="unfinished"></translation>
+        <translation>Rolar para o início do documento</translation>
     </message>
     <message>
         <location filename="qscicommandset.cpp" line="128"/>
         <source>Scroll to end of document</source>
-        <translation type="unfinished"></translation>
+        <translation>Rolar para o final do documento</translation>
     </message>
     <message>
         <location filename="qscicommandset.cpp" line="138"/>
         <source>Scroll vertically to centre current line</source>
-        <translation type="unfinished"></translation>
+        <translation>Rolar verticalmente para o centro da linha atual</translation>
     </message>
     <message>
         <location filename="qscicommandset.cpp" line="151"/>
@@ -131,22 +131,22 @@
     <message>
         <location filename="qscicommandset.cpp" line="271"/>
         <source>Move to end of previous word</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover para o final da palavra anterior</translation>
     </message>
     <message>
         <location filename="qscicommandset.cpp" line="277"/>
         <source>Extend selection to end of previous word</source>
-        <translation type="unfinished"></translation>
+        <translation>Estender seleção para o final da palavra anterior</translation>
     </message>
     <message>
         <location filename="qscicommandset.cpp" line="288"/>
         <source>Move to end of next word</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover para o final da próxima palavra</translation>
     </message>
     <message>
         <location filename="qscicommandset.cpp" line="298"/>
         <source>Extend selection to end of next word</source>
-        <translation type="unfinished"></translation>
+        <translation>Estender seleção para o fim da próxima palavra</translation>
     </message>
     <message>
         <location filename="qscicommandset.cpp" line="305"/>
@@ -156,7 +156,7 @@
     <message>
         <location filename="qscicommandset.cpp" line="311"/>
         <source>Extend selection left one word part</source>
-        <translation>Extender a seleção uma parte de palavra para esquerda</translation>
+        <translation>Estender a seleção uma parte de palavra para esquerda</translation>
     </message>
     <message>
         <location filename="qscicommandset.cpp" line="318"/>
@@ -216,12 +216,12 @@
     <message>
         <location filename="qscicommandset.cpp" line="335"/>
         <source>Move to start of document line</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover para o início da linha do documento</translation>
     </message>
     <message>
         <location filename="qscicommandset.cpp" line="345"/>
         <source>Extend selection to start of document line</source>
-        <translation type="unfinished"></translation>
+        <translation>Estender seleção para o início da linha do documento</translation>
     </message>
     <message>
         <location filename="qscicommandset.cpp" line="356"/>
@@ -3262,12 +3262,12 @@
     <message>
         <location filename="qsciscintilla.cpp" line="4326"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Desfazer</translation>
     </message>
     <message>
         <location filename="qsciscintilla.cpp" line="4330"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Refazer</translation>
     </message>
     <message>
         <location filename="qsciscintilla.cpp" line="4336"/>
@@ -3277,22 +3277,22 @@
     <message>
         <location filename="qsciscintilla.cpp" line="4341"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Copiar</translation>
     </message>
     <message>
         <location filename="qsciscintilla.cpp" line="4347"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Colar</translation>
     </message>
     <message>
         <location filename="qsciscintilla.cpp" line="4351"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Deletar</translation>
     </message>
     <message>
         <location filename="qsciscintilla.cpp" line="4358"/>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionar tudo</translation>
     </message>
 </context>
 </TS>

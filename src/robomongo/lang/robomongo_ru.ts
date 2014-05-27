@@ -1071,7 +1071,7 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="206"/>
         <source>Open Shell</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Открыть консоль</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="207"/>
@@ -1112,12 +1112,12 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="97"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Система</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="193"/>
         <source>&amp;Create</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Создать</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="194"/>

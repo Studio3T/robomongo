@@ -127,7 +127,7 @@
 <context>
     <name>Robomongo::BsonTreeView</name>
     <message>
-        <location filename="../gui/widgets/workarea/BsonTreeView.cpp" line="27"/>
+        <location filename="../gui/widgets/workarea/BsonTreeView.cpp" line="39"/>
         <source>Expand Recursively</source>
         <translation type="unfinished"></translation>
     </message>
@@ -135,37 +135,37 @@
 <context>
     <name>Robomongo::CollectionStatsTreeWidget</name>
     <message>
-        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="14"/>
+        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="35"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="14"/>
+        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="35"/>
         <source>Count</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="14"/>
+        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="35"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="14"/>
+        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="35"/>
         <source>Storage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="14"/>
+        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="35"/>
         <source>Index</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="14"/>
+        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="35"/>
         <source>Average Object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="14"/>
+        <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="35"/>
         <source>Padding</source>
         <translation type="unfinished"></translation>
     </message>
@@ -708,38 +708,43 @@
 <context>
     <name>Robomongo::ExplorerCollectionDirIndexesTreeItem</name>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="41"/>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="44"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="77"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="78"/>
         <source>Add Index...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="47"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="79"/>
         <source>Drop Index...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="50"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="80"/>
         <source>Rebuild Indexes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="53"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="81"/>
         <source>View Indexes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="56"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="82"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="107"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="83"/>
+        <source>Indexes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="119"/>
         <source>A unique index causes MongoDB to reject all documents that contain a duplicate value for the indexed field.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="108"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="120"/>
         <source>Sparse indexes only contain entries for documents that have the indexed field.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -747,22 +752,22 @@
 <context>
     <name>Robomongo::ExplorerCollectionIndexesTreeItem</name>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="151"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="179"/>
         <source>Drop Index...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="153"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="180"/>
         <source>Edit Index...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="166"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="186"/>
         <source>Drop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="166"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="186"/>
         <source>Index</source>
         <translation type="unfinished"></translation>
     </message>
@@ -770,138 +775,138 @@
 <context>
     <name>Robomongo::ExplorerCollectionTreeItem</name>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="206"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="299"/>
         <source>Insert Document...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="209"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="300"/>
         <source>Update Documents...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="211"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="301"/>
         <source>Remove Documents...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="214"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="302"/>
         <source>Remove All Documents...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="217"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="303"/>
         <source>Statistics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="220"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="304"/>
         <source>Storage Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="223"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="305"/>
         <source>Total Index Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="226"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="306"/>
         <source>Total Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="228"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="307"/>
         <source>Shard Version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="231"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="308"/>
         <source>Shard Distribution</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="234"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="309"/>
         <source>Drop Collection...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="237"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="310"/>
         <source>Rename Collection...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="239"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="311"/>
         <source>Duplicate Collection...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="241"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="312"/>
         <source>Copy Collection to Database...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="244"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="313"/>
         <source>View Documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="343"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="380"/>
         <source>Insert Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="365"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="402"/>
         <source>Remove All Documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="366"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="403"/>
         <source>Remove all documents from &lt;b&gt;%1&lt;/b&gt; collection?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="393"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="430"/>
         <source>update only one document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="394"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="431"/>
         <source>insert a new document, if no existing document match the query</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="407"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="444"/>
         <source>Drop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="407"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="444"/>
         <source>collection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="425"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="462"/>
         <source>Duplicate Collection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="426"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="463"/>
         <source>&amp;Duplicate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="427"/>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="466"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="464"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="503"/>
         <source>New Collection Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="464"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="501"/>
         <source>Rename Collection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="465"/>
+        <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="502"/>
         <source>&amp;Rename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -909,64 +914,64 @@
 <context>
     <name>Robomongo::ExplorerDatabaseCategoryTreeItem</name>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="33"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="89"/>
         <source>Create Collection...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="36"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="90"/>
         <source>Collections Statistics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="39"/>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="49"/>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="65"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="91"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="94"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="99"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="52"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="95"/>
         <source>View Users</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="55"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="96"/>
         <source>Add User...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="68"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="100"/>
         <source>View Functions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="71"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="101"/>
         <source>Add Function...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="158"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="179"/>
         <source>Create Collection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="159"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="180"/>
         <source>&amp;Create</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="160"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="181"/>
         <source>Collection Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="205"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="226"/>
         <source>Create Function</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="208"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="229"/>
         <source>write your code here</source>
         <translation type="unfinished"></translation>
     </message>
@@ -974,63 +979,63 @@
 <context>
     <name>Robomongo::ExplorerDatabaseTreeItem</name>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="51"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="103"/>
         <source>Open Shell</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="55"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="104"/>
         <source>Database Statistics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="58"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="105"/>
         <source>Drop Database..</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="61"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="106"/>
         <source>Repair Database...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="64"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="107"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="88"/>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="142"/>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="193"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="109"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="153"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="204"/>
         <source>Collections</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="93"/>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="181"/>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="198"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="110"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="192"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="209"/>
         <source>Functions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="98"/>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="167"/>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="203"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="111"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="178"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="214"/>
         <source>Users</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="147"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="158"/>
         <source>System</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="248"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="259"/>
         <source>Drop &lt;b&gt;%1&lt;/b&gt; database?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="250"/>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="261"/>
         <source>Drop Database</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1038,23 +1043,23 @@
 <context>
     <name>Robomongo::ExplorerFunctionTreeItem</name>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="24"/>
+        <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="43"/>
         <source>Remove Function</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="27"/>
-        <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="51"/>
+        <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="44"/>
+        <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="59"/>
         <source>Edit Function</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="67"/>
+        <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="75"/>
         <source>Drop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="67"/>
+        <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="75"/>
         <source>Function</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1062,58 +1067,58 @@
 <context>
     <name>Robomongo::ExplorerServerTreeItem</name>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="33"/>
+        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="206"/>
         <source>Open Shell</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="37"/>
+        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="207"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="40"/>
+        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="208"/>
         <source>Create Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="43"/>
+        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="209"/>
         <source>Server Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="46"/>
+        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="210"/>
         <source>MongoDB Version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="49"/>
+        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="211"/>
         <source>Host Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="52"/>
+        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="212"/>
         <source>Show Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="55"/>
-        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="56"/>
+        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="213"/>
+        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="214"/>
         <source>Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="96"/>
+        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="97"/>
         <source>System</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="192"/>
+        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="193"/>
         <source>&amp;Create</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="193"/>
+        <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="194"/>
         <source>Database Name:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1121,28 +1126,28 @@
 <context>
     <name>Robomongo::ExplorerUserTreeItem</name>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="36"/>
+        <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="56"/>
         <source>Drop User</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="39"/>
-        <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="75"/>
+        <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="57"/>
+        <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="83"/>
         <source>Edit User</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="55"/>
+        <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="63"/>
         <source>Drop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="55"/>
+        <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="63"/>
         <source>User</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="76"/>
+        <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="84"/>
         <source>New Password:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1191,7 +1196,7 @@
 <context>
     <name>Robomongo::LogWidget</name>
     <message>
-        <location filename="../gui/widgets/LogWidget.cpp" line="22"/>
+        <location filename="../gui/widgets/LogWidget.cpp" line="31"/>
         <source>Clear All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1199,295 +1204,290 @@
 <context>
     <name>Robomongo::MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="108"/>
+        <location filename="../gui/MainWindow.cpp" line="394"/>
         <source>&amp;Open...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="109"/>
+        <location filename="../gui/MainWindow.cpp" line="395"/>
         <source>Load script from the file to the currently opened shell</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="112"/>
+        <location filename="../gui/MainWindow.cpp" line="397"/>
         <source>&amp;Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="114"/>
+        <location filename="../gui/MainWindow.cpp" line="398"/>
         <source>Save script of the currently opened shell to the file &lt;b&gt;(Ctrl + S)&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="117"/>
+        <location filename="../gui/MainWindow.cpp" line="400"/>
         <source>Save &amp;As...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="122"/>
+        <location filename="../gui/MainWindow.cpp" line="402"/>
         <source>&amp;Exit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="127"/>
-        <location filename="../gui/MainWindow.cpp" line="139"/>
+        <location filename="../gui/MainWindow.cpp" line="404"/>
+        <location filename="../gui/MainWindow.cpp" line="408"/>
         <source>&amp;Connect...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="130"/>
+        <location filename="../gui/MainWindow.cpp" line="405"/>
         <source>Connect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="131"/>
-        <location filename="../gui/MainWindow.cpp" line="142"/>
+        <location filename="../gui/MainWindow.cpp" line="406"/>
+        <location filename="../gui/MainWindow.cpp" line="409"/>
         <source>Connect to local or remote MongoDB instance &lt;b&gt;(Ctrl + O)&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="156"/>
+        <location filename="../gui/MainWindow.cpp" line="411"/>
         <source>&amp;Rotate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="159"/>
+        <location filename="../gui/MainWindow.cpp" line="412"/>
         <source>Toggle orientation of results view &lt;b&gt;(F10)&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="166"/>
+        <location filename="../gui/MainWindow.cpp" line="414"/>
         <source>&amp;Text Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="169"/>
+        <location filename="../gui/MainWindow.cpp" line="415"/>
         <source>Show current tab in text mode, and make this mode default for all subsequent queries &lt;b&gt;(F4)&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="175"/>
+        <location filename="../gui/MainWindow.cpp" line="417"/>
         <source>&amp;Tree Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="178"/>
+        <location filename="../gui/MainWindow.cpp" line="418"/>
         <source>Show current tab in tree mode, and make this mode default for all subsequent queries &lt;b&gt;(F3)&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="184"/>
+        <location filename="../gui/MainWindow.cpp" line="420"/>
         <source>T&amp;able Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="187"/>
+        <location filename="../gui/MainWindow.cpp" line="421"/>
         <source>Show current tab in table mode, and make this mode default for all subsequent queries &lt;b&gt;(F3)&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="193"/>
+        <location filename="../gui/MainWindow.cpp" line="423"/>
         <source>&amp;Custom Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="196"/>
+        <location filename="../gui/MainWindow.cpp" line="424"/>
         <source>Show current tab in custom mode if possible, and make this mode default for all subsequent queries &lt;b&gt;(F2)&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="472"/>
-        <source>You need to restart %1 for language change take effect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="206"/>
+        <location filename="../gui/MainWindow.cpp" line="426"/>
         <source>Execute query for current tab. If you have some selection in query text - only selection will be executed &lt;b&gt;(F5 &lt;/b&gt; or &lt;b&gt;Ctrl + Enter)&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="214"/>
+        <location filename="../gui/MainWindow.cpp" line="428"/>
         <source>Stop execution of currently running script. &lt;b&gt;(F6)&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="219"/>
+        <location filename="../gui/MainWindow.cpp" line="430"/>
         <source>&amp;Full Screen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="225"/>
+        <location filename="../gui/MainWindow.cpp" line="432"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="230"/>
+        <location filename="../gui/MainWindow.cpp" line="457"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="240"/>
+        <location filename="../gui/MainWindow.cpp" line="458"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="243"/>
+        <location filename="../gui/MainWindow.cpp" line="460"/>
         <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="246"/>
+        <location filename="../gui/MainWindow.cpp" line="461"/>
         <source>Default View Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="271"/>
+        <location filename="../gui/MainWindow.cpp" line="462"/>
         <source>Display Dates In...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="315"/>
+        <location filename="../gui/MainWindow.cpp" line="444"/>
         <source>Auto Expand First Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="280"/>
+        <location filename="../gui/MainWindow.cpp" line="437"/>
         <source>Do not decode (show as is)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="285"/>
+        <location filename="../gui/MainWindow.cpp" line="438"/>
         <source>Use Java Encoding</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="290"/>
+        <location filename="../gui/MainWindow.cpp" line="439"/>
         <source>Use .NET Encoding</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="295"/>
+        <location filename="../gui/MainWindow.cpp" line="440"/>
         <source>Use Python Encoding</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="300"/>
+        <location filename="../gui/MainWindow.cpp" line="463"/>
         <source>Legacy UUID Encoding</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="306"/>
+        <location filename="../gui/MainWindow.cpp" line="442"/>
         <source>Load .mongorc.js</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="321"/>
+        <location filename="../gui/MainWindow.cpp" line="446"/>
         <source>Disable Connection Shortcuts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="327"/>
+        <location filename="../gui/MainWindow.cpp" line="448"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="341"/>
+        <location filename="../gui/MainWindow.cpp" line="450"/>
         <source>&amp;About Robomongo...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="345"/>
+        <location filename="../gui/MainWindow.cpp" line="469"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="349"/>
+        <location filename="../gui/MainWindow.cpp" line="471"/>
         <source>Toolbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="357"/>
+        <location filename="../gui/MainWindow.cpp" line="472"/>
         <source>Open/Save ToolBar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="364"/>
+        <location filename="../gui/MainWindow.cpp" line="473"/>
         <source>Exec Toolbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="391"/>
+        <location filename="../gui/MainWindow.cpp" line="459"/>
         <source>Theme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="408"/>
+        <location filename="../gui/MainWindow.cpp" line="465"/>
         <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="410"/>
+        <location filename="../gui/MainWindow.cpp" line="467"/>
         <source>System locale (if available)</source>
         <extracomment>Language based on system locale</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="433"/>
-        <location filename="../gui/MainWindow.cpp" line="804"/>
+        <location filename="../gui/MainWindow.cpp" line="390"/>
+        <location filename="../gui/MainWindow.cpp" line="392"/>
         <source>Logs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="544"/>
+        <location filename="../gui/MainWindow.cpp" line="636"/>
         <source>&amp;Manage Connections...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="546"/>
+        <location filename="../gui/MainWindow.cpp" line="638"/>
         <source>Connect to MongoDB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="567"/>
-        <location filename="../gui/MainWindow.cpp" line="746"/>
+        <location filename="../gui/MainWindow.cpp" line="659"/>
+        <location filename="../gui/MainWindow.cpp" line="838"/>
         <source>Cannot connect to MongoDB (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="568"/>
-        <location filename="../gui/MainWindow.cpp" line="747"/>
-        <location filename="../gui/MainWindow.cpp" line="755"/>
+        <location filename="../gui/MainWindow.cpp" line="660"/>
+        <location filename="../gui/MainWindow.cpp" line="839"/>
+        <location filename="../gui/MainWindow.cpp" line="847"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="667"/>
+        <location filename="../gui/MainWindow.cpp" line="759"/>
         <source>Refresh not working yet... : &lt;br/&gt;  &lt;b&gt;Ctrl+D&lt;/b&gt; : push Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="754"/>
+        <location filename="../gui/MainWindow.cpp" line="846"/>
         <source>Cannot connect to MongoDB (%1),
 error: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="782"/>
+        <location filename="../gui/MainWindow.cpp" line="389"/>
         <source>Database Explorer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="793"/>
+        <location filename="../gui/MainWindow.cpp" line="452"/>
         <source>&amp;Explorer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="795"/>
+        <location filename="../gui/MainWindow.cpp" line="453"/>
         <source>Press to show/hide Database Explorer panel.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="807"/>
+        <location filename="../gui/MainWindow.cpp" line="454"/>
         <source>&amp;Logs</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1690,7 +1690,7 @@ Maybe this is a system document that should be managed in a special way?</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/OutputItemContentWidget.cpp" line="218"/>
+        <location filename="../gui/widgets/workarea/OutputItemContentWidget.cpp" line="241"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1698,27 +1698,27 @@ Maybe this is a system document that should be managed in a special way?</source
 <context>
     <name>Robomongo::OutputItemHeaderWidget</name>
     <message>
-        <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="39"/>
+        <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="129"/>
         <source>Maximize or restore back this output result. You also can double-click on result&apos;s header.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="47"/>
+        <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="130"/>
         <source>View results in text mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="56"/>
+        <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="131"/>
         <source>View results in tree mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="66"/>
+        <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="132"/>
         <source>View results in table mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="76"/>
+        <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="133"/>
         <source>View results in custom UI</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1726,12 +1726,12 @@ Maybe this is a system document that should be managed in a special way?</source
 <context>
     <name>Robomongo::PagingWidget</name>
     <message>
-        <location filename="../gui/widgets/workarea/PagingWidget.cpp" line="32"/>
+        <location filename="../gui/widgets/workarea/PagingWidget.cpp" line="69"/>
         <source>Skip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/PagingWidget.cpp" line="34"/>
+        <location filename="../gui/widgets/workarea/PagingWidget.cpp" line="70"/>
         <source>Batch Size (number of documents shown at once)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1760,9 +1760,10 @@ Maybe this is a system document that should be managed in a special way?</source
 <context>
     <name>Robomongo::SettingsManager</name>
     <message>
-        <location filename="../core/settings/SettingsManager.cpp" line="270"/>
+        <location filename="../core/settings/SettingsManager.cpp" line="264"/>
+        <location filename="../core/settings/SettingsManager.cpp" line="265"/>
         <source>__LANGUAGE_NAME__</source>
-        <extracomment>Native language name</extracomment>
+        <extracomment>Native language name: &quot;English&quot; for English, &quot;Русский&quot; for Russian etc.</extracomment>
         <translation>English</translation>
     </message>
 </context>
@@ -1794,37 +1795,37 @@ Maybe this is a system document that should be managed in a special way?</source
 <context>
     <name>Robomongo::WorkAreaTabBar</name>
     <message>
-        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="23"/>
+        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="48"/>
         <source>&amp;New Shell</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="25"/>
+        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="49"/>
         <source>&amp;Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="27"/>
+        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="50"/>
         <source>&amp;Duplicate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="28"/>
+        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="51"/>
         <source>&amp;Pin Shell</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="29"/>
+        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="52"/>
         <source>&amp;Close Shell</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="31"/>
+        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="53"/>
         <source>Close &amp;Other Shells</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="32"/>
+        <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="54"/>
         <source>Close Shells to the R&amp;ight</source>
         <translation type="unfinished"></translation>
     </message>

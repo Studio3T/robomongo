@@ -75,7 +75,7 @@
     <message>
         <location filename="../gui/dialogs/AboutDialog.cpp" line="30"/>
         <source>Fork</source>
-        <translation type="unfinished"></translation>
+        <translation>Fork</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/AboutDialog.cpp" line="30"/>
@@ -165,7 +165,7 @@
     <message>
         <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="14"/>
         <source>Average Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Objeto médio</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="14"/>
@@ -192,7 +192,7 @@
     <message>
         <location filename="../gui/dialogs/ConnectionAuthTab.cpp" line="19"/>
         <source>&lt;nobr&gt;The &lt;code&gt;admin&lt;/code&gt; database is unique in MongoDB.&lt;/nobr&gt; Users with normal access to the &lt;code&gt;admin&lt;/code&gt; database have read and write access to &lt;b&gt;all databases&lt;/b&gt;.</source>
-        <translation type="unfinished">&lt;nobr&gt;O&lt;code&gt;admin&lt;/code&gt; database is unique in MongoDB.&lt;/nobr&gt; Users with normal access to the &lt;code&gt;admin&lt;/code&gt; database have read and write access to &lt;b&gt;all databases&lt;/b&gt;.</translation>
+        <translation>&lt;nobr&gt;O&lt;code&gt;admin&lt;/code&gt; database is unique in MongoDB.&lt;/nobr&gt; Users with normal access to the &lt;code&gt;admin&lt;/code&gt; database have read and write access to &lt;b&gt;all databases&lt;/b&gt;.</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionAuthTab.cpp" line="29"/>
@@ -374,22 +374,22 @@
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="76"/>
         <source>&amp;Add...</source>
-        <translation>&amp;Adicionar</translation>
+        <translation>&amp;Adicionar...</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="79"/>
         <source>&amp;Edit...</source>
-        <translation>&amp;Editar</translation>
+        <translation>&amp;Editar...</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="82"/>
         <source>&amp;Clone...</source>
-        <translation>&amp;Clonar</translation>
+        <translation>&amp;Clonar...</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="85"/>
         <source>&amp;Remove...</source>
-        <translation>&amp;Remover</translation>
+        <translation>&amp;Remover...</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionsDialog.cpp" line="93"/>
@@ -717,37 +717,37 @@
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="41"/>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="44"/>
         <source>Add Index...</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar índice...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="47"/>
         <source>Drop Index...</source>
-        <translation type="unfinished"></translation>
+        <translation>Dropar índice...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="50"/>
         <source>Rebuild Indexes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Recriar índices...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="53"/>
         <source>View Indexes</source>
-        <translation type="unfinished"></translation>
+        <translation>Ver índices</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="56"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Atualizar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="107"/>
         <source>A unique index causes MongoDB to reject all documents that contain a duplicate value for the indexed field.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um índice único faz com que MongoDB rejeite todos os documentos qyue contém um valor duplicado de campo indexado.</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="108"/>
         <source>Sparse indexes only contain entries for documents that have the indexed field.</source>
-        <translation type="unfinished"></translation>
+        <translation>Índices com espaçamento somente contém entradas para documents que tem campo indexado.</translation>
     </message>
 </context>
 <context>
@@ -755,22 +755,22 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="151"/>
         <source>Drop Index...</source>
-        <translation type="unfinished"></translation>
+        <translation>Dropar índice...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="153"/>
         <source>Edit Index...</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar Índice...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="166"/>
         <source>Drop</source>
-        <translation type="unfinished"></translation>
+        <translation>Dropar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="166"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Índice</translation>
     </message>
 </context>
 <context>
@@ -778,138 +778,138 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="206"/>
         <source>Insert Document...</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserir documento...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="209"/>
         <source>Update Documents...</source>
-        <translation type="unfinished"></translation>
+        <translation>Atualizar documento...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="211"/>
         <source>Remove Documents...</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover documento...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="214"/>
         <source>Remove All Documents...</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover todos os Documentos...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="217"/>
         <source>Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Estatísticas</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="220"/>
         <source>Storage Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho de Armazenamento</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="223"/>
         <source>Total Index Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho total de índice</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="226"/>
         <source>Total Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho total</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="228"/>
         <source>Shard Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Shard versão</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="231"/>
         <source>Shard Distribution</source>
-        <translation type="unfinished"></translation>
+        <translation>Shard Distribuição</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="234"/>
         <source>Drop Collection...</source>
-        <translation type="unfinished"></translation>
+        <translation>Dropar Coleção...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="237"/>
         <source>Rename Collection...</source>
-        <translation type="unfinished"></translation>
+        <translation>Renomear Coleção...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="239"/>
         <source>Duplicate Collection...</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicar Coleção...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="241"/>
         <source>Copy Collection to Database...</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar coleção para o banco de dados...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="244"/>
         <source>View Documents</source>
-        <translation type="unfinished"></translation>
+        <translation>Ver Documentos</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="343"/>
         <source>Insert Document</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserir Documentos</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="365"/>
         <source>Remove All Documents</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover todos os documentos</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="366"/>
         <source>Remove all documents from &lt;b&gt;%1&lt;/b&gt; collection?</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover todos os documentos da coleção &lt;b&gt;%1&lt;/b&gt; ?</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="393"/>
         <source>update only one document</source>
-        <translation type="unfinished"></translation>
+        <translation>atualizar somente um documento</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="394"/>
         <source>insert a new document, if no existing document match the query</source>
-        <translation type="unfinished"></translation>
+        <translation>inserir um novo documento, se não existir nenhum documento que seja igual a query</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="407"/>
         <source>Drop</source>
-        <translation type="unfinished"></translation>
+        <translation>Dropar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="407"/>
         <source>collection</source>
-        <translation type="unfinished"></translation>
+        <translation>coleção</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="425"/>
         <source>Duplicate Collection</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicar conexão</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="426"/>
         <source>&amp;Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Duplicar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="427"/>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="466"/>
         <source>New Collection Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Novo nome de coleção:</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="464"/>
         <source>Rename Collection</source>
-        <translation type="unfinished"></translation>
+        <translation>Renomar coleção</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="465"/>
         <source>&amp;Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Renomear</translation>
     </message>
 </context>
 <context>
@@ -917,64 +917,64 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="33"/>
         <source>Create Collection...</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar coleção...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="36"/>
         <source>Collections Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Estatísticas de coleções</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="39"/>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="49"/>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="65"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Atualizar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="52"/>
         <source>View Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Ver Usuários</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="55"/>
         <source>Add User...</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar Usuário...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="68"/>
         <source>View Functions</source>
-        <translation type="unfinished"></translation>
+        <translation>Ver funções</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="71"/>
         <source>Add Function...</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar Funções...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="158"/>
         <source>Create Collection</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar Coleção</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="159"/>
         <source>&amp;Create</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Criar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="160"/>
         <source>Collection Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome da coleção:</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="205"/>
         <source>Create Function</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar função</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp" line="208"/>
         <source>write your code here</source>
-        <translation type="unfinished"></translation>
+        <translation>escreva seu código aqui</translation>
     </message>
 </context>
 <context>
@@ -982,63 +982,63 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="51"/>
         <source>Open Shell</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir Terminal</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="55"/>
         <source>Database Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Estatísticas de banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="58"/>
         <source>Drop Database..</source>
-        <translation type="unfinished"></translation>
+        <translation>Dropar banco de dados..</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="61"/>
         <source>Repair Database...</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparar Banco de dados...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="64"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Atualizar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="88"/>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="142"/>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="193"/>
         <source>Collections</source>
-        <translation type="unfinished"></translation>
+        <translation>Coleções</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="93"/>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="181"/>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="198"/>
         <source>Functions</source>
-        <translation type="unfinished"></translation>
+        <translation>Funções</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="98"/>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="167"/>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="203"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuários</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="147"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="248"/>
         <source>Drop &lt;b&gt;%1&lt;/b&gt; database?</source>
-        <translation type="unfinished"></translation>
+        <translation>Dropar banco de dados &lt;b&gt; %1 &lt;/b&gt; ?</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="250"/>
         <source>Drop Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Dropar banco de dados</translation>
     </message>
 </context>
 <context>
@@ -1046,23 +1046,23 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="24"/>
         <source>Remove Function</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover Função</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="27"/>
         <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="51"/>
         <source>Edit Function</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar função</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="67"/>
         <source>Drop</source>
-        <translation type="unfinished"></translation>
+        <translation>Dropar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="67"/>
         <source>Function</source>
-        <translation type="unfinished"></translation>
+        <translation>Função</translation>
     </message>
 </context>
 <context>
@@ -1070,58 +1070,58 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="33"/>
         <source>Open Shell</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir Terminal</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="37"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Atualizar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="40"/>
         <source>Create Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="43"/>
         <source>Server Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Status do servidor</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="46"/>
         <source>MongoDB Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Versão do MongoDB</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="49"/>
         <source>Host Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Informações do Host</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="52"/>
         <source>Show Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar Log</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="55"/>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="56"/>
         <source>Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconectar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="96"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="192"/>
         <source>&amp;Create</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Criar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="193"/>
         <source>Database Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome do Banco de Dados:</translation>
     </message>
 </context>
 <context>
@@ -1129,28 +1129,28 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="36"/>
         <source>Drop User</source>
-        <translation type="unfinished"></translation>
+        <translation>Dropar Usuário</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="39"/>
         <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="75"/>
         <source>Edit User</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar Usuário</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="55"/>
         <source>Drop</source>
-        <translation type="unfinished"></translation>
+        <translation>Dropar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="55"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuário</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="76"/>
         <source>New Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nova senha:</translation>
     </message>
 </context>
 <context>
@@ -1158,27 +1158,27 @@
     <message>
         <location filename="../gui/editors/FindFrame.cpp" line="24"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Próximo</translation>
     </message>
     <message>
         <location filename="../gui/editors/FindFrame.cpp" line="25"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Anterior</translation>
     </message>
     <message>
         <location filename="../gui/editors/FindFrame.cpp" line="26"/>
         <source>Match case</source>
-        <translation type="unfinished"></translation>
+        <translation>Deferenciar maíusculas de minúsculas</translation>
     </message>
     <message>
         <location filename="../gui/editors/FindFrame.cpp" line="117"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Pesquisar</translation>
     </message>
     <message>
         <location filename="../gui/editors/FindFrame.cpp" line="117"/>
         <source>The specified text was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>O texto específico não foi encontrado.</translation>
     </message>
 </context>
 <context>
@@ -1186,12 +1186,12 @@
     <message>
         <location filename="../gui/dialogs/FunctionTextEditor.cpp" line="63"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome:</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/FunctionTextEditor.cpp" line="65"/>
         <source>Code:</source>
-        <translation type="unfinished"></translation>
+        <translation>Código:</translation>
     </message>
 </context>
 <context>
@@ -1199,7 +1199,7 @@
     <message>
         <location filename="../gui/widgets/LogWidget.cpp" line="22"/>
         <source>Clear All</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpar tudo</translation>
     </message>
 </context>
 <context>
@@ -1708,27 +1708,27 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
     <message>
         <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="39"/>
         <source>Maximize or restore back this output result. You also can double-click on result&apos;s header.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximizar ou restaurar esta saída de resultados. Você pode também dar um duplo clique no cabeçalho dos resultados.</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="47"/>
         <source>View results in text mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Ver resultados em modo texto</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="56"/>
         <source>View results in tree mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Ver resultados em modo árvore</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="66"/>
         <source>View results in table mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Ver resultados em modo tabela</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="76"/>
         <source>View results in custom UI</source>
-        <translation type="unfinished"></translation>
+        <translation>Ver resultados em modo customizado</translation>
     </message>
 </context>
 <context>
@@ -1736,12 +1736,12 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
     <message>
         <location filename="../gui/widgets/workarea/PagingWidget.cpp" line="32"/>
         <source>Skip</source>
-        <translation type="unfinished"></translation>
+        <translation>Pular</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/PagingWidget.cpp" line="34"/>
         <source>Batch Size (number of documents shown at once)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho do Batch (número de documentos mostrados de uma só vez)</translation>
     </message>
 </context>
 <context>
@@ -1749,12 +1749,12 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
     <message>
         <location filename="../gui/widgets/workarea/QueryWidget.cpp" line="236"/>
         <source>New Shell</source>
-        <translation type="unfinished"></translation>
+        <translation>Novo Shell</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/QueryWidget.cpp" line="263"/>
         <source>  Script executed successfully, but there is no results to show.</source>
-        <translation type="unfinished"></translation>
+        <translation>Script executado com sucesso, mas não há resultados para mostrar.</translation>
     </message>
 </context>
 <context>
@@ -1762,7 +1762,7 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
     <message>
         <location filename="../gui/widgets/workarea/ScriptWidget.cpp" line="60"/>
         <source>loading...</source>
-        <translation type="unfinished"></translation>
+        <translation>carregando...</translation>
     </message>
 </context>
 <context>
@@ -1771,7 +1771,7 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
         <location filename="../core/settings/SettingsManager.cpp" line="270"/>
         <source>__LANGUAGE_NAME__</source>
         <extracomment>Native language name</extracomment>
-        <translation type="unfinished">Brazilian Portuguese</translation>
+        <translation>Brazilian Portuguese</translation>
     </message>
 </context>
 <context>
@@ -1779,24 +1779,24 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
     <message>
         <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="23"/>
         <source>Use SSH tunnel</source>
-        <translation type="unfinished"></translation>
+        <translation>Use Túnel SSH</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="36"/>
         <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="103"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Senha</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="36"/>
         <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="101"/>
         <source>Private Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Chave Privada</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="158"/>
         <source>Select private key file</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione o arquivo de chave privada</translation>
     </message>
 </context>
 <context>
@@ -1804,37 +1804,37 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
     <message>
         <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="23"/>
         <source>&amp;New Shell</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Novo Terminal</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="25"/>
         <source>&amp;Reload</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Recarregar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="27"/>
         <source>&amp;Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Duplicar</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="28"/>
         <source>&amp;Pin Shell</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fixar Terminal</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="29"/>
         <source>&amp;Close Shell</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fechar Terminal</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="31"/>
         <source>Close &amp;Other Shells</source>
-        <translation type="unfinished"></translation>
+        <translation>Fechar &amp;Outros Terminais</translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/WorkAreaTabBar.cpp" line="32"/>
         <source>Close Shells to the R&amp;ight</source>
-        <translation type="unfinished"></translation>
+        <translation>Fechar Terminais a di&amp;reita</translation>
     </message>
 </context>
 <context>
@@ -1842,7 +1842,7 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
     <message>
         <location filename="../gui/widgets/workarea/WorkAreaTabWidget.cpp" line="206"/>
         <source> Loading...</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregando...</translation>
     </message>
 </context>
 </TS>

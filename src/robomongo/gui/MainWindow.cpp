@@ -386,6 +386,11 @@ namespace Robomongo
     
     void MainWindow::retranslateUI()
     {
+        QString controlKey = "Ctrl";
+    #if defined(Q_OS_MAC)
+        controlKey = QChar(0x2318); // "Command" key aka Cauliflower
+    #endif
+        
         _explorerDock->setWindowTitle(tr("Database Explorer"));
         _logDock->setWindowTitle(tr("Logs")); 
         
@@ -395,7 +400,7 @@ namespace Robomongo
         _openAction->setToolTip(tr("Load script from the file to the currently opened shell"));
         
         _saveAction->setText(tr("&Save"));
-        _saveAction->setToolTip(tr("Save script of the currently opened shell to the file <b>(Ctrl + S)</b>"));
+        _saveAction->setToolTip(tr("Save script of the currently opened shell to the file <b>(%1 + S)</b>").arg(controlKey));
         
         _saveAsAction->setText(tr("Save &As..."));
 
@@ -403,10 +408,10 @@ namespace Robomongo
         
         _connectAction->setText(tr("&Connect..."));
         _connectAction->setIconText(tr("Connect"));
-        _connectAction->setToolTip(tr("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>"));
+        _connectAction->setToolTip(tr("Connect to local or remote MongoDB instance <b>(%1 + O)</b>").arg(controlKey));
         
         _connectButton->setText(tr("&Connect..."));
-        _connectButton->setToolTip(tr("Connect to local or remote MongoDB instance <b>(Ctrl + O)</b>"));
+        _connectButton->setToolTip(tr("Connect to local or remote MongoDB instance <b>(%1 + O)</b>").arg(controlKey));
         
         _orientationAction->setText(tr("&Rotate"));
         _orientationAction->setToolTip(tr("Toggle orientation of results view <b>(F10)</b>"));
@@ -423,7 +428,7 @@ namespace Robomongo
         _customModeAction->setText(tr("&Custom Mode"));
         _customModeAction->setToolTip(tr("Show current tab in custom mode if possible, and make this mode default for all subsequent queries <b>(F2)</b>"));
 
-        _executeAction->setToolTip(tr("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>Ctrl + Enter)</b>"));
+        _executeAction->setToolTip(tr("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>%1 + Enter)</b>").arg(controlKey));
         
         _stopAction->setToolTip(tr("Stop execution of currently running script. <b>(F6)</b>"));
 

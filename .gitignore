@@ -1,6 +1,5 @@
-# Ignore *.pro.user files
-*.pro.user
-*.pro.user.*
+# Robomongo-specific
+
 CMakeLists.txt.user*
 
 .sconsign.dblite
@@ -11,13 +10,90 @@ CMakeLists.txt.user*
 
 target/
 libs/
-*~
-*.autosave
+
 *.orig
-.DS_Store
 /build
 /build2
 
 /src/robomongo/robomongo.pro.user.1.3
 
 /src/third-party/mongodb/src/third_party/js-1.7/jswgen
+
+# Created by http://www.gitignore.io
+
+### C++ ###
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+### Linux ###
+*~
+
+# KDE directory preferences
+.directory
+
+
+### OSX ###
+.DS_Store
+.AppleDouble
+.LSOverride
+
+### Qt ###
+# C++ objects and libs
+
+*.slo
+*.lo
+*.o
+*.a
+*.la
+*.lai
+*.so
+*.dll
+*.dylib
+
+# Qt-es
+
+/.qmake.cache
+/.qmake.stash
+*.pro.user
+*.pro.user.*
+*.moc
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+Makefile*
+*-build-*
+
+# QtCreator
+
+*.autosave
+
+
+### Windows ###
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/

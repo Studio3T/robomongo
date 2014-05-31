@@ -29,7 +29,7 @@ namespace
                 }
                 else if (BsonUtils::isDocument(element)) {
                     int count = BsonUtils::elementsCount(element.Obj());
-                    childItemInner->setValue(QObject::tr("{ %1 fields }").arg(count));
+                    childItemInner->setValue(QObject::tr("{ %n fields }", "", count));
                    // parseDocument(childItemInner,element.Obj());                    
                 }
                 else {
@@ -67,7 +67,7 @@ namespace Robomongo
             child->setKey(QString("(%1) %2").arg(i + 1).arg(idValue));
 
             int count = BsonUtils::elementsCount(doc->bsonObj());
-            child->setValue(tr("{ %1 fields }").arg(count));
+            child->setValue(tr("{ %n fields }", "", count));
 
             child->setType(mongo::Object);
             _root->addChild(child);

@@ -386,7 +386,7 @@ namespace Robomongo
     
     void MainWindow::retranslateUI()
     {
-        QString controlKey = "Ctrl";
+        QString controlKey = tr("Ctrl");
     #if defined(Q_OS_MAC)
         controlKey = QChar(0x2318); // "Command" key aka Cauliflower
     #endif

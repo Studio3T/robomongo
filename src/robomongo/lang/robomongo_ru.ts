@@ -38,10 +38,14 @@
         <source>Array [%1]</source>
         <translation>Массив [%1]</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="32"/>
-        <source>{ %1 fields }</source>
-        <translation>{ полей: %1 }</translation>
+        <source>{ %n fields }</source>
+        <translation>
+            <numerusform>{ %n поле}</numerusform>
+            <numerusform>{ %n поля}</numerusform>
+            <numerusform>{ %n полей }</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="159"/>
@@ -105,10 +109,14 @@
 </context>
 <context>
     <name>Robomongo::BsonTreeModel</name>
-    <message>
+    <message numerus="yes">
         <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="70"/>
-        <source>{ %1 fields }</source>
-        <translation>{ полей: %1 }</translation>
+        <source>{ %n fields }</source>
+        <translation>
+            <numerusform>{ %n поле}</numerusform>
+            <numerusform>{ %n поля}</numerusform>
+            <numerusform>{ %n полей }</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="207"/>
@@ -536,6 +544,21 @@
         <source>The UserSourse field and the Password field are mutually exclusive. The document cannot contain both.
 </source>
         <translation>Поля UserSourse и пароль взаимоисключающие. Запись не может содержать оба этих поля.</translation>
+    </message>
+</context>
+<context>
+    <name>Robomongo::DialogUtils</name>
+    <message>
+        <location filename="../gui/utils/DialogUtils.cpp" line="10"/>
+        <source>%1 %2</source>
+        <extracomment>Title for dialogs</extracomment>
+        <translation type="unfinished">%1 %2</translation>
+    </message>
+    <message>
+        <location filename="../gui/utils/DialogUtils.cpp" line="12"/>
+        <source>%1 &lt;b&gt;%3&lt;/b&gt; %2?</source>
+        <extracomment>Text for dialogs</extracomment>
+        <translation type="unfinished">%1 %2 &lt;b&gt;%3&lt;/b&gt;?</translation>
     </message>
 </context>
 <context>
@@ -1206,290 +1229,295 @@
 <context>
     <name>Robomongo::MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="394"/>
+        <location filename="../gui/MainWindow.cpp" line="399"/>
         <source>&amp;Open...</source>
         <translation>&amp;Открыть...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="395"/>
+        <location filename="../gui/MainWindow.cpp" line="400"/>
         <source>Load script from the file to the currently opened shell</source>
         <translation>Загрузить скрипт из файла в текущую консоль</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="397"/>
+        <location filename="../gui/MainWindow.cpp" line="402"/>
         <source>&amp;Save</source>
         <translation>&amp;Сохранить</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="398"/>
-        <source>Save script of the currently opened shell to the file &lt;b&gt;(Ctrl + S)&lt;/b&gt;</source>
-        <translation>Сохранить скрипт из консоли в файл &lt;b&gt;(Ctrl + S)&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="400"/>
+        <location filename="../gui/MainWindow.cpp" line="405"/>
         <source>Save &amp;As...</source>
         <translation>Сохранить &amp;как...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="402"/>
+        <location filename="../gui/MainWindow.cpp" line="407"/>
         <source>&amp;Exit</source>
         <translation>&amp;Выход</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="404"/>
-        <location filename="../gui/MainWindow.cpp" line="408"/>
+        <location filename="../gui/MainWindow.cpp" line="409"/>
+        <location filename="../gui/MainWindow.cpp" line="413"/>
         <source>&amp;Connect...</source>
         <translation>&amp;Подключить...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="405"/>
+        <location filename="../gui/MainWindow.cpp" line="410"/>
         <source>Connect</source>
         <translation>Подключить</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="406"/>
-        <location filename="../gui/MainWindow.cpp" line="409"/>
-        <source>Connect to local or remote MongoDB instance &lt;b&gt;(Ctrl + O)&lt;/b&gt;</source>
-        <translation>Подключиться к локальному или удаленному серверу MongoDB &lt;b&gt;(Ctrl + O)&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="411"/>
+        <location filename="../gui/MainWindow.cpp" line="416"/>
         <source>&amp;Rotate</source>
         <translation>Пове&amp;рнуть</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="412"/>
+        <location filename="../gui/MainWindow.cpp" line="417"/>
         <source>Toggle orientation of results view &lt;b&gt;(F10)&lt;/b&gt;</source>
         <translation>Сменить ориентацию окна результатов &lt;b&gt;(F10)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="414"/>
+        <location filename="../gui/MainWindow.cpp" line="419"/>
         <source>&amp;Text Mode</source>
         <translation>&amp;Текстовый режим</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="415"/>
+        <location filename="../gui/MainWindow.cpp" line="420"/>
         <source>Show current tab in text mode, and make this mode default for all subsequent queries &lt;b&gt;(F4)&lt;/b&gt;</source>
         <translation>Текстовый режим для этой вкладки и дочерних &lt;b&gt;(F4)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="417"/>
+        <location filename="../gui/MainWindow.cpp" line="422"/>
         <source>&amp;Tree Mode</source>
         <translation>Режим &amp;Дерева</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="418"/>
+        <location filename="../gui/MainWindow.cpp" line="423"/>
         <source>Show current tab in tree mode, and make this mode default for all subsequent queries &lt;b&gt;(F3)&lt;/b&gt;</source>
         <translation>Режим Дерева для этой вкладки и дочерних &lt;b&gt;(F3)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="420"/>
+        <location filename="../gui/MainWindow.cpp" line="425"/>
         <source>T&amp;able Mode</source>
         <translation>Та&amp;бличный режим</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="421"/>
+        <location filename="../gui/MainWindow.cpp" line="426"/>
         <source>Show current tab in table mode, and make this mode default for all subsequent queries &lt;b&gt;(F3)&lt;/b&gt;</source>
         <translation>Табличный режим для этой вкладки и дочерних &lt;b&gt;(F3)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="423"/>
+        <location filename="../gui/MainWindow.cpp" line="428"/>
         <source>&amp;Custom Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="424"/>
+        <location filename="../gui/MainWindow.cpp" line="429"/>
         <source>Show current tab in custom mode if possible, and make this mode default for all subsequent queries &lt;b&gt;(F2)&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="446"/>
+        <location filename="../gui/MainWindow.cpp" line="431"/>
+        <source>Execute query for current tab. If you have some selection in query text - only selection will be executed &lt;b&gt;(F5 &lt;/b&gt; or &lt;b&gt;%1 + Enter)&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="451"/>
         <source>Disable Connection Shortcuts</source>
         <translation>Отключить горячие клавиши подключений</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="426"/>
-        <source>Execute query for current tab. If you have some selection in query text - only selection will be executed &lt;b&gt;(F5 &lt;/b&gt; or &lt;b&gt;Ctrl + Enter)&lt;/b&gt;</source>
-        <translation>Выполнить выделенный текст или скрипт из текущей консоли.целиком &lt;b&gt;(F5 &lt;/b&gt; or &lt;b&gt;Ctrl + Enter)&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="428"/>
+        <location filename="../gui/MainWindow.cpp" line="433"/>
         <source>Stop execution of currently running script. &lt;b&gt;(F6)&lt;/b&gt;</source>
         <translation>Остановить выполнение скрипта &lt;b&gt;(F6)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="430"/>
+        <location filename="../gui/MainWindow.cpp" line="435"/>
         <source>&amp;Full Screen</source>
         <translation>&amp;На весь экран</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="432"/>
+        <location filename="../gui/MainWindow.cpp" line="437"/>
         <source>Refresh</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="457"/>
+        <location filename="../gui/MainWindow.cpp" line="462"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="458"/>
+        <location filename="../gui/MainWindow.cpp" line="463"/>
         <source>View</source>
         <translation>Вид</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="460"/>
+        <location filename="../gui/MainWindow.cpp" line="465"/>
         <source>Options</source>
         <translation>Опции</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="461"/>
+        <location filename="../gui/MainWindow.cpp" line="466"/>
         <source>Default View Mode</source>
         <translation>Режим по умолчанию</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="462"/>
+        <location filename="../gui/MainWindow.cpp" line="467"/>
         <source>Display Dates In...</source>
         <translation>Отображать даты в...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="444"/>
+        <location filename="../gui/MainWindow.cpp" line="449"/>
         <source>Auto Expand First Document</source>
         <translation>Разворачивать первый документ</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="437"/>
+        <location filename="../gui/MainWindow.cpp" line="442"/>
         <source>Do not decode (show as is)</source>
         <translation>Не декодировать (показывать как есть)</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="438"/>
+        <location filename="../gui/MainWindow.cpp" line="443"/>
         <source>Use Java Encoding</source>
         <translation>Кодировка Java</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="439"/>
+        <location filename="../gui/MainWindow.cpp" line="444"/>
         <source>Use .NET Encoding</source>
         <translation>Кодировка .NET</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="440"/>
+        <location filename="../gui/MainWindow.cpp" line="445"/>
         <source>Use Python Encoding</source>
         <translation>Кодировка Python</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="463"/>
+        <location filename="../gui/MainWindow.cpp" line="468"/>
         <source>Legacy UUID Encoding</source>
         <translation>Традиционная кодировка UUID</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="442"/>
+        <location filename="../gui/MainWindow.cpp" line="447"/>
         <source>Load .mongorc.js</source>
         <translation>Выполнять .mongorc.js</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="448"/>
+        <location filename="../gui/MainWindow.cpp" line="389"/>
+        <source>Ctrl</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="403"/>
+        <source>Save script of the currently opened shell to the file &lt;b&gt;(%1 + S)&lt;/b&gt;</source>
+        <translation>Сохранить скрипт из текущей консоли в файл &lt;b&gt;(%1 + S)&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="411"/>
+        <location filename="../gui/MainWindow.cpp" line="414"/>
+        <source>Connect to local or remote MongoDB instance &lt;b&gt;(%1 + O)&lt;/b&gt;</source>
+        <translation>Подключиться к локальному или удаленному серверу MongoDB &lt;b&gt;(%1 + O)&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="453"/>
         <source>Preferences</source>
         <translation>Предпочтения</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="450"/>
+        <location filename="../gui/MainWindow.cpp" line="455"/>
         <source>&amp;About Robomongo...</source>
         <translation>&amp;О Robomongo...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="469"/>
+        <location filename="../gui/MainWindow.cpp" line="474"/>
         <source>Help</source>
         <translation>Помощь</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="471"/>
+        <location filename="../gui/MainWindow.cpp" line="476"/>
         <source>Toolbar</source>
         <translation>Панель инструментов</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="472"/>
+        <location filename="../gui/MainWindow.cpp" line="477"/>
         <source>Open/Save ToolBar</source>
         <translation>Панель загрузки/сохранения</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="473"/>
+        <location filename="../gui/MainWindow.cpp" line="478"/>
         <source>Exec Toolbar</source>
         <translation>Панель выполнения</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="459"/>
+        <location filename="../gui/MainWindow.cpp" line="464"/>
         <source>Theme</source>
         <translation>Тема</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="465"/>
+        <location filename="../gui/MainWindow.cpp" line="470"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="467"/>
+        <location filename="../gui/MainWindow.cpp" line="472"/>
         <source>System locale (if available)</source>
         <extracomment>Language based on system locale</extracomment>
         <translation>Язык системы (если доступен)</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="390"/>
-        <location filename="../gui/MainWindow.cpp" line="392"/>
+        <location filename="../gui/MainWindow.cpp" line="395"/>
+        <location filename="../gui/MainWindow.cpp" line="397"/>
         <source>Logs</source>
         <translation>Журнал</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="636"/>
+        <location filename="../gui/MainWindow.cpp" line="641"/>
         <source>&amp;Manage Connections...</source>
         <translation type="unfinished">&amp;Настройки соединений...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="638"/>
+        <location filename="../gui/MainWindow.cpp" line="643"/>
         <source>Connect to MongoDB</source>
         <translation>Подключиться к MongoDB</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="659"/>
-        <location filename="../gui/MainWindow.cpp" line="838"/>
+        <location filename="../gui/MainWindow.cpp" line="664"/>
+        <location filename="../gui/MainWindow.cpp" line="843"/>
         <source>Cannot connect to MongoDB (%1)</source>
         <translation>Не удаётся подкючиться к MongoDB (%1)</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="660"/>
-        <location filename="../gui/MainWindow.cpp" line="839"/>
-        <location filename="../gui/MainWindow.cpp" line="847"/>
+        <location filename="../gui/MainWindow.cpp" line="665"/>
+        <location filename="../gui/MainWindow.cpp" line="844"/>
+        <location filename="../gui/MainWindow.cpp" line="852"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="759"/>
+        <location filename="../gui/MainWindow.cpp" line="764"/>
         <source>Refresh not working yet... : &lt;br/&gt;  &lt;b&gt;Ctrl+D&lt;/b&gt; : push Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="846"/>
+        <location filename="../gui/MainWindow.cpp" line="851"/>
         <source>Cannot connect to MongoDB (%1),
 error: %2</source>
         <translation>Не удаётся подкючиться к MongoDB (%1), ошибка: %2</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="389"/>
+        <location filename="../gui/MainWindow.cpp" line="394"/>
         <source>Database Explorer</source>
         <translation>Проводник базы данных</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="452"/>
+        <location filename="../gui/MainWindow.cpp" line="457"/>
         <source>&amp;Explorer</source>
         <translation>П&amp;роводник</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="453"/>
+        <location filename="../gui/MainWindow.cpp" line="458"/>
         <source>Press to show/hide Database Explorer panel.</source>
         <translation>Нажмите, чтобы показать/спрятать панель Проводника Базы данных.</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="454"/>
+        <location filename="../gui/MainWindow.cpp" line="459"/>
         <source>&amp;Logs</source>
         <translation>&amp;Журнал</translation>
     </message>
@@ -1499,7 +1527,7 @@ error: %2</source>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="111"/>
         <source>Unable to authorize</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся авторизовать</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="126"/>
@@ -1608,80 +1636,88 @@ error: %2</source>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="75"/>
         <source>Delete Document...</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить документ...</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="78"/>
         <source>Delete Documents...</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить документы...</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="81"/>
         <source>Edit Document...</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать документ...</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="84"/>
         <source>View Document...</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотреть документ...</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="87"/>
         <source>Insert Document...</source>
-        <translation type="unfinished">Вставить документ...</translation>
+        <translation>Вставить документ...</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="90"/>
         <source>Copy Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать значение</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="93"/>
         <source>Copy JSON</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать JSON</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="141"/>
         <source>Cannot delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся удалить</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="141"/>
         <source>Selected document doesn&apos;t have _id field. 
 Maybe this is a system document that should be managed in a special way?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выбранный документ не содержит поля _id. Возможно это системный документ, редактировать который нужно каким-то особым образом?</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="153"/>
         <location filename="../core/domain/Notifier.cpp" line="181"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="154"/>
         <source>Document</source>
-        <comment>%1 %2 with id:&lt;br&gt;&lt;b&gt;%3&lt;/b&gt;?</comment>
-        <translation type="unfinished"></translation>
+        <translation>Документ</translation>
     </message>
     <message>
+        <location filename="../core/domain/Notifier.cpp" line="154"/>
+        <source>%1 %2 with id:&lt;br&gt;&lt;b&gt;%3&lt;/b&gt;?</source>
+        <translation>%1 %2 с id:&lt;br&gt;&lt;b&gt;%3&lt;/b&gt;?</translation>
+    </message>
+    <message numerus="yes">
         <location filename="../core/domain/Notifier.cpp" line="181"/>
-        <source>Do you want to delete %1 selected documents?</source>
-        <translation type="unfinished"></translation>
+        <source>Do you want to delete %n selected documents?</source>
+        <translation>
+            <numerusform>Вы хотите удалить %n выбранный документ?</numerusform>
+            <numerusform>Вы хотите удалить %n выбранных документа?</numerusform>
+            <numerusform>Вы хотите удалить %n выбранных документов?</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="231"/>
         <source>Edit Document</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактор документа</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="260"/>
         <source>View Document</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр документа</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="273"/>
         <source>Insert Document</source>
-        <translation type="unfinished">Вставить документ</translation>
+        <translation>Вставить документ</translation>
     </message>
 </context>
 <context>

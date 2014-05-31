@@ -151,7 +151,7 @@ namespace Robomongo
             if (!force) {
                 // Ask user
                 int answer = utils::questionDialog(dynamic_cast<QWidget*>(_observer), tr("Delete"),
-                    tr("Document", "%1 %2 with id:<br><b>%3</b>?"), QtUtils::toQString(id.toString(false)));
+                    tr("Document"), tr("%1 %2 with id:<br><b>%3</b>?"), QtUtils::toQString(id.toString(false)));
 
                 if (answer != QMessageBox::Yes)
                     break;
@@ -178,7 +178,7 @@ namespace Robomongo
         QModelIndexList selectedIndexes = _observer->selectedIndexes();
         if (!detail::isMultySelection(selectedIndexes))
             return;
-        int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), tr("Delete"), tr("Do you want to delete %1 selected documents?").arg(selectedIndexes.count()));
+        int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), tr("Delete"), tr("Do you want to delete %n selected documents?", "", selectedIndexes.count()));
         if (answer == QMessageBox::Yes) {
             std::vector<BsonTreeItem*> items;
             for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it!= selectedIndexes.end(); ++it) {

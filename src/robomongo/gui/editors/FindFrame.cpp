@@ -12,18 +12,23 @@
 
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/KeyboardManager.h"
+#include "robomongo/gui/widgets/workarea/ScriptWidget.h"
 
 namespace Robomongo
 {
     FindFrame::FindFrame(QWidget *parent) : 
         BaseClass(parent),
+        _parent(parent),
         _scin(new RoboScintilla()),
         _findPanel(new QFrame(this)),
         _close(new QToolButton(this)),
         _findLine(new QLineEdit(this)),
         _next(new QPushButton("Next", this)),
         _prev(new QPushButton("Previous", this)),
-        _caseSensitive(new QCheckBox("Match case", this))
+        _caseSensitive(new QCheckBox("Match case", this)),
+        _commentSign("// "),
+        _commentSignLength(3)
     {
         _close->setIcon(QIcon(":/robomongo/icons/close_2_16x16.png"));
         _close->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -78,6 +83,9 @@ namespace Robomongo
             _findLine->setFocus();
             _findLine->selectAll();
             return keyEvent->accept();
+        } else if (KeyboardManager::isToggleCommentsShortcut(keyEvent)) {
+            toggleComments();
+            return keyEvent->accept();
         } else {
             return BaseClass::keyPressEvent(keyEvent);
         }
@@ -116,6 +124,78 @@ namespace Robomongo
             else {
                 QMessageBox::warning(this, tr("Search"),tr("The specified text was not found."));
             }            
+        }
+    }
+    
+    void FindFrame::toggleComments()
+    {
+        int lineFrom, indexFrom, lineTo, indexTo;
+        QString line;
+        ScriptWidget *container;
+        bool commentOut, is_textAndCursorNotificationsDisabled;
+                
+        _scin->getSelection(&lineFrom, &indexFrom, &lineTo, &indexTo);
+        if (-1 == indexTo) {
+            // There is no selection. Get cursor position
+            _scin->getCursorPosition(&lineFrom, &indexFrom);
+            lineTo = lineFrom;
+        }
+        // Define what action should be done for each selected line        
+        line = _scin->text(lineFrom);
+        if (line.startsWith(_commentSign)) {
+            // Remove comment sign
+            commentOut = false;
+        } else {
+            // Add comment sign
+            commentOut = true;
+        }
+        
+        // To prevent displaying of autocomplete menu
+        if (container = static_cast<ScriptWidget*>(_parent)) {
+            is_textAndCursorNotificationsDisabled = container->getDisableTextAndCursorNotifications();
+            container->setDisableTextAndCursorNotifications(true);
+        }
+
+        for (int lineIndex = lineFrom; lineIndex <= lineTo; ++lineIndex) {
+            setLineComment(lineIndex, commentOut);
+        }
+        
+        /** 
+         * Changing cursor position cancels the selection, so restoring original position of the cursor is done 
+         * only if there was no selection at the beginning of the operation
+         */
+        if (-1 == indexTo) {
+            // No selection, set original cursor position
+            if (commentOut) {
+                _scin->setCursorPosition(lineFrom, indexFrom + _commentSignLength);
+            } else {
+                _scin->setCursorPosition(lineFrom, indexFrom - _commentSignLength);
+            }
+        } else {
+            // Restore original selection
+            if (commentOut) {
+                _scin->setSelection(lineFrom, indexFrom + _commentSignLength, lineTo, indexTo + _commentSignLength);
+            } else {
+                _scin->setSelection(lineFrom, indexFrom - _commentSignLength, lineTo, indexTo - _commentSignLength);
+            }
+        }
+        
+        if (container = static_cast<ScriptWidget*>(_parent)) {
+            container->setDisableTextAndCursorNotifications(is_textAndCursorNotificationsDisabled);
+        }
+    }
+    
+    void FindFrame::setLineComment(const int lineIndex, const bool commentOut)
+    {
+        QString line;
+        line = _scin->text(lineIndex);
+        if (commentOut) {
+            // Add comment sign
+            _scin->insertAt(_commentSign, lineIndex, 0);
+        } else if (line.startsWith(_commentSign)) {
+            // Remove comment sign
+            _scin->setSelection(lineIndex, 0, lineIndex, _commentSignLength);
+            _scin->removeSelectedText();
         }
     }
 

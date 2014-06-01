@@ -40,7 +40,9 @@ namespace Robomongo
         void restoreSize();
         void maximizePart();
     private:
-        std::vector<ViewMode> clearAllParts();
+        void clearAllParts();
+        std::vector<ViewMode> _prevViewModes;
+        int _prevResultsCount;
         void tryToMakeAllPartsEqualInSize();
         QSplitter *_splitter;
         ProgressBarPopup *_progressBarPopup;

@@ -220,7 +220,11 @@ namespace Robomongo
 
         // Full screen action
         QAction *fullScreenAction = new QAction("&Full Screen", this);
+    #if !defined(Q_OS_MAC)
+        fullScreenAction->setShortcut(Qt::Key_F11);
+    #else
         fullScreenAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F11));
+    #endif
         fullScreenAction->setVisible(true);
         VERIFY(connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2())));
 

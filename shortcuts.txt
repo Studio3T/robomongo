@@ -59,8 +59,11 @@ Robomongo shortcut key reference
       Toggle result orientation (between vertical and horizontal) for two or
       more result panes.
 
-   Ctrl+F11
+   F11
       Toggle fullscreen mode.
+
+   Ctrl+F11
+      Toggle line numbers in Javascript editing views
 
    F12
       Opens connection popup menu.
@@ -121,3 +124,6 @@ Robomongo shortcut key reference
 
    Cmd+F11
       Toggle fullscreen mode.
+
+   Ctrl+F11
+      Toggle line numbers in Javascript editing views

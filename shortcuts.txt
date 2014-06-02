@@ -59,7 +59,7 @@ Robomongo shortcut key reference
       Toggle result orientation (between vertical and horizontal) for two or
       more result panes.
 
-   F11
+   Ctrl+F11
       Toggle fullscreen mode.
 
    F12
@@ -118,3 +118,6 @@ Robomongo shortcut key reference
    F10
       Toggle result orientation (between vertical and horizontal) for two or
       more result panes.
+
+   Cmd+F11
+      Toggle fullscreen mode.

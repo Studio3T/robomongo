@@ -109,6 +109,7 @@ namespace Robomongo
 
         _openAction = new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this);
         _openAction->setToolTip("Load script from the file to the currently opened shell");
+        _openAction->setShortcuts(QKeySequence::Open);
         VERIFY(connect(_openAction, SIGNAL(triggered()), this, SLOT(open())));
 
         _saveAction = new QAction(GuiRegistry::instance().saveIcon(), tr("&Save"), this);
@@ -127,7 +128,7 @@ namespace Robomongo
 
         // Connect action
         _connectAction = new QAction("&Connect...", this);
-        _connectAction->setShortcut(QKeySequence::Open);
+        _connectAction->setShortcut(QKeySequence::New);
         _connectAction->setIcon(GuiRegistry::instance().connectIcon());
         _connectAction->setIconText("Connect");
         _connectAction->setToolTip(QString("Connect to local or remote MongoDB instance <b>(%1 + O)</b>").arg(controlKey));

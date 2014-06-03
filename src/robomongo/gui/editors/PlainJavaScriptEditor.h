@@ -28,7 +28,8 @@ namespace Robomongo
         void updateLineNumbersMarginWidth();
 
     private:
-        void showOrHideLinesNumbers();
+        void setLineNumbers(bool displayNumbers);
+        void toggleLineNumbers();
         bool _ignoreEnterKey;
         bool _ignoreTabKey;
         int _lineNumberMarginWidth;

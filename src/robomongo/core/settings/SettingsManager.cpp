@@ -261,7 +261,7 @@ namespace Robomongo
             finfo = qmIt.fileInfo();
             translator.load(finfo.baseName(), _qmPath);
             //: Native language name: "English" for English, "Русский" for Russian etc.
-            QT_TR_NOOP("__LANGUAGE_NAME__");
+            QT_TRANSLATE_NOOP("Robomongo::SettingsManager", "__LANGUAGE_NAME__");
             _translations[finfo.baseName()] = translator.translate("Robomongo::SettingsManager", "__LANGUAGE_NAME__");
         }
     }

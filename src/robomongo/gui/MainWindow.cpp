@@ -58,6 +58,12 @@ namespace
         Robomongo::AppRegistry::instance().settingsManager()->setAutoExpand(isExpand);
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
+
+    void saveLineNumbers(bool showLineNumbers)
+    {
+        Robomongo::AppRegistry::instance().settingsManager()->setLineNumbers(showLineNumbers);
+        Robomongo::AppRegistry::instance().settingsManager()->save();
+    }
 }
 
 namespace Robomongo
@@ -324,6 +330,12 @@ namespace Robomongo
         autoExpand->setChecked(AppRegistry::instance().settingsManager()->autoExpand());
         VERIFY(connect(autoExpand, SIGNAL(triggered()), this, SLOT(toggleAutoExpand())));
         optionsMenu->addAction(autoExpand);
+
+        QAction *showLineNumbers = new QAction("Show Line Numbers By Default", this);
+        showLineNumbers->setCheckable(true);
+        showLineNumbers->setChecked(AppRegistry::instance().settingsManager()->lineNumbers());
+        VERIFY(connect(showLineNumbers, SIGNAL(triggered()), this, SLOT(toggleLineNumbers())));
+        optionsMenu->addAction(showLineNumbers);
 
         QAction *disabelConnectionShortcuts = new QAction("Disable Connection Shortcuts",this);
         disabelConnectionShortcuts->setCheckable(true);
@@ -599,6 +611,12 @@ namespace Robomongo
     {
         QAction *send = qobject_cast<QAction*>(sender());
         saveAutoExpand(send->isChecked());
+    }
+
+    void MainWindow::toggleLineNumbers()
+    {
+        QAction *send = qobject_cast<QAction*>(sender());
+        saveLineNumbers(send->isChecked());
     }
     
     void MainWindow::executeScript()

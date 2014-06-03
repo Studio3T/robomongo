@@ -162,6 +162,7 @@ namespace Robomongo
             || ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->modifiers() & Qt::AltModifier) && keyEvent->key()==Qt::Key_Left)
             || ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->modifiers() & Qt::AltModifier) && keyEvent->key()==Qt::Key_Right)
             || ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->modifiers() & Qt::ShiftModifier) && keyEvent->key()==Qt::Key_C)
+            || ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key()==Qt::Key_Slash))
            )
         {
             keyEvent->ignore();

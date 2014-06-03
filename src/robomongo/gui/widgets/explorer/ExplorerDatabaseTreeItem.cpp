@@ -102,7 +102,7 @@ namespace Robomongo
     {
         _openDbShellAction->setText(tr("Open Shell"));
         _dbStatsAction->setText(tr("Database Statistics"));
-        _dbDropAction->setText(tr("Drop Database.."));
+        _dbDropAction->setText(tr("Drop Database..."));
         _dbRepairAction->setText(tr("Repair Database..."));
         _refreshDatabaseAction->setText(tr("Refresh"));
         

@@ -32,18 +32,20 @@ namespace Robomongo
 
     void OutputWidget::present(MongoShell *shell, const std::vector<MongoShellResult> &results)
     {
-        std::vector<ViewMode> prev = clearAllParts();
-        int count = results.size();
-
+        if (_prevResultsCount > 0) {
+            clearAllParts();
+        }
+        int count = _prevResultsCount = results.size();
+        
         for (int i=0; i<count; ++i) {
             MongoShellResult shellResult = results[i];
             OutputItemContentWidget *output = NULL;
 
             double secs = shellResult.elapsedMs() / 1000.f;
             ViewMode viewMode = AppRegistry::instance().settingsManager()->viewMode();
-            if (prev.size()) {
-                viewMode = prev.back();
-                prev.pop_back();
+            if (_prevViewModes.size()) {
+                viewMode = _prevViewModes.back();
+                _prevViewModes.pop_back();
             }
 
             if (shellResult.documents().size() > 0) {
@@ -55,7 +57,7 @@ namespace Robomongo
             VERIFY(connect(output, SIGNAL(restoredSize()), this, SLOT(restoreSize())));
             _splitter->addWidget(output);
         }
-
+        
         tryToMakeAllPartsEqualInSize();
     }
 
@@ -152,16 +154,15 @@ namespace Robomongo
         _progressBarPopup->hide();
     }
 
-    std::vector<ViewMode> OutputWidget::clearAllParts()
+    void OutputWidget::clearAllParts()
     {
-        std::vector<ViewMode> res;
+        _prevViewModes.clear();
         while (_splitter->count() > 0) {
             OutputItemContentWidget *widget =  (OutputItemContentWidget *)_splitter->widget(_splitter->count()-1);
-            res.push_back(widget->viewMode());
+            _prevViewModes.push_back(widget->viewMode());
             widget->hide();
             delete widget;
         }
-        return res;
     }
 
     void OutputWidget::tryToMakeAllPartsEqualInSize()

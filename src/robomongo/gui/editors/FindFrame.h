@@ -29,6 +29,7 @@ namespace Robomongo
         {
             return _scin;
         }
+        void toggleComments();
         virtual ~FindFrame();
     protected:
         virtual void wheelEvent(QWheelEvent *e);
@@ -40,6 +41,7 @@ namespace Robomongo
 
     private:
         void findElement(bool forward);
+        void setLineComment(const int lineIndex, const bool commentOut);
         RoboScintilla *const _scin;
         QFrame *const _findPanel;
         QLineEdit *const _findLine;
@@ -47,6 +49,9 @@ namespace Robomongo
         QPushButton *const _next;
         QPushButton *const _prev;
         QCheckBox *const  _caseSensitive;
+        const char *_commentSign;
+        const int _commentSignLength;
+        QWidget *_parent;
     };
 }
 

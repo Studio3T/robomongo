@@ -151,7 +151,8 @@ namespace Robomongo
         }
         
         // To prevent displaying of autocomplete menu
-        if (container = static_cast<ScriptWidget*>(_parent)) {
+        container = dynamic_cast<ScriptWidget*>(_parent);
+        if (NULL != container) {
             is_textAndCursorNotificationsDisabled = container->getDisableTextAndCursorNotifications();
             container->setDisableTextAndCursorNotifications(true);
         }
@@ -180,7 +181,7 @@ namespace Robomongo
             }
         }
         
-        if (container = static_cast<ScriptWidget*>(_parent)) {
+        if (NULL != container) {
             container->setDisableTextAndCursorNotifications(is_textAndCursorNotificationsDisabled);
         }
     }

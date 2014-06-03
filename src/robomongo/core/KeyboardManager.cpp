@@ -53,8 +53,11 @@ namespace Robomongo
     
     bool KeyboardManager::isToggleCommentsShortcut(QKeyEvent *keyEvent)
     {
-        return (keyEvent->modifiers() & Qt::ControlModifier)
-            && (keyEvent->modifiers() & Qt::ShiftModifier)
-            && (keyEvent->key() == Qt::Key_C);
+        return ((keyEvent->modifiers() & Qt::ControlModifier)
+               && (keyEvent->key() == Qt::Key_Slash))
+            ||
+               ((keyEvent->modifiers() & Qt::ControlModifier)
+               && (keyEvent->modifiers() & Qt::ShiftModifier)
+               && (keyEvent->key() == Qt::Key_C));
     }
 }

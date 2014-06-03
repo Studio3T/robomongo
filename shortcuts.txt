@@ -22,6 +22,10 @@ Robomongo shortcut key reference
    Shift+Ctrl+S
       Save contents of active shell console (prompts for filename).
 
+   Shift+Ctrl+C or Ctrl+/
+      Toggle comment/uncomment mode for selected lines (or current line,
+      if none are selected)
+
    Ctrl+T or Ctrl+Shift+Enter
       Open new tab, based on current (the same server and database). If you
       have selection in query text, selected text will be executed in new tab.
@@ -88,6 +92,10 @@ Robomongo shortcut key reference
 
    Shift+Cmd+S
       Save contents of active shell console (prompts for filename).
+
+   Shift+Ctrl+C or Ctrl+/
+      Toggle comment/uncomment mode for selected lines (or current line,
+      if none are selected)
 
    Cmd+T or Cmd+Shift+Enter
       Open new tab, based on current (the same server and database). If you have

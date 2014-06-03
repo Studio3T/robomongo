@@ -83,7 +83,7 @@ namespace Robomongo
 
     QString DocumentTextEditor::jsonText() const
     {
-        return _queryText->sciScintilla()->text();
+        return _queryText->sciScintilla()->text().trimmed();
     }
 
     void DocumentTextEditor::setCursorPosition(int line, int column)

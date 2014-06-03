@@ -72,7 +72,7 @@ namespace Robomongo
 
         setText(0, buildServerName());
         setIcon(0, GuiRegistry::instance().serverIcon());
-        setExpanded(false);
+        setExpanded(true);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }
 

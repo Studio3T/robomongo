@@ -39,6 +39,8 @@ namespace Robomongo
         void executeScript();
         void stopScript();
         void toggleFullScreen2();
+        void selectNextTab();
+        void selectPrevTab();
         void refreshConnections();
         void aboutRobomongo();
         void open();

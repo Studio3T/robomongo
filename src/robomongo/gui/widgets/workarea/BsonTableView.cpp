@@ -34,12 +34,20 @@ namespace Robomongo
         if (event->key() == Qt::Key_Delete) {
             _notifier.onDeleteDocuments();
         }
+
+        if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+            _notifier.onEditDocument();
+        }
+
         return BaseClass::keyPressEvent(event);
     }
 
+    /**
+     * @todo move selectedIndex and selectedIndexes to sub-cluss BsonView(?)
+     */
     QModelIndex BsonTableView::selectedIndex() const
     {
-        QModelIndexList indexses = detail::uniqueRows(selectionModel()->selectedIndexes());
+        QModelIndexList indexses = selectedIndexes();
 
         if (indexses.count() != 1)
             return QModelIndex();

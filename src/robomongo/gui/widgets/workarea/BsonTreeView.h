@@ -21,6 +21,7 @@ namespace Robomongo
         
     private Q_SLOTS:
         void onExpandRecursive();
+        void onExpandToggle();
         void showContextMenu(const QPoint &point);
 
     protected:

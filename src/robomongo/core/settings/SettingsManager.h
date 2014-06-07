@@ -79,7 +79,10 @@ namespace Robomongo
 
         void setAutoExpand(bool isExpand) { _autoExpand = isExpand; }
         bool autoExpand() const { return _autoExpand; }
-        
+
+        void setLineNumbers(bool showLineNumbers) { _lineNumbers = showLineNumbers; }
+        bool lineNumbers() const { return _lineNumbers; }
+
         void setLoadMongoRcJs(bool isLoadJs) { _loadMongoRcJs = isLoadJs; }
         bool loadMongoRcJs() const { return _loadMongoRcJs; }
 
@@ -125,6 +128,7 @@ namespace Robomongo
         ViewMode _viewMode;
         bool _loadMongoRcJs;
         bool _autoExpand;
+        bool _lineNumbers;
         bool _disableConnectionShortcuts;
         int _batchSize;
         QString _currentStyle;

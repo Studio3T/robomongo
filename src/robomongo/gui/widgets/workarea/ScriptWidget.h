@@ -67,6 +67,8 @@ namespace Robomongo
         void showAutocompletion(const QStringList &list, const QString &prefix);
         void showAutocompletion();
         void hideAutocompletion();
+        bool getDisableTextAndCursorNotifications() { return _disableTextAndCursorNotifications; }
+        void setDisableTextAndCursorNotifications(const bool value) { _disableTextAndCursorNotifications = value; }
 
     Q_SIGNALS:
         void textChanged();

@@ -39,9 +39,12 @@ QT_END_NAMESPACE
         void enterTableMode();
         void enterCustomMode();
         void toggleAutoExpand();
+        void toggleLineNumbers();
         void executeScript();
         void stopScript();
         void toggleFullScreen2();
+        void selectNextTab();
+        void selectPrevTab();
         void refreshConnections();
         void aboutRobomongo();
         void open();
@@ -98,7 +101,6 @@ QT_END_NAMESPACE
         QAction *_customModeAction;
         QAction *_executeAction;
         QAction *_stopAction;
-        QAction *_fullScreenAction;
         QAction *_refreshAction;
         QAction *_utcTimeAction;
         QAction *_localTimeAction;
@@ -108,9 +110,16 @@ QT_END_NAMESPACE
         QAction *_pythonEncodingAction;
         QAction *_loadMongoRcJsAction;
         QAction *_autoExpandAction;
+        QAction *_showLineNumbersAction;
         QAction *_disabelConnectionShortcutsAction;
         QAction *_preferencesAction;
         QAction *_localeLanguageAction;
+        
+        QAction *_fullScreenAction;
+        QAction *_minimizeAction;
+        QAction *_nexttabAction;
+        QAction *_prevtabAction;
+        
         QAction *_aboutRobomongoAction;
 
         QAction *_explorerAction;
@@ -128,6 +137,7 @@ QT_END_NAMESPACE
         QMenu *_timeMenu;
         QMenu *_uuidMenu;
         QMenu *_languagesMenu;
+        QMenu *_windowMenu;
         QMenu *_helpMenu;
 
         QToolBar *_execToolBar;

@@ -260,7 +260,7 @@ namespace Robomongo
         if (!empty) {
             bool isOutVisible = results.size() == 0 && !_scriptWidget->text().isEmpty();
             if (isOutVisible) {
-                _outputLabel->setText(tr("  Script executed successfully, but there is no results to show."));
+                _outputLabel->setText(tr("  Script executed successfully, but there are no results to show."));
             }
             _outputLabel->setVisible(isOutVisible);
         }

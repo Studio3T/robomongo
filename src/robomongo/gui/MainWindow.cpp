@@ -58,6 +58,12 @@ namespace
         Robomongo::AppRegistry::instance().settingsManager()->setAutoExpand(isExpand);
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
+
+    void saveLineNumbers(bool showLineNumbers)
+    {
+        Robomongo::AppRegistry::instance().settingsManager()->setLineNumbers(showLineNumbers);
+        Robomongo::AppRegistry::instance().settingsManager()->save();
+    }
 }
 
 namespace Robomongo
@@ -107,6 +113,7 @@ namespace Robomongo
 
         _openAction = new QAction(this);
         _openAction->setIcon(GuiRegistry::instance().openIcon());
+        _openAction->setShortcuts(QKeySequence::Open);
         VERIFY(connect(_openAction, SIGNAL(triggered()), this, SLOT(open())));
 
         _saveAction = new QAction(this);
@@ -125,7 +132,7 @@ namespace Robomongo
 
         // Connect action
         _connectAction = new QAction(this);
-        _connectAction->setShortcut(QKeySequence::Open);
+        _connectAction->setShortcut(QKeySequence::New);
         _connectAction->setIcon(GuiRegistry::instance().connectIcon());
         VERIFY(connect(_connectAction, SIGNAL(triggered()), this, SLOT(manageConnections())));
 
@@ -204,18 +211,12 @@ namespace Robomongo
         _stopAction->setDisabled(true);
         VERIFY(connect(_stopAction, SIGNAL(triggered()), SLOT(stopScript())));
 
-        // Full screen action
-        _fullScreenAction = new QAction(this);
-        _fullScreenAction->setShortcut(Qt::Key_F11);
-        _fullScreenAction->setVisible(true);
-        VERIFY(connect(_fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2())));
-
         // Refresh action
         _refreshAction = new QAction(this);
         _refreshAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
         VERIFY(connect(_refreshAction, SIGNAL(triggered()), this, SLOT(refreshConnections())));
 
-        // File menu
+    // File menu
         _fileMenu = new QMenu(this);
         _fileMenu->addAction(_connectAction);
         _fileMenu->addSeparator();
@@ -226,11 +227,11 @@ namespace Robomongo
         _fileMenu->addAction(_exitAction);
         menuBar()->addMenu(_fileMenu);
 
-        // View menu
+    // View menu
         _viewMenu = new QMenu(this) ;
         menuBar()->addMenu(_viewMenu);
         
-        // Options menu
+    // Options menu
         _optionsMenu = new QMenu(this);
         menuBar()->addMenu(_optionsMenu);
 
@@ -313,6 +314,12 @@ namespace Robomongo
         VERIFY(connect(_autoExpandAction, SIGNAL(triggered()), this, SLOT(toggleAutoExpand())));
         _optionsMenu->addAction(_autoExpandAction);
 
+        _showLineNumbersAction = new QAction(this);
+        _showLineNumbersAction->setCheckable(true);
+        _showLineNumbersAction->setChecked(AppRegistry::instance().settingsManager()->lineNumbers());
+        VERIFY(connect(_showLineNumbersAction, SIGNAL(triggered()), this, SLOT(toggleLineNumbers())));
+        _optionsMenu->addAction(_showLineNumbersAction);
+        
         _disabelConnectionShortcutsAction = new QAction(this);
         _disabelConnectionShortcutsAction->setCheckable(true);
         _disabelConnectionShortcutsAction->setChecked(AppRegistry::instance().settingsManager()->disableConnectionShortcuts());
@@ -333,6 +340,46 @@ namespace Robomongo
         _uuidEncodingGroup->addAction(_csharpLegacyEncodingAction);
         _uuidEncodingGroup->addAction(_pythonEncodingAction);
 
+    // Window menu
+        // Full screen action
+        _fullScreenAction = new QAction(this);
+    #if !defined(Q_OS_MAC)
+        _fullScreenAction->setShortcut(Qt::Key_F11);
+    #else
+        _fullScreenAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F11));
+    #endif
+        _fullScreenAction->setVisible(true);
+        VERIFY(connect(_fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2())));
+        
+        // Minimize window
+        _minimizeAction = new QAction(this);
+        _minimizeAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
+        _minimizeAction->setVisible(true);
+        VERIFY(connect(_minimizeAction, SIGNAL(triggered()), this, SLOT(showMinimized())));
+        
+        // Next tab
+        _nexttabAction = new QAction(this);
+        _nexttabAction->setShortcut(QKeySequence(QKeySequence::NextChild));
+        _nexttabAction->setVisible(true);
+        VERIFY(connect(_nexttabAction, SIGNAL(triggered()), this, SLOT(selectNextTab())));
+
+        // Previous tab
+        _prevtabAction = new QAction(this);
+        _prevtabAction->setShortcut(QKeySequence(QKeySequence::PreviousChild));
+        _prevtabAction->setVisible(true);
+        VERIFY(connect(_prevtabAction, SIGNAL(triggered()), this, SLOT(selectPrevTab())));
+
+        // Window menu
+        _windowMenu = new QMenu(this);
+        
+        _windowMenu->addAction(_fullScreenAction);
+        _windowMenu->addAction(_minimizeAction);
+        _windowMenu->addSeparator();
+        _windowMenu->addAction(_nexttabAction);
+        _windowMenu->addAction(_prevtabAction);
+        menuBar()->addMenu(_windowMenu);
+    
+    // About menu    
         _aboutRobomongoAction = new QAction(this);
         VERIFY(connect(_aboutRobomongoAction, SIGNAL(triggered()), this, SLOT(aboutRobomongo())));
 
@@ -374,7 +421,6 @@ namespace Robomongo
         _viewMenu->addSeparator();
         createStylesMenu();
         createStatusBar();
-        _viewMenu->addAction(_fullScreenAction);
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
@@ -431,8 +477,6 @@ namespace Robomongo
         _executeAction->setToolTip(tr("Execute query for current tab. If you have some selection in query text - only selection will be executed <b>(F5 </b> or <b>%1 + Enter)</b>").arg(controlKey));
         
         _stopAction->setToolTip(tr("Stop execution of currently running script. <b>(F6)</b>"));
-
-        _fullScreenAction->setText(tr("&Full Screen"));
         
         _refreshAction->setText(tr("Refresh"));
         
@@ -447,6 +491,8 @@ namespace Robomongo
         _loadMongoRcJsAction->setText(tr("Load .mongorc.js"));
         
         _autoExpandAction->setText(tr("Auto Expand First Document"));
+        
+        _showLineNumbersAction->setText(tr("Show Line Numbers By Default"));
         
         _disabelConnectionShortcutsAction->setText(tr("Disable Connection Shortcuts"));
         
@@ -471,6 +517,12 @@ namespace Robomongo
         //: Language based on system locale
         _localeLanguageAction->setText(tr("System locale (if available)"));
        
+        _windowMenu->setTitle(tr("Window"));
+        _fullScreenAction->setText(tr("&Full Screen"));
+        _minimizeAction->setText(tr("&Minimize"));
+        _nexttabAction->setText(tr("Select Next Tab"));
+        _prevtabAction->setText(tr("Select Previous Tab"));
+        
         _helpMenu->setTitle(tr("Help"));
         
         _connectToolBar->setWindowTitle(tr("Toolbar"));
@@ -724,6 +776,12 @@ namespace Robomongo
         QAction *send = qobject_cast<QAction*>(sender());
         saveAutoExpand(send->isChecked());
     }
+
+    void MainWindow::toggleLineNumbers()
+    {
+        QAction *send = qobject_cast<QAction*>(sender());
+        saveLineNumbers(send->isChecked());
+    }
     
     void MainWindow::executeScript()
     {
@@ -756,6 +814,16 @@ namespace Robomongo
             showNormal();
         else
             showFullScreen();
+    }
+
+    void MainWindow::selectNextTab()
+    {
+        _workArea->nextTab();
+    }
+
+    void MainWindow::selectPrevTab()
+    {
+        _workArea->previousTab();
     }
 
     void MainWindow::refreshConnections()

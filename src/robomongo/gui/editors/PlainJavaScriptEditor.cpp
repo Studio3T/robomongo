@@ -3,6 +3,8 @@
 #include <QPainter>
 #include <QApplication>
 #include <QKeyEvent>
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
 
@@ -85,6 +87,8 @@ namespace Robomongo
         _lineNumberDigitWidth = textWidth(STYLE_LINENUMBER, "0");
 #endif
         updateLineNumbersMarginWidth();
+
+        setLineNumbers(AppRegistry::instance().settingsManager()->lineNumbers());
         setUtf8(true);
         VERIFY(connect(this, SIGNAL(linesChanged()), this, SLOT(updateLineNumbersMarginWidth())));
     }
@@ -111,14 +115,19 @@ namespace Robomongo
         }
     }
 
-    void RoboScintilla::showOrHideLinesNumbers()
+    void RoboScintilla::setLineNumbers(bool displayNumbers)
     {
-        if (!lineNumberMarginWidth()) {
+        if (displayNumbers) {
             setMarginWidth(0, _lineNumberMarginWidth);
         }
         else {
             setMarginWidth(0, 0);
         }
+    }
+
+    void RoboScintilla::toggleLineNumbers()
+    {
+        setLineNumbers(!lineNumberMarginWidth());
     }
 
     void RoboScintilla::keyPressEvent(QKeyEvent *keyEvent)
@@ -141,7 +150,7 @@ namespace Robomongo
 
         if (keyEvent->key() == Qt::Key_F11) {
             keyEvent->ignore();
-            showOrHideLinesNumbers();
+            toggleLineNumbers();
             return;
         }
 
@@ -152,6 +161,8 @@ namespace Robomongo
             || ((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key()==Qt::Key_F)
             || ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->modifiers() & Qt::AltModifier) && keyEvent->key()==Qt::Key_Left)
             || ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->modifiers() & Qt::AltModifier) && keyEvent->key()==Qt::Key_Right)
+            || ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->modifiers() & Qt::ShiftModifier) && keyEvent->key()==Qt::Key_C)
+            || ((keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key()==Qt::Key_Slash))
            )
         {
             keyEvent->ignore();

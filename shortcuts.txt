@@ -1,35 +1,155 @@
+Robomongo shortcut key reference
+================================
 
-   F5 or Ctrl+Enter
-      Execute query on current tab. If you have selection in query text, only 
-      selected text will be executed.
-      
+### Windows/Linux users
+
+   Ctrl+Enter or F5
+      Execute query on current tab. If you have selection in query text,
+      only selected text will be executed.
+
+   Ctrl+M
+      Minimize Robomongo Window
+
+   Ctrl+N
+      Open new connection dialog.
+
+   Ctrl+O
+      Open a Javascript file and load contents into active shell console
+      (without executing).
+
+   Ctrl+S
+      Save contents of active shell console into a .js file. Note: updates
+      existing file if contents were loaded via "Open", otherwise will confirm
+      filename via "Save As" dialog.
+
+   Shift+Ctrl+S
+      Save contents of active shell console (prompts for filename).
+
+   Shift+Ctrl+C or Ctrl+/
+      Toggle comment/uncomment mode for selected lines (or current line,
+      if none are selected)
+
    Ctrl+T or Ctrl+Shift+Enter
-      Open new tab, based on current (the same server and database). If you have 
-      selection in query text, selected text will be executed in new tab.
-      
+      Open new tab, based on current (the same server and database). If you
+      have selection in query text, selected text will be executed in new tab.
+
    Ctrl+F4 or Ctrl+W
       Closes current tab.
-      
+
+   Ctrl+L
+      Toggle log window.
+
    Alt+1, Alt+2, ..., Alt+9
-      Connect to server with 'this' number (you can reorder connections in Connections 
-      menu via drag'n'drop)
+      Connect to server with 'this' number (you can reorder connections in
+      Connections menu via drag'n'drop)
+
+   F2
+      Enter Tree Mode. Current tab will be immediately displayed in tree mode
+      and all subsequent requests will be in tree mode.
 
    F3
-      Enter Tree Mode. Current tab will be immediately displayed in tree mode and all 
-      subsequent requests will be in tree mode.
-      
+      Enter Table Mode. Current tab will be immediately displayed in table mode
+      and all subsequent requests will be in table mode.
+
    F4
-      Enter Text Mode. Current tab will be immediately displayed in text mode and all 
-      subsequent requests will be in text mode.      
-      
-   F10 
-      Toggle result orientation (between vertical and horizontal).
+      Enter Text Mode. Current tab will be immediately displayed in text mode
+      and all subsequent requests will be in text mode.
+
+   F5 or Ctrl+Enter
+      Execute query on current tab. If you have selection in query text, only
+      selected text will be executed.
+
+   F6
+      Stop execution of currently running script.
+
+   F10
+      Toggle result orientation (between vertical and horizontal) for two or
+      more result panes.
 
    F11
       Toggle fullscreen mode.
-      
+
+   Ctrl+F11
+      Toggle line numbers in Javascript editing views
+
+   Ctrl+Tab
+      Select next tab
+
+   Ctrl+Shift+Tab
+      Select previous tab
+
    F12
-      Opens connection popup menu.      
-      
-   Ctrl+0
-      Open Connections dialog.
+      Opens connection popup menu.
+
+### OS X users
+
+   Cmd+Enter or F5
+      Execute query on current tab. If you have selection in query text, only
+      selected text will be executed.
+
+   Cmd+M
+      Minimize Robomongo Window
+
+   Cmd+N
+      Open new connection dialog.
+
+   Cmd+O
+      Open a Javascript (.js) file and load contents into active shell console
+      (without executing)
+
+   Cmd+S
+      Save contents of active shell console into a .js file. Note: updates
+      existing file if contents were loaded via "Open", otherwise will confirm
+      filename via "Save As" dialog.
+
+   Shift+Cmd+S
+      Save contents of active shell console (prompts for filename).
+
+   Shift+Ctrl+C or Ctrl+/
+      Toggle comment/uncomment mode for selected lines (or current line,
+      if none are selected)
+
+   Cmd+T or Cmd+Shift+Enter
+      Open new tab, based on current (the same server and database). If you have
+      selection in query text, selected text will be executed in new tab.
+
+   Cmd+W or Cmd+F4
+      Closes current tab.
+
+   Cmd+L
+      Toggle log window.
+
+   F2
+      Enter Tree Mode. Current tab will be immediately displayed in tree mode
+      and all subsequent requests will be in tree mode.
+
+   F3
+      Enter Table Mode. Current tab will be immediately displayed in table mode
+      and all subsequent requests will be in table mode.
+
+   F4
+      Enter Text Mode. Current tab will be immediately displayed in text mode
+      and all subsequent requests will be in text mode.
+
+   F5 or Cmd+Enter
+      Execute query on current tab. If you have selection in query text, only
+      selected text will be executed.
+
+   F6
+      Stop execution of currently running script.
+
+   F10
+      Toggle result orientation (between vertical and horizontal) for two or
+      more result panes.
+
+   Cmd+F11
+      Toggle fullscreen mode.
+
+   Cmd+} or Opt+Cmd+RightArrow
+      Select next tab
+
+   Cmd+{ or Opt+Cmd+LeftArrow
+      Select previous tab
+
+   Ctrl+F11
+      Toggle line numbers in Javascript editing views

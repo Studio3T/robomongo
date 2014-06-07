@@ -137,6 +137,9 @@ namespace Robomongo
         _autoExpand = map.contains("autoExpand") ?
                 map.value("autoExpand").toBool() : true;
 
+        _lineNumbers = map.contains("lineNumbers") ?
+            map.value("lineNumbers").toBool() : true;
+
         // 4. Load TimeZone
         int timeZone = map.value("timeZone").toInt();
         if (timeZone > 1 || timeZone < 0)
@@ -186,6 +189,7 @@ namespace Robomongo
         // 4. Save view mode
         map.insert("viewMode", _viewMode);
         map.insert("autoExpand", _autoExpand);
+        map.insert("lineNumbers", _lineNumbers);
 
         // 5. Save loadInitJs
         map.insert("loadMongoRcJs", _loadMongoRcJs);

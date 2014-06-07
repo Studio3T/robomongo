@@ -224,22 +224,13 @@ namespace Robomongo
         _stopAction->setDisabled(true);
         VERIFY(connect(_stopAction, SIGNAL(triggered()), SLOT(stopScript())));
 
-        // Full screen action
-        QAction *fullScreenAction = new QAction("&Full Screen", this);
-    #if !defined(Q_OS_MAC)
-        fullScreenAction->setShortcut(Qt::Key_F11);
-    #else
-        fullScreenAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F11));
-    #endif
-        fullScreenAction->setVisible(true);
-        VERIFY(connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2())));
-
         // Refresh action
         QAction *refreshAction = new QAction("Refresh", this);
         refreshAction->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
         VERIFY(connect(refreshAction, SIGNAL(triggered()), this, SLOT(refreshConnections())));
 
-        // File menu
+
+    /*** File menu ***/
         QMenu *fileMenu = menuBar()->addMenu("File");
         fileMenu->addAction(_connectAction);
         fileMenu->addSeparator();
@@ -249,10 +240,15 @@ namespace Robomongo
         fileMenu->addSeparator();
         fileMenu->addAction(exitAction);
 
-        // View menu
+
+    /*** View menu ***/
         _viewMenu = menuBar()->addMenu("View");
-        
-        // Options menu
+        // createDatabaseExplorer() adds option to toggle Explorer and Logs panels
+        // createStylesMenu() adds Themes submenu
+
+
+    /*** Options menu ***/
+
         QMenu *optionsMenu = menuBar()->addMenu("Options");
 
         // View Mode
@@ -354,6 +350,47 @@ namespace Robomongo
         uuidEncodingGroup->addAction(csharpLegacyEncodingAction);
         uuidEncodingGroup->addAction(pythonEncodingAction);
 
+    /*** Window menu ***/
+        // Full screen action
+        QAction *fullScreenAction = new QAction("&Full Screen", this);
+    #if !defined(Q_OS_MAC)
+        fullScreenAction->setShortcut(Qt::Key_F11);
+    #else
+        fullScreenAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_F11));
+    #endif
+        fullScreenAction->setVisible(true);
+        VERIFY(connect(fullScreenAction, SIGNAL(triggered()), this, SLOT(toggleFullScreen2())));
+
+        // Minimize window
+        QAction *minimizeAction = new QAction("&Minimize", this);
+        minimizeAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
+        minimizeAction->setVisible(true);
+        VERIFY(connect(minimizeAction, SIGNAL(triggered()), this, SLOT(showMinimized())));
+
+        // Next tab
+        QAction *nexttabAction = new QAction("Select Next Tab", this);
+        nexttabAction->setShortcut(QKeySequence(QKeySequence::NextChild));
+        nexttabAction->setVisible(true);
+        VERIFY(connect(nexttabAction, SIGNAL(triggered()), this, SLOT(selectNextTab())));
+
+        // Previous tab
+        QAction *prevtabAction = new QAction("Select Previous Tab", this);
+        prevtabAction->setShortcut(QKeySequence(QKeySequence::PreviousChild));
+        prevtabAction->setVisible(true);
+        VERIFY(connect(prevtabAction, SIGNAL(triggered()), this, SLOT(selectPrevTab())));
+
+        // Window menu
+        QMenu *windowMenu = menuBar()->addMenu("Window");
+        //minimize
+        windowMenu->addAction(fullScreenAction);
+        windowMenu->addAction(minimizeAction);
+        windowMenu->addSeparator();
+        windowMenu->addAction(nexttabAction);
+        windowMenu->addAction(prevtabAction);
+
+
+    /*** About menu ***/
+
         QAction *aboutRobomongoAction = new QAction("&About Robomongo...", this);
         VERIFY(connect(aboutRobomongoAction, SIGNAL(triggered()), this, SLOT(aboutRobomongo())));
 
@@ -393,7 +430,6 @@ namespace Robomongo
         createDatabaseExplorer();
         createStylesMenu();
         createStatusBar();
-        _viewMenu->addAction(fullScreenAction);
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
@@ -650,6 +686,16 @@ namespace Robomongo
             showNormal();
         else
             showFullScreen();
+    }
+
+    void MainWindow::selectNextTab()
+    {
+        _workArea->nextTab();
+    }
+
+    void MainWindow::selectPrevTab()
+    {
+        _workArea->previousTab();
     }
 
     void MainWindow::refreshConnections()

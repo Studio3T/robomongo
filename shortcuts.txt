@@ -7,6 +7,9 @@ Robomongo shortcut key reference
       Execute query on current tab. If you have selection in query text,
       only selected text will be executed.
 
+   Ctrl+M
+      Minimize Robomongo Window
+
    Ctrl+N
       Open new connection dialog.
 
@@ -69,6 +72,12 @@ Robomongo shortcut key reference
    Ctrl+F11
       Toggle line numbers in Javascript editing views
 
+   Ctrl+Tab
+      Select next tab
+
+   Ctrl+Shift+Tab
+      Select previous tab
+
    F12
       Opens connection popup menu.
 
@@ -77,6 +86,9 @@ Robomongo shortcut key reference
    Cmd+Enter or F5
       Execute query on current tab. If you have selection in query text, only
       selected text will be executed.
+
+   Cmd+M
+      Minimize Robomongo Window
 
    Cmd+N
       Open new connection dialog.
@@ -132,6 +144,12 @@ Robomongo shortcut key reference
 
    Cmd+F11
       Toggle fullscreen mode.
+
+   Cmd+} or Opt+Cmd+RightArrow
+      Select next tab
+
+   Cmd+{ or Opt+Cmd+LeftArrow
+      Select previous tab
 
    Ctrl+F11
       Toggle line numbers in Javascript editing views

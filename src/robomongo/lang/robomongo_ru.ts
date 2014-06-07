@@ -4,53 +4,44 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../core/domain/ScriptInfo.cpp" line="73"/>
         <source>JavaScript (*.js);; All Files (*.*)</source>
-        <translation>JavaScript (*.js);; Все файлы (*.*)</translation>
+        <translation type="obsolete">JavaScript (*.js);; Все файлы (*.*)</translation>
     </message>
     <message>
-        <location filename="../core/domain/ScriptInfo.cpp" line="23"/>
-        <location filename="../core/domain/ScriptInfo.cpp" line="52"/>
         <source>Error</source>
-        <translation>Ошибка</translation>
+        <translation type="obsolete">Ошибка</translation>
     </message>
     <message>
-        <location filename="../core/domain/ScriptInfo.cpp" line="24"/>
         <source> can&apos;t read from %1:
 %2.</source>
-        <translation> Не удаётся прочитать %1:
+        <translation type="obsolete"> Не удаётся прочитать %1:
 %2.</translation>
     </message>
     <message>
-        <location filename="../core/domain/ScriptInfo.cpp" line="53"/>
         <source> can&apos;t save to %1:
 %2.</source>
-        <translation> Не удаётся сохранить %1:
+        <translation type="obsolete"> Не удаётся сохранить %1:
 %2.</translation>
     </message>
     <message>
-        <location filename="../core/domain/ScriptInfo.cpp" line="99"/>
         <source>Save As</source>
-        <translation>Сохранить как</translation>
+        <translation type="obsolete">Сохранить как</translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="27"/>
         <source>Array [%1]</source>
-        <translation>Массив [%1]</translation>
+        <translation type="obsolete">Массив [%1]</translation>
     </message>
     <message numerus="yes">
-        <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="32"/>
         <source>{ %n fields }</source>
-        <translation>
+        <translation type="obsolete">
             <numerusform>{ %n поле}</numerusform>
             <numerusform>{ %n поля}</numerusform>
             <numerusform>{ %n полей }</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="159"/>
         <source>Private key files (*.*)</source>
-        <translation>Файлы закрытых ключей (*.*)</translation>
+        <translation type="obsolete">Файлы закрытых ключей (*.*)</translation>
     </message>
 </context>
 <context>
@@ -99,7 +90,7 @@
     <message>
         <location filename="../gui/dialogs/AboutDialog.cpp" line="34"/>
         <source>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.</source>
-        <translation type="unfinished"></translation>
+        <translation>Программа предоставляется КАК ЕСТЬ БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, БЕЗ ГАРАНТИЙ ДИЗАЙНА, КОММЕРЧЕСКИХ ГАРАНТИЙ И ГАРАНТИЙ ПРИГОДНОСТИ ДЛЯ КОНКРЕТНЫХ ЗАДАЧ.</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/AboutDialog.cpp" line="32"/>
@@ -109,6 +100,11 @@
 </context>
 <context>
     <name>Robomongo::BsonTreeModel</name>
+    <message>
+        <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="67"/>
+        <source>(%1) %2</source>
+        <translation>(%1) %2</translation>
+    </message>
     <message numerus="yes">
         <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="70"/>
         <source>{ %n fields }</source>
@@ -177,7 +173,7 @@
     <message>
         <location filename="../gui/widgets/workarea/CollectionStatsTreeWidget.cpp" line="35"/>
         <source>Padding</source>
-        <translation type="unfinished">Заполнение</translation>
+        <translation>Заполнение</translation>
     </message>
 </context>
 <context>
@@ -329,7 +325,7 @@
     <message>
         <location filename="../gui/dialogs/ConnectionDialog.cpp" line="91"/>
         <source>Invalid Transport</source>
-        <translation type="unfinished">Неверный транспорт</translation>
+        <translation>Неверный протокол</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionDialog.cpp" line="91"/>
@@ -357,7 +353,7 @@
     <message>
         <location filename="../gui/dialogs/ConnectionSslTab.cpp" line="52"/>
         <source>&lt;b&gt;Note:&lt;/b&gt; Support for Certificate Authority (CA) file and encrypted SSL Private Keys are planned for future releases.</source>
-        <translation type="unfinished">&lt;b&gt;Отметим:&lt;/b&gt; Support for Certificate Authority (CA) file and encrypted SSL Private Keys are planned for future releases.</translation>
+        <translation>&lt;b&gt;Примечание:&lt;/b&gt; Поддержка файлов сертификатов (CA) и шифрованных закрытых ключей SSL запланирована в будущих выпусках.</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/ConnectionSslTab.cpp" line="77"/>
@@ -527,7 +523,7 @@
     <message>
         <location filename="../gui/dialogs/CreateUserDialog.cpp" line="66"/>
         <source>UserSource:</source>
-        <translation type="unfinished"></translation>
+        <translation>Источник авторизации:</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/CreateUserDialog.cpp" line="141"/>
@@ -552,13 +548,13 @@
         <location filename="../gui/utils/DialogUtils.cpp" line="10"/>
         <source>%1 %2</source>
         <extracomment>Title for dialogs</extracomment>
-        <translation type="unfinished">%1 %2</translation>
+        <translation>%1 %2</translation>
     </message>
     <message>
         <location filename="../gui/utils/DialogUtils.cpp" line="12"/>
         <source>%1 &lt;b&gt;%3&lt;/b&gt; %2?</source>
         <extracomment>Text for dialogs</extracomment>
-        <translation type="unfinished">%1 %2 &lt;b&gt;%3&lt;/b&gt;?</translation>
+        <translation>%1 %2 &lt;b&gt;%3&lt;/b&gt;?</translation>
     </message>
 </context>
 <context>
@@ -571,7 +567,7 @@
     <message>
         <location filename="../gui/dialogs/DocumentTextEditor.cpp" line="129"/>
         <source>Unable to parse JSON:&lt;br /&gt; &lt;b&gt;%1&lt;/b&gt;, at (%2, %3).</source>
-        <translation type="unfinished">Не удаётся разобрать JSON:&lt;br /&gt; &lt;b&gt;%1&lt;/b&gt;, на (%2, %3).</translation>
+        <translation>Не удаётся разобрать JSON:&lt;br /&gt; &lt;b&gt;%1&lt;/b&gt;, на (%2, %3).</translation>
     </message>
     <message>
         <location filename="../gui/dialogs/DocumentTextEditor.cpp" line="132"/>
@@ -594,140 +590,140 @@
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="80"/>
         <source>Index Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Свойства индекса</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="95"/>
         <source>Basic</source>
-        <translation type="unfinished">Основное</translation>
+        <translation>Основное</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="96"/>
         <source>Advanced</source>
-        <translation type="unfinished">Дополнительно</translation>
+        <translation>Дополнительно</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="97"/>
         <source>Text Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск по тексту</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="121"/>
         <source>Unique</source>
-        <translation type="unfinished"></translation>
+        <translation>Уникальный</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="123"/>
         <source>Drop duplicates</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить дубликаты</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="128"/>
         <source>Choose any name that will help you to identify this index.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите любое имя, которое поможет вам понять что этот за индекс.</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="132"/>
         <source>Document that contains pairs with the name of the field or fields to index and order of the index. A 1 specifies ascending and a -1 specifies descending.</source>
-        <translation type="unfinished"></translation>
+        <translation>Документ, содержащий пары, состоящие из имени поля и порядка индексирования по нему. &lt;b&gt;1&lt;/b&gt; означает по возрастанию, а &lt;b&gt;-1&lt;/b&gt; &amp;mdash; по убыванию.</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="137"/>
         <source>If set, creates a unique index so that the collection will not accept insertion of documents where the index key or keys match an existing value in the index.</source>
-        <translation type="unfinished"></translation>
+        <translation>Если выбрано, создаёт уникальный индекс, в результате чего вставка в коллекцию документов, значения индексируемых полей которых уже имеются в индексе, будет невозможна.</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="142"/>
         <source>MongoDB cannot create a unique index on a field that has duplicate values. To force the creation of a unique index, you can specify the dropDups option, which will only index the first occurrence of a value for the key, and delete all subsequent values. </source>
-        <translation type="unfinished"></translation>
+        <translation>MongoDB не сможет создать уникальный индекс по полю, значения которого повторяются в пределах коллекции. Чтобы принудительно создать индекс в такой ситуации, вы можете использовать опцию &lt;b&gt;dropDups&lt;/b&gt;. В этом случае первый документ, содержащий повторяющееся значение поля, будет проиндексирован, а остальные будут удалены.</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="148"/>
         <source>Name:   </source>
-        <translation type="unfinished"></translation>
+        <translation>Имя:</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="151"/>
         <source>Keys:   </source>
-        <translation type="unfinished"></translation>
+        <translation>Ключ:</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="184"/>
         <source>Sparse</source>
-        <translation type="unfinished"></translation>
+        <translation>Частичный</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="186"/>
         <source>Create index in background</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать индекс в фоне</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="195"/>
         <source>seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>секунд</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="200"/>
         <source>Expire after</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалять после</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="210"/>
         <source>If set, the index only references documents with the specified field. These indexes use less space but behave differently in some situations (particularly sorts).</source>
-        <translation type="unfinished"></translation>
+        <translation>Если выбрано, индексируются только те документы, в которых указанное поле существует. Такой индекс занимает меньше места, но ведет себя по-разному в разных ситуациях (в частности при сортировках).</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="215"/>
         <source>Builds the index in the background so that building an index does not block other database activities.</source>
-        <translation type="unfinished"></translation>
+        <translation>Строит индекс в фоне, и его построение не блокирует остальные процессы базы данных.</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="219"/>
         <source>Specifies a &lt;i&gt;time to live&lt;/i&gt;, in seconds, to control how long MongoDB retains documents in this collection</source>
-        <translation type="unfinished"></translation>
+        <translation>Указывает &lt;i&gt;время жизни&lt;/i&gt;, в секундах, для определения как долго MongoDB будет хранить документы в этой коллекции</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="245"/>
         <source>For a &lt;i&gt;text&lt;/i&gt; index, the language that determines the list of stop words and the rules for the stemmer and tokenizer. The default value is &lt;b&gt;english&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Для &lt;i&gt;текстового&lt;/i&gt; индекса, язык, определяющий список стоп-слов и правила для стеммера и лексера. Значение по умолчанию &lt;b&gt;english&lt;/b&gt; (английский)</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="249"/>
         <source>For a &lt;i&gt;text&lt;/i&gt; index, specify the name of the field in the document that contains, for that document, the language to override the default language. The default value is &lt;b&gt;language&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Для &lt;i&gt;текстового&lt;/i&gt; индекса, указывает имя поля в документе, которое содержит язык данного документа, переопределяющий язык по умолчанию. Значение по умолчанию &lt;b&gt;language&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="253"/>
         <source>Document that contains field and weight pairs. The weight is a number ranging from 1 to 99,999 and denotes the significance of the field relative to the other indexed fields. </source>
-        <translation type="unfinished"></translation>
+        <translation>Документ, содержащий пары полей и весов. Вес &amp;mdash; число в диапазоне от 1 до 99999, определяющее значимость поля по сравнению с остальными индексируемыми полями.</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="258"/>
         <source>Default language:</source>
-        <translation type="unfinished"></translation>
+        <translation>Язык по умолчанию:</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="261"/>
         <source>Language override:</source>
-        <translation type="unfinished"></translation>
+        <translation>Переопределение языка:</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="264"/>
         <source>Text weights</source>
-        <translation type="unfinished"></translation>
+        <translation>Веса полей</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="301"/>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="308"/>
         <source>Invalid json</source>
-        <translation type="unfinished"></translation>
+        <translation>Некорректный JSON</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="301"/>
         <location filename="../gui/widgets/explorer/EditIndexDialog.cpp" line="308"/>
         <source>Please check json text.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Проверьте, пожалуйста, JSON.</translation>
     </message>
 </context>
 <context>
@@ -842,12 +838,12 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="307"/>
         <source>Shard Version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Версия шарда</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="308"/>
         <source>Shard Distribution</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Распределение шарда</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="309"/>
@@ -892,12 +888,12 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="430"/>
         <source>update only one document</source>
-        <translation type="unfinished"></translation>
+        <translation>изменить только один документ</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="431"/>
         <source>insert a new document, if no existing document match the query</source>
-        <translation type="unfinished"></translation>
+        <translation>вставить новый документ, если ни один из существующих не удовлетворяет условиям запроса</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="444"/>
@@ -1014,8 +1010,12 @@
         <translation>Статистика базы данных</translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="105"/>
         <source>Drop Database..</source>
+        <translation type="obsolete">Удалить базу данных...</translation>
+    </message>
+    <message>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="105"/>
+        <source>Drop Database...</source>
         <translation>Удалить базу данных...</translation>
     </message>
     <message>
@@ -1086,7 +1086,7 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerFunctionTreeItem.cpp" line="75"/>
         <source>Function</source>
-        <translation type="unfinished">Функцию</translation>
+        <translation>Функцию</translation>
     </message>
 </context>
 <context>
@@ -1094,53 +1094,53 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="206"/>
         <source>Open Shell</source>
-        <translation type="unfinished">Открыть консоль</translation>
+        <translation>Открыть консоль</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="207"/>
         <source>Refresh</source>
-        <translation type="unfinished">Обновить</translation>
+        <translation>Обновить</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="208"/>
         <source>Create Database</source>
-        <translation type="unfinished">Создать базу данных</translation>
+        <translation>Создать базу данных</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="209"/>
         <source>Server Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Состояние сервера</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="210"/>
         <source>MongoDB Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Версия MongoDB</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="211"/>
         <source>Host Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация о хосте</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="212"/>
         <source>Show Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать журнал</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="213"/>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="214"/>
         <source>Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="97"/>
         <source>System</source>
-        <translation type="unfinished">Система</translation>
+        <translation>Система</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="193"/>
         <source>&amp;Create</source>
-        <translation type="unfinished">&amp;Создать</translation>
+        <translation>&amp;Создать</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerServerTreeItem.cpp" line="194"/>
@@ -1169,7 +1169,7 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="63"/>
         <source>User</source>
-        <translation type="unfinished">Пользователя</translation>
+        <translation>Пользователя</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerUserTreeItem.cpp" line="84"/>
@@ -1282,7 +1282,7 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="420"/>
         <source>Show current tab in text mode, and make this mode default for all subsequent queries &lt;b&gt;(F4)&lt;/b&gt;</source>
-        <translation>Текстовый режим для этой вкладки и дочерних &lt;b&gt;(F4)&lt;/b&gt;</translation>
+        <translation>Текстовый режим для этой и дочерних вкладок &lt;b&gt;(F4)&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="422"/>
@@ -1292,7 +1292,7 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="423"/>
         <source>Show current tab in tree mode, and make this mode default for all subsequent queries &lt;b&gt;(F3)&lt;/b&gt;</source>
-        <translation>Режим Дерева для этой вкладки и дочерних &lt;b&gt;(F3)&lt;/b&gt;</translation>
+        <translation>Режим Дерева для этой и дочерних вкладок &lt;b&gt;(F3)&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="425"/>
@@ -1302,22 +1302,22 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="426"/>
         <source>Show current tab in table mode, and make this mode default for all subsequent queries &lt;b&gt;(F3)&lt;/b&gt;</source>
-        <translation>Табличный режим для этой вкладки и дочерних &lt;b&gt;(F3)&lt;/b&gt;</translation>
+        <translation>Табличный режим для этой и дочерних вкладок  &lt;b&gt;(F3)&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="428"/>
         <source>&amp;Custom Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Пользовательский режим</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="429"/>
         <source>Show current tab in custom mode if possible, and make this mode default for all subsequent queries &lt;b&gt;(F2)&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользовательский режим для этой и дочерних вкладок &lt;b&gt;(F2)&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="431"/>
         <source>Execute query for current tab. If you have some selection in query text - only selection will be executed &lt;b&gt;(F5 &lt;/b&gt; or &lt;b&gt;%1 + Enter)&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Выполнить запрос в этой вкладке. Если выделена часть текста &amp;mdash; будет выполнена только она &lt;b&gt;(F5 &lt;/b&gt; или &lt;b&gt;%1 + Enter)&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="451"/>
@@ -1402,7 +1402,7 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="389"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="403"/>
@@ -1470,7 +1470,7 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="641"/>
         <source>&amp;Manage Connections...</source>
-        <translation type="unfinished">&amp;Настройки соединений...</translation>
+        <translation>&amp;Настройки соединений...</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="643"/>
@@ -1493,7 +1493,7 @@
     <message>
         <location filename="../gui/MainWindow.cpp" line="764"/>
         <source>Refresh not working yet... : &lt;br/&gt;  &lt;b&gt;Ctrl+D&lt;/b&gt; : push Button</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Обновление пока не работает... : &lt;br/&gt;  &lt;b&gt;Ctrl+D&lt;/b&gt; : нажать кнопку</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="851"/>
@@ -1527,108 +1527,108 @@ error: %2</source>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="111"/>
         <source>Unable to authorize</source>
-        <translation>Не удаётся авторизовать</translation>
+        <translation>Не удаётся авторизоваться</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="126"/>
         <source>Unable to connect to MongoDB</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся подключиться к MongoDB</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="174"/>
         <source>Unable to load database names.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся загрузить имена баз данных.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="192"/>
         <source>Unable to load list of collections.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся загрузить список коллекций.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="206"/>
         <source>Unable to load list of users.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся загрузить список пользователей.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="279"/>
         <source>Unable to load list of functions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся загрузить список функций.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="298"/>
         <source>Unable to insert document.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся вставить документ.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="313"/>
         <source>Unable to remove documents.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся удалить документы.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="327"/>
         <location filename="../core/mongodb/MongoWorker.cpp" line="341"/>
         <source>Unable to complete query.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся выполнить запрос.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="352"/>
         <source>Unable to autocomplete query.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся автоматически завершить запрос.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="366"/>
         <source>Unable to create database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся создать базу данных.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="380"/>
         <source>Unable to drop database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся удалить базу данных.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="394"/>
         <source>Unable to create collection.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся создать коллекцию.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="408"/>
         <source>Unable to drop collection.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся удалить коллекцию.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="422"/>
         <source>Unable to rename collection.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся переименовать коллекцию.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="436"/>
         <source>Unable to duplicate collection.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся дублировать коллекцию.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="451"/>
         <source>Unable to copy collection.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся скопировать коллекцию.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="465"/>
         <source>Unable to create/ovewrite user.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся создать/перезаписать пользователя.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="479"/>
         <source>Unable to drop user.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся удалить пользователя.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="493"/>
         <source>Unable to create/ovewrite function.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся создать/перезаписать функцию.</translation>
     </message>
     <message>
         <location filename="../core/mongodb/MongoWorker.cpp" line="507"/>
         <source>Unable to drop function.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удаётся удалить функцию.</translation>
     </message>
 </context>
 <context>
@@ -1677,7 +1677,7 @@ error: %2</source>
         <location filename="../core/domain/Notifier.cpp" line="141"/>
         <source>Selected document doesn&apos;t have _id field. 
 Maybe this is a system document that should be managed in a special way?</source>
-        <translation type="unfinished">Выбранный документ не содержит поля _id. Возможно это системный документ, редактировать который нужно каким-то особым образом?</translation>
+        <translation>Выбранный документ не содержит поля _id. Возможно, это системный документ, редактировать который нужно каким-то особым образом?</translation>
     </message>
     <message>
         <location filename="../core/domain/Notifier.cpp" line="153"/>
@@ -1758,7 +1758,7 @@ Maybe this is a system document that should be managed in a special way?</source
     <message>
         <location filename="../gui/widgets/workarea/OutputItemHeaderWidget.cpp" line="133"/>
         <source>View results in custom UI</source>
-        <translation type="unfinished">Смотреть результат в custom UI</translation>
+        <translation>Смотреть результат в пользовательском режиме</translation>
     </message>
 </context>
 <context>
@@ -1788,6 +1788,19 @@ Maybe this is a system document that should be managed in a special way?</source
     </message>
 </context>
 <context>
+    <name>Robomongo::ScriptInfo</name>
+    <message>
+        <location filename="../core/domain/ScriptInfo.cpp" line="73"/>
+        <source>JavaScript (*.js);; All Files (*.*)</source>
+        <translation>JavaScript (*.js);; Все файлы (*.*)</translation>
+    </message>
+    <message>
+        <location filename="../core/domain/ScriptInfo.cpp" line="99"/>
+        <source>Save As</source>
+        <translation>Сохранить как</translation>
+    </message>
+</context>
+<context>
     <name>Robomongo::ScriptWidget</name>
     <message>
         <location filename="../gui/widgets/workarea/ScriptWidget.cpp" line="60"/>
@@ -1814,20 +1827,55 @@ Maybe this is a system document that should be managed in a special way?</source
     </message>
     <message>
         <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="36"/>
-        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="103"/>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="104"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="36"/>
-        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="101"/>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="37"/>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="102"/>
         <source>Private Key</source>
         <translation>Секретный ключ</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="158"/>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="44"/>
+        <source>User Password:</source>
+        <translation>Пароль пользователя:</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="45"/>
+        <source>Private key:</source>
+        <translation>Закрытый ключ:</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="46"/>
+        <source>Passphrase:</source>
+        <translation>Парольная фраза:</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="47"/>
+        <source>SSH Address:</source>
+        <translation>Адрес SSH:</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="48"/>
+        <source>SSH User Name:</source>
+        <translation>Пользователь SSH:</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="49"/>
+        <source>SSH Auth Method:</source>
+        <translation>Способ аутентификации SSH:</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="159"/>
         <source>Select private key file</source>
         <translation>Выберите файл секретного ключа</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="160"/>
+        <source>Private key files (*.*)</source>
+        <translation>Файлы закрытых ключей (*.*)</translation>
     </message>
 </context>
 <context>
@@ -1874,6 +1922,53 @@ Maybe this is a system document that should be managed in a special way?</source
         <location filename="../gui/widgets/workarea/WorkAreaTabWidget.cpp" line="206"/>
         <source> Loading...</source>
         <translation> Загрузка...</translation>
+    </message>
+</context>
+<context>
+    <name>loadFromFileText</name>
+    <message>
+        <location filename="../core/domain/ScriptInfo.cpp" line="23"/>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="../core/domain/ScriptInfo.cpp" line="24"/>
+        <source> can&apos;t read from %1:
+%2.</source>
+        <translation> Не удаётся прочитать %1:
+%2.</translation>
+    </message>
+</context>
+<context>
+    <name>parseDocument</name>
+    <message>
+        <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="27"/>
+        <source>Array [%1]</source>
+        <translation>Массив [%1]</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="32"/>
+        <source>{ %n fields }</source>
+        <translation>
+            <numerusform>{ %n поле}</numerusform>
+            <numerusform>{ %n поля}</numerusform>
+            <numerusform>{ %n полей }</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>saveToFileText</name>
+    <message>
+        <location filename="../core/domain/ScriptInfo.cpp" line="52"/>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="../core/domain/ScriptInfo.cpp" line="53"/>
+        <source> can&apos;t save to %1:
+%2.</source>
+        <translation> Не удаётся сохранить %1:
+%2.</translation>
     </message>
 </context>
 </TS>

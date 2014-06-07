@@ -4,6 +4,7 @@
 #include <third_party/js-1.7/jsparse.h>
 
 #include "robomongo/core/domain/MongoShellResult.h"
+#include "robomongo/core/Enums.h"
 
 namespace Robomongo
 {
@@ -23,7 +24,7 @@ namespace Robomongo
         void use(const std::string &dbName);
         void setBatchSize(int batchSize);
         void ping();
-        QStringList complete(const std::string &prefix);
+        QStringList complete(const std::string &prefix, const AutocompletionMode mode);
 
     private:
         ConnectionSettings *_connection;

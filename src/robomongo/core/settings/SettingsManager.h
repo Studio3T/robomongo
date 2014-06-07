@@ -77,6 +77,9 @@ namespace Robomongo
         void setViewMode(ViewMode viewMode) { _viewMode = viewMode; }
         ViewMode viewMode() const { return _viewMode; }
 
+        void setAutocompletionMode(AutocompletionMode mode) { _autocompletionMode = mode; }
+        AutocompletionMode autocompletionMode() const { return _autocompletionMode; }
+
         void setAutoExpand(bool isExpand) { _autoExpand = isExpand; }
         bool autoExpand() const { return _autoExpand; }
         
@@ -125,6 +128,7 @@ namespace Robomongo
          * @brief view mode
          */
         ViewMode _viewMode;
+        AutocompletionMode _autocompletionMode;
         bool _loadMongoRcJs;
         bool _autoExpand;
         bool _autoExec;

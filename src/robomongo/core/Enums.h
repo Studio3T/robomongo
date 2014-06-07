@@ -24,6 +24,13 @@ namespace Robomongo
         Custom = 3
     };
 
+    enum AutocompletionMode
+    {
+        AutocompleteNone = 0,
+        AutocompleteAll = 1,
+        AutocompleteNoCollectionNames = 2
+    };
+
     const char *convertUUIDEncodingToString(UUIDEncoding uuidCode);
     UUIDEncoding convertStringToUUIDEncoding(const char *text);
 

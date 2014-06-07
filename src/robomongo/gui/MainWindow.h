@@ -53,6 +53,9 @@ namespace Robomongo
         void setJavaUuidEncoding();
         void setCSharpUuidEncoding();
         void setPythonUuidEncoding();
+        void setShellAutocompletionAll();
+        void setShellAutocompletionNoCollectionNames();
+        void setShellAutocompletionNone();
         void setLoadMongoRcJs();
         void setDisableConnectionShortcuts();
 

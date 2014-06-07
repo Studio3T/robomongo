@@ -119,6 +119,8 @@ namespace Robomongo
         QTextStream in(&file);
         QString esprima = in.readAll();
         _scope->exec(QtUtils::toStdString(esprima), "(esprima)", true, true, true);
+
+        _scope->exec("DB.autocompleteOriginal = DB.autocomplete;", "(saveOriginalAutocomplete)", false, false, false);
     }
 
     MongoShellExecResult ScriptEngine::exec(const std::string &originalScript, const std::string &dbName)
@@ -222,12 +224,17 @@ namespace Robomongo
         _scope->exec("if (db) { db.runCommand({ping:1}); }", "(ping)", false, false, false);
     }
 
-    QStringList ScriptEngine::complete(const std::string &prefix)
+    QStringList ScriptEngine::complete(const std::string &prefix, const AutocompletionMode mode)
     {
-//        if ( prefix.find( '"' ) != string::npos )
-//            return;
+        //if ( prefix.find( '"' ) != string::npos )
+        //    return;
 
         try {
+            if (mode == AutocompleteAll)
+                _scope->exec("DB.autocomplete = DB.autocompleteOriginal;", "", false, false, false);
+            else if (mode == AutocompleteNoCollectionNames)
+                _scope->exec("DB.autocomplete = function(obj){return [];}", "", false, false, false);
+
             QStringList results;
             mongo::BSONObj args = BSON( "0" << prefix );
 

@@ -11,6 +11,7 @@
 #include "robomongo/core/domain/MongoFunction.h"
 #include "robomongo/core/events/MongoEventsInfo.h"
 #include "robomongo/core/Event.h"
+#include "robomongo/core/Enums.h"
 
 namespace Robomongo
 {
@@ -790,11 +791,13 @@ namespace Robomongo
     {
         R_EVENT
 
-        AutocompleteRequest(QObject *sender, const std::string &prefix) :
+        AutocompleteRequest(QObject *sender, const std::string &prefix, const AutocompletionMode mode) :
             Event(sender),
-            prefix(prefix) {}
+            prefix(prefix),
+            mode(mode) {}
 
         std::string prefix;
+        AutocompletionMode mode;
     };
 
     class AutocompleteResponse : public Event

@@ -8,6 +8,7 @@
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/Logger.h"
+#include "robomongo/core/settings/SettingsManager.h"
 
 namespace Robomongo
 {
@@ -43,7 +44,7 @@ namespace Robomongo
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             _scriptInfo.setScript("");
             AppRegistry::instance().bus()->send(_server->client(), new ExecuteScriptRequest(this,query() , dbName));
-        }        
+        }
     }
 
     void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
@@ -53,7 +54,10 @@ namespace Robomongo
 
     void MongoShell::autocomplete(const std::string &prefix)
     {
-        AppRegistry::instance().bus()->send(_server->client(), new AutocompleteRequest(this, prefix));
+        AutocompletionMode autocompletionMode = AppRegistry::instance().settingsManager()->autocompletionMode();
+        if (autocompletionMode == AutocompleteNone)
+            return;
+        AppRegistry::instance().bus()->send(_server->client(), new AutocompleteRequest(this, prefix, autocompletionMode));
     }
 
     void MongoShell::stop()

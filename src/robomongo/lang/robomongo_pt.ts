@@ -4,51 +4,42 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../core/domain/ScriptInfo.cpp" line="73"/>
         <source>JavaScript (*.js);; All Files (*.*)</source>
-        <translation>JavaScript (*.js);; Todos os Arquivos (*.*)</translation>
+        <translation type="obsolete">JavaScript (*.js);; Todos os Arquivos (*.*)</translation>
     </message>
     <message>
-        <location filename="../core/domain/ScriptInfo.cpp" line="23"/>
-        <location filename="../core/domain/ScriptInfo.cpp" line="52"/>
         <source>Error</source>
-        <translation>Erro</translation>
+        <translation type="obsolete">Erro</translation>
     </message>
     <message>
-        <location filename="../core/domain/ScriptInfo.cpp" line="24"/>
         <source> can&apos;t read from %1:
 %2.</source>
-        <translation>impossível ler de %1: %2.</translation>
+        <translation type="obsolete">impossível ler de %1: %2.</translation>
     </message>
     <message>
-        <location filename="../core/domain/ScriptInfo.cpp" line="53"/>
         <source> can&apos;t save to %1:
 %2.</source>
-        <translation>impossível salvar para %1:
+        <translation type="obsolete">impossível salvar para %1:
 %2.</translation>
     </message>
     <message>
-        <location filename="../core/domain/ScriptInfo.cpp" line="99"/>
         <source>Save As</source>
-        <translation>Salvar como</translation>
+        <translation type="obsolete">Salvar como</translation>
     </message>
     <message>
-        <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="27"/>
         <source>Array [%1]</source>
-        <translation>Array[%1]</translation>
+        <translation type="obsolete">Array[%1]</translation>
     </message>
     <message numerus="yes">
-        <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="32"/>
         <source>{ %n fields }</source>
-        <translation>
+        <translation type="obsolete">
             <numerusform>{ %n campo }</numerusform>
             <numerusform>{ %n campos }</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="159"/>
         <source>Private key files (*.*)</source>
-        <translation>Arquivos de chaves privadas (*.*)</translation>
+        <translation type="obsolete">Arquivos de chaves privadas (*.*)</translation>
     </message>
 </context>
 <context>
@@ -108,6 +99,11 @@
 </context>
 <context>
     <name>Robomongo::BsonTreeModel</name>
+    <message>
+        <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="67"/>
+        <source>(%1) %2</source>
+        <translation type="unfinished">(%1) %2</translation>
+    </message>
     <message numerus="yes">
         <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="70"/>
         <source>{ %n fields }</source>
@@ -763,7 +759,7 @@
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="83"/>
         <source>Indexes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Índices</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerCollectionTreeItem.cpp" line="119"/>
@@ -1016,9 +1012,13 @@
         <translation>Estatísticas de banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="105"/>
         <source>Drop Database..</source>
-        <translation>Dropar banco de dados..</translation>
+        <translation type="obsolete">Dropar banco de dados..</translation>
+    </message>
+    <message>
+        <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="105"/>
+        <source>Drop Database...</source>
+        <translation type="unfinished">Dropar banco de dados...</translation>
     </message>
     <message>
         <location filename="../gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp" line="106"/>
@@ -1703,7 +1703,8 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
         <location filename="../core/domain/Notifier.cpp" line="181"/>
         <source>Do you want to delete %n selected documents?</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
+            <numerusform>Você quer deletar %n documento selecionados?</numerusform>
+            <numerusform>Você quer deletar %n documentos selecionados?</numerusform>
         </translation>
     </message>
     <message>
@@ -1790,6 +1791,19 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
     </message>
 </context>
 <context>
+    <name>Robomongo::ScriptInfo</name>
+    <message>
+        <location filename="../core/domain/ScriptInfo.cpp" line="73"/>
+        <source>JavaScript (*.js);; All Files (*.*)</source>
+        <translation type="unfinished">JavaScript (*.js);; Todos os Arquivos (*.*)</translation>
+    </message>
+    <message>
+        <location filename="../core/domain/ScriptInfo.cpp" line="99"/>
+        <source>Save As</source>
+        <translation type="unfinished">Salvar como</translation>
+    </message>
+</context>
+<context>
     <name>Robomongo::ScriptWidget</name>
     <message>
         <location filename="../gui/widgets/workarea/ScriptWidget.cpp" line="60"/>
@@ -1816,20 +1830,55 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
     </message>
     <message>
         <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="36"/>
-        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="103"/>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="104"/>
         <source>Password</source>
         <translation>Senha</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="36"/>
-        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="101"/>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="37"/>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="102"/>
         <source>Private Key</source>
         <translation>Chave Privada</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="158"/>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="44"/>
+        <source>User Password:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="45"/>
+        <source>Private key:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="46"/>
+        <source>Passphrase:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="47"/>
+        <source>SSH Address:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="48"/>
+        <source>SSH User Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="49"/>
+        <source>SSH Auth Method:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="159"/>
         <source>Select private key file</source>
         <translation>Selecione o arquivo de chave privada</translation>
+    </message>
+    <message>
+        <location filename="../gui/dialogs/SSHTunnelTab.cpp" line="160"/>
+        <source>Private key files (*.*)</source>
+        <translation type="unfinished">Arquivos de chaves privadas (*.*)</translation>
     </message>
 </context>
 <context>
@@ -1876,6 +1925,52 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
         <location filename="../gui/widgets/workarea/WorkAreaTabWidget.cpp" line="206"/>
         <source> Loading...</source>
         <translation>Carregando...</translation>
+    </message>
+</context>
+<context>
+    <name>loadFromFileText</name>
+    <message>
+        <location filename="../core/domain/ScriptInfo.cpp" line="23"/>
+        <source>Error</source>
+        <translation type="unfinished">Erro</translation>
+    </message>
+    <message>
+        <location filename="../core/domain/ScriptInfo.cpp" line="24"/>
+        <source> can&apos;t read from %1:
+%2.</source>
+        <translation type="unfinished">impossível ler de %1:
+%2.</translation>
+    </message>
+</context>
+<context>
+    <name>parseDocument</name>
+    <message>
+        <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="27"/>
+        <source>Array [%1]</source>
+        <translation type="unfinished">Array [%1]</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../gui/widgets/workarea/BsonTreeModel.cpp" line="32"/>
+        <source>{ %n fields }</source>
+        <translation type="unfinished">
+            <numerusform>{ %n campo }</numerusform>
+            <numerusform>{ %n campos }</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>saveToFileText</name>
+    <message>
+        <location filename="../core/domain/ScriptInfo.cpp" line="52"/>
+        <source>Error</source>
+        <translation type="unfinished">Erro</translation>
+    </message>
+    <message>
+        <location filename="../core/domain/ScriptInfo.cpp" line="53"/>
+        <source> can&apos;t save to %1:
+%2.</source>
+        <translation type="unfinished">impossível salvar para %1:
+%2.</translation>
     </message>
 </context>
 </TS>

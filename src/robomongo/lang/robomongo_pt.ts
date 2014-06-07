@@ -561,27 +561,27 @@
 <context>
     <name>Robomongo::DocumentTextEditor</name>
     <message>
-        <location filename="../gui/dialogs/DocumentTextEditor.cpp" line="42"/>
+        <location filename="../gui/dialogs/DocumentTextEditor.cpp" line="39"/>
         <source>Validate</source>
         <translation>Validar</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/DocumentTextEditor.cpp" line="129"/>
+        <location filename="../gui/dialogs/DocumentTextEditor.cpp" line="126"/>
         <source>Unable to parse JSON:&lt;br /&gt; &lt;b&gt;%1&lt;/b&gt;, at (%2, %3).</source>
         <translation>Não foi possível analisar JSON&lt;br /&gt; &lt;b&gt;%1&lt;/b&gt;, em (%2, %3).</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/DocumentTextEditor.cpp" line="132"/>
+        <location filename="../gui/dialogs/DocumentTextEditor.cpp" line="129"/>
         <source>Parsing error</source>
         <translation>Erro de varredura</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/DocumentTextEditor.cpp" line="139"/>
+        <location filename="../gui/dialogs/DocumentTextEditor.cpp" line="136"/>
         <source>Validation</source>
         <translation>Validação</translation>
     </message>
     <message>
-        <location filename="../gui/dialogs/DocumentTextEditor.cpp" line="139"/>
+        <location filename="../gui/dialogs/DocumentTextEditor.cpp" line="136"/>
         <source>JSON is valid!</source>
         <translation>JSON é valido!</translation>
     </message>
@@ -1182,27 +1182,27 @@
 <context>
     <name>Robomongo::FindFrame</name>
     <message>
-        <location filename="../gui/editors/FindFrame.cpp" line="24"/>
+        <location filename="../gui/editors/FindFrame.cpp" line="27"/>
         <source>Next</source>
         <translation>Próximo</translation>
     </message>
     <message>
-        <location filename="../gui/editors/FindFrame.cpp" line="25"/>
+        <location filename="../gui/editors/FindFrame.cpp" line="28"/>
         <source>Previous</source>
         <translation>Anterior</translation>
     </message>
     <message>
-        <location filename="../gui/editors/FindFrame.cpp" line="26"/>
+        <location filename="../gui/editors/FindFrame.cpp" line="29"/>
         <source>Match case</source>
         <translation>Deferenciar maíusculas de minúsculas</translation>
     </message>
     <message>
-        <location filename="../gui/editors/FindFrame.cpp" line="117"/>
+        <location filename="../gui/editors/FindFrame.cpp" line="125"/>
         <source>Search</source>
         <translation>Pesquisar</translation>
     </message>
     <message>
-        <location filename="../gui/editors/FindFrame.cpp" line="117"/>
+        <location filename="../gui/editors/FindFrame.cpp" line="125"/>
         <source>The specified text was not found.</source>
         <translation>O texto específico não foi encontrado.</translation>
     </message>
@@ -1231,296 +1231,321 @@
 <context>
     <name>Robomongo::MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="399"/>
+        <location filename="../gui/MainWindow.cpp" line="445"/>
         <source>&amp;Open...</source>
         <translation>&amp;Abrir...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="400"/>
+        <location filename="../gui/MainWindow.cpp" line="446"/>
         <source>Load script from the file to the currently opened shell</source>
         <translation>Carregar o script do arquivo para o shell aberto</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="402"/>
+        <location filename="../gui/MainWindow.cpp" line="448"/>
         <source>&amp;Save</source>
         <translation>&amp;Salvar</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="405"/>
+        <location filename="../gui/MainWindow.cpp" line="451"/>
         <source>Save &amp;As...</source>
         <translation>Salvar &amp;Como...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="407"/>
+        <location filename="../gui/MainWindow.cpp" line="453"/>
         <source>&amp;Exit</source>
         <translation>&amp;Fechar</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="409"/>
-        <location filename="../gui/MainWindow.cpp" line="413"/>
+        <location filename="../gui/MainWindow.cpp" line="455"/>
+        <location filename="../gui/MainWindow.cpp" line="459"/>
         <source>&amp;Connect...</source>
         <translation>C&amp;onectar...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="410"/>
+        <location filename="../gui/MainWindow.cpp" line="456"/>
         <source>Connect</source>
         <translation>Conectar</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="416"/>
+        <location filename="../gui/MainWindow.cpp" line="462"/>
         <source>&amp;Rotate</source>
         <translation>Gi&amp;rar</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="417"/>
+        <location filename="../gui/MainWindow.cpp" line="463"/>
         <source>Toggle orientation of results view &lt;b&gt;(F10)&lt;/b&gt;</source>
         <translation>Alternar orientação da visualização dos resultados &lt;b&gt;F10&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="419"/>
+        <location filename="../gui/MainWindow.cpp" line="465"/>
         <source>&amp;Text Mode</source>
         <translation>Modo &amp;Texto</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="420"/>
+        <location filename="../gui/MainWindow.cpp" line="466"/>
         <source>Show current tab in text mode, and make this mode default for all subsequent queries &lt;b&gt;(F4)&lt;/b&gt;</source>
         <translation>Mostrar a aba ativa no modo texto, e tornar este modo padrão para todas as queries subsequentes &lt;b&gt;(F4)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="422"/>
+        <location filename="../gui/MainWindow.cpp" line="468"/>
         <source>&amp;Tree Mode</source>
         <translation>&amp;Modo Árvore</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="423"/>
+        <location filename="../gui/MainWindow.cpp" line="469"/>
         <source>Show current tab in tree mode, and make this mode default for all subsequent queries &lt;b&gt;(F3)&lt;/b&gt;</source>
         <translation>Mostrar a aba ativa no modo árvore, e tornar este modo padrão para todas as queries subsequentes &lt;b&gt;(F3)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="425"/>
+        <location filename="../gui/MainWindow.cpp" line="471"/>
         <source>T&amp;able Mode</source>
         <translation>Modo Ta&amp;bela</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="426"/>
+        <location filename="../gui/MainWindow.cpp" line="472"/>
         <source>Show current tab in table mode, and make this mode default for all subsequent queries &lt;b&gt;(F3)&lt;/b&gt;</source>
         <translation>Mostrar a aba ativa no modo tabela, e tornar este modo padrão para todas as queries subsequentes &lt;b&gt;(F3)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="428"/>
+        <location filename="../gui/MainWindow.cpp" line="474"/>
         <source>&amp;Custom Mode</source>
         <translation>Modo C&amp;ustomizado</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="429"/>
+        <location filename="../gui/MainWindow.cpp" line="475"/>
         <source>Show current tab in custom mode if possible, and make this mode default for all subsequent queries &lt;b&gt;(F2)&lt;/b&gt;</source>
         <translation>Mostrar a aba ativa no modo customizado se possível, e tornar este modo padrão para todas as queries subsequentes &lt;b&gt;(F2)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="433"/>
+        <location filename="../gui/MainWindow.cpp" line="479"/>
         <source>Stop execution of currently running script. &lt;b&gt;(F6)&lt;/b&gt;</source>
         <translation>Parar a execução do script.&lt;b&gt;(F6)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="435"/>
+        <location filename="../gui/MainWindow.cpp" line="495"/>
+        <source>Show Line Numbers By Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="520"/>
+        <source>Window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="521"/>
         <source>&amp;Full Screen</source>
         <translation>Tela C&amp;heia</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="437"/>
+        <location filename="../gui/MainWindow.cpp" line="481"/>
         <source>Refresh</source>
         <translation>Atualizar</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="462"/>
+        <location filename="../gui/MainWindow.cpp" line="508"/>
         <source>File</source>
         <translation>Arquivo</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="463"/>
+        <location filename="../gui/MainWindow.cpp" line="509"/>
         <source>View</source>
         <translation>Visualização</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="465"/>
+        <location filename="../gui/MainWindow.cpp" line="511"/>
         <source>Options</source>
         <translation>Opções</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="466"/>
+        <location filename="../gui/MainWindow.cpp" line="512"/>
         <source>Default View Mode</source>
         <translation>Modo de visualização padrão</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="467"/>
+        <location filename="../gui/MainWindow.cpp" line="513"/>
         <source>Display Dates In...</source>
         <translation>Mostrar datas em...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="449"/>
+        <location filename="../gui/MainWindow.cpp" line="493"/>
         <source>Auto Expand First Document</source>
         <translation>Auto expandir primeiro documento</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="442"/>
+        <location filename="../gui/MainWindow.cpp" line="486"/>
         <source>Do not decode (show as is)</source>
         <translation>Não decodificar(mostrar como esta)</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="443"/>
+        <location filename="../gui/MainWindow.cpp" line="487"/>
         <source>Use Java Encoding</source>
         <translation>Usar codificação do Java</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="444"/>
+        <location filename="../gui/MainWindow.cpp" line="488"/>
         <source>Use .NET Encoding</source>
         <translation>Usar codificação do .NET</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="445"/>
+        <location filename="../gui/MainWindow.cpp" line="489"/>
         <source>Use Python Encoding</source>
         <translation>Usar codificação do Python</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="468"/>
+        <location filename="../gui/MainWindow.cpp" line="514"/>
         <source>Legacy UUID Encoding</source>
         <translation>Usar codificação UUID Legacy</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="447"/>
+        <location filename="../gui/MainWindow.cpp" line="491"/>
         <source>Load .mongorc.js</source>
         <translation>Carregar .mongorc.js</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="389"/>
+        <location filename="../gui/MainWindow.cpp" line="435"/>
         <source>Ctrl</source>
         <translation type="unfinished">Ctrl</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="403"/>
+        <location filename="../gui/MainWindow.cpp" line="449"/>
         <source>Save script of the currently opened shell to the file &lt;b&gt;(%1 + S)&lt;/b&gt;</source>
         <translation type="unfinished">Salvar o script do shell aberto para o arquivo &lt;b&gt;(%1 + S)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="411"/>
-        <location filename="../gui/MainWindow.cpp" line="414"/>
+        <location filename="../gui/MainWindow.cpp" line="457"/>
+        <location filename="../gui/MainWindow.cpp" line="460"/>
         <source>Connect to local or remote MongoDB instance &lt;b&gt;(%1 + O)&lt;/b&gt;</source>
         <translation type="unfinished">Conectar a uma instância local ou remota do MongoDB &lt;b&gt;(%1 + O)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="431"/>
+        <location filename="../gui/MainWindow.cpp" line="477"/>
         <source>Execute query for current tab. If you have some selection in query text - only selection will be executed &lt;b&gt;(F5 &lt;/b&gt; or &lt;b&gt;%1 + Enter)&lt;/b&gt;</source>
         <translation type="unfinished">Executar query da aba atual. Se você tiver algo selecionado, somente a seleção será executada &lt;b&gt;(F5 &lt;/b&gt; or &lt;b&gt;%1 + Enter)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="451"/>
+        <location filename="../gui/MainWindow.cpp" line="497"/>
         <source>Disable Connection Shortcuts</source>
         <translation>Desabilitar atalhos de conexão</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="453"/>
+        <location filename="../gui/MainWindow.cpp" line="499"/>
         <source>Preferences</source>
         <translation>Preferências</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="455"/>
+        <location filename="../gui/MainWindow.cpp" line="501"/>
         <source>&amp;About Robomongo...</source>
         <translation>So&amp;bre Robomongo...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="474"/>
+        <location filename="../gui/MainWindow.cpp" line="522"/>
+        <source>&amp;Minimize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="523"/>
+        <source>Select Next Tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="524"/>
+        <source>Select Previous Tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="526"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="476"/>
+        <location filename="../gui/MainWindow.cpp" line="528"/>
         <source>Toolbar</source>
         <translation>Barra de Ferramentar</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="477"/>
+        <location filename="../gui/MainWindow.cpp" line="529"/>
         <source>Open/Save ToolBar</source>
         <translation>Abrir/Salvar Barra de Ferramentas</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="478"/>
+        <location filename="../gui/MainWindow.cpp" line="530"/>
         <source>Exec Toolbar</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="464"/>
+        <location filename="../gui/MainWindow.cpp" line="510"/>
         <source>Theme</source>
         <translation>Tema</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="470"/>
+        <location filename="../gui/MainWindow.cpp" line="516"/>
         <source>Language</source>
         <translation>Idioma</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="472"/>
+        <location filename="../gui/MainWindow.cpp" line="518"/>
         <source>System locale (if available)</source>
         <extracomment>Language based on system locale</extracomment>
         <translation>Localidade do sistema(se disponível)</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="395"/>
-        <location filename="../gui/MainWindow.cpp" line="397"/>
+        <location filename="../gui/MainWindow.cpp" line="441"/>
+        <location filename="../gui/MainWindow.cpp" line="443"/>
         <source>Logs</source>
         <translation>Logs</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="641"/>
+        <location filename="../gui/MainWindow.cpp" line="693"/>
         <source>&amp;Manage Connections...</source>
         <translation>Ad&amp;ministrar Conexões...</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="643"/>
+        <location filename="../gui/MainWindow.cpp" line="695"/>
         <source>Connect to MongoDB</source>
         <translation>Conectar com MongoDB</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="664"/>
-        <location filename="../gui/MainWindow.cpp" line="843"/>
+        <location filename="../gui/MainWindow.cpp" line="716"/>
+        <location filename="../gui/MainWindow.cpp" line="911"/>
         <source>Cannot connect to MongoDB (%1)</source>
         <translation>Não foi possível conectar com MongoDB (%1)</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="665"/>
-        <location filename="../gui/MainWindow.cpp" line="844"/>
-        <location filename="../gui/MainWindow.cpp" line="852"/>
+        <location filename="../gui/MainWindow.cpp" line="717"/>
+        <location filename="../gui/MainWindow.cpp" line="912"/>
+        <location filename="../gui/MainWindow.cpp" line="920"/>
         <source>Error</source>
         <translation>Erro</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="764"/>
+        <location filename="../gui/MainWindow.cpp" line="832"/>
         <source>Refresh not working yet... : &lt;br/&gt;  &lt;b&gt;Ctrl+D&lt;/b&gt; : push Button</source>
         <translation>Atualizar não esta funcionando ainda... : &lt;br/&gt;  &lt;b&gt;Ctrl+D&lt;/b&gt; : push Button</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="851"/>
+        <location filename="../gui/MainWindow.cpp" line="919"/>
         <source>Cannot connect to MongoDB (%1),
 error: %2</source>
         <translation>Não foi possível conectar com MongoDB (%1),
 Erro: %2</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="394"/>
+        <location filename="../gui/MainWindow.cpp" line="440"/>
         <source>Database Explorer</source>
         <translation>Explorador</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="457"/>
+        <location filename="../gui/MainWindow.cpp" line="503"/>
         <source>&amp;Explorer</source>
         <translation>&amp;Explorador</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="458"/>
+        <location filename="../gui/MainWindow.cpp" line="504"/>
         <source>Press to show/hide Database Explorer panel.</source>
         <translation>Pressione para mostrar/esconder painel de Explorador.</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="459"/>
+        <location filename="../gui/MainWindow.cpp" line="505"/>
         <source>&amp;Logs</source>
         <translation>&amp;Logs</translation>
     </message>
@@ -1786,8 +1811,12 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
     </message>
     <message>
         <location filename="../gui/widgets/workarea/QueryWidget.cpp" line="263"/>
+        <source>  Script executed successfully, but there are no results to show.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>  Script executed successfully, but there is no results to show.</source>
-        <translation>Script executado com sucesso, mas não há resultados para mostrar.</translation>
+        <translation type="obsolete">Script executado com sucesso, mas não há resultados para mostrar.</translation>
     </message>
 </context>
 <context>
@@ -1814,8 +1843,8 @@ Este é um sistema de documentos que precisa ser gerenciado de forma especial?</
 <context>
     <name>Robomongo::SettingsManager</name>
     <message>
-        <location filename="../core/settings/SettingsManager.cpp" line="264"/>
-        <location filename="../core/settings/SettingsManager.cpp" line="265"/>
+        <location filename="../core/settings/SettingsManager.cpp" line="268"/>
+        <location filename="../core/settings/SettingsManager.cpp" line="269"/>
         <source>__LANGUAGE_NAME__</source>
         <extracomment>Native language name: &quot;English&quot; for English, &quot;Русский&quot; for Russian etc.</extracomment>
         <translation>Brazilian Portuguese</translation>

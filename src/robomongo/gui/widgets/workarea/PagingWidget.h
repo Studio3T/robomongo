@@ -23,6 +23,9 @@ namespace Robomongo
         void rightClicked(int skip, int limit);
         void refreshed(int skip, int limit);
 
+    protected:
+        void changeEvent(QEvent *event);
+        
     private Q_SLOTS:
         void leftButton_clicked();
         void rightButton_clicked();
@@ -31,5 +34,7 @@ namespace Robomongo
     private:
         QLineEdit *_skipEdit;
         QLineEdit *_batchSizeEdit;
+        
+        void retranslateUI();
     };
 }

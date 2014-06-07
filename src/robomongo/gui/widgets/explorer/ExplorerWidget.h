@@ -32,12 +32,15 @@ namespace Robomongo
 
     protected:
         virtual void keyPressEvent(QKeyEvent *event);   
+        void changeEvent(QEvent*);
 
     private:
         int _progress;
-        void increaseProgress();
-        void decreaseProgress();
         QLabel *_progressLabel;
         QTreeWidget *_treeWidget;
+        
+        void increaseProgress();
+        void decreaseProgress();
+        void retranslateUI();
     };
 }

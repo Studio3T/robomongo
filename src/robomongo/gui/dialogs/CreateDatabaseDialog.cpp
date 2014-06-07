@@ -19,7 +19,7 @@ namespace Robomongo
                                                const QString &collection, QWidget *parent) :
         QDialog(parent)
     {
-        setWindowTitle("Create Database");
+        setWindowTitle(tr("Create Database"));
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         //setFixedSize(dialogSize);
         setMinimumWidth(300);
@@ -31,13 +31,13 @@ namespace Robomongo
         hline->setFrameShadow(QFrame::Sunken);
 
         _inputEdit = new QLineEdit();
-        _inputLabel= new QLabel("Database Name:");
+        _inputLabel= new QLabel(tr("Database Name:"));
         _inputEdit->setMaxLength(maxLenghtName);
 
         _buttonBox = new QDialogButtonBox(this);
         _buttonBox->setOrientation(Qt::Horizontal);
         _buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        _buttonBox->button(QDialogButtonBox::Save)->setText("C&reate");
+        _buttonBox->button(QDialogButtonBox::Save)->setText(tr("C&reate"));
         VERIFY(connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
         VERIFY(connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 

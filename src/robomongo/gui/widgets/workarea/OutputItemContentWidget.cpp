@@ -91,7 +91,7 @@ namespace Robomongo
             }
         }
 
-        _header->setTime(QString("%1 sec.").arg(secs));
+        _header->setTime(tr("%1 sec.").arg(secs));
 
         QVBoxLayout *layout = new QVBoxLayout();
         layout->setContentsMargins(0, 0, 0, 0);
@@ -109,6 +109,29 @@ namespace Robomongo
         VERIFY(connect(_header, SIGNAL(restoredSize()), this, SIGNAL(restoredSize())));
 
         refreshOutputItem();
+    }
+    
+    void OutputItemContentWidget::retranslateUI()
+    {
+        configureModel();
+        markUninitialized();
+        refreshOutputItem();
+    }
+    
+    void OutputItemContentWidget::changeEvent(QEvent* event)
+    {
+        if (0 != event) {
+            switch (event->type()) {
+                // this event is send if a translator is loaded
+            case QEvent::LanguageChange:
+                retranslateUI();
+                break;
+                // this event is send, if the system, language changes
+            case QEvent::LocaleChange:
+                break;
+            }
+        }
+        BaseClass::changeEvent(event);
     }
 
     void OutputItemContentWidget::paging_leftClicked(int skip, int limit)
@@ -215,7 +238,7 @@ namespace Robomongo
             }
             else {
                 if (_documents.size() > 0) {
-                    _textView->sciScintilla()->setText("Loading...");
+                    _textView->sciScintilla()->setText(tr("Loading..."));
                     _thread = new JsonPrepareThread(_documents, AppRegistry::instance().settingsManager()->uuidEncoding(), AppRegistry::instance().settingsManager()->timeZone());
                     VERIFY(connect(_thread, SIGNAL(partReady(const QString&)), this, SLOT(jsonPartReady(const QString&))));
                     VERIFY(connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater())));

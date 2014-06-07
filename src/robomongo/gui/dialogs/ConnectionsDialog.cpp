@@ -68,21 +68,21 @@ namespace Robomongo
         : QDialog(parent), _settingsManager(settingsManager)
     {
         setWindowIcon(GuiRegistry::instance().connectIcon());
-        setWindowTitle("MongoDB Connections");
+        setWindowTitle(tr("MongoDB Connections"));
 
         // Remove help button (?)
         setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-        QAction *addAction = new QAction("&Add...", this);
+        QAction *addAction = new QAction(tr("&Add..."), this);
         VERIFY(connect(addAction, SIGNAL(triggered()), this, SLOT(add())));
 
-        QAction *editAction = new QAction("&Edit...", this);
+        QAction *editAction = new QAction(tr("&Edit..."), this);
         VERIFY(connect(editAction, SIGNAL(triggered()), this, SLOT(edit())));
 
-        QAction *cloneAction = new QAction("&Clone...", this);
+        QAction *cloneAction = new QAction(tr("&Clone..."), this);
         VERIFY(connect(cloneAction, SIGNAL(triggered()), this, SLOT(clone())));
 
-        QAction *removeAction = new QAction("&Remove...", this);
+        QAction *removeAction = new QAction(tr("&Remove..."), this);
         VERIFY(connect(removeAction, SIGNAL(triggered()), this, SLOT(remove())));
 
         _listWidget = new ConnectionsTreeWidget;
@@ -90,7 +90,7 @@ namespace Robomongo
         _listWidget->setIndentation(5);
 
         QStringList colums;
-        colums << "Name" << "Address" << "Auth. Database / User";
+        colums << tr("Name") << tr("Address") << tr("Auth. Database / User");
         _listWidget->setHeaderLabels(colums);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         _listWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
@@ -115,7 +115,7 @@ namespace Robomongo
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
         buttonBox->button(QDialogButtonBox::Save)->setIcon(GuiRegistry::instance().serverIcon());
-        buttonBox->button(QDialogButtonBox::Save)->setText("C&onnect");
+        buttonBox->button(QDialogButtonBox::Save)->setText(tr("C&onnect"));
         VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
         VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
@@ -123,8 +123,8 @@ namespace Robomongo
         bottomLayout->addWidget(buttonBox);
 
         QLabel *intro = new QLabel(
-            "<a href='create'>Create</a>, "
-            "<a href='edit'>edit</a>, <a href='remove'>remove</a>, <a href='clone'>clone</a> or reorder connections via drag'n'drop.");
+            "<a href='create'>"+tr("Create")+"</a>, "
+            "<a href='edit'>"+tr("edit")+"</a>, <a href='remove'>"+tr("remove")+"</a>, <a href='clone'>"+tr("clone")+"</a> "+tr("or reorder connections via drag'n'drop."));
         intro->setWordWrap(true);
         VERIFY(connect(intro, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString))));
 
@@ -252,8 +252,8 @@ namespace Robomongo
 
         // Ask user
         int answer = QMessageBox::question(this,
-            "Connections",
-            QString("Really delete \"%1\" connection?").arg(QtUtils::toQString(connectionModel->getReadableName())),
+            tr("Connections"),
+            tr("Really delete \"%1\" connection?").arg(QtUtils::toQString(connectionModel->getReadableName())),
             QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
         if (answer != QMessageBox::Yes)
@@ -274,7 +274,7 @@ namespace Robomongo
 
         // Clone connection
         ConnectionSettings *connection = currentItem->connection()->clone();
-        std::string newConnectionName="Copy of "+connection->connectionName();
+        std::string newConnectionName=tr("Copy of %1").arg(connection->connectionName().c_str()).toStdString();
 
         connection->setConnectionName(newConnectionName);
 

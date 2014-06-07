@@ -30,55 +30,76 @@ namespace Robomongo
         BaseClass(databaseItem) ,_category(category)
     {
         if (_category == Collections) {
-            QAction *createCollection = new QAction("Create Collection...", this);
-            VERIFY(connect(createCollection, SIGNAL(triggered()), SLOT(ui_createCollection())));
+            _createCollectionAction = new QAction(this);
+            VERIFY(connect(_createCollectionAction, SIGNAL(triggered()), SLOT(ui_createCollection())));
 
-            QAction *dbCollectionsStats = new QAction("Collections Statistics", this);
-            VERIFY(connect(dbCollectionsStats, SIGNAL(triggered()), SLOT(ui_dbCollectionsStatistics())));
+            _dbCollectionsStatsAction = new QAction(this);
+            VERIFY(connect(_dbCollectionsStatsAction, SIGNAL(triggered()), SLOT(ui_dbCollectionsStatistics())));
 
-            QAction *refreshCollections = new QAction("Refresh", this);
-            VERIFY(connect(refreshCollections, SIGNAL(triggered()), SLOT(ui_refreshCollections())));
+            _refreshCollectionsAction = new QAction(this);
+            VERIFY(connect(_refreshCollectionsAction, SIGNAL(triggered()), SLOT(ui_refreshCollections())));
 
-            BaseClass::_contextMenu->addAction(dbCollectionsStats);
-            BaseClass::_contextMenu->addAction(createCollection);
+            BaseClass::_contextMenu->addAction(_dbCollectionsStatsAction);
+            BaseClass::_contextMenu->addAction(_createCollectionAction);
             BaseClass::_contextMenu->addSeparator();
-            BaseClass::_contextMenu->addAction(refreshCollections);
+            BaseClass::_contextMenu->addAction(_refreshCollectionsAction);
         }
         else if (_category == Users) {
 
-            QAction *refreshUsers = new QAction("Refresh", this);
-            VERIFY(connect(refreshUsers, SIGNAL(triggered()), SLOT(ui_refreshUsers())));
+            _refreshUsersAction = new QAction(this);
+            VERIFY(connect(_refreshUsersAction, SIGNAL(triggered()), SLOT(ui_refreshUsers())));
 
-            QAction *viewUsers = new QAction("View Users", this);
-            VERIFY(connect(viewUsers, SIGNAL(triggered()), SLOT(ui_viewUsers())));
+            _viewUsersAction = new QAction(this);
+            VERIFY(connect(_viewUsersAction, SIGNAL(triggered()), SLOT(ui_viewUsers())));
 
-            QAction *addUser = new QAction("Add User...", this);
-            VERIFY(connect(addUser, SIGNAL(triggered()), SLOT(ui_addUser())));
+            _addUserAction = new QAction(this);
+            VERIFY(connect(_addUserAction, SIGNAL(triggered()), SLOT(ui_addUser())));
 
-            BaseClass::_contextMenu->addAction(viewUsers);
-            BaseClass::_contextMenu->addAction(addUser);
+            BaseClass::_contextMenu->addAction(_viewUsersAction);
+            BaseClass::_contextMenu->addAction(_addUserAction);
             BaseClass::_contextMenu->addSeparator();
-            BaseClass::_contextMenu->addAction(refreshUsers);
+            BaseClass::_contextMenu->addAction(_refreshUsersAction);
         }
         else if (_category == Functions) {
 
-            QAction *refreshFunctions = new QAction("Refresh", this);
-            VERIFY(connect(refreshFunctions, SIGNAL(triggered()), SLOT(ui_refreshFunctions())));
+            _refreshFunctionsAction = new QAction(this);
+            VERIFY(connect(_refreshFunctionsAction, SIGNAL(triggered()), SLOT(ui_refreshFunctions())));
 
-            QAction *viewFunctions = new QAction("View Functions", this);
-            VERIFY(connect(viewFunctions, SIGNAL(triggered()), SLOT(ui_viewFunctions())));
+            _viewFunctionsAction = new QAction(this);
+            VERIFY(connect(_viewFunctionsAction, SIGNAL(triggered()), SLOT(ui_viewFunctions())));
 
-            QAction *addFunction = new QAction("Add Function...", this);
-            VERIFY(connect(addFunction, SIGNAL(triggered()), SLOT(ui_addFunction())));
+            _addFunctionAction = new QAction(this);
+            VERIFY(connect(_addFunctionAction, SIGNAL(triggered()), SLOT(ui_addFunction())));
 
-            BaseClass::_contextMenu->addAction(viewFunctions);
-            BaseClass::_contextMenu->addAction(addFunction);
+            BaseClass::_contextMenu->addAction(_viewFunctionsAction);
+            BaseClass::_contextMenu->addAction(_addFunctionAction);
             BaseClass::_contextMenu->addSeparator();
-            BaseClass::_contextMenu->addAction(refreshFunctions);
+            BaseClass::_contextMenu->addAction(_refreshFunctionsAction);
         }
 
         setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+        
+        retranslateUI();
+    }
+
+    void ExplorerDatabaseCategoryTreeItem::retranslateUI()
+    {
+        if (_category == Collections) {
+            _createCollectionAction->setText(tr("Create Collection..."));
+            _dbCollectionsStatsAction->setText(tr("Collections Statistics"));
+            _refreshCollectionsAction->setText(tr("Refresh"));
+        }
+        else if (_category == Users) {
+            _refreshUsersAction->setText(tr("Refresh"));
+            _viewUsersAction->setText(tr("View Users"));
+            _addUserAction->setText(tr("Add User..."));
+        }
+        else if (_category == Functions) {
+            _refreshFunctionsAction->setText(tr("Refresh"));
+            _viewFunctionsAction->setText(tr("View Functions"));
+            _addFunctionAction->setText(tr("Add Function..."));
+        }
     }
     
     void ExplorerDatabaseCategoryTreeItem::expand()
@@ -155,9 +176,9 @@ namespace Robomongo
 
         CreateDatabaseDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
             QtUtils::toQString(databaseItem->database()->name()), QString(), treeWidget());
-        dlg.setWindowTitle("Create Collection");
-        dlg.setOkButtonText("&Create");
-        dlg.setInputLabelText("Collection Name:");
+        dlg.setWindowTitle(tr("Create Collection"));
+        dlg.setOkButtonText(tr("&Create"));
+        dlg.setInputLabelText(tr("Collection Name:"));
         int result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
@@ -202,10 +223,10 @@ namespace Robomongo
             return;
 
         FunctionTextEditor dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(databaseItem->database()->name()), MongoFunction());
-        dlg.setWindowTitle("Create Function");
+        dlg.setWindowTitle(tr("Create Function"));
         dlg.setCode(
             "function() {\n"
-            "    // write your code here\n"
+            "    // " + tr("write your code here") + "\n"
             "}");
         dlg.setCursorPosition(1, 4);
         int result = dlg.exec();

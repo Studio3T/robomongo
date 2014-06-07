@@ -24,9 +24,9 @@ namespace Robomongo
         _findPanel(new QFrame(this)),
         _close(new QToolButton(this)),
         _findLine(new QLineEdit(this)),
-        _next(new QPushButton("Next", this)),
-        _prev(new QPushButton("Previous", this)),
-        _caseSensitive(new QCheckBox("Match case", this)),
+        _next(new QPushButton(tr("Next"), this)),
+        _prev(new QPushButton(tr("Previous"), this)),
+        _caseSensitive(new QCheckBox(tr("Match case"), this)),
         _commentSign("// "),
         _commentSignLength(3)
     {

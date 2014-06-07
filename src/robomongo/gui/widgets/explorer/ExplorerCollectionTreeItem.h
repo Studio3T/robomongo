@@ -30,6 +30,7 @@ namespace Robomongo
         void dropIndex(const QTreeWidgetItem * const ind);
         void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
         ExplorerDatabaseTreeItem *const databaseItem() const { return _databaseItem; }
+        void retranslateUI();
 
     public Q_SLOTS:
         void handle(LoadCollectionIndexesResponse *event);
@@ -58,6 +59,22 @@ namespace Robomongo
         ExplorerCollectionDirIndexesTreeItem *_indexDir;
         MongoCollection *const _collection;
         ExplorerDatabaseTreeItem *const _databaseItem;
+        
+        QAction *_addDocumentAction;
+        QAction *_updateDocumentAction;
+        QAction *_removeDocumentAction;
+        QAction *_removeAllDocumentsAction;
+        QAction *_collectionStatsAction;
+        QAction *_storageSizeAction;
+        QAction *_totalIndexSizeAction;
+        QAction *_totalSizeAction;
+        QAction *_shardVersionAction;
+        QAction *_shardDistributionAction;
+        QAction *_dropCollectionAction;
+        QAction *_renameCollectionAction;
+        QAction *_duplicateCollectionAction;
+        QAction *_copyCollectionToDiffrentServerAction;
+        QAction *_viewCollectionAction;
     };
 
     class ExplorerCollectionDirIndexesTreeItem: public ExplorerTreeItem
@@ -68,6 +85,7 @@ namespace Robomongo
         static const QString labelText;
         explicit ExplorerCollectionDirIndexesTreeItem(QTreeWidgetItem *parent);
         void expand();
+        void retranslateUI();
 
     private Q_SLOTS:
         void ui_addIndex();
@@ -76,6 +94,15 @@ namespace Robomongo
         void ui_dropIndex();
         void ui_viewIndex();
         void ui_refreshIndex();
+        
+    private:
+        QAction *_addIndexAction;
+        QAction *_addIndexGuiAction;
+        QAction *_dropIndexAction;
+        QAction *_reIndexAction;
+        QAction *_viewIndexAction;
+        QAction *_refreshIndexAction;
+                
     };
 
     class ExplorerCollectionIndexesTreeItem: public ExplorerTreeItem
@@ -84,11 +111,15 @@ namespace Robomongo
     public:
         typedef ExplorerTreeItem BaseClass;
         explicit ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent,const EnsureIndexInfo &info);
+        void retranslateUI();
 
     private Q_SLOTS:
         void ui_dropIndex();
         void ui_edit();
     private:
         EnsureIndexInfo _info;
+        
+        QAction *_deleteIndexAction;
+        QAction *_editIndexAction;
     };
 }

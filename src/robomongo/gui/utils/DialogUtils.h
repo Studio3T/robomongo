@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QApplication>
 #include <QMessageBox>
 
 namespace Robomongo

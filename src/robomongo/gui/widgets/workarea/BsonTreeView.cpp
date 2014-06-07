@@ -24,15 +24,37 @@ namespace Robomongo
         setContextMenuPolicy(Qt::CustomContextMenu);
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
 
-        _expandRecursive = new QAction("Expand Recursively", this);
+        _expandRecursive = new QAction(this);
         VERIFY(connect(_expandRecursive, SIGNAL(triggered()), SLOT(onExpandRecursive())));
 
         setStyleSheet("QTreeView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         header()->setSectionResizeMode(QHeaderView::Interactive);
 #endif
+        retranslateUI();
     }
 
+    void BsonTreeView::retranslateUI()
+    {
+        _expandRecursive->setText(tr("Expand Recursively"));
+    }
+    
+    void BsonTreeView::changeEvent(QEvent* event)
+    {
+        if (0 != event) {
+            switch (event->type()) {
+                // this event is send if a translator is loaded
+            case QEvent::LanguageChange:
+                retranslateUI();
+                break;
+                // this event is send, if the system, language changes
+            case QEvent::LocaleChange:
+                break;
+            }
+        }
+        BaseClass::changeEvent(event);
+    }
+    
     void BsonTreeView::showContextMenu(const QPoint &point)
     {        
         QPoint menuPoint = mapToGlobal(point);

@@ -10,10 +10,6 @@ namespace Robomongo
     CollectionStatsTreeWidget::CollectionStatsTreeWidget(const std::vector<MongoDocumentPtr> &documents, QWidget *parent) 
         : QTreeWidget(parent)
     {
-        QStringList colums;
-        colums << "Name" << "Count" << "Size" << "Storage" << "Index" << "Average Object" << "Padding";
-        setHeaderLabels(colums);
-
         setStyleSheet(
             "QTreeWidget { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }"
         );
@@ -27,7 +23,32 @@ namespace Robomongo
         }
 
         addTopLevelItems(items);
+        
+        retranslateUI();
 
         header()->resizeSections(QHeaderView::ResizeToContents);
+    }
+
+    void CollectionStatsTreeWidget::retranslateUI()
+    {
+        QStringList colums;
+        colums << tr("Name") << tr("Count") << tr("Size") << tr("Storage") << tr("Index") << tr("Average Object") << tr("Padding");
+        setHeaderLabels(colums);
+    }
+    
+    void CollectionStatsTreeWidget::changeEvent(QEvent* event)
+    {
+        if (0 != event) {
+            switch (event->type()) {
+                // this event is send if a translator is loaded
+            case QEvent::LanguageChange:
+                retranslateUI();
+                break;
+                // this event is send, if the system, language changes
+            case QEvent::LocaleChange:
+                break;
+            }
+        }
+        BaseClass::changeEvent(event);
     }
 }

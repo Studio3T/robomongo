@@ -20,16 +20,16 @@ namespace Robomongo
 
         _menu = new QMenu(this);
 
-        _newShellAction = new QAction("&New Shell", _menu);
+        _newShellAction = new QAction(_menu);
         _newShellAction->setShortcut(Qt::CTRL + Qt::Key_T);
-        _reloadShellAction = new QAction("&Reload", _menu);
+        _reloadShellAction = new QAction(_menu);
         _reloadShellAction->setShortcut(Qt::CTRL + Qt::Key_R);
-        _duplicateShellAction = new QAction("&Duplicate", _menu);
-        _pinShellAction = new QAction("&Pin Shell", _menu);
-        _closeShellAction = new QAction("&Close Shell", _menu);
+        _duplicateShellAction = new QAction(_menu);
+        _pinShellAction = new QAction(_menu);
+        _closeShellAction = new QAction(_menu);
         _closeShellAction->setShortcut(Qt::CTRL + Qt::Key_W);
-        _closeOtherShellsAction = new QAction("Close &Other Shells", _menu);
-        _closeShellsToTheRightAction = new QAction("Close Shells to the R&ight", _menu);
+        _closeOtherShellsAction = new QAction(_menu);
+        _closeShellsToTheRightAction = new QAction(_menu);
 
         _menu->addAction(_newShellAction);
         _menu->addSeparator();
@@ -39,7 +39,35 @@ namespace Robomongo
         _menu->addAction(_closeShellAction);
         _menu->addAction(_closeOtherShellsAction);
         _menu->addAction(_closeShellsToTheRightAction);
-
+        
+        retranslateUI();
+    }
+    
+    void WorkAreaTabBar::retranslateUI()
+    {
+        _newShellAction->setText(tr("&New Shell"));
+        _reloadShellAction->setText(tr("&Reload"));
+        _duplicateShellAction->setText(tr("&Duplicate"));
+        _pinShellAction->setText(tr("&Pin Shell"));
+        _closeShellAction->setText(tr("&Close Shell"));
+        _closeOtherShellsAction->setText(tr("Close &Other Shells"));
+        _closeShellsToTheRightAction->setText(tr("Close Shells to the R&ight"));
+    }
+    
+    void WorkAreaTabBar::changeEvent(QEvent* event)
+    {
+        if (0 != event) {
+            switch (event->type()) {
+                // this event is send if a translator is loaded
+            case QEvent::LanguageChange:
+                retranslateUI();
+                break;
+                // this event is send, if the system, language changes
+            case QEvent::LocaleChange:
+                break;
+            }
+        }
+        BaseClass::changeEvent(event);
     }
 
     /**

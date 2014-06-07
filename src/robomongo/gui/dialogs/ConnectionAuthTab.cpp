@@ -16,9 +16,9 @@ namespace Robomongo
         _settings(settings)
     {
         _databaseNameDescriptionLabel = new QLabel(
-            "<nobr>The <code>admin</code> database is unique in MongoDB.</nobr> Users with normal access "
+            tr("<nobr>The <code>admin</code> database is unique in MongoDB.</nobr> Users with normal access "
             "to the <code>admin</code> database have read and write access to <b>all "
-            "databases</b>.");
+            "databases</b>."));
 
         _databaseNameDescriptionLabel->setWordWrap(true);
         _databaseNameDescriptionLabel->setAlignment(Qt::AlignTop);
@@ -26,18 +26,18 @@ namespace Robomongo
         _databaseNameDescriptionLabel->setMinimumSize(_databaseNameDescriptionLabel->sizeHint());
 
         _userName = new QLineEdit();
-        _userNameLabel = new QLabel("User Name");
+        _userNameLabel = new QLabel(tr("User Name"));
         _userPassword = new QLineEdit();
         _userPassword->setEchoMode(QLineEdit::Password);
-        _userPasswordLabel = new QLabel("Password");
+        _userPasswordLabel = new QLabel(tr("Password"));
         _databaseName = new QLineEdit("admin");
-        _databaseNameLabel = new QLabel("Database");
+        _databaseNameLabel = new QLabel(tr("Database"));
 
-        _useAuth = new QCheckBox("Perform authentication");
+        _useAuth = new QCheckBox(tr("Perform authentication"));
         _useAuth->setStyleSheet("margin-bottom: 7px");
         VERIFY(connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool))));
 
-        _echoModeButton = new QPushButton("Show");
+        _echoModeButton = new QPushButton(tr("Show"));
         VERIFY(connect(_echoModeButton, SIGNAL(clicked()), this, SLOT(toggleEchoMode())));
 
         _useAuth->setChecked(_settings->hasEnabledPrimaryCredential());
@@ -89,7 +89,7 @@ namespace Robomongo
     {
         bool isPassword = _userPassword->echoMode() == QLineEdit::Password;
         _userPassword->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
-        _echoModeButton->setText(isPassword ? "Hide": "Show");
+        _echoModeButton->setText(isPassword ? tr("Hide") : tr("Show"));
     }
 
     void ConnectionAuthTab::authChecked(bool checked)

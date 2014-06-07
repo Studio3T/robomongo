@@ -7,8 +7,7 @@
 
 namespace
 {
-    const QString filterForScripts = QObject::tr("JavaScript (*.js);; All Files (*.*)");
-
+    
     bool loadFromFileText(const QString &filePath, QString &text)
     {
         bool result = false;
@@ -21,8 +20,8 @@ namespace
             result = true;
         }
         else {
-            QMessageBox::critical(QApplication::activeWindow(), QString("Error"),
-                QObject::tr(PROJECT_NAME" can't read from %1:\n%2.")
+            QMessageBox::critical(QApplication::activeWindow(), qApp->translate("loadFromFileText",  "Error"),
+                PROJECT_NAME + qApp->translate("loadFromFileText", " can't read from %1:\n%2.")
                     .arg(filePath)
                     .arg(file.errorString()));
         }
@@ -50,8 +49,8 @@ namespace
             result = true;
         }
         else {
-            QMessageBox::critical(QApplication::activeWindow(), QString("Error"),
-                QObject::tr(PROJECT_NAME" can't save to %1:\n%2.")
+            QMessageBox::critical(QApplication::activeWindow(), qApp->translate("saveToFileText", "Error"),
+                PROJECT_NAME + qApp->translate("saveToFileText", " can't save to %1:\n%2.")
                     .arg(filePath)
                     .arg(file.errorString()));
         }
@@ -62,13 +61,17 @@ namespace
 
 namespace Robomongo
 {
+    QString filterForScripts;
+    
     ScriptInfo::ScriptInfo(const QString &script, bool execute,const CursorPosition &position,
                            const QString &title, const QString &filePath) :
         _script(script),
         _execute(execute),
         _title(title),
         _cursor(position),
-        _filePath(filePath) {}
+        _filePath(filePath) {
+        filterForScripts = qApp->translate("Robomongo::ScriptInfo", "JavaScript (*.js);; All Files (*.*)");
+    }
 
     bool ScriptInfo::loadFromFile(const QString &filePath)
     {
@@ -93,7 +96,7 @@ namespace Robomongo
     bool ScriptInfo::saveToFileAs()
     {
         QString filepath = QFileDialog::getSaveFileName(QApplication::activeWindow(),
-            QObject::tr("Save As"), _filePath, filterForScripts);
+            qApp->translate("Robomongo::ScriptInfo", "Save As"), _filePath, filterForScripts);
 
         if (saveToFileText(filepath,_script)) {
             _filePath = filepath;

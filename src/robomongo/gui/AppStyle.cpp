@@ -52,7 +52,7 @@ namespace Robomongo
         return OsStyle::drawPrimitive(element, option, painter, widget);
     }
 
-    QRect AppStyle::subElementRect( SubElement element, const QStyleOption * option, const QWidget * widget /*= 0 */ ) const
+    QRect AppStyle::subElementRect( SubElement element, const QStyleOption * option, const QWidget * widget /* = 0 */ ) const
     {
         return OsStyle::subElementRect(element, option, widget);
     }

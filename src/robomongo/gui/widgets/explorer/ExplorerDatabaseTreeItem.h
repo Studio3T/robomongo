@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QAction>
+
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
 
 namespace Robomongo
@@ -40,6 +42,7 @@ namespace Robomongo
         void dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &indexName);
         void enshureIndex(ExplorerCollectionTreeItem *const item, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo);
         void editIndexFromCollection(ExplorerCollectionTreeItem *const item,const std::string& oldIndexText,const std::string& newIndexText);
+        void retranslateUI();
 
     public Q_SLOTS:
         void handle(MongoDatabaseCollectionListLoadedEvent *event);
@@ -64,6 +67,12 @@ namespace Robomongo
         void addUserItem(MongoDatabase *database, const MongoUser &user);
         void addFunctionItem(MongoDatabase *database, const MongoFunction &function);
 
+        QAction *_openDbShellAction;
+        QAction *_dbStatsAction;
+        QAction *_dbDropAction;
+        QAction *_dbRepairAction;
+        QAction *_refreshDatabaseAction;
+        
         EventBus *_bus;
         ExplorerDatabaseCategoryTreeItem *_collectionFolderItem;
         ExplorerDatabaseCategoryTreeItem *_javascriptFolderItem;

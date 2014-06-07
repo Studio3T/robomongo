@@ -24,13 +24,13 @@ namespace
 
                 if (BsonUtils::isArray(element)) {
                     int itemsCount = element.Array().size();
-                    childItemInner->setValue(QString("Array [%1]").arg(itemsCount));
+                    childItemInner->setValue(qApp->translate("parseDocument", "Array [%1]").arg(itemsCount));
                     //parseDocument(childItemInner,element.Obj());  
                 }
                 else if (BsonUtils::isDocument(element)) {
                     int count = BsonUtils::elementsCount(element.Obj());
-                    childItemInner->setValue(QString("{ %1 fields }").arg(count));
-                   // parseDocument(childItemInner,element.Obj());                    
+                    childItemInner->setValue(qApp->translate("parseDocument", "{ %n fields }", "", count));
+                   // parseDocument(childItemInner,element.Obj());
                 }
                 else {
                     std::string result;
@@ -64,10 +64,10 @@ namespace Robomongo
                 idValue = idItem->value();
             }
 
-            child->setKey(QString("(%1) %2").arg(i + 1).arg(idValue));
+            child->setKey(tr("(%1) %2").arg(i + 1).arg(idValue));
 
             int count = BsonUtils::elementsCount(doc->bsonObj());
-            child->setValue(QString("{ %1 fields }").arg(count));
+            child->setValue(tr("{ %n fields }", "", count));
 
             child->setType(mongo::Object);
             _root->addChild(child);
@@ -204,13 +204,13 @@ namespace Robomongo
 
         if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
             if (section == BsonTreeItem::eKey) {
-                return "Key";
+                return tr("Key");
             }
             else if (section == BsonTreeItem::eValue) {
-                return "Value";
+                return tr("Value");
             }
             else {
-                return "Type";
+                return tr("Type");
             }
         }
 

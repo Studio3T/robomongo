@@ -26,8 +26,11 @@ namespace Robomongo
     protected:
         virtual void resizeEvent(QResizeEvent *event);
         virtual void keyPressEvent(QKeyEvent *event);
+        void changeEvent(QEvent *event);
         
     private:
+        void retranslateUI();
+        
         Notifier _notifier;
         QAction *_expandRecursive;
     };

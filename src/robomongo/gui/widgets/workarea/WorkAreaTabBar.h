@@ -13,6 +13,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        typedef QTabBar BaseClass;
         /**
          * @brief Creates WorkAreaTabBar, without parent widget. We are
          * assuming, that tab bar will be installed to (and owned by)
@@ -69,6 +70,8 @@ namespace Robomongo
          * open new shell.
          */
         void mouseDoubleClickEvent(QMouseEvent *);
+        
+        void changeEvent(QEvent *event);
 
     private:
         /**
@@ -90,6 +93,8 @@ namespace Robomongo
          */
         void emitSignalForContextMenuAction(int tabIndex, QAction *action);
 
+        void retranslateUI();
+        
         /**
          * @brief Builds stylesheet for this WorkAreaTabBar widget.
          */

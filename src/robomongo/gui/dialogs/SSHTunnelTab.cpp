@@ -20,7 +20,7 @@ namespace Robomongo
         _settings(settings)
     {
         SSHInfo info = _settings->sshInfo();
-        _sshSupport = new QCheckBox("Use SSH tunnel");
+        _sshSupport = new QCheckBox(tr("Use SSH tunnel"));
         _sshSupport->setStyleSheet("margin-bottom: 7px");
         _sshSupport->setChecked(info.isValid());
 
@@ -33,19 +33,20 @@ namespace Robomongo
         _sshPort->setValidator(new QRegExpValidator(rx, this));        
 
         _security = new QComboBox();
-        _security->addItems(QStringList() << "Password" << "Private Key");
+        _security->addItem(tr("Password"), SSHInfo::PASSWORD);
+        _security->addItem(tr("Private Key"), SSHInfo::PUBLICKEY);
         VERIFY(connect(_security, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(securityChange(const QString&))));
 
         _passwordBox = new QLineEdit(QtUtils::toQString(info._password));
         _privateKeyBox = new QLineEdit(QtUtils::toQString(info._publicKey._privateKey));
         _passphraseBox = new QLineEdit(QtUtils::toQString(info._publicKey._passphrase));
 
-        _passwordLabel = new QLabel("User Password:");
-        _sshPrivateKeyLabel = new QLabel("Private key:");
-        _sshPassphraseLabel = new QLabel("Passphrase:");
-        _sshAddressLabel = new QLabel("SSH Address:");
-        _sshUserNameLabel = new QLabel("SSH User Name:");
-        _sshAuthMethodLabel = new QLabel("SSH Auth Method:");
+        _passwordLabel = new QLabel(tr("User Password:"));
+        _sshPrivateKeyLabel = new QLabel(tr("Private key:"));
+        _sshPassphraseLabel = new QLabel(tr("Passphrase:"));
+        _sshAddressLabel = new QLabel(tr("SSH Address:"));
+        _sshUserNameLabel = new QLabel(tr("SSH User Name:"));
+        _sshAuthMethodLabel = new QLabel(tr("SSH Auth Method:"));
 
 /*
 // Commented because of this:
@@ -98,9 +99,9 @@ namespace Robomongo
         setLayout(mainLayout);
 
         if (info.authMethod() == SSHInfo::PUBLICKEY) {
-            utils::setCurrentText(_security, "Private Key");
+            utils::setCurrentText(_security, tr("Private Key"));
         } else {
-            utils::setCurrentText(_security, "Password");
+            utils::setCurrentText(_security, tr("Password"));
         }
 
         securityChange(_security->currentText());
@@ -155,8 +156,8 @@ namespace Robomongo
 
     void SshTunelTab::setPrivateFile()
     {
-        QString filepath = QFileDialog::getOpenFileName(this, "Select private key file",
-            _privateKeyBox->text(), QObject::tr("Private key files (*.*)"));
+        QString filepath = QFileDialog::getOpenFileName(this, tr("Select private key file"),
+            _privateKeyBox->text(), tr("Private key files (*.*)"));
 
         if (filepath.isNull())
             return;
@@ -166,10 +167,7 @@ namespace Robomongo
 
     SSHInfo::SupportedAuthenticationMetods SshTunelTab::selectedAuthMethod()
     {
-        if (_security->currentText() == "Private Key")
-            return SSHInfo::PUBLICKEY;
-
-        return SSHInfo::PASSWORD;
+        return static_cast<SSHInfo::SupportedAuthenticationMetods> (_security->itemData(_security->currentIndex()).toInt());
     }
 
     void SshTunelTab::accept()

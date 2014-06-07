@@ -203,7 +203,7 @@ namespace Robomongo
     {
         const QString &title = event->shell->title();
 
-        QString shellName = title.isEmpty() ? " Loading..." : title;
+        QString shellName = title.isEmpty() ? tr(" Loading...") : title;
 
         QueryWidget *queryWidget = new QueryWidget(event->shell,this);
         VERIFY(connect(queryWidget, SIGNAL(titleChanged(const QString &)), this, SLOT(tabTextChange(const QString &))));

@@ -1,0 +1,21 @@
+SET(TRANSLATIONS
+    robomongo_de.ts
+    robomongo_en.ts
+    robomongo_pt.ts
+    robomongo_ru.ts
+)
+
+SET(QM_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/qt_ru.qm
+)
+
+FIND_PACKAGE(Qt5LinguistTools)
+IF(UPDATE_TRANSLATIONS)
+  QT5_CREATE_TRANSLATION(QM_FILES ${CMAKE_SOURCE_DIR}/src/robomongo ${TRANSLATIONS} OPTIONS -no-obsolete -I ${CMAKE_SOURCE_DIR}/src)
+  MESSAGE("Updating *.ts files")
+ELSE(UPDATE_TRANSLATIONS)
+  QT5_ADD_TRANSLATION(QM_FILES ${TRANSLATIONS})
+  MESSAGE("Using existing *.ts files")
+ENDIF(UPDATE_TRANSLATIONS)
+SET(QM_FILES ${QM_FILES} PARENT_SCOPE)
+ADD_CUSTOM_TARGET (translations ALL DEPENDS ${QM_FILES})

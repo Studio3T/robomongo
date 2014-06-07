@@ -11,6 +11,7 @@ CMakeLists.txt.user*
 target/
 libs/
 
+*.orig
 /build
 /build2
 

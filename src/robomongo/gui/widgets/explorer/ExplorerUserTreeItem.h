@@ -13,7 +13,8 @@ namespace Robomongo
     public:
         typedef ExplorerTreeItem BaseClass;
         ExplorerUserTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database, const MongoUser &user);
-
+        void retranslateUI();
+        
     private Q_SLOTS:
         void ui_dropUser();
         void ui_editUser();
@@ -21,6 +22,9 @@ namespace Robomongo
     private:
         const MongoUser _user;
         MongoDatabase *_database;
+        
+        QAction *_dropUserAction;
+        QAction *_editUserAction;
     };
 }
 

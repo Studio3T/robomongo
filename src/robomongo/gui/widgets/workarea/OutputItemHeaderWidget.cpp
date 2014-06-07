@@ -36,7 +36,6 @@ namespace Robomongo
         // Maximaze button
         _maxButton = new QPushButton;
         _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
-        _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");
         _maxButton->setFixedSize(18, 18);
         _maxButton->setFlat(true);
         VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart())));
@@ -44,7 +43,6 @@ namespace Robomongo
         // Text mode button
         _textButton = new QPushButton(this);
         _textButton->setIcon(GuiRegistry::instance().textIcon());
-        _textButton->setToolTip("View results in text mode");
         _textButton->setFixedSize(24, 24);
         _textButton->setFlat(true);
         _textButton->setCheckable(true);
@@ -53,7 +51,6 @@ namespace Robomongo
         _treeButton = new QPushButton(this);
         _treeButton->hide();
         _treeButton->setIcon(GuiRegistry::instance().treeIcon());
-        _treeButton->setToolTip("View results in tree mode");
         _treeButton->setFixedSize(24, 24);
         _treeButton->setFlat(true);
         _treeButton->setCheckable(true);
@@ -63,7 +60,6 @@ namespace Robomongo
         _tableButton = new QPushButton(this);
         _tableButton->hide();
         _tableButton->setIcon(GuiRegistry::instance().tableIcon());
-        _tableButton->setToolTip("View results in table mode");
         _tableButton->setFixedSize(24, 24);
         _tableButton->setFlat(true);
         _tableButton->setCheckable(true);
@@ -73,7 +69,6 @@ namespace Robomongo
         _customButton = new QPushButton(this);
         _customButton->hide();
         _customButton->setIcon(GuiRegistry::instance().customIcon());
-        _customButton->setToolTip("View results in custom UI");
         _customButton->setFixedSize(24, 24);
         _customButton->setFlat(true);
         _customButton->setCheckable(true);
@@ -125,6 +120,33 @@ namespace Robomongo
         layout->addWidget(createVerticalLine());
         layout->addWidget(_maxButton, 0, Qt::AlignRight);
         setLayout(layout);
+        
+        retranslateUI();
+    }
+
+    void OutputItemHeaderWidget::retranslateUI()
+    {
+        _maxButton->setToolTip(tr("Maximize or restore back this output result. You also can double-click on result's header."));
+        _textButton->setToolTip(tr("View results in text mode"));
+        _treeButton->setToolTip(tr("View results in tree mode"));
+        _tableButton->setToolTip(tr("View results in table mode"));
+        _customButton->setToolTip(tr("View results in custom UI"));
+    }
+    
+    void OutputItemHeaderWidget::changeEvent(QEvent* event)
+    {
+        if (0 != event) {
+            switch (event->type()) {
+                // this event is send if a translator is loaded
+            case QEvent::LanguageChange:
+                retranslateUI();
+                break;
+                // this event is send, if the system, language changes
+            case QEvent::LocaleChange:
+                break;
+            }
+        }
+        BaseClass::changeEvent(event);
     }
 
     void OutputItemHeaderWidget::mouseDoubleClickEvent(QMouseEvent *)

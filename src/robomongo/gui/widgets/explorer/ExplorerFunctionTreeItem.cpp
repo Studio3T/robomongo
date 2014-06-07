@@ -21,19 +21,27 @@ namespace Robomongo
         _database(database)
     {
 
-        QAction *dropFunction = new QAction("Remove Function", this);
-        VERIFY(connect(dropFunction, SIGNAL(triggered()), SLOT(ui_dropFunction())));
+        _dropFunctionAction = new QAction(this);
+        VERIFY(connect(_dropFunctionAction, SIGNAL(triggered()), SLOT(ui_dropFunction())));
 
-        QAction *editFunction = new QAction("Edit Function", this);
-        VERIFY(connect(editFunction, SIGNAL(triggered()), SLOT(ui_editFunction())));
+        _editFunctionAction = new QAction(this);
+        VERIFY(connect(_editFunctionAction, SIGNAL(triggered()), SLOT(ui_editFunction())));
 
-        BaseClass::_contextMenu->addAction(editFunction);
-        BaseClass::_contextMenu->addAction(dropFunction);
+        BaseClass::_contextMenu->addAction(_editFunctionAction);
+        BaseClass::_contextMenu->addAction(_dropFunctionAction);
 
         setText(0, QtUtils::toQString(_function.name()));
         setIcon(0, GuiRegistry::instance().functionIcon());
         setToolTip(0, buildToolTip(_function));
         setExpanded(false);
+        
+        retranslateUI();
+    }
+    
+    void ExplorerFunctionTreeItem::retranslateUI()
+    {
+        _dropFunctionAction->setText(tr("Remove Function"));
+        _editFunctionAction->setText(tr("Edit Function"));
     }
 
     QString ExplorerFunctionTreeItem::buildToolTip(const MongoFunction &function)
@@ -48,7 +56,7 @@ namespace Robomongo
         FunctionTextEditor dlg(QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),
             QtUtils::toQString(_database->name()),
             _function);
-        dlg.setWindowTitle("Edit Function");
+        dlg.setWindowTitle(tr("Edit Function"));
         int result = dlg.exec();
 
         if (result == QDialog::Accepted) {
@@ -64,7 +72,7 @@ namespace Robomongo
     void ExplorerFunctionTreeItem::ui_dropFunction()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(),"Drop","Function",QtUtils::toQString(_function.name()));
+        int answer = utils::questionDialog(treeWidget(),tr("Drop"),tr("Function"),QtUtils::toQString(_function.name()));
 
         if (answer != QMessageBox::Yes)
             return;

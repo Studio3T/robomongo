@@ -60,9 +60,9 @@ namespace Robomongo
         QVBoxLayout *layout = new QVBoxLayout();
         layout->addLayout(hlayout);
         layout->addWidget(hline);
-        layout->addWidget(new QLabel("Name:"));
+        layout->addWidget(new QLabel(tr("Name:")));
         layout->addWidget(_nameEdit);
-        layout->addWidget(new QLabel("Code:"));
+        layout->addWidget(new QLabel(tr("Code:")));
         layout->addWidget(_queryText);
         layout->addLayout(bottomlayout);
         setLayout(layout);

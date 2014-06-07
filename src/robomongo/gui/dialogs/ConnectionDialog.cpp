@@ -28,7 +28,7 @@ namespace Robomongo
         : QDialog(),
         _connection(connection)
     {
-        setWindowTitle("Connection Settings");
+        setWindowTitle(tr("Connection Settings"));
         setWindowIcon(GuiRegistry::instance().serverIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumWidth(450);
@@ -57,9 +57,9 @@ namespace Robomongo
         _sshTab = new SshTunelTab(_connection);
 #endif
 
-        tabWidget->addTab(_basicTab,    "Connection");
-        tabWidget->addTab(_authTab,     "Authentication");
-        tabWidget->addTab(_advancedTab, "Advanced");
+        tabWidget->addTab(_basicTab,    tr("Connection"));
+        tabWidget->addTab(_authTab,     tr("Authentication"));
+        tabWidget->addTab(_advancedTab, tr("Advanced"));
         tabWidget->addTab(_sslTab,      "SSL");
 #ifdef SSH_SUPPORT_ENABLED
         tabWidget->addTab(_sshTab,      "SSH");
@@ -88,7 +88,7 @@ namespace Robomongo
 #ifdef SSH_SUPPORT_ENABLED
         bool isSshAndSsl = _sslTab->isSslSupported() && _sshTab->isSshSupported();
         if (isSshAndSsl) {
-            QMessageBox::warning(this, "Invalid Transport", "SSH and SSL cannot be enabled simultaneously. Please uncheck one of them.");
+            QMessageBox::warning(this, tr("Invalid Transport"), tr("SSH and SSL cannot be enabled simultaneously. Please uncheck one of them."));
             return false;
         }
 #endif

@@ -1,9 +1,14 @@
 #pragma once
 
+#include <QObject>
 #include <QString>
 #include <QVariantMap>
+#include <QApplication>
+#include <QTranslator>
 #include <vector>
+#include <stdlib.h>
 #include "robomongo/core/Enums.h"
+#include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
@@ -89,7 +94,11 @@ namespace Robomongo
 
         QString currentStyle() const {return _currentStyle; }
         void setCurrentStyle(const QString& style);
-
+        
+        QString currentTranslation() const {return _currentTranslation; }
+        void setCurrentTranslation(const QString& langName);
+        QMap<QString, QString> getTranslations() const {return _translations; }
+        void switchTranslator(const QString& langName, bool forced = false);
 
     private:
 
@@ -123,6 +132,13 @@ namespace Robomongo
         bool _disableConnectionShortcuts;
         int _batchSize;
         QString _currentStyle;
+
+        QTranslator *_translator;
+        QTranslator *_translatorQt;
+        QString _currentTranslation;
+        QString _qmPath;
+        QMap<QString, QString> _translations;
+        void loadProvidedTranslations();
         /**
          * @brief List of connections
          */

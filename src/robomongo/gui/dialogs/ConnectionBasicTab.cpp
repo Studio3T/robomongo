@@ -17,12 +17,12 @@ namespace Robomongo
         _settings(settings)
     {
         QLabel *connectionDescriptionLabel = new QLabel(
-            "Choose any connection name that will help you to identify this connection.");
+            tr("Choose any connection name that will help you to identify this connection."));
         connectionDescriptionLabel->setWordWrap(true);
         connectionDescriptionLabel->setContentsMargins(0, -2, 0, 20);
 
         QLabel *serverDescriptionLabel = new QLabel(
-            "Specify host and port of MongoDB server. Host can be either IP or domain name.");
+            tr("Specify host and port of MongoDB server. Host can be either IP or domain name."));
         serverDescriptionLabel->setWordWrap(true);
         serverDescriptionLabel->setContentsMargins(0, -2, 0, 20);
 
@@ -35,10 +35,10 @@ namespace Robomongo
 
         QGridLayout *connectionLayout = new QGridLayout;
         connectionLayout->setAlignment(Qt::AlignTop);
-        connectionLayout->addWidget(new QLabel("Name:"),          1, 0);
+        connectionLayout->addWidget(new QLabel(tr("Name:")),          1, 0);
         connectionLayout->addWidget(_connectionName,              1, 1, 1, 3);
         connectionLayout->addWidget(connectionDescriptionLabel,   2, 1, 1, 3);
-        connectionLayout->addWidget(new QLabel("Address:"),       3, 0);
+        connectionLayout->addWidget(new QLabel(tr("Address:")),       3, 0);
         connectionLayout->addWidget(_serverAddress,               3, 1);
         connectionLayout->addWidget(new QLabel(":"),              3, 2);
         connectionLayout->addWidget(_serverPort,                  3, 3);

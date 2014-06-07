@@ -77,7 +77,7 @@ namespace Robomongo
     EditIndexDialog::EditIndexDialog(const EnsureIndexInfo &info, const QString &databaseName, const QString &serverAdress, QWidget *parent)
         :BaseClass(parent),_info(info)
     {        
-        setWindowTitle("Index Properties");
+        setWindowTitle(tr("Index Properties"));
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverAdress);
         Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(),QtUtils::toQString(_info._collection.name()));
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), databaseName);
@@ -125,30 +125,30 @@ namespace Robomongo
         uniqueStateChanged(_uniqueCheckBox->checkState());
 
         QLabel *nameHelpLabel = createHelpLabel(
-            "Choose any name that will help you to identify this index.",
+            tr("Choose any name that will help you to identify this index."),
             0, -2, 0, 15);
 
         QLabel *keyHelpLabel = createHelpLabel(
-            "Document that contains pairs with the name of the field or fields to index "
-            "and order of the index. A 1 specifies ascending and a -1 specifies descending.",
+            tr("Document that contains pairs with the name of the field or fields to index "
+            "and order of the index. A 1 specifies ascending and a -1 specifies descending."),
             0, -2, 0, 20);
 
         QLabel *uniqueHelpLabel = createHelpLabel(
-            "If set, creates a unique index so that the collection will not accept insertion "
-            "of documents where the index key or keys match an existing value in the index.",
+            tr("If set, creates a unique index so that the collection will not accept insertion "
+            "of documents where the index key or keys match an existing value in the index."),
             20, -2, 0, 20);
 
         QLabel *dropDupsHelpLabel = createHelpLabel(
-            "MongoDB cannot create a unique index on a field that has duplicate values. "
+            tr("MongoDB cannot create a unique index on a field that has duplicate values. "
             "To force the creation of a unique index, you can specify the dropDups option, "
-            "which will only index the first occurrence of a value for the key, and delete all subsequent values. ",
+            "which will only index the first occurrence of a value for the key, and delete all subsequent values. "),
             20, -2, 0, 20);
 
         QGridLayout *layout = new QGridLayout;
-        layout->addWidget(new QLabel("Name:   "),       0, 0);
+        layout->addWidget(new QLabel(tr("Name:   ")),       0, 0);
         layout->addWidget(_nameLineEdit,                0, 1);
         layout->addWidget(nameHelpLabel,                1, 1, Qt::AlignTop);
-        layout->addWidget(new QLabel("Keys:   "),       2, 0, Qt::AlignTop);
+        layout->addWidget(new QLabel(tr("Keys:   ")),       2, 0, Qt::AlignTop);
         layout->addWidget(_jsonText,                    2, 1, Qt::AlignTop);
         layout->addWidget(keyHelpLabel,                 3, 1, Qt::AlignTop);
         layout->addWidget(_uniqueCheckBox,              4, 0, 1, 2);
@@ -207,16 +207,16 @@ namespace Robomongo
         VERIFY(connect(expireCheckBox,SIGNAL(stateChanged(int)),this,SLOT(expireStateChanged(int))));
 
         QLabel *sparseHelpLabel = createHelpLabel(
-            "If set, the index only references documents with the specified field. "
-            "These indexes use less space but behave differently in some situations (particularly sorts).",
+            tr("If set, the index only references documents with the specified field. "
+            "These indexes use less space but behave differently in some situations (particularly sorts)."),
             20, -2, 0, 20);
 
         QLabel *backgroundHelpLabel = createHelpLabel(
-            "Builds the index in the background so that building an index does not block other database activities.",
+            tr("Builds the index in the background so that building an index does not block other database activities."),
             20, -2, 0, 20);
 
         QLabel *expireHelpLabel = createHelpLabel(
-            "Specifies a <i>time to live</i>, in seconds, to control how long MongoDB retains documents in this collection",
+            tr("Specifies a <i>time to live</i>, in seconds, to control how long MongoDB retains documents in this collection"),
             20, -2, 0, 20);
 
         QGridLayout *layout = new QGridLayout;
@@ -242,16 +242,16 @@ namespace Robomongo
         _textWeightsLineEdit = createFindFrame(textSearch, QtUtils::toQString(_info._textWeights));
 
         QLabel *defaultLanguageHelpLabel = createHelpLabel(
-            "For a <i>text</i> index, the language that determines the list of stop words and the rules for the stemmer and tokenizer. The default value is <b>english</b>",
+            tr("For a <i>text</i> index, the language that determines the list of stop words and the rules for the stemmer and tokenizer. The default value is <b>english</b>"),
             0, -2, 0, 20);
 
         QLabel *languageOverrideHelpLabel = createHelpLabel(
-            "For a <i>text</i> index, specify the name of the field in the document that contains, for that document, the language to override the default language. The default value is <b>language</b>",
+            tr("For a <i>text</i> index, specify the name of the field in the document that contains, for that document, the language to override the default language. The default value is <b>language</b>"),
             0, -2, 0, 20);
 
         QLabel *textWeightsHelpLabel = createHelpLabel(
-            "Document that contains field and weight pairs. The weight is a number ranging from 1 to 99,999 "
-            "and denotes the significance of the field relative to the other indexed fields. ",
+            tr("Document that contains field and weight pairs. The weight is a number ranging from 1 to 99,999 "
+            "and denotes the significance of the field relative to the other indexed fields. "),
             0, -2, 0, 20);
 
         QGridLayout *layout = new QGridLayout;
@@ -298,14 +298,14 @@ namespace Robomongo
         if (isValidJson(_jsonText->sciScintilla()->text())) {
             const QString &weightText = _textWeightsLineEdit->sciScintilla()->text();
             if (!weightText.isEmpty() && !isValidJson(weightText)) {
-                QMessageBox::warning(this, "Invalid json", "Please check json text.\n");
+                QMessageBox::warning(this, tr("Invalid json"), tr("Please check json text.\n"));
                 _textWeightsLineEdit->setFocus();
                 return ;
             }
             return BaseClass::accept();
         }
         else {
-            QMessageBox::warning(this, "Invalid json", "Please check json text.\n");
+            QMessageBox::warning(this, tr("Invalid json"), tr("Please check json text.\n"));
             _jsonText->setFocus();
         }
     }

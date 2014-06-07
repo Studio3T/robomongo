@@ -21,18 +21,15 @@
 
 namespace Robomongo
 {
-    const QSize DocumentTextEditor::minimumSize = QSize(800, 600);
+    const QSize DocumentTextEditor::minimumSize = QSize(800, 400);
 
     DocumentTextEditor::DocumentTextEditor(const CollectionInfo &info, const QString &json, bool readonly /* = false */, QWidget *parent) :
         QDialog(parent),
         _info(info),
         _readonly(readonly)
     {
-        QRect screenGeometry = QApplication::desktop()->availableGeometry();
-        QSize size(screenGeometry.width() - 650, screenGeometry.height() - 265);
-        size.expandedTo(minimumSize);
+        setMinimumSize(minimumSize);
 
-        setMinimumSize(size);
         setWindowFlags(Qt::Window | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
 
         Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), QtUtils::toQString(_info._ns.collectionName()));

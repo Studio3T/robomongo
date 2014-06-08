@@ -379,8 +379,8 @@ namespace Robomongo
         prevtabAction->setVisible(true);
         VERIFY(connect(prevtabAction, SIGNAL(triggered()), this, SLOT(selectPrevTab())));
 
-        // Reload action
-        QAction *reloadAction = new QAction("Reload Current Tab", this);
+        // Reload action (currently a re-execute, as does not "reload" files per issue #447)
+        QAction *reloadAction = new QAction("Re-execute Query in Current Tab", this);
         reloadAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
         reloadAction->setVisible(true);
         VERIFY(connect(reloadAction, SIGNAL(triggered()), SLOT(executeScript())));

@@ -379,6 +379,12 @@ namespace Robomongo
         prevtabAction->setVisible(true);
         VERIFY(connect(prevtabAction, SIGNAL(triggered()), this, SLOT(selectPrevTab())));
 
+        // Reload action
+        QAction *reloadAction = new QAction("Reload Current Tab", this);
+        reloadAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
+        reloadAction->setVisible(true);
+        VERIFY(connect(reloadAction, SIGNAL(triggered()), SLOT(executeScript())));
+
         // Window menu
         QMenu *windowMenu = menuBar()->addMenu("Window");
         //minimize
@@ -387,6 +393,8 @@ namespace Robomongo
         windowMenu->addSeparator();
         windowMenu->addAction(nexttabAction);
         windowMenu->addAction(prevtabAction);
+        windowMenu->addSeparator();
+        windowMenu->addAction(reloadAction);
 
 
     /*** About menu ***/
@@ -657,13 +665,6 @@ namespace Robomongo
     
     void MainWindow::executeScript()
     {
-        QAction *action = static_cast<QAction *>(sender());
-
-        if (action->data().toString() != "Execute") {
-            stopScript();
-            return;
-        }
-
         QueryWidget *widget = _workArea->currentQueryWidget();
         if (!widget)
             return;

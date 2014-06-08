@@ -33,7 +33,7 @@ namespace Robomongo
     {
         setContentsMargins(5,0,0,0);
         
-        // Maximaze button
+        // Maximize button
         _maxButton = new QPushButton;
         _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
         _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");

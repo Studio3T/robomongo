@@ -102,13 +102,13 @@ namespace Robomongo
      */
     QModelIndex BsonTreeView::selectedIndex() const
     {
-        QModelIndexList indexses = detail::uniqueRows(selectionModel()->selectedRows());
-        int count = indexses.count();
+        QModelIndexList indexes = detail::uniqueRows(selectionModel()->selectedRows());
+        int count = indexes.count();
 
-        if (indexses.count() != 1)
+        if (indexes.count() != 1)
             return QModelIndex();
 
-        return indexses[0];
+        return indexes[0];
     }
 
     QModelIndexList BsonTreeView::selectedIndexes() const

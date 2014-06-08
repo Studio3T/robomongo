@@ -38,10 +38,10 @@ namespace Robomongo
             return Robomongo::BsonUtils::isDocument(item->type());
         }
 
-        QModelIndexList uniqueRows(QModelIndexList indexses)
+        QModelIndexList uniqueRows(QModelIndexList indexes)
         {
             QModelIndexList result;
-            for (QModelIndexList::const_iterator it = indexses.begin(); it!=indexses.end(); ++it)
+            for (QModelIndexList::const_iterator it = indexes.begin(); it!=indexes.end(); ++it)
             {
                 QModelIndex isUnique = *it;
                 Robomongo::BsonTreeItem *item = Robomongo::QtUtils::item<Robomongo::BsonTreeItem*>(isUnique);

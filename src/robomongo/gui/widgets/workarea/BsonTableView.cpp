@@ -39,12 +39,12 @@ namespace Robomongo
 
     QModelIndex BsonTableView::selectedIndex() const
     {
-        QModelIndexList indexses = detail::uniqueRows(selectionModel()->selectedIndexes());
+        QModelIndexList indexes = detail::uniqueRows(selectionModel()->selectedIndexes());
 
-        if (indexses.count() != 1)
+        if (indexes.count() != 1)
             return QModelIndex();
 
-        return indexses[0];
+        return indexes[0];
     }
 
     QModelIndexList BsonTableView::selectedIndexes() const

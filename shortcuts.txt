@@ -3,7 +3,7 @@ Robomongo shortcut key reference
 
 ### Windows/Linux users
 
-   Ctrl+Enter or F5
+   Ctrl+Enter or F5 or Ctrl+R
       Execute query on current tab. If you have selection in query text,
       only selected text will be executed.
 
@@ -83,7 +83,7 @@ Robomongo shortcut key reference
 
 ### OS X users
 
-   Cmd+Enter or F5
+   Cmd+Enter or F5 or Cmd+R
       Execute query on current tab. If you have selection in query text, only
       selected text will be executed.
 

@@ -124,11 +124,11 @@ namespace Robomongo
     void OutputItemContentWidget::refreshOutputItem()
     {
         switch(_viewMode) {
-        case Text: showText(); break;
-        case Tree: showTree(); break;
-        case Table: showTable(); break;
-        case Custom: showCustom(); break;
-        default: showTree();
+            case Text: showText(); break;
+            case Tree: showTree(); break;
+            case Table: showTable(); break;
+            case Custom: showCustom(); break;
+            default: showTree();
         }
     }
 

@@ -129,12 +129,12 @@ namespace Robomongo
 
         // Exit action
         QAction *exitAction = new QAction("&Exit", this);
-        exitAction->setShortcut(QKeySequence::Quit);
+        exitAction->setShortcuts(QKeySequence::Quit);
         VERIFY(connect(exitAction, SIGNAL(triggered()), this, SLOT(close())));
 
         // Connect action
         _connectAction = new QAction("&Connect...", this);
-        _connectAction->setShortcut(QKeySequence::New);
+        _connectAction->setShortcuts(QKeySequence::New);
         _connectAction->setIcon(GuiRegistry::instance().connectIcon());
         _connectAction->setIconText("Connect");
         _connectAction->setToolTip(QString("Connect to local or remote MongoDB instance <b>(%1 + O)</b>").arg(controlKey));
@@ -369,13 +369,13 @@ namespace Robomongo
 
         // Next tab
         QAction *nexttabAction = new QAction("Select Next Tab", this);
-        nexttabAction->setShortcut(QKeySequence(QKeySequence::NextChild));
+        nexttabAction->setShortcuts(QKeySequence::NextChild);
         nexttabAction->setVisible(true);
         VERIFY(connect(nexttabAction, SIGNAL(triggered()), this, SLOT(selectNextTab())));
 
         // Previous tab
         QAction *prevtabAction = new QAction("Select Previous Tab", this);
-        prevtabAction->setShortcut(QKeySequence(QKeySequence::PreviousChild));
+        prevtabAction->setShortcuts(QKeySequence::PreviousChild);
         prevtabAction->setVisible(true);
         VERIFY(connect(prevtabAction, SIGNAL(triggered()), this, SLOT(selectPrevTab())));
 

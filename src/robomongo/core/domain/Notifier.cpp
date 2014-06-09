@@ -12,6 +12,8 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/MongoServer.h"
 
+#include "robomongo/shell/db/ptimeutil.h"
+
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/utils/DialogUtils.h"
@@ -26,6 +28,11 @@ namespace Robomongo
         {
             return Robomongo::BsonUtils::isSimpleType(item->type())
                 || Robomongo::BsonUtils::isUuidType(item->type(), item->binType());
+        }
+
+        bool isObjectIdType(Robomongo::BsonTreeItem *item)
+        {
+            return mongo::jstOID == item->type();
         }
 
         bool isMultySelection(const QModelIndexList &indexes)
@@ -90,6 +97,9 @@ namespace Robomongo
         _copyValueAction = new QAction("Copy Value", wid);
         VERIFY(connect(_copyValueAction, SIGNAL(triggered()), SLOT(onCopyDocument())));
 
+        _copyTimestampAction = new QAction("Copy Timestamp from ObjectId", wid);
+        VERIFY(connect(_copyTimestampAction, SIGNAL(triggered()), SLOT(onCopyTimestamp())));
+
         _copyJsonAction = new QAction("Copy JSON", wid);
         VERIFY(connect(_copyJsonAction, SIGNAL(triggered()), SLOT(onCopyJson())));        
     }
@@ -101,10 +111,13 @@ namespace Robomongo
         
         bool isSimple = false;
         bool isDocument = false;
+        bool isObjectId = false;
+
         if (item) {
             isSimple = detail::isSimpleType(item);
             isDocument = detail::isDocumentType(item);
-        }         
+            isObjectId = detail::isObjectIdType(item);
+        }
 
         if (onItem && isEditable) menu->addAction(_editDocumentAction);
         if (onItem)               menu->addAction(_viewDocumentAction);
@@ -113,6 +126,7 @@ namespace Robomongo
         if (onItem && (isSimple || isDocument)) menu->addSeparator();
 
         if (onItem && isSimple)   menu->addAction(_copyValueAction);
+        if (onItem && isObjectId) menu->addAction(_copyTimestampAction);
         if (onItem && isDocument) menu->addAction(_copyJsonAction);
         if (onItem && isEditable) menu->addSeparator();
         if (onItem && isEditable) menu->addAction(_deleteDocumentAction);
@@ -299,6 +313,42 @@ namespace Robomongo
 
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(documentItem->value());
+    }
+
+    void Notifier::onCopyTimestamp()
+    {
+        QModelIndex selectedInd = _observer->selectedIndex();
+        if (!selectedInd.isValid())
+            return;
+
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+        if (!documentItem)
+            return;
+
+        if (!detail::isObjectIdType(documentItem))
+            return;
+
+        QClipboard *clipboard = QApplication::clipboard();
+
+        // new Date(parseInt(this.valueOf().slice(0,8), 16)*1000);
+        QString hexTimestamp = documentItem->value().mid(10,8);
+        bool ok;
+        long long milliTimestamp = (long long)hexTimestamp.toLongLong(&ok,16)*1000;
+
+        bool isSupportedDate = (miutil::minDate < milliTimestamp) && (milliTimestamp < miutil::maxDate);
+
+        boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
+        boost::posix_time::time_duration diff = boost::posix_time::millisec(milliTimestamp);
+        boost::posix_time::ptime time = epoch + diff;
+
+        if(isSupportedDate)
+        {
+            std::string date = miutil::isotimeString(time,false,false);
+            clipboard->setText("ISODate(\""+QString::fromStdString(date)+"\")");
+        }
+        else {
+            clipboard->setText("Error extracting ISODate()");
+        }
     }
 
      void Notifier::onCopyJson()

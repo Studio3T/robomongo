@@ -41,6 +41,10 @@ namespace Robomongo
         QModelIndexList indexes = selectedIndexes();
         if (detail::isMultiSelection(indexes)) {
             QMenu menu(this);
+            
+            menu.addAction(_expandRecursive);
+            menu.addSeparator();
+            
             _notifier.initMultiSelectionMenu(&menu);
             menu.exec(menuPoint);
         }
@@ -94,7 +98,13 @@ namespace Robomongo
 
     void BsonTreeView::onExpandRecursive()
     {
-        expandNode(selectedIndex());
+        QModelIndexList indexes = selectedIndexes();
+        if (detail::isMultiSelection(indexes)) {
+            for (int i=0; i<indexes.count(); ++i) 
+                expandNode(indexes[i]);
+        } else {
+            expandNode(selectedIndex());
+        }
     }
 
     /**

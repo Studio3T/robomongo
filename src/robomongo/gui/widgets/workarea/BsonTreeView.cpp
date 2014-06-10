@@ -39,7 +39,7 @@ namespace Robomongo
         menuPoint.setY(menuPoint.y() + header()->height());
 
         QModelIndexList indexes = selectedIndexes();
-        if (detail::isMultySelection(indexes)) {
+        if (detail::isMultiSelection(indexes)) {
             QMenu menu(this);
             _notifier.initMultiSelectionMenu(&menu);
             menu.exec(menuPoint);

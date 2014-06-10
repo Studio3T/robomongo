@@ -35,7 +35,7 @@ namespace Robomongo
             return mongo::jstOID == item->type();
         }
 
-        bool isMultySelection(const QModelIndexList &indexes)
+        bool isMultiSelection(const QModelIndexList &indexes)
         {
             return indexes.count()>1;
         }
@@ -190,7 +190,7 @@ namespace Robomongo
             return;
 
         QModelIndexList selectedIndexes = _observer->selectedIndexes();
-        if (!detail::isMultySelection(selectedIndexes))
+        if (!detail::isMultiSelection(selectedIndexes))
             return;
         int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", QString("Do you want to delete %1 selected documents?").arg(selectedIndexes.count()));
         if (answer == QMessageBox::Yes) {

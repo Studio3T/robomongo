@@ -18,9 +18,11 @@ namespace Robomongo
         virtual QModelIndex selectedIndex() const;
         virtual QModelIndexList selectedIndexes() const;
         void expandNode(const QModelIndex &index);
+        void collapseNode(const QModelIndex &index);
         
     private Q_SLOTS:
         void onExpandRecursive();
+        void onCollapseRecursive();
         void showContextMenu(const QPoint &point);
 
     protected:
@@ -30,5 +32,6 @@ namespace Robomongo
     private:
         Notifier _notifier;
         QAction *_expandRecursive;
+        QAction *_collapseRecursive;
     };
 }

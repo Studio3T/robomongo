@@ -26,6 +26,9 @@ namespace Robomongo
 
         _expandRecursive = new QAction("Expand Recursively", this);
         VERIFY(connect(_expandRecursive, SIGNAL(triggered()), SLOT(onExpandRecursive())));
+        
+        _collapseRecursive = new QAction(tr("Collapse Recursively"), this);
+        VERIFY(connect(_collapseRecursive, SIGNAL(triggered()), SLOT(onCollapseRecursive())));
 
         setStyleSheet("QTreeView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
@@ -43,12 +46,13 @@ namespace Robomongo
             QMenu menu(this);
             
             menu.addAction(_expandRecursive);
+            menu.addAction(_collapseRecursive);
             menu.addSeparator();
             
             _notifier.initMultiSelectionMenu(&menu);
             menu.exec(menuPoint);
         }
-        else{
+        else {
 
             QModelIndex selectedInd = selectedIndex();
             BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
@@ -59,6 +63,7 @@ namespace Robomongo
                 isSimple = detail::isSimpleType(documentItem);
                 if (detail::isDocumentType(documentItem)) {
                     menu.addAction(_expandRecursive);
+                    menu.addAction(_collapseRecursive);
                     menu.addSeparator();
                 }
             }
@@ -95,15 +100,34 @@ namespace Robomongo
             }
         }
     }
+    
+    void BsonTreeView::collapseNode(const QModelIndex &index)
+    {
+        if (index.isValid()) {
+            BaseClass::collapse(index);
+            BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(index);
+            for (unsigned i = 0; i < item->childrenCount(); ++i) {
+                BsonTreeItem *tritem = item->child(i);
+                if (tritem && detail::isDocumentType(tritem)) {
+                    collapseNode(model()->index(i, 0, index));
+                }
+            }
+        }
+    }
 
     void BsonTreeView::onExpandRecursive()
     {
         QModelIndexList indexes = selectedIndexes();
-        if (detail::isMultiSelection(indexes)) {
-            for (int i=0; i<indexes.count(); ++i) 
-                expandNode(indexes[i]);
-        } else {
-            expandNode(selectedIndex());
+        for (unsigned i = 0; i < indexes.count(); ++i) {
+            expandNode(indexes[i]);
+        }
+    }
+
+    void BsonTreeView::onCollapseRecursive()
+    {
+        QModelIndexList indexes = selectedIndexes();
+        for (unsigned i = 0; i < indexes.count(); ++i) {
+            collapseNode(indexes[i]);
         }
     }
 

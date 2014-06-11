@@ -122,7 +122,7 @@ namespace Robomongo
         // 3. Load view mode
         if (map.contains("viewMode")) {
             int viewMode = map.value("viewMode").toInt();
-            if (viewMode > 2 || encoding < 0)
+            if (viewMode > 2 || viewMode < 0)
                 viewMode = Custom; // Default View Mode
             _viewMode = (ViewMode) viewMode;
         } else {

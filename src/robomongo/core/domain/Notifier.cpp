@@ -62,6 +62,12 @@ namespace Robomongo
                         }
                     }
                     if (isUnique.isValid()){
+                        // Move index onto "super parent" element before pushing it into result set
+                        QModelIndex parent = isUnique.parent();
+                        while (parent != QModelIndex()) {
+                            isUnique = parent;
+                            parent = parent.parent();
+                        }
                         result.append(isUnique);
                     }
                 }

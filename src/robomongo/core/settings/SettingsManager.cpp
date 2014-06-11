@@ -131,6 +131,9 @@ namespace Robomongo
 
         _autoExpand = map.contains("autoExpand") ?
             map.value("autoExpand").toBool() : true;
+        
+        _autoExec = map.contains("autoExec") ?
+            map.value("autoExec").toBool() : true;
 
         _lineNumbers = map.contains("lineNumbers") ?
             map.value("lineNumbers").toBool() : true;

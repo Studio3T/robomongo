@@ -186,7 +186,7 @@ namespace Robomongo
         map.insert("viewMode", _viewMode);
         map.insert("autoExpand", _autoExpand);
         map.insert("lineNumbers", _lineNumbers);
-
+        
         // 5. Save loadInitJs
         map.insert("loadMongoRcJs", _loadMongoRcJs);
 
@@ -208,6 +208,8 @@ namespace Robomongo
         }
 
         map.insert("connections", list);
+        
+        map.insert("autoExec", _autoExec);
 
         return map;
     }

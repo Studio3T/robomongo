@@ -476,7 +476,8 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::ui_viewCollection()
     {
-        openCurrentCollectionShell("find()");
+        CursorPosition cp(0, -2);
+        openCurrentCollectionShell("find({})", true, cp);
     }
 
     void ExplorerCollectionTreeItem::ui_storageSize()

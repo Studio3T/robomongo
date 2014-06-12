@@ -30,6 +30,8 @@ namespace Robomongo
         void sshSupportStateChange(int val);
         void securityChange(const QString& val);
         void setPrivateFile();
+        void togglePasswordEchoMode();
+        void togglePassphraseEchoMode();
 
     private:
         SSHInfo::SupportedAuthenticationMetods selectedAuthMethod();
@@ -50,9 +52,11 @@ namespace Robomongo
 
         QLineEdit *_passwordBox;
         QLabel *_passwordLabel;
+        QPushButton *_passwordEchoModeButton;
 
         QLineEdit *_privateKeyBox; 
         QLineEdit *_passphraseBox;
+        QPushButton *_passphraseEchoModeButton;
 
         ConnectionSettings *const _settings;
     };

@@ -17,12 +17,12 @@ namespace Robomongo
 {
     class ConnectionSettings;
 
-    class SshTunelTab : public QWidget
+    class SshTunnelTab : public QWidget
     {
         Q_OBJECT
 
     public:
-        SshTunelTab(ConnectionSettings *settings);
+        SshTunnelTab(ConnectionSettings *settings);
         void accept();
         bool isSshSupported() const;
 

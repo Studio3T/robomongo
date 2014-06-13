@@ -16,7 +16,7 @@
 
 namespace Robomongo
 {
-    SshTunelTab::SshTunelTab(ConnectionSettings *settings) :
+    SshTunnelTab::SshTunnelTab(ConnectionSettings *settings) :
         _settings(settings)
     {
         SSHInfo info = _settings->sshInfo();
@@ -122,12 +122,12 @@ namespace Robomongo
         _sshHostName->setFocus();
     }
 
-    bool SshTunelTab::isSshSupported() const
+    bool SshTunnelTab::isSshSupported() const
     {
         return _sshSupport->isChecked();
     }
 
-    void SshTunelTab::sshSupportStateChange(int value)
+    void SshTunnelTab::sshSupportStateChange(int value)
     {
         _sshHostName->setEnabled(value);
         _userName->setEnabled(value);
@@ -148,7 +148,7 @@ namespace Robomongo
         _passwordLabel->setEnabled(value);
     }
 
-    void SshTunelTab::securityChange(const QString&)
+    void SshTunnelTab::securityChange(const QString&)
     {
         bool isKey = selectedAuthMethod() == SSHInfo::PUBLICKEY;
 
@@ -165,7 +165,7 @@ namespace Robomongo
         _passwordEchoModeButton->setVisible(!isKey);
     }
 
-    void SshTunelTab::setPrivateFile()
+    void SshTunnelTab::setPrivateFile()
     {
         QString filepath = QFileDialog::getOpenFileName(this, "Select private key file",
             _privateKeyBox->text(), QObject::tr("Private key files (*.*)"));
@@ -176,7 +176,7 @@ namespace Robomongo
         _privateKeyBox->setText(filepath);
     }
 
-    SSHInfo::SupportedAuthenticationMetods SshTunelTab::selectedAuthMethod()
+    SSHInfo::SupportedAuthenticationMetods SshTunnelTab::selectedAuthMethod()
     {
         if (_security->currentText() == "Private Key")
             return SSHInfo::PUBLICKEY;
@@ -184,7 +184,7 @@ namespace Robomongo
         return SSHInfo::PASSWORD;
     }
 
-    void SshTunelTab::accept()
+    void SshTunnelTab::accept()
     {
         SSHInfo info = _settings->sshInfo();
         info._hostName = QtUtils::toStdString(_sshHostName->text());
@@ -204,14 +204,14 @@ namespace Robomongo
         _settings->setSshInfo(info);
     }
     
-    void SshTunelTab::togglePasswordEchoMode()
+    void SshTunnelTab::togglePasswordEchoMode()
     {
         bool isPassword = _passwordBox->echoMode() == QLineEdit::Password;
         _passwordBox->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
         _passwordEchoModeButton->setText(isPassword ? tr("Hide"): tr("Show"));
     }
     
-    void SshTunelTab::togglePassphraseEchoMode()
+    void SshTunnelTab::togglePassphraseEchoMode()
     {
         bool isPassword = _passphraseBox->echoMode() == QLineEdit::Password;
         _passphraseBox->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);

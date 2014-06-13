@@ -22,6 +22,7 @@ namespace Robomongo
     {
     public:
         typedef std::vector<ConnectionSettings *> ConnectionSettingsContainerType;
+        typedef QMap<QString, QVariant> ToolbarSettingsContainerType;
         /**
          * @brief Creates SettingsManager for config file in default location
          *        (usually ~/.config/robomongo/robomongo.json)
@@ -58,10 +59,14 @@ namespace Robomongo
 
         void reorderConnections(const ConnectionSettingsContainerType &connections);
 
+        void setToolbarSettings(QString toolbarName, bool visible);
+        
         /**
          * @brief Returns list of connections
          */
         ConnectionSettingsContainerType connections() const { return _connections; }
+        
+        ToolbarSettingsContainerType toolbars() const { return _toolbars; }
 
         void setUuidEncoding(UUIDEncoding encoding) { _uuidEncoding = encoding; }
         UUIDEncoding uuidEncoding() const { return _uuidEncoding; }
@@ -127,5 +132,6 @@ namespace Robomongo
          * @brief List of connections
          */
         ConnectionSettingsContainerType _connections;
+        ToolbarSettingsContainerType _toolbars;
     };
 }

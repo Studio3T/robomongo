@@ -66,7 +66,13 @@ namespace Robomongo
         void setUtcTimeZone();
         void setLocalTimeZone();
         void openPreferences();
-
+        
+        void onConnectToolbarVisibilityChanged(bool isVisisble);
+        void onOpenSaveToolbarVisibilityChanged(bool isVisisble);
+        void onExecToolbarVisibilityChanged(bool isVisisble);
+        void onExplorerVisibilityChanged(bool isVisisble);
+        void onLogsVisibilityChanged(bool isVisible);
+        
     private:
         QDockWidget *_logDock;
 

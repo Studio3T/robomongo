@@ -396,6 +396,7 @@ namespace Robomongo
         windowMenu->addSeparator();
         windowMenu->addAction(reloadAction);
 
+        SettingsManager::ToolbarSettingsContainerType toolbarsSettings = AppRegistry::instance().settingsManager()->toolbars();
 
     /*** About menu ***/
 
@@ -405,13 +406,15 @@ namespace Robomongo
         // Options menu
         QMenu *helpMenu = menuBar()->addMenu("Help");
         helpMenu->addAction(aboutRobomongoAction);
-
+        
         // Toolbar
         QToolBar *connectToolBar = new QToolBar("Toolbar", this);
         connectToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
         connectToolBar->addAction(connectButtonAction);
         connectToolBar->setShortcutEnabled(1, true);
         connectToolBar->setMovable(false);
+        connectToolBar->setVisible(toolbarsSettings["connect"].toBool());
+        VERIFY(connect(connectToolBar, SIGNAL(visibilityChanged(bool)), this, SLOT(onConnectToolbarVisibilityChanged(bool))));
         setToolBarIconSize(connectToolBar);
         addToolBar(connectToolBar);
 
@@ -419,6 +422,8 @@ namespace Robomongo
         openSaveToolBar->addAction(_openAction);
         openSaveToolBar->addAction(_saveAction);
         openSaveToolBar->setMovable(false);
+        openSaveToolBar->setVisible(toolbarsSettings["open_save"].toBool());
+        VERIFY(connect(openSaveToolBar, SIGNAL(visibilityChanged(bool)), this, SLOT(onOpenSaveToolbarVisibilityChanged(bool))));
         setToolBarIconSize(openSaveToolBar);
         addToolBar(openSaveToolBar);
 
@@ -431,6 +436,7 @@ namespace Robomongo
         _execToolBar->setMovable(false);
         setToolBarIconSize(_execToolBar);
         addToolBar(_execToolBar);
+        VERIFY(connect(_execToolBar, SIGNAL(visibilityChanged(bool)), this, SLOT(onExecToolbarVisibilityChanged(bool))));
 
         _execToolBar->hide();
 
@@ -824,14 +830,15 @@ namespace Robomongo
 
         QWidget *titleWidget = new QWidget(this);         // this lines simply remove
         explorerDock->setTitleBarWidget(titleWidget);     // title bar widget.
-
+        explorerDock->setVisible(AppRegistry::instance().settingsManager()->toolbars()["explorer"].toBool());
+        
         QAction *actionExp = explorerDock->toggleViewAction();
-
         // Adjust any parameter you want.  
         actionExp->setText(QString("&Explorer"));
         actionExp->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));  
         actionExp->setStatusTip(QString("Press to show/hide Database Explorer panel."));
-        actionExp->setChecked(true);
+        actionExp->setChecked(explorerDock->isVisible());
+        VERIFY(connect(actionExp, SIGNAL(triggered(bool)), this, SLOT(onExplorerVisibilityChanged(bool))));
         // Install action in the menu.  
         _viewMenu->addAction(actionExp);
 
@@ -840,19 +847,21 @@ namespace Robomongo
         LogWidget *log = new LogWidget(this);        
         VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, mongo::LogLevel)), log, SLOT(addMessage(const QString&, mongo::LogLevel))));
         _logDock = new QDockWidget(tr("Logs"));
+        _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+        _logDock->setWidget(log);
+        _logDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+        _logDock->setVisible(AppRegistry::instance().settingsManager()->toolbars()["logs"].toBool());
+        
         QAction *action = _logDock->toggleViewAction();
         // Adjust any parameter you want.  
         action->setText(QString("&Logs"));
         action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));  
         //action->setStatusTip(QString("Press to show/hide Logs panel."));  //commented for now because this message hides Logs button in status bar :)
-        action->setChecked(false);
+        action->setChecked(_logDock->isVisible());
+        VERIFY(connect(action, SIGNAL(triggered(bool)), this, SLOT(onLogsVisibilityChanged(bool))));
         // Install action in the menu.
         _viewMenu->addAction(action);
-
-        _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
-        _logDock->setWidget(log);
-        _logDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
-        _logDock->setVisible(false);
+        
         addDockWidget(Qt::BottomDockWidgetArea, _logDock);
     }
 
@@ -861,7 +870,7 @@ namespace Robomongo
         int contTab = _workArea->count();
         bool isEnable = _workArea && contTab > 0;
 
-        _execToolBar->setVisible(isEnable);
+        _execToolBar->setVisible(AppRegistry::instance().settingsManager()->toolbars()["exec"].toBool() && isEnable);
         _openAction->setEnabled(isEnable);
         _saveAction->setEnabled(isEnable);
         _saveAsAction->setEnabled(isEnable);
@@ -880,5 +889,35 @@ namespace Robomongo
         window->setLayout(hlayout);
 
         setCentralWidget(window);
+    }
+    
+    void MainWindow::onConnectToolbarVisibilityChanged(bool isVisible)
+    {
+        AppRegistry::instance().settingsManager()->setToolbarSettings("connect", isVisible);
+        AppRegistry::instance().settingsManager()->save();
+    }
+    
+    void MainWindow::onOpenSaveToolbarVisibilityChanged(bool isVisible)
+    {
+        AppRegistry::instance().settingsManager()->setToolbarSettings("open_save", isVisible);
+        AppRegistry::instance().settingsManager()->save();
+    }
+    
+    void MainWindow::onExecToolbarVisibilityChanged(bool isVisible)
+    {
+        AppRegistry::instance().settingsManager()->setToolbarSettings("exec", isVisible);
+        AppRegistry::instance().settingsManager()->save();
+    }
+    
+    void MainWindow::onExplorerVisibilityChanged(bool isVisible) 
+    {
+        AppRegistry::instance().settingsManager()->setToolbarSettings("explorer", isVisible);
+        AppRegistry::instance().settingsManager()->save();
+    }
+    
+    void MainWindow::onLogsVisibilityChanged(bool isVisible) 
+    {
+        AppRegistry::instance().settingsManager()->setToolbarSettings("logs", isVisible);
+        AppRegistry::instance().settingsManager()->save();
     }
 }

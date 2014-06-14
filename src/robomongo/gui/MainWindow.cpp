@@ -406,7 +406,7 @@ namespace Robomongo
         // Options menu
         QMenu *helpMenu = menuBar()->addMenu("Help");
         helpMenu->addAction(aboutRobomongoAction);
-        
+
         // Toolbar
         QToolBar *connectToolBar = new QToolBar("Toolbar", this);
         connectToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -414,7 +414,7 @@ namespace Robomongo
         connectToolBar->setShortcutEnabled(1, true);
         connectToolBar->setMovable(false);
         connectToolBar->setVisible(toolbarsSettings["connect"].toBool());
-        VERIFY(connect(connectToolBar, SIGNAL(visibilityChanged(bool)), this, SLOT(onConnectToolbarVisibilityChanged(bool))));
+        VERIFY(connect(connectToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onConnectToolbarVisibilityChanged(bool))));
         setToolBarIconSize(connectToolBar);
         addToolBar(connectToolBar);
 
@@ -423,7 +423,7 @@ namespace Robomongo
         openSaveToolBar->addAction(_saveAction);
         openSaveToolBar->setMovable(false);
         openSaveToolBar->setVisible(toolbarsSettings["open_save"].toBool());
-        VERIFY(connect(openSaveToolBar, SIGNAL(visibilityChanged(bool)), this, SLOT(onOpenSaveToolbarVisibilityChanged(bool))));
+        VERIFY(connect(openSaveToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onOpenSaveToolbarVisibilityChanged(bool))));
         setToolBarIconSize(openSaveToolBar);
         addToolBar(openSaveToolBar);
 
@@ -436,7 +436,7 @@ namespace Robomongo
         _execToolBar->setMovable(false);
         setToolBarIconSize(_execToolBar);
         addToolBar(_execToolBar);
-        VERIFY(connect(_execToolBar, SIGNAL(visibilityChanged(bool)), this, SLOT(onExecToolbarVisibilityChanged(bool))));
+        VERIFY(connect(_execToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onExecToolbarVisibilityChanged(bool))));
 
         _execToolBar->hide();
 

@@ -19,7 +19,7 @@ namespace Robomongo
     {
         bool isSimpleType(BsonTreeItem *item);
         bool isObjectIdType(BsonTreeItem *item);
-        bool isMultySelection(const QModelIndexList &indexes);
+        bool isMultiSelection(const QModelIndexList &indexes);
         bool isDocumentType(BsonTreeItem *item);
         QModelIndexList uniqueRows(QModelIndexList indexes);
     }

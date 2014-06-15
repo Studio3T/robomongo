@@ -411,7 +411,7 @@ namespace Robomongo
         helpMenu->addAction(aboutRobomongoAction);
 
         // Toolbar
-        QToolBar *connectToolBar = new QToolBar("Toolbar", this);
+        QToolBar *connectToolBar = new QToolBar(tr("Connections Toolbar"), this);
         connectToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
         connectToolBar->addAction(connectButtonAction);
         connectToolBar->setShortcutEnabled(1, true);
@@ -422,7 +422,7 @@ namespace Robomongo
         setToolBarIconSize(connectToolBar);
         addToolBar(connectToolBar);
 
-        QToolBar *openSaveToolBar = new QToolBar("Open/Save ToolBar", this);
+        QToolBar *openSaveToolBar = new QToolBar(tr("Open/Save Toolbar"), this);
         openSaveToolBar->addAction(_openAction);
         openSaveToolBar->addAction(_saveAction);
         openSaveToolBar->setMovable(false);
@@ -432,7 +432,7 @@ namespace Robomongo
         setToolBarIconSize(openSaveToolBar);
         addToolBar(openSaveToolBar);
 
-        _execToolBar = new QToolBar("Exec Toolbar", this);
+        _execToolBar = new QToolBar(tr("Execution Toolbar"), this);
         _execToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
         _execToolBar->addAction(_executeAction);
         _execToolBar->addAction(_stopAction);

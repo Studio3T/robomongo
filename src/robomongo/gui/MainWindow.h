@@ -83,6 +83,7 @@ namespace Robomongo
         ConnectionMenu *_connectionsMenu;
         QToolButton *_connectButton;
         QMenu *_viewMenu;
+        QMenu *_toolbarsMenu;
         QAction *_connectAction;
         QAction *_openAction;
         QAction *_saveAction;

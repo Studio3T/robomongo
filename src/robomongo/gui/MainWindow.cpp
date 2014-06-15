@@ -243,8 +243,11 @@ namespace Robomongo
 
     /*** View menu ***/
         _viewMenu = menuBar()->addMenu("View");
-        // createDatabaseExplorer() adds option to toggle Explorer and Logs panels
-        // createStylesMenu() adds Themes submenu
+        // adds option to toggle Explorer and Logs panels
+        createDatabaseExplorer();
+        _toolbarsMenu = _viewMenu->addMenu(tr("Toolbars"));
+        // adds Themes submenu
+        createStylesMenu();
 
 
     /*** Options menu ***/
@@ -414,6 +417,7 @@ namespace Robomongo
         connectToolBar->setShortcutEnabled(1, true);
         connectToolBar->setMovable(false);
         connectToolBar->setVisible(toolbarsSettings["connect"].toBool());
+        _toolbarsMenu->addAction(connectToolBar->toggleViewAction());
         VERIFY(connect(connectToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onConnectToolbarVisibilityChanged(bool))));
         setToolBarIconSize(connectToolBar);
         addToolBar(connectToolBar);
@@ -423,6 +427,7 @@ namespace Robomongo
         openSaveToolBar->addAction(_saveAction);
         openSaveToolBar->setMovable(false);
         openSaveToolBar->setVisible(toolbarsSettings["open_save"].toBool());
+        _toolbarsMenu->addAction(openSaveToolBar->toggleViewAction());
         VERIFY(connect(openSaveToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onOpenSaveToolbarVisibilityChanged(bool))));
         setToolBarIconSize(openSaveToolBar);
         addToolBar(openSaveToolBar);
@@ -434,15 +439,13 @@ namespace Robomongo
         _execToolBar->addAction(_orientationAction);
         _execToolBar->setShortcutEnabled(1, true);
         _execToolBar->setMovable(false);
+        _execToolBar->setVisible(toolbarsSettings["exec"].toBool());
         setToolBarIconSize(_execToolBar);
         addToolBar(_execToolBar);
+        _toolbarsMenu->addAction(_execToolBar->toggleViewAction());
         VERIFY(connect(_execToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onExecToolbarVisibilityChanged(bool))));
 
-        _execToolBar->hide();
-
         createTabs();
-        createDatabaseExplorer();
-        createStylesMenu();
         createStatusBar();
         setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
@@ -813,7 +816,7 @@ namespace Robomongo
 
     void MainWindow::handle(QueryWidgetUpdatedEvent *event)
     {
-        _orientationAction->setVisible(event->numOfResults() > 1);
+        _orientationAction->setEnabled(event->numOfResults() > 1);
     }
 
     void MainWindow::createDatabaseExplorer()
@@ -870,7 +873,7 @@ namespace Robomongo
         int contTab = _workArea->count();
         bool isEnable = _workArea && contTab > 0;
 
-        _execToolBar->setVisible(AppRegistry::instance().settingsManager()->toolbars()["exec"].toBool() && isEnable);
+        _execToolBar->setEnabled(isEnable);
         _openAction->setEnabled(isEnable);
         _saveAction->setEnabled(isEnable);
         _saveAsAction->setEnabled(isEnable);

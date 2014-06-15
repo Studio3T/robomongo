@@ -114,7 +114,7 @@ namespace Robomongo
         ).arg(explorerColor));
 
         _openAction = new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this);
-        _openAction->setToolTip("Load script from the file to the currently opened shell");
+        _openAction->setToolTip(QString("Load script from the file to the currently opened shell <b>(%1 + O)</b>").arg(controlKey));
         _openAction->setShortcuts(QKeySequence::Open);
         VERIFY(connect(_openAction, SIGNAL(triggered()), this, SLOT(open())));
 
@@ -137,7 +137,7 @@ namespace Robomongo
         _connectAction->setShortcuts(QKeySequence::New);
         _connectAction->setIcon(GuiRegistry::instance().connectIcon());
         _connectAction->setIconText("Connect");
-        _connectAction->setToolTip(QString("Connect to local or remote MongoDB instance <b>(%1 + O)</b>").arg(controlKey));
+        _connectAction->setToolTip(QString("Connect to local or remote MongoDB instance <b>(%1 + N)</b>").arg(controlKey));
         VERIFY(connect(_connectAction, SIGNAL(triggered()), this, SLOT(manageConnections())));
 
         _connectionsMenu = new ConnectionMenu(this);
@@ -148,7 +148,7 @@ namespace Robomongo
         _connectButton->setText("&Connect...");
         _connectButton->setIcon(GuiRegistry::instance().connectIcon());
         _connectButton->setFocusPolicy(Qt::NoFocus);
-        _connectButton->setToolTip(QString("Connect to local or remote MongoDB instance <b>(%1 + O)</b>").arg(controlKey));
+        _connectButton->setToolTip(QString("Connect to local or remote MongoDB instance <b>(%1 + N)</b>").arg(controlKey));
         _connectButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
         
     #if !defined(Q_OS_MAC)

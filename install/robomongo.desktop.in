@@ -2,8 +2,7 @@
 Type=Application
 Exec=@SHORTPRODUCTNAME@
 Name=Robomongo
-GenericName=The IDE for mongodb working.
-GenericName[de]=Die IDE der
+GenericName=MongoDB management tool
 Icon=@ICONNAME@
 Terminal=false
 Categories=Development;IDE;mongodb;

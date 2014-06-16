@@ -58,6 +58,12 @@ namespace
         Robomongo::AppRegistry::instance().settingsManager()->setAutoExpand(isExpand);
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
+    
+    void saveAutoExec(bool isAutoExec)
+    {
+        Robomongo::AppRegistry::instance().settingsManager()->setAutoExec(isAutoExec);
+        Robomongo::AppRegistry::instance().settingsManager()->save();
+    }
 
     void saveLineNumbers(bool showLineNumbers)
     {
@@ -341,6 +347,12 @@ namespace Robomongo
         disabelConnectionShortcuts->setChecked(AppRegistry::instance().settingsManager()->disableConnectionShortcuts());
         VERIFY(connect(disabelConnectionShortcuts, SIGNAL(triggered()), this, SLOT(setDisableConnectionShortcuts())));
         optionsMenu->addAction(disabelConnectionShortcuts);
+        
+        QAction *autoExec = new QAction(tr("Automatically execute code in new tab"),this);
+        autoExec->setCheckable(true);
+        autoExec->setChecked(AppRegistry::instance().settingsManager()->autoExec());
+        VERIFY(connect(autoExec, SIGNAL(triggered()), this, SLOT(toggleAutoExec())));
+        optionsMenu->addAction(autoExec);
 
         QAction *preferencesAction = new QAction("Preferences",this);
         VERIFY(connect(preferencesAction, SIGNAL(triggered()), this, SLOT(openPreferences())));
@@ -664,6 +676,12 @@ namespace Robomongo
     {
         QAction *send = qobject_cast<QAction*>(sender());
         saveAutoExpand(send->isChecked());
+    }
+    
+    void MainWindow::toggleAutoExec()
+    {
+        QAction *send = qobject_cast<QAction*>(sender());
+        saveAutoExec(send->isChecked());
     }
 
     void MainWindow::toggleLineNumbers()

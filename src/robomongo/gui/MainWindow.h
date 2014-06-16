@@ -35,6 +35,7 @@ namespace Robomongo
         void enterTableMode();
         void enterCustomMode();
         void toggleAutoExpand();
+        void toggleAutoExec();
         void toggleLineNumbers();
         void executeScript();
         void stopScript();

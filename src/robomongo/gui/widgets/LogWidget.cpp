@@ -37,9 +37,10 @@ namespace Robomongo
     void LogWidget::addMessage(const QString &message, mongo::LogLevel level)
     {
         QTime time = QTime::currentTime();
+        QDate date = QDate::currentDate();
         //_logTextEdit->appendHtml(QString(level == mongo::LL_ERROR ? "<font color=red>%1 %2</font>" : "<font color=black>%1 %2</font>").arg(time.toString("h:mm:ss AP:")).arg(message.toHtmlEscaped()));
         _logTextEdit->setTextColor(level == mongo::LL_ERROR ? QColor(Qt::red):QColor(Qt::black));
-        _logTextEdit->append(time.toString("h:mm:ss AP: ") + message);
+        _logTextEdit->append(date.toString("yyyy-MM-dd ") + time.toString("hh:mm:ss: ") + message);
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());
     }

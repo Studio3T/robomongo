@@ -17,6 +17,7 @@
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 #include "robomongo/gui/GuiRegistry.h"
@@ -102,7 +103,7 @@ namespace Robomongo
         if(_shell){
             MongoServer *server = _shell->server();
             QString query = _scriptWidget->selectedText();
-            AppRegistry::instance().app()->openShell(server, query, _currentResult.currentDatabase());
+            AppRegistry::instance().app()->openShell(server, query, _currentResult.currentDatabase(), AppRegistry::instance().settingsManager()->autoExec());
         }
     }
 

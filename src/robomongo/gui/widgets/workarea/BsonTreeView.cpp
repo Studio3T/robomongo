@@ -119,7 +119,7 @@ namespace Robomongo
     {
         QModelIndexList indexes = selectedIndexes();
         for (unsigned i = 0; i < indexes.count(); ++i) {
-            expandNode(indexes[i]);
+                expandNode(indexes[i]);
         }
     }
 
@@ -127,7 +127,7 @@ namespace Robomongo
     {
         QModelIndexList indexes = selectedIndexes();
         for (unsigned i = 0; i < indexes.count(); ++i) {
-            collapseNode(indexes[i]);
+                collapseNode(indexes[i]);
         }
     }
 
@@ -147,6 +147,6 @@ namespace Robomongo
 
     QModelIndexList BsonTreeView::selectedIndexes() const
     {
-        return detail::uniqueRows(selectionModel()->selectedRows());
+        return detail::uniqueRows(selectionModel()->selectedRows(), true);
     }
 }

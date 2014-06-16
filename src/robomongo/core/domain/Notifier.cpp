@@ -45,7 +45,13 @@ namespace Robomongo
             return Robomongo::BsonUtils::isDocument(item->type());
         }
 
-        QModelIndexList uniqueRows(QModelIndexList indexes)
+        /**
+         * 
+         * @param QModelIndexList indexes
+         * @param bool returnSuperParents If TRUE, only indexes of super-parents will be in result list
+         * @return QModelIndexList
+         */
+        QModelIndexList uniqueRows(QModelIndexList indexes, bool returnSuperParents)
         {
             QModelIndexList result;
             for (QModelIndexList::const_iterator it = indexes.begin(); it!=indexes.end(); ++it)
@@ -62,11 +68,13 @@ namespace Robomongo
                         }
                     }
                     if (isUnique.isValid()){
-                        // Move index onto "super parent" element before pushing it into result set
-                        QModelIndex parent = isUnique.parent();
-                        while (parent != QModelIndex()) {
-                            isUnique = parent;
-                            parent = parent.parent();
+                        if (returnSuperParents) {
+                            // Move index onto "super parent" element before pushing it into result set
+                            QModelIndex parent = isUnique.parent();
+                            while (parent != QModelIndex()) {
+                                isUnique = parent;
+                                parent = parent.parent();
+                            }
                         }
                         result.append(isUnique);
                     }

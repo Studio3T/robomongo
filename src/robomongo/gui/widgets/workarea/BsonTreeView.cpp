@@ -118,16 +118,22 @@ namespace Robomongo
     void BsonTreeView::onExpandRecursive()
     {
         QModelIndexList indexes = selectedIndexes();
-        for (unsigned i = 0; i < indexes.count(); ++i) {
+        if (detail::isMultiSelection(indexes)) {
+            for (int i=0; i<indexes.count(); ++i) 
                 expandNode(indexes[i]);
+        } else {
+            expandNode(selectedIndex());
         }
     }
 
     void BsonTreeView::onCollapseRecursive()
     {
         QModelIndexList indexes = selectedIndexes();
-        for (unsigned i = 0; i < indexes.count(); ++i) {
+        if (detail::isMultiSelection(indexes)) {
+            for (int i=0; i<indexes.count(); ++i) 
                 collapseNode(indexes[i]);
+        } else {
+            collapseNode(selectedIndex());
         }
     }
 

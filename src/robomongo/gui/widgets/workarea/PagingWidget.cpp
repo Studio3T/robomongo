@@ -34,7 +34,7 @@ namespace Robomongo
         _batchSizeEdit->setToolTip("Batch Size (number of documents shown at once)");
 
         QFontMetrics metrics = _skipEdit->fontMetrics();
-        int width = metrics.boundingRect("000000").width();
+        int width = metrics.boundingRect("00000000").width();
         QRegExp rx("\\d+");
         _skipEdit->setValidator(new QRegExpValidator(rx, this));
         _batchSizeEdit->setValidator(new QRegExpValidator(rx, this));

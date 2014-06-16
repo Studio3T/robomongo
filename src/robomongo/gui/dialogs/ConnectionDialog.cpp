@@ -54,7 +54,7 @@ namespace Robomongo
         _sslTab      = new ConnectionSslTab(_connection);
 
 #ifdef SSH_SUPPORT_ENABLED
-        _sshTab = new SshTunelTab(_connection);
+        _sshTab = new SshTunnelTab(_connection);
 #endif
 
         tabWidget->addTab(_basicTab,    "Connection");

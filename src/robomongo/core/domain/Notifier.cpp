@@ -35,7 +35,7 @@ namespace Robomongo
             return mongo::jstOID == item->type();
         }
 
-        bool isMultySelection(const QModelIndexList &indexes)
+        bool isMultiSelection(const QModelIndexList &indexes)
         {
             return indexes.count()>1;
         }
@@ -45,7 +45,13 @@ namespace Robomongo
             return Robomongo::BsonUtils::isDocument(item->type());
         }
 
-        QModelIndexList uniqueRows(QModelIndexList indexes)
+        /**
+         * 
+         * @param QModelIndexList indexes
+         * @param bool returnSuperParents If TRUE, only indexes of super-parents will be in result list
+         * @return QModelIndexList
+         */
+        QModelIndexList uniqueRows(QModelIndexList indexes, bool returnSuperParents)
         {
             QModelIndexList result;
             for (QModelIndexList::const_iterator it = indexes.begin(); it!=indexes.end(); ++it)
@@ -62,6 +68,14 @@ namespace Robomongo
                         }
                     }
                     if (isUnique.isValid()){
+                        if (returnSuperParents) {
+                            // Move index onto "super parent" element before pushing it into result set
+                            QModelIndex parent = isUnique.parent();
+                            while (parent != QModelIndex()) {
+                                isUnique = parent;
+                                parent = parent.parent();
+                            }
+                        }
                         result.append(isUnique);
                     }
                 }
@@ -190,7 +204,7 @@ namespace Robomongo
             return;
 
         QModelIndexList selectedIndexes = _observer->selectedIndexes();
-        if (!detail::isMultySelection(selectedIndexes))
+        if (!detail::isMultiSelection(selectedIndexes))
             return;
         int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", QString("Do you want to delete %1 selected documents?").arg(selectedIndexes.count()));
         if (answer == QMessageBox::Yes) {

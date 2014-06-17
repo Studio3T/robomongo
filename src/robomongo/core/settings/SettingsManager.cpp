@@ -164,6 +164,23 @@ namespace Robomongo
             ConnectionSettings *record = new ConnectionSettings((*it).toMap());
             _connections.push_back(record);
         }
+        
+        _toolbars = map.value("toolbars").toMap();
+        ToolbarSettingsContainerType::const_iterator it = _toolbars.find("connect");
+        if (_toolbars.end() == it) 
+            _toolbars["connect"] = true;
+        it = _toolbars.find("open_save");
+        if (_toolbars.end() == it) 
+            _toolbars["open_save"] = true;
+        it = _toolbars.find("exec");
+        if (_toolbars.end() == it) 
+            _toolbars["exec"] = true;
+        it = _toolbars.find("explorer");
+        if (_toolbars.end() == it) 
+            _toolbars["explorer"] = true;
+        it = _toolbars.find("logs");
+        if (_toolbars.end() == it) 
+            _toolbars["logs"] = false;
     }
 
     /**
@@ -210,6 +227,8 @@ namespace Robomongo
         map.insert("connections", list);
         
         map.insert("autoExec", _autoExec);
+        
+        map.insert("toolbars", _toolbars);
 
         return map;
     }
@@ -242,6 +261,11 @@ namespace Robomongo
     void SettingsManager::reorderConnections(const ConnectionSettingsContainerType &connections)
     {
         _connections = connections;
+    }
+    
+    void SettingsManager::setToolbarSettings(const QString toolbarName, const bool visible)
+    {
+        _toolbars[toolbarName] = visible;
     }
 
 }

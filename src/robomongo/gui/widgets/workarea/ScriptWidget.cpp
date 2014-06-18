@@ -57,7 +57,7 @@ namespace Robomongo
         setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
 
         _queryText = new FindFrame(this);
-        _topStatusBar = new TopStatusBar(_shell->server()->connectionRecord()->getFullAddress(), "loading...");
+        _topStatusBar = new TopStatusBar(_shell->server()->connectionRecord()->connectionName(), _shell->server()->connectionRecord()->getFullAddress(), "loading...");
 
         QVBoxLayout *layout = new QVBoxLayout;
         layout->setSpacing(0);
@@ -367,11 +367,14 @@ namespace Robomongo
         return AutoCompletionInfo(final, row, leftStop, rightStop);
     }
 
-    TopStatusBar::TopStatusBar(const std::string &serverName, const std::string &dbName)
+    TopStatusBar::TopStatusBar(const std::string &connectionName, const std::string &serverName, const std::string &dbName)
     {
         setContentsMargins(0, 0, 0, 0);
         _textColor = palette().text().color().lighter(200);
 
+        _currentConnectionLabel = new Indicator(GuiRegistry::instance().connectIcon(), QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(connectionName.c_str()));
+        _currentConnectionLabel->setDisabled(true);
+        
         _currentServerLabel = new Indicator(GuiRegistry::instance().serverIcon(), QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(serverName.c_str()));
         _currentServerLabel->setDisabled(true);
 
@@ -385,6 +388,7 @@ namespace Robomongo
     #else
         topLayout->setContentsMargins(2, 7, 2, 3);
     #endif
+        topLayout->addWidget(_currentConnectionLabel, 0, Qt::AlignLeft);
         topLayout->addWidget(_currentServerLabel, 0, Qt::AlignLeft);
         topLayout->addWidget(_currentDatabaseLabel, 0, Qt::AlignLeft);
         topLayout->addStretch(1);
@@ -410,6 +414,17 @@ namespace Robomongo
         QString text = QString("<font color='%1'>%2</font>")
                 .arg(color)
                 .arg(detail::prepareServerAddress(address).c_str());
+
+        _currentServerLabel->setText(text);
+    }
+    
+    void TopStatusBar::setCurrentConnection(const std::string &connection, bool isValid)
+    {
+        QString color = isValid ? _textColor.name() : "red";
+
+        QString text = QString("<font color='%1'>%2</font>")
+                .arg(color)
+                .arg(connection.c_str());
 
         _currentServerLabel->setText(text);
     }

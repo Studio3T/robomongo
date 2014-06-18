@@ -42,6 +42,7 @@ namespace Robomongo
         _uuidEncoding(DefaultEncoding),
         _timeZone(Utc),
         _viewMode(Robomongo::Tree),
+        _autocompletionMode(AutocompleteAll),
         _batchSize(50),
         _disableConnectionShortcuts(false)
     {
@@ -147,6 +148,16 @@ namespace Robomongo
         _loadMongoRcJs = map.value("loadMongoRcJs").toBool();
         _disableConnectionShortcuts = map.value("disableConnectionShortcuts").toBool();
 
+        // Load AutocompletionMode
+        if (map.contains("autocompletionMode")) {
+            int autocompletionMode = map.value("autocompletionMode").toInt();
+            if (autocompletionMode < 0 || autocompletionMode > 2)
+                autocompletionMode = AutocompleteAll; // Default Mode
+            _autocompletionMode = (AutocompletionMode) autocompletionMode;
+        } else {
+            _autocompletionMode = AutocompleteAll; // Default Mode
+        }
+
         // Load Batch Size
         _batchSize = map.value("batchSize").toInt();
         if (_batchSize == 0)
@@ -203,20 +214,23 @@ namespace Robomongo
         map.insert("viewMode", _viewMode);
         map.insert("autoExpand", _autoExpand);
         map.insert("lineNumbers", _lineNumbers);
-        
-        // 5. Save loadInitJs
+
+        // 5. Save Autocompletion mode
+        map.insert("autocompletionMode", _autocompletionMode);
+
+        // 6. Save loadInitJs
         map.insert("loadMongoRcJs", _loadMongoRcJs);
 
-        // 6. Save disableConnectionShortcuts
+        // 7. Save disableConnectionShortcuts
         map.insert("disableConnectionShortcuts", _disableConnectionShortcuts);
         
-        // 7. Save batchSize
+        // 8. Save batchSize
         map.insert("batchSize", _batchSize);
 
-        // 8. Save style
+        // 9. Save style
         map.insert("style", _currentStyle);
 
-        // 9. Save connections
+        // 10. Save connections
         QVariantList list;
 
         for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it!=_connections.end(); ++it) {

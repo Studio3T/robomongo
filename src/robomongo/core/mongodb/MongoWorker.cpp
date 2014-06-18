@@ -11,6 +11,7 @@
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/settings/CredentialSettings.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
 
@@ -346,7 +347,7 @@ namespace Robomongo
     void MongoWorker::handle(AutocompleteRequest *event)
     {
         try {
-            QStringList list = _scriptEngine->complete(event->prefix);
+            QStringList list = _scriptEngine->complete(event->prefix, event->mode);
             reply(event->sender(), new AutocompleteResponse(this, list, event->prefix));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new ExecuteScriptResponse(this, EventError("Unable to autocomplete query.")));

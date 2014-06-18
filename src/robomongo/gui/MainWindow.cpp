@@ -321,6 +321,35 @@ namespace Robomongo
         uuidMenu->addAction(csharpLegacyEncodingAction);
         uuidMenu->addAction(pythonEncodingAction);
 
+        // Read Autocompletion Mode
+        AutocompletionMode autocompletionMode = AppRegistry::instance().settingsManager()->autocompletionMode();
+
+        // Autocompletion
+        QAction *autocompletionAllAction = new QAction("All",this);
+        autocompletionAllAction->setCheckable(true);
+        autocompletionAllAction->setChecked(autocompletionMode == AutocompleteAll);
+        VERIFY(connect(autocompletionAllAction, SIGNAL(triggered()), this, SLOT(setShellAutocompletionAll())));
+
+        QAction *autocompletionNoCollectionNamesAction = new QAction("All (Except Collection Names)",this);
+        autocompletionNoCollectionNamesAction->setCheckable(true);
+        autocompletionNoCollectionNamesAction->setChecked(autocompletionMode == AutocompleteNoCollectionNames);
+        VERIFY(connect(autocompletionNoCollectionNamesAction, SIGNAL(triggered()), this, SLOT(setShellAutocompletionNoCollectionNames())));
+
+        QAction *autocompletionNoneAction = new QAction("None",this);
+        autocompletionNoneAction->setCheckable(true);
+        autocompletionNoneAction->setChecked(autocompletionMode == AutocompleteNone);
+        VERIFY(connect(autocompletionNoneAction, SIGNAL(triggered()), this, SLOT(setShellAutocompletionNone())));
+
+        QMenu *autocompletionMenu = optionsMenu->addMenu("Autocompletion Mode");
+        autocompletionMenu->addAction(autocompletionAllAction);
+        autocompletionMenu->addAction(autocompletionNoCollectionNamesAction);
+        autocompletionMenu->addAction(autocompletionNoneAction);
+
+        QActionGroup *autocompletionGroup = new QActionGroup(this);
+        autocompletionGroup->addAction(autocompletionAllAction);
+        autocompletionGroup->addAction(autocompletionNoCollectionNamesAction);
+        autocompletionGroup->addAction(autocompletionNoneAction);
+
         QAction *loadMongoRcJs = new QAction("Load .mongorc.js",this);
         loadMongoRcJs->setCheckable(true);
         loadMongoRcJs->setChecked(AppRegistry::instance().settingsManager()->loadMongoRcJs());
@@ -765,6 +794,24 @@ namespace Robomongo
     void MainWindow::setPythonUuidEncoding()
     {
         AppRegistry::instance().settingsManager()->setUuidEncoding(PythonLegacy);
+        AppRegistry::instance().settingsManager()->save();
+    }
+
+    void MainWindow::setShellAutocompletionAll()
+    {
+        AppRegistry::instance().settingsManager()->setAutocompletionMode(AutocompleteAll);
+        AppRegistry::instance().settingsManager()->save();
+    }
+
+    void MainWindow::setShellAutocompletionNoCollectionNames()
+    {
+        AppRegistry::instance().settingsManager()->setAutocompletionMode(AutocompleteNoCollectionNames);
+        AppRegistry::instance().settingsManager()->save();
+    }
+
+    void MainWindow::setShellAutocompletionNone()
+    {
+        AppRegistry::instance().settingsManager()->setAutocompletionMode(AutocompleteNone);
         AppRegistry::instance().settingsManager()->save();
     }
 

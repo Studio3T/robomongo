@@ -98,8 +98,8 @@ namespace Robomongo
                         || keyEvent->key() == Qt::Key_Tab) {
                     hideAutocompletion();
                     return false;
-                }                
-            }            
+                }
+            }
         }
         return QFrame::eventFilter(obj, event);
     }
@@ -414,17 +414,6 @@ namespace Robomongo
         QString text = QString("<font color='%1'>%2</font>")
                 .arg(color)
                 .arg(detail::prepareServerAddress(address).c_str());
-
-        _currentServerLabel->setText(text);
-    }
-    
-    void TopStatusBar::setCurrentConnection(const std::string &connection, bool isValid)
-    {
-        QString color = isValid ? _textColor.name() : "red";
-
-        QString text = QString("<font color='%1'>%2</font>")
-                .arg(color)
-                .arg(connection.c_str());
 
         _currentServerLabel->setText(text);
     }

@@ -123,7 +123,6 @@ namespace Robomongo
         TopStatusBar(const std::string &connectionName, const std::string &serverName, const std::string &dbName);
         void setCurrentDatabase(const std::string &database, bool isValid = true);
         void setCurrentServer(const std::string &address, bool isValid = true);
-        void setCurrentConnection(const std::string &connection, bool isValid = true);
         void showProgress();
         void hideProgress();
 

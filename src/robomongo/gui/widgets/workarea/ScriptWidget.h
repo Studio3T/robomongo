@@ -120,7 +120,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        TopStatusBar(const std::string &serverName, const std::string &dbName);
+        TopStatusBar(const std::string &connectionName, const std::string &serverName, const std::string &dbName);
         void setCurrentDatabase(const std::string &database, bool isValid = true);
         void setCurrentServer(const std::string &address, bool isValid = true);
         void showProgress();
@@ -129,6 +129,7 @@ namespace Robomongo
     private:
         Indicator *_currentDatabaseLabel;
         Indicator *_currentServerLabel;
+        Indicator *_currentConnectionLabel;
         QColor _textColor;
     };
 }

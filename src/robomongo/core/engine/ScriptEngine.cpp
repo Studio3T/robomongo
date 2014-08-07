@@ -111,15 +111,21 @@ namespace Robomongo
             scope->execFile(roboMongorcPath, false, false);
         }
 
-        // Esprima
+        // Esprima ECMAScript parser: http://esprima.org/
         QFile file(":/robomongo/scripts/esprima.js");
         if (!file.open(QIODevice::ReadOnly))
             throw std::runtime_error("Unable to read esprima.js ");
 
         QTextStream in(&file);
         QString esprima = in.readAll();
+
+        // Inject Esprima into Javascript scope
         _scope->exec(QtUtils::toStdString(esprima), "(esprima)", true, true, true);
 
+        // Enable verbose shell reporting
+        _scope->exec("_verboseShell = true;", "(verboseShell)", false, false, false);
+
+        // Save original autocomplete function so it can be restored if overwritten by user preference
         _scope->exec("DB.autocompleteOriginal = DB.autocomplete;", "(saveOriginalAutocomplete)", false, false, false);
     }
 

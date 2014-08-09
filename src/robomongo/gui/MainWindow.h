@@ -42,6 +42,7 @@ namespace Robomongo
         void toggleFullScreen2();
         void selectNextTab();
         void selectPrevTab();
+        void duplicateTab();
         void refreshConnections();
         void aboutRobomongo();
         void open();

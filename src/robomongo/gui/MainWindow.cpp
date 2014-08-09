@@ -429,6 +429,12 @@ namespace Robomongo
         reloadAction->setVisible(true);
         VERIFY(connect(reloadAction, SIGNAL(triggered()), SLOT(executeScript())));
 
+        // Duplicate tab action
+        QAction *duplicateAction = new QAction("Duplicate Query in New Tab", this);
+        duplicateAction->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_T);
+        duplicateAction->setVisible(true);
+        VERIFY(connect(duplicateAction, SIGNAL(triggered()), SLOT(duplicateTab())));
+
         // Window menu
         QMenu *windowMenu = menuBar()->addMenu("Window");
         //minimize
@@ -439,6 +445,7 @@ namespace Robomongo
         windowMenu->addAction(prevtabAction);
         windowMenu->addSeparator();
         windowMenu->addAction(reloadAction);
+        windowMenu->addAction(duplicateAction);
 
         SettingsManager::ToolbarSettingsContainerType toolbarsSettings = AppRegistry::instance().settingsManager()->toolbars();
 
@@ -753,6 +760,15 @@ namespace Robomongo
     void MainWindow::selectPrevTab()
     {
         _workArea->previousTab();
+    }
+
+    void MainWindow::duplicateTab()
+    {
+        QueryWidget *widget = _workArea->currentQueryWidget();
+        if (!widget)
+            return;
+
+        widget->duplicate();
     }
 
     void MainWindow::refreshConnections()

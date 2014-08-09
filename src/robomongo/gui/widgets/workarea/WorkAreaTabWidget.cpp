@@ -112,6 +112,9 @@ namespace Robomongo
         } else if (KeyboardManager::isNewTabShortcut(keyEvent) && widget) {
             widget->openNewTab();
             return;
+        } else if (KeyboardManager::isDuplicateTabShortcut(keyEvent) && widget) {
+            widget->duplicate();
+            return;
         } else if (KeyboardManager::isSetFocusOnQueryLineShortcut(keyEvent) && widget) {
             widget->setScriptFocus();
             return;

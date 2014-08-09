@@ -21,10 +21,11 @@ namespace Robomongo
         _menu = new QMenu(this);
 
         _newShellAction = new QAction("&New Shell", _menu);
-        _newShellAction->setShortcut(Qt::CTRL + Qt::Key_T);
+        _newShellAction->setShortcut(QKeySequence(QKeySequence::AddTab));
         _reloadShellAction = new QAction("&Re-execute Query", _menu);
         _reloadShellAction->setShortcut(Qt::CTRL + Qt::Key_R);
-        _duplicateShellAction = new QAction("&Duplicate Query In New Shell", _menu);
+        _duplicateShellAction = new QAction("&Duplicate Query In New Tab", _menu);
+        _duplicateShellAction->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_T);
         _pinShellAction = new QAction("&Pin Shell", _menu);
         _closeShellAction = new QAction("&Close Shell", _menu);
         _closeShellAction->setShortcut(Qt::CTRL + Qt::Key_W);

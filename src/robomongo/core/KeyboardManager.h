@@ -7,6 +7,7 @@ namespace Robomongo
     namespace KeyboardManager
     {
         bool isNewTabShortcut(QKeyEvent *keyEvent);
+        bool isDuplicateTabShortcut(QKeyEvent *keyEvent);
         bool isSetFocusOnQueryLineShortcut(QKeyEvent *keyEvent);
         bool isExecuteScriptShortcut(QKeyEvent *keyEvent);
         bool isAutoCompleteShortcut(QKeyEvent *keyEvent);

@@ -8,9 +8,19 @@ namespace Robomongo
             (keyEvent->modifiers() & Qt::ShiftModifier) &&
             (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter);
 
-        bool ctrlT = (keyEvent->modifiers() & Qt::ControlModifier) && (keyEvent->key() == Qt::Key_T);
+        // TODO: compare with QKeySequence::AddTab rather than Ctrl+T
+        bool ctrlT = (keyEvent->modifiers() & Qt::ControlModifier) && !(keyEvent->modifiers() & Qt::ShiftModifier) && (keyEvent->key() == Qt::Key_T);
 
         return ctrlShiftReturn || ctrlT;
+    }
+
+    bool KeyboardManager::isDuplicateTabShortcut(QKeyEvent *keyEvent)
+    {
+        bool ctrlShiftT = (keyEvent->modifiers() & Qt::ControlModifier) &&
+            (keyEvent->modifiers() & Qt::ShiftModifier) &&
+            (keyEvent->key() == Qt::Key_T);
+
+        return ctrlShiftT;
     }
 
     bool KeyboardManager::isSetFocusOnQueryLineShortcut(QKeyEvent *keyEvent)

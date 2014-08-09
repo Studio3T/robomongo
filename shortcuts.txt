@@ -33,6 +33,9 @@ Robomongo shortcut key reference
       Open new tab, based on current (the same server and database). If you
       have selection in query text, selected text will be executed in new tab.
 
+   Ctrl+Shift+T
+      Open duplicate shell tab (same server, database, and query)
+
    Ctrl+F4 or Ctrl+W
       Closes current tab.
 
@@ -112,6 +115,9 @@ Robomongo shortcut key reference
    Cmd+T or Cmd+Shift+Enter
       Open new tab, based on current (the same server and database). If you have
       selection in query text, selected text will be executed in new tab.
+
+   Cmd+Shift+T
+      Open duplicate shell tab (same server, database, and query)
 
    Cmd+W or Cmd+F4
       Closes current tab.

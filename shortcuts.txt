@@ -159,3 +159,9 @@ Robomongo shortcut key reference
 
    Ctrl+F11
       Toggle line numbers in Javascript editing views
+
+   Cmd + Up/Down arrow
+      Move to start/end of text in editing window
+
+   Cmd + Left/Right arrow
+      Move to start/end of current line in editing window

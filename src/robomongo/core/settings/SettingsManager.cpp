@@ -87,12 +87,16 @@ namespace Robomongo
     {
         QVariantMap map = convertToMap();
 
-        if (!QDir().mkpath(_configDir))
+        if (!QDir().mkpath(_configDir)) {
+            LOG_MSG("ERROR: Could not create settings path: " + _configDir, mongo::LL_ERROR);
             return false;
+        }
 
         QFile f(_configPath);
-        if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+            LOG_MSG("ERROR: Could not write settings to: " + _configPath, mongo::LL_ERROR);
             return false;
+        }
 
         bool ok;
         QJson::Serializer s;

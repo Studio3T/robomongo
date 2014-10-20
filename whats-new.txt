@@ -1,3 +1,44 @@
+0.8.5 / (development)
+  * [Stephen Steneker]
+    - OS X build fixes for XCode 5 / libc++ (#524)
+    - OS X specific keyboard shortcut tips (#505)
+    - View documents fail if collection name is "group" (#414)
+    - Problem with slash in collection names (#404)
+    - Add shortcut to open JS file (#408)
+    - Fullscreen mode not working on OS X (#519)
+    - Usability request - add initial curly braces to command bar (#506)
+    - TTL index should allow expiry of 0 seconds (#500)
+    - Add line numbers to JSON editing windows on OS X (#449)
+    - Add user preference to have line numbers displayed by default (#564)
+    - Space after document causes validation error (#544)
+    - Expand current server as soon as you connect to it (#405)
+    - Switching tabs using standard keys on OS X (#87)
+    - Cannot make the Edit Document Window smaller (#548)
+    - Consistent numbering for tree/table/text view items (#421)
+    - Reload Query with keyboard shortcut doesn't work (#551)
+    - Rename "Reload" to "Re-execute query" (#447)
+    - Add "Copy Timestamp from ObjectId" to context menu for ObjectId fields (#559)
+    - Bug: Type of Double changed to Int32 on save document (#622)
+    - "Duplicate Query In New Tab": add to Window menu with keyboard shortcut (#631)
+    - No errors logged if settings directory cannot be created or settings file cannot be written to (#636)
+    - Retina display support (#248)
+  * [Vladimir Belozyorov]
+    - View mode reset to default after no results (#509)
+    - Comment / uncomment selected code in the shell (#467)
+    - Passphrase and password should be hidden in authentication tab (#433)
+    - Cursor initialization - place between curly brackets for default find({}) query (#592)
+    - Include full date/time for log entries (#596)
+    - Option to disable selected code autoexecution when opening a new tab (#514)
+    - Tooltip fixes to match current keyboard shortcuts (#598)
+    - Expand/collapse multiple selections (#591)
+    - Changes in toolbars visibility are saved in config file (#457)
+    - Include connection name under shell tabs (#47)
+  * [Sergey Gavruk]
+    - SettingsManager typo (#558)
+    - Ability to disable autocompletion (#512)
+  * [Kanstantsin Kamkou]
+    - Increase display width for limit & offset input fields (#458)
+
 0.8.4 / November 27, 2013
 
   Read about updates in this version here:
@@ -283,7 +324,7 @@
   * New shape of Connection Settings Dialog
   * New shape of Connections Dialog.  
 
-  
+
 0.4.0 / Dec 26, 2012
 
   * No more "type 'it' for more results" when we have more than 20 objects in collection.
@@ -308,7 +349,3 @@
   * Correct focus placement when opening new connection and switching tabs.
   * Bonus: F12 - opens connections menu from any place.
   * Memory leaks fix.
-    
-    
-  
-  

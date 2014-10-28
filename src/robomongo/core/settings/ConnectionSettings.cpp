@@ -49,6 +49,7 @@ namespace Robomongo
         inf._currentMethod = static_cast<SSHInfo::SupportedAuthenticationMetods>(map.value("sshAuthMethod").toInt());
         setSshInfo(inf);
 #endif
+       _slaveOk = map.value("slaveOk").toBool();
         QVariantList list = map.value("credentials").toList();
         for(QVariantList::const_iterator it = list.begin(); it != list.end(); ++it) {
             QVariant var = *it;
@@ -81,6 +82,7 @@ namespace Robomongo
     void ConnectionSettings::apply(const ConnectionSettings *source)
     {
         setConnectionName(source->connectionName());
+        setSlaveOk(source->slaveOk());
         setServerHost(source->serverHost());
         setServerPort(source->serverPort());
         setDefaultDatabase(source->defaultDatabase());
@@ -104,6 +106,7 @@ namespace Robomongo
         map.insert("connectionName", QtUtils::toQString(connectionName()));
         map.insert("serverHost", QtUtils::toQString(serverHost()));
         map.insert("serverPort", serverPort());
+        map.insert("slaveOk", slaveOk());
         map.insert("defaultDatabase", QtUtils::toQString(defaultDatabase()));
 #ifdef MONGO_SSL
         SSLInfo infl = _info.sslInfo();

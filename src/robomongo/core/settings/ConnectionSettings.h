@@ -56,6 +56,12 @@ namespace Robomongo
         void setServerHost(const std::string &serverHost) { _info.setHost(serverHost); }
 
         /**
+         * @brief SlaveOk
+         */
+        bool slaveOk() const { return _slaveOk; }
+        void setSlaveOk(const bool slaveOk) { _slaveOk = slaveOk; }
+
+        /**
          * @brief Port of server
          */
         unsigned short serverPort() const { return _info.port(); }
@@ -136,6 +142,7 @@ namespace Robomongo
         std::string _connectionName;
         mongo::HostAndPort _info;
         std::string _defaultDatabase;
+        bool _slaveOk;
         QList<CredentialSettings *> _credentials;
     };
 }

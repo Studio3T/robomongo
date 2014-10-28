@@ -10,7 +10,6 @@
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
-
 namespace Robomongo
 {
     ConnectionBasicTab::ConnectionBasicTab(ConnectionSettings *settings) :
@@ -29,6 +28,10 @@ namespace Robomongo
         _connectionName = new QLineEdit(QtUtils::toQString(_settings->connectionName()));
         _serverAddress = new QLineEdit(QtUtils::toQString(_settings->serverHost()));
         _serverPort = new QLineEdit(QString::number(_settings->serverPort()));
+
+        _slaveOk = new QCheckBox("Slave OK?");
+        _slaveOk->setChecked(_settings->slaveOk());
+
         _serverPort->setFixedWidth(80);
         QRegExp rx("\\d+");//(0-65554)
         _serverPort->setValidator(new QRegExpValidator(rx, this));
@@ -43,6 +46,7 @@ namespace Robomongo
         connectionLayout->addWidget(new QLabel(":"),              3, 2);
         connectionLayout->addWidget(_serverPort,                  3, 3);
         connectionLayout->addWidget(serverDescriptionLabel,       4, 1, 1, 3);
+        connectionLayout->addWidget(_slaveOk, 5, 1);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addLayout(connectionLayout);
@@ -56,5 +60,6 @@ namespace Robomongo
         _settings->setConnectionName(QtUtils::toStdString(_connectionName->text()));
         _settings->setServerHost(QtUtils::toStdString(_serverAddress->text()));
         _settings->setServerPort(_serverPort->text().toInt());
+        _settings->setSlaveOk(_slaveOk->isChecked());
     }
 }

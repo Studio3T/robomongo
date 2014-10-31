@@ -203,7 +203,7 @@ namespace Robomongo
                 return;
 
             if (!userSource.empty() && !pass.empty()) {
-                QMessageBox::warning(this, "Invalid input", "The UserSourse field and the Password field are mutually exclusive. The document cannot contain both.\n");
+                QMessageBox::warning(this, "Invalid input", "The UserSource field and the Password field are mutually exclusive. The document cannot contain both.\n");
                 return;
             }
 

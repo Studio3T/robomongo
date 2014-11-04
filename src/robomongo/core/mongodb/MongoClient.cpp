@@ -39,15 +39,24 @@ namespace Robomongo
 
     std::vector<std::string> MongoClient::getCollectionNames(const std::string &dbname) const
     {
-        typedef std::list<std::string> cont_string_t;
-        cont_string_t dbs = _dbclient->getCollectionNames(dbname);
+        std::list<std::string> collections;
 
-        std::vector<std::string> stringList;
-        for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); i++) {
-            stringList.push_back(*i);
+        std::string ns = dbname + ".system.namespaces";
+        std::auto_ptr<mongo::DBClientCursor> c(_dbclient->query( ns.c_str() , mongo::BSONObj(), 0, 0, 0, mongo::QueryOption_SlaveOk, 0 ));
+        while ( c->more() ) {
+            std::string name = c->next()["name"].valuestr();
+            if ( name.find( "$" ) != std::string::npos )
+                continue;
+            collections.push_back( name );
         }
-        std::sort(stringList.begin(), stringList.end());
-        return stringList;
+
+        std::vector<std::string> sortedCollections;
+
+        for (std::list<std::string>::const_iterator i = collections.begin(); i != collections.end(); i++) {
+            sortedCollections.push_back(*i);
+        }
+        std::sort(sortedCollections.begin(), sortedCollections.end());
+        return sortedCollections;
     }
 
 
@@ -55,7 +64,7 @@ namespace Robomongo
     {
         float result = 0.0f;
         mongo::BSONObj resultObj;
-        _dbclient->runCommand("db", BSON("buildInfo" << "1"), resultObj);
+        _dbclient->runCommand("db", BSON("buildInfo" << "1"), resultObj, mongo::QueryOption_SlaveOk);
         std::string resultStr = BsonUtils::getField<mongo::String>(resultObj,"version");
         result = atof(resultStr.c_str());
         return result;

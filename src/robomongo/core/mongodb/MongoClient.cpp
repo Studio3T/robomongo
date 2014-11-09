@@ -42,9 +42,9 @@ namespace Robomongo
         std::list<std::string> collections;
 
         std::string ns = dbname + ".system.namespaces";
-        std::auto_ptr<mongo::DBClientCursor> c(_dbclient->query( ns.c_str() , mongo::BSONObj(), 0, 0, 0, mongo::QueryOption_SlaveOk, 0 ));
-        while ( c->more() ) {
-            std::string name = c->next()["name"].valuestr();
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query( ns.c_str() , mongo::BSONObj(), 0, 0, 0, mongo::QueryOption_SlaveOk, 0 ));
+        while ( cursor->more() ) {
+            std::string name = cursor->next()["name"].valuestr();
             if ( name.find( "$" ) != std::string::npos )
                 continue;
             collections.push_back( name );
@@ -87,7 +87,7 @@ namespace Robomongo
         MongoNamespace ns(dbName, "system.users");
         std::vector<MongoUser> users;
 
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query()));
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query(), 0, 0, 0, mongo::QueryOption_SlaveOk, 0));
         float ver = getVersion();
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();

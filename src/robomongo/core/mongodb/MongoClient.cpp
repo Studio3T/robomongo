@@ -151,7 +151,10 @@ namespace Robomongo
     std::vector<EnsureIndexInfo> MongoClient::getIndexes(const MongoCollectionInfo &collection) const
     {
         std::vector<EnsureIndexInfo> result;
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString()));
+        std::string indexNamespace = mongo::Namespace(collection.ns().toString()).getSisterNS("system.indexes");
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->
+            query( indexNamespace.c_str(), BSON("ns" << collection.ns().toString()), 0, 0, 0, mongo::QueryOption_SlaveOk, 0)
+        );
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();

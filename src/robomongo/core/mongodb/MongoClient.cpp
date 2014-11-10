@@ -133,7 +133,7 @@ namespace Robomongo
         MongoNamespace ns(dbName, "system.js");
         std::vector<MongoFunction> functions;
 
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query()));
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query(), 0, 0, 0, mongo::QueryOption_SlaveOk, 0));
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();

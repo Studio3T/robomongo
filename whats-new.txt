@@ -39,6 +39,8 @@
     - Ability to disable autocompletion (#512)
   * [Kanstantsin Kamkou]
     - Increase display width for limit & offset input fields (#458)
+  * [volans-]
+    - CreateUserDialog.cpp: fixed typo in warning message
 
 0.8.4 / November 27, 2013
 

@@ -41,6 +41,8 @@
     - Increase display width for limit & offset input fields (#458)
   * [volans-]
     - CreateUserDialog.cpp: fixed typo in warning message
+  * [Andres Kievsky]
+    - Added new app icon in a variety of png and iDraw formats (#693)
 
 0.8.4 / November 27, 2013
 

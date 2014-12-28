@@ -22,7 +22,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">QScintilla
-   &#160;<span id="projectnumber">2.7.2</span>
+   &#160;<span id="projectnumber">2.8.4</span>
    </div>
    
   </td>
@@ -74,7 +74,7 @@ printing. </li>
 <p>QScintilla is a port or Scintilla to the Qt GUI toolkit from <a href="http://qt.digia.com">Digia</a> and runs on any operating system supported by Qt (eg. Windows, UNIX/Linux, MacOS/X). QScintilla works with Qt v3, v4 and v5.</p>
 <p>This documentation describes QScintilla for Qt v4 and Qt v5. The QScintilla APIs for Qt v3 and Qt v4 and v5 are almost identical. The main difference is that the <a class="el" href="classQsciScintillaBase.html" title="The QsciScintillaBase class implements the Scintilla editor widget and its low-level API...">QsciScintillaBase</a> class is derived from a different Qt class.</p>
 <p>QScintilla also includes language bindings for <a href="http://www.python.org">Python</a>. These require that <a href="http://www.riverbankcomputing.com/software/pyqt/">PyQt</a> v4 or v5 is also installed.</p>
-<p>This version of QScintilla is based on Scintilla v3.23.</p>
+<p>This version of QScintilla is based on Scintilla v3.3.6.</p>
 <h2>Licensing</h2>
 <p>QScintilla is available under the <a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html">GNU General Public License v2</a>, <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License v3</a> and a commercial license.</p>
 <p>The commercial license allows closed source applications using QScintilla to be developed and distributed. At the moment the commercial version of QScintilla is bundled with the commercial version of <a href="http://www.riverbankcomputing.com/software/pyqt/">PyQt</a>.</p>
@@ -94,7 +94,9 @@ printing. </li>
  OR PERFORMANCE OF THIS SOFTWARE.
 </pre><h2>Installation</h2>
 <p>As supplied QScintilla will be built as a shared library/DLL and installed in the same directories as the Qt libraries and include files.</p>
-<p>If you want to change the configuration then edit the file <code>qscintilla.pro</code> in the <code>Qt4Qt5</code> directory. For example, if you want to build a static library, edit the value of <code>CONFIG</code> and replace <code>dll</code> with <code>staticlib</code>, and edit the value of <code>DEFINES</code> and remove <code>QSCINTILLA_MAKE_DLL</code>.</p>
+<p>If you wish to build a static version of the library then pass <code>CONFIG+=staticlib</code> on the <code>qmake</code> command line.</p>
+<p>If you want to make more significant changes to the configuration then edit the file <code>qscintilla.pro</code> in the <code>Qt4Qt5</code> directory.</p>
+<p>If you do make changes, specifically to the names of the installation directories or the name of the library, then you may also need to update the <code>Qt4Qt5/features/qscintilla2.prf</code> file.</p>
 <p>See your <code>qmake</code> documentation for more details.</p>
 <p>To build and install QScintilla, run:</p>
 <pre>
@@ -111,7 +113,11 @@ printing. </li>
     copy %QTDIR%\lib\qscintilla2.dll %QTDIR%\bin
 </pre><h3>Installation on MacOS/X</h3>
 <p>On MacOS/X you may need to pass <code>-spec macx-g++</code> in order to generate a Makefile, otherwise an XCode project file may be created. In particular the Qt Designer plugin will not load if you do not do this.</p>
-<h2>Example Application</h2>
+<h2>Integration with <code>qmake</code></h2>
+<p>To configure <code>qmake</code> to find your QScintilla installation, add the following line to your application's <code>.pro</code> <a href="file:">file:</a></p>
+<pre>
+    CONFIG += qscintilla2
+</pre><h2>Example Application</h2>
 <p>The example application provided is a port of the standard Qt <code>application</code> example with the <a class="el" href="classQsciScintilla.html" title="The QsciScintilla class implements a higher level, more Qt-like, API to the Scintilla editor widget...">QsciScintilla</a> class being used instead of Qt's QTextEdit class.</p>
 <p>The example does not demonstrate all of the extra features of QScintilla.</p>
 <p>To build the example, run:</p>
@@ -144,7 +150,7 @@ printing. </li>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Jun 16 2013 14:03:34 for QScintilla by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Sep 11 2014 18:15:20 for QScintilla by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>

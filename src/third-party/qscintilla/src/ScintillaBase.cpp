@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <algorithm>
 
 #include "Platform.h"
 
@@ -41,6 +42,7 @@
 #include "AutoComplete.h"
 #include "CharClassify.h"
 #include "Decoration.h"
+#include "CaseFolder.h"
 #include "Document.h"
 #include "Selection.h"
 #include "PositionCache.h"
@@ -193,6 +195,13 @@ void ScintillaBase::AutoCompleteDoubleClick(void *p) {
 	sci->AutoCompleteCompleted();
 }
 
+void ScintillaBase::AutoCompleteInsert(Position startPos, int removeLen, const char *text, int textLen) {
+	UndoGroup ug(pdoc);
+	pdoc->DeleteChars(startPos, removeLen);
+	pdoc->InsertString(startPos, text, textLen);
+	SetEmptySelection(startPos + textLen);
+}
+
 void ScintillaBase::AutoCompleteStart(int lenEntered, const char *list) {
 	//Platform::DebugPrintf("AutoComplete %s\n", list);
 	ct.CallTipCancel();
@@ -203,15 +212,10 @@ void ScintillaBase::AutoCompleteStart(int lenEntered, const char *list) {
 			int lenInsert = typeSep ? 
 				static_cast<int>(typeSep-list) : static_cast<int>(strlen(list));
 			if (ac.ignoreCase) {
-				SetEmptySelection(sel.MainCaret() - lenEntered);
-				pdoc->DeleteChars(sel.MainCaret(), lenEntered);
-				SetEmptySelection(sel.MainCaret());
-				pdoc->InsertString(sel.MainCaret(), list, lenInsert);
-				SetEmptySelection(sel.MainCaret() + lenInsert);
+				// May need to convert the case before invocation, so remove lenEntered characters
+				AutoCompleteInsert(sel.MainCaret() - lenEntered, lenEntered, list, lenInsert);
 			} else {
-				SetEmptySelection(sel.MainCaret());
-				pdoc->InsertString(sel.MainCaret(), list + lenEntered, lenInsert - lenEntered);
-				SetEmptySelection(sel.MainCaret() + lenInsert - lenEntered);
+				AutoCompleteInsert(sel.MainCaret(), 0, list + lenEntered, lenInsert - lenEntered);
 			}
 			ac.Cancel();
 			return;
@@ -233,6 +237,11 @@ void ScintillaBase::AutoCompleteStart(int lenEntered, const char *list) {
 		Redraw();
 		pt = PointMainCaret();
 	}
+	if (wMargin.GetID()) {
+		Point ptOrigin = GetVisibleOriginInMain();
+		pt.x += ptOrigin.x;
+		pt.y += ptOrigin.y;
+	}
 	PRectangle rcac;
 	rcac.left = pt.x - ac.lb->CaretFromEdge();
 	if (pt.y >= rcPopupBounds.bottom - heightLB &&  // Wont fit below.
@@ -253,7 +262,7 @@ void ScintillaBase::AutoCompleteStart(int lenEntered, const char *list) {
 	ac.lb->SetAverageCharWidth(aveCharWidth);
 	ac.lb->SetDoubleClickAction(AutoCompleteDoubleClick, this);
 
-	ac.SetList(list);
+	ac.SetList(list ? list : "");
 
 	// Fiddle the position of the list so it is right next to the target and wide enough for all its strings
 	PRectangle rcList = ac.lb->GetDesiredRect();
@@ -280,7 +289,7 @@ void ScintillaBase::AutoCompleteStart(int lenEntered, const char *list) {
 
 void ScintillaBase::AutoCompleteCancel() {
 	if (ac.Active()) {
-		SCNotification scn = {0};
+		SCNotification scn = {};
 		scn.nmhdr.code = SCN_AUTOCCANCELLED;
 		scn.wParam = 0;
 		scn.listType = 0;
@@ -316,7 +325,7 @@ void ScintillaBase::AutoCompleteCharacterDeleted() {
 	} else {
 		AutoCompleteMoveToCurrentWord();
 	}
-	SCNotification scn = {0};
+	SCNotification scn = {};
 	scn.nmhdr.code = SCN_AUTOCCHARDELETED;
 	scn.wParam = 0;
 	scn.listType = 0;
@@ -333,7 +342,7 @@ void ScintillaBase::AutoCompleteCompleted() {
 
 	ac.Show(false);
 
-	SCNotification scn = {0};
+	SCNotification scn = {};
 	scn.nmhdr.code = listType > 0 ? SCN_USERLISTSELECTION : SCN_AUTOCSELECTION;
 	scn.message = 0;
 	scn.wParam = listType;
@@ -356,25 +365,17 @@ void ScintillaBase::AutoCompleteCompleted() {
 		endPos = pdoc->ExtendWordSelect(endPos, 1, true);
 	if (endPos < firstPos)
 		return;
-	UndoGroup ug(pdoc);
-	if (endPos != firstPos) {
-		pdoc->DeleteChars(firstPos, endPos - firstPos);
-	}
-	SetEmptySelection(ac.posStart);
-	if (item != -1) {
-		pdoc->InsertCString(firstPos, selected.c_str());
-		SetEmptySelection(firstPos + static_cast<int>(selected.length()));
-	}
+	AutoCompleteInsert(firstPos, endPos - firstPos, selected.c_str(), static_cast<int>(selected.length()));
 	SetLastXChosen();
 }
 
-int ScintillaBase::AutoCompleteGetCurrent() {
+int ScintillaBase::AutoCompleteGetCurrent() const {
 	if (!ac.Active())
 		return -1;
 	return ac.GetSelection();
 }
 
-int ScintillaBase::AutoCompleteGetCurrentText(char *buffer) {
+int ScintillaBase::AutoCompleteGetCurrentText(char *buffer) const {
 	if (ac.Active()) {
 		int item = ac.GetSelection();
 		if (item != -1) {
@@ -397,6 +398,11 @@ void ScintillaBase::CallTipShow(Point pt, const char *defn) {
 	int ctStyle = ct.UseStyleCallTip() ? STYLE_CALLTIP : STYLE_DEFAULT;
 	if (ct.UseStyleCallTip()) {
 		ct.SetForeBack(vs.styles[STYLE_CALLTIP].fore, vs.styles[STYLE_CALLTIP].back);
+	}
+	if (wMargin.GetID()) {
+		Point ptOrigin = GetVisibleOriginInMain();
+		pt.x += ptOrigin.x;
+		pt.y += ptOrigin.y;
 	}
 	PRectangle rc = ct.CallTipStart(sel.MainCaret(), pt,
 		vs.lineHeight,
@@ -428,7 +434,7 @@ void ScintillaBase::CallTipShow(Point pt, const char *defn) {
 }
 
 void ScintillaBase::CallTipClick() {
-	SCNotification scn = {0};
+	SCNotification scn = {};
 	scn.nmhdr.code = SCN_CALLTIPCLICK;
 	scn.position = ct.clickPlace;
 	NotifyParent(scn);
@@ -472,6 +478,7 @@ class LexState : public LexInterface {
 	const LexerModule *lexCurrent;
 	void SetLexerModule(const LexerModule *lex);
 	PropSetSimple props;
+	int interfaceVersion;
 public:
 	int lexLanguage;
 
@@ -491,6 +498,17 @@ public:
 	const char *PropGet(const char *key) const;
 	int PropGetInt(const char *key, int defaultValue=0) const;
 	int PropGetExpanded(const char *key, char *result) const;
+
+	int LineEndTypesSupported();
+	int AllocateSubStyles(int styleBase, int numberStyles);
+	int SubStylesStart(int styleBase);
+	int SubStylesLength(int styleBase);
+	int StyleFromSubStyle(int subStyle);
+	int PrimaryStyleFromStyle(int style);
+	void FreeSubStyles();
+	void SetIdentifiers(int style, const char *identifiers);
+	int DistanceToSecondaryStyles();
+	const char *GetSubStyleBases();
 };
 
 #ifdef SCI_NAMESPACE
@@ -500,6 +518,7 @@ public:
 LexState::LexState(Document *pdoc_) : LexInterface(pdoc_) {
 	lexCurrent = 0;
 	performingStyle = false;
+	interfaceVersion = lvOriginal;
 	lexLanguage = SCLEX_CONTAINER;
 }
 
@@ -523,9 +542,12 @@ void LexState::SetLexerModule(const LexerModule *lex) {
 			instance->Release();
 			instance = 0;
 		}
+		interfaceVersion = lvOriginal;
 		lexCurrent = lex;
-		if (lexCurrent)
+		if (lexCurrent) {
 			instance = lexCurrent->Create();
+			interfaceVersion = instance->Version();
+		}
 		pdoc->LexerChanged();
 	}
 }
@@ -630,6 +652,74 @@ int LexState::PropGetExpanded(const char *key, char *result) const {
 	return props.GetExpanded(key, result);
 }
 
+int LexState::LineEndTypesSupported() {
+	if (instance && (interfaceVersion >= lvSubStyles)) {
+		return static_cast<ILexerWithSubStyles *>(instance)->LineEndTypesSupported();
+	}
+	return 0;
+}
+
+int LexState::AllocateSubStyles(int styleBase, int numberStyles) {
+	if (instance && (interfaceVersion >= lvSubStyles)) {
+		return static_cast<ILexerWithSubStyles *>(instance)->AllocateSubStyles(styleBase, numberStyles);
+	}
+	return -1;
+}
+
+int LexState::SubStylesStart(int styleBase) {
+	if (instance && (interfaceVersion >= lvSubStyles)) {
+		return static_cast<ILexerWithSubStyles *>(instance)->SubStylesStart(styleBase);
+	}
+	return -1;
+}
+
+int LexState::SubStylesLength(int styleBase) {
+	if (instance && (interfaceVersion >= lvSubStyles)) {
+		return static_cast<ILexerWithSubStyles *>(instance)->SubStylesLength(styleBase);
+	}
+	return 0;
+}
+
+int LexState::StyleFromSubStyle(int subStyle) {
+	if (instance && (interfaceVersion >= lvSubStyles)) {
+		return static_cast<ILexerWithSubStyles *>(instance)->StyleFromSubStyle(subStyle);
+	}
+	return 0;
+}
+
+int LexState::PrimaryStyleFromStyle(int style) {
+	if (instance && (interfaceVersion >= lvSubStyles)) {
+		return static_cast<ILexerWithSubStyles *>(instance)->PrimaryStyleFromStyle(style);
+	}
+	return 0;
+}
+
+void LexState::FreeSubStyles() {
+	if (instance && (interfaceVersion >= lvSubStyles)) {
+		static_cast<ILexerWithSubStyles *>(instance)->FreeSubStyles();
+	}
+}
+
+void LexState::SetIdentifiers(int style, const char *identifiers) {
+	if (instance && (interfaceVersion >= lvSubStyles)) {
+		static_cast<ILexerWithSubStyles *>(instance)->SetIdentifiers(style, identifiers);
+	}
+}
+
+int LexState::DistanceToSecondaryStyles() {
+	if (instance && (interfaceVersion >= lvSubStyles)) {
+		return static_cast<ILexerWithSubStyles *>(instance)->DistanceToSecondaryStyles();
+	}
+	return 0;
+}
+
+const char *LexState::GetSubStyleBases() {
+	if (instance && (interfaceVersion >= lvSubStyles)) {
+		return static_cast<ILexerWithSubStyles *>(instance)->GetSubStyleBases();
+	}
+	return "";
+}
+
 #endif
 
 void ScintillaBase::NotifyStyleToNeeded(int endStyleNeeded) {
@@ -724,6 +814,13 @@ sptr_t ScintillaBase::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lPara
 
 	case SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR:
 		return ac.ignoreCaseBehaviour;
+
+	case SCI_AUTOCSETORDER:
+		ac.autoSort = wParam;
+		break;
+
+	case SCI_AUTOCGETORDER:
+		return ac.autoSort;
 
 	case SCI_USERLISTSHOW:
 		listType = wParam;
@@ -890,6 +987,37 @@ sptr_t ScintillaBase::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lPara
 	case SCI_DESCRIBEKEYWORDSETS:
 		return StringResult(lParam, DocumentLexState()->DescribeWordListSets());
 
+	case SCI_GETLINEENDTYPESSUPPORTED:
+		return DocumentLexState()->LineEndTypesSupported();
+
+	case SCI_ALLOCATESUBSTYLES:
+		return DocumentLexState()->AllocateSubStyles(wParam, lParam);
+
+	case SCI_GETSUBSTYLESSTART:
+		return DocumentLexState()->SubStylesStart(wParam);
+
+	case SCI_GETSUBSTYLESLENGTH:
+		return DocumentLexState()->SubStylesLength(wParam);
+
+	case SCI_GETSTYLEFROMSUBSTYLE:
+		return DocumentLexState()->StyleFromSubStyle(wParam);
+
+	case SCI_GETPRIMARYSTYLEFROMSTYLE:
+		return DocumentLexState()->PrimaryStyleFromStyle(wParam);
+
+	case SCI_FREESUBSTYLES:
+		DocumentLexState()->FreeSubStyles();
+		break;
+
+	case SCI_SETIDENTIFIERS:
+		DocumentLexState()->SetIdentifiers(wParam, reinterpret_cast<const char *>(lParam));
+		break;
+
+	case SCI_DISTANCETOSECONDARYSTYLES:
+		return DocumentLexState()->DistanceToSecondaryStyles();
+
+	case SCI_GETSUBSTYLEBASES:
+		return StringResult(lParam, DocumentLexState()->GetSubStyleBases());
 #endif
 
 	default:

@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerCPP class.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -144,6 +144,10 @@ public:
         //! A pre-processor stream comment.
         PreProcessorComment = 23,
         InactivePreProcessorComment = PreProcessorComment + 23,
+
+        //! A JavaDoc/Doxygen style pre-processor comment.
+        PreProcessorCommentLineDoc = 24,
+        InactivePreProcessorCommentLineDoc = PreProcessorCommentLineDoc + 64,
     };
 
     //! Construct a QsciLexerCPP with parent \a parent and name \a name.  \a

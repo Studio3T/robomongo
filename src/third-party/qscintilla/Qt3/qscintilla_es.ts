@@ -496,6 +496,84 @@
     </message>
 </context>
 <context>
+    <name>QsciLexerAVS</name>
+    <message>
+        <location filename="qscilexeravs.cpp" line="280"/>
+        <source>Default</source>
+        <translation>Por defecto</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="283"/>
+        <source>Block comment</source>
+        <translation>Comentario de bloque</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="286"/>
+        <source>Nested block comment</source>
+        <translation>Comentario de bloque anidado</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="289"/>
+        <source>Line comment</source>
+        <translation>Comentario de línea</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="292"/>
+        <source>Number</source>
+        <translation>Número</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="295"/>
+        <source>Operator</source>
+        <translation>Operador</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="298"/>
+        <source>Identifier</source>
+        <translation>Identificador</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="301"/>
+        <source>Double-quoted string</source>
+        <translation>Cadena con comillas dobles</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="304"/>
+        <source>Triple double-quoted string</source>
+        <translation>Cadena con triple comilla doble</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="307"/>
+        <source>Keyword</source>
+        <translation>Palabra clave</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="310"/>
+        <source>Filter</source>
+        <translation>Filtro</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="313"/>
+        <source>Plugin</source>
+        <translation>Plugin</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="316"/>
+        <source>Function</source>
+        <translation>Función</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="319"/>
+        <source>Clip property</source>
+        <translation>Propiedad de recorte</translation>
+    </message>
+    <message>
+        <location filename="qscilexeravs.cpp" line="322"/>
+        <source>User defined</source>
+        <translation>Definido por el usuario</translation>
+    </message>
+</context>
+<context>
     <name>QsciLexerBash</name>
     <message>
         <location filename="qscilexerbash.cpp" line="193"/>
@@ -692,214 +770,254 @@
 <context>
     <name>QsciLexerCPP</name>
     <message>
-        <location filename="qscilexercpp.cpp" line="338"/>
+        <location filename="qscilexercpp.cpp" line="340"/>
         <source>Default</source>
         <translation>Por defecto</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="341"/>
+        <location filename="qscilexercpp.cpp" line="343"/>
         <source>Inactive default</source>
         <translation>Por defecto inactivo</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="344"/>
+        <location filename="qscilexercpp.cpp" line="346"/>
         <source>C comment</source>
         <translation>Comentario C</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="347"/>
+        <location filename="qscilexercpp.cpp" line="349"/>
         <source>Inactive C comment</source>
         <translation>Comentario C inactivo</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="350"/>
+        <location filename="qscilexercpp.cpp" line="352"/>
         <source>C++ comment</source>
         <translation>Comentario C++</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="353"/>
+        <location filename="qscilexercpp.cpp" line="355"/>
         <source>Inactive C++ comment</source>
         <translation>Comentario C++ inactivo</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="356"/>
+        <location filename="qscilexercpp.cpp" line="358"/>
         <source>JavaDoc style C comment</source>
         <translation>Comentario C de estilo JavaDoc</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="359"/>
+        <location filename="qscilexercpp.cpp" line="361"/>
         <source>Inactive JavaDoc style C comment</source>
         <translation>Comentario C estilo JavaDoc inactivo</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="362"/>
+        <location filename="qscilexercpp.cpp" line="364"/>
         <source>Number</source>
         <translation>Número</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="365"/>
+        <location filename="qscilexercpp.cpp" line="367"/>
         <source>Inactive number</source>
         <translation>Número inactivo</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="368"/>
+        <location filename="qscilexercpp.cpp" line="370"/>
         <source>Keyword</source>
         <translation>Palabra clave</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="371"/>
+        <location filename="qscilexercpp.cpp" line="373"/>
         <source>Inactive keyword</source>
         <translation>Palabra clave inactiva</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="374"/>
+        <location filename="qscilexercpp.cpp" line="376"/>
         <source>Double-quoted string</source>
         <translation>Cadena con comillas dobles</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="377"/>
+        <location filename="qscilexercpp.cpp" line="379"/>
         <source>Inactive double-quoted string</source>
         <translation>Cadena con doble comilla inactiva</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="380"/>
+        <location filename="qscilexercpp.cpp" line="382"/>
         <source>Single-quoted string</source>
         <translation>Cadena con comillas simples</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="383"/>
+        <location filename="qscilexercpp.cpp" line="385"/>
         <source>Inactive single-quoted string</source>
         <translation>Cadena con comilla simple inactiva</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="386"/>
+        <location filename="qscilexercpp.cpp" line="388"/>
         <source>IDL UUID</source>
         <translation>IDL UUID</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="389"/>
+        <location filename="qscilexercpp.cpp" line="391"/>
         <source>Inactive IDL UUID</source>
         <translation>IDL UUID inactivo</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="392"/>
+        <location filename="qscilexercpp.cpp" line="394"/>
         <source>Pre-processor block</source>
         <translation>Bloque de preprocesador</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="395"/>
+        <location filename="qscilexercpp.cpp" line="397"/>
         <source>Inactive pre-processor block</source>
         <translation>Bloque de preprocesador inactivo</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="398"/>
+        <location filename="qscilexercpp.cpp" line="400"/>
         <source>Operator</source>
         <translation>Operador</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="401"/>
+        <location filename="qscilexercpp.cpp" line="403"/>
         <source>Inactive operator</source>
         <translation>Operador inactivo</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="404"/>
+        <location filename="qscilexercpp.cpp" line="406"/>
         <source>Identifier</source>
         <translation>Identificador</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="407"/>
+        <location filename="qscilexercpp.cpp" line="409"/>
         <source>Inactive identifier</source>
         <translation>Identificador inactivo</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="410"/>
+        <location filename="qscilexercpp.cpp" line="412"/>
         <source>Unclosed string</source>
         <translation>Cadena sin cerrar</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="413"/>
+        <location filename="qscilexercpp.cpp" line="415"/>
         <source>Inactive unclosed string</source>
         <translation>Cadena sin cerrar inactiva</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="416"/>
+        <location filename="qscilexercpp.cpp" line="418"/>
         <source>C# verbatim string</source>
         <translation>Cadena C# textual</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="419"/>
+        <location filename="qscilexercpp.cpp" line="421"/>
         <source>Inactive C# verbatim string</source>
         <translation>Cadena C# textual inactiva</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="422"/>
+        <location filename="qscilexercpp.cpp" line="424"/>
         <source>JavaScript regular expression</source>
         <translation>Expresión regular JavaScript</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="425"/>
+        <location filename="qscilexercpp.cpp" line="427"/>
         <source>Inactive JavaScript regular expression</source>
         <translation>Expresión regular JavaScript inactiva</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="428"/>
+        <location filename="qscilexercpp.cpp" line="430"/>
         <source>JavaDoc style C++ comment</source>
         <translation>Comentario C++ de estilo JavaDoc</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="431"/>
+        <location filename="qscilexercpp.cpp" line="433"/>
         <source>Inactive JavaDoc style C++ comment</source>
         <translation>Comentario C++ estilo JavaDoc inactivo</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="434"/>
+        <location filename="qscilexercpp.cpp" line="436"/>
         <source>Secondary keywords and identifiers</source>
         <translation>Identificadores y palabras clave secundarios</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="437"/>
+        <location filename="qscilexercpp.cpp" line="439"/>
         <source>Inactive secondary keywords and identifiers</source>
         <translation>Identificadores y palabras clave secundarios inactivos</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="440"/>
+        <location filename="qscilexercpp.cpp" line="442"/>
         <source>JavaDoc keyword</source>
         <translation>Palabra clave de Javadoc</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="443"/>
+        <location filename="qscilexercpp.cpp" line="445"/>
         <source>Inactive JavaDoc keyword</source>
         <translation>Palabra clave de JavaDoc inactiva</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="446"/>
+        <location filename="qscilexercpp.cpp" line="448"/>
         <source>JavaDoc keyword error</source>
         <translation>Error en palabra clave de Javadoc</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="449"/>
+        <location filename="qscilexercpp.cpp" line="451"/>
         <source>Inactive JavaDoc keyword error</source>
         <translation>Error en palabra clave de Javadoc inactivo</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="452"/>
+        <location filename="qscilexercpp.cpp" line="454"/>
         <source>Global classes and typedefs</source>
         <translation>Clases globales y typedefs</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="455"/>
+        <location filename="qscilexercpp.cpp" line="457"/>
         <source>Inactive global classes and typedefs</source>
         <translation>Clases globales y typedefs inactivos</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="458"/>
+        <location filename="qscilexercpp.cpp" line="460"/>
         <source>C++ raw string</source>
         <translation>Cadena en bruto C++</translation>
     </message>
     <message>
-        <location filename="qscilexercpp.cpp" line="461"/>
+        <location filename="qscilexercpp.cpp" line="463"/>
         <source>Inactive C++ raw string</source>
         <translation>Cadena inactiva C++</translation>
+    </message>
+    <message>
+        <location filename="qscilexercpp.cpp" line="466"/>
+        <source>Vala triple-quoted verbatim string</source>
+        <translation>Cadena Vala con triple comilla textual</translation>
+    </message>
+    <message>
+        <location filename="qscilexercpp.cpp" line="469"/>
+        <source>Inactive Vala triple-quoted verbatim string</source>
+        <translation>Cadena Vala con triple comilla textual inactiva</translation>
+    </message>
+    <message>
+        <location filename="qscilexercpp.cpp" line="472"/>
+        <source>Pike hash-quoted string</source>
+        <translation>Cadena Pike con hash entrecomillado</translation>
+    </message>
+    <message>
+        <location filename="qscilexercpp.cpp" line="475"/>
+        <source>Inactive Pike hash-quoted string</source>
+        <translation>Cadena Pike con hash entrecomillado inactiva</translation>
+    </message>
+    <message>
+        <location filename="qscilexercpp.cpp" line="478"/>
+        <source>Pre-processor C comment</source>
+        <translation>Comentario C de preprocesador</translation>
+    </message>
+    <message>
+        <location filename="qscilexercpp.cpp" line="481"/>
+        <source>Inactive pre-processor C comment</source>
+        <translation>Comentario C de preprocesador inactivo</translation>
+    </message>
+    <message>
+        <location filename="qscilexercpp.cpp" line="484"/>
+        <source>JavaDoc style pre-processor comment</source>
+        <translation>Comentario de preprocesador estilo JavaDoc</translation>
+    </message>
+    <message>
+        <location filename="qscilexercpp.cpp" line="487"/>
+        <source>Inactive JavaDoc style pre-processor comment</source>
+        <translation>Comentario de preprocesador estilo JavaDoc inactivo</translation>
     </message>
 </context>
 <context>
@@ -1026,6 +1144,124 @@
         <location filename="qscilexercsharp.cpp" line="95"/>
         <source>Verbatim string</source>
         <translation>Cadena textual</translation>
+    </message>
+</context>
+<context>
+    <name>QsciLexerCoffeeScript</name>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="244"/>
+        <source>Default</source>
+        <translation>Por defecto</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="247"/>
+        <source>C-style comment</source>
+        <translation>Comentario de estilo C</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="250"/>
+        <source>C++-style comment</source>
+        <translation>Comentario de estilo C++</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="253"/>
+        <source>JavaDoc C-style comment</source>
+        <translation>Comentario de estilo JavaDoc C</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="256"/>
+        <source>Number</source>
+        <translation>Número</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="259"/>
+        <source>Keyword</source>
+        <translation>Palabra clave</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="262"/>
+        <source>Double-quoted string</source>
+        <translation>Cadena con comillas dobles</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="265"/>
+        <source>Single-quoted string</source>
+        <translation>Cadena con comilla simple</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="268"/>
+        <source>IDL UUID</source>
+        <translation>IDL UUID</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="271"/>
+        <source>Pre-processor block</source>
+        <translation>Bloque de preprocesador</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="274"/>
+        <source>Operator</source>
+        <translation>Operador</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="277"/>
+        <source>Identifier</source>
+        <translation>Identificador</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="280"/>
+        <source>Unclosed string</source>
+        <translation>Cadena sin cerrar</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="283"/>
+        <source>C# verbatim string</source>
+        <translation>Cadena C# textual</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="286"/>
+        <source>Regular expression</source>
+        <translation>Expresión regular</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="289"/>
+        <source>JavaDoc C++-style comment</source>
+        <translation>Comentario de estilo JavaDoc C++</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="292"/>
+        <source>Secondary keywords and identifiers</source>
+        <translation>Identificadores y palabras clave secundarios</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="295"/>
+        <source>JavaDoc keyword</source>
+        <translation>Palabra clave de JavaDoc</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="298"/>
+        <source>JavaDoc keyword error</source>
+        <translation>Error en palabra clave de JavaDoc</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="301"/>
+        <source>Global classes</source>
+        <translation>Clases globales</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="304"/>
+        <source>Block comment</source>
+        <translation>Comentario de bloque</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="307"/>
+        <source>Block regular expression</source>
+        <translation>Expresión regular de bloque</translation>
+    </message>
+    <message>
+        <location filename="qscilexercoffeescript.cpp" line="310"/>
+        <source>Block regular expression comment</source>
+        <translation>Comentario de expresión regular de bloque</translation>
     </message>
 </context>
 <context>
@@ -2018,6 +2254,84 @@
         <location filename="qscilexermatlab.cpp" line="147"/>
         <source>Double-quoted string</source>
         <translation>Cadena con comillas dobles</translation>
+    </message>
+</context>
+<context>
+    <name>QsciLexerPO</name>
+    <message>
+        <location filename="qscilexerpo.cpp" line="90"/>
+        <source>Default</source>
+        <translation>Por defecto</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="93"/>
+        <source>Comment</source>
+        <translation>Comentario</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="96"/>
+        <source>Message identifier</source>
+        <translation>Identificador de mensaje</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="99"/>
+        <source>Message identifier text</source>
+        <translation>Texto identificador de mensaje</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="102"/>
+        <source>Message string</source>
+        <translation>Cadena de mensaje</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="105"/>
+        <source>Message string text</source>
+        <translation>Texto de cadena de mensaje</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="108"/>
+        <source>Message context</source>
+        <translation>Contexto de mensaje</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="111"/>
+        <source>Message context text</source>
+        <translation>Texto de contexto de mensaje</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="114"/>
+        <source>Fuzzy flag</source>
+        <translation>Señalador difuso</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="117"/>
+        <source>Programmer comment</source>
+        <translation>Comentario de programador</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="120"/>
+        <source>Reference</source>
+        <translation>Referencia</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="123"/>
+        <source>Flags</source>
+        <translation>Señaladores</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="126"/>
+        <source>Message identifier text end-of-line</source>
+        <translation>Fin de línea de texto identificador de mensaje</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="129"/>
+        <source>Message string text end-of-line</source>
+        <translation>Fin de línea de texto de cadena de mensaje</translation>
+    </message>
+    <message>
+        <location filename="qscilexerpo.cpp" line="132"/>
+        <source>Message context text end-of-line</source>
+        <translation>Fin de línea de texto de contexto de mensaje</translation>
     </message>
 </context>
 <context>
@@ -3260,37 +3574,37 @@
 <context>
     <name>QsciScintilla</name>
     <message>
-        <location filename="qsciscintilla.cpp" line="4326"/>
+        <location filename="qsciscintilla.cpp" line="4359"/>
         <source>&amp;Undo</source>
         <translation>&amp;Deshacer</translation>
     </message>
     <message>
-        <location filename="qsciscintilla.cpp" line="4330"/>
+        <location filename="qsciscintilla.cpp" line="4363"/>
         <source>&amp;Redo</source>
         <translation>&amp;Rehacer</translation>
     </message>
     <message>
-        <location filename="qsciscintilla.cpp" line="4336"/>
+        <location filename="qsciscintilla.cpp" line="4369"/>
         <source>Cu&amp;t</source>
         <translation>Cor&amp;tar</translation>
     </message>
     <message>
-        <location filename="qsciscintilla.cpp" line="4341"/>
+        <location filename="qsciscintilla.cpp" line="4374"/>
         <source>&amp;Copy</source>
         <translation>&amp;Copiar</translation>
     </message>
     <message>
-        <location filename="qsciscintilla.cpp" line="4347"/>
+        <location filename="qsciscintilla.cpp" line="4380"/>
         <source>&amp;Paste</source>
         <translation>&amp;Pegar</translation>
     </message>
     <message>
-        <location filename="qsciscintilla.cpp" line="4351"/>
+        <location filename="qsciscintilla.cpp" line="4384"/>
         <source>Delete</source>
         <translation>Borrar</translation>
     </message>
     <message>
-        <location filename="qsciscintilla.cpp" line="4358"/>
+        <location filename="qsciscintilla.cpp" line="4391"/>
         <source>Select All</source>
         <translation>Seleccionar todo</translation>
     </message>

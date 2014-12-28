@@ -1,6 +1,6 @@
 // This module implements the QsciPrinter class.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -24,6 +24,8 @@
 
 
 #include "Qsci/qsciprinter.h"
+
+#if !defined(QT_NO_PRINTER)
 
 #include <qprinter.h>
 #include <qpainter.h>
@@ -189,3 +191,5 @@ void QsciPrinter::setWrapMode(QsciScintilla::WrapMode wmode)
 {
     wrap = wmode;
 }
+
+#endif

@@ -1,6 +1,6 @@
 // This module defines interface to the QsciPrinter class.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -36,6 +36,8 @@ extern "C++" {
 #endif
 
 #include <qprinter.h>
+
+#if !defined(QT_NO_PRINTER)
 
 #include <Qsci/qsciglobal.h>
 #include <Qsci/qsciscintilla.h>
@@ -113,6 +115,8 @@ private:
     QsciPrinter(const QsciPrinter &);
     QsciPrinter &operator=(const QsciPrinter &);
 };
+
+#endif
 
 #ifdef __APPLE__
 }

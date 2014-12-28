@@ -141,30 +141,21 @@ static int ExpandAllInPlace(const PropSetSimple &props, std::string &withVars, i
 	return maxExpands;
 }
 
-char *PropSetSimple::Expanded(const char *key) const {
+int PropSetSimple::GetExpanded(const char *key, char *result) const {
 	std::string val = Get(key);
 	ExpandAllInPlace(*this, val, 100, VarChain(key));
-	char *ret = new char [val.size() + 1];
-	strcpy(ret, val.c_str());
-	return ret;
-}
-
-int PropSetSimple::GetExpanded(const char *key, char *result) const {
-	char *val = Expanded(key);
-	const int n = static_cast<int>(strlen(val));
+	const int n = static_cast<int>(val.size());
 	if (result) {
-		strcpy(result, val);
+		strcpy(result, val.c_str());
 	}
-	delete []val;
 	return n;	// Not including NUL
 }
 
 int PropSetSimple::GetInt(const char *key, int defaultValue) const {
-	char *val = Expanded(key);
-	if (val) {
-		int retVal = val[0] ? atoi(val) : defaultValue;
-		delete []val;
-		return retVal;
+	std::string val = Get(key);
+	ExpandAllInPlace(*this, val, 100, VarChain(key));
+	if (!val.empty()) {
+		return atoi(val.c_str());
 	}
 	return defaultValue;
 }

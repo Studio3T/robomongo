@@ -9,7 +9,7 @@
     <meta name="keywords" content="Scintilla, SciTE, Editing Component, Text Editor" />
     <meta name="Description"
     content="www.scintilla.org is the home of the Scintilla editing component and SciTE text editor application." />
-    <meta name="Date.Modified" content="20121021" />
+    <meta name="Date.Modified" content="20131015" />
     <style type="text/css">
         #versionlist {
             margin: 0;
@@ -51,12 +51,12 @@
           <img src="SciWord.jpg" height="78" width="256" alt="Scintilla" />
         </td>
         <td width="40%" align="left">
-          <font color="#FFCC99" size="4"> A free source code editing component for Win32 and
-          GTK+</font>
+          <font color="#FFCC99" size="4"> A free source code editing component for Win32,
+          GTK+, and OS X</font>
         </td>
         <td width="40%" align="right">
-          <font color="#FFCC99" size="3"> Release version 3.2.3<br />
-           Site last modified October 21 2012</font>
+          <font color="#FFCC99" size="3"> Release version 3.3.6<br />
+           Site last modified October 15 2013</font>
         </td>
         <td width="20%">
           &nbsp;
@@ -71,13 +71,12 @@
       </tr>
     </table>
     <ul id="versionlist">
-      <li>Version 3.2.3 improves speed when performing multiple searches.</li>
-      <li>Version 3.2.2 supports retina displays on Cocoa.</li>
-      <li>Version 3.2.1 adds some minor features and fixes bugs.</li>
-      <li>Version 3.2.0 adds support for the Qt platform and PySide Python bindings.</li>
-      <li>Version 3.1.0 adds an animated find indicator on Cocoa.</li>
-      <li>Version 3.0.4 fixes minor problems particularly with Direct2D.</li>
-      <li>Version 3.0.3 uses fractional positioning in more situations.</li>
+      <li>Version 3.3.6 adds support for the Rust language and fixes bugs.</li>
+      <li>Version 3.3.5 can represent characters with strings. This may be used for modes
+      which show invisible characters or differentiate characters that appear similar.</li>
+      <li>Version 3.3.4 better supports Unicode use in lexers.</li>
+      <li>Version 3.3.3 fixes bugs on GTK+.</li>
+      <li>Version 3.3.2 simplifies implementing folding.</li>
     </ul>
     <ul id="menu">
       <li id="remote1"><a href="http://www.scintilla.org/SciTEImage.html">Screenshot</a></li>
@@ -124,8 +123,8 @@ if (!IsRemote()) { //if NOT remote...
       code, styling should not be persisted as it can be mechanically recreated.
     </p>
     <p>
-       Scintilla and SciTE are currently available for Intel Win32 and Linux compatible operating
-      systems with GTK+. They have been run on Windows XP, Windows 7, and on Ubuntu 10.10
+       Scintilla and SciTE are currently available for Intel Win32, OS X, and Linux compatible operating
+      systems with GTK+. They have been run on Windows XP, Windows 7, OS X 10.6+, and on Ubuntu 10.10
       with GTK+ 2.20. <a href="http://www.scintilla.org/SciTEImage.html">Here is a screenshot of
       SciTE.</a><br />
     </p>

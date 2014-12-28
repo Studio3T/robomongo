@@ -1,6 +1,6 @@
 // This module implements the QsciLexer class.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -403,7 +403,8 @@ bool QsciLexer::readSettings(QSettings &qs,const char *prefix)
         else
             rc = false;
 
-        // Read the font
+        // Read the font.  First try the deprecated format that uses an integer
+        // point size.
         full_key = key + "font";
 
         fdesc = qs.readListEntry(full_key, ',', &ok);
@@ -422,6 +423,33 @@ bool QsciLexer::readSettings(QSettings &qs,const char *prefix)
         }
         else
             rc = false;
+
+        // Now try the newer font format that uses a floating point point size.
+        // It is not an error if it doesn't exist.
+        full_key = key + "font2";
+
+        fdesc = qs.readListEntry(full_key, ',', &ok);
+
+        if (ok)
+        {
+            // Allow for future versions with more fields.
+            if (fdesc.count() >= 5)
+            {
+                QFont f;
+
+                f.setFamily(fdesc[0]);
+                f.setPointSizeF(fdesc[1].toDouble());
+                f.setBold(fdesc[2].toInt());
+                f.setItalic(fdesc[3].toInt());
+                f.setUnderline(fdesc[4].toInt());
+
+                setFont(f, i);
+            }
+            else
+            {
+                rc = false;
+            }
+        }
 
         // Read the background colour.
         full_key = key + "paper";
@@ -465,7 +493,8 @@ bool QsciLexer::readSettings(QSettings &qs,const char *prefix)
     else
         rc = false;
 
-    // Read the default font.
+    // Read the default font.  First try the deprecated format that uses an
+    // integer point size.
     full_key = key + "defaultfont";
 
     fdesc = qs.readListEntry(full_key, ',', &ok);
@@ -484,6 +513,33 @@ bool QsciLexer::readSettings(QSettings &qs,const char *prefix)
     }
     else
         rc = false;
+
+    // Now try the newer font format that uses a floating point point size.  It
+    // is not an error if it doesn't exist.
+    full_key = key + "defaultfont2";
+
+    fdesc = qs.readListEntry(full_key, ',', &ok);
+
+    if (ok)
+    {
+        // Allow for future versions with more fields.
+        if (fdesc.count() >= 5)
+        {
+            QFont f;
+
+            f.setFamily(fdesc[0]);
+            f.setPointSizeF(fdesc[1].toDouble());
+            f.setBold(fdesc[2].toInt());
+            f.setItalic(fdesc[3].toInt());
+            f.setUnderline(fdesc[4].toInt());
+
+            setDefaultFont(f);
+        }
+        else
+        {
+            rc = false;
+        }
+    }
 
     full_key = key + "autoindentstyle";
 
@@ -530,7 +586,7 @@ bool QsciLexer::writeSettings(QSettings &qs,const char *prefix) const
         if (!qs.writeEntry(key + "eolfill", eolFill(i)))
             rc = false;
 
-        // Write the font
+        // Write the font using the deprecated format.
         QFont f = font(i);
 
         fdesc.clear();
@@ -543,6 +599,12 @@ bool QsciLexer::writeSettings(QSettings &qs,const char *prefix) const
         fdesc += fmt.arg((int)f.underline());
 
         if (!qs.writeEntry(key + "font", fdesc, ','))
+            rc = false;
+
+        // Write the font using the newer format.
+        fdesc[1] = fmt.arg(f.pointSizeF());
+
+        if (!qs.writeEntry(key + "font2", fdesc, ','))
             rc = false;
 
         // Write the background colour.
@@ -574,7 +636,7 @@ bool QsciLexer::writeSettings(QSettings &qs,const char *prefix) const
     if (!qs.writeEntry(key + "defaultpaper", num))
         rc = false;
 
-    // Write the default font
+    // Write the default font using the deprecated format.
     fdesc.clear();
     fdesc += defFont.family();
     fdesc += fmt.arg(defFont.pointSize());
@@ -585,6 +647,12 @@ bool QsciLexer::writeSettings(QSettings &qs,const char *prefix) const
     fdesc += fmt.arg((int)defFont.underline());
 
     if (!qs.writeEntry(key + "defaultfont", fdesc, ','))
+        rc = false;
+
+    // Write the font using the newer format.
+    fdesc[1] = fmt.arg(defFont.pointSizeF());
+
+    if (!qs.writeEntry(key + "defaultfont2", fdesc, ','))
         rc = false;
 
     if (!qs.writeEntry(key + "autoindentstyle", autoIndStyle))

@@ -38,7 +38,7 @@ QScintilla also includes language bindings for
 <a href="http://www.riverbankcomputing.com/software/pyqt/">PyQt</a> v4 or v5 is
 also installed.
 
-This version of QScintilla is based on Scintilla v3.23.
+This version of QScintilla is based on Scintilla v3.3.6.
 
 
 <h2>Licensing</h2>
@@ -84,12 +84,14 @@ The Scintilla code within QScintilla is released under the following license:
 As supplied QScintilla will be built as a shared library/DLL and installed in
 the same directories as the Qt libraries and include files.
 
-If you want to change the configuration then edit the file
-<tt>qscintilla.pro</tt> in the
+If you wish to build a static version of the library then pass
+<tt>CONFIG+=staticlib</tt> on the <tt>qmake</tt> command line.
+
+If you want to make more significant changes to the configuration then edit the
+file <tt>qscintilla.pro</tt> in the
 <tt>Qt3</tt>
-directory.  For example, if you want to build a static library, edit the value
-of <tt>CONFIG</tt> and replace <tt>dll</tt> with <tt>staticlib</tt>, and edit
-the value of <tt>DEFINES</tt> and remove <tt>QSCINTILLA_MAKE_DLL</tt>.
+directory.
+
 
 See your <tt>qmake</tt> documentation for more details.
 
@@ -136,6 +138,8 @@ also want to run:
 On MacOS/X you may need to pass <tt>-spec macx-g++</tt> in order to generate a
 Makefile, otherwise an XCode project file may be created.  In particular the
 Qt Designer plugin will not load if you do not do this.
+
+
 
 
 <h2>Example Application</h2>

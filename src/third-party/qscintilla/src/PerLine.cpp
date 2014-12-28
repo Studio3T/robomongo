@@ -7,6 +7,8 @@
 
 #include <string.h>
 
+#include <algorithm>
+
 #include "Platform.h"
 
 #include "Scintilla.h"
@@ -43,17 +45,6 @@ int MarkerHandleSet::Length() const {
 	return c;
 }
 
-int MarkerHandleSet::NumberFromHandle(int handle) const {
-	MarkerHandleNumber *mhn = root;
-	while (mhn) {
-		if (mhn->handle == handle) {
-			return mhn->number;
-		}
-		mhn = mhn->next;
-	}
-	return - 1;
-}
-
 int MarkerHandleSet::MarkValue() const {
 	unsigned int m = 0;
 	MarkerHandleNumber *mhn = root;
@@ -77,8 +68,6 @@ bool MarkerHandleSet::Contains(int handle) const {
 
 bool MarkerHandleSet::InsertHandle(int handle, int markerNum) {
 	MarkerHandleNumber *mhn = new MarkerHandleNumber;
-	if (!mhn)
-		return false;
 	mhn->handle = handle;
 	mhn->number = markerNum;
 	mhn->next = root;
@@ -209,8 +198,6 @@ int LineMarkers::AddMark(int line, int markerNum, int lines) {
 	if (!markers[line]) {
 		// Need new structure to hold marker handle
 		markers[line] = new MarkerHandleSet();
-		if (!markers[line])
-			return -1;
 	}
 	markers[line]->InsertHandle(handleCurrent, markerNum);
 
@@ -295,7 +282,7 @@ int LineLevels::SetLevel(int line, int level, int lines) {
 	return prev;
 }
 
-int LineLevels::GetLevel(int line) {
+int LineLevels::GetLevel(int line) const {
 	if (levels.Length() && (line >= 0) && (line < levels.Length())) {
 		return levels[line];
 	} else {
@@ -338,7 +325,7 @@ int LineState::GetLineState(int line) {
 	return lineStates[line];
 }
 
-int LineState::GetMaxLineState() {
+int LineState::GetMaxLineState() const {
 	return lineStates.Length();
 }
 
@@ -389,10 +376,6 @@ void LineAnnotation::RemoveLine(int line) {
 	}
 }
 
-bool LineAnnotation::AnySet() const {
-	return annotations.Length() > 0;
-}
-
 bool LineAnnotation::MultipleStyles(int line) const {
 	if (annotations.Length() && (line >= 0) && (line < annotations.Length()) && annotations[line])
 		return reinterpret_cast<AnnotationHeader *>(annotations[line])->style == IndividualStyles;
@@ -400,7 +383,7 @@ bool LineAnnotation::MultipleStyles(int line) const {
 		return 0;
 }
 
-int LineAnnotation::Style(int line) {
+int LineAnnotation::Style(int line) const {
 	if (annotations.Length() && (line >= 0) && (line < annotations.Length()) && annotations[line])
 		return reinterpret_cast<AnnotationHeader *>(annotations[line])->style;
 	else

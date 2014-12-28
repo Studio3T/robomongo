@@ -22,7 +22,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">QScintilla
-   &#160;<span id="projectnumber">2.7.2</span>
+   &#160;<span id="projectnumber">2.8.4</span>
    </div>
    
   </td>
@@ -72,69 +72,72 @@
 Public Types</h2>
 <ul>
 <li>enum { <br/>
-&#160;&#160;<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01daaf3761b6b64a02e306095a77c6e44d22">Default</a> =  0, 
+&#160;&#160;<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62aaf3761b6b64a02e306095a77c6e44d22">Default</a> =  0, 
 <b>InactiveDefault</b> =  Default + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01dab05c80130359b9586979df7f9a85d3fe">Comment</a> =  1, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62ab05c80130359b9586979df7f9a85d3fe">Comment</a> =  1, 
 <br/>
 &#160;&#160;<b>InactiveComment</b> =  Comment + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01daf7a31515ec66490642ab83b9fedb8a78">CommentLine</a> =  2, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62af7a31515ec66490642ab83b9fedb8a78">CommentLine</a> =  2, 
 <b>InactiveCommentLine</b> =  CommentLine + 64, 
 <br/>
-&#160;&#160;<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da12cc5d18b03e47a08bd19098be35631b">CommentDoc</a> =  3, 
+&#160;&#160;<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a12cc5d18b03e47a08bd19098be35631b">CommentDoc</a> =  3, 
 <b>InactiveCommentDoc</b> =  CommentDoc + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da3f7d7b7c70a53fe91b336ff31c59e195">Number</a> =  4, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a3f7d7b7c70a53fe91b336ff31c59e195">Number</a> =  4, 
 <br/>
 &#160;&#160;<b>InactiveNumber</b> =  Number + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da2495558f63baf5987a97cf2dceddbfc7">Keyword</a> =  5, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a2495558f63baf5987a97cf2dceddbfc7">Keyword</a> =  5, 
 <b>InactiveKeyword</b> =  Keyword + 64, 
 <br/>
-&#160;&#160;<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da9956498543ca425e9772a8d11e7555b5">DoubleQuotedString</a> =  6, 
+&#160;&#160;<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a9956498543ca425e9772a8d11e7555b5">DoubleQuotedString</a> =  6, 
 <b>InactiveDoubleQuotedString</b> =  DoubleQuotedString + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01dad7c37e1eaac5103b567dd7f677fbd5be">SingleQuotedString</a> =  7, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62ad7c37e1eaac5103b567dd7f677fbd5be">SingleQuotedString</a> =  7, 
 <br/>
 &#160;&#160;<b>InactiveSingleQuotedString</b> =  SingleQuotedString + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da3ce80212372e40f2ed903c52297f48c7">UUID</a> =  8, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a3ce80212372e40f2ed903c52297f48c7">UUID</a> =  8, 
 <b>InactiveUUID</b> =  UUID + 64, 
 <br/>
-&#160;&#160;<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da16c747644d986c230126c5420de1497e">PreProcessor</a> =  9, 
+&#160;&#160;<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a16c747644d986c230126c5420de1497e">PreProcessor</a> =  9, 
 <b>InactivePreProcessor</b> =  PreProcessor + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da4007ebc2021d70cf1ad6e9c6c85aba4e">Operator</a> =  10, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a4007ebc2021d70cf1ad6e9c6c85aba4e">Operator</a> =  10, 
 <br/>
 &#160;&#160;<b>InactiveOperator</b> =  Operator + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da162f877d72b7a405250d3a931660080e">Identifier</a> =  11, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a162f877d72b7a405250d3a931660080e">Identifier</a> =  11, 
 <b>InactiveIdentifier</b> =  Identifier + 64, 
 <br/>
-&#160;&#160;<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da7aae8e724d5fcbbca68f3e7f97460721">UnclosedString</a> =  12, 
+&#160;&#160;<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a7aae8e724d5fcbbca68f3e7f97460721">UnclosedString</a> =  12, 
 <b>InactiveUnclosedString</b> =  UnclosedString + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01dafb3585e07f994345f2c21f43f7e2ec1a">VerbatimString</a> =  13, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62afb3585e07f994345f2c21f43f7e2ec1a">VerbatimString</a> =  13, 
 <br/>
 &#160;&#160;<b>InactiveVerbatimString</b> =  VerbatimString + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01dac26a3735f09aa6702cfbbb9fac56d6f5">Regex</a> =  14, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62ac26a3735f09aa6702cfbbb9fac56d6f5">Regex</a> =  14, 
 <b>InactiveRegex</b> =  Regex + 64, 
 <br/>
-&#160;&#160;<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da659ebab287e989f11cf905532c1ccddf">CommentLineDoc</a> =  15, 
+&#160;&#160;<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a659ebab287e989f11cf905532c1ccddf">CommentLineDoc</a> =  15, 
 <b>InactiveCommentLineDoc</b> =  CommentLineDoc + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01dae9944f1484321b3261c8749ccfadbe2d">KeywordSet2</a> =  16, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62ae9944f1484321b3261c8749ccfadbe2d">KeywordSet2</a> =  16, 
 <br/>
 &#160;&#160;<b>InactiveKeywordSet2</b> =  KeywordSet2 + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01dac640cd198228b554ec3d0b60e00d91bd">CommentDocKeyword</a> =  17, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62ac640cd198228b554ec3d0b60e00d91bd">CommentDocKeyword</a> =  17, 
 <b>InactiveCommentDocKeyword</b> =  CommentDocKeyword + 64, 
 <br/>
-&#160;&#160;<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da52db9ffb3d81b68562da67cbc70d3388">CommentDocKeywordError</a> =  18, 
+&#160;&#160;<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a52db9ffb3d81b68562da67cbc70d3388">CommentDocKeywordError</a> =  18, 
 <b>InactiveCommentDocKeywordError</b> =  CommentDocKeywordError + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da713977fdf2b7b8b59c7e9d23004090dc">GlobalClass</a> =  19, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a713977fdf2b7b8b59c7e9d23004090dc">GlobalClass</a> =  19, 
 <br/>
 &#160;&#160;<b>InactiveGlobalClass</b> =  GlobalClass + 64, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da12c1673479aaf32d03b5a2fde6f032a9">RawString</a> =  20, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a12c1673479aaf32d03b5a2fde6f032a9">RawString</a> =  20, 
 <b>InactiveRawString</b> =  RawString + 20, 
 <br/>
-&#160;&#160;<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da68d65b20c3cd1c04f46914904bc9277c">TripleQuotedVerbatimString</a> =  21, 
+&#160;&#160;<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a68d65b20c3cd1c04f46914904bc9277c">TripleQuotedVerbatimString</a> =  21, 
 <b>InactiveTripleQuotedVerbatimString</b> =  TripleQuotedVerbatimString + 21, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da1b8ef1921a218a2db1d6d7d65ac3242c">HashQuotedString</a> =  22, 
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a1b8ef1921a218a2db1d6d7d65ac3242c">HashQuotedString</a> =  22, 
 <br/>
 &#160;&#160;<b>InactiveHashQuotedString</b> =  HashQuotedString + 22, 
-<a class="el" href="classQsciLexerCPP.html#a9e207c35eb4d13407b46606e44faa01da95c728e17fdb37a45ba20d09ee9eda9c">PreProcessorComment</a> =  23, 
-<b>InactivePreProcessorComment</b> =  PreProcessorComment + 23
+<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a95c728e17fdb37a45ba20d09ee9eda9c">PreProcessorComment</a> =  23, 
+<b>InactivePreProcessorComment</b> =  PreProcessorComment + 23, 
+<br/>
+&#160;&#160;<a class="el" href="classQsciLexerCPP.html#ade52f83ef37526736fb767b6e73c5e62a5b319d25cf7a161e08b0810a0d2b8470">PreProcessorCommentLineDoc</a> =  24, 
+<b>InactivePreProcessorCommentLineDoc</b> =  PreProcessorCommentLineDoc + 64
 <br/>
  }
 </ul>
@@ -198,7 +201,7 @@ Protected Member Functions</h2>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="classQsciLexerCPP.html" title="The QsciLexerCPP class encapsulates the Scintilla C++ lexer.">QsciLexerCPP</a> class encapsulates the Scintilla C++ lexer. </p>
 </div><hr/><h2>Member Enumeration Documentation</h2>
-<a class="anchor" id="a9e207c35eb4d13407b46606e44faa01d"></a><!-- doxytag: member="QsciLexerCPP::@3" ref="a9e207c35eb4d13407b46606e44faa01d" args="" -->
+<a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62"></a><!-- doxytag: member="QsciLexerCPP::@5" ref="ade52f83ef37526736fb767b6e73c5e62" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -210,77 +213,80 @@ Protected Member Functions</h2>
 <div class="memdoc">
 <p>This enum defines the meanings of the different styles used by the C++ lexer. </p>
 <dl><dt><b>Enumerator: </b></dt><dd><table border="0" cellspacing="2" cellpadding="0">
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01daaf3761b6b64a02e306095a77c6e44d22"></a><!-- doxytag: member="Default" ref="a9e207c35eb4d13407b46606e44faa01daaf3761b6b64a02e306095a77c6e44d22" args="" -->Default</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62aaf3761b6b64a02e306095a77c6e44d22"></a><!-- doxytag: member="Default" ref="ade52f83ef37526736fb767b6e73c5e62aaf3761b6b64a02e306095a77c6e44d22" args="" -->Default</em>&nbsp;</td><td>
 <p>The default. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01dab05c80130359b9586979df7f9a85d3fe"></a><!-- doxytag: member="Comment" ref="a9e207c35eb4d13407b46606e44faa01dab05c80130359b9586979df7f9a85d3fe" args="" -->Comment</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62ab05c80130359b9586979df7f9a85d3fe"></a><!-- doxytag: member="Comment" ref="ade52f83ef37526736fb767b6e73c5e62ab05c80130359b9586979df7f9a85d3fe" args="" -->Comment</em>&nbsp;</td><td>
 <p>A C comment. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01daf7a31515ec66490642ab83b9fedb8a78"></a><!-- doxytag: member="CommentLine" ref="a9e207c35eb4d13407b46606e44faa01daf7a31515ec66490642ab83b9fedb8a78" args="" -->CommentLine</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62af7a31515ec66490642ab83b9fedb8a78"></a><!-- doxytag: member="CommentLine" ref="ade52f83ef37526736fb767b6e73c5e62af7a31515ec66490642ab83b9fedb8a78" args="" -->CommentLine</em>&nbsp;</td><td>
 <p>A C++ comment line. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da12cc5d18b03e47a08bd19098be35631b"></a><!-- doxytag: member="CommentDoc" ref="a9e207c35eb4d13407b46606e44faa01da12cc5d18b03e47a08bd19098be35631b" args="" -->CommentDoc</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a12cc5d18b03e47a08bd19098be35631b"></a><!-- doxytag: member="CommentDoc" ref="ade52f83ef37526736fb767b6e73c5e62a12cc5d18b03e47a08bd19098be35631b" args="" -->CommentDoc</em>&nbsp;</td><td>
 <p>A JavaDoc/Doxygen style C comment. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da3f7d7b7c70a53fe91b336ff31c59e195"></a><!-- doxytag: member="Number" ref="a9e207c35eb4d13407b46606e44faa01da3f7d7b7c70a53fe91b336ff31c59e195" args="" -->Number</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a3f7d7b7c70a53fe91b336ff31c59e195"></a><!-- doxytag: member="Number" ref="ade52f83ef37526736fb767b6e73c5e62a3f7d7b7c70a53fe91b336ff31c59e195" args="" -->Number</em>&nbsp;</td><td>
 <p>A number. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da2495558f63baf5987a97cf2dceddbfc7"></a><!-- doxytag: member="Keyword" ref="a9e207c35eb4d13407b46606e44faa01da2495558f63baf5987a97cf2dceddbfc7" args="" -->Keyword</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a2495558f63baf5987a97cf2dceddbfc7"></a><!-- doxytag: member="Keyword" ref="ade52f83ef37526736fb767b6e73c5e62a2495558f63baf5987a97cf2dceddbfc7" args="" -->Keyword</em>&nbsp;</td><td>
 <p>A keyword. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da9956498543ca425e9772a8d11e7555b5"></a><!-- doxytag: member="DoubleQuotedString" ref="a9e207c35eb4d13407b46606e44faa01da9956498543ca425e9772a8d11e7555b5" args="" -->DoubleQuotedString</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a9956498543ca425e9772a8d11e7555b5"></a><!-- doxytag: member="DoubleQuotedString" ref="ade52f83ef37526736fb767b6e73c5e62a9956498543ca425e9772a8d11e7555b5" args="" -->DoubleQuotedString</em>&nbsp;</td><td>
 <p>A double-quoted string. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01dad7c37e1eaac5103b567dd7f677fbd5be"></a><!-- doxytag: member="SingleQuotedString" ref="a9e207c35eb4d13407b46606e44faa01dad7c37e1eaac5103b567dd7f677fbd5be" args="" -->SingleQuotedString</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62ad7c37e1eaac5103b567dd7f677fbd5be"></a><!-- doxytag: member="SingleQuotedString" ref="ade52f83ef37526736fb767b6e73c5e62ad7c37e1eaac5103b567dd7f677fbd5be" args="" -->SingleQuotedString</em>&nbsp;</td><td>
 <p>A single-quoted string. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da3ce80212372e40f2ed903c52297f48c7"></a><!-- doxytag: member="UUID" ref="a9e207c35eb4d13407b46606e44faa01da3ce80212372e40f2ed903c52297f48c7" args="" -->UUID</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a3ce80212372e40f2ed903c52297f48c7"></a><!-- doxytag: member="UUID" ref="ade52f83ef37526736fb767b6e73c5e62a3ce80212372e40f2ed903c52297f48c7" args="" -->UUID</em>&nbsp;</td><td>
 <p>An IDL UUID. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da16c747644d986c230126c5420de1497e"></a><!-- doxytag: member="PreProcessor" ref="a9e207c35eb4d13407b46606e44faa01da16c747644d986c230126c5420de1497e" args="" -->PreProcessor</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a16c747644d986c230126c5420de1497e"></a><!-- doxytag: member="PreProcessor" ref="ade52f83ef37526736fb767b6e73c5e62a16c747644d986c230126c5420de1497e" args="" -->PreProcessor</em>&nbsp;</td><td>
 <p>A pre-processor block. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da4007ebc2021d70cf1ad6e9c6c85aba4e"></a><!-- doxytag: member="Operator" ref="a9e207c35eb4d13407b46606e44faa01da4007ebc2021d70cf1ad6e9c6c85aba4e" args="" -->Operator</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a4007ebc2021d70cf1ad6e9c6c85aba4e"></a><!-- doxytag: member="Operator" ref="ade52f83ef37526736fb767b6e73c5e62a4007ebc2021d70cf1ad6e9c6c85aba4e" args="" -->Operator</em>&nbsp;</td><td>
 <p>An operator. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da162f877d72b7a405250d3a931660080e"></a><!-- doxytag: member="Identifier" ref="a9e207c35eb4d13407b46606e44faa01da162f877d72b7a405250d3a931660080e" args="" -->Identifier</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a162f877d72b7a405250d3a931660080e"></a><!-- doxytag: member="Identifier" ref="ade52f83ef37526736fb767b6e73c5e62a162f877d72b7a405250d3a931660080e" args="" -->Identifier</em>&nbsp;</td><td>
 <p>An identifier. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da7aae8e724d5fcbbca68f3e7f97460721"></a><!-- doxytag: member="UnclosedString" ref="a9e207c35eb4d13407b46606e44faa01da7aae8e724d5fcbbca68f3e7f97460721" args="" -->UnclosedString</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a7aae8e724d5fcbbca68f3e7f97460721"></a><!-- doxytag: member="UnclosedString" ref="ade52f83ef37526736fb767b6e73c5e62a7aae8e724d5fcbbca68f3e7f97460721" args="" -->UnclosedString</em>&nbsp;</td><td>
 <p>The end of a line where a string is not closed. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01dafb3585e07f994345f2c21f43f7e2ec1a"></a><!-- doxytag: member="VerbatimString" ref="a9e207c35eb4d13407b46606e44faa01dafb3585e07f994345f2c21f43f7e2ec1a" args="" -->VerbatimString</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62afb3585e07f994345f2c21f43f7e2ec1a"></a><!-- doxytag: member="VerbatimString" ref="ade52f83ef37526736fb767b6e73c5e62afb3585e07f994345f2c21f43f7e2ec1a" args="" -->VerbatimString</em>&nbsp;</td><td>
 <p>A C# verbatim string. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01dac26a3735f09aa6702cfbbb9fac56d6f5"></a><!-- doxytag: member="Regex" ref="a9e207c35eb4d13407b46606e44faa01dac26a3735f09aa6702cfbbb9fac56d6f5" args="" -->Regex</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62ac26a3735f09aa6702cfbbb9fac56d6f5"></a><!-- doxytag: member="Regex" ref="ade52f83ef37526736fb767b6e73c5e62ac26a3735f09aa6702cfbbb9fac56d6f5" args="" -->Regex</em>&nbsp;</td><td>
 <p>A JavaScript regular expression. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da659ebab287e989f11cf905532c1ccddf"></a><!-- doxytag: member="CommentLineDoc" ref="a9e207c35eb4d13407b46606e44faa01da659ebab287e989f11cf905532c1ccddf" args="" -->CommentLineDoc</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a659ebab287e989f11cf905532c1ccddf"></a><!-- doxytag: member="CommentLineDoc" ref="ade52f83ef37526736fb767b6e73c5e62a659ebab287e989f11cf905532c1ccddf" args="" -->CommentLineDoc</em>&nbsp;</td><td>
 <p>A JavaDoc/Doxygen style C++ comment line. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01dae9944f1484321b3261c8749ccfadbe2d"></a><!-- doxytag: member="KeywordSet2" ref="a9e207c35eb4d13407b46606e44faa01dae9944f1484321b3261c8749ccfadbe2d" args="" -->KeywordSet2</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62ae9944f1484321b3261c8749ccfadbe2d"></a><!-- doxytag: member="KeywordSet2" ref="ade52f83ef37526736fb767b6e73c5e62ae9944f1484321b3261c8749ccfadbe2d" args="" -->KeywordSet2</em>&nbsp;</td><td>
 <p>A keyword defined in keyword set number 2. The class must be sub-classed and re-implement <a class="el" href="classQsciLexerCPP.html#aad460a3dde0be5dd8904729ed1e47826">keywords()</a> to make use of this style. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01dac640cd198228b554ec3d0b60e00d91bd"></a><!-- doxytag: member="CommentDocKeyword" ref="a9e207c35eb4d13407b46606e44faa01dac640cd198228b554ec3d0b60e00d91bd" args="" -->CommentDocKeyword</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62ac640cd198228b554ec3d0b60e00d91bd"></a><!-- doxytag: member="CommentDocKeyword" ref="ade52f83ef37526736fb767b6e73c5e62ac640cd198228b554ec3d0b60e00d91bd" args="" -->CommentDocKeyword</em>&nbsp;</td><td>
 <p>A JavaDoc/Doxygen keyword. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da52db9ffb3d81b68562da67cbc70d3388"></a><!-- doxytag: member="CommentDocKeywordError" ref="a9e207c35eb4d13407b46606e44faa01da52db9ffb3d81b68562da67cbc70d3388" args="" -->CommentDocKeywordError</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a52db9ffb3d81b68562da67cbc70d3388"></a><!-- doxytag: member="CommentDocKeywordError" ref="ade52f83ef37526736fb767b6e73c5e62a52db9ffb3d81b68562da67cbc70d3388" args="" -->CommentDocKeywordError</em>&nbsp;</td><td>
 <p>A JavaDoc/Doxygen keyword error. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da713977fdf2b7b8b59c7e9d23004090dc"></a><!-- doxytag: member="GlobalClass" ref="a9e207c35eb4d13407b46606e44faa01da713977fdf2b7b8b59c7e9d23004090dc" args="" -->GlobalClass</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a713977fdf2b7b8b59c7e9d23004090dc"></a><!-- doxytag: member="GlobalClass" ref="ade52f83ef37526736fb767b6e73c5e62a713977fdf2b7b8b59c7e9d23004090dc" args="" -->GlobalClass</em>&nbsp;</td><td>
 <p>A global class or typedef defined in keyword set number 5. The class must be sub-classed and re-implement <a class="el" href="classQsciLexerCPP.html#aad460a3dde0be5dd8904729ed1e47826">keywords()</a> to make use of this style. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da12c1673479aaf32d03b5a2fde6f032a9"></a><!-- doxytag: member="RawString" ref="a9e207c35eb4d13407b46606e44faa01da12c1673479aaf32d03b5a2fde6f032a9" args="" -->RawString</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a12c1673479aaf32d03b5a2fde6f032a9"></a><!-- doxytag: member="RawString" ref="ade52f83ef37526736fb767b6e73c5e62a12c1673479aaf32d03b5a2fde6f032a9" args="" -->RawString</em>&nbsp;</td><td>
 <p>A C++ raw string. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da68d65b20c3cd1c04f46914904bc9277c"></a><!-- doxytag: member="TripleQuotedVerbatimString" ref="a9e207c35eb4d13407b46606e44faa01da68d65b20c3cd1c04f46914904bc9277c" args="" -->TripleQuotedVerbatimString</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a68d65b20c3cd1c04f46914904bc9277c"></a><!-- doxytag: member="TripleQuotedVerbatimString" ref="ade52f83ef37526736fb767b6e73c5e62a68d65b20c3cd1c04f46914904bc9277c" args="" -->TripleQuotedVerbatimString</em>&nbsp;</td><td>
 <p>A Vala triple-quoted verbatim string. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da1b8ef1921a218a2db1d6d7d65ac3242c"></a><!-- doxytag: member="HashQuotedString" ref="a9e207c35eb4d13407b46606e44faa01da1b8ef1921a218a2db1d6d7d65ac3242c" args="" -->HashQuotedString</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a1b8ef1921a218a2db1d6d7d65ac3242c"></a><!-- doxytag: member="HashQuotedString" ref="ade52f83ef37526736fb767b6e73c5e62a1b8ef1921a218a2db1d6d7d65ac3242c" args="" -->HashQuotedString</em>&nbsp;</td><td>
 <p>A Pike hash-quoted string. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="a9e207c35eb4d13407b46606e44faa01da95c728e17fdb37a45ba20d09ee9eda9c"></a><!-- doxytag: member="PreProcessorComment" ref="a9e207c35eb4d13407b46606e44faa01da95c728e17fdb37a45ba20d09ee9eda9c" args="" -->PreProcessorComment</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a95c728e17fdb37a45ba20d09ee9eda9c"></a><!-- doxytag: member="PreProcessorComment" ref="ade52f83ef37526736fb767b6e73c5e62a95c728e17fdb37a45ba20d09ee9eda9c" args="" -->PreProcessorComment</em>&nbsp;</td><td>
 <p>A pre-processor stream comment. </p>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" id="ade52f83ef37526736fb767b6e73c5e62a5b319d25cf7a161e08b0810a0d2b8470"></a><!-- doxytag: member="PreProcessorCommentLineDoc" ref="ade52f83ef37526736fb767b6e73c5e62a5b319d25cf7a161e08b0810a0d2b8470" args="" -->PreProcessorCommentLineDoc</em>&nbsp;</td><td>
+<p>A JavaDoc/Doxygen style pre-processor comment. </p>
 </td></tr>
 </table>
 </dd>
@@ -808,7 +814,7 @@ Protected Member Functions</h2>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Jun 16 2013 14:03:34 for QScintilla by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Sep 11 2014 18:15:20 for QScintilla by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>

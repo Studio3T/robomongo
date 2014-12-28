@@ -1,6 +1,6 @@
 // This defines the interface to the QsciCommand class.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -359,11 +359,14 @@ public:
     //! Binds the key \a key to the command.  If \a key is 0 then the key
     //! binding is removed.  If \a key is invalid then the key binding is
     //! unchanged.  Valid keys are any visible or control character or any
-    //! of \c Key_Down, \c Key_Up, \c Key_Left, \c Key_Right, \c Key_Home,
-    //! \c Key_End, \c Key_PageUp, \c Key_PageDown, \c Key_Delete,
-    //! \c Key_Insert, \c Key_Escape, \c Key_Backspace, \c Key_Tab and
-    //! \c Key_Return.  Keys may be modified with any combination of \c SHIFT,
-    //! \c CTRL, \c ALT and \c META.
+    //! of \c Qt::Key_Down, \c Qt::Key_Up, \c Qt::Key_Left, \c Qt::Key_Right,
+    //! \c Qt::Key_Home, \c Qt::Key_End, \c Qt::Key_PageUp,
+    //! \c Qt::Key_PageDown, \c Qt::Key_Delete, \c Qt::Key_Insert,
+    //! \c Qt::Key_Escape, \c Qt::Key_Backspace, \c Qt::Key_Tab,
+    //! \c Qt::Key_Backtab, \c Qt::Key_Return, \c Qt::Key_Enter,
+    //! \c Qt::Key_Super_L, \c Qt::Key_Super_R or \c Qt::Key_Menu.  Keys may be
+    //! modified with any combination of \c Qt::ShiftModifier,
+    //! \c Qt::ControlModifier, \c Qt::AltModifier and \c Qt::MetaModifier.
     //!
     //! \sa key(), setAlternateKey(), validKey()
     void setKey(int key);

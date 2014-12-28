@@ -22,7 +22,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">QScintilla
-   &#160;<span id="projectnumber">2.7.2</span>
+   &#160;<span id="projectnumber">2.8.4</span>
    </div>
    
   </td>
@@ -76,9 +76,9 @@ Classes</h2>
 <h2><a name="pub-types"></a>
 Public Types</h2>
 <ul>
-<li>enum { <a class="el" href="classQsciScintilla.html#ab27a2c5d15ae271bf7c8a8e8d320c504a63083d9a621b8dc11de24e63f2ccdef6">AiMaintain</a> =  0x01, 
-<a class="el" href="classQsciScintilla.html#ab27a2c5d15ae271bf7c8a8e8d320c504a4644ed0f2bb211f82d6ceec31cf0b1ad">AiOpening</a> =  0x02, 
-<a class="el" href="classQsciScintilla.html#ab27a2c5d15ae271bf7c8a8e8d320c504acae08c8d6e6cc73fcd5492d46e2432eb">AiClosing</a> =  0x04
+<li>enum { <a class="el" href="classQsciScintilla.html#a83130a3872578593263c8d7c6544aba6a63083d9a621b8dc11de24e63f2ccdef6">AiMaintain</a> =  0x01, 
+<a class="el" href="classQsciScintilla.html#a83130a3872578593263c8d7c6544aba6a4644ed0f2bb211f82d6ceec31cf0b1ad">AiOpening</a> =  0x02, 
+<a class="el" href="classQsciScintilla.html#a83130a3872578593263c8d7c6544aba6acae08c8d6e6cc73fcd5492d46e2432eb">AiClosing</a> =  0x04
  }
 <li>enum <a class="el" href="classQsciScintilla.html#a3793111b6e2a86351c798c68deda7d0c">AnnotationDisplay</a> { <a class="el" href="classQsciScintilla.html#a3793111b6e2a86351c798c68deda7d0caf708fc8c6c5b70daf1e03d5286a699f6">AnnotationHidden</a> =  ANNOTATION_HIDDEN, 
 <a class="el" href="classQsciScintilla.html#a3793111b6e2a86351c798c68deda7d0ca9127adc556d20a38d87055264228b121">AnnotationStandard</a> =  ANNOTATION_STANDARD, 
@@ -147,11 +147,12 @@ Public Types</h2>
 <a class="el" href="classQsciScintilla.html#a3333f3a47163153c1bd7db1a362b8974a1ab0879dfc51ea5894fcfc108f3baa59">SquiggleLowIndicator</a> =  INDIC_SQUIGGLELOW, 
 <br/>
 &#160;&#160;<a class="el" href="classQsciScintilla.html#a3333f3a47163153c1bd7db1a362b8974a14ea8b26486c9b42eb7748d32687e51a">DotBoxIndicator</a> =  INDIC_DOTBOX, 
-<a class="el" href="classQsciScintilla.html#a3333f3a47163153c1bd7db1a362b8974a989b84433c9f4c7a95dbb3d3802b724f">SquigglePixmapIndicator</a> =  INDIC_SQUIGGLEPIXMAP
+<a class="el" href="classQsciScintilla.html#a3333f3a47163153c1bd7db1a362b8974a989b84433c9f4c7a95dbb3d3802b724f">SquigglePixmapIndicator</a> =  INDIC_SQUIGGLEPIXMAP, 
+<a class="el" href="classQsciScintilla.html#a3333f3a47163153c1bd7db1a362b8974affa2d89915d3958c0938d55a17c6afb7">ThickCompositionIndicator</a> =  INDIC_COMPOSITIONTHICK
 <br/>
  }
-<li>enum { <a class="el" href="classQsciScintilla.html#aca94513ed48401f035b295f52637d92ea60b02d4ccdce34fa80a161002ed3eae9">MoNone</a> =  SC_MARGINOPTION_NONE, 
-<a class="el" href="classQsciScintilla.html#aca94513ed48401f035b295f52637d92ead71e0832f464e6871d986dd5ec69abc0">MoSublineSelect</a> =  SC_MARGINOPTION_SUBLINESELECT
+<li>enum { <a class="el" href="classQsciScintilla.html#a29f30d081da8b63d943154d5e7b47c90a60b02d4ccdce34fa80a161002ed3eae9">MoNone</a> =  SC_MARGINOPTION_NONE, 
+<a class="el" href="classQsciScintilla.html#a29f30d081da8b63d943154d5e7b47c90ad71e0832f464e6871d986dd5ec69abc0">MoSublineSelect</a> =  SC_MARGINOPTION_SUBLINESELECT
  }
 <li>enum <a class="el" href="classQsciScintilla.html#aedab060e87e0533083ea8f1398302090">MarginType</a> { <br/>
 &#160;&#160;<a class="el" href="classQsciScintilla.html#aedab060e87e0533083ea8f1398302090ac77614e4b9956e3c44fface749ff6602">SymbolMargin</a> =  SC_MARGIN_SYMBOL, 
@@ -437,6 +438,8 @@ int <a class="el" href="classQsciScintilla.html#aad42b7161eb9e4b3ad5dedecf12249a
 <li>void <a class="el" href="classQsciScintilla.html#a1d35bee9f234dbde7066a68b924edeed">registerImage</a> (int id, const QImage &amp;im)
 <li>virtual void <a class="el" href="classQsciScintilla.html#ad8a7afc4f25e04e805b7e291d5df1d35">replace</a> (const QString &amp;replaceStr)
 <li>void <a class="el" href="classQsciScintilla.html#ae1d3703631c9113a4309da17332ca180">resetFoldMarginColors</a> ()
+<li>void <a class="el" href="classQsciScintilla.html#a366393c6bf0fd7ef5ce87b7682e6c6ae">resetHotspotBackgroundColor</a> ()
+<li>void <a class="el" href="classQsciScintilla.html#a3fd2a1bbc409d1bbca44efc7976b808c">resetHotspotForegroundColor</a> ()
 <li>void <a class="el" href="classQsciScintilla.html#a6bdcf192822a31094e680ffb2f142aab">setFoldMarginColors</a> (const QColor &amp;fore, const QColor &amp;back)
 <li>void <a class="el" href="classQsciScintilla.html#aeda9c17a6e746e177fa6f5311d96dc03">setAnnotationDisplay</a> (<a class="el" href="classQsciScintilla.html#a3793111b6e2a86351c798c68deda7d0c">AnnotationDisplay</a> display)
 <li>void <a class="el" href="classQsciScintilla.html#a0d273a0573088d9fb6d66d7b2633ea4b">setAutoCompletionFillupsEnabled</a> (bool enabled)
@@ -478,6 +481,10 @@ void <a class="el" href="classQsciScintilla.html#ad85546712df2387738e63be38dc41d
 <li>void <a class="el" href="classQsciScintilla.html#ab696e4703374af4c01651453d094ac08">setWrapVisualFlags</a> (<a class="el" href="classQsciScintilla.html#ac4d1c67938c75806b2c139d0779d0478">WrapVisualFlag</a> endFlag, <a class="el" href="classQsciScintilla.html#ac4d1c67938c75806b2c139d0779d0478">WrapVisualFlag</a> startFlag=WrapFlagNone, int indent=0)
 <li>QString <a class="el" href="classQsciScintilla.html#ac3a47e883108c0bb8fecaa76e91d2267">selectedText</a> () const 
 <li>bool <a class="el" href="classQsciScintilla.html#af6bd6066057345f2a452d898bf4d82c7">selectionToEol</a> () const 
+<li>void <a class="el" href="classQsciScintilla.html#aaf19a3abaa1b1662a0f1b499ef4b6602">setHotspotBackgroundColor</a> (const QColor &amp;col)
+<li>void <a class="el" href="classQsciScintilla.html#a4c6a412b7d066b9fce90f3976350348c">setHotspotForegroundColor</a> (const QColor &amp;col)
+<li>void <a class="el" href="classQsciScintilla.html#ac961cfe1be7cd29038a2772f30b71bfc">setHotspotUnderline</a> (bool enable)
+<li>void <a class="el" href="classQsciScintilla.html#a7245335691700f82db41016d257d63cc">setHotspotWrap</a> (bool enable)
 <li>void <a class="el" href="classQsciScintilla.html#a7e36f3595e0d89910b9322dc5295152d">setSelectionToEol</a> (bool filled)
 <li>void <a class="el" href="classQsciScintilla.html#a87e61d47e344dbbb84c4608fdc8536d0">setExtraAscent</a> (int extra)
 <li>void <a class="el" href="classQsciScintilla.html#a06458817a42498ee65e890c36f63453e">setExtraDescent</a> (int extra)
@@ -510,6 +517,8 @@ Protected Member Functions</h2>
 <ul>
 <li><a class="anchor" id="a84ab3eb3c8e81cc58bbf2d3f472e757c"></a><!-- doxytag: member="QsciScintilla::event" ref="a84ab3eb3c8e81cc58bbf2d3f472e757c" args="(QEvent *e)" -->
 virtual bool <a class="el" href="classQsciScintilla.html#a84ab3eb3c8e81cc58bbf2d3f472e757c">event</a> (QEvent *e)
+<li><a class="anchor" id="ac05da1bc5b91c682f192ff594552a306"></a><!-- doxytag: member="QsciScintilla::changeEvent" ref="ac05da1bc5b91c682f192ff594552a306" args="(QEvent *e)" -->
+virtual void <a class="el" href="classQsciScintilla.html#ac05da1bc5b91c682f192ff594552a306">changeEvent</a> (QEvent *e)
 <li><a class="anchor" id="ad8fcb6e32235be34335e443230fb9000"></a><!-- doxytag: member="QsciScintilla::contextMenuEvent" ref="ad8fcb6e32235be34335e443230fb9000" args="(QContextMenuEvent *e)" -->
 virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e443230fb9000">contextMenuEvent</a> (QContextMenuEvent *e)
 </ul>
@@ -517,7 +526,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 <div class="textblock"><p>The <a class="el" href="classQsciScintilla.html" title="The QsciScintilla class implements a higher level, more Qt-like, API to the Scintilla editor widget...">QsciScintilla</a> class implements a higher level, more Qt-like, API to the Scintilla editor widget. </p>
 <p><a class="el" href="classQsciScintilla.html" title="The QsciScintilla class implements a higher level, more Qt-like, API to the Scintilla editor widget...">QsciScintilla</a> implements methods, signals and slots similar to those found in other Qt editor classes. It also provides a higher level interface to features specific to Scintilla such as syntax styling, call tips, auto-indenting and auto-completion than that provided by <a class="el" href="classQsciScintillaBase.html" title="The QsciScintillaBase class implements the Scintilla editor widget and its low-level API...">QsciScintillaBase</a>. </p>
 </div><hr/><h2>Member Enumeration Documentation</h2>
-<a class="anchor" id="ab27a2c5d15ae271bf7c8a8e8d320c504"></a><!-- doxytag: member="QsciScintilla::@26" ref="ab27a2c5d15ae271bf7c8a8e8d320c504" args="" -->
+<a class="anchor" id="a83130a3872578593263c8d7c6544aba6"></a><!-- doxytag: member="QsciScintilla::@29" ref="a83130a3872578593263c8d7c6544aba6" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -530,13 +539,13 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 
 <p>This enum defines the different auto-indentation styles. </p>
 <dl><dt><b>Enumerator: </b></dt><dd><table border="0" cellspacing="2" cellpadding="0">
-<tr><td valign="top"><em><a class="anchor" id="ab27a2c5d15ae271bf7c8a8e8d320c504a63083d9a621b8dc11de24e63f2ccdef6"></a><!-- doxytag: member="AiMaintain" ref="ab27a2c5d15ae271bf7c8a8e8d320c504a63083d9a621b8dc11de24e63f2ccdef6" args="" -->AiMaintain</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="a83130a3872578593263c8d7c6544aba6a63083d9a621b8dc11de24e63f2ccdef6"></a><!-- doxytag: member="AiMaintain" ref="a83130a3872578593263c8d7c6544aba6a63083d9a621b8dc11de24e63f2ccdef6" args="" -->AiMaintain</em>&nbsp;</td><td>
 <p>A line is automatically indented to match the previous line. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="ab27a2c5d15ae271bf7c8a8e8d320c504a4644ed0f2bb211f82d6ceec31cf0b1ad"></a><!-- doxytag: member="AiOpening" ref="ab27a2c5d15ae271bf7c8a8e8d320c504a4644ed0f2bb211f82d6ceec31cf0b1ad" args="" -->AiOpening</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="a83130a3872578593263c8d7c6544aba6a4644ed0f2bb211f82d6ceec31cf0b1ad"></a><!-- doxytag: member="AiOpening" ref="a83130a3872578593263c8d7c6544aba6a4644ed0f2bb211f82d6ceec31cf0b1ad" args="" -->AiOpening</em>&nbsp;</td><td>
 <p>If the language supported by the current lexer has a specific start of block character (e.g. { in C++), then a line that begins with that character is indented as well as the lines that make up the block. It may be logically ored with AiClosing. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="ab27a2c5d15ae271bf7c8a8e8d320c504acae08c8d6e6cc73fcd5492d46e2432eb"></a><!-- doxytag: member="AiClosing" ref="ab27a2c5d15ae271bf7c8a8e8d320c504acae08c8d6e6cc73fcd5492d46e2432eb" args="" -->AiClosing</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="a83130a3872578593263c8d7c6544aba6acae08c8d6e6cc73fcd5492d46e2432eb"></a><!-- doxytag: member="AiClosing" ref="a83130a3872578593263c8d7c6544aba6acae08c8d6e6cc73fcd5492d46e2432eb" args="" -->AiClosing</em>&nbsp;</td><td>
 <p>If the language supported by the current lexer has a specific end of block character (e.g. } in C++), then a line that begins with that character is indented as well as the lines that make up the block. It may be logically ored with AiOpening. </p>
 </td></tr>
 </table>
@@ -862,13 +871,16 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 <tr><td valign="top"><em><a class="anchor" id="a3333f3a47163153c1bd7db1a362b8974a989b84433c9f4c7a95dbb3d3802b724f"></a><!-- doxytag: member="SquigglePixmapIndicator" ref="a3333f3a47163153c1bd7db1a362b8974a989b84433c9f4c7a95dbb3d3802b724f" args="" -->SquigglePixmapIndicator</em>&nbsp;</td><td>
 <p>A version of SquiggleIndicator that uses a pixmap. This is quicker but may be of lower quality. </p>
 </td></tr>
+<tr><td valign="top"><em><a class="anchor" id="a3333f3a47163153c1bd7db1a362b8974affa2d89915d3958c0938d55a17c6afb7"></a><!-- doxytag: member="ThickCompositionIndicator" ref="a3333f3a47163153c1bd7db1a362b8974affa2d89915d3958c0938d55a17c6afb7" args="" -->ThickCompositionIndicator</em>&nbsp;</td><td>
+<p>A thick underline typically used during Asian language input composition. </p>
+</td></tr>
 </table>
 </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="aca94513ed48401f035b295f52637d92e"></a><!-- doxytag: member="QsciScintilla::@27" ref="aca94513ed48401f035b295f52637d92e" args="" -->
+<a class="anchor" id="a29f30d081da8b63d943154d5e7b47c90"></a><!-- doxytag: member="QsciScintilla::@30" ref="a29f30d081da8b63d943154d5e7b47c90" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -881,10 +893,10 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 
 <p>This enum defines the different margin options. </p>
 <dl><dt><b>Enumerator: </b></dt><dd><table border="0" cellspacing="2" cellpadding="0">
-<tr><td valign="top"><em><a class="anchor" id="aca94513ed48401f035b295f52637d92ea60b02d4ccdce34fa80a161002ed3eae9"></a><!-- doxytag: member="MoNone" ref="aca94513ed48401f035b295f52637d92ea60b02d4ccdce34fa80a161002ed3eae9" args="" -->MoNone</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="a29f30d081da8b63d943154d5e7b47c90a60b02d4ccdce34fa80a161002ed3eae9"></a><!-- doxytag: member="MoNone" ref="a29f30d081da8b63d943154d5e7b47c90a60b02d4ccdce34fa80a161002ed3eae9" args="" -->MoNone</em>&nbsp;</td><td>
 <p>Reset all margin options. </p>
 </td></tr>
-<tr><td valign="top"><em><a class="anchor" id="aca94513ed48401f035b295f52637d92ead71e0832f464e6871d986dd5ec69abc0"></a><!-- doxytag: member="MoSublineSelect" ref="aca94513ed48401f035b295f52637d92ead71e0832f464e6871d986dd5ec69abc0" args="" -->MoSublineSelect</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" id="a29f30d081da8b63d943154d5e7b47c90ad71e0832f464e6871d986dd5ec69abc0"></a><!-- doxytag: member="MoSublineSelect" ref="a29f30d081da8b63d943154d5e7b47c90ad71e0832f464e6871d986dd5ec69abc0" args="" -->MoSublineSelect</em>&nbsp;</td><td>
 <p>If this is set then only the first sub-line of a wrapped line will be selected when clicking on a margin. </p>
 </td></tr>
 </table>
@@ -2600,7 +2612,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Returns true if line numbers are enabled for margin <em>margin</em>.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a5fddd1e6e19cf2e2b40c15a39e62d198">setMarginLineNumbers()</a>, <a class="el" href="classQsciScintilla.html#a4b5213e02b1a26012f961cc4f175b0b6">marginType()</a>, <a class="el" href="classQsciScintillaBase.html#ab2179a2af3123f8e759086f07be80cd2a919cf8a6d08d570e00ece099ff62010c">SCI_GETMARGINTYPEN</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a5fddd1e6e19cf2e2b40c15a39e62d198">setMarginLineNumbers()</a>, <a class="el" href="classQsciScintilla.html#a4b5213e02b1a26012f961cc4f175b0b6">marginType()</a>, <a class="el" href="classQsciScintillaBase.html#ab7599500a82c87cf303643005ea78e79a919cf8a6d08d570e00ece099ff62010c">SCI_GETMARGINTYPEN</a> </dd></dl>
 
 </div>
 </div>
@@ -2619,7 +2631,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Returns the marker mask of margin <em>margin</em>.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd>setMarginMask(), QsciMarker, <a class="el" href="classQsciScintillaBase.html#ab2179a2af3123f8e759086f07be80cd2adbd2eceef7f59bcda7d7db01a4aa7c7b">SCI_GETMARGINMASKN</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd>setMarginMask(), QsciMarker, <a class="el" href="classQsciScintillaBase.html#ab7599500a82c87cf303643005ea78e79adbd2eceef7f59bcda7d7db01a4aa7c7b">SCI_GETMARGINMASKN</a> </dd></dl>
 
 </div>
 </div>
@@ -2637,7 +2649,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Returns the margin options. The default is MoNone.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a626103a61623dd360dc44210fe435ad7">setMarginOptions()</a>, <a class="el" href="classQsciScintilla.html#aca94513ed48401f035b295f52637d92ea60b02d4ccdce34fa80a161002ed3eae9" title="Reset all margin options.">MoNone</a>, <a class="el" href="classQsciScintilla.html#aca94513ed48401f035b295f52637d92ead71e0832f464e6871d986dd5ec69abc0">MoSublineSelect</a>. </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a626103a61623dd360dc44210fe435ad7">setMarginOptions()</a>, <a class="el" href="classQsciScintilla.html#a29f30d081da8b63d943154d5e7b47c90a60b02d4ccdce34fa80a161002ed3eae9" title="Reset all margin options.">MoNone</a>, <a class="el" href="classQsciScintilla.html#a29f30d081da8b63d943154d5e7b47c90ad71e0832f464e6871d986dd5ec69abc0">MoSublineSelect</a>. </dd></dl>
 
 </div>
 </div>
@@ -2656,7 +2668,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Returns true if margin <em>margin</em> is sensitive to mouse clicks.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a064b51eca1ab2d32d4c4c328e69a395d">setMarginSensitivity()</a>, <a class="el" href="classQsciScintilla.html#a5afec2f913c2a46d661c5fdda29f5e87">marginClicked()</a>, <a class="el" href="classQsciScintillaBase.html#ab2179a2af3123f8e759086f07be80cd2a919cf8a6d08d570e00ece099ff62010c">SCI_GETMARGINTYPEN</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a064b51eca1ab2d32d4c4c328e69a395d">setMarginSensitivity()</a>, <a class="el" href="classQsciScintilla.html#a5afec2f913c2a46d661c5fdda29f5e87">marginClicked()</a>, <a class="el" href="classQsciScintillaBase.html#ab7599500a82c87cf303643005ea78e79a919cf8a6d08d570e00ece099ff62010c">SCI_GETMARGINTYPEN</a> </dd></dl>
 
 </div>
 </div>
@@ -2675,7 +2687,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Returns the type of margin <em>margin</em>.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a4dd046074be580fbde318ba2ae343d39">setMarginType()</a>, <a class="el" href="classQsciScintillaBase.html#ab2179a2af3123f8e759086f07be80cd2a919cf8a6d08d570e00ece099ff62010c">SCI_GETMARGINTYPEN</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a4dd046074be580fbde318ba2ae343d39">setMarginType()</a>, <a class="el" href="classQsciScintillaBase.html#ab7599500a82c87cf303643005ea78e79a919cf8a6d08d570e00ece099ff62010c">SCI_GETMARGINTYPEN</a> </dd></dl>
 
 </div>
 </div>
@@ -2694,7 +2706,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Returns the width in pixels of margin <em>margin</em>.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a1a8b798b6b36db2b5f60b0cdccba88a1">setMarginWidth()</a>, <a class="el" href="classQsciScintillaBase.html#ab2179a2af3123f8e759086f07be80cd2a3654140951ae95d75f21c43cdcd91a43">SCI_GETMARGINWIDTHN</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a1a8b798b6b36db2b5f60b0cdccba88a1">setMarginWidth()</a>, <a class="el" href="classQsciScintillaBase.html#ab7599500a82c87cf303643005ea78e79a3654140951ae95d75f21c43cdcd91a43">SCI_GETMARGINWIDTHN</a> </dd></dl>
 
 </div>
 </div>
@@ -3211,6 +3223,42 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 
 </div>
 </div>
+<a class="anchor" id="a366393c6bf0fd7ef5ce87b7682e6c6ae"></a><!-- doxytag: member="QsciScintilla::resetHotspotBackgroundColor" ref="a366393c6bf0fd7ef5ce87b7682e6c6ae" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QsciScintilla::resetHotspotBackgroundColor </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Resets the background colour of an active hotspot area to the default.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#aaf19a3abaa1b1662a0f1b499ef4b6602">setHotspotBackgroundColor()</a>, <a class="el" href="classQsciScintilla.html#a3fd2a1bbc409d1bbca44efc7976b808c">resetHotspotForegroundColor()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3fd2a1bbc409d1bbca44efc7976b808c"></a><!-- doxytag: member="QsciScintilla::resetHotspotForegroundColor" ref="a3fd2a1bbc409d1bbca44efc7976b808c" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QsciScintilla::resetHotspotForegroundColor </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Resets the foreground colour of an active hotspot area to the default.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a4c6a412b7d066b9fce90f3976350348c">setHotspotForegroundColor()</a>, <a class="el" href="classQsciScintilla.html#a366393c6bf0fd7ef5ce87b7682e6c6ae">resetHotspotBackgroundColor()</a> </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a6bdcf192822a31094e680ffb2f142aab"></a><!-- doxytag: member="QsciScintilla::setFoldMarginColors" ref="a6bdcf192822a31094e680ffb2f142aab" args="(const QColor &amp;fore, const QColor &amp;back)" -->
 <div class="memitem">
 <div class="memproto">
@@ -3643,7 +3691,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Set the margin options to <em>options</em>.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#ad98120ddb8851e3283a2afc45a27a723">marginOptions()</a>, <a class="el" href="classQsciScintilla.html#aca94513ed48401f035b295f52637d92ea60b02d4ccdce34fa80a161002ed3eae9" title="Reset all margin options.">MoNone</a>, <a class="el" href="classQsciScintilla.html#aca94513ed48401f035b295f52637d92ead71e0832f464e6871d986dd5ec69abc0">MoSublineSelect</a>. </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#ad98120ddb8851e3283a2afc45a27a723">marginOptions()</a>, <a class="el" href="classQsciScintilla.html#a29f30d081da8b63d943154d5e7b47c90a60b02d4ccdce34fa80a161002ed3eae9" title="Reset all margin options.">MoNone</a>, <a class="el" href="classQsciScintilla.html#a29f30d081da8b63d943154d5e7b47c90ad71e0832f464e6871d986dd5ec69abc0">MoSublineSelect</a>. </dd></dl>
 
 </div>
 </div>
@@ -3768,7 +3816,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Set the type of margin <em>margin</em> to type <em>type</em>.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a4b5213e02b1a26012f961cc4f175b0b6">marginType()</a>, <a class="el" href="classQsciScintillaBase.html#ab2179a2af3123f8e759086f07be80cd2a0ee188f4bfe7289f454f99af191d1523">SCI_SETMARGINTYPEN</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a4b5213e02b1a26012f961cc4f175b0b6">marginType()</a>, <a class="el" href="classQsciScintillaBase.html#ab7599500a82c87cf303643005ea78e79a0ee188f4bfe7289f454f99af191d1523">SCI_SETMARGINTYPEN</a> </dd></dl>
 
 </div>
 </div>
@@ -4065,6 +4113,80 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 <div class="memdoc">
 <p>Returns whether or not the selection is drawn up to the right hand border.</p>
 <dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a7e36f3595e0d89910b9322dc5295152d">setSelectionToEol()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aaf19a3abaa1b1662a0f1b499ef4b6602"></a><!-- doxytag: member="QsciScintilla::setHotspotBackgroundColor" ref="aaf19a3abaa1b1662a0f1b499ef4b6602" args="(const QColor &amp;col)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QsciScintilla::setHotspotBackgroundColor </td>
+          <td>(</td>
+          <td class="paramtype">const QColor &amp;&#160;</td>
+          <td class="paramname"><em>col</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Sets the background colour of an active hotspot area to <em>col</em>.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a366393c6bf0fd7ef5ce87b7682e6c6ae">resetHotspotBackgroundColor()</a>, <a class="el" href="classQsciScintilla.html#a4c6a412b7d066b9fce90f3976350348c">setHotspotForegroundColor()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4c6a412b7d066b9fce90f3976350348c"></a><!-- doxytag: member="QsciScintilla::setHotspotForegroundColor" ref="a4c6a412b7d066b9fce90f3976350348c" args="(const QColor &amp;col)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QsciScintilla::setHotspotForegroundColor </td>
+          <td>(</td>
+          <td class="paramtype">const QColor &amp;&#160;</td>
+          <td class="paramname"><em>col</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Sets the foreground colour of an active hotspot area to <em>col</em>.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a3fd2a1bbc409d1bbca44efc7976b808c">resetHotspotForegroundColor()</a>, <a class="el" href="classQsciScintilla.html#aaf19a3abaa1b1662a0f1b499ef4b6602">setHotspotBackgroundColor()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac961cfe1be7cd29038a2772f30b71bfc"></a><!-- doxytag: member="QsciScintilla::setHotspotUnderline" ref="ac961cfe1be7cd29038a2772f30b71bfc" args="(bool enable)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QsciScintilla::setHotspotUnderline </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>enable</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Enables or disables, according to <em>enable</em>, the underlining of an active hotspot area. The default is false. </p>
+
+</div>
+</div>
+<a class="anchor" id="a7245335691700f82db41016d257d63cc"></a><!-- doxytag: member="QsciScintilla::setHotspotWrap" ref="a7245335691700f82db41016d257d63cc" args="(bool enable)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QsciScintilla::setHotspotWrap </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>enable</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Enables or disables, according to <em>enable</em>, the wrapping of a hotspot area to following lines. The default is true. </p>
 
 </div>
 </div>
@@ -5380,7 +5502,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Enables or disables, according to <em>lnrs</em>, the display of line numbers in margin <em>margin</em>.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a48298e4278b089cbd3dd6071e5247800">marginLineNumbers()</a>, <a class="el" href="classQsciScintilla.html#a4dd046074be580fbde318ba2ae343d39">setMarginType()</a>, <a class="el" href="classQsciScintillaBase.html#ab2179a2af3123f8e759086f07be80cd2a0ee188f4bfe7289f454f99af191d1523">SCI_SETMARGINTYPEN</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a48298e4278b089cbd3dd6071e5247800">marginLineNumbers()</a>, <a class="el" href="classQsciScintilla.html#a4dd046074be580fbde318ba2ae343d39">setMarginType()</a>, <a class="el" href="classQsciScintillaBase.html#ab7599500a82c87cf303643005ea78e79a0ee188f4bfe7289f454f99af191d1523">SCI_SETMARGINTYPEN</a> </dd></dl>
 
 </div>
 </div>
@@ -5409,7 +5531,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Sets the marker mask of margin <em>margin</em> to <em>mask</em>. Only those markers whose bit is set in the mask are displayed in the margin.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#aadff28b3fad66d120ebc9898d85d87fb">marginMarkerMask()</a>, QsciMarker, <a class="el" href="classQsciScintillaBase.html#ab2179a2af3123f8e759086f07be80cd2ad1cec6e4e0ad45ce7d7edad7acb8a3b5">SCI_SETMARGINMASKN</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#aadff28b3fad66d120ebc9898d85d87fb">marginMarkerMask()</a>, QsciMarker, <a class="el" href="classQsciScintillaBase.html#ab7599500a82c87cf303643005ea78e79ad1cec6e4e0ad45ce7d7edad7acb8a3b5">SCI_SETMARGINMASKN</a> </dd></dl>
 
 </div>
 </div>
@@ -5438,7 +5560,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Enables or disables, according to <em>sens</em>, the sensitivity of margin <em>margin</em> to mouse clicks. If the user clicks in a sensitive margin the <a class="el" href="classQsciScintilla.html#a5afec2f913c2a46d661c5fdda29f5e87">marginClicked()</a> signal is emitted.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#ade82b8972f547fdc9cd3e1b99d9c287e">marginSensitivity()</a>, <a class="el" href="classQsciScintilla.html#a5afec2f913c2a46d661c5fdda29f5e87">marginClicked()</a>, <a class="el" href="classQsciScintillaBase.html#ab2179a2af3123f8e759086f07be80cd2a64b07178255dc95b19a7c8feabaac1b2">SCI_SETMARGINSENSITIVEN</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#ade82b8972f547fdc9cd3e1b99d9c287e">marginSensitivity()</a>, <a class="el" href="classQsciScintilla.html#a5afec2f913c2a46d661c5fdda29f5e87">marginClicked()</a>, <a class="el" href="classQsciScintillaBase.html#ab7599500a82c87cf303643005ea78e79a64b07178255dc95b19a7c8feabaac1b2">SCI_SETMARGINSENSITIVEN</a> </dd></dl>
 
 </div>
 </div>
@@ -5467,7 +5589,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Sets the width of margin <em>margin</em> to <em>width</em> pixels. If the width of a margin is 0 then it is not displayed.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a7897f4352ff3a31dc855970fc773f2b3">marginWidth()</a>, <a class="el" href="classQsciScintillaBase.html#ab2179a2af3123f8e759086f07be80cd2a1195d46181a565b14806d94595fc7aa6">SCI_SETMARGINWIDTHN</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a7897f4352ff3a31dc855970fc773f2b3">marginWidth()</a>, <a class="el" href="classQsciScintillaBase.html#ab7599500a82c87cf303643005ea78e79a1195d46181a565b14806d94595fc7aa6">SCI_SETMARGINWIDTHN</a> </dd></dl>
 
 </div>
 </div>
@@ -5496,7 +5618,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 </div>
 <div class="memdoc">
 <p>Sets the width of margin <em>margin</em> so that it is wide enough to display <em>s</em> in the current margin font.</p>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a7897f4352ff3a31dc855970fc773f2b3">marginWidth()</a>, <a class="el" href="classQsciScintillaBase.html#ab2179a2af3123f8e759086f07be80cd2a1195d46181a565b14806d94595fc7aa6">SCI_SETMARGINWIDTHN</a> </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQsciScintilla.html#a7897f4352ff3a31dc855970fc773f2b3">marginWidth()</a>, <a class="el" href="classQsciScintillaBase.html#ab7599500a82c87cf303643005ea78e79a1195d46181a565b14806d94595fc7aa6">SCI_SETMARGINWIDTHN</a> </dd></dl>
 
 </div>
 </div>
@@ -6119,7 +6241,7 @@ virtual void <a class="el" href="classQsciScintilla.html#ad8fcb6e32235be34335e44
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Jun 16 2013 14:03:35 for QScintilla by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Sep 11 2014 18:15:21 for QScintilla by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.5.1
 </small></address>

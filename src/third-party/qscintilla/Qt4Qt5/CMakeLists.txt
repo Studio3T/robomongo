@@ -14,14 +14,20 @@ include_directories(. ../include ../lexlib ../src)
 add_definitions(-DQSCINTILLA_MAKE_DLL -DQT -DSCI_LEXER)
 
 set(HEADERS_TO_MOC
+	./Qsci/qsciglobal.h 
 	./Qsci/qsciscintilla.h 
 	./Qsci/qsciscintillabase.h 
 	./Qsci/qsciabstractapis.h 
 	./Qsci/qsciapis.h 
+	./Qsci/qscicommand.h 
+	./Qsci/qscicommandset.h 
+	./Qsci/qscidocument.h 
 	./Qsci/qscilexer.h 
+	./Qsci/qscilexeravs.h 
 	./Qsci/qscilexerbash.h 
 	./Qsci/qscilexerbatch.h 
 	./Qsci/qscilexercmake.h 
+	./Qsci/qscilexercoffeescript.h 
 	./Qsci/qscilexercpp.h 
 	./Qsci/qscilexercsharp.h 
 	./Qsci/qscilexercss.h 
@@ -41,6 +47,7 @@ set(HEADERS_TO_MOC
 	./Qsci/qscilexerpascal.h 
 	./Qsci/qscilexerperl.h 
 	./Qsci/qscilexerpostscript.h 
+	./Qsci/qscilexerpo.h 
 	./Qsci/qscilexerpov.h 
 	./Qsci/qscilexerproperties.h 
 	./Qsci/qscilexerpython.h 
@@ -53,63 +60,63 @@ set(HEADERS_TO_MOC
 	./Qsci/qscilexervhdl.h 
 	./Qsci/qscilexerxml.h 
 	./Qsci/qscilexeryaml.h 
-	./Qsci/qscimacro.h         
-        SciClasses.h 
+	./Qsci/qscimacro.h 
+	./Qsci/qsciprinter.h 
+	./Qsci/qscistyle.h 
+	./Qsci/qscistyledtext.h
+    SciClasses.h 
 )
 set(HEADERS
-        ../lexlib/LexerSimple.h
-        ../lexlib/WordList.h
-        ../lexlib/PropSetSimple.h
-        ../lexlib/StyleContext.h
-        ../lexlib/OptionSet.h
-        ../src/AutoComplete.h
-        ../include/SciLexer.h
-        ../include/Scintilla.h
-        ../include/ScintillaWidget.h
-        ../lexlib/LexerBase.h
-        ../lexlib/LexerModule.h
-        ../lexlib/LexerNoExceptions.h
-        ../src/CallTip.h
-        ../lexlib/Accessor.h
-        ../lexlib/CharacterSet.h
-        ../lexlib/LexAccessor.h
-        ../include/ILexer.h
-        ../include/Platform.h
-        ./Qsci/qscistyledtext.h
-        ../src/LineMarker.h
-        ../src/ViewStyle.h
-        ./Qsci/qsciglobal.h
-        ./Qsci/qscicommand.h
-        ./Qsci/qscicommandset.h
-        ./Qsci/qscidocument.h
-        ./Qsci/qsciprinter.h
-        ./Qsci/qscistyle.h
-        ListBoxQt.h
-        SciNamespace.h
-        ScintillaQt.h
-        ../src/XPM.h
-        ../src/Partitioning.h
-        ../src/PerLine.h
-        ../src/PositionCache.h
-        ../src/RESearch.h
-        ../src/RunStyles.h
-        ../src/ScintillaBase.h
-        ../src/Selection.h
-        ../src/SplitVector.h
-        ../src/Style.h
-        ../src/SVector.h
-        ../src/UniConversion.h
-        ../src/Catalogue.h
-        ../src/CellBuffer.h
-        ../src/CharClassify.h
-        ../src/ContractionState.h
-        ../src/Decoration.h
-        ../src/Document.h
-        ../src/Editor.h
-        ../src/ExternalLexer.h
-        ../src/FontQuality.h
-        ../src/Indicator.h
-        ../src/KeyMap.h
+	../include/ILexer.h 
+	../include/Platform.h 
+	../include/SciLexer.h 
+	../include/Scintilla.h 
+	../include/ScintillaWidget.h 
+	../lexlib/Accessor.h 
+	../lexlib/CharacterCategory.h 
+	../lexlib/CharacterSet.h 
+	../lexlib/LexAccessor.h 
+	../lexlib/LexerBase.h 
+	../lexlib/LexerModule.h 
+	../lexlib/LexerNoExceptions.h 
+	../lexlib/LexerSimple.h 
+	../lexlib/OptionSet.h 
+	../lexlib/PropSetSimple.h 
+	../lexlib/StyleContext.h 
+	../lexlib/SubStyles.h 
+	../lexlib/WordList.h 
+    ListBoxQt.h 
+	SciNamespace.h 
+	ScintillaQt.h 
+	../src/AutoComplete.h 
+	../src/CallTip.h 
+	../src/CaseConvert.h 
+	../src/CaseFolder.h 
+	../src/Catalogue.h 
+	../src/CellBuffer.h 
+	../src/CharClassify.h 
+	../src/ContractionState.h 
+	../src/Decoration.h 
+	../src/Document.h 
+	../src/Editor.h 
+	../src/ExternalLexer.h 
+	../src/FontQuality.h 
+	../src/Indicator.h 
+	../src/KeyMap.h 
+	../src/LineMarker.h 
+	../src/Partitioning.h 
+	../src/PerLine.h 
+	../src/PositionCache.h 
+	../src/RESearch.h 
+	../src/RunStyles.h 
+	../src/ScintillaBase.h 
+	../src/Selection.h 
+	../src/SplitVector.h 
+	../src/Style.h 
+	../src/UnicodeFromUTF8.h 
+	../src/UniConversion.h 
+	../src/ViewStyle.h 
+	../src/XPM.h
 )
 set(SOURCES
 	qsciscintilla.cpp 
@@ -120,9 +127,11 @@ set(SOURCES
 	qscicommandset.cpp 
 	qscidocument.cpp 
 	qscilexer.cpp 
+	qscilexeravs.cpp 
 	qscilexerbash.cpp 
 	qscilexerbatch.cpp 
 	qscilexercmake.cpp 
+	qscilexercoffeescript.cpp 
 	qscilexercpp.cpp 
 	qscilexercsharp.cpp 
 	qscilexercss.cpp 
@@ -142,6 +151,7 @@ set(SOURCES
 	qscilexerpascal.cpp 
 	qscilexerperl.cpp 
 	qscilexerpostscript.cpp 
+	qscilexerpo.cpp 
 	qscilexerpov.cpp 
 	qscilexerproperties.cpp 
 	qscilexerpython.cpp 
@@ -158,6 +168,8 @@ set(SOURCES
 	qsciprinter.cpp 
 	qscistyle.cpp 
 	qscistyledtext.cpp 
+    MacPasteboardMime.cpp 
+    InputMethod.cpp 
 	SciClasses.cpp 
 	ListBoxQt.cpp 
 	PlatQt.cpp 
@@ -200,6 +212,8 @@ set(SOURCES
 	../lexers/LexHTML.cpp 
 	../lexers/LexInno.cpp 
 	../lexers/LexKix.cpp 
+	../lexers/LexKVIrc.cpp 
+	../lexers/LexLaTex.cpp 
 	../lexers/LexLisp.cpp 
 	../lexers/LexLout.cpp 
 	../lexers/LexLua.cpp 
@@ -231,6 +245,7 @@ set(SOURCES
 	../lexers/LexR.cpp 
 	../lexers/LexRebol.cpp 
 	../lexers/LexRuby.cpp 
+	../lexers/LexRust.cpp 
 	../lexers/LexScriptol.cpp 
 	../lexers/LexSmalltalk.cpp 
 	../lexers/LexSML.cpp 
@@ -238,6 +253,7 @@ set(SOURCES
 	../lexers/LexSpecman.cpp 
 	../lexers/LexSpice.cpp 
 	../lexers/LexSQL.cpp 
+	../lexers/LexSTTXT.cpp 
 	../lexers/LexTACL.cpp 
 	../lexers/LexTADS3.cpp 
 	../lexers/LexTAL.cpp 
@@ -251,6 +267,7 @@ set(SOURCES
 	../lexers/LexVisualProlog.cpp 
 	../lexers/LexYAML.cpp 
 	../lexlib/Accessor.cpp 
+	../lexlib/CharacterCategory.cpp 
 	../lexlib/CharacterSet.cpp 
 	../lexlib/LexerBase.cpp 
 	../lexlib/LexerModule.cpp 
@@ -261,6 +278,8 @@ set(SOURCES
 	../lexlib/WordList.cpp 
 	../src/AutoComplete.cpp 
 	../src/CallTip.cpp 
+	../src/CaseConvert.cpp 
+	../src/CaseFolder.cpp 
 	../src/Catalogue.cpp 
 	../src/CellBuffer.cpp 
 	../src/CharClassify.cpp 

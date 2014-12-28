@@ -21,7 +21,7 @@ FontAlias::FontAlias() {
 
 FontAlias::~FontAlias() {
 	SetID(0);
-	// ~Font will not release the actual font resource sine it is now 0
+	// ~Font will not release the actual font resource since it is now 0
 }
 
 void FontAlias::MakeAlias(Font &fontOrigin) {
@@ -32,12 +32,29 @@ void FontAlias::ClearFont() {
 	SetID(0);
 }
 
-bool FontSpecification::EqualTo(const FontSpecification &other) const {
-	return weight == other.weight &&
+bool FontSpecification::operator==(const FontSpecification &other) const {
+	return fontName == other.fontName &&
+	       weight == other.weight &&
 	       italic == other.italic &&
 	       size == other.size &&
 	       characterSet == other.characterSet &&
-	       fontName == other.fontName;
+	       extraFontFlag == other.extraFontFlag;
+}
+
+bool FontSpecification::operator<(const FontSpecification &other) const {
+	if (fontName != other.fontName)
+		return fontName < other.fontName;
+	if (weight != other.weight)
+		return weight < other.weight;
+	if (italic != other.italic)
+		return italic == false;
+	if (size != other.size)
+		return size < other.size;
+	if (characterSet != other.characterSet)
+		return characterSet < other.characterSet;
+	if (extraFontFlag != other.extraFontFlag)
+		return extraFontFlag < other.extraFontFlag;
+	return false;
 }
 
 FontMeasurements::FontMeasurements() {
@@ -68,6 +85,7 @@ Style::Style(const Style &source) : FontSpecification(), FontMeasurements() {
 	weight = source.weight;
 	italic = source.italic;
 	size = source.size;
+	fontName = source.fontName;
 	eolFilled = source.eolFilled;
 	underline = source.underline;
 	caseForce = source.caseForce;
@@ -91,6 +109,7 @@ Style &Style::operator=(const Style &source) {
 	weight = source.weight;
 	italic = source.italic;
 	size = source.size;
+	fontName = source.fontName;
 	eolFilled = source.eolFilled;
 	underline = source.underline;
 	caseForce = source.caseForce;

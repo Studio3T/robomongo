@@ -1,6 +1,6 @@
 // The implementation of the Qt specific subclass of ScintillaBase.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -50,6 +50,8 @@
 #undef  SCN_DOUBLECLICK
 #undef  SCN_DWELLEND
 #undef  SCN_DWELLSTART
+#undef  SCN_FOCUSIN
+#undef  SCN_FOCUSOUT
 #undef  SCN_HOTSPOTCLICK
 #undef  SCN_HOTSPOTDOUBLECLICK
 #undef  SCN_HOTSPOTRELEASECLICK
@@ -79,6 +81,8 @@ enum
     SCN_DOUBLECLICK = 2006,
     SCN_DWELLEND = 2017,
     SCN_DWELLSTART = 2016,
+    SCN_FOCUSIN = 2028,
+    SCN_FOCUSOUT = 2029,
     SCN_HOTSPOTCLICK = 2019,
     SCN_HOTSPOTDOUBLECLICK = 2020,
     SCN_HOTSPOTRELEASECLICK = 2027,
@@ -239,15 +243,20 @@ void QsciScintillaQt::SetHorizontalScrollPos()
 bool QsciScintillaQt::ModifyScrollBars(int nMax,int nPage)
 {
     qsb->verticalScrollBar()->setMinimum(0);
-    qsb->horizontalScrollBar()->setMinimum(0);
-
     qsb->verticalScrollBar()->setMaximum(nMax - nPage + 1);
-    qsb->horizontalScrollBar()->setMaximum(scrollWidth);
-
+    qsb->verticalScrollBar()->setPageStep(nPage);
     qsb->verticalScrollBar()->setSingleStep(1);
 
-    qsb->verticalScrollBar()->setPageStep(nPage);
-    qsb->horizontalScrollBar()->setPageStep(scrollWidth / 10);
+    // QAbstractScrollArea ignores Qt::ScrollBarAsNeeded and shows the
+    // horizontal scrollbar if a non-zero maximum is set.  That isn't the
+    // behavior we want, so set the maximum to zero unless scrollWidth exceeds
+    // the viewport.
+    const int widthBeyondViewport = qMax(0,
+            scrollWidth - qsb->viewport()->width());
+
+    qsb->horizontalScrollBar()->setMinimum(0);
+    qsb->horizontalScrollBar()->setMaximum(qMax(0, widthBeyondViewport - 1));
+    qsb->horizontalScrollBar()->setPageStep(widthBeyondViewport / 10);
 
     return true;
 }
@@ -257,10 +266,10 @@ bool QsciScintillaQt::ModifyScrollBars(int nMax,int nPage)
 void QsciScintillaQt::ReconfigureScrollBars()
 {
     // Hide or show the scrollbars if needed.
-    bool hsb = (horizontalScrollBarVisible && wrapState == eWrapNone);
+    bool hsb = (horizontalScrollBarVisible && !Wrapping());
 
-    qsb->setHorizontalScrollBarPolicy(hsb ? Qt::ScrollBarAlwaysOn : Qt::ScrollBarAlwaysOff);
-    qsb->setVerticalScrollBarPolicy(verticalScrollBarVisible ? Qt::ScrollBarAlwaysOn : Qt::ScrollBarAlwaysOff);
+    qsb->setHorizontalScrollBarPolicy(hsb ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
+    qsb->setVerticalScrollBarPolicy(verticalScrollBarVisible ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
 }
 
 
@@ -307,6 +316,14 @@ void QsciScintillaQt::NotifyParent(QSCI_SCI_NAMESPACE(SCNotification) scn)
 
     case SCN_DWELLSTART:
         emit qsb->SCN_DWELLSTART(scn.position, scn.x, scn.y);
+        break;
+
+    case SCN_FOCUSIN:
+        emit qsb->SCN_FOCUSIN();
+        break;
+
+    case SCN_FOCUSOUT:
+        emit qsb->SCN_FOCUSOUT();
         break;
 
     case SCN_HOTSPOTCLICK:
@@ -411,7 +428,7 @@ void QsciScintillaQt::NotifyParent(QSCI_SCI_NAMESPACE(SCNotification) scn)
 QMimeData *QsciScintillaQt::mimeSelection(
         const QSCI_SCI_NAMESPACE(SelectionText) &text) const
 {
-    return qsb->toMimeData(QByteArray(text.s), text.rectangular);
+    return qsb->toMimeData(QByteArray(text.Data()), text.rectangular);
 }
 
 
@@ -460,8 +477,12 @@ void QsciScintillaQt::pasteFromClipboard(QClipboard::Mode mode)
     len = text.length();
     s = text.data();
 
-    s = QSCI_SCI_NAMESPACE(Document)::TransformLineEnds(&len, s, len,
+    std::string dest = QSCI_SCI_NAMESPACE(Document)::TransformLineEnds(s, len,
             pdoc->eolMode);
+
+    QSCI_SCI_NAMESPACE(SelectionText) selText;
+    selText.Copy(dest, (IsUnicodeMode() ? SC_CP_UTF8 : 0),
+            vs.styles[STYLE_DEFAULT].characterSet, rectangular, false);
 
     QSCI_SCI_NAMESPACE(UndoGroup) ug(pdoc);
 
@@ -470,12 +491,10 @@ void QsciScintillaQt::pasteFromClipboard(QClipboard::Mode mode)
     QSCI_SCI_NAMESPACE(SelectionPosition) start = sel.IsRectangular()
             ? sel.Rectangular().Start() : sel.Range(sel.Main()).Start();
 
-    if (rectangular)
-        PasteRectangular(start, s, len);
+    if (selText.rectangular)
+        PasteRectangular(start, selText.Data(), selText.Length());
     else
-        InsertPaste(start, s, len);
-
-    delete[] s;
+        InsertPaste(start, selText.Data(), selText.Length());
 
     NotifyChange();
     Redraw();
@@ -523,7 +542,7 @@ void QsciScintillaQt::ClaimSelection()
 
             CopySelectionRange(&text);
 
-            if (text.s)
+            if (text.Data())
                 cb->setMimeData(mimeSelection(text), QClipboard::Selection);
         }
 

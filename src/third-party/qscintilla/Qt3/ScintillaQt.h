@@ -1,6 +1,6 @@
 // The definition of the Qt specific subclass of ScintillaBase.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -37,18 +37,20 @@
 // These are needed because Scintilla class header files don't manage their own
 // dependencies properly.
 #include <vector>
+#include <algorithm>
 #include <assert.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <string>
 #include "ILexer.h"
 #include "Platform.h"
 #include "Scintilla.h"
-#include "SVector.h"
 #include "SplitVector.h"
 #include "Partitioning.h"
 #include "CellBuffer.h"
 #include "CharClassify.h"
 #include "RunStyles.h"
+#include "CaseFolder.h"
 #include "Decoration.h"
 #include "Document.h"
 #include "Style.h"

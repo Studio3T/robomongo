@@ -119,7 +119,7 @@ static int ClassifyWordRb(unsigned int start, unsigned int end, WordList &keywor
 		chAttr = SCE_RB_MODULE_NAME;
 	else if (0 == strcmp(prevWord, "def"))
 		chAttr = SCE_RB_DEFNAME;
-    else if (keywords.InList(s) && !followsDot(start - 1, styler)) {
+    else if (keywords.InList(s) && ((start == 0) || !followsDot(start - 1, styler))) {
         if (keywordIsAmbiguous(s)
             && keywordIsModifier(s, start, styler)) {
 
@@ -254,7 +254,7 @@ class QuoteCls {
     char Up;
     char Down;
     QuoteCls() {
-        this->New();
+        New();
     }
     void New() {
         Count = 0;

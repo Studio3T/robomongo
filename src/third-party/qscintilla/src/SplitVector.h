@@ -9,6 +9,10 @@
 #ifndef SPLITVECTOR_H
 #define SPLITVECTOR_H
 
+#ifdef SCI_NAMESPACE
+namespace Scintilla {
+#endif
+
 template <typename T>
 class SplitVector {
 protected:
@@ -174,8 +178,7 @@ public:
 			}
 			RoomFor(insertLength);
 			GapTo(position);
-			for (int i = 0; i < insertLength; i++)
-				body[part1Length + i] = v;
+			std::fill(&body[part1Length], &body[part1Length + insertLength], v);
 			lengthBody += insertLength;
 			part1Length += insertLength;
 			gapLength -= insertLength;
@@ -280,5 +283,9 @@ public:
 		return part1Length; 
 	}
 };
+
+#ifdef SCI_NAMESPACE
+}
+#endif
 
 #endif

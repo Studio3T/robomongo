@@ -1,6 +1,6 @@
 // This class defines the "official" low-level API.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -32,6 +32,7 @@ extern "C++" {
 
 #include <qglobal.h>
 
+#include <qcstring.h>
 #include <qwidget.h>
 
 #include <qpoint.h>
@@ -924,6 +925,15 @@ public:
         SCI_GETALLLINESVISIBLE = 2236,
 
         //!
+        SCI_FOLDLINE = 2237,
+
+        //!
+        SCI_FOLDCHILDREN = 2238,
+
+        //!
+        SCI_EXPANDCHILDREN = 2239,
+
+        //!
         SCI_SETTABINDENTS = 2260,
 
         //!
@@ -1384,6 +1394,9 @@ public:
         SCI_COPYTEXT = 2420,
 
         //!
+        SCI_SETHOTSPOTSINGLELINE = 2421,
+
+        //!
         SCI_SETSELECTIONMODE = 2422,
 
         //!
@@ -1764,6 +1777,12 @@ public:
         SCI_ANNOTATIONGETSTYLEOFFSET = 2551,
 
         //!
+        SCI_RELEASEALLEXTENDEDSTYLES = 2552,
+
+        //!
+        SCI_ALLOCATEEXTENDEDSTYLES = 2553,
+
+        //!
         SCI_SETEMPTYSELECTION = 2556,
 
         //!
@@ -1801,6 +1820,9 @@ public:
 
         //!
         SCI_GETADDITIONALCARETSBLINK = 2568,
+
+        //!
+        SCI_SCROLLRANGE = 2569,
 
         //!
         SCI_SETADDITIONALCARETSVISIBLE = 2608,
@@ -2061,7 +2083,46 @@ public:
         SCI_VCHOMEDISPLAY = 2652,
 
         //!
+        SCI_GETCARETLINEVISIBLEALWAYS = 2654,
+
+        //!
+        SCI_SETCARETLINEVISIBLEALWAYS = 2655,
+
+        //!
         SCI_VCHOMEDISPLAYEXTEND = 2653,
+
+        //!
+        SCI_AUTOCSETORDER = 2660,
+
+        //!
+        SCI_AUTOCGETORDER = 2661,
+
+        //!
+        SCI_FOLDALL = 2662,
+
+        //!
+        SCI_SETAUTOMATICFOLD = 2663,
+
+        //!
+        SCI_GETAUTOMATICFOLD = 2664,
+
+        //!
+        SCI_SETREPRESENTATION = 2665,
+
+        //!
+        SCI_GETREPRESENTATION = 2666,
+
+        //!
+        SCI_CLEARREPRESENTATION = 2667,
+
+        //!
+        SCI_SETMOUSESELECTIONRECTANGULARSWITCH = 2668,
+
+        //!
+        SCI_GETMOUSESELECTIONRECTANGULARSWITCH = 2669,
+
+        //!
+        SCI_POSITIONRELATIVE = 2670,
 
         //!
         SCI_STARTRECORD = 3001,
@@ -2124,7 +2185,7 @@ public:
         SCI_DESCRIBEPROPERTY = 4016,
 
         //!
-        SCI_DESCRIBEKEYWORDSETS = 4017
+        SCI_DESCRIBEKEYWORDSETS = 4017,
     };
 
     enum
@@ -2463,6 +2524,7 @@ public:
         INDIC_SQUIGGLELOW = 11,
         INDIC_DOTBOX = 12,
         INDIC_SQUIGGLEPIXMAP = 13,
+        INDIC_COMPOSITIONTHICK = 14,
 
         INDIC_CONTAINER = 8,
         INDIC_MAX = 31,
@@ -2982,6 +3044,18 @@ public:
 
         //! Select the Visual Prolog lexer.
         SCLEX_VISUALPROLOG = 107,
+
+        //! Select the Literal Haskell lexer.
+        SCLEX_LITERATEHASKELL = 108,
+
+        //! Select the Structured Text lexer.
+        SCLEX_STTXT = 109,
+
+        //! Select the KVIrc lexer.
+        SCLEX_KVIRC = 110,
+
+        //! Select the Rust lexer.
+        SCLEX_RUST = 111,
     };
 
     enum
@@ -3006,6 +3080,27 @@ public:
     enum
     {
         SC_FONT_SIZE_MULTIPLIER = 100,
+    };
+
+    enum
+    {
+        SC_FOLDACTION_CONTRACT = 0,
+        SC_FOLDACTION_EXPAND = 1,
+        SC_FOLDACTION_TOGGLE = 2,
+    };
+
+    enum
+    {
+        SC_AUTOMATICFOLD_SHOW = 0x0001,
+        SC_AUTOMATICFOLD_CLICK = 0x0002,
+        SC_AUTOMATICFOLD_CHANGE = 0x0004,
+    };
+
+    enum
+    {
+        SC_ORDER_PRESORTED = 0,
+        SC_ORDER_PERFORMSORT = 1,
+        SC_ORDER_CUSTOM = 2,
     };
 
     //! Construct an empty QsciScintillaBase with parent \a parent, name \a
@@ -3085,6 +3180,9 @@ public:
     //! Re-implemented to filter certain events.
     virtual bool eventFilter(QObject *o, QEvent *e);
 
+    //! \internal
+    static int commandKey(int qt_key, int &modifiers);
+
 signals:
     //! This signal is emitted when text is selected or de-selected.
     //! \a yes is true if text has been selected and false if text has been
@@ -3136,6 +3234,12 @@ signals:
 
     //!
     void SCN_DWELLSTART(int, int, int);
+
+    //! This signal is emitted when focus is received.
+    void SCN_FOCUSIN();
+
+    //! This signal is emitted when focus is lost.
+    void SCN_FOCUSOUT();
 
     //! This signal is emitted when the user clicks on text in a style with the
     //! hotspot attribute set.
@@ -3286,6 +3390,18 @@ protected:
 
     //! \internal This helps to work around some Scintilla bugs.
     void setScrollBars();
+
+    //! \internal Qt3 portability.
+    typedef QCString ScintillaBytes;
+
+#define ScintillaBytesConstData(b)  (b).operator const char *()
+
+
+    //! \internal Convert a QString to encoded bytes.
+    ScintillaBytes textAsBytes(const QString &text) const;
+
+    //! \internal Convert encoded bytes to a QString.
+    QString bytesAsText(const char *bytes) const;
 
 private slots:
     void handleTimer();

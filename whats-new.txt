@@ -21,7 +21,6 @@
     - Bug: Type of Double changed to Int32 on save document (#622)
     - "Duplicate Query In New Tab": add to Window menu with keyboard shortcut (#631)
     - No errors logged if settings directory cannot be created or settings file cannot be written to (#636)
-    - Retina display support (#248)
     - Show execution time for operations that don't return results (#455)
   * [Vladimir Belozyorov]
     - View mode reset to default after no results (#509)
@@ -43,6 +42,8 @@
     - CreateUserDialog.cpp: fixed typo in warning message
   * [Andres Kievsky]
     - Added new app icon in a variety of png and iDraw formats (#693)
+  * [Michael Steinacher]
+	- Retina text display support (#724)
 
 0.8.4 / November 27, 2013
 

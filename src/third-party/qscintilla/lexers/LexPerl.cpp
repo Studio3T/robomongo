@@ -188,28 +188,12 @@ static int styleCheckIdentifier(LexAccessor &styler, unsigned int bk) {
 	return 0;
 }
 
-static int inputsymbolScan(LexAccessor &styler, unsigned int pos, unsigned int endPos) {
-	// looks forward for matching > on same line; a bit ugly
-	unsigned int fw = pos;
-	while (++fw < endPos) {
-		int fwch = static_cast<unsigned char>(styler.SafeGetCharAt(fw));
-		if (fwch == '\r' || fwch == '\n') {
-			return 0;
-		} else if (fwch == '>') {
-			if (styler.Match(fw - 2, "<=>"))	// '<=>' case
-				return 0;
-			return fw - pos;
-		}
-	}
-	return 0;
-}
-
 static int podLineScan(LexAccessor &styler, unsigned int &pos, unsigned int endPos) {
 	// forward scan the current line to classify line for POD style
 	int state = -1;
-	while (pos <= endPos) {
+	while (pos < endPos) {
 		int ch = static_cast<unsigned char>(styler.SafeGetCharAt(pos));
-		if (ch == '\n' || ch == '\r' || pos >= endPos) {
+		if (ch == '\n' || ch == '\r') {
 			if (ch == '\r' && styler.SafeGetCharAt(pos + 1) == '\n') pos++;
 			break;
 		}
@@ -398,6 +382,7 @@ public:
 	static ILexer *LexerFactoryPerl() {
 		return new LexerPerl();
 	}
+	int InputSymbolScan(StyleContext &sc);
 	void InterpolateSegment(StyleContext &sc, int maxSeg, bool isPattern=false);
 };
 
@@ -427,6 +412,21 @@ int SCI_METHOD LexerPerl::WordListSet(int n, const char *wl) {
 	return firstModification;
 }
 
+int LexerPerl::InputSymbolScan(StyleContext &sc) {
+	// forward scan for matching > on same line; file handles
+	int c, sLen = 0;
+	while ((c = sc.GetRelativeCharacter(++sLen)) != 0) {
+		if (c == '\r' || c == '\n') {
+			return 0;
+		} else if (c == '>') {
+			if (sc.Match("<=>"))	// '<=>' case
+				return 0;
+			return sLen;
+		}
+	}
+	return 0;
+}
+
 void LexerPerl::InterpolateSegment(StyleContext &sc, int maxSeg, bool isPattern) {
 	// interpolate a segment (with no active backslashes or delimiters within)
 	// switch in or out of an interpolation style or continue current style
@@ -441,39 +441,42 @@ void LexerPerl::InterpolateSegment(StyleContext &sc, int maxSeg, bool isPattern)
 			if (sc.ch == '$' && sc.chNext == '#') {	// starts with $#
 				sLen++;
 			}
-			while ((maxSeg > sLen) && (sc.GetRelative(sLen) == '$'))	// >0 $ dereference within
+			while ((maxSeg > sLen) && (sc.GetRelativeCharacter(sLen) == '$'))	// >0 $ dereference within
 				sLen++;
-			if ((maxSeg > sLen) && (sc.GetRelative(sLen) == '{')) {	// { start for {word}
+			if ((maxSeg > sLen) && (sc.GetRelativeCharacter(sLen) == '{')) {	// { start for {word}
 				sLen++;
 				braces = true;
 			}
 			if (maxSeg > sLen) {
-				int c = sc.GetRelative(sLen);
+				int c = sc.GetRelativeCharacter(sLen);
 				if (setWordStart.Contains(c)) {	// word (various)
 					sLen++;
 					isVar = true;
-					while ((maxSeg > sLen) && setWord.Contains(sc.GetRelative(sLen)))
+					while (maxSeg > sLen) {
+						if (!setWord.Contains(sc.GetRelativeCharacter(sLen)))
+							break;
 						sLen++;
+					}
 				} else if (braces && IsADigit(c) && (sLen == 2)) {	// digit for ${digit}
 					sLen++;
 					isVar = true;
 				}
 			}
 			if (braces) {
-				if ((maxSeg > sLen) && (sc.GetRelative(sLen) == '}')) {	// } end for {word}
+				if ((maxSeg > sLen) && (sc.GetRelativeCharacter(sLen) == '}')) {	// } end for {word}
 					sLen++;
 				} else
 					isVar = false;
 			}
 		}
 		if (!isVar && (maxSeg > 1)) {	// $- or @-specific variable patterns
-			sLen = 1;
 			int c = sc.chNext;
 			if (sc.ch == '$') {
+				sLen = 1;
 				if (IsADigit(c)) {	// $[0-9] and slurp trailing digits
 					sLen++;
 					isVar = true;
-					while ((maxSeg > sLen) && IsADigit(sc.GetRelative(sLen)))
+					while ((maxSeg > sLen) && IsADigit(sc.GetRelativeCharacter(sLen)))
 						sLen++;
 				} else if (setSpecialVar.Contains(c)) {	// $ special variables
 					sLen++;
@@ -483,12 +486,13 @@ void LexerPerl::InterpolateSegment(StyleContext &sc, int maxSeg, bool isPattern)
 					isVar = true;
 				} else if (c == '^') {	// $^A control-char style
 					sLen++;
-					if ((maxSeg > sLen) && setControlVar.Contains(sc.GetRelative(sLen))) {
+					if ((maxSeg > sLen) && setControlVar.Contains(sc.GetRelativeCharacter(sLen))) {
 						sLen++;
 						isVar = true;
 					}
 				}
 			} else if (sc.ch == '@') {
+				sLen = 1;
 				if (!isPattern && ((c == '+') || (c == '-'))) {	// @ specials non-pattern
 					sLen++;
 					isVar = true;
@@ -576,7 +580,7 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 		int Count;
 		int Up, Down;
 		QuoteCls() {
-			this->New(1);
+			New(1);
 		}
 		void New(int r = 1) {
 			Rep   = r;
@@ -857,10 +861,14 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 							sc.Forward();
 						}
 						if (sc.ch != '\r') {	// skip CR if CRLF
-							HereDoc.Append(sc.ch);
+							int i = 0;			// else append char, possibly an extended char
+							while (i < sc.width) {
+								HereDoc.Append(static_cast<unsigned char>(styler.SafeGetCharAt(sc.currentPos + i)));
+								i++;
+							}
 						}
 					}
-				} else { // an unquoted here-doc delimiter
+				} else { // an unquoted here-doc delimiter, no extended charsets
 					if (setHereDocDelim.Contains(sc.ch)) {
 						HereDoc.Append(sc.ch);
 					} else {
@@ -881,7 +889,7 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 			if (HereDoc.DelimiterLength == 0 || sc.Match(HereDoc.Delimiter)) {
 				int c = sc.GetRelative(HereDoc.DelimiterLength);
 				if (c == '\r' || c == '\n') {	// peek first, do not consume match
-					sc.Forward(HereDoc.DelimiterLength);
+					sc.ForwardBytes(HereDoc.DelimiterLength);
 					sc.SetState(SCE_PL_DEFAULT);
 					backFlag = BACK_NONE;
 					HereDoc.State = 0;
@@ -896,19 +904,18 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 				break;
 			}
 			while (!sc.atLineEnd) {		// "EOF" and `EOF` interpolated
-				int s = 0, endType = 0;
-				int maxSeg = endPos - sc.currentPos;
-				while (s < maxSeg) {	// scan to break string into segments
-					int c = sc.GetRelative(s);
+				int c, sLen = 0, endType = 0;
+				while ((c = sc.GetRelativeCharacter(sLen)) != 0) {
+					// scan to break string into segments
 					if (c == '\\') {
 						endType = 1; break;
 					} else if (c == '\r' || c == '\n') {
 						endType = 2; break;
 					}
-					s++;
+					sLen++;
 				}
-				if (s > 0)	// process non-empty segments
-					InterpolateSegment(sc, s);
+				if (sLen > 0)	// process non-empty segments
+					InterpolateSegment(sc, sLen);
 				if (endType == 1) {
 					sc.Forward();
 					// \ at end-of-line does not appear to have any effect, skip
@@ -936,7 +943,7 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 				if (pod == SCE_PL_DEFAULT) {
 					if (sc.state == SCE_PL_POD_VERB) {
 						unsigned int fw2 = fw;
-						while (fw2 <= endPos && pod == SCE_PL_DEFAULT) {
+						while (fw2 < (endPos - 1) && pod == SCE_PL_DEFAULT) {
 							fw = fw2++;	// penultimate line (last blank line)
 							pod = podLineScan(styler, fw2, endPos);
 							styler.SetLineState(styler.GetLine(fw2), pod);
@@ -958,7 +965,7 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 					}
 					sc.SetState(pod);
 				}
-				sc.Forward(fw - sc.currentPos);	// commit style
+				sc.ForwardBytes(fw - sc.currentPos);	// commit style
 			}
 			break;
 		case SCE_PL_REGEX:
@@ -969,10 +976,9 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 			} else if (!Quote.Up && !IsASpace(sc.ch)) {
 				Quote.Open(sc.ch);
 			} else {
-				int s = 0, endType = 0;
-				int maxSeg = endPos - sc.currentPos;
-				while (s < maxSeg) {	// scan to break string into segments
-					int c = sc.GetRelative(s);
+				int c, sLen = 0, endType = 0;
+				while ((c = sc.GetRelativeCharacter(sLen)) != 0) {
+					// scan to break string into segments
 					if (IsASpace(c)) {
 						break;
 					} else if (c == '\\' && Quote.Up != '\\') {
@@ -985,13 +991,13 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 						}
 					} else if (c == Quote.Up)
 						Quote.Count++;
-					s++;
+					sLen++;
 				}
-				if (s > 0) {	// process non-empty segments
+				if (sLen > 0) {	// process non-empty segments
 					if (Quote.Up != '\'') {
-						InterpolateSegment(sc, s, true);
+						InterpolateSegment(sc, sLen, true);
 					} else		// non-interpolated path
-						sc.Forward(s);
+						sc.Forward(sLen);
 				}
 				if (endType == 1)
 					sc.Forward();
@@ -1005,11 +1011,10 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 			} else if (!Quote.Up && !IsASpace(sc.ch)) {
 				Quote.Open(sc.ch);
 			} else {
-				int s = 0, endType = 0;
-				int maxSeg = endPos - sc.currentPos;
+				int c, sLen = 0, endType = 0;
 				bool isPattern = (Quote.Rep == 2);
-				while (s < maxSeg) {	// scan to break string into segments
-					int c = sc.GetRelative(s);
+				while ((c = sc.GetRelativeCharacter(sLen)) != 0) {
+					// scan to break string into segments
 					if (c == '\\' && Quote.Up != '\\') {
 						endType = 2; break;
 					} else if (Quote.Count == 0 && Quote.Rep == 1) {
@@ -1020,7 +1025,7 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 						// For '#', if no whitespace in between, it's a delimiter.
 						if (IsASpace(c)) {
 							// Keep going
-						} else if (c == '#' && IsASpaceOrTab(sc.GetRelative(s - 1))) {
+						} else if (c == '#' && IsASpaceOrTab(sc.GetRelativeCharacter(sLen - 1))) {
 							endType = 3;
 						} else
 							Quote.Open(c);
@@ -1039,13 +1044,13 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 						Quote.Count++;
 					} else if (IsASpace(c))
 						break;
-					s++;
+					sLen++;
 				}
-				if (s > 0) {	// process non-empty segments
+				if (sLen > 0) {	// process non-empty segments
 					if (sc.state == SCE_PL_REGSUBST && Quote.Up != '\'') {
-						InterpolateSegment(sc, s, isPattern);
+						InterpolateSegment(sc, sLen, isPattern);
 					} else		// non-interpolated path
-						sc.Forward(s);
+						sc.Forward(sLen);
 				}
 				if (endType == 2) {
 					sc.Forward();
@@ -1063,10 +1068,9 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 			if (!Quote.Down && !IsASpace(sc.ch)) {
 				Quote.Open(sc.ch);
 			} else {
-				int s = 0, endType = 0;
-				int maxSeg = endPos - sc.currentPos;
-				while (s < maxSeg) {	// scan to break string into segments
-					int c = sc.GetRelative(s);
+				int c, sLen = 0, endType = 0;
+				while ((c = sc.GetRelativeCharacter(sLen)) != 0) {
+					// scan to break string into segments
 					if (IsASpace(c)) {
 						break;
 					} else if (c == '\\' && Quote.Up != '\\') {
@@ -1078,23 +1082,23 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 						}
 					} else if (c == Quote.Up)
 						Quote.Count++;
-					s++;
+					sLen++;
 				}
-				if (s > 0) {	// process non-empty segments
+				if (sLen > 0) {	// process non-empty segments
 					switch (sc.state) {
 					case SCE_PL_STRING:
 					case SCE_PL_STRING_QQ:
 					case SCE_PL_BACKTICKS:
-						InterpolateSegment(sc, s);
+						InterpolateSegment(sc, sLen);
 						break;
 					case SCE_PL_STRING_QX:
 						if (Quote.Up != '\'') {
-							InterpolateSegment(sc, s);
+							InterpolateSegment(sc, sLen);
 							break;
 						}
 						// (continued for ' delim)
 					default:	// non-interpolated path
-						sc.Forward(s);
+						sc.Forward(sLen);
 					}
 				}
 				if (endType == 2) {
@@ -1109,7 +1113,7 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 				while (setSubPrototype.Contains(sc.GetRelative(i)))
 					i++;
 				if (sc.GetRelative(i) == ')') {	// valid sub prototype
-					sc.Forward(i);
+					sc.ForwardBytes(i);
 					sc.ForwardSetState(SCE_PL_DEFAULT);
 				} else {
 					// abandon prototype, restart from '('
@@ -1322,7 +1326,7 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 				if (setArray.Contains(sc.chNext)) {
 					// no special treatment
 				} else if (sc.chNext == ':' && sc.GetRelative(2) == ':') {
-					sc.Forward(2);
+					sc.ForwardBytes(2);
 				} else if (sc.chNext == '{' || sc.chNext == '[') {
 					sc.ForwardSetState(SCE_PL_OPERATOR);
 				} else {
@@ -1445,7 +1449,7 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 					if (preferRE) {
 						sc.SetState(SCE_PL_SYMBOLTABLE);
 						if (sc.chNext == ':' && sc.GetRelative(2) == ':') {
-							sc.Forward(2);
+							sc.ForwardBytes(2);
 						} else if (sc.chNext == '{') {
 							sc.ForwardSetState(SCE_PL_OPERATOR);
 						} else {
@@ -1462,7 +1466,7 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 						if (setHash.Contains(sc.chNext)) {
 							sc.Forward();
 						} else if (sc.chNext == ':' && sc.GetRelative(2) == ':') {
-							sc.Forward(2);
+							sc.ForwardBytes(2);
 						} else if (sc.chNext == '{') {
 							sc.ForwardSetState(SCE_PL_OPERATOR);
 						} else {
@@ -1474,7 +1478,7 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 				} else if (sc.ch == '<') {	// handle '<', inputsymbol
 					if (preferRE) {
 						// forward scan
-						int i = inputsymbolScan(styler, sc.currentPos, endPos);
+						int i = InputSymbolScan(sc);
 						if (i > 0) {
 							sc.SetState(SCE_PL_IDENTIFIER);
 							sc.Forward(i);
@@ -1626,7 +1630,7 @@ void SCI_METHOD LexerPerl::Fold(unsigned int startPos, int length, int /* initSt
 				else if (styler.Match(i, "=head"))
 					podHeading = PodHeadingLevel(i, styler);
 			} else if (style == SCE_PL_DATASECTION) {
-				if (ch == '=' && isascii(chNext) && isalpha(chNext) && levelCurrent == SC_FOLDLEVELBASE)
+				if (ch == '=' && IsASCII(chNext) && isalpha(chNext) && levelCurrent == SC_FOLDLEVELBASE)
 					levelCurrent++;
 				else if (styler.Match(i, "=cut") && levelCurrent > SC_FOLDLEVELBASE)
 					levelCurrent = (levelCurrent & ~PERL_HEADFOLD_MASK) - 1;

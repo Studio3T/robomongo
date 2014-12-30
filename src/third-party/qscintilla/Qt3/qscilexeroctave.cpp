@@ -1,6 +1,6 @@
 // This module implements the QsciLexerOctave class.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -61,10 +61,13 @@ const char *QsciLexerOctave::keywords(int set) const
 {
     if (set == 1)
         return
-            "break case catch continue do else elseif end end_unwind_protect "
-            "endfor endfunction endif endswitch endwhile for function "
-            "global if otherwise persistent return switch try until "
-            "unwind_protect unwind_protect_cleanup while";
+            "__FILE__ __LINE__ break case catch classdef continue do else "
+            "elseif end end_try_catch end_unwind_protect endclassdef "
+            "endenumeration endevents endfor endfunction endif endmethods "
+            "endparfor endproperties endswitch endwhile enumeration events "
+            "for function get global if methods otherwise parfor persistent "
+            "properties return set static switch try until unwind_protect "
+            "unwind_protect_cleanup while";
 
     return 0;
 }

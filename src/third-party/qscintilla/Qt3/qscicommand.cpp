@@ -1,6 +1,6 @@
 // This module implements the QsciCommand class.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -132,72 +132,7 @@ static int convert(int key)
     key &= ~Qt::MODIFIER_MASK;
 
     // Convert the key.
-    int sci_key;
-
-    if (key > 0x7f)
-        switch (key)
-        {
-        case Qt::Key_Down:
-            sci_key = QsciScintillaBase::SCK_DOWN;
-            break;
-
-        case Qt::Key_Up:
-            sci_key = QsciScintillaBase::SCK_UP;
-            break;
-
-        case Qt::Key_Left:
-            sci_key = QsciScintillaBase::SCK_LEFT;
-            break;
-
-        case Qt::Key_Right:
-            sci_key = QsciScintillaBase::SCK_RIGHT;
-            break;
-
-        case Qt::Key_Home:
-            sci_key = QsciScintillaBase::SCK_HOME;
-            break;
-
-        case Qt::Key_End:
-            sci_key = QsciScintillaBase::SCK_END;
-            break;
-
-        case Qt::Key_Prior:
-            sci_key = QsciScintillaBase::SCK_PRIOR;
-            break;
-
-        case Qt::Key_Next:
-            sci_key = QsciScintillaBase::SCK_NEXT;
-            break;
-
-        case Qt::Key_Delete:
-            sci_key = QsciScintillaBase::SCK_DELETE;
-            break;
-
-        case Qt::Key_Insert:
-            sci_key = QsciScintillaBase::SCK_INSERT;
-            break;
-
-        case Qt::Key_Escape:
-            sci_key = QsciScintillaBase::SCK_ESCAPE;
-            break;
-
-        case Qt::Key_Backspace:
-            sci_key = QsciScintillaBase::SCK_BACK;
-            break;
-
-        case Qt::Key_Tab:
-            sci_key = QsciScintillaBase::SCK_TAB;
-            break;
-
-        case Qt::Key_Return:
-            sci_key = QsciScintillaBase::SCK_RETURN;
-            break;
-
-        default:
-            sci_key = 0;
-        }
-    else
-        sci_key = key;
+    int sci_key = QsciScintillaBase::commandKey(key, sci_mod);
 
     if (sci_key)
         sci_key |= (sci_mod << 16);

@@ -1,7 +1,6 @@
 // Scintilla source code edit control
 /** @file LexOthers.cxx
  ** Lexers for batch files, diff results, properties files, make files and error lists.
- ** Also lexer for LaTeX documents.
  **/
 // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
@@ -41,7 +40,7 @@ static bool Is1To9(char ch) {
 }
 
 static bool IsAlphabetic(int ch) {
-	return isascii(ch) && isalpha(ch);
+	return IsASCII(ch) && isalpha(ch);
 }
 
 static inline bool AtEOL(Accessor &styler, unsigned int i) {
@@ -923,8 +922,9 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 	        (strstr(lineBuffer, " at ") < (lineBuffer + lengthLine)) &&
 	           strstr(lineBuffer, " line ") &&
 	           (strstr(lineBuffer, " line ") < (lineBuffer + lengthLine)) &&
-	        (strstr(lineBuffer, " at ") < (strstr(lineBuffer, " line ")))) {
-		// perl error message
+	        (strstr(lineBuffer, " at ") + 4 < (strstr(lineBuffer, " line ")))) {
+		// perl error message:
+		// <message> at <file> line <line>
 		return SCE_ERR_PERL;
 	} else if ((memcmp(lineBuffer, "   at ", 6) == 0) &&
 	           strstr(lineBuffer, ":line ")) {
@@ -943,6 +943,10 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 	           strstr(lineBuffer, ".java:")) {
 		// Java stack back trace
 		return SCE_ERR_JAVA_STACK;
+	} else if (strstart(lineBuffer, "In file included from ") ||
+	           strstart(lineBuffer, "                 from ")) {
+		// GCC showing include path to following error
+		return SCE_ERR_GCC_INCLUDED_FROM;
 	} else {
 		// Look for one of the following formats:
 		// GCC: <filename>:<line>:<message>
@@ -950,15 +954,16 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 		// Common: <filename>(<line>): warning|error|note|remark|catastrophic|fatal
 		// Common: <filename>(<line>) warning|error|note|remark|catastrophic|fatal
 		// Microsoft: <filename>(<line>,<column>)<message>
-		// CTags: \t<message>
+		// CTags: <identifier>\t<filename>\t<message>
 		// Lua 5 traceback: \t<filename>:<line>:<message>
 		// Lua 5.1: <exe>: <filename>:<line>:<message>
 		bool initialTab = (lineBuffer[0] == '\t');
 		bool initialColonPart = false;
+		bool canBeCtags = !initialTab;	// For ctags must have an identifier with no spaces then a tab
 		enum { stInitial,
 			stGccStart, stGccDigit, stGccColumn, stGcc,
 			stMsStart, stMsDigit, stMsBracket, stMsVc, stMsDigitComma, stMsDotNet,
-			stCtagsStart, stCtagsStartString, stCtagsStringDollar, stCtags,
+			stCtagsStart, stCtagsFile, stCtagsStartString, stCtagsStringDollar, stCtags,
 			stUnrecognized
 		} state = stInitial;
 		for (unsigned int i = 0; i < lengthLine; i++) {
@@ -980,9 +985,11 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 					// May be Microsoft
 					// Check against '0' often removes phone numbers
 					state = stMsStart;
-				} else if ((ch == '\t') && (!initialTab)) {
+				} else if ((ch == '\t') && canBeCtags) {
 					// May be CTags
 					state = stCtagsStart;
+				} else if (ch == ' ') {
+					canBeCtags = false;
 				}
 			} else if (state == stGccStart) {	// <filename>:
 				state = Is1To9(ch) ? stGccDigit : stUnrecognized;
@@ -1043,11 +1050,15 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 					state = stUnrecognized;
 				}
 			} else if (state == stCtagsStart) {
+				if (ch == '\t') {
+					state = stCtagsFile;
+				}
+			} else if (state == stCtagsFile) {
 				if ((lineBuffer[i - 1] == '\t') &&
-				        ((ch == '/' && lineBuffer[i + 1] == '^') || Is0To9(ch))) {
+				        ((ch == '/' && chNext == '^') || Is0To9(ch))) {
 					state = stCtags;
 					break;
-				} else if ((ch == '/') && (lineBuffer[i + 1] == '^')) {
+				} else if ((ch == '/') && (chNext == '^')) {
 					state = stCtagsStartString;
 				}
 			} else if ((state == stCtagsStartString) && ((lineBuffer[i] == '$') && (lineBuffer[i + 1] == '/'))) {
@@ -1109,301 +1120,6 @@ static void ColouriseErrorListDoc(unsigned int startPos, int length, int, WordLi
 	}
 }
 
-static bool latexIsSpecial(int ch) {
-	return (ch == '#') || (ch == '$') || (ch == '%') || (ch == '&') || (ch == '_') ||
-	       (ch == '{') || (ch == '}') || (ch == ' ');
-}
-
-static bool latexIsBlank(int ch) {
-	return (ch == ' ') || (ch == '\t');
-}
-
-static bool latexIsBlankAndNL(int ch) {
-	return (ch == ' ') || (ch == '\t') || (ch == '\r') || (ch == '\n');
-}
-
-static bool latexIsLetter(int ch) {
-	return isascii(ch) && isalpha(ch);
-}
-
-static bool latexIsTagValid(int &i, int l, Accessor &styler) {
-	while (i < l) {
-		if (styler.SafeGetCharAt(i) == '{') {
-			while (i < l) {
-				i++;
-				if (styler.SafeGetCharAt(i) == '}') {
-					return true;
-				}	else if (!latexIsLetter(styler.SafeGetCharAt(i)) &&
-                   styler.SafeGetCharAt(i)!='*') {
-					return false;
-				}
-			}
-		} else if (!latexIsBlank(styler.SafeGetCharAt(i))) {
-			return false;
-		}
-		i++;
-	}
-	return false;
-}
-
-static bool latexNextNotBlankIs(int i, int l, Accessor &styler, char needle) {
-  char ch;
-	while (i < l) {
-    ch = styler.SafeGetCharAt(i);
-		if (!latexIsBlankAndNL(ch) && ch != '*') {
-      if (ch == needle)
-        return true;
-      else
-        return false;
-		}
-		i++;
-	}
-	return false;
-}
-
-static bool latexLastWordIs(int start, Accessor &styler, const char *needle) {
-  unsigned int i = 0;
-	unsigned int l = static_cast<unsigned int>(strlen(needle));
-	int ini = start-l+1;
-	char s[32];
-
-	while (i < l && i < 32) {
-		s[i] = styler.SafeGetCharAt(ini + i);
-    i++;
-	}
-	s[i] = '\0';
-
-	return (strcmp(s, needle) == 0);
-}
-
-static void ColouriseLatexDoc(unsigned int startPos, int length, int initStyle,
-                              WordList *[], Accessor &styler) {
-
-	styler.StartAt(startPos);
-
-	int state = initStyle;
-	char chNext = styler.SafeGetCharAt(startPos);
-	styler.StartSegment(startPos);
-	int lengthDoc = startPos + length;
-  char chVerbatimDelim = '\0';
-
-	for (int i = startPos; i < lengthDoc; i++) {
-		char ch = chNext;
-		chNext = styler.SafeGetCharAt(i + 1);
-
-		if (styler.IsLeadByte(ch)) {
-			i++;
-			chNext = styler.SafeGetCharAt(i + 1);
-			continue;
-		}
-
-		switch (state) {
-		case SCE_L_DEFAULT :
-			switch (ch) {
-			case '\\' :
-				styler.ColourTo(i - 1, state);
-				if (latexIsSpecial(chNext)) {
-					state = SCE_L_SPECIAL;
-				} else {
-					if (latexIsLetter(chNext)) {
-						state = SCE_L_COMMAND;
-					}	else {
-						if (chNext == '(' || chNext == '[') {
-							styler.ColourTo(i-1, state);
-							styler.ColourTo(i+1, SCE_L_SHORTCMD);
-							state = SCE_L_MATH;
-							if (chNext == '[')
-								state = SCE_L_MATH2;
-							i++;
-							chNext = styler.SafeGetCharAt(i+1);
-						} else {
-							state = SCE_L_SHORTCMD;
-						}
-					}
-				}
-				break;
-			case '$' :
-				styler.ColourTo(i - 1, state);
-				state = SCE_L_MATH;
-				if (chNext == '$') {
-					state = SCE_L_MATH2;
-					i++;
-					chNext = styler.SafeGetCharAt(i + 1);
-				}
-				break;
-			case '%' :
-				styler.ColourTo(i - 1, state);
-				state = SCE_L_COMMENT;
-				break;
-			}
-			break;
-		case SCE_L_ERROR:
-			styler.ColourTo(i-1, state);
-			state = SCE_L_DEFAULT;
-			break;
-		case SCE_L_SPECIAL:
-		case SCE_L_SHORTCMD:
-			styler.ColourTo(i, state);
-			state = SCE_L_DEFAULT;
-			break;
-		case SCE_L_COMMAND :
-			if (!latexIsLetter(chNext)) {
-				styler.ColourTo(i, state);
-				state = SCE_L_DEFAULT;
-        if (latexNextNotBlankIs(i+1, lengthDoc, styler, '[' )) {
-          state = SCE_L_CMDOPT;
-				} else if (latexLastWordIs(i, styler, "\\begin")) {
-					state = SCE_L_TAG;
-				} else if (latexLastWordIs(i, styler, "\\end")) {
-					state = SCE_L_TAG2;
-				} else if (latexLastWordIs(i, styler, "\\verb") &&
-                   chNext != '*' && chNext != ' ') {
-          chVerbatimDelim = chNext;
-					state = SCE_L_VERBATIM;
-				}
-			}
-			break;
-		case SCE_L_CMDOPT :
-      if (ch == ']') {
-        styler.ColourTo(i, state);
-        state = SCE_L_DEFAULT;
-      }
-			break;
-		case SCE_L_TAG :
-			if (latexIsTagValid(i, lengthDoc, styler)) {
-				styler.ColourTo(i, state);
-				state = SCE_L_DEFAULT;
-				if (latexLastWordIs(i, styler, "{verbatim}")) {
-					state = SCE_L_VERBATIM;
-				} else if (latexLastWordIs(i, styler, "{comment}")) {
-					state = SCE_L_COMMENT2;
-				} else if (latexLastWordIs(i, styler, "{math}")) {
-					state = SCE_L_MATH;
-				} else if (latexLastWordIs(i, styler, "{displaymath}")) {
-					state = SCE_L_MATH2;
-				} else if (latexLastWordIs(i, styler, "{equation}")) {
-					state = SCE_L_MATH2;
-				}
-			} else {
-				state = SCE_L_ERROR;
-				styler.ColourTo(i, state);
-				state = SCE_L_DEFAULT;
-			}
-			chNext = styler.SafeGetCharAt(i+1);
-			break;
-		case SCE_L_TAG2 :
-			if (latexIsTagValid(i, lengthDoc, styler)) {
-				styler.ColourTo(i, state);
-				state = SCE_L_DEFAULT;
-			} else {
-				state = SCE_L_ERROR;
-			}
-			chNext = styler.SafeGetCharAt(i+1);
-			break;
-		case SCE_L_MATH :
-			if (ch == '$') {
-				styler.ColourTo(i, state);
-				state = SCE_L_DEFAULT;
-			} else if (ch == '\\' && chNext == ')') {
-				styler.ColourTo(i-1, state);
-				styler.ColourTo(i+1, SCE_L_SHORTCMD);
-				i++;
-				chNext = styler.SafeGetCharAt(i+1);
-				state = SCE_L_DEFAULT;
-			} else if (ch == '\\') {
-				int match = i + 3;
-				if (latexLastWordIs(match, styler, "\\end")) {
-					match++;
-					if (latexIsTagValid(match, lengthDoc, styler)) {
-						if (latexLastWordIs(match, styler, "{math}")) {
-							styler.ColourTo(i-1, state);
-							state = SCE_L_COMMAND;
-						}
-					}
-				}
-			}
-
-			break;
-		case SCE_L_MATH2 :
-			if (ch == '$') {
-        if (chNext == '$') {
-          i++;
-          chNext = styler.SafeGetCharAt(i + 1);
-          styler.ColourTo(i, state);
-          state = SCE_L_DEFAULT;
-        } else {
-          styler.ColourTo(i, SCE_L_ERROR);
-          state = SCE_L_DEFAULT;
-        }
-			} else if (ch == '\\' && chNext == ']') {
-				styler.ColourTo(i-1, state);
-				styler.ColourTo(i+1, SCE_L_SHORTCMD);
-				i++;
-				chNext = styler.SafeGetCharAt(i+1);
-				state = SCE_L_DEFAULT;
-			} else if (ch == '\\') {
-				int match = i + 3;
-				if (latexLastWordIs(match, styler, "\\end")) {
-					match++;
-					if (latexIsTagValid(match, lengthDoc, styler)) {
-						if (latexLastWordIs(match, styler, "{displaymath}")) {
-							styler.ColourTo(i-1, state);
-							state = SCE_L_COMMAND;
-						} else if (latexLastWordIs(match, styler, "{equation}")) {
-							styler.ColourTo(i-1, state);
-							state = SCE_L_COMMAND;
-						}
-					}
-				}
-			}
-			break;
-		case SCE_L_COMMENT :
-			if (ch == '\r' || ch == '\n') {
-				styler.ColourTo(i - 1, state);
-				state = SCE_L_DEFAULT;
-			}
-			break;
-		case SCE_L_COMMENT2 :
-			if (ch == '\\') {
-				int match = i + 3;
-				if (latexLastWordIs(match, styler, "\\end")) {
-					match++;
-					if (latexIsTagValid(match, lengthDoc, styler)) {
-						if (latexLastWordIs(match, styler, "{comment}")) {
-							styler.ColourTo(i-1, state);
-							state = SCE_L_COMMAND;
-						}
-					}
-				}
-			}
-			break;
-		case SCE_L_VERBATIM :
-			if (ch == '\\') {
-				int match = i + 3;
-				if (latexLastWordIs(match, styler, "\\end")) {
-					match++;
-					if (latexIsTagValid(match, lengthDoc, styler)) {
-						if (latexLastWordIs(match, styler, "{verbatim}")) {
-							styler.ColourTo(i-1, state);
-							state = SCE_L_COMMAND;
-						}
-					}
-				}
-			} else if (chNext == chVerbatimDelim) {
-        styler.ColourTo(i+1, state);
-				state = SCE_L_DEFAULT;
-        chVerbatimDelim = '\0';
-      } else if (chVerbatimDelim != '\0' && (ch == '\n' || ch == '\r')) {
-        styler.ColourTo(i, SCE_L_ERROR);
-				state = SCE_L_DEFAULT;
-        chVerbatimDelim = '\0';
-      }
-			break;
-		}
-	}
-	styler.ColourTo(lengthDoc-1, state);
-}
-
 static const char *const batchWordListDesc[] = {
 	"Internal Commands",
 	"External Commands",
@@ -1429,5 +1145,4 @@ LexerModule lmDiff(SCLEX_DIFF, ColouriseDiffDoc, "diff", FoldDiffDoc, emptyWordL
 LexerModule lmProps(SCLEX_PROPERTIES, ColourisePropsDoc, "props", FoldPropsDoc, emptyWordListDesc);
 LexerModule lmMake(SCLEX_MAKEFILE, ColouriseMakeDoc, "makefile", 0, emptyWordListDesc);
 LexerModule lmErrorList(SCLEX_ERRORLIST, ColouriseErrorListDoc, "errorlist", 0, emptyWordListDesc);
-LexerModule lmLatex(SCLEX_LATEX, ColouriseLatexDoc, "latex", 0, emptyWordListDesc);
 LexerModule lmNull(SCLEX_NULL, ColouriseNullDoc, "null");

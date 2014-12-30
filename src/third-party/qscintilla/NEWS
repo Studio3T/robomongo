@@ -1,3 +1,64 @@
+v2.8.4 11th September 2014
+  - Added setHotspotForegroundColor(), resetHotspotForegroundColor(),
+    setHotspotBackgroundColor(), resetHotspotBackgroundColor(),
+    setHotspotUnderline() and setHotspotWrap() to QsciScintilla.
+  - Added SCI_SETHOTSPOTSINGLELINE to QsciScintillaBase.
+  - Bug fixes.
+
+v2.8.3 3rd July 2014
+  - Added the QsciLexerCoffeeScript class.
+  - Font sizes are now handled as floating point values rather than integers.
+  - Bug fixes.
+
+v2.8.2 26th May 2014
+  - Added the QsciLexerAVS class.
+  - Added the QsciLexerPO class.
+  - Added the --sysroot, --no-sip-files and --no-qsci-api options to the Python
+    bindings' configure.py.
+  - Cross-compilation (specifically to iOS and Android) is now supported.
+  - configure.py has been refactored and relicensed so that it can be used as a
+    template for wrapping other bindings.
+  - Bug fixes.
+
+v2.8.1 14th March 2014
+  - Added support for iOS and Android.
+  - Added support for retina displays.
+  - A qscintilla2.prf file is installed so that application .pro files only
+    need to add CONFIG += qscintilla2.
+  - Updated the keywords recognised by the Octave lexer.
+  - Bug fixes.
+
+v2.8 9th November 2013
+  - Based on Scintilla v3.3.6.
+  - Added the SCN_FOCUSIN() and SCN_FOCUSOUT() signals to QsciScintillaBase.
+  - Added PreProcessorCommentLineDoc and InactivePreProcessorCommentLineDoc to
+    QsciLexerCPP.
+  - Added SCLEX_LITERATEHASKELL, SCLEX_KVIRC, SCLEX_RUST and SCLEX_STTXT to
+    QsciScintillaBase.
+  - Added ThickCompositionIndicator to QsciScintilla::IndicatorStyle.
+  - Added INDIC_COMPOSITIONTHICK to QsciScintillaBase.
+  - Added SC_FOLDACTION_CONTRACT, SC_FOLDACTION_EXPAND and SC_FOLDACTION_TOGGLE
+    to QsciScintillaBase.
+  - Added SCI_FOLDLINE, SCI_FOLDCHILDREN, SCI_EXPANDCHILDREN and SCI_FOLDALL to
+    QsciScintillaBase.
+  - Added SC_AUTOMATICFOLD_SHOW, SC_AUTOMATICFOLD_CLICK and
+    SC_AUTOMATICFOLD_CHANGE to QsciScintillaBase.
+  - Added SCI_SETAUTOMATICFOLD and SCI_GETAUTOMATICFOLD to QsciScintillaBase.
+  - Added SC_ORDER_PRESORTED, SC_ORDER_PERFORMSORT and SC_ORDER_CUSTOM to
+    QsciScintillaBase.
+  - Added SCI_AUTOCSETORDER and SCI_AUTOCGETORDER to QsciScintillaBase.
+  - Added SCI_POSITIONRELATIVE to QsciScintillaBase.
+  - Added SCI_RELEASEALLEXTENDEDSTYLES and SCI_ALLOCATEEXTENDEDSTYLES to
+    QsciScintillaBase.
+  - Added SCI_SCROLLRANGE to QsciScintillaBase.
+  - Added SCI_SETCARETLINEVISIBLEALWAYS and SCI_GETCARETLINEVISIBLEALWAYS to
+    QsciScintillaBase.
+  - Added SCI_SETMOUSESELECTIONRECTANGULARSWITCH and
+    SCI_GETMOUSESELECTIONRECTANGULARSWITCH to QsciScintillaBase.
+  - Added SCI_SETREPRESENTATION, SCI_GETREPRESENTATION and
+    SCI_CLEARREPRESENTATION to QsciScintillaBase.
+  - Input methods are now properly supported.
+
 v2.7.2 16th June 2013
   - The build script for the Python bindings now has a --pyqt argument for
     specifying PyQt4 or PyQt5.
@@ -10,7 +71,7 @@ v2.7.1 1st March 2013
   - Bug fixes.
 
 v2.7 8th December 2012
-  - Based on Scintilla v3.23.
+  - Based on Scintilla v3.2.3.
   - Added support for Qt v5-rc1.
   - Added HashQuotedString, InactiveHashQuotedString, PreProcessorComment,
     InactivePreProcessorComment, setHighlightHashQuotedStrings() and

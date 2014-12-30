@@ -6,6 +6,7 @@
 // The License.txt file describes the conditions under which this software may be distributed.
 
 #include <string.h>
+#include <math.h>
 
 #include <vector>
 #include <map>
@@ -112,8 +113,8 @@ void LineMarker::Draw(Surface *surface, PRectangle &rcWhole, Font &fontForCharac
 	rc.bottom--;
 	int minDim = Platform::Minimum(rc.Width(), rc.Height());
 	minDim--;	// Ensure does not go beyond edge
-	int centreX = (rc.right + rc.left) / 2;
-	int centreY = (rc.bottom + rc.top) / 2;
+	int centreX = floor((rc.right + rc.left) / 2.0);
+	int centreY = floor((rc.bottom + rc.top) / 2.0);
 	int dimOn2 = minDim / 2;
 	int dimOn4 = minDim / 4;
 	int blobSize = dimOn2-1;

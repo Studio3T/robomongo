@@ -1,6 +1,6 @@
 // This module implements the QsciStyle class.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -98,8 +98,8 @@ void QsciStyle::apply(QsciScintillaBase *sci) const
             style_paper);
     sci->SendScintilla(QsciScintillaBase::SCI_STYLESETFONT, style_nr,
             style_font.family().toLatin1().data());
-    sci->SendScintilla(QsciScintillaBase::SCI_STYLESETSIZE, style_nr,
-            style_font.pointSize());
+    sci->SendScintilla(QsciScintillaBase::SCI_STYLESETSIZEFRACTIONAL, style_nr,
+            long(style_font.pointSizeF() * QsciScintillaBase::SC_FONT_SIZE_MULTIPLIER));
 
     // Pass the Qt weight via the back door.
     sci->SendScintilla(QsciScintillaBase::SCI_STYLESETWEIGHT, style_nr,

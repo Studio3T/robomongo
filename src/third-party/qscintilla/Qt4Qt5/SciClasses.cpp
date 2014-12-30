@@ -1,7 +1,7 @@
 // The implementation of various Qt version independent classes used by the
 // rest of the port.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -66,6 +66,7 @@ void QsciSciCallTip::paintEvent(QPaintEvent *)
     QPainter p(this);
 
     surfaceWindow->Init(&p);
+    surfaceWindow->SetUnicodeMode(sci->CodePage() == SC_CP_UTF8);
     sci->ct.PaintCT(surfaceWindow);
 
     delete surfaceWindow;
@@ -149,8 +150,6 @@ QsciSciListBox::QsciSciListBox(QWidget *parent, QsciListBoxQt *lbx_)
     setFrameShadow(Plain);
 
     connect(this, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
-            SLOT(handleSelection()));
-    connect(this, SIGNAL(itemActivated(QListWidgetItem *)),
             SLOT(handleSelection()));
 }
 

@@ -1,6 +1,6 @@
 // This module implements the portability layer for the Qt port of Scintilla.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -129,7 +129,7 @@ void Font::Create(const FontParameters &fp)
     else
     {
         f->setFamily(fp.faceName);
-        f->setPointSize(fp.size);
+        f->setPointSizeF(fp.size);
 
         // See if the Qt weight has been passed via the back door.   Otherwise
         // map Scintilla weights to Qt weights ensuring that the SC_WEIGHT_*
@@ -177,12 +177,12 @@ public:
     void Init(WindowID wid);
     void Init(SurfaceID sid, WindowID);
     void Init(QPainter *p);
-    void InitPixMap(int width, int height, Surface *, WindowID);
+    void InitPixMap(int width, int height, Surface *, WindowID wid);
 
     void Release();
     bool Initialised() {return painter;}
     void PenColour(ColourDesired fore);
-    int LogPixelsY() {return 72;}
+    int LogPixelsY() {return pd->logicalDpiY();}
     int DeviceHeightFont(int points) {return points;}
     void MoveTo(int x_,int y_);
     void LineTo(int x_,int y_);
@@ -287,11 +287,21 @@ void SurfaceImpl::Init(QPainter *p)
     painter = p;
 }
 
-void SurfaceImpl::InitPixMap(int width, int height, Surface *, WindowID)
+void SurfaceImpl::InitPixMap(int width, int height, Surface *, WindowID wid)
 {
     Release();
 
-    pd = new QPixmap(width, height);
+#if QT_VERSION >= 0x050100
+    int dpr = PWindow(wid)->devicePixelRatio();
+    QPixmap *pixmap = new QPixmap(width * dpr, height * dpr);
+    pixmap->setDevicePixelRatio(dpr);
+#else
+    QPixmap *pixmap = new QPixmap(width, height);
+    Q_UNUSED(wid);
+#endif
+
+    pd = pixmap;
+
     painter = new QPainter(pd);
     my_resources = true;
 }
@@ -410,9 +420,20 @@ void SurfaceImpl::AlphaRectangle(PRectangle rc, int cornerSize,
 {
     Q_ASSERT(painter);
 
+    QColor outline_colour = convertQColor(outline, alphaOutline);
+    QColor fill_colour = convertQColor(fill, alphaFill);
+
+    // There was a report of Qt seeming to ignore the alpha value of the pen so
+    // so we disable the pen if the outline and fill colours are the same.
+    if (outline_colour == fill_colour)
+        painter->setPen(Qt::NoPen);
+    else
+        painter->setPen(outline_colour);
+
+    painter->setBrush(fill_colour);
+
     const int radius = (cornerSize ? 25 : 0);
 
-    painter->setBrush(convertQColor(fill, alphaFill));
     painter->drawRoundRect(
             QRectF(rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top),
             radius, radius);
@@ -444,9 +465,22 @@ void SurfaceImpl::Copy(PRectangle rc, Point from, Surface &surfaceSource)
     if (si.pd)
     {
         QPixmap *pm = static_cast<QPixmap *>(si.pd);
+        qreal x = from.x;
+        qreal y = from.y;
+        qreal width = rc.right - rc.left;
+        qreal height = rc.bottom - rc.top;
+
+#if QT_VERSION >= 0x050100
+        qreal dpr = pm->devicePixelRatio();
+
+        x *= dpr;
+        y *= dpr;
+        width *= dpr;
+        height *= dpr;
+#endif
 
         painter->drawPixmap(QPointF(rc.left, rc.top), *pm,
-                QRectF(from.x, from.y, rc.right - rc.left, rc.bottom - rc.top));
+                QRectF(x, y, width, height));
     }
 }
 

@@ -1,6 +1,6 @@
 // This is the SIP interface definition for QsciPrinter.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -23,6 +23,8 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
+%If (PyQt_Printer)
+
 class QsciPrinter : QPrinter
 {
 %TypeHeaderCode
@@ -44,3 +46,5 @@ public:
 private:
     QsciPrinter(const QsciPrinter &);
 };
+
+%End

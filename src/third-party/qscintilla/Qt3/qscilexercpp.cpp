@@ -1,6 +1,6 @@
 // This module implements the QsciLexerCPP class.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -133,6 +133,7 @@ QColor QsciLexerCPP::defaultColor(int style) const
 
     case CommentDoc:
     case CommentLineDoc:
+    case PreProcessorCommentLineDoc:
         return QColor(0x3f, 0x70, 0x3f);
 
     case Number:
@@ -176,6 +177,7 @@ QColor QsciLexerCPP::defaultColor(int style) const
     case InactiveKeywordSet2:
     case InactiveCommentDocKeyword:
     case InactiveCommentDocKeywordError:
+    case InactivePreProcessorCommentLineDoc:
         return QColor(0xc0, 0xc0, 0xc0);
 
     case InactiveComment:
@@ -474,6 +476,30 @@ QString QsciLexerCPP::description(int style) const
 
     case InactiveRawString:
         return tr("Inactive C++ raw string");
+
+    case TripleQuotedVerbatimString:
+        return tr("Vala triple-quoted verbatim string");
+
+    case InactiveTripleQuotedVerbatimString:
+        return tr("Inactive Vala triple-quoted verbatim string");
+
+    case HashQuotedString:
+        return tr("Pike hash-quoted string");
+
+    case InactiveHashQuotedString:
+        return tr("Inactive Pike hash-quoted string");
+
+    case PreProcessorComment:
+        return tr("Pre-processor C comment");
+
+    case InactivePreProcessorComment:
+        return tr("Inactive pre-processor C comment");
+
+    case PreProcessorCommentLineDoc:
+        return tr("JavaDoc style pre-processor comment");
+
+    case InactivePreProcessorCommentLineDoc:
+        return tr("Inactive JavaDoc style pre-processor comment");
     }
 
     return QString();

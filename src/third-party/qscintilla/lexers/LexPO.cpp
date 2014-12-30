@@ -98,6 +98,12 @@ static void ColourisePODoc(unsigned int startPos, int length, int initStyle, Wor
 			// forward to the first non-white character on the line
 			bool atLineStart = sc.atLineStart;
 			if (atLineStart) {
+				// reset line state if it is set to comment state so empty lines don't get
+				// comment line state, and the folding code folds comments separately,
+				// and anyway the styling don't use line state for comments
+				if (curLineState == SCE_PO_COMMENT)
+					curLineState = SCE_PO_DEFAULT;
+				
 				while (sc.More() && ! sc.atLineEnd && isspacechar(sc.ch))
 					sc.Forward();
 			}
@@ -142,8 +148,66 @@ static void ColourisePODoc(unsigned int startPos, int length, int initStyle, Wor
 	sc.Complete();
 }
 
+static int FindNextNonEmptyLineState(unsigned int startPos, Accessor &styler) {
+	unsigned int length = styler.Length();
+	for (unsigned int i = startPos; i < length; i++) {
+		if (! isspacechar(styler[i])) {
+			return styler.GetLineState(styler.GetLine(i));
+		}
+	}
+	return 0;
+}
+
+static void FoldPODoc(unsigned int startPos, int length, int, WordList *[], Accessor &styler) {
+	if (! styler.GetPropertyInt("fold"))
+		return;
+	bool foldCompact = styler.GetPropertyInt("fold.compact") != 0;
+	bool foldComment = styler.GetPropertyInt("fold.comment") != 0;
+	
+	unsigned int endPos = startPos + length;
+	int curLine = styler.GetLine(startPos);
+	int lineState = styler.GetLineState(curLine);
+	int nextLineState;
+	int level = styler.LevelAt(curLine) & SC_FOLDLEVELNUMBERMASK;
+	int nextLevel;
+	int visible = 0;
+	int chNext = styler[startPos];
+	
+	for (unsigned int i = startPos; i < endPos; i++) {
+		int ch = chNext;
+		chNext = styler.SafeGetCharAt(i+1);
+		
+		if (! isspacechar(ch)) {
+			visible++;
+		} else if ((ch == '\r' && chNext != '\n') || ch == '\n' || i+1 >= endPos) {
+			int lvl = level;
+			int nextLine = curLine + 1;
+			
+			nextLineState = styler.GetLineState(nextLine);
+			if ((lineState != SCE_PO_COMMENT || foldComment) &&
+					nextLineState == lineState &&
+					FindNextNonEmptyLineState(i, styler) == lineState)
+				nextLevel = SC_FOLDLEVELBASE + 1;
+			else
+				nextLevel = SC_FOLDLEVELBASE;
+			
+			if (nextLevel > level)
+				lvl |= SC_FOLDLEVELHEADERFLAG;
+			if (visible == 0 && foldCompact)
+				lvl |= SC_FOLDLEVELWHITEFLAG;
+			
+			styler.SetLevel(curLine, lvl);
+			
+			lineState = nextLineState;
+			curLine = nextLine;
+			level = nextLevel;
+			visible = 0;
+		}
+	}
+}
+
 static const char *const poWordListDesc[] = {
 	0
 };
 
-LexerModule lmPO(SCLEX_PO, ColourisePODoc, "po", 0, poWordListDesc);
+LexerModule lmPO(SCLEX_PO, ColourisePODoc, "po", FoldPODoc, poWordListDesc);

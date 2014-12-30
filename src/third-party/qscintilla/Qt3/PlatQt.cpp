@@ -1,6 +1,6 @@
 // This module implements the portability layer for the Qt port of Scintilla.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -38,6 +38,7 @@
 #include <qcursor.h>
 #include <qlibrary.h>
 
+#include <qpaintdevicemetrics.h>
 #include <qpointarray.h>
 
 #include "SciNamespace.h"
@@ -127,7 +128,7 @@ void Font::Create(const FontParameters &fp)
     else
     {
         f->setFamily(fp.faceName);
-        f->setPointSize(fp.size);
+        f->setPointSizeF(fp.size);
 
         // See if the Qt weight has been passed via the back door.   Otherwise
         // map Scintilla weights to Qt weights ensuring that the SC_WEIGHT_*
@@ -175,12 +176,12 @@ public:
     void Init(WindowID wid);
     void Init(SurfaceID sid, WindowID);
     void Init(QPainter *p);
-    void InitPixMap(int width, int height, Surface *, WindowID);
+    void InitPixMap(int width, int height, Surface *, WindowID wid);
 
     void Release();
     bool Initialised() {return painter;}
     void PenColour(ColourDesired fore);
-    int LogPixelsY() {return 72;}
+    int LogPixelsY() {return QPaintDeviceMetrics(pd).logicalDpiY();}
     int DeviceHeightFont(int points) {return points;}
     void MoveTo(int x_,int y_);
     void LineTo(int x_,int y_);
@@ -286,11 +287,21 @@ void SurfaceImpl::Init(QPainter *p)
     painter = p;
 }
 
-void SurfaceImpl::InitPixMap(int width, int height, Surface *, WindowID)
+void SurfaceImpl::InitPixMap(int width, int height, Surface *, WindowID wid)
 {
     Release();
 
-    pd = new QPixmap(width, height);
+#if QT_VERSION >= 0x050100
+    int dpr = PWindow(wid)->devicePixelRatio();
+    QPixmap *pixmap = new QPixmap(width * dpr, height * dpr);
+    pixmap->setDevicePixelRatio(dpr);
+#else
+    QPixmap *pixmap = new QPixmap(width, height);
+    Q_UNUSED(wid);
+#endif
+
+    pd = pixmap;
+
     painter = new QPainter(pd);
     my_resources = true;
 }

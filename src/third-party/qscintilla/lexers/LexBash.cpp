@@ -437,12 +437,22 @@ static void ColouriseBashDoc(unsigned int startPos, int length, int initStyle,
 						HereDoc.State = 1;
 					}
 				} else if (HereDoc.State == 1) { // collect the delimiter
-					if (setHereDoc2.Contains(sc.ch) || sc.chPrev == '\\') {
+					// * if single quoted, there's no escape
+					// * if double quoted, there are \\ and \" escapes
+					if ((HereDoc.Quote == '\'' && sc.ch != HereDoc.Quote) ||
+					    (HereDoc.Quoted && sc.ch != HereDoc.Quote && sc.ch != '\\') ||
+					    (HereDoc.Quote != '\'' && sc.chPrev == '\\') ||
+					    (setHereDoc2.Contains(sc.ch))) {
 						HereDoc.Append(sc.ch);
 					} else if (HereDoc.Quoted && sc.ch == HereDoc.Quote) {	// closing quote => end of delimiter
 						sc.ForwardSetState(SCE_SH_DEFAULT);
 					} else if (sc.ch == '\\') {
-						// skip escape prefix
+						if (HereDoc.Quoted && sc.chNext != HereDoc.Quote && sc.chNext != '\\') {
+							// in quoted prefixes only \ and the quote eat the escape
+							HereDoc.Append(sc.ch);
+						} else {
+							// skip escape prefix
+						}
 					} else if (!HereDoc.Quoted) {
 						sc.SetState(SCE_SH_DEFAULT);
 					}

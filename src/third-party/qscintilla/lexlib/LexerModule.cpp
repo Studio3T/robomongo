@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <stdarg.h>
 #include <assert.h>
-#include <ctype.h>
 
 #include <string>
 
@@ -74,11 +74,9 @@ int LexerModule::GetNumWordLists() const {
 }
 
 const char *LexerModule::GetWordListDescription(int index) const {
-	static const char *emptyStr = "";
-
 	assert(index < GetNumWordLists());
-	if (index >= GetNumWordLists()) {
-		return emptyStr;
+	if (!wordListDescriptions || (index >= GetNumWordLists())) {
+		return "";
 	} else {
 		return wordListDescriptions[index];
  	}

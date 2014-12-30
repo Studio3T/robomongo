@@ -1,6 +1,6 @@
 // This is the SIP interface definition for QsciLexerCPP.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -79,6 +79,8 @@ public:
         InactiveHashQuotedString,
         PreProcessorComment,
         InactivePreProcessorComment,
+        PreProcessorCommentLineDoc,
+        InactivePreProcessorCommentLineDoc,
     };
 
 %If (Qsci_Qt4)

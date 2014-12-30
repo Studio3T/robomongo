@@ -1,6 +1,6 @@
 // This is the SIP interface definition for QsciScintillaBase.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -402,6 +402,7 @@ public:
         SCI_SETHOTSPOTACTIVEFORE,
         SCI_SETHOTSPOTACTIVEBACK,
         SCI_SETHOTSPOTACTIVEUNDERLINE,
+        SCI_SETHOTSPOTSINGLELINE,
         SCI_PARADOWN,
         SCI_PARADOWNEXTEND,
         SCI_PARAUP,
@@ -549,6 +550,7 @@ public:
         SCI_GETADDITIONALSELECTIONTYPING,
         SCI_SETADDITIONALCARETSBLINK,
         SCI_GETADDITIONALCARETSBLINK,
+        SCI_SCROLLRANGE,
         SCI_SETADDITIONALCARETSVISIBLE,
         SCI_GETADDITIONALCARETSVISIBLE,
         SCI_AUTOCGETCURRENTTEXT,
@@ -653,6 +655,25 @@ public:
         SCI_STYLEGETSIZEFRACTIONAL,
         SCI_STYLESETWEIGHT,             
         SCI_STYLEGETWEIGHT,
+
+        SCI_FOLDLINE,
+        SCI_FOLDCHILDREN,
+        SCI_EXPANDCHILDREN,
+        SCI_FOLDALL,
+        SCI_SETAUTOMATICFOLD,
+        SCI_GETAUTOMATICFOLD,
+        SCI_AUTOCSETORDER,
+        SCI_AUTOCGETORDER,
+        SCI_POSITIONRELATIVE,
+        SCI_RELEASEALLEXTENDEDSTYLES,
+        SCI_ALLOCATEEXTENDEDSTYLES,
+        SCI_SETMOUSESELECTIONRECTANGULARSWITCH,
+        SCI_GETMOUSESELECTIONRECTANGULARSWITCH,
+        SCI_GETCARETLINEVISIBLEALWAYS,
+        SCI_SETCARETLINEVISIBLEALWAYS,
+        SCI_SETREPRESENTATION,
+        SCI_GETREPRESENTATION,
+        SCI_CLEARREPRESENTATION,
     };
 
     enum {
@@ -860,6 +881,7 @@ public:
         INDIC_SQUIGGLELOW,
         INDIC_DOTBOX,
         INDIC_SQUIGGLEPIXMAP,
+        INDIC_COMPOSITIONTHICK,
 
         INDIC_CONTAINER,
         INDIC_MAX,
@@ -1130,6 +1152,10 @@ public:
         SCLEX_ECL,
         SCLEX_OSCRIPT,
         SCLEX_VISUALPROLOG,
+        SCLEX_LITERATEHASKELL,
+        SCLEX_STTXT,
+        SCLEX_KVIRC,
+        SCLEX_RUST,
     };
 
     enum {
@@ -1152,6 +1178,27 @@ public:
         SC_FONT_SIZE_MULTIPLIER,
     };
 
+    enum
+    {
+        SC_FOLDACTION_CONTRACT,
+        SC_FOLDACTION_EXPAND,
+        SC_FOLDACTION_TOGGLE,
+    };
+
+    enum
+    {
+        SC_AUTOMATICFOLD_SHOW,
+        SC_AUTOMATICFOLD_CLICK,
+        SC_AUTOMATICFOLD_CHANGE,
+    };
+
+    enum
+    {
+        SC_ORDER_PRESORTED,
+        SC_ORDER_PERFORMSORT,
+        SC_ORDER_CUSTOM,
+    };
+    
     QsciScintillaBase(QWidget *parent /TransferThis/ = 0, const char *name = 0,
             WFlags f = 0);
     virtual ~QsciScintillaBase();
@@ -1159,49 +1206,57 @@ public:
 %ConvertToSubClassCode
 static struct class_graph {
     const char *name;
-    sipWrapperType **type;
+    sipTypeDef **type;
     int yes, no;
 } graph[] = {
-    {sipName_QsciMacro, &sipClass_QsciMacro, -1, 1},
-    {sipName_QsciAbstractAPIs, &sipClass_QsciAbstractAPIs, 4, 2},
-    {sipName_QsciScintillaBase, &sipClass_QsciScintillaBase, 5, 3},
-    {sipName_QsciLexer, &sipClass_QsciLexer, 6, -1},
-    {sipName_QsciAPIs, &sipClass_QsciAPIs, -1, -1},
-    {sipName_QsciScintilla, &sipClass_QsciScintilla, -1, -1},
-    {sipName_QsciLexerBash, &sipClass_QsciLexerBash, -1, 7},
-    {sipName_QsciLexerMakefile, &sipClass_QsciLexerMakefile, -1, 8},
-    {sipName_QsciLexerCSS, &sipClass_QsciLexerCSS, -1, 9},
-    {sipName_QsciLexerPerl, &sipClass_QsciLexerPerl, -1, 10},
-    {sipName_QsciLexerBatch, &sipClass_QsciLexerBatch, -1, 11},
-    {sipName_QsciLexerDiff, &sipClass_QsciLexerDiff, -1, 12},
-    {sipName_QsciLexerD, &sipClass_QsciLexerD, -1, 13},
-    {sipName_QsciLexerYAML, &sipClass_QsciLexerYAML, -1, 14},
-    {sipName_QsciLexerSQL, &sipClass_QsciLexerSQL, -1, 15},
-    {sipName_QsciLexerVHDL, &sipClass_QsciLexerVHDL, -1, 16},
-    {sipName_QsciLexerLua, &sipClass_QsciLexerLua, -1, 17},
-    {sipName_QsciLexerRuby, &sipClass_QsciLexerRuby, -1, 18},
-    {sipName_QsciLexerCMake, &sipClass_QsciLexerCMake, -1, 19},
-    {sipName_QsciLexerFortran77, &sipClass_QsciLexerFortran77, 29, 20},
-    {sipName_QsciLexerPostScript, &sipClass_QsciLexerPostScript, -1, 21},
-    {sipName_QsciLexerPOV, &sipClass_QsciLexerPOV, -1, 22},
-    {sipName_QsciLexerPascal, &sipClass_QsciLexerPascal, -1, 23},
-    {sipName_QsciLexerPython, &sipClass_QsciLexerPython, -1, 24},
-    {sipName_QsciLexerTeX, &sipClass_QsciLexerTeX, -1, 25},
-    {sipName_QsciLexerHTML, &sipClass_QsciLexerHTML, 30, 26},
-    {sipName_QsciLexerCPP, &sipClass_QsciLexerCPP, 31, 27},
-    {sipName_QsciLexerProperties, &sipClass_QsciLexerProperties, -1, 28},
-    {sipName_QsciLexerTCL, &sipClass_QsciLexerTCL, -1, -1},
-    {sipName_QsciLexerFortran, &sipClass_QsciLexerFortran, -1, -1},
-    {sipName_QsciLexerXML, &sipClass_QsciLexerXML, -1, -1},
-    {sipName_QsciLexerCSharp, &sipClass_QsciLexerCSharp, -1, 32},
-    {sipName_QsciLexerIDL, &sipClass_QsciLexerIDL, -1, 33},
-    {sipName_QsciLexerJava, &sipClass_QsciLexerJava, -1, 34},
-    {sipName_QsciLexerJavaScript, &sipClass_QsciLexerJavaScript, -1, -1},
+    {sipName_QsciScintillaBase, &sipType_QsciScintillaBase, 4, 1},
+    {sipName_QsciMacro, &sipType_QsciMacro, -1, 2},
+    {sipName_QsciLexer, &sipType_QsciLexer, 5, 3},
+    {sipName_QsciAbstractAPIs, &sipType_QsciAbstractAPIs, 42, -1},
+    {sipName_QsciScintilla, &sipType_QsciScintilla, -1, -1},
+    {sipName_QsciLexerPO, &sipType_QsciLexerPO, -1, 6},
+    {sipName_QsciLexerBash, &sipType_QsciLexerBash, -1, 7},
+    {sipName_QsciLexerPython, &sipType_QsciLexerPython, -1, 8},
+    {sipName_QsciLexerSQL, &sipType_QsciLexerSQL, -1, 9},
+    {sipName_QsciLexerPascal, &sipType_QsciLexerPascal, -1, 10},
+    {sipName_QsciLexerDiff, &sipType_QsciLexerDiff, -1, 11},
+    {sipName_QsciLexerCustom, &sipType_QsciLexerCustom, -1, 12},
+    {sipName_QsciLexerPOV, &sipType_QsciLexerPOV, -1, 13},
+    {sipName_QsciLexerLua, &sipType_QsciLexerLua, -1, 14},
+    {sipName_QsciLexerSpice, &sipType_QsciLexerSpice, -1, 15},
+    {sipName_QsciLexerMatlab, &sipType_QsciLexerMatlab, 35, 16},
+    {sipName_QsciLexerCSS, &sipType_QsciLexerCSS, -1, 17},
+    {sipName_QsciLexerCMake, &sipType_QsciLexerCMake, -1, 18},
+    {sipName_QsciLexerVHDL, &sipType_QsciLexerVHDL, -1, 19},
+    {sipName_QsciLexerVerilog, &sipType_QsciLexerVerilog, -1, 20},
+    {sipName_QsciLexerHTML, &sipType_QsciLexerHTML, 36, 21},
+    {sipName_QsciLexerMakefile, &sipType_QsciLexerMakefile, -1, 22},
+    {sipName_QsciLexerPostScript, &sipType_QsciLexerPostScript, -1, 23},
+    {sipName_QsciLexerTCL, &sipType_QsciLexerTCL, -1, 24},
+    {sipName_QsciLexerAVS, &sipType_QsciLexerAVS, -1, 25},
+    {sipName_QsciLexerPerl, &sipType_QsciLexerPerl, -1, 26},
+    {sipName_QsciLexerCoffeeScript, &sipType_QsciLexerCoffeeScript, -1, 27},
+    {sipName_QsciLexerFortran77, &sipType_QsciLexerFortran77, 37, 28},
+    {sipName_QsciLexerYAML, &sipType_QsciLexerYAML, -1, 29},
+    {sipName_QsciLexerRuby, &sipType_QsciLexerRuby, -1, 30},
+    {sipName_QsciLexerProperties, &sipType_QsciLexerProperties, -1, 31},
+    {sipName_QsciLexerTeX, &sipType_QsciLexerTeX, -1, 32},
+    {sipName_QsciLexerD, &sipType_QsciLexerD, -1, 33},
+    {sipName_QsciLexerCPP, &sipType_QsciLexerCPP, 38, 34},
+    {sipName_QsciLexerBatch, &sipType_QsciLexerBatch, -1, -1},
+    {sipName_QsciLexerOctave, &sipType_QsciLexerOctave, -1, -1},
+    {sipName_QsciLexerXML, &sipType_QsciLexerXML, -1, -1},
+    {sipName_QsciLexerFortran, &sipType_QsciLexerFortran, -1, -1},
+    {sipName_QsciLexerJava, &sipType_QsciLexerJava, -1, 39},
+    {sipName_QsciLexerCSharp, &sipType_QsciLexerCSharp, -1, 40},
+    {sipName_QsciLexerIDL, &sipType_QsciLexerIDL, -1, 41},
+    {sipName_QsciLexerJavaScript, &sipType_QsciLexerJavaScript, -1, -1},
+    {sipName_QsciAPIs, &sipType_QsciAPIs, -1, -1},
 };
 
 int i = 0;
 
-sipClass = NULL;
+sipType = NULL;
 
 do
 {
@@ -1209,7 +1264,7 @@ do
 
     if (cg->name != NULL && sipCpp->inherits(cg->name))
     {
-        sipClass = *cg->type;
+        sipType = *cg->type;
         i = cg->yes;
     }
     else
@@ -1265,6 +1320,8 @@ signals:
     void SCN_DOUBLECLICK(int position, int line, int modifiers);
     void SCN_DWELLEND(int, int, int);
     void SCN_DWELLSTART(int, int, int);
+    void SCN_FOCUSIN();
+    void SCN_FOCUSOUT();
     void SCN_HOTSPOTCLICK(int position, int modifiers);
     void SCN_HOTSPOTDOUBLECLICK(int position, int modifiers);
     void SCN_HOTSPOTRELEASECLICK(int position, int modifiers);

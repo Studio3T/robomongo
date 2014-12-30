@@ -1,6 +1,6 @@
 // This is the SIP interface definition for QsciScintilla.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -325,6 +325,9 @@ public:
     void registerImage(int id, const QImage &im);
     virtual void replace(const QString &replaceStr);
     void resetFoldMarginColors();
+    void resetHotspotBackgroundColor();
+    void resetHotspotForegroundColor();
+
     void setFoldMarginColors(const QColor &fore, const QColor &back);
 
     void setAnnotationDisplay(AnnotationDisplay display);
@@ -354,6 +357,11 @@ public:
 
     void setFirstVisibleLine(int linenr);
     void setFont(const QFont &f);
+
+    void setHotspotBackgroundColor(const QColor &col);
+    void setHotspotForegroundColor(const QColor &col);
+    void setHotspotUnderline(bool enable);
+    void setHotspotWrap(bool enable);
 
     void setIndicatorDrawUnder(bool under, int indicatorNumber = -1);
     void setIndicatorForegroundColor(const QColor &col,
@@ -547,6 +555,7 @@ signals:
 protected:
 %If (Qsci_Qt4)
     virtual bool event(QEvent *event);
+    virtual void changeEvent(QEvent *event);
     virtual void contextMenuEvent(QContextMenuEvent *event);
 %End
 

@@ -1,7 +1,7 @@
 // This is the SIP interface definition for the parts of the Qsci module common
 // to the Qt v3 and v4 versions.
 //
-// Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -28,7 +28,7 @@
 
 
 %Copying
-Copyright (c) 2012 Riverbank Computing Limited <info@riverbankcomputing.com>
+Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 
 This file is part of QScintilla.
 
@@ -63,9 +63,11 @@ const char *QSCINTILLA_VERSION_STR;
 %Include qscicommandset.sip
 %Include qscidocument.sip
 %Include qscilexer.sip
+%Include qscilexeravs.sip
 %Include qscilexerbash.sip
 %Include qscilexerbatch.sip
 %Include qscilexercmake.sip
+%Include qscilexercoffeescript.sip
 %Include qscilexercpp.sip
 %Include qscilexercsharp.sip
 %Include qscilexercss.sip
@@ -85,6 +87,7 @@ const char *QSCINTILLA_VERSION_STR;
 %Include qscilexerpascal.sip
 %Include qscilexerperl.sip
 %Include qscilexerpostscript.sip
+%Include qscilexerpo.sip
 %Include qscilexerpov.sip
 %Include qscilexerproperties.sip
 %Include qscilexerpython.sip

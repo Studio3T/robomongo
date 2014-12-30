@@ -22,6 +22,7 @@
     - "Duplicate Query In New Tab": add to Window menu with keyboard shortcut (#631)
     - No errors logged if settings directory cannot be created or settings file cannot be written to (#636)
     - Show execution time for operations that don't return results (#455)
+    - Disable broken "Copy Collection to Database" misfeature (#398)
   * [Vladimir Belozyorov]
     - View mode reset to default after no results (#509)
     - Comment / uncomment selected code in the shell (#467)

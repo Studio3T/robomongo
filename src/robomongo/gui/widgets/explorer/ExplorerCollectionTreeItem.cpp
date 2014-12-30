@@ -238,8 +238,10 @@ namespace Robomongo
         VERIFY(connect(renameCollection, SIGNAL(triggered()), SLOT(ui_renameCollection())));
         QAction *duplicateCollection = new QAction("Duplicate Collection...", this);
         VERIFY(connect(duplicateCollection, SIGNAL(triggered()), SLOT(ui_duplicateCollection())));
-        QAction *copyCollectionToDiffrentServer = new QAction("Copy Collection to Database...", this);
-        VERIFY(connect(copyCollectionToDiffrentServer, SIGNAL(triggered()), SLOT(ui_copyToCollectionToDiffrentServer())));
+
+        // Disabling for 0.8.5 release as this is currently a broken misfeature (see discussion on issue #398)
+        // QAction *copyCollectionToDiffrentServer = new QAction("Copy Collection to Database...", this);
+        // VERIFY(connect(copyCollectionToDiffrentServer, SIGNAL(triggered()), SLOT(ui_copyToCollectionToDiffrentServer())));
 
         QAction *viewCollection = new QAction("View Documents", this);
         VERIFY(connect(viewCollection, SIGNAL(triggered()), SLOT(ui_viewCollection())));
@@ -253,7 +255,8 @@ namespace Robomongo
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(renameCollection);
         BaseClass::_contextMenu->addAction(duplicateCollection);
-        BaseClass::_contextMenu->addAction(copyCollectionToDiffrentServer);
+        // Disabling for 0.8.5 release as this is currently a broken misfeature (see discussion on issue #398)
+        // BaseClass::_contextMenu->addAction(copyCollectionToDiffrentServer);
         BaseClass::_contextMenu->addAction(dropCollection);
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(collectionStats);

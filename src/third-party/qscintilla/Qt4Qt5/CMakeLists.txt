@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+Lexcmake_minimum_required(VERSION 2.8)
 project(qscintilla2)
 INCLUDE(../../../../cmake/integrate-qt.cmake)
 
@@ -213,7 +213,7 @@ set(SOURCES
 	../lexers/LexInno.cpp 
 	../lexers/LexKix.cpp 
 	../lexers/LexKVIrc.cpp 
-	../lexers/LexLaTex.cpp 
+	../lexers/LexLaTeX.cpp
 	../lexers/LexLisp.cpp 
 	../lexers/LexLout.cpp 
 	../lexers/LexLua.cpp 

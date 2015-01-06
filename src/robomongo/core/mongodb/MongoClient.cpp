@@ -64,7 +64,7 @@ namespace Robomongo
     {
         float result = 0.0f;
         mongo::BSONObj resultObj;
-        _dbclient->runCommand("db", BSON("buildInfo" << "1"), resultObj, mongo::QueryOption_SlaveOk);
+        _dbclient->runCommand("db", BSON("buildInfo" << "1"), resultObj);
         std::string resultStr = BsonUtils::getField<mongo::String>(resultObj,"version");
         result = atof(resultStr.c_str());
         return result;

@@ -9,6 +9,8 @@ CMakeLists.txt.user*
 *.kate-swp
 
 target/
+target-debug/
+target-release/
 libs/
 
 /build

@@ -1,4 +1,4 @@
-0.8.5 / (development)
+0.8.5 / March 10, 2015
   * [Stephen Steneker]
     - OS X build fixes for XCode 5 / libc++ (#524)
     - OS X specific keyboard shortcut tips (#505)

@@ -1,5 +1,6 @@
 #include "robomongo/gui/widgets/workarea/CollectionStatsTreeItem.h"
 
+#include <mongo/db/jsobj.h>
 #include <mongo/bson/bsonobj.h>
 
 #include "robomongo/core/domain/MongoUtils.h"

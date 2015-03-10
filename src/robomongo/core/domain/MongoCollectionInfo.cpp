@@ -1,6 +1,7 @@
 #include "MongoCollectionInfo.h"
 #include "robomongo/core/utils/BsonUtils.h"
 #include <mongo/client/dbclient.h>
+#include <robomongo/core/utils/Logger.h>
 
 namespace Robomongo
 {
@@ -11,7 +12,8 @@ namespace Robomongo
         _sizeBytes = BsonUtils::getField<mongo::NumberDouble>(stats,"size");
         _storageSizeBytes = BsonUtils::getField<mongo::NumberDouble>(stats,"storageSize");
 
-        _count = BsonUtils::getField<mongo::NumberInt>(stats,"count");
+        // NumberLong because of mongodb can have very big collections
+        _count = BsonUtils::getField<mongo::NumberLong>(stats,"count");
     }
 }
 

@@ -27,7 +27,7 @@ namespace Robomongo
          */
         double storageSizeBytes() const { return _storageSizeBytes; }
 
-        int count() const { return _count; }
+        long long count() const { return _count; }
 
     private:
         MongoNamespace _ns;
@@ -46,7 +46,7 @@ namespace Robomongo
          */
         double _storageSizeBytes;
 
-        int _count;
+        long long _count;
     };
 }
 

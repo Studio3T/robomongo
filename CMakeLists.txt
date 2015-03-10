@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.0)
+cmake_minimum_required(VERSION 3.0.0)
 cmake_policy(SET CMP0048 OLD)
 
 ###
@@ -40,6 +40,8 @@ PROJECT(${PROJECT_NAME})
 
 IF(WIN32)
     OPTION(MANIFEST_ENABLE "Enable Manifest" ON)
+    cmake_policy(SET CMP0020 OLD)
+    cmake_policy(SET CMP0026 OLD)
 ENDIF(WIN32)
 
 set(ROBOMONGO_QT_VERSION 5 CACHE STRING "Qt version to use when building Robomongo (can be 4 or 5)")

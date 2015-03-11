@@ -99,7 +99,6 @@ set(HEADERS
 	../src/Decoration.h 
 	../src/Document.h 
 	../src/Editor.h 
-	../src/ExternalLexer.h 
 	../src/FontQuality.h 
 	../src/Indicator.h 
 	../src/KeyMap.h 
@@ -287,7 +286,6 @@ set(SOURCES
 	../src/Decoration.cpp 
 	../src/Document.cpp 
 	../src/Editor.cpp 
-	../src/ExternalLexer.cpp 
 	../src/Indicator.cpp 
     ../src/KeyMap.cpp 
 	../src/LineMarker.cpp 

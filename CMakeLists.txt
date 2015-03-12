@@ -270,10 +270,9 @@ IF(CPACK_SUPPORT)
             IF(ARCH_TEXT_PACKAGE STREQUAL x86_64)
                 SET(ARCH_TEXT_PACKAGE amd64)
             ENDIF()
-            #SET(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+            SET(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
             #CPACK_DEBIAN_PACKAGE_HOMEPAGE The URL of the web site for this package
             SET(CPACK_DEBIAN_PACKAGE_DEBUG ON)
-            SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.12), libstdc++6 (>= 4.4.7)")
             SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
             SET(CPACK_DEBIAN_PACKAGE_SECTION "database")#input our section
             SET(CPACK_DEBIAN_PACKAGE_RECOMMENDS "Unknown")

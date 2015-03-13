@@ -12,5 +12,6 @@ ROBO_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 export LD_LIBRARY_PATH="$ROBO_DIR/../lib:$LD_LIBRARY_PATH"
 export QT_PLUGIN_PATH="$ROBO_DIR/../lib:$QT_PLUGIN_PATH"
+export QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb
 
 "$ROBO_DIR/robomongo"

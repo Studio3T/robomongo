@@ -1,0 +1,3 @@
+Robomongo is a shell-centric cross-platform open source MongoDB management
+tool (i.e. Admin GUI). Robomongo embeds the same JavaScript engine that
+powers MongoDB's mongo shell.

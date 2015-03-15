@@ -24,7 +24,7 @@ namespace
     const char *tooltipTemplate =
         "%s "
         "<table>"
-        "<tr><td>Count:</td> <td><b>&nbsp;&nbsp;%d</b></td></tr>"
+        "<tr><td>Count:</td> <td><b>&nbsp;&nbsp;%lld</b></td></tr>"
         "<tr><td>Size:</td><td><b>&nbsp;&nbsp;%s</b></td></tr>"
         "</table>"
         ;

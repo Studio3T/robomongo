@@ -18,7 +18,7 @@ namespace Robomongo
 
     private:
         AppRegistry();
-        ~AppRegistry();  
+        ~AppRegistry();
 
         const EventBusScopedPtr _bus;
         const SettingsManagerScopedPtr _settingsManager;

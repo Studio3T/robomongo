@@ -12,6 +12,17 @@ You can download tested install packages for OS X, Windows, and Linux from our s
 
 The latest stable release is currently **Robomongo 0.8.5**.
 
+Support
+=======
+
+Robomongo is an open source project driven by volunteers. We'll try to get to your questions as soon as we can, but please be patient :).
+
+You can:
+
+ - [Create a new issue in the Github issue queue](https://github.com/paralect/robomongo/issues)
+
+ - [Join developer discussion on Gitter](https://gitter.im/paralect/robomongo) [![Join the chat at https://gitter.im/paralect/robomongo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/paralect/robomongo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Build
 =====
 

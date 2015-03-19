@@ -1,6 +1,8 @@
 About Robomongo
 ===============
 
+[![Join the chat at https://gitter.im/paralect/robomongo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/paralect/robomongo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [Robomongo](http://www.robomongo.org) is a shell-centric cross-platform MongoDB management tool. Unlike most other MongoDB admin UI tools, Robomongo embeds the actual `mongo` shell in a tabbed interface with access to a shell command line as well as GUI interaction.
 
 Note: Robomongo 0.8.x currently embeds the **MongoDB 2.4.0** shell using the SpiderMonkey JavaScript engine. We are working on updating this to the MongoDB 3.0 shell with V8 for the 0.9.x release series.

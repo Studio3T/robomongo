@@ -86,6 +86,7 @@ Makefile*
 # QtCreator
 
 *.autosave
+*.creator.user
 
 
 ### Windows ###

@@ -153,7 +153,7 @@ ELSE()
 ENDIF()
 
 ##################################DEFAULT VALUES##########################################
-IF(NOT CMAKE_INSTALL_PREFIX})
+IF(NOT CMAKE_INSTALL_PREFIX)
     SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
 ENDIF()
 

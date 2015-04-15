@@ -114,15 +114,13 @@ namespace Robomongo
                 s << "NumberLong(" << elem._numberLong() << ")";
                 break;
             case NumberInt:
-				s << elem.number();
-				break;
             case NumberDouble:
                 {
                     int sign=0;
                     if ( elem.number() >= -numeric_limits< double >::max() &&
                             elem.number() <= numeric_limits< double >::max() ) {
                         s.precision( 16 );
-                        s << fixed << elem._numberDouble();
+                        s << elem.number();
                     }
                     else if ( mongo::isNaN(elem.number()) ) {
                         s << "NaN";
@@ -132,7 +130,7 @@ namespace Robomongo
                     }
                     else {
                         StringBuilder ss;
-                        ss << "NumberDouble " << elem.number() << " cannot be represented in JSON";
+                        ss << "Number " << elem.number() << " cannot be represented in JSON";
                         string message = ss.str();
                         //massert( 10311 ,  message.c_str(), false );
                     }

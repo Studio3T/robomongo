@@ -1,4 +1,6 @@
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/settings/SettingsManager.h"
 
 #include <QApplication>
 #include <QStyle>
@@ -292,15 +294,34 @@ namespace Robomongo
 
     const QFont &GuiRegistry::font() const
     {
-        
+        QString family = AppRegistry::instance().settingsManager()->textFontFamily();
+        if (family.isEmpty()) {
 #if defined(Q_OS_MAC)
-        static const QFont textFont = QFont("Monaco",12);
+            family = "Monaco";
 #elif defined(Q_OS_UNIX)
-        static QFont textFont = QFont("Monospace");
-        textFont.setFixedPitch(true);        
+            family = "Monospace";
 #elif defined(Q_OS_WIN)
-        static const QFont textFont = QFont("Courier",10);
+            family = "Courier";
 #endif
+        }
+
+        int pointSize = AppRegistry::instance().settingsManager()->textFontPointSize();
+        if (pointSize < 1) {
+#if defined(Q_OS_MAC)
+            pointSize = 12
+#elif defined(Q_OS_UNIX)
+            pointSize = -1;
+#elif defined(Q_OS_WIN)
+            pointSize = 10;
+#endif
+        }
+
+
+        static QFont textFont = QFont(family, pointSize);
+#if defined(Q_OS_UNIX)
+        textFont.setFixedPitch(true);
+#endif
+
         return textFont;
     }
 }

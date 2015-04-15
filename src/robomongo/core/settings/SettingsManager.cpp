@@ -44,7 +44,9 @@ namespace Robomongo
         _viewMode(Robomongo::Tree),
         _autocompletionMode(AutocompleteAll),
         _batchSize(50),
-        _disableConnectionShortcuts(false)
+        _disableConnectionShortcuts(false),
+        _textFontFamily(""),
+        _textFontPointSize(-1)
     {
         load();
         LOG_MSG("SettingsManager initialized in " + _configPath, mongo::LL_INFO, false);
@@ -136,7 +138,7 @@ namespace Robomongo
 
         _autoExpand = map.contains("autoExpand") ?
             map.value("autoExpand").toBool() : true;
-        
+
         _autoExec = map.contains("autoExec") ?
             map.value("autoExec").toBool() : true;
 
@@ -171,6 +173,10 @@ namespace Robomongo
             _currentStyle = AppStyle::StyleName;
         }
 
+        // Load font information
+        _textFontFamily = map.value("textFontFamily").toString();
+        _textFontPointSize = map.value("textFontPointSize").toInt();
+
         // 5. Load connections
         _connections.clear();
 
@@ -179,22 +185,22 @@ namespace Robomongo
             ConnectionSettings *record = new ConnectionSettings((*it).toMap());
             _connections.push_back(record);
         }
-        
+
         _toolbars = map.value("toolbars").toMap();
         ToolbarSettingsContainerType::const_iterator it = _toolbars.find("connect");
-        if (_toolbars.end() == it) 
+        if (_toolbars.end() == it)
             _toolbars["connect"] = true;
         it = _toolbars.find("open_save");
-        if (_toolbars.end() == it) 
+        if (_toolbars.end() == it)
             _toolbars["open_save"] = true;
         it = _toolbars.find("exec");
-        if (_toolbars.end() == it) 
+        if (_toolbars.end() == it)
             _toolbars["exec"] = true;
         it = _toolbars.find("explorer");
-        if (_toolbars.end() == it) 
+        if (_toolbars.end() == it)
             _toolbars["explorer"] = true;
         it = _toolbars.find("logs");
-        if (_toolbars.end() == it) 
+        if (_toolbars.end() == it)
             _toolbars["logs"] = false;
     }
 
@@ -227,14 +233,18 @@ namespace Robomongo
 
         // 7. Save disableConnectionShortcuts
         map.insert("disableConnectionShortcuts", _disableConnectionShortcuts);
-        
+
         // 8. Save batchSize
         map.insert("batchSize", _batchSize);
 
         // 9. Save style
         map.insert("style", _currentStyle);
 
-        // 10. Save connections
+        // 10. Save font information
+        map.insert("textFontFamily", _textFontFamily);
+        map.insert("textFontPointSize", _textFontPointSize);
+
+        // 11. Save connections
         QVariantList list;
 
         for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it!=_connections.end(); ++it) {
@@ -243,9 +253,9 @@ namespace Robomongo
         }
 
         map.insert("connections", list);
-        
+
         map.insert("autoExec", _autoExec);
-        
+
         map.insert("toolbars", _toolbars);
 
         return map;
@@ -276,11 +286,20 @@ namespace Robomongo
         _currentStyle = style;
     }
 
+    void SettingsManager::setTextFontFamily(const QString& fontFamily)
+    {
+        _textFontFamily = fontFamily;
+    }
+
+    void SettingsManager::setTextFontPointSize(int pointSize) {
+        _textFontPointSize = pointSize > 0 ? pointSize : -1;
+    }
+
     void SettingsManager::reorderConnections(const ConnectionSettingsContainerType &connections)
     {
         _connections = connections;
     }
-    
+
     void SettingsManager::setToolbarSettings(const QString toolbarName, const bool visible)
     {
         _toolbars[toolbarName] = visible;

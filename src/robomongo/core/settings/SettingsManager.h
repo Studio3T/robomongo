@@ -51,7 +51,7 @@ namespace Robomongo
          * Connection now will be owned by SettingsManager.
          */
         void addConnection(ConnectionSettings *connection);
-        
+
         /**
          * @brief Removes connection by index
          */
@@ -60,12 +60,12 @@ namespace Robomongo
         void reorderConnections(const ConnectionSettingsContainerType &connections);
 
         void setToolbarSettings(QString toolbarName, bool visible);
-        
+
         /**
          * @brief Returns list of connections
          */
         ConnectionSettingsContainerType connections() const { return _connections; }
-        
+
         ToolbarSettingsContainerType toolbars() const { return _toolbars; }
 
         void setUuidEncoding(UUIDEncoding encoding) { _uuidEncoding = encoding; }
@@ -82,7 +82,7 @@ namespace Robomongo
 
         void setAutoExpand(bool isExpand) { _autoExpand = isExpand; }
         bool autoExpand() const { return _autoExpand; }
-        
+
         void setAutoExec(bool isAutoExec) { _autoExec = isAutoExec; }
         bool autoExec() const { return _autoExec; }
 
@@ -100,6 +100,12 @@ namespace Robomongo
 
         QString currentStyle() const {return _currentStyle; }
         void setCurrentStyle(const QString& style);
+
+        QString textFontFamily() const { return _textFontFamily; }
+        void setTextFontFamily(const QString& fontFamily);
+
+        int textFontPointSize() const { return _textFontPointSize; }
+        void setTextFontPointSize(int pointSize);
 
 
     private:
@@ -136,6 +142,8 @@ namespace Robomongo
         bool _disableConnectionShortcuts;
         int _batchSize;
         QString _currentStyle;
+        QString _textFontFamily;
+        int _textFontPointSize;
         /**
          * @brief List of connections
          */

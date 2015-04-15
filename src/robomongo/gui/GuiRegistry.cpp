@@ -308,7 +308,7 @@ namespace Robomongo
         int pointSize = AppRegistry::instance().settingsManager()->textFontPointSize();
         if (pointSize < 1) {
 #if defined(Q_OS_MAC)
-            pointSize = 12
+            pointSize = 12;
 #elif defined(Q_OS_UNIX)
             pointSize = -1;
 #elif defined(Q_OS_WIN)

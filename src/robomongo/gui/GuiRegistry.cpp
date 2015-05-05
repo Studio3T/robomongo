@@ -12,9 +12,8 @@ namespace Robomongo
     /**
      * @brief This is a private constructor, because GuiRegistry is a singleton
      */
-    GuiRegistry::GuiRegistry()
+    GuiRegistry::GuiRegistry(): textFont(NULL)
     {
-        textFont = NULL;
     }
 
     /**

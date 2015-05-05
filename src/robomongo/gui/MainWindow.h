@@ -37,6 +37,7 @@ namespace Robomongo
         void toggleAutoExpand();
         void toggleAutoExec();
         void toggleLineNumbers();
+        void enterEditorFont();
         void executeScript();
         void stopScript();
         void toggleFullScreen2();

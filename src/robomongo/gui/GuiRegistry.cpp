@@ -14,6 +14,7 @@ namespace Robomongo
      */
     GuiRegistry::GuiRegistry()
     {
+        textFont = NULL;
     }
 
     /**
@@ -292,7 +293,7 @@ namespace Robomongo
         return mainWindowIc;
     }
 
-    const QFont &GuiRegistry::font() const
+    void GuiRegistry::loadFont()
     {
         QString family = AppRegistry::instance().settingsManager()->textFontFamily();
         if (family.isEmpty()) {
@@ -316,12 +317,26 @@ namespace Robomongo
 #endif
         }
 
+        if (textFont == NULL) {
+            textFont = new QFont(family, pointSize);
+        }
+        else {
+            //This is a reload
+            textFont->setFamily(family);
+            textFont->setPointSize(pointSize);
+        }
 
-        static QFont textFont = QFont(family, pointSize);
 #if defined(Q_OS_UNIX)
-        textFont.setFixedPitch(true);
+        textFont->setFixedPitch(true);
 #endif
+    }
 
-        return textFont;
+    const QFont &GuiRegistry::font()
+    {
+        if (textFont == NULL)
+        {
+            loadFont();
+        }
+        return *textFont;
     }
 }

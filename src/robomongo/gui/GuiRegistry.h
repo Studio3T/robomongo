@@ -73,8 +73,12 @@ namespace Robomongo
 
         const QBrush &typeBrush() const;
 
-        const QFont &font() const;
+        void loadFont();
+        const QFont &font();
+
     private:
+        QFont* textFont;
+
         /**
          * @brief Private, because this is singleton
          */

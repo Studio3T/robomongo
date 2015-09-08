@@ -124,7 +124,7 @@ namespace Robomongo
         MongoNamespace ns(dbName, "system.js");
         std::vector<MongoFunction> functions;
 
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query()));
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query().sort("_id")));
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -153,7 +153,7 @@ namespace Robomongo
     }
 
     void MongoClient::ensureIndex(const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo) const
-    {   
+    {
         std::string ns = newInfo._collection.ns().toString();
         mongo::BSONObj keys = mongo::Robomongo::fromjson(newInfo._request);
         mongo::BSONObjBuilder toSave;
@@ -466,7 +466,7 @@ namespace Robomongo
             MongoCollectionInfo info = runCollStatsCommand(*it);
             if (info.ns().isValid()){
                 infos.push_back(info);
-            }            
+            }
         }
         return infos;
     }

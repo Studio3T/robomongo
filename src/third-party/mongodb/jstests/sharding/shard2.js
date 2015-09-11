@@ -40,8 +40,6 @@ db.foo.save( { num : 1 , name : "eliot" } );
 db.foo.save( { num : 2 , name : "sara" } );
 db.foo.save( { num : -1 , name : "joe" } );
 
-db.getLastError();
-
 assert.eq( 3 , s.getServer( "test" ).getDB( "test" ).foo.find().length() , "not right directly to db A" );
 assert.eq( 3 , db.foo.find().length() , "not right on shard" );
 
@@ -72,19 +70,16 @@ placeCheck( 3 );
 
 // test inserts go to right server/shard
 
-db.foo.save( { num : 3 , name : "bob" } );
-db.getLastError();
+assert.writeOK(db.foo.save( { num : 3 , name : "bob" } ));
 assert.eq( 1 , primary.foo.find().length() , "after move insert go wrong place?" );
 assert.eq( 3 , secondary.foo.find().length() , "after move insert go wrong place?" );
 
-db.foo.save( { num : -2 , name : "funny man" } );
-db.getLastError();
+assert.writeOK(db.foo.save( { num : -2 , name : "funny man" } ));
 assert.eq( 2 , primary.foo.find().length() , "after move insert go wrong place?" );
 assert.eq( 3 , secondary.foo.find().length() , "after move insert go wrong place?" );
 
 
-db.foo.save( { num : 0 , name : "funny guy" } );
-db.getLastError();
+assert.writeOK(db.foo.save( { num : 0 , name : "funny guy" } ));
 assert.eq( 2 , primary.foo.find().length() , "boundary A" );
 assert.eq( 4 , secondary.foo.find().length() , "boundary B" );
 
@@ -145,13 +140,16 @@ placeCheck( 7 );
 
 db.foo.find().sort( { _id : 1 } ).forEach( function(z){ print( z._id ); } )
 
-zzz = db.foo.find().explain();
-assert.eq( 6 , zzz.nscanned , "EX1a" )
-assert.eq( 6 , zzz.n , "EX1b" )
+zzz = db.foo.find().explain("executionStats").executionStats;
+assert.eq( 0 , zzz.totalKeysExamined , "EX1a" )
+assert.eq( 6 , zzz.nReturned , "EX1b" )
+assert.eq( 6 , zzz.totalDocsExamined , "EX1c" )
 
-zzz = db.foo.find().sort( { _id : 1 } ).explain();
-assert.eq( 6 , zzz.nscanned , "EX2a" )
-assert.eq( 6 , zzz.n , "EX2a" )
+zzz = db.foo.find().hint( { _id : 1 } ).sort( { _id : 1 } )
+                                       .explain("executionStats").executionStats;
+assert.eq( 6 , zzz.totalKeysExamined , "EX2a" )
+assert.eq( 6 , zzz.nReturned , "EX2b" )
+assert.eq( 6 , zzz.totalDocsExamined , "EX2c" )
 
 // getMore
 assert.eq( 4 , db.foo.find().limit(-4).toArray().length , "getMore 1" );
@@ -198,22 +196,17 @@ assert.isnull( db.foo.findOne( { num : 3 } ) , "remove test E" );
 
 placeCheck( 8 );
 
-// TODO: getLastError
-db.getLastError();
-db.getPrevError();
-
 // more update stuff
 
 printAll();
 total = db.foo.find().count();
-db.foo.update( {} , { $inc : { x : 1 } } , false , true );
-x = db.getLastErrorObj();
+var res = assert.writeOK(db.foo.update( {}, { $inc: { x: 1 } }, false, true ));
 printAll();
-assert.eq( total , x.n , "getLastError n A: " + tojson( x ) );
+assert.eq( total , res.nModified, res.toString() );
 
 
-db.foo.update( { num : -1 } , { $inc : { x : 1 } } , false , true );
-assert.eq( 1 , db.getLastErrorObj().n , "getLastErrorObj n B" );
+res = db.foo.update( { num : -1 } , { $inc : { x : 1 } } , false , true );
+assert.eq( 1, res.nModified, res.toString() );
 
 // ---- move all to the secondary
 

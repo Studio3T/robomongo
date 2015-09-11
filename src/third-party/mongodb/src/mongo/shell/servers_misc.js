@@ -60,7 +60,7 @@ ToolTest = function( name, extraOptions ){
     this.options = extraOptions;
     this.port = allocatePorts(1)[0];
     this.baseName = "jstests_tool_" + name;
-    this.root = "/data/db/" + this.baseName;
+    this.root = MongoRunner.dataPath + this.baseName;
     this.dbpath = this.root + "/";
     this.ext = this.root + "_external/";
     this.extFile = this.root + "_external/a";
@@ -129,7 +129,7 @@ ReplTest.prototype.getPort = function( master ){
 }
 
 ReplTest.prototype.getPath = function( master ){
-    var p = "/data/db/" + this.name + "-";
+    var p = MongoRunner.dataPath + this.name + "-";
     if ( master )
         p += "master";
     else
@@ -163,6 +163,26 @@ ReplTest.prototype.getOptions = function( master , extra , putBinaryFirst, norep
         a.push( jsTestOptions().keyFile )
     }
 
+    if( jsTestOptions().useSSL ) {
+        if (!a.contains("--sslMode")) {
+            a.push( "--sslMode" )
+            a.push( "requireSSL" )
+        }
+        if (!a.contains("--sslPEMKeyFile")) {
+            a.push( "--sslPEMKeyFile" )
+            a.push( "jstests/libs/server.pem" )
+        }
+        if (!a.contains("--sslCAFile")) {
+            a.push( "--sslCAFile" )
+            a.push( "jstests/libs/ca.pem" )
+        }
+        a.push( "--sslWeakCertificateValidation" )
+    }
+    if( jsTestOptions().useX509 && !a.contains("--clusterAuthMode")) {
+        a.push( "--clusterAuthMode" )
+        a.push( "x509" )
+    }
+
     if ( !norepl ) {
         if ( master ){
             a.push( "--master" );
@@ -178,7 +198,7 @@ ReplTest.prototype.getOptions = function( master , extra , putBinaryFirst, norep
         var v = extra[k];
         if( k in MongoRunner.logicalOptions ) continue
         a.push( "--" + k );
-        if ( v != null )
+        if ( v != null && v !== "")
             a.push( v );                    
     }
 
@@ -190,16 +210,19 @@ ReplTest.prototype.start = function( master , options , restart, norepl ){
     removeFile( lockFile );
     var o = this.getOptions( master , options , restart, norepl );
 
-
     if (restart) {
-        return startMongoProgram.apply(null, o);
+        var conn = startMongoProgram.apply(null, o);
+        if (!master) {
+            conn.setSlaveOk();
+        }
+        return conn;
     } else {
         var conn = startMongod.apply(null, o);
-        if (jsTestOptions().keyFile || jsTestOptions().auth) {
-            if (master) {
-                jsTest.addAuth(conn);
-            }
+        if (jsTestOptions().keyFile || jsTestOptions().auth || jsTestOptions().useX509) {
             jsTest.authenticate(conn);
+        }
+        if (!master) {
+            conn.setSlaveOk();
         }
         return conn;
     }
@@ -268,15 +291,25 @@ SyncCCTest.prototype.tempStart = function( num ){
 }
 
 
-function startParallelShell( jsCode, port ){
+function startParallelShell( jsCode, port, noConnect ){
     var x;
 
     var args = ["mongo"];
-    if (port) {
-        args.push("--port", port);
-    }
 
-    if (typeof(db) == "object") {
+    // Convert function into call-string
+    if (typeof(jsCode) == "function") {
+        var id = Math.floor(Math.random() * 100000);
+        jsCode = "var f" + id + " = " + jsCode.toString() + ";f" + id + "();"; 
+    }
+    else if(typeof(jsCode) == "string") {}
+        // do nothing
+    else {
+        throw Error("bad first argument to startParallelShell");
+    }
+    
+    if (noConnect) {
+        args.push("--nodb");
+    } else if (typeof(db) == "object") {
         jsCode = "db = db.getSiblingDB('" + db.getName() + "');" + jsCode;
     }
 
@@ -287,21 +320,29 @@ function startParallelShell( jsCode, port ){
     args.push("--eval", jsCode);
 
     if (typeof db == "object") {
-        // Must start connected to admin DB so auth works when running tests with auth.
-        args.push(db.getMongo().host + "/admin");
+        var hostAndPort = db.getMongo().host.split(':');
+        var host = hostAndPort[0];
+        args.push("--host", host);
+        if (!port && hostAndPort.length >= 2) {
+            var port = hostAndPort[1];
+        }
+    }
+    if (port) {
+        args.push("--port", port);
+    }
+
+    if( jsTestOptions().useSSL ) {
+        args.push( "--ssl" )
+        args.push( "--sslPEMKeyFile" )
+        args.push( "jstests/libs/client.pem" )
+        args.push( "--sslCAFile" )
+        args.push( "jstests/libs/ca.pem" )
     }
 
     x = startMongoProgramNoConnect.apply(null, args);
     return function(){
-        waitProgram( x );
+        return waitProgram( x );
     };
 }
 
 var testingReplication = false;
-
-function skipIfTestingReplication(){
-    if (testingReplication) {
-        print("skipIfTestingReplication skipping");
-        quit(0);
-    }
-}

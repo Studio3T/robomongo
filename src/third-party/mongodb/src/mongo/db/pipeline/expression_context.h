@@ -12,80 +12,59 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * As a special exception, the copyright holders give permission to link the
+ * code of portions of this program with the OpenSSL library under certain
+ * conditions as described in each individual source file and distribute
+ * linked combinations including the program with the OpenSSL library. You
+ * must comply with the GNU Affero General Public License in all respects for
+ * all of the code used other than as permitted herein. If you modify file(s)
+ * with this exception, you may extend this exception to your version of the
+ * file(s), but you are not obligated to do so. If you do not wish to do so,
+ * delete this exception statement from your version. If you delete this
+ * exception statement from all source files in the program, then also delete
+ * it in the license file.
  */
 
 #pragma once
 
-#include "mongo/pch.h"
+#include <string>
 
-#include "util/intrusive_counter.h"
-
-namespace mongo {
-
-    class InterruptStatus;
-
-    class ExpressionContext :
-        public IntrusiveCounterUnsigned {
-    public:
-        virtual ~ExpressionContext();
-
-        void setDoingMerge(bool b);
-        void setInShard(bool b);
-        void setInRouter(bool b);
-
-        bool getDoingMerge() const;
-        bool getInShard() const;
-        bool getInRouter() const;
-
-        /**
-           Used by a pipeline to check for interrupts so that killOp() works.
-
-           @throws if the operation has been interrupted
-         */
-        void checkForInterrupt();
-
-        ExpressionContext* clone();
-
-        static ExpressionContext *create(InterruptStatus *pStatus);
-
-    private:
-        ExpressionContext(InterruptStatus *pStatus);
-        
-        bool doingMerge;
-        bool inShard;
-        bool inRouter;
-        unsigned intCheckCounter; // interrupt check counter
-        InterruptStatus *const pStatus;
-    };
-}
-
-
-/* ======================= INLINED IMPLEMENTATIONS ========================== */
+#include "mongo/db/namespace_string.h"
+#include "mongo/db/operation_context.h"
+#include "mongo/util/intrusive_counter.h"
 
 namespace mongo {
 
-    inline void ExpressionContext::setDoingMerge(bool b) {
-        doingMerge = b;
+struct ExpressionContext : public IntrusiveCounterUnsigned {
+public:
+    ExpressionContext(OperationContext* opCtx, const NamespaceString& ns)
+        : inShard(false),
+          inRouter(false),
+          extSortAllowed(false),
+          ns(ns),
+          opCtx(opCtx),
+          interruptCounter(interruptCheckPeriod) {}
+
+    /** Used by a pipeline to check for interrupts so that killOp() works.
+     *  @throws if the operation has been interrupted
+     */
+    void checkForInterrupt() {
+        if (opCtx && --interruptCounter == 0) {  // XXX SERVER-13931 for opCtx check
+            // The checkForInterrupt could be expensive, at least in relative terms.
+            opCtx->checkForInterrupt();
+            interruptCounter = interruptCheckPeriod;
+        }
     }
 
-    inline void ExpressionContext::setInShard(bool b) {
-        inShard = b;
-    }
-    
-    inline void ExpressionContext::setInRouter(bool b) {
-        inRouter = b;
-    }
+    bool inShard;
+    bool inRouter;
+    bool extSortAllowed;
+    NamespaceString ns;
+    std::string tempDir;  // Defaults to empty to prevent external sorting in mongos.
 
-    inline bool ExpressionContext::getDoingMerge() const {
-        return doingMerge;
-    }
-
-    inline bool ExpressionContext::getInShard() const {
-        return inShard;
-    }
-
-    inline bool ExpressionContext::getInRouter() const {
-        return inRouter;
-    }
-
+    OperationContext* opCtx;
+    static const int interruptCheckPeriod = 128;
+    int interruptCounter;  // when 0, check interruptStatus
 };
+}

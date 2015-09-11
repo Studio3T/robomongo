@@ -264,44 +264,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-6) License notice for SpiderMonkey 1.7
----------------------------------
-For applicable files:
-
-  Version: MPL 1.1/GPL 2.0/LGPL 2.1
-
-  The contents of this file are subject to the Mozilla Public License Version
-  1.1 (the "License"); you may not use this file except in compliance with
-  the License. You may obtain a copy of the License at
-  http://www.mozilla.org/MPL/
-
-  Software distributed under the License is distributed on an "AS IS" basis,
-  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-  for the specific language governing rights and limitations under the
-  License.
-
-  The Original Code is Mozilla Communicator client code, released
-  March 31, 1998.
-
-  The Initial Developer of the Original Code is
-  Netscape Communications Corporation.
-  Portions created by the Initial Developer are Copyright (C) 1998
-  the Initial Developer. All Rights Reserved.
-
-  Contributor(s):
-
-  Alternatively, the contents of this file may be used under the terms of
-  either of the GNU General Public License Version 2 or later (the "GPL"),
-  or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
-  in which case the provisions of the GPL or the LGPL are applicable instead
-  of those above. If you wish to allow use of your version of this file only
-  under the terms of either the GPL or the LGPL, and not to allow others to
-  use your version of this file under the terms of the MPL, indicate your
-  decision by deleting the provisions above and replace them with the notice
-  and other provisions required by the GPL or the LGPL. If you do not delete
-  the provisions above, a recipient may use your version of this file under
-  the terms of any one of the MPL, the GPL or the LGPL.
-
 7) License notice for Linenoise
 -------------------------------
 
@@ -407,6 +369,133 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
+11) License notice for yaml-cpp
+-------------------------------
+
+Copyright (c) 2008 Jesse Beder.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+12) License notice for zlib
+---------------------------
+
+http://www.zlib.net/zlib_license.html
+
+zlib.h -- interface of the 'zlib' general purpose compression library
+version 1.2.8, April 28th, 2013
+
+Copyright (C) 1995-2013 Jean-loup Gailly and Mark Adler
+
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+
+Jean-loup Gailly        Mark Adler
+jloup@gzip.org          madler@alumni.caltech.edu
+
+
+13) License notice for 3rd party software included in the WiredTiger library
+----------------------------------------------------------------------------
+
+http://source.wiredtiger.com/license.html
+
+WiredTiger Distribution Files | Copyright Holder                    | License
+----------------------------- | ----------------------------------- | ----------------------
+src/include/bitstring.i       | University of California, Berkeley  | BSD-3-Clause License
+src/include/queue.h           | University of California, Berkeley  | BSD-3-Clause License
+src/os_posix/os_getopt.c      | University of California, Berkeley  | BSD-3-Clause License
+src/support/hash_city.c       | Google, Inc.                        | The MIT License
+src/support/hash_fnv.c        | Authors                             | Public Domain
+
+
+Other optional 3rd party software included in the WiredTiger distribution is removed by MongoDB.
+
+
+BSD-3-CLAUSE LICENSE
+--------------------
+
+http://www.opensource.org/licenses/BSD-3-Clause
+
+Copyright (c) 1987, 1989, 1991, 1993, 1994
+    The Regents of the University of California.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+4. Neither the name of the University nor the names of its contributors
+   may be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+
+
+THE MIT LICENSE
+---------------
+
+http://www.opensource.org/licenses/MIT
+
+Copyright (c) 2011 Google, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
 
 End

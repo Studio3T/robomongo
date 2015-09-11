@@ -17,6 +17,7 @@ Getting Started
 - Create a `MongoDB JIRA account`_.
 - Create a `Github account`_.
 - Fork the repository on Github at https://github.com/mongodb/mongo.
+- For more details see http://www.mongodb.org/about/contributors/
 
 .. _MongoDB JIRA account: https://jira.mongodb.org/secure/Signup!default.jspa
 .. _Github account: https://github.com/signup/free
@@ -39,6 +40,22 @@ your solution will take.
 .. _SERVER project: https://jira.mongodb.org/browse/SERVER
 
 
+The Life Cycle of a Pull Request
+--------------------------------
+
+Here's what happens when you submit a pull request:
+
+- The MongoDB engineering team will review your pull request to make sure you have included a
+  SERVER ticket in your request and signed the contributor agreement.
+- You should receive a response from one of our engineers with additional questions about your
+  contributions.
+- If your pull request matches a ticket and is aligned with the Server Roadmap, it will get
+  triaged and reviewed by the Kernel team.
+- Pull requests that have been reviewed and approved will be signed off and merged into a
+  development branch and the associated JIRA SERVER issue will be resolved with an expected
+  fixVersion.
+
+
 Style Guide
 -----------
 
@@ -51,8 +68,8 @@ not covered in this document you should default to the `Google CPP Style Guide`_
 Your commit message should also be prefaced with the relevant JIRA ticket, e.g. "SERVER-XXX Fixed
 a bug in aggregation".
 
-.. _kernel development rules: http://www.mongodb.org/display/DOCS/MongoDB+kernel+code+development+rules
-.. _Kernel Code Style guidelines: http://www.mongodb.org/display/DOCS/Kernel+code+style
+.. _kernel development rules: http://dochub.mongodb.org/core/kernelcodedevelopmentrules
+.. _Kernel Code Style guidelines: http://dochub.mongodb.org/core/kernelcodestyle
 .. _Google CPP Style Guide: http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
 .. _Google JavaScript Style Guide: http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
 
@@ -61,7 +78,7 @@ Testing
 -------
 
 Every non-trivial change to the code base should be accompanied by a relevant addition to or
-modification of the test suite.  If you don't believe this is necessary, please add an explanation
+modification of the test suite.  If you do not believe this is necessary, please add an explanation
 in the JIRA ticket why no such changes are either needed or possible.
 
 All changes must also pass the full test suite (including your test additions/changes) on your
@@ -74,4 +91,4 @@ Contributor Agreement
 A patch will only be considered for merging into the upstream codebase after you have signed the
 `contributor agreement`_.
 
-.. _contributor agreement: http://www.10gen.com/contributor
+.. _contributor agreement: http://www.mongodb.com/contributor

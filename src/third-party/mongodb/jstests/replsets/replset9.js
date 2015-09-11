@@ -1,11 +1,11 @@
 
 
-var rt = new ReplSetTest( { name : "replset9tests" , nodes: 1, oplogSize: 100 } );
+var rt = new ReplSetTest( { name : "replset9tests" , nodes: 1, oplogSize: 300 } );
 
 var nodes = rt.startSet();
 rt.initiate();
 var master = rt.getMaster();
-var bigstring = Array(1000).toString();
+var bigstring = Array(5000).toString();
 var md = master.getDB( 'd' );
 var mdc = md[ 'c' ];
 
@@ -18,32 +18,56 @@ mdc.insert( { _id:-1, x:"dummy" } );
 
 // Make this db big so that cloner takes a while.
 print ("inserting bigstrings");
+var bulk = mdc.initializeUnorderedBulkOp();
 for( i = 0; i < doccount; ++i ) {
-    mdc.insert( { _id:i, x:bigstring } );
+    mdc.insert({ _id: i, x: bigstring });
 }
-md.getLastError();
+assert.writeOK(bulk.execute());
 
 // Insert some docs to update and remove
 print ("inserting x");
+bulk = mdc.initializeUnorderedBulkOp();
 for( i = doccount; i < doccount*2; ++i ) {
-    mdc.insert( { _id:i, bs:bigstring, x:i } );
+    bulk.insert({ _id: i, bs: bigstring, x: i });
 }
-md.getLastError();
+assert.writeOK(bulk.execute());
 
 // add a secondary; start cloning
 var slave = rt.add();
-rt.reInitiate();
+(function reinitiate() {
+    var master  = rt.nodes[0];
+    var c = master.getDB("local")['system.replset'].findOne();
+    var config  = rt.getReplSetConfig();
+    config.version = c.version + 1;
+    var admin  = master.getDB("admin");
+    var cmd     = {};
+    var cmdKey  = 'replSetReconfig';
+    var timeout = timeout || 30000;
+    cmd[cmdKey] = config;
+    printjson(cmd);
+
+    assert.soon(function() {
+        var result = admin.runCommand(cmd);
+        printjson(result);
+        return result['ok'] == 1;
+    }, "reinitiate replica set", timeout);
+})();
+
+
 print ("initiation complete!");
 var sc = slave.getDB( 'd' )[ 'c' ];
 slave.setSlaveOk();
+master = rt.getMaster();
 
 print ("updating and deleting documents");
+bulk = master.getDB('d')['c'].initializeUnorderedBulkOp();
 for (i = doccount*4; i > doccount; --i) {
-    mdc.update( { _id:i }, { $inc: { x : 1 } } );
-    mdc.remove( { _id:i } );
-    mdc.insert( { bs:bigstring } );
+    bulk.find({ _id: i }).update({ $inc: { x: 1 }});
+    bulk.find({ _id: i }).remove();
+    bulk.insert({ bs: bigstring });
 }
-md.getLastError();
+assert.writeOK(bulk.execute());
+
 print ("finished");
 // Wait for replication to catch up.
 rt.awaitReplication(640000);

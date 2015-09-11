@@ -3,7 +3,7 @@
 soonCountAtLeast = function( db, coll, count ) {
     assert.soon( function() { 
 //                print( "count: " + s.getDB( db )[ coll ].find().count() );
-                return s.getDB( db )[ coll ].find().count() >= count; 
+                return s.getDB( db )[ coll ].find().itcount() >= count;
                 } );    
 }
 
@@ -14,8 +14,10 @@ doTest = function(signal, extraOpts) {
     m = rt.start( true );
     
     ma = m.getDB( "a" ).a;
+    var bulk = ma.initializeUnorderedBulkOp();
     for( i = 0; i < 10000; ++i )
-        ma.save( { i:i } );
+        bulk.insert({ i: i });
+    assert.writeOK(bulk.execute());
     
     s = rt.start(false, extraOpts);
     soonCountAtLeast( "a", "a", 1 );

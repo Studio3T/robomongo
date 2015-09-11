@@ -34,15 +34,15 @@ function assertResults( expectedResults, matchSpec ) {
     }
     matchStage = { $match:matchSpec };
     // Check where matching is folded in to DocumentSourceCursor.
-    assertEqualResultsUnordered( findResults, t.aggregate( matchStage ).result );
+    assertEqualResultsUnordered( findResults, t.aggregate( matchStage ).toArray() );
     // Check where matching is not folded in to DocumentSourceCursor.
     assertEqualResultsUnordered( findResults,
                                  t.aggregate( { $project:identityProjection },
-                                              matchStage ).result );    
+                                              matchStage ).toArray() );
 }
 
 // Invalid matcher syntax.
-assertError( 10073, { a:{ $mod:[ 0 /* invalid */, 0 ] } } );
+assertError( 16810, { a:{ $mod:[ 0 /* invalid */, 0 ] } } );
 
 // $where not allowed.
 assertError( 16395, { $where:'true' } );
@@ -63,7 +63,7 @@ assertError( 0, { a:1, b:{ $gt:{ $add:[ 1, 1 ] } } } );
 function checkMatchResults( indexed ) {
 
     // No results.
-    t.remove();
+    t.remove({});
     assertResults( [], {} );
     
     t.save( { _id:0, a:1 } );
@@ -81,27 +81,27 @@ function checkMatchResults( indexed ) {
     assertResults( [ { _id:0, a:1 }, { _id:2, a:3 } ], { a:{ $in:[ 1, 3 ] } } );
 
     // Regular expression.
-    t.remove();
+    t.remove({});
     t.save( { _id:0, a:'x' } );
     t.save( { _id:1, a:'yx' } );
     assertResults( [ { _id:0, a:'x' } ], { a:/^x/ } );
     assertResults( [ { _id:0, a:'x' }, { _id:1, a:'yx' } ], { a:/x/ } );
 
     // Dotted field.
-    t.remove();
+    t.remove({});
     t.save( { _id:0, a:{ b:4 } } );
     t.save( { _id:1, a:2 } );
     assertResults( [ { _id:0, a:{ b:4 } } ], { 'a.b':4 } );
 
     // Value within an array.
-    t.remove();
+    t.remove({});
     t.save( { _id:0, a:[ 1, 2, 3 ] } );
     t.save( { _id:1, a:[ 2, 2, 3 ] } );
     t.save( { _id:2, a:[ 2, 2, 2 ] } );
     assertResults( [ { _id:0, a:[ 1, 2, 3 ] }, { _id:1, a:[ 2, 2, 3 ] } ], { a:3 } );
 
     // Missing, null, $exists matching.
-    t.remove();
+    t.remove({});
     t.save( { _id:0 } );
     t.save( { _id:1, a:null } );
     if ( 0 ) { // SERVER-6571
@@ -109,25 +109,22 @@ function checkMatchResults( indexed ) {
     }
     t.save( { _id:3, a:0 } );
     assertResults( [ { _id:0 }, { _id:1, a:null } ], { a:null } );
-    if ( !indexed ) { // SERVER-1160
-        assertResults( null, { a:{ $in:[ undefined ] } } );
-    }
     assertResults( null, { a:{ $exists:true } } );
     assertResults( null, { a:{ $exists:false } } );
 
     // $elemMatch
-    t.remove();
+    t.remove({});
     t.save( { _id:0, a:[ 1, 2 ] } );
     t.save( { _id:1, a:[ 1, 2, 3 ] } );
     assertResults( [ { _id:1, a:[ 1, 2, 3 ] } ], { a:{ $elemMatch:{ $gt:1, $mod:[ 2, 1 ] } } } );
 
-    t.remove();
+    t.remove({});
     t.save( { _id:0, a:[ { b:1 }, { c:2 } ] } );
     t.save( { _id:1, a:[ { b:1, c:2 } ] } );
     assertResults( [ { _id:1, a:[ { b:1, c:2 } ] } ], { a:{ $elemMatch:{ b:1, c:2 } } } );
 
     // $size
-    t.remove();
+    t.remove({});
     t.save( {} );
     t.save( { a:null } );
     t.save( { a:[] } );
@@ -138,7 +135,7 @@ function checkMatchResults( indexed ) {
     assertResults( null, { a:{ $size:2 } } );
 
     // $type
-    t.remove();
+    t.remove({});
     t.save( {} );
     t.save( { a:null } );
     if ( 0 ) { // SERVER-6571
@@ -154,15 +151,11 @@ function checkMatchResults( indexed ) {
     t.save( { a:new Date() } );
     t.save( { a:new ObjectId() } );
     for( type = 1; type <= 18; ++type ) {
-        if ( indexed && type == 17 ) {
-            // SERVER-3304
-            continue;
-        }
         assertResults( null, { a:{ $type:type } } );
     }
 
     // $atomic does not affect results.
-    t.remove();
+    t.remove({});
     t.save( { _id:0, a:1 } );
     t.save( { _id:1, a:2 } );
     t.save( { _id:2, a:3 } );

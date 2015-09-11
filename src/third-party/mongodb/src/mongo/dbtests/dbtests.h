@@ -15,9 +15,23 @@
 *
 *    You should have received a copy of the GNU Affero General Public License
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*    As a special exception, the copyright holders give permission to link the
+*    code of portions of this program with the OpenSSL library under certain
+*    conditions as described in each individual source file and distribute
+*    linked combinations including the program with the OpenSSL library. You
+*    must comply with the GNU Affero General Public License in all respects
+*    for all of the code used other than as permitted herein. If you modify
+*    file(s) with this exception, you may extend this exception to your
+*    version of the file(s), but you are not obligated to do so. If you do not
+*    wish to do so, delete this exception statement from your version. If you
+*    delete this exception statement from all source files in the program,
+*    then also delete it in the license file.
 */
 
 #pragma once
+
+#include <boost/shared_ptr.hpp>
 
 #include "mongo/db/instance.h"
 #include "mongo/unittest/unittest.h"
@@ -26,3 +40,27 @@ using namespace mongo;
 using namespace mongo::unittest;
 using boost::shared_ptr;
 
+namespace mongo {
+class BSONObj;
+class OperationContext;
+class Status;
+class StringData;
+
+namespace dbtests {
+// This specifies default dbpath for our testing framework
+extern const std::string default_test_dbpath;
+
+/**
+ * Creates an index if it does not already exist.
+ */
+Status createIndex(OperationContext* txn,
+                   const StringData& ns,
+                   const BSONObj& keys,
+                   bool unique = false);
+
+/**
+ * Creates an index from a BSON spec, if it does not already exist.
+ */
+Status createIndexFromSpec(OperationContext* txn, const StringData& ns, const BSONObj& spec);
+}  // namespace dbtests
+}  // namespace mongo

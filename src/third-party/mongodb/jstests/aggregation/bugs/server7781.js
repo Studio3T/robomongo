@@ -15,11 +15,10 @@ assertErrorCode(db[coll],
 
 function checkOutput(cmdOut, aggOut, expectedNum) {
     assert.commandWorked(cmdOut, "geoNear command");
-    assert.commandWorked(aggOut, "aggregate command");
 
-    // the output arrays are named differently
+    // the output arrays are accessed differently
     cmdOut = cmdOut.results;
-    aggOut = aggOut.result;
+    aggOut = aggOut.toArray();
 
     assert.eq(cmdOut.length, expectedNum);
     assert.eq(aggOut.length, expectedNum);
@@ -67,10 +66,12 @@ function test(db, sharded, indexType) {
 
     // insert points
     var numPts = 10*1000;
+    var bulk = db[coll].initializeUnorderedBulkOp();
     for (var i=0; i < numPts; i++) {
-        db[coll].insert({rand:Math.random(), loc: pointMaker.mkPt()});
+        bulk.insert({ rand: Math.random(), loc: pointMaker.mkPt() });
     }
-    db.getLastError();
+    assert.writeOK(bulk.execute());
+
     assert.eq(db[coll].count(), numPts);
 
     db[coll].ensureIndex({loc: indexType});

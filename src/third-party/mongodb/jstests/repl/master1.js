@@ -24,7 +24,7 @@ assert.eq( "i", lastop().op );
 op = lastop();
 printjson( op );
 op.ts.t = op.ts.t + 600000 // 10 minutes
-m.getDB( "local" ).runCommand( {godinsert:"oplog.$main", obj:op} );
+assert.commandWorked(m.getDB( "local" ).runCommand( {godinsert:"oplog.$main", obj:op} ));
 
 rt.stop( true );
 m = rt.start( true, null, true );
@@ -36,14 +36,16 @@ assert.eq( op.ts.i + 1, lastop().ts.i );
 
 op = lastop();
 printjson( op );
-op.ts.i = Math.pow(2,31);
+op.ts.i = Math.pow(2,31)-1;
 printjson( op );
-m.getDB( "local" ).runCommand( {godinsert:"oplog.$main", obj:op} );
+assert.commandWorked(m.getDB( "local" ).runCommand( {godinsert:"oplog.$main", obj:op} ));
 
 rt.stop( true );
 m = rt.start( true, null, true );
 assert.eq( op.ts.i, lastop().ts.i );
-am().save( {} );
-sleep( 3000 ); // make sure dies on its own before stop() called
 
-assert.eq( 47 /*EXIT_CLOCK_SKEW*/, rt.stop( true ) );
+assert.throws(function() {
+    am().save( {} ); // triggers fassert because ofclock skew
+});
+
+assert.neq(0, rt.stop( true )); // fasserted

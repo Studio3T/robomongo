@@ -1,95 +1,41 @@
 /*    Copyright 2009 10gen Inc.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *    This program is free software: you can redistribute it and/or  modify
+ *    it under the terms of the GNU Affero General Public License, version 3,
+ *    as published by the Free Software Foundation.
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    As a special exception, the copyright holders give permission to link the
+ *    code of portions of this program with the OpenSSL library under certain
+ *    conditions as described in each individual source file and distribute
+ *    linked combinations including the program with the OpenSSL library. You
+ *    must comply with the GNU Affero General Public License in all respects
+ *    for all of the code used other than as permitted herein. If you modify
+ *    file(s) with this exception, you may extend this exception to your
+ *    version of the file(s), but you are not obligated to do so. If you do not
+ *    wish to do so, delete this exception statement from your version. If you
+ *    delete this exception statement from all source files in the program,
+ *    then also delete it in the license file.
  */
 
 
-#include "pch.h"
-
 #include "mongo/util/touch_pages.h"
 
-#include <boost/scoped_ptr.hpp>
-#include <fcntl.h>
-#include <list>
-#include <string>
-
-#include "mongo/db/curop.h"
-#include "mongo/db/kill_current_op.h"
-#include "mongo/db/pdfile.h"
-#include "mongo/db/database.h"
-#include "mongo/util/mmap.h"
-#include "mongo/util/progress_meter.h"
-
 namespace mongo {
-    struct touch_location {
-        HANDLE fd;
-        int offset;
-        size_t length;
-        Extent *ext;
-    };
-        
-    void touchNs( const std::string& ns ) { 
-        std::vector< touch_location > ranges;
-        boost::scoped_ptr<LockMongoFilesShared> mongoFilesLock;
-        {
-            Client::ReadContext ctx(ns);
-            NamespaceDetails *nsd = nsdetails(ns);
-            uassert( 16154, "namespace does not exist", nsd );
-            
-            for( DiskLoc L = nsd->firstExtent; !L.isNull(); L = L.ext()->xnext )  {
-                MongoDataFile* mdf = cc().database()->getFile( L.a() );
-                massert( 16238, "can't fetch extent file structure", mdf );
-                touch_location tl;
-                tl.fd = mdf->getFd();
-                tl.offset = L.getOfs();
-                tl.ext = L.ext();
-                tl.length = tl.ext->length;
-                
-                ranges.push_back(tl);                
-            }
-            mongoFilesLock.reset(new LockMongoFilesShared());
-        }
-        // DB read lock is dropped; no longer needed after this point.
 
-        std::string progress_msg = "touch " + ns + " extents";
-        ProgressMeterHolder pm(cc().curop()->setMessage(progress_msg.c_str(),
-                                                        "Touch Progress",
-                                                        ranges.size()));
-        for ( std::vector< touch_location >::iterator it = ranges.begin(); it != ranges.end(); ++it ) {
-            touch_pages( it->fd, it->offset, it->length, it->ext );
-            pm.hit();
-            killCurrentOp.checkForInterrupt(false);
-        }
-        pm.finished();
-    }
+char _touch_pages_char_reader;  // goes in .bss
 
-#if defined(__linux__)    
-    void touch_pages( HANDLE fd, int offset, size_t length, const Extent* ext ) {
-        if ( -1 == readahead(fd, offset, length) ) {
-            massert( 16237, str::stream() << "readahead failed on fd " << fd 
-                     << " offset " << offset << " len " << length 
-                     << " : " << errnoWithDescription(errno), 0 );
-        }
+void touch_pages(const char* buf, size_t length, size_t pageSize) {
+    // read first byte of every page, in order
+    for (size_t i = 0; i < length; i += pageSize) {
+        _touch_pages_char_reader += buf[i];
     }
-#else // if defined __linux__
-    char _touch_pages_char_reader; // goes in .bss
-    void touch_pages( HANDLE fd, int offset, size_t length, const Extent* ext ) {
-        // read first byte of every page, in order
-        const char *p = static_cast<const char *>(static_cast<const void *> (ext));
-        for( size_t i = 0; i < length; i += g_minOSPageSizeBytes ) { 
-            _touch_pages_char_reader += p[i];
-        }
-  
-    }
-#endif // if defined __linux__
+}
 }

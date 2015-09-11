@@ -10,7 +10,7 @@ COMPONENTS
 
 UTILITIES
 
-  mongodump         - MongoDB dump tool - for backups, snapshots, etc..
+  mongodump         - MongoDB dump tool - for backups, snapshots, etc.
   mongorestore      - MongoDB restore a dump
   mongoexport       - Export a single collection to test (JSON, CSV)
   mongoimport       - Import from JSON or CSV
@@ -18,7 +18,7 @@ UTILITIES
   mongostat         - Show performance statistics
 
 BUILDING
-      
+
   See docs/building.md, also www.mongodb.org search for "Building".
 
 RUNNING
@@ -41,13 +41,26 @@ DRIVERS
   Client drivers for most programming languages are available at mongodb.org.  Use the 
   shell ("mongo") for administrative tasks.
 
+PACKAGING
+
+  Packages are created dynamically by the package.py script located in the buildscripts directory. This will 
+  generate RPM and Debian packages.
+
 DOCUMENTATION
 
   http://www.mongodb.org/
+ 
+CLOUD MANAGED MONGODB
+
+  http://mms.mongodb.com/
 
 MAIL LISTS AND IRC
 
   http://dochub.mongodb.org/core/community
+  
+LEARN MONGODB
+
+  http://university.mongodb.com/
 
 32 BIT BUILD NOTES
 
@@ -57,7 +70,7 @@ MAIL LISTS AND IRC
 
 LICENSE
 
-  Most MongoDB source files are made available under the terms of the
+  Most MongoDB source files (src/mongo folder and below) are made available under the terms of the
   GNU Affero General Public License (AGPL).  See individual files for
   details.
 

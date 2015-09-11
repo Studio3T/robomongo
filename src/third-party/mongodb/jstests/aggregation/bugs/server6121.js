@@ -19,7 +19,7 @@ load('jstests/aggregation/extras/utils.js');
 // Clear db
 db.s6121.drop();
 // Populate db
-db.s6121.save({date:new Timestamp(1341337661000, 1)});
+db.s6121.save({date:new Timestamp(1341337661, 1)});
 db.s6121.save({date:new Date(1341337661000)});
 // Aggregate checking various combinations of the constant and the field
 var s6121 = db.s6121.aggregate(
@@ -35,9 +35,9 @@ var s6121 = db.s6121.aggregate(
             week: {$week: '$date'},
             year: {$year: '$date'}
         }}
-);
+).toArray();
 // Assert the two entries are equal
-assert.eq(s6121.result[0], s6121.result[1], 's6121 failed');
+assert.eq(s6121[0], s6121[1], 's6121 failed');
 
 
 // Clear db for timestamp to date compare test
@@ -45,7 +45,7 @@ assert.eq(s6121.result[0], s6121.result[1], 's6121 failed');
 // That means that the Timestamp has an "inc" that is the same as the Date has millis.
 db.s6121.drop();
 db.s6121.save({time:new Timestamp(   0, 1234), date:new Date(1234)});
-db.s6121.save({time:new Timestamp(1000, 1234), date:new Date(1234)});
+db.s6121.save({time:new Timestamp(   1, 1234), date:new Date(1234)});
 printjson(db.s6121.find().toArray());
 var s6121 = db.s6121.aggregate(
         {$project: {
@@ -55,13 +55,13 @@ var s6121 = db.s6121.aggregate(
             date_ts: {$eq: ['$date', '$time']}
         }}
 );
-assert.eq(s6121.result, [{ts_date: true, date_ts: true}
-                        ,{ts_date: false, date_ts: false}]);
+assert.eq(s6121.toArray(), [{ts_date: false, date_ts: false}
+                           ,{ts_date: false, date_ts: false}]);
 
 
 // Clear db for timestamp comparison tests
 db.s6121.drop();
-db.s6121.save({time:new Timestamp(1341337661000, 1), time2:new Timestamp(1341337661000, 2)});
+db.s6121.save({time:new Timestamp(1341337661, 1), time2:new Timestamp(1341337661, 2)});
 var s6121 = db.s6121.aggregate(
         {$project: {
             _id: 0,
@@ -84,4 +84,4 @@ var s6121result = [{
     ne: true
 }];
 // Assert the results are as expected
-assert.eq(s6121.result, s6121result, 's6121 failed comparing two timestamps');
+assert.eq(s6121.toArray(), s6121result, 's6121 failed comparing two timestamps');

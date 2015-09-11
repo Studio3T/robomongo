@@ -9,7 +9,7 @@ t.save( {} );
 
 function week( date ) {
     return t.aggregate( { $project:{ a:{ $week:date } } },
-                        { $match:{ a:{ $type:16 /* Int type expected */ } } } ).result[ 0 ].a;
+                        { $match:{ a:{ $type:16 /* Int type expected */ } } } ).toArray()[ 0 ].a;
 }
 
 function assertWeek( expectedWeek, date ) {
@@ -147,6 +147,6 @@ assertErrorCode(t, {$project: {a: {$week: [new Date(2020, 1, 28),
                 16020);
 
 // From a field path expression.
-t.remove();
+t.remove({});
 t.save( { a:new Date( 2020, 2, 1 ) } );
 assertWeek( 9, '$a' );

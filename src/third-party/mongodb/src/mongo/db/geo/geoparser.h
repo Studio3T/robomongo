@@ -1,5 +1,5 @@
 /**
-*    Copyright (C) 2008-2012 10gen Inc.
+*    Copyright (C) 2013 10gen Inc.
 *
 *    This program is free software: you can redistribute it and/or  modify
 *    it under the terms of the GNU Affero General Public License, version 3,
@@ -12,79 +12,86 @@
 *
 *    You should have received a copy of the GNU Affero General Public License
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*    As a special exception, the copyright holders give permission to link the
+*    code of portions of this program with the OpenSSL library under certain
+*    conditions as described in each individual source file and distribute
+*    linked combinations including the program with the OpenSSL library. You
+*    must comply with the GNU Affero General Public License in all respects for
+*    all of the code used other than as permitted herein. If you modify file(s)
+*    with this exception, you may extend this exception to your version of the
+*    file(s), but you are not obligated to do so. If you do not wish to do so,
+*    delete this exception statement from your version. If you delete this
+*    exception statement from all source files in the program, then also delete
+*    it in the license file.
 */
 
 #pragma once
 
-#include "mongo/db/jsobj.h"
-#include <vector>
-#include "third_party/s2/s2.h"
 #include "mongo/db/geo/shapes.h"
-
-class S2Cap;
-class S2Cell;
-class S2Polyline;
-class S2Polygon;
+#include "mongo/db/jsobj.h"
 
 namespace mongo {
-    // This class parses geographic data.
-    // It parses a subset of GeoJSON and creates S2 shapes from it.
-    // See http://geojson.org/geojson-spec.html for the spec.
-    //
-    // This class also parses the ad-hoc geo formats that MongoDB introduced.
-    //
-    // The parseFoo methods that return a bool internally call isFoo and return true
-    // if the foo is parsed correctly.
-    // The parseFoo methods that do not return a bool assume isFoo is true.
-    //
-    // We assume that if you're trying to parse something, you know it's valid.
-    class GeoParser {
-    public:
-        // Try to parse GeoJSON, then try legacy format, return true if either succeed.
-        // These call the various isPoint and parsePoint methods below.
-        // You can just use these bool parsePoint(...) methods.
-        static bool parsePoint(const BSONObj &obj, S2Point *out);
-        static bool parsePoint(const BSONObj &obj, S2Cell *out);
-        static bool parsePoint(const BSONObj &obj, Point *out);
-        // Check to see if it's GeoJSON or if it's legacy geo.
-        static bool isPoint(const BSONObj &obj);
 
-        static bool isGeoJSONPoint(const BSONObj &obj);
-        static void parseGeoJSONPoint(const BSONObj &obj, S2Point *out);
-        static void parseGeoJSONPoint(const BSONObj &obj, S2Cell *out);
-        static void parseGeoJSONPoint(const BSONObj &obj, Point *out);
-
-        static bool isLegacyPoint(const BSONObj &obj);
-        static void parseLegacyPoint(const BSONObj &obj, S2Point *out);
-        static void parseLegacyPoint(const BSONObj &obj, Point *out);
-
-        static bool parseLineString(const BSONObj &obj, S2Polyline *out);
-        static bool isLineString(const BSONObj &obj);
-        static bool isGeoJSONLineString(const BSONObj &obj);
-        static void parseGeoJSONLineString(const BSONObj &obj, S2Polyline *out);
-
-        static bool parsePolygon(const BSONObj &obj, S2Polygon *out);
-        static bool parsePolygon(const BSONObj &obj, Polygon *out);
-        static bool isPolygon(const BSONObj &obj);
-        static bool isGeoJSONPolygon(const BSONObj &obj);
-        static bool isLegacyPolygon(const BSONObj &obj);
-        static void parseGeoJSONPolygon(const BSONObj &obj, S2Polygon *out);
-        static void parseLegacyPolygon(const BSONObj &obj, Polygon *out);
-
-        static bool isLegacyBox(const BSONObj &obj);
-        static void parseLegacyBox(const BSONObj &obj, Box *out);
-
-        static bool isLegacyCenter(const BSONObj &obj);
-        static void parseLegacyCenter(const BSONObj &obj, Circle *out);
-
-        static bool isLegacyCenterSphere(const BSONObj &obj);
-        static void parseLegacyCenterSphere(const BSONObj &obj, S2Cap *out);
-
-        // Return true if the CRS field is 1. missing, or 2. is well-formed and
-        // has a datum we accept.  Otherwise, return false.
-        // NOTE(hk): If this is ever used anywhere but internally, consider
-        // returning states: missing, invalid, unknown, ok, etc. -- whatever
-        // needed.
-        static bool crsIsOK(const BSONObj& obj);
+// This class parses geographic data.
+// It parses a subset of GeoJSON and creates S2 shapes from it.
+// See http://geojson.org/geojson-spec.html for the spec.
+//
+// This class also parses the ad-hoc geo formats that MongoDB introduced.
+//
+// parse* methods may do some more validation than the is* methods; they return false if they
+// encounter invalid geometry and true if the geometry is parsed successfully.
+class GeoParser {
+public:
+    // Geospatial specifier after $geoWithin / $geoIntersects predicates.
+    // i.e. "$box" in { $box: [[1, 2], [3, 4]] }
+    enum GeoSpecifier {
+        UNKNOWN = 0,
+        BOX,            // $box
+        CENTER,         // $center
+        POLYGON,        // $polygon
+        CENTER_SPHERE,  // $centerSphere
+        GEOMETRY        // GeoJSON geometry, $geometry
     };
+
+    // GeoJSON type defined in GeoJSON document.
+    // i.e. "Point" in { type: "Point", coordinates: [1, 2] }
+    enum GeoJSONType {
+        GEOJSON_UNKNOWN = 0,
+        GEOJSON_POINT,
+        GEOJSON_LINESTRING,
+        GEOJSON_POLYGON,
+        GEOJSON_MULTI_POINT,
+        GEOJSON_MULTI_LINESTRING,
+        GEOJSON_MULTI_POLYGON,
+        GEOJSON_GEOMETRY_COLLECTION
+    };
+
+    static GeoSpecifier parseGeoSpecifier(const BSONElement& elem);
+    static GeoJSONType parseGeoJSONType(const BSONObj& obj);
+
+    // Legacy points can contain extra data as extra fields - these are valid to index
+    // e.g. { x: 1, y: 1, z: 1 }
+    static Status parseLegacyPoint(const BSONElement& elem,
+                                   PointWithCRS* out,
+                                   bool allowAddlFields = false);
+    // Parse the BSON object after $box, $center, etc.
+    static Status parseLegacyBox(const BSONObj& obj, BoxWithCRS* out);
+    static Status parseLegacyCenter(const BSONObj& obj, CapWithCRS* out);
+    static Status parseLegacyPolygon(const BSONObj& obj, PolygonWithCRS* out);
+    static Status parseCenterSphere(const BSONObj& obj, CapWithCRS* out);
+    static Status parseGeoJSONPolygon(const BSONObj& obj, PolygonWithCRS* out);
+    static Status parseGeoJSONPoint(const BSONObj& obj, PointWithCRS* out);
+    static Status parseGeoJSONLine(const BSONObj& obj, LineWithCRS* out);
+    static Status parseMultiPoint(const BSONObj& obj, MultiPointWithCRS* out);
+    static Status parseMultiLine(const BSONObj& obj, MultiLineWithCRS* out);
+    static Status parseMultiPolygon(const BSONObj& obj, MultiPolygonWithCRS* out);
+    static Status parseGeometryCollection(const BSONObj& obj, GeometryCollection* out);
+
+    // For geo near
+    static Status parseQueryPoint(const BSONElement& elem, PointWithCRS* out);
+    static Status parseStoredPoint(const BSONElement& elem, PointWithCRS* out);
+    static bool parsePointWithMaxDistance(const BSONObj& obj, PointWithCRS* out, double* maxOut);
+};
+
 }  // namespace mongo

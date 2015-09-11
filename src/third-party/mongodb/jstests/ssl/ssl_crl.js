@@ -11,13 +11,14 @@ var baseName = "jstests_ssl_ssl_crl";
 
 
 var md = startMongod("--port", port1, "--dbpath", 
-                     "/data/db/" + baseName + "1", "--sslOnNormalPorts",
+                     MongoRunner.dataPath + baseName + "1",
+                     "--sslMode", "requireSSL",
                      "--sslPEMKeyFile", "jstests/libs/server.pem",
                      "--sslCAFile", "jstests/libs/ca.pem",
                      "--sslCRLFile", "jstests/libs/crl.pem");
 
 
-var mongo = runMongoProgram("mongo", "--port", port1, "--ssl", 
+var mongo = runMongoProgram("mongo", "--port", port1, "--ssl", "--sslAllowInvalidCertificates",
                             "--sslPEMKeyFile", "jstests/libs/client.pem",
                             "--eval", ";");
 
@@ -26,13 +27,14 @@ assert(mongo==0);
 
 port2 = ports[1];
 // This test ensures clients cannot connect if the CRL is expired.
-md = startMongod("--port", port2, "--dbpath", "/data/db/" + baseName + "2", "--sslOnNormalPorts",
+md = startMongod("--port", port2, "--dbpath", MongoRunner.dataPath + baseName + "2",
+                 "--sslMode", "requireSSL",
                  "--sslPEMKeyFile", "jstests/libs/server.pem",
                  "--sslCAFile", "jstests/libs/ca.pem",
                  "--sslCRLFile", "jstests/libs/crl_expired.pem");
 
 
-mongo = runMongoProgram("mongo", "--port", port2, "--ssl", 
+mongo = runMongoProgram("mongo", "--port", port2, "--ssl", "--sslAllowInvalidCertificates",
                         "--sslPEMKeyFile", "jstests/libs/client.pem",
                         "--eval", ";");
 

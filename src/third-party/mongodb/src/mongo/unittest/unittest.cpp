@@ -12,288 +12,414 @@
 *
 *    You should have received a copy of the GNU Affero General Public License
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*    As a special exception, the copyright holders give permission to link the
+*    code of portions of this program with the OpenSSL library under certain
+*    conditions as described in each individual source file and distribute
+*    linked combinations including the program with the OpenSSL library. You
+*    must comply with the GNU Affero General Public License in all respects
+*    for all of the code used other than as permitted herein. If you modify
+*    file(s) with this exception, you may extend this exception to your
+*    version of the file(s), but you are not obligated to do so. If you do not
+*    wish to do so, delete this exception statement from your version. If you
+*    delete this exception statement from all source files in the program,
+*    then also delete it in the license file.
 */
 
-#include "mongo/pch.h"
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kDefault
+
+#include "mongo/platform/basic.h"
 
 #include "mongo/unittest/unittest.h"
 
+#include <boost/shared_ptr.hpp>
 #include <iostream>
 #include <map>
 
+#include "mongo/base/init.h"
+#include "mongo/logger/console_appender.h"
+#include "mongo/logger/log_manager.h"
+#include "mongo/logger/logger.h"
+#include "mongo/logger/message_event_utf8_encoder.h"
+#include "mongo/logger/message_log_domain.h"
 #include "mongo/util/assert_util.h"
 #include "mongo/util/log.h"
+#include "mongo/util/timer.h"
 
 namespace mongo {
 
-    namespace unittest {
+using boost::shared_ptr;
+using std::string;
 
-        namespace {
-            typedef std::map<std::string, Suite*> SuiteMap;
+namespace unittest {
 
-            inline SuiteMap& _allSuites() {
-                static SuiteMap allSuites;
-                return allSuites;
-            }
+namespace {
+logger::MessageLogDomain* unittestOutput = logger::globalLogManager()->getNamedDomain("unittest");
 
-        }  // namespace
+typedef std::map<std::string, boost::shared_ptr<Suite>> SuiteMap;
 
-        class Result {
-        public:
-            Result( const std::string& name ) : _name( name ) , _rc(0) , _tests(0) , _fails(0) , _asserts(0) {}
+inline SuiteMap& _allSuites() {
+    static SuiteMap allSuites;
+    return allSuites;
+}
 
-            std::string toString() {
-                std::stringstream ss;
+}  // namespace
 
-                char result[128];
-                sprintf(result, "%-20s | tests: %4d | fails: %4d | assert calls: %6d\n", _name.c_str(), _tests, _fails, _asserts);
-                ss << result;
+logger::LogstreamBuilder log() {
+    return LogstreamBuilder(unittestOutput, getThreadName(), logger::LogSeverity::Log());
+}
 
-                for ( std::vector<std::string>::iterator i=_messages.begin(); i!=_messages.end(); i++ ) {
-                    ss << "\t" << *i << '\n';
-                }
+MONGO_INITIALIZER_WITH_PREREQUISITES(UnitTestOutput,
+                                     ("GlobalLogManager", "default"))(InitializerContext*) {
+    unittestOutput->attachAppender(logger::MessageLogDomain::AppenderAutoPtr(
+        new logger::ConsoleAppender<logger::MessageLogDomain::Event>(
+            new logger::MessageEventDetailsEncoder)));
+    return Status::OK();
+}
 
-                return ss.str();
-            }
+class Result {
+public:
+    Result(const std::string& name)
+        : _name(name), _rc(0), _tests(0), _fails(), _asserts(0), _millis(0) {}
 
-            int rc() {
-                return _rc;
-            }
+    std::string toString() {
+        std::stringstream ss;
 
-            string _name;
+        char result[128];
+        sprintf(result,
+                "%-30s | tests: %4d | fails: %4d | assert calls: %10d | time secs: %6.3f\n",
+                _name.c_str(),
+                _tests,
+                static_cast<int>(_fails.size()),
+                _asserts,
+                _millis / 1000.0);
+        ss << result;
 
-            int _rc;
-            int _tests;
-            int _fails;
-            int _asserts;
-            std::vector<std::string> _messages;
-
-            static Result * cur;
-        };
-
-        Result* Result::cur = 0;
-
-        Test::Test() {}
-        Test::~Test() {}
-
-        void Test::run() {
-            setUp();
-
-            // An uncaught exception does not prevent the tear down from running. But
-            // such an event still constitutes an error. To test this behavior we use a
-            // special exception here that when thrown does trigger the tear down but is
-            // not considered an error.
-            try {
-                _doTest();
-            }
-            catch (FixtureExceptionForTesting&) {
-                tearDown();
-                return;
-            }
-            catch (TestAssertionFailureException&) {
-                tearDown();
-                throw;
-            }
-
-            tearDown();
+        for (std::vector<std::string>::iterator i = _messages.begin(); i != _messages.end(); i++) {
+            ss << "\t" << *i << '\n';
         }
 
-        void Test::setUp() {}
-        void Test::tearDown() {}
+        return ss.str();
+    }
 
-        Suite::Suite( const std::string& name ) : _name( name ) {
-            registerSuite( name , this );
+    int rc() {
+        return _rc;
+    }
+
+    string _name;
+
+    int _rc;
+    int _tests;
+    std::vector<std::string> _fails;
+    int _asserts;
+    int _millis;
+    std::vector<std::string> _messages;
+
+    static Result* cur;
+};
+
+Result* Result::cur = 0;
+
+Test::Test() : _isCapturingLogMessages(false) {}
+
+Test::~Test() {
+    if (_isCapturingLogMessages) {
+        stopCapturingLogMessages();
+    }
+}
+
+void Test::run() {
+    setUp();
+
+    // An uncaught exception does not prevent the tear down from running. But
+    // such an event still constitutes an error. To test this behavior we use a
+    // special exception here that when thrown does trigger the tear down but is
+    // not considered an error.
+    try {
+        _doTest();
+    } catch (FixtureExceptionForTesting&) {
+        tearDown();
+        return;
+    } catch (TestAssertionFailureException&) {
+        tearDown();
+        throw;
+    }
+
+    tearDown();
+}
+
+void Test::setUp() {}
+void Test::tearDown() {}
+
+namespace {
+class StringVectorAppender : public logger::MessageLogDomain::EventAppender {
+public:
+    explicit StringVectorAppender(std::vector<std::string>* lines) : _lines(lines) {}
+    virtual ~StringVectorAppender() {}
+    virtual Status append(const logger::MessageLogDomain::Event& event) {
+        std::ostringstream _os;
+        if (!_encoder.encode(event, _os)) {
+            return Status(ErrorCodes::LogWriteFailed, "Failed to append to LogTestAppender.");
+        }
+        _lines->push_back(_os.str());
+        return Status::OK();
+    }
+
+private:
+    logger::MessageEventDetailsEncoder _encoder;
+    std::vector<std::string>* _lines;
+};
+}  // namespace
+
+void Test::startCapturingLogMessages() {
+    invariant(!_isCapturingLogMessages);
+    _capturedLogMessages.clear();
+    _captureAppenderHandle = logger::globalLogDomain()->attachAppender(
+        logger::MessageLogDomain::AppenderAutoPtr(new StringVectorAppender(&_capturedLogMessages)));
+    _isCapturingLogMessages = true;
+}
+
+void Test::stopCapturingLogMessages() {
+    invariant(_isCapturingLogMessages);
+    logger::globalLogDomain()->detachAppender(_captureAppenderHandle);
+    _isCapturingLogMessages = false;
+}
+
+Suite::Suite(const std::string& name) : _name(name) {
+    registerSuite(name, this);
+}
+
+Suite::~Suite() {}
+
+void Suite::add(const std::string& name, const TestFunction& testFn) {
+    _tests.push_back(boost::shared_ptr<TestHolder>(new TestHolder(name, testFn)));
+}
+
+Result* Suite::run(const std::string& filter, int runsPerTest) {
+    LOG(1) << "\t about to setupTests" << std::endl;
+    setupTests();
+    LOG(1) << "\t done setupTests" << std::endl;
+
+    Timer timer;
+    Result* r = new Result(_name);
+    Result::cur = r;
+
+    for (std::vector<boost::shared_ptr<TestHolder>>::iterator i = _tests.begin(); i != _tests.end();
+         i++) {
+        boost::shared_ptr<TestHolder>& tc = *i;
+        if (filter.size() && tc->getName().find(filter) == std::string::npos) {
+            LOG(1) << "\t skipping test: " << tc->getName() << " because doesn't match filter"
+                   << std::endl;
+            continue;
         }
 
-        Suite::~Suite() {}
+        r->_tests++;
 
-        void Suite::add(const std::string& name, const TestFunction& testFn) {
-            _tests.push_back(new TestHolder(name, testFn));
+        bool passes = false;
+
+        onCurrentTestNameChange(tc->getName());
+
+        log() << "\t going to run test: " << tc->getName() << std::endl;
+
+        std::stringstream err;
+        err << tc->getName() << "\t";
+
+        try {
+            for (int x = 0; x < runsPerTest; x++)
+                tc->run();
+            passes = true;
+        } catch (const TestAssertionFailureException& ae) {
+            err << ae.toString();
+        } catch (const std::exception& e) {
+            err << " std::exception: " << e.what() << " in test " << tc->getName();
+        } catch (int x) {
+            err << " caught int " << x << " in test " << tc->getName();
         }
 
-        Result * Suite::run( const std::string& filter, int runsPerTest ) {
+        if (!passes) {
+            std::string s = err.str();
+            log() << "FAIL: " << s << std::endl;
+            r->_fails.push_back(tc->getName());
+            r->_messages.push_back(s);
+        }
+    }
 
-            LOG(1) << "\t about to setupTests" << std::endl;
-            setupTests();
-            LOG(1) << "\t done setupTests" << std::endl;
+    if (!r->_fails.empty())
+        r->_rc = 17;
 
-            Result * r = new Result( _name );
-            Result::cur = r;
+    r->_millis = timer.millis();
 
-            for ( std::vector<TestHolder*>::iterator i=_tests.begin(); i!=_tests.end(); i++ ) {
-                TestHolder* tc = *i;
-                if ( filter.size() && tc->getName().find( filter ) == std::string::npos ) {
-                    LOG(1) << "\t skipping test: " << tc->getName() << " because doesn't match filter" << std::endl;
-                    continue;
-                }
+    onCurrentTestNameChange("");
 
-                r->_tests++;
+    log() << "\t DONE running tests" << std::endl;
 
-                bool passes = false;
+    return r;
+}
 
-                onCurrentTestNameChange( tc->getName() );
+int Suite::run(const std::vector<std::string>& suites, const std::string& filter, int runsPerTest) {
+    if (_allSuites().empty()) {
+        log() << "error: no suites registered.";
+        return EXIT_FAILURE;
+    }
 
-                log() << "\t going to run test: " << tc->getName() << std::endl;
+    for (unsigned int i = 0; i < suites.size(); i++) {
+        if (_allSuites().count(suites[i]) == 0) {
+            log() << "invalid test suite [" << suites[i] << "], use --list to see valid names"
+                  << std::endl;
+            return EXIT_FAILURE;
+        }
+    }
 
-                std::stringstream err;
-                err << tc->getName() << "\t";
+    std::vector<std::string> torun(suites);
 
-                try {
-                    for ( int x=0; x<runsPerTest; x++ )
-                        tc->run();
-                    passes = true;
-                }
-                catch ( const TestAssertionFailureException& ae ) {
-                    err << ae.toString();
-                }
-                catch ( const std::exception& e ) {
-                    err << " std::exception: " << e.what() << " in test " << tc->getName();
-                }
-                catch ( int x ) {
-                    err << " caught int " << x << " in test " << tc->getName();
-                }
+    if (torun.empty()) {
+        for (SuiteMap::const_iterator i = _allSuites().begin(); i != _allSuites().end(); ++i) {
+            torun.push_back(i->first);
+        }
+    }
 
-                if ( ! passes ) {
-                    std::string s = err.str();
-                    log() << "FAIL: " << s << std::endl;
-                    r->_fails++;
-                    r->_messages.push_back( s );
-                }
+    std::vector<Result*> results;
+
+    for (std::vector<std::string>::iterator i = torun.begin(); i != torun.end(); i++) {
+        std::string name = *i;
+        boost::shared_ptr<Suite>& s = _allSuites()[name];
+        fassert(16145, s != NULL);
+
+        log() << "going to run suite: " << name << std::endl;
+        results.push_back(s->run(filter, runsPerTest));
+    }
+
+    log() << "**************************************************" << std::endl;
+
+    int rc = 0;
+
+    int tests = 0;
+    int asserts = 0;
+    int millis = 0;
+
+    Result totals("TOTALS");
+    std::vector<std::string> failedSuites;
+
+    Result::cur = NULL;
+    for (std::vector<Result*>::iterator i = results.begin(); i != results.end(); i++) {
+        Result* r = *i;
+        log() << r->toString();
+        if (abs(r->rc()) > abs(rc))
+            rc = r->rc();
+
+        tests += r->_tests;
+        if (!r->_fails.empty()) {
+            failedSuites.push_back(r->toString());
+            for (std::vector<std::string>::const_iterator j = r->_fails.begin();
+                 j != r->_fails.end();
+                 j++) {
+                const std::string& s = (*j);
+                totals._fails.push_back(r->_name + "/" + s);
             }
-
-            if ( r->_fails )
-                r->_rc = 17;
-
-
-            onCurrentTestNameChange( "" );
-
-            log() << "\t DONE running tests" << std::endl;
-
-            return r;
         }
+        asserts += r->_asserts;
+        millis += r->_millis;
 
-        int Suite::run( const std::vector<std::string>& suites , const std::string& filter , int runsPerTest ) {
+        delete r;
+    }
 
-            if (_allSuites().empty()) {
-                log() << "error: no suites registered.";
-                return EXIT_FAILURE;
-            }
+    totals._tests = tests;
+    totals._asserts = asserts;
+    totals._millis = millis;
 
-            for ( unsigned int i = 0; i < suites.size(); i++ ) {
-                if ( _allSuites().count( suites[i] ) == 0 ) {
-                    log() << "invalid test suite [" << suites[i] << "], use --list to see valid names" << std::endl;
-                    return EXIT_FAILURE;
-                }
-            }
+    log() << totals.toString();  // includes endl
 
-            std::vector<std::string> torun(suites);
-
-            if ( torun.empty() ) {
-                for ( SuiteMap::const_iterator i = _allSuites().begin();
-                      i !=_allSuites().end(); ++i ) {
-
-                    torun.push_back( i->first );
-                }
-            }
-
-            std::vector<Result*> results;
-
-            for ( std::vector<std::string>::iterator i=torun.begin(); i!=torun.end(); i++ ) {
-                std::string name = *i;
-                Suite* s = _allSuites()[name];
-                fassert( 16145,  s );
-
-                log() << "going to run suite: " << name << std::endl;
-                results.push_back( s->run( filter, runsPerTest ) );
-            }
-
-            log() << "**************************************************" << std::endl;
-
-            int rc = 0;
-
-            int tests = 0;
-            int fails = 0;
-            int asserts = 0;
-
-            for ( std::vector<Result*>::iterator i=results.begin(); i!=results.end(); i++ ) {
-                Result* r = *i;
-                log() << r->toString();
-                if ( abs( r->rc() ) > abs( rc ) )
-                    rc = r->rc();
-
-                tests += r->_tests;
-                fails += r->_fails;
-                asserts += r->_asserts;
-            }
-
-            Result totals ("TOTALS");
-            totals._tests = tests;
-            totals._fails = fails;
-            totals._asserts = asserts;
-
-            log() << totals.toString(); // includes endl
-
-            return rc;
+    // summary
+    if (!totals._fails.empty()) {
+        log() << "Failing tests:" << std::endl;
+        for (std::vector<std::string>::const_iterator i = totals._fails.begin();
+             i != totals._fails.end();
+             i++) {
+            const std::string& s = (*i);
+            log() << "\t " << s << " Failed";
         }
+        log() << "FAILURE - " << totals._fails.size() << " tests in " << failedSuites.size()
+              << " suites failed";
+    } else {
+        log() << "SUCCESS - All tests in all suites passed";
+    }
 
-        void Suite::registerSuite( const std::string& name , Suite* s ) {
-            Suite*& m = _allSuites()[name];
-            fassert( 10162, ! m );
-            m = s;
-        }
+    return rc;
+}
 
-        Suite* Suite::getSuite(const std::string& name) {
-            Suite* result = _allSuites()[name];
-            if (!result)
-                result = new Suite(name);  // Suites are self-registering.
-            return result;
-        }
+void Suite::registerSuite(const std::string& name, Suite* s) {
+    boost::shared_ptr<Suite>& m = _allSuites()[name];
+    fassert(10162, !m);
+    m.reset(s);
+}
 
-        void Suite::setupTests() {}
+Suite* Suite::getSuite(const std::string& name) {
+    boost::shared_ptr<Suite>& result = _allSuites()[name];
+    if (!result) {
+        // Suites are self-registering.
+        new Suite(name);
+    }
+    invariant(result);
+    return result.get();
+}
 
-        TestAssertionFailureDetails::TestAssertionFailureDetails(
-                const std::string& theFile,
-                unsigned theLine,
-                const std::string& theMessage )
-            : file( theFile ), line( theLine ), message( theMessage ) {
-        }
+void Suite::setupTests() {}
 
-        TestAssertionFailureException::TestAssertionFailureException(
-                const std::string& theFile,
-                unsigned theLine,
-                const std::string& theFailingExpression )
-            : _details( new TestAssertionFailureDetails( theFile, theLine, theFailingExpression ) ) {
-        }
+TestAssertionFailureException::TestAssertionFailureException(
+    const std::string& theFile, unsigned theLine, const std::string& theFailingExpression)
+    : _file(theFile), _line(theLine), _message(theFailingExpression) {}
 
-        std::string TestAssertionFailureException::toString() const {
-            std::ostringstream os;
-            os << getMessage() << " @" << getFile() << ":" << getLine();
-            return os.str();
-        }
+std::string TestAssertionFailureException::toString() const {
+    std::ostringstream os;
+    os << getMessage() << " @" << getFile() << ":" << getLine();
+    return os.str();
+}
 
-        TestAssertion::TestAssertion( const std::string& file, unsigned line )
-            : _file( file ), _line( line ) {
+TestAssertionFailure::TestAssertionFailure(const std::string& file,
+                                           unsigned line,
+                                           const std::string& message)
+    : _exception(file, line, message), _enabled(false) {}
 
-            ++Result::cur->_asserts;
-        }
+TestAssertionFailure::TestAssertionFailure(const TestAssertionFailure& other)
+    : _exception(other._exception), _enabled(false) {
+    invariant(!other._enabled);
+}
 
-        TestAssertion::~TestAssertion() {}
+TestAssertionFailure& TestAssertionFailure::operator=(const TestAssertionFailure& other) {
+    invariant(!_enabled);
+    invariant(!other._enabled);
+    _exception = other._exception;
+    return *this;
+}
 
-        void TestAssertion::fail( const std::string& message ) const {
-            throw TestAssertionFailureException( _file, _line, message );
-        }
+TestAssertionFailure::~TestAssertionFailure()
+#if __cplusplus >= 201103
+    noexcept(false)
+#endif
+{
+    if (!_enabled) {
+        invariant(_stream.str().empty());
+        return;
+    }
+    if (!_stream.str().empty()) {
+        _exception.setMessage(_exception.getMessage() + " " + _stream.str());
+    }
+    throw _exception;
+}
 
-        ComparisonAssertion::ComparisonAssertion( const std::string& aexp, const std::string& bexp,
-                                                  const std::string& file, unsigned line )
-            : TestAssertion( file, line ), _aexp( aexp ), _bexp( bexp ) {}
+std::ostream& TestAssertionFailure::stream() {
+    invariant(!_enabled);
+    _enabled = true;
+    return _stream;
+}
 
-        std::vector<std::string> getAllSuiteNames() {
-            std::vector<std::string> result;
-            for (SuiteMap::const_iterator i = _allSuites().begin(); i != _allSuites().end(); ++i) {
-                    result.push_back(i->first);
-            }
-            return result;
-        }
+std::vector<std::string> getAllSuiteNames() {
+    std::vector<std::string> result;
+    for (SuiteMap::const_iterator i = _allSuites().begin(); i != _allSuites().end(); ++i) {
+        result.push_back(i->first);
+    }
+    return result;
+}
 
-    }  // namespace unittest
+}  // namespace unittest
 }  // namespace mongo

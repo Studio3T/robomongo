@@ -2,17 +2,29 @@
 
 /*    Copyright 2009 10gen Inc.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *    This program is free software: you can redistribute it and/or  modify
+ *    it under the terms of the GNU Affero General Public License, version 3,
+ *    as published by the Free Software Foundation.
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    As a special exception, the copyright holders give permission to link the
+ *    code of portions of this program with the OpenSSL library under certain
+ *    conditions as described in each individual source file and distribute
+ *    linked combinations including the program with the OpenSSL library. You
+ *    must comply with the GNU Affero General Public License in all respects
+ *    for all of the code used other than as permitted herein. If you modify
+ *    file(s) with this exception, you may extend this exception to your
+ *    version of the file(s), but you are not obligated to do so. If you do not
+ *    wish to do so, delete this exception statement from your version. If you
+ *    delete this exception statement from all source files in the program,
+ *    then also delete it in the license file.
  */
 
 /*
@@ -26,76 +38,77 @@
 
 #pragma once
 
-#include "../util/optime.h"
-#include "../util/time_support.h"
+#include "mongo/base/data_view.h"
+#include "mongo/bson/optime.h"
+#include "mongo/util/time_support.h"
 
 namespace mongo {
 
-    /**
-    Timestamps are a special BSON datatype that is used internally for replication.
-    Append a timestamp element to the object being ebuilt.
-    @param time - in millis (but stored in seconds)
-    */
-    inline BSONObjBuilder& BSONObjBuilder::appendTimestamp( const StringData& fieldName , unsigned long long time , unsigned int inc ) {
-        OpTime t( (unsigned) (time / 1000) , inc );
-        appendTimestamp( fieldName , t.asDate() );
-        return *this;
-    }
+/**
+Timestamps are a special BSON datatype that is used internally for replication.
+Append a timestamp element to the object being ebuilt.
+@param time - in millis (but stored in seconds)
+*/
+inline BSONObjBuilder& BSONObjBuilder::appendTimestamp(const StringData& fieldName,
+                                                       unsigned long long time,
+                                                       unsigned int inc) {
+    OpTime t((unsigned)(time / 1000), inc);
+    appendTimestamp(fieldName, t.asDate());
+    return *this;
+}
 
-    inline BSONObjBuilder& BSONObjBuilder::append(const StringData& fieldName, OpTime optime) {
-        appendTimestamp(fieldName, optime.asDate());
-        return *this;
-    }
+inline BSONObjBuilder& BSONObjBuilder::append(const StringData& fieldName, OpTime optime) {
+    appendTimestamp(fieldName, optime.asDate());
+    return *this;
+}
 
-    inline OpTime BSONElement::_opTime() const {
-        if( type() == mongo::Date || type() == Timestamp )
-            return OpTime( *reinterpret_cast< const unsigned long long* >( value() ) );
-        return OpTime();
-    }
+inline OpTime BSONElement::_opTime() const {
+    if (type() == mongo::Date || type() == Timestamp)
+        return OpTime(ConstDataView(value()).readLE<unsigned long long>());
+    return OpTime();
+}
 
-    inline std::string BSONElement::_asCode() const {
-        switch( type() ) {
-        case mongo::String:
-        case Code:
-            return std::string(valuestr(), valuestrsize()-1);
-        case CodeWScope:
-            return std::string(codeWScopeCode(), *(int*)(valuestr())-1);
-        default:
-            log() << "can't convert type: " << (int)(type()) << " to code" << std::endl;
-        }
-        uassert( 10062 ,  "not code" , 0 );
-        return "";
-    }
+inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const DateNowLabeler& id) {
+    _builder->appendDate(_fieldName, jsTime());
+    _fieldName = StringData();
+    return *_builder;
+}
 
-    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const DateNowLabeler& id) {
-        _builder->appendDate(_fieldName, jsTime());
-        _fieldName = StringData();
-        return *_builder;
-    }
+inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const NullLabeler& id) {
+    _builder->appendNull(_fieldName);
+    _fieldName = StringData();
+    return *_builder;
+}
 
-    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const NullLabeler& id) {
-        _builder->appendNull(_fieldName);
-        _fieldName = StringData();
-        return *_builder;
-    }
-
-    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const UndefinedLabeler& id) {
-        _builder->appendUndefined(_fieldName);
-        _fieldName = StringData();
-        return *_builder;
-    }
+inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const UndefinedLabeler& id) {
+    _builder->appendUndefined(_fieldName);
+    _fieldName = StringData();
+    return *_builder;
+}
 
 
-    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const MinKeyLabeler& id) {
-        _builder->appendMinKey(_fieldName);
-        _fieldName = StringData();
-        return *_builder;
-    }
+inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const MinKeyLabeler& id) {
+    _builder->appendMinKey(_fieldName);
+    _fieldName = StringData();
+    return *_builder;
+}
 
-    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const MaxKeyLabeler& id) {
-        _builder->appendMaxKey(_fieldName);
-        _fieldName = StringData();
-        return *_builder;
-    }
+inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const MaxKeyLabeler& id) {
+    _builder->appendMaxKey(_fieldName);
+    _fieldName = StringData();
+    return *_builder;
+}
 
+template <class T>
+inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(T value) {
+    _builder->append(_fieldName, value);
+    _fieldName = StringData();
+    return *_builder;
+}
+
+template <class T>
+BSONObjBuilder& Labeler::operator<<(T value) {
+    s_->subobj()->append(l_.l_, value);
+    return *s_->_builder;
+}
 }

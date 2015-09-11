@@ -12,113 +12,161 @@
  *
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    As a special exception, the copyright holders give permission to link the
+ *    code of portions of this program with the OpenSSL library under certain
+ *    conditions as described in each individual source file and distribute
+ *    linked combinations including the program with the OpenSSL library. You
+ *    must comply with the GNU Affero General Public License in all respects for
+ *    all of the code used other than as permitted herein. If you modify file(s)
+ *    with this exception, you may extend this exception to your version of the
+ *    file(s), but you are not obligated to do so. If you do not wish to do so,
+ *    delete this exception statement from your version. If you delete this
+ *    exception statement from all source files in the program, then also delete
+ *    it in the license file.
  */
+
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kIndex
+
+#include "mongo/platform/basic.h"
 
 #include "mongo/db/index_rebuilder.h"
 
+#include <list>
+#include <string>
+
+#include "mongo/db/auth/authorization_session.h"
+#include "mongo/db/auth/user_name.h"
+#include "mongo/db/catalog/collection.h"
+#include "mongo/db/catalog/database.h"
+#include "mongo/db/catalog/database_catalog_entry.h"
+#include "mongo/db/catalog/index_create.h"
+#include "mongo/db/client.h"
+#include "mongo/db/global_environment_experiment.h"
 #include "mongo/db/instance.h"
-#include "mongo/db/pdfile.h"
+#include "mongo/db/operation_context_impl.h"
+#include "mongo/db/storage/storage_engine.h"
+#include "mongo/util/log.h"
+#include "mongo/util/scopeguard.h"
 
 namespace mongo {
 
-    IndexRebuilder indexRebuilder;
+using std::endl;
+using std::string;
+using std::vector;
 
-    IndexRebuilder::IndexRebuilder() {}
+namespace {
+void checkNS(OperationContext* txn, const std::list<std::string>& nsToCheck) {
+    bool firstTime = true;
+    for (std::list<std::string>::const_iterator it = nsToCheck.begin(); it != nsToCheck.end();
+         ++it) {
+        string ns = *it;
 
-    std::string IndexRebuilder::name() const {
-        return "IndexRebuilder";
-    }
+        LOG(3) << "IndexRebuilder::checkNS: " << ns;
 
-    void IndexRebuilder::run() {
-        Client::initThread(name().c_str());
-        Lock::GlobalWrite lk;
-        Client::GodScope gs;
-        std::vector<std::string> dbNames;
-        getDatabaseNames(dbNames);
+        // This write lock is held throughout the index building process
+        // for this namespace.
+        ScopedTransaction transaction(txn, MODE_IX);
+        Lock::DBLock lk(txn->lockState(), nsToDatabaseSubstring(ns), MODE_X);
+        Client::Context ctx(txn, ns);
 
-        for (std::vector<std::string>::const_iterator it = dbNames.begin();
-             it < dbNames.end();
-             it++) {
-            checkDB(*it);
+        Collection* collection = ctx.db()->getCollection(ns);
+        if (collection == NULL)
+            continue;
+
+        IndexCatalog* indexCatalog = collection->getIndexCatalog();
+
+        if (collection->ns().isOplog() && indexCatalog->numIndexesTotal(txn) > 0) {
+            warning() << ns << " had illegal indexes, removing";
+            indexCatalog->dropAllIndexes(txn, true);
+            continue;
         }
 
-        cc().shutdown();
-    }
 
-    void IndexRebuilder::checkDB(const std::string& dbName) {
-        const std::string systemNS = dbName + ".system.namespaces";
-        DBDirectClient cli;
-        scoped_ptr<DBClientCursor> cursor(cli.query(systemNS, Query()));
+        MultiIndexBlock indexer(txn, collection);
 
-        // This depends on system.namespaces not changing while we iterate
-        while (cursor->more()) {
-            BSONObj nsDoc = cursor->next();
-            const char* ns = nsDoc["name"].valuestrsafe();
+        {
+            WriteUnitOfWork wunit(txn);
+            vector<BSONObj> indexesToBuild = indexCatalog->getAndClearUnfinishedIndexes(txn);
 
-            Client::Context ctx(ns, dbpath, false);
-            NamespaceDetails* nsd = nsdetails(ns);
+            // The indexes have now been removed from system.indexes, so the only record is
+            // in-memory. If there is a journal commit between now and when insert() rewrites
+            // the entry and the db crashes before the new system.indexes entry is journalled,
+            // the index will be lost forever. Thus, we must stay in the same WriteUnitOfWork
+            // to ensure that no journaling will happen between now and the entry being
+            // re-written in MultiIndexBlock::init(). The actual index building is done outside
+            // of this WUOW.
 
-            if (!nsd || !nsd->indexBuildsInProgress) {
+            if (indexesToBuild.empty()) {
                 continue;
             }
 
-            log() << "Found interrupted index build on " << ns << endl;
+            log() << "found " << indexesToBuild.size() << " interrupted index build(s) on " << ns;
 
-            // If the indexBuildRetry flag isn't set, just clear the inProg flag
-            if (!cmdLine.indexBuildRetry) {
-                // If we crash between unsetting the inProg flag and cleaning up the index, the
-                // index space will be lost.
-                int inProg = nsd->indexBuildsInProgress;
-                getDur().writingInt(nsd->indexBuildsInProgress) = 0;
+            if (firstTime) {
+                log() << "note: restart the server with --noIndexBuildRetry "
+                      << "to skip index rebuilds";
+                firstTime = false;
+            }
 
-                for (int i = 0; i < inProg; i++) {
-                    nsd->idx(nsd->nIndexes+i).kill_idx();
-                }
-
+            if (!serverGlobalParams.indexBuildRetry) {
+                log() << "  not rebuilding interrupted indexes";
+                wunit.commit();
                 continue;
             }
 
-            // We go from right to left building these indexes, so that indexBuildInProgress-- has
-            // the correct effect of "popping" an index off the list.
-            while (nsd->indexBuildsInProgress > 0) {
-                retryIndexBuild(dbName, nsd, nsd->nIndexes+nsd->indexBuildsInProgress-1);
-            }
+            uassertStatusOK(indexer.init(indexesToBuild));
+
+            wunit.commit();
         }
-    }
-
-    void IndexRebuilder::retryIndexBuild(const std::string& dbName,
-                                         NamespaceDetails* nsd,
-                                         const int index) {
-        // details.info is always a valid system.indexes entry because DataFileMgr::insert journals
-        // creating the index doc and then insert_makeIndex durably assigns its DiskLoc to info.
-        // indexBuildsInProgress is set after that, so if it is set, info must be set.
-        IndexDetails& details = nsd->idx(index);
-
-        // First, clean up the in progress index build.  Save the system.indexes entry so that we
-        // can add it again afterwards.
-        BSONObj indexObj = details.info.obj().getOwned();
-
-        // Clean up the in-progress index build
-        getDur().writingInt(nsd->indexBuildsInProgress) -= 1;
-        details.kill_idx();
-        // The index has now been removed from system.indexes, so the only record of it is in-
-        // memory. If there is a journal commit between now and when insert() rewrites the entry and
-        // the db crashes before the new system.indexes entry is journalled, the index will be lost
-        // forever.  Thus, we're assuming no journaling will happen between now and the entry being
-        // re-written.
-
-        // We need to force a foreground index build to prevent replication from replaying an
-        // incompatible op (like a drop) during a yield.
-        // TODO: once commands can interrupt/wait for index builds, this can be removed.
-        indexObj = indexObj.removeField("background");
 
         try {
-            const std::string ns = dbName + ".system.indexes";
-            theDataFileMgr.insert(ns.c_str(), indexObj.objdata(), indexObj.objsize(), false, true);
-        }
-        catch (const DBException& e) {
-            log() << "Rebuilding index failed: " << e.what() << " (" << e.getCode() << ")"
-                  << endl;
+            uassertStatusOK(indexer.insertAllDocumentsInCollection());
+
+            WriteUnitOfWork wunit(txn);
+            indexer.commit();
+            wunit.commit();
+        } catch (const DBException& e) {
+            error() << "Index rebuilding did not complete: " << e.toString();
+            log() << "note: restart the server with --noIndexBuildRetry to skip index rebuilds";
+            // If anything went wrong, leave the indexes partially built so that we pick them up
+            // again on restart.
+            indexer.abortWithoutCleanup();
+            fassertFailedNoTrace(26100);
+        } catch (...) {
+            // If anything went wrong, leave the indexes partially built so that we pick them up
+            // again on restart.
+            indexer.abortWithoutCleanup();
+            throw;
         }
     }
+}
+}  // namespace
+
+void restartInProgressIndexesFromLastShutdown(OperationContext* txn) {
+    txn->getClient()->getAuthorizationSession()->grantInternalAuthorization();
+
+    std::vector<std::string> dbNames;
+
+    StorageEngine* storageEngine = getGlobalEnvironment()->getGlobalStorageEngine();
+    storageEngine->listDatabases(&dbNames);
+
+    try {
+        std::list<std::string> collNames;
+        for (std::vector<std::string>::const_iterator dbName = dbNames.begin();
+             dbName < dbNames.end();
+             ++dbName) {
+            ScopedTransaction scopedXact(txn, MODE_IS);
+            AutoGetDb autoDb(txn, *dbName, MODE_S);
+
+            Database* db = autoDb.getDb();
+            db->getDatabaseCatalogEntry()->getCollectionNamespaces(&collNames);
+        }
+        checkNS(txn, collNames);
+    } catch (const DBException& e) {
+        error() << "Index verification did not complete: " << e.toString();
+        fassertFailedNoTrace(18643);
+    }
+    LOG(1) << "checking complete" << endl;
+}
 }

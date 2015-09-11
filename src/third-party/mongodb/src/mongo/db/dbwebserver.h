@@ -15,71 +15,136 @@
 *
 *    You should have received a copy of the GNU Affero General Public License
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*    As a special exception, the copyright holders give permission to link the
+*    code of portions of this program with the OpenSSL library under certain
+*    conditions as described in each individual source file and distribute
+*    linked combinations including the program with the OpenSSL library. You
+*    must comply with the GNU Affero General Public License in all respects for
+*    all of the code used other than as permitted herein. If you modify file(s)
+*    with this exception, you may extend this exception to your version of the
+*    file(s), but you are not obligated to do so. If you do not wish to do so,
+*    delete this exception statement from your version. If you delete this
+*    exception statement from all source files in the program, then also delete
+*    it in the license file.
 */
 
-#include "../util/admin_access.h"
+#pragma once
+
+#include <boost/shared_ptr.hpp>
+#include <string>
+#include <vector>
+
+#include "mongo/base/disallow_copying.h"
+#include "mongo/util/net/miniwebserver.h"
+#include "mongo/util/net/sock.h"
 
 namespace mongo {
 
-    class Prioritizable {
-    public:
-        Prioritizable( double p ) : _priority(p) {}
-        double priority() const { return _priority; }
-    private:
-        double _priority;
-    };
+class AdminAccess;
+class DbWebServer;
+class OperationContext;
 
-    class DbWebHandler : public Prioritizable {
-    public:
-        DbWebHandler( const string& name , double priority , bool requiresREST );
-        virtual ~DbWebHandler() {}
 
-        virtual bool handles( const string& url ) const { return url == _defaultUrl; }
+class Prioritizable {
+public:
+    Prioritizable(double p) : _priority(p) {}
+    double priority() const {
+        return _priority;
+    }
 
-        virtual bool requiresREST( const string& url ) const { return _requiresREST; }
+private:
+    double _priority;
+};
 
-        virtual void handle( const char *rq, // the full request
-                             const std::string& url,
-                             BSONObj params,
-                             // set these and return them:
-                             string& responseMsg,
-                             int& responseCode,
-                             vector<string>& headers, // if completely empty, content-type: text/html will be added
-                             const SockAddr &from
-                           ) = 0;
+class DbWebHandler : public Prioritizable {
+    MONGO_DISALLOW_COPYING(DbWebHandler);
 
-        string toString() const { return _toString; }
-        static DbWebHandler * findHandler( const string& url );
+public:
+    DbWebHandler(const std::string& name, double priority, bool requiresREST);
+    virtual ~DbWebHandler() {}
 
-    private:
-        string _name;
-        bool _requiresREST;
+    virtual bool handles(const std::string& url) const {
+        return url == _defaultUrl;
+    }
 
-        string _defaultUrl;
-        string _toString;
+    virtual bool requiresREST(const std::string& url) const {
+        return _requiresREST;
+    }
 
-        static vector<DbWebHandler*> * _handlers;
-    };
+    virtual void handle(OperationContext* txn,
+                        const char* rq,  // the full request
+                        const std::string& url,
+                        BSONObj params,
+                        // set these and return them:
+                        std::string& responseMsg,
+                        int& responseCode,
+                        std::vector<std::string>&
+                            headers,  // if completely empty, content-type: text/html will be added
+                        const SockAddr& from) = 0;
 
-    class WebStatusPlugin : public Prioritizable {
-    public:
-        WebStatusPlugin( const string& secionName , double priority , const string& subheader = "" );
-        virtual ~WebStatusPlugin() {}
+    std::string toString() const {
+        return _toString;
+    }
+    static DbWebHandler* findHandler(const std::string& url);
 
-        virtual void run( stringstream& ss ) = 0;
-        /** called when web server stats up */
-        virtual void init() = 0;
+private:
+    std::string _name;
+    bool _requiresREST;
 
-        static void initAll();
-        static void runAll( stringstream& ss );
-    private:
-        string _name;
-        string _subHeading;
-        static vector<WebStatusPlugin*> * _plugins;
+    std::string _defaultUrl;
+    std::string _toString;
 
-    };
+    static std::vector<DbWebHandler*>* _handlers;
+};
 
-    void webServerThread( const AdminAccess* admins );
-    string prettyHostName();
 
+class WebStatusPlugin : public Prioritizable {
+public:
+    WebStatusPlugin(const std::string& secionName,
+                    double priority,
+                    const std::string& subheader = "");
+    virtual ~WebStatusPlugin() {}
+
+    virtual void run(OperationContext* txn, std::stringstream& ss) = 0;
+    /** called when web server stats up */
+    virtual void init() = 0;
+
+    static void initAll();
+    static void runAll(OperationContext* txn, std::stringstream& ss);
+
+private:
+    std::string _name;
+    std::string _subHeading;
+    static std::vector<WebStatusPlugin*>* _plugins;
+};
+
+class DbWebServer : public MiniWebServer {
+public:
+    DbWebServer(const std::string& ip, int port, AdminAccess* webUsers);
+
+private:
+    virtual void doRequest(const char* rq,
+                           std::string url,
+                           std::string& responseMsg,
+                           int& responseCode,
+                           std::vector<std::string>& headers,
+                           const SockAddr& from);
+
+    bool _allowed(OperationContext* txn,
+                  const char* rq,
+                  std::vector<std::string>& headers,
+                  const SockAddr& from);
+
+    void _rejectREST(std::string& responseMsg,
+                     int& responseCode,
+                     std::vector<std::string>& headers);
+
+
+    const boost::scoped_ptr<AdminAccess> _webUsers;
+};
+
+void webServerListenThread(boost::shared_ptr<DbWebServer> dbWebServer);
+
+std::string prettyHostName();
 };

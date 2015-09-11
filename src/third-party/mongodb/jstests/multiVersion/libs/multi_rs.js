@@ -31,16 +31,34 @@ ReplSetTest.prototype.upgradeSet = function( binVersion, options ){
         
         var prevPrimaryId = this.getNodeId( primary )
         
-        this.upgradeNode( node, binVersion, true )
+        if( options.custom ){
+            options.custom.binVersion = binVersion;
+
+            for( var nodeName in this.nodeOptions ){
+                this.nodeOptions[ nodeName ] = options.custom
+            }
+        }
+
+        this.upgradeNode( node, binVersion, true, options )
         
         if( noDowntimePossible )
             assert.eq( this.getNodeId( primary ), prevPrimaryId )
     }
 }
 
-ReplSetTest.prototype.upgradeNode = function( node, binVersion, waitForState ){
-    
-    var node = this.restart( node, { binVersion : binVersion } )
+ReplSetTest.prototype.upgradeNode = function( node, binVersion, waitForState, options ){
+
+    var node;
+    if (options.custom) {
+        node = this.restart( node, options.custom );
+    } else {
+        node = this.restart( node, { binVersion : binVersion } );
+    }
+
+    if (options.auth) {
+        // Hardcode admin database, because otherwise can't get repl set status
+        node.getDB("admin").auth(options.auth);
+    }
     
     // By default, wait for primary or secondary state
     if( waitForState == undefined ) waitForState = true
@@ -87,4 +105,18 @@ ReplSetTest.prototype.reconnect = function( node ){
     }
     
     return this.nodes[ nodeId ]
+}
+
+ReplSetTest.prototype.conf = function () {
+    var admin = this.getPrimary().getDB('admin');
+
+    var resp = admin.runCommand({replSetGetConfig:1});
+
+    if (resp.ok && !(resp.errmsg) && resp.config)
+        return resp.config;
+
+    else if (resp.errmsg && resp.errmsg.startsWith( "no such cmd" ))
+        return admin.getSisterDB("local").system.replset.findOne();
+
+    throw new Error("Could not retrieve replica set config: " + tojson(resp));
 }

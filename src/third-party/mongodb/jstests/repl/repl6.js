@@ -4,7 +4,7 @@ var baseName = "jstests_repl6test";
 
 soonCount = function( m, count ) {
     assert.soon( function() { 
-                return m.getDB( baseName ).a.find().count() == count; 
+                return m.getDB( baseName ).a.find().itcount() == count; 
                 }, "expected count: " + count + " from : " + m );    
 }
 
@@ -49,6 +49,10 @@ doTest = function( signal ) {
     assert.eq( 1, as.find( { i: 1009 } ).count() );
 
     ms1.stop( true, signal );
+
+    // Need to pause here on Windows, since killing processes does not synchronously close their
+    // open file handles.
+    sleep(5000);
 
     m = ms1.start( true, null, true );
     am = m.getDB( baseName ).a

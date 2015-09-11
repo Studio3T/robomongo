@@ -7,6 +7,9 @@ var st = new ShardingTest({shards : 3,
                            other : {mongosOptions : {verbose : 2},
                                     separateConfig : true}});
 
+// Stop balancer, we're doing our own manual chunk distribution
+st.stopBalancer();
+
 var mongos = st.s;
 var config = mongos.getDB("config");
 var admin = mongos.getDB("admin");
@@ -50,9 +53,7 @@ var inserts = [{_id : -1},
                {_id : 1000}];
 
 collOneShard.insert(inserts);
-collAllShards.insert(inserts);
-
-assert.eq(null, collOneShard.getDB().getLastError());
+assert.writeOK(collAllShards.insert(inserts));
 
 var returnPartialFlag = 1 << 7;
 

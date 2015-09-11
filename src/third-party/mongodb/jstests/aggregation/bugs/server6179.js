@@ -12,7 +12,6 @@ d = s.getDB( "test" );
 for( i = 0; i < 100; ++i ) {
     d.data.insert( { _id:i, i:i%10 } )
 }
-d.getLastError();
 
 // Split the data into 3 chunks.
 s.adminCommand( { split:"test.data", middle:{ _id:33 } } );
@@ -25,7 +24,7 @@ s.adminCommand( { movechunk:"test.data", find:{ _id:50 },
 // Check that we get results rather than an error
 result = d.data.aggregate({$group: {_id: '$_id', i: {$first: '$i'}}},
                           {$group: {_id: '$i', avg_id: {$avg: '$_id'}}},
-                          {$sort: {_id: 1}}).result;
+                          {$sort: {_id: 1}}).toArray();
 expected = [
     {
         "_id" : 0,

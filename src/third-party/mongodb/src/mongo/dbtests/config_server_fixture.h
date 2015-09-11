@@ -12,86 +12,123 @@
  *
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    As a special exception, the copyright holders give permission to link the
+ *    code of portions of this program with the OpenSSL library under certain
+ *    conditions as described in each individual source file and distribute
+ *    linked combinations including the program with the OpenSSL library. You
+ *    must comply with the GNU Affero General Public License in all respects
+ *    for all of the code used other than as permitted herein. If you modify
+ *    file(s) with this exception, you may extend this exception to your
+ *    version of the file(s), but you are not obligated to do so. If you do not
+ *    wish to do so, delete this exception statement from your version. If you
+ *    delete this exception statement from all source files in the program,
+ *    then also delete it in the license file.
  */
 
 #pragma once
 
-#include "mongo/db/instance.h"
 #include "mongo/client/dbclientinterface.h"
+#include "mongo/db/dbdirectclient.h"
+#include "mongo/db/operation_context_impl.h"
+#include "mongo/db/wire_version.h"
 #include "mongo/unittest/unittest.h"
 #include "mongo/util/assert_util.h"
 
 namespace mongo {
 
-    class CustomDirectClient: public DBDirectClient {
-    public:
-        virtual ConnectionString::ConnectionType type() const {
-            return ConnectionString::CUSTOM;
-        }
-    };
+class CustomDirectClient : public DBDirectClient {
+public:
+    CustomDirectClient(OperationContext* txn) : DBDirectClient(txn) {
+        setWireVersions(minWireVersion, maxWireVersion);
+    }
 
-    class CustomConnectHook: public ConnectionString::ConnectionHook {
-    public:
-        virtual DBClientBase* connect(const ConnectionString& connStr,
-                                      string& errmsg,
-                                      double socketTimeout)
-        {
-            // Note - must be new, since it gets owned elsewhere
-            return new CustomDirectClient();
-        }
-    };
+    virtual ConnectionString::ConnectionType type() const {
+        return ConnectionString::CUSTOM;
+    }
+
+    virtual bool recv(Message& m) {
+        // This is tailored to act as a dummy response for write commands.
+
+        BufBuilder bb;
+        bb.skip(sizeof(QueryResult::Value));
+
+        BSONObj cmdResult(BSON("ok" << 1));
+
+        bb.appendBuf(cmdResult.objdata(), cmdResult.objsize());
+
+        QueryResult::View qr = bb.buf();
+        bb.decouple();
+        qr.setResultFlagsToOk();
+        qr.msgdata().setLen(bb.len());
+        qr.msgdata().setOperation(opReply);
+        qr.setCursorId(0);
+        qr.setStartingFrom(0);
+        qr.setNReturned(1);
+        m.setData(qr.view2ptr(), true);
+
+        return true;
+    }
+};
+
+class CustomConnectHook : public ConnectionString::ConnectionHook {
+public:
+    CustomConnectHook(OperationContext* txn) : _txn(txn) {}
+
+    virtual DBClientBase* connect(const ConnectionString& connStr,
+                                  std::string& errmsg,
+                                  double socketTimeout) {
+        // Note - must be new, since it gets owned elsewhere
+        return new CustomDirectClient(_txn);
+    }
+
+private:
+    OperationContext* const _txn;
+};
+
+/**
+ * Fixture for testing complicated operations against a "virtual" config server.
+ *
+ * Use this if your test requires complex commands and writing to many collections,
+ * otherwise a unit test in the mock framework may be a better option.
+ */
+class ConfigServerFixture : public mongo::unittest::Test {
+public:
+    ConfigServerFixture();
 
     /**
-     * Fixture for testing complicated operations against a "virtual" config server.
-     *
-     * Use this if your test requires complex commands and writing to many collections,
-     * otherwise a unit test in the mock framework may be a better option.
+     * Returns a connection std::string to the virtual config server.
      */
-    class ConfigServerFixture: public mongo::unittest::Test {
-    public:
+    ConnectionString configSvr() const {
+        return ConnectionString(HostAndPort("$dummy:10000"));
+    }
 
-        /**
-         * Returns a client connection to the virtual config server.
-         */
-        DBClientBase& client() {
-            return _client;
-        }
+    /**
+     * Clears all data on the server
+     */
+    void clearServer();
 
-        /**
-         * Returns a connection string to the virtual config server.
-         */
-        ConnectionString configSvr() const {
-            return ConnectionString(string("$dummy:10000"));
-        }
+    void clearVersion();
+    void clearShards();
+    void clearDatabases();
+    void clearCollections();
+    void clearChunks();
+    void clearPings();
+    void clearChangelog();
 
-        /**
-         * Clears all data on the server
-         */
-        void clearServer();
+    /**
+     * Dumps the contents of the config server to the log.
+     */
+    void dumpServer();
 
-        void clearVersion();
-        void clearShards();
-        void clearDatabases();
-        void clearCollections();
-        void clearChunks();
-        void clearPings();
-        void clearChangelog();
+protected:
+    virtual void setUp();
 
-        /**
-         * Dumps the contents of the config server to the log.
-         */
-        void dumpServer();
+    virtual void tearDown();
 
-    protected:
 
-        virtual void setUp();
-
-        virtual void tearDown();
-
-    private:
-
-        CustomConnectHook* _connectHook;
-        CustomDirectClient _client;
-    };
-
+    OperationContextImpl _txn;
+    CustomDirectClient _client;
+    CustomConnectHook* _connectHook;
+};
 }

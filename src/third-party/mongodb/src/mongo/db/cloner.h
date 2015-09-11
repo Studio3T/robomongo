@@ -14,124 +14,121 @@
  *
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    As a special exception, the copyright holders give permission to link the
+ *    code of portions of this program with the OpenSSL library under certain
+ *    conditions as described in each individual source file and distribute
+ *    linked combinations including the program with the OpenSSL library. You
+ *    must comply with the GNU Affero General Public License in all respects for
+ *    all of the code used other than as permitted herein. If you modify file(s)
+ *    with this exception, you may extend this exception to your version of the
+ *    file(s), but you are not obligated to do so. If you do not wish to do so,
+ *    delete this exception statement from your version. If you delete this
+ *    exception statement from all source files in the program, then also delete
+ *    it in the license file.
  */
 
 #pragma once
 
-#include "mongo/db/jsobj.h"
-#include "mongo/db/sort_phase_one.h"
+#include "mongo/client/dbclientinterface.h"
+#include "mongo/base/disallow_copying.h"
 
 namespace mongo {
 
-    struct CloneOptions;
-    class IndexSpec;
-    class DBClientBase;
-    class DBClientCursor;
-    class Query;
+struct CloneOptions;
+class DBClientBase;
+class NamespaceString;
+class OperationContext;
 
-    class Cloner: boost::noncopyable {
-    public:
-        Cloner();
-        /**
-         *  slaveOk     - if true it is ok if the source of the data is !ismaster.
-         *  useReplAuth - use the credentials we normally use as a replication slave for the cloning
-         *  snapshot    - use $snapshot mode for copying collections.  note this should not be used
-         *                when it isn't required, as it will be slower.  for example,
-         *                repairDatabase need not use it.
-         */
-        void setConnection( DBClientBase *c ) { _conn.reset( c ); }
 
-        /** copy the entire database */
-        bool go(const char *masterHost, string& errmsg, const string& fromdb, bool logForRepl,
-                bool slaveOk, bool useReplAuth, bool snapshot, bool mayYield,
-                bool mayBeInterrupted, int *errCode = 0);
+class Cloner {
+    MONGO_DISALLOW_COPYING(Cloner);
 
-        bool go(const char *masterHost, const CloneOptions& opts, set<string>& clonedColls,
-                string& errmsg, int *errCode = 0);
+public:
+    Cloner();
 
-        bool go(const char *masterHost, const CloneOptions& opts, string& errmsg, int *errCode = 0);
+    void setConnection(DBClientBase* c) {
+        _conn.reset(c);
+    }
 
-        bool copyCollection(const string& ns, const BSONObj& query, string& errmsg,
-                            bool mayYield, bool mayBeInterrupted, bool copyIndexes = true,
-                            bool logForRepl = true );
-        /**
-         * validate the cloner query was successful
-         * @param cur   Cursor the query was executed on
-         * @param errCode out  Error code encountered during the query
-         */
-        static bool validateQueryResults(const auto_ptr<DBClientCursor>& cur, int32_t* errCode);
+    /** copy the entire database */
+    bool go(OperationContext* txn,
+            const std::string& toDBName,
+            const std::string& masterHost,
+            const CloneOptions& opts,
+            std::set<std::string>* clonedColls,
+            std::string& errmsg,
+            int* errCode = 0);
 
-        /**
-         * @param errmsg out  - Error message (if encountered).
-         * @param slaveOk     - if true it is ok if the source of the data is !ismaster.
-         * @param useReplAuth - use the credentials we normally use as a replication slave for the
-         *                      cloning.
-         * @param snapshot    - use $snapshot mode for copying collections.  note this should not be
-         *                      used when it isn't required, as it will be slower.  for example
-         *                      repairDatabase need not use it.
-         * @param errCode out - If provided, this will be set on error to the server's error code.
-         *                      Currently this will only be set if there is an error in the initial
-         *                      system.namespaces query.
-         */
-        static bool cloneFrom(const char *masterHost, string& errmsg, const string& fromdb,
-                              bool logForReplication, bool slaveOk, bool useReplAuth,
-                              bool snapshot, bool mayYield, bool mayBeInterrupted,
-                              int *errCode = 0);
+    bool copyCollection(OperationContext* txn,
+                        const std::string& ns,
+                        const BSONObj& query,
+                        std::string& errmsg,
+                        bool mayYield,
+                        bool mayBeInterrupted,
+                        bool copyIndexes = true,
+                        bool logForRepl = true);
 
-        static bool cloneFrom(const string& masterHost, const CloneOptions& options,
-                              string& errmsg, int* errCode = 0,
-                              set<string>* clonedCollections = 0);
+private:
+    void copy(OperationContext* txn,
+              const std::string& toDBName,
+              const NamespaceString& from_ns,
+              const BSONObj& from_opts,
+              const NamespaceString& to_ns,
+              bool logForRepl,
+              bool masterSameProcess,
+              bool slaveOk,
+              bool mayYield,
+              bool mayBeInterrupted,
+              Query q);
 
-        /**
-         * Copy a collection (and indexes) from a remote host
-         */
-        static bool copyCollectionFromRemote(const string& host, const string& ns, string& errmsg);
+    void copyIndexes(OperationContext* txn,
+                     const std::string& toDBName,
+                     const NamespaceString& from_ns,
+                     const BSONObj& from_opts,
+                     const NamespaceString& to_ns,
+                     bool logForRepl,
+                     bool masterSameProcess,
+                     bool slaveOk,
+                     bool mayYield,
+                     bool mayBeInterrupted);
 
-    private:
-        void copy(const char *from_ns, const char *to_ns, bool isindex, bool logForRepl,
-                  bool masterSameProcess, bool slaveOk, bool mayYield, bool mayBeInterrupted,
-                  Query q);
+    struct Fun;
+    std::auto_ptr<DBClientBase> _conn;
+};
 
-        // index presort info
-        typedef struct {
-            IndexSpec spec;
-            SortPhaseOne preSortPhase;
-        } PreSortDetails;
+/**
+ *  slaveOk     - if true it is ok if the source of the data is !ismaster.
+ *  useReplAuth - use the credentials we normally use as a replication slave for the cloning
+ *  snapshot    - use $snapshot mode for copying collections.  note this should not be used
+ *                when it isn't required, as it will be slower.  for example,
+ *                repairDatabase need not use it.
+ */
+struct CloneOptions {
+    CloneOptions() {
+        logForRepl = true;
+        slaveOk = false;
+        useReplAuth = false;
+        snapshot = true;
+        mayYield = true;
+        mayBeInterrupted = false;
 
-        typedef map<string, PreSortDetails> SortersForIndex; // map from index name to presorter
-        typedef map<string, SortersForIndex> SortersForNS;   // map from ns to indices/sorters
+        syncData = true;
+        syncIndexes = true;
+    }
 
-        struct Fun;
-        auto_ptr<DBClientBase> _conn;
-        SortersForNS _sortersForNS;
-    };
+    std::string fromDB;
+    std::set<std::string> collsToIgnore;
 
-    struct CloneOptions {
+    bool logForRepl;
+    bool slaveOk;
+    bool useReplAuth;
+    bool snapshot;
+    bool mayYield;
+    bool mayBeInterrupted;
 
-        CloneOptions() {
-            logForRepl = true;
-            slaveOk = false;
-            useReplAuth = false;
-            snapshot = true;
-            mayYield = true;
-            mayBeInterrupted = false;
+    bool syncData;
+    bool syncIndexes;
+};
 
-            syncData = true;
-            syncIndexes = true;
-        }
-            
-        string fromDB;
-        set<string> collsToIgnore;
-
-        bool logForRepl;
-        bool slaveOk;
-        bool useReplAuth;
-        bool snapshot;
-        bool mayYield;
-        bool mayBeInterrupted;
-
-        bool syncData;
-        bool syncIndexes;
-    };
-
-} // namespace mongo
+}  // namespace mongo

@@ -16,9 +16,13 @@
 load("jstests/replsets/rslib.js");
 var basename = "jstests_initsync1";
 
-
 print("1. Bring up set");
-var replTest = new ReplSetTest( {name: basename, nodes: 2} );
+// SERVER-7455, this test is called from ssl/auth_x509.js
+var x509_options1;
+var x509_options2;
+var replTest = new ReplSetTest({name: basename, 
+                                nodes : {node0 : x509_options1, node1 : x509_options2}});
+
 var conns = replTest.startSet();
 replTest.initiate();
 
@@ -31,9 +35,11 @@ var admin_s1 = slave1.getDB("admin");
 var local_s1 = slave1.getDB("local");
 
 print("2. Insert some data");
-for (var i=0; i<10000; i++) {
-  foo.bar.insert({date : new Date(), x : i, str : "all the talk on the market"});
+var bulk = foo.bar.initializeUnorderedBulkOp();
+for (var i = 0; i < 100; i++) {
+  bulk.insert({ date: new Date(), x: i, str: "all the talk on the market" });
 }
+assert.writeOK(bulk.execute());
 print("total in foo: "+foo.bar.count());
 
 
@@ -47,10 +53,13 @@ admin_s1.runCommand({replSetFreeze:999999});
 
 print("6. Bring up #3");
 var ports = allocatePorts( 3 );
-var basePath = "/data/db/" + basename;
+var basePath = MongoRunner.dataPath + basename;
 var hostname = getHostName();
 
-var slave2 = startMongodTest (ports[2], basename, false, {replSet : basename, oplogSize : 2} )
+var slave2 = startMongodTest (ports[2],
+                              basename,
+                              false,
+                              Object.merge({replSet : basename, oplogSize : 2}, x509_options2));
 
 var local_s2 = slave2.getDB("local");
 var admin_s2 = slave2.getDB("admin");
@@ -105,24 +114,21 @@ reconnect(slave1);
 wait(function() {
     var status = admin_s1.runCommand({replSetGetStatus:1});
     printjson(status);
-    return status.ok == 1 && status.members &&
-      status.members[1].state == 2 || status.members[1].state == 1;
+    return status.ok === 1 && status.members && status.members.length >= 2 &&
+      (status.members[1].state === 2 || status.members[1].state === 1);
   });
 
 
 print("10. Insert some stuff");
 master = replTest.getMaster();
-for (var i=0; i<10000; i++) {
-  foo.bar.insert({date : new Date(), x : i, str : "all the talk on the market"});
+bulk = foo.bar.initializeUnorderedBulkOp();
+for (var i = 0; i < 100; i++) {
+  bulk.insert({ date: new Date(), x: i, str: "all the talk on the market" });
 }
-
+assert.writeOK(bulk.execute());
 
 print("11. Everyone happy eventually");
 replTest.awaitReplication(300000);
 
-
-print("13. Check hbmsg");
-master.getDB("admin").runCommand({replSetTest:1, sethbmsg:"foo bar baz"});
-var status = master.getDB("admin").runCommand({replSetGetStatus:1});
-printjson(status);
-assert.eq(status.members[0].errmsg, "foo bar baz");
+stopMongod(ports[2]);
+replTest.stopSet();

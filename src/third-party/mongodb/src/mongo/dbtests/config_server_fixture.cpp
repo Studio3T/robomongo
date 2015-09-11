@@ -12,13 +12,30 @@
  *
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    As a special exception, the copyright holders give permission to link the
+ *    code of portions of this program with the OpenSSL library under certain
+ *    conditions as described in each individual source file and distribute
+ *    linked combinations including the program with the OpenSSL library. You
+ *    must comply with the GNU Affero General Public License in all respects
+ *    for all of the code used other than as permitted herein. If you modify
+ *    file(s) with this exception, you may extend this exception to your
+ *    version of the file(s), but you are not obligated to do so. If you do not
+ *    wish to do so, delete this exception statement from your version. If you
+ *    delete this exception statement from all source files in the program,
+ *    then also delete it in the license file.
  */
+
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kDefault
 
 #include "mongo/dbtests/config_server_fixture.h"
 
+#include <boost/scoped_ptr.hpp>
 #include <list>
 
-#include "mongo/client/distlock.h"
+#include "mongo/dbtests/dbtests.h"
+#include "mongo/s/config.h"
+#include "mongo/s/distlock.h"
 #include "mongo/s/type_changelog.h"
 #include "mongo/s/type_chunk.h"
 #include "mongo/s/type_collection.h"
@@ -26,93 +43,104 @@
 #include "mongo/s/type_database.h"
 #include "mongo/s/type_mongos.h"
 #include "mongo/s/type_shard.h"
+#include "mongo/util/log.h"
 
 namespace mongo {
 
-    using std::list;
+using boost::scoped_ptr;
+using std::endl;
+using std::list;
+using std::string;
 
-    void ConfigServerFixture::setUp() {
-        DBException::traceExceptions = true;
+ConfigServerFixture::ConfigServerFixture() : _client(&_txn), _connectHook(NULL) {}
 
-        // Make all connections redirect to the direct client
-        _connectHook = new CustomConnectHook();
-        ConnectionString::setConnectionHook(_connectHook);
-        // Disable the lock pinger
-        setLockPingerEnabled(false);
+void ConfigServerFixture::setUp() {
+    DBException::traceExceptions = true;
 
-        // Create the default config database before querying, necessary for direct connections
-        clearServer();
-        client().insert("config.test", BSON( "hello" << "world" ));
-        client().dropCollection("config.test");
-    }
+    // Make all connections redirect to the direct client
+    _connectHook = new CustomConnectHook(&_txn);
+    ConnectionString::setConnectionHook(_connectHook);
+    // Disable the lock pinger
+    setLockPingerEnabled(false);
 
-    void ConfigServerFixture::clearServer() {
-        client().dropDatabase("config");
-    }
+    // Create the default config database before querying, necessary for direct connections
+    clearServer();
+    _client.insert("config.test",
+                   BSON("hello"
+                        << "world"));
+    _client.dropCollection("config.test");
 
-    void ConfigServerFixture::clearVersion() {
-        client().dropCollection(VersionType::ConfigNS);
-    }
+    // Create an index over the chunks, to allow correct diffing
+    ASSERT_OK(
+        dbtests::createIndex(&_txn,
+                             ChunkType::ConfigNS,
+                             BSON(ChunkType::ns() << 1 << ChunkType::DEPRECATED_lastmod() << 1)));
+    configServer.init(configSvr().toString());
+}
 
-    void ConfigServerFixture::clearShards() {
-        client().dropCollection(ShardType::ConfigNS);
-    }
+void ConfigServerFixture::clearServer() {
+    _client.dropDatabase("config");
+}
 
-    void ConfigServerFixture::clearDatabases() {
-        client().dropCollection(DatabaseType::ConfigNS);
-    }
+void ConfigServerFixture::clearVersion() {
+    _client.dropCollection(VersionType::ConfigNS);
+}
 
-    void ConfigServerFixture::clearCollections() {
-        client().dropCollection(CollectionType::ConfigNS);
-    }
+void ConfigServerFixture::clearShards() {
+    _client.dropCollection(ShardType::ConfigNS);
+}
 
-    void ConfigServerFixture::clearChunks() {
-        client().dropCollection(ChunkType::ConfigNS);
-    }
+void ConfigServerFixture::clearDatabases() {
+    _client.dropCollection(DatabaseType::ConfigNS);
+}
 
-    void ConfigServerFixture::clearPings() {
-        client().dropCollection(MongosType::ConfigNS);
-    }
+void ConfigServerFixture::clearCollections() {
+    _client.dropCollection(CollectionType::ConfigNS);
+}
 
-    void ConfigServerFixture::clearChangelog() {
-        client().dropCollection(ChangelogType::ConfigNS);
-    }
+void ConfigServerFixture::clearChunks() {
+    _client.dropCollection(ChunkType::ConfigNS);
+}
 
-    void ConfigServerFixture::dumpServer() {
+void ConfigServerFixture::clearPings() {
+    _client.dropCollection(MongosType::ConfigNS);
+}
 
-        log() << "Dumping virtual config server to log..." << endl;
+void ConfigServerFixture::clearChangelog() {
+    _client.dropCollection(ChangelogType::ConfigNS);
+}
 
-        list<string> collectionNames(client().getCollectionNames("config"));
+void ConfigServerFixture::dumpServer() {
+    log() << "Dumping virtual config server to log..." << endl;
 
-        for (list<string>::iterator it = collectionNames.begin(); it != collectionNames.end(); ++it)
-        {
-            const string& collection = *it;
+    list<string> collectionNames(_client.getCollectionNames("config"));
 
-            scoped_ptr<DBClientCursor> cursor(client().query(collection, BSONObj()).release());
-            ASSERT(cursor.get() != NULL);
+    for (list<string>::iterator it = collectionNames.begin(); it != collectionNames.end(); ++it) {
+        const string& collection = *it;
 
-            log() << "Dumping collection " << collection << endl;
+        scoped_ptr<DBClientCursor> cursor(_client.query(collection, BSONObj()).release());
+        ASSERT(cursor.get() != NULL);
 
-            while (cursor->more()) {
-                BSONObj obj = cursor->nextSafe();
-                log() << obj.toString() << endl;
-            }
+        log() << "Dumping collection " << collection << endl;
+
+        while (cursor->more()) {
+            BSONObj obj = cursor->nextSafe();
+            log() << obj.toString() << endl;
         }
     }
+}
 
-    void ConfigServerFixture::tearDown() {
+void ConfigServerFixture::tearDown() {
+    clearServer();
 
-        clearServer();
+    // Reset the pinger
+    setLockPingerEnabled(true);
 
-        // Reset the pinger
-        setLockPingerEnabled(true);
+    // Make all connections redirect to the direct client
+    ConnectionString::setConnectionHook(NULL);
+    delete _connectHook;
+    _connectHook = NULL;
 
-        // Make all connections redirect to the direct client
-        ConnectionString::setConnectionHook(NULL);
-        delete _connectHook;
-        _connectHook = NULL;
-
-        DBException::traceExceptions = false;
-    }
-
+    DBException::traceExceptions = false;
+}
 }

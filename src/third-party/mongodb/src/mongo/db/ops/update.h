@@ -14,88 +14,50 @@
  *
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    As a special exception, the copyright holders give permission to link the
+ *    code of portions of this program with the OpenSSL library under certain
+ *    conditions as described in each individual source file and distribute
+ *    linked combinations including the program with the OpenSSL library. You
+ *    must comply with the GNU Affero General Public License in all respects for
+ *    all of the code used other than as permitted herein. If you modify file(s)
+ *    with this exception, you may extend this exception to your version of the
+ *    file(s), but you are not obligated to do so. If you do not wish to do so,
+ *    delete this exception statement from your version. If you delete this
+ *    exception statement from all source files in the program, then also delete
+ *    it in the license file.
  */
 
-#include "mongo/pch.h"
+#pragma once
 
 #include "mongo/db/jsobj.h"
 #include "mongo/db/curop.h"
-#include "mongo/db/queryoptimizercursor.h"
+#include "mongo/db/ops/update_request.h"
+#include "mongo/db/ops/update_result.h"
 
 namespace mongo {
 
-    // ---------- public -------------
+class CanonicalQuery;
+class Database;
+class OperationContext;
+class UpdateDriver;
 
-    struct UpdateResult {
-        const bool existing; // if existing objects were modified
-        const bool mod;      // was this a $ mod
-        const long long num; // how many objects touched
-        OID upserted;  // if something was upserted, the new _id of the object
+/**
+ * Utility method to execute an update described by "request".
+ *
+ * Caller must hold the appropriate database locks.
+ */
+UpdateResult update(OperationContext* txn,
+                    Database* db,
+                    const UpdateRequest& request,
+                    OpDebug* opDebug);
 
-        UpdateResult( bool e, bool m, unsigned long long n , const BSONObj& upsertedObject )
-            : existing(e) , mod(m), num(n) {
-            upserted.clear();
-            BSONElement id = upsertedObject["_id"];
-            if ( ! e && n == 1 && id.type() == jstOID ) {
-                upserted = id.OID();
-            }
-        }
-    };
-
-    class RemoveSaver;
-
-    /* returns true if an existing object was updated, false if no existing object was found.
-       multi - update multiple objects - mostly useful with things like $set
-       su - allow access to system namespaces (super user)
-    */
-    UpdateResult updateObjects(const char* ns,
-                               const BSONObj& updateobj,
-                               const BSONObj& pattern,
-                               bool upsert,
-                               bool multi,
-                               bool logop,
-                               OpDebug& debug,
-                               bool fromMigrate = false,
-                               const QueryPlanSelectionPolicy& planPolicy = QueryPlanSelectionPolicy::any());
-
-    /*
-     * Similar to updateObjects but not strict about applying mods that can fail during initial
-     * replication.
-     *
-     * Reference ticket: SERVER-4781
-     */
-    UpdateResult updateObjectsForReplication(const char* ns,
-                                             const BSONObj& updateobj,
-                                             const BSONObj& pattern,
-                                             bool upsert,
-                                             bool multi,
-                                             bool logop,
-                                             OpDebug& debug,
-                                             bool fromMigrate = false,
-                                             const QueryPlanSelectionPolicy& planPolicy =
-                                                 QueryPlanSelectionPolicy::any());
-
-    UpdateResult _updateObjects(bool su,
-                                const char* ns,
-                                const BSONObj& updateobj,
-                                const BSONObj& pattern,
-                                bool upsert,
-                                bool multi,
-                                bool logop,
-                                OpDebug& debug,
-                                RemoveSaver* rs = 0,
-                                bool fromMigrate = false,
-                                const QueryPlanSelectionPolicy& planPolicy = QueryPlanSelectionPolicy::any(),
-                                bool forReplication = false);
-
-
-    /**
-     * takes the from document and returns a new document
-     * after apply all the operators 
-     * e.g. 
-     *   applyUpdateOperators( BSON( "x" << 1 ) , BSON( "$inc" << BSON( "x" << 1 ) ) );
-     *   returns: { x : 2 }
-     */
-    BSONObj applyUpdateOperators( const BSONObj& from, const BSONObj& operators );
-    
+/**
+ * takes the from document and returns a new document
+ * after apply all the operators
+ * e.g.
+ *   applyUpdateOperators( BSON( "x" << 1 ) , BSON( "$inc" << BSON( "x" << 1 ) ) );
+ *   returns: { x : 2 }
+ */
+BSONObj applyUpdateOperators(const BSONObj& from, const BSONObj& operators);
 }  // namespace mongo

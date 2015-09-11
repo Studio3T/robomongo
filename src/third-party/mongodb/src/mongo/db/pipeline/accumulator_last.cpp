@@ -12,36 +12,53 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * As a special exception, the copyright holders give permission to link the
+ * code of portions of this program with the OpenSSL library under certain
+ * conditions as described in each individual source file and distribute
+ * linked combinations including the program with the OpenSSL library. You
+ * must comply with the GNU Affero General Public License in all respects for
+ * all of the code used other than as permitted herein. If you modify file(s)
+ * with this exception, you may extend this exception to your version of the
+ * file(s), but you are not obligated to do so. If you do not wish to do so,
+ * delete this exception statement from your version. If you delete this
+ * exception statement from all source files in the program, then also delete
+ * it in the license file.
  */
 
-#include "pch.h"
-#include "accumulator.h"
+#include "mongo/platform/basic.h"
 
-#include "db/pipeline/value.h"
+#include "mongo/db/pipeline/accumulator.h"
+#include "mongo/db/pipeline/value.h"
 
 namespace mongo {
 
-    Value AccumulatorLast::evaluate(const Document& pDocument) const {
-        verify(vpOperand.size() == 1);
+using boost::intrusive_ptr;
 
-        /* always remember the last value seen */
-        pValue = vpOperand[0]->evaluate(pDocument);
+void AccumulatorLast::processInternal(const Value& input, bool merging) {
+    /* always remember the last value seen */
+    _last = input;
+    _memUsageBytes = sizeof(*this) + _last.getApproximateSize() - sizeof(Value);
+}
 
-        return pValue;
-    }
+Value AccumulatorLast::getValue(bool toBeMerged) const {
+    return _last;
+}
 
-    AccumulatorLast::AccumulatorLast():
-        AccumulatorSingleValue() {
-    }
+AccumulatorLast::AccumulatorLast() {
+    _memUsageBytes = sizeof(*this);
+}
 
-    intrusive_ptr<Accumulator> AccumulatorLast::create(
-        const intrusive_ptr<ExpressionContext> &pCtx) {
-        intrusive_ptr<AccumulatorLast> pAccumulator(
-            new AccumulatorLast());
-        return pAccumulator;
-    }
+void AccumulatorLast::reset() {
+    _memUsageBytes = sizeof(*this);
+    _last = Value();
+}
 
-    const char *AccumulatorLast::getOpName() const {
-        return "$last";
-    }
+intrusive_ptr<Accumulator> AccumulatorLast::create() {
+    return new AccumulatorLast();
+}
+
+const char* AccumulatorLast::getOpName() const {
+    return "$last";
+}
 }

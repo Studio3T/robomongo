@@ -8,7 +8,7 @@ import sys
 
 import buildscripts.utils
 
-Import('env windows usev8 usesm')
+Import('env windows usev8')
 
 def getSysInfo():
     if windows:
@@ -16,7 +16,8 @@ def getSysInfo():
     else:
         return " ".join( os.uname() )
 
-buildinfo_filename = '#build/buildinfo.cpp'
+buildinfo_filename = '$BUILD_DIR/buildinfo.cpp'
+env.NoCache(buildinfo_filename)
 
 buildinfo_template = '''
 #include <string>
@@ -41,8 +42,6 @@ def generate_buildinfo(env, target, source, **kw):
 
     if usev8:
         js_engine = "V8"
-    elif usesm:
-        js_engine = "SpiderMonkey"
     else:
         js_engine = "Unknown"
 
@@ -60,7 +59,8 @@ def generate_buildinfo(env, target, source, **kw):
     finally:
         out.close()
 
-env.Command(buildinfo_filename, Value(buildinfo_template), generate_buildinfo)
+env.Command(buildinfo_filename,
+            Value(buildinfo_template),
+            Action(generate_buildinfo, "Generating $TARGET"))
 env.AlwaysBuild(buildinfo_filename)
 env.Install('$BUILD_DIR/mongo', buildinfo_filename)
-env.Install('$BUILD_DIR/client_build/mongo', buildinfo_filename)

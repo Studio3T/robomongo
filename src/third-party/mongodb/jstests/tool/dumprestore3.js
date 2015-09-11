@@ -39,20 +39,20 @@ var master = replTest.getMaster();
 
 step("try mongorestore to slave");
 
-var data = "/data/db/dumprestore3-other1/";
+var data = MongoRunner.dataDir + "/dumprestore3-other1/";
 resetDbpath(data);
 runMongoProgram( "mongodump", "--host", "127.0.0.1:"+port, "--out", data );
 
 var x = runMongoProgram( "mongorestore", "--host", "127.0.0.1:"+replTest.ports[1], "--dir", data );
-assert.eq(x, _isWindows() ? -1 : 255, "mongorestore should exit w/ -1 on slave");
+assert.neq(x, 0, "mongorestore should exit w/ 1 on slave");
 
 step("try mongoimport to slave");
 
-dataFile = "/data/db/dumprestore3-other2.json";
+dataFile = MongoRunner.dataDir + "/dumprestore3-other2.json";
 runMongoProgram( "mongoexport", "--host", "127.0.0.1:"+port, "--out", dataFile, "--db", "foo", "--collection", "bar" );
 
 x = runMongoProgram( "mongoimport", "--host", "127.0.0.1:"+replTest.ports[1], "--file", dataFile );
-assert.eq(x, _isWindows() ? -1 : 255, "mongoreimport should exit w/ -1 on slave"); // windows return is signed
+assert.neq(x, 0, "mongoreimport should exit w/ 1 on slave");
 
 step("stopSet");
 replTest.stopSet();

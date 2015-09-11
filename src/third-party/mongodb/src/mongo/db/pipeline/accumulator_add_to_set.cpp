@@ -12,64 +12,75 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * As a special exception, the copyright holders give permission to link the
+ * code of portions of this program with the OpenSSL library under certain
+ * conditions as described in each individual source file and distribute
+ * linked combinations including the program with the OpenSSL library. You
+ * must comply with the GNU Affero General Public License in all respects for
+ * all of the code used other than as permitted herein. If you modify file(s)
+ * with this exception, you may extend this exception to your version of the
+ * file(s), but you are not obligated to do so. If you do not wish to do so,
+ * delete this exception statement from your version. If you delete this
+ * exception statement from all source files in the program, then also delete
+ * it in the license file.
  */
 
-#include "pch.h"
-#include "accumulator.h"
+#include "mongo/platform/basic.h"
 
-#include "db/pipeline/expression_context.h"
-#include "db/pipeline/value.h"
+#include "mongo/db/pipeline/accumulator.h"
+#include "mongo/db/pipeline/expression_context.h"
+#include "mongo/db/pipeline/value.h"
 
 namespace mongo {
-    Value AccumulatorAddToSet::evaluate(const Document& pDocument) const {
-        verify(vpOperand.size() == 1);
-        Value prhs(vpOperand[0]->evaluate(pDocument));
 
-        if (!pCtx->getDoingMerge()) {
-            if (!prhs.missing()) {
-                set.insert(prhs);
+using boost::intrusive_ptr;
+using std::vector;
+
+void AccumulatorAddToSet::processInternal(const Value& input, bool merging) {
+    if (!merging) {
+        if (!input.missing()) {
+            bool inserted = set.insert(input).second;
+            if (inserted) {
+                _memUsageBytes += input.getApproximateSize();
             }
-        } else {
-            /*
-              If we're in the router, we need to take apart the arrays we
-              receive and put their elements into the array we are collecting.
-              If we didn't, then we'd get an array of arrays, with one array
-              from each shard that responds.
-             */
-            verify(prhs.getType() == Array);
-            
-            const vector<Value>& array = prhs.getArray();
-            set.insert(array.begin(), array.end());
         }
+    } else {
+        // If we're merging, we need to take apart the arrays we
+        // receive and put their elements into the array we are collecting.
+        // If we didn't, then we'd get an array of arrays, with one array
+        // from each merge source.
+        verify(input.getType() == Array);
 
-        return Value();
-    }
-
-    Value AccumulatorAddToSet::getValue() const {
-        vector<Value> valVec;
-
-        for (itr = set.begin(); itr != set.end(); ++itr) {
-            valVec.push_back(*itr);
+        const vector<Value>& array = input.getArray();
+        for (size_t i = 0; i < array.size(); i++) {
+            bool inserted = set.insert(array[i]).second;
+            if (inserted) {
+                _memUsageBytes += array[i].getApproximateSize();
+            }
         }
-        /* there is no issue of scope since createArray copy constructs */
-        return Value::createArray(valVec);
     }
+}
 
-    AccumulatorAddToSet::AccumulatorAddToSet(
-        const intrusive_ptr<ExpressionContext> &pTheCtx):
-        Accumulator(),
-        set(),
-        pCtx(pTheCtx) {
-    }
+Value AccumulatorAddToSet::getValue(bool toBeMerged) const {
+    vector<Value> valVec(set.begin(), set.end());
+    return Value::consume(valVec);
+}
 
-    intrusive_ptr<Accumulator> AccumulatorAddToSet::create(
-        const intrusive_ptr<ExpressionContext> &pCtx) {
-        intrusive_ptr<AccumulatorAddToSet> pAccumulator(
-            new AccumulatorAddToSet(pCtx));
-        return pAccumulator;
-    }
+AccumulatorAddToSet::AccumulatorAddToSet() {
+    _memUsageBytes = sizeof(*this);
+}
 
-    const char *AccumulatorAddToSet::getOpName() const {
-        return "$addToSet";
-    }
+void AccumulatorAddToSet::reset() {
+    SetType().swap(set);
+    _memUsageBytes = sizeof(*this);
+}
+
+intrusive_ptr<Accumulator> AccumulatorAddToSet::create() {
+    return new AccumulatorAddToSet();
+}
+
+const char* AccumulatorAddToSet::getOpName() const {
+    return "$addToSet";
+}
 }

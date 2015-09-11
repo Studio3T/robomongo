@@ -14,102 +14,181 @@
  *
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    As a special exception, the copyright holders give permission to link the
+ *    code of portions of this program with the OpenSSL library under certain
+ *    conditions as described in each individual source file and distribute
+ *    linked combinations including the program with the OpenSSL library. You
+ *    must comply with the GNU Affero General Public License in all respects
+ *    for all of the code used other than as permitted herein. If you modify
+ *    file(s) with this exception, you may extend this exception to your
+ *    version of the file(s), but you are not obligated to do so. If you do not
+ *    wish to do so, delete this exception statement from your version. If you
+ *    delete this exception statement from all source files in the program,
+ *    then also delete it in the license file.
  */
 
-#include "pch.h"
-#include "../db/mongommf.h"
-#include "../util/timer.h"
-#include "dbtests.h"
+#include "mongo/platform/basic.h"
 
 #include <boost/filesystem/operations.hpp>
+#include <iostream>
+
+#include "mongo/db/concurrency/lock_state.h"
+#include "mongo/db/global_environment_experiment.h"
+#include "mongo/db/storage/mmap_v1/data_file.h"
+#include "mongo/db/storage/mmap_v1/durable_mapped_file.h"
+#include "mongo/db/storage/mmap_v1/extent.h"
+#include "mongo/db/storage/mmap_v1/extent_manager.h"
+#include "mongo/db/storage/mmap_v1/mmap_v1_extent_manager.h"
+#include "mongo/db/storage/mmap_v1/mmap_v1_options.h"
+#include "mongo/db/storage_options.h"
+#include "mongo/dbtests/dbtests.h"
+#include "mongo/util/timer.h"
 
 namespace MMapTests {
 
-    class LeakTest  {
-        const string fn;
-        const int optOld;
-    public:
-        LeakTest() :
-            fn( (boost::filesystem::path(dbpath) / "testfile.map").string() ), optOld(cmdLine.durOptions)
-        { 
-            cmdLine.durOptions = 0; // DurParanoid doesn't make sense with this test
+using std::endl;
+using std::string;
+
+class LeakTest {
+    const string fn;
+    const int optOld;
+
+public:
+    LeakTest()
+        : fn((boost::filesystem::path(storageGlobalParams.dbpath) / "testfile.map").string()),
+          optOld(mmapv1GlobalOptions.journalOptions) {
+        mmapv1GlobalOptions.journalOptions = 0;  // DurParanoid doesn't make sense with this test
+    }
+    ~LeakTest() {
+        mmapv1GlobalOptions.journalOptions = optOld;
+        try {
+            boost::filesystem::remove(fn);
+        } catch (...) {
         }
-        ~LeakTest() {
-            cmdLine.durOptions = optOld;
-            try { boost::filesystem::remove(fn); }
-            catch(...) { }
+    }
+    void run() {
+        try {
+            boost::filesystem::remove(fn);
+        } catch (...) {
         }
-        void run() {
 
-            try { boost::filesystem::remove(fn); }
-            catch(...) { }
+        MMAPV1LockerImpl lockState;
+        Lock::GlobalWrite lk(&lockState);
 
-            Lock::GlobalWrite lk;
-
+        {
+            DurableMappedFile f;
+            unsigned long long len = 256 * 1024 * 1024;
+            verify(f.create(fn, len, /*sequential*/ false));
             {
-                MongoMMF f;
-                unsigned long long len = 256 * 1024 * 1024;
-                verify( f.create(fn, len, /*sequential*/false) );
-                {
-                    char *p = (char *) f.getView();
-                    verify(p);
-                    // write something to the private view as a test
-                    if( cmdLine.dur ) 
-                        MemoryMappedFile::makeWritable(p, 6);
-                    strcpy(p, "hello");
-                }
-                if( cmdLine.dur ) {
-                    char *w = (char *) f.view_write();
-                    strcpy(w + 6, "world");
-                }
-                MongoFileFinder ff;
-                ASSERT( ff.findByPath(fn) );
-                ASSERT( ff.findByPath("asdf") == 0 );
+                char* p = (char*)f.getView();
+                verify(p);
+                // write something to the private view as a test
+                if (storageGlobalParams.dur)
+                    privateViews.makeWritable(p, 6);
+                strcpy(p, "hello");
             }
-            {
-                MongoFileFinder ff;
-                ASSERT( ff.findByPath(fn) == 0 );
+            if (storageGlobalParams.dur) {
+                char* w = (char*)f.view_write();
+                strcpy(w + 6, "world");
             }
+            MongoFileFinder ff;
+            ASSERT(ff.findByPath(fn));
+            ASSERT(ff.findByPath("asdf") == 0);
+        }
+        {
+            MongoFileFinder ff;
+            ASSERT(ff.findByPath(fn) == 0);
+        }
 
-            int N = 10000;
+        int N = 10000;
 #if !defined(_WIN32) && !defined(__linux__)
-            // seems this test is slow on OS X.
-            N = 100;
+        // seems this test is slow on OS X.
+        N = 100;
 #endif
 
-            // we make a lot here -- if we were leaking, presumably it would fail doing this many.
-            Timer t;
-            for( int i = 0; i < N; i++ ) {
-                MongoMMF f;
-                verify( f.open(fn, i%4==1) );
-                {
-                    char *p = (char *) f.getView();
-                    verify(p);
-                    if( cmdLine.dur ) 
-                        MemoryMappedFile::makeWritable(p, 4);
-                    strcpy(p, "zzz");
-                }
-                if( cmdLine.dur ) {
-                    char *w = (char *) f.view_write();
-                    if( i % 2 == 0 )
-                        ++(*w);
-                    verify( w[6] == 'w' );
+        // we make a lot here -- if we were leaking, presumably it would fail doing this many.
+        Timer t;
+        for (int i = 0; i < N; i++) {
+            DurableMappedFile f;
+            verify(f.open(fn, i % 4 == 1));
+            {
+                char* p = (char*)f.getView();
+                verify(p);
+                if (storageGlobalParams.dur)
+                    privateViews.makeWritable(p, 4);
+                strcpy(p, "zzz");
+            }
+            if (storageGlobalParams.dur) {
+                char* w = (char*)f.view_write();
+                if (i % 2 == 0)
+                    ++(*w);
+                verify(w[6] == 'w');
+            }
+        }
+        if (t.millis() > 10000) {
+            mongo::unittest::log() << "warning: MMap LeakTest is unusually slow N:" << N << ' '
+                                   << t.millis() << "ms" << endl;
+        }
+    }
+};
+
+class ExtentSizing {
+public:
+    void run() {
+        MmapV1ExtentManager em("x", "x", false);
+
+        ASSERT_EQUALS(em.maxSize(), em.quantizeExtentSize(em.maxSize()));
+
+        // test that no matter what we start with, we always get to max extent size
+        for (int obj = 16; obj < BSONObjMaxUserSize; obj += 111) {
+            int sz = em.initialSize(obj);
+
+            double totalExtentSize = sz;
+
+            int numFiles = 1;
+            int sizeLeftInExtent = em.maxSize() - 1;
+
+            for (int i = 0; i < 100; i++) {
+                sz = em.followupSize(obj, sz);
+                ASSERT(sz >= obj);
+                ASSERT(sz >= em.minSize());
+                ASSERT(sz <= em.maxSize());
+                ASSERT(sz <= em.maxSize());
+
+                totalExtentSize += sz;
+
+                if (sz < sizeLeftInExtent) {
+                    sizeLeftInExtent -= sz;
+                } else {
+                    numFiles++;
+                    sizeLeftInExtent = em.maxSize() - sz;
                 }
             }
-            if( t.millis() > 10000 ) {
-                log() << "warning: MMap LeakTest is unusually slow N:" << N << ' ' << t.millis() << "ms" << endl;
-            }
+            ASSERT_EQUALS(em.maxSize(), sz);
 
-        }
-    };
+            double allocatedOnDisk = (double)numFiles * em.maxSize();
 
-    class All : public Suite {
-    public:
-        All() : Suite( "mmap" ) {}
-        void setupTests() {
-            add< LeakTest >();
+            ASSERT((totalExtentSize / allocatedOnDisk) > .95);
+
+            invariant(em.numFiles() == 0);
         }
-    } myall;
+    }
+};
+
+class All : public Suite {
+public:
+    All() : Suite("mmap") {}
+    void setupTests() {
+        if (!getGlobalEnvironment()->getGlobalStorageEngine()->isMmapV1())
+            return;
+
+        add<LeakTest>();
+        add<ExtentSizing>();
+    }
+};
+
+SuiteInstance<All> myall;
 
 #if 0
 
@@ -217,5 +296,4 @@ namespace MMapTests {
     } myall;
 
 #endif
-
 }

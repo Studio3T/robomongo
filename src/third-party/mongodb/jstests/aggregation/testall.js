@@ -46,7 +46,7 @@ var p1result = [
     }
 ];
 
-assert.eq(p1.result, p1result, 'p1 failed');
+assert.docEq(p1.result, p1result, 'p1 failed');
 
 
 // a simple array unwinding
@@ -207,7 +207,7 @@ var u1result = [
     }
 ];
 
-assert.eq(u1.result, u1result, 'u1 failed');
+assert.docEq(u1.result, u1result, 'u1 failed');
 
 // unwind an array at the end of a dotted path
 db.ut.drop();
@@ -260,7 +260,7 @@ var u2result = [
     }
 ];
 
-assert.eq(u2.result, u2result, 'u2 failed');
+assert.docEq(u2.result, u2result, 'u2 failed');
 
 
 // combining a projection with unwinding an array
@@ -319,7 +319,7 @@ var p2result = [
     }
 ];
 
-assert.eq(p2.result, p2result, 'p2 failed');
+assert.docEq(p2.result, p2result, 'p2 failed');
 
 
 // pulling values out of subdocuments
@@ -346,7 +346,7 @@ var p3result = [
     }
 ];
 
-assert.eq(p3.result, p3result, 'p3 failed');
+assert.docEq(p3.result, p3result, 'p3 failed');
 
 
 // projection includes a computed value
@@ -376,7 +376,7 @@ var p4result = [
     }
 ];
 
-assert.eq(p4.result, p4result, 'p4 failed');
+assert.docEq(p4.result, p4result, 'p4 failed');
 
 
 // projection includes a virtual (fabricated) document
@@ -453,7 +453,7 @@ var p5result = [
     }
 ];
 
-assert.eq(p5.result, p5result, 'p5 failed');
+assert.docEq(p5.result, p5result, 'p5 failed');
 
 
 // multi-step aggregate
@@ -535,7 +535,7 @@ var p6result = [
     }
 ];
 
-assert.eq(p6.result, p6result, 'p6 failed');
+assert.docEq(p6.result, p6result, 'p6 failed');
 
 
 // slightly more complex computed expression; $ifNull
@@ -563,7 +563,7 @@ var p7result = [
     }
 ];
 
-assert.eq(p7.result, p7result, 'p7 failed');
+assert.docEq(p7.result, p7result, 'p7 failed');
 
 
 // dotted path inclusion; _id exclusion
@@ -665,7 +665,7 @@ var p8result = [
     }
 ];
 
-assert.eq(p8.result, p8result, 'p8 failed');
+assert.docEq(p8.result, p8result, 'p8 failed');
 
 
 // collapse a dotted path with an intervening array
@@ -702,7 +702,7 @@ var p9result = [
     }
 ];
 
-assert.eq(p9.result, p9result, 'p9 failed');
+assert.docEq(p9.result, p9result, 'p9 failed');
 
 
 // simple sort
@@ -789,7 +789,7 @@ var p10result = [
     }
 ];
 
-assert.eq(p10.result, p10result, 'p10 failed');
+assert.docEq(p10.result, p10result, 'p10 failed');
 
 
 // unwind on nested array
@@ -831,7 +831,7 @@ p11result = [
     }
 ];
 
-assert.eq(p11.result, p11result, 'p11 failed');
+assert.docEq(p11.result, p11result, 'p11 failed');
 
 
 // multiply test
@@ -859,7 +859,7 @@ var p12result = [
     }
 ];
 
-assert.eq(p12.result, p12result, 'p12 failed');
+assert.docEq(p12.result, p12result, 'p12 failed');
 
 
 // subtraction test
@@ -887,7 +887,7 @@ var p13result = [
     }
 ];
 
-assert.eq(p13.result, p13result, 'p13 failed');
+assert.docEq(p13.result, p13result, 'p13 failed');
 
 
 // mod test
@@ -916,7 +916,7 @@ var p14result = [
     }
 ];
 
-assert.eq(p14.result, p14result, 'p14 failed');
+assert.docEq(p14.result, p14result, 'p14 failed');
 
 
 // toUpper test
@@ -946,7 +946,7 @@ var p15result = [
     }
 ];
 
-assert.eq(p15.result, p15result, 'p15 failed');
+assert.docEq(p15.result, p15result, 'p15 failed');
 
 
 // toLower test
@@ -980,7 +980,7 @@ var p16result = [
     }
 ];
 
-assert.eq(p16.result, p16result, 'p16 failed');
+assert.docEq(p16.result, p16result, 'p16 failed');
 
 
 // substr test
@@ -1006,7 +1006,7 @@ var p17result = [
     }
 ];
 
-assert.eq(p17.result, p17result, 'p17 failed');
+assert.docEq(p17.result, p17result, 'p17 failed');
 
 
 // strcasecmp test
@@ -1050,7 +1050,7 @@ var p18result = [
     }
 ];
 
-assert.eq(p18.result, p18result, 'p18 failed');
+assert.docEq(p18.result, p18result, 'p18 failed');
 
 
 // date tests
@@ -1112,42 +1112,11 @@ var p19result = [
     }
 ];
 
-assert.eq(p19.result, p19result, 'p19 failed');
+assert.docEq(p19.result, p19result, 'p19 failed');
 
 
 db.vartype.drop();
 db.vartype.save({ x : 17, y : "foo"});
-
-// just passing through fields
-var p20 = db.runCommand(
-{ aggregate : "vartype", pipeline : [
-    { $project : {
-        all_numbers : { $add:[1, "$x", 2, "$x"] },
-        string_fields : { $concat:[3, "$y", 4, "$y"] },
-        number_fields : { $concat:["a", "$x", "b", "$x"] },
-        all_strings : { $concat:["c", "$y", "d", "$y"] },
-        potpourri_1 : { $concat:[5, "$y", "e", "$x"] },
-        potpourri_2 : { $concat:[6, "$x", "f", "$y"] },
-        potpourri_3 : { $concat:["g", "$y", 7, "$x"] },
-        potpourri_4 : { $concat:["h", "$x", 8, "$y"] },
-        _id: 0
-    }}
-]});
-
-var p20result = [
-    {
-        "all_numbers" : 37,
-        "string_fields" : "3foo4foo",
-        "number_fields" : "a17b17",
-        "all_strings" : "cfoodfoo",
-        "potpourri_1" : "5fooe17",
-        "potpourri_2" : "617ffoo",
-        "potpourri_3" : "gfoo717",
-        "potpourri_4" : "h178foo"
-    }
-];
-
-assert.eq(p20.result, p20result, 'p20 failed');
 
 // ternary conditional operator
 var p21 = db.runCommand(
@@ -1176,7 +1145,7 @@ var p21result = [
     }
 ];
 
-assert.eq(p21.result, p21result, 'p21 failed');
+assert.docEq(p21.result, p21result, 'p21 failed');
 
 
 // simple matching
@@ -1213,7 +1182,7 @@ var m1result = [
     }
 ];
 
-assert.eq(m1.result, m1result, 'm1 failed');
+assert.docEq(m1.result, m1result, 'm1 failed');
 
 
 // combining matching with a projection
@@ -1268,7 +1237,7 @@ var m2result = [
     }
 ];
 
-assert.eq(m2.result, m2result, 'm2 failed');
+assert.docEq(m2.result, m2result, 'm2 failed');
 
 
 // group by tag, _id is a field reference
@@ -1311,7 +1280,7 @@ var g1result = [
     },
 ];
 
-assert.eq(g1.result, g1result, 'g1 failed');
+assert.docEq(g1.result, g1result, 'g1 failed');
 
 
 // $max, and averaging in a final projection; _id is structured
@@ -1371,7 +1340,7 @@ var g2result = [
     }
 ];
 
-assert.eq(g2.result, g2result, 'g2 failed');
+assert.docEq(g2.result, g2result, 'g2 failed');
 
 
 // $push as an accumulator; can pivot data
@@ -1427,7 +1396,7 @@ var g3result = [
     }
 ];
 
-assert.eq(g3.result, g3result, 'g3 failed');
+assert.docEq(g3.result, g3result, 'g3 failed');
 
 
 // $avg, and averaging in a final projection
@@ -1483,7 +1452,7 @@ var g4result = [
     }
 ];
 
-assert.eq(g4.result, g4result, 'g4 failed');
+assert.docEq(g4.result, g4result, 'g4 failed');
 
 
 // $addToSet as an accumulator; can pivot data
@@ -1501,6 +1470,11 @@ var g5 = db.runCommand(
     {$sort: {'_id': 1}}
 ]});
 
+// $addToSet doesn't guarantee order so we shouldn't test for it.
+g5.result.forEach(function(obj) {
+    obj.authors.sort();
+});
+
 var g5result = [
     {
         "_id" : {
@@ -1515,8 +1489,8 @@ var g5result = [
             "tags" : "fun"
         },
         "authors" : [
+            "bob",
             "dave",
-            "bob"
         ]
     },
     {
@@ -1532,13 +1506,13 @@ var g5result = [
             "tags" : "nasty"
         },
         "authors" : [
+            "dave",
             "jane",
-            "dave"
         ]
     }
 ];
 
-assert.eq(g5.result, g5result, 'g5 failed');
+assert.docEq(g5.result, g5result, 'g5 failed');
 
 
 // $first and $last accumulators, constant _id

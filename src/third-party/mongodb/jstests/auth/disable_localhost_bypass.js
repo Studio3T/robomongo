@@ -1,10 +1,28 @@
-var conn = MongoRunner.runMongod({ auth: "", smallfiles: ""});
+var conn1 = MongoRunner.runMongod({ auth: "",
+                                    smallfiles: "",
+                                    setParameter: "enableLocalhostAuthBypass=true"});
+var conn2 = MongoRunner.runMongod({ auth: "",
+                                    smallfiles: "",
+                                    setParameter: "enableLocalhostAuthBypass=false"});
 
-var test = conn.getDB("test");
+// Should fail because of localhost exception narrowed (SERVER-12621).
+assert.writeError(conn1.getDB("test").foo.insert({a:1}));
+assert.throws(function() { conn2.getDB("test").foo.findOne(); });
 
-test.foo.insert({a:1});
-assert.eq(1, test.foo.findOne().a);
+// Should succeed due to localhost exception.
+conn1.getDB("admin").createUser({user: "root", pwd: "pass", roles: ["root"]});
 
-conn.getDB("admin").runCommand({setParameter:1, enableLocalhostAuthBypass:false});
+conn1.getDB("admin").auth("root", "pass");
+conn1.getDB("test").foo.insert({a:1});
 
-assert.throws(function() { db.foo.findOne(); });
+conn1.getDB("admin").dropAllUsers();
+conn1.getDB("admin").logout();
+
+assert.throws(function() { conn2.getDB("test").foo.findOne(); });
+
+// Should fail since localhost exception is disabled
+assert.throws(function() {
+    conn2.getDB("admin").createUser({user: "root", pwd: "pass", roles: ["root"]});
+});
+
+print("SUCCESS Completed disable_localhost_bypass.js");

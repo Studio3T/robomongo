@@ -10,13 +10,13 @@ def generate( header, source, language_files ):
     out = open( header, "wb" )
     out.write( """
 #pragma once
-#include <map>
 #include <set>
 #include <string>
+#include "mongo/util/string_map.h"
 namespace mongo {
 namespace fts {
 
-  void loadStopWordMap( std::map< std::string, std::set< std::string > >* m );
+  void loadStopWordMap( StringMap< std::set< std::string > >* m );
 }
 }
 """ )
@@ -30,7 +30,7 @@ namespace fts {
 namespace mongo {
 namespace fts {
 
-  void loadStopWordMap( std::map< std::string, std::set< std::string > >* m ) {
+  void loadStopWordMap( StringMap< std::set< std::string > >* m ) {
 
 """ )
 
@@ -39,9 +39,13 @@ namespace fts {
 
         out.write( '  // %s\n' % l_file )
         out.write( '  {\n' )
-        out.write( '   std::set< std::string >& l = (*m)["%s"];\n' % l )
+        out.write( '   const char* const words[] = {\n' )
         for word in open( l_file, "rb" ):
-            out.write( '   l.insert( "%s" );\n' % word.strip() )
+            out.write( '       "%s",\n' % word.strip() )
+        out.write( '   };\n' )
+        out.write( '   const size_t wordcnt = sizeof(words) / sizeof(words[0]);\n' )
+        out.write( '   std::set< std::string >& l = (*m)["%s"];\n' % l )
+        out.write( '   l.insert(&words[0], &words[wordcnt]);\n' )
         out.write( '  }\n' )
     out.write( """
   }

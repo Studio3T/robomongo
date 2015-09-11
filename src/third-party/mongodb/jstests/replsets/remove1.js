@@ -38,8 +38,21 @@ catch(e) {
     print(e);
 }
 
-assert.throws(replTest.nodes[1].getDB("admin").runCommand({ping:1}).ok, 1, "we are not connected to node[1]");
-assert.eq(replTest.nodes[1].getDB("admin").runCommand({ping:1}).ok, 1, "we are connected to node[1]");
+// This test that nodes[1] disconnects us when it picks up the new config
+assert.soon(
+    function() {
+        try {
+            replTest.nodes[1].getDB("admin").runCommand({ping:1});
+        } catch (e) {
+            return true;
+        }
+        return false;
+    }
+);
+
+// Now we should successfully reconnect to nodes[1]
+assert.eq(replTest.nodes[1].getDB("admin").runCommand({ping:1}).ok, 1,
+          "we are connected to node[1]");
 
 reconnect(master);
 
@@ -59,6 +72,10 @@ wait(function() {
     catch(e) {
         print(e);
     }
+    // master will likely step down (and close all connections) sometime after the reconfig if it
+    // thinks the newly re-added secondary is down.  So wait for that then reconnect the connection
+    // we are using.
+    replTest.awaitReplication();
     reconnect(master);
 
     printjson(master.getDB("admin").runCommand({replSetGetStatus:1}));
@@ -115,6 +132,6 @@ assert.soon(function() {
 
 config = master.getDB("local").system.replset.findOne();
 printjson(config);
-assert(config.version > 4);
+assert.gt(config.version, 4);
 
 replTest.stopSet();

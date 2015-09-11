@@ -12,23 +12,30 @@ while ( bigString.length < 1024 * 50 )
 db = s.getDB( "test" )
 coll = db.foo;
 
-var i=0;
+// Temporarily disable balancer so it will not interfere with auto-splitting
+s.stopBalancer();
 
+var i=0;
 for ( j=0; j<30; j++ ){
     print( "j:" + j + " : " + 
            Date.timeFunc( 
                function(){
+                   var bulk = coll.initializeUnorderedBulkOp();
                    for ( var k=0; k<100; k++ ){
-                       coll.save( { num : i , s : bigString } );
+                       bulk.insert( { num : i , s : bigString } );
                        i++;
                    }
+                   assert.writeOK(bulk.execute());
                } 
            ) );
     
 }
+
+s.startBalancer();
+
 assert.eq( i , j * 100 , "setup" );
-s.adminCommand( "connpoolsync" );
-db.getLastError();
+// Until SERVER-9715 is fixed, the sync command must be run on a diff connection
+new Mongo( s.s.host ).adminCommand( "connpoolsync" );
 
 print( "done inserting data" );
 
@@ -124,6 +131,13 @@ print( "checkpoint E")
 x = db.runCommand( "connPoolStats" );
 printjson( x )
 for ( host in x.hosts ){
+    
+    // Ignore all non-shard connections in this check for used sharded
+    // connections, only check those with 0 timeout.
+    if (!/.*::0$/.test(host)) continue;
+
+    // Connection pooling may change in the near future
+    // TODO: Refactor / remove this test to make sure it stays relevant
     var foo = x.hosts[host];
     assert.lt( 0 , foo.available , "pool: " + host );
 }

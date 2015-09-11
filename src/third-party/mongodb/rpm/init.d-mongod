@@ -6,7 +6,7 @@
 # description: Mongo is a scalable, document-oriented database.
 # processname: mongod
 # config: /etc/mongod.conf
-# pidfile: /var/run/mongo/mongod.pid
+# pidfile: /var/run/mongodb/mongod.pid
 
 . /etc/rc.d/init.d/functions
 
@@ -19,11 +19,8 @@ CONFIGFILE="/etc/mongod.conf"
 OPTIONS=" -f $CONFIGFILE"
 SYSCONFIG="/etc/sysconfig/mongod"
 
-# FIXME: 1.9.x has a --shutdown flag that parses the config file and
-# shuts down the correct running pid, but that's unavailable in 1.8
-# for now.  This can go away when this script stops supporting 1.8.
-DBPATH=`awk -F= '/^dbpath=/{print $2}' "$CONFIGFILE"`
-PIDFILE=`awk -F= '/^dbpath\s=\s/{print $2}' "$CONFIGFILE"`
+PIDFILEPATH=`awk -F'[:=]' -v IGNORECASE=1 '/^[[:blank:]]*(processManagement\.)?pidfilepath[[:blank:]]*[:=][[:blank:]]*/{print $2}' "$CONFIGFILE" | tr -d "[:blank:]\"'"`
+
 mongod=${MONGOD-/usr/bin/mongod}
 
 MONGO_USER=mongod
@@ -32,6 +29,8 @@ MONGO_GROUP=mongod
 if [ -f "$SYSCONFIG" ]; then
     . "$SYSCONFIG"
 fi
+
+PIDDIR=`dirname $PIDFILEPATH`
 
 # Handle NUMA access to CPUs (SERVER-3574)
 # This verifies the existence of numactl as well as testing that the command works
@@ -45,8 +44,23 @@ fi
 
 start()
 {
+  # Make sure the default pidfile directory exists
+  if [ ! -d $PIDDIR ]; then
+    install -d -m 0755 -o $MONGO_USER -g $MONGO_GROUP $PIDDIR
+  fi
+
+  # Recommended ulimit values for mongod or mongos
+  # See http://docs.mongodb.org/manual/reference/ulimit/#recommended-settings
+  #
+  ulimit -f unlimited
+  ulimit -t unlimited
+  ulimit -v unlimited
+  ulimit -n 64000
+  ulimit -m unlimited
+  ulimit -u 64000
+
   echo -n $"Starting mongod: "
-  daemon --user "$MONGO_USER" $NUMACTL $mongod $OPTIONS
+  daemon --user "$MONGO_USER" --check $mongod "$NUMACTL $mongod $OPTIONS >/dev/null 2>&1"
   RETVAL=$?
   echo
   [ $RETVAL -eq 0 ] && touch /var/lock/subsys/mongod
@@ -55,18 +69,48 @@ start()
 stop()
 {
   echo -n $"Stopping mongod: "
-  killproc -p "$PIDFILE" -d 300 /usr/bin/mongod
+  mongo_killproc "$PIDFILEPATH" $mongod
   RETVAL=$?
   echo
   [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/mongod
 }
 
 restart () {
-	stop
-	start
+        stop
+        start
 }
 
-ulimit -n 12000
+# Send TERM signal to process and wait up to 300 seconds for process to go away.
+# If process is still alive after 300 seconds, send KILL signal.
+# Built-in killproc() (found in /etc/init.d/functions) is on certain versions of Linux
+# where it sleeps for the full $delay seconds if process does not respond fast enough to
+# the initial TERM signal.
+mongo_killproc()
+{
+  local pid_file=$1
+  local procname=$2
+  local -i delay=300
+  local -i duration=10
+  local pid=`pidofproc -p "${pid_file}" ${procname}`
+
+  kill -TERM $pid >/dev/null 2>&1
+  usleep 100000
+  local -i x=0
+  while [ $x -le $delay ] && checkpid $pid; do
+    sleep $duration
+    x=$(( $x + $duration))
+  done
+
+  kill -KILL $pid >/dev/null 2>&1
+  usleep 100000
+
+  checkpid $pid # returns 0 only if the process exists
+  local RC=$?
+  [ "$RC" -eq 0 ] && failure "${procname} shutdown" || rm -f "${pid_file}"; success "${procname} shutdown"
+  RC=$((! $RC)) # invert return code so we return 0 when process is dead.
+  return $RC
+}
+
 RETVAL=0
 
 case "$1" in

@@ -14,6 +14,18 @@
 *
 *    You should have received a copy of the GNU Affero General Public License
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*    As a special exception, the copyright holders give permission to link the
+*    code of portions of this program with the OpenSSL library under certain
+*    conditions as described in each individual source file and distribute
+*    linked combinations including the program with the OpenSSL library. You
+*    must comply with the GNU Affero General Public License in all respects for
+*    all of the code used other than as permitted herein. If you modify file(s)
+*    with this exception, you may extend this exception to your version of the
+*    file(s), but you are not obligated to do so. If you do not wish to do so,
+*    delete this exception statement from your version. If you delete this
+*    exception statement from all source files in the program, then also delete
+*    it in the license file.
 */
 
 /**
@@ -22,52 +34,62 @@
 */
 
 
-#include "pch.h"
+#include "mongo/platform/basic.h"
 
 #include <string>
 #include <vector>
 
 #include "mongo/db/auth/action_set.h"
 #include "mongo/db/auth/action_type.h"
-#include "mongo/db/auth/authorization_manager.h"
 #include "mongo/db/auth/privilege.h"
-#include "jsobj.h"
-#include "pdfile.h"
-#include "namespace-inl.h"
-#include "commands.h"
-#include "cmdline.h"
-#include "curop-inl.h"
-#include "../util/background.h"
-#include "../scripting/engine.h"
+#include "mongo/db/commands.h"
+#include "mongo/db/curop.h"
+#include "mongo/db/jsobj.h"
+#include "mongo/scripting/engine.h"
+#include "mongo/util/background.h"
 
 namespace mongo {
 
-    class BasicDriverHelper : public Command {
-    public:
-        BasicDriverHelper( const char * name ) : Command( name ) {}
+using std::string;
 
-        virtual LockType locktype() const { return NONE; }
-        virtual bool slaveOk() const { return true; }
-        virtual bool slaveOverrideOk() const { return true; }
-    };
+class BasicDriverHelper : public Command {
+public:
+    BasicDriverHelper(const char* name) : Command(name) {}
 
-    class ObjectIdTest : public BasicDriverHelper {
-    public:
-        ObjectIdTest() : BasicDriverHelper( "driverOIDTest" ) {}
-        virtual void addRequiredPrivileges(const std::string& dbname,
-                                           const BSONObj& cmdObj,
-                                           std::vector<Privilege>* out) {} // No auth required
-        virtual bool run(const string& , BSONObj& cmdObj, int, string& errmsg, BSONObjBuilder& result, bool fromRepl) {
-            if ( cmdObj.firstElement().type() != jstOID ) {
-                errmsg = "not oid";
-                return false;
-            }
+    virtual bool isWriteCommandForConfigServer() const {
+        return false;
+    }
+    virtual bool slaveOk() const {
+        return true;
+    }
+    virtual bool slaveOverrideOk() const {
+        return true;
+    }
+};
 
-            const OID& oid = cmdObj.firstElement().__oid();
-            result.append( "oid" , oid );
-            result.append( "str" , oid.str() );
-
-            return true;
+class ObjectIdTest : public BasicDriverHelper {
+public:
+    ObjectIdTest() : BasicDriverHelper("driverOIDTest") {}
+    virtual void addRequiredPrivileges(const std::string& dbname,
+                                       const BSONObj& cmdObj,
+                                       std::vector<Privilege>* out) {}  // No auth required
+    virtual bool run(OperationContext* txn,
+                     const string&,
+                     BSONObj& cmdObj,
+                     int,
+                     string& errmsg,
+                     BSONObjBuilder& result,
+                     bool fromRepl) {
+        if (cmdObj.firstElement().type() != jstOID) {
+            errmsg = "not oid";
+            return false;
         }
-    } driverObjectIdTest;
+
+        const OID& oid = cmdObj.firstElement().__oid();
+        result.append("oid", oid);
+        result.append("str", oid.toString());
+
+        return true;
+    }
+} driverObjectIdTest;
 }

@@ -3,8 +3,8 @@ var conn = startMongodTest();
 var db1 = conn.getDB("profile-a");
 var db2 = db1.getSisterDB("profile-b");
 var username = "user";
-db1.addUser(username, "password");
-db2.addUser(username, "password");
+db1.createUser({user:username, pwd: "password", roles: jsTest.basicUserRoles});
+db2.createUser({user:username, pwd: "password", roles: jsTest.basicUserRoles});
 
 
 function lastOp(db) {
@@ -33,7 +33,7 @@ var last = lastOp(db1);
 assert.eq(principalName(username, db1), last.user);
 assert.eq(1, last.allUsers.length);
 assert.eq(username, last.allUsers[0].user);
-assert.eq(db1, last.allUsers[0].userSource);
+assert.eq(db1, last.allUsers[0].db);
 
 db2.auth(username, "password");
 
@@ -44,8 +44,8 @@ assert((principalName(username, db1) == last.user) || (principalName(username, d
 assert.eq(2, last.allUsers.length);
 assert.eq(username, last.allUsers[0].user);
 assert.eq(username, last.allUsers[1].user);
-assert((db1 == last.allUsers[0].userSource && db2 == last.allUsers[1].userSource) ||
-       (db2 == last.allUsers[0].userSource && db1 == last.allUsers[1].userSource));
+assert((db1 == last.allUsers[0].db && db2 == last.allUsers[1].db) ||
+       (db2 == last.allUsers[0].db && db1 == last.allUsers[1].db));
 
 db1.setProfilingLevel(0);
 db1.dropDatabase();

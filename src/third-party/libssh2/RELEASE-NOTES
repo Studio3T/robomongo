@@ -1,0 +1,83 @@
+libssh2 1.5.0
+
+This release includes the following changes:
+
+ o Added Windows Cryptography API: Next Generation based backend
+
+This release includes the following bugfixes:
+
+ o Security Advisory for CVE-2015-1782, using SSH_MSG_KEXINIT data unbounded
+ o missing _libssh2_error in _libssh2_channel_write
+ o knownhost: Fix DSS keys being detected as unknown.
+ o knownhost: Restore behaviour of `libssh2_knownhost_writeline` with short buffer.
+ o libssh2.h: on Windows, a socket is of type SOCKET, not int
+ o libssh2_priv.h: a 1 bit bit-field should be unsigned
+ o windows build: do not export externals from static library
+ o Fixed two potential use-after-frees of the payload buffer
+ o Fixed a few memory leaks in error paths
+ o userauth: Fixed an attempt to free from stack on error
+ o agent_list_identities: Fixed memory leak on OOM
+ o knownhosts: Abort if the hosts buffer is too small
+ o sftp_close_handle: ensure the handle is always closed
+ o channel_close: Close the channel even in the case of errors
+ o docs: added missing libssh2_session_handshake.3 file
+ o docs: fixed a bunch of typos
+ o userauth_password: pass on the underlying error code
+ o _libssh2_channel_forward_cancel: accessed struct after free
+ o _libssh2_packet_add: avoid using uninitialized memory
+ o _libssh2_channel_forward_cancel: avoid memory leaks on error
+ o _libssh2_channel_write: client spins on write when window full
+ o windows build: fix build errors
+ o publickey_packet_receive: avoid junk in returned pointers
+ o channel_receive_window_adjust: store windows size always
+ o userauth_hostbased_fromfile: zero assign to avoid uninitialized use
+ o configure: change LIBS not LDFLAGS when checking for libs
+ o agent_connect_unix: make sure there's a trailing zero
+ o MinGW build: Fixed redefine warnings.
+ o sftpdir.c: added authentication method detection.
+ o Watcom build: added support for WinCNG build.
+ o configure.ac: replace AM_CONFIG_HEADER with AC_CONFIG_HEADERS
+ o sftp_statvfs: fix for servers not supporting statfvs extension
+ o knownhost.c: use LIBSSH2_FREE macro instead of free
+ o Fixed compilation using mingw-w64
+ o knownhost.c: fixed that 'key_type_len' may be used uninitialized
+ o configure: Display individual crypto backends on separate lines
+ o examples on Windows: check for WSAStartup return code
+ o examples on Windows: check for socket return code
+ o agent.c: check return code of MapViewOfFile
+ o kex.c: fix possible NULL pointer de-reference with session->kex
+ o packet.c: fix possible NULL pointer de-reference within listen_state
+ o tests on Windows: check for WSAStartup return code
+ o userauth.c: improve readability and clarity of for-loops
+ o examples on Windows: use native SOCKET-type instead of int
+ o packet.c: i < 256 was always true and i would overflow to 0
+ o kex.c: make sure mlist is not set to NULL
+ o session.c: check return value of session_nonblock in debug mode
+ o session.c: check return value of session_nonblock during startup
+ o userauth.c: make sure that sp_len is positive and avoid overflows
+ o knownhost.c: fix use of uninitialized argument variable wrote
+ o openssl: initialise the digest context before calling EVP_DigestInit()
+ o libssh2_agent_init: init ->fd to LIBSSH2_INVALID_SOCKET
+ o configure.ac: Add zlib to Requires.private in libssh2.pc if using zlib
+ o configure.ac: Rework crypto library detection
+ o configure.ac: Reorder --with-* options in --help output
+ o configure.ac: Call zlib zlib and not libz in text but keep option names
+ o Fix non-autotools builds: Always define the LIBSSH2_OPENSSL CPP macro
+ o sftp: seek: Don't flush buffers on same offset
+ o sftp: statvfs: Along error path, reset the correct 'state' variable.
+ o sftp: Add support for fsync (OpenSSH extension).
+ o _libssh2_channel_read: fix data drop when out of window
+ o comp_method_zlib_decomp: Improve buffer growing algorithm
+ o _libssh2_channel_read: Honour window_size_initial
+ o window_size: redid window handling for flow control reasons
+ o knownhosts: handle unknown key types
+
+This release would not have looked like this without help, code, reports and
+advice from friends like these:
+
+ Alexander Lamaison, Bob Kast, Dan Fandrich, Daniel Stenberg, Guenter Knauf,
+ Kamil Dudka, Leif Salomonsson, Marc Hörsken, Mark McPherson,
+ Matthias Kerestesch, Mikhail Gusarov, Peter Stuge, Richard W.M. Jones,
+ Salvador Fandino, Seth Willits, Mariusz Ziulek
+ 
+        Thanks! (and sorry if I forgot to mention someone)

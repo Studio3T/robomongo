@@ -17,8 +17,8 @@ set(PROJECT_GITHUB_ISSUES "www.github.com/paralect/robomongo/issues" CACHE STRIN
 
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
 set(MAJOR "0")
-set(MINOR "8")
-set(PATCH "6")
+set(MINOR "10")
+set(PATCH "0")
 set(BUILD "dev")
 set(SHORT_VERSION ${MAJOR}.${MINOR}.${PATCH} CACHE STRING "${PROJECT_NAME} short version")
 set(PROJECT_VERSION "${SHORT_VERSION}${BUILD}" CACHE STRING "${PROJECT_NAME} version")

@@ -1,8 +1,0 @@
-.deps
-.libs
-*.gcno
-*.gcda
-Makefile
-Makefile.in
-simple
-ssh2

@@ -3,11 +3,11 @@ IF(BOOST_ENABLED)
 ENDIF()
 ADD_SUBDIRECTORY(third-party/qjson)
 ADD_SUBDIRECTORY(third-party/qscintilla/Qt4Qt5)
-ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/js-1.7)
+ADD_SUBDIRECTORY(third-party/js-1.7)
 
 SET(PCRE_BUILD_TESTS OFF CACHE BOOL "Build the tests pcre tests.")
 SET(PCRE_BUILD_PCREGREP OFF CACHE BOOL "Build pcregrep")
-ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/pcre-8.30 pcrecpp)
+ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/pcre-8.37 pcrecpp)
 
 SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/ConnectionsDialog.h
@@ -286,7 +286,7 @@ IF(SSH_ENABLED)
     SET(SOURCES_GUI ${SOURCES_GUI}
         robomongo/gui/dialogs/SSHTunnelTab.cpp
     )
-    ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/libssh2)
+    ADD_SUBDIRECTORY(third-party/libssh2)
     SET(ALL_LIBS ${ALL_LIBS} libssh2_third_party)    
 ENDIF(SSH_ENABLED)
 

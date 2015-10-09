@@ -686,13 +686,8 @@ session_startup(LIBSSH2_SESSION *session, libssh2_socket_t sock)
             !get_socket_nonblocking(session->socket_fd);
 
         if (session->socket_prev_blockstate) {
-            /* If in blocking state change to non-blocking */
-            rc = session_nonblock(session->socket_fd, 1);
-            if (rc) {
-                return _libssh2_error(session, rc,
-                                      "Failed changing socket's "
-                                      "blocking state to non-blocking");
-            }
+            /* If in blocking state chang to non-blocking */
+            session_nonblock(session->socket_fd, 1);
         }
 
         session->startup_state = libssh2_NB_state_created;
@@ -1021,14 +1016,6 @@ session_free(LIBSSH2_SESSION *session)
     if (session->scpSend_command) {
         LIBSSH2_FREE(session, session->scpSend_command);
     }
-    if (session->sftpInit_sftp) {
-        LIBSSH2_FREE(session, session->sftpInit_sftp);
-    }
-
-    /* Free payload buffer */
-    if (session->packet.total_num) {
-        LIBSSH2_FREE(session, session->packet.payload);
-    }
 
     /* Cleanup all remaining packets */
     while ((pkg = _libssh2_list_first(&session->packets))) {
@@ -1045,14 +1032,9 @@ session_free(LIBSSH2_SESSION *session)
     _libssh2_debug(session, LIBSSH2_TRACE_TRANS,
          "Extra packets left %d", packets_left);
 
-    if(session->socket_prev_blockstate) {
+    if(session->socket_prev_blockstate)
         /* if the socket was previously blocking, put it back so */
-        rc = session_nonblock(session->socket_fd, 0);
-        if (rc) {
-            _libssh2_debug(session, LIBSSH2_TRACE_TRANS,
-             "unable to reset socket's blocking state");
-        }
-    }
+        session_nonblock(session->socket_fd, 0);
 
     if (session->server_hostkey) {
         LIBSSH2_FREE(session, session->server_hostkey);
@@ -1532,7 +1514,7 @@ libssh2_poll(LIBSSH2_POLLFD * fds, unsigned int nfds, long timeout)
     }
 #else
     /* No select() or poll()
-     * no sockets structure to setup
+     * no sockets sturcture to setup
      */
 
     timeout = 0;

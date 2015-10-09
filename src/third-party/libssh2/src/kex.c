@@ -1549,30 +1549,6 @@ static int kex_agree_comp(LIBSSH2_SESSION *session,
  * The Client gets to make the final call on "agreed methods"
  */
 
-/*
- * kex_string_pair() extracts a string from the packet and makes sure it fits
- * within the given packet.
- */
-static int kex_string_pair(unsigned char **sp,   /* parsing position */
-                           unsigned char *data,  /* start pointer to packet */
-                           size_t data_len,      /* size of total packet */
-                           size_t *lenp,         /* length of the string */
-                           unsigned char **strp) /* pointer to string start */
-{
-    unsigned char *s = *sp;
-    *lenp = _libssh2_ntohu32(s);
-
-    /* the length of the string must fit within the current pointer and the
-       end of the packet */
-    if (*lenp > (data_len - (s - data) -4))
-        return 1;
-    *strp = s + 4;
-    s += 4 + *lenp;
-
-    *sp = s;
-    return 0;
-}
-
 /* kex_agree_methods
  * Decide which specific method to use of the methods offered by each party
  */
@@ -1592,23 +1568,38 @@ static int kex_agree_methods(LIBSSH2_SESSION * session, unsigned char *data,
     s += 16;
 
     /* Locate each string */
-    if(kex_string_pair(&s, data, data_len, &kex_len, &kex))
-       return -1;
-    if(kex_string_pair(&s, data, data_len, &hostkey_len, &hostkey))
-       return -1;
-    if(kex_string_pair(&s, data, data_len, &crypt_cs_len, &crypt_cs))
-       return -1;
-    if(kex_string_pair(&s, data, data_len, &crypt_sc_len, &crypt_sc))
-       return -1;
-    if(kex_string_pair(&s, data, data_len, &mac_cs_len, &mac_cs))
-       return -1;
-    if(kex_string_pair(&s, data, data_len, &mac_sc_len, &mac_sc))
-       return -1;
-    if(kex_string_pair(&s, data, data_len, &comp_cs_len, &comp_cs))
-       return -1;
-    if(kex_string_pair(&s, data, data_len, &comp_sc_len, &comp_sc))
-       return -1;
-
+    kex_len = _libssh2_ntohu32(s);
+    kex = s + 4;
+    s += 4 + kex_len;
+    hostkey_len = _libssh2_ntohu32(s);
+    hostkey = s + 4;
+    s += 4 + hostkey_len;
+    crypt_cs_len = _libssh2_ntohu32(s);
+    crypt_cs = s + 4;
+    s += 4 + crypt_cs_len;
+    crypt_sc_len = _libssh2_ntohu32(s);
+    crypt_sc = s + 4;
+    s += 4 + crypt_sc_len;
+    mac_cs_len = _libssh2_ntohu32(s);
+    mac_cs = s + 4;
+    s += 4 + mac_cs_len;
+    mac_sc_len = _libssh2_ntohu32(s);
+    mac_sc = s + 4;
+    s += 4 + mac_sc_len;
+    comp_cs_len = _libssh2_ntohu32(s);
+    comp_cs = s + 4;
+    s += 4 + comp_cs_len;
+    comp_sc_len = _libssh2_ntohu32(s);
+    comp_sc = s + 4;
+#if 0
+    s += 4 + comp_sc_len;
+    lang_cs_len = _libssh2_ntohu32(s);
+    lang_cs = s + 4;
+    s += 4 + lang_cs_len;
+    lang_sc_len = _libssh2_ntohu32(s);
+    lang_sc = s + 4;
+    s += 4 + lang_sc_len;
+#endif
     /* If the server sent an optimistic packet, assume that it guessed wrong.
      * If the guess is determined to be right (by kex_agree_kex_hostkey)
      * This flag will be reset to zero so that it's not ignored */
@@ -1765,7 +1756,7 @@ _libssh2_kex_exchange(LIBSSH2_SESSION * session, int reexchange,
         key_state->state = libssh2_NB_state_sent2;
     }
 
-    if (rc == 0 && session->kex) {
+    if (rc == 0) {
         if (key_state->state == libssh2_NB_state_sent2) {
             retcode = session->kex->exchange_keys(session,
                                                   &key_state->key_state_low);
@@ -1875,7 +1866,7 @@ libssh2_session_method_pref(LIBSSH2_SESSION * session, int method_type,
     }
     memcpy(s, prefs, prefs_len + 1);
 
-    while (s && *s && mlist) {
+    while (s && *s) {
         char *p = strchr(s, ',');
         int method_len = p ? (p - s) : (int) strlen(s);
 

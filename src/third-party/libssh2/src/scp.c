@@ -133,7 +133,7 @@ shell_quotearg(const char *path, unsigned char *buf,
      * Processing States:
      *  UQSTRING:       unquoted string: ... -- used for quoting exclamation
      *                  marks. This is the initial state
-     *  SQSTRING:       single-quoted-string: '... -- any character may follow
+     *  SQSTRING:       single-qouted-string: '... -- any character may follow
      *  QSTRING:        quoted string: "... -- only apostrophes may follow
      */
     enum { UQSTRING, SQSTRING, QSTRING } state = UQSTRING;
@@ -727,7 +727,7 @@ scp_recv(LIBSSH2_SESSION * session, const char *path, struct stat * sb)
         sb->st_mtime = session->scpRecv_mtime;
         sb->st_atime = session->scpRecv_atime;
         sb->st_size = session->scpRecv_size;
-        sb->st_mode = (unsigned short)session->scpRecv_mode;
+        sb->st_mode = session->scpRecv_mode;
     }
 
     session->scpRecv_state = libssh2_NB_state_idle;

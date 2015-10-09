@@ -1,5 +1,5 @@
 /* Copyright (c) 2004-2007, Sara Golemon <sarag@libssh2.org>
- * Copyright (c) 2010-2014 by Daniel Stenberg
+ * Copyright (c) 2010-2012 by Daniel Stenberg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms,
@@ -136,8 +136,6 @@ publickey_packet_receive(LIBSSH2_PUBLICKEY * pkey,
     LIBSSH2_SESSION *session = channel->session;
     unsigned char buffer[4];
     int rc;
-    *data = NULL; /* default to nothing returned */
-    *data_len = 0;
 
     if (pkey->receive_state == libssh2_NB_state_idle) {
         rc = _libssh2_channel_read(channel, 0, (char *) buffer, 4);
@@ -350,12 +348,13 @@ static LIBSSH2_PUBLICKEY *publickey_init(LIBSSH2_SESSION *session)
         }
 
         session->pkeyInit_pkey =
-            LIBSSH2_CALLOC(session, sizeof(LIBSSH2_PUBLICKEY));
+            LIBSSH2_ALLOC(session, sizeof(LIBSSH2_PUBLICKEY));
         if (!session->pkeyInit_pkey) {
             _libssh2_error(session, LIBSSH2_ERROR_ALLOC,
                            "Unable to allocate a new publickey structure");
             goto err_exit;
         }
+        memset(session->pkeyInit_pkey, 0, sizeof(LIBSSH2_PUBLICKEY));
         session->pkeyInit_pkey->channel = session->pkeyInit_channel;
         session->pkeyInit_pkey->version = 0;
 

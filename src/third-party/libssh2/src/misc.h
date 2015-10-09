@@ -1,6 +1,6 @@
 #ifndef __LIBSSH2_MISC_H
 #define __LIBSSH2_MISC_H
-/* Copyright (c) 2009-2014 by Daniel Stenberg
+/* Copyright (c) 2009-2011 by Daniel Stenberg
  *
  * All rights reserved.
  *
@@ -77,7 +77,6 @@ libssh2_uint64_t _libssh2_ntohu64(const unsigned char *buf);
 void _libssh2_htonu32(unsigned char *buf, uint32_t val);
 void _libssh2_store_u32(unsigned char **buf, uint32_t value);
 void _libssh2_store_str(unsigned char **buf, const char *str, size_t len);
-void *_libssh2_calloc(LIBSSH2_SESSION* session, size_t size);
 
 #if defined(LIBSSH2_WIN32) && !defined(__MINGW32__) && !defined(__CYGWIN__)
 /* provide a private one */

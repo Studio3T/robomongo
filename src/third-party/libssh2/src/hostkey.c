@@ -1,5 +1,5 @@
 /* Copyright (c) 2004-2006, Sara Golemon <sarag@libssh2.org>
- * Copyright (c) 2009-2014 by Daniel Stenberg
+ * Copyright (c) 2009 by Daniel Stenberg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms,
@@ -347,12 +347,13 @@ hostkey_method_ssh_dss_signv(LIBSSH2_SESSION * session,
     libssh2_sha1_ctx ctx;
     int i;
 
-    *signature = LIBSSH2_CALLOC(session, 2 * SHA_DIGEST_LENGTH);
+    *signature = LIBSSH2_ALLOC(session, 2 * SHA_DIGEST_LENGTH);
     if (!*signature) {
         return -1;
     }
 
     *signature_len = 2 * SHA_DIGEST_LENGTH;
+    memset(*signature, 0, 2 * SHA_DIGEST_LENGTH);
 
     libssh2_sha1_init(&ctx);
     for(i = 0; i < veccount; i++) {

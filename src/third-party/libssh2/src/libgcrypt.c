@@ -342,7 +342,7 @@ _libssh2_dsa_new_private(libssh2_dsa_ctx ** dsa,
 
 int
 _libssh2_rsa_sha1_sign(LIBSSH2_SESSION * session,
-                       libssh2_rsa_ctx * rsactx,
+                       libssh2_dsa_ctx * rsactx,
                        const unsigned char *hash,
                        size_t hash_len,
                        unsigned char **signature, size_t *signature_len)

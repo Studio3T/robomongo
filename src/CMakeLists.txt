@@ -350,7 +350,7 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
                     COMMENT "Build mongoclient library")
             ELSE()
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --d ${MONGODB_COMMAND}
+                    COMMAND scons --dbg ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
@@ -375,7 +375,7 @@ ELSEIF(MSVC)
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient release library")
         ADD_CUSTOM_TARGET(mongoclient_debug
-            COMMAND call scons --d ${MONGODB_COMMAND}
+            COMMAND call scons --dbg ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient debug library")
@@ -386,7 +386,7 @@ ELSEIF(MSVC)
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient release library")
         ADD_CUSTOM_TARGET(mongoclient_debug
-            COMMAND call scons --d ${MONGODB_COMMAND}
+            COMMAND call scons --dbg ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient debug library")

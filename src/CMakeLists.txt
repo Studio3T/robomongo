@@ -228,9 +228,12 @@ SET(SOURCES_CORE
 IF(WIN32)
     ADD_DEFINITIONS(-D_WINSOCKAPI_ -DXP_WIN -DUNICODE -D_UNICODE)
 ELSEIF(UNIX)
-    ADD_DEFINITIONS(-DXP_UNIX)
+    ADD_DEFINITIONS(-DXP_UNIX -DMONGO_BYTE_ORDER=1234)
 ENDIF()
 ADD_DEFINITIONS(-DROBOMONGO -DJS_C_STRINGS_ARE_UTF8 -DMONGO_EXPOSE_MACROS)
+
+# TODO
+# python generate_error_codes.py error_codes.err error_codes.h error_codes.cpp
 
 SET_DESKTOP_TARGET()
 
@@ -279,8 +282,7 @@ ENDIF(OPENSSL_ENABLED)
 
 
 IF(SSH_ENABLED)
-    # SET(MONGODB_COMMAND ${MONGODB_COMMAND} --ssh) # Commented out as this isn't supported in mongo-3.x
-    SET(MONGODB_COMMAND ${MONGODB_COMMAND})
+    SET(MONGODB_COMMAND ${MONGODB_COMMAND} --ssh)
     SET(HEADERS_GUI_TO_MOC ${HEADERS_GUI_TO_MOC}
         robomongo/gui/dialogs/SSHTunnelTab.h
     )
@@ -291,18 +293,18 @@ IF(SSH_ENABLED)
     SET(ALL_LIBS ${ALL_LIBS} libssh2_third_party)    
 ENDIF(SSH_ENABLED)
 
-IF(NOT MONGODB_EXTRAPATH STREQUAL "")
-    STRING(REGEX REPLACE "([^\ ]+)" "\\1," MONGODB_EXTRAPATH_OUT ${MONGODB_EXTRAPATH})
-    
-    # Remove trailing comma
-    STRING(REGEX REPLACE ",$" "" MONGODB_EXTRAPATH_OUT_CLEAR ${MONGODB_EXTRAPATH_OUT})    
-    
-    # Remove spaces
-    STRING(REGEX REPLACE "([ ]+)" "" MONGODB_EXTRAPATH_OUT_CLEAR_NO_SPACES ${MONGODB_EXTRAPATH_OUT_CLEAR})    
-    
-    SET(MONGODB_COMMAND ${MONGODB_COMMAND} --extrapath=${MONGODB_EXTRAPATH_OUT_CLEAR_NO_SPACES})
-    SET(ALL_LIBS ${ALL_LIBS} ${OPENSSL_LIBRARIES})
-ENDIF()
+#IF(NOT MONGODB_EXTRAPATH STREQUAL "")
+#    STRING(REGEX REPLACE "([^\ ]+)" "\\1," MONGODB_EXTRAPATH_OUT ${MONGODB_EXTRAPATH})
+#    
+#    # Remove trailing comma
+#    STRING(REGEX REPLACE ",$" "" MONGODB_EXTRAPATH_OUT_CLEAR ${MONGODB_EXTRAPATH_OUT})    
+#    
+##    # Remove spaces
+#    STRING(REGEX REPLACE "([ ]+)" "" MONGODB_EXTRAPATH_OUT_CLEAR_NO_SPACES ${MONGODB_EXTRAPATH_OUT_CLEAR})    
+#    
+#    SET(MONGODB_COMMAND ${MONGODB_COMMAND} --extrapath=${MONGODB_EXTRAPATH_OUT_CLEAR_NO_SPACES})
+#    SET(ALL_LIBS ${ALL_LIBS} ${OPENSSL_LIBRARIES})
+#ENDIF()
 
 SET(MONGODB_COMMAND ${MONGODB_COMMAND} --${ARCH_TEXT} mongo)
 
@@ -331,13 +333,13 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     IF(BOOST_ENABLED)
             IF ("${CMAKE_BUILD_TYPE_STABLE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --release ${MONGODB_COMMAND}
+                    COMMAND scons --64 --release ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
             ELSE()
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons -d ${MONGODB_COMMAND}
+                    COMMAND scons --64 --dbg=on --opt=on ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
@@ -345,13 +347,14 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
         ELSE()
             IF ("${CMAKE_BUILD_TYPE_STABLE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --release ${MONGODB_COMMAND}
+                    COMMAND scons --64 --release ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
             ELSE()
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --dbg ${MONGODB_COMMAND}
+                    # FIXME: add architecture check?
+                    COMMAND scons --64 --dbg=on --opt=on ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
@@ -371,23 +374,23 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
 ELSEIF(MSVC)
     IF(BOOST_ENABLED)
         ADD_CUSTOM_TARGET(mongoclient_release
-            COMMAND call scons --release ${MONGODB_COMMAND}
+            COMMAND call scons --64 --release ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient release library")
         ADD_CUSTOM_TARGET(mongoclient_debug
-            COMMAND call scons --dbg ${MONGODB_COMMAND}
+            COMMAND call scons --64 --dbg=on --opt=on ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient debug library")
     ELSE(BOOST_ENABLED)
         ADD_CUSTOM_TARGET(mongoclient_release
-            COMMAND call scons --release ${MONGODB_COMMAND}
+            COMMAND call scons --64 --release ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient release library")
         ADD_CUSTOM_TARGET(mongoclient_debug
-            COMMAND call scons --dbg ${MONGODB_COMMAND}
+            COMMAND call scons --64 --dbg=on --opt=on ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient debug library")

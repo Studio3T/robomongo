@@ -56,7 +56,7 @@ namespace mongo {
     using std::string;
     using std::stringstream;
 
-    const char versionString[] = "@mongo_version@";
+    const char versionString[] = "3.0.6";
     const char * gitVersion() { return "@mongo_git_version@"; }
     const char * compiledJSEngine() { return "@buildinfo_js_engine@"; }
     const char * allocator() { return "@buildinfo_allocator@"; }
@@ -64,10 +64,10 @@ namespace mongo {
     const char * loaderFlags() { return "@buildinfo_loader_flags@"; }
     const char * sysInfo() { return "@buildinfo_sysinfo@ BOOST_LIB_VERSION=" BOOST_LIB_VERSION ; }
 
-    const int kMongoVersionMajor = @mongo_version_major@;
-    const int kMongoVersionMinor = @mongo_version_minor@;
-    const int kMongoVersionPatch = @mongo_version_patch@;
-    const int kMongoVersionExtra = @mongo_version_extra@;
+    const int kMongoVersionMajor = 3;
+    const int kMongoVersionMinor = 0;
+    const int kMongoVersionPatch = 6;
+    const int kMongoVersionExtra = 0;
     const char kMongoVersionExtraStr[] = "@mongo_version_extra_str@";
 
     bool isSameMajorVersion(const char* version) {

@@ -204,6 +204,27 @@ public:
     virtual void appendPrefix(std::stringstream& ss) const;
 };
 
+#ifdef ROBOMONGO
+    class ParseMsgAssertionException : public MsgAssertionException {
+    public:
+        ParseMsgAssertionException(int c, const std::string& m, int offset, const std::string reason) :
+            MsgAssertionException( c , m ),
+            _reason(reason),
+            _offset(offset) {}
+
+        virtual ~ParseMsgAssertionException() throw() { }
+        virtual bool severe() { return false; }
+
+        std::string reason() const { return _reason; }
+        int offset() const { return _offset; }
+
+    private:
+        std::string _reason;
+        int _offset;
+    };
+#endif
+
+
 MONGO_CLIENT_API MONGO_COMPILER_NORETURN void verifyFailed(const char* expr,
                                                            const char* file,
                                                            unsigned line);

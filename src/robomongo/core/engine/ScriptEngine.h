@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mongo/scripting/engine.h>
-#include <third_party/js-1.7/jsparse.h>
+#include "third-party/js-1.7/jsparse.h"
 
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/Enums.h"

@@ -25,12 +25,12 @@ namespace Robomongo
         AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
         _scriptInfo.setScript(QtUtils::toQString(script));
         AppRegistry::instance().bus()->send(_server->client(), new ExecuteScriptRequest(this, query(), dbName));
-        LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
+        LOG_MSG(_scriptInfo.script(), ::mongo::logger::LogSeverity::Info());
     }
 
-    std::string MongoShell::query() const 
+    std::string MongoShell::query() const
     {
-        return QtUtils::toStdString(_scriptInfo.script()); 
+        return QtUtils::toStdString(_scriptInfo.script());
     }
 
     void MongoShell::execute(const std::string &dbName)
@@ -39,7 +39,7 @@ namespace Robomongo
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             AppRegistry::instance().bus()->send(_server->client(), new ExecuteScriptRequest(this, query(), dbName));
             if(!_scriptInfo.script().isEmpty())
-                LOG_MSG(_scriptInfo.script(), mongo::LL_INFO);
+                LOG_MSG(_scriptInfo.script(), ::mongo::logger::LogSeverity::Info());
         } else {
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             _scriptInfo.setScript("");
@@ -62,7 +62,8 @@ namespace Robomongo
 
     void MongoShell::stop()
     {
-        mongo::Scope::setInterruptFlag(true);
+        // FIXME
+        // mongo::Scope::setInterruptFlag(true);
     }
 
     bool MongoShell::loadFromFile()

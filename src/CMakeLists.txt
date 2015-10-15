@@ -121,12 +121,12 @@ SET(HEADERS_SHELL
     robomongo/shell/db/ptimeutil.h)
 SET(SOURCES_SHELL
     robomongo/shell/scripting/utils.cpp
-    robomongo/shell/scripting/sm_db.cpp
-    robomongo/shell/scripting/engine_spidermonkey.cpp
-    robomongo/shell/scripting/engine.cpp
+    #robomongo/shell/scripting/sm_db.cpp
+    #robomongo/shell/scripting/engine_spidermonkey.cpp
+    #robomongo/shell/scripting/engine.cpp
     robomongo/shell/mongo.cpp
     #robomongo/shell/util/version.cpp
-    robomongo/shell/util/processinfo.cpp
+    #robomongo/shell/util/processinfo.cpp
     robomongo/shell/shell/shell_utils.cpp
     robomongo/shell/shell/shell_utils_launcher.cpp
     robomongo/shell/shell/shell_utils_extended.cpp
@@ -308,8 +308,10 @@ ENDIF(SSH_ENABLED)
 
 SET(MONGODB_COMMAND ${MONGODB_COMMAND} --${ARCH_TEXT} mongo)
 
-SET(HEADERS ${HEADERS} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
-SET(SOURCES ${SOURCES} ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_CORE})
+#SET(HEADERS ${HEADERS} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
+SET(HEADERS ${HEADERS} ${HEADERS_GUI} ${HEADERS_CORE})
+#SET(SOURCES ${SOURCES} ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_CORE})
+SET(SOURCES ${SOURCES} ${SOURCES_GUI} ${SOURCES_CORE})
 SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC})
 
 QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})

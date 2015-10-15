@@ -19,7 +19,7 @@
 
 #include "mongo/base/init.h"
 #include "mongo/client/dbclientcursor.h"
-#include "mongo/db/namespacestring.h"
+#include "mongo/db/namespace_string.h"
 #include "mongo/scripting/engine_spidermonkey.h"
 #include "mongo/scripting/engine_spidermonkey_internal.h"
 #include "mongo/util/base64.h"

@@ -84,7 +84,9 @@ namespace Robomongo
         setServerHost(source->serverHost());
         setServerPort(source->serverPort());
         setDefaultDatabase(source->defaultDatabase());
+#ifdef MONGO_SSL
         setSslInfo(source->sslInfo());
+#endif
 #ifdef SSH_SUPPORT_ENABLED
         setSshInfo(source->sshInfo());
 #endif
@@ -94,7 +96,7 @@ namespace Robomongo
             addCredential((*it)->clone());
         }
 
-         _info = new mongo::HostAndPort(_hostName, _port);
+         _info = mongo::HostAndPort(_hostName, _port);
     }
 
     /**

@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 2.8.0)
 if(POLICY CMP0048)
    cmake_policy(SET CMP0048 OLD)
 endif()
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif(CCACHE_FOUND)
 
 ###
 # Settings

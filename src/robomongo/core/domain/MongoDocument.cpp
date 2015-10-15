@@ -1,6 +1,6 @@
 #include "robomongo/core/domain/MongoDocument.h"
 
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/utils/BsonUtils.h"
@@ -25,7 +25,7 @@ namespace Robomongo
 
     /*
     ** Create MongoDocument from BsonObj. It will take owned version of BSONObj
-    */ 
+    */
     MongoDocumentPtr MongoDocument::fromBsonObj(const mongo::BSONObj &bsonObj)
     {
         MongoDocument *doc = new MongoDocument(bsonObj);
@@ -34,7 +34,7 @@ namespace Robomongo
 
     /*
     ** Create list of MongoDocuments from QList<BsonObj>. It will take owned version of BSONObj
-    */ 
+    */
     std::vector<MongoDocumentPtr> MongoDocument::fromBsonObj(const std::vector<mongo::BSONObj> &bsonObjs)
     {
         std::vector<MongoDocumentPtr> list;
@@ -66,7 +66,7 @@ namespace Robomongo
         for (QList<MongoDocumentPtr>::const_iterator it = documents.begin(); it != documents.end(); ++it) {
             if (position == 0)
                 sb << "/* 0 */\n";
-            else 
+            else
                 sb << "\n\n/* " << position << " */\n";
 
             std::string jsonString = (*it)->bsonObj().jsonString(mongo::TenGen, 1);

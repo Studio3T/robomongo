@@ -6,7 +6,7 @@
 #include <QVBoxLayout>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerjavascript.h>
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
@@ -126,7 +126,7 @@ namespace Robomongo
                 _isTextChanged =false;
                 updateCurrentTab();
             }
-        }        
+        }
     }
 
     void QueryWidget::openFile()
@@ -193,18 +193,18 @@ namespace Robomongo
 
     void QueryWidget::handle(DocumentListLoadedEvent *event)
     {
-        hideProgress();        
+        hideProgress();
         _viewer->updatePart(event->resultIndex(), event->queryInfo(), event->documents()); // this should be in viewer, subscribed to ScriptExecutedEvent
     }
 
     void QueryWidget::handle(ScriptExecutedEvent *event)
     {
         hideProgress();
-        _currentResult = event->result();        
+        _currentResult = event->result();
 
         updateCurrentTab();
         displayData(event->result().results(), event->empty());
-        _scriptWidget->setup(event->result()); // this should be in ScriptWidget, which is subscribed to ScriptExecutedEvent              
+        _scriptWidget->setup(event->result()); // this should be in ScriptWidget, which is subscribed to ScriptExecutedEvent
         activateTabContent();
     }
 

@@ -1,6 +1,6 @@
 #include "robomongo/core/domain/MongoQueryInfo.h"
 
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 
 namespace Robomongo
 {
@@ -11,7 +11,7 @@ namespace Robomongo
             size_t pos = address.find_first_of("{");
             if (pos!=std::string::npos){
                 return address.substr(0,pos);
-            }       
+            }
             return address;
         }
     }

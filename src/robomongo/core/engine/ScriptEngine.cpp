@@ -17,7 +17,7 @@
 #include <mongo/scripting/engine_spidermonkey.h>
 #include <mongo/shell/shell_utils.h>
 #include <mongo/base/string_data.h>
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 #include <pcrecpp.h>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -101,7 +101,7 @@ namespace Robomongo
             // checked by 'Scope::execFile'.
             if (isLoadMongoRcJs) {
                 std::string mongorcPath = QtUtils::toStdString(QString("%1/.mongorc.js").arg(QDir::homePath()));
-                scope->execFile(mongorcPath, false, false);      
+                scope->execFile(mongorcPath, false, false);
             }
 
             // Load '.robomongorc.js'

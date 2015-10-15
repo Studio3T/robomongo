@@ -1,6 +1,6 @@
 #include "robomongo/core/utils/BsonUtils.h"
 
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 #include <mongo/bson/bsonobjiterator.h>
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/HexUtils.h"
@@ -15,7 +15,7 @@ namespace Robomongo
         namespace detail
         {
             template<>
-            mongo::BSONObj getField<mongo::BSONObj>(const mongo::BSONElement &elem) 
+            mongo::BSONObj getField<mongo::BSONObj>(const mongo::BSONElement &elem)
             {
                 return elem.embeddedObject();
             }
@@ -59,7 +59,7 @@ namespace Robomongo
 
         std::string jsonString(const BSONObj &obj, JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat, bool isArray)
         {
-            if ( obj.isEmpty() ) return isArray? "[]" : "{}";           
+            if ( obj.isEmpty() ) return isArray? "[]" : "{}";
 
             StringBuilder s;
             s << (isArray ? "[" : "{");
@@ -96,7 +96,7 @@ namespace Robomongo
 
         std::string jsonString(const BSONElement &elem, JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat, bool isArray)
         {
-            BSONType t = elem.type();            
+            BSONType t = elem.type();
 
             stringstream s;
             if ( includeFieldNames && !isArray)
@@ -326,7 +326,7 @@ namespace Robomongo
             }
             return s.str();
         }
-    
+
         bool isArray(const mongo::BSONElement &elem)
         {
             return isArray(elem.type());
@@ -334,7 +334,7 @@ namespace Robomongo
 
         bool isArray(mongo::BSONType type)
         {
-            return type == mongo::Array ; 
+            return type == mongo::Array ;
         }
 
         bool isDocument(const mongo::BSONElement &elem)
@@ -377,12 +377,12 @@ namespace Robomongo
             return (binDataType == mongo::newUUID || binDataType == mongo::bdtUUID);
         }
 
-        bool isSimpleType(const mongo::BSONElement &elem) 
+        bool isSimpleType(const mongo::BSONElement &elem)
         {
-            return isSimpleType(elem.type()); 
+            return isSimpleType(elem.type());
         }
 
-        bool isUuidType(const mongo::BSONElement &elem) 
+        bool isUuidType(const mongo::BSONElement &elem)
         {
             if (elem.type() != mongo::BinData)
                 return false;
@@ -653,7 +653,7 @@ namespace Robomongo
                     sprintf(num,"%d",elem.Int());
                     con.append(num);
                     break;
-                }           
+                }
             case Timestamp:
                 {
                     Date_t date = elem.timestampTime();
@@ -669,7 +669,7 @@ namespace Robomongo
                     char num[32]={0};
                     sprintf(num,"%lld",elem.Long());
                     con.append(num);
-                    break; 
+                    break;
                 }
             default:
                 con.append("<unsupported>");
@@ -682,7 +682,7 @@ namespace Robomongo
             mongo::BSONObjIterator iterator(doc);
             for (int i = 0; iterator.more(); ++i)
             {
-                mongo::BSONElement element = iterator.next(); 
+                mongo::BSONElement element = iterator.next();
                 if(i==index){
                     return element;
                 }
@@ -696,7 +696,7 @@ namespace Robomongo
             int i=0;
             for (; iterator.more(); ++i)
             {
-                iterator.next();                
+                iterator.next();
             }
             return i;
         }

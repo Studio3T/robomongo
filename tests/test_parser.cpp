@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 #include <mongo/bson/bsonobjbuilder.h>
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/shell/db/ptimeutil.h"
@@ -40,7 +40,7 @@ namespace
     }
 }
 
-TEST(JsonString, BSONObjConversion) 
+TEST(JsonString, BSONObjConversion)
 {
     mongo::BSONObj obj;
     std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1, DefaultEncoding, Utc);

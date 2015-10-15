@@ -1,6 +1,6 @@
 #include "robomongo/core/domain/MongoUser.h"
 
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 
 #include "robomongo/core/utils/BsonUtils.h"
 
@@ -16,7 +16,7 @@ namespace Robomongo
         _passwordHash = BsonUtils::getField<mongo::String>(obj,"pwd");
         if (_version<minimumSupportedVersion) {
             _readOnly = BsonUtils::getField<mongo::Bool>(obj,"readOnly");
-        }     
+        }
         else {
             _userSource = BsonUtils::getField<mongo::String>(obj,"userSource");
             std::vector<mongo::BSONElement> roles = BsonUtils::getField<mongo::Array>(obj, "roles");
@@ -54,7 +54,7 @@ namespace Robomongo
             {
                 builderA << *it;
             }
-            mongo::BSONObj arObj = builderA.arr();            
+            mongo::BSONObj arObj = builderA.arr();
             builder.appendArray("roles", arObj);
         }
         mongo::BSONObj obj = builder.obj();

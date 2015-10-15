@@ -7,7 +7,7 @@
 #include <QDialogButtonBox>
 #include <QDesktopWidget>
 #include <Qsci/qscilexerjavascript.h>
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
@@ -100,14 +100,14 @@ namespace Robomongo
     {
         QString text = jsonText();
         int len = 0;
-        try {  
+        try {
             std::string textString = QtUtils::toStdString(text);
             const char *json = textString.c_str();
             int jsonLen = textString.length();
             int offset = 0;
             _obj.clear();
             while(offset!=jsonLen)
-            { 
+            {
                 mongo::BSONObj doc = mongo::Robomongo::fromjson(json+offset,&len);
                 _obj.push_back(doc);
                 offset+=len;

@@ -123,10 +123,12 @@ SET(SOURCES_SHELL
     robomongo/shell/scripting/utils.cpp
     #robomongo/shell/scripting/sm_db.cpp
     #robomongo/shell/scripting/engine_spidermonkey.cpp
-    #robomongo/shell/scripting/engine.cpp
+    robomongo/shell/scripting/v8_db.cpp
+    robomongo/shell/scripting/engine_v8.cpp    
+    robomongo/shell/scripting/engine.cpp
     robomongo/shell/mongo.cpp
-    #robomongo/shell/util/version.cpp
-    #robomongo/shell/util/processinfo.cpp
+    robomongo/shell/util/version.cpp
+    robomongo/shell/util/processinfo.cpp
     robomongo/shell/shell/shell_utils.cpp
     robomongo/shell/shell/shell_utils_launcher.cpp
     robomongo/shell/shell/shell_utils_extended.cpp
@@ -308,16 +310,14 @@ ENDIF(SSH_ENABLED)
 
 SET(MONGODB_COMMAND ${MONGODB_COMMAND} --${ARCH_TEXT} mongo)
 
-#SET(HEADERS ${HEADERS} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
-SET(HEADERS ${HEADERS} ${HEADERS_GUI} ${HEADERS_CORE})
-#SET(SOURCES ${SOURCES} ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_CORE})
-SET(SOURCES ${SOURCES} ${SOURCES_GUI} ${SOURCES_CORE})
+SET(HEADERS ${HEADERS} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
+SET(SOURCES ${SOURCES} ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_CORE})
 SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC})
 
 QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})
 SET(RESOURCES robomongo/gui/resources/gui.qrc)
 QTX_ADD_RESOURCES(RES_SRC ${RESOURCES})
-SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${CMAKE_CURRENT_LIST_DIR} third-party/mongodb/src/third_party/pcre-8.30 third-party/qscintilla/Qt4Qt5 third-party/qjson third-party/mongodb/src)
+SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${CMAKE_CURRENT_LIST_DIR} third-party/mongodb/src/third_party/pcre-8.37 third-party/mongodb/src/third_party/v8/include third-party/qscintilla/Qt4Qt5 third-party/qjson third-party/mongodb/src)
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS} )
 SOURCE_GROUP("Header Files" FILES ${HEADERS} ${HEADERS_TOMOC})
 SOURCE_GROUP("Source Files" FILES ${SOURCES})

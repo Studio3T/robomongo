@@ -42,6 +42,52 @@
 #include "mongo/scripting/v8_deadline_monitor.h"
 #include "mongo/scripting/v8_profiler.h"
 
+#ifdef ROBOMONGO
+std::vector<mongo::BSONObj> __objects;
+std::string __type;     // type of request
+bool __finished;        // typed request is finished
+std::stringstream __logs;
+
+void robomongo_reset_type() {
+    __type = "";
+    __finished = false;
+}
+
+void robomongo_reset() {
+    __objects.clear();
+    __logs.str("");
+    robomongo_reset_type();
+}
+
+void robomongo_add_bsonobj(const mongo::BSONObj &obj) {
+    if (__finished) {
+        robomongo_reset_type();
+    }
+
+    __objects.push_back(obj);
+}
+
+void robomongo_begin(const std::string &type) {
+    if (__objects.size() != 0) {
+        robomongo_reset_type();
+        return;
+    }
+
+    if (__finished) {
+        robomongo_reset_type();
+        return;
+    }
+
+    __type = type;
+    __finished = false;
+}
+
+void robomongo_end() {
+    __finished = true;
+}
+
+#endif
+
 /**
  * V8_SIMPLE_HEADER must be placed in any function called from a public API
  * that work with v8 handles (and/or must be within the V8Scope's isolate

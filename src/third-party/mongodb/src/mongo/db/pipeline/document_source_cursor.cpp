@@ -12,249 +12,204 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * As a special exception, the copyright holders give permission to link the
+ * code of portions of this program with the OpenSSL library under certain
+ * conditions as described in each individual source file and distribute
+ * linked combinations including the program with the OpenSSL library. You
+ * must comply with the GNU Affero General Public License in all respects for
+ * all of the code used other than as permitted herein. If you modify file(s)
+ * with this exception, you may extend this exception to your version of the
+ * file(s), but you are not obligated to do so. If you do not wish to do so,
+ * delete this exception statement from your version. If you delete this
+ * exception statement from all source files in the program, then also delete
+ * it in the license file.
  */
 
-#include "mongo/pch.h"
+#include "mongo/platform/basic.h"
 
 #include "mongo/db/pipeline/document_source.h"
 
-#include "mongo/db/clientcursor.h"
+#include <boost/shared_ptr.hpp>
+
+#include "mongo/db/catalog/database_holder.h"
+#include "mongo/db/exec/working_set_common.h"
 #include "mongo/db/instance.h"
 #include "mongo/db/pipeline/document.h"
-#include "mongo/s/d_logic.h"
-#include "mongo/s/stale_exception.h" // for SendStaleConfigException
+#include "mongo/db/query/explain.h"
+#include "mongo/db/query/find_constants.h"
+#include "mongo/db/storage_options.h"
+#include "mongo/s/d_state.h"
+
 
 namespace mongo {
 
-    DocumentSourceCursor::CursorWithContext::CursorWithContext( const string& ns )
-        : _readContext( ns ) // Take a read lock.
-        , _chunkMgr(shardingState.needShardChunkManager( ns )
-                    ? shardingState.getShardChunkManager( ns )
-                    : ShardChunkManagerPtr())
-    {}
+using boost::intrusive_ptr;
+using boost::shared_ptr;
+using std::string;
 
-    DocumentSourceCursor::~DocumentSourceCursor() {
+DocumentSourceCursor::~DocumentSourceCursor() {
+    dispose();
+}
+
+const char* DocumentSourceCursor::getSourceName() const {
+    return "$cursor";
+}
+
+boost::optional<Document> DocumentSourceCursor::getNext() {
+    pExpCtx->checkForInterrupt();
+
+    if (_currentBatch.empty()) {
+        loadBatch();
+
+        if (_currentBatch.empty())  // exhausted the cursor
+            return boost::none;
     }
 
-    bool DocumentSourceCursor::eof() {
-        /* if we haven't gotten the first one yet, do so now */
-        if (unstarted)
-            findNext();
+    Document out = _currentBatch.front();
+    _currentBatch.pop_front();
+    return out;
+}
 
-        return !hasCurrent;
+void DocumentSourceCursor::dispose() {
+    // Can't call in to PlanExecutor or ClientCursor registries from this function since it
+    // will be called when an agg cursor is killed which would cause a deadlock.
+    _exec.reset();
+    _currentBatch.clear();
+}
+
+void DocumentSourceCursor::loadBatch() {
+    if (!_exec) {
+        dispose();
+        return;
     }
 
-    bool DocumentSourceCursor::advance() {
-        DocumentSource::advance(); // check for interrupts
+    // We have already validated the sharding version when we constructed the PlanExecutor
+    // so we shouldn't check it again.
+    const NamespaceString nss(_ns);
+    AutoGetCollectionForRead autoColl(pExpCtx->opCtx, nss);
 
-        /* if we haven't gotten the first one yet, do so now */
-        if (unstarted)
-            findNext();
+    _exec->restoreState(pExpCtx->opCtx);
 
-        findNext();
-        return hasCurrent;
-    }
-
-    Document DocumentSourceCursor::getCurrent() {
-        verify(hasCurrent);
-        return pCurrent;
-    }
-
-    void DocumentSourceCursor::dispose() {
-        _cursorWithContext.reset();
-    }
-
-    ClientCursor::Holder& DocumentSourceCursor::cursor() {
-        verify( _cursorWithContext );
-        verify( _cursorWithContext->_cursor );
-        return _cursorWithContext->_cursor;
-    }
-
-    bool DocumentSourceCursor::canUseCoveredIndex() {
-        // We can't use a covered index when we have a chunk manager because we
-        // need to examine the object to see if it belongs on this shard
-        return (!chunkMgr() &&
-                cursor()->ok() && cursor()->c()->keyFieldsOnly());
-    }
-
-    void DocumentSourceCursor::yieldSometimes() {
-        try { // SERVER-5752 may make this try unnecessary
-            // if we are index only we don't need the recored
-            bool cursorOk = cursor()->yieldSometimes(canUseCoveredIndex()
-                                                     ? ClientCursor::DontNeed
-                                                     : ClientCursor::WillNeed);
-            uassert( 16028, "collection or database disappeared when cursor yielded", cursorOk );
-        }
-        catch(SendStaleConfigException& e){
-            // We want to ignore this because the migrated documents will be filtered out of the
-            // cursor anyway and, we don't want to restart the aggregation after every migration.
-
-            log() << "Config changed during aggregation - command will resume" << endl;
-            // useful for debugging but off by default to avoid looking like a scary error.
-            LOG(1) << "aggregation stale config exception: " << e.what() << endl;
-        }
-    }
-
-    void DocumentSourceCursor::findNext() {
-        unstarted = false;
-
-        if ( !_cursorWithContext ) {
-            pCurrent = Document();
-            hasCurrent = false;
-            return;
+    int memUsageBytes = 0;
+    BSONObj obj;
+    PlanExecutor::ExecState state;
+    while ((state = _exec->getNext(&obj, NULL)) == PlanExecutor::ADVANCED) {
+        if (_dependencies) {
+            _currentBatch.push_back(_dependencies->extractFields(obj));
+        } else {
+            _currentBatch.push_back(Document::fromBsonWithMetaData(obj));
         }
 
-        for( ; cursor()->ok(); cursor()->advance() ) {
-
-            yieldSometimes();
-            if ( !cursor()->ok() ) {
-                // The cursor was exhausted during the yield.
+        if (_limit) {
+            if (++_docsAddedToBatches == _limit->getLimit()) {
                 break;
             }
+            verify(_docsAddedToBatches < _limit->getLimit());
+        }
 
-            if ( !cursor()->currentMatches() || cursor()->currentIsDup() )
-                continue;
+        memUsageBytes += _currentBatch.back().getApproximateSize();
 
-            // grab the matching document
-            if (canUseCoveredIndex()) {
-                // Can't have a Chunk Manager if we are here
-                BSONObj indexKey = cursor()->currKey();
-                pCurrent = Document(cursor()->c()->keyFieldsOnly()->hydrate(indexKey));
-            }
-            else {
-                BSONObj next = cursor()->current();
-
-                // check to see if this is a new object we don't own yet
-                // because of a chunk migration
-                if (chunkMgr() && ! chunkMgr()->belongsToMe(next))
-                    continue;
-
-                if (!_projection) {
-                    pCurrent = Document(next);
-                }
-                else {
-                    pCurrent = documentFromBsonWithDeps(next, _dependencies);
-
-                    if (debug && !_dependencies.empty()) {
-                        // Make sure we behave the same as Projection.  Projection doesn't have a
-                        // way to specify "no fields needed" so we skip the test in that case.
-
-                        MutableDocument byAggo(pCurrent);
-                        MutableDocument byProj(Document(_projection->transform(next)));
-
-                        if (_dependencies["_id"].getType() == Object) {
-                            // We handle subfields of _id identically to other fields.
-                            // Projection doesn't handle them correctly.
-
-                            byAggo.remove("_id");
-                            byProj.remove("_id");
-                        }
-
-                        if (Document::compare(byAggo.peek(), byProj.peek()) != 0) {
-                            PRINT(next);
-                            PRINT(_dependencies);
-                            PRINT(_projection->getSpec());
-                            PRINT(byAggo.peek());
-                            PRINT(byProj.peek());
-                            verify(false);
-                        }
-                    }
-                }
-            }
-
-            hasCurrent = true;
-            cursor()->advance();
-
+        if (memUsageBytes > MaxBytesToReturnToClientAtOnce) {
+            // End this batch and prepare PlanExecutor for yielding.
+            _exec->saveState();
             return;
         }
-
-        // If we got here, there aren't any more documents.
-        // The CursorWithContext (and its read lock) must be released, see SERVER-6123.
-        dispose();
-        pCurrent = Document();
-        hasCurrent = false;
     }
 
-    void DocumentSourceCursor::setSource(DocumentSource *pSource) {
-        /* this doesn't take a source */
-        verify(false);
+    // If we got here, there won't be any more documents, so destroy the executor. Can't use
+    // dispose since we want to keep the _currentBatch.
+    _exec.reset();
+
+    uassert(
+        16028, "collection or index disappeared when cursor yielded", state != PlanExecutor::DEAD);
+
+    uassert(17285,
+            "cursor encountered an error: " + WorkingSetCommon::toStatusString(obj),
+            state != PlanExecutor::FAILURE);
+
+    massert(17286,
+            str::stream() << "Unexpected return from PlanExecutor::getNext: " << state,
+            state == PlanExecutor::IS_EOF || state == PlanExecutor::ADVANCED);
+}
+
+void DocumentSourceCursor::setSource(DocumentSource* pSource) {
+    /* this doesn't take a source */
+    verify(false);
+}
+
+long long DocumentSourceCursor::getLimit() const {
+    return _limit ? _limit->getLimit() : -1;
+}
+
+bool DocumentSourceCursor::coalesce(const intrusive_ptr<DocumentSource>& nextSource) {
+    // Note: Currently we assume the $limit is logically after any $sort or
+    // $match. If we ever pull in $match or $sort using this method, we
+    // will need to keep track of the order of the sub-stages.
+
+    if (!_limit) {
+        _limit = dynamic_cast<DocumentSourceLimit*>(nextSource.get());
+        return _limit.get();  // false if next is not a $limit
+    } else {
+        return _limit->coalesce(nextSource);
     }
 
-    void DocumentSourceCursor::sourceToBson(
-        BSONObjBuilder *pBuilder, bool explain) const {
+    return false;
+}
 
-        /* this has no analog in the BSON world, so only allow it for explain */
-        if (explain)
-        {
-            BSONObj bsonObj;
-            
-            pBuilder->append("query", *pQuery);
+Value DocumentSourceCursor::serialize(bool explain) const {
+    // we never parse a documentSourceCursor, so we only serialize for explain
+    if (!explain)
+        return Value();
 
-            if (pSort.get())
-            {
-                pBuilder->append("sort", *pSort);
-            }
+    // Get planner-level explain info from the underlying PlanExecutor.
+    BSONObjBuilder explainBuilder;
+    {
+        const NamespaceString nss(_ns);
+        AutoGetCollectionForRead autoColl(pExpCtx->opCtx, nss);
 
-            BSONObj projectionSpec;
-            if (_projection) {
-                projectionSpec = _projection->getSpec();
-                pBuilder->append("projection", projectionSpec);
-            }
+        massert(17392, "No _exec. Were we disposed before explained?", _exec);
 
-            // construct query for explain
-            BSONObjBuilder queryBuilder;
-            queryBuilder.append("$query", *pQuery);
-            if (pSort.get())
-                queryBuilder.append("$orderby", *pSort);
-            queryBuilder.append("$explain", 1);
-            Query query(queryBuilder.obj());
-
-            DBDirectClient directClient;
-            BSONObj explainResult(directClient.findOne(ns, query, _projection
-                                                                  ? &projectionSpec
-                                                                  : NULL));
-
-            pBuilder->append("cursor", explainResult);
-        }
+        _exec->restoreState(pExpCtx->opCtx);
+        Explain::explainStages(_exec.get(), ExplainCommon::QUERY_PLANNER, &explainBuilder);
+        _exec->saveState();
     }
 
-    DocumentSourceCursor::DocumentSourceCursor(
-        const shared_ptr<CursorWithContext>& cursorWithContext,
-        const intrusive_ptr<ExpressionContext> &pCtx):
-        DocumentSource(pCtx),
-        unstarted(true),
-        hasCurrent(false),
-        _cursorWithContext( cursorWithContext )
-    {}
+    MutableDocument out;
+    out["query"] = Value(_query);
 
-    intrusive_ptr<DocumentSourceCursor> DocumentSourceCursor::create(
-        const shared_ptr<CursorWithContext>& cursorWithContext,
-        const intrusive_ptr<ExpressionContext> &pExpCtx) {
-        verify( cursorWithContext );
-        verify( cursorWithContext->_cursor );
-        intrusive_ptr<DocumentSourceCursor> pSource(
-            new DocumentSourceCursor( cursorWithContext, pExpCtx ) );
-        return pSource;
-    }
+    if (!_sort.isEmpty())
+        out["sort"] = Value(_sort);
 
-    void DocumentSourceCursor::setNamespace(const string &n) {
-        ns = n;
-    }
+    if (_limit)
+        out["limit"] = Value(_limit->getLimit());
 
-    void DocumentSourceCursor::setQuery(const shared_ptr<BSONObj> &pBsonObj) {
-        pQuery = pBsonObj;
-    }
+    if (!_projection.isEmpty())
+        out["fields"] = Value(_projection);
 
-    void DocumentSourceCursor::setSort(const shared_ptr<BSONObj> &pBsonObj) {
-        pSort = pBsonObj;
-    }
+    // Add explain results from the query system into the agg explain output.
+    BSONObj explainObj = explainBuilder.obj();
+    invariant(explainObj.hasField("queryPlanner"));
+    out["queryPlanner"] = Value(explainObj["queryPlanner"]);
 
-    void DocumentSourceCursor::setProjection(const BSONObj& projection, const ParsedDeps& deps) {
-        verify(!_projection);
-        _projection.reset(new Projection);
-        _projection->init(projection);
-        cursor()->fields = _projection;
+    return Value(DOC(getSourceName() << out.freezeToValue()));
+}
 
-        _dependencies = deps;
-    }
+DocumentSourceCursor::DocumentSourceCursor(const string& ns,
+                                           const boost::shared_ptr<PlanExecutor>& exec,
+                                           const intrusive_ptr<ExpressionContext>& pCtx)
+    : DocumentSource(pCtx), _docsAddedToBatches(0), _ns(ns), _exec(exec) {}
+
+intrusive_ptr<DocumentSourceCursor> DocumentSourceCursor::create(
+    const string& ns,
+    const boost::shared_ptr<PlanExecutor>& exec,
+    const intrusive_ptr<ExpressionContext>& pExpCtx) {
+    return new DocumentSourceCursor(ns, exec, pExpCtx);
+}
+
+void DocumentSourceCursor::setProjection(const BSONObj& projection,
+                                         const boost::optional<ParsedDeps>& deps) {
+    _projection = projection;
+    _dependencies = deps;
+}
 }

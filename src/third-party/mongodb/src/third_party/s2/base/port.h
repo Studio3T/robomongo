@@ -102,7 +102,7 @@ typedef uint16_t u_int16_t;
 
 #endif
 
-#if defined __sunos__ || defined __freebsd__
+#if defined __sunos__ || defined __freebsd__ || defined __openbsd__
 #ifdef _LITTLE_ENDIAN
 #define IS_LITTLE_ENDIAN
 #elif defined _BIG_ENDIAN
@@ -134,6 +134,11 @@ typedef uint16_t u_int16_t;
 #define bswap_16(x) bswap16(x)
 #define bswap_32(x) bswap32(x)
 #define bswap_64(x) bswap64(x)
+#elif defined __openbsd__
+#include <sys/endian.h>
+#define bswap_16(x) swap16(x)
+#define bswap_32(x) swap32(x)
+#define bswap_64(x) swap64(x)
 #else
 #include <byteswap.h>
 #endif
@@ -706,9 +711,11 @@ inline double drem(double x, double y) {
 #define safe_vsnprintf _vsnprintf
 #define snprintf _snprintf
 
+#if _MSC_VER < 1800
 inline void va_copy(va_list& a, va_list& b) {
   a = b;
 }
+#endif
 using namespace std;
 #define isnan _isnan
 #define snprintf _snprintf

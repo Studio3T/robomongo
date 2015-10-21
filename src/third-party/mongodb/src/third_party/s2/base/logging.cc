@@ -11,28 +11,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "stdio.h"
-#include "time.h"
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kGeo
 
 #include "logging.h"
 
-namespace google_base {
-DateLogger::DateLogger() {
-#if defined(_MSC_VER)
-  _tzset();
-#endif
+#include "mongo/util/assert_util.h"
+#include "mongo/util/log.h"
+#include "mongo/util/mongoutils/str.h"
+
+using ::mongo::logger::LogstreamBuilder;
+
+LogMessageBase::LogMessageBase(LogstreamBuilder builder, const char* file, int line) :
+    _lsb(builder) {
+    _lsb.setBaseMessage(mongoutils::str::stream() << file << ':' << line << ": ");
 }
 
-char* const DateLogger::HumanDate() {
-#if defined(_MSC_VER)
-  _strtime_s(buffer_, sizeof(buffer_));
-#else
-  time_t time_value = time(NULL);
-  struct tm now;
-  localtime_r(&time_value, &now);
-  snprintf(buffer_, sizeof(buffer_), "%02d:%02d:%02d",
-           now.tm_hour, now.tm_min, now.tm_sec);
-#endif
-  return buffer_;
+LogMessageBase::LogMessageBase(LogstreamBuilder builder) : _lsb(builder) { }
+
+LogMessageInfo::LogMessageInfo() : LogMessageBase(mongo::log()) { }
+
+LogMessageWarning::LogMessageWarning(const char* file, int line) :
+        LogMessageBase(mongo::warning(), file, line) { }
+
+LogMessageWarning::~LogMessageWarning() {
+    mongo::logContext(NULL);
 }
-}  // namespace google_base
+
+LogMessageFatal::LogMessageFatal(const char* file, int line) :
+        LogMessageBase(mongo::severe(), file, line) { }
+
+LogMessageFatal::~LogMessageFatal() {
+    _lsb.~LogstreamBuilder();
+    mongo::fassertFailed(0);
+}

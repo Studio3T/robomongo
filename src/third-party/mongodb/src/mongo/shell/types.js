@@ -61,16 +61,36 @@ ISODate = function(isoDateStr){
     var res = isoDateRegex.exec(isoDateStr);
 
     if (!res)
-        throw "invalid ISO date";
+        throw Error("invalid ISO date");
 
     var year = parseInt(res[1],10) || 1970; // this should always be present
     var month = (parseInt(res[2],10) || 1) - 1;
     var date = parseInt(res[3],10) || 0;
     var hour = parseInt(res[5],10) || 0;
     var min = parseInt(res[7],10) || 0;
-    var sec = parseFloat(res[9]) || 0;
-    var ms = Math.round((sec%1) * 1000)
-    sec -= ms/1000
+    var sec = parseInt((res[9] && res[9].substr(0,2)),10) || 0;
+    var ms = Math.round((parseFloat(res[10]) || 0) * 1000);
+    if (ms == 1000) {
+        ms = 0;
+        ++sec;
+    }
+    if (sec == 60) {
+        sec = 0;
+        ++min;
+    }
+    if (min == 60) {
+        min = 0;
+        ++hour;
+    }
+    if (hour == 24) {
+        hour = 0;   // the day wrapped, let JavaScript figure out the rest
+        var tempTime = Date.UTC(year, month, date, hour, min, sec, ms);
+        tempTime += 24 * 60 * 60 * 1000;    // milliseconds in a day
+        var tempDate = new Date(tempTime);
+        year = tempDate.getUTCFullYear();
+        month = tempDate.getUTCMonth();
+        date = tempDate.getUTCDate();
+    }
 
     var time = Date.UTC(year, month, date, hour, min, sec, ms);
 
@@ -125,7 +145,7 @@ Array.shuffle = function(arr){
 }
 
 Array.tojson = function(a, indent, nolint){
-    var lineEnding = nolint ? " " : "\n";
+    var elementSeparator = nolint ? " " : "\n";
 
     if (!indent)
         indent = "";
@@ -136,20 +156,24 @@ Array.tojson = function(a, indent, nolint){
         return "[ ]";
     }
 
-    var s = "[" + lineEnding;
-    indent += "\t";
+    var s = "[" + elementSeparator;
+
+    // add to indent if we are pretty
+    if (!nolint)
+      indent += "\t";
+
     for (var i=0; i<a.length; i++){
         s += indent + tojson(a[i], indent, nolint);
         if (i < a.length - 1){
-            s += "," + lineEnding;
+            s += "," + elementSeparator;
         }
     }
-    if (a.length == 0) {
-        s += indent;
-    }
 
-    indent = indent.substring(1);
-    s += lineEnding+indent+"]";
+    // remove from indent if we are pretty
+    if (!nolint)
+      indent = indent.substring(1);
+
+    s += elementSeparator + indent + "]";
     return s;
 }
 
@@ -228,15 +252,25 @@ Object.keySet = function(o) {
 }
 
 // String
-String.prototype.trim = function() {
-    return this.replace(/^\s+|\s+$/g,"");
+if (String.prototype.trim === undefined) {
+    String.prototype.trim = function() {
+        return this.replace(/^\s+|\s+$/g,"");
+    }
 }
-String.prototype.ltrim = function() {
-    return this.replace(/^\s+/,"");
+if (String.prototype.trimLeft === undefined) {
+    String.prototype.trimLeft = function() {
+        return this.replace(/^\s+/,"");
+    }
 }
-String.prototype.rtrim = function() {
-    return this.replace(/\s+$/,"");
+if (String.prototype.trimRight === undefined) {
+    String.prototype.trimRight = function() {
+        return this.replace(/\s+$/,"");
+    }
 }
+
+// always provide ltrim and rtrim for backwards compatibility
+String.prototype.ltrim = String.prototype.trimLeft;
+String.prototype.rtrim = String.prototype.trimRight;
 
 String.prototype.startsWith = function(str){
     return this.indexOf(str) == 0
@@ -319,6 +353,37 @@ ObjectId.prototype.equals = function(other){
     return this.str == other.str;
 }
 
+// Creates an ObjectId from a Date.
+// Based on solution discussed here:
+//     http://stackoverflow.com/questions/8749971/can-i-query-mongodb-objectid-by-date
+ObjectId.fromDate = function(source) {
+    if (!source) {
+        throw Error("date missing or undefined");
+    }
+
+    var sourceDate;
+
+    // Extract Date from input.
+    // If input is a string, assume ISO date string and
+    // create a Date from the string.
+    if (source instanceof Date) {
+        sourceDate = source;
+    } else {
+        throw Error("Cannot create ObjectId from " + typeof(source) + ": " + tojson(source));
+    }
+
+    // Convert date object to seconds since Unix epoch.
+    var seconds = Math.floor(sourceDate.getTime()/1000);
+
+    // Generate hex timestamp with padding.
+    var hexTimestamp = seconds.toString(16).pad(8,false,'0') + "0000000000000000";
+
+    // Create an ObjectId with hex timestamp.
+    var objectId = ObjectId(hexTimestamp);
+
+    return objectId;
+}
+
 // DBPointer
 if (typeof(DBPointer) != "undefined"){
     DBPointer.prototype.fetch = function(){
@@ -352,11 +417,16 @@ if (typeof(DBRef) != "undefined"){
     DBRef.prototype.fetch = function(){
         assert(this.$ref, "need a ns");
         assert(this.$id, "need an id");
-        return db[ this.$ref ].findOne({ _id : this.$id });
+        var coll = this.$db ? db.getSiblingDB(this.$db).getCollection(this.$ref) : db[this.$ref];
+        return coll.findOne({ _id : this.$id });
     }
 
     DBRef.prototype.tojson = function(indent){
         return this.toString();
+    }
+
+    DBRef.prototype.getDb = function(){
+        return this.$db || undefined;
     }
 
     DBRef.prototype.getCollection = function(){
@@ -372,7 +442,7 @@ if (typeof(DBRef) != "undefined"){
     }
 
     DBRef.prototype.toString = function(){
-        return "DBRef(" + tojson(this.$ref) + ", " + tojson(this.$id) + ")";
+        return "DBRef(" + tojson(this.$ref) + ", " + tojson(this.$id) + (this.$db ? ", " + tojson(this.$db) : "") + ")";
     }
 }
 else {
@@ -421,7 +491,7 @@ Map.hash = function(val){
         return s;
     }
 
-    throw "can't hash : " + typeof(val);
+    throw Error( "can't hash : " + typeof(val) );
 }
 
 Map.prototype.put = function(key, value){
@@ -483,28 +553,45 @@ tojson = function(x, indent, nolint){
 
     switch (typeof x) {
     case "string": {
-        var s = "\"";
+        var out = new Array(x.length+1);
+        out[0] = '"';
         for (var i=0; i<x.length; i++){
-            switch (x[i]){
-                case '"': s += '\\"'; break;
-                case '\\': s += '\\\\'; break;
-                case '\b': s += '\\b'; break;
-                case '\f': s += '\\f'; break;
-                case '\n': s += '\\n'; break;
-                case '\r': s += '\\r'; break;
-                case '\t': s += '\\t'; break;
+            switch (x[i]) {
+                case '"':
+                  out[out.length] = '\\"';
+                  break;
+                case '\\':
+                  out[out.length] = '\\\\';
+                  break;
+                case '\b':
+                  out[out.length] = '\\b';
+                  break;
+                case '\f':
+                  out[out.length] = '\\f';
+                  break;
+                case '\n':
+                  out[out.length] = '\\n';
+                  break;
+                case '\r':
+                  out[out.length] = '\\r';
+                  break;
+                case '\t':
+                  out[out.length] = '\\t';
+                  break;
 
                 default: {
                     var code = x.charCodeAt(i);
                     if (code < 0x20){
-                        s += (code < 0x10 ? '\\u000' : '\\u00') + code.toString(16);
+                        out[out.length] =
+                          (code < 0x10 ? '\\u000' : '\\u00') + code.toString(16);
                     } else {
-                        s += x[i];
+                        out[out.length] = x[i];
                     }
                 }
             }
         }
-        return s + "\"";
+
+        return out.join('') + "\"";
     }
     case "number":
     case "boolean":
@@ -512,14 +599,14 @@ tojson = function(x, indent, nolint){
     case "object":{
         var s = tojsonObject(x, indent, nolint);
         if ((nolint == null || nolint == true) && s.length < 80 && (indent == null || indent.length == 0)){
-            s = s.replace(/[\s\r\n ]+/gm, " ");
+            s = s.replace(/[\t\r\n]+/gm, " ");
         }
         return s;
     }
     case "function":
         return x.toString();
     default:
-        throw "tojson can't handle type " + (typeof x);
+        throw Error( "tojson can't handle type " + (typeof x) );
     }
 
 }
@@ -561,32 +648,41 @@ tojsonObject = function(x, indent, nolint){
     // push one level of indent
     indent += tabSpace;
 
-    var total = 0;
-    for (var k in x) total++;
-    if (total == 0) {
-        s += indent + lineEnding;
-    }
-
     var keys = x;
     if (typeof(x._simpleKeys) == "function")
         keys = x._simpleKeys();
-    var num = 1;
+    var fieldStrings = [];
     for (var k in keys){
         var val = x[k];
-        if (val == DB.prototype || val == DBCollection.prototype)
+
+        // skip internal DB types to avoid issues with interceptors
+        if (typeof DB != 'undefined' && val == DB.prototype)
+            continue;
+        if (typeof DBCollection != 'undefined' && val == DBCollection.prototype)
             continue;
 
-        s += indent + "\"" + k + "\" : " + tojson(val, indent, nolint);
-        if (num != total) {
-            s += ",";
-            num++;
-        }
-        s += lineEnding;
+        fieldStrings.push(indent + "\"" + k + "\" : " + tojson(val, indent, nolint));
     }
+
+    if (fieldStrings.length > 0) {
+        s += fieldStrings.join("," + lineEnding);
+    }
+    else {
+        s += indent;
+    }
+    s += lineEnding;
 
     // pop one level of indent
     indent = indent.substring(1);
     return s + indent + "}";
+}
+
+printjson = function(x){
+    print( tojson( x ) );
+}
+
+printjsononeline = function(x){
+    print( tojsononeline( x ) );
 }
 
 isString = function(x){
@@ -597,6 +693,7 @@ isNumber = function(x){
     return typeof(x) == "number";
 }
 
+// This function returns true even if the argument is an array.  See SERVER-14220.
 isObject = function(x){
     return typeof(x) == "object";
 }

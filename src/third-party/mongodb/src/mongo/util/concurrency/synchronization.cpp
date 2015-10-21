@@ -2,78 +2,116 @@
 
 /*    Copyright 2010 10gen Inc.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *    This program is free software: you can redistribute it and/or  modify
+ *    it under the terms of the GNU Affero General Public License, version 3,
+ *    as published by the Free Software Foundation.
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    As a special exception, the copyright holders give permission to link the
+ *    code of portions of this program with the OpenSSL library under certain
+ *    conditions as described in each individual source file and distribute
+ *    linked combinations including the program with the OpenSSL library. You
+ *    must comply with the GNU Affero General Public License in all respects
+ *    for all of the code used other than as permitted herein. If you modify
+ *    file(s) with this exception, you may extend this exception to your
+ *    version of the file(s), but you are not obligated to do so. If you do not
+ *    wish to do so, delete this exception statement from your version. If you
+ *    delete this exception statement from all source files in the program,
+ *    then also delete it in the license file.
  */
 
-#include "pch.h"
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kDefault
+
 #include "synchronization.h"
+
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+#include "mongo/util/log.h"
 
 namespace mongo {
 
-    Notification::Notification() : _mutex ( "Notification" ){ 
-        lookFor = 1;
-        cur = 0;
+namespace {
+ThreadIdleCallback threadIdleCallback;
+}  // namespace
+
+void registerThreadIdleCallback(ThreadIdleCallback callback) {
+    invariant(!threadIdleCallback);
+    threadIdleCallback = callback;
+}
+
+void markThreadIdle() {
+    if (!threadIdleCallback) {
+        return;
     }
-
-    void Notification::waitToBeNotified() {
-        scoped_lock lock( _mutex );
-        while ( lookFor != cur )
-            _condition.wait( lock.boost() );
-        lookFor++;
+    try {
+        threadIdleCallback();
+    } catch (...) {
+        severe() << "Exception escaped from threadIdleCallback";
+        fassertFailedNoTrace(28603);
     }
+}
 
-    void Notification::notifyOne() {
-        scoped_lock lock( _mutex );
-        verify( cur != lookFor );
-        cur++;
-        _condition.notify_one();
+Notification::Notification() : _mutex("Notification") {
+    lookFor = 1;
+    cur = 0;
+}
+
+void Notification::waitToBeNotified() {
+    scoped_lock lock(_mutex);
+    while (lookFor != cur)
+        _condition.wait(lock.boost());
+    lookFor++;
+}
+
+void Notification::notifyOne() {
+    scoped_lock lock(_mutex);
+    verify(cur != lookFor);
+    cur++;
+    _condition.notify_one();
+}
+
+/* --- NotifyAll --- */
+
+NotifyAll::NotifyAll() : _mutex("NotifyAll") {
+    _lastDone = 0;
+    _lastReturned = 0;
+    _nWaiting = 0;
+}
+
+NotifyAll::When NotifyAll::now() {
+    scoped_lock lock(_mutex);
+    return ++_lastReturned;
+}
+
+void NotifyAll::waitFor(When e) {
+    scoped_lock lock(_mutex);
+    ++_nWaiting;
+    while (_lastDone < e) {
+        _condition.wait(lock.boost());
     }
+}
 
-    /* --- NotifyAll --- */
-
-    NotifyAll::NotifyAll() : _mutex("NotifyAll") { 
-        _lastDone = 0;
-        _lastReturned = 0;
-        _nWaiting = 0;
+void NotifyAll::awaitBeyondNow() {
+    scoped_lock lock(_mutex);
+    ++_nWaiting;
+    When e = ++_lastReturned;
+    while (_lastDone <= e) {
+        _condition.wait(lock.boost());
     }
+}
 
-    NotifyAll::When NotifyAll::now() { 
-        scoped_lock lock( _mutex );
-        return ++_lastReturned;
-    }
+void NotifyAll::notifyAll(When e) {
+    scoped_lock lock(_mutex);
+    _lastDone = e;
+    _nWaiting = 0;
+    _condition.notify_all();
+}
 
-    void NotifyAll::waitFor(When e) {
-        scoped_lock lock( _mutex );
-        ++_nWaiting;
-        while( _lastDone < e ) {
-            _condition.wait( lock.boost() );
-        }
-    }
-
-    void NotifyAll::awaitBeyondNow() { 
-        scoped_lock lock( _mutex );
-        ++_nWaiting;
-        When e = ++_lastReturned;
-        while( _lastDone <= e ) {
-            _condition.wait( lock.boost() );
-        }
-    }
-
-    void NotifyAll::notifyAll(When e) {
-        scoped_lock lock( _mutex );
-        _lastDone = e;
-        _nWaiting = 0;
-        _condition.notify_all();
-    }
-
-} // namespace mongo
+}  // namespace mongo

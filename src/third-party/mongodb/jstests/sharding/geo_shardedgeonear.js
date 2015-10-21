@@ -26,12 +26,11 @@ function test(db, sharded, indexType) {
     for (var i=0; i < numPts; i++) {
         var lat = 90 - Random.rand() * 180;
         var lng = 180 - Random.rand() * 360;
-        db[coll].insert({rand:Math.random(), loc: [lat, lng]})
+        assert.writeOK(db[coll].insert({rand:Math.random(), loc: [lng, lat]}));
     }
-    db.getLastError();
     assert.eq(db[coll].count(), numPts);
 
-    db[coll].ensureIndex({loc: indexType})
+    assert.commandWorked(db[coll].ensureIndex({ loc: indexType }));
 
     var queryPoint = [0,0]
     geoCmd = {geoNear: coll, near: queryPoint, spherical: true, includeLocs: true};

@@ -42,16 +42,17 @@ var master = replTest.getMaster();
 
 step("try mongodump with $timestamp");
 
-var data = "/data/db/dumprestore7-dump1/";
-// We need to divide by 1000 here because the JSON parser interprets the first field of timestamps
-// as seconds while the shell interprets them as milliseconds.  See SERVER-7718.
-var query = "{\"ts\":{\"$gt\":{\"$timestamp\" : {\"t\":"+ time.ts.t / 1000 + ",\"i\":" + time.ts.i +" }}}}";
+var data = MongoRunner.dataDir + "/dumprestore7-dump1/";
+var query = "{\"ts\":{\"$gt\":{\"$timestamp\":{\"t\":"+ time.ts.t + ",\"i\":" + time.ts.i +"}}}}";
 
-runMongoProgram( "mongodump", "--host", "127.0.0.1:"+replTest.ports[0], "--db", "local", "--collection", "oplog.rs", "--query", query, "--out", data );
+MongoRunner.runMongoTool( "mongodump",
+    { "host": "127.0.0.1:"+replTest.ports[0],
+      "db": "local", "collection": "oplog.rs",
+      "query": query, "out": data });
 
 step("try mongorestore from $timestamp");
 
-runMongoProgram( "mongorestore", "--host", "127.0.0.1:"+port, "--dir", data );
+runMongoProgram( "mongorestore", "--host", "127.0.0.1:"+port, "--dir", data, "--writeConcern", 1);
 var x = 9;
 x = conn.getDB("local").getCollection("oplog.rs").count();
 

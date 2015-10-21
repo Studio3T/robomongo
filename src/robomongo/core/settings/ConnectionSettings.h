@@ -52,14 +52,14 @@ namespace Robomongo
         /**
          * @brief Server host
          */
-        std::string serverHost() const { return _info.host(); }
-        void setServerHost(const std::string &serverHost) { _info.setHost(serverHost); }
+        std::string serverHost() const { return _hostName; }
+        void setServerHost(const std::string &serverHost) { _hostName = serverHost; }
 
         /**
          * @brief Port of server
          */
-        unsigned short serverPort() const { return _info.port(); }
-        void setServerPort(const int port) { _info.setPort(port); }
+        unsigned short serverPort() const { return _port; }
+        void setServerPort(const int port) { _port = port; }
 
         /**
          * @brief Default database
@@ -134,6 +134,8 @@ namespace Robomongo
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
         std::string _connectionName;
+        std::string _hostName = "";
+        int _port = -1;
         mongo::HostAndPort _info;
         std::string _defaultDatabase;
         QList<CredentialSettings *> _credentials;

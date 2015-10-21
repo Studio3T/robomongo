@@ -99,3 +99,6 @@ Desktop.ini
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
+
+## Mongo 3.x Upgrade ###
+src/third-party/js-1.7/

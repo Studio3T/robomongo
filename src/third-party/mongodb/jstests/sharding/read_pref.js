@@ -1,5 +1,5 @@
 /**
- * Integration test for read prefrence and tagging. The more comprehensive unit test
+ * Integration test for read preference and tagging. The more comprehensive unit test
  * can be found in dbtests/replica_set_monitor_test.cpp.
  */
 
@@ -12,134 +12,197 @@ var SEC_TAGS = [
 ];
 var NODES = SEC_TAGS.length + 1;
 
-var st = new ShardingTest({ shards: { rs0: { nodes: NODES, oplogSize: 10,
-                useHostName: true }}});
-var replTest = st.rs0;
-var primaryNode = replTest.getMaster();
+var doTest = function(useDollarQuerySyntax) {
+    var st = new ShardingTest({ shards: { rs0: { nodes: NODES, oplogSize: 10, verbose: 2,
+                    useHostName: true }}});
+    var replTest = st.rs0;
+    var primaryNode = replTest.getMaster();
 
-var setupConf = function(){
-    var replConf = primaryNode.getDB( 'local' ).system.replset.findOne();
-    replConf.version = (replConf.version || 0) + 1;
+    var setupConf = function(){
+        var replConf = primaryNode.getDB( 'local' ).system.replset.findOne();
+        replConf.version = (replConf.version || 0) + 1;
 
-    var secIdx = 0;
-    for ( var x = 0; x < NODES; x++ ){
-        var node = replConf.members[x];
+        var secIdx = 0;
+        for ( var x = 0; x < NODES; x++ ){
+            var node = replConf.members[x];
 
-        if ( node.host == primaryNode.name ){
-            node.tags = PRI_TAG;
+            if ( node.host == primaryNode.name ){
+                node.tags = PRI_TAG;
+            }
+            else {
+                node.tags = SEC_TAGS[secIdx++];
+                node.priority = 0;
+            }
         }
-        else {
-            node.tags = SEC_TAGS[secIdx++];
+
+        try {
+            primaryNode.getDB( 'admin' ).runCommand({ replSetReconfig: replConf });
+        } catch (x) {
+            jsTest.log('Exception expected because reconfiguring would close all conn, got ' + x);
         }
-    }
 
-    try {
-        primaryNode.getDB( 'admin' ).runCommand({ replSetReconfig: replConf });
-    } catch (x) {
-        jsTest.log( 'Exception expected because reconfiguring would close all conn, got ' + x );
-    }
+        return replConf;
+    };
 
-    return replConf;
-};
+    var checkTag = function( nodeToCheck, tag ){
+        for ( var idx = 0; idx < NODES; idx++ ){
+            var node = replConf.members[idx];
 
-var replConf = setupConf();
+            if ( node.host == nodeToCheck ){
+                jsTest.log( 'node[' + node.host + '], Tag: ' + tojson( node['tags'] ));
+                jsTest.log( 'tagToCheck: ' + tojson( tag ));
 
-var conn = st.s;
+                var nodeTag = node['tags'];
 
-// Wait until the ReplicaSetMonitor refreshes its view and see the tags
-ReplSetTest.awaitRSClientHosts( conn, primaryNode,
-        { ok: true, tags: PRI_TAG }, replTest.name );
-replTest.awaitReplication();
+                for ( var key in tag ){
+                    assert.eq( tag[key], nodeTag[key] );
+                }
 
-jsTest.log( 'New rs config: ' + tojson( primaryNode.getDB( 'local' ).system.replset.findOne() ));
+                return;
+            }
+        }
 
-jsTest.log( 'connpool: ' + tojson(conn.getDB('admin').runCommand({ connPoolStats: 1 })));
+        assert( false, 'node ' + nodeToCheck + ' not part of config!' );
+    };
 
-var coll = conn.getDB( 'test' ).user;
+    var replConf = setupConf();
 
-coll.insert({ x: 1 });
-assert.eq( null, coll.getDB().getLastError( NODES ));
+    var conn = st.s;
 
-// Read pref should work without slaveOk
-var explain = coll.find().readPref( "secondary" ).explain();
-assert.neq( primaryNode.name, explain.server );
+    // Wait until the ReplicaSetMonitor refreshes its view and see the tags
+    ReplSetTest.awaitRSClientHosts( conn, primaryNode,
+            { ok: true, tags: PRI_TAG }, replTest.name );
+    replTest.awaitReplication();
 
-conn.setSlaveOk();
+    jsTest.log('New rs config: ' + tojson(primaryNode.getDB('local').system.replset.findOne()));
+    jsTest.log( 'connpool: ' + tojson(conn.getDB('admin').runCommand({ connPoolStats: 1 })));
 
-// It should also work with slaveOk
-explain = coll.find().readPref( "secondary" ).explain();
-assert.neq( primaryNode.name, explain.server );
+    var coll = conn.getDB( 'test' ).user;
 
-// Check that $readPreference does not influence the actual query
-assert.eq( 1, explain.n );
+    assert.soon(function() {
+        var res = coll.insert({ x: 1 }, { writeConcern: { w: NODES }});
+        if (!res.hasWriteError()) {
+            return true;
+        }
 
-var checkTag = function( nodeToCheck, tag ){
-    for ( var idx = 0; idx < NODES; idx++ ){
-        var node = replConf.members[idx];
+        var err = res.getWriteError().errmsg;
+        // Transient transport errors may be expected b/c of the replSetReconfig
+        if (err.indexOf("transport error") == -1) {
+            throw err;
+        }
+        return false;
+    });
 
-        if ( node.host == nodeToCheck ){
-            jsTest.log( 'node[' + node.host + '], Tag: ' + tojson( node['tags'] ));
-            jsTest.log( 'tagToCheck: ' + tojson( tag ));
 
-            var nodeTag = node['tags'];
+    var getExplain = function(readPrefMode, readPrefTags) {
+        if (useDollarQuerySyntax) {
+            var readPrefObj = {
+                mode: readPrefMode
+            };
 
-            for ( var key in tag ){
-                assert.eq( tag[key], nodeTag[key] );
+            if (readPrefTags) {
+                readPrefObj.tags = readPrefTags;
             }
 
-            return;
+            return coll.find({ $query: {}, $readPreference: readPrefObj,
+                $explain: true }).limit(-1).next();
         }
+        else {
+            return coll.find().readPref(readPrefMode, readPrefTags).explain("executionStats");
+        }
+    };
+
+    var getExplainServer = function(explain) {
+        var serverInfo;
+
+        if (useDollarQuerySyntax) {
+            serverInfo = explain.serverInfo;
+        }
+        else {
+            assert.eq("SINGLE_SHARD", explain.queryPlanner.winningPlan.stage);
+            serverInfo = explain.queryPlanner.winningPlan.shards[0].serverInfo;
+        }
+
+        return serverInfo.host + ":" + serverInfo.port.toString();
+    };
+
+    // Read pref should work without slaveOk
+    var explain = getExplain("secondary");
+    var explainServer = getExplainServer(explain);
+    assert.neq( primaryNode.name, explainServer );
+
+    conn.setSlaveOk();
+
+    // It should also work with slaveOk
+    explain = getExplain("secondary");
+    explainServer = getExplainServer(explain);
+    assert.neq( primaryNode.name, explainServer );
+
+    // Check that $readPreference does not influence the actual query
+    assert.eq( 1, explain.executionStats.nReturned );
+
+    explain = getExplain("secondaryPreferred", [{ s: "2" }]);
+    explainServer = getExplainServer(explain);
+    checkTag( explainServer, { s: "2" });
+    assert.eq( 1, explain.executionStats.nReturned );
+
+    // Cannot use tags with primaryOnly
+    assert.throws( function() {
+        getExplain("primary", [{ s: "2" }]);
+    });
+
+    // Ok to use empty tags on primaryOnly
+    explain = getExplain("primary", [{}]);
+    explainServer = getExplainServer(explain);
+    assert.eq(primaryNode.name, explainServer);
+
+    explain = getExplain("primary", []);
+    explainServer = getExplainServer(explain);
+    assert.eq(primaryNode.name, explainServer);
+
+    // Check that mongos will try the next tag if nothing matches the first
+    explain = getExplain("secondary", [{ z: "3" }, { dc: "jp" }]);
+    explainServer = getExplainServer(explain);
+    checkTag( explainServer, { dc: "jp" });
+    assert.eq( 1, explain.executionStats.nReturned );
+
+    // Check that mongos will fallback to primary if none of tags given matches
+    explain = getExplain("secondaryPreferred", [{ z: "3" }, { dc: "ph" }]);
+    explainServer = getExplainServer(explain);
+    // Call getPrimary again since the primary could have changed after the restart.
+    assert.eq(replTest.getPrimary().name, explainServer);
+    assert.eq( 1, explain.executionStats.nReturned );
+
+    // Kill all members except one
+    var stoppedNodes = [];
+    for ( var x = 0; x < NODES - 1; x++ ){
+        replTest.stop( x );
+        stoppedNodes.push( replTest.nodes[x] );
     }
 
-    assert( false, 'node ' + nodeToCheck + ' not part of config!' );
+    // Wait for ReplicaSetMonitor to realize nodes are down
+    ReplSetTest.awaitRSClientHosts( conn, stoppedNodes, { ok: false }, replTest.name );
+
+    // Wait for the last node to be in steady state -> secondary (not recovering)
+    var lastNode = replTest.nodes[NODES - 1];
+    ReplSetTest.awaitRSClientHosts( conn, lastNode,
+        { ok: true, secondary: true }, replTest.name );
+
+    jsTest.log( 'connpool: ' + tojson(conn.getDB('admin').runCommand({ connPoolStats: 1 })));
+
+    // Test to make sure that connection is ok, in prep for priOnly test
+    explain = getExplain("nearest");
+    explainServer = getExplainServer(explain);
+    assert.eq( explainServer, replTest.nodes[NODES - 1].name );
+    assert.eq( 1, explain.executionStats.nReturned );
+
+    // Should assert if request with priOnly but no primary
+    assert.throws( function(){
+       getExplain("primary");
+    });
+
+    st.stop();
 };
 
-explain = coll.find().readPref( "secondaryPreferred", [{ s: "2" }] ).explain();
-checkTag( explain.server, { s: "2" });
-assert.eq( 1, explain.n );
-
-// Cannot use tags with primaryOnly
-assert.throws( function() {
-    coll.find().readPref( "primaryOnly", [] ).explain();
-});
-
-// Check that mongos will try the next tag if nothing matches the first
-explain = coll.find().readPref( "secondary", [{ z: "3" }, { dc: "jp" }] ).explain();
-checkTag( explain.server, { dc: "jp" });
-assert.eq( 1, explain.n );
-
-// Check that mongos will fallback to primary if none of tags given matches
-explain = coll.find().readPref( "secondaryPreferred", [{ z: "3" }, { dc: "ph" }] ).explain();
-// Call getPrimary again since the primary could have changed after the restart.
-assert.eq(replTest.getPrimary().name, explain.server);
-assert.eq( 1, explain.n );
-
-// Kill all members except one
-var stoppedNodes = [];
-for ( var x = 0; x < NODES - 1; x++ ){
-    replTest.stop( x );
-    stoppedNodes.push( replTest.nodes[x] );
-}
-
-// Wait for ReplicaSetMonitor to realize nodes are down
-ReplSetTest.awaitRSClientHosts( conn, stoppedNodes, { ok: false }, replTest.name );
-
-// Wait for the last node to be in steady state -> secondary (not recovering)
-var lastNode = replTest.nodes[NODES - 1];
-ReplSetTest.awaitRSClientHosts( conn, lastNode,
-    { ok: true, secondary: true }, replTest.name );
-
-jsTest.log( 'connpool: ' + tojson(conn.getDB('admin').runCommand({ connPoolStats: 1 })));
-
-// Test to make sure that connection is ok, in prep for priOnly test
-explain = coll.find().readPref( "nearest" ).explain();
-assert.eq( explain.server, replTest.nodes[NODES - 1].name );
-assert.eq( 1, explain.n );
-
-// Should assert if request with priOnly but no primary
-assert.throws( function(){
-   coll.find().readPref( "primary" ).explain();
-});
-
-st.stop();
-
+doTest(false);
+doTest(true);

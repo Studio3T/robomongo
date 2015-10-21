@@ -29,10 +29,10 @@
 import sys
 from os.path import join, dirname, abspath
 root_dir = dirname(File('SConscript').rfile().abspath)
-sys.path.append(join(root_dir, 'tools'))
+sys.path.insert(0, join(root_dir, 'tools'))
 import js2c
 
-Import("env windows linux darwin solaris freebsd debugBuild")
+Import("env windows linux darwin solaris freebsd debugBuild openbsd")
 
 # pared-down copies of the equivalent structures in v8's SConstruct/SConscript:
 LIBRARY_FLAGS = {
@@ -46,10 +46,7 @@ LIBRARY_FLAGS = {
   },
   'gcc': {
     'all': {
-      'CCFLAGS':      ['-Wall',
-                       '-Werror',
-                       '-W',
-                       '-Wno-unused-parameter',
+      'CCFLAGS':      ['-Wno-unused-parameter',
                        '-Woverloaded-virtual',
                        '-Wnon-virtual-dtor']
     },
@@ -60,7 +57,7 @@ LIBRARY_FLAGS = {
       'CCFLAGS':      ['-ansi', '-pedantic'],
     },
     'os:macos': {
-      'CCFLAGS':      ['-ansi', '-pedantic', '-mmacosx-version-min=10.4'],
+      'CCFLAGS':      ['-ansi', '-pedantic'],
     },
     'os:freebsd': {
       'CCFLAGS':      ['-ansi'],
@@ -244,6 +241,7 @@ SOURCES = {
     x64/stub-cache-x64.cc
     """),
   'os:freebsd': ['platform-freebsd.cc', 'platform-posix.cc'],
+  'os:openbsd': ['platform-openbsd.cc', 'platform-posix.cc'],
   'os:linux':   ['platform-linux.cc', 'platform-posix.cc'],
   'os:macos':   ['platform-macos.cc', 'platform-posix.cc'],
   'os:solaris': ['platform-solaris.cc', 'platform-posix.cc'],
@@ -307,6 +305,8 @@ def get_options():
         os_string = 'os:freebsd'
     elif solaris:
         os_string = 'os:solaris'
+    elif openbsd:
+        os_string = 'os:openbsd'
     else:
         os_string = 'os:nullos'
 
@@ -354,8 +354,8 @@ env = env.Clone()
 # in addition, v8 source needs to compile with src/parser.h, which
 # is being placed here earlier in the search path than windows sdk's
 # Include/parser.h (v8 doesn't even use any of those header files)
-env['CPPPATH'].remove('$BUILD_DIR/third_party/v8/include')
-env.Prepend(CPPPATH='$BUILD_DIR/third_party/v8/src')
+env['CPPPATH'].remove('#/src/third_party/v8/include')
+env.Prepend(CPPPATH='#/src/third_party/v8/src')
 
 # add v8 ccflags and cppdefines to environment if they're not already
 # present
@@ -367,6 +367,21 @@ env.Append(CCFLAGS=ccflags)
 cppdefines = get_flags('CPPDEFINES', toolchain, options)
 cppdefines = filter(lambda f : f not in env['CPPDEFINES'], cppdefines)
 env.Append(CPPDEFINES=cppdefines)
+
+# NOTE: Suppress attempts to enable warnings in v8. Trying to individually suppress with -Wno-
+# results in a game of whack-a-mole between various versions of clang and gcc as they add new
+# warnings. We won't be changing the v8 sources, so the warnings aren't helpful.
+def removeIfPresent(lst, item):
+    try:
+        lst.remove(item)
+    except ValueError:
+        pass
+
+# NOTE: Along with the warning flags, remove any flags for LTO when building v8,
+# as LTO builds currently appear to generate bad code with clang.
+for to_remove in ['-Werror', '-Wall', '-W', "-flto"]:
+    removeIfPresent(env['CCFLAGS'], to_remove)
+    removeIfPresent(env['LINKFLAGS'], to_remove)
 
 # specify rules for building libraries.cc and experimental-libraries.cc
 env['BUILDERS']['JS2C'] = Builder(action=js2c.JS2C)
@@ -380,4 +395,4 @@ library_files = [('src/'+s) for s in LIBRARY_FILES]
 library_files.append('src/macros.py')
 env.JS2C(['src/libraries.cc'], library_files, TYPE='CORE', COMPRESSION='off')
 
-env.StaticLibrary("v8", sources)
+env.Library("v8", sources)

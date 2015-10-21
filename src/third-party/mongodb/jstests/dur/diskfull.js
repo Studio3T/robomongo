@@ -1,10 +1,19 @@
-/** Test running out of disk space with durability enabled */
+/** Test running out of disk space with durability enabled. 
+To set up the test, it's required to set up a small partition something like the following:
+sudo umount /data/db/diskfulltest/
+rm -rf /data/db/diskfulltest
+mkdir -p /data/images
+dd bs=512 count=83968 if=/dev/zero of=/data/images/diskfulltest.img
+/sbin/mkfs.ext2 -m 0 -F /data/images/diskfulltest.img
+mkdir -p /data/db/diskfulltest
+mount -o loop /data/images/diskfulltest.img /data/db/diskfulltest
+*/
 
-startPath = "/data/db/diskfulltest";
-recoverPath = "/data/db/dur_diskfull";
+startPath = MongoRunner.dataDir + "/diskfulltest";
+recoverPath = MongoRunner.dataDir + "/dur_diskfull";
 
 doIt = false;
-files = listFiles( "/data/db" );
+files = listFiles( MongoRunner.dataDir );
 for ( i in files ) {
     if ( files[ i ].name == startPath ) {
         doIt = true;
@@ -50,15 +59,15 @@ function work() {
     log("work");
     try {
         var d = conn.getDB("test");
-        
-        big = new Array( 5000 ).toString();
-        for( i = 0; i < 10000; ++i ) {
-            d.foo.insert( { _id:i, b:big } );
+        var big = new Array( 5000 ).toString();
+        var bulk = d.foo.initializeUnorderedBulkOp();
+        // This part of the test depends on the partition size used in the build env
+        // Currently, unused, but with larger partitions insert enough documents here
+        // to create a second db file
+        for( i = 0; i < 1; ++i ) {
+            bulk.insert({ _id: i, b: big });
         }
-        
-        gle = d.getLastError();
-        if ( gle )
-            throw gle;
+        assert.writeOK(bulk.execute());
     } catch ( e ) {
         print( e );
         raise( e );

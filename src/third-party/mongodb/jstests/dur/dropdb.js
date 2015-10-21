@@ -62,10 +62,8 @@ function work() {
 
     d.dropDatabase();
 
-    d.foo.insert({ _id: 100 });
-
     // assure writes applied in case we kill -9 on return from this function
-    assert(d.runCommand({ getlasterror: 1, fsync: 1 }).ok, "getlasterror not ok");
+    assert.writeOK(d.foo.insert({ _id: 100 }, { writeConcern: { fsync: 1 }}));
 }
 
 function verify() {
@@ -107,8 +105,8 @@ if (debugging) {
 }
 
 // directories
-var path1 = "/data/db/" + testname + "nodur";
-var path2 = "/data/db/" + testname + "dur";
+var path1 = MongoRunner.dataPath + testname + "nodur";
+var path2 = MongoRunner.dataPath + testname + "dur";
 
 // non-durable version
 log("mongod nodur");

@@ -8,16 +8,17 @@
 #include <QFile>
 #include <QElapsedTimer>
 
-#include <third_party/js-1.7/jsapi.h>
-#include <third_party/js-1.7/jsparse.h>
-#include <third_party/js-1.7/jsscan.h>
-#include <third_party/js-1.7/jsstr.h>
+#include <jsapi.h>
+#include <jsparse.h>
+#include <jsscan.h>
+#include <jsstr.h>
+
 #include <mongo/util/assert_util.h>
 #include <mongo/scripting/engine.h>
-#include <mongo/scripting/engine_spidermonkey.h>
+#include <mongo/scripting/engine_v8.h>
 #include <mongo/shell/shell_utils.h>
 #include <mongo/base/string_data.h>
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 #include <pcrecpp.h>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -75,7 +76,9 @@ namespace Robomongo
             connectDatabase = _connection->primaryCredential()->databaseName();
 
         std::stringstream ss;
-        ss << "db = connect('" << _connection->serverHost() << ":" << _connection->serverPort() << _connection->sslInfo() << _connection->sshInfo() << "/" << connectDatabase;
+        // FIXME
+        // ss << "db = connect('" << _connection->serverHost() << ":" << _connection->serverPort() << _connection->sslInfo() << _connection->sshInfo() << "/" << connectDatabase;
+        ss << "db = connect('" << _connection->serverHost() << ":" << _connection->serverPort() << "/" << connectDatabase;
 
         if (!_connection->hasEnabledPrimaryCredential())
             ss << "')";
@@ -101,7 +104,7 @@ namespace Robomongo
             // checked by 'Scope::execFile'.
             if (isLoadMongoRcJs) {
                 std::string mongorcPath = QtUtils::toStdString(QString("%1/.mongorc.js").arg(QDir::homePath()));
-                scope->execFile(mongorcPath, false, false);      
+                scope->execFile(mongorcPath, false, false);
             }
 
             // Load '.robomongorc.js'
@@ -200,7 +203,8 @@ namespace Robomongo
 
     void ScriptEngine::interrupt()
     {
-        mongo::Scope::_interruptFlag = true;
+        // FIXME
+        // mongo::Scope::_interruptFlag = true;
     }
 
     void ScriptEngine::use(const std::string &dbName)

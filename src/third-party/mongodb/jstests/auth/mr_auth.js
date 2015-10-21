@@ -13,17 +13,19 @@ ports = allocatePorts( 2 );
 // make sure writing is allowed when started without --auth enabled
 
 port = ports[ 0 ];
-dbms = startMongod( "--port", port, "--dbpath", "/data/db/" + baseName, "--nohttpinterface", "--bind_ip", "127.0.0.1" );
+dbms = startMongod( "--port", port, "--dbpath", MongoRunner.dataPath + baseName, "--nohttpinterface", "--bind_ip", "127.0.0.1" );
 var d = dbms.getDB( dbName );
 var t = d[ baseName ];
 
 for( var i = 0; i < 1000; i++) t.insert( {_id:i, x:i%10, y:i%100} );
 assert.eq( 1000, t.count(), "inserts failed" );
 
-d.system.users.remove( {} );
-d.addUser( "write" , "write" );
-d.addUser( "read" , "read", true );
-d.getSisterDB( "admin" ).addUser( "admin", "admin" );
+d.dropAllUsers();
+d.getSisterDB( "admin" ).createUser({user: "admin", pwd: "admin", roles: jsTest.adminUserRoles });
+d.getSisterDB( "admin" ).auth('admin', 'admin');
+d.createUser({user: "write" , pwd: "write", roles: jsTest.basicUserRoles});
+d.createUser({user: "read" , pwd: "read", roles: jsTest.readOnlyUserRoles});
+d.getSisterDB( "admin" ).logout();
 
 t.mapReduce( map, red, {out: { inline: 1 }} )
 
@@ -39,7 +41,7 @@ stopMongod( port );
 // In --auth mode, read-only user should not be able to write to existing or temporary collection, thus only can execute inline mode
 
 port = ports[ 1 ];
-dbms = startMongodNoReset( "--auth", "--port", port, "--dbpath", "/data/db/" + baseName, "--nohttpinterface", "--bind_ip", "127.0.0.1" );
+dbms = startMongodNoReset( "--auth", "--port", port, "--dbpath", MongoRunner.dataPath + baseName, "--nohttpinterface", "--bind_ip", "127.0.0.1" );
 d = dbms.getDB( dbName );
 t = d[ baseName ];
 

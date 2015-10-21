@@ -33,6 +33,7 @@ for (var i = 0; i < 3; i++) {
 }
 
 // Eventually connect to a mongo host, to be sure that the config upgrade happened
+// (This can take longer on extremely slow bbots or VMs)
 var mongosConn = null;
 assert.soon(function() {
     try {
@@ -44,7 +45,7 @@ assert.soon(function() {
         printjson(e);
         return false;
     }
-});
+}, "Mongos " + mongoses[0].host + " did not start.", 5 * 60 * 1000 );
 
 var version = mongosConn.getCollection("config.version").findOne();
 
@@ -73,7 +74,7 @@ assert.soon(function() {
         printjson(e);
         return false;
     }
-});
+}, "Later mongos " + mongoses[ mongoses.length - 1 ].host + " did not start.", 5 * 60 * 1000 );
 
 // Shut down our mongoses now that we've tested them
 for (var i = 0; i < mongoses.length; i++) {
@@ -88,9 +89,8 @@ jsTest.log("Mongoses stopped...");
 
 printjson(version);
 
-assert.eq(version.version, 3);
-assert.eq(version.minCompatibleVersion, 3);
-assert.eq(version.currentVersion, 4);
+assert.eq(version.minCompatibleVersion, 5);
+assert.eq(version.currentVersion, 6);
 assert(version.clusterId);
 assert.eq(version.excluding, undefined);
 
@@ -106,4 +106,5 @@ MongoRunner.stopMongod(configSvrB);
 MongoRunner.stopMongod(configSvrC);
 
 jsTest.log("DONE!");
+
 

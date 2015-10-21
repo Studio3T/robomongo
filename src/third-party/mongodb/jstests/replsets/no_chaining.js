@@ -10,9 +10,9 @@ replTest.initiate(
     {
         "_id" : "testSet",
         "members" : [
-            {"_id" : 0, "host" : hostnames[0], "priority" : 2},
-            {"_id" : 1, "host" : hostnames[1]},
-            {"_id" : 2, "host" : hostnames[2]}
+            {"_id" : 0, "host" : hostnames[0], priority: 2},
+            {"_id" : 1, "host" : hostnames[1], priority: 0},
+            {"_id" : 2, "host" : hostnames[2], priority: 0}
         ],
         "settings" : {
             "chainingAllowed" : false
@@ -52,12 +52,20 @@ var forceSync = function() {
             var config = nodes[2].getDB("local").system.replset.findOne();
             var targetHost = config.members[1].host;
             printjson(nodes[2].getDB("admin").runCommand({replSetSyncFrom : targetHost}));
+            assert.soon(
+                function() {
+                    return nodes[2].getDB("test").foo.findOne() != null;
+                },
+                'Check for data after force sync', 5000
+            );
             return nodes[2].getDB("test").foo.findOne() != null;
         },
         'Check force sync still works'
     );
 };
 
+// SERVER-12922
+//
 if (!_isWindows()) {
     print("break the network so that node 2 cannot replicate");
     breakNetwork();

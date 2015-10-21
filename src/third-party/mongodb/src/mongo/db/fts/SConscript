@@ -2,7 +2,7 @@
 
 Import("env")
 
-stop_word_lanages = [
+stop_word_languages = [
     'danish',
     'dutch',
     'english',
@@ -21,45 +21,39 @@ stop_word_lanages = [
 ]
 
 env.Command( [ "stop_words_list.h", "stop_words_list.cpp"],
-             [ "generate_stop_words.py"] + [ 'stop_words_%s.txt' % x for x in stop_word_lanages ],
+             [ "generate_stop_words.py"] + [ 'stop_words_%s.txt' % x for x in stop_word_languages ],
              "$PYTHON $SOURCES $TARGETS" )
 
-# this is not awesome
-hack = env.Clone()
-hack.StaticLibrary( "stopwords", [ "stop_words_list.cpp" ] )
-if "-O3" in hack["CCFLAGS"]:
-    hack["CCFLAGS"].remove( "-O3" )
-
-env.StaticLibrary('base', [
+baseEnv=env.Clone()
+baseEnv.InjectThirdPartyIncludePaths(libraries=['stemmer'])
+baseEnv.Library('base', [
         'fts_index_format.cpp',
         'fts_matcher.cpp',
         'fts_query.cpp',
         'fts_spec.cpp',
+        'fts_spec_legacy.cpp',
+        'fts_language.cpp',
         'fts_util.cpp',
+        'fts_element_iterator.cpp',
         'stemmer.cpp',
         'stop_words.cpp',
+        'stop_words_list.cpp',
         'tokenizer.cpp',
-        ], LIBDEPS=["stopwords",
-                    "$BUILD_DIR/mongo/base/base",
-                    "$BUILD_DIR/mongo/bson",
+        ], LIBDEPS=["$BUILD_DIR/mongo/base/base",
+                    "$BUILD_DIR/mongo/db/common",
                     "$BUILD_DIR/mongo/platform/platform",
-                    "$BUILD_DIR/third_party/libstemmer_c/stemmer"
+                    "$BUILD_DIR/third_party/shim_stemmer"
                     ])
 
-env.StaticLibrary( 'server_common', [
-                   'fts_command.cpp',
-                   'fts_enabled.cpp'
-                   ] )
+env.Library( 'server_common', [
+             'fts_enabled.cpp'
+             ] )
 
-env.StaticLibrary('ftsmongod', [
-        'fts_command_mongod.cpp',
-        'fts_index.cpp',
-        'fts_search.cpp',
+env.Library('ftsmongod', [
         ], LIBDEPS=["base","server_common"])
 
 
-env.StaticLibrary('ftsmongos', [
-        'fts_command_mongos.cpp',
+env.Library('ftsmongos', [
         ], LIBDEPS=["server_common"])
 
 
@@ -81,7 +75,13 @@ env.CppUnitTest( "fts_query_test", "fts_query_test.cpp",
 env.CppUnitTest( "fts_spec_test", "fts_spec_test.cpp",
                  LIBDEPS=["base"] )
 
+env.CppUnitTest( "fts_language_test", "fts_language_test.cpp",
+                 LIBDEPS=["base"] )
+
 env.CppUnitTest( "fts_matcher_test", "fts_matcher_test.cpp",
+                 LIBDEPS=["base"] )
+
+env.CppUnitTest( "fts_element_iterator_test", "fts_element_iterator_test.cpp",
                  LIBDEPS=["base"] )
 
 env.CppUnitTest( "fts_util_test", "fts_util_test.cpp",

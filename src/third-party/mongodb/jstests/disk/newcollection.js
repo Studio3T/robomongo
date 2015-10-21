@@ -2,7 +2,7 @@
 
 port = allocatePorts( 1 )[ 0 ]
 var baseName = "jstests_disk_newcollection";
-var m = startMongod( "--noprealloc", "--smallfiles", "--port", port, "--dbpath", "/data/db/" + baseName );
+var m = startMongod( "--noprealloc", "--smallfiles", "--port", port, "--dbpath", MongoRunner.dataPath + baseName );
 //var m = db.getMongo();
 db = m.getDB( "test" );
 
@@ -10,8 +10,13 @@ var t = db[baseName];
 var getTotalNonLocalSize = function() {
     var totalNonLocalDBSize = 0;
     m.getDBs().databases.forEach( function(dbStats) {
-            if (dbStats.name != "local")
-                totalNonLocalDBSize += dbStats.sizeOnDisk;
+        // We accept the local database's space overhead.
+        if (dbStats.name == "local") return;
+
+        // Databases with "sizeOnDisk=1" and "empty=true" dont' actually take up space o disk.
+        // See SERVER-11051.
+        if (dbStats.sizeOnDisk == 1 && dbStats.empty) return;
+        totalNonLocalDBSize += dbStats.sizeOnDisk;
     });
     return totalNonLocalDBSize;
 }

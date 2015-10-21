@@ -12,318 +12,340 @@
  *
  *    You should have received a copy of the GNU Affero General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    As a special exception, the copyright holders give permission to link the
+ *    code of portions of this program with the OpenSSL library under certain
+ *    conditions as described in each individual source file and distribute
+ *    linked combinations including the program with the OpenSSL library. You
+ *    must comply with the GNU Affero General Public License in all respects
+ *    for all of the code used other than as permitted herein. If you modify
+ *    file(s) with this exception, you may extend this exception to your
+ *    version of the file(s), but you are not obligated to do so. If you do not
+ *    wish to do so, delete this exception statement from your version. If you
+ *    delete this exception statement from all source files in the program,
+ *    then also delete it in the license file.
  */
+
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kSharding
 
 #include "mongo/s/config_upgrade_helpers.h"
 
+#include <boost/scoped_ptr.hpp>
+
 #include "mongo/client/connpool.h"
-#include "mongo/db/namespacestring.h"
+#include "mongo/db/field_parser.h"
+#include "mongo/db/namespace_string.h"
+#include "mongo/db/write_concern.h"
 #include "mongo/s/cluster_client_internal.h"
+#include "mongo/s/cluster_write.h"
+#include "mongo/s/type_config_version.h"
+#include "mongo/util/log.h"
+#include "mongo/util/timer.h"
 
 namespace mongo {
 
-    using mongoutils::str::stream;
+using boost::scoped_ptr;
+using std::auto_ptr;
+using std::endl;
+using std::string;
 
-    Status checkIdsTheSame(const ConnectionString& configLoc, const string& nsA, const string& nsB)
-    {
-        scoped_ptr<ScopedDbConnection> connPtr;
-        auto_ptr<DBClientCursor> cursor;
+using mongoutils::str::stream;
 
-        try {
-            connPtr.reset(ScopedDbConnection::getInternalScopedDbConnection(configLoc, 30));
-            ScopedDbConnection& conn = *connPtr;
+// Custom field used in upgrade state to determine if/where we failed on last upgrade
+const BSONField<bool> inCriticalSectionField("inCriticalSection", false);
 
-            scoped_ptr<DBClientCursor> cursorA(_safeCursor(conn->query(nsA,
-                                                                       Query().sort(BSON("_id" << 1)))));
-            scoped_ptr<DBClientCursor> cursorB(_safeCursor(conn->query(nsB,
-                                                                       Query().sort(BSON("_id" << 1)))));
+Status checkIdsTheSame(const ConnectionString& configLoc, const string& nsA, const string& nsB) {
+    scoped_ptr<ScopedDbConnection> connPtr;
+    auto_ptr<DBClientCursor> cursor;
 
-            while (cursorA->more() && cursorB->more()) {
+    try {
+        connPtr.reset(new ScopedDbConnection(configLoc, 30));
+        ScopedDbConnection& conn = *connPtr;
 
-                BSONObj nextA = cursorA->nextSafe();
-                BSONObj nextB = cursorB->nextSafe();
+        scoped_ptr<DBClientCursor> cursorA(
+            _safeCursor(conn->query(nsA, Query().sort(BSON("_id" << 1)))));
+        scoped_ptr<DBClientCursor> cursorB(
+            _safeCursor(conn->query(nsB, Query().sort(BSON("_id" << 1)))));
 
-                if (nextA["_id"] != nextB["_id"]) {
-                    connPtr->done();
+        while (cursorA->more() && cursorB->more()) {
+            BSONObj nextA = cursorA->nextSafe();
+            BSONObj nextB = cursorB->nextSafe();
 
-                    return Status(ErrorCodes::RemoteValidationError,
-                                  stream() << "document " << nextA << " is not the same as "
-                                           << nextB);
-                }
-            }
-
-            if (cursorA->more() != cursorB->more()) {
+            if (nextA["_id"] != nextB["_id"]) {
                 connPtr->done();
 
                 return Status(ErrorCodes::RemoteValidationError,
-                              stream() << "collection " << (cursorA->more() ? nsA : nsB)
-                                       << " has more documents than "
-                                       << (cursorA->more() ? nsB : nsA));
+                              stream() << "document " << nextA << " is not the same as " << nextB);
             }
         }
-        catch (const DBException& e) {
-            return e.toStatus();
-        }
 
-        connPtr->done();
+        if (cursorA->more() != cursorB->more()) {
+            connPtr->done();
+
+            return Status(ErrorCodes::RemoteValidationError,
+                          stream() << "collection " << (cursorA->more() ? nsA : nsB)
+                                   << " has more documents than " << (cursorA->more() ? nsB : nsA));
+        }
+    } catch (const DBException& e) {
+        return e.toStatus();
+    }
+
+    connPtr->done();
+    return Status::OK();
+}
+
+string _extractHashFor(const BSONObj& dbHashResult, const StringData& collName) {
+    if (dbHashResult["collections"].type() != Object ||
+        dbHashResult["collections"].Obj()[collName].type() != String) {
+        return "";
+    }
+
+    return dbHashResult["collections"].Obj()[collName].String();
+}
+
+Status checkHashesTheSame(const ConnectionString& configLoc, const string& nsA, const string& nsB) {
+    //
+    // Check the sizes first, b/c if one collection is empty the hash check will fail
+    //
+
+    unsigned long long countA;
+    unsigned long long countB;
+
+    try {
+        ScopedDbConnection conn(configLoc, 30);
+        countA = conn->count(nsA, BSONObj());
+        countB = conn->count(nsB, BSONObj());
+        conn.done();
+    } catch (const DBException& e) {
+        return e.toStatus();
+    }
+
+    if (countA == 0 && countB == 0) {
         return Status::OK();
+    } else if (countA != countB) {
+        return Status(ErrorCodes::RemoteValidationError,
+                      stream() << "collection " << nsA << " has " << countA << " documents but "
+                               << nsB << " has " << countB << "documents");
+    }
+    verify(countA == countB);
+
+    //
+    // Find hash for nsA
+    //
+
+    bool resultOk;
+    BSONObj result;
+
+    NamespaceString nssA(nsA);
+
+    try {
+        ScopedDbConnection conn(configLoc, 30);
+        resultOk = conn->runCommand(nssA.db().toString(), BSON("dbHash" << true), result);
+        conn.done();
+    } catch (const DBException& e) {
+        return e.toStatus();
     }
 
-    string _extractHashFor(const BSONObj& dbHashResult, const string& collName) {
-
-        if (dbHashResult["collections"].type() != Object
-            || dbHashResult["collections"].Obj()[collName].type() != String)
-        {
-            return "";
-        }
-
-        return dbHashResult["collections"].Obj()[collName].String();
+    if (!resultOk) {
+        return Status(ErrorCodes::UnknownError,
+                      stream() << "could not run dbHash command on " << nssA.db() << " db"
+                               << causedBy(result.toString()));
     }
 
-    Status checkHashesTheSame(const ConnectionString& configLoc,
-                              const string& nsA,
-                              const string& nsB)
-    {
+    string hashResultA = _extractHashFor(result, nssA.coll());
+
+    if (hashResultA == "") {
+        return Status(ErrorCodes::RemoteValidationError,
+                      stream() << "could not find hash for collection " << nsA << " in "
+                               << result.toString());
+    }
+
+    //
+    // Find hash for nsB
+    //
+
+    NamespaceString nssB(nsB);
+
+    try {
+        ScopedDbConnection conn(configLoc, 30);
+        resultOk = conn->runCommand(nssB.db().toString(), BSON("dbHash" << true), result);
+        conn.done();
+    } catch (const DBException& e) {
+        return e.toStatus();
+    }
+
+    if (!resultOk) {
+        return Status(ErrorCodes::UnknownError,
+                      stream() << "could not run dbHash command on " << nssB.db() << " db"
+                               << causedBy(result.toString()));
+    }
+
+    string hashResultB = _extractHashFor(result, nssB.coll());
+
+    if (hashResultB == "") {
+        return Status(ErrorCodes::RemoteValidationError,
+                      stream() << "could not find hash for collection " << nsB << " in "
+                               << result.toString());
+    }
+
+    if (hashResultA != hashResultB) {
+        return Status(ErrorCodes::RemoteValidationError,
+                      stream() << "collection hashes for collection " << nsA << " and " << nsB
+                               << " do not match");
+    }
+
+    return Status::OK();
+}
+
+Status overwriteCollection(const ConnectionString& configLoc,
+                           const string& fromNS,
+                           const string& overwriteNS) {
+    // TODO: Also a bit awkward to deal with command results
+    bool resultOk;
+    BSONObj renameResult;
+
+    // Create new collection
+    try {
+        ScopedDbConnection conn(configLoc, 30);
+
+        BSONObjBuilder bob;
+        bob.append("renameCollection", fromNS);
+        bob.append("to", overwriteNS);
+        bob.append("dropTarget", true);
+        BSONObj renameCommand = bob.obj();
+
+        resultOk = conn->runCommand("admin", renameCommand, renameResult);
+        conn.done();
+    } catch (const DBException& e) {
+        return e.toStatus();
+    }
+
+    if (!resultOk) {
+        return Status(ErrorCodes::UnknownError,
+                      stream() << DBClientWithCommands::getLastErrorString(renameResult)
+                               << causedBy(renameResult.toString()));
+    }
+
+    return Status::OK();
+}
+
+string genWorkingSuffix(const OID& lastUpgradeId) {
+    return "-upgrade-" + lastUpgradeId.toString();
+}
+
+string genBackupSuffix(const OID& lastUpgradeId) {
+    return "-backup-" + lastUpgradeId.toString();
+}
+
+Status preUpgradeCheck(const ConnectionString& configServer,
+                       const VersionType& lastVersionInfo,
+                       string minMongosVersion) {
+    if (lastVersionInfo.isUpgradeIdSet() && lastVersionInfo.getUpgradeId().isSet()) {
         //
-        // Check the sizes first, b/c if one collection is empty the hash check will fail
+        // Another upgrade failed, so cleanup may be necessary
         //
 
-        scoped_ptr<ScopedDbConnection> connPtr;
+        BSONObj lastUpgradeState = lastVersionInfo.getUpgradeState();
 
-        unsigned long long countA;
-        unsigned long long countB;
-
-        try {
-            connPtr.reset(ScopedDbConnection::getInternalScopedDbConnection(configLoc, 30));
-            ScopedDbConnection& conn = *connPtr;
-
-            countA = conn->count(nsA, BSONObj());
-            countB = conn->count(nsB, BSONObj());
-        }
-        catch (const DBException& e) {
-            return e.toStatus();
+        bool inCriticalSection;
+        string errMsg;
+        if (!FieldParser::extract(
+                lastUpgradeState, inCriticalSectionField, &inCriticalSection, &errMsg)) {
+            return Status(ErrorCodes::FailedToParse, causedBy(errMsg));
         }
 
-        connPtr->done();
-
-        if (countA == 0 && countB == 0) {
-            return Status::OK();
+        if (inCriticalSection) {
+            // Note: custom message must be supplied by caller
+            return Status(ErrorCodes::ManualInterventionRequired, "");
         }
-        else if (countA != countB) {
-            return Status(ErrorCodes::RemoteValidationError,
-                          stream() << "collection " << nsA << " has " << countA << " documents but "
-                                   << nsB << " has " << countB << "documents");
-        }
-        verify(countA == countB);
-
-        //
-        // Find hash for nsA
-        //
-
-        bool resultOk;
-        BSONObj result;
-
-        NamespaceString nssA(nsA);
-
-        try {
-            connPtr.reset(ScopedDbConnection::getInternalScopedDbConnection(configLoc, 30));
-            ScopedDbConnection& conn = *connPtr;
-
-            resultOk = conn->runCommand(nssA.db, BSON("dbHash" << true), result);
-        }
-        catch (const DBException& e) {
-            return e.toStatus();
-        }
-
-        connPtr->done();
-
-        if (!resultOk) {
-            return Status(ErrorCodes::UnknownError,
-                          stream() << "could not run dbHash command on " << nssA.db << " db"
-                                   << causedBy(result.toString()));
-        }
-
-        string hashResultA = _extractHashFor(result, nssA.coll);
-
-        if (hashResultA == "") {
-            return Status(ErrorCodes::RemoteValidationError,
-                          stream() << "could not find hash for collection " << nsA << " in "
-                                   << result.toString());
-        }
-
-        //
-        // Find hash for nsB
-        //
-
-        NamespaceString nssB(nsB);
-
-        try {
-            connPtr.reset(ScopedDbConnection::getInternalScopedDbConnection(configLoc, 30));
-            ScopedDbConnection& conn = *connPtr;
-
-            resultOk = conn->runCommand(nssB.db, BSON("dbHash" << true), result);
-        }
-        catch (const DBException& e) {
-            return e.toStatus();
-        }
-
-        connPtr->done();
-
-        if (!resultOk) {
-            return Status(ErrorCodes::UnknownError,
-                          stream() << "could not run dbHash command on " << nssB.db << " db"
-                                   << causedBy(result.toString()));
-        }
-
-        string hashResultB = _extractHashFor(result, nssB.coll);
-
-        if (hashResultB == "") {
-            return Status(ErrorCodes::RemoteValidationError,
-                          stream() << "could not find hash for collection " << nsB << " in "
-                                   << result.toString());
-        }
-
-        if (hashResultA != hashResultB) {
-            return Status(ErrorCodes::RemoteValidationError,
-                          stream() << "collection hashes for collection " << nsA << " and " << nsB
-                                   << " do not match");
-        }
-
-        return Status::OK();
     }
 
-    Status copyFrozenCollection(const ConnectionString& configLoc,
-                                const string& fromNS,
-                                const string& toNS)
-    {
-        scoped_ptr<ScopedDbConnection> connPtr;
-        auto_ptr<DBClientCursor> cursor;
+    //
+    // Check the versions of other mongo processes in the cluster before upgrade.
+    // We can't upgrade if there are active pre-v2.4 processes in the cluster
+    //
+    return checkClusterMongoVersions(configServer, string(minMongosVersion));
+}
 
-        // Create new collection
-        bool resultOk;
-        BSONObj createResult;
+Status startConfigUpgrade(const string& configServer, int currentVersion, const OID& upgradeID) {
+    BSONObjBuilder setUpgradeIdObj;
+    setUpgradeIdObj << VersionType::upgradeId(upgradeID);
+    setUpgradeIdObj << VersionType::upgradeState(BSONObj());
 
-        try {
-            connPtr.reset(ScopedDbConnection::getInternalScopedDbConnection(configLoc, 30));
-            ScopedDbConnection& conn = *connPtr;
+    Status result = clusterUpdate(VersionType::ConfigNS,
+                                  BSON("_id" << 1 << VersionType::currentVersion(currentVersion)),
+                                  BSON("$set" << setUpgradeIdObj.done()),
+                                  false,  // upsert
+                                  false,  // multi
+                                  WriteConcernOptions::AllConfigs,
+                                  NULL);
 
-            resultOk = conn->createCollection(toNS, 0, false, 0, &createResult);
-        }
-        catch (const DBException& e) {
-            return e.toStatus("could not create new collection");
-        }
+    if (!result.isOK()) {
+        return Status(result.code(),
+                      str::stream() << "could not initialize version info"
+                                    << "for upgrade: " << result.reason());
+    }
+    return result;
+}
 
-        if (!resultOk) {
-            return Status(ErrorCodes::UnknownError,
-                          stream() << DBClientWithCommands::getLastErrorString(createResult)
-                                   << causedBy(createResult.toString()));
-        }
+Status enterConfigUpgradeCriticalSection(const string& configServer, int currentVersion) {
+    BSONObjBuilder setUpgradeStateObj;
+    setUpgradeStateObj.append(VersionType::upgradeState(), BSON(inCriticalSectionField(true)));
 
-        NamespaceString fromNSS(fromNS);
-        NamespaceString toNSS(toNS);
+    Status result = clusterUpdate(VersionType::ConfigNS,
+                                  BSON("_id" << 1 << VersionType::currentVersion(currentVersion)),
+                                  BSON("$set" << setUpgradeStateObj.done()),
+                                  false,  // upsert
+                                  false,  // multi
+                                  WriteConcernOptions::AllConfigs,
+                                  NULL);
 
-        // Copy indexes over
-        try {
-            ScopedDbConnection& conn = *connPtr;
+    log() << "entered critical section for config upgrade" << endl;
 
-            verify(fromNSS.isValid());
+    // No cleanup message here since we're not sure if we wrote or not, and
+    // not dangerous either way except to prevent further updates (at which point
+    // the message is printed)
 
-            // TODO: EnsureIndex at some point, if it becomes easier?
-            string indexesNS = fromNSS.db + ".system.indexes";
-            scoped_ptr<DBClientCursor> cursor(_safeCursor(conn->query(indexesNS,
-                                                                      BSON("ns" << fromNS))));
-
-            while (cursor->more()) {
-
-                BSONObj next = cursor->nextSafe();
-
-                BSONObjBuilder newIndexDesc;
-                newIndexDesc.append("ns", toNS);
-                newIndexDesc.appendElementsUnique(next);
-
-                conn->insert(toNSS.db + ".system.indexes", newIndexDesc.done());
-                _checkGLE(conn);
-            }
-        }
-        catch (const DBException& e) {
-            return e.toStatus("could not create indexes in new collection");
-        }
-
-        // Copy data over
-        try {
-            ScopedDbConnection& conn = *connPtr;
-            scoped_ptr<DBClientCursor> cursor(_safeCursor(conn->query(fromNS, BSONObj())));
-
-            while (cursor->more()) {
-
-                BSONObj next = cursor->nextSafe();
-
-                conn->insert(toNS, next);
-                _checkGLE(conn);
-            }
-        }
-        catch (const DBException& e) {
-            return e.toStatus("could not copy data into new collection");
-        }
-
-        connPtr->done();
-
-        // Verify indices haven't changed
-        Status indexStatus = checkIdsTheSame(configLoc,
-                                             fromNSS.db + ".system.indexes",
-                                             toNSS.db + ".system.indexes");
-
-        if (!indexStatus.isOK()) {
-            return indexStatus;
-        }
-
-        // Verify data hasn't changed
-        return checkHashesTheSame(configLoc, fromNS, toNS);
+    if (!result.isOK()) {
+        return Status(result.code(),
+                      str::stream() << "could not update version info"
+                                    << "to enter critical update section: " << result.reason());
     }
 
-    Status overwriteCollection(const ConnectionString& configLoc,
-                               const string& fromNS,
-                               const string& overwriteNS)
-    {
-        scoped_ptr<ScopedDbConnection> connPtr;
+    return result;
+}
 
-        // TODO: Also a bit awkward to deal with command results
-        bool resultOk;
-        BSONObj renameResult;
 
-        // Create new collection
-        try {
-            connPtr.reset(ScopedDbConnection::getInternalScopedDbConnection(configLoc, 30));
-            ScopedDbConnection& conn = *connPtr;
+Status commitConfigUpgrade(const string& configServer,
+                           int currentVersion,
+                           int minCompatibleVersion,
+                           int newVersion) {
+    // Note: DO NOT CLEAR the config version unless bumping the minCompatibleVersion,
+    // we want to save the excludes that were set.
 
-            BSONObjBuilder bob;
-            bob.append("renameCollection", fromNS);
-            bob.append("to", overwriteNS);
-            bob.append("dropTarget", true);
-            BSONObj renameCommand = bob.obj();
+    BSONObjBuilder setObj;
+    setObj << VersionType::minCompatibleVersion(minCompatibleVersion);
+    setObj << VersionType::currentVersion(newVersion);
 
-            resultOk = conn->runCommand("admin", renameCommand, renameResult);
-        }
-        catch (const DBException& e) {
-            return e.toStatus();
-        }
+    BSONObjBuilder unsetObj;
+    unsetObj.append(VersionType::upgradeId(), 1);
+    unsetObj.append(VersionType::upgradeState(), 1);
+    unsetObj.append("version", 1);  // remove deprecated field, no longer supported >= v3.0.
 
-        connPtr->done();
+    Status result = clusterUpdate(VersionType::ConfigNS,
+                                  BSON("_id" << 1 << VersionType::currentVersion(currentVersion)),
+                                  BSON("$set" << setObj.done() << "$unset" << unsetObj.done()),
+                                  false,  // upsert
+                                  false,  // multi,
+                                  WriteConcernOptions::AllConfigs,
+                                  NULL);
 
-        if (!resultOk) {
-            return Status(ErrorCodes::UnknownError,
-                          stream() << DBClientWithCommands::getLastErrorString(renameResult)
-                                   << causedBy(renameResult.toString()));
-        }
-
-        return Status::OK();
+    if (!result.isOK()) {
+        return Status(result.code(),
+                      str::stream() << "could not write new version info "
+                                    << " and exit critical upgrade section: " << result.reason());
     }
 
-    string genWorkingSuffix(const OID& lastUpgradeId) {
-        return "-upgrade-" + lastUpgradeId.toString();
-    }
-
-    string genBackupSuffix(const OID& lastUpgradeId) {
-        return "-backup-" + lastUpgradeId.toString();
-    }
+    return result;
+}
 }

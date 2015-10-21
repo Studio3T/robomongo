@@ -3,11 +3,11 @@ IF(BOOST_ENABLED)
 ENDIF()
 ADD_SUBDIRECTORY(third-party/qjson)
 ADD_SUBDIRECTORY(third-party/qscintilla/Qt4Qt5)
-ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/js-1.7)
+ADD_SUBDIRECTORY(third-party/js-1.7)
 
 SET(PCRE_BUILD_TESTS OFF CACHE BOOL "Build the tests pcre tests.")
 SET(PCRE_BUILD_PCREGREP OFF CACHE BOOL "Build pcregrep")
-ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/pcre-8.30 pcrecpp)
+ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/pcre-8.37 pcrecpp)
 
 SET(HEADERS_GUI_TO_MOC
     robomongo/gui/dialogs/ConnectionsDialog.h
@@ -121,11 +121,13 @@ SET(HEADERS_SHELL
     robomongo/shell/db/ptimeutil.h)
 SET(SOURCES_SHELL
     robomongo/shell/scripting/utils.cpp
-    robomongo/shell/scripting/sm_db.cpp
-    robomongo/shell/scripting/engine_spidermonkey.cpp
+    #robomongo/shell/scripting/sm_db.cpp
+    #robomongo/shell/scripting/engine_spidermonkey.cpp
+    robomongo/shell/scripting/v8_db.cpp
+    robomongo/shell/scripting/engine_v8.cpp    
     robomongo/shell/scripting/engine.cpp
     robomongo/shell/mongo.cpp
-    #robomongo/shell/util/version.cpp
+    robomongo/shell/util/version.cpp
     robomongo/shell/util/processinfo.cpp
     robomongo/shell/shell/shell_utils.cpp
     robomongo/shell/shell/shell_utils_launcher.cpp
@@ -228,9 +230,12 @@ SET(SOURCES_CORE
 IF(WIN32)
     ADD_DEFINITIONS(-D_WINSOCKAPI_ -DXP_WIN -DUNICODE -D_UNICODE)
 ELSEIF(UNIX)
-    ADD_DEFINITIONS(-DXP_UNIX)
+    ADD_DEFINITIONS(-DXP_UNIX -DMONGO_BYTE_ORDER=1234)
 ENDIF()
 ADD_DEFINITIONS(-DROBOMONGO -DJS_C_STRINGS_ARE_UTF8 -DMONGO_EXPOSE_MACROS)
+
+# TODO
+# python generate_error_codes.py error_codes.err error_codes.h error_codes.cpp
 
 SET_DESKTOP_TARGET()
 
@@ -286,24 +291,24 @@ IF(SSH_ENABLED)
     SET(SOURCES_GUI ${SOURCES_GUI}
         robomongo/gui/dialogs/SSHTunnelTab.cpp
     )
-    ADD_SUBDIRECTORY(third-party/mongodb/src/third_party/libssh2)
+    ADD_SUBDIRECTORY(third-party/libssh2)
     SET(ALL_LIBS ${ALL_LIBS} libssh2_third_party)    
 ENDIF(SSH_ENABLED)
 
-IF(NOT MONGODB_EXTRAPATH STREQUAL "")
-    STRING(REGEX REPLACE "([^\ ]+)" "\\1," MONGODB_EXTRAPATH_OUT ${MONGODB_EXTRAPATH})
-    
-    # Remove trailing comma
-    STRING(REGEX REPLACE ",$" "" MONGODB_EXTRAPATH_OUT_CLEAR ${MONGODB_EXTRAPATH_OUT})    
-    
-    # Remove spaces
-    STRING(REGEX REPLACE "([ ]+)" "" MONGODB_EXTRAPATH_OUT_CLEAR_NO_SPACES ${MONGODB_EXTRAPATH_OUT_CLEAR})    
-    
-    SET(MONGODB_COMMAND ${MONGODB_COMMAND} --extrapath=${MONGODB_EXTRAPATH_OUT_CLEAR_NO_SPACES})
-    SET(ALL_LIBS ${ALL_LIBS} ${OPENSSL_LIBRARIES})
-ENDIF()
+#IF(NOT MONGODB_EXTRAPATH STREQUAL "")
+#    STRING(REGEX REPLACE "([^\ ]+)" "\\1," MONGODB_EXTRAPATH_OUT ${MONGODB_EXTRAPATH})
+#    
+#    # Remove trailing comma
+#    STRING(REGEX REPLACE ",$" "" MONGODB_EXTRAPATH_OUT_CLEAR ${MONGODB_EXTRAPATH_OUT})    
+#    
+##    # Remove spaces
+#    STRING(REGEX REPLACE "([ ]+)" "" MONGODB_EXTRAPATH_OUT_CLEAR_NO_SPACES ${MONGODB_EXTRAPATH_OUT_CLEAR})    
+#    
+#    SET(MONGODB_COMMAND ${MONGODB_COMMAND} --extrapath=${MONGODB_EXTRAPATH_OUT_CLEAR_NO_SPACES})
+#    SET(ALL_LIBS ${ALL_LIBS} ${OPENSSL_LIBRARIES})
+#ENDIF()
 
-SET(MONGODB_COMMAND ${MONGODB_COMMAND} --${ARCH_TEXT} mongoclient)
+SET(MONGODB_COMMAND ${MONGODB_COMMAND} --${ARCH_TEXT} mongo)
 
 SET(HEADERS ${HEADERS} ${HEADERS_GUI} ${HEADERS_CORE} ${HEADERS_SHELL})
 SET(SOURCES ${SOURCES} ${SOURCES_GUI} ${SOURCES_SHELL} ${SOURCES_CORE})
@@ -312,7 +317,7 @@ SET(HEADERS_TOMOC ${HEADERS_GUI_TO_MOC} ${HEADERS_CORE_TO_MOC})
 QTX_WRAP_CPP(MOC_FILES ${HEADERS_TOMOC})
 SET(RESOURCES robomongo/gui/resources/gui.qrc)
 QTX_ADD_RESOURCES(RES_SRC ${RESOURCES})
-SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${CMAKE_CURRENT_LIST_DIR} third-party/mongodb/src/third_party/pcre-8.30 third-party/qscintilla/Qt4Qt5 third-party/qjson third-party/mongodb/src)
+SET(INCLUDE_DIRS ${INCLUDE_DIRS} ${CMAKE_CURRENT_LIST_DIR} third-party/mongodb/src/third_party/pcre-8.37 third-party/mongodb/src/third_party/v8/include third-party/qscintilla/Qt4Qt5 third-party/js-1.7 third-party/qjson third-party/mongodb/src)
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS} )
 SOURCE_GROUP("Header Files" FILES ${HEADERS} ${HEADERS_TOMOC})
 SOURCE_GROUP("Source Files" FILES ${SOURCES})
@@ -330,13 +335,13 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
     IF(BOOST_ENABLED)
             IF ("${CMAKE_BUILD_TYPE_STABLE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --release ${MONGODB_COMMAND}
+                    COMMAND scons --64 --release ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
             ELSE()
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons -d ${MONGODB_COMMAND}
+                    COMMAND scons --64 --dbg=on --opt=on ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
@@ -344,13 +349,14 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
         ELSE()
             IF ("${CMAKE_BUILD_TYPE_STABLE}" STREQUAL "RELEASE")
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --release ${MONGODB_COMMAND}
+                    COMMAND scons --64 --release ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
             ELSE()
                 ADD_CUSTOM_TARGET(build_mongoclient
-                    COMMAND scons --d ${MONGODB_COMMAND}
+                    # FIXME: add architecture check?
+                    COMMAND scons --64 --dbg=on --opt=on ${MONGODB_COMMAND}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${LIBMONGOCLIENT_RELEASE_FILENAME}  ${MONGOCLIENT_RELEASE_LIBRARY}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
                     COMMENT "Build mongoclient library")
@@ -370,23 +376,23 @@ IF(MINGW OR CMAKE_COMPILER_IS_GNUCXX OR APPLE)
 ELSEIF(MSVC)
     IF(BOOST_ENABLED)
         ADD_CUSTOM_TARGET(mongoclient_release
-            COMMAND call scons --release ${MONGODB_COMMAND}
+            COMMAND call scons --64 --release ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient release library")
         ADD_CUSTOM_TARGET(mongoclient_debug
-            COMMAND call scons --d ${MONGODB_COMMAND}
+            COMMAND call scons --64 --dbg=on --opt=on ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient debug library")
     ELSE(BOOST_ENABLED)
         ADD_CUSTOM_TARGET(mongoclient_release
-            COMMAND call scons --release ${MONGODB_COMMAND}
+            COMMAND call scons --64 --release ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_RELEASE_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient release library")
         ADD_CUSTOM_TARGET(mongoclient_debug
-            COMMAND call scons --d ${MONGODB_COMMAND}
+            COMMAND call scons --64 --dbg=on --opt=on ${MONGODB_COMMAND}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different \"${LIBMONGOCLIENT_RELEASE_FILENAME}\" \"${MONGOCLIENT_DEBUG_LIBRARY}\"
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/third-party/mongodb
             COMMENT "Build mongoclient debug library")

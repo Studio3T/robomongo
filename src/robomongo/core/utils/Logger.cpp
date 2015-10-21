@@ -17,7 +17,7 @@ namespace Robomongo
 {
     Logger::Logger()
     {
-        qRegisterMetaType<mongo::LogLevel>("mongo::LogLevel");
+        qRegisterMetaType<::mongo::logger::LogSeverity>("::mongo::logger::LogSeverity");
         std::string path = getLoggerPath();
         QFile file(QtUtils::toQString(path)); //delete file if it size more than 5mb
         if (file.exists() && file.size() > 5 * 1024 * 1024) {
@@ -27,21 +27,21 @@ namespace Robomongo
     }
 
     Logger::~Logger()
-    {   
+    {
     }
 
-    void Logger::print(const char *mess, mongo::LogLevel level, bool notify)
+    void Logger::print(const char *mess, ::mongo::logger::LogSeverity level, bool notify)
     {
         print(std::string(mess), level, notify);
     }
 
-    void Logger::print(const std::string &mess, mongo::LogLevel level, bool notify)
-    {       
+    void Logger::print(const std::string &mess, ::mongo::logger::LogSeverity level, bool notify)
+    {
         print(QtUtils::toQString(mess), level, notify);
     }
 
-    void Logger::print(const QString &mess, mongo::LogLevel level, bool notify)
-    {        
+    void Logger::print(const QString &mess, ::mongo::logger::LogSeverity level, bool notify)
+    {
         LOG(level) << "["PROJECT_NAME_TITLE"] " << QtUtils::toStdString(mess) << std::endl;
         if (notify)
             emit printed(mess, level);

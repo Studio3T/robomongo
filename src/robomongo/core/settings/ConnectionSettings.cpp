@@ -33,7 +33,7 @@ namespace Robomongo
 #endif
 #ifdef SSH_SUPPORT_ENABLED
         ,SSHInfo()
-#endif        
+#endif
         )
         ,_defaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString()))
     {
@@ -84,7 +84,9 @@ namespace Robomongo
         setServerHost(source->serverHost());
         setServerPort(source->serverPort());
         setDefaultDatabase(source->defaultDatabase());
+#ifdef MONGO_SSL
         setSslInfo(source->sslInfo());
+#endif
 #ifdef SSH_SUPPORT_ENABLED
         setSshInfo(source->sshInfo());
 #endif
@@ -93,6 +95,8 @@ namespace Robomongo
         for (QList<CredentialSettings *>::iterator it = cred.begin(); it != cred.end(); ++it) {
             addCredential((*it)->clone());
         }
+
+         _info = mongo::HostAndPort(_hostName, _port);
     }
 
     /**

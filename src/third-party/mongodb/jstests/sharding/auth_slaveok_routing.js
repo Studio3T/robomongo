@@ -1,4 +1,4 @@
-1/**
+/**
  * This tests whether slaveOk reads are properly routed through mongos in
  * an authenticated environment. This test also includes restarting the
  * entire set, then querying afterwards.
@@ -14,7 +14,9 @@
  */
 function doesRouteToSec( coll, query ) {
     var explain = coll.find( query ).explain();
-    var conn = new Mongo( explain.server );
+    assert.eq("SINGLE_SHARD", explain.queryPlanner.winningPlan.stage);
+    var serverInfo = explain.queryPlanner.winningPlan.shards[0].serverInfo;
+    var conn = new Mongo( serverInfo.host + ":" + serverInfo.port.toString());
     var cmdRes = conn.getDB( 'admin' ).runCommand({ isMaster: 1 });
 
     jsTest.log('isMaster: ' + tojson(cmdRes));
@@ -38,10 +40,11 @@ var nodeCount = replTest.nodes.length;
  * is no admin user.
  */
 var adminDB = mongos.getDB( 'admin' )
-adminDB.addUser('user', 'password', false);
+adminDB.createUser({user: 'user', pwd: 'password', roles: jsTest.adminUserRoles});
 adminDB.auth( 'user', 'password' );
 var priAdminDB = replTest.getPrimary().getDB( 'admin' );
-priAdminDB.addUser( 'user', 'password', false, 3 );
+priAdminDB.createUser({user:  'user', pwd: 'password', roles: jsTest.adminUserRoles},
+                      {w: 3, wtimeout: 30000});
 
 coll.drop();
 coll.setSlaveOk( true );
@@ -53,11 +56,11 @@ coll.setSlaveOk( true );
 ReplSetTest.awaitRSClientHosts( mongos, replTest.getSecondaries(),
    { ok : true, secondary : true });
 
+var bulk = coll.initializeUnorderedBulkOp();
 for ( var x = 0; x < 20; x++ ) {
-    coll.insert({ v: x, k: 10 });
+    bulk.insert({ v: x, k: 10 });
 }
-
-coll.runCommand({ getLastError: 1, w: nodeCount });
+assert.writeOK(bulk.execute({ w: nodeCount }));
 
 /* Although mongos never caches query results, try to do a different query
  * everytime just to be sure.
@@ -98,7 +101,7 @@ assert( doesRouteToSec( coll, { v: vToFind++ }));
 // Cleanup auth so Windows will be able to shutdown gracefully
 priAdminDB = replTest.getPrimary().getDB( 'admin' );
 priAdminDB.auth( 'user', 'password' );
-priAdminDB.removeUser( 'user' );
+priAdminDB.dropUser( 'user' );
 
 st.stop();
 

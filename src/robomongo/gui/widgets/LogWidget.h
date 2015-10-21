@@ -1,7 +1,13 @@
 #pragma once
 
-#include <QWidget>
+#ifndef MONGO_UTIL_LOG_H_
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kStorage
+
+#include <mongo/logger/log_severity.h>
 #include <mongo/util/log.h>
+#endif
+
+#include <QWidget>
 QT_BEGIN_NAMESPACE
 class QTextEdit;
 class QAction;
@@ -15,15 +21,15 @@ namespace Robomongo
 
     public:
         typedef QWidget BaseClass;
-        LogWidget(QWidget* parent = 0);        
+        LogWidget(QWidget* parent = 0);
 
     public Q_SLOTS:
-        void addMessage(const QString &message, mongo::LogLevel level);
+        void addMessage(const QString &message, ::mongo::logger::LogSeverity level);
 
     private Q_SLOTS:
         void showContextMenu(const QPoint &pt);
 
-    private:        
+    private:
         QTextEdit *const _logTextEdit;
         QAction *_clear;
     };

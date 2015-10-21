@@ -1,6 +1,6 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
 
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 #include <mongo/bson/bsonobjiterator.h>
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
@@ -14,23 +14,23 @@ namespace
 {
     using namespace Robomongo;
     void parseDocument(BsonTreeItem *root, const mongo::BSONObj &doc)
-    {            
+    {
             mongo::BSONObjIterator iterator(doc);
             while (iterator.more())
             {
-                mongo::BSONElement element = iterator.next();                
+                mongo::BSONElement element = iterator.next();
                 BsonTreeItem *childItemInner = new BsonTreeItem(doc, root);
                 childItemInner->setKey(QtUtils::toQString(std::string(element.fieldName())));
 
                 if (BsonUtils::isArray(element)) {
                     int itemsCount = element.Array().size();
                     childItemInner->setValue(QString("Array [%1]").arg(itemsCount));
-                    //parseDocument(childItemInner,element.Obj());  
+                    //parseDocument(childItemInner,element.Obj());
                 }
                 else if (BsonUtils::isDocument(element)) {
                     int count = BsonUtils::elementsCount(element.Obj());
                     childItemInner->setValue(QString("{ %1 fields }").arg(count));
-                   // parseDocument(childItemInner,element.Obj());                    
+                   // parseDocument(childItemInner,element.Obj());
                 }
                 else {
                     std::string result;
@@ -43,7 +43,7 @@ namespace
                 }
                 root->addChild(childItemInner);
                 //root->setValue(QString("{ %1 fields }").arg(root->childrenCount()));
-            }            
+            }
     }
 }
 
@@ -54,7 +54,7 @@ namespace Robomongo
         _root(new BsonTreeItem(this))
     {
         for (int i = 0; i < documents.size(); ++i) {
-            MongoDocumentPtr doc = documents[i]; 
+            MongoDocumentPtr doc = documents[i];
             BsonTreeItem *child = new BsonTreeItem(doc->bsonObj(), _root);
             parseDocument(child, doc->bsonObj());
 
@@ -81,7 +81,7 @@ namespace Robomongo
             mongo::BSONElement elem = BsonUtils::indexOf(node->root(),parent.row());
             if (!elem.isNull() && elem.isABSONObj()) {
                 parseDocument(node,elem.Obj());
-            }            
+            }
         }
         return BaseClass::fetchMore(parent);
     }
@@ -137,9 +137,9 @@ namespace Robomongo
         BsonTreeItem *node = QtUtils::item<BsonTreeItem*>(index);
 
         if (!node)
-            return result;  
+            return result;
 
-        int col = index.column();        
+        int col = index.column();
 
         if(role == Qt::DecorationRole && col == BsonTreeItem::eKey ){
             return getIcon(node);
@@ -156,18 +156,18 @@ namespace Robomongo
                 }
             }
             else if (col == BsonTreeItem::eValue) {
-                bool isCut = node->type() == mongo::String ||  node->type() == mongo::Code || node->type() == mongo::CodeWScope;  
+                bool isCut = node->type() == mongo::String ||  node->type() == mongo::Code || node->type() == mongo::CodeWScope;
                 if (role == Qt::ToolTipRole){
-                    result = isCut ? node->value().left(500) : node->value(); 
+                    result = isCut ? node->value().left(500) : node->value();
                 }
                 else{
-                    result = isCut ? node->value().simplified().left(300) : node->value(); 
+                    result = isCut ? node->value().simplified().left(300) : node->value();
                 }
             }
             else if (col == BsonTreeItem::eType) {
                 result = BsonUtils::BSONTypeToString(node->type(),node->binType(),AppRegistry::instance().settingsManager()->uuidEncoding());
             }
-        }       
+        }
 
         return result;
     }

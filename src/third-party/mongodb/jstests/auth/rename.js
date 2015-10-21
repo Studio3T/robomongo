@@ -3,22 +3,24 @@
 port = allocatePorts( 1 )[ 0 ];
 
 baseName = "jstests_rename_auth";
-m = startMongod( "--auth", "--port", port, "--dbpath", "/data/db/" + baseName, "--nohttpinterface" );
+m = startMongod( "--auth", "--port", port, "--dbpath", MongoRunner.dataPath + baseName, "--nohttpinterface" );
 
 db1 = m.getDB( baseName )
 db2 = m.getDB( baseName + '_other' )
 admin = m.getDB( 'admin' )
 
-// auth not yet checked since we are on localhost
-db1.addUser( "foo", "bar" );
-db2.addUser( "bar", "foo" );
+// Setup initial data
+admin.createUser({user:'admin', pwd: 'password', roles: jsTest.adminUserRoles});
+admin.auth('admin', 'password')
+
+db1.createUser({user: "foo", pwd: "bar", roles: jsTest.basicUserRoles});
+db2.createUser({user: "bar", pwd: "foo", roles: jsTest.basicUserRoles});
 
 printjson(db1.a.count());
 db1.a.save({});
 assert.eq(db1.a.count(), 1);
 
-//this makes auth required on localhost
-admin.addUser('not', 'used');
+admin.logout();
 
 // can't run same db w/o auth
 assert.commandFailed( admin.runCommand({renameCollection:db1.a.getFullName(), to: db1.b.getFullName()}) );

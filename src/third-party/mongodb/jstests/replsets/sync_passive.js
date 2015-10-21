@@ -23,11 +23,13 @@ var replTest = new ReplSetTest( {name: name, nodes: 3} );
 
 var nodes = replTest.startSet();
 
-/* set slaveDelay to 30 seconds */
+// make sure node 0 becomes primary initially and that node 2 never will
 var config = replTest.getReplSetConfig();
+config.members[0].priority = 2;
 config.members[2].priority = 0;
   
 replTest.initiate(config);
+replTest.waitForState(replTest.nodes[0], replTest.PRIMARY, 60 * 1000);
 
 var master = replTest.getMaster().getDB("test");
 var server0 = master;

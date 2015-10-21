@@ -1,65 +1,30 @@
-// ramlog.h
-
 /*    Copyright 2009 10gen Inc.
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *    This program is free software: you can redistribute it and/or  modify
+ *    it under the terms of the GNU Affero General Public License, version 3,
+ *    as published by the Free Software Foundation.
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    As a special exception, the copyright holders give permission to link the
+ *    code of portions of this program with the OpenSSL library under certain
+ *    conditions as described in each individual source file and distribute
+ *    linked combinations including the program with the OpenSSL library. You
+ *    must comply with the GNU Affero General Public License in all respects
+ *    for all of the code used other than as permitted herein. If you modify
+ *    file(s) with this exception, you may extend this exception to your
+ *    version of the file(s), but you are not obligated to do so. If you do not
+ *    wish to do so, delete this exception statement from your version. If you
+ *    delete this exception statement from all source files in the program,
+ *    then also delete it in the license file.
  */
 
 #pragma once
 
-#include "log.h"
-
-namespace mongo {
-
-    class RamLog : public Tee {
-    public:
-        RamLog( const std::string& name );
-
-        virtual void write(LogLevel ll, const string& str);
-
-        void get( vector<const char*>& v) const;
-
-        void toHTML(stringstream& s);
-
-        static RamLog* get( const std::string& name );
-        static void getNames( vector<string>& names );
-
-        time_t lastWrite() { return _lastWrite; } // 0 if no writes
-
-    protected:
-        static int repeats(const vector<const char *>& v, int i);
-        static string clean(const vector<const char *>& v, int i, string line="");
-        static string color(const std::string& line);
-
-        /* turn http:... into an anchor */
-        static string linkify(const char *s);
-
-    private:
-        ~RamLog(); // want this private as we want to leak so we can use them till the very end
-
-        enum {
-            N = 128, // number of links
-            C = 256 // max size of line
-        };
-        char lines[N][C];
-        unsigned h; // current position
-        unsigned n; // number of lines stores 0 o N
-        string _name;
-
-        typedef map<string,RamLog*> RM;
-        static mongo::mutex* _namedLock;
-        static RM*  _named;
-        time_t _lastWrite;
-    };
-
-}
+#include "mongo/logger/ramlog.h"

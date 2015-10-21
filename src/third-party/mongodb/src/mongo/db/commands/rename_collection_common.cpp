@@ -12,6 +12,18 @@
 *
 *    You should have received a copy of the GNU Affero General Public License
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*    As a special exception, the copyright holders give permission to link the
+*    code of portions of this program with the OpenSSL library under certain
+*    conditions as described in each individual source file and distribute
+*    linked combinations including the program with the OpenSSL library. You
+*    must comply with the GNU Affero General Public License in all respects for
+*    all of the code used other than as permitted herein. If you modify file(s)
+*    with this exception, you may extend this exception to your version of the
+*    file(s), but you are not obligated to do so. If you do not wish to do so,
+*    delete this exception statement from your version. If you delete this
+*    exception statement from all source files in the program, then also delete
+*    it in the license file.
 */
 
 #include "mongo/db/commands/rename_collection.h"
@@ -21,35 +33,70 @@
 
 #include "mongo/db/auth/action_set.h"
 #include "mongo/db/auth/action_type.h"
+#include "mongo/db/auth/authorization_session.h"
 #include "mongo/db/auth/privilege.h"
+#include "mongo/db/client_basic.h"
 #include "mongo/db/jsobj.h"
-#include "mongo/db/namespacestring.h"
+#include "mongo/db/namespace_string.h"
 
 namespace mongo {
 namespace rename_collection {
 
-    void addPrivilegesRequiredForRenameCollection(const BSONObj& cmdObj,
-                                                  std::vector<Privilege>* out) {
-        NamespaceString sourceNS = NamespaceString(cmdObj.getStringField("renameCollection"));
-        NamespaceString targetNS = NamespaceString(cmdObj.getStringField("to"));
-        if (sourceNS.db == targetNS.db) {
-            ActionSet actions;
-            actions.addAction(ActionType::renameCollectionSameDB);
-            out->push_back(Privilege(sourceNS.db, actions));
-            return;
+Status checkAuthForRenameCollectionCommand(ClientBasic* client,
+                                           const std::string& dbname,
+                                           const BSONObj& cmdObj) {
+    NamespaceString sourceNS = NamespaceString(cmdObj.getStringField("renameCollection"));
+    NamespaceString targetNS = NamespaceString(cmdObj.getStringField("to"));
+    bool dropTarget = cmdObj["dropTarget"].trueValue();
+
+    if (sourceNS.db() == targetNS.db() && !sourceNS.isSystem() && !targetNS.isSystem()) {
+        // If renaming within the same database, then if you have renameCollectionSameDB and
+        // either can read both of source and dest collections or *can't* read either of source
+        // or dest collection, then you get can do the rename, even without insert on the
+        // destination collection.
+        bool canRename = client->getAuthorizationSession()->isAuthorizedForActionsOnResource(
+            ResourcePattern::forDatabaseName(sourceNS.db()), ActionType::renameCollectionSameDB);
+
+        bool canDropTargetIfNeeded = true;
+        if (dropTarget) {
+            canDropTargetIfNeeded =
+                client->getAuthorizationSession()->isAuthorizedForActionsOnResource(
+                    ResourcePattern::forExactNamespace(targetNS), ActionType::dropCollection);
         }
 
-        ActionSet sourceActions;
-        sourceActions.addAction(ActionType::cloneCollectionLocalSource);
-        sourceActions.addAction(ActionType::dropCollection);
-        out->push_back(Privilege(sourceNS.ns(), sourceActions));
+        bool canReadSrc = client->getAuthorizationSession()->isAuthorizedForActionsOnResource(
+            ResourcePattern::forExactNamespace(sourceNS), ActionType::find);
+        bool canReadDest = client->getAuthorizationSession()->isAuthorizedForActionsOnResource(
+            ResourcePattern::forExactNamespace(targetNS), ActionType::find);
 
-        ActionSet targetActions;
-        targetActions.addAction(ActionType::createCollection);
-        targetActions.addAction(ActionType::cloneCollectionTarget);
-        targetActions.addAction(ActionType::ensureIndex);
-        out->push_back(Privilege(targetNS.ns(), targetActions));
+        if (canRename && canDropTargetIfNeeded && (canReadSrc || !canReadDest)) {
+            return Status::OK();
+        }
     }
 
-} // namespace rename_collection
-} // namespace mongo
+    // Check privileges on source collection
+    ActionSet actions;
+    actions.addAction(ActionType::find);
+    actions.addAction(ActionType::dropCollection);
+    if (!client->getAuthorizationSession()->isAuthorizedForActionsOnResource(
+            ResourcePattern::forExactNamespace(sourceNS), actions)) {
+        return Status(ErrorCodes::Unauthorized, "Unauthorized");
+    }
+
+    // Check privileges on dest collection
+    actions.removeAllActions();
+    actions.addAction(ActionType::insert);
+    actions.addAction(ActionType::createIndex);
+    if (dropTarget) {
+        actions.addAction(ActionType::dropCollection);
+    }
+    if (!client->getAuthorizationSession()->isAuthorizedForActionsOnResource(
+            ResourcePattern::forExactNamespace(targetNS), actions)) {
+        return Status(ErrorCodes::Unauthorized, "Unauthorized");
+    }
+
+    return Status::OK();
+}
+
+}  // namespace rename_collection
+}  // namespace mongo

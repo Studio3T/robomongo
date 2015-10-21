@@ -22,6 +22,11 @@ StaticLibrary('ta', ['a.c'])
 
 And the build system will figure out that it needs to link libta.a and libtb.a
 when building 'try'.
+
+A StaticLibrary S may also declare programs or libraries, [L1, ...] to be dependent
+upon S by setting LIBDEPS_DEPENDENTS=[L1, ...], using the same syntax as is used
+for LIBDEPS, except that the libraries and programs will not have LIBPREFIX/LIBSUFFIX
+automatically added when missing.
 """
 
 # Copyright (c) 2010, Corensic Inc., All Rights Reserved.
@@ -53,6 +58,7 @@ import SCons.Util
 
 libdeps_env_var = 'LIBDEPS'
 syslibdeps_env_var = 'SYSLIBDEPS'
+missing_syslibdep = 'MISSING_LIBDEP_'
 
 def sorted_by_str(iterable):
     """Shorthand for sorting an iterable according to its string representation.
@@ -72,7 +78,7 @@ class DependencyCycleError(SCons.Errors.UserError):
         self.cycle_nodes = [first_node]
 
     def __str__(self):
-        return " => ".join(str(n) for n in self.cycle_nodes)
+        return "Library dependency cycle detected: " + " => ".join(str(n) for n in self.cycle_nodes)
 
 def __get_libdeps(node):
     """Given a SCons Node, return its library dependencies.
@@ -97,7 +103,7 @@ def __compute_libdeps(node):
     node.attributes.libdeps_exploring = True
     try:
         try:
-            for child in env.Flatten(env.get(libdeps_env_var, [])):
+            for child in env.Flatten(getattr(node.attributes, 'libdeps_direct', [])):
                 if not child:
                     continue
                 deps.add(child)
@@ -105,8 +111,8 @@ def __compute_libdeps(node):
 
         except DependencyCycleError, e:
             if len(e.cycle_nodes) == 1 or e.cycle_nodes[0] != e.cycle_nodes[-1]:
-                e.cycle_nodes.append(node)
-                raise
+                e.cycle_nodes.insert(0, node)
+            raise
     finally:
         node.attributes.libdeps_exploring = False
 
@@ -121,10 +127,20 @@ def __get_syslibdeps(node):
     if not hasattr(node.attributes, cached_var_name):
         syslibdeps = []
         for lib in __get_libdeps(node):
-            for syslib in lib.get_env().get(syslibdeps_env_var, []):
-                syslibdeps.append(syslib)
+            for syslib in node.get_env().Flatten(lib.get_env().get(syslibdeps_env_var, [])):
+                if syslib:
+                    if type(syslib) in (str, unicode) and syslib.startswith(missing_syslibdep):
+                        print("Target '%s' depends on the availability of a "
+                              "system provided library for '%s', "
+                              "but no suitable library was found during configuration." %
+                              (str(node), syslib[len(missing_syslibdep):]))
+                        node.get_env().Exit(1)
+                    syslibdeps.append(syslib)
         setattr(node.attributes, cached_var_name, syslibdeps)
     return getattr(node.attributes, cached_var_name)
+
+def __missing_syslib(name):
+    return missing_syslibdep + name
 
 def update_scanner(builder):
     """Update the scanner for "builder" to also scan library dependencies."""
@@ -182,6 +198,14 @@ def get_syslibdeps(source, target, env, for_signature):
             result.append(d)
     return result
 
+def __append_direct_libdeps(node, prereq_nodes):
+    # We do not bother to decorate nodes that are not actual Objects
+    if type(node) == str:
+        return
+    if getattr(node.attributes, 'libdeps_direct', None) is None:
+        node.attributes.libdeps_direct = []
+    node.attributes.libdeps_direct.extend(prereq_nodes)
+
 def libdeps_emitter(target, source, env):
     """SCons emitter that takes values from the LIBDEPS environment variable and
     converts them to File node objects, binding correct path information into
@@ -195,13 +219,16 @@ def libdeps_emitter(target, source, env):
     relative paths to LIBDEPS elements.
 
     This emitter also adds LIBSUFFIX and LIBPREFIX appropriately.
+
+    NOTE: For purposes of LIBDEPS_DEPENDENTS propagation, only the first member
+    of the "target" list is made a prerequisite of the elements of LIBDEPS_DEPENDENTS.
     """
 
     libdep_files = []
     lib_suffix = env.subst('$LIBSUFFIX', target=target, source=source)
     lib_prefix = env.subst('$LIBPREFIX', target=target, source=source)
-    for dep in env.Flatten([env.get(libdeps_env_var, [])]):
-        full_path = env.subst(str(dep), target=target, source=source)
+    for prereq in env.Flatten([env.get(libdeps_env_var, [])]):
+        full_path = env.subst(str(prereq), target=target, source=source)
         dir_name = os.path.dirname(full_path)
         file_name = os.path.basename(full_path)
         if not file_name.startswith(lib_prefix):
@@ -210,7 +237,13 @@ def libdeps_emitter(target, source, env):
             file_name += '${LIBSUFFIX}'
         libdep_files.append(env.File(os.path.join(dir_name, file_name)))
 
-    env[libdeps_env_var] = libdep_files
+    for t in target:
+        # target[0] must be a Node and not a string, or else libdeps will fail to
+        # work properly.
+        __append_direct_libdeps(t, libdep_files)
+
+    for dependent in env.Flatten([env.get('LIBDEPS_DEPENDENTS', [])]):
+        __append_direct_libdeps(env.File(dependent), [target[0]])
 
     return target, source
 
@@ -245,3 +278,17 @@ def setup_environment(env):
             update_scanner(env['BUILDERS'][builder_name])
         except KeyError:
             pass
+
+def setup_conftests(conf):
+    def FindSysLibDep(context, name, libs, **kwargs):
+        var = "LIBDEPS_" + name.upper() + "_SYSLIBDEP"
+        kwargs['autoadd'] = False
+        for lib in libs:
+            result = context.sconf.CheckLib(lib, **kwargs)
+            context.did_show_result = 1
+            if result:
+                context.env[var] = lib
+                return context.Result(result)
+        context.env[var] = __missing_syslib(name)
+        return context.Result(result)
+    conf.AddTest('FindSysLibDep', FindSysLibDep)

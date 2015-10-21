@@ -49,7 +49,7 @@ namespace Robomongo
         _textFontPointSize(-1)
     {
         load();
-        LOG_MSG("SettingsManager initialized in " + _configPath, mongo::LL_INFO, false);
+        LOG_MSG("SettingsManager initialized in " + _configPath, ::mongo::logger::LogSeverity::Info(), false);
     }
 
     SettingsManager::~SettingsManager()
@@ -90,13 +90,13 @@ namespace Robomongo
         QVariantMap map = convertToMap();
 
         if (!QDir().mkpath(_configDir)) {
-            LOG_MSG("ERROR: Could not create settings path: " + _configDir, mongo::LL_ERROR);
+            LOG_MSG("ERROR: Could not create settings path: " + _configDir, ::mongo::logger::LogSeverity::Error());
             return false;
         }
 
         QFile f(_configPath);
         if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-            LOG_MSG("ERROR: Could not write settings to: " + _configPath, mongo::LL_ERROR);
+            LOG_MSG("ERROR: Could not write settings to: " + _configPath, ::mongo::logger::LogSeverity::Error());
             return false;
         }
 
@@ -105,7 +105,7 @@ namespace Robomongo
         s.setIndentMode(QJson::IndentFull);
         s.serialize(map, &f, &ok);
 
-        LOG_MSG("Settings saved to: " + _configPath, mongo::LL_INFO);
+        LOG_MSG("Settings saved to: " + _configPath, ::mongo::logger::LogSeverity::Info());
 
         return ok;
     }

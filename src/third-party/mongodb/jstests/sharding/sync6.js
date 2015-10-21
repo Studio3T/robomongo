@@ -12,7 +12,7 @@ test = new SyncCCTest( "sync6", { logpath : bitbucket , logappend : "" } )
 // Startup another process to handle our commands to the cluster, mostly so it's 
 // easier to read.
 var commandConn = startMongodTest( 30000 + 4, "syncCommander", false, {})//{ logpath : bitbucket } )//{verbose : ""} )
-// { logpath : "/data/db/syncCommander/mongod.log" } );
+// { logpath : MongoRunner.dataDir + "/syncCommander/mongod.log" } );
 
 // Up the log level for this test
 commandConn.getDB( "admin" ).runCommand( { setParameter : 1, logLevel : 1 } )
@@ -22,11 +22,11 @@ commandConn.getDB( "admin" ).runCommand( { setParameter : 1, logLevel : 1 } )
 // javascript console.
 for ( var i = 8; i < 9; i++ ) {
 
-	// Our force time is 4 seconds
+	// Our force time is 8 seconds
     // Slower machines can't keep up the LockPinger rate, which can lead to lock failures
     // since our locks are only valid if the LockPinger pings faster than the force time.
     // Actual lock timeout is 15 minutes, so a few seconds is extremely aggressive
-	var takeoverMS = 4000;
+	var takeoverMS = 8000;
 
 	// Generate valid sleep and skew for this timeout
 	var threadSleepWithLock = takeoverMS / 2;

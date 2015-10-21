@@ -137,7 +137,8 @@ namespace Robomongo
 
         try {
             connection.reset(new mongo::DBClientConnection);
-            connection->connect(_connection->info());
+            std::string errmsg;
+            connection->connect(_connection->info(), errmsg);
             emit connectionStatus("", true);
         }
         catch(const mongo::UserException &ex) {

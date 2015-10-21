@@ -7,13 +7,12 @@ replTest.awaitReplication();
 var mast = nodes[0].getDB('test');
 var slav = nodes[1].getDB('test');
 
-mast.agg.insert({});
-mast.agg.insert({});
-mast.agg.insert({});
-mast.getLastError(2);
+var options = { writeConcern: { w: 2 }};
+mast.agg.insert({}, options);
+mast.agg.insert({}, options);
+mast.agg.insert({}, options);
 
 var res = slav.agg.aggregate({$group: {_id: null, count: {$sum: 1}}});
-assert.commandWorked(res);
-assert.eq(res.result, [{_id:null, count: 3}]);
+assert.eq(res.toArray(), [{_id:null, count: 3}]);
 
 replTest.stopSet();

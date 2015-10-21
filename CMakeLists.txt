@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 2.8.0)
 if(POLICY CMP0048)
    cmake_policy(SET CMP0048 OLD)
 endif()
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif(CCACHE_FOUND)
 
 ###
 # Settings
@@ -17,8 +22,8 @@ set(PROJECT_GITHUB_ISSUES "www.github.com/paralect/robomongo/issues" CACHE STRIN
 
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
 set(MAJOR "0")
-set(MINOR "8")
-set(PATCH "6")
+set(MINOR "10")
+set(PATCH "0")
 set(BUILD "dev")
 set(SHORT_VERSION ${MAJOR}.${MINOR}.${PATCH} CACHE STRING "${PROJECT_NAME} short version")
 set(PROJECT_VERSION "${SHORT_VERSION}${BUILD}" CACHE STRING "${PROJECT_NAME} version")
@@ -55,8 +60,8 @@ ENDIF(WIN32)
 
 set(ROBOMONGO_QT_VERSION 5 CACHE STRING "Qt version to use when building Robomongo (can be 4 or 5)")
 OPTION(BOOST_ENABLED "Enable boost system support" OFF)
-OPTION(OPENSSL_ENABLED "Enable openssl support" ON)
-OPTION(SSH_ENABLED "Enable ssh support" ON)
+OPTION(OPENSSL_ENABLED "Enable openssl support" OFF)
+OPTION(SSH_ENABLED "Enable ssh support" OFF)
 OPTION(CPACK_SUPPORT "Enable package support" ON)
 OPTION(DEVELOPER_DYNAMIC_RUNTIME "Build with dynamic C++ runtime" ON)
 OPTION(DEVELOPER_FEATURES "Use some debug tricks for developers" OFF)

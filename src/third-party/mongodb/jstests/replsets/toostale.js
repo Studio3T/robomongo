@@ -45,14 +45,14 @@ var reconnect = function(a) {
 
 
 var name = "toostale"
-var replTest = new ReplSetTest( {name: name, nodes: 3});
+var replTest = new ReplSetTest({ name: name, nodes: 3, oplogSize: 5 });
 var host = getHostName();
 
 var nodes = replTest.startSet();
 replTest.initiate({_id : name, members : [
-    {_id : 0, host : host+":"+replTest.ports[0]},
+    {_id : 0, host : host+":"+replTest.ports[0], priority: 2},
     {_id : 1, host : host+":"+replTest.ports[1], arbiterOnly : true},
-    {_id : 2, host : host+":"+replTest.ports[2]}
+    {_id : 2, host : host+":"+replTest.ports[2], priority: 0}
 ]});
 var master = replTest.getMaster();
 var mdb = master.getDB("foo");
@@ -76,10 +76,13 @@ reconnect(master.getDB("local"));
 var count = master.getDB("local").oplog.rs.count();
 var prevCount = -1;
 while (count != prevCount) {
-  print("inserting 10000");
-  for (var i = 0; i < 10000; i++) {
-    mdb.bar.insert({x:i, date : new Date(), str : "safkaldmfaksndfkjansfdjanfjkafa"});
+  print("inserting 1000");
+  var bulk = mdb.bar.initializeUnorderedBulkOp();
+  for (var i = 0; i < 1000; i++) {
+    bulk.insert({ x: i, date: new Date(), str: "safkaldmfaksndfkjansfdjanfjkafa" });
   }
+  assert.writeOK(bulk.execute());
+
   prevCount = count;
   replTest.awaitReplication();
   count = master.getDB("local").oplog.rs.count();
@@ -117,11 +120,5 @@ assert.soon(function() {
     return status.members && status.members[2].state == 3;
 });
 
-
-print("make sure s2 doesn't become primary");
 replTest.stop(0);
-sleep(20000);
-printjson(replTest.nodes[2].getDB("admin").runCommand({isMaster : 1}));
-printjson(replTest.nodes[2].getDB("admin").runCommand({replSetGetStatus : 1}));
 
-//replTest.stopSet(15);

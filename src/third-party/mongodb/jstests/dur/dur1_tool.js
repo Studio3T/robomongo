@@ -63,13 +63,6 @@ function work() {
 
     // try building an index.  however, be careful as object id's in system.indexes would vary, so we do it manually:
     d.system.indexes.insert({ _id: 99, ns: "test.a", key: { x: 1 }, name: "x_1", v: 0 });
-
-//    d.a.update({ _id: 4 }, { $inc: { x: 1} });
-//    d.a.reIndex();
-
-    // assure writes applied in case we kill -9 on return from this function
-    d.getLastError();
-
     log("endwork");
     return d;
 }
@@ -95,8 +88,8 @@ if( debugging ) {
 log();
 
 // directories
-var path1 = "/data/db/" + testname+"nodur";
-var path2 = "/data/db/" + testname+"dur";
+var path1 = MongoRunner.dataPath + testname+"nodur";
+var path2 = MongoRunner.dataPath + testname+"dur";
 
 // non-durable version
 log("run mongod without journaling");
@@ -118,13 +111,14 @@ stopMongod(30001, /*signal*/9);
 
 // journal file should be present, and non-empty as we killed hard
 
-// mongorestore with --dbpath and --journal options should do a recovery pass
+// mongod with --dbpath and --journal options should do a recovery pass
 // empty.bson is an empty file so it won't actually insert anything
-log("use mongorestore to recover");
-runMongoProgram("mongorestore", "--dbpath", path2, "--journal", "-d", "test", "-c", "empty", "jstests/dur/data/empty.bson");
-
-// stopMongod seems to be asynchronous (hmmm) so we sleep here.
-// sleep(5000);
+log("use mongod to recover");
+conn = startMongoProgram('mongod', '--port', 30001, '--dbpath', path2,
+                         '--journal', '--smallfiles',
+                         '--nohttpinterface', '--noprealloc', '--bind_ip', '127.0.0.1');
+verify();
+stopMongod(30001);
 
 // at this point, after clean shutdown, there should be no journal files
 log("check no journal files (after presumably clean shutdown)");

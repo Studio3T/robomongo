@@ -2,11 +2,8 @@
 /src/mongo/db/modules
 /.jsdbshell
 /.dbshell
-/.sconsign.dblite
-/.sconf_temp
 /perf.data
 /massif.out.*
-.scons
 /smoke-last.json
 
 *~
@@ -44,6 +41,7 @@
 /src/mongo/*/*/*Debug*/
 /src/mongo/*/*Release*/
 /src/mongo/*/*/*Release*/
+/src/ipch
 /src/mongo/*/ipch
 /src/mongo/*/*/ipch
 /src/mongo/db/.gdb*
@@ -55,13 +53,13 @@
 config.log
 settings.py
 log_config.py
-tags
+/tags
 TAGS
 failfile.smoke
 
 #temp dirs
 dump
-log
+/log
 logs
 docs/html
 docs/latex
@@ -75,20 +73,12 @@ scratch
 /mongogrid
 /mongos
 
-/mongodump
-/mongorestore
-
-/mongofiles
-/mongoexport
-
-/mongoimport
 /mongosniff
 /mongobridge
-/mongostat
-/mongotop
-/mongooplog
 /mongoperf
-/bsondump
+/mongoshim
+/loadgen
+/docgen
 
 *.tgz
 *.zip
@@ -98,6 +88,7 @@ scratch
 /libmongoclient.*
 /libmongotestfiles.*
 /libmongoshellfiles.*
+/sharedclient
 
 /emr.jar
 *.class
@@ -111,7 +102,7 @@ scratch
 /tutorial
 
 #tests
-/test
+/dbtest
 /authTest
 /perftest
 /clientTest
@@ -127,6 +118,7 @@ debian/mongodb
 #osx
 .DS_Store
 ._.DS_Store
+*.fuse_*
 
 # QtCreator
 *.config
@@ -145,15 +137,20 @@ src/mongo/db/fts/stop_words_list.cpp
 src/mongo/db/fts/stop_words_list.h
 src/mongo/shell/mongo-server.cpp
 src/mongo/shell/mongo.cpp
-src/third_party/js-1.7/jsautocfg.h
-src/third_party/js-1.7/jsautokw.h
 src/third_party/v8/src/experimental-libraries.cc
 src/third_party/v8/src/libraries.cc
 
+# Eclipse build artifacts
+.cproject
+.project
+
 # old things that should be removed
 # maybe remove this mid 2012
-src/third_party/js-1.7/jscpucfg
-src/third_party/js-1.7/jskwgen
 src/mongo/buildinfo.cpp
 buildinfo.cpp
 /.settings/
+
+*.msi
+*.wixobj
+*.wixpdb
+DriverInclude.wxs

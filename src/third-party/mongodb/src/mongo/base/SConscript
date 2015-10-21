@@ -5,22 +5,23 @@ Import("env")
 env.Command(['error_codes.h', 'error_codes.cpp'], ['generate_error_codes.py', 'error_codes.err'],
             '$PYTHON $SOURCES $TARGETS')
 
-env.StaticLibrary('base', ['configuration_variable_manager.cpp',
-                           'error_codes.cpp',
-                           'global_initializer.cpp',
-                           'global_initializer_registerer.cpp',
-                           'init.cpp',
-                           'initializer.cpp',
-                           'initializer_context.cpp',
-                           'initializer_dependency_graph.cpp',
-                           'make_string_vector.cpp',
-                           'parse_number.cpp',
-                           'status.cpp',
-                           'string_data.cpp'])
-
-env.CppUnitTest('configuration_variable_manager_test',
-                ['configuration_variable_manager_test.cpp'],
-                LIBDEPS=['base'])
+env.Library('base', ['error_codes.cpp',
+                     'global_initializer.cpp',
+                     'global_initializer_registerer.cpp',
+                     'init.cpp',
+                     'initializer.cpp',
+                     'initializer_context.cpp',
+                     'initializer_dependency_graph.cpp',
+                     'validate_locale.cpp',
+                     'make_string_vector.cpp',
+                     'parse_number.cpp',
+                     'status.cpp',
+                     'string_data.cpp',
+                     ],
+                     LIBDEPS=[
+                     '$BUILD_DIR/mongo/quick_exit',
+                     '$BUILD_DIR/third_party/murmurhash3/murmurhash3',
+                     ])
 
 env.CppUnitTest('initializer_dependency_graph_test',
                 ['initializer_dependency_graph_test.cpp'],
@@ -44,6 +45,19 @@ env.CppUnitTest('parse_number_test',
 
 env.CppUnitTest('status_test',
                 'status_test.cpp',
+                LIBDEPS=['base'])
+
+env.CppUnitTest('encoded_value_storage_test',
+                'encoded_value_storage_test.cpp')
+
+env.CppUnitTest('data_view_test',
+                'data_view_test.cpp')
+
+env.CppUnitTest('data_cursor_test',
+                'data_cursor_test.cpp')
+
+env.CppUnitTest('counter_test',
+                'counter_test.cpp',
                 LIBDEPS=['base'])
 
 env.CppUnitTest('string_data_test',

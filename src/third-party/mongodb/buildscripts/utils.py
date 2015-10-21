@@ -24,6 +24,11 @@ def getAllSourceFiles( arr=None , prefix="." ):
     for x in os.listdir( prefix ):
         if x.startswith( "." ) or x.startswith( "pcre-" ) or x.startswith( "32bit" ) or x.startswith( "mongodb-" ) or x.startswith("debian") or x.startswith( "mongo-cxx-driver" ):
             continue
+        # XXX: Avoid conflict between v8 and v8-3.25 source files in
+        #      src/mongo/scripting
+        #      Remove after v8-3.25 migration.
+        if x.find("v8-3.25") != -1:
+            continue
         full = prefix + "/" + x
         if os.path.isdir( full ) and not os.path.islink( full ):
             getAllSourceFiles( arr , full )
@@ -36,7 +41,7 @@ def getAllSourceFiles( arr=None , prefix="." ):
 
 
 def getGitBranch():
-    if not os.path.exists( ".git" ):
+    if not os.path.exists( ".git" ) or not os.path.isdir(".git"):
         return None
 
     version = open( ".git/HEAD" ,'r' ).read().strip()
@@ -63,7 +68,7 @@ def getGitBranchString( prefix="" , postfix="" ):
     return prefix + b + postfix
 
 def getGitVersion():
-    if not os.path.exists( ".git" ):
+    if not os.path.exists( ".git" ) or not os.path.isdir(".git"):
         return "nogitversion"
 
     version = open( ".git/HEAD" ,'r' ).read().strip()
@@ -74,6 +79,15 @@ def getGitVersion():
     if not os.path.exists( f ):
         return version
     return open( f , 'r' ).read().strip()
+
+def getGitDescribe():
+    with open(os.devnull, "r+") as devnull:
+        proc = subprocess.Popen("git describe",
+            stdout=subprocess.PIPE,
+            stderr=devnull,
+            stdin=devnull,
+            shell=True)
+        return proc.communicate()[0].strip()
 
 def execsys( args ):
     import subprocess
@@ -87,7 +101,7 @@ def execsys( args ):
 def getprocesslist():
     raw = ""
     try:
-        raw = execsys( "/bin/ps -ax" )[0]
+        raw = execsys( "/bin/ps axww" )[0]
     except Exception,e:
         print( "can't get processlist: " + str( e ) )
 

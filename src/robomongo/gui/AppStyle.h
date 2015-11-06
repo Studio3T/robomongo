@@ -1,21 +1,8 @@
 #pragma once
 
 #include <QStyle>
-#ifdef OS_WIN
-    #include <QProxyStyle>
-    typedef QProxyStyle OsStyle;
-#elif defined(OS_MAC)
-    #include <QProxyStyle>
-    typedef QProxyStyle OsStyle;
-#elif defined OS_LINUX
-    #if !defined(QT_NO_STYLE_GTK)
-        #include <QProxyStyle>
-        typedef QProxyStyle OsStyle;
-    #else
-        #include <QCleanlooksStyle>
-        typedef QCleanlooksStyle OsStyle;
-    #endif
-#endif
+#include <QProxyStyle>
+typedef QProxyStyle OsStyle;
 
 namespace Robomongo
 {

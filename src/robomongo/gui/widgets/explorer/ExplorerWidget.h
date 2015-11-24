@@ -29,9 +29,10 @@ namespace Robomongo
     private Q_SLOTS:
         void ui_itemExpanded(QTreeWidgetItem *item);
         void ui_itemDoubleClicked(QTreeWidgetItem *item, int column);
+        void ui_itemClicked(QTreeWidgetItem *item, int column);
 
     protected:
-        virtual void keyPressEvent(QKeyEvent *event);   
+        virtual void keyPressEvent(QKeyEvent *event);
 
     private:
         int _progress;

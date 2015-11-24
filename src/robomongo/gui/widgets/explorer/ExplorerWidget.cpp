@@ -5,6 +5,7 @@
 #include <QMovie>
 #include <QKeyEvent>
 
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/utils/QtUtils.h"
@@ -28,6 +29,7 @@ namespace Robomongo
 
         VERIFY(connect(_treeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(ui_itemExpanded(QTreeWidgetItem *))));
         VERIFY(connect(_treeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(ui_itemDoubleClicked(QTreeWidgetItem *, int))));
+        VERIFY(connect(_treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(ui_itemClicked(QTreeWidgetItem *, int))));
 
         setLayout(vlaout);
 
@@ -35,7 +37,7 @@ namespace Robomongo
         _progressLabel = new QLabel(this);
         _progressLabel->setMovie(movie);
         _progressLabel->hide();
-        movie->start();        
+        movie->start();
     }
 
     void ExplorerWidget::keyPressEvent(QKeyEvent *event)
@@ -115,7 +117,7 @@ namespace Robomongo
             serverItem->expand();
             return;
         }
-       
+
         ExplorerCollectionDirIndexesTreeItem * dirItem = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(item);
         if (dirItem) {
             dirItem->expand();
@@ -127,6 +129,16 @@ namespace Robomongo
         ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
         if (collectionItem) {
             AppRegistry::instance().app()->openShell(collectionItem->collection());
+        }
+    }
+
+    void ExplorerWidget::ui_itemClicked(QTreeWidgetItem *item, int cloumn)
+    {
+        if (!AppRegistry::instance().settingsManager()->useTabbar()) {
+            ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
+            if (collectionItem) {
+                AppRegistry::instance().app()->openShell(collectionItem->collection());
+            }
         }
     }
 }

@@ -5,7 +5,9 @@
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/StdUtils.h"
 #include "robomongo/core/utils/Logger.h"
@@ -98,6 +100,17 @@ namespace Robomongo
 
     MongoShell *App::openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo)
     {
+        if (!AppRegistry::instance().settingsManager()->useTabbar()) {
+            for (MongoShellsContainerType::const_iterator it = _shells.begin(); it != _shells.end(); ++it) {
+                MongoShell *shell = *it;
+                MongoServer *server = shell->server();
+                ConnectionSettings *settings = server->connectionRecord();
+                if (QString::fromStdString(shell->query()) == scriptInfo.script()
+                    && shell->title() == scriptInfo.title()
+                    && settings->getFullAddress() == connection->getFullAddress())
+                    return shell;
+            }
+        }
         MongoServer *server = openServer(connection, false);
         MongoShell *shell = new MongoShell(server,scriptInfo);
         _shells.push_back(shell);

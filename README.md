@@ -1,6 +1,6 @@
-Decide on the feature of Robomongo
+Decide on the future of Robomongo
 ==============
-![Robomongo mascot](http://app.robomongo.org/images/robomongo-64x64.png) We've started a campaign on Indeigogo to get some funds and continue development of Robomongo. We want to keep Robomongo free forever. Everyone have a chance to decide on a project feature. Read more on [Robomongo website](http://robomongo.org).
+![Robomongo mascot](http://app.robomongo.org/images/robomongo-64x64.png) We've started a campaign on Indeigogo to get some funds and continue development of Robomongo. We want to keep Robomongo free forever. Everyone have a chance to decide on a project future. Read more on [Robomongo website](http://robomongo.org).
 
 
 

@@ -50,7 +50,7 @@ Contribute!
 
 ### Vote for Features
 
-Please view our [Magic Backlog](http://robomongo.org/backlog) to see features prioritised by donation. The small amount of donations we currently receive are put toward hosting costs.
+Please view our [Magic Backlog](http://app.robomongo.org/backlog) to see features prioritised by donation. The small amount of donations we currently receive are put toward hosting costs.
 
 ### Suggest Features
 

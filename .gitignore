@@ -20,6 +20,8 @@ libs/
 
 /src/third-party/mongodb/src/third_party/js-1.7/jswgen
 
+.idea/
+
 # Created by http://www.gitignore.io
 
 ### C++ ###

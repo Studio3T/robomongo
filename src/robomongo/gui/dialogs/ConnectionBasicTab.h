@@ -23,6 +23,7 @@ namespace Robomongo
         QLineEdit *_connectionName;
         QLineEdit *_serverAddress;
         QLineEdit *_serverPort;
+        QCheckBox *_slaveOk;
         ConnectionSettings *const _settings;
     };
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mongo/client/dbclientinterface.h>
+#include <mongo/db/namespace-inl.h>
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/core/domain/MongoUser.h"

@@ -119,6 +119,12 @@ namespace Robomongo
         QTextStream in(&file);
         QString esprima = in.readAll();
 
+        // Enable reads from secondary node
+        if(_connection->slaveOk())
+        {
+            _scope->exec("rs.slaveOk()", "(slaveOk)", false, true, true);
+        }
+
         // Inject Esprima into Javascript scope
         _scope->exec(QtUtils::toStdString(esprima), "(esprima)", true, true, true);
 

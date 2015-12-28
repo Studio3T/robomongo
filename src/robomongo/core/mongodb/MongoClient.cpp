@@ -39,15 +39,24 @@ namespace Robomongo
 
     std::vector<std::string> MongoClient::getCollectionNames(const std::string &dbname) const
     {
-        typedef std::list<std::string> cont_string_t;
-        cont_string_t dbs = _dbclient->getCollectionNames(dbname);
+        std::list<std::string> collections;
 
-        std::vector<std::string> stringList;
-        for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); i++) {
-            stringList.push_back(*i);
+        std::string ns = dbname + ".system.namespaces";
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query( ns.c_str() , mongo::BSONObj(), 0, 0, 0, mongo::QueryOption_SlaveOk, 0 ));
+        while ( cursor->more() ) {
+            std::string name = cursor->next()["name"].valuestr();
+            if ( name.find( "$" ) != std::string::npos )
+                continue;
+            collections.push_back( name );
         }
-        std::sort(stringList.begin(), stringList.end());
-        return stringList;
+
+        std::vector<std::string> sortedCollections;
+
+        for (std::list<std::string>::const_iterator i = collections.begin(); i != collections.end(); i++) {
+            sortedCollections.push_back(*i);
+        }
+        std::sort(sortedCollections.begin(), sortedCollections.end());
+        return sortedCollections;
     }
 
 
@@ -78,7 +87,7 @@ namespace Robomongo
         MongoNamespace ns(dbName, "system.users");
         std::vector<MongoUser> users;
 
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query()));
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query(), 0, 0, 0, mongo::QueryOption_SlaveOk, 0));
         float ver = getVersion();
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -124,7 +133,7 @@ namespace Robomongo
         MongoNamespace ns(dbName, "system.js");
         std::vector<MongoFunction> functions;
 
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query()));
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query(), 0, 0, 0, mongo::QueryOption_SlaveOk, 0));
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -142,7 +151,10 @@ namespace Robomongo
     std::vector<EnsureIndexInfo> MongoClient::getIndexes(const MongoCollectionInfo &collection) const
     {
         std::vector<EnsureIndexInfo> result;
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString()));
+        std::string indexNamespace = mongo::Namespace(collection.ns().toString()).getSisterNS("system.indexes");
+        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->
+            query( indexNamespace.c_str(), BSON("ns" << collection.ns().toString()), 0, 0, 0, mongo::QueryOption_SlaveOk, 0)
+        );
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();

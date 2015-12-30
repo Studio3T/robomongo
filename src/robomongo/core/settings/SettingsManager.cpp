@@ -202,6 +202,12 @@ namespace Robomongo
         it = _toolbars.find("logs");
         if (_toolbars.end() == it)
             _toolbars["logs"] = false;
+
+        if (map.contains("useTabbar")) {
+            _useTabbar = map.value("useTabbar").toBool();
+        } else {
+            _useTabbar = true; // Default
+        }
     }
 
     /**
@@ -258,6 +264,8 @@ namespace Robomongo
 
         map.insert("toolbars", _toolbars);
 
+        map.insert("useTabbar", _useTabbar);
+
         return map;
     }
 
@@ -291,8 +299,14 @@ namespace Robomongo
         _textFontFamily = fontFamily;
     }
 
-    void SettingsManager::setTextFontPointSize(int pointSize) {
+    void SettingsManager::setTextFontPointSize(int pointSize)
+    {
         _textFontPointSize = pointSize > 0 ? pointSize : -1;
+    }
+
+    void SettingsManager::setUseTabbar(bool usesTabbar)
+    {
+        _useTabbar = usesTabbar;
     }
 
     void SettingsManager::reorderConnections(const ConnectionSettingsContainerType &connections)

@@ -2,6 +2,8 @@
 
 #include <QKeyEvent>
 
+#include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/KeyboardManager.h"
 #include "robomongo/core/domain/MongoShell.h"
@@ -27,6 +29,7 @@ namespace Robomongo
         setElideMode(Qt::ElideRight);
         setMovable(true);
         setDocumentMode(true);
+        setTabBarAutoHide(true);
         VERIFY(connect(this, SIGNAL(tabCloseRequested(int)), SLOT(tabBar_tabCloseRequested(int))));
         VERIFY(connect(this, SIGNAL(currentChanged(int)), SLOT(ui_currentChanged(int))));
 
@@ -190,7 +193,7 @@ namespace Robomongo
         if(!send)
             return;
 
-        setTabText(indexOf(send), text);        
+        setTabText(indexOf(send), text);
     }
 
     void WorkAreaTabWidget::tooltipTextChange(const QString &text)
@@ -211,10 +214,14 @@ namespace Robomongo
         QueryWidget *queryWidget = new QueryWidget(event->shell,this);
         VERIFY(connect(queryWidget, SIGNAL(titleChanged(const QString &)), this, SLOT(tabTextChange(const QString &))));
         VERIFY(connect(queryWidget, SIGNAL(toolTipChanged(const QString &)), this, SLOT(tooltipTextChange(const QString &))));
-        
+
         addTab(queryWidget, shellName);
 
         setCurrentIndex(count() - 1);
+        if (!AppRegistry::instance().settingsManager()->useTabbar()) {
+            ui_closeOtherTabsRequested(currentIndex());
+        }
+
 #if !defined(Q_OS_MAC)
         setTabIcon(count() - 1, GuiRegistry::instance().mongodbIcon());
 #endif

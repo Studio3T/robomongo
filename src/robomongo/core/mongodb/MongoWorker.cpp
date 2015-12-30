@@ -24,11 +24,14 @@ namespace Robomongo
         _isAdmin(true),
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
-        _timerId(-1)
-    {         
-        _thread = new QThread(this);
+        _timerId(-1),
+        _isQuiting(false)
+    {
+        _thread = new QThread();
         moveToThread(_thread);
         VERIFY(connect( _thread, SIGNAL(started()), this, SLOT(init()) ));
+        VERIFY(connect( _thread, SIGNAL(finished()), _thread, SLOT(deleteLater()) ));
+        VERIFY(connect( _thread, SIGNAL(finished()), this, SLOT(deleteLater()) ));
         _thread->start();
     }
 
@@ -66,7 +69,7 @@ namespace Robomongo
     }
 
     void MongoWorker::init()
-    {        
+    {
         try {
             _scriptEngine = new ScriptEngine(_connection);
             _scriptEngine->init(_isLoadMongoRcJs);
@@ -81,14 +84,16 @@ namespace Robomongo
 
     MongoWorker::~MongoWorker()
     {
+        killTimer(_timerId);
         delete _dbclient;
         delete _connection;
-        _thread->quit();
-        if (!_thread->wait(2000))
-            _thread->terminate();
-
         delete _scriptEngine;
-        delete _thread;
+    }
+
+    void MongoWorker::stopAndDelete()
+    {
+        _isQuiting = true;
+        _thread->quit();
     }
 
     /**
@@ -139,7 +144,7 @@ namespace Robomongo
     }
 
     MongoWorker::DatabasesContainerType MongoWorker::getDatabaseNamesSafe()
-    {        
+    {
         DatabasesContainerType result;
         std::string authBase = getAuthBase();
         if (!_isAdmin && !authBase.empty()) {
@@ -168,7 +173,7 @@ namespace Robomongo
         // If user not an admin - he doesn't have access to mongodb 'listDatabases' command
         // Non admin user has access only to the single database he specified while performing auth.
         std::vector<std::string> dbNames = getDatabaseNamesSafe();
-            
+
         if(dbNames.size()){
             reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
         }else{
@@ -250,7 +255,7 @@ namespace Robomongo
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), std::string() ));
             LOG_MSG(ex.what(), mongo::LL_ERROR);
-        }            
+        }
     }
 
     void MongoWorker::handle(EditIndexRequest *event)
@@ -265,7 +270,7 @@ namespace Robomongo
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new LoadCollectionIndexesResponse(this, std::vector<EnsureIndexInfo>()));
             LOG_MSG(ex.what(), mongo::LL_ERROR);
-        } 
+        }
     }
 
     void MongoWorker::handle(LoadFunctionsRequest *event)
@@ -530,7 +535,9 @@ namespace Robomongo
      */
     void MongoWorker::send(Event *event)
     {
-        AppRegistry::instance().bus()->send(this, event);
+        if (!_isQuiting) {
+            AppRegistry::instance().bus()->send(this, event);
+        }
     }
 
     /**
@@ -538,6 +545,8 @@ namespace Robomongo
      */
     void MongoWorker::reply(QObject *receiver, Event *event)
     {
-        AppRegistry::instance().bus()->send(receiver, event);
+        if (!_isQuiting) {
+            AppRegistry::instance().bus()->send(receiver, event);
+        }
     }
 }

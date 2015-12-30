@@ -107,6 +107,9 @@ namespace Robomongo
         int textFontPointSize() const { return _textFontPointSize; }
         void setTextFontPointSize(int pointSize);
 
+        bool useTabbar() const { return _useTabbar; }
+        void setUseTabbar(bool useTabbar);
+
 
     private:
 
@@ -144,6 +147,7 @@ namespace Robomongo
         QString _currentStyle;
         QString _textFontFamily;
         int _textFontPointSize;
+        bool _useTabbar;
         /**
          * @brief List of connections
          */

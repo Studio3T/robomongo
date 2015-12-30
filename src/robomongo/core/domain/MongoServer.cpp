@@ -25,15 +25,15 @@ namespace Robomongo
         return _isConnected;
     }
 
-    ConnectionSettings *MongoServer::connectionRecord() const 
-    { 
-        return _client->connectionRecord(); 
+    ConnectionSettings *MongoServer::connectionRecord() const
+    {
+        return _client->connectionRecord();
     }
 
     MongoServer::~MongoServer()
-    {        
+    {
         clearDatabases();
-        delete _client;
+        _client->stopAndDelete();
     }
 
     /**
@@ -129,7 +129,7 @@ namespace Robomongo
     {
         const ConnectionInfo &info = event->info();
         _isConnected = !event->isError();
-        if (event->isError()) {            
+        if (event->isError()) {
             AppRegistry::instance().bus()->publish(new ConnectionFailedEvent(this, event->error()));
         } else if (_visible) {
             AppRegistry::instance().bus()->publish(new ConnectionEstablishedEvent(this));
@@ -139,7 +139,7 @@ namespace Robomongo
                 MongoDatabase *db  = new MongoDatabase(this, name);
                 addDatabase(db);
             }
-        }        
+        }
         _version = info._version;
     }
 

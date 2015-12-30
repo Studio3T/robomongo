@@ -27,7 +27,9 @@ namespace Robomongo
         ConnectionSettings *connectionRecord() const {return _connection;}
         ~MongoWorker();
         enum{pingTimeMs = 60*1000};
-        
+
+        void stopAndDelete();
+
     protected Q_SLOTS: // handlers:
         void init();
         /**
@@ -145,6 +147,7 @@ namespace Robomongo
         const bool _isLoadMongoRcJs;
         const int _batchSize;
         int _timerId;
+        QAtomicInteger<bool> _isQuiting;
 
         ConnectionSettings *_connection;
     };

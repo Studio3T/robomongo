@@ -36,6 +36,7 @@ namespace Robomongo
         void enterCustomMode();
         void toggleAutoExpand();
         void toggleAutoExec();
+        void toggleUseTabbar();
         void toggleLineNumbers();
         void executeScript();
         void stopScript();
@@ -71,13 +72,13 @@ namespace Robomongo
         void setUtcTimeZone();
         void setLocalTimeZone();
         void openPreferences();
-        
+
         void onConnectToolbarVisibilityChanged(bool isVisisble);
         void onOpenSaveToolbarVisibilityChanged(bool isVisisble);
         void onExecToolbarVisibilityChanged(bool isVisisble);
         void onExplorerVisibilityChanged(bool isVisisble);
         void onLogsVisibilityChanged(bool isVisible);
-        
+
     private:
         QDockWidget *_logDock;
 
@@ -96,6 +97,7 @@ namespace Robomongo
         QAction *_executeAction;
         QAction *_stopAction;
         QAction *_orientationAction;
+        QAction *_useTabbarAction;
         QToolBar *_execToolBar;
 
         void updateConnectionsMenu();

@@ -23,6 +23,7 @@
 
 #include <QtCore/QIODevice>
 #include <QtCore/QVariant>
+#include <QtCore/QLocale>
 
 #define YYSTYPE QVariant
 
@@ -33,6 +34,8 @@
 
 #include "parser_p.h"
 
+
+
 namespace yy {
   class location;
   int yylex(YYSTYPE *yylval, yy::location *yylloc, QJson::ParserPrivate* driver);
@@ -42,6 +45,8 @@ class JSonScanner : public yyFlexLexer
 {
     public:
         explicit JSonScanner(QIODevice* io);
+        ~JSonScanner();
+
         void allowSpecialNumbers(bool allow);
 
         int yylex(YYSTYPE* yylval, yy::location *yylloc);
@@ -55,6 +60,7 @@ class JSonScanner : public yyFlexLexer
         yy::location* m_yylloc;
         bool m_criticalError;
         QString m_currentString;
+        QLocale m_C_locale;
 };
 
 #endif

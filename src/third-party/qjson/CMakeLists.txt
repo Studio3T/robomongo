@@ -1,62 +1,129 @@
-# add_custom_command (OUTPUT ${qjson_SOURCE_DIR}/lib/json_parser.cc
-#                    PRE_BUILD
-#                    COMMAND bison -t -o json_parser.cc -d json_parser.yy
-#                    DEPENDS json_parser.yy
-#                    WORKING_DIRECTORY ${qjson_SOURCE_DIR}/lib/
-#                    )
+PROJECT(qjson)
 
-# To regenerate json_scanner.cc use:
-# flex json_scanner.yy
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_NO_CAST_FROM_ASCII -DQT_NO_CAST_TO_ASCII" )
 
-SET(qjson_MOC_HDRS
-  parserrunnable.h
-  serializerrunnable.h
-)
+# Force cmake 2.8.8 in order to have a decent support of Qt5
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
+CMAKE_POLICY(SET CMP0003 NEW)
+
+# Do not link against qtmain on Windows
+if(POLICY CMP0020)
+	cmake_policy(SET CMP0020 OLD)
+endif()
+
+set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
+
+IF("${CMAKE_BUILD_TYPE}" MATCHES "^Rel.*")
+  ADD_DEFINITIONS("-DQT_NO_DEBUG_OUTPUT")
+ENDIF("${CMAKE_BUILD_TYPE}" MATCHES "^Rel.*")
+
+# Ability to disable verbose debug output
+IF(QJSON_VERBOSE_DEBUG_OUTPUT)
+  ADD_DEFINITIONS("-DQJSON_VERBOSE_DEBUG_OUTPUT")
+endif(QJSON_VERBOSE_DEBUG_OUTPUT)
+
+# On Windows debug library should have 'd' postfix.
+IF (WIN32)
+  SET(CMAKE_DEBUG_POSTFIX "d")
+elseif (APPLE)
+  set(CMAKE_DEBUG_POSTFIX "_debug")
+endif (WIN32)
+
+# BUILD_SHARED_LIBS is cmake variable. Need to change default value.
+option(BUILD_SHARED_LIBS "Build shared library" ON)
+
+OPTION(OSX_FRAMEWORK "Build a Mac OS X Framework")
+SET(FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/Library/Frameworks"
+    CACHE PATH "Where to place qjson.framework if OSX_FRAMEWORK is selected")
+
+# Don't use absolute path in qjson-targets-*.cmake
+# (This will have no effect with CMake < 2.8)
+SET(QT_USE_IMPORTED_TARGETS TRUE)
+
+option(QT4_BUILD "Force building with Qt4 even if Qt5 is found")
+IF (NOT QT4_BUILD)
+  FIND_PACKAGE( Qt5Core QUIET )
+ENDIF()
 
 IF (Qt5Core_FOUND)
-    QT5_WRAP_CPP(qjson_MOC_SRCS ${qjson_MOC_HDRS})
+  MESSAGE ("Qt5 found")
+
+  INCLUDE_DIRECTORIES(${Qt5Core_INCLUDE_DIRS})
+  ADD_DEFINITIONS(${Qt5Core_DEFINITIONS})
+  SET(PC_Requires "Qt5Core")
+  set(QJSON_SUFFIX "-qt5")
+  # Tell CMake to run moc when necessary:
+  set(CMAKE_AUTOMOC ON)
+  # As moc files are generated in the binary dir, tell CMake
+  # to always look for includes there:
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 ELSE()
-    QT4_WRAP_CPP(qjson_MOC_SRCS ${qjson_MOC_HDRS})
+  MESSAGE ("Qt5 not found, searching for Qt4")
+  # Find Qt4
+  FIND_PACKAGE( Qt4 4.5 REQUIRED )
+
+  # Include the cmake file needed to use qt4
+  INCLUDE( ${QT_USE_FILE} )
+  SET(PC_Requires "QtCore")
 ENDIF()
 
-SET (qjson_SRCS parser.cpp qobjecthelper.cpp json_scanner.cpp json_parser.cc parserrunnable.cpp serializer.cpp serializerrunnable.cpp)
-SET (qjson_HEADERS parser.h parserrunnable.h qobjecthelper.h serializer.h serializerrunnable.h qjson_export.h)
-
-# Required to use the intree copy of FlexLexer.h
-INCLUDE_DIRECTORIES(.)
-IF(WIN32)
-    ADD_DEFINITIONS(-DQJSON_MAKEDLL)
-    ADD_LIBRARY (qjson SHARED ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
-ELSE()
-    ADD_LIBRARY (qjson STATIC ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
+IF (NOT WIN32)
+  SET( QT_DONT_USE_QTGUI TRUE )
 ENDIF()
 
 
-IF (Qt5Core_FOUND)
-  TARGET_LINK_LIBRARIES( qjson ${Qt5Core_LIBRARIES})
-ELSE()
-  TARGET_LINK_LIBRARIES( qjson ${QT_LIBRARIES})
-ENDIF()
+#add extra search paths for libraries and includes
+SET (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
+SET (LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Directory where lib will install")
+SET (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
+SET (CMAKECONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/${CMAKE_PROJECT_NAME}${QJSON_SUFFIX}" CACHE PATH "Directory where to install QJSONConfig.cmake")
 
-#if(NOT android)
-        #set_target_properties(qjson PROPERTIES
-                                #VERSION ${QJSON_LIB_MAJOR_VERSION}.${QJSON_LIB_MINOR_VERSION}.${QJSON_LIB_PATCH_VERSION}
-                                #SOVERSION ${QJSON_LIB_MAJOR_VERSION})
-#endif()
-#IF(APPLE)
-#    set_target_properties(qjson PROPERTIES
-#                          DEFINE_SYMBOL QJSON_MAKEDLL
-#                          PUBLIC_HEADER "${qjson_HEADERS}"
-#                          FRAMEWORK ${OSX_FRAMEWORK})
-#ENDIF()
+set(QJSON_LIB_MAJOR_VERSION "0")
+set(QJSON_LIB_MINOR_VERSION "8")
+set(QJSON_LIB_PATCH_VERSION "1")
 
-IF(WIN32)
-INSTALL(TARGETS qjson RUNTIME DESTINATION . COMPONENT QTLIBS)
-#INSTALL(TARGETS qjson EXPORT qjson-export
-#   LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-#   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
-#   ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-#   FRAMEWORK DESTINATION ${FRAMEWORK_INSTALL_DIR}
-#   PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}/qjson
-#)
-ENDIF()
+set(QJSON_LIB_VERSION_STRING "${QJSON_LIB_MAJOR_VERSION}.${QJSON_LIB_MINOR_VERSION}.${QJSON_LIB_PATCH_VERSION}")
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" )
+
+# pkg-config
+IF (NOT WIN32)
+  CONFIGURE_FILE (${CMAKE_CURRENT_SOURCE_DIR}/QJson.pc.in
+                  ${CMAKE_CURRENT_BINARY_DIR}/QJson${QJSON_SUFFIX}.pc
+                  @ONLY)
+  INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/QJson${QJSON_SUFFIX}.pc
+           DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+ENDIF (NOT WIN32)
+
+# Subdirs
+ADD_SUBDIRECTORY(src)
+IF (KDE4_BUILD_TESTS OR QJSON_BUILD_TESTS)
+  enable_testing()
+  ADD_SUBDIRECTORY(tests)
+ENDIF (KDE4_BUILD_TESTS OR QJSON_BUILD_TESTS)
+
+CONFIGURE_FILE(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+  IMMEDIATE @ONLY)
+
+INSTALL(EXPORT qjson-export DESTINATION ${CMAKECONFIG_INSTALL_DIR} FILE QJSON${QJSON_SUFFIX}Targets.cmake)
+
+# figure out the relative path from the installed Config.cmake file to the install prefix (which may be at
+# runtime different from the chosen CMAKE_INSTALL_PREFIX if under Windows the package was installed anywhere)
+# This relative path will be configured into the QJSONConfig.cmake
+file(RELATIVE_PATH relInstallDir ${CMAKE_INSTALL_PREFIX}/${CMAKECONFIG_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX} )
+
+# cmake-modules
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/QJSONConfig.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/QJSON${QJSON_SUFFIX}Config.cmake
+               @ONLY)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/QJSONConfigVersion.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/QJSON${QJSON_SUFFIX}ConfigVersion.cmake
+               @ONLY)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/QJSON${QJSON_SUFFIX}Config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/QJSON${QJSON_SUFFIX}ConfigVersion.cmake
+        DESTINATION "${CMAKECONFIG_INSTALL_DIR}")
+
+ADD_CUSTOM_TARGET(uninstall
+  "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")

@@ -31,23 +31,33 @@
 using namespace QJson;
 
 ParserPrivate::ParserPrivate() :
-    m_scanner(0)
-  , m_negate(false)
-  , m_error(false)
-  , m_errorLine(0)
-  , m_specialNumbersAllowed(false)
+  m_scanner(0)
 {
+  m_specialNumbersAllowed = false;
+  reset();
 }
 
 ParserPrivate::~ParserPrivate()
 {
-  delete m_scanner;
+  if (m_scanner)
+    delete m_scanner;
 }
 
 void ParserPrivate::setError(QString errorMsg, int errorLine) {
   m_error = true;
   m_errorMsg = errorMsg;
   m_errorLine = errorLine;
+}
+
+void ParserPrivate::reset()
+{
+  m_error = false;
+  m_errorLine = 0;
+  m_errorMsg.clear();
+  if (m_scanner) {
+    delete m_scanner;
+    m_scanner = 0;
+  }
 }
 
 Parser::Parser() :
@@ -62,9 +72,7 @@ Parser::~Parser()
 
 QVariant Parser::parse (QIODevice* io, bool* ok)
 {
-  d->m_errorMsg.clear();
-  delete d->m_scanner;
-  d->m_scanner = 0;
+  d->reset();
 
   if (!io->isOpen()) {
     if (!io->open(QIODevice::ReadOnly)) {
@@ -79,6 +87,14 @@ QVariant Parser::parse (QIODevice* io, bool* ok)
     if (ok != 0)
       *ok = false;
     qCritical ("Device is not readable");
+    io->close();
+    return QVariant();
+  }
+
+  if (io->atEnd()) {
+    if (ok != 0)
+      *ok = false;
+    d->setError(QLatin1String("No data"), 0);
     io->close();
     return QVariant();
   }
@@ -100,7 +116,7 @@ QVariant Parser::parse (QIODevice* io, bool* ok)
 
 QVariant Parser::parse(const QByteArray& jsonString, bool* ok) {
   QBuffer buffer;
-  buffer.open(QBuffer::ReadWrite);
+  buffer.open(QBuffer::ReadWrite | QBuffer::Text);
   buffer.write(jsonString);
   buffer.seek(0);
   return parse (&buffer, ok);

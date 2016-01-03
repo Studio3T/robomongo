@@ -90,8 +90,7 @@ data: value { $$ = $1; }
             qCritical()<< "json_parser - syntax error found, "
                     << "forcing abort, Line" << @$.begin.line << "Column" << @$.begin.column;
             YYABORT;
-          }
-      | END;
+          };
 
 object: CURLY_BRACKET_OPEN CURLY_BRACKET_CLOSE {
           $$ = QVariant(QVariantMap());

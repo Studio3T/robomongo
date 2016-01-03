@@ -33,31 +33,70 @@ namespace QJson {
   /**
    @brief How the indentation should work.
    \verbatim
-   none (default) : { "foo" : 0, "foo1" : 1, "foo2" : [ { "foo3" : 3, "foo4" : 4 } ] }
+   none (default) :
+            { "foo" : 0, "foo1" : 1, "foo2" : [ { "bar" : 1, "foo" : 0, "foobar" : 0 }, { "bar" : 1, "foo" : 1, "foobar" : 1 } ], "foo3" : [ 1, 2, 3, 4, 5, 6 ] }
   
-   compact : {"foo":0,"foo1":1,"foo2":[{"foo3":3,"foo4":4}]}
+   compact :
+            {"foo":0,"foo1":1,"foo2":[{"bar":1,"foo":0,"foobar":0},{"bar":1,"foo":1,"foobar":1}],"foo3":[1,2,3,4,5,6]}
   
-   minimum : { "foo" : 0, "foo1" : 1, "foo2" : [
-               { "foo3" : 3, "foo4" : 4 }
+   minimum :
+            { "foo" : 0, "foo1" : 1, "foo2" : [
+              { "bar" : 1, "foo" : 0, "foobar" : 0 },
+              { "bar" : 1, "foo" : 1, "foobar" : 1 }
+             ], "foo3" : [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
              ] }
-  
-   medium : {
+
+   medium :
+            {
              "foo" : 0, "foo1" : 1, "foo2" : [
               {
-               "foo3" : 3, "foo4" : 4
+               "bar" : 1, "foo" : 0, "foobar" : 0
+              },
+              {
+               "bar" : 1, "foo" : 1, "foobar" : 1
               }
+             ], "foo3" : [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
              ]
             }
-   full : {
-           "foo" : 0,
-           "foo1" : 1,
-           "foo2" : [
+
+   full :
             {
-             "foo3" : 3,
-             "foo4" : 4
+             "foo" : 0,
+             "foo1" : 1,
+             "foo2" : [
+              {
+               "bar" : 1,
+               "foo" : 0,
+               "foobar" : 0
+              },
+              {
+               "bar" : 1,
+               "foo" : 1,
+               "foobar" : 1
+              }
+             ],
+             "foo3" : [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+             ]
             }
-           ]
-          }
+
   
    \endverbatim
   */

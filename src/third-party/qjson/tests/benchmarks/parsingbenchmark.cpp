@@ -1,7 +1,6 @@
 /* This file is part of QJson
  *
- * Copyright (C) 2008 Flavio Castelli <flavio.castelli@gmail.com>
- * Copyright (C) 2009 Michael Leupold <lemma@confuego.org>
+ * Copyright (C) 2014 Sune Vuorela <sune@ange.dk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,38 +18,38 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef QJSON_PARSER_P_H
-#define QJSON_PARSER_P_H
+#include <QJson/Parser>
+#include <QJson/Serializer>
+#include <QtTest/QTest>
+#include <QFile>
 
-#include "parser.h"
+class ParsingBenchmark: public QObject {
+    Q_OBJECT
+    private Q_SLOTS:
+        void benchmark();
+};
 
-#include <QtCore/QString>
-#include <QtCore/QVariant>
+void ParsingBenchmark::benchmark() {
+    QString path = QFINDTESTDATA("largefile.json");
 
-class JSonScanner;
+    QVERIFY(QFile::exists(path));
 
-namespace yy {
-  class json_parser;
+    QFile f(path);
+    QVERIFY(f.open(QIODevice::ReadOnly));
+
+    QByteArray data = f.readAll();
+
+    QVariant result;
+
+    QJson::Parser parser;
+    QBENCHMARK {
+        result = parser.parse(data);
+    }
+
+    Q_UNUSED(result);
 }
 
-namespace QJson {
 
-  class ParserPrivate
-  {
-    public:
-      ParserPrivate();
-      ~ParserPrivate();
+QTEST_MAIN(ParsingBenchmark)
 
-      void setError(QString errorMsg, int line);
-
-      JSonScanner* m_scanner;
-      bool m_negate;
-      bool m_error;
-      int m_errorLine;
-      QString m_errorMsg;
-      QVariant m_result;
-      bool m_specialNumbersAllowed;
-  };
-}
-
-#endif // QJSON_PARSER_H
+#include "parsingbenchmark.moc"

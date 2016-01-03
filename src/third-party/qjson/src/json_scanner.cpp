@@ -31,10 +31,17 @@
 
 #include <cassert>
 
+
 JSonScanner::JSonScanner(QIODevice* io)
   : m_allowSpecialNumbers(false),
     m_io (io),
-    m_criticalError(false)
+    m_criticalError(false),
+    m_C_locale(QLocale::C)
+{
+
+}
+
+JSonScanner::~JSonScanner()
 {
 }
 

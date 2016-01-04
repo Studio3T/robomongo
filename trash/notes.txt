@@ -1,0 +1,5 @@
+-D Qt5Core_DIR=/home/dmitry/main/libs/qt-5/5.5/gcc_64/lib/cmake/Qt5Core
+-D Qt5Gui_DIR=/home/dmitry/main/libs/qt-5/5.5/gcc_64/lib/cmake/Qt5Gui
+-D Qt5Widgets_DIR=/home/dmitry/main/libs/qt-5/5.5/gcc_64/lib/cmake/Qt5Widgets
+-D Qt5DBus_DIR=/home/dmitry/main/libs/qt-5/5.5/gcc_64/lib/cmake/Qt5DBus
+-D Qt5PrintSupport_DIR=/home/dmitry/main/libs/qt-5/5.5/gcc_64/lib/cmake/Qt5PrintSupport

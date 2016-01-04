@@ -50,3 +50,13 @@ function(print_var name)
 
     message("${name}${value}")
 endfunction()
+
+###
+# Prints included directories
+#
+function(print_include_dirs)
+    get_property(dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
+    foreach(dir ${dirs})
+        message("${dir}")
+    endforeach()
+endfunction()

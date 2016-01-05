@@ -16,16 +16,16 @@ set(FILES
     core/utils/QtUtils.cpp
     core/utils/StdUtils.cpp
     core/utils/Logger.cpp
-#    core/HexUtils.cpp
-#    shell/db/ptimeutil.cpp
-#    core/utils/BsonUtils.cpp
+    core/HexUtils.cpp
+    shell/db/ptimeutil.cpp
+    core/utils/BsonUtils.cpp
 )
 
 add_library(step-by-step ${FILES})
 target_link_libraries(step-by-step Qt5::Widgets)
 
 add_executable(exe entry.cpp ${FILES})
-target_link_libraries(exe Qt5::Widgets)
+target_link_libraries(exe Qt5::Widgets roboshell pthread dl pcre pcrecpp)
 
 print_include_dirs()
 #print_vars(include)

@@ -1,6 +1,6 @@
 #include "robomongo/core/domain/MongoDocument.h"
 
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/utils/BsonUtils.h"

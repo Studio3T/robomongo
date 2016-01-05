@@ -53,7 +53,7 @@ namespace Robomongo
         if (visible)
             _bus->publish(new ConnectingEvent(this, server));
 
-        LOG_MSG(QString("Connecting to %1...").arg(QtUtils::toQString(server->connectionRecord()->getFullAddress())), mongo::LL_INFO);
+        LOG_MSG(QString("Connecting to %1...").arg(QtUtils::toQString(server->connectionRecord()->getFullAddress())), mongo::logger::LogSeverity::Info());
         server->tryConnect();
         return server;
     }
@@ -102,7 +102,7 @@ namespace Robomongo
         MongoShell *shell = new MongoShell(server,scriptInfo);
         _shells.push_back(shell);
         _bus->publish(new OpeningShellEvent(this, shell));
-        LOG_MSG("Opening shell...", mongo::LL_INFO);
+        LOG_MSG("Opening shell...", mongo::logger::LogSeverity::Info());
         shell->execute();
         return shell;
     }

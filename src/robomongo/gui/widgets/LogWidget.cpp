@@ -34,7 +34,7 @@ namespace Robomongo
         delete menu;
     }
 
-    void LogWidget::addMessage(const QString &message, mongo::LogLevel level)
+    void LogWidget::addMessage(const QString &message, mongo::logger::LogSeverity level)
     {
         QTime time = QTime::currentTime();
         QDate date = QDate::currentDate();

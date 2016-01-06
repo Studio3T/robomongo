@@ -127,10 +127,10 @@ set(FILES
     gui/widgets/workarea/QueryWidget.cpp
     gui/widgets/workarea/WorkAreaTabBar.cpp
     gui/widgets/workarea/WorkAreaTabWidget.cpp
-#    gui/widgets/LogWidget.cpp
 
 
     # More to come here..
+    gui/widgets/LogWidget.cpp
 
 )
 

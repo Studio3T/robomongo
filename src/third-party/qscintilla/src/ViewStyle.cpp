@@ -55,8 +55,9 @@ const char *FontNames::Save(const char *name) {
 			return *it;
 		}
 	}
-	char *nameSave = new char[strlen(name) + 1];
-	strcpy(nameSave, name);
+	const size_t lenName = strlen(name) + 1;
+	char *nameSave = new char[lenName];
+	memcpy(nameSave, name, lenName);
 	names.push_back(nameSave);
 	return nameSave;
 }
@@ -74,12 +75,12 @@ void FontRealised::Realise(Surface &surface, int zoomLevel, int technology, cons
 	if (sizeZoomed <= 2 * SC_FONT_SIZE_MULTIPLIER)	// Hangs if sizeZoomed <= 1
 		sizeZoomed = 2 * SC_FONT_SIZE_MULTIPLIER;
 
-	float deviceHeight = surface.DeviceHeightFont(sizeZoomed);
+	float deviceHeight = static_cast<float>(surface.DeviceHeightFont(sizeZoomed));
 	FontParameters fp(fs.fontName, deviceHeight / SC_FONT_SIZE_MULTIPLIER, fs.weight, fs.italic, fs.extraFontFlag, technology, fs.characterSet);
 	font.Create(fp);
 
-	ascent = surface.Ascent(font);
-	descent = surface.Descent(font);
+	ascent = static_cast<unsigned int>(surface.Ascent(font));
+	descent = static_cast<unsigned int>(surface.Descent(font));
 	aveCharWidth = surface.AverageCharWidth(font);
 	spaceWidth = surface.WidthChar(font, ' ');
 }
@@ -100,8 +101,14 @@ ViewStyle::ViewStyle(const ViewStyle &source) {
 		markers[mrk] = source.markers[mrk];
 	}
 	CalcLargestMarkerHeight();
+	indicatorsDynamic = 0;
+	indicatorsSetFore = 0;
 	for (int ind=0; ind<=INDIC_MAX; ind++) {
 		indicators[ind] = source.indicators[ind];
+		if (indicators[ind].IsDynamic())
+			indicatorsDynamic++;
+		if (indicators[ind].OverridesTextFore())
+			indicatorsSetFore++;
 	}
 
 	selColours = source.selColours;
@@ -191,18 +198,15 @@ void ViewStyle::Init(size_t stylesSize_) {
 	// There are no image markers by default, so no need for calling CalcLargestMarkerHeight()
 	largestMarkerHeight = 0;
 
-	indicators[0].style = INDIC_SQUIGGLE;
-	indicators[0].under = false;
-	indicators[0].fore = ColourDesired(0, 0x7f, 0);
-	indicators[1].style = INDIC_TT;
-	indicators[1].under = false;
-	indicators[1].fore = ColourDesired(0, 0, 0xff);
-	indicators[2].style = INDIC_PLAIN;
-	indicators[2].under = false;
-	indicators[2].fore = ColourDesired(0xff, 0, 0);
+	indicators[0] = Indicator(INDIC_SQUIGGLE, ColourDesired(0, 0x7f, 0));
+	indicators[1] = Indicator(INDIC_TT, ColourDesired(0, 0, 0xff));
+	indicators[2] = Indicator(INDIC_PLAIN, ColourDesired(0xff, 0, 0));
 
 	technology = SC_TECHNOLOGY_DEFAULT;
+	indicatorsDynamic = 0;
+	indicatorsSetFore = 0;
 	lineHeight = 1;
+	lineOverlap = 0;
 	maxAscent = 1;
 	maxDescent = 1;
 	aveCharWidth = 8;
@@ -309,9 +313,9 @@ void ViewStyle::Refresh(Surface &surface, int tabInChars) {
 		styles[i].extraFontFlag = extraFontFlag;
 	}
 
-	CreateFont(styles[STYLE_DEFAULT]);
+	CreateAndAddFont(styles[STYLE_DEFAULT]);
 	for (unsigned int j=0; j<styles.size(); j++) {
-		CreateFont(styles[j]);
+		CreateAndAddFont(styles[j]);
 	}
 
 	for (FontMap::iterator it = fonts.begin(); it != fonts.end(); ++it) {
@@ -322,12 +326,25 @@ void ViewStyle::Refresh(Surface &surface, int tabInChars) {
 		FontRealised *fr = Find(styles[k]);
 		styles[k].Copy(fr->font, *fr);
 	}
+	indicatorsDynamic = 0;
+	indicatorsSetFore = 0;
+	for (int ind = 0; ind <= INDIC_MAX; ind++) {
+		if (indicators[ind].IsDynamic())
+			indicatorsDynamic++;
+		if (indicators[ind].OverridesTextFore())
+			indicatorsSetFore++;
+	}
 	maxAscent = 1;
 	maxDescent = 1;
 	FindMaxAscentDescent();
 	maxAscent += extraAscent;
 	maxDescent += extraDescent;
 	lineHeight = maxAscent + maxDescent;
+	lineOverlap = lineHeight / 10;
+	if (lineOverlap < 2)
+		lineOverlap = 2;
+	if (lineOverlap > lineHeight)
+		lineOverlap = lineHeight;
 
 	someStylesProtected = false;
 	someStylesForceCase = false;
@@ -346,7 +363,7 @@ void ViewStyle::Refresh(Surface &surface, int tabInChars) {
 
 	controlCharWidth = 0.0;
 	if (controlCharSymbol >= 32) {
-		controlCharWidth = surface.WidthChar(styles[STYLE_CONTROLCHAR].font, controlCharSymbol);
+		controlCharWidth = surface.WidthChar(styles[STYLE_CONTROLCHAR].font, static_cast<char>(controlCharSymbol));
 	}
 
 	fixedColumnWidth = marginInside ? leftMarginWidth : 0;
@@ -433,6 +450,51 @@ void ViewStyle::CalcLargestMarkerHeight() {
 	}
 }
 
+// See if something overrides the line background color:  Either if caret is on the line
+// and background color is set for that, or if a marker is defined that forces its background
+// color onto the line, or if a marker is defined but has no selection margin in which to
+// display itself (as long as it's not an SC_MARK_EMPTY marker).  These are checked in order
+// with the earlier taking precedence.  When multiple markers cause background override,
+// the color for the highest numbered one is used.
+ColourOptional ViewStyle::Background(int marksOfLine, bool caretActive, bool lineContainsCaret) const {
+	ColourOptional background;
+	if ((caretActive || alwaysShowCaretLineBackground) && showCaretLineBackground && (caretLineAlpha == SC_ALPHA_NOALPHA) && lineContainsCaret) {
+		background = ColourOptional(caretLineBackground, true);
+	}
+	if (!background.isSet && marksOfLine) {
+		int marks = marksOfLine;
+		for (int markBit = 0; (markBit < 32) && marks; markBit++) {
+			if ((marks & 1) && (markers[markBit].markType == SC_MARK_BACKGROUND) &&
+				(markers[markBit].alpha == SC_ALPHA_NOALPHA)) {
+				background = ColourOptional(markers[markBit].back, true);
+			}
+			marks >>= 1;
+		}
+	}
+	if (!background.isSet && maskInLine) {
+		int marksMasked = marksOfLine & maskInLine;
+		if (marksMasked) {
+			for (int markBit = 0; (markBit < 32) && marksMasked; markBit++) {
+				if ((marksMasked & 1) && (markers[markBit].markType != SC_MARK_EMPTY) &&
+					(markers[markBit].alpha == SC_ALPHA_NOALPHA)) {
+					background = ColourOptional(markers[markBit].back, true);
+				}
+				marksMasked >>= 1;
+			}
+		}
+	}
+	return background;
+}
+
+bool ViewStyle::SelectionBackgroundDrawn() const {
+	return selColours.back.isSet &&
+		((selAlpha == SC_ALPHA_NOALPHA) || (selAdditionalAlpha == SC_ALPHA_NOALPHA));
+}
+
+bool ViewStyle::WhitespaceBackgroundDrawn() const {
+	return (viewWhitespace != wsInvisible) && (whitespaceColours.back.isSet);
+}
+
 ColourDesired ViewStyle::WrapColour() const {
 	if (whitespaceColours.fore.isSet)
 		return whitespaceColours.fore;
@@ -448,6 +510,9 @@ bool ViewStyle::SetWrapState(int wrapState_) {
 		break;
 	case SC_WRAP_CHAR:
 		wrapStateWanted = eWrapChar;
+		break;
+	case SC_WRAP_WHITESPACE:
+		wrapStateWanted = eWrapWhitespace;
 		break;
 	default:
 		wrapStateWanted = eWrapNone;
@@ -494,7 +559,7 @@ void ViewStyle::AllocStyles(size_t sizeNew) {
 	}
 }
 
-void ViewStyle::CreateFont(const FontSpecification &fs) {
+void ViewStyle::CreateAndAddFont(const FontSpecification &fs) {
 	if (fs.fontName) {
 		FontMap::iterator it = fonts.find(fs);
 		if (it == fonts.end()) {

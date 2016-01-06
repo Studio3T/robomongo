@@ -1,23 +1,18 @@
 // This defines the interface to the QsciLexerCPP class.
 //
-// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This file may be used under the terms of the GNU General Public
-// License versions 2.0 or 3.0 as published by the Free Software
-// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
-// included in the packaging of this file.  Alternatively you may (at
-// your option) use any later version of the GNU General Public
-// License if such license has been publicly approved by Riverbank
-// Computing Limited (or its successors, if any) and the KDE Free Qt
-// Foundation. In addition, as a special exception, Riverbank gives you
-// certain additional rights. These rights are described in the Riverbank
-// GPL Exception version 1.1, which can be found in the file
-// GPL_EXCEPTION.txt in this package.
+// This file may be used under the terms of the GNU General Public License
+// version 3.0 as published by the Free Software Foundation and appearing in
+// the file LICENSE included in the packaging of this file.  Please review the
+// following information to ensure the GNU General Public License version 3.0
+// requirements will be met: http://www.gnu.org/copyleft/gpl.html.
 // 
-// If you are unsure which license is appropriate for your use, please
-// contact the sales department at sales@riverbankcomputing.com.
+// If you do not wish to use this file under the terms of the GPL version 3.0
+// then you may purchase a commercial license.  For more information contact
+// info@riverbankcomputing.com.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -30,7 +25,7 @@
 extern "C++" {
 #endif
 
-#include <qobject.h>
+#include <QObject>
 
 #include <Qsci/qsciglobal.h>
 #include <Qsci/qscilexer.h>
@@ -131,23 +126,35 @@ public:
 
         //! A C++ raw string.
         RawString = 20,
-        InactiveRawString = RawString + 20,
+        InactiveRawString = RawString + 64,
 
         //! A Vala triple-quoted verbatim string.
         TripleQuotedVerbatimString = 21,
-        InactiveTripleQuotedVerbatimString = TripleQuotedVerbatimString + 21,
+        InactiveTripleQuotedVerbatimString = TripleQuotedVerbatimString + 64,
 
         //! A Pike hash-quoted string.
         HashQuotedString = 22,
-        InactiveHashQuotedString = HashQuotedString + 22,
+        InactiveHashQuotedString = HashQuotedString + 64,
 
         //! A pre-processor stream comment.
         PreProcessorComment = 23,
-        InactivePreProcessorComment = PreProcessorComment + 23,
+        InactivePreProcessorComment = PreProcessorComment + 64,
 
         //! A JavaDoc/Doxygen style pre-processor comment.
         PreProcessorCommentLineDoc = 24,
         InactivePreProcessorCommentLineDoc = PreProcessorCommentLineDoc + 64,
+
+        //! A user-defined literal.
+        UserLiteral = 25,
+        InactiveUserLiteral = UserLiteral + 64,
+
+        //! A task marker.
+        TaskMarker = 26,
+        InactiveTaskMarker = TaskMarker + 64,
+
+        //! An escape sequence.
+        EscapeSequence = 27,
+        InactiveEscapeSequence = EscapeSequence + 64,
     };
 
     //! Construct a QsciLexerCPP with parent \a parent.  \a parent is typically
@@ -282,6 +289,39 @@ public:
     //! \sa setHighlightHashQuotedStrings()
     bool highlightHashQuotedStrings() const {return highlight_hash;}
 
+    //! If \a enabled is true then back-quoted raw strings are highlighted.
+    //! The default is false.
+    //!
+    //! \sa highlightBackQuotedStrings()
+    void setHighlightBackQuotedStrings(bool enabled);
+
+    //! Returns true if back-quoted raw strings should be highlighted.
+    //!
+    //! \sa setHighlightBackQuotedStrings()
+    bool highlightBackQuotedStrings() const {return highlight_back;}
+
+    //! If \a enabled is true then escape sequences in strings are highlighted.
+    //! The default is false.
+    //!
+    //! \sa highlightEscapeSequences()
+    void setHighlightEscapeSequences(bool enabled);
+
+    //! Returns true if escape sequences in strings should be highlighted.
+    //!
+    //! \sa setHighlightEscapeSequences()
+    bool highlightEscapeSequences() const {return highlight_escape;}
+
+    //! If \a allowed is true then escape sequences are allowed in verbatim
+    //! strings.  The default is false.
+    //!
+    //! \sa verbatimStringEscapeSequencesAllowed()
+    void setVerbatimStringEscapeSequencesAllowed(bool allowed);
+
+    //! Returns true if hash quoted strings should be highlighted.
+    //!
+    //! \sa setVerbatimStringEscapeSequencesAllowed()
+    bool verbatimStringEscapeSequencesAllowed() const {return vs_escape;}
+
 public slots:
     //! If \a fold is true then "} else {" lines can be folded.  The
     //! default is false.
@@ -337,6 +377,9 @@ private:
     void setDollarsProp();
     void setHighlightTripleProp();
     void setHighlightHashProp();
+    void setHighlightBackProp();
+    void setHighlightEscapeProp();
+    void setVerbatimStringEscapeProp();
 
     bool fold_atelse;
     bool fold_comments;
@@ -346,6 +389,9 @@ private:
     bool dollars;
     bool highlight_triple;
     bool highlight_hash;
+    bool highlight_back;
+    bool highlight_escape;
+    bool vs_escape;
 
     bool nocase;
 

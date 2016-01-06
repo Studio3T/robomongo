@@ -47,11 +47,6 @@ static bool IsBSeparator(char ch) {
 	return (ch == '\\') || (ch == '.') || (ch == ';') || (ch == ' ') || (ch == '\t') || (ch == '[') || (ch == ']') || (ch == '\"') || (ch == '\'') || (ch == '/');
 }
 
-// Tests for Environment Variable symbol
-static inline bool IsEnvironmentVar(char ch) {
-	return isalpha(ch) || isdigit(ch) || (ch == '_') || (ch == '$');
-}
-
 // Find length of CMD FOR variable with modifier (%~...) or return 0
 static unsigned int GetBatchVarLen( char *wordBuffer )
 {
@@ -112,7 +107,7 @@ static void ColouriseTCMDLine( char *lineBuffer, unsigned int lengthLine, unsign
 	// Examples are: cd. cd\ echo: echo. path=
 	bool inString = false; // Used for processing while ""
 	// Special Keyword Buffer used to determine if the first n characters is a Keyword
-	char sKeywordBuffer[260];	// Special Keyword Buffer
+	char sKeywordBuffer[260] = "";	// Special Keyword Buffer
 	bool sKeywordFound;		// Exit Special Keyword for-loop if found
 
 	// Skip leading whitespace

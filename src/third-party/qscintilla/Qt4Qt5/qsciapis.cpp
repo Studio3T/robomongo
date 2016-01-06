@@ -1,23 +1,18 @@
 // This module implements the QsciAPIs class.
 //
-// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This file may be used under the terms of the GNU General Public
-// License versions 2.0 or 3.0 as published by the Free Software
-// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
-// included in the packaging of this file.  Alternatively you may (at
-// your option) use any later version of the GNU General Public
-// License if such license has been publicly approved by Riverbank
-// Computing Limited (or its successors, if any) and the KDE Free Qt
-// Foundation. In addition, as a special exception, Riverbank gives you
-// certain additional rights. These rights are described in the Riverbank
-// GPL Exception version 1.1, which can be found in the file
-// GPL_EXCEPTION.txt in this package.
+// This file may be used under the terms of the GNU General Public License
+// version 3.0 as published by the Free Software Foundation and appearing in
+// the file LICENSE included in the packaging of this file.  Please review the
+// following information to ensure the GNU General Public License version 3.0
+// requirements will be met: http://www.gnu.org/copyleft/gpl.html.
 // 
-// If you are unsure which license is appropriate for your use, please
-// contact the sales department at sales@riverbankcomputing.com.
+// If you do not wish to use this file under the terms of the GPL version 3.0
+// then you may purchase a commercial license.  For more information contact
+// info@riverbankcomputing.com.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -27,16 +22,15 @@
 
 #include "Qsci/qsciapis.h"
 
-#include <qapplication.h>
-#include <qdatastream.h>
-#include <qdir.h>
-#include <qevent.h>
-#include <qfile.h>
-#include <qmap.h>
-#include <qtextstream.h>
-#include <qthread.h>
-
+#include <QApplication>
+#include <QDataStream>
+#include <QDir>
+#include <QEvent>
+#include <QFile>
 #include <QLibraryInfo>
+#include <QMap>
+#include <QTextStream>
+#include <QThread>
 
 #include "Qsci/qscilexer.h"
 
@@ -59,7 +53,6 @@ struct QsciAPIsPrepared
     // insensitive.
     QMap<QString, QString> cdict;
 
-
     // The raw API information.
     QStringList raw_apis;
 
@@ -67,7 +60,6 @@ struct QsciAPIsPrepared
             bool strip_image) const;
     static QString apiBaseName(const QString &api);
 };
-
 
 
 // Return a particular API entry as a list of words.
@@ -198,7 +190,6 @@ void QsciAPIsWorker::run()
         }
     }
 
-
     // Tell the main thread we have finished.
     QApplication::postEvent(proxy, new QEvent(abort ? WorkerAborted : WorkerFinished));
 }
@@ -206,8 +197,7 @@ void QsciAPIsWorker::run()
 
 // The ctor.
 QsciAPIs::QsciAPIs(QsciLexer *lexer)
-    : QsciAbstractAPIs(lexer),
-      worker(0), origin_len(0)
+    : QsciAbstractAPIs(lexer), worker(0), origin_len(0)
 {
     prep = new QsciAPIsPrepared;
 }
@@ -640,7 +630,6 @@ void QsciAPIs::addAPIEntries(const WordIndexList &wl, bool complete,
         else
         {
             QStringList orgl = api_words.mid(0, idx);
-
             QString org = orgl.join(wseps.first());
 
             api_word = QString("%1 (%2)").arg(api_words[idx]).arg(org);
@@ -664,8 +653,7 @@ void QsciAPIs::addAPIEntries(const WordIndexList &wl, bool complete,
 
 // Return the call tip for a function.
 QStringList QsciAPIs::callTips(const QStringList &context, int commas,
-        QsciScintilla::CallTipsStyle style,
-        QList<int> &shifts)
+        QsciScintilla::CallTipsStyle style, QList<int> &shifts)
 {
     QString path;
     QStringList new_context = positionOrigin(context, path);
@@ -674,11 +662,14 @@ QStringList QsciAPIs::callTips(const QStringList &context, int commas,
 
     if (origin_len > 0)
     {
+        // The path should have a trailing word separator.
+        const QString &wsep = wseps.first();
+        path.chop(wsep.length());
+
         QStringList::const_iterator it = origin;
         QString prev;
 
         // Work out the length of the context.
-        const QString &wsep = wseps.first();
         QStringList strip = path.split(wsep);
         strip.removeLast();
         int ctstart = strip.join(wsep).length();
@@ -749,7 +740,14 @@ QStringList QsciAPIs::callTips(const QStringList &context, int commas,
                 else
                 {
                     shifts << tail - fname.length();
-                    cts << api;
+
+                    // Remove any image type.
+                    int im_type = api.indexOf('?');
+
+                    if (im_type <= 0)
+                        cts << api;
+                    else
+                        cts << (api.left(im_type - 1) + api.mid(tail));
                 }
             }
     }
@@ -865,10 +863,8 @@ bool QsciAPIs::loadPrepared(const QString &filename)
         while (it != prep->wdict.end())
         {
             prep->cdict[it.key().toUpper()] = it.key();
-
             ++it;
         }
-
     }
 
     prep->raw_apis.clear();

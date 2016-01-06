@@ -1037,8 +1037,9 @@ static int RecogniseErrorListLine(const char *lineBuffer, unsigned int lengthLin
 						!CompareCaseInsensitive(word, "fatal") || !CompareCaseInsensitive(word, "catastrophic") ||
 						!CompareCaseInsensitive(word, "note") || !CompareCaseInsensitive(word, "remark")) {
 						state = stMsVc;
-					} else
+					} else {
 						state = stUnrecognized;
+					}
 				} else {
 					state = stUnrecognized;
 				}

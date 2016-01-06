@@ -18,7 +18,7 @@ namespace Scintilla {
 
 class SplitVectorWithRangeAdd : public SplitVector<int> {
 public:
-	SplitVectorWithRangeAdd(int growSize_) {
+	explicit SplitVectorWithRangeAdd(int growSize_) {
 		SetGrowSize(growSize_);
 		ReAllocate(growSize_);
 	}
@@ -88,7 +88,7 @@ private:
 	}
 
 public:
-	Partitioning(int growSize) {
+	explicit Partitioning(int growSize) {
 		Allocate(growSize);
 	}
 

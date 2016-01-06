@@ -49,10 +49,6 @@ static inline bool IsAWordChar(const int ch) {
 	return (ch < 0x80) && (isalnum(ch) || ch == '.' || ch == '_' || ch =='\\');
 }
 
-static inline bool IsAWordStart(const int ch) {
-	return (ch < 0x80) && (isalnum(ch) || ch == '_' || ch == '.');
-}
-
 inline bool isGCOperator(int ch)
 {	if (isalnum(ch))
 		return false;

@@ -14,11 +14,15 @@ namespace Scintilla {
 
 const int UTF8MaxBytes = 4;
 
+const int unicodeReplacementChar = 0xFFFD;
+
 unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 void UTF8FromUTF16(const wchar_t *uptr, unsigned int tlen, char *putf, unsigned int len);
 unsigned int UTF8CharLength(unsigned char ch);
-unsigned int UTF16Length(const char *s, unsigned int len);
-unsigned int UTF16FromUTF8(const char *s, unsigned int len, wchar_t *tbuf, unsigned int tlen);
+size_t UTF16Length(const char *s, size_t len);
+size_t UTF16FromUTF8(const char *s, size_t len, wchar_t *tbuf, size_t tlen);
+unsigned int UTF32FromUTF8(const char *s, unsigned int len, unsigned int *tbuf, unsigned int tlen);
+unsigned int UTF16FromUTF32Character(unsigned int val, wchar_t *tbuf);
 
 extern int UTF8BytesOfLead[256];
 void UTF8BytesOfLeadInitialise();
@@ -49,6 +53,12 @@ inline bool UTF8IsSeparator(const unsigned char *us) {
 const int UTF8NELLength = 2;
 inline bool UTF8IsNEL(const unsigned char *us) {
 	return (us[0] == 0xc2) && (us[1] == 0x85);
+}
+
+enum { SURROGATE_LEAD_FIRST = 0xD800 };
+enum { SURROGATE_LEAD_LAST = 0xDBFF };
+inline unsigned int UTF16CharLength(wchar_t uch) {
+	return ((uch >= SURROGATE_LEAD_FIRST) && (uch <= SURROGATE_LEAD_LAST)) ? 2 : 1;
 }
 
 #ifdef SCI_NAMESPACE

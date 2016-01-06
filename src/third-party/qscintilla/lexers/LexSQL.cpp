@@ -444,6 +444,7 @@ void SCI_METHOD LexerSQL::Lex(unsigned int startPos, int length, int initStyle, 
 	StyleContext sc(startPos, length, initStyle, styler);
 	int styleBeforeDCKeyword = SCE_SQL_DEFAULT;
 	int offset = 0;
+
 	for (; sc.More(); sc.Forward(), offset++) {
 		// Determine if the current state should terminate.
 		switch (sc.state) {
@@ -556,11 +557,44 @@ void SCI_METHOD LexerSQL::Lex(unsigned int startPos, int length, int initStyle, 
 				}
 			}
 			break;
+		case SCE_SQL_QOPERATOR:
+			// Locate the unique Q operator character
+			sc.Complete();
+			char qOperator = 0x00;
+			for (int styleStartPos = sc.currentPos; styleStartPos > 0; --styleStartPos) {
+				if (styler.StyleAt(styleStartPos - 1) != SCE_SQL_QOPERATOR) {
+					qOperator = styler.SafeGetCharAt(styleStartPos + 2);
+					break;
+				}
+			}
+			
+			char qComplement = 0x00;						
+
+			if (qOperator == '<') {
+				qComplement = '>';
+			} else if (qOperator == '(') {
+				qComplement = ')';
+			} else if (qOperator == '{') {
+				qComplement = '}';
+			} else if (qOperator == '[') {
+				qComplement = ']';
+			} else {
+				qComplement = qOperator;
+			}	
+				
+			if (sc.Match(qComplement, '\'')) {
+				sc.Forward();
+				sc.ForwardSetState(SCE_SQL_DEFAULT);
+			}
+			break;
 		}
 
 		// Determine if a new state should be entered.
 		if (sc.state == SCE_SQL_DEFAULT) {
-			if (IsADigit(sc.ch) || (sc.ch == '.' && IsADigit(sc.chNext))) {
+			if (sc.Match('q', '\'') || sc.Match('Q', '\'')) {
+				sc.SetState(SCE_SQL_QOPERATOR);			
+				sc.Forward();
+			} else if (IsADigit(sc.ch) || (sc.ch == '.' && IsADigit(sc.chNext))) {
 				sc.SetState(SCE_SQL_NUMBER);
 			} else if (IsAWordStart(sc.ch)) {
 				sc.SetState(SCE_SQL_IDENTIFIER);
@@ -643,7 +677,7 @@ void SCI_METHOD LexerSQL::Fold(unsigned int startPos, int length, int initStyle,
 			break;
 		}
 	}
-	
+
 	int levelNext = levelCurrent;
 	char chNext = styler[startPos];
 	int styleNext = styler.StyleAt(startPos);

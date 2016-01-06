@@ -1,23 +1,18 @@
 # The project file for the QScintilla library.
 #
-# Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
+# Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
 # 
 # This file is part of QScintilla.
 # 
-# This file may be used under the terms of the GNU General Public
-# License versions 2.0 or 3.0 as published by the Free Software
-# Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
-# included in the packaging of this file.  Alternatively you may (at
-# your option) use any later version of the GNU General Public
-# License if such license has been publicly approved by Riverbank
-# Computing Limited (or its successors, if any) and the KDE Free Qt
-# Foundation. In addition, as a special exception, Riverbank gives you
-# certain additional rights. These rights are described in the Riverbank
-# GPL Exception version 1.1, which can be found in the file
-# GPL_EXCEPTION.txt in this package.
+# This file may be used under the terms of the GNU General Public License
+# version 3.0 as published by the Free Software Foundation and appearing in
+# the file LICENSE included in the packaging of this file.  Please review the
+# following information to ensure the GNU General Public License version 3.0
+# requirements will be met: http://www.gnu.org/copyleft/gpl.html.
 # 
-# If you are unsure which license is appropriate for your use, please
-# contact the sales department at sales@riverbankcomputing.com.
+# If you do not wish to use this file under the terms of the GPL version 3.0
+# then you may purchase a commercial license.  For more information contact
+# info@riverbankcomputing.com.
 # 
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -25,25 +20,20 @@
 
 # This must be kept in sync with Python/configure.py, Python/configure-old.py,
 # example-Qt4Qt5/application.pro and designer-Qt4Qt5/designer.pro.
-!win32:VERSION = 11.3.0
+!win32:VERSION = 12.0.1
 
 TEMPLATE = lib
 TARGET = qscintilla2
-CONFIG += qt warn_off thread exceptions
-CONFIG  -= debug_and_release
+CONFIG += qt warn_off release thread exceptions
 INCLUDEPATH += . ../include ../lexlib ../src
-macx {
-QMAKE_MAC_SDK = macosx10.9
+
+!CONFIG(staticlib) {
+    DEFINES += QSCINTILLA_MAKE_DLL
 }
-DEFINES += QSCINTILLA_MAKE_DLL SCINTILLA_QT SCI_LEXER
-greaterThan(QT_MAJOR_VERSION, 3) {
-    CONFIG(staticlib) {
-        DEFINES -= QSCINTILLA_MAKE_DLL
-    }
-}
+DEFINES += SCINTILLA_QT SCI_LEXER
 
 greaterThan(QT_MAJOR_VERSION, 4) {
-        QT += widgets printsupport gui
+	QT += widgets printsupport
 
     greaterThan(QT_MINOR_VERSION, 1) {
 	    macx:QT += macextras
@@ -57,38 +47,28 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 # Scintilla namespace rather than pollute the global namespace.
 #DEFINES += SCI_NAMESPACE
 
-# Handle both Qt v4 and v3.
 target.path = $$[QT_INSTALL_LIBS]
-isEmpty(target.path) {
-	target.path = $(QTDIR)/lib
-}
+INSTALLS += target
 
 header.path = $$[QT_INSTALL_HEADERS]
 header.files = Qsci
-isEmpty(header.path) {
-	header.path = $(QTDIR)/include/Qsci
-	header.files = Qsci/qsci*.h
-}
+INSTALLS += header
 
 trans.path = $$[QT_INSTALL_TRANSLATIONS]
 trans.files = qscintilla_*.qm
-isEmpty(trans.path) {
-	trans.path = $(QTDIR)/translations
-}
+INSTALLS += trans
 
 qsci.path = $$[QT_INSTALL_DATA]
 qsci.files = ../qsci
-isEmpty(qsci.path) {
-	qsci.path = $(QTDIR)
-}
+INSTALLS += qsci
 
-INSTALLS += header trans qsci target
-
-greaterThan(QT_MAJOR_VERSION, 3) {
+greaterThan(QT_MAJOR_VERSION, 4) {
+    features.path = $$[QT_HOST_DATA]/mkspecs/features
+} else {
     features.path = $$[QT_INSTALL_DATA]/mkspecs/features
-    features.files = $$PWD/features/qscintilla2.prf
-    INSTALLS += features
 }
+features.files = $$PWD/features/qscintilla2.prf
+INSTALLS += features
 
 HEADERS = \
 	./Qsci/qsciglobal.h \
@@ -160,6 +140,7 @@ HEADERS = \
 	../lexlib/LexerSimple.h \
 	../lexlib/OptionSet.h \
 	../lexlib/PropSetSimple.h \
+	../lexlib/StringCopy.h \
 	../lexlib/StyleContext.h \
 	../lexlib/SubStyles.h \
 	../lexlib/WordList.h \
@@ -173,12 +154,15 @@ HEADERS = \
 	../src/ContractionState.h \
 	../src/Decoration.h \
 	../src/Document.h \
+	../src/EditModel.h \
 	../src/Editor.h \
+	../src/EditView.h \
 	../src/ExternalLexer.h \
 	../src/FontQuality.h \
 	../src/Indicator.h \
 	../src/KeyMap.h \
 	../src/LineMarker.h \
+	../src/MarginView.h \
 	../src/Partitioning.h \
 	../src/PerLine.h \
 	../src/PositionCache.h \
@@ -262,6 +246,7 @@ SOURCES = \
 	../lexers/LexBaan.cpp \
 	../lexers/LexBash.cpp \
 	../lexers/LexBasic.cpp \
+	../lexers/LexBibTex.cpp \
 	../lexers/LexBullant.cpp \
 	../lexers/LexCaml.cpp \
 	../lexers/LexCLW.cpp \
@@ -274,6 +259,8 @@ SOURCES = \
 	../lexers/LexCsound.cpp \
 	../lexers/LexCSS.cpp \
 	../lexers/LexD.cpp \
+	../lexers/LexDMAP.cpp \
+	../lexers/LexDMIS.cpp \
 	../lexers/LexECL.cpp \
 	../lexers/LexEiffel.cpp \
 	../lexers/LexErlang.cpp \
@@ -284,6 +271,7 @@ SOURCES = \
 	../lexers/LexGAP.cpp \
 	../lexers/LexGui4Cli.cpp \
 	../lexers/LexHaskell.cpp \
+	../lexers/LexHex.cpp \
 	../lexers/LexHTML.cpp \
 	../lexers/LexInno.cpp \
 	../lexers/LexKix.cpp \
@@ -319,6 +307,7 @@ SOURCES = \
 	../lexers/LexPython.cpp \
 	../lexers/LexR.cpp \
 	../lexers/LexRebol.cpp \
+	../lexers/LexRegistry.cpp \
 	../lexers/LexRuby.cpp \
 	../lexers/LexRust.cpp \
 	../lexers/LexScriptol.cpp \
@@ -361,11 +350,14 @@ SOURCES = \
 	../src/ContractionState.cpp \
 	../src/Decoration.cpp \
 	../src/Document.cpp \
+	../src/EditModel.cpp \
 	../src/Editor.cpp \
+	../src/EditView.cpp \
 	../src/ExternalLexer.cpp \
 	../src/Indicator.cpp \
     ../src/KeyMap.cpp \
 	../src/LineMarker.cpp \
+	../src/MarginView.cpp \
 	../src/PerLine.cpp \
 	../src/PositionCache.cpp \
     ../src/RESearch.cpp \

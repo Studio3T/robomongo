@@ -272,7 +272,7 @@ public:
 				GapTo(position);
 				return body + position + gapLength;
 			} else {
-				return body + position ;
+				return body + position;
 			}
 		} else {
 			return body + position + gapLength;
@@ -280,7 +280,7 @@ public:
 	}
 
 	int GapPosition() const {
-		return part1Length; 
+		return part1Length;
 	}
 };
 

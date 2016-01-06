@@ -1,23 +1,18 @@
 // The implementation of the Qt specific subclass of ScintillaBase.
 //
-// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This file may be used under the terms of the GNU General Public
-// License versions 2.0 or 3.0 as published by the Free Software
-// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
-// included in the packaging of this file.  Alternatively you may (at
-// your option) use any later version of the GNU General Public
-// License if such license has been publicly approved by Riverbank
-// Computing Limited (or its successors, if any) and the KDE Free Qt
-// Foundation. In addition, as a special exception, Riverbank gives you
-// certain additional rights. These rights are described in the Riverbank
-// GPL Exception version 1.1, which can be found in the file
-// GPL_EXCEPTION.txt in this package.
+// This file may be used under the terms of the GNU General Public License
+// version 3.0 as published by the Free Software Foundation and appearing in
+// the file LICENSE included in the packaging of this file.  Please review the
+// following information to ensure the GNU General Public License version 3.0
+// requirements will be met: http://www.gnu.org/copyleft/gpl.html.
 // 
-// If you are unsure which license is appropriate for your use, please
-// contact the sales department at sales@riverbankcomputing.com.
+// If you do not wish to use this file under the terms of the GPL version 3.0
+// then you may purchase a commercial license.  For more information contact
+// info@riverbankcomputing.com.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -26,14 +21,13 @@
 #include <string.h>
 
 #include <qapplication.h>
+#include <qbytearray.h>
+#include <qdrag.h>
 #include <qevent.h>
+#include <qmimedata.h>
 #include <qpainter.h>
 #include <qscrollbar.h>
 #include <qstring.h>
-
-#include <qbytearray.h>
-#include <qdrag.h>
-#include <qmimedata.h>
 
 #include "Qsci/qsciscintillabase.h"
 #include "ScintillaQt.h"
@@ -105,14 +99,16 @@ enum
 
 // The ctor.
 QsciScintillaQt::QsciScintillaQt(QsciScintillaBase *qsb_)
-    : capturedMouse(false), qsb(qsb_)
+    : vMax(0), hMax(0), vPage(0), hPage(0), capturedMouse(false), qsb(qsb_)
 {
     wMain = qsb->viewport();
 
-    // We aren't a QObject so we use the API class to do QObject related things
-    // for us.
-    qsb->connect(&qtimer, SIGNAL(timeout()), SLOT(handleTimer()));
-    
+    // This is ignored.
+    imeInteraction = imeInline;
+
+    for (int i = 0; i <= static_cast<int>(tickPlatform); ++i)
+        timers[i] = 0;
+
     Initialise();
 }
 
@@ -127,14 +123,15 @@ QsciScintillaQt::~QsciScintillaQt()
 // Initialise the instance.
 void QsciScintillaQt::Initialise()
 {
-    SetTicking(true);
 }
 
 
 // Tidy up the instance.
 void QsciScintillaQt::Finalise()
 {
-    SetTicking(false);
+    for (int i = 0; i <= static_cast<int>(tickPlatform); ++i)
+        FineTickerCancel(static_cast<TickReason>(i));
+
     ScintillaBase::Finalise();
 }
 
@@ -147,11 +144,11 @@ void QsciScintillaQt::StartDrag()
     QDrag *qdrag = new QDrag(qsb);
     qdrag->setMimeData(mimeSelection(drag));
 
-# if QT_VERSION >= 0x040300
+#if QT_VERSION >= 0x040300
     Qt::DropAction action = qdrag->exec(Qt::MoveAction | Qt::CopyAction, Qt::MoveAction);
-# else
+#else
     Qt::DropAction action = qdrag->start(Qt::MoveAction);
-# endif
+#endif
 
     // Remove the dragged text if it was a move to another widget or
     // application.
@@ -187,23 +184,6 @@ sptr_t QsciScintillaQt::DefWndProc(unsigned int, uptr_t, sptr_t)
 }
 
 
-// Manage the timer.
-void QsciScintillaQt::SetTicking(bool on)
-{
-    if (timer.ticking != on)
-    {
-        timer.ticking = on;
-
-        if (timer.ticking)
-            qtimer.start(timer.tickSize);
-        else
-            qtimer.stop();
-    }
-
-    timer.ticksToWait = caret.period;
-}
-
-
 // Grab or release the mouse (and keyboard).
 void QsciScintillaQt::SetMouseCapture(bool on)
 {
@@ -227,14 +207,24 @@ bool QsciScintillaQt::HaveMouseCapture()
 // Set the position of the vertical scrollbar.
 void QsciScintillaQt::SetVerticalScrollPos()
 {
-    qsb->verticalScrollBar()->setValue(topLine);
+    QScrollBar *sb = qsb->verticalScrollBar();
+    bool was_blocked = sb->blockSignals(true);
+
+    sb->setValue(topLine);
+
+    sb->blockSignals(was_blocked);
 }
 
 
 // Set the position of the horizontal scrollbar.
 void QsciScintillaQt::SetHorizontalScrollPos()
 {
-    qsb->horizontalScrollBar()->setValue(xOffset);
+    QScrollBar *sb = qsb->horizontalScrollBar();
+    bool was_blocked = sb->blockSignals(true);
+
+    sb->setValue(xOffset);
+
+    sb->blockSignals(was_blocked);
 }
 
 
@@ -242,23 +232,41 @@ void QsciScintillaQt::SetHorizontalScrollPos()
 // the view needs re-drawing.
 bool QsciScintillaQt::ModifyScrollBars(int nMax,int nPage)
 {
-    qsb->verticalScrollBar()->setMinimum(0);
-    qsb->verticalScrollBar()->setMaximum(nMax - nPage + 1);
-    qsb->verticalScrollBar()->setPageStep(nPage);
-    qsb->verticalScrollBar()->setSingleStep(1);
+    bool modified = false;
+    QScrollBar *sb;
 
-    // QAbstractScrollArea ignores Qt::ScrollBarAsNeeded and shows the
-    // horizontal scrollbar if a non-zero maximum is set.  That isn't the
-    // behavior we want, so set the maximum to zero unless scrollWidth exceeds
-    // the viewport.
-    const int widthBeyondViewport = qMax(0,
-            scrollWidth - qsb->viewport()->width());
+    int vNewPage = nPage;
+    int vNewMax = nMax - vNewPage + 1;
 
-    qsb->horizontalScrollBar()->setMinimum(0);
-    qsb->horizontalScrollBar()->setMaximum(qMax(0, widthBeyondViewport - 1));
-    qsb->horizontalScrollBar()->setPageStep(widthBeyondViewport / 10);
+    if (vMax != vNewMax || vPage != vNewPage)
+    {
+        vMax = vNewMax;
+        vPage = vNewPage;
+        modified = true;
 
-    return true;
+        sb = qsb->verticalScrollBar();
+        sb->setMaximum(vMax);
+        sb->setPageStep(vPage);
+    }
+
+    int hNewPage = GetTextRectangle().Width();
+    int hNewMax = (scrollWidth > hNewPage) ? scrollWidth - hNewPage : 0;
+    int charWidth = vs.styles[STYLE_DEFAULT].aveCharWidth;
+
+    sb = qsb->horizontalScrollBar();
+
+    if (hMax != hNewMax || hPage != hNewPage || sb->singleStep() != charWidth)
+    {
+        hMax = hNewMax;
+        hPage = hNewPage;
+        modified = true;
+
+        sb->setMaximum(hMax);
+        sb->setPageStep(hPage);
+        sb->setSingleStep(charWidth);
+    }
+
+    return modified;
 }
 
 
@@ -423,14 +431,12 @@ void QsciScintillaQt::NotifyParent(QSCI_SCI_NAMESPACE(SCNotification) scn)
 }
 
 
-
 // Convert a selection to mime data.
 QMimeData *QsciScintillaQt::mimeSelection(
         const QSCI_SCI_NAMESPACE(SelectionText) &text) const
 {
     return qsb->toMimeData(QByteArray(text.Data()), text.rectangular);
 }
-
 
 
 // Copy the selected text to the clipboard.
@@ -487,17 +493,9 @@ void QsciScintillaQt::pasteFromClipboard(QClipboard::Mode mode)
     QSCI_SCI_NAMESPACE(UndoGroup) ug(pdoc);
 
     ClearSelection();
-
-    QSCI_SCI_NAMESPACE(SelectionPosition) start = sel.IsRectangular()
-            ? sel.Rectangular().Start() : sel.Range(sel.Main()).Start();
-
-    if (selText.rectangular)
-        PasteRectangular(start, selText.Data(), selText.Length());
-    else
-        InsertPaste(start, selText.Data(), selText.Length());
-
-    NotifyChange();
-    Redraw();
+    InsertPasteShape(selText.Data(), selText.Length(),
+            selText.rectangular ? pasteRectangular : pasteStream);
+    EnsureCaretVisible();
 }
 
 
@@ -608,4 +606,89 @@ void QsciScintillaQt::paintEvent(QPaintEvent *e)
         qsb->viewport()->update();
 
     paintState = notPainting;
+}
+
+
+// Re-implemented to drive the tickers.
+void QsciScintillaQt::timerEvent(QTimerEvent *e)
+{
+    for (int i = 0; i <= static_cast<int>(tickPlatform); ++i)
+        if (timers[i] == e->timerId())
+            TickFor(static_cast<TickReason>(i));
+}
+
+
+// Re-implemented to say we support fine tickers.
+bool QsciScintillaQt::FineTickerAvailable()
+{
+    return true;
+}
+
+
+// Re-implemented to stop a ticker.
+void QsciScintillaQt::FineTickerCancel(TickReason reason)
+{
+    int &ticker = timers[static_cast<int>(reason)];
+
+    if (ticker != 0)
+    {
+        killTimer(ticker);
+        ticker = 0;
+    }
+}
+
+
+// Re-implemented to check if a particular ticker is running.
+bool QsciScintillaQt::FineTickerRunning(TickReason reason)
+{
+    return (timers[static_cast<int>(reason)] != 0);
+}
+
+
+// Re-implemented to start a ticker.
+void QsciScintillaQt::FineTickerStart(TickReason reason, int ms, int)
+{
+    int &ticker = timers[static_cast<int>(reason)];
+
+    if (ticker != 0)
+        killTimer(ticker);
+
+    ticker = startTimer(ms);
+}
+
+
+// Re-implemented to support idle processing.
+bool QsciScintillaQt::SetIdle(bool on)
+{
+    if (on)
+    {
+        if (!idler.state)
+        {
+            QTimer *timer = reinterpret_cast<QTimer *>(idler.idlerID);
+
+            if (!timer)
+            {
+                idler.idlerID = timer = new QTimer(this);
+                connect(timer, SIGNAL(timeout()), this, SLOT(onIdle()));
+            }
+
+            timer->start(0);
+            idler.state = true;
+        }
+    }
+    else if (idler.state)
+    {
+        reinterpret_cast<QTimer *>(idler.idlerID)->stop();
+        idler.state = false;
+    }
+
+    return true;
+}
+
+
+// Invoked to trigger any idle processing.
+void QsciScintillaQt::onIdle()
+{
+    if (!Idle())
+        SetIdle(false);
 }

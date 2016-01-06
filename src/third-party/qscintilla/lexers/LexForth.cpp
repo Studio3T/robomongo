@@ -27,15 +27,6 @@
 using namespace Scintilla;
 #endif
 
-static inline bool IsAWordChar(int ch) {
-	return (ch < 0x80) && (isalnum(ch) || ch == '.' ||
-		ch == '_' || ch == '?' || ch == '"' || ch == '@' ||
-		ch == '!' || ch == '[' || ch == ']' || ch == '/' ||
-		ch == '+' || ch == '-' || ch == '*' || ch == '<' ||
-		ch == '>' || ch == '=' || ch == ';' || ch == '(' ||
-		ch == ')' );
-}
-
 static inline bool IsAWordStart(int ch) {
 	return (ch < 0x80) && (isalnum(ch) || ch == '_' || ch == '.');
 }

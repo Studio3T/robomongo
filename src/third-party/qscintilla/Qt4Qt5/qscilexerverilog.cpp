@@ -1,23 +1,18 @@
 // This module implements the QsciLexerVerilog class.
 //
-// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This file may be used under the terms of the GNU General Public
-// License versions 2.0 or 3.0 as published by the Free Software
-// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
-// included in the packaging of this file.  Alternatively you may (at
-// your option) use any later version of the GNU General Public
-// License if such license has been publicly approved by Riverbank
-// Computing Limited (or its successors, if any) and the KDE Free Qt
-// Foundation. In addition, as a special exception, Riverbank gives you
-// certain additional rights. These rights are described in the Riverbank
-// GPL Exception version 1.1, which can be found in the file
-// GPL_EXCEPTION.txt in this package.
+// This file may be used under the terms of the GNU General Public License
+// version 3.0 as published by the Free Software Foundation and appearing in
+// the file LICENSE included in the packaging of this file.  Please review the
+// following information to ensure the GNU General Public License version 3.0
+// requirements will be met: http://www.gnu.org/copyleft/gpl.html.
 // 
-// If you are unsure which license is appropriate for your use, please
-// contact the sales department at sales@riverbankcomputing.com.
+// If you do not wish to use this file under the terms of the GPL version 3.0
+// then you may purchase a commercial license.  For more information contact
+// info@riverbankcomputing.com.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -134,37 +129,68 @@ QColor QsciLexerVerilog::defaultColor(int style) const
     switch (style)
     {
     case Default:
-        return QColor(0x80,0x80,0x80);
+    case InactiveComment:
+    case InactiveCommentLine:
+    case InactiveCommentBang:
+    case InactiveNumber:
+    case InactiveKeyword:
+    case InactiveString:
+    case InactiveKeywordSet2:
+    case InactiveSystemTask:
+    case InactivePreprocessor:
+    case InactiveOperator:
+    case InactiveIdentifier:
+    case InactiveUnclosedString:
+    case InactiveUserKeywordSet:
+    case InactiveCommentKeyword:
+    case InactiveDeclareInputPort:
+    case InactiveDeclareOutputPort:
+    case InactiveDeclareInputOutputPort:
+    case InactivePortConnection:
+        return QColor(0x80, 0x80, 0x80);
 
     case Comment:
     case CommentLine:
-        return QColor(0x00,0x7f,0x00);
+        return QColor(0x00, 0x7f, 0x00);
 
     case CommentBang:
-        return QColor(0x3f,0x7f,0x3f);
+        return QColor(0x3f, 0x7f, 0x3f);
 
     case Number:
     case KeywordSet2:
-        return QColor(0x00,0x7f,0x7f);
+        return QColor(0x00, 0x7f, 0x7f);
 
     case Keyword:
-        return QColor(0x00,0x00,0x7f);
+    case DeclareOutputPort:
+        return QColor(0x00, 0x00, 0x7f);
 
     case String:
-        return QColor(0x7f,0x00,0x7f);
+        return QColor(0x7f, 0x00, 0x7f);
 
     case SystemTask:
-    case UserKeywordSet:
-        return QColor(0x80,0x40,0x20);
+        return QColor(0x80, 0x40, 0x20);
 
     case Preprocessor:
-        return QColor(0x7f,0x7f,0x00);
+        return QColor(0x7f, 0x7f, 0x00);
 
     case Operator:
-        return QColor(0x00,0x70,0x70);
+        return QColor(0x00, 0x70, 0x70);
 
     case UnclosedString:
-        return QColor(0x00,0x00,0x00);
+        return QColor(0x00, 0x00, 0x00);
+
+    case UserKeywordSet:
+    case CommentKeyword:
+        return QColor(0x2a, 0x00, 0xff);
+
+    case DeclareInputPort:
+        return QColor(0x7f, 0x00, 0x00);
+
+    case DeclareInputOutputPort:
+        return QColor(0x00, 0x00, 0xff);
+
+    case PortConnection:
+        return QColor(0x00, 0x50, 0x32);
     }
 
     return QsciLexer::defaultColor(style);
@@ -174,8 +200,31 @@ QColor QsciLexerVerilog::defaultColor(int style) const
 // Returns the end-of-line fill for a style.
 bool QsciLexerVerilog::defaultEolFill(int style) const
 {
-    if (style == CommentBang || style == UnclosedString)
+    switch (style)
+    {
+    case CommentBang:
+    case UnclosedString:
+    case InactiveDefault:
+    case InactiveComment:
+    case InactiveCommentLine:
+    case InactiveCommentBang:
+    case InactiveNumber:
+    case InactiveKeyword:
+    case InactiveString:
+    case InactiveKeywordSet2:
+    case InactiveSystemTask:
+    case InactivePreprocessor:
+    case InactiveOperator:
+    case InactiveIdentifier:
+    case InactiveUnclosedString:
+    case InactiveUserKeywordSet:
+    case InactiveCommentKeyword:
+    case InactiveDeclareInputPort:
+    case InactiveDeclareOutputPort:
+    case InactiveDeclareInputOutputPort:
+    case InactivePortConnection:
         return true;
+    }
 
     return QsciLexer::defaultEolFill(style);
 }
@@ -202,9 +251,32 @@ QFont QsciLexerVerilog::defaultFont(int style) const
         break;
 
     case Keyword:
-    case Operator:
+    case PortConnection:
         f = QsciLexer::defaultFont(style);
         f.setBold(true);
+        break;
+
+    case InactiveDefault:
+    case InactiveComment:
+    case InactiveCommentLine:
+    case InactiveCommentBang:
+    case InactiveNumber:
+    case InactiveKeyword:
+    case InactiveString:
+    case InactiveKeywordSet2:
+    case InactiveSystemTask:
+    case InactivePreprocessor:
+    case InactiveOperator:
+    case InactiveIdentifier:
+    case InactiveUnclosedString:
+    case InactiveUserKeywordSet:
+    case InactiveCommentKeyword:
+    case InactiveDeclareInputPort:
+    case InactiveDeclareOutputPort:
+    case InactiveDeclareInputOutputPort:
+    case InactivePortConnection:
+        f = QsciLexer::defaultFont(style);
+        f.setItalic(true);
         break;
 
     default:
@@ -261,6 +333,36 @@ QString QsciLexerVerilog::description(int style) const
 
     case UserKeywordSet:
         return tr("User defined tasks and identifiers");
+
+    case CommentKeyword:
+        return tr("Keyword comment");
+
+    case InactiveCommentKeyword:
+        return tr("Inactive keyword comment");
+
+    case DeclareInputPort:
+        return tr("Input port declaration");
+
+    case InactiveDeclareInputPort:
+        return tr("Inactive input port declaration");
+
+    case DeclareOutputPort:
+        return tr("Output port declaration");
+
+    case InactiveDeclareOutputPort:
+        return tr("Inactive output port declaration");
+
+    case DeclareInputOutputPort:
+        return tr("Input/output port declaration");
+
+    case InactiveDeclareInputOutputPort:
+        return tr("Inactive input/output port declaration");
+
+    case PortConnection:
+        return tr("Port connection");
+
+    case InactivePortConnection:
+        return tr("Inactive port connection");
     }
 
     return QString();
@@ -270,11 +372,35 @@ QString QsciLexerVerilog::description(int style) const
 // Returns the background colour of the text for a style.
 QColor QsciLexerVerilog::defaultPaper(int style) const
 {
-    if (style == CommentBang)
-        return QColor(0xe0,0xf0,0xff);
+    switch (style)
+    {
+    case CommentBang:
+        return QColor(0xe0, 0xf0, 0xff);
 
-    if (style == UnclosedString)
-        return QColor(0xe0,0xc0,0xe0);
+    case UnclosedString:
+        return QColor(0xe0, 0xc0, 0xe0);
+
+    case InactiveDefault:
+    case InactiveComment:
+    case InactiveCommentLine:
+    case InactiveCommentBang:
+    case InactiveNumber:
+    case InactiveKeyword:
+    case InactiveString:
+    case InactiveKeywordSet2:
+    case InactiveSystemTask:
+    case InactivePreprocessor:
+    case InactiveOperator:
+    case InactiveIdentifier:
+    case InactiveUnclosedString:
+    case InactiveUserKeywordSet:
+    case InactiveCommentKeyword:
+    case InactiveDeclareInputPort:
+    case InactiveDeclareOutputPort:
+    case InactiveDeclareInputOutputPort:
+    case InactivePortConnection:
+        return QColor(0xe0, 0xe0, 0xe0);
+    }
 
     return QsciLexer::defaultPaper(style);
 }
@@ -287,43 +413,39 @@ void QsciLexerVerilog::refreshProperties()
     setCommentProp();
     setCompactProp();
     setPreprocProp();
+
+    // We don't provide options for these as there doesn't seem much point in
+    // disabling them.
+    emit propertyChanged("lexer.verilog.track.preprocessor", "1");
+    emit propertyChanged("lexer.verilog.update.preprocessor", "1");
+    emit propertyChanged("lexer.verilog.portstyling", "1");
+    emit propertyChanged("lexer.verilog.allupperkeywords", "1");
 }
 
 
 // Read properties from the settings.
 bool QsciLexerVerilog::readProperties(QSettings &qs,const QString &prefix)
 {
-    int rc = true;
-
     fold_atelse = qs.value(prefix + "foldatelse", false).toBool();
     fold_comments = qs.value(prefix + "foldcomments", false).toBool();
     fold_compact = qs.value(prefix + "foldcompact", true).toBool();
     fold_preproc = qs.value(prefix + "foldpreprocessor", false).toBool();
     fold_atmodule = qs.value(prefix + "foldverilogflags", false).toBool();
 
-    return rc;
+    return true;
 }
 
 
 // Write properties to the settings.
 bool QsciLexerVerilog::writeProperties(QSettings &qs,const QString &prefix) const
 {
-    int rc = true;
-
     qs.setValue(prefix + "foldatelse", fold_atelse);
     qs.setValue(prefix + "foldcomments", fold_comments);
     qs.setValue(prefix + "foldcompact", fold_compact);
     qs.setValue(prefix + "foldpreprocessor", fold_preproc);
     qs.setValue(prefix + "foldverilogflags", fold_atmodule);
 
-    return rc;
-}
-
-
-// Return true if else can be folded.
-bool QsciLexerVerilog::foldAtElse() const
-{
-    return fold_atelse;
+    return true;
 }
 
 
@@ -339,14 +461,7 @@ void QsciLexerVerilog::setFoldAtElse(bool fold)
 // Set the "fold.at.else" property.
 void QsciLexerVerilog::setAtElseProp()
 {
-    emit propertyChanged("fold.at.else",(fold_atelse ? "1" : "0"));
-}
-
-
-// Return true if comments can be folded.
-bool QsciLexerVerilog::foldComments() const
-{
-    return fold_comments;
+    emit propertyChanged("fold.at.else", (fold_atelse ? "1" : "0"));
 }
 
 
@@ -362,14 +477,7 @@ void QsciLexerVerilog::setFoldComments(bool fold)
 // Set the "fold.comment" property.
 void QsciLexerVerilog::setCommentProp()
 {
-    emit propertyChanged("fold.comment",(fold_comments ? "1" : "0"));
-}
-
-
-// Return true if folds are compact.
-bool QsciLexerVerilog::foldCompact() const
-{
-    return fold_compact;
+    emit propertyChanged("fold.comment", (fold_comments ? "1" : "0"));
 }
 
 
@@ -385,14 +493,7 @@ void QsciLexerVerilog::setFoldCompact(bool fold)
 // Set the "fold.compact" property.
 void QsciLexerVerilog::setCompactProp()
 {
-    emit propertyChanged("fold.compact",(fold_compact ? "1" : "0"));
-}
-
-
-// Return true if preprocessor blocks can be folded.
-bool QsciLexerVerilog::foldPreprocessor() const
-{
-    return fold_preproc;
+    emit propertyChanged("fold.compact", (fold_compact ? "1" : "0"));
 }
 
 
@@ -408,14 +509,7 @@ void QsciLexerVerilog::setFoldPreprocessor(bool fold)
 // Set the "fold.preprocessor" property.
 void QsciLexerVerilog::setPreprocProp()
 {
-    emit propertyChanged("fold.preprocessor",(fold_preproc ? "1" : "0"));
-}
-
-
-// Return true if modules can be folded.
-bool QsciLexerVerilog::foldAtModule() const
-{
-    return fold_atmodule;
+    emit propertyChanged("fold.preprocessor", (fold_preproc ? "1" : "0"));
 }
 
 
@@ -431,5 +525,5 @@ void QsciLexerVerilog::setFoldAtModule(bool fold)
 // Set the "fold.verilog.flags" property.
 void QsciLexerVerilog::setAtModuleProp()
 {
-    emit propertyChanged("fold.verilog.flags",(fold_atmodule ? "1" : "0"));
+    emit propertyChanged("fold.verilog.flags", (fold_atmodule ? "1" : "0"));
 }

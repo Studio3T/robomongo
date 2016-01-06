@@ -1,23 +1,18 @@
 # This script configures QScintilla for PyQt v3 and/or v4.
 #
-# Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
+# Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
 # 
 # This file is part of QScintilla.
 # 
-# This file may be used under the terms of the GNU General Public
-# License versions 2.0 or 3.0 as published by the Free Software
-# Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
-# included in the packaging of this file.  Alternatively you may (at
-# your option) use any later version of the GNU General Public
-# License if such license has been publicly approved by Riverbank
-# Computing Limited (or its successors, if any) and the KDE Free Qt
-# Foundation. In addition, as a special exception, Riverbank gives you
-# certain additional rights. These rights are described in the Riverbank
-# GPL Exception version 1.1, which can be found in the file
-# GPL_EXCEPTION.txt in this package.
+# This file may be used under the terms of the GNU General Public License
+# version 3.0 as published by the Free Software Foundation and appearing in
+# the file LICENSE included in the packaging of this file.  Please review the
+# following information to ensure the GNU General Public License version 3.0
+# requirements will be met: http://www.gnu.org/copyleft/gpl.html.
 # 
-# If you are unsure which license is appropriate for your use, please
-# contact the sales department at sales@riverbankcomputing.com.
+# If you do not wish to use this file under the terms of the GPL version 3.0
+# then you may purchase a commercial license.  For more information contact
+# info@riverbankcomputing.com.
 # 
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -60,7 +55,7 @@ else:
 
 # This must be kept in sync with Python/configure.py, qscintilla.pro,
 # example-Qt4Qt5/application.pro and designer-Qt4Qt5/designer.pro.
-QSCI_API_MAJOR = 11
+QSCI_API_MAJOR = 12
 
 
 # Initialise the globals.
@@ -85,7 +80,7 @@ def create_optparser():
         setattr(parser.values, option.dest, os.path.abspath(value))
 
     p = optparse.OptionParser(usage="python %prog [options]",
-            version="2.8.4")
+            version="2.9.1")
 
     p.add_option("-a", "--apidir", action="callback", default=None,
             type="string", metavar="DIR", dest="qscidir",
@@ -185,8 +180,8 @@ def check_qscintilla():
             # Because we include the Python bindings with the C++ code we can
             # reasonably force the same version to be used and not bother about
             # versioning.
-            if sciversstr != "2.8.4":
-                sipconfig.error("QScintilla %s is being used but the Python bindings 2.8.4 are being built.  Please use matching versions." % sciversstr)
+            if sciversstr != "2.9.1":
+                sipconfig.error("QScintilla %s is being used but the Python bindings 2.9.1 are being built.  Please use matching versions." % sciversstr)
 
             sipconfig.inform("QScintilla %s is being used." % sciversstr)
         else:
@@ -338,7 +333,7 @@ def main(argv):
     global pyqt
 
     # Check SIP is new enough.
-    if "snapshot" not in pyqt.sip_version_str:
+    if "preview" not in pyqt.sip_version_str and "snapshot" not in pyqt.sip_version_str:
         if pyqt.sip_version < sip_min_version:
             sipconfig.error("This version of QScintilla requires SIP v%s or later" % sipconfig.version_to_string(sip_min_version))
 

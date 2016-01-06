@@ -662,7 +662,7 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 	} else if (initStyle == SCE_PL_POD
 	        || initStyle == SCE_PL_POD_VERB
 	          ) {
-		// POD backtracking finds preceeding blank lines and goes back past them
+		// POD backtracking finds preceding blank lines and goes back past them
 		int ln = styler.GetLine(startPos);
 		if (ln > 0) {
 			initStyle = styler.StyleAt(styler.LineStart(--ln));
@@ -1159,12 +1159,12 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 					sc.ForwardSetState(SCE_PL_DEFAULT);
 					HereDoc.State = 3;
 				} else {
-					// invalid indentifier; inexact fallback, but hey
+					// invalid identifier; inexact fallback, but hey
 					sc.ChangeState(SCE_PL_IDENTIFIER);
 					sc.SetState(SCE_PL_DEFAULT);
 				}
 			} else {
-				sc.ChangeState(SCE_PL_DEFAULT);	// invalid indentifier
+				sc.ChangeState(SCE_PL_DEFAULT);	// invalid identifier
 			}
 			backFlag = BACK_NONE;
 			break;
@@ -1185,7 +1185,7 @@ void SCI_METHOD LexerPerl::Lex(unsigned int startPos, int length, int initStyle,
 				}
 				switch (HereDoc.Quote) {
 				case '\'':
-					st_new = SCE_PL_HERE_Q ;
+					st_new = SCE_PL_HERE_Q;
 					break;
 				case '"' :
 					st_new = SCE_PL_HERE_QQ;
@@ -1726,4 +1726,4 @@ void SCI_METHOD LexerPerl::Fold(unsigned int startPos, int length, int /* initSt
 	styler.SetLevel(lineCurrent, levelPrev | flagsNext);
 }
 
-LexerModule lmPerl(SCLEX_PERL, LexerPerl::LexerFactoryPerl, "perl", perlWordListDesc, 8);
+LexerModule lmPerl(SCLEX_PERL, LexerPerl::LexerFactoryPerl, "perl", perlWordListDesc);

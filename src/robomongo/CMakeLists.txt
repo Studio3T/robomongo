@@ -86,6 +86,9 @@ set(FILES
     # Isolated scope #4
     gui/dialogs/PreferencesDialog.cpp
     gui/dialogs/ConnectionsDialog.cpp
+
+    # Isolated scope #5
+    gui/editors/PlainJavaScriptEditor.cpp
 #    gui/widgets/explorer/ExplorerCollectionTreeItem.cpp
 #    gui/widgets/explorer/ExplorerTreeItem.cpp
 #    gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp
@@ -97,7 +100,7 @@ add_library(step-by-step ${FILES})
 target_link_libraries(step-by-step Qt5::Widgets)
 
 add_executable(exe entry.cpp ${FILES})
-target_link_libraries(exe Qt5::Widgets roboshell pthread dl pcre pcrecpp qjson-qt5)
+target_link_libraries(exe Qt5::Widgets roboshell pthread dl pcre pcrecpp qjson-qt5 qscintilla2)
 
 print_include_dirs()
 #print_vars(include)

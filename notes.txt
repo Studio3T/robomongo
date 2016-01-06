@@ -1,0 +1,12 @@
+This is a logbook for notes about migration to MongoDB 3.2 and upgrading of Scintilla and QJson libraries.
+
+QScintilla
+----------
+
+Upgraded and compiled on Linux (and only on Linux for now) in this way:
+
+cd third-party/qscintilla/Qt4Qt5
+qmake qscintilla.pro
+make -j5
+
+Shared libs will be located in the same directory

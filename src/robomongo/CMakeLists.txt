@@ -83,11 +83,13 @@ set(FILES
     gui/utils/ComboBoxUtils.cpp
     gui/utils/DialogUtils.cpp
 
-    # More to come here...
-    #core/domain/Notifier.cpp
-    #gui/dialogs/PreferencesDialog.cpp
-    #gui/dialogs/ConnectionSslTab.cpp
-#    gui/dialogs/ConnectionsDialog.cpp
+    # Isolated scope #4
+    gui/dialogs/PreferencesDialog.cpp
+    gui/dialogs/ConnectionsDialog.cpp
+#    gui/widgets/explorer/ExplorerCollectionTreeItem.cpp
+#    gui/widgets/explorer/ExplorerTreeItem.cpp
+#    gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp
+
 
 )
 

@@ -94,7 +94,7 @@ set(FILES
     gui/widgets/explorer/EditIndexDialog.cpp
     gui/widgets/workarea/ScriptWidget.cpp
 
-    # Isolated scopt #6
+    # Isolated scope #6
     gui/widgets/explorer/ExplorerCollectionTreeItem.cpp
     gui/widgets/explorer/ExplorerTreeItem.cpp
     gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp
@@ -103,6 +103,17 @@ set(FILES
     gui/widgets/explorer/ExplorerFunctionTreeItem.cpp
     gui/dialogs/DocumentTextEditor.cpp
     gui/dialogs/FunctionTextEditor.cpp
+
+    # Isolated scope #7
+    gui/widgets/explorer/ExplorerServerTreeItem.cpp
+    gui/widgets/explorer/ExplorerTreeWidget.cpp
+    gui/widgets/explorer/ExplorerWidget.cpp
+    gui/widgets/workarea/BsonTableModel.cpp
+    gui/widgets/workarea/BsonTableView.cpp
+    gui/widgets/workarea/BsonTreeItem.cpp
+    gui/widgets/workarea/BsonTreeModel.cpp
+    gui/widgets/workarea/BsonTreeView.cpp
+    core/domain/Notifier.cpp
 
     # More to come here..
 

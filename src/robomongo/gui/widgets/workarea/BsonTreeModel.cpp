@@ -1,7 +1,6 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
 
-#include <mongo/client/dbclient.h>
-#include <mongo/bson/bsonobjiterator.h>
+#include <mongo/client/dbclientinterface.h>
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/utils/BsonUtils.h"
@@ -121,7 +120,7 @@ namespace Robomongo
         case mongo::DBRef: return GuiRegistry::instance().circleIcon();
         case mongo::Code: case mongo::CodeWScope: return GuiRegistry::instance().circleIcon();
         case mongo::NumberInt: return GuiRegistry::instance().bsonIntegerIcon();
-        case mongo::Timestamp: return GuiRegistry::instance().bsonDateTimeIcon();
+        case mongo::bsonTimestamp: return GuiRegistry::instance().bsonDateTimeIcon();
         case mongo::NumberLong: return GuiRegistry::instance().bsonIntegerIcon();
         default: return GuiRegistry::instance().circleIcon();
         }

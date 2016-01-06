@@ -115,6 +115,21 @@ set(FILES
     gui/widgets/workarea/BsonTreeView.cpp
     core/domain/Notifier.cpp
 
+    # Isolated scope #8
+    gui/widgets/workarea/CollectionStatsTreeItem.cpp
+    gui/widgets/workarea/CollectionStatsTreeWidget.cpp
+    gui/widgets/workarea/JsonPrepareThread.cpp
+    gui/widgets/workarea/OutputItemContentWidget.cpp
+    gui/widgets/workarea/OutputItemHeaderWidget.cpp
+    gui/widgets/workarea/OutputWidget.cpp
+    gui/widgets/workarea/PagingWidget.cpp
+    gui/widgets/workarea/ProgressBarPopup.cpp
+    gui/widgets/workarea/QueryWidget.cpp
+    gui/widgets/workarea/WorkAreaTabBar.cpp
+    gui/widgets/workarea/WorkAreaTabWidget.cpp
+#    gui/widgets/LogWidget.cpp
+
+
     # More to come here..
 
 )

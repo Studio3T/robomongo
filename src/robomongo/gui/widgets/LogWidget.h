@@ -1,5 +1,8 @@
 #pragma once
 
+// v0.9
+#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kStorage
+
 #include <QWidget>
 #include <mongo/util/log.h>
 QT_BEGIN_NAMESPACE

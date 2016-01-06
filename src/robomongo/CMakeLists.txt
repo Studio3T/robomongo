@@ -68,7 +68,27 @@ set(FILES
     core/settings/SettingsManager.cpp
     core/AppRegistry.cpp
 
+    # Isolated Scope #3
+    gui/GuiRegistry.cpp
+    gui/dialogs/AboutDialog.cpp
+    gui/dialogs/ConnectionAdvancedTab.cpp
+    gui/dialogs/ConnectionAuthTab.cpp
+    gui/dialogs/ConnectionBasicTab.cpp
+    gui/dialogs/ConnectionDiagnosticDialog.cpp
+    gui/dialogs/ConnectionDialog.cpp
+    gui/dialogs/CopyCollectionDialog.cpp
+    gui/widgets/workarea/IndicatorLabel.cpp
+    gui/dialogs/CreateDatabaseDialog.cpp
+    gui/dialogs/CreateUserDialog.cpp
+    gui/utils/ComboBoxUtils.cpp
+    gui/utils/DialogUtils.cpp
+
     # More to come here...
+    #core/domain/Notifier.cpp
+    #gui/dialogs/PreferencesDialog.cpp
+    #gui/dialogs/ConnectionSslTab.cpp
+#    gui/dialogs/ConnectionsDialog.cpp
+
 )
 
 add_library(step-by-step ${FILES})

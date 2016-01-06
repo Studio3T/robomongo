@@ -23,6 +23,8 @@ add_definitions(
 )
 
 set(FILES
+
+    # Isolated Scope #1
     core/utils/QtUtils.cpp
     core/utils/StdUtils.cpp
     core/utils/Logger.cpp
@@ -30,7 +32,6 @@ set(FILES
     core/utils/BsonUtils.cpp
     core/settings/CredentialSettings.cpp
     core/settings/ConnectionSettings.cpp
-#    core/settings/SettingsManager.cpp
     core/Event.cpp
     core/Enums.cpp
     core/EventError.cpp
@@ -47,17 +48,27 @@ set(FILES
     core/domain/MongoCollection.cpp
     core/domain/MongoCollectionInfo.cpp
     core/domain/MongoQueryInfo.cpp
-#   core/domain/MongoDocument.cpp
     core/domain/MongoShellResult.cpp
     core/domain/CursorPosition.cpp
     core/domain/ScriptInfo.cpp
-#   core/domain/App.cpp
-
     core/events/MongoEventsInfo.cpp
-
-
     shell/db/ptimeutil.cpp
-#    gui/AppStyle.cpp
+
+    # Isolated Scope #2
+    core/engine/ScriptEngine.cpp
+    core/events/MongoEvents.cpp
+    core/domain/MongoDocument.cpp
+    gui/AppStyle.cpp
+    core/domain/MongoServer.cpp
+    core/domain/MongoShell.cpp
+    core/domain/MongoDatabase.cpp
+    core/domain/App.cpp
+    core/mongodb/MongoClient.cpp
+    core/mongodb/MongoWorker.cpp
+    core/settings/SettingsManager.cpp
+    core/AppRegistry.cpp
+
+    # More to come here...
 )
 
 add_library(step-by-step ${FILES})

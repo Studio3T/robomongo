@@ -22,13 +22,13 @@ namespace
          * @brief Config file absolute path
          *        (usually: /home/user/.config/robomongo/robomongo.json)
          */
-        const QString _configPath = QString("%1/.config/"PROJECT_NAME_LOWERCASE"/"PROJECT_NAME_LOWERCASE".json").arg(QDir::homePath());
+        const QString _configPath = QString("%1/.config/" PROJECT_NAME_LOWERCASE "/" PROJECT_NAME_LOWERCASE ".json").arg(QDir::homePath());
 
         /**
          * @brief Config file containing directory path
          *        (usually: /home/user/.config/robomongo)
          */
-        const QString _configDir = QString("%1/.config/"PROJECT_NAME_LOWERCASE).arg(QDir::homePath());
+        const QString _configDir = QString("%1/.config/" PROJECT_NAME_LOWERCASE).arg(QDir::homePath());
 }
 
 namespace Robomongo

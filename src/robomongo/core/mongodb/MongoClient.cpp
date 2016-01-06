@@ -78,7 +78,7 @@ namespace Robomongo
         MongoNamespace ns(dbName, "system.users");
         std::vector<MongoUser> users;
 
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query()));
+        std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query()));
         float ver = getVersion();
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -124,7 +124,7 @@ namespace Robomongo
         MongoNamespace ns(dbName, "system.js");
         std::vector<MongoFunction> functions;
 
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query()));
+        std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query()));
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -142,10 +142,12 @@ namespace Robomongo
     std::vector<EnsureIndexInfo> MongoClient::getIndexes(const MongoCollectionInfo &collection) const
     {
         std::vector<EnsureIndexInfo> result;
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexes(collection.ns().toString()));
+        std::list<mongo::BSONObj> indexes = _dbclient->getIndexSpecs(collection.ns().toString());
 
-        while (cursor->more()) {
-            mongo::BSONObj bsonObj = cursor->next();
+//        std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexSpecs(collection.ns().toString()));
+
+        for (std::list<mongo::BSONObj>::iterator it = indexes.begin(); it != indexes.end(); ++it) {
+            mongo::BSONObj bsonObj = *it;
             result.push_back(makeEnsureIndexInfoFromBsonObj(collection,bsonObj));
         }
 
@@ -155,7 +157,11 @@ namespace Robomongo
     void MongoClient::ensureIndex(const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo) const
     {   
         std::string ns = newInfo._collection.ns().toString();
-        mongo::BSONObj keys = mongo::Robomongo::fromjson(newInfo._request);
+
+        // v0.9
+        // mongo::BSONObj keys = mongo::Robomongo::fromjson(newInfo._request);
+
+        mongo::BSONObj keys = mongo::fromjson(newInfo._request);
         mongo::BSONObjBuilder toSave;
         bool cache=true;
         int version =-1;
@@ -373,7 +379,7 @@ namespace Robomongo
         if (!_dbclient->exists(to.toString()))
             _dbclient->createCollection(to.toString());
 
-        std::auto_ptr<mongo::DBClientCursor> cursor(_dbclient->query(from.toString(), mongo::Query()));
+        std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(from.toString(), mongo::Query()));
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
             _dbclient->insert(to.toString(), bsonObj);
@@ -385,7 +391,7 @@ namespace Robomongo
         if (!_dbclient->exists(to.toString()))
             _dbclient->createCollection(to.toString());
 
-        std::auto_ptr<mongo::DBClientCursor> cursor(fromServ->query(from.toString(), mongo::Query()));
+        std::unique_ptr<mongo::DBClientCursor> cursor(fromServ->query(from.toString(), mongo::Query()));
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
             _dbclient->insert(to.toString(), bsonObj);
@@ -431,7 +437,7 @@ namespace Robomongo
         if (info._limit == -1) // it means that we do not need to load any documents
             return docs;
 
-        std::auto_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
+        std::unique_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
             ns.toString(), info._query, info._limit, info._skip,
             info._fields.nFields() ? &info._fields : 0, info._options, info._batchSize);
 

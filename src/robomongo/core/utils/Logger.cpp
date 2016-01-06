@@ -43,9 +43,10 @@ namespace Robomongo
     }
 
     void Logger::print(const QString &mess, mongo::logger::LogSeverity level, bool notify)
-    {        
-        LOG(level) << "[" PROJECT_NAME_TITLE "] " << QtUtils::toStdString(mess) << std::endl;
-        if (notify)
-            emit printed(mess, level);
+    {
+        // v0.9
+//        LOG(level) << "[" PROJECT_NAME_TITLE "] " << QtUtils::toStdString(mess) << std::endl;
+//        if (notify)
+//            emit printed(mess, level);
     }
 }

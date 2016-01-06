@@ -17,4 +17,7 @@ DocumentTextEditor.cpp
 
 Commented error reporting.
 
+Logger.cpp
+----------
 
+Commented Logger::print().

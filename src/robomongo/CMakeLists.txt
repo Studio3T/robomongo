@@ -131,13 +131,14 @@ set(FILES
 
     # More to come here..
     gui/widgets/LogWidget.cpp
+    gui/MainWindow.cpp
 
 )
 
 add_library(step-by-step ${FILES})
 target_link_libraries(step-by-step Qt5::Widgets)
 
-add_executable(exe entry.cpp ${FILES})
+add_executable(exe app/main.cpp ${FILES})
 target_link_libraries(exe Qt5::Widgets roboshell pthread dl pcre pcrecpp qjson-qt5 qscintilla2)
 
 print_include_dirs()

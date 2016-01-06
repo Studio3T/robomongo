@@ -17,6 +17,7 @@
 #include <QStatusBar>
 #include <QHBoxLayout>
 
+#include <mongo/logger/log_severity.h>
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
@@ -495,7 +496,7 @@ namespace Robomongo
 
         createTabs();
         createStatusBar();
-        setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
+        setWindowTitle(PROJECT_NAME_TITLE " " PROJECT_VERSION);
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
         QTimer::singleShot(0, this, SLOT(manageConnections()));
@@ -929,7 +930,7 @@ namespace Robomongo
         addDockWidget(Qt::LeftDockWidgetArea, explorerDock);
 
         LogWidget *log = new LogWidget(this);        
-        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, mongo::LogLevel)), log, SLOT(addMessage(const QString&, mongo::LogLevel))));
+        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, mongo::logger::LogSeverity)), log, SLOT(addMessage(const QString&, mongo::logger::LogSeverity))));
         _logDock = new QDockWidget(tr("Logs"));
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         _logDock->setWidget(log);

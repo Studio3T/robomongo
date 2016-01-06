@@ -1,12 +1,12 @@
 #pragma once
 
-// v0.9
-#define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kStorage
+
+// #define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kStorage
 
 #include <QObject>
 #include <QString>
 #include <string>
-#include <mongo/util/log.h>
+#include <mongo/logger/log_severity.h>
 #include "robomongo/core/utils/SingletonPattern.hpp"
 
 namespace Robomongo

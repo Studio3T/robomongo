@@ -21,7 +21,6 @@
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/domain/MongoCollection.h"
-#include "robomongo/shell/db/json.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace
@@ -31,11 +30,10 @@ namespace
         bool result = false;
         if (!text.isEmpty()) {
             try {
-                mongo::Robomongo::fromjson(text.toUtf8());
+                mongo::fromjson(text.toUtf8());
                 result = true;
             }
-            catch (const mongo::ParseMsgAssertionException &) {
-
+            catch (const mongo::MsgAssertionException &) {
             }
         }
         return result;

@@ -89,10 +89,22 @@ set(FILES
 
     # Isolated scope #5
     gui/editors/PlainJavaScriptEditor.cpp
-#    gui/widgets/explorer/ExplorerCollectionTreeItem.cpp
-#    gui/widgets/explorer/ExplorerTreeItem.cpp
-#    gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp
+    gui/editors/JSLexer.cpp
+    gui/editors/FindFrame.cpp
+    gui/widgets/explorer/EditIndexDialog.cpp
+    gui/widgets/workarea/ScriptWidget.cpp
 
+    # Isolated scopt #6
+    gui/widgets/explorer/ExplorerCollectionTreeItem.cpp
+    gui/widgets/explorer/ExplorerTreeItem.cpp
+    gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp
+    gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp
+    gui/widgets/explorer/ExplorerUserTreeItem.cpp
+    gui/widgets/explorer/ExplorerFunctionTreeItem.cpp
+    gui/dialogs/DocumentTextEditor.cpp
+    gui/dialogs/FunctionTextEditor.cpp
+
+    # More to come here..
 
 )
 

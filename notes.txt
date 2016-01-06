@@ -10,3 +10,11 @@ qmake qscintilla.pro
 make -j5
 
 Shared libs will be located in the same directory
+
+
+DocumentTextEditor.cpp
+----------------------
+
+Commented error reporting.
+
+

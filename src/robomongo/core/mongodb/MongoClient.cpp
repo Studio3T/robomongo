@@ -2,7 +2,7 @@
 
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/utils/BsonUtils.h"
-#include "robomongo/shell/db/json.h"
+#include <mongo/db/json.h>
 
 namespace
 {

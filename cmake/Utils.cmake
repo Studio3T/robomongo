@@ -60,3 +60,15 @@ function(print_include_dirs)
         message("${dir}")
     endforeach()
 endfunction()
+
+###
+# Prints link directories
+#
+function(print_link_dirs)
+    get_property(dirs DIRECTORY PROPERTY LINK_DIRECTORIES)
+    foreach(dir ${dirs})
+        message("${dir}")
+    endforeach()
+endfunction()
+
+

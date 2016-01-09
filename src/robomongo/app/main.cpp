@@ -2,12 +2,16 @@
 #include <QDesktopWidget>
 
 #include <locale.h>
+#include <mongo/base/initializer.h>
 
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/AppStyle.h"
 
-int main(int argc, char *argv[])
+
+
+int main(int argc, char *argv[], char** envp)
 {
+    mongo::runGlobalInitializersOrDie(argc, argv, envp);
     QApplication app(argc, argv);
     Robomongo::detail::initStyle();    
     setlocale(LC_NUMERIC,"C"); // do not move this line!!!

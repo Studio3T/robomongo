@@ -20,6 +20,15 @@ add_definitions(
     -DPROJECT_GITHUB_ISSUES="${PROJECT_GITHUB_ISSUES}"
     -DPROJECT_VERSION="${PROJECT_VERSION}"
     -DPROJECT_NAME_LOWERCASE="${PROJECT_NAME_LOWERCASE}"
+    -DPCRE_STATIC
+    -DBOOST_THREAD_VERSION=4
+    -DBOOST_THREAD_DONT_PROVIDE_VARIADIC_THREAD
+    -DBOOST_THREAD_NO_DEPRECATED
+    -DBOOST_THREAD_DONT_PROVIDE_INTERRUPTIONS
+    -DBOOST_THREAD_HAS_BUG
+    -DMONGO_CONFIG_HAVE_HEADER_UNISTD_H
+    -DZZZZZZ
+#    -D_GLIBCXX_DEBUG
 )
 
 set(FILES
@@ -133,13 +142,119 @@ set(FILES
     gui/widgets/LogWidget.cpp
     gui/MainWindow.cpp
 
+    gui/resources/gui.qrc
+
 )
 
-add_library(step-by-step ${FILES})
-target_link_libraries(step-by-step Qt5::Widgets)
+SET(STATIC_LIBS
+    build/debug/mongo/bson/mutable/mutable_bson
+    build/debug/mongo/bson/util/libbson_extract.a
+    build/debug/mongo/client/libauthentication.a
+    build/debug/mongo/client/libclientdriver.a
+    build/debug/mongo/client/libconnection_string.a
+    build/debug/mongo/client/libread_preference.a
+    build/debug/mongo/client/libsasl_client.a
+    build/debug/mongo/crypto/libcrypto_tom.a
+    build/debug/mongo/crypto/libscramauth.a
+    build/debug/mongo/crypto/tom/libtomcrypt.a
+    build/debug/mongo/db/auth/libauthcommon.a
+    build/debug/mongo/db/catalog/libindex_key_validate.a
+    build/debug/mongo/db/commands/libtest_commands_enabled.a
+    build/debug/mongo/db/fts/libbase.a
+    build/debug/mongo/db/fts/unicode/libunicode.a
+    build/debug/mongo/db/geo/libgeometry.a
+    build/debug/mongo/db/geo/libgeoparser.a
+    build/debug/mongo/db/index/libexpression_params.a
+    build/debug/mongo/db/index/libexternal_key_generator.a
+    build/debug/mongo/db/index/libkey_generator.a
+    build/debug/mongo/db/libcommon.a
+    build/debug/mongo/db/libdbmessage.a
+    build/debug/mongo/db/libindex_names.a
+    build/debug/mongo/db/libmongohasher.a
+    build/debug/mongo/db/libnamespace_string.a
+    build/debug/mongo/db/libserver_options_core.a
+    build/debug/mongo/db/libserver_parameters.a
+    build/debug/mongo/db/libservice_context.a
+    build/debug/mongo/db/query/libcommand_request_response.a
+    build/debug/mongo/db/query/liblite_parsed_query.a
+    build/debug/mongo/db/repl/liboptime.a
+    build/debug/mongo/db/repl/libread_concern_args.a
+    build/debug/mongo/executor/libremote_command.a
+    build/debug/mongo/libbase.a
+    build/debug/mongo/liblinenoise_utf8.a
+    build/debug/mongo/libshell_core.a
+    build/debug/mongo/libshell_options.a
+    build/debug/mongo/platform/libplatform.a
+    build/debug/mongo/rpc/libcommand_reply.a
+    build/debug/mongo/rpc/libcommand_request.a
+    build/debug/mongo/rpc/libcommand_status.a
+    build/debug/mongo/rpc/libdocument_range.a
+    build/debug/mongo/rpc/liblegacy_reply.a
+    build/debug/mongo/rpc/liblegacy_request.a
+    build/debug/mongo/rpc/libmetadata.a
+    build/debug/mongo/rpc/libprotocol.a
+    build/debug/mongo/rpc/librpc.a
+    build/debug/mongo/scripting/libbson_template_evaluator.a
+    build/debug/mongo/scripting/libscripting.a
+    build/debug/mongo/scripting/libscripting_common.a
+    build/debug/mongo/shell/libmongojs.a
+    build/debug/mongo/util/concurrency/libspin_lock.a
+    build/debug/mongo/util/concurrency/libsynchronization.a
+    build/debug/mongo/util/concurrency/libticketholder.a
+    build/debug/mongo/util/libbackground_job.a
+    build/debug/mongo/util/libdebugger.a
+    build/debug/mongo/util/libdecorable.a
+    build/debug/mongo/util/libfail_point.a
+    build/debug/mongo/util/libfoundation.a
+    build/debug/mongo/util/libmd5.a
+    build/debug/mongo/util/libpassword.a
+    build/debug/mongo/util/libprocessinfo.a
+    build/debug/mongo/util/libquick_exit.a
+    build/debug/mongo/util/libsafe_num.a
+    build/debug/mongo/util/libsignal_handlers.a
+    build/debug/mongo/util/net/libhostandport.a
+    build/debug/mongo/util/net/libnetwork.a
+    build/debug/mongo/util/options_parser/liboptions_parser.a
+    build/debug/mongo/util/options_parser/liboptions_parser_init.a
+    build/debug/third_party/boost-1.56.0/libboost_chrono.a
+    build/debug/third_party/boost-1.56.0/libboost_filesystem.a
+    build/debug/third_party/boost-1.56.0/libboost_program_options.a
+    build/debug/third_party/boost-1.56.0/libboost_regex.a
+    build/debug/third_party/boost-1.56.0/libboost_system.a
+    build/debug/third_party/boost-1.56.0/libboost_thread.a
+    build/debug/third_party/gperftools-2.2/libtcmalloc_minimal.a
+    build/debug/third_party/libshim_allocator.a
+    build/debug/third_party/libshim_boost.a
+    build/debug/third_party/libshim_mozjs.a
+    build/debug/third_party/libshim_pcrecpp.a
+    build/debug/third_party/libshim_stemmer.a
+    build/debug/third_party/libshim_tz.a
+    build/debug/third_party/libshim_yaml.a
+    build/debug/third_party/libshim_zlib.a
+    build/debug/third_party/libstemmer_c/libstemmer.a
+    build/debug/third_party/mozjs-38/libmozjs.a
+    build/debug/third_party/murmurhash3/libmurmurhash3.a
+    build/debug/third_party/pcre-8.37/libpcrecpp.a
+    build/debug/third_party/s2/base/libbase.a
+    build/debug/third_party/s2/libs2.a
+    build/debug/third_party/s2/strings/libstrings.a
+    build/debug/third_party/s2/util/coding/libcoding.a
+    build/debug/third_party/s2/util/math/libmath.a
+    build/debug/third_party/yaml-cpp-0.5.1/libyaml.a
+    build/debug/third_party/zlib-1.2.8/libzlib.a
+)
+
 
 add_executable(exe app/main.cpp ${FILES})
-target_link_libraries(exe Qt5::Widgets roboshell pthread dl pcre pcrecpp qjson-qt5 qscintilla2)
+target_link_libraries(exe Qt5::Widgets qjson-qt5 qscintilla2 -Wl,--whole-archive -Wl,--start-group ${STATIC_LIBS} -Wl,--end-group -Wl,--no-whole-archive m rt dl)
 
+# It works!
+# add_executable(exe shell/shell/dbshell.cpp)
+# target_link_libraries(exe -Wl,--whole-archive -Wl,--start-group ${STATIC_LIBS} -Wl,--end-group -Wl,--no-whole-archive m rt dl)
+
+message("Include")
 print_include_dirs()
+
+message("Link")
+print_link_dirs()
 #print_vars(include)

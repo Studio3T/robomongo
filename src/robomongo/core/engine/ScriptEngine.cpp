@@ -49,6 +49,11 @@ namespace
 
 namespace mongo {
     extern bool isShell;
+
+    void logProcessDetailsForLogRotate() {}
+
+    void exitCleanly(ExitCode code) {}
+
 }
 
 namespace Robomongo
@@ -94,6 +99,7 @@ namespace Robomongo
 
         {
             mongo::shell_utils::_dbConnect = ss.str();
+            mongo::shell_utils::_dbAuth = "(function() { \nDB.prototype._defaultGssapiServiceName = \"mongodb\";\n}())";
 
             // v0.9
             // mongo::isShell = true;

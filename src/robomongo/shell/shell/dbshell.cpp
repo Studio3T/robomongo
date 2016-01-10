@@ -611,11 +611,11 @@ int _main(int argc, char* argv[], char** envp) {
 
     mongo::StartupTest::runTests();
 
-/*    logger::globalLogManager()
+    logger::globalLogManager()
         ->getNamedDomain("javascriptOutput")
         ->attachAppender(logger::MessageLogDomain::AppenderAutoPtr(
             new logger::ConsoleAppender<logger::MessageEventEphemeral>(
-                new logger::MessageEventUnadornedEncoder)));*/
+                new logger::MessageEventUnadornedEncoder)));
 
     if (!shellGlobalParams.nodb) {  // connect to db
         stringstream ss;

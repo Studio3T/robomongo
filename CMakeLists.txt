@@ -22,7 +22,7 @@ find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(MongoDB REQUIRED)
 
-#add_subdirectory(src)
+add_subdirectory(src/third-party/qjson)
 
 # Show configuration summary and build tip
 message("")

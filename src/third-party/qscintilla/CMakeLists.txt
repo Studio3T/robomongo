@@ -3,18 +3,6 @@
 
 project(QScintilla)
 
-include_directories(
-    sources/Qt4Qt5
-    sources/include
-    sources/lexlib
-    sources/src
-)
-
-add_definitions(
-    -DSCINTILLA_QT
-    -DSCI_LEXER
-)
-
 add_library(qscintilla
     sources/lexlib/StyleContext.cpp
     sources/lexlib/WordList.cpp
@@ -211,4 +199,20 @@ add_library(qscintilla
     sources/src/CaseFolder.cpp
 )
 
-target_link_libraries(qscintilla Qt5::Widgets Qt5::PrintSupport)
+target_link_libraries(qscintilla
+    PUBLIC
+        Qt5::Widgets
+        Qt5::PrintSupport)
+
+target_include_directories(qscintilla
+    PUBLIC
+        sources/Qt4Qt5
+        sources/include
+        sources/lexlib
+        sources/src)
+
+target_compile_definitions(qscintilla
+    PUBLIC
+        SCINTILLA_QT
+        SCI_LEXER)
+

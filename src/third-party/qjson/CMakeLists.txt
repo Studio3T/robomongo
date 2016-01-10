@@ -7,7 +7,12 @@ add_library(qjson
     sources/src/json_parser.cc
     sources/src/parserrunnable.cpp
     sources/src/serializer.cpp
-    sources/src/serializerrunnable.cpp
-)
+    sources/src/serializerrunnable.cpp)
 
-target_link_libraries(qjson Qt5::Core)
+target_link_libraries(qjson
+    PUBLIC
+        Qt5::Core)
+
+target_include_directories(qjson
+    PUBLIC
+        sources/src)

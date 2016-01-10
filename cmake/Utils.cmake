@@ -71,4 +71,34 @@ function(print_link_dirs)
     endforeach()
 endfunction()
 
+###
+# Prints compile definitions
+#
+function(print_compile_definitions)
+    get_property(defs DIRECTORY PROPERTY COMPILE_DEFINITIONS)
+    foreach(def ${defs})
+        message("${def}")
+    endforeach()
+endfunction()
+
+
+###
+# Prints target include directories
+#
+function(print_target_include_dirs target)
+    get_property(dirs TARGET ${target} PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+    foreach(dir ${dirs})
+        message("${dir}")
+    endforeach()
+endfunction()
+
+###
+# Prints target include directories
+#
+function(print_target_compile_definitions target)
+    get_property(defs TARGET ${target} PROPERTY INTERFACE_COMPILE_DEFINITIONS)
+    foreach(def ${defs})
+        message("${def}")
+    endforeach()
+endfunction()
 

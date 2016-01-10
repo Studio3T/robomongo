@@ -1,4 +1,12 @@
 
+add_executable(main2 app/main2.cpp)
+target_link_libraries(main2 Qt5::Widgets qjson qscintilla)
+
+#print_include_dirs()
+#print_target_include_dirs(qjson)
+
+return()
+
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     add_definitions(-DOS_LINUX -DOS_POSIX)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")

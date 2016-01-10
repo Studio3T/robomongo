@@ -12,7 +12,7 @@ set(PROJECT_VERSION_BUILD -dev)
 set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}${PROJECT_VERSION_BUILD}")
 
 # Modules
-include(Utils)
+include(PrintUtils)
 include(DefineCMakeDefaults)
 include(DefineTrashSymbols)
 

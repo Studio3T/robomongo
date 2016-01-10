@@ -139,8 +139,8 @@ set(FILES
     gui/resources/gui.qrc
 )
 
-add_executable(exe shell/shell/dbshell.cpp)
-target_link_libraries(exe mongodb)
+add_executable(shell shell/shell/dbshell.cpp)
+target_link_libraries(shell mongodb)
 
 # It works!
 #include_directories(${MongoDB_INCLUDE_DIRS})

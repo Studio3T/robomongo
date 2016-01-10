@@ -7,4 +7,4 @@ libraries:
 1. QJson 
 2. QScintilla
 
-
+You do not need to build them separately. 

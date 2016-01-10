@@ -153,14 +153,35 @@ find_package_handle_standard_args(MongoDB
 set(start -Wl,--whole-archive -Wl,--start-group)
 set(end -Wl,--end-group -Wl,--no-whole-archive)
 
+set(definitions
+    DPCRE_STATIC
+    BOOST_THREAD_VERSION=4
+    BOOST_THREAD_DONT_PROVIDE_VARIADIC_THREAD
+    BOOST_THREAD_NO_DEPRECATED
+    BOOST_THREAD_DONT_PROVIDE_INTERRUPTIONS
+    BOOST_THREAD_HAS_BUG
+    MONGO_CONFIG_HAVE_HEADER_UNISTD_H
+)
+
 if(MongoDB_FOUND)
     set(MongoDB_VERSION ${git_describe})
     set(MongoDB_DIR ${base_dir})
-    set(MongoDB_LIBRARIES ${start} ${static_libs} ${end})
+    set(MongoDB_LIBRARIES ${start} ${static_libs} ${end} dl) # Original MongoDB link command has the following in the end: m rt dl
     set(MongoDB_INCLUDE_DIRS ${include_dirs})
-endif()
+    set(MongoDB_COMPILE_DEFINITIONS ${definitions})
 
-#mark_as_advanced()
+    # Add imported target
+    add_library(mongodb STATIC IMPORTED)
+
+    # Specify INTERFACE properties for this target
+    set_target_properties(mongodb PROPERTIES
+        IMPORTED_LOCATION             "${base_dir}/${build_dir}/mongo/bson/mutable/libmutable_bson.a"
+        INTERFACE_LINK_LIBRARIES      "${MongoDB_LIBRARIES}"
+        INTERFACE_COMPILE_DEFINITIONS "${MongoDB_COMPILE_DEFINITIONS}"
+        INTERFACE_INCLUDE_DIRECTORIES "${MongoDB_INCLUDE_DIRS}"
+    )
+
+endif()
 
 # Cleanup
 unset(base_dir)
@@ -170,4 +191,5 @@ unset(src_dir)
 unset(static_libs)
 unset(start)
 unset(end)
+unset(definitions)
 

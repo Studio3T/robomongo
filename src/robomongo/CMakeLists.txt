@@ -23,13 +23,6 @@ add_definitions(
     -DPROJECT_GITHUB_ISSUES="${PROJECT_GITHUB_ISSUES}"
     -DPROJECT_VERSION="${PROJECT_VERSION}"
     -DPROJECT_NAME_LOWERCASE="${PROJECT_NAME_LOWERCASE}"
-    -DPCRE_STATIC
-    -DBOOST_THREAD_VERSION=4
-    -DBOOST_THREAD_DONT_PROVIDE_VARIADIC_THREAD
-    -DBOOST_THREAD_NO_DEPRECATED
-    -DBOOST_THREAD_DONT_PROVIDE_INTERRUPTIONS
-    -DBOOST_THREAD_HAS_BUG
-    -DMONGO_CONFIG_HAVE_HEADER_UNISTD_H
 )
 
 set(FILES
@@ -146,10 +139,13 @@ set(FILES
     gui/resources/gui.qrc
 )
 
-# It works!
-include_directories(${MongoDB_INCLUDE_DIRS})
 add_executable(exe shell/shell/dbshell.cpp)
-target_link_libraries(exe ${MongoDB_LIBRARIES} m rt dl)
+target_link_libraries(exe mongodb)
+
+# It works!
+#include_directories(${MongoDB_INCLUDE_DIRS})
+#add_executable(exe shell/shell/dbshell.cpp)
+#target_link_libraries(exe ${MongoDB_LIBRARIES} m rt dl)
 
 # add_executable(exe app/main.cpp ${FILES})
 # target_link_libraries(exe Qt5::Widgets qjson qscintilla ${MongoDB_LIBRARIES} m rt dl)

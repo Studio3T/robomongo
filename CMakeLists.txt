@@ -24,8 +24,8 @@ find_package(Qt5PrintSupport REQUIRED)
 find_package(MongoDB REQUIRED)
 
 # Projects
-#add_subdirectory(src/third-party/qjson)
-#add_subdirectory(src/third-party/qscintilla)
+add_subdirectory(src/third-party/qjson)
+add_subdirectory(src/third-party/qscintilla)
 add_subdirectory(src/robomongo)
 
 # Show configuration summary and build tip

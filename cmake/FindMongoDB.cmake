@@ -173,11 +173,10 @@ if(MongoDB_FOUND)
     set(MongoDB_COMPILE_DEFINITIONS ${definitions})
 
     # Add imported target
-    add_library(mongodb STATIC IMPORTED)
+    add_library(mongodb INTERFACE IMPORTED)
 
     # Specify INTERFACE properties for this target
     set_target_properties(mongodb PROPERTIES
-        IMPORTED_LOCATION             "${base_dir}/${build_dir}/mongo/bson/mutable/libmutable_bson.a"
         INTERFACE_LINK_LIBRARIES      "${MongoDB_LIBRARIES}"
         INTERFACE_COMPILE_DEFINITIONS "${MongoDB_COMPILE_DEFINITIONS}"
         INTERFACE_INCLUDE_DIRECTORIES "${MongoDB_INCLUDE_DIRS}"

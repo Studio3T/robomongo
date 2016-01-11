@@ -16,9 +16,9 @@ find_path(
 )
 set(base_dir ${MongoDB_DIR})
 
-if("${CMAKE_BUILD_TYPE}" STREQUAL "" OR "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+if(BUILD_DEBUG)
   set(build_dir build/debug)
-elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+elseif(BUILD_RELEASE OR BUILD_RELWITHDEBINFO)
   set(build_dir build/opt)
 endif()
 
@@ -30,11 +30,11 @@ set(include_dirs
     ${base_dir}/${build_dir}
 )
 
-if(UNIX)
+if(SYSTEM_LINUX)
     list(APPEND include_dirs ${base_dir}/src/third_party/mozjs-38/platform/x86_64/linux/include)
-elseif(WIN32)
+elseif(SYSTEM_WINDOWS)
     # todo
-elseif(APPLE)
+elseif(SYSTEM_MACOSX)
     # todo
 endif()
 

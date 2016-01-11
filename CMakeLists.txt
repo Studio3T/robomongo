@@ -14,6 +14,7 @@ set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT
 # Modules
 include(PrintUtils)
 include(DefineCMakeDefaults)
+include(DefineDefaults)
 include(DefineTrashSymbols)
 
 # Search for dependencies

@@ -1,0 +1,46 @@
+# This files defines:
+#
+# 1) Platform checks
+#
+#    SYSTEM_MACOSX
+#    SYSTEM_WINDOWS
+#    SYSTEM_LINUX
+#    SYSTEM_FREEBSD
+#    SYSTEM_OPENBSD
+#    SYSTEM_NETBSD
+#
+# 2) Build types checks
+#
+#    BUILD_DEBUG
+#    BUILD_RELEASE
+#    BUILD_RELWITHDEBINFO
+#    BUILD_MINSIZEREL
+
+# Platform checks
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    set(SYSTEM_MACOSX TRUE)
+elseif(CMAKE_SYSTEM_NAME MATCHES "Windows")
+    set(SYSTEM_WINDOWS TRUE)
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    set(SYSTEM_LINUX TRUE)
+elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+    set(SYSTEM_FREEBSD TRUE)
+    set(SYSTEM_BSD TRUE)
+elseif(CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
+    set(SYSTEM_OPENBSD TRUE)
+    set(SYSTEM_BSD TRUE)
+elseif(CMAKE_SYSTEM_NAME MATCHES "NetBSD")
+    set(SYSTEM_NETBSD TRUE)
+    set(SYSTEM_BSD TRUE)
+endif()
+
+# Build types
+if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+    set(BUILD_DEBUG TRUE)
+elseif("${CMAKE_BUILD_TYPE}" MATCHES "Release")
+    set(BUILD_RELEASE TRUE)
+elseif("${CMAKE_BUILD_TYPE}" MATCHES "RelWithDebInfo")
+    set(BUILD_RELWITHDEBINFO TRUE)
+elseif("${CMAKE_BUILD_TYPE}" MATCHES "MinSizeRel")
+    set(BUILD_MINSIZEREL TRUE)
+endif()

@@ -17,8 +17,9 @@ set(CMAKE_COLOR_MAKEFILE ON)
 # Set the default build type to release with debug info
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE RelWithDebInfo
-    CACHE STRING
-      "Choose the type of build, options are: Debug, Release, RelWithDebInfo, MinSizeRel and None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used)"
+      CACHE STRING
+          "Choose the type of build, options are: Debug, Release, RelWithDebInfo, MinSizeRel and None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used)"
+      FORCE
   )
 endif()
 

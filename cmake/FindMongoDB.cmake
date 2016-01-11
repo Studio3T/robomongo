@@ -10,7 +10,11 @@
 #      MongoDB_INCLUDE_DIRS  - Set when MONGODB_INCLUDE_DIR is found
 #
 
-find_path(base_dir src/mongo/config.h.in)
+find_path(
+    MongoDB_DIR src/mongo/config.h.in
+    DOC "Path to MongoDB (robomongo-shell) root directory"
+)
+set(base_dir ${MongoDB_DIR})
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "" OR "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   set(build_dir build/debug)

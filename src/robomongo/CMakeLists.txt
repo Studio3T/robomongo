@@ -142,11 +142,5 @@ set(FILES
 add_executable(shell shell/shell/dbshell.cpp)
 target_link_libraries(shell mongodb)
 
-# It works!
-#include_directories(${MongoDB_INCLUDE_DIRS})
-#add_executable(exe shell/shell/dbshell.cpp)
-#target_link_libraries(exe ${MongoDB_LIBRARIES} m rt dl)
-
-# add_executable(exe app/main.cpp ${FILES})
-# target_link_libraries(exe Qt5::Widgets qjson qscintilla ${MongoDB_LIBRARIES} m rt dl)
-
+#add_executable(robomongo app/main.cpp ${FILES})
+#target_link_libraries(exe Qt5::Widgets qjson qscintilla ${MongoDB_LIBRARIES} m rt dl)

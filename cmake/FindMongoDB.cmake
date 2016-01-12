@@ -1,52 +1,74 @@
-# (in progress...)
-#
-# Find MongoDB
 #
 # Find the MongoDB libraries
 #
-#   This module defines the following variables:
-#      MongoDB_FOUND         - True if MONGODB_INCLUDE_DIR & MONGODB_LIBRARY are found
-#      MongoDB_LIBRARIES     - Set when MONGODB_LIBRARY is found
-#      MongoDB_INCLUDE_DIRS  - Set when MONGODB_INCLUDE_DIR is found
+# This module defines the following variables:
+#      MongoDB_FOUND
+#      MongoDB_LIBS
+#      MongoDB_INCLUDE_DIRS
+#      MongoDB_DEFINITIONS
+#
+# Imported target "mongodb" is created
+#
+# We assume, that at least "mongo" target was build by the following command:
+#    $ scons mongo
+#
 #
 
+# Try to find MongoDB directory (uses CMAKE_PREFIX_PATH locations)
 find_path(
     MongoDB_DIR src/mongo/config.h.in
-    DOC "Path to MongoDB (robomongo-shell) root directory"
+    DOC "Path to MongoDB (github.com/robomongo-shell) root directory"
 )
-set(base_dir ${MongoDB_DIR})
 
-if(BUILD_DEBUG)
-  set(build_dir build/debug)
-elseif(BUILD_RELEASE OR BUILD_RELWITHDEBINFO)
-  set(build_dir build/opt)
+# Find relative path to build directory
+if(BUILD_RELEASE OR BUILD_RELWITHDEBINFO)
+    set(MongoDB_RELATIVE_BUILD_DIR build/opt)
+elseif(BUILD_DEBUG)
+    set(MongoDB_RELATIVE_BUILD_DIR build/debug)
 endif()
 
-set(include_dirs
-    ${base_dir}/src
-    ${base_dir}/src/third_party/boost-1.56.0
-    ${base_dir}/src/third_party/mozjs-38/include
-    ${base_dir}/src/third_party/pcre-8.37
-    ${base_dir}/${build_dir}
+# Set absolute path to build directory
+set(MongoDB_BUILD_DIR ${MongoDB_DIR}/${MongoDB_RELATIVE_BUILD_DIR})
+
+# Set commong compiler definitons
+set(MongoDB_DEFINITIONS
+    PCRE_STATIC
+    BOOST_THREAD_VERSION=4
+    BOOST_THREAD_DONT_PROVIDE_VARIADIC_THREAD
+    BOOST_THREAD_NO_DEPRECATED
+    BOOST_THREAD_DONT_PROVIDE_INTERRUPTIONS
+    BOOST_THREAD_HAS_BUG
+    MONGO_CONFIG_HAVE_HEADER_UNISTD_H
+)
+
+# Set common compiler include directories
+set(MongoDB_INCLUDE_DIRS
+    ${MongoDB_DIR}/src
+    ${MongoDB_DIR}/src/third_party/boost-1.56.0
+    ${MongoDB_DIR}/src/third_party/mozjs-38/include
+    ${MongoDB_DIR}/src/third_party/pcre-8.37
+    ${MongoDB_BUILD_DIR}
 )
 
 if(SYSTEM_LINUX)
-    list(APPEND include_dirs ${base_dir}/src/third_party/mozjs-38/platform/x86_64/linux/include)
+    list(APPEND MongoDB_INCLUDE_DIRS
+        ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/linux/include)
 elseif(SYSTEM_WINDOWS)
-    # todo
+    list(APPEND MongoDB_INCLUDE_DIRS
+        ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/windows/include)
 elseif(SYSTEM_MACOSX)
-    # todo
+    list(APPEND MongoDB_INCLUDE_DIRS
+        ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/osx/include)
+elseif(SYSTEM_FREEBSD)
+    list(APPEND MongoDB_INCLUDE_DIRS
+        ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/freebsd/include)
+elseif(SYSTEM_OPENBSD)
+    list(APPEND MongoDB_INCLUDE_DIRS
+        ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/openbsd/include)
 endif()
 
-# Get tag
-execute_process(
-    COMMAND git describe --abbrev=0 --tags
-    WORKING_DIRECTORY ${base_dir}
-    OUTPUT_VARIABLE git_describe
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
 
-SET(relative_static_libs
+SET(MongoDB_RELATIVE_LIBS
     mongo/bson/mutable/libmutable_bson.a
     mongo/bson/util/libbson_extract.a
     mongo/client/libauthentication.a
@@ -144,57 +166,53 @@ SET(relative_static_libs
     third_party/zlib-1.2.8/libzlib.a
 )
 
-foreach(lib ${relative_static_libs})
-  list(APPEND static_libs -l${base_dir}/${build_dir}/${lib})
+# Convert to absolute path
+foreach(lib ${MongoDB_RELATIVE_LIBS})
+  list(APPEND MongoDB_LIBS -l${MongoDB_BUILD_DIR}/${lib})
 endforeach()
 
-# handle the QUIETLY and REQUIRED arguments and set ALSA_FOUND to TRUE if
+# Get MongoDB repository recent tag
+execute_process(
+    COMMAND git describe --abbrev=0 --tags
+    WORKING_DIRECTORY ${MongoDB_DIR}
+    OUTPUT_VARIABLE MongoDB_RECENT_TAG
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Handle the QUIETLY and REQUIRED arguments and set ALSA_FOUND to TRUE if
 # all listed variables are TRUE
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(MongoDB
-    REQUIRED_VARS include_dirs base_dir
-    VERSION_VAR git_describe
+    REQUIRED_VARS MongoDB_DIR MongoDB_BUILD_DIR
+    VERSION_VAR MongoDB_RECENT_TAG
     FAIL_MESSAGE "Could not find MongoDB. Make sure that CMAKE_PREFIX_PATH points to MongoDB project root.\n")
 
-set(start -Wl,--whole-archive -Wl,--start-group)
-set(end -Wl,--end-group -Wl,--no-whole-archive)
-
-set(definitions
-    DPCRE_STATIC
-    BOOST_THREAD_VERSION=4
-    BOOST_THREAD_DONT_PROVIDE_VARIADIC_THREAD
-    BOOST_THREAD_NO_DEPRECATED
-    BOOST_THREAD_DONT_PROVIDE_INTERRUPTIONS
-    BOOST_THREAD_HAS_BUG
-    MONGO_CONFIG_HAVE_HEADER_UNISTD_H
-)
-
 if(MongoDB_FOUND)
-    set(MongoDB_VERSION ${git_describe})
-    set(MongoDB_DIR ${base_dir})
-    set(MongoDB_LIBRARIES ${start} ${static_libs} ${end} dl) # Original MongoDB link command has the following in the end: m rt dl
-    set(MongoDB_INCLUDE_DIRS ${include_dirs})
-    set(MongoDB_COMPILE_DEFINITIONS ${definitions})
+    set(MongoDB_VERSION ${MongoDB_RECENT_TAG})
+
+    # Original MongoDB link command has the following in the end: m rt dl
+    set(MongoDB_LIBS
+        ${LINK_WHOLE_ARCHIVE_START}   # Linux: -Wl,--whole-archive
+        ${LINK_LIBGROUP_START}        # Linux: -Wl,--start-group
+        ${MongoDB_LIBS}
+        ${LINK_LIBGROUP_END}          # Linux: -Wl,--end-group
+        ${LINK_WHOLE_ARCHIVE_END}     # Linux: -Wl,--no-whole-archive
+        ${CMAKE_DL_LIBS}              # Linux: dl
+    )
 
     # Add imported target
     add_library(mongodb INTERFACE IMPORTED)
 
     # Specify INTERFACE properties for this target
     set_target_properties(mongodb PROPERTIES
-        INTERFACE_LINK_LIBRARIES      "${MongoDB_LIBRARIES}"
-        INTERFACE_COMPILE_DEFINITIONS "${MongoDB_COMPILE_DEFINITIONS}"
+        INTERFACE_LINK_LIBRARIES      "${MongoDB_LIBS}"
+        INTERFACE_COMPILE_DEFINITIONS "${MongoDB_DEFINITIONS}"
         INTERFACE_INCLUDE_DIRECTORIES "${MongoDB_INCLUDE_DIRS}"
     )
 
 endif()
 
 # Cleanup
-unset(base_dir)
-unset(build_dir)
-unset(git_describe)
-unset(src_dir)
-unset(static_libs)
-unset(start)
-unset(end)
-unset(definitions)
-
+unset(MongoDB_RELATIVE_BUILD_DIR)
+unset(MongoDB_RELATIVE_LIBS)
+unset(MongoDB_RECENT_TAG)

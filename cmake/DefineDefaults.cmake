@@ -15,6 +15,13 @@
 #    BUILD_RELEASE
 #    BUILD_RELWITHDEBINFO
 #    BUILD_MINSIZEREL
+#
+# 3) Link "lib groups" and "whole-archive" options
+#
+#    LINK_LIBGROUP_START
+#    LINK_LIBGROUP_END
+#    LINK_WHOLE_ARCHIVE_START
+#    LINK_WHOLE_ARCHIVE_END
 
 # Platform checks
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
@@ -43,4 +50,17 @@ elseif("${CMAKE_BUILD_TYPE}" MATCHES "RelWithDebInfo")
     set(BUILD_RELWITHDEBINFO TRUE)
 elseif("${CMAKE_BUILD_TYPE}" MATCHES "MinSizeRel")
     set(BUILD_MINSIZEREL TRUE)
+endif()
+
+# Link "groups" and "whole-archive" options
+if(SYSTEM_LINUX OR SYSTEM_FREEBSD OR SYSTEM_OPENBSD)
+    set(LINK_LIBGROUP_START        -Wl,--start-group)
+    set(LINK_LIBGROUP_END          -Wl,--end-group)
+    set(LINK_WHOLE_ARCHIVE_START   -Wl,--whole-archive)
+    set(LINK_WHOLE_ARCHIVE_END     -Wl,--no-whole-archive)
+elseif(SYSTEM_MACOSX)
+    set(LINK_LIBGROUP_START        "")
+    set(LINK_LIBGROUP_END          "")
+    set(LINK_WHOLE_ARCHIVE_START   -Wl,-all_load)
+    set(LINK_WHOLE_ARCHIVE_END     -Wl,-noall_load)
 endif()

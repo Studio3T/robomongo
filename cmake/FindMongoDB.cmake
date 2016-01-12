@@ -21,7 +21,7 @@ find_path(
 )
 
 # Find relative path to build directory
-if(BUILD_RELEASE OR BUILD_RELWITHDEBINFO)
+if(BUILD_RELEASE OR BUILD_RELWITHDEBINFO OR BUILD_MINSIZEREL)
     set(MongoDB_RELATIVE_BUILD_DIR build/opt)
     set(MongoDB_OBJECT_LIST_BUILD_TYPE_PART release)
 elseif(BUILD_DEBUG)

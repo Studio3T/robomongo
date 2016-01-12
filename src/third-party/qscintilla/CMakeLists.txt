@@ -3,7 +3,13 @@
 
 project(QScintilla)
 
+# For some reasons AUTOMOC doesn't work here...
+# Doing this manually.
+file(GLOB headers sources/Qt4Qt5/Qsci/*.h)
+qt5_wrap_cpp(moc ${headers})
+
 add_library(qscintilla
+    ${moc}
     sources/lexlib/StyleContext.cpp
     sources/lexlib/WordList.cpp
     sources/lexlib/Accessor.cpp

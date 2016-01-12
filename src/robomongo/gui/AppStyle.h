@@ -1,13 +1,13 @@
 #pragma once
 
 #include <QStyle>
-#ifdef OS_WIN
+#ifdef Q_OS_WIN
     #include <QProxyStyle>
     typedef QProxyStyle OsStyle;
-#elif defined(OS_MAC)
+#elif defined(Q_OS_MAC)
     #include <QProxyStyle>
     typedef QProxyStyle OsStyle;
-#elif defined OS_LINUX
+#elif defined Q_OS_LINUX
     #if !defined(QT_NO_STYLE_GTK)
         #include <QProxyStyle>
         typedef QProxyStyle OsStyle;

@@ -1,31 +1,5 @@
-# add_executable(main2 app/main2.cpp)
-# target_link_libraries(main2 Qt5::Widgets qjson qscintilla)
-# return()
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    add_definitions(-DOS_LINUX -DOS_POSIX)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    add_definitions(-DOS_MAC -DOS_POSIX)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    add_definitions(-D_WIN32 -DOS_WIN)
-else()
-    message(FATAL_ERROR "Not supported OS: ${CMAKE_SYSTEM_NAME}")
-endif()
-
-add_definitions(
-    -DPROJECT_NAME="${PROJECT_NAME}"
-    -DPROJECT_NAME_TITLE="${PROJECT_NAME_TITLE}"
-    -DPROJECT_COPYRIGHT="${PROJECT_COPYRIGHT}"
-    -DPROJECT_DOMAIN="${PROJECT_DOMAIN}"
-    -DPROJECT_COMPANYNAME="${PROJECT_COMPANYNAME}"
-    -DPROJECT_COMPANYNAME_DOMAIN="${PROJECT_COMPANYNAME_DOMAIN}"
-    -DPROJECT_GITHUB_FORK="${PROJECT_GITHUB_FORK}"
-    -DPROJECT_GITHUB_ISSUES="${PROJECT_GITHUB_ISSUES}"
-    -DPROJECT_VERSION="${PROJECT_VERSION}"
-    -DPROJECT_NAME_LOWERCASE="${PROJECT_NAME_LOWERCASE}"
-)
-
-set(FILES
+set(SOURCES
 
     # Isolated Scope #1
     core/utils/QtUtils.cpp
@@ -139,8 +113,38 @@ set(FILES
     gui/resources/gui.qrc
 )
 
-add_executable(shell shell/shell/dbshell.cpp)
+# Target that creates original MongoDB shell
+# Used to test compilation and linking
+add_executable(shell EXCLUDE_FROM_ALL shell/shell/dbshell.cpp)
 target_link_libraries(shell mongodb)
 
-#add_executable(robomongo app/main.cpp ${FILES})
-#target_link_libraries(exe Qt5::Widgets qjson qscintilla ${MongoDB_LIBRARIES} m rt dl)
+# Robomongo target
+add_executable(robomongo app/main.cpp ${SOURCES})
+
+target_link_libraries(robomongo
+    PRIVATE
+        Qt5::Widgets
+        qjson
+        qscintilla
+        mongodb)
+
+target_include_directories(robomongo
+    PRIVATE
+        ${CMAKE_HOME_DIRECTORY}/src
+)
+
+target_compile_definitions(robomongo
+    PRIVATE
+        PROJECT_NAME="${PROJECT_NAME}"
+        PROJECT_NAME_TITLE="${PROJECT_NAME_TITLE}"
+        PROJECT_COPYRIGHT="${PROJECT_COPYRIGHT}"
+        PROJECT_DOMAIN="${PROJECT_DOMAIN}"
+        PROJECT_COMPANYNAME="${PROJECT_COMPANYNAME}"
+        PROJECT_COMPANYNAME_DOMAIN="${PROJECT_COMPANYNAME_DOMAIN}"
+        PROJECT_GITHUB_FORK="${PROJECT_GITHUB_FORK}"
+        PROJECT_GITHUB_ISSUES="${PROJECT_GITHUB_ISSUES}"
+        PROJECT_VERSION="${PROJECT_VERSION}"
+        PROJECT_NAME_LOWERCASE="${PROJECT_NAME_LOWERCASE}")
+
+#add_executable(main2 app/main_json.cpp)
+#target_link_libraries(main2 Qt5::Widgets qjson qscintilla)

@@ -23,8 +23,10 @@ find_path(
 # Find relative path to build directory
 if(BUILD_RELEASE OR BUILD_RELWITHDEBINFO)
     set(MongoDB_RELATIVE_BUILD_DIR build/opt)
+    set(MongoDB_OBJECT_LIST_BUILD_TYPE_PART release)
 elseif(BUILD_DEBUG)
     set(MongoDB_RELATIVE_BUILD_DIR build/debug)
+    set(MongoDB_OBJECT_LIST_BUILD_TYPE_PART debug)
 endif()
 
 # Set absolute path to build directory
@@ -51,124 +53,39 @@ set(MongoDB_INCLUDE_DIRS
 )
 
 if(SYSTEM_LINUX)
+    set(MongoDB_OBJECT_LIST_PLATFORM_PART linux)
     list(APPEND MongoDB_INCLUDE_DIRS
         ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/linux/include)
 elseif(SYSTEM_WINDOWS)
+    set(MongoDB_OBJECT_LIST_PLATFORM_PART windows)
     list(APPEND MongoDB_INCLUDE_DIRS
         ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/windows/include)
 elseif(SYSTEM_MACOSX)
+    set(MongoDB_OBJECT_LIST_PLATFORM_PART macosx)
     list(APPEND MongoDB_INCLUDE_DIRS
         ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/osx/include)
 elseif(SYSTEM_FREEBSD)
+    set(MongoDB_OBJECT_LIST_PLATFORM_PART freebsd)
     list(APPEND MongoDB_INCLUDE_DIRS
         ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/freebsd/include)
 elseif(SYSTEM_OPENBSD)
+    set(MongoDB_OBJECT_LIST_PLATFORM_PART openbsd)
     list(APPEND MongoDB_INCLUDE_DIRS
         ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/openbsd/include)
 endif()
 
+# Read list of object files
+# See "mongodb/README.md" file (relative to the current folder) for more information.
+file(READ
+    ${CMAKE_CURRENT_LIST_DIR}/mongodb/${MongoDB_OBJECT_LIST_PLATFORM_PART}-${MongoDB_OBJECT_LIST_BUILD_TYPE_PART}.objects
+    MongoDB_RELATIVE_LIBS)
 
-SET(MongoDB_RELATIVE_LIBS
-    mongo/bson/mutable/libmutable_bson.a
-    mongo/bson/util/libbson_extract.a
-    mongo/client/libauthentication.a
-    mongo/client/libclientdriver.a
-    mongo/client/libconnection_string.a
-    mongo/client/libread_preference.a
-    mongo/client/libsasl_client.a
-    mongo/crypto/libcrypto_tom.a
-    mongo/crypto/libscramauth.a
-    mongo/crypto/tom/libtomcrypt.a
-    mongo/db/auth/libauthcommon.a
-    mongo/db/catalog/libindex_key_validate.a
-    mongo/db/commands/libtest_commands_enabled.a
-    mongo/db/fts/libbase.a
-    mongo/db/fts/unicode/libunicode.a
-    mongo/db/geo/libgeometry.a
-    mongo/db/geo/libgeoparser.a
-    mongo/db/index/libexpression_params.a
-    mongo/db/index/libexternal_key_generator.a
-    mongo/db/index/libkey_generator.a
-    mongo/db/libcommon.a
-    mongo/db/libdbmessage.a
-    mongo/db/libindex_names.a
-    mongo/db/libmongohasher.a
-    mongo/db/libnamespace_string.a
-    mongo/db/libserver_options_core.a
-    mongo/db/libserver_parameters.a
-    mongo/db/libservice_context.a
-    mongo/db/query/libcommand_request_response.a
-    mongo/db/query/liblite_parsed_query.a
-    mongo/db/repl/liboptime.a
-    mongo/db/repl/libread_concern_args.a
-    mongo/executor/libremote_command.a
-    mongo/libbase.a
-    mongo/liblinenoise_utf8.a
-    mongo/libshell_core.a
-    mongo/libshell_options.a
-    mongo/platform/libplatform.a
-    mongo/rpc/libcommand_reply.a
-    mongo/rpc/libcommand_request.a
-    mongo/rpc/libcommand_status.a
-    mongo/rpc/libdocument_range.a
-    mongo/rpc/liblegacy_reply.a
-    mongo/rpc/liblegacy_request.a
-    mongo/rpc/libmetadata.a
-    mongo/rpc/libprotocol.a
-    mongo/rpc/librpc.a
-    mongo/scripting/libbson_template_evaluator.a
-    mongo/scripting/libscripting.a
-    mongo/scripting/libscripting_common.a
-    mongo/shell/libmongojs.a
-    mongo/util/concurrency/libspin_lock.a
-    mongo/util/concurrency/libsynchronization.a
-    mongo/util/concurrency/libticketholder.a
-    mongo/util/libbackground_job.a
-    mongo/util/libdebugger.a
-    mongo/util/libdecorable.a
-    mongo/util/libfail_point.a
-    mongo/util/libfoundation.a
-    mongo/util/libmd5.a
-    mongo/util/libpassword.a
-    mongo/util/libprocessinfo.a
-    mongo/util/libquick_exit.a
-    mongo/util/libsafe_num.a
-    mongo/util/libsignal_handlers.a
-    mongo/util/net/libhostandport.a
-    mongo/util/net/libnetwork.a
-    mongo/util/options_parser/liboptions_parser.a
-    mongo/util/options_parser/liboptions_parser_init.a
-    third_party/boost-1.56.0/libboost_chrono.a
-    third_party/boost-1.56.0/libboost_filesystem.a
-    third_party/boost-1.56.0/libboost_program_options.a
-    third_party/boost-1.56.0/libboost_regex.a
-    third_party/boost-1.56.0/libboost_system.a
-    third_party/boost-1.56.0/libboost_thread.a
-    third_party/gperftools-2.2/libtcmalloc_minimal.a
-    third_party/libshim_allocator.a
-    third_party/libshim_boost.a
-    third_party/libshim_mozjs.a
-    third_party/libshim_pcrecpp.a
-    third_party/libshim_stemmer.a
-    third_party/libshim_tz.a
-    third_party/libshim_yaml.a
-    third_party/libshim_zlib.a
-    third_party/libstemmer_c/libstemmer.a
-    third_party/mozjs-38/libmozjs.a
-    third_party/murmurhash3/libmurmurhash3.a
-    third_party/pcre-8.37/libpcrecpp.a
-    third_party/s2/base/libbase.a
-    third_party/s2/libs2.a
-    third_party/s2/strings/libstrings.a
-    third_party/s2/util/coding/libcoding.a
-    third_party/s2/util/math/libmath.a
-    third_party/yaml-cpp-0.5.1/libyaml.a
-    third_party/zlib-1.2.8/libzlib.a
-)
+# Convert string to list
+string(REPLACE " " ";" MongoDB_RELATIVE_LIBS ${MongoDB_RELATIVE_LIBS})
 
 # Convert to absolute path
 foreach(lib ${MongoDB_RELATIVE_LIBS})
-  list(APPEND MongoDB_LIBS -l${MongoDB_BUILD_DIR}/${lib})
+  list(APPEND MongoDB_LIBS ${MongoDB_DIR}/${lib})
 endforeach()
 
 # Get MongoDB repository recent tag
@@ -213,6 +130,8 @@ if(MongoDB_FOUND)
 endif()
 
 # Cleanup
+unset(MongoDB_OBJECT_LIST_BUILD_TYPE_PART)
+unset(MongoDB_OBJECT_LIST_PLATFORM_PART)
 unset(MongoDB_RELATIVE_BUILD_DIR)
 unset(MongoDB_RELATIVE_LIBS)
 unset(MongoDB_RECENT_TAG)

@@ -105,8 +105,7 @@ set(SOURCES
     gui/widgets/workarea/WorkAreaTabBar.cpp
     gui/widgets/workarea/WorkAreaTabWidget.cpp
 
-
-    # More to come here..
+    # Final scope
     gui/widgets/LogWidget.cpp
     gui/MainWindow.cpp
 
@@ -146,5 +145,9 @@ target_compile_definitions(robomongo
         PROJECT_VERSION="${PROJECT_VERSION}"
         PROJECT_NAME_LOWERCASE="${PROJECT_NAME_LOWERCASE}")
 
-#add_executable(main2 app/main_json.cpp)
-#target_link_libraries(main2 Qt5::Widgets qjson qscintilla)
+add_executable(main2 EXCLUDE_FROM_ALL app/main_json.cpp gui/editors/JSLexer.cpp)
+target_link_libraries(main2 Qt5::Widgets qjson qscintilla)
+target_include_directories(main2
+    PRIVATE
+        ${CMAKE_HOME_DIRECTORY}/src
+)

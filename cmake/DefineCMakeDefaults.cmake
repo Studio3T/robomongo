@@ -1,9 +1,3 @@
-# Always include srcdir and builddir in include path
-# This saves typing ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY} in
-# about every subdir
-# Since cmake 2.4.0
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 # Put the include dirs which are in the source or build tree
 # before all other include dirs, so the headers in the sources
 # are prefered over the already installed ones

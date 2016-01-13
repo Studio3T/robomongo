@@ -6,7 +6,7 @@
 #include <Qsci/qsciscintilla.h>
 
 // TODO: The following include should NOT work (remove this folder from include dirs)
-#include <gui/editors/JSLexer.h>
+#include <robomongo/gui/editors/JSLexer.h>
 
 int main(int argc, char *argv[], char** envp)
 {
@@ -14,6 +14,7 @@ int main(int argc, char *argv[], char** envp)
 
     QJson::Parser parser;
     Robomongo::JSLexer lexer;
+    Robomongo::JSLexer lexer2z;
 
     QsciScintilla editor;
 

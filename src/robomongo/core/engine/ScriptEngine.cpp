@@ -71,8 +71,8 @@ namespace Robomongo
         delete _scope;
         _scope = NULL;
 
-        delete _engine;
-        _engine = NULL;
+//        delete _engine;
+//        _engine = NULL;
     }
 
     void ScriptEngine::init(bool isLoadMongoRcJs)

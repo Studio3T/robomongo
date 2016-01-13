@@ -107,7 +107,7 @@ namespace Robomongo
             mongo::ScriptEngine::setConnectCallback( mongo::shell_utils::onConnect );
             mongo::ScriptEngine::setup();
             mongo::globalScriptEngine->setScopeInitCallback(mongo::shell_utils::initScope);
-            mongo::globalScriptEngine->enableJIT(false);
+            mongo::globalScriptEngine->enableJIT(true);
 
             mongo::Scope *scope = mongo::globalScriptEngine->newScope();
             _scope = scope;

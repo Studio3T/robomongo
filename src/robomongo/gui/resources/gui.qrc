@@ -29,7 +29,8 @@
         <file>icons/connect_24x24.png</file>
         <file>icons/server_16x16.png</file>
         <file>icons/execute_24x24.png</file>
-        <file>icons/main_window_icon.png</file>
+        <file>icons/main_window_icon_old.png</file>
+        <file>icons/logo-256x256.png</file>
         <file>icons/text_highlighted_16x16.png</file>
         <file>icons/tree_highlighted_16x16.png</file>
         <file>icons/maximize_highlighted_16x16.png</file>

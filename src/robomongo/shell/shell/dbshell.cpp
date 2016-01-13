@@ -592,9 +592,7 @@ int _main(int argc, char* argv[], char** envp) {
 
     shellGlobalParams.url = "test";
 
-    cout << "here\n";
     mongo::runGlobalInitializersOrDie(argc, argv, envp);
-    cout << "after-here\n";
 
     // hide password from ps output
     for (int i = 0; i < (argc - 1); ++i) {

@@ -19,6 +19,12 @@ INSTALL(
     DESTINATION
         ${install_dir})
 
+INSTALL(
+    PROGRAMS
+        ${CMAKE_SOURCE_DIR}/install/linux/robomongo.sh
+    DESTINATION
+        ${bin_dir})
+
 
 function(install_qt_lib)
     foreach(module ${ARGV})
@@ -59,5 +65,25 @@ function(install_qt_lib)
     endforeach()
 endfunction()
 
+function(install_icu_libs)
+    # We are trying to get 'lib' folder of Qt installation.
+    # For this we take some known target (Qt5::Core in this case)
+    # and taking path to this library.
+
+    # Get full path to known library (i.e. /path/to/lib/libQt5Core.so.5.5.1)
+    get_target_property(target_path Qt5::Core LOCATION)
+
+    # Get absolute path to 'lib' folder (which is a parent folder of 'known' library)
+    get_filename_component(qt_lib_dir ${target_path} DIRECTORY)
+
+    # Not very good solution, but we simply take all files with *icu* in names (including symlinks)
+    file(GLOB icu_libs ${qt_lib_dir}/${CMAKE_SHARED_LIBRARY_PREFIX}icu*)
+
+    # Install to "lib" folder
+    install(FILES ${icu_libs}
+            DESTINATION ${lib_dir})
+endfunction()
+
 install_qt_lib(Core Gui Widgets)
+install_icu_libs()
 

@@ -151,3 +151,7 @@ target_include_directories(main2
     PRIVATE
         ${CMAKE_HOME_DIRECTORY}/src
 )
+
+# Install
+include(InstallRobomongo)
+

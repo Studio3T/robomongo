@@ -102,3 +102,12 @@ function(print_target_compile_definitions target)
     endforeach()
 endfunction()
 
+###
+# Prints Qt5 module plugins
+#
+function(print_qt_module_plugins module)
+    foreach(plugin ${Qt5${module}_PLUGINS})
+        get_target_property(loc ${plugin} LOCATION)
+        message("Plugin ${plugin} is at location ${loc}")
+    endforeach()
+endfunction()

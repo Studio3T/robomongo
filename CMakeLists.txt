@@ -33,10 +33,8 @@ add_subdirectory(src/robomongo)
 # Show configuration summary
 include(ConfigurationSummary)
 
-#set(CPACK_GENERATOR ZIP)
-#set(CPACK_MONOLITHIC_INSTALL ON)
-#set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/package)
-#SET(CPACK_PACKAGE_EXECUTABLES "robomongo")
-#unset(CPACK_INSTALL_CMAKE_PROJECTS)
-#include(CPack)
+set(CPACK_GENERATOR TGZ)
+set(CPACK_MONOLITHIC_INSTALL ON)
+set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/package)
+include(CPack)
 

@@ -1,11 +1,22 @@
+# Note for maintainers
+# --------------------
+#
+# Do not use absolute paths in DESTINATION arguments for install() command.
+# Because the same install code will be executed again by CPack. And CPack will
+# change internally CMAKE_INSTALL_PREFIX to point to some temporary folder
+# for package content.
+#
+#
+
+
 # Temporary change
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install"
     CACHE STRING "Install path prefix, prepended onto install directories"
     FORCE)
 
 set(install_dir ${CMAKE_INSTALL_PREFIX})
-set(bin_dir ${install_dir}/bin)
-set(lib_dir ${install_dir}/lib)
+set(bin_dir bin)
+set(lib_dir lib)
 
 INSTALL(
     TARGETS robomongo
@@ -17,7 +28,7 @@ INSTALL(
         ${CMAKE_SOURCE_DIR}/COPYRIGHT
         ${CMAKE_SOURCE_DIR}/CHANGELOG
     DESTINATION
-        ${install_dir})
+        .)
 
 INSTALL(
     PROGRAMS
@@ -57,10 +68,10 @@ function(install_qt_lib)
 
             # Create symlink (for Qt5Core it will be: libQt5Core.so.5 => libQt5Core.so.5.5.1)
             install(CODE "
-                message(STATUS \"Installing: ${lib_dir}/${symlink_file_name}\")
+                message(STATUS \"Installing: ${CMAKE_INSTALL_PREFIX}/${lib_dir}/${symlink_file_name}\")
                 execute_process(
                     COMMAND ln -sf ${target_file} ${symlink_file_name}
-                    WORKING_DIRECTORY ${lib_dir})")
+                    WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${lib_dir})")
         endif()
     endforeach()
 endfunction()

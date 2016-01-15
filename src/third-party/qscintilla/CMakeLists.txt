@@ -21,62 +21,69 @@ add_library(qscintilla
     sources/lexlib/LexerSimple.cpp
     sources/lexlib/LexerNoExceptions.cpp
 
+    sources/Qt4Qt5/qscilexer.cpp
+    sources/Qt4Qt5/qscilexerjavascript.cpp
+    sources/Qt4Qt5/qscilexercpp.cpp
+
+    # We do not need these lexers
     sources/Qt4Qt5/qscilexerpov.cpp
     sources/Qt4Qt5/qscilexercss.cpp
-    sources/Qt4Qt5/qscistyle.cpp
     sources/Qt4Qt5/qscilexerd.cpp
     sources/Qt4Qt5/qscilexerspice.cpp
     sources/Qt4Qt5/qscilexerbash.cpp
     sources/Qt4Qt5/qscilexerdiff.cpp
-    sources/Qt4Qt5/InputMethod.cpp
     sources/Qt4Qt5/qscilexerruby.cpp
     sources/Qt4Qt5/qscilexerpostscript.cpp
-    sources/Qt4Qt5/qsciabstractapis.cpp
-    sources/Qt4Qt5/ScintillaQt.cpp
     sources/Qt4Qt5/qscilexerpascal.cpp
     sources/Qt4Qt5/qscilexerbatch.cpp
     sources/Qt4Qt5/qscilexerfortran.cpp
     sources/Qt4Qt5/qscilexercoffeescript.cpp
     sources/Qt4Qt5/qscilexertcl.cpp
-    sources/Qt4Qt5/qscidocument.cpp
     sources/Qt4Qt5/qscilexerjava.cpp
     sources/Qt4Qt5/qscilexercustom.cpp
-    sources/Qt4Qt5/qscilexer.cpp
     sources/Qt4Qt5/qscilexercsharp.cpp
     sources/Qt4Qt5/qscilexertex.cpp
     sources/Qt4Qt5/qscilexerproperties.cpp
     sources/Qt4Qt5/qscilexeravs.cpp
-    sources/Qt4Qt5/qsciscintilla.cpp
-    sources/Qt4Qt5/qsciscintillabase.cpp
     sources/Qt4Qt5/qscilexerpo.cpp
-    sources/Qt4Qt5/qscicommand.cpp
-    sources/Qt4Qt5/qscilexermakefile.cpp
-    sources/Qt4Qt5/ListBoxQt.cpp
     sources/Qt4Qt5/qscilexerfortran77.cpp
-    sources/Qt4Qt5/qscistyledtext.cpp
-    sources/Qt4Qt5/qscilexerverilog.cpp
-    sources/Qt4Qt5/SciClasses.cpp
     sources/Qt4Qt5/qscilexersql.cpp
-    sources/Qt4Qt5/qsciprinter.cpp
-    sources/Qt4Qt5/qscilexercpp.cpp
     sources/Qt4Qt5/qscilexerhtml.cpp
     sources/Qt4Qt5/qscilexerperl.cpp
     sources/Qt4Qt5/qscilexermatlab.cpp
-    sources/Qt4Qt5/PlatQt.cpp
-    sources/Qt4Qt5/MacPasteboardMime.cpp
     sources/Qt4Qt5/qscilexervhdl.cpp
-    sources/Qt4Qt5/qscilexerjavascript.cpp
-    sources/Qt4Qt5/qscimacro.cpp
     sources/Qt4Qt5/qscilexerpython.cpp
     sources/Qt4Qt5/qscilexerxml.cpp
     sources/Qt4Qt5/qscilexeroctave.cpp
-    sources/Qt4Qt5/qsciapis.cpp
-    sources/Qt4Qt5/qscilexeryaml.cpp
-    sources/Qt4Qt5/qscicommandset.cpp
     sources/Qt4Qt5/qscilexerlua.cpp
     sources/Qt4Qt5/qscilexeridl.cpp
     sources/Qt4Qt5/qscilexercmake.cpp
 
+    sources/Qt4Qt5/qscistyle.cpp
+    sources/Qt4Qt5/InputMethod.cpp
+    sources/Qt4Qt5/qsciabstractapis.cpp
+    sources/Qt4Qt5/ScintillaQt.cpp
+    sources/Qt4Qt5/qscidocument.cpp
+    sources/Qt4Qt5/qsciscintilla.cpp
+    sources/Qt4Qt5/qsciscintillabase.cpp
+    sources/Qt4Qt5/qscicommand.cpp
+    sources/Qt4Qt5/qscilexermakefile.cpp
+    sources/Qt4Qt5/ListBoxQt.cpp
+    sources/Qt4Qt5/qscistyledtext.cpp
+    sources/Qt4Qt5/qscilexerverilog.cpp
+    sources/Qt4Qt5/SciClasses.cpp
+    sources/Qt4Qt5/qsciprinter.cpp
+    sources/Qt4Qt5/PlatQt.cpp
+    sources/Qt4Qt5/MacPasteboardMime.cpp
+    sources/Qt4Qt5/qscimacro.cpp
+    sources/Qt4Qt5/qsciapis.cpp
+    sources/Qt4Qt5/qscilexeryaml.cpp
+    sources/Qt4Qt5/qscicommandset.cpp
+
+    sources/lexers/LexCPP.cpp
+
+
+    # We do not need these lexers
     sources/lexers/LexFlagship.cpp
     sources/lexers/LexMetapost.cpp
     sources/lexers/LexOthers.cpp
@@ -100,7 +107,6 @@ add_library(qscintilla
     sources/lexers/LexAVS.cpp
     sources/lexers/LexHaskell.cpp
     sources/lexers/LexAsm.cpp
-    sources/lexers/LexCPP.cpp
     sources/lexers/LexScriptol.cpp
     sources/lexers/LexTCMD.cpp
     sources/lexers/LexR.cpp

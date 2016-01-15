@@ -10,6 +10,24 @@ QScintilla sources are provided in `sources` folder as-is, in their original for
 without modifications. We should *not* put or modify any files in this folder.
 All changes to original QScintilla, if they are inevitable, should be documented here.
 
+What was changed?
+=================
+
+To make builds faster (and only for this) we commented all lexers, except CPP, in file `src/Catalogue.cpp`:
+
+```cpp
+int Scintilla_LinkLexers() {
+    ...
+//	LINK_LEXER(lmA68k);
+//	LINK_LEXER(lmAbaqus);
+//	LINK_LEXER(lmAda);
+    ...
+	LINK_LEXER(lmCPP);
+	...
+}
+
+```
+
 CMake integration
 =================
 

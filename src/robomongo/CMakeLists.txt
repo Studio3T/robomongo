@@ -115,7 +115,10 @@ set(SOURCES
 # Target that creates original MongoDB shell
 # Used to test compilation and linking
 add_executable(shell EXCLUDE_FROM_ALL shell/shell/dbshell.cpp)
-target_link_libraries(shell mongodb)
+target_link_libraries(
+    shell
+    mongodb
+    Threads::Threads)       # Target from FindThreads CMake module
 
 # Robomongo target
 add_executable(robomongo app/main.cpp ${SOURCES})
@@ -125,7 +128,8 @@ target_link_libraries(robomongo
         Qt5::Widgets
         qjson
         qscintilla
-        mongodb)
+        mongodb
+        Threads::Threads)   # Target from FindThreads CMake module
 
 target_include_directories(robomongo
     PRIVATE

@@ -1,6 +1,5 @@
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-omit-frame-pointer -fPIC -fno-strict-aliasing -ggdb -pthread -O0 -fstack-protector -fno-builtin-memcmp -rdynamic -fuse-ld=gold")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -fPIC")
-
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-omit-frame-pointer -fPIC -fno-strict-aliasing -pthread -O0 -fstack-protector -fno-builtin-memcmp -rdynamic -fuse-ld=gold")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(PROJECT_NAME "Robomongo")
 set(PROJECT_NAME_TITLE ${PROJECT_NAME})

@@ -8,6 +8,16 @@ set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 # Since cmake 2.4.0
 set(CMAKE_COLOR_MAKEFILE ON)
 
+# MongoDB compiled with this option
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# This variable is used by CMake "FindThreads" module
+# From documentation to FindThreads module:
+#   > Please note that the compiler flag can only be
+#   > used with the imported target. Use of both the imported
+#   > target as well as this switch is highly recommended for new code.
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+
 # Set the default build type to release with debug info
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RelWithDebInfo

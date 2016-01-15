@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"       # Get directory of this file
+PROJECT_DIR=$(dirname $BIN_DIR)                                   # Get root directory of project
+source $BIN_DIR/common/setup $1
+
+cd $BUILD_DIR
+cmake --build . --target package "${@:2}"

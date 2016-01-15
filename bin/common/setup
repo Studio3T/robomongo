@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+if [ "$1" == "debug" ]; then
+  BUILD_TYPE=Debug
+else
+  BUILD_TYPE=Release
+
+  # Prepend "release" in front of $@
+  set -- release "$@"
+fi
+
+# Build dir name is a lowercase of BUILD_TYPE
+# i.e. debug
+BUILD_DIR_NAME="$(echo $BUILD_TYPE | tr '[A-Z]' '[a-z]')"
+
+# i.e. /path/to/robomongo/build
+VARIANT_DIR=$PROJECT_DIR/build
+
+# i.e. /path/to/robomongo/build/debug
+BUILD_DIR=$VARIANT_DIR/$BUILD_DIR_NAME
+
+# i.e. /path/to/robomongo/build/debug/install
+INSTALL_PREFIX=$BUILD_DIR/install
+
+# i.e. /path/to/robomongo/build/debug/package
+PACK_PREFIX=$BUILD_DIR/package
+
+PREFIX_PATH=$ROBOMONGO_CMAKE_PREFIX_PATH
+
+mkdir -p $BUILD_DIR
+

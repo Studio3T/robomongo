@@ -16,6 +16,7 @@ include(PrintUtils)
 include(DefineCMakeDefaults)
 include(DefineDefaults)
 include(DefineTrashSymbols)
+include(PackageRobomongo)
 
 # Search for dependencies
 find_package(Threads REQUIRED)
@@ -32,9 +33,4 @@ add_subdirectory(src/robomongo)
 
 # Show configuration summary
 include(ConfigurationSummary)
-
-set(CPACK_GENERATOR TGZ)
-set(CPACK_MONOLITHIC_INSTALL ON)
-set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/package)
-include(CPack)
 

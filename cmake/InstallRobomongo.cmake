@@ -42,8 +42,8 @@ function(install_qt_lib)
         set(module_name Qt5${module})
         set(target_name Qt5::${module})
 
-        # Get full path to library (i.e. /path/to/lib/libQt5Widgets.so.5.5.1)
-        get_target_property(target_path ${target_name} LOCATION)
+        # Get full path to some known Qt library (i.e. /path/to/lib/libQt5Widgets.so.5.5.1)
+        get_target_property(target_path Qt5::Core LOCATION)
 
         # Resolve symlinks if any
         get_filename_component(real_target_path ${target_path} REALPATH)
@@ -121,7 +121,13 @@ function(install_qt_plugins)
     endforeach()
 endfunction()
 
-install_qt_lib(Core Gui Widgets PrintSupport)
-install_qt_plugins(QGifPlugin QICOPlugin QGtk2ThemePlugin QXcbIntegrationPlugin)
+# Install common dependencies
+install_qt_lib(Core Gui Widgets PrintSupport )
+install_qt_plugins(QGifPlugin QICOPlugin)
 install_icu_libs()
+
+if(SYSTEM_LINUX)
+    install_qt_lib(XcbQpa)
+    install_qt_plugins(QGtk2ThemePlugin QXcbIntegrationPlugin)
+endif()
 

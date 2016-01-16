@@ -42,37 +42,21 @@ function(install_qt_lib)
         set(module_name Qt5${module})
         set(target_name Qt5::${module})
 
-        # Get full path to library (i.e. /path/to/libQt5Widgets.so.5.5.1)
+        # Get full path to library (i.e. /path/to/lib/libQt5Widgets.so.5.5.1)
         get_target_property(target_path ${target_name} LOCATION)
 
         # Resolve symlinks if any
         get_filename_component(real_target_path ${target_path} REALPATH)
 
-        # Get folder path of library (i.e. /path/to)
-        get_filename_component(target_dir ${real_target_path} DIRECTORY)
+        # Get folder path of library (i.e. /path/to/lib)
+        get_filename_component(qt_lib_dir ${real_target_path} DIRECTORY)
 
-        # Get file name of library (i.e. libQt5Widgets.so.5.5.1)
-        get_filename_component(target_file ${real_target_path} NAME)
+        # Not very good solution, but we simply take all files with *Qt5<module>* in names (including symlinks)
+        file(GLOB module_libs ${qt_lib_dir}/${CMAKE_SHARED_LIBRARY_PREFIX}${module_name}*)
 
-        # Install library
-        install(
-            FILES ${real_target_path}
+        # Install to "lib" folder
+        install(FILES ${module_libs}
             DESTINATION ${lib_dir})
-
-        if(SYSTEM_LINUX)
-            # Find major version (5 for Qt5)
-            set(module_version_major ${${module_name}_VERSION_MAJOR})
-
-            # Prepare symlink file name (for Qt5Core it will be libQt5Core.so.5)
-            set(symlink_file_name ${CMAKE_SHARED_LIBRARY_PREFIX}${module_name}${CMAKE_SHARED_LIBRARY_SUFFIX}.${module_version_major})
-
-            # Create symlink (for Qt5Core it will be: libQt5Core.so.5 => libQt5Core.so.5.5.1)
-            install(CODE "
-                message(STATUS \"Installing: ${CMAKE_INSTALL_PREFIX}/${lib_dir}/${symlink_file_name}\")
-                execute_process(
-                    COMMAND ln -sf ${target_file} ${symlink_file_name}
-                    WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${lib_dir})")
-        endif()
     endforeach()
 endfunction()
 

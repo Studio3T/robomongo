@@ -131,9 +131,6 @@ target_link_libraries(robomongo
         mongodb
         Threads::Threads)   # Target from FindThreads CMake module
 
-if (SYSTEM_MACOSX)
-    target_link_libraries(robomongo PRIVATE Qt5::MacExtras)
-endif()
 
 target_include_directories(robomongo
     PRIVATE

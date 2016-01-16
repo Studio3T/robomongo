@@ -66,6 +66,9 @@ add_library(qscintilla
 #    sources/Qt4Qt5/qscilexerlua.cpp
 #    sources/Qt4Qt5/qscilexeridl.cpp
 #    sources/Qt4Qt5/qscilexercmake.cpp
+#    sources/Qt4Qt5/qscilexerverilog.cpp
+#    sources/Qt4Qt5/qscilexeryaml.cpp
+#    sources/Qt4Qt5/qscilexermakefile.cpp
 
     sources/Qt4Qt5/qscistyle.cpp
     sources/Qt4Qt5/InputMethod.cpp
@@ -75,17 +78,14 @@ add_library(qscintilla
     sources/Qt4Qt5/qsciscintilla.cpp
     sources/Qt4Qt5/qsciscintillabase.cpp
     sources/Qt4Qt5/qscicommand.cpp
-    sources/Qt4Qt5/qscilexermakefile.cpp
     sources/Qt4Qt5/ListBoxQt.cpp
     sources/Qt4Qt5/qscistyledtext.cpp
-    sources/Qt4Qt5/qscilexerverilog.cpp
     sources/Qt4Qt5/SciClasses.cpp
     sources/Qt4Qt5/qsciprinter.cpp
     sources/Qt4Qt5/PlatQt.cpp
     sources/Qt4Qt5/MacPasteboardMime.cpp
     sources/Qt4Qt5/qscimacro.cpp
     sources/Qt4Qt5/qsciapis.cpp
-    sources/Qt4Qt5/qscilexeryaml.cpp
     sources/Qt4Qt5/qscicommandset.cpp
 
     sources/lexers/LexCPP.cpp
@@ -223,6 +223,10 @@ target_link_libraries(qscintilla
     PUBLIC
         Qt5::Widgets
         Qt5::PrintSupport)
+
+if (SYSTEM_MACOSX)
+    target_link_libraries(qscintilla PUBLIC Qt5::MacExtras)
+endif()
 
 target_include_directories(qscintilla
     PUBLIC

@@ -80,6 +80,8 @@ file(READ
     ${CMAKE_CURRENT_LIST_DIR}/mongodb/${MongoDB_OBJECT_LIST_PLATFORM_PART}-${MongoDB_OBJECT_LIST_BUILD_TYPE_PART}.objects
     MongoDB_RELATIVE_LIBS)
 
+string(STRIP "${MongoDB_RELATIVE_LIBS}" MongoDB_RELATIVE_LIBS)
+
 # Convert string to list
 string(REPLACE " " ";" MongoDB_RELATIVE_LIBS ${MongoDB_RELATIVE_LIBS})
 

@@ -26,6 +26,10 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
 find_package(MongoDB REQUIRED)
 
+if (SYSTEM_MACOSX)
+    find_package(Qt5MacExtras REQUIRED)
+endif()
+
 # Projects
 add_subdirectory(src/third-party/qjson)
 add_subdirectory(src/third-party/qscintilla)

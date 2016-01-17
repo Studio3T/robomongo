@@ -465,7 +465,7 @@ namespace Robomongo
         connectToolBar->addAction(connectButtonAction);
         connectToolBar->setShortcutEnabled(1, true);
         connectToolBar->setMovable(false);
-        connectToolBar->setVisible(toolbarsSettings["connect"].toBool());
+        connectToolBar->setVisible(true /*toolbarsSettings["connect"].toBool()*/);
         _toolbarsMenu->addAction(connectToolBar->toggleViewAction());
         VERIFY(connect(connectToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onConnectToolbarVisibilityChanged(bool))));
         setToolBarIconSize(connectToolBar);
@@ -475,7 +475,7 @@ namespace Robomongo
         openSaveToolBar->addAction(_openAction);
         openSaveToolBar->addAction(_saveAction);
         openSaveToolBar->setMovable(false);
-        openSaveToolBar->setVisible(toolbarsSettings["open_save"].toBool());
+        openSaveToolBar->setVisible(true /*toolbarsSettings["open_save"].toBool()*/);
         _toolbarsMenu->addAction(openSaveToolBar->toggleViewAction());
         VERIFY(connect(openSaveToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onOpenSaveToolbarVisibilityChanged(bool))));
         setToolBarIconSize(openSaveToolBar);
@@ -488,7 +488,7 @@ namespace Robomongo
         _execToolBar->addAction(_orientationAction);
         _execToolBar->setShortcutEnabled(1, true);
         _execToolBar->setMovable(false);
-        _execToolBar->setVisible(toolbarsSettings["exec"].toBool());
+        _execToolBar->setVisible(true /*toolbarsSettings["exec"].toBool()*/);
         setToolBarIconSize(_execToolBar);
         addToolBar(_execToolBar);
         _toolbarsMenu->addAction(_execToolBar->toggleViewAction());
@@ -915,7 +915,10 @@ namespace Robomongo
 
         QWidget *titleWidget = new QWidget(this);         // this lines simply remove
         explorerDock->setTitleBarWidget(titleWidget);     // title bar widget.
-        explorerDock->setVisible(AppRegistry::instance().settingsManager()->toolbars()["explorer"].toBool());
+        explorerDock->setVisible(true);
+
+        // Prior to v0.9 it was:
+        // explorerDock->setVisible(AppRegistry::instance().settingsManager()->toolbars()["explorer"].toBool());
         
         QAction *actionExp = explorerDock->toggleViewAction();
         // Adjust any parameter you want.  
@@ -935,7 +938,11 @@ namespace Robomongo
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         _logDock->setWidget(log);
         _logDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
-        _logDock->setVisible(AppRegistry::instance().settingsManager()->toolbars()["logs"].toBool());
+
+        _logDock->setVisible(false);
+
+        // Prior to v0.9 it was:
+        // _logDock->setVisible(AppRegistry::instance().settingsManager()->toolbars()["logs"].toBool());
         
         QAction *action = _logDock->toggleViewAction();
         // Adjust any parameter you want.  

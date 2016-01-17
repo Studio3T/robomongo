@@ -46,7 +46,8 @@ namespace Robomongo
         _batchSize(50),
         _disableConnectionShortcuts(false),
         _textFontFamily(""),
-        _textFontPointSize(-1)
+        _textFontPointSize(-1),
+        _lineNumbers(false)
     {
         load();
         LOG_MSG("SettingsManager initialized in " + _configPath, mongo::logger::LogSeverity::Info(), false);
@@ -143,7 +144,7 @@ namespace Robomongo
             map.value("autoExec").toBool() : true;
 
         _lineNumbers = map.contains("lineNumbers") ?
-            map.value("lineNumbers").toBool() : true;
+            map.value("lineNumbers").toBool() : false;
 
         // 4. Load TimeZone
         int timeZone = map.value("timeZone").toInt();

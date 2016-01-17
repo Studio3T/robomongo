@@ -27,6 +27,32 @@ namespace Robomongo
         setElideMode(Qt::ElideRight);
         setMovable(true);
         setDocumentMode(true);
+
+#ifdef Q_OS_MAC
+        setDocumentMode(false);
+        QFont font = tab->font();
+        font.setPixelSize(12);
+        tab->setFont(font);
+        QString styles = QString(
+            "QTabWidget::tab-bar {"
+                "alignment: left;"
+            "}"
+            "QTabBar::tab:selected { "
+                "background: #E1E1E1; "
+                "color: #282828;"
+            "} "
+            "QTabBar::tab {"
+                "color: #505050;"
+                "font-size: 11px;"
+                "background: #c1c0c1;"
+                "border-right: 1px solid #aaaaaa;"
+                "padding: 5px 5px 5px 5px;"
+            "}"
+        );
+        setStyleSheet(styles);
+#endif
+
+
         VERIFY(connect(this, SIGNAL(tabCloseRequested(int)), SLOT(tabBar_tabCloseRequested(int))));
         VERIFY(connect(this, SIGNAL(currentChanged(int)), SLOT(ui_currentChanged(int))));
 

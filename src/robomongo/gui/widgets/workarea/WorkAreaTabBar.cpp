@@ -177,9 +177,10 @@ namespace Robomongo
             "}"
 
             "QTabBar::tab:selected, QTabBar::tab:hover {"
-                "background: qlineargradient(x1: 0, y1: 1, x2: 0, y2: 0,"
+                "/* background: qlineargradient(x1: 0, y1: 1, x2: 0, y2: 0,"
                                             "stop: 0 %1, stop: 0.3 %2,"    //#fafafa, #f4f4f4
-                                            "stop: 0.6 %3, stop: 1.0 %4);" //#e7e7e7, #fafafa
+                                            "stop: 0.6 %3, stop: 1.0 %4); */" //#e7e7e7, #fafafa
+                "background-color: white;"
             "}"
 
             "QTabBar::tab:selected {"

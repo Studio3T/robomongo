@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QMutex>
+#include <unordered_set>
 
 #include "robomongo/core/events/MongoEvents.h"
 
@@ -147,6 +148,13 @@ namespace Robomongo
         int _timerId;
 
         ConnectionSettings *_connection;
+
+        // Collection of created databases.
+        // Starting from 3.0, MongoDB drops empty databases.
+        // It means, we do not find a way to create "empty" database.
+        // We save all created databases in this collection and merge with
+        // list of real databases returned from MongoDB server.
+        std::unordered_set<std::string> _createdDbs;
     };
 
 }

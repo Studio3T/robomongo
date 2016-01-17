@@ -168,7 +168,20 @@ namespace Robomongo
         // If user not an admin - he doesn't have access to mongodb 'listDatabases' command
         // Non admin user has access only to the single database he specified while performing auth.
         std::vector<std::string> dbNames = getDatabaseNamesSafe();
-            
+
+        // Remove from list of created databases existing databases
+        for(std::vector<std::string>::iterator it = dbNames.begin(); it != dbNames.end(); ++it) {
+            std::unordered_set<std::string>::const_iterator exists = _createdDbs.find(*it);
+            if (exists != _createdDbs.end()) {
+                _createdDbs.erase(*it);
+            }
+        }
+
+        // Merge with list of created databases
+        for(std::unordered_set<std::string>::iterator it = _createdDbs.begin(); it != _createdDbs.end(); ++it) {
+            dbNames.push_back(*it);
+        }
+
         if(dbNames.size()){
             reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
         }else{
@@ -360,7 +373,10 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             client->createDatabase(event->database());
-            client->done();
+
+            // Insert to list of created database
+            // Read docs for this hashset in the header
+            _createdDbs.insert(event->database());
 
             reply(event->sender(), new CreateDatabaseResponse(this));
         } catch(const mongo::DBException &ex) {
@@ -374,7 +390,10 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             client->dropDatabase(event->database());
-            client->done();
+
+            // Remove from the list of created database
+            // Read docs for this hashset in the header
+            _createdDbs.erase(event->database());
 
             reply(event->sender(), new DropDatabaseResponse(this));
         } catch(const mongo::DBException &ex) {

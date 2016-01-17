@@ -28,7 +28,17 @@ namespace Robomongo
         _info(info),
         _readonly(readonly)
     {
-        setMinimumSize(minimumSize);
+        QRect screenGeometry = QApplication::desktop()->availableGeometry();
+        int horizontalMargin = (int)(screenGeometry.width() * 0.35);
+        int verticalMargin = (int)(screenGeometry.height() * 0.20);
+        QSize size(screenGeometry.width() - horizontalMargin,
+                   screenGeometry.height() - verticalMargin);
+
+        resize(size);
+
+        int x = (screenGeometry.width() - width()) / 2;
+        int y = (screenGeometry.height() - height()) / 2;
+        move(x, y);
 
         setWindowFlags(Qt::Window | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
 

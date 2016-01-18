@@ -8,7 +8,12 @@ execute_process(
 # Timestamp (not used for now)
 string(TIMESTAMP timestamp "%Y-%m-%d")
 
-set(CPACK_GENERATOR TGZ)
+if(SYSTEM_LINUX)
+    set(CPACK_GENERATOR TGZ)
+elseif(SYSTEM_MACOSX)
+    set(CPACK_GENERATOR DragNDrop)
+endif()
+
 set(CPACK_MONOLITHIC_INSTALL ON)
 set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/package)
 set(CPACK_STRIP_FILES ON)

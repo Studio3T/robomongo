@@ -121,7 +121,12 @@ target_link_libraries(
     Threads::Threads)       # Target from FindThreads CMake module
 
 # Robomongo target
-add_executable(robomongo app/main.cpp ${SOURCES})
+add_executable(robomongo MACOSX_BUNDLE app/main.cpp ${SOURCES})
+
+# Rename output name for Mac and Windows
+if(SYSTEM_MACOSX OR SYSTEM_WINDOWS)
+    set_target_properties(robomongo PROPERTIES OUTPUT_NAME "Robomongo")
+endif()
 
 target_link_libraries(robomongo
     PRIVATE

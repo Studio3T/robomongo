@@ -15,12 +15,23 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install"
     FORCE)
 
 set(install_dir ${CMAKE_INSTALL_PREFIX})
-set(bin_dir bin)
-set(lib_dir lib)
+
+if(SYSTEM_LINUX)
+    set(bin_dir bin)
+    set(lib_dir lib)
+    set(license_dir .)
+elseif(SYSTEM_MACOSX)
+    set(bundle_name Robomongo.app)
+    set(bin_dir ${bundle_name}/MacOS)
+    set(lib_dir ${bundle_name}/Frameworks)
+    set(license_dir ${bundle_name}/Resources)
+endif()
+
 
 INSTALL(
     TARGETS robomongo
-    DESTINATION ${bin_dir})
+    RUNTIME DESTINATION ${bin_dir}
+    BUNDLE DESTINATION .)
 
 INSTALL(
     FILES
@@ -28,35 +39,51 @@ INSTALL(
         ${CMAKE_SOURCE_DIR}/COPYRIGHT
         ${CMAKE_SOURCE_DIR}/CHANGELOG
     DESTINATION
-        .)
+        ${license_dir})
 
-INSTALL(
-    PROGRAMS
-        ${CMAKE_SOURCE_DIR}/install/linux/robomongo.sh
-    DESTINATION
-        ${bin_dir})
+if(SYSTEM_LINUX)
+    INSTALL(
+        PROGRAMS
+            ${CMAKE_SOURCE_DIR}/install/linux/robomongo.sh
+        DESTINATION
+            ${bin_dir})
+endif()
 
 
 function(install_qt_lib)
     foreach(module ${ARGV})
-        set(module_name Qt5${module})
         set(target_name Qt5::${module})
 
         # Get full path to some known Qt library (i.e. /path/to/lib/libQt5Widgets.so.5.5.1)
         get_target_property(target_path Qt5::Core LOCATION)
 
-        # Resolve symlinks if any
-        get_filename_component(real_target_path ${target_path} REALPATH)
-
         # Get folder path of library (i.e. /path/to/lib)
-        get_filename_component(qt_lib_dir ${real_target_path} DIRECTORY)
+        get_filename_component(qt_lib_dir ${target_path} DIRECTORY)
 
-        # Not very good solution, but we simply take all files with *Qt5<module>* in names (including symlinks)
-        file(GLOB module_libs ${qt_lib_dir}/${CMAKE_SHARED_LIBRARY_PREFIX}${module_name}*)
+        if (SYSTEM_LINUX)
+            set(module_name Qt5${module})
 
-        # Install to "lib" folder
-        install(FILES ${module_libs}
-            DESTINATION ${lib_dir})
+            # Not very good solution, but we simply take all files with *Qt5<module>* in names (including symlinks)
+            file(GLOB module_libs ${qt_lib_dir}/${CMAKE_SHARED_LIBRARY_PREFIX}${module_name}*)
+
+            # Install to "lib" folder
+            install(FILES ${module_libs}
+                    DESTINATION ${lib_dir})
+        endif()
+
+        if(SYSTEM_MACOSX)
+            set(module_name Qt${module})
+
+            # On Mac OS we are still located in .framework folder,
+            # and we need to go one level up
+            get_filename_component(qt_lib_dir ${qt_lib_dir} DIRECTORY)
+
+            install(
+                DIRECTORY ${qt_lib_dir}/${module_name}.framework
+                DESTINATION ${lib_dir}
+                PATTERN "*_debug" EXCLUDE)
+        endif()
+
     endforeach()
 endfunction()
 

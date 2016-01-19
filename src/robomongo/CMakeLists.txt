@@ -123,9 +123,25 @@ target_link_libraries(
 # Robomongo target
 add_executable(robomongo MACOSX_BUNDLE app/main.cpp ${SOURCES})
 
-# Rename output name for Mac and Windows
-if(SYSTEM_MACOSX OR SYSTEM_WINDOWS)
-    set_target_properties(robomongo PROPERTIES OUTPUT_NAME "Robomongo")
+if(SYSTEM_WINDOWS)
+    # Rename output name for Windows
+    set_target_properties(robomongo PROPERTIES
+        OUTPUT_NAME "Robomongo")
+endif()
+
+if(SYSTEM_MACOSX)
+    set_target_properties(robomongo PROPERTIES
+        INSTALL_RPATH "@executable_path/../Frameworks"
+        OUTPUT_NAME "Robomongo"
+        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/install/macosx/Info.plist.in
+        MACOSX_BUNDLE_BUNDLE_NAME "Robomongo"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "com.paralect.Robomongo"
+        MACOSX_BUNDLE_INFO_STRING "Robomongo ${PROJECT_VERSION}. Copyright Paralect, 2013 - 2016"
+        MACOSX_BUNDLE_SHORT_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_LONG_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_COPYRIGHT "Copyright Paralect, 2013 - 2016"
+        MACOSX_BUNDLE_ICON_FILE "Robomongo")
 endif()
 
 target_link_libraries(robomongo
@@ -136,11 +152,9 @@ target_link_libraries(robomongo
         mongodb
         Threads::Threads)   # Target from FindThreads CMake module
 
-
 target_include_directories(robomongo
     PRIVATE
-        ${CMAKE_HOME_DIRECTORY}/src
-)
+        ${CMAKE_HOME_DIRECTORY}/src)
 
 target_compile_definitions(robomongo
     PRIVATE
@@ -159,9 +173,7 @@ add_executable(main2 EXCLUDE_FROM_ALL app/main_json.cpp gui/editors/JSLexer.cpp)
 target_link_libraries(main2 Qt5::Widgets qjson qscintilla)
 target_include_directories(main2
     PRIVATE
-        ${CMAKE_HOME_DIRECTORY}/src
-)
+        ${CMAKE_HOME_DIRECTORY}/src)
 
 # Install
 include(InstallRobomongo)
-

@@ -3,6 +3,6 @@ How to generate "icns" icon file
 
 In this directory run:
 
-    $ iconutil -c icns logo.iconset
+    $ iconutil -c icns Robomongo.iconset
 
-File `logo.icns` will be generated.
+File `Robomongo.icns` will be generated.

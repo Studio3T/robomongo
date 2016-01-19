@@ -19,21 +19,26 @@ set(install_dir ${CMAKE_INSTALL_PREFIX})
 if(SYSTEM_LINUX)
     set(bin_dir bin)
     set(lib_dir lib)
+    set(qt_plugin_dir ${lib_dir})
+    set(resources_dir share)
     set(license_dir .)
 elseif(SYSTEM_MACOSX)
     set(bundle_name Robomongo.app)
-    set(bin_dir ${bundle_name}/MacOS)
-    set(lib_dir ${bundle_name}/Frameworks)
-    set(license_dir ${bundle_name}/Resources)
+    set(contents_path ${bundle_name}/Contents)
+
+    set(bin_dir ${contents_path}/MacOS)
+    set(lib_dir ${contents_path}/Frameworks)
+    set(qt_plugin_dir ${contents_path}/PlugIns/Qt)
+    set(resources_dir ${contents_path}/Resources)
+    set(license_dir ${resources_dir})
 endif()
 
-
-INSTALL(
+install(
     TARGETS robomongo
     RUNTIME DESTINATION ${bin_dir}
     BUNDLE DESTINATION .)
 
-INSTALL(
+install(
     FILES
         ${CMAKE_SOURCE_DIR}/LICENSE
         ${CMAKE_SOURCE_DIR}/COPYRIGHT
@@ -42,13 +47,21 @@ INSTALL(
         ${license_dir})
 
 if(SYSTEM_LINUX)
-    INSTALL(
+    install(
         PROGRAMS
             ${CMAKE_SOURCE_DIR}/install/linux/robomongo.sh
         DESTINATION
             ${bin_dir})
 endif()
 
+if(SYSTEM_MACOSX)
+    install(
+        FILES
+            "${CMAKE_SOURCE_DIR}/install/macosx/Robomongo.icns"
+            "${CMAKE_SOURCE_DIR}/install/macosx/qt.conf"
+        DESTINATION
+            ${resources_dir})
+endif()
 
 function(install_qt_lib)
     foreach(module ${ARGV})
@@ -81,7 +94,8 @@ function(install_qt_lib)
             install(
                 DIRECTORY ${qt_lib_dir}/${module_name}.framework
                 DESTINATION ${lib_dir}
-                PATTERN "*_debug" EXCLUDE)
+                PATTERN "*_debug" EXCLUDE      # Exclude debug libraries
+                PATTERN "Headers" EXCLUDE)     # Exclude Headers folders
         endif()
 
     endforeach()
@@ -144,17 +158,25 @@ function(install_qt_plugins)
         # Install to "lib" folder
         install(
             FILES ${target_path}
-            DESTINATION ${lib_dir}/${plugin_dir_name})
+            DESTINATION ${qt_plugin_dir}/${plugin_dir_name})
     endforeach()
 endfunction()
 
 # Install common dependencies
-install_qt_lib(Core Gui Widgets PrintSupport )
+install_qt_lib(Core Gui Widgets PrintSupport)
 install_qt_plugins(QGifPlugin QICOPlugin)
 install_icu_libs()
 
 if(SYSTEM_LINUX)
     install_qt_lib(XcbQpa DBus)
     install_qt_plugins(QGtk2ThemePlugin QXcbIntegrationPlugin)
+endif()
+
+if(SYSTEM_MACOSX)
+    install_qt_lib(MacExtras DBus)
+    install_qt_plugins(
+        QCocoaIntegrationPlugin
+        QMinimalIntegrationPlugin
+        QOffscreenIntegrationPlugin)
 endif()
 

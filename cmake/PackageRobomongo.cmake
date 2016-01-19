@@ -12,6 +12,7 @@ if(SYSTEM_LINUX)
     set(CPACK_GENERATOR TGZ)
 elseif(SYSTEM_MACOSX)
     set(CPACK_GENERATOR DragNDrop)
+    set(CPACK_DMG_DS_STORE ${CMAKE_SOURCE_DIR}/install/macosx/DMG_DS_Store)
 endif()
 
 set(CPACK_MONOLITHIC_INSTALL ON)

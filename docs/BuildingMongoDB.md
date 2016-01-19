@@ -1,12 +1,13 @@
 Building MongoDB 
 ================
 
-Linux
------
+Linux and Mac
+-------------
 
 Clone MongoDB fork and checkout to "roboshell-v3.2" branch:
 
-    $ git clone git@github.com:paralect/robomongo-shell.git && cd robomongo-shell
+    $ git clone git@github.com:paralect/robomongo-shell.git
+    $ cd robomongo-shell
     $ git checkout roboshell-v3.2
     
 Build MongoDB shell:

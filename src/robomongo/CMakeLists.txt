@@ -1,5 +1,15 @@
 
+if(SYSTEM_LINUX)
+    set(QT_PLUGINS_RELATIVE_PATH "../lib")
+elseif(SYSTEM_MACOSX)
+    set(QT_PLUGINS_RELATIVE_PATH "PlugIns/Qt")
+elseif(SYSTEM_WINDOWS)
+endif()
+
+qt_conf_resource(qt_conf_cpp)
+
 set(SOURCES
+    ${qt_conf_cpp}
 
     # Isolated Scope #1
     core/utils/QtUtils.cpp
@@ -133,7 +143,7 @@ if(SYSTEM_MACOSX)
     set_target_properties(robomongo PROPERTIES
         INSTALL_RPATH "@executable_path/../Frameworks"
         OUTPUT_NAME "Robomongo"
-        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/install/macosx/Info.plist.in
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/install/macosx/Info.plist.in"
         MACOSX_BUNDLE_BUNDLE_NAME "Robomongo"
         MACOSX_BUNDLE_GUI_IDENTIFIER "com.paralect.Robomongo"
         MACOSX_BUNDLE_INFO_STRING "Robomongo ${PROJECT_VERSION}. Copyright Paralect, 2013 - 2016"
@@ -143,6 +153,12 @@ if(SYSTEM_MACOSX)
         MACOSX_BUNDLE_COPYRIGHT "Copyright Paralect, 2013 - 2016"
         MACOSX_BUNDLE_ICON_FILE "Robomongo")
 endif()
+
+if(SYSTEM_LINUX)
+    set_target_properties(robomongo PROPERTIES
+        INSTALL_RPATH "$ORIGIN/../lib")
+endif()
+
 
 target_link_libraries(robomongo
     PRIVATE

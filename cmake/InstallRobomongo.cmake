@@ -46,19 +46,10 @@ install(
     DESTINATION
         ${license_dir})
 
-if(SYSTEM_LINUX)
-    install(
-        PROGRAMS
-            ${CMAKE_SOURCE_DIR}/install/linux/robomongo.sh
-        DESTINATION
-            ${bin_dir})
-endif()
-
 if(SYSTEM_MACOSX)
     install(
         FILES
             "${CMAKE_SOURCE_DIR}/install/macosx/Robomongo.icns"
-            "${CMAKE_SOURCE_DIR}/install/macosx/qt.conf"
         DESTINATION
             ${resources_dir})
 endif()

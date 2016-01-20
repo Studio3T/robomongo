@@ -106,7 +106,7 @@ namespace Robomongo
         QString controlKey = "Ctrl";
 
     #if defined(Q_OS_MAC)
-        QString explorerColor = "#DEE3EA"; // was #CED6DF"
+        QString explorerColor = "#EFEFEF"; // was #CED6DF"
         controlKey = QChar(0x2318); // "Command" key aka Cauliflower
     #elif defined(Q_OS_LINUX)
         QString explorerColor = background.darker(103).name();

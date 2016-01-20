@@ -87,6 +87,9 @@ namespace Robomongo
 
         _listWidget = new ConnectionsTreeWidget;
         GuiRegistry::instance().setAlternatingColor(_listWidget);
+#if defined(Q_OS_MAC)
+        _listWidget->setAttribute(Qt::WA_MacShowFocusRect, false);
+#endif
         _listWidget->setIndentation(5);
 
         QStringList colums;
@@ -106,7 +109,7 @@ namespace Robomongo
         _listWidget->setSelectionMode(QAbstractItemView::SingleSelection); // single item can be draged or droped
         _listWidget->setDragEnabled(true);
         _listWidget->setDragDropMode(QAbstractItemView::InternalMove);
-        _listWidget->setMinimumHeight(300);
+        _listWidget->setMinimumHeight(290);
         _listWidget->setMinimumWidth(630);
         VERIFY(connect(_listWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept())));
         VERIFY(connect(_listWidget, SIGNAL(layoutChanged()), this, SLOT(listWidget_layoutChanged())));
@@ -124,8 +127,11 @@ namespace Robomongo
 
         QLabel *intro = new QLabel(
             "<a href='create'>Create</a>, "
-            "<a href='edit'>edit</a>, <a href='remove'>remove</a>, <a href='clone'>clone</a> or reorder connections via drag'n'drop.");
+            "<a href='edit'>edit</a>, "
+            "<a href='remove'>remove</a>, "
+            "<a href='clone'>clone</a> or reorder connections via drag'n'drop.");
         intro->setWordWrap(true);
+
         VERIFY(connect(intro, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString))));
 
         QVBoxLayout *firstColumnLayout = new QVBoxLayout;

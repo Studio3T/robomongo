@@ -7,8 +7,6 @@
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/AppStyle.h"
 
-
-
 int main(int argc, char *argv[], char** envp)
 {
     mongo::runGlobalInitializersOrDie(argc, argv, envp);

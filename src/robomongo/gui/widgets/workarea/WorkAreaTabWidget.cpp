@@ -34,21 +34,22 @@ namespace Robomongo
         font.setPixelSize(12);
         tab->setFont(font);
         QString styles = QString(
+            "QTabWidget::pane { background-color: white; }"   // This style disables default styling under Mac
             "QTabWidget::tab-bar {"
                 "alignment: left;"
             "}"
             "QTabBar::tab:selected { "
-                "background: #E1E1E1; "
+                "background: white; /*#E1E1E1*/; "
                 "color: #282828;"
             "} "
             "QTabBar::tab {"
                 "color: #505050;"
                 "font-size: 11px;"
-                "background: #c1c0c1;"
+                "background: %1;"
                 "border-right: 1px solid #aaaaaa;"
-                "padding: 5px 5px 5px 5px;"
+                "padding: 4px 5px 7px 5px;"
             "}"
-        );
+        ).arg(QWidget::palette().color(QWidget::backgroundRole()).darker(114).name());
         setStyleSheet(styles);
 #endif
 

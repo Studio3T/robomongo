@@ -16,8 +16,8 @@ include(PrintUtils)
 include(DefineCMakeDefaults)
 include(DefineDefaults)
 include(DefineTrashSymbols)
+include(QtInstall)
 include(PackageRobomongo)
-include(QtConf)
 
 # Search for dependencies
 find_package(Threads REQUIRED)

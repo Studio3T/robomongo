@@ -1,15 +1,4 @@
-
-if(SYSTEM_LINUX)
-    set(QT_PLUGINS_RELATIVE_PATH "../lib")
-elseif(SYSTEM_MACOSX)
-    set(QT_PLUGINS_RELATIVE_PATH "PlugIns/Qt")
-elseif(SYSTEM_WINDOWS)
-endif()
-
-qt_conf_resource(qt_conf_cpp)
-
 set(SOURCES
-    ${qt_conf_cpp}
 
     # Isolated Scope #1
     core/utils/QtUtils.cpp
@@ -122,43 +111,9 @@ set(SOURCES
     gui/resources/gui.qrc
 )
 
-# Target that creates original MongoDB shell
-# Used to test compilation and linking
-add_executable(shell EXCLUDE_FROM_ALL shell/shell/dbshell.cpp)
-target_link_libraries(
-    shell
-    mongodb
-    Threads::Threads)       # Target from FindThreads CMake module
 
 # Robomongo target
 add_executable(robomongo MACOSX_BUNDLE app/main.cpp ${SOURCES})
-
-if(SYSTEM_WINDOWS)
-    # Rename output name for Windows
-    set_target_properties(robomongo PROPERTIES
-        OUTPUT_NAME "Robomongo")
-endif()
-
-if(SYSTEM_MACOSX)
-    set_target_properties(robomongo PROPERTIES
-        INSTALL_RPATH "@executable_path/../Frameworks"
-        OUTPUT_NAME "Robomongo"
-        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/install/macosx/Info.plist.in"
-        MACOSX_BUNDLE_BUNDLE_NAME "Robomongo"
-        MACOSX_BUNDLE_GUI_IDENTIFIER "com.paralect.Robomongo"
-        MACOSX_BUNDLE_INFO_STRING "Robomongo ${PROJECT_VERSION}. Copyright Paralect, 2013 - 2016"
-        MACOSX_BUNDLE_SHORT_VERSION "${PROJECT_VERSION}"
-        MACOSX_BUNDLE_LONG_VERSION "${PROJECT_VERSION}"
-        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
-        MACOSX_BUNDLE_COPYRIGHT "Copyright Paralect, 2013 - 2016"
-        MACOSX_BUNDLE_ICON_FILE "Robomongo")
-endif()
-
-if(SYSTEM_LINUX)
-    set_target_properties(robomongo PROPERTIES
-        INSTALL_RPATH "$ORIGIN/../lib")
-endif()
-
 
 target_link_libraries(robomongo
     PRIVATE
@@ -185,11 +140,47 @@ target_compile_definitions(robomongo
         PROJECT_VERSION="${PROJECT_VERSION}"
         PROJECT_NAME_LOWERCASE="${PROJECT_NAME_LOWERCASE}")
 
+if(SYSTEM_WINDOWS)
+    # Rename output name for Windows
+    set_target_properties(robomongo PROPERTIES
+        OUTPUT_NAME "Robomongo")
+
+elseif(SYSTEM_MACOSX)
+    set_target_properties(robomongo PROPERTIES
+        INSTALL_RPATH "@executable_path/../Frameworks"
+        OUTPUT_NAME "Robomongo"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/install/macosx/Info.plist.in"
+        MACOSX_BUNDLE_BUNDLE_NAME "Robomongo"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "com.paralect.Robomongo"
+        MACOSX_BUNDLE_INFO_STRING "Robomongo ${PROJECT_VERSION}. Copyright Paralect, 2013 - 2016"
+        MACOSX_BUNDLE_SHORT_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_LONG_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_COPYRIGHT "Copyright Paralect, 2013 - 2016"
+        MACOSX_BUNDLE_ICON_FILE "Robomongo")
+
+elseif(SYSTEM_LINUX)
+    set_target_properties(robomongo PROPERTIES
+        INSTALL_RPATH "$ORIGIN/../lib")
+endif()
+
+# Install
+include(InstallRobomongo)
+
+
+#
+# Helper targets
+#
+
 add_executable(main2 EXCLUDE_FROM_ALL app/main_json.cpp gui/editors/JSLexer.cpp)
 target_link_libraries(main2 Qt5::Widgets qjson qscintilla)
 target_include_directories(main2
     PRIVATE
         ${CMAKE_HOME_DIRECTORY}/src)
 
-# Install
-include(InstallRobomongo)
+# Target that creates original MongoDB shell
+# Used to test compilation and linking
+add_executable(shell EXCLUDE_FROM_ALL shell/shell/dbshell.cpp)
+target_link_libraries(shell
+    mongodb
+    Threads::Threads)       # Target from FindThreads CMake module

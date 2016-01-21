@@ -4,5 +4,4 @@ BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"       # Get director
 PROJECT_DIR=$(dirname $BIN_DIR)                                   # Get root directory of project
 source $BIN_DIR/common/setup $1
 
-cd $VARIANT_DIR
-rm -rf $BUILD_DIR_NAME
+cd $VARIANT_DIR && rm -rf $BUILD_DIR_NAME

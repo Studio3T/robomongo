@@ -12,7 +12,7 @@ Clone MongoDB fork and checkout to "roboshell-v3.2" branch:
     
 Build MongoDB shell:
 
-    $ scons mongo -j8 --release
+    $ scons mongo -j8 --release --osx-version-min=10.9
     
 #### Advanced
 

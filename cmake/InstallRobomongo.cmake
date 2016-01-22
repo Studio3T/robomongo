@@ -35,6 +35,15 @@ elseif(SYSTEM_MACOSX)
     set(qt_plugins_dir      ${contents_path}/PlugIns/Qt)
     set(qt_conf_dir         ${resources_dir})
     set(qt_conf_plugins     "PlugIns/Qt")
+elseif(SYSTEM_WINDOWS)
+    set(bin_dir             .)
+    set(lib_dir             .)
+    set(resources_dir       .)
+    set(license_dir         .)
+
+    set(qt_plugins_dir      ${lib_dir})
+    set(qt_conf_dir         ${bin_dir})
+    set(qt_conf_plugins     .)
 endif()
 
 # Generate qt.conf file

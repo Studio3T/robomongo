@@ -113,7 +113,7 @@ set(SOURCES
 
 
 # Robomongo target
-add_executable(robomongo MACOSX_BUNDLE app/main.cpp ${SOURCES})
+add_executable(robomongo MACOSX_BUNDLE WIN32 app/main.cpp ${SOURCES})
 
 target_link_libraries(robomongo
     PRIVATE

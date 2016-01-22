@@ -12,4 +12,4 @@ if %ERRORLEVEL% neq 0 (exit /b 1)
 
 rem Run build
 cd "%BUILD_DIR%"
-cmake --build .
+cmake --build . --config Release %*

@@ -1,5 +1,8 @@
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-omit-frame-pointer -fPIC -fno-strict-aliasing -pthread -O0 -fstack-protector -fno-builtin-memcmp -rdynamic -fuse-ld=gold")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+if(SYSTEM_LINUX OR SYSTEM_MACOSX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
 
 set(PROJECT_NAME "Robomongo")
 set(PROJECT_NAME_TITLE ${PROJECT_NAME})

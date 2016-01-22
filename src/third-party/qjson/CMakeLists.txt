@@ -16,3 +16,7 @@ target_link_libraries(qjson
 target_include_directories(qjson
     PUBLIC
         sources/src)
+
+target_compile_definitions(qjson
+    PUBLIC
+        QJSON_STATIC)

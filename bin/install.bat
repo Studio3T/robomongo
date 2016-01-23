@@ -12,4 +12,4 @@ if %ERRORLEVEL% neq 0 (exit /b 1)
 
 rem Run install
 cd "%BUILD_DIR%"
-cmake --build . --config %BUILD_TYPE% --target install %*
+cmake --build . --config %BUILD_TYPE% --target install

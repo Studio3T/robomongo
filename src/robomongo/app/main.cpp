@@ -9,7 +9,11 @@
 
 int main(int argc, char *argv[], char** envp)
 {
+#ifdef Q_OS_WIN
+    envp = NULL;
+#endif
     mongo::runGlobalInitializersOrDie(argc, argv, envp);
+
     QApplication app(argc, argv);
     Robomongo::detail::initStyle();    
     setlocale(LC_NUMERIC, "C"); // Do not move this line

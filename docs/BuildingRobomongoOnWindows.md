@@ -88,8 +88,45 @@ Open VS2013 x64 Native Tools Command Prompt and navigate to `robomongo-shell` fo
 
 Build shell:
 
-    $ scons mongo --release -j8
+    > bin\build
+    
+Note that backslash is used (`\`), and not forward slash (`/`).
+
+Clean build files:
+
+    > bin\clean
 
 
-   
+## Build Robomongo   
+
+Set special environment variable `ROBOMONGO_CMAKE_PREFIX_PATH` to point to set of 
+directories:
+
+1. Location of Qt SDK
+2. Location of Robomongo Shell
+
+Separate directories by semicolon `;` (not colon).
+
+    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.5\msvc2013_64;d:\Projects\robomongo-shell"
+    
+Reopen your Command Prompt to make this variable available.
+ 
+Run configuration step:
+    
+    > bin\configure 
+    
+And finally, build Robomongo:
+    
+    > bin\build 
+    
+    
+#### Helper commands
+    
+Clean build files (in order to start build from scratch):
+
+    > bin\clean
+    
+Install Robomongo to `build\Release\install` folder:
+
+    > bin\install
    

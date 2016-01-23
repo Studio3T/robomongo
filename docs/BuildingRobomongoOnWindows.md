@@ -19,6 +19,12 @@ Prerequisites
  for cross-platform projects and required by both MongoDB and Robomongo.
   
  All other Git installer options are not important (use defaults).
+ 
+ If you are using SSH clone url, start SSH agent and add your private key
+ with this commands in Git Bash:
+ 
+    $ eval `ssh-agent`       # starts ssh agent
+    $ ssh-add ~/.ssh/mykey   # add your key (which can be in any folder)
   
 #### 1. Visual Studio 2013 (i.e. MSVC12) Update 4 or newer
 

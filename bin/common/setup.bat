@@ -9,8 +9,18 @@ if not defined ROBOMONGO_CMAKE_PREFIX_PATH (
   exit /b 1
 )
 
-rem Build type (can be Release, Debug, RelWithDebugInfo and MinRelSize)
-set BUILD_TYPE=Release
+rem Check for debug build type
+if %1. == debug. (
+  set BUILD_TYPE=Debug
+) else (
+    rem If build type wasn't specified - Release mode assumed
+    if %1. ==. (
+      set BUILD_TYPE=Release
+    ) else (
+        echo Invalid build type "%1". Supported build types: debug or release.
+        exit /b 1
+    )
+)
 
 rem Build dir name (i.e. Release)
 set BUILD_DIR_NAME=%BUILD_TYPE%

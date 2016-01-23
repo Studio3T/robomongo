@@ -92,5 +92,10 @@ elseif(SYSTEM_MACOSX)
     install(
         FILES       "${CMAKE_SOURCE_DIR}/install/macosx/Robomongo.icns"
         DESTINATION "${resources_dir}")
+elseif(SYSTEM_WINDOWS)
+    install_qt_plugins(
+        QWindowsIntegrationPlugin
+        QMinimalIntegrationPlugin
+        QOffscreenIntegrationPlugin)
 endif()
 

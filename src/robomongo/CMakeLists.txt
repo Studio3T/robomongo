@@ -145,6 +145,11 @@ if(SYSTEM_WINDOWS)
     set_target_properties(robomongo PROPERTIES
         OUTPUT_NAME "Robomongo")
 
+    # Seems that we do not need to do this with recent versions of Qt
+    target_link_libraries(robomongo
+        PRIVATE
+            Qt5::WinMain)
+
 elseif(SYSTEM_MACOSX)
     set_target_properties(robomongo PROPERTIES
         INSTALL_RPATH "@executable_path/../Frameworks"
@@ -169,11 +174,10 @@ include(InstallRobomongo)
 
 
 #
-# Helper targets
+# Helper targets (code below should be moved to separate file)
 #
-
-add_executable(main2 EXCLUDE_FROM_ALL app/main_json.cpp gui/editors/JSLexer.cpp)
-target_link_libraries(main2 Qt5::Widgets qjson qscintilla)
+add_executable(main2 WIN32 EXCLUDE_FROM_ALL app/main_json.cpp gui/editors/JSLexer.cpp)
+target_link_libraries(main2 Qt5::Widgets qjson qscintilla mongodb)
 target_include_directories(main2
     PRIVATE
         ${CMAKE_HOME_DIRECTORY}/src)

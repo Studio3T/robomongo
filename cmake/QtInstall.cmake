@@ -1,6 +1,7 @@
 function(install_qt_lib)
     foreach(module ${ARGV})
         set(target_name Qt5::${module})
+        set(module_name Qt5${module})
 
         # Get full path to some known Qt library (i.e. /path/to/lib/libQt5Widgets.so.5.5.1)
         get_target_property(target_path Qt5::Core LOCATION)
@@ -9,8 +10,6 @@ function(install_qt_lib)
         get_filename_component(qt_lib_dir ${target_path} DIRECTORY)
 
         if (SYSTEM_LINUX)
-            set(module_name Qt5${module})
-
             # Not very good solution, but we simply take all files with *Qt5<module>* in names (including symlinks)
             file(GLOB module_libs ${qt_lib_dir}/${CMAKE_SHARED_LIBRARY_PREFIX}${module_name}*)
 
@@ -31,6 +30,12 @@ function(install_qt_lib)
                 DESTINATION ${lib_dir}
                 PATTERN "*_debug" EXCLUDE      # Exclude debug libraries
                 PATTERN "Headers" EXCLUDE)     # Exclude Headers folders
+        endif()
+
+        if (SYSTEM_WINDOWS)
+            # Install single DLL to lib directory
+            install(FILES ${qt_lib_dir}/${module_name}${CMAKE_SHARED_LIBRARY_SUFFIX}
+                    DESTINATION ${lib_dir})
         endif()
 
     endforeach()

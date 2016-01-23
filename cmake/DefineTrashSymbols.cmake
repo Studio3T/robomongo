@@ -4,6 +4,11 @@ if(SYSTEM_LINUX OR SYSTEM_MACOSX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 elseif(SYSTEM_WINDOWS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_UNICODE -DUNICODE -DWIN32 -D_WIN32 -D_CRT_SECURE_NO_WARNINGS -DBOOST_ALL_NO_LIB")
+
+    # Do not show some warnings
+    # We disable the same warnings as MongoDB do
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4355 /wd4800 /wd4267 /wd4244 /wd4290 /wd4068 /wd4351")
+
     set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} psapi.lib bcrypt.lib Iphlpapi.lib dbghelp.lib ws2_32.lib winmm.lib version.lib")
 endif()
 

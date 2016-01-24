@@ -141,6 +141,18 @@ target_compile_definitions(robomongo
         PROJECT_NAME_LOWERCASE="${PROJECT_NAME_LOWERCASE}")
 
 if(SYSTEM_WINDOWS)
+    # Create Windows Resource file
+    set(windows_icon "${CMAKE_SOURCE_DIR}/install/windows/robomongo.ico")
+    configure_file(
+        "${CMAKE_SOURCE_DIR}/install/windows/winres.rc.in"
+        "${CMAKE_BINARY_DIR}/winres.rc")
+    unset(windows_icon)
+
+    # Add additional source file to "robomongo" target
+    target_sources(robomongo
+        PRIVATE
+            "${CMAKE_BINARY_DIR}/winres.rc")
+
     # Rename output name for Windows
     set_target_properties(robomongo PROPERTIES
         OUTPUT_NAME "Robomongo")

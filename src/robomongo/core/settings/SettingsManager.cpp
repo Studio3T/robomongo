@@ -16,19 +16,19 @@ namespace
         /**
          * @brief Version of schema
          */
-        const QString SchemaVersion = "1.0";
+        const QString SchemaVersion = "2.0";
 
          /**
          * @brief Config file absolute path
          *        (usually: /home/user/.config/robomongo/robomongo.json)
          */
-        const QString _configPath = QString("%1/.config/" PROJECT_NAME_LOWERCASE "/" PROJECT_NAME_LOWERCASE ".json").arg(QDir::homePath());
+        const QString _configPath = QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath());
 
         /**
          * @brief Config file containing directory path
          *        (usually: /home/user/.config/robomongo)
          */
-        const QString _configDir = QString("%1/.config/" PROJECT_NAME_LOWERCASE).arg(QDir::homePath());
+        const QString _configDir = QString("%1/.config/robomongo/0.9").arg(QDir::homePath());
 }
 
 namespace Robomongo
@@ -47,7 +47,8 @@ namespace Robomongo
         _disableConnectionShortcuts(false),
         _textFontFamily(""),
         _textFontPointSize(-1),
-        _lineNumbers(false)
+        _lineNumbers(false),
+        _loadMongoRcJs(false)
     {
         load();
         LOG_MSG("SettingsManager initialized in " + _configPath, mongo::logger::LogSeverity::Info(), false);

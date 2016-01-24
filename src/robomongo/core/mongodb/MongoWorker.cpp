@@ -24,11 +24,14 @@ namespace Robomongo
         _isAdmin(true),
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
-        _timerId(-1)
+        _timerId(-1),
+        _isQuiting(false)
     {         
-        _thread = new QThread(this);
+        _thread = new QThread();
         moveToThread(_thread);
         VERIFY(connect( _thread, SIGNAL(started()), this, SLOT(init()) ));
+        VERIFY(connect( _thread, SIGNAL(finished()), _thread, SLOT(deleteLater()) ));
+        VERIFY(connect( _thread, SIGNAL(finished()), this, SLOT(deleteLater()) ));
         _thread->start();
     }
 
@@ -81,14 +84,19 @@ namespace Robomongo
 
     MongoWorker::~MongoWorker()
     {
+        killTimer(_timerId);
         delete _dbclient;
         delete _connection;
-        _thread->quit();
-        if (!_thread->wait(2000))
-            _thread->terminate();
-
         delete _scriptEngine;
-        delete _thread;
+
+        // QThread "_thread" and MongoWorker itself will be deleted later
+        // (see MongoWorker() constructor)
+    }
+
+    void MongoWorker::stopAndDelete()
+    {
+        _isQuiting = true;
+        _thread->quit();
     }
 
     /**
@@ -549,6 +557,9 @@ namespace Robomongo
      */
     void MongoWorker::send(Event *event)
     {
+        if (_isQuiting)
+            return;
+
         AppRegistry::instance().bus()->send(this, event);
     }
 
@@ -557,6 +568,9 @@ namespace Robomongo
      */
     void MongoWorker::reply(QObject *receiver, Event *event)
     {
+        if (_isQuiting)
+            return;
+
         AppRegistry::instance().bus()->send(receiver, event);
     }
 }

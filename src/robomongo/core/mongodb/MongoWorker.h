@@ -147,7 +147,7 @@ namespace Robomongo
         const bool _isLoadMongoRcJs;
         const int _batchSize;
         int _timerId;
-        QAtomicInteger<_Bool> _isQuiting;
+        QAtomicInteger<int> _isQuiting;
 
         ConnectionSettings *_connection;
 

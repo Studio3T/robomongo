@@ -25,7 +25,7 @@ namespace Robomongo
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
         _timerId(-1),
-        _isQuiting(false)
+        _isQuiting(FALSE)
     {         
         _thread = new QThread();
         moveToThread(_thread);
@@ -95,7 +95,7 @@ namespace Robomongo
 
     void MongoWorker::stopAndDelete()
     {
-        _isQuiting = true;
+        _isQuiting = TRUE;
         _thread->quit();
     }
 

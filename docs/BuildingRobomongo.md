@@ -8,11 +8,10 @@ Refer to [Building MongoDB fork](BuildingMongoDB.md) document in this folder.
 
 #### Step 2.
 
-Download Robomongo and checkout to `v0.9` branch:
+Download Robomongo: 
 
     $ git clone https://github.com/paralect/robomongo
     $ cd robomongo
-    $ git checkout v0.9
 
 Set special environment variable `ROBOMONGO_CMAKE_PREFIX_PATH` to point to set of 
 directories:

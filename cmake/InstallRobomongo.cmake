@@ -97,5 +97,11 @@ elseif(SYSTEM_WINDOWS)
         QWindowsIntegrationPlugin
         QMinimalIntegrationPlugin
         QOffscreenIntegrationPlugin)
+
+    # Install runtime libraries:
+    # msvcp120.dll
+    # msvcr120.dll
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
+    include(InstallRequiredSystemLibraries)
 endif()
 

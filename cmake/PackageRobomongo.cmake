@@ -13,6 +13,8 @@ if(SYSTEM_LINUX)
 elseif(SYSTEM_MACOSX)
     set(CPACK_GENERATOR DragNDrop)
     set(CPACK_DMG_DS_STORE ${CMAKE_SOURCE_DIR}/install/macosx/DMG_DS_Store)
+elseif(SYSTEM_WINDOWS)
+
 endif()
 
 set(CPACK_MONOLITHIC_INSTALL ON)

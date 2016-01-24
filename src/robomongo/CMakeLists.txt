@@ -1,0 +1,190 @@
+set(SOURCES
+
+    # Isolated Scope #1
+    core/utils/QtUtils.cpp
+    core/utils/StdUtils.cpp
+    core/utils/Logger.cpp
+    core/HexUtils.cpp
+    core/utils/BsonUtils.cpp
+    core/settings/CredentialSettings.cpp
+    core/settings/ConnectionSettings.cpp
+    core/Event.cpp
+    core/Enums.cpp
+    core/EventError.cpp
+    core/EventBusSubscriber.cpp
+    core/EventBusDispatcher.cpp
+    core/EventWrapper.cpp
+    core/EventBus.cpp
+    core/KeyboardManager.cpp
+    core/domain/MongoNamespace.cpp
+    core/domain/MongoUser.cpp
+    core/domain/MongoUser.cpp
+    core/domain/MongoFunction.cpp
+    core/domain/MongoUtils.cpp
+    core/domain/MongoCollection.cpp
+    core/domain/MongoCollectionInfo.cpp
+    core/domain/MongoQueryInfo.cpp
+    core/domain/MongoShellResult.cpp
+    core/domain/CursorPosition.cpp
+    core/domain/ScriptInfo.cpp
+    core/events/MongoEventsInfo.cpp
+    shell/db/ptimeutil.cpp
+
+    # Isolated Scope #2
+    core/engine/ScriptEngine.cpp
+    core/events/MongoEvents.cpp
+    core/domain/MongoDocument.cpp
+    gui/AppStyle.cpp
+    core/domain/MongoServer.cpp
+    core/domain/MongoShell.cpp
+    core/domain/MongoDatabase.cpp
+    core/domain/App.cpp
+    core/mongodb/MongoClient.cpp
+    core/mongodb/MongoWorker.cpp
+    core/settings/SettingsManager.cpp
+    core/AppRegistry.cpp
+
+    # Isolated Scope #3
+    gui/GuiRegistry.cpp
+    gui/dialogs/AboutDialog.cpp
+    gui/dialogs/ConnectionAdvancedTab.cpp
+    gui/dialogs/ConnectionAuthTab.cpp
+    gui/dialogs/ConnectionBasicTab.cpp
+    gui/dialogs/ConnectionDiagnosticDialog.cpp
+    gui/dialogs/ConnectionDialog.cpp
+    gui/dialogs/CopyCollectionDialog.cpp
+    gui/widgets/workarea/IndicatorLabel.cpp
+    gui/dialogs/CreateDatabaseDialog.cpp
+    gui/dialogs/CreateUserDialog.cpp
+    gui/utils/ComboBoxUtils.cpp
+    gui/utils/DialogUtils.cpp
+
+    # Isolated scope #4
+    gui/dialogs/PreferencesDialog.cpp
+    gui/dialogs/ConnectionsDialog.cpp
+
+    # Isolated scope #5
+    gui/editors/PlainJavaScriptEditor.cpp
+    gui/editors/JSLexer.cpp
+    gui/editors/FindFrame.cpp
+    gui/widgets/explorer/EditIndexDialog.cpp
+    gui/widgets/workarea/ScriptWidget.cpp
+
+    # Isolated scope #6
+    gui/widgets/explorer/ExplorerCollectionTreeItem.cpp
+    gui/widgets/explorer/ExplorerTreeItem.cpp
+    gui/widgets/explorer/ExplorerDatabaseTreeItem.cpp
+    gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.cpp
+    gui/widgets/explorer/ExplorerUserTreeItem.cpp
+    gui/widgets/explorer/ExplorerFunctionTreeItem.cpp
+    gui/dialogs/DocumentTextEditor.cpp
+    gui/dialogs/FunctionTextEditor.cpp
+
+    # Isolated scope #7
+    gui/widgets/explorer/ExplorerServerTreeItem.cpp
+    gui/widgets/explorer/ExplorerTreeWidget.cpp
+    gui/widgets/explorer/ExplorerWidget.cpp
+    gui/widgets/workarea/BsonTableModel.cpp
+    gui/widgets/workarea/BsonTableView.cpp
+    gui/widgets/workarea/BsonTreeItem.cpp
+    gui/widgets/workarea/BsonTreeModel.cpp
+    gui/widgets/workarea/BsonTreeView.cpp
+    core/domain/Notifier.cpp
+
+    # Isolated scope #8
+    gui/widgets/workarea/CollectionStatsTreeItem.cpp
+    gui/widgets/workarea/CollectionStatsTreeWidget.cpp
+    gui/widgets/workarea/JsonPrepareThread.cpp
+    gui/widgets/workarea/OutputItemContentWidget.cpp
+    gui/widgets/workarea/OutputItemHeaderWidget.cpp
+    gui/widgets/workarea/OutputWidget.cpp
+    gui/widgets/workarea/PagingWidget.cpp
+    gui/widgets/workarea/ProgressBarPopup.cpp
+    gui/widgets/workarea/QueryWidget.cpp
+    gui/widgets/workarea/WorkAreaTabBar.cpp
+    gui/widgets/workarea/WorkAreaTabWidget.cpp
+
+    # Final scope
+    gui/widgets/LogWidget.cpp
+    gui/MainWindow.cpp
+
+    gui/resources/gui.qrc
+)
+
+
+# Robomongo target
+add_executable(robomongo MACOSX_BUNDLE WIN32 app/main.cpp ${SOURCES})
+
+target_link_libraries(robomongo
+    PRIVATE
+        Qt5::Widgets
+        qjson
+        qscintilla
+        mongodb
+        Threads::Threads)   # Target from FindThreads CMake module
+
+target_include_directories(robomongo
+    PRIVATE
+        ${CMAKE_HOME_DIRECTORY}/src)
+
+target_compile_definitions(robomongo
+    PRIVATE
+        PROJECT_NAME="${PROJECT_NAME}"
+        PROJECT_NAME_TITLE="${PROJECT_NAME_TITLE}"
+        PROJECT_COPYRIGHT="${PROJECT_COPYRIGHT}"
+        PROJECT_DOMAIN="${PROJECT_DOMAIN}"
+        PROJECT_COMPANYNAME="${PROJECT_COMPANYNAME}"
+        PROJECT_COMPANYNAME_DOMAIN="${PROJECT_COMPANYNAME_DOMAIN}"
+        PROJECT_GITHUB_FORK="${PROJECT_GITHUB_FORK}"
+        PROJECT_GITHUB_ISSUES="${PROJECT_GITHUB_ISSUES}"
+        PROJECT_VERSION="${PROJECT_VERSION}"
+        PROJECT_NAME_LOWERCASE="${PROJECT_NAME_LOWERCASE}")
+
+if(SYSTEM_WINDOWS)
+    # Rename output name for Windows
+    set_target_properties(robomongo PROPERTIES
+        OUTPUT_NAME "Robomongo")
+
+    # Seems that we do not need to do this with recent versions of Qt
+    target_link_libraries(robomongo
+        PRIVATE
+            Qt5::WinMain)
+
+elseif(SYSTEM_MACOSX)
+    set_target_properties(robomongo PROPERTIES
+        INSTALL_RPATH "@executable_path/../Frameworks"
+        OUTPUT_NAME "Robomongo"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/install/macosx/Info.plist.in"
+        MACOSX_BUNDLE_BUNDLE_NAME "Robomongo"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "com.paralect.Robomongo"
+        MACOSX_BUNDLE_INFO_STRING "Robomongo ${PROJECT_VERSION}. Copyright Paralect, 2013 - 2016"
+        MACOSX_BUNDLE_SHORT_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_LONG_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_COPYRIGHT "Copyright Paralect, 2013 - 2016"
+        MACOSX_BUNDLE_ICON_FILE "Robomongo")
+
+elseif(SYSTEM_LINUX)
+    set_target_properties(robomongo PROPERTIES
+        INSTALL_RPATH "$ORIGIN/../lib")
+endif()
+
+# Install
+include(InstallRobomongo)
+
+
+#
+# Helper targets (code below should be moved to separate file)
+#
+add_executable(main2 WIN32 EXCLUDE_FROM_ALL app/main_json.cpp gui/editors/JSLexer.cpp)
+target_link_libraries(main2 Qt5::Widgets qjson qscintilla mongodb)
+target_include_directories(main2
+    PRIVATE
+        ${CMAKE_HOME_DIRECTORY}/src)
+
+# Target that creates original MongoDB shell
+# Used to test compilation and linking
+add_executable(shell EXCLUDE_FROM_ALL shell/shell/dbshell.cpp)
+target_link_libraries(shell
+    mongodb
+    Threads::Threads)       # Target from FindThreads CMake module

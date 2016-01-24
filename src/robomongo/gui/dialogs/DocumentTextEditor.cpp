@@ -7,7 +7,7 @@
 #include <QDialogButtonBox>
 #include <QDesktopWidget>
 #include <Qsci/qscilexerjavascript.h>
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
@@ -16,7 +16,7 @@
 #include "robomongo/gui/GuiRegistry.h"
 
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/shell/db/json.h"
+#include <mongo/db/json.h>
 
 
 namespace Robomongo
@@ -28,7 +28,17 @@ namespace Robomongo
         _info(info),
         _readonly(readonly)
     {
-        setMinimumSize(minimumSize);
+        QRect screenGeometry = QApplication::desktop()->availableGeometry();
+        int horizontalMargin = (int)(screenGeometry.width() * 0.35);
+        int verticalMargin = (int)(screenGeometry.height() * 0.20);
+        QSize size(screenGeometry.width() - horizontalMargin,
+                   screenGeometry.height() - verticalMargin);
+
+        resize(size);
+
+        int x = (screenGeometry.width() - width()) / 2;
+        int y = (screenGeometry.height() - height()) / 2;
+        move(x, y);
 
         setWindowFlags(Qt::Window | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
 
@@ -108,27 +118,28 @@ namespace Robomongo
             _obj.clear();
             while(offset!=jsonLen)
             { 
-                mongo::BSONObj doc = mongo::Robomongo::fromjson(json+offset,&len);
+                mongo::BSONObj doc = mongo::fromjson(json+offset,&len);
                 _obj.push_back(doc);
                 offset+=len;
             }
-        } catch (const mongo::ParseMsgAssertionException &ex) {
-            QString message = QtUtils::toQString(ex.reason());
-            int offset = ex.offset();
-
-            int line=0, pos=0;
-            _queryText->sciScintilla()->lineIndexFromPosition(offset, &line, &pos);
-            _queryText->sciScintilla()->setCursorPosition(line, pos);
-
-            int lineHeight = _queryText->sciScintilla()->lineLength(line);
-            _queryText->sciScintilla()->fillIndicatorRange(line, pos, line, lineHeight, 0);
-
-            message = QString("Unable to parse JSON:<br /> <b>%1</b>, at (%2, %3).")
-                .arg(message).arg(line + 1).arg(pos + 1);
-
-            QMessageBox::critical(NULL, "Parsing error", message);
-            _queryText->setFocus();
-            activateWindow();
+        } catch (const mongo::MsgAssertionException &ex) {
+//            v0.9
+//            QString message = QtUtils::toQString(ex.reason());
+//            int offset = ex.offset();
+//
+//            int line=0, pos=0;
+//            _queryText->sciScintilla()->lineIndexFromPosition(offset, &line, &pos);
+//            _queryText->sciScintilla()->setCursorPosition(line, pos);
+//
+//            int lineHeight = _queryText->sciScintilla()->lineLength(line);
+//            _queryText->sciScintilla()->fillIndicatorRange(line, pos, line, lineHeight, 0);
+//
+//            message = QString("Unable to parse JSON:<br /> <b>%1</b>, at (%2, %3).")
+//                .arg(message).arg(line + 1).arg(pos + 1);
+//
+//            QMessageBox::critical(NULL, "Parsing error", message);
+//            _queryText->setFocus();
+//            activateWindow();
             return false;
         }
 

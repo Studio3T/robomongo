@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+if [ "$1" == "debug" ]; then
+  BUILD_TYPE=Debug
+else
+  BUILD_TYPE=Release
+
+  # Prepend "release" in front of $@
+  set -- release "$@"
+fi
+
+# Build dir name is a lowercase of BUILD_TYPE
+# i.e. debug
+BUILD_DIR_NAME="$(echo $BUILD_TYPE | tr '[A-Z]' '[a-z]')"
+
+# i.e. /path/to/robomongo/build
+VARIANT_DIR=$PROJECT_DIR/build
+
+# i.e. /path/to/robomongo/build/debug
+BUILD_DIR=$VARIANT_DIR/$BUILD_DIR_NAME
+
+# i.e. /path/to/robomongo/build/debug/install
+INSTALL_PREFIX=$BUILD_DIR/install
+
+# i.e. /path/to/robomongo/build/debug/package
+PACK_PREFIX=$BUILD_DIR/package
+
+PREFIX_PATH=$ROBOMONGO_CMAKE_PREFIX_PATH
+
+mkdir -p $BUILD_DIR
+
+if [ "$(uname -s)" == "Darwin" ]; then
+    # On Mac OS we specify minimal OS version that we support.
+    #
+    # The following environment variable will set "-mmacosx-version-min=10.6" option
+    # for compiler. From documentation to GCC or Clang:
+    #
+    #    -mmacosx-version-min=version
+    #
+    #     The earliest version of MacOS X that this executable will run on is
+    #     version.  Typical values of version include 10.1, 10.2, and 10.3.9.
+    #
+    #     This value can also be set with the MACOSX_DEPLOYMENT_TARGET environment
+    #     variable.  If both the command-line option is specified and the
+    #     environment variable is set, the command-line option will take precedence.
+    #
+    export MACOSX_DEPLOYMENT_TARGET=10.9
+fi
+

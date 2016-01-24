@@ -1,10 +1,12 @@
 #include "robomongo/core/utils/BsonUtils.h"
 
-#include <mongo/client/dbclient.h>
-#include <mongo/bson/bsonobjiterator.h>
+#include <mongo/client/dbclientinterface.h>
+//#include <mongo/bson/bsonobjiterator.h>
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/HexUtils.h"
 #include "mongo/util/base64.h"
+
+// v0.9
 #include "robomongo/shell/db/ptimeutil.h"
 
 using namespace mongo;
@@ -59,6 +61,7 @@ namespace Robomongo
 
         std::string jsonString(const BSONObj &obj, JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat, bool isArray)
         {
+            using namespace std;
             if ( obj.isEmpty() ) return isArray? "[]" : "{}";           
 
             StringBuilder s;
@@ -96,9 +99,10 @@ namespace Robomongo
 
         std::string jsonString(const BSONElement &elem, JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat, bool isArray)
         {
+            using namespace std;
             BSONType t = elem.type();            
 
-            stringstream s;
+            std::stringstream s;
             if ( includeFieldNames && !isArray)
                 s << '"' << escape( elem.fieldName() ) << "\" : ";
 
@@ -108,7 +112,7 @@ namespace Robomongo
                 break;
             case mongo::String:
             case Symbol:
-                s << '"' << escape( string(elem.valuestr(), elem.valuestrsize()-1) ) << '"';
+                s << '"' << escape( std::string(elem.valuestr(), elem.valuestrsize()-1) ) << '"';
                 break;
             case NumberLong:
                 s << "NumberLong(" << elem._numberLong() << ")";
@@ -117,16 +121,17 @@ namespace Robomongo
             case NumberDouble:
                 {
                     int sign=0;
-                    if ( elem.number() >= -numeric_limits< double >::max() &&
-                            elem.number() <= numeric_limits< double >::max() ) {
+                    if ( elem.number() >= -std::numeric_limits< double >::max() &&
+                            elem.number() <= std::numeric_limits< double >::max() ) {
                         s.precision( 16 );
                         s << elem.number();
                     }
-                    else if ( mongo::isNaN(elem.number()) ) {
+                    else if (std::isnan(elem.number()) ) {
                         s << "NaN";
                     }
-                    else if ( mongo::isInf(elem.number(), &sign) ) {
-                        s << ( sign == 1 ? "Infinity" : "-Infinity");
+                    else if (std::isinf(elem.number()) ) {
+                        s << "Infinity";
+//                        s << ( sign == 1 ? "Infinity" : "-Infinity");
                     }
                     else {
                         StringBuilder ss;
@@ -238,7 +243,7 @@ namespace Robomongo
             case mongo::Date:
                 {
                     Date_t d = elem.date();
-                    long long ms = static_cast<long long>(d.millis);
+                    long long ms = d.toMillisSinceEpoch();//static_cast<long long>(d.millis);
                     bool isSupportedDate = miutil::minDate < ms && ms < miutil::maxDate;
 
                     if ( format == Strict )
@@ -302,12 +307,12 @@ namespace Robomongo
                 s << elem._asCode();
                 break;
 
-            case Timestamp:
+            case bsonTimestamp:
                 if ( format == TenGen ) {
-                    s << "Timestamp(" << ( elem.timestampTime() / 1000 ) << ", " << elem.timestampInc() << ")";
+                    s << "Timestamp(" << ( elem.timestampValue() / 1000 ) << ", " << elem.timestampInc() << ")";
                 }
                 else {
-                    s << "{ \"$timestamp\" : { \"t\" : " << ( elem.timestampTime() / 1000 ) << ", \"i\" : " << elem.timestampInc() << " } }";
+                    s << "{ \"$timestamp\" : { \"t\" : " << ( elem.timestampValue() / 1000 ) << ", \"i\" : " << elem.timestampInc() << " } }";
                 }
                 break;
 
@@ -505,7 +510,7 @@ namespace Robomongo
                 }
 
                 /** Updated to a Date with value next OpTime on insert */
-            case Timestamp:
+            case bsonTimestamp:
                 {
                     return "Timestamp";
                 }
@@ -594,7 +599,7 @@ namespace Robomongo
                 break;
             case Date:
                 {
-                    long long ms = (long long) elem.Date().millis;
+                    long long ms = (long long) elem.Date().toMillisSinceEpoch();
                     bool isSupportedDate = miutil::minDate < ms && ms < miutil::maxDate;
 
                     boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
@@ -654,10 +659,10 @@ namespace Robomongo
                     con.append(num);
                     break;
                 }           
-            case Timestamp:
+            case bsonTimestamp:
                 {
                     Date_t date = elem.timestampTime();
-                    unsigned long long millis = date.millis;
+                    unsigned long long millis = date.toMillisSinceEpoch();// millis;
                     if ((long long)millis >= 0 &&
                         ((long long)millis/1000) < (std::numeric_limits<time_t>::max)()) {
                             con.append(date.toString());

@@ -7,6 +7,7 @@ CMakeLists.txt.user*
 .scons
 
 *.kate-swp
+*.swp
 
 target/
 target-debug/
@@ -33,6 +34,7 @@ libs/
 
 # Compiled Dynamic libraries
 *.so
+*.so.*
 *.dylib
 *.dll
 

@@ -1,0 +1,27 @@
+# Get last commit hash
+execute_process(
+    COMMAND git rev-parse --short HEAD
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE git_hash
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+# Timestamp (not used for now)
+string(TIMESTAMP timestamp "%Y-%m-%d")
+
+if(SYSTEM_LINUX)
+    set(CPACK_GENERATOR TGZ)
+elseif(SYSTEM_MACOSX)
+    set(CPACK_GENERATOR DragNDrop)
+    set(CPACK_DMG_DS_STORE ${CMAKE_SOURCE_DIR}/install/macosx/DMG_DS_Store)
+endif()
+
+set(CPACK_MONOLITHIC_INSTALL ON)
+set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/package)
+set(CPACK_STRIP_FILES ON)
+
+set(CPACK_PACKAGE_NAME robomongo)
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+string(TOLOWER ${CMAKE_SYSTEM_NAME} CPACK_SYSTEM_NAME)
+
+set(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}-${git_hash})
+include(CPack)

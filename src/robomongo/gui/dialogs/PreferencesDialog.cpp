@@ -22,7 +22,7 @@ namespace Robomongo
     {
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
-        setWindowTitle("Preferences "PROJECT_NAME_TITLE);
+        setWindowTitle("Preferences " PROJECT_NAME_TITLE);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
         setFixedSize(height,width);
 

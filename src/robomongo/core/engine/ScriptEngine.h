@@ -1,7 +1,8 @@
 #pragma once
 
+#include <QMutex>
 #include <mongo/scripting/engine.h>
-#include <third_party/js-1.7/jsparse.h>
+//#include <third_party/js-1.7/jsparse.h>
 
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/Enums.h"
@@ -36,9 +37,10 @@ namespace Robomongo
 
         bool statementize(const std::string &script, std::vector<std::string> &outList, std::string &outError);
         std::vector<std::string> statementize2(const std::string &script);
-        void parseTree(JSParseNode * root, int indent, const std::string &script, std::vector<std::string> &list, bool topList);
+//        void parseTree(JSParseNode * root, int indent, const std::string &script, std::vector<std::string> &list, bool topList);
 
         mongo::ScriptEngine *_engine;
         mongo::Scope *_scope;
+        QMutex _mutex;
     };
 }

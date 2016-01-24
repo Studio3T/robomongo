@@ -19,22 +19,23 @@ namespace Robomongo
      * @brief Creates ConnectionSettings with default values
      */
     ConnectionSettings::ConnectionSettings() : QObject(),
-         _connectionName(defaultNameConnection),
-        _info(defaultServerHost,port)
+        _connectionName(defaultNameConnection),
+        _host(defaultServerHost),
+        _port(port)
     {
 
     }
 
     ConnectionSettings::ConnectionSettings(QVariantMap map) : QObject(),
         _connectionName(QtUtils::toStdString(map.value("connectionName").toString())),
-        _info( QtUtils::toStdString(map.value("serverHost").toString()), map.value("serverPort").toInt()
+        _host(QtUtils::toStdString(map.value("serverHost").toString())),
+        _port(map.value("serverPort").toInt())
 #ifdef MONGO_SSL
         ,SSLInfo(map.value("sslEnabled").toBool(),QtUtils::toStdString(map.value("sslPemKeyFile").toString()))
 #endif
 #ifdef SSH_SUPPORT_ENABLED
         ,SSHInfo()
 #endif        
-        )
         ,_defaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString()))
     {
 #ifdef SSH_SUPPORT_ENABLED
@@ -84,7 +85,10 @@ namespace Robomongo
         setServerHost(source->serverHost());
         setServerPort(source->serverPort());
         setDefaultDatabase(source->defaultDatabase());
+#ifdef MONGO_SSL
         setSslInfo(source->sslInfo());
+#endif
+
 #ifdef SSH_SUPPORT_ENABLED
         setSshInfo(source->sshInfo());
 #endif
@@ -188,7 +192,7 @@ namespace Robomongo
     std::string ConnectionSettings::getFullAddress() const
     {
         char buff[1024] = {0};
-        sprintf(buff, "%s:%u", _info.host().c_str(), _info.port());
+        sprintf(buff, "%s:%u", _host.c_str(), _port);
         return buff;
     }
 }

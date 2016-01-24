@@ -2,18 +2,27 @@
 #include <QDesktopWidget>
 
 #include <locale.h>
+#include <mongo/base/initializer.h>
 
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/AppStyle.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[], char** envp)
 {
+#ifdef Q_OS_WIN
+    envp = NULL;
+#endif
+    mongo::runGlobalInitializersOrDie(argc, argv, envp);
+
     QApplication app(argc, argv);
     Robomongo::detail::initStyle();    
-    setlocale(LC_NUMERIC,"C"); // do not move this line!!!
+    setlocale(LC_NUMERIC, "C"); // Do not move this line
 
     QRect screenGeometry = QApplication::desktop()->availableGeometry();
-    QSize size(screenGeometry.width() - 450, screenGeometry.height() - 165);
+    int horizontalMargin = (int)(screenGeometry.width() * 0.1);
+    int verticalMargin = (int)(screenGeometry.height() * 0.1);
+    QSize size(screenGeometry.width() - horizontalMargin,
+               screenGeometry.height() - verticalMargin);
 
     Robomongo::MainWindow win;
     win.resize(size);

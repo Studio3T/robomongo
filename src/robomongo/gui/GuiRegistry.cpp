@@ -25,7 +25,9 @@ namespace Robomongo
         view->setAlternatingRowColors(true);
 
         QPalette p = view->palette();
-        p.setColor(QPalette::AlternateBase, QColor(243, 246, 250));
+//        p.setColor(QPalette::AlternateBase, QColor(243, 246, 250));
+        p.setColor(QPalette::AlternateBase, QColor(245, 245, 245));
+        p.setColor(QPalette::Active, QPalette::Highlight, QColor(16, 108, 214));
         view->setPalette(p);
     #endif
     }
@@ -288,7 +290,8 @@ namespace Robomongo
 
     const QIcon &GuiRegistry::mainWindowIcon() const
     {
-        static const QIcon mainWindowIc = QIcon(":/robomongo/icons/main_window_icon.png");
+        static const QIcon mainWindowIc = QIcon(":/robomongo/icons/logo-256x256.png");
+//        static const QIcon mainWindowIc = QIcon(":/robomongo/icons/main_window_icon.png");
         return mainWindowIc;
     }
 

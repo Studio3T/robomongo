@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QMovie>
 
+#include <boost/scoped_ptr.hpp>
 #include <mongo/client/dbclientinterface.h>
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"

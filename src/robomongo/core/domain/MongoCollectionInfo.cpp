@@ -1,6 +1,6 @@
 #include "MongoCollectionInfo.h"
 #include "robomongo/core/utils/BsonUtils.h"
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 
 namespace Robomongo
 {

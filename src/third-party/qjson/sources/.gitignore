@@ -1,0 +1,9 @@
+lib
+Makefile
+doc/html
+build
+*.user
+
+# -- kdevelop
+.kdev4
+*.kdev4

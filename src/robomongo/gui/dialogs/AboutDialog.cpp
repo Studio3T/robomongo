@@ -11,15 +11,15 @@
 namespace
 {
     const QString description = QObject::tr(
-        "<h3>"PROJECT_NAME_TITLE" "PROJECT_VERSION"</h3>"
+        "<h3>" PROJECT_NAME_TITLE " " PROJECT_VERSION "</h3>"
         "Shell-centric MongoDB management tool."
         "<br/>"
         "<br/>"
-        "Visit "PROJECT_NAME_TITLE" website: <a href=\"http://"PROJECT_DOMAIN"\">"PROJECT_DOMAIN"</a> <br/>"
+        "Visit " PROJECT_NAME_TITLE " website: <a href=\"http://" PROJECT_DOMAIN "\">" PROJECT_DOMAIN "</a> <br/>"
         "<br/>"
-        "<a href=\"https://"PROJECT_GITHUB_FORK"\">Fork</a> project or <a href=\"https://"PROJECT_GITHUB_ISSUES"\">submit</a> issues/proposals on GitHub.  <br/>"
+        "<a href=\"https://" PROJECT_GITHUB_FORK "\">Fork</a> project or <a href=\"https://" PROJECT_GITHUB_ISSUES "\">submit</a> issues/proposals on GitHub.  <br/>"
         "<br/>"
-        "Copyright 2013-2015 <a href=\"http://"PROJECT_COMPANYNAME_DOMAIN"\">"PROJECT_COMPANYNAME"</a>. All rights reserved.<br/>"
+        "Copyright 2013-2016 <a href=\"http:// " PROJECT_COMPANYNAME_DOMAIN "\">" PROJECT_COMPANYNAME "</a>. All rights reserved.<br/>"
         "<br/>"
         "The program is provided AS IS with NO WARRANTY OF ANY KIND, "
         "INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A "
@@ -33,7 +33,7 @@ namespace Robomongo
     {
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
-        setWindowTitle("About "PROJECT_NAME_TITLE);
+        setWindowTitle("About " PROJECT_NAME_TITLE);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
         QGridLayout *layout = new QGridLayout(this);
         layout->setSizeConstraint(QLayout::SetFixedSize);
@@ -49,8 +49,7 @@ namespace Robomongo
         VERIFY(connect(buttonBox , SIGNAL(rejected()), this, SLOT(reject())));
 
         QIcon icon = GuiRegistry::instance().mainWindowIcon();
-        QPixmap iconPixmap = icon.pixmap(48, 48);
-
+        QPixmap iconPixmap = icon.pixmap(128, 128);
 
         QLabel *logoLabel = new QLabel;
         logoLabel->setPixmap(iconPixmap);

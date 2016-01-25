@@ -79,7 +79,7 @@ elseif(SYSTEM_WINDOWS)
 
     # Default installation directory (not full path), just the path after
     # default "c:\Program Files"
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "Robomongo ${CPACK_PACKAGE_VERSION}")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "${install_dir}")
 
     # A path to the executable inside package that contains the installer icon
     set(CPACK_NSIS_INSTALLED_ICON_NAME "\\\\${exe_name}")

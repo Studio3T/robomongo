@@ -68,6 +68,15 @@ elseif(SYSTEM_WINDOWS)
     set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/DESCRIPTION")
     set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
 
+    # Name of the folder where Robomongo files will be installed
+    set(install_dir "Robomongo ${CPACK_PACKAGE_VERSION}")
+
+    # For stable releases (ones that have empty build version)
+    # use simple name of the folder, without version
+    if(PROJECT_VERSION_BUILD STREQUAL "")
+        set(install_dir "Robomongo")
+    endif()
+
     # Default installation directory (not full path), just the path after
     # default "c:\Program Files"
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "Robomongo ${CPACK_PACKAGE_VERSION}")

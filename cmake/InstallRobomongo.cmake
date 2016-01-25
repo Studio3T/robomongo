@@ -68,6 +68,7 @@ install(
         ${CMAKE_SOURCE_DIR}/LICENSE
         ${CMAKE_SOURCE_DIR}/COPYRIGHT
         ${CMAKE_SOURCE_DIR}/CHANGELOG
+        ${CMAKE_SOURCE_DIR}/DESCRIPTION
     DESTINATION ${license_dir})
 
 # Install common dependencies

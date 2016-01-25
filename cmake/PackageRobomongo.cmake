@@ -42,9 +42,15 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Robomongo is a shell-centric cross-platfo
 # Use lowercase for system name and package file name
 string(TOLOWER ${CMAKE_SYSTEM_NAME} system_name)
 string(TOLOWER ${CPACK_PACKAGE_NAME} package_file_name)
+string(TOLOWER ${CPACK_PACKAGE_VERSION} package_file_version)
+
+# We use function from TargetArch.cmake module
+# Returns string with target architecture value
+# Output for common architectures is: i386 or x86_64
+target_architecture(target_arch)
 
 # Package file name
-set(CPACK_PACKAGE_FILE_NAME ${package_file_name}-${CPACK_PACKAGE_VERSION}-${system_name}-${git_hash})
+set(CPACK_PACKAGE_FILE_NAME ${package_file_name}-${package_file_version}-${system_name}-${target_arch}-${git_hash})
 
 if(SYSTEM_LINUX)
     set(CPACK_GENERATOR TGZ)

@@ -16,6 +16,7 @@ include(PrintUtils)
 include(DefineCMakeDefaults)
 include(DefineDefaults)
 include(DefineTrashSymbols)
+include(TargetArch)
 include(QtInstall)
 include(PackageRobomongo)
 

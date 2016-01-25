@@ -28,6 +28,9 @@
 #define MONGO_LOG_DEFAULT_COMPONENT ::mongo::logger::LogComponent::kDefault
 
 #include "robomongo/shell/bson/json.h"
+#include "robomongo/shell/db/ptimeutil.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time_io.hpp>
 #include <boost/scoped_array.hpp>
 
 #include <cstdint>
@@ -828,15 +831,28 @@ Status JParse::date(StringData fieldName, BSONObjBuilder& builder) {
             return ret;
         }
 
-        StatusWith<Date_t> datet = dateFromISOString(datestr);
-        if (!datet.isOK()) {
+        // We cannot use built-in parser, because it doesn't support
+        // local times as of MongoDB 3.2
+        // StatusWith<Date_t> datet = dateFromISOString(datestr);
+        // if (!datet.isOK()) {
+        //    return parseError("Invalid date format");
+        // }
+
+        bool isSuccessfull = false;
+        boost::posix_time::ptime isotime = miutil::ptimeFromIsoString(datestr,isSuccessfull);
+        if (!isSuccessfull) {
             return parseError("Invalid date format");
         }
+
+        boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
+        boost::posix_time::time_duration diff = isotime - epoch;
+        int64_t millis = diff.total_milliseconds();
+        Date_t datet = Date_t::fromMillisSinceEpoch(millis);
 
         if (!readToken(RPAREN)) {
             return parseError("Expecting ')'");
         }
-        builder.appendDate(fieldName, datet.getValue());
+        builder.appendDate(fieldName, datet);
         return Status::OK();
     }
 

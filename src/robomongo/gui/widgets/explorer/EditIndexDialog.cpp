@@ -22,6 +22,7 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include <robomongo/shell/bson/json.h>
 
 namespace
 {
@@ -30,7 +31,7 @@ namespace
         bool result = false;
         if (!text.isEmpty()) {
             try {
-                mongo::fromjson(text.toUtf8());
+                mongo::Robomongo::fromjson(text.toUtf8());
                 result = true;
             }
             catch (const mongo::MsgAssertionException &) {

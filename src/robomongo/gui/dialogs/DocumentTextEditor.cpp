@@ -16,7 +16,7 @@
 #include "robomongo/gui/GuiRegistry.h"
 
 #include "robomongo/core/utils/QtUtils.h"
-#include <mongo/db/json.h>
+#include "robomongo/shell/bson/json.h"
 
 
 namespace Robomongo
@@ -118,28 +118,28 @@ namespace Robomongo
             _obj.clear();
             while(offset!=jsonLen)
             { 
-                mongo::BSONObj doc = mongo::fromjson(json+offset,&len);
+                mongo::BSONObj doc = mongo::Robomongo::fromjson(json+offset,&len);
                 _obj.push_back(doc);
                 offset+=len;
             }
-        } catch (const mongo::MsgAssertionException &ex) {
+        } catch (const mongo::Robomongo::ParseMsgAssertionException &ex) {
 //            v0.9
-//            QString message = QtUtils::toQString(ex.reason());
-//            int offset = ex.offset();
-//
-//            int line=0, pos=0;
-//            _queryText->sciScintilla()->lineIndexFromPosition(offset, &line, &pos);
-//            _queryText->sciScintilla()->setCursorPosition(line, pos);
-//
-//            int lineHeight = _queryText->sciScintilla()->lineLength(line);
-//            _queryText->sciScintilla()->fillIndicatorRange(line, pos, line, lineHeight, 0);
-//
-//            message = QString("Unable to parse JSON:<br /> <b>%1</b>, at (%2, %3).")
-//                .arg(message).arg(line + 1).arg(pos + 1);
-//
-//            QMessageBox::critical(NULL, "Parsing error", message);
-//            _queryText->setFocus();
-//            activateWindow();
+            QString message = QtUtils::toQString(ex.reason());
+            int offset = ex.offset();
+
+            int line=0, pos=0;
+            _queryText->sciScintilla()->lineIndexFromPosition(offset, &line, &pos);
+            _queryText->sciScintilla()->setCursorPosition(line, pos);
+
+            int lineHeight = _queryText->sciScintilla()->lineLength(line);
+            _queryText->sciScintilla()->fillIndicatorRange(line, pos, line, lineHeight, 0);
+
+            message = QString("Unable to parse JSON:<br /> <b>%1</b>, at (%2, %3).")
+                .arg(message).arg(line + 1).arg(pos + 1);
+
+            QMessageBox::critical(NULL, "Parsing error", message);
+            _queryText->setFocus();
+            activateWindow();
             return false;
         }
 

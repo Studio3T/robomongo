@@ -29,6 +29,7 @@ set(SOURCES
     core/domain/ScriptInfo.cpp
     core/events/MongoEventsInfo.cpp
     shell/db/ptimeutil.cpp
+    shell/bson/json.cpp
 
     # Isolated Scope #2
     core/engine/ScriptEngine.cpp

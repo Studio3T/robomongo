@@ -2,7 +2,7 @@
 
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/utils/BsonUtils.h"
-#include <mongo/db/json.h>
+#include "robomongo/shell/bson/json.h"
 
 namespace
 {
@@ -162,7 +162,7 @@ namespace Robomongo
         // v0.9
         // mongo::BSONObj keys = mongo::Robomongo::fromjson(newInfo._request);
 
-        mongo::BSONObj keys = mongo::fromjson(newInfo._request);
+        mongo::BSONObj keys = mongo::Robomongo::fromjson(newInfo._request);
         mongo::BSONObjBuilder toSave;
         bool cache=true;
         int version =-1;

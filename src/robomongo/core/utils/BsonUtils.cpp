@@ -62,7 +62,19 @@ namespace Robomongo
         std::string jsonString(const BSONObj &obj, JsonStringFormat format, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat, bool isArray)
         {
             using namespace std;
-            if ( obj.isEmpty() ) return isArray? "[]" : "{}";           
+
+            // Use of method, that is implemented in Robomongo Shell
+            // Method "isArray()" is not part of MongoDB.
+            // In order for this method to work, someone should
+            // explicetly call "markAsArray()" method on BSONObj.
+            // This is done in the Robomongo Shell (MongoDB fork)
+            if (obj.isArray()) {
+               isArray = true;
+            }
+
+            if ( obj.isEmpty() ) {
+                return isArray? "[]" : "{}";
+            }
 
             StringBuilder s;
             s << (isArray ? "[" : "{");

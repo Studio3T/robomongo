@@ -564,9 +564,10 @@ namespace Robomongo
             {
             case NumberDouble:
                 {
-                    char dob[32] = {0};
-                    sprintf(dob, "%f", elem.Double());
-                    con.append(dob);
+                    const int maxSize = 32;
+                    char buf[maxSize] = {0};
+                    snprintf(buf, maxSize, "%.16g", elem.Double());
+                    con.append(buf);
                 }
                 break;
             case String:

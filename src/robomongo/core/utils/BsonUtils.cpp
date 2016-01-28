@@ -575,7 +575,7 @@ namespace Robomongo
                 {
                     const int maxSize = 32;
                     char buf[maxSize] = {0};
-                    snprintf(buf, maxSize, "%.16g", elem.Double());
+                    sprintf(buf, "%.16g", elem.Double());
                     con.append(buf);
                 }
                 break;

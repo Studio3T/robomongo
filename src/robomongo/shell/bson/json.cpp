@@ -705,6 +705,9 @@ Status JParse::numberLongObject(StringData fieldName, BSONObjBuilder& builder) {
 }
 
 Status JParse::numberDecimalObject(StringData fieldName, BSONObjBuilder& builder) {
+    // Robomongo
+    return parseError("NumberDecimal is an expiremental feature and not yet supported.");
+
     if (!readToken(COLON)) {
         return parseError("Expecting ':'");
     }
@@ -1005,6 +1008,9 @@ Status JParse::numberLong(StringData fieldName, BSONObjBuilder& builder) {
 }
 
 Status JParse::numberDecimal(StringData fieldName, BSONObjBuilder& builder) {
+    // Robomongo
+    return parseError("NumberDecimal is an expiremental feature and not yet supported.");
+
     if (!readToken(LPAREN)) {
         return parseError("Expecting '('");
     }

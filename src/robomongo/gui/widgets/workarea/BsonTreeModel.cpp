@@ -127,7 +127,8 @@ namespace Robomongo
     const QIcon &BsonTreeModel::getIcon(BsonTreeItem *item)
     {
         switch(item->type()) {
-        case mongo::NumberDouble: return GuiRegistry::instance().bsonIntegerIcon();
+        case mongo::NumberDouble: return GuiRegistry::instance().bsonDoubleIcon();
+        case mongo::NumberDecimal: return GuiRegistry::instance().bsonDoubleIcon();
         case mongo::String: return GuiRegistry::instance().bsonStringIcon();
         case mongo::Object: return GuiRegistry::instance().bsonObjectIcon();
         case mongo::Array: return GuiRegistry::instance().bsonArrayIcon();

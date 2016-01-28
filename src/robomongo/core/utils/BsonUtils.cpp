@@ -153,6 +153,9 @@ namespace Robomongo
                     }
                     break;
                 }
+            case NumberDecimal:
+                s << "NumberDecimal(" << elem._numberDecimal().toString() << ")";
+                break;
             case mongo::Bool:
                 s << ( elem.boolean() ? "true" : "false" );
                 break;
@@ -375,6 +378,7 @@ namespace Robomongo
             switch( type ) {
             case NumberLong:
             case NumberDouble:
+            case NumberDecimal:
             case NumberInt:
             case mongo::String:
             case mongo::Bool:
@@ -416,6 +420,11 @@ namespace Robomongo
             case NumberDouble:
                 {
                     return "Double";
+                }
+                /** double precision floating point value */
+            case NumberDecimal:
+                {
+                    return "Decimal";
                 }
                 /** character string, stored in utf8 */
             case String:

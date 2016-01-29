@@ -493,7 +493,7 @@ namespace Robomongo
         addToolBar(_execToolBar);
 
         QLabel *message = new QLabel("&nbsp;<span style='color:#555555;'>Hey! This version could be the <a style='color: #106CD6' href='http://robomongo.org'>last release</a> of Robomongo, "
-                                     "a few days remaining to <a style='color: #106CD6' href='https://www.indiegogo.com/projects/save-robomongo'>change it</a>.</span> &nbsp;&nbsp;    ");
+                                     "a few days remain to <a style='color: #106CD6' href='https://www.indiegogo.com/projects/save-robomongo'>change it</a>.</span> &nbsp;&nbsp;    ");
         message->setWordWrap(false);
         message->setOpenExternalLinks(true);
 

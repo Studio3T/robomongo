@@ -135,7 +135,9 @@ namespace Robomongo
                     int sign=0;
                     if ( elem.number() >= -std::numeric_limits< double >::max() &&
                             elem.number() <= std::numeric_limits< double >::max() ) {
-                        s.precision( 16 );
+
+                        // was 16
+                        s.precision(std::numeric_limits<double>::digits10);
                         s << elem.number();
                     }
                     else if (std::isnan(elem.number()) ) {
@@ -573,10 +575,10 @@ namespace Robomongo
             {
             case NumberDouble:
                 {
-                    const int maxSize = 32;
-                    char buf[maxSize] = {0};
-                    snprintf(buf, maxSize, "%.16g", elem.Double());
-                    con.append(buf);
+                    std::stringstream s;
+                    s.precision(std::numeric_limits<double>::digits10);
+                    s << elem.Double();
+                    con.append(s.str());
                 }
                 break;
             case String:
@@ -727,5 +729,6 @@ namespace Robomongo
             }
             return i;
         }
-    }
-}
+
+    } // BsonUtils
+} // Robomongo

@@ -31,6 +31,8 @@
         <file>icons/execute_24x24.png</file>
         <file>icons/main_window_icon_old.png</file>
         <file>icons/logo-256x256.png</file>
+        <file>icons/logo-20x20.png</file>
+        <file>icons/handsup-20x20.png</file>
         <file>icons/text_highlighted_16x16.png</file>
         <file>icons/tree_highlighted_16x16.png</file>
         <file>icons/maximize_highlighted_16x16.png</file>

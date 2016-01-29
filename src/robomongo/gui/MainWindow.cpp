@@ -491,6 +491,34 @@ namespace Robomongo
         _execToolBar->setVisible(true /*toolbarsSettings["exec"].toBool()*/);
         setToolBarIconSize(_execToolBar);
         addToolBar(_execToolBar);
+
+        QLabel *message = new QLabel("&nbsp; Hey! This version could be the <a style='color: #106CD6' href='http://robomongo.org'>last release</a> of Robomongo, "
+                                     "a few days remaining to <a style='color: #106CD6' href='https://www.indiegogo.com/projects/save-robomongo'>change it</a>. &nbsp;&nbsp;    ");
+        message->setWordWrap(false);
+        message->setOpenExternalLinks(true);
+
+        QLabel *robotLabel = new QLabel();
+        QPixmap robot = QPixmap(":/robomongo/icons/handsup-20x20.png");
+        robotLabel->setPixmap(robot);
+
+        QWidget *spacerWidgetLeft = new QWidget(this);
+        spacerWidgetLeft->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        spacerWidgetLeft->setVisible(true);
+
+        QWidget *spacerWidgetRight = new QWidget(this);
+        spacerWidgetRight->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        spacerWidgetRight->setVisible(true);
+
+        QToolBar *robotToolBar = new QToolBar(tr("Robot Toolbar"));
+        robotToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        robotToolBar->setMovable(false);
+        robotToolBar->setVisible(true);
+        robotToolBar->addWidget(spacerWidgetLeft);
+        robotToolBar->addWidget(robotLabel);
+        robotToolBar->addWidget(message);
+        robotToolBar->addWidget(spacerWidgetRight);
+        addToolBar(robotToolBar);
+
         _toolbarsMenu->addAction(_execToolBar->toggleViewAction());
         VERIFY(connect(_execToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onExecToolbarVisibilityChanged(bool))));
 

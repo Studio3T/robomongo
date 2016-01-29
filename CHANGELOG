@@ -1,4 +1,32 @@
+0.9.0-RC3 / January 29, 2016
+ 
+  Most important changes: support for MongoDB 3.x and WiredTiger engine. Robomongo 
+  now embeds MongoDB 3.2 shell. It means that you can now use the latest
+  shell functionality. 
+
+  Fixed incorrect representation of floating-point numbers (fixed since RC3).
+  This bug was a reason of a big number of issues:
+
+     #910, #748, #697, #699, #760, #815, #870, #892, 
+     #894, #905, #945, #974, #978, #990, #831, #842
+
+  What's new in RC3 (January 29, 2016 )
+  http://blog.robomongo.org/robomongo-0-9-0-rc3-released
+
+  What's new in RC2 (January 26, 2016)
+  http://blog.robomongo.org/robomongo-rc2-for-windows-mac-os-x-and-linux
+  
+  What's new in RC1 (January 17, 2016)
+  http://blog.robomongo.org/robomongo-rc1-with-full-support-for-mongodb-3
+
+
 0.8.5 / March 10, 2015
+
+  Release 0.8.5 is now deprecated because of a critical bug, that is
+  described here: http://blog.robomongo.org/robomongo-0-9-0-rc3-released
+
+  We recommend to use Robomongo 0.9.0 or newer.
+
   * [Stephen Steneker]
     - OS X build fixes for XCode 5 / libc++ (#524)
     - OS X specific keyboard shortcut tips (#505)

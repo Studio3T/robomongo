@@ -183,7 +183,7 @@ elseif(SYSTEM_LINUX)
 endif()
 
 # Install
-include(InstallRobomongo)
+include(RobomongoInstall)
 
 
 #

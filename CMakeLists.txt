@@ -12,13 +12,14 @@ set(PROJECT_VERSION_BUILD "-RC3")
 set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}${PROJECT_VERSION_BUILD}")
 
 # Modules
-include(PrintUtils)
-include(DefineCMakeDefaults)
-include(DefineDefaults)
-include(DefineTrashSymbols)
-include(TargetArch)
-include(QtInstall)
-include(PackageRobomongo)
+include(RobomongoPrintUtils)
+include(RobomongoCMakeDefaults)
+include(RobomongoDefaults)
+include(RobomongoCommon)
+include(RobomongoTrashSymbols)
+include(RobomongoTargetArch)
+include(RobomongoInstallQt)
+include(RobomongoPackage)
 
 # Search for dependencies
 find_package(Threads REQUIRED)
@@ -38,5 +39,5 @@ add_subdirectory(src/third-party/qscintilla)
 add_subdirectory(src/robomongo)
 
 # Show configuration summary
-include(ConfigurationSummary)
+include(RobomongoConfigurationSummary)
 

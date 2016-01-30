@@ -66,28 +66,39 @@ elseif(SYSTEM_WINDOWS)
 
     set(CPACK_GENERATOR NSIS)
     set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/DESCRIPTION")
+
+    # License file will be shown in the installation wizard
     set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
-
-    # Name of the folder where Robomongo files will be installed
-    set(install_dir "Robomongo ${CPACK_PACKAGE_VERSION}")
-
-    # For stable releases (ones that have empty build version)
-    # use simple name of the folder, without version
-    if(PROJECT_VERSION_BUILD STREQUAL "")
-        set(install_dir "Robomongo")
-    endif()
 
     # Default installation directory (not full path), just the path after
     # default "c:\Program Files"
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "${install_dir}")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "${ROBOMONGO_DISPLAY_FULL_NAME}")
 
-    # A path to the executable inside package that contains the installer icon
+    # A path to the executable inside installed package that contains icon
+    # This icon is used in Windows "Add or remove programs" control panel
     set(CPACK_NSIS_INSTALLED_ICON_NAME "\\\\${exe_name}")
 
-    # The title displayed at the top of the installer
-    set(CPACK_NSIS_PACKAGE_NAME "Robomongo ${CPACK_PACKAGE_VERSION}")
+    # Create shortcuts on desktop and start-up menu
+    set(CPACK_NSIS_CREATE_ICONS_EXTRA "
+        CreateShortCut '$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\${ROBOMONGO_DISPLAY_FULL_NAME}.lnk' '$INSTDIR\\\\${exe_name}'
+        CreateShortCut '$DESKTOP\\\\${ROBOMONGO_DISPLAY_FULL_NAME}.lnk' '$INSTDIR\\\\${exe_name}'
+    ")
 
-    # Installer images
+    # Cleanup during uninstallation. This cleanup is required because shortcuts
+    # will not be deleted automatically.
+    # Without line '!insertmacro...' shortcut in start menu will not be removed
+    # (i.e. it doesn't work when we referece '$STARTMENU_FOLDER' that is used
+    # when creating shortcuts). This solution was found somewhere in internet.
+    set(CPACK_NSIS_DELETE_ICONS_EXTRA "
+        !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
+        Delete '$DESKTOP\\\\${ROBOMONGO_DISPLAY_FULL_NAME}.lnk'
+        Delete '$SMPROGRAMS\\\\$MUI_TEMP\\\\${ROBOMONGO_DISPLAY_FULL_NAME}.lnk'
+    ")
+
+    # The title displayed at the top of the installer
+    set(CPACK_NSIS_PACKAGE_NAME "${ROBOMONGO_DISPLAY_FULL_NAME}")
+
+    # Installer images (for sidebar and topbar)
     set(CPACK_PACKAGE_ICON "${files_dir}\\\\nsis-topbar.bmp")
     set(CPACK_NSIS_INSTALLER_MUI_ICON_CODE "!define MUI_WELCOMEFINISHPAGE_BITMAP \\\"${files_dir}\\\\nsis-sidebar.bmp\\\"")
 
@@ -99,6 +110,11 @@ elseif(SYSTEM_WINDOWS)
     # Specify an executable to add an option to run on the finish
     # page of the NSIS installer. Without "..\\\\" it dowsn't work for NSIS 2.5
     set(CPACK_NSIS_MUI_FINISHPAGE_RUN "..\\\\${exe_name}")
+
+    # Trying to set for installer and uninstaller, but this is
+    # doesn't work and default icons are still used...
+    set(CPACK_NSIS_MUI_ICON "${files_dir}\\\\robomongo.ico")
+    set(CPACK_NSIS_MUI_UNIICON "${files_dir}\\\\robomongo.ico")
 endif()
 
 include(CPack)

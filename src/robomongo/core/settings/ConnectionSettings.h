@@ -122,14 +122,6 @@ namespace Robomongo
         }
 
         mongo::HostAndPort info() const {return mongo::HostAndPort(_host, _port);}
-#ifdef MONGO_SSL
-        SSLInfo sslInfo() const {return _info.sslInfo(); }
-        void setSslInfo(const SSLInfo &info) {_info.setSslInfo(info);}
-#endif // MONGO_SSL
-#ifdef SSH_SUPPORT_ENABLED
-       SSHInfo sshInfo() const {return _info.sshInfo(); }
-       void setSshInfo(const SSHInfo &info) {_info.setSshInfo(info);}
-#endif // SSH_SUPPORT_ENABLED
 
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;

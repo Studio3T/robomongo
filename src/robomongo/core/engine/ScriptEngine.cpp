@@ -228,10 +228,15 @@ namespace Robomongo
         QMutexLocker lock(&_mutex);
 
         if (!dbName.empty()) {
-            // switch to database
-            char useDb[1024]={0};
-            sprintf(useDb,"shellHelper.use('%s');",dbName.c_str());
-            _scope->exec(useDb, "(usedb)", false, true, false);
+            std::stringstream ss;
+
+            // Switch to database
+            ss << "shellHelper.use('" << dbName << "');" << std::endl;
+
+            // Always allow to read from slave
+            ss << "rs.slaveOk();" << std::endl;
+
+            _scope->exec(ss.str(), "(usedb)", false, true, false);
         }
     }
 

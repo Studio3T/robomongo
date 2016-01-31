@@ -55,5 +55,6 @@ namespace Robomongo
 
     private:
         mongo::DBClientConnection *const _dbclient;
+        void checkLastErrorAndThrow(const std::string &db);
     };
 }

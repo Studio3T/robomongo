@@ -317,7 +317,8 @@ namespace Robomongo
 
             reply(event->sender(), new InsertDocumentResponse(this));
         } catch(const mongo::DBException &ex) {
-            reply(event->sender(), new InsertDocumentResponse(this, EventError("Unable to insert document.")));
+            EventError error = EventError("Error when saving document: " + ex.toString());
+            reply(event->sender(), new InsertDocumentResponse(this, error));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }

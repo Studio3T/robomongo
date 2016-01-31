@@ -407,11 +407,11 @@ namespace Robomongo
     void MongoClient::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
         _dbclient->insert(ns.toString(), obj);
+        checkLastErrorAndThrow(ns.databaseName());
     }
 
     void MongoClient::saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
     {
-
         mongo::BSONElement id = obj.getField("_id");
         mongo::BSONObjBuilder builder;
         builder.append(id);
@@ -419,12 +419,13 @@ namespace Robomongo
         mongo::Query query(bsonQuery);
 
         _dbclient->update(ns.toString(), query, obj, true, false);
-        //_dbclient->save(ns.toString().toStdString(), obj);
+        checkLastErrorAndThrow(ns.databaseName());
     }
 
     void MongoClient::removeDocuments(const MongoNamespace &ns, mongo::Query query, bool justOne /*= true*/)
     {
         _dbclient->remove(ns.toString(), query, justOne);
+        checkLastErrorAndThrow(ns.databaseName());
     }
 
     std::vector<MongoDocumentPtr> MongoClient::query(const MongoQueryInfo &info)
@@ -482,5 +483,16 @@ namespace Robomongo
     {
         // do nothing here, because we are not using ScopedDbConnection now
         //_scopedConnection->done();
+    }
+
+    void MongoClient::checkLastErrorAndThrow(const std::string &db)
+    {
+        std::string lastError = _dbclient->getLastError(db);
+
+        // Nothing to do when there is no error
+        if (lastError.empty())
+            return;
+
+        throw mongo::DBException(lastError, mongo::ErrorCodes::InternalError);
     }
 }

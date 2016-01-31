@@ -195,6 +195,11 @@ namespace Robomongo
 
     void Notifier::handle(InsertDocumentResponse *event)
     {
+        if (event->isError()) {
+            QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
+            return;
+        }
+
         _shell->query(0, _queryInfo);
     }
 

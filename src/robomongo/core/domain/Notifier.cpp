@@ -11,6 +11,7 @@
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/events/MongoEvents.h"
 
 #include "robomongo/shell/db/ptimeutil.h"
 
@@ -92,6 +93,7 @@ namespace Robomongo
     {
         QWidget *wid = dynamic_cast<QWidget*>(_observer);
         AppRegistry::instance().bus()->subscribe(this, InsertDocumentResponse::Type);
+        AppRegistry::instance().bus()->subscribe(this, RemoveDocumentResponse::Type);
 
         _deleteDocumentAction = new QAction("Delete Document...", wid);
         VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument())));
@@ -201,6 +203,14 @@ namespace Robomongo
         }
 
         _shell->query(0, _queryInfo);
+    }
+
+    void Notifier::handle(RemoveDocumentResponse *event)
+    {
+        if (event->isError()) {
+            QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
+            return;
+        }
     }
 
     void Notifier::onDeleteDocuments()

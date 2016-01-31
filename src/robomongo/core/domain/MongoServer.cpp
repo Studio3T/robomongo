@@ -169,4 +169,9 @@ namespace Robomongo
     {
         AppRegistry::instance().bus()->publish(new InsertDocumentResponse(event->sender(), event->error()));
     }
+
+    void MongoServer::handle(RemoveDocumentResponse *event)
+    {
+        AppRegistry::instance().bus()->publish(new RemoveDocumentResponse(event->sender(), event->error()));
+    }
 }

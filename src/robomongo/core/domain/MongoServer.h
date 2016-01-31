@@ -68,6 +68,7 @@ namespace Robomongo
         void handle(EstablishConnectionResponse *event);
         void handle(LoadDatabaseNamesResponse *event);
         void handle(InsertDocumentResponse *event);
+        void handle(RemoveDocumentResponse *event);
 
     private:
         void clearDatabases();

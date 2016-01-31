@@ -333,7 +333,8 @@ namespace Robomongo
 
             reply(event->sender(), new RemoveDocumentResponse(this));
         } catch(const mongo::DBException &ex) {
-            reply(event->sender(), new RemoveDocumentResponse(this, EventError("Unable to remove documents.")));
+            EventError error = EventError("Error when deleting document: " + ex.toString());
+            reply(event->sender(), new RemoveDocumentResponse(this, error));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }

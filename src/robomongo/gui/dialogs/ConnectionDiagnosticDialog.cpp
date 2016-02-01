@@ -161,13 +161,10 @@ namespace Robomongo
                     .append("mechanism", credentials->mechanism())
                     .obj());
 
-                printf("mechanismmmm: %s\n", credentials->mechanism().c_str());
-
                 connection->auth(authParams);
                 emit authStatus("", true);
             }
         } catch (const mongo::UserException &ex) {
-            printf("%s\n", ex.what());
             emit authStatus("", false);
         }
 

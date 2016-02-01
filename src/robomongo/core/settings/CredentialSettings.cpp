@@ -8,6 +8,7 @@ namespace Robomongo
         _userName(),
         _userPassword(),
         _databaseName(),
+        _mechanism(),
         _enabled(false)
     {
 
@@ -16,6 +17,7 @@ namespace Robomongo
         _userName(QtUtils::toStdString(map.value("userName").toString())),
         _userPassword(QtUtils::toStdString(map.value("userPassword").toString())),
         _databaseName(QtUtils::toStdString(map.value("databaseName").toString())),
+        _mechanism(QtUtils::toStdString(map.value("mechanism").toString())),
         _enabled(map.value("enabled").toBool())
     {
     }
@@ -35,6 +37,7 @@ namespace Robomongo
         map.insert("userName", QtUtils::toQString(userName()));
         map.insert("userPassword", QtUtils::toQString(userPassword()));
         map.insert("databaseName", QtUtils::toQString(databaseName()));
+        map.insert("mechanism", QtUtils::toQString(mechanism()));
         map.insert("enabled", enabled());
         return map;
     }

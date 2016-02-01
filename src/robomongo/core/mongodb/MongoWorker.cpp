@@ -110,25 +110,26 @@ namespace Robomongo
             mongo::DBClientBase *conn = getConnection();
             bool hasPrimary = _connection->hasEnabledPrimaryCredential();
             if (hasPrimary) {
-                std::string errmsg;
-                bool ok = conn->auth(
-                    _connection->primaryCredential()->databaseName(),
-                    _connection->primaryCredential()->userName(),
-                    _connection->primaryCredential()->userPassword(), errmsg);
+                CredentialSettings *credentials = _connection->primaryCredential();
 
-                if (!ok) {
-                    throw std::runtime_error("Unable to authorize");
-                }
+                // Building BSON object:
+                mongo::BSONObj authParams(mongo::BSONObjBuilder()
+                    .append("user", credentials->userName())
+                    .append("db", credentials->databaseName())
+                    .append("pwd", credentials->userPassword())
+                    .append("mechanism", credentials->mechanism())
+                    .obj());
+
+                conn->auth(authParams);
 
                 // If authentication succeed and database name is 'admin' -
                 // then user is admin, otherwise user is not admin
-                std::string dbName = _connection->primaryCredential()->databaseName();
+                std::string dbName = credentials->databaseName();
                 std::transform(dbName.begin(), dbName.end(), dbName.begin(), ::tolower);
                 if (dbName.compare("admin") != 0) // dbName is NOT "admin"
                     _isAdmin = false;
             }
             boost::scoped_ptr<MongoClient> client(getClient());
-            //conn->done();
             std::vector<std::string> dbNames = getDatabaseNamesSafe();
             reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, client->getVersion()) ));
         } catch(const std::exception &ex) {

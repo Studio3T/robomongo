@@ -208,7 +208,13 @@ namespace Robomongo
     void Notifier::handle(RemoveDocumentResponse *event)
     {
         if (event->isError()) {
-            QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
+            // Commented because when you'll delete multiple documents,
+            // we'll receive this event as many times as many selected
+            // documents you have. This is incorrect and remove of
+            // multiple documents should be a single command, instead
+            // of many. Error message should be printed in the logs.
+
+            // QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
             return;
         }
     }

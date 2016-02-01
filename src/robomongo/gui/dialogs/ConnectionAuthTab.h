@@ -6,6 +6,7 @@ class QLineEdit;
 class QLabel;
 class QCheckBox;
 class QPushButton;
+class QComboBox;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -34,6 +35,9 @@ namespace Robomongo
         QLabel    *_databaseNameDescriptionLabel;
         QCheckBox *_useAuth;
         QPushButton *_echoModeButton;
+
+        QLabel    *_mechanismLabel;
+        QComboBox *_mechanismComboBox;
 
         ConnectionSettings *const _settings;        
     };

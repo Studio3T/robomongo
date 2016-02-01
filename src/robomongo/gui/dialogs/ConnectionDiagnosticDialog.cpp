@@ -151,16 +151,20 @@ namespace Robomongo
         try {
             if (_connection->hasEnabledPrimaryCredential())
             {
-                CredentialSettings *credential = _connection->primaryCredential();
-                std::string database = credential->databaseName();
-                std::string username = credential->userName();
-                std::string password = credential->userPassword();
+                CredentialSettings *credentials = _connection->primaryCredential();
 
-                std::string errmsg;
-                bool ok = connection->auth(database, username, password, errmsg);
-                emit authStatus("", ok);
+                // Building BSON object:
+                mongo::BSONObj authParams(mongo::BSONObjBuilder()
+                    .append("user", credentials->userName())
+                    .append("db", credentials->databaseName())
+                    .append("pwd", credentials->userPassword())
+                    .append("mechanism", credentials->mechanism())
+                    .obj());
+
+                connection->auth(authParams);
+                emit authStatus("", true);
             }
-        } catch (const mongo::UserException &) {
+        } catch (const mongo::UserException &ex) {
             emit authStatus("", false);
         }
 

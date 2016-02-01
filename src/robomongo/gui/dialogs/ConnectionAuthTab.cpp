@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QCheckBox>
 #include <QPushButton>
+#include <QComboBox>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
@@ -27,11 +28,16 @@ namespace Robomongo
 
         _userName = new QLineEdit();
         _userNameLabel = new QLabel("User Name");
+        _mechanismLabel = new QLabel("Auth Mechanism");
         _userPassword = new QLineEdit();
         _userPassword->setEchoMode(QLineEdit::Password);
         _userPasswordLabel = new QLabel("Password");
         _databaseName = new QLineEdit("admin");
         _databaseNameLabel = new QLabel("Database");
+
+        _mechanismComboBox = new QComboBox();
+        _mechanismComboBox->addItem("SCRAM-SHA-1");
+        _mechanismComboBox->addItem("MONGODB-CR");
 
         _useAuth = new QCheckBox("Perform authentication");
         _useAuth->setStyleSheet("margin-bottom: 7px");
@@ -48,6 +54,7 @@ namespace Robomongo
             _userName->setText(QtUtils::toQString(primaryCredential->userName()));
             _userPassword->setText(QtUtils::toQString(primaryCredential->userPassword()));
             _databaseName->setText(QtUtils::toQString(primaryCredential->databaseName()));
+            _mechanismComboBox->setCurrentText(QtUtils::toQString(primaryCredential->mechanism()));
         }
 
         QGridLayout *_authLayout = new QGridLayout;
@@ -60,6 +67,8 @@ namespace Robomongo
         _authLayout->addWidget(_userPasswordLabel,            4, 0);
         _authLayout->addWidget(_userPassword,                 4, 1);
         _authLayout->addWidget(_echoModeButton,               4, 2);
+        _authLayout->addWidget(_mechanismLabel,               5, 0);
+        _authLayout->addWidget(_mechanismComboBox,            5, 1, 1, 2);
         _authLayout->setAlignment(Qt::AlignTop);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -82,6 +91,7 @@ namespace Robomongo
         credential->setUserName(QtUtils::toStdString(_userName->text()));
         credential->setUserPassword(QtUtils::toStdString(_userPassword->text()));
         credential->setDatabaseName(QtUtils::toStdString(_databaseName->text()));
+        credential->setMechanism(QtUtils::toStdString(_mechanismComboBox->currentText()));
         _settings->addCredential(credential);
     }
 
@@ -102,6 +112,9 @@ namespace Robomongo
         _userPassword->setDisabled(!checked);
         _userPasswordLabel->setDisabled(!checked);
         _echoModeButton->setDisabled(!checked);
+
+        _mechanismLabel->setDisabled(!checked);
+        _mechanismComboBox->setDisabled(!checked);
 
         if (checked)
             _databaseName->setFocus();

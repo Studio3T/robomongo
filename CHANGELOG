@@ -2,13 +2,18 @@
  
   Most important changes: support for MongoDB 3.x and WiredTiger engine. Robomongo 
   now embeds MongoDB 3.2 shell. It means that you can now use the latest
-  shell functionality. 
+  shell functionality. Both MONGODB-CR and SCRAM-SHA-1 authentication mechanisms are
+  supprted. Also, we now allow direct connections to Replica Set
+  members.
 
   Fixed incorrect representation of floating-point numbers (fixed since RC3).
   This bug was a reason of a big number of issues:
 
      #910, #748, #697, #699, #760, #815, #870, #892, 
      #894, #905, #945, #974, #978, #990, #831, #842
+
+  What's new in RC4 (February 1, 2016 )
+  http://blog.robomongo.org/robomongo-rc4
 
   What's new in RC3 (January 29, 2016 )
   http://blog.robomongo.org/robomongo-0-9-0-rc3-released

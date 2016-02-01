@@ -126,8 +126,12 @@ namespace Robomongo
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
         std::string _connectionName;
+
         std::string _host;
         int _port;
+
+        std::string _hosts;
+
         //mongo::HostAndPort _info;
         std::string _defaultDatabase;
         QList<CredentialSettings *> _credentials;

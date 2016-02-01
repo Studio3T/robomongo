@@ -540,7 +540,7 @@ namespace Robomongo
         }
     }
 
-    mongo::DBClientConnection *MongoWorker::getConnection()
+    mongo::DBClientBase *MongoWorker::getConnection()
     {
         if (!_dbclient) {
             mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);

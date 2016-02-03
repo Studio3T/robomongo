@@ -11,7 +11,7 @@ About Robomongo
 
 [Robomongo](http://www.robomongo.org) is a shell-centric cross-platform MongoDB management tool. Unlike most other MongoDB admin UI tools, Robomongo embeds the actual `mongo` shell in a tabbed interface with access to a shell command line as well as GUI interaction.
 
-Robomongo 0.9.x embeds the **MongoDB 3.2** shell.
+Starting from version 0.9, Robomongo is compatibile with MongoDB 3.x (including SCRAM-SHA-1 auth and support for WiredTiger storage engine). Robomongo 0.9 embeds the **MongoDB 3.2** shell.
 
 Robomongo 0.8.x embeds the **MongoDB 2.4.0** shell.
 

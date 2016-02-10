@@ -1,11 +1,3 @@
-Decide the future of Robomongo
-==============
-![Robomongo mascot](http://app.robomongo.org/images/robomongo-64x64.png) 
-
-We've started a campaign on [Indiegogo](https://www.indiegogo.com/projects/save-robomongo) in order to continue development of Robomongo. We want to keep Robomongo free forever. Everyone has a chance to decide the future of the project. Read more on [Robomongo website](http://robomongo.org).
-
-
-
 About Robomongo
 ===============
 

@@ -17,8 +17,8 @@ namespace Robomongo
         _settings(settings)
     {
         _databaseNameDescriptionLabel = new QLabel(
-            "<nobr>The <code>admin</code> database is unique in MongoDB.</nobr> Users with normal access "
-            "to the <code>admin</code> database have read and write access to <b>all "
+            "<nobr>The admin database is unique in MongoDB.</nobr> Users with normal access "
+            "to the admin database have read and write access to <b>all "
             "databases</b>.");
 
         _databaseNameDescriptionLabel->setWordWrap(true);

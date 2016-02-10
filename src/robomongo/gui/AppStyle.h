@@ -2,21 +2,20 @@
 
 #include <QStyle>
 #include <QProxyStyle>
-typedef QProxyStyle OsStyle;
 
 namespace Robomongo
 {
-    namespace detail
+    namespace AppStyleUtils
     {
+        void initStyle();
         void applyStyle(const QString &styleName);
         QStringList getSupportedStyles();
-        void initStyle();
     }
 
-    class AppStyle 
-        :public OsStyle
+    class AppStyle : public QProxyStyle
     {
         Q_OBJECT
+
     public:
         static const QString StyleName;
         virtual void drawControl(ControlElement element, const QStyleOption * option, QPainter * painter, const QWidget * widget) const;

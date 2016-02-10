@@ -108,6 +108,7 @@ namespace Robomongo
     #if defined(Q_OS_MAC)
         QString explorerColor = "#EFEFEF"; // was #CED6DF"
         controlKey = QChar(0x2318); // "Command" key aka Cauliflower
+        setUnifiedTitleAndToolBarOnMac(true);
     #elif defined(Q_OS_LINUX)
         QString explorerColor = background.darker(103).name();
     #else
@@ -508,7 +509,7 @@ namespace Robomongo
     {
         _viewMenu->addSeparator();
          QMenu *styles = _viewMenu->addMenu("Theme");
-         QStringList supportedStyles = detail::getSupportedStyles();
+         QStringList supportedStyles = AppStyleUtils::getSupportedStyles();
          QActionGroup *styleGroup = new QActionGroup(this);
          VERIFY(connect(styleGroup, SIGNAL(triggered(QAction *)), this, SLOT(changeStyle(QAction *))));
          const QString &currentStyle = AppRegistry::instance().settingsManager()->currentStyle();
@@ -558,7 +559,7 @@ namespace Robomongo
     void MainWindow::changeStyle(QAction *ac)
     {
         const QString &text = ac->text();
-        detail::applyStyle(text);
+        AppStyleUtils::applyStyle(text);
         AppRegistry::instance().settingsManager()->setCurrentStyle(text);
         AppRegistry::instance().settingsManager()->save();
     }

@@ -1,24 +1,25 @@
 #include "robomongo/gui/AppStyle.h"
 
-#include "robomongo/core/AppRegistry.h"
-#include "robomongo/core/settings/SettingsManager.h"
 #include <QApplication>
 #include <QStyleFactory>
+
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/settings/SettingsManager.h"
 
 namespace Robomongo
 {
     const QString AppStyle::StyleName = "Native";
 
-    namespace detail
+    namespace AppStyleUtils
     {
         void applyStyle(const QString &styleName)
         {
             if (styleName == "Native") {
                 QApplication::setStyle(new AppStyle);
+                return;
             }
-            else {
-                QApplication::setStyle(QStyleFactory::create(styleName));
-            }
+
+            QApplication::setStyle(QStyleFactory::create(styleName));
         }
 
         QStringList getSupportedStyles()
@@ -35,25 +36,23 @@ namespace Robomongo
         }
     }
 
-    void AppStyle::drawControl(ControlElement element, const QStyleOption * option, QPainter * painter, const QWidget * widget) const
+    void AppStyle::drawControl(ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
     {
-        return OsStyle::drawControl(element, option, painter, widget);
+        return QProxyStyle::drawControl(element, option, painter, widget);
     }
 
     void AppStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
     {
 #ifdef Q_OS_WIN
-
-        if(element==QStyle::PE_FrameFocusRect)
+        if (element == QStyle::PE_FrameFocusRect)
             return;
+#endif
 
-#endif // Q_OS_WIN
-
-        return OsStyle::drawPrimitive(element, option, painter, widget);
+        return QProxyStyle::drawPrimitive(element, option, painter, widget);
     }
 
-    QRect AppStyle::subElementRect( SubElement element, const QStyleOption * option, const QWidget * widget /*= 0 */ ) const
+    QRect AppStyle::subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget /*= 0 */) const
     {
-        return OsStyle::subElementRect(element, option, widget);
+        return QProxyStyle::subElementRect(element, option, widget);
     }
 }

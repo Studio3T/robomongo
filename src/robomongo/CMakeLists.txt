@@ -187,11 +187,11 @@ include(RobomongoInstall)
 
 
 #
-# Helper targets (code below should be moved to separate file)
+# Tests targets (code below should be moved to separate file)
 #
-add_executable(main2 WIN32 EXCLUDE_FROM_ALL app/main_test.cpp gui/editors/JSLexer.cpp)
-target_link_libraries(main2 Qt5::Widgets qjson qscintilla)
-target_include_directories(main2
+add_executable(tests WIN32 EXCLUDE_FROM_ALL app/main_test.cpp gui/editors/JSLexer.cpp)
+target_link_libraries(tests Qt5::Widgets qjson qscintilla mongodb Threads::Threads)
+target_include_directories(tests
     PRIVATE
         ${CMAKE_HOME_DIRECTORY}/src)
 

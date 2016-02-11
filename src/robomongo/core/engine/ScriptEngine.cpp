@@ -49,11 +49,8 @@ namespace
 
 namespace mongo {
     extern bool isShell;
-
     void logProcessDetailsForLogRotate() {}
-
     void exitCleanly(ExitCode code) {}
-
 }
 
 namespace Robomongo
@@ -85,7 +82,7 @@ namespace Robomongo
             connectDatabase = _connection->primaryCredential()->databaseName();
 
         std::stringstream ss;
-        ss << "db = connect('" << _connection->serverHost() << ":" << _connection->serverPort() << "/" << connectDatabase;
+        ss << "db = connect('" << _connection->info().toString() << "/" << connectDatabase;
 
 //        v0.9
 //        ss << "db = connect('" << _connection->serverHost() << ":" << _connection->serverPort() << _connection->sslInfo() << _connection->sshInfo() << "/" << connectDatabase;
@@ -244,8 +241,8 @@ namespace Robomongo
     {
         QMutexLocker lock(&_mutex);
 
-        char buff[64]={0};
-        sprintf(buff,"DBQuery.shellBatchSize = %d",batchSize);
+        char buff[64] = {0};
+        sprintf(buff, "DBQuery.shellBatchSize = %d", batchSize);
 
         _scope->exec(buff, "(shellBatchSize)", true, true, true);
     }

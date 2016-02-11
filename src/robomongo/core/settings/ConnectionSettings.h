@@ -4,6 +4,7 @@
 #include <QVariant>
 #include <QVariantMap>
 #include <mongo/client/dbclientinterface.h>
+#include <boost/algorithm/string.hpp>
 
 namespace Robomongo
 {
@@ -121,7 +122,23 @@ namespace Robomongo
             return _connectionName;
         }
 
-        mongo::HostAndPort info() const {return mongo::HostAndPort(_host, _port);}
+        mongo::HostAndPort info() const {
+            // If it doesn't look like IPv6 address,
+            // treat it like IPv4 or literal hostname
+            if (_host.find(':') == std::string::npos) {
+                return mongo::HostAndPort(_host, _port);
+            }
+
+            // The following code assumes, that it is IPv6 address
+            // If address contains square brackets ("["), remove them:
+            std::string hostCopy = _host;
+            if (_host.find('[') != std::string::npos) {
+                boost::erase_all(hostCopy, "[");
+                boost::erase_all(hostCopy, "]");
+            }
+
+            return mongo::HostAndPort(hostCopy, _port);
+        }
 
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;

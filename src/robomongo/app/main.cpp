@@ -2,8 +2,13 @@
 #include <QDesktopWidget>
 
 #include <locale.h>
-#include <mongo/base/initializer.h>
+
+// Header "mongo/util/net/sock" is needed for mongo::enableIPv6()
+// Header "mongo/platform/basic" is required by "sock.h" under Windows
+#include <mongo/platform/basic.h>
 #include <mongo/util/net/sock.h>
+
+#include <mongo/base/initializer.h>
 
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/AppStyle.h"

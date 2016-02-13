@@ -1,16 +1,22 @@
-0.9.0-RC3 / January 29, 2016
+0.9.0-RC6 / February 13, 2016
  
   Most important changes: support for MongoDB 3.x and WiredTiger engine. Robomongo 
   now embeds MongoDB 3.2 shell. It means that you can now use the latest
   shell functionality. Both MONGODB-CR and SCRAM-SHA-1 authentication mechanisms are
-  supprted. Also, we now allow direct connections to Replica Set
-  members.
+  supprted. Also, we now allow direct connections to Replica Set members and 
+  support IPv6 protocol. Loading of huge list of collection names is now faster.
 
   Fixed incorrect representation of floating-point numbers (fixed since RC3).
   This bug was a reason of a big number of issues:
 
      #910, #748, #697, #699, #760, #815, #870, #892, 
      #894, #905, #945, #974, #978, #990, #831, #842
+     
+  What's new in RC6 (February 13, 2016 )
+  http://blog.robomongo.org/ipv6-protocol
+
+  What's new in RC5 (February 8, 2016 )
+  http://blog.robomongo.org/campaign-is-over-robomongo-is-not/
 
   What's new in RC4 (February 1, 2016 )
   http://blog.robomongo.org/robomongo-rc4

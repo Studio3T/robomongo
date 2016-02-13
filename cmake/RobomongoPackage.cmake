@@ -64,7 +64,7 @@ elseif(SYSTEM_WINDOWS)
     set(files_dir "${CMAKE_SOURCE_DIR}/install/windows")
     set(exe_name "Robomongo.exe")
 
-    set(CPACK_GENERATOR NSIS)
+    set(CPACK_GENERATOR NSIS ZIP)
     set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/DESCRIPTION")
 
     # License file will be shown in the installation wizard

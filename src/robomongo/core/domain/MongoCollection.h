@@ -17,8 +17,8 @@ namespace Robomongo
         std::string fullName() const { return _ns.toString(); }
         MongoDatabase *database() const { return _database; }
 
-        std::string sizeString() const;
-        QString storageSizeString() const;
+//        std::string sizeString() const;
+//        QString storageSizeString() const;
 
     private:
 

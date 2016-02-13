@@ -7,7 +7,8 @@ namespace Robomongo
     class MongoCollectionInfo
     {
     public:
-        MongoCollectionInfo(mongo::BSONObj stats);
+        MongoCollectionInfo(const std::string &ns);
+//        MongoCollectionInfo(mongo::BSONObj stats);
 
         std::string name() const { return _ns.collectionName(); }
         std::string fullName() const { return _ns.toString(); }
@@ -18,16 +19,16 @@ namespace Robomongo
          * It is double, because db.stats()'s "size" field may be double
          * for large values, while Int32 for small.
          */
-        double sizeBytes() const { return _sizeBytes; }
+//        double sizeBytes() const { return _sizeBytes; }
 
         /**
          * @brief Storage size in bytes
          * It is double, because db.stats()'s "storageSize" field may be double
          * for large values, while Int32 for small.
          */
-        double storageSizeBytes() const { return _storageSizeBytes; }
+//        double storageSizeBytes() const { return _storageSizeBytes; }
 
-        long long count() const { return _count; }
+//        long long count() const { return _count; }
 
     private:
         MongoNamespace _ns;

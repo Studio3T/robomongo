@@ -454,6 +454,10 @@ namespace Robomongo
 
     MongoCollectionInfo MongoClient::runCollStatsCommand(const std::string &ns)
     {
+        MongoCollectionInfo info(ns);
+        return info;
+
+/*      // Commented for now, to speedup load of collection names
         MongoNamespace mongons(ns);
 
         mongo::BSONObjBuilder command; // { collStats: "db.collection", scale : 1 }
@@ -465,6 +469,7 @@ namespace Robomongo
         std::string isCV = result.toString();
         MongoCollectionInfo newInfo(result);
         return newInfo;
+        */
     }
 
     std::vector<MongoCollectionInfo> MongoClient::runCollStatsCommand(const std::vector<std::string> &namespaces)

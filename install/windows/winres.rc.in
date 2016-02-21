@@ -1,13 +1,13 @@
 #include "verrsrc.h"
 
-IDI_ICON1               ICON        "@ICON_FILE@"
+IDI_ICON1               ICON        "@windows_icon@"
 
 
-#define VER_FILEVERSION             @MAJOR_VER@,@MINOR_VER1@,@MINOR_VER2@
-#define VER_FILEVERSION_STR         "@MAJOR_VER@.@MINOR_VER1@.@MINOR_VER2@\0"
+#define VER_FILEVERSION             @PROJECT_VERSION_MAJOR@,@PROJECT_VERSION_MINOR@,@PROJECT_VERSION_PATCH@
+#define VER_FILEVERSION_STR         "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@\0"
 
-#define VER_PRODUCTVERSION          @MAJOR_VER@,@MINOR_VER1@,@MINOR_VER2@
-#define VER_PRODUCTVERSION_STR     	"@MAJOR_VER@.@MINOR_VER1@.@MINOR_VER2@\0"
+#define VER_PRODUCTVERSION          @PROJECT_VERSION_MAJOR@,@PROJECT_VERSION_MINOR@,@PROJECT_VERSION_PATCH@
+#define VER_PRODUCTVERSION_STR     	"@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@\0"
 
 1 VERSIONINFO
  FILEVERSION VER_FILEVERSION
@@ -26,14 +26,14 @@ IDI_ICON1               ICON        "@ICON_FILE@"
 	BEGIN
 		BLOCK "040904e4"
 		BEGIN
-			VALUE "CompanyName", "@COMPANYNAME@\0"
-			VALUE "FileDescription", "@PRODUCTNAME@\0"
+			VALUE "CompanyName", "Paralect, Inc\0"
+			VALUE "FileDescription", "Robomongo, MongoDB management tool\0"
 			VALUE "FileVersion", VER_FILEVERSION_STR
-			VALUE "LegalCopyright", "@PRODUCTCOPYRIGHT@\0"
-			VALUE "ProductName", "@PRODUCTNAME@\0"
+			VALUE "LegalCopyright", "Copyright Paralect, 2013 - 2016\0"
+			VALUE "ProductName", "Robomongo\0"
 			VALUE "ProductVersion", VER_PRODUCTVERSION_STR
-			VALUE "OriginalFilename", "@SHORTPRODUCTNAME@.exe\0"
-			VALUE "InternalName", "@SHORTPRODUCTNAME@\0"
+			VALUE "OriginalFilename", "Robomongo.exe\0"
+			VALUE "InternalName", "Robomongo\0"
 		END
 	END
 	BLOCK "VarFileInfo"

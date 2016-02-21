@@ -1,35 +1,21 @@
 #pragma once
 
 #include <QStyle>
-#ifdef OS_WIN
-    #include <QProxyStyle>
-    typedef QProxyStyle OsStyle;
-#elif defined(OS_MAC)
-    #include <QProxyStyle>
-    typedef QProxyStyle OsStyle;
-#elif defined OS_LINUX
-    #if !defined(QT_NO_STYLE_GTK)
-        #include <QProxyStyle>
-        typedef QProxyStyle OsStyle;
-    #else
-        #include <QCleanlooksStyle>
-        typedef QCleanlooksStyle OsStyle;
-    #endif
-#endif
+#include <QProxyStyle>
 
 namespace Robomongo
 {
-    namespace detail
+    namespace AppStyleUtils
     {
+        void initStyle();
         void applyStyle(const QString &styleName);
         QStringList getSupportedStyles();
-        void initStyle();
     }
 
-    class AppStyle 
-        :public OsStyle
+    class AppStyle : public QProxyStyle
     {
         Q_OBJECT
+
     public:
         static const QString StyleName;
         virtual void drawControl(ControlElement element, const QStyleOption * option, QPainter * painter, const QWidget * widget) const;

@@ -1,6 +1,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerTreeWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
 #include <QContextMenuEvent>
+#include <robomongo/gui/GuiRegistry.h>
 
 namespace Robomongo
 {
@@ -8,6 +9,9 @@ namespace Robomongo
     {
     #if defined(Q_OS_MAC)
         setAttribute(Qt::WA_MacShowFocusRect, false);
+        QPalette palet = palette();
+        palet.setColor(QPalette::Active, QPalette::Highlight, QColor(16, 108, 214));
+        setPalette(palet);
     #endif
         setContextMenuPolicy(Qt::DefaultContextMenu);
         setObjectName("explorerTree");

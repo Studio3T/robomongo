@@ -17,6 +17,7 @@
 #include <QStatusBar>
 #include <QHBoxLayout>
 
+#include <mongo/logger/log_severity.h>
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
@@ -105,8 +106,9 @@ namespace Robomongo
         QString controlKey = "Ctrl";
 
     #if defined(Q_OS_MAC)
-        QString explorerColor = "#DEE3EA"; // was #CED6DF"
+        QString explorerColor = "#EFEFEF"; // was #CED6DF"
         controlKey = QChar(0x2318); // "Command" key aka Cauliflower
+        setUnifiedTitleAndToolBarOnMac(true);
     #elif defined(Q_OS_LINUX)
         QString explorerColor = background.darker(103).name();
     #else
@@ -464,7 +466,7 @@ namespace Robomongo
         connectToolBar->addAction(connectButtonAction);
         connectToolBar->setShortcutEnabled(1, true);
         connectToolBar->setMovable(false);
-        connectToolBar->setVisible(toolbarsSettings["connect"].toBool());
+        connectToolBar->setVisible(true /*toolbarsSettings["connect"].toBool()*/);
         _toolbarsMenu->addAction(connectToolBar->toggleViewAction());
         VERIFY(connect(connectToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onConnectToolbarVisibilityChanged(bool))));
         setToolBarIconSize(connectToolBar);
@@ -474,7 +476,7 @@ namespace Robomongo
         openSaveToolBar->addAction(_openAction);
         openSaveToolBar->addAction(_saveAction);
         openSaveToolBar->setMovable(false);
-        openSaveToolBar->setVisible(toolbarsSettings["open_save"].toBool());
+        openSaveToolBar->setVisible(true /*toolbarsSettings["open_save"].toBool()*/);
         _toolbarsMenu->addAction(openSaveToolBar->toggleViewAction());
         VERIFY(connect(openSaveToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onOpenSaveToolbarVisibilityChanged(bool))));
         setToolBarIconSize(openSaveToolBar);
@@ -487,15 +489,16 @@ namespace Robomongo
         _execToolBar->addAction(_orientationAction);
         _execToolBar->setShortcutEnabled(1, true);
         _execToolBar->setMovable(false);
-        _execToolBar->setVisible(toolbarsSettings["exec"].toBool());
+        _execToolBar->setVisible(true /*toolbarsSettings["exec"].toBool()*/);
         setToolBarIconSize(_execToolBar);
         addToolBar(_execToolBar);
+
         _toolbarsMenu->addAction(_execToolBar->toggleViewAction());
         VERIFY(connect(_execToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onExecToolbarVisibilityChanged(bool))));
 
         createTabs();
         createStatusBar();
-        setWindowTitle(PROJECT_NAME_TITLE" "PROJECT_VERSION);
+        setWindowTitle(PROJECT_NAME_TITLE " " PROJECT_VERSION);
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
         QTimer::singleShot(0, this, SLOT(manageConnections()));
@@ -506,7 +509,7 @@ namespace Robomongo
     {
         _viewMenu->addSeparator();
          QMenu *styles = _viewMenu->addMenu("Theme");
-         QStringList supportedStyles = detail::getSupportedStyles();
+         QStringList supportedStyles = AppStyleUtils::getSupportedStyles();
          QActionGroup *styleGroup = new QActionGroup(this);
          VERIFY(connect(styleGroup, SIGNAL(triggered(QAction *)), this, SLOT(changeStyle(QAction *))));
          const QString &currentStyle = AppRegistry::instance().settingsManager()->currentStyle();
@@ -556,7 +559,7 @@ namespace Robomongo
     void MainWindow::changeStyle(QAction *ac)
     {
         const QString &text = ac->text();
-        detail::applyStyle(text);
+        AppStyleUtils::applyStyle(text);
         AppRegistry::instance().settingsManager()->setCurrentStyle(text);
         AppRegistry::instance().settingsManager()->save();
     }
@@ -914,7 +917,10 @@ namespace Robomongo
 
         QWidget *titleWidget = new QWidget(this);         // this lines simply remove
         explorerDock->setTitleBarWidget(titleWidget);     // title bar widget.
-        explorerDock->setVisible(AppRegistry::instance().settingsManager()->toolbars()["explorer"].toBool());
+        explorerDock->setVisible(true);
+
+        // Prior to v0.9 it was:
+        // explorerDock->setVisible(AppRegistry::instance().settingsManager()->toolbars()["explorer"].toBool());
         
         QAction *actionExp = explorerDock->toggleViewAction();
         // Adjust any parameter you want.  
@@ -929,12 +935,16 @@ namespace Robomongo
         addDockWidget(Qt::LeftDockWidgetArea, explorerDock);
 
         LogWidget *log = new LogWidget(this);        
-        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, mongo::LogLevel)), log, SLOT(addMessage(const QString&, mongo::LogLevel))));
+        VERIFY(connect(&Logger::instance(), SIGNAL(printed(const QString&, mongo::logger::LogSeverity)), log, SLOT(addMessage(const QString&, mongo::logger::LogSeverity))));
         _logDock = new QDockWidget(tr("Logs"));
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         _logDock->setWidget(log);
         _logDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
-        _logDock->setVisible(AppRegistry::instance().settingsManager()->toolbars()["logs"].toBool());
+
+        _logDock->setVisible(false);
+
+        // Prior to v0.9 it was:
+        // _logDock->setVisible(AppRegistry::instance().settingsManager()->toolbars()["logs"].toBool());
         
         QAction *action = _logDock->toggleViewAction();
         // Adjust any parameter you want.  

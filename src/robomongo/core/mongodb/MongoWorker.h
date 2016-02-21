@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QMutex>
+#include <unordered_set>
 
 #include "robomongo/core/events/MongoEvents.h"
 
@@ -15,7 +16,6 @@ namespace Robomongo
     class MongoClient;
     class ScriptEngine;
     class ConnectionSettings;
-    class RDBClientConnection;
 
     class MongoWorker : public QObject
     {
@@ -26,7 +26,8 @@ namespace Robomongo
         explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
         ConnectionSettings *connectionRecord() const {return _connection;}
         ~MongoWorker();
-        enum{pingTimeMs = 60*1000};
+        enum { pingTimeMs = 60 * 1000 };
+        void stopAndDelete();
         
     protected Q_SLOTS: // handlers:
         void init();
@@ -128,8 +129,8 @@ namespace Robomongo
         DatabasesContainerType getDatabaseNamesSafe();
         std::string getAuthBase() const;
 
-        mongo::DBClientConnection *_dbclient;
-        mongo::DBClientConnection *getConnection();
+        mongo::DBClientBase *_dbclient;
+        mongo::DBClientBase *getConnection();
         MongoClient *getClient();
 
         /**
@@ -145,8 +146,16 @@ namespace Robomongo
         const bool _isLoadMongoRcJs;
         const int _batchSize;
         int _timerId;
+        QAtomicInteger<int> _isQuiting;
 
         ConnectionSettings *_connection;
+
+        // Collection of created databases.
+        // Starting from 3.0, MongoDB drops empty databases.
+        // It means, we do not find a way to create "empty" database.
+        // We save all created databases in this collection and merge with
+        // list of real databases returned from MongoDB server.
+        std::unordered_set<std::string> _createdDbs;
     };
 
 }

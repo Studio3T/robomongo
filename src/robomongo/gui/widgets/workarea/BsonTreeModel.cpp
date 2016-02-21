@@ -1,7 +1,6 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
 
-#include <mongo/client/dbclient.h>
-#include <mongo/bson/bsonobjiterator.h>
+#include <mongo/client/dbclientinterface.h>
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/utils/BsonUtils.h"
@@ -13,24 +12,40 @@
 namespace
 {
     using namespace Robomongo;
-    void parseDocument(BsonTreeItem *root, const mongo::BSONObj &doc)
+
+    QString arrayValue(int itemsCount) {
+        QString elements = itemsCount == 1 ? "element" : "elements";
+        return QString("[ %1 %2 ]").arg(itemsCount).arg(elements);
+    }
+
+    QString objectValue(int itemsCount) {
+        QString fields = itemsCount == 1 ? "field" : "fields";
+        return QString("{ %1 %2 }").arg(itemsCount).arg(fields);
+    }
+
+    void parseDocument(BsonTreeItem *root, const mongo::BSONObj &doc, bool isArray)
     {            
             mongo::BSONObjIterator iterator(doc);
             while (iterator.more())
             {
                 mongo::BSONElement element = iterator.next();                
                 BsonTreeItem *childItemInner = new BsonTreeItem(doc, root);
-                childItemInner->setKey(QtUtils::toQString(std::string(element.fieldName())));
+                QString fieldName = QtUtils::toQString(std::string(element.fieldName()));
+                childItemInner->setKey(fieldName);
+
+                if (isArray) {
+                    // When we iterate array, show field names in square brackets
+                    // In this case field names are numeric, starting from 0.
+                    childItemInner->setKey("[" + fieldName + "]");
+                }
 
                 if (BsonUtils::isArray(element)) {
                     int itemsCount = element.Array().size();
-                    childItemInner->setValue(QString("Array [%1]").arg(itemsCount));
-                    //parseDocument(childItemInner,element.Obj());  
+                    childItemInner->setValue(arrayValue(itemsCount));
                 }
                 else if (BsonUtils::isDocument(element)) {
                     int count = BsonUtils::elementsCount(element.Obj());
-                    childItemInner->setValue(QString("{ %1 fields }").arg(count));
-                   // parseDocument(childItemInner,element.Obj());                    
+                    childItemInner->setValue(objectValue(count));
                 }
                 else {
                     std::string result;
@@ -56,7 +71,7 @@ namespace Robomongo
         for (int i = 0; i < documents.size(); ++i) {
             MongoDocumentPtr doc = documents[i]; 
             BsonTreeItem *child = new BsonTreeItem(doc->bsonObj(), _root);
-            parseDocument(child, doc->bsonObj());
+            parseDocument(child, doc->bsonObj(), doc->bsonObj().isArray());
 
             QString idValue;
             BsonTreeItem *idItem = child->childByKey("_id");
@@ -67,9 +82,14 @@ namespace Robomongo
             child->setKey(QString("(%1) %2").arg(i + 1).arg(idValue));
 
             int count = BsonUtils::elementsCount(doc->bsonObj());
-            child->setValue(QString("{ %1 fields }").arg(count));
 
-            child->setType(mongo::Object);
+            if (doc->bsonObj().isArray()) {
+                child->setValue(arrayValue(count));
+                child->setType(mongo::Array);
+            } else {
+                child->setValue(objectValue(count));
+                child->setType(mongo::Object);
+            }
             _root->addChild(child);
         }
     }
@@ -80,7 +100,7 @@ namespace Robomongo
         if (node) {
             mongo::BSONElement elem = BsonUtils::indexOf(node->root(),parent.row());
             if (!elem.isNull() && elem.isABSONObj()) {
-                parseDocument(node,elem.Obj());
+                parseDocument(node, elem.Obj(), elem.type() == mongo::Array);
             }            
         }
         return BaseClass::fetchMore(parent);
@@ -107,7 +127,8 @@ namespace Robomongo
     const QIcon &BsonTreeModel::getIcon(BsonTreeItem *item)
     {
         switch(item->type()) {
-        case mongo::NumberDouble: return GuiRegistry::instance().bsonIntegerIcon();
+        case mongo::NumberDouble: return GuiRegistry::instance().bsonDoubleIcon();
+        case mongo::NumberDecimal: return GuiRegistry::instance().bsonDoubleIcon();
         case mongo::String: return GuiRegistry::instance().bsonStringIcon();
         case mongo::Object: return GuiRegistry::instance().bsonObjectIcon();
         case mongo::Array: return GuiRegistry::instance().bsonArrayIcon();
@@ -121,7 +142,7 @@ namespace Robomongo
         case mongo::DBRef: return GuiRegistry::instance().circleIcon();
         case mongo::Code: case mongo::CodeWScope: return GuiRegistry::instance().circleIcon();
         case mongo::NumberInt: return GuiRegistry::instance().bsonIntegerIcon();
-        case mongo::Timestamp: return GuiRegistry::instance().bsonDateTimeIcon();
+        case mongo::bsonTimestamp: return GuiRegistry::instance().bsonDateTimeIcon();
         case mongo::NumberLong: return GuiRegistry::instance().bsonIntegerIcon();
         default: return GuiRegistry::instance().circleIcon();
         }

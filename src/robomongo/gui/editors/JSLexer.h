@@ -8,6 +8,7 @@ namespace Robomongo
 {
     class JSLexer : public QsciLexerJavaScript
     {
+        Q_OBJECT
         // This Q_OBJECT macro produce the following error for VC, but works on GCC:
         // unresolved external symbol "public: static struct QMetaObject const...
         // Q_OBJECT

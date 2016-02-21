@@ -43,7 +43,9 @@ namespace Robomongo
         ConnectionAuthTab *_authTab;
         ConnectionBasicTab *_basicTab;
         ConnectionAdvancedTab *_advancedTab;
-        ConnectionSslTab *_sslTab;
+
+        // v0.9
+        //ConnectionSslTab *_sslTab;
 
 #ifdef SSH_SUPPORT_ENABLED
         SshTunnelTab *_sshTab;

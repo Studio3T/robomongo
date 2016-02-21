@@ -18,7 +18,7 @@ namespace Robomongo
             _system = true;
     }
 
-    std::string MongoCollection::sizeString() const
+/*    std::string MongoCollection::sizeString() const
     {
         return MongoUtils::buildNiceSizeString(_info.sizeBytes()).toStdString();
     }
@@ -26,5 +26,5 @@ namespace Robomongo
     QString MongoCollection::storageSizeString() const
     {
         return MongoUtils::buildNiceSizeString(_info.storageSizeBytes());
-    }
+    }*/
 }

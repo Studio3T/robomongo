@@ -11,6 +11,7 @@
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/MongoServer.h"
+#include "robomongo/core/events/MongoEvents.h"
 
 #include "robomongo/shell/db/ptimeutil.h"
 
@@ -92,6 +93,7 @@ namespace Robomongo
     {
         QWidget *wid = dynamic_cast<QWidget*>(_observer);
         AppRegistry::instance().bus()->subscribe(this, InsertDocumentResponse::Type);
+        AppRegistry::instance().bus()->subscribe(this, RemoveDocumentResponse::Type);
 
         _deleteDocumentAction = new QAction("Delete Document...", wid);
         VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument())));
@@ -195,7 +197,26 @@ namespace Robomongo
 
     void Notifier::handle(InsertDocumentResponse *event)
     {
+        if (event->isError()) {
+            QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
+            return;
+        }
+
         _shell->query(0, _queryInfo);
+    }
+
+    void Notifier::handle(RemoveDocumentResponse *event)
+    {
+        if (event->isError()) {
+            // Commented because when you'll delete multiple documents,
+            // we'll receive this event as many times as many selected
+            // documents you have. This is incorrect and remove of
+            // multiple documents should be a single command, instead
+            // of many. Error message should be printed in the logs.
+
+            // QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
+            return;
+        }
     }
 
     void Notifier::onDeleteDocuments()

@@ -4,6 +4,7 @@
 #include <QVariant>
 #include <QVariantMap>
 #include <mongo/client/dbclientinterface.h>
+#include <boost/algorithm/string.hpp>
 
 namespace Robomongo
 {
@@ -52,14 +53,14 @@ namespace Robomongo
         /**
          * @brief Server host
          */
-        std::string serverHost() const { return _info.host(); }
-        void setServerHost(const std::string &serverHost) { _info.setHost(serverHost); }
+        std::string serverHost() const { return _host; }
+        void setServerHost(const std::string &serverHost) { _host = serverHost; }
 
         /**
          * @brief Port of server
          */
-        unsigned short serverPort() const { return _info.port(); }
-        void setServerPort(const int port) { _info.setPort(port); }
+        unsigned short serverPort() const { return _port; }
+        void setServerPort(const int port) { _port = port; }
 
         /**
          * @brief Default database
@@ -121,20 +122,30 @@ namespace Robomongo
             return _connectionName;
         }
 
-        mongo::HostAndPort info() const {return _info;}
-#ifdef MONGO_SSL
-        SSLInfo sslInfo() const {return _info.sslInfo(); }
-        void setSslInfo(const SSLInfo &info) {_info.setSslInfo(info);}
-#endif // MONGO_SSL
-#ifdef SSH_SUPPORT_ENABLED
-       SSHInfo sshInfo() const {return _info.sshInfo(); }
-       void setSshInfo(const SSHInfo &info) {_info.setSshInfo(info);}
-#endif // SSH_SUPPORT_ENABLED
+        mongo::HostAndPort info() const {
+            // If it doesn't look like IPv6 address,
+            // treat it like IPv4 or literal hostname
+            if (_host.find(':') == std::string::npos) {
+                return mongo::HostAndPort(_host, _port);
+            }
+
+            // The following code assumes, that it is IPv6 address
+            // If address contains square brackets ("["), remove them:
+            std::string hostCopy = _host;
+            if (_host.find('[') != std::string::npos) {
+                boost::erase_all(hostCopy, "[");
+                boost::erase_all(hostCopy, "]");
+            }
+
+            return mongo::HostAndPort(hostCopy, _port);
+        }
 
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
         std::string _connectionName;
-        mongo::HostAndPort _info;
+        std::string _host;
+        int _port;
+        //mongo::HostAndPort _info;
         std::string _defaultDatabase;
         QList<CredentialSettings *> _credentials;
     };

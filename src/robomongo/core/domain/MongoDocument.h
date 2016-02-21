@@ -42,17 +42,5 @@ namespace Robomongo
         ** Return "native" BSONObj
         */
         mongo::BSONObj bsonObj() const { return _bsonObj; }
-
-        /*
-        ** Convert to json string
-        */
-        void buildJsonString(std::string &con);
-
-        /*
-        ** Build JsonString from list of documents
-        */
-        static std::string buildJsonString(const QList<MongoDocumentPtr> &documents);
-
-        static std::string buildJsonString(const MongoDocumentPtr &documents);
     };
 }

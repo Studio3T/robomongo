@@ -22,7 +22,7 @@ namespace Robomongo
     {
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
-        setWindowTitle("Preferences "PROJECT_NAME_TITLE);
+        setWindowTitle("Preferences " PROJECT_NAME_TITLE);
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
         setFixedSize(height,width);
 
@@ -77,7 +77,7 @@ namespace Robomongo
         QLabel *stylesLabel = new QLabel("Styles:");
         stylesLayout->addWidget(stylesLabel);
         _stylesComboBox = new QComboBox();
-        _stylesComboBox->addItems(detail::getSupportedStyles());
+        _stylesComboBox->addItems(AppStyleUtils::getSupportedStyles());
         stylesLayout->addWidget(_stylesComboBox);
         layout->addLayout(stylesLayout);   
 
@@ -117,7 +117,7 @@ namespace Robomongo
         AppRegistry::instance().settingsManager()->setLoadMongoRcJs(_loadMongoRcJsCheckBox->isChecked());
         AppRegistry::instance().settingsManager()->setDisableConnectionShortcuts(_disabelConnectionShortcutsCheckBox->isChecked());
         Robomongo::AppRegistry::instance().settingsManager()->setCurrentStyle(_stylesComboBox->currentText());
-        detail::applyStyle(_stylesComboBox->currentText());
+        AppStyleUtils::applyStyle(_stylesComboBox->currentText());
         Robomongo::AppRegistry::instance().settingsManager()->save();
 
         return BaseClass::accept();

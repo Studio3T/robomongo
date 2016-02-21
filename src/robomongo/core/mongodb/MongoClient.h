@@ -12,7 +12,7 @@ namespace Robomongo
     class MongoClient
     {
     public:
-        MongoClient(mongo::DBClientConnection *const scopedConnection);
+        MongoClient(mongo::DBClientBase *const scopedConnection);
 
         std::vector<std::string> getCollectionNames(const std::string &dbname) const;
         std::vector<std::string> getDatabaseNames() const;
@@ -41,7 +41,7 @@ namespace Robomongo
         void renameCollection(const MongoNamespace &ns, const std::string &newCollectionName);
         void duplicateCollection(const MongoNamespace &ns, const std::string &newCollectionName);
         void dropCollection(const MongoNamespace &ns);
-        void copyCollectionToDiffServer(mongo::DBClientConnection *const,const MongoNamespace &from, const MongoNamespace &to);
+        void copyCollectionToDiffServer(mongo::DBClientBase *const,const MongoNamespace &from, const MongoNamespace &to);
 
         void insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
         void saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
@@ -54,6 +54,7 @@ namespace Robomongo
         void done();
 
     private:
-        mongo::DBClientConnection *const _dbclient;
+        mongo::DBClientBase *const _dbclient;
+        void checkLastErrorAndThrow(const std::string &db);
     };
 }

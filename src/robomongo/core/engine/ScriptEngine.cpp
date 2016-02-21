@@ -8,16 +8,22 @@
 #include <QFile>
 #include <QElapsedTimer>
 
-#include <third_party/js-1.7/jsapi.h>
-#include <third_party/js-1.7/jsparse.h>
-#include <third_party/js-1.7/jsscan.h>
-#include <third_party/js-1.7/jsstr.h>
+// v0.9
+//#include <third_party/js-1.7/jsapi.h>
+//#include <third_party/js-1.7/jsparse.h>
+//#include <third_party/js-1.7/jsscan.h>
+//#include <third_party/js-1.7/jsstr.h>
+
 #include <mongo/util/assert_util.h>
 #include <mongo/scripting/engine.h>
-#include <mongo/scripting/engine_spidermonkey.h>
+
+// v0.9
+//#include <mongo/scripting/engine_spidermonkey.h>
+#include <mongo/scripting/mozjs/engine.h>
+
 #include <mongo/shell/shell_utils.h>
 #include <mongo/base/string_data.h>
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 #include <pcrecpp.h>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -39,12 +45,12 @@ namespace
         output.push_back(s.substr(prev_pos, pos-prev_pos)); // Last word
         return output;
     }
-
-    mongo::RecursiveMutex _mutex( "ScriptEngine::_mutex" );
 }
 
 namespace mongo {
     extern bool isShell;
+    void logProcessDetailsForLogRotate() {}
+    void exitCleanly(ExitCode code) {}
 }
 
 namespace Robomongo
@@ -52,22 +58,23 @@ namespace Robomongo
     ScriptEngine::ScriptEngine(ConnectionSettings *connection) :
         _connection(connection),
         _scope(NULL),
-        _engine(NULL) { }
+        _engine(NULL),
+        _mutex(QMutex::Recursive) { }
 
     ScriptEngine::~ScriptEngine()
     {
-        mongo::RecursiveMutex::scoped_lock lk( _mutex );
+        QMutexLocker lock(&_mutex);
 
         delete _scope;
         _scope = NULL;
 
-        delete _engine;
-        _engine = NULL;
+//        delete _engine;
+//        _engine = NULL;
     }
 
     void ScriptEngine::init(bool isLoadMongoRcJs)
     {
-        mongo::RecursiveMutex::scoped_lock lk( _mutex );
+        QMutexLocker lock(&_mutex);
 
         std::string connectDatabase = "test";
 
@@ -75,7 +82,10 @@ namespace Robomongo
             connectDatabase = _connection->primaryCredential()->databaseName();
 
         std::stringstream ss;
-        ss << "db = connect('" << _connection->serverHost() << ":" << _connection->serverPort() << _connection->sslInfo() << _connection->sshInfo() << "/" << connectDatabase;
+        ss << "db = connect('" << _connection->info().toString() << "/" << connectDatabase;
+
+//        v0.9
+//        ss << "db = connect('" << _connection->serverHost() << ":" << _connection->serverPort() << _connection->sslInfo() << _connection->sshInfo() << "/" << connectDatabase;
 
         if (!_connection->hasEnabledPrimaryCredential())
             ss << "')";
@@ -86,11 +96,15 @@ namespace Robomongo
 
         {
             mongo::shell_utils::_dbConnect = ss.str();
-            mongo::isShell = true;
+            mongo::shell_utils::_dbAuth = "(function() { \nDB.prototype._defaultGssapiServiceName = \"mongodb\";\n}())";
+
+            // v0.9
+            // mongo::isShell = true;
 
             mongo::ScriptEngine::setConnectCallback( mongo::shell_utils::onConnect );
             mongo::ScriptEngine::setup();
-            mongo::globalScriptEngine->setScopeInitCallback( mongo::shell_utils::initScope );
+            mongo::globalScriptEngine->setScopeInitCallback(mongo::shell_utils::initScope);
+            mongo::globalScriptEngine->enableJIT(true);
 
             mongo::Scope *scope = mongo::globalScriptEngine->newScope();
             _scope = scope;
@@ -131,10 +145,10 @@ namespace Robomongo
 
     MongoShellExecResult ScriptEngine::exec(const std::string &originalScript, const std::string &dbName)
     {
+        QMutexLocker lock(&_mutex);
+
         if(!_scope)
             return MongoShellExecResult();
-
-        mongo::RecursiveMutex::scoped_lock lk( _mutex );
 
         /*
          * Replace all commands ('show dbs', 'use db' etc.) with call
@@ -200,33 +214,42 @@ namespace Robomongo
 
     void ScriptEngine::interrupt()
     {
-        mongo::Scope::_interruptFlag = true;
+        _engine->interruptAll();
+
+        // v0.9
+        //mongo::Scope::_interruptFlag = true;
     }
 
     void ScriptEngine::use(const std::string &dbName)
     {
-        mongo::RecursiveMutex::scoped_lock lk( _mutex );
+        QMutexLocker lock(&_mutex);
 
         if (!dbName.empty()) {
-            // switch to database
-            char useDb[1024]={0};
-            sprintf(useDb,"shellHelper.use('%s');",dbName.c_str());
-            _scope->exec(useDb, "(usedb)", false, true, false);
+            std::stringstream ss;
+
+            // Switch to database
+            ss << "shellHelper.use('" << dbName << "');" << std::endl;
+
+            // Always allow to read from slave
+            ss << "rs.slaveOk();" << std::endl;
+
+            _scope->exec(ss.str(), "(usedb)", false, true, false);
         }
     }
 
     void ScriptEngine::setBatchSize(int batchSize)
     {
-        mongo::RecursiveMutex::scoped_lock lk( _mutex );
-        char buff[64]={0};
-        sprintf(buff,"DBQuery.shellBatchSize = %d",batchSize);
+        QMutexLocker lock(&_mutex);
+
+        char buff[64] = {0};
+        sprintf(buff, "DBQuery.shellBatchSize = %d", batchSize);
 
         _scope->exec(buff, "(shellBatchSize)", true, true, true);
     }
 
     void ScriptEngine::ping()
     {
-        mongo::RecursiveMutex::scoped_lock lk( _mutex );
+        QMutexLocker lock(&_mutex);
         _scope->exec("if (db) { db.runCommand({ping:1}); }", "(ping)", false, false, false);
     }
 

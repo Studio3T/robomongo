@@ -273,7 +273,7 @@ namespace Robomongo
 
         _indexDir = new ExplorerCollectionDirIndexesTreeItem(this);
         addChild(_indexDir);
-        setToolTip(0, buildToolTip(collection));
+//        setToolTip(0, buildToolTip(collection));
 
         setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
@@ -329,8 +329,9 @@ namespace Robomongo
 
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
     {
+        // This function does not used now
         char buff[2048]={0};
-        sprintf(buff,tooltipTemplate,collection->name().c_str(),collection->info().count(),collection->sizeString().c_str());
+//        sprintf(buff,tooltipTemplate,collection->name().c_str(),collection->info().count(),collection->sizeString().c_str());
         return buff;
     }
 

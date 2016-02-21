@@ -1,0 +1,11 @@
+This is a logbook for notes about migration to MongoDB 3.2
+
+DocumentTextEditor.cpp
+----------------------
+
+Commented error reporting.
+
+Logger.cpp
+----------
+
+Commented Logger::print().

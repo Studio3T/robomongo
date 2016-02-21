@@ -22,7 +22,7 @@ namespace Robomongo
         connectionDescriptionLabel->setContentsMargins(0, -2, 0, 20);
 
         QLabel *serverDescriptionLabel = new QLabel(
-            "Specify host and port of MongoDB server. Host can be either IP or domain name.");
+            "Specify host and port of MongoDB server. Host can be either IPv4, IPv6 or domain name.");
         serverDescriptionLabel->setWordWrap(true);
         serverDescriptionLabel->setContentsMargins(0, -2, 0, 20);
 

@@ -33,7 +33,12 @@ namespace Robomongo
     MongoServer::~MongoServer()
     {        
         clearDatabases();
-        delete _client;
+        _client->stopAndDelete();
+
+        // MongoWorker "_client" does not deleted here, because it is now owned by
+        // another thread (call to moveToThread() made in MongoWorker constructor).
+        // It will be deleted by this thread by means of "deleteLater()", which
+        // is also specified in MongoWorker constructor.
     }
 
     /**
@@ -163,5 +168,10 @@ namespace Robomongo
     void MongoServer::handle(InsertDocumentResponse *event)
     {
         AppRegistry::instance().bus()->publish(new InsertDocumentResponse(event->sender(), event->error()));
+    }
+
+    void MongoServer::handle(RemoveDocumentResponse *event)
+    {
+        AppRegistry::instance().bus()->publish(new RemoveDocumentResponse(event->sender(), event->error()));
     }
 }

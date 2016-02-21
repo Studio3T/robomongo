@@ -16,19 +16,19 @@ namespace
         /**
          * @brief Version of schema
          */
-        const QString SchemaVersion = "1.0";
+        const QString SchemaVersion = "2.0";
 
          /**
          * @brief Config file absolute path
          *        (usually: /home/user/.config/robomongo/robomongo.json)
          */
-        const QString _configPath = QString("%1/.config/"PROJECT_NAME_LOWERCASE"/"PROJECT_NAME_LOWERCASE".json").arg(QDir::homePath());
+        const QString _configPath = QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath());
 
         /**
          * @brief Config file containing directory path
          *        (usually: /home/user/.config/robomongo)
          */
-        const QString _configDir = QString("%1/.config/"PROJECT_NAME_LOWERCASE).arg(QDir::homePath());
+        const QString _configDir = QString("%1/.config/robomongo/0.9").arg(QDir::homePath());
 }
 
 namespace Robomongo
@@ -46,10 +46,12 @@ namespace Robomongo
         _batchSize(50),
         _disableConnectionShortcuts(false),
         _textFontFamily(""),
-        _textFontPointSize(-1)
+        _textFontPointSize(-1),
+        _lineNumbers(false),
+        _loadMongoRcJs(false)
     {
         load();
-        LOG_MSG("SettingsManager initialized in " + _configPath, mongo::LL_INFO, false);
+        LOG_MSG("SettingsManager initialized in " + _configPath, mongo::logger::LogSeverity::Info(), false);
     }
 
     SettingsManager::~SettingsManager()
@@ -90,13 +92,13 @@ namespace Robomongo
         QVariantMap map = convertToMap();
 
         if (!QDir().mkpath(_configDir)) {
-            LOG_MSG("ERROR: Could not create settings path: " + _configDir, mongo::LL_ERROR);
+            LOG_MSG("ERROR: Could not create settings path: " + _configDir, mongo::logger::LogSeverity::Error());
             return false;
         }
 
         QFile f(_configPath);
         if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-            LOG_MSG("ERROR: Could not write settings to: " + _configPath, mongo::LL_ERROR);
+            LOG_MSG("ERROR: Could not write settings to: " + _configPath, mongo::logger::LogSeverity::Error());
             return false;
         }
 
@@ -105,7 +107,7 @@ namespace Robomongo
         s.setIndentMode(QJson::IndentFull);
         s.serialize(map, &f, &ok);
 
-        LOG_MSG("Settings saved to: " + _configPath, mongo::LL_INFO);
+        LOG_MSG("Settings saved to: " + _configPath, mongo::logger::LogSeverity::Info());
 
         return ok;
     }
@@ -143,7 +145,7 @@ namespace Robomongo
             map.value("autoExec").toBool() : true;
 
         _lineNumbers = map.contains("lineNumbers") ?
-            map.value("lineNumbers").toBool() : true;
+            map.value("lineNumbers").toBool() : false;
 
         // 4. Load TimeZone
         int timeZone = map.value("timeZone").toInt();

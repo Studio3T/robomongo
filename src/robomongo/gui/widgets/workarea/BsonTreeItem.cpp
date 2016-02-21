@@ -1,5 +1,5 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 
 using namespace mongo;
 namespace

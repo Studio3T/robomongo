@@ -24,11 +24,14 @@ namespace Robomongo
         _isAdmin(true),
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
-        _timerId(-1)
+        _timerId(-1),
+        _isQuiting(0)
     {         
-        _thread = new QThread(this);
+        _thread = new QThread();
         moveToThread(_thread);
         VERIFY(connect( _thread, SIGNAL(started()), this, SLOT(init()) ));
+        VERIFY(connect( _thread, SIGNAL(finished()), _thread, SLOT(deleteLater()) ));
+        VERIFY(connect( _thread, SIGNAL(finished()), this, SLOT(deleteLater()) ));
         _thread->start();
     }
 
@@ -61,7 +64,7 @@ namespace Robomongo
             }
 
         } catch(std::exception &ex) {
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -75,20 +78,25 @@ namespace Robomongo
             _timerId = startTimer(pingTimeMs);
         }
         catch (const std::exception &ex) {
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
     MongoWorker::~MongoWorker()
     {
+        killTimer(_timerId);
         delete _dbclient;
         delete _connection;
-        _thread->quit();
-        if (!_thread->wait(2000))
-            _thread->terminate();
-
         delete _scriptEngine;
-        delete _thread;
+
+        // QThread "_thread" and MongoWorker itself will be deleted later
+        // (see MongoWorker() constructor)
+    }
+
+    void MongoWorker::stopAndDelete()
+    {
+        _isQuiting = 1;
+        _thread->quit();
     }
 
     /**
@@ -102,30 +110,31 @@ namespace Robomongo
             mongo::DBClientBase *conn = getConnection();
             bool hasPrimary = _connection->hasEnabledPrimaryCredential();
             if (hasPrimary) {
-                std::string errmsg;
-                bool ok = conn->auth(
-                    _connection->primaryCredential()->databaseName(),
-                    _connection->primaryCredential()->userName(),
-                    _connection->primaryCredential()->userPassword(), errmsg);
+                CredentialSettings *credentials = _connection->primaryCredential();
 
-                if (!ok) {
-                    throw std::runtime_error("Unable to authorize");
-                }
+                // Building BSON object:
+                mongo::BSONObj authParams(mongo::BSONObjBuilder()
+                    .append("user", credentials->userName())
+                    .append("db", credentials->databaseName())
+                    .append("pwd", credentials->userPassword())
+                    .append("mechanism", credentials->mechanism())
+                    .obj());
+
+                conn->auth(authParams);
 
                 // If authentication succeed and database name is 'admin' -
                 // then user is admin, otherwise user is not admin
-                std::string dbName = _connection->primaryCredential()->databaseName();
+                std::string dbName = credentials->databaseName();
                 std::transform(dbName.begin(), dbName.end(), dbName.begin(), ::tolower);
                 if (dbName.compare("admin") != 0) // dbName is NOT "admin"
                     _isAdmin = false;
             }
             boost::scoped_ptr<MongoClient> client(getClient());
-            //conn->done();
             std::vector<std::string> dbNames = getDatabaseNamesSafe();
             reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, client->getVersion()) ));
         } catch(const std::exception &ex) {
             reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -155,7 +164,7 @@ namespace Robomongo
         {
             if(!authBase.empty())
                 result.push_back(authBase);
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
         return result;
     }
@@ -168,7 +177,20 @@ namespace Robomongo
         // If user not an admin - he doesn't have access to mongodb 'listDatabases' command
         // Non admin user has access only to the single database he specified while performing auth.
         std::vector<std::string> dbNames = getDatabaseNamesSafe();
-            
+
+        // Remove from list of created databases existing databases
+        for(std::vector<std::string>::iterator it = dbNames.begin(); it != dbNames.end(); ++it) {
+            std::unordered_set<std::string>::const_iterator exists = _createdDbs.find(*it);
+            if (exists != _createdDbs.end()) {
+                _createdDbs.erase(*it);
+            }
+        }
+
+        // Merge with list of created databases
+        for(std::unordered_set<std::string>::iterator it = _createdDbs.begin(); it != _createdDbs.end(); ++it) {
+            dbNames.push_back(*it);
+        }
+
         if(dbNames.size()){
             reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
         }else{
@@ -191,7 +213,7 @@ namespace Robomongo
             reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName(), infos));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new LoadCollectionNamesResponse(this, EventError("Unable to load list of collections.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -205,7 +227,7 @@ namespace Robomongo
             reply(event->sender(), new LoadUsersResponse(this, event->databaseName(), users));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new LoadUsersResponse(this, EventError("Unable to load list of users.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -219,7 +241,7 @@ namespace Robomongo
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new LoadCollectionIndexesResponse(this, std::vector<EnsureIndexInfo>()));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -236,7 +258,7 @@ namespace Robomongo
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new LoadCollectionIndexesResponse(this, std::vector<EnsureIndexInfo>()));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -249,7 +271,7 @@ namespace Robomongo
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), event->name()));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), std::string() ));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }            
     }
 
@@ -264,7 +286,7 @@ namespace Robomongo
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new LoadCollectionIndexesResponse(this, std::vector<EnsureIndexInfo>()));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         } 
     }
 
@@ -278,7 +300,7 @@ namespace Robomongo
             reply(event->sender(), new LoadFunctionsResponse(this, event->databaseName(), funs));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new LoadFunctionsResponse(this, EventError("Unable to load list of functions.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -296,8 +318,9 @@ namespace Robomongo
 
             reply(event->sender(), new InsertDocumentResponse(this));
         } catch(const mongo::DBException &ex) {
-            reply(event->sender(), new InsertDocumentResponse(this, EventError("Unable to insert document.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            EventError error = EventError("Error when saving document: " + ex.toString());
+            reply(event->sender(), new InsertDocumentResponse(this, error));
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -311,8 +334,9 @@ namespace Robomongo
 
             reply(event->sender(), new RemoveDocumentResponse(this));
         } catch(const mongo::DBException &ex) {
-            reply(event->sender(), new RemoveDocumentResponse(this, EventError("Unable to remove documents.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            EventError error = EventError("Error when deleting document: " + ex.toString());
+            reply(event->sender(), new RemoveDocumentResponse(this, error));
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -326,7 +350,7 @@ namespace Robomongo
             reply(event->sender(), new ExecuteQueryResponse(this, event->resultIndex(), event->queryInfo(), docs));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new ExecuteQueryResponse(this, EventError("Unable to complete query.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -340,7 +364,7 @@ namespace Robomongo
             reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty()));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new ExecuteScriptResponse(this, EventError("Unable to complete query.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -351,7 +375,7 @@ namespace Robomongo
             reply(event->sender(), new AutocompleteResponse(this, list, event->prefix));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new ExecuteScriptResponse(this, EventError("Unable to autocomplete query.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -360,12 +384,15 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             client->createDatabase(event->database());
-            client->done();
+
+            // Insert to list of created database
+            // Read docs for this hashset in the header
+            _createdDbs.insert(event->database());
 
             reply(event->sender(), new CreateDatabaseResponse(this));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new CreateDatabaseResponse(this, EventError("Unable to create database.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -374,12 +401,15 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             client->dropDatabase(event->database());
-            client->done();
+
+            // Remove from the list of created database
+            // Read docs for this hashset in the header
+            _createdDbs.erase(event->database());
 
             reply(event->sender(), new DropDatabaseResponse(this));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new DropDatabaseResponse(this, EventError("Unable to drop database.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -393,7 +423,7 @@ namespace Robomongo
             reply(event->sender(), new CreateCollectionResponse(this));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new CreateCollectionResponse(this, EventError("Unable to create collection.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -407,7 +437,7 @@ namespace Robomongo
             reply(event->sender(), new DropCollectionResponse(this));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new DropCollectionResponse(this, EventError("Unable to drop collection.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -421,7 +451,7 @@ namespace Robomongo
             reply(event->sender(), new RenameCollectionResponse(this));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new RenameCollectionResponse(this, EventError("Unable to rename collection.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -435,7 +465,7 @@ namespace Robomongo
             reply(event->sender(), new DuplicateCollectionResponse(this));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new DuplicateCollectionResponse(this, EventError("Unable to duplicate collection.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -450,7 +480,7 @@ namespace Robomongo
             reply(event->sender(), new CopyCollectionToDiffServerResponse(this));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new CopyCollectionToDiffServerResponse(this, EventError("Unable to copy collection.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -464,7 +494,7 @@ namespace Robomongo
             reply(event->sender(), new CreateUserResponse(this));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new CreateUserResponse(this, EventError("Unable to create/ovewrite user.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -478,7 +508,7 @@ namespace Robomongo
             reply(event->sender(), new DropUserResponse(this));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new DropUserResponse(this, EventError("Unable to drop user.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -492,7 +522,7 @@ namespace Robomongo
             reply(event->sender(), new CreateFunctionResponse(this));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new CreateFunctionResponse(this, EventError("Unable to create/ovewrite function.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -506,11 +536,11 @@ namespace Robomongo
             reply(event->sender(), new DropFunctionResponse(this));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new DropFunctionResponse(this, EventError("Unable to drop function.")));
-            LOG_MSG(ex.what(), mongo::LL_ERROR);
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
-    mongo::DBClientConnection *MongoWorker::getConnection()
+    mongo::DBClientBase *MongoWorker::getConnection()
     {
         if (!_dbclient) {
             mongo::DBClientConnection *conn = new mongo::DBClientConnection(true);
@@ -530,6 +560,9 @@ namespace Robomongo
      */
     void MongoWorker::send(Event *event)
     {
+        if (_isQuiting)
+            return;
+
         AppRegistry::instance().bus()->send(this, event);
     }
 
@@ -538,6 +571,9 @@ namespace Robomongo
      */
     void MongoWorker::reply(QObject *receiver, Event *event)
     {
+        if (_isQuiting)
+            return;
+
         AppRegistry::instance().bus()->send(receiver, event);
     }
 }

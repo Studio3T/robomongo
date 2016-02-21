@@ -21,8 +21,8 @@
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/domain/MongoCollection.h"
-#include "robomongo/shell/db/json.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include <robomongo/shell/bson/json.h>
 
 namespace
 {
@@ -34,8 +34,7 @@ namespace
                 mongo::Robomongo::fromjson(text.toUtf8());
                 result = true;
             }
-            catch (const mongo::ParseMsgAssertionException &) {
-
+            catch (const mongo::MsgAssertionException &) {
             }
         }
         return result;

@@ -7,7 +7,7 @@
 #include <QDialogButtonBox>
 #include <QDesktopWidget>
 #include <Qsci/qscilexerjavascript.h>
-#include <mongo/client/dbclient.h>
+#include <mongo/client/dbclientinterface.h>
 
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
@@ -16,7 +16,7 @@
 #include "robomongo/gui/GuiRegistry.h"
 
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/shell/db/json.h"
+#include "robomongo/shell/bson/json.h"
 
 
 namespace Robomongo
@@ -28,7 +28,17 @@ namespace Robomongo
         _info(info),
         _readonly(readonly)
     {
-        setMinimumSize(minimumSize);
+        QRect screenGeometry = QApplication::desktop()->availableGeometry();
+        int horizontalMargin = (int)(screenGeometry.width() * 0.35);
+        int verticalMargin = (int)(screenGeometry.height() * 0.20);
+        QSize size(screenGeometry.width() - horizontalMargin,
+                   screenGeometry.height() - verticalMargin);
+
+        resize(size);
+
+        int x = (screenGeometry.width() - width()) / 2;
+        int y = (screenGeometry.height() - height()) / 2;
+        move(x, y);
 
         setWindowFlags(Qt::Window | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
 
@@ -112,7 +122,8 @@ namespace Robomongo
                 _obj.push_back(doc);
                 offset+=len;
             }
-        } catch (const mongo::ParseMsgAssertionException &ex) {
+        } catch (const mongo::Robomongo::ParseMsgAssertionException &ex) {
+//            v0.9
             QString message = QtUtils::toQString(ex.reason());
             int offset = ex.offset();
 

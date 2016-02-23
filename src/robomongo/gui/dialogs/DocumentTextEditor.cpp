@@ -53,6 +53,9 @@ namespace Robomongo
         _queryText = new FindFrame(this);
         _configureQueryText();
         _queryText->sciScintilla()->setText(json);
+        // clear modification state after setting the content
+        _queryText->sciScintilla()->setModified(false);
+
         VERIFY(connect(_queryText->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onQueryTextChanged())));
 
         QHBoxLayout *hlayout = new QHBoxLayout();
@@ -106,18 +109,40 @@ namespace Robomongo
         QDialog::accept();
     }
 
+    void DocumentTextEditor::reject()
+    {
+        if (_queryText->sciScintilla()->isModified()) {
+            int ret = QMessageBox::warning(this, tr("Robomongo"),
+                               tr("The document has been modified.\n"
+                                  "Do you want to save your changes?"),
+                               QMessageBox::Save | QMessageBox::Discard
+                               | QMessageBox::Cancel,
+                               QMessageBox::Save);
+
+            if (ret == QMessageBox::Save) {
+                this->accept();
+            } else if (ret == QMessageBox::Discard) {
+                QDialog::reject();
+            }
+
+            return;
+        }
+
+        QDialog::reject();
+    }
+
     bool DocumentTextEditor::validate(bool silentOnSuccess /* = true */)
     {
         QString text = jsonText();
         int len = 0;
-        try {  
+        try {
             std::string textString = QtUtils::toStdString(text);
             const char *json = textString.c_str();
             int jsonLen = textString.length();
             int offset = 0;
             _obj.clear();
             while(offset!=jsonLen)
-            { 
+            {
                 mongo::BSONObj doc = mongo::Robomongo::fromjson(json+offset,&len);
                 _obj.push_back(doc);
                 offset+=len;

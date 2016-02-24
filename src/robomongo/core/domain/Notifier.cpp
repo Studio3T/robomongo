@@ -96,7 +96,7 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(this, RemoveDocumentResponse::Type);
 
         _deleteDocumentAction = new QAction("Delete Document...", wid);
-        VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument())));
+        VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocuments())));
 
         _deleteDocumentsAction = new QAction("Delete Documents...", wid);
         VERIFY(connect(_deleteDocumentsAction, SIGNAL(triggered()), SLOT(onDeleteDocuments())));
@@ -225,8 +225,7 @@ namespace Robomongo
             return;
 
         QModelIndexList selectedIndexes = _observer->selectedIndexes();
-        if (!detail::isMultiSelection(selectedIndexes))
-            return;
+
         int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", QString("Do you want to delete %1 selected documents?").arg(selectedIndexes.count()));
         if (answer == QMessageBox::Yes) {
             std::vector<BsonTreeItem*> items;
@@ -236,21 +235,6 @@ namespace Robomongo
             }
             deleteDocuments(items,true);
         }
-    }
-
-    void Notifier::onDeleteDocument()
-    {
-        if (!_queryInfo._info.isValid())
-            return;
-
-        QModelIndex selectedIndex = _observer->selectedIndex();
-        if (!selectedIndex.isValid())
-            return;
-
-        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedIndex);
-        std::vector<BsonTreeItem*> vec;
-        vec.push_back(documentItem);
-        return deleteDocuments(vec,false);
     }
 
     void Notifier::onEditDocument()

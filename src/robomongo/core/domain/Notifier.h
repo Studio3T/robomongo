@@ -47,8 +47,7 @@ namespace Robomongo
 
         void deleteDocuments(std::vector<BsonTreeItem*> items, bool force);
 
-    public Q_SLOTS: 
-        void onDeleteDocument();
+    public Q_SLOTS:
         void onDeleteDocuments();
         void onEditDocument();
         void onViewDocument();

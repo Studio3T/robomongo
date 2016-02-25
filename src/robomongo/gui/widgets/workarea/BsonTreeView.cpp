@@ -81,9 +81,20 @@ namespace Robomongo
 
     void BsonTreeView::keyPressEvent(QKeyEvent *event)
     {
-        if (event->key() == Qt::Key_Delete) {
-            _notifier.onDeleteDocuments();
+        switch (event->key()) {
+            case Qt::Key_Delete:
+                _notifier.onDeleteDocuments();
+                break;
+            case Qt::Key_Right:
+                if (event->modifiers() & Qt::AltModifier)
+                    this->onExpandRecursive();
+                break;
+            case Qt::Key_Left:
+                if (event->modifiers() & Qt::AltModifier)
+                    this->onCollapseRecursive();
+                break;
         }
+
         return BaseClass::keyPressEvent(event);
     }
 

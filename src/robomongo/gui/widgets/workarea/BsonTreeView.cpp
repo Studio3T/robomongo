@@ -81,8 +81,14 @@ namespace Robomongo
 
     void BsonTreeView::keyPressEvent(QKeyEvent *event)
     {
-        if (event->key() == Qt::Key_Delete) {
-            _notifier.onDeleteDocuments();
+        if (event->key() == Qt::Key_Delete  ||
+            // Cmd/Ctrl + Backspace
+            event->key() == Qt::Key_Backspace && (event->modifiers() & Qt::ControlModifier)) {
+            if (selectedIndexes().count() > 1) {
+                _notifier.onDeleteDocuments();
+            } else {
+                _notifier.onDeleteDocument();
+            }
         }
         return BaseClass::keyPressEvent(event);
     }

@@ -27,8 +27,6 @@ void testHostAndPort() {
 
     hp = mongo::HostAndPort("[2a03:b0c0:3:d0::f3:1001", 20017);
     assert(hp.toString() == "[[2a03:b0c0:3:d0::f3:1001]:20017");
-
-
 }
 
 void precisionAssert(const std::string &text, double d) {
@@ -66,6 +64,6 @@ void testPrecision() {
 int main(int argc, char *argv[], char** envp)
 {
     testHostAndPort();
-//    testPrecision();
+    testPrecision();
     return 0;
 }

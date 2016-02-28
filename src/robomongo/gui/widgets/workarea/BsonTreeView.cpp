@@ -12,7 +12,7 @@
 
 namespace Robomongo
 {
-    BsonTreeView::BsonTreeView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent) 
+    BsonTreeView::BsonTreeView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent)
         : BaseClass(parent),_notifier(this,shell,queryInfo)
     {
 #if defined(Q_OS_MAC)
@@ -81,15 +81,25 @@ namespace Robomongo
 
     void BsonTreeView::keyPressEvent(QKeyEvent *event)
     {
-        if (event->key() == Qt::Key_Delete  ||
-            // Cmd/Ctrl + Backspace
-            event->key() == Qt::Key_Backspace && (event->modifiers() & Qt::ControlModifier)) {
-            if (selectedIndexes().count() > 1) {
-                _notifier.onDeleteDocuments();
-            } else {
-                _notifier.onDeleteDocument();
-            }
+        switch (event->key()) {
+            case Qt::Key_Delete:
+                _notifier.handleDeleteCommand();
+                break;
+            case Qt::Key_Backspace:
+                // Cmd/Ctrl + Backspace
+                if (event->modifiers() & Qt::ControlModifier)
+                    _notifier.handleDeleteCommand();
+                break;
+            case Qt::Key_Right:
+                if (event->modifiers() & Qt::AltModifier)
+                    this->onExpandRecursive();
+                break;
+            case Qt::Key_Left:
+                if (event->modifiers() & Qt::AltModifier)
+                    this->onCollapseRecursive();
+                break;
         }
+
         return BaseClass::keyPressEvent(event);
     }
 

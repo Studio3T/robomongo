@@ -46,6 +46,7 @@ namespace Robomongo
         void initMultiSelectionMenu(QMenu *const menu);
 
         void deleteDocuments(std::vector<BsonTreeItem*> items, bool force);
+        void handleDeleteCommand();
 
     public Q_SLOTS: 
         void onDeleteDocument();

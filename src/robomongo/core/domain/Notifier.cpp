@@ -219,6 +219,15 @@ namespace Robomongo
         }
     }
 
+    void Notifier::handleDeleteCommand()
+    {
+        if (_observer->selectedIndexes().count() > 1) {
+            onDeleteDocuments();
+        } else {
+            onDeleteDocument();
+        }
+    }
+
     void Notifier::onDeleteDocuments()
     {
         if (!_queryInfo._info.isValid())

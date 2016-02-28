@@ -6,7 +6,7 @@ Linux and Mac
 
 Clone MongoDB fork and checkout to "roboshell-v3.2" branch:
 
-    $ git clone git@github.com:paralect/robomongo-shell.git
+    $ git clone https://github.com/paralect/robomongo-shell.git
     $ cd robomongo-shell
     $ git checkout roboshell-v3.2
     

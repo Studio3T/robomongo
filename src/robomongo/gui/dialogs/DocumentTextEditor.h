@@ -29,6 +29,7 @@ namespace Robomongo
 
     public Q_SLOTS:
         virtual void accept();
+        virtual void reject();
         bool validate(bool silentOnSuccess = true);
 
     private Q_SLOTS:

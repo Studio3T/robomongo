@@ -127,6 +127,10 @@ namespace Robomongo
         ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
         if (collectionItem) {
             AppRegistry::instance().app()->openShell(collectionItem->collection());
+            return;
         }
+
+        // Toggle expanded state
+        item->setExpanded(!item->isExpanded());
     }
 }

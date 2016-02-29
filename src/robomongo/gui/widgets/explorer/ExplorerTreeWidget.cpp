@@ -18,6 +18,7 @@ namespace Robomongo
         setIndentation(15);
         setHeaderHidden(true);
         setSelectionMode(QAbstractItemView::SingleSelection);
+        setExpandsOnDoubleClick(false);
     }
 
     void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)

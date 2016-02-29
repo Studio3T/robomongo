@@ -102,7 +102,6 @@ namespace Robomongo
         MongoShell *shell = new MongoShell(server,scriptInfo);
         _shells.push_back(shell);
         _bus->publish(new OpeningShellEvent(this, shell));
-        LOG_MSG("Opening shell...", mongo::logger::LogSeverity::Info());
         shell->execute();
         return shell;
     }

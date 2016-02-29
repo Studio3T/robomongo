@@ -11,15 +11,16 @@
 
 namespace Robomongo
 {  
-    class Logger
-        : public QObject, public Patterns::LazySingleton<Logger>
+    class Logger : public QObject, public Patterns::LazySingleton<Logger>
     {
-        friend class Patterns::LazySingleton<Logger>;
         Q_OBJECT
+        friend class Patterns::LazySingleton<Logger>;
+
     public:
         void print(const char *mess, mongo::logger::LogSeverity level, bool notify);
         void print(const std::string &mess, mongo::logger::LogSeverity level, bool notify);
         void print(const QString &mess, mongo::logger::LogSeverity level, bool notify);
+
     Q_SIGNALS:
         void printed(const QString &mess, mongo::logger::LogSeverity level);
 

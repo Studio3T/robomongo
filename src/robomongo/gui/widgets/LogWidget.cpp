@@ -36,11 +36,24 @@ namespace Robomongo
 
     void LogWidget::addMessage(const QString &message, mongo::logger::LogSeverity level)
     {
+        // Print time
         QTime time = QTime::currentTime();
-        QDate date = QDate::currentDate();
-        //_logTextEdit->appendHtml(QString(level == mongo::logger::LogSeverity::Error() ? "<font color=red>%1 %2</font>" : "<font color=black>%1 %2</font>").arg(time.toString("h:mm:ss AP:")).arg(message.toHtmlEscaped()));
-        _logTextEdit->setTextColor(level == mongo::logger::LogSeverity::Error() ? QColor(Qt::red):QColor(Qt::black));
-        _logTextEdit->append(date.toString("yyyy-MM-dd ") + time.toString("hh:mm:ss: ") + message);
+        _logTextEdit->moveCursor (QTextCursor::End);
+        _logTextEdit->setTextColor(QColor("#aaaaaa"));
+        _logTextEdit->insertPlainText(time.toString("h:mm:ss AP") + "\t");
+
+        // Print message
+        _logTextEdit->moveCursor (QTextCursor::End);
+        _logTextEdit->setTextColor(level == mongo::logger::LogSeverity::Error() ? QColor("#CD0000") : QColor(Qt::black));
+
+        const int maxLength = 500;
+        if (message.length() <= maxLength) {
+            _logTextEdit->insertPlainText(message.trimmed() + "\n");
+        } else {
+            _logTextEdit->insertPlainText(QString("(truncated) ") + message.left(maxLength).trimmed() + "...\n");
+        }
+
+        // Scroll to bottom
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());
     }

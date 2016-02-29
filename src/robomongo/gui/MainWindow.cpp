@@ -527,7 +527,7 @@ namespace Robomongo
     {
         QColor windowColor = palette().window().color();
         QColor buttonBgColor = windowColor.lighter(105);
-        QColor buttonBorderBgColor = windowColor.darker(120);
+        QColor buttonBorderBgColor = windowColor.darker(112);
         QColor buttonPressedColor = windowColor.darker(102);
 
         QToolButton *log = new QToolButton(this);
@@ -539,9 +539,9 @@ namespace Robomongo
             "   background-color: %1;"
             "   border-style: outset;"
             "   border-width: 1px;"
-            "   border-radius: 3px;"
+            "   border-radius: 4px;"
             "   border-color: %2;"
-            "   padding: 1px 20px 1px 20px;"
+            "   padding: 1px 10px 1px 10px;"
             "} \n"
             ""
             "QToolButton:checked, QToolButton:pressed {"
@@ -940,19 +940,13 @@ namespace Robomongo
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         _logDock->setWidget(log);
         _logDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
-
         _logDock->setVisible(false);
 
-        // Prior to v0.9 it was:
-        // _logDock->setVisible(AppRegistry::instance().settingsManager()->toolbars()["logs"].toBool());
-        
         QAction *action = _logDock->toggleViewAction();
-        // Adjust any parameter you want.  
         action->setText(QString("&Logs"));
         action->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));  
         //action->setStatusTip(QString("Press to show/hide Logs panel."));  //commented for now because this message hides Logs button in status bar :)
         action->setChecked(_logDock->isVisible());
-        VERIFY(connect(action, SIGNAL(triggered(bool)), this, SLOT(onLogsVisibilityChanged(bool))));
         // Install action in the menu.
         _viewMenu->addAction(action);
         
@@ -1006,12 +1000,6 @@ namespace Robomongo
     void MainWindow::onExplorerVisibilityChanged(bool isVisible) 
     {
         AppRegistry::instance().settingsManager()->setToolbarSettings("explorer", isVisible);
-        AppRegistry::instance().settingsManager()->save();
-    }
-    
-    void MainWindow::onLogsVisibilityChanged(bool isVisible) 
-    {
-        AppRegistry::instance().settingsManager()->setToolbarSettings("logs", isVisible);
         AppRegistry::instance().settingsManager()->save();
     }
 }

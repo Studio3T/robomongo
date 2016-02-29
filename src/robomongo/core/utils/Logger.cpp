@@ -46,7 +46,7 @@ namespace Robomongo
     {
         // v0.9
 //        LOG(level) << "[" PROJECT_NAME_TITLE "] " << QtUtils::toStdString(mess) << std::endl;
-//        if (notify)
-//            emit printed(mess, level);
+        if (notify)
+            emit printed(mess, level);
     }
 }

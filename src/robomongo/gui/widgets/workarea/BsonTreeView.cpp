@@ -25,9 +25,11 @@ namespace Robomongo
         VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&))));
 
         _expandRecursive = new QAction("Expand Recursively", this);
+        _expandRecursive->setShortcut(QKeySequence(Qt::ALT + Qt::Key_Right));
         VERIFY(connect(_expandRecursive, SIGNAL(triggered()), SLOT(onExpandRecursive())));
         
         _collapseRecursive = new QAction(tr("Collapse Recursively"), this);
+        _collapseRecursive->setShortcut(QKeySequence(Qt::ALT + Qt::Key_Left));
         VERIFY(connect(_collapseRecursive, SIGNAL(triggered()), SLOT(onCollapseRecursive())));
 
         setStyleSheet("QTreeView { border-left: 1px solid #c7c5c4; border-top: 1px solid #c7c5c4; }");

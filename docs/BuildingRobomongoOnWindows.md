@@ -105,7 +105,7 @@ directories:
 1. Location of Qt SDK
 2. Location of Robomongo Shell
 
-Separate directories by semicolon `;` (not colon).
+Separate directories by semicolon `;` (not colon). You can do this in Command Prompt:
 
     > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.5\msvc2013_64;d:\Projects\robomongo-shell"
     

@@ -87,8 +87,11 @@ namespace Robomongo
         layout->addLayout(bottomlayout);
         setLayout(layout);
 
-        if (_readonly)
+        if (_readonly) {
+            validate->hide();
             buttonBox->button(QDialogButtonBox::Save)->hide();
+            _queryText->sciScintilla()->setReadOnly(true);
+        }
     }
 
     QString DocumentTextEditor::jsonText() const

@@ -102,9 +102,11 @@ execute_process(
 # all listed variables are TRUE
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(MongoDB
+    FOUND_VAR MongoDB_FOUND     # When using CMake 3.0 MONGODB_FOUND variable will be created.
+                                # Make it explicit that variable name is MongoDB_FOUND.
     REQUIRED_VARS MongoDB_DIR MongoDB_BUILD_DIR
     VERSION_VAR MongoDB_RECENT_TAG
-    FAIL_MESSAGE "Could not find MongoDB. Make sure that CMAKE_PREFIX_PATH points to MongoDB project root.\n")
+    FAIL_MESSAGE "Could not find Robomongo Shell (MongoDB fork). Make sure that CMAKE_PREFIX_PATH points to Robomongo Shell project root.\n")
 
 if(MongoDB_FOUND)
     set(MongoDB_VERSION ${MongoDB_RECENT_TAG})

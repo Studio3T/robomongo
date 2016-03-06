@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.0.0)
 project(Robomongo)
 
 # Where to look first for CMake modules, before "${CMAKE_ROOT}/Modules" is checked
@@ -22,7 +22,7 @@ include(RobomongoInstallQt)
 include(RobomongoPackage)
 
 # Search for dependencies
-find_package(Threads REQUIRED)
+find_package(Threading REQUIRED)    # Wrapper arround CMake "Threads" module
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)

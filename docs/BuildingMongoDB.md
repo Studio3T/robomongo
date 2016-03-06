@@ -8,17 +8,17 @@ Build for Mac OS X or Linux
 
 1. Clone Robomongo Shell and checkout to `roboshell-v3.2` branch:
 
-```sh
-$ git clone https://github.com/paralect/robomongo-shell.git
-$ cd robomongo-shell
-$ git checkout roboshell-v3.2
-```
+  ```sh
+  $ git clone https://github.com/paralect/robomongo-shell.git
+  $ cd robomongo-shell
+  $ git checkout roboshell-v3.2
+  ```
 
 2. Build Robomongo Shell:
 
-```sh
-$ bin/build
-```
+  ```sh
+  $ bin/build
+  ```
 
 Done! Now you can continue with [Step 2](BuildingRobomongo.md#step-2) and build Robomongo 
 with embedded MongoDB 3.2 shell.

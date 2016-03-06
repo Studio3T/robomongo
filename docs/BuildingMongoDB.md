@@ -24,9 +24,13 @@ Done! Now you can continue with [Step 2](BuildingRobomongo.md#step-2) and build 
 with embedded MongoDB 3.2 shell.
 
 
+<br/>
 #### Advanced helper commands
 
-Clean build files for release mode:
+The following commands are needed only if you are planning to develop or deeper understand
+Robomongo or Robomongo Shell build process.
+
+Clean build files for release mode (folder `build/opt` will be removed):
 
     $ bin/clean
 

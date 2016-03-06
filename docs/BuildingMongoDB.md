@@ -1,23 +1,23 @@
-Building MongoDB fork
-=====================
+Building Robomongo Shell
+========================
 
-Robomongo uses [modified version](https://github.com/paralect/robomongo-shell/tree/roboshell-v3.2) of MongoDB. We call it Robomongo Shell.
+Robomongo uses [modified version](https://github.com/paralect/robomongo-shell/tree/roboshell-v3.2) of MongoDB that we call Robomongo Shell. Before you can build Robomongo, you have to build Robomongo Shell. The following instructions are applicable only for Mac OS X and Linux. For Windows instructions please check [Building Robomongo on Windows](BuildingRobomongoOnWindows.md)
 
 Build for Mac OS X or Linux
 ---------------------------
 
-1. Clone MongoDB fork and checkout to `roboshell-v3.2` branch:
+1. Clone Robomongo Shell and checkout to `roboshell-v3.2` branch:
 
 ```sh
-    $ git clone https://github.com/paralect/robomongo-shell.git
-    $ cd robomongo-shell
-    $ git checkout roboshell-v3.2
+$ git clone https://github.com/paralect/robomongo-shell.git
+$ cd robomongo-shell
+$ git checkout roboshell-v3.2
 ```
 
-2. Build MongoDB shell:
+2. Build Robomongo Shell:
 
 ```sh
-    $ bin/build
+$ bin/build
 ```
 
 Done! Now you can continue with [Step 2](BuildingRobomongo.md#step-2) and build Robomongo 

@@ -3,8 +3,8 @@ Building Robomongo
 
 #### Step 1.
 
-Download and build Robomongo shell (our fork of MongoDB). 
-Refer to [Building MongoDB fork](BuildingMongoDB.md) document in this folder.
+Download and build Robomongo Shell (our fork of MongoDB). 
+Refer to [Building Robomongo Shell](BuildingMongoDB.md) document.
 
 #### Step 2.
 
@@ -13,10 +13,10 @@ Download Robomongo:
     $ git clone https://github.com/paralect/robomongo
     $ cd robomongo
 
-Set special environment variable `ROBOMONGO_CMAKE_PREFIX_PATH` to point to set of 
+Set special environment variable `ROBOMONGO_CMAKE_PREFIX_PATH` to point to a set of 
 directories:
 
-1. Location of Qt SDK
+1. Location of Qt 5 SDK
 2. Location of Robomongo Shell (built in "Step 1")
 
 Separate directories by semicolon `;` (not colon):
@@ -31,6 +31,7 @@ And finally, build Robomongo:
     
     $ bin/build 
     
+<br>    
 ## Helper commands
 
 Execute just built Robomongo:

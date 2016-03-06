@@ -93,10 +93,20 @@ function(print_target_include_dirs target)
 endfunction()
 
 ###
-# Prints target include directories
+# Prints target compile definitions
 #
 function(print_target_compile_definitions target)
     get_property(defs TARGET ${target} PROPERTY INTERFACE_COMPILE_DEFINITIONS)
+    foreach(def ${defs})
+        message("${def}")
+    endforeach()
+endfunction()
+
+###
+# Prints target link libraries
+#
+function(print_target_link_libraries target)
+    get_property(defs TARGET ${target} PROPERTY INTERFACE_LINK_LIBRARIES)
     foreach(def ${defs})
         message("${def}")
     endforeach()

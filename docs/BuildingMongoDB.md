@@ -21,7 +21,7 @@ Build for Mac OS X or Linux
   ```
 
 Done! Now you can continue with [Step 2](BuildingRobomongo.md#step-2) and build Robomongo 
-with embedded MongoDB 3.2 shell.
+with embedded MongoDB 3.2 shell (that you've just built).
 
 
 <br/>

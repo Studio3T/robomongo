@@ -4,14 +4,17 @@
   now embeds MongoDB 3.2 shell. It means that you can now use the latest
   shell functionality. Both MONGODB-CR and SCRAM-SHA-1 authentication mechanisms are
   supprted. Also, we now allow direct connections to Replica Set members and 
-  support IPv6 protocol. Loading of huge list of collection names is now faster.
+  support IPv6 protocol. Loading of huge list of collections is now faster.
 
   Fixed incorrect representation of floating-point numbers (fixed since RC3).
   This bug was a reason of a big number of issues:
 
      #910, #748, #697, #699, #760, #815, #870, #892, 
      #894, #905, #945, #974, #978, #990, #831, #842
-     
+
+  What's new in RC7 (March 4, 2016 )
+  http://blog.robomongo.org/robomongo-rc7
+
   What's new in RC6 (February 13, 2016 )
   http://blog.robomongo.org/ipv6-protocol
 

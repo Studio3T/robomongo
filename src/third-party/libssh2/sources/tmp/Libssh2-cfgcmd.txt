@@ -1,0 +1,1 @@
+cmd='/Applications/CMake.app/Contents/bin/cmake;-GUnix Makefiles;/Users/dmitry/main/dev/robomongo/src/third-party/libssh2/sources/src/Libssh2'

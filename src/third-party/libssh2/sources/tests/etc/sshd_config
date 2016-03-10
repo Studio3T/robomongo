@@ -1,0 +1,3 @@
+Port 4711
+Protocol 2
+AuthorizedKeysFile /home/jas/src/libssh2/tests/etc/user.pub

@@ -1,0 +1,2 @@
+win32/msvcproj.head -crlf
+win32/msvcproj.foot -crlf

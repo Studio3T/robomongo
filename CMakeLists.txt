@@ -34,7 +34,7 @@ if (SYSTEM_MACOSX)
 endif()
 
 # Projects
-add_subdirectory(src/third-party/qjson)
+add_subdirectory(src/third-party/libssh2)
 add_subdirectory(src/third-party/qjson)
 add_subdirectory(src/third-party/qscintilla)
 add_subdirectory(src/robomongo)

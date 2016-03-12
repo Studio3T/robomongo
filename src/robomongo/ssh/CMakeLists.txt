@@ -1,6 +1,7 @@
 include(CheckIncludeFiles)
 include(CheckSymbolExists)
 
+# Direct-tcpip sample
 add_executable(direct-tcpip
     direct_tcpip.c)
 
@@ -9,6 +10,18 @@ target_link_libraries(direct-tcpip
         libssh2)
 
 target_include_directories(direct-tcpip
+    PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR})
+
+# Server
+add_executable(server
+    server.c)
+
+target_link_libraries(server
+    PRIVATE
+        libssh2)
+
+target_include_directories(server
     PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR})
 

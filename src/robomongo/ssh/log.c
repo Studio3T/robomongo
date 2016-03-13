@@ -13,7 +13,7 @@ int log_error(const char *format, ...)
     va_start(args, format);
     vsnprintf(buf, buf_size, format, args);
 
-    if (!errsave) {
+    if (errsave) {
         fprintf(stderr, "Error (%d): %s. %s\n", errno, strerror(errsave), buf);
     } else {
         fprintf(stderr, "Error: %s\n", buf);

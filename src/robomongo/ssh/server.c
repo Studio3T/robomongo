@@ -269,32 +269,172 @@ int main(int argc, char *argv[]) {
 
     err = init();
     if (err) {
-        // errors are already logged by init
-        return 1;
+        return 1; // errors are already logged by init
     }
 
     log_msg("Connecting to %s...", config.serverip);
     socket_type ssh_socket = socket_connect(config.serverip, config.serverport);
     if (ssh_socket == -1) {
-        // errors are already logged by socket_connect
-        return 1;
+        return 1; // errors are already logged by socket_connect
     }
 
     LIBSSH2_SESSION *session = ssh_connect(ssh_socket, AUTH_PUBLICKEY, config.username, config.password,
                                            config.publickeyfile, config.privatekeyfile, config.passphrase);
     if (session == 0) {
-        // errors are already logged by ssh_connect
-        return 1;
+        return 1; // errors are already logged by ssh_connect
     }
 
     socket_type local_socket = socket_listen(config.localip, config.localport);
     if (local_socket == -1) {
-        // errors are already logged by socket_listen
-        return 1;
+        return 1; // errors are already logged by socket_listen
     }
 
     log_msg("Waiting for TCP connection on %s:%d...", config.localip, config.localport);
+    // -------------------------------------
 
+
+//    log_msg(stderr, "Forwarding connection from %s:%d here to remote %s:%d\n",
+//            shost, sport, remote_desthost, remote_destport);
+
+    LIBSSH2_CHANNEL *channel = NULL;
+    channel = libssh2_channel_direct_tcpip_ex(session, config.remotehost,
+                                              config.remoteport, config.localip, config.localport);
+    if (!channel) {
+        log_error("Could not open the direct TCP/IP channel");
+        return 1;
+    }
+
+    // Must use non-blocking IO hereafter due to the current libssh3 API
+    libssh2_session_set_blocking(session, 0);
+
+
+    // ------------------------------------
+
+    char buf[16384];
+    int fdmax;       // maximum file descriptor number
+    int i;
+    fd_set masterset, readset;   // master file descriptor list
+    FD_ZERO(&masterset);
+    socket_type newfd;
+
+    // add the listener to the master set
+    FD_SET(local_socket, &masterset);
+    FD_SET(ssh_socket, &masterset);
+
+    // keep track of the biggest file descriptor
+    fdmax = local_socket; // so far, it's this one
+
+    while (1) {
+        readset = masterset; // copy it
+        log_msg("* Okay, we are ready to select.");
+        if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
+            log_error("Error on select()");
+            break;
+        }
+        log_msg("* Selected!");
+
+        // Run through the existing connections looking for data to read
+        for(i = 0; i <= fdmax; i++) {
+
+            // Skip connections that are not ready
+            if (!FD_ISSET(i, &readset))
+                continue;
+
+            if (i == local_socket) {
+                struct sockaddr_in remoteaddr;
+                socklen_t slen = sizeof(remoteaddr);
+
+                // handle new connections
+                if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
+                    log_error("Error on accept()");
+                } else {
+                    FD_SET(newfd, &masterset); // add to master set
+
+                    if (newfd > fdmax) {       // keep track of the maximum
+                        fdmax = newfd;
+                    }
+
+                    log_msg("New connection from %s on socket %d", inet_ntoa(remoteaddr.sin_addr), newfd);
+                }
+
+                continue;
+            }
+
+            if (i == ssh_socket) {
+
+                while (1) {
+                    int len;
+                    len = libssh2_channel_read(channel, buf, sizeof(buf));
+                    if (LIBSSH2_ERROR_EAGAIN == len)
+                        break;
+                    else if (len < 0) {
+                        log_error("libssh2_channel_read: %d", (int)len);
+                        break;
+                    }
+
+                    log_msg("Received %d bytes from tunnel", len);
+
+                    int wr = 0;
+                    int rc = 0; // result
+                    while (wr < len) {
+                        rc = send(newfd, buf + wr, len - wr, 0);
+                        if (rc <= 0) {
+                            log_error("Failure to write data to client");
+                            break;
+                        }
+                        wr += rc;
+                    }
+                    if (libssh2_channel_eof(channel)) {
+                        log_msg("The server at %s:%d disconnected!\n",
+                                config.remotehost, config.remoteport);
+                        break;
+                    }
+                }
+
+                continue;
+            }
+
+            // Read data from a client
+            int nbytes = recv(i, buf, sizeof(buf), 0);
+            if (nbytes <= 0) {
+                if (nbytes == 0) {
+                    // Normal situation
+                    log_msg("Client disconnected");
+                } else {
+                    // Got error
+                    log_error("Error when recv()");
+                }
+
+                // In both these cases, close and cleanup connection
+                close(i); // bye!
+                FD_CLR(i, &masterset); // remove from master set
+
+                continue;
+            }
+
+            log_msg("Received %d bytes from client", nbytes);
+
+
+            // Write data to ssh tunnel
+            int wr = 0;
+            int rc = 0; // result
+            while (wr < nbytes) {
+                rc = libssh2_channel_write(channel, buf + wr, nbytes - wr);
+                if (LIBSSH2_ERROR_EAGAIN == rc) {
+                    continue;
+                }
+                if (rc < 0) {
+                    log_error("Failed to write to SSH channel");
+                    break;
+
+                }
+                wr += rc;
+            }
+            log_msg("Written %d bytes to tunnel", wr);
+        }
+    }
+
+    // -------------------------------------
     cleanup();
 
     return 0;

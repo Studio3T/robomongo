@@ -15,6 +15,7 @@ target_include_directories(direct-tcpip
 
 # Server
 add_executable(server
+    log.c
     server.c)
 
 target_link_libraries(server

@@ -13,21 +13,22 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/utils/ComboBoxUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/SshSettings.h"
 
 namespace Robomongo
 {
     SshTunnelTab::SshTunnelTab(ConnectionSettings *settings) :
         _settings(settings)
     {
-        SSHInfo info = _settings->sshInfo();
+        SshSettings info;
         _sshSupport = new QCheckBox("Use SSH tunnel");
         _sshSupport->setStyleSheet("margin-bottom: 7px");
-        _sshSupport->setChecked(info.isValid());
+        _sshSupport->setChecked(info.enabled());
 
-        _sshHostName = new QLineEdit(QtUtils::toQString(info._hostName));
-        _userName = new QLineEdit(QtUtils::toQString(info._userName));
+        _sshHostName = new QLineEdit(QtUtils::toQString(info.host()));
+        _userName = new QLineEdit(QtUtils::toQString(info.userName()));
 
-        _sshPort = new QLineEdit(QString::number(info._port));
+        _sshPort = new QLineEdit(QString::number(info.port()));
         _sshPort->setFixedWidth(80);
         QRegExp rx("\\d+");//(0-65554)
         _sshPort->setValidator(new QRegExpValidator(rx, this));        
@@ -36,14 +37,14 @@ namespace Robomongo
         _security->addItems(QStringList() << "Password" << "Private Key");
         VERIFY(connect(_security, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(securityChange(const QString&))));
 
-        _passwordBox = new QLineEdit(QtUtils::toQString(info._password));
+        _passwordBox = new QLineEdit(QtUtils::toQString(info.userPassword()));
         _passwordBox->setEchoMode(QLineEdit::Password);
         _passwordEchoModeButton = new QPushButton(tr("Show"));
         VERIFY(connect(_passwordEchoModeButton, SIGNAL(clicked()), this, SLOT(togglePasswordEchoMode())));
         
-        _privateKeyBox = new QLineEdit(QtUtils::toQString(info._publicKey._privateKey));
+        _privateKeyBox = new QLineEdit(QtUtils::toQString(info.privateKeyFile()));
         
-        _passphraseBox = new QLineEdit(QtUtils::toQString(info._publicKey._passphrase));
+        _passphraseBox = new QLineEdit(QtUtils::toQString(info.passphrase()));
         _passphraseBox->setEchoMode(QLineEdit::Password);
         _passphraseEchoModeButton = new QPushButton(tr("Show"));
         VERIFY(connect(_passphraseEchoModeButton, SIGNAL(clicked()), this, SLOT(togglePassphraseEchoMode())));
@@ -107,7 +108,7 @@ namespace Robomongo
         mainLayout->addLayout(connectionLayout);
         setLayout(mainLayout);
 
-        if (info.authMethod() == SSHInfo::PUBLICKEY) {
+        if (info.authMethod() == "publickey") {
             utils::setCurrentText(_security, "Private Key");
         } else {
             utils::setCurrentText(_security, "Password");
@@ -148,9 +149,9 @@ namespace Robomongo
         _passwordLabel->setEnabled(value);
     }
 
-    void SshTunnelTab::securityChange(const QString&)
+    void SshTunnelTab::securityChange(const QString& method)
     {
-        bool isKey = selectedAuthMethod() == SSHInfo::PUBLICKEY;
+        bool isKey = method == "Private Key";
 
         _sshPrivateKeyLabel->setVisible(isKey);
         _privateKeyBox->setVisible(isKey);
@@ -176,32 +177,32 @@ namespace Robomongo
         _privateKeyBox->setText(filepath);
     }
 
-    SSHInfo::SupportedAuthenticationMetods SshTunnelTab::selectedAuthMethod()
-    {
-        if (_security->currentText() == "Private Key")
-            return SSHInfo::PUBLICKEY;
-
-        return SSHInfo::PASSWORD;
-    }
+//    SSHInfo::SupportedAuthenticationMetods SshTunnelTab::selectedAuthMethod()
+//    {
+//        if (_security->currentText() == "Private Key")
+//            return SSHInfo::PUBLICKEY;
+//
+//        return SSHInfo::PASSWORD;
+//    }
 
     void SshTunnelTab::accept()
     {
-        SSHInfo info = _settings->sshInfo();
-        info._hostName = QtUtils::toStdString(_sshHostName->text());
-        info._userName = QtUtils::toStdString(_userName->text()); 
-        info._port = _sshPort->text().toInt();
-        info._password = QtUtils::toStdString(_passwordBox->text());
-        info._publicKey._publicKey = "";
-        info._publicKey._privateKey = QtUtils::toStdString(_privateKeyBox->text());
-        info._publicKey._passphrase = QtUtils::toStdString(_passphraseBox->text());
-
-        if (_sshSupport->isChecked()) {
-            info._currentMethod = selectedAuthMethod();
-        } else {
-            info._currentMethod = SSHInfo::UNKNOWN;
-        }
-        
-        _settings->setSshInfo(info);
+//        SSHInfo info = _settings->sshInfo();
+//        info._hostName = QtUtils::toStdString(_sshHostName->text());
+//        info._userName = QtUtils::toStdString(_userName->text());
+//        info._port = _sshPort->text().toInt();
+//        info._password = QtUtils::toStdString(_passwordBox->text());
+//        info._publicKey._publicKey = "";
+//        info._publicKey._privateKey = QtUtils::toStdString(_privateKeyBox->text());
+//        info._publicKey._passphrase = QtUtils::toStdString(_passphraseBox->text());
+//
+//        if (_sshSupport->isChecked()) {
+//            info._currentMethod = selectedAuthMethod();
+//        } else {
+//            info._currentMethod = SSHInfo::UNKNOWN;
+//        }
+//
+//        _settings->setSshInfo(info);
     }
     
     void SshTunnelTab::togglePasswordEchoMode()

@@ -109,6 +109,9 @@ set(SOURCES
     gui/widgets/LogWidget.cpp
     gui/MainWindow.cpp
 
+    gui/dialogs/SSHTunnelTab.cpp
+#    core/settings/SshSettings.h
+
     gui/resources/gui.qrc
 )
 

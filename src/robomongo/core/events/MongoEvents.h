@@ -809,6 +809,9 @@ namespace Robomongo
             list(list),
             prefix(prefix) {}
 
+        AutocompleteResponse(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
+
         QStringList list;
         std::string prefix;
     };
@@ -924,6 +927,9 @@ namespace Robomongo
             _query(query),
             _documents(docs) { }
 
+        DocumentListLoadedEvent(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
+
         int resultIndex() const { return _resultIndex; }
         MongoQueryInfo queryInfo() const { return _queryInfo; }
         std::vector<MongoDocumentPtr> documents() const { return _documents; }
@@ -945,6 +951,9 @@ namespace Robomongo
             Event(sender),
             _result(result),
             _empty(empty) { }
+
+        ScriptExecutedEvent(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
 
         MongoShellExecResult result() const { return _result; }
         bool empty() const { return _empty; }

@@ -374,7 +374,7 @@ namespace Robomongo
             QStringList list = _scriptEngine->complete(event->prefix, event->mode);
             reply(event->sender(), new AutocompleteResponse(this, list, event->prefix));
         } catch(const mongo::DBException &ex) {
-            reply(event->sender(), new ExecuteScriptResponse(this, EventError("Unable to autocomplete query.")));
+            reply(event->sender(), new AutocompleteResponse(this, EventError("Unable to autocomplete query.")));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }

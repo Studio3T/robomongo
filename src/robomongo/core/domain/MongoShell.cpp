@@ -82,16 +82,31 @@ namespace Robomongo
 
     void MongoShell::handle(ExecuteQueryResponse *event)
     {
+        if (event->isError()) {
+            AppRegistry::instance().bus()->publish(new DocumentListLoadedEvent(this, event->error()));
+            return;
+        }
+
         AppRegistry::instance().bus()->publish(new DocumentListLoadedEvent(this, event->resultIndex, event->queryInfo, query(), event->documents));
     }
 
     void MongoShell::handle(ExecuteScriptResponse *event)
     {
+        if (event->isError()) {
+            AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->error()));
+            return;
+        }
+
         AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->result, event->empty));
     }
 
     void MongoShell::handle(AutocompleteResponse *event)
     {
+        if (event->isError()) {
+            AppRegistry::instance().bus()->publish(new AutocompleteResponse(this, event->error()));
+            return;
+        }
+
         AppRegistry::instance().bus()->publish(new AutocompleteResponse(this, event->list, event->prefix));
     }
 }

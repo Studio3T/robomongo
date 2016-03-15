@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QFileInfo>
 #include <QVBoxLayout>
+#include <QMessageBox>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerjavascript.h>
 #include <mongo/client/dbclientinterface.h>
@@ -193,14 +194,30 @@ namespace Robomongo
 
     void QueryWidget::handle(DocumentListLoadedEvent *event)
     {
-        hideProgress();        
+        hideProgress();
+
+        if (event->isError()) {
+            QString message = QString("Failed to load documents: %1")
+                .arg(QtUtils::toQString(event->error().errorMessage()));
+            QMessageBox::information(this, "Error", message);
+            return;
+        }
+
         _viewer->updatePart(event->resultIndex(), event->queryInfo(), event->documents()); // this should be in viewer, subscribed to ScriptExecutedEvent
     }
 
     void QueryWidget::handle(ScriptExecutedEvent *event)
     {
         hideProgress();
-        _currentResult = event->result();        
+
+        if (event->isError()) {
+            QString message = QString("Failed to execute script: %1")
+                .arg(QtUtils::toQString(event->error().errorMessage()));
+            QMessageBox::information(this, "Error", message);
+            return;
+        }
+
+        _currentResult = event->result();
 
         updateCurrentTab();
         displayData(event->result().results(), event->empty());
@@ -216,6 +233,11 @@ namespace Robomongo
 
     void QueryWidget::handle(AutocompleteResponse *event)
     {
+        if (event->isError()) {
+            // Do not show error message (error should be already logged)
+            return;
+        }
+
         _scriptWidget->showAutocompletion(event->list, QtUtils::toQString(event->prefix) );
     }
 

@@ -443,6 +443,11 @@ namespace Robomongo
             ns.toString(), info._query, info._limit, info._skip,
             info._fields.nFields() ? &info._fields : 0, info._options, info._batchSize);
 
+        // DBClientBase::query may return nullptr
+        if (!cursor) {
+            throw mongo::DBException("Connectivity problem", 0);
+        }
+
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
             MongoDocumentPtr doc(new MongoDocument(bsonObj.getOwned()));

@@ -251,6 +251,51 @@ LIBSSH2_SESSION *ssh_connect(socket_type sock, enum ssh_auth_type type, char *us
 }
 
 
+typedef struct {
+    socket_type socket;
+    LIBSSH2_CHANNEL *channel;
+    char *inbuf;
+    char *outbuf;
+    int bufsize;
+} session_context;
+
+session_context *init_session_context(socket_type socket, LIBSSH2_CHANNEL *channel) {
+    const int bufsize = 16384;
+    session_context *cnt = malloc(sizeof(session_context));
+    cnt->socket = socket;
+    cnt->channel = channel;
+    cnt->inbuf = malloc(sizeof(char) * bufsize);
+    cnt->outbuf = malloc(sizeof(char) * bufsize);
+    cnt->bufsize = bufsize;
+    return cnt;
+}
+
+void free_session_context(session_context *context) {
+    free(context->inbuf);
+    free(context->outbuf);
+    // free socket and channel
+    free(context);
+}
+
+static session_context *session_contexts[1000];
+static int session_context_empty_index = 0;
+
+void add_session_context(session_context *context) {
+    session_contexts[session_context_empty_index] = context;
+    ++session_context_empty_index;
+}
+
+session_context *find_session_context_by_socket(socket_type socket) {
+    for (int i = 0; i < session_context_empty_index; i++) {
+        if (session_contexts[i]->socket == socket) {
+            return session_contexts[i];
+        }
+    }
+
+    return NULL;
+}
+
+
 int main(int argc, char *argv[]) {
     struct ssh_tunnel_config config;
     int err = 0;
@@ -296,13 +341,16 @@ int main(int argc, char *argv[]) {
 //    log_msg(stderr, "Forwarding connection from %s:%d here to remote %s:%d\n",
 //            shost, sport, remote_desthost, remote_destport);
 
-    LIBSSH2_CHANNEL *channel = NULL;
-    channel = libssh2_channel_direct_tcpip_ex(session, config.remotehost,
-                                              config.remoteport, config.localip, config.localport);
-    if (!channel) {
-        log_error("Could not open the direct TCP/IP channel");
-        return 1;
-    }
+
+//    LIBSSH2_CHANNEL *channel = NULL;
+//    LIBSSH2_CHANNEL *channel2 = NULL;
+//    channel = libssh2_channel_direct_tcpip_ex(session, config.remotehost, config.remoteport,
+//                                              config.localip, config.localport);
+//    if (!channel) {
+//        log_error("Could not open the direct TCP/IP channel (channel1)");
+//        return 1;
+//    }
+
 
     // Must use non-blocking IO hereafter due to the current libssh3 API
     libssh2_session_set_blocking(session, 0);
@@ -310,7 +358,7 @@ int main(int argc, char *argv[]) {
 
     // ------------------------------------
 
-    char buf[16384];
+//    char buf[16384];
     int fdmax;       // maximum file descriptor number
     int i;
     fd_set masterset, readset;   // master file descriptor list
@@ -341,6 +389,8 @@ int main(int argc, char *argv[]) {
                 continue;
 
             if (i == local_socket) {
+                log_msg("Data on accept socket is available");
+
                 struct sockaddr_in remoteaddr;
                 socklen_t slen = sizeof(remoteaddr);
 
@@ -357,45 +407,79 @@ int main(int argc, char *argv[]) {
                     log_msg("New connection from %s on socket %d", inet_ntoa(remoteaddr.sin_addr), newfd);
                 }
 
+                LIBSSH2_CHANNEL *channel;
+                int maxattempts = 20;
+                int attempts = 0;
+                while (attempts < maxattempts) {
+                    ++attempts;
+                    channel = libssh2_channel_direct_tcpip_ex(session, config.remotehost, config.remoteport,
+                                                               config.localip, config.localport);
+                    if (!channel) {
+                        log_error("Could not open the direct TCP/IP channel (channel2)");
+                        usleep(100 * 1000);
+                        continue;
+                    }
+
+                    log_msg("Channel successfully created!");
+                    break;
+                }
+
+                session_context* context = init_session_context(newfd, channel);
+                add_session_context(context);
                 continue;
             }
 
             if (i == ssh_socket) {
+                log_msg("Data on SSH socket is available");
 
-                while (1) {
-                    int len;
-                    len = libssh2_channel_read(channel, buf, sizeof(buf));
-                    if (LIBSSH2_ERROR_EAGAIN == len)
-                        break;
-                    else if (len < 0) {
-                        log_error("libssh2_channel_read: %d", (int)len);
-                        break;
-                    }
+                log_msg("%d", session_context_empty_index);
 
-                    log_msg("Received %d bytes from tunnel", len);
+                int s = 0;
+                while (s < session_context_empty_index) {
+                    session_context *context = session_contexts[s];
+                    ++s;
 
-                    int wr = 0;
-                    int rc = 0; // result
-                    while (wr < len) {
-                        rc = send(newfd, buf + wr, len - wr, 0);
-                        if (rc <= 0) {
-                            log_error("Failure to write data to client");
+                    while (1) {
+                        int len;
+                        len = libssh2_channel_read(context->channel, context->outbuf, context->bufsize);
+                        if (LIBSSH2_ERROR_EAGAIN == len)
+                            break;
+                        else if (len < 0) {
+                            log_error("libssh2_channel_read: %d", (int)len);
                             break;
                         }
-                        wr += rc;
-                    }
-                    if (libssh2_channel_eof(channel)) {
-                        log_msg("The server at %s:%d disconnected!\n",
-                                config.remotehost, config.remoteport);
-                        break;
+
+                        log_msg("Received %d bytes from tunnel", len);
+
+                        int wr = 0;
+                        int rc = 0; // result
+                        while (wr < len) {
+                            rc = send(context->socket, context->outbuf + wr, len - wr, 0);
+                            if (rc <= 0) {
+                                log_error("Failure to write data to client");
+                                break;
+                            }
+                            wr += rc;
+                        }
+                        if (libssh2_channel_eof(context->channel)) {
+                            log_msg("The server at %s:%d disconnected!\n",
+                                    config.remotehost, config.remoteport);
+                            break;
+                        }
                     }
                 }
+
 
                 continue;
             }
 
+            log_msg("Data on client socket is available");
+
+            session_context *context = find_session_context_by_socket(i);
+
+
             // Read data from a client
-            int nbytes = recv(i, buf, sizeof(buf), 0);
+            int nbytes = recv(context->socket, context->inbuf, context->bufsize, 0);
             if (nbytes <= 0) {
                 if (nbytes == 0) {
                     // Normal situation
@@ -406,8 +490,8 @@ int main(int argc, char *argv[]) {
                 }
 
                 // In both these cases, close and cleanup connection
-                close(i); // bye!
-                FD_CLR(i, &masterset); // remove from master set
+                close(context->socket); // bye!
+                FD_CLR(context->socket, &masterset); // remove from master set
 
                 continue;
             }
@@ -419,7 +503,7 @@ int main(int argc, char *argv[]) {
             int wr = 0;
             int rc = 0; // result
             while (wr < nbytes) {
-                rc = libssh2_channel_write(channel, buf + wr, nbytes - wr);
+                rc = libssh2_channel_write(context->channel, context->inbuf + wr, nbytes - wr);
                 if (LIBSSH2_ERROR_EAGAIN == rc) {
                     continue;
                 }

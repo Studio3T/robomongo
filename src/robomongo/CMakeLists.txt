@@ -110,7 +110,7 @@ set(SOURCES
     gui/MainWindow.cpp
 
     gui/dialogs/SSHTunnelTab.cpp
-#    core/settings/SshSettings.h
+    core/settings/SshSettings.cpp
 
     gui/resources/gui.qrc
 )

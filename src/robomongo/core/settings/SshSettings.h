@@ -9,18 +9,18 @@ namespace Robomongo
     class SshSettings
     {
     public:
-//        SshSettings();
-//        explicit SshSettings(const QVariantMap &map);
+        SshSettings();
 
         /**
          * Clones credential settings.
          */
-//        SshSettings *clone() const;
+        SshSettings *clone() const;
 
         /**
          * Converts to QVariantMap
          */
-//        QVariant toVariant() const;
+        QVariant toVariant() const;
+        void fromVariant(const QVariantMap &map);
 
         std::string host() const { return _host; }
         void setHost(const std::string &host) { _host = host; }

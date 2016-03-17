@@ -8,6 +8,7 @@
 #include <QHeaderView>
 #include <QDialogButtonBox>
 #include <QTreeWidgetItem>
+#include <QKeyEvent>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
@@ -338,6 +339,22 @@ namespace Robomongo
         _listWidget->addTopLevelItem(item);
         _connectionItems.push_back(item);
     }
+
+    void ConnectionsDialog::keyPressEvent(QKeyEvent *event) {
+
+        if (event->key() == Qt::Key_E && (event->modifiers() & Qt::ControlModifier)) {
+            edit();
+            return;
+        }
+
+        if (event->key() == Qt::Key_W && (event->modifiers() & Qt::ControlModifier)) {
+            close();
+            return;
+        }
+
+        QDialog::keyPressEvent(event);
+    }
+
 
     ConnectionsTreeWidget::ConnectionsTreeWidget()
     {

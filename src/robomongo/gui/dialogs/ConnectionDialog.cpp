@@ -76,7 +76,7 @@ namespace Robomongo
      */
     void ConnectionDialog::accept()
     {
-        if(validateAndApply()){
+        if (validateAndApply()){
             QDialog::accept();
         }
     }
@@ -93,12 +93,10 @@ namespace Robomongo
         _basicTab->accept();
         _authTab->accept();
         _advancedTab->accept();
+        _sshTab->accept();
 
         // v0.9
         // _sslTab->accept();
-#ifdef SSH_SUPPORT_ENABLED
-        _sshTab->accept();
-#endif
         return true;
     }
 

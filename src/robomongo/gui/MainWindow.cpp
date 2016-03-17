@@ -97,11 +97,6 @@ namespace Robomongo
         _workArea(NULL),
         _connectionsMenu(NULL)
     {
-        AppRegistry::instance().bus()->subscribe(this, ConnectionFailedEvent::Type);
-        AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type);
-        AppRegistry::instance().bus()->subscribe(this, ScriptExecutingEvent::Type);
-        AppRegistry::instance().bus()->subscribe(this, QueryWidgetUpdatedEvent::Type);
-
         QColor background = palette().window().color();
         QString controlKey = "Ctrl";
 
@@ -503,6 +498,11 @@ namespace Robomongo
 
         QTimer::singleShot(0, this, SLOT(manageConnections()));
         updateMenus();
+
+        AppRegistry::instance().bus()->subscribe(this, ConnectionFailedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, ScriptExecutingEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, QueryWidgetUpdatedEvent::Type);
     }
 
     void MainWindow::createStylesMenu()
@@ -874,7 +874,8 @@ namespace Robomongo
             _app->openServer(ptr, true);
         }
         catch(const std::exception &) {
-            QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(ptr->getFullAddress()));
+            QString message = QString("Cannot connect to MongoDB (%1)")
+                .arg(QtUtils::toQString(ptr->getFullAddress()));
             QMessageBox::information(this, "Error", message);
         }
     }
@@ -882,7 +883,9 @@ namespace Robomongo
     void MainWindow::handle(ConnectionFailedEvent *event)
     {
         ConnectionSettings *connection = event->server->connectionRecord();
-        QString message = QString("Cannot connect to MongoDB (%1),\nerror: %2").arg(QtUtils::toQString(connection->getFullAddress())).arg(QtUtils::toQString(event->error().errorMessage()));
+        QString message = QString("Cannot connect to MongoDB (%1),\nerror: %2")
+            .arg(QtUtils::toQString(connection->getFullAddress()))
+            .arg(QtUtils::toQString(event->error().errorMessage()));
         QMessageBox::information(this, "Error", message);
     }
 

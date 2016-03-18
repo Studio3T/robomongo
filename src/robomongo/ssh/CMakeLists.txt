@@ -1,31 +1,6 @@
 include(CheckIncludeFiles)
 include(CheckSymbolExists)
 
-# Direct-tcpip sample
-add_executable(direct-tcpip
-    direct_tcpip.c)
-
-target_link_libraries(direct-tcpip
-    PRIVATE
-        libssh2)
-
-target_include_directories(direct-tcpip
-    PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR})
-
-# Server
-add_executable(server
-    log.c
-    server.c)
-
-target_link_libraries(server
-    PRIVATE
-        libssh2)
-
-target_include_directories(server
-    PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR})
-
 ## Platform checks
 check_include_files(inttypes.h HAVE_INTTYPES_H)
 check_include_files(unistd.h HAVE_UNISTD_H)
@@ -47,3 +22,27 @@ check_symbol_exists(__FUNCTION__ "" HAVE___FUNCTION__)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/libssh2_config_cmake.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/libssh2_config.h)
+
+# Direct-tcpip sample
+add_library(ssh ssh.c log.c)
+
+target_link_libraries(ssh
+    PUBLIC
+        libssh2)
+
+target_include_directories(ssh
+    PUBLIC
+        ${CMAKE_BINARY_DIR}/src)
+
+print_target_include_dirs(ssh)
+
+# Server
+add_executable(server server.c)
+
+target_link_libraries(server
+    PRIVATE
+        ssh)
+
+target_include_directories(server
+    PRIVATE
+        ${CMAKE_BINARY_DIR}/src)

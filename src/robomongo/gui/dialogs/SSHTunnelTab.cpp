@@ -205,7 +205,7 @@ namespace Robomongo
         info->setUserPassword(QtUtils::toStdString(_passwordBox->text()));
         info->setPublicKeyFile("");
         info->setPrivateKeyFile(QtUtils::toStdString(_privateKeyBox->text()));
-        info->setPassphrase(QtUtils::toStdString(_privateKeyBox->text()));
+        info->setPassphrase(QtUtils::toStdString(_passphraseBox->text()));
 
         if (_security->currentText() == "Private Key") {
             info->setAuthMethod("publickey");

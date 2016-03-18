@@ -17,7 +17,7 @@
 
 namespace Robomongo
 {
-    MongoWorker::MongoWorker(ConnectionSettings *connection,bool isLoadMongoRcJs, int batchSize, QObject *parent) : QObject(parent),
+    MongoWorker::MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent) : QObject(parent),
         _connection(connection),
         _scriptEngine(NULL),
         _dbclient(NULL),

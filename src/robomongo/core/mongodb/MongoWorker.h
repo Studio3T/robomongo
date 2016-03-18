@@ -24,7 +24,6 @@ namespace Robomongo
     public:
         typedef std::vector<std::string> DatabasesContainerType;
         explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
-        ConnectionSettings *connectionRecord() const {return _connection;}
         ~MongoWorker();
         enum { pingTimeMs = 60 * 1000 };
         void stopAndDelete();

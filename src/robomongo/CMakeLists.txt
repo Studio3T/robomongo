@@ -111,6 +111,7 @@ set(SOURCES
 
     gui/dialogs/SSHTunnelTab.cpp
     core/settings/SshSettings.cpp
+    core/mongodb/SshTunnelWorker.cpp
 
     gui/resources/gui.qrc
 )
@@ -125,6 +126,7 @@ target_link_libraries(robomongo
         qjson
         qscintilla
         mongodb
+        ssh
         Threads::Threads)   # Target from FindThreads CMake module
 
 target_include_directories(robomongo

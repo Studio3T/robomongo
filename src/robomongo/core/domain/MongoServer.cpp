@@ -2,8 +2,10 @@
 
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/mongodb/MongoWorker.h"
+#include "robomongo/core/mongodb/SshTunnelWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
@@ -12,12 +14,21 @@ namespace Robomongo
 {
     R_REGISTER_EVENT(MongoServerLoadingDatabasesEvent)
 
-    MongoServer::MongoServer(ConnectionSettings *connectionRecord, bool visible) : QObject(),
+    MongoServer::MongoServer(ConnectionSettings *settings, bool visible) : QObject(),
         _version(0.0f),
         _visible(visible),
-        _client(new MongoWorker(connectionRecord->clone(),AppRegistry::instance().settingsManager()->loadMongoRcJs(),AppRegistry::instance().settingsManager()->batchSize())),
-        _isConnected(false)
+        _client(NULL),
+        _isConnected(false),
+        _sshWorker(NULL),
+        _settings(settings)
     {
+//        _client = new MongoWorker(settings->clone(),
+//                                  AppRegistry::instance().settingsManager()->loadMongoRcJs(),
+//                                  AppRegistry::instance().settingsManager()->batchSize());
+
+        if (settings->sshSettings()->enabled()) {
+            _sshWorker = new SshTunnelWorker(settings->clone());
+        }
     }
 
     bool MongoServer::isConnected() const
@@ -27,18 +38,27 @@ namespace Robomongo
 
     ConnectionSettings *MongoServer::connectionRecord() const 
     { 
-        return _client->connectionRecord(); 
+        return _settings;
     }
 
     MongoServer::~MongoServer()
     {        
         clearDatabases();
-        _client->stopAndDelete();
+
+        if (_client != NULL) {
+            _client->stopAndDelete();
+        }
 
         // MongoWorker "_client" does not deleted here, because it is now owned by
         // another thread (call to moveToThread() made in MongoWorker constructor).
         // It will be deleted by this thread by means of "deleteLater()", which
         // is also specified in MongoWorker constructor.
+
+        if (_sshWorker != NULL) {
+            _sshWorker->stopAndDelete();
+        }
+
+        delete _settings;
     }
 
     /**
@@ -47,7 +67,7 @@ namespace Robomongo
      */
     void MongoServer::tryConnect()
     {
-        AppRegistry::instance().bus()->send(_client,new EstablishConnectionRequest(this,
+        AppRegistry::instance().bus()->send(_client, new EstablishConnectionRequest(this,
             "_connectionRecord->databaseName()",
             "_connectionRecord->userName()",
             "_connectionRecord->userPassword()"));

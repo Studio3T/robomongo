@@ -47,7 +47,7 @@ namespace Robomongo
     MongoServer *App::openServer(ConnectionSettings *connection,
                                  bool visible)
     {
-        MongoServer *server = new MongoServer(connection, visible);
+        MongoServer *server = new MongoServer(connection->clone(), visible);
         _servers.push_back(server);
 
         if (visible)

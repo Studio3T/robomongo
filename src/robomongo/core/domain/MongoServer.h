@@ -7,6 +7,7 @@
 namespace Robomongo
 {
     class MongoWorker;
+    class SshTunnelWorker;
     class MongoDatabase;
     class EstablishConnectionResponse;
     class LoadDatabaseNamesResponse;
@@ -74,7 +75,9 @@ namespace Robomongo
         void clearDatabases();
         void addDatabase(MongoDatabase *database);
 
-        MongoWorker *const _client;
+        MongoWorker* _client;
+        SshTunnelWorker* _sshWorker;
+        ConnectionSettings* _settings;
 
         float _version;
         bool _visible;

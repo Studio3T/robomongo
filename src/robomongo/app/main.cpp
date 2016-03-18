@@ -13,8 +13,14 @@
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/AppStyle.h"
 
+#include "robomongo/ssh/ssh.h"
+
 int main(int argc, char *argv[], char** envp)
 {
+    if (ssh_init()) {
+        return 1;
+    }
+
     // Please check, do we really need envp for other OSes?
 #ifdef Q_OS_WIN
     envp = NULL;

@@ -30,8 +30,7 @@ namespace Robomongo
             config.username = const_cast<char*>(ssh->userName().c_str());
             config.password = const_cast<char*>(ssh->userPassword().c_str());
             config.privatekeyfile = const_cast<char*>(ssh->privateKeyFile().c_str());
-//            config.publickeyfile = const_cast<char*>(ssh->publicKeyFile().c_str());
-            config.publickeyfile = const_cast<char*>("/User/dmitry/ssh/alocean");
+            config.publickeyfile = const_cast<char*>(ssh->publicKeyFile().c_str());
             config.passphrase = const_cast<char*>(ssh->passphrase().c_str());
             config.sshserverip = const_cast<char*>(ssh->host().c_str());
             config.sshserverport = static_cast<unsigned int>(ssh->port());

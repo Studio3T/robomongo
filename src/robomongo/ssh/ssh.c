@@ -40,11 +40,6 @@
 #  define socket_invalid (-1)
 #endif
 
-enum ssh_auth_type {
-    AUTH_NONE = 0,
-    AUTH_PASSWORD,
-    AUTH_PUBLICKEY
-};
 
 #include "ssh.h"
 
@@ -221,9 +216,9 @@ LIBSSH2_SESSION *ssh_connect(socket_type sock, enum ssh_auth_type type, char *us
         // If authentication by key is available
         // and was chosen by the user, then use it
     } else if (auth & AUTH_PUBLICKEY && type == AUTH_PUBLICKEY) {
-        if (libssh2_userauth_publickey_fromfile(session, username, publickeypath,
-                                                privatekeypath, passphrase)) {
-            log_error("Authentication by key failed: %s, %s", privatekeypath, "hehe");
+        rc = libssh2_userauth_publickey_fromfile(session, username, publickeypath, privatekeypath, passphrase);
+        if (rc) {
+            log_error("Authentication by key (%s) failed (Error %d).", privatekeypath, rc);
             return 0;
         }
         log_msg("Authentication by key succeeded.");
@@ -295,10 +290,9 @@ int ssh_open_tunnel(struct ssh_tunnel_config config) {
         return 1; // errors are already logged by socket_connect
     }
 
-    LIBSSH2_SESSION *session = ssh_connect(ssh_socket, AUTH_PUBLICKEY, config.username, config.password,
+    LIBSSH2_SESSION *session = ssh_connect(ssh_socket, config.authtype, config.username, config.password,
                                            config.publickeyfile, config.privatekeyfile, config.passphrase);
     if (session == 0) {
-        log_msg("ssh_open_tunnel: privatekeyfile (error): %s", config.privatekeyfile);
         return 1; // errors are already logged by ssh_connect
     }
 
@@ -310,28 +304,11 @@ int ssh_open_tunnel(struct ssh_tunnel_config config) {
     log_msg("Waiting for TCP connection on %s:%d...", config.localip, config.localport);
     // -------------------------------------
 
-
-//    log_msg(stderr, "Forwarding connection from %s:%d here to remote %s:%d\n",
-//            shost, sport, remote_desthost, remote_destport);
-
-
-//    LIBSSH2_CHANNEL *channel = NULL;
-//    LIBSSH2_CHANNEL *channel2 = NULL;
-//    channel = libssh2_channel_direct_tcpip_ex(session, config.remotehost, config.remoteport,
-//                                              config.localip, config.localport);
-//    if (!channel) {
-//        log_error("Could not open the direct TCP/IP channel (channel1)");
-//        return 1;
-//    }
-
-
     // Must use non-blocking IO hereafter due to the current libssh3 API
     libssh2_session_set_blocking(session, 0);
 
-
     // ------------------------------------
 
-//    char buf[16384];
     int fdmax;       // maximum file descriptor number
     int i;
     fd_set masterset, readset;   // master file descriptor list

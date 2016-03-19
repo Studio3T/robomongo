@@ -24,26 +24,34 @@ namespace Robomongo
     {
         try {
             SshSettings *ssh = _settings->sshSettings();
+
+            // We are going to access raw char* buffers,
+            // so prepare copies of strings
+            std::string host = ssh->host();
+            std::string userName = ssh->userName();
+            std::string userPassword = ssh->userPassword();
+            std::string privateKeyFile = ssh->privateKeyFile();
+            std::string publicKeyFile = ssh->publicKeyFile();
+            std::string passphrase = ssh->passphrase();
+            std::string authMethod = ssh->authMethod(); // "password" or "publickey"
+            std::string remotehost = _settings->serverHost();
+
             ssh_tunnel_config config;
             config.localip = const_cast<char*>("127.0.0.1");
             config.localport = 27040;
-            config.username = const_cast<char*>(ssh->userName().c_str());
-            config.password = const_cast<char*>(ssh->userPassword().c_str());
-            config.privatekeyfile = const_cast<char*>(ssh->privateKeyFile().c_str());
-            config.publickeyfile = const_cast<char*>(ssh->publicKeyFile().c_str());
-            config.passphrase = const_cast<char*>(ssh->passphrase().c_str());
-            config.sshserverip = const_cast<char*>(ssh->host().c_str());
-            config.sshserverport = static_cast<unsigned int>(ssh->port());
-            config.remotehost = const_cast<char*>(_settings->serverHost().c_str());
-            config.remoteport = _settings->serverPort();
 
-            printf("* Openning tunnel, yah! \n");
-            printf("SshTunnelWorker: username: %s \n", ssh->userName().c_str());
-            printf("SshTunnelWorker: username: %s \n", config.username);
-            printf("SshTunnelWorker: privatekeyfile: %s \n", const_cast<char*>(ssh->privateKeyFile().c_str()));
-            printf("SshTunnelWorker: privatekeyfile: %s \n", config.privatekeyfile);
+            config.username = const_cast<char*>(userName.c_str());
+            config.password = const_cast<char*>(userPassword.c_str());
+            config.privatekeyfile = const_cast<char*>(privateKeyFile.c_str());
+            config.publickeyfile = publicKeyFile.empty() ? NULL : const_cast<char*>(publicKeyFile.c_str());
+            config.passphrase = const_cast<char*>(passphrase.c_str());
+            config.sshserverip = const_cast<char*>(host.c_str());
+            config.sshserverport = static_cast<unsigned int>(ssh->port());
+            config.remotehost = const_cast<char*>(remotehost.c_str());
+            config.remoteport = _settings->serverPort();
+            config.authtype = (authMethod == "publickey") ? AUTH_PUBLICKEY : AUTH_PASSWORD;
+
             ssh_open_tunnel(config);
-            printf("* Done with tunnel!\n");
 
         }
         catch (const std::exception &ex) {
@@ -57,7 +65,6 @@ namespace Robomongo
         // (see MongoWorker() constructor)
 
         delete _settings;
-        printf("* SSH Tunnel shutdowned\n");
     }
 
     void SshTunnelWorker::stopAndDelete() {

@@ -5,6 +5,7 @@
 int main(int argc, char *argv[]) {
     struct ssh_tunnel_config config;
 
+    config.authtype = AUTH_PUBLICKEY;
     config.localip = "127.0.0.1";
     config.localport = 27040;
     config.username = "dmitry";

@@ -5,28 +5,40 @@
 extern "C" {
 #endif
 
+enum ssh_auth_type {
+    AUTH_NONE       = 0,
+    AUTH_PASSWORD   = 1,
+    AUTH_PUBLICKEY  = 2
+};
+
 /*
  * SSH Tunnel configuration
  */
 struct ssh_tunnel_config {
-    // Local IP and port to bind and listen to
-    char *localip;
-    unsigned int localport;
-
-    // Username and password of remote user
-    char *username;
-    char *password;     // May be NULL or ""
+    enum ssh_auth_type authtype;
 
     // Keys and optional passphrase
     char *privatekeyfile;
     char *publickeyfile;
     char *passphrase;   // May be NULL or ""
 
+    // Local IP and port to bind and listen to
+    char *localip;
+    unsigned int localport;
+
+    // Remote host and port to connect to
+    char *remotehost;   // Resolved by the remote server
+    unsigned int remoteport;
+
+    // Username and password of remote user
+    char *username;
+    char *password;     // May be NULL or ""
+
     // Remote IP and (host, port) in remote network
     char *sshserverip;
     unsigned int sshserverport;  // SSH port
-    char *remotehost;   // Resolved by the remote server
-    unsigned int remoteport;
+
+
 };
 
 int ssh_init();

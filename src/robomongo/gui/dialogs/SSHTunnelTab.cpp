@@ -203,7 +203,7 @@ namespace Robomongo
         info->setPort(_sshPort->text().toInt());
         info->setUserName(QtUtils::toStdString(_userName->text()));
         info->setUserPassword(QtUtils::toStdString(_passwordBox->text()));
-        info->setPublicKeyFile("");
+//        info->setPublicKeyFile("");
         info->setPrivateKeyFile(QtUtils::toStdString(_privateKeyBox->text()));
         info->setPassphrase(QtUtils::toStdString(_passphraseBox->text()));
 

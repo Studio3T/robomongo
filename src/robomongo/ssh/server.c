@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     config.username = "dmitry";
     config.password = "";
     config.privatekeyfile = "/Users/dmitry/.ssh/ubuntik";
-    config.publickeyfile = "/Users/dmitry/.ssh/ubuntik.pub";
+    config.publickeyfile = NULL; //"/Users/dmitry/.ssh/ubuntik.pub";
     config.passphrase = "";
     config.sshserverip = "198.61.166.171";
     config.sshserverport = 22;

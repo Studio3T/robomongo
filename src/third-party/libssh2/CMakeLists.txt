@@ -49,8 +49,10 @@ include(SocketLibraries)
 
 ## Cryptography backend choice
 
+set(OPENSSL_ROOT_DIR "/usr/local/Cellar/openssl/1.0.2f")
+
 set(CRYPTO_BACKEND
-  ""
+  "OpenSSL"
   CACHE
   STRING
   "The backend to use for cryptography: OpenSSL, Libgcrypt or WinCNG,

@@ -19,6 +19,8 @@ namespace Robomongo
     class MongoShell;
     class MongoDatabase;
     class MongoWorker;
+    class ConnectionSettings;
+    class SshTunnelWorker;
 
     /**
      * @brief EstablishConnection
@@ -28,16 +30,8 @@ namespace Robomongo
     {
         R_EVENT
 
-        EstablishConnectionRequest(QObject *sender, const QString &databaseName,
-                                   const QString &userName, const QString &userPassword) :
-            Event(sender),
-            databaseName(databaseName),
-            userName(userName),
-            userPassword(userPassword) {}
-
-        QString databaseName;
-        QString userName;
-        QString userPassword;
+        EstablishConnectionRequest(QObject *sender) :
+            Event(sender) {}
     };
 
     class EstablishConnectionResponse : public Event
@@ -985,5 +979,45 @@ namespace Robomongo
 
     private:
         int _numOfResults;
+    };
+
+    /**
+     * @brief EstablishConnection
+     */
+
+    class EstablishSshConnectionRequest : public Event
+    {
+    R_EVENT
+
+        EstablishSshConnectionRequest(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, bool visible) :
+            Event(sender),
+            worker(worker),
+            settings(settings),
+            visible(visible) {}
+
+        ConnectionSettings* settings;
+        bool visible;
+        SshTunnelWorker* worker;
+    };
+
+    class EstablishSshConnectionResponse : public Event
+    {
+    R_EVENT
+
+        EstablishSshConnectionResponse(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, bool visible) :
+            Event(sender),
+            worker(worker),
+            settings(settings),
+            visible(visible) {}
+
+        EstablishSshConnectionResponse(QObject *sender, const EventError &error, SshTunnelWorker* worker, ConnectionSettings* settings, bool visible) :
+            Event(sender, error),
+            worker(worker),
+            settings(settings),
+            visible(visible) {}
+
+        ConnectionSettings* settings;
+        bool visible;
+        SshTunnelWorker* worker;
     };
 }

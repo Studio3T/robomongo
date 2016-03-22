@@ -5,6 +5,8 @@
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/SshSettings.h"
+#include "robomongo/core/mongodb/SshTunnelWorker.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/StdUtils.h"
@@ -31,7 +33,9 @@ namespace Robomongo
     }
 
     App::App(EventBus *const bus) : QObject(),
-        _bus(bus) { }
+        _bus(bus) {
+        _bus->subscribe(this, EstablishSshConnectionResponse::Type);
+    }
 
     App::~App()
     {
@@ -40,22 +44,22 @@ namespace Robomongo
     }
 
     /**
-     * @brief Creates and opens new server connection.
+     * Creates and opens new server connection.
      * @param connection: ConnectionSettings, that will be owned by MongoServer.
      * @param visible: should this server be visible in UI (explorer) or not.
      */
-    MongoServer *App::openServer(ConnectionSettings *connection,
-                                 bool visible)
-    {
-        MongoServer *server = new MongoServer(connection->clone(), visible);
-        _servers.push_back(server);
+    MongoServer *App::openServer(ConnectionSettings *connection, bool visible) {
+        // When connection is not "visible" or do not have
+        // ssh settings enabled, continue without SSH Tunnel
+        if (!visible || !connection->sshSettings()->enabled()) {
+            return continueOpenServer(connection, visible);
+        }
 
-        if (visible)
-            _bus->publish(new ConnectingEvent(this, server));
-
-        LOG_MSG(QString("Connecting to %1...").arg(QtUtils::toQString(server->connectionRecord()->getFullAddress())), mongo::logger::LogSeverity::Info());
-        server->tryConnect();
-        return server;
+        // Open SSH channel and only after that open connection
+        ConnectionSettings* settingsCopy = connection->clone();
+        SshTunnelWorker* sshWorker = new SshTunnelWorker(settingsCopy);
+        _bus->send(sshWorker, new EstablishSshConnectionRequest(this, sshWorker, settingsCopy, visible));
+        return NULL;
     }
 
     /**
@@ -121,4 +125,32 @@ namespace Robomongo
         closeServer(shell->server());
         delete shell;
     }
+
+    MongoServer* App::continueOpenServer(ConnectionSettings *connection, bool visible) {
+        MongoServer *server = new MongoServer(connection->clone(), visible);
+        _servers.push_back(server);
+
+        server->runWorkerThread();
+
+        if (visible)
+            _bus->publish(new ConnectingEvent(this, server));
+
+        LOG_MSG(QString("Connecting to %1...").arg(QtUtils::toQString(server->connectionRecord()->getFullAddress())), mongo::logger::LogSeverity::Info());
+        server->tryConnect();
+        return server;
+    }
+
+    void App::handle(EstablishSshConnectionResponse *event) {
+        LOG_MSG(QString("Answer from ssh"), mongo::logger::LogSeverity::Info());
+
+        if (event->isError()) {
+            event->worker->stopAndDelete();
+            return;
+        }
+
+        continueOpenServer(event->settings, event->visible);
+        // record even->worker and delete when needed
+    }
+
+
 }

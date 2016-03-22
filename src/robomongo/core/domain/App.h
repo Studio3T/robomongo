@@ -1,6 +1,7 @@
 #pragma once
 #include <QObject>
 #include <vector>
+#include <robomongo/core/events/MongoEvents.h>
 
 #include "robomongo/core/domain/ScriptInfo.h"
 
@@ -12,9 +13,11 @@ namespace Robomongo
     class MongoCollection;
     class MongoShell;
     class MongoDatabase;
+    class EstablishSshConnectionResponse;
+
     namespace detail
     {
-                /**
+        /**
          * @brief Builds single collection query (i.e. db.my_col.find()) from
          *  string that doesn't contain "db.my_col." prefix.
          *
@@ -59,11 +62,11 @@ namespace Robomongo
 
         MongoShell *openShell(MongoServer *server, const QString &script, const std::string &dbName = std::string(),
                               bool execute = true, const QString &shellName = QString(),
-                              const CursorPosition &cursorPosition = CursorPosition(),const QString &file=QString());
+                              const CursorPosition &cursorPosition = CursorPosition(), const QString &file = QString());
 
         MongoShell *openShell(MongoDatabase *database, const QString &script,
                               bool execute = true, const QString &shellName = QString(),
-                              const CursorPosition &cursorPosition = CursorPosition(),const QString &filePathToSave=QString());
+                              const CursorPosition &cursorPosition = CursorPosition(), const QString &filePathToSave = QString());
 
         MongoShell *openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo);
         MongoServersContainerType getServers() const {return _servers; };
@@ -74,20 +77,22 @@ namespace Robomongo
          */
         void closeShell(MongoShell *shell);
 
+    public Q_SLOTS:
+        void handle(EstablishSshConnectionResponse *event);
+
     private:
+        MongoServer* continueOpenServer(ConnectionSettings *connection, bool visible);
+
         /**
-         * @brief MongoServers, owned by this App.
+         * MongoServers, owned by this App.
          */
         MongoServersContainerType _servers;
 
         /**
-         * @brief MongoShells, owned by this App.
+         * MongoShells, owned by this App.
          */
         MongoShellsContainerType _shells;
 
-        /**
-         * @brief EventBus
-         */
         EventBus *const _bus;
     };
 }

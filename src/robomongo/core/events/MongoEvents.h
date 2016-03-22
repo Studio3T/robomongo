@@ -982,7 +982,7 @@ namespace Robomongo
     };
 
     /**
-     * @brief EstablishConnection
+     * @brief Establish SSH Connection
      */
 
     class EstablishSshConnectionRequest : public Event
@@ -1019,5 +1019,28 @@ namespace Robomongo
         ConnectionSettings* settings;
         bool visible;
         SshTunnelWorker* worker;
+    };
+
+    /**
+     * @brief Start listening on all opened sockets (SSH tunnel)
+     */
+
+    class ListenSshConnectionRequest : public Event
+    {
+    R_EVENT
+
+        ListenSshConnectionRequest(QObject *sender) :
+                Event(sender) {}
+    };
+
+    class ListenSshConnectionResponse : public Event
+    {
+    R_EVENT
+
+        ListenSshConnectionResponse(QObject *sender) :
+            Event(sender) {}
+
+        ListenSshConnectionResponse(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
     };
 }

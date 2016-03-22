@@ -7,10 +7,14 @@ QT_BEGIN_NAMESPACE
 class QThread;
 QT_END_NAMESPACE
 
+struct ssh_tunnel_config;
+struct ssh_connection;
+
 namespace Robomongo
 {
     class ConnectionSettings;
     class EstablishSshConnectionRequest;
+    class ListenSshConnectionRequest;
 
     class SshTunnelWorker : public QObject
     {
@@ -24,6 +28,7 @@ namespace Robomongo
     protected Q_SLOTS: // handlers:
         void init();
         void handle(EstablishSshConnectionRequest *event);
+        void handle(ListenSshConnectionRequest *event);
 
     private:
         void reply(QObject *receiver, Event *event);
@@ -31,6 +36,8 @@ namespace Robomongo
         QThread *_thread;
         QAtomicInteger<int> _isQuiting;
         ConnectionSettings* _settings;
+        ssh_tunnel_config* _sshConfig;
+        ssh_connection* _sshConnection;
 
         std::string _sshhost;
         int _sshport;

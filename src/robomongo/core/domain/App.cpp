@@ -127,7 +127,15 @@ namespace Robomongo
     }
 
     MongoServer* App::continueOpenServer(ConnectionSettings *connection, bool visible) {
-        MongoServer *server = new MongoServer(connection->clone(), visible);
+        ConnectionSettings* settings = connection->clone();
+
+        // Modify connection settings when SSH tunnel is used
+        if (visible && settings->sshSettings()->enabled()) {
+            settings->setServerHost("127.0.0.1");
+            settings->setServerPort(27040);
+        }
+
+        MongoServer *server = new MongoServer(settings, visible);
         _servers.push_back(server);
 
         server->runWorkerThread();
@@ -141,15 +149,18 @@ namespace Robomongo
     }
 
     void App::handle(EstablishSshConnectionResponse *event) {
-        LOG_MSG(QString("Answer from ssh"), mongo::logger::LogSeverity::Info());
+        LOG_MSG(QString("SSH tunnel created successfully"), mongo::logger::LogSeverity::Info());
 
         if (event->isError()) {
+            LOG_MSG(QString("Failed to create SSH tunnel"), mongo::logger::LogSeverity::Info());
             event->worker->stopAndDelete();
             return;
         }
 
+        _bus->send(event->worker, new ListenSshConnectionRequest(this));
         continueOpenServer(event->settings, event->visible);
-        // record even->worker and delete when needed
+
+        // record event->worker and delete when needed
     }
 
 

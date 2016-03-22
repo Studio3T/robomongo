@@ -27,8 +27,13 @@ int main(int argc, char *argv[]) {
 
     int res = 0;
     while (1) {
-        res = ssh_open_tunnel(config);
+        struct ssh_connection connection;
+        res = ssh_esablish_connection(&config, &connection);
+        if (res != 0) {
+            break;
+        }
 
+        res = ssh_open_tunnel(&connection);
         if (res == 2) {
             usleep(100 * 1000);
             continue;

@@ -32,15 +32,6 @@
 #define INADDR_NONE (in_addr_t)-1
 #endif
 
-#ifdef WIN32
-#  define socket_type SOCKET
-#  define socket_invalid INVALID_SOCKET
-#else
-#  define socket_type int
-#  define socket_invalid (-1)
-#endif
-
-
 #include "ssh.h"
 
 /*
@@ -276,38 +267,12 @@ session_context *find_session_context_by_socket(socket_type socket) {
 }
 
 
-int ssh_open_tunnel(struct ssh_tunnel_config config) {
-    int err = 0;
+int ssh_open_tunnel(struct ssh_connection* connection) {
+    socket_type local_socket = connection->localsocket;
+    socket_type ssh_socket = connection->sshsocket;
+    LIBSSH2_SESSION* session = connection->sshsession;
+    struct ssh_tunnel_config* config = connection->config;
 
-    log_msg("ssh_open_tunnel: username: %s", config.username);
-    log_msg("ssh_open_tunnel: privatekeyfile: %s", config.privatekeyfile);
-
-    test_connect(config.privatekeyfile);
-
-    log_msg("Connecting to %s...", config.sshserverip);
-    socket_type ssh_socket = socket_connect(config.sshserverip, config.sshserverport);
-    if (ssh_socket == -1) {
-        return 1; // errors are already logged by socket_connect
-    }
-
-    LIBSSH2_SESSION *session = ssh_connect(ssh_socket, config.authtype, config.username, config.password,
-                                           config.publickeyfile, config.privatekeyfile, config.passphrase);
-    if (session == 0) {
-        return 1; // errors are already logged by ssh_connect
-    }
-
-    socket_type local_socket = socket_listen(config.localip, config.localport);
-    if (local_socket == -1) {
-        return 1; // errors are already logged by socket_listen
-    }
-
-    log_msg("Waiting for TCP connection on %s:%d...", config.localip, config.localport);
-    // -------------------------------------
-
-    // Must use non-blocking IO hereafter due to the current libssh3 API
-    libssh2_session_set_blocking(session, 0);
-
-    // ------------------------------------
 
     int fdmax;       // maximum file descriptor number
     int i;
@@ -358,12 +323,12 @@ int ssh_open_tunnel(struct ssh_tunnel_config config) {
                 }
 
                 LIBSSH2_CHANNEL *channel;
-                int maxattempts = 20;
+                int maxattempts = 25;
                 int attempts = 0;
                 while (attempts < maxattempts) {
                     ++attempts;
-                    channel = libssh2_channel_direct_tcpip_ex(session, config.remotehost, config.remoteport,
-                                                              config.localip, config.localport);
+                    channel = libssh2_channel_direct_tcpip_ex(session, config->remotehost, config->remoteport,
+                                                              config->localip, config->localport);
                     if (!channel) {
                         log_error("Could not open the direct TCP/IP channel (channel2)");
                         usleep(100 * 1000);
@@ -420,7 +385,7 @@ int ssh_open_tunnel(struct ssh_tunnel_config config) {
                         }
                         if (libssh2_channel_eof(context->channel)) {
                             log_msg("The server at %s:%d disconnected!\n",
-                                    config.remotehost, config.remoteport);
+                                    config->remotehost, config->remoteport);
                             break;
                         }
                     }
@@ -479,3 +444,43 @@ int ssh_open_tunnel(struct ssh_tunnel_config config) {
 
     return 0;
 }
+
+int ssh_esablish_connection(struct ssh_tunnel_config* config, struct ssh_connection* out) {
+    log_msg("ssh_open_tunnel: username: %s", config->username);
+    log_msg("ssh_open_tunnel: privatekeyfile: %s", config->privatekeyfile);
+
+    test_connect(config->privatekeyfile);
+
+    log_msg("Connecting to %s...", config->sshserverip);
+    socket_type ssh_socket = socket_connect(config->sshserverip, config->sshserverport);
+    if (ssh_socket == -1) {
+        return 1; // errors are already logged by socket_connect
+    }
+
+    LIBSSH2_SESSION *session = ssh_connect(ssh_socket, config->authtype, config->username, config->password,
+                                           config->publickeyfile, config->privatekeyfile, config->passphrase);
+    if (session == 0) {
+        return 1; // errors are already logged by ssh_connect
+    }
+
+    socket_type local_socket = socket_listen(config->localip, config->localport);
+    if (local_socket == -1) {
+        return 1; // errors are already logged by socket_listen
+    }
+
+    log_msg("Waiting for TCP connection on %s:%d...", config->localip, config->localport);
+    // -------------------------------------
+
+    // Must use non-blocking IO hereafter due to the current libssh3 API
+    libssh2_session_set_blocking(session, 0);
+
+    // ------------------------------------
+
+    out->sshsession = session;
+    out->localsocket = local_socket;
+    out->sshsocket = ssh_socket;
+    out->config = config;
+    return 0;
+}
+
+

@@ -13,7 +13,9 @@
 namespace Robomongo
 {
     SshTunnelWorker::SshTunnelWorker(ConnectionSettings *settings) : QObject(),
-        _settings(settings)
+        _settings(settings),
+        _sshConfig(NULL),
+        _sshConnection(NULL)
     {
         _thread = new QThread();
         moveToThread(_thread);
@@ -55,6 +57,9 @@ namespace Robomongo
         // (see MongoWorker() constructor)
 
         delete _settings;
+
+        // We need to delete _sshConfig and _sshConnection somewhere
+        // But it is still possible that thread is using them... TODO!
     }
 
     void SshTunnelWorker::stopAndDelete() {
@@ -64,22 +69,26 @@ namespace Robomongo
 
     void SshTunnelWorker::handle(EstablishSshConnectionRequest *event) {
         try {
-            ssh_tunnel_config config;
-            config.sshserverip = const_cast<char*>(_sshhost.c_str());
-            config.sshserverport = static_cast<unsigned int>(_sshport);
-            config.remotehost = const_cast<char*>(_remotehost.c_str());
-            config.remoteport = static_cast<unsigned int>(_remoteport);
-            config.localip = const_cast<char*>(_localip.c_str());
-            config.localport = static_cast<unsigned int>(_localport);
+            _sshConfig = new ssh_tunnel_config;
+            _sshConfig->sshserverip = const_cast<char*>(_sshhost.c_str());
+            _sshConfig->sshserverport = static_cast<unsigned int>(_sshport);
+            _sshConfig->remotehost = const_cast<char*>(_remotehost.c_str());
+            _sshConfig->remoteport = static_cast<unsigned int>(_remoteport);
+            _sshConfig->localip = const_cast<char*>(_localip.c_str());
+            _sshConfig->localport = static_cast<unsigned int>(_localport);
 
-            config.username = const_cast<char*>(_userName.c_str());
-            config.password = const_cast<char*>(_userPassword.c_str());
-            config.privatekeyfile = const_cast<char*>(_privateKeyFile.c_str());
-            config.publickeyfile = _publicKeyFile.empty() ? NULL : const_cast<char*>(_publicKeyFile.c_str());
-            config.passphrase = const_cast<char*>(_passphrase.c_str());
-            config.authtype = (_authMethod == "publickey") ? AUTH_PUBLICKEY : AUTH_PASSWORD;
+            _sshConfig->username = const_cast<char*>(_userName.c_str());
+            _sshConfig->password = const_cast<char*>(_userPassword.c_str());
+            _sshConfig->privatekeyfile = const_cast<char*>(_privateKeyFile.c_str());
+            _sshConfig->publickeyfile = _publicKeyFile.empty() ? NULL : const_cast<char*>(_publicKeyFile.c_str());
+            _sshConfig->passphrase = const_cast<char*>(_passphrase.c_str());
+            _sshConfig->authtype = (_authMethod == "publickey") ? AUTH_PUBLICKEY : AUTH_PASSWORD;
 
-//            ssh_open_tunnel(config);
+            _sshConnection = new ssh_connection;
+            int rc = ssh_esablish_connection(_sshConfig, _sshConnection);
+            if (rc != 0) {
+                throw std::runtime_error("Failed to establish SSH connection");
+            }
 
             reply(event->sender(), new EstablishSshConnectionResponse(
                     this, event->worker, event->settings, event->visible));
@@ -88,6 +97,19 @@ namespace Robomongo
             reply(event->sender(),
                 new EstablishSshConnectionResponse(this, EventError("Failed to create SSH tunnel"),
                 event->worker, event->settings, event->visible));
+        }
+    }
+
+    void SshTunnelWorker::handle(ListenSshConnectionRequest *event) {
+        try {
+            int rc = ssh_open_tunnel(_sshConnection);
+            if (rc != 0) {
+                throw std::runtime_error("Failed to open SSH tunnel");
+            }
+
+        } catch (const std::exception& ex) {
+            reply(event->sender(),
+                  new ListenSshConnectionResponse(this, EventError("Failed to listen to SSH tunnel")));
         }
     }
 

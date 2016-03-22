@@ -126,13 +126,13 @@ namespace Robomongo
         delete shell;
     }
 
-    MongoServer* App::continueOpenServer(ConnectionSettings *connection, bool visible) {
+    MongoServer* App::continueOpenServer(ConnectionSettings *connection, bool visible, int localport) {
         ConnectionSettings* settings = connection->clone();
 
         // Modify connection settings when SSH tunnel is used
         if (visible && settings->sshSettings()->enabled()) {
             settings->setServerHost("127.0.0.1");
-            settings->setServerPort(27040);
+            settings->setServerPort(localport);
         }
 
         MongoServer *server = new MongoServer(settings, visible);
@@ -158,7 +158,7 @@ namespace Robomongo
         }
 
         _bus->send(event->worker, new ListenSshConnectionRequest(this));
-        continueOpenServer(event->settings, event->visible);
+        continueOpenServer(event->settings, event->visible, event->localport);
 
         // record event->worker and delete when needed
     }

@@ -91,7 +91,7 @@ namespace Robomongo
             }
 
             reply(event->sender(), new EstablishSshConnectionResponse(
-                    this, event->worker, event->settings, event->visible));
+                    this, event->worker, event->settings, event->visible, _sshConfig->localport));
 
         } catch (const std::exception& ex) {
             reply(event->sender(),

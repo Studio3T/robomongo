@@ -1004,11 +1004,12 @@ namespace Robomongo
     {
     R_EVENT
 
-        EstablishSshConnectionResponse(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, bool visible) :
+        EstablishSshConnectionResponse(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, bool visible, int localport) :
             Event(sender),
             worker(worker),
             settings(settings),
-            visible(visible) {}
+            visible(visible),
+            localport(localport) {}
 
         EstablishSshConnectionResponse(QObject *sender, const EventError &error, SshTunnelWorker* worker, ConnectionSettings* settings, bool visible) :
             Event(sender, error),
@@ -1019,6 +1020,7 @@ namespace Robomongo
         ConnectionSettings* settings;
         bool visible;
         SshTunnelWorker* worker;
+        int localport;
     };
 
     /**

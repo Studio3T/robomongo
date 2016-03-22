@@ -104,7 +104,7 @@ socket_type socket_connect(char *ip, int port) {
 /*
  * Returns socket (binded and in listen state) if succeed, otherwise -1 on error
  */
-socket_type socket_listen(char *ip, int port) {
+socket_type socket_listen(char *ip, int *port) {
     socket_type listensock;
     struct sockaddr_in sin;
     int sockopt;
@@ -117,7 +117,7 @@ socket_type socket_listen(char *ip, int port) {
     }
 
     sin.sin_family = AF_INET;
-    sin.sin_port = htons(port);
+    sin.sin_port = htons(0); // Bind to any available port (htons is not needed, but still it's here)
     if (INADDR_NONE == (sin.sin_addr.s_addr = inet_addr(ip))) {
         log_error("inet_addr");
         return -1;
@@ -135,6 +135,12 @@ socket_type socket_listen(char *ip, int port) {
         return -1;
     }
 
+    if (getsockname(listensock, (struct sockaddr *)&sin, &sinlen) == -1) {
+        log_error("Failed to get socket address");
+        return -1;
+    }
+
+    *port = ntohs(sin.sin_port);
     return listensock;
 
 }
@@ -463,7 +469,7 @@ int ssh_esablish_connection(struct ssh_tunnel_config* config, struct ssh_connect
         return 1; // errors are already logged by ssh_connect
     }
 
-    socket_type local_socket = socket_listen(config->localip, config->localport);
+    socket_type local_socket = socket_listen(config->localip, &config->localport);
     if (local_socket == -1) {
         return 1; // errors are already logged by socket_listen
     }

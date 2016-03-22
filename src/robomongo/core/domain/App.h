@@ -81,7 +81,7 @@ namespace Robomongo
         void handle(EstablishSshConnectionResponse *event);
 
     private:
-        MongoServer* continueOpenServer(ConnectionSettings *connection, bool visible);
+        MongoServer* continueOpenServer(ConnectionSettings *connection, bool visible, int localport = 0);
 
         /**
          * MongoServers, owned by this App.

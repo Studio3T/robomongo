@@ -84,10 +84,9 @@ namespace Robomongo
             _sshConfig->passphrase = const_cast<char*>(_passphrase.c_str());
             _sshConfig->authtype = (_authMethod == "publickey") ? AUTH_PUBLICKEY : AUTH_PASSWORD;
 
-            _sshConnection = new ssh_connection;
-            int rc = ssh_esablish_connection(_sshConfig, _sshConnection);
-            if (rc != 0) {
-                throw std::runtime_error("Failed to establish SSH connection");
+            _sshConnection = new ssh_session;
+            if (ssh_esablish_connection(_sshConfig, _sshConnection) != 0) {
+                throw std::runtime_error(_sshConnection->lasterror);
             }
 
             reply(event->sender(), new EstablishSshConnectionResponse(
@@ -109,7 +108,7 @@ namespace Robomongo
 
         } catch (const std::exception& ex) {
             reply(event->sender(),
-                  new ListenSshConnectionResponse(this, EventError("Failed to listen to SSH tunnel")));
+                  new ListenSshConnectionResponse(this, EventError(ex.what())));
         }
     }
 

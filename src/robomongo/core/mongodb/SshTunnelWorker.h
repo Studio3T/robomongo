@@ -8,7 +8,7 @@ class QThread;
 QT_END_NAMESPACE
 
 struct ssh_tunnel_config;
-struct ssh_connection;
+struct ssh_session;
 
 namespace Robomongo
 {
@@ -37,7 +37,7 @@ namespace Robomongo
         QAtomicInteger<int> _isQuiting;
         ConnectionSettings* _settings;
         ssh_tunnel_config* _sshConfig;
-        ssh_connection* _sshConnection;
+        ssh_session* _sshConnection;
 
         std::string _sshhost;
         int _sshport;

@@ -49,19 +49,20 @@ struct ssh_tunnel_config {
     unsigned int sshserverport;  // SSH port
 };
 
-struct ssh_connection {
+typedef struct ssh_session {
     socket_type localsocket;
     socket_type sshsocket;
     LIBSSH2_SESSION *sshsession;
-
     struct ssh_tunnel_config *config;
-};
+
+    char lasterror[2048];
+} ssh_session;
 
 int ssh_init();
 void ssh_cleanup();
 
-int ssh_esablish_connection(struct ssh_tunnel_config *config, struct ssh_connection *out);
-int ssh_open_tunnel(struct ssh_connection *connection);
+int ssh_esablish_connection(struct ssh_tunnel_config *config, struct ssh_session *out);
+int ssh_open_tunnel(struct ssh_session *connection);
 
 #ifdef __cplusplus
 }

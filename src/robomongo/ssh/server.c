@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 
     int res = 0;
     while (1) {
-        struct ssh_connection connection;
+        struct ssh_session connection;
         res = ssh_esablish_connection(&config, &connection);
         if (res != 0) {
             break;

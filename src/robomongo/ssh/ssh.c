@@ -14,6 +14,7 @@
 
 #include <fcntl.h>
 #include <errno.h>
+#include <stdarg.h>
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
@@ -72,29 +73,48 @@ void ssh_cleanup() {
 #endif
 }
 
+static void ssh_set_last_error(ssh_session* session, const char *format, ...) {
+    int errsave = errno;
+    const int buf_size = 2000;
+    char buf[buf_size];
+    va_list args;
+
+    va_start(args, format);
+    vsnprintf(buf, buf_size, format, args);
+
+    if (errsave) {
+        // Use of snprintf should be here
+        sprintf(session->lasterror, "%s. %s. Errno: %d", strerror(errsave), buf, errsave);
+    } else {
+        sprintf(session->lasterror, "%s", buf);
+    }
+
+    va_end(args);
+}
+
 /*
  * Returns socket if succeed, otherwise -1 on error
  */
-socket_type socket_connect(char *ip, int port) {
+static socket_type socket_connect(ssh_session* session, char *ip, int port) {
     socket_type sock;
     struct sockaddr_in sin;
 
     /* Connect to SSH server */
     sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sock == socket_invalid) {
-        log_error("Failed to open socket");
+        ssh_set_last_error(session, "Failed to open socket");
         return -1;
     }
 
     sin.sin_family = AF_INET;
     if (INADDR_NONE == (sin.sin_addr.s_addr = inet_addr(ip))) {
-        log_error("inet_addr error");
+        ssh_set_last_error(session, "Call to inet_addr failed");
         return -1;
     }
 
     sin.sin_port = htons(port);
     if (connect(sock, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0) {
-        log_error("Failed to connect to %s:%d", ip, port);
+        ssh_set_last_error(session, "Failed to connect to %s:%d", ip, port);
         return -1;
     }
 
@@ -104,7 +124,7 @@ socket_type socket_connect(char *ip, int port) {
 /*
  * Returns socket (binded and in listen state) if succeed, otherwise -1 on error
  */
-socket_type socket_listen(char *ip, int *port) {
+socket_type socket_listen(ssh_session *rsession, char *ip, int *port) {
     socket_type listensock;
     struct sockaddr_in sin;
     int sockopt;
@@ -112,14 +132,14 @@ socket_type socket_listen(char *ip, int *port) {
 
     listensock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (listensock == socket_invalid) {
-        log_error("Failed to open socket");
+        ssh_set_last_error(rsession, "Failed to open socket");
         return -1;
     }
 
     sin.sin_family = AF_INET;
     sin.sin_port = htons(0); // Bind to any available port (htons is not needed, but still it's here)
     if (INADDR_NONE == (sin.sin_addr.s_addr = inet_addr(ip))) {
-        log_error("inet_addr");
+        ssh_set_last_error(rsession, "inet_addr");
         return -1;
     }
 
@@ -127,16 +147,17 @@ socket_type socket_listen(char *ip, int *port) {
     setsockopt(listensock, SOL_SOCKET, SO_REUSEADDR, &sockopt, sizeof(sockopt));
     sinlen = sizeof(sin);
     if (-1 == bind(listensock, (struct sockaddr *)&sin, sinlen)) {
-        log_error("Cannot bind to port %d", port);
+        ssh_set_last_error(rsession, "Cannot bind to port %d", port);
         return -1;
     }
+
     if (-1 == listen(listensock, 2)) {
-        log_error("Failed to listen opened socket");
+        ssh_set_last_error(rsession, "Failed to listen opened socket");
         return -1;
     }
 
     if (getsockname(listensock, (struct sockaddr *)&sin, &sinlen) == -1) {
-        log_error("Failed to get socket address");
+        ssh_set_last_error(rsession, "Failed to get socket address");
         return -1;
     }
 
@@ -145,14 +166,10 @@ socket_type socket_listen(char *ip, int *port) {
 
 }
 
-void test_connect(char *privatekeypath) {
-    log_msg("test_connect: privatekeyfile: %s", privatekeypath);
-}
-
 /*
  * Returns 0 if error.
  */
-LIBSSH2_SESSION *ssh_connect(socket_type sock, enum ssh_auth_type type, char *username, char *password,
+LIBSSH2_SESSION *ssh_connect(ssh_session *rsession, socket_type sock, enum ssh_auth_type type, char *username, char *password,
                              char *publickeypath, char *privatekeypath, char *passphrase) {
     int rc, i, auth = AUTH_NONE;
     LIBSSH2_SESSION *session;
@@ -167,7 +184,7 @@ LIBSSH2_SESSION *ssh_connect(socket_type sock, enum ssh_auth_type type, char *us
     /* Create a session instance */
     session = libssh2_session_init();
     if (!session) {
-        log_error("Could not initialize SSH session");
+        ssh_set_last_error(rsession, "Could not initialize SSH session");
         return 0;
     }
 
@@ -176,7 +193,7 @@ LIBSSH2_SESSION *ssh_connect(socket_type sock, enum ssh_auth_type type, char *us
      */
     rc = libssh2_session_handshake(session, sock);
     if (rc) {
-        log_error("Error when starting up SSH session: %d\n", rc);
+        ssh_set_last_error(rsession, "Error when starting up SSH session: %d\n", rc);
         return 0;
     }
 
@@ -206,7 +223,7 @@ LIBSSH2_SESSION *ssh_connect(socket_type sock, enum ssh_auth_type type, char *us
     // and was chosen by the user, then use it
     if (auth & AUTH_PASSWORD && type == AUTH_PASSWORD) {
         if (libssh2_userauth_password(session, username, password)) {
-            log_error("Authentication by password failed");
+            ssh_set_last_error(rsession, "Authentication by password failed");
             return 0;
         }
         log_msg("Authentication by password succeeded.");
@@ -215,12 +232,12 @@ LIBSSH2_SESSION *ssh_connect(socket_type sock, enum ssh_auth_type type, char *us
     } else if (auth & AUTH_PUBLICKEY && type == AUTH_PUBLICKEY) {
         rc = libssh2_userauth_publickey_fromfile(session, username, publickeypath, privatekeypath, passphrase);
         if (rc) {
-            log_error("Authentication by key (%s) failed (Error %d).", privatekeypath, rc);
+            ssh_set_last_error(rsession, "Authentication by key (%s) failed (Error %d)", privatekeypath, rc);
             return 0;
         }
         log_msg("Authentication by key succeeded.");
     } else {
-        log_error("No supported authentication methods found.");
+        ssh_set_last_error(rsession, "No supported authentication methods found");
         return 0;
     }
 
@@ -273,7 +290,7 @@ session_context *find_session_context_by_socket(socket_type socket) {
 }
 
 
-int ssh_open_tunnel(struct ssh_connection* connection) {
+int ssh_open_tunnel(ssh_session* connection) {
     socket_type local_socket = connection->localsocket;
     socket_type ssh_socket = connection->sshsocket;
     LIBSSH2_SESSION* session = connection->sshsession;
@@ -451,41 +468,40 @@ int ssh_open_tunnel(struct ssh_connection* connection) {
     return 0;
 }
 
-int ssh_esablish_connection(struct ssh_tunnel_config* config, struct ssh_connection* out) {
+// Returns -1 on error, zero if no errors
+int ssh_esablish_connection(struct ssh_tunnel_config* config, ssh_session* session) {
     log_msg("ssh_open_tunnel: username: %s", config->username);
     log_msg("ssh_open_tunnel: privatekeyfile: %s", config->privatekeyfile);
-
-    test_connect(config->privatekeyfile);
-
     log_msg("Connecting to %s...", config->sshserverip);
-    socket_type ssh_socket = socket_connect(config->sshserverip, config->sshserverport);
+
+    socket_type ssh_socket = socket_connect(session, config->sshserverip, config->sshserverport);
     if (ssh_socket == -1) {
-        return 1; // errors are already logged by socket_connect
+        return -1; // errors are already logged by socket_connect
     }
 
-    LIBSSH2_SESSION *session = ssh_connect(ssh_socket, config->authtype, config->username, config->password,
+    LIBSSH2_SESSION *lsession = ssh_connect(session, ssh_socket, config->authtype, config->username, config->password,
                                            config->publickeyfile, config->privatekeyfile, config->passphrase);
-    if (session == 0) {
-        return 1; // errors are already logged by ssh_connect
+    if (lsession == 0) {
+        return -1; // errors are already logged by ssh_connect
     }
 
-    socket_type local_socket = socket_listen(config->localip, (int *) &config->localport);
+    socket_type local_socket = socket_listen(session, config->localip, (int *) &config->localport);
     if (local_socket == -1) {
-        return 1; // errors are already logged by socket_listen
+        return -1; // errors are already logged by socket_listen
     }
 
     log_msg("Waiting for TCP connection on %s:%d...", config->localip, config->localport);
     // -------------------------------------
 
     // Must use non-blocking IO hereafter due to the current libssh3 API
-    libssh2_session_set_blocking(session, 0);
+    libssh2_session_set_blocking(lsession, 0);
 
     // ------------------------------------
 
-    out->sshsession = session;
-    out->localsocket = local_socket;
-    out->sshsocket = ssh_socket;
-    out->config = config;
+    session->sshsession = lsession;
+    session->localsocket = local_socket;
+    session->sshsocket = ssh_socket;
+    session->config = config;
     return 0;
 }
 

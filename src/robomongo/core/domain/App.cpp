@@ -59,6 +59,10 @@ namespace Robomongo
         }
 
         // Open SSH channel and only after that open connection
+        LOG_MSG(QString("Creating SSH tunnel to %1:%2...")
+            .arg(QtUtils::toQString(connection->sshSettings()->host()))
+            .arg(connection->sshSettings()->port()), mongo::logger::LogSeverity::Info());
+
         ConnectionSettings* settingsCopy = connection->clone();
         SshTunnelWorker* sshWorker = new SshTunnelWorker(settingsCopy);
         _bus->send(sshWorker, new EstablishSshConnectionRequest(this, sshWorker, settingsCopy, visible));
@@ -156,10 +160,10 @@ namespace Robomongo
                << event->settings->sshSettings()->port() << ".\n\nError:\n"
                << event->error().errorMessage();
 
-            _bus->publish(new ConnectionFailedEvent(this, ss.str()));
-
             LOG_MSG(QString("Failed to create SSH tunnel: %1")
-                .arg(QtUtils::toQString(event->error().errorMessage())), mongo::logger::LogSeverity::Error());
+                            .arg(QtUtils::toQString(event->error().errorMessage())), mongo::logger::LogSeverity::Error());
+
+            _bus->publish(new ConnectionFailedEvent(this, ss.str()));
 
             event->worker->stopAndDelete();
             return;

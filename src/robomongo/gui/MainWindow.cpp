@@ -874,7 +874,7 @@ namespace Robomongo
             _app->openServer(ptr, true);
         }
         catch(const std::exception &) {
-            QString message = QString("Cannot connect to MongoDB (%1)")
+            QString message = QString("Cannot connect to the MongoDB at %1.")
                 .arg(QtUtils::toQString(ptr->getFullAddress()));
             QMessageBox::information(this, "Error", message);
         }
@@ -882,11 +882,7 @@ namespace Robomongo
 
     void MainWindow::handle(ConnectionFailedEvent *event)
     {
-        ConnectionSettings *connection = event->server->connectionRecord();
-        QString message = QString("Cannot connect to MongoDB (%1),\nerror: %2")
-            .arg(QtUtils::toQString(connection->getFullAddress()))
-            .arg(QtUtils::toQString(event->error().errorMessage()));
-        QMessageBox::information(this, "Error", message);
+        QMessageBox::information(this, "Error", QtUtils::toQString(event->message));
     }
 
     void MainWindow::handle(ScriptExecutingEvent *)

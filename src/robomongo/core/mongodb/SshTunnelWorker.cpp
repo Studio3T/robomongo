@@ -95,7 +95,7 @@ namespace Robomongo
 
         } catch (const std::exception& ex) {
             reply(event->sender(),
-                new EstablishSshConnectionResponse(this, EventError("Failed to create SSH tunnel"),
+                new EstablishSshConnectionResponse(this, EventError(ex.what()),
                 event->worker, event->settings, event->visible));
         }
     }

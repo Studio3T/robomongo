@@ -49,6 +49,9 @@ namespace Robomongo
      * @param visible: should this server be visible in UI (explorer) or not.
      */
     MongoServer *App::openServer(ConnectionSettings *connection, bool visible) {
+        if (visible)
+            _bus->publish(new ConnectingEvent(this));
+
         // When connection is not "visible" or do not have
         // ssh settings enabled, continue without SSH Tunnel
         if (!visible || !connection->sshSettings()->enabled()) {
@@ -140,22 +143,29 @@ namespace Robomongo
 
         server->runWorkerThread();
 
-        if (visible)
-            _bus->publish(new ConnectingEvent(this, server));
-
         LOG_MSG(QString("Connecting to %1...").arg(QtUtils::toQString(server->connectionRecord()->getFullAddress())), mongo::logger::LogSeverity::Info());
         server->tryConnect();
         return server;
     }
 
     void App::handle(EstablishSshConnectionResponse *event) {
-        LOG_MSG(QString("SSH tunnel created successfully"), mongo::logger::LogSeverity::Info());
-
         if (event->isError()) {
-            LOG_MSG(QString("Failed to create SSH tunnel"), mongo::logger::LogSeverity::Info());
+            std::stringstream ss;
+            ss << "Failed to create SSH tunnel to "
+               << event->settings->sshSettings()->host() << ":"
+               << event->settings->sshSettings()->port() << ".\n\nError:\n"
+               << event->error().errorMessage();
+
+            _bus->publish(new ConnectionFailedEvent(this, ss.str()));
+
+            LOG_MSG(QString("Failed to create SSH tunnel: %1")
+                .arg(QtUtils::toQString(event->error().errorMessage())), mongo::logger::LogSeverity::Error());
+
             event->worker->stopAndDelete();
             return;
         }
+
+        LOG_MSG(QString("SSH tunnel created successfully"), mongo::logger::LogSeverity::Info());
 
         _bus->send(event->worker, new ListenSshConnectionRequest(this));
         continueOpenServer(event->settings, event->visible, event->localport);

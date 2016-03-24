@@ -133,7 +133,7 @@ namespace Robomongo
             std::vector<std::string> dbNames = getDatabaseNamesSafe();
             reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, client->getVersion()) ));
         } catch(const std::exception &ex) {
-            reply(event->sender(), new EstablishConnectionResponse(this, EventError("Unable to connect to MongoDB")));
+            reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what())));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }

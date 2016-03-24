@@ -469,7 +469,7 @@ int ssh_esablish_connection(struct ssh_tunnel_config* config, struct ssh_connect
         return 1; // errors are already logged by ssh_connect
     }
 
-    socket_type local_socket = socket_listen(config->localip, &config->localport);
+    socket_type local_socket = socket_listen(config->localip, (int *) &config->localport);
     if (local_socket == -1) {
         return 1; // errors are already logged by socket_listen
     }

@@ -126,7 +126,12 @@ namespace Robomongo {
     void MongoServer::handle(EstablishConnectionResponse *event) {
         if (event->isError()) {
             _isConnected = false;
-            _bus->publish(new ConnectionFailedEvent(this, event->error()));
+
+            std::stringstream ss;
+            ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
+               << ".\n\nError:\n" << event->error().errorMessage();
+
+            _bus->publish(new ConnectionFailedEvent(this, ss.str()));
             return;
         }
 
@@ -150,7 +155,11 @@ namespace Robomongo {
 
     void MongoServer::handle(LoadDatabaseNamesResponse *event) {
         if (event->isError()) {
-            _bus->publish(new ConnectionFailedEvent(this, event->error()));
+            std::stringstream ss;
+            ss << "Cannot load list of databases.\n\nError:\n"
+               << event->error().errorMessage();
+
+            _bus->publish(new ConnectionFailedEvent(this, ss.str()));
             return;
         }
 

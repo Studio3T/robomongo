@@ -852,11 +852,8 @@ namespace Robomongo
     {
         R_EVENT
 
-        ConnectingEvent(QObject *sender, MongoServer *server) :
-            Event(sender),
-            server(server) { }
-
-        MongoServer *server;
+        ConnectingEvent(QObject *sender) :
+            Event(sender) { }
     };
 
     class OpeningShellEvent : public Event
@@ -874,15 +871,14 @@ namespace Robomongo
     {
         R_EVENT
 
-        ConnectionFailedEvent(MongoServer *server) :
-            Event((QObject *)server),
-            server(server) { }
+        ConnectionFailedEvent(QObject *sender, const std::string& message) :
+            Event(sender),
+            message(message) {}
 
-        ConnectionFailedEvent(MongoServer *server, const EventError &error) :
-            Event((QObject *)server, error),
-            server(server) {}
+        ConnectionFailedEvent(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
 
-        MongoServer *server;
+        std::string message;
     };
 
 //    class ScriptExecute

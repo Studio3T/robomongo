@@ -80,6 +80,7 @@ namespace Robomongo
 
     public Q_SLOTS:
         void handle(EstablishSshConnectionResponse *event);
+        void handle(ListenSshConnectionResponse *event);
         void handle(LogEvent *event);
 
     private:

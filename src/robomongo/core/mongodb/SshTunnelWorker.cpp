@@ -16,7 +16,7 @@ namespace Robomongo
     SshTunnelWorker::SshTunnelWorker(ConnectionSettings *settings) : QObject(),
         _settings(settings),
         _sshConfig(NULL),
-        _sshConnection(NULL)
+        _sshSession(NULL)
     {
         _thread = new QThread();
         moveToThread(_thread);
@@ -57,10 +57,10 @@ namespace Robomongo
         // QThread "_thread" and MongoWorker itself will be deleted later
         // (see MongoWorker() constructor)
 
-        delete _settings;
+        ssh_session_close(_sshSession);
 
-        // We need to delete _sshConfig and _sshConnection somewhere
-        // But it is still possible that thread is using them... TODO!
+        delete _settings;
+        delete _sshConfig;
     }
 
     void SshTunnelWorker::stopAndDelete() {
@@ -85,9 +85,11 @@ namespace Robomongo
             _sshConfig->passphrase = const_cast<char*>(_passphrase.c_str());
             _sshConfig->authtype = (_authMethod == "publickey") ? AUTH_PUBLICKEY : AUTH_PASSWORD;
 
-            _sshConnection = new ssh_session;
-            if (ssh_esablish_connection(_sshConfig, _sshConnection) != 0) {
-                throw std::runtime_error(_sshConnection->lasterror);
+            _sshConfig->context = this;
+            _sshConfig->logcallback = &SshTunnelWorker::logCallbackHandler;
+
+            if ((_sshSession = ssh_session_create(_sshConfig)) == 0) {
+                throw std::runtime_error(_sshSession->lasterror);
             }
 
             reply(event->sender(), new EstablishSshConnectionResponse(
@@ -102,14 +104,14 @@ namespace Robomongo
 
     void SshTunnelWorker::handle(ListenSshConnectionRequest *event) {
         try {
-            int rc = ssh_open_tunnel(_sshConnection);
+            int rc = ssh_open_tunnel(_sshSession);
             if (rc != 0) {
                 throw std::runtime_error("Failed to open SSH tunnel");
             }
 
         } catch (const std::exception& ex) {
             reply(event->sender(),
-                  new ListenSshConnectionResponse(this, EventError(ex.what())));
+                  new ListenSshConnectionResponse(this, EventError(ex.what()), _settings));
         }
     }
 
@@ -131,5 +133,9 @@ namespace Robomongo
         AppRegistry::instance().bus()->send(
             AppRegistry::instance().app(),
             new LogEvent(this, message, error));
+    }
+
+    void SshTunnelWorker::logCallbackHandler(ssh_session *session, char *message, int iserror) {
+        static_cast<SshTunnelWorker*>(session->config->context)->log(message, iserror == 1);
     }
 }

@@ -1035,11 +1035,15 @@ namespace Robomongo
     {
     R_EVENT
 
-        ListenSshConnectionResponse(QObject *sender) :
-            Event(sender) {}
+        ListenSshConnectionResponse(QObject *sender, ConnectionSettings* settings) :
+            Event(sender),
+            settings(settings) {}
 
-        ListenSshConnectionResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        ListenSshConnectionResponse(QObject *sender, const EventError &error, ConnectionSettings* settings) :
+            Event(sender, error),
+            settings(settings) {}
+
+        ConnectionSettings* settings;
     };
 
     class LogEvent : public Event

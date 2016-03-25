@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <robomongo/ssh/ssh.h>
 #include "robomongo/core/events/MongoEvents.h"
 
 QT_BEGIN_NAMESPACE
@@ -25,6 +26,8 @@ namespace Robomongo
         ~SshTunnelWorker();
         void stopAndDelete();
 
+        static void logCallbackHandler(ssh_session* session, char *message, int iserror);
+
     protected Q_SLOTS: // handlers:
         void init();
         void handle(EstablishSshConnectionRequest *event);
@@ -38,7 +41,7 @@ namespace Robomongo
         QAtomicInteger<int> _isQuiting;
         ConnectionSettings* _settings;
         ssh_tunnel_config* _sshConfig;
-        ssh_session* _sshConnection;
+        ssh_session* _sshSession;
 
         std::string _sshhost;
         int _sshport;

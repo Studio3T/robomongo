@@ -73,7 +73,21 @@ void ssh_cleanup() {
 #endif
 }
 
-static void ssh_set_last_error(ssh_session* session, const char *format, ...) {
+static void ssh_log_msg(ssh_session* session, const char *format, ...) {
+    const int buf_size = 2000;
+    char buf[buf_size];
+    va_list args;
+
+    va_start(args, format);
+    vsnprintf(buf, buf_size, format, args);
+
+    printf("%s\n", buf);
+    session->config->logcallback(session, buf, 0);
+
+    va_end(args);
+}
+
+static void ssh_log_error(ssh_session* session, const char *format, ...) {
     int errsave = errno;
     const int buf_size = 2000;
     char buf[buf_size];
@@ -83,11 +97,13 @@ static void ssh_set_last_error(ssh_session* session, const char *format, ...) {
     vsnprintf(buf, buf_size, format, args);
 
     if (errsave) {
-        // Use of snprintf should be here
-        sprintf(session->lasterror, "%s. %s. Errno: %d", strerror(errsave), buf, errsave);
+        sprintf(session->lasterror, "%s. %s. (Error #%d)", strerror(errsave), buf, errsave);
     } else {
         sprintf(session->lasterror, "%s", buf);
     }
+
+    fprintf(stderr, "%s\n", session->lasterror);
+    session->config->logcallback(session, session->lasterror, 1);
 
     va_end(args);
 }
@@ -102,19 +118,19 @@ static socket_type socket_connect(ssh_session* session, char *ip, int port) {
     /* Connect to SSH server */
     sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sock == socket_invalid) {
-        ssh_set_last_error(session, "Failed to open socket");
+        ssh_log_error(session, "Failed to open socket");
         return -1;
     }
 
     sin.sin_family = AF_INET;
     if (INADDR_NONE == (sin.sin_addr.s_addr = inet_addr(ip))) {
-        ssh_set_last_error(session, "Call to inet_addr failed");
+        ssh_log_error(session, "Call to inet_addr failed");
         return -1;
     }
 
     sin.sin_port = htons(port);
     if (connect(sock, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0) {
-        ssh_set_last_error(session, "Failed to connect to %s:%d", ip, port);
+        ssh_log_error(session, "Failed to connect to %s:%d", ip, port);
         return -1;
     }
 
@@ -132,14 +148,14 @@ socket_type socket_listen(ssh_session *rsession, char *ip, int *port) {
 
     listensock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (listensock == socket_invalid) {
-        ssh_set_last_error(rsession, "Failed to open socket");
+        ssh_log_error(rsession, "Failed to open socket");
         return -1;
     }
 
     sin.sin_family = AF_INET;
     sin.sin_port = htons(0); // Bind to any available port (htons is not needed, but still it's here)
     if (INADDR_NONE == (sin.sin_addr.s_addr = inet_addr(ip))) {
-        ssh_set_last_error(rsession, "inet_addr");
+        ssh_log_error(rsession, "inet_addr");
         return -1;
     }
 
@@ -147,17 +163,17 @@ socket_type socket_listen(ssh_session *rsession, char *ip, int *port) {
     setsockopt(listensock, SOL_SOCKET, SO_REUSEADDR, &sockopt, sizeof(sockopt));
     sinlen = sizeof(sin);
     if (-1 == bind(listensock, (struct sockaddr *)&sin, sinlen)) {
-        ssh_set_last_error(rsession, "Cannot bind to port %d", port);
+        ssh_log_error(rsession, "Cannot bind to port %d", port);
         return -1;
     }
 
     if (-1 == listen(listensock, 2)) {
-        ssh_set_last_error(rsession, "Failed to listen opened socket");
+        ssh_log_error(rsession, "Failed to listen opened socket");
         return -1;
     }
 
     if (getsockname(listensock, (struct sockaddr *)&sin, &sinlen) == -1) {
-        ssh_set_last_error(rsession, "Failed to get socket address");
+        ssh_log_error(rsession, "Failed to get socket address");
         return -1;
     }
 
@@ -176,15 +192,15 @@ LIBSSH2_SESSION *ssh_connect(ssh_session *rsession, socket_type sock, enum ssh_a
     const char *fingerprint;
     char *userauthlist;
 
-    log_msg("ssh_connect: username: %s", username);
-    log_msg("ssh_connect: password: %s", password);
-    log_msg("ssh_connect: privatekeyfile: %s", privatekeypath);
-    log_msg("ssh_connect: publickeyfile: %s", publickeypath);
+    ssh_log_msg(rsession, "ssh_connect: username: %s", username);
+    ssh_log_msg(rsession, "ssh_connect: password: %s", password);
+    ssh_log_msg(rsession, "ssh_connect: privatekeyfile: %s", privatekeypath);
+    ssh_log_msg(rsession, "ssh_connect: publickeyfile: %s", publickeypath);
 
     /* Create a session instance */
     session = libssh2_session_init();
     if (!session) {
-        ssh_set_last_error(rsession, "Could not initialize SSH session");
+        ssh_log_error(rsession, "Could not initialize SSH session");
         return 0;
     }
 
@@ -193,7 +209,7 @@ LIBSSH2_SESSION *ssh_connect(ssh_session *rsession, socket_type sock, enum ssh_a
      */
     rc = libssh2_session_handshake(session, sock);
     if (rc) {
-        ssh_set_last_error(rsession, "Error when starting up SSH session: %d\n", rc);
+        ssh_log_error(rsession, "Error when starting up SSH session: %d\n", rc);
         return 0;
     }
 
@@ -213,7 +229,7 @@ LIBSSH2_SESSION *ssh_connect(ssh_session *rsession, socket_type sock, enum ssh_a
 
     /* check what authentication methods are available */
     userauthlist = libssh2_userauth_list(session, username, strlen(username));
-    log_msg("Authentication methods: %s", userauthlist);
+    ssh_log_msg(rsession, "Authentication methods: %s", userauthlist);
     if (strstr(userauthlist, "password"))
         auth |= AUTH_PASSWORD;
     if (strstr(userauthlist, "publickey"))
@@ -223,21 +239,21 @@ LIBSSH2_SESSION *ssh_connect(ssh_session *rsession, socket_type sock, enum ssh_a
     // and was chosen by the user, then use it
     if (auth & AUTH_PASSWORD && type == AUTH_PASSWORD) {
         if (libssh2_userauth_password(session, username, password)) {
-            ssh_set_last_error(rsession, "Authentication by password failed");
+            ssh_log_error(rsession, "Authentication by password failed");
             return 0;
         }
-        log_msg("Authentication by password succeeded.");
+        ssh_log_msg(rsession, "Authentication by password succeeded.");
         // If authentication by key is available
         // and was chosen by the user, then use it
     } else if (auth & AUTH_PUBLICKEY && type == AUTH_PUBLICKEY) {
         rc = libssh2_userauth_publickey_fromfile(session, username, publickeypath, privatekeypath, passphrase);
         if (rc) {
-            ssh_set_last_error(rsession, "Authentication by key (%s) failed (Error %d)", privatekeypath, rc);
+            ssh_log_error(rsession, "Authentication by key (%s) failed (Error %d)", privatekeypath, rc);
             return 0;
         }
-        log_msg("Authentication by key succeeded.");
+        ssh_log_msg(rsession, "Authentication by key succeeded.");
     } else {
-        ssh_set_last_error(rsession, "No supported authentication methods found");
+        ssh_log_error(rsession, "No supported authentication methods found");
         return 0;
     }
 
@@ -312,12 +328,12 @@ int ssh_open_tunnel(ssh_session* connection) {
 
     while (1) {
         readset = masterset; // copy it
-        log_msg("* Okay, we are ready to select.");
+        ssh_log_msg(connection, "* Okay, we are ready to select.");
         if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
-            log_error("Error on select()");
+            ssh_log_error(connection, "Error on select()");
             break;
         }
-        log_msg("* Selected!");
+        ssh_log_msg(connection, "* Selected!");
 
         // Run through the existing connections looking for data to read
         for(i = 0; i <= fdmax; i++) {
@@ -327,14 +343,14 @@ int ssh_open_tunnel(ssh_session* connection) {
                 continue;
 
             if (i == local_socket) {
-                log_msg("Data on accept socket is available");
+                ssh_log_msg(connection, "Data on accept socket is available");
 
                 struct sockaddr_in remoteaddr;
                 socklen_t slen = sizeof(remoteaddr);
 
                 // handle new connections
                 if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
-                    log_error("Error on accept()");
+                    ssh_log_error(connection, "Error on accept()");
                 } else {
                     FD_SET(newfd, &masterset); // add to master set
 
@@ -342,7 +358,7 @@ int ssh_open_tunnel(ssh_session* connection) {
                         fdmax = newfd;
                     }
 
-                    log_msg("New connection from %s on socket %d", inet_ntoa(remoteaddr.sin_addr), newfd);
+                    ssh_log_msg(connection, "New connection from %s on socket %d", inet_ntoa(remoteaddr.sin_addr), newfd);
                 }
 
                 LIBSSH2_CHANNEL *channel;
@@ -353,12 +369,12 @@ int ssh_open_tunnel(ssh_session* connection) {
                     channel = libssh2_channel_direct_tcpip_ex(session, config->remotehost, config->remoteport,
                                                               config->localip, config->localport);
                     if (!channel) {
-                        log_error("Could not open the direct TCP/IP channel (channel2)");
+                        ssh_log_error(connection, "Could not open the direct TCP/IP channel (channel2)");
                         usleep(100 * 1000);
                         continue;
                     }
 
-                    log_msg("Channel successfully created!");
+                    ssh_log_msg(connection, "Channel successfully created!");
                     break;
                 }
 
@@ -368,9 +384,9 @@ int ssh_open_tunnel(ssh_session* connection) {
             }
 
             if (i == ssh_socket) {
-                log_msg("Data on SSH socket is available");
+                ssh_log_msg(connection, "Data on SSH socket is available");
 
-                log_msg("%d", session_context_empty_index);
+                ssh_log_msg(connection, "%d", session_context_empty_index);
 
                 int s = 0;
                 while (s < session_context_empty_index) {
@@ -390,24 +406,24 @@ int ssh_open_tunnel(ssh_session* connection) {
                                 return 2;
                             }
 
-                            log_error("libssh2_channel_read: %d", (int)len);
+                            ssh_log_error(connection, "libssh2_channel_read: %d", (int)len);
                             break;
                         }
 
-                        log_msg("Received %d bytes from tunnel", len);
+                        ssh_log_msg(connection, "Received %d bytes from tunnel", len);
 
                         int wr = 0;
                         int rc = 0; // result
                         while (wr < len) {
                             rc = send(context->socket, context->outbuf + wr, len - wr, 0);
                             if (rc <= 0) {
-                                log_error("Failure to write data to client");
+                                ssh_log_error(connection, "Failure to write data to client");
                                 break;
                             }
                             wr += rc;
                         }
                         if (libssh2_channel_eof(context->channel)) {
-                            log_msg("The server at %s:%d disconnected!\n",
+                            ssh_log_msg(connection, "The server at %s:%d disconnected!\n",
                                     config->remotehost, config->remoteport);
                             break;
                         }
@@ -418,7 +434,7 @@ int ssh_open_tunnel(ssh_session* connection) {
                 continue;
             }
 
-            log_msg("Data on client socket is available");
+            ssh_log_msg(connection, "Data on client socket is available");
 
             session_context *context = find_session_context_by_socket(i);
 
@@ -428,10 +444,10 @@ int ssh_open_tunnel(ssh_session* connection) {
             if (nbytes <= 0) {
                 if (nbytes == 0) {
                     // Normal situation
-                    log_msg("Client disconnected");
+                    ssh_log_msg(connection, "Client disconnected");
                 } else {
                     // Got error
-                    log_error("Error when recv()");
+                    ssh_log_error(connection, "Error when recv()");
                 }
 
                 // In both these cases, close and cleanup connection
@@ -441,7 +457,7 @@ int ssh_open_tunnel(ssh_session* connection) {
                 continue;
             }
 
-            log_msg("Received %d bytes from client", nbytes);
+            ssh_log_msg(connection, "Received %d bytes from client", nbytes);
 
 
             // Write data to ssh tunnel
@@ -453,13 +469,13 @@ int ssh_open_tunnel(ssh_session* connection) {
                     continue;
                 }
                 if (rc < 0) {
-                    log_error("Failed to write to SSH channel");
+                    ssh_log_error(connection, "Failed to write to SSH channel");
                     break;
 
                 }
                 wr += rc;
             }
-            log_msg("Written %d bytes to tunnel", wr);
+            ssh_log_msg(connection, "Written %d bytes to tunnel", wr);
         }
     }
 
@@ -468,29 +484,40 @@ int ssh_open_tunnel(ssh_session* connection) {
     return 0;
 }
 
-// Returns -1 on error, zero if no errors
-int ssh_esablish_connection(struct ssh_tunnel_config* config, ssh_session* session) {
-    log_msg("ssh_open_tunnel: username: %s", config->username);
-    log_msg("ssh_open_tunnel: privatekeyfile: %s", config->privatekeyfile);
-    log_msg("Connecting to %s...", config->sshserverip);
+void ssh_session_close(ssh_session *session) {
+    // TODO: perform session cleanup
+    free(session);
+}
+
+// Returns 0 on error, valid ssh_session* if no errors
+ssh_session* ssh_session_create(struct ssh_tunnel_config* config) {
+    ssh_session* session = (ssh_session*) malloc(sizeof(ssh_session));
+    if (!session) {
+        return NULL;
+    }
+    session->config = config;
+
+    ssh_log_msg(session, "ssh_open_tunnel: username: %s", config->username);
+    ssh_log_msg(session, "ssh_open_tunnel: privatekeyfile: %s", config->privatekeyfile);
+    ssh_log_msg(session, "Connecting to %s...", config->sshserverip);
 
     socket_type ssh_socket = socket_connect(session, config->sshserverip, config->sshserverport);
     if (ssh_socket == -1) {
-        return -1; // errors are already logged by socket_connect
+        return NULL; // errors are already logged by socket_connect
     }
 
     LIBSSH2_SESSION *lsession = ssh_connect(session, ssh_socket, config->authtype, config->username, config->password,
                                            config->publickeyfile, config->privatekeyfile, config->passphrase);
     if (lsession == 0) {
-        return -1; // errors are already logged by ssh_connect
+        return NULL; // errors are already logged by ssh_connect
     }
 
     socket_type local_socket = socket_listen(session, config->localip, (int *) &config->localport);
     if (local_socket == -1) {
-        return -1; // errors are already logged by socket_listen
+        return NULL; // errors are already logged by socket_listen
     }
 
-    log_msg("Waiting for TCP connection on %s:%d...", config->localip, config->localport);
+    ssh_log_msg(session, "Waiting for TCP connection on %s:%d...", config->localip, config->localport);
     // -------------------------------------
 
     // Must use non-blocking IO hereafter due to the current libssh3 API
@@ -501,8 +528,7 @@ int ssh_esablish_connection(struct ssh_tunnel_config* config, ssh_session* sessi
     session->sshsession = lsession;
     session->localsocket = local_socket;
     session->sshsocket = ssh_socket;
-    session->config = config;
-    return 0;
+    return session;
 }
 
 

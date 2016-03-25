@@ -21,6 +21,7 @@ enum ssh_auth_type {
     AUTH_PUBLICKEY  = 2
 };
 
+struct ssh_session;
 /*
  * SSH Tunnel configuration
  */
@@ -47,6 +48,9 @@ struct ssh_tunnel_config {
     // Remote IP and (host, port) in remote network
     char *sshserverip;
     unsigned int sshserverport;  // SSH port
+
+    void *context; // pointer to user-defined data
+    void (*logcallback)(struct ssh_session* session, char *message, int iserror);
 };
 
 typedef struct ssh_session {
@@ -61,7 +65,9 @@ typedef struct ssh_session {
 int ssh_init();
 void ssh_cleanup();
 
-int ssh_esablish_connection(struct ssh_tunnel_config *config, struct ssh_session *out);
+ssh_session* ssh_session_create(struct ssh_tunnel_config *config);
+void ssh_session_close(ssh_session *session);
+
 int ssh_open_tunnel(struct ssh_session *connection);
 
 #ifdef __cplusplus

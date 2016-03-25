@@ -32,6 +32,7 @@ namespace Robomongo
 
     private:
         void reply(QObject *receiver, Event *event);
+        void log(const std::string& message, bool error = false);
 
         QThread *_thread;
         QAtomicInteger<int> _isQuiting;

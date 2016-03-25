@@ -14,6 +14,7 @@ namespace Robomongo
     class MongoShell;
     class MongoDatabase;
     class EstablishSshConnectionResponse;
+    class LogEvent;
 
     namespace detail
     {
@@ -79,6 +80,7 @@ namespace Robomongo
 
     public Q_SLOTS:
         void handle(EstablishSshConnectionResponse *event);
+        void handle(LogEvent *event);
 
     private:
         MongoServer* continueOpenServer(ConnectionSettings *connection, bool visible, int localport = 0);

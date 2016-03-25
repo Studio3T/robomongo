@@ -9,6 +9,7 @@
 #include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/ssh/ssh.h"
+#include "robomongo/core/domain/App.h"
 
 namespace Robomongo
 {
@@ -121,5 +122,14 @@ namespace Robomongo
             return;
 
         AppRegistry::instance().bus()->send(receiver, event);
+    }
+
+    void SshTunnelWorker::log(const std::string &message, bool error) {
+        if (_isQuiting)
+            return;
+
+        AppRegistry::instance().bus()->send(
+            AppRegistry::instance().app(),
+            new LogEvent(this, message, error));
     }
 }

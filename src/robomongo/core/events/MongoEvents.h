@@ -1041,4 +1041,17 @@ namespace Robomongo
         ListenSshConnectionResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
     };
+
+    class LogEvent : public Event
+    {
+    R_EVENT
+
+        LogEvent(QObject *sender, const std::string& message, bool error) :
+            Event(sender),
+            message(message),
+            error(error) {}
+
+        std::string message;
+        bool error; // true if this should be logged as error, false if just an information
+    };
 }

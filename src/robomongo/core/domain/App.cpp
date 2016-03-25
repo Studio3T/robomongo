@@ -35,6 +35,7 @@ namespace Robomongo
     App::App(EventBus *const bus) : QObject(),
         _bus(bus) {
         _bus->subscribe(this, EstablishSshConnectionResponse::Type);
+        _bus->subscribe(this, LogEvent::Type);
     }
 
     App::~App()
@@ -177,5 +178,11 @@ namespace Robomongo
         // record event->worker and delete when needed
     }
 
-
+    void App::handle(LogEvent *event) {
+        if (event->error) {
+            LOG_MSG(event->message, mongo::logger::LogSeverity::Error());
+        } else {
+            LOG_MSG(event->message, mongo::logger::LogSeverity::Info());
+        }
+    }
 }

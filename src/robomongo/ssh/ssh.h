@@ -25,7 +25,7 @@ struct ssh_session;
 /*
  * SSH Tunnel configuration
  */
-struct ssh_tunnel_config {
+typedef struct ssh_tunnel_config {
     enum ssh_auth_type authtype;
 
     // Keys and optional passphrase
@@ -51,13 +51,27 @@ struct ssh_tunnel_config {
 
     void *context; // pointer to user-defined data
     void (*logcallback)(struct ssh_session* session, char *message, int iserror);
-};
+} ssh_tunnel_config;
+
+struct ssh_session;
+
+typedef struct ssh_channel {
+    struct ssh_session* session;
+    LIBSSH2_CHANNEL *channel;
+    socket_type socket;
+    char *inbuf;
+    char *outbuf;
+    int bufsize;
+} ssh_channel;
 
 typedef struct ssh_session {
     socket_type localsocket;
     socket_type sshsocket;
     LIBSSH2_SESSION *sshsession;
-    struct ssh_tunnel_config *config;
+    ssh_tunnel_config *config;
+
+    ssh_channel **channels;
+    int channelssize; // number of channels
 
     char lasterror[2048];
 } ssh_session;

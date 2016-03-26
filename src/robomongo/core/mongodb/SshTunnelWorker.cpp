@@ -57,6 +57,8 @@ namespace Robomongo
         // QThread "_thread" and MongoWorker itself will be deleted later
         // (see MongoWorker() constructor)
 
+        log("*** Shutdown of SSH worker ***");
+
         ssh_session_close(_sshSession);
 
         delete _settings;

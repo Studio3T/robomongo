@@ -261,50 +261,79 @@ LIBSSH2_SESSION *ssh_connect(ssh_session *rsession, socket_type sock, enum ssh_a
 }
 
 
-typedef struct {
-    socket_type socket;
-    LIBSSH2_CHANNEL *channel;
-    char *inbuf;
-    char *outbuf;
-    int bufsize;
-} session_context;
-
-session_context *init_session_context(socket_type socket, LIBSSH2_CHANNEL *channel) {
+ssh_channel *ssh_channel_create(ssh_session* session, socket_type socket, LIBSSH2_CHANNEL *lchannel) {
     const int bufsize = 16384;
-    session_context *cnt = malloc(sizeof(session_context));
-    cnt->socket = socket;
-    cnt->channel = channel;
-    cnt->inbuf = malloc(sizeof(char) * bufsize);
-    cnt->outbuf = malloc(sizeof(char) * bufsize);
-    cnt->bufsize = bufsize;
-    return cnt;
+    ssh_channel **channels;
+
+    ssh_channel *channel = malloc(sizeof(ssh_channel));
+    channel->session = session;
+    channel->channel = lchannel;
+    channel->socket = socket;
+    channel->inbuf = malloc(sizeof(char) * bufsize);
+    channel->outbuf = malloc(sizeof(char) * bufsize);
+    channel->bufsize = bufsize;
+
+    channels = (ssh_channel**) realloc (session->channels, (session->channelssize + 1) * sizeof(ssh_channel*)); // acts like malloc when (session->channels == NULL)
+    if (!channels) {
+        ssh_log_error(session, "Not enough memory (call to realloc)");
+        return NULL;
+    }
+
+    channels[session->channelssize] = channel;
+
+    session->channels = channels;
+    ++session->channelssize;
+    return channel;
 }
 
-void free_session_context(session_context *context) {
-    free(context->inbuf);
-    free(context->outbuf);
-    // free socket and channel
-    free(context);
+void ssh_channel_close(ssh_channel* channel) {
+    int i;
+    ssh_session* session;
+    ssh_channel** channels;
+
+    session = channel->session;
+
+    for (i = 0; i < session->channelssize; i++) {
+        if (session->channels[i] != channel) {
+            continue;
+        }
+
+        if (session->channelssize == 1) {
+            channels = NULL;
+        } else {
+            channels = (ssh_channel**) malloc((session->channelssize - 1) * sizeof(ssh_channel*));
+            memcpy(channels, session->channels, i * sizeof(ssh_channel*));
+
+            if (i + 1 < session->channelssize) {
+                memcpy(channels + i, session->channels + i + 1, (session->channelssize - i - 1) * sizeof(ssh_channel*));
+            }
+        }
+
+        free(session->channels);
+        session->channels = channels;
+        --session->channelssize;
+
+        libssh2_channel_free(channel->channel);
+        free(channel->inbuf);
+        free(channel->outbuf);
+
+        // free socket and channel
+        free(channel);
+        ssh_log_msg(session, "done channel_close");
+        break;
+    }
+
 }
 
-static session_context *session_contexts[1000];
-static int session_context_empty_index = 0;
-
-void add_session_context(session_context *context) {
-    session_contexts[session_context_empty_index] = context;
-    ++session_context_empty_index;
-}
-
-session_context *find_session_context_by_socket(socket_type socket) {
-    for (int i = 0; i < session_context_empty_index; i++) {
-        if (session_contexts[i]->socket == socket) {
-            return session_contexts[i];
+ssh_channel* ssh_channel_find_by_socket(ssh_session* session, socket_type socket) {
+    for (int i = 0; i < session->channelssize; i++) {
+        if (session->channels[i]->socket == socket) {
+            return session->channels[i];
         }
     }
 
     return NULL;
 }
-
 
 int ssh_open_tunnel(ssh_session* connection) {
     socket_type local_socket = connection->localsocket;
@@ -370,7 +399,7 @@ int ssh_open_tunnel(ssh_session* connection) {
                                                               config->localip, config->localport);
                     if (!channel) {
                         ssh_log_error(connection, "Could not open the direct TCP/IP channel (channel2)");
-                        usleep(100 * 1000);
+                        usleep(200 * 1000);
                         continue;
                     }
 
@@ -378,19 +407,18 @@ int ssh_open_tunnel(ssh_session* connection) {
                     break;
                 }
 
-                session_context* context = init_session_context(newfd, channel);
-                add_session_context(context);
+                (void) ssh_channel_create(connection, newfd, channel);
                 continue;
             }
 
             if (i == ssh_socket) {
                 ssh_log_msg(connection, "Data on SSH socket is available");
 
-                ssh_log_msg(connection, "%d", session_context_empty_index);
+                ssh_log_msg(connection, "[%d]  <-  Number of channels", connection->channelssize);
 
                 int s = 0;
-                while (s < session_context_empty_index) {
-                    session_context *context = session_contexts[s];
+                while (s < connection->channelssize) {
+                    ssh_channel *context = connection->channels[s];
                     ++s;
 
                     while (1) {
@@ -436,7 +464,7 @@ int ssh_open_tunnel(ssh_session* connection) {
 
             ssh_log_msg(connection, "Data on client socket is available");
 
-            session_context *context = find_session_context_by_socket(i);
+            ssh_channel *context = ssh_channel_find_by_socket(connection, i);
 
 
             // Read data from a client
@@ -453,6 +481,7 @@ int ssh_open_tunnel(ssh_session* connection) {
                 // In both these cases, close and cleanup connection
                 close(context->socket); // bye!
                 FD_CLR(context->socket, &masterset); // remove from master set
+                ssh_channel_close(context);
 
                 continue;
             }
@@ -496,6 +525,8 @@ ssh_session* ssh_session_create(struct ssh_tunnel_config* config) {
         return NULL;
     }
     session->config = config;
+    session->channelssize = 0;
+    session->channels = NULL;
 
     ssh_log_msg(session, "ssh_open_tunnel: username: %s", config->username);
     ssh_log_msg(session, "ssh_open_tunnel: privatekeyfile: %s", config->privatekeyfile);

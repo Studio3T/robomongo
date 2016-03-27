@@ -32,7 +32,8 @@ target_link_libraries(ssh
 
 target_include_directories(ssh
     PUBLIC
-        ${CMAKE_BINARY_DIR}/src)
+        ${CMAKE_BINARY_DIR}/src
+        ${CMAKE_SOURCE_DIR}/src)
 
 print_target_include_dirs(ssh)
 
@@ -45,4 +46,5 @@ target_link_libraries(server
 
 target_include_directories(server
     PRIVATE
-        ${CMAKE_BINARY_DIR}/src)
+        ${CMAKE_BINARY_DIR}/src
+        ${CMAKE_SOURCE_DIR}/src)

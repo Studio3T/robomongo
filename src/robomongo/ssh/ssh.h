@@ -7,26 +7,27 @@
 extern "C" {
 #endif
 
-#ifdef WIN32
-#  define socket_type SOCKET
-#  define socket_invalid INVALID_SOCKET
+#ifdef _WIN32
+#  define rbm_socket_t SOCKET
+#  define rbm_socket_invalid INVALID_SOCKET
 #else
-#  define socket_type int
-#  define socket_invalid (-1)
+#  define rbm_socket_t int
+#  define rbm_socket_invalid (-1)
 #endif
 
-enum ssh_auth_type {
-    AUTH_NONE       = 0,
-    AUTH_PASSWORD   = 1,
-    AUTH_PUBLICKEY  = 2
+enum rbm_ssh_auth_type {
+    RBM_SSH_AUTH_TYPE_NONE       = 0,
+    RBM_SSH_AUTH_TYPE_PASSWORD   = 1,
+    RBM_SSH_AUTH_TYPE_PUBLICKEY  = 2
 };
 
-struct ssh_session;
+struct rbm_ssh_session;
+
 /*
  * SSH Tunnel configuration
  */
-typedef struct ssh_tunnel_config {
-    enum ssh_auth_type authtype;
+typedef struct rbm_ssh_tunnel_config {
+    enum rbm_ssh_auth_type authtype;
 
     // Keys and optional passphrase
     char *privatekeyfile;
@@ -50,39 +51,37 @@ typedef struct ssh_tunnel_config {
     unsigned int sshserverport;  // SSH port
 
     void *context; // pointer to user-defined data
-    void (*logcallback)(struct ssh_session* session, char *message, int iserror);
-} ssh_tunnel_config;
+    void (*logcallback)(struct rbm_ssh_session* session, char *message, int iserror);
+} rbm_ssh_tunnel_config;
 
-struct ssh_session;
-
-typedef struct ssh_channel {
-    struct ssh_session* session;
+typedef struct rbm_ssh_channel {
+    struct rbm_ssh_session* session;
     LIBSSH2_CHANNEL *channel;
-    socket_type socket;
+    rbm_socket_t socket;
     char *inbuf;
     char *outbuf;
     int bufsize;
-} ssh_channel;
+} rbm_ssh_channel;
 
-typedef struct ssh_session {
-    socket_type localsocket;
-    socket_type sshsocket;
+typedef struct rbm_ssh_session {
+    rbm_socket_t localsocket;
+    rbm_socket_t sshsocket;
     LIBSSH2_SESSION *sshsession;
-    ssh_tunnel_config *config;
+    rbm_ssh_tunnel_config *config;
 
-    ssh_channel **channels;
+    rbm_ssh_channel **channels;
     int channelssize; // number of channels
 
     char lasterror[2048];
-} ssh_session;
+} rbm_ssh_session;
 
-int ssh_init();
-void ssh_cleanup();
+int rbm_ssh_init();
+void rbm_ssh_cleanup();
 
-ssh_session* ssh_session_create(struct ssh_tunnel_config *config);
-void ssh_session_close(ssh_session *session);
+rbm_ssh_session* rbm_ssh_session_create(struct rbm_ssh_tunnel_config *config);
+void rbm_ssh_session_close(rbm_ssh_session *session);
 
-int ssh_open_tunnel(struct ssh_session *connection);
+int rbm_ssh_open_tunnel(struct rbm_ssh_session *connection);
 
 #ifdef __cplusplus
 }

@@ -8,8 +8,8 @@ QT_BEGIN_NAMESPACE
 class QThread;
 QT_END_NAMESPACE
 
-struct ssh_tunnel_config;
-struct ssh_session;
+struct rbm_ssh_tunnel_config;
+struct rbm_ssh_session;
 
 namespace Robomongo
 {
@@ -26,7 +26,7 @@ namespace Robomongo
         ~SshTunnelWorker();
         void stopAndDelete();
 
-        static void logCallbackHandler(ssh_session* session, char *message, int iserror);
+        static void logCallbackHandler(rbm_ssh_session* session, char *message, int iserror);
 
     protected Q_SLOTS: // handlers:
         void init();
@@ -40,8 +40,8 @@ namespace Robomongo
         QThread *_thread;
         QAtomicInteger<int> _isQuiting;
         ConnectionSettings* _settings;
-        ssh_tunnel_config* _sshConfig;
-        ssh_session* _sshSession;
+        rbm_ssh_tunnel_config* _sshConfig;
+        rbm_ssh_session* _sshSession;
 
         std::string _sshhost;
         int _sshport;

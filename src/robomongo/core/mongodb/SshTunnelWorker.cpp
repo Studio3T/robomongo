@@ -59,7 +59,7 @@ namespace Robomongo
 
         log("*** Shutdown of SSH worker ***");
 
-        ssh_session_close(_sshSession);
+        rbm_ssh_session_close(_sshSession);
 
         delete _settings;
         delete _sshConfig;
@@ -72,7 +72,7 @@ namespace Robomongo
 
     void SshTunnelWorker::handle(EstablishSshConnectionRequest *event) {
         try {
-            _sshConfig = new ssh_tunnel_config;
+            _sshConfig = new rbm_ssh_tunnel_config;
             _sshConfig->sshserverip = const_cast<char*>(_sshhost.c_str());
             _sshConfig->sshserverport = static_cast<unsigned int>(_sshport);
             _sshConfig->remotehost = const_cast<char*>(_remotehost.c_str());
@@ -85,12 +85,12 @@ namespace Robomongo
             _sshConfig->privatekeyfile = const_cast<char*>(_privateKeyFile.c_str());
             _sshConfig->publickeyfile = _publicKeyFile.empty() ? NULL : const_cast<char*>(_publicKeyFile.c_str());
             _sshConfig->passphrase = const_cast<char*>(_passphrase.c_str());
-            _sshConfig->authtype = (_authMethod == "publickey") ? AUTH_PUBLICKEY : AUTH_PASSWORD;
+            _sshConfig->authtype = (_authMethod == "publickey") ? RBM_SSH_AUTH_TYPE_PUBLICKEY : RBM_SSH_AUTH_TYPE_PASSWORD;
 
             _sshConfig->context = this;
             _sshConfig->logcallback = &SshTunnelWorker::logCallbackHandler;
 
-            if ((_sshSession = ssh_session_create(_sshConfig)) == 0) {
+            if ((_sshSession = rbm_ssh_session_create(_sshConfig)) == 0) {
                 throw std::runtime_error(_sshSession->lasterror);
             }
 
@@ -106,7 +106,7 @@ namespace Robomongo
 
     void SshTunnelWorker::handle(ListenSshConnectionRequest *event) {
         try {
-            int rc = ssh_open_tunnel(_sshSession);
+            int rc = rbm_ssh_open_tunnel(_sshSession);
             if (rc != 0) {
                 throw std::runtime_error("Failed to open SSH tunnel");
             }
@@ -137,7 +137,7 @@ namespace Robomongo
             new LogEvent(this, message, error));
     }
 
-    void SshTunnelWorker::logCallbackHandler(ssh_session *session, char *message, int iserror) {
+    void SshTunnelWorker::logCallbackHandler(rbm_ssh_session *session, char *message, int iserror) {
         static_cast<SshTunnelWorker*>(session->config->context)->log(message, iserror == 1);
     }
 }

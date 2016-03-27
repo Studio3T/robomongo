@@ -17,7 +17,7 @@
 
 int main(int argc, char *argv[], char** envp)
 {
-    if (ssh_init()) {
+    if (rbm_ssh_init()) {
         return 1;
     }
 
@@ -62,9 +62,9 @@ int main(int argc, char *argv[], char** envp)
     int x = (screenGeometry.width() - win.width()) / 2;
     int y = (screenGeometry.height() - win.height()) / 2;
     win.move(x, y);
-
-    // And, finally, show it
     win.show();
 
-    return app.exec();
+    int rc = app.exec();
+    rbm_ssh_cleanup();
+    return rc;
 }

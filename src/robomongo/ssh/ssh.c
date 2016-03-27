@@ -1,5 +1,6 @@
+#include "ssh.h"
+
 #include "robomongo/ssh/libssh2_config.h"
-#include <libssh2.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -33,13 +34,11 @@
 #define INADDR_NONE (in_addr_t)-1
 #endif
 
-#include "ssh.h"
-
 /*
  * Initialises Sockets and Libssh
  * Returns 0 if initialization succeeds
  */
-int ssh_init() {
+int rbm_ssh_init() {
     int err;
 #ifdef WIN32
     WSADATA wsadata;
@@ -65,7 +64,7 @@ int ssh_init() {
 /*
  * Cleanups Sockets and Libssh
  */
-void ssh_cleanup() {
+void rbm_ssh_cleanup() {
     libssh2_exit();
 
 #ifdef WIN32
@@ -73,7 +72,7 @@ void ssh_cleanup() {
 #endif
 }
 
-static void ssh_log_msg(ssh_session* session, const char *format, ...) {
+static void ssh_log_msg(rbm_ssh_session* session, const char *format, ...) {
     const int buf_size = 2000;
     char buf[buf_size];
     va_list args;
@@ -87,7 +86,7 @@ static void ssh_log_msg(ssh_session* session, const char *format, ...) {
     va_end(args);
 }
 
-static void ssh_log_error(ssh_session* session, const char *format, ...) {
+static void ssh_log_error(rbm_ssh_session* session, const char *format, ...) {
     int errsave = errno;
     const int buf_size = 2000;
     char buf[buf_size];
@@ -111,13 +110,13 @@ static void ssh_log_error(ssh_session* session, const char *format, ...) {
 /*
  * Returns socket if succeed, otherwise -1 on error
  */
-static socket_type socket_connect(ssh_session* session, char *ip, int port) {
-    socket_type sock;
+static rbm_socket_t socket_connect(rbm_ssh_session* session, char *ip, int port) {
+    rbm_socket_t sock;
     struct sockaddr_in sin;
 
     /* Connect to SSH server */
     sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (sock == socket_invalid) {
+    if (sock == rbm_socket_invalid) {
         ssh_log_error(session, "Failed to open socket");
         return -1;
     }
@@ -140,14 +139,14 @@ static socket_type socket_connect(ssh_session* session, char *ip, int port) {
 /*
  * Returns socket (binded and in listen state) if succeed, otherwise -1 on error
  */
-socket_type socket_listen(ssh_session *rsession, char *ip, int *port) {
-    socket_type listensock;
+rbm_socket_t socket_listen(rbm_ssh_session *rsession, char *ip, int *port) {
+    rbm_socket_t listensock;
     struct sockaddr_in sin;
     int sockopt;
     socklen_t sinlen;
 
     listensock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (listensock == socket_invalid) {
+    if (listensock == rbm_socket_invalid) {
         ssh_log_error(rsession, "Failed to open socket");
         return -1;
     }
@@ -185,9 +184,9 @@ socket_type socket_listen(ssh_session *rsession, char *ip, int *port) {
 /*
  * Returns 0 if error.
  */
-LIBSSH2_SESSION *ssh_connect(ssh_session *rsession, socket_type sock, enum ssh_auth_type type, char *username, char *password,
+LIBSSH2_SESSION *ssh_connect(rbm_ssh_session *rsession, rbm_socket_t sock, enum rbm_ssh_auth_type type, char *username, char *password,
                              char *publickeypath, char *privatekeypath, char *passphrase) {
-    int rc, i, auth = AUTH_NONE;
+    int rc, i, auth = RBM_SSH_AUTH_TYPE_NONE;
     LIBSSH2_SESSION *session;
     const char *fingerprint;
     char *userauthlist;
@@ -231,13 +230,13 @@ LIBSSH2_SESSION *ssh_connect(ssh_session *rsession, socket_type sock, enum ssh_a
     userauthlist = libssh2_userauth_list(session, username, strlen(username));
     ssh_log_msg(rsession, "Authentication methods: %s", userauthlist);
     if (strstr(userauthlist, "password"))
-        auth |= AUTH_PASSWORD;
+        auth |= RBM_SSH_AUTH_TYPE_PASSWORD;
     if (strstr(userauthlist, "publickey"))
-        auth |= AUTH_PUBLICKEY;
+        auth |= RBM_SSH_AUTH_TYPE_PUBLICKEY;
 
     // If authentication by password is available
     // and was chosen by the user, then use it
-    if (auth & AUTH_PASSWORD && type == AUTH_PASSWORD) {
+    if (auth & RBM_SSH_AUTH_TYPE_PASSWORD && type == RBM_SSH_AUTH_TYPE_PASSWORD) {
         if (libssh2_userauth_password(session, username, password)) {
             ssh_log_error(rsession, "Authentication by password failed");
             return 0;
@@ -245,7 +244,7 @@ LIBSSH2_SESSION *ssh_connect(ssh_session *rsession, socket_type sock, enum ssh_a
         ssh_log_msg(rsession, "Authentication by password succeeded.");
         // If authentication by key is available
         // and was chosen by the user, then use it
-    } else if (auth & AUTH_PUBLICKEY && type == AUTH_PUBLICKEY) {
+    } else if (auth & RBM_SSH_AUTH_TYPE_PUBLICKEY && type == RBM_SSH_AUTH_TYPE_PUBLICKEY) {
         rc = libssh2_userauth_publickey_fromfile(session, username, publickeypath, privatekeypath, passphrase);
         if (rc) {
             ssh_log_error(rsession, "Authentication by key (%s) failed (Error %d)", privatekeypath, rc);
@@ -261,11 +260,11 @@ LIBSSH2_SESSION *ssh_connect(ssh_session *rsession, socket_type sock, enum ssh_a
 }
 
 
-ssh_channel *ssh_channel_create(ssh_session* session, socket_type socket, LIBSSH2_CHANNEL *lchannel) {
+rbm_ssh_channel *ssh_channel_create(rbm_ssh_session* session, rbm_socket_t socket, LIBSSH2_CHANNEL *lchannel) {
     const int bufsize = 16384;
-    ssh_channel **channels;
+    rbm_ssh_channel **channels;
 
-    ssh_channel *channel = malloc(sizeof(ssh_channel));
+    rbm_ssh_channel *channel = malloc(sizeof(rbm_ssh_channel));
     channel->session = session;
     channel->channel = lchannel;
     channel->socket = socket;
@@ -273,7 +272,7 @@ ssh_channel *ssh_channel_create(ssh_session* session, socket_type socket, LIBSSH
     channel->outbuf = malloc(sizeof(char) * bufsize);
     channel->bufsize = bufsize;
 
-    channels = (ssh_channel**) realloc (session->channels, (session->channelssize + 1) * sizeof(ssh_channel*)); // acts like malloc when (session->channels == NULL)
+    channels = (rbm_ssh_channel**) realloc (session->channels, (session->channelssize + 1) * sizeof(rbm_ssh_channel*)); // acts like malloc when (session->channels == NULL)
     if (!channels) {
         ssh_log_error(session, "Not enough memory (call to realloc)");
         return NULL;
@@ -286,10 +285,10 @@ ssh_channel *ssh_channel_create(ssh_session* session, socket_type socket, LIBSSH
     return channel;
 }
 
-void ssh_channel_close(ssh_channel* channel) {
+void ssh_channel_close(rbm_ssh_channel* channel) {
     int i;
-    ssh_session* session;
-    ssh_channel** channels;
+    rbm_ssh_session* session;
+    rbm_ssh_channel** channels;
 
     session = channel->session;
 
@@ -301,11 +300,11 @@ void ssh_channel_close(ssh_channel* channel) {
         if (session->channelssize == 1) {
             channels = NULL;
         } else {
-            channels = (ssh_channel**) malloc((session->channelssize - 1) * sizeof(ssh_channel*));
-            memcpy(channels, session->channels, i * sizeof(ssh_channel*));
+            channels = (rbm_ssh_channel**) malloc((session->channelssize - 1) * sizeof(rbm_ssh_channel*));
+            memcpy(channels, session->channels, i * sizeof(rbm_ssh_channel*));
 
             if (i + 1 < session->channelssize) {
-                memcpy(channels + i, session->channels + i + 1, (session->channelssize - i - 1) * sizeof(ssh_channel*));
+                memcpy(channels + i, session->channels + i + 1, (session->channelssize - i - 1) * sizeof(rbm_ssh_channel*));
             }
         }
 
@@ -325,7 +324,7 @@ void ssh_channel_close(ssh_channel* channel) {
 
 }
 
-ssh_channel* ssh_channel_find_by_socket(ssh_session* session, socket_type socket) {
+rbm_ssh_channel* ssh_channel_find_by_socket(rbm_ssh_session* session, rbm_socket_t socket) {
     for (int i = 0; i < session->channelssize; i++) {
         if (session->channels[i]->socket == socket) {
             return session->channels[i];
@@ -335,18 +334,18 @@ ssh_channel* ssh_channel_find_by_socket(ssh_session* session, socket_type socket
     return NULL;
 }
 
-int ssh_open_tunnel(ssh_session* connection) {
-    socket_type local_socket = connection->localsocket;
-    socket_type ssh_socket = connection->sshsocket;
+int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
+    rbm_socket_t local_socket = connection->localsocket;
+    rbm_socket_t ssh_socket = connection->sshsocket;
     LIBSSH2_SESSION* session = connection->sshsession;
-    struct ssh_tunnel_config* config = connection->config;
+    struct rbm_ssh_tunnel_config* config = connection->config;
 
 
     int fdmax;       // maximum file descriptor number
     int i;
     fd_set masterset, readset;   // master file descriptor list
     FD_ZERO(&masterset);
-    socket_type newfd;
+    rbm_socket_t newfd;
 
     // add the listener to the master set
     FD_SET(local_socket, &masterset);
@@ -418,7 +417,7 @@ int ssh_open_tunnel(ssh_session* connection) {
 
                 int s = 0;
                 while (s < connection->channelssize) {
-                    ssh_channel *context = connection->channels[s];
+                    rbm_ssh_channel *context = connection->channels[s];
                     ++s;
 
                     while (1) {
@@ -464,7 +463,7 @@ int ssh_open_tunnel(ssh_session* connection) {
 
             ssh_log_msg(connection, "Data on client socket is available");
 
-            ssh_channel *context = ssh_channel_find_by_socket(connection, i);
+            rbm_ssh_channel *context = ssh_channel_find_by_socket(connection, i);
 
 
             // Read data from a client
@@ -513,14 +512,14 @@ int ssh_open_tunnel(ssh_session* connection) {
     return 0;
 }
 
-void ssh_session_close(ssh_session *session) {
+void rbm_ssh_session_close(rbm_ssh_session *session) {
     // TODO: perform session cleanup
     free(session);
 }
 
-// Returns 0 on error, valid ssh_session* if no errors
-ssh_session* ssh_session_create(struct ssh_tunnel_config* config) {
-    ssh_session* session = (ssh_session*) malloc(sizeof(ssh_session));
+// Returns 0 on error, valid rbm_ssh_session* if no errors
+rbm_ssh_session* rbm_ssh_session_create(struct rbm_ssh_tunnel_config *config) {
+    rbm_ssh_session* session = (rbm_ssh_session*) malloc(sizeof(rbm_ssh_session));
     if (!session) {
         return NULL;
     }
@@ -528,11 +527,11 @@ ssh_session* ssh_session_create(struct ssh_tunnel_config* config) {
     session->channelssize = 0;
     session->channels = NULL;
 
-    ssh_log_msg(session, "ssh_open_tunnel: username: %s", config->username);
-    ssh_log_msg(session, "ssh_open_tunnel: privatekeyfile: %s", config->privatekeyfile);
+    ssh_log_msg(session, "rbm_ssh_open_tunnel: username: %s", config->username);
+    ssh_log_msg(session, "rbm_ssh_open_tunnel: privatekeyfile: %s", config->privatekeyfile);
     ssh_log_msg(session, "Connecting to %s...", config->sshserverip);
 
-    socket_type ssh_socket = socket_connect(session, config->sshserverip, config->sshserverport);
+    rbm_socket_t ssh_socket = socket_connect(session, config->sshserverip, config->sshserverport);
     if (ssh_socket == -1) {
         return NULL; // errors are already logged by socket_connect
     }
@@ -543,7 +542,7 @@ ssh_session* ssh_session_create(struct ssh_tunnel_config* config) {
         return NULL; // errors are already logged by ssh_connect
     }
 
-    socket_type local_socket = socket_listen(session, config->localip, (int *) &config->localport);
+    rbm_socket_t local_socket = socket_listen(session, config->localip, (int *) &config->localport);
     if (local_socket == -1) {
         return NULL; // errors are already logged by socket_listen
     }

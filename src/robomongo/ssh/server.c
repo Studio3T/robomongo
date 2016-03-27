@@ -3,9 +3,9 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
-    struct ssh_tunnel_config config;
+    struct rbm_ssh_tunnel_config config;
 
-    config.authtype = AUTH_PUBLICKEY;
+    config.authtype = RBM_SSH_AUTH_TYPE_PUBLICKEY;
     config.localip = "127.0.0.1";
     config.localport = 27040;
     config.username = "dmitry";
@@ -20,20 +20,20 @@ int main(int argc, char *argv[]) {
 
     int err = 0;
 
-    err = ssh_init();
+    err = rbm_ssh_init();
     if (err) {
         return 1; // errors are already logged by init
     }
 
     int res = 0;
     while (1) {
-        ssh_session* connection;
-        connection = ssh_session_create(&config);
+        rbm_ssh_session* connection;
+        connection = rbm_ssh_session_create(&config);
         if (!connection) {
             break;
         }
 
-        res = ssh_open_tunnel(connection);
+        res = rbm_ssh_open_tunnel(connection);
         if (res == 2) {
             usleep(100 * 1000);
             continue;
@@ -42,5 +42,5 @@ int main(int argc, char *argv[]) {
         break;
     }
 
-    ssh_cleanup();
+    rbm_ssh_cleanup();
 }

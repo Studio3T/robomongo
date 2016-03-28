@@ -133,6 +133,8 @@ namespace Robomongo
                 throw std::runtime_error(_sshSession->lasterror);
             }
 
+            log("SSH tunnel stopped.", false);
+
         } catch (const std::exception& ex) {
             reply(event->sender(),
                   new ListenSshConnectionResponse(this, EventError(ex.what()), _settings));

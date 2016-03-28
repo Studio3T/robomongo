@@ -260,6 +260,7 @@ LIBSSH2_SESSION *ssh_connect(rbm_ssh_session *rsession, rbm_socket_t sock, enum 
 }
 
 
+// Returns NULL on error, or valid rbm_ssh_channel otherwise.
 rbm_ssh_channel *ssh_channel_create(rbm_ssh_session* session, rbm_socket_t socket, LIBSSH2_CHANNEL *lchannel) {
     const int bufsize = 16384;
     rbm_ssh_channel **channels;
@@ -270,7 +271,7 @@ rbm_ssh_channel *ssh_channel_create(rbm_ssh_session* session, rbm_socket_t socke
     channel->socket = socket;
     channel->inbuf = malloc(sizeof(char) * bufsize);
     channel->outbuf = malloc(sizeof(char) * bufsize);
-    channel->bufsize = bufsize;
+    channel->bufmaxsize = bufsize;
 
     channels = (rbm_ssh_channel**) realloc (session->channels, (session->channelssize + 1) * sizeof(rbm_ssh_channel*)); // acts like malloc when (session->channels == NULL)
     if (!channels) {
@@ -336,7 +337,6 @@ void ssh_channel_close(rbm_ssh_channel* channel) {
         ssh_log_msg(session, "Channel closed");
         break;
     }
-
 }
 
 rbm_ssh_channel* ssh_channel_find_by_socket(rbm_ssh_session* session, rbm_socket_t socket) {
@@ -349,18 +349,178 @@ rbm_ssh_channel* ssh_channel_find_by_socket(rbm_ssh_session* session, rbm_socket
     return NULL;
 }
 
-int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
+static int handle_new_client_connections(rbm_ssh_session *connection, int *fdmax, fd_set *masterset) {
     rbm_socket_t local_socket = connection->localsocket;
     rbm_socket_t ssh_socket = connection->sshsocket;
     LIBSSH2_SESSION* session = connection->sshsession;
     struct rbm_ssh_tunnel_config* config = connection->config;
+    rbm_socket_t newfd = rbm_socket_invalid;
+    const int ERROR = -1;
+    const int SUCCESS = 0;
 
+    ssh_log_msg(connection, "Data on accept socket is available");
+
+    struct sockaddr_in remoteaddr;
+    socklen_t slen = sizeof(remoteaddr);
+
+    // handle new connections
+    if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
+        ssh_log_error(connection, "Error on accept()");
+        return ERROR;
+    } else {
+        FD_SET(newfd, masterset); // add to master set
+
+        if (newfd > *fdmax) {       // keep track of the maximum
+            *fdmax = newfd;
+        }
+
+        ssh_log_msg(connection, "New connection from %s on socket %d", inet_ntoa(remoteaddr.sin_addr), newfd);
+    }
+
+    LIBSSH2_CHANNEL *channel = NULL;
+    int maxattempts = 45;
+    int attempts = 0;
+    while (attempts < maxattempts) {
+        ++attempts;
+        channel = libssh2_channel_direct_tcpip_ex(session, config->remotehost, config->remoteport,
+                                                  config->localip, config->localport);
+        if (!channel) {
+            ssh_log_error(connection, "Could not open the direct TCP/IP channel (channel2)");
+            usleep(200 * 1000);
+            continue;
+        }
+
+        ssh_log_msg(connection, "Channel successfully created!");
+        break;
+    }
+
+    if (!channel) {
+        ssh_log_error(connection, "Failed to create SSH channel in %d attempts", maxattempts);
+        return ERROR;
+    }
+
+    if (ssh_channel_create(connection, newfd, channel) == NULL) {
+        return ERROR;
+    }
+
+    return SUCCESS;
+}
+
+//  0: success
+// -1:
+static int handle_ssh_connections(rbm_ssh_session *connection) {
+    const int SUCCESS = 0;
+    struct rbm_ssh_tunnel_config* config = connection->config;
+
+    ssh_log_msg(connection, "Data on SSH socket is available");
+    ssh_log_msg(connection, "[%d]  <-  Number of channels", connection->channelssize);
+
+    if (connection->channelssize == 0) {
+        rbm_ssh_session_close(connection);
+        return SUCCESS;
+    }
+
+    int s = 0;
+    while (s < connection->channelssize) {
+        rbm_ssh_channel *context = connection->channels[s];
+        ++s;
+
+        while (1) {
+            int len;
+            len = libssh2_channel_read(context->channel, context->outbuf, context->bufmaxsize);
+            if (LIBSSH2_ERROR_EAGAIN == len)
+                break;
+            else if (len < 0) {
+
+                // ETIMEDOUT (60) Connection timed out
+                // We need to reconnect
+                if (errno == 60) {
+                    return 2;
+                }
+
+                ssh_log_error(connection, "libssh2_channel_read: %d", (int)len);
+                break;
+            }
+
+            ssh_log_msg(connection, "Received %d bytes from tunnel", len);
+
+            int wr = 0;
+            int rc = 0; // result
+            while (wr < len) {
+                rc = send(context->socket, context->outbuf + wr, len - wr, 0);
+                if (rc <= 0) {
+                    ssh_log_error(connection, "Failure to write data to client");
+                    break;
+                }
+                wr += rc;
+            }
+            if (libssh2_channel_eof(context->channel)) {
+                ssh_log_msg(connection, "The server at %s:%d disconnected!\n",
+                            config->remotehost, config->remoteport);
+                break;
+            }
+        }
+    }
+
+    return SUCCESS;
+}
+
+static void handle_client_connections(rbm_ssh_session *connection, rbm_socket_t i, fd_set *masterset) {
+    ssh_log_msg(connection, "Data on client socket is available");
+
+    rbm_ssh_channel *context = ssh_channel_find_by_socket(connection, i);
+    if (!context) {
+        close(i); // bye!
+        FD_CLR(i, masterset); // remove from master set
+        return;
+    }
+
+    // Read data from a client
+    int nbytes = recv(context->socket, context->inbuf, context->bufmaxsize, 0);
+    if (nbytes <= 0) {
+        if (nbytes == 0) {
+            // Normal situation
+            ssh_log_msg(connection, "Client disconnected");
+        } else {
+            // Got error
+            ssh_log_error(connection, "Error when recv()");
+        }
+
+        // In both these cases, close and cleanup connection
+        close(context->socket); // bye!
+        FD_CLR(context->socket, masterset); // remove from master set
+        ssh_channel_close(context);
+        return;
+    }
+    ssh_log_msg(connection, "Received %d bytes from client", nbytes);
+
+    // Write data to ssh tunnel
+    int wr = 0;
+    int rc = 0; // result
+    while (wr < nbytes) {
+        rc = libssh2_channel_write(context->channel, context->inbuf + wr, nbytes - wr);
+        if (LIBSSH2_ERROR_EAGAIN == rc) {
+            continue;
+        }
+        if (rc < 0) {
+            ssh_log_error(connection, "Failed to write to SSH channel");
+            return;
+        }
+        wr += rc;
+    }
+    ssh_log_msg(connection, "Written %d bytes to tunnel", wr);
+
+    return;
+}
+
+int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
+    rbm_socket_t local_socket = connection->localsocket;
+    rbm_socket_t ssh_socket = connection->sshsocket;
 
     int fdmax;       // maximum file descriptor number
     int i;
-    fd_set masterset, readset;   // master file descriptor list
+    fd_set masterset, readset;
     FD_ZERO(&masterset);
-    rbm_socket_t newfd;
 
     // add the listener to the master set
     FD_SET(local_socket, &masterset);
@@ -371,6 +531,7 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
 
     while (1) {
         readset = masterset; // copy it
+
         ssh_log_msg(connection, "* Okay, we are ready to select.");
         if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
             ssh_log_error(connection, "Error on select()");
@@ -381,157 +542,23 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
         // Run through the existing connections looking for data to read
         for(i = 0; i <= fdmax; i++) {
 
-            // Skip connections that are not ready
+            // Skip connections that are not available for reading
             if (!FD_ISSET(i, &readset))
                 continue;
 
             if (i == local_socket) {
-                ssh_log_msg(connection, "Data on accept socket is available");
-
-                struct sockaddr_in remoteaddr;
-                socklen_t slen = sizeof(remoteaddr);
-
-                // handle new connections
-                if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
-                    ssh_log_error(connection, "Error on accept()");
-                } else {
-                    FD_SET(newfd, &masterset); // add to master set
-
-                    if (newfd > fdmax) {       // keep track of the maximum
-                        fdmax = newfd;
-                    }
-
-                    ssh_log_msg(connection, "New connection from %s on socket %d", inet_ntoa(remoteaddr.sin_addr), newfd);
-                }
-
-                LIBSSH2_CHANNEL *channel = NULL;
-                int maxattempts = 25;
-                int attempts = 0;
-                while (attempts < maxattempts) {
-                    ++attempts;
-                    channel = libssh2_channel_direct_tcpip_ex(session, config->remotehost, config->remoteport,
-                                                              config->localip, config->localport);
-                    if (!channel) {
-                        ssh_log_error(connection, "Could not open the direct TCP/IP channel (channel2)");
-                        usleep(200 * 1000);
-                        continue;
-                    }
-
-                    ssh_log_msg(connection, "Channel successfully created!");
-                    break;
-                }
-
-                (void) ssh_channel_create(connection, newfd, channel);
+                handle_new_client_connections(connection, &fdmax, &masterset);
                 continue;
             }
 
             if (i == ssh_socket) {
-                ssh_log_msg(connection, "Data on SSH socket is available");
-                ssh_log_msg(connection, "[%d]  <-  Number of channels", connection->channelssize);
-
-                if (connection->channelssize == 0) {
-                    rbm_ssh_session_close(connection);
-                    return 0;
-                }
-
-                int s = 0;
-                while (s < connection->channelssize) {
-                    rbm_ssh_channel *context = connection->channels[s];
-                    ++s;
-
-                    while (1) {
-                        int len;
-                        len = libssh2_channel_read(context->channel, context->outbuf, context->bufsize);
-                        if (LIBSSH2_ERROR_EAGAIN == len)
-                            break;
-                        else if (len < 0) {
-
-                            // ETIMEDOUT (60) Connection timed out
-                            // We need to reconnect
-                            if (errno == 60) {
-                                return 2;
-                            }
-
-                            ssh_log_error(connection, "libssh2_channel_read: %d", (int)len);
-                            break;
-                        }
-
-                        ssh_log_msg(connection, "Received %d bytes from tunnel", len);
-
-                        int wr = 0;
-                        int rc = 0; // result
-                        while (wr < len) {
-                            rc = send(context->socket, context->outbuf + wr, len - wr, 0);
-                            if (rc <= 0) {
-                                ssh_log_error(connection, "Failure to write data to client");
-                                break;
-                            }
-                            wr += rc;
-                        }
-                        if (libssh2_channel_eof(context->channel)) {
-                            ssh_log_msg(connection, "The server at %s:%d disconnected!\n",
-                                    config->remotehost, config->remoteport);
-                            break;
-                        }
-                    }
-                }
-
-
+                handle_ssh_connections(connection);
                 continue;
             }
 
-            ssh_log_msg(connection, "Data on client socket is available");
-
-            rbm_ssh_channel *context = ssh_channel_find_by_socket(connection, i);
-            if (!context) {
-                close(i); // bye!
-                FD_CLR(i, &masterset); // remove from master set
-                continue;
-            }
-
-
-            // Read data from a client
-            int nbytes = recv(context->socket, context->inbuf, context->bufsize, 0);
-            if (nbytes <= 0) {
-                if (nbytes == 0) {
-                    // Normal situation
-                    ssh_log_msg(connection, "Client disconnected");
-                } else {
-                    // Got error
-                    ssh_log_error(connection, "Error when recv()");
-                }
-
-                // In both these cases, close and cleanup connection
-                close(context->socket); // bye!
-                FD_CLR(context->socket, &masterset); // remove from master set
-                ssh_channel_close(context);
-
-                continue;
-            }
-
-            ssh_log_msg(connection, "Received %d bytes from client", nbytes);
-
-
-            // Write data to ssh tunnel
-            int wr = 0;
-            int rc = 0; // result
-            while (wr < nbytes) {
-                rc = libssh2_channel_write(context->channel, context->inbuf + wr, nbytes - wr);
-                if (LIBSSH2_ERROR_EAGAIN == rc) {
-                    continue;
-                }
-                if (rc < 0) {
-                    ssh_log_error(connection, "Failed to write to SSH channel");
-                    break;
-
-                }
-                wr += rc;
-            }
-            ssh_log_msg(connection, "Written %d bytes to tunnel", wr);
+            handle_client_connections(connection, i, &masterset);
         }
     }
-
-    // -------------------------------------
 
     return 0;
 }

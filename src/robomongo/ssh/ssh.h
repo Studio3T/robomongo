@@ -60,7 +60,7 @@ typedef struct rbm_ssh_channel {
     rbm_socket_t socket;
     char *inbuf;
     char *outbuf;
-    int bufsize;
+    int bufmaxsize;
 } rbm_ssh_channel;
 
 typedef struct rbm_ssh_session {

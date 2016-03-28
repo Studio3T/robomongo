@@ -15,6 +15,12 @@ extern "C" {
 #  define rbm_socket_invalid (-1)
 #endif
 
+enum rbm_ssh_log_type {
+    RBM_SSH_LOG_TYPE_ERROR  = 1,
+    RBM_SSH_LOG_TYPE_INFO   = 2,
+    RBM_SSH_LOG_TYPE_DEBUG  = 100 // log as much as possible
+};
+
 enum rbm_ssh_auth_type {
     RBM_SSH_AUTH_TYPE_NONE       = 0,
     RBM_SSH_AUTH_TYPE_PASSWORD   = 1,

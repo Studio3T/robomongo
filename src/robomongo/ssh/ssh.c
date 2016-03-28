@@ -72,38 +72,45 @@ void rbm_ssh_cleanup() {
 #endif
 }
 
+/*
+ * errsave: use 0, if you are not logging errors (i.e. errno == 0).
+ */
+static void ssh_log_v(rbm_ssh_session* session, enum rbm_ssh_log_type type, const char *format, va_list args, int errsave) {
+    const int bufsize = 2000;
+    char buf[bufsize];
+    vsnprintf(buf, bufsize, format, args);
+
+    if (type == RBM_SSH_LOG_TYPE_ERROR) {
+        if (errsave) {
+            sprintf(session->lasterror, "%s. %s. (Error #%d)", strerror(errsave), buf, errsave);
+        } else {
+            sprintf(session->lasterror, "%s", buf);
+        }
+
+        fprintf(stderr, "%s\n", session->lasterror);
+        session->config->logcallback(session, session->lasterror, type);
+        return;
+    }
+
+    if (type == RBM_SSH_LOG_TYPE_INFO ||
+        type == RBM_SSH_LOG_TYPE_DEBUG) {
+        printf("%s\n", buf);
+        session->config->logcallback(session, buf, type);
+    }
+}
+
 static void ssh_log_msg(rbm_ssh_session* session, const char *format, ...) {
-    const int buf_size = 2000;
-    char buf[buf_size];
     va_list args;
-
     va_start(args, format);
-    vsnprintf(buf, buf_size, format, args);
-
-    printf("%s\n", buf);
-    session->config->logcallback(session, buf, 0);
-
+    ssh_log_v(session, RBM_SSH_LOG_TYPE_INFO, format, args, 0);
     va_end(args);
 }
 
 static void ssh_log_error(rbm_ssh_session* session, const char *format, ...) {
     int errsave = errno;
-    const int buf_size = 2000;
-    char buf[buf_size];
     va_list args;
-
     va_start(args, format);
-    vsnprintf(buf, buf_size, format, args);
-
-    if (errsave) {
-        sprintf(session->lasterror, "%s. %s. (Error #%d)", strerror(errsave), buf, errsave);
-    } else {
-        sprintf(session->lasterror, "%s", buf);
-    }
-
-    fprintf(stderr, "%s\n", session->lasterror);
-    session->config->logcallback(session, session->lasterror, 1);
-
+    ssh_log_v(session, RBM_SSH_LOG_TYPE_ERROR, format, args, errsave);
     va_end(args);
 }
 

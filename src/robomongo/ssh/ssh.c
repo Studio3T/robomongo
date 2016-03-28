@@ -92,17 +92,42 @@ static void ssh_log_v(rbm_ssh_session* session, enum rbm_ssh_log_type type, cons
         return;
     }
 
-    if (type == RBM_SSH_LOG_TYPE_INFO ||
-        type == RBM_SSH_LOG_TYPE_DEBUG) {
-        printf("%s\n", buf);
-        session->config->logcallback(session, buf, type);
-    }
+    if (type != RBM_SSH_LOG_TYPE_INFO &&
+        type != RBM_SSH_LOG_TYPE_DEBUG)
+        return;
+
+    if (type > session->config->loglevel)
+        return;
+
+    printf("%s\n", buf);
+    session->config->logcallback(session, buf, type);
 }
 
 static void ssh_log_msg(rbm_ssh_session* session, const char *format, ...) {
+    const int type = RBM_SSH_LOG_TYPE_INFO;
+
+    // For performance reasons, return as quick as possible,
+    // if this level of logging is not enabled
+    if (type > session->config->loglevel)
+        return;
+
     va_list args;
     va_start(args, format);
-    ssh_log_v(session, RBM_SSH_LOG_TYPE_INFO, format, args, 0);
+    ssh_log_v(session, type, format, args, 0);
+    va_end(args);
+}
+
+static void ssh_log_debug(rbm_ssh_session* session, const char *format, ...) {
+    const int type = RBM_SSH_LOG_TYPE_DEBUG;
+
+    // For performance reasons, return as quick as possible,
+    // if this level of logging is not enabled
+    if (type > session->config->loglevel)
+        return;
+
+    va_list args;
+    va_start(args, format);
+    ssh_log_v(session, type, format, args, 0);
     va_end(args);
 }
 
@@ -198,10 +223,10 @@ LIBSSH2_SESSION *ssh_connect(rbm_ssh_session *rsession, rbm_socket_t sock, enum 
     const char *fingerprint;
     char *userauthlist;
 
-    ssh_log_msg(rsession, "ssh_connect: username: %s", username);
-    ssh_log_msg(rsession, "ssh_connect: password: %s", password);
-    ssh_log_msg(rsession, "ssh_connect: privatekeyfile: %s", privatekeypath);
-    ssh_log_msg(rsession, "ssh_connect: publickeyfile: %s", publickeypath);
+    ssh_log_debug(rsession, "ssh_connect: username: %s", username);
+    ssh_log_debug(rsession, "ssh_connect: password: %s", password);
+    ssh_log_debug(rsession, "ssh_connect: privatekeyfile: %s", privatekeypath);
+    ssh_log_debug(rsession, "ssh_connect: publickeyfile: %s", publickeypath);
 
     /* Create a session instance */
     session = libssh2_session_init();
@@ -235,7 +260,7 @@ LIBSSH2_SESSION *ssh_connect(rbm_ssh_session *rsession, rbm_socket_t sock, enum 
 
     /* check what authentication methods are available */
     userauthlist = libssh2_userauth_list(session, username, strlen(username));
-    ssh_log_msg(rsession, "Authentication methods: %s", userauthlist);
+    ssh_log_debug(rsession, "Authentication methods: %s", userauthlist);
     if (strstr(userauthlist, "password"))
         auth |= RBM_SSH_AUTH_TYPE_PASSWORD;
     if (strstr(userauthlist, "publickey"))
@@ -248,7 +273,7 @@ LIBSSH2_SESSION *ssh_connect(rbm_ssh_session *rsession, rbm_socket_t sock, enum 
             ssh_log_error(rsession, "Authentication by password failed");
             return 0;
         }
-        ssh_log_msg(rsession, "Authentication by password succeeded.");
+        ssh_log_debug(rsession, "Authentication by password succeeded.");
         // If authentication by key is available
         // and was chosen by the user, then use it
     } else if (auth & RBM_SSH_AUTH_TYPE_PUBLICKEY && type == RBM_SSH_AUTH_TYPE_PUBLICKEY) {
@@ -257,7 +282,7 @@ LIBSSH2_SESSION *ssh_connect(rbm_ssh_session *rsession, rbm_socket_t sock, enum 
             ssh_log_error(rsession, "Authentication by key (%s) failed (Error %d)", privatekeypath, rc);
             return 0;
         }
-        ssh_log_msg(rsession, "Authentication by key succeeded.");
+        ssh_log_debug(rsession, "Authentication by key succeeded.");
     } else {
         ssh_log_error(rsession, "No supported authentication methods found");
         return 0;
@@ -341,7 +366,7 @@ void ssh_channel_close(rbm_ssh_channel* channel) {
         // 4. Free channel struct
         free(channel);
 
-        ssh_log_msg(session, "Channel closed");
+        ssh_log_debug(session, "Channel closed");
         break;
     }
 }
@@ -365,7 +390,7 @@ static int handle_new_client_connections(rbm_ssh_session *connection, int *fdmax
     const int ERROR = -1;
     const int SUCCESS = 0;
 
-    ssh_log_msg(connection, "Data on accept socket is available");
+    ssh_log_debug(connection, "Data on accept socket is available");
 
     struct sockaddr_in remoteaddr;
     socklen_t slen = sizeof(remoteaddr);
@@ -381,7 +406,7 @@ static int handle_new_client_connections(rbm_ssh_session *connection, int *fdmax
             *fdmax = newfd;
         }
 
-        ssh_log_msg(connection, "New connection from %s on socket %d", inet_ntoa(remoteaddr.sin_addr), newfd);
+        ssh_log_debug(connection, "New connection from %s on socket %d", inet_ntoa(remoteaddr.sin_addr), newfd);
     }
 
     LIBSSH2_CHANNEL *channel = NULL;
@@ -397,7 +422,7 @@ static int handle_new_client_connections(rbm_ssh_session *connection, int *fdmax
             continue;
         }
 
-        ssh_log_msg(connection, "Channel successfully created!");
+        ssh_log_debug(connection, "Channel successfully created!");
         break;
     }
 
@@ -419,8 +444,8 @@ static int handle_ssh_connections(rbm_ssh_session *connection) {
     const int SUCCESS = 0;
     struct rbm_ssh_tunnel_config* config = connection->config;
 
-    ssh_log_msg(connection, "Data on SSH socket is available");
-    ssh_log_msg(connection, "[%d]  <-  Number of channels", connection->channelssize);
+    ssh_log_debug(connection, "Data on SSH socket is available");
+    ssh_log_debug(connection, "[%d]  <-  Number of channels", connection->channelssize);
 
     if (connection->channelssize == 0) {
         rbm_ssh_session_close(connection);
@@ -449,7 +474,7 @@ static int handle_ssh_connections(rbm_ssh_session *connection) {
                 break;
             }
 
-            ssh_log_msg(connection, "Received %d bytes from tunnel", len);
+            ssh_log_debug(connection, "Received %d bytes from tunnel", len);
 
             int wr = 0;
             int rc = 0; // result
@@ -462,7 +487,7 @@ static int handle_ssh_connections(rbm_ssh_session *connection) {
                 wr += rc;
             }
             if (libssh2_channel_eof(context->channel)) {
-                ssh_log_msg(connection, "The server at %s:%d disconnected!\n",
+                ssh_log_debug(connection, "The server at %s:%d disconnected!\n",
                             config->remotehost, config->remoteport);
                 break;
             }
@@ -473,7 +498,7 @@ static int handle_ssh_connections(rbm_ssh_session *connection) {
 }
 
 static void handle_client_connections(rbm_ssh_session *connection, rbm_socket_t i, fd_set *masterset) {
-    ssh_log_msg(connection, "Data on client socket is available");
+    ssh_log_debug(connection, "Data on client socket is available");
 
     rbm_ssh_channel *context = ssh_channel_find_by_socket(connection, i);
     if (!context) {
@@ -487,7 +512,7 @@ static void handle_client_connections(rbm_ssh_session *connection, rbm_socket_t 
     if (nbytes <= 0) {
         if (nbytes == 0) {
             // Normal situation
-            ssh_log_msg(connection, "Client disconnected");
+            ssh_log_debug(connection, "Client disconnected");
         } else {
             // Got error
             ssh_log_error(connection, "Error when recv()");
@@ -499,7 +524,7 @@ static void handle_client_connections(rbm_ssh_session *connection, rbm_socket_t 
         ssh_channel_close(context);
         return;
     }
-    ssh_log_msg(connection, "Received %d bytes from client", nbytes);
+    ssh_log_debug(connection, "Received %d bytes from client", nbytes);
 
     // Write data to ssh tunnel
     int wr = 0;
@@ -515,7 +540,7 @@ static void handle_client_connections(rbm_ssh_session *connection, rbm_socket_t 
         }
         wr += rc;
     }
-    ssh_log_msg(connection, "Written %d bytes to tunnel", wr);
+    ssh_log_debug(connection, "Written %d bytes to tunnel", wr);
 
     return;
 }
@@ -539,12 +564,12 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
     while (1) {
         readset = masterset; // copy it
 
-        ssh_log_msg(connection, "* Okay, we are ready to select.");
+        ssh_log_debug(connection, "* Okay, we are ready to select.");
         if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
             ssh_log_error(connection, "Error on select()");
             break;
         }
-        ssh_log_msg(connection, "* Selected!");
+        ssh_log_debug(connection, "* Selected!");
 
         // Run through the existing connections looking for data to read
         for(i = 0; i <= fdmax; i++) {
@@ -585,7 +610,7 @@ void rbm_ssh_session_close(rbm_ssh_session *session) {
 
     // 2.
     if (session->localsocket != rbm_socket_invalid) {
-        ssh_log_msg(session, "Closing local accept socket");
+        ssh_log_debug(session, "Closing local accept socket");
         close(session->localsocket);
         session->localsocket = rbm_socket_invalid;
     }
@@ -597,7 +622,7 @@ void rbm_ssh_session_close(rbm_ssh_session *session) {
 
     // 4.
     if (session->sshsession) {
-        ssh_log_msg(session, "Closing SSH session");
+        ssh_log_debug(session, "Closing SSH session");
         libssh2_session_disconnect(session->sshsession, "Client disconnecting normally");
         libssh2_session_free(session->sshsession);
         session->sshsession = NULL;
@@ -605,12 +630,12 @@ void rbm_ssh_session_close(rbm_ssh_session *session) {
 
     // 5.
     if (session->sshsocket != rbm_socket_invalid) {
-        ssh_log_msg(session, "Closing SSH socket");
+        ssh_log_debug(session, "Closing SSH socket");
         close(session->sshsocket);
         session->sshsocket = rbm_socket_invalid;
     }
 
-    ssh_log_msg(session, "SSH tunnel successfully closed.");
+    ssh_log_debug(session, "SSH tunnel successfully closed.");
     free(session);
 }
 
@@ -627,6 +652,15 @@ rbm_ssh_session* rbm_ssh_session_create(struct rbm_ssh_tunnel_config *config) {
     session->channelssize = 0;
     session->channels = NULL;
     session->lasterror[0] = '\0';
+
+    // Check that loglevel is valid
+    if (config->loglevel != RBM_SSH_LOG_TYPE_ERROR &&
+        config->loglevel != RBM_SSH_LOG_TYPE_INFO &&
+        config->loglevel != RBM_SSH_LOG_TYPE_DEBUG) {
+        log_error("Invalid log level for SSH submodule");
+        return NULL;
+    }
+
     return session;
 }
 
@@ -636,7 +670,7 @@ int rbm_ssh_session_setup(rbm_ssh_session *session) {
     const int SUCCESS = 0;
     rbm_ssh_tunnel_config *config = session->config;
 
-    ssh_log_msg(session, "Connecting to SSH server (%s:%d)...", config->sshserverip, config->sshserverport);
+    ssh_log_debug(session, "Connecting to SSH server (%s:%d)...", config->sshserverip, config->sshserverport);
 
     session->sshsocket = socket_connect(session, config->sshserverip, config->sshserverport);
     if (session->sshsocket == -1) {
@@ -654,7 +688,7 @@ int rbm_ssh_session_setup(rbm_ssh_session *session) {
         return ERROR; // errors are already logged by socket_listen
     }
 
-    ssh_log_msg(session, "Waiting for TCP connection on %s:%d...", config->localip, config->localport);
+    ssh_log_debug(session, "Waiting for TCP connection on %s:%d...", config->localip, config->localport);
 
     // Must use non-blocking IO hereafter due to the current libssh3 API
     libssh2_session_set_blocking(session->sshsession, 0);

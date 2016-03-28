@@ -89,6 +89,7 @@ namespace Robomongo
 
             _sshConfig->context = this;
             _sshConfig->logcallback = &SshTunnelWorker::logCallbackHandler;
+            _sshConfig->loglevel = RBM_SSH_LOG_TYPE_DEBUG;
 
             if ((_sshSession = rbm_ssh_session_create(_sshConfig)) == 0) {
                 // Cleanup config structure
@@ -152,16 +153,16 @@ namespace Robomongo
         AppRegistry::instance().bus()->send(receiver, event);
     }
 
-    void SshTunnelWorker::log(const std::string &message, bool error) {
+    void SshTunnelWorker::log(const std::string &message, int level) {
         if (_isQuiting)
             return;
 
         AppRegistry::instance().bus()->send(
             AppRegistry::instance().app(),
-            new LogEvent(this, message, error));
+            new LogEvent(this, message, (LogEvent::LogLevel)level));
     }
 
-    void SshTunnelWorker::logCallbackHandler(rbm_ssh_session *session, char *message, int iserror) {
-        static_cast<SshTunnelWorker*>(session->config->context)->log(message, iserror == 1);
+    void SshTunnelWorker::logCallbackHandler(rbm_ssh_session *session, char *message, int level) {
+        static_cast<SshTunnelWorker*>(session->config->context)->log(message, level);
     }
 }

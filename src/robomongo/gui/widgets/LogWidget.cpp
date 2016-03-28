@@ -44,7 +44,15 @@ namespace Robomongo
 
         // Print message
         _logTextEdit->moveCursor (QTextCursor::End);
-        _logTextEdit->setTextColor(level == mongo::logger::LogSeverity::Error() ? QColor("#CD0000") : QColor(Qt::black));
+
+        // Nice color for the future: "#CD9800" :)
+
+        if (level == mongo::logger::LogSeverity::Error())
+            _logTextEdit->setTextColor(QColor("#CD0000"));
+        else if (level == mongo::logger::LogSeverity::Log())
+            _logTextEdit->setTextColor(QColor("#777777"));
+        else
+            _logTextEdit->setTextColor(QColor(Qt::black));
 
         const int maxLength = 500;
         if (message.length() <= maxLength) {
@@ -53,7 +61,7 @@ namespace Robomongo
             _logTextEdit->insertPlainText(QString("(truncated) ") + message.left(maxLength).trimmed() + "...\n");
         }
 
-        // Scroll to bottom
+        // Scroll to the bottom
         QScrollBar *sb = _logTextEdit->verticalScrollBar();
         sb->setValue(sb->maximum());
     }

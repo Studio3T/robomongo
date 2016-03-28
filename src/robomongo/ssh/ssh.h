@@ -34,6 +34,7 @@ struct rbm_ssh_session;
  */
 typedef struct rbm_ssh_tunnel_config {
     enum rbm_ssh_auth_type authtype;
+    enum rbm_ssh_log_type loglevel;
 
     // Keys and optional passphrase
     char *privatekeyfile;
@@ -57,7 +58,7 @@ typedef struct rbm_ssh_tunnel_config {
     unsigned int sshserverport;  // SSH port
 
     void *context; // pointer to user-defined data
-    void (*logcallback)(struct rbm_ssh_session* session, char *message, int iserror);
+    void (*logcallback)(struct rbm_ssh_session* session, char *message, int level);
 } rbm_ssh_tunnel_config;
 
 typedef struct rbm_ssh_channel {

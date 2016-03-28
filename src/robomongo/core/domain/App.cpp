@@ -180,10 +180,12 @@ namespace Robomongo
     }
 
     void App::handle(LogEvent *event) {
-        if (event->error) {
+        if (event->level == LogEvent::ERROR) {
             LOG_MSG(event->message, mongo::logger::LogSeverity::Error());
-        } else {
+        } else if (event->level == LogEvent::INFO) {
             LOG_MSG(event->message, mongo::logger::LogSeverity::Info());
+        } else if (event->level == LogEvent::DEBUG) {
+            LOG_MSG(event->message, mongo::logger::LogSeverity::Log());
         }
     }
 

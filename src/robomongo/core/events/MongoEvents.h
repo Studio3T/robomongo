@@ -1050,12 +1050,18 @@ namespace Robomongo
     {
     R_EVENT
 
-        LogEvent(QObject *sender, const std::string& message, bool error) :
+        enum LogLevel {
+            ERROR  = 1,
+            INFO   = 2,
+            DEBUG  = 100 // log as much as possible
+        };
+
+        LogEvent(QObject *sender, const std::string& message, LogLevel level) :
             Event(sender),
             message(message),
-            error(error) {}
+            level(level) {}
 
         std::string message;
-        bool error; // true if this should be logged as error, false if just an information
+        LogLevel level;
     };
 }

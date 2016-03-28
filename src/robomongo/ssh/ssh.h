@@ -79,6 +79,7 @@ int rbm_ssh_init();
 void rbm_ssh_cleanup();
 
 rbm_ssh_session* rbm_ssh_session_create(struct rbm_ssh_tunnel_config *config);
+int rbm_ssh_session_setup(rbm_ssh_session *session);
 void rbm_ssh_session_close(rbm_ssh_session *session);
 
 int rbm_ssh_open_tunnel(struct rbm_ssh_session *connection);

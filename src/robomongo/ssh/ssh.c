@@ -137,7 +137,7 @@ static rbm_socket_t socket_connect(rbm_ssh_session* session, char *ip, int port)
 }
 
 /*
- * Returns socket (binded and in listen state) if succeed, otherwise -1 on error
+ * Returns socket (binded and in listen state) if succeed, otherwise (rbm_socket_invalid) on error
  */
 rbm_socket_t socket_listen(rbm_ssh_session *rsession, char *ip, int *port) {
     rbm_socket_t listensock;
@@ -148,14 +148,14 @@ rbm_socket_t socket_listen(rbm_ssh_session *rsession, char *ip, int *port) {
     listensock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (listensock == rbm_socket_invalid) {
         ssh_log_error(rsession, "Failed to open socket");
-        return -1;
+        return rbm_socket_invalid;
     }
 
     sin.sin_family = AF_INET;
     sin.sin_port = htons(0); // Bind to any available port (htons is not needed, but still it's here)
     if (INADDR_NONE == (sin.sin_addr.s_addr = inet_addr(ip))) {
         ssh_log_error(rsession, "inet_addr");
-        return -1;
+        return rbm_socket_invalid;
     }
 
     sockopt = 1;
@@ -163,17 +163,17 @@ rbm_socket_t socket_listen(rbm_ssh_session *rsession, char *ip, int *port) {
     sinlen = sizeof(sin);
     if (-1 == bind(listensock, (struct sockaddr *)&sin, sinlen)) {
         ssh_log_error(rsession, "Cannot bind to port %d", port);
-        return -1;
+        return rbm_socket_invalid;
     }
 
     if (-1 == listen(listensock, 2)) {
         ssh_log_error(rsession, "Failed to listen opened socket");
-        return -1;
+        return rbm_socket_invalid;
     }
 
     if (getsockname(listensock, (struct sockaddr *)&sin, &sinlen) == -1) {
         ssh_log_error(rsession, "Failed to get socket address");
-        return -1;
+        return rbm_socket_invalid;
     }
 
     *port = ntohs(sin.sin_port);
@@ -312,13 +312,28 @@ void ssh_channel_close(rbm_ssh_channel* channel) {
         session->channels = channels;
         --session->channelssize;
 
-        libssh2_channel_free(channel->channel);
-        free(channel->inbuf);
-        free(channel->outbuf);
+        // 1. Free libssh2 channel
+        if (channel->channel) {
+            libssh2_channel_free(channel->channel);
+            channel->channel = NULL;
+        }
 
-        // free socket and channel
+        // 2. Free input/output buffers
+        free(channel->inbuf);
+        channel->inbuf = NULL;
+        free(channel->outbuf);
+        channel->outbuf = NULL;
+
+        // 3. Close socket
+        if (channel->socket != rbm_socket_invalid) {
+            close(channel->socket);
+            channel->socket = rbm_socket_invalid;
+        }
+
+        // 4. Free channel struct
         free(channel);
-        ssh_log_msg(session, "done channel_close");
+
+        ssh_log_msg(session, "Channel closed");
         break;
     }
 
@@ -389,7 +404,7 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
                     ssh_log_msg(connection, "New connection from %s on socket %d", inet_ntoa(remoteaddr.sin_addr), newfd);
                 }
 
-                LIBSSH2_CHANNEL *channel;
+                LIBSSH2_CHANNEL *channel = NULL;
                 int maxattempts = 25;
                 int attempts = 0;
                 while (attempts < maxattempts) {
@@ -412,8 +427,12 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
 
             if (i == ssh_socket) {
                 ssh_log_msg(connection, "Data on SSH socket is available");
-
                 ssh_log_msg(connection, "[%d]  <-  Number of channels", connection->channelssize);
+
+                if (connection->channelssize == 0) {
+                    rbm_ssh_session_close(connection);
+                    return 0;
+                }
 
                 int s = 0;
                 while (s < connection->channelssize) {
@@ -464,6 +483,11 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
             ssh_log_msg(connection, "Data on client socket is available");
 
             rbm_ssh_channel *context = ssh_channel_find_by_socket(connection, i);
+            if (!context) {
+                close(i); // bye!
+                FD_CLR(i, &masterset); // remove from master set
+                continue;
+            }
 
 
             // Read data from a client
@@ -513,52 +537,95 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
 }
 
 void rbm_ssh_session_close(rbm_ssh_session *session) {
-    // TODO: perform session cleanup
+    if (session == NULL) {
+        return;
+    }
+
+    // Order is important:
+    // 1. close client sockets
+    // 2. close accept socket
+    // 3. free libssh2 channels
+    // 4. free libssh2 session
+    // 5. close ssh socket
+
+
+    // 2.
+    if (session->localsocket != rbm_socket_invalid) {
+        ssh_log_msg(session, "Closing local accept socket");
+        close(session->localsocket);
+        session->localsocket = rbm_socket_invalid;
+    }
+
+    // 3.
+    while (session->channelssize > 0) {
+        ssh_channel_close(session->channels[0]);
+    }
+
+    // 4.
+    if (session->sshsession) {
+        ssh_log_msg(session, "Closing SSH session");
+        libssh2_session_disconnect(session->sshsession, "Client disconnecting normally");
+        libssh2_session_free(session->sshsession);
+        session->sshsession = NULL;
+    }
+
+    // 5.
+    if (session->sshsocket != rbm_socket_invalid) {
+        ssh_log_msg(session, "Closing SSH socket");
+        close(session->sshsocket);
+        session->sshsocket = rbm_socket_invalid;
+    }
+
+    ssh_log_msg(session, "SSH tunnel successfully closed.");
     free(session);
 }
 
 // Returns 0 on error, valid rbm_ssh_session* if no errors
 rbm_ssh_session* rbm_ssh_session_create(struct rbm_ssh_tunnel_config *config) {
-    rbm_ssh_session* session = (rbm_ssh_session*) malloc(sizeof(rbm_ssh_session));
+    rbm_ssh_session *session = (rbm_ssh_session *) malloc(sizeof(rbm_ssh_session));
     if (!session) {
         return NULL;
     }
+    session->localsocket = rbm_socket_invalid;
+    session->sshsocket = rbm_socket_invalid;
+    session->sshsession = 0;
     session->config = config;
     session->channelssize = 0;
     session->channels = NULL;
+    session->lasterror[0] = '\0';
+    return session;
+}
 
-    ssh_log_msg(session, "rbm_ssh_open_tunnel: username: %s", config->username);
-    ssh_log_msg(session, "rbm_ssh_open_tunnel: privatekeyfile: %s", config->privatekeyfile);
-    ssh_log_msg(session, "Connecting to %s...", config->sshserverip);
+// Returns -1 on error, 0 when otherwise
+int rbm_ssh_session_setup(rbm_ssh_session *session) {
+    const int ERROR = -1;
+    const int SUCCESS = 0;
+    rbm_ssh_tunnel_config *config = session->config;
 
-    rbm_socket_t ssh_socket = socket_connect(session, config->sshserverip, config->sshserverport);
-    if (ssh_socket == -1) {
-        return NULL; // errors are already logged by socket_connect
+    ssh_log_msg(session, "Connecting to SSH server (%s:%d)...", config->sshserverip, config->sshserverport);
+
+    session->sshsocket = socket_connect(session, config->sshserverip, config->sshserverport);
+    if (session->sshsocket == -1) {
+        return ERROR; // errors are already logged by socket_connect
     }
 
-    LIBSSH2_SESSION *lsession = ssh_connect(session, ssh_socket, config->authtype, config->username, config->password,
-                                           config->publickeyfile, config->privatekeyfile, config->passphrase);
-    if (lsession == 0) {
-        return NULL; // errors are already logged by ssh_connect
+    session->sshsession = ssh_connect(session, session->sshsocket, config->authtype, config->username, config->password,
+        config->publickeyfile, config->privatekeyfile, config->passphrase);
+    if (session->sshsession == 0) {
+        return ERROR; // errors are already logged by ssh_connect
     }
 
-    rbm_socket_t local_socket = socket_listen(session, config->localip, (int *) &config->localport);
-    if (local_socket == -1) {
-        return NULL; // errors are already logged by socket_listen
+    session->localsocket = socket_listen(session, config->localip, (int *) &config->localport);
+    if (session->localsocket == -1) {
+        return ERROR; // errors are already logged by socket_listen
     }
 
     ssh_log_msg(session, "Waiting for TCP connection on %s:%d...", config->localip, config->localport);
-    // -------------------------------------
 
     // Must use non-blocking IO hereafter due to the current libssh3 API
-    libssh2_session_set_blocking(lsession, 0);
+    libssh2_session_set_blocking(session->sshsession, 0);
 
-    // ------------------------------------
-
-    session->sshsession = lsession;
-    session->localsocket = local_socket;
-    session->sshsocket = ssh_socket;
-    return session;
+    return SUCCESS;
 }
 
 

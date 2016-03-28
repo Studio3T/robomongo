@@ -91,7 +91,27 @@ namespace Robomongo
             _sshConfig->logcallback = &SshTunnelWorker::logCallbackHandler;
 
             if ((_sshSession = rbm_ssh_session_create(_sshConfig)) == 0) {
-                throw std::runtime_error(_sshSession->lasterror);
+                // Cleanup config structure
+                delete _sshConfig;
+                _sshConfig = NULL;
+
+                // Not much we can say about this error
+                throw std::runtime_error("Failed to create SSH session");
+            }
+
+            if (rbm_ssh_session_setup(_sshSession) == -1) {
+                // Prepare copy of error message (if any)
+                std::string error(_sshSession->lasterror);
+
+                // Cleanup session
+                rbm_ssh_session_close(_sshSession);
+                _sshSession = NULL;
+
+                // Cleanup config
+                delete _sshConfig;
+                _sshConfig = NULL;
+
+                throw std::runtime_error(error);
             }
 
             reply(event->sender(), new EstablishSshConnectionResponse(
@@ -106,9 +126,11 @@ namespace Robomongo
 
     void SshTunnelWorker::handle(ListenSshConnectionRequest *event) {
         try {
-            int rc = rbm_ssh_open_tunnel(_sshSession);
-            if (rc != 0) {
-                throw std::runtime_error("Failed to open SSH tunnel");
+            if (_sshSession == NULL || _sshConfig == NULL)
+                return;
+
+            if (rbm_ssh_open_tunnel(_sshSession) != 0) {
+                throw std::runtime_error(_sshSession->lasterror);
             }
 
         } catch (const std::exception& ex) {

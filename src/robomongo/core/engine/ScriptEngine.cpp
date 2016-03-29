@@ -244,7 +244,7 @@ namespace Robomongo
         char buff[64] = {0};
         sprintf(buff, "DBQuery.shellBatchSize = %d", batchSize);
 
-        _scope->exec(buff, "(shellBatchSize)", true, true, true);
+        _scope->exec(buff, "(shellBatchSize)", false, true, true);
     }
 
     void ScriptEngine::ping()

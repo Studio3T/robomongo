@@ -111,18 +111,18 @@ namespace Robomongo
             _engine = mongo::globalScriptEngine;
 
             // Load '.mongorc.js' from user's home directory
-            // We are not checking whether file exists, because it will be
-            // checked by 'Scope::execFile'.
             if (isLoadMongoRcJs) {
-                std::string mongorcPath = QtUtils::toStdString(QString("%1/.mongorc.js").arg(QDir::homePath()));
-                scope->execFile(mongorcPath, false, false);      
+                QString mongorcPath = QString("%1/.mongorc.js").arg(QDir::homePath());
+                if (QFile::exists(mongorcPath)) {
+                    scope->execFile(QtUtils::toStdString(mongorcPath), false, false);
+                }
             }
 
             // Load '.robomongorc.js'
-            // Alexander: branding very usfull see Chromium and his brand Chrome, in Chrome some features private
-            // Dmitry: I agree, but we still need to support ".robomongorc.js" even when name of project will change
-            std::string roboMongorcPath = QtUtils::toStdString(QString("%1/.robomongorc.js").arg(QDir::homePath()));
-            scope->execFile(roboMongorcPath, false, false);
+            QString robomongorcPath = QString("%1/.robomongorc.js").arg(QDir::homePath());
+            if (QFile::exists(robomongorcPath)) {
+                scope->execFile(QtUtils::toStdString(robomongorcPath), false, false);
+            }
         }
 
         // Esprima ECMAScript parser: http://esprima.org/
@@ -204,7 +204,7 @@ namespace Robomongo
                         results.push_back(prepareResult(type, answer, docs, elapsed));
                 }
                 catch (const std::exception &e) {
-                    std::cout << "error:" << e.what() << endl;
+                    std::cout << "error:" << e.what() << std::endl;
                 }
             }
         }

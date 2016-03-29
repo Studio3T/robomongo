@@ -35,8 +35,6 @@ target_include_directories(ssh
         ${CMAKE_BINARY_DIR}/src
         ${CMAKE_SOURCE_DIR}/src)
 
-print_target_include_dirs(ssh)
-
 # Server
 add_executable(server server.c)
 

@@ -76,8 +76,7 @@ namespace Robomongo
             _scriptEngine->use(_connection->defaultDatabase());
             _scriptEngine->setBatchSize(_batchSize);
             _timerId = startTimer(pingTimeMs);
-        }
-        catch (const std::exception &ex) {
+        } catch (const std::exception &ex) {
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
@@ -159,9 +158,7 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             result = client->getDatabaseNames();
-        }
-        catch(const std::exception &ex)
-        {
+        } catch(const std::exception &ex) {
             if(!authBase.empty())
                 result.push_back(authBase);
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
@@ -179,7 +176,7 @@ namespace Robomongo
         std::vector<std::string> dbNames = getDatabaseNamesSafe();
 
         // Remove from list of created databases existing databases
-        for(std::vector<std::string>::iterator it = dbNames.begin(); it != dbNames.end(); ++it) {
+        for (std::vector<std::string>::iterator it = dbNames.begin(); it != dbNames.end(); ++it) {
             std::unordered_set<std::string>::const_iterator exists = _createdDbs.find(*it);
             if (exists != _createdDbs.end()) {
                 _createdDbs.erase(*it);
@@ -187,13 +184,13 @@ namespace Robomongo
         }
 
         // Merge with list of created databases
-        for(std::unordered_set<std::string>::iterator it = _createdDbs.begin(); it != _createdDbs.end(); ++it) {
+        for (std::unordered_set<std::string>::iterator it = _createdDbs.begin(); it != _createdDbs.end(); ++it) {
             dbNames.push_back(*it);
         }
 
-        if(dbNames.size()){
+        if (dbNames.size()) {
             reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
-        }else{
+        } else {
             reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError("Unable to load database names.")));
         }
     }

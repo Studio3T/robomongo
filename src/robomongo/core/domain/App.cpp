@@ -156,18 +156,7 @@ namespace Robomongo
 
     void App::handle(EstablishSshConnectionResponse *event) {
         if (event->isError()) {
-            std::stringstream ss;
-            ss << "Failed to create SSH tunnel to "
-               << event->settings->sshSettings()->host() << ":"
-               << event->settings->sshSettings()->port() << ".\n\nError:\n"
-               << event->error().errorMessage();
-
-            LOG_MSG(QString("Failed to create SSH tunnel: %1")
-                            .arg(QtUtils::toQString(event->error().errorMessage())), mongo::logger::LogSeverity::Error());
-
-            _bus->publish(new ConnectionFailedEvent(this, ss.str()));
-
-            event->worker->stopAndDelete();
+            _bus->publish(new ConnectionFailedEvent(this, event->error().errorMessage()));
             return;
         }
 

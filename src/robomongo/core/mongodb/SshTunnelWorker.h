@@ -24,9 +24,11 @@ namespace Robomongo
     public:
         explicit SshTunnelWorker(ConnectionSettings *settings);
         ~SshTunnelWorker();
-        void stopAndDelete();
 
         static void logCallbackHandler(rbm_ssh_session* session, char *message, int level);
+
+    protected:
+        void stopAndDelete();
 
     protected Q_SLOTS: // handlers:
         void init();
@@ -35,7 +37,7 @@ namespace Robomongo
 
     private:
         void reply(QObject *receiver, Event *event);
-        void log(const std::string& message, int level = 1);
+        void log(const std::string& message, int level = 3);
 
         QThread *_thread;
         QAtomicInteger<int> _isQuiting;

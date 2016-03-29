@@ -7,7 +7,6 @@
 namespace Robomongo
 {
     class MongoWorker;
-    class SshTunnelWorker;
     class MongoDatabase;
     class EstablishConnectionResponse;
     class LoadDatabaseNamesResponse;
@@ -78,7 +77,6 @@ namespace Robomongo
         void addDatabase(MongoDatabase *database);
 
         MongoWorker* _client;
-        SshTunnelWorker* _sshWorker;
         ConnectionSettings* _settings;
         EventBus* _bus;
 

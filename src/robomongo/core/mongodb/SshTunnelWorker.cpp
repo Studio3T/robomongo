@@ -57,10 +57,6 @@ namespace Robomongo
         // QThread "_thread" and MongoWorker itself will be deleted later
         // (see MongoWorker() constructor)
 
-        log("*** Shutdown of SSH worker ***");
-
-        rbm_ssh_session_close(_sshSession);
-
         delete _settings;
         delete _sshConfig;
     }
@@ -72,6 +68,9 @@ namespace Robomongo
 
     void SshTunnelWorker::handle(EstablishSshConnectionRequest *event) {
         try {
+            if (_isQuiting)
+                return;
+
             _sshConfig = new rbm_ssh_tunnel_config;
             _sshConfig->sshserverip = const_cast<char*>(_sshhost.c_str());
             _sshConfig->sshserverport = static_cast<unsigned int>(_sshport);
@@ -104,6 +103,12 @@ namespace Robomongo
                 // Prepare copy of error message (if any)
                 std::string error(_sshSession->lasterror);
 
+                std::stringstream ss;
+                ss << "Failed to create SSH tunnel to "
+                << _settings->sshSettings()->host() << ":"
+                << _settings->sshSettings()->port() << ".\n\nError:\n"
+                << error;
+
                 // Cleanup session
                 rbm_ssh_session_close(_sshSession);
                 _sshSession = NULL;
@@ -112,7 +117,7 @@ namespace Robomongo
                 delete _sshConfig;
                 _sshConfig = NULL;
 
-                throw std::runtime_error(error);
+                throw std::runtime_error(ss.str());
             }
 
             reply(event->sender(), new EstablishSshConnectionResponse(
@@ -122,14 +127,22 @@ namespace Robomongo
             reply(event->sender(),
                 new EstablishSshConnectionResponse(this, EventError(ex.what()),
                 event->worker, event->settings, event->visible));
+
+            // In case of error in connection, we should cleanup SshTunnelWorker
+            stopAndDelete();
         }
     }
 
     void SshTunnelWorker::handle(ListenSshConnectionRequest *event) {
         try {
+            if (_isQuiting)
+                return;
+
             if (_sshSession == NULL || _sshConfig == NULL)
                 return;
 
+            // This function will block until all TCP connections disconnects.
+            // Initially, it will wait for at least one such connection.
             if (rbm_ssh_open_tunnel(_sshSession) != 0) {
                 throw std::runtime_error(_sshSession->lasterror);
             }
@@ -140,6 +153,10 @@ namespace Robomongo
             reply(event->sender(),
                   new ListenSshConnectionResponse(this, EventError(ex.what()), _settings));
         }
+
+        // When we done with SSH (i.e. rbm_ssh_open_tunnel exits) regardless
+        // of the error or success state, we should cleanup SshTunnelWorker.
+        stopAndDelete();
     }
 
     /**

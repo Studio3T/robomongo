@@ -17,7 +17,6 @@ namespace Robomongo {
         _version(0.0f),
         _visible(visible),
         _client(NULL),
-        _sshWorker(NULL),
         _isConnected(false),
         _settings(settings),
         _bus(AppRegistry::instance().bus()) { }
@@ -41,10 +40,6 @@ namespace Robomongo {
         // another thread (call to moveToThread() made in MongoWorker constructor).
         // It will be deleted by this thread by means of "deleteLater()", which
         // is also specified in MongoWorker constructor.
-
-        if (_sshWorker != NULL) {
-            _sshWorker->stopAndDelete();
-        }
 
         delete _settings;
     }

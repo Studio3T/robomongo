@@ -507,7 +507,7 @@ static int handle_ssh_connections(rbm_ssh_session *connection) {
             }
             if (libssh2_channel_eof(context->channel)) {
                 ssh_log_debug(connection, "The server at %s:%d disconnected!\n",
-                            config->remotehost, config->remoteport);
+                    config->remotehost, config->remoteport);
                 break;
             }
         }
@@ -541,6 +541,13 @@ static void handle_client_connections(rbm_ssh_session *connection, rbm_socket_t 
         close(context->socket); // bye!
         FD_CLR(context->socket, masterset); // remove from master set
         ssh_channel_close(context);
+
+        if (connection->channelssize == 0) {
+            FD_CLR(connection->localsocket, masterset); // remove from master set
+            FD_CLR(connection->sshsocket, masterset); // remove from master set
+            rbm_ssh_session_close(connection);
+        }
+
         return;
     }
     ssh_log_debug(connection, "Received %d bytes from client", nbytes);
@@ -568,20 +575,26 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
     rbm_socket_t local_socket = connection->localsocket;
     rbm_socket_t ssh_socket = connection->sshsocket;
 
-    int fdmax;       // maximum file descriptor number
-    int i;
-    fd_set masterset, readset;
+    int fdmax;       // maximum socket (file descriptor) number
+    int isocket;     // index for traversing sockets
+    fd_set masterset, readset, clearset;
     FD_ZERO(&masterset);
+    FD_ZERO(&clearset);
 
-    // add the listener to the master set
+    // Add the listener to the master set
     FD_SET(local_socket, &masterset);
     FD_SET(ssh_socket, &masterset);
 
-    // keep track of the biggest file descriptor
-    fdmax = local_socket; // so far, it's this one
+    // Keep track of the biggest file descriptor
+    fdmax = local_socket > ssh_socket ? local_socket : ssh_socket;
 
     while (1) {
-        readset = masterset; // copy it
+        readset = masterset; // copy set
+
+        // If readset has no descriptors, it means that
+        // session is closed and we should stop our work
+        if (!memcmp(&readset, &clearset, sizeof(fd_set)))
+            return 0;
 
         ssh_log_debug(connection, "* Okay, we are ready to select.");
         if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
@@ -591,23 +604,23 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
         ssh_log_debug(connection, "* Selected!");
 
         // Run through the existing connections looking for data to read
-        for(i = 0; i <= fdmax; i++) {
+        for(isocket = 0; isocket <= fdmax; isocket++) {
 
             // Skip connections that are not available for reading
-            if (!FD_ISSET(i, &readset))
+            if (!FD_ISSET(isocket, &readset))
                 continue;
 
-            if (i == local_socket) {
+            if (isocket == local_socket) {
                 handle_new_client_connections(connection, &fdmax, &masterset);
                 continue;
             }
 
-            if (i == ssh_socket) {
+            if (isocket == ssh_socket) {
                 handle_ssh_connections(connection);
                 continue;
             }
 
-            handle_client_connections(connection, i, &masterset);
+            handle_client_connections(connection, isocket, &masterset);
         }
     }
 

@@ -352,6 +352,13 @@ namespace Robomongo
             return;
         }
 
+        // Shift + Return also accepts connection (this shortcut is handled
+        // to support DEBUG level logging)
+        if (event->key() == Qt::Key_Return && (event->modifiers() & Qt::ShiftModifier)) {
+            accept();
+            return;
+        }
+
         QDialog::keyPressEvent(event);
     }
 

@@ -17,7 +17,8 @@ extern "C" {
 
 enum rbm_ssh_log_type {
     RBM_SSH_LOG_TYPE_ERROR  = 1,
-    RBM_SSH_LOG_TYPE_INFO   = 2,
+    RBM_SSH_LOG_TYPE_WARN   = 2,
+    RBM_SSH_LOG_TYPE_INFO   = 3,
     RBM_SSH_LOG_TYPE_DEBUG  = 100 // log as much as possible
 };
 

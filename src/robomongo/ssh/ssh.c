@@ -92,7 +92,8 @@ static void ssh_log_v(rbm_ssh_session* session, enum rbm_ssh_log_type type, cons
         return;
     }
 
-    if (type != RBM_SSH_LOG_TYPE_INFO &&
+    if (type != RBM_SSH_LOG_TYPE_WARN &&
+        type != RBM_SSH_LOG_TYPE_INFO &&
         type != RBM_SSH_LOG_TYPE_DEBUG)
         return;
 
@@ -114,6 +115,24 @@ static void ssh_log_msg(rbm_ssh_session* session, const char *format, ...) {
     va_list args;
     va_start(args, format);
     ssh_log_v(session, type, format, args, 0);
+    va_end(args);
+}
+
+// When you faced with an error that you are planning to overcome or handle,
+// log it as a warning. If you do not have plan how to proceed further, log
+// as an error.
+static void ssh_log_warn(rbm_ssh_session* session, const char *format, ...) {
+    int errsave = errno;
+    const int type = RBM_SSH_LOG_TYPE_WARN;
+
+    // For performance reasons, return as quick as possible,
+    // if this level of logging is not enabled
+    if (type > session->config->loglevel)
+        return;
+
+    va_list args;
+    va_start(args, format);
+    ssh_log_v(session, type, format, args, errsave);
     va_end(args);
 }
 
@@ -417,7 +436,7 @@ static int handle_new_client_connections(rbm_ssh_session *connection, int *fdmax
         channel = libssh2_channel_direct_tcpip_ex(session, config->remotehost, config->remoteport,
                                                   config->localip, config->localport);
         if (!channel) {
-            ssh_log_error(connection, "Could not open the direct TCP/IP channel (channel2)");
+            ssh_log_warn(connection, "Could not open the direct TCP/IP channel");
             usleep(200 * 1000);
             continue;
         }
@@ -655,6 +674,7 @@ rbm_ssh_session* rbm_ssh_session_create(struct rbm_ssh_tunnel_config *config) {
 
     // Check that loglevel is valid
     if (config->loglevel != RBM_SSH_LOG_TYPE_ERROR &&
+        config->loglevel != RBM_SSH_LOG_TYPE_WARN &&
         config->loglevel != RBM_SSH_LOG_TYPE_INFO &&
         config->loglevel != RBM_SSH_LOG_TYPE_DEBUG) {
         log_error("Invalid log level for SSH submodule");

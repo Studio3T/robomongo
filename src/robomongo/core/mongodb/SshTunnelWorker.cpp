@@ -89,7 +89,7 @@ namespace Robomongo
 
             _sshConfig->context = this;
             _sshConfig->logcallback = &SshTunnelWorker::logCallbackHandler;
-            _sshConfig->loglevel = RBM_SSH_LOG_TYPE_DEBUG;
+            _sshConfig->loglevel = (rbm_ssh_log_type) _settings->sshSettings()->logLevel(); // RBM_SSH_LOG_TYPE_DEBUG;
 
             if ((_sshSession = rbm_ssh_session_create(_sshConfig)) == 0) {
                 // Cleanup config structure

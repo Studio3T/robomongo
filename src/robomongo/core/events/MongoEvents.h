@@ -1052,7 +1052,8 @@ namespace Robomongo
 
         enum LogLevel {
             ERROR  = 1,
-            INFO   = 2,
+            WARN   = 2,
+            INFO   = 3,
             DEBUG  = 100 // log as much as possible
         };
 

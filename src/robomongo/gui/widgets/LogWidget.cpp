@@ -47,12 +47,16 @@ namespace Robomongo
 
         // Nice color for the future: "#CD9800" :)
 
+        QColor textColor = QColor(Qt::black);
+
         if (level == mongo::logger::LogSeverity::Error())
-            _logTextEdit->setTextColor(QColor("#CD0000"));
+            textColor = QColor("#CD0000");
         else if (level == mongo::logger::LogSeverity::Log())
-            _logTextEdit->setTextColor(QColor("#777777"));
-        else
-            _logTextEdit->setTextColor(QColor(Qt::black));
+            textColor = QColor("#777777");
+        else if (level == mongo::logger::LogSeverity::Warning())
+            textColor = QColor("#CD9800");
+
+        _logTextEdit->setTextColor(textColor);
 
         const int maxLength = 500;
         if (message.length() <= maxLength) {

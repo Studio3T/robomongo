@@ -19,6 +19,7 @@
 
 #include <mongo/logger/log_severity.h>
 #include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/AppRegistry.h"
@@ -649,6 +650,17 @@ namespace Robomongo
 
         if (result == QDialog::Accepted) {
             ConnectionSettings *selected = dialog.selectedConnection();
+
+            selected->sshSettings()->setLogLevel(1);
+            if (QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier)) {
+                // Enable debug level of logging for SSH
+                if (selected->sshSettings()->enabled()) {
+                    selected->sshSettings()->setLogLevel(100);
+                }
+
+                // Show log pannel
+                toggleLogs(true);
+            }
 
             try {
                 _app->openServer(selected, true);

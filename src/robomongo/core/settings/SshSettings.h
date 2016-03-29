@@ -53,6 +53,9 @@ namespace Robomongo
         bool enabled() const { return _enabled; }
         void setEnabled(bool enabled) { _enabled = enabled; }
 
+        int logLevel() const { return _logLevel; }
+        void setLogLevel(const int logLevel) { _logLevel = logLevel; }
+
     private:
         std::string _host;
         int _port;
@@ -68,5 +71,6 @@ namespace Robomongo
          * this SSH tunnel or not.
          */
         bool _enabled;
+        int _logLevel; // this property is not persisted
     };
 }

@@ -134,6 +134,9 @@ namespace Robomongo
     }
 
     void SshTunnelWorker::handle(ListenSshConnectionRequest *event) {
+
+        // do it here, i.e. cycle
+
         try {
             if (_isQuiting)
                 return;

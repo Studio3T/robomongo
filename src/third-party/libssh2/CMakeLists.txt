@@ -69,6 +69,9 @@ if(CRYPTO_BACKEND STREQUAL "OpenSSL" OR NOT CRYPTO_BACKEND)
 
   find_package(OpenSSL ${SPECIFIC_CRYPTO_REQUIREMENT})
 
+#  set(OPENSSL_INCLUDE_DIR "/Users/dmitry/main/libs/openssl-0.9.8zg/include")
+#  set(OPENSSL_LIBRARIES ssl crypto)
+
   if(OPENSSL_FOUND)
     set(CRYPTO_BACKEND "OpenSSL")
     set(CRYPTO_SOURCES openssl.c openssl.h)
@@ -79,12 +82,11 @@ if(CRYPTO_BACKEND STREQUAL "OpenSSL" OR NOT CRYPTO_BACKEND)
 
     if (WIN32)
       find_file(DLL_LIBEAY32
-	NAMES libeay32.dll crypto.dll
+        NAMES libeay32.dll crypto.dll
         HINTS ${_OPENSSL_ROOT_HINTS} PATHS ${_OPENSSL_ROOT_PATHS}
         PATH_SUFFIXES bin)
       if (NOT DLL_LIBEAY32)
-        message(WARNING
-          "Unable to find OpenSSL libeay32 DLL, executables may not run")
+        message(WARNING "Unable to find OpenSSL libeay32 DLL, executables may not run")
       endif()
 
       find_file(DLL_SSLEAY32
@@ -92,8 +94,7 @@ if(CRYPTO_BACKEND STREQUAL "OpenSSL" OR NOT CRYPTO_BACKEND)
         HINTS ${_OPENSSL_ROOT_HINTS} PATHS ${_OPENSSL_ROOT_PATHS}
         PATH_SUFFIXES bin)
       if (NOT DLL_SSLEAY32)
-        message(WARNING
-          "Unable to find OpenSSL ssleay32 DLL, executables may not run")
+        message(WARNING "Unable to find OpenSSL ssleay32 DLL, executables may not run")
       endif()
 
       if(DLL_LIBEAY32 AND DLL_SSLEAY32)

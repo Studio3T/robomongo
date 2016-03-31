@@ -479,9 +479,9 @@ static int handle_ssh_connections(rbm_ssh_session *connection) {
         while (1) {
             int len;
             len = libssh2_channel_read(context->channel, context->outbuf, context->bufmaxsize);
-            if (LIBSSH2_ERROR_EAGAIN == len)
+            if (len == LIBSSH2_ERROR_EAGAIN) {
                 break;
-            else if (len < 0) {
+            } else if (len < 0) {
 
                 // ETIMEDOUT (60) Connection timed out
                 // We need to reconnect
@@ -489,7 +489,10 @@ static int handle_ssh_connections(rbm_ssh_session *connection) {
                     return 2;
                 }
 
-                ssh_log_error(connection, "libssh2_channel_read: %d", (int)len);
+                // Endless cycle:
+                // Network is down. libssh2_channel_read: -43. (Error #50)
+
+                ssh_log_error(connection, "libssh2_channel_read: %d", len);
                 break;
             }
 
@@ -575,6 +578,9 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
     rbm_socket_t local_socket = connection->localsocket;
     rbm_socket_t ssh_socket = connection->sshsocket;
 
+    const int maxerrors = 25;   // number of serial errors, when we probably should stop the loop
+    int errors = 0;             // counter for serial errors
+
     int fdmax;       // maximum socket (file descriptor) number
     int isocket;     // index for traversing sockets
     fd_set masterset, readset, clearset;
@@ -588,7 +594,8 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
     // Keep track of the biggest file descriptor
     fdmax = local_socket > ssh_socket ? local_socket : ssh_socket;
 
-    while (1) {
+    while (errors < maxerrors) {
+
         readset = masterset; // copy set
 
         // If readset has no descriptors, it means that
@@ -633,26 +640,25 @@ void rbm_ssh_session_close(rbm_ssh_session *session) {
     }
 
     // Order is important:
-    // 1. close client sockets
-    // 2. close accept socket
-    // 3. free libssh2 channels
-    // 4. free libssh2 session
-    // 5. close ssh socket
+    // 1. close accept socket
+    // 2. free libssh2 channels (and client sockets)
+    // 3. free libssh2 session
+    // 4. close ssh socket
 
 
-    // 2.
+    // 1.
     if (session->localsocket != rbm_socket_invalid) {
         ssh_log_debug(session, "Closing local accept socket");
         close(session->localsocket);
         session->localsocket = rbm_socket_invalid;
     }
 
-    // 3.
+    // 2.
     while (session->channelssize > 0) {
         ssh_channel_close(session->channels[0]);
     }
 
-    // 4.
+    // 3.
     if (session->sshsession) {
         ssh_log_debug(session, "Closing SSH session");
         libssh2_session_disconnect(session->sshsession, "Client disconnecting normally");
@@ -660,7 +666,7 @@ void rbm_ssh_session_close(rbm_ssh_session *session) {
         session->sshsession = NULL;
     }
 
-    // 5.
+    // 4.
     if (session->sshsocket != rbm_socket_invalid) {
         ssh_log_debug(session, "Closing SSH socket");
         close(session->sshsocket);

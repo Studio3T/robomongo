@@ -137,11 +137,28 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseCollectionListLoadedEvent *event)
     {
+        if (event->isError()) {
+            _collectionFolderItem->setText(0, "Collections");
+            _collectionFolderItem->setExpanded(false);
+
+            std::stringstream ss;
+            ss << "Cannot load list of collections.\n\nError:\n" << event->error().errorMessage();
+
+            QMessageBox::information(NULL, "Error", QtUtils::toQString(ss.str()));
+            return;
+        }
+
         std::vector<MongoCollection *> collections = event->collections;
         int count = collections.size();
         _collectionFolderItem->setText(0, detail::buildName("Collections",count));
-
         QtUtils::clearChildItems(_collectionFolderItem);
+
+        // Do not expand, when we do not have collections
+        if (count == 0) {
+            _collectionFolderItem->setExpanded(false);
+            return;
+        }
+
         _collectionSystemFolderItem = new ExplorerTreeItem(_collectionFolderItem);
         _collectionSystemFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         _collectionSystemFolderItem->setText(0, "System");
@@ -162,9 +179,24 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseUsersLoadedEvent *event)
     {
+        if (event->isError()) {
+            _usersFolderItem->setText(0, "Users");
+            _usersFolderItem->setExpanded(false);
+
+            std::stringstream ss;
+            ss << "Cannot load list of users.\n\nError:\n" << event->error().errorMessage();
+
+            QMessageBox::information(NULL, "Error", QtUtils::toQString(ss.str()));
+            return;
+        }
+
         std::vector<MongoUser> users = event->users();
         int count = users.size();
         _usersFolderItem->setText(0, detail::buildName("Users",count));
+
+        // Do not expand, when we do not have users
+        if (count == 0)
+            _usersFolderItem->setExpanded(false);
 
         QtUtils::clearChildItems(_usersFolderItem);
 
@@ -176,9 +208,24 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseFunctionsLoadedEvent *event)
     {
+        if (event->isError()) {
+            _javascriptFolderItem->setText(0, "Functions");
+            _javascriptFolderItem->setExpanded(false);
+
+            std::stringstream ss;
+            ss << "Cannot load list of functions.\n\nError:\n" << event->error().errorMessage();
+
+            QMessageBox::information(NULL, "Error", QtUtils::toQString(ss.str()));
+            return;
+        }
+
         std::vector<MongoFunction> functions = event->functions();
         int count = functions.size();
         _javascriptFolderItem->setText(0,  detail::buildName("Functions",count));
+
+        // Do not expand, when we do not have functions
+        if (count == 0)
+            _javascriptFolderItem->setExpanded(false);
 
         QtUtils::clearChildItems(_javascriptFolderItem);
 

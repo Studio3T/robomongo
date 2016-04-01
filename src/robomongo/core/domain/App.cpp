@@ -182,16 +182,7 @@ namespace Robomongo
 
     void App::handle(ListenSshConnectionResponse *event) {
         if (event->isError()) {
-            std::stringstream ss;
-            ss << "You are disconnected from SSH tunnel ("
-            << event->settings->sshSettings()->host() << ":"
-            << event->settings->sshSettings()->port() << "). Try to reconnect.\n\nError:\n"
-            << event->error().errorMessage();
-
-            LOG_MSG(QString("Disconnected from SSH tunnel: %1")
-                .arg(QtUtils::toQString(event->error().errorMessage())), mongo::logger::LogSeverity::Error());
-
-            _bus->publish(new ConnectionFailedEvent(this, ss.str()));
+            _bus->publish(new ConnectionFailedEvent(this, event->error().errorMessage()));
             return;
         }
 

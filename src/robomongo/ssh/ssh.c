@@ -80,7 +80,8 @@ static void ssh_log_v(rbm_ssh_session* session, enum rbm_ssh_log_type type, cons
     char buf[bufsize];
     vsnprintf(buf, bufsize, format, args);
 
-    if (type == RBM_SSH_LOG_TYPE_ERROR) {
+    if (type == RBM_SSH_LOG_TYPE_ERROR ||
+        type == RBM_SSH_LOG_TYPE_WARN) {
         if (errsave) {
             sprintf(session->lasterror, "%s. %s. (Error #%d)", strerror(errsave), buf, errsave);
         } else {
@@ -92,8 +93,7 @@ static void ssh_log_v(rbm_ssh_session* session, enum rbm_ssh_log_type type, cons
         return;
     }
 
-    if (type != RBM_SSH_LOG_TYPE_WARN &&
-        type != RBM_SSH_LOG_TYPE_INFO &&
+    if (type != RBM_SSH_LOG_TYPE_INFO &&
         type != RBM_SSH_LOG_TYPE_DEBUG)
         return;
 
@@ -400,6 +400,7 @@ rbm_ssh_channel* ssh_channel_find_by_socket(rbm_ssh_session* session, rbm_socket
     return NULL;
 }
 
+// Return -1 on error. 0 otherwise.
 static int handle_new_client_connections(rbm_ssh_session *connection, int *fdmax, fd_set *masterset) {
     rbm_socket_t local_socket = connection->localsocket;
     rbm_socket_t ssh_socket = connection->sshsocket;
@@ -429,16 +430,24 @@ static int handle_new_client_connections(rbm_ssh_session *connection, int *fdmax
     }
 
     LIBSSH2_CHANNEL *channel = NULL;
-    int maxattempts = 45;
+    int maxattempts = 25; //45;
     int attempts = 0;
     while (attempts < maxattempts) {
         ++attempts;
         channel = libssh2_channel_direct_tcpip_ex(session, config->remotehost, config->remoteport,
                                                   config->localip, config->localport);
+
+        int errsave = errno;
         if (!channel) {
-            ssh_log_warn(connection, "Could not open the direct TCP/IP channel");
-            usleep(200 * 1000);
-            continue;
+            ssh_log_warn(connection, "Could not open the direct TCP/IP channel (%d)", channel);
+
+            // Error 35: Resource temporarily unavailable.
+            if (errsave == 35) {
+                usleep(200 * 1000);
+                continue;
+            }
+
+            break;
         }
 
         ssh_log_debug(connection, "Channel successfully created!");
@@ -446,7 +455,7 @@ static int handle_new_client_connections(rbm_ssh_session *connection, int *fdmax
     }
 
     if (!channel) {
-        ssh_log_error(connection, "Failed to create SSH channel in %d attempts", maxattempts);
+        ssh_log_error(connection, "Failed to create SSH channel");
         return ERROR;
     }
 
@@ -459,7 +468,9 @@ static int handle_new_client_connections(rbm_ssh_session *connection, int *fdmax
 
 //  0: success
 // -1:
-static int handle_ssh_connections(rbm_ssh_session *connection) {
+static int handle_ssh_connections(rbm_ssh_session *connection, fd_set *masterset) {
+    const int AGAIN = -2;
+    const int ERROR = -1;
     const int SUCCESS = 0;
     struct rbm_ssh_tunnel_config* config = connection->config;
 
@@ -467,35 +478,51 @@ static int handle_ssh_connections(rbm_ssh_session *connection) {
     ssh_log_debug(connection, "[%d]  <-  Number of channels", connection->channelssize);
 
     if (connection->channelssize == 0) {
-        rbm_ssh_session_close(connection);
+        FD_CLR(connection->localsocket, masterset); // remove from master set
+        FD_CLR(connection->sshsocket, masterset);   // remove from master set
         return SUCCESS;
     }
 
     int s = 0;
+    int result = SUCCESS;
+    int eagain = 0;
     while (s < connection->channelssize) {
         rbm_ssh_channel *context = connection->channels[s];
         ++s;
 
+        int firstflag = 1;
         while (1) {
             int len;
             len = libssh2_channel_read(context->channel, context->outbuf, context->bufmaxsize);
             if (len == LIBSSH2_ERROR_EAGAIN) {
+
+                if (firstflag) {
+                    ++eagain;
+
+                    if (eagain == connection->channelssize) {
+                        result = AGAIN;
+                        ssh_log_warn(connection, "All channels are in a non ready state (EAGAIN)");
+                    }
+                }
+
+                // Proceed with the next channel
                 break;
             } else if (len < 0) {
 
                 // ETIMEDOUT (60) Connection timed out
                 // We need to reconnect
-                if (errno == 60) {
-                    return 2;
-                }
-
+                // if (errno == 60) {
+                //    return 2;
+                // }
                 // Endless cycle:
                 // Network is down. libssh2_channel_read: -43. (Error #50)
 
+                result = ERROR;
                 ssh_log_error(connection, "libssh2_channel_read: %d", len);
                 break;
             }
 
+            firstflag = 0;
             ssh_log_debug(connection, "Received %d bytes from tunnel", len);
 
             int wr = 0;
@@ -503,12 +530,14 @@ static int handle_ssh_connections(rbm_ssh_session *connection) {
             while (wr < len) {
                 rc = send(context->socket, context->outbuf + wr, len - wr, 0);
                 if (rc <= 0) {
+                    result = ERROR;
                     ssh_log_error(connection, "Failure to write data to client");
                     break;
                 }
                 wr += rc;
             }
             if (libssh2_channel_eof(context->channel)) {
+                result = SUCCESS;
                 ssh_log_debug(connection, "The server at %s:%d disconnected!\n",
                     config->remotehost, config->remoteport);
                 break;
@@ -516,17 +545,20 @@ static int handle_ssh_connections(rbm_ssh_session *connection) {
         }
     }
 
-    return SUCCESS;
+    return result;
 }
 
-static void handle_client_connections(rbm_ssh_session *connection, rbm_socket_t i, fd_set *masterset) {
+static int handle_client_connections(rbm_ssh_session *connection, rbm_socket_t i, fd_set *masterset) {
+    const int ERROR = -1;
+    const int SUCCESS = 0;
+    int result = SUCCESS;
     ssh_log_debug(connection, "Data on client socket is available");
 
     rbm_ssh_channel *context = ssh_channel_find_by_socket(connection, i);
     if (!context) {
         close(i); // bye!
         FD_CLR(i, masterset); // remove from master set
-        return;
+        return ERROR;
     }
 
     // Read data from a client
@@ -534,9 +566,11 @@ static void handle_client_connections(rbm_ssh_session *connection, rbm_socket_t 
     if (nbytes <= 0) {
         if (nbytes == 0) {
             // Normal situation
+            result = SUCCESS;
             ssh_log_debug(connection, "Client disconnected");
         } else {
             // Got error
+            result = ERROR;
             ssh_log_error(connection, "Error when recv()");
         }
 
@@ -547,39 +581,50 @@ static void handle_client_connections(rbm_ssh_session *connection, rbm_socket_t 
 
         if (connection->channelssize == 0) {
             FD_CLR(connection->localsocket, masterset); // remove from master set
-            FD_CLR(connection->sshsocket, masterset); // remove from master set
-            rbm_ssh_session_close(connection);
+            FD_CLR(connection->sshsocket, masterset);   // remove from master set
         }
 
-        return;
+        return result;
     }
     ssh_log_debug(connection, "Received %d bytes from client", nbytes);
 
     // Write data to ssh tunnel
+    const int againmax = 100;
+    int again = 0;
     int wr = 0;
     int rc = 0; // result
     while (wr < nbytes) {
         rc = libssh2_channel_write(context->channel, context->inbuf + wr, nbytes - wr);
         if (LIBSSH2_ERROR_EAGAIN == rc) {
+            ++again;
+
+            if (again > againmax) {
+                ssh_log_warn(connection, "Number of attempts to libssh2_channel_write exсeed max value");
+                return ERROR;
+            }
+
             continue;
         }
         if (rc < 0) {
             ssh_log_error(connection, "Failed to write to SSH channel");
-            return;
+            return ERROR;
         }
         wr += rc;
     }
     ssh_log_debug(connection, "Written %d bytes to tunnel", wr);
 
-    return;
+    return SUCCESS;
 }
 
-int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
+int rbm_ssh_open_tunnel_ex(rbm_ssh_session *connection) {
+    const int ERROR = -1;
+    const int SUCCESS = 0;
     rbm_socket_t local_socket = connection->localsocket;
     rbm_socket_t ssh_socket = connection->sshsocket;
 
     const int maxerrors = 25;   // number of serial errors, when we probably should stop the loop
     int errors = 0;             // counter for serial errors
+    int rc = 0;
 
     int fdmax;       // maximum socket (file descriptor) number
     int isocket;     // index for traversing sockets
@@ -601,7 +646,7 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
         // If readset has no descriptors, it means that
         // session is closed and we should stop our work
         if (!memcmp(&readset, &clearset, sizeof(fd_set)))
-            return 0;
+            break;
 
         ssh_log_debug(connection, "* Okay, we are ready to select.");
         if (select(fdmax + 1, &readset, NULL, NULL, NULL) == -1) {
@@ -618,23 +663,68 @@ int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
                 continue;
 
             if (isocket == local_socket) {
-                handle_new_client_connections(connection, &fdmax, &masterset);
-                continue;
+                rc = handle_new_client_connections(connection, &fdmax, &masterset);
+                goto next;
             }
 
             if (isocket == ssh_socket) {
-                handle_ssh_connections(connection);
-                continue;
+                rc = handle_ssh_connections(connection, &masterset);
+                goto next;
             }
 
-            handle_client_connections(connection, isocket, &masterset);
+            rc = handle_client_connections(connection, isocket, &masterset);
+
+next:
+            // Increment "errors" counter, if we found an error,
+            // or zero it, if not.
+            errors = (rc == -2) ? errors + 1 : 0;
+            if (errors > 0) {
+                ssh_log_warn(connection, "*** COLLECTED %d AGAIN ***", errors);
+            }
+
+            if (rc == -1) {
+                ssh_log_warn(connection, "SSH tunnel shutdown because of error");
+                return ERROR;
+            }
         }
     }
 
-    return 0;
+    if (errors >= maxerrors) {
+        ssh_log_warn(connection, "SSH tunnel shutdown because of series of successive EAGAIN errors");
+        return ERROR;
+    }
+
+    rbm_ssh_session_close(connection);
+    return SUCCESS;
 }
 
-void rbm_ssh_session_close(rbm_ssh_session *session) {
+void rbm_ssh_session_cleanup(rbm_ssh_session *session);
+
+int rbm_ssh_open_tunnel(rbm_ssh_session *connection) {
+    const int ERROR = -1;
+    const int SUCCESS = 0;
+    int rc = 0;
+
+    while (1) {
+        rc = rbm_ssh_open_tunnel_ex(connection);
+        if (rc == 0)
+            break;
+
+        // Cleanup SSH connection we hope that local connection
+        // will not break so often
+        rbm_ssh_session_cleanup(connection);
+        ssh_log_warn(connection, "STARTING AGAIN!!!!!!!!!111");
+
+        if (rbm_ssh_setup(connection) == -1) {
+            rbm_ssh_session_close(connection);
+            return ERROR;
+        }
+    }
+
+    return SUCCESS;
+}
+
+void rbm_ssh_session_cleanup(rbm_ssh_session *session) {
     if (session == NULL) {
         return;
     }
@@ -645,17 +735,11 @@ void rbm_ssh_session_close(rbm_ssh_session *session) {
     // 3. free libssh2 session
     // 4. close ssh socket
 
-
-    // 1.
-    if (session->localsocket != rbm_socket_invalid) {
-        ssh_log_debug(session, "Closing local accept socket");
-        close(session->localsocket);
-        session->localsocket = rbm_socket_invalid;
-    }
-
     // 2.
+    ssh_log_debug(session, "Closing channels");
     while (session->channelssize > 0) {
         ssh_channel_close(session->channels[0]);
+        ssh_log_debug(session, "Channel closed");
     }
 
     // 3.
@@ -672,6 +756,16 @@ void rbm_ssh_session_close(rbm_ssh_session *session) {
         close(session->sshsocket);
         session->sshsocket = rbm_socket_invalid;
     }
+}
+
+void rbm_ssh_session_close(rbm_ssh_session *session) {
+    if (session->localsocket != rbm_socket_invalid) {
+        ssh_log_debug(session, "Closing local accept socket");
+        close(session->localsocket);
+        session->localsocket = rbm_socket_invalid;
+    }
+
+    rbm_ssh_session_cleanup(session);
 
     ssh_log_debug(session, "SSH tunnel successfully closed.");
     free(session);
@@ -704,7 +798,7 @@ rbm_ssh_session* rbm_ssh_session_create(struct rbm_ssh_tunnel_config *config) {
 }
 
 // Returns -1 on error, 0 when otherwise
-int rbm_ssh_session_setup(rbm_ssh_session *session) {
+int rbm_ssh_setup(rbm_ssh_session *session) {
     const int ERROR = -1;
     const int SUCCESS = 0;
     rbm_ssh_tunnel_config *config = session->config;
@@ -713,6 +807,7 @@ int rbm_ssh_session_setup(rbm_ssh_session *session) {
 
     session->sshsocket = socket_connect(session, config->sshserverip, config->sshserverport);
     if (session->sshsocket == -1) {
+        session->sshsocket = rbm_socket_invalid;
         return ERROR; // errors are already logged by socket_connect
     }
 
@@ -722,15 +817,28 @@ int rbm_ssh_session_setup(rbm_ssh_session *session) {
         return ERROR; // errors are already logged by ssh_connect
     }
 
+    // Must use non-blocking IO hereafter due to the current libssh3 API
+    libssh2_session_set_blocking(session->sshsession, 0);
+
+    return SUCCESS;
+}
+
+// Returns -1 on error, 0 when otherwise
+int rbm_ssh_session_setup(rbm_ssh_session *session) {
+    const int ERROR = -1;
+    const int SUCCESS = 0;
+    rbm_ssh_tunnel_config *config = session->config;
+
+    if (rbm_ssh_setup(session) == -1)
+        return ERROR;
+
     session->localsocket = socket_listen(session, config->localip, (int *) &config->localport);
     if (session->localsocket == -1) {
+        session->localsocket = rbm_socket_invalid;
         return ERROR; // errors are already logged by socket_listen
     }
 
     ssh_log_debug(session, "Waiting for TCP connection on %s:%d...", config->localip, config->localport);
-
-    // Must use non-blocking IO hereafter due to the current libssh3 API
-    libssh2_session_set_blocking(session->sshsession, 0);
 
     return SUCCESS;
 }

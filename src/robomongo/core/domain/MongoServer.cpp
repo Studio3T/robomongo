@@ -150,11 +150,7 @@ namespace Robomongo {
 
     void MongoServer::handle(LoadDatabaseNamesResponse *event) {
         if (event->isError()) {
-            std::stringstream ss;
-            ss << "Cannot load list of databases.\n\nError:\n"
-               << event->error().errorMessage();
-
-            _bus->publish(new ConnectionFailedEvent(this, ss.str()));
+            _bus->publish(new DatabaseListLoadedEvent(this, event->error()));
             return;
         }
 

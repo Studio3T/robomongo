@@ -135,7 +135,11 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        LoadCollectionIndexesResponse(QObject *sender, const std::vector<EnsureIndexInfo> &indexes) :Event(sender), _indexes(indexes) {}
+        LoadCollectionIndexesResponse(QObject *sender, const std::vector<EnsureIndexInfo> &indexes) :
+            Event(sender), _indexes(indexes) {}
+
+        LoadCollectionIndexesResponse(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
         std::vector<EnsureIndexInfo> indexes() const { return _indexes; }
     private:
         std::vector<EnsureIndexInfo> _indexes;
@@ -179,11 +183,15 @@ namespace Robomongo
         R_EVENT
     public:
         DeleteCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection,const std::string &index) :
-        Event(sender),_collection(collection),_index(index) {}
+            Event(sender),_collection(collection),_index(index) {}
+
+        DeleteCollectionIndexResponse(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
+
         MongoCollectionInfo collection() const { return _collection; }
         std::string index() const {return _index;}
     private:
-        const MongoCollectionInfo _collection;
+        MongoCollectionInfo _collection;
         std::string _index;
     };
 
@@ -902,6 +910,9 @@ namespace Robomongo
             Event(sender),
             list(list) { }
 
+        DatabaseListLoadedEvent(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
+
         QList<MongoDatabase *> list;
     };
 
@@ -1064,5 +1075,13 @@ namespace Robomongo
 
         std::string message;
         LogLevel level;
+    };
+
+    class StopScriptRequest : public Event
+    {
+    R_EVENT
+
+        StopScriptRequest(QObject *sender) :
+            Event(sender) {}
     };
 }

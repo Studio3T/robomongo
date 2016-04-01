@@ -62,7 +62,8 @@ namespace Robomongo
 
     void MongoShell::stop()
     {
-        mongo::Scope::setInterruptFlag(true);
+        // _server->client()->interrupt();
+        // mongo::Scope::setInterruptFlag(true);
     }
 
     bool MongoShell::loadFromFile()

@@ -190,8 +190,9 @@ namespace Robomongo
                 try {
                     QElapsedTimer timer;
                     timer.start();
-                    if ( _scope->exec( statement , "(shell)" , false , true , false, 3600000 ) )
-                        _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false, 3600000);
+                    if ( _scope->exec( statement , "(shell)" , false , true , false, 0 ) ) {
+                        _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false, 0);
+                    }
 
                     qint64 elapsed = timer.elapsed();
 
@@ -214,7 +215,8 @@ namespace Robomongo
 
     void ScriptEngine::interrupt()
     {
-        _engine->interruptAll();
+        // This operation crash Robomongo
+        // static_cast<mongo::mozjs::MozJSImplScope*>(_scope)->kill();
 
         // v0.9
         //mongo::Scope::_interruptFlag = true;

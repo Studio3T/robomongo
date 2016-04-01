@@ -26,6 +26,7 @@ namespace Robomongo
         explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
         ~MongoWorker();
         enum { pingTimeMs = 60 * 1000 };
+        void interrupt();
         void stopAndDelete();
         
     protected Q_SLOTS: // handlers:
@@ -100,6 +101,7 @@ namespace Robomongo
          * @brief Execute javascript
          */
         void handle(ExecuteScriptRequest *event);
+        void handle(StopScriptRequest *event);
 
         void handle(AutocompleteRequest *event);
         void handle(CreateDatabaseRequest *event);

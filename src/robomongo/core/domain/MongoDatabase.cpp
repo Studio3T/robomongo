@@ -8,7 +8,6 @@
 
 namespace Robomongo
 {
-
     R_REGISTER_EVENT(MongoDatabaseCollectionListLoadedEvent)
     R_REGISTER_EVENT(MongoDatabaseUsersLoadedEvent)
     R_REGISTER_EVENT(MongoDatabaseFunctionsLoadedEvent)
@@ -21,9 +20,7 @@ namespace Robomongo
         _system(name == "admin" || name == "local"),
         _server(server),
         _bus(AppRegistry::instance().bus()),
-        _name(name)
-    {
-    }
+        _name(name) {}
 
     MongoDatabase::~MongoDatabase()
     {
@@ -99,8 +96,10 @@ namespace Robomongo
 
     void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
     {
-        if (loaded->isError())
+        if (loaded->isError()) {
+            _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, loaded->error()));
             return;
+        }
 
         clearCollections();
         const std::vector<MongoCollectionInfo> &colectionsInfos = loaded->collectionInfos();
@@ -122,17 +121,21 @@ namespace Robomongo
 
     void MongoDatabase::handle(LoadUsersResponse *event)
     {
-        if (event->isError())
+        if (event->isError()) {
+            _bus->publish(new MongoDatabaseUsersLoadedEvent(this, event->error()));
             return;
-        
+        }
+
         _bus->publish(new MongoDatabaseUsersLoadedEvent(this, this, event->users()));
     }
 
     void MongoDatabase::handle(LoadFunctionsResponse *event)
     {
-        if (event->isError())
+        if (event->isError()) {
+            _bus->publish(new MongoDatabaseFunctionsLoadedEvent(this, event->error()));
             return;
-            
+        }
+
         _bus->publish(new MongoDatabaseFunctionsLoadedEvent(this, this, event->functions()));
     }
 

@@ -105,9 +105,9 @@ namespace Robomongo
 
                 std::stringstream ss;
                 ss << "Failed to create SSH tunnel to "
-                << _settings->sshSettings()->host() << ":"
-                << _settings->sshSettings()->port() << ".\n\nError:\n"
-                << error;
+                    << _settings->sshSettings()->host() << ":"
+                    << _settings->sshSettings()->port() << ".\n\nError:\n"
+                    << error;
 
                 // Cleanup session
                 rbm_ssh_session_close(_sshSession);
@@ -147,7 +147,16 @@ namespace Robomongo
             // This function will block until all TCP connections disconnects.
             // Initially, it will wait for at least one such connection.
             if (rbm_ssh_open_tunnel(_sshSession) != 0) {
-                throw std::runtime_error(_sshSession->lasterror);
+                // Prepare copy of error message (if any)
+                std::string error(_sshSession->lasterror);
+
+                std::stringstream ss;
+                ss << "You are disconnected from SSH tunnel ("
+                    << _settings->sshSettings()->host() << ":"
+                    << _settings->sshSettings()->port() << "). Try to reconnect.\n\nError:\n"
+                    << event->error().errorMessage();
+
+                throw std::runtime_error(ss.str());
             }
 
             log("SSH tunnel stopped.", false);

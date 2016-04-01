@@ -86,6 +86,9 @@ namespace Robomongo
             Event(sender),
             collections(list) { }
 
+        MongoDatabaseCollectionListLoadedEvent(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
+
         std::vector<MongoCollection *> collections;
     };
 
@@ -97,6 +100,9 @@ namespace Robomongo
             Event(sender),
             _users(list),
             _database(database) {}
+
+        MongoDatabaseUsersLoadedEvent(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
 
         std::vector<MongoUser> users() const { return _users; }
         MongoDatabase *database() const { return _database; }
@@ -114,6 +120,9 @@ namespace Robomongo
             Event(sender),
             _functions(list),
             _database(database) {}
+
+        MongoDatabaseFunctionsLoadedEvent(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
 
         std::vector<MongoFunction> functions() const { return _functions; }
         MongoDatabase *database() const { return _database; }

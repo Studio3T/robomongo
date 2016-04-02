@@ -24,7 +24,7 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/libssh2_config.h)
 
 # Direct-tcpip sample
-add_library(ssh ssh.c log.c)
+add_library(ssh ssh.c ssh_log.c)
 
 target_link_libraries(ssh
     PUBLIC

@@ -1,8 +1,18 @@
 #ifndef ROBOMONGO_SSH_H
 #define ROBOMONGO_SSH_H
 
+#include <libssh2.h>
+
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#ifdef _WIN32
+#  define rbm_socket_t SOCKET
+#  define rbm_socket_invalid INVALID_SOCKET
+#else
+#  define rbm_socket_t int
+#  define rbm_socket_invalid (-1)
 #endif
 
 enum rbm_ssh_log_type {
@@ -18,11 +28,14 @@ enum rbm_ssh_auth_type {
     RBM_SSH_AUTH_TYPE_PUBLICKEY  = 2
 };
 
+struct rbm_ssh_session;
+
 /*
  * SSH Tunnel configuration
  */
-struct rbm_ssh_tunnel_config {
+typedef struct rbm_ssh_tunnel_config {
     enum rbm_ssh_auth_type authtype;
+    enum rbm_ssh_log_type loglevel;
 
     // Keys and optional passphrase
     char *privatekeyfile;
@@ -45,27 +58,42 @@ struct rbm_ssh_tunnel_config {
     char *sshserverip;
     unsigned int sshserverport;  // SSH port
 
-    // Logging facilities
-    enum rbm_ssh_log_type loglevel;
-    void *logcontext;   // Pointer to user-defined data
-    void (*logcallback)(void *logcontext, char *message, int level);
-};
+    void *context; // pointer to user-defined data
+    void (*logcallback)(struct rbm_ssh_session* session, char *message, int level);
+} rbm_ssh_tunnel_config;
 
-struct rbm_ssh_session {
-    char *lasterror;
-    void *handle;    // opaque pointer to rbm_session
-};
+typedef struct rbm_ssh_channel {
+    struct rbm_ssh_session* session;
+    LIBSSH2_CHANNEL *channel;
+    rbm_socket_t socket;
+    char *inbuf;
+    char *outbuf;
+    int bufmaxsize;
+} rbm_ssh_channel;
+
+typedef struct rbm_ssh_session {
+    rbm_socket_t localsocket;
+    rbm_socket_t sshsocket;
+    LIBSSH2_SESSION *sshsession;
+    rbm_ssh_tunnel_config *config;
+
+    rbm_ssh_channel **channels;
+    int channelssize; // number of channels
+
+    char lasterror[2048];
+} rbm_ssh_session;
 
 int rbm_ssh_init();
 void rbm_ssh_cleanup();
 
-struct rbm_ssh_session* rbm_ssh_session_create(struct rbm_ssh_tunnel_config *config);
-int rbm_ssh_open_tunnel(struct rbm_ssh_session *connection);
-int rbm_ssh_session_setup(struct rbm_ssh_session *session);
-void rbm_ssh_session_close(struct rbm_ssh_session *session);
+rbm_ssh_session* rbm_ssh_session_create(struct rbm_ssh_tunnel_config *config);
+int rbm_ssh_session_setup(rbm_ssh_session *session);
+void rbm_ssh_session_close(rbm_ssh_session *session);
 
+int rbm_ssh_open_tunnel(struct rbm_ssh_session *connection);
 
 #ifdef __cplusplus
 }
 #endif
+
 #endif // ROBOMONGO_SSH_H

@@ -11,23 +11,27 @@ $ man2help sys$input: libssh2.hlp -b 1
 
 LIBSSH2
 
-OpenVMS port of the public domain libssh2 library, which 
-provides an API to implement client SSH communciation.
+OpenVMS port of the libssh2 library, which provides an
+API to implement client SSH communication.
 
-License information is available at the copying subtopic.
+License information is available at the Copying subtopic.
 
 $!
 $ open/append mh libssh2.hlp
 $ write mh helpversion
 $ close mh
 $!
-$ man2help -a [-]readme.; libssh2.hlp        -b 2
-$ man2help -a [-]authors.; libssh2.hlp       -b 2
-$ man2help -a [-]copying.; libssh2.hlp       -b 2
-$ man2help -a [-]news.; libssh2.hlp          -b 2
-$ man2help -a [-]release-notes.; libssh2.hlp -b 2
-$ man2help -a [-]hacking.; libssh2.hlp       -b 2
-$ man2help -a [-]todo.; libssh2.hlp          -b 2
+$ man2help -a [-]README.; libssh2.hlp        -b 2
+$ man2help -a [-]COPYING.; libssh2.hlp       -b 2
+$ man2help -a [-]NEWS.; libssh2.hlp          -b 2
+$ man2help -a [-]RELEASE-NOTES.; libssh2.hlp -b 2
+$ man2help -a [-.docs]AUTHORS.; libssh2.hlp  -b 2
+$ man2help -a [-.docs]BINDINGS.; libssh2.hlp -b 2
+$ man2help -a [-.docs]HACKING.; libssh2.hlp  -b 2
+$ if f$search("[]HACKING_CRYPTO.") .nes. "" then delete []HACKING_CRYPTO.;*
+$ copy [-.docs]HACKING.CRYPTO; []HACKING_CRYPTO.
+$ man2help -a []HACKING_CRYPTO.; libssh2.hlp -b 2
+$ man2help -a [-.docs]TODO.; libssh2.hlp     -b 2
 $!
 $ man2help -a sys$input: libssh2.hlp         -b 2
 

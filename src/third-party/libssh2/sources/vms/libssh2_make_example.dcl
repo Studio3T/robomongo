@@ -29,6 +29,7 @@ $ this = f$search("exadir:*.c;0")
 $ if this .eqs. "" then goto EndLoop
 $!
 $ what = f$parse( this,,,"name")
+$ if what .eqs. "x11" then goto loop ! not portable yet
 $ call Make
 $!
 $ goto Loop
@@ -84,7 +85,7 @@ $ define objdir 'objdir'
 $ define exadir 'exadir'
 $!
 $ cc_include = "/include=([],[-.include])"
-$ cc_flags   = "/name=shortened/show=all"
+$ cc_flags   = "/name=shortened/show=all/define=(_USE_STD_STAT=1)"
 $ link_opts  = "objdir:libssh2_''thisid'.opt"
 $!
 $!

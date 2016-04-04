@@ -3,6 +3,11 @@
 
 project(QScintilla)
 
+# Automatically generate code for Qt moc, uic and rcc files
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
 # For some reasons AUTOMOC doesn't work here...
 # Doing this manually.
 qt5_wrap_cpp(moc

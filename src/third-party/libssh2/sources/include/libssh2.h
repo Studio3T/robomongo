@@ -202,7 +202,16 @@ typedef off_t libssh2_struct_stat_size;
 #endif
 
 #ifndef LIBSSH2_STRUCT_STAT_SIZE_FORMAT
-#  define LIBSSH2_STRUCT_STAT_SIZE_FORMAT      "%zd"
+#  ifdef __VMS
+/* We have to roll our own format here because %z is a C99-ism we don't have. */
+#    if __USE_OFF64_T || __USING_STD_STAT
+#      define LIBSSH2_STRUCT_STAT_SIZE_FORMAT      "%Ld"
+#    else
+#      define LIBSSH2_STRUCT_STAT_SIZE_FORMAT      "%d"
+#    endif
+#  else
+#    define LIBSSH2_STRUCT_STAT_SIZE_FORMAT      "%zd"
+#  endif
 typedef struct stat libssh2_struct_stat;
 typedef off_t libssh2_struct_stat_size;
 #endif

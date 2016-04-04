@@ -86,7 +86,7 @@ namespace Robomongo
             _sshConfig->passphrase = const_cast<char*>(_passphrase.c_str());
             _sshConfig->authtype = (_authMethod == "publickey") ? RBM_SSH_AUTH_TYPE_PUBLICKEY : RBM_SSH_AUTH_TYPE_PASSWORD;
 
-            _sshConfig->context = this;
+            _sshConfig->logcontext = this;
             _sshConfig->logcallback = &SshTunnelWorker::logCallbackHandler;
             _sshConfig->loglevel = (rbm_ssh_log_type) _settings->sshSettings()->logLevel(); // RBM_SSH_LOG_TYPE_DEBUG;
 
@@ -191,7 +191,7 @@ namespace Robomongo
             new LogEvent(this, message, (LogEvent::LogLevel)level));
     }
 
-    void SshTunnelWorker::logCallbackHandler(rbm_ssh_session *session, char *message, int level) {
-        static_cast<SshTunnelWorker*>(session->config->context)->log(message, level);
+    void SshTunnelWorker::logCallbackHandler(void *context, char *message, int level) {
+        static_cast<SshTunnelWorker*>(context)->log(message, level);
     }
 }

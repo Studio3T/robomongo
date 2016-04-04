@@ -1,3 +1,10 @@
+
+# Automatically generate code for Qt moc, uic and rcc files
+# Since CMake 2.8.6
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
 set(SOURCES
 
     # Isolated Scope #1

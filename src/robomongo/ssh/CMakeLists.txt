@@ -20,11 +20,11 @@ check_symbol_exists(__func__ "" HAVE___FUNC__)
 check_symbol_exists(__FUNCTION__ "" HAVE___FUNCTION__)
 
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/libssh2_config_cmake.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/libssh2_config.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/libssh2_config.h)
 
 # Direct-tcpip sample
-add_library(ssh ssh.c ssh_log.c)
+add_library(ssh ssh.c log.c array.c)
 
 target_link_libraries(ssh
     PUBLIC
@@ -43,6 +43,18 @@ target_link_libraries(server
         ssh)
 
 target_include_directories(server
+    PRIVATE
+        ${CMAKE_BINARY_DIR}/src
+        ${CMAKE_SOURCE_DIR}/src)
+
+# Tests
+add_executable(ssh_test test.c)
+
+target_link_libraries(ssh_test
+    PRIVATE
+        ssh)
+
+target_include_directories(ssh_test
     PRIVATE
         ${CMAKE_BINARY_DIR}/src
         ${CMAKE_SOURCE_DIR}/src)

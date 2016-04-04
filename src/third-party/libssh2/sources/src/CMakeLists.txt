@@ -71,6 +71,11 @@ if(CRYPTO_BACKEND STREQUAL "OpenSSL" OR NOT CRYPTO_BACKEND)
     list(APPEND PC_REQUIRES_PRIVATE libssl libcrypto)
 
     if (WIN32)
+      # Statically linking to OpenSSL requires crypt32 for some Windows APIs.
+      # This should really be handled by FindOpenSSL.cmake.
+      list(APPEND LIBRARIES crypt32)
+      list(APPEND PC_LIBS -lcrypt32)
+
       find_file(DLL_LIBEAY32
 	NAMES libeay32.dll crypto.dll
         HINTS ${_OPENSSL_ROOT_HINTS} PATHS ${_OPENSSL_ROOT_PATHS}

@@ -25,8 +25,8 @@ if(NOT CMAKE_BUILD_TYPE)
         FORCE)
 endif()
 
-# Automatically generate code for Qt moc, uic and rcc files
+# Do not use Qt moc, uic and rcc by default
 # Since CMake 2.8.6
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC OFF)
+set(CMAKE_AUTORCC OFF)
+set(CMAKE_AUTOUIC OFF)

@@ -1,6 +1,7 @@
 #include "ssh.h"
 
 #include <unistd.h>
+#include <stdio.h>
 
 int main(int argc, char *argv[]) {
     struct rbm_ssh_tunnel_config config;
@@ -17,30 +18,37 @@ int main(int argc, char *argv[]) {
     config.sshserverport = 22;
     config.remotehost = "localhost";
     config.remoteport = 27017;
+    config.logcontext = NULL;
+    config.loglevel = RBM_SSH_LOG_TYPE_DEBUG;
 
-    int err = 0;
+    if (rbm_ssh_init())
+        return 1;
 
-    err = rbm_ssh_init();
-    if (err) {
-        return 1; // errors are already logged by init
+    struct rbm_ssh_session *session = NULL;
+    session = rbm_ssh_session_create(&config);
+    if (!session) {
+        printf("Unable to create session. Shutdown");
+        return 1;
     }
 
-    int res = 0;
-    while (1) {
-        rbm_ssh_session* connection;
-        connection = rbm_ssh_session_create(&config);
-        if (!connection) {
-            break;
-        }
+//    rbm_ssh_session_close(session);
+    printf("II About to open tunnel...\n");
 
-        res = rbm_ssh_open_tunnel(connection);
-        if (res == 2) {
-            usleep(100 * 1000);
-            continue;
-        }
-
-        break;
+    if (rbm_ssh_session_setup(session) == -1) {
+        printf("Setup failed. Shutdowning...");
+        rbm_ssh_session_close(session);
+        return 1;
     }
 
+//    rbm_ssh_session_close(session);
+//
+    printf("About to open tunnel...\n");
+    if (rbm_ssh_open_tunnel(session) != 0) {
+        printf("Tunnel stopped because of error.");
+        return 1;
+    }
+//
+//    printf("Planned shutdown of the tunnel.");
     rbm_ssh_cleanup();
+    return 0;
 }

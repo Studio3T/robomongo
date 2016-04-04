@@ -25,7 +25,7 @@ namespace Robomongo
         explicit SshTunnelWorker(ConnectionSettings *settings);
         ~SshTunnelWorker();
 
-        static void logCallbackHandler(rbm_ssh_session* session, char *message, int level);
+        static void logCallbackHandler(void* context, char *message, int level);
 
     protected:
         void stopAndDelete();

@@ -270,7 +270,7 @@ _libssh2_channel_open(LIBSSH2_SESSION * session, const char *channel_type,
             switch (reason_code) {
             case SSH_OPEN_ADMINISTRATIVELY_PROHIBITED:
                 _libssh2_error(session, LIBSSH2_ERROR_CHANNEL_FAILURE,
-                               "Channel open failure (admininstratively prohibited)");
+                               "Channel open failure (administratively prohibited)");
                 break;
             case SSH_OPEN_CONNECT_FAILED:
                 _libssh2_error(session, LIBSSH2_ERROR_CHANNEL_FAILURE,

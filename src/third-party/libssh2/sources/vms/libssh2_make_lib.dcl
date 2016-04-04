@@ -46,7 +46,8 @@ $!
 $ define objdir 'objdir'
 $ define srcdir 'srcdir'
 $!
-$ cc_include = "/include=([],[-.include])"
+$ cc_include = "/include=([],[-.include],""/gnv$zlib_include"")"
+$ cc_define = "/DEFINE=(_USE_STD_STAT=1)"
 $ link_opts  = "objdir:libssh2_''thisid'.opt"
 $!
 $ pipe search [-.include]libssh2.h libssh2_version_major/nohead | (read sys$input l ; l = f$element(2," ",f$edit(l,"trim,compress")) ; - 
@@ -137,7 +138,7 @@ $CaseLoop:
 $!
 $ if case .eq. 0 
 $ then!camel case names 
-$   cc_flags = "/names=(shortened,as_is)"
+$   cc_flags = "/names=(shortened,as_is)''cc_define'"
 $   objlib = "libssh2_asis.olb"
 $ endif
 $!
@@ -149,7 +150,7 @@ $      rename [.cxx_repository]cxx$demangler_db.; *.lowercase
 $      purge  [.cxx_repository]cxx$demangler_db.lowercase
 $   endif
 $!
-$   cc_flags = "/names=(shortened)"
+$   cc_flags = "/names=(shortened)''cc_define'"
 $   objlib = "libssh2_up.olb"
 $ endif
 $!

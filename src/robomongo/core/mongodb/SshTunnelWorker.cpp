@@ -153,13 +153,14 @@ namespace Robomongo
                 std::stringstream ss;
                 ss << "You are disconnected from SSH tunnel ("
                     << _settings->sshSettings()->host() << ":"
-                    << _settings->sshSettings()->port() << "). Try to reconnect.\n\nError:\n"
-                    << event->error().errorMessage();
+                    << _settings->sshSettings()->port() << "). "
+                    << "Please initiate a new connection and reopen all tabs.\n\nError:\n"
+                    << error;
 
                 throw std::runtime_error(ss.str());
             }
 
-            log("SSH tunnel stopped.", false);
+            log("SSH tunnel stopped normally.", false);
 
         } catch (const std::exception& ex) {
             reply(event->sender(),

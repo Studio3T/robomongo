@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
+#include <signal.h>
 
 static int handle_new_client_connections(struct rbm_session *connection, int *fdmax, fd_set *masterset);
 static int handle_ssh_connections(struct rbm_session *connection, fd_set *masterset);
@@ -22,6 +23,13 @@ static int handle_client_connections(struct rbm_session *connection, rbm_socket_
  * Returns 0 if succeeded, or a negative value for error.
  */
 int rbm_ssh_init() {
+    // Ignore SIGPIPE signal. If we will not do that, an attempt to send/write
+    // to the socket that do not have readers will force OS to generate SIGPIPE
+    // signal. Default handler for this signal is a termination of program.
+    // While signal is ignored, send/write will still return error code, that
+    // should be handled by the code.
+    signal(SIGPIPE, SIG_IGN);
+
     int err = libssh2_init(0);
     if (err) {
         log_error("Initialization of LIBSSH2 failed with error code: (%d)", err);
@@ -106,7 +114,7 @@ int rbm_ssh_open_tunnel(struct rbm_ssh_session *sshsession) {
         // Cleanup SSH connection we hope that local connection
         // will not break so often
         rbm_session_cleanup(connection);
-        ssh_log_warn(connection, "STARTING AGAIN!!!!!!!!!111");
+        ssh_log_warn(connection, "Reconnecting SSH tunnel...");
 
         if (rbm_ssh_setup(connection) == -1) {
             rbm_ssh_session_close(sshsession);
@@ -185,23 +193,7 @@ void rbm_channel_close(struct rbm_channel *channel) {
 
     // 1. Free libssh2 channel
     if (channel->channel) {
-        ssh_log_debug(session, "rbm_channel_close: Closing channel...");
-
-//        int rc = 0;
-//
-//        while((rc = libssh2_channel_close(channel->channel)) == LIBSSH2_ERROR_EAGAIN ) {
-//            usleep(1000 * 1000);
-//            ssh_log_debug(session, "Waiting for close to be accepted...");
-//		}
-//
-//        while((rc = libssh2_channel_wait_closed(channel->channel)) == LIBSSH2_ERROR_EAGAIN ) {
-//            usleep(1000 * 1000);
-//            ssh_log_debug(session, "Waiting for channel close...");
-//        }
-
-        ssh_log_debug(session, "Done! We can now free channel");
         libssh2_channel_free(channel->channel);
-        ssh_log_debug(session, "Call to libssh2_channel_free completed.");
         channel->channel = NULL;
     }
 
@@ -259,19 +251,17 @@ void rbm_session_cleanup(struct rbm_session *session) {
         return;
 
     // Order is important:
-    // 1. close accept socket
-    // 2. free libssh2 channels (and client sockets)
-    // 3. free libssh2 session
-    // 4. close ssh socket
+    // 1. free libssh2 channels (and client sockets)
+    // 2. free libssh2 session
+    // 3. close ssh socket
 
-    // 2.
+    // 1.
     ssh_log_debug(session, "Closing channels");
     while (session->channelssize > 0) {
         rbm_channel_close(session->channels[0]);
-        ssh_log_debug(session, "Channel closed");
     }
 
-    // 3.
+    // 2.
     if (session->sshsession) {
         ssh_log_debug(session, "Closing SSH session");
         libssh2_session_disconnect(session->sshsession, "Client disconnecting normally");
@@ -279,7 +269,7 @@ void rbm_session_cleanup(struct rbm_session *session) {
         session->sshsession = NULL;
     }
 
-    // 4.
+    // 3.
     if (session->sshsocket != rbm_socket_invalid) {
         ssh_log_debug(session, "Closing SSH socket");
         close(session->sshsocket);
@@ -491,7 +481,7 @@ static int handle_ssh_connections(struct rbm_session *connection, fd_set *master
 
                 result = ERROR;
                 ssh_log_error(connection, "libssh2_channel_read: %d", len);
-                break;
+                return ERROR;
             }
 
             firstflag = 0;

@@ -197,7 +197,7 @@ namespace Robomongo
         hideProgress();
 
         if (event->isError()) {
-            QString message = QString("Failed to load documents: %1")
+            QString message = QString("Failed to load documents.\n\nError:\n%1")
                 .arg(QtUtils::toQString(event->error().errorMessage()));
             QMessageBox::information(this, "Error", message);
             return;
@@ -211,7 +211,7 @@ namespace Robomongo
         hideProgress();
 
         if (event->isError()) {
-            QString message = QString("Failed to execute script: %1")
+            QString message = QString("Failed to execute script.\n\nError:\n%1")
                 .arg(QtUtils::toQString(event->error().errorMessage()));
             QMessageBox::information(this, "Error", message);
             return;

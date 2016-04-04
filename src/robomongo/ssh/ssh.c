@@ -9,6 +9,10 @@
 #include <arpa/inet.h>
 #include <sys/time.h>
 
+static int handle_new_client_connections(struct rbm_session *connection, int *fdmax, fd_set *masterset);
+static int handle_ssh_connections(struct rbm_session *connection, fd_set *masterset);
+static int handle_client_connections(struct rbm_session *connection, rbm_socket_t i, fd_set *masterset);
+
 //===----------------------------------------------------------------------===//
 // Public API
 //===----------------------------------------------------------------------===//
@@ -405,10 +409,12 @@ static int handle_new_client_connections(struct rbm_session *connection, int *fd
 
         int errsave = errno;
         if (!channel) {
-            ssh_log_warn(connection, "Could not open the direct TCP/IP channel (%d)", channel);
+            int lerr = libssh2_session_last_error(connection->sshsession, NULL, NULL, 0);
+
+            ssh_log_warn(connection, "Could not open the direct TCP/IP channel (%d)", lerr);
 
             // Error 35: Resource temporarily unavailable.
-            if (errsave == 35) {
+            if (lerr == LIBSSH2_ERROR_EAGAIN) {
                 usleep(200 * 1000);
                 continue;
             }

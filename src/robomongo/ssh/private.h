@@ -61,9 +61,6 @@ struct rbm_channel *rbm_channel_find_by_socket(struct rbm_session *session, rbm_
 
 void rbm_session_cleanup(struct rbm_session *session);
 int rbm_open_tunnel(struct rbm_session *connection);
-static int handle_new_client_connections(struct rbm_session *connection, int *fdmax, fd_set *masterset);
-static int handle_ssh_connections(struct rbm_session *connection, fd_set *masterset);
-static int handle_client_connections(struct rbm_session *connection, rbm_socket_t i, fd_set *masterset);
 int rbm_ssh_setup(struct rbm_session *session);
 static rbm_socket_t socket_connect(struct rbm_session* session, char *ip, int port);
 LIBSSH2_SESSION *ssh_connect(struct rbm_session *rsession, rbm_socket_t sock, enum rbm_ssh_auth_type type, char *username, char *password,

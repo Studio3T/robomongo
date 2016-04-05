@@ -23,28 +23,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_definitions( -DOPENSSL_NO_ASM )
-
-if( WIN32 AND NOT CYGWIN )
-    add_definitions( -DOPENSSL_SYSNAME_WIN32 )
-    add_definitions( -DWIN32_LEAN_AND_MEAN )
-
-    # avoid conflict: ocsp.h and wincrypt.h
-    add_definitions( -D_WINDLL )
-endif ( )
-
-include( CMakeParseArguments )
-
+include(CMakeParseArguments)
 
 # Crypto library
 set(sources_dir sources)
 set(crypto_dir ${sources_dir}/crypto)
 
-file( READ ${crypto_dir}/opensslconf.h.in CONF )
-string( REPLACE "#undef OPENSSL_EXPORT_VAR_AS_FUNCTION" "#cmakedefine OPENSSL_EXPORT_VAR_AS_FUNCTION"
-        CONF "${CONF}" )
+file(READ ${crypto_dir}/opensslconf.h.in CONF)
+string(REPLACE "#undef OPENSSL_EXPORT_VAR_AS_FUNCTION" "#cmakedefine OPENSSL_EXPORT_VAR_AS_FUNCTION"
+       CONF "${CONF}")
 
-set( CONF "
+set(CONF "
 #define OPENSSL_NO_GMP
 #define OPENSSL_NO_JPAKE
 #define OPENSSL_NO_KRB5
@@ -55,51 +44,35 @@ set( CONF "
 #define OPENSSL_NO_DYNAMIC_ENGINE
 #define OPENSSL_NO_SCTP
 #define OPENSSL_NO_EC_NISTP_64_GCC_128
-${CONF}" )
-file( WRITE ${CMAKE_CURRENT_BINARY_DIR}/opensslconf.h.cmake "${CONF}" )
+${CONF}")
+
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/opensslconf.h.cmake "${CONF}")
 
 #~2DO: set BUILDINF_DATE to `date LC_ALL=C LC_TIME=C`
-configure_file ( ${crypto_dir}/buildinf.h.cmake buildinf.h )
+configure_file(${crypto_dir}/buildinf.h.cmake buildinf.h)
 
-if( WIN32 AND MINGW AND NOT CYGWIN )
-    set( OPENSSL_EXPORT_VAR_AS_FUNCTION true )
+if(WIN32 AND MINGW AND NOT CYGWIN)
+    set(OPENSSL_EXPORT_VAR_AS_FUNCTION true)
 endif()
-configure_file( ${CMAKE_CURRENT_BINARY_DIR}/opensslconf.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/openssl/opensslconf.h )
+configure_file(${CMAKE_CURRENT_BINARY_DIR}/opensslconf.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/openssl/opensslconf.h)
 
-set( LIBSRC cryptlib.c mem.c mem_clr.c mem_dbg.c cversion.c ex_data.c cpt_err.c
-        ebcdic.c uid.c o_time.c o_str.c o_dir.c o_init.c )
+set(LIBSRC cryptlib.c mem.c mem_clr.c mem_dbg.c cversion.c ex_data.c cpt_err.c
+    ebcdic.c uid.c o_time.c o_str.c o_dir.c o_init.c)
 
-include_directories(
-        ${CMAKE_CURRENT_BINARY_DIR}
-        ${crypto_dir}/..
-        ${crypto_dir}/../include
-        ${crypto_dir}/.
-        ${crypto_dir}/asn1
-        ${crypto_dir}/evp
-        ${crypto_dir}/modes )
+macro(add_submodule dir)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs EXHEADERS)
+    cmake_parse_arguments(add_submodule "" "" "${multiValueArgs}" ${ARGN})
 
-if( BUILD_SHARED_LIBS )
-    add_definitions( -DOPENSSL_BUILD_SHLIBCRYPTO )
-endif()
-
-macro( add_submodule dir )
-    set( options )
-    set( oneValueArgs )
-    set( multiValueArgs EXHEADERS )
-    cmake_parse_arguments( add_submodule "" "" "${multiValueArgs}" ${ARGN} )
-
-    #message( STATUS "{dir} ${dir}" )
-    #message( STATUS "{add_submodule_UNPARSED_ARGUMENTS} ${add_submodule_UNPARSED_ARGUMENTS}" )
-    foreach( name ${add_submodule_UNPARSED_ARGUMENTS} )
-        set( LIBSRC ${LIBSRC} ${dir}/${name} )
+    foreach(name ${add_submodule_UNPARSED_ARGUMENTS})
+        set(LIBSRC ${LIBSRC} ${dir}/${name})
     endforeach( name )
 
-    #message( STATUS "{add_submodule_EXHEADERS} ${add_submodule_EXHEADERS}" )
-    foreach( name ${add_submodule_EXHEADERS} )
-        set( EXHEADERS ${EXHEADERS} ${dir}/${name} )
-    endforeach( name )
-
-endmacro( add_submodule )
+    foreach(name ${add_submodule_EXHEADERS})
+        set(EXHEADERS ${EXHEADERS} ${dir}/${name})
+    endforeach(name)
+endmacro(add_submodule)
 
 add_submodule ( ../engines e_4758cca.c e_aep.c e_atalla.c e_cswift.c e_gmp.c e_chil.c
         e_nuron.c e_sureware.c e_ubsec.c e_padlock.c e_capi.c )
@@ -242,37 +215,69 @@ foreach (source ${LIBSRC})
     list (APPEND sources ${CMAKE_CURRENT_SOURCE_DIR}/sources/crypto/${source})
 endforeach ()
 
-add_library( crypto ${sources} ${OBJECTS_SRC} )
 
-if( WIN32 AND NOT CYGWIN )
-    target_link_libraries( crypto ws2_32 crypt32 )
+add_library(crypto
+    ${sources}
+    ${OBJECTS_SRC})
+
+target_include_directories(crypto
+    PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${crypto_dir}/..
+        ${crypto_dir}/../include
+        ${crypto_dir}/.
+        ${crypto_dir}/asn1
+        ${crypto_dir}/evp
+        ${crypto_dir}/modes
+    PUBLIC
+        ${crypto_dir}/../include)
+
+
+target_compile_definitions(crypto
+    PUBLIC
+        OPENSSL_NO_ASM)
+
+if(WIN32 AND NOT CYGWIN)
+    target_link_libraries(crypto
+            PUBLIC
+            ws2_32
+            crypt32)
+
+    target_compile_definitions(crypto
+        PUBLIC
+            OPENSSL_SYSNAME_WIN32
+            WIN32_LEAN_AND_MEAN
+            # avoid conflict: ocsp.h and wincrypt.h
+            _WINDLL)
 endif()
+
 
 
 # SSL library
 set(sources_dir sources)
 set(ssl_dir ${sources_dir}/ssl)
 
-include_directories (
-        ${ssl_dir}/../crypto
-        ${ssl_dir}/..
-        ${ssl_dir}/../include )
-
-if( BUILD_SHARED_LIBS )
-    add_definitions ( -DOPENSSL_BUILD_SHLIBSSL )
-endif()
-
-set ( LIBSRC s2_meth.c s2_srvr.c s2_clnt.c s2_lib.c s2_enc.c s2_pkt.c s3_meth.c s3_srvr.c
-        s3_clnt.c s3_lib.c s3_enc.c s3_pkt.c s3_both.c s23_meth.c s23_srvr.c s23_clnt.c
-        s23_lib.c s23_pkt.c t1_meth.c t1_srvr.c t1_clnt.c t1_lib.c t1_enc.c d1_meth.c d1_srvr.c
-        d1_clnt.c d1_lib.c d1_pkt.c d1_both.c d1_enc.c ssl_lib.c ssl_err2.c ssl_cert.c
-        ssl_sess.c ssl_ciph.c ssl_stat.c ssl_rsa.c ssl_asn1.c ssl_txt.c ssl_algs.c bio_ssl.c
-        ssl_err.c kssl.c t1_reneg.c tls_srp.c s3_cbc.c d1_srtp.c )
+set(LIBSRC s2_meth.c s2_srvr.c s2_clnt.c s2_lib.c s2_enc.c s2_pkt.c s3_meth.c s3_srvr.c
+    s3_clnt.c s3_lib.c s3_enc.c s3_pkt.c s3_both.c s23_meth.c s23_srvr.c s23_clnt.c
+    s23_lib.c s23_pkt.c t1_meth.c t1_srvr.c t1_clnt.c t1_lib.c t1_enc.c d1_meth.c d1_srvr.c
+    d1_clnt.c d1_lib.c d1_pkt.c d1_both.c d1_enc.c ssl_lib.c ssl_err2.c ssl_cert.c
+    ssl_sess.c ssl_ciph.c ssl_stat.c ssl_rsa.c ssl_asn1.c ssl_txt.c ssl_algs.c bio_ssl.c
+    ssl_err.c kssl.c t1_reneg.c tls_srp.c s3_cbc.c d1_srtp.c)
 
 set(sources "")
-foreach (source ${LIBSRC})
-    list (APPEND sources ${CMAKE_CURRENT_SOURCE_DIR}/sources/ssl/${source})
+foreach(source ${LIBSRC})
+    list(APPEND sources ${ssl_dir}/${source})
 endforeach ()
 
-add_library ( ssl ${sources} )
-target_link_libraries ( ssl crypto )
+add_library(ssl ${sources})
+
+target_link_libraries(ssl
+    PUBLIC
+        crypto)
+
+target_include_directories(ssl
+    PRIVATE
+        ${ssl_dir}/../crypto
+        ${ssl_dir}/..
+    PUBLIC
+        ${ssl_dir}/../include )

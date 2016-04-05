@@ -47,126 +47,41 @@ include(CheckSymbolExists)
 include(CheckNonblockingSocketSupport)
 include(SocketLibraries)
 
-## Cryptography backend choice
+if (WIN32)
+    # Statically linking to OpenSSL requires crypt32 for some Windows APIs.
+    # This should really be handled by FindOpenSSL.cmake.
+    list(APPEND LIBRARIES crypt32)
+    list(APPEND PC_LIBS -lcrypt32)
 
-set(OPENSSL_ROOT_DIR "/usr/local/Cellar/openssl/1.0.2f")
-
-set(CRYPTO_BACKEND
-  "OpenSSL"
-  CACHE
-  STRING
-  "The backend to use for cryptography: OpenSSL, Libgcrypt or WinCNG,
-or empty to try any available")
-
-# If the crypto backend was given, rather than searching for the first
-# we are able to find, the find_package commands must abort configuration
-# and report to the user.
-if(CRYPTO_BACKEND)
-  set(SPECIFIC_CRYPTO_REQUIREMENT REQUIRED)
-endif()
-
-if(CRYPTO_BACKEND STREQUAL "OpenSSL" OR NOT CRYPTO_BACKEND)
-
-  find_package(OpenSSL ${SPECIFIC_CRYPTO_REQUIREMENT})
-
-#  set(OPENSSL_INCLUDE_DIR "/Users/dmitry/main/libs/openssl-0.9.8zg/include")
-#  set(OPENSSL_LIBRARIES ssl crypto)
-
-  if(OPENSSL_FOUND)
-    set(CRYPTO_BACKEND "OpenSSL")
-    set(CRYPTO_SOURCES openssl.c openssl.h)
-    list(APPEND PRIVATE_COMPILE_DEFINITIONS LIBSSH2_OPENSSL)
-    list(APPEND PRIVATE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
-    list(APPEND LIBRARIES ${OPENSSL_LIBRARIES})
-    list(APPEND PC_REQUIRES_PRIVATE libssl libcrypto)
-
-    if (WIN32)
-      # Statically linking to OpenSSL requires crypt32 for some Windows APIs.
-      # This should really be handled by FindOpenSSL.cmake.
-      list(APPEND LIBRARIES crypt32)
-      list(APPEND PC_LIBS -lcrypt32)
-
-      find_file(DLL_LIBEAY32
+    find_file(DLL_LIBEAY32
         NAMES libeay32.dll crypto.dll
         HINTS ${_OPENSSL_ROOT_HINTS} PATHS ${_OPENSSL_ROOT_PATHS}
         PATH_SUFFIXES bin)
-      if (NOT DLL_LIBEAY32)
-        message(WARNING "Unable to find OpenSSL libeay32 DLL, executables may not run")
-      endif()
 
-      find_file(DLL_SSLEAY32
+    if (NOT DLL_LIBEAY32)
+        message(WARNING "Unable to find OpenSSL libeay32 DLL, executables may not run")
+    endif()
+
+    find_file(DLL_SSLEAY32
         NAMES ssleay32.dll ssl.dll
         HINTS ${_OPENSSL_ROOT_HINTS} PATHS ${_OPENSSL_ROOT_PATHS}
         PATH_SUFFIXES bin)
-      if (NOT DLL_SSLEAY32)
+
+    if (NOT DLL_SSLEAY32)
         message(WARNING "Unable to find OpenSSL ssleay32 DLL, executables may not run")
-      endif()
+    endif()
 
-      if(DLL_LIBEAY32 AND DLL_SSLEAY32)
+    if(DLL_LIBEAY32 AND DLL_SSLEAY32)
         list(APPEND _RUNTIME_DEPENDENCIES ${DLL_LIBEAY32} ${DLL_SSLEAY32})
-      endif()
     endif()
-
-    # Not all OpenSSL have AES-CTR functions.
-    set(SAVE_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
-    set(CMAKE_REQUIRED_LIBRARIES ${OPENSSL_LIBRARIES})
-    check_function_exists(EVP_aes_128_ctr HAVE_EVP_AES_128_CTR)
-    set(CMAKE_REQUIRED_LIBRARIES ${SAVE_CMAKE_REQUIRED_LIBRARIES})
-  endif()
 endif()
 
-if(CRYPTO_BACKEND STREQUAL "Libgcrypt" OR NOT CRYPTO_BACKEND)
-
-  find_package(Libgcrypt ${SPECIFIC_CRYPTO_REQUIREMENT})
-
-  if(LIBGCRYPT_FOUND)
-    set(CRYPTO_BACKEND "Libgcrypt")
-    set(CRYPTO_SOURCES libgcrypt.c libgcrypt.h)
-    list(APPEND PRIVATE_COMPILE_DEFINITIONS LIBSSH2_LIBGCRYPT)
-    list(APPEND PRIVATE_INCLUDE_DIRECTORIES ${LIBGCRYPT_INCLUDE_DIRS})
-    list(APPEND LIBRARIES ${LIBGCRYPT_LIBRARIES})
-    list(APPEND PC_LIBS -lgcrypt)
-  endif()
-endif()
-
-if(CRYPTO_BACKEND STREQUAL "WinCNG" OR NOT CRYPTO_BACKEND)
-
-  # The check actually compiles the header.  This requires windows.h.
-  check_include_files("windows.h;bcrypt.h" HAVE_BCRYPT_H)
-
-  if(HAVE_BCRYPT_H)
-    set(CRYPTO_BACKEND "WinCNG")
-    set(CRYPTO_SOURCES wincng.c wincng.h)
-    list(APPEND PRIVATE_COMPILE_DEFINITIONS LIBSSH2_WINCNG)
-
-    set(HAVE_LIBCRYPT32 TRUE)
-    list(APPEND LIBRARIES bcrypt)
-    list(APPEND PC_LIBS -lbcrypt)
-
-    check_include_files(ntdef.h HAVE_NTDEF_H)
-    check_include_files(ntstatus.h HAVE_NTSTATUS_H)
-
-    # Reading keys from files is optional and depends on Wincrypt
-    check_include_files("windows.h;wincrypt.h" HAVE_WINCRYPT_H)
-
-    if(HAVE_WINCRYPT_H)
-      list(APPEND LIBRARIES crypt32)
-      list(APPEND PC_LIBS -lcrypt32)
-    endif()
-
-  elseif(${SPECIFIC_CRYPTO_REQUIREMENT} STREQUAL ${REQUIRED})
-    message(FATAL_ERROR "WinCNG not available")
-  endif()
-endif()
-
-if(NOT CRYPTO_BACKEND)
-  message(FATAL_ERROR "No suitable cryptography backend found.")
-endif()
+set(HAVE_EVP_AES_128_CTR YES)
 
 ## Library definition
-
 set(SOURCES
-  ${CRYPTO_SOURCES}
+  openssl.c
+  openssl.h
   agent.c
   channel.c
   channel.h
@@ -200,28 +115,31 @@ set(SOURCES
   version.c)
 
 if(WIN32)
-  list(APPEND SOURCES ${PROJECT_SOURCE_DIR}/sources/src/win32/libssh2.rc)
+  list(APPEND SOURCES ../win32/libssh2.rc)
 endif()
 
 foreach (source ${SOURCES})
-  list (APPEND sources ${CMAKE_CURRENT_SOURCE_DIR}/sources/src/${source})
+  list (APPEND sources sources/src/${source})
 endforeach ()
 
 add_library(libssh2 ${sources})
 # we want it to be called libssh2 on all platforms
 set_target_properties(libssh2 PROPERTIES PREFIX "")
 
-target_compile_definitions(libssh2 PRIVATE ${PRIVATE_COMPILE_DEFINITIONS})
+target_compile_definitions(libssh2
+    PRIVATE
+        LIBSSH2_OPENSSL)
+
+target_link_libraries(libssh2
+    PRIVATE
+        ssl crypto)
+
 target_include_directories(libssh2
-  PRIVATE ${PRIVATE_INCLUDE_DIRECTORIES}
-  PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/sources/include>
-    $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>)
+    PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/sources/include>
+        $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>)
 
 ## Options
-
-add_feature_info("Shared library" BUILD_SHARED_LIBS
-  "creating libssh2 as a shared library (.so/.dll)")
 
 option(ENABLE_ZLIB_COMPRESSION "Use zlib for compression")
 add_feature_info(Compression ENABLE_ZLIB_COMPRESSION
@@ -237,32 +155,13 @@ if(ENABLE_ZLIB_COMPRESSION)
   endif()
 endif()
 
-option(ENABLE_CRYPT_NONE "Permit \"none\" cipher -- NOT RECOMMENDED")
-add_feature_info("\"none\" cipher" ENABLE_CRYPT_NONE "")
-if(ENABLE_CRYPT_NONE)
-  target_compile_definitions(libssh2 PRIVATE LIBSSH2_CRYPT_NONE=1)
-endif()
-
-option(ENABLE_MAC_NONE "Permit \"none\" MAC -- NOT RECOMMMENDED")
-add_feature_info("\"none\" MAC" ENABLE_MAC_NONE "")
-if(ENABLE_MAC_NONE)
-  target_compile_definitions(libssh2 PRIVATE LIBSSH2_MAC_NONE=1)
-endif()
-
-option(ENABLE_GEX_NEW
-  "Enable diffie-hellman-group-exchange-sha1 method" ON)
-add_feature_info("diffie-hellman-group-exchange-sha1" ENABLE_GEX_NEW
-  "\"new\" diffie-hellman-group-exchange-sha1 method")
-if(ENABLE_GEX_NEW)
-  target_compile_definitions(libssh2 PRIVATE LIBSSH2_DH_GEX_NEW=1)
-endif()
-
 # Enable debugging logging by default if the user configured a debug build
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(DEBUG_LOGGING_DEFAULT ON)
 else()
   set(DEBUG_LOGGING_DEFAULT OFF)
 endif()
+
 option(ENABLE_DEBUG_LOGGING "log execution with debug trace"
   ${DEBUG_LOGGING_DEFAULT})
 add_feature_info(Logging ENABLE_DEBUG_LOGGING

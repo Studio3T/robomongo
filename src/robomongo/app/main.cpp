@@ -13,8 +13,14 @@
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/AppStyle.h"
 
+#include "robomongo/ssh/ssh.h"
+
 int main(int argc, char *argv[], char** envp)
 {
+    if (rbm_ssh_init()) {
+        return 1;
+    }
+
     // Please check, do we really need envp for other OSes?
 #ifdef Q_OS_WIN
     envp = NULL;
@@ -56,9 +62,9 @@ int main(int argc, char *argv[], char** envp)
     int x = (screenGeometry.width() - win.width()) / 2;
     int y = (screenGeometry.height() - win.height()) / 2;
     win.move(x, y);
-
-    // And, finally, show it
     win.show();
 
-    return app.exec();
+    int rc = app.exec();
+    rbm_ssh_cleanup();
+    return rc;
 }

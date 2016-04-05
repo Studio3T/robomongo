@@ -41,5 +41,7 @@ namespace Robomongo
          * @brief Error message
          */
         const std::string _errorMessage;
+
+        bool _isNull;
     };
 }

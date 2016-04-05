@@ -1,0 +1,75 @@
+# Copyright (c) 2014 Alexander Lamaison <alexander.lamaison@gmail.com>
+#
+# Redistribution and use in source and binary forms,
+# with or without modification, are permitted provided
+# that the following conditions are met:
+#
+#   Redistributions of source code must retain the above
+#   copyright notice, this list of conditions and the
+#   following disclaimer.
+#
+#   Redistributions in binary form must reproduce the above
+#   copyright notice, this list of conditions and the following
+#   disclaimer in the documentation and/or other materials
+#   provided with the distribution.
+#
+#   Neither the name of the copyright holder nor the names
+#   of any other contributors may be used to endorse or
+#   promote products derived from this software without
+#   specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+# CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+# OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+# OF SUCH DAMAGE.
+
+language: c
+
+compiler:
+  - gcc
+  - clang
+
+env:
+  matrix:
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON
+   - ADDRESS_SIZE=64 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON
+   - ADDRESS_SIZE=32 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON
+
+before_install:
+  - sudo add-apt-repository --yes ppa:kalakris/cmake
+  - sudo apt-get update
+  - sudo apt-get -y install cmake
+  - if [ $ADDRESS_SIZE = '64' ]; then sudo apt-get install -y libgcrypt11-dev libssl-dev zlib1g-dev; fi
+  - if [ $ADDRESS_SIZE = '32' ]; then sudo apt-get install -y linux-libc-dev linux-libc-dev:i386; fi
+  - if [ $ADDRESS_SIZE = '32' ]; then sudo apt-get install -y gcc-multilib libgcrypt11-dev:i386 libssl-dev:i386 zlib1g-dev:i386; fi
+  - if [ $ADDRESS_SIZE = '32' ]; then export TOOLCHAIN_OPTION="-DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-Linux-32.cmake"; fi
+
+install:
+  - mkdir bin
+  - cd bin
+
+script:
+  - cmake $TOOLCHAIN_OPTION -DCRYPTO_BACKEND=$CRYPTO_BACKEND -DBUILD_SHARED_LIBS=$BUILD_SHARED_LIBS -DENABLE_ZLIB_COMPRESSION=$ENABLE_ZLIB_COMPRESSION .. && cmake --build . && CTEST_OUTPUT_ON_FAILURE=1 cmake --build . --target test && cmake --build . --target package

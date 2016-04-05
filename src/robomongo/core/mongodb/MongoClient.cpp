@@ -79,6 +79,11 @@ namespace Robomongo
         std::vector<MongoUser> users;
 
         std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query()));
+
+        // Cursor may be NULL, it means we have connectivity problem
+        if (!cursor)
+            throw mongo::DBException("Network error while attempting to load list of users", 0);
+
         float ver = getVersion();
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -126,6 +131,9 @@ namespace Robomongo
 
         std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query().sort("_id")));
 
+        // Cursor may be NULL, it means we have connectivity problem
+        if (!cursor)
+            throw mongo::DBException("Network error while attempting to load list of functions.", 0);
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -381,6 +389,11 @@ namespace Robomongo
             _dbclient->createCollection(to.toString());
 
         std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(from.toString(), mongo::Query()));
+
+        // Cursor may be NULL, it means we have connectivity problem
+        if (!cursor)
+            throw mongo::DBException("Network error while attempting to run query", 0);
+
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
             _dbclient->insert(to.toString(), bsonObj);
@@ -393,6 +406,11 @@ namespace Robomongo
             _dbclient->createCollection(to.toString());
 
         std::unique_ptr<mongo::DBClientCursor> cursor(fromServ->query(from.toString(), mongo::Query()));
+
+        // Cursor may be NULL, it means we have connectivity problem
+        if (!cursor)
+            throw mongo::DBException("Network error while attempting to run query", 0);
+
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
             _dbclient->insert(to.toString(), bsonObj);
@@ -442,6 +460,10 @@ namespace Robomongo
         std::unique_ptr<mongo::DBClientCursor> cursor = _dbclient->query(
             ns.toString(), info._query, info._limit, info._skip,
             info._fields.nFields() ? &info._fields : 0, info._options, info._batchSize);
+
+        // DBClientBase::query may return nullptr
+        if (!cursor)
+            throw mongo::DBException("Network error while attempting to run query", 0);
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();

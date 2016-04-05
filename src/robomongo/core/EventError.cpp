@@ -2,12 +2,18 @@
 
 namespace Robomongo
 {
-    EventError::EventError() {}
+    EventError::EventError() :
+        _isNull(true) {}
 
     EventError::EventError(const std::string &errorMessage) :
-        _errorMessage(errorMessage) {}
+        _errorMessage(errorMessage),
+        _isNull(false) {}
 
-    bool EventError::isNull() const { return _errorMessage.empty(); }
+    bool EventError::isNull() const {
+        return _isNull;
+    }
 
-    const std::string &EventError::errorMessage() const { return _errorMessage; }
+    const std::string &EventError::errorMessage() const {
+        return _errorMessage;
+    }
 }

@@ -7,6 +7,7 @@ namespace Robomongo
     class MongoCollectionInfo
     {
     public:
+        MongoCollectionInfo() {}
         MongoCollectionInfo(const std::string &ns);
 //        MongoCollectionInfo(mongo::BSONObj stats);
 

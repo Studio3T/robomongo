@@ -56,7 +56,7 @@ namespace Robomongo
 
     SettingsManager::~SettingsManager()
     {
-        std::for_each(_connections.begin(),_connections.end(),stdutils::default_delete<ConnectionSettings *>());
+        std::for_each(_connections.begin() ,_connections.end(), stdutils::default_delete<ConnectionSettings *>());
     }
 
     /**
@@ -184,7 +184,8 @@ namespace Robomongo
 
         QVariantList list = map.value("connections").toList();
         for (QVariantList::iterator it = list.begin(); it != list.end(); ++it) {
-            ConnectionSettings *record = new ConnectionSettings((*it).toMap());
+            ConnectionSettings *record = new ConnectionSettings();
+            record->fromVariant((*it).toMap());
             _connections.push_back(record);
         }
 

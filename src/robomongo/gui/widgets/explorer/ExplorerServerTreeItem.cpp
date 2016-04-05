@@ -2,6 +2,7 @@
 
 #include <QAction>
 #include <QMenu>
+#include <QMessageBox>
 
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoDatabase.h"
@@ -116,6 +117,25 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::handle(DatabaseListLoadedEvent *event)
     {
+        if (event->isError()) {
+            setText(0, buildServerName(0));     // Restore normal name (without "...")
+            setExpanded(false);                 // Collapse
+
+            // We should clear all child items, but we are not
+            // doing this, because of incorrect "senders" for messages
+            // that are going to Worker thread. Yes, some guy specified UI objects
+            // as senders. If we delete these UI objects, response will crash the app
+            // (because QObject::thread() is used to get thread of the QObject)
+            // QtUtils::clearChildItems(this);
+
+            std::stringstream ss;
+            ss << "Cannot load list of databases.\n\nError:\n"
+                << event->error().errorMessage();
+
+            QMessageBox::information(NULL, "Error", QtUtils::toQString(ss.str()));
+            return;
+        }
+
         databaseRefreshed(event->list);
     }
 

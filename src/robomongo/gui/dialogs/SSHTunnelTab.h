@@ -34,7 +34,7 @@ namespace Robomongo
         void togglePassphraseEchoMode();
 
     private:
-        SSHInfo::SupportedAuthenticationMetods selectedAuthMethod();
+//        SSHInfo::SupportedAuthenticationMetods selectedAuthMethod();
         
     private:        
         QCheckBox *_sshSupport;

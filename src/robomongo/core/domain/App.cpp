@@ -5,6 +5,8 @@
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/SshSettings.h"
+#include "robomongo/core/mongodb/SshTunnelWorker.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/StdUtils.h"
@@ -31,7 +33,11 @@ namespace Robomongo
     }
 
     App::App(EventBus *const bus) : QObject(),
-        _bus(bus) { }
+        _bus(bus) {
+        _bus->subscribe(this, EstablishSshConnectionResponse::Type);
+        _bus->subscribe(this, ListenSshConnectionResponse::Type);
+        _bus->subscribe(this, LogEvent::Type);
+    }
 
     App::~App()
     {
@@ -40,22 +46,29 @@ namespace Robomongo
     }
 
     /**
-     * @brief Creates and opens new server connection.
+     * Creates and opens new server connection.
      * @param connection: ConnectionSettings, that will be owned by MongoServer.
      * @param visible: should this server be visible in UI (explorer) or not.
      */
-    MongoServer *App::openServer(ConnectionSettings *connection,
-                                 bool visible)
-    {
-        MongoServer *server = new MongoServer(connection, visible);
-        _servers.push_back(server);
-
+    MongoServer *App::openServer(ConnectionSettings *connection, bool visible) {
         if (visible)
-            _bus->publish(new ConnectingEvent(this, server));
+            _bus->publish(new ConnectingEvent(this));
 
-        LOG_MSG(QString("Connecting to %1...").arg(QtUtils::toQString(server->connectionRecord()->getFullAddress())), mongo::logger::LogSeverity::Info());
-        server->tryConnect();
-        return server;
+        // When connection is not "visible" or do not have
+        // ssh settings enabled, continue without SSH Tunnel
+        if (!visible || !connection->sshSettings()->enabled()) {
+            return continueOpenServer(connection, visible);
+        }
+
+        // Open SSH channel and only after that open connection
+        LOG_MSG(QString("Creating SSH tunnel to %1:%2...")
+            .arg(QtUtils::toQString(connection->sshSettings()->host()))
+            .arg(connection->sshSettings()->port()), mongo::logger::LogSeverity::Info());
+
+        ConnectionSettings* settingsCopy = connection->clone();
+        SshTunnelWorker* sshWorker = new SshTunnelWorker(settingsCopy);
+        _bus->send(sshWorker, new EstablishSshConnectionRequest(this, sshWorker, settingsCopy, visible));
+        return NULL;
     }
 
     /**
@@ -120,5 +133,59 @@ namespace Robomongo
         _shells.erase(it);
         closeServer(shell->server());
         delete shell;
+    }
+
+    MongoServer* App::continueOpenServer(ConnectionSettings *connection, bool visible, int localport) {
+        ConnectionSettings* settings = connection->clone();
+
+        // Modify connection settings when SSH tunnel is used
+        if (visible && settings->sshSettings()->enabled()) {
+            settings->setServerHost("127.0.0.1");
+            settings->setServerPort(localport);
+        }
+
+        MongoServer *server = new MongoServer(settings, visible);
+        _servers.push_back(server);
+
+        server->runWorkerThread();
+
+        LOG_MSG(QString("Connecting to %1...").arg(QtUtils::toQString(server->connectionRecord()->getFullAddress())), mongo::logger::LogSeverity::Info());
+        server->tryConnect();
+        return server;
+    }
+
+    void App::handle(EstablishSshConnectionResponse *event) {
+        if (event->isError()) {
+            _bus->publish(new ConnectionFailedEvent(this, event->error().errorMessage()));
+            return;
+        }
+
+        LOG_MSG(QString("SSH tunnel created successfully"), mongo::logger::LogSeverity::Info());
+
+        _bus->send(event->worker, new ListenSshConnectionRequest(this));
+        continueOpenServer(event->settings, event->visible, event->localport);
+
+        // record event->worker and delete when needed
+    }
+
+    void App::handle(LogEvent *event) {
+        if (event->level == LogEvent::ERROR) {
+            LOG_MSG(event->message, mongo::logger::LogSeverity::Error());
+        } else if (event->level == LogEvent::WARN) {
+            LOG_MSG(event->message, mongo::logger::LogSeverity::Warning());
+        } else if (event->level == LogEvent::INFO) {
+            LOG_MSG(event->message, mongo::logger::LogSeverity::Info());
+        } else if (event->level == LogEvent::DEBUG) {
+            LOG_MSG(event->message, mongo::logger::LogSeverity::Log());
+        }
+    }
+
+    void App::handle(ListenSshConnectionResponse *event) {
+        if (event->isError()) {
+            _bus->publish(new ConnectionFailedEvent(this, event->error().errorMessage()));
+            return;
+        }
+
+        LOG_MSG(QString("SSH tunnel closed."), mongo::logger::LogSeverity::Error());
     }
 }

@@ -1,5 +1,10 @@
 project(QJson)
 
+# Automatically generate code for Qt moc, uic and rcc files
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
 add_library(qjson
     sources/src/parser.cpp
     sources/src/qobjecthelper.cpp

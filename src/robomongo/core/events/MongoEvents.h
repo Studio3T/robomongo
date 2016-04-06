@@ -1062,10 +1062,10 @@ namespace Robomongo
     R_EVENT
 
         enum LogLevel {
-            ERROR  = 1,
-            WARN   = 2,
-            INFO   = 3,
-            DEBUG  = 100 // log as much as possible
+            RBM_ERROR  = 1,
+            RBM_WARN   = 2,
+            RBM_INFO   = 3,
+            RBM_DEBUG  = 100 // log as much as possible
         };
 
         LogEvent(QObject *sender, const std::string& message, LogLevel level) :

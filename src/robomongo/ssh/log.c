@@ -3,15 +3,16 @@
 #include <errno.h>
 #include <stdio.h>
 
+enum {BUF_SIZE = 1024 };
+
 int log_error(const char *format, ...)
 {
     int errsave = errno;
-    const int buf_size = 1024;
-    char buf[buf_size];
+    char buf[BUF_SIZE];
     va_list args;
 
     va_start(args, format);
-    vsnprintf(buf, buf_size, format, args);
+    vsnprintf(buf, BUF_SIZE, format, args);
 
     if (errsave) {
         fprintf(stderr, "Error (%d): %s. %s\n", errno, strerror(errsave), buf);
@@ -25,12 +26,11 @@ int log_error(const char *format, ...)
 
 int log_msg(const char *format, ...)
 {
-    const int buf_size = 1024;
-    char buf[buf_size];
+    char buf[BUF_SIZE];
     va_list args;
 
     va_start(args, format);
-    vsnprintf(buf, buf_size, format, args);
+    vsnprintf(buf, BUF_SIZE, format, args);
 
     printf("%s\n", buf);
 
@@ -42,9 +42,8 @@ int log_msg(const char *format, ...)
  * errsave: use 0, if you are not logging errors (i.e. errno == 0).
  */
 void ssh_log_v(struct rbm_session* session, enum rbm_ssh_log_type type, const char *format, va_list args, int errsave) {
-    const size_t bufsize = 2000;
-    char buf[bufsize];
-    vsnprintf(buf, bufsize, format, args);
+    char buf[BUF_SIZE];
+    vsnprintf(buf, BUF_SIZE, format, args);
 
     if (type == RBM_SSH_LOG_TYPE_ERROR ||
         type == RBM_SSH_LOG_TYPE_WARN) {

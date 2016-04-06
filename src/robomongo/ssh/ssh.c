@@ -1,18 +1,32 @@
 #include "robomongo/ssh/private.h"
 
-#include <stdlib.h>
-#include <errno.h>
-#include <unistd.h>   // close()
-
+#ifdef WIN32
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
+#endif
+
+#include <stdlib.h>
+#include <errno.h>
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h> // close()
+#endif
+
+
 #include <signal.h>
 
 static int handle_new_client_connections(struct rbm_session *connection, int *fdmax, fd_set *masterset);
 static int handle_ssh_connections(struct rbm_session *connection, fd_set *masterset);
 static int handle_client_connections(struct rbm_session *connection, rbm_socket_t i, fd_set *masterset);
+
+static void rbm_sleep_ms(int ms);
+static void rbm_socket_close(rbm_socket_t socket);
 
 //===----------------------------------------------------------------------===//
 // Public API
@@ -23,14 +37,28 @@ static int handle_client_connections(struct rbm_session *connection, rbm_socket_
  * Returns 0 if succeeded, or a negative value for error.
  */
 int rbm_ssh_init() {
+#ifndef WIN32
     // Ignore SIGPIPE signal. If we will not do that, an attempt to send/write
     // to the socket that do not have readers will force OS to generate SIGPIPE
     // signal. Default handler for this signal is a termination of program.
     // While signal is ignored, send/write will still return error code, that
     // should be handled by the code.
     signal(SIGPIPE, SIG_IGN);
+#endif
 
-    int err = libssh2_init(0);
+    int err;
+
+#ifdef WIN32
+    WSADATA wsadata;
+    err = WSAStartup(MAKEWORD(2,0), &wsadata);
+    if (err) {
+        log_error("WSAStartup failed with error code: (%d)", err);
+        return RBM_ERROR;
+    }
+#endif
+
+
+    err = libssh2_init(0);
     if (err) {
         log_error("Initialization of LIBSSH2 failed with error code: (%d)", err);
         return RBM_ERROR;
@@ -44,6 +72,10 @@ int rbm_ssh_init() {
  */
 void rbm_ssh_cleanup() {
     libssh2_exit();
+
+#ifdef WIN32
+    WSACleanup();
+#endif
 }
 
 /*
@@ -89,7 +121,7 @@ void rbm_ssh_session_close(struct rbm_ssh_session *sshsession) {
     struct rbm_session *session = (struct rbm_session*)sshsession->handle;
     if (session->localsocket != rbm_socket_invalid) {
         ssh_log_debug(session, "Closing local accept socket");
-        close(session->localsocket);
+        rbm_socket_close(session->localsocket);
         session->localsocket = rbm_socket_invalid;
     }
 
@@ -102,8 +134,6 @@ void rbm_ssh_session_close(struct rbm_ssh_session *sshsession) {
 
 int rbm_ssh_open_tunnel(struct rbm_ssh_session *sshsession) {
     struct rbm_session *connection = (struct rbm_session*)sshsession->handle;
-    const int ERROR = -1;
-    const int SUCCESS = 0;
     int rc = 0;
 
     while (1) {
@@ -118,33 +148,31 @@ int rbm_ssh_open_tunnel(struct rbm_ssh_session *sshsession) {
 
         if (rbm_ssh_setup(connection) == -1) {
             rbm_ssh_session_close(sshsession);
-            return ERROR;
+            return RBM_ERROR;
         }
     }
 
-    return SUCCESS;
+    return RBM_SUCCESS;
 }
 
 
 // Returns -1 on error, 0 when otherwise
 int rbm_ssh_session_setup(struct rbm_ssh_session *sshsession) {
     struct rbm_session *session = (struct rbm_session*)sshsession->handle;
-    const int ERROR = -1;
-    const int SUCCESS = 0;
     struct rbm_ssh_tunnel_config *config = session->config;
 
     if (rbm_ssh_setup(session) == -1)
-        return ERROR;
+        return RBM_ERROR;
 
     session->localsocket = socket_listen(session, config->localip, (int *) &config->localport);
     if (session->localsocket == -1) {
         session->localsocket = rbm_socket_invalid;
-        return ERROR; // errors are already logged by socket_listen
+        return RBM_ERROR; // errors are already logged by socket_listen
     }
 
     ssh_log_debug(session, "Waiting for TCP connection on %s:%d...", config->localip, config->localport);
 
-    return SUCCESS;
+    return RBM_SUCCESS;
 }
 
 
@@ -187,7 +215,7 @@ void rbm_channel_close(struct rbm_channel *channel) {
 
     // 3. Close socket
     if (channel->socket != rbm_socket_invalid) {
-        close(channel->socket);
+        rbm_socket_close(channel->socket);
         channel->socket = rbm_socket_invalid;
     }
 
@@ -222,8 +250,6 @@ struct rbm_channel *rbm_channel_find_by_socket(struct rbm_session *session, rbm_
 
 // Returns -1 on error, 0 when otherwise
 int rbm_ssh_setup(struct rbm_session *session) {
-    const int ERROR = -1;
-    const int SUCCESS = 0;
     struct rbm_ssh_tunnel_config *config = session->config;
 
     ssh_log_debug(session, "Connecting to SSH server (%s:%d)...", config->sshserverip, config->sshserverport);
@@ -231,19 +257,19 @@ int rbm_ssh_setup(struct rbm_session *session) {
     session->sshsocket = socket_connect(session, config->sshserverip, config->sshserverport);
     if (session->sshsocket == -1) {
         session->sshsocket = rbm_socket_invalid;
-        return ERROR; // errors are already logged by socket_connect
+        return RBM_ERROR; // errors are already logged by socket_connect
     }
 
     session->sshsession = ssh_connect(session, session->sshsocket, config->authtype, config->username, config->password,
                                       config->publickeyfile, config->privatekeyfile, config->passphrase);
     if (session->sshsession == 0) {
-        return ERROR; // errors are already logged by ssh_connect
+        return RBM_ERROR; // errors are already logged by ssh_connect
     }
 
     // Must use non-blocking IO hereafter due to the current libssh3 API
     libssh2_session_set_blocking(session->sshsession, 0);
 
-    return SUCCESS;
+    return RBM_SUCCESS;
 }
 
 void rbm_session_cleanup(struct rbm_session *session) {
@@ -272,15 +298,13 @@ void rbm_session_cleanup(struct rbm_session *session) {
     // 3.
     if (session->sshsocket != rbm_socket_invalid) {
         ssh_log_debug(session, "Closing SSH socket");
-        close(session->sshsocket);
+        rbm_socket_close(session->sshsocket);
         session->sshsocket = rbm_socket_invalid;
     }
 }
 
 
 int rbm_open_tunnel(struct rbm_session *connection) {
-    const int ERROR = -1;
-    const int SUCCESS = 0;
     rbm_socket_t local_socket = connection->localsocket;
     rbm_socket_t ssh_socket = connection->sshsocket;
 
@@ -346,18 +370,18 @@ int rbm_open_tunnel(struct rbm_session *connection) {
 
             if (rc == -1) {
                 ssh_log_warn(connection, "SSH tunnel shutdown because of error");
-                return ERROR;
+                return RBM_ERROR;
             }
         }
     }
 
     if (errors >= maxerrors) {
         ssh_log_warn(connection, "SSH tunnel shutdown because of series of successive EAGAIN errors");
-        return ERROR;
+        return RBM_ERROR;
     }
 
     rbm_ssh_session_close(connection->publicsession);
-    return SUCCESS;
+    return RBM_SUCCESS;
 }
 
 // Return -1 on error. 0 otherwise.
@@ -367,8 +391,6 @@ static int handle_new_client_connections(struct rbm_session *connection, int *fd
     LIBSSH2_SESSION* session = connection->sshsession;
     struct rbm_ssh_tunnel_config* config = connection->config;
     rbm_socket_t newfd = rbm_socket_invalid;
-    const int ERROR = -1;
-    const int SUCCESS = 0;
 
     ssh_log_debug(connection, "Data on accept socket is available");
 
@@ -378,7 +400,7 @@ static int handle_new_client_connections(struct rbm_session *connection, int *fd
     // handle new connections
     if ((newfd = accept(local_socket, (struct sockaddr *) &remoteaddr, &slen)) == -1) {
         ssh_log_error(connection, "Error on accept()");
-        return ERROR;
+        return RBM_ERROR;
     } else {
         FD_SET(newfd, masterset); // add to master set
 
@@ -405,7 +427,8 @@ static int handle_new_client_connections(struct rbm_session *connection, int *fd
 
             // Error 35: Resource temporarily unavailable.
             if (lerr == LIBSSH2_ERROR_EAGAIN) {
-                usleep(200 * 1000);
+                rbm_sleep_ms(200);
+//                usleep(200 * 1000);
                 continue;
             }
 
@@ -418,22 +441,20 @@ static int handle_new_client_connections(struct rbm_session *connection, int *fd
 
     if (!channel) {
         ssh_log_error(connection, "Failed to create SSH channel");
-        return ERROR;
+        return RBM_ERROR;
     }
 
     if (rbm_channel_create(connection, newfd, channel) == NULL) {
-        return ERROR;
+        return RBM_ERROR;
     }
 
-    return SUCCESS;
+    return RBM_SUCCESS;
 }
 
 //  0: success
 // -1:
 static int handle_ssh_connections(struct rbm_session *connection, fd_set *masterset) {
     const int AGAIN = -2;
-    const int ERROR = -1;
-    const int SUCCESS = 0;
     struct rbm_ssh_tunnel_config* config = connection->config;
 
     ssh_log_debug(connection, "Data on SSH socket is available");
@@ -442,11 +463,11 @@ static int handle_ssh_connections(struct rbm_session *connection, fd_set *master
     if (connection->channelssize == 0) {
         FD_CLR(connection->localsocket, masterset); // remove from master set
         FD_CLR(connection->sshsocket, masterset);   // remove from master set
-        return SUCCESS;
+        return RBM_SUCCESS;
     }
 
     int s = 0;
-    int result = SUCCESS;
+    int result = RBM_SUCCESS;
     int eagain = 0;
     while (s < connection->channelssize) {
         struct rbm_channel *context = connection->channels[s];
@@ -479,9 +500,9 @@ static int handle_ssh_connections(struct rbm_session *connection, fd_set *master
                 // Endless cycle:
                 // Network is down. libssh2_channel_read: -43. (Error #50)
 
-                result = ERROR;
+                result = RBM_ERROR;
                 ssh_log_error(connection, "libssh2_channel_read: %d", len);
-                return ERROR;
+                return RBM_ERROR;
             }
 
             firstflag = 0;
@@ -492,14 +513,14 @@ static int handle_ssh_connections(struct rbm_session *connection, fd_set *master
             while (wr < len) {
                 rc = send(context->socket, context->outbuf + wr, len - wr, 0);
                 if (rc <= 0) {
-                    result = ERROR;
+                    result = RBM_ERROR;
                     ssh_log_error(connection, "Failure to write data to client");
                     break;
                 }
                 wr += rc;
             }
             if (libssh2_channel_eof(context->channel)) {
-                result = SUCCESS;
+                result = RBM_SUCCESS;
                 ssh_log_debug(connection, "The server at %s:%d disconnected!\n",
                               config->remotehost, config->remoteport);
                 break;
@@ -511,16 +532,14 @@ static int handle_ssh_connections(struct rbm_session *connection, fd_set *master
 }
 
 static int handle_client_connections(struct rbm_session *connection, rbm_socket_t i, fd_set *masterset) {
-    const int ERROR = -1;
-    const int SUCCESS = 0;
-    int result = SUCCESS;
+    int result = RBM_SUCCESS;
     ssh_log_debug(connection, "Data on client socket is available");
 
     struct rbm_channel *context = rbm_channel_find_by_socket(connection, i);
     if (!context) {
-        close(i); // bye!
+        rbm_socket_close(i); // bye!
         FD_CLR(i, masterset); // remove from master set
-        return ERROR;
+        return RBM_ERROR;
     }
 
     // Read data from a client
@@ -528,16 +547,16 @@ static int handle_client_connections(struct rbm_session *connection, rbm_socket_
     if (nbytes <= 0) {
         if (nbytes == 0) {
             // Normal situation
-            result = SUCCESS;
+            result = RBM_SUCCESS;
             ssh_log_debug(connection, "Client disconnected");
         } else {
             // Got error
-            result = ERROR;
+            result = RBM_ERROR;
             ssh_log_error(connection, "Error when recv()");
         }
 
         // In both these cases, close and cleanup connection
-//        close(context->socket); // bye!
+//        rbm_socket_close(context->socket); // bye!
         FD_CLR(context->socket, masterset); // remove from master set
         rbm_channel_close(context);
 
@@ -562,20 +581,20 @@ static int handle_client_connections(struct rbm_session *connection, rbm_socket_
 
             if (again > againmax) {
                 ssh_log_warn(connection, "Number of attempts to libssh2_channel_write exсeed max value");
-                return ERROR;
+                return RBM_ERROR;
             }
 
             continue;
         }
         if (rc < 0) {
             ssh_log_error(connection, "Failed to write to SSH channel");
-            return ERROR;
+            return RBM_ERROR;
         }
         wr += rc;
     }
     ssh_log_debug(connection, "Written %d bytes to tunnel", wr);
 
-    return SUCCESS;
+    return RBM_SUCCESS;
 }
 
 /*
@@ -728,4 +747,20 @@ LIBSSH2_SESSION *ssh_connect(struct rbm_session *rsession, rbm_socket_t sock, en
     }
 
     return session;
+}
+
+static void rbm_sleep_ms(int ms) {
+#ifdef WIN32
+    Sleep(ms);
+#else
+    usleep(ms * 1000);
+#endif
+}
+
+static void rbm_socket_close(rbm_socket_t socket) {
+#ifdef WIN32
+    closesocket(socket);
+#else
+    close(socket);
+#endif
 }

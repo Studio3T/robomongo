@@ -1,6 +1,5 @@
 #include "ssh.h"
 
-#include <unistd.h>
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
@@ -11,7 +10,13 @@ int main(int argc, char *argv[]) {
     config.localport = 27040;
     config.username = "dmitry";
     config.password = "";
+
+#ifdef WIN32
+    config.privatekeyfile = "d:\\ubuntik";
+#else
     config.privatekeyfile = "/Users/dmitry/.ssh/ubuntik";
+#endif
+
     config.publickeyfile = NULL; //"/Users/dmitry/.ssh/ubuntik.pub";
     config.passphrase = "";
     config.sshserverip = "198.61.166.171";
@@ -27,7 +32,7 @@ int main(int argc, char *argv[]) {
     struct rbm_ssh_session *session = NULL;
     session = rbm_ssh_session_create(&config);
     if (!session) {
-        printf("Unable to create session. Shutdown");
+        printf("Unable to create session. Shutdown\n");
         return 1;
     }
 
@@ -35,7 +40,7 @@ int main(int argc, char *argv[]) {
     printf("II About to open tunnel...\n");
 
     if (rbm_ssh_session_setup(session) == -1) {
-        printf("Setup failed. Shutdowning...");
+        printf("Setup failed. Shutdowning...\n");
         rbm_ssh_session_close(session);
         return 1;
     }
@@ -44,7 +49,7 @@ int main(int argc, char *argv[]) {
 //
     printf("About to open tunnel...\n");
     if (rbm_ssh_open_tunnel(session) != 0) {
-        printf("Tunnel stopped because of error.");
+        printf("Tunnel stopped because of error.\n");
         return 1;
     }
 //

@@ -169,13 +169,13 @@ namespace Robomongo
     }
 
     void App::handle(LogEvent *event) {
-        if (event->level == LogEvent::ERROR) {
+        if (event->level == LogEvent::RBM_ERROR) {
             LOG_MSG(event->message, mongo::logger::LogSeverity::Error());
-        } else if (event->level == LogEvent::WARN) {
+        } else if (event->level == LogEvent::RBM_WARN) {
             LOG_MSG(event->message, mongo::logger::LogSeverity::Warning());
-        } else if (event->level == LogEvent::INFO) {
+        } else if (event->level == LogEvent::RBM_INFO) {
             LOG_MSG(event->message, mongo::logger::LogSeverity::Info());
-        } else if (event->level == LogEvent::DEBUG) {
+        } else if (event->level == LogEvent::RBM_DEBUG) {
             LOG_MSG(event->message, mongo::logger::LogSeverity::Log());
         }
     }

@@ -49,31 +49,7 @@ include(SocketLibraries)
 
 if (WIN32)
     # Statically linking to OpenSSL requires crypt32 for some Windows APIs.
-    # This should really be handled by FindOpenSSL.cmake.
     list(APPEND LIBRARIES crypt32)
-    list(APPEND PC_LIBS -lcrypt32)
-
-    find_file(DLL_LIBEAY32
-        NAMES libeay32.dll crypto.dll
-        HINTS ${_OPENSSL_ROOT_HINTS} PATHS ${_OPENSSL_ROOT_PATHS}
-        PATH_SUFFIXES bin)
-
-    if (NOT DLL_LIBEAY32)
-        message(WARNING "Unable to find OpenSSL libeay32 DLL, executables may not run")
-    endif()
-
-    find_file(DLL_SSLEAY32
-        NAMES ssleay32.dll ssl.dll
-        HINTS ${_OPENSSL_ROOT_HINTS} PATHS ${_OPENSSL_ROOT_PATHS}
-        PATH_SUFFIXES bin)
-
-    if (NOT DLL_SSLEAY32)
-        message(WARNING "Unable to find OpenSSL ssleay32 DLL, executables may not run")
-    endif()
-
-    if(DLL_LIBEAY32 AND DLL_SSLEAY32)
-        list(APPEND _RUNTIME_DEPENDENCIES ${DLL_LIBEAY32} ${DLL_SSLEAY32})
-    endif()
 endif()
 
 set(HAVE_EVP_AES_128_CTR YES)
@@ -252,3 +228,7 @@ else()
   target_link_libraries(libssh2 PRIVATE ${LIBRARIES})
 endif()
 
+# Ignore single compiler warning for this third-party project
+if(COMPILER_MSVC)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4133")
+endif()

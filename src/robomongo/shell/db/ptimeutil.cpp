@@ -344,7 +344,7 @@ namespace miutil
             td = boost::posix_time::time_duration(hourOffset, minuteOffset, 0);
             return pt - td;
         }
-        catch(const std::out_of_range &ex)
+        catch(const std::out_of_range &)
         {
             isSuccessfull = false;
             return boost::posix_time::ptime();

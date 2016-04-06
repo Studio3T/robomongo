@@ -631,7 +631,13 @@ static rbm_socket_t socket_connect(struct rbm_session* session, char *ip, int po
 rbm_socket_t socket_listen(struct rbm_session *rsession, char *ip, int *port) {
     rbm_socket_t listensock;
     struct sockaddr_in sin;
+
+#ifdef WIN32
+    char sockopt;
+#else
     int sockopt;
+#endif
+
     socklen_t sinlen;
 
     listensock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -675,7 +681,7 @@ rbm_socket_t socket_listen(struct rbm_session *rsession, char *ip, int *port) {
  */
 LIBSSH2_SESSION *ssh_connect(struct rbm_session *rsession, rbm_socket_t sock, enum rbm_ssh_auth_type type, char *username, char *password,
                              char *publickeypath, char *privatekeypath, char *passphrase) {
-    int rc, i, auth = RBM_SSH_AUTH_TYPE_NONE;
+    int rc, auth = RBM_SSH_AUTH_TYPE_NONE;
     LIBSSH2_SESSION *session;
     const char *fingerprint;
     char *userauthlist;

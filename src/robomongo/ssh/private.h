@@ -5,6 +5,10 @@
 extern "C" {
 #endif
 
+// Until we will implement support for IPv6, we can ignore MSVC warning:
+// "Use inet_ntop() or InetNtop() instead" of "inet_ntoa"
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
 #include <libssh2.h>
 #include <stdarg.h>         // for va_list in log functions
 

@@ -281,3 +281,9 @@ target_include_directories(ssl
         ${ssl_dir}/..
     PUBLIC
         ${ssl_dir}/../include )
+
+
+# Ignore 4 types of compiler warnings for this third-party project
+if(COMPILER_MSVC)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4267 /wd4244 /wd4996 /wd4273")
+endif()

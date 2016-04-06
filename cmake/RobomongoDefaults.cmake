@@ -52,6 +52,18 @@ elseif("${CMAKE_BUILD_TYPE}" MATCHES "MinSizeRel")
     set(BUILD_MINSIZEREL TRUE)
 endif()
 
+# Compiler checks
+# We check Clang using MATCH instead of STREQUAL, because as of CMake 3.0.0 the
+# CMAKE_<LANG>_COMPILER_ID value for Apple-provided Clang is AppleClang. To test
+# for both the Apple-provided Clang and the regular Clang we use MATCH.
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    set(COMPILER_CLANG TRUE)
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(COMPILER_GCC TRUE)
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    set(COMPILER_MSVC TRUE)
+endif()
+
 # Link "groups" and "whole-archive" options
 if(SYSTEM_LINUX OR SYSTEM_FREEBSD OR SYSTEM_OPENBSD)
     set(LINK_LIBGROUP_START        -Wl,--start-group)

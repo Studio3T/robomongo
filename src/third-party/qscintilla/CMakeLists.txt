@@ -245,3 +245,8 @@ target_compile_definitions(qscintilla
         SCINTILLA_QT
         SCI_LEXER)
 
+# Project produces three types of warnings that are all not critical.
+# We are turning them off to remove noise
+if (COMPILER_CLANG OR COMPILER_GCC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-dangling-else -Wno-parentheses -Wno-switch")
+endif()

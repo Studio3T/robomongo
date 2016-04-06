@@ -203,7 +203,7 @@ namespace miutil
         if( !isLocalFormat ){
             sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03dZ", 
                 static_cast<int>(d.year()), d.month().as_number(), d.day().as_number(), sep,
-                t.hours(), t.minutes(), t.seconds(),(static_cast<int64_t>(t.total_milliseconds()))%1000 );
+                t.hours(), t.minutes(), t.seconds(),(static_cast<int>(t.total_milliseconds()))%1000 );
         }
         else{
             boost::posix_time::ptime timeP(d,t);       
@@ -225,7 +225,7 @@ namespace miutil
             sprintf(utc_buff,diffT.hours()>0?"+%02d:%02d":"%03d:%02d",diffT.hours(),abs(diffM));
             sprintf( buf, "%04d-%02d-%02d%c%02d:%02d:%02d.%03d", 
                 static_cast<int>(d.year()), d.month().as_number(), d.day().as_number(), sep,
-                t.hours(), t.minutes(), t.seconds(),(static_cast<int64_t>(t.total_milliseconds()))%1000);
+                t.hours(), t.minutes(), t.seconds(),(static_cast<int>(t.total_milliseconds()))%1000);
             strcat(buf,utc_buff);
         }
 

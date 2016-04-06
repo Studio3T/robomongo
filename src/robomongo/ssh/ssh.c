@@ -1,4 +1,5 @@
 #include "robomongo/ssh/private.h"
+#include "robomongo/ssh/libssh2_config.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -15,9 +16,8 @@
 #include <errno.h>
 
 #ifdef HAVE_UNISTD_H
-#include <unistd.h> // close()
+#include <unistd.h>
 #endif
-
 
 #include <signal.h>
 

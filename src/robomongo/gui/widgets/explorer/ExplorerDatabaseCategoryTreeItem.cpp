@@ -6,6 +6,7 @@
 #include "robomongo/gui/dialogs/FunctionTextEditor.h"
 #include "robomongo/gui/dialogs/CreateUserDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
+#include "robomongo/gui/dialogs/CreateCollectionDialog.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -153,9 +154,9 @@ namespace Robomongo
         if (!databaseItem)
             return;
 
-        CreateDatabaseDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
+		CreateCollectionDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
             QtUtils::toQString(databaseItem->database()->name()), QString(), treeWidget());
-        dlg.setWindowTitle("Create Collection");
+        //dlg.setWindowTitle("Create Collection");	//todo: remove
         dlg.setOkButtonText("&Create");
         dlg.setInputLabelText("Collection Name:");
         int result = dlg.exec();

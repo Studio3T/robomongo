@@ -62,6 +62,7 @@ set(SOURCES
     gui/dialogs/ConnectionDialog.cpp
     gui/dialogs/CopyCollectionDialog.cpp
     gui/widgets/workarea/IndicatorLabel.cpp
+    gui/dialogs/CreateCollectionDialog.cpp
     gui/dialogs/CreateDatabaseDialog.cpp
     gui/dialogs/CreateUserDialog.cpp
     gui/utils/ComboBoxUtils.cpp

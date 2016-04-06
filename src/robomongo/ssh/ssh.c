@@ -314,9 +314,8 @@ int rbm_open_tunnel(struct rbm_session *connection) {
 
     int fdmax;       // maximum socket (file descriptor) number
     int isocket;     // index for traversing sockets
-    fd_set masterset, readset, clearset;
+    fd_set masterset, readset;
     FD_ZERO(&masterset);
-    FD_ZERO(&clearset);
 
     // Add the listener to the master set
     FD_SET(local_socket, &masterset);
@@ -329,9 +328,9 @@ int rbm_open_tunnel(struct rbm_session *connection) {
 
         readset = masterset; // copy set
 
-        // If readset has no descriptors, it means that
+        // If local (accept) socket is closed, it means that
         // session is closed and we should stop our work
-        if (!memcmp(&readset, &clearset, sizeof(fd_set)))
+        if (!FD_ISSET(local_socket, &readset))
             break;
 
         ssh_log_debug(connection, "* Okay, we are ready to select.");

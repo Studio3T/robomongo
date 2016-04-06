@@ -9,6 +9,7 @@
 namespace Robomongo
 {
     class CredentialSettings;
+    class SshSettings;
     /**
      * @brief Represents connection record
      */
@@ -43,6 +44,7 @@ namespace Robomongo
          * @brief Converts to QVariantMap
          */
         QVariant toVariant() const;
+        void fromVariant(const QVariantMap &map);
 
         /**
          * @brief Name of connection
@@ -140,14 +142,16 @@ namespace Robomongo
             return mongo::HostAndPort(hostCopy, _port);
         }
 
+        SshSettings *sshSettings() const { return _sshSettings; }
+
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
         std::string _connectionName;
         std::string _host;
         int _port;
-        //mongo::HostAndPort _info;
         std::string _defaultDatabase;
         QList<CredentialSettings *> _credentials;
+        SshSettings *_sshSettings;
     };
 }
 

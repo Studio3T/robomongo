@@ -19,6 +19,7 @@
 
 #include <mongo/logger/log_severity.h>
 #include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/AppRegistry.h"
@@ -97,11 +98,6 @@ namespace Robomongo
         _workArea(NULL),
         _connectionsMenu(NULL)
     {
-        AppRegistry::instance().bus()->subscribe(this, ConnectionFailedEvent::Type);
-        AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type);
-        AppRegistry::instance().bus()->subscribe(this, ScriptExecutingEvent::Type);
-        AppRegistry::instance().bus()->subscribe(this, QueryWidgetUpdatedEvent::Type);
-
         QColor background = palette().window().color();
         QString controlKey = "Ctrl";
 
@@ -503,6 +499,11 @@ namespace Robomongo
 
         QTimer::singleShot(0, this, SLOT(manageConnections()));
         updateMenus();
+
+        AppRegistry::instance().bus()->subscribe(this, ConnectionFailedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, ScriptExecutingEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, QueryWidgetUpdatedEvent::Type);
     }
 
     void MainWindow::createStylesMenu()
@@ -649,6 +650,17 @@ namespace Robomongo
 
         if (result == QDialog::Accepted) {
             ConnectionSettings *selected = dialog.selectedConnection();
+
+            selected->sshSettings()->setLogLevel(1);
+            if (QGuiApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier)) {
+                // Enable debug level of logging for SSH
+                if (selected->sshSettings()->enabled()) {
+                    selected->sshSettings()->setLogLevel(100);
+                }
+
+                // Show log pannel
+                toggleLogs(true);
+            }
 
             try {
                 _app->openServer(selected, true);
@@ -874,16 +886,15 @@ namespace Robomongo
             _app->openServer(ptr, true);
         }
         catch(const std::exception &) {
-            QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(ptr->getFullAddress()));
+            QString message = QString("Cannot connect to the MongoDB at %1.")
+                .arg(QtUtils::toQString(ptr->getFullAddress()));
             QMessageBox::information(this, "Error", message);
         }
     }
 
     void MainWindow::handle(ConnectionFailedEvent *event)
     {
-        ConnectionSettings *connection = event->server->connectionRecord();
-        QString message = QString("Cannot connect to MongoDB (%1),\nerror: %2").arg(QtUtils::toQString(connection->getFullAddress())).arg(QtUtils::toQString(event->error().errorMessage()));
-        QMessageBox::information(this, "Error", message);
+        QMessageBox::information(this, "Error", QtUtils::toQString(event->message));
     }
 
     void MainWindow::handle(ScriptExecutingEvent *)

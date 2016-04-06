@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "robomongo/core/settings/CredentialSettings.h"
+#include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace
@@ -16,58 +17,47 @@ namespace Robomongo
 {
 
     /**
-     * @brief Creates ConnectionSettings with default values
+     * Creates ConnectionSettings with default values
      */
     ConnectionSettings::ConnectionSettings() : QObject(),
         _connectionName(defaultNameConnection),
         _host(defaultServerHost),
-        _port(port)
-    {
+        _port(port),
+        _sshSettings(new SshSettings()) { }
 
-    }
+    void ConnectionSettings::fromVariant(const QVariantMap &map) {
+        setConnectionName(QtUtils::toStdString(map.value("connectionName").toString()));
+        setServerHost(QtUtils::toStdString(map.value("serverHost").toString()));
+        setServerPort(map.value("serverPort").toInt());
+        setDefaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString()));
 
-    ConnectionSettings::ConnectionSettings(QVariantMap map) : QObject(),
-        _connectionName(QtUtils::toStdString(map.value("connectionName").toString())),
-        _host(QtUtils::toStdString(map.value("serverHost").toString())),
-        _port(map.value("serverPort").toInt())
-#ifdef MONGO_SSL
-        ,SSLInfo(map.value("sslEnabled").toBool(),QtUtils::toStdString(map.value("sslPemKeyFile").toString()))
-#endif
-#ifdef SSH_SUPPORT_ENABLED
-        ,SSHInfo()
-#endif        
-        ,_defaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString()))
-    {
-#ifdef SSH_SUPPORT_ENABLED
-        SSHInfo inf;
-        inf._hostName = QtUtils::toStdString(map.value("sshHost").toString());
-        inf._userName = QtUtils::toStdString(map.value("sshUserName").toString());
-        inf._port = map.value("sshPort").toInt();
-        inf._password = QtUtils::toStdString(map.value("sshUserPassword").toString());
-        inf._publicKey._publicKey = QtUtils::toStdString(map.value("sshPublicKey").toString());
-        inf._publicKey._privateKey = QtUtils::toStdString(map.value("sshPrivateKey").toString());
-        inf._publicKey._passphrase = QtUtils::toStdString(map.value("sshPassphrase").toString());
-        inf._currentMethod = static_cast<SSHInfo::SupportedAuthenticationMetods>(map.value("sshAuthMethod").toInt());
-        setSshInfo(inf);
-#endif
         QVariantList list = map.value("credentials").toList();
         for(QVariantList::const_iterator it = list.begin(); it != list.end(); ++it) {
             QVariant var = *it;
             CredentialSettings *credential = new CredentialSettings(var.toMap());
             addCredential(credential);
         }
+
+        if (map.contains("ssh")) {
+            _sshSettings->fromVariant(map.value("ssh").toMap());
+        }
+
+//#ifdef MONGO_SSL
+//      ,SSLInfo(map.value("sslEnabled").toBool(),QtUtils::toStdString(map.value("sslPemKeyFile").toString()))
+//#endif
     }
 
     /**
-     * @brief Cleanup used resources
+     * Cleanup used resources
      */
     ConnectionSettings::~ConnectionSettings()
     {
         clearCredentials();
+        delete _sshSettings;
     }
 
     /**
-     * @brief Creates completely new ConnectionSettings by cloning this record.
+     * Creates completely new ConnectionSettings by cloning this record.
      */
     ConnectionSettings *ConnectionSettings::clone() const
     {
@@ -77,7 +67,7 @@ namespace Robomongo
     }
 
     /**
-     * @brief Discards current state and applies state from 'source' ConnectionSettings.
+     * Discards current state and applies state from 'source' ConnectionSettings.
      */
     void ConnectionSettings::apply(const ConnectionSettings *source)
     {
@@ -85,18 +75,19 @@ namespace Robomongo
         setServerHost(source->serverHost());
         setServerPort(source->serverPort());
         setDefaultDatabase(source->defaultDatabase());
-#ifdef MONGO_SSL
-        setSslInfo(source->sslInfo());
-#endif
 
-#ifdef SSH_SUPPORT_ENABLED
-        setSshInfo(source->sshInfo());
-#endif
         clearCredentials();
         QList<CredentialSettings *> cred = source->credentials();
         for (QList<CredentialSettings *>::iterator it = cred.begin(); it != cred.end(); ++it) {
             addCredential((*it)->clone());
         }
+
+        // Clone SSH settings
+        _sshSettings = source->sshSettings()->clone();
+
+//#ifdef MONGO_SSL
+//        setSslInfo(source->sslInfo());
+//#endif
     }
 
     /**
@@ -114,23 +105,14 @@ namespace Robomongo
         map.insert("sslEnabled", infl._sslSupport);
         map.insert("sslPemKeyFile", QtUtils::toQString(infl._sslPEMKeyFile));
 #endif
-#ifdef SSH_SUPPORT_ENABLED
-        SSHInfo inf = _info.sshInfo();
-        map.insert("sshHost", QtUtils::toQString(inf._hostName));
-        map.insert("sshUserName", QtUtils::toQString(inf._userName));
-        map.insert("sshPort", inf._port);
-        map.insert("sshUserPassword", QtUtils::toQString(inf._password));
-        map.insert("sshPublicKey", QtUtils::toQString(inf._publicKey._publicKey));
-        map.insert("sshPrivateKey", QtUtils::toQString(inf._publicKey._privateKey));
-        map.insert("sshPassphrase", QtUtils::toQString(inf._publicKey._passphrase));
-        map.insert("sshAuthMethod", inf._currentMethod);
-#endif
         QVariantList list;
         for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
             CredentialSettings *credential = *it;
             list.append(credential->toVariant());
         }
         map.insert("credentials", list);
+
+        map.insert("ssh", _sshSettings->toVariant());
 
         return map;
     }
@@ -193,4 +175,7 @@ namespace Robomongo
     {
         return info().toString();
     }
+
+
+
 }

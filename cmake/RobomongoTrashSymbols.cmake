@@ -1,5 +1,6 @@
 if(SYSTEM_LINUX OR SYSTEM_MACOSX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
 elseif(SYSTEM_WINDOWS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_UNICODE -DUNICODE -DWIN32 -D_WIN32 -D_CRT_SECURE_NO_WARNINGS -DBOOST_ALL_NO_LIB")
 
@@ -9,6 +10,7 @@ elseif(SYSTEM_WINDOWS)
     # The /MP option can reduce the total time to compile the source files. This option
     # causes the compiler to create one or more copies of itself, each in a separate process.
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+    set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
     set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} psapi.lib bcrypt.lib Iphlpapi.lib dbghelp.lib ws2_32.lib winmm.lib version.lib")
 endif()

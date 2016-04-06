@@ -1,3 +1,10 @@
+
+# Automatically generate code for Qt moc, uic and rcc files
+# Since CMake 2.8.6
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
 set(SOURCES
 
     # Isolated Scope #1
@@ -109,6 +116,10 @@ set(SOURCES
     gui/widgets/LogWidget.cpp
     gui/MainWindow.cpp
 
+    gui/dialogs/SSHTunnelTab.cpp
+    core/settings/SshSettings.cpp
+    core/mongodb/SshTunnelWorker.cpp
+
     gui/resources/gui.qrc
 )
 
@@ -122,6 +133,7 @@ target_link_libraries(robomongo
         qjson
         qscintilla
         mongodb
+        ssh
         Threads::Threads)   # Target from FindThreads CMake module
 
 target_include_directories(robomongo

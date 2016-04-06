@@ -111,18 +111,18 @@ namespace Robomongo
             _engine = mongo::globalScriptEngine;
 
             // Load '.mongorc.js' from user's home directory
-            // We are not checking whether file exists, because it will be
-            // checked by 'Scope::execFile'.
             if (isLoadMongoRcJs) {
-                std::string mongorcPath = QtUtils::toStdString(QString("%1/.mongorc.js").arg(QDir::homePath()));
-                scope->execFile(mongorcPath, false, false);      
+                QString mongorcPath = QString("%1/.mongorc.js").arg(QDir::homePath());
+                if (QFile::exists(mongorcPath)) {
+                    scope->execFile(QtUtils::toStdString(mongorcPath), false, false);
+                }
             }
 
             // Load '.robomongorc.js'
-            // Alexander: branding very usfull see Chromium and his brand Chrome, in Chrome some features private
-            // Dmitry: I agree, but we still need to support ".robomongorc.js" even when name of project will change
-            std::string roboMongorcPath = QtUtils::toStdString(QString("%1/.robomongorc.js").arg(QDir::homePath()));
-            scope->execFile(roboMongorcPath, false, false);
+            QString robomongorcPath = QString("%1/.robomongorc.js").arg(QDir::homePath());
+            if (QFile::exists(robomongorcPath)) {
+                scope->execFile(QtUtils::toStdString(robomongorcPath), false, false);
+            }
         }
 
         // Esprima ECMAScript parser: http://esprima.org/
@@ -190,8 +190,9 @@ namespace Robomongo
                 try {
                     QElapsedTimer timer;
                     timer.start();
-                    if ( _scope->exec( statement , "(shell)" , false , true , false, 3600000 ) )
-                        _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false, 3600000);
+                    if ( _scope->exec( statement , "(shell)" , false , true , false, 0 ) ) {
+                        _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false, 0);
+                    }
 
                     qint64 elapsed = timer.elapsed();
 
@@ -204,7 +205,7 @@ namespace Robomongo
                         results.push_back(prepareResult(type, answer, docs, elapsed));
                 }
                 catch (const std::exception &e) {
-                    std::cout << "error:" << e.what() << endl;
+                    std::cout << "error:" << e.what() << std::endl;
                 }
             }
         }
@@ -214,7 +215,8 @@ namespace Robomongo
 
     void ScriptEngine::interrupt()
     {
-        _engine->interruptAll();
+        // This operation crash Robomongo
+        // static_cast<mongo::mozjs::MozJSImplScope*>(_scope)->kill();
 
         // v0.9
         //mongo::Scope::_interruptFlag = true;
@@ -244,7 +246,7 @@ namespace Robomongo
         char buff[64] = {0};
         sprintf(buff, "DBQuery.shellBatchSize = %d", batchSize);
 
-        _scope->exec(buff, "(shellBatchSize)", true, true, true);
+        _scope->exec(buff, "(shellBatchSize)", false, true, true);
     }
 
     void ScriptEngine::ping()

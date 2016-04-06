@@ -72,6 +72,8 @@ namespace Robomongo
          */
         void listWidget_layoutChanged();
 
+        void keyPressEvent(QKeyEvent* event);
+
     private:
         /**
          * @brief ConnectionSettings, that was selected after pressing on

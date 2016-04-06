@@ -24,9 +24,9 @@ namespace Robomongo
     public:
         typedef std::vector<std::string> DatabasesContainerType;
         explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
-        ConnectionSettings *connectionRecord() const {return _connection;}
         ~MongoWorker();
         enum { pingTimeMs = 60 * 1000 };
+        void interrupt();
         void stopAndDelete();
         
     protected Q_SLOTS: // handlers:
@@ -101,6 +101,7 @@ namespace Robomongo
          * @brief Execute javascript
          */
         void handle(ExecuteScriptRequest *event);
+        void handle(StopScriptRequest *event);
 
         void handle(AutocompleteRequest *event);
         void handle(CreateDatabaseRequest *event);

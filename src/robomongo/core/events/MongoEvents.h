@@ -19,6 +19,8 @@ namespace Robomongo
     class MongoShell;
     class MongoDatabase;
     class MongoWorker;
+    class ConnectionSettings;
+    class SshTunnelWorker;
 
     /**
      * @brief EstablishConnection
@@ -28,16 +30,8 @@ namespace Robomongo
     {
         R_EVENT
 
-        EstablishConnectionRequest(QObject *sender, const QString &databaseName,
-                                   const QString &userName, const QString &userPassword) :
-            Event(sender),
-            databaseName(databaseName),
-            userName(userName),
-            userPassword(userPassword) {}
-
-        QString databaseName;
-        QString userName;
-        QString userPassword;
+        EstablishConnectionRequest(QObject *sender) :
+            Event(sender) {}
     };
 
     class EstablishConnectionResponse : public Event
@@ -141,7 +135,11 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        LoadCollectionIndexesResponse(QObject *sender, const std::vector<EnsureIndexInfo> &indexes) :Event(sender), _indexes(indexes) {}
+        LoadCollectionIndexesResponse(QObject *sender, const std::vector<EnsureIndexInfo> &indexes) :
+            Event(sender), _indexes(indexes) {}
+
+        LoadCollectionIndexesResponse(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
         std::vector<EnsureIndexInfo> indexes() const { return _indexes; }
     private:
         std::vector<EnsureIndexInfo> _indexes;
@@ -185,11 +183,15 @@ namespace Robomongo
         R_EVENT
     public:
         DeleteCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection,const std::string &index) :
-        Event(sender),_collection(collection),_index(index) {}
+            Event(sender),_collection(collection),_index(index) {}
+
+        DeleteCollectionIndexResponse(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
+
         MongoCollectionInfo collection() const { return _collection; }
         std::string index() const {return _index;}
     private:
-        const MongoCollectionInfo _collection;
+        MongoCollectionInfo _collection;
         std::string _index;
     };
 
@@ -809,6 +811,9 @@ namespace Robomongo
             list(list),
             prefix(prefix) {}
 
+        AutocompleteResponse(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
+
         QStringList list;
         std::string prefix;
     };
@@ -855,11 +860,8 @@ namespace Robomongo
     {
         R_EVENT
 
-        ConnectingEvent(QObject *sender, MongoServer *server) :
-            Event(sender),
-            server(server) { }
-
-        MongoServer *server;
+        ConnectingEvent(QObject *sender) :
+            Event(sender) { }
     };
 
     class OpeningShellEvent : public Event
@@ -877,15 +879,14 @@ namespace Robomongo
     {
         R_EVENT
 
-        ConnectionFailedEvent(MongoServer *server) :
-            Event((QObject *)server),
-            server(server) { }
+        ConnectionFailedEvent(QObject *sender, const std::string& message) :
+            Event(sender),
+            message(message) {}
 
-        ConnectionFailedEvent(MongoServer *server, const EventError &error) :
-            Event((QObject *)server, error),
-            server(server) {}
+        ConnectionFailedEvent(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
 
-        MongoServer *server;
+        std::string message;
     };
 
 //    class ScriptExecute
@@ -909,6 +910,9 @@ namespace Robomongo
             Event(sender),
             list(list) { }
 
+        DatabaseListLoadedEvent(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
+
         QList<MongoDatabase *> list;
     };
 
@@ -923,6 +927,9 @@ namespace Robomongo
             _queryInfo(queryInfo),
             _query(query),
             _documents(docs) { }
+
+        DocumentListLoadedEvent(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
 
         int resultIndex() const { return _resultIndex; }
         MongoQueryInfo queryInfo() const { return _queryInfo; }
@@ -945,6 +952,9 @@ namespace Robomongo
             Event(sender),
             _result(result),
             _empty(empty) { }
+
+        ScriptExecutedEvent(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
 
         MongoShellExecResult result() const { return _result; }
         bool empty() const { return _empty; }
@@ -976,5 +986,102 @@ namespace Robomongo
 
     private:
         int _numOfResults;
+    };
+
+    /**
+     * @brief Establish SSH Connection
+     */
+
+    class EstablishSshConnectionRequest : public Event
+    {
+    R_EVENT
+
+        EstablishSshConnectionRequest(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, bool visible) :
+            Event(sender),
+            worker(worker),
+            settings(settings),
+            visible(visible) {}
+
+        ConnectionSettings* settings;
+        bool visible;
+        SshTunnelWorker* worker;
+    };
+
+    class EstablishSshConnectionResponse : public Event
+    {
+    R_EVENT
+
+        EstablishSshConnectionResponse(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, bool visible, int localport) :
+            Event(sender),
+            worker(worker),
+            settings(settings),
+            visible(visible),
+            localport(localport) {}
+
+        EstablishSshConnectionResponse(QObject *sender, const EventError &error, SshTunnelWorker* worker, ConnectionSettings* settings, bool visible) :
+            Event(sender, error),
+            worker(worker),
+            settings(settings),
+            visible(visible) {}
+
+        ConnectionSettings* settings;
+        bool visible;
+        SshTunnelWorker* worker;
+        int localport;
+    };
+
+    /**
+     * @brief Start listening on all opened sockets (SSH tunnel)
+     */
+
+    class ListenSshConnectionRequest : public Event
+    {
+    R_EVENT
+
+        ListenSshConnectionRequest(QObject *sender) :
+                Event(sender) {}
+    };
+
+    class ListenSshConnectionResponse : public Event
+    {
+    R_EVENT
+
+        ListenSshConnectionResponse(QObject *sender, ConnectionSettings* settings) :
+            Event(sender),
+            settings(settings) {}
+
+        ListenSshConnectionResponse(QObject *sender, const EventError &error, ConnectionSettings* settings) :
+            Event(sender, error),
+            settings(settings) {}
+
+        ConnectionSettings* settings;
+    };
+
+    class LogEvent : public Event
+    {
+    R_EVENT
+
+        enum LogLevel {
+            RBM_ERROR  = 1,
+            RBM_WARN   = 2,
+            RBM_INFO   = 3,
+            RBM_DEBUG  = 100 // log as much as possible
+        };
+
+        LogEvent(QObject *sender, const std::string& message, LogLevel level) :
+            Event(sender),
+            message(message),
+            level(level) {}
+
+        std::string message;
+        LogLevel level;
+    };
+
+    class StopScriptRequest : public Event
+    {
+    R_EVENT
+
+        StopScriptRequest(QObject *sender) :
+            Event(sender) {}
     };
 }

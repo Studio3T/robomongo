@@ -164,7 +164,7 @@ namespace Robomongo
                 connection->auth(authParams);
                 emit authStatus("", true);
             }
-        } catch (const mongo::UserException &ex) {
+        } catch (const mongo::UserException &) {
             emit authStatus("", false);
         }
 

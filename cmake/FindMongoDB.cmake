@@ -48,6 +48,7 @@ set(MongoDB_INCLUDE_DIRS
     ${MongoDB_DIR}/src
     ${MongoDB_DIR}/src/third_party/boost-1.56.0
     ${MongoDB_DIR}/src/third_party/mozjs-38/include
+    ${MongoDB_DIR}/src/third_party/mozjs-38/mongo_sources
     ${MongoDB_DIR}/src/third_party/pcre-8.37
     ${MongoDB_BUILD_DIR}
 )

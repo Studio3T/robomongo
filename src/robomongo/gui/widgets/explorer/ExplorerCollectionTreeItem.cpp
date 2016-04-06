@@ -281,8 +281,25 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::handle(LoadCollectionIndexesResponse *event)
     {
+        if (event->isError()) {
+            _indexDir->setText(0, "Indexes");
+            _indexDir->setExpanded(false);
+            QtUtils::clearChildItems(_indexDir);
+
+            std::stringstream ss;
+            ss << "Cannot load list of indexes.\n\nError:\n" << event->error().errorMessage();
+
+            QMessageBox::information(NULL, "Error", QtUtils::toQString(ss.str()));
+            return;
+        }
+
         QtUtils::clearChildItems(_indexDir);
         const std::vector<EnsureIndexInfo> &indexes = event->indexes();
+
+        // Do not expand, when we do not have functions
+        if (indexes.size() == 0)
+            _indexDir->setExpanded(false);
+
         for (std::vector<EnsureIndexInfo>::const_iterator it = indexes.begin(); it!=indexes.end(); ++it) {
             _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(_indexDir,*it));
         }
@@ -291,6 +308,10 @@ namespace Robomongo
 
     void ExplorerCollectionTreeItem::handle(DeleteCollectionIndexResponse *event)
     {
+        if (event->isError()) {
+            return;
+        }
+
         if (!event->index().empty()) {
             int itemCount = _indexDir->childCount();
             QString eventIndex = QtUtils::toQString(event->index());

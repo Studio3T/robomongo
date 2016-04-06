@@ -44,8 +44,6 @@ namespace Robomongo
                                        QWidget *parent) : QDialog(parent),
         _user(user)
     {
-        VERIFY(!user.version() < MongoUser::minimumSupportedVersion);
-
         setWindowTitle("Add User");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumSize(minimumSize);
@@ -120,7 +118,6 @@ namespace Robomongo
         QWidget *parent) : QDialog(parent),
         _user(user)
     {
-        VERIFY(user.version() < MongoUser::minimumSupportedVersion);
         setWindowTitle("Add User");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumSize(minimumSize);

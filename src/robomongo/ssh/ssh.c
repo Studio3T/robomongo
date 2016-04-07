@@ -6,10 +6,12 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #else
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
+#include <netdb.h>
 #endif
 
 #include <stdlib.h>
@@ -20,6 +22,7 @@
 #endif
 
 #include <signal.h>
+#include <stdio.h>
 
 static int handle_new_client_connections(struct rbm_session *connection, int *fdmax, fd_set *masterset);
 static int handle_ssh_connections(struct rbm_session *connection, fd_set *masterset);
@@ -252,9 +255,9 @@ struct rbm_channel *rbm_channel_find_by_socket(struct rbm_session *session, rbm_
 int rbm_ssh_setup(struct rbm_session *session) {
     struct rbm_ssh_tunnel_config *config = session->config;
 
-    ssh_log_debug(session, "Connecting to SSH server (%s:%d)...", config->sshserverip, config->sshserverport);
+    ssh_log_debug(session, "Connecting to SSH server (%s:%d)...", config->sshserverhost, config->sshserverport);
 
-    session->sshsocket = socket_connect(session, config->sshserverip, config->sshserverport);
+    session->sshsocket = socket_connect(session, config->sshserverhost, config->sshserverport);
     if (session->sshsocket == -1) {
         session->sshsocket = rbm_socket_invalid;
         return RBM_ERROR; // errors are already logged by socket_connect
@@ -601,27 +604,35 @@ static int handle_client_connections(struct rbm_session *connection, rbm_socket_
  */
 static rbm_socket_t socket_connect(struct rbm_session* session, char *ip, int port) {
     rbm_socket_t sock;
-    struct sockaddr_in sin;
+    struct addrinfo hints, *res;
+    int err;
+    char cport[20];
 
-    /* Connect to SSH server */
-    sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    // We need port as decimal chars for "getaddrinfo"
+    sprintf(cport, "%d", port);
+
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = PF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    err = getaddrinfo(ip, cport, &hints, &res);
+    if (err) {
+        ssh_log_error(session, "Failed to get address info");
+        return -1;
+    }
+
+    sock = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
     if (sock == rbm_socket_invalid) {
         ssh_log_error(session, "Failed to open socket");
         return -1;
     }
 
-    sin.sin_family = AF_INET;
-    if (INADDR_NONE == (sin.sin_addr.s_addr = inet_addr(ip))) {
-        ssh_log_error(session, "Call to inet_addr failed");
-        return -1;
-    }
-
-    sin.sin_port = htons(port);
-    if (connect(sock, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0) {
+    /* Connect to SSH server */
+    if (connect(sock, res->ai_addr, res->ai_addrlen) != 0) {
         ssh_log_error(session, "Failed to connect to %s:%d", ip, port);
         return -1;
     }
 
+    freeaddrinfo(res);
     return sock;
 }
 

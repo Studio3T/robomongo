@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 
     config.publickeyfile = NULL; //"/Users/dmitry/.ssh/ubuntik.pub";
     config.passphrase = "";
-    config.sshserverip = "198.61.166.171";
+    config.sshserverhost = "198.61.166.171";
     config.sshserverport = 22;
     config.remotehost = "localhost";
     config.remoteport = 27017;

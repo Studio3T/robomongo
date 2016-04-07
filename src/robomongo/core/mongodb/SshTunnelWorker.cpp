@@ -72,7 +72,7 @@ namespace Robomongo
                 return;
 
             _sshConfig = new rbm_ssh_tunnel_config;
-            _sshConfig->sshserverip = const_cast<char*>(_sshhost.c_str());
+            _sshConfig->sshserverhost = const_cast<char*>(_sshhost.c_str());
             _sshConfig->sshserverport = static_cast<unsigned int>(_sshport);
             _sshConfig->remotehost = const_cast<char*>(_remotehost.c_str());
             _sshConfig->remoteport = static_cast<unsigned int>(_remoteport);

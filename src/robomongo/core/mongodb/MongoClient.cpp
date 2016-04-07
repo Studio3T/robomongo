@@ -361,9 +361,9 @@ namespace Robomongo
         _dbclient->dropDatabase(dbName);
     }
 
-    void MongoClient::createCollection(const MongoNamespace &ns)
+    void MongoClient::createCollection(const MongoNamespace &ns, long long size, bool capped, int maxDocNum)
     {
-        _dbclient->createCollection(ns.toString());
+        _dbclient->createCollection(ns.toString(), size, capped, maxDocNum);
     }
 
     void MongoClient::renameCollection(const MongoNamespace &ns, const std::string &newCollectionName)

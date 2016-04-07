@@ -44,9 +44,10 @@ namespace Robomongo
         _bus->publish(new MongoDatabaseFunctionsLoadingEvent(this));
         _bus->send(_server->client(), new LoadFunctionsRequest(this, _name));
     }
-    void MongoDatabase::createCollection(const std::string &collection)
+
+    void MongoDatabase::createCollection(const std::string &collection, long long size, bool capped, int maxDocNum)
     {
-        _bus->send(_server->client(), new CreateCollectionRequest(this, MongoNamespace(_name, collection)));
+        _bus->send(_server->client(), new CreateCollectionRequest(this, MongoNamespace(_name, collection), size, capped, maxDocNum));
     }
 
     void MongoDatabase::dropCollection(const std::string &collection)

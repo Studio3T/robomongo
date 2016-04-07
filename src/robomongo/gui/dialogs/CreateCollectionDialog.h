@@ -5,35 +5,52 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 class QDialogButtonBox;
 class QLineEdit;
+class QTabWidget;
+class QCheckBox;
 QT_END_NAMESPACE
 
 namespace Robomongo
 {
-	class Indicator;
+    class Indicator;
 
-	class CreateCollectionDialog : public QDialog
-	{
-		Q_OBJECT
+    class CreateCollectionDialog : public QDialog
+    {
+        Q_OBJECT
 
-	public:
-		explicit CreateCollectionDialog(const QString &serverName,
-			const QString &database = QString(),
-			const QString &collection = QString(), QWidget *parent = 0);
-		QString databaseName() const;
-		void setOkButtonText(const QString &text);
-		void setInputLabelText(const QString &text);
-		void setInputText(const QString &text);
-		enum { maxLenghtName = 60 };
-		const static QSize dialogSize;
+    public:
+        explicit CreateCollectionDialog(const QString &serverName,
+            const QString &database = QString(),
+            const QString &collection = QString(), QWidget *parent = 0);
+        QString databaseName() const;
+        void setOkButtonText(const QString &text);
+        void setInputLabelText(const QString &text);
+        void setInputText(const QString &text);
+        bool isCapped() const;
+        long long getSizeInputEditValue() const;
+        int getMaxDocNumberInputEditValue() const;
 
-		public Q_SLOTS:
-		virtual void accept();
+        enum { maxLenghtName = 60 };
+        const static QSize dialogSize;
 
-	private:
-		Indicator *createDatabaseIndicator(const QString &database);
-		Indicator *createCollectionIndicator(const QString &collection);
-		QLineEdit *_inputEdit;
-		QLabel *_inputLabel;
-		QDialogButtonBox *_buttonBox;
-	};
+        public Q_SLOTS:
+        virtual void accept();
+        void cappedCheckBoxStateChanged(int newState);
+
+    private:
+        Indicator *createDatabaseIndicator(const QString &database);
+        Indicator *createCollectionIndicator(const QString &collection);
+        QWidget *createOptionsTab();
+        QWidget *createStorageEngineTab();
+
+        QLineEdit *_inputEdit;
+        QLabel *_inputLabel;
+        QTabWidget *_tabWidget;
+        QCheckBox *_cappedCheckBox;
+        QLabel *_sizeInputLabel;
+        QLineEdit *_sizeInputEdit;
+        QLabel *_maxDocNumberInputLabel;
+        QLineEdit *_maxDocNumberInputEdit;
+
+        QDialogButtonBox *_buttonBox;
+    };
 }

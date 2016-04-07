@@ -441,7 +441,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->createCollection(event->ns());
+            client->createCollection(event->getNs(), event->getSize(), event->getCapped(), event->getMaxDocNum());
             client->done();
 
             reply(event->sender(), new CreateCollectionResponse(this));

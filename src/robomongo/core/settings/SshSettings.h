@@ -22,6 +22,9 @@ namespace Robomongo
         QVariant toVariant() const;
         void fromVariant(const QVariantMap &map);
 
+        /*
+         * Domain or IPv4 or IPv6 address
+         */
         std::string host() const { return _host; }
         void setHost(const std::string &host) { _host = host; }
 
@@ -57,7 +60,7 @@ namespace Robomongo
         void setLogLevel(const int logLevel) { _logLevel = logLevel; }
 
     private:
-        std::string _host;
+        std::string _host;  // domain or IPv4/v6
         int _port;
         std::string _userName;
         std::string _userPassword;

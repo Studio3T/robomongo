@@ -33,7 +33,7 @@ struct rbm_ssh_tunnel_config {
     char *localip;
     unsigned int localport;
 
-    // Remote host and port to connect to
+    // Remote host (domain or IPv4/v6) and port to connect to
     char *remotehost;   // Resolved by the remote server
     unsigned int remoteport;
 
@@ -41,9 +41,9 @@ struct rbm_ssh_tunnel_config {
     char *username;
     char *password;     // May be NULL or ""
 
-    // Remote IP and (host, port) in remote network
-    char *sshserverip;
-    unsigned int sshserverport;  // SSH port
+    // Remote host (domain or IPv4/v6)
+    char *sshserverhost;
+    unsigned int sshserverport;
 
     // Logging facilities
     enum rbm_ssh_log_type loglevel;

@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 
-// Until we will implement support for IPv6, we can ignore MSVC warning:
-// "Use inet_ntop() or InetNtop() instead" of "inet_ntoa"
+// We do not need to use IPv6 for local bind. But we do support IPv6 for remote connection.
+// It means we can ignore MSVC warning: "Use inet_ntop() or InetNtop() instead" of "inet_ntoa"
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 #include <libssh2.h>

@@ -11,6 +11,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
+#include <netdb.h>
 #endif
 
 #include <stdlib.h>
@@ -21,7 +22,6 @@
 #endif
 
 #include <signal.h>
-#include <netdb.h>
 #include <stdio.h>
 
 static int handle_new_client_connections(struct rbm_session *connection, int *fdmax, fd_set *masterset);
@@ -612,7 +612,6 @@ static int handle_client_connections(struct rbm_session *connection, rbm_socket_
  */
 static rbm_socket_t socket_connect(struct rbm_session* session, char *ip, int port) {
     rbm_socket_t sock;
-    struct sockaddr_in sin;
     struct addrinfo hints, *res;
     int err;
     char cport[20];

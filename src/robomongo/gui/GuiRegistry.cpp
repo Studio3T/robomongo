@@ -223,14 +223,26 @@ namespace Robomongo
 
     const QIcon &GuiRegistry::noMarkIcon() const
     {
-        static const QIcon noMarkIc = QIcon(":/robomongo/icons/no_mark_16x16.png");
+        static const QIcon noMarkIc = QIcon(":/robomongo/icons/no_mark_24x24.png");
         return noMarkIc;
     }
 
     const QIcon &GuiRegistry::yesMarkIcon() const
     {
-        static const QIcon yesMarkIc = QIcon(":/robomongo/icons/yes_mark_16x16.png");
+        static const QIcon yesMarkIc = QIcon(":/robomongo/icons/yes_mark_24x24.png");
         return yesMarkIc;
+    }
+
+    const QIcon &GuiRegistry::skipMarkIcon() const
+    {
+        static const QIcon skipMarkIc = QIcon(":/robomongo/icons/skip_mark_24x24.png");
+        return skipMarkIc;
+    }
+
+    const QIcon &GuiRegistry::questionMarkIcon() const
+    {
+        static const QIcon questionMarkIc = QIcon(":/robomongo/icons/question_mark_24x24.png");
+        return questionMarkIc;
     }
 
     const QIcon &GuiRegistry::timeIcon() const

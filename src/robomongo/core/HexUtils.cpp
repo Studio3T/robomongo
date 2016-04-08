@@ -159,7 +159,7 @@ namespace Robomongo
             mongo::BinDataType binType = element.binDataType();
 
             if (binType != mongo::newUUID && binType != mongo::bdtUUID)
-                throw new std::invalid_argument("Binary subtype should be 3 (bdtUUID) or 4 (newUUID)");
+                throw std::invalid_argument("Binary subtype should be 3 (bdtUUID) or 4 (newUUID)");
 
             int len;
             const char *data = element.binData(len);

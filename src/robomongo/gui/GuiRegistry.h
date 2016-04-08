@@ -68,6 +68,8 @@ namespace Robomongo
         const QIcon &bsonBooleanIcon() const;
         const QIcon &noMarkIcon() const;
         const QIcon &yesMarkIcon() const;
+        const QIcon &skipMarkIcon() const;
+        const QIcon &questionMarkIcon() const;
         const QIcon &timeIcon() const;
         const QIcon &keyIcon() const;
 

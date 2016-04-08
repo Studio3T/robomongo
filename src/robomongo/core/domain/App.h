@@ -48,7 +48,7 @@ namespace Robomongo
          * @param connection: ConnectionSettings, that will be owned by MongoServer.
          * @param visible: should this server be visible in UI (explorer) or not.
          */
-        MongoServer *openServer(ConnectionSettings *connection, bool visible);
+        MongoServer *openServer(ConnectionSettings *connection, ConnectionType type);
 
         /**
          * @brief Closes MongoServer connection and frees all resources, owned
@@ -84,7 +84,7 @@ namespace Robomongo
         void handle(LogEvent *event);
 
     private:
-        MongoServer* continueOpenServer(ConnectionSettings *connection, bool visible, int localport = 0);
+        MongoServer* continueOpenServer(ConnectionSettings *connection, ConnectionType type, int localport = 0);
 
         /**
          * MongoServers, owned by this App.

@@ -28,6 +28,7 @@ extern "C" {
 enum {
     RBM_SUCCESS = 0,
     RBM_ERROR   = -1,
+    RBM_CHANNEL_CREATION_ERROR   = -10,
     RBM_BUFSIZE = 16384, // Size of the in/out buffers
 };
 

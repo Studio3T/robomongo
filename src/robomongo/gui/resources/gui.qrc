@@ -16,6 +16,7 @@
         <file>icons/bson_object_16x16.png</file>
         <file>icons/database_16x16.png</file>
         <file>icons/loading.gif</file>
+        <file>icons/loading_ticks_40x40.gif</file>
         <file>scripts/esprima.js</file>
         <file>icons/maximize.gif</file>
         <file>icons/text_16x16.png</file>
@@ -38,8 +39,14 @@
         <file>icons/maximize_highlighted_16x16.png</file>
         <file>icons/table_16x16.png</file>
         <file>icons/table_highlighted_16x16.png</file>
-        <file>icons/no_mark_16x16.png</file>
-        <file>icons/yes_mark_16x16.png</file>
+        <file>icons/no_mark_24x24.png</file>
+        <file>icons/no_mark_24x24@2x.png</file>
+        <file>icons/yes_mark_24x24.png</file>
+        <file>icons/yes_mark_24x24@2x.png</file>
+        <file>icons/skip_mark_24x24.png</file>
+        <file>icons/skip_mark_24x24@2x.png</file>
+        <file>icons/question_mark_24x24.png</file>
+        <file>icons/question_mark_24x24@2x.png</file>
         <file>icons/time_16x16.png</file>
         <file>icons/key_16x16.png</file>
         <file>icons/progress_bar.gif</file>

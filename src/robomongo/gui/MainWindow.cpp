@@ -663,7 +663,7 @@ namespace Robomongo
             }
 
             try {
-                _app->openServer(selected, true);
+                _app->openServer(selected, ConnectionPrimary);
             } catch(const std::exception &) {
                 QString message = QString("Cannot connect to MongoDB (%1)").arg(QtUtils::toQString(selected->getFullAddress()));
                 QMessageBox::information(this, "Error", message);
@@ -883,7 +883,7 @@ namespace Robomongo
         QVariant data = connectionAction->data();
         ConnectionSettings *ptr = data.value<ConnectionSettings *>();
         try {
-            _app->openServer(ptr, true);
+            _app->openServer(ptr, ConnectionPrimary);
         }
         catch(const std::exception &) {
             QString message = QString("Cannot connect to the MongoDB at %1.")
@@ -894,6 +894,10 @@ namespace Robomongo
 
     void MainWindow::handle(ConnectionFailedEvent *event)
     {
+        // Handle only Primary connections
+        if (event->connectionType != ConnectionPrimary)
+            return;
+
         QMessageBox::information(this, "Error", QtUtils::toQString(event->message));
     }
 

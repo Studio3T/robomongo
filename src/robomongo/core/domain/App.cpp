@@ -50,14 +50,14 @@ namespace Robomongo
      * @param connection: ConnectionSettings, that will be owned by MongoServer.
      * @param visible: should this server be visible in UI (explorer) or not.
      */
-    MongoServer *App::openServer(ConnectionSettings *connection, bool visible) {
-        if (visible)
+    MongoServer *App::openServer(ConnectionSettings *connection, ConnectionType type) {
+        if (type == ConnectionPrimary)
             _bus->publish(new ConnectingEvent(this));
 
-        // When connection is not "visible" or do not have
+        // When connection is SECONDARY or do not have
         // ssh settings enabled, continue without SSH Tunnel
-        if (!visible || !connection->sshSettings()->enabled()) {
-            return continueOpenServer(connection, visible);
+        if (type == ConnectionSecondary || !connection->sshSettings()->enabled()) {
+            return continueOpenServer(connection, type);
         }
 
         // Open SSH channel and only after that open connection
@@ -67,7 +67,7 @@ namespace Robomongo
 
         ConnectionSettings* settingsCopy = connection->clone();
         SshTunnelWorker* sshWorker = new SshTunnelWorker(settingsCopy);
-        _bus->send(sshWorker, new EstablishSshConnectionRequest(this, sshWorker, settingsCopy, visible));
+        _bus->send(sshWorker, new EstablishSshConnectionRequest(this, sshWorker, settingsCopy, type));
         return NULL;
     }
 
@@ -111,7 +111,7 @@ namespace Robomongo
 
     MongoShell *App::openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo)
     {
-        MongoServer *server = openServer(connection, false);
+        MongoServer *server = openServer(connection, ConnectionSecondary);
         MongoShell *shell = new MongoShell(server,scriptInfo);
         _shells.push_back(shell);
         _bus->publish(new OpeningShellEvent(this, shell));
@@ -135,16 +135,17 @@ namespace Robomongo
         delete shell;
     }
 
-    MongoServer* App::continueOpenServer(ConnectionSettings *connection, bool visible, int localport) {
+    MongoServer* App::continueOpenServer(ConnectionSettings *connection, ConnectionType type, int localport) {
         ConnectionSettings* settings = connection->clone();
 
         // Modify connection settings when SSH tunnel is used
-        if (visible && settings->sshSettings()->enabled()) {
+        if ((type == ConnectionPrimary || type == ConnectionTest)
+            && settings->sshSettings()->enabled()) {
             settings->setServerHost("127.0.0.1");
             settings->setServerPort(localport);
         }
 
-        MongoServer *server = new MongoServer(settings, visible);
+        MongoServer *server = new MongoServer(settings, type);
         _servers.push_back(server);
 
         server->runWorkerThread();
@@ -156,14 +157,16 @@ namespace Robomongo
 
     void App::handle(EstablishSshConnectionResponse *event) {
         if (event->isError()) {
-            _bus->publish(new ConnectionFailedEvent(this, event->error().errorMessage()));
+            _bus->publish(new ConnectionFailedEvent(
+                this, event->connectionType, event->error().errorMessage(),
+                ConnectionFailedEvent::SshConnection));
             return;
         }
 
         LOG_MSG(QString("SSH tunnel created successfully"), mongo::logger::LogSeverity::Info());
 
-        _bus->send(event->worker, new ListenSshConnectionRequest(this));
-        continueOpenServer(event->settings, event->visible, event->localport);
+        _bus->send(event->worker, new ListenSshConnectionRequest(this, event->connectionType));
+        continueOpenServer(event->settings, event->connectionType, event->localport);
 
         // record event->worker and delete when needed
     }
@@ -182,7 +185,8 @@ namespace Robomongo
 
     void App::handle(ListenSshConnectionResponse *event) {
         if (event->isError()) {
-            _bus->publish(new ConnectionFailedEvent(this, event->error().errorMessage()));
+            _bus->publish(new ConnectionFailedEvent(this, event->connectionType, event->error().errorMessage(),
+                ConnectionFailedEvent::SshChannel));
             return;
         }
 

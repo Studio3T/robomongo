@@ -44,6 +44,10 @@ int main(int argc, char *argv[], char** envp)
     // (http://doc.qt.io/qt-5/qcoreapplication.html#locale-settings)
     setlocale(LC_NUMERIC, "C");
 
+#ifdef Q_OS_MAC
+    app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
+
     // Init GUI style
     Robomongo::AppStyleUtils::initStyle();
 

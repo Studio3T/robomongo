@@ -47,7 +47,7 @@ struct rbm_ssh_tunnel_config {
 
     // Logging facilities
     enum rbm_ssh_log_type loglevel;
-    void *logcontext;   // Pointer to user-defined data
+    void *logcontext;   // Pointer to user-defined data (can be NULL)
     void (*logcallback)(void *logcontext, char *message, int level);
 };
 

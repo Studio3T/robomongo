@@ -1,6 +1,8 @@
 #include "robomongo/core/mongodb/SshTunnelWorker.h"
 
 #include <QThread>
+#include <QElapsedTimer>
+
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -15,41 +17,14 @@ namespace Robomongo
 {
     SshTunnelWorker::SshTunnelWorker(ConnectionSettings *settings) : QObject(),
         _settings(settings),
-        _sshConfig(NULL),
-        _sshSession(NULL)
+        _sshSession(NULL),
+        _configCreator(settings)
     {
         _thread = new QThread();
         moveToThread(_thread);
-        VERIFY(connect(_thread, SIGNAL(started()), this, SLOT(init())));
         VERIFY(connect(_thread, SIGNAL(finished()), _thread, SLOT(deleteLater())));
         VERIFY(connect(_thread, SIGNAL(finished()), this, SLOT(deleteLater())));
         _thread->start();
-    }
-
-    void SshTunnelWorker::init()
-    {
-        try {
-            SshSettings *ssh = _settings->sshSettings();
-
-            // We are going to access raw char* buffers, so prepare copies
-            // of strings (and rest of the things for symmetry)
-            _sshhost = ssh->host();
-            _sshport = ssh->port();
-            _remotehost = _settings->serverHost();
-            _remoteport = _settings->serverPort();
-            _localip = "127.0.0.1";
-            _localport = 27040;
-
-            _userName = ssh->userName();
-            _userPassword = ssh->userPassword();
-            _privateKeyFile = ssh->privateKeyFile();
-            _publicKeyFile = ssh->publicKeyFile();
-            _passphrase = ssh->passphrase();
-            _authMethod = ssh->authMethod(); // "password" or "publickey"
-        }
-        catch (const std::exception &ex) {
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
-        }
     }
 
     SshTunnelWorker::~SshTunnelWorker()
@@ -58,7 +33,7 @@ namespace Robomongo
         // (see MongoWorker() constructor)
 
         delete _settings;
-        delete _sshConfig;
+        printf("SSH tunnel closed.\n");
     }
 
     void SshTunnelWorker::stopAndDelete() {
@@ -71,30 +46,12 @@ namespace Robomongo
             if (_isQuiting)
                 return;
 
-            _sshConfig = new rbm_ssh_tunnel_config;
-            _sshConfig->sshserverhost = const_cast<char*>(_sshhost.c_str());
-            _sshConfig->sshserverport = static_cast<unsigned int>(_sshport);
-            _sshConfig->remotehost = const_cast<char*>(_remotehost.c_str());
-            _sshConfig->remoteport = static_cast<unsigned int>(_remoteport);
-            _sshConfig->localip = const_cast<char*>(_localip.c_str());
-            _sshConfig->localport = static_cast<unsigned int>(_localport);
+            // Additionally configure "rbm_ssh_tunnel_config"
+            _configCreator.config()->logcontext = this;
+            _configCreator.config()->logcallback = &SshTunnelWorker::logCallbackHandler;
+            _configCreator.config()->loglevel = (rbm_ssh_log_type) _settings->sshSettings()->logLevel(); // RBM_SSH_LOG_TYPE_DEBUG;
 
-            _sshConfig->username = const_cast<char*>(_userName.c_str());
-            _sshConfig->password = const_cast<char*>(_userPassword.c_str());
-            _sshConfig->privatekeyfile = const_cast<char*>(_privateKeyFile.c_str());
-            _sshConfig->publickeyfile = _publicKeyFile.empty() ? NULL : const_cast<char*>(_publicKeyFile.c_str());
-            _sshConfig->passphrase = const_cast<char*>(_passphrase.c_str());
-            _sshConfig->authtype = (_authMethod == "publickey") ? RBM_SSH_AUTH_TYPE_PUBLICKEY : RBM_SSH_AUTH_TYPE_PASSWORD;
-
-            _sshConfig->logcontext = this;
-            _sshConfig->logcallback = &SshTunnelWorker::logCallbackHandler;
-            _sshConfig->loglevel = (rbm_ssh_log_type) _settings->sshSettings()->logLevel(); // RBM_SSH_LOG_TYPE_DEBUG;
-
-            if ((_sshSession = rbm_ssh_session_create(_sshConfig)) == 0) {
-                // Cleanup config structure
-                delete _sshConfig;
-                _sshConfig = NULL;
-
+            if ((_sshSession = rbm_ssh_session_create(_configCreator.config())) == 0) {
                 // Not much we can say about this error
                 throw std::runtime_error("Failed to create SSH session");
             }
@@ -113,20 +70,16 @@ namespace Robomongo
                 rbm_ssh_session_close(_sshSession);
                 _sshSession = NULL;
 
-                // Cleanup config
-                delete _sshConfig;
-                _sshConfig = NULL;
-
                 throw std::runtime_error(ss.str());
             }
 
             reply(event->sender(), new EstablishSshConnectionResponse(
-                    this, event->worker, event->settings, event->visible, _sshConfig->localport));
+                    this, event->worker, event->settings, event->connectionType, _configCreator.config()->localport));
 
         } catch (const std::exception& ex) {
             reply(event->sender(),
                 new EstablishSshConnectionResponse(this, EventError(ex.what()),
-                event->worker, event->settings, event->visible));
+                event->worker, event->settings, event->connectionType));
 
             // In case of error in connection, we should cleanup SshTunnelWorker
             stopAndDelete();
@@ -134,28 +87,46 @@ namespace Robomongo
     }
 
     void SshTunnelWorker::handle(ListenSshConnectionRequest *event) {
-
-        // do it here, i.e. cycle
-
         try {
             if (_isQuiting)
                 return;
 
-            if (_sshSession == NULL || _sshConfig == NULL)
+            if (_sshSession == NULL)
                 return;
+
+            // We are running this timer in order to distinguish between two
+            // types of errors:
+            // 1) SSH tunnel wasn't successfully created
+            // 2) SSH tunnel was disconnected
+            // This is used now only for UI error message, that we show to user.
+            QElapsedTimer timer;
+            timer.start();
 
             // This function will block until all TCP connections disconnects.
             // Initially, it will wait for at least one such connection.
             if (rbm_ssh_open_tunnel(_sshSession) != 0) {
+
+                qint64 elapsed = timer.elapsed();
+                bool wasDisconnected = elapsed > 20000; // More than 20 seconds passed
+
                 // Prepare copy of error message (if any)
                 std::string error(_sshSession->lasterror);
 
                 std::stringstream ss;
-                ss << "You are disconnected from SSH tunnel ("
-                    << _settings->sshSettings()->host() << ":"
-                    << _settings->sshSettings()->port() << "). "
-                    << "Please initiate a new connection and reopen all tabs.\n\nError:\n"
-                    << error;
+
+                if (wasDisconnected) {
+                    ss << "You are disconnected from SSH tunnel ("
+                        << _settings->sshSettings()->host() << ":"
+                        << _settings->sshSettings()->port() << "). "
+                        << "Please initiate a new connection and reopen all tabs.\n\nError:\n"
+                        << error;
+                } else {
+                    ss << "Cannot establish SSH tunnel ("
+                        << _settings->sshSettings()->host() << ":"
+                        << _settings->sshSettings()->port() << "). "
+                        << "\n\nError:\n"
+                        << error;
+                }
 
                 throw std::runtime_error(ss.str());
             }
@@ -164,7 +135,7 @@ namespace Robomongo
 
         } catch (const std::exception& ex) {
             reply(event->sender(),
-                  new ListenSshConnectionResponse(this, EventError(ex.what()), _settings));
+                  new ListenSshConnectionResponse(this, EventError(ex.what()), _settings, event->connectionType));
         }
 
         // When we done with SSH (i.e. rbm_ssh_open_tunnel exits) regardless
@@ -195,4 +166,54 @@ namespace Robomongo
     void SshTunnelWorker::logCallbackHandler(void *context, char *message, int level) {
         static_cast<SshTunnelWorker*>(context)->log(message, level);
     }
+
+    /*
+     * SshTunnelConfigCreator
+     */
+    SshTunnelConfigCreator::SshTunnelConfigCreator(ConnectionSettings *settings) {
+        SshSettings *ssh = settings->sshSettings();
+
+        // We are going to access raw char* buffers, so prepare copies
+        // of strings (and rest of the things for symmetry)
+        _sshhost = ssh->host();
+        _sshport = ssh->port();
+        _remotehost = settings->serverHost();
+        _remoteport = settings->serverPort();
+        _localip = "127.0.0.1";
+        _localport = 27040;
+
+        _userName = ssh->userName();
+        _userPassword = ssh->userPassword();
+        _privateKeyFile = ssh->privateKeyFile();
+        _publicKeyFile = ssh->publicKeyFile();
+        _passphrase = ssh->passphrase();
+        _authMethod = ssh->authMethod(); // "password" or "publickey"
+
+        _sshConfig = new rbm_ssh_tunnel_config;
+        _sshConfig->sshserverhost = const_cast<char*>(_sshhost.c_str());
+        _sshConfig->sshserverport = static_cast<unsigned int>(_sshport);
+        _sshConfig->remotehost = const_cast<char*>(_remotehost.c_str());
+        _sshConfig->remoteport = static_cast<unsigned int>(_remoteport);
+        _sshConfig->localip = const_cast<char*>(_localip.c_str());
+        _sshConfig->localport = static_cast<unsigned int>(_localport);
+
+        _sshConfig->username = const_cast<char*>(_userName.c_str());
+        _sshConfig->password = const_cast<char*>(_userPassword.c_str());
+        _sshConfig->privatekeyfile = const_cast<char*>(_privateKeyFile.c_str());
+        _sshConfig->publickeyfile = _publicKeyFile.empty() ? NULL : const_cast<char*>(_publicKeyFile.c_str());
+        _sshConfig->passphrase = const_cast<char*>(_passphrase.c_str());
+        _sshConfig->authtype = (_authMethod == "publickey") ? RBM_SSH_AUTH_TYPE_PUBLICKEY : RBM_SSH_AUTH_TYPE_PASSWORD;
+
+        // Default settings
+        _sshConfig->logcontext = NULL;
+        _sshConfig->logcallback = NULL;
+        _sshConfig->loglevel = RBM_SSH_LOG_TYPE_ERROR;
+
+    }
+
+    SshTunnelConfigCreator::~SshTunnelConfigCreator() {
+        delete _sshConfig;
+    }
 }
+
+

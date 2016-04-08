@@ -147,6 +147,10 @@ int rbm_ssh_open_tunnel(struct rbm_ssh_session *sshsession) {
         // Cleanup SSH connection we hope that local connection
         // will not break so often
         rbm_session_cleanup(connection);
+
+        if (rc == RBM_CHANNEL_CREATION_ERROR)
+            return RBM_ERROR;
+
         ssh_log_warn(connection, "Reconnecting SSH tunnel...");
 
         if (rbm_ssh_setup(connection) == -1) {
@@ -374,6 +378,10 @@ int rbm_open_tunnel(struct rbm_session *connection) {
                 ssh_log_warn(connection, "SSH tunnel shutdown because of error");
                 return RBM_ERROR;
             }
+
+            if (rc == RBM_CHANNEL_CREATION_ERROR) {
+                return RBM_CHANNEL_CREATION_ERROR;
+            }
         }
     }
 
@@ -443,7 +451,7 @@ static int handle_new_client_connections(struct rbm_session *connection, int *fd
 
     if (!channel) {
         ssh_log_error(connection, "Failed to create SSH channel");
-        return RBM_ERROR;
+        return RBM_CHANNEL_CREATION_ERROR;
     }
 
     if (rbm_channel_create(connection, newfd, channel) == NULL) {

@@ -30,4 +30,18 @@ namespace Robomongo
 
     class MongoDocument;
     typedef boost::shared_ptr<MongoDocument> MongoDocumentPtr;
+
+    enum ConnectionType {
+        // This type of connection is shown in Explorer and also
+        // opens SSH tunnel for Secondary connections (if needed)
+        ConnectionPrimary      = 0,
+
+        // Never shown in Explorer and uses SSH tunnel from
+        // Primary connection (if needed)
+        ConnectionSecondary    = 1,
+
+        // The same as Primary, but is specifically for testing
+        // connections.
+        ConnectionTest         = 2
+    };
 }

@@ -139,7 +139,7 @@ namespace Robomongo
         ConnectionSettings* settings = connection->clone();
 
         // Modify connection settings when SSH tunnel is used
-        if ((type == ConnectionPrimary || type == ConnectionPrimary)
+        if ((type == ConnectionPrimary || type == ConnectionTest)
             && settings->sshSettings()->enabled()) {
             settings->setServerHost("127.0.0.1");
             settings->setServerPort(localport);

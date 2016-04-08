@@ -9,14 +9,17 @@
 #    SYSTEM_OPENBSD
 #    SYSTEM_NETBSD
 #
-# 2) Build types checks
+# 2) Additional Linux distro check
+#    SYSTEM_LINUX_RHEL
+#
+# 3) Build types checks
 #
 #    BUILD_DEBUG
 #    BUILD_RELEASE
 #    BUILD_RELWITHDEBINFO
 #    BUILD_MINSIZEREL
 #
-# 3) Link "lib groups" and "whole-archive" options
+# 4) Link "lib groups" and "whole-archive" options
 #
 #    LINK_LIBGROUP_START
 #    LINK_LIBGROUP_END
@@ -30,6 +33,9 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Windows")
     set(SYSTEM_WINDOWS TRUE)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(SYSTEM_LINUX TRUE)
+    if(EXISTS "/etc/redhat-release")
+        set(SYSTEM_LINUX_RHEL TRUE)
+    endif()
 elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
     set(SYSTEM_FREEBSD TRUE)
     set(SYSTEM_BSD TRUE)

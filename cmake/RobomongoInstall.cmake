@@ -105,4 +105,3 @@ elseif(SYSTEM_WINDOWS)
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
     include(InstallRequiredSystemLibraries)
 endif()
-

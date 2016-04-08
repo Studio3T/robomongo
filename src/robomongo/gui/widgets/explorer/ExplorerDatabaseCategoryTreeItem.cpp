@@ -162,7 +162,8 @@ namespace Robomongo
         if (result != QDialog::Accepted)
             return;
 
-        databaseItem->database()->createCollection(QtUtils::toStdString(dlg.databaseName()), 
+        std::string collectionName = QtUtils::toStdString(dlg.getCollectionName());
+        databaseItem->database()->createCollection(collectionName, 
             dlg.getSizeInputEditValue(), dlg.isCapped(), dlg.getMaxDocNumberInputEditValue());
         // refresh list of databases
         databaseItem->expandCollections();

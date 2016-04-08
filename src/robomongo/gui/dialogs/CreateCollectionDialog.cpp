@@ -76,7 +76,7 @@ namespace Robomongo
         _inputEdit->setFocus();
     }
 
-    QString CreateCollectionDialog::databaseName() const
+    QString CreateCollectionDialog::getCollectionName() const
     {
         return _inputEdit->text();
     }
@@ -112,6 +112,21 @@ namespace Robomongo
         return (_maxDocNumberInputEdit->text().toInt());
     }
 
+    bool CreateCollectionDialog::isCheckedAutoIndexid() const
+    {
+        return (_autoIndexCheckBox->checkState() == Qt::Checked);
+    }
+
+    bool CreateCollectionDialog::isCheckedUsePowerOfTwo() const
+    {
+        return (_usePowerOfTwoSizeCheckBox->checkState() == Qt::Checked);
+    }
+
+    bool CreateCollectionDialog::isCheckedNoPadding() const
+    {
+        return (_noPaddingCheckBox->checkState() == Qt::Checked);
+    }
+
     void CreateCollectionDialog::accept()
     {
         if (_inputEdit->text().isEmpty())
@@ -144,19 +159,27 @@ namespace Robomongo
         _sizeInputLabel = new QLabel(tr("Maximum size in bytes: "));
         _sizeInputLabel->setContentsMargins(22, 0, 0, 0);
         _sizeInputEdit = new QLineEdit();
+        _sizeInputEdit->setEnabled(false);
         _maxDocNumberInputLabel = new QLabel(tr("Maximum number of documents: "));
         _maxDocNumberInputLabel->setContentsMargins(22, 0, 0, 0);
         _maxDocNumberInputEdit = new QLineEdit();
-        _sizeInputEdit->setEnabled(false);
         _maxDocNumberInputEdit->setEnabled(false);
+        _autoIndexCheckBox = new QCheckBox(tr("Auto index _id"), options);
+        _autoIndexCheckBox->setChecked(true);
+        _usePowerOfTwoSizeCheckBox = new QCheckBox(tr("Use power-of-2 sizes"), options);
+        _noPaddingCheckBox = new QCheckBox(tr("No Padding"), options);
+
         VERIFY(connect(_cappedCheckBox, SIGNAL(stateChanged(int)), this, SLOT(cappedCheckBoxStateChanged(int))));
 
         QGridLayout *layout = new QGridLayout;
-        layout->addWidget(_cappedCheckBox,          0, 0, 1, 2);
-        layout->addWidget(_sizeInputLabel,          1, 0);
-        layout->addWidget(_sizeInputEdit,           1, 1);
-        layout->addWidget(_maxDocNumberInputLabel,  2, 0);
-        layout->addWidget(_maxDocNumberInputEdit,   2, 1);
+        layout->addWidget(_cappedCheckBox,              0, 0, 1, 2);
+        layout->addWidget(_sizeInputLabel,              1, 0);
+        layout->addWidget(_sizeInputEdit,               1, 1);
+        layout->addWidget(_maxDocNumberInputLabel,      2, 0);
+        layout->addWidget(_maxDocNumberInputEdit,       2, 1);
+        layout->addWidget(_autoIndexCheckBox,           3, 0);
+        layout->addWidget(_usePowerOfTwoSizeCheckBox,   4, 0);
+        layout->addWidget(_noPaddingCheckBox,           5, 0);
         layout->setAlignment(Qt::AlignTop);
         options->setLayout(layout);
 

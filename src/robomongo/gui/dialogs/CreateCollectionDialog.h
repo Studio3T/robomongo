@@ -21,13 +21,16 @@ namespace Robomongo
         explicit CreateCollectionDialog(const QString &serverName,
             const QString &database = QString(),
             const QString &collection = QString(), QWidget *parent = 0);
-        QString databaseName() const;
+        QString getCollectionName() const;
         void setOkButtonText(const QString &text);
         void setInputLabelText(const QString &text);
         void setInputText(const QString &text);
         bool isCapped() const;
         long long getSizeInputEditValue() const;
         int getMaxDocNumberInputEditValue() const;
+        bool isCheckedAutoIndexid() const;
+        bool isCheckedUsePowerOfTwo() const;
+        bool isCheckedNoPadding() const;
 
         enum { maxLenghtName = 60 };
         const static QSize dialogSize;
@@ -45,11 +48,17 @@ namespace Robomongo
         QLineEdit *_inputEdit;
         QLabel *_inputLabel;
         QTabWidget *_tabWidget;
+        // Options Tab
         QCheckBox *_cappedCheckBox;
         QLabel *_sizeInputLabel;
         QLineEdit *_sizeInputEdit;
         QLabel *_maxDocNumberInputLabel;
         QLineEdit *_maxDocNumberInputEdit;
+        QCheckBox *_autoIndexCheckBox;
+        QCheckBox *_usePowerOfTwoSizeCheckBox;
+        QCheckBox *_noPaddingCheckBox;
+        // Storage Engine Tab
+        // ... todo
 
         QDialogButtonBox *_buttonBox;
     };

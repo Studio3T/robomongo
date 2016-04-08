@@ -10,55 +10,55 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
+    class ConnectionEstablishedEvent;
+    class ConnectionFailedEvent;
     class ConnectionSettings;
+    class MongoServer;
 
     class ConnectionDiagnosticDialog : public QDialog
     {
         Q_OBJECT
     public:
-        typedef QDialog BaseClass;
-        static const QSize dialogSize;        
         ConnectionDiagnosticDialog(ConnectionSettings *connection, QWidget *parent = 0);
+        ~ConnectionDiagnosticDialog();
 
     protected Q_SLOTS:
-        void connectionStatus(QString error, bool connected);
-        void authStatus(QString error, bool authed);
-        void completed();
+        void handle(ConnectionEstablishedEvent *event);
+        void handle(ConnectionFailedEvent *event);
 
     private:
+
+        enum State {
+            InitialState,
+            CompletedState,
+            FailedState,
+            NotPerformedState
+        };
+
+        void sshStatus(State connected);
+        void connectionStatus(State connected);
+        void authStatus(State authed);
+        void listStatus(State authed);
+
         ConnectionSettings *_connection;
         QIcon _yesIcon;
         QIcon _noIcon;
-        QIcon _waitIcon;
+        QIcon _questionIcon;
         QMovie *_loadingMovie;
 
         QPixmap _yesPixmap;
         QPixmap _noPixmap;
+        QPixmap _questionPixmap;
 
+        QLabel *_sshIconLabel;
+        QLabel *_sshLabel;
         QLabel *_connectionIconLabel;
         QLabel *_connectionLabel;
         QLabel *_authIconLabel;
         QLabel *_authLabel;
+        QLabel *_listIconLabel;  // List database names
+        QLabel *_listLabel;
 
-        bool _connectionStatusReceived;
-        bool _authStatusReceived;
-    };
-
-    class ConnectionDiagnosticThread : public QThread
-    {
-        Q_OBJECT
-    public:
-        ConnectionDiagnosticThread(ConnectionSettings *connection);
-
-    Q_SIGNALS:
-        void connectionStatus(QString error, bool connected);
-        void authStatus(QString error, bool authed);
-        void completed();
-
-    protected:
-        void run();
-
-    private:
-        ConnectionSettings *_connection;
+        MongoServer *_server;
     };
 }

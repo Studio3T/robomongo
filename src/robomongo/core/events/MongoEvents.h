@@ -30,25 +30,39 @@ namespace Robomongo
     {
         R_EVENT
 
-        EstablishConnectionRequest(QObject *sender) :
-            Event(sender) {}
+        EstablishConnectionRequest(QObject *sender, ConnectionType connectionType) :
+            Event(sender),
+            connectionType(connectionType) {}
+
+        ConnectionType connectionType;
     };
 
     class EstablishConnectionResponse : public Event
     {
         R_EVENT
 
-        EstablishConnectionResponse(QObject *sender, const ConnectionInfo &info) :
-            Event(sender),
-            _info(info) {}
+        enum ErrorReason {
+            MongoConnection = 0,
+            MongoAuth       = 1,
+        };
 
-        EstablishConnectionResponse(QObject *sender, const EventError &error) :
-            Event(sender, error),_info() {}
+        EstablishConnectionResponse(QObject *sender, const ConnectionInfo &info, ConnectionType connectionType) :
+            Event(sender),
+            _info(info),
+            connectionType(connectionType) {}
+
+        EstablishConnectionResponse(QObject *sender, const EventError &error, ConnectionType connectionType, ErrorReason errorReason) :
+            Event(sender, error),
+            _info(),
+            connectionType(connectionType),
+            errorReason(errorReason) {}
 
         const ConnectionInfo &info() const{
             return _info;
         }
         const ConnectionInfo _info;
+        ConnectionType connectionType;
+        ErrorReason errorReason;
     };
 
 
@@ -879,14 +893,23 @@ namespace Robomongo
     {
         R_EVENT
 
-        ConnectionFailedEvent(QObject *sender, const std::string& message) :
-            Event(sender),
-            message(message) {}
+        enum Reason {
+            MongoConnection    = 1,
+            MongoAuth          = 2,
+            SshConnection      = 3,
+            SshChannel         = 4
+        };
 
-        ConnectionFailedEvent(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        ConnectionFailedEvent(QObject *sender, ConnectionType connectionType,
+                              const std::string& message, Reason reason) :
+            Event(sender),
+            message(message),
+            reason(reason),
+            connectionType(connectionType) {}
 
         std::string message;
+        Reason reason;
+        ConnectionType connectionType;
     };
 
 //    class ScriptExecute
@@ -895,11 +918,13 @@ namespace Robomongo
     {
         R_EVENT
 
-        ConnectionEstablishedEvent(MongoServer *server) :
+        ConnectionEstablishedEvent(MongoServer *server, ConnectionType type) :
             Event((QObject *)server),
-            server(server) { }
+            server(server),
+            connectionType(type) { }
 
         MongoServer *server;
+        ConnectionType connectionType;
     };
 
     class DatabaseListLoadedEvent : public Event
@@ -996,14 +1021,14 @@ namespace Robomongo
     {
     R_EVENT
 
-        EstablishSshConnectionRequest(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, bool visible) :
+        EstablishSshConnectionRequest(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType) :
             Event(sender),
             worker(worker),
             settings(settings),
-            visible(visible) {}
+            connectionType(connectionType) {}
 
         ConnectionSettings* settings;
-        bool visible;
+        ConnectionType connectionType;
         SshTunnelWorker* worker;
     };
 
@@ -1011,21 +1036,21 @@ namespace Robomongo
     {
     R_EVENT
 
-        EstablishSshConnectionResponse(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, bool visible, int localport) :
+        EstablishSshConnectionResponse(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType, int localport) :
             Event(sender),
             worker(worker),
             settings(settings),
-            visible(visible),
+            connectionType(connectionType),
             localport(localport) {}
 
-        EstablishSshConnectionResponse(QObject *sender, const EventError &error, SshTunnelWorker* worker, ConnectionSettings* settings, bool visible) :
+        EstablishSshConnectionResponse(QObject *sender, const EventError &error, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType) :
             Event(sender, error),
             worker(worker),
             settings(settings),
-            visible(visible) {}
+            connectionType(connectionType) {}
 
         ConnectionSettings* settings;
-        bool visible;
+        ConnectionType connectionType;
         SshTunnelWorker* worker;
         int localport;
     };
@@ -1038,23 +1063,29 @@ namespace Robomongo
     {
     R_EVENT
 
-        ListenSshConnectionRequest(QObject *sender) :
-                Event(sender) {}
+        ListenSshConnectionRequest(QObject *sender, ConnectionType connectionType) :
+            Event(sender),
+            connectionType(connectionType) {}
+
+        ConnectionType connectionType;
     };
 
     class ListenSshConnectionResponse : public Event
     {
     R_EVENT
 
-        ListenSshConnectionResponse(QObject *sender, ConnectionSettings* settings) :
+        ListenSshConnectionResponse(QObject *sender, ConnectionSettings* settings, ConnectionType connectionType) :
             Event(sender),
-            settings(settings) {}
+            settings(settings),
+            connectionType(connectionType) {}
 
-        ListenSshConnectionResponse(QObject *sender, const EventError &error, ConnectionSettings* settings) :
+        ListenSshConnectionResponse(QObject *sender, const EventError &error, ConnectionSettings* settings, ConnectionType connectionType) :
             Event(sender, error),
-            settings(settings) {}
+            settings(settings),
+            connectionType(connectionType) {}
 
         ConnectionSettings* settings;
+        ConnectionType connectionType;
     };
 
     class LogEvent : public Event

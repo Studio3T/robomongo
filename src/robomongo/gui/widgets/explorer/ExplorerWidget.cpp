@@ -89,6 +89,10 @@ namespace Robomongo
 
     void ExplorerWidget::handle(ConnectionEstablishedEvent *event)
     {
+        // Do not make UI changes for non PRIMARY connections
+        if (event->connectionType != ConnectionPrimary)
+            return;
+
         decreaseProgress();
 
         ExplorerServerTreeItem *item = new ExplorerServerTreeItem(_treeWidget,event->server);

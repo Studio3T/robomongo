@@ -13,9 +13,9 @@
 namespace Robomongo {
     R_REGISTER_EVENT(MongoServerLoadingDatabasesEvent)
 
-    MongoServer::MongoServer(ConnectionSettings *settings, bool visible) : QObject(),
+    MongoServer::MongoServer(ConnectionSettings *settings, ConnectionType connectionType) : QObject(),
         _version(0.0f),
-        _visible(visible),
+        _connectionType(connectionType),
         _client(NULL),
         _isConnected(false),
         _settings(settings),
@@ -49,7 +49,7 @@ namespace Robomongo {
      * @throws MongoException, if fails
      */
     void MongoServer::tryConnect() {
-        _bus->send(_client, new EstablishConnectionRequest(this));
+        _bus->send(_client, new EstablishConnectionRequest(this, _connectionType));
     }
 
     QStringList MongoServer::getDatabasesNames() const {
@@ -126,7 +126,11 @@ namespace Robomongo {
             ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
                << ".\n\nError:\n" << event->error().errorMessage();
 
-            _bus->publish(new ConnectionFailedEvent(this, ss.str()));
+            ConnectionFailedEvent::Reason reason =
+                event->errorReason == EstablishConnectionResponse::MongoAuth ?
+                ConnectionFailedEvent::MongoAuth : ConnectionFailedEvent::MongoConnection;
+
+            _bus->publish(new ConnectionFailedEvent(this, _connectionType, ss.str(), reason));
             return;
         }
 
@@ -134,12 +138,13 @@ namespace Robomongo {
         _version = info._version;
         _isConnected = true;
 
-        // Do nothing if this is not "visible" connection
-        if (!_visible) {
+        _bus->publish(new ConnectionEstablishedEvent(this, _connectionType));
+
+        // Do nothing if this is not a "primary" connection
+        if (_connectionType != ConnectionPrimary) {
             return;
         }
 
-        _bus->publish(new ConnectionEstablishedEvent(this));
         clearDatabases();
         for(std::vector<std::string>::const_iterator it = info._databases.begin(); it != info._databases.end(); ++it) {
             const std::string &name = *it;

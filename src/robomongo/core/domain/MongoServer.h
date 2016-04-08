@@ -29,7 +29,7 @@ namespace Robomongo
          * @param visible
          * @param defaultDatabase
          */
-        MongoServer(ConnectionSettings *connectionRecord, bool visible);
+        MongoServer(ConnectionSettings *connectionRecord, ConnectionType connectionType);
         ~MongoServer();
 
         void runWorkerThread();
@@ -63,7 +63,6 @@ namespace Robomongo
          * @brief Loads databases of this server asynchronously.
          */
         void loadDatabases();
-        bool visible() const { return _visible; }
         MongoWorker *const client() const { return _client; }
 
     protected Q_SLOTS:
@@ -81,7 +80,7 @@ namespace Robomongo
         EventBus* _bus;
 
         float _version;
-        bool _visible;
+        ConnectionType _connectionType;
         bool _isConnected;
 
         QList<MongoDatabase *> _databases;

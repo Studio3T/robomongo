@@ -131,7 +131,7 @@ namespace Robomongo
         std::string getAuthBase() const;
 
         mongo::DBClientBase *_dbclient;
-        mongo::DBClientBase *getConnection();
+        mongo::DBClientBase *getConnection(bool mayReturnNull = false);
         MongoClient *getClient();
 
         /**
@@ -153,7 +153,7 @@ namespace Robomongo
 
         // Collection of created databases.
         // Starting from 3.0, MongoDB drops empty databases.
-        // It means, we do not find a way to create "empty" database.
+        // It means, we did not find a way to create "empty" database.
         // We save all created databases in this collection and merge with
         // list of real databases returned from MongoDB server.
         std::unordered_set<std::string> _createdDbs;

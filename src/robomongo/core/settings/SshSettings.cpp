@@ -7,7 +7,8 @@ namespace Robomongo
     SshSettings::SshSettings() :
         _port(22),
         _authMethod("publickey"),
-        _enabled(false) {
+        _enabled(false),
+        _logLevel(1) {
 
     }
 

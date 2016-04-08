@@ -93,7 +93,9 @@ namespace Robomongo
 
     MongoWorker::~MongoWorker()
     {
-        killTimer(_timerId);
+        if (_timerId != -1)
+            killTimer(_timerId);
+
         delete _dbclient;
         delete _connection;
         delete _scriptEngine;
@@ -116,7 +118,14 @@ namespace Robomongo
         QMutexLocker lock(&_firstConnectionMutex);
 
         try {
-            mongo::DBClientBase *conn = getConnection();
+            mongo::DBClientBase *conn = getConnection(true);
+            if (conn == NULL) {
+                reply(event->sender(), new EstablishConnectionResponse(this,
+                    EventError("Network is unreachable"), event->connectionType,
+                    EstablishConnectionResponse::MongoConnection));
+                return;
+            }
+
             bool hasPrimary = _connection->hasEnabledPrimaryCredential();
             if (hasPrimary) {
                 CredentialSettings *credentials = _connection->primaryCredential();
@@ -140,19 +149,23 @@ namespace Robomongo
             }
             boost::scoped_ptr<MongoClient> client(getClient());
             std::vector<std::string> dbNames = getDatabaseNamesSafe();
-            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, client->getVersion()) ));
+
+            // If we do not have databases, it means that we are unable to
+            // execute "listdatabases" command and we have nothing to show.
+            if (dbNames.size() == 0)
+                throw mongo::DBException("Failed to execute \"listdatabases\" command.", 0);
+
+            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, client->getVersion()), event->connectionType));
         } catch(const std::exception &ex) {
-            reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what()), event->connectionType, EstablishConnectionResponse::MongoAuth));
         }
     }
 
     std::string MongoWorker::getAuthBase() const
     {
-        bool hasPrimary = _connection->hasEnabledPrimaryCredential();
-        if(hasPrimary){
+        if (_connection->hasEnabledPrimaryCredential())
             return _connection->primaryCredential()->databaseName();
-        }
+
         return std::string();
     }
 
@@ -171,7 +184,6 @@ namespace Robomongo
         } catch(const std::exception &ex) {
             if (!authBase.empty())
                 result.push_back(authBase);
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
         return result;
     }
@@ -202,7 +214,7 @@ namespace Robomongo
             if (dbNames.size()) {
                 reply(event->sender(), new LoadDatabaseNamesResponse(this, dbNames));
             } else {
-                reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError("Unable to load database names.")));
+                reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError("Failed to execute \"listdatabases\" command.")));
             }
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError(ex.what())));
@@ -564,13 +576,19 @@ namespace Robomongo
         }
     }
 
-    mongo::DBClientBase *MongoWorker::getConnection()
+    mongo::DBClientBase *MongoWorker::getConnection(bool mayReturnNull /* = false */)
     {
         if (!_dbclient) {
             // Timeout for operations is 10 seconds.
             // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
             mongo::DBClientConnection *conn = new mongo::DBClientConnection(true, 10);
-            conn->connect(_connection->info());
+            mongo::Status status = conn->connect(_connection->info());
+
+            if (!status.isOK() && mayReturnNull) {
+                delete conn;
+                return NULL;
+            }
+
             _dbclient = conn;
         }
         return _dbclient;

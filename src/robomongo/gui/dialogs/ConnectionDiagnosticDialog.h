@@ -2,11 +2,9 @@
 
 #include <QDialog>
 #include <QIcon>
-#include <QThread>
-QT_BEGIN_NAMESPACE
+
 class QLabel;
 class QMovie;
-QT_END_NAMESPACE
 
 namespace Robomongo
 {
@@ -35,10 +33,10 @@ namespace Robomongo
             NotPerformedState
         };
 
-        void sshStatus(State connected);
-        void connectionStatus(State connected);
-        void authStatus(State authed);
-        void listStatus(State authed);
+        void sshStatus(State state);
+        void connectionStatus(State state);
+        void authStatus(State state);
+        void listStatus(State state);
 
         ConnectionSettings *_connection;
         QIcon _yesIcon;

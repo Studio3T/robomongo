@@ -8,6 +8,7 @@
 #include <QDialogButtonBox>
 #include <QCheckBox>
 #include <QMessageBox>
+#include <QComboBox>
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qsciscintilla.h>
 
@@ -61,7 +62,7 @@ namespace Robomongo
         _tabWidget = new QTabWidget(this);
         _tabWidget->addTab(createOptionsTab(), tr("Options"));
         _tabWidget->addTab(createStorageEngineTab(), tr("Storage Engine"));
-        //_tabWidget->addTab(createTextSearchTab(), tr("Validator"));
+        _tabWidget->addTab(createValidatorTab(), tr("Validator"));
         _tabWidget->setTabsClosable(false);
         VERIFY(connect(_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChangedSlot(int))));
 
@@ -96,12 +97,12 @@ namespace Robomongo
 
     QString CreateCollectionDialog::jsonText() const
     {
-        return _frameText->sciScintilla()->text().trimmed();
+        return _activeFrame->sciScintilla()->text().trimmed();
     }
 
     void CreateCollectionDialog::setCursorPosition(int line, int column)
     {
-        _frameText->sciScintilla()->setCursorPosition(line, column);
+        _activeFrame->sciScintilla()->setCursorPosition(line, column);
     }
 
     QString CreateCollectionDialog::getCollectionName() const
@@ -157,7 +158,8 @@ namespace Robomongo
 
     void CreateCollectionDialog::accept()
     {
-        if (_inputEdit->text().isEmpty() && !validate())
+        if (_inputEdit->text().isEmpty() && !validate(_storageEngineFrame, &_storageEngineObj) 
+            && !validate(_validatorFrame, &_validatorObj))
             return;
 
         QDialog::accept();
@@ -171,15 +173,23 @@ namespace Robomongo
 
     void CreateCollectionDialog::tabChangedSlot(int index)
     {
-        if (0 == index){    // todo: make 0 to enum
+        if (0 == index){    // todo: make 0 to enum "Options Tab"
             _validateJsonButton->hide();
         }
         else{
             _validateJsonButton->show();
+            if (1 == index){    
+                _activeFrame = _storageEngineFrame;
+                _activeObj = &_storageEngineObj;
+            }
+            if (2 == index){
+                _activeFrame = _validatorFrame;
+                _activeObj = &_validatorObj;
+            }
         }
     };
 
-    bool CreateCollectionDialog::validate(bool silentOnSuccess /* = true */)
+    bool CreateCollectionDialog::validate(FindFrame* frame, ReturnType* bsonObj, bool silentOnSuccess /* = true */)
     {
         QString text = jsonText();
         int len = 0;
@@ -188,11 +198,11 @@ namespace Robomongo
             const char *json = textString.c_str();
             int jsonLen = textString.length();
             int offset = 0;
-            _obj.clear();
+            bsonObj->clear();
             while (offset != jsonLen)
             {
                 mongo::BSONObj doc = mongo::Robomongo::fromjson(json + offset, &len);
-                _obj.push_back(doc);
+                bsonObj->push_back(doc);
                 offset += len;
             }
         }
@@ -202,24 +212,24 @@ namespace Robomongo
             int offset = ex.offset();
 
             int line = 0, pos = 0;
-            _frameText->sciScintilla()->lineIndexFromPosition(offset, &line, &pos);
-            _frameText->sciScintilla()->setCursorPosition(line, pos);
+            frame->sciScintilla()->lineIndexFromPosition(offset, &line, &pos);
+            frame->sciScintilla()->setCursorPosition(line, pos);
 
-            int lineHeight = _frameText->sciScintilla()->lineLength(line);
-            _frameText->sciScintilla()->fillIndicatorRange(line, pos, line, lineHeight, 0);
+            int lineHeight = frame->sciScintilla()->lineLength(line);
+            frame->sciScintilla()->fillIndicatorRange(line, pos, line, lineHeight, 0);
 
             message = QString("Unable to parse JSON:<br /> <b>%1</b>, at (%2, %3).")
                 .arg(message).arg(line + 1).arg(pos + 1);
 
             QMessageBox::critical(NULL, "Parsing error", message);
-            _frameText->setFocus();
+            frame->setFocus();
             activateWindow();
             return false;
         }
 
         if (!silentOnSuccess) {
             QMessageBox::information(NULL, "Validation", "JSON is valid!");
-            _frameText->setFocus();
+            frame->setFocus();
             activateWindow();
         }
 
@@ -228,12 +238,12 @@ namespace Robomongo
 
     void CreateCollectionDialog::onFrameTextChanged()
     {
-        _frameText->sciScintilla()->clearIndicatorRange(0, 0, _frameText->sciScintilla()->lines(), 40, 0);
+        _activeFrame->sciScintilla()->clearIndicatorRange(0, 0, _activeFrame->sciScintilla()->lines(), 40, 0);
     }
 
     void CreateCollectionDialog::onValidateButtonClicked()
     {
-        validate(false);  
+        validate(_activeFrame, _activeObj, false);
     }
 
     void CreateCollectionDialog::enableFindButton(const QString &text)
@@ -290,36 +300,78 @@ namespace Robomongo
     {
         QWidget *storageEngineTab = new QWidget(this);
         
-        _frameLabel = new QLabel(tr("Enter the configuration for the storage engine: "));
-        _frameText = new FindFrame(this);
-        configureQueryText();
-        _frameText->sciScintilla()->setText("{\n    \n}");
+        _storageEngineFrameLabel = new QLabel(tr("Enter the configuration for the storage engine: "));
+        _storageEngineFrame = new FindFrame(this);
+        configureFrameText(_storageEngineFrame);
+        _storageEngineFrame->sciScintilla()->setText("{\n    \n}");
         // clear modification state after setting the content
-        _frameText->sciScintilla()->setModified(false);
-        VERIFY(connect(_frameText->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onframeTextChanged())));
+        _storageEngineFrame->sciScintilla()->setModified(false);
+        VERIFY(connect(_storageEngineFrame->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onframeTextChanged())));
 
         QGridLayout *layout = new QGridLayout;
-        layout->addWidget(_frameLabel, 0, 0);
-        layout->addWidget(_frameText, 1, 0);
+        layout->addWidget(_storageEngineFrameLabel, 0, 0);
+        layout->addWidget(_storageEngineFrame, 1, 0);
         layout->setAlignment(Qt::AlignTop);
         storageEngineTab->setLayout(layout);
 
         return storageEngineTab;
     }
 
-    void CreateCollectionDialog::configureQueryText()
+    QWidget* CreateCollectionDialog::createValidatorTab()
+    {
+        QWidget *validatorEngineTab = new QWidget(this);
+
+        _validatorLevelLabel = new QLabel(tr("Validation Level: "));
+        _validatorLevelComboBox = new QComboBox();
+        _validatorLevelComboBox->addItem("off");
+        _validatorLevelComboBox->addItem("strict");
+        _validatorLevelComboBox->addItem("moderate");
+        _validatorLevelComboBox->setCurrentIndex(1);
+
+        _validatorActionLabel = new QLabel(tr("Validation Action: "));
+        _validatorActionComboBox = new QComboBox();
+        _validatorActionComboBox->addItem("error");
+        _validatorActionComboBox->addItem("warn");    // todo: warn or warning ??
+        _validatorActionComboBox->setCurrentIndex(0);
+
+        _validatorFrameLabel = new QLabel(tr("Enter the validator document for this collection: "));
+        _validatorFrame = new FindFrame(this);
+        configureFrameText(_validatorFrame);
+        _validatorFrame->sciScintilla()->setText("{\n    \n}");
+        // clear modification state after setting the content
+        _validatorFrame->sciScintilla()->setModified(false);
+        VERIFY(connect(_validatorFrame->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onframeTextChanged())));
+
+        QHBoxLayout *validationOptionslayout = new QHBoxLayout();
+        validationOptionslayout->addWidget(_validatorLevelLabel);
+        validationOptionslayout->addWidget(_validatorLevelComboBox, Qt::AlignLeft);
+        validationOptionslayout->addWidget(_validatorActionLabel);
+        validationOptionslayout->addWidget(_validatorActionComboBox, Qt::AlignLeft);
+
+        QVBoxLayout *vlayout = new QVBoxLayout();
+        vlayout->addWidget(_validatorFrameLabel);
+        vlayout->addWidget(_validatorFrame);
+
+        QVBoxLayout *layout = new QVBoxLayout();
+        layout->addLayout(validationOptionslayout);
+        layout->addLayout(vlayout);
+        validatorEngineTab->setLayout(layout);
+
+        return validatorEngineTab;
+    }
+
+    void CreateCollectionDialog::configureFrameText(FindFrame* frame)
     {
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
         QFont font = GuiRegistry::instance().font();
         javaScriptLexer->setFont(font);
-        _frameText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
-        _frameText->sciScintilla()->setFont(font);
-        _frameText->sciScintilla()->setPaper(QColor(255, 0, 0, 127));
-        _frameText->sciScintilla()->setLexer(javaScriptLexer);
-        _frameText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_WORD);
-        _frameText->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        _frameText->sciScintilla()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-
-        _frameText->sciScintilla()->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
+        frame->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
+        frame->sciScintilla()->setFont(font);
+        frame->sciScintilla()->setPaper(QColor(255, 0, 0, 127));
+        frame->sciScintilla()->setLexer(javaScriptLexer);
+        frame->sciScintilla()->setWrapMode((QsciScintilla::WrapMode)QsciScintilla::SC_WRAP_WORD);
+        frame->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        frame->sciScintilla()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        frame->sciScintilla()->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
     }
 }

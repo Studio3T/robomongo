@@ -9,12 +9,13 @@ class QDialogButtonBox;
 class QLineEdit;
 class QTabWidget;
 class QCheckBox;
+class QComboBox;
 QT_END_NAMESPACE
 class QsciScintilla;
 
 namespace Robomongo
 {
-    class FindFrame;
+    class FindFrame;    // todo: new class or typedef i.e. JSONFrame
     class Indicator;
 
     class CreateCollectionDialog : public QDialog
@@ -28,12 +29,12 @@ namespace Robomongo
             const QString &database = QString(),
             const QString &collection = QString(), QWidget *parent = 0);
 
-        QString jsonText() const;
+        QString jsonText() const;   // todo: private
         /**
         * @brief Use returned BSONObj only if Dialog exec() method returns QDialog::Accepted
         */
-        ReturnType bsonObj() const { return _obj; }
-        void setCursorPosition(int line, int column);
+        //ReturnType bsonObj() const { return _obj; }   // todo
+        void setCursorPosition(int line, int column);   // todo: private
 
         QString getCollectionName() const;
         void setOkButtonText(const QString &text);
@@ -55,7 +56,7 @@ namespace Robomongo
         virtual void accept();
         void cappedCheckBoxStateChanged(int newState);
         void tabChangedSlot(int index);
-        bool validate(bool silentOnSuccess = true);
+        bool validate(FindFrame* frame, ReturnType* bsonObj, bool silentOnSuccess = true);
 
         private Q_SLOTS:
         void onFrameTextChanged();
@@ -67,7 +68,8 @@ namespace Robomongo
         Indicator *createCollectionIndicator(const QString &collection);
         QWidget *createOptionsTab();
         QWidget *createStorageEngineTab();
-        void configureQueryText();
+        QWidget *createValidatorTab();
+        void configureFrameText(FindFrame* frame);
 
         // Main Frame
         QLineEdit *_inputEdit;
@@ -85,11 +87,19 @@ namespace Robomongo
         QCheckBox *_usePowerOfTwoSizeCheckBox;
         QCheckBox *_noPaddingCheckBox;
         // Storage Engine Tab
-        FindFrame *_frameText;
-        QLabel * _frameLabel;
+        FindFrame *_storageEngineFrame;
+        QLabel * _storageEngineFrameLabel;
         // Validator Tab
-        //...
+        QLabel * _validatorLevelLabel;
+        QComboBox * _validatorLevelComboBox;
+        QLabel * _validatorActionLabel;
+        QComboBox * _validatorActionComboBox;
+        FindFrame *_validatorFrame;
+        QLabel * _validatorFrameLabel;
 
-        ReturnType _obj;
+        FindFrame *_activeFrame;            // ptr to active frame
+        ReturnType *_activeObj;             // ptr to active JSON object
+        ReturnType _storageEngineObj;
+        ReturnType _validatorObj;
     };
 }

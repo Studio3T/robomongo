@@ -7,8 +7,6 @@
 #include <QMovie>
 #include <QMessageBox>
 
-#include <boost/scoped_ptr.hpp>
-#include <mongo/client/dbclientinterface.h>
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
@@ -33,7 +31,6 @@ namespace Robomongo
 
         setWindowTitle("Diagnostic");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
-        //setFixedSize(dialogSize);
 
         _yesIcon = GuiRegistry::instance().yesMarkIcon();
         _noIcon = GuiRegistry::instance().noMarkIcon();
@@ -57,6 +54,11 @@ namespace Robomongo
         _loadingMovie->setScaledSize(QSize(20, 20));
         _loadingMovie->start();
 
+        _connectionIconLabel->setMovie(_loadingMovie);
+        _sshIconLabel->setMovie(_loadingMovie);
+        _authIconLabel->setMovie(_loadingMovie);
+        _listIconLabel->setMovie(_loadingMovie);
+
         QGridLayout *layout = new QGridLayout();
         layout->setContentsMargins(20, 20, 20, 10);
         layout->addWidget(_sshIconLabel,        0, 0);
@@ -67,7 +69,8 @@ namespace Robomongo
         layout->addWidget(_authLabel,           2, 1, Qt::AlignLeft);
         layout->addWidget(_listIconLabel,       3, 0);
         layout->addWidget(_listLabel,           3, 1, Qt::AlignLeft);
-        layout->setSizeConstraint(QLayout::SetFixedSize);
+        layout->setColumnStretch(0, 0) ; // Give column 0 no stretch ability
+        layout->setColumnStretch(1, 1) ; // Give column 1 stretch ability of ratio 1
 
         QVBoxLayout *box = new QVBoxLayout;
         box->addLayout(layout);
@@ -79,10 +82,6 @@ namespace Robomongo
         connectionStatus(InitialState);
         authStatus(InitialState);
         listStatus(InitialState);
-
-        // Fit size of dialog to content
-        box->activate();
-        setFixedSize(minimumSizeHint());
 
         _server = AppRegistry::instance().app()->openServer(_connection, ConnectionTest);
     }
@@ -116,9 +115,6 @@ namespace Robomongo
                 .arg(QtUtils::toQString(_connection->sshSettings()->host()))
                 .arg(_connection->sshSettings()->port()));
         }
-
-        layout()->activate();
-        setFixedSize(minimumSizeHint());
     }
 
     void ConnectionDiagnosticDialog::connectionStatus(State state)
@@ -136,9 +132,6 @@ namespace Robomongo
             _connectionIconLabel->setPixmap(_questionPixmap);
             _connectionLabel->setText(QString("No chance to try connection to <b>%1</b>").arg(QtUtils::toQString(_connection->getFullAddress())));
         }
-
-        layout()->activate();
-        setFixedSize(minimumSizeHint());
     }
 
     void ConnectionDiagnosticDialog::authStatus(State state)
@@ -168,9 +161,6 @@ namespace Robomongo
             _authIconLabel->setPixmap(_questionPixmap);
             _authLabel->setText(QString("No chance to authorize"));
         }
-
-        layout()->activate();
-        setFixedSize(minimumSizeHint());
     }
 
     void ConnectionDiagnosticDialog::listStatus(State state)
@@ -194,9 +184,6 @@ namespace Robomongo
             _listIconLabel->setPixmap(_questionPixmap);
             _listLabel->setText(QString("No chance to load list of databases"));
         }
-
-        layout()->activate();
-        setFixedSize(minimumSizeHint());
     }
 
     void ConnectionDiagnosticDialog::handle(ConnectionEstablishedEvent *event) {

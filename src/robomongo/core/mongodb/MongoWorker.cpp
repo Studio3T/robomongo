@@ -182,7 +182,7 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             result = client->getDatabaseNames();
-        } catch(const std::exception &ex) {
+        } catch(const std::exception &) {
             if (!authBase.empty())
                 result.push_back(authBase);
         }

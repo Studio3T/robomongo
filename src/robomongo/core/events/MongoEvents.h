@@ -900,16 +900,18 @@ namespace Robomongo
             SshChannel         = 4
         };
 
-        ConnectionFailedEvent(QObject *sender, ConnectionType connectionType,
+        ConnectionFailedEvent(QObject *sender, int serverHandle, ConnectionType connectionType,
                               const std::string& message, Reason reason) :
             Event(sender),
             message(message),
             reason(reason),
+            serverHandle(serverHandle),
             connectionType(connectionType) {}
 
         std::string message;
         Reason reason;
         ConnectionType connectionType;
+        int serverHandle;
     };
 
 //    class ScriptExecute
@@ -1021,38 +1023,43 @@ namespace Robomongo
     {
     R_EVENT
 
-        EstablishSshConnectionRequest(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType) :
+        EstablishSshConnectionRequest(QObject *sender, int serverHandle, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType) :
             Event(sender),
             worker(worker),
             settings(settings),
+            serverHandle(serverHandle),
             connectionType(connectionType) {}
 
         ConnectionSettings* settings;
         ConnectionType connectionType;
         SshTunnelWorker* worker;
+        int serverHandle;
     };
 
     class EstablishSshConnectionResponse : public Event
     {
     R_EVENT
 
-        EstablishSshConnectionResponse(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType, int localport) :
+        EstablishSshConnectionResponse(QObject *sender, int serverHandle, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType, int localport) :
             Event(sender),
             worker(worker),
             settings(settings),
             connectionType(connectionType),
+            serverHandle(serverHandle),
             localport(localport) {}
 
-        EstablishSshConnectionResponse(QObject *sender, const EventError &error, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType) :
+        EstablishSshConnectionResponse(QObject *sender, int serverHandle, const EventError &error, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType) :
             Event(sender, error),
             worker(worker),
             settings(settings),
+            serverHandle(serverHandle),
             connectionType(connectionType) {}
 
         ConnectionSettings* settings;
         ConnectionType connectionType;
         SshTunnelWorker* worker;
         int localport;
+        int serverHandle;
     };
 
     /**
@@ -1063,29 +1070,34 @@ namespace Robomongo
     {
     R_EVENT
 
-        ListenSshConnectionRequest(QObject *sender, ConnectionType connectionType) :
+        ListenSshConnectionRequest(QObject *sender, int serverHandle, ConnectionType connectionType) :
             Event(sender),
+            serverHandle(serverHandle),
             connectionType(connectionType) {}
 
         ConnectionType connectionType;
+        int serverHandle;
     };
 
     class ListenSshConnectionResponse : public Event
     {
     R_EVENT
 
-        ListenSshConnectionResponse(QObject *sender, ConnectionSettings* settings, ConnectionType connectionType) :
+        ListenSshConnectionResponse(QObject *sender, int serverHandle, ConnectionSettings* settings, ConnectionType connectionType) :
             Event(sender),
             settings(settings),
+            serverHandle(serverHandle),
             connectionType(connectionType) {}
 
-        ListenSshConnectionResponse(QObject *sender, const EventError &error, ConnectionSettings* settings, ConnectionType connectionType) :
+        ListenSshConnectionResponse(QObject *sender, const EventError &error, int serverHandle, ConnectionSettings* settings, ConnectionType connectionType) :
             Event(sender, error),
             settings(settings),
+            serverHandle(serverHandle),
             connectionType(connectionType) {}
 
         ConnectionSettings* settings;
         ConnectionType connectionType;
+        int serverHandle;
     };
 
     class LogEvent : public Event

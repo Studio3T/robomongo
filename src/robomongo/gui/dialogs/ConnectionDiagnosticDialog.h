@@ -23,6 +23,7 @@ namespace Robomongo
     protected Q_SLOTS:
         void handle(ConnectionEstablishedEvent *event);
         void handle(ConnectionFailedEvent *event);
+        void errorLinkActivated(const QString &link);
 
     private:
 
@@ -57,6 +58,10 @@ namespace Robomongo
         QLabel *_listIconLabel;  // List database names
         QLabel *_listLabel;
 
+        QLabel *_viewErrorLink;
+        std::string _lastErrorMessage;
+
         MongoServer *_server;
+        int _serverHandle;
     };
 }

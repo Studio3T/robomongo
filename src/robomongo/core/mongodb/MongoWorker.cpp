@@ -29,7 +29,6 @@ namespace Robomongo
     {         
         _thread = new QThread();
         moveToThread(_thread);
-        VERIFY(connect( _thread, SIGNAL(started()), this, SLOT(init()) ));
         VERIFY(connect( _thread, SIGNAL(finished()), _thread, SLOT(deleteLater()) ));
         VERIFY(connect( _thread, SIGNAL(finished()), this, SLOT(deleteLater()) ));
         _thread->start();
@@ -126,8 +125,7 @@ namespace Robomongo
                 return;
             }
 
-            bool hasPrimary = _connection->hasEnabledPrimaryCredential();
-            if (hasPrimary) {
+            if (_connection->hasEnabledPrimaryCredential()) {
                 CredentialSettings *credentials = _connection->primaryCredential();
 
                 // Building BSON object:
@@ -147,6 +145,7 @@ namespace Robomongo
                 if (dbName.compare("admin") != 0) // dbName is NOT "admin"
                     _isAdmin = false;
             }
+
             boost::scoped_ptr<MongoClient> client(getClient());
             std::vector<std::string> dbNames = getDatabaseNamesSafe();
 
@@ -154,6 +153,8 @@ namespace Robomongo
             // execute "listdatabases" command and we have nothing to show.
             if (dbNames.size() == 0)
                 throw mongo::DBException("Failed to execute \"listdatabases\" command.", 0);
+
+            init();
 
             reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, client->getVersion()), event->connectionType));
         } catch(const std::exception &ex) {
@@ -384,6 +385,11 @@ namespace Robomongo
     void MongoWorker::handle(ExecuteScriptRequest *event)
     {
         try {
+            if (!_scriptEngine) {
+                reply(event->sender(), new ExecuteScriptResponse(this, EventError("MongoDB Shell was not initialized")));
+                return;
+            }
+
             MongoShellExecResult result = _scriptEngine->exec(event->script, event->databaseName);
             reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty()));
         } catch(const mongo::DBException &ex) {
@@ -398,6 +404,10 @@ namespace Robomongo
     void MongoWorker::handle(StopScriptRequest *)
     {
         try {
+            if (!_scriptEngine) {
+                return;
+            }
+
             _scriptEngine->interrupt();
         } catch(const mongo::DBException &ex) {
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
@@ -407,6 +417,11 @@ namespace Robomongo
     void MongoWorker::handle(AutocompleteRequest *event)
     {
         try {
+            if (!_scriptEngine) {
+                reply(event->sender(), new AutocompleteResponse(this, EventError("MongoDB Shell was not initialized")));
+                return;
+            }
+
             QStringList list = _scriptEngine->complete(event->prefix, event->mode);
             reply(event->sender(), new AutocompleteResponse(this, list, event->prefix));
         } catch(const mongo::DBException &ex) {

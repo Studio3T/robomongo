@@ -33,7 +33,7 @@ namespace Robomongo
     }
 
     App::App(EventBus *const bus) : QObject(),
-        _bus(bus) {
+        _bus(bus), _lastServerHandle(0) {
         _bus->subscribe(this, EstablishSshConnectionResponse::Type);
         _bus->subscribe(this, ListenSshConnectionResponse::Type);
         _bus->subscribe(this, LogEvent::Type);
@@ -51,13 +51,15 @@ namespace Robomongo
      * @param visible: should this server be visible in UI (explorer) or not.
      */
     MongoServer *App::openServer(ConnectionSettings *connection, ConnectionType type) {
+        ++_lastServerHandle;
+
         if (type == ConnectionPrimary)
             _bus->publish(new ConnectingEvent(this));
 
         // When connection is SECONDARY or do not have
         // ssh settings enabled, continue without SSH Tunnel
         if (type == ConnectionSecondary || !connection->sshSettings()->enabled()) {
-            return continueOpenServer(connection, type);
+            return continueOpenServer(_lastServerHandle, connection, type);
         }
 
         // Open SSH channel and only after that open connection
@@ -67,7 +69,7 @@ namespace Robomongo
 
         ConnectionSettings* settingsCopy = connection->clone();
         SshTunnelWorker* sshWorker = new SshTunnelWorker(settingsCopy);
-        _bus->send(sshWorker, new EstablishSshConnectionRequest(this, sshWorker, settingsCopy, type));
+        _bus->send(sshWorker, new EstablishSshConnectionRequest(this, _lastServerHandle, sshWorker, settingsCopy, type));
         return NULL;
     }
 
@@ -135,7 +137,7 @@ namespace Robomongo
         delete shell;
     }
 
-    MongoServer* App::continueOpenServer(ConnectionSettings *connection, ConnectionType type, int localport) {
+    MongoServer *App::continueOpenServer(int serverHandle, ConnectionSettings *connection, ConnectionType type, int localport) {
         ConnectionSettings* settings = connection->clone();
 
         // Modify connection settings when SSH tunnel is used
@@ -145,7 +147,7 @@ namespace Robomongo
             settings->setServerPort(localport);
         }
 
-        MongoServer *server = new MongoServer(settings, type);
+        MongoServer *server = new MongoServer(serverHandle, settings, type);
         _servers.push_back(server);
 
         server->runWorkerThread();
@@ -158,17 +160,15 @@ namespace Robomongo
     void App::handle(EstablishSshConnectionResponse *event) {
         if (event->isError()) {
             _bus->publish(new ConnectionFailedEvent(
-                this, event->connectionType, event->error().errorMessage(),
+                this, event->serverHandle, event->connectionType, event->error().errorMessage(),
                 ConnectionFailedEvent::SshConnection));
             return;
         }
 
         LOG_MSG(QString("SSH tunnel created successfully"), mongo::logger::LogSeverity::Info());
 
-        _bus->send(event->worker, new ListenSshConnectionRequest(this, event->connectionType));
-        continueOpenServer(event->settings, event->connectionType, event->localport);
-
-        // record event->worker and delete when needed
+        continueOpenServer(event->serverHandle, event->settings, event->connectionType, event->localport);
+        _bus->send(event->worker, new ListenSshConnectionRequest(this, event->serverHandle, event->connectionType));
     }
 
     void App::handle(LogEvent *event) {
@@ -185,11 +185,17 @@ namespace Robomongo
 
     void App::handle(ListenSshConnectionResponse *event) {
         if (event->isError()) {
-            _bus->publish(new ConnectionFailedEvent(this, event->connectionType, event->error().errorMessage(),
+            _bus->publish(new ConnectionFailedEvent(this, event->serverHandle, event->connectionType, event->error().errorMessage(),
                 ConnectionFailedEvent::SshChannel));
             return;
         }
 
         LOG_MSG(QString("SSH tunnel closed."), mongo::logger::LogSeverity::Error());
     }
+
+    void App::fireConnectionFailedEvent(int serverHandle, ConnectionType type, std::string errormsg,
+                                        ConnectionFailedEvent::Reason reason) {
+        _bus->publish(new ConnectionFailedEvent(this, serverHandle, type, errormsg, reason));
+    }
+
 }

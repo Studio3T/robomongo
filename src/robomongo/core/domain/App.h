@@ -78,13 +78,17 @@ namespace Robomongo
          */
         void closeShell(MongoShell *shell);
 
+        void fireConnectionFailedEvent(int serverHandle, ConnectionType type, std::string errormsg, ConnectionFailedEvent::Reason reason);
+
+        int getLastServerHandle() const { return _lastServerHandle; };
+
     public Q_SLOTS:
         void handle(EstablishSshConnectionResponse *event);
         void handle(ListenSshConnectionResponse *event);
         void handle(LogEvent *event);
 
     private:
-        MongoServer* continueOpenServer(ConnectionSettings *connection, ConnectionType type, int localport = 0);
+        MongoServer *continueOpenServer(int serverHandle, ConnectionSettings *connection, ConnectionType type, int localport = 0);
 
         /**
          * MongoServers, owned by this App.
@@ -97,5 +101,9 @@ namespace Robomongo
         MongoShellsContainerType _shells;
 
         EventBus *const _bus;
+
+        // Increase monotonically when new MongoServer is created
+        // Never decreases.
+        int _lastServerHandle;
     };
 }

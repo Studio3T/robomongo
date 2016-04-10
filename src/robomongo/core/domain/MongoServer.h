@@ -12,6 +12,7 @@ namespace Robomongo
     class LoadDatabaseNamesResponse;
     class InsertDocumentResponse;
     class EventBus;
+    class App;
 
     /**
      * @brief MongoServer represents active connection to MongoDB server.
@@ -29,7 +30,7 @@ namespace Robomongo
          * @param visible
          * @param defaultDatabase
          */
-        MongoServer(ConnectionSettings *connectionRecord, ConnectionType connectionType);
+        MongoServer(int handle, ConnectionSettings *connectionRecord, ConnectionType connectionType);
         ~MongoServer();
 
         void runWorkerThread();
@@ -75,13 +76,15 @@ namespace Robomongo
         void clearDatabases();
         void addDatabase(MongoDatabase *database);
 
-        MongoWorker* _client;
-        ConnectionSettings* _settings;
-        EventBus* _bus;
+        MongoWorker *_client;
+        ConnectionSettings *_settings;
+        EventBus *_bus;
+        App *_app;
 
         float _version;
         ConnectionType _connectionType;
         bool _isConnected;
+        int _handle;
 
         QList<MongoDatabase *> _databases;
     };

@@ -898,6 +898,14 @@ namespace Robomongo
         if (event->connectionType != ConnectionPrimary)
             return;
 
+
+        // Very temporary solution to prevent multiple connection error messages
+        // from both SshTunnelWorker and MongoWorker
+        static int lastServerHandle = -1;
+        if (event->serverHandle <= lastServerHandle)
+            return;
+
+        lastServerHandle = event->serverHandle;
         QMessageBox::information(this, "Error", QtUtils::toQString(event->message));
     }
 

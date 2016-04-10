@@ -74,11 +74,11 @@ namespace Robomongo
             }
 
             reply(event->sender(), new EstablishSshConnectionResponse(
-                    this, event->worker, event->settings, event->connectionType, _configCreator.config()->localport));
+                    this, event->serverHandle, event->worker, event->settings, event->connectionType, _configCreator.config()->localport));
 
         } catch (const std::exception& ex) {
             reply(event->sender(),
-                new EstablishSshConnectionResponse(this, EventError(ex.what()),
+                new EstablishSshConnectionResponse(this, event->serverHandle, EventError(ex.what()),
                 event->worker, event->settings, event->connectionType));
 
             // In case of error in connection, we should cleanup SshTunnelWorker
@@ -128,6 +128,10 @@ namespace Robomongo
                         << error;
                 }
 
+                // Cleanup session
+                rbm_ssh_session_close(_sshSession);
+                _sshSession = NULL;
+
                 throw std::runtime_error(ss.str());
             }
 
@@ -135,7 +139,7 @@ namespace Robomongo
 
         } catch (const std::exception& ex) {
             reply(event->sender(),
-                  new ListenSshConnectionResponse(this, EventError(ex.what()), _settings, event->connectionType));
+                  new ListenSshConnectionResponse(this, EventError(ex.what()), event->serverHandle, _settings, event->connectionType));
         }
 
         // When we done with SSH (i.e. rbm_ssh_open_tunnel exits) regardless

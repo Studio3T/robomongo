@@ -259,7 +259,7 @@ namespace Robomongo
 
     const QBrush &GuiRegistry::typeBrush() const
     {
-        static const QBrush typeBrush = QBrush(QColor(150,150, 150));
+        static const QBrush typeBrush = QBrush(QColor(150, 150, 150));
         return typeBrush;
     }
 

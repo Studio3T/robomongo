@@ -18,13 +18,13 @@ namespace Robomongo
 
     void JsonPrepareThread::stop()
     {
-        _stop=true;
+        _stop = true;
     }
 
     void JsonPrepareThread::run()
     {
         int position = 1; // 1-based numbering to match tree & table views
-        for(std::vector<MongoDocumentPtr>::const_iterator it = _bsonObjects.begin();it!=_bsonObjects.end();++it)
+        for (std::vector<MongoDocumentPtr>::const_iterator it = _bsonObjects.begin(); it != _bsonObjects.end(); ++it)
         {
             MongoDocumentPtr doc = *it;
             mongo::StringBuilder sb;

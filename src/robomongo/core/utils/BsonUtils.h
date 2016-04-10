@@ -100,8 +100,8 @@ namespace Robomongo
 
         const char* BSONTypeToString(mongo::BSONType type, mongo::BinDataType binDataType, UUIDEncoding uuidEncoding);
 
-        void buildJsonString(const mongo::BSONObj &obj,std::string &con, UUIDEncoding uuid, SupportedTimes tz);
-        void buildJsonString(const mongo::BSONElement &elem,std::string &con, UUIDEncoding uuid, SupportedTimes tz);
+        void buildJsonString(const mongo::BSONObj &obj, std::string &con, UUIDEncoding uuid, SupportedTimes tz);
+        void buildJsonString(const mongo::BSONElement &elem, std::string &con, UUIDEncoding uuid, SupportedTimes tz);
 
         mongo::BSONElement indexOf(const mongo::BSONObj &doc, int index);
         int elementsCount(const mongo::BSONObj &doc);

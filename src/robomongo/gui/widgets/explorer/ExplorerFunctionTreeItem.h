@@ -12,7 +12,7 @@ namespace Robomongo
         Q_OBJECT
     public:
         typedef ExplorerTreeItem BaseClass;
-        ExplorerFunctionTreeItem(QTreeWidgetItem *parent,MongoDatabase *database, const MongoFunction &function);
+        ExplorerFunctionTreeItem(QTreeWidgetItem *parent, MongoDatabase *database, const MongoFunction &function);
         MongoFunction function() const { return _function; }
         MongoDatabase *database() const { return _database; }
 

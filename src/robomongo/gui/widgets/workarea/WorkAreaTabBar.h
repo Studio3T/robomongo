@@ -18,7 +18,7 @@ namespace Robomongo
          * assuming, that tab bar will be installed to (and owned by)
          * WorkAreaTabWidget, using QTabWidget::setTabBar().
          */
-        explicit WorkAreaTabBar(QWidget* parent=0);
+        explicit WorkAreaTabBar(QWidget* parent = 0);
 
     Q_SIGNALS:
         /**

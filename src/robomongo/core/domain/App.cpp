@@ -82,39 +82,39 @@ namespace Robomongo
         _servers.erase(std::remove_if(_servers.begin(), _servers.end(), stdutils::RemoveIfFound<MongoServer*>(server)), _servers.end());
     }
 
-    MongoShell *App::openShell(MongoCollection *collection,const QString &filePathToSave)
+    MongoShell *App::openShell(MongoCollection *collection, const QString &filePathToSave)
     {
         ConnectionSettings *connection = collection->database()->server()->connectionRecord();
         connection->setDefaultDatabase(collection->database()->name());
         QString script = detail::buildCollectionQuery(collection->name(), "find({})");
-        return openShell(connection, ScriptInfo(script, true, CursorPosition(0, -2), QtUtils::toQString(collection->database()->name()),filePathToSave));
+        return openShell(connection, ScriptInfo(script, true, CursorPosition(0, -2), QtUtils::toQString(collection->database()->name()), filePathToSave));
     }
 
-    MongoShell *App::openShell(MongoServer *server,const QString &script, const std::string &dbName,
+    MongoShell *App::openShell(MongoServer *server, const QString &script, const std::string &dbName,
                                bool execute, const QString &shellName,
-                               const CursorPosition &cursorPosition,const QString &filePathToSave)
+                               const CursorPosition &cursorPosition, const QString &filePathToSave)
     {
         ConnectionSettings *connection = server->connectionRecord();
 
         if (!dbName.empty())
             connection->setDefaultDatabase(dbName);
 
-        return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName,filePathToSave));
+        return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName, filePathToSave));
     }
 
     MongoShell *App::openShell(MongoDatabase *database, const QString &script,
                                bool execute, const QString &shellName,
-                               const CursorPosition &cursorPosition,const QString &filePathToSave)
+                               const CursorPosition &cursorPosition, const QString &filePathToSave)
     {
         ConnectionSettings *connection = database->server()->connectionRecord();
         connection->setDefaultDatabase(database->name());
-        return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName,filePathToSave));
+        return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName, filePathToSave));
     }
 
     MongoShell *App::openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo)
     {
         MongoServer *server = openServer(connection, ConnectionSecondary);
-        MongoShell *shell = new MongoShell(server,scriptInfo);
+        MongoShell *shell = new MongoShell(server, scriptInfo);
         _shells.push_back(shell);
         _bus->publish(new OpeningShellEvent(this, shell));
         shell->execute();
@@ -128,7 +128,7 @@ namespace Robomongo
     void App::closeShell(MongoShell *shell)
     {
         // Do nothing, if this shell not owned by this App.
-        MongoShellsContainerType::iterator it = std::find_if(_shells.begin(),_shells.end(),std::bind1st(std::equal_to<MongoShell *>(),shell));
+        MongoShellsContainerType::iterator it = std::find_if(_shells.begin(), _shells.end(), std::bind1st(std::equal_to<MongoShell *>(), shell));
         if (it == _shells.end())
             return;
 

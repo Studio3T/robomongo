@@ -65,7 +65,7 @@ namespace Robomongo {
     }
 
     void MongoServer::createDatabase(const std::string &dbName) {
-        _bus->send(_client,new CreateDatabaseRequest(this, dbName));
+        _bus->send(_client, new CreateDatabaseRequest(this, dbName));
     }
 
     MongoDatabase *MongoServer::findDatabaseByName(const std::string &dbName) const {
@@ -79,7 +79,7 @@ namespace Robomongo {
     }
 
     void MongoServer::dropDatabase(const std::string &dbName) {
-        _bus->send(_client,new DropDatabaseRequest(this, dbName));
+        _bus->send(_client, new DropDatabaseRequest(this, dbName));
     }
 
     void MongoServer::insertDocuments(const std::vector<mongo::BSONObj> &objCont,
@@ -90,12 +90,12 @@ namespace Robomongo {
     }
 
     void MongoServer::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns) {
-        _bus->send(_client,new InsertDocumentRequest(this, obj, ns));
+        _bus->send(_client, new InsertDocumentRequest(this, obj, ns));
     }
 
     void MongoServer::saveDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns) {
         for (std::vector<mongo::BSONObj>::const_iterator it = objCont.begin(); it != objCont.end(); it++) {
-            saveDocument(*it,ns);
+            saveDocument(*it, ns);
         }
     }
 
@@ -155,7 +155,7 @@ namespace Robomongo {
             return;
 
         clearDatabases();
-        for(std::vector<std::string>::const_iterator it = info._databases.begin(); it != info._databases.end(); ++it) {
+        for (std::vector<std::string>::const_iterator it = info._databases.begin(); it != info._databases.end(); ++it) {
             const std::string &name = *it;
             MongoDatabase *db  = new MongoDatabase(this, name);
             addDatabase(db);
@@ -169,7 +169,7 @@ namespace Robomongo {
         }
 
         clearDatabases();
-        for(std::vector<std::string>::iterator it = event->databaseNames.begin(); it != event->databaseNames.end(); ++it) {
+        for (std::vector<std::string>::iterator it = event->databaseNames.begin(); it != event->databaseNames.end(); ++it) {
             const std::string &name = *it;
             MongoDatabase *db  = new MongoDatabase(this, name);
             addDatabase(db);

@@ -21,9 +21,9 @@ namespace
     const Robomongo::BsonTreeItem *findSuperRoot(const Robomongo::BsonTreeItem *const item)
     {
         Robomongo::BsonTreeItem *parent = qobject_cast<Robomongo::BsonTreeItem *>(item->parent());
-        if(parent){
+        if (parent) {
             Robomongo::BsonTreeItem *grParent = qobject_cast<Robomongo::BsonTreeItem *>(parent->parent());
-            if(grParent){
+            if (grParent) {
                return findSuperRoot(parent);
             }
         }
@@ -77,7 +77,7 @@ namespace Robomongo
 
     BsonTreeItem* BsonTreeItem::childByKey(const QString &val)
     {
-        for (unsigned i=0; i < _items.size(); ++i) {
+        for (unsigned i = 0; i < _items.size(); ++i) {
             if (_items[i]->key() == val) {
                 return _items[i];
             }
@@ -102,7 +102,7 @@ namespace Robomongo
 
     int BsonTreeItem::indexOf(BsonTreeItem *item) const
     {
-        for (unsigned i=0; i < _items.size(); ++i) {
+        for (unsigned i = 0; i < _items.size(); ++i) {
             if (item == _items[i]) {
                 return i;
             }
@@ -152,6 +152,6 @@ namespace Robomongo
 
     void BsonTreeItem::removeChild(BsonTreeItem *item)
     {
-        _items.erase(std::remove_if(_items.begin(), _items.end(), removeIfFound(item)),_items.end());
+        _items.erase(std::remove_if(_items.begin(), _items.end(), removeIfFound(item)), _items.end());
     }
 }

@@ -233,7 +233,7 @@ namespace Robomongo
         activateWindow();
 
         int size = _connectionItems.size();
-        for (int i=0; i<size; ++i)
+        for (int i = 0; i<size; ++i)
         {
             ConnectionListWidgetItem *item = _connectionItems[i];
             if (_connectionItems[i]->connection() == connection) {
@@ -281,7 +281,7 @@ namespace Robomongo
 
         // Clone connection
         ConnectionSettings *connection = currentItem->connection()->clone();
-        std::string newConnectionName="Copy of "+connection->connectionName();
+        std::string newConnectionName = "Copy of "+connection->connectionName();
 
         connection->setConnectionName(newConnectionName);
 
@@ -307,7 +307,7 @@ namespace Robomongo
 
         // Make childrens toplevel again. This is a bad, but quickiest item reordering
         // implementation.
-        for(int i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             ConnectionListWidgetItem * item = (ConnectionListWidgetItem *) _listWidget->topLevelItem(i);
             if (item->childCount() > 0) {
@@ -321,7 +321,7 @@ namespace Robomongo
 
         count = _listWidget->topLevelItemCount();
         SettingsManager::ConnectionSettingsContainerType items;
-        for(int i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             ConnectionListWidgetItem * item = (ConnectionListWidgetItem *) _listWidget->topLevelItem(i);
             items.push_back(item->connection());

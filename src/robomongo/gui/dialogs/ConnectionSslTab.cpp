@@ -36,7 +36,7 @@ namespace Robomongo
         _sslSupport->setChecked(_settings->sslInfo()._sslSupport);
 
         _selectPemFileButton = new QPushButton("...");
-        _selectPemFileButton->setFixedSize(20,20);
+        _selectPemFileButton->setFixedSize(20, 20);
         VERIFY(connect(_selectPemFileButton, SIGNAL(clicked()), this, SLOT(setSslPEMKeyFile())));
 
         _sslPemLabel = new QLabel("SSL Certificate:");

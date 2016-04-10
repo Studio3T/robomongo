@@ -18,7 +18,7 @@
 
 namespace Robomongo
 {
-    const QSize CopyCollection::minimumSize = QSize(300,150);
+    const QSize CopyCollection::minimumSize = QSize(300, 150);
 
     CopyCollection::CopyCollection(const QString &serverName, const QString &database,
                                                const QString &collection, QWidget *parent) :
@@ -28,9 +28,9 @@ namespace Robomongo
     {
         App::MongoServersContainerType servers = AppRegistry::instance().app()->getServers();
         QSet<QString> uniqueConnectionsNames;
-        for(App::MongoServersContainerType::const_iterator it = servers.begin(); it != servers.end(); ++it){
+        for (App::MongoServersContainerType::const_iterator it = servers.begin(); it != servers.end(); ++it) {
              MongoServer *server = *it;
-             if (server->isConnected() ){
+             if (server->isConnected()) {
                  _servers.push_back(server);
                  uniqueConnectionsNames.insert(QtUtils::toQString(server->connectionRecord()->connectionName()));
              }
@@ -109,7 +109,7 @@ namespace Robomongo
             }
         }  
         _databaseComboBox->addItems(server->getDatabasesNames());
-        if (_currentServerName==QtUtils::toQString(server->connectionRecord()->getFullAddress())) {
+        if (_currentServerName == QtUtils::toQString(server->connectionRecord()->getFullAddress())) {
             _databaseComboBox->removeItem(_databaseComboBox->findText(_currentDatabase));
         }
     }

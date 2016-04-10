@@ -13,7 +13,7 @@
 
 namespace Robomongo
 {
-    const QSize CreateDatabaseDialog::dialogSize = QSize(300,150);
+    const QSize CreateDatabaseDialog::dialogSize = QSize(300, 150);
 
     CreateDatabaseDialog::CreateDatabaseDialog(const QString &serverName, const QString &database,
                                                const QString &collection, QWidget *parent) :
@@ -31,7 +31,7 @@ namespace Robomongo
         hline->setFrameShadow(QFrame::Sunken);
 
         _inputEdit = new QLineEdit();
-        _inputLabel= new QLabel("Database Name:");
+        _inputLabel = new QLabel("Database Name:");
         _inputEdit->setMaxLength(maxLenghtName);
 
         _buttonBox = new QDialogButtonBox(this);

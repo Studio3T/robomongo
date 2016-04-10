@@ -41,7 +41,7 @@ namespace Robomongo
         void renameCollection(const MongoNamespace &ns, const std::string &newCollectionName);
         void duplicateCollection(const MongoNamespace &ns, const std::string &newCollectionName);
         void dropCollection(const MongoNamespace &ns);
-        void copyCollectionToDiffServer(mongo::DBClientBase *const,const MongoNamespace &from, const MongoNamespace &to);
+        void copyCollectionToDiffServer(mongo::DBClientBase *const, const MongoNamespace &from, const MongoNamespace &to);
 
         void insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
         void saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);

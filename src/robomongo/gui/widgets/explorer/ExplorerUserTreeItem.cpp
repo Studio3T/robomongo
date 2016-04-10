@@ -22,16 +22,16 @@ namespace
 
     std::string buildToolTip(const Robomongo::MongoUser &user)
     {
-        char buff[2048]={0};
-        sprintf(buff,tooltipTemplate,user.name().c_str(),user.id().toString().c_str());
+        char buff[2048] = {0};
+        sprintf(buff, tooltipTemplate, user.name().c_str(), user.id().toString().c_str());
         return buff;
     }
 }
 
 namespace Robomongo
 {
-    ExplorerUserTreeItem::ExplorerUserTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database, const MongoUser &user) :
-        BaseClass(parent),_user(user),_database(database)
+    ExplorerUserTreeItem::ExplorerUserTreeItem(QTreeWidgetItem *parent, MongoDatabase *const database, const MongoUser &user) :
+        BaseClass(parent), _user(user), _database(database)
     {
         QAction *dropUser = new QAction("Drop User", this);
         VERIFY(connect(dropUser, SIGNAL(triggered()), SLOT(ui_dropUser())));
@@ -52,7 +52,7 @@ namespace Robomongo
     void ExplorerUserTreeItem::ui_dropUser()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(),"Drop","User",QtUtils::toQString(_user.name()));
+        int answer = utils::questionDialog(treeWidget(), "Drop", "User", QtUtils::toQString(_user.name()));
 
         if (answer == QMessageBox::Yes) {
             _database->dropUser(_user.id());

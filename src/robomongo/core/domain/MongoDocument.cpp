@@ -38,7 +38,7 @@ namespace Robomongo
     std::vector<MongoDocumentPtr> MongoDocument::fromBsonObj(const std::vector<mongo::BSONObj> &bsonObjs)
     {
         std::vector<MongoDocumentPtr> list;
-        for (std::vector<mongo::BSONObj>::const_iterator it=bsonObjs.begin(); it!=bsonObjs.end(); ++it) {
+        for (std::vector<mongo::BSONObj>::const_iterator it = bsonObjs.begin(); it != bsonObjs.end(); ++it) {
             list.push_back(fromBsonObj(*it));
         }
 

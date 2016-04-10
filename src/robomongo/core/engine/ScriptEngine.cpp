@@ -147,7 +147,7 @@ namespace Robomongo
     {
         QMutexLocker lock(&_mutex);
 
-        if(!_scope)
+        if (!_scope)
             return MongoShellExecResult();
 
         /*
@@ -177,7 +177,7 @@ namespace Robomongo
 
         use(dbName);
 
-        for(std::vector<std::string>::const_iterator it = statements.begin(); it != statements.end(); ++it)
+        for (std::vector<std::string>::const_iterator it = statements.begin(); it != statements.end(); ++it)
         {
             std::string statement = *it;
             // clear global objects

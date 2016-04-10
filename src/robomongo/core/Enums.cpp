@@ -10,9 +10,9 @@ namespace
     template<typename type, int size>
     inline type findTypeInArray(const char *(&arr)[size], const char *text)
     {
-        for (int i=0; i < size;++i )
+        for (int i = 0; i < size; ++i )
         {
-            if (strcmp(text,arr[i])==0)
+            if (strcmp(text, arr[i]) == 0)
             {
                 return static_cast<type>(i);
             }

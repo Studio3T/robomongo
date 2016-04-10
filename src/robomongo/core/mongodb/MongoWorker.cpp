@@ -276,7 +276,7 @@ namespace Robomongo
         const EnsureIndexInfo &oldInfo = event->oldInfo();
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->ensureIndex(oldInfo,newInfo);
+            client->ensureIndex(oldInfo, newInfo);
             const std::vector<EnsureIndexInfo> &ind = client->getIndexes(newInfo._collection);
             client->done();
 
@@ -291,7 +291,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->dropIndexFromCollection(event->collection(),event->name());
+            client->dropIndexFromCollection(event->collection(), event->name());
             client->done();
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), event->name()));
         } catch(const mongo::DBException &ex) {
@@ -304,7 +304,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->renameIndexFromCollection(event->collection(),event->oldIndex(),event->newIndex());
+            client->renameIndexFromCollection(event->collection(), event->oldIndex(), event->newIndex());
             const std::vector<EnsureIndexInfo> &ind = client->getIndexes(event->collection());
             client->done();
 
@@ -525,7 +525,7 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             MongoWorker *cl = event->worker();
-            client->copyCollectionToDiffServer(cl->_dbclient,event->from(),event->to());
+            client->copyCollectionToDiffServer(cl->_dbclient, event->from(), event->to());
             client->done();
 
             reply(event->sender(), new CopyCollectionToDiffServerResponse(this));

@@ -116,8 +116,8 @@ namespace Robomongo
         ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *const>(parent());
         if (!par)
             return;
-        EnsureIndexInfo fakeInfo(par->collection()->info(),"");
-        EditIndexDialog dlg(fakeInfo , QtUtils::toQString(par->databaseItem()->database()->name()),QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()), treeWidget());
+        EnsureIndexInfo fakeInfo(par->collection()->info(), "");
+        EditIndexDialog dlg(fakeInfo , QtUtils::toQString(par->databaseItem()->database()->name()), QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()), treeWidget());
         int result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
@@ -126,7 +126,7 @@ namespace Robomongo
         if (!databaseTreeItem)
             return;
 
-        databaseTreeItem->enshureIndex(par,fakeInfo, dlg.info());
+        databaseTreeItem->enshureIndex(par, fakeInfo, dlg.info());
     }
 
     void ExplorerCollectionDirIndexesTreeItem::ui_reIndex()
@@ -145,8 +145,8 @@ namespace Robomongo
         }
     }
 
-    ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent,const EnsureIndexInfo &info)
-        : BaseClass(parent),_info(info)
+    ExplorerCollectionIndexesTreeItem::ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent, const EnsureIndexInfo &info)
+        : BaseClass(parent), _info(info)
     {
         QAction *deleteIndex = new QAction("Drop Index...", this);
         connect(deleteIndex, SIGNAL(triggered()), SLOT(ui_dropIndex()));
@@ -163,7 +163,7 @@ namespace Robomongo
     void ExplorerCollectionIndexesTreeItem::ui_dropIndex()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(),"Drop","Index",text(0));
+        int answer = utils::questionDialog(treeWidget(), "Drop", "Index", text(0));
 
         if (answer != QMessageBox::Yes)
             return;
@@ -300,10 +300,10 @@ namespace Robomongo
         if (indexes.size() == 0)
             _indexDir->setExpanded(false);
 
-        for (std::vector<EnsureIndexInfo>::const_iterator it = indexes.begin(); it!=indexes.end(); ++it) {
-            _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(_indexDir,*it));
+        for (std::vector<EnsureIndexInfo>::const_iterator it = indexes.begin(); it != indexes.end(); ++it) {
+            _indexDir->addChild(new ExplorerCollectionIndexesTreeItem(_indexDir, *it));
         }
-        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText,_indexDir->childCount()));
+        _indexDir->setText(0, detail::buildName(ExplorerCollectionDirIndexesTreeItem::labelText, _indexDir->childCount()));
     }
 
     void ExplorerCollectionTreeItem::handle(DeleteCollectionIndexResponse *event)
@@ -351,7 +351,7 @@ namespace Robomongo
     QString ExplorerCollectionTreeItem::buildToolTip(MongoCollection *collection)
     {
         // This function does not used now
-        char buff[2048]={0};
+        char buff[2048] = {0};
 //        sprintf(buff,tooltipTemplate,collection->name().c_str(),collection->info().count(),collection->sizeString().c_str());
         return buff;
     }
@@ -429,7 +429,7 @@ namespace Robomongo
     void ExplorerCollectionTreeItem::ui_dropCollection()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(),"Drop","collection",QtUtils::toQString(_collection->name()));
+        int answer = utils::questionDialog(treeWidget(), "Drop", "collection", QtUtils::toQString(_collection->name()));
 
         if (answer == QMessageBox::Yes) {
             MongoDatabase *database = _collection->database();
@@ -530,7 +530,7 @@ namespace Robomongo
         openCurrentCollectionShell("getShardDistribution()");
     }
 
-    void ExplorerCollectionTreeItem::openCurrentCollectionShell(const QString &script, bool execute,const CursorPosition &cursor)
+    void ExplorerCollectionTreeItem::openCurrentCollectionShell(const QString &script, bool execute, const CursorPosition &cursor)
     {
         QString query = detail::buildCollectionQuery(_collection->name(), script);
         AppRegistry::instance().app()->openShell(_collection->database(), query, execute, QtUtils::toQString(_collection->name()), cursor);

@@ -18,7 +18,7 @@ namespace Robomongo
          * @brief Creates WorkAreaTabWidget.
          * @param workAreaWidget: WorkAreaWidget this tab belongs to.
          */
-        explicit WorkAreaTabWidget(QWidget *parent=0);
+        explicit WorkAreaTabWidget(QWidget *parent = 0);
 
         void closeTab(int index);
         void nextTab();

@@ -13,7 +13,7 @@
 namespace Robomongo
 {
     BsonTreeView::BsonTreeView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent)
-        : BaseClass(parent),_notifier(this,shell,queryInfo)
+        : BaseClass(parent), _notifier(this, shell, queryInfo)
     {
 #if defined(Q_OS_MAC)
         setAttribute(Qt::WA_MacShowFocusRect, false);
@@ -70,7 +70,7 @@ namespace Robomongo
                 }
             }
 
-            _notifier.initMenu(&menu,documentItem);
+            _notifier.initMenu(&menu, documentItem);
             menu.exec(menuPoint);
         }
     }
@@ -137,7 +137,7 @@ namespace Robomongo
     {
         QModelIndexList indexes = selectedIndexes();
         if (detail::isMultiSelection(indexes)) {
-            for (int i=0; i<indexes.count(); ++i) 
+            for (int i = 0; i<indexes.count(); ++i)
                 expandNode(indexes[i]);
         } else {
             expandNode(selectedIndex());
@@ -148,7 +148,7 @@ namespace Robomongo
     {
         QModelIndexList indexes = selectedIndexes();
         if (detail::isMultiSelection(indexes)) {
-            for (int i=0; i<indexes.count(); ++i) 
+            for (int i = 0; i<indexes.count(); ++i)
                 collapseNode(indexes[i]);
         } else {
             collapseNode(selectedIndex());

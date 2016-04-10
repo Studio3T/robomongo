@@ -12,7 +12,7 @@
 namespace Robomongo
 {
     BsonTableView::BsonTableView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent) 
-        :BaseClass(parent),_notifier(this,shell,queryInfo)
+        :BaseClass(parent), _notifier(this, shell, queryInfo)
     {
 #if defined(Q_OS_MAC)
         setAttribute(Qt::WA_MacShowFocusRect, false);
@@ -68,7 +68,7 @@ namespace Robomongo
             QModelIndex selectedInd = selectedIndex();
             BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
             QMenu menu(this);
-            _notifier.initMenu(&menu,documentItem);
+            _notifier.initMenu(&menu, documentItem);
             menu.exec(menuPoint);
         }
     }

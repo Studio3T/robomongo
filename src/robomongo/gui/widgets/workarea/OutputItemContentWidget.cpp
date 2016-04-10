@@ -86,8 +86,8 @@ namespace Robomongo
             _header->setCollection(QtUtils::toQString(_queryInfo._info._ns.collectionName()));
             _header->paging()->setBatchSize(_queryInfo._batchSize);
             _header->paging()->setSkip(_queryInfo._skip);
-            if(!_queryInfo._limit){
-            _queryInfo._limit=50;
+            if (!_queryInfo._limit) {
+            _queryInfo._limit = 50;
             }
         }
 
@@ -102,9 +102,9 @@ namespace Robomongo
         setLayout(layout);
         configureModel();
 
-        VERIFY(connect(_header->paging(), SIGNAL(refreshed(int,int)), this, SLOT(refresh(int,int))));        
-        VERIFY(connect(_header->paging(), SIGNAL(leftClicked(int,int)), this, SLOT(paging_leftClicked(int,int))));
-        VERIFY(connect(_header->paging(), SIGNAL(rightClicked(int,int)), this, SLOT(paging_rightClicked(int,int))));
+        VERIFY(connect(_header->paging(), SIGNAL(refreshed(int, int)), this, SLOT(refresh(int, int))));
+        VERIFY(connect(_header->paging(), SIGNAL(leftClicked(int, int)), this, SLOT(paging_leftClicked(int, int))));
+        VERIFY(connect(_header->paging(), SIGNAL(rightClicked(int, int)), this, SLOT(paging_rightClicked(int, int))));
         VERIFY(connect(_header, SIGNAL(maximizedPart()), this, SIGNAL(maximizedPart())));
         VERIFY(connect(_header, SIGNAL(restoredSize()), this, SIGNAL(restoredSize())));
 
@@ -168,7 +168,7 @@ namespace Robomongo
         _shell->query(_out->resultIndex(this), info);
     }
 
-    void OutputItemContentWidget::update(const MongoQueryInfo &inf,const std::vector<MongoDocumentPtr> &documents)
+    void OutputItemContentWidget::update(const MongoQueryInfo &inf, const std::vector<MongoDocumentPtr> &documents)
     {
         _queryInfo = inf;
         _documents = documents;
@@ -241,7 +241,7 @@ namespace Robomongo
         }
 
         if (!_isTreeModeInitialized) {
-            _bsonTreeview = new BsonTreeView(_shell,_queryInfo);
+            _bsonTreeview = new BsonTreeView(_shell, _queryInfo);
             _bsonTreeview->setModel(_mod);
             _stack->addWidget(_bsonTreeview);
 
@@ -293,7 +293,7 @@ namespace Robomongo
         }
 
         if (!_isTableModeInitialized) {
-            _bsonTable = new BsonTableView(_shell,_queryInfo);            
+            _bsonTable = new BsonTableView(_shell, _queryInfo);
             BsonTableModelProxy *modp = new BsonTableModelProxy(_bsonTable);
             modp->setSourceModel(_mod);
             _bsonTable->setModel(modp);
@@ -338,7 +338,7 @@ namespace Robomongo
     BsonTreeModel *OutputItemContentWidget::configureModel()
     {
         delete _mod;
-        _mod = new BsonTreeModel(_documents,this);
+        _mod = new BsonTreeModel(_documents, this);
         return _mod;
     }
 

@@ -19,7 +19,7 @@
 
 namespace
 {
-     void openCurrentServerShell(Robomongo::MongoServer *const server,const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
+     void openCurrentServerShell(Robomongo::MongoServer *const server, const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
      {
           Robomongo::AppRegistry::instance().app()->openShell(server, script, std::string(), execute, Robomongo::QtUtils::toQString(server->connectionRecord()->getReadableName()), cursor);
      }
@@ -27,7 +27,7 @@ namespace
 
 namespace Robomongo
 {
-    ExplorerServerTreeItem::ExplorerServerTreeItem(QTreeWidget *view,MongoServer *const server) : BaseClass(view),
+    ExplorerServerTreeItem::ExplorerServerTreeItem(QTreeWidget *view, MongoServer *const server) : BaseClass(view),
         _server(server),
         _bus(AppRegistry::instance().bus())
     { 
@@ -102,12 +102,12 @@ namespace Robomongo
             MongoDatabase *database = dbs.at(i);
 
             if (database->isSystem()) {
-                ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(systemFolder,database);
+                ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(systemFolder, database);
                 systemFolder->addChild(dbItem);
                 continue;
             }
 
-            ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(this,database);
+            ExplorerDatabaseTreeItem *dbItem = new ExplorerDatabaseTreeItem(this, database);
             addChild(dbItem);
         }
 
@@ -160,27 +160,27 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::ui_serverHostInfo()
     {
-        openCurrentServerShell(_server,"db.hostInfo()");
+        openCurrentServerShell(_server, "db.hostInfo()");
     }
 
     void ExplorerServerTreeItem::ui_serverStatus()
     {
-        openCurrentServerShell(_server,"db.serverStatus()");
+        openCurrentServerShell(_server, "db.serverStatus()");
     }
 
     void ExplorerServerTreeItem::ui_serverVersion()
     {
-        openCurrentServerShell(_server,"db.version()");
+        openCurrentServerShell(_server, "db.version()");
     }
 
     void ExplorerServerTreeItem::ui_showLog()
     {
-        openCurrentServerShell(_server,"show log");
+        openCurrentServerShell(_server, "show log");
     }
 
     void ExplorerServerTreeItem::ui_openShell()
     {
-        openCurrentServerShell(_server,"");
+        openCurrentServerShell(_server, "");
     }
 
     void ExplorerServerTreeItem::ui_disconnectServer()

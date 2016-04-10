@@ -9,8 +9,8 @@ namespace Robomongo
         std::string prepareServerAddress(const std::string &address)
         {
             size_t pos = address.find_first_of("{");
-            if (pos!=std::string::npos){
-                return address.substr(0,pos);
+            if (pos != std::string::npos) {
+                return address.substr(0, pos);
             }       
             return address;
         }
@@ -20,7 +20,7 @@ namespace Robomongo
 
     CollectionInfo::CollectionInfo(const std::string &server, const std::string &database, const std::string &collection)
         :_serverAddress(server),
-        _ns(database,collection)
+        _ns(database, collection)
     {}
 
     bool CollectionInfo::isValid() const

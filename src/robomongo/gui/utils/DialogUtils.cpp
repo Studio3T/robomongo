@@ -12,12 +12,12 @@ namespace Robomongo
 
         int questionDialog(QWidget *parent, const QString &actionText, const QString &itemText, const QString& valueText)
         {
-            return questionDialog(parent,actionText,itemText,textTemaple,valueText);
+            return questionDialog(parent, actionText, itemText, textTemaple, valueText);
         }
 
         int questionDialog(QWidget *parent, const QString &actionText, const QString &itemText, const QString &templateText, const QString &valueText)
         {
-            return QMessageBox::question(parent,titleTemaple.arg(actionText).arg(itemText),templateText.arg(actionText).arg(itemText.toLower()).arg(valueText), QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+            return QMessageBox::question(parent, titleTemaple.arg(actionText).arg(itemText), templateText.arg(actionText).arg(itemText.toLower()).arg(valueText), QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Robomongo
 
         bool isMultiSelection(const QModelIndexList &indexes)
         {
-            return indexes.count()>1;
+            return indexes.count() > 1;
         }
 
         bool isDocumentType(BsonTreeItem *item)
@@ -55,20 +55,20 @@ namespace Robomongo
         QModelIndexList uniqueRows(QModelIndexList indexes, bool returnSuperParents)
         {
             QModelIndexList result;
-            for (QModelIndexList::const_iterator it = indexes.begin(); it!=indexes.end(); ++it)
+            for (QModelIndexList::const_iterator it = indexes.begin(); it != indexes.end(); ++it)
             {
                 QModelIndex isUnique = *it;
                 Robomongo::BsonTreeItem *item = Robomongo::QtUtils::item<Robomongo::BsonTreeItem*>(isUnique);
-                if(item){                
-                    for (QModelIndexList::const_iterator jt = result.begin(); jt!=result.end(); ++jt)
+                if (item) {
+                    for (QModelIndexList::const_iterator jt = result.begin(); jt != result.end(); ++jt)
                     {
                         Robomongo::BsonTreeItem *jItem = Robomongo::QtUtils::item<Robomongo::BsonTreeItem*>(*jt);
-                        if (jItem && jItem->superParent() == item->superParent()){
+                        if (jItem && jItem->superParent() == item->superParent()) {
                             isUnique = QModelIndex();
                             break;
                         }
                     }
-                    if (isUnique.isValid()){
+                    if (isUnique.isValid()) {
                         if (returnSuperParents) {
                             // Move index onto "super parent" element before pushing it into result set
                             QModelIndex parent = isUnique.parent();
@@ -187,7 +187,7 @@ namespace Robomongo
                     break;
             }
 
-            isNeededRefresh=true;
+            isNeededRefresh = true;
             _shell->server()->removeDocuments(query, _queryInfo._info._ns);
         }
 
@@ -240,11 +240,11 @@ namespace Robomongo
         int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", QString("Do you want to delete %1 selected documents?").arg(selectedIndexes.count()));
         if (answer == QMessageBox::Yes) {
             std::vector<BsonTreeItem*> items;
-            for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it!= selectedIndexes.end(); ++it) {
+            for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it != selectedIndexes.end(); ++it) {
                 BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
                 items.push_back(item);                
             }
-            deleteDocuments(items,true);
+            deleteDocuments(items, true);
         }
     }
 
@@ -260,7 +260,7 @@ namespace Robomongo
         BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedIndex);
         std::vector<BsonTreeItem*> vec;
         vec.push_back(documentItem);
-        return deleteDocuments(vec,false);
+        return deleteDocuments(vec, false);
     }
 
     void Notifier::onEditDocument()
@@ -376,19 +376,19 @@ namespace Robomongo
         QClipboard *clipboard = QApplication::clipboard();
 
         // new Date(parseInt(this.valueOf().slice(0,8), 16)*1000);
-        QString hexTimestamp = documentItem->value().mid(10,8);
+        QString hexTimestamp = documentItem->value().mid(10, 8);
         bool ok;
-        long long milliTimestamp = (long long)hexTimestamp.toLongLong(&ok,16)*1000;
+        long long milliTimestamp = (long long)hexTimestamp.toLongLong(&ok, 16)*1000;
 
         bool isSupportedDate = (miutil::minDate < milliTimestamp) && (milliTimestamp < miutil::maxDate);
 
-        boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
+        boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
         boost::posix_time::time_duration diff = boost::posix_time::millisec(milliTimestamp);
         boost::posix_time::ptime time = epoch + diff;
 
-        if(isSupportedDate)
+        if (isSupportedDate)
         {
-            std::string date = miutil::isotimeString(time,false,false);
+            std::string date = miutil::isotimeString(time, false, false);
             clipboard->setText("ISODate(\""+QString::fromStdString(date)+"\")");
         }
         else {
@@ -411,13 +411,13 @@ namespace Robomongo
 
          QClipboard *clipboard = QApplication::clipboard();
          mongo::BSONObj obj = documentItem->root();
-         if (documentItem != documentItem->superParent()){
+         if (documentItem != documentItem->superParent()) {
              obj = obj[QtUtils::toStdString(documentItem->key())].Obj();
          }
          bool isArray = BsonUtils::isArray(documentItem->type());
          std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
                  AppRegistry::instance().settingsManager()->uuidEncoding(),
-                 AppRegistry::instance().settingsManager()->timeZone(),isArray);
+                 AppRegistry::instance().settingsManager()->timeZone(), isArray);
 
          const QString &json = QtUtils::toQString(str);
          clipboard->setText(json);

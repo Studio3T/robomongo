@@ -225,7 +225,7 @@ namespace Robomongo
             height = maxHeight;
         _queryText->setFixedHeight(height);
         _queryText->sciScintilla()->setFixedHeight(height);
-        _queryText->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+        _queryText->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         _queryText->setMaximumHeight(height+FindFrame::HeightFindPanel);
     }
 
@@ -238,7 +238,7 @@ namespace Robomongo
 
     void ScriptWidget::onCursorPositionChanged(int line, int index)
     {
-        if (!_disableTextAndCursorNotifications&&_textChanged) {
+        if (!_disableTextAndCursorNotifications && _textChanged) {
             showAutocompletion();
             _textChanged = false;
         }
@@ -288,7 +288,7 @@ namespace Robomongo
         _queryText->sciScintilla()->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
         VERIFY(connect(_queryText->sciScintilla(), SIGNAL(linesChanged()), SLOT(ui_queryLinesCountChanged())));
         VERIFY(connect(_queryText->sciScintilla(), SIGNAL(textChanged()), SLOT(onTextChanged())));
-        VERIFY(connect(_queryText->sciScintilla(), SIGNAL(cursorPositionChanged(int,int)), SLOT(onCursorPositionChanged(int,int))));
+        VERIFY(connect(_queryText->sciScintilla(), SIGNAL(cursorPositionChanged(int, int)), SLOT(onCursorPositionChanged(int, int))));
     }
 
     /**

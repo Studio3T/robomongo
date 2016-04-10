@@ -6,7 +6,7 @@ namespace Robomongo
 {
     MongoFunction::MongoFunction(const mongo::BSONObj &obj)
     {
-        _name = BsonUtils::getField<mongo::String>(obj,"_id");
+        _name = BsonUtils::getField<mongo::String>(obj, "_id");
         _code = obj.getField("value")._asCode();
     }
 

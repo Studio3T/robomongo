@@ -24,7 +24,7 @@ namespace Robomongo
         Q_OBJECT
     public:
         typedef ExplorerTreeItem BaseClass;
-        ExplorerCollectionTreeItem(QTreeWidgetItem *parent,ExplorerDatabaseTreeItem *databaseItem,MongoCollection *collection);
+        ExplorerCollectionTreeItem(QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection);
         MongoCollection *collection() const { return _collection; }
         void expand();
         void dropIndex(const QTreeWidgetItem * const ind);
@@ -83,7 +83,7 @@ namespace Robomongo
          Q_OBJECT
     public:
         typedef ExplorerTreeItem BaseClass;
-        explicit ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent,const EnsureIndexInfo &info);
+        explicit ExplorerCollectionIndexesTreeItem(ExplorerCollectionDirIndexesTreeItem *parent, const EnsureIndexInfo &info);
 
     private Q_SLOTS:
         void ui_dropIndex();

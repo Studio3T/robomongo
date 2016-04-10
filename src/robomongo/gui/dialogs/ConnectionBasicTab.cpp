@@ -30,7 +30,7 @@ namespace Robomongo
         _serverAddress = new QLineEdit(QtUtils::toQString(_settings->serverHost()));
         _serverPort = new QLineEdit(QString::number(_settings->serverPort()));
         _serverPort->setFixedWidth(80);
-        QRegExp rx("\\d+");//(0-65554)
+        QRegExp rx("\\d+"); //(0-65554)
         _serverPort->setValidator(new QRegExpValidator(rx, this));
 
         QGridLayout *connectionLayout = new QGridLayout;

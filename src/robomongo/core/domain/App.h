@@ -59,7 +59,7 @@ namespace Robomongo
         /**
          * @brief Open new shell based on specified collection
          */
-        MongoShell *openShell(MongoCollection *collection,const QString &filePathToSave=QString());
+        MongoShell *openShell(MongoCollection *collection, const QString &filePathToSave = QString());
 
         MongoShell *openShell(MongoServer *server, const QString &script, const std::string &dbName = std::string(),
                               bool execute = true, const QString &shellName = QString(),
@@ -70,7 +70,7 @@ namespace Robomongo
                               const CursorPosition &cursorPosition = CursorPosition(), const QString &filePathToSave = QString());
 
         MongoShell *openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo);
-        MongoServersContainerType getServers() const {return _servers; };
+        MongoServersContainerType getServers() const { return _servers; };
 
         /**
          * @brief Closes MongoShell and frees all resources, owned by specified MongoShell.

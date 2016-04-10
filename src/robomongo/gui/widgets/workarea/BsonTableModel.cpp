@@ -48,12 +48,12 @@ namespace Robomongo
 
     QModelIndex BsonTableModelProxy::sibling(int row, int column, const QModelIndex &idx) const
     {
-        return BaseClass::sibling(row,0,idx);
+        return BaseClass::sibling(row, 0, idx);
     }
 
     QModelIndex BsonTableModelProxy::index( int row, int col, const QModelIndex& parent ) const
     {
-        BsonTreeItem *node = QtUtils::item<BsonTreeItem *>(sourceModel()->index(row,0,parent));
+        BsonTreeItem *node = QtUtils::item<BsonTreeItem *>(sourceModel()->index(row, 0, parent));
         if (!node || _columns.size() <= col)
             return QModelIndex();
 
@@ -85,12 +85,12 @@ namespace Robomongo
     void BsonTableModelProxy::setSourceModel( QAbstractItemModel* model )
     {
         if (model) {
-            BsonTreeItem *child = QtUtils::item<BsonTreeItem *>(model->index(0,0));
+            BsonTreeItem *child = QtUtils::item<BsonTreeItem *>(model->index(0, 0));
             if (child) {
                 _root = qobject_cast<BsonTreeItem *>(child->parent());
                 if (_root) {
                     int count = _root->childrenCount();
-                    for (int i=0; i < count; ++i) {
+                    for (int i = 0; i < count; ++i) {
                         BsonTreeItem *child = _root->child(i);
                         int countc = child->childrenCount();
                         for (int j = 0; j < countc; ++j) {
@@ -121,7 +121,7 @@ namespace Robomongo
 
         if (role == Qt::DisplayRole || role == Qt::ToolTipRole) {
             bool isCut = node->type() == mongo::String ||  node->type() == mongo::Code || node->type() == mongo::CodeWScope;  
-            if (role == Qt::ToolTipRole){
+            if (role == Qt::ToolTipRole) {
                 result = isCut ? node->value() : node->value().left(500); 
             }
             else{

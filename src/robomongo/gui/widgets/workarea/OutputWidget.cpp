@@ -37,7 +37,7 @@ namespace Robomongo
         }
         int count = _prevResultsCount = results.size();
         
-        for (int i=0; i<count; ++i) {
+        for (int i = 0; i<count; ++i) {
             MongoShellResult shellResult = results[i];
             OutputItemContentWidget *output = NULL;
 
@@ -49,9 +49,9 @@ namespace Robomongo
             }
 
             if (shellResult.documents().size() > 0) {
-                output = new OutputItemContentWidget(this, viewMode, shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo(),secs);
+                output = new OutputItemContentWidget(this, viewMode, shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo(), secs);
             } else {
-                output = new OutputItemContentWidget(this, viewMode, shell, QtUtils::toQString(shellResult.response()),secs);
+                output = new OutputItemContentWidget(this, viewMode, shell, QtUtils::toQString(shellResult.response()), secs);
             }
             VERIFY(connect(output, SIGNAL(maximizedPart()), this, SLOT(maximizePart())));
             VERIFY(connect(output, SIGNAL(restoredSize()), this, SLOT(restoreSize())));
@@ -67,7 +67,7 @@ namespace Robomongo
             return;
 
         OutputItemContentWidget *output = (OutputItemContentWidget *) _splitter->widget(partIndex);
-        output->update(queryInfo,documents);
+        output->update(queryInfo, documents);
         output->refreshOutputItem();
     }
 

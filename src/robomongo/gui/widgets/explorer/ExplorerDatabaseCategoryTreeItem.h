@@ -22,7 +22,7 @@ namespace Robomongo
         Q_OBJECT
     public:
         typedef ExplorerTreeItem BaseClass;
-        ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseTreeItem *databaseItem,ExplorerDatabaseCategory category);        
+        ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseTreeItem *databaseItem, ExplorerDatabaseCategory category);
         void expand();
 
     private Q_SLOTS:

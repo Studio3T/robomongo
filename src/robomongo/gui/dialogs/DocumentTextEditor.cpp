@@ -144,18 +144,18 @@ namespace Robomongo
             int jsonLen = textString.length();
             int offset = 0;
             _obj.clear();
-            while(offset!=jsonLen)
+            while (offset != jsonLen)
             {
-                mongo::BSONObj doc = mongo::Robomongo::fromjson(json+offset,&len);
+                mongo::BSONObj doc = mongo::Robomongo::fromjson(json+offset, &len);
                 _obj.push_back(doc);
-                offset+=len;
+                offset += len;
             }
         } catch (const mongo::Robomongo::ParseMsgAssertionException &ex) {
 //            v0.9
             QString message = QtUtils::toQString(ex.reason());
             int offset = ex.offset();
 
-            int line=0, pos=0;
+            int line = 0, pos = 0;
             _queryText->sciScintilla()->lineIndexFromPosition(offset, &line, &pos);
             _queryText->sciScintilla()->setCursorPosition(line, pos);
 

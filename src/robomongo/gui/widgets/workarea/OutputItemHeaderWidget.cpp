@@ -31,7 +31,7 @@ namespace Robomongo
         QFrame(parent),
         _maximized(false)
     {
-        setContentsMargins(5,0,0,0);
+        setContentsMargins(5, 0, 0, 0);
         
         // Maximize button
         _maxButton = new QPushButton;

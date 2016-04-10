@@ -14,15 +14,15 @@ namespace Robomongo
     public:
         typedef QAbstractItemModel BaseClass;
         static const QIcon &getIcon(BsonTreeItem *item);
-        explicit BsonTreeModel(const std::vector<MongoDocumentPtr> &documents,QObject *parent = 0);
+        explicit BsonTreeModel(const std::vector<MongoDocumentPtr> &documents, QObject *parent = 0);
         QVariant data(const QModelIndex &index, int role) const;
 
-        int rowCount(const QModelIndex &parent=QModelIndex()) const;
+        int rowCount(const QModelIndex &parent = QModelIndex()) const;
         int columnCount(const QModelIndex &parent) const;
 
-        QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
         Qt::ItemFlags flags(const QModelIndex &index) const;
-        virtual QModelIndex index(int row, int column, const QModelIndex &parent= QModelIndex()) const;
+        virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
         virtual QModelIndex parent(const QModelIndex& index) const;
 
         void insertItem(BsonTreeItem *parent, BsonTreeItem *children);

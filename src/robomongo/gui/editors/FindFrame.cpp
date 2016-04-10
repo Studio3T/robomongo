@@ -78,7 +78,7 @@ namespace Robomongo
             goToPrevElement();
         } else if (Qt::Key_Return == keyEvent->key() && isFocusScin && isShowFind) {
             goToNextElement();
-        } else if (((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key()==Qt::Key_F) && isFocusScin) {
+        } else if (((keyEvent->modifiers() & Qt::ControlModifier) && keyEvent->key() == Qt::Key_F) && isFocusScin) {
             _findPanel->show();
             _findLine->setFocus();
             _findLine->selectAll();
@@ -122,7 +122,7 @@ namespace Robomongo
                 _scin->ensureCursorVisible(); 
             }
             else {
-                QMessageBox::warning(this, tr("Search"),tr("The specified text was not found."));
+                QMessageBox::warning(this, tr("Search"), tr("The specified text was not found."));
             }            
         }
     }

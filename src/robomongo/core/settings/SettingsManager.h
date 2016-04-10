@@ -72,7 +72,7 @@ namespace Robomongo
         UUIDEncoding uuidEncoding() const { return _uuidEncoding; }
 
         void setTimeZone(SupportedTimes timeZ) { _timeZone = timeZ; }
-        SupportedTimes timeZone() const { return _timeZone;}
+        SupportedTimes timeZone() const { return _timeZone; }
 
         void setViewMode(ViewMode viewMode) { _viewMode = viewMode; }
         ViewMode viewMode() const { return _viewMode; }
@@ -98,7 +98,7 @@ namespace Robomongo
         void setBatchSize(int batchSize) { _batchSize = batchSize; }
         int batchSize() const { return _batchSize; }
 
-        QString currentStyle() const {return _currentStyle; }
+        QString currentStyle() const { return _currentStyle; }
         void setCurrentStyle(const QString& style);
 
         QString textFontFamily() const { return _textFontFamily; }

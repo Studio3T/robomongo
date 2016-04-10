@@ -6,7 +6,7 @@ namespace Robomongo
 {
     namespace detail
     {
-        QString buildName(const QString& text,int count);
+        QString buildName(const QString& text, int count);
     }
 
     class ExplorerCollectionTreeItem;
@@ -30,7 +30,7 @@ namespace Robomongo
 
     public:
         typedef ExplorerTreeItem BaseClass;
-        ExplorerDatabaseTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database);
+        ExplorerDatabaseTreeItem(QTreeWidgetItem *parent, MongoDatabase *const database);
 
         MongoDatabase *database() const { return _database; }
         void expandCollections();
@@ -39,7 +39,7 @@ namespace Robomongo
         void expandColection(ExplorerCollectionTreeItem *const item);
         void dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &indexName);
         void enshureIndex(ExplorerCollectionTreeItem *const item, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo);
-        void editIndexFromCollection(ExplorerCollectionTreeItem *const item,const std::string& oldIndexText,const std::string& newIndexText);
+        void editIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string& oldIndexText, const std::string& newIndexText);
 
     public Q_SLOTS:
         void handle(MongoDatabaseCollectionListLoadedEvent *event);

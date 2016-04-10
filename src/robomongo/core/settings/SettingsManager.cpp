@@ -56,7 +56,7 @@ namespace Robomongo
 
     SettingsManager::~SettingsManager()
     {
-        std::for_each(_connections.begin() ,_connections.end(), stdutils::default_delete<ConnectionSettings *>());
+        std::for_each(_connections.begin(), _connections.end(), stdutils::default_delete<ConnectionSettings *>());
     }
 
     /**
@@ -250,7 +250,7 @@ namespace Robomongo
         // 11. Save connections
         QVariantList list;
 
-        for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it!=_connections.end(); ++it) {
+        for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it != _connections.end(); ++it) {
             QVariantMap rm = (*it)->toVariant().toMap();
             list.append(rm);
         }
@@ -277,8 +277,8 @@ namespace Robomongo
      */
     void SettingsManager::removeConnection(ConnectionSettings *connection)
     {
-        ConnectionSettingsContainerType::iterator it = std::find(_connections.begin(),_connections.end(),connection);
-        if (it!=_connections.end()) {
+        ConnectionSettingsContainerType::iterator it = std::find(_connections.begin(), _connections.end(), connection);
+        if (it != _connections.end()) {
             _connections.erase(it);
             delete connection;
         }

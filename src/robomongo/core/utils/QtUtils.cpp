@@ -38,7 +38,7 @@ namespace Robomongo
 
         void cleanUpThread(QThread *const thread)
         {
-            if (thread&&thread->isRunning()) {
+            if (thread && thread->isRunning()) {
                 //thread->stop();
                 thread->wait();
             }

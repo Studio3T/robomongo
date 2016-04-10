@@ -17,8 +17,19 @@
 
 namespace Robomongo
 {
-    const char * rolesText[CreateUserDialog::RolesCount] = {"read","readWrite","dbAdmin","userAdmin","clusterAdmin","readAnyDatabase","readWriteAnyDatabase","userAdminAnyDatabase","dbAdminAnyDatabase"}; 
-    const QSize CreateUserDialog::minimumSize = QSize(400,200);
+    const char * rolesText[CreateUserDialog::RolesCount] = {
+        "read",
+        "readWrite",
+        "dbAdmin",
+        "userAdmin",
+        "clusterAdmin",
+        "readAnyDatabase",
+        "readWriteAnyDatabase",
+        "userAdminAnyDatabase",
+        "dbAdminAnyDatabase"
+    };
+
+    const QSize CreateUserDialog::minimumSize = QSize(400, 200);
 
     bool containsWord(const std::string& sentence, const std::string& word)
     {
@@ -31,7 +42,7 @@ namespace Robomongo
                 if (pos) {
                     isFirstAlpha = isalpha(sentence[pos - 1]);
                 }
-                if (!isFirstAlpha&&!isLastAlpha)
+                if (!isFirstAlpha && !isLastAlpha)
                     return true;
             }
             pos++;
@@ -39,7 +50,7 @@ namespace Robomongo
         return false;
     }
 
-    CreateUserDialog::CreateUserDialog(const QStringList &databases,const QString &serverName,
+    CreateUserDialog::CreateUserDialog(const QStringList &databases, const QString &serverName,
                                        const QString &database, const MongoUser &user,
                                        QWidget *parent) : QDialog(parent),
         _user(user)
@@ -55,10 +66,10 @@ namespace Robomongo
         hline->setFrameShape(QFrame::HLine);
         hline->setFrameShadow(QFrame::Sunken);
 
-        _userNameLabel= new QLabel("Name:");
+        _userNameLabel = new QLabel("Name:");
         _userNameEdit = new QLineEdit();
         _userNameEdit->setText(QtUtils::toQString(user.name()));
-        _userPassLabel= new QLabel("Password:");
+        _userPassLabel = new QLabel("Password:");
         _userPassEdit = new QLineEdit();
         _userPassEdit->setEchoMode(QLineEdit::Password);
         _userSourceLabel = new QLabel("UserSource:");
@@ -68,14 +79,14 @@ namespace Robomongo
 
         QGridLayout *gridRoles = new QGridLayout();
         MongoUser::RoleType userRoles = user.role();
-        for (unsigned i=0; i<RolesCount; ++i)
+        for (unsigned i = 0; i<RolesCount; ++i)
         {
             int row = i%3;
             int col = i/3;
-            _rolesArray[i] = new QCheckBox(rolesText[i],this);
-            MongoUser::RoleType::const_iterator it = std::find(userRoles.begin(),userRoles.end(),rolesText[i]);
-            _rolesArray[i]->setChecked(it!=userRoles.end());      
-            gridRoles->addWidget(_rolesArray[i],row,col);
+            _rolesArray[i] = new QCheckBox(rolesText[i], this);
+            MongoUser::RoleType::const_iterator it = std::find(userRoles.begin(), userRoles.end(), rolesText[i]);
+            _rolesArray[i]->setChecked(it!= userRoles.end());
+            gridRoles->addWidget(_rolesArray[i], row, col);
         }
 
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
@@ -129,7 +140,7 @@ namespace Robomongo
         hline->setFrameShape(QFrame::HLine);
         hline->setFrameShadow(QFrame::Sunken);
 
-        _userNameLabel= new QLabel("Name:");
+        _userNameLabel = new QLabel("Name:");
         _userNameEdit = new QLineEdit();
         _userNameEdit->setText(QtUtils::toQString(user.name()));
         _userPassLabel= new QLabel("Password:");

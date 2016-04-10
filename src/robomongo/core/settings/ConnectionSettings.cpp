@@ -32,7 +32,7 @@ namespace Robomongo
         setDefaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString()));
 
         QVariantList list = map.value("credentials").toList();
-        for(QVariantList::const_iterator it = list.begin(); it != list.end(); ++it) {
+        for (QVariantList::const_iterator it = list.begin(); it != list.end(); ++it) {
             QVariant var = *it;
             CredentialSettings *credential = new CredentialSettings(var.toMap());
             addCredential(credential);
@@ -106,7 +106,7 @@ namespace Robomongo
         map.insert("sslPemKeyFile", QtUtils::toQString(infl._sslPEMKeyFile));
 #endif
         QVariantList list;
-        for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
+        for (QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
             CredentialSettings *credential = *it;
             list.append(credential->toVariant());
         }
@@ -120,7 +120,7 @@ namespace Robomongo
      CredentialSettings *ConnectionSettings::findCredential(const std::string &databaseName) const
      {
          CredentialSettings *result = NULL;
-         for(QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
+         for (QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
              CredentialSettings *cred = *it;
              if (cred->databaseName() == databaseName) {
                  result = cred;

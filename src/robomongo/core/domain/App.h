@@ -59,7 +59,7 @@ namespace Robomongo
         /**
          * @brief Open new shell based on specified collection
          */
-        MongoShell *openShell(MongoCollection *collection,const QString &filePathToSave=QString());
+        MongoShell *openShell(MongoCollection *collection, const QString &filePathToSave = QString());
 
         MongoShell *openShell(MongoServer *server, const QString &script, const std::string &dbName = std::string(),
                               bool execute = true, const QString &shellName = QString(),
@@ -70,7 +70,7 @@ namespace Robomongo
                               const CursorPosition &cursorPosition = CursorPosition(), const QString &filePathToSave = QString());
 
         MongoShell *openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo);
-        MongoServersContainerType getServers() const {return _servers; };
+        MongoServersContainerType getServers() const { return _servers; };
 
         /**
          * @brief Closes MongoShell and frees all resources, owned by specified MongoShell.
@@ -78,13 +78,17 @@ namespace Robomongo
          */
         void closeShell(MongoShell *shell);
 
+        void fireConnectionFailedEvent(int serverHandle, ConnectionType type, std::string errormsg, ConnectionFailedEvent::Reason reason);
+
+        int getLastServerHandle() const { return _lastServerHandle; };
+
     public Q_SLOTS:
         void handle(EstablishSshConnectionResponse *event);
         void handle(ListenSshConnectionResponse *event);
         void handle(LogEvent *event);
 
     private:
-        MongoServer* continueOpenServer(ConnectionSettings *connection, ConnectionType type, int localport = 0);
+        MongoServer *continueOpenServer(int serverHandle, ConnectionSettings *connection, ConnectionType type, int localport = 0);
 
         /**
          * MongoServers, owned by this App.
@@ -97,5 +101,9 @@ namespace Robomongo
         MongoShellsContainerType _shells;
 
         EventBus *const _bus;
+
+        // Increase monotonically when new MongoServer is created
+        // Never decreases.
+        int _lastServerHandle;
     };
 }

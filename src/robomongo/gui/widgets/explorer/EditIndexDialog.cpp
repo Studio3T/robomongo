@@ -74,11 +74,11 @@ namespace
 namespace Robomongo
 {
     EditIndexDialog::EditIndexDialog(const EnsureIndexInfo &info, const QString &databaseName, const QString &serverAdress, QWidget *parent)
-        :BaseClass(parent),_info(info)
+        :BaseClass(parent), _info(info)
     {        
         setWindowTitle("Index Properties");
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverAdress);
-        Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(),QtUtils::toQString(_info._collection.name()));
+        Indicator *collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon(), QtUtils::toQString(_info._collection.name()));
         Indicator *databaseIndicator = new Indicator(GuiRegistry::instance().databaseIcon(), databaseName);
 
         QHBoxLayout *hlayout = new QHBoxLayout;
@@ -156,7 +156,7 @@ namespace Robomongo
         layout->addWidget(dropDupsHelpLabel,            7, 0, 1, 2);
         layout->setAlignment(Qt::AlignTop);
         basicTab->setLayout(layout);
-        VERIFY(connect(_uniqueCheckBox,SIGNAL(stateChanged(int)),this,SLOT(uniqueStateChanged(int))));
+        VERIFY(connect(_uniqueCheckBox, SIGNAL(stateChanged(int)), this, SLOT(uniqueStateChanged(int))));
         return basicTab;
     }
 
@@ -203,7 +203,7 @@ namespace Robomongo
             _expireAfterLineEdit->setText(QString("%1").arg(_info._ttl));
         }
         expireStateChanged(expireCheckBox->checkState());
-        VERIFY(connect(expireCheckBox,SIGNAL(stateChanged(int)),this,SLOT(expireStateChanged(int))));
+        VERIFY(connect(expireCheckBox, SIGNAL(stateChanged(int)), this, SLOT(expireStateChanged(int))));
 
         QLabel *sparseHelpLabel = createHelpLabel(
             "If set, the index only references documents with the specified field. "

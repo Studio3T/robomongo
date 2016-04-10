@@ -122,7 +122,7 @@ namespace Robomongo
     void WorkAreaTabWidget::keyPressEvent(QKeyEvent *keyEvent)
     {
         if ((keyEvent->modifiers() & Qt::ControlModifier) &&
-            (keyEvent->key()==Qt::Key_F4 || keyEvent->key()==Qt::Key_W))
+            (keyEvent->key() == Qt::Key_F4 || keyEvent->key() == Qt::Key_W))
         {
             int index = currentIndex();
             closeTab(index);
@@ -214,7 +214,7 @@ namespace Robomongo
     void WorkAreaTabWidget::tabTextChange(const QString &text)
     {
         QWidget *send = qobject_cast<QWidget*>(sender());
-        if(!send)
+        if (!send)
             return;
 
         setTabText(indexOf(send), text);        
@@ -223,7 +223,7 @@ namespace Robomongo
     void WorkAreaTabWidget::tooltipTextChange(const QString &text)
     {
         QWidget *send = qobject_cast<QWidget*>(sender());
-        if(!send)
+        if (!send)
             return;
 
         setTabToolTip(indexOf(send), text);
@@ -235,7 +235,7 @@ namespace Robomongo
 
         QString shellName = title.isEmpty() ? " Loading..." : title;
 
-        QueryWidget *queryWidget = new QueryWidget(event->shell,this);
+        QueryWidget *queryWidget = new QueryWidget(event->shell, this);
         VERIFY(connect(queryWidget, SIGNAL(titleChanged(const QString &)), this, SLOT(tabTextChange(const QString &))));
         VERIFY(connect(queryWidget, SIGNAL(toolTipChanged(const QString &)), this, SLOT(tooltipTextChange(const QString &))));
         

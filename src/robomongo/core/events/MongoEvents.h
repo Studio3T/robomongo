@@ -123,7 +123,7 @@ namespace Robomongo
             _databaseName(databaseName),
             _collectionInfos(collectionInfos) { }
 
-        LoadCollectionNamesResponse(QObject *sender,const EventError &error) :
+        LoadCollectionNamesResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
 
         std::string databaseName() const { return _databaseName; }
@@ -139,7 +139,7 @@ namespace Robomongo
         R_EVENT
     public:
         LoadCollectionIndexesRequest(QObject *sender, const MongoCollectionInfo &collection) :
-        Event(sender),_collection(collection) {}
+        Event(sender), _collection(collection) {}
         MongoCollectionInfo collection() const { return _collection; }
     private:
         const MongoCollectionInfo _collection;
@@ -162,7 +162,7 @@ namespace Robomongo
     class EnsureIndexRequest : public Event
     {
         R_EVENT
-        EnsureIndexRequest(QObject *sender,const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo) : Robomongo::Event(sender),oldInfo_(oldInfo),newInfo_(newInfo) {}
+        EnsureIndexRequest(QObject *sender, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo) : Robomongo::Event(sender), oldInfo_(oldInfo), newInfo_(newInfo) {}
         const EnsureIndexInfo &oldInfo() const
         {
             return oldInfo_;
@@ -186,7 +186,7 @@ namespace Robomongo
             _name(name) {}
 
         MongoCollectionInfo collection() const { return _collection; }
-        std::string name() const {return _name;}
+        std::string name() const { return _name; }
     private:
         const MongoCollectionInfo _collection;
         std::string _name;
@@ -196,14 +196,14 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        DeleteCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection,const std::string &index) :
-            Event(sender),_collection(collection),_index(index) {}
+        DeleteCollectionIndexResponse(QObject *sender, const MongoCollectionInfo &collection, const std::string &index) :
+            Event(sender), _collection(collection), _index(index) {}
 
         DeleteCollectionIndexResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
 
         MongoCollectionInfo collection() const { return _collection; }
-        std::string index() const {return _index;}
+        std::string index() const { return _index; }
     private:
         MongoCollectionInfo _collection;
         std::string _index;
@@ -213,11 +213,11 @@ namespace Robomongo
     {
         R_EVENT
     public:
-        EditIndexRequest(QObject *sender, const MongoCollectionInfo &collection,const std::string &oldIndex,const std::string &newIndex) :
-            Event(sender),_collection(collection),_oldIndex(oldIndex),_newIndex(newIndex) {}
+        EditIndexRequest(QObject *sender, const MongoCollectionInfo &collection, const std::string &oldIndex, const std::string &newIndex) :
+            Event(sender), _collection(collection), _oldIndex(oldIndex), _newIndex(newIndex) {}
         MongoCollectionInfo collection() const { return _collection; }
-        std::string oldIndex() const {return _oldIndex;}
-        std::string newIndex() const {return _newIndex;}
+        std::string oldIndex() const { return _oldIndex; }
+        std::string newIndex() const { return _newIndex; }
     private:
         const MongoCollectionInfo _collection;
         std::string _oldIndex;
@@ -254,7 +254,7 @@ namespace Robomongo
             _databaseName(databaseName),
             _users(users) { }
 
-        LoadUsersResponse(QObject *sender,const EventError &error) :
+        LoadUsersResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
 
         std::string databaseName() const { return _databaseName; }
@@ -296,7 +296,7 @@ namespace Robomongo
             _databaseName(databaseName),
             _functions(functions) { }
 
-        LoadFunctionsResponse(QObject *sender,const EventError &error) :
+        LoadFunctionsResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
 
         std::string databaseName() const { return _databaseName; }
@@ -606,7 +606,7 @@ namespace Robomongo
             _to(databaseTo, collection) {}
 
         MongoWorker *worker() const { return _worker; }
-        MongoNamespace from() const { return _from;}
+        MongoNamespace from() const { return _from; }
         MongoNamespace to() const { return _to; }
     private:
         MongoWorker *_worker;
@@ -832,7 +832,7 @@ namespace Robomongo
     {
         R_EVENT
 
-        AutocompleteResponse(QObject *sender,const QStringList &list, const std::string &prefix) :
+        AutocompleteResponse(QObject *sender, const QStringList &list, const std::string &prefix) :
             Event(sender),
             list(list),
             prefix(prefix) {}
@@ -912,16 +912,18 @@ namespace Robomongo
             SshChannel         = 4
         };
 
-        ConnectionFailedEvent(QObject *sender, ConnectionType connectionType,
+        ConnectionFailedEvent(QObject *sender, int serverHandle, ConnectionType connectionType,
                               const std::string& message, Reason reason) :
             Event(sender),
             message(message),
             reason(reason),
+            serverHandle(serverHandle),
             connectionType(connectionType) {}
 
         std::string message;
         Reason reason;
         ConnectionType connectionType;
+        int serverHandle;
     };
 
 //    class ScriptExecute
@@ -1033,38 +1035,43 @@ namespace Robomongo
     {
     R_EVENT
 
-        EstablishSshConnectionRequest(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType) :
+        EstablishSshConnectionRequest(QObject *sender, int serverHandle, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType) :
             Event(sender),
             worker(worker),
             settings(settings),
+            serverHandle(serverHandle),
             connectionType(connectionType) {}
 
         ConnectionSettings* settings;
         ConnectionType connectionType;
         SshTunnelWorker* worker;
+        int serverHandle;
     };
 
     class EstablishSshConnectionResponse : public Event
     {
     R_EVENT
 
-        EstablishSshConnectionResponse(QObject *sender, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType, int localport) :
+        EstablishSshConnectionResponse(QObject *sender, int serverHandle, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType, int localport) :
             Event(sender),
             worker(worker),
             settings(settings),
             connectionType(connectionType),
+            serverHandle(serverHandle),
             localport(localport) {}
 
-        EstablishSshConnectionResponse(QObject *sender, const EventError &error, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType) :
+        EstablishSshConnectionResponse(QObject *sender, int serverHandle, const EventError &error, SshTunnelWorker* worker, ConnectionSettings* settings, ConnectionType connectionType) :
             Event(sender, error),
             worker(worker),
             settings(settings),
+            serverHandle(serverHandle),
             connectionType(connectionType) {}
 
         ConnectionSettings* settings;
         ConnectionType connectionType;
         SshTunnelWorker* worker;
         int localport;
+        int serverHandle;
     };
 
     /**
@@ -1075,29 +1082,34 @@ namespace Robomongo
     {
     R_EVENT
 
-        ListenSshConnectionRequest(QObject *sender, ConnectionType connectionType) :
+        ListenSshConnectionRequest(QObject *sender, int serverHandle, ConnectionType connectionType) :
             Event(sender),
+            serverHandle(serverHandle),
             connectionType(connectionType) {}
 
         ConnectionType connectionType;
+        int serverHandle;
     };
 
     class ListenSshConnectionResponse : public Event
     {
     R_EVENT
 
-        ListenSshConnectionResponse(QObject *sender, ConnectionSettings* settings, ConnectionType connectionType) :
+        ListenSshConnectionResponse(QObject *sender, int serverHandle, ConnectionSettings* settings, ConnectionType connectionType) :
             Event(sender),
             settings(settings),
+            serverHandle(serverHandle),
             connectionType(connectionType) {}
 
-        ListenSshConnectionResponse(QObject *sender, const EventError &error, ConnectionSettings* settings, ConnectionType connectionType) :
+        ListenSshConnectionResponse(QObject *sender, const EventError &error, int serverHandle, ConnectionSettings* settings, ConnectionType connectionType) :
             Event(sender, error),
             settings(settings),
+            serverHandle(serverHandle),
             connectionType(connectionType) {}
 
         ConnectionSettings* settings;
         ConnectionType connectionType;
+        int serverHandle;
     };
 
     class LogEvent : public Event

@@ -13,6 +13,7 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/App.h"
+#include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/mongodb/SshTunnelWorker.h"
@@ -22,7 +23,8 @@ namespace Robomongo
     ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *connection, QWidget *parent) :
         QDialog(parent),
         _connection(NULL),
-        _server(NULL)
+        _server(NULL),
+        _serverHandle(0)
     {
         _connection = connection->clone();
 
@@ -50,6 +52,9 @@ namespace Robomongo
         _listIconLabel = new QLabel;
         _listLabel = new QLabel;
 
+        _viewErrorLink = new QLabel("<a href='error' style='color: #777777;'>Show error details</a>");
+        VERIFY(connect(_viewErrorLink, SIGNAL(linkActivated(QString)), this, SLOT(errorLinkActivated(QString))));
+
         _loadingMovie = new QMovie(":robomongo/icons/loading_ticks_40x40.gif", QByteArray(), this);
         _loadingMovie->setScaledSize(QSize(20, 20));
         _loadingMovie->start();
@@ -72,10 +77,15 @@ namespace Robomongo
         layout->setColumnStretch(0, 0) ; // Give column 0 no stretch ability
         layout->setColumnStretch(1, 1) ; // Give column 1 stretch ability of ratio 1
 
+        QHBoxLayout *hbox = new QHBoxLayout;
+        hbox->addSpacing(21);
+        hbox->addWidget(_viewErrorLink, 1, Qt::AlignLeft);
+        hbox->addWidget(closeButton, 0, Qt::AlignRight);
+
         QVBoxLayout *box = new QVBoxLayout;
         box->addLayout(layout);
         box->addSpacing(10);
-        box->addWidget(closeButton, 0, Qt::AlignRight);
+        box->addLayout(hbox);
         setLayout(box);
 
         sshStatus(InitialState);
@@ -83,12 +93,22 @@ namespace Robomongo
         authStatus(InitialState);
         listStatus(InitialState);
 
-        _server = AppRegistry::instance().app()->openServer(_connection, ConnectionTest);
+        _viewErrorLink->hide();
+
+        AppRegistry::instance().app()->openServer(_connection, ConnectionTest);
+        _serverHandle = AppRegistry::instance().app()->getLastServerHandle();
     }
 
     ConnectionDiagnosticDialog::~ConnectionDiagnosticDialog() {
         if (_server)
             AppRegistry::instance().app()->closeServer(_server);
+    }
+
+    void ConnectionDiagnosticDialog::errorLinkActivated(const QString &link) {
+        if (_lastErrorMessage.empty())
+            return;
+
+        QMessageBox::information(this, "Error details", QtUtils::toQString(_lastErrorMessage));
     }
 
     void ConnectionDiagnosticDialog::sshStatus(State state)
@@ -121,16 +141,20 @@ namespace Robomongo
     {
         if (state == InitialState) {
             _connectionIconLabel->setMovie(_loadingMovie);
-            _connectionLabel->setText(QString("Connecting to <b>%1</b>...") .arg(QtUtils::toQString(_connection->getFullAddress())));
+            QString tunnelNote = _connection->sshSettings()->enabled() ? " via SSH tunnel" : "";
+            _connectionLabel->setText(QString("Connecting to <b>%1</b>%2...").arg(QtUtils::toQString(_connection->getFullAddress()), tunnelNote));
         } else if (state == CompletedState) {
             _connectionIconLabel->setPixmap(_yesPixmap);
-            _connectionLabel->setText(QString("Connected to <b>%1</b>").arg(QtUtils::toQString(_connection->getFullAddress())));
+            QString tunnelNote = _connection->sshSettings()->enabled() ? " via SSH tunnel" : "";
+            _connectionLabel->setText(QString("Connected to <b>%1</b>%2").arg(QtUtils::toQString(_connection->getFullAddress()), tunnelNote));
         } else if (state == FailedState) {
             _connectionIconLabel->setPixmap(_noPixmap);
-            _connectionLabel->setText(QString("Unable to connect to <b>%1</b>").arg(QtUtils::toQString(_connection->getFullAddress())));
+            QString tunnelNote = _connection->sshSettings()->enabled() ? " via tunnel" : "";
+            _connectionLabel->setText(QString("Failed to connect to <b>%1</b>%2").arg(QtUtils::toQString(_connection->getFullAddress()), tunnelNote));
         } else if (state == NotPerformedState) {
             _connectionIconLabel->setPixmap(_questionPixmap);
-            _connectionLabel->setText(QString("No chance to try connection to <b>%1</b>").arg(QtUtils::toQString(_connection->getFullAddress())));
+            QString tunnelNote = _connection->sshSettings()->enabled() ? " via SSH tunnel" : "";
+            _connectionLabel->setText(QString("No chance to try connection to <b>%1</b>%2").arg(QtUtils::toQString(_connection->getFullAddress()), tunnelNote));
         }
     }
 
@@ -187,13 +211,22 @@ namespace Robomongo
     }
 
     void ConnectionDiagnosticDialog::handle(ConnectionEstablishedEvent *event) {
+        if (event->connectionType != ConnectionTest)
+            return;
+
         sshStatus(CompletedState);
         connectionStatus(CompletedState);
         authStatus(CompletedState);
         listStatus(CompletedState);
+
+        // Remember in order to delete on dialog close
+        _server = static_cast<MongoServer*>(event->sender());
     }
 
     void ConnectionDiagnosticDialog::handle(ConnectionFailedEvent *event) {
+        if (event->connectionType != ConnectionTest || event->serverHandle != _serverHandle)
+            return;
+
         sshStatus(CompletedState);
         connectionStatus(CompletedState);
         authStatus(CompletedState);
@@ -216,6 +249,12 @@ namespace Robomongo
             authStatus(FailedState);
             listStatus(FailedState);
             break;
+        }
+
+        // Show link for additional error details
+        if (!event->message.empty()) {
+            _lastErrorMessage = event->message;
+            _viewErrorLink->show();
         }
     }
 }

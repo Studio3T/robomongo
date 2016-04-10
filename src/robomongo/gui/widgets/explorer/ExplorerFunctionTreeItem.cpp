@@ -15,7 +15,7 @@
 namespace Robomongo
 {
 
-    ExplorerFunctionTreeItem::ExplorerFunctionTreeItem(QTreeWidgetItem *parent,MongoDatabase *database, const MongoFunction &function) :
+    ExplorerFunctionTreeItem::ExplorerFunctionTreeItem(QTreeWidgetItem *parent, MongoDatabase *database, const MongoFunction &function) :
         BaseClass(parent),
         _function(function),
         _database(database)
@@ -64,7 +64,7 @@ namespace Robomongo
     void ExplorerFunctionTreeItem::ui_dropFunction()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(),"Drop","Function",QtUtils::toQString(_function.name()));
+        int answer = utils::questionDialog(treeWidget(), "Drop", "Function", QtUtils::toQString(_function.name()));
 
         if (answer != QMessageBox::Yes)
             return;

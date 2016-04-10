@@ -842,12 +842,12 @@ Status JParse::date(StringData fieldName, BSONObjBuilder& builder) {
         // }
 
         bool isSuccessfull = false;
-        boost::posix_time::ptime isotime = miutil::ptimeFromIsoString(datestr,isSuccessfull);
+        boost::posix_time::ptime isotime = miutil::ptimeFromIsoString(datestr, isSuccessfull);
         if (!isSuccessfull) {
             return parseError("Invalid date format");
         }
 
-        boost::posix_time::ptime epoch(boost::gregorian::date(1970,1,1));
+        boost::posix_time::ptime epoch(boost::gregorian::date(1970, 1, 1));
         boost::posix_time::time_duration diff = isotime - epoch;
         int64_t millis = diff.total_milliseconds();
         Date_t datet = Date_t::fromMillisSinceEpoch(millis);

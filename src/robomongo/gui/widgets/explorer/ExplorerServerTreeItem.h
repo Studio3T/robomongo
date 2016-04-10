@@ -18,7 +18,7 @@ namespace Robomongo
         /*
         ** Constructs ExplorerServerTreeItem
         */
-        ExplorerServerTreeItem(QTreeWidget *view,MongoServer *const server);
+        ExplorerServerTreeItem(QTreeWidget *view, MongoServer *const server);
 
         /*
         ** Expand server tree item;

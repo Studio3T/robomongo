@@ -323,17 +323,17 @@ namespace Robomongo
         AutocompletionMode autocompletionMode = AppRegistry::instance().settingsManager()->autocompletionMode();
 
         // Autocompletion
-        QAction *autocompletionAllAction = new QAction("All",this);
+        QAction *autocompletionAllAction = new QAction("All", this);
         autocompletionAllAction->setCheckable(true);
         autocompletionAllAction->setChecked(autocompletionMode == AutocompleteAll);
         VERIFY(connect(autocompletionAllAction, SIGNAL(triggered()), this, SLOT(setShellAutocompletionAll())));
 
-        QAction *autocompletionNoCollectionNamesAction = new QAction("All (Except Collection Names)",this);
+        QAction *autocompletionNoCollectionNamesAction = new QAction("All (Except Collection Names)", this);
         autocompletionNoCollectionNamesAction->setCheckable(true);
         autocompletionNoCollectionNamesAction->setChecked(autocompletionMode == AutocompleteNoCollectionNames);
         VERIFY(connect(autocompletionNoCollectionNamesAction, SIGNAL(triggered()), this, SLOT(setShellAutocompletionNoCollectionNames())));
 
-        QAction *autocompletionNoneAction = new QAction("None",this);
+        QAction *autocompletionNoneAction = new QAction("None", this);
         autocompletionNoneAction->setCheckable(true);
         autocompletionNoneAction->setChecked(autocompletionMode == AutocompleteNone);
         VERIFY(connect(autocompletionNoneAction, SIGNAL(triggered()), this, SLOT(setShellAutocompletionNone())));
@@ -348,7 +348,7 @@ namespace Robomongo
         autocompletionGroup->addAction(autocompletionNoCollectionNamesAction);
         autocompletionGroup->addAction(autocompletionNoneAction);
 
-        QAction *loadMongoRcJs = new QAction("Load .mongorc.js",this);
+        QAction *loadMongoRcJs = new QAction("Load .mongorc.js", this);
         loadMongoRcJs->setCheckable(true);
         loadMongoRcJs->setChecked(AppRegistry::instance().settingsManager()->loadMongoRcJs());
         VERIFY(connect(loadMongoRcJs, SIGNAL(triggered()), this, SLOT(setLoadMongoRcJs())));
@@ -369,19 +369,19 @@ namespace Robomongo
         VERIFY(connect(showLineNumbers, SIGNAL(triggered()), this, SLOT(toggleLineNumbers())));
         optionsMenu->addAction(showLineNumbers);
 
-        QAction *disabelConnectionShortcuts = new QAction("Disable Connection Shortcuts",this);
+        QAction *disabelConnectionShortcuts = new QAction("Disable Connection Shortcuts", this);
         disabelConnectionShortcuts->setCheckable(true);
         disabelConnectionShortcuts->setChecked(AppRegistry::instance().settingsManager()->disableConnectionShortcuts());
         VERIFY(connect(disabelConnectionShortcuts, SIGNAL(triggered()), this, SLOT(setDisableConnectionShortcuts())));
         optionsMenu->addAction(disabelConnectionShortcuts);
         
-        QAction *autoExec = new QAction(tr("Automatically execute code in new tab"),this);
+        QAction *autoExec = new QAction(tr("Automatically execute code in new tab"), this);
         autoExec->setCheckable(true);
         autoExec->setChecked(AppRegistry::instance().settingsManager()->autoExec());
         VERIFY(connect(autoExec, SIGNAL(triggered()), this, SLOT(toggleAutoExec())));
         optionsMenu->addAction(autoExec);
 
-        QAction *preferencesAction = new QAction("Preferences",this);
+        QAction *preferencesAction = new QAction("Preferences", this);
         VERIFY(connect(preferencesAction, SIGNAL(triggered()), this, SLOT(openPreferences())));
         preferencesAction->setVisible(false);
         optionsMenu->addAction(preferencesAction);
@@ -516,7 +516,7 @@ namespace Robomongo
          const QString &currentStyle = AppRegistry::instance().settingsManager()->currentStyle();
          for (QStringList::const_iterator it = supportedStyles.begin(); it != supportedStyles.end(); ++it) {
              const QString &style = *it;
-             QAction *styleAction = new QAction(style,this);
+             QAction *styleAction = new QAction(style, this);
              styleAction->setCheckable(true);
              styleAction->setChecked(style == currentStyle);
              styleGroup->addAction(styleAction);
@@ -614,7 +614,7 @@ namespace Robomongo
         int number = 1;
         // Populate list with connections
         SettingsManager::ConnectionSettingsContainerType connections = AppRegistry::instance().settingsManager()->connections();
-        for(SettingsManager::ConnectionSettingsContainerType::const_iterator it = connections.begin(); it!= connections.end(); ++it) {
+        for (SettingsManager::ConnectionSettingsContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
             ConnectionSettings *connection = *it;
             QAction *action = new QAction(QtUtils::toQString(connection->getReadableName()), this);
             action->setData(QVariant::fromValue(connection));
@@ -788,7 +788,7 @@ namespace Robomongo
 
     void MainWindow::refreshConnections()
     {
-        QToolTip::showText(QPoint(0,0),
+        QToolTip::showText(QPoint(0, 0),
         QString("Refresh not working yet... : <br/>  <b>Ctrl+D</b> : push Button"));
     }
 
@@ -898,6 +898,14 @@ namespace Robomongo
         if (event->connectionType != ConnectionPrimary)
             return;
 
+
+        // Very temporary solution to prevent multiple connection error messages
+        // from both SshTunnelWorker and MongoWorker
+        static int lastServerHandle = -1;
+        if (event->serverHandle <= lastServerHandle)
+            return;
+
+        lastServerHandle = event->serverHandle;
         QMessageBox::information(this, "Error", QtUtils::toQString(event->message));
     }
 

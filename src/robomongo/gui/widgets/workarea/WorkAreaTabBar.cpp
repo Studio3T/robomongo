@@ -134,9 +134,9 @@ namespace Robomongo
     QString WorkAreaTabBar::buildStyleSheet()
     {
         QColor background = palette().window().color();
-        QColor gradientZero = QColor("#ffffff");//Qt::white;//.lighter(103);
-        QColor gradientOne =  background.lighter(104);//Qt::white;//.lighter(103);
-        QColor gradientTwo =  background.lighter(108);//.lighter(103);
+        QColor gradientZero = QColor("#ffffff"); //Qt::white;//.lighter(103);
+        QColor gradientOne =  background.lighter(104); //Qt::white;//.lighter(103);
+        QColor gradientTwo =  background.lighter(108); //.lighter(103);
         QColor selectedBorder = background.darker(103);
 
         QString aga1 = gradientOne.name();

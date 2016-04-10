@@ -13,7 +13,7 @@ namespace
         using namespace Robomongo::BsonUtils;
         Robomongo::EnsureIndexInfo info(collection);
         info._name = getField<mongo::String>(obj, "name");
-        mongo::BSONObj keyObj = getField<mongo::Object>(obj,"key");
+        mongo::BSONObj keyObj = getField<mongo::Object>(obj, "key");
         if (keyObj.isValid()) {
             info._request = jsonString(keyObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
         }
@@ -56,7 +56,7 @@ namespace Robomongo
         float result = 0.0f;
         mongo::BSONObj resultObj;
         _dbclient->runCommand("db", BSON("buildInfo" << "1"), resultObj);
-        std::string resultStr = BsonUtils::getField<mongo::String>(resultObj,"version");
+        std::string resultStr = BsonUtils::getField<mongo::String>(resultObj, "version");
         result = atof(resultStr.c_str());
         return result;
     }
@@ -87,7 +87,7 @@ namespace Robomongo
         float ver = getVersion();
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
-            MongoUser user(ver,bsonObj);
+            MongoUser user(ver, bsonObj);
             users.push_back(user);
         }
 
@@ -157,13 +157,13 @@ namespace Robomongo
 
         for (std::list<mongo::BSONObj>::iterator it = indexes.begin(); it != indexes.end(); ++it) {
             mongo::BSONObj bsonObj = *it;
-            result.push_back(makeEnsureIndexInfoFromBsonObj(collection,bsonObj));
+            result.push_back(makeEnsureIndexInfoFromBsonObj(collection, bsonObj));
         }
 
         return result;
     }
 
-    void MongoClient::ensureIndex(const EnsureIndexInfo &oldInfo,const EnsureIndexInfo &newInfo) const
+    void MongoClient::ensureIndex(const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo) const
     {   
         std::string ns = newInfo._collection.ns().toString();
 
@@ -172,8 +172,8 @@ namespace Robomongo
 
         mongo::BSONObj keys = mongo::Robomongo::fromjson(newInfo._request);
         mongo::BSONObjBuilder toSave;
-        bool cache=true;
-        int version =-1;
+        bool cache = true;
+        int version = -1;
 
         toSave.append( "ns" , ns );
         toSave.append( "key" , keys );
@@ -401,7 +401,7 @@ namespace Robomongo
         }
     }
 
-    void MongoClient::copyCollectionToDiffServer(mongo::DBClientBase *const fromServ,const MongoNamespace &from, const MongoNamespace &to)
+    void MongoClient::copyCollectionToDiffServer(mongo::DBClientBase *const fromServ, const MongoNamespace &from, const MongoNamespace &to)
     {
         if (!_dbclient->exists(to.toString()))
             _dbclient->createCollection(to.toString());
@@ -498,9 +498,9 @@ namespace Robomongo
     std::vector<MongoCollectionInfo> MongoClient::runCollStatsCommand(const std::vector<std::string> &namespaces)
     {
         std::vector<MongoCollectionInfo> infos;
-        for (std::vector<std::string>::const_iterator it = namespaces.begin(); it!=namespaces.end(); ++it) {
+        for (std::vector<std::string>::const_iterator it = namespaces.begin(); it != namespaces.end(); ++it) {
             MongoCollectionInfo info = runCollStatsCommand(*it);
-            if (info.ns().isValid()){
+            if (info.ns().isValid()) {
                 infos.push_back(info);
             }            
         }

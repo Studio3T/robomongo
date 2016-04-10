@@ -7,19 +7,22 @@
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/mongodb/SshTunnelWorker.h"
 #include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/App.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo {
     R_REGISTER_EVENT(MongoServerLoadingDatabasesEvent)
 
-    MongoServer::MongoServer(ConnectionSettings *settings, ConnectionType connectionType) : QObject(),
+    MongoServer::MongoServer(int handle, ConnectionSettings *settings, ConnectionType connectionType) : QObject(),
         _version(0.0f),
         _connectionType(connectionType),
         _client(NULL),
         _isConnected(false),
         _settings(settings),
-        _bus(AppRegistry::instance().bus()) { }
+        _handle(handle),
+        _bus(AppRegistry::instance().bus()),
+        _app(AppRegistry::instance().app()) { }
 
     bool MongoServer::isConnected() const {
         return _isConnected;
@@ -62,7 +65,7 @@ namespace Robomongo {
     }
 
     void MongoServer::createDatabase(const std::string &dbName) {
-        _bus->send(_client,new CreateDatabaseRequest(this, dbName));
+        _bus->send(_client, new CreateDatabaseRequest(this, dbName));
     }
 
     MongoDatabase *MongoServer::findDatabaseByName(const std::string &dbName) const {
@@ -76,7 +79,7 @@ namespace Robomongo {
     }
 
     void MongoServer::dropDatabase(const std::string &dbName) {
-        _bus->send(_client,new DropDatabaseRequest(this, dbName));
+        _bus->send(_client, new DropDatabaseRequest(this, dbName));
     }
 
     void MongoServer::insertDocuments(const std::vector<mongo::BSONObj> &objCont,
@@ -87,12 +90,12 @@ namespace Robomongo {
     }
 
     void MongoServer::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns) {
-        _bus->send(_client,new InsertDocumentRequest(this, obj, ns));
+        _bus->send(_client, new InsertDocumentRequest(this, obj, ns));
     }
 
     void MongoServer::saveDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns) {
         for (std::vector<mongo::BSONObj>::const_iterator it = objCont.begin(); it != objCont.end(); it++) {
-            saveDocument(*it,ns);
+            saveDocument(*it, ns);
         }
     }
 
@@ -130,7 +133,14 @@ namespace Robomongo {
                 event->errorReason == EstablishConnectionResponse::MongoAuth ?
                 ConnectionFailedEvent::MongoAuth : ConnectionFailedEvent::MongoConnection;
 
-            _bus->publish(new ConnectionFailedEvent(this, _connectionType, ss.str(), reason));
+            // When connection cannot be established, we should
+            // cleanup this instance of MongoServer if it wasn't
+            // shown in UI (i.e. it is not a Secondary connection
+            // that is used for shells tab)
+            if (_connectionType == ConnectionPrimary || _connectionType == ConnectionTest)
+                _app->closeServer(this);
+
+            _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
             return;
         }
 
@@ -141,12 +151,11 @@ namespace Robomongo {
         _bus->publish(new ConnectionEstablishedEvent(this, _connectionType));
 
         // Do nothing if this is not a "primary" connection
-        if (_connectionType != ConnectionPrimary) {
+        if (_connectionType != ConnectionPrimary)
             return;
-        }
 
         clearDatabases();
-        for(std::vector<std::string>::const_iterator it = info._databases.begin(); it != info._databases.end(); ++it) {
+        for (std::vector<std::string>::const_iterator it = info._databases.begin(); it != info._databases.end(); ++it) {
             const std::string &name = *it;
             MongoDatabase *db  = new MongoDatabase(this, name);
             addDatabase(db);
@@ -160,7 +169,7 @@ namespace Robomongo {
         }
 
         clearDatabases();
-        for(std::vector<std::string>::iterator it = event->databaseNames.begin(); it != event->databaseNames.end(); ++it) {
+        for (std::vector<std::string>::iterator it = event->databaseNames.begin(); it != event->databaseNames.end(); ++it) {
             const std::string &name = *it;
             MongoDatabase *db  = new MongoDatabase(this, name);
             addDatabase(db);

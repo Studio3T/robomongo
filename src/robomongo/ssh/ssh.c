@@ -144,19 +144,16 @@ int rbm_ssh_open_tunnel(struct rbm_ssh_session *sshsession) {
         if (rc == 0)
             break;
 
-        // Cleanup SSH connection we hope that local connection
-        // will not break so often
-        rbm_session_cleanup(connection);
-
         if (rc == RBM_CHANNEL_CREATION_ERROR)
             return RBM_ERROR;
 
+        // Cleanup SSH connection we hope that local connection
+        // will not break so often
+        rbm_session_cleanup(connection);
         ssh_log_warn(connection, "Reconnecting SSH tunnel...");
 
-        if (rbm_ssh_setup(connection) == -1) {
-            rbm_ssh_session_close(sshsession);
+        if (rbm_ssh_setup(connection) == -1)
             return RBM_ERROR;
-        }
     }
 
     return RBM_SUCCESS;

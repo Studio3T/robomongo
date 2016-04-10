@@ -98,7 +98,7 @@ namespace Robomongo
     {
         BsonTreeItem *node = QtUtils::item<BsonTreeItem*>(parent);
         if (node) {
-            mongo::BSONElement elem = BsonUtils::indexOf(node->root(),parent.row());
+            mongo::BSONElement elem = BsonUtils::indexOf(node->root(), parent.row());
             if (!elem.isNull() && elem.isABSONObj()) {
                 parseDocument(node, elem.Obj(), elem.type() == mongo::Array);
             }            
@@ -162,11 +162,11 @@ namespace Robomongo
 
         int col = index.column();        
 
-        if(role == Qt::DecorationRole && col == BsonTreeItem::eKey ){
+        if (role == Qt::DecorationRole && col == BsonTreeItem::eKey ) {
             return getIcon(node);
         }
 
-        if(role == Qt::TextColorRole && col == BsonTreeItem::eType){
+        if (role == Qt::TextColorRole && col == BsonTreeItem::eType) {
             return QColor(Qt::gray);
         }
 
@@ -178,7 +178,7 @@ namespace Robomongo
             }
             else if (col == BsonTreeItem::eValue) {
                 bool isCut = node->type() == mongo::String ||  node->type() == mongo::Code || node->type() == mongo::CodeWScope;  
-                if (role == Qt::ToolTipRole){
+                if (role == Qt::ToolTipRole) {
                     result = isCut ? node->value().left(500) : node->value(); 
                 }
                 else{
@@ -186,7 +186,7 @@ namespace Robomongo
                 }
             }
             else if (col == BsonTreeItem::eType) {
-                result = BsonUtils::BSONTypeToString(node->type(),node->binType(),AppRegistry::instance().settingsManager()->uuidEncoding());
+                result = BsonUtils::BSONTypeToString(node->type(), node->binType(), AppRegistry::instance().settingsManager()->uuidEncoding());
             }
         }       
 
@@ -204,7 +204,7 @@ namespace Robomongo
 
     int BsonTreeModel::rowCount(const QModelIndex &parent) const
     {
-        const BsonTreeItem *parentItem=NULL;
+        const BsonTreeItem *parentItem = NULL;
         if (parent.isValid())
             parentItem = QtUtils::item<BsonTreeItem*>(parent);
         else
@@ -235,7 +235,7 @@ namespace Robomongo
             }
         }
 
-        return BaseClass::headerData(section,orientation,role);
+        return BaseClass::headerData(section, orientation, role);
     }
 
     QModelIndex BsonTreeModel::parent(const QModelIndex& index) const
@@ -244,10 +244,10 @@ namespace Robomongo
         if (index.isValid()) {
             BsonTreeItem *const childItem = QtUtils::item<BsonTreeItem*const>(index);
             BsonTreeItem *const parentItem = static_cast<BsonTreeItem*const>(childItem->parent());
-            if (parentItem && parentItem!=_root) {
+            if (parentItem && parentItem != _root) {
                 BsonTreeItem *const grandParent = static_cast<BsonTreeItem*const>(parentItem->parent());
                 int row = grandParent->indexOf(parentItem);
-                result= createIndex(row, 0, parentItem);
+                result = createIndex(row, 0, parentItem);
             }
         }
         return result;
@@ -257,7 +257,7 @@ namespace Robomongo
     {
         QModelIndex index;
         if (hasIndex(row, column, parent)) {
-            const BsonTreeItem * parentItem=NULL;
+            const BsonTreeItem * parentItem = NULL;
             if (!parent.isValid()) {
                 parentItem = _root;
             } else {
@@ -274,9 +274,9 @@ namespace Robomongo
 
     void BsonTreeModel::insertItem(BsonTreeItem *parent, BsonTreeItem *children)
     {
-        QModelIndex index = createIndex(0,0,parent);
+        QModelIndex index = createIndex(0, 0, parent);
         unsigned child_count = parent->childrenCount();
-        beginInsertRows(index,child_count,child_count);
+        beginInsertRows(index, child_count, child_count);
         parent->addChild(children);
         endInsertRows();
     }

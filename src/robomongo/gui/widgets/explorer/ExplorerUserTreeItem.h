@@ -12,7 +12,7 @@ namespace Robomongo
         Q_OBJECT
     public:
         typedef ExplorerTreeItem BaseClass;
-        ExplorerUserTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database, const MongoUser &user);
+        ExplorerUserTreeItem(QTreeWidgetItem *parent, MongoDatabase *const database, const MongoUser &user);
 
     private Q_SLOTS:
         void ui_dropUser();

@@ -76,7 +76,7 @@ namespace Robomongo
      */
     void ConnectionDialog::accept()
     {
-        if (validateAndApply()){
+        if (validateAndApply()) {
             QDialog::accept();
         }
     }
@@ -105,8 +105,8 @@ namespace Robomongo
      */
     void ConnectionDialog::testConnection()
     {
-        if(validateAndApply()){
-            ConnectionDiagnosticDialog diag(_connection,this);
+        if (validateAndApply()) {
+            ConnectionDiagnosticDialog diag(_connection, this);
             diag.exec();
         }
     }

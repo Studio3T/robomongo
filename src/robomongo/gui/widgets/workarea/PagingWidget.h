@@ -13,8 +13,8 @@ namespace Robomongo
 
     public:
         typedef QWidget BaseClass;
-        enum {pageLimit=50};
-        PagingWidget(QWidget *parent=NULL);
+        enum {pageLimit = 50};
+        PagingWidget(QWidget *parent = NULL);
         void setSkip(int skip);
         void setBatchSize(int limit);
 

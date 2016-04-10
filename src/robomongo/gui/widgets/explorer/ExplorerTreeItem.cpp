@@ -7,13 +7,13 @@
 namespace Robomongo
 {
     ExplorerTreeItem::ExplorerTreeItem(QTreeWidgetItem *parent)
-        :QObject(),BaseClass(parent),_contextMenu(new QMenu(treeWidget()) )
+        :QObject(), BaseClass(parent), _contextMenu(new QMenu(treeWidget()) )
     {
 
     }
 
     ExplorerTreeItem::ExplorerTreeItem(QTreeWidget *view)
-        :QObject(view),BaseClass(view),_contextMenu(new QMenu(view) )
+        :QObject(view), BaseClass(view), _contextMenu(new QMenu(view) )
     {
 
     }

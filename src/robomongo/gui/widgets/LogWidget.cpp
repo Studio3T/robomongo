@@ -15,12 +15,12 @@ namespace Robomongo
     {
         _logTextEdit->setReadOnly(true);
         _logTextEdit->setContextMenuPolicy(Qt::CustomContextMenu);
-        VERIFY(connect(_logTextEdit,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(showContextMenu(const QPoint &))));
+        VERIFY(connect(_logTextEdit, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint &))));
         QHBoxLayout *hlayout = new QHBoxLayout;
-        hlayout->setContentsMargins(0,0,0,0);
+        hlayout->setContentsMargins(0, 0, 0, 0);
         hlayout->addWidget(_logTextEdit);
         _clear = new QAction("Clear All", this);
-        VERIFY(connect(_clear, SIGNAL(triggered()),_logTextEdit, SLOT(clear())));
+        VERIFY(connect(_clear, SIGNAL(triggered()), _logTextEdit, SLOT(clear())));
         setLayout(hlayout);      
     }
 

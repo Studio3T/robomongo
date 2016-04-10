@@ -39,7 +39,7 @@ int main(int argc, char *argv[], char** envp)
     // This can cause a conflict when using POSIX functions, for instance, when
     // converting between data types such as floats and strings, since the notation
     // may differ between locales. To get around this problem, call the POSIX
-    // function setlocale(LC_NUMERIC,"C") right after initializing QApplication or
+    // function setlocale(LC_NUMERIC, "C") right after initializing QApplication or
     // QCoreApplication to reset the locale that is used for number formatting to "C"-locale.
     // (http://doc.qt.io/qt-5/qcoreapplication.html#locale-settings)
     setlocale(LC_NUMERIC, "C");

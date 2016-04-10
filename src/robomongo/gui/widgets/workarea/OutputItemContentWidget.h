@@ -29,7 +29,7 @@ namespace Robomongo
         OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent = NULL);
         int _initialSkip;
         int _initialLimit;
-        void update(const MongoQueryInfo &inf,const std::vector<MongoDocumentPtr> &documents);
+        void update(const MongoQueryInfo &inf, const std::vector<MongoDocumentPtr> &documents);
         bool isTextModeSupported() const { return _isTextModeSupported; }
         bool isTreeModeSupported() const { return _isTreeModeSupported; }
         bool isCustomModeSupported() const { return _isCustomModeSupported; }

@@ -18,10 +18,10 @@ namespace Robomongo
         explicit BsonTableModelProxy(QObject *parent = 0);
         QVariant data(const QModelIndex &index, int role) const;
 
-        int rowCount(const QModelIndex &parent=QModelIndex()) const;
+        int rowCount(const QModelIndex &parent = QModelIndex()) const;
         int columnCount(const QModelIndex &parent) const;
 
-        QVariant headerData(int section,Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
         QModelIndex index( int row, int col, const QModelIndex& index ) const;
         virtual QModelIndex mapFromSource( const QModelIndex & sourceIndex ) const;
         virtual QModelIndex mapToSource( const QModelIndex &proxyIndex ) const;

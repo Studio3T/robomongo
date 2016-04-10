@@ -24,7 +24,7 @@
 
 namespace
 {
-    void openCurrentDatabaseShell(Robomongo::MongoDatabase *database,const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
+    void openCurrentDatabaseShell(Robomongo::MongoDatabase *database, const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
     {
         Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, Robomongo::QtUtils::toQString(database->name()), cursor);
     }
@@ -34,7 +34,7 @@ namespace Robomongo
 {
     namespace detail
     {
-        QString buildName(const QString& text,int count)
+        QString buildName(const QString& text, int count)
         {
             if (count == -1)
                 return QString("%1 ...").arg(text);
@@ -42,7 +42,7 @@ namespace Robomongo
             return QString("%1 (%2)").arg(text).arg(count);
         }
     }
-    ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(QTreeWidgetItem *parent,MongoDatabase *const database) :
+    ExplorerDatabaseTreeItem::ExplorerDatabaseTreeItem(QTreeWidgetItem *parent, MongoDatabase *const database) :
         BaseClass(parent),
         _database(database),
         _bus(AppRegistry::instance().bus()),
@@ -84,17 +84,17 @@ namespace Robomongo
         setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
-        _collectionFolderItem = new ExplorerDatabaseCategoryTreeItem(this,Collections);
+        _collectionFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Collections);
         _collectionFolderItem->setText(0, "Collections");
         _collectionFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_collectionFolderItem);
 
-        _javascriptFolderItem = new ExplorerDatabaseCategoryTreeItem(this,Functions);
+        _javascriptFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Functions);
         _javascriptFolderItem->setText(0, "Functions");
         _javascriptFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_javascriptFolderItem);
         
-        _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(this,Users);
+        _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Users);
         _usersFolderItem->setText(0, "Users");
         _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_usersFolderItem);
@@ -122,12 +122,12 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo)
     {
-        _bus->send(_database->server()->client(), new EnsureIndexRequest(item,oldInfo ,newInfo));
+        _bus->send(_database->server()->client(), new EnsureIndexRequest(item, oldInfo, newInfo));
     }
 
-    void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item,const std::string &oldIndexText,const std::string &newIndexText)
+    void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &oldIndexText, const std::string &newIndexText)
     {
-         _bus->send(_database->server()->client(), new EditIndexRequest(item, item->collection()->info(),oldIndexText,newIndexText));
+         _bus->send(_database->server()->client(), new EditIndexRequest(item, item->collection()->info(), oldIndexText, newIndexText));
     }
 
     void ExplorerDatabaseTreeItem::expandFunctions()
@@ -150,7 +150,7 @@ namespace Robomongo
 
         std::vector<MongoCollection *> collections = event->collections;
         int count = collections.size();
-        _collectionFolderItem->setText(0, detail::buildName("Collections",count));
+        _collectionFolderItem->setText(0, detail::buildName("Collections", count));
         QtUtils::clearChildItems(_collectionFolderItem);
 
         // Do not expand, when we do not have collections
@@ -192,7 +192,7 @@ namespace Robomongo
 
         std::vector<MongoUser> users = event->users();
         int count = users.size();
-        _usersFolderItem->setText(0, detail::buildName("Users",count));
+        _usersFolderItem->setText(0, detail::buildName("Users", count));
 
         // Do not expand, when we do not have users
         if (count == 0)
@@ -221,7 +221,7 @@ namespace Robomongo
 
         std::vector<MongoFunction> functions = event->functions();
         int count = functions.size();
-        _javascriptFolderItem->setText(0,  detail::buildName("Functions",count));
+        _javascriptFolderItem->setText(0,  detail::buildName("Functions", count));
 
         // Do not expand, when we do not have functions
         if (count == 0)
@@ -237,22 +237,22 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseCollectionsLoadingEvent *event)
     {
-        _collectionFolderItem->setText(0, detail::buildName("Collections",-1));
+        _collectionFolderItem->setText(0, detail::buildName("Collections", -1));
     }
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseFunctionsLoadingEvent *event)
     {
-        _javascriptFolderItem->setText(0, detail::buildName("Functions",-1));
+        _javascriptFolderItem->setText(0, detail::buildName("Functions", -1));
     }
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseUsersLoadingEvent *event)
     {
-        _usersFolderItem->setText(0, detail::buildName("Users",-1));
+        _usersFolderItem->setText(0, detail::buildName("Users", -1));
     }
 
     void ExplorerDatabaseTreeItem::addCollectionItem(MongoCollection *collection)
     {
-        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(_collectionFolderItem,this,collection);
+        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(_collectionFolderItem, this, collection);
         _collectionFolderItem->addChild(collectionItem);
     }
 
@@ -286,7 +286,7 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::ui_dbStatistics()
     {
-        openCurrentDatabaseShell(_database,"db.stats()");
+        openCurrentDatabaseShell(_database, "db.stats()");
     }
 
     void ExplorerDatabaseTreeItem::ui_dbDrop()
@@ -294,7 +294,7 @@ namespace Robomongo
         // Ask user
         QString buff = QString("Drop <b>%1</b> database?").arg(QtUtils::toQString(_database->name()));
         int answer = QMessageBox::question(treeWidget(),
-            "Drop Database",buff,
+            "Drop Database", buff,
             QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
         if (answer != QMessageBox::Yes)
             return;

@@ -42,7 +42,7 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(this, AutocompleteResponse::Type, shell);
 
         _scriptWidget = new ScriptWidget(_shell);
-        VERIFY(connect(_scriptWidget,SIGNAL(textChanged()),this,SLOT(textChange())));
+        VERIFY(connect(_scriptWidget, SIGNAL(textChanged()), this, SLOT(textChange())));
 
         _viewer = new OutputWidget();
         _outputLabel = new QLabel(this);
@@ -101,7 +101,7 @@ namespace Robomongo
 
     void QueryWidget::openNewTab()
     {
-        if(_shell){
+        if (_shell) {
             MongoServer *server = _shell->server();
             QString query = _scriptWidget->selectedText();
             AppRegistry::instance().app()->openShell(server, query, _currentResult.currentDatabase(), AppRegistry::instance().settingsManager()->autoExec());
@@ -113,7 +113,7 @@ namespace Robomongo
         if (_shell) {
             _shell->setScript(_scriptWidget->text());
             if (_shell->saveToFile()) {
-                _isTextChanged =false;
+                _isTextChanged = false;
                 updateCurrentTab();
             }
         }
@@ -124,7 +124,7 @@ namespace Robomongo
         if (_shell) {
             _shell->setScript(_scriptWidget->text());
             if (_shell->saveToFileAs()) {
-                _isTextChanged =false;
+                _isTextChanged = false;
                 updateCurrentTab();
             }
         }        
@@ -246,7 +246,7 @@ namespace Robomongo
         const QString &shellQuery = QtUtils::toQString(_shell->query());
         QString toolTipQuery = shellQuery.left(700);
 
-        QString tabTitle,toolTipText;
+        QString tabTitle, toolTipText;
         if (_shell) {
             QFileInfo fileInfo(_shell->filePath());
             if (fileInfo.isFile()) {
@@ -255,13 +255,13 @@ namespace Robomongo
             }
         }
 
-        if (tabTitle.isEmpty()&&shellQuery.isEmpty()) {
+        if (tabTitle.isEmpty() && shellQuery.isEmpty()) {
             tabTitle = "New Shell";
         }
         else {
 
             if (tabTitle.isEmpty()) {
-                tabTitle = shellQuery.left(41).replace(QRegExp("[\n\r\t]"), " ");;
+                tabTitle = shellQuery.left(41).replace(QRegExp("[\n\r\t]"), " ");
                 toolTipText = QString("<pre>%1</pre>").arg(toolTipQuery);
             }
             else {
@@ -288,6 +288,6 @@ namespace Robomongo
             _outputLabel->setVisible(isOutVisible);
         }
 
-        _viewer->present(_shell,results);
+        _viewer->present(_shell, results);
     }
 }

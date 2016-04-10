@@ -27,8 +27,8 @@ namespace
 namespace Robomongo
 {
 
-    ExplorerDatabaseCategoryTreeItem::ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseTreeItem *databaseItem,ExplorerDatabaseCategory category) :
-        BaseClass(databaseItem) ,_category(category)
+    ExplorerDatabaseCategoryTreeItem::ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseTreeItem *databaseItem, ExplorerDatabaseCategory category) :
+        BaseClass(databaseItem), _category(category)
     {
         if (_category == Collections) {
             QAction *createCollection = new QAction("Create Collection...", this);

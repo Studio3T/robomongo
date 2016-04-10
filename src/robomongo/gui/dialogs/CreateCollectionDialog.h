@@ -29,11 +29,14 @@ namespace Robomongo
             const QString &database = QString(),
             const QString &collection = QString(), QWidget *parent = 0);
 
-        QString jsonText() const;   // todo: private
+        QString jsonText(FindFrame* frame) const;   // todo: private
         /**
         * @brief Use returned BSONObj only if Dialog exec() method returns QDialog::Accepted
         */
-        //ReturnType bsonObj() const { return _obj; }   // todo
+        const ReturnType& getStorageEngineBsonObj() const { return _storageEngineObj; }    // todo
+        const ReturnType& getValidatorBsonObj() const { return _validatorObj; }            // todo
+        const ReturnType& getExtraOptions();
+
         void setCursorPosition(int line, int column);   // todo: private
 
         QString getCollectionName() const;
@@ -70,6 +73,7 @@ namespace Robomongo
         QWidget *createStorageEngineTab();
         QWidget *createValidatorTab();
         void configureFrameText(FindFrame* frame);
+        bool makeExtraOptionsObj();
 
         // Main Frame
         QLineEdit *_inputEdit;
@@ -99,6 +103,8 @@ namespace Robomongo
 
         FindFrame *_activeFrame;            // ptr to active frame
         ReturnType *_activeObj;             // ptr to active JSON object
+        //mongo::BSONObj _extraOptions;     // todo
+        ReturnType _extraOptions;
         ReturnType _storageEngineObj;
         ReturnType _validatorObj;
     };

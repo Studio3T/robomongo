@@ -37,7 +37,8 @@ namespace Robomongo
 
         void loadFunctions();
 
-        void createCollection(const std::string &collection, long long size, bool capped, int maxDocNum);
+        void createCollection(const std::string &collection, long long size, bool capped, int maxDocNum, 
+                              const mongo::BSONObj* extraOptions = nullptr);
         void dropCollection(const std::string &collection);
         void renameCollection(const std::string &collection, const std::string &newCollection);
         void duplicateCollection(const std::string &collection, const std::string &newCollection);

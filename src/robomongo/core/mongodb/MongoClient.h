@@ -1,6 +1,8 @@
 #pragma once
 
 #include <mongo/client/dbclientinterface.h>
+#include <mongo/bson/bsonobj.h>
+
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/core/domain/MongoUser.h"
@@ -37,7 +39,7 @@ namespace Robomongo
         void createDatabase(const std::string &dbName);
         void dropDatabase(const std::string &dbName);
 
-        void createCollection(const MongoNamespace &ns, long long size, bool capped, int maxDocNum);
+        void createCollection(const MongoNamespace &ns, long long size, bool capped, int maxDocNum, const mongo::BSONObj* extraOptions);
         void renameCollection(const MongoNamespace &ns, const std::string &newCollectionName);
         void duplicateCollection(const MongoNamespace &ns, const std::string &newCollectionName);
         void dropCollection(const MongoNamespace &ns);

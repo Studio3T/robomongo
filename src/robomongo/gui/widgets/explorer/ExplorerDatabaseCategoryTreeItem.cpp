@@ -158,13 +158,15 @@ namespace Robomongo
             QtUtils::toQString(databaseItem->database()->name()), QString(), treeWidget());
         dlg.setOkButtonText("&Create");             // todo: move to ctor
         dlg.setInputLabelText("Collection Name:");  // todo: move to ctor
+        
         int result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
-
         std::string collectionName = QtUtils::toStdString(dlg.getCollectionName());
+        const mongo::BSONObj* extraOptions = nullptr;
+        if (dlg.getExtraOptions().size() > 0) extraOptions = &(*dlg.getExtraOptions().begin());    // todo
         databaseItem->database()->createCollection(collectionName, 
-            dlg.getSizeInputEditValue(), dlg.isCapped(), dlg.getMaxDocNumberInputEditValue());
+            dlg.getSizeInputEditValue(), dlg.isCapped(), dlg.getMaxDocNumberInputEditValue(), extraOptions);
         // refresh list of databases
         databaseItem->expandCollections();
     }

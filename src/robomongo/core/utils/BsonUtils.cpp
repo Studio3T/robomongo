@@ -139,6 +139,10 @@ namespace Robomongo
                         // was 16
                         s.precision(std::numeric_limits<double>::digits10);
                         s << elem.number();
+
+                        // Leave trailing zero if needed
+                        if (elem.number() == (long long)elem.number())
+                            s << ".0";
                     }
                     else if (std::isnan(elem.number()) ) {
                         s << "NaN";
@@ -578,6 +582,11 @@ namespace Robomongo
                     std::stringstream s;
                     s.precision(std::numeric_limits<double>::digits10);
                     s << elem.Double();
+
+                    // Leave trailing zero if needed
+                    if (elem.Double() == (long long)elem.Double())
+                        s << ".0";
+
                     con.append(s.str());
                 }
                 break;

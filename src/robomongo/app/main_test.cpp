@@ -33,12 +33,19 @@ void precisionAssert(const std::string &text, double d) {
     std::stringstream s;
     s.precision(std::numeric_limits<double>::digits10);
     s << d;
+    if (d == (long long)d)
+        s << ".0";
     std::cout << "Checking " << text << " - ";
     assert(text == s.str());
     std::cout << "Correct. " << std::endl;
 }
 
 void testPrecision() {
+    precisionAssert("-9.987654321", -9.987654321);
+    precisionAssert("-1.0", -1.0);
+    precisionAssert("-0.0", -0.0);
+    precisionAssert("0.0", 0.0);
+    precisionAssert("9.0", 9.0);
     precisionAssert("9.8", 9.8);
     precisionAssert("9.9", 9.9);
     precisionAssert("9.98", 9.98);

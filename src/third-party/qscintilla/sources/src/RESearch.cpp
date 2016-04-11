@@ -203,10 +203,14 @@
 #include <stdlib.h>
 
 #include <string>
-#include <algorithm>
 
 #include "CharClassify.h"
 #include "RESearch.h"
+
+// Shut up annoying Visual C++ warnings:
+#ifdef _MSC_VER
+#pragma warning(disable: 4514)
+#endif
 
 #ifdef SCI_NAMESPACE
 using namespace Scintilla;
@@ -252,16 +256,20 @@ const char bitarr[] = { 1, 2, 4, 8, 16, 32, 64, '\200' };
 RESearch::RESearch(CharClassify *charClassTable) {
 	failure = 0;
 	charClass = charClassTable;
-	sta = NOP;                  /* status of lastpat */
-	bol = 0;
-	std::fill(bittab, bittab + BITBLK, 0);
-	std::fill(tagstk, tagstk + MAXTAG, 0);
-	std::fill(nfa, nfa + MAXNFA, 0);
-	Clear();
+	Init();
 }
 
 RESearch::~RESearch() {
 	Clear();
+}
+
+void RESearch::Init() {
+	sta = NOP;                  /* status of lastpat */
+	bol = 0;
+	for (int i = 0; i < MAXTAG; i++)
+		pat[i].clear();
+	for (int j = 0; j < BITBLK; j++)
+		bittab[j] = 0;
 }
 
 void RESearch::Clear() {
@@ -276,9 +284,10 @@ void RESearch::GrabMatches(CharacterIndexer &ci) {
 	for (unsigned int i = 0; i < MAXTAG; i++) {
 		if ((bopat[i] != NOTFOUND) && (eopat[i] != NOTFOUND)) {
 			unsigned int len = eopat[i] - bopat[i];
-			pat[i].resize(len);
+			pat[i] = std::string(len+1, '\0');
 			for (unsigned int j = 0; j < len; j++)
 				pat[i][j] = ci.CharAt(bopat[i] + j);
+			pat[i][len] = '\0';
 		}
 	}
 }
@@ -324,26 +333,24 @@ static int GetHexaChar(unsigned char hd1, unsigned char hd2) {
 		hexValue += 16 * (hd1 - 'A' + 10);
 	} else if (hd1 >= 'a' && hd1 <= 'f') {
 		hexValue += 16 * (hd1 - 'a' + 10);
-	} else {
+	} else
 		return -1;
-	}
 	if (hd2 >= '0' && hd2 <= '9') {
 		hexValue += hd2 - '0';
 	} else if (hd2 >= 'A' && hd2 <= 'F') {
 		hexValue += hd2 - 'A' + 10;
 	} else if (hd2 >= 'a' && hd2 <= 'f') {
 		hexValue += hd2 - 'a' + 10;
-	} else {
+	} else
 		return -1;
-	}
 	return hexValue;
 }
 
 /**
  * Called when the parser finds a backslash not followed
  * by a valid expression (like \( in non-Posix mode).
- * @param pattern : pointer on the char after the backslash.
- * @param incr : (out) number of chars to skip after expression evaluation.
+ * @param pattern: pointer on the char after the backslash.
+ * @param incr: (out) number of chars to skip after expression evaluation.
  * @return the char if it resolves to a simple char,
  * or -1 for a char class. In this case, bittab is changed.
  */
@@ -465,18 +472,18 @@ const char *RESearch::Compile(const char *pattern, int length, bool caseSensitiv
 			break;
 
 		case '^':               /* match beginning */
-			if (p == pattern) {
+			if (p == pattern)
 				*mp++ = BOL;
-			} else {
+			else {
 				*mp++ = CHR;
 				*mp++ = *p;
 			}
 			break;
 
 		case '$':               /* match endofline */
-			if (!*(p+1)) {
+			if (!*(p+1))
 				*mp++ = EOL;
-			} else {
+			else {
 				*mp++ = CHR;
 				*mp++ = *p;
 			}
@@ -491,9 +498,8 @@ const char *RESearch::Compile(const char *pattern, int length, bool caseSensitiv
 				mask = '\377';
 				i++;
 				p++;
-			} else {
+			} else
 				mask = 0;
-			}
 
 			if (*p == '-') {	/* real dash */
 				i++;
@@ -517,9 +523,9 @@ const char *RESearch::Compile(const char *pattern, int length, bool caseSensitiv
 							i++;
 							c2 = static_cast<unsigned char>(*++p);
 							if (c2 == '\\') {
-								if (!*(p+1)) {	// End of RE
+								if (!*(p+1))	// End of RE
 									return badpat("Missing ]");
-								} else {
+								else {
 									i++;
 									p++;
 									int incr;
@@ -648,9 +654,8 @@ const char *RESearch::Compile(const char *pattern, int length, bool caseSensitiv
 				if (tagc > n) {
 					*mp++ = static_cast<char>(REF);
 					*mp++ = static_cast<char>(n);
-				} else {
+				} else
 					return badpat("Undetermined reference");
-				}
 				break;
 			default:
 				if (!posix && *p == '(') {
@@ -658,18 +663,16 @@ const char *RESearch::Compile(const char *pattern, int length, bool caseSensitiv
 						tagstk[++tagi] = tagc;
 						*mp++ = BOT;
 						*mp++ = static_cast<char>(tagc++);
-					} else {
+					} else
 						return badpat("Too many \\(\\) pairs");
-					}
 				} else if (!posix && *p == ')') {
 					if (*sp == BOT)
 						return badpat("Null pattern inside \\(\\)");
 					if (tagi > 0) {
 						*mp++ = static_cast<char>(EOT);
 						*mp++ = static_cast<char>(tagstk[tagi--]);
-					} else {
+					} else
 						return badpat("Unmatched \\)");
-					}
 				} else {
 					int incr;
 					int c = GetBackslashExpression(p, incr);
@@ -694,18 +697,16 @@ const char *RESearch::Compile(const char *pattern, int length, bool caseSensitiv
 					tagstk[++tagi] = tagc;
 					*mp++ = BOT;
 					*mp++ = static_cast<char>(tagc++);
-				} else {
+				} else
 					return badpat("Too many () pairs");
-				}
 			} else if (posix && *p == ')') {
 				if (*sp == BOT)
 					return badpat("Null pattern inside ()");
 				if (tagi > 0) {
 					*mp++ = static_cast<char>(EOT);
 					*mp++ = static_cast<char>(tagstk[tagi--]);
-				} else {
+				} else
 					return badpat("Unmatched )");
-				}
 			} else {
 				unsigned char c = *p;
 				if (!c)	// End of RE
@@ -780,7 +781,7 @@ int RESearch::Execute(CharacterIndexer &ci, int lp, int endp) {
 		c = *(ap+1);
 		while ((lp < endp) && (static_cast<unsigned char>(ci.CharAt(lp)) != c))
 			lp++;
-		if (lp >= endp)	/* if EOS, fail, else fall through. */
+		if (lp >= endp)	/* if EOS, fail, else fall thru. */
 			return 0;
 	default:			/* regular matching all the way. */
 		while (lp < endp) {
@@ -810,7 +811,7 @@ int RESearch::Execute(CharacterIndexer &ci, int lp, int endp) {
  *
  *  special case optimizations: (nfa[n], nfa[n+1])
  *      CLO ANY
- *          We KNOW .* will match everything up to the
+ *          We KNOW .* will match everything upto the
  *          end of line. Thus, directly go to the end of
  *          line, without recursive PMatch calls. As in
  *          the other closure cases, the remaining pattern

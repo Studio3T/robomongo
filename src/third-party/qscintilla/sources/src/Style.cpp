@@ -19,10 +19,6 @@ using namespace Scintilla;
 FontAlias::FontAlias() {
 }
 
-FontAlias::FontAlias(const FontAlias &other) : Font() {
-	SetID(other.fid);
-}
-
 FontAlias::~FontAlias() {
 	SetID(0);
 	// ~Font will not release the actual font resource since it is now 0

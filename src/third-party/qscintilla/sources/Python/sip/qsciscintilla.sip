@@ -1,18 +1,23 @@
 // This is the SIP interface definition for QsciScintilla.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This file may be used under the terms of the GNU General Public License
-// version 3.0 as published by the Free Software Foundation and appearing in
-// the file LICENSE included in the packaging of this file.  Please review the
-// following information to ensure the GNU General Public License version 3.0
-// requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// If you do not wish to use this file under the terms of the GPL version 3.0
-// then you may purchase a commercial license.  For more information contact
-// info@riverbankcomputing.com.
+// If you are unsure which license is appropriate for your use, please
+// contact the sales department at sales@riverbankcomputing.com.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -34,8 +39,7 @@ public:
     enum AnnotationDisplay {
         AnnotationHidden,
         AnnotationStandard,
-        AnnotationBoxed,
-        AnnotationIndented,
+        AnnotationBoxed
     };
 
     enum AutoCompletionSource {
@@ -100,15 +104,11 @@ public:
         BoxIndicator,
         RoundBoxIndicator,
         StraightBoxIndicator,
-        FullBoxIndicator,
         DashesIndicator,
         DotsIndicator,
         SquiggleLowIndicator,
         DotBoxIndicator,
         SquigglePixmapIndicator,
-        ThickCompositionIndicator,
-        ThinCompositionIndicator,
-        TextColorIndicator,
     };
 
     enum {
@@ -153,8 +153,7 @@ public:
         ThreeRightArrows,
         FullRectangle,
         LeftRectangle,
-        Underline,
-        Bookmark
+        Underline
     };
 
     enum WhitespaceVisibility {
@@ -167,7 +166,6 @@ public:
         WrapNone,
         WrapWord,
         WrapCharacter,
-        WrapWhitespace,
     };
 
     enum WrapVisualFlag {
@@ -183,7 +181,14 @@ public:
         WrapIndentIndented,
     };
 
+%If (Qsci_Qt4)
     QsciScintilla(QWidget *parent /TransferThis/ = 0);
+%End
+%If (!Qsci_Qt4)
+    QsciScintilla(QWidget *parent /TransferThis/ = 0, const char *name = 0,
+            WFlags f = 0);
+%End
+
     virtual ~QsciScintilla();
 
     virtual QStringList apiContext(int pos, int &context_start,
@@ -192,7 +197,12 @@ public:
     void annotate(int line, const QString &text, int style);
     void annotate(int line, const QString &text, const QsciStyle &style);
     void annotate(int line, const QsciStyledText &text);
+%If (Qsci_Qt4)
     void annotate(int line, const QList<QsciStyledText> &text);
+%End
+%If (!Qsci_Qt4)
+    void annotate(int line, const QValueList<QsciStyledText> &text);
+%End
     QString annotation(int line) const;
     AnnotationDisplay annotationDisplay() const;
     void clearAnnotations(int line = -1);
@@ -217,9 +227,16 @@ public:
     bool caseSensitive() const;
     void clearRegisteredImages();
     QColor color() const;
+%If (Qsci_Qt4)
     QList<int> contractedFolds() const;
+%End
+%If (!Qsci_Qt4)
+    QValueList<int> contractedFolds() const;
+%End
     void convertEols(EolMode mode);
+%If (Qsci_Qt4)
     QMenu *createStandardContextMenu() /Factory/;
+%End
 
     QsciDocument document() const;
 
@@ -325,7 +342,12 @@ public:
     void setCallTipsPosition(CallTipsPosition position);
     void setCallTipsStyle(CallTipsStyle style);
     void setCallTipsVisible(int nr);
+%If (Qsci_Qt4)
     void setContractedFolds(const QList<int> &folds);
+%End
+%If (!Qsci_Qt4)
+    void setContractedFolds(const QValueList<int> &folds);
+%End
 
     void setDocument(const QsciDocument &document);
 
@@ -344,17 +366,18 @@ public:
     void setIndicatorDrawUnder(bool under, int indicatorNumber = -1);
     void setIndicatorForegroundColor(const QColor &col,
             int indicatorNumber = -1);
-    void setIndicatorHoverForegroundColor(const QColor &col,
-            int indicatorNumber = -1);
-    void setIndicatorHoverStyle(IndicatorStyle style,
-            int indicatorNumber = -1);
     void setIndicatorOutlineColor(const QColor &col, int indicatorNumber = -1);
 
     void setMarginOptions(int options);
     void setMarginText(int line, const QString &text, int style);
     void setMarginText(int line, const QString &text, const QsciStyle &style);
     void setMarginText(int line, const QsciStyledText &text);
+%If (Qsci_Qt4)
     void setMarginText(int line, const QList<QsciStyledText> &text);
+%End
+%If (!Qsci_Qt4)
+    void setMarginText(int line, const QValueList<QsciStyledText> &text);
+%End
     void setMarginType(int margin, MarginType type);
     void clearMarginText(int line = -1);
 
@@ -500,12 +523,28 @@ signals:
     void cursorPositionChanged(int line, int index);
     void copyAvailable(bool yes);
 
+%If (Qsci_Qt4)
     void indicatorClicked(int line, int index, Qt::KeyboardModifiers state);
+%End
+%If (!Qsci_Qt4)
+    void indicatorClicked(int line, int index, Qt::ButtonState state);
+%End
+
+%If (Qsci_Qt4)
     void indicatorReleased(int line, int index, Qt::KeyboardModifiers state);
+%End
+%If (!Qsci_Qt4)
+    void indicatorReleased(int line, int index, Qt::ButtonState state);
+%End
 
     void linesChanged();
 
+%If (Qsci_Qt4)
     void marginClicked(int margin, int line, Qt::KeyboardModifiers state);
+%End
+%If (!Qsci_Qt4)
+    void marginClicked(int margin, int line, Qt::ButtonState state);
+%End
 
     void modificationAttempted();
     void modificationChanged(bool m);
@@ -514,9 +553,11 @@ signals:
     void userListActivated(int id, const QString &string);
 
 protected:
+%If (Qsci_Qt4)
     virtual bool event(QEvent *event);
     virtual void changeEvent(QEvent *event);
     virtual void contextMenuEvent(QContextMenuEvent *event);
+%End
 
 private:
     QsciScintilla(const QsciScintilla &);

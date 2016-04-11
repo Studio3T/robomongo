@@ -1,4 +1,4 @@
-// Copyright (c) 2015 Riverbank Computing Limited
+// Copyright (c) 2014 Riverbank Computing Limited
 // Copyright (c) 2011 Archaeopteryx Software, Inc.
 // Copyright (c) 1990-2011, Scientific Toolworks, Inc.
 //
@@ -7,6 +7,7 @@
 
 
 #include <qglobal.h>
+
 
 #include "Qsci/qsciscintillabase.h"
 
@@ -180,3 +181,4 @@ QVariant QsciScintillaBase::inputMethodQuery(Qt::InputMethodQuery query) const
             return QVariant();
     }
 }
+

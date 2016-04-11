@@ -16,9 +16,9 @@
 
 #include "Platform.h"
 
-#include "Scintilla.h"
 #include "CharacterSet.h"
 #include "AutoComplete.h"
+#include "Scintilla.h"
 
 #ifdef SCI_NAMESPACE
 using namespace Scintilla;
@@ -41,6 +41,8 @@ AutoComplete::AutoComplete() :
 	heightLBDefault(100),
 	autoSort(SC_ORDER_PRESORTED) {
 	lb = ListBox::Allocate();
+	stopChars[0] = '\0';
+	fillUpChars[0] = '\0';
 }
 
 AutoComplete::~AutoComplete() {
@@ -69,19 +71,21 @@ void AutoComplete::Start(Window &parent, int ctrlID,
 }
 
 void AutoComplete::SetStopChars(const char *stopChars_) {
-	stopChars = stopChars_;
+	strncpy(stopChars, stopChars_, sizeof(stopChars));
+	stopChars[sizeof(stopChars) - 1] = '\0';
 }
 
 bool AutoComplete::IsStopChar(char ch) {
-	return ch && (stopChars.find(ch) != std::string::npos);
+	return ch && strchr(stopChars, ch);
 }
 
 void AutoComplete::SetFillUpChars(const char *fillUpChars_) {
-	fillUpChars = fillUpChars_;
+	strncpy(fillUpChars, fillUpChars_, sizeof(fillUpChars));
+	fillUpChars[sizeof(fillUpChars) - 1] = '\0';
 }
 
 bool AutoComplete::IsFillUpChar(char ch) {
-	return ch && (fillUpChars.find(ch) != std::string::npos);
+	return ch && strchr(fillUpChars, ch);
 }
 
 void AutoComplete::SetSeparator(char separator_) {

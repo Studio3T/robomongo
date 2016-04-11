@@ -85,9 +85,7 @@ namespace Scintilla {
 
 typedef float XYPOSITION;
 typedef double XYACCUMULATOR;
-inline int RoundXYPosition(XYPOSITION xyPos) {
-	return int(xyPos + 0.5);
-}
+//#define XYPOSITION int
 
 // Underlying the implementation of the platform classes are platform specific types.
 // Sometimes these need to be passed around by client code so they are defined here
@@ -102,7 +100,7 @@ typedef void *IdlerID;
 
 /**
  * A geometric point class.
- * Point is similar to the Win32 POINT and GTK+ GdkPoint types.
+ * Point is exactly the same as the Win32 POINT and GTK+ GdkPoint so can be used interchangeably.
  */
 class Point {
 public:
@@ -112,10 +110,6 @@ public:
 	explicit Point(XYPOSITION x_=0, XYPOSITION y_=0) : x(x_), y(y_) {
 	}
 
-	static Point FromInts(int x_, int y_) {
-		return Point(static_cast<XYPOSITION>(x_), static_cast<XYPOSITION>(y_));
-	}
-
 	// Other automatically defined methods (assignment, copy constructor, destructor) are fine
 
 	static Point FromLong(long lpoint);
@@ -123,7 +117,7 @@ public:
 
 /**
  * A geometric rectangle class.
- * PRectangle is similar to the Win32 RECT.
+ * PRectangle is exactly the same as the Win32 RECT so can be used interchangeably.
  * PRectangles contain their top and left sides, but not their right and bottom sides.
  */
 class PRectangle {
@@ -133,13 +127,8 @@ public:
 	XYPOSITION right;
 	XYPOSITION bottom;
 
-	explicit PRectangle(XYPOSITION left_=0, XYPOSITION top_=0, XYPOSITION right_=0, XYPOSITION bottom_ = 0) :
+	PRectangle(XYPOSITION left_=0, XYPOSITION top_=0, XYPOSITION right_=0, XYPOSITION bottom_ = 0) :
 		left(left_), top(top_), right(right_), bottom(bottom_) {
-	}
-
-	static PRectangle FromInts(int left_, int top_, int right_, int bottom_) {
-		return PRectangle(static_cast<XYPOSITION>(left_), static_cast<XYPOSITION>(top_),
-			static_cast<XYPOSITION>(right_), static_cast<XYPOSITION>(bottom_));
 	}
 
 	// Other automatically defined methods (assignment, copy constructor, destructor) are fine
@@ -151,11 +140,6 @@ public:
 	bool Contains(Point pt) const {
 		return (pt.x >= left) && (pt.x <= right) &&
 			(pt.y >= top) && (pt.y <= bottom);
-	}
-	bool ContainsWholePixel(Point pt) const {
-		// Does the rectangle contain all of the pixel to left/below the point 
-		return (pt.x >= left) && ((pt.x+1) <= right) &&
-			(pt.y >= top) && ((pt.y+1) <= bottom);
 	}
 	bool Contains(PRectangle rc) const {
 		return (rc.left >= left) && (rc.right <= right) &&
@@ -476,16 +460,6 @@ public:
 	static DynamicLibrary *Load(const char *modulePath);
 };
 
-#if defined(__clang__)
-# if __has_feature(attribute_analyzer_noreturn)
-#  define CLANG_ANALYZER_NORETURN __attribute__((analyzer_noreturn))
-# else
-#  define CLANG_ANALYZER_NORETURN
-# endif
-#else
-# define CLANG_ANALYZER_NORETURN
-#endif
-
 /**
  * Platform class used to retrieve system wide parameters such as double click speed
  * and chrome colour. Not a creatable object, more of a module with several functions.
@@ -530,7 +504,7 @@ public:
 	}
 	static void DebugPrintf(const char *format, ...);
 	static bool ShowAssertionPopUps(bool assertionPopUps_);
-	static void Assert(const char *c, const char *file, int line) CLANG_ANALYZER_NORETURN;
+	static void Assert(const char *c, const char *file, int line);
 	static int Clamp(int val, int minVal, int maxVal);
 };
 
@@ -546,6 +520,11 @@ public:
 
 #ifdef SCI_NAMESPACE
 }
+#endif
+
+// Shut up annoying Visual C++ warnings:
+#ifdef _MSC_VER
+#pragma warning(disable: 4244 4309 4514 4710)
 #endif
 
 #if defined(__GNUC__) && defined(SCINTILLA_QT)

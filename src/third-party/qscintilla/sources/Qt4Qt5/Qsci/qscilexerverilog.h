@@ -1,18 +1,23 @@
 // This defines the interface to the QsciLexerVerilog class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This file may be used under the terms of the GNU General Public License
-// version 3.0 as published by the Free Software Foundation and appearing in
-// the file LICENSE included in the packaging of this file.  Please review the
-// following information to ensure the GNU General Public License version 3.0
-// requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// If you do not wish to use this file under the terms of the GPL version 3.0
-// then you may purchase a commercial license.  For more information contact
-// info@riverbankcomputing.com.
+// If you are unsure which license is appropriate for your use, please
+// contact the sales department at sales@riverbankcomputing.com.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -25,7 +30,7 @@
 extern "C++" {
 #endif
 
-#include <QObject>
+#include <qobject.h>
 
 #include <Qsci/qsciglobal.h>
 #include <Qsci/qscilexer.h>
@@ -43,84 +48,50 @@ public:
     enum {
         //! The default.
         Default = 0,
-        InactiveDefault = Default + 64,
 
         //! A comment.
         Comment = 1,
-        InactiveComment = Comment + 64,
 
         //! A line comment.
         CommentLine = 2,
-        InactiveCommentLine = CommentLine + 64,
 
         //! A bang comment.
         CommentBang = 3,
-        InactiveCommentBang = CommentBang + 64,
 
         //! A number
         Number = 4,
-        InactiveNumber = Number + 64,
 
         //! A keyword.
         Keyword = 5,
-        InactiveKeyword = Keyword + 64,
 
         //! A string.
         String = 6,
-        InactiveString = String + 64,
 
         //! A keyword defined in keyword set number 2.  The class must
         //! be sub-classed and re-implement keywords() to make use of
         //! this style.
         KeywordSet2 = 7,
-        InactiveKeywordSet2 = KeywordSet2 + 64,
 
         //! A system task.
         SystemTask = 8,
-        InactiveSystemTask = SystemTask + 64,
 
         //! A pre-processor block.
         Preprocessor = 9,
-        InactivePreprocessor = Preprocessor + 64,
 
         //! An operator.
         Operator = 10,
-        InactiveOperator = Operator + 64,
 
         //! An identifier.
         Identifier = 11,
-        InactiveIdentifier = Identifier + 64,
 
         //! The end of a line where a string is not closed.
         UnclosedString = 12,
-        InactiveUnclosedString = UnclosedString + 64,
 
         //! A keyword defined in keyword set number 4.  The class must
         //! be sub-classed and re-implement keywords() to make use of
         //! this style.  This set is intended to be used for user defined
         //! identifiers and tasks.
-        UserKeywordSet = 19,
-        InactiveUserKeywordSet = UserKeywordSet + 64,
-
-        //! A keyword comment.
-        CommentKeyword = 20,
-        InactiveCommentKeyword = CommentKeyword + 64,
-
-        //! An input port declaration.
-        DeclareInputPort = 21,
-        InactiveDeclareInputPort = DeclareInputPort + 64,
-
-        //! An output port declaration.
-        DeclareOutputPort = 22,
-        InactiveDeclareOutputPort = DeclareOutputPort + 64,
-
-        //! An input/output port declaration.
-        DeclareInputOutputPort = 23,
-        InactiveDeclareInputOutputPort = DeclareInputOutputPort + 64,
-
-        //! A port connection.
-        PortConnection = 24,
-        InactivePortConnection = PortConnection + 64,
+        UserKeywordSet = 19
     };
 
     //! Construct a QsciLexerVerilog with parent \a parent.  \a parent is
@@ -181,7 +152,7 @@ public:
     //! Returns true if "} else {" lines can be folded.
     //!
     //! \sa setFoldAtElse()
-    bool foldAtElse() const {return fold_atelse;}
+    bool foldAtElse() const;
 
     //! If \a fold is true then multi-line comment blocks can be folded.
     //! The default is false.
@@ -192,7 +163,7 @@ public:
     //! Returns true if multi-line comment blocks can be folded.
     //!
     //! \sa setFoldComments()
-    bool foldComments() const {return fold_comments;}
+    bool foldComments() const;
 
     //! If \a fold is true then trailing blank lines are included in a fold
     //! block. The default is true.
@@ -203,7 +174,7 @@ public:
     //! Returns true if trailing blank lines are included in a fold block.
     //!
     //! \sa setFoldCompact()
-    bool foldCompact() const {return fold_compact;};
+    bool foldCompact() const;
 
     //! If \a fold is true then preprocessor blocks can be folded.  The
     //! default is true.
@@ -214,7 +185,7 @@ public:
     //! Returns true if preprocessor blocks can be folded.
     //!
     //! \sa setFoldPreprocessor()
-    bool foldPreprocessor() const {return fold_preproc;};
+    bool foldPreprocessor() const;
 
     //! If \a fold is true then modules can be folded.  The default is false.
     //!
@@ -224,7 +195,7 @@ public:
     //! Returns true if modules can be folded.
     //!
     //! \sa setFoldAtModule()
-    bool foldAtModule() const {return fold_atmodule;};
+    bool foldAtModule() const;
 
 protected:
     //! The lexer's properties are read from the settings \a qs.  \a prefix

@@ -14,8 +14,6 @@
 #include "Platform.h"
 
 #include "Scintilla.h"
-
-#include "StringCopy.h"
 #include "CallTip.h"
 
 #ifdef SCI_NAMESPACE
@@ -109,15 +107,13 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 		int endSeg = ends[seg];
 		if (endSeg > startSeg) {
 			if (IsArrowCharacter(s[startSeg])) {
-				xEnd = x + widthArrow;
 				bool upArrow = s[startSeg] == '\001';
-				rcClient.left = static_cast<XYPOSITION>(x);
-				rcClient.right = static_cast<XYPOSITION>(xEnd);
+				rcClient.left = x;
+				rcClient.right = rcClient.left + widthArrow;
 				if (draw) {
 					const int halfWidth = widthArrow / 2 - 3;
-					const int quarterWidth = halfWidth / 2;
-					const int centreX = x + widthArrow / 2 - 1;
-					const int centreY = static_cast<int>(rcClient.top + rcClient.bottom) / 2;
+					const int centreX = rcClient.left + widthArrow / 2 - 1;
+					const int centreY = (rcClient.top + rcClient.bottom) / 2;
 					surface->FillRectangle(rcClient, colourBG);
 					PRectangle rcClientInner(rcClient.left + 1, rcClient.top + 1,
 					                         rcClient.right - 2, rcClient.bottom - 1);
@@ -125,20 +121,23 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 
 					if (upArrow) {      // Up arrow
 						Point pts[] = {
-    						Point::FromInts(centreX - halfWidth, centreY + quarterWidth),
-    						Point::FromInts(centreX + halfWidth, centreY + quarterWidth),
-    						Point::FromInts(centreX, centreY - halfWidth + quarterWidth),
+    						Point(centreX - halfWidth, centreY + halfWidth / 2),
+    						Point(centreX + halfWidth, centreY + halfWidth / 2),
+    						Point(centreX, centreY - halfWidth + halfWidth / 2),
 						};
-						surface->Polygon(pts, ELEMENTS(pts), colourBG, colourBG);
+						surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
+                 						colourBG, colourBG);
 					} else {            // Down arrow
 						Point pts[] = {
-    						Point::FromInts(centreX - halfWidth, centreY - quarterWidth),
-    						Point::FromInts(centreX + halfWidth, centreY - quarterWidth),
-    						Point::FromInts(centreX, centreY + halfWidth - quarterWidth),
+    						Point(centreX - halfWidth, centreY - halfWidth / 2),
+    						Point(centreX + halfWidth, centreY - halfWidth / 2),
+    						Point(centreX, centreY + halfWidth - halfWidth / 2),
 						};
-						surface->Polygon(pts, ELEMENTS(pts), colourBG, colourBG);
+						surface->Polygon(pts, sizeof(pts) / sizeof(pts[0]),
+                 						colourBG, colourBG);
 					}
 				}
+				xEnd = rcClient.right;
 				offsetMain = xEnd;
 				if (upArrow) {
 					rectUp = rcClient;
@@ -148,11 +147,11 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 			} else if (IsTabCharacter(s[startSeg])) {
 				xEnd = NextTabPos(x);
 			} else {
-				xEnd = x + RoundXYPosition(surface->WidthText(font, s + startSeg, endSeg - startSeg));
+				xEnd = x + surface->WidthText(font, s + startSeg, endSeg - startSeg);
 				if (draw) {
-					rcClient.left = static_cast<XYPOSITION>(x);
-					rcClient.right = static_cast<XYPOSITION>(xEnd);
-					surface->DrawTextTransparent(rcClient, font, static_cast<XYPOSITION>(ytext),
+					rcClient.left = x;
+					rcClient.right = xEnd;
+					surface->DrawTextTransparent(rcClient, font, ytext,
 										s+startSeg, endSeg - startSeg,
 					                             highlight ? colourSel : colourUnSel);
 				}
@@ -165,16 +164,16 @@ void CallTip::DrawChunk(Surface *surface, int &x, const char *s,
 
 int CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 	PRectangle rcClientPos = wCallTip.GetClientPosition();
-	PRectangle rcClientSize(0.0f, 0.0f, rcClientPos.right - rcClientPos.left,
+	PRectangle rcClientSize(0, 0, rcClientPos.right - rcClientPos.left,
 	                        rcClientPos.bottom - rcClientPos.top);
-	PRectangle rcClient(1.0f, 1.0f, rcClientSize.right - 1, rcClientSize.bottom - 1);
+	PRectangle rcClient(1, 1, rcClientSize.right - 1, rcClientSize.bottom - 1);
 
 	// To make a nice small call tip window, it is only sized to fit most normal characters without accents
-	int ascent = RoundXYPosition(surfaceWindow->Ascent(font) - surfaceWindow->InternalLeading(font));
+	int ascent = surfaceWindow->Ascent(font) - surfaceWindow->InternalLeading(font);
 
 	// For each line...
 	// Draw the definition in three parts: before highlight, highlighted, after highlight
-	int ytext = static_cast<int>(rcClient.top) + ascent + 1;
+	int ytext = rcClient.top + ascent + 1;
 	rcClient.bottom = ytext + surfaceWindow->Descent(font) + 1;
 	const char *chunkVal = val.c_str();
 	bool moreChunks = true;
@@ -186,8 +185,8 @@ int CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 			chunkEnd = chunkVal + strlen(chunkVal);
 			moreChunks = false;
 		}
-		int chunkOffset = static_cast<int>(chunkVal - val.c_str());
-		int chunkLength = static_cast<int>(chunkEnd - chunkVal);
+		int chunkOffset = chunkVal - val.c_str();
+		int chunkLength = chunkEnd - chunkVal;
 		int chunkEndOffset = chunkOffset + chunkLength;
 		int thisStartHighlight = Platform::Maximum(startHighlight, chunkOffset);
 		thisStartHighlight = Platform::Minimum(thisStartHighlight, chunkEndOffset);
@@ -195,7 +194,7 @@ int CallTip::PaintContents(Surface *surfaceWindow, bool draw) {
 		int thisEndHighlight = Platform::Maximum(endHighlight, chunkOffset);
 		thisEndHighlight = Platform::Minimum(thisEndHighlight, chunkEndOffset);
 		thisEndHighlight -= chunkOffset;
-		rcClient.top = static_cast<XYPOSITION>(ytext - ascent - 1);
+		rcClient.top = ytext - ascent - 1;
 
 		int x = insetX;     // start each line at this inset
 
@@ -218,9 +217,9 @@ void CallTip::PaintCT(Surface *surfaceWindow) {
 	if (val.empty())
 		return;
 	PRectangle rcClientPos = wCallTip.GetClientPosition();
-	PRectangle rcClientSize(0.0f, 0.0f, rcClientPos.right - rcClientPos.left,
+	PRectangle rcClientSize(0, 0, rcClientPos.right - rcClientPos.left,
 	                        rcClientPos.bottom - rcClientPos.top);
-	PRectangle rcClient(1.0f, 1.0f, rcClientSize.right - 1, rcClientSize.bottom - 1);
+	PRectangle rcClient(1, 1, rcClientSize.right - 1, rcClientSize.bottom - 1);
 
 	surfaceWindow->FillRectangle(rcClient, colourBG);
 
@@ -230,13 +229,13 @@ void CallTip::PaintCT(Surface *surfaceWindow) {
 #ifndef __APPLE__
 	// OSX doesn't put borders on "help tags"
 	// Draw a raised border around the edges of the window
-	surfaceWindow->MoveTo(0, static_cast<int>(rcClientSize.bottom) - 1);
+	surfaceWindow->MoveTo(0, rcClientSize.bottom - 1);
 	surfaceWindow->PenColour(colourShade);
-	surfaceWindow->LineTo(static_cast<int>(rcClientSize.right) - 1, static_cast<int>(rcClientSize.bottom) - 1);
-	surfaceWindow->LineTo(static_cast<int>(rcClientSize.right) - 1, 0);
+	surfaceWindow->LineTo(rcClientSize.right - 1, rcClientSize.bottom - 1);
+	surfaceWindow->LineTo(rcClientSize.right - 1, 0);
 	surfaceWindow->PenColour(colourLight);
 	surfaceWindow->LineTo(0, 0);
-	surfaceWindow->LineTo(0, static_cast<int>(rcClientSize.bottom) - 1);
+	surfaceWindow->LineTo(0, rcClientSize.bottom - 1);
 #endif
 }
 
@@ -265,7 +264,7 @@ PRectangle CallTip::CallTipStart(int pos, Point pt, int textHeight, const char *
 	endHighlight = 0;
 	inCallTipMode = true;
 	posStartCallTip = pos;
-	XYPOSITION deviceHeight = static_cast<XYPOSITION>(surfaceMeasure->DeviceHeightFont(size));
+	int deviceHeight = surfaceMeasure->DeviceHeightFont(size);
 	FontParameters fp(faceName, deviceHeight / SC_FONT_SIZE_MULTIPLIER, SC_WEIGHT_NORMAL, false, 0, technology, characterSet);
 	font.Create(fp);
 	// Look for multiple lines in the text
@@ -281,12 +280,12 @@ PRectangle CallTip::CallTipStart(int pos, Point pt, int textHeight, const char *
 		look = newline + 1;
 		numLines++;
 	}
-	lineHeight = RoundXYPosition(surfaceMeasure->Height(font));
+	lineHeight = surfaceMeasure->Height(font);
 
 	// The returned
 	// rectangle is aligned to the right edge of the last arrow encountered in
 	// the tip text, else to the tip text left edge.
-	int height = lineHeight * numLines - static_cast<int>(surfaceMeasure->InternalLeading(font)) + borderHeight * 2;
+	int height = lineHeight * numLines - surfaceMeasure->InternalLeading(font) + borderHeight * 2;
 	delete surfaceMeasure;
 	if (above) {
 		return PRectangle(pt.x - offsetMain, pt.y - verticalOffset - height, pt.x + width - offsetMain, pt.y - verticalOffset);

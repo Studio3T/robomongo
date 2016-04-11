@@ -194,34 +194,31 @@ add_library(qscintilla
 #    sources/lexers/LexD.cpp
 #    sources/lexers/LexPS.cpp
 
-    sources/src/EditModel.cpp
-    sources/src/EditView.cpp
-    sources/src/ExternalLexer.cpp
-    sources/src/ViewStyle.cpp
-    sources/src/Editor.cpp
-    sources/src/Selection.cpp
-    sources/src/XPM.cpp
     sources/src/AutoComplete.cpp
-    sources/src/CharClassify.cpp
-    sources/src/PerLine.cpp
-    sources/src/Style.cpp
-    sources/src/Indicator.cpp
-    sources/src/CaseConvert.cpp
-    sources/src/KeyMap.cpp
-    sources/src/CellBuffer.cpp
-    sources/src/ContractionState.cpp
-    sources/src/Document.cpp
-    sources/src/RESearch.cpp
-    sources/src/Decoration.cpp
-    sources/src/LineMarker.cpp
-    sources/src/UniConversion.cpp
-    sources/src/MarginView.cpp
-    sources/src/PositionCache.cpp
-    sources/src/RunStyles.cpp
-    sources/src/Catalogue.cpp
     sources/src/CallTip.cpp
-    sources/src/ScintillaBase.cpp
+    sources/src/CaseConvert.cpp
     sources/src/CaseFolder.cpp
+    sources/src/Catalogue.cpp
+    sources/src/CellBuffer.cpp
+    sources/src/CharClassify.cpp
+    sources/src/ContractionState.cpp
+    sources/src/Decoration.cpp
+    sources/src/Document.cpp
+    sources/src/Editor.cpp
+    sources/src/ExternalLexer.cpp
+    sources/src/Indicator.cpp
+    sources/src/KeyMap.cpp
+    sources/src/LineMarker.cpp
+    sources/src/PerLine.cpp
+    sources/src/PositionCache.cpp
+    sources/src/RESearch.cpp
+    sources/src/RunStyles.cpp
+    sources/src/ScintillaBase.cpp
+    sources/src/Selection.cpp
+    sources/src/Style.cpp
+    sources/src/UniConversion.cpp
+    sources/src/ViewStyle.cpp
+    sources/src/XPM.cpp
 )
 
 target_link_libraries(qscintilla

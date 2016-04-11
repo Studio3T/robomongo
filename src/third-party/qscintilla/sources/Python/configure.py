@@ -1,4 +1,4 @@
-# Copyright (c) 2015, Riverbank Computing Limited
+# Copyright (c) 2014, Riverbank Computing Limited
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -23,14 +23,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# This is v1.4 of this boilerplate.
+# This is v1.2 of this boilerplate.
 
 
-from distutils import sysconfig
-import glob
-import os
-import optparse
 import sys
+import os
+import glob
+import optparse
+
+try:
+    import sysconfig
+except ImportError:
+    from distutils import sysconfig
 
 
 ###############################################################################
@@ -40,7 +44,7 @@ import sys
 
 # This must be kept in sync with Python/configure-old.py, qscintilla.pro,
 # example-Qt4Qt5/application.pro and designer-Qt4Qt5/designer.pro.
-QSCI_API_MAJOR = 12
+QSCI_API_MAJOR = 11
 
 
 class ModuleConfiguration(object):
@@ -60,7 +64,7 @@ class ModuleConfiguration(object):
 
     # The version of the module as a string.  Set it to None if you don't
     # provide version information.
-    version = '2.9.1'
+    version = '2.8.4'
 
     # Set if a configuration script is provided that handles versions of PyQt4
     # prior to v4.10 (i.e. versions where the pyqtconfig.py module is
@@ -617,9 +621,14 @@ class _HostPythonConfiguration:
         self.platform = sys.platform
         self.version = sys.hexversion >> 8
 
-        self.inc_dir = sysconfig.get_python_inc()
-        self.venv_inc_dir = sysconfig.get_python_inc(prefix=sys.prefix)
-        self.module_dir = sysconfig.get_python_lib(plat_specific=1)
+        if hasattr(sysconfig, 'get_path'):
+            # The modern API.
+            self.inc_dir = sysconfig.get_path('include')
+            self.module_dir = sysconfig.get_path('platlib')
+        else:
+            # The legacy distutils API.
+            self.inc_dir = sysconfig.get_python_inc(plat_specific=1)
+            self.module_dir = sysconfig.get_python_lib(plat_specific=1)
 
         if sys.platform == 'win32':
             self.data_dir = sys.prefix
@@ -673,16 +682,13 @@ class _TargetConfiguration:
         self.py_version = py_config.version
         self.py_module_dir = py_config.module_dir
         self.py_inc_dir = py_config.inc_dir
-        self.py_venv_inc_dir = py_config.venv_inc_dir
         self.py_pylib_dir = py_config.lib_dir
         self.py_sip_dir = os.path.join(py_config.data_dir, 'sip')
-        self.sip_inc_dir = py_config.venv_inc_dir
+        self.sip_inc_dir = py_config.inc_dir
 
         # The default qmake spec.
         if self.py_platform == 'win32':
-            if self.py_version >= 0x030500:
-                self.qmake_spec = 'win32-msvc2015'
-            elif self.py_version >= 0x030300:
+            if self.py_version >= 0x030300:
                 self.qmake_spec = 'win32-msvc2010'
             elif self.py_version >= 0x020600:
                 self.qmake_spec = 'win32-msvc2008'
@@ -699,7 +705,7 @@ class _TargetConfiguration:
         self.pyqt_version_str = ''
         self.qmake = self._find_exe('qmake')
         self.qt_version_str = ''
-        self.sip = self._find_exe('sip5', 'sip')
+        self.sip = self._find_exe('sip')
         self.sip_version = None
         self.sysroot = ''
 
@@ -780,11 +786,10 @@ class _TargetConfiguration:
 
         self.py_platform = parser.get(section, 'py_platform', self.py_platform)
         self.py_inc_dir = parser.get(section, 'py_inc_dir', self.py_inc_dir)
-        self.py_venv_inc_dir = self.py_inc_dir
         self.py_pylib_dir = parser.get(section, 'py_pylib_dir',
                 self.py_pylib_dir)
 
-        self.sip_inc_dir = self.py_venv_inc_dir
+        self.sip_inc_dir = self.py_inc_dir
 
         self.module_dir = parser.get(section, 'module_dir', self.module_dir)
 
@@ -808,9 +813,13 @@ class _TargetConfiguration:
 
                 if qt_version > 0x060000:
                     qt_version = 0x060000
+
+                backstop = 'Qt_6_0_0'
             else:
                 if qt_version > 0x050000:
                     qt_version = 0x050000
+
+                backstop = 'Qt_5_0_0'
 
             major = (qt_version >> 16) & 0xff
             minor = (qt_version >> 8) & 0xff
@@ -818,6 +827,9 @@ class _TargetConfiguration:
 
             flags.append('-t')
             flags.append('Qt_%d_%d_%d' % (major, minor, patch))
+
+            flags.append('-B')
+            flags.append(backstop)
 
             for feat in parser.getlist(section, 'pyqt_disabled_features', []):
                 flags.append('-x')
@@ -889,7 +901,6 @@ class _TargetConfiguration:
 
         if self.sysroot != '':
             self.py_inc_dir = self._apply_sysroot(self.py_inc_dir)
-            self.py_venv_inc_dir = self._apply_sysroot(self.py_venv_inc_dir)
             self.py_pylib_dir = self._apply_sysroot(self.py_pylib_dir)
             self.py_sip_dir = self._apply_sysroot(self.py_sip_dir)
             self.module_dir = self._apply_sysroot(self.module_dir)
@@ -1020,20 +1031,22 @@ class _TargetConfiguration:
         module_config.apply_options(self, opts)
 
     @staticmethod
-    def _find_exe(*exes):
+    def _find_exe(exe):
         """ Find an executable, ie. the first on the path. """
 
-        path_dirs = os.environ.get('PATH', '').split(os.pathsep)
+        try:
+            path = os.environ['PATH']
+        except KeyError:
+            path = ''
 
-        for exe in exes:
-            if sys.platform == 'win32':
-                exe = exe + '.exe'
+        if sys.platform == 'win32':
+            exe = exe + '.exe'
 
-            for d in path_dirs:
-                exe_path = os.path.join(d, exe)
+        for d in path.split(os.pathsep):
+            exe_path = os.path.join(d, exe)
 
-                if os.access(exe_path, os.X_OK):
-                    return exe_path
+            if os.access(exe_path, os.X_OK):
+                return exe_path
 
         return None
 
@@ -1197,9 +1210,9 @@ def _inform_user(target_config, module_config):
 
 
 def _generate_code(target_config, opts, module_config):
-    """ Generate the code for the module.  target_config is the target
-    configuration.  opts are the command line options.  module_config is the
-    module configuration.
+    """ Generate the code for the QScintilla module.  target_config is the
+    target configuration.  opts are the command line options.  module_config is
+    the module configuration.
     """
 
     inform(
@@ -1215,11 +1228,6 @@ def _generate_code(target_config, opts, module_config):
     if target_config.pyqt_package is not None:
         # Get the flags used for the main PyQt module.
         argv.extend(target_config.pyqt_sip_flags.split())
-
-        # Add the backstop version.
-        argv.append('-B')
-        argv.append('Qt_6_0_0' if target_config.pyqt_package == 'PyQt5'
-                else 'Qt_5_0_0')
 
         # Add PyQt's .sip files to the search path.
         argv.append('-I')
@@ -1434,9 +1442,6 @@ macx {
     QMAKE_LFLAGS += "-undefined dynamic_lookup"
     greaterThan(QT_MAJOR_VERSION, 4) {
         QMAKE_LFLAGS += "-install_name $$absolute_path($$PY_MODULE, $$target.path)"
-        greaterThan(QT_MINOR_VERSION, 4) {
-            QMAKE_RPATHDIR += $$[QT_INSTALL_LIBS]
-        }
     }
 ''')
 

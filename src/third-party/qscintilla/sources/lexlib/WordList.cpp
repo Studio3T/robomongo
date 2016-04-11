@@ -8,12 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <stdarg.h>
 #include <ctype.h>
+#include <stdarg.h>
 
 #include <algorithm>
 
-#include "StringCopy.h"
 #include "WordList.h"
 
 #ifdef SCI_NAMESPACE
@@ -69,11 +68,9 @@ static char **ArrayFromWordList(char *wordlist, int *len, bool onlyLineEnds = fa
 
 WordList::WordList(bool onlyLineEnds_) :
 	words(0), list(0), len(0), onlyLineEnds(onlyLineEnds_) {
-	// Prevent warnings by static analyzers about uninitialized starts.
-	starts[0] = -1;
 }
 
-WordList::~WordList() {
+WordList::~WordList() { 
 	Clear();
 }
 
@@ -125,16 +122,15 @@ static void SortWordList(char **words, unsigned int len) {
 
 void WordList::Set(const char *s) {
 	Clear();
-	const size_t lenS = strlen(s) + 1;
-	list = new char[lenS];
-	memcpy(list, s, lenS);
+	list = new char[strlen(s) + 1];
+	strcpy(list, s);
 	words = ArrayFromWordList(list, &len, onlyLineEnds);
 #ifdef _MSC_VER
 	std::sort(words, words + len, cmpWords);
 #else
 	SortWordList(words, len);
 #endif
-	for (unsigned int k = 0; k < ELEMENTS(starts); k++)
+	for (unsigned int k = 0; k < (sizeof(starts) / sizeof(starts[0])); k++)
 		starts[k] = -1;
 	for (int l = len - 1; l >= 0; l--) {
 		unsigned char indexChar = words[l][0];

@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include <stdexcept>
 #include <algorithm>
 
 #include "Platform.h"
@@ -145,7 +144,6 @@ UndoHistory::UndoHistory() {
 	currentAction = 0;
 	undoSequenceDepth = 0;
 	savePoint = 0;
-	tentativePoint = -1;
 
 	actions[currentAction].Create(startAction);
 }
@@ -192,11 +190,7 @@ const char *UndoHistory::AppendAction(actionType at, int position, const char *d
 			}
 			// See if current action can be coalesced into previous action
 			// Will work if both are inserts or deletes and position is same
-#if defined(_MSC_VER) && defined(_PREFAST_)
-			// Visual Studio 2013 Code Analysis wrongly believes actions can be NULL at its next reference
-			__analysis_assume(actions);
-#endif
-			if ((currentAction == savePoint) || (currentAction == tentativePoint)) {
+			if (currentAction == savePoint) {
 				currentAction++;
 			} else if (!actions[currentAction].mayCoalesce) {
 				// Not allowed to coalesce if this set
@@ -284,7 +278,6 @@ void UndoHistory::DeleteUndoHistory() {
 	currentAction = 0;
 	actions[currentAction].Create(startAction);
 	savePoint = 0;
-	tentativePoint = -1;
 }
 
 void UndoHistory::SetSavePoint() {
@@ -293,26 +286,6 @@ void UndoHistory::SetSavePoint() {
 
 bool UndoHistory::IsSavePoint() const {
 	return savePoint == currentAction;
-}
-
-void UndoHistory::TentativeStart() {
-	tentativePoint = currentAction;
-}
-
-void UndoHistory::TentativeCommit() {
-	tentativePoint = -1;
-	// Truncate undo history
-	maxAction = currentAction;
-}
-
-int UndoHistory::TentativeSteps() {
-	// Drop any trailing startAction
-	if (actions[currentAction].at == startAction && currentAction > 0)
-		currentAction--;
-	if (tentativePoint >= 0)
-		return currentAction - tentativePoint;
-	else
-		return -1;
 }
 
 bool UndoHistory::CanUndo() const {
@@ -379,7 +352,7 @@ char CellBuffer::CharAt(int position) const {
 }
 
 void CellBuffer::GetCharRange(char *buffer, int position, int lengthRetrieve) const {
-	if (lengthRetrieve <= 0)
+	if (lengthRetrieve < 0)
 		return;
 	if (position < 0)
 		return;
@@ -436,24 +409,25 @@ const char *CellBuffer::InsertString(int position, const char *s, int insertLeng
 	return data;
 }
 
-bool CellBuffer::SetStyleAt(int position, char styleValue) {
+bool CellBuffer::SetStyleAt(int position, char styleValue, char mask) {
+	styleValue &= mask;
 	char curVal = style.ValueAt(position);
-	if (curVal != styleValue) {
-		style.SetValueAt(position, styleValue);
+	if ((curVal & mask) != styleValue) {
+		style.SetValueAt(position, static_cast<char>((curVal & ~mask) | styleValue));
 		return true;
 	} else {
 		return false;
 	}
 }
 
-bool CellBuffer::SetStyleFor(int position, int lengthStyle, char styleValue) {
+bool CellBuffer::SetStyleFor(int position, int lengthStyle, char styleValue, char mask) {
 	bool changed = false;
 	PLATFORM_ASSERT(lengthStyle == 0 ||
 		(lengthStyle > 0 && lengthStyle + position <= style.Length()));
 	while (lengthStyle--) {
 		char curVal = style.ValueAt(position);
-		if (curVal != styleValue) {
-			style.SetValueAt(position, styleValue);
+		if ((curVal & mask) != styleValue) {
+			style.SetValueAt(position, static_cast<char>((curVal & ~mask) | styleValue));
 			changed = true;
 		}
 		position++;
@@ -526,22 +500,6 @@ void CellBuffer::SetSavePoint() {
 
 bool CellBuffer::IsSavePoint() const {
 	return uh.IsSavePoint();
-}
-
-void CellBuffer::TentativeStart() {
-	uh.TentativeStart();
-}
-
-void CellBuffer::TentativeCommit() {
-	uh.TentativeCommit();
-}
-
-int CellBuffer::TentativeSteps() {
-	return uh.TentativeSteps();
-}
-
-bool CellBuffer::TentativeActive() const {
-	return uh.TentativeActive();
 }
 
 // Without undo
@@ -787,10 +745,6 @@ const Action &CellBuffer::GetUndoStep() const {
 void CellBuffer::PerformUndoStep() {
 	const Action &actionStep = uh.GetUndoStep();
 	if (actionStep.at == insertAction) {
-		if (substance.Length() < actionStep.lenData) {
-			throw std::runtime_error(
-				"CellBuffer::PerformUndoStep: deletion must be less than document length.");
-		}
 		BasicDeleteChars(actionStep.position, actionStep.lenData);
 	} else if (actionStep.at == removeAction) {
 		BasicInsertString(actionStep.position, actionStep.data, actionStep.lenData);

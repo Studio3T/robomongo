@@ -20,7 +20,7 @@ class WordClassifier {
 
 public:
 
-	explicit WordClassifier(int baseStyle_) : baseStyle(baseStyle_), firstStyle(0), lenStyles(0) {
+	WordClassifier(int baseStyle_) : baseStyle(baseStyle_), firstStyle(0), lenStyles(0) {
 	}
 
 	void Allocate(int firstStyle_, int lenStyles_) {

@@ -307,7 +307,7 @@ namespace Robomongo
     void CreateCollectionDialog::onValidateButtonClicked()
     {
         validate(_activeFrame, _activeObj, false);
-        makeExtraOptionsObj();
+        makeExtraOptionsObj();      // todo: remove
     }
 
     void CreateCollectionDialog::enableFindButton(const QString &text)

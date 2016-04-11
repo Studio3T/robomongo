@@ -101,8 +101,8 @@ namespace Robomongo
         FindFrame *_validatorFrame;
         QLabel * _validatorFrameLabel;
 
-        FindFrame *_activeFrame;            // ptr to active frame
-        ReturnType *_activeObj;             // ptr to active JSON object
+        FindFrame *_activeFrame;            // ptr to active frame          // todo: ctor default init
+        ReturnType *_activeObj;             // ptr to active JSON object    // todo: ctor default init
         //mongo::BSONObj _extraOptions;     // todo
         ReturnType _extraOptions;
         ReturnType _storageEngineObj;

@@ -1,5 +1,7 @@
 #include "robomongo/core/mongodb/MongoClient.h"
 
+#include "mongo/db/namespace_string.h"
+
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/shell/bson/json.h"
@@ -361,10 +363,33 @@ namespace Robomongo
         _dbclient->dropDatabase(dbName);
     }
 
-    void MongoClient::createCollection(const MongoNamespace &ns, long long size, bool capped, int maxDocNum, 
-                                       const mongo::BSONObj* extraOptions)
+    void MongoClient::createCollection(const std::string& ns, long long size, bool capped, int max, 
+                                       const mongo::BSONObj* extraOptions, mongo::BSONObj* info)
     {
-        _dbclient->createCollection(ns.toString(), size, capped, maxDocNum, extraOptions);
+        verify(!capped || size);
+        mongo::BSONObj o;
+        if (info == 0)
+            info = &o;
+        mongo::BSONObjBuilder b;
+        std::string db = mongo::nsToDatabase(ns);
+        b.append("create", ns.c_str() + db.length() + 1);
+        if (size){
+            b.append("size", size);
+        }
+        if (capped){
+            b.append("capped", true);
+        }
+        if (max){
+            b.append("max", max);
+        }
+        if (extraOptions){
+            b.append("autoIndexId", extraOptions->getStringField("autoIndexId"));
+            b.append("storageEngine", extraOptions->getObjectField("storageEngine"));
+            b.append("validator", extraOptions->getObjectField("validator"));
+            b.append("validationLevel", extraOptions->getStringField("validationLevel"));
+            b.append("validationAction", extraOptions->getStringField("validationAction"));
+        }
+        _dbclient->runCommand(db.c_str(), b.done(), *info);
     }
 
     void MongoClient::renameCollection(const MongoNamespace &ns, const std::string &newCollectionName)

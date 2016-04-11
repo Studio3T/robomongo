@@ -130,6 +130,8 @@ namespace Robomongo
                 s << "NumberLong(" << elem._numberLong() << ")";
                 break;
             case NumberInt:
+                s << elem._numberInt();
+                break;
             case NumberDouble:
                 {
                     int sign = 0;

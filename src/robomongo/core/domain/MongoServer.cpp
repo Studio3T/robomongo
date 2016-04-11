@@ -189,6 +189,8 @@ namespace Robomongo {
     void MongoServer::runWorkerThread() {
         _client = new MongoWorker(_settings->clone(),
             AppRegistry::instance().settingsManager()->loadMongoRcJs(),
-            AppRegistry::instance().settingsManager()->batchSize());
+            AppRegistry::instance().settingsManager()->batchSize(),
+            AppRegistry::instance().settingsManager()->mongoTimeoutSec(),
+            AppRegistry::instance().settingsManager()->shellTimeoutSec());
     }
 }

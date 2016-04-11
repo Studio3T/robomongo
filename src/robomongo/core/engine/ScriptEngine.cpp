@@ -55,10 +55,11 @@ namespace mongo {
 
 namespace Robomongo
 {
-    ScriptEngine::ScriptEngine(ConnectionSettings *connection) :
+    ScriptEngine::ScriptEngine(ConnectionSettings *connection, int timeoutSec) :
         _connection(connection),
         _scope(NULL),
         _engine(NULL),
+        _timeoutSec(timeoutSec),
         _mutex(QMutex::Recursive) { }
 
     ScriptEngine::~ScriptEngine()
@@ -190,8 +191,8 @@ namespace Robomongo
                 try {
                     QElapsedTimer timer;
                     timer.start();
-                    if ( _scope->exec( statement , "(shell)" , false , true , false, 0 ) ) {
-                        _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false, 0);
+                    if ( _scope->exec( statement , "(shell)" , false , true , false, _timeoutSec * 1000) ) {
+                        _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false, _timeoutSec * 1000);
                     }
 
                     qint64 elapsed = timer.elapsed();
@@ -252,7 +253,7 @@ namespace Robomongo
     void ScriptEngine::ping()
     {
         QMutexLocker lock(&_mutex);
-        _scope->exec("if (db) { db.runCommand({ping:1}); }", "(ping)", false, false, false);
+        _scope->exec("if (db) { db.runCommand({ping:1}); }", "(ping)", false, false, false, 3000);
     }
 
     QStringList ScriptEngine::complete(const std::string &prefix, const AutocompletionMode mode)

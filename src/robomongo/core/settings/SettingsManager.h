@@ -107,6 +107,9 @@ namespace Robomongo
         int textFontPointSize() const { return _textFontPointSize; }
         void setTextFontPointSize(int pointSize);
 
+        int mongoTimeoutSec() const { return _mongoTimeoutSec; }
+        int shellTimeoutSec() const { return _shellTimeoutSec; }
+
 
     private:
 
@@ -125,14 +128,8 @@ namespace Robomongo
          */
         QString _version;
 
-        /**
-         * @brief UUID encoding
-         */
         UUIDEncoding _uuidEncoding;
         SupportedTimes _timeZone;
-        /**
-         * @brief view mode
-         */
         ViewMode _viewMode;
         AutocompletionMode _autocompletionMode;
         bool _loadMongoRcJs;
@@ -144,6 +141,10 @@ namespace Robomongo
         QString _currentStyle;
         QString _textFontFamily;
         int _textFontPointSize;
+
+        int _mongoTimeoutSec;
+        int _shellTimeoutSec;
+
         /**
          * @brief List of connections
          */

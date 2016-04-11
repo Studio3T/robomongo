@@ -1,7 +1,11 @@
 
+# Copy icon files
+mkdir ~/.icons
+cp -r $RPM_INSTALL_PREFIX/share/icons/hicolor ~/.icons
+
 # Create desktop shortcut
 desktop-file-install \
   --delete-original \
   --dir=/usr/share/applications \
   --set-key=Exec --set-value=$RPM_INSTALL_PREFIX/bin/robomongo \
-  /home/myaskevich/Projects/paralect/robomongo/install/linux/Robomongo.desktop
+  $RPM_INSTALL_PREFIX/share/applications/robomongo.desktop

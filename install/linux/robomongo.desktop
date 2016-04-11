@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Robomongo
+Comment=Shell-centric cross-platform MongoDB management tool
+Exec=robomongo
+Icon=robomongo
+Type=Application
+Categories=Development;Utility;

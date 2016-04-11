@@ -18,7 +18,7 @@ if(SYSTEM_LINUX)
     set(bin_dir             bin)
     set(lib_dir             lib)
     set(resources_dir       share)
-    set(license_dir         .)
+    set(license_dir         ${resources_dir}/doc/robomongo)
 
     set(qt_plugins_dir      ${lib_dir})
     set(qt_conf_dir         ${bin_dir})
@@ -81,6 +81,19 @@ if(SYSTEM_LINUX)
     install_qt_plugins(
         QGtk2ThemePlugin
         QXcbIntegrationPlugin)
+
+    # Install icons
+    install(
+        FILES       "${CMAKE_SOURCE_DIR}/install/linux/robomongo.png"
+        DESTINATION "${resources_dir}/pixmaps")
+    install(
+        DIRECTORY   "${CMAKE_SOURCE_DIR}/install/linux/icons/"
+        DESTINATION "${resources_dir}/icons")
+
+    # Install desktop shortcut
+    install(
+        FILES       "${CMAKE_SOURCE_DIR}/install/linux/robomongo.desktop"
+        DESTINATION "${resources_dir}/applications")
 
 elseif(SYSTEM_MACOSX)
     install_qt_lib(MacExtras DBus)

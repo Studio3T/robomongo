@@ -253,7 +253,7 @@ namespace Robomongo
     void ScriptEngine::ping()
     {
         QMutexLocker lock(&_mutex);
-        _scope->exec("if (db) { db.runCommand({ping:1}); }", "(ping)", false, false, false, 3);
+        _scope->exec("if (db) { db.runCommand({ping:1}); }", "(ping)", false, false, false, 3000);
     }
 
     QStringList ScriptEngine::complete(const std::string &prefix, const AutocompletionMode mode)

@@ -15,7 +15,7 @@ namespace Robomongo
     {
 
     public:
-        ScriptEngine(ConnectionSettings *connection);
+        ScriptEngine(ConnectionSettings *connection, int timeoutSec);
         ~ScriptEngine();
 
         void init(bool isLoadMongoJs);
@@ -39,6 +39,7 @@ namespace Robomongo
         std::vector<std::string> statementize2(const std::string &script);
 //        void parseTree(JSParseNode * root, int indent, const std::string &script, std::vector<std::string> &list, bool topList);
 
+        int _timeoutSec;
         mongo::ScriptEngine *_engine;
         mongo::Scope *_scope;
         QMutex _mutex;

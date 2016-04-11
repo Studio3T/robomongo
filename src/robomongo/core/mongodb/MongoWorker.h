@@ -23,7 +23,8 @@ namespace Robomongo
 
     public:
         typedef std::vector<std::string> DatabasesContainerType;
-        explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent = NULL);
+        explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
+                             int mongoTimeoutSec, int shellTimeoutSec, QObject *parent = NULL);
         ~MongoWorker();
         enum { pingTimeMs = 60 * 1000 };
         void interrupt();
@@ -147,6 +148,8 @@ namespace Robomongo
         const bool _isLoadMongoRcJs;
         const int _batchSize;
         int _timerId;
+        int _mongoTimeoutSec;
+        int _shellTimeoutSec;
         QAtomicInteger<int> _isQuiting;
 
         ConnectionSettings *_connection;

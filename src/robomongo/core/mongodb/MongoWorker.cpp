@@ -17,7 +17,8 @@
 
 namespace Robomongo
 {
-    MongoWorker::MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize, QObject *parent) : QObject(parent),
+    MongoWorker::MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
+                             int mongoTimeoutSec, int shellTimeoutSec, QObject *parent) : QObject(parent),
         _connection(connection),
         _scriptEngine(NULL),
         _dbclient(NULL),
@@ -25,8 +26,10 @@ namespace Robomongo
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
         _timerId(-1),
+        _mongoTimeoutSec(mongoTimeoutSec),
+        _shellTimeoutSec(shellTimeoutSec),
         _isQuiting(0)
-    {         
+    {
         _thread = new QThread();
         moveToThread(_thread);
         VERIFY(connect( _thread, SIGNAL(finished()), _thread, SLOT(deleteLater()) ));
@@ -69,7 +72,7 @@ namespace Robomongo
     void MongoWorker::init()
     {        
         try {
-            _scriptEngine = new ScriptEngine(_connection);
+            _scriptEngine = new ScriptEngine(_connection, _shellTimeoutSec);
             _scriptEngine->init(_isLoadMongoRcJs);
             _scriptEngine->use(_connection->defaultDatabase());
             _scriptEngine->setBatchSize(_batchSize);
@@ -594,9 +597,9 @@ namespace Robomongo
     mongo::DBClientBase *MongoWorker::getConnection(bool mayReturnNull /* = false */)
     {
         if (!_dbclient) {
-            // Timeout for operations is 10 seconds.
+            // Timeout for operations
             // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
-            mongo::DBClientConnection *conn = new mongo::DBClientConnection(true, 10);
+            mongo::DBClientConnection *conn = new mongo::DBClientConnection(true, _mongoTimeoutSec);
             mongo::Status status = conn->connect(_connection->info());
 
             if (!status.isOK() && mayReturnNull) {

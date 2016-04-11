@@ -48,7 +48,9 @@ namespace Robomongo
         _textFontFamily(""),
         _textFontPointSize(-1),
         _lineNumbers(false),
-        _loadMongoRcJs(false)
+        _loadMongoRcJs(false),
+        _mongoTimeoutSec(10),
+        _shellTimeoutSec(15)
     {
         load();
         LOG_MSG("SettingsManager initialized in " + _configPath, mongo::logger::LogSeverity::Info(), false);
@@ -179,6 +181,14 @@ namespace Robomongo
         _textFontFamily = map.value("textFontFamily").toString();
         _textFontPointSize = map.value("textFontPointSize").toInt();
 
+        if (map.contains("mongoTimeoutSec")) {
+            _mongoTimeoutSec = map.value("mongoTimeoutSec").toInt();
+        }
+
+        if (map.contains("shellTimeoutSec")) {
+            _shellTimeoutSec = map.value("shellTimeoutSec").toInt();
+        }
+
         // 5. Load connections
         _connections.clear();
 
@@ -239,6 +249,8 @@ namespace Robomongo
 
         // 8. Save batchSize
         map.insert("batchSize", _batchSize);
+        map.insert("mongoTimeoutSec", _mongoTimeoutSec);
+        map.insert("shellTimeoutSec", _shellTimeoutSec);
 
         // 9. Save style
         map.insert("style", _currentStyle);

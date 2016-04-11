@@ -21,7 +21,7 @@ namespace Robomongo
     public:
         enum
         {
-            HeightFindPanel = 40
+            HeightFindPanel = 38
         };
         typedef QFrame BaseClass;
         explicit FindFrame(QWidget *parent);

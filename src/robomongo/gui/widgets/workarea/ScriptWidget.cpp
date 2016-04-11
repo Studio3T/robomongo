@@ -223,10 +223,15 @@ namespace Robomongo
         int maxHeight = editorHeight(18);
         if (height > maxHeight)
             height = maxHeight;
+
+        // Hide & Show solves problem of UI blinking
+        _queryText->hide();
         _queryText->setFixedHeight(height);
         _queryText->sciScintilla()->setFixedHeight(height);
         _queryText->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         _queryText->setMaximumHeight(height+FindFrame::HeightFindPanel);
+        _queryText->sciScintilla()->setFocus();
+        _queryText->show();
     }
 
     void ScriptWidget::onTextChanged()

@@ -236,20 +236,26 @@ namespace Robomongo
 
     bool CreateCollectionDialog::makeExtraOptionsObj()
     {
-        validate(_storageEngineFrame, _storageEngineObj);
-        validate(_validatorFrame, _validatorObj);
-        std::string autoIndexidVal = isCheckedAutoIndexid() ? "true" : "false";
-        std::string usePowerOfTwoVal = isCheckedUsePowerOfTwo() ? "true" : "false";
-        std::string noPaddingVal = isCheckedNoPadding() ? "true" : "false";
-
         mongo::BSONObjBuilder builder;
-        builder.append("autoIndexId", isCheckedAutoIndexid());
-        builder.append("usePowerOf2Sizes", usePowerOfTwoVal);
-        builder.append("noPadding", noPaddingVal);
-        builder.append("storageEngine", _storageEngineObj);
-        builder.append("validator", _validatorObj);
-        builder.append("validationLevel", _validatorLevelComboBox->currentText().toStdString());
-        builder.append("validationAction", _validatorActionComboBox->currentText().toStdString());
+        if (_autoIndexCheckBox->isEnabled()) builder.append("autoIndexId", isCheckedAutoIndexid());
+        if (_usePowerOfTwoSizeCheckBox->isEnabled()) builder.append("usePowerOf2Sizes", isCheckedUsePowerOfTwo());
+        if (_noPaddingCheckBox->isEnabled()) builder.append("noPadding", isCheckedNoPadding());
+        // todo: 1 and 2 to enum xxxTab
+        if (_tabWidget->isTabEnabled(1) )
+        {
+            validate(_storageEngineFrame, _storageEngineObj);
+            if(!_storageEngineObj.isEmpty()) builder.append("storageEngine", _storageEngineObj);
+        }
+        if (_tabWidget->isTabEnabled(2))
+        {
+            validate(_validatorFrame, _validatorObj);
+            if (!_validatorObj.isEmpty())
+            {
+                builder.append("validator", _validatorObj);
+                builder.append("validationLevel", _validatorLevelComboBox->currentText().toStdString());
+                builder.append("validationAction", _validatorActionComboBox->currentText().toStdString());
+            }
+        }
         _extraOptions = builder.obj();
         // todo: return?
         return true;

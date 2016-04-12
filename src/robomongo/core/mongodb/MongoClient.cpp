@@ -390,11 +390,7 @@ namespace Robomongo
             b.append("max", max);
         }
         if (extraOptions){
-            b.append("autoIndexId", extraOptions->getStringField("autoIndexId"));
-            b.append("storageEngine", extraOptions->getObjectField("storageEngine"));
-            b.append("validator", extraOptions->getObjectField("validator"));
-            b.append("validationLevel", extraOptions->getStringField("validationLevel"));
-            b.append("validationAction", extraOptions->getStringField("validationAction"));
+            b.appendElements(*extraOptions);
         }
         _dbclient->runCommand(db.c_str(), b.done(), *info);
     }

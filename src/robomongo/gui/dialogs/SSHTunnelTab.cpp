@@ -19,6 +19,8 @@
 #include "robomongo/core/settings/SshSettings.h"
 
 namespace {
+    const QString askPasswordText = "Ask for password each time";
+    const QString askPassphraseText = "Ask for passphrase each time";
     bool isFileExists(const QString &path) {
         QFileInfo fileInfo(path);
         return fileInfo.exists() && fileInfo.isFile();
@@ -35,7 +37,7 @@ namespace Robomongo
         _sshSupport->setStyleSheet("margin-bottom: 7px");
         _sshSupport->setChecked(info->enabled());
 
-        _askForPassword = new QCheckBox("Ask for password each time");
+        _askForPassword = new QCheckBox(askPasswordText);
         _askForPassword->setChecked(info->askPassword());
 
         _sshHostName = new QLineEdit(QtUtils::toQString(info->host()));
@@ -183,6 +185,7 @@ namespace Robomongo
         _passwordBox->setVisible(!isKey);
         _passwordLabel->setVisible(!isKey);
         _passwordEchoModeButton->setVisible(!isKey);
+        _askForPassword->setText(isKey ? askPassphraseText : askPasswordText);
     }
 
     void SshTunnelTab::setPrivateFile()

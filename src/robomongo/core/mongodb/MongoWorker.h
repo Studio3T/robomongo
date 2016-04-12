@@ -148,6 +148,7 @@ namespace Robomongo
         const bool _isLoadMongoRcJs;
         const int _batchSize;
         int _timerId;
+        int _dbAutocompleteCacheTimerId;
         int _mongoTimeoutSec;
         int _shellTimeoutSec;
         QAtomicInteger<int> _isQuiting;

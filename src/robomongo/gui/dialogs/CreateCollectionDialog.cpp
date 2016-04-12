@@ -27,9 +27,9 @@ namespace Robomongo
 {
     const QSize CreateCollectionDialog::dialogSize = QSize(300, 150);
 
-    CreateCollectionDialog::CreateCollectionDialog(const QString &serverName, const QString &database,
-        const QString &collection, QWidget *parent) :
-        QDialog(parent)
+    CreateCollectionDialog::CreateCollectionDialog(const QString &serverName, double dbVersion, const std::string& storageEngine, 
+        const QString &database, const QString &collection, QWidget *parent) :
+        QDialog(parent), _dbVersion(dbVersion), _storageEngine(storageEngine)
     {
         setWindowTitle("Create Collection"); 
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
@@ -67,6 +67,9 @@ namespace Robomongo
         _tabWidget->addTab(createValidatorTab(), tr("Validator"));
         _tabWidget->setTabsClosable(false);
         VERIFY(connect(_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChangedSlot(int))));
+
+        // Check db version and storage engine type to enable/disable UI options
+        checkSupportedOptions();
 
         QHBoxLayout *hlayout = new QHBoxLayout();
         hlayout->addWidget(_validateJsonButton);
@@ -166,7 +169,7 @@ namespace Robomongo
     void CreateCollectionDialog::accept()
     {
         if (_inputEdit->text().isEmpty() || !validate(_storageEngineFrame, &_storageEngineObj)
-            || !validate(_validatorFrame, &_validatorObj))
+            || !validate(_validatorFrame, &_validatorObj) || !validateAllOptions())
             return;
         makeExtraOptionsObj();
 
@@ -297,6 +300,66 @@ namespace Robomongo
         }
 
         return true;
+    }
+
+    bool CreateCollectionDialog::validateAllOptions() const
+    {
+        bool result(false);
+        if (isCapped()){
+            if (!(getSizeInputEditValue() > 0) || !(getMaxDocNumberInputEditValue() > 0)){
+                QMessageBox::critical(NULL, "Error", "Invalid capped collection options");
+                return false;
+            }
+            result = true;
+        }
+        // todo
+        // ...
+        result = true;
+        return result;
+    }
+
+    void CreateCollectionDialog::checkSupportedOptions() const
+    {
+        if ("wiredTiger" == _storageEngine){     // todo: WiredTiger to be static const in other class
+            _usePowerOfTwoSizeCheckBox->setDisabled(true);
+            _noPaddingCheckBox->setDisabled(true);
+            if (3.0 > _dbVersion){
+                _tabWidget->setTabEnabled(1, false);    // todo: 1 to enum storageEngineTab
+            }
+        }
+        else {
+            _tabWidget->setTabEnabled(1, false);    // todo: 1 to enum storageEngineTab
+        }
+
+        if ("mmapv1" == _storageEngine){        // todo: what is the actual case sensitive string?
+            if (3.0 <= _dbVersion){
+                _usePowerOfTwoSizeCheckBox->setDisabled(true);
+            }
+            if (3.0 > _dbVersion){
+                _noPaddingCheckBox->setDisabled(true);
+            }
+            if (3.0 <= _dbVersion){
+                _usePowerOfTwoSizeCheckBox->setDisabled(true);
+            }
+        }
+        else{
+            _noPaddingCheckBox->setDisabled(true);
+            _usePowerOfTwoSizeCheckBox->setDisabled(true);
+        }
+
+        if ("mmapv1" != _storageEngine && "wiredTiger" != _storageEngine){
+            // ...
+        }
+
+        if (3.2 <= _dbVersion){
+            _autoIndexCheckBox->setDisabled(true);
+        }
+        if (3.0 > _dbVersion){
+            _tabWidget->setTabEnabled(1, false);    // todo: 1 to enum storageEngineTab
+        }
+        if (3.2 > _dbVersion){
+            _tabWidget->setTabEnabled(2, false);    // todo: 2 to enum validatorTab
+        }
     }
 
     void CreateCollectionDialog::onFrameTextChanged()

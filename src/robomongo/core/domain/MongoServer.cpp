@@ -146,6 +146,7 @@ namespace Robomongo {
 
         const ConnectionInfo &info = event->info();
         _version = info._version;
+        _storageEngineType = info._storageEngineType;
         _isConnected = true;
 
         _bus->publish(new ConnectionEstablishedEvent(this, _connectionType));

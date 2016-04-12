@@ -154,8 +154,12 @@ namespace Robomongo
         if (!databaseItem)
             return;
 
-        CreateCollectionDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
-            QtUtils::toQString(databaseItem->database()->name()), QString(), treeWidget());
+        const double dbVersion = static_cast<double>(databaseItem->database()->server()->version());
+        const std::string& engineName = databaseItem->database()->server()->getStorageEngineType();
+        const QString& serverName = QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress());
+        const QString& dbName = QtUtils::toQString(databaseItem->database()->name());
+
+        CreateCollectionDialog dlg(serverName, dbVersion, engineName, dbName, QString(), treeWidget());
         dlg.setOkButtonText("&Create");             // todo: move to ctor
         dlg.setInputLabelText("Collection Name:");  // todo: move to ctor
         

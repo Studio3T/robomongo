@@ -63,6 +63,13 @@ namespace Robomongo
         return result;
     }
 
+    std::string MongoClient::getStorageEngineType() const
+    {
+        mongo::BSONObj resultObj;
+        _dbclient->runCommand("db", BSON("serverStatus" << "1"), resultObj);
+        return resultObj.getObjectField("storageEngine").getStringField("name");
+    }
+
     std::vector<std::string> MongoClient::getDatabaseNames() const
     {
         typedef std::list<std::string> cont_string_t;

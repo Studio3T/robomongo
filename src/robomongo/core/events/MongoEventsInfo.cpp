@@ -22,8 +22,9 @@ namespace Robomongo
             _databases(),
             _version(0.0f) {}
 
-        ConnectionInfo::ConnectionInfo(const std::string &address, const std::vector<std::string> &databases, float version) :
+        ConnectionInfo::ConnectionInfo(const std::string &address, const std::vector<std::string> &databases, float version, const std::string& storageEngine) :
            _address(address),
            _databases(databases),
-           _version(version) {}
+           _version(version),
+           _storageEngineType(storageEngine) {}
 }

@@ -25,9 +25,9 @@ namespace Robomongo
     public:
         typedef std::vector<mongo::BSONObj> ReturnType;     // todo: public access?
 
-        explicit CreateCollectionDialog(const QString &serverName,
-            const QString &database = QString(),
-            const QString &collection = QString(), QWidget *parent = 0);
+        explicit CreateCollectionDialog(const QString &serverName, double dbVersion, const std::string& storageEngine, 
+            const QString &database = QString(), const QString &collection = QString(), QWidget *parent = 0);
+
 
         QString jsonText(FindFrame* frame) const;   // todo: private
         /**
@@ -46,7 +46,7 @@ namespace Robomongo
 
         // Options Tab
         bool isCapped() const;
-        long long getSizeInputEditValue() const;
+        long long getSizeInputEditValue() const;    // todo: shorten name
         int getMaxDocNumberInputEditValue() const;
         bool isCheckedAutoIndexid() const;
         bool isCheckedUsePowerOfTwo() const;
@@ -74,6 +74,8 @@ namespace Robomongo
         QWidget *createValidatorTab();
         void configureFrameText(FindFrame* frame);
         bool makeExtraOptionsObj();
+        bool validateAllOptions() const;
+        void checkSupportedOptions() const;
 
         // Main Frame
         QLineEdit *_inputEdit;
@@ -107,5 +109,8 @@ namespace Robomongo
         ReturnType _extraOptions;
         ReturnType _storageEngineObj;
         ReturnType _validatorObj;
+
+        const double _dbVersion;
+        const std::string _storageEngine;
     };
 }

@@ -155,7 +155,7 @@ namespace Robomongo
             "   return __robomongoAutocompletionCache;"
             "}";
 
-        _scope->exec(cacheAutocompletion, "", true, true, false);
+        _scope->exec(cacheAutocompletion, "", false, false, false);
 
         _initialized = true;
     }

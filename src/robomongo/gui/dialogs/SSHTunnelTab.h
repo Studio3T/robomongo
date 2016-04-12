@@ -27,7 +27,7 @@ namespace Robomongo
         bool isSshSupported() const;
 
     private Q_SLOTS:
-        void sshSupportStateChange(int val);
+        void sshSupportStateChange(int checked);
         void securityChange(const QString& val);
         void setPrivateFile();
         void togglePasswordEchoMode();

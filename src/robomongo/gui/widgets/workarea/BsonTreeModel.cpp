@@ -30,13 +30,16 @@ namespace
             {
                 mongo::BSONElement element = iterator.next();                
                 BsonTreeItem *childItemInner = new BsonTreeItem(doc, root);
-                QString fieldName = QtUtils::toQString(std::string(element.fieldName()));
-                childItemInner->setKey(fieldName);
+                std::string fieldName = std::string(element.fieldName());
+                childItemInner->setFieldName(fieldName);
+
+                QString uiFieldName = QtUtils::toQString(fieldName);
+                childItemInner->setKey(uiFieldName);
 
                 if (isArray) {
                     // When we iterate array, show field names in square brackets
                     // In this case field names are numeric, starting from 0.
-                    childItemInner->setKey("[" + fieldName + "]");
+                    childItemInner->setKey("[" + uiFieldName + "]");
                 }
 
                 if (BsonUtils::isArray(element)) {

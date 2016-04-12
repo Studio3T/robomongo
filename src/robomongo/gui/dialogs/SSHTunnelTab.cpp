@@ -129,25 +129,28 @@ namespace Robomongo
         return _sshSupport->isChecked();
     }
 
-    void SshTunnelTab::sshSupportStateChange(int value)
+    void SshTunnelTab::sshSupportStateChange(int checked)
     {
-        _sshHostName->setEnabled(value);
-        _userName->setEnabled(value);
-        _sshPort->setEnabled(value);       
-        _security->setEnabled(value);
+        _sshHostName->setEnabled(checked);
+        _userName->setEnabled(checked);
+        _sshPort->setEnabled(checked);
+        _security->setEnabled(checked);
 
-        _sshPrivateKeyLabel->setEnabled(value);
-        _privateKeyBox->setEnabled(value);
-        _selectPrivateFileButton->setEnabled(value);
-        _sshAddressLabel->setEnabled(value);
-        _sshUserNameLabel->setEnabled(value);
-        _sshAuthMethodLabel->setEnabled(value);
+        _sshPrivateKeyLabel->setEnabled(checked);
+        _privateKeyBox->setEnabled(checked);
+        _selectPrivateFileButton->setEnabled(checked);
+        _sshAddressLabel->setEnabled(checked);
+        _sshUserNameLabel->setEnabled(checked);
+        _sshAuthMethodLabel->setEnabled(checked);
 
-        _sshPassphraseLabel->setEnabled(value);
-        _passphraseBox->setEnabled(value);
+        _sshPassphraseLabel->setEnabled(checked);
+        _passphraseBox->setEnabled(checked);
 
-        _passwordBox->setEnabled(value);
-        _passwordLabel->setEnabled(value);
+        _passwordBox->setEnabled(checked);
+        _passwordLabel->setEnabled(checked);
+
+        if (checked)
+            _sshHostName->setFocus();
     }
 
     void SshTunnelTab::securityChange(const QString& method)

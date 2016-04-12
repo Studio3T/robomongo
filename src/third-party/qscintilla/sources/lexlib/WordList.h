@@ -22,7 +22,7 @@ class WordList {
 	bool onlyLineEnds;	///< Delimited by any white space or only line ends
 	int starts[256];
 public:
-	explicit WordList(bool onlyLineEnds_ = false);
+	WordList(bool onlyLineEnds_ = false);
 	~WordList();
 	operator bool() const;
 	bool operator!=(const WordList &other) const;

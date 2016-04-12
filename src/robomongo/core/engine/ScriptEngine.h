@@ -27,6 +27,8 @@ namespace Robomongo
         void ping();
         QStringList complete(const std::string &prefix, const AutocompletionMode mode);
 
+        void invalidateDbCollectionsCache();
+
     private:
         ConnectionSettings *_connection;
 
@@ -43,5 +45,6 @@ namespace Robomongo
         mongo::ScriptEngine *_engine;
         mongo::Scope *_scope;
         QMutex _mutex;
+        bool _initialized;
     };
 }

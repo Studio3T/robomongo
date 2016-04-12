@@ -16,7 +16,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 }
 
 macx {
-    QMAKE_POST_LINK = install_name_tool -change libqscintilla2.12.dylib $$[QT_INSTALL_LIBS]/libqscintilla2.12.dylib $(TARGET)
+    QMAKE_POST_LINK = install_name_tool -change libqscintilla2.11.dylib $$[QT_INSTALL_LIBS]/libqscintilla2.11.dylib $(TARGET)
 }
 
 HEADERS = qscintillaplugin.h

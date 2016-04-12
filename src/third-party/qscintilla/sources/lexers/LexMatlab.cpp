@@ -12,9 +12,6 @@
  **   - added ... displayed as a comment
  **   - removed unused IsAWord functions
  **   - added some comments
- **
- ** Changes by John Donoghue 2014/08/01
- **   - fix allowed transpose ' after {} operator
  **/
 // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
@@ -60,8 +57,7 @@ static bool IsOctaveComment(Accessor &styler, int pos, int len) {
 static void ColouriseMatlabOctaveDoc(
             unsigned int startPos, int length, int initStyle,
             WordList *keywordlists[], Accessor &styler,
-            bool (*IsCommentChar)(int),
-            bool ismatlab) {
+            bool (*IsCommentChar)(int)) {
 
 	WordList &keywords = *keywordlists[0];
 
@@ -203,11 +199,7 @@ static void ColouriseMatlabOctaveDoc(
 				styler.SetLineState(curLine, commentDepth);
 				sc.SetState(SCE_MATLAB_COMMENT);
 			} else if (sc.ch == '!' && sc.chNext != '=' ) {
-				if(ismatlab) {
-					sc.SetState(SCE_MATLAB_COMMAND);
-				} else {
-					sc.SetState(SCE_MATLAB_OPERATOR);
-				}
+				sc.SetState(SCE_MATLAB_COMMAND);
 			} else if (sc.ch == '\'') {
 				if (transpose) {
 					sc.SetState(SCE_MATLAB_OPERATOR);
@@ -221,7 +213,7 @@ static void ColouriseMatlabOctaveDoc(
 			} else if (isalpha(sc.ch)) {
 				sc.SetState(SCE_MATLAB_KEYWORD);
 			} else if (isoperator(static_cast<char>(sc.ch)) || sc.ch == '@' || sc.ch == '\\') {
-				if (sc.ch == ')' || sc.ch == ']' || sc.ch == '}') {
+				if (sc.ch == ')' || sc.ch == ']') {
 					transpose = true;
 				} else {
 					transpose = false;
@@ -237,12 +229,12 @@ static void ColouriseMatlabOctaveDoc(
 
 static void ColouriseMatlabDoc(unsigned int startPos, int length, int initStyle,
                                WordList *keywordlists[], Accessor &styler) {
-	ColouriseMatlabOctaveDoc(startPos, length, initStyle, keywordlists, styler, IsMatlabCommentChar, true);
+	ColouriseMatlabOctaveDoc(startPos, length, initStyle, keywordlists, styler, IsMatlabCommentChar);
 }
 
 static void ColouriseOctaveDoc(unsigned int startPos, int length, int initStyle,
                                WordList *keywordlists[], Accessor &styler) {
-	ColouriseMatlabOctaveDoc(startPos, length, initStyle, keywordlists, styler, IsOctaveCommentChar, false);
+	ColouriseMatlabOctaveDoc(startPos, length, initStyle, keywordlists, styler, IsOctaveCommentChar);
 }
 
 static void FoldMatlabOctaveDoc(unsigned int startPos, int length, int,

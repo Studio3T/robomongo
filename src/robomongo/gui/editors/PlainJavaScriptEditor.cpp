@@ -182,4 +182,18 @@ namespace Robomongo
             setMarginWidth(0, _lineNumberMarginWidth);
         }
     }
+
+    void RoboScintilla::setAppropriateBraceMatching() {
+#ifdef Q_OS_MAC
+        // On Mac OS when brace matching is enabled, text
+        // will blink when you move cursor to some brace or
+        // when inside braces. This behaviour is not fully fixed
+        // in QScintilla 2.9.1 and 2.8.4
+        setBraceMatching(QsciScintilla::NoBraceMatch);
+#else
+        setBraceMatching(QsciScintilla::StrictBraceMatch);
+#endif
+    }
+
+
 }

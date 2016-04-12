@@ -11,6 +11,8 @@ namespace
     const unsigned port = 27017;
     const char *defaultServerHost = "localhost";
     const char *defaultNameConnection = "New Connection";
+
+    const int maxLength = 300;
 }
 
 namespace Robomongo
@@ -27,7 +29,7 @@ namespace Robomongo
 
     void ConnectionSettings::fromVariant(const QVariantMap &map) {
         setConnectionName(QtUtils::toStdString(map.value("connectionName").toString()));
-        setServerHost(QtUtils::toStdString(map.value("serverHost").toString()));
+        setServerHost(QtUtils::toStdString(map.value("serverHost").toString().left(maxLength)));
         setServerPort(map.value("serverPort").toInt());
         setDefaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString()));
 

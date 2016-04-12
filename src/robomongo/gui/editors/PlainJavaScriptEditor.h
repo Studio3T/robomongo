@@ -19,6 +19,7 @@ namespace Robomongo
         void setIgnoreTabKey(bool ignore) { _ignoreTabKey = ignore; }
         int lineNumberMarginWidth() const;
         int textWidth(int style, const QString &text);
+        void setAppropriateBraceMatching();
 
     protected:
         void wheelEvent(QWheelEvent *e);

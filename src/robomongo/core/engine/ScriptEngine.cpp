@@ -60,6 +60,7 @@ namespace Robomongo
         _scope(NULL),
         _engine(NULL),
         _timeoutSec(timeoutSec),
+        _initialized(false),
         _mutex(QMutex::Recursive) { }
 
     ScriptEngine::~ScriptEngine()
@@ -142,6 +143,21 @@ namespace Robomongo
 
         // Save original autocomplete function so it can be restored if overwritten by user preference
         _scope->exec("DB.autocompleteOriginal = DB.autocomplete;", "(saveOriginalAutocomplete)", false, false, false);
+
+        // Cache result of original "DB.autocomplete"
+        // Cache invalidated by the invalidateDbCollectionsCache() method.
+        std::string cacheAutocompletion =
+            "__robomongoAutocompletionCache = null;"
+            "DB.autocompleteCached = function(obj) { "
+            "   if (__robomongoAutocompletionCache == null) {"
+            "       __robomongoAutocompletionCache = DB.autocompleteOriginal(obj);"
+            "   }"
+            "   return __robomongoAutocompletionCache;"
+            "}";
+
+        _scope->exec(cacheAutocompletion, "", false, false, false);
+
+        _initialized = true;
     }
 
     MongoShellExecResult ScriptEngine::exec(const std::string &originalScript, const std::string &dbName)
@@ -263,7 +279,7 @@ namespace Robomongo
 
         try {
             if (mode == AutocompleteAll)
-                _scope->exec("DB.autocomplete = DB.autocompleteOriginal;", "", false, false, false);
+                _scope->exec("DB.autocomplete = DB.autocompleteCached;", "", false, false, false);
             else if (mode == AutocompleteNoCollectionNames)
                 _scope->exec("DB.autocomplete = function(obj){return [];}", "", false, false, false);
 
@@ -413,5 +429,12 @@ namespace Robomongo
         }
 
         return true;
+    }
+
+    void ScriptEngine::invalidateDbCollectionsCache() {
+        if (!_initialized)
+            return;
+
+        _scope->exec("__robomongoAutocompletionCache = null;", "", false, false, false);
     }
 }

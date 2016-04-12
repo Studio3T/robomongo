@@ -17,7 +17,7 @@ public:
 	RunStyles rs;
 	int indicator;
 
-	explicit Decoration(int indicator_);
+	Decoration(int indicator_);
 	~Decoration();
 
 	bool Empty() const;

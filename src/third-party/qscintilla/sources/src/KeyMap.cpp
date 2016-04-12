@@ -8,7 +8,6 @@
 #include <stdlib.h>
 
 #include <vector>
-#include <map>
 
 #include "Platform.h"
 
@@ -37,12 +36,26 @@ void KeyMap::Clear() {
 }
 
 void KeyMap::AssignCmdKey(int key, int modifiers, unsigned int msg) {
-	kmap[KeyModifiers(key, modifiers)] = msg;
+	for (size_t keyIndex = 0; keyIndex < kmap.size(); keyIndex++) {
+		if ((key == kmap[keyIndex].key) && (modifiers == kmap[keyIndex].modifiers)) {
+			kmap[keyIndex].msg = msg;
+			return;
+		}
+	}
+	KeyToCommand ktc;
+	ktc.key = key;
+	ktc.modifiers = modifiers;
+	ktc.msg = msg;
+	kmap.push_back(ktc);
 }
 
 unsigned int KeyMap::Find(int key, int modifiers) const {
-	std::map<KeyModifiers, unsigned int>::const_iterator it = kmap.find(KeyModifiers(key, modifiers));
-	return (it == kmap.end()) ? 0 : it->second;
+	for (size_t i = 0; i < kmap.size(); i++) {
+		if ((key == kmap[i].key) && (modifiers == kmap[i].modifiers)) {
+			return kmap[i].msg;
+		}
+	}
+	return 0;
 }
 
 #if PLAT_GTK_MACOSX

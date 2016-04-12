@@ -28,6 +28,15 @@ int Scintilla_LinkLexers() {
 
 ```
 
+We fixed problem of active caret when editor pane is not active. For this we
+commented single line in `sources/Qt4Qt5/qsciscintillabase.cpp`, line 345:
+
+```cpp
+//    if (e->reason() == Qt::ActiveWindowFocusReason)
+```
+
+This problem was discussed at least here: https://github.com/openscad/openscad/issues/1176
+
 CMake integration
 =================
 

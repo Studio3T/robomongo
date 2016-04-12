@@ -9,7 +9,6 @@
 
 #include <algorithm>
 
-#include "StringCopy.h"
 #include "CharacterCategory.h"
 
 #ifdef SCI_NAMESPACE
@@ -3276,7 +3275,7 @@ const int catRanges[] = {
 
 const int maxUnicode = 0x10ffff;
 const int maskCategory = 0x1F;
-const int nRanges = ELEMENTS(catRanges);
+const int nRanges = sizeof(catRanges) / sizeof(catRanges[0]);
 
 }
 
@@ -3287,7 +3286,7 @@ const int nRanges = ELEMENTS(catRanges);
 // Initial version has 3249 entries and adds about 13K to the executable.
 // The array is in ascending order so can be searched using binary search.
 // Therefore the average call takes log2(3249) = 12 comparisons.
-// For speed, it may be useful to make a linear table for the common values,
+// For speed, it may be an useful to make a linear table for the common values,
 // possibly for 0..0xff for most Western European text or 0..0xfff for most
 // alphabetic languages.
 

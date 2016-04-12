@@ -4,7 +4,7 @@
 #ifndef _QSCINTILLAPLUGIN_H
 #define _QSCINTILLAPLUGIN_H
 
-#include <QtDesigner>
+#include <QDesignerCustomWidgetInterface>
 
 
 class QScintillaPlugin : public QObject, public QDesignerCustomWidgetInterface

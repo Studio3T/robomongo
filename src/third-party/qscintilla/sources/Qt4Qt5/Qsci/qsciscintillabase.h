@@ -1,18 +1,23 @@
 // This class defines the "official" low-level API.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This file may be used under the terms of the GNU General Public License
-// version 3.0 as published by the Free Software Foundation and appearing in
-// the file LICENSE included in the packaging of this file.  Please review the
-// following information to ensure the GNU General Public License version 3.0
-// requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// If you do not wish to use this file under the terms of the GPL version 3.0
-// then you may purchase a commercial license.  For more information contact
-// info@riverbankcomputing.com.
+// If you are unsure which license is appropriate for your use, please
+// contact the sales department at sales@riverbankcomputing.com.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -29,8 +34,9 @@ extern "C++" {
 
 #include <QAbstractScrollArea>
 #include <QByteArray>
-#include <QPoint>
-#include <QTimer>
+
+#include <qpoint.h>
+#include <qtimer.h>
 
 #include <Qsci/qsciglobal.h>
 
@@ -38,9 +44,9 @@ extern "C++" {
 QT_BEGIN_NAMESPACE
 class QColor;
 class QImage;
-class QMimeData;
 class QPainter;
 class QPixmap;
+class QMimeData;
 QT_END_NAMESPACE
 
 class QsciScintillaQt;
@@ -865,9 +871,6 @@ public:
 
         //!
         SCI_CALLTIPSETPOSITION = 2213,
-
-        //!
-        SCI_CALLTIPSETPOSSTART = 2214,
 
         //!
         SCI_VISIBLEFROMDOCLINE = 2220,
@@ -1821,6 +1824,15 @@ public:
         SCI_SCROLLRANGE = 2569,
 
         //!
+        SCI_SETADDITIONALCARETSVISIBLE = 2608,
+
+        //!
+        SCI_GETADDITIONALCARETSVISIBLE = 2609,
+
+        //!
+        SCI_AUTOCGETCURRENTTEXT = 2610,
+
+        //!
         SCI_GETSELECTIONS = 2570,
 
         //!
@@ -1935,15 +1947,6 @@ public:
         SCI_SWAPMAINANCHORCARET = 2607,
 
         //!
-        SCI_SETADDITIONALCARETSVISIBLE = 2608,
-
-        //!
-        SCI_GETADDITIONALCARETSVISIBLE = 2609,
-
-        //!
-        SCI_AUTOCGETCURRENTTEXT = 2610,
-
-        //!
         SCI_SETFONTQUALITY = 2611,
 
         //!
@@ -2040,12 +2043,6 @@ public:
         SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR = 2635,
 
         //!
-        SCI_AUTOCSETMULTI = 2636,
-
-        //!
-        SCI_AUTOCGETMULTI = 2637,
-
-        //!
         SCI_FINDINDICATORSHOW = 2640,
 
         //!
@@ -2085,22 +2082,13 @@ public:
         SCI_VCHOMEDISPLAY = 2652,
 
         //!
-        SCI_VCHOMEDISPLAYEXTEND = 2653,
-
-        //!
         SCI_GETCARETLINEVISIBLEALWAYS = 2654,
 
         //!
         SCI_SETCARETLINEVISIBLEALWAYS = 2655,
 
         //!
-        SCI_SETLINEENDTYPESALLOWED = 2656,
-
-        //!
-        SCI_GETLINEENDTYPESALLOWED = 2657,
-
-        //!
-        SCI_GETLINEENDTYPESACTIVE = 2658,
+        SCI_VCHOMEDISPLAYEXTEND = 2653,
 
         //!
         SCI_AUTOCSETORDER = 2660,
@@ -2134,57 +2122,6 @@ public:
 
         //!
         SCI_POSITIONRELATIVE = 2670,
-
-        //!
-        SCI_DROPSELECTIONN = 2671,
-
-        //!
-        SCI_CHANGEINSERTION = 2672,
-
-        //!
-        SCI_GETPHASESDRAW = 2673,
-
-        //!
-        SCI_SETPHASESDRAW = 2674,
-
-        //!
-        SCI_CLEARTABSTOPS = 2675,
-
-        //!
-        SCI_ADDTABSTOP = 2676,
-
-        //!
-        SCI_GETNEXTTABSTOP = 2677,
-
-        //!
-        SCI_GETIMEINTERACTION = 2678,
-
-        //!
-        SCI_SETIMEINTERACTION = 2679,
-
-        //!
-        SCI_INDICSETHOVERSTYLE = 2680,
-
-        //!
-        SCI_INDICGETHOVERSTYLE = 2681,
-
-        //!
-        SCI_INDICSETHOVERFORE = 2682,
-
-        //!
-        SCI_INDICGETHOVERFORE = 2683,
-
-        //!
-        SCI_INDICSETFLAGS = 2684,
-
-        //!
-        SCI_INDICGETFLAGS = 2685,
-
-        //!
-        SCI_SETTARGETRANGE = 2686,
-
-        //!
-        SCI_GETTARGETRANGE = 2687,
 
         //!
         SCI_STARTRECORD = 3001,
@@ -2248,36 +2185,6 @@ public:
 
         //!
         SCI_DESCRIBEKEYWORDSETS = 4017,
-
-        //!
-        SCI_GETLINEENDTYPESSUPPORTED = 4018,
-
-        //!
-        SCI_ALLOCATESUBSTYLES = 4020,
-
-        //!
-        SCI_GETSUBSTYLESSTART = 4021,
-
-        //!
-        SCI_GETSUBSTYLESLENGTH = 4022,
-
-        //!
-        SCI_GETSTYLEFROMSUBSTYLE = 4027,
-
-        //!
-        SCI_GETPRIMARYSTYLEFROMSTYLE = 4028,
-
-        //!
-        SCI_FREESUBSTYLES = 4023,
-
-        //!
-        SCI_SETIDENTIFIERS = 4024,
-
-        //!
-        SCI_DISTANCETOSECONDARYSTYLES = 4025,
-
-        //!
-        SCI_GETSUBSTYLEBASES = 4026,
     };
 
     enum
@@ -2305,46 +2212,14 @@ public:
 
     enum
     {
-        SC_IME_WINDOWED = 0,
-        SC_IME_INLINE = 1,
-    };
-
-    enum
-    {
         SC_MARGINOPTION_NONE = 0x00,
         SC_MARGINOPTION_SUBLINESELECT = 0x01
     };
 
     enum
     {
-        SC_MULTIAUTOC_ONCE = 0,
-        SC_MULTIAUTOC_EACH = 1
-    };
-
-    enum
-    {
         SC_MULTIPASTE_ONCE = 0,
         SC_MULTIPASTE_EACH = 1
-    };
-
-    //! This enum defines the different selection modes.
-    //!
-    //! \sa SCI_GETSELECTIONMODE, SCI_SETSELECTIONMODE
-    enum
-    {
-        SC_SEL_STREAM = 0,
-        SC_SEL_RECTANGLE = 1,
-        SC_SEL_LINES = 2,
-        SC_SEL_THIN = 3
-    };
-
-    enum
-    {
-        SC_STATUS_OK = 0,
-        SC_STATUS_FAILURE = 1,
-        SC_STATUS_BADALLOC = 2,
-        SC_STATUS_WARN_START = 1000,
-        SC_STATUS_WARNREGEX = 1001,
     };
 
     enum
@@ -2375,6 +2250,17 @@ public:
         SC_WRAPVISUALFLAGLOC_DEFAULT = 0x0000,
         SC_WRAPVISUALFLAGLOC_END_BY_TEXT = 0x0001,
         SC_WRAPVISUALFLAGLOC_START_BY_TEXT = 0x0002
+    };
+
+    //! This enum defines the different selection modes.
+    //!
+    //! \sa SCI_GETSELECTIONMODE, SCI_SETSELECTIONMODE
+    enum
+    {
+        SC_SEL_STREAM = 0,
+        SC_SEL_RECTANGLE = 1,
+        SC_SEL_LINES = 2,
+        SC_SEL_THIN = 3
     };
 
     enum
@@ -2509,9 +2395,6 @@ public:
         //! A RGBA format image.
         SC_MARK_RGBAIMAGE = 30,
 
-        //! A bookmark.
-        SC_MARK_BOOKMARK = 31,
-
         //! Characters can be used as symbols by adding this to the ASCII value
         //! of the character.
         SC_MARK_CHARACTER = 10000
@@ -2641,23 +2524,13 @@ public:
         INDIC_DOTBOX = 12,
         INDIC_SQUIGGLEPIXMAP = 13,
         INDIC_COMPOSITIONTHICK = 14,
-        INDIC_COMPOSITIONTHIN = 15,
-        INDIC_FULLBOX = 16,
-        INDIC_TEXTFORE = 17,
-
-        INDIC_IME = 32,
-        INDIC_IME_MAX = 35,
 
         INDIC_CONTAINER = 8,
-        INDIC_MAX = 35,
+        INDIC_MAX = 31,
         INDIC0_MASK = 0x20,
         INDIC1_MASK = 0x40,
         INDIC2_MASK = 0x80,
-        INDICS_MASK = 0xe0,
-
-        SC_INDICVALUEBIT = 0x01000000,
-        SC_INDICVALUEMASK = 0x00ffffff,
-        SC_INDICFLAG_VALUEBEFORE = 1,
+        INDICS_MASK = 0xe0
     };
 
     enum
@@ -2675,8 +2548,7 @@ public:
         SCFIND_MATCHCASE = 4,
         SCFIND_WORDSTART = 0x00100000,
         SCFIND_REGEXP = 0x00200000,
-        SCFIND_POSIX = 0x00400000,
-        SCFIND_CXX11REGEX = 0x00800000,
+        SCFIND_POSIX = 0x00400000
     };
 
     enum
@@ -2693,14 +2565,7 @@ public:
         SC_FOLDFLAG_LINEBEFORE_CONTRACTED = 0x0004,
         SC_FOLDFLAG_LINEAFTER_EXPANDED = 0x0008,
         SC_FOLDFLAG_LINEAFTER_CONTRACTED = 0x0010,
-        SC_FOLDFLAG_LEVELNUMBERS = 0x0040,
-        SC_FOLDFLAG_LINESTATE = 0x0080,
-    };
-
-    enum
-    {
-        SC_LINE_END_TYPE_DEFAULT = 0,
-        SC_LINE_END_TYPE_UNICODE = 1,
+        SC_FOLDFLAG_LEVELNUMBERS = 0x0040
     };
 
     enum
@@ -2712,8 +2577,7 @@ public:
     {
         SC_WRAP_NONE = 0,
         SC_WRAP_WORD = 1,
-        SC_WRAP_CHAR = 2,
-        SC_WRAP_WHITESPACE = 3,
+        SC_WRAP_CHAR = 2
     };
 
     enum
@@ -2733,17 +2597,9 @@ public:
 
     enum
     {
-        SC_PHASES_ONE = 0,
-        SC_PHASES_TWO = 1,
-        SC_PHASES_MULTIPLE = 2,
-    };
-
-    enum
-    {
         ANNOTATION_HIDDEN = 0,
         ANNOTATION_STANDARD = 1,
-        ANNOTATION_BOXED = 2,
-        ANNOTATION_INDENTED = 3,
+        ANNOTATION_BOXED = 2
     };
 
     enum
@@ -2809,9 +2665,7 @@ public:
         SC_MOD_CHANGEANNOTATION = 0x20000,
         SC_MOD_CONTAINER = 0x40000,
         SC_MOD_LEXERSTATE = 0x80000,
-        SC_MOD_INSERTCHECK = 0x100000,
-        SC_MOD_CHANGETABSTOPS = 0x200000,
-        SC_MODEVENTMASKALL = 0x3fffff
+        SC_MODEVENTMASKALL = 0xfffff
     };
 
     enum
@@ -2968,7 +2822,7 @@ public:
         //! Select the Scriptol lexer.
         SCLEX_SCRIPTOL = 33,
 
-        //! Select the assembler lexer (';' comment character).
+        //! Select the assembler lexer.
         SCLEX_ASM = 34,
 
         //! Select the C++ lexer with case insensitive keywords.
@@ -3201,30 +3055,6 @@ public:
 
         //! Select the Rust lexer.
         SCLEX_RUST = 111,
-
-        //! Select the MSC Nastran DMAP lexer.
-        SCLEX_DMAP = 112,
-
-        //! Select the assembler lexer ('#' comment character).
-        SCLEX_AS = 113,
-
-        //! Select the DMIS lexer.
-        SCLEX_DMIS = 114,
-
-        //! Select the lexer for Windows registry files.
-        SCLEX_REGISTRY = 115,
-
-        //! Select the BibTex lexer.
-        SCLEX_BIBTEX = 116,
-
-        //! Select the Motorola S-Record hex lexer.
-        SCLEX_SREC = 117,
-
-        //! Select the Intel hex lexer.
-        SCLEX_IHEX = 118,
-
-        //! Select the Tektronix extended hex lexer.
-        SCLEX_TEHEX = 119,
     };
 
     enum
@@ -3238,8 +3068,6 @@ public:
     {
         SC_TECHNOLOGY_DEFAULT = 0,
         SC_TECHNOLOGY_DIRECTWRITE = 1,
-        SC_TECHNOLOGY_DIRECTWRITERETAIN = 2,
-        SC_TECHNOLOGY_DIRECTWRITEDC = 3,
     };
 
     enum
@@ -3336,6 +3164,7 @@ public:
 
     //! Send the Scintilla message \a msg and return a pointer result.
     void *SendScintillaPtrResult(unsigned int msg) const;
+
 
     //! \internal
     static int commandKey(int qt_key, int &modifiers);
@@ -3583,6 +3412,7 @@ protected:
 
 #define ScintillaBytesConstData(b)  (b).constData()
 
+
     //! \internal Convert a QString to encoded bytes.
     ScintillaBytes textAsBytes(const QString &text) const;
 
@@ -3590,6 +3420,7 @@ protected:
     QString bytesAsText(const char *bytes) const;
 
 private slots:
+    void handleTimer();
     void handleVSb(int value);
     void handleHSb(int value);
     void handleSelection();

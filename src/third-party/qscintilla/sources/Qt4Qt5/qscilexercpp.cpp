@@ -1,18 +1,23 @@
 // This module implements the QsciLexerCPP class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This file may be used under the terms of the GNU General Public License
-// version 3.0 as published by the Free Software Foundation and appearing in
-// the file LICENSE included in the packaging of this file.  Please review the
-// following information to ensure the GNU General Public License version 3.0
-// requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// If you do not wish to use this file under the terms of the GPL version 3.0
-// then you may purchase a commercial license.  For more information contact
-// info@riverbankcomputing.com.
+// If you are unsure which license is appropriate for your use, please
+// contact the sales department at sales@riverbankcomputing.com.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -30,8 +35,7 @@ QsciLexerCPP::QsciLexerCPP(QObject *parent, bool caseInsensitiveKeywords)
     : QsciLexer(parent),
       fold_atelse(false), fold_comments(false), fold_compact(true),
       fold_preproc(true), style_preproc(false), dollars(true),
-      highlight_triple(false), highlight_hash(false), highlight_back(false),
-      highlight_escape(false), vs_escape(false),
+      highlight_triple(false), highlight_hash(false),
       nocase(caseInsensitiveKeywords)
 {
 }
@@ -210,18 +214,6 @@ QColor QsciLexerCPP::defaultColor(int style) const
 
     case InactivePreProcessorComment:
         return QColor(0xa0, 0xc0, 0x90);
-
-    case UserLiteral:
-        return QColor(0xc0, 0x60, 0x00);
-
-    case InactiveUserLiteral:
-        return QColor(0xd7, 0xa0, 0x90);
-
-    case TaskMarker:
-        return QColor(0xbe, 0x07, 0xff);
-
-    case InactiveTaskMarker:
-        return QColor(0xc3, 0xa1, 0xcf);
     }
 
     return QsciLexer::defaultColor(style);
@@ -269,8 +261,6 @@ QFont QsciLexerCPP::defaultFont(int style) const
     case InactiveCommentDocKeyword:
     case CommentDocKeywordError:
     case InactiveCommentDocKeywordError:
-    case TaskMarker:
-    case InactiveTaskMarker:
 #if defined(Q_OS_WIN)
         f = QFont("Comic Sans MS",9);
 #elif defined(Q_OS_MAC)
@@ -509,24 +499,6 @@ QString QsciLexerCPP::description(int style) const
 
     case InactivePreProcessorCommentLineDoc:
         return tr("Inactive JavaDoc style pre-processor comment");
-
-    case UserLiteral:
-        return tr("User-defined literal");
-
-    case InactiveUserLiteral:
-        return tr("Inactive user-defined literal");
-
-    case TaskMarker:
-        return tr("Task marker");
-
-    case InactiveTaskMarker:
-        return tr("Inactive task marker");
-
-    case EscapeSequence:
-        return tr("Escape sequence");
-
-    case InactiveEscapeSequence:
-        return tr("Inactive escape sequence");
     }
 
     return QString();
@@ -576,15 +548,14 @@ void QsciLexerCPP::refreshProperties()
     setDollarsProp();
     setHighlightTripleProp();
     setHighlightHashProp();
-    setHighlightBackProp();
-    setHighlightEscapeProp();
-    setVerbatimStringEscapeProp();
 }
 
 
 // Read properties from the settings.
 bool QsciLexerCPP::readProperties(QSettings &qs,const QString &prefix)
 {
+    int rc = true;
+
     fold_atelse = qs.value(prefix + "foldatelse", false).toBool();
     fold_comments = qs.value(prefix + "foldcomments", false).toBool();
     fold_compact = qs.value(prefix + "foldcompact", true).toBool();
@@ -593,17 +564,16 @@ bool QsciLexerCPP::readProperties(QSettings &qs,const QString &prefix)
     dollars = qs.value(prefix + "dollars", true).toBool();
     highlight_triple = qs.value(prefix + "highlighttriple", false).toBool();
     highlight_hash = qs.value(prefix + "highlighthash", false).toBool();
-    highlight_back = qs.value(prefix + "highlightback", false).toBool();
-    highlight_escape = qs.value(prefix + "highlightescape", false).toBool();
-    vs_escape = qs.value(prefix + "verbatimstringescape", false).toBool();
 
-    return true;
+    return rc;
 }
 
 
 // Write properties to the settings.
 bool QsciLexerCPP::writeProperties(QSettings &qs,const QString &prefix) const
 {
+    int rc = true;
+
     qs.setValue(prefix + "foldatelse", fold_atelse);
     qs.setValue(prefix + "foldcomments", fold_comments);
     qs.setValue(prefix + "foldcompact", fold_compact);
@@ -612,11 +582,8 @@ bool QsciLexerCPP::writeProperties(QSettings &qs,const QString &prefix) const
     qs.setValue(prefix + "dollars", dollars);
     qs.setValue(prefix + "highlighttriple", highlight_triple);
     qs.setValue(prefix + "highlighthash", highlight_hash);
-    qs.setValue(prefix + "highlightback", highlight_back);
-    qs.setValue(prefix + "highlightescape", highlight_escape);
-    qs.setValue(prefix + "verbatimstringescape", vs_escape);
 
-    return true;
+    return rc;
 }
 
 
@@ -747,55 +714,4 @@ void QsciLexerCPP::setHighlightHashProp()
 {
     emit propertyChanged("lexer.cpp.hashquoted.strings",
             (highlight_hash ? "1" : "0"));
-}
-
-
-// Set if back-quoted strings are highlighted.
-void QsciLexerCPP::setHighlightBackQuotedStrings(bool enabled)
-{
-    highlight_back = enabled;
-
-    setHighlightBackProp();
-}
-
-
-// Set the "lexer.cpp.backquoted.strings" property.
-void QsciLexerCPP::setHighlightBackProp()
-{
-    emit propertyChanged("lexer.cpp.backquoted.strings",
-            (highlight_back ? "1" : "0"));
-}
-
-
-// Set if escape sequences in strings are highlighted.
-void QsciLexerCPP::setHighlightEscapeSequences(bool enabled)
-{
-    highlight_escape = enabled;
-
-    setHighlightEscapeProp();
-}
-
-
-// Set the "lexer.cpp.escape.sequence" property.
-void QsciLexerCPP::setHighlightEscapeProp()
-{
-    emit propertyChanged("lexer.cpp.escape.sequence",
-            (highlight_escape ? "1" : "0"));
-}
-
-
-// Set if escape sequences in verbatim strings are allowed.
-void QsciLexerCPP::setVerbatimStringEscapeSequencesAllowed(bool allowed)
-{
-    vs_escape = allowed;
-
-    setVerbatimStringEscapeProp();
-}
-
-
-// Set the "lexer.cpp.verbatim.strings.allow.escapes" property.
-void QsciLexerCPP::setVerbatimStringEscapeProp()
-{
-    emit propertyChanged("lexer.cpp.verbatim.strings.allow.escapes",
-            (vs_escape ? "1" : "0"));
 }

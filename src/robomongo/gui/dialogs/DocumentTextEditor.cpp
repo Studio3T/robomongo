@@ -194,7 +194,7 @@ namespace Robomongo
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
         QFont font = GuiRegistry::instance().font();
         javaScriptLexer->setFont(font);
-        _queryText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
+        _queryText->sciScintilla()->setAppropriateBraceMatching();
         _queryText->sciScintilla()->setFont(font);
         _queryText->sciScintilla()->setPaper(QColor(255, 0, 0, 127));
         _queryText->sciScintilla()->setLexer(javaScriptLexer);

@@ -1,18 +1,23 @@
 // This module implements the "official" low-level API.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This file may be used under the terms of the GNU General Public License
-// version 3.0 as published by the Free Software Foundation and appearing in
-// the file LICENSE included in the packaging of this file.  Please review the
-// following information to ensure the GNU General Public License version 3.0
-// requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// If you do not wish to use this file under the terms of the GPL version 3.0
-// then you may purchase a commercial license.  For more information contact
-// info@riverbankcomputing.com.
+// If you are unsure which license is appropriate for your use, please
+// contact the sales department at sales@riverbankcomputing.com.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -20,9 +25,12 @@
 
 #include "Qsci/qsciscintillabase.h"
 
-#include <QApplication>
-#include <QClipboard>
-#include <QColor>
+#include <qapplication.h>
+#include <qclipboard.h>
+#include <qcolor.h>
+#include <qscrollbar.h>
+#include <qtextcodec.h>
+
 #include <QContextMenuEvent>
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
@@ -34,9 +42,7 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QPaintEvent>
-#include <QScrollBar>
 #include <QStyle>
-#include <QTextCodec>
 
 #include "ScintillaQt.h"
 
@@ -81,6 +87,7 @@ static const QLatin1String mimeRectangular("text/x-qscintilla-rectangular");
 #if (QT_VERSION >= 0x040200 && QT_VERSION < 0x050000 && defined(Q_OS_MAC)) || (QT_VERSION >= 0x050200 && defined(Q_OS_OSX))
 extern void initialiseRectangularPasteboardMime();
 #endif
+
 
 // The ctor.
 QsciScintillaBase::QsciScintillaBase(QWidget *parent)
@@ -140,11 +147,10 @@ QsciScintillaBase::QsciScintillaBase(QWidget *parent)
 // The dtor.
 QsciScintillaBase::~QsciScintillaBase()
 {
-    // The QsciScintillaQt object isn't a child so delete it explicitly.
-    delete sci;
-
     // Remove it from the pool.
     poolList.removeAt(poolList.indexOf(this));
+
+    delete sci;
 }
 
 
@@ -301,6 +307,13 @@ void *QsciScintillaBase::SendScintillaPtrResult(unsigned int msg) const
 }
 
 
+// Handle the timer on behalf of the QsciScintillaQt instance.
+void QsciScintillaBase::handleTimer()
+{
+    sci->Tick();
+}
+
+
 // Re-implemented to handle the context menu.
 void QsciScintillaBase::contextMenuEvent(QContextMenuEvent *e)
 {
@@ -324,21 +337,17 @@ void QsciScintillaBase::focusInEvent(QFocusEvent *e)
 // Re-implemented to tell the widget it has lost the focus.
 void QsciScintillaBase::focusOutEvent(QFocusEvent *e)
 {
-    if (e->reason() == Qt::ActiveWindowFocusReason)
-    {
-        // Only tell Scintilla we have lost focus if the new active window
-        // isn't our auto-completion list.  This is probably only an issue on
-        // Linux and there are still problems because subsequent focus out
-        // events don't always seem to get generated (at least with Qt5).
+    // Only tell Scintilla we have lost focus if the new active window isn't
+    // our auto-completion list.  This is probably only an issue on Linux and
+    // there are still problems because subsequent focus out events don't
+    // always seem to get generated (at least with Qt5).
 
+//    if (e->reason() == Qt::ActiveWindowFocusReason)
+    {
         QWidget *aw = QApplication::activeWindow();
 
         if (!aw || aw->parent() != this || !aw->inherits("QsciSciListBox"))
             sci->SetFocusState(false);
-    }
-    else
-    {
-        sci->SetFocusState(false);
     }
 
     QAbstractScrollArea::focusOutEvent(e);
@@ -737,6 +746,7 @@ void QsciScintillaBase::acceptAction(QDropEvent *e)
 }
 
 
+
 // See if a MIME data object can be decoded.
 bool QsciScintillaBase::canInsertFromMimeData(const QMimeData *source) const
 {
@@ -797,3 +807,4 @@ QMimeData *QsciScintillaBase::toMimeData(const QByteArray &text, bool rectangula
 
     return mime;
 }
+

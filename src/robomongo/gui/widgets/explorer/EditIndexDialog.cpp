@@ -62,7 +62,7 @@ namespace
         Robomongo::FindFrame *findFrame = new Robomongo::FindFrame(parent);
         findFrame->sciScintilla()->setLexer(javaScriptLexer);
         findFrame->sciScintilla()->setTabWidth(4);
-        findFrame->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
+        findFrame->sciScintilla()->setAppropriateBraceMatching();
         findFrame->sciScintilla()->setFont(textFont);
         findFrame->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
         findFrame->sciScintilla()->setText(text);

@@ -26,6 +26,7 @@ namespace Robomongo
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
         _timerId(-1),
+        _dbAutocompleteCacheTimerId(-1),
         _mongoTimeoutSec(mongoTimeoutSec),
         _shellTimeoutSec(shellTimeoutSec),
         _isQuiting(0)
@@ -41,6 +42,13 @@ namespace Robomongo
     {
         if (_timerId == event->timerId()) {
             keepAlive();
+            return;
+        }
+
+        if (_dbAutocompleteCacheTimerId == event->timerId() &&
+            _scriptEngine != NULL) {
+            _scriptEngine->invalidateDbCollectionsCache();
+            return;
         }
     }
 
@@ -77,6 +85,7 @@ namespace Robomongo
             _scriptEngine->use(_connection->defaultDatabase());
             _scriptEngine->setBatchSize(_batchSize);
             _timerId = startTimer(pingTimeMs);
+            _dbAutocompleteCacheTimerId = startTimer(30000);
         } catch (const std::exception &ex) {
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
@@ -97,6 +106,9 @@ namespace Robomongo
     {
         if (_timerId != -1)
             killTimer(_timerId);
+
+        if (_dbAutocompleteCacheTimerId != -1)
+            killTimer(_dbAutocompleteCacheTimerId);
 
         delete _dbclient;
         delete _connection;

@@ -1,19 +1,24 @@
 // This module defines the "official" high-level API of the Qt port of
 // Scintilla.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
-// This file may be used under the terms of the GNU General Public License
-// version 3.0 as published by the Free Software Foundation and appearing in
-// the file LICENSE included in the packaging of this file.  Please review the
-// following information to ensure the GNU General Public License version 3.0
-// requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+// This file may be used under the terms of the GNU General Public
+// License versions 2.0 or 3.0 as published by the Free Software
+// Foundation and appearing in the files LICENSE.GPL2 and LICENSE.GPL3
+// included in the packaging of this file.  Alternatively you may (at
+// your option) use any later version of the GNU General Public
+// License if such license has been publicly approved by Riverbank
+// Computing Limited (or its successors, if any) and the KDE Free Qt
+// Foundation. In addition, as a special exception, Riverbank gives you
+// certain additional rights. These rights are described in the Riverbank
+// GPL Exception version 1.1, which can be found in the file
+// GPL_EXCEPTION.txt in this package.
 // 
-// If you do not wish to use this file under the terms of the GPL version 3.0
-// then you may purchase a commercial license.  For more information contact
-// info@riverbankcomputing.com.
+// If you are unsure which license is appropriate for your use, please
+// contact the sales department at sales@riverbankcomputing.com.
 // 
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -26,11 +31,12 @@
 extern "C++" {
 #endif
 
+#include <qobject.h>
+#include <qstringlist.h>
+
 #include <QByteArray>
 #include <QList>
-#include <QObject>
 #include <QPointer>
-#include <QStringList>
 
 #include <Qsci/qsciglobal.h>
 #include <Qsci/qscicommand.h>
@@ -92,10 +98,7 @@ public:
         AnnotationStandard = ANNOTATION_STANDARD,
 
         //! Annotations are surrounded by a box.
-        AnnotationBoxed = ANNOTATION_BOXED,
-
-        //! Annotations are indented to match the text.
-        AnnotationIndented = ANNOTATION_INDENTED,
+        AnnotationBoxed = ANNOTATION_BOXED
     };
 
     //! This enum defines the behavior if an auto-completion list contains a
@@ -256,15 +259,8 @@ public:
         RoundBoxIndicator = INDIC_ROUNDBOX,
 
         //! A rectangle around the text with the interior usually more
-        //! transparent than the border.  It does not colour the top pixel of
-        //! the line so that indicators on contiguous lines are visually
-        //! distinct and disconnected.
+        //! transparent than the border.
         StraightBoxIndicator = INDIC_STRAIGHTBOX,
-
-        //! A rectangle around the text with the interior usually more
-        //! transparent than the border.  Unlike StraightBoxIndicator it covers
-        //! the entire character area.
-        FullBoxIndicator = INDIC_FULLBOX,
 
         //! A dashed underline.
         DashesIndicator = INDIC_DASH,
@@ -284,17 +280,9 @@ public:
         //! but may be of lower quality.
         SquigglePixmapIndicator = INDIC_SQUIGGLEPIXMAP,
 
-        //! A thick underline typically used for the target during Asian
-        //! language input composition.
+        //! A thick underline typically used during Asian language input
+        //! composition.
         ThickCompositionIndicator = INDIC_COMPOSITIONTHICK,
-
-        //! A thin underline typically used for non-target ranges during Asian
-        //! language input composition.
-        ThinCompositionIndicator = INDIC_COMPOSITIONTHIN,
-
-        //! The color of the text is set to the color of the indicator's
-        //! foreground.
-        TextColorIndicator = INDIC_TEXTFORE,
     };
 
     //! This enum defines the different margin options.
@@ -422,10 +410,7 @@ public:
 
         //! No symbol is drawn but the line is drawn underlined using the
         //! marker's background color.
-        Underline = SC_MARK_UNDERLINE,
-
-        //! A bookmark.
-        Bookmark = SC_MARK_BOOKMARK,
+        Underline = SC_MARK_UNDERLINE
     };
 
     //! This enum defines the different whitespace visibility modes.  When
@@ -451,10 +436,7 @@ public:
         WrapWord = SC_WRAP_WORD,
 
         //! Lines are wrapped at character boundaries.
-        WrapCharacter = SC_WRAP_CHAR,
-
-        //! Lines are wrapped at whitespace boundaries.
-        WrapWhitespace = SC_WRAP_WHITESPACE,
+        WrapCharacter = SC_WRAP_CHAR
     };
 
     //! This enum defines the different line wrap visual flags.
@@ -1227,16 +1209,6 @@ public:
     //! Set the foreground colour of indicator \a indicatorNumber to \a col.
     //! If \a indicatorNumber is -1 then the colour of all indicators is set.
     void setIndicatorForegroundColor(const QColor &col, int indicatorNumber = -1);
-
-    //! Set the foreground colour of indicator \a indicatorNumber to \a col
-    //! when the mouse is over it or the caret moved into it.  If
-    //! \a indicatorNumber is -1 then the colour of all indicators is set.
-    void setIndicatorHoverForegroundColor(const QColor &col, int indicatorNumber = -1);
-
-    //! Set the style of indicator \a indicatorNumber to \a style when the
-    //! mouse is over it or the caret moved into it.  If \a indicatorNumber is
-    //! -1 then the style of all indicators is set.
-    void setIndicatorHoverStyle(IndicatorStyle style, int indicatorNumber = -1);
 
     //! Set the outline colour of indicator \a indicatorNumber to \a col.
     //! If \a indicatorNumber is -1 then the colour of all indicators is set.

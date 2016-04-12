@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <stdarg.h>
 #include <assert.h>
-#include <ctype.h>
 
 #include "ILexer.h"
 #include "Scintilla.h"

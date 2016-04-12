@@ -148,6 +148,7 @@ namespace Robomongo
 
         _passwordBox->setEnabled(checked);
         _passwordLabel->setEnabled(checked);
+        _passphraseEchoModeButton->setEnabled(checked);
 
         if (checked)
             _sshHostName->setFocus();

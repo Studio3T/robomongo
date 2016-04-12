@@ -57,8 +57,8 @@ namespace Robomongo
 
         tabWidget->addTab(_basicTab,    "Connection");
         tabWidget->addTab(_authTab,     "Authentication");
-        tabWidget->addTab(_advancedTab, "Advanced");
         tabWidget->addTab(_sshTab,      "SSH");
+        tabWidget->addTab(_advancedTab, "Advanced");
 
         // v0.9
         //tabWidget->addTab(_sslTab,      "SSL");

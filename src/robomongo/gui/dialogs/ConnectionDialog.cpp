@@ -93,7 +93,9 @@ namespace Robomongo
         _basicTab->accept();
         _authTab->accept();
         _advancedTab->accept();
-        _sshTab->accept();
+
+        if (!_sshTab->accept())
+            return false;
 
         // v0.9
         // _sslTab->accept();
@@ -105,9 +107,10 @@ namespace Robomongo
      */
     void ConnectionDialog::testConnection()
     {
-        if (validateAndApply()) {
-            ConnectionDiagnosticDialog diag(_connection, this);
-            diag.exec();
-        }
+        if (!validateAndApply())
+            return;
+
+        ConnectionDiagnosticDialog diag(_connection, this);
+        diag.exec();
     }
 }

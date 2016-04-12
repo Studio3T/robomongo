@@ -23,7 +23,7 @@ namespace Robomongo
 
     public:
         SshTunnelTab(ConnectionSettings *settings);
-        void accept();
+        bool accept();
         bool isSshSupported() const;
 
     private Q_SLOTS:

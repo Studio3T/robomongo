@@ -38,6 +38,7 @@ namespace Robomongo
         
     private:        
         QCheckBox *_sshSupport;
+        QCheckBox *_askForPassword;
         QLineEdit *_sshHostName;
         QLineEdit *_userName;
         QLineEdit *_sshPort;

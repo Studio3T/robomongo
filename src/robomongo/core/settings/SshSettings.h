@@ -56,6 +56,12 @@ namespace Robomongo
         bool enabled() const { return _enabled; }
         void setEnabled(bool enabled) { _enabled = enabled; }
 
+        bool askPassword() const { return _askPassword; }
+        void setAskPassword(bool ask) { _askPassword = ask; }
+
+        std::string askedPassword() const { return _askedPassword; }
+        void setAskedPassword(const std::string &asked) { _askedPassword = asked; }
+
         int logLevel() const { return _logLevel; }
         void setLogLevel(const int logLevel) { _logLevel = logLevel; }
 
@@ -69,11 +75,16 @@ namespace Robomongo
         std::string _passphrase;
         std::string _authMethod; // "password" or "publickey"
 
+        // Should we ask user about password or passphrase
+        // each time when we try to connect
+        bool _askPassword;
+
         /**
          * Flag, indicating whether we should use
          * this SSH tunnel or not.
          */
         bool _enabled;
-        int _logLevel; // this property is not persisted
+        int _logLevel;              // this property is not persisted
+        std::string _askedPassword; // this property is not persisted
     };
 }

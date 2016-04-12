@@ -95,7 +95,11 @@ namespace Robomongo
 
         _viewErrorLink->hide();
 
-        AppRegistry::instance().app()->openServer(_connection, ConnectionTest);
+        if (!AppRegistry::instance().app()->openServer(_connection, ConnectionTest)) {
+            QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
+            return;
+        }
+
         _serverHandle = AppRegistry::instance().app()->getLastServerHandle();
     }
 

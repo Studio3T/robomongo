@@ -1,5 +1,6 @@
 #include "robomongo/core/domain/App.h"
 #include <QHash>
+#include <QInputDialog>
 
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoShell.h"
@@ -45,12 +46,31 @@ namespace Robomongo
         std::for_each(_servers.begin(), _servers.end(), stdutils::default_delete<MongoServer*>());
     }
 
+    bool App::openServer(ConnectionSettings *connection, ConnectionType type) {
+        if (connection->sshSettings()->enabled() &&
+            connection->sshSettings()->askPassword() &&
+            (type == ConnectionPrimary || type == ConnectionTest)) {
+            bool ok = false;
+            QString userInput = QInputDialog::getText(NULL, tr("Password"),
+                "To authenticate with SSH server enter your password: ",
+                QLineEdit::Password, "", &ok);
+
+            if (!ok)
+                return false;
+
+            connection->sshSettings()->setAskedPassword(QtUtils::toStdString(userInput));
+        }
+
+        openServerInternal(connection, type);
+        return true;
+    }
+
     /**
      * Creates and opens new server connection.
      * @param connection: ConnectionSettings, that will be owned by MongoServer.
      * @param visible: should this server be visible in UI (explorer) or not.
      */
-    MongoServer *App::openServer(ConnectionSettings *connection, ConnectionType type) {
+    MongoServer *App::openServerInternal(ConnectionSettings *connection, ConnectionType type) {
         ++_lastServerHandle;
 
         if (type == ConnectionPrimary)
@@ -82,15 +102,15 @@ namespace Robomongo
         _servers.erase(std::remove_if(_servers.begin(), _servers.end(), stdutils::RemoveIfFound<MongoServer*>(server)), _servers.end());
     }
 
-    MongoShell *App::openShell(MongoCollection *collection, const QString &filePathToSave)
+    void App::openShell(MongoCollection *collection, const QString &filePathToSave)
     {
         ConnectionSettings *connection = collection->database()->server()->connectionRecord();
         connection->setDefaultDatabase(collection->database()->name());
         QString script = detail::buildCollectionQuery(collection->name(), "find({})");
-        return openShell(connection, ScriptInfo(script, true, CursorPosition(0, -2), QtUtils::toQString(collection->database()->name()), filePathToSave));
+        openShell(connection, ScriptInfo(script, true, CursorPosition(0, -2), QtUtils::toQString(collection->database()->name()), filePathToSave));
     }
 
-    MongoShell *App::openShell(MongoServer *server, const QString &script, const std::string &dbName,
+    void App::openShell(MongoServer *server, const QString &script, const std::string &dbName,
                                bool execute, const QString &shellName,
                                const CursorPosition &cursorPosition, const QString &filePathToSave)
     {
@@ -99,26 +119,29 @@ namespace Robomongo
         if (!dbName.empty())
             connection->setDefaultDatabase(dbName);
 
-        return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName, filePathToSave));
+        openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName, filePathToSave));
     }
 
-    MongoShell *App::openShell(MongoDatabase *database, const QString &script,
+    void App::openShell(MongoDatabase *database, const QString &script,
                                bool execute, const QString &shellName,
                                const CursorPosition &cursorPosition, const QString &filePathToSave)
     {
         ConnectionSettings *connection = database->server()->connectionRecord();
         connection->setDefaultDatabase(database->name());
-        return openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName, filePathToSave));
+        openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName, filePathToSave));
     }
 
-    MongoShell *App::openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo)
+    void App::openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo)
     {
-        MongoServer *server = openServer(connection, ConnectionSecondary);
+        MongoServer *server = openServerInternal(connection, ConnectionSecondary);
+        if (!server)
+            return;
+
         MongoShell *shell = new MongoShell(server, scriptInfo);
         _shells.push_back(shell);
         _bus->publish(new OpeningShellEvent(this, shell));
         shell->execute();
-        return shell;
+        return;
     }
 
     /**

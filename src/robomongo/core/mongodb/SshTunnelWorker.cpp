@@ -193,6 +193,12 @@ namespace Robomongo
         _passphrase = ssh->passphrase();
         _authMethod = ssh->authMethod(); // "password" or "publickey"
 
+        // Use "askedPassword" for both passphrase and password if required
+        if (ssh->askPassword()) {
+            _passphrase = ssh->askedPassword();
+            _userPassword = ssh->askedPassword();
+        }
+
         _sshConfig = new rbm_ssh_tunnel_config;
         _sshConfig->sshserverhost = const_cast<char*>(_sshhost.c_str());
         _sshConfig->sshserverport = static_cast<unsigned int>(_sshport);

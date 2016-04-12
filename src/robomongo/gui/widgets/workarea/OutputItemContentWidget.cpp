@@ -352,7 +352,7 @@ namespace Robomongo
         FindFrame *_logText = new FindFrame(this);
         _logText->sciScintilla()->setLexer(javaScriptLexer);
         _logText->sciScintilla()->setTabWidth(4);        
-        _logText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
+        _logText->sciScintilla()->setAppropriateBraceMatching();
         _logText->sciScintilla()->setFont(textFont);
         _logText->sciScintilla()->setReadOnly(true);
         _logText->sciScintilla()->setWrapMode((QsciScintilla::WrapMode) QsciScintilla::SC_WRAP_NONE);

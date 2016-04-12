@@ -285,7 +285,7 @@ namespace Robomongo
         int height = editorHeight(1);
         _queryText->sciScintilla()->setMinimumHeight(height);
         _queryText->sciScintilla()->setFixedHeight(height);
-        _queryText->sciScintilla()->setBraceMatching(QsciScintilla::StrictBraceMatch);
+        _queryText->sciScintilla()->setAppropriateBraceMatching();
         _queryText->sciScintilla()->setFont(GuiRegistry::instance().font());
         _queryText->sciScintilla()->setPaper(QColor(255, 0, 0, 127));
         _queryText->sciScintilla()->setLexer(javaScriptLexer);

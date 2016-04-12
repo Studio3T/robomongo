@@ -412,7 +412,7 @@ namespace Robomongo
          QClipboard *clipboard = QApplication::clipboard();
          mongo::BSONObj obj = documentItem->root();
          if (documentItem != documentItem->superParent()) {
-             obj = obj[QtUtils::toStdString(documentItem->key())].Obj();
+             obj = obj[documentItem->fieldName()].Obj();
          }
          bool isArray = BsonUtils::isArray(documentItem->type());
          std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,

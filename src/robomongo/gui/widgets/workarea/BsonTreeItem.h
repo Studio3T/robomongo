@@ -49,6 +49,9 @@ namespace Robomongo
         mongo::BSONObj root() const;
         mongo::BSONObj superRoot() const;
 
+        std::string fieldName() const { return _fieldName; };
+        void setFieldName(const std::string &fieldName) { _fieldName = fieldName; };
+
         QString key() const;
         void setKey(const QString &key);
 
@@ -66,5 +69,6 @@ namespace Robomongo
         const mongo::BSONObj _root;
         ChildContainerType _items;
         BsonItemFields _fields;
+        std::string _fieldName;
     };
 }

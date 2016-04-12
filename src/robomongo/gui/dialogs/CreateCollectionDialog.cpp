@@ -18,10 +18,9 @@
 #include "robomongo/gui/editors/FindFrame.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
-
 #include "robomongo/shell/bson/json.h"
 
-//#include <mongo/bson/bsonobjbuilder.h>    // todo
+#include <mongo/bson/bsonobjbuilder.h>    
 
 namespace Robomongo
 {
@@ -105,7 +104,7 @@ namespace Robomongo
         return frame->sciScintilla()->text().trimmed();
     }
 
-    const CreateCollectionDialog::ReturnType& CreateCollectionDialog::getExtraOptions()
+    const mongo::BSONObj& CreateCollectionDialog::getExtraOptions()
     {
         return _extraOptions;
     }
@@ -168,8 +167,8 @@ namespace Robomongo
 
     void CreateCollectionDialog::accept()
     {
-        if (_inputEdit->text().isEmpty() || !validate(_storageEngineFrame, &_storageEngineObj)
-            || !validate(_validatorFrame, &_validatorObj) || !validateAllOptions())
+        if (_inputEdit->text().isEmpty() || !validate(_storageEngineFrame, _storageEngineObj)
+            || !validate(_validatorFrame, _validatorObj) || !validateAllOptions())
             return;
         makeExtraOptionsObj();
 
@@ -200,22 +199,10 @@ namespace Robomongo
         }
     };
 
-    bool CreateCollectionDialog::validate(FindFrame* frame, ReturnType* bsonObj, bool silentOnSuccess /* = true */)
+    bool CreateCollectionDialog::validate(FindFrame* frame, mongo::BSONObj& bsonObj, bool silentOnSuccess /* = true */)
     {
-        QString text = jsonText(frame);
-        int len = 0;
         try {
-            std::string textString = QtUtils::toStdString(text);
-            const char *json = textString.c_str();
-            int jsonLen = textString.length();
-            int offset = 0;
-            bsonObj->clear(); 
-            while (offset != jsonLen)
-            {
-                mongo::BSONObj doc = mongo::Robomongo::fromjson(json + offset, &len);
-                bsonObj->push_back(doc);
-                offset += len;
-            }
+            bsonObj = mongo::Robomongo::fromjson(jsonText(frame).toStdString());
         }
         catch (const mongo::Robomongo::ParseMsgAssertionException &ex) {
             // v0.9
@@ -249,56 +236,22 @@ namespace Robomongo
 
     bool CreateCollectionDialog::makeExtraOptionsObj()
     {
-        validate(_storageEngineFrame, &_storageEngineObj);
-        validate(_validatorFrame, &_validatorObj);
+        validate(_storageEngineFrame, _storageEngineObj);
+        validate(_validatorFrame, _validatorObj);
         std::string autoIndexidVal = isCheckedAutoIndexid() ? "true" : "false";
         std::string usePowerOfTwoVal = isCheckedUsePowerOfTwo() ? "true" : "false";
         std::string noPaddingVal = isCheckedNoPadding() ? "true" : "false";
 
-        // todo: use bsonbuilder instead of string
-        std::string text = "{ ";
-        text.append("autoIndexId:" + autoIndexidVal);
-        text.append(", usePowerOf2Sizes:" + usePowerOfTwoVal);
-        text.append(", noPadding:" + noPaddingVal);
-        if (_storageEngineObj.size() > 0){
-            if (_storageEngineObj.begin()->nFields()){
-                text.append(", storageEngine:" + _storageEngineObj.begin()->toString());
-            }
-        }
-        if (_validatorObj.size() > 0){
-            if (_validatorObj.begin()->nFields()){
-                text.append(", validator:" + _validatorObj.begin()->toString());
-                text.append(", validationLevel: \"" + _validatorLevelComboBox->currentText().toStdString() + '"');
-                text.append(", validationAction: \"" + _validatorActionComboBox->currentText().toStdString() + '"');
-            }
-        }
-        text.append(" }");
-
-        int len = 0;
-        try {
-            const char *json = text.c_str();
-            int jsonLen = text.length();
-            int offset = 0;
-            _extraOptions.clear();
-            while (offset != jsonLen)
-            {
-                mongo::BSONObj doc = mongo::Robomongo::fromjson(json + offset, &len);
-                _extraOptions.push_back(doc);
-                offset += len;
-            }
-        }
-        catch (const mongo::Robomongo::ParseMsgAssertionException &ex) {
-            // v0.9
-            QString message = QtUtils::toQString(ex.reason());
-            int offset = ex.offset();
-            int line = 0, pos = 0;
-            message = QString("Unable to parse JSON:<br /> <b>%1</b>, at (%2, %3).")
-                .arg(message).arg(line + 1).arg(pos + 1);
-            QMessageBox::critical(NULL, "Parsing error", message);
-            activateWindow();
-            return false;
-        }
-
+        mongo::BSONObjBuilder builder;
+        builder.append("autoIndexId", isCheckedAutoIndexid());
+        builder.append("usePowerOf2Sizes", usePowerOfTwoVal);
+        builder.append("noPadding", noPaddingVal);
+        builder.append("storageEngine", _storageEngineObj);
+        builder.append("validator", _validatorObj);
+        builder.append("validationLevel", _validatorLevelComboBox->currentText().toStdString());
+        builder.append("validationAction", _validatorActionComboBox->currentText().toStdString());
+        _extraOptions = builder.obj();
+        // todo: return?
         return true;
     }
 
@@ -369,7 +322,7 @@ namespace Robomongo
 
     void CreateCollectionDialog::onValidateButtonClicked()
     {
-        validate(_activeFrame, _activeObj, false);
+        validate(_activeFrame, *_activeObj, false);
         makeExtraOptionsObj();      // todo: remove
     }
 

@@ -33,10 +33,9 @@ namespace Robomongo
         /**
         * @brief Use returned BSONObj only if Dialog exec() method returns QDialog::Accepted
         */
-        const ReturnType& getStorageEngineBsonObj() const { return _storageEngineObj; }    // todo
-        const ReturnType& getValidatorBsonObj() const { return _validatorObj; }            // todo
-        const ReturnType& getExtraOptions();
-
+        const mongo::BSONObj& getStorageEngineBsonObj() const { return _storageEngineObj; }    
+        const mongo::BSONObj& getValidatorBsonObj() const { return _validatorObj; }            
+        const mongo::BSONObj& getExtraOptions();
         void setCursorPosition(int line, int column);   // todo: private
 
         QString getCollectionName() const;
@@ -59,7 +58,8 @@ namespace Robomongo
         virtual void accept();
         void cappedCheckBoxStateChanged(int newState);
         void tabChangedSlot(int index);
-        bool validate(FindFrame* frame, ReturnType* bsonObj, bool silentOnSuccess = true);
+        // todo: const frame and bsonobj
+        bool validate(FindFrame* frame, mongo::BSONObj& bsonObj, bool silentOnSuccess = true);
 
         private Q_SLOTS:
         void onFrameTextChanged();
@@ -103,12 +103,11 @@ namespace Robomongo
         FindFrame *_validatorFrame;
         QLabel * _validatorFrameLabel;
 
-        FindFrame *_activeFrame;            // ptr to active frame          // todo: ctor default init
-        ReturnType *_activeObj;             // ptr to active JSON object    // todo: ctor default init
-        //mongo::BSONObj _extraOptions;     // todo
-        ReturnType _extraOptions;
-        ReturnType _storageEngineObj;
-        ReturnType _validatorObj;
+        FindFrame *_activeFrame;          // ptr to active frame          // todo: ctor default init
+        mongo::BSONObj *_activeObj;       // ptr to active JSON object    // todo: ctor default init
+        mongo::BSONObj _extraOptions;     
+        mongo::BSONObj _storageEngineObj;
+        mongo::BSONObj _validatorObj;
 
         const double _dbVersion;
         const std::string _storageEngine;

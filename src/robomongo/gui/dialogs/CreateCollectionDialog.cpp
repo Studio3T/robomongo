@@ -34,7 +34,7 @@ namespace Robomongo
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         //setFixedSize(dialogSize);
         setMinimumWidth(300);
-
+        resize(520, 400);
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
 
         QFrame *hline = new QFrame();
@@ -64,6 +64,7 @@ namespace Robomongo
         _tabWidget->addTab(createOptionsTab(), tr("Options"));
         _tabWidget->addTab(createStorageEngineTab(), tr("Storage Engine"));
         _tabWidget->addTab(createValidatorTab(), tr("Validator"));
+        _tabWidget->addTab(createIndexOptionDefaultsTab(), tr("Index Option Defaults"));
         _tabWidget->setTabsClosable(false);
         VERIFY(connect(_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChangedSlot(int))));
 
@@ -192,9 +193,13 @@ namespace Robomongo
                 _activeFrame = _storageEngineFrame;
                 _activeObj = &_storageEngineObj;
             }
-            if (2 == index){
+            else if (2 == index){
                 _activeFrame = _validatorFrame;
                 _activeObj = &_validatorObj;
+            }
+            else if (3 == index){
+                _activeFrame = _indexOptionDefaultsFrame;
+                _activeObj = &_indexOptionDefaultsObj;
             }
         }
     };
@@ -246,7 +251,7 @@ namespace Robomongo
             validate(_storageEngineFrame, _storageEngineObj);
             if(!_storageEngineObj.isEmpty()) builder.append("storageEngine", _storageEngineObj);
         }
-        if (_tabWidget->isTabEnabled(2))
+        if (_tabWidget->isTabEnabled(2))    // todo: enum validatorTab
         {
             validate(_validatorFrame, _validatorObj);
             if (!_validatorObj.isEmpty())
@@ -255,6 +260,11 @@ namespace Robomongo
                 builder.append("validationLevel", _validatorLevelComboBox->currentText().toStdString());
                 builder.append("validationAction", _validatorActionComboBox->currentText().toStdString());
             }
+        }
+        if (_tabWidget->isTabEnabled(3))
+        {
+            validate(_indexOptionDefaultsFrame, _indexOptionDefaultsObj);
+            if (!_indexOptionDefaultsObj.isEmpty()) builder.append("indexOptionDefaults", _indexOptionDefaultsObj);
         }
         _extraOptions = builder.obj();
         // todo: return?
@@ -318,6 +328,7 @@ namespace Robomongo
         }
         if (3.2 > _dbVersion){
             _tabWidget->setTabEnabled(2, false);    // todo: 2 to enum validatorTab
+            _tabWidget->setTabEnabled(3, false);    // disable indexoptions.. tab
         }
     }
 
@@ -444,6 +455,27 @@ namespace Robomongo
         validatorEngineTab->setLayout(layout);
 
         return validatorEngineTab;
+    }
+
+    QWidget* CreateCollectionDialog::createIndexOptionDefaultsTab()
+    {
+        QWidget *indexOptionDefaultsTab = new QWidget(this);
+
+        _indexOptionDefaultsFrameLabel = new QLabel(tr("Enter a default configuration for indexes when creating a collection: "));
+        _indexOptionDefaultsFrame = new FindFrame(this);
+        configureFrameText(_indexOptionDefaultsFrame);
+        _indexOptionDefaultsFrame->sciScintilla()->setText("{\n    \n}");
+        // clear modification state after setting the content
+        _indexOptionDefaultsFrame->sciScintilla()->setModified(false);
+        VERIFY(connect(_indexOptionDefaultsFrame->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onframeTextChanged())));
+
+        QGridLayout *layout = new QGridLayout;
+        layout->addWidget(_indexOptionDefaultsFrameLabel, 0, 0);
+        layout->addWidget(_indexOptionDefaultsFrame, 1, 0);
+        layout->setAlignment(Qt::AlignTop);
+        indexOptionDefaultsTab->setLayout(layout);
+
+        return indexOptionDefaultsTab;
     }
 
     void CreateCollectionDialog::configureFrameText(FindFrame* frame)

@@ -72,6 +72,7 @@ namespace Robomongo
         QWidget *createOptionsTab();
         QWidget *createStorageEngineTab();
         QWidget *createValidatorTab();
+        QWidget *createIndexOptionDefaultsTab();
         void configureFrameText(FindFrame* frame);
         bool makeExtraOptionsObj();
         bool validateAllOptions() const;
@@ -102,12 +103,17 @@ namespace Robomongo
         QComboBox * _validatorActionComboBox;
         FindFrame *_validatorFrame;
         QLabel * _validatorFrameLabel;
+        // Index Options Defaults Tab
+        FindFrame *_indexOptionDefaultsFrame;
+        QLabel * _indexOptionDefaultsFrameLabel;
 
         FindFrame *_activeFrame;          // ptr to active frame          // todo: ctor default init
         mongo::BSONObj *_activeObj;       // ptr to active JSON object    // todo: ctor default init
+        // todo: better pointer to BSONObj, create on the fly? test it.
         mongo::BSONObj _extraOptions;     
         mongo::BSONObj _storageEngineObj;
         mongo::BSONObj _validatorObj;
+        mongo::BSONObj _indexOptionDefaultsObj;
 
         const double _dbVersion;
         const std::string _storageEngine;

@@ -160,15 +160,12 @@ namespace Robomongo
         const QString& dbName = QtUtils::toQString(databaseItem->database()->name());
 
         CreateCollectionDialog dlg(serverName, dbVersion, engineName, dbName, QString(), treeWidget());
-        dlg.setOkButtonText("&Create");             // todo: move to ctor
-        dlg.setInputLabelText("Collection Name:");  // todo: move to ctor
-        
         int result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
         std::string collectionName = QtUtils::toStdString(dlg.getCollectionName());
         databaseItem->database()->createCollection(collectionName, 
-            dlg.getSizeInputEditValue(), dlg.isCapped(), dlg.getMaxDocNumberInputEditValue(), &dlg.getExtraOptions());
+            dlg.getSizeInputValue(), dlg.isCapped(), dlg.getMaxDocNumberInputValue(), &dlg.getExtraOptions());
         // refresh list of databases
         databaseItem->expandCollections();
     }

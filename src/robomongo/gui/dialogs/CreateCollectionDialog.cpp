@@ -1,38 +1,44 @@
 #include "robomongo/gui/dialogs/CreateCollectionDialog.h"
 
-#include <QPushButton>
+#include <mongo/bson/bsonobjbuilder.h>
+#include <QApplication>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDialogButtonBox>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QLineEdit>
 #include <QLabel>
-#include <QDialogButtonBox>
-#include <QCheckBox>
 #include <QMessageBox>
-#include <QComboBox>
+#include <QPushButton>
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qsciscintilla.h>
+#include <QVBoxLayout>
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/editors/FindFrame.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/shell/bson/json.h"
 
-#include <mongo/bson/bsonobjbuilder.h>    
-
 namespace Robomongo
 {
-    const QSize CreateCollectionDialog::dialogSize = QSize(300, 150);
+    enum
+    {
+        OPTIONS_TAB                 = 0,
+        STORAGE_ENGINE_TAB          = 1,
+        VALIDATOR_TAB               = 2,
+        INDEX_OPTION_DEFAULTS_TAB   = 3,
+    };
 
     CreateCollectionDialog::CreateCollectionDialog(const QString &serverName, double dbVersion, const std::string& storageEngine, 
         const QString &database, const QString &collection, QWidget *parent) :
-        QDialog(parent), _dbVersion(dbVersion), _storageEngine(storageEngine)
+        QDialog(parent), _dbVersion(dbVersion), _storageEngine(storageEngine), 
+        _activeFrame(_storageEngineFrame), _activeObj(&_storageEngineObj)
     {
-        setWindowTitle("Create Collection"); 
-        setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
-        //setFixedSize(dialogSize);
+        setWindowTitle(tr("Create Collection"));
         setMinimumWidth(300);
         resize(520, 400);
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
@@ -42,20 +48,21 @@ namespace Robomongo
         hline->setFrameShadow(QFrame::Sunken);
 
         _inputEdit = new QLineEdit();
-        _inputLabel = new QLabel("Database Name:");
-        _inputEdit->setMaxLength(maxLenghtName);
+        _inputLabel = new QLabel(tr("Collection Name:"));
+        _inputEdit->setMaxLength(60);
 
         _buttonBox = new QDialogButtonBox(this);
         _buttonBox->setOrientation(Qt::Horizontal);
         _buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
-        _buttonBox->button(QDialogButtonBox::Save)->setText("C&reate");
+        _buttonBox->button(QDialogButtonBox::Save)->setText(tr("C&reate"));
         _buttonBox->button(QDialogButtonBox::Save)->setEnabled(false);
         VERIFY(connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
         VERIFY(connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
         VERIFY(connect(_inputEdit, SIGNAL(textChanged(const QString &)),
-            this, SLOT(enableFindButton(const QString &))));
+            this, SLOT(enableCreateButton(const QString &))));
 
-        _validateJsonButton = new QPushButton("Validate JSON"); // todo: need to change other UI accordingly
+        _validateJsonButton = new QPushButton(tr("Validate JSON"));
+        _validateJsonButton->setIcon(qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation));
         _validateJsonButton->hide();
         VERIFY(connect(_validateJsonButton, SIGNAL(clicked()), this, SLOT(onValidateButtonClicked())));
 
@@ -66,15 +73,15 @@ namespace Robomongo
         _tabWidget->addTab(createValidatorTab(), tr("Validator"));
         _tabWidget->addTab(createIndexOptionDefaultsTab(), tr("Index Option Defaults"));
         _tabWidget->setTabsClosable(false);
-        VERIFY(connect(_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChangedSlot(int))));
+        VERIFY(connect(_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(onTabChanged(int))));
 
-        // Check db version and storage engine type to enable/disable UI options
-        checkSupportedOptions();
+        // Check mongodb version and storage engine type to enable/disable UI options
+        disableUnsupportedOptions();
 
-        QHBoxLayout *hlayout = new QHBoxLayout();
-        hlayout->addWidget(_validateJsonButton);
-        hlayout->addStretch(1);
-        hlayout->addWidget(_buttonBox);
+        QHBoxLayout *buttomHlayout = new QHBoxLayout();
+        buttomHlayout->addWidget(_validateJsonButton);
+        buttomHlayout->addStretch(1);
+        buttomHlayout->addWidget(_buttonBox);
 
         QHBoxLayout *vlayout = new QHBoxLayout();
         if (!serverName.isEmpty())
@@ -89,30 +96,20 @@ namespace Robomongo
         namelayout->addWidget(_inputLabel);
         namelayout->addWidget(_inputEdit);
         
-        QVBoxLayout *layout = new QVBoxLayout();
-        layout->addLayout(vlayout);
-        layout->addWidget(hline);
-        layout->addLayout(namelayout);
-        layout->addWidget(_tabWidget);
-        layout->addLayout(hlayout);
-        setLayout(layout);
+        QVBoxLayout *mainLayout = new QVBoxLayout();
+        mainLayout->addLayout(vlayout);
+        mainLayout->addWidget(hline);
+        mainLayout->addLayout(namelayout);
+        mainLayout->addWidget(_tabWidget);
+        mainLayout->addLayout(buttomHlayout);
+        setLayout(mainLayout);
 
         _inputEdit->setFocus();
     }
 
-    QString CreateCollectionDialog::jsonText(FindFrame* frame) const
-    {
-        return frame->sciScintilla()->text().trimmed();
-    }
-
     const mongo::BSONObj& CreateCollectionDialog::getExtraOptions()
     {
-        return _extraOptions;
-    }
-
-    void CreateCollectionDialog::setCursorPosition(int line, int column)
-    {
-        _activeFrame->sciScintilla()->setCursorPosition(line, column);
+        return _extraOptionsObj;
     }
 
     QString CreateCollectionDialog::getCollectionName() const
@@ -120,33 +117,17 @@ namespace Robomongo
         return _inputEdit->text();
     }
 
-    void CreateCollectionDialog::setOkButtonText(const QString &text)
-    {
-        _buttonBox->button(QDialogButtonBox::Save)->setText(text);
-    }
-
-    void CreateCollectionDialog::setInputLabelText(const QString &text)
-    {
-        _inputLabel->setText(text);
-    }
-
-    void CreateCollectionDialog::setInputText(const QString &text)
-    {
-        _inputEdit->setText(text);
-        _inputEdit->selectAll();
-    }
-
     bool CreateCollectionDialog::isCapped() const
     {
         return (_cappedCheckBox->checkState() == Qt::Checked);
     }
 
-    long long CreateCollectionDialog::getSizeInputEditValue() const
+    long long CreateCollectionDialog::getSizeInputValue() const
     {
         return (_sizeInputEdit->text().toLongLong());
     }
-    
-    int CreateCollectionDialog::getMaxDocNumberInputEditValue() const
+
+    int CreateCollectionDialog::getMaxDocNumberInputValue() const
     {
         return (_maxDocNumberInputEdit->text().toInt());
     }
@@ -168,168 +149,17 @@ namespace Robomongo
 
     void CreateCollectionDialog::accept()
     {
-        if (_inputEdit->text().isEmpty() || !validate(_storageEngineFrame, _storageEngineObj)
-            || !validate(_validatorFrame, _validatorObj) || !validateAllOptions())
+        if ( _inputEdit->text().isEmpty() 
+            || !validateOptionDependencies()
+            || !validate(_storageEngineFrame, _storageEngineObj)
+            || !validate(_validatorFrame, _validatorObj) 
+            || !validate(_indexOptionDefaultsFrame, _indexOptionDefaultsObj))
+        {
             return;
+        }
         makeExtraOptionsObj();
 
         QDialog::accept();
-    }
-
-    void CreateCollectionDialog::cappedCheckBoxStateChanged(int newState)
-    {
-        _sizeInputEdit->setEnabled((Qt::Checked == static_cast<Qt::CheckState>(newState)));
-        _maxDocNumberInputEdit->setEnabled((Qt::Checked == static_cast<Qt::CheckState>(newState)));
-    }
-
-    void CreateCollectionDialog::tabChangedSlot(int index)
-    {
-        if (0 == index){    // todo: make 0 to enum "Options Tab"
-            _validateJsonButton->hide();
-        }
-        else{
-            _validateJsonButton->show();
-            if (1 == index){    
-                _activeFrame = _storageEngineFrame;
-                _activeObj = &_storageEngineObj;
-            }
-            else if (2 == index){
-                _activeFrame = _validatorFrame;
-                _activeObj = &_validatorObj;
-            }
-            else if (3 == index){
-                _activeFrame = _indexOptionDefaultsFrame;
-                _activeObj = &_indexOptionDefaultsObj;
-            }
-        }
-    };
-
-    bool CreateCollectionDialog::validate(FindFrame* frame, mongo::BSONObj& bsonObj, bool silentOnSuccess /* = true */)
-    {
-        try {
-            bsonObj = mongo::Robomongo::fromjson(jsonText(frame).toStdString());
-        }
-        catch (const mongo::Robomongo::ParseMsgAssertionException &ex) {
-            // v0.9
-            QString message = QtUtils::toQString(ex.reason());
-            int offset = ex.offset();
-
-            int line = 0, pos = 0;
-            frame->sciScintilla()->lineIndexFromPosition(offset, &line, &pos);
-            frame->sciScintilla()->setCursorPosition(line, pos);
-
-            int lineHeight = frame->sciScintilla()->lineLength(line);
-            frame->sciScintilla()->fillIndicatorRange(line, pos, line, lineHeight, 0);
-
-            message = QString("Unable to parse JSON:<br /> <b>%1</b>, at (%2, %3).")
-                .arg(message).arg(line + 1).arg(pos + 1);
-
-            QMessageBox::critical(NULL, "Parsing error", message);
-            frame->setFocus();
-            activateWindow();
-            return false;
-        }
-
-        if (!silentOnSuccess) {
-            QMessageBox::information(NULL, "Validation", "JSON is valid!");
-            frame->setFocus();
-            activateWindow();
-        }
-
-        return true;
-    }
-
-    bool CreateCollectionDialog::makeExtraOptionsObj()
-    {
-        mongo::BSONObjBuilder builder;
-        if (_autoIndexCheckBox->isEnabled()) builder.append("autoIndexId", isCheckedAutoIndexid());
-        if (_usePowerOfTwoSizeCheckBox->isEnabled()) builder.append("usePowerOf2Sizes", isCheckedUsePowerOfTwo());
-        if (_noPaddingCheckBox->isEnabled()) builder.append("noPadding", isCheckedNoPadding());
-        // todo: 1 and 2 to enum xxxTab
-        if (_tabWidget->isTabEnabled(1) )
-        {
-            validate(_storageEngineFrame, _storageEngineObj);
-            if(!_storageEngineObj.isEmpty()) builder.append("storageEngine", _storageEngineObj);
-        }
-        if (_tabWidget->isTabEnabled(2))    // todo: enum validatorTab
-        {
-            validate(_validatorFrame, _validatorObj);
-            if (!_validatorObj.isEmpty())
-            {
-                builder.append("validator", _validatorObj);
-                builder.append("validationLevel", _validatorLevelComboBox->currentText().toStdString());
-                builder.append("validationAction", _validatorActionComboBox->currentText().toStdString());
-            }
-        }
-        if (_tabWidget->isTabEnabled(3))
-        {
-            validate(_indexOptionDefaultsFrame, _indexOptionDefaultsObj);
-            if (!_indexOptionDefaultsObj.isEmpty()) builder.append("indexOptionDefaults", _indexOptionDefaultsObj);
-        }
-        _extraOptions = builder.obj();
-        // todo: return?
-        return true;
-    }
-
-    bool CreateCollectionDialog::validateAllOptions() const
-    {
-        bool result(false);
-        if (isCapped()){
-            if (!(getSizeInputEditValue() > 0) || !(getMaxDocNumberInputEditValue() > 0)){
-                QMessageBox::critical(NULL, "Error", "Invalid capped collection options");
-                return false;
-            }
-            result = true;
-        }
-        // todo
-        // ...
-        result = true;
-        return result;
-    }
-
-    void CreateCollectionDialog::checkSupportedOptions() const
-    {
-        if ("wiredTiger" == _storageEngine){     // todo: WiredTiger to be static const in other class
-            _usePowerOfTwoSizeCheckBox->setDisabled(true);
-            _noPaddingCheckBox->setDisabled(true);
-            if (3.0 > _dbVersion){
-                _tabWidget->setTabEnabled(1, false);    // todo: 1 to enum storageEngineTab
-            }
-        }
-        else {
-            _tabWidget->setTabEnabled(1, false);    // todo: 1 to enum storageEngineTab
-        }
-
-        if ("mmapv1" == _storageEngine){        // todo: what is the actual case sensitive string?
-            if (3.0 <= _dbVersion){
-                _usePowerOfTwoSizeCheckBox->setDisabled(true);
-            }
-            if (3.0 > _dbVersion){
-                _noPaddingCheckBox->setDisabled(true);
-            }
-            if (3.0 <= _dbVersion){
-                _usePowerOfTwoSizeCheckBox->setDisabled(true);
-            }
-        }
-        else{
-            _noPaddingCheckBox->setDisabled(true);
-            _usePowerOfTwoSizeCheckBox->setDisabled(true);
-        }
-
-        if ("mmapv1" != _storageEngine && "wiredTiger" != _storageEngine){
-            // ...
-        }
-
-        if (3.2 <= _dbVersion){
-            _autoIndexCheckBox->setDisabled(true);
-        }
-        if (3.0 > _dbVersion){
-            _tabWidget->setTabEnabled(1, false);    // todo: 1 to enum storageEngineTab
-        }
-        if (3.2 > _dbVersion){
-            _tabWidget->setTabEnabled(2, false);    // todo: 2 to enum validatorTab
-            _tabWidget->setTabEnabled(3, false);    // disable indexoptions.. tab
-        }
     }
 
     void CreateCollectionDialog::onFrameTextChanged()
@@ -340,13 +170,40 @@ namespace Robomongo
     void CreateCollectionDialog::onValidateButtonClicked()
     {
         validate(_activeFrame, *_activeObj, false);
-        makeExtraOptionsObj();      // todo: remove
     }
 
-    void CreateCollectionDialog::enableFindButton(const QString &text)
+    void CreateCollectionDialog::enableCreateButton(const QString &text)
     {
         _buttonBox->button(QDialogButtonBox::Save)->setEnabled(!text.isEmpty());
     }
+
+    void CreateCollectionDialog::onCappedCheckBoxChanged(int newState)
+    {
+        _sizeInputEdit->setEnabled((Qt::Checked == static_cast<Qt::CheckState>(newState)));
+        _maxDocNumberInputEdit->setEnabled((Qt::Checked == static_cast<Qt::CheckState>(newState)));
+    }
+
+    void CreateCollectionDialog::onTabChanged(int index)
+    {
+        if (OPTIONS_TAB == index) {    
+            _validateJsonButton->hide();
+        }
+        else {
+            _validateJsonButton->show();
+            if (STORAGE_ENGINE_TAB == index) {
+                _activeFrame = _storageEngineFrame;
+                _activeObj = &_storageEngineObj;
+            }
+            else if (VALIDATOR_TAB == index) {
+                _activeFrame = _validatorFrame;
+                _activeObj = &_validatorObj;
+            }
+            else if (INDEX_OPTION_DEFAULTS_TAB == index) {
+                _activeFrame = _indexOptionDefaultsFrame;
+                _activeObj = &_indexOptionDefaultsObj;
+            }
+        }
+    };
 
     Indicator *CreateCollectionDialog::createDatabaseIndicator(const QString &database)
     {
@@ -360,9 +217,9 @@ namespace Robomongo
 
     QWidget* CreateCollectionDialog::createOptionsTab()
     {
-        QWidget *options = new QWidget(this);   // todo: rename optionsTab
+        QWidget *optionsTab = new QWidget(this);
 
-        _cappedCheckBox = new QCheckBox(tr("Create capped collection"), options);
+        _cappedCheckBox = new QCheckBox(tr("Create capped collection"), optionsTab);
         _sizeInputLabel = new QLabel(tr("Maximum size in bytes: "));
         _sizeInputLabel->setContentsMargins(22, 0, 0, 0);
         _sizeInputEdit = new QLineEdit();
@@ -371,39 +228,41 @@ namespace Robomongo
         _maxDocNumberInputLabel->setContentsMargins(22, 0, 0, 0);
         _maxDocNumberInputEdit = new QLineEdit();
         _maxDocNumberInputEdit->setEnabled(false);
-        _autoIndexCheckBox = new QCheckBox(tr("Auto index _id"), options);
+        _autoIndexCheckBox = new QCheckBox(tr("Auto index _id"), optionsTab);
         _autoIndexCheckBox->setChecked(true);
-        _usePowerOfTwoSizeCheckBox = new QCheckBox(tr("Use power-of-2 sizes"), options);
-        _noPaddingCheckBox = new QCheckBox(tr("No Padding"), options);
+        _usePowerOfTwoSizeCheckBox = new QCheckBox(tr("Use power-of-2 sizes"), optionsTab);
+        _noPaddingCheckBox = new QCheckBox(tr("No Padding"), optionsTab);
 
-        VERIFY(connect(_cappedCheckBox, SIGNAL(stateChanged(int)), this, SLOT(cappedCheckBoxStateChanged(int))));
+        VERIFY(connect(_cappedCheckBox, SIGNAL(stateChanged(int)),
+            this, SLOT(onCappedCheckBoxChanged(int))));
 
         QGridLayout *layout = new QGridLayout;
-        layout->addWidget(_cappedCheckBox,              0, 0, 1, 2);
-        layout->addWidget(_sizeInputLabel,              1, 0);
-        layout->addWidget(_sizeInputEdit,               1, 1);
-        layout->addWidget(_maxDocNumberInputLabel,      2, 0);
-        layout->addWidget(_maxDocNumberInputEdit,       2, 1);
-        layout->addWidget(_autoIndexCheckBox,           3, 0);
-        layout->addWidget(_usePowerOfTwoSizeCheckBox,   4, 0);
-        layout->addWidget(_noPaddingCheckBox,           5, 0);
+        layout->addWidget(_cappedCheckBox, 0, 0, 1, 2);
+        layout->addWidget(_sizeInputLabel, 1, 0);
+        layout->addWidget(_sizeInputEdit, 1, 1);
+        layout->addWidget(_maxDocNumberInputLabel, 2, 0);
+        layout->addWidget(_maxDocNumberInputEdit, 2, 1);
+        layout->addWidget(_autoIndexCheckBox, 3, 0);
+        layout->addWidget(_usePowerOfTwoSizeCheckBox, 4, 0);
+        layout->addWidget(_noPaddingCheckBox, 5, 0);
         layout->setAlignment(Qt::AlignTop);
-        options->setLayout(layout);
+        optionsTab->setLayout(layout);
 
-        return options;
+        return optionsTab;
     }
 
     QWidget* CreateCollectionDialog::createStorageEngineTab()
     {
         QWidget *storageEngineTab = new QWidget(this);
-        
+
         _storageEngineFrameLabel = new QLabel(tr("Enter the configuration for the storage engine: "));
-        _storageEngineFrame = new FindFrame(this);
+        _storageEngineFrame = new JSONFrame(this);
         configureFrameText(_storageEngineFrame);
         _storageEngineFrame->sciScintilla()->setText("{\n    \n}");
         // clear modification state after setting the content
         _storageEngineFrame->sciScintilla()->setModified(false);
-        VERIFY(connect(_storageEngineFrame->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onframeTextChanged())));
+        VERIFY(connect(_storageEngineFrame->sciScintilla(), SIGNAL(textChanged()),
+            this, SLOT(onframeTextChanged())));
 
         QGridLayout *layout = new QGridLayout;
         layout->addWidget(_storageEngineFrameLabel, 0, 0);
@@ -420,24 +279,25 @@ namespace Robomongo
 
         _validatorLevelLabel = new QLabel(tr("Validation Level: "));
         _validatorLevelComboBox = new QComboBox();
-        _validatorLevelComboBox->addItem("off");
-        _validatorLevelComboBox->addItem("strict");
-        _validatorLevelComboBox->addItem("moderate");
+        _validatorLevelComboBox->addItem(tr("off"));
+        _validatorLevelComboBox->addItem(tr("strict"));
+        _validatorLevelComboBox->addItem(tr("moderate"));
         _validatorLevelComboBox->setCurrentIndex(1);
 
         _validatorActionLabel = new QLabel(tr("Validation Action: "));
         _validatorActionComboBox = new QComboBox();
-        _validatorActionComboBox->addItem("error");
-        _validatorActionComboBox->addItem("warn");    // todo: warn or warning ??
+        _validatorActionComboBox->addItem(tr("error"));
+        _validatorActionComboBox->addItem(tr("warn"));
         _validatorActionComboBox->setCurrentIndex(0);
 
         _validatorFrameLabel = new QLabel(tr("Enter the validator document for this collection: "));
-        _validatorFrame = new FindFrame(this);
+        _validatorFrame = new JSONFrame(this);
         configureFrameText(_validatorFrame);
         _validatorFrame->sciScintilla()->setText("{\n    \n}");
         // clear modification state after setting the content
         _validatorFrame->sciScintilla()->setModified(false);
-        VERIFY(connect(_validatorFrame->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onframeTextChanged())));
+        VERIFY(connect(_validatorFrame->sciScintilla(), SIGNAL(textChanged()),
+            this, SLOT(onframeTextChanged())));
 
         QHBoxLayout *validationOptionslayout = new QHBoxLayout();
         validationOptionslayout->addWidget(_validatorLevelLabel);
@@ -462,12 +322,13 @@ namespace Robomongo
         QWidget *indexOptionDefaultsTab = new QWidget(this);
 
         _indexOptionDefaultsFrameLabel = new QLabel(tr("Enter a default configuration for indexes when creating a collection: "));
-        _indexOptionDefaultsFrame = new FindFrame(this);
+        _indexOptionDefaultsFrame = new JSONFrame(this);
         configureFrameText(_indexOptionDefaultsFrame);
         _indexOptionDefaultsFrame->sciScintilla()->setText("{\n    \n}");
         // clear modification state after setting the content
         _indexOptionDefaultsFrame->sciScintilla()->setModified(false);
-        VERIFY(connect(_indexOptionDefaultsFrame->sciScintilla(), SIGNAL(textChanged()), this, SLOT(onframeTextChanged())));
+        VERIFY(connect(_indexOptionDefaultsFrame->sciScintilla(), SIGNAL(textChanged()),
+            this, SLOT(onframeTextChanged())));
 
         QGridLayout *layout = new QGridLayout;
         layout->addWidget(_indexOptionDefaultsFrameLabel, 0, 0);
@@ -478,7 +339,7 @@ namespace Robomongo
         return indexOptionDefaultsTab;
     }
 
-    void CreateCollectionDialog::configureFrameText(FindFrame* frame)
+    void CreateCollectionDialog::configureFrameText(JSONFrame* frame)
     {
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
         QFont font = GuiRegistry::instance().font();
@@ -491,5 +352,136 @@ namespace Robomongo
         frame->sciScintilla()->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         frame->sciScintilla()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         frame->sciScintilla()->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
+    }
+
+    bool CreateCollectionDialog::validate(JSONFrame* frame, mongo::BSONObj& bsonObj, bool silentOnSuccess /* = true */)
+    {
+        try {
+            bsonObj = mongo::Robomongo::fromjson(jsonText(frame).toStdString());
+        }
+        catch (const mongo::Robomongo::ParseMsgAssertionException &ex) {
+            // v0.9
+            QString message = QtUtils::toQString(ex.reason());
+            int offset = ex.offset();
+
+            int line = 0, pos = 0;
+            frame->sciScintilla()->lineIndexFromPosition(offset, &line, &pos);
+            frame->sciScintilla()->setCursorPosition(line, pos);
+
+            int lineHeight = frame->sciScintilla()->lineLength(line);
+            frame->sciScintilla()->fillIndicatorRange(line, pos, line, lineHeight, 0);
+
+            message = QString(tr("Unable to parse JSON:<br /> <b>%1</b>, at (%2, %3)."))
+                .arg(message).arg(line + 1).arg(pos + 1);
+
+            QMessageBox::critical(NULL, tr("Parsing error"), message);
+            frame->setFocus();
+            activateWindow();
+            return false;
+        }
+
+        if (!silentOnSuccess) {
+            QMessageBox::information(NULL, tr("Validation"), tr("JSON is valid!"));
+            frame->setFocus();
+            activateWindow();
+        }
+
+        return true;
+    }
+
+    void CreateCollectionDialog::makeExtraOptionsObj()
+    {
+        mongo::BSONObjBuilder builder;
+        if (_autoIndexCheckBox->isEnabled()) builder.append("autoIndexId", isCheckedAutoIndexid());
+        if (_usePowerOfTwoSizeCheckBox->isEnabled()) builder.append("usePowerOf2Sizes", isCheckedUsePowerOfTwo());
+        if (_noPaddingCheckBox->isEnabled()) builder.append("noPadding", isCheckedNoPadding());
+        if (_tabWidget->isTabEnabled(STORAGE_ENGINE_TAB) ) {
+            validate(_storageEngineFrame, _storageEngineObj);
+            if(!_storageEngineObj.isEmpty()) builder.append("storageEngine", _storageEngineObj);
+        }
+        if (_tabWidget->isTabEnabled(VALIDATOR_TAB)) {
+            validate(_validatorFrame, _validatorObj);
+            if (!_validatorObj.isEmpty()) {
+                builder.append("validator", _validatorObj);
+                builder.append("validationLevel", _validatorLevelComboBox->currentText().toStdString());
+                builder.append("validationAction", _validatorActionComboBox->currentText().toStdString());
+            }
+        }
+        if (_tabWidget->isTabEnabled(INDEX_OPTION_DEFAULTS_TAB)) {
+            validate(_indexOptionDefaultsFrame, _indexOptionDefaultsObj);
+            if (!_indexOptionDefaultsObj.isEmpty()) builder.append("indexOptionDefaults", _indexOptionDefaultsObj);
+        }
+        // Complete and get resulting BSONObj
+        _extraOptionsObj = builder.obj();
+    }
+
+    bool CreateCollectionDialog::validateOptionDependencies() const
+    {
+        bool result(false);
+        // Validate capped options
+        if (isCapped()) {
+            if (!(getSizeInputValue() > 0) || !(getMaxDocNumberInputValue() > 0)) {
+                QMessageBox::critical(NULL, tr("Error"), tr("Invalid capped collection options"));
+                return false;
+            }
+            result = true;
+        }
+        else {
+            result = true;
+        }
+
+        // Completed checking all dependendencies.
+        return result;
+    }
+    
+    void CreateCollectionDialog::disableUnsupportedOptions() const
+    {
+        if (MongoDatabase::StorageEngineType::WIRED_TIGER == _storageEngine) {
+            _usePowerOfTwoSizeCheckBox->setDisabled(true);
+            _noPaddingCheckBox->setDisabled(true);
+            if (MongoDatabase::DBVersion::MONGODB_3_0 > _dbVersion) {
+                _tabWidget->setTabEnabled(STORAGE_ENGINE_TAB, false);
+            }
+        }
+        else {
+            _tabWidget->setTabEnabled(STORAGE_ENGINE_TAB, false);
+        }
+
+        if (MongoDatabase::StorageEngineType::MMAPV1 == _storageEngine) {
+            if (MongoDatabase::DBVersion::MONGODB_3_0 <= _dbVersion) {
+                _usePowerOfTwoSizeCheckBox->setDisabled(true);
+            }
+            if (MongoDatabase::DBVersion::MONGODB_3_0 > _dbVersion) {
+                _noPaddingCheckBox->setDisabled(true);
+            }
+            if (MongoDatabase::DBVersion::MONGODB_3_0 <= _dbVersion) {
+                _usePowerOfTwoSizeCheckBox->setDisabled(true);
+            }
+        }
+        else {
+            _noPaddingCheckBox->setDisabled(true);
+            _usePowerOfTwoSizeCheckBox->setDisabled(true);
+        }
+
+        if (MongoDatabase::DBVersion::MONGODB_3_2 <= _dbVersion) {
+            _autoIndexCheckBox->setDisabled(true);
+        }
+        if (MongoDatabase::DBVersion::MONGODB_3_0 > _dbVersion) {
+            _tabWidget->setTabEnabled(STORAGE_ENGINE_TAB, false);
+        }
+        if (MongoDatabase::DBVersion::MONGODB_3_2 > _dbVersion) {
+            _tabWidget->setTabEnabled(VALIDATOR_TAB, false);
+            _tabWidget->setTabEnabled(INDEX_OPTION_DEFAULTS_TAB, false);
+        }
+    }
+
+    void CreateCollectionDialog::setCursorPosition(int line, int column)
+    {
+        _activeFrame->sciScintilla()->setCursorPosition(line, column);
+    }
+
+    QString CreateCollectionDialog::jsonText(JSONFrame* frame) const
+    {
+        return frame->sciScintilla()->text().trimmed();
     }
 }

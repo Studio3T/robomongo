@@ -171,7 +171,8 @@ namespace Robomongo
 
             init();
 
-            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), dbNames, client->getVersion(), client->getStorageEngineType()), event->connectionType));
+            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), 
+                dbNames, client->getVersion(), client->getStorageEngineType()), event->connectionType));
         } catch(const std::exception &ex) {
             reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what()), event->connectionType, EstablishConnectionResponse::MongoAuth));
         }
@@ -483,8 +484,8 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->createCollection(event->getNs().toString(), event->getSize(), event->getCapped(), event->getMaxDocNum(), 
-                                     event->getExtraOptions());
+            client->createCollection(event->getNs().toString(), event->getSize(), event->getCapped(), 
+                event->getMaxDocNum(), event->getExtraOptions());
             client->done();
 
             reply(event->sender(), new CreateCollectionResponse(this));

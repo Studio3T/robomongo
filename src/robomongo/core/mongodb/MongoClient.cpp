@@ -370,8 +370,7 @@ namespace Robomongo
         _dbclient->dropDatabase(dbName);
     }
 
-    void MongoClient::createCollection(const std::string& ns, long long size, bool capped, int max, 
-                                       const mongo::BSONObj* extraOptions, mongo::BSONObj* info)
+    void MongoClient::createCollection(const std::string& ns, long long size, bool capped, int max, const mongo::BSONObj* extraOptions, mongo::BSONObj* info)
     {
         verify(!capped || size);
         mongo::BSONObj o;

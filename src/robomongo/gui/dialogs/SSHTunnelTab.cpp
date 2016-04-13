@@ -45,7 +45,7 @@ namespace Robomongo
         _userName = new QLineEdit(QtUtils::toQString(info->userName()));
 
         _sshPort = new QLineEdit(QString::number(info->port()));
-        _sshPort->setFixedWidth(80);
+        _sshPort->setFixedWidth(40);
         QRegExp rx("\\d+"); //(0-65554)
         _sshPort->setValidator(new QRegExpValidator(rx, this));        
 

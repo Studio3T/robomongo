@@ -703,7 +703,6 @@ LIBSSH2_SESSION *ssh_connect(struct rbm_session *rsession, rbm_socket_t sock, en
     char *userauthlist;
 
     ssh_log_debug(rsession, "ssh_connect: username: %s", username);
-    ssh_log_debug(rsession, "ssh_connect: password: %s", password);
     ssh_log_debug(rsession, "ssh_connect: privatekeyfile: %s", privatekeypath);
     ssh_log_debug(rsession, "ssh_connect: publickeyfile: %s", publickeypath);
 

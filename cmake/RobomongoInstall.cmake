@@ -84,9 +84,6 @@ if(SYSTEM_LINUX)
 
     # Install icons
     install(
-        FILES       "${CMAKE_SOURCE_DIR}/install/linux/robomongo.png"
-        DESTINATION "${resources_dir}/pixmaps")
-    install(
         DIRECTORY   "${CMAKE_SOURCE_DIR}/install/linux/icons/"
         DESTINATION "${resources_dir}/icons")
 

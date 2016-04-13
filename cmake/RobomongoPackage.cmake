@@ -55,10 +55,10 @@ set(CPACK_PACKAGE_FILE_NAME ${package_file_name}-${package_file_version}-${syste
 if(SYSTEM_LINUX_RHEL)
     set(CPACK_GENERATOR RPM)
     set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/DESCRIPTION")
-    set(CPACK_RPM_PACKAGE_LICENSE "GNU GPLv3")
-    set(CPACK_RPM_PACKAGE_GROUP "Development/Tools")
+    set(CPACK_RPM_PACKAGE_LICENSE "GPLv3")
     set(CPACK_RPM_PACKAGE_DEBUG 1)
-    set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/install/linux/rpm-postinstall")
+    list(APPEND CPACK_RPM_USER_FILELIST "%attr(755,root,root) /usr/share/icons")
+    list(APPEND CPACK_RPM_USER_FILELIST "%attr(755,root,root) /usr/share/applications")
 
 elseif(SYSTEM_LINUX)
     set(CPACK_GENERATOR TGZ)

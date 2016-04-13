@@ -23,7 +23,7 @@ namespace Robomongo
 
     public:
         SshTunnelTab(ConnectionSettings *settings);
-        void accept();
+        bool accept();
         bool isSshSupported() const;
 
     private Q_SLOTS:
@@ -38,6 +38,7 @@ namespace Robomongo
         
     private:        
         QCheckBox *_sshSupport;
+        QCheckBox *_askForPassword;
         QLineEdit *_sshHostName;
         QLineEdit *_userName;
         QLineEdit *_sshPort;

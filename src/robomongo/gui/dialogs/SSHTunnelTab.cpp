@@ -9,12 +9,23 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QComboBox>
+#include <QMessageBox>
+#include <QFileInfo>
 #include <QFrame>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/utils/ComboBoxUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
+
+namespace {
+    const QString askPasswordText = "Ask for password each time";
+    const QString askPassphraseText = "Ask for passphrase each time";
+    bool isFileExists(const QString &path) {
+        QFileInfo fileInfo(path);
+        return fileInfo.exists() && fileInfo.isFile();
+    }
+}
 
 namespace Robomongo
 {
@@ -25,6 +36,9 @@ namespace Robomongo
         _sshSupport = new QCheckBox("Use SSH tunnel");
         _sshSupport->setStyleSheet("margin-bottom: 7px");
         _sshSupport->setChecked(info->enabled());
+
+        _askForPassword = new QCheckBox(askPasswordText);
+        _askForPassword->setChecked(info->askPassword());
 
         _sshHostName = new QLineEdit(QtUtils::toQString(info->host()));
         _userName = new QLineEdit(QtUtils::toQString(info->userName()));
@@ -103,6 +117,7 @@ namespace Robomongo
         connectionLayout->addWidget(_sshPassphraseLabel,           8, 0);
         connectionLayout->addWidget(_passphraseBox,                8, 1);
         connectionLayout->addWidget(_passphraseEchoModeButton,     8, 2);
+        connectionLayout->addWidget(_askForPassword,               9, 1, 1, 2);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addWidget(_sshSupport);
@@ -148,6 +163,8 @@ namespace Robomongo
 
         _passwordBox->setEnabled(checked);
         _passwordLabel->setEnabled(checked);
+        _passphraseEchoModeButton->setEnabled(checked);
+        _askForPassword->setEnabled(checked);
 
         if (checked)
             _sshHostName->setFocus();
@@ -168,6 +185,7 @@ namespace Robomongo
         _passwordBox->setVisible(!isKey);
         _passwordLabel->setVisible(!isKey);
         _passwordEchoModeButton->setVisible(!isKey);
+        _askForPassword->setText(isKey ? askPassphraseText : askPasswordText);
     }
 
     void SshTunnelTab::setPrivateFile()
@@ -199,15 +217,39 @@ namespace Robomongo
 //        return SSHInfo::PASSWORD;
 //    }
 
-    void SshTunnelTab::accept()
+    bool SshTunnelTab::accept()
     {
+        bool sshEnabled = _sshSupport->isChecked();
+
+        // Check for existence of the private key file name
+        // and try to expand "~" character when needed
+        QString privateKey = _privateKeyBox->text();
+        if (sshEnabled && !isFileExists(privateKey)) {
+            bool failed = true;
+
+            // Try to expand "~" if available
+            if (privateKey.startsWith ("~/")) {
+                privateKey.replace (0, 1, QDir::homePath());
+                if (isFileExists(privateKey)) {
+                    failed = false;
+                }
+            }
+
+            if (failed) {
+                QString message = QString("Private key file \"%1\" doesn't exist").arg(privateKey);
+                QMessageBox::information(this, "Settings are incomplete", message);
+                return false;
+            }
+        }
+
         SshSettings *info = _settings->sshSettings();
         info->setHost(QtUtils::toStdString(_sshHostName->text()));
         info->setPort(_sshPort->text().toInt());
         info->setUserName(QtUtils::toStdString(_userName->text()));
         info->setUserPassword(QtUtils::toStdString(_passwordBox->text()));
+        info->setAskPassword(_askForPassword->isChecked());
 //        info->setPublicKeyFile("");
-        info->setPrivateKeyFile(QtUtils::toStdString(_privateKeyBox->text()));
+        info->setPrivateKeyFile(QtUtils::toStdString(privateKey));
         info->setPassphrase(QtUtils::toStdString(_passphraseBox->text()));
 
         if (_security->currentText() == "Private Key") {
@@ -216,7 +258,8 @@ namespace Robomongo
             info->setAuthMethod("password");
         }
 
-        info->setEnabled(_sshSupport->isChecked());
+        info->setEnabled(sshEnabled);
+        return true;
     }
     
     void SshTunnelTab::togglePasswordEchoMode()

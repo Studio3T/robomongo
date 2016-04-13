@@ -47,8 +47,9 @@ namespace Robomongo
          * @brief Creates and opens new server connection.
          * @param connection: ConnectionSettings, that will be owned by MongoServer.
          * @param visible: should this server be visible in UI (explorer) or not.
+         * @return Succeeded or not
          */
-        MongoServer *openServer(ConnectionSettings *connection, ConnectionType type);
+        bool openServer(ConnectionSettings *connection, ConnectionType type);
 
         /**
          * @brief Closes MongoServer connection and frees all resources, owned
@@ -59,17 +60,17 @@ namespace Robomongo
         /**
          * @brief Open new shell based on specified collection
          */
-        MongoShell *openShell(MongoCollection *collection, const QString &filePathToSave = QString());
+        void openShell(MongoCollection *collection, const QString &filePathToSave = QString());
 
-        MongoShell *openShell(MongoServer *server, const QString &script, const std::string &dbName = std::string(),
+        void openShell(MongoServer *server, const QString &script, const std::string &dbName = std::string(),
                               bool execute = true, const QString &shellName = QString(),
                               const CursorPosition &cursorPosition = CursorPosition(), const QString &file = QString());
 
-        MongoShell *openShell(MongoDatabase *database, const QString &script,
+        void openShell(MongoDatabase *database, const QString &script,
                               bool execute = true, const QString &shellName = QString(),
                               const CursorPosition &cursorPosition = CursorPosition(), const QString &filePathToSave = QString());
 
-        MongoShell *openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo);
+        void openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo);
         MongoServersContainerType getServers() const { return _servers; };
 
         /**
@@ -88,6 +89,7 @@ namespace Robomongo
         void handle(LogEvent *event);
 
     private:
+        MongoServer *openServerInternal(ConnectionSettings *connection, ConnectionType type);
         MongoServer *continueOpenServer(int serverHandle, ConnectionSettings *connection, ConnectionType type, int localport = 0);
 
         /**

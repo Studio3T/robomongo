@@ -57,23 +57,20 @@ namespace Robomongo
             _mechanismComboBox->setCurrentText(QtUtils::toQString(primaryCredential->mechanism()));
         }
 
-        QGridLayout *_authLayout = new QGridLayout;
-        _authLayout->addWidget(_useAuth,                      0, 0, 1, 3);
-        _authLayout->addWidget(_databaseNameLabel,            1, 0);
-        _authLayout->addWidget(_databaseName,                 1, 1, 1, 2);
-        _authLayout->addWidget(_databaseNameDescriptionLabel, 2, 1, 1, 2);
-        _authLayout->addWidget(_userNameLabel,                3, 0);
-        _authLayout->addWidget(_userName,                     3, 1, 1, 2);
-        _authLayout->addWidget(_userPasswordLabel,            4, 0);
-        _authLayout->addWidget(_userPassword,                 4, 1);
-        _authLayout->addWidget(_echoModeButton,               4, 2);
-        _authLayout->addWidget(_mechanismLabel,               5, 0);
-        _authLayout->addWidget(_mechanismComboBox,            5, 1, 1, 2);
-        _authLayout->setAlignment(Qt::AlignTop);
-
-        QVBoxLayout *mainLayout = new QVBoxLayout;
-        mainLayout->addLayout(_authLayout);
-        setLayout(mainLayout);
+        QGridLayout *authLayout = new QGridLayout;
+        authLayout->addWidget(_useAuth,                      0, 0, 1, 3);
+        authLayout->addWidget(_databaseNameLabel,            1, 0);
+        authLayout->addWidget(_databaseName,                 1, 1, 1, 2);
+        authLayout->addWidget(_databaseNameDescriptionLabel, 2, 1, 1, 2);
+        authLayout->addWidget(_userNameLabel,                3, 0);
+        authLayout->addWidget(_userName,                     3, 1, 1, 2);
+        authLayout->addWidget(_userPasswordLabel,            4, 0);
+        authLayout->addWidget(_userPassword,                 4, 1);
+        authLayout->addWidget(_echoModeButton,               4, 2);
+        authLayout->addWidget(_mechanismLabel,               5, 0);
+        authLayout->addWidget(_mechanismComboBox,            5, 1, 1, 2);
+        authLayout->setAlignment(Qt::AlignTop);
+        setLayout(authLayout);
     }
 
     void ConnectionAuthTab::accept()

@@ -8,6 +8,7 @@ namespace Robomongo
         _port(22),
         _authMethod("publickey"),
         _enabled(false),
+        _askPassword(false),
         _logLevel(1) {
 
     }
@@ -28,6 +29,7 @@ namespace Robomongo
         map.insert("passphrase", QtUtils::toQString(passphrase()));
         map.insert("method", QtUtils::toQString(authMethod()));
         map.insert("enabled", enabled());
+        map.insert("askPassword", askPassword());
         return map;
     }
 
@@ -41,5 +43,6 @@ namespace Robomongo
         setPassphrase(QtUtils::toStdString(map.value("passphrase").toString()));
         setAuthMethod(QtUtils::toStdString(map.value("method").toString()));
         setEnabled(map.value("enabled").toBool());
+        setAskPassword(map.value("askPassword").toBool());
     }
 }

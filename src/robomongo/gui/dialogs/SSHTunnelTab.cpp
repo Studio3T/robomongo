@@ -239,15 +239,12 @@ namespace Robomongo
     bool SshTunnelTab::accept()
     {
         bool sshEnabled = _sshSupport->isChecked();
-        if (!sshEnabled)
-            return true;
-
         QString authMethod = _security->currentText() == "Private Key" ? "publickey" : "password";
 
         // Check for existence of the private key file name
         // and try to expand "~" character when needed
         QString privateKey = _privateKeyBox->text();
-        if (authMethod == "publickey" &&  !isFileExists(privateKey)) {
+        if (sshEnabled && authMethod == "publickey" &&  !isFileExists(privateKey)) {
             bool failed = true;
 
             // Try to expand "~" if available

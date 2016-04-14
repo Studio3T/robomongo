@@ -47,18 +47,41 @@ namespace Robomongo
     }
 
     bool App::openServer(ConnectionSettings *connection, ConnectionType type) {
-        if (connection->sshSettings()->enabled() &&
-            connection->sshSettings()->askPassword() &&
+
+        SshSettings *ssh = connection->sshSettings();
+
+        if (ssh->enabled() && ssh->askPassword() &&
             (type == ConnectionPrimary || type == ConnectionTest)) {
             bool ok = false;
-            QString userInput = QInputDialog::getText(NULL, tr("Password"),
-                "To authenticate with SSH server enter your password: ",
+
+            bool isByKey = ssh->authMethod() == "publickey";
+            std::string passText = isByKey ? "passphrase" : "password";
+
+            std::stringstream s;
+            s << "In order to continue, please provide the " << passText;
+
+            if (isByKey)
+                s << " for the key file";
+
+            s << "." << std::endl << std::endl;
+
+            if (ssh->authMethod() == "publickey")
+                s << "Private Key:  " << ssh->privateKeyFile() << std::endl;
+
+            s << "Server:  " << ssh->host() << std::endl;
+            s << "User:  " << ssh->userName() << std::endl;
+
+
+            s << std::endl << "Enter your " << passText << " that will never be stored:";
+
+            QString userInput = QInputDialog::getText(NULL, tr("SSH Authentication"),
+                QtUtils::toQString(s.str()),
                 QLineEdit::Password, "", &ok);
 
             if (!ok)
                 return false;
 
-            connection->sshSettings()->setAskedPassword(QtUtils::toStdString(userInput));
+            ssh->setAskedPassword(QtUtils::toStdString(userInput));
         }
 
         openServerInternal(connection, type);

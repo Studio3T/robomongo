@@ -39,12 +39,13 @@ namespace Robomongo
 
         _askForPassword = new QCheckBox(askPasswordText);
         _askForPassword->setChecked(info->askPassword());
+        VERIFY(connect(_askForPassword, SIGNAL(stateChanged(int)), this, SLOT(askForPasswordStateChanged(int))));
 
         _sshHostName = new QLineEdit(QtUtils::toQString(info->host()));
         _userName = new QLineEdit(QtUtils::toQString(info->userName()));
 
         _sshPort = new QLineEdit(QString::number(info->port()));
-        _sshPort->setFixedWidth(80);
+        _sshPort->setFixedWidth(40);
         QRegExp rx("\\d+"); //(0-65554)
         _sshPort->setValidator(new QRegExpValidator(rx, this));        
 
@@ -144,8 +145,30 @@ namespace Robomongo
         return _sshSupport->isChecked();
     }
 
-    void SshTunnelTab::sshSupportStateChange(int checked)
+    void SshTunnelTab::setPasswordFieldsEnabled(bool enabled)
     {
+        _sshPassphraseLabel->setEnabled(enabled);
+        _passphraseBox->setEnabled(enabled);
+        _passwordBox->setEnabled(enabled);
+        _passwordLabel->setEnabled(enabled);
+        _passphraseEchoModeButton->setEnabled(enabled);
+        _passwordEchoModeButton->setEnabled(enabled);
+    }
+
+    void SshTunnelTab::askForPasswordStateChanged(int state)
+    {
+        bool checked = state == Qt::Checked;
+        if (checked) {
+            _passphraseBox->setText("");
+            _passwordBox->setText("");
+        }
+
+        setPasswordFieldsEnabled(!checked && _sshSupport->isChecked());
+    }
+
+    void SshTunnelTab::sshSupportStateChange(int state)
+    {
+        bool checked = state == Qt::Checked;
         _sshHostName->setEnabled(checked);
         _userName->setEnabled(checked);
         _sshPort->setEnabled(checked);
@@ -158,13 +181,9 @@ namespace Robomongo
         _sshUserNameLabel->setEnabled(checked);
         _sshAuthMethodLabel->setEnabled(checked);
 
-        _sshPassphraseLabel->setEnabled(checked);
-        _passphraseBox->setEnabled(checked);
-
-        _passwordBox->setEnabled(checked);
-        _passwordLabel->setEnabled(checked);
-        _passphraseEchoModeButton->setEnabled(checked);
         _askForPassword->setEnabled(checked);
+
+        askForPasswordStateChanged(_askForPassword->checkState());
 
         if (checked)
             _sshHostName->setFocus();
@@ -220,11 +239,12 @@ namespace Robomongo
     bool SshTunnelTab::accept()
     {
         bool sshEnabled = _sshSupport->isChecked();
+        QString authMethod = _security->currentText() == "Private Key" ? "publickey" : "password";
 
         // Check for existence of the private key file name
         // and try to expand "~" character when needed
         QString privateKey = _privateKeyBox->text();
-        if (sshEnabled && !isFileExists(privateKey)) {
+        if (sshEnabled && authMethod == "publickey" &&  !isFileExists(privateKey)) {
             bool failed = true;
 
             // Try to expand "~" if available
@@ -248,16 +268,9 @@ namespace Robomongo
         info->setUserName(QtUtils::toStdString(_userName->text()));
         info->setUserPassword(QtUtils::toStdString(_passwordBox->text()));
         info->setAskPassword(_askForPassword->isChecked());
-//        info->setPublicKeyFile("");
         info->setPrivateKeyFile(QtUtils::toStdString(privateKey));
         info->setPassphrase(QtUtils::toStdString(_passphraseBox->text()));
-
-        if (_security->currentText() == "Private Key") {
-            info->setAuthMethod("publickey");
-        } else {
-            info->setAuthMethod("password");
-        }
-
+        info->setAuthMethod(QtUtils::toStdString(authMethod));
         info->setEnabled(sshEnabled);
         return true;
     }

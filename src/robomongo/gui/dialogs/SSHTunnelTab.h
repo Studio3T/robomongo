@@ -28,14 +28,15 @@ namespace Robomongo
 
     private Q_SLOTS:
         void sshSupportStateChange(int checked);
+        void askForPasswordStateChanged(int checked);
         void securityChange(const QString& val);
         void setPrivateFile();
         void togglePasswordEchoMode();
         void togglePassphraseEchoMode();
 
     private:
-//        SSHInfo::SupportedAuthenticationMetods selectedAuthMethod();
-        
+        void setPasswordFieldsEnabled(bool enabled);
+
     private:        
         QCheckBox *_sshSupport;
         QCheckBox *_askForPassword;

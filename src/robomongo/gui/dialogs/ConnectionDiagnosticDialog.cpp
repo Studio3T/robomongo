@@ -24,7 +24,8 @@ namespace Robomongo
         QDialog(parent),
         _connection(NULL),
         _server(NULL),
-        _serverHandle(0)
+        _serverHandle(0),
+        _continueExec(true)
     {
         _connection = connection->clone();
 
@@ -96,7 +97,7 @@ namespace Robomongo
         _viewErrorLink->hide();
 
         if (!AppRegistry::instance().app()->openServer(_connection, ConnectionTest)) {
-            QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
+            _continueExec = false;
             return;
         }
 

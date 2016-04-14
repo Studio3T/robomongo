@@ -20,6 +20,8 @@ namespace Robomongo
         ConnectionDiagnosticDialog(ConnectionSettings *connection, QWidget *parent = 0);
         ~ConnectionDiagnosticDialog();
 
+        bool continueExec() const { return _continueExec; }
+
     protected Q_SLOTS:
         void handle(ConnectionEstablishedEvent *event);
         void handle(ConnectionFailedEvent *event);
@@ -63,5 +65,6 @@ namespace Robomongo
 
         MongoServer *_server;
         int _serverHandle;
+        bool _continueExec;
     };
 }

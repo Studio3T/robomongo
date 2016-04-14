@@ -111,6 +111,9 @@ namespace Robomongo
             return;
 
         ConnectionDiagnosticDialog diag(_connection, this);
+        if (!diag.continueExec())
+            return;
+
         diag.exec();
     }
 }

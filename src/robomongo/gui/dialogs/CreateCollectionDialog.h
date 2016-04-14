@@ -117,6 +117,16 @@ namespace Robomongo
 
     private:
         /**
+        * @brief Tool tip strings for disabled options and tabs
+        */
+        static const QString STORAGE_ENGINE_TAB_HINT;
+        static const QString VALIDATOR_TAB_HINT;
+        static const QString INDEX_OPTION_DEFAULTS_TAB_HINT;
+        static const QString NO_PADDING_HINT;
+        static const QString USE_POWEROFTWO_HINT;
+        static const QString AUTO_INDEXID_HINT;
+
+        /**
         * @brief Create database indicator widget
         * @param database : Name of the database
         * @return : Pointer to newly created Indicator
@@ -160,6 +170,20 @@ namespace Robomongo
         * @brief Disable options if they are not supported by database version or storage engine type
         */
         void disableUnsupportedOptions() const;
+
+        /**
+        * @brief Disable widget if unsupported
+        * @param option : Widget to disable
+        * @param hint : Hint string to be shown
+        */
+        void disableOption(QWidget* option, const QString& hint) const;
+        
+        /**
+        * @brief Disable tab if unsupported
+        * @param index : Tab index
+        * @param hint : Hint string to be shown
+        */
+        void disableTab(int index, const QString& hint) const;
 
         /**
         * @brief Set cursor position of the active JSON frame

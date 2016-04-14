@@ -33,6 +33,13 @@ namespace Robomongo
         INDEX_OPTION_DEFAULTS_TAB   = 3,
     };
 
+    const QString CreateCollectionDialog::STORAGE_ENGINE_TAB_HINT = "Option available for WiredTiger storage engine only and database version 3.0 and higher.";
+    const QString CreateCollectionDialog::VALIDATOR_TAB_HINT = "Option available for database version 3.2 and higher.";
+    const QString CreateCollectionDialog::INDEX_OPTION_DEFAULTS_TAB_HINT = "Option available for database version 3.2 and higher.";
+    const QString CreateCollectionDialog::NO_PADDING_HINT = "Option available for MMAPv1 storage engine only and database version 3.0 and higher.";
+    const QString CreateCollectionDialog::USE_POWEROFTWO_HINT = "Option available for MMAPv1 storage engine only and deprecated since database version 3.0";
+    const QString CreateCollectionDialog::AUTO_INDEXID_HINT = "Option deprecated since database version 3.2";
+
     CreateCollectionDialog::CreateCollectionDialog(const QString &serverName, double dbVersion, const std::string& storageEngine, 
         const QString &database, const QString &collection, QWidget *parent) :
         QDialog(parent), _dbVersion(dbVersion), _storageEngine(storageEngine), 
@@ -392,9 +399,17 @@ namespace Robomongo
     void CreateCollectionDialog::makeExtraOptionsObj()
     {
         mongo::BSONObjBuilder builder;
-        if (_autoIndexCheckBox->isEnabled()) builder.append("autoIndexId", isCheckedAutoIndexid());
-        if (_usePowerOfTwoSizeCheckBox->isEnabled()) builder.append("usePowerOf2Sizes", isCheckedUsePowerOfTwo());
-        if (_noPaddingCheckBox->isEnabled()) builder.append("noPadding", isCheckedNoPadding());
+
+        if (_autoIndexCheckBox->isEnabled()) builder.append("autoIndexId", isCheckedAutoIndexid()); 
+        if (_noPaddingCheckBox->isEnabled() && _usePowerOfTwoSizeCheckBox->isEnabled()) {
+            builder.append("flags", (isCheckedNoPadding()*2 + isCheckedUsePowerOfTwo()*1));
+        }
+        else if (_noPaddingCheckBox->isEnabled()) {
+            builder.append("flags", (isCheckedNoPadding()*2));
+        }
+        else if (_usePowerOfTwoSizeCheckBox->isEnabled()) {
+            builder.append("flags", (isCheckedUsePowerOfTwo()*1));
+        }
         if (_tabWidget->isTabEnabled(STORAGE_ENGINE_TAB) ) {
             validate(_storageEngineFrame, _storageEngineObj);
             if(!_storageEngineObj.isEmpty()) builder.append("storageEngine", _storageEngineObj);
@@ -436,43 +451,56 @@ namespace Robomongo
     
     void CreateCollectionDialog::disableUnsupportedOptions() const
     {
+
         if (MongoDatabase::StorageEngineType::WIRED_TIGER == _storageEngine) {
-            _usePowerOfTwoSizeCheckBox->setDisabled(true);
-            _noPaddingCheckBox->setDisabled(true);
+            disableOption(_usePowerOfTwoSizeCheckBox, USE_POWEROFTWO_HINT);
+            disableOption(_noPaddingCheckBox, NO_PADDING_HINT);
             if (MongoDatabase::DBVersion::MONGODB_3_0 > _dbVersion) {
-                _tabWidget->setTabEnabled(STORAGE_ENGINE_TAB, false);
+                disableTab(STORAGE_ENGINE_TAB, STORAGE_ENGINE_TAB_HINT);
             }
         }
         else {
-            _tabWidget->setTabEnabled(STORAGE_ENGINE_TAB, false);
+            disableTab(STORAGE_ENGINE_TAB, STORAGE_ENGINE_TAB_HINT);
         }
 
         if (MongoDatabase::StorageEngineType::MMAPV1 == _storageEngine) {
             if (MongoDatabase::DBVersion::MONGODB_3_0 <= _dbVersion) {
-                _usePowerOfTwoSizeCheckBox->setDisabled(true);
+                disableOption(_usePowerOfTwoSizeCheckBox, USE_POWEROFTWO_HINT);
             }
             if (MongoDatabase::DBVersion::MONGODB_3_0 > _dbVersion) {
-                _noPaddingCheckBox->setDisabled(true);
+                disableOption(_noPaddingCheckBox, NO_PADDING_HINT);
             }
             if (MongoDatabase::DBVersion::MONGODB_3_0 <= _dbVersion) {
-                _usePowerOfTwoSizeCheckBox->setDisabled(true);
+                disableOption(_usePowerOfTwoSizeCheckBox, USE_POWEROFTWO_HINT);
             }
         }
         else {
-            _noPaddingCheckBox->setDisabled(true);
-            _usePowerOfTwoSizeCheckBox->setDisabled(true);
+            disableOption(_noPaddingCheckBox, NO_PADDING_HINT);
+            disableOption(_usePowerOfTwoSizeCheckBox, USE_POWEROFTWO_HINT);
         }
 
         if (MongoDatabase::DBVersion::MONGODB_3_2 <= _dbVersion) {
-            _autoIndexCheckBox->setDisabled(true);
+            disableOption(_autoIndexCheckBox, AUTO_INDEXID_HINT);
         }
         if (MongoDatabase::DBVersion::MONGODB_3_0 > _dbVersion) {
-            _tabWidget->setTabEnabled(STORAGE_ENGINE_TAB, false);
+            disableTab(STORAGE_ENGINE_TAB, STORAGE_ENGINE_TAB_HINT);
         }
         if (MongoDatabase::DBVersion::MONGODB_3_2 > _dbVersion) {
-            _tabWidget->setTabEnabled(VALIDATOR_TAB, false);
-            _tabWidget->setTabEnabled(INDEX_OPTION_DEFAULTS_TAB, false);
+            disableTab(VALIDATOR_TAB, VALIDATOR_TAB_HINT);
+            disableTab(INDEX_OPTION_DEFAULTS_TAB, INDEX_OPTION_DEFAULTS_TAB_HINT);
         }
+    }
+
+    void CreateCollectionDialog::disableOption(QWidget* option, const QString& hint) const
+    {
+        option->setDisabled(true);
+        option->setToolTip(hint);
+    }
+
+    void CreateCollectionDialog::disableTab(int index, const QString& hint) const
+    {
+        _tabWidget->setTabEnabled(index, false);
+        _tabWidget->setTabToolTip(index, hint);
     }
 
     void CreateCollectionDialog::setCursorPosition(int line, int column)

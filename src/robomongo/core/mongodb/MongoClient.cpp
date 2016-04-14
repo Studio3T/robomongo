@@ -379,16 +379,16 @@ namespace Robomongo
         mongo::BSONObjBuilder b;
         std::string db = mongo::nsToDatabase(ns);
         b.append("create", ns.c_str() + db.length() + 1);
-        if (size){
+        if (size) {
             b.append("size", size);
         }
-        if (capped){
+        if (capped) {
             b.append("capped", true);
         }
-        if (max){
+        if (max) {
             b.append("max", max);
         }
-        if (extraOptions){
+        if (extraOptions) {
             b.appendElements(*extraOptions);
         }
         _dbclient->runCommand(db.c_str(), b.done(), *info);

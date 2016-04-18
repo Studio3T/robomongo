@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"       # Get directory of this file
+PROJECT_DIR=$(dirname $BIN_DIR)                                   # Get root directory of project
+
+VERSION="$(echo $1 | tr '[A-Z]' '[a-z]')"
+if [ -z "$VERSION" ]; then
+    echo "Usage: tag <name>"
+    echo "Example: tag 0.9.0-rc9"
+    exit
+fi
+
+if [ "$(git rev-parse --abbrev-ref HEAD)" != "master" ]; then
+    echo "Error: You are not on master branch"
+    exit
+fi
+
+cd $PROJECT_DIR
+git tag -a "v${VERSION}" -m "${VERSION}"
+git push --tags

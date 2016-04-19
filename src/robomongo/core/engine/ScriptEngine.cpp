@@ -128,15 +128,12 @@ namespace Robomongo
         }
 
         // Esprima ECMAScript parser: http://esprima.org/
-        QFile file(":/robomongo/scripts/esprima.js");
-        if (!file.open(QIODevice::ReadOnly))
-            throw std::runtime_error("Unable to read esprima.js ");
+        std::string esprima = loadFile(":/robomongo/scripts/esprima.js", true);
+        _scope->exec(esprima, "(esprima)", false, true, true);
 
-        QTextStream in(&file);
-        QString esprima = in.readAll();
-
-        // Inject Esprima into Javascript scope
-        _scope->exec(QtUtils::toStdString(esprima), "(esprima)", true, true, true);
+        // UUID helpers
+        std::string uuidhelpers = loadFile(":/robomongo/scripts/uuidhelpers.js", true);
+        _scope->exec(uuidhelpers, "(uuidhelpers)", false, true, true);
 
         // Enable verbose shell reporting
         _scope->exec("_verboseShell = true;", "(verboseShell)", false, false, false);
@@ -436,5 +433,19 @@ namespace Robomongo
             return;
 
         _scope->exec("__robomongoAutocompletionCache = null;", "", false, false, false);
+    }
+
+    std::string ScriptEngine::loadFile(const QString &path, bool throwOnError) {
+        QFile file(path);
+        if (!file.open(QIODevice::ReadOnly)) {
+            if (throwOnError)
+                throw std::runtime_error("Unable to load file");
+
+            return "";
+        }
+
+        QTextStream in(&file);
+        QString content = in.readAll();
+        return QtUtils::toStdString(content);
     }
 }

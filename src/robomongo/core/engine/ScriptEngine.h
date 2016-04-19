@@ -34,12 +34,11 @@ namespace Robomongo
 
         MongoShellResult prepareResult(const std::string &type, const std::string &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms);
         MongoShellExecResult prepareExecResult(const std::vector<MongoShellResult> &results);
+        std::string loadFile(const QString &path, bool throwOnError);
 
         std::string getString(const char *fieldName);
 
         bool statementize(const std::string &script, std::vector<std::string> &outList, std::string &outError);
-        std::vector<std::string> statementize2(const std::string &script);
-//        void parseTree(JSParseNode * root, int indent, const std::string &script, std::vector<std::string> &list, bool topList);
 
         int _timeoutSec;
         mongo::ScriptEngine *_engine;

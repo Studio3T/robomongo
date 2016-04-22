@@ -53,7 +53,7 @@ namespace Robomongo
         void saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
         void removeDocuments(mongo::Query query, const MongoNamespace &ns, bool justOne = true);
         float version() const{ return _version; }
-
+        const std::string& getStorageEngineType() const { return _storageEngineType; }
 
         /**
          * @brief Returns associated connection record
@@ -82,6 +82,7 @@ namespace Robomongo
         App *_app;
 
         float _version;
+        std::string _storageEngineType;
         ConnectionType _connectionType;
         bool _isConnected;
         int _handle;

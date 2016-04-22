@@ -1,6 +1,8 @@
 #pragma once
 
 #include <mongo/client/dbclientinterface.h>
+#include <mongo/bson/bsonobj.h>
+
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/core/domain/MongoUser.h"
@@ -17,6 +19,7 @@ namespace Robomongo
         std::vector<std::string> getCollectionNames(const std::string &dbname) const;
         std::vector<std::string> getDatabaseNames() const;
         float getVersion() const;
+        std::string getStorageEngineType() const;
 
         std::vector<MongoUser> getUsers(const std::string &dbName);
         void createUser(const std::string &dbName, const MongoUser &user, bool overwrite);
@@ -37,7 +40,7 @@ namespace Robomongo
         void createDatabase(const std::string &dbName);
         void dropDatabase(const std::string &dbName);
 
-        void createCollection(const MongoNamespace &ns);
+        void createCollection(const std::string &ns, long long size, bool capped, int max, const mongo::BSONObj* extraOptions, mongo::BSONObj* info = nullptr);
         void renameCollection(const MongoNamespace &ns, const std::string &newCollectionName);
         void duplicateCollection(const MongoNamespace &ns, const std::string &newCollectionName);
         void dropCollection(const MongoNamespace &ns);

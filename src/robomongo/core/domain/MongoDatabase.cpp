@@ -15,6 +15,12 @@ namespace Robomongo
     R_REGISTER_EVENT(MongoDatabaseFunctionsLoadingEvent)
     R_REGISTER_EVENT(MongoDatabaseCollectionsLoadingEvent)
 
+    const std::string MongoDatabase::StorageEngineType::WIRED_TIGER = "wiredTiger";
+    const std::string MongoDatabase::StorageEngineType::MMAPV1      = "mmapv1";
+ 
+    const double MongoDatabase::DBVersion::MONGODB_3_2 = 3.2;
+    const double MongoDatabase::DBVersion::MONGODB_3_0 = 3.0;
+
     MongoDatabase::MongoDatabase(MongoServer *server, const std::string &name) :
         QObject(),
         _system(name == "admin" || name == "local"),
@@ -44,9 +50,11 @@ namespace Robomongo
         _bus->publish(new MongoDatabaseFunctionsLoadingEvent(this));
         _bus->send(_server->client(), new LoadFunctionsRequest(this, _name));
     }
-    void MongoDatabase::createCollection(const std::string &collection)
+
+    void MongoDatabase::createCollection(const std::string &collection, long long size, bool capped, int maxDocNum, const mongo::BSONObj* extraOptions)
     {
-        _bus->send(_server->client(), new CreateCollectionRequest(this, MongoNamespace(_name, collection)));
+        _bus->send(_server->client(), 
+            new CreateCollectionRequest(this, MongoNamespace(_name, collection), size, capped, maxDocNum, extraOptions));
     }
 
     void MongoDatabase::dropCollection(const std::string &collection)

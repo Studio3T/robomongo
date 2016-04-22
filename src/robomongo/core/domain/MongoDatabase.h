@@ -19,6 +19,24 @@ namespace Robomongo
 
     public:
         /**
+        * @brief Database storage engine type
+        */
+        struct StorageEngineType
+        {
+            static const std::string WIRED_TIGER;
+            static const std::string MMAPV1;
+        };
+
+        /**
+        * @brief MongoDB version
+        */
+        struct DBVersion 
+        {
+            static const double MONGODB_3_2;
+            static const double MONGODB_3_0;
+        };
+
+        /**
          * @brief MongoDatabase
          * @param server: pointer to parent MongoServer
          */
@@ -37,7 +55,7 @@ namespace Robomongo
 
         void loadFunctions();
 
-        void createCollection(const std::string &collection);
+        void createCollection(const std::string &collection, long long size, bool capped, int maxDocNum, const mongo::BSONObj* extraOptions = nullptr);
         void dropCollection(const std::string &collection);
         void renameCollection(const std::string &collection, const std::string &newCollection);
         void duplicateCollection(const std::string &collection, const std::string &newCollection);

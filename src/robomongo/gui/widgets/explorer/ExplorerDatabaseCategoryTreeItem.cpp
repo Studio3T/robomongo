@@ -6,6 +6,7 @@
 #include "robomongo/gui/dialogs/FunctionTextEditor.h"
 #include "robomongo/gui/dialogs/CreateUserDialog.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
+#include "robomongo/gui/dialogs/CreateCollectionDialog.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -153,16 +154,18 @@ namespace Robomongo
         if (!databaseItem)
             return;
 
-        CreateDatabaseDialog dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
-            QtUtils::toQString(databaseItem->database()->name()), QString(), treeWidget());
-        dlg.setWindowTitle("Create Collection");
-        dlg.setOkButtonText("&Create");
-        dlg.setInputLabelText("Collection Name:");
+        const double dbVersion = static_cast<double>(databaseItem->database()->server()->version());
+        const std::string& engineName = databaseItem->database()->server()->getStorageEngineType();
+        const QString& serverName = QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress());
+        const QString& dbName = QtUtils::toQString(databaseItem->database()->name());
+
+        CreateCollectionDialog dlg(serverName, dbVersion, engineName, dbName, QString(), treeWidget());
         int result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
-
-        databaseItem->database()->createCollection(QtUtils::toStdString(dlg.databaseName()));
+        std::string collectionName = QtUtils::toStdString(dlg.getCollectionName());
+        databaseItem->database()->createCollection(collectionName, 
+            dlg.getSizeInputValue(), dlg.isCapped(), dlg.getMaxDocNumberInputValue(), &dlg.getExtraOptions());
         // refresh list of databases
         databaseItem->expandCollections();
     }

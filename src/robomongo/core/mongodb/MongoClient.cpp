@@ -1,5 +1,7 @@
 #include "robomongo/core/mongodb/MongoClient.h"
 
+#include "mongo/db/namespace_string.h"
+
 #include "robomongo/core/domain/MongoDocument.h"
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/shell/bson/json.h"
@@ -59,6 +61,13 @@ namespace Robomongo
         std::string resultStr = BsonUtils::getField<mongo::String>(resultObj, "version");
         result = atof(resultStr.c_str());
         return result;
+    }
+
+    std::string MongoClient::getStorageEngineType() const
+    {
+        mongo::BSONObj resultObj;
+        _dbclient->runCommand("db", BSON("serverStatus" << "1"), resultObj);
+        return resultObj.getObjectField("storageEngine").getStringField("name");
     }
 
     std::vector<std::string> MongoClient::getDatabaseNames() const
@@ -361,9 +370,28 @@ namespace Robomongo
         _dbclient->dropDatabase(dbName);
     }
 
-    void MongoClient::createCollection(const MongoNamespace &ns)
+    void MongoClient::createCollection(const std::string& ns, long long size, bool capped, int max, const mongo::BSONObj* extraOptions, mongo::BSONObj* info)
     {
-        _dbclient->createCollection(ns.toString());
+        verify(!capped || size);
+        mongo::BSONObj o;
+        if (info == 0)
+            info = &o;
+        mongo::BSONObjBuilder b;
+        std::string db = mongo::nsToDatabase(ns);
+        b.append("create", ns.c_str() + db.length() + 1);
+        if (size) {
+            b.append("size", size);
+        }
+        if (capped) {
+            b.append("capped", true);
+        }
+        if (max) {
+            b.append("max", max);
+        }
+        if (extraOptions) {
+            b.appendElements(*extraOptions);
+        }
+        _dbclient->runCommand(db.c_str(), b.done(), *info);
     }
 
     void MongoClient::renameCollection(const MongoNamespace &ns, const std::string &newCollectionName)

@@ -66,4 +66,5 @@ namespace Robomongo
     R_REGISTER_EVENT(ListenSshConnectionResponse)
     R_REGISTER_EVENT(LogEvent)
     R_REGISTER_EVENT(StopScriptRequest)
+    R_REGISTER_EVENT(OperationFailedEvent)
 }

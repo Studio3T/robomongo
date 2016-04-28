@@ -1012,6 +1012,20 @@ namespace Robomongo
             Event(sender) { }
     };
 
+    class OperationFailedEvent : public Event
+    {
+        R_EVENT
+
+    public:
+        OperationFailedEvent(QObject *sender, const std::string &technicalErrorMessage, const std::string &userFriendlyErrorMessage) :
+            technicalErrorMessage(technicalErrorMessage),
+            userFriendlyErrorMessage(userFriendlyErrorMessage),
+            Event(sender) { }
+
+        std::string technicalErrorMessage;
+        std::string userFriendlyErrorMessage;
+    };
+
     class QueryWidgetUpdatedEvent : public Event
     {
         R_EVENT

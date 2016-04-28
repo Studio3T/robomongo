@@ -43,7 +43,7 @@ namespace Robomongo
     CreateCollectionDialog::CreateCollectionDialog(const QString &serverName, double dbVersion, const std::string& storageEngine, 
         const QString &database, const QString &collection, QWidget *parent) :
         QDialog(parent), _dbVersion(dbVersion), _storageEngine(storageEngine), 
-        _activeFrame(_storageEngineFrame), _activeObj(&_storageEngineObj)
+        _activeFrame(NULL), _activeObj(&_storageEngineObj)
     {
         setWindowTitle(tr("Create Collection"));
         setMinimumWidth(300);

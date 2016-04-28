@@ -13,6 +13,8 @@ namespace Robomongo
     class ConnectionFailedEvent;
     class ScriptExecutingEvent;
     class ScriptExecutedEvent;
+    class OperationFailedEvent;
+
     class QueryWidgetUpdatedEvent;
     class WorkAreaTabWidget;
     class ConnectionMenu;
@@ -66,6 +68,7 @@ namespace Robomongo
         void handle(ScriptExecutingEvent *event);
         void handle(ScriptExecutedEvent *event);
         void handle(QueryWidgetUpdatedEvent *event);
+        void handle(OperationFailedEvent *event);
     private Q_SLOTS:
         void updateMenus();
         void setUtcTimeZone();

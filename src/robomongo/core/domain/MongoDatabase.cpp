@@ -157,4 +157,19 @@ namespace Robomongo
     {
         _collections.push_back(collection);
     }
+
+    void MongoDatabase::handle(CreateCollectionResponse *event) {
+        genericResponseHandler(event, "Failed to create collection.");
+    }
+
+    void MongoDatabase::handle(DropCollectionResponse *event) {
+        genericResponseHandler(event, "Failed to drop collection.");
+    }
+
+    void MongoDatabase::genericResponseHandler(Event *event, const std::string &userFriendlyMessage) {
+        if (!event->isError())
+            return;
+
+        _bus->publish(new OperationFailedEvent(this, event->error().errorMessage(), userFriendlyMessage));
+    }
 }

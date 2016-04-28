@@ -194,4 +194,19 @@ namespace Robomongo {
             AppRegistry::instance().settingsManager()->mongoTimeoutSec(),
             AppRegistry::instance().settingsManager()->shellTimeoutSec());
     }
+
+    void MongoServer::handle(CreateDatabaseResponse *event) {
+        genericResponseHandler(event, "Failed to create database.");
+    }
+
+    void MongoServer::handle(DropDatabaseResponse *event) {
+        genericResponseHandler(event, "Failed to drop database.");
+    }
+
+    void MongoServer::genericResponseHandler(Event *event, const std::string &userFriendlyMessage) {
+        if (!event->isError())
+            return;
+
+        _bus->publish(new OperationFailedEvent(this, event->error().errorMessage(), userFriendlyMessage));
+    }
 }

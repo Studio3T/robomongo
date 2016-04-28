@@ -8,11 +8,15 @@ namespace Robomongo
 {
     class MongoWorker;
     class MongoDatabase;
+    class EventBus;
+    class App;
+
+    // Messages
     class EstablishConnectionResponse;
     class LoadDatabaseNamesResponse;
     class InsertDocumentResponse;
-    class EventBus;
-    class App;
+    class CreateDatabaseResponse;
+    class DropDatabaseResponse;
 
     /**
      * @brief MongoServer represents active connection to MongoDB server.
@@ -71,10 +75,13 @@ namespace Robomongo
         void handle(LoadDatabaseNamesResponse *event);
         void handle(InsertDocumentResponse *event);
         void handle(RemoveDocumentResponse *event);
+        void handle(CreateDatabaseResponse *event);
+        void handle(DropDatabaseResponse *event);
 
     private:
         void clearDatabases();
         void addDatabase(MongoDatabase *database);
+        void genericResponseHandler(Event *event, const std::string &userFriendlyMessage);
 
         MongoWorker *_client;
         ConnectionSettings *_settings;

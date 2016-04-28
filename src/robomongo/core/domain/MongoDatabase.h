@@ -83,10 +83,13 @@ namespace Robomongo
         void handle(LoadUsersResponse *event);
         void handle(LoadFunctionsResponse *event);
         void handle(CreateUserResponse *event);
+        void handle(CreateCollectionResponse *event);
+        void handle(DropCollectionResponse *event);
 
     private:
         void clearCollections();
         void addCollection(MongoCollection *collection);
+        void genericResponseHandler(Event *event, const std::string &userFriendlyMessage);
 
     private:
         MongoServer *_server;

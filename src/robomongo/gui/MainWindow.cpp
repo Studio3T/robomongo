@@ -504,6 +504,7 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type);
         AppRegistry::instance().bus()->subscribe(this, ScriptExecutingEvent::Type);
         AppRegistry::instance().bus()->subscribe(this, QueryWidgetUpdatedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(this, OperationFailedEvent::Type);
     }
 
     void MainWindow::createStylesMenu()
@@ -919,6 +920,15 @@ namespace Robomongo
     {
         _stopAction->setDisabled(true);
         _executeAction->setDisabled(false);
+    }
+
+    void MainWindow::handle(OperationFailedEvent *event)
+    {
+        std::stringstream ss;
+        ss << event->userFriendlyErrorMessage << std::endl << std::endl
+            << "Error:" << std::endl << event->technicalErrorMessage;
+
+        QMessageBox::information(NULL, "Operation failed", QtUtils::toQString(ss.str()));
     }
 
     void MainWindow::handle(QueryWidgetUpdatedEvent *event)

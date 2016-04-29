@@ -57,7 +57,7 @@ namespace Robomongo
         std::string _userName;
         std::string _userPassword;
         std::string _databaseName;
-        std::string _mechanism; // authentication mechanism
+        std::string _mechanism; // authentication mechanism (MONGODB-CR or SCRAM-SHA-1)
 
         /**
          * @brief Flag, indecating whether we should use this

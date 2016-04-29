@@ -56,6 +56,10 @@ namespace Robomongo
 
             _connection = connection;
             setIcon(0, GuiRegistry::instance().serverIcon());
+
+            if (connection->imported()) {
+                setIcon(0, GuiRegistry::instance().serverImportedIcon());
+            }
         }
 
     private:

@@ -4,6 +4,7 @@
 
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
+#include "robomongo/core/settings/SslSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace
@@ -25,7 +26,9 @@ namespace Robomongo
         _connectionName(defaultNameConnection),
         _host(defaultServerHost),
         _port(port),
-        _sshSettings(new SshSettings()) { }
+        _imported(false),
+        _sshSettings(new SshSettings()),
+        _sslSettings(new SslSettings()) { }
 
     void ConnectionSettings::fromVariant(const QVariantMap &map) {
         setConnectionName(QtUtils::toStdString(map.value("connectionName").toString()));
@@ -44,6 +47,10 @@ namespace Robomongo
             _sshSettings->fromVariant(map.value("ssh").toMap());
         }
 
+        if (map.contains("ssl")) {
+            _sslSettings->fromVariant(map.value("ssl").toMap());
+        }
+
 //#ifdef MONGO_SSL
 //      ,SSLInfo(map.value("sslEnabled").toBool(),QtUtils::toStdString(map.value("sslPemKeyFile").toString()))
 //#endif
@@ -56,6 +63,7 @@ namespace Robomongo
     {
         clearCredentials();
         delete _sshSettings;
+        delete _sslSettings;
     }
 
     /**
@@ -77,6 +85,7 @@ namespace Robomongo
         setServerHost(source->serverHost());
         setServerPort(source->serverPort());
         setDefaultDatabase(source->defaultDatabase());
+        setImported(source->imported());
 
         clearCredentials();
         QList<CredentialSettings *> cred = source->credentials();
@@ -84,8 +93,9 @@ namespace Robomongo
             addCredential((*it)->clone());
         }
 
-        // Clone SSH settings
+        // Clone SSH & SSL settings
         _sshSettings = source->sshSettings()->clone();
+        _sslSettings = source->sslSettings()->clone();
 
 //#ifdef MONGO_SSL
 //        setSslInfo(source->sslInfo());
@@ -115,6 +125,7 @@ namespace Robomongo
         map.insert("credentials", list);
 
         map.insert("ssh", _sshSettings->toVariant());
+        map.insert("ssl", _sslSettings->toVariant());
 
         return map;
     }

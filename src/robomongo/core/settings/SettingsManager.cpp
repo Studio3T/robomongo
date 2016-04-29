@@ -7,7 +7,11 @@
 #include <serializer.h>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/CredentialSettings.h"
+#include "robomongo/core/settings/SshSettings.h"
+#include "robomongo/core/settings/SslSettings.h"
 #include "robomongo/core/utils/Logger.h"
+#include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/StdUtils.h"
 #include "robomongo/gui/AppStyle.h"
 
@@ -196,8 +200,10 @@ namespace Robomongo
         for (QVariantList::iterator it = list.begin(); it != list.end(); ++it) {
             ConnectionSettings *record = new ConnectionSettings();
             record->fromVariant((*it).toMap());
-            _connections.push_back(record);
+            addConnection(record);
         }
+
+        loadPreviousConnections();
 
         _toolbars = map.value("toolbars").toMap();
         ToolbarSettingsContainerType::const_iterator it = _toolbars.find("connect");
@@ -263,6 +269,11 @@ namespace Robomongo
         QVariantList list;
 
         for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it != _connections.end(); ++it) {
+
+            // Temporary skip imported
+            if ((*it)->imported())
+                continue;
+
             QVariantMap rm = (*it)->toVariant().toMap();
             list.append(rm);
         }
@@ -320,4 +331,72 @@ namespace Robomongo
         _toolbars[toolbarName] = visible;
     }
 
+    void SettingsManager::loadPreviousConnections() {
+        const QString oldConfigPath = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
+
+        if (!QFile::exists(oldConfigPath))
+            return;
+
+        QFile f(oldConfigPath);
+        if (!f.open(QIODevice::ReadOnly))
+            return;
+
+        bool ok;
+        QJson::Parser parser;
+        QVariantMap vmap = parser.parse(f.readAll(), &ok).toMap();
+        if (!ok)
+            return;
+
+        QVariantList vconns = vmap.value("connections").toList();
+        for (QVariantList::iterator itconn = vconns.begin(); itconn != vconns.end(); ++itconn) {
+            QVariantMap vconn = (*itconn).toMap();
+
+            ConnectionSettings *conn = new ConnectionSettings();
+            conn->setImported(true);
+            conn->setConnectionName(QtUtils::toStdString(vconn.value("connectionName").toString()));
+            conn->setServerHost(QtUtils::toStdString(vconn.value("serverHost").toString().left(300)));
+            conn->setServerPort(vconn.value("serverPort").toInt());
+            conn->setDefaultDatabase(QtUtils::toStdString(vconn.value("defaultDatabase").toString()));
+
+            // SSH settings
+            if (vconn.contains("sshAuthMethod")) {
+                SshSettings *ssh = conn->sshSettings();
+                ssh->setHost(QtUtils::toStdString(vconn.value("sshHost").toString()));
+                ssh->setUserName(QtUtils::toStdString(vconn.value("sshUserName").toString()));
+                ssh->setPort(vconn.value("sshPort").toInt());
+                ssh->setUserPassword(QtUtils::toStdString(vconn.value("sshUserPassword").toString()));
+                ssh->setPublicKeyFile(QtUtils::toStdString(vconn.value("sshPublicKey").toString()));
+                ssh->setPrivateKeyFile(QtUtils::toStdString(vconn.value("sshPrivateKey").toString()));
+                ssh->setPassphrase(QtUtils::toStdString(vconn.value("sshPassphrase").toString()));
+
+                int auth = vconn.value("sshAuthMethod").toInt();
+                ssh->setEnabled(auth == 1 || auth == 2);
+                ssh->setAuthMethod(auth == 2 ? "publickey" : "password");
+            }
+
+            // SSL settings
+            if (vconn.contains("sshEnabled")) {
+                SslSettings *ssl = conn->sslSettings();
+                ssl->setEnabled(vconn.value("enabled").toBool());
+                ssl->setPemKeyFile(QtUtils::toStdString(vconn.value("sslPemKeyFile").toString()));
+            }
+
+            // Credentials
+            QVariantList vcreds = vconn.value("credentials").toList();
+            for (QVariantList::const_iterator itcred = vcreds.begin(); itcred != vcreds.end(); ++itcred) {
+                QVariantMap vcred = (*itcred).toMap();
+
+                CredentialSettings *cred = new CredentialSettings();
+                cred->setUserName(QtUtils::toStdString(vcred.value("userName").toString()));
+                cred->setUserPassword(QtUtils::toStdString(vcred.value("userPassword").toString()));
+                cred->setDatabaseName(QtUtils::toStdString(vcred.value("databaseName").toString()));
+                cred->setMechanism("MONGODB-CR");
+                cred->setEnabled(vcred.value("enabled").toBool());
+
+                conn->addCredential(cred);
+            }
+
+            addConnection(conn);
+        }
+    }
 }

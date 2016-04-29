@@ -123,6 +123,7 @@ set(SOURCES
 
     gui/dialogs/SSHTunnelTab.cpp
     core/settings/SshSettings.cpp
+    core/settings/SslSettings.cpp
     core/mongodb/SshTunnelWorker.cpp
 
     gui/resources/gui.qrc

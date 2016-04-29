@@ -46,6 +46,7 @@ namespace Robomongo
         std::string passphrase() const { return _passphrase; }
         void setPassphrase(const std::string &passphrase) { _passphrase = passphrase; }
 
+        // "password" or "publickey"
         std::string authMethod() const { return _authMethod.empty() ? "publickey" : _authMethod; }
         void setAuthMethod(const std::string &method) { _authMethod = method; }
 

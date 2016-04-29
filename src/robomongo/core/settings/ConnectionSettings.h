@@ -10,6 +10,8 @@ namespace Robomongo
 {
     class CredentialSettings;
     class SshSettings;
+    class SslSettings;
+
     /**
      * @brief Represents connection record
      */
@@ -69,6 +71,12 @@ namespace Robomongo
          */
         std::string defaultDatabase() const { return _defaultDatabase; }
         void setDefaultDatabase(const std::string &defaultDatabase) { _defaultDatabase = defaultDatabase; }
+
+        /**
+         * Was this connection imported from somewhere?
+         */
+        bool imported() const { return _imported; }
+        void setImported(bool imported) { _imported = imported; }
 
         /**
          * @brief Adds credential to this connection
@@ -143,6 +151,7 @@ namespace Robomongo
         }
 
         SshSettings *sshSettings() const { return _sshSettings; }
+        SslSettings *sslSettings() const { return _sslSettings; }
 
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
@@ -152,6 +161,10 @@ namespace Robomongo
         std::string _defaultDatabase;
         QList<CredentialSettings *> _credentials;
         SshSettings *_sshSettings;
+        SslSettings *_sslSettings;
+
+        // Was this connection imported from somewhere?
+        bool _imported;
     };
 }
 

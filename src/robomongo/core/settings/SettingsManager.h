@@ -123,6 +123,8 @@ namespace Robomongo
          */
         QVariantMap convertToMap() const;
 
+        void loadPreviousConnections();
+
         /**
          * @brief Version of settings schema currently loaded
          */

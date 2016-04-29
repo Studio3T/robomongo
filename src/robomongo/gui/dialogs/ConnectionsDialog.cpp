@@ -126,11 +126,12 @@ namespace Robomongo
         QHBoxLayout *bottomLayout = new QHBoxLayout;
         bottomLayout->addWidget(buttonBox);
 
-        QLabel *intro = new QLabel(
-            "<a href='create'>Create</a>, "
-            "<a href='edit'>edit</a>, "
-            "<a href='remove'>remove</a>, "
-            "<a href='clone'>clone</a> or reorder connections via drag'n'drop.");
+        QLabel *intro = new QLabel(QString(
+            "<a style='color: %1' href='create'>Create</a>, "
+            "<a style='color: %1' href='edit'>edit</a>, "
+            "<a style='color: %1' href='remove'>remove</a>, "
+            "<a style='color: %1' href='clone'>clone</a> "
+            "or reorder connections via drag'n'drop.").arg("#106CD6"));
         intro->setWordWrap(true);
 
         VERIFY(connect(intro, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString))));

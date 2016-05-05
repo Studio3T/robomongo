@@ -1,6 +1,11 @@
 Building Robomongo
 ==================
 
+#### Prerequisites
+
+1. CMake (3.2 or later)
+2. Qt (5.5 or later)
+
 #### Step 1.
 
 Download and build Robomongo Shell (our fork of MongoDB). 

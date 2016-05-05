@@ -6,7 +6,12 @@ Robomongo uses [modified version](https://github.com/paralect/robomongo-shell/tr
 Build for Mac OS X or Linux
 ---------------------------
 
-1. Clone Robomongo Shell and checkout to `roboshell-v3.2` branch:
+#### Prerequisites
+
+1. Install [Scons](http://scons.org/tag/releases.html) (2.4 or later)
+
+
+2. Clone Robomongo Shell and checkout to `roboshell-v3.2` branch:
 
   ```sh
   $ git clone https://github.com/paralect/robomongo-shell.git
@@ -14,7 +19,7 @@ Build for Mac OS X or Linux
   $ git checkout roboshell-v3.2
   ```
 
-2. Build Robomongo Shell:
+3. Build Robomongo Shell:
 
   ```sh
   $ bin/build

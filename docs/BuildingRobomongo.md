@@ -22,7 +22,7 @@ Set special environment variable `ROBOMONGO_CMAKE_PREFIX_PATH` to point to a set
 directories:
 
 1. Location of Qt 5 SDK
-2. Location of Robomongo Shell (built in "Step 1")
+2. Location of Robomongo Shell **source root** folder (built in "Step 1")
 
 Separate directories by semicolon `;` (not colon):
 

@@ -110,20 +110,31 @@ namespace Robomongo
         int mongoTimeoutSec() const { return _mongoTimeoutSec; }
         int shellTimeoutSec() const { return _shellTimeoutSec; }
 
+        // True when settings from previous versions of
+        // Robomongo are imported
+        void setImported(bool imported) { _imported = imported; }
+        bool imported() const { return _imported; }
 
+        /**
+         * Returns number of imported connections
+         */
+        int importedConnectionsCount();
     private:
 
         /**
-         * @brief Load settings from the map. Existings settings will be overwritten.
+         * Load settings from the map. Existing settings will be overwritten.
          */
         void loadFromMap(QVariantMap &map);
 
         /**
-         * @brief Save all settings to map.
+         * Save all settings to map.
          */
         QVariantMap convertToMap() const;
 
-        void loadPreviousConnections();
+        /**
+         * Load connection settings from previous versions of Robomongo
+         */
+        void importPreviousConnections();
 
         /**
          * @brief Version of settings schema currently loaded
@@ -146,6 +157,10 @@ namespace Robomongo
 
         int _mongoTimeoutSec;
         int _shellTimeoutSec;
+
+        // True when settings from previous versions of
+        // Robomongo are imported
+        bool _imported;
 
         /**
          * @brief List of connections

@@ -165,12 +165,13 @@ namespace Robomongo
     }
 
     /**
-     * @brief Returns primary credential, or NULL if no credentials exists.
+     * @brief Returns primary credential
      */
     CredentialSettings *ConnectionSettings::primaryCredential()
     {
-        if (_credentials.count() == 0)
-            return NULL;
+        if (_credentials.count() == 0) {
+            _credentials.append(new CredentialSettings());
+        }
 
         return _credentials.at(0);
     }

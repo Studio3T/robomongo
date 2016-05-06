@@ -9,6 +9,7 @@
 #include <QDialogButtonBox>
 #include <QTreeWidgetItem>
 #include <QKeyEvent>
+#include <QApplication>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
@@ -69,8 +70,8 @@ namespace Robomongo
     /**
      * @brief Creates dialog
      */
-    ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager, QWidget *parent) 
-        : QDialog(parent), _settingsManager(settingsManager)
+    ConnectionsDialog::ConnectionsDialog(SettingsManager *settingsManager, bool checkForImported, QWidget *parent)
+        : QDialog(parent), _settingsManager(settingsManager), _checkForImported(checkForImported)
     {
         setWindowIcon(GuiRegistry::instance().connectIcon());
         setWindowTitle("MongoDB Connections");
@@ -128,7 +129,26 @@ namespace Robomongo
         VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
 
         QHBoxLayout *bottomLayout = new QHBoxLayout;
-        bottomLayout->addWidget(buttonBox);
+
+        // Information message is shown when connection
+        // settings are imported from previous version of Robomongo
+        int importedCount = _settingsManager->importedConnectionsCount();
+        if (_checkForImported && importedCount > 0) {
+            QIcon importIcon = qApp->style()->standardIcon(QStyle::SP_MessageBoxInformation);
+            QPixmap importPixmap = importIcon.pixmap(20, 20);
+            QLabel *importLabelIcon = new QLabel;
+            importLabelIcon->setPixmap(importPixmap);
+            QString importedRecords = importedCount > 1 ? "records" : "record";
+            QLabel *importLabelMessage = new QLabel(QString(
+                "<span style='color: #777777;'>"
+                "Connection settings were imported (%1 %2)"
+                "</span>").arg(importedCount).arg(importedRecords));
+
+            bottomLayout->addWidget(importLabelIcon, 0, Qt::AlignLeft);
+            bottomLayout->addWidget(importLabelMessage, 1, Qt::AlignLeft);
+        }
+
+        bottomLayout->addWidget(buttonBox, 0, Qt::AlignRight);
 
         QLabel *intro = new QLabel(QString(
             "<a style='color: %1' href='create'>Create</a>, "

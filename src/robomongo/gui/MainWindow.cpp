@@ -642,8 +642,10 @@ namespace Robomongo
 
     void MainWindow::manageConnections()
     {
-        ConnectionsDialog dialog(AppRegistry::instance().settingsManager(), this);
+        static bool checkForImported = true;
+        ConnectionsDialog dialog(AppRegistry::instance().settingsManager(), checkForImported, this);
         int result = dialog.exec();
+        checkForImported = false;
 
         // save settings and update connection menu
         AppRegistry::instance().settingsManager()->save();

@@ -53,6 +53,7 @@ namespace Robomongo
         _textFontPointSize(-1),
         _lineNumbers(false),
         _loadMongoRcJs(false),
+        _imported(false),
         _mongoTimeoutSec(10),
         _shellTimeoutSec(15)
     {
@@ -153,6 +154,9 @@ namespace Robomongo
         _lineNumbers = map.contains("lineNumbers") ?
             map.value("lineNumbers").toBool() : false;
 
+        _imported = map.contains("imported") ?
+            map.value("imported").toBool() : false;
+
         // 4. Load TimeZone
         int timeZone = map.value("timeZone").toInt();
         if (timeZone > 1 || timeZone < 0)
@@ -203,8 +207,6 @@ namespace Robomongo
             addConnection(record);
         }
 
-        loadPreviousConnections();
-
         _toolbars = map.value("toolbars").toMap();
         ToolbarSettingsContainerType::const_iterator it = _toolbars.find("connect");
         if (_toolbars.end() == it)
@@ -221,6 +223,10 @@ namespace Robomongo
         it = _toolbars.find("logs");
         if (_toolbars.end() == it)
             _toolbars["logs"] = false;
+
+        // Load connection settings from previous
+        // versions of Robomongo
+        importPreviousConnections();
     }
 
     /**
@@ -269,11 +275,6 @@ namespace Robomongo
         QVariantList list;
 
         for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it != _connections.end(); ++it) {
-
-            // Temporary skip imported
-            if ((*it)->imported())
-                continue;
-
             QVariantMap rm = (*it)->toVariant().toMap();
             list.append(rm);
         }
@@ -283,6 +284,8 @@ namespace Robomongo
         map.insert("autoExec", _autoExec);
 
         map.insert("toolbars", _toolbars);
+
+        map.insert("imported", _imported);
 
         return map;
     }
@@ -331,7 +334,12 @@ namespace Robomongo
         _toolbars[toolbarName] = visible;
     }
 
-    void SettingsManager::loadPreviousConnections() {
+    void SettingsManager::importPreviousConnections() {
+        // Skip when settings already imported
+        if (_imported)
+            return;
+
+        // Load old configuration file (used till version 0.8.5)
         const QString oldConfigPath = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
 
         if (!QFile::exists(oldConfigPath))
@@ -396,7 +404,55 @@ namespace Robomongo
                 conn->addCredential(cred);
             }
 
-            addConnection(conn);
+            // Check that we didn't have similar connection
+            bool matched = false;
+            for (std::vector<ConnectionSettings*>::const_iterator it = _connections.begin(); it != _connections.end(); ++it) {
+                ConnectionSettings *econn = *it;    // Existing connection
+
+                if (conn->serverPort() != econn->serverPort() ||
+                    conn->serverHost() != econn->serverHost() ||
+                    conn->defaultDatabase() != econn->defaultDatabase())
+                    continue;
+
+                CredentialSettings *cred = conn->primaryCredential();
+                CredentialSettings *ecred = econn->primaryCredential();
+                if (cred->databaseName() != ecred->databaseName() ||
+                    cred->userName() != ecred->userName() ||
+                    cred->userPassword() != ecred->userPassword() ||
+                    cred->enabled() != ecred->enabled())
+                    continue;
+
+                SshSettings *ssh = conn->sshSettings();
+                SshSettings *essh = econn->sshSettings();
+                if (ssh->enabled() != essh->enabled() ||
+                    ssh->port() != essh->port() ||
+                    ssh->host() != essh->host() ||
+                    ssh->privateKeyFile() != essh->privateKeyFile() ||
+                    ssh->userPassword() != essh->userPassword() ||
+                    ssh->userName() != essh->userName())
+                    continue;
+
+                matched = true;
+                break;
+            }
+
+            // Import connection only if we didn't find similar one
+            if (!matched)
+                addConnection(conn);
         }
+
+        // Mark as imported
+        setImported(true);
+    }
+
+    int SettingsManager::importedConnectionsCount() {
+        int count = 0;
+        for (std::vector<ConnectionSettings*>::const_iterator it = _connections.begin(); it != _connections.end(); ++it) {
+            ConnectionSettings *conn = *it;
+            if (conn->imported())
+                ++count;
+        }
+
+        return count;
     }
 }

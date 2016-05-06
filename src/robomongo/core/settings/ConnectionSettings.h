@@ -95,7 +95,7 @@ namespace Robomongo
         bool hasEnabledPrimaryCredential();
 
         /**
-         * @brief Returns primary credential, or NULL if no credentials exists.
+         * @brief Returns primary credential
          */
         CredentialSettings *primaryCredential();
 

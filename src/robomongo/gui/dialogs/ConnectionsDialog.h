@@ -23,7 +23,7 @@ namespace Robomongo
         /**
          * @brief Creates dialog
          */
-        ConnectionsDialog(SettingsManager *manager, QWidget *parent = 0);
+        ConnectionsDialog(SettingsManager *manager, bool checkForImported, QWidget *parent = 0);
 
         /**
          * @brief ConnectionSettings, that was selected after pressing on
@@ -96,6 +96,8 @@ namespace Robomongo
          * ConnectionListWidgetItem*
          */
         ConnectionListItemContainerType _connectionItems;
+
+        bool _checkForImported;
     };    
 
     class ConnectionsTreeWidget : public QTreeWidget

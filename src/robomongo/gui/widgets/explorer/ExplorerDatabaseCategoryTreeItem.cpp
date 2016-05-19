@@ -165,7 +165,7 @@ namespace Robomongo
             return;
         std::string collectionName = QtUtils::toStdString(dlg.getCollectionName());
         databaseItem->database()->createCollection(collectionName, 
-            dlg.getSizeInputValue(), dlg.isCapped(), dlg.getMaxDocNumberInputValue(), &dlg.getExtraOptions());
+            dlg.getSizeInputValue(), dlg.isCapped(), dlg.getMaxDocNumberInputValue(), dlg.getExtraOptions());
         // refresh list of databases
         databaseItem->expandCollections();
     }

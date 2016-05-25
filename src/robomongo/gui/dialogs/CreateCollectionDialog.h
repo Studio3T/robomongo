@@ -86,6 +86,12 @@ namespace Robomongo
         */
         virtual void accept();
 
+    protected:
+        /**
+        * @brief Reimplementing closeEvent in order to do implement functioanlites before close this dialog.
+        */
+        void closeEvent(QCloseEvent *event);
+
     private Q_SLOTS:
         /**
         * @brief Set indicator position when active JSON frame text changed
@@ -114,6 +120,12 @@ namespace Robomongo
         * @param Index of active tab (i.e. index = 0 for the first tab)
         */
         void onTabChanged(int index);
+
+        /**
+        * @brief Show/hide advanced options menu (_tabwidget) when advancedButton toggled.
+        * @param state : true if dialog is expanding, false if shrinking.
+        */
+        void onAdvancedButtonToggled(bool state);
 
     private:
         /**
@@ -148,6 +160,15 @@ namespace Robomongo
         QWidget* createStorageEngineTab();
         QWidget* createValidatorTab();
         QWidget* createIndexOptionDefaultsTab();
+
+        /**
+        * @brief Save windows settings into system registry
+        */
+        void saveWindowSettings() const;
+        /**
+        * @brief Restore windows settings from system registry
+        */
+        void restoreWindowSettings();
 
         /**
         * @brief Do initial configuration of given JSON frame.
@@ -212,9 +233,11 @@ namespace Robomongo
         */
         QLineEdit *_inputEdit;
         QLabel *_inputLabel;
-        QTabWidget *_tabWidget;
+        QTabWidget *_advancedOptions;
         QPushButton *_validateJsonButton;
         QDialogButtonBox *_buttonBox;
+        QPushButton *_advancedButton;
+
         /**
         * @brief Options Tab
         */

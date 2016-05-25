@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QSettings>
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qsciscintilla.h>
 #include <QVBoxLayout>
@@ -46,8 +47,7 @@ namespace Robomongo
         _activeFrame(nullptr), _activeObj(&_storageEngineObj), _extraOptionsObj(nullptr)
     {
         setWindowTitle(tr("Create Collection"));
-        setMinimumWidth(300);
-        resize(520, 400);
+        setMinimumSize(300,150);
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
 
         QFrame *hline = new QFrame();
@@ -73,14 +73,18 @@ namespace Robomongo
         _validateJsonButton->hide();
         VERIFY(connect(_validateJsonButton, SIGNAL(clicked()), this, SLOT(onValidateButtonClicked())));
 
-        // Create tabs at last
-        _tabWidget = new QTabWidget(this);
-        _tabWidget->addTab(createOptionsTab(), tr("Options"));
-        _tabWidget->addTab(createStorageEngineTab(), tr("Storage Engine"));
-        _tabWidget->addTab(createValidatorTab(), tr("Validator"));
-        _tabWidget->addTab(createIndexOptionDefaultsTab(), tr("Index Option Defaults"));
-        _tabWidget->setTabsClosable(false);
-        VERIFY(connect(_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(onTabChanged(int))));
+        // Create advanced options tabs
+        _advancedOptions = new QTabWidget(this);
+        _advancedOptions->addTab(createOptionsTab(), tr("Options"));
+        _advancedOptions->addTab(createStorageEngineTab(), tr("Storage Engine"));
+        _advancedOptions->addTab(createValidatorTab(), tr("Validator"));
+        _advancedOptions->addTab(createIndexOptionDefaultsTab(), tr("Index Option Defaults"));
+        _advancedOptions->setTabsClosable(false);
+        VERIFY(connect(_advancedOptions, SIGNAL(currentChanged(int)), this, SLOT(onTabChanged(int))));
+        // Create Advanced Button
+        _advancedButton = new QPushButton(tr("Advanced"));
+        _advancedButton->setCheckable(true);
+        VERIFY(connect(_advancedButton, SIGNAL(toggled(bool)), this, SLOT(onAdvancedButtonToggled(bool))));
 
         // Check mongodb version and storage engine type to enable/disable UI options
         disableUnsupportedOptions();
@@ -89,6 +93,7 @@ namespace Robomongo
         buttomHlayout->addWidget(_validateJsonButton);
         buttomHlayout->addStretch(1);
         buttomHlayout->addWidget(_buttonBox);
+        buttomHlayout->addWidget(_advancedButton);
 
         QHBoxLayout *vlayout = new QHBoxLayout();
         if (!serverName.isEmpty())
@@ -97,6 +102,7 @@ namespace Robomongo
             vlayout->addWidget(createDatabaseIndicator(database), 0, Qt::AlignLeft);
         if (!collection.isEmpty())
             vlayout->addWidget(createCollectionIndicator(collection), 0, Qt::AlignLeft);
+        vlayout->addStretch(1);
 
         QVBoxLayout *namelayout = new QVBoxLayout();
         namelayout->setContentsMargins(0, 7, 0, 7);
@@ -107,10 +113,12 @@ namespace Robomongo
         mainLayout->addLayout(vlayout);
         mainLayout->addWidget(hline);
         mainLayout->addLayout(namelayout);
-        mainLayout->addWidget(_tabWidget);
+        mainLayout->addWidget(_advancedOptions);
         mainLayout->addLayout(buttomHlayout);
+        mainLayout->setSizeConstraint(QLayout::SetMaximumSize);
         setLayout(mainLayout);
 
+        _advancedOptions->hide();
         _inputEdit->setFocus();
     }
 
@@ -169,6 +177,15 @@ namespace Robomongo
         QDialog::accept();
     }
 
+    void CreateCollectionDialog::closeEvent(QCloseEvent *event)
+    {
+        if (_advancedOptions->isVisible())
+        {
+            saveWindowSettings();
+        }
+        QWidget::closeEvent(event);
+    }
+
     void CreateCollectionDialog::onFrameTextChanged()
     {
         _activeFrame->sciScintilla()->clearIndicatorRange(0, 0, _activeFrame->sciScintilla()->lines(), 40, 0);
@@ -211,6 +228,30 @@ namespace Robomongo
             }
         }
     };
+
+    void CreateCollectionDialog::onAdvancedButtonToggled(bool state)
+    {
+        _advancedOptions->setVisible(state);
+        if (state)  // resize for expanded dialog
+        {
+            setMinimumSize(530, 400);
+            QSettings settings("Paralect", "Robomongo");
+            if (settings.contains("CreateCollectionDialog/geometry"))
+            {
+                restoreWindowSettings();
+            }
+            else
+            {
+                resize(530, 400);
+                adjustSize();
+            }
+        }
+        else        // resize for shrinked dialog
+        {
+            setMinimumSize(300, 150);
+            adjustSize();
+        }
+    }
 
     Indicator *CreateCollectionDialog::createDatabaseIndicator(const QString &database)
     {
@@ -346,6 +387,18 @@ namespace Robomongo
         return indexOptionDefaultsTab;
     }
 
+    void CreateCollectionDialog::saveWindowSettings() const
+    {
+        QSettings settings("Paralect", "Robomongo");
+        settings.setValue("CreateCollectionDialog/geometry", saveGeometry());
+    }
+
+    void CreateCollectionDialog::restoreWindowSettings()
+    {
+        QSettings settings("Paralect", "Robomongo");
+        restoreGeometry(settings.value("CreateCollectionDialog/geometry").toByteArray());
+    }
+
     void CreateCollectionDialog::configureFrameText(JSONFrame* frame)
     {
         QsciLexerJavaScript *javaScriptLexer = new JSLexer(this);
@@ -410,11 +463,11 @@ namespace Robomongo
         else if (_usePowerOfTwoSizeCheckBox->isEnabled()) {
             builder.append("flags", (isCheckedUsePowerOfTwo()*1));
         }
-        if (_tabWidget->isTabEnabled(STORAGE_ENGINE_TAB) ) {
+        if (_advancedOptions->isTabEnabled(STORAGE_ENGINE_TAB) ) {
             validate(_storageEngineFrame, _storageEngineObj);
             if(!_storageEngineObj.isEmpty()) builder.append("storageEngine", _storageEngineObj);
         }
-        if (_tabWidget->isTabEnabled(VALIDATOR_TAB)) {
+        if (_advancedOptions->isTabEnabled(VALIDATOR_TAB)) {
             validate(_validatorFrame, _validatorObj);
             if (!_validatorObj.isEmpty()) {
                 builder.append("validator", _validatorObj);
@@ -422,7 +475,7 @@ namespace Robomongo
                 builder.append("validationAction", _validatorActionComboBox->currentText().toStdString());
             }
         }
-        if (_tabWidget->isTabEnabled(INDEX_OPTION_DEFAULTS_TAB)) {
+        if (_advancedOptions->isTabEnabled(INDEX_OPTION_DEFAULTS_TAB)) {
             validate(_indexOptionDefaultsFrame, _indexOptionDefaultsObj);
             if (!_indexOptionDefaultsObj.isEmpty()) builder.append("indexOptionDefaults", _indexOptionDefaultsObj);
         }
@@ -499,8 +552,8 @@ namespace Robomongo
 
     void CreateCollectionDialog::disableTab(int index, const QString& hint) const
     {
-        _tabWidget->setTabEnabled(index, false);
-        _tabWidget->setTabToolTip(index, hint);
+        _advancedOptions->setTabEnabled(index, false);
+        _advancedOptions->setTabToolTip(index, hint);
     }
 
     void CreateCollectionDialog::setCursorPosition(int line, int column)

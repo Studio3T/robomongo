@@ -1708,7 +1708,8 @@ kex_method_diffie_helman_group_exchange_sha256 = {
 };
 
 static const LIBSSH2_KEX_METHOD *libssh2_kex_methods[] = {
-    //&kex_method_diffie_helman_group_exchange_sha256,
+    //&kex_method_diffie_helman_group_exchange_sha256,  // #1090: Patch for libssh2 for ssh connection issue due to Ubuntu 16.04/OSX's 
+                                                        // OpenSSH 6.9 version have disabled obsolete form of KEX "Diffie-Hellman group exchange" algorithm .
     &kex_method_diffie_helman_group_exchange_sha1,
     &kex_method_diffie_helman_group14_sha1,
     &kex_method_diffie_helman_group1_sha1,

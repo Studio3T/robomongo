@@ -488,8 +488,8 @@ namespace Robomongo
         bool result(false);
         // Validate capped options
         if (isCapped()) {
-            if (!(getSizeInputValue() > 0) || !(getMaxDocNumberInputValue() > 0)) {
-                QMessageBox::critical(NULL, tr("Error"), tr("Invalid capped collection options"));
+            if (!(getSizeInputValue() > 0)) {
+                QMessageBox::critical(NULL, tr("Error"), tr("Maximum size is required for capped collections"));
                 return false;
             }
             result = true;

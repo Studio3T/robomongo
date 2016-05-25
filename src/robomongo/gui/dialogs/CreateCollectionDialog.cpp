@@ -480,7 +480,7 @@ namespace Robomongo
             if (!_indexOptionDefaultsObj.isEmpty()) builder.append("indexOptionDefaults", _indexOptionDefaultsObj);
         }
         // Complete and get resulting BSONObj
-        _extraOptionsObj = std::make_unique<mongo::BSONObj>(builder.obj());
+        _extraOptionsObj.reset(new mongo::BSONObj(builder.obj()));
     }
 
     bool CreateCollectionDialog::validateOptionDependencies() const

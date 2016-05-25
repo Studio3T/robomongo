@@ -36,6 +36,12 @@ namespace Robomongo
          */
         virtual void accept();
 
+    protected:
+        /**
+        * @brief Reimplementing closeEvent in order to do some pre-close actions.
+        */
+        void closeEvent(QCloseEvent *event);
+
     private Q_SLOTS:
         void linkActivated(const QString &link);
 
@@ -75,6 +81,17 @@ namespace Robomongo
         void keyPressEvent(QKeyEvent* event);
 
     private:
+
+        /**
+        * @brief Restore windows settings from system registry
+        */
+        void restoreWindowsSettings();
+
+        /**
+        * @brief Save windows settings into system registry
+        */
+        void saveWindowsSettings() const;
+
         /**
          * @brief ConnectionSettings, that was selected after pressing on
          * "Connect" button

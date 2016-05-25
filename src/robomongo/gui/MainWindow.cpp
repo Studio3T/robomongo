@@ -16,6 +16,7 @@
 #include <QLabel>
 #include <QStatusBar>
 #include <QHBoxLayout>
+#include <QSettings>
 
 #include <mongo/logger/log_severity.h>
 #include "robomongo/core/settings/SettingsManager.h"
@@ -505,6 +506,8 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(this, ScriptExecutingEvent::Type);
         AppRegistry::instance().bus()->subscribe(this, QueryWidgetUpdatedEvent::Type);
         AppRegistry::instance().bus()->subscribe(this, OperationFailedEvent::Type);
+
+        restoreWindowsSettings();
     }
 
     void MainWindow::createStylesMenu()
@@ -564,6 +567,40 @@ namespace Robomongo
         AppStyleUtils::applyStyle(text);
         AppRegistry::instance().settingsManager()->setCurrentStyle(text);
         AppRegistry::instance().settingsManager()->save();
+    }
+
+    void MainWindow::restoreWindowsSettings()
+    {
+        QSettings settings("Paralect", "Robomongo");
+        // Restore settings if registery key exists, otherwise resize as app started for the first time.
+        if (settings.contains("MainWindow/geometry"))
+        {
+            restoreGeometry(settings.value("MainWindow/geometry").toByteArray());
+            restoreState(settings.value("MainWindow/windowState").toByteArray());
+            settings.setValue("windowState", saveState());
+        }
+        else
+        {
+            // Resize main window. We are trying to keep it "almost" maximized.
+            QRect screenGeometry = QApplication::desktop()->availableGeometry();
+            int horizontalMargin = (int)(screenGeometry.width() * 0.1);     // todo: use C++ static cast instead of C-style cast
+            int verticalMargin = (int)(screenGeometry.height() * 0.1);
+            int _width = screenGeometry.width() - horizontalMargin;
+            int _height = screenGeometry.height() - verticalMargin;
+            resize(QSize(_width, _height));
+
+            // Center main window
+            int x = (screenGeometry.width() - width()) / 2;
+            int y = (screenGeometry.height() - height()) / 2;
+            move(x, y);
+        }
+    }
+
+    void MainWindow::saveWindowsSettings() const
+    {
+        QSettings settings("Paralect", "Robomongo");
+        settings.setValue("MainWindow/geometry", saveGeometry());
+        settings.setValue("MainWindow/windowState", saveState());
     }
 
     void MainWindow::open()
@@ -931,6 +968,12 @@ namespace Robomongo
             << "Error:" << std::endl << event->technicalErrorMessage;
 
         QMessageBox::information(NULL, "Operation failed", QtUtils::toQString(ss.str()));
+    }
+
+    void MainWindow::closeEvent(QCloseEvent *event)
+    {
+        saveWindowsSettings();
+        QMainWindow::closeEvent(event);
     }
 
     void MainWindow::handle(QueryWidgetUpdatedEvent *event)

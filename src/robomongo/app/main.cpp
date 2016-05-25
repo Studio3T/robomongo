@@ -53,19 +53,6 @@ int main(int argc, char *argv[], char** envp)
 
     // Application main window
     Robomongo::MainWindow win;
-
-    // Resize main window. We are trying to keep it "almost" maximized.
-    QRect screenGeometry = QApplication::desktop()->availableGeometry();
-    int horizontalMargin = (int)(screenGeometry.width() * 0.1);
-    int verticalMargin = (int)(screenGeometry.height() * 0.1);
-    int width = screenGeometry.width() - horizontalMargin;
-    int height = screenGeometry.height() - verticalMargin;
-    win.resize(QSize(width, height));
-
-    // Center main window
-    int x = (screenGeometry.width() - win.width()) / 2;
-    int y = (screenGeometry.height() - win.height()) / 2;
-    win.move(x, y);
     win.show();
 
     int rc = app.exec();

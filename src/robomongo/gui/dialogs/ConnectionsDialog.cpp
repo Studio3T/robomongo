@@ -10,6 +10,7 @@
 #include <QTreeWidgetItem>
 #include <QKeyEvent>
 #include <QApplication>
+#include <QSettings>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
@@ -180,6 +181,8 @@ namespace Robomongo
             _listWidget->setCurrentItem(_listWidget->topLevelItem(0));
 
         _listWidget->setFocus();
+
+        restoreWindowsSettings();
     }
 
     /**
@@ -196,6 +199,12 @@ namespace Robomongo
         _selectedConnection = currentItem->connection();
 
         QDialog::accept();
+    }
+
+    void ConnectionsDialog::closeEvent(QCloseEvent *event)
+    {
+        saveWindowsSettings();
+        QWidget::closeEvent(event);
     }
 
     void ConnectionsDialog::linkActivated(const QString &link)
@@ -387,6 +396,17 @@ namespace Robomongo
         QDialog::keyPressEvent(event);
     }
 
+    void ConnectionsDialog::restoreWindowsSettings()
+    {
+        QSettings settings("Paralect", "Robomongo");
+        restoreGeometry(settings.value("ConnectionsDialog/geometry").toByteArray());
+    }
+
+    void ConnectionsDialog::saveWindowsSettings() const
+    {
+        QSettings settings("Paralect", "Robomongo");
+        settings.setValue("ConnectionsDialog/geometry", saveGeometry());
+    }
 
     ConnectionsTreeWidget::ConnectionsTreeWidget()
     {

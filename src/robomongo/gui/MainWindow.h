@@ -69,6 +69,10 @@ namespace Robomongo
         void handle(ScriptExecutedEvent *event);
         void handle(QueryWidgetUpdatedEvent *event);
         void handle(OperationFailedEvent *event);
+
+    protected:
+        void closeEvent(QCloseEvent *event);
+
     private Q_SLOTS:
         void updateMenus();
         void setUtcTimeZone();
@@ -105,6 +109,8 @@ namespace Robomongo
         void createTabs();
         void createStylesMenu();
         void createStatusBar();
+        void restoreWindowsSettings();
+        void saveWindowsSettings() const;
     };
 
 }

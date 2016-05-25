@@ -505,6 +505,7 @@ namespace Robomongo
     void CreateCollectionDialog::disableUnsupportedOptions() const
     {
 
+        // Handle WIRED_TIGER engine type
         if (MongoDatabase::StorageEngineType::WIRED_TIGER == _storageEngine) {
             disableOption(_usePowerOfTwoSizeCheckBox, USE_POWEROFTWO_HINT);
             disableOption(_noPaddingCheckBox, NO_PADDING_HINT);
@@ -516,7 +517,9 @@ namespace Robomongo
             disableTab(STORAGE_ENGINE_TAB, STORAGE_ENGINE_TAB_HINT);
         }
 
-        if (MongoDatabase::StorageEngineType::MMAPV1 == _storageEngine) {
+        // Handle MMAPV1 engine type
+        // Note: For mongodb 2.6 does not have storageEngine string due to the fact that it uses MMAPV1 only.
+        if (MongoDatabase::StorageEngineType::MMAPV1 == _storageEngine || "" == _storageEngine) {
             if (MongoDatabase::DBVersion::MONGODB_3_0 <= _dbVersion) {
                 disableOption(_usePowerOfTwoSizeCheckBox, USE_POWEROFTWO_HINT);
             }

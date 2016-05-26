@@ -197,8 +197,15 @@ namespace Robomongo
             return;
 
         _selectedConnection = currentItem->connection();
+        saveWindowsSettings();
 
         QDialog::accept();
+    }
+
+    void ConnectionsDialog::reject()
+    {
+        saveWindowsSettings();
+        QDialog::reject();
     }
 
     void ConnectionsDialog::closeEvent(QCloseEvent *event)

@@ -172,9 +172,17 @@ namespace Robomongo
         {
             return;
         }
+        
         makeExtraOptionsObj();
+        saveWindowSettings();
 
         QDialog::accept();
+    }
+
+    void CreateCollectionDialog::reject()
+    {
+        saveWindowSettings();
+        QDialog::reject();
     }
 
     void CreateCollectionDialog::closeEvent(QCloseEvent *event)
@@ -232,7 +240,7 @@ namespace Robomongo
     void CreateCollectionDialog::onAdvancedButtonToggled(bool state)
     {
         _advancedOptions->setVisible(state);
-        if (state)  // resize for expanded dialog
+        if (state)  // resize, dialog is expanding
         {
             setMinimumSize(530, 400);
             QSettings settings("Paralect", "Robomongo");
@@ -246,8 +254,9 @@ namespace Robomongo
                 adjustSize();
             }
         }
-        else        // resize for shrinked dialog
+        else        // resize, dialog is shrinking
         {
+            saveWindowSettings();       // save expanded geometry first
             setMinimumSize(300, 150);
             adjustSize();
         }

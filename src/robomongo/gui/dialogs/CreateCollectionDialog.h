@@ -86,6 +86,11 @@ namespace Robomongo
         */
         virtual void accept();
 
+        /**
+        * @brief Called when "Cancel" button clicked.
+        */
+        virtual void reject();
+
     protected:
         /**
         * @brief Reimplementing closeEvent in order to do implement functioanlites before close this dialog.

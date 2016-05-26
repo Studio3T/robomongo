@@ -31,10 +31,16 @@ namespace Robomongo
          */
         ConnectionSettings *selectedConnection() const { return _selectedConnection; }
 
+    public Q_SLOTS:
         /**
          * @brief This function is called when user clicks on "Connect" button.
          */
         virtual void accept();
+
+        /**
+        * @brief Called when "Cancel" button clicked.
+        */
+        virtual void reject();
 
     protected:
         /**

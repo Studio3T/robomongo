@@ -576,8 +576,6 @@ namespace Robomongo
         if (settings.contains("MainWindow/geometry"))
         {
             restoreGeometry(settings.value("MainWindow/geometry").toByteArray());
-            restoreState(settings.value("MainWindow/windowState").toByteArray());
-            settings.setValue("windowState", saveState());
         }
         else
         {
@@ -600,7 +598,6 @@ namespace Robomongo
     {
         QSettings settings("Paralect", "Robomongo");
         settings.setValue("MainWindow/geometry", saveGeometry());
-        settings.setValue("MainWindow/windowState", saveState());
     }
 
     void MainWindow::open()

@@ -43,7 +43,7 @@ namespace Robomongo
         * @brief Used if dialog exec() method returns QDialog::Accepted 
         * @return Extra options as BSONObj
         */
-        const mongo::BSONObj* getExtraOptions() const;
+        const mongo::BSONObj getExtraOptions() const;
 
         /**
         * @return Collection name
@@ -287,7 +287,7 @@ namespace Robomongo
         /**
         * @brief Main BSON obj. with all extra options
         */
-        std::unique_ptr<mongo::BSONObj> _extraOptionsObj;
+        mongo::BSONObj _extraOptionsObj;
 
         /**
         * @brief Sub objects for each JSON tab to create extraOptions object finally.

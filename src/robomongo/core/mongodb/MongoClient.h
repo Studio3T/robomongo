@@ -40,7 +40,7 @@ namespace Robomongo
         void createDatabase(const std::string &dbName);
         void dropDatabase(const std::string &dbName);
 
-        void createCollection(const std::string &ns, long long size, bool capped, int max, const mongo::BSONObj* extraOptions, mongo::BSONObj* info = nullptr);
+        void createCollection(const std::string &ns, long long size, bool capped, int max, const mongo::BSONObj& extraOptions, mongo::BSONObj* info = nullptr);
         void renameCollection(const MongoNamespace &ns, const std::string &newCollectionName);
         void duplicateCollection(const MongoNamespace &ns, const std::string &newCollectionName);
         void dropCollection(const MongoNamespace &ns);

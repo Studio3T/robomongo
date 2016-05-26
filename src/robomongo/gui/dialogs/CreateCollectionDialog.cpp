@@ -44,7 +44,7 @@ namespace Robomongo
     CreateCollectionDialog::CreateCollectionDialog(const QString &serverName, double dbVersion, const std::string& storageEngine, 
         const QString &database, const QString &collection, QWidget *parent) :
         QDialog(parent), _dbVersion(dbVersion), _storageEngine(storageEngine), 
-        _activeFrame(nullptr), _activeObj(&_storageEngineObj), _extraOptionsObj(nullptr)
+        _activeFrame(nullptr), _activeObj(&_storageEngineObj)
     {
         setWindowTitle(tr("Create Collection"));
         setMinimumSize(300,150);
@@ -122,9 +122,9 @@ namespace Robomongo
         _inputEdit->setFocus();
     }
 
-    const mongo::BSONObj* CreateCollectionDialog::getExtraOptions() const
+    const mongo::BSONObj CreateCollectionDialog::getExtraOptions() const
     {
-        return _extraOptionsObj.get();
+        return _extraOptionsObj;
     }
 
     QString CreateCollectionDialog::getCollectionName() const
@@ -489,7 +489,7 @@ namespace Robomongo
             if (!_indexOptionDefaultsObj.isEmpty()) builder.append("indexOptionDefaults", _indexOptionDefaultsObj);
         }
         // Complete and get resulting BSONObj
-        _extraOptionsObj.reset(new mongo::BSONObj(builder.obj()));
+        _extraOptionsObj = builder.obj();
     }
 
     bool CreateCollectionDialog::validateOptionDependencies() const

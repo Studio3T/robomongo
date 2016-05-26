@@ -370,7 +370,7 @@ namespace Robomongo
         _dbclient->dropDatabase(dbName);
     }
 
-    void MongoClient::createCollection(const std::string& ns, long long size, bool capped, int max, const mongo::BSONObj* extraOptions, mongo::BSONObj* info)
+    void MongoClient::createCollection(const std::string& ns, long long size, bool capped, int max, const mongo::BSONObj& extraOptions, mongo::BSONObj* info)
     {
         verify(!capped || size);
         mongo::BSONObj o;
@@ -388,9 +388,8 @@ namespace Robomongo
         if (max) {
             b.append("max", max);
         }
-        if (extraOptions) {
-            b.appendElements(*extraOptions);
-        }
+        b.appendElements(extraOptions);
+
         _dbclient->runCommand(db.c_str(), b.done(), *info);
     }
 

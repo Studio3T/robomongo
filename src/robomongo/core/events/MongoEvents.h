@@ -454,26 +454,27 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateCollectionRequest(QObject *sender, const MongoNamespace &ns,
+        CreateCollectionRequest(QObject *sender, const MongoNamespace &ns, 
+                                                 const mongo::BSONObj& extraOptions,
 			                                     long long size = 0,
 			                                     bool capped = false,
-			                                     int maxDocNum = 0, 
-                                                 const mongo::BSONObj* extraOptions = nullptr) :
-            Event(sender),
-            _ns(ns), _size(size), _capped(capped), _maxDocNum(maxDocNum), _extraOptions(extraOptions) {}
+			                                     int maxDocNum = 0
+                                                 ) :
+            Event(sender), _ns(ns), _extraOptions(extraOptions),
+            _size(size), _capped(capped), _maxDocNum(maxDocNum) {}
 
         MongoNamespace getNs() const { return _ns; }
 		long long getSize() const { return _size; }
 		bool getCapped() const { return _capped; }
 		int getMaxDocNum() const { return _maxDocNum; }
-        const mongo::BSONObj* getExtraOptions() const { return _extraOptions; }
+        const mongo::BSONObj getExtraOptions() const { return _extraOptions; }
 
     private:
         const MongoNamespace _ns;
         const long long _size;
         const bool _capped;
         const int _maxDocNum;
-        const mongo::BSONObj* _extraOptions;
+        const mongo::BSONObj _extraOptions;
     };
 
     class CreateCollectionResponse : public Event

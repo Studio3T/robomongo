@@ -406,15 +406,7 @@ namespace Robomongo
     void ConnectionsDialog::restoreWindowsSettings()
     {
         QSettings settings("Paralect", "Robomongo");
-        // Restore settings if registery key exists, otherwise resize as app started for the first time.
-        if (settings.contains("ConnectionsDialog/size"))
-        {
-            resize(settings.value("ConnectionsDialog/size").toSize());
-        }
-        else
-        {
-            resize(1250, 740);
-        }
+        resize(settings.value("ConnectionsDialog/size").toSize());
     }
 
     void ConnectionsDialog::saveWindowsSettings() const

@@ -406,13 +406,21 @@ namespace Robomongo
     void ConnectionsDialog::restoreWindowsSettings()
     {
         QSettings settings("Paralect", "Robomongo");
-        restoreGeometry(settings.value("ConnectionsDialog/geometry").toByteArray());
+        // Restore settings if registery key exists, otherwise resize as app started for the first time.
+        if (settings.contains("ConnectionsDialog/size"))
+        {
+            resize(settings.value("ConnectionsDialog/size").toSize());
+        }
+        else
+        {
+            resize(1250, 740);
+        }
     }
 
     void ConnectionsDialog::saveWindowsSettings() const
     {
         QSettings settings("Paralect", "Robomongo");
-        settings.setValue("ConnectionsDialog/geometry", saveGeometry());
+        settings.setValue("ConnectionsDialog/size", size());
     }
 
     ConnectionsTreeWidget::ConnectionsTreeWidget()

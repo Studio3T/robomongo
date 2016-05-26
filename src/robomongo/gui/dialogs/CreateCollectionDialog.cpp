@@ -242,15 +242,15 @@ namespace Robomongo
         _advancedOptions->setVisible(state);
         if (state)  // resize, dialog is expanding
         {
-            setMinimumSize(530, 400);
+            setMinimumSize(560, 440);
             QSettings settings("Paralect", "Robomongo");
-            if (settings.contains("CreateCollectionDialog/geometry"))
+            if (settings.contains("CreateCollectionDialog/size"))
             {
                 restoreWindowSettings();
             }
             else
             {
-                resize(530, 400);
+                resize(560, 440);
                 adjustSize();
             }
         }
@@ -399,13 +399,13 @@ namespace Robomongo
     void CreateCollectionDialog::saveWindowSettings() const
     {
         QSettings settings("Paralect", "Robomongo");
-        settings.setValue("CreateCollectionDialog/geometry", saveGeometry());
+        settings.setValue("CreateCollectionDialog/size", size());
     }
 
     void CreateCollectionDialog::restoreWindowSettings()
     {
         QSettings settings("Paralect", "Robomongo");
-        restoreGeometry(settings.value("CreateCollectionDialog/geometry").toByteArray());
+        resize(settings.value("CreateCollectionDialog/size").toSize());
     }
 
     void CreateCollectionDialog::configureFrameText(JSONFrame* frame)

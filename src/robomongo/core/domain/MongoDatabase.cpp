@@ -18,8 +18,9 @@ namespace Robomongo
     const std::string MongoDatabase::StorageEngineType::WIRED_TIGER = "wiredTiger";
     const std::string MongoDatabase::StorageEngineType::MMAPV1      = "mmapv1";
  
-    const double MongoDatabase::DBVersion::MONGODB_3_2 = 3.2;
-    const double MongoDatabase::DBVersion::MONGODB_3_0 = 3.0;
+    const float MongoDatabase::DBVersion::MONGODB_2_6 = 2.6f;
+    const float MongoDatabase::DBVersion::MONGODB_3_0 = 3.0f;
+    const float MongoDatabase::DBVersion::MONGODB_3_2 = 3.2f;
 
     MongoDatabase::MongoDatabase(MongoServer *server, const std::string &name) :
         QObject(),

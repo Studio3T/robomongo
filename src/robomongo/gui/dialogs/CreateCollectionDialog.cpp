@@ -41,7 +41,7 @@ namespace Robomongo
     const QString CreateCollectionDialog::USE_POWEROFTWO_HINT = "Option available for MMAPv1 storage engine only and deprecated since database version 3.0";
     const QString CreateCollectionDialog::AUTO_INDEXID_HINT = "Option deprecated since database version 3.2";
 
-    CreateCollectionDialog::CreateCollectionDialog(const QString &serverName, double dbVersion, const std::string& storageEngine, 
+    CreateCollectionDialog::CreateCollectionDialog(const QString &serverName, const float dbVersion, const std::string& storageEngine, 
         const QString &database, const QString &collection, QWidget *parent) :
         QDialog(parent), _dbVersion(dbVersion), _storageEngine(storageEngine), 
         _activeFrame(nullptr), _activeObj(&_storageEngineObj)
@@ -288,6 +288,11 @@ namespace Robomongo
         _autoIndexCheckBox = new QCheckBox(tr("Auto index _id"), optionsTab);
         _autoIndexCheckBox->setChecked(true);
         _usePowerOfTwoSizeCheckBox = new QCheckBox(tr("Use power-of-2 sizes"), optionsTab);
+        // Note: For mongodb 2.6 does not have storageEngine string due to the fact that it uses MMAPV1 only.
+        if (MongoDatabase::StorageEngineType::MMAPV1 == _storageEngine || "" == _storageEngine)
+        {
+            _usePowerOfTwoSizeCheckBox->setChecked(true);
+        }
         _noPaddingCheckBox = new QCheckBox(tr("No Padding"), optionsTab);
 
         VERIFY(connect(_cappedCheckBox, SIGNAL(stateChanged(int)),
@@ -529,14 +534,11 @@ namespace Robomongo
         // Handle MMAPV1 engine type
         // Note: For mongodb 2.6 does not have storageEngine string due to the fact that it uses MMAPV1 only.
         if (MongoDatabase::StorageEngineType::MMAPV1 == _storageEngine || "" == _storageEngine) {
-            if (MongoDatabase::DBVersion::MONGODB_3_0 <= _dbVersion) {
+            if (MongoDatabase::DBVersion::MONGODB_3_0 < _dbVersion) {
                 disableOption(_usePowerOfTwoSizeCheckBox, USE_POWEROFTWO_HINT);
             }
             if (MongoDatabase::DBVersion::MONGODB_3_0 > _dbVersion) {
                 disableOption(_noPaddingCheckBox, NO_PADDING_HINT);
-            }
-            if (MongoDatabase::DBVersion::MONGODB_3_0 <= _dbVersion) {
-                disableOption(_usePowerOfTwoSizeCheckBox, USE_POWEROFTWO_HINT);
             }
         }
         else {
@@ -544,9 +546,10 @@ namespace Robomongo
             disableOption(_usePowerOfTwoSizeCheckBox, USE_POWEROFTWO_HINT);
         }
 
-        if (MongoDatabase::DBVersion::MONGODB_3_2 <= _dbVersion) {
+        if (MongoDatabase::DBVersion::MONGODB_3_2 < _dbVersion) {
             disableOption(_autoIndexCheckBox, AUTO_INDEXID_HINT);
         }
+
         if (MongoDatabase::DBVersion::MONGODB_3_0 > _dbVersion) {
             disableTab(STORAGE_ENGINE_TAB, STORAGE_ENGINE_TAB_HINT);
         }

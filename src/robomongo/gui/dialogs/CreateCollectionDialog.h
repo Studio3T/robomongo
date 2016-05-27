@@ -36,7 +36,7 @@ namespace Robomongo
         * @param database: Name of the database
         * @param collection: Name of the collection
         */
-        explicit CreateCollectionDialog(const QString &serverName, double dbVersion, const std::string& storageEngine, 
+        explicit CreateCollectionDialog(const QString &serverName, const float dbVersion, const std::string& storageEngine, 
             const QString &database = QString(), const QString &collection = QString(), QWidget *parent = 0);
 
         /**
@@ -299,7 +299,7 @@ namespace Robomongo
         /**
         * @brief Database version
         */
-        const double _dbVersion;
+        const float _dbVersion;
 
         /**
         * @brief Storage engine type

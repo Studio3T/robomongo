@@ -154,7 +154,7 @@ namespace Robomongo
         if (!databaseItem)
             return;
 
-        const double dbVersion = static_cast<double>(databaseItem->database()->server()->version());
+        const float dbVersion = databaseItem->database()->server()->version();
         const std::string& engineName = databaseItem->database()->server()->getStorageEngineType();
         const QString& serverName = QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress());
         const QString& dbName = QtUtils::toQString(databaseItem->database()->name());

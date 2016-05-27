@@ -32,8 +32,9 @@ namespace Robomongo
         */
         struct DBVersion 
         {
-            static const double MONGODB_3_2;
-            static const double MONGODB_3_0;
+            static const float MONGODB_2_6;
+            static const float MONGODB_3_0;
+            static const float MONGODB_3_2;
         };
 
         /**

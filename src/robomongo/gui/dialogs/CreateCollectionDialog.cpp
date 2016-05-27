@@ -535,15 +535,11 @@ namespace Robomongo
         // Note: For mongodb 2.6 does not have storageEngine string due to the fact that it uses MMAPV1 only.
         if (MongoDatabase::StorageEngineType::MMAPV1 == _storageEngine || "" == _storageEngine) {
             if (MongoDatabase::DBVersion::MONGODB_3_0 < _dbVersion) {
-                disableOption(_usePowerOfTwoSizeCheckBox, USE_POWEROFTWO_HINT);
+                _usePowerOfTwoSizeCheckBox->hide();
             }
             if (MongoDatabase::DBVersion::MONGODB_3_0 > _dbVersion) {
                 disableOption(_noPaddingCheckBox, NO_PADDING_HINT);
             }
-        }
-        else {
-            disableOption(_noPaddingCheckBox, NO_PADDING_HINT);
-            disableOption(_usePowerOfTwoSizeCheckBox, USE_POWEROFTWO_HINT);
         }
 
         if (MongoDatabase::DBVersion::MONGODB_3_2 < _dbVersion) {

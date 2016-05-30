@@ -1,17 +1,44 @@
-0.9.0-RC6 / February 13, 2016
- 
-  Most important changes: support for MongoDB 3.x and WiredTiger engine. Robomongo 
-  now embeds MongoDB 3.2 shell. It means that you can now use the latest
-  shell functionality. Both MONGODB-CR and SCRAM-SHA-1 authentication mechanisms are
-  supprted. Also, we now allow direct connections to Replica Set members and 
-  support IPv6 protocol. Loading of huge list of collections is now faster.
 
-  Fixed incorrect representation of floating-point numbers (fixed since RC3).
-  This bug was a reason of a big number of issues:
+Robomongo 0.9.0 RC9 (May 30, 2016)
+http://blog.robomongo.org/robomongo-rc9/
 
-     #910, #748, #697, #699, #760, #815, #870, #892, 
-     #894, #905, #945, #974, #978, #990, #831, #842
-
+  What's new in Robomongo 0.9.0:
+	New Features: 
+	  - Support for MongoDB 3.x and WiredTiger engine. Robomongo now embeds MongoDB 3.2 shell. 
+		It means that you can now use the latest shell functionality. 
+	  - SSH tunnel support for connections added.
+	  - Both MONGODB-CR and SCRAM-SHA-1 authentication mechanisms are supported. 
+	  - Allow direct connections to Replica Set members and support IPv6 protocol. 
+	  - Loading of huge list of collections is now faster.
+	  - Create Collection dialog is now expandable to support all advanced options.
+	  (Supporting all major mongoDB versions 3.2, 3.0, 2.6 and all storage engine types (WiredTiger 
+	  and MMAPV1) is added.) 
+	
+    Fixed:
+	  - Incorrect representation of floating-point numbers (fixed since RC3). This bug was a reason of a big number of issues:
+        #910, #748, #697, #699, #760, #815, #870, #892, 
+        #894, #905, #945, #974, #978, #990, #831, #842
+	  - SSH connection failure to servers on Ubuntu and OS X with the following error:
+		"Resource temporarily unavailable. Error when starting up SSH session: -8"  (#1090)
+		  
+  What's new in RC9 (May 30, 2016 )
+  http://blog.robomongo.org/robomongo-rc9/
+  
+	  New Features:
+		- Create Collection dialog with advanced options.
+		- New feature has been added to save/restore window sizes. (#1102)
+		- Connection settings from previous versions of Robomongo are 
+		  now automatically imported starting from Robomongo 0.9.0 RC9. (#1086)
+		- Support for querying documents by UUIDs is added, both in legacy and new encoding. (#432)
+		 
+	  Fixed:
+		- SSH connection failure to servers on Ubuntu and OS X with the following error:
+		  "Resource temporarily unavailable. Error when starting up SSH session: -8"  (#1090)
+		- Correct handling of create/drop of databases and collections. (#1083)
+	
+  What's new in RC8 (April 14, 2016 )
+  http://blog.robomongo.org/robomongo-rc8/
+	 
   What's new in RC7 (March 4, 2016 )
   http://blog.robomongo.org/robomongo-rc7
 

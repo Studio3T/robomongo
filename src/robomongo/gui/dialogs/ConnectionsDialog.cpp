@@ -142,7 +142,7 @@ namespace Robomongo
             QString importedRecords = importedCount > 1 ? "records" : "record";
             QLabel *importLabelMessage = new QLabel(QString(
                 "<span style='color: #777777;'>"
-                "Connection settings were imported (%1 %2)"
+                "Connection settings have been imported (%1 %2)"
                 "</span>").arg(importedCount).arg(importedRecords));
 
             bottomLayout->addWidget(importLabelIcon, 0, Qt::AlignLeft);

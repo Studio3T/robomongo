@@ -15,6 +15,7 @@
 #include "robomongo/gui/dialogs/ConnectionSslTab.h"
 #include "robomongo/gui/dialogs/ConnectionSslTab.h"
 #include "robomongo/gui/dialogs/SSHTunnelTab.h"
+#include "robomongo/gui/dialogs/SSLTab.h"
 #include "robomongo/gui/dialogs/ConnectionDiagnosticDialog.h"
 #include "robomongo/core/utils/QtUtils.h"
 
@@ -50,18 +51,14 @@ namespace Robomongo
         _basicTab    = new ConnectionBasicTab(_connection);
         _authTab     = new ConnectionAuthTab(_connection);
         _advancedTab = new ConnectionAdvancedTab(_connection);
-        _sshTab = new SshTunnelTab(_connection);
-
-        // v0.9
-        //_sslTab      = new ConnectionSslTab(_connection);
+        _sshTab      = new SshTunnelTab(_connection);
+        _sslTab      = new SSLTab(_connection);
 
         tabWidget->addTab(_basicTab,    "Connection");
         tabWidget->addTab(_authTab,     "Authentication");
         tabWidget->addTab(_sshTab,      "SSH");
+        tabWidget->addTab(_sslTab,      "SSL");
         tabWidget->addTab(_advancedTab, "Advanced");
-
-        // v0.9
-        //tabWidget->addTab(_sslTab,      "SSL");
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addWidget(tabWidget);

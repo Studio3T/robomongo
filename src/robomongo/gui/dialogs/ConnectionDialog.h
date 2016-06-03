@@ -10,7 +10,7 @@ namespace Robomongo
     class ConnectionAuthTab;
     class ConnectionBasicTab;
     class ConnectionAdvancedTab;
-    class ConnectionSslTab;
+    class SSLTab;
     class SshTunnelTab;
     /**
      * @brief This Dialog allows to edit single connection
@@ -44,9 +44,7 @@ namespace Robomongo
         ConnectionBasicTab *_basicTab;
         ConnectionAdvancedTab *_advancedTab;
         SshTunnelTab *_sshTab;
-
-        // v0.9
-        //ConnectionSslTab *_sslTab;
+        SSLTab *_sslTab;
 
 #ifdef SSH_SUPPORT_ENABLED
         SshTunnelTab *_sshTab;

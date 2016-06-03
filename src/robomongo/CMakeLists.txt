@@ -122,6 +122,7 @@ set(SOURCES
     gui/MainWindow.cpp
 
     gui/dialogs/SSHTunnelTab.cpp
+    gui/dialogs/SSLTab.cpp
     core/settings/SshSettings.cpp
     core/settings/SslSettings.cpp
     core/mongodb/SshTunnelWorker.cpp

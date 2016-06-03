@@ -11,6 +11,7 @@ class QCheckBox;
 class QPushButton;
 class QComboBox;
 class QFrame;
+class QRadioButton;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -25,6 +26,23 @@ namespace Robomongo
         SSLTab(ConnectionSettings *settings);
 
     private:
+        QCheckBox *_useSslCheckBox;
 
+        QRadioButton *_acceptSelfSignedButton;
+        QRadioButton *_useRootCaFileButton;
+        QLabel *_caFileLabel;
+        QLineEdit *_caFilePathLineEdit;
+        QPushButton *_caFileBrowseButton;
+
+        QCheckBox *_useClientCertCheckBox;
+        QLabel *_clientCertLabel;
+        QLineEdit *_clientCertPathLineEdit;
+        QPushButton *_clientCertFileBrowseButton;
+        QLabel *_clientCertPassLabel;
+        QLineEdit *_clientCertPassLineEdit;
+        QPushButton *_clientCertPassShowButton;
+        QCheckBox *_useClientCertPassCheckBox;
+
+        ConnectionSettings *const _settings;
     };
 }

@@ -13,7 +13,7 @@ Supported Platforms
 **MongoDB Versions:**
 
 | MongoDB              |
-| -------------------- |
+| :-------------------- |
 | Current - 3.2.x      |
 | 3.0.12               |
 | 2.6.12               |
@@ -21,7 +21,7 @@ Supported Platforms
 **OS Platforms:**
 
 | Windows                |   Mac            | Linux                       |        
-| ---------------------- | :---------------:| ---------------------------:|
+|:---------------------- | :---------------| :---------------------------|
 | Windows 64-bit 10      |  Mac OS X 10.11  | Linux Ubuntu 16.04 64-bit*  |
   Windows 64-bit 8.1     |  Mac OS X 10.10  | Linux Ubuntu 14.04 64-bit*  |
 | Windows 64-bit 7       |                  | Linux CentOS 7 64-bit*      |

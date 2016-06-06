@@ -12,11 +12,11 @@ Supported Platforms
 
 **MongoDB Versions:**
 
-| MongoDB              |
+| MongoDB               |
 | :-------------------- |
-| Current - 3.2.x      |
-| 3.0.12               |
-| 2.6.12               |
+| 3.2                   |
+| 3.0                   |
+| 2.6                   |
 
 **OS Platforms:**
 
@@ -64,10 +64,6 @@ with some major features targeted including support for connection via SSL and f
 
 Contribute!
 ===========
-
-### Vote for Features
-
-Please view our [Magic Backlog](http://app.robomongo.org/backlog) to see features prioritised by donation. The small amount of donations we currently receive are put toward hosting costs.
 
 ### Suggest Features
 

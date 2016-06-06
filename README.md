@@ -10,7 +10,7 @@ Robomongo 0.8.x embeds the **MongoDB 2.4.0** shell.
 Supported Platforms
 ===============
 
-**MongoDB Versions**
+**MongoDB Versions:**
 
 | MongoDB              |
 | -------------------- |

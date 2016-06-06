@@ -84,6 +84,14 @@ Prerequisites
 Refer to MongoDB documentation for additional information:
 https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source/#windows-specific-instructions
 
+Clone Robomongo Shell and checkout to roboshell-v3.2 branch:
+
+  ```sh
+  $ git clone https://github.com/paralect/robomongo-shell.git
+  $ cd robomongo-shell
+  $ git checkout roboshell-v3.2
+  ```
+
 Open VS2013 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.
 
 Build shell:

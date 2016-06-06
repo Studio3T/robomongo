@@ -7,13 +7,36 @@ Starting from version 0.9, Robomongo is compatibile with MongoDB 3.x (including 
 
 Robomongo 0.8.x embeds the **MongoDB 2.4.0** shell.
 
+Supported Platforms
+===============
+
+**MongoDB Versions**
+
+| MongoDB              |
+| -------------------- |
+| Current - 3.2.x      |
+| 3.0.12               |
+| 2.6.12               |
+
+**OS Platforms:**
+
+| Windows                |   Mac            | Linux                       |        
+| ---------------------- | :---------------:| ---------------------------:|
+| Windows 64-bit 10      |  Mac OS X 10.11  | Linux Ubuntu 16.04 64-bit*  |
+  Windows 64-bit 8.1     |  Mac OS X 10.10  | Linux Ubuntu 14.04 64-bit*  |
+| Windows 64-bit 7       |                  | Linux CentOS 7 64-bit*      |
+|                        |                  | Linux CentOS 6 64-bit*      |
+
+\* latest stable build
 
 Download
 ========
 
 You can download tested install packages for OS X, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
 
-The latest stable release is currently **Robomongo 0.8.5**.
+The latest release candidate is currently **Robomongo 0.9.0 RC**. (http://blog.robomongo.org/robomongo-rc9/).
+
+The latest stable release is currently **Robomongo 0.8.5**. (http://blog.robomongo.org/whats-new-in-robomongo-0-8-5/)
 
 Support
 =======
@@ -37,9 +60,7 @@ What's Planned for the Next Release?
 ====================================
 
 We are currently working toward a [0.9.0 release milestone](https://github.com/paralect/robomongo/milestones/Robomongo%200.9.0)
-with some major features targeted including compatibility with MongoDB 3.0
-(updated shell, SCRAM-SHA-1 auth, support for WiredTiger storage engine)
-and full support for replica sets.
+with some major features targeted including support for connection via SSL and full support for replica sets.
 
 Contribute!
 ===========

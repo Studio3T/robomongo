@@ -32,6 +32,8 @@ namespace Robomongo
         //
         void on_caFileBrowseButton_clicked();
         //
+        void on_pemKeyFileBrowseButton_clicked();
+        //
         void useSslCheckBoxStateChange(int checked);
 
     private:

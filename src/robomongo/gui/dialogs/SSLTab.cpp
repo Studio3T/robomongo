@@ -62,6 +62,7 @@ namespace Robomongo
         _clientCertPathLineEdit = new QLineEdit;
         _clientCertFileBrowseButton = new QPushButton("...");
         _clientCertFileBrowseButton->setMaximumWidth(50);
+        VERIFY(connect(_clientCertFileBrowseButton, SIGNAL(clicked()), this, SLOT(on_pemKeyFileBrowseButton_clicked())));
 
         _clientCertPassLabel = new QLabel("Passphrase: ");
         _clientCertPassLineEdit = new QLineEdit;
@@ -94,9 +95,10 @@ namespace Robomongo
         mainLayout->addWidget(_useClientCertPassCheckBox);
         setLayout(mainLayout);
 
-        // Disable/enable widgets  
+        // Update widgets according to settings
         useSslCheckBoxStateChange(_useSslCheckBox->checkState());
         _caFilePathLineEdit->setText(QString::fromStdString(sslSettings->caFile()));
+        _clientCertPathLineEdit->setText(QString::fromStdString(sslSettings->pemKeyFile()));
     }
 
     void SSLTab::on_caFileBrowseButton_clicked()
@@ -127,6 +129,22 @@ namespace Robomongo
         //_clientCertPassLineEdit->setText("isOk: " + QString::number(status.isOK()));
     }
 
+    void SSLTab::on_pemKeyFileBrowseButton_clicked()
+    {
+        // If user has previously selected a file, initialize file dialog
+        // with that file's name; otherwise, use user's home directory.
+        QString initialName = _clientCertPathLineEdit->text();
+        if (initialName.isEmpty())
+        {
+            initialName = QDir::homePath();
+        }
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File"));
+        fileName = QDir::toNativeSeparators(fileName);
+        if (!fileName.isEmpty()) {
+            _clientCertPathLineEdit->setText(fileName);
+            //buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+        }
+    }
 
     void SSLTab::useSslCheckBoxStateChange(int state)
     {
@@ -150,6 +168,7 @@ namespace Robomongo
     {
         SslSettings *sslSettings = _settings->sslSettings();
         sslSettings->setCaFile(QtUtils::toStdString(_caFilePathLineEdit->text()));
+        sslSettings->setPemKeyFile(QtUtils::toStdString(_clientCertPathLineEdit->text()));
         sslSettings->enableSSL(_useSslCheckBox->isChecked());
         return true;
     }

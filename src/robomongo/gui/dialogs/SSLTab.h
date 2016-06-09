@@ -23,11 +23,21 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        //
         SSLTab(ConnectionSettings *settings);
+        //
+        bool accept();
+
+    private Q_SLOTS :
+        //
+        void on_caFileBrowseButton_clicked();
+        //
+        void useSslCheckBoxStateChange(int checked);
 
     private:
+        // Widgets
         QCheckBox *_useSslCheckBox;
-
+        
         QRadioButton *_acceptSelfSignedButton;
         QRadioButton *_useRootCaFileButton;
         QLabel *_caFileLabel;

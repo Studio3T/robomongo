@@ -14,13 +14,15 @@ namespace Robomongo
 
     QVariant SslSettings::toVariant() const {
         QVariantMap map;
+        map.insert("caFile", QtUtils::toQString(caFile()));
         map.insert("pemKeyFile", QtUtils::toQString(pemKeyFile()));
         map.insert("enabled", enabled());
         return map;
     }
 
     void SslSettings::fromVariant(const QVariantMap &map) {
+        setCaFile(QtUtils::toStdString(map.value("caFile").toString()));
         setPemKeyFile(QtUtils::toStdString(map.value("pemKeyFile").toString()));
-        setEnabled(map.value("enabled").toBool());
+        enableSSL(map.value("enabled").toBool());
     }
 }

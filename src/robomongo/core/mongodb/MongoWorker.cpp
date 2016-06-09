@@ -14,6 +14,9 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/settings/SslSettings.h"
+
+#include "mongo/util/net/ssl_options.h"
 
 namespace Robomongo
 {
@@ -614,6 +617,18 @@ namespace Robomongo
             // Timeout for operations
             // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
             mongo::DBClientConnection *conn = new mongo::DBClientConnection(true, _mongoTimeoutSec);
+
+            // todo: move to function xxx
+            if (_connection->sslSettings()->sslEnabled())
+            {
+                mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
+                mongo::sslGlobalParams.sslPEMKeyFile = _connection->sslSettings()->caFile();
+            }
+            else
+            {
+                mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
+            }
+
             mongo::Status status = conn->connect(_connection->info());
 
             if (!status.isOK() && mayReturnNull) {

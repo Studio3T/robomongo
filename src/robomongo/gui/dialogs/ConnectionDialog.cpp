@@ -66,6 +66,7 @@ namespace Robomongo
         setLayout(mainLayout);
 
         _basicTab->setFocus();
+        resize(900, 500);
     }
 
     /**
@@ -94,8 +95,8 @@ namespace Robomongo
         if (!_sshTab->accept())
             return false;
 
-        // v0.9
-        // _sslTab->accept();
+        // todo
+         _sslTab->accept();
         return true;
     }
 

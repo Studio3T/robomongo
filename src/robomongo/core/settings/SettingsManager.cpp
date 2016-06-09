@@ -385,7 +385,7 @@ namespace Robomongo
             // SSL settings
             if (vconn.contains("sshEnabled")) {
                 SslSettings *ssl = conn->sslSettings();
-                ssl->setEnabled(vconn.value("enabled").toBool());
+                ssl->enableSSL(vconn.value("enabled").toBool());
                 ssl->setPemKeyFile(QtUtils::toStdString(vconn.value("sslPemKeyFile").toString()));
             }
 

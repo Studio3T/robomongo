@@ -15,6 +15,8 @@
 
 #include "robomongo/ssh/ssh.h"
 
+#include "mongo/util/net/ssl_options.h" // todo
+
 int main(int argc, char *argv[], char** envp)
 {
     if (rbm_ssh_init()) {
@@ -28,6 +30,10 @@ int main(int argc, char *argv[], char** envp)
 
     // Support for IPv6 is disabled by default. Enable it.
     mongo::enableIPv6(true);
+
+    // todo
+    //mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
+    mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
 
     // Initialization routine for MongoDB shell
     mongo::runGlobalInitializersOrDie(argc, argv, envp);

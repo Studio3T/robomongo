@@ -67,6 +67,7 @@ namespace Robomongo
         _clientCertPassLabel = new QLabel("Passphrase: ");
         _clientCertPassLineEdit = new QLineEdit;
         _clientCertPassShowButton = new QPushButton("Show");
+        //VERIFY(connect(_clientCertPassShowButton, SIGNAL(clicked()), this, SLOT(togglePassphraseShowMode())));
         _useClientCertPassCheckBox = new QCheckBox("Client certificated is protected by passphrase");
 
         // Layouts
@@ -99,6 +100,7 @@ namespace Robomongo
         useSslCheckBoxStateChange(_useSslCheckBox->checkState());
         _caFilePathLineEdit->setText(QString::fromStdString(sslSettings->caFile()));
         _clientCertPathLineEdit->setText(QString::fromStdString(sslSettings->pemKeyFile()));
+        _clientCertPassLineEdit->setText(QString::fromStdString(sslSettings->pemPassPhrase()));
     }
 
     void SSLTab::on_caFileBrowseButton_clicked()
@@ -118,15 +120,23 @@ namespace Robomongo
         }
 
         //mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
-        //mongo::sslGlobalParams.sslPEMKeyFile = "C:\\cygwin64\\etc\\ssl\\mongodb.pem";
+        ////mongo::sslGlobalParams.sslPEMKeyFile = "C:\\cygwin\\etc\\ssl\\mongodb.pem";
+        //mongo::sslGlobalParams.sslCAFile = "C:\\cygwin\\demarcek_pass\\mongodb.pem";
+        //mongo::sslGlobalParams.sslPEMKeyFile = "C:\\cygwin\\demarcek_pass\\client.pem";
+        //mongo::sslGlobalParams.sslPEMKeyPassword = "testc";
 
         //mongo::DBClientConnection *conn = new mongo::DBClientConnection(true, 10);
         ////mongo::Status status = conn->connect(mongo::HostAndPort("46.101.137.132", 27020));
-        //mongo::Status status = conn->connect(mongo::HostAndPort("localhost", 27017));
+
+        //try{
+        //    mongo::Status status = conn->connect(mongo::HostAndPort("localhost", 27017));
+        //    _clientCertPassLineEdit->setText("isOk: " + QString::number(status.isOK()));
+        //}
+        //catch (const std::exception& ex){
+        //    _clientCertPassLineEdit->setText("exc: " + QString::fromStdString(ex.what()));
+        //}
 
         //mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
-
-        //_clientCertPassLineEdit->setText("isOk: " + QString::number(status.isOK()));
     }
 
     void SSLTab::on_pemKeyFileBrowseButton_clicked()
@@ -164,12 +174,20 @@ namespace Robomongo
         _useClientCertPassCheckBox->setDisabled(!isChecked);
     }
 
+    void SSLTab::togglePassphraseShowMode()
+    {
+        bool isPassword = _clientCertPassLineEdit->echoMode() == QLineEdit::Password;
+        _clientCertPassLineEdit->setEchoMode(isPassword ? QLineEdit::Normal : QLineEdit::Password);
+        _clientCertPassShowButton->setText(isPassword ? tr("Hide") : tr("Show"));
+    }
+
     bool SSLTab::accept()
     {
         SslSettings *sslSettings = _settings->sslSettings();
+        sslSettings->enableSSL(_useSslCheckBox->isChecked());
         sslSettings->setCaFile(QtUtils::toStdString(_caFilePathLineEdit->text()));
         sslSettings->setPemKeyFile(QtUtils::toStdString(_clientCertPathLineEdit->text()));
-        sslSettings->enableSSL(_useSslCheckBox->isChecked());
+        sslSettings->setPemPassPhrase(QtUtils::toStdString(_clientCertPassLineEdit->text()));
         return true;
     }
 }

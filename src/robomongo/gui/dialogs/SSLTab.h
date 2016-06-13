@@ -35,6 +35,8 @@ namespace Robomongo
         void on_pemKeyFileBrowseButton_clicked();
         //
         void useSslCheckBoxStateChange(int checked);
+        //
+        void togglePassphraseShowMode();
 
     private:
         // Widgets

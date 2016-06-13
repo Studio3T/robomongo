@@ -622,7 +622,9 @@ namespace Robomongo
             if (_connection->sslSettings()->sslEnabled())
             {
                 mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
-                mongo::sslGlobalParams.sslPEMKeyFile = _connection->sslSettings()->caFile();
+                mongo::sslGlobalParams.sslCAFile = _connection->sslSettings()->caFile();
+                mongo::sslGlobalParams.sslPEMKeyFile = _connection->sslSettings()->pemKeyFile();
+                mongo::sslGlobalParams.sslPEMKeyPassword = _connection->sslSettings()->pemPassPhrase();
             }
             else
             {

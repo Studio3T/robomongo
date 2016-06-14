@@ -30,15 +30,22 @@ namespace Robomongo
 
     private Q_SLOTS :
         //
+        void useSslCheckBoxStateChange(int checked);
+        //
+        void on_acceptSelfSignedButton_toggle(bool checked);
+        //
         void on_caFileBrowseButton_clicked();
         //
         void on_pemKeyFileBrowseButton_clicked();
         //
-        void useSslCheckBoxStateChange(int checked);
-        //
         void togglePassphraseShowMode();
 
     private:
+
+        //
+        void setDisabledCAfileWidgets(bool disabled);
+
+
         // Widgets
         QCheckBox *_useSslCheckBox;
         

@@ -49,12 +49,14 @@ namespace Robomongo
         // CA Section widgets
         _acceptSelfSignedButton = new QRadioButton("Accept self-signed certificates");
         _useRootCaFileButton = new QRadioButton("Use own Root CA file ( --sslCAFile )");
+        _acceptSelfSignedButton->setChecked(sslSettings->allowInvalidCertificates());
+        _useRootCaFileButton->setChecked(!_acceptSelfSignedButton->isChecked());
         _caFileLabel = new QLabel("Root CA file: ");
         _caFilePathLineEdit = new QLineEdit;
         _caFileBrowseButton = new QPushButton("...");
         _caFileBrowseButton->setMaximumWidth(50);
         VERIFY(connect(_caFileBrowseButton, SIGNAL(clicked()), this, SLOT(on_caFileBrowseButton_clicked())));
-
+        VERIFY(connect(_acceptSelfSignedButton, SIGNAL(toggled(bool)), this, SLOT(on_acceptSelfSignedButton_toggle(bool))));
 
         // Client Cert section widgets
         _useClientCertCheckBox = new QCheckBox("Use Client Certificate ( --sslPemKeyFile )");
@@ -67,7 +69,7 @@ namespace Robomongo
         _clientCertPassLabel = new QLabel("Passphrase: ");
         _clientCertPassLineEdit = new QLineEdit;
         _clientCertPassShowButton = new QPushButton("Show");
-        //VERIFY(connect(_clientCertPassShowButton, SIGNAL(clicked()), this, SLOT(togglePassphraseShowMode())));
+        VERIFY(connect(_clientCertPassShowButton, SIGNAL(clicked()), this, SLOT(togglePassphraseShowMode())));
         _useClientCertPassCheckBox = new QCheckBox("Client certificated is protected by passphrase");
 
         // Layouts
@@ -101,6 +103,13 @@ namespace Robomongo
         _caFilePathLineEdit->setText(QString::fromStdString(sslSettings->caFile()));
         _clientCertPathLineEdit->setText(QString::fromStdString(sslSettings->pemKeyFile()));
         _clientCertPassLineEdit->setText(QString::fromStdString(sslSettings->pemPassPhrase()));
+
+    }
+
+    void SSLTab::on_acceptSelfSignedButton_toggle(bool checked)
+    {
+        _useRootCaFileButton->setChecked(!checked);
+        setDisabledCAfileWidgets(checked);
     }
 
     void SSLTab::on_caFileBrowseButton_clicked()
@@ -161,9 +170,14 @@ namespace Robomongo
         bool isChecked = static_cast<bool>(state);
         _acceptSelfSignedButton->setDisabled(!isChecked);
         _useRootCaFileButton->setDisabled(!isChecked);
-        _caFileLabel->setDisabled(!isChecked);
-        _caFilePathLineEdit->setDisabled(!isChecked);
-        _caFileBrowseButton->setDisabled(!isChecked);
+        if (state)  // if SSL enabled, disable/enable conditionally; otherwise disable all widgets.
+        {
+            setDisabledCAfileWidgets(_acceptSelfSignedButton->isChecked());
+        }
+        else
+        {
+            setDisabledCAfileWidgets(true);
+        }
         _clientCertLabel->setDisabled(!isChecked);
         _clientCertPathLineEdit->setDisabled(!isChecked);
         _clientCertFileBrowseButton->setDisabled(!isChecked);
@@ -188,7 +202,15 @@ namespace Robomongo
         sslSettings->setCaFile(QtUtils::toStdString(_caFilePathLineEdit->text()));
         sslSettings->setPemKeyFile(QtUtils::toStdString(_clientCertPathLineEdit->text()));
         sslSettings->setPemPassPhrase(QtUtils::toStdString(_clientCertPassLineEdit->text()));
+        sslSettings->setAllowInvalidCertificates(_acceptSelfSignedButton->isChecked());
         return true;
+    }
+
+    void SSLTab::setDisabledCAfileWidgets(bool disabled)
+    {
+        _caFileLabel->setDisabled(disabled);
+        _caFilePathLineEdit->setDisabled(disabled);
+        _caFileBrowseButton->setDisabled(disabled);
     }
 }
 

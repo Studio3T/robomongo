@@ -625,6 +625,7 @@ namespace Robomongo
                 mongo::sslGlobalParams.sslCAFile = _connection->sslSettings()->caFile();
                 mongo::sslGlobalParams.sslPEMKeyFile = _connection->sslSettings()->pemKeyFile();
                 mongo::sslGlobalParams.sslPEMKeyPassword = _connection->sslSettings()->pemPassPhrase();
+                mongo::sslGlobalParams.sslAllowInvalidCertificates = _connection->sslSettings()->allowInvalidCertificates();
             }
             else
             {

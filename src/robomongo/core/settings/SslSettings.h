@@ -27,11 +27,13 @@ namespace Robomongo
         std::string pemKeyFile() const { return _pemKeyFile; }
         std::string caFile() const { return _caFile; }
         std::string pemPassPhrase() const { return _pemPassPhrase; }
+        bool allowInvalidCertificates() const { return _allowInvalidCertificates; }
 
         // todo: setters 
         void setPemKeyFile(const std::string &path) { _pemKeyFile = path; }
         void setCaFile(const std::string &path) { _caFile = path; }
         void setPemPassPhrase(const std::string &pemPassPhrase) { _pemPassPhrase = pemPassPhrase; }
+        void setAllowInvalidCertificates(const bool state) { _allowInvalidCertificates = state; }
 
         /**
          * Flag, indicating whether we should use
@@ -45,6 +47,8 @@ namespace Robomongo
         std::string _caFile;
         std::string _pemKeyFile;
         std::string _pemPassPhrase;
+        bool _allowInvalidCertificates;
+
         /**
          * Flag, indicating whether we should use
          * this SSL settings or not.

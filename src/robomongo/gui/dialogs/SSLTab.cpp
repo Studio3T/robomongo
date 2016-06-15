@@ -15,6 +15,7 @@
 #include <QRadioButton>
 #include <QSpacerItem>
 #include <QHBoxLayout>
+#include <QGroupbox>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/utils/ComboBoxUtils.h"
@@ -35,6 +36,7 @@ namespace {
     }
 }
 
+
 namespace Robomongo
 {
     SSLTab::SSLTab(ConnectionSettings *settings) 
@@ -50,10 +52,10 @@ namespace Robomongo
 
         // CA Section
         _acceptSelfSignedButton = new QRadioButton("Accept self-signed certificates");
-        _useRootCaFileButton = new QRadioButton("Use own Root CA file ( --sslCAFile )");
+        _useRootCaFileButton = new QRadioButton("Use Root CA file: ");
         _acceptSelfSignedButton->setChecked(sslSettings->allowInvalidCertificates());
         _useRootCaFileButton->setChecked(!_acceptSelfSignedButton->isChecked());
-        _caFileLabel = new QLabel("Root CA file: ");
+        //_caFileLabel = new QLabel("Root CA file: ");
         _caFilePathLineEdit = new QLineEdit;
         _caFileBrowseButton = new QPushButton("...");
         _caFileBrowseButton->setMaximumWidth(50);
@@ -83,12 +85,18 @@ namespace Robomongo
         _crlFileBrowseButton->setMaximumWidth(50);
         VERIFY(connect(_crlFileBrowseButton, SIGNAL(clicked()), this, SLOT(on_crlFileBrowseButton_clicked())));
 
-        // Layouts
-        QHBoxLayout* rootCaFileLayout = new QHBoxLayout;
-        rootCaFileLayout->addWidget(_caFileLabel);
-        rootCaFileLayout->addWidget(_caFilePathLineEdit);
-        rootCaFileLayout->addWidget(_caFileBrowseButton);
-
+        // Layouts and Boxes
+        // CA section
+        QGridLayout* caFileLayout = new QGridLayout;
+        caFileLayout->addWidget(_acceptSelfSignedButton,    0 ,0, 1, 2);
+        caFileLayout->addWidget(_useRootCaFileButton,       1, 0);
+        caFileLayout->addWidget(_caFilePathLineEdit,        1, 1);
+        caFileLayout->addWidget(_caFileBrowseButton,        1, 2);
+        QGroupBox* caFileBox = new QGroupBox(tr("CA (Certificate Authority) File"));
+        caFileBox->setLayout(caFileLayout);
+        caFileBox->setFont(QFont(caFileBox->font().family(), -1, -1, false));
+        
+        // Client Section
         QGridLayout* clientCertLayout = new QGridLayout;
         clientCertLayout->addWidget(_clientCertLabel,               0, 0);
         clientCertLayout->addWidget(_clientCertPathLineEdit,        0, 1);
@@ -96,25 +104,26 @@ namespace Robomongo
         clientCertLayout->addWidget(_clientCertPassLabel,           1, 0);
         clientCertLayout->addWidget(_clientCertPassLineEdit,        1, 1);
         clientCertLayout->addWidget(_clientCertPassShowButton,      1, 2);
+        clientCertLayout->addWidget(_useClientCertPassCheckBox,     2, 0, 2, 2);
+        QGroupBox* clientPemBox = new QGroupBox(tr("Client Certificate/Key File"));
+        clientPemBox->setLayout(clientCertLayout);
+        //clientPemBox->setCheckable(true);
+        //clientPemBox->setChecked(false);
 
-        QHBoxLayout* advancedLayout = new QHBoxLayout;
-        advancedLayout->addWidget(_crlFileLabel);
-        advancedLayout->addWidget(_crlFilePathLineEdit);
-        advancedLayout->addWidget(_crlFileBrowseButton);
+        // Advanced section
+        QGridLayout* advancedLayout = new QGridLayout;
+        advancedLayout->addWidget(_crlFileLabel,                    0, 0);
+        advancedLayout->addWidget(_crlFilePathLineEdit,             0, 1);
+        advancedLayout->addWidget(_crlFileBrowseButton,             0, 2);
+        advancedLayout->addWidget(_allowInvalidHostnamesCheckBox,   1, 0, 1, 2);
+        QGroupBox* advancedBox = new QGroupBox(tr("Advanced Options"));
+        advancedBox->setLayout(advancedLayout);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addWidget(_useSslCheckBox);
-        mainLayout->addSpacerItem(new QSpacerItem(20, 30));
-        mainLayout->addWidget(_acceptSelfSignedButton);
-        mainLayout->addWidget(_useRootCaFileButton);
-        mainLayout->addLayout(rootCaFileLayout);
-        mainLayout->addSpacerItem(new QSpacerItem(20, 30));
-        mainLayout->addWidget(_useClientCertCheckBox);
-        mainLayout->addLayout(clientCertLayout);
-        mainLayout->addWidget(_useClientCertPassCheckBox);
-        mainLayout->addSpacerItem(new QSpacerItem(20, 30));
-        mainLayout->addWidget(_allowInvalidHostnamesCheckBox);
-        mainLayout->addLayout(advancedLayout);
+        mainLayout->addWidget(caFileBox);
+        mainLayout->addWidget(clientPemBox);
+        mainLayout->addWidget(advancedBox);
         setLayout(mainLayout);
 
         // Update widgets according to settings
@@ -253,7 +262,7 @@ namespace Robomongo
 
     void SSLTab::setDisabledCAfileWidgets(bool disabled)
     {
-        _caFileLabel->setDisabled(disabled);
+        //_caFileLabel->setDisabled(disabled);
         _caFilePathLineEdit->setDisabled(disabled);
         _caFileBrowseButton->setDisabled(disabled);
     }

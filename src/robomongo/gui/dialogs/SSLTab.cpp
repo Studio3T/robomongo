@@ -41,12 +41,14 @@ namespace Robomongo
         : _settings(settings)
     {
         SslSettings *sslSettings = settings->sslSettings();
+
+        // Use SSL section
         _useSslCheckBox = new QCheckBox("Use SSL protocol");
         _useSslCheckBox->setStyleSheet("margin-bottom: 7px");
         _useSslCheckBox->setChecked(sslSettings->enabled());
         VERIFY(connect(_useSslCheckBox, SIGNAL(stateChanged(int)), this, SLOT(useSslCheckBoxStateChange(int))));
 
-        // CA Section widgets
+        // CA Section
         _acceptSelfSignedButton = new QRadioButton("Accept self-signed certificates");
         _useRootCaFileButton = new QRadioButton("Use own Root CA file ( --sslCAFile )");
         _acceptSelfSignedButton->setChecked(sslSettings->allowInvalidCertificates());
@@ -58,7 +60,7 @@ namespace Robomongo
         VERIFY(connect(_caFileBrowseButton, SIGNAL(clicked()), this, SLOT(on_caFileBrowseButton_clicked())));
         VERIFY(connect(_acceptSelfSignedButton, SIGNAL(toggled(bool)), this, SLOT(on_acceptSelfSignedButton_toggle(bool))));
 
-        // Client Cert section widgets
+        // Client Cert section
         _useClientCertCheckBox = new QCheckBox("Use Client Certificate ( --sslPemKeyFile )");
         _clientCertLabel = new QLabel("Client Certificate: ");
         _clientCertPathLineEdit = new QLineEdit;
@@ -71,6 +73,15 @@ namespace Robomongo
         _clientCertPassShowButton = new QPushButton("Show");
         VERIFY(connect(_clientCertPassShowButton, SIGNAL(clicked()), this, SLOT(togglePassphraseShowMode())));
         _useClientCertPassCheckBox = new QCheckBox("Client certificated is protected by passphrase");
+
+        // Advanced options
+        _allowInvalidHostnamesCheckBox = new QCheckBox("Allow connections to servers with non-matching hostnames");
+        _allowInvalidHostnamesCheckBox->setChecked(sslSettings->allowInvalidHostnames());
+        _crlFileLabel = new QLabel("CRL file: ");
+        _crlFilePathLineEdit = new QLineEdit;
+        _crlFileBrowseButton = new QPushButton("...");
+        _crlFileBrowseButton->setMaximumWidth(50);
+        VERIFY(connect(_crlFileBrowseButton, SIGNAL(clicked()), this, SLOT(on_crlFileBrowseButton_clicked())));
 
         // Layouts
         QHBoxLayout* rootCaFileLayout = new QHBoxLayout;
@@ -86,6 +97,11 @@ namespace Robomongo
         clientCertLayout->addWidget(_clientCertPassLineEdit,        1, 1);
         clientCertLayout->addWidget(_clientCertPassShowButton,      1, 2);
 
+        QHBoxLayout* advancedLayout = new QHBoxLayout;
+        advancedLayout->addWidget(_crlFileLabel);
+        advancedLayout->addWidget(_crlFilePathLineEdit);
+        advancedLayout->addWidget(_crlFileBrowseButton);
+
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addWidget(_useSslCheckBox);
         mainLayout->addSpacerItem(new QSpacerItem(20, 30));
@@ -96,6 +112,9 @@ namespace Robomongo
         mainLayout->addWidget(_useClientCertCheckBox);
         mainLayout->addLayout(clientCertLayout);
         mainLayout->addWidget(_useClientCertPassCheckBox);
+        mainLayout->addSpacerItem(new QSpacerItem(20, 30));
+        mainLayout->addWidget(_allowInvalidHostnamesCheckBox);
+        mainLayout->addLayout(advancedLayout);
         setLayout(mainLayout);
 
         // Update widgets according to settings
@@ -103,7 +122,8 @@ namespace Robomongo
         _caFilePathLineEdit->setText(QString::fromStdString(sslSettings->caFile()));
         _clientCertPathLineEdit->setText(QString::fromStdString(sslSettings->pemKeyFile()));
         _clientCertPassLineEdit->setText(QString::fromStdString(sslSettings->pemPassPhrase()));
-
+        _allowInvalidHostnamesCheckBox->setChecked(sslSettings->allowInvalidHostnames());
+        _crlFilePathLineEdit->setText(QString::fromStdString(sslSettings->crlFile()));
     }
 
     void SSLTab::on_acceptSelfSignedButton_toggle(bool checked)
@@ -150,6 +170,7 @@ namespace Robomongo
 
     void SSLTab::on_pemKeyFileBrowseButton_clicked()
     {
+        // todo: move to function
         // If user has previously selected a file, initialize file dialog
         // with that file's name; otherwise, use user's home directory.
         QString initialName = _clientCertPathLineEdit->text();
@@ -161,6 +182,24 @@ namespace Robomongo
         fileName = QDir::toNativeSeparators(fileName);
         if (!fileName.isEmpty()) {
             _clientCertPathLineEdit->setText(fileName);
+            //buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+        }
+    }
+
+    void SSLTab::on_crlFileBrowseButton_clicked()
+    {
+        // todo: move to function
+        // If user has previously selected a file, initialize file dialog
+        // with that file's name; otherwise, use user's home directory.
+        QString initialName = _crlFilePathLineEdit->text();
+        if (initialName.isEmpty())
+        {
+            initialName = QDir::homePath();
+        }
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File"));
+        fileName = QDir::toNativeSeparators(fileName);
+        if (!fileName.isEmpty()) {
+            _crlFilePathLineEdit->setText(fileName);
             //buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         }
     }
@@ -186,6 +225,10 @@ namespace Robomongo
         _clientCertPassShowButton->setDisabled(!isChecked);
         _useClientCertCheckBox->setDisabled(!isChecked);
         _useClientCertPassCheckBox->setDisabled(!isChecked);
+        _allowInvalidHostnamesCheckBox->setDisabled(!isChecked);
+        _crlFileLabel->setDisabled(!isChecked);
+        _crlFilePathLineEdit->setDisabled(!isChecked);
+        _crlFileBrowseButton->setDisabled(!isChecked);
     }
 
     void SSLTab::togglePassphraseShowMode()
@@ -203,6 +246,8 @@ namespace Robomongo
         sslSettings->setPemKeyFile(QtUtils::toStdString(_clientCertPathLineEdit->text()));
         sslSettings->setPemPassPhrase(QtUtils::toStdString(_clientCertPassLineEdit->text()));
         sslSettings->setAllowInvalidCertificates(_acceptSelfSignedButton->isChecked());
+        sslSettings->setAllowInvalidHostnames(_allowInvalidHostnamesCheckBox->isChecked());
+        sslSettings->setCrlFile(QtUtils::toStdString(_crlFilePathLineEdit->text()));
         return true;
     }
 

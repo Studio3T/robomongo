@@ -38,6 +38,8 @@ namespace Robomongo
         //
         void on_pemKeyFileBrowseButton_clicked();
         //
+        void on_crlFileBrowseButton_clicked();
+        //
         void togglePassphraseShowMode();
 
     private:
@@ -63,6 +65,11 @@ namespace Robomongo
         QLineEdit *_clientCertPassLineEdit;
         QPushButton *_clientCertPassShowButton;
         QCheckBox *_useClientCertPassCheckBox;
+
+        QCheckBox *_allowInvalidHostnamesCheckBox;
+        QLabel *_crlFileLabel;
+        QLineEdit *_crlFilePathLineEdit;
+        QPushButton *_crlFileBrowseButton;
 
         ConnectionSettings *const _settings;
     };

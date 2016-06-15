@@ -18,6 +18,8 @@ namespace Robomongo
         map.insert("caFile", QtUtils::toQString(caFile()));
         map.insert("pemKeyFile", QtUtils::toQString(pemKeyFile()));
         map.insert("pemPassPhrase", QtUtils::toQString(pemPassPhrase()));
+        map.insert("crlFile", QtUtils::toQString(crlFile()));
+        map.insert("allowInvalidHostnames", allowInvalidHostnames());
         map.insert("allowInvalidCertificates", allowInvalidCertificates());
 
         return map;
@@ -28,6 +30,8 @@ namespace Robomongo
         setCaFile(QtUtils::toStdString(map.value("caFile").toString()));
         setPemKeyFile(QtUtils::toStdString(map.value("pemKeyFile").toString()));
         setPemPassPhrase(QtUtils::toStdString(map.value("pemPassPhrase").toString()));
+        setCrlFile(QtUtils::toStdString(map.value("crlFile").toString()));
+        setAllowInvalidHostnames(map.value("allowInvalidHostnames").toBool());
         setAllowInvalidCertificates(map.value("allowInvalidCertificates").toBool());
     }
 }

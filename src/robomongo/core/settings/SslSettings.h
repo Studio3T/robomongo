@@ -30,6 +30,7 @@ namespace Robomongo
         std::string crlFile() const { return _crlFile; }
         bool allowInvalidHostnames() const { return _allowInvalidHostnames; }
         bool allowInvalidCertificates() const { return _allowInvalidCertificates; }
+        bool pemKeyEncrypted() const { return _pemKeyEncrypted; }
 
         // todo: setters 
         void setPemKeyFile(const std::string &path) { _pemKeyFile = path; }
@@ -38,6 +39,7 @@ namespace Robomongo
         void setCrlFile(const std::string &path) { _crlFile = path; }
         void setAllowInvalidHostnames(const bool state) { _allowInvalidHostnames = state; }
         void setAllowInvalidCertificates(const bool state) { _allowInvalidCertificates = state; }
+        void setPemKeyEncrypted(const bool state) { _pemKeyEncrypted = state; }
 
         /**
          * Flag, indicating whether we should use
@@ -54,6 +56,7 @@ namespace Robomongo
         std::string _crlFile;
         bool _allowInvalidHostnames;
         bool _allowInvalidCertificates;
+        bool _pemKeyEncrypted;
 
         /**
          * Flag, indicating whether we should use

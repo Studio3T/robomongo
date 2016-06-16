@@ -41,6 +41,8 @@ namespace Robomongo
         void on_crlFileBrowseButton_clicked();
         //
         void togglePassphraseShowMode();
+        //
+        void on_useClientCertPassCheckBox_toggle(bool checked);
 
     private:
 

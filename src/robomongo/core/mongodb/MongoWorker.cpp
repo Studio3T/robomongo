@@ -621,13 +621,15 @@ namespace Robomongo
             // todo: move to function xxx
             if (_connection->sslSettings()->sslEnabled())
             {
+                const SslSettings * const sslSettings = _connection->sslSettings();
                 mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
-                mongo::sslGlobalParams.sslCAFile = _connection->sslSettings()->caFile();
-                mongo::sslGlobalParams.sslPEMKeyFile = _connection->sslSettings()->pemKeyFile();
-                mongo::sslGlobalParams.sslPEMKeyPassword = _connection->sslSettings()->pemPassPhrase();
-                mongo::sslGlobalParams.sslAllowInvalidCertificates = _connection->sslSettings()->allowInvalidCertificates();
-                mongo::sslGlobalParams.sslCRLFile = _connection->sslSettings()->crlFile();
-                mongo::sslGlobalParams.sslAllowInvalidHostnames = _connection->sslSettings()->allowInvalidHostnames();
+                mongo::sslGlobalParams.sslCAFile = sslSettings->caFile();
+                mongo::sslGlobalParams.sslPEMKeyFile = sslSettings->pemKeyFile();
+                mongo::sslGlobalParams.sslPEMKeyPassword = 
+                    sslSettings->pemKeyEncrypted() ? sslSettings->pemPassPhrase() : "";
+                mongo::sslGlobalParams.sslAllowInvalidCertificates = sslSettings->allowInvalidCertificates();
+                mongo::sslGlobalParams.sslCRLFile = sslSettings->crlFile();
+                mongo::sslGlobalParams.sslAllowInvalidHostnames = sslSettings->allowInvalidHostnames();
             }
             else
             {

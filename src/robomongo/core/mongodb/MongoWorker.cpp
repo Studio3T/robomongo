@@ -2,6 +2,9 @@
 
 #include <QThread>
 
+#include <mongo/util/net/ssl_manager.h>
+#include <mongo/util/net/ssl_options.h>
+
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/engine/ScriptEngine.h"
 #include "robomongo/core/EventBus.h"
@@ -12,11 +15,9 @@
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/settings/SslSettings.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/core/settings/SslSettings.h"
-
-#include "mongo/util/net/ssl_options.h"
 
 namespace Robomongo
 {
@@ -618,21 +619,16 @@ namespace Robomongo
             // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
             mongo::DBClientConnection *conn = new mongo::DBClientConnection(true, _mongoTimeoutSec);
 
-            // todo: move to function xxx
+            // Update global mongo SSL settings according to SSL enable/disabled status
             if (_connection->sslSettings()->sslEnabled())
             {
-                const SslSettings * const sslSettings = _connection->sslSettings();
+                // Force SSL mode for outgoing connections
                 mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
-                mongo::sslGlobalParams.sslCAFile = sslSettings->caFile();
-                mongo::sslGlobalParams.sslPEMKeyFile = sslSettings->pemKeyFile();
-                mongo::sslGlobalParams.sslPEMKeyPassword = 
-                    sslSettings->pemKeyEncrypted() ? sslSettings->pemPassPhrase() : "";
-                mongo::sslGlobalParams.sslAllowInvalidCertificates = sslSettings->allowInvalidCertificates();
-                mongo::sslGlobalParams.sslCRLFile = sslSettings->crlFile();
-                mongo::sslGlobalParams.sslAllowInvalidHostnames = sslSettings->allowInvalidHostnames();
+                writeGlobalSSLparams();
             }
             else
             {
+                // Disable force SSL mode for outgoing connections
                 mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
             }
 
@@ -651,6 +647,18 @@ namespace Robomongo
     MongoClient *MongoWorker::getClient()
     {
         return new MongoClient(getConnection());
+    }
+
+    void MongoWorker::writeGlobalSSLparams() const
+    {
+        const SslSettings * const sslSettings = _connection->sslSettings();
+        mongo::sslGlobalParams.sslCAFile = sslSettings->caFile();
+        mongo::sslGlobalParams.sslPEMKeyFile = sslSettings->pemKeyFile();
+        mongo::sslGlobalParams.sslPEMKeyPassword =
+            sslSettings->pemKeyEncrypted() ? sslSettings->pemPassPhrase() : "";
+        mongo::sslGlobalParams.sslAllowInvalidCertificates = sslSettings->allowInvalidCertificates();
+        mongo::sslGlobalParams.sslCRLFile = sslSettings->crlFile();
+        mongo::sslGlobalParams.sslAllowInvalidHostnames = sslSettings->allowInvalidHostnames();
     }
 
     /**

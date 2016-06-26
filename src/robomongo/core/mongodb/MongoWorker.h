@@ -136,6 +136,11 @@ namespace Robomongo
         MongoClient *getClient();
 
         /**
+        *@brief Update mongo:: SSL global settings according from active connection request SSL settings.
+        */
+        void writeGlobalSSLparams() const;  // todo: move to somewhere else (i.e. RoboSSLManager class)
+
+        /**
          * @brief Send reply event to object 'obj'
          */
         void reply(QObject *receiver, Event *event);

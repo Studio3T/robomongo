@@ -16,24 +16,14 @@
 #include <QSpacerItem>
 #include <QHBoxLayout>
 
+#include <mongo/util/net/ssl_options.h>
+#include <mongo/util/net/ssl_manager.h>
+
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/utils/ComboBoxUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/settings/SslSettings.h"
-
-#include "mongo/util/net/ssl_options.h"
-#include "mongo/util/net/ssl_manager.h"
-//#include "mongo/client/init.h"
-
-namespace {
-    const QString askPasswordText = "Ask for password each time";
-    const QString askPassphraseText = "Ask for passphrase each time";
-    bool isFileExists(const QString &path) {
-        QFileInfo fileInfo(path);
-        return fileInfo.exists() && fileInfo.isFile();
-    }
-}
 
 
 namespace Robomongo
@@ -146,6 +136,8 @@ namespace Robomongo
             //buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         }
 
+
+        // todo: remove
         //mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
         ////mongo::sslGlobalParams.sslPEMKeyFile = "C:\\cygwin\\etc\\ssl\\mongodb.pem";
         //mongo::sslGlobalParams.sslCAFile = "C:\\cygwin\\demarcek_pass\\mongodb.pem";

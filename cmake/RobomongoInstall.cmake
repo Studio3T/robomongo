@@ -56,6 +56,21 @@ install(
     FILES       "${CMAKE_BINARY_DIR}/qt.conf"
     DESTINATION "${qt_conf_dir}")
 
+# Install OpenSSL dynamic lib files
+if(SYSTEM_WINDOWS)
+    install(
+        FILES 
+        "${OpenSSL_DIR}/out32dll/ssleay32.dll"
+        "${OpenSSL_DIR}/out32dll/libeay32.dll"
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
+elseif(SYSTEM_LINUX)
+    install(
+        FILES 
+        "${OpenSSL_DIR}/lib/libssl.so"
+        "${OpenSSL_DIR}/lib/libcrypto.so"
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
+endif()
+
 # Install binary
 install(
     TARGETS robomongo
@@ -105,4 +120,3 @@ elseif(SYSTEM_WINDOWS)
     set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
     include(InstallRequiredSystemLibraries)
 endif()
-

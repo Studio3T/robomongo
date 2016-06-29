@@ -28,13 +28,14 @@ find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
 find_package(MongoDB REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 if (SYSTEM_MACOSX)
     find_package(Qt5MacExtras REQUIRED)
 endif()
 
 # Projects
-add_subdirectory(src/third-party/openssl)
+#add_subdirectory(src/third-party/openssl)
 add_subdirectory(src/third-party/libssh2)
 add_subdirectory(src/robomongo/ssh)
 add_subdirectory(src/third-party/qjson)

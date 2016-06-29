@@ -47,11 +47,6 @@ include(CheckSymbolExists)
 include(CheckNonblockingSocketSupport)
 include(SocketLibraries)
 
-if (WIN32)
-    # Statically linking to OpenSSL requires crypt32 for some Windows APIs.
-    list(APPEND LIBRARIES crypt32)
-endif()
-
 set(HAVE_EVP_AES_128_CTR YES)
 
 ## Library definition
@@ -107,8 +102,8 @@ target_compile_definitions(libssh2
         LIBSSH2_OPENSSL)
 
 target_link_libraries(libssh2
-    PRIVATE
-        ssl crypto)
+    PUBLIC
+       ssl crypto)
 
 target_include_directories(libssh2
     PUBLIC

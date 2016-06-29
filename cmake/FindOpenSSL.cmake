@@ -14,7 +14,12 @@ find_path(
 
 # Find OpenSSL version   // todo: refactor
 #-------------------------------------------
-set (OPENSSL_INCLUDE_DIR "${OpenSSL_DIR}/inc32")
+
+if(SYSTEM_WINDOWS)
+  set (OPENSSL_INCLUDE_DIR "${OpenSSL_DIR}/inc32")
+else()
+  set (OPENSSL_INCLUDE_DIR "${OpenSSL_DIR}/include")
+endif()
 
 function(from_hex HEX DEC)
   string(TOUPPER "${HEX}" HEX)
@@ -102,15 +107,14 @@ if(SYSTEM_WINDOWS)
         INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/inc32"
         IMPORTED_IMPLIB                 "${OpenSSL_DIR}/out32dll/libeay32.lib"
     )
-elseif()
+elseif(SYSTEM_MACOSX)
     set_target_properties(ssl PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
-        IMPORTED_IMPLIB                 "${OpenSSL_DIR}/lib/libssl.so"
+        IMPORTED_LOCATION               "${OpenSSL_DIR}/lib/libssl.dylib"
     )
     set_target_properties(crypto PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
-        IMPORTED_IMPLIB                 "${OpenSSL_DIR}/lib/libcrypto.so"
+        IMPORTED_LOCATION               "${OpenSSL_DIR}/lib/libcrypto.dylib"
     )
 endif()
-
 

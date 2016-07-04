@@ -98,7 +98,7 @@ There are a number of issues we could use help with reproducing. They are marked
 License
 =======
 
-Copyright (C) 2013-2015 [Paralect, Inc](http://www.paralect.com)
+Copyright (C) 2013-2016 [Paralect, Inc](http://www.paralect.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 as 

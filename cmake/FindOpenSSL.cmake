@@ -12,7 +12,7 @@ find_path(
     DOC "Path to OpenSSL (github.com/openssl/openssl) root directory"
 )
 
-# Find OpenSSL version   // todo: refactor
+# Find OpenSSL version
 #-------------------------------------------
 
 if(SYSTEM_WINDOWS)
@@ -115,6 +115,15 @@ elseif(SYSTEM_MACOSX)
     set_target_properties(crypto PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
         IMPORTED_LOCATION               "${OpenSSL_DIR}/lib/libcrypto.dylib"
+    )
+elseif(SYSTEM_LINUX)
+    set_target_properties(ssl PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
+        IMPORTED_LOCATION               "${OpenSSL_DIR}/lib/libssl.so"
+    )
+    set_target_properties(crypto PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
+        IMPORTED_LOCATION               "${OpenSSL_DIR}/lib/libcrypto.so"
     )
 endif()
 

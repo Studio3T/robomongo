@@ -1,20 +1,13 @@
 #include "robomongo/gui/dialogs/SSLTab.h"
 
-#include <QApplication>
 #include <QLabel>
 #include <QLineEdit>
 #include <QGridLayout>
-#include <QRegExpValidator>
 #include <QCheckBox>
 #include <QPushButton>
 #include <QFileDialog>
 #include <QComboBox>
-#include <QMessageBox>
-#include <QFileInfo>
-#include <QFrame>
 #include <QRadioButton>
-#include <QSpacerItem>
-#include <QHBoxLayout>
 
 #include <mongo/util/net/ssl_options.h>
 #include <mongo/util/net/ssl_manager.h>
@@ -44,7 +37,6 @@ namespace Robomongo
         _useRootCaFileButton = new QRadioButton("Use Root CA file: ");
         _acceptSelfSignedButton->setChecked(sslSettings->allowInvalidCertificates());
         _useRootCaFileButton->setChecked(!_acceptSelfSignedButton->isChecked());
-        //_caFileLabel = new QLabel("Root CA file: ");
         _caFilePathLineEdit = new QLineEdit;
         _caFileBrowseButton = new QPushButton("...");
         _caFileBrowseButton->setMaximumWidth(50);
@@ -92,7 +84,7 @@ namespace Robomongo
         gridLayout->addWidget(_clientCertPassLineEdit,          3, 1);
         gridLayout->addWidget(_clientCertPassShowButton,        3, 2);
         gridLayout->addWidget(_useClientCertPassCheckBox,       4, 1);
-        //// Advanced section
+        // Advanced section
         gridLayout->addWidget(_crlFileLabel,                    5, 0);
         gridLayout->addWidget(_crlFilePathLineEdit,             5, 1);
         gridLayout->addWidget(_crlFileBrowseButton,             5, 2);
@@ -105,13 +97,55 @@ namespace Robomongo
         mainLayout->addLayout(gridLayout);
         setLayout(mainLayout);
 
-        // Update widgets according to settings
+        // Update widgets according to SSL settings
         useSslCheckBoxStateChange(_useSslCheckBox->checkState());
         _caFilePathLineEdit->setText(QString::fromStdString(sslSettings->caFile()));
         _clientCertPathLineEdit->setText(QString::fromStdString(sslSettings->pemKeyFile()));
         _clientCertPassLineEdit->setText(QString::fromStdString(sslSettings->pemPassPhrase()));
         _allowInvalidHostnamesCheckBox->setChecked(sslSettings->allowInvalidHostnames());
         _crlFilePathLineEdit->setText(QString::fromStdString(sslSettings->crlFile()));
+    }
+
+    bool SSLTab::accept()
+    {
+        SslSettings *sslSettings = _settings->sslSettings();
+        sslSettings->enableSSL(_useSslCheckBox->isChecked());
+        sslSettings->setCaFile(QtUtils::toStdString(_caFilePathLineEdit->text()));
+        sslSettings->setPemKeyFile(QtUtils::toStdString(_clientCertPathLineEdit->text()));
+        sslSettings->setPemPassPhrase(QtUtils::toStdString(_clientCertPassLineEdit->text()));
+        sslSettings->setPemKeyEncrypted(_useClientCertPassCheckBox->isChecked());
+        sslSettings->setAllowInvalidCertificates(_acceptSelfSignedButton->isChecked());
+        sslSettings->setAllowInvalidHostnames(_allowInvalidHostnamesCheckBox->isChecked());
+        sslSettings->setCrlFile(QtUtils::toStdString(_crlFilePathLineEdit->text()));
+        return true;
+    }
+
+    void SSLTab::useSslCheckBoxStateChange(int state)
+    {
+        bool isChecked = static_cast<bool>(state);
+        _acceptSelfSignedButton->setDisabled(!isChecked);
+        _useRootCaFileButton->setDisabled(!isChecked);
+        if (state)  // if SSL enabled, disable/enable conditionally; otherwise disable all widgets.
+        {
+            setDisabledCAfileWidgets(_acceptSelfSignedButton->isChecked());
+            on_useClientCertPassCheckBox_toggle(_useClientCertPassCheckBox->isChecked());
+        }
+        else
+        {
+            setDisabledCAfileWidgets(true);
+            _clientCertPassLineEdit->setDisabled(true);
+            _clientCertPassShowButton->setDisabled(true);
+        }
+        _clientCertLabel->setDisabled(!isChecked);
+        _clientCertPathLineEdit->setDisabled(!isChecked);
+        _clientCertFileBrowseButton->setDisabled(!isChecked);
+        _clientCertPassLabel->setDisabled(!isChecked);
+        _useClientCertCheckBox->setDisabled(!isChecked);
+        _useClientCertPassCheckBox->setDisabled(!isChecked);
+        _allowInvalidHostnamesCheckBox->setDisabled(!isChecked);
+        _crlFileLabel->setDisabled(!isChecked);
+        _crlFilePathLineEdit->setDisabled(!isChecked);
+        _crlFileBrowseButton->setDisabled(!isChecked);
     }
 
     void SSLTab::on_acceptSelfSignedButton_toggle(bool checked)
@@ -135,27 +169,6 @@ namespace Robomongo
             _caFilePathLineEdit->setText(fileName);
             //buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         }
-
-
-        // todo: remove
-        //mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
-        ////mongo::sslGlobalParams.sslPEMKeyFile = "C:\\cygwin\\etc\\ssl\\mongodb.pem";
-        //mongo::sslGlobalParams.sslCAFile = "C:\\cygwin\\demarcek_pass\\mongodb.pem";
-        //mongo::sslGlobalParams.sslPEMKeyFile = "C:\\cygwin\\demarcek_pass\\client.pem";
-        //mongo::sslGlobalParams.sslPEMKeyPassword = "testc";
-
-        //mongo::DBClientConnection *conn = new mongo::DBClientConnection(true, 10);
-        ////mongo::Status status = conn->connect(mongo::HostAndPort("46.101.137.132", 27020));
-
-        //try{
-        //    mongo::Status status = conn->connect(mongo::HostAndPort("localhost", 27017));
-        //    _clientCertPassLineEdit->setText("isOk: " + QString::number(status.isOK()));
-        //}
-        //catch (const std::exception& ex){
-        //    _clientCertPassLineEdit->setText("exc: " + QString::fromStdString(ex.what()));
-        //}
-
-        //mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
     }
 
     void SSLTab::on_pemKeyFileBrowseButton_clicked()
@@ -194,34 +207,6 @@ namespace Robomongo
         }
     }
 
-    void SSLTab::useSslCheckBoxStateChange(int state)
-    {
-        bool isChecked = static_cast<bool>(state);
-        _acceptSelfSignedButton->setDisabled(!isChecked);
-        _useRootCaFileButton->setDisabled(!isChecked);
-        if (state)  // if SSL enabled, disable/enable conditionally; otherwise disable all widgets.
-        {
-            setDisabledCAfileWidgets(_acceptSelfSignedButton->isChecked());
-            on_useClientCertPassCheckBox_toggle(_useClientCertPassCheckBox->isChecked());
-        }
-        else
-        {
-            setDisabledCAfileWidgets(true);
-            _clientCertPassLineEdit->setDisabled(true);
-            _clientCertPassShowButton->setDisabled(true);
-        }
-        _clientCertLabel->setDisabled(!isChecked);
-        _clientCertPathLineEdit->setDisabled(!isChecked);
-        _clientCertFileBrowseButton->setDisabled(!isChecked);
-        _clientCertPassLabel->setDisabled(!isChecked);
-        _useClientCertCheckBox->setDisabled(!isChecked);
-        _useClientCertPassCheckBox->setDisabled(!isChecked);
-        _allowInvalidHostnamesCheckBox->setDisabled(!isChecked);
-        _crlFileLabel->setDisabled(!isChecked);
-        _crlFilePathLineEdit->setDisabled(!isChecked);
-        _crlFileBrowseButton->setDisabled(!isChecked);
-    }
-
     void SSLTab::togglePassphraseShowMode()
     {
         bool isPassword = _clientCertPassLineEdit->echoMode() == QLineEdit::Password;
@@ -235,23 +220,8 @@ namespace Robomongo
         _clientCertPassShowButton->setDisabled(!checked);
     }
 
-    bool SSLTab::accept()
-    {
-        SslSettings *sslSettings = _settings->sslSettings();
-        sslSettings->enableSSL(_useSslCheckBox->isChecked());
-        sslSettings->setCaFile(QtUtils::toStdString(_caFilePathLineEdit->text()));
-        sslSettings->setPemKeyFile(QtUtils::toStdString(_clientCertPathLineEdit->text()));
-        sslSettings->setPemPassPhrase(QtUtils::toStdString(_clientCertPassLineEdit->text()));
-        sslSettings->setPemKeyEncrypted(_useClientCertPassCheckBox->isChecked()) ;
-        sslSettings->setAllowInvalidCertificates(_acceptSelfSignedButton->isChecked());
-        sslSettings->setAllowInvalidHostnames(_allowInvalidHostnamesCheckBox->isChecked());
-        sslSettings->setCrlFile(QtUtils::toStdString(_crlFilePathLineEdit->text()));
-        return true;
-    }
-
     void SSLTab::setDisabledCAfileWidgets(bool disabled)
     {
-        //_caFileLabel->setDisabled(disabled);
         _caFilePathLineEdit->setDisabled(disabled);
         _caFileBrowseButton->setDisabled(disabled);
     }

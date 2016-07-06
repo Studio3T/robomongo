@@ -628,7 +628,7 @@ namespace Robomongo
             }
             else
             {
-                // Disable force SSL mode for outgoing connections
+                // Disable forced SSL mode for outgoing connections
                 mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
             }
 

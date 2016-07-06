@@ -7,15 +7,13 @@
 // Header "mongo/platform/basic" is required by "sock.h" under Windows
 #include <mongo/platform/basic.h>
 #include <mongo/util/net/sock.h>
-
 #include <mongo/base/initializer.h>
+#include <mongo/util/net/ssl_options.h>
 
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/AppStyle.h"
-
 #include "robomongo/ssh/ssh.h"
 
-#include "mongo/util/net/ssl_options.h" // todo
 
 int main(int argc, char *argv[], char** envp)
 {
@@ -31,8 +29,7 @@ int main(int argc, char *argv[], char** envp)
     // Support for IPv6 is disabled by default. Enable it.
     mongo::enableIPv6(true);
 
-    // todo
-    //mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
+    // Perform SSL-enabled mongo initialization
     mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
 
     // Initialization routine for MongoDB shell

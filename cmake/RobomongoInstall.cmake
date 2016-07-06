@@ -63,12 +63,6 @@ if(SYSTEM_WINDOWS)
         "${OpenSSL_DIR}/out32dll/ssleay32.dll"
         "${OpenSSL_DIR}/out32dll/libeay32.dll"
         DESTINATION ${CMAKE_INSTALL_PREFIX})
-elseif(SYSTEM_LINUX)
-    install(
-        FILES 
-        "${OpenSSL_DIR}/lib/libssl.so"
-        "${OpenSSL_DIR}/lib/libcrypto.so"
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
 endif()
 
 # Install binary

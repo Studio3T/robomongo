@@ -1,11 +1,19 @@
 ##################################################
-# Find the OpenSSL library
+# Find and Add OpenSSL shared (dynamic) library 
 # 
-# Find/Set variables:
+# - This module defines the following variables:
 #   OpenSSL_DIR
 #   OPENSSL_VERSION
 #
+# - Imported shared(dynamic) libraries "ssl" and "crypto" are created.
+#
+# - It is assumed that OpenSSL has been built and path to OpenSSL build directory is 
+#   added into system(environment) variable ROBOMONGO_CMAKE_PREFIX_PATH.
+#
 ##################################################
+
+# Try to find OpenSSL directory (uses CMAKE_PREFIX_PATH locations)
+#-------------------------------------------
 
 find_path(
     OpenSSL_DIR include/openssl/ssl.h
@@ -92,10 +100,10 @@ endif ()
 # Add imported ssl and crypto libraries
 #-------------------------------------------
     
-# Add imported target ssleay32 (ssl)
+# Add imported target ssl (ssleay32)
 add_library(ssl SHARED IMPORTED)
 
-# Add imported target for libeay32 (crypto)
+# Add imported target for crypto (libeay32)
 add_library(crypto SHARED IMPORTED)
     
 if(SYSTEM_WINDOWS)
@@ -127,3 +135,4 @@ elseif(SYSTEM_LINUX)
     )
 endif()
 
+# End of file

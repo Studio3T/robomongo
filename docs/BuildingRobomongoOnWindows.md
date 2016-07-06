@@ -1,7 +1,7 @@
-Building Robomongo for Windows
+Building Robomongo (Windows)
 ==============================
 
-Prerequisites
+A. Prerequisites
 -------------
 
 #### 0. Git
@@ -77,12 +77,45 @@ Prerequisites
    
  You may uncheck all other components to download as little as possible. 
 
+#### 6. OpenSSL (1.0.1p)
+Download openssl-1.0.1p (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1p.tar.gz)
+  
+  
 
+B. Building Robomongo and Dependencies
+-------------
 
-## Build Robomongo Shell (fork of MongoDB)
+#### 1. Build OpenSSL (1.0.1p)
 
-Refer to MongoDB documentation for additional information:
-https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source/#windows-specific-instructions
+Steps to build OpenSSL on windows:
+
+  ```sh
+Open Visual Studio tool x64 Cross Tools Command prompt
+cd to the directory where you have openssl sources cd c:\myPath\openssl
+perl Configure VC-WIN64A
+ms\do_win64a
+nmake -f ms\ntdll.mak
+```
+
+**Check Point:**
+After successful build, newly created sub directory out32dll should contain dynamic lib files libeay32.lib (and libeay32.dll) and ssleay32.lib (and ssleay32.dll); and associated include files will be in newly created folder "inc32".
+
+Refer to OpenSSL documentation for more information:  
+https://wiki.openssl.org/index.php/Compilation_and_Installation#W64
+
+#### 2. Set `ROBOMONGO_CMAKE_PREFIX_PATH`
+
+Environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robomongo-Shell and Robomongo build scripts, needs to be set according to the following directories:
+
+1. Location of Qt SDK
+2. Location of Robomongo Shell
+3. Location of OpenSSL
+
+Separate directories by semicolon `;` (not colon). You can do this in Command Prompt:
+
+    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.5\msvc2013_64;d:\Projects\robomongo-shell;c:\myPath\openssl-1.0.1p"
+
+#### 3. Build Robomongo Shell (fork of MongoDB)
 
 Clone Robomongo Shell and checkout to roboshell-v3.2 branch:
 
@@ -104,21 +137,18 @@ Clean build files:
 
     > bin\clean
 
+Refer to MongoDB documentation for additional information:
+https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source/#windows-specific-instructions
 
-## Build Robomongo   
 
-Set special environment variable `ROBOMONGO_CMAKE_PREFIX_PATH` to point to set of 
-directories:
+#### 4. Build Robomongo   
 
-1. Location of Qt SDK
-2. Location of Robomongo Shell
+Clone Robomongo:
 
-Separate directories by semicolon `;` (not colon). You can do this in Command Prompt:
-
-    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.5\msvc2013_64;d:\Projects\robomongo-shell"
-    
-Reopen your Command Prompt to make this variable available.
-
+  ```sh
+  $ git clone https://github.com/paralect/robomongo.git
+  ```
+  
 Open VS2013 x64 Native Tools Command Prompt and navigate to `robomongo` folder.
  
 Run configuration step:
@@ -128,15 +158,23 @@ Run configuration step:
 And finally, build Robomongo:
     
     > bin\build 
-    
-    
-#### Helper commands
+ 
+
+**Run Robomongo**
+
+Install Robomongo to `build\Release\install` folder:
+
+    > bin\install
+   
+And run Robomongo
+
+    > \robomongo\build\Release\install\Robomongo.exe
+
+**Helper commands**
     
 Clean build files (in order to start build from scratch):
 
     > bin\clean
     
-Install Robomongo to `build\Release\install` folder:
 
-    > bin\install
    

@@ -118,6 +118,8 @@ Separate directories by semicolon `;` (not colon). You can do this in Command Pr
     > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.5\msvc2013_64;d:\Projects\robomongo-shell"
     
 Reopen your Command Prompt to make this variable available.
+
+Open VS2013 x64 Native Tools Command Prompt and navigate to `robomongo` folder.
  
 Run configuration step:
     

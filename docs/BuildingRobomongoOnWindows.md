@@ -103,9 +103,17 @@ After successful build, newly created sub directory out32dll should contain dyna
 Refer to OpenSSL documentation for more information:  
 https://wiki.openssl.org/index.php/Compilation_and_Installation#W64
 
-#### 2. Set `ROBOMONGO_CMAKE_PREFIX_PATH`
+#### 2. Build Robomongo Shell (fork of MongoDB)
 
-Environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robomongo-Shell and Robomongo build scripts, needs to be set according to the following directories:
+Clone Robomongo Shell and checkout to roboshell-v3.2 branch:
+
+  ```sh
+  $ git clone https://github.com/paralect/robomongo-shell.git
+  $ cd robomongo-shell
+  $ git checkout roboshell-v3.2
+  ```
+
+Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robomongo-Shell and Robomongo build scripts, needs to be set according to the following directories:
 
 1. Location of Qt SDK
 2. Location of Robomongo Shell
@@ -115,15 +123,6 @@ Separate directories by semicolon `;` (not colon). You can do this in Command Pr
 
     > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.5\msvc2013_64;d:\Projects\robomongo-shell;c:\myPath\openssl-1.0.1p"
 
-#### 3. Build Robomongo Shell (fork of MongoDB)
-
-Clone Robomongo Shell and checkout to roboshell-v3.2 branch:
-
-  ```sh
-  $ git clone https://github.com/paralect/robomongo-shell.git
-  $ cd robomongo-shell
-  $ git checkout roboshell-v3.2
-  ```
 
 Open VS2013 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.
 
@@ -141,7 +140,7 @@ Refer to MongoDB documentation for additional information:
 https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source/#windows-specific-instructions
 
 
-#### 4. Build Robomongo   
+#### 3. Build Robomongo   
 
 Clone Robomongo:
 

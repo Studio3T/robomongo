@@ -69,6 +69,12 @@ namespace Robomongo
         */
         void setDisabledCAfileWidgets(bool disabled);
 
+        /**
+        * @brief  Check existence of files: CA cert, Client Cert and CRL file
+        * @return true if all files exist, false any of them does not exist
+        * @return QString Lable of file which does not exist, empty string if all files exist
+        */
+        std::pair<bool, QString> checkExistenseOfFiles() const;
 
         /**
         * @brief Main checkbox to disable/enable all other SSL tab widgets

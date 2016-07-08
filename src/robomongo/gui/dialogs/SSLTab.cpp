@@ -8,6 +8,8 @@
 #include <QFileDialog>
 #include <QComboBox>
 #include <QRadioButton>
+#include <QFileInfo>
+#include <QMessageBox>
 
 #include <mongo/util/net/ssl_options.h>
 #include <mongo/util/net/ssl_manager.h>
@@ -18,6 +20,14 @@
 #include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/settings/SslSettings.h"
 
+namespace 
+{
+    bool fileExists(const QString &path) 
+    {
+        QFileInfo fileInfo(path);
+        return (fileInfo.exists() && fileInfo.isFile());
+    }
+}
 
 namespace Robomongo
 {
@@ -34,7 +44,7 @@ namespace Robomongo
 
         // CA Section
         _acceptSelfSignedButton = new QRadioButton("Accept self-signed certificates");
-        _useRootCaFileButton = new QRadioButton("Use Root CA file: ");
+        _useRootCaFileButton = new QRadioButton("Use CA certificate: ");
         _acceptSelfSignedButton->setChecked(sslSettings->allowInvalidCertificates());
         _useRootCaFileButton->setChecked(!_acceptSelfSignedButton->isChecked());
         _caFilePathLineEdit = new QLineEdit;
@@ -63,7 +73,7 @@ namespace Robomongo
         // Advanced options
         _allowInvalidHostnamesCheckBox = new QCheckBox("Allow connections to servers with non-matching hostnames");
         _allowInvalidHostnamesCheckBox->setChecked(sslSettings->allowInvalidHostnames());
-        _crlFileLabel = new QLabel("CRL file: ");
+        _crlFileLabel = new QLabel("CRL (Revocation List): ");
         _crlFilePathLineEdit = new QLineEdit;
         _crlFileBrowseButton = new QPushButton("...");
         _crlFileBrowseButton->setMaximumWidth(50);
@@ -117,6 +127,15 @@ namespace Robomongo
         sslSettings->setAllowInvalidCertificates(_acceptSelfSignedButton->isChecked());
         sslSettings->setAllowInvalidHostnames(_allowInvalidHostnamesCheckBox->isChecked());
         sslSettings->setCrlFile(QtUtils::toStdString(_crlFilePathLineEdit->text()));
+        auto const resultAndFileName = checkExistenseOfFiles();
+        if (!resultAndFileName.first)
+        {
+            QString nonExistingFile = resultAndFileName.second;
+            QMessageBox errorBox;
+            errorBox.critical(this, "Error", ("Error: " + nonExistingFile + " file does not exist"));
+            errorBox.adjustSize();
+            return false;
+        }
         return true;
     }
 
@@ -224,6 +243,33 @@ namespace Robomongo
     {
         _caFilePathLineEdit->setDisabled(disabled);
         _caFileBrowseButton->setDisabled(disabled);
+    }
+
+    std::pair<bool,QString> SSLTab::checkExistenseOfFiles() const
+    {
+        if (_caFilePathLineEdit->isEnabled())
+        {
+            if (!fileExists(_caFilePathLineEdit->text())){
+                return { false, "CA" };
+            }
+        }
+
+        if (!_clientCertPathLineEdit->text().isEmpty())
+        {
+            if (!fileExists(_clientCertPathLineEdit->text()))
+            {
+                return{ false, "Client Certificate" };
+            }
+        }
+
+        if (!_crlFilePathLineEdit->text().isEmpty())
+        {
+            if (!fileExists(_crlFilePathLineEdit->text()))
+            {
+                return{ false, "CRL (Revocation List)" };
+            }
+        }
+        return{ true, "" };
     }
 }
 

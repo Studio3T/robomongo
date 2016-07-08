@@ -92,10 +92,10 @@ namespace Robomongo
         _authTab->accept();
         _advancedTab->accept();
 
-        if (!_sshTab->accept())
+        if (!_sshTab->accept() || !_sslTab->accept())
+        {
             return false;
-
-         _sslTab->accept();
+        }
 
         return true;
     }

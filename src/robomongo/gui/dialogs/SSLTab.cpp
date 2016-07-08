@@ -107,7 +107,7 @@ namespace Robomongo
         mainLayout->addLayout(gridLayout);
         setLayout(mainLayout);
 
-        // Update widgets according to SSL settings
+        // Update widget states according to SSL settings
         useSslCheckBoxStateChange(_useSslCheckBox->checkState());
         _caFilePathLineEdit->setText(QString::fromStdString(sslSettings->caFile()));
         _clientCertPathLineEdit->setText(QString::fromStdString(sslSettings->pemKeyFile()));
@@ -118,25 +118,8 @@ namespace Robomongo
 
     bool SSLTab::accept()
     {
-        SslSettings *sslSettings = _settings->sslSettings();
-        sslSettings->enableSSL(_useSslCheckBox->isChecked());
-        sslSettings->setCaFile(QtUtils::toStdString(_caFilePathLineEdit->text()));
-        sslSettings->setPemKeyFile(QtUtils::toStdString(_clientCertPathLineEdit->text()));
-        sslSettings->setPemPassPhrase(QtUtils::toStdString(_clientCertPassLineEdit->text()));
-        sslSettings->setPemKeyEncrypted(_useClientCertPassCheckBox->isChecked());
-        sslSettings->setAllowInvalidCertificates(_acceptSelfSignedButton->isChecked());
-        sslSettings->setAllowInvalidHostnames(_allowInvalidHostnamesCheckBox->isChecked());
-        sslSettings->setCrlFile(QtUtils::toStdString(_crlFilePathLineEdit->text()));
-        auto const resultAndFileName = checkExistenseOfFiles();
-        if (!resultAndFileName.first)
-        {
-            QString nonExistingFile = resultAndFileName.second;
-            QMessageBox errorBox;
-            errorBox.critical(this, "Error", ("Error: " + nonExistingFile + " file does not exist"));
-            errorBox.adjustSize();
-            return false;
-        }
-        return true;
+        saveSslSettings();
+        return validate();
     }
 
     void SSLTab::useSslCheckBoxStateChange(int state)
@@ -175,54 +158,25 @@ namespace Robomongo
 
     void SSLTab::on_caFileBrowseButton_clicked()
     {
-        // If user has previously selected a file, initialize file dialog
-        // with that file's name; otherwise, use user's home directory.
-        QString initialName = _caFilePathLineEdit->text();
-        if (initialName.isEmpty())
-        {
-            initialName = QDir::homePath();
-        }
-        QString fileName =  QFileDialog::getOpenFileName(this, tr("Choose File"));
-        fileName = QDir::toNativeSeparators(fileName);
+        QString const fileName = openFileBrowseDialog(_caFilePathLineEdit->text());
         if (!fileName.isEmpty()) {
             _caFilePathLineEdit->setText(fileName);
-            //buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         }
     }
 
     void SSLTab::on_pemKeyFileBrowseButton_clicked()
     {
-        // todo: move to function
-        // If user has previously selected a file, initialize file dialog
-        // with that file's name; otherwise, use user's home directory.
-        QString initialName = _clientCertPathLineEdit->text();
-        if (initialName.isEmpty())
-        {
-            initialName = QDir::homePath();
-        }
-        QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File"));
-        fileName = QDir::toNativeSeparators(fileName);
+        QString const fileName = openFileBrowseDialog(_clientCertPathLineEdit->text());
         if (!fileName.isEmpty()) {
             _clientCertPathLineEdit->setText(fileName);
-            //buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         }
     }
 
     void SSLTab::on_crlFileBrowseButton_clicked()
     {
-        // todo: move to function
-        // If user has previously selected a file, initialize file dialog
-        // with that file's name; otherwise, use user's home directory.
-        QString initialName = _crlFilePathLineEdit->text();
-        if (initialName.isEmpty())
-        {
-            initialName = QDir::homePath();
-        }
-        QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File"));
-        fileName = QDir::toNativeSeparators(fileName);
+        QString const fileName = openFileBrowseDialog(_crlFilePathLineEdit->text());
         if (!fileName.isEmpty()) {
             _crlFilePathLineEdit->setText(fileName);
-            //buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         }
     }
 
@@ -239,7 +193,22 @@ namespace Robomongo
         _clientCertPassShowButton->setDisabled(!checked);
     }
 
-    void SSLTab::setDisabledCAfileWidgets(bool disabled)
+    bool SSLTab::validate()
+    {
+        // Validate existence of files
+        auto const resultAndFileName = checkExistenseOfFiles();
+        if (!resultAndFileName.first)
+        {
+            QString nonExistingFile = resultAndFileName.second;
+            QMessageBox errorBox;
+            errorBox.critical(this, "Error", ("Error: " + nonExistingFile + " file does not exist"));
+            errorBox.adjustSize();
+            return false;
+        }
+        return true;
+    }
+
+    void SSLTab::setDisableCAfileWidgets(bool disabled)
     {
         _caFilePathLineEdit->setDisabled(disabled);
         _caFileBrowseButton->setDisabled(disabled);
@@ -249,7 +218,8 @@ namespace Robomongo
     {
         if (_caFilePathLineEdit->isEnabled())
         {
-            if (!fileExists(_caFilePathLineEdit->text())){
+            if (!fileExists(_caFilePathLineEdit->text()))
+            {
                 return { false, "CA" };
             }
         }
@@ -270,6 +240,32 @@ namespace Robomongo
             }
         }
         return{ true, "" };
+    }
+
+    void SSLTab::saveSslSettings() const
+    {
+        SslSettings *sslSettings = _settings->sslSettings();
+        sslSettings->enableSSL(_useSslCheckBox->isChecked());
+        sslSettings->setCaFile(QtUtils::toStdString(_caFilePathLineEdit->text()));
+        sslSettings->setPemKeyFile(QtUtils::toStdString(_clientCertPathLineEdit->text()));
+        sslSettings->setPemPassPhrase(QtUtils::toStdString(_clientCertPassLineEdit->text()));
+        sslSettings->setPemKeyEncrypted(_useClientCertPassCheckBox->isChecked());
+        sslSettings->setAllowInvalidCertificates(_acceptSelfSignedButton->isChecked());
+        sslSettings->setAllowInvalidHostnames(_allowInvalidHostnamesCheckBox->isChecked());
+        sslSettings->setCrlFile(QtUtils::toStdString(_crlFilePathLineEdit->text()));
+    }
+
+    QString SSLTab::openFileBrowseDialog(const QString& initialPath)
+    {
+        QString filePath = initialPath;
+        // If user has previously selected a file, initialize file dialog with that file's 
+        // path and name; otherwise, use user's home directory.
+        if (filePath.isEmpty())
+        {
+            filePath = QDir::homePath();
+        }
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File"), filePath);
+        return QDir::toNativeSeparators(fileName);
     }
 }
 

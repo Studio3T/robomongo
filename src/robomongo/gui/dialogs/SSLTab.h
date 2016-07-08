@@ -65,9 +65,15 @@ namespace Robomongo
     private:
 
         /**
+        * @brief Do validation according to user input in UI
+        * @return true on success, false otherwise
+        */
+        bool validate();
+
+        /**
         * @brief Enable/disable Use CA file widget section
         */
-        void setDisabledCAfileWidgets(bool disabled);
+        void setDisableCAfileWidgets(bool disabled);
 
         /**
         * @brief  Check existence of files: CA cert, Client Cert and CRL file
@@ -75,6 +81,16 @@ namespace Robomongo
         * @return QString Lable of file which does not exist, empty string if all files exist
         */
         std::pair<bool, QString> checkExistenseOfFiles() const;
+
+        /**
+        * @brief Save dialog input into connection's ssl settings
+        */
+        void saveSslSettings() const;
+
+        /**
+        * @brief 
+        */
+        QString openFileBrowseDialog(const QString& initialPath);
 
         /**
         * @brief Main checkbox to disable/enable all other SSL tab widgets

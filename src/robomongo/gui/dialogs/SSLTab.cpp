@@ -129,12 +129,12 @@ namespace Robomongo
         _useRootCaFileButton->setDisabled(!isChecked);
         if (state)  // if SSL enabled, disable/enable conditionally; otherwise disable all widgets.
         {
-            setDisabledCAfileWidgets(_acceptSelfSignedButton->isChecked());
+            setDisableCAfileWidgets(_acceptSelfSignedButton->isChecked());
             on_useClientCertPassCheckBox_toggle(_useClientCertPassCheckBox->isChecked());
         }
         else
         {
-            setDisabledCAfileWidgets(true);
+            setDisableCAfileWidgets(true);
             _clientCertPassLineEdit->setDisabled(true);
             _clientCertPassShowButton->setDisabled(true);
         }
@@ -153,7 +153,7 @@ namespace Robomongo
     void SSLTab::on_acceptSelfSignedButton_toggle(bool checked)
     {
         _useRootCaFileButton->setChecked(!checked);
-        setDisabledCAfileWidgets(checked);
+        setDisableCAfileWidgets(checked);
     }
 
     void SSLTab::on_caFileBrowseButton_clicked()

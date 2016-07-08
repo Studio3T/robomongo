@@ -85,6 +85,14 @@ namespace Robomongo
         void onExplorerVisibilityChanged(bool isVisisble);
 
     private:
+        void updateConnectionsMenu();
+        void createDatabaseExplorer();
+        void createTabs();
+        void createStylesMenu();
+        void createStatusBar();
+        void restoreWindowsSettings();
+        void saveWindowsSettings() const;
+
         QDockWidget *_logDock;
 
         WorkAreaTabWidget *_workArea;
@@ -104,13 +112,6 @@ namespace Robomongo
         QAction *_orientationAction;
         QToolBar *_execToolBar;
 
-        void updateConnectionsMenu();
-        void createDatabaseExplorer();
-        void createTabs();
-        void createStylesMenu();
-        void createStatusBar();
-        void restoreWindowsSettings();
-        void saveWindowsSettings() const;
     };
 
 }

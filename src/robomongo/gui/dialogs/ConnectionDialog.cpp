@@ -66,7 +66,7 @@ namespace Robomongo
         setLayout(mainLayout);
 
         _basicTab->setFocus();
-        resize(1100,790);       // updated resize after SSLTab, to be removed after Qt5.7 - HiDPI implemented.
+        adjustSize();
     }
 
     /**

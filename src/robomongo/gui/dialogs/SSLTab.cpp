@@ -22,11 +22,20 @@
 
 namespace 
 {
+    // Helper function: Check file existence, return true if file exists, else otherwise
     bool fileExists(const QString &path) 
     {
         QFileInfo fileInfo(path);
         return (fileInfo.exists() && fileInfo.isFile());
     }
+
+    // Helper hint constant strings
+    QString const CA_FILE_HINT                      = "( mongo --sslCAFile )";
+    QString const CLIENT_CERT_KEY_HINT              = "( mongo --sslPEMKeyFile )";
+    QString const CLIENT_CERT_KEY_PASS_HINT         = "( mongo --sslPEMKeyPassword )";
+    QString const ALLOW_INVALID_HOSTNAME_HINT       = "( mongo --sslAllowInvalidHostnames )";
+    QString const ALLOW_INVALID_CERTIFICATES_HINT   = "( mongo --sslAllowInvalidCertificates )";
+    QString const CRL_FILE_HINT                     = "( mongo --sslCRLFile )";
 }
 
 namespace Robomongo
@@ -43,8 +52,8 @@ namespace Robomongo
         VERIFY(connect(_useSslCheckBox, SIGNAL(stateChanged(int)), this, SLOT(useSslCheckBoxStateChange(int))));
 
         // CA Section
-        _acceptSelfSignedButton = new QRadioButton("Accept self-signed certificates");
-        _useRootCaFileButton = new QRadioButton("Use CA certificate: ");
+        _acceptSelfSignedButton = new QRadioButton("Self-signed Certificate");
+        _useRootCaFileButton = new QRadioButton("CA-signed Certificate: ");
         _acceptSelfSignedButton->setChecked(sslSettings->allowInvalidCertificates());
         _useRootCaFileButton->setChecked(!_acceptSelfSignedButton->isChecked());
         _caFilePathLineEdit = new QLineEdit;
@@ -55,7 +64,7 @@ namespace Robomongo
 
         // Client Cert section
         _useClientCertCheckBox = new QCheckBox("Use Client Certificate ( --sslPemKeyFile )");
-        _clientCertLabel = new QLabel("Client Certificate: ");
+        _clientCertLabel = new QLabel("Client Certificate/Key: ");
         _clientCertPathLineEdit = new QLineEdit;
         _clientCertFileBrowseButton = new QPushButton("...");
         _clientCertFileBrowseButton->setMaximumWidth(50);

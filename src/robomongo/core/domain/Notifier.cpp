@@ -51,7 +51,8 @@ namespace Robomongo
             return Robomongo::BsonUtils::isArray(dynamic_cast<BsonTreeItem *>(item->parent())->type());
         }
 
-        bool isDocumentRoot(BsonTreeItem *item) {
+        bool isDocumentRoot(BsonTreeItem *item)
+        {
             return ( item == item->superParent() );
         }
 

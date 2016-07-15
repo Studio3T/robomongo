@@ -46,6 +46,7 @@ namespace Robomongo
         : _settings(settings)
     {
         const SslSettings* const sslSettings = _settings->sslSettings();
+        int const WIN_BUTTON_HEIGHT = 23;
 
         // Use SSL section
         _useSslCheckBox = new QCheckBox("Use SSL protocol");
@@ -116,49 +117,41 @@ namespace Robomongo
 
         // Layouts
         // CA section
-        QGridLayout* authLayout = new QGridLayout;
-        authLayout->addWidget(_authMethodLabel,                 0 ,0, 1, 2);
-        authLayout->addWidget(_authMethodComboBox,              0 ,2, 1, 2);
-        authLayout->addWidget(_selfSignedInfoStr,               1, 2, 2, 2);
-        authLayout->addWidget(_caFileLabel,                     2, 1);
-        authLayout->addWidget(_caFilePathLineEdit,              2, 2);
-        authLayout->addWidget(_caFileBrowseButton,              2, 3);        
-        authLayout->addWidget(new QLabel(""),                   3, 0);        
+        QGridLayout* gridLayout = new QGridLayout;
+        gridLayout->addWidget(_authMethodLabel,                 0 ,0, 1, 2);
+        gridLayout->addWidget(_authMethodComboBox,              0 ,2, 1, 2);
+        gridLayout->addWidget(_selfSignedInfoStr,               1, 2, 2, 2);
+        gridLayout->addWidget(_caFileLabel,                     2, 1);
+        gridLayout->addWidget(_caFilePathLineEdit,              2, 2);
+        gridLayout->addWidget(_caFileBrowseButton,              2, 3);        
+        gridLayout->addWidget(new QLabel(""),                   3, 0);        
         // PEM File Section
-        QGridLayout* pemLayout = new QGridLayout;
-        pemLayout = authLayout;
-        int const a = 4;
-        pemLayout->addWidget(_usePemFileCheckBox,              0+a, 0, Qt::AlignTop);
-        pemLayout->addWidget(_usePemFileCheckBoxLabel,         0+a, 1, Qt::AlignTop);
-        pemLayout->addWidget(_pemFileInfoStr,                  0+a, 2, 1, 2);
-        pemLayout->addWidget(_pemFileLabel,                    2+a, 1);
-        pemLayout->addWidget(_pemFilePathLineEdit,             2+a, 2);
-        pemLayout->addWidget(_pemFileBrowseButton,             2+a, 3);
-        pemLayout->addWidget(_pemPassLabel,                    3+a, 1);
-        pemLayout->addWidget(_pemPassLineEdit,                 3+a, 2);
-        pemLayout->addWidget(_pemPassShowButton,               3+a, 3);
-        pemLayout->addWidget(_usePemPassphraseCheckBox,        4+a, 2, 1, 2);
-        pemLayout->addWidget(new QLabel(""),                   5+a, 1);        
+        gridLayout->addWidget(_usePemFileCheckBox,              4, 0, Qt::AlignTop);
+        gridLayout->addWidget(_usePemFileCheckBoxLabel,         4, 1, Qt::AlignTop);
+        gridLayout->addWidget(_pemFileInfoStr,                  4, 2, 1, 2);
+        gridLayout->addWidget(_pemFileLabel,                    5, 1);
+        gridLayout->addWidget(_pemFilePathLineEdit,             5, 2);
+        gridLayout->addWidget(_pemFileBrowseButton,             5, 3);
+        gridLayout->addWidget(_pemPassLabel,                    6, 1);
+        gridLayout->addWidget(_pemPassLineEdit,                 6, 2);
+        gridLayout->addWidget(_pemPassShowButton,               6, 3);
+        gridLayout->addWidget(_usePemPassphraseCheckBox,        7, 2, 1, 2);
+        gridLayout->addWidget(new QLabel(""),                   8, 1);        
         // Advanced section
-        QGridLayout* advLayout = new QGridLayout;
-        advLayout = pemLayout;
-        int const b = 10;
-        advLayout->addWidget(_useAdvancedOptionsCheckBox,       0+b, 0, Qt::AlignTop);
-        advLayout->addWidget(_useAdvancedOptionsLabel,          0+b, 1, Qt::AlignTop);
-        advLayout->addWidget(_crlFileLabel,                     1+b, 1);
-        advLayout->addWidget(_crlFilePathLineEdit,              1+b, 2);
-        advLayout->addWidget(_crlFileBrowseButton,              1+b, 3);
-        advLayout->addWidget(_allowInvalidHostnamesLabel,       2+b, 1);
-        advLayout->addWidget(_allowInvalidHostnamesComboBox,    2+b, 2, Qt::AlignLeft);
-        advLayout->addWidget(new QLabel(""),                    3+b, 0);
+        gridLayout->addWidget(_useAdvancedOptionsCheckBox,       9, 0, Qt::AlignTop);
+        gridLayout->addWidget(_useAdvancedOptionsLabel,          9, 1, Qt::AlignTop);
+        gridLayout->addWidget(_crlFileLabel,                     10, 1);
+        gridLayout->addWidget(_crlFilePathLineEdit,              10, 2);
+        gridLayout->addWidget(_crlFileBrowseButton,              10, 3);
+        gridLayout->addWidget(_allowInvalidHostnamesLabel,       11, 1);
+        gridLayout->addWidget(_allowInvalidHostnamesComboBox,    11, 2, Qt::AlignLeft);
+        gridLayout->addWidget(new QLabel(""),                    12, 0);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->setAlignment(Qt::AlignTop);
         mainLayout->addWidget(_useSslCheckBox);
         mainLayout->addWidget(new QLabel(""));
-        mainLayout->addLayout(authLayout);
-        //mainLayout->addLayout(pemLayout); 
-        //mainLayout->addLayout(advLayout);
+        mainLayout->addLayout(gridLayout);
         setLayout(mainLayout);
 
         // Update widget states according to SSL settings
@@ -175,6 +168,16 @@ namespace Robomongo
         on_useAdvancedOptionsCheckBox_toggle(_useAdvancedOptionsCheckBox->isChecked());
 
         setMinimumWidth(540);
+        setMinimumHeight(300);
+
+        // Fixing issue for Windows High DPI button height is slightly bigger than other widgets 
+#ifdef Q_OS_WIN
+        _caFileBrowseButton->setMaximumHeight(WIN_BUTTON_HEIGHT);
+        _pemFileBrowseButton->setMaximumHeight(WIN_BUTTON_HEIGHT);
+        _pemPassShowButton->setMaximumHeight(WIN_BUTTON_HEIGHT);
+        _crlFileBrowseButton->setMaximumHeight(WIN_BUTTON_HEIGHT);
+#endif
+
     }
 
     bool SSLTab::accept()

@@ -32,6 +32,9 @@ int main(int argc, char *argv[], char** envp)
     // Perform SSL-enabled mongo initialization
     mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
 
+    // Cross Platform High DPI support - Qt 5.7
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
     // Initialization routine for MongoDB shell
     mongo::runGlobalInitializersOrDie(argc, argv, envp);
 

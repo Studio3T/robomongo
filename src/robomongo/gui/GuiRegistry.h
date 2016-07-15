@@ -73,6 +73,8 @@ namespace Robomongo
         const QIcon &questionMarkIcon() const;
         const QIcon &timeIcon() const;
         const QIcon &keyIcon() const;
+        const QIcon &showIcon() const;
+        const QIcon &hideIcon() const;
 
         const QBrush &typeBrush() const;
 

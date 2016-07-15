@@ -59,5 +59,7 @@
         <file>icons/stop_24x24.png</file>
         <file>icons/function_16x16.png</file>
         <file>icons/index_16x16.png</file>
+        <file>icons/show_icon.png</file>
+        <file>icons/hide_icon.png</file>
     </qresource>
 </RCC>

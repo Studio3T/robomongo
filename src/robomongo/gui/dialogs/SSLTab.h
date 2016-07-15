@@ -10,6 +10,7 @@ class QLineEdit;
 class QCheckBox;
 class QPushButton;
 class QRadioButton;
+class QComboBox;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -41,6 +42,17 @@ namespace Robomongo
         void useSslCheckBoxStateChange(int checked);
         
         /**
+        * @brief Disable/enable widgets according to state of authentication method combobox
+        */
+        void on_authModeComboBox_change(int index);
+
+        // new
+        void on_usePemFileCheckBox_toggle(bool checked);
+
+        // new
+        void on_useAdvancedOptionsCheckBox_toggle(bool checked);
+
+        /**
         * @brief Disable/enable widgets according to state of self-signed radio button
         */
         void on_acceptSelfSignedButton_toggle(bool checked);
@@ -60,7 +72,7 @@ namespace Robomongo
         /**
         * @brief Enable/disable client cert's passphrase widget section
         */
-        void on_useClientCertPassCheckBox_toggle(bool checked);
+        void on_usePemPassphraseCheckBox_toggle(bool checked);
 
     private:
 
@@ -91,6 +103,9 @@ namespace Robomongo
         * @brief 
         */
         QString openFileBrowseDialog(const QString& initialPath);
+        
+        // new
+        bool eventFilter(QObject * watched, QEvent * event);
 
         /**
         * @brief Main checkbox to disable/enable all other SSL tab widgets
@@ -100,11 +115,31 @@ namespace Robomongo
         /**
         * @brief CA file widgets
         */
-        QRadioButton *_acceptSelfSignedButton;
-        QRadioButton *_useRootCaFileButton;
+        QLabel *_authMethodLabel;
+        QComboBox *_authMethodComboBox;
+        QLabel *_selfSignedInfoStr;
         QLabel *_caFileLabel;
         QLineEdit *_caFilePathLineEdit;
         QPushButton *_caFileBrowseButton;
+
+
+        // new : 
+        QCheckBox* _usePemFileCheckBox;
+        QLabel* _usePemFileCheckBoxLabel;
+        QLabel* _pemFileInfoStr;
+        QLabel* _pemFileLabel;
+        QLineEdit *_pemFilePathLineEdit;
+        QPushButton *_pemFileBrowseButton;
+
+        // new
+        QLabel* _pemPassLabel;
+        QLineEdit* _pemPassLineEdit;
+        QPushButton* _pemPassShowButton;
+        QCheckBox* _usePemPassphraseCheckBox;
+
+        // old
+        QRadioButton *_acceptSelfSignedButton;
+        QRadioButton *_useRootCaFileButton;
 
         /**
         * @brief Client Certificate file widgets
@@ -118,6 +153,10 @@ namespace Robomongo
         QPushButton *_clientCertPassShowButton;
         QCheckBox *_useClientCertPassCheckBox;
 
+        // new 
+        QCheckBox* _useAdvancedOptionsCheckBox;
+        QLabel* _useAdvancedOptionsLabel;
+
         /**
         * @brief CRL file widgets
         */
@@ -128,7 +167,8 @@ namespace Robomongo
         /**
         * @brief Allow connections with non-matching hostnames
         */
-        QCheckBox *_allowInvalidHostnamesCheckBox;
+        QLabel *_allowInvalidHostnamesLabel;
+        QComboBox *_allowInvalidHostnamesComboBox;
 
         /**
         * @brief Pointer to active connection's ConnectionsSettings member

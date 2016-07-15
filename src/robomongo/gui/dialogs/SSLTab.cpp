@@ -89,6 +89,8 @@ namespace Robomongo
         _pemPassLineEdit = new QLineEdit;
         _pemPassShowButton = new QPushButton;
         togglePassphraseShowMode();
+        // Fix for MAC OSX: PEM pass show button was created bigger, making it same size as other pushbuttons
+        _pemPassShowButton->setMaximumWidth(_pemFileBrowseButton->width());
         VERIFY(connect(_pemPassShowButton, SIGNAL(clicked()), this, SLOT(togglePassphraseShowMode())));
         _usePemPassphraseCheckBox = new QCheckBox("PEM key is encrypted with passphrase");
         _usePemPassphraseCheckBox->setChecked(sslSettings->pemKeyEncrypted());
@@ -117,7 +119,7 @@ namespace Robomongo
         QGridLayout* authLayout = new QGridLayout;
         authLayout->addWidget(_authMethodLabel,                 0 ,0, 1, 2);
         authLayout->addWidget(_authMethodComboBox,              0 ,2, 1, 2);
-        authLayout->addWidget(_selfSignedInfoStr,               1, 2, 1, 2);
+        authLayout->addWidget(_selfSignedInfoStr,               1, 2, 2, 2);
         authLayout->addWidget(_caFileLabel,                     2, 1);
         authLayout->addWidget(_caFilePathLineEdit,              2, 2);
         authLayout->addWidget(_caFileBrowseButton,              2, 3);        
@@ -172,7 +174,7 @@ namespace Robomongo
         on_usePemFileCheckBox_toggle(_usePemFileCheckBox->isChecked());
         on_useAdvancedOptionsCheckBox_toggle(_useAdvancedOptionsCheckBox->isChecked());
 
-        setMinimumWidth(480);
+        setMinimumWidth(540);
     }
 
     bool SSLTab::accept()
@@ -228,6 +230,10 @@ namespace Robomongo
         _pemPassLineEdit->setVisible(isChecked);
         _pemPassShowButton->setVisible(isChecked);
         _usePemPassphraseCheckBox->setVisible(isChecked);
+        if(isChecked)
+        {
+            setMinimumHeight(400);
+        }
     }
 
     void SSLTab::on_useAdvancedOptionsCheckBox_toggle(bool isChecked)
@@ -237,6 +243,10 @@ namespace Robomongo
         _crlFileBrowseButton->setVisible(isChecked);
         _allowInvalidHostnamesLabel->setVisible(isChecked);
         _allowInvalidHostnamesComboBox->setVisible(isChecked);
+        if(isChecked)
+        {
+            setMinimumHeight(460);
+        }
     }
 
     void SSLTab::on_acceptSelfSignedButton_toggle(bool checked)

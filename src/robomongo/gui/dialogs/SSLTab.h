@@ -51,11 +51,6 @@ namespace Robomongo
 
         // new
         void on_useAdvancedOptionsCheckBox_toggle(bool checked);
-
-        /**
-        * @brief Disable/enable widgets according to state of self-signed radio button
-        */
-        void on_acceptSelfSignedButton_toggle(bool checked);
         
         /**
         * @brief File browsers for SSL related cert/key files
@@ -83,11 +78,6 @@ namespace Robomongo
         bool validate();
 
         /**
-        * @brief Enable/disable Use CA file widget section
-        */
-        void setDisableCAfileWidgets(bool disabled);
-
-        /**
         * @brief  Check existence of files: CA cert, Client Cert and CRL file
         * @return true if all files exist, false any of them does not exist
         * @return QString Lable of file which does not exist, empty string if all files exist
@@ -103,9 +93,6 @@ namespace Robomongo
         * @brief 
         */
         QString openFileBrowseDialog(const QString& initialPath);
-        
-        // new
-        bool eventFilter(QObject * watched, QEvent * event);
 
         /**
         * @brief Main checkbox to disable/enable all other SSL tab widgets
@@ -113,7 +100,7 @@ namespace Robomongo
         QCheckBox *_useSslCheckBox;
         
         /**
-        * @brief CA file widgets
+        * @brief Auth. Method widgets
         */
         QLabel *_authMethodLabel;
         QComboBox *_authMethodComboBox;
@@ -122,51 +109,26 @@ namespace Robomongo
         QLineEdit *_caFilePathLineEdit;
         QPushButton *_caFileBrowseButton;
 
-
-        // new : 
+        /**
+        * @brief PEM file widgets
+        */
         QCheckBox* _usePemFileCheckBox;
-        QLabel* _usePemFileCheckBoxLabel;
         QLabel* _pemFileInfoStr;
         QLabel* _pemFileLabel;
         QLineEdit *_pemFilePathLineEdit;
         QPushButton *_pemFileBrowseButton;
-
-        // new
         QLabel* _pemPassLabel;
         QLineEdit* _pemPassLineEdit;
         QPushButton* _pemPassShowButton;
         QCheckBox* _usePemPassphraseCheckBox;
 
-        // old
-        QRadioButton *_acceptSelfSignedButton;
-        QRadioButton *_useRootCaFileButton;
-
         /**
-        * @brief Client Certificate file widgets
+        * @brief Advanced options widgets
         */
-        QCheckBox *_useClientCertCheckBox;
-        QLabel *_clientCertLabel;
-        QLineEdit *_clientCertPathLineEdit;
-        QPushButton *_clientCertFileBrowseButton;
-        QLabel *_clientCertPassLabel;
-        QLineEdit *_clientCertPassLineEdit;
-        QPushButton *_clientCertPassShowButton;
-        QCheckBox *_useClientCertPassCheckBox;
-
-        // new 
         QCheckBox* _useAdvancedOptionsCheckBox;
-        QLabel* _useAdvancedOptionsLabel;
-
-        /**
-        * @brief CRL file widgets
-        */
         QLabel *_crlFileLabel;
         QLineEdit *_crlFilePathLineEdit;
         QPushButton *_crlFileBrowseButton;
-        
-        /**
-        * @brief Allow connections with non-matching hostnames
-        */
         QLabel *_allowInvalidHostnamesLabel;
         QComboBox *_allowInvalidHostnamesComboBox;
 

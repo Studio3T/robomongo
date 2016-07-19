@@ -54,7 +54,7 @@ namespace Robomongo
         _useSslCheckBox->setChecked(sslSettings->enabled());
         VERIFY(connect(_useSslCheckBox, SIGNAL(stateChanged(int)), this, SLOT(useSslCheckBoxStateChange(int))));
 
-        // Auth Method section
+        // Auth. Method section
         _authMethodLabel = new QLabel("Authentication Method:        ");
         _authMethodLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         _authMethodComboBox = new QComboBox;
@@ -70,11 +70,8 @@ namespace Robomongo
         VERIFY(connect(_authMethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_authModeComboBox_change(int))));
 
         // PEM file section
-        _usePemFileCheckBox = new QCheckBox;
-        _usePemFileCheckBoxLabel = new QLabel("Use PEM Certificate/Key: ");
-        _usePemFileCheckBoxLabel->installEventFilter(this);
+        _usePemFileCheckBox = new QCheckBox("Use PEM Certificate/Key: ");
         _usePemFileCheckBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        _usePemFileCheckBoxLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         _pemFileInfoStr = 
             new QLabel("Enable this option to connect to a MongoDB that requires CA-signed client certificates/key file.");
         _pemFileInfoStr->setWordWrap(true);
@@ -98,11 +95,8 @@ namespace Robomongo
         VERIFY(connect(_usePemPassphraseCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_usePemPassphraseCheckBox_toggle(bool))));
 
         // Advanced options
-        _useAdvancedOptionsCheckBox = new QCheckBox;
+        _useAdvancedOptionsCheckBox = new QCheckBox("Use Advanced Options");
         _useAdvancedOptionsCheckBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        _useAdvancedOptionsLabel = new QLabel("Use Advanced Options");
-        _useAdvancedOptionsLabel->installEventFilter(this);
-        _useAdvancedOptionsLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         VERIFY(connect(_useAdvancedOptionsCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_useAdvancedOptionsCheckBox_toggle(bool))));
         _crlFileLabel = new QLabel("CRL (Revocation List): ");
         _crlFilePathLineEdit = new QLineEdit;
@@ -116,36 +110,34 @@ namespace Robomongo
         _allowInvalidHostnamesComboBox->setCurrentIndex(sslSettings->allowInvalidHostnames());
 
         // Layouts
-        // CA section
+        // Auth. method section
         QGridLayout* gridLayout = new QGridLayout;
-        gridLayout->addWidget(_authMethodLabel,                 0 ,0, 1, 2);
-        gridLayout->addWidget(_authMethodComboBox,              0 ,2, 1, 2);
-        gridLayout->addWidget(_selfSignedInfoStr,               1, 2, 2, 2);
-        gridLayout->addWidget(_caFileLabel,                     2, 1);
-        gridLayout->addWidget(_caFilePathLineEdit,              2, 2);
-        gridLayout->addWidget(_caFileBrowseButton,              2, 3);        
+        gridLayout->addWidget(_authMethodLabel,                 0 ,0);
+        gridLayout->addWidget(_authMethodComboBox,              0 ,1, 1, 2);
+        gridLayout->addWidget(_selfSignedInfoStr,               1, 1, 2, 2);
+        gridLayout->addWidget(_caFileLabel,                     2, 0);
+        gridLayout->addWidget(_caFilePathLineEdit,              2, 1);
+        gridLayout->addWidget(_caFileBrowseButton,              2, 2);        
         gridLayout->addWidget(new QLabel(""),                   3, 0);        
         // PEM File Section
         gridLayout->addWidget(_usePemFileCheckBox,              4, 0, Qt::AlignTop);
-        gridLayout->addWidget(_usePemFileCheckBoxLabel,         4, 1, Qt::AlignTop);
-        gridLayout->addWidget(_pemFileInfoStr,                  4, 2, 1, 2);
-        gridLayout->addWidget(_pemFileLabel,                    5, 1);
-        gridLayout->addWidget(_pemFilePathLineEdit,             5, 2);
-        gridLayout->addWidget(_pemFileBrowseButton,             5, 3);
-        gridLayout->addWidget(_pemPassLabel,                    6, 1);
-        gridLayout->addWidget(_pemPassLineEdit,                 6, 2);
-        gridLayout->addWidget(_pemPassShowButton,               6, 3);
-        gridLayout->addWidget(_usePemPassphraseCheckBox,        7, 2, 1, 2);
-        gridLayout->addWidget(new QLabel(""),                   8, 1);        
+        gridLayout->addWidget(_pemFileInfoStr,                  4, 1, 1, 2);
+        gridLayout->addWidget(_pemFileLabel,                    5, 0);
+        gridLayout->addWidget(_pemFilePathLineEdit,             5, 1);
+        gridLayout->addWidget(_pemFileBrowseButton,             5, 2);
+        gridLayout->addWidget(_pemPassLabel,                    6, 0);
+        gridLayout->addWidget(_pemPassLineEdit,                 6, 1);
+        gridLayout->addWidget(_pemPassShowButton,               6, 2);
+        gridLayout->addWidget(_usePemPassphraseCheckBox,        7, 1, 1, 2);
+        gridLayout->addWidget(new QLabel(""),                   8, 0);        
         // Advanced section
-        gridLayout->addWidget(_useAdvancedOptionsCheckBox,       9, 0, Qt::AlignTop);
-        gridLayout->addWidget(_useAdvancedOptionsLabel,          9, 1, Qt::AlignTop);
-        gridLayout->addWidget(_crlFileLabel,                     10, 1);
-        gridLayout->addWidget(_crlFilePathLineEdit,              10, 2);
-        gridLayout->addWidget(_crlFileBrowseButton,              10, 3);
-        gridLayout->addWidget(_allowInvalidHostnamesLabel,       11, 1);
-        gridLayout->addWidget(_allowInvalidHostnamesComboBox,    11, 2, Qt::AlignLeft);
-        gridLayout->addWidget(new QLabel(""),                    12, 0);
+        gridLayout->addWidget(_useAdvancedOptionsCheckBox,      9, 0, Qt::AlignTop);
+        gridLayout->addWidget(_crlFileLabel,                    10, 0);
+        gridLayout->addWidget(_crlFilePathLineEdit,             10, 1);
+        gridLayout->addWidget(_crlFileBrowseButton,             10, 2);
+        gridLayout->addWidget(_allowInvalidHostnamesLabel,      11, 0);
+        gridLayout->addWidget(_allowInvalidHostnamesComboBox,   11, 1, Qt::AlignLeft);
+        gridLayout->addWidget(new QLabel(""),                   12, 0);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->setAlignment(Qt::AlignTop);
@@ -155,16 +147,17 @@ namespace Robomongo
         setLayout(mainLayout);
 
         // Update widget states according to SSL settings
-        useSslCheckBoxStateChange(_useSslCheckBox->checkState());
         _caFilePathLineEdit->setText(QString::fromStdString(sslSettings->caFile()));
         _pemFilePathLineEdit->setText(QString::fromStdString(sslSettings->pemKeyFile()));
         _pemPassLineEdit->setText(QString::fromStdString(sslSettings->pemPassPhrase()));
         _allowInvalidHostnamesComboBox->setCurrentIndex(sslSettings->allowInvalidHostnames());
         _crlFilePathLineEdit->setText(QString::fromStdString(sslSettings->crlFile()));
+        useSslCheckBoxStateChange(_useSslCheckBox->checkState());
 
-        // new
+        // Update inter-connected (signal-slot) widget states
         on_authModeComboBox_change(_authMethodComboBox->currentIndex());
         on_usePemFileCheckBox_toggle(_usePemFileCheckBox->isChecked());
+        on_usePemPassphraseCheckBox_toggle(_usePemPassphraseCheckBox->isChecked());
         on_useAdvancedOptionsCheckBox_toggle(_useAdvancedOptionsCheckBox->isChecked());
 
         setMinimumWidth(540);
@@ -189,29 +182,25 @@ namespace Robomongo
     void SSLTab::useSslCheckBoxStateChange(int state)
     {
         bool isChecked = static_cast<bool>(state);
-        //_authMethodLabel->setDisabled(!isChecked);
-        //_authMethodComboBox->setDisabled(!isChecked);
-        ////if (state)  // if SSL enabled, disable/enable conditionally; otherwise disable all widgets.
-        ////{
-        ////    setDisableCAfileWidgets(_acceptSelfSignedButton->isChecked());
-        ////    on_useClientCertPassCheckBox_toggle(_useClientCertPassCheckBox->isChecked());
-        ////}
-        ////else
-        ////{
-        ////    setDisableCAfileWidgets(true);
-        ////    _clientCertPassLineEdit->setDisabled(true);
-        ////    _clientCertPassShowButton->setDisabled(true);
-        ////}
-        //_pemFileInfoStr->setDisabled(!isChecked);
-        //_clientCertPathLineEdit->setDisabled(!isChecked);
-        //_clientCertFileBrowseButton->setDisabled(!isChecked);
-        //_clientCertPassLabel->setDisabled(!isChecked);
-        //_useClientCertCheckBox->setDisabled(!isChecked);
-        //_useClientCertPassCheckBox->setDisabled(!isChecked);
-        //_allowInvalidHostnamesComboBox->setDisabled(!isChecked);
-        //_crlFileLabel->setDisabled(!isChecked);
-        //_crlFilePathLineEdit->setDisabled(!isChecked);
-        //_crlFileBrowseButton->setDisabled(!isChecked);
+        _authMethodLabel->setDisabled(!isChecked);
+        _authMethodComboBox->setDisabled(!isChecked);
+        _selfSignedInfoStr->setDisabled(!isChecked);
+        _caFileLabel->setDisabled(!isChecked);
+        _caFilePathLineEdit->setDisabled(!isChecked);
+        _caFileBrowseButton->setDisabled(!isChecked);
+        _usePemFileCheckBox->setDisabled(!isChecked);
+        _pemFileInfoStr->setDisabled(!isChecked);
+        _pemFileLabel->setDisabled(!isChecked);
+        _pemFilePathLineEdit->setDisabled(!isChecked);
+        _pemFileBrowseButton->setDisabled(!isChecked);
+        _pemPassLabel->setDisabled(!isChecked);
+        _usePemPassphraseCheckBox->setDisabled(!isChecked);
+        _useAdvancedOptionsCheckBox->setDisabled(!isChecked);
+        _crlFileLabel->setDisabled(!isChecked);
+        _crlFilePathLineEdit->setDisabled(!isChecked);
+        _crlFileBrowseButton->setDisabled(!isChecked);
+        _allowInvalidHostnamesLabel->setDisabled(!isChecked);
+        _allowInvalidHostnamesComboBox->setDisabled(!isChecked);
     }
 
     void SSLTab::on_authModeComboBox_change(int index)
@@ -252,12 +241,6 @@ namespace Robomongo
         }
     }
 
-    void SSLTab::on_acceptSelfSignedButton_toggle(bool checked)
-    {
-        _useRootCaFileButton->setChecked(!checked);
-        setDisableCAfileWidgets(checked);
-    }
-
     void SSLTab::on_caFileBrowseButton_clicked()
     {
         QString const fileName = openFileBrowseDialog(_caFilePathLineEdit->text());
@@ -268,9 +251,9 @@ namespace Robomongo
 
     void SSLTab::on_pemKeyFileBrowseButton_clicked()
     {
-        QString const fileName = openFileBrowseDialog(_clientCertPathLineEdit->text());
+        QString const fileName = openFileBrowseDialog(_pemFilePathLineEdit->text());
         if (!fileName.isEmpty()) {
-            _clientCertPathLineEdit->setText(fileName);
+            _pemFilePathLineEdit->setText(fileName);
         }
     }
 
@@ -310,12 +293,6 @@ namespace Robomongo
         return true;
     }
 
-    void SSLTab::setDisableCAfileWidgets(bool disabled)
-    {
-        _caFilePathLineEdit->setDisabled(disabled);
-        _caFileBrowseButton->setDisabled(disabled);
-    }
-
     std::pair<bool,QString> SSLTab::checkExistenseOfFiles() const
     {
         if (_caFilePathLineEdit->isEnabled())
@@ -326,9 +303,9 @@ namespace Robomongo
             }
         }
 
-        if (!_clientCertPathLineEdit->text().isEmpty())
+        if (!_pemFilePathLineEdit->text().isEmpty())
         {
-            if (!fileExists(_clientCertPathLineEdit->text()))
+            if (!fileExists(_pemFilePathLineEdit->text()))
             {
                 return{ false, "Client Certificate" };
             }
@@ -349,10 +326,10 @@ namespace Robomongo
         SslSettings *sslSettings = _settings->sslSettings();
         sslSettings->enableSSL(_useSslCheckBox->isChecked());
         sslSettings->setCaFile(QtUtils::toStdString(_caFilePathLineEdit->text()));
-        sslSettings->setPemKeyFile(QtUtils::toStdString(_clientCertPathLineEdit->text()));
-        sslSettings->setPemPassPhrase(QtUtils::toStdString(_clientCertPassLineEdit->text()));
-        sslSettings->setPemKeyEncrypted(_useClientCertPassCheckBox->isChecked());
-        sslSettings->setAllowInvalidCertificates(_acceptSelfSignedButton->isChecked());
+        sslSettings->setPemKeyFile(QtUtils::toStdString(_pemFilePathLineEdit->text()));
+        sslSettings->setPemPassPhrase(QtUtils::toStdString(_pemPassLineEdit->text()));
+        sslSettings->setPemKeyEncrypted(_usePemFileCheckBox->isChecked());
+        sslSettings->setAllowInvalidCertificates(static_cast<bool>(_authMethodComboBox->currentIndex()));
         sslSettings->setAllowInvalidHostnames(static_cast<bool>(_allowInvalidHostnamesComboBox->currentIndex()));
         sslSettings->setCrlFile(QtUtils::toStdString(_crlFilePathLineEdit->text()));
     }
@@ -370,21 +347,5 @@ namespace Robomongo
         return QDir::toNativeSeparators(fileName);
     }
 
-    bool SSLTab::eventFilter(QObject * watched, QEvent * event)
-    {
-        QLabel const * const label = qobject_cast<QLabel *>(watched);
-        if (label && event->type() == QEvent::MouseButtonPress)
-        {
-            if (label == _usePemFileCheckBoxLabel)
-            {
-                _usePemFileCheckBox->toggle();
-            }
-            else if (label == _useAdvancedOptionsLabel)
-            {
-                _useAdvancedOptionsCheckBox->toggle();
-            }
-        }
-        return QObject::eventFilter(watched, event);
-    }
 }
 

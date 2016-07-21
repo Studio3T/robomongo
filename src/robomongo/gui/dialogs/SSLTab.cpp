@@ -75,7 +75,9 @@ namespace Robomongo
         _pemFileInfoStr = 
             new QLabel("Enable this option to connect to a MongoDB that requires CA-signed client certificates/key file.");
         _pemFileInfoStr->setWordWrap(true);
-        _pemFileInfoStr->setContentsMargins(0,2,0,0);
+#ifdef Q_OS_WIN
+        _pemFileInfoStr->setContentsMargins(0,2,0,0);   // Top alignment adjustment required only for Windows
+#endif
         _pemFileLabel = new QLabel("PEM Certificate/Key: ");
         _pemFileLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         _pemFilePathLineEdit = new QLineEdit;

@@ -23,7 +23,7 @@ namespace Robomongo
         void fromVariant(const QVariantMap &map);
 
 
-        // todo: getters
+        // Getters for mongo:: SSLGlobalParams related settings
         std::string pemKeyFile() const { return _pemKeyFile; }
         std::string caFile() const { return _caFile; }
         std::string pemPassPhrase() const { return _pemPassPhrase; }
@@ -31,8 +31,12 @@ namespace Robomongo
         bool allowInvalidHostnames() const { return _allowInvalidHostnames; }
         bool allowInvalidCertificates() const { return _allowInvalidCertificates; }
         bool pemKeyEncrypted() const { return _pemKeyEncrypted; }
+ 
+        // Getters for helper SSL settings 
+        bool usePemFile() const { return _usePemFile; }
+        bool useAdvancedOptions() const { return _useAdvancedOptions; }
 
-        // todo: setters 
+        // Setters for mongo:: SSLGlobalParams related settings
         void setPemKeyFile(const std::string &path) { _pemKeyFile = path; }
         void setCaFile(const std::string &path) { _caFile = path; }
         void setPemPassPhrase(const std::string &pemPassPhrase) { _pemPassPhrase = pemPassPhrase; }
@@ -40,6 +44,10 @@ namespace Robomongo
         void setAllowInvalidHostnames(const bool state) { _allowInvalidHostnames = state; }
         void setAllowInvalidCertificates(const bool state) { _allowInvalidCertificates = state; }
         void setPemKeyEncrypted(const bool state) { _pemKeyEncrypted = state; }
+
+        // Setters for helper SSL settings 
+        void setUsePemFile(const bool state) { _usePemFile = state; }
+        void setUseAdvancedOptions(const bool state) { _useAdvancedOptions = state; }
 
         /**
          * Flag, indicating whether we should use
@@ -50,6 +58,8 @@ namespace Robomongo
         void enableSSL(bool enabled) { _enabled = enabled; }
 
     private:
+
+        // mongo:: SSL Global params related settings
         std::string _caFile;
         std::string _pemKeyFile;
         std::string _pemPassPhrase;
@@ -57,6 +67,10 @@ namespace Robomongo
         bool _allowInvalidHostnames;
         bool _allowInvalidCertificates;
         bool _pemKeyEncrypted;
+
+        // Helper settings indirectly effecting what to pass to SSL global params
+        bool _usePemFile;
+        bool _useAdvancedOptions;
 
         /**
          * Flag, indicating whether we should use

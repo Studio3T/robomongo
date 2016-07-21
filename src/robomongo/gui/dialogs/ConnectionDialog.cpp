@@ -67,6 +67,9 @@ namespace Robomongo
 
         _basicTab->setFocus();
         adjustSize();
+
+        // Set minimum width - adjustment for SSLTab
+        setMinimumWidth(540);
     }
 
     /**

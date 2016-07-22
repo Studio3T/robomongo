@@ -7,6 +7,7 @@
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
+#include "robomongo/core/settings/SslSettings.h"
 #include "robomongo/core/mongodb/SshTunnelWorker.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
@@ -82,6 +83,17 @@ namespace Robomongo
                 return false;
 
             ssh->setAskedPassword(QtUtils::toStdString(userInput));
+        }
+
+        SslSettings *sslSettings = connection->sslSettings();
+
+        if (sslSettings->enabled() && sslSettings->usePemFile() && sslSettings->pemKeyEncrypted() 
+            && sslSettings->askPassphrase() && (type == ConnectionPrimary || type == ConnectionTest)) 
+        {
+            if (!setupSslConnection(connection))
+            {
+                return false;
+            }
         }
 
         openServerInternal(connection, type);
@@ -242,6 +254,34 @@ namespace Robomongo
     void App::fireConnectionFailedEvent(int serverHandle, ConnectionType type, std::string errormsg,
                                         ConnectionFailedEvent::Reason reason) {
         _bus->publish(new ConnectionFailedEvent(this, serverHandle, type, errormsg, reason));
+    }
+
+
+    bool App::setupSslConnection(ConnectionSettings *connection) const
+    {
+        auto sslSettings = connection->sslSettings();
+        bool ok = false;
+
+        std::stringstream s;
+        s << "In order to continue, please provide the passphrase";
+        s << "." << std::endl << std::endl;
+
+        s << "Server  : " << connection->serverHost() << std::endl;
+        s << "PEM file: " << sslSettings->pemKeyFile() << std::endl;
+
+        s << std::endl << "Enter your PEM key passphrase (will never be stored):";
+
+        QString userInput = QInputDialog::getText(NULL, tr("SSL Authentication"),
+            QtUtils::toQString(s.str()),
+            QLineEdit::Password, "", &ok);
+
+        if (!ok)
+        {
+            return false;
+        }
+
+        sslSettings->setPemPassPhrase(QtUtils::toStdString(userInput));
+        return ok;
     }
 
 }

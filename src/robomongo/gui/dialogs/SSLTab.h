@@ -65,9 +65,14 @@ namespace Robomongo
         void togglePassphraseShowMode();
         
         /**
-        * @brief Enable/disable client cert's passphrase widget section
+        * @brief Enable/disable PEM passphrase widgets section
         */
         void on_usePemPassphraseCheckBox_toggle(bool checked);
+
+        /**
+        * @brief Enable/disable/clean PEM passphrase widgets section
+        */
+        void on_askPemPassCheckBox_toggle(bool checked);
 
     private:
 
@@ -121,6 +126,7 @@ namespace Robomongo
         QLineEdit* _pemPassLineEdit;
         QPushButton* _pemPassShowButton;
         QCheckBox* _usePemPassphraseCheckBox;
+        QCheckBox* _askPemPassCheckBox;
 
         /**
         * @brief Advanced options widgets

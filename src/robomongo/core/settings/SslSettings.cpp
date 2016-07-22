@@ -24,6 +24,7 @@ namespace Robomongo
         map.insert("allowInvalidHostnames", allowInvalidHostnames());
         map.insert("allowInvalidCertificates", allowInvalidCertificates());
         map.insert("pemKeyEncrypted", pemKeyEncrypted());
+        map.insert("askPassphrase", askPassphrase());
 
         return map;
     }
@@ -39,5 +40,6 @@ namespace Robomongo
         setAllowInvalidHostnames(map.value("allowInvalidHostnames").toBool());
         setAllowInvalidCertificates(map.value("allowInvalidCertificates").toBool());
         setPemKeyEncrypted(map.value("pemKeyEncrypted").toBool());
+        setAskPassphrase(map.value("askPassphrase").toBool());
     }
 }

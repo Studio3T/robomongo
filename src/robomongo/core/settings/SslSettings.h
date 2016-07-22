@@ -35,6 +35,7 @@ namespace Robomongo
         // Getters for helper SSL settings 
         bool usePemFile() const { return _usePemFile; }
         bool useAdvancedOptions() const { return _useAdvancedOptions; }
+        bool askPassphrase() const { return _askPassphrase; }
 
         // Setters for mongo:: SSLGlobalParams related settings
         void setPemKeyFile(const std::string &path) { _pemKeyFile = path; }
@@ -48,6 +49,7 @@ namespace Robomongo
         // Setters for helper SSL settings 
         void setUsePemFile(const bool state) { _usePemFile = state; }
         void setUseAdvancedOptions(const bool state) { _useAdvancedOptions = state; }
+        void setAskPassphrase(const bool state) { _askPassphrase = state; }
 
         /**
          * Flag, indicating whether we should use
@@ -71,6 +73,7 @@ namespace Robomongo
         // Helper settings indirectly effecting what to pass to SSL global params
         bool _usePemFile;
         bool _useAdvancedOptions;
+        bool _askPassphrase;
 
         /**
          * Flag, indicating whether we should use

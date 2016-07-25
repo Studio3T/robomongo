@@ -125,22 +125,36 @@ namespace Robomongo {
         if (event->isError()) {
             _isConnected = false;
 
-            std::stringstream ss;
-            ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
-               << ".\n\nError:\n" << event->error().errorMessage();
+            std::stringstream ss("Unknown error");
 
-            ConnectionFailedEvent::Reason reason =
-                event->errorReason == EstablishConnectionResponse::MongoAuth ?
-                ConnectionFailedEvent::MongoAuth : ConnectionFailedEvent::MongoConnection;
+            auto eventErrorReason = event->errorReason;
+            auto reason = ConnectionFailedEvent::Unknown;
+            if (EstablishConnectionResponse::ErrorReason::MongoSslConnection == eventErrorReason)
+            {
+                reason = ConnectionFailedEvent::SslConnection;
+                ss.clear();
+                ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
+                    << ".\n\nError:\n" << "SSL connection failure: " << event->error().errorMessage();
+            }
+            else
+            {
+                reason = (EstablishConnectionResponse::ErrorReason::MongoAuth == eventErrorReason) ?
+                    ConnectionFailedEvent::MongoAuth : ConnectionFailedEvent::MongoConnection;
+                ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
+                    << ".\n\nError:\n" << event->error().errorMessage();
+            }
+
+            _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
 
             // When connection cannot be established, we should
             // cleanup this instance of MongoServer if it wasn't
             // shown in UI (i.e. it is not a Secondary connection
             // that is used for shells tab)
             if (_connectionType == ConnectionPrimary || _connectionType == ConnectionTest)
+            {
                 _app->closeServer(this);
+            }
 
-            _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
             return;
         }
 

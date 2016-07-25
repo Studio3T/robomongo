@@ -10,6 +10,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
+#include "robomongo/core/settings/SslSettings.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/App.h"
@@ -144,21 +145,28 @@ namespace Robomongo
 
     void ConnectionDiagnosticDialog::connectionStatus(State state)
     {
+        // Add info about tunneling if SSH or SSL is used
+        QString tunnelNote = "";    // no tunnel info when neither SSH nor SSL enabled
+        if (_connection->sshSettings()->enabled()) {
+            tunnelNote = " via SSH tunnel";
+        }
+        else if (_connection->sslSettings()->sslEnabled()) {
+            tunnelNote = " via SSL tunnel";
+        }
+
+        // Set main info text at dialog
         if (state == InitialState) {
             _connectionIconLabel->setMovie(_loadingMovie);
-            QString tunnelNote = _connection->sshSettings()->enabled() ? " via SSH tunnel" : "";
+
             _connectionLabel->setText(QString("Connecting to <b>%1</b>%2...").arg(QtUtils::toQString(_connection->getFullAddress()), tunnelNote));
         } else if (state == CompletedState) {
             _connectionIconLabel->setPixmap(_yesPixmap);
-            QString tunnelNote = _connection->sshSettings()->enabled() ? " via SSH tunnel" : "";
             _connectionLabel->setText(QString("Connected to <b>%1</b>%2").arg(QtUtils::toQString(_connection->getFullAddress()), tunnelNote));
         } else if (state == FailedState) {
             _connectionIconLabel->setPixmap(_noPixmap);
-            QString tunnelNote = _connection->sshSettings()->enabled() ? " via tunnel" : "";
             _connectionLabel->setText(QString("Failed to connect to <b>%1</b>%2").arg(QtUtils::toQString(_connection->getFullAddress()), tunnelNote));
         } else if (state == NotPerformedState) {
             _connectionIconLabel->setPixmap(_questionPixmap);
-            QString tunnelNote = _connection->sshSettings()->enabled() ? " via SSH tunnel" : "";
             _connectionLabel->setText(QString("No chance to try connection to <b>%1</b>%2").arg(QtUtils::toQString(_connection->getFullAddress()), tunnelNote));
         }
     }
@@ -253,6 +261,11 @@ namespace Robomongo
         case ConnectionFailedEvent::MongoAuth:
             authStatus(FailedState);
             listStatus(FailedState);
+            break;
+        case ConnectionFailedEvent::SslConnection:
+            connectionStatus(FailedState);
+            authStatus(NotPerformedState);
+            listStatus(NotPerformedState);
             break;
         }
 

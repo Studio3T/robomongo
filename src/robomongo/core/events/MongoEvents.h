@@ -42,8 +42,9 @@ namespace Robomongo
         R_EVENT
 
         enum ErrorReason {
-            MongoConnection = 0,
-            MongoAuth       = 1,
+            MongoConnection     = 0,
+            MongoAuth           = 1,
+            MongoSslConnection  = 2
         };
 
         EstablishConnectionResponse(QObject *sender, const ConnectionInfo &info, ConnectionType connectionType) :
@@ -907,10 +908,12 @@ namespace Robomongo
         R_EVENT
 
         enum Reason {
+            Unknown            = 0,
             MongoConnection    = 1,
             MongoAuth          = 2,
             SshConnection      = 3,
-            SshChannel         = 4
+            SshChannel         = 4,
+            SslConnection      = 5
         };
 
         ConnectionFailedEvent(QObject *sender, int serverHandle, ConnectionType connectionType,

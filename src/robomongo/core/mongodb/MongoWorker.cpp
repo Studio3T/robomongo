@@ -25,7 +25,7 @@ namespace Robomongo
                              int mongoTimeoutSec, int shellTimeoutSec, QObject *parent) : QObject(parent),
         _connection(connection),
         _scriptEngine(NULL),
-        _dbclient(NULL),
+        _dbclient(nullptr),
         _isAdmin(true),
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
@@ -114,7 +114,6 @@ namespace Robomongo
         if (_dbAutocompleteCacheTimerId != -1)
             killTimer(_dbAutocompleteCacheTimerId);
 
-        delete _dbclient;
         delete _connection;
         delete _scriptEngine;
 
@@ -562,7 +561,7 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             MongoWorker *cl = event->worker();
-            client->copyCollectionToDiffServer(cl->_dbclient, event->from(), event->to());
+            client->copyCollectionToDiffServer(cl->_dbclient.get(), event->from(), event->to());
             client->done();
 
             reply(event->sender(), new CopyCollectionToDiffServerResponse(this));
@@ -633,7 +632,7 @@ namespace Robomongo
         if (!_dbclient) {
             // Timeout for operations
             // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
-            mongo::DBClientConnection *conn = new mongo::DBClientConnection(true, _mongoTimeoutSec);
+            _dbclient = std::unique_ptr<mongo::DBClientConnection>(new mongo::DBClientConnection(true, _mongoTimeoutSec));
 
             // Update global mongo SSL settings according to SSL enable/disabled status
             if (_connection->sslSettings()->sslEnabled())
@@ -648,16 +647,13 @@ namespace Robomongo
                 mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
             }
 
-            mongo::Status status = conn->connect(_connection->info());
+            mongo::Status status = _dbclient->connect(_connection->info());
 
             if (!status.isOK() && mayReturnNull) {
-                delete conn;
-                return NULL;
+                return nullptr;
             }
-
-            _dbclient = conn;
         }
-        return _dbclient;
+        return _dbclient.get();
     }
 
     MongoClient *MongoWorker::getClient()

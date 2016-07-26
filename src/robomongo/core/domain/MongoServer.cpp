@@ -128,28 +128,25 @@ namespace Robomongo {
             std::stringstream ss("Unknown error");
 
             auto eventErrorReason = event->errorReason;
-            auto reason = ConnectionFailedEvent::Unknown;
             if (EstablishConnectionResponse::ErrorReason::MongoSslConnection == eventErrorReason)
             {
-                reason = ConnectionFailedEvent::SslConnection;
+                auto reason = ConnectionFailedEvent::SslConnection;
                 ss.clear();
                 ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
                     << ".\n\nError:\n" << "SSL connection failure: " << event->error().errorMessage();
+                _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
             }
             else
             {
-                reason = (EstablishConnectionResponse::ErrorReason::MongoAuth == eventErrorReason) ?
+                auto reason = (EstablishConnectionResponse::ErrorReason::MongoAuth == eventErrorReason) ?
                     ConnectionFailedEvent::MongoAuth : ConnectionFailedEvent::MongoConnection;
                 ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
                     << ".\n\nError:\n" << event->error().errorMessage();
+                _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
             }
 
-            _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
-
-            // When connection cannot be established, we should
-            // cleanup this instance of MongoServer if it wasn't
-            // shown in UI (i.e. it is not a Secondary connection
-            // that is used for shells tab)
+            // When connection cannot be established, we should cleanup this instance of MongoServer if it wasn't
+            // shown in UI (i.e. it is not a Secondary connection that is used for shells tab)
             if (_connectionType == ConnectionPrimary || _connectionType == ConnectionTest)
             {
                 _app->closeServer(this);

@@ -908,7 +908,6 @@ namespace Robomongo
         R_EVENT
 
         enum Reason {
-            Unknown            = 0,
             MongoConnection    = 1,
             MongoAuth          = 2,
             SshConnection      = 3,

@@ -663,15 +663,13 @@ namespace Robomongo
 
     void MongoWorker::writeGlobalSSLparams() const
     {
+        resetGlobalSSLparams();
         const SslSettings * const sslSettings = _connection->sslSettings();
-        // todo: caFile and allowInvalidCertificates are related to eachother
         mongo::sslGlobalParams.sslAllowInvalidCertificates = sslSettings->allowInvalidCertificates();
-        mongo::sslGlobalParams.sslCAFile = sslSettings->caFile();
-        // Start resetting to default values
-        mongo::sslGlobalParams.sslPEMKeyFile = "";
-        mongo::sslGlobalParams.sslPEMKeyPassword = "";
-        mongo::sslGlobalParams.sslCRLFile = "";
-        mongo::sslGlobalParams.sslAllowInvalidHostnames = false;
+        if (!mongo::sslGlobalParams.sslAllowInvalidCertificates)
+        {
+            mongo::sslGlobalParams.sslCAFile = sslSettings->caFile();
+        }
         if (sslSettings->usePemFile())
         {
             mongo::sslGlobalParams.sslPEMKeyFile = sslSettings->pemKeyFile();
@@ -682,6 +680,16 @@ namespace Robomongo
             mongo::sslGlobalParams.sslCRLFile = sslSettings->crlFile();
             mongo::sslGlobalParams.sslAllowInvalidHostnames = sslSettings->allowInvalidHostnames();
         }
+    }
+
+    void MongoWorker::resetGlobalSSLparams() const
+    {
+        mongo::sslGlobalParams.sslAllowInvalidCertificates = "";
+        mongo::sslGlobalParams.sslCAFile = "";
+        mongo::sslGlobalParams.sslPEMKeyFile = "";
+        mongo::sslGlobalParams.sslPEMKeyPassword = "";
+        mongo::sslGlobalParams.sslCRLFile = "";
+        mongo::sslGlobalParams.sslAllowInvalidHostnames = false;
     }
 
     /**

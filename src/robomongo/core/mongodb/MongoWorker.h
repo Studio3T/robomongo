@@ -142,6 +142,11 @@ namespace Robomongo
         void writeGlobalSSLparams() const;
 
         /**
+        *@brief Reset global mongo SSL settings (mongo::sslGlobalParams) into default zero state
+        */
+        void resetGlobalSSLparams() const;
+
+        /**
          * @brief Send reply event to object 'obj'
          */
         void reply(QObject *receiver, Event *event);

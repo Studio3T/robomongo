@@ -84,13 +84,12 @@ namespace Robomongo
 
     bool ConnectionDialog::validateAndApply()
     {
-#ifdef SSH_SUPPORT_ENABLED
-        bool isSshAndSsl = _sslTab->isSslSupported() && _sshTab->isSshSupported();
-        if (isSshAndSsl) {
-            QMessageBox::warning(this, "Invalid Transport", "SSH and SSL cannot be enabled simultaneously. Please uncheck one of them.");
+        bool sshAndSslChecked = (_sslTab->sslChecked() && _sshTab->sshChecked());
+        if (sshAndSslChecked) {
+            QMessageBox::warning(this, "Invalid Transport", "SSH and SSL cannot be enabled simultaneously. "
+                "Please use one of them.");
             return false;
         }
-#endif
         _basicTab->accept();
         _authTab->accept();
         _advancedTab->accept();

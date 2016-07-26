@@ -140,7 +140,7 @@ namespace Robomongo
         _sshHostName->setFocus();
     }
 
-    bool SshTunnelTab::isSshSupported() const
+    bool SshTunnelTab::sshChecked() const
     {
         return _sshSupport->isChecked();
     }

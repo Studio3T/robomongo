@@ -199,6 +199,8 @@ namespace Robomongo
         return validate();
     }
 
+    bool SSLTab::sslChecked() const { return _useSslCheckBox->isChecked(); }
+
     void SSLTab::useSslCheckBoxStateChange(int state)
     {
         bool isChecked = static_cast<bool>(state);

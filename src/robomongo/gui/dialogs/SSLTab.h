@@ -34,6 +34,11 @@ namespace Robomongo
         */
         bool accept();
 
+        /**
+        * @return true if main use SSL checkbox is checked, false otherwise
+        */
+        bool sslChecked() const;
+
     private Q_SLOTS :
         
         /**

@@ -32,12 +32,14 @@ namespace
     }
 
     // Helper hint constant strings
-    QString const CA_FILE_HINT                      = "( mongo --sslCAFile )";
-    QString const CLIENT_CERT_KEY_HINT              = "( mongo --sslPEMKeyFile )";
-    QString const CLIENT_CERT_KEY_PASS_HINT         = "( mongo --sslPEMKeyPassword )";
-    QString const ALLOW_INVALID_HOSTNAME_HINT       = "( mongo --sslAllowInvalidHostnames )";
-    QString const ALLOW_INVALID_CERTIFICATES_HINT   = "( mongo --sslAllowInvalidCertificates )";
-    QString const CRL_FILE_HINT                     = "( mongo --sslCRLFile )";
+    QString const CA_FILE_HINT                      = " mongo --sslCAFile : Certificate Authority file for SSL";
+    QString const PEM_FILE_HINT                     = " mongo --sslPEMKeyFile : PEM certificate/key file for SSL";
+    QString const PEM_PASS_HINT                     = " mongo --sslPEMKeyPassword : password for key in PEM file for SSL";
+    QString const ALLOW_INVALID_HOSTNAME_HINT       = " mongo --sslAllowInvalidHostnames : allow connections to servers "
+                                                      "with non-matching hostnames";
+    QString const ALLOW_INVALID_CERTIFICATES_HINT   = " mongo --sslAllowInvalidCertificates : allow connections to servers "
+                                                      "with invalid certificates";
+    QString const CRL_FILE_HINT                     = " mongo --sslCRLFile : Certificate Revocation List file for SSL";
 }
 
 namespace Robomongo
@@ -59,10 +61,14 @@ namespace Robomongo
         _authMethodComboBox = new QComboBox;
         _authMethodComboBox->addItem("Self-signed Certificate");
         _authMethodComboBox->addItem("CA-signed Certificate");
+        _authMethodComboBox->setItemData(0, ALLOW_INVALID_CERTIFICATES_HINT, Qt::ToolTipRole);
+        _authMethodComboBox->setItemData(1, CA_FILE_HINT, Qt::ToolTipRole);
         _selfSignedInfoStr = new QLabel("In general, avoid using self-signed certificates unless the network is trusted.");
         _selfSignedInfoStr->setWordWrap(true);
+        _selfSignedInfoStr->setToolTip(ALLOW_INVALID_CERTIFICATES_HINT);
         _caFileLabel = new QLabel("CA-signed Certificate: ");
         _caFileLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        _caFileLabel->setToolTip(CA_FILE_HINT);
         _caFilePathLineEdit = new QLineEdit;
         _caFileBrowseButton = new QPushButton("...");
         _caFileBrowseButton->setMaximumWidth(50);
@@ -80,6 +86,7 @@ namespace Robomongo
 #endif
         _pemFileLabel = new QLabel("PEM Certificate/Key: ");
         _pemFileLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        _pemFileLabel->setToolTip(PEM_FILE_HINT);
         _pemFilePathLineEdit = new QLineEdit;
         _pemFileBrowseButton = new QPushButton("...");
         _pemFileBrowseButton->setMaximumWidth(50);
@@ -87,6 +94,7 @@ namespace Robomongo
         VERIFY(connect(_pemFileBrowseButton, SIGNAL(clicked()), this, SLOT(on_pemKeyFileBrowseButton_clicked())));
         // PEM Passphrase section
         _pemPassLabel = new QLabel("Passphrase: ");    
+        _pemPassLabel->setToolTip(PEM_PASS_HINT);
         _pemPassLineEdit = new QLineEdit;
         _pemPassShowButton = new QPushButton;
         togglePassphraseShowMode();
@@ -105,11 +113,13 @@ namespace Robomongo
         _useAdvancedOptionsCheckBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         VERIFY(connect(_useAdvancedOptionsCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_useAdvancedOptionsCheckBox_toggle(bool))));
         _crlFileLabel = new QLabel("CRL (Revocation List): ");
+        _crlFileLabel->setToolTip(CRL_FILE_HINT);
         _crlFilePathLineEdit = new QLineEdit;
         _crlFileBrowseButton = new QPushButton("...");
         _crlFileBrowseButton->setMaximumWidth(50);
         VERIFY(connect(_crlFileBrowseButton, SIGNAL(clicked()), this, SLOT(on_crlFileBrowseButton_clicked())));
         _allowInvalidHostnamesLabel = new QLabel("Allow Invalid Hostnames: ");
+        _allowInvalidHostnamesLabel->setToolTip(ALLOW_INVALID_HOSTNAME_HINT);
         _allowInvalidHostnamesComboBox = new QComboBox;
         _allowInvalidHostnamesComboBox->addItem("No");
         _allowInvalidHostnamesComboBox->addItem("Yes");

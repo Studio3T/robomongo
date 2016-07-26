@@ -143,7 +143,13 @@ namespace Robomongo
 
         _sshHostName->setFocus();
 
+#ifdef Q_OS_MAC
+        _passwordEchoModeButton->setMaximumWidth(_selectPrivateFileButton->width());
+        _passphraseEchoModeButton->setMaximumWidth(_selectPrivateFileButton->width());
+#else
         _passwordEchoModeButton->setMinimumWidth(_selectPrivateFileButton->width());
+        _passphraseEchoModeButton->setMinimumWidth(_selectPrivateFileButton->width());
+#endif
 
         // Fixing issue for Windows High DPI button height is slightly taller than other widgets 
 #ifdef Q_OS_WIN

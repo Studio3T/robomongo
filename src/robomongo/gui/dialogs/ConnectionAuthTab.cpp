@@ -46,7 +46,12 @@ namespace Robomongo
         VERIFY(connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool))));
 
         _echoModeButton = new QPushButton;
+#ifdef Q_OS_MAC
+        _echoModeButton->setMaximumWidth(50);
+#else
         _echoModeButton->setMinimumWidth(50);
+#endif
+
         // Fixing issue for Windows High DPI button height is slightly taller than other widgets 
 #ifdef Q_OS_WIN
         _echoModeButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);

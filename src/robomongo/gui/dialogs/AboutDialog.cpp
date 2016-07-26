@@ -23,7 +23,13 @@ namespace
         "<br/>"
         "The program is provided AS IS with NO WARRANTY OF ANY KIND, "
         "INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A "
-        "PARTICULAR PURPOSE.<br/>");
+        "PARTICULAR PURPOSE.<br/>"
+        "<br>"
+        "Credits: "
+        "<br/>"
+        "Some icons are designed by Freepik from <a href=http://www.flaticon.com>www.flaticon.com</a>"
+        "<br/>"
+        );
 }
 
 namespace Robomongo

@@ -265,13 +265,13 @@ namespace Robomongo
 
     const QIcon &GuiRegistry::showIcon() const
     {
-        static const QIcon icon = QIcon(":/robomongo/icons/show_icon.png");
+        static const QIcon icon = QIcon(":/robomongo/icons/show_64x64.png");
         return icon;
     }
 
     const QIcon &GuiRegistry::hideIcon() const
     {
-        static const QIcon icon = QIcon(":/robomongo/icons/hide_icon.png");
+        static const QIcon icon = QIcon(":/robomongo/icons/hide_64x64.png");
         return icon;
     }
 

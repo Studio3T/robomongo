@@ -21,6 +21,7 @@
 #include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/settings/SslSettings.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/utils/GuiConstants.h"
 
 namespace 
 {
@@ -48,7 +49,6 @@ namespace Robomongo
         : _settings(settings)
     {
         const SslSettings* const sslSettings = _settings->sslSettings();
-        int const WIN_BUTTON_HEIGHT = 23;
 
         // Use SSL section
         _useSslCheckBox = new QCheckBox("Use SSL protocol");
@@ -97,10 +97,10 @@ namespace Robomongo
         _pemPassLabel->setToolTip(PEM_PASS_HINT);
         _pemPassLineEdit = new QLineEdit;
         _pemPassShowButton = new QPushButton;
-        togglePassphraseShowMode();
         // Fix for MAC OSX: PEM pass show button was created bigger, making it same size as other pushbuttons
         _pemPassShowButton->setMaximumWidth(_pemFileBrowseButton->width());
         VERIFY(connect(_pemPassShowButton, SIGNAL(clicked()), this, SLOT(togglePassphraseShowMode())));
+        togglePassphraseShowMode();
         _usePemPassphraseCheckBox = new QCheckBox("PEM key is encrypted with passphrase");
         _usePemPassphraseCheckBox->setChecked(sslSettings->pemKeyEncrypted());
         VERIFY(connect(_usePemPassphraseCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_usePemPassphraseCheckBox_toggle(bool))));
@@ -193,12 +193,12 @@ namespace Robomongo
         // Enable/disable all tab widgets
         useSslCheckBoxStateChange(_useSslCheckBox->checkState());
 
-        // Fixing issue for Windows High DPI button height is slightly bigger than other widgets 
+        // Fixing issue for Windows High DPI button height is slightly taller than other widgets 
 #ifdef Q_OS_WIN
-        _caFileBrowseButton->setMaximumHeight(WIN_BUTTON_HEIGHT);
-        _pemFileBrowseButton->setMaximumHeight(WIN_BUTTON_HEIGHT);
-        _pemPassShowButton->setMaximumHeight(WIN_BUTTON_HEIGHT);
-        _crlFileBrowseButton->setMaximumHeight(WIN_BUTTON_HEIGHT);
+        _caFileBrowseButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _pemFileBrowseButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _pemPassShowButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _crlFileBrowseButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
 #endif
 
     }

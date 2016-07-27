@@ -56,8 +56,7 @@ namespace Robomongo
         VERIFY(connect(_useSslCheckBox, SIGNAL(stateChanged(int)), this, SLOT(useSslCheckBoxStateChange(int))));
 
         // Auth. Method section
-        _authMethodLabel = new QLabel("Authentication Method:        ");
-        _authMethodLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        _authMethodLabel = new QLabel("Authentication Method: ");
         _authMethodComboBox = new QComboBox;
         _authMethodComboBox->addItem("Self-signed Certificate");
         _authMethodComboBox->addItem("CA-signed Certificate");
@@ -67,7 +66,6 @@ namespace Robomongo
         _selfSignedInfoStr->setWordWrap(true);
         _selfSignedInfoStr->setToolTip(ALLOW_INVALID_CERTIFICATES_HINT);
         _caFileLabel = new QLabel("CA-signed Certificate: ");
-        _caFileLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         _caFileLabel->setToolTip(CA_FILE_HINT);
         _caFilePathLineEdit = new QLineEdit;
         _caFileBrowseButton = new QPushButton("...");
@@ -76,7 +74,7 @@ namespace Robomongo
         VERIFY(connect(_authMethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_authModeComboBox_change(int))));
 
         // PEM file section
-        _usePemFileCheckBox = new QCheckBox("Use PEM Certificate/Key: ");
+        _usePemFileCheckBox = new QCheckBox("Use PEM Cert./Key: ");
         _usePemFileCheckBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         _pemFileInfoStr = 
             new QLabel("Enable this option to connect to a MongoDB that requires CA-signed client certificates/key file.");
@@ -106,7 +104,7 @@ namespace Robomongo
         VERIFY(connect(_askPemPassCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_askPemPassCheckBox_toggle(bool))));
 
         // Advanced options
-        _useAdvancedOptionsCheckBox = new QCheckBox("Use Advanced Options");
+        _useAdvancedOptionsCheckBox = new QCheckBox("Advanced Options");
         _useAdvancedOptionsCheckBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         VERIFY(connect(_useAdvancedOptionsCheckBox, SIGNAL(toggled(bool)), this, SLOT(on_useAdvancedOptionsCheckBox_toggle(bool))));
         _crlFileLabel = new QLabel("CRL (Revocation List): ");
@@ -115,11 +113,11 @@ namespace Robomongo
         _crlFileBrowseButton = new QPushButton("...");
         _crlFileBrowseButton->setMaximumWidth(50);
         VERIFY(connect(_crlFileBrowseButton, SIGNAL(clicked()), this, SLOT(on_crlFileBrowseButton_clicked())));
-        _allowInvalidHostnamesLabel = new QLabel("Allow Invalid Hostnames: ");
+        _allowInvalidHostnamesLabel = new QLabel("Invalid Hostnames: ");
         _allowInvalidHostnamesLabel->setToolTip(ALLOW_INVALID_HOSTNAME_HINT);
         _allowInvalidHostnamesComboBox = new QComboBox;
-        _allowInvalidHostnamesComboBox->addItem("No");
-        _allowInvalidHostnamesComboBox->addItem("Yes");
+        _allowInvalidHostnamesComboBox->addItem("Not Allowed");
+        _allowInvalidHostnamesComboBox->addItem("Allowed");
         _allowInvalidHostnamesComboBox->setCurrentIndex(sslSettings->allowInvalidHostnames());
 
         // Layouts

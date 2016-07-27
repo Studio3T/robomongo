@@ -673,7 +673,7 @@ namespace Robomongo
         if (sslSettings->usePemFile())
         {
             mongo::sslGlobalParams.sslPEMKeyFile = sslSettings->pemKeyFile();
-            mongo::sslGlobalParams.sslPEMKeyPassword = sslSettings->pemKeyEncrypted() ? sslSettings->pemPassPhrase() : "";
+            mongo::sslGlobalParams.sslPEMKeyPassword = sslSettings->pemPassPhrase();
         }
         if (sslSettings->useAdvancedOptions())
         {

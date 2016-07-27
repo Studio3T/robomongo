@@ -87,8 +87,8 @@ namespace Robomongo
 
         SslSettings *sslSettings = connection->sslSettings();
 
-        if (sslSettings->enabled() && sslSettings->usePemFile() && sslSettings->pemKeyEncrypted() 
-            && sslSettings->askPassphrase() && (type == ConnectionPrimary || type == ConnectionTest)) 
+        if (sslSettings->enabled() && sslSettings->usePemFile() && sslSettings->askPassphrase() 
+            && (type == ConnectionPrimary || type == ConnectionTest)) 
         {
             if (!setupSslConnection(connection))
             {

@@ -30,7 +30,6 @@ namespace Robomongo
         std::string crlFile() const { return _crlFile; }
         bool allowInvalidHostnames() const { return _allowInvalidHostnames; }
         bool allowInvalidCertificates() const { return _allowInvalidCertificates; }
-        bool pemKeyEncrypted() const { return _pemKeyEncrypted; }
  
         // Getters for helper SSL settings 
         bool usePemFile() const { return _usePemFile; }
@@ -44,7 +43,6 @@ namespace Robomongo
         void setCrlFile(const std::string &path) { _crlFile = path; }
         void setAllowInvalidHostnames(const bool state) { _allowInvalidHostnames = state; }
         void setAllowInvalidCertificates(const bool state) { _allowInvalidCertificates = state; }
-        void setPemKeyEncrypted(const bool state) { _pemKeyEncrypted = state; }
 
         // Setters for helper SSL settings 
         void setUsePemFile(const bool state) { _usePemFile = state; }
@@ -68,7 +66,6 @@ namespace Robomongo
         std::string _crlFile;
         bool _allowInvalidHostnames;
         bool _allowInvalidCertificates;
-        bool _pemKeyEncrypted;
 
         // Helper settings indirectly effecting what to pass to SSL global params
         bool _usePemFile;

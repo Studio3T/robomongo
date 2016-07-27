@@ -266,8 +266,8 @@ namespace Robomongo
         s << "In order to continue, please provide the passphrase";
         s << "." << std::endl << std::endl;
 
-        s << "Server  : " << connection->serverHost() << std::endl;
-        s << "PEM file: " << sslSettings->pemKeyFile() << std::endl;
+        s << "Server : " << connection->serverHost() << ":" << connection->serverPort() << std::endl;
+        s << "PEM file : " << sslSettings->pemKeyFile() << std::endl;
 
         s << std::endl << "Enter your PEM key passphrase (will never be stored):";
 

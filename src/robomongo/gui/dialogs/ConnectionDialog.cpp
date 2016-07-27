@@ -69,7 +69,7 @@ namespace Robomongo
         adjustSize();
 
         // Set minimum width - adjustment for SSLTab
-        setMinimumWidth(540);
+        setMinimumWidth(550);
     }
 
     /**

@@ -126,7 +126,6 @@ namespace Robomongo {
             _isConnected = false;
 
             std::stringstream ss("Unknown error");
-
             auto eventErrorReason = event->errorReason;
             if (EstablishConnectionResponse::ErrorReason::MongoSslConnection == eventErrorReason)
             {
@@ -140,6 +139,7 @@ namespace Robomongo {
             {
                 auto reason = (EstablishConnectionResponse::ErrorReason::MongoAuth == eventErrorReason) ?
                     ConnectionFailedEvent::MongoAuth : ConnectionFailedEvent::MongoConnection;
+                ss.clear();
                 ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
                     << ".\n\nError:\n" << event->error().errorMessage();
                 _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);

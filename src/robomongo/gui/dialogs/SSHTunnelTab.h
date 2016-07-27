@@ -26,9 +26,9 @@ namespace Robomongo
         bool accept();
 
         /**
-        * @return true if main use SSH checkbox is checked, false otherwise
+        * @return true if use SSH checkbox is checked, false otherwise
         */
-        bool sshChecked() const;
+        bool sshEnabled() const;
 
     private Q_SLOTS:
         void sshSupportStateChange(int checked);

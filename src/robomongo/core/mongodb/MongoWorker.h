@@ -139,7 +139,7 @@ namespace Robomongo
         *@brief Update global mongo SSL settings (mongo::sslGlobalParams) according to active connection 
         *       request's SSL settings.
         */
-        void writeGlobalSSLparams() const;
+        void updateGlobalSSLparams() const;
 
         /**
         *@brief Reset global mongo SSL settings (mongo::sslGlobalParams) into default zero state

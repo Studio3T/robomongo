@@ -150,8 +150,7 @@ namespace Robomongo
         _passwordEchoModeButton->setMinimumWidth(_selectPrivateFileButton->width());
         _passphraseEchoModeButton->setMinimumWidth(_selectPrivateFileButton->width());
 #endif
-
-        // Fixing issue for Windows High DPI button height is slightly taller than other widgets 
+        // Attempt to fix the issue for Windows High DPI button height is slightly taller than other widgets 
 #ifdef Q_OS_WIN
         _passwordEchoModeButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
         _passphraseEchoModeButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
@@ -160,7 +159,7 @@ namespace Robomongo
 
     }
 
-    bool SshTunnelTab::sshChecked() const
+    bool SshTunnelTab::sshEnabled() const
     {
         return _sshSupport->isChecked();
     }

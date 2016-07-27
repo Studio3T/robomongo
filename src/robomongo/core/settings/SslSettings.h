@@ -53,9 +53,8 @@ namespace Robomongo
          * Flag, indicating whether we should use
          * this SSL settings or not.
          */
-        bool enabled() const { return _enabled; }
-        bool sslEnabled() const { return _enabled; }
-        void enableSSL(bool enabled) { _enabled = enabled; }
+        bool sslEnabled() const { return _sslEnabled; }
+        void enableSSL(bool enabled) { _sslEnabled = enabled; }
 
     private:
 
@@ -73,9 +72,8 @@ namespace Robomongo
         bool _askPassphrase;
 
         /**
-         * Flag, indicating whether we should use
-         * this SSL settings or not.
+         * Flag, indicating whether SSL enabled for related connection
          */
-        bool _enabled;
+        bool _sslEnabled;
     };
 }

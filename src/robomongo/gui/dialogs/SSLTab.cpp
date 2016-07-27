@@ -10,7 +10,6 @@
 #include <QRadioButton>
 #include <QFileInfo>
 #include <QMessageBox>
-#include <QEvent>
 
 #include <mongo/util/net/ssl_options.h>
 #include <mongo/util/net/ssl_manager.h>
@@ -25,30 +24,30 @@
 
 namespace 
 {
-    // Helper function: Check file existence, return true if file exists, else otherwise
+    // Helper function: Check file existence, return true if file exists, false otherwise
     bool fileExists(const QString &path) 
     {
         QFileInfo fileInfo(path);
         return (fileInfo.exists() && fileInfo.isFile());
     }
 
-    // Helper hint constant strings
+    // Helper hint strings
     QString const CA_FILE_HINT                      = " mongo --sslCAFile : Certificate Authority file for SSL";
     QString const PEM_FILE_HINT                     = " mongo --sslPEMKeyFile : PEM certificate/key file for SSL";
     QString const PEM_PASS_HINT                     = " mongo --sslPEMKeyPassword : password for key in PEM file for SSL";
-    QString const ALLOW_INVALID_HOSTNAME_HINT       = " mongo --sslAllowInvalidHostnames : allow connections to servers "
-                                                      "with non-matching hostnames";
-    QString const ALLOW_INVALID_CERTIFICATES_HINT   = " mongo --sslAllowInvalidCertificates : allow connections to servers "
-                                                      "with invalid certificates";
+    QString const ALLOW_INVALID_HOSTNAME_HINT       = " mongo --sslAllowInvalidHostnames : allow connections to servers"
+                                                      " with non-matching hostnames";
+    QString const ALLOW_INVALID_CERTIFICATES_HINT   = " mongo --sslAllowInvalidCertificates : allow connections to servers"
+                                                      " with invalid certificates";
     QString const CRL_FILE_HINT                     = " mongo --sslCRLFile : Certificate Revocation List file for SSL";
 }
 
 namespace Robomongo
 {
-    SSLTab::SSLTab(ConnectionSettings *settings) 
-        : _settings(settings)
+    SSLTab::SSLTab(ConnectionSettings *connSettings) 
+        : _connSettings(connSettings)
     {
-        const SslSettings* const sslSettings = _settings->sslSettings();
+        const SslSettings* const sslSettings = _connSettings->sslSettings();
 
         // Use SSL section
         _useSslCheckBox = new QCheckBox("Use SSL protocol");
@@ -150,18 +149,18 @@ namespace Robomongo
         gridLayout->addWidget(_allowInvalidHostnamesComboBox,   11, 1, Qt::AlignLeft);
         gridLayout->addWidget(new QLabel(""),                   12, 0);   
 
-        QLabel* afterFirstRowSpacing = new QLabel("");
-        afterFirstRowSpacing->setFixedHeight(5);
+        QLabel* spacingAfterFirstRow = new QLabel("");
+        spacingAfterFirstRow->setFixedHeight(5);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->setAlignment(Qt::AlignTop);
         mainLayout->addWidget(_useSslCheckBox);
-        mainLayout->addWidget(afterFirstRowSpacing);
+        mainLayout->addWidget(spacingAfterFirstRow);
         mainLayout->addLayout(gridLayout);
         setLayout(mainLayout);
 
         // Load SSL settings to update UI states
-        _useSslCheckBox->setChecked(sslSettings->enabled());
+        _useSslCheckBox->setChecked(sslSettings->sslEnabled());
         _authMethodComboBox->setCurrentIndex(!sslSettings->allowInvalidCertificates());
         _caFilePathLineEdit->setText(QString::fromStdString(sslSettings->caFile()));
         _usePemFileCheckBox->setChecked(sslSettings->usePemFile());
@@ -182,10 +181,10 @@ namespace Robomongo
         on_askPemPassCheckBox_toggle(_askPemPassCheckBox->isChecked());
         on_useAdvancedOptionsCheckBox_toggle(_useAdvancedOptionsCheckBox->isChecked());
 
-        // Enable/disable all tab widgets
+        // Enable/disable all SSL tab widgets
         useSslCheckBoxStateChange(_useSslCheckBox->checkState());
 
-        // Fixing issue for Windows High DPI button height is slightly taller than other widgets 
+        // Attempt to fix issue for Windows High DPI button height is slightly taller than other widgets 
 #ifdef Q_OS_WIN
         _caFileBrowseButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
         _pemFileBrowseButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
@@ -201,7 +200,10 @@ namespace Robomongo
         return validate();
     }
 
-    bool SSLTab::sslChecked() const { return _useSslCheckBox->isChecked(); }
+    bool SSLTab::sslEnabled() const 
+    { 
+        return _useSslCheckBox->isChecked(); 
+    }
 
     void SSLTab::useSslCheckBoxStateChange(int state)
     {
@@ -227,7 +229,7 @@ namespace Robomongo
         _crlFileBrowseButton->setDisabled(!isChecked);
         _allowInvalidHostnamesLabel->setDisabled(!isChecked);
         _allowInvalidHostnamesComboBox->setDisabled(!isChecked);
-        if (isChecked)  // If SSL enabled passphrase widgets enabled/disabled according to pem pass checkbox
+        if (isChecked)  // Update some widgets only if SSL enabled
         {
             on_usePemFileCheckBox_toggle(_usePemFileCheckBox->isChecked());
             on_askPemPassCheckBox_toggle(_askPemPassCheckBox->isChecked());
@@ -274,7 +276,7 @@ namespace Robomongo
 
     void SSLTab::on_caFileBrowseButton_clicked()
     {
-        QString const fileName = openFileBrowseDialog(_caFilePathLineEdit->text());
+        QString const& fileName = openFileBrowseDialog(_caFilePathLineEdit->text());
         if (!fileName.isEmpty()) {
             _caFilePathLineEdit->setText(fileName);
         }
@@ -282,7 +284,7 @@ namespace Robomongo
 
     void SSLTab::on_pemKeyFileBrowseButton_clicked()
     {
-        QString const fileName = openFileBrowseDialog(_pemFilePathLineEdit->text());
+        QString const& fileName = openFileBrowseDialog(_pemFilePathLineEdit->text());
         if (!fileName.isEmpty()) {
             _pemFilePathLineEdit->setText(fileName);
         }
@@ -290,7 +292,7 @@ namespace Robomongo
 
     void SSLTab::on_crlFileBrowseButton_clicked()
     {
-        QString const fileName = openFileBrowseDialog(_crlFilePathLineEdit->text());
+        QString const& fileName = openFileBrowseDialog(_crlFilePathLineEdit->text());
         if (!fileName.isEmpty()) {
             _crlFilePathLineEdit->setText(fileName);
         }
@@ -320,10 +322,10 @@ namespace Robomongo
     bool SSLTab::validate()
     {
         // Validate existence of files
-        auto const resultAndFileName = checkExistenseOfFiles();
+        auto const& resultAndFileName = checkExistenseOfFiles();
         if (!resultAndFileName.first)
         {
-            QString nonExistingFile = resultAndFileName.second;
+            QString const& nonExistingFile = resultAndFileName.second;
             QMessageBox errorBox;
             errorBox.critical(this, "Error", ("Error: " + nonExistingFile + " file does not exist"));
             errorBox.adjustSize();
@@ -363,14 +365,14 @@ namespace Robomongo
 
     void SSLTab::saveSslSettings() const
     {
-        SslSettings *sslSettings = _settings->sslSettings();
+        SslSettings* sslSettings = _connSettings->sslSettings();
         sslSettings->enableSSL(_useSslCheckBox->isChecked());
         sslSettings->setAllowInvalidCertificates(!static_cast<bool>(_authMethodComboBox->currentIndex()));
         sslSettings->setCaFile(QtUtils::toStdString(_caFilePathLineEdit->text()));
         sslSettings->setUsePemFile(_usePemFileCheckBox->isChecked());
         sslSettings->setPemKeyFile(QtUtils::toStdString(_pemFilePathLineEdit->text()));
         sslSettings->setAskPassphrase(_askPemPassCheckBox->isChecked());
-        // save passphrase only if _askPemPassCheckBox is not checked; otherwise save empty string
+        // save passphrase only if _askPemPassCheckBox is not checked; otherwise don't save and clear saved passphrase
         if (!_askPemPassCheckBox->isChecked())
         {
             sslSettings->setPemPassPhrase(QtUtils::toStdString(_pemPassLineEdit->text()));
@@ -396,6 +398,5 @@ namespace Robomongo
         QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File"), filePath);
         return QDir::toNativeSeparators(fileName);
     }
-
 }
 

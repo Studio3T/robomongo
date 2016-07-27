@@ -192,8 +192,8 @@ namespace Robomongo
             auto errorReason = _connection->sslSettings()->sslEnabled() ?
                 EstablishConnectionResponse::ErrorReason::MongoSslConnection : 
                 EstablishConnectionResponse::ErrorReason::MongoAuth;
-            reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what()), event->connectionType, 
-                errorReason));
+            reply(event->sender(), 
+                new EstablishConnectionResponse(this, EventError(ex.what()), event->connectionType, errorReason));
         }
     }
 
@@ -639,7 +639,7 @@ namespace Robomongo
             {
                 // Force SSL mode for outgoing connections
                 mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
-                writeGlobalSSLparams();
+                updateGlobalSSLparams();
             }
             else
             {
@@ -661,7 +661,7 @@ namespace Robomongo
         return new MongoClient(getConnection());
     }
 
-    void MongoWorker::writeGlobalSSLparams() const
+    void MongoWorker::updateGlobalSSLparams() const
     {
         resetGlobalSSLparams();
         const SslSettings * const sslSettings = _connection->sslSettings();

@@ -35,26 +35,30 @@ namespace Robomongo
         bool accept();
 
         /**
-        * @return true if main use SSL checkbox is checked, false otherwise
+        * @return true if use SSL checkbox is checked, false otherwise
         */
-        bool sslChecked() const;
+        bool sslEnabled() const;
 
     private Q_SLOTS :
         
         /**
-        * @brief Disable/enable widgets according to SSL checkbox state
+        * @brief Disable/enable widgets according to SSL check box state
         */ 
         void useSslCheckBoxStateChange(int checked);
         
         /**
-        * @brief Disable/enable widgets according to state of authentication method combobox
+        * @brief Disable/enable widgets according to state of authentication method combo box
         */
         void on_authModeComboBox_change(int index);
 
-        // new
+        /**
+        * @brief Disable/enable widgets according to state of use PEM file combo box
+        */
         void on_usePemFileCheckBox_toggle(bool checked);
 
-        // new
+        /**
+        * @brief Disable/enable widgets according to state of advanced options combo box
+        */
         void on_useAdvancedOptionsCheckBox_toggle(bool checked);
         
         /**
@@ -96,6 +100,8 @@ namespace Robomongo
 
         /**
         * @brief 
+        * @param initialPath Previously selected file path
+        * @return Selected file absolute path and file name
         */
         QString openFileBrowseDialog(const QString& initialPath);
 
@@ -138,8 +144,8 @@ namespace Robomongo
         QComboBox *_allowInvalidHostnamesComboBox;
 
         /**
-        * @brief Pointer to active connection's ConnectionsSettings member
+        * @brief Pointer to active connection's settings
         */
-        ConnectionSettings *const _settings;
+        ConnectionSettings *const _connSettings;
     };
 } /* end of Robomongo namespace */

@@ -68,7 +68,7 @@ namespace Robomongo
         _basicTab->setFocus();
         adjustSize();
 
-        // Set minimum width - adjustment for SSLTab
+        // Set minimum width - adjustment after adding SSLTab
         setMinimumWidth(550);
     }
 
@@ -84,9 +84,10 @@ namespace Robomongo
 
     bool ConnectionDialog::validateAndApply()
     {
-        bool sshAndSslChecked = (_sslTab->sslChecked() && _sshTab->sshChecked());
-        if (sshAndSslChecked) {
-            QMessageBox::warning(this, "Invalid Transport", "SSH and SSL cannot be enabled simultaneously. "
+        bool sshAndSslChecked = (_sslTab->sslEnabled() && _sshTab->sshEnabled());
+        if (sshAndSslChecked) 
+        {
+            QMessageBox::warning(this, "Invalid Configuration", "SSH and SSL cannot be enabled simultaneously. "
                 "Please use one of them.");
             return false;
         }

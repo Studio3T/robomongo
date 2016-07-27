@@ -146,7 +146,7 @@ namespace Robomongo
     void ConnectionDiagnosticDialog::connectionStatus(State state)
     {
         // Add info about tunneling if SSH or SSL is used
-        QString tunnelNote = "";    // no tunnel info when neither SSH nor SSL enabled
+        QString tunnelNote("");    // no tunnel info when neither SSH nor SSL enabled
         if (_connection->sshSettings()->enabled()) {
             tunnelNote = " via SSH tunnel";
         }

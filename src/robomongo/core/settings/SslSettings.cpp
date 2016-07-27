@@ -5,16 +5,18 @@
 namespace Robomongo
 {
     SslSettings::SslSettings() :
-            _enabled(false) { }
+        _sslEnabled(false) { }
 
-    SslSettings *SslSettings::clone() const {
+    SslSettings *SslSettings::clone() const 
+    {
         SslSettings *cloned = new SslSettings(*this);
         return cloned;
     }
 
-    QVariant SslSettings::toVariant() const {
+    QVariant SslSettings::toVariant() const 
+    {
         QVariantMap map;
-        map.insert("enabled", enabled());   // todo: rename ssl_enabled
+        map.insert("sslEnabled", sslEnabled());
         map.insert("caFile", QtUtils::toQString(caFile()));
         map.insert("usePemFile", usePemFile());
         map.insert("pemKeyFile", QtUtils::toQString(pemKeyFile()));
@@ -28,8 +30,9 @@ namespace Robomongo
         return map;
     }
 
-    void SslSettings::fromVariant(const QVariantMap &map) {
-        enableSSL(map.value("enabled").toBool());
+    void SslSettings::fromVariant(const QVariantMap &map) 
+    {
+        enableSSL(map.value("sslEnabled").toBool());
         setCaFile(QtUtils::toStdString(map.value("caFile").toString()));
         setUsePemFile(map.value("usePemFile").toBool());
         setPemKeyFile(QtUtils::toStdString(map.value("pemKeyFile").toString()));

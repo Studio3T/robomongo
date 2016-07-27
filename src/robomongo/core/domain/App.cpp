@@ -87,7 +87,7 @@ namespace Robomongo
 
         SslSettings *sslSettings = connection->sslSettings();
 
-        if (sslSettings->enabled() && sslSettings->usePemFile() && sslSettings->askPassphrase() 
+        if (sslSettings->sslEnabled() && sslSettings->usePemFile() && sslSettings->askPassphrase() 
             && (type == ConnectionPrimary || type == ConnectionTest)) 
         {
             if (!setupSslConnection(connection))
@@ -257,16 +257,16 @@ namespace Robomongo
     }
 
 
-    bool App::setupSslConnection(ConnectionSettings *connection) const
+    bool App::setupSslConnection(ConnectionSettings *connSettings) const
     {
-        auto sslSettings = connection->sslSettings();
+        auto sslSettings = connSettings->sslSettings();
         bool ok = false;
 
         std::stringstream s;
         s << "In order to continue, please provide the passphrase";
         s << "." << std::endl << std::endl;
 
-        s << "Server : " << connection->serverHost() << ":" << connection->serverPort() << std::endl;
+        s << "Server : " << connSettings->serverHost() << ":" << connSettings->serverPort() << std::endl;
         s << "PEM file : " << sslSettings->pemKeyFile() << std::endl;
 
         s << std::endl << "Enter your PEM key passphrase (will never be stored):";

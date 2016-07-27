@@ -97,7 +97,7 @@ namespace Robomongo
         * @param connection Pointer to active connection settings
         * @return true on success, false otherwise
         */
-        bool setupSslConnection(ConnectionSettings *connection) const;
+        bool setupSslConnection(ConnectionSettings *connSettings) const;
 
         /**
          * MongoServers, owned by this App.

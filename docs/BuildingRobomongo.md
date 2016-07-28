@@ -6,17 +6,17 @@ A. Prerequisites
 
 1. Install CMake (3.2 or later)
 2. Install [Scons](http://scons.org/tag/releases.html) (2.4 or later)
-3. Install Qt 5.5
+3. Install Qt 5.7
 
   ```sh
 Example installation for MAC OSX and Ubuntu:
-    Go to http://download.qt.io/archive/qt/5.5/5.5.1/
+    Go to http://download.qt.io/archive/qt/5.7/5.7.0/
     Download, run and install 
-      qt-opensource-mac-x64-clang-5.5.1.dmg (for MAC OSX) 
-      qt-opensource-linux-x64-5.5.1.run (for Linux)
+      qt-opensource-mac-x64-clang-5.7.0.dmg (for MAC OSX) 
+      qt-opensource-linux-x64-5.7.0.run (for Linux)
     After successful installation you should have 
-      /path/to/qt-5.5.1/5.5/clang_64 (for MAC OSX)
-      /path/to/qt-5.5.1/5.5/gcc_64 (for Linux)
+      /path/to/qt-5.7.0/5.7/clang_64 (for MAC OSX)
+      /path/to/qt-5.7.0/5.7/gcc_64 (for Linux)
 
 More information for installing on Ubuntu:
 https://wiki.qt.io/Install_Qt_5_on_Ubuntu
@@ -72,9 +72,9 @@ directories:
 Separate directories by semicolon `;` (not colon):
 
     // MAC OSX example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.5/5.5/clang_64;/path/to/robomongo-shell;/path/to/openss_build"
+    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.7.0/5.7/clang_64;/path/to/robomongo-shell;/path/to/openss_build"
     // Ubuntu example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.5/5.5/gcc_64;/path/to/robomongo-shell;/path/to/openss_build"
+    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.7.0/5.7/gcc_64;/path/to/robomongo-shell;/path/to/openss_build"
 
 
 Build Robomongo Shell:

@@ -64,13 +64,13 @@ A. Prerequisites
  command will be available from Command Prompt. For this set "Add CMake to the system
  PATH for current user" in the installer wizard page. 
    
-#### 5. Qt 5.5
+#### 5. Qt 5.7
 
  Download Qt from http://www.qt.io/download-open-source/ (we use Qt Online installer)
    
  When installing Qt, only one component is required by Robomongo: 
    
-    Qt 5.5 
+    Qt 5.7 
       [x] msvc2013 64-bit.
     
  This components contains prebuilt 64-bit binaries for Visual Studio 2013. 
@@ -121,7 +121,7 @@ Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robomongo-Sh
 
 Separate directories by semicolon `;` (not colon). You can do this in Command Prompt:
 
-    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.5\msvc2013_64;d:\Projects\robomongo-shell;c:\myPath\openssl-1.0.1p"
+    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.7\msvc2013_64;d:\Projects\robomongo-shell;c:\myPath\openssl-1.0.1p"
 
 
 Open VS2013 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.

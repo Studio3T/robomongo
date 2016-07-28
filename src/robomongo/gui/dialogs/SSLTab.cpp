@@ -263,7 +263,7 @@ namespace Robomongo
         _askPemPassCheckBox->setVisible(isChecked);
         if(isChecked)
         {
-            setMinimumHeight(420);
+            setMinimumHeight(440);
         }
     }
 
@@ -276,7 +276,7 @@ namespace Robomongo
         _allowInvalidHostnamesComboBox->setVisible(isChecked);
         if(isChecked)
         {
-            setMinimumHeight(460);
+            setMinimumHeight(500);
         }
     }
 

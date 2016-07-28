@@ -69,8 +69,8 @@ namespace Robomongo
             if (ssh->authMethod() == "publickey")
                 s << "Private Key:  " << ssh->privateKeyFile() << std::endl;
 
-            s << "Server:  " << ssh->host() << std::endl;
-            s << "User:  " << ssh->userName() << std::endl;
+            s << "Server: " << ssh->host() << std::endl;
+            s << "User: " << ssh->userName() << std::endl;
 
 
             s << std::endl << "Enter your " << passText << " that will never be stored:";
@@ -266,8 +266,8 @@ namespace Robomongo
         s << "In order to continue, please provide the passphrase";
         s << "." << std::endl << std::endl;
 
-        s << "Server : " << connSettings->serverHost() << ":" << connSettings->serverPort() << std::endl;
-        s << "PEM file : " << sslSettings->pemKeyFile() << std::endl;
+        s << "Server: " << connSettings->serverHost() << ":" << connSettings->serverPort() << std::endl;
+        s << "PEM file: " << sslSettings->pemKeyFile() << std::endl;
 
         s << std::endl << "Enter your PEM key passphrase (will never be stored):";
 

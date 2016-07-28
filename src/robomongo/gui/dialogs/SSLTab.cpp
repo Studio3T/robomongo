@@ -58,13 +58,15 @@ namespace Robomongo
         _authMethodLabel = new QLabel("Authentication Method: ");
         _authMethodComboBox = new QComboBox;
         _authMethodComboBox->addItem("Self-signed Certificate");
-        _authMethodComboBox->addItem("CA-signed Certificate");
+        _authMethodComboBox->addItem("Use CA Certificate");
         _authMethodComboBox->setItemData(0, ALLOW_INVALID_CERTIFICATES_HINT, Qt::ToolTipRole);
         _authMethodComboBox->setItemData(1, CA_FILE_HINT, Qt::ToolTipRole);
-        _selfSignedInfoStr = new QLabel("In general, avoid using self-signed certificates unless the network is trusted.");
+        _selfSignedInfoStr = new QLabel("In general, avoid using self-signed certificates unless the network is trusted. "
+            "If self-signed certificate is used, the communications channel will be encrypted however there will be "
+            "no validation of server identity.");
         _selfSignedInfoStr->setWordWrap(true);
         _selfSignedInfoStr->setToolTip(ALLOW_INVALID_CERTIFICATES_HINT);
-        _caFileLabel = new QLabel("CA-signed Certificate: ");
+        _caFileLabel = new QLabel("CA Certificate:");
         _caFileLabel->setToolTip(CA_FILE_HINT);
         _caFilePathLineEdit = new QLineEdit;
         _caFileBrowseButton = new QPushButton("...");
@@ -243,6 +245,10 @@ namespace Robomongo
         _caFileLabel->setVisible(isCaSigned);
         _caFilePathLineEdit->setVisible(isCaSigned);
         _caFileBrowseButton->setVisible(isCaSigned);
+        if (!isCaSigned)
+        {
+            setMinimumHeight(300);
+        }
     }
 
     void SSLTab::on_usePemFileCheckBox_toggle(bool isChecked)

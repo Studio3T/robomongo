@@ -247,7 +247,7 @@ namespace Robomongo
         _caFileBrowseButton->setVisible(isCaSigned);
         if (!isCaSigned)
         {
-            setMinimumHeight(300);
+            setMinimumHeight(330);
         }
     }
 
@@ -263,7 +263,7 @@ namespace Robomongo
         _askPemPassCheckBox->setVisible(isChecked);
         if(isChecked)
         {
-            setMinimumHeight(400);
+            setMinimumHeight(420);
         }
     }
 

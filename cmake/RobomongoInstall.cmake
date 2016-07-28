@@ -88,7 +88,6 @@ install_icu_libs()
 if(SYSTEM_LINUX)
     install_qt_lib(XcbQpa DBus)
     install_qt_plugins(
-        QGtk2ThemePlugin
         QXcbIntegrationPlugin)
 
 elseif(SYSTEM_MACOSX)

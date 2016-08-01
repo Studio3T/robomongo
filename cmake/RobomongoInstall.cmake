@@ -62,7 +62,7 @@ if(SYSTEM_WINDOWS)
         FILES 
         "${OpenSSL_DIR}/out32dll/ssleay32.dll"
         "${OpenSSL_DIR}/out32dll/libeay32.dll"
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
+        DESTINATION ${bin_dir})
 elseif(SYSTEM_MACOSX)
     install(
         FILES 

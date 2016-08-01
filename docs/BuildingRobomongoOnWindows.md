@@ -88,7 +88,6 @@ B. Building Robomongo and Dependencies
 #### 1. Build OpenSSL (1.0.1p)
 
 Steps to build OpenSSL on windows:
-
   ```sh
 Open Visual Studio tool x64 Cross Tools Command prompt
 cd to the directory where you have openssl sources cd c:\myPath\openssl
@@ -99,6 +98,12 @@ nmake -f ms\ntdll.mak
 
 **Check Point:**
 After successful build, newly created sub directory out32dll should contain dynamic lib files libeay32.lib (and libeay32.dll) and ssleay32.lib (and ssleay32.dll); and associated include files will be in newly created folder "inc32".
+
+Helper Commands:
+  ```sh
+// clean to start fresh build
+nmake -f ms\ntdll.mak clean
+```
 
 Refer to OpenSSL documentation for more information:  
 https://wiki.openssl.org/index.php/Compilation_and_Installation#W64

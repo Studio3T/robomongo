@@ -36,19 +36,23 @@ Download openssl-1.0.1p (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1p.t
 tar -xvzf openssl-1.0.1p.tar.gz
 cd /Users/<user>/Downloads/openssl-1.0.1p
 ./Configure darwin64-x86_64-cc shared --openssldir="@rpath/OpenSSL"
-make
-(or sudo make)
+make (or sudo make)
 ```
+Helper Commands
+  ```sh
+// to start fresh build
+make clean
+```
+
 
 Steps to build OpenSSL on Linux:
 
   ```sh
 Download openssl-1.0.1p (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1p.tar.gz)
 tar -xvzf openssl-1.0.1p.tar.gz
-mkdir /home/<user>/openssl_build
 cd /home/<user>/Downloads/openssl-1.0.1p
-./config shared --openssldir=/home/<user>/openssl_build
-make install
+./config shared
+make
 ```
 
 #### Step 2. Build Robomongo Shell (fork of MongoDB)
@@ -73,7 +77,7 @@ Separate directories by semicolon `;` (not colon):
     // MAC OSX example:
     $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.7.0/5.7/clang_64;/path/to/robomongo-shell;/path/to/openssl-1.0.1p"
     // Ubuntu example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.7.0/5.7/gcc_64;/path/to/robomongo-shell;/path/to/openssl_build"
+    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.7.0/5.7/gcc_64;/path/to/robomongo-shell;/path/to/openssl-1.0.1p"
 
 
 Build Robomongo Shell:

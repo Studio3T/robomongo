@@ -63,6 +63,12 @@ if(SYSTEM_WINDOWS)
         "${OpenSSL_DIR}/out32dll/ssleay32.dll"
         "${OpenSSL_DIR}/out32dll/libeay32.dll"
         DESTINATION ${CMAKE_INSTALL_PREFIX})
+elseif(SYSTEM_MACOSX)
+    install(
+        FILES 
+        "${OpenSSL_DIR}/libssl.1.0.0.dylib"
+        "${OpenSSL_DIR}/libcrypto.1.0.0.dylib"
+        DESTINATION ${lib_dir}/OpenSSL/lib)        
 endif()
 
 # Install binary

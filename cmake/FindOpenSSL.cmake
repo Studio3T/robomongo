@@ -118,11 +118,11 @@ if(SYSTEM_WINDOWS)
 elseif(SYSTEM_MACOSX)
     set_target_properties(ssl PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
-        IMPORTED_LOCATION               "${OpenSSL_DIR}/lib/libssl.dylib"
+        IMPORTED_LOCATION               "${OpenSSL_DIR}/libssl.dylib"
     )
     set_target_properties(crypto PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
-        IMPORTED_LOCATION               "${OpenSSL_DIR}/lib/libcrypto.dylib"
+        IMPORTED_LOCATION               "${OpenSSL_DIR}/libcrypto.dylib"
     )
 elseif(SYSTEM_LINUX)
     set_target_properties(ssl PROPERTIES

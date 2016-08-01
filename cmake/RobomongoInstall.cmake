@@ -68,7 +68,13 @@ elseif(SYSTEM_MACOSX)
         FILES 
         "${OpenSSL_DIR}/libssl.1.0.0.dylib"
         "${OpenSSL_DIR}/libcrypto.1.0.0.dylib"
-        DESTINATION ${lib_dir}/OpenSSL/lib)        
+        DESTINATION ${lib_dir}/OpenSSL/lib)       
+elseif(SYSTEM_LINUX)
+    install(
+        FILES 
+        "${OpenSSL_DIR}/libssl.so.1.0.0"
+        "${OpenSSL_DIR}/libcrypto.so.1.0.0"
+        DESTINATION ${lib_dir})         
 endif()
 
 # Install binary

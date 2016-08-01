@@ -127,11 +127,11 @@ elseif(SYSTEM_MACOSX)
 elseif(SYSTEM_LINUX)
     set_target_properties(ssl PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
-        IMPORTED_LOCATION               "${OpenSSL_DIR}/lib/libssl.so"
+        IMPORTED_LOCATION               "${OpenSSL_DIR}/libssl.so"
     )
     set_target_properties(crypto PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES   "${OpenSSL_DIR}/include"
-        IMPORTED_LOCATION               "${OpenSSL_DIR}/lib/libcrypto.so"
+        IMPORTED_LOCATION               "${OpenSSL_DIR}/libcrypto.so"
     )
 endif()
 

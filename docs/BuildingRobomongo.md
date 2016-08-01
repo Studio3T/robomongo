@@ -34,11 +34,10 @@ Steps to build OpenSSL on MAC:
   ```sh
 Download openssl-1.0.1p (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1p.tar.gz)
 tar -xvzf openssl-1.0.1p.tar.gz
-mkdir /Users/<user>/Downloads/openssl_build
 cd /Users/<user>/Downloads/openssl-1.0.1p
-./Configure darwin64-x86_64-cc shared --openssldir=/Users/<use>/Downloads/openssl_build
+./Configure darwin64-x86_64-cc shared --openssldir="@rpath/OpenSSL"
 make
-make install
+(or sudo make)
 ```
 
 Steps to build OpenSSL on Linux:
@@ -72,9 +71,9 @@ directories:
 Separate directories by semicolon `;` (not colon):
 
     // MAC OSX example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.7.0/5.7/clang_64;/path/to/robomongo-shell;/path/to/openss_build"
+    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.7.0/5.7/clang_64;/path/to/robomongo-shell;/path/to/openssl-1.0.1p"
     // Ubuntu example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.7.0/5.7/gcc_64;/path/to/robomongo-shell;/path/to/openss_build"
+    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.7.0/5.7/gcc_64;/path/to/robomongo-shell;/path/to/openssl_build"
 
 
 Build Robomongo Shell:

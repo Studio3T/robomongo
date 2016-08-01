@@ -51,6 +51,7 @@ namespace Robomongo
 
     private Q_SLOTS:
         void ui_dbStatistics();
+        void ui_dbCurrentOps();
         void ui_dbDrop();
         void ui_dbRepair();
         void ui_dbOpenShell();

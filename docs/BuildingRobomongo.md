@@ -36,9 +36,14 @@ Download openssl-1.0.1p (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1p.t
 tar -xvzf openssl-1.0.1p.tar.gz
 cd /Users/<user>/Downloads/openssl-1.0.1p
 ./Configure darwin64-x86_64-cc shared --openssldir="@rpath/OpenSSL"
-make
-(or sudo make)
+make (or sudo make)
 ```
+Helper Commands
+  ```sh
+// to start fresh build
+make clean
+```
+
 
 Steps to build OpenSSL on Linux:
 

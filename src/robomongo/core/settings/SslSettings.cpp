@@ -5,7 +5,10 @@
 namespace Robomongo
 {
     SslSettings::SslSettings() :
-        _sslEnabled(false) { }
+        _sslEnabled(false), _caFile(""), _pemKeyFile(""),  _pemPassPhrase(""), _crlFile(""), 
+        _allowInvalidHostnames(false),  _allowInvalidCertificates(false), _usePemFile(false),
+        _useAdvancedOptions(false), _askPassphrase(false)
+    {}
 
     SslSettings *SslSettings::clone() const 
     {

@@ -15,11 +15,11 @@
 #include <mongo/util/net/ssl_manager.h>
 
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/gui/utils/ComboBoxUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/settings/SslSettings.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/utils/ComboBoxUtils.h"
 #include "robomongo/gui/utils/GuiConstants.h"
 
 namespace 
@@ -343,30 +343,24 @@ namespace Robomongo
 
     std::pair<bool,QString> SSLTab::checkExistenseOfFiles() const
     {
-        if (_caFilePathLineEdit->isEnabled() && _caFilePathLineEdit->isVisible())
-        {
-            if (!fileExists(_caFilePathLineEdit->text()))
-            {
-                return { false, "CA-signed certificate" };
+        if (_caFilePathLineEdit->isEnabled() && _caFilePathLineEdit->isVisible()) {
+            if (!fileExists(_caFilePathLineEdit->text())) {
+                return {false, "CA-signed certificate"};
             }
         }
 
-        if (_pemFilePathLineEdit->isVisible() && _pemFilePathLineEdit->isEnabled())
-        {
-            if (!fileExists(_pemFilePathLineEdit->text()))
-            {
-                return{ false, "PEM Certificate/Key" };
+        if (_pemFilePathLineEdit->isVisible() && _pemFilePathLineEdit->isEnabled()) {
+            if (!fileExists(_pemFilePathLineEdit->text())) {
+                return {false, "PEM Certificate/Key"};
             }
         }
 
-        if (!_crlFilePathLineEdit->text().isEmpty())
-        {
-            if (!fileExists(_crlFilePathLineEdit->text()))
-            {
-                return{ false, "CRL (Revocation List)" };
+        if (!_crlFilePathLineEdit->text().isEmpty()) {
+            if (!fileExists(_crlFilePathLineEdit->text())) {
+                return {false, "CRL (Revocation List)"};
             }
         }
-        return{ true, "" };
+        return {true, ""};
     }
 
     void SSLTab::saveSslSettings() const

@@ -90,7 +90,7 @@ namespace Robomongo
         if (sslSettings->sslEnabled() && sslSettings->usePemFile() && sslSettings->askPassphrase() 
             && (type == ConnectionPrimary || type == ConnectionTest)) 
         {
-            if (!setupSslConnection(connection))
+            if (!askSslPassphrasePromptDialog(connection))
             {
                 return false;
             }
@@ -257,7 +257,7 @@ namespace Robomongo
     }
 
 
-    bool App::setupSslConnection(ConnectionSettings *connSettings) const
+    bool App::askSslPassphrasePromptDialog(ConnectionSettings *connSettings) const
     {
         auto sslSettings = connSettings->sslSettings();
         bool ok = false;

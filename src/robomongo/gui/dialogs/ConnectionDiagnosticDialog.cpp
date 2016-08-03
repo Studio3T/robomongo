@@ -146,18 +146,19 @@ namespace Robomongo
     void ConnectionDiagnosticDialog::connectionStatus(State state)
     {
         // Add info about tunneling if SSH or SSL is used
-        QString tunnelNote("");    // no tunnel info when neither SSH nor SSL enabled
-        if (_connection->sshSettings()->enabled()) {
+        QString tunnelNote("");    // No tunnel info when neither SSH nor SSL enabled
+        if (_connection->sshSettings()->enabled()) 
+        {
             tunnelNote = " via SSH tunnel";
         }
-        else if (_connection->sslSettings()->sslEnabled()) {
+        else if (_connection->sslSettings()->sslEnabled()) 
+        {
             tunnelNote = " via SSL tunnel";
         }
 
         // Set main info text at dialog
         if (state == InitialState) {
             _connectionIconLabel->setMovie(_loadingMovie);
-
             _connectionLabel->setText(QString("Connecting to <b>%1</b>%2...").arg(QtUtils::toQString(_connection->getFullAddress()), tunnelNote));
         } else if (state == CompletedState) {
             _connectionIconLabel->setPixmap(_yesPixmap);

@@ -137,6 +137,7 @@ namespace Robomongo
         try {
             mongo::DBClientBase *conn = getConnection(true);
             if (conn == NULL) {
+                // Protection by default value: Logically/ideally, this error should never be seen.
                 auto errorReason = std::string("Connection failure: Unknown error.");
                 if (_connection->sslSettings()->sslEnabled())
                 {

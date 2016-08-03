@@ -145,8 +145,7 @@ target_link_libraries(robomongo
 
 target_include_directories(robomongo
     PRIVATE
-        ${CMAKE_HOME_DIRECTORY}/src
-        ${CMAKE_HOME_DIRECTORY}/src/third-party/openssl/sources/include)
+        ${CMAKE_HOME_DIRECTORY}/src)
 
 target_compile_definitions(robomongo
     PRIVATE

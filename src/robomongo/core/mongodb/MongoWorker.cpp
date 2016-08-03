@@ -149,6 +149,8 @@ namespace Robomongo
                     errorReason = "Network is unreachable.";
                 }
 
+                resetGlobalSSLparams();
+
                 reply(event->sender(), new EstablishConnectionResponse(this,
                     EventError(errorReason), event->connectionType,
                     EstablishConnectionResponse::MongoConnection));
@@ -186,12 +188,17 @@ namespace Robomongo
 
             init();
 
+            resetGlobalSSLparams();
+
             reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), 
                 dbNames, client->getVersion(), client->getStorageEngineType()), event->connectionType));
         } catch(const std::exception &ex) {
+            resetGlobalSSLparams();
+
             auto errorReason = _connection->sslSettings()->sslEnabled() ?
                 EstablishConnectionResponse::ErrorReason::MongoSslConnection : 
                 EstablishConnectionResponse::ErrorReason::MongoAuth;
+
             reply(event->sender(), 
                 new EstablishConnectionResponse(this, EventError(ex.what()), event->connectionType, errorReason));
         }
@@ -634,6 +641,9 @@ namespace Robomongo
             // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
             _dbclient = std::unique_ptr<mongo::DBClientConnection>(new mongo::DBClientConnection(true, _mongoTimeoutSec));
 
+            // As a precaution reset SSL global params for any kind of connection request (SSL or non-SSL)
+            resetGlobalSSLparams();
+
             // Update global mongo SSL settings according to SSL enable/disabled status
             if (_connection->sslSettings()->sslEnabled())
             {
@@ -684,7 +694,7 @@ namespace Robomongo
 
     void MongoWorker::resetGlobalSSLparams() const
     {
-        mongo::sslGlobalParams.sslAllowInvalidCertificates = "";
+        mongo::sslGlobalParams.sslAllowInvalidCertificates = false;
         mongo::sslGlobalParams.sslCAFile = "";
         mongo::sslGlobalParams.sslPEMKeyFile = "";
         mongo::sslGlobalParams.sslPEMKeyPassword = "";

@@ -37,6 +37,8 @@ tar -xvzf openssl-1.0.1p.tar.gz
 cd /Users/<user>/Downloads/openssl-1.0.1p
 ./Configure darwin64-x86_64-cc shared --openssldir="@rpath/OpenSSL"
 make (or sudo make)
+mkdir -p /OpenSSL/lib
+cp libssl.1.0.0.dylib libcrypto.1.0.0.dylib /OpenSSL/lib/
 ```
 Helper Commands
   ```sh

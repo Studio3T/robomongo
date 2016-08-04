@@ -1,5 +1,6 @@
 #include "robomongo/gui/dialogs/SSLTab.h"
 
+#include <QApplication>
 #include <QLabel>
 #include <QLineEdit>
 #include <QGridLayout>
@@ -396,6 +397,13 @@ namespace Robomongo
             filePath = QDir::homePath();
         }
         QString fileName = QFileDialog::getOpenFileName(this, tr("Choose File"), filePath);
+
+        // Some strange behaviour at least on Mac happens when you close QFileDialog. Focus switched to a different modal
+        // dialog, not the one that was active before openning QFileDialog.
+        // http://stackoverflow.com/questions/17998811/window-modal-qfiledialog-pushing-parent-to-background-after-exec
+        QApplication::activeModalWidget()->raise();
+        QApplication::activeModalWidget()->activateWindow();
+
         return QDir::toNativeSeparators(fileName);
     }
 }

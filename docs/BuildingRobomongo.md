@@ -35,10 +35,10 @@ Steps to build OpenSSL on MAC:
 Download openssl-1.0.1p (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1p.tar.gz)
 tar -xvzf openssl-1.0.1p.tar.gz
 cd /Users/<user>/Downloads/openssl-1.0.1p
-./Configure darwin64-x86_64-cc shared --openssldir="@rpath/OpenSSL"
+./Configure darwin64-x86_64-cc shared --openssldir="@rpath"
 make (or sudo make)
-mkdir -p /OpenSSL/lib
-cp libssl.1.0.0.dylib libcrypto.1.0.0.dylib /OpenSSL/lib/
+mkdir lib
+cp libssl.1.0.0.dylib libcrypto.1.0.0.dylib lib/
 ```
 Helper Commands
   ```sh

@@ -46,6 +46,7 @@ namespace Robomongo
         VERIFY(connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool))));
 
         _echoModeButton = new QPushButton;
+        _echoModeButton->setIcon(GuiRegistry::instance().hideIcon());
 #ifdef Q_OS_MAC
         _echoModeButton->setMaximumWidth(50);
 #else
@@ -56,7 +57,6 @@ namespace Robomongo
         _echoModeButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
 #endif
         VERIFY(connect(_echoModeButton, SIGNAL(clicked()), this, SLOT(toggleEchoMode())));
-        toggleEchoMode();
 
         _useAuth->setChecked(_settings->hasEnabledPrimaryCredential());
         authChecked(_settings->hasEnabledPrimaryCredential());

@@ -58,16 +58,16 @@ namespace Robomongo
         _passwordBox = new QLineEdit(QtUtils::toQString(info->userPassword()));
         _passwordBox->setEchoMode(QLineEdit::Password);
         _passwordEchoModeButton = new QPushButton;
+        _passwordEchoModeButton->setIcon(GuiRegistry::instance().hideIcon());
         VERIFY(connect(_passwordEchoModeButton, SIGNAL(clicked()), this, SLOT(togglePasswordEchoMode())));
-        togglePasswordEchoMode();
 
         _privateKeyBox = new QLineEdit(QtUtils::toQString(info->privateKeyFile()));
         
         _passphraseBox = new QLineEdit(QtUtils::toQString(info->passphrase()));
         _passphraseBox->setEchoMode(QLineEdit::Password);
         _passphraseEchoModeButton = new QPushButton;
+        _passphraseEchoModeButton->setIcon(GuiRegistry::instance().hideIcon());
         VERIFY(connect(_passphraseEchoModeButton, SIGNAL(clicked()), this, SLOT(togglePassphraseEchoMode())));
-        togglePassphraseEchoMode();
 
         _passwordLabel = new QLabel("User Password:");
         _sshPrivateKeyLabel = new QLabel("Private key:");

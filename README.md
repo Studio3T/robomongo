@@ -27,15 +27,15 @@ Plans for Future:
 Supported Platforms
 ===============
 
-**MongoDB Versions:**
+**Supported MongoDBs:**
 
-| MongoDB               |
-| :-------------------- |
-| 3.2                   |
-| 3.0                   |
-| 2.6                   |
+| MongoDB Versions      | MongoDB Cloud |
+| :-------------------- | :------------ |
+| 3.2                   | MongoDB Atlas |
+| 3.0                   | Compose       |
+| 2.6                   |               |
 
-**OS Platforms:**
+**Supported OS Platforms:**
 
 | Windows                |   Mac            | Linux                       |        
 |:---------------------- | :---------------| :---------------------------|

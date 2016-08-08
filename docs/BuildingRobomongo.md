@@ -55,6 +55,8 @@ tar -xvzf openssl-1.0.1p.tar.gz
 cd /home/<user>/Downloads/openssl-1.0.1p
 ./config shared
 make
+mkdir lib
+cp libssl* libcrypto* lib/
 ```
 
 #### Step 2. Build Robomongo Shell (fork of MongoDB)

@@ -62,7 +62,19 @@ if(SYSTEM_WINDOWS)
         FILES 
         "${OpenSSL_DIR}/out32dll/ssleay32.dll"
         "${OpenSSL_DIR}/out32dll/libeay32.dll"
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
+        DESTINATION ${bin_dir})
+elseif(SYSTEM_MACOSX)
+    install(
+        FILES 
+        "${OpenSSL_DIR}/libssl.1.0.0.dylib"
+        "${OpenSSL_DIR}/libcrypto.1.0.0.dylib"
+        DESTINATION ${lib_dir}/lib)
+elseif(SYSTEM_LINUX)
+    install(
+        FILES 
+        "${OpenSSL_DIR}/libssl.so.1.0.0"
+        "${OpenSSL_DIR}/libcrypto.so.1.0.0"
+        DESTINATION ${lib_dir})         
 endif()
 
 # Install binary
@@ -88,7 +100,6 @@ install_icu_libs()
 if(SYSTEM_LINUX)
     install_qt_lib(XcbQpa DBus)
     install_qt_plugins(
-        QGtk2ThemePlugin
         QXcbIntegrationPlugin)
 
 elseif(SYSTEM_MACOSX)

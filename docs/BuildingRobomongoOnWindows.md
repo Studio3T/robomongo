@@ -64,13 +64,13 @@ A. Prerequisites
  command will be available from Command Prompt. For this set "Add CMake to the system
  PATH for current user" in the installer wizard page. 
    
-#### 5. Qt 5.5
+#### 5. Qt 5.7
 
  Download Qt from http://www.qt.io/download-open-source/ (we use Qt Online installer)
    
  When installing Qt, only one component is required by Robomongo: 
    
-    Qt 5.5 
+    Qt 5.7 
       [x] msvc2013 64-bit.
     
  This components contains prebuilt 64-bit binaries for Visual Studio 2013. 
@@ -88,7 +88,6 @@ B. Building Robomongo and Dependencies
 #### 1. Build OpenSSL (1.0.1p)
 
 Steps to build OpenSSL on windows:
-
   ```sh
 Open Visual Studio tool x64 Cross Tools Command prompt
 cd to the directory where you have openssl sources cd c:\myPath\openssl
@@ -99,6 +98,12 @@ nmake -f ms\ntdll.mak
 
 **Check Point:**
 After successful build, newly created sub directory out32dll should contain dynamic lib files libeay32.lib (and libeay32.dll) and ssleay32.lib (and ssleay32.dll); and associated include files will be in newly created folder "inc32".
+
+Helper Commands:
+  ```sh
+// clean to start fresh build
+nmake -f ms\ntdll.mak clean
+```
 
 Refer to OpenSSL documentation for more information:  
 https://wiki.openssl.org/index.php/Compilation_and_Installation#W64
@@ -121,7 +126,7 @@ Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robomongo-Sh
 
 Separate directories by semicolon `;` (not colon). You can do this in Command Prompt:
 
-    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.5\msvc2013_64;d:\Projects\robomongo-shell;c:\myPath\openssl-1.0.1p"
+    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.7\msvc2013_64;d:\Projects\robomongo-shell;c:\myPath\openssl-1.0.1p"
 
 
 Open VS2013 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.

@@ -131,7 +131,7 @@ namespace Robomongo
         DatabasesContainerType getDatabaseNamesSafe();
         std::string getAuthBase() const;
 
-        mongo::DBClientBase *_dbclient;
+        std::unique_ptr<mongo::DBClientConnection> _dbclient;
         mongo::DBClientBase *getConnection(bool mayReturnNull = false);
         MongoClient *getClient();
 
@@ -139,7 +139,12 @@ namespace Robomongo
         *@brief Update global mongo SSL settings (mongo::sslGlobalParams) according to active connection 
         *       request's SSL settings.
         */
-        void writeGlobalSSLparams() const;
+        void updateGlobalSSLparams() const;
+
+        /**
+        *@brief Reset global mongo SSL settings (mongo::sslGlobalParams) into default zero state
+        */
+        void resetGlobalSSLparams() const;
 
         /**
          * @brief Send reply event to object 'obj'

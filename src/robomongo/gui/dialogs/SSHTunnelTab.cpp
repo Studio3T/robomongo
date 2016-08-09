@@ -14,9 +14,11 @@
 #include <QFrame>
 
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/utils/ComboBoxUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
+#include "robomongo/gui/utils/GuiConstants.h"
 
 namespace {
     const QString askPasswordText = "Ask for password each time";
@@ -55,14 +57,16 @@ namespace Robomongo
 
         _passwordBox = new QLineEdit(QtUtils::toQString(info->userPassword()));
         _passwordBox->setEchoMode(QLineEdit::Password);
-        _passwordEchoModeButton = new QPushButton(tr("Show"));
+        _passwordEchoModeButton = new QPushButton;
+        _passwordEchoModeButton->setIcon(GuiRegistry::instance().hideIcon());
         VERIFY(connect(_passwordEchoModeButton, SIGNAL(clicked()), this, SLOT(togglePasswordEchoMode())));
-        
+
         _privateKeyBox = new QLineEdit(QtUtils::toQString(info->privateKeyFile()));
         
         _passphraseBox = new QLineEdit(QtUtils::toQString(info->passphrase()));
         _passphraseBox->setEchoMode(QLineEdit::Password);
-        _passphraseEchoModeButton = new QPushButton(tr("Show"));
+        _passphraseEchoModeButton = new QPushButton;
+        _passphraseEchoModeButton->setIcon(GuiRegistry::instance().hideIcon());
         VERIFY(connect(_passphraseEchoModeButton, SIGNAL(clicked()), this, SLOT(togglePassphraseEchoMode())));
 
         _passwordLabel = new QLabel("User Password:");
@@ -138,9 +142,24 @@ namespace Robomongo
         VERIFY(connect(_sshSupport, SIGNAL(stateChanged(int)), this, SLOT(sshSupportStateChange(int))));
 
         _sshHostName->setFocus();
+
+#ifdef Q_OS_MAC
+        _passwordEchoModeButton->setMaximumWidth(_selectPrivateFileButton->width());
+        _passphraseEchoModeButton->setMaximumWidth(_selectPrivateFileButton->width());
+#else
+        _passwordEchoModeButton->setMinimumWidth(_selectPrivateFileButton->width());
+        _passphraseEchoModeButton->setMinimumWidth(_selectPrivateFileButton->width());
+#endif
+        // Attempt to fix the issue for Windows High DPI button height is slightly taller than other widgets 
+#ifdef Q_OS_WIN
+        _passwordEchoModeButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _passphraseEchoModeButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _selectPrivateFileButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+#endif
+
     }
 
-    bool SshTunnelTab::isSshSupported() const
+    bool SshTunnelTab::sshEnabled() const
     {
         return _sshSupport->isChecked();
     }
@@ -279,13 +298,13 @@ namespace Robomongo
     {
         bool isPassword = _passwordBox->echoMode() == QLineEdit::Password;
         _passwordBox->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
-        _passwordEchoModeButton->setText(isPassword ? tr("Hide"): tr("Show"));
+        _passwordEchoModeButton->setIcon(isPassword ? GuiRegistry::instance().showIcon() : GuiRegistry::instance().hideIcon());
     }
     
     void SshTunnelTab::togglePassphraseEchoMode()
     {
         bool isPassword = _passphraseBox->echoMode() == QLineEdit::Password;
         _passphraseBox->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
-        _passphraseEchoModeButton->setText(isPassword ? tr("Hide"): tr("Show"));
+        _passphraseEchoModeButton->setIcon(isPassword ? GuiRegistry::instance().showIcon() : GuiRegistry::instance().hideIcon());
     }
 }

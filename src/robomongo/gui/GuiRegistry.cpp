@@ -263,6 +263,18 @@ namespace Robomongo
         return keyIc;
     }
 
+    const QIcon &GuiRegistry::showIcon() const
+    {
+        static const QIcon icon = QIcon(":/robomongo/icons/show_64x64.png");
+        return icon;
+    }
+
+    const QIcon &GuiRegistry::hideIcon() const
+    {
+        static const QIcon icon = QIcon(":/robomongo/icons/hide_64x64.png");
+        return icon;
+    }
+
     const QBrush &GuiRegistry::typeBrush() const
     {
         static const QBrush typeBrush = QBrush(QColor(150, 150, 150));

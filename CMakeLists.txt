@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 set(PROJECT_VERSION_MAJOR "0")
 set(PROJECT_VERSION_MINOR "9")
 set(PROJECT_VERSION_PATCH "0")
-set(PROJECT_VERSION_BUILD "-RC9")
+set(PROJECT_VERSION_BUILD "-RC10")
 set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}${PROJECT_VERSION_BUILD}")
 
 # Modules
@@ -35,7 +35,6 @@ if (SYSTEM_MACOSX)
 endif()
 
 # Projects
-#add_subdirectory(src/third-party/openssl)
 add_subdirectory(src/third-party/libssh2)
 add_subdirectory(src/robomongo/ssh)
 add_subdirectory(src/third-party/qjson)

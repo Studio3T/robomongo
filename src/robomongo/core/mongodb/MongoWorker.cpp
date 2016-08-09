@@ -25,7 +25,7 @@ namespace Robomongo
                              int mongoTimeoutSec, int shellTimeoutSec, QObject *parent) : QObject(parent),
         _connection(connection),
         _scriptEngine(NULL),
-        _dbclient(NULL),
+        _dbclient(nullptr),
         _isAdmin(true),
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
@@ -114,7 +114,6 @@ namespace Robomongo
         if (_dbAutocompleteCacheTimerId != -1)
             killTimer(_dbAutocompleteCacheTimerId);
 
-        delete _dbclient;
         delete _connection;
         delete _scriptEngine;
 
@@ -138,8 +137,23 @@ namespace Robomongo
         try {
             mongo::DBClientBase *conn = getConnection(true);
             if (conn == NULL) {
+                // Protection by default value: Logically/ideally, this error should never be seen.
+                auto errorReason = std::string("Connection failure: Unknown error.");
+                if (_connection->sslSettings()->sslEnabled())
+                {
+                    // Note: Currently mongo-shell does not provide any interface to fetch actual error details
+                    // for some SSL connection failures that's why we are unable to show exact error here. 
+                    errorReason = "SSL tunnel failure: Network is unreachable or SSL connection rejected by server.";
+                }
+                else
+                {
+                    errorReason = "Network is unreachable.";
+                }
+
+                resetGlobalSSLparams();
+
                 reply(event->sender(), new EstablishConnectionResponse(this,
-                    EventError("Network is unreachable"), event->connectionType,
+                    EventError(errorReason), event->connectionType,
                     EstablishConnectionResponse::MongoConnection));
                 return;
             }
@@ -175,10 +189,19 @@ namespace Robomongo
 
             init();
 
+            resetGlobalSSLparams();
+
             reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), 
                 dbNames, client->getVersion(), client->getStorageEngineType()), event->connectionType));
         } catch(const std::exception &ex) {
-            reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what()), event->connectionType, EstablishConnectionResponse::MongoAuth));
+            resetGlobalSSLparams();
+
+            auto errorReason = _connection->sslSettings()->sslEnabled() ?
+                EstablishConnectionResponse::ErrorReason::MongoSslConnection : 
+                EstablishConnectionResponse::ErrorReason::MongoAuth;
+
+            reply(event->sender(), 
+                new EstablishConnectionResponse(this, EventError(ex.what()), event->connectionType, errorReason));
         }
     }
 
@@ -546,7 +569,7 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             MongoWorker *cl = event->worker();
-            client->copyCollectionToDiffServer(cl->_dbclient, event->from(), event->to());
+            client->copyCollectionToDiffServer(cl->_dbclient.get(), event->from(), event->to());
             client->done();
 
             reply(event->sender(), new CopyCollectionToDiffServerResponse(this));
@@ -617,14 +640,17 @@ namespace Robomongo
         if (!_dbclient) {
             // Timeout for operations
             // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
-            mongo::DBClientConnection *conn = new mongo::DBClientConnection(true, _mongoTimeoutSec);
+            _dbclient = std::unique_ptr<mongo::DBClientConnection>(new mongo::DBClientConnection(true, _mongoTimeoutSec));
+
+            // As a precaution reset SSL global params for any kind of connection request (SSL or non-SSL)
+            resetGlobalSSLparams();
 
             // Update global mongo SSL settings according to SSL enable/disabled status
             if (_connection->sslSettings()->sslEnabled())
             {
                 // Force SSL mode for outgoing connections
                 mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
-                writeGlobalSSLparams();
+                updateGlobalSSLparams();
             }
             else
             {
@@ -632,16 +658,13 @@ namespace Robomongo
                 mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
             }
 
-            mongo::Status status = conn->connect(_connection->info());
+            mongo::Status status = _dbclient->connect(_connection->info());
 
             if (!status.isOK() && mayReturnNull) {
-                delete conn;
-                return NULL;
+                return nullptr;
             }
-
-            _dbclient = conn;
         }
-        return _dbclient;
+        return _dbclient.get();
     }
 
     MongoClient *MongoWorker::getClient()
@@ -649,16 +672,35 @@ namespace Robomongo
         return new MongoClient(getConnection());
     }
 
-    void MongoWorker::writeGlobalSSLparams() const
+    void MongoWorker::updateGlobalSSLparams() const
     {
+        resetGlobalSSLparams();
         const SslSettings * const sslSettings = _connection->sslSettings();
-        mongo::sslGlobalParams.sslCAFile = sslSettings->caFile();
-        mongo::sslGlobalParams.sslPEMKeyFile = sslSettings->pemKeyFile();
-        mongo::sslGlobalParams.sslPEMKeyPassword =
-            sslSettings->pemKeyEncrypted() ? sslSettings->pemPassPhrase() : "";
         mongo::sslGlobalParams.sslAllowInvalidCertificates = sslSettings->allowInvalidCertificates();
-        mongo::sslGlobalParams.sslCRLFile = sslSettings->crlFile();
-        mongo::sslGlobalParams.sslAllowInvalidHostnames = sslSettings->allowInvalidHostnames();
+        if (!mongo::sslGlobalParams.sslAllowInvalidCertificates)
+        {
+            mongo::sslGlobalParams.sslCAFile = sslSettings->caFile();
+        }
+        if (sslSettings->usePemFile())
+        {
+            mongo::sslGlobalParams.sslPEMKeyFile = sslSettings->pemKeyFile();
+            mongo::sslGlobalParams.sslPEMKeyPassword = sslSettings->pemPassPhrase();
+        }
+        if (sslSettings->useAdvancedOptions())
+        {
+            mongo::sslGlobalParams.sslCRLFile = sslSettings->crlFile();
+            mongo::sslGlobalParams.sslAllowInvalidHostnames = sslSettings->allowInvalidHostnames();
+        }
+    }
+
+    void MongoWorker::resetGlobalSSLparams() const
+    {
+        mongo::sslGlobalParams.sslAllowInvalidCertificates = false;
+        mongo::sslGlobalParams.sslCAFile = "";
+        mongo::sslGlobalParams.sslPEMKeyFile = "";
+        mongo::sslGlobalParams.sslPEMKeyPassword = "";
+        mongo::sslGlobalParams.sslCRLFile = "";
+        mongo::sslGlobalParams.sslAllowInvalidHostnames = false;
     }
 
     /**

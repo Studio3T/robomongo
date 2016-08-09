@@ -10,6 +10,8 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/utils/GuiConstants.h"
 
 namespace Robomongo
 {
@@ -43,7 +45,17 @@ namespace Robomongo
         _useAuth->setStyleSheet("margin-bottom: 7px");
         VERIFY(connect(_useAuth, SIGNAL(toggled(bool)), this, SLOT(authChecked(bool))));
 
-        _echoModeButton = new QPushButton("Show");
+        _echoModeButton = new QPushButton;
+        _echoModeButton->setIcon(GuiRegistry::instance().hideIcon());
+#ifdef Q_OS_MAC
+        _echoModeButton->setMaximumWidth(50);
+#else
+        _echoModeButton->setMinimumWidth(50);
+#endif
+        // Attempt to fix the issue for Windows High DPI button height is slightly taller than other widgets 
+#ifdef Q_OS_WIN
+        _echoModeButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+#endif
         VERIFY(connect(_echoModeButton, SIGNAL(clicked()), this, SLOT(toggleEchoMode())));
 
         _useAuth->setChecked(_settings->hasEnabledPrimaryCredential());
@@ -96,7 +108,7 @@ namespace Robomongo
     {
         bool isPassword = _userPassword->echoMode() == QLineEdit::Password;
         _userPassword->setEchoMode(isPassword ? QLineEdit::Normal: QLineEdit::Password);
-        _echoModeButton->setText(isPassword ? "Hide": "Show");
+        _echoModeButton->setIcon(isPassword ? GuiRegistry::instance().showIcon() : GuiRegistry::instance().hideIcon());
     }
 
     void ConnectionAuthTab::authChecked(bool checked)

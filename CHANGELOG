@@ -1,19 +1,23 @@
 
-Robomongo 0.9.0 RC9 (May 30, 2016)
-http://blog.robomongo.org/robomongo-rc9/
+Latest Release: 
+Robomongo 0.9.0 RC10 (Aug 8, 2016)
+http://blog.robomongo.org/robomongo-rc10/
 
-  What's new in Robomongo 0.9.0:
-	New Features: 
+  Highlights from Robomongo 0.9.0 RCs:
+	Major Features: 
 	  - Support for MongoDB 3.x and WiredTiger engine. Robomongo now embeds MongoDB 3.2 shell. 
-		It means that you can now use the latest shell functionality. 
+		(Ability to use the latest shell functionality)
 	  - SSH tunnel support for connections added.
+  	  - Support for SSL connections added. 
+	  - MongoDB Atlas (Cloud) support added.
 	  - Both MONGODB-CR and SCRAM-SHA-1 authentication mechanisms are supported. 
 	  - Allow direct connections to Replica Set members and support IPv6 protocol. 
 	  - Loading of huge list of collections is now faster.
 	  - Create Collection dialog is now expandable to support all advanced options.
-	  (Supporting all major mongoDB versions 3.2, 3.0, 2.6 and all storage engine types (WiredTiger 
-	  and MMAPV1) is added.) 
-	
+	    (Supporting all major mongoDB versions 3.2, 3.0, 2.6 and all storage engine types (WiredTiger 
+	    and MMAPV1) is added.) 
+	  - Windows High DPI support.
+	  
     Fixed:
 	  - Incorrect representation of floating-point numbers (fixed since RC3). This bug was a reason of a big number of issues:
         #910, #748, #697, #699, #760, #815, #870, #892, 
@@ -21,7 +25,20 @@ http://blog.robomongo.org/robomongo-rc9/
 	  - SSH connection failure to servers on Ubuntu and OS X with the following error:
 		"Resource temporarily unavailable. Error when starting up SSH session: -8"  (#1090)
 		  
-  What's new in RC9 (May 30, 2016 )
+  What's new in RC10 (Aug 8, 2016)
+  http://blog.robomongo.org/robomongo-rc10/
+  
+	  New Features:
+		- SSL connections with advanced options are now supported.
+		- MongoDB Atlas (Cloud) is supported.
+		- Window High DPI support
+
+	  Enhancements:
+		- For better security, OpenSSL has been upgraded to OpenSSL 1.0.1p.
+		- Qt has been uprade from Qt 5.5 to latest Qt 5.7. With this update there are many 
+		  enhancements including cross platform High DPI support.
+
+  What's new in RC9 (May 30, 2016)
   http://blog.robomongo.org/robomongo-rc9/
   
 	  New Features:
@@ -36,22 +53,22 @@ http://blog.robomongo.org/robomongo-rc9/
 		  "Resource temporarily unavailable. Error when starting up SSH session: -8"  (#1090)
 		- Correct handling of create/drop of databases and collections. (#1083)
 	
-  What's new in RC8 (April 14, 2016 )
+  What's new in RC8 (April 14, 2016)
   http://blog.robomongo.org/robomongo-rc8/
 	 
-  What's new in RC7 (March 4, 2016 )
+  What's new in RC7 (March 4, 2016)
   http://blog.robomongo.org/robomongo-rc7
 
-  What's new in RC6 (February 13, 2016 )
+  What's new in RC6 (February 13, 2016)
   http://blog.robomongo.org/ipv6-protocol
 
-  What's new in RC5 (February 8, 2016 )
+  What's new in RC5 (February 8, 2016)
   http://blog.robomongo.org/campaign-is-over-robomongo-is-not/
 
-  What's new in RC4 (February 1, 2016 )
+  What's new in RC4 (February 1, 2016)
   http://blog.robomongo.org/robomongo-rc4
 
-  What's new in RC3 (January 29, 2016 )
+  What's new in RC3 (January 29, 2016)
   http://blog.robomongo.org/robomongo-0-9-0-rc3-released
 
   What's new in RC2 (January 26, 2016)

@@ -66,7 +66,10 @@ namespace Robomongo
         setLayout(mainLayout);
 
         _basicTab->setFocus();
-        resize(1100,790);       // updated resize after SSLTab, to be removed after Qt5.7 - HiDPI implemented.
+        adjustSize();
+
+        // Set minimum width - adjustment after adding SSLTab
+        setMinimumWidth(550);
     }
 
     /**
@@ -81,21 +84,21 @@ namespace Robomongo
 
     bool ConnectionDialog::validateAndApply()
     {
-#ifdef SSH_SUPPORT_ENABLED
-        bool isSshAndSsl = _sslTab->isSslSupported() && _sshTab->isSshSupported();
-        if (isSshAndSsl) {
-            QMessageBox::warning(this, "Invalid Transport", "SSH and SSL cannot be enabled simultaneously. Please uncheck one of them.");
+        bool sshAndSslChecked = (_sslTab->sslEnabled() && _sshTab->sshEnabled());
+        if (sshAndSslChecked) 
+        {
+            QMessageBox::warning(this, "Invalid Configuration", "SSH and SSL cannot be enabled simultaneously. "
+                "Please use one of them.");
             return false;
         }
-#endif
         _basicTab->accept();
         _authTab->accept();
         _advancedTab->accept();
 
-        if (!_sshTab->accept())
+        if (!_sshTab->accept() || !_sslTab->accept())
+        {
             return false;
-
-         _sslTab->accept();
+        }
 
         return true;
     }

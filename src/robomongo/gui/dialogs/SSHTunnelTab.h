@@ -24,7 +24,11 @@ namespace Robomongo
     public:
         SshTunnelTab(ConnectionSettings *settings);
         bool accept();
-        bool isSshSupported() const;
+
+        /**
+        * @return true if use SSH checkbox is checked, false otherwise
+        */
+        bool sshEnabled() const;
 
     private Q_SLOTS:
         void sshSupportStateChange(int checked);

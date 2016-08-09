@@ -7,18 +7,37 @@ Starting from version 0.9, Robomongo is compatibile with MongoDB 3.x (including 
 
 Robomongo 0.8.x embeds the **MongoDB 2.4.0** shell.
 
+What's Planned for the Next Release?
+====================================
+
+We are currently working towards [Robomongo 0.9.0 RC10 milestone](https://github.com/paralect/robomongo/milestone/14).  
+ 
+Currently in progress:
+- SSL supported connections
+- Cross Plaftorm Hi-DPI support (Qt 5.7 transition)
+
+Plans for Future:
+- User Roles
+- Replica Sets
+- Enhancements for stability, running without crashes
+- More Documentation
+- Unit Tests
+- Refactoring Debug Log module
+
 Supported Platforms
 ===============
 
-**MongoDB Versions:**
+**Supported MongoDBs:**
 
-| MongoDB               |
-| :-------------------- |
-| 3.2                   |
-| 3.0                   |
-| 2.6                   |
+| MongoDB Versions      | MongoDB Cloud |
+| :-------------------- | :------------ |
+| 3.2                   | MongoDB Atlas |
+| 3.0                   | Compose       |
+| 2.6                   | mLab          |
 
-**OS Platforms:**
+**Note**: Currently Robomongo supports connection to single server of a replica set. Support for connection to **Replica Sets** is one of the most important features of next Robomongo release plan.
+
+**Supported OS Platforms:**
 
 | Windows                |   Mac            | Linux                       |        
 |:---------------------- | :---------------| :---------------------------|
@@ -55,12 +74,6 @@ Build
 The wiki contains prerequisites and instructions to [Build Robomongo](https://github.com/paralect/robomongo/wiki/Build-Robomongo).
 
 If you want to compile from source yourself, you should be able to do so cleanly from a [release branch](https://github.com/paralect/robomongo/releases).
-
-What's Planned for the Next Release?
-====================================
-
-We are currently working toward a [0.9.0 release milestone](https://github.com/paralect/robomongo/milestones/Robomongo%200.9.0)
-with some major features targeted including support for connection via SSL and full support for replica sets.
 
 Contribute!
 ===========

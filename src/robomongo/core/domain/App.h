@@ -93,6 +93,13 @@ namespace Robomongo
         MongoServer *continueOpenServer(int serverHandle, ConnectionSettings *connection, ConnectionType type, int localport = 0);
 
         /**
+        * @brief Create prompt dialog to enter SSL PEM key passphrase and save passphrase into SSL settings
+        * @param connection Pointer to active connection settings
+        * @return true on success, false otherwise
+        */
+        bool askSslPassphrasePromptDialog(ConnectionSettings *connSettings) const;
+
+        /**
          * MongoServers, owned by this App.
          */
         MongoServersContainerType _servers;

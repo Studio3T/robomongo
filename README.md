@@ -71,7 +71,7 @@ You can:
 Build
 =====
 
-The wiki contains prerequisites and instructions to [Build Robomongo](https://github.com/paralect/robomongo/wiki/Build-Robomongo).
+The wiki contains prerequisites and instructions to [Build Robomongo](https://github.com/paralect/robomongo/wiki).
 
 If you want to compile from source yourself, you should be able to do so cleanly from a [release branch](https://github.com/paralect/robomongo/releases).
 

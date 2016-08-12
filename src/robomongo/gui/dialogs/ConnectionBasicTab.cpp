@@ -7,6 +7,7 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include <QFileDialog>
+#include <QComboBox>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -27,6 +28,9 @@ namespace Robomongo
         serverDescriptionLabel->setContentsMargins(0, -2, 0, 20);
 
         _connectionName = new QLineEdit(QtUtils::toQString(_settings->connectionName()));
+        _connectionType = new QComboBox;
+        _connectionType->addItem(tr("Direct Connection"));
+        _connectionType->addItem(tr("Replica Set or Sharded Cluster"));
         _serverAddress = new QLineEdit(QtUtils::toQString(_settings->serverHost()));
         _serverPort = new QLineEdit(QString::number(_settings->serverPort()));
         _serverPort->setFixedWidth(80);
@@ -35,14 +39,17 @@ namespace Robomongo
 
         QGridLayout *connectionLayout = new QGridLayout;
         connectionLayout->setAlignment(Qt::AlignTop);
-        connectionLayout->addWidget(new QLabel("Name:"),          1, 0);
-        connectionLayout->addWidget(_connectionName,              1, 1, 1, 3);
-        connectionLayout->addWidget(connectionDescriptionLabel,   2, 1, 1, 3);
-        connectionLayout->addWidget(new QLabel("Address:"),       3, 0);
-        connectionLayout->addWidget(_serverAddress,               3, 1);
-        connectionLayout->addWidget(new QLabel(":"),              3, 2);
-        connectionLayout->addWidget(_serverPort,                  3, 3);
-        connectionLayout->addWidget(serverDescriptionLabel,       4, 1, 1, 3);
+        connectionLayout->addWidget(new QLabel("Type:"),          1, 0);
+        connectionLayout->addWidget(_connectionType,              1, 1, 1, 3);        
+        connectionLayout->addWidget(new QLabel(""),               2, 0);
+        connectionLayout->addWidget(new QLabel("Name:"),          3, 0);
+        connectionLayout->addWidget(_connectionName,              3, 1, 1, 3);
+        connectionLayout->addWidget(connectionDescriptionLabel,   4, 1, 1, 3);
+        connectionLayout->addWidget(new QLabel("Address:"),       5, 0);
+        connectionLayout->addWidget(_serverAddress,               5, 1);
+        connectionLayout->addWidget(new QLabel(":"),              5, 2);
+        connectionLayout->addWidget(_serverPort,                  5, 3);
+        connectionLayout->addWidget(serverDescriptionLabel,       6, 1, 1, 3);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addLayout(connectionLayout);

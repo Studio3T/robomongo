@@ -5,6 +5,7 @@ QT_BEGIN_NAMESPACE
 class QLineEdit;
 class QCheckBox;
 class QPushButton;
+class QComboBox;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -22,6 +23,7 @@ namespace Robomongo
     private:
         QLineEdit *_connectionName;
         QLineEdit *_serverAddress;
+        QComboBox *_connectionType;
         QLineEdit *_serverPort;
         ConnectionSettings *const _settings;
     };

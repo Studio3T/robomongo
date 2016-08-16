@@ -53,7 +53,7 @@ Download
 
 You can download tested install packages for OS X, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
 
-The latest release candidate is currently **Robomongo 0.9.0 RC**. (http://blog.robomongo.org/robomongo-rc9/).
+The latest release candidate is currently **Robomongo 0.9.0 RC9**. (http://blog.robomongo.org/robomongo-rc9/).
 
 The latest stable release is currently **Robomongo 0.8.5**. (http://blog.robomongo.org/whats-new-in-robomongo-0-8-5/)
 
@@ -86,7 +86,9 @@ This project is powered by open source volunteers, so we have a limited amount o
 
 ### Code Contributions
 
-Code contributions are always welcome! Just try to follow our coding style: [Robomongo Coding Style](https://github.com/paralect/robomongo/wiki/Robomongo-Coding-Style).
+Code contributions are always welcome! Just try to follow our pre-commit checks and coding style: 
+- [Robomongo Code Quality](https://github.com/paralect/robomongo/wiki/Robomongo-Code-Quality)
+- [Robomongo Coding Style](https://github.com/paralect/robomongo/wiki/Robomongo-Coding-Style)
 
 If you plan to contribute, please create a Github issue (or comment on the relevant existing issue) so we can help coordinate with upcoming release plans.
 

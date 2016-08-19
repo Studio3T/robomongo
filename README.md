@@ -19,6 +19,7 @@ Currently in progress:
 Plans for Future:
 - User Roles
 - Replica Sets
+- Support execution of multiple simultaneous queries [#1161](https://github.com/paralect/robomongo/issues/1161)
 - Enhancements for stability, running without crashes
 - More Documentation
 - Unit Tests

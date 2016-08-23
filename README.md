@@ -35,6 +35,9 @@ Supported Platforms
 | 3.2                   | MongoDB Atlas |
 | 3.0                   | Compose       |
 | 2.6                   | mLab          |
+|                       | ObjectRocket  |
+
+
 
 **Note**: Currently Robomongo supports connection to single server of a replica set. Support for connection to **Replica Sets** is one of the most important features of next Robomongo release plan.
 

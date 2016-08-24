@@ -77,6 +77,9 @@ namespace Robomongo
         void setViewMode(ViewMode viewMode) { _viewMode = viewMode; }
         ViewMode viewMode() const { return _viewMode; }
 
+        void setEditWindowMode(EditWindowMode editWindowMode) { _editWindowMode = editWindowMode; }
+        EditWindowMode editWindowMode() const { return _editWindowMode; }
+
         void setAutocompletionMode(AutocompletionMode mode) { _autocompletionMode = mode; }
         AutocompletionMode autocompletionMode() const { return _autocompletionMode; }
 
@@ -144,6 +147,7 @@ namespace Robomongo
         UUIDEncoding _uuidEncoding;
         SupportedTimes _timeZone;
         ViewMode _viewMode;
+        EditWindowMode _editWindowMode;
         AutocompletionMode _autocompletionMode;
         bool _loadMongoRcJs;
         bool _autoExpand;

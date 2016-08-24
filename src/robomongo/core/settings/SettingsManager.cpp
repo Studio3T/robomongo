@@ -46,6 +46,7 @@ namespace Robomongo
         _uuidEncoding(DefaultEncoding),
         _timeZone(Utc),
         _viewMode(Robomongo::Tree),
+        _editWindowMode(Robomongo::Modal),
         _autocompletionMode(AutocompleteAll),
         _batchSize(50),
         _disableConnectionShortcuts(false),
@@ -143,6 +144,14 @@ namespace Robomongo
             _viewMode = (ViewMode) viewMode;
         } else {
             _viewMode = Custom; // Default View Mode
+        }
+
+        // 4. Load edit window mode
+        if (map.contains("editWindowMode")) {
+            int editWindowMode = map.value("editWindowMode").toInt();
+            _editWindowMode = (EditWindowMode) editWindowMode;
+        } else {
+            _editWindowMode = Modal; // Default Edit Window Mode
         }
 
         _autoExpand = map.contains("autoExpand") ?
@@ -250,28 +259,31 @@ namespace Robomongo
         map.insert("autoExpand", _autoExpand);
         map.insert("lineNumbers", _lineNumbers);
 
-        // 5. Save Autocompletion mode
+        // 5 Save edit window mode
+        map.insert("editWindowMode", _editWindowMode);
+
+        // 6. Save Autocompletion mode
         map.insert("autocompletionMode", _autocompletionMode);
 
-        // 6. Save loadInitJs
+        // 7. Save loadInitJs
         map.insert("loadMongoRcJs", _loadMongoRcJs);
 
-        // 7. Save disableConnectionShortcuts
+        // 8. Save disableConnectionShortcuts
         map.insert("disableConnectionShortcuts", _disableConnectionShortcuts);
 
-        // 8. Save batchSize
+        // 9. Save batchSize
         map.insert("batchSize", _batchSize);
         map.insert("mongoTimeoutSec", _mongoTimeoutSec);
         map.insert("shellTimeoutSec", _shellTimeoutSec);
 
-        // 9. Save style
+        // 10. Save style
         map.insert("style", _currentStyle);
 
-        // 10. Save font information
+        // 11. Save font information
         map.insert("textFontFamily", _textFontFamily);
         map.insert("textFontPointSize", _textFontPointSize);
 
-        // 11. Save connections
+        // 12. Save connections
         QVariantList list;
 
         for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it != _connections.end(); ++it) {

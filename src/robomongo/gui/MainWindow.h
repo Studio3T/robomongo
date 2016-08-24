@@ -36,6 +36,9 @@ namespace Robomongo
         void enterTreeMode();
         void enterTableMode();
         void enterCustomMode();
+        void setModalWindowMode();
+        void setModelessWindowMode();
+        void setTabbedWindowMode();
         void toggleAutoExpand();
         void toggleAutoExec();
         void toggleLineNumbers();

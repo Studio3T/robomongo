@@ -11,6 +11,7 @@ namespace Robomongo
     class CredentialSettings;
     class SshSettings;
     class SslSettings;
+    class ReplicaSetSettings;
 
     /**
      * @brief Represents connection record
@@ -152,9 +153,14 @@ namespace Robomongo
 
         SshSettings *sshSettings() const { return _sshSettings; }
         SslSettings *sslSettings() const { return _sslSettings; }
+        ReplicaSetSettings *replicaSetSettings() const { return _replicaSetSettings; }
+
+        bool isReplicaSet() const { return _isReplicaSet; }
+        void setReplicaSet(bool flag) { _isReplicaSet = flag; }
 
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
+        bool _isReplicaSet;
         std::string _connectionName;
         std::string _host;
         int _port;
@@ -162,6 +168,7 @@ namespace Robomongo
         QList<CredentialSettings *> _credentials;
         SshSettings *_sshSettings;
         SslSettings *_sslSettings;
+        ReplicaSetSettings *_replicaSetSettings;
 
         // Was this connection imported from somewhere?
         bool _imported;

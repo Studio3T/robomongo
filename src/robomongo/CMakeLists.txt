@@ -125,6 +125,7 @@ set(SOURCES
     gui/dialogs/SSLTab.cpp
     core/settings/SshSettings.cpp
     core/settings/SslSettings.cpp
+	core/settings/ReplicaSetSettings.cpp
     core/mongodb/SshTunnelWorker.cpp
 
     gui/resources/gui.qrc

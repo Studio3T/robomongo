@@ -9,21 +9,26 @@
 #include <QFileDialog>
 #include <QComboBox>
 #include <QListWidget>
+#include <QListWidgetItem>
 #include <QShortCut>
 #include <QKeySequence>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/ReplicaSetSettings.h"
 
 namespace Robomongo
 {
     ConnectionBasicTab::ConnectionBasicTab(ConnectionSettings *settings) :
         _settings(settings)
     {
+        const ReplicaSetSettings* const replicaSettings = _settings->replicaSetSettings();
+
         _typeLabel = new QLabel("Type:");
         _connectionType = new QComboBox;
         _connectionType->addItem(tr("Direct Connection"));
         _connectionType->addItem(tr("Replica Set or Sharded Cluster")); 
+        _connectionType->setCurrentIndex(static_cast<int>(_settings->isReplicaSet()));
         VERIFY(connect(_connectionType, SIGNAL(currentIndexChanged(int)), this, SLOT(on_ConnectionTypeChange(int))));
         
         _nameLabel = new QLabel("Name:"); 
@@ -45,9 +50,18 @@ namespace Robomongo
 
         _membersLabel = new QLabel("Members:");
         _members = new QListWidget;
-        auto itemx = new QListWidgetItem("New Item");
-        itemx->setFlags(itemx->flags() | Qt::ItemIsEditable);
-        _members->addItem(itemx);
+        if (_settings->isReplicaSet()) {
+            for (const std::string& str : replicaSettings->members()) {
+                _members->addItem(QString::fromStdString(str));
+            }
+        }
+        // todo
+        //else
+        //{
+        //    auto itemx = new QListWidgetItem("New Item");
+        //    itemx->setFlags(itemx->flags() | Qt::ItemIsEditable);
+        //    _members->addItem(itemx);
+        //}
         int const BUTTON_SIZE = 60;
         _addButton = new QPushButton("Add");
         _addButton->setFixedWidth(BUTTON_SIZE);
@@ -67,6 +81,10 @@ namespace Robomongo
         _readPrefLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
         _readPreference = new QComboBox;
         _readPreference->addItems(QStringList({ "Primary", "Primary Preferred" }));  //todo
+        if (_settings->isReplicaSet()) {
+            _readPreference->setCurrentIndex(static_cast<int>(replicaSettings->readPreference()));
+        }
+        
 
         new QShortcut(QKeySequence(Qt::Key_Delete), this, SLOT(deleteItem()));
 
@@ -101,9 +119,24 @@ namespace Robomongo
 
     void ConnectionBasicTab::accept()
     {
+        ReplicaSetSettings* const replicaSettings = _settings->replicaSetSettings();
+       
+        _settings->setReplicaSet(static_cast<bool>(_connectionType->currentIndex()));
         _settings->setConnectionName(QtUtils::toStdString(_connectionName->text()));
         _settings->setServerHost(QtUtils::toStdString(_serverAddress->text()));
         _settings->setServerPort(_serverPort->text().toInt());
+        if (_settings->isReplicaSet()) {
+            // save replica members
+            std::vector<std::string> members;
+            for (int i = 0; i < _members->count(); ++i)
+            {
+                QListWidgetItem const* item = _members->item(i);
+                members.push_back(item->text().toStdString());
+            }
+            replicaSettings->setMembers(members);
+            // save read preference option 
+            replicaSettings->setReadPreference(static_cast<ReplicaSetSettings::ReadPreference>(_readPreference->currentIndex()));
+        }
     }
 
     void ConnectionBasicTab::on_ConnectionTypeChange(int index)

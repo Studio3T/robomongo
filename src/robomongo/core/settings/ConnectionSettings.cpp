@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "robomongo/core/settings/CredentialSettings.h"
+#include "robomongo/core/settings/ReplicaSetSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/settings/SslSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
@@ -28,14 +29,18 @@ namespace Robomongo
         _port(port),
         _imported(false),
         _sshSettings(new SshSettings()),
-        _sslSettings(new SslSettings()) { }
+        _sslSettings(new SslSettings()),
+        _replicaSetSettings(new ReplicaSetSettings()),
+        _isReplicaSet(false)
+    { }
 
     void ConnectionSettings::fromVariant(const QVariantMap &map) {
         setConnectionName(QtUtils::toStdString(map.value("connectionName").toString()));
         setServerHost(QtUtils::toStdString(map.value("serverHost").toString().left(maxLength)));
         setServerPort(map.value("serverPort").toInt());
         setDefaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString()));
-
+        setReplicaSet(map.value("isReplicaSet").toBool());       
+        
         QVariantList list = map.value("credentials").toList();
         for (QVariantList::const_iterator it = list.begin(); it != list.end(); ++it) {
             QVariant var = *it;
@@ -51,6 +56,10 @@ namespace Robomongo
             _sslSettings->fromVariant(map.value("ssl").toMap());
         }
 
+        if (isReplicaSet()) {
+            _replicaSetSettings->fromVariant(map.value("replicaSet").toMap());
+        }
+
 //#ifdef MONGO_SSL
 //      ,SSLInfo(map.value("sslEnabled").toBool(),QtUtils::toStdString(map.value("sslPemKeyFile").toString()))
 //#endif
@@ -64,6 +73,7 @@ namespace Robomongo
         clearCredentials();
         delete _sshSettings;
         delete _sslSettings;
+        delete _replicaSetSettings; // todo: unique_ptr
     }
 
     /**
@@ -86,6 +96,7 @@ namespace Robomongo
         setServerPort(source->serverPort());
         setDefaultDatabase(source->defaultDatabase());
         setImported(source->imported());
+        setReplicaSet(source->isReplicaSet());
 
         clearCredentials();
         QList<CredentialSettings *> cred = source->credentials();
@@ -93,9 +104,9 @@ namespace Robomongo
             addCredential((*it)->clone());
         }
 
-        // Clone SSH & SSL settings
         _sshSettings = source->sshSettings()->clone();
         _sslSettings = source->sslSettings()->clone();
+        _replicaSetSettings = source->_replicaSetSettings->clone(); // todo: leak candidate
 
 //#ifdef MONGO_SSL
 //        setSslInfo(source->sslInfo());
@@ -112,6 +123,11 @@ namespace Robomongo
         map.insert("serverHost", QtUtils::toQString(serverHost()));
         map.insert("serverPort", serverPort());
         map.insert("defaultDatabase", QtUtils::toQString(defaultDatabase()));
+        map.insert("isReplicaSet", isReplicaSet());
+        if (isReplicaSet()) {
+            map.insert("replicaSet", _replicaSetSettings->toVariant());
+        }
+
 #ifdef MONGO_SSL
         SSLInfo infl = _info.sslInfo();
         map.insert("sslEnabled", infl._sslSupport);

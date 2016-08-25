@@ -324,7 +324,7 @@ namespace Robomongo
         // clear modification state after setting the content
         _storageEngineFrame->sciScintilla()->setModified(false);
         VERIFY(connect(_storageEngineFrame->sciScintilla(), SIGNAL(textChanged()),
-            this, SLOT(onframeTextChanged())));
+            this, SLOT(onFrameTextChanged())));
 
         QGridLayout *layout = new QGridLayout;
         layout->addWidget(_storageEngineFrameLabel, 0, 0);
@@ -359,7 +359,7 @@ namespace Robomongo
         // clear modification state after setting the content
         _validatorFrame->sciScintilla()->setModified(false);
         VERIFY(connect(_validatorFrame->sciScintilla(), SIGNAL(textChanged()),
-            this, SLOT(onframeTextChanged())));
+            this, SLOT(onFrameTextChanged())));
 
         QHBoxLayout *validationOptionslayout = new QHBoxLayout();
         validationOptionslayout->addWidget(_validatorLevelLabel);
@@ -390,7 +390,7 @@ namespace Robomongo
         // clear modification state after setting the content
         _indexOptionDefaultsFrame->sciScintilla()->setModified(false);
         VERIFY(connect(_indexOptionDefaultsFrame->sciScintilla(), SIGNAL(textChanged()),
-            this, SLOT(onframeTextChanged())));
+            this, SLOT(onFrameTextChanged())));
 
         QGridLayout *layout = new QGridLayout;
         layout->addWidget(_indexOptionDefaultsFrameLabel, 0, 0);

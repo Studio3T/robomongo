@@ -7,18 +7,29 @@ Starting from version 0.9, Robomongo is compatibile with MongoDB 3.x (including 
 
 Robomongo 0.8.x embeds the **MongoDB 2.4.0** shell.
 
+What's new in latest Robomongo 0.9.0 RC10?
+====================================
+Latest release of Robomongo 0.9.0 RC10 includes: 
+  - Support for SSL 
+  - MongoDB Atlas 
+  - HiDPI enhancements.  
+  
+Central feature of this release is full support for TSL/SSL protocol with advanced options. This version also brings support to MongoDB Atlas cloud service and includes enhancements for HiDPI displays.
+
+Blog:     http://blog.robomongo.org/robomongo-rc10/  
+Download: https://robomongo.org/download  
+Follow: https://twitter.com/Robomongo
+
 What's Planned for the Next Release?
 ====================================
 
-We are currently working towards [Robomongo 0.9.0 RC10 milestone](https://github.com/paralect/robomongo/milestone/14).  
+We are currently working towards [Robomongo 0.9.0 RC11 milestone](https://github.com/paralect/robomongo/milestone/16).  
  
 Currently in progress:
-- SSL supported connections
-- Cross Plaftorm Hi-DPI support (Qt 5.7 transition)
+- Replica Sets Feature
 
 Plans for Future:
 - User Roles
-- Replica Sets
 - Support execution of multiple simultaneous queries [#1161](https://github.com/paralect/robomongo/issues/1161)
 - Enhancements for stability, running without crashes
 - More Documentation
@@ -57,7 +68,7 @@ Download
 
 You can download tested install packages for OS X, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
 
-The latest release candidate is currently **Robomongo 0.9.0 RC9**. (http://blog.robomongo.org/robomongo-rc9/).
+The latest release candidate is currently **Robomongo 0.9.0 RC10**. (http://blog.robomongo.org/robomongo-rc10/).
 
 The latest stable release is currently **Robomongo 0.8.5**. (http://blog.robomongo.org/whats-new-in-robomongo-0-8-5/)
 

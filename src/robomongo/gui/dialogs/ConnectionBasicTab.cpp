@@ -50,15 +50,18 @@ namespace Robomongo
 
         _membersLabel = new QLabel("Members:");
         _members = new QListWidget;
-        if (_settings->isReplicaSet()) {
-            if (replicaSettings->members().empty()){
+        if (_settings->isReplicaSet()) 
+        {
+            if (replicaSettings->members().empty()) 
+            {
                 auto itemx = new QListWidgetItem("New Item");
                 itemx->setFlags(itemx->flags() | Qt::ItemIsEditable);
                 _members->addItem(itemx);
             }
-            else
+            else            
             {
-                for (const std::string& str : replicaSettings->members()) {
+                for (const std::string& str : replicaSettings->members()) 
+                {
                     auto item = new QListWidgetItem(QString::fromStdString(str));
                     item->setFlags(item->flags() | Qt::ItemIsEditable);
                     _members->addItem(item);

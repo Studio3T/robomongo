@@ -50,18 +50,25 @@ namespace Robomongo
 
         _membersLabel = new QLabel("Members:");
         _members = new QListWidget;
-        if (_settings->isReplicaSet()) {
-            for (const std::string& str : replicaSettings->members()) {
-                _members->addItem(QString::fromStdString(str));
+        if (_settings->isReplicaSet()) 
+        {
+            if (replicaSettings->members().empty()) 
+            {
+                auto itemx = new QListWidgetItem("New Item");
+                itemx->setFlags(itemx->flags() | Qt::ItemIsEditable);
+                _members->addItem(itemx);
+            }
+            else            
+            {
+                for (const std::string& str : replicaSettings->members()) 
+                {
+                    auto item = new QListWidgetItem(QString::fromStdString(str));
+                    item->setFlags(item->flags() | Qt::ItemIsEditable);
+                    _members->addItem(item);
+                }
             }
         }
-        // todo
-        //else
-        //{
-        //    auto itemx = new QListWidgetItem("New Item");
-        //    itemx->setFlags(itemx->flags() | Qt::ItemIsEditable);
-        //    _members->addItem(itemx);
-        //}
+
         int const BUTTON_SIZE = 60;
         _addButton = new QPushButton("Add");
         _addButton->setFixedWidth(BUTTON_SIZE);
@@ -135,7 +142,8 @@ namespace Robomongo
             }
             replicaSettings->setMembers(members);
             // save read preference option 
-            replicaSettings->setReadPreference(static_cast<ReplicaSetSettings::ReadPreference>(_readPreference->currentIndex()));
+            replicaSettings->setReadPreference(
+                static_cast<ReplicaSetSettings::ReadPreference>(_readPreference->currentIndex()));
         }
     }
 

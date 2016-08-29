@@ -26,9 +26,19 @@ namespace Robomongo
     }
 
     void ReplicaSetSettings::fromVariant(const QVariantMap &map) {
-        // todo
-        //setMembers()
-        //setUserName(QtUtils::toStdString(map.value("userName").toString()));
+        // Extract and set replica members
+        std::vector<std::string> vec;
+        auto& itr = map.begin();
+        int idx = 0;
+        do
+        {
+            itr = map.find(QString::number(idx));
+            if (map.end() == itr) break;
+            vec.push_back(itr->toString().toStdString());
+            ++idx;
+        } while (map.end() != itr);
+        setMembers(vec);
+        // Extract and set read reference
         setReadPreference(static_cast<ReadPreference>(map.value("readPreference").toInt()));
     }
 }

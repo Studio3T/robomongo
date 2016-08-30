@@ -8,11 +8,13 @@
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/ReplicaSetSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 
@@ -72,7 +74,13 @@ namespace Robomongo
         _bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
 
         setText(0, buildServerName());
-        setIcon(0, GuiRegistry::instance().serverIcon());
+        if (_server->connectionRecord()->isReplicaSet())
+        {
+            setIcon(0, GuiRegistry::instance().replicaSetIcon());
+        }
+        else {
+            setIcon(0, GuiRegistry::instance().serverIcon());
+        }
         setExpanded(true);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }
@@ -89,6 +97,19 @@ namespace Robomongo
 
         // Remove child items
         QtUtils::clearChildItems(this);
+
+        // Add 'Replica Set' folder
+        auto repSetFolder = new ExplorerTreeItem(this);
+        repSetFolder->setIcon(0, GuiRegistry::instance().folderIcon());
+        repSetFolder->setText(0, "Replica Set Members");
+        addChild(repSetFolder);
+        // Add replica members
+        ReplicaSetSettings const* repSetSettings = _server->connectionRecord()->replicaSetSettings();
+        auto const& repMembers = repSetSettings->members();
+        for (auto const& repMember : repMembers) 
+        {
+            repSetFolder->addChild(new ExplorerReplicaSetTreeItem(repSetFolder, _server, repMember));
+        }
 
         // Add 'System' folder
         QIcon folderIcon = GuiRegistry::instance().folderIcon();

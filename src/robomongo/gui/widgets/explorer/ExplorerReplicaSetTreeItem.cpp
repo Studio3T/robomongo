@@ -9,6 +9,7 @@
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/ReplicaSetSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
@@ -39,13 +40,19 @@ namespace Robomongo
         _bus(AppRegistry::instance().bus())
     { 
         // Set connection settings of this replica member
+        _connSettings->setConnectionName(_repMemberHostAndPort.toString() + " - [member of " + _connSettings->connectionName() + "]");
         _connSettings->setServerHost(_repMemberHostAndPort.host());
         _connSettings->setServerPort(_repMemberHostAndPort.port());
+        _connSettings->setReplicaSet(false);  
+        _connSettings->replicaSetSettings()->setMembers(std::vector<std::string>()); // todo: replicaSetSettings->clear()
 
         // Add Actions
         QAction *openShellAction = new QAction("Open Shell", this);
         openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
         VERIFY(connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell())));
+
+        QAction *openDirectConnection = new QAction("Open Direct Connection", this);
+        VERIFY(connect(openDirectConnection, SIGNAL(triggered()), SLOT(ui_openDirectConnection())));
 
         QAction *refreshServer = new QAction("Refresh", this);
         VERIFY(connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer())));
@@ -63,6 +70,7 @@ namespace Robomongo
         VERIFY(connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog()))); 
 
         BaseClass::_contextMenu->addAction(openShellAction);
+        BaseClass::_contextMenu->addAction(openDirectConnection);
         BaseClass::_contextMenu->addAction(refreshServer);
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(serverStatus);
@@ -103,6 +111,11 @@ namespace Robomongo
     void ExplorerReplicaSetTreeItem::ui_openShell()
     {
         openCurrentServerShell(_connSettings.get(), "");
+    }
+
+    void ExplorerReplicaSetTreeItem::ui_openDirectConnection()
+    {
+        AppRegistry::instance().app()->openServer(_connSettings.get(), ConnectionPrimary);
     }
 
     void ExplorerReplicaSetTreeItem::ui_refreshServer()

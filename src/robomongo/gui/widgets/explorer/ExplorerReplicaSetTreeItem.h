@@ -29,12 +29,13 @@ namespace Robomongo
         //void handle(MongoServerLoadingDatabasesEvent *event);
 
     private Q_SLOTS:
-        void ui_showLog();
         void ui_openShell();
+        void ui_openDirectConnection();
         void ui_refreshServer();
         void ui_serverHostInfo();
         void ui_serverStatus();
         void ui_serverVersion();
+        void ui_showLog();
 
     private:
         mongo::HostAndPort _repMemberHostAndPort;

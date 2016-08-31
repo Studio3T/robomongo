@@ -20,6 +20,9 @@ namespace Robomongo
         */
         ExplorerReplicaSetTreeItem(QTreeWidgetItem *parent, MongoServer *const server, const mongo::HostAndPort& repMemberHostAndPort);
 
+        // Getters
+        ConnectionSettings const* connectionSettings() const { return _connSettings.get(); }
+
     public Q_SLOTS:
         //void databaseRefreshed(const QList<MongoDatabase *> &dbs);
         //void handle(DatabaseListLoadedEvent *event);

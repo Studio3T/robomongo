@@ -42,6 +42,7 @@ namespace Robomongo
         _connSettings->setServerHost(_repMemberHostAndPort.host());
         _connSettings->setServerPort(_repMemberHostAndPort.port());
 
+        // Add Actions
         QAction *openShellAction = new QAction("Open Shell", this);
         openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
         VERIFY(connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell())));

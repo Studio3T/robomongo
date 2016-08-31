@@ -70,7 +70,7 @@ namespace Robomongo
                               bool execute = true, const QString &shellName = QString(),
                               const CursorPosition &cursorPosition = CursorPosition(), const QString &filePathToSave = QString());
 
-        void openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo);
+        void openShell(ConnectionSettings const* connection, const ScriptInfo &scriptInfo);
         MongoServersContainerType getServers() const { return _servers; };
 
         /**
@@ -89,8 +89,8 @@ namespace Robomongo
         void handle(LogEvent *event);
 
     private:
-        MongoServer *openServerInternal(ConnectionSettings *connection, ConnectionType type);
-        MongoServer *continueOpenServer(int serverHandle, ConnectionSettings *connection, ConnectionType type, int localport = 0);
+        MongoServer *openServerInternal(ConnectionSettings const* connection, ConnectionType type);
+        MongoServer *continueOpenServer(int serverHandle, ConnectionSettings const *connection, ConnectionType type, int localport = 0);
 
         /**
         * @brief Create prompt dialog to enter SSL PEM key passphrase and save passphrase into SSL settings

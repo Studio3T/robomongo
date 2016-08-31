@@ -13,6 +13,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h"
 
 namespace Robomongo
 {
@@ -131,6 +132,13 @@ namespace Robomongo
         ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
         if (collectionItem) {
             AppRegistry::instance().app()->openShell(collectionItem->collection());
+            return;
+        }
+
+        auto replicaMemberItem = dynamic_cast<ExplorerReplicaSetTreeItem*>(item);
+        if (replicaMemberItem) {
+            auto const scriptStr = Robomongo::ScriptInfo("", true);
+            AppRegistry::instance().app()->openShell(replicaMemberItem->connectionSettings(), scriptStr);
             return;
         }
 

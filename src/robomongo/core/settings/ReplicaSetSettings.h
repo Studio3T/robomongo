@@ -4,6 +4,8 @@
 #include <QVariant>
 #include <QVariantMap>
 
+#include <mongo/util/net/hostandport.h>
+
 namespace Robomongo
 {
     class ReplicaSetSettings
@@ -34,6 +36,7 @@ namespace Robomongo
         // Getters
         //
         const std::vector<std::string>& members() const { return _members; }
+        const std::vector<mongo::HostAndPort> membersToHostAndPort() const;
         ReadPreference readPreference() const { return _readPreference; }
 
         // Setters

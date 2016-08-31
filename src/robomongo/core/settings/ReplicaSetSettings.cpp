@@ -9,12 +9,14 @@ namespace Robomongo
         : _members(), _readPreference(ReadPreference::PRIMARY) 
     {}
 
-    ReplicaSetSettings *ReplicaSetSettings::clone() const {
+    ReplicaSetSettings *ReplicaSetSettings::clone() const 
+    {
         ReplicaSetSettings *cloned = new ReplicaSetSettings(*this);
         return cloned;
     }
 
-    QVariant ReplicaSetSettings::toVariant() const {
+    QVariant ReplicaSetSettings::toVariant() const 
+    {
         QVariantMap map;
         int idx = 0;
         for (std::string const& str : _members) {
@@ -25,7 +27,8 @@ namespace Robomongo
         return map;
     }
 
-    void ReplicaSetSettings::fromVariant(const QVariantMap &map) {
+    void ReplicaSetSettings::fromVariant(const QVariantMap &map) 
+    {
         // Extract and set replica members
         std::vector<std::string> vec;
         auto& itr = map.begin();
@@ -41,4 +44,15 @@ namespace Robomongo
         // Extract and set read reference
         setReadPreference(static_cast<ReadPreference>(map.value("readPreference").toInt()));
     }
+
+    const std::vector<mongo::HostAndPort> ReplicaSetSettings::membersToHostAndPort() const 
+    {
+        std::vector<mongo::HostAndPort> membersHostAndPort;
+        for (auto const& member : _members)
+        {
+            membersHostAndPort.push_back(mongo::HostAndPort(member));
+        }
+        return membersHostAndPort;
+    }
+
 }

@@ -105,7 +105,7 @@ namespace Robomongo
         addChild(repSetFolder);
         // Add replica members
         ReplicaSetSettings const* repSetSettings = _server->connectionRecord()->replicaSetSettings();
-        auto const& repMembers = repSetSettings->members();
+        auto const& repMembers = repSetSettings->membersToHostAndPort();
         for (auto const& repMember : repMembers) 
         {
             repSetFolder->addChild(new ExplorerReplicaSetTreeItem(repSetFolder, _server, repMember));

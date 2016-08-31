@@ -18,7 +18,7 @@ namespace Robomongo
         /*
         ** Constructs ExplorerReplicaSetTreeItem
         */
-        ExplorerReplicaSetTreeItem(QTreeWidgetItem *parent, MongoServer *const server, const std::string& replicaMemberIpPort);
+        ExplorerReplicaSetTreeItem(QTreeWidgetItem *parent, MongoServer *const server, const mongo::HostAndPort& repMemberHostAndPort);
 
     public Q_SLOTS:
         //void databaseRefreshed(const QList<MongoDatabase *> &dbs);
@@ -34,7 +34,9 @@ namespace Robomongo
         void ui_serverVersion();
 
     private:
+        mongo::HostAndPort _repMemberHostAndPort;
         MongoServer *const _server;
+        std::unique_ptr<ConnectionSettings> _connSettings;
         EventBus *_bus; // todo: remove?
     };
 }

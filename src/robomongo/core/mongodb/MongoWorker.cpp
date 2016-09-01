@@ -11,6 +11,7 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/mongodb/MongoClient.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/ReplicaSetSettings.h"
 #include "robomongo/core/domain/MongoShellResult.h"
 #include "robomongo/core/domain/MongoCollectionInfo.h"
 #include "robomongo/core/settings/CredentialSettings.h"
@@ -23,9 +24,10 @@ namespace Robomongo
 {
     MongoWorker::MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
                              int mongoTimeoutSec, int shellTimeoutSec, QObject *parent) : QObject(parent),
-        _connection(connection),
+        _connSettings(connection),
         _scriptEngine(NULL),
         _dbclient(nullptr),
+        _dbclientRepSet(nullptr),
         _isAdmin(true),
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
@@ -84,9 +86,9 @@ namespace Robomongo
     void MongoWorker::init()
     {        
         try {
-            _scriptEngine = new ScriptEngine(_connection, _shellTimeoutSec);
+            _scriptEngine = new ScriptEngine(_connSettings, _shellTimeoutSec);
             _scriptEngine->init(_isLoadMongoRcJs);
-            _scriptEngine->use(_connection->defaultDatabase());
+            _scriptEngine->use(_connSettings->defaultDatabase());
             _scriptEngine->setBatchSize(_batchSize);
             _timerId = startTimer(pingTimeMs);
             _dbAutocompleteCacheTimerId = startTimer(30000);
@@ -114,7 +116,7 @@ namespace Robomongo
         if (_dbAutocompleteCacheTimerId != -1)
             killTimer(_dbAutocompleteCacheTimerId);
 
-        delete _connection;
+        delete _connSettings;
         delete _scriptEngine;
 
         // QThread "_thread" and MongoWorker itself will be deleted later
@@ -139,7 +141,7 @@ namespace Robomongo
             if (conn == NULL) {
                 // Protection by default value: Logically/ideally, this error should never be seen.
                 auto errorReason = std::string("Connection failure: Unknown error.");
-                if (_connection->sslSettings()->sslEnabled())
+                if (_connSettings->sslSettings()->sslEnabled())
                 {
                     // Note: Currently mongo-shell does not provide any interface to fetch actual error details
                     // for some SSL connection failures that's why we are unable to show exact error here. 
@@ -158,8 +160,8 @@ namespace Robomongo
                 return;
             }
 
-            if (_connection->hasEnabledPrimaryCredential()) {
-                CredentialSettings *credentials = _connection->primaryCredential();
+            if (_connSettings->hasEnabledPrimaryCredential()) {
+                CredentialSettings *credentials = _connSettings->primaryCredential();
 
                 // Building BSON object:
                 mongo::BSONObj authParams(mongo::BSONObjBuilder()
@@ -191,12 +193,12 @@ namespace Robomongo
 
             resetGlobalSSLparams();
 
-            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connection->getFullAddress(), 
+            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connSettings->getFullAddress(), 
                 dbNames, client->getVersion(), client->getStorageEngineType()), event->connectionType));
         } catch(const std::exception &ex) {
             resetGlobalSSLparams();
 
-            auto errorReason = _connection->sslSettings()->sslEnabled() ?
+            auto errorReason = _connSettings->sslSettings()->sslEnabled() ?
                 EstablishConnectionResponse::ErrorReason::MongoSslConnection : 
                 EstablishConnectionResponse::ErrorReason::MongoAuth;
 
@@ -207,8 +209,8 @@ namespace Robomongo
 
     std::string MongoWorker::getAuthBase() const
     {
-        if (_connection->hasEnabledPrimaryCredential())
-            return _connection->primaryCredential()->databaseName();
+        if (_connSettings->hasEnabledPrimaryCredential())
+            return _connSettings->primaryCredential()->databaseName();
 
         return std::string();
     }
@@ -218,7 +220,7 @@ namespace Robomongo
         DatabasesContainerType result;
         std::string authBase = getAuthBase();
         if (!_isAdmin && !authBase.empty()) {
-            result.push_back(_connection->primaryCredential()->databaseName());
+            result.push_back(_connSettings->primaryCredential()->databaseName());
             return result;
         }
 
@@ -637,34 +639,51 @@ namespace Robomongo
 
     mongo::DBClientBase *MongoWorker::getConnection(bool mayReturnNull /* = false */)
     {
-        if (!_dbclient) {
-            // Timeout for operations
-            // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
-            _dbclient = std::unique_ptr<mongo::DBClientConnection>(new mongo::DBClientConnection(true, _mongoTimeoutSec));
+        // --- Configure SSL first --- Todo: move to function?
+        // As a precaution reset SSL global params for any kind of connection request (SSL or non-SSL)
+        resetGlobalSSLparams();
 
-            // As a precaution reset SSL global params for any kind of connection request (SSL or non-SSL)
-            resetGlobalSSLparams();
-
-            // Update global mongo SSL settings according to SSL enable/disabled status
-            if (_connection->sslSettings()->sslEnabled())
-            {
-                // Force SSL mode for outgoing connections
-                mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
-                updateGlobalSSLparams();
-            }
-            else
-            {
-                // Disable forced SSL mode for outgoing connections
-                mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
-            }
-
-            mongo::Status status = _dbclient->connect(_connection->info());
-
-            if (!status.isOK() && mayReturnNull) {
-                return nullptr;
-            }
+        // Update global mongo SSL settings according to SSL enable/disabled status
+        if (_connSettings->sslSettings()->sslEnabled())
+        {
+            // Force SSL mode for outgoing connections
+            mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
+            updateGlobalSSLparams();
         }
-        return _dbclient.get();
+        else
+        {
+            // Disable forced SSL mode for outgoing connections
+            mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
+        }
+
+        // --- Perform connection ---
+        if (_connSettings->isReplicaSet()) {  // connection to replica set 
+            if (!_dbclientRepSet) {
+                _dbclientRepSet = std::unique_ptr<mongo::DBClientReplicaSet>(
+                    // todo: where to get name of replica? (i.e. repset) - todo: this if causes crash after app close
+                    new mongo::DBClientReplicaSet("repset",_connSettings->replicaSetSettings()->membersToHostAndPort(), _mongoTimeoutSec));
+
+                bool const connStatus = _dbclientRepSet->connect();
+                if (!connStatus) {
+                    return nullptr;
+                }
+            }
+            return _dbclientRepSet.get();
+        }
+        else {                              // connection to single server
+            if (!_dbclient) {
+                // Timeout for operations
+                // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
+                _dbclient = std::unique_ptr<mongo::DBClientConnection>(new mongo::DBClientConnection(true, _mongoTimeoutSec));
+
+                mongo::Status status = _dbclient->connect(_connSettings->info());
+
+                if (!status.isOK() && mayReturnNull) {
+                    return nullptr;
+                }
+            }
+            return _dbclient.get();
+        }
     }
 
     MongoClient *MongoWorker::getClient()
@@ -675,7 +694,7 @@ namespace Robomongo
     void MongoWorker::updateGlobalSSLparams() const
     {
         resetGlobalSSLparams();
-        const SslSettings * const sslSettings = _connection->sslSettings();
+        const SslSettings * const sslSettings = _connSettings->sslSettings();
         mongo::sslGlobalParams.sslAllowInvalidCertificates = sslSettings->allowInvalidCertificates();
         if (!mongo::sslGlobalParams.sslAllowInvalidCertificates)
         {

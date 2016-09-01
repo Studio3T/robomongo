@@ -4,6 +4,8 @@
 #include <QMutex>
 #include <unordered_set>
 
+#include <mongo/client/dbclient_rs.h> // todo: move
+
 #include "robomongo/core/events/MongoEvents.h"
 
 QT_BEGIN_NAMESPACE
@@ -132,6 +134,7 @@ namespace Robomongo
         std::string getAuthBase() const;
 
         std::unique_ptr<mongo::DBClientConnection> _dbclient;
+        std::unique_ptr<mongo::DBClientReplicaSet> _dbclientRepSet;
         mongo::DBClientBase *getConnection(bool mayReturnNull = false);
         MongoClient *getClient();
 
@@ -164,7 +167,7 @@ namespace Robomongo
         int _shellTimeoutSec;
         QAtomicInteger<int> _isQuiting;
 
-        ConnectionSettings *_connection;
+        ConnectionSettings *_connSettings;
 
         // Collection of created databases.
         // Starting from 3.0, MongoDB drops empty databases.

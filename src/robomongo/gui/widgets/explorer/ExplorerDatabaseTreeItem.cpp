@@ -55,6 +55,12 @@ namespace Robomongo
         QAction *dbStats = new QAction("Database Statistics", this);
         VERIFY(connect(dbStats, SIGNAL(triggered()), SLOT(ui_dbStatistics())));
 
+        QAction *dbCurrOps = new QAction("Current Operations", this);
+        VERIFY(connect(dbCurrOps, SIGNAL(triggered()), SLOT(ui_dbCurrentOps())));
+
+        QAction *dbKillOp = new QAction("Kill Operation...", this);
+        VERIFY(connect(dbKillOp, SIGNAL(triggered()), SLOT(ui_dbKillOp())));
+
         QAction *dbDrop = new QAction("Drop Database...", this);
         VERIFY(connect(dbDrop, SIGNAL(triggered()), SLOT(ui_dbDrop())));
 
@@ -68,6 +74,9 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(refreshDatabase);
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(dbStats);
+        BaseClass::_contextMenu->addSeparator();
+        BaseClass::_contextMenu->addAction(dbCurrOps);
+        BaseClass::_contextMenu->addAction(dbKillOp);
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(dbRepair);
         BaseClass::_contextMenu->addAction(dbDrop);
@@ -287,6 +296,16 @@ namespace Robomongo
     void ExplorerDatabaseTreeItem::ui_dbStatistics()
     {
         openCurrentDatabaseShell(_database, "db.stats()");
+    }
+
+    void ExplorerDatabaseTreeItem::ui_dbCurrentOps()
+    {
+        openCurrentDatabaseShell(_database, "db.currentOp()");
+    }
+
+    void ExplorerDatabaseTreeItem::ui_dbKillOp()
+    {
+        openCurrentDatabaseShell(_database, "db.killOp()", false, CursorPosition(0, -1));
     }
 
     void ExplorerDatabaseTreeItem::ui_dbDrop()

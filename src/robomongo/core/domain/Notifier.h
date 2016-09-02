@@ -55,6 +55,8 @@ namespace Robomongo
         void onViewDocument();
         void onInsertDocument();
         void onCopyDocument();
+        void onCopyNameDocument();
+        void onCopyPathDocument();
         void onCopyTimestamp();
         void onCopyJson();
         void handle(InsertDocumentResponse *event);
@@ -67,6 +69,8 @@ namespace Robomongo
         QAction *_viewDocumentAction;
         QAction *_insertDocumentAction;
         QAction *_copyValueAction;
+        QAction *_copyValueNameAction;
+        QAction *_copyValuePathAction;
         QAction *_copyTimestampAction;
         QAction *_copyJsonAction;
         const MongoQueryInfo _queryInfo;

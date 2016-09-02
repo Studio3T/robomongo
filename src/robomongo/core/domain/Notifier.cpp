@@ -46,6 +46,16 @@ namespace Robomongo
             return Robomongo::BsonUtils::isDocument(item->type());
         }
 
+        bool isArrayChild(BsonTreeItem *item)
+        {
+            return Robomongo::BsonUtils::isArray(dynamic_cast<BsonTreeItem *>(item->parent())->type());
+        }
+
+        bool isDocumentRoot(BsonTreeItem *item)
+        {
+            return ( item == item->superParent() );
+        }
+
         /**
          * 
          * @param QModelIndexList indexes
@@ -113,6 +123,12 @@ namespace Robomongo
         _copyValueAction = new QAction("Copy Value", wid);
         VERIFY(connect(_copyValueAction, SIGNAL(triggered()), SLOT(onCopyDocument())));
 
+        _copyValueNameAction = new QAction("Copy Name", wid);
+        VERIFY(connect(_copyValueNameAction, SIGNAL(triggered()), SLOT(onCopyNameDocument())));
+
+        _copyValuePathAction = new QAction("Copy Path", wid);
+        VERIFY(connect(_copyValuePathAction, SIGNAL(triggered()), SLOT(onCopyPathDocument())));
+
         _copyTimestampAction = new QAction("Copy Timestamp from ObjectId", wid);
         VERIFY(connect(_copyTimestampAction, SIGNAL(triggered()), SLOT(onCopyTimestamp())));
 
@@ -128,11 +144,15 @@ namespace Robomongo
         bool isSimple = false;
         bool isDocument = false;
         bool isObjectId = false;
+        bool isNotArrayChild = false;
+        bool isRoot = false;
 
         if (item) {
             isSimple = detail::isSimpleType(item);
             isDocument = detail::isDocumentType(item);
             isObjectId = detail::isObjectIdType(item);
+            isNotArrayChild = !detail::isArrayChild(item);
+            isRoot = detail::isDocumentRoot(item);
         }
 
         if (onItem && isEditable) menu->addAction(_editDocumentAction);
@@ -142,9 +162,15 @@ namespace Robomongo
         if (onItem && (isSimple || isDocument)) menu->addSeparator();
 
         if (onItem && isSimple)   menu->addAction(_copyValueAction);
+        if (onItem && (isSimple || isDocument) && isNotArrayChild && !isRoot)
+            menu->addAction(_copyValueNameAction);
+        if (onItem && (isSimple || isDocument) && !isRoot)
+            menu->addAction(_copyValuePathAction);
         if (onItem && isObjectId) menu->addAction(_copyTimestampAction);
         if (onItem && isDocument) menu->addAction(_copyJsonAction);
+
         if (onItem && isEditable) menu->addSeparator();
+
         if (onItem && isEditable) menu->addAction(_deleteDocumentAction);
     }
 
@@ -358,6 +384,53 @@ namespace Robomongo
 
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(documentItem->value());
+    }
+
+    void Notifier::onCopyNameDocument()
+    {
+        QModelIndex selectedInd = _observer->selectedIndex();
+        if (!selectedInd.isValid())
+            return;
+
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+        if (!documentItem)
+            return;
+
+        if ( !(detail::isSimpleType(documentItem) || detail::isDocumentType(documentItem) || 
+             !detail::isArrayChild(documentItem) || !detail::isDocumentRoot(documentItem)) )
+            return;
+
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText(QString::fromStdString(documentItem->fieldName()));
+    }
+
+    void Notifier::onCopyPathDocument()
+    {
+        QModelIndex selectedInd = _observer->selectedIndex();
+        if (!selectedInd.isValid())
+            return;
+
+        BsonTreeItem *documentItem = QtUtils::item<BsonTreeItem*>(selectedInd);
+        if (!documentItem)
+            return;
+
+        if ( !(detail::isSimpleType(documentItem) || detail::isDocumentType(documentItem) || 
+             !detail::isDocumentRoot(documentItem)) )
+            return;
+
+        QStringList namesList;
+        BsonTreeItem *documentItemHelper = documentItem;
+
+        while ( !detail::isDocumentRoot(documentItemHelper) ) {
+            if ( !detail::isArrayChild(documentItemHelper) ) {
+                namesList.push_front( QString::fromStdString(documentItemHelper->fieldName()) );
+            }
+
+            documentItemHelper = dynamic_cast<BsonTreeItem *>(documentItemHelper->parent());
+        }
+
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText(namesList.join("."));
     }
 
     void Notifier::onCopyTimestamp()

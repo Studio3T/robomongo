@@ -105,7 +105,7 @@ namespace Robomongo
      * @param connection: ConnectionSettings, that will be owned by MongoServer.
      * @param visible: should this server be visible in UI (explorer) or not.
      */
-    MongoServer *App::openServerInternal(ConnectionSettings *connection, ConnectionType type) {
+    MongoServer *App::openServerInternal(ConnectionSettings const* connection, ConnectionType type) {
         ++_lastServerHandle;
 
         if (type == ConnectionPrimary)
@@ -166,7 +166,7 @@ namespace Robomongo
         openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName, filePathToSave));
     }
 
-    void App::openShell(ConnectionSettings *connection, const ScriptInfo &scriptInfo)
+    void App::openShell(ConnectionSettings const* connection, const ScriptInfo &scriptInfo)
     {
         MongoServer *server = openServerInternal(connection, ConnectionSecondary);
         if (!server)
@@ -195,7 +195,7 @@ namespace Robomongo
         delete shell;
     }
 
-    MongoServer *App::continueOpenServer(int serverHandle, ConnectionSettings *connection, ConnectionType type, int localport) {
+    MongoServer *App::continueOpenServer(int serverHandle, ConnectionSettings const* connection, ConnectionType type, int localport) {
         ConnectionSettings* settings = connection->clone();
 
         // Modify connection settings when SSH tunnel is used

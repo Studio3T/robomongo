@@ -98,17 +98,19 @@ namespace Robomongo
         // Remove child items
         QtUtils::clearChildItems(this);
 
-        // Add 'Replica Set' folder
-        auto repSetFolder = new ExplorerTreeItem(this);
-        repSetFolder->setIcon(0, GuiRegistry::instance().folderIcon());
-        repSetFolder->setText(0, "Replica Set Members");
-        addChild(repSetFolder);
-        // Add replica members
-        ReplicaSetSettings const* repSetSettings = _server->connectionRecord()->replicaSetSettings();
-        auto const& repMembers = repSetSettings->membersToHostAndPort();
-        for (auto const& repMember : repMembers) 
-        {
-            repSetFolder->addChild(new ExplorerReplicaSetTreeItem(repSetFolder, _server, repMember));
+        if (_server->connectionRecord()->isReplicaSet()) {
+            // Add 'Replica Set' folder
+            auto repSetFolder = new ExplorerTreeItem(this);
+            repSetFolder->setIcon(0, GuiRegistry::instance().folderIcon());
+            repSetFolder->setText(0, "Replica Set Members");
+            addChild(repSetFolder);
+            // Add replica members
+            ReplicaSetSettings const* repSetSettings = _server->connectionRecord()->replicaSetSettings();
+            auto const& repMembers = repSetSettings->membersToHostAndPort();
+            for (auto const& repMember : repMembers)
+            {
+                repSetFolder->addChild(new ExplorerReplicaSetTreeItem(repSetFolder, _server, repMember));
+            }
         }
 
         // Add 'System' folder

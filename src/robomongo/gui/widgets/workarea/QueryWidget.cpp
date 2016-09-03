@@ -5,6 +5,8 @@
 #include <QFileInfo>
 #include <QVBoxLayout>
 #include <QMessageBox>
+#include <QMainWindow>
+#include <QDockWidget>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerjavascript.h>
 #include <mongo/client/dbclientinterface.h>
@@ -44,7 +46,17 @@ namespace Robomongo
         _scriptWidget = new ScriptWidget(_shell);
         VERIFY(connect(_scriptWidget, SIGNAL(textChanged()), this, SLOT(textChange())));
 
+        // Need to use QMainWindow in order to make use of all features of docking.
+        // (Qt full support for dock windows implemented only for QMainWindow)
         _viewer = new OutputWidget();
+        auto mainWin = new QMainWindow;
+        auto dock = new QDockWidget;
+        dock->setAllowedAreas(Qt::BottomDockWidgetArea);
+        dock->setFeatures(QDockWidget::DockWidgetFeature::DockWidgetFloatable |
+                          QDockWidget::DockWidgetFeature::DockWidgetMovable);
+        dock->setWidget(_viewer);
+        mainWin->addDockWidget(Qt::BottomDockWidgetArea, dock);
+
         _outputLabel = new QLabel(this);
         _outputLabel->setContentsMargins(0, 5, 0, 0);
         _outputLabel->setVisible(false);
@@ -59,7 +71,7 @@ namespace Robomongo
         layout->addWidget(_scriptWidget, 0, Qt::AlignTop);
         layout->addWidget(line);
         layout->addWidget(_outputLabel, 0, Qt::AlignTop);
-        layout->addWidget(_viewer, 1);
+        layout->addWidget(mainWin, 1);
         setLayout(layout);
     }
 

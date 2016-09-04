@@ -74,8 +74,8 @@ namespace Robomongo
         void textChanged();
     public Q_SLOTS:
         void setText(const QString &text);
-    private Q_SLOTS:
         void ui_queryLinesCountChanged();
+    private Q_SLOTS:
         void onTextChanged();
         void onCursorPositionChanged(int line, int index);
         void onCompletionActivated(const QString&);

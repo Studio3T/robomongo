@@ -18,6 +18,7 @@
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 
 namespace
 {
@@ -218,18 +219,30 @@ namespace Robomongo
     void ScriptWidget::ui_queryLinesCountChanged()
     {
         int lines = _queryText->sciScintilla()->lines();
-        int height = editorHeight(lines);
+        int editorTotalHeight = editorHeight(lines);
 
-        int maxHeight = editorHeight(18);
-        if (height > maxHeight)
-            height = maxHeight;
+        auto parentQueryWidget = dynamic_cast<QueryWidget*>(parentWidget());
+        auto outputWidgetDocked = parentQueryWidget->docked();
+
+        if (outputWidgetDocked)
+        {
+            int maxHeight = editorHeight(18);
+            if (editorTotalHeight > maxHeight)
+                editorTotalHeight = maxHeight;
+        }
+        else
+        {
+            if (parentWidget()->height() - editorTotalHeight  < lineHeight()) {
+                return;
+            }
+        }
 
         // Hide & Show solves problem of UI blinking
         _queryText->hide();
-        _queryText->setFixedHeight(height);
-        _queryText->sciScintilla()->setFixedHeight(height);
+        _queryText->setFixedHeight(editorTotalHeight);
+        _queryText->sciScintilla()->setFixedHeight(editorTotalHeight);
         _queryText->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-        _queryText->setMaximumHeight(height+FindFrame::HeightFindPanel);
+        _queryText->setMaximumHeight(editorTotalHeight + FindFrame::HeightFindPanel);
         _queryText->sciScintilla()->setFocus();
         _queryText->show();
     }

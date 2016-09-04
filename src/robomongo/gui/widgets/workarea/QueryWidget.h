@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QDockWidget>
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -40,6 +41,9 @@ namespace Robomongo
         void showAutocompletion();
         void hideAutocompletion();
 
+        // Getter
+        bool docked() const { return !_dock->isFloating(); }
+
         ~QueryWidget();
 
     Q_SIGNALS:
@@ -60,6 +64,9 @@ namespace Robomongo
         void handle(ScriptExecutedEvent *event);
         void handle(AutocompleteResponse *event);
 
+    private Q_SLOTS:
+        void on_dock_undock(bool isFloating);
+
     private:        
         void hideProgress();
         void updateCurrentTab();
@@ -69,6 +76,7 @@ namespace Robomongo
         OutputWidget *_viewer;
         ScriptWidget *_scriptWidget;
         QLabel *_outputLabel;
+        QDockWidget *_dock;
 
         MongoShellExecResult _currentResult;
         bool _isTextChanged;

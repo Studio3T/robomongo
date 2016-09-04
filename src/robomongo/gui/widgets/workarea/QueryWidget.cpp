@@ -50,12 +50,13 @@ namespace Robomongo
         // (Qt full support for dock windows implemented only for QMainWindow)
         _viewer = new OutputWidget();
         auto mainWin = new QMainWindow;
-        auto dock = new QDockWidget;
-        dock->setAllowedAreas(Qt::BottomDockWidgetArea);
-        dock->setFeatures(QDockWidget::DockWidgetFeature::DockWidgetFloatable |
+        _dock = new QDockWidget;
+        _dock->setAllowedAreas(Qt::BottomDockWidgetArea);
+        _dock->setFeatures(QDockWidget::DockWidgetFeature::DockWidgetFloatable |
                           QDockWidget::DockWidgetFeature::DockWidgetMovable);
-        dock->setWidget(_viewer);
-        mainWin->addDockWidget(Qt::BottomDockWidgetArea, dock);
+        _dock->setWidget(_viewer);
+        VERIFY(connect(_dock, SIGNAL(topLevelChanged(bool)), this, SLOT(on_dock_undock(bool))));
+        mainWin->addDockWidget(Qt::BottomDockWidgetArea, _dock);
 
         _outputLabel = new QLabel(this);
         _outputLabel->setContentsMargins(0, 5, 0, 0);
@@ -251,6 +252,15 @@ namespace Robomongo
         }
 
         _scriptWidget->showAutocompletion(event->list, QtUtils::toQString(event->prefix) );
+    }
+
+    void QueryWidget::on_dock_undock(bool floating)
+    {
+        // If output window (OutputWidget) is docked, trigger ui_queryLinesCountChanged() for query window 
+        // (ScriptWidget) docked mode size adjustments.
+        if (!floating) {
+            _scriptWidget->ui_queryLinesCountChanged();
+        }
     }
 
     void QueryWidget::updateCurrentTab()

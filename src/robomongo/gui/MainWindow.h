@@ -83,6 +83,7 @@ namespace Robomongo
         void onOpenSaveToolbarVisibilityChanged(bool isVisisble);
         void onExecToolbarVisibilityChanged(bool isVisisble);
         void onExplorerVisibilityChanged(bool isVisisble);
+        void on_tabChange();
 
     private:
         void updateConnectionsMenu();

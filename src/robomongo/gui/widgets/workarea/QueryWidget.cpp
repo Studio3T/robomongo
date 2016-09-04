@@ -91,6 +91,11 @@ namespace Robomongo
         _scriptWidget->hideAutocompletion();
     }
 
+    void QueryWidget::bringDockToFront()
+    {
+        _dock->activateWindow();
+    }
+
     void QueryWidget::execute()
     {
         QString query = _scriptWidget->selectedText();

@@ -1044,6 +1044,7 @@ namespace Robomongo
         _workArea = new WorkAreaTabWidget(this);
         AppRegistry::instance().bus()->subscribe(_workArea, OpeningShellEvent::Type);
         VERIFY(connect(_workArea, SIGNAL(currentChanged(int)), this, SLOT(updateMenus())));
+        VERIFY(connect(_workArea, SIGNAL(currentChanged(int)), this, SLOT(on_tabChange())));
 
         QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0, 3, 0, 0);
@@ -1077,4 +1078,13 @@ namespace Robomongo
         AppRegistry::instance().settingsManager()->setToolbarSettings("explorer", isVisible);
         AppRegistry::instance().settingsManager()->save();
     }
+
+    void MainWindow::on_tabChange()
+    {
+        auto activeTab = dynamic_cast<QueryWidget*>(_workArea->currentWidget());
+        if (activeTab) {
+            activeTab->bringDockToFront();
+        }
+    }
+
 }

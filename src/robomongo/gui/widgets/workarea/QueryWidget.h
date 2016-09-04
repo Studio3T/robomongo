@@ -40,7 +40,10 @@ namespace Robomongo
         void setScriptFocus();
         void showAutocompletion();
         void hideAutocompletion();
-
+        
+        // Bring active tab's dock into front
+        void bringDockToFront();
+        
         // Getter
         bool docked() const { return !_dock->isFloating(); }
 

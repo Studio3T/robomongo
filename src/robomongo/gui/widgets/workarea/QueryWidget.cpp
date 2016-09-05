@@ -49,14 +49,14 @@ namespace Robomongo
         // Need to use QMainWindow in order to make use of all features of docking.
         // (Qt full support for dock windows implemented only for QMainWindow)
         _viewer = new OutputWidget();
-        auto mainWin = new QMainWindow;
+        _outputWindow = new QMainWindow;
         _dock = new QDockWidget;
         _dock->setAllowedAreas(Qt::BottomDockWidgetArea);
         _dock->setFeatures(QDockWidget::DockWidgetFeature::DockWidgetFloatable |
-                          QDockWidget::DockWidgetFeature::DockWidgetMovable);
+                           QDockWidget::DockWidgetFeature::DockWidgetMovable);
         _dock->setWidget(_viewer);
         VERIFY(connect(_dock, SIGNAL(topLevelChanged(bool)), this, SLOT(on_dock_undock(bool))));
-        mainWin->addDockWidget(Qt::BottomDockWidgetArea, _dock);
+        _outputWindow->addDockWidget(Qt::BottomDockWidgetArea, _dock);
 
         _outputLabel = new QLabel(this);
         _outputLabel->setContentsMargins(0, 5, 0, 0);
@@ -66,14 +66,14 @@ namespace Robomongo
         line->setFrameShape(QFrame::HLine);
         line->setFrameShadow(QFrame::Raised);
 
-        QVBoxLayout *layout = new QVBoxLayout;
-        layout->setSpacing(0);
-        layout->setContentsMargins(0, 0, 0, 0);
-        layout->addWidget(_scriptWidget, 0, Qt::AlignTop);
-        layout->addWidget(line);
-        layout->addWidget(_outputLabel, 0, Qt::AlignTop);
-        layout->addWidget(mainWin, 1);
-        setLayout(layout);
+        _mainLayout = new QVBoxLayout;
+        _mainLayout->setSpacing(0);
+        _mainLayout->setContentsMargins(0, 0, 0, 0);
+        _mainLayout->addWidget(_scriptWidget);
+        _mainLayout->addWidget(line);
+        _mainLayout->addWidget(_outputLabel, 0, Qt::AlignTop);
+        _mainLayout->addWidget(_outputWindow, 1);
+        setLayout(_mainLayout);
     }
 
     void QueryWidget::setScriptFocus()
@@ -264,7 +264,13 @@ namespace Robomongo
         // If output window (OutputWidget) is docked, trigger ui_queryLinesCountChanged() for query window 
         // (ScriptWidget) docked mode size adjustments.
         if (!floating) {
+            _mainLayout->addWidget(_outputWindow, 1);
             _scriptWidget->ui_queryLinesCountChanged();
+        }
+        else {  // If output window (OutputWidget) is undocked(floating)
+            // Remove outputwindow so that query window can stretch maximum
+            _mainLayout->removeWidget(_outputWindow);
+            _scriptWidget->disableFixedHeight();
         }
     }
 

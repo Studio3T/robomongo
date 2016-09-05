@@ -5,6 +5,8 @@
 
 QT_BEGIN_NAMESPACE
 class QLabel;
+class QVBoxLayout;
+class QMainWindow;
 QT_END_NAMESPACE
 
 #include "robomongo/core/Core.h"
@@ -80,6 +82,8 @@ namespace Robomongo
         ScriptWidget *_scriptWidget;
         QLabel *_outputLabel;
         QDockWidget *_dock;
+        QMainWindow *_outputWindow;
+        QVBoxLayout *_mainLayout;
 
         MongoShellExecResult _currentResult;
         bool _isTextChanged;

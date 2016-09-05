@@ -70,6 +70,8 @@ namespace Robomongo
         bool getDisableTextAndCursorNotifications() { return _disableTextAndCursorNotifications; }
         void setDisableTextAndCursorNotifications(const bool value) { _disableTextAndCursorNotifications = value; }
 
+        void disableFixedHeight() const;
+
     Q_SIGNALS:
         void textChanged();
     public Q_SLOTS:

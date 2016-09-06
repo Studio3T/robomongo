@@ -69,10 +69,10 @@ namespace Robomongo
         _mainLayout = new QVBoxLayout;
         _mainLayout->setSpacing(0);
         _mainLayout->setContentsMargins(0, 0, 0, 0);
-        _mainLayout->addWidget(_scriptWidget);
+        _mainLayout->addWidget(_scriptWidget); 
         _mainLayout->addWidget(line);
         _mainLayout->addWidget(_outputLabel, 0, Qt::AlignTop);
-        _mainLayout->addWidget(_outputWindow, 1);
+        _mainLayout->addWidget(_outputWindow, 1);      
         setLayout(_mainLayout);
     }
 
@@ -264,13 +264,17 @@ namespace Robomongo
         // If output window (OutputWidget) is docked, trigger ui_queryLinesCountChanged() for query window 
         // (ScriptWidget) docked mode size adjustments.
         if (!floating) {
-            _mainLayout->addWidget(_outputWindow, 1);
+            // Settings to revert to docked mode
             _scriptWidget->ui_queryLinesCountChanged();
+            _mainLayout->addWidget(_scriptWidget);                     
+            _mainLayout->addWidget(_outputWindow, 1);              
+            
         }
         else {  // If output window (OutputWidget) is undocked(floating)
-            // Remove outputwindow so that query window can stretch maximum
-            _mainLayout->removeWidget(_outputWindow);
+            // Settings for query window to use maximum space
             _scriptWidget->disableFixedHeight();
+            _mainLayout->addWidget(_scriptWidget, 1); 
+            _mainLayout->addWidget(_outputWindow);               
         }
     }
 

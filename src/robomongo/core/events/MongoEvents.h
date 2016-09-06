@@ -47,10 +47,14 @@ namespace Robomongo
             MongoSslConnection  = 2
         };
 
-        EstablishConnectionResponse(QObject *sender, const ConnectionInfo &info, ConnectionType connectionType) :
+        EstablishConnectionResponse(QObject *sender, const ConnectionInfo &info, ConnectionType connectionType, 
+                                    const mongo::HostAndPort& repPrimary, const std::vector<bool>& repMembersHealths) :
             Event(sender),
             _info(info),
-            connectionType(connectionType) {}
+            connectionType(connectionType),
+            _repPrimary(repPrimary),
+            _repMembersHealths(repMembersHealths)
+            {}
 
         EstablishConnectionResponse(QObject *sender, const EventError &error, ConnectionType connectionType, ErrorReason errorReason) :
             Event(sender, error),
@@ -58,12 +62,16 @@ namespace Robomongo
             connectionType(connectionType),
             errorReason(errorReason) {}
 
-        const ConnectionInfo &info() const{
-            return _info;
-        }
+        // Getters
+        const ConnectionInfo &info() const { return _info; }
+        const mongo::HostAndPort& getRepPrimary() const { return _repPrimary; }
+        const std::vector<bool>& getRepMembersHealths() const { return _repMembersHealths; }
+
         const ConnectionInfo _info;
         ConnectionType connectionType;
         ErrorReason errorReason;
+        mongo::HostAndPort _repPrimary;
+        std::vector<bool> _repMembersHealths;    // todo: vector of host and health pair
     };
 
 
@@ -457,17 +465,17 @@ namespace Robomongo
     public:
         CreateCollectionRequest(QObject *sender, const MongoNamespace &ns, 
                                                  const mongo::BSONObj& extraOptions,
-			                                     long long size = 0,
-			                                     bool capped = false,
-			                                     int maxDocNum = 0
+                                                 long long size = 0,
+                                                 bool capped = false,
+                                                 int maxDocNum = 0
                                                  ) :
             Event(sender), _ns(ns), _extraOptions(extraOptions),
             _size(size), _capped(capped), _maxDocNum(maxDocNum) {}
 
         MongoNamespace getNs() const { return _ns; }
-		long long getSize() const { return _size; }
-		bool getCapped() const { return _capped; }
-		int getMaxDocNum() const { return _maxDocNum; }
+        long long getSize() const { return _size; }
+        bool getCapped() const { return _capped; }
+        int getMaxDocNum() const { return _maxDocNum; }
         const mongo::BSONObj getExtraOptions() const { return _extraOptions; }
 
     private:

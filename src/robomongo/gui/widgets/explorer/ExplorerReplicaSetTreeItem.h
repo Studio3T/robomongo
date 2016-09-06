@@ -18,7 +18,8 @@ namespace Robomongo
         /*
         ** Constructs ExplorerReplicaSetTreeItem
         */
-        ExplorerReplicaSetTreeItem(QTreeWidgetItem *parent, MongoServer *const server, const mongo::HostAndPort& repMemberHostAndPort);
+        ExplorerReplicaSetTreeItem(QTreeWidgetItem *parent, MongoServer *const server, const mongo::HostAndPort& repMemberHostAndPort,
+                                   const bool isPrimary, const bool isUp);
 
         // Getters
         ConnectionSettings const* connectionSettings() const { return _connSettings.get(); }
@@ -39,6 +40,9 @@ namespace Robomongo
 
     private:
         mongo::HostAndPort _repMemberHostAndPort;
+        const bool _isPrimary;
+        const bool _isUp;
+
         MongoServer *const _server;
         std::unique_ptr<ConnectionSettings> _connSettings;
         EventBus *_bus; // todo: remove?

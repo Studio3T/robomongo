@@ -107,9 +107,13 @@ namespace Robomongo
             // Add replica members
             ReplicaSetSettings const* repSetSettings = _server->connectionRecord()->replicaSetSettings();
             auto const& repMembers = repSetSettings->membersToHostAndPort();
-            for (auto const& repMember : repMembers)
+            bool isPrimary;
+            auto const& repMembersHealths = _server->getRepMembersHealths();
+            for (int i = 0; i < repMembers.size() && i < repMembersHealths.size(); ++i)
             {
-                repSetFolder->addChild(new ExplorerReplicaSetTreeItem(repSetFolder, _server, repMember));
+                isPrimary = (_server->getRepPrimary() == repMembers[i]);
+                repSetFolder->addChild(new ExplorerReplicaSetTreeItem(repSetFolder, _server, repMembers[i], isPrimary,
+                                       repMembersHealths[i]));
             }
         }
 

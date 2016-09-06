@@ -70,6 +70,10 @@ namespace Robomongo
         void loadDatabases();
         MongoWorker *const client() const { return _client; }
 
+        // --- Getters ---
+        const mongo::HostAndPort& getRepPrimary() const { return _repPrimary; }
+        const std::vector<bool>& getRepMembersHealths() const { return _repMembersHealths; }
+
     protected Q_SLOTS:
         void handle(EstablishConnectionResponse *event);
         void handle(LoadDatabaseNamesResponse *event);
@@ -95,6 +99,10 @@ namespace Robomongo
         int _handle;
 
         QList<MongoDatabase *> _databases;
+
+        // Replica Set Status
+        mongo::HostAndPort _repPrimary;
+        std::vector<bool> _repMembersHealths;   // todo: vector of pairs of host and health
     };
 
     class MongoServerLoadingDatabasesEvent : public Event

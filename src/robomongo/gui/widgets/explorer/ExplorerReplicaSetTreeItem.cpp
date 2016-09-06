@@ -32,9 +32,11 @@ namespace
 namespace Robomongo
 {
     ExplorerReplicaSetTreeItem::ExplorerReplicaSetTreeItem(QTreeWidgetItem *parent, MongoServer *const server, 
-        const mongo::HostAndPort& repMemberHostAndPort)
+        const mongo::HostAndPort& repMemberHostAndPort, const bool isPrimary, const bool isUp)
         : BaseClass(parent),
         _repMemberHostAndPort(repMemberHostAndPort),
+        _isPrimary(isPrimary),
+        _isUp(isUp),
         _server(server),
         _connSettings(server->connectionRecord()->clone()),
         _bus(AppRegistry::instance().bus())
@@ -82,7 +84,9 @@ namespace Robomongo
         //_bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
         //_bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
 
-        setText(0, QString::fromStdString(_repMemberHostAndPort.toString()));
+        auto status = _isPrimary ? "Primary" : "Secondary";
+        auto health = _isUp ? "Up" : "Down";
+        setText(0, QString::fromStdString(_repMemberHostAndPort.toString()) + " - [" + status + "] [" + health + "]");
         setIcon(0, GuiRegistry::instance().serverIcon());
         setExpanded(true);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);

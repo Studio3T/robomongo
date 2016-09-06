@@ -2,6 +2,8 @@
 
 #include <QThread>
 
+#include "mongo/client/global_conn_pool.h"
+#include "mongo/client/replica_set_monitor.h"
 #include <mongo/util/net/ssl_manager.h>
 #include <mongo/util/net/ssl_options.h>
 
@@ -189,12 +191,34 @@ namespace Robomongo
             if (dbNames.size() == 0)
                 throw mongo::DBException("Failed to execute \"listdatabases\" command.", 0);
 
+            // todo: move to func. getRepSetStatus();
+            mongo::HostAndPort repPrimary;
+            std::vector<bool> repMembersHealths;
+            if (_connSettings->isReplicaSet()) 
+            {
+                // Refresh view of Replica Set Monitor to get live data
+                auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
+                repSetMonitor->startOrContinueRefresh().refreshAll();
+
+                // Update connection settings with primary(master) address and port
+                repPrimary = repSetMonitor->getMasterOrUassert();
+                _connSettings->setServerHost(repPrimary.host());
+                _connSettings->setServerPort(repPrimary.port());
+
+                // Save health of members
+                for (auto const& member : _connSettings->replicaSetSettings()->membersToHostAndPort()) 
+                {
+                    repMembersHealths.push_back(repSetMonitor->isHostUp(member));
+                }
+            }
+
+            // Init MongoWorker
             init();
 
             resetGlobalSSLparams();
 
             reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connSettings->getFullAddress(), 
-                dbNames, client->getVersion(), client->getStorageEngineType()), event->connectionType));
+                dbNames, client->getVersion(), client->getStorageEngineType()), event->connectionType, repPrimary, repMembersHealths));
         } catch(const std::exception &ex) {
             resetGlobalSSLparams();
 
@@ -664,6 +688,7 @@ namespace Robomongo
                     new mongo::DBClientReplicaSet("repset",_connSettings->replicaSetSettings()->membersToHostAndPort(), _mongoTimeoutSec));
 
                 bool const connStatus = _dbclientRepSet->connect();
+                
                 if (!connStatus) {
                     return nullptr;
                 }

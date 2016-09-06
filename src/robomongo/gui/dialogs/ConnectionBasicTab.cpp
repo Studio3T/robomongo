@@ -54,9 +54,9 @@ namespace Robomongo
         {
             if (replicaSettings->members().empty()) 
             {
-                auto itemx = new QListWidgetItem("New Item");
-                itemx->setFlags(itemx->flags() | Qt::ItemIsEditable);
-                _members->addItem(itemx);
+                auto item = new QListWidgetItem("localhost:27017");
+                item->setFlags(item->flags() | Qt::ItemIsEditable);
+                _members->addItem(item);
             }
             else            
             {
@@ -175,7 +175,7 @@ namespace Robomongo
 
     void ConnectionBasicTab::on_addButton_clicked()
     {
-        auto item = new QListWidgetItem("New Item");
+        auto item = new QListWidgetItem("localhost:27017");
         item->setFlags(item->flags() | Qt::ItemIsEditable);
         _members->addItem(item);
     }

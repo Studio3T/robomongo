@@ -13,6 +13,7 @@
 #include <QSettings>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/ReplicaSetSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
@@ -44,8 +45,15 @@ namespace Robomongo
          */
         void setConnection(ConnectionSettings *connection)
         {
-            setText(0, QtUtils::toQString(connection->connectionName()));
-            setText(1, QtUtils::toQString(connection->getFullAddress()));
+            if (connection->isReplicaSet()) {
+                setText(0, QtUtils::toQString(connection->connectionName()) + " [Replica Set]");
+                auto const repSetSize = connection->replicaSetSettings()->members().size();
+                setText(1, QString::number(repSetSize) + " Servers (" + QtUtils::toQString(connection->getFullAddress()) + ")");
+            }
+            else {
+                setText(0, QtUtils::toQString(connection->connectionName()));
+                setText(1, QtUtils::toQString(connection->getFullAddress()));
+            }
 
             if (connection->hasEnabledPrimaryCredential()) {
                 QString authString = QString("%1 / %2").arg(QtUtils::toQString(connection->primaryCredential()->databaseName())).arg(QtUtils::toQString(connection->primaryCredential()->userName()));
@@ -57,7 +65,12 @@ namespace Robomongo
             }
 
             _connection = connection;
-            setIcon(0, GuiRegistry::instance().serverIcon());
+            if (connection->isReplicaSet()) { 
+                setIcon(0, GuiRegistry::instance().replicaSetIcon());
+            }
+            else {
+                setIcon(0, GuiRegistry::instance().serverIcon());
+            }
 
             if (connection->imported()) {
                 setIcon(0, GuiRegistry::instance().serverImportedIcon());

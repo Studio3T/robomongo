@@ -74,7 +74,7 @@ namespace Robomongo
         void handle(AutocompleteResponse *event);
 
     private Q_SLOTS:
-        void on_dock_undock(bool isFloating);
+    void on_dock_undock(bool isFloating);
 
     private:        
         void hideProgress();

@@ -228,10 +228,6 @@ namespace Robomongo
 
     void ScriptWidget::ui_queryLinesCountChanged()
     {
-        //// todo: in parent set ScriptWidget::_isOutputWindowDocked on dock/undock 
-        //auto const parentQueryWidget = dynamic_cast<QueryWidget*>(parentWidget());
-        //auto const outputWidgetDocked = parentQueryWidget->docked();
-
         // Set fixed size only if output widget is docked
         if (_parent->outputWindowDocked())
         {

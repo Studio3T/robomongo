@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QMainWindow>
 #include <QDockWidget>
+#include <QCloseEvent>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerjavascript.h>
 #include <mongo/client/dbclientinterface.h>
@@ -33,6 +34,20 @@ using namespace mongo;
 
 namespace Robomongo
 {
+    /* ------- CustomDockWidget -------- */
+    /* Custom dock widget for output window */
+    class CustomDockWidget : public QDockWidget
+    {
+    protected:
+        // Dock instead of close
+        void closeEvent(QCloseEvent *event)
+        {
+            event->ignore();
+            setFloating(false);
+        }
+    };
+
+    /* ------- QueryWidget -------- */
     QueryWidget::QueryWidget(MongoShell *shell, QWidget *parent) :
         QWidget(parent),
         _shell(shell),
@@ -51,12 +66,12 @@ namespace Robomongo
         // (Qt full support for dock windows implemented only for QMainWindow)
         _viewer = new OutputWidget();
         _outputWindow = new QMainWindow;
-        _dock = new QDockWidget;
+        _dock = new CustomDockWidget;
         _dock->setAllowedAreas(Qt::BottomDockWidgetArea);
-        _dock->setFeatures(QDockWidget::DockWidgetFeature::DockWidgetFloatable |
-                           QDockWidget::DockWidgetFeature::DockWidgetMovable);
+        _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
         _dock->setWidget(_viewer);
         VERIFY(connect(_dock, SIGNAL(topLevelChanged(bool)), this, SLOT(on_dock_undock(bool))));
+        VERIFY(connect(_dock, SIGNAL(visibilityChanged(bool)), this, SLOT(on_dock_visibilityChanged(bool))));
         _outputWindow->addDockWidget(Qt::BottomDockWidgetArea, _dock);
 
         _outputLabel = new QLabel(this);
@@ -268,14 +283,16 @@ namespace Robomongo
             // Settings to revert to docked mode
             _scriptWidget->ui_queryLinesCountChanged();
             _mainLayout->addWidget(_scriptWidget);                     
-            _mainLayout->addWidget(_outputWindow, 1);              
-            
+            _mainLayout->addWidget(_outputWindow, 1);     
+            _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
         }
-        else {  // If output window (OutputWidget) is undocked(floating)
+        else {  // output window undocked(floating)
             // Settings for query window to use maximum space
             _scriptWidget->disableFixedHeight();
             _mainLayout->addWidget(_scriptWidget, 1); 
-            _mainLayout->addWidget(_outputWindow);               
+            _mainLayout->addWidget(_outputWindow);  
+            _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetClosable |
+                               QDockWidget::DockWidgetMovable);
         }
     }
 

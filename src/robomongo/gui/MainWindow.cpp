@@ -37,6 +37,7 @@
 #include "robomongo/gui/dialogs/PreferencesDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/AppStyle.h"
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 
 namespace
 {
@@ -508,6 +509,9 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(this, OperationFailedEvent::Type);
 
         restoreWindowsSettings();
+
+        // Catch application windows focus changes
+        VERIFY(connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(on_focusChanged())));
     }
 
     void MainWindow::createStylesMenu()
@@ -1087,4 +1091,12 @@ namespace Robomongo
         }
     }
 
+    void MainWindow::on_focusChanged()
+    {
+        // If focus is on dock output window, make it's parent (which is a QueryWidget tab) as active tab
+        auto const activeDock = dynamic_cast<QueryWidget::CustomDockWidget*>(qApp->activeWindow());
+        if (activeDock) {
+            _workArea->setCurrentWidget(activeDock->getParent());
+        }
+    }
 }

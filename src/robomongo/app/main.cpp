@@ -58,8 +58,8 @@ int main(int argc, char *argv[], char** envp)
     Robomongo::AppStyleUtils::initStyle();
 
     // Application main window
-    Robomongo::MainWindow win;
-    win.show();
+    Robomongo::MainWindow mainWindow;
+    mainWindow.show();
 
     int rc = app.exec();
     rbm_ssh_cleanup();

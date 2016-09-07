@@ -7,7 +7,6 @@
 #include <QMessageBox>
 #include <QMainWindow>
 #include <QDockWidget>
-#include <QCloseEvent>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerjavascript.h>
 #include <mongo/client/dbclientinterface.h>
@@ -34,19 +33,6 @@ using namespace mongo;
 
 namespace Robomongo
 {
-    /* ------- CustomDockWidget -------- */
-    /* Custom dock widget for output window */
-    class CustomDockWidget : public QDockWidget
-    {
-    protected:
-        // Dock instead of close
-        void closeEvent(QCloseEvent *event)
-        {
-            event->ignore();
-            setFloating(false);
-        }
-    };
-
     /* ------- QueryWidget -------- */
     QueryWidget::QueryWidget(MongoShell *shell, QWidget *parent) :
         QWidget(parent),
@@ -66,7 +52,7 @@ namespace Robomongo
         // (Qt full support for dock windows implemented only for QMainWindow)
         _viewer = new OutputWidget();
         _outputWindow = new QMainWindow;
-        _dock = new CustomDockWidget;
+        _dock = new CustomDockWidget(this);
         _dock->setAllowedAreas(Qt::BottomDockWidgetArea);
         _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
         _dock->setWidget(_viewer);

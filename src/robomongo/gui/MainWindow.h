@@ -85,6 +85,9 @@ namespace Robomongo
         void onExplorerVisibilityChanged(bool isVisisble);
         void on_tabChange();
 
+        // On application focus changes
+        void on_focusChanged();
+
     private:
         void updateConnectionsMenu();
         void createDatabaseExplorer();

@@ -71,7 +71,6 @@ namespace Robomongo
         _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
         _dock->setWidget(_viewer);
         VERIFY(connect(_dock, SIGNAL(topLevelChanged(bool)), this, SLOT(on_dock_undock(bool))));
-        VERIFY(connect(_dock, SIGNAL(visibilityChanged(bool)), this, SLOT(on_dock_visibilityChanged(bool))));
         _outputWindow->addDockWidget(Qt::BottomDockWidgetArea, _dock);
 
         _outputLabel = new QLabel(this);

@@ -13,6 +13,7 @@
 #include "robomongo/core/utils/QtUtils.h"
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
@@ -49,10 +50,11 @@ namespace
 
 namespace Robomongo
 {
-    ScriptWidget::ScriptWidget(MongoShell *shell) :
+    ScriptWidget::ScriptWidget(MongoShell *shell, QueryWidget *parent) :
         _shell(shell),
         _textChanged(false),
-        _disableTextAndCursorNotifications(false)
+        _disableTextAndCursorNotifications(false),
+        _parent(parent)
     {
         setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
 
@@ -226,13 +228,12 @@ namespace Robomongo
 
     void ScriptWidget::ui_queryLinesCountChanged()
     {
-        // todo: in parent set ScriptWidget::_isOutputWindowDocked on dock/undock 
-        auto const parentQueryWidget = dynamic_cast<QueryWidget*>(parentWidget());
-        auto const outputWidgetDocked = parentQueryWidget->docked();
+        //// todo: in parent set ScriptWidget::_isOutputWindowDocked on dock/undock 
+        //auto const parentQueryWidget = dynamic_cast<QueryWidget*>(parentWidget());
+        //auto const outputWidgetDocked = parentQueryWidget->docked();
 
         // Set fixed size only if output widget is docked
-
-        if (outputWidgetDocked)
+        if (_parent->outputWindowDocked())
         {
             int lines = _queryText->sciScintilla()->lines();
             int editorTotalHeight = editorHeight(lines);

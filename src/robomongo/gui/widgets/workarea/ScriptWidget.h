@@ -15,6 +15,7 @@ namespace Robomongo
     class TopStatusBar;
     class MongoShell;
     class Indicator;
+    class QueryWidget;
 
     class AutoCompletionInfo
     {
@@ -49,7 +50,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        ScriptWidget(MongoShell *shell);
+        ScriptWidget(MongoShell *shell, QueryWidget* parent);
 
         /**
          * @reimp
@@ -115,6 +116,7 @@ namespace Robomongo
         AutoCompletionInfo _currentAutoCompletionInfo;
         bool _textChanged;
         bool _disableTextAndCursorNotifications;
+        QueryWidget *_parent;
     };
 
     class TopStatusBar : public QFrame

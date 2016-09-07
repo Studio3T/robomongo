@@ -47,7 +47,11 @@ namespace Robomongo
         void bringDockToFront();
         
         // Getter
-        bool docked() const { return !_dock->isFloating(); }
+        bool outputWindowDocked() const 
+        { 
+            if (_dock) return !_dock->isFloating(); 
+            else return true; 
+        }
 
         ~QueryWidget();
 

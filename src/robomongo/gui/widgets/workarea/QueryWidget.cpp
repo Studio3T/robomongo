@@ -36,14 +36,15 @@ namespace Robomongo
     QueryWidget::QueryWidget(MongoShell *shell, QWidget *parent) :
         QWidget(parent),
         _shell(shell),
-        _viewer(NULL),
-        _isTextChanged(false)
+        _viewer(nullptr),
+        _isTextChanged(false),
+        _dock(nullptr)
     {
         AppRegistry::instance().bus()->subscribe(this, DocumentListLoadedEvent::Type, shell);
         AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type, shell);
         AppRegistry::instance().bus()->subscribe(this, AutocompleteResponse::Type, shell);
 
-        _scriptWidget = new ScriptWidget(_shell);
+        _scriptWidget = new ScriptWidget(_shell, this);
         VERIFY(connect(_scriptWidget, SIGNAL(textChanged()), this, SLOT(textChange())));
 
         // Need to use QMainWindow in order to make use of all features of docking.

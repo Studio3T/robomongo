@@ -324,6 +324,18 @@ namespace Robomongo
         return stopIc;
     }
 
+    const QIcon &GuiRegistry::exportIcon() const
+    {
+        static const QIcon exportIc = QIcon(":/robomongo/icons/export_64x64.png");
+        return exportIc;
+    }
+
+    const QIcon &GuiRegistry::importIcon() const
+    {
+        static const QIcon importIc = QIcon(":/robomongo/icons/import_64x64.png");
+        return importIc;
+    }
+
     const QIcon &GuiRegistry::mainWindowIcon() const
     {
         static const QIcon mainWindowIc = QIcon(":/robomongo/icons/logo-256x256.png");

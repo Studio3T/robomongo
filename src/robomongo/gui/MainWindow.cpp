@@ -493,6 +493,17 @@ namespace Robomongo
         _toolbarsMenu->addAction(_execToolBar->toggleViewAction());
         VERIFY(connect(_execToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onExecToolbarVisibilityChanged(bool))));
 
+        // Export/Import Toolbar
+        auto expImpToolBar = new QToolBar(tr("Export/Import Toolbar"), this);
+        expImpToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        expImpToolBar->setMovable(false);
+        // Export action
+        _exportAction = new QAction(this);
+        _exportAction->setData("Export");
+        _exportAction->setIcon(GuiRegistry::instance().exportIcon());
+        addToolBar(expImpToolBar);
+        expImpToolBar->addAction(_exportAction);
+
         createTabs();
         createStatusBar();
         setWindowTitle(PROJECT_NAME_TITLE " " PROJECT_VERSION);

@@ -104,14 +104,17 @@ namespace Robomongo
         QMenu *_viewMenu;
         QMenu *_toolbarsMenu;
         QAction *_connectAction;
+        // Open/Save tool bar
         QAction *_openAction;
         QAction *_saveAction;
         QAction *_saveAsAction;
+        // Execution tool bar
         QAction *_executeAction;
         QAction *_stopAction;
         QAction *_orientationAction;
         QToolBar *_execToolBar;
-
+        // Export/import tool bar
+        QAction *_exportAction;
     };
 
 }

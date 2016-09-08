@@ -62,5 +62,7 @@
         <file>icons/index_16x16.png</file>
         <file>icons/hide_64x64.png</file>
         <file>icons/show_64x64.png</file>
+        <file>icons/export_64x64.png</file>
+        <file>icons/import_64x64.png</file>
     </qresource>
 </RCC>

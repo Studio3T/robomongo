@@ -75,6 +75,7 @@ set(SOURCES
     # Isolated scope #4
     gui/dialogs/PreferencesDialog.cpp
     gui/dialogs/ConnectionsDialog.cpp
+    gui/dialogs/ExportDialog.cpp
 
     # Isolated scope #5
     gui/editors/PlainJavaScriptEditor.cpp

@@ -35,6 +35,7 @@
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 #include "robomongo/gui/dialogs/AboutDialog.h"
 #include "robomongo/gui/dialogs/PreferencesDialog.h"
+#include "robomongo/gui/dialogs/ExportDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/AppStyle.h"
 
@@ -95,10 +96,12 @@ namespace Robomongo
 
     MainWindow::MainWindow()
         : BaseClass(),
-        _app(AppRegistry::instance().app()),
-        _workArea(NULL),
-        _connectionsMenu(NULL)
-    {
+        _logDock(nullptr), _workArea(nullptr), _app(AppRegistry::instance().app()), 
+        _connectionsMenu(nullptr), _connectButton(nullptr), _viewMenu(nullptr), _toolbarsMenu(nullptr), 
+        _connectAction(nullptr), _openAction(nullptr), _saveAction(nullptr), _saveAsAction(nullptr),
+        _executeAction(nullptr), _stopAction(nullptr), _orientationAction(nullptr), _execToolBar(nullptr),
+        _exportAction(nullptr), _importAction(nullptr)
+     {
         QColor background = palette().window().color();
         QString controlKey = "Ctrl";
 
@@ -497,12 +500,19 @@ namespace Robomongo
         auto expImpToolBar = new QToolBar(tr("Export/Import Toolbar"), this);
         expImpToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
         expImpToolBar->setMovable(false);
-        // Export action
+        // Add export action
         _exportAction = new QAction(this);
         _exportAction->setData("Export");
         _exportAction->setIcon(GuiRegistry::instance().exportIcon());
+        VERIFY(connect(_exportAction, SIGNAL(triggered()), this, SLOT(openExportDialog())));
         addToolBar(expImpToolBar);
         expImpToolBar->addAction(_exportAction);
+        // Add import action
+        _importAction = new QAction(this);
+        _importAction->setData("Import");
+        _importAction->setIcon(GuiRegistry::instance().importIcon());
+        addToolBar(expImpToolBar);
+        expImpToolBar->addAction(_importAction);
 
         createTabs();
         createStatusBar();
@@ -849,6 +859,12 @@ namespace Robomongo
     void MainWindow::openPreferences()
     {
         PreferencesDialog dlg(this);
+        dlg.exec();
+    }
+
+    void MainWindow::openExportDialog()
+    {
+        ExportDialog dlg(this);
         dlg.exec();
     }
 

@@ -78,7 +78,8 @@ namespace Robomongo
         void setUtcTimeZone();
         void setLocalTimeZone();
         void openPreferences();
-        
+        void openExportDialog();
+
         void onConnectToolbarVisibilityChanged(bool isVisisble);
         void onOpenSaveToolbarVisibilityChanged(bool isVisisble);
         void onExecToolbarVisibilityChanged(bool isVisisble);
@@ -115,6 +116,7 @@ namespace Robomongo
         QToolBar *_execToolBar;
         // Export/import tool bar
         QAction *_exportAction;
+        QAction *_importAction;
     };
 
 }

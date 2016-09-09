@@ -22,6 +22,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h"
 #include "robomongo/gui/utils/GuiConstants.h"
 
@@ -73,7 +74,7 @@ namespace Robomongo
         //
         auto const& serversVec = AppRegistry::instance().app()->getServers();
         if (!serversVec.empty()){
-            auto explorerServerTreeItem = new ExplorerServerTreeItem(_treeWidget, *serversVec.begin());
+            auto explorerServerTreeItem = new ExplorerServerTreeItem(_treeWidget, *serversVec.begin()); // todo
             _treeWidget->addTopLevelItem(explorerServerTreeItem);
             _treeWidget->setCurrentItem(explorerServerTreeItem);
             _treeWidget->setFocus();
@@ -208,7 +209,7 @@ namespace Robomongo
 
     void ExportDialog::ui_itemDoubleClicked(QTreeWidgetItem *item, int column)
     {
-        auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
+        auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(item);
         if (collectionItem) {
             AppRegistry::instance().app()->openShell(collectionItem->collection());
             return;
@@ -221,8 +222,10 @@ namespace Robomongo
             return;
         }
 
-        // Toggle expanded state
-        item->setExpanded(!item->isExpanded());
+        auto dbTreeItem = dynamic_cast<ExplorerDatabaseTreeItem*>(item);
+        if (dbTreeItem) {
+            dbTreeItem->applySettingsForExportDialog();
+        }
     }
 
     Indicator *ExportDialog::createDatabaseIndicator(const QString &database)

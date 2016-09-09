@@ -98,11 +98,11 @@ namespace Robomongo
         _collectionFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_collectionFolderItem);
 
-        _javascriptFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Functions);
-        _javascriptFolderItem->setText(0, "Functions");
-        _javascriptFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        addChild(_javascriptFolderItem);
-        
+        _functionsFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Functions);
+        _functionsFolderItem->setText(0, "Functions");
+        _functionsFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
+        addChild(_functionsFolderItem);
+
         _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Users);
         _usersFolderItem->setText(0, "Users");
         _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
@@ -137,6 +137,12 @@ namespace Robomongo
     void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &oldIndexText, const std::string &newIndexText)
     {
          _bus->send(_database->server()->client(), new EditIndexRequest(item, item->collection()->info(), oldIndexText, newIndexText));
+    }
+
+    void ExplorerDatabaseTreeItem::applySettingsForExportDialog()
+    {
+        _functionsFolderItem->setHidden(true);
+        _usersFolderItem->setHidden(true);
     }
 
     void ExplorerDatabaseTreeItem::expandFunctions()
@@ -218,8 +224,8 @@ namespace Robomongo
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseFunctionsLoadedEvent *event)
     {
         if (event->isError()) {
-            _javascriptFolderItem->setText(0, "Functions");
-            _javascriptFolderItem->setExpanded(false);
+            _functionsFolderItem->setText(0, "Functions");
+            _functionsFolderItem->setExpanded(false);
 
             std::stringstream ss;
             ss << "Cannot load list of functions.\n\nError:\n" << event->error().errorMessage();
@@ -230,13 +236,13 @@ namespace Robomongo
 
         std::vector<MongoFunction> functions = event->functions();
         int count = functions.size();
-        _javascriptFolderItem->setText(0,  detail::buildName("Functions", count));
+        _functionsFolderItem->setText(0,  detail::buildName("Functions", count));
 
         // Do not expand, when we do not have functions
         if (count == 0)
-            _javascriptFolderItem->setExpanded(false);
+            _functionsFolderItem->setExpanded(false);
 
-        QtUtils::clearChildItems(_javascriptFolderItem);
+        QtUtils::clearChildItems(_functionsFolderItem);
 
         for (int i = 0; i < functions.size(); ++i) {
             MongoFunction fun = functions[i];
@@ -251,7 +257,7 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseFunctionsLoadingEvent *event)
     {
-        _javascriptFolderItem->setText(0, detail::buildName("Functions", -1));
+        _functionsFolderItem->setText(0, detail::buildName("Functions", -1));
     }
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseUsersLoadingEvent *event)
@@ -284,8 +290,8 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::addFunctionItem(MongoDatabase *database, const MongoFunction &function)
     {
-        ExplorerFunctionTreeItem *functionItem = new ExplorerFunctionTreeItem(_javascriptFolderItem, database, function);
-        _javascriptFolderItem->addChild(functionItem);
+        ExplorerFunctionTreeItem *functionItem = new ExplorerFunctionTreeItem(_functionsFolderItem, database, function);
+        _functionsFolderItem->addChild(functionItem);
     }
 
     void ExplorerDatabaseTreeItem::ui_refreshDatabase()

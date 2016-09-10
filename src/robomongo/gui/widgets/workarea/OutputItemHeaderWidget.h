@@ -19,7 +19,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        OutputItemHeaderWidget(OutputItemContentWidget *output, QWidget *parent = 0);
+        OutputItemHeaderWidget(OutputItemContentWidget *output, bool multipleResults, QWidget *parent = 0);
         PagingWidget *paging() const { return _paging; }
         void showText();
         void showTree();
@@ -48,5 +48,6 @@ namespace Robomongo
         Indicator *_timeIndicator;
         PagingWidget *_paging;
         bool _maximized;
+        bool _multipleResults;
     };
 }

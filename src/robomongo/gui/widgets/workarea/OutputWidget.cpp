@@ -35,11 +35,11 @@ namespace Robomongo
         if (_prevResultsCount > 0) {
             clearAllParts();
         }
-        int count = _prevResultsCount = results.size();
-        
-        for (int i = 0; i<count; ++i) {
+        int const SIZE = _prevResultsCount = results.size();
+        bool const multipleResults = (SIZE > 1);
+
+        for (int i = 0; i < SIZE; ++i) {
             MongoShellResult shellResult = results[i];
-            OutputItemContentWidget *output = NULL;
 
             double secs = shellResult.elapsedMs() / 1000.f;
             ViewMode viewMode = AppRegistry::instance().settingsManager()->viewMode();
@@ -48,10 +48,13 @@ namespace Robomongo
                 _prevViewModes.pop_back();
             }
 
+            OutputItemContentWidget *output = nullptr;
             if (shellResult.documents().size() > 0) {
-                output = new OutputItemContentWidget(this, viewMode, shell, QtUtils::toQString(shellResult.type()), shellResult.documents(), shellResult.queryInfo(), secs);
+                output = new OutputItemContentWidget(this, viewMode, shell, QtUtils::toQString(shellResult.type()), 
+                                                     shellResult.documents(), shellResult.queryInfo(), secs, multipleResults);
             } else {
-                output = new OutputItemContentWidget(this, viewMode, shell, QtUtils::toQString(shellResult.response()), secs);
+                output = new OutputItemContentWidget(this, viewMode, shell, QtUtils::toQString(shellResult.response()), secs, 
+                                                     multipleResults);
             }
             VERIFY(connect(output, SIGNAL(maximizedPart()), this, SLOT(maximizePart())));
             VERIFY(connect(output, SIGNAL(restoredSize()), this, SLOT(restoreSize())));

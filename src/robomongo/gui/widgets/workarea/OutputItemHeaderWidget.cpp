@@ -27,19 +27,21 @@ namespace
 namespace Robomongo
 {
 
-    OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemContentWidget *output, QWidget *parent) : 
+    OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemContentWidget *output, bool multipleResults, QWidget *parent) :
         QFrame(parent),
-        _maximized(false)
+        _maximized(false), _multipleResults(multipleResults)
     {
         setContentsMargins(5, 0, 0, 0);
         
-        // Maximize button
-        _maxButton = new QPushButton;
-        _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
-        _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");
-        _maxButton->setFixedSize(18, 18);
-        _maxButton->setFlat(true);
-        VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart())));
+        // Maximize button - do not crate it if there is only one result
+        if (_multipleResults) {
+            _maxButton = new QPushButton;
+            _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
+            _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");
+            _maxButton->setFixedSize(18, 18);
+            _maxButton->setFlat(true);
+            VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart())));
+        }
 
         // Text mode button
         _textButton = new QPushButton(this);
@@ -123,7 +125,9 @@ namespace Robomongo
 
         layout->addSpacing(3);
         layout->addWidget(createVerticalLine());
-        layout->addWidget(_maxButton, 0, Qt::AlignRight);
+        if (_multipleResults) {
+            layout->addWidget(_maxButton, 0, Qt::AlignRight);
+        }
         setLayout(layout);
     }
 
@@ -197,12 +201,16 @@ namespace Robomongo
         if (_maximized) {
             //item->_output->restoreSize();
             emit restoredSize();
-            _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
+            if (_multipleResults) {
+                _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
+            }
         }
         else {
             //item->_output->maximizePart(item);
             emit maximizedPart();
-            _maxButton->setIcon(GuiRegistry::instance().maximizeHighlightedIcon());
+            if (_multipleResults) {
+                _maxButton->setIcon(GuiRegistry::instance().maximizeHighlightedIcon());
+            }
         }
 
         _maximized = !_maximized;

@@ -23,7 +23,8 @@
 
 namespace Robomongo
 {
-    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &text, double secs, QWidget *parent) :
+    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &text, 
+                                                     double secs, bool multipleResults, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -46,10 +47,12 @@ namespace Robomongo
         _mod(NULL),
         _viewMode(viewMode)
     {
-        setup(secs);
+        setup(secs, multipleResults);
     }
 
-    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent) :
+    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, 
+                                                     const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, 
+                                                     double secs, bool multipleResults, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -74,13 +77,13 @@ namespace Robomongo
         _mod(NULL),
         _viewMode(viewMode)
     {
-        setup(secs);
+        setup(secs, multipleResults);
     }
 
-    void OutputItemContentWidget::setup(double secs)
+    void OutputItemContentWidget::setup(double secs, bool multipleResults)
     {      
         setContentsMargins(0, 0, 0, 0);
-        _header = new OutputItemHeaderWidget(this);       
+        _header = new OutputItemHeaderWidget(this, multipleResults);       
 
         if (_queryInfo._info.isValid()) {
             _header->setCollection(QtUtils::toQString(_queryInfo._info._ns.collectionName()));

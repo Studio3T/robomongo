@@ -25,8 +25,11 @@ namespace Robomongo
 
     public:
         typedef QWidget BaseClass;
-        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &text, double secs, QWidget *parent = NULL);
-        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent = NULL);
+        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &text, double secs, 
+                                bool multipleResults, QWidget *parent = NULL);
+        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, 
+                                const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, 
+                                bool multipleResults, QWidget *parent = NULL);
         int _initialSkip;
         int _initialLimit;
         void update(const MongoQueryInfo &inf, const std::vector<MongoDocumentPtr> &documents);
@@ -56,7 +59,7 @@ namespace Robomongo
         void paging_leftClicked(int skip, int limit);      
 
     private:
-        void setup(double secs);
+        void setup(double secs, bool multipleResults);
         FindFrame *configureLogText();
         BsonTreeModel *configureModel();
 

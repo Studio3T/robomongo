@@ -23,7 +23,8 @@
 
 namespace Robomongo
 {
-    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &text, double secs, QWidget *parent) :
+    OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &text,
+                                                     double secs, bool multipleResults, bool firstItem, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -40,16 +41,18 @@ namespace Robomongo
         _isFirstPartRendered(false),
         _text(text),
         _shell(shell),
+        _outputWidget(dynamic_cast<OutputWidget*>(parentWidget())),
         _initialSkip(0),
         _initialLimit(0),
-        _out(out),
         _mod(NULL),
         _viewMode(viewMode)
     {
-        setup(secs);
+        setup(secs, multipleResults, firstItem);
     }
 
-    OutputItemContentWidget::OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent) :
+    OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &type,
+                                                     const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, 
+                                                     double secs, bool multipleResults, bool firstItem, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -70,17 +73,17 @@ namespace Robomongo
         _shell(shell),
         _initialSkip(queryInfo._skip),
         _initialLimit(queryInfo._limit),
-        _out(out),
+        _outputWidget(dynamic_cast<OutputWidget*>(parentWidget())),
         _mod(NULL),
         _viewMode(viewMode)
     {
-        setup(secs);
+        setup(secs, multipleResults, firstItem);
     }
 
-    void OutputItemContentWidget::setup(double secs)
+    void OutputItemContentWidget::setup(double secs, bool multipleResults, bool firstItem)
     {      
         setContentsMargins(0, 0, 0, 0);
-        _header = new OutputItemHeaderWidget(this);       
+        _header = new OutputItemHeaderWidget(this, multipleResults, firstItem);
 
         if (_queryInfo._info.isValid()) {
             _header->setCollection(QtUtils::toQString(_queryInfo._info._ns.collectionName()));
@@ -164,8 +167,8 @@ namespace Robomongo
         info._limit = limit;
         info._skip = skip;
         info._batchSize = batchSize;
-        _out->showProgress();
-        _shell->query(_out->resultIndex(this), info);
+        _outputWidget->showProgress();
+        _shell->query(_outputWidget->resultIndex(this), info);
     }
 
     void OutputItemContentWidget::update(const MongoQueryInfo &inf, const std::vector<MongoDocumentPtr> &documents)

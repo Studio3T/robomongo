@@ -37,6 +37,7 @@
 #include "robomongo/gui/dialogs/PreferencesDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/AppStyle.h"
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 
 namespace
 {
@@ -508,6 +509,9 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(this, OperationFailedEvent::Type);
 
         restoreWindowsSettings();
+
+        // Catch application windows focus changes
+        VERIFY(connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(on_focusChanged())));
     }
 
     void MainWindow::createStylesMenu()
@@ -1014,7 +1018,7 @@ namespace Robomongo
         _logDock = new QDockWidget(tr("Logs"));
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         _logDock->setWidget(log);
-        _logDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+        _logDock->setFeatures(QDockWidget::DockWidgetClosable);
         _logDock->setVisible(false);
 
         QAction *action = _logDock->toggleViewAction();
@@ -1044,6 +1048,7 @@ namespace Robomongo
         _workArea = new WorkAreaTabWidget(this);
         AppRegistry::instance().bus()->subscribe(_workArea, OpeningShellEvent::Type);
         VERIFY(connect(_workArea, SIGNAL(currentChanged(int)), this, SLOT(updateMenus())));
+        VERIFY(connect(_workArea, SIGNAL(currentChanged(int)), this, SLOT(on_tabChange())));
 
         QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0, 3, 0, 0);
@@ -1076,5 +1081,22 @@ namespace Robomongo
     {
         AppRegistry::instance().settingsManager()->setToolbarSettings("explorer", isVisible);
         AppRegistry::instance().settingsManager()->save();
+    }
+
+    void MainWindow::on_tabChange()
+    {
+        auto activeTab = dynamic_cast<QueryWidget*>(_workArea->currentWidget());
+        if (activeTab) {
+            activeTab->bringDockToFront();
+        }
+    }
+
+    void MainWindow::on_focusChanged()
+    {
+        // If focus is on dock output window, make it's parent (which is a QueryWidget tab) as active tab
+        auto const activeDock = dynamic_cast<QueryWidget::CustomDockWidget*>(qApp->activeWindow());
+        if (activeDock) {
+            _workArea->setCurrentWidget(activeDock->getQueryWidget());
+        }
     }
 }

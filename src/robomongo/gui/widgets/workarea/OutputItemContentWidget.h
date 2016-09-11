@@ -25,8 +25,11 @@ namespace Robomongo
 
     public:
         typedef QWidget BaseClass;
-        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &text, double secs, QWidget *parent = NULL);
-        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent = NULL);
+        OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &text, double secs,
+                                bool multipleResults, bool firstHeaderItem, QWidget *parent);
+        OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &type,
+                                const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, 
+                                double secs, bool multipleResults, bool firstHeaderItem, QWidget *parent);
         int _initialSkip;
         int _initialLimit;
         void update(const MongoQueryInfo &inf, const std::vector<MongoDocumentPtr> &documents);
@@ -38,6 +41,8 @@ namespace Robomongo
 
         void refreshOutputItem();
         void markUninitialized();
+
+        OutputItemHeaderWidget* getOutputItemHeaderWidget() { return _header; }
 
     Q_SIGNALS:
         void restoredSize();
@@ -56,7 +61,7 @@ namespace Robomongo
         void paging_leftClicked(int skip, int limit);      
 
     private:
-        void setup(double secs);
+        void setup(double secs, bool multipleResults, bool firstItem);
         FindFrame *configureLogText();
         BsonTreeModel *configureModel();
 
@@ -76,7 +81,7 @@ namespace Robomongo
 
         MongoShell *_shell;
         OutputItemHeaderWidget *_header;
-        OutputWidget *_out;
+        OutputWidget *_outputWidget;
         bool _isTextModeSupported;
         bool _isTreeModeSupported;
         bool _isTableModeSupported;

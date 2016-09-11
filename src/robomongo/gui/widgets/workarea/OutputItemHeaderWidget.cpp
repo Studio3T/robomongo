@@ -7,6 +7,7 @@
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/core/AppRegistry.h"
@@ -27,19 +28,12 @@ namespace
 namespace Robomongo
 {
 
-    OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemContentWidget *output, QWidget *parent) : 
+    OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemContentWidget *outputItemContentWidget, bool multipleResults, 
+                                                   bool firstItem, QWidget *parent) :
         QFrame(parent),
-        _maximized(false)
+        _maxButton(nullptr), _dockUndockButton(nullptr), _maximized(false), _firstItem(firstItem)
     {
         setContentsMargins(5, 0, 0, 0);
-        
-        // Maximize button
-        _maxButton = new QPushButton;
-        _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
-        _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");
-        _maxButton->setFixedSize(18, 18);
-        _maxButton->setFlat(true);
-        VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart())));
 
         // Text mode button
         _textButton = new QPushButton(this);
@@ -78,10 +72,30 @@ namespace Robomongo
         _customButton->setFlat(true);
         _customButton->setCheckable(true);
 
-        VERIFY(connect(_textButton, SIGNAL(clicked()), output, SLOT(showText())));
-        VERIFY(connect(_treeButton, SIGNAL(clicked()), output, SLOT(showTree())));
-        VERIFY(connect(_tableButton, SIGNAL(clicked()), output, SLOT(showTable())));
-        VERIFY(connect(_customButton, SIGNAL(clicked()), output, SLOT(showCustom())));
+        // Maximize button - do not crate it if there is only one result
+        if (multipleResults) {
+            _maxButton = new QPushButton;
+            _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
+            _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");
+            _maxButton->setFixedSize(18, 18);
+            _maxButton->setFlat(true);
+            VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart())));
+        }
+
+        _dockUndockButton = new QPushButton;
+        _dockUndockButton->setIcon(GuiRegistry::instance().undockIcon());
+        _dockUndockButton->setToolTip("Undock into separate window");
+        _dockUndockButton->setFixedSize(18, 18);
+        _dockUndockButton->setFlat(true);
+        
+        auto dockWidget = dynamic_cast<QueryWidget::CustomDockWidget*>(outputItemContentWidget->parentWidget()->parentWidget());
+        auto queryWidget = dockWidget->getQueryWidget();
+        VERIFY(connect(_dockUndockButton, SIGNAL(clicked()), queryWidget, SLOT(dockUndock())));
+        
+        VERIFY(connect(_textButton, SIGNAL(clicked()), outputItemContentWidget, SLOT(showText())));
+        VERIFY(connect(_treeButton, SIGNAL(clicked()), outputItemContentWidget, SLOT(showTree())));
+        VERIFY(connect(_tableButton, SIGNAL(clicked()), outputItemContentWidget, SLOT(showTable())));
+        VERIFY(connect(_customButton, SIGNAL(clicked()), outputItemContentWidget, SLOT(showCustom())));
 
         _collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon());
         _timeIndicator = new Indicator(GuiRegistry::instance().timeIcon());
@@ -103,27 +117,39 @@ namespace Robomongo
         layout->addWidget(createVerticalLine());
         layout->addSpacing(2);
 
-        if (output->isCustomModeSupported()) {
+        if (outputItemContentWidget->isCustomModeSupported()) {
             layout->addWidget(_customButton, 0, Qt::AlignRight);
             _customButton->show();
         }
 
-        if (output->isTreeModeSupported()) {
+        if (outputItemContentWidget->isTreeModeSupported()) {
             layout->addWidget(_treeButton, 0, Qt::AlignRight);
             _treeButton->show();
         }
 
-        if (output->isTableModeSupported()) {
+        if (outputItemContentWidget->isTableModeSupported()) {
             layout->addWidget(_tableButton, 0, Qt::AlignRight);
             _tableButton->show();
         }
 
-        if (output->isTextModeSupported())
+        if (outputItemContentWidget->isTextModeSupported())
             layout->addWidget(_textButton, 0, Qt::AlignRight);
 
+        if (multipleResults) {
+            layout->addWidget(_maxButton, 0, Qt::AlignRight);
+        }
+
         layout->addSpacing(3);
-        layout->addWidget(createVerticalLine());
-        layout->addWidget(_maxButton, 0, Qt::AlignRight);
+        _verticalLine = createVerticalLine();
+        layout->addWidget(_verticalLine);
+        layout->addWidget(_dockUndockButton);
+        
+        // Add _dockUndockButton only for first header item
+        if (!_firstItem) {
+            _verticalLine->setHidden(true);
+            _dockUndockButton->setHidden(true);
+        }
+
         setLayout(layout);
     }
 
@@ -180,6 +206,18 @@ namespace Robomongo
         _customButton->setChecked(true);
     }
 
+    void OutputItemHeaderWidget::applyDockUndockSettings(bool docking)
+    {
+        if (docking) {
+            _dockUndockButton->setIcon(GuiRegistry::instance().undockIcon());
+            _dockUndockButton->setToolTip("Undock into separate window");
+        }
+        else {
+            _dockUndockButton->setIcon(GuiRegistry::instance().dockIcon());
+            _dockUndockButton->setToolTip("Dock into main window");
+        }
+    }
+
     void OutputItemHeaderWidget::setTime(const QString &time)
     {
         _timeIndicator->setVisible(!time.isEmpty());
@@ -195,17 +233,22 @@ namespace Robomongo
     void OutputItemHeaderWidget::maximizePart()
     {
         if (_maximized) {
-            //item->_output->restoreSize();
             emit restoredSize();
             _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
+            if (!_firstItem) {
+                _verticalLine->setHidden(true);
+                _dockUndockButton->setHidden(true);
+            }
         }
         else {
-            //item->_output->maximizePart(item);
             emit maximizedPart();
             _maxButton->setIcon(GuiRegistry::instance().maximizeHighlightedIcon());
+            if (!_firstItem) {
+                _verticalLine->setVisible(true);
+                _dockUndockButton->setVisible(true);
+            }
         }
 
         _maximized = !_maximized;
     }
-
 }

@@ -15,6 +15,7 @@ namespace Robomongo
     class TopStatusBar;
     class MongoShell;
     class Indicator;
+    class QueryWidget;
 
     class AutoCompletionInfo
     {
@@ -49,7 +50,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        ScriptWidget(MongoShell *shell);
+        ScriptWidget(MongoShell *shell, QueryWidget* parent);
 
         /**
          * @reimp
@@ -70,12 +71,14 @@ namespace Robomongo
         bool getDisableTextAndCursorNotifications() { return _disableTextAndCursorNotifications; }
         void setDisableTextAndCursorNotifications(const bool value) { _disableTextAndCursorNotifications = value; }
 
+        void disableFixedHeight() const;
+
     Q_SIGNALS:
         void textChanged();
     public Q_SLOTS:
         void setText(const QString &text);
-    private Q_SLOTS:
         void ui_queryLinesCountChanged();
+    private Q_SLOTS:
         void onTextChanged();
         void onCursorPositionChanged(int line, int index);
         void onCompletionActivated(const QString&);
@@ -113,6 +116,7 @@ namespace Robomongo
         AutoCompletionInfo _currentAutoCompletionInfo;
         bool _textChanged;
         bool _disableTextAndCursorNotifications;
+        QueryWidget *_parent;
     };
 
     class TopStatusBar : public QFrame

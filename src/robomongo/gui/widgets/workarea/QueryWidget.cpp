@@ -68,15 +68,15 @@ namespace Robomongo
         _outputLabel->setContentsMargins(0, 5, 0, 0);
         _outputLabel->setVisible(false);
 
-        QFrame *line = new QFrame(this);
-        line->setFrameShape(QFrame::HLine);
-        line->setFrameShadow(QFrame::Raised);
+        _line = new QFrame(this);
+        _line->setFrameShape(QFrame::HLine);
+        _line->setFrameShadow(QFrame::Raised);
 
         _mainLayout = new QVBoxLayout;
         _mainLayout->setSpacing(0);
         _mainLayout->setContentsMargins(0, 0, 0, 0);
         _mainLayout->addWidget(_scriptWidget); 
-        _mainLayout->addWidget(line);
+        _mainLayout->addWidget(_line);
         _mainLayout->addWidget(_outputLabel, 0, Qt::AlignTop);
         _mainLayout->addWidget(_outputWindow, 1);      
         setLayout(_mainLayout);
@@ -278,13 +278,14 @@ namespace Robomongo
 
     void QueryWidget::on_dock_undock(bool floating)
     {
-        // If output window (OutputWidget) is docked, trigger ui_queryLinesCountChanged() for query window 
+        // If output window docked, trigger ui_queryLinesCountChanged() for query window 
         // (ScriptWidget) docked mode size adjustments.
         if (!floating) {
             // Settings to revert to docked mode
             _scriptWidget->ui_queryLinesCountChanged();
             _mainLayout->addWidget(_scriptWidget);                     
-            _mainLayout->addWidget(_outputWindow, 1);     
+            _mainLayout->addWidget(_line);
+            _mainLayout->addWidget(_outputWindow, 1);
             _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
             _dock->setTitleBarWidget(new QWidget);
             for (auto item : _viewer->getOutputItemContentWidgets()) {
@@ -295,7 +296,8 @@ namespace Robomongo
             // Settings for query window to use maximum space
             _scriptWidget->disableFixedHeight();
             _mainLayout->addWidget(_scriptWidget, 1); 
-            _mainLayout->addWidget(_outputWindow);  
+            _mainLayout->addWidget(_line);
+            _mainLayout->addWidget(_outputWindow);
             _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetClosable |
                                QDockWidget::DockWidgetMovable);
             _dock->setTitleBarWidget(nullptr);

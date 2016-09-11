@@ -9,6 +9,7 @@ class QLabel;
 class QVBoxLayout;
 class QMainWindow;
 class QPushButton;
+class QFrame;
 QT_END_NAMESPACE
 
 #include "robomongo/core/Core.h"
@@ -91,6 +92,7 @@ namespace Robomongo
         QLabel *_outputLabel;
         QDockWidget *_dock;
         QMainWindow *_outputWindow;
+        QFrame *_line;
         QVBoxLayout *_mainLayout;
 
         MongoShellExecResult _currentResult;

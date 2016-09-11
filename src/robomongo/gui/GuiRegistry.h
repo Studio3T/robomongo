@@ -40,6 +40,8 @@ namespace Robomongo
         const QIcon& functionIcon() const;
         const QIcon& maximizeIcon() const;
         const QIcon& maximizeHighlightedIcon() const;
+        const QIcon& undockIcon() const;
+        const QIcon& dockIcon() const;
         const QIcon& textIcon() const;
         const QIcon& textHighlightedIcon() const;
         const QIcon& treeIcon() const;

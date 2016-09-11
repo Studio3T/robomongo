@@ -1,5 +1,7 @@
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 
+#include <QObject>
+#include <QPushButton>
 #include <QApplication>
 #include <QLabel>
 #include <QFileInfo>
@@ -26,6 +28,8 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/ScriptWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/editors/JSLexer.h"
 
@@ -50,12 +54,13 @@ namespace Robomongo
 
         // Need to use QMainWindow in order to make use of all features of docking.
         // (Qt full support for dock windows implemented only for QMainWindow)
-        _viewer = new OutputWidget();
+        _viewer = new OutputWidget(this);
         _outputWindow = new QMainWindow;
         _dock = new CustomDockWidget(this);
         _dock->setAllowedAreas(Qt::BottomDockWidgetArea);
         _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
         _dock->setWidget(_viewer);
+        _dock->setTitleBarWidget(new QWidget);
         VERIFY(connect(_dock, SIGNAL(topLevelChanged(bool)), this, SLOT(on_dock_undock(bool))));
         _outputWindow->addDockWidget(Qt::BottomDockWidgetArea, _dock);
 
@@ -95,6 +100,12 @@ namespace Robomongo
     void QueryWidget::bringDockToFront()
     {
         _dock->activateWindow();
+    }
+
+    bool QueryWidget::outputWindowDocked() const
+    {
+        if (_dock) return !_dock->isFloating();
+        else return true;
     }
 
     void QueryWidget::execute()
@@ -205,11 +216,16 @@ namespace Robomongo
         _viewer->showProgress();
     }
 
+    void QueryWidget::dockUndock() 
+    {
+        // Toggle between dock/undock
+        _dock->setFloating(!_dock->isFloating());
+    };
+
     void QueryWidget::hideProgress()
     {
         _viewer->hideProgress();
     }
-
 
     void QueryWidget::handle(DocumentListLoadedEvent *event)
     {
@@ -270,6 +286,10 @@ namespace Robomongo
             _mainLayout->addWidget(_scriptWidget);                     
             _mainLayout->addWidget(_outputWindow, 1);     
             _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+            _dock->setTitleBarWidget(new QWidget);
+            for (auto item : _viewer->getOutputItemContentWidgets()) {
+                item->getOutputItemHeaderWidget()->applyDockUndockSettings(true);
+            }
         }
         else {  // output window undocked(floating)
             // Settings for query window to use maximum space
@@ -278,6 +298,10 @@ namespace Robomongo
             _mainLayout->addWidget(_outputWindow);  
             _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetClosable |
                                QDockWidget::DockWidgetMovable);
+            _dock->setTitleBarWidget(nullptr);
+            for (auto item : _viewer->getOutputItemContentWidgets()) {
+                item->getOutputItemHeaderWidget()->applyDockUndockSettings(false);
+            }
         }
     }
 

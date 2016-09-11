@@ -8,6 +8,7 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 class QVBoxLayout;
 class QMainWindow;
+class QPushButton;
 QT_END_NAMESPACE
 
 #include "robomongo/core/Core.h"
@@ -48,13 +49,9 @@ namespace Robomongo
         
         // Bring active tab's dock into front
         void bringDockToFront();
-        
-        // Getter
-        bool outputWindowDocked() const 
-        { 
-            if (_dock) return !_dock->isFloating(); 
-            else return true; 
-        }
+
+        // Get output window's dock status
+        bool outputWindowDocked() const;
 
         ~QueryWidget();
 
@@ -71,13 +68,17 @@ namespace Robomongo
         void openFile();
         void textChange();
         void showProgress();
+
+        // Toggle output window between dock/undock
+        void dockUndock();
+
     public Q_SLOTS:
         void handle(DocumentListLoadedEvent *event);
         void handle(ScriptExecutedEvent *event);
         void handle(AutocompleteResponse *event);
 
     private Q_SLOTS:
-    void on_dock_undock(bool isFloating);
+        void on_dock_undock(bool isFloating);
 
     private:        
         void hideProgress();
@@ -105,7 +106,7 @@ namespace Robomongo
             : _parent(parent)
         {}
 
-        QueryWidget* getParent() const { return _parent; }
+        QueryWidget* getQueryWidget() const { return _parent; }
 
     protected:
         // Dock instead of close

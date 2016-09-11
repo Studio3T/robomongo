@@ -106,6 +106,18 @@ namespace Robomongo
         return maximizeHighlightedIc;
     }
 
+    const QIcon &GuiRegistry::undockIcon() const
+    {
+        static const QIcon undockIc(":/robomongo/icons/undock.png");
+        return undockIc;
+    }
+
+    const QIcon &GuiRegistry::dockIcon() const
+    {
+        static const QIcon dockIc(":/robomongo/icons/dock.png");
+        return dockIc;
+    }
+
     const QIcon &GuiRegistry::textIcon() const
     {
         static const QIcon textIc = QIcon(":/robomongo/icons/text_16x16.png");

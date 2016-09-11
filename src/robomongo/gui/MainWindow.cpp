@@ -1018,7 +1018,7 @@ namespace Robomongo
         _logDock = new QDockWidget(tr("Logs"));
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         _logDock->setWidget(log);
-        _logDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+        _logDock->setFeatures(QDockWidget::DockWidgetClosable);
         _logDock->setVisible(false);
 
         QAction *action = _logDock->toggleViewAction();
@@ -1096,7 +1096,7 @@ namespace Robomongo
         // If focus is on dock output window, make it's parent (which is a QueryWidget tab) as active tab
         auto const activeDock = dynamic_cast<QueryWidget::CustomDockWidget*>(qApp->activeWindow());
         if (activeDock) {
-            _workArea->setCurrentWidget(activeDock->getParent());
+            _workArea->setCurrentWidget(activeDock->getQueryWidget());
         }
     }
 }

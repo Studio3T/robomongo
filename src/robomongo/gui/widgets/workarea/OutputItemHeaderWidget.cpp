@@ -80,7 +80,7 @@ namespace Robomongo
             _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");
             _maxButton->setFixedSize(18, 18);
             _maxButton->setFlat(true);
-            VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart())));
+            VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizeMinimizePart())));
         }
 
         _dockUndockButton = new QPushButton;
@@ -156,7 +156,7 @@ namespace Robomongo
 
     void OutputItemHeaderWidget::mouseDoubleClickEvent(QMouseEvent *)
     {
-        maximizePart();
+        maximizeMinimizePart();
     }
 
     void OutputItemHeaderWidget::showText()
@@ -231,7 +231,7 @@ namespace Robomongo
         _collectionIndicator->setText(collection);
     }
 
-    void OutputItemHeaderWidget::maximizePart()
+    void OutputItemHeaderWidget::maximizeMinimizePart()
     {
         // No maximize if there is only one query result
         if (!_multipleResults) {
@@ -248,7 +248,7 @@ namespace Robomongo
         }
         else {
             emit maximizedPart();
-            _maxButton->setIcon(GuiRegistry::instance().maximizeHighlightedIcon());
+            _maxButton->setIcon(GuiRegistry::instance().minimizeIcon());
             if (!_firstItem) {
                 _verticalLine->setVisible(true);
                 _dockUndockButton->setVisible(true);

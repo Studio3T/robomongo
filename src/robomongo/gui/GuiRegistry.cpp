@@ -96,14 +96,14 @@ namespace Robomongo
 
     const QIcon &GuiRegistry::maximizeIcon() const
     {
-        static const QIcon maximizeIc = QIcon(":/robomongo/icons/maximize.gif");
+        static const QIcon maximizeIc(":/robomongo/icons/maximize.png");
         return maximizeIc;
     }
 
-    const QIcon &GuiRegistry::maximizeHighlightedIcon() const
+    const QIcon &GuiRegistry::minimizeIcon() const
     {
-        static const QIcon maximizeHighlightedIc = QIcon(":/robomongo/icons/maximize_highlighted_16x16.png");
-        return maximizeHighlightedIc;
+        static const QIcon minimizeIc(":/robomongo/icons/minimize.png");
+        return minimizeIc;
     }
 
     const QIcon &GuiRegistry::undockIcon() const

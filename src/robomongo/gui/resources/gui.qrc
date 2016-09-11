@@ -22,6 +22,8 @@
         <file>icons/maximize.gif</file>
         <file>icons/undock.png</file>
         <file>icons/dock.png</file>
+        <file>icons/maximize.png</file>
+        <file>icons/minimize.png</file>
         <file>icons/text_16x16.png</file>
         <file>icons/tree_16x16.png</file>
         <file>icons/rotate_16x16.png</file>

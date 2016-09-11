@@ -57,8 +57,8 @@ namespace Robomongo
         _viewer = new OutputWidget(this);
         _outputWindow = new QMainWindow;
         _dock = new CustomDockWidget(this);
-        _dock->setAllowedAreas(Qt::BottomDockWidgetArea);
-        _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+        _dock->setAllowedAreas(Qt::NoDockWidgetArea);
+        _dock->setFeatures(QDockWidget::DockWidgetFloatable);
         _dock->setWidget(_viewer);
         _dock->setTitleBarWidget(new QWidget);
         VERIFY(connect(_dock, SIGNAL(topLevelChanged(bool)), this, SLOT(on_dock_undock(bool))));
@@ -286,7 +286,7 @@ namespace Robomongo
             _mainLayout->addWidget(_scriptWidget);                     
             _mainLayout->addWidget(_line);
             _mainLayout->addWidget(_outputWindow, 1);
-            _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+            _dock->setFeatures(QDockWidget::DockWidgetFloatable);
             _dock->setTitleBarWidget(new QWidget);
             for (auto item : _viewer->getOutputItemContentWidgets()) {
                 item->getOutputItemHeaderWidget()->applyDockUndockSettings(true);
@@ -298,8 +298,7 @@ namespace Robomongo
             _mainLayout->addWidget(_scriptWidget, 1); 
             _mainLayout->addWidget(_line);
             _mainLayout->addWidget(_outputWindow);
-            _dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetClosable |
-                               QDockWidget::DockWidgetMovable);
+            _dock->setFeatures(QDockWidget::DockWidgetClosable);
             _dock->setTitleBarWidget(nullptr);
             for (auto item : _viewer->getOutputItemContentWidgets()) {
                 item->getOutputItemHeaderWidget()->applyDockUndockSettings(false);

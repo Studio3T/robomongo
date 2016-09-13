@@ -31,7 +31,8 @@ namespace Robomongo
     OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemContentWidget *outputItemContentWidget, bool multipleResults, 
                                                    bool firstItem, QWidget *parent) :
         QFrame(parent),
-        _maxButton(nullptr), _dockUndockButton(nullptr), _maximized(false), _firstItem(firstItem)
+        _maxButton(nullptr), _dockUndockButton(nullptr), _maximized(false), _multipleResults(multipleResults), 
+        _firstItem(firstItem)
     {
         setContentsMargins(5, 0, 0, 0);
 
@@ -73,13 +74,13 @@ namespace Robomongo
         _customButton->setCheckable(true);
 
         // Maximize button - do not crate it if there is only one result
-        if (multipleResults) {
+        if (_multipleResults) {
             _maxButton = new QPushButton;
             _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
             _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");
             _maxButton->setFixedSize(18, 18);
             _maxButton->setFlat(true);
-            VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart())));
+            VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizeMinimizePart())));
         }
 
         _dockUndockButton = new QPushButton;
@@ -135,7 +136,7 @@ namespace Robomongo
         if (outputItemContentWidget->isTextModeSupported())
             layout->addWidget(_textButton, 0, Qt::AlignRight);
 
-        if (multipleResults) {
+        if (_multipleResults) {
             layout->addWidget(_maxButton, 0, Qt::AlignRight);
         }
 
@@ -155,7 +156,7 @@ namespace Robomongo
 
     void OutputItemHeaderWidget::mouseDoubleClickEvent(QMouseEvent *)
     {
-        maximizePart();
+        maximizeMinimizePart();
     }
 
     void OutputItemHeaderWidget::showText()
@@ -230,8 +231,13 @@ namespace Robomongo
         _collectionIndicator->setText(collection);
     }
 
-    void OutputItemHeaderWidget::maximizePart()
+    void OutputItemHeaderWidget::maximizeMinimizePart()
     {
+        // No maximize if there is only one query result
+        if (!_multipleResults) {
+            return;
+        }
+
         if (_maximized) {
             emit restoredSize();
             _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
@@ -242,7 +248,7 @@ namespace Robomongo
         }
         else {
             emit maximizedPart();
-            _maxButton->setIcon(GuiRegistry::instance().maximizeHighlightedIcon());
+            _maxButton->setIcon(GuiRegistry::instance().minimizeIcon());
             if (!_firstItem) {
                 _verticalLine->setVisible(true);
                 _dockUndockButton->setVisible(true);

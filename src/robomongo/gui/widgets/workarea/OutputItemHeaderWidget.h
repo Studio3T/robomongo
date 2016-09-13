@@ -38,7 +38,7 @@ namespace Robomongo
     public Q_SLOTS:        
         void setTime(const QString &time);
         void setCollection(const QString &collection);
-        void maximizePart();
+        void maximizeMinimizePart();
 
     private:
         QPushButton *_textButton;
@@ -52,6 +52,7 @@ namespace Robomongo
         Indicator *_timeIndicator;
         PagingWidget *_paging;
         bool _maximized;
+        bool _multipleResults;
         bool _firstItem;
     };
 }

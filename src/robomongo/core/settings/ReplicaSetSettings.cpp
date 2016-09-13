@@ -31,7 +31,7 @@ namespace Robomongo
     {
         // Extract and set replica members
         std::vector<std::string> vec;
-        auto& itr = map.begin();
+        auto itr = map.begin();
         int idx = 0;
         do
         {

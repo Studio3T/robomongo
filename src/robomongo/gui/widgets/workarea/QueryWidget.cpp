@@ -37,7 +37,6 @@ using namespace mongo;
 
 namespace Robomongo
 {
-    /* ------- QueryWidget -------- */
     QueryWidget::QueryWidget(MongoShell *shell, QWidget *parent) :
         QWidget(parent),
         _shell(shell),

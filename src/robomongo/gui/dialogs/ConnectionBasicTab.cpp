@@ -10,8 +10,6 @@
 #include <QComboBox>
 #include <QListWidget>
 #include <QListWidgetItem>
-#include <QShortCut>
-#include <QKeySequence>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -92,9 +90,6 @@ namespace Robomongo
             _readPreference->setCurrentIndex(static_cast<int>(replicaSettings->readPreference()));
         }
         
-
-        new QShortcut(QKeySequence(Qt::Key_Delete), this, SLOT(deleteItem()));
-
         QGridLayout *connectionLayout = new QGridLayout;
         connectionLayout->setAlignment(Qt::AlignTop);
         connectionLayout->addWidget(_typeLabel,                     1, 0);

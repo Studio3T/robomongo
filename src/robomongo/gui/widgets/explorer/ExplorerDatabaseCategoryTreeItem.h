@@ -36,6 +36,7 @@ namespace Robomongo
         void ui_refreshFunctions();
         void ui_viewUsers();
         void ui_viewFunctions();
+        void functionTextEditorAddAccepted();
 
     private:
         ExplorerDatabaseTreeItem *databaseItem() const;

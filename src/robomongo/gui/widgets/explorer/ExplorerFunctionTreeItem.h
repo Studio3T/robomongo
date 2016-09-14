@@ -20,6 +20,7 @@ namespace Robomongo
     private Q_SLOTS:
         void ui_editFunction();        
         void ui_dropFunction();
+        void functionTextEditorEditAccepted();
 
     private:
         QString buildToolTip(const MongoFunction &function);

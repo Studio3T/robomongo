@@ -151,6 +151,9 @@ namespace Robomongo
         _autoExec = map.contains("autoExec") ?
             map.value("autoExec").toBool() : true;
 
+        _minimizeTray = map.contains("minimizeTray") ?
+            map.value("minimizeTray").toBool() : false;
+
         _lineNumbers = map.contains("lineNumbers") ?
             map.value("lineNumbers").toBool() : false;
 
@@ -282,6 +285,8 @@ namespace Robomongo
         map.insert("connections", list);
 
         map.insert("autoExec", _autoExec);
+
+        map.insert("minimizeTray", _minimizeTray);
 
         map.insert("toolbars", _toolbars);
 

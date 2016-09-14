@@ -17,6 +17,7 @@
 #include <QStatusBar>
 #include <QHBoxLayout>
 #include <QSettings>
+#include <QSystemTrayIcon>
 
 #include <mongo/logger/log_severity.h>
 #include "robomongo/core/settings/SettingsManager.h"
@@ -69,6 +70,12 @@ namespace
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
 
+    void saveMinimizeTray(bool isMinimizingToTray)
+    {
+        Robomongo::AppRegistry::instance().settingsManager()->setMinimizeTray(isMinimizingToTray);
+        Robomongo::AppRegistry::instance().settingsManager()->save();
+    }
+
     void saveLineNumbers(bool showLineNumbers)
     {
         Robomongo::AppRegistry::instance().settingsManager()->setLineNumbers(showLineNumbers);
@@ -98,7 +105,8 @@ namespace Robomongo
         : BaseClass(),
         _app(AppRegistry::instance().app()),
         _workArea(NULL),
-        _connectionsMenu(NULL)
+        _connectionsMenu(NULL),
+        _allowExit(false)
     {
         QColor background = palette().window().color();
         QString controlKey = "Ctrl";
@@ -136,7 +144,7 @@ namespace Robomongo
         // Exit action
         QAction *exitAction = new QAction("&Exit", this);
         exitAction->setShortcuts(QKeySequence::Quit);
-        VERIFY(connect(exitAction, SIGNAL(triggered()), this, SLOT(close())));
+        VERIFY(connect(exitAction, SIGNAL(triggered()), this, SLOT(exit())));
 
         // Connect action
         _connectAction = new QAction("&Connect...", this);
@@ -166,6 +174,25 @@ namespace Robomongo
 
         QWidgetAction *connectButtonAction = new QWidgetAction(this);
         connectButtonAction->setDefaultWidget(_connectButton);
+
+        // Tray icon
+    #if defined(Q_OS_WIN)
+        _trayIcon = new QSystemTrayIcon(GuiRegistry::instance().mainWindowIcon());
+        VERIFY(connect(_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason))));
+
+        QAction *trayMinimizeAction = new QAction("Minimize to Tray", _trayIcon);
+        VERIFY(connect(trayMinimizeAction, SIGNAL(triggered()), this, SLOT(toggleMinimize())));
+
+        QAction *trayExitAction = new QAction("Exit", _trayIcon);
+        VERIFY(connect(trayExitAction, SIGNAL(triggered()), this, SLOT(exit())));
+       
+        QMenu *contextMenu = new QMenu();
+        contextMenu->addAction(trayMinimizeAction);
+        contextMenu->addSeparator();
+        contextMenu->addAction(trayExitAction);
+
+        _trayIcon->setContextMenu(contextMenu);
+    #endif
 
         // Orientation action
         _orientationAction = new QAction("&Rotate", this);
@@ -383,6 +410,14 @@ namespace Robomongo
         VERIFY(connect(autoExec, SIGNAL(triggered()), this, SLOT(toggleAutoExec())));
         optionsMenu->addAction(autoExec);
 
+    #if defined(Q_OS_WIN)
+        QAction *minimizeTray = new QAction("Close button should minimize to system tray");
+        minimizeTray->setCheckable(true);
+        minimizeTray->setChecked(AppRegistry::instance().settingsManager()->minimizeToTray());
+        VERIFY(connect(minimizeTray, SIGNAL(triggered()), this, SLOT(toggleMinimizeToTray())));
+        optionsMenu->addAction(minimizeTray);
+    #endif
+
         QAction *preferencesAction = new QAction("Preferences", this);
         VERIFY(connect(preferencesAction, SIGNAL(triggered()), this, SLOT(openPreferences())));
         preferencesAction->setVisible(false);
@@ -573,6 +608,12 @@ namespace Robomongo
         AppRegistry::instance().settingsManager()->save();
     }
 
+    void MainWindow::exit()
+    {
+        _allowExit = true;
+        close();
+    }
+
     void MainWindow::restoreWindowsSettings()
     {
         QSettings settings("Paralect", "Robomongo");
@@ -680,6 +721,10 @@ namespace Robomongo
 
     void MainWindow::manageConnections()
     {
+    #if defined(Q_OS_WIN)
+        _trayIcon->hide(); // hide the tray icon so the main window can't be hidden behind the connections dialog
+    #endif
+
         static bool checkForImported = true;
         ConnectionsDialog dialog(AppRegistry::instance().settingsManager(), checkForImported, this);
         int result = dialog.exec();
@@ -711,6 +756,10 @@ namespace Robomongo
             }
         }
 
+    #if defined(Q_OS_WIN)
+        _trayIcon->show(); // show the tray icon once the connections dialog is gone
+    #endif
+
         // on linux focus is lost - we need to activate main window back
         activateWindow();
     }
@@ -722,6 +771,28 @@ namespace Robomongo
             return;
 
         widget->toggleOrientation();
+    }
+
+    void MainWindow::toggleMinimize()
+    {
+        if (isHidden())
+            show();
+        else
+            hide();
+
+        updateTrayMinimizeAction();
+    }
+
+    void MainWindow::updateTrayMinimizeAction()
+    {
+        _trayIcon->contextMenu()->actions().at(0)->setText(isHidden() ? "Show Robomongo" : "Minimize to Tray");
+    }
+
+    void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason)
+    {
+        if (reason == QSystemTrayIcon::DoubleClick && isHidden()) {
+            show();
+        }
     }
 
     void MainWindow::enterTextMode()
@@ -774,6 +845,12 @@ namespace Robomongo
     {
         QAction *send = qobject_cast<QAction*>(sender());
         saveAutoExec(send->isChecked());
+    }
+
+    void MainWindow::toggleMinimizeToTray()
+    {
+        QAction *send = qobject_cast<QAction*>(sender());
+        saveMinimizeTray(send->isChecked());
     }
 
     void MainWindow::toggleLineNumbers()
@@ -974,7 +1051,21 @@ namespace Robomongo
     void MainWindow::closeEvent(QCloseEvent *event)
     {
         saveWindowsSettings();
+    #if defined(Q_OS_WIN)
+        if (AppRegistry::instance().settingsManager()->minimizeToTray() && !_allowExit) {
+            event->ignore();
+            hide(); // hide the window becasue it can be reopened with the tray icon
+            updateTrayMinimizeAction();
+        }
+        else {
+            if (_trayIcon->isVisible())
+                _trayIcon->hide();
+
+            QMainWindow::closeEvent(event);
+        }
+    #else
         QMainWindow::closeEvent(event);
+    #endif
     }
 
     void MainWindow::handle(QueryWidgetUpdatedEvent *event)

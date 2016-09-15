@@ -39,7 +39,8 @@ namespace Robomongo
         setServerHost(QtUtils::toStdString(map.value("serverHost").toString().left(maxLength)));
         setServerPort(map.value("serverPort").toInt());
         setDefaultDatabase(QtUtils::toStdString(map.value("defaultDatabase").toString()));
-        setReplicaSet(map.value("isReplicaSet").toBool());       
+        //// Temporarily disable Replica Setet - feature is under development
+        //setReplicaSet(map.value("isReplicaSet").toBool());       
         
         QVariantList list = map.value("credentials").toList();
         for (QVariantList::const_iterator it = list.begin(); it != list.end(); ++it) {
@@ -56,9 +57,10 @@ namespace Robomongo
             _sslSettings->fromVariant(map.value("ssl").toMap());
         }
 
-        if (isReplicaSet()) {
-            _replicaSetSettings->fromVariant(map.value("replicaSet").toMap());
-        }
+        //// Temporarily disable Replica Setet - feature is under development
+        //if (isReplicaSet()) {
+        //    _replicaSetSettings->fromVariant(map.value("replicaSet").toMap());
+        //}
 
 //#ifdef MONGO_SSL
 //      ,SSLInfo(map.value("sslEnabled").toBool(),QtUtils::toStdString(map.value("sslPemKeyFile").toString()))
@@ -96,7 +98,8 @@ namespace Robomongo
         setServerPort(source->serverPort());
         setDefaultDatabase(source->defaultDatabase());
         setImported(source->imported());
-        setReplicaSet(source->isReplicaSet());
+        //// Temporarily disable Replica Setet - feature is under development
+        //setReplicaSet(source->isReplicaSet());
 
         clearCredentials();
         QList<CredentialSettings *> cred = source->credentials();
@@ -123,10 +126,11 @@ namespace Robomongo
         map.insert("serverHost", QtUtils::toQString(serverHost()));
         map.insert("serverPort", serverPort());
         map.insert("defaultDatabase", QtUtils::toQString(defaultDatabase()));
-        map.insert("isReplicaSet", isReplicaSet());
-        if (isReplicaSet()) {
-            map.insert("replicaSet", _replicaSetSettings->toVariant());
-        }
+        //// Temporarily disable Replica Setet - feature is under development
+        //map.insert("isReplicaSet", isReplicaSet());
+        //if (isReplicaSet()) {
+        //    map.insert("replicaSet", _replicaSetSettings->toVariant());
+        //}
 
 #ifdef MONGO_SSL
         SSLInfo infl = _info.sslInfo();

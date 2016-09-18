@@ -70,9 +70,9 @@ namespace
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
 
-    void saveMinimizeTray(bool isMinimizingToTray)
+    void saveMinimizeToTraySettings(bool isMinimizingToTray)
     {
-        Robomongo::AppRegistry::instance().settingsManager()->setMinimizeTray(isMinimizingToTray);
+        Robomongo::AppRegistry::instance().settingsManager()->setMinimizeToTray(isMinimizingToTray);
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
 
@@ -178,7 +178,8 @@ namespace Robomongo
         // Tray icon
     #if defined(Q_OS_WIN)
         _trayIcon = new QSystemTrayIcon(GuiRegistry::instance().mainWindowIcon());
-        VERIFY(connect(_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason))));
+        VERIFY(connect(_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), 
+                       this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason))));
 
         QAction *trayMinimizeAction = new QAction("Minimize to Tray", _trayIcon);
         VERIFY(connect(trayMinimizeAction, SIGNAL(triggered()), this, SLOT(toggleMinimize())));
@@ -790,7 +791,7 @@ namespace Robomongo
 
     void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason)
     {
-        if (reason == QSystemTrayIcon::DoubleClick && isHidden()) {
+        if (QSystemTrayIcon::DoubleClick == reason && isHidden()) {
             show();
         }
     }
@@ -850,7 +851,7 @@ namespace Robomongo
     void MainWindow::toggleMinimizeToTray()
     {
         QAction *send = qobject_cast<QAction*>(sender());
-        saveMinimizeTray(send->isChecked());
+        saveMinimizeToTraySettings(send->isChecked());
     }
 
     void MainWindow::toggleLineNumbers()
@@ -1054,7 +1055,7 @@ namespace Robomongo
     #if defined(Q_OS_WIN)
         if (AppRegistry::instance().settingsManager()->minimizeToTray() && !_allowExit) {
             event->ignore();
-            hide(); // hide the window becasue it can be reopened with the tray icon
+            hide(); // hide the window because it can be reopened with the tray icon
             updateTrayMinimizeAction();
         }
         else {

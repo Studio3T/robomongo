@@ -55,7 +55,8 @@ namespace Robomongo
         _loadMongoRcJs(false),
         _imported(false),
         _mongoTimeoutSec(10),
-        _shellTimeoutSec(15)
+        _shellTimeoutSec(15),
+        _minimizeToTray(false)
     {
         load();
         LOG_MSG("SettingsManager initialized in " + _configPath, mongo::logger::LogSeverity::Info(), false);
@@ -151,8 +152,8 @@ namespace Robomongo
         _autoExec = map.contains("autoExec") ?
             map.value("autoExec").toBool() : true;
 
-        _minimizeTray = map.contains("minimizeTray") ?
-            map.value("minimizeTray").toBool() : false;
+        _minimizeToTray = map.contains("minimizeToTray") ?
+            map.value("minimizeToTray").toBool() : false;
 
         _lineNumbers = map.contains("lineNumbers") ?
             map.value("lineNumbers").toBool() : false;
@@ -286,7 +287,7 @@ namespace Robomongo
 
         map.insert("autoExec", _autoExec);
 
-        map.insert("minimizeTray", _minimizeTray);
+        map.insert("minimizeToTray", _minimizeToTray);
 
         map.insert("toolbars", _toolbars);
 

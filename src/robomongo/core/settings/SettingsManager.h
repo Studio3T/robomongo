@@ -86,8 +86,8 @@ namespace Robomongo
         void setAutoExec(bool isAutoExec) { _autoExec = isAutoExec; }
         bool autoExec() const { return _autoExec; }
 
-        void setMinimizeTray(bool isMinimizingToTray) { _minimizeTray = isMinimizingToTray; }
-        bool minimizeToTray() const { return _minimizeTray; }
+        void setMinimizeToTray(bool isMinimizingToTray) { _minimizeToTray = isMinimizingToTray; }
+        bool minimizeToTray() const { return _minimizeToTray; }
 
         void setLineNumbers(bool showLineNumbers) { _lineNumbers = showLineNumbers; }
         bool lineNumbers() const { return _lineNumbers; }
@@ -151,7 +151,7 @@ namespace Robomongo
         bool _loadMongoRcJs;
         bool _autoExpand;
         bool _autoExec;
-        bool _minimizeTray;
+        bool _minimizeToTray;
         bool _lineNumbers;
         bool _disableConnectionShortcuts;
         int _batchSize;

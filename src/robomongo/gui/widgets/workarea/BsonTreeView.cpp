@@ -79,6 +79,9 @@ namespace Robomongo
     {
         BaseClass::resizeEvent(event);
         header()->resizeSections(QHeaderView::ResizeToContents);
+        int eKeyWidth = header()->sectionSize(BsonTreeItem::eKey);
+        header()->resizeSections(QHeaderView::Stretch);
+        header()->resizeSection(BsonTreeItem::eKey, width);
     }
 
     void BsonTreeView::keyPressEvent(QKeyEvent *event)

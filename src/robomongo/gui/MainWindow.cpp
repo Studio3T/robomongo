@@ -57,6 +57,12 @@ namespace
         Robomongo::AppRegistry::instance().settingsManager()->setViewMode(mode);
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
+
+    void saveEditWindowMode(Robomongo::EditWindowMode mode)
+    {
+        Robomongo::AppRegistry::instance().settingsManager()->setEditWindowMode(mode);
+        Robomongo::AppRegistry::instance().settingsManager()->save();
+    }
     
     void saveAutoExpand(bool isExpand)
     {
@@ -242,6 +248,30 @@ namespace Robomongo
         customModeAction->setChecked(viewMode == Custom);
         VERIFY(connect(customModeAction, SIGNAL(triggered()), this, SLOT(enterCustomMode())));
 
+        // read edit window mode setting
+        EditWindowMode editWindowMode = AppRegistry::instance().settingsManager()->editWindowMode();
+
+        // Modal Window Action
+        QAction *modalWindowAction = new QAction("&Modal Window", this);
+        modalWindowAction->setToolTip("Show document edit in a modal window");
+        modalWindowAction->setCheckable(true);
+        modalWindowAction->setChecked(editWindowMode == Modal);
+        VERIFY(connect(modalWindowAction, SIGNAL(triggered()), this, SLOT(setModalWindowMode())));
+
+        // Modeless Window Action
+        QAction *modelessWindowAction = new QAction("&Modeless Window", this);
+        modelessWindowAction->setToolTip("Show document edit in a modeless window");
+        modelessWindowAction->setCheckable(true);
+        modelessWindowAction->setChecked(editWindowMode == Modeless);
+        VERIFY(connect(modelessWindowAction, SIGNAL(triggered()), this, SLOT(setModelessWindowMode())));
+
+        // Tabbed Window Action
+        QAction *tabbedWindowAction = new QAction("&Tabbed Window", this);
+        tabbedWindowAction->setToolTip("Show document edit in a tabbed window");
+        tabbedWindowAction->setCheckable(true);
+        tabbedWindowAction->setChecked(editWindowMode == Tabbed);
+        VERIFY(connect(tabbedWindowAction, SIGNAL(triggered()), this, SLOT(setTabbedWindowMode())));
+
         // Execute action
         _executeAction = new QAction(this);
         _executeAction->setData("Execute");
@@ -295,14 +325,25 @@ namespace Robomongo
         defaultViewModeMenu->addAction(treeModeAction);
         defaultViewModeMenu->addAction(tableModeAction);
         defaultViewModeMenu->addAction(textModeAction);
-        
-        optionsMenu->addSeparator();
 
         QActionGroup *modeGroup = new QActionGroup(this);
         modeGroup->addAction(textModeAction);
         modeGroup->addAction(treeModeAction);
         modeGroup->addAction(tableModeAction);
         modeGroup->addAction(customModeAction);
+
+        // Edit window mode
+        QMenu *defaultEditWindowModeMenu = optionsMenu->addMenu("Edit Window Mode");
+        defaultEditWindowModeMenu->addAction(modalWindowAction);
+        defaultEditWindowModeMenu->addAction(modelessWindowAction);
+        defaultEditWindowModeMenu->addAction(tabbedWindowAction);
+
+        QActionGroup *editWindowModeGroup = new QActionGroup(this);
+        editWindowModeGroup->addAction(modalWindowAction);
+        editWindowModeGroup->addAction(modelessWindowAction);
+        editWindowModeGroup->addAction(tabbedWindowAction);
+
+        optionsMenu->addSeparator();
 
         // Time Zone
         QAction *utcTime = new QAction(convertTimesToString(Utc), this);
@@ -813,6 +854,21 @@ namespace Robomongo
             return;
 
         widget->enterCustomMode();
+    }
+
+    void MainWindow::setModalWindowMode()
+    {
+        saveEditWindowMode(Modal);
+    }
+
+    void MainWindow::setModelessWindowMode()
+    {
+        saveEditWindowMode(Modeless);
+    }
+
+    void MainWindow::setTabbedWindowMode()
+    {
+        saveEditWindowMode(Tabbed);
     }
 
     void MainWindow::toggleAutoExpand()

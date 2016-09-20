@@ -16,6 +16,7 @@
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 
@@ -362,16 +363,46 @@ namespace Robomongo
         MongoServer *server = database->server();
         ConnectionSettings *settings = server->connectionRecord();
 
-        DocumentTextEditor editor(CollectionInfo(settings->getFullAddress(), database->name(), _collection->name()), "{\n    \n}");
+        EditWindowMode editWindowMode = AppRegistry::instance().settingsManager()->editWindowMode();
 
-        editor.setCursorPosition(1, 4);
-        editor.setWindowTitle("Insert Document");
-        int result = editor.exec();
+        if(editWindowMode != Tabbed) {
+            DocumentTextEditor *editor = new DocumentTextEditor(CollectionInfo(settings->getFullAddress(), database->name(), _collection->name()), "{\n    \n}");
 
-        treeWidget()->activateWindow();
+            editor->setCursorPosition(1, 4);
+            editor->setWindowTitle("Insert Document");
 
-        if (result == QDialog::Accepted) {
-            server->insertDocuments(editor.bsonObj(), MongoNamespace(database->name(), _collection->name()) );
+            switch(editWindowMode)
+            {
+                case Modal:
+                    {
+                        int result = editor->exec();
+
+                        treeWidget()->activateWindow();
+
+                        if (result == QDialog::Accepted) {
+                            server->insertDocuments(editor->bsonObj(), MongoNamespace(database->name(), _collection->name()) );
+                        }
+                    }
+                    break;
+
+                case Modeless:
+                    VERIFY(connect(editor, SIGNAL(accepted()), SLOT(documentTextEditorAccepted())));
+                    editor->show();
+                    break;
+            }
+        } else {
+            // Show in a tabbed window
+            openCurrentCollectionShell(
+                "insertMany(\n"
+                "    [\n"
+                "        {\n"
+                "            \"key\" : \"value\"\n"
+                "        }\n"
+                "    ],\n"
+                "    {\n"
+                "        ordered: true\n"
+                "    }\n"
+                ");", false);
         }
     }
 
@@ -534,5 +565,15 @@ namespace Robomongo
     {
         QString query = detail::buildCollectionQuery(_collection->name(), script);
         AppRegistry::instance().app()->openShell(_collection->database(), query, execute, QtUtils::toQString(_collection->name()), cursor);
+    }
+
+    void ExplorerCollectionTreeItem::documentTextEditorAccepted()
+    {
+        MongoDatabase *database = _collection->database();
+        MongoServer *server = database->server();
+        ConnectionSettings *settings = server->connectionRecord();
+
+        DocumentTextEditor *editor = (DocumentTextEditor*)QObject::sender();
+        server->insertDocuments(editor->bsonObj(), MongoNamespace(database->name(), _collection->name()) );
     }
 }

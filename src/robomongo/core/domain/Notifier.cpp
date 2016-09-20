@@ -20,6 +20,7 @@
 #include "robomongo/gui/utils/DialogUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/core/domain/App.h"
 
 namespace Robomongo
 {
@@ -356,14 +357,33 @@ namespace Robomongo
 
         const QString &json = QtUtils::toQString(str);
 
-        DocumentTextEditor editor(_queryInfo._info,
-            json, false, dynamic_cast<QWidget*>(_observer));
+        EditWindowMode editWindowMode = AppRegistry::instance().settingsManager()->editWindowMode();
+        if(editWindowMode != Tabbed) {
+            DocumentTextEditor *editor = new DocumentTextEditor(_queryInfo._info, json);
 
-        editor.setWindowTitle("Edit Document");
-        int result = editor.exec();
+            editor->setWindowTitle("Edit Document");
+            switch(editWindowMode)
+            {
+                case Modal:
+                    {
+                        int result = editor->exec();
 
-        if (result == QDialog::Accepted) {
-            _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo._info._ns);
+                        if (result == QDialog::Accepted) {
+                            _shell->server()->saveDocuments(editor->bsonObj(), _queryInfo._info._ns);
+                        }
+                    }
+                    break;
+                case Modeless:
+                    VERIFY(connect(editor, SIGNAL(accepted()), SLOT(documentTextEditorEditAccepted())));
+                    editor->show();
+                    break;
+            }
+        } else {
+            // Show in a tabbed window
+            openCurrentCollectionShell(
+                "save(\n"
+                + json +
+                ");", false);
         }
     }
 
@@ -397,22 +417,49 @@ namespace Robomongo
         if (!_queryInfo._info.isValid())
             return;
 
-        DocumentTextEditor editor(_queryInfo._info,
-            "{\n    \n}", false, dynamic_cast<QWidget*>(_observer));
+        EditWindowMode editWindowMode = AppRegistry::instance().settingsManager()->editWindowMode();
 
-        editor.setCursorPosition(1, 4);
-        editor.setWindowTitle("Insert Document");
+        if(editWindowMode != Tabbed) {
+            DocumentTextEditor *editor = new DocumentTextEditor(_queryInfo._info, "{\n    \n}");
 
-        int result = editor.exec();
-        if (result != QDialog::Accepted)
-            return;
+            editor->setCursorPosition(1, 4);
+            editor->setWindowTitle("Insert Document");
 
-        DocumentTextEditor::ReturnType obj = editor.bsonObj();
-        for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
-            _shell->server()->insertDocument(*it, _queryInfo._info._ns);
+            switch(editWindowMode)
+            {
+                case Modal:
+                    {
+                        int result = editor->exec();
+                        if (result != QDialog::Accepted)
+                            return;
+
+                        DocumentTextEditor::ReturnType obj = editor->bsonObj();
+                        for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
+                            _shell->server()->insertDocument(*it, _queryInfo._info._ns);
+                        }
+
+                        _shell->query(0, _queryInfo);
+                    }
+                    break;
+                case Modeless:
+                    VERIFY(connect(editor, SIGNAL(accepted()), SLOT(documentTextEditorInsertAccepted())));
+                    editor->show();
+                    break;
+            }
+        } else {
+            // Show in a tabbed window
+            openCurrentCollectionShell(
+                "insertMany(\n"
+                "    [\n"
+                "        {\n"
+                "            \"key\" : \"value\"\n"
+                "        }\n"
+                "    ],\n"
+                "    {\n"
+                "        ordered: true\n"
+                "    }\n"
+                ");", false);
         }
-
-        _shell->query(0, _queryInfo);
     }
 
     void Notifier::onCopyDocument()
@@ -494,4 +541,27 @@ namespace Robomongo
          const QString &json = QtUtils::toQString(str);
          clipboard->setText(json);
      }
+
+    void Notifier::documentTextEditorInsertAccepted()
+    {
+        DocumentTextEditor *editor = (DocumentTextEditor*)QObject::sender();
+        DocumentTextEditor::ReturnType obj = editor->bsonObj();
+        for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
+            _shell->server()->insertDocument(*it, _queryInfo._info._ns);
+        }
+
+        _shell->query(0, _queryInfo);
+    }
+
+    void Notifier::openCurrentCollectionShell(const QString &script, bool execute, const CursorPosition &cursor)
+    {
+        QString query = detail::buildCollectionQuery(_queryInfo._info._ns.collectionName(), script);
+        AppRegistry::instance().app()->openShell(_shell->server(), query, _queryInfo._info._ns.databaseName(), execute, QtUtils::toQString(_queryInfo._info._ns.collectionName()), cursor);
+    }
+
+    void Notifier::documentTextEditorEditAccepted()
+    {
+        DocumentTextEditor *editor = (DocumentTextEditor*)QObject::sender();
+        _shell->server()->saveDocuments(editor->bsonObj(), _queryInfo._info._ns);
+    }
 }

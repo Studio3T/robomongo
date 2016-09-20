@@ -3,6 +3,7 @@
 #include <QModelIndex>
 
 #include "robomongo/core/domain/MongoQueryInfo.h"
+#include "robomongo/core/domain/CursorPosition.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -59,6 +60,8 @@ namespace Robomongo
         void onCopyJson();
         void handle(InsertDocumentResponse *event);
         void handle(RemoveDocumentResponse *event);
+        void documentTextEditorInsertAccepted();
+        void documentTextEditorEditAccepted();
 
     private Q_SLOTS:
         void onCopyNameDocument();
@@ -79,5 +82,7 @@ namespace Robomongo
 
         MongoShell *_shell;
         INotifierObserver *const _observer;
+
+        void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
     };
 }

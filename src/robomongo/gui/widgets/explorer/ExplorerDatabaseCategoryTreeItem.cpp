@@ -10,6 +10,7 @@
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/App.h"
@@ -204,21 +205,43 @@ namespace Robomongo
         if (!databaseItem)
             return;
 
-        FunctionTextEditor dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(databaseItem->database()->name()), MongoFunction());
-        dlg.setWindowTitle("Create Function");
-        dlg.setCode(
-            "function() {\n"
-            "    // write your code here\n"
-            "}");
-        dlg.setCursorPosition(1, 4);
-        int result = dlg.exec();
-        if (result != QDialog::Accepted)
-            return;
+        EditWindowMode editWindowMode = AppRegistry::instance().settingsManager()->editWindowMode();
+        if(editWindowMode != Tabbed) {
+            FunctionTextEditor *dlg = new FunctionTextEditor(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(databaseItem->database()->name()), MongoFunction());
+            dlg->setWindowTitle("Create Function");
+            dlg->setCode(
+                "function() {\n"
+                "    // write your code here\n"
+                "}");
+            dlg->setCursorPosition(1, 4);
 
-        MongoFunction function = dlg.function();
-        databaseItem->database()->createFunction(function);
-        // refresh list of functions
-        databaseItem->expandFunctions();
+            switch(editWindowMode)
+            {
+                case Modal:
+                    {
+                        int result = dlg->exec();
+                        if (result != QDialog::Accepted)
+                            return;
+
+                        MongoFunction function = dlg->function();
+                        databaseItem->database()->createFunction(function);
+                        // refresh list of functions
+                        databaseItem->expandFunctions();
+                    }
+                    break;
+                case Modeless:
+                    VERIFY(connect(dlg, SIGNAL(accepted()), SLOT(functionTextEditorAddAccepted())));
+                    dlg->show();
+                    break;
+            }
+        } else {
+            openCurrentCollectionShell("{\n"
+                "    _id: \"function_name\",\n"
+                "    value : function() {\n"
+                "         // write your code here\n"
+                "    }\n"
+                "}", false);
+        }
     }
 
     void ExplorerDatabaseCategoryTreeItem::ui_refreshCollections()
@@ -227,5 +250,26 @@ namespace Robomongo
         if (databaseItem) {
             databaseItem->expandCollections();
         }
+    }
+
+    void ExplorerDatabaseCategoryTreeItem::functionTextEditorAddAccepted()
+    {
+        ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
+        if (!databaseItem)
+            return;
+        FunctionTextEditor *dlg = (FunctionTextEditor*)QObject::sender();
+        MongoFunction function = dlg->function();
+        databaseItem->database()->createFunction(function);
+        // refresh list of functions
+        databaseItem->expandFunctions();
+    }
+
+    void ExplorerDatabaseCategoryTreeItem::openCurrentCollectionShell(const QString &script, bool execute, const CursorPosition &cursor)
+    {
+        ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
+        if (!databaseItem)
+            return;
+        QString query = "db.system.js.save(" + script + ")";
+        AppRegistry::instance().app()->openShell(databaseItem->database(), query, execute, "New Function", cursor);
     }
 }

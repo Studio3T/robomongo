@@ -24,6 +24,13 @@ namespace Robomongo
         Custom = 3
     };
 
+    enum EditWindowMode
+    {
+        Modal = 0,
+        Modeless = 1,
+        Tabbed = 2
+    };
+
     enum AutocompletionMode
     {
         AutocompleteNone = 0,

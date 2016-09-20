@@ -2,6 +2,7 @@
 
 #include "robomongo/core/domain/MongoFunction.h"
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
+#include "robomongo/core/domain/CursorPosition.h"
 
 namespace Robomongo
 {
@@ -19,11 +20,13 @@ namespace Robomongo
     private Q_SLOTS:
         void ui_editFunction();        
         void ui_dropFunction();
+        void functionTextEditorEditAccepted();
 
     private:
         QString buildToolTip(const MongoFunction &function);
         MongoFunction _function;
         MongoDatabase *_database;
+        void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
     };
 }
 

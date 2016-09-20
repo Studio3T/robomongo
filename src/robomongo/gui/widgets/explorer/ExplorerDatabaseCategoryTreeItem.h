@@ -1,6 +1,7 @@
 #pragma once
 
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
+#include "robomongo/core/domain/CursorPosition.h"
 
 namespace Robomongo
 {
@@ -35,9 +36,11 @@ namespace Robomongo
         void ui_refreshFunctions();
         void ui_viewUsers();
         void ui_viewFunctions();
+        void functionTextEditorAddAccepted();
 
     private:
         ExplorerDatabaseTreeItem *databaseItem() const;
         const ExplorerDatabaseCategory _category;
+        void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
     };
 }

@@ -52,6 +52,7 @@ namespace Robomongo
         void ui_duplicateCollection();
         void ui_copyToCollectionToDiffrentServer();
         void ui_viewCollection();
+        void documentTextEditorAccepted();
 
     private:
         QString buildToolTip(MongoCollection *collection);

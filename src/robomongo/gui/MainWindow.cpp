@@ -103,9 +103,10 @@ namespace Robomongo
 
     MainWindow::MainWindow()
         : BaseClass(),
+        _workArea(nullptr),
         _app(AppRegistry::instance().app()),
-        _workArea(NULL),
-        _connectionsMenu(NULL),
+        _connectionsMenu(nullptr),
+        _trayIcon(nullptr),
         _allowExit(false)
     {
         QColor background = palette().window().color();
@@ -774,28 +775,6 @@ namespace Robomongo
         widget->toggleOrientation();
     }
 
-    void MainWindow::toggleMinimize()
-    {
-        if (isHidden())
-            show();
-        else
-            hide();
-
-        updateTrayMinimizeAction();
-    }
-
-    void MainWindow::updateTrayMinimizeAction()
-    {
-        _trayIcon->contextMenu()->actions().at(0)->setText(isHidden() ? "Show Robomongo" : "Minimize to Tray");
-    }
-
-    void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason)
-    {
-        if (QSystemTrayIcon::DoubleClick == reason && isHidden()) {
-            show();
-        }
-    }
-
     void MainWindow::enterTextMode()
     {
         saveViewMode(Text);
@@ -1056,7 +1035,6 @@ namespace Robomongo
         if (AppRegistry::instance().settingsManager()->minimizeToTray() && !_allowExit) {
             event->ignore();
             hide(); // hide the window because it can be reopened with the tray icon
-            updateTrayMinimizeAction();
         }
         else {
             if (_trayIcon->isVisible())
@@ -1067,6 +1045,16 @@ namespace Robomongo
     #else
         QMainWindow::closeEvent(event);
     #endif
+    }
+
+    void MainWindow::hideEvent(QHideEvent *event)
+    {
+        _trayIcon->contextMenu()->actions().at(0)->setText("Show Robomongo");
+    }
+    
+    void MainWindow::showEvent(QShowEvent *event)
+    {
+        _trayIcon->contextMenu()->actions().at(0)->setText("Minimize to Tray");
     }
 
     void MainWindow::handle(QueryWidgetUpdatedEvent *event)
@@ -1180,6 +1168,21 @@ namespace Robomongo
         auto activeTab = dynamic_cast<QueryWidget*>(_workArea->currentWidget());
         if (activeTab) {
             activeTab->bringDockToFront();
+        }
+    }
+
+    void MainWindow::toggleMinimize()
+    {
+        if (isHidden())
+            show();
+        else
+            hide();
+    }
+
+    void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason)
+    {
+        if (QSystemTrayIcon::DoubleClick == reason && isHidden()) {
+            show();
         }
     }
 

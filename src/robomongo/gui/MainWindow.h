@@ -33,16 +33,12 @@ namespace Robomongo
     public Q_SLOTS:
         void manageConnections();
         void toggleOrientation();
-        void toggleMinimize();
-        void updateTrayMinimizeAction();
-        void trayActivated(QSystemTrayIcon::ActivationReason reason);
         void enterTextMode();
         void enterTreeMode();
         void enterTableMode();
         void enterCustomMode();
         void toggleAutoExpand();
         void toggleAutoExec();
-        void toggleMinimizeToTray();
         void toggleLineNumbers();
         void executeScript();
         void stopScript();
@@ -77,7 +73,9 @@ namespace Robomongo
         void handle(OperationFailedEvent *event);
 
     protected:
-        void closeEvent(QCloseEvent *event);
+        void closeEvent(QCloseEvent *event) override;
+        void hideEvent(QHideEvent *event) override;
+        void showEvent(QShowEvent *event) override;
 
     private Q_SLOTS:
         void updateMenus();
@@ -90,6 +88,10 @@ namespace Robomongo
         void onExecToolbarVisibilityChanged(bool isVisisble);
         void onExplorerVisibilityChanged(bool isVisisble);
         void on_tabChange();
+
+        void toggleMinimize();
+        void trayActivated(QSystemTrayIcon::ActivationReason reason);
+        void toggleMinimizeToTray();
 
         // On application focus changes
         void on_focusChanged();
@@ -109,8 +111,6 @@ namespace Robomongo
 
         App *_app;
 
-        bool _allowExit;
-
         ConnectionMenu *_connectionsMenu;
         QToolButton *_connectButton;
         QMenu *_viewMenu;
@@ -125,6 +125,7 @@ namespace Robomongo
         QToolBar *_execToolBar;
         QSystemTrayIcon *_trayIcon;
 
+        bool _allowExit;
     };
 
 }

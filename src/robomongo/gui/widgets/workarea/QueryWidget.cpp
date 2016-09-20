@@ -98,6 +98,7 @@ namespace Robomongo
 
     void QueryWidget::bringDockToFront()
     {
+        _dock->raise(); // required for MAC only; possible Qt bug
         _dock->activateWindow();
     }
 

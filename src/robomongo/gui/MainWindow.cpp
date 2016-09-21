@@ -81,10 +81,13 @@ namespace
         Robomongo::AppRegistry::instance().settingsManager()->setLineNumbers(showLineNumbers);
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
-}
+} 
+/* End of anonymous namespace */
+
 
 namespace Robomongo
 {
+/* ------ ConnectionMenu ------ */
     class ConnectionMenu : public QMenu
     {
     public:
@@ -101,6 +104,7 @@ namespace Robomongo
         }
     };
 
+/* ------ MainWindow ------ */
     MainWindow::MainWindow()
         : BaseClass(),
         _workArea(nullptr),
@@ -1173,10 +1177,12 @@ namespace Robomongo
 
     void MainWindow::toggleMinimize()
     {
-        if (isHidden())
+        if (isHidden()) {
             show();
-        else
+        }
+        else {
             hide();
+        }
     }
 
     void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason)

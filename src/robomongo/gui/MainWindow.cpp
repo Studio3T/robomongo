@@ -110,7 +110,9 @@ namespace Robomongo
         _workArea(nullptr),
         _app(AppRegistry::instance().app()),
         _connectionsMenu(nullptr),
+#if defined(Q_OS_WIN)
         _trayIcon(nullptr),
+#endif
         _allowExit(false)
     {
         QColor background = palette().window().color();
@@ -1047,12 +1049,20 @@ namespace Robomongo
 
     void MainWindow::hideEvent(QHideEvent *event)
     {
-        _trayIcon->contextMenu()->actions().at(0)->setText("Show Robomongo");
+#if defined(Q_OS_WIN)
+        if (_trayIcon->contextMenu()->actions().size() > 0) {
+            _trayIcon->contextMenu()->actions().at(0)->setText("Show Robomongo");
+        }
+#endif
     }
     
     void MainWindow::showEvent(QShowEvent *event)
     {
-        _trayIcon->contextMenu()->actions().at(0)->setText("Minimize to Tray");
+#if defined(Q_OS_WIN)
+        if (_trayIcon->contextMenu()->actions().size() > 0) {
+            _trayIcon->contextMenu()->actions().at(0)->setText("Minimize to Tray");
+        }
+#endif
     }
 
     void MainWindow::handle(QueryWidgetUpdatedEvent *event)

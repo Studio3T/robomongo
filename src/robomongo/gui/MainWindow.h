@@ -123,7 +123,10 @@ namespace Robomongo
         QAction *_stopAction;
         QAction *_orientationAction;
         QToolBar *_execToolBar;
+
+#if defined(Q_OS_WIN)
         QSystemTrayIcon *_trayIcon;
+#endif
 
         bool _allowExit;
     };

@@ -93,7 +93,7 @@ namespace Robomongo
     public:
         ConnectionMenu(QWidget *parent) : QMenu(parent) {}
     protected:
-        virtual void keyPressEvent(QKeyEvent *event)
+        virtual void keyPressEvent(QKeyEvent *event) override
         {
             if (event->key() == Qt::Key_F12) {
                 hide();
@@ -684,16 +684,6 @@ namespace Robomongo
         }
     }
 
-    void MainWindow::keyPressEvent(QKeyEvent *event)
-    {
-        if (event->key() == Qt::Key_F12) {
-           _connectButton->showMenu();
-            return;
-        }
-
-        BaseClass::keyPressEvent(event);
-    }
-
     void MainWindow::updateConnectionsMenu()
     {
         _connectionsMenu->clear();
@@ -1024,6 +1014,16 @@ namespace Robomongo
             << "Error:" << std::endl << event->technicalErrorMessage;
 
         QMessageBox::information(NULL, "Operation failed", QtUtils::toQString(ss.str()));
+    }
+
+    void MainWindow::keyPressEvent(QKeyEvent *event)
+    {
+        if (event->key() == Qt::Key_F12) {
+            _connectButton->showMenu();
+            return;
+        }
+
+        BaseClass::keyPressEvent(event);
     }
 
     void MainWindow::closeEvent(QCloseEvent *event)

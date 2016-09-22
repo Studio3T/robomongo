@@ -28,7 +28,6 @@ namespace Robomongo
     public:
         typedef QMainWindow BaseClass;
         MainWindow();
-        void keyPressEvent(QKeyEvent *event);
 
     public Q_SLOTS:
         void manageConnections();
@@ -73,6 +72,7 @@ namespace Robomongo
         void handle(OperationFailedEvent *event);
 
     protected:
+        void keyPressEvent(QKeyEvent *event) override;
         void closeEvent(QCloseEvent *event) override;
         void hideEvent(QHideEvent *event) override;
         void showEvent(QShowEvent *event) override;

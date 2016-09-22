@@ -831,12 +831,6 @@ namespace Robomongo
         saveAutoExec(send->isChecked());
     }
 
-    void MainWindow::toggleMinimizeToTray()
-    {
-        QAction *send = qobject_cast<QAction*>(sender());
-        saveMinimizeToTraySettings(send->isChecked());
-    }
-
     void MainWindow::toggleLineNumbers()
     {
         QAction *send = qobject_cast<QAction*>(sender());
@@ -1192,9 +1186,15 @@ namespace Robomongo
         }
     }
 
+    void MainWindow::toggleMinimizeToTray()
+    {
+        QAction *send = qobject_cast<QAction*>(sender());
+        saveMinimizeToTraySettings(send->isChecked());
+    }
+
     void MainWindow::on_focusChanged()
     {
-        // If focus is on dock output window, make it's parent (which is a QueryWidget tab) as active tab
+        // If focus is on floating output window, make it's parent (which is a QueryWidget tab) as active tab
         auto const activeDock = dynamic_cast<QueryWidget::CustomDockWidget*>(qApp->activeWindow());
         if (activeDock) {
             _workArea->setCurrentWidget(activeDock->getQueryWidget());

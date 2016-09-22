@@ -42,6 +42,7 @@ namespace Robomongo
         void refreshOutputItem();
         void markUninitialized();
 
+        // todo: refactor - not a good idea to return non-const pointer to private member
         OutputItemHeaderWidget* getOutputItemHeaderWidget() { return _header; }
 
     Q_SIGNALS:

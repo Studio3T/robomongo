@@ -34,6 +34,7 @@ namespace Robomongo
         typedef QWidget BaseClass;
 
         QueryWidget(MongoShell *shell, QWidget *parent = NULL);
+        ~QueryWidget();
 
         void toggleOrientation();
         void activateTabContent();
@@ -54,8 +55,6 @@ namespace Robomongo
         // Get output window's dock status
         bool outputWindowDocked() const;
 
-        ~QueryWidget();
-
     Q_SIGNALS:
         void titleChanged(const QString &text);
         void toolTipChanged(const QString &text);
@@ -70,15 +69,15 @@ namespace Robomongo
         void textChange();
         void showProgress();
 
-        // Toggle output window between dock/undock
-        void dockUndock();
-
-    public Q_SLOTS:
         void handle(DocumentListLoadedEvent *event);
         void handle(ScriptExecutedEvent *event);
         void handle(AutocompleteResponse *event);
 
     private Q_SLOTS:
+        // Toggle output window between dock/undock status
+        void dockUndock(); 
+        
+        // Make adjustments between output window dock/undock events
         void on_dock_undock(bool isFloating);
 
     private:        
@@ -117,6 +116,7 @@ namespace Robomongo
             event->ignore();
             setFloating(false);
         }
+
     private:
         QueryWidget* _parent;
     };

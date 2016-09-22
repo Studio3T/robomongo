@@ -31,8 +31,8 @@ namespace Robomongo
     OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemContentWidget *outputItemContentWidget, bool multipleResults, 
                                                    bool firstItem, QWidget *parent) :
         QFrame(parent),
-        _maxButton(nullptr), _dockUndockButton(nullptr), _maximized(false), _multipleResults(multipleResults), 
-        _firstItem(firstItem)
+        _maxButton(nullptr), _dockUndockButton(nullptr), 
+        _maximized(false), _multipleResults(multipleResults), _firstItem(firstItem)
     {
         setContentsMargins(5, 0, 0, 0);
 
@@ -73,7 +73,7 @@ namespace Robomongo
         _customButton->setFlat(true);
         _customButton->setCheckable(true);
 
-        // Maximize button - do not crate it if there is only one result
+        // Create maximize button only if there are multiple results
         if (_multipleResults) {
             _maxButton = new QPushButton;
             _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
@@ -145,7 +145,7 @@ namespace Robomongo
         layout->addWidget(_verticalLine);
         layout->addWidget(_dockUndockButton);
         
-        // Add _dockUndockButton only for first header item
+        // Hide _dockUndockButton for header items other than first header item
         if (!_firstItem) {
             _verticalLine->setHidden(true);
             _dockUndockButton->setHidden(true);
@@ -233,7 +233,7 @@ namespace Robomongo
 
     void OutputItemHeaderWidget::maximizeMinimizePart()
     {
-        // No maximize if there is only one query result
+        // No maximize/minimize logic if there is only one query result
         if (!_multipleResults) {
             return;
         }

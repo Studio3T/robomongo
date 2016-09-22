@@ -18,7 +18,6 @@
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
-#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 
 namespace
 {
@@ -52,9 +51,9 @@ namespace Robomongo
 {
     ScriptWidget::ScriptWidget(MongoShell *shell, QueryWidget *parent) :
         _shell(shell),
+        _parent(parent),
         _textChanged(false),
-        _disableTextAndCursorNotifications(false),
-        _parent(parent)
+        _disableTextAndCursorNotifications(false)
     {
         setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
 

@@ -75,9 +75,11 @@ namespace Robomongo
 
     Q_SIGNALS:
         void textChanged();
+
     public Q_SLOTS:
         void setText(const QString &text);
         void ui_queryLinesCountChanged();
+
     private Q_SLOTS:
         void onTextChanged();
         void onCursorPositionChanged(int line, int index);
@@ -114,9 +116,11 @@ namespace Robomongo
         QCompleter *_completer;
         MongoShell *_shell;
         AutoCompletionInfo _currentAutoCompletionInfo;
+
+        QueryWidget *_parent;
+
         bool _textChanged;
         bool _disableTextAndCursorNotifications;
-        QueryWidget *_parent;
     };
 
     class TopStatusBar : public QFrame

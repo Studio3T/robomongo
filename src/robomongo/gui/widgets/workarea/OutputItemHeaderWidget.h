@@ -51,6 +51,7 @@ namespace Robomongo
         Indicator *_collectionIndicator;
         Indicator *_timeIndicator;
         PagingWidget *_paging;
+
         bool _maximized;
         bool _multipleResults;
         bool _firstItem;

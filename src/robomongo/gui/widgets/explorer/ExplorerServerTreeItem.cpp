@@ -109,6 +109,7 @@ namespace Robomongo
             auto const& repMembers = repSetSettings->membersToHostAndPort();
             bool isPrimary;
             auto const& repMembersHealths = _server->getRepMembersHealths();
+            // todo: refactor loop to do without "i"
             for (int i = 0; i < repMembers.size() && i < repMembersHealths.size(); ++i)
             {
                 isPrimary = (_server->getRepPrimary() == repMembers[i]);

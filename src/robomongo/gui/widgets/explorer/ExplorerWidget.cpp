@@ -137,8 +137,7 @@ namespace Robomongo
 
         auto replicaMemberItem = dynamic_cast<ExplorerReplicaSetTreeItem*>(item);
         if (replicaMemberItem) {
-            auto const scriptStr = Robomongo::ScriptInfo("", true);
-            AppRegistry::instance().app()->openShell(replicaMemberItem->connectionSettings(), scriptStr);
+            AppRegistry::instance().app()->openShell(replicaMemberItem->connectionSettings(), ScriptInfo("", true));
             return;
         }
 

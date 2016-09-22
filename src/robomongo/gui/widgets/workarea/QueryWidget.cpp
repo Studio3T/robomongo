@@ -41,8 +41,8 @@ namespace Robomongo
         QWidget(parent),
         _shell(shell),
         _viewer(nullptr),
-        _isTextChanged(false),
-        _dock(nullptr)
+        _dock(nullptr),
+        _isTextChanged(false)
     {
         AppRegistry::instance().bus()->subscribe(this, DocumentListLoadedEvent::Type, shell);
         AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type, shell);
@@ -52,7 +52,7 @@ namespace Robomongo
         VERIFY(connect(_scriptWidget, SIGNAL(textChanged()), this, SLOT(textChange())));
 
         // Need to use QMainWindow in order to make use of all features of docking.
-        // (Qt full support for dock windows implemented only for QMainWindow)
+        // (Note: Qt full support for dock windows implemented only for QMainWindow)
         _viewer = new OutputWidget(this);
         _outputWindow = new QMainWindow;
         _dock = new CustomDockWidget(this);
@@ -104,8 +104,12 @@ namespace Robomongo
 
     bool QueryWidget::outputWindowDocked() const
     {
-        if (_dock) return !_dock->isFloating();
-        else return true;
+        if (_dock) {
+            return !_dock->isFloating();
+        }
+        else {  // _dock is not initialized yet, but it will be docked when initialized
+            return true;
+        }
     }
 
     void QueryWidget::execute()
@@ -278,9 +282,7 @@ namespace Robomongo
 
     void QueryWidget::on_dock_undock(bool floating)
     {
-        // If output window docked, trigger ui_queryLinesCountChanged() for query window 
-        // (ScriptWidget) docked mode size adjustments.
-        if (!floating) {
+        if (!floating) {    // If output window docked 
             // Settings to revert to docked mode
             _scriptWidget->ui_queryLinesCountChanged();
             _mainLayout->addWidget(_scriptWidget);                     
@@ -292,8 +294,8 @@ namespace Robomongo
                 item->getOutputItemHeaderWidget()->applyDockUndockSettings(true);
             }
         }
-        else {  // output window undocked(floating)
-            // Settings for query window to use maximum space
+        else {              // output window undocked(floating)
+            // Settings for query window in order to use maximum space
             _scriptWidget->disableFixedHeight();
             _mainLayout->addWidget(_scriptWidget, 1); 
             _mainLayout->addWidget(_line);

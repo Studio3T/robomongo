@@ -14,9 +14,8 @@ namespace Robomongo
 {
     OutputWidget::OutputWidget(QWidget *parent) :
         QFrame(parent),
-        _splitter(nullptr)
+        _splitter(new QSplitter)
     {
-        _splitter = new QSplitter;
         _splitter->setOrientation(Qt::Vertical);
         _splitter->setHandleWidth(1);
         _splitter->setContentsMargins(0, 0, 0, 0);
@@ -35,12 +34,12 @@ namespace Robomongo
         if (_prevResultsCount > 0) {
             clearAllParts();
         }
-        int const SIZE = _prevResultsCount = results.size();
-        bool const multipleResults = (SIZE > 1);
+        int const RESULTS_SIZE = _prevResultsCount = results.size();
+        bool const multipleResults = (RESULTS_SIZE > 1);
         
         _outputItemContentWidgets.clear();
 
-        for (int i = 0; i < SIZE; ++i) {
+        for (int i = 0; i < RESULTS_SIZE; ++i) {
             MongoShellResult shellResult = results[i];
 
             double secs = shellResult.elapsedMs() / 1000.f;
@@ -50,7 +49,7 @@ namespace Robomongo
                 _prevViewModes.pop_back();
             }
 
-            bool const firstItem = (i == 0);
+            bool const firstItem = (0 == i);
 
             OutputItemContentWidget* item = nullptr;
             if (shellResult.documents().size() > 0) {

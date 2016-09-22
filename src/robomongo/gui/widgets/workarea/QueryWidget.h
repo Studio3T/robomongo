@@ -107,7 +107,7 @@ namespace Robomongo
             : _parent(parent)
         {}
 
-        QueryWidget* getQueryWidget() const { return _parent; }
+        QueryWidget* getParentQueryWidget() const { return _parent; }
 
     protected:
         // Dock instead of close

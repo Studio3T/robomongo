@@ -1197,7 +1197,7 @@ namespace Robomongo
         // If focus is on floating output window, make it's parent (which is a QueryWidget tab) as active tab
         auto const activeDock = dynamic_cast<QueryWidget::CustomDockWidget*>(qApp->activeWindow());
         if (activeDock) {
-            _workArea->setCurrentWidget(activeDock->getQueryWidget());
+            _workArea->setCurrentWidget(activeDock->getParentQueryWidget());
         }
     }
 }

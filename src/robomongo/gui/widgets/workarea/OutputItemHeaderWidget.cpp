@@ -90,7 +90,7 @@ namespace Robomongo
         _dockUndockButton->setFlat(true);
         
         auto dockWidget = dynamic_cast<QueryWidget::CustomDockWidget*>(outputItemContentWidget->parentWidget()->parentWidget());
-        auto queryWidget = dockWidget->getQueryWidget();
+        auto queryWidget = dockWidget->getParentQueryWidget();
         VERIFY(connect(_dockUndockButton, SIGNAL(clicked()), queryWidget, SLOT(dockUndock())));
         
         VERIFY(connect(_textButton, SIGNAL(clicked()), outputItemContentWidget, SLOT(showText())));
@@ -145,7 +145,7 @@ namespace Robomongo
         layout->addWidget(_verticalLine);
         layout->addWidget(_dockUndockButton);
         
-        // Hide _dockUndockButton for header items other than first header item
+        // Hide _dockUndockButton for header items except first header item
         if (!_firstItem) {
             _verticalLine->setHidden(true);
             _dockUndockButton->setHidden(true);
@@ -207,9 +207,9 @@ namespace Robomongo
         _customButton->setChecked(true);
     }
 
-    void OutputItemHeaderWidget::applyDockUndockSettings(bool docking)
+    void OutputItemHeaderWidget::applyDockUndockSettings(bool isDocking)
     {
-        if (docking) {
+        if (isDocking) {
             _dockUndockButton->setIcon(GuiRegistry::instance().undockIcon());
             _dockUndockButton->setToolTip("Undock into separate window");
         }
@@ -233,7 +233,7 @@ namespace Robomongo
 
     void OutputItemHeaderWidget::maximizeMinimizePart()
     {
-        // No maximize/minimize logic if there is only one query result
+        // No maximize/minimize behaviour if there is only one query result
         if (!_multipleResults) {
             return;
         }

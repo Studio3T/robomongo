@@ -162,6 +162,13 @@ namespace Robomongo
         _progressBarPopup->hide();
     }
 
+    void OutputWidget::applyDockUndockSettings(bool isDocking) const
+    {
+        for (auto const& item : _outputItemContentWidgets) {
+            item->applyDockUndockSettings(isDocking);
+        }
+    }
+
     void OutputWidget::clearAllParts()
     {
         _prevViewModes.clear();

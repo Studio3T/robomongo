@@ -315,6 +315,11 @@ namespace Robomongo
         _isTableModeInitialized = false;
     }
 
+    void OutputItemContentWidget::applyDockUndockSettings(bool isDocking) const
+    {
+        _header->applyDockUndockSettings(isDocking);
+    }
+
     void OutputItemContentWidget::jsonPartReady(const QString &json)
     {
         // check that this is our current thread

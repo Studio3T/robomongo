@@ -35,7 +35,7 @@ namespace Robomongo
         void showProgress();
         void hideProgress();
 
-        std::vector<OutputItemContentWidget*> const& getOutputItemContentWidgets() { return _outputItemContentWidgets; }
+        void applyDockUndockSettings(bool isDocking) const;
 
     private Q_SLOTS:
         void restoreSize();

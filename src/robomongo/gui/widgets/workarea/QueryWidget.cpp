@@ -290,9 +290,7 @@ namespace Robomongo
             _mainLayout->addWidget(_outputWindow, 1);
             _dock->setFeatures(QDockWidget::DockWidgetFloatable);
             _dock->setTitleBarWidget(new QWidget);
-            for (auto item : _viewer->getOutputItemContentWidgets()) {
-                item->getOutputItemHeaderWidget()->applyDockUndockSettings(true);
-            }
+            _viewer->applyDockUndockSettings(true);
         }
         else {              // output window undocked(floating)
             // Settings for query window in order to use maximum space
@@ -302,9 +300,7 @@ namespace Robomongo
             _mainLayout->addWidget(_outputWindow);
             _dock->setFeatures(QDockWidget::DockWidgetClosable);
             _dock->setTitleBarWidget(nullptr);
-            for (auto item : _viewer->getOutputItemContentWidgets()) {
-                item->getOutputItemHeaderWidget()->applyDockUndockSettings(false);
-            }
+            _viewer->applyDockUndockSettings(false);
         }
     }
 

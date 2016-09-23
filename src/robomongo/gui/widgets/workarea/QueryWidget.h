@@ -74,11 +74,11 @@ namespace Robomongo
         void handle(AutocompleteResponse *event);
 
     private Q_SLOTS:
+        // Make adjustments between output window dock/undock events
+        void on_dock_undock();
+
         // Toggle output window between dock/undock status
         void dockUndock(); 
-        
-        // Make adjustments between output window dock/undock events
-        void on_dock_undock(bool isFloating);
 
     private:        
         void hideProgress();
@@ -102,6 +102,8 @@ namespace Robomongo
     /* Custom dock widget for output window */
     class QueryWidget::CustomDockWidget : public QDockWidget
     {
+        Q_OBJECT
+
     public:
         CustomDockWidget(QueryWidget* parent)
             : _parent(parent)

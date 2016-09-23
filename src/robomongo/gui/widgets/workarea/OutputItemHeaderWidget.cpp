@@ -83,16 +83,15 @@ namespace Robomongo
             VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizeMinimizePart())));
         }
 
-        _dockUndockButton = new QPushButton;
-        _dockUndockButton->setIcon(GuiRegistry::instance().undockIcon());
-        _dockUndockButton->setToolTip("Undock into separate window");
-        _dockUndockButton->setFixedSize(18, 18);
-        _dockUndockButton->setFlat(true);
-        
         auto dockWidget = dynamic_cast<QueryWidget::CustomDockWidget*>(outputItemContentWidget->parentWidget()->parentWidget());
         auto queryWidget = dockWidget->getParentQueryWidget();
-        VERIFY(connect(_dockUndockButton, SIGNAL(clicked()), queryWidget, SLOT(dockUndock())));
         
+        _dockUndockButton = new QPushButton;
+        _dockUndockButton->setFixedSize(18, 18);
+        _dockUndockButton->setFlat(true);
+        applyDockUndockSettings(!dockWidget->isFloating());
+        VERIFY(connect(_dockUndockButton, SIGNAL(clicked()), queryWidget, SLOT(dockUndock())));
+
         VERIFY(connect(_textButton, SIGNAL(clicked()), outputItemContentWidget, SLOT(showText())));
         VERIFY(connect(_treeButton, SIGNAL(clicked()), outputItemContentWidget, SLOT(showTree())));
         VERIFY(connect(_tableButton, SIGNAL(clicked()), outputItemContentWidget, SLOT(showTable())));

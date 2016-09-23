@@ -60,7 +60,7 @@ namespace Robomongo
         _dock->setFeatures(QDockWidget::DockWidgetFloatable);
         _dock->setWidget(_viewer);
         _dock->setTitleBarWidget(new QWidget);
-        VERIFY(connect(_dock, SIGNAL(topLevelChanged(bool)), this, SLOT(on_dock_undock(bool))));
+        VERIFY(connect(_dock, SIGNAL(topLevelChanged(bool)), this, SLOT(on_dock_undock())));
         _outputWindow->addDockWidget(Qt::BottomDockWidgetArea, _dock);
 
         _outputLabel = new QLabel(this);
@@ -280,9 +280,9 @@ namespace Robomongo
         _scriptWidget->showAutocompletion(event->list, QtUtils::toQString(event->prefix) );
     }
 
-    void QueryWidget::on_dock_undock(bool floating)
+    void QueryWidget::on_dock_undock()
     {
-        if (!floating) {    // If output window docked 
+        if (!_dock->isFloating()) {    // If output window docked 
             // Settings to revert to docked mode
             _scriptWidget->ui_queryLinesCountChanged();
             _mainLayout->addWidget(_scriptWidget);                     

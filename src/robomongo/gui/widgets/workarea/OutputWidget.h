@@ -36,6 +36,7 @@ namespace Robomongo
         void hideProgress();
 
         void applyDockUndockSettings(bool isDocking) const;
+        Qt::Orientation getOrientation() const;
 
     private Q_SLOTS:
         void restoreSize();

@@ -8,6 +8,7 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/core/AppRegistry.h"
@@ -29,12 +30,15 @@ namespace Robomongo
 {
 
     OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemContentWidget *outputItemContentWidget, bool multipleResults, 
-                                                   bool firstItem, QWidget *parent) :
+                                                   bool firstItem, bool lastItem, QWidget *parent) :
         QFrame(parent),
-        _maxButton(nullptr), _dockUndockButton(nullptr), 
-        _maximized(false), _multipleResults(multipleResults), _firstItem(firstItem)
+        _maxButton(nullptr), _dockUndockButton(nullptr), _maximized(false), _multipleResults(multipleResults), 
+        _firstItem(firstItem), _lastItem(lastItem), _orientation(Qt::Vertical)
     {
         setContentsMargins(5, 0, 0, 0);
+
+        auto const* outputWidget = qobject_cast<OutputWidget*>(outputItemContentWidget->parentWidget());
+        _orientation = outputWidget->getOrientation();
 
         // Text mode button
         _textButton = new QPushButton(this);
@@ -77,18 +81,19 @@ namespace Robomongo
         if (_multipleResults) {
             _maxButton = new QPushButton;
             _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
-            _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");
+            _maxButton->setToolTip("Maximize this output result (double-click on result's header)");
             _maxButton->setFixedSize(18, 18);
             _maxButton->setFlat(true);
             VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizeMinimizePart())));
         }
 
-        auto dockWidget = dynamic_cast<QueryWidget::CustomDockWidget*>(outputItemContentWidget->parentWidget()->parentWidget());
+        auto dockWidget = qobject_cast<QueryWidget::CustomDockWidget*>(outputItemContentWidget->parentWidget()->parentWidget());
         auto queryWidget = dockWidget->getParentQueryWidget();
         
         _dockUndockButton = new QPushButton;
         _dockUndockButton->setFixedSize(18, 18);
         _dockUndockButton->setFlat(true);
+        _dockUndockButton->setHidden(true);
         applyDockUndockSettings(!dockWidget->isFloating());
         VERIFY(connect(_dockUndockButton, SIGNAL(clicked()), queryWidget, SLOT(dockUndock())));
 
@@ -141,16 +146,20 @@ namespace Robomongo
 
         layout->addSpacing(3);
         _verticalLine = createVerticalLine();
+        _verticalLine->setHidden(true);
         layout->addWidget(_verticalLine);
         layout->addWidget(_dockUndockButton);
-        
-        // Hide _dockUndockButton for header items except first header item
-        if (!_firstItem) {
-            _verticalLine->setHidden(true);
-            _dockUndockButton->setHidden(true);
-        }
 
         setLayout(layout);
+
+        // Update dock/undock button visibility
+        if (_multipleResults) {
+            updateDockButtonOnToggleOrientation();
+        }
+        else {
+            _verticalLine->setVisible(true);
+            _dockUndockButton->setVisible(true);
+        }
     }
 
     void OutputItemHeaderWidget::mouseDoubleClickEvent(QMouseEvent *)
@@ -218,6 +227,15 @@ namespace Robomongo
         }
     }
 
+    void OutputItemHeaderWidget::toggleOrientation(Qt::Orientation orientation)
+    {
+        if (!_firstItem && !_lastItem) 
+            return;
+
+        _orientation = orientation;
+        updateDockButtonOnToggleOrientation();
+    }
+
     void OutputItemHeaderWidget::setTime(const QString &time)
     {
         _timeIndicator->setVisible(!time.isEmpty());
@@ -237,23 +255,40 @@ namespace Robomongo
             return;
         }
 
-        if (_maximized) {
+        if (_maximized) {   // restoring original size
             emit restoredSize();
             _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
-            if (!_firstItem) {
-                _verticalLine->setHidden(true);
-                _dockUndockButton->setHidden(true);
-            }
+            _maxButton->setToolTip("Maximize this output result (double-click on result header)");
+            updateDockButtonOnToggleOrientation();
         }
-        else {
+        else {              // maximizing
             emit maximizedPart();
             _maxButton->setIcon(GuiRegistry::instance().minimizeIcon());
-            if (!_firstItem) {
-                _verticalLine->setVisible(true);
-                _dockUndockButton->setVisible(true);
-            }
+            _maxButton->setToolTip("Restore back to original size (double-click on result header)");
+            _verticalLine->setVisible(true);
+            _dockUndockButton->setVisible(true);
         }
 
         _maximized = !_maximized;
     }
+    
+    void OutputItemHeaderWidget::updateDockButtonOnToggleOrientation() const
+    {
+        if (!_multipleResults)
+            return;
+
+        if (_firstItem) {
+            _verticalLine->setVisible(Qt::Vertical == _orientation);
+            _dockUndockButton->setVisible(Qt::Vertical == _orientation);
+        }
+        else if (_lastItem) {
+            _verticalLine->setVisible(Qt::Horizontal == _orientation);
+            _dockUndockButton->setVisible(Qt::Horizontal == _orientation);
+        }
+        else {
+            _verticalLine->setVisible(false);
+            _dockUndockButton->setVisible(false);
+        }
+    }
+
 }

@@ -23,8 +23,8 @@
 
 namespace Robomongo
 {
-    OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &text,
-                                                     double secs, bool multipleResults, bool firstItem, QWidget *parent) :
+    OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &text, double secs, 
+                                                     bool multipleResults, bool firstItem, bool lastItem, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -47,12 +47,12 @@ namespace Robomongo
         _mod(NULL),
         _viewMode(viewMode)
     {
-        setup(secs, multipleResults, firstItem);
+        setup(secs, multipleResults, firstItem, lastItem);
     }
 
     OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &type,
                                                      const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, 
-                                                     double secs, bool multipleResults, bool firstItem, QWidget *parent) :
+                                                     double secs, bool multipleResults, bool firstItem, bool lastItem, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -77,13 +77,13 @@ namespace Robomongo
         _mod(NULL),
         _viewMode(viewMode)
     {
-        setup(secs, multipleResults, firstItem);
+        setup(secs, multipleResults, firstItem, lastItem);
     }
 
-    void OutputItemContentWidget::setup(double secs, bool multipleResults, bool firstItem)
+    void OutputItemContentWidget::setup(double secs, bool multipleResults, bool firstItem, bool lastItem)
     {      
         setContentsMargins(0, 0, 0, 0);
-        _header = new OutputItemHeaderWidget(this, multipleResults, firstItem);
+        _header = new OutputItemHeaderWidget(this, multipleResults, firstItem, lastItem);
 
         if (_queryInfo._info.isValid()) {
             _header->setCollection(QtUtils::toQString(_queryInfo._info._ns.collectionName()));
@@ -318,6 +318,11 @@ namespace Robomongo
     void OutputItemContentWidget::applyDockUndockSettings(bool isDocking) const
     {
         _header->applyDockUndockSettings(isDocking);
+    }
+
+    void OutputItemContentWidget::toggleOrientation(Qt::Orientation orientation) const
+    {
+        _header->toggleOrientation(orientation);
     }
 
     void OutputItemContentWidget::jsonPartReady(const QString &json)

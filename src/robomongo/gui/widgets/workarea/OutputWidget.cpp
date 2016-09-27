@@ -50,15 +50,16 @@ namespace Robomongo
             }
 
             bool const firstItem = (0 == i);
+            bool const lastItem = (RESULTS_SIZE-1 == i);
 
             OutputItemContentWidget* item = nullptr;
             if (shellResult.documents().size() > 0) {
                 item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.type()),
                                                    shellResult.documents(), shellResult.queryInfo(), secs, multipleResults,
-                                                   firstItem, this);
+                                                   firstItem, lastItem, this);
             } else {
                 item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.response()), secs,
-                                                   multipleResults, firstItem, this);
+                                                   multipleResults, firstItem, lastItem, this);
             }
             VERIFY(connect(item, SIGNAL(maximizedPart()), this, SLOT(maximizePart())));
             VERIFY(connect(item, SIGNAL(restoredSize()), this, SLOT(restoreSize())));
@@ -81,10 +82,15 @@ namespace Robomongo
 
     void OutputWidget::toggleOrientation()
     {
-        if (_splitter->orientation() == Qt::Horizontal)
-            _splitter->setOrientation(Qt::Vertical);
-        else
-            _splitter->setOrientation(Qt::Horizontal);
+        bool const horizontal = _splitter->orientation() == Qt::Horizontal;
+        _splitter->setOrientation(horizontal ? Qt::Vertical : Qt::Horizontal);
+        int const COUNT = _splitter->count();
+        if (COUNT > 1) {
+            auto const* firstItem = qobject_cast<OutputItemContentWidget*>(_splitter->widget(0));
+            auto const* lastItem = qobject_cast<OutputItemContentWidget*>(_splitter->widget(COUNT-1));
+            firstItem->toggleOrientation(_splitter->orientation());
+            lastItem->toggleOrientation(_splitter->orientation());
+        }
     }
 
     void OutputWidget::enterTreeMode()
@@ -167,6 +173,11 @@ namespace Robomongo
         for (auto const& item : _outputItemContentWidgets) {
             item->applyDockUndockSettings(isDocking);
         }
+    }
+
+    Qt::Orientation OutputWidget::getOrientation() const
+    {
+        return _splitter->orientation();
     }
 
     void OutputWidget::clearAllParts()

@@ -26,12 +26,13 @@ What's Planned for the Next Release?
 We are currently working towards [Robomongo 0.9.0 RC11 milestone](https://github.com/paralect/robomongo/milestone/16).  
  
 Currently in progress:
-- Replica Sets Support
+- Replica Sets
+- Export/Import
 
 Plans for Future:
 - User Roles
 - Support execution of multiple simultaneous queries [#1161](https://github.com/paralect/robomongo/issues/1161)
-- Enhancements for stability, running without crashes
+- Enhancements for stability, running without crashes ([Stability Milestone](https://github.com/paralect/robomongo/milestone/15))
 - More Documentation
 - Unit Tests
 - Refactoring Debug Log module

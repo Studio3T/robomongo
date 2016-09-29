@@ -389,7 +389,7 @@ namespace Robomongo
             json, true, dynamic_cast<QWidget*>(_observer));
 
         editor->setWindowTitle("View Document");
-        editor->show();
+        editor->exec();
     }
 
     void Notifier::onInsertDocument()

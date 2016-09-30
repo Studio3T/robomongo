@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QAction>
 #include <QMenu>
+#include <QApplication>
 
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoCollection.h"
@@ -19,6 +20,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
+#include "robomongo/gui/dialogs/ExportDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 
 
@@ -98,15 +100,20 @@ namespace Robomongo
         _collectionFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_collectionFolderItem);
 
-        _functionsFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Functions);
-        _functionsFolderItem->setText(0, "Functions");
-        _functionsFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        addChild(_functionsFolderItem);
+        // todo: make member
+        auto exportDialog = qobject_cast<ExportDialog*>(qApp->activeWindow());
+        if (!exportDialog)
+        {
+            _functionsFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Functions);
+            _functionsFolderItem->setText(0, "Functions");
+            _functionsFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
+            addChild(_functionsFolderItem);
 
-        _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Users);
-        _usersFolderItem->setText(0, "Users");
-        _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-        addChild(_usersFolderItem);
+            _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Users);
+            _usersFolderItem->setText(0, "Users");
+            _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
+            addChild(_usersFolderItem);
+        }
     }
 
     void ExplorerDatabaseTreeItem::expandCollections()
@@ -139,6 +146,7 @@ namespace Robomongo
          _bus->send(_database->server()->client(), new EditIndexRequest(item, item->collection()->info(), oldIndexText, newIndexText));
     }
 
+    // todo: remove
     void ExplorerDatabaseTreeItem::applySettingsForExportDialog()
     {
         _functionsFolderItem->setHidden(true);
@@ -267,13 +275,15 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::addCollectionItem(MongoCollection *collection)
     {
-        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(_collectionFolderItem, this, collection);
+        auto collectionItem = new ExplorerCollectionTreeItem(_collectionFolderItem, this, collection);
+        collectionItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
         _collectionFolderItem->addChild(collectionItem);
     }
 
     void ExplorerDatabaseTreeItem::addSystemCollectionItem(MongoCollection *collection)
     {
-        ExplorerCollectionTreeItem *collectionItem = new ExplorerCollectionTreeItem(_collectionSystemFolderItem, this, collection);
+        auto collectionItem = new ExplorerCollectionTreeItem(_collectionSystemFolderItem, this, collection);
+        collectionItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
         _collectionSystemFolderItem->addChild(collectionItem);
     }
 

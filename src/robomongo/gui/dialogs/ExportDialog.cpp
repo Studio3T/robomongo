@@ -222,10 +222,11 @@ namespace Robomongo
             return;
         }
 
-        auto dbTreeItem = dynamic_cast<ExplorerDatabaseTreeItem*>(item);
-        if (dbTreeItem) {
-            dbTreeItem->applySettingsForExportDialog();
-        }
+        // todo
+        //auto dbTreeItem = dynamic_cast<ExplorerDatabaseTreeItem*>(item);
+        //if (dbTreeItem) {
+        //    dbTreeItem->applySettingsForExportDialog();
+        //}
     }
 
     Indicator *ExportDialog::createDatabaseIndicator(const QString &database)

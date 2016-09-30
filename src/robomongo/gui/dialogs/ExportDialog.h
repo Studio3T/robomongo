@@ -6,6 +6,7 @@ class QLabel;
 class QDialogButtonBox;
 class QLineEdit;
 class QTreeWidgetItem;
+class QComboBox;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -18,7 +19,7 @@ namespace Robomongo
 
     public:
         explicit ExportDialog(QWidget *parent = 0);
-        QString databaseName() const;
+        //QString databaseName() const;
         void setOkButtonText(const QString &text);
         void setInputLabelText(const QString &text);
         void setInputText(const QString &text);
@@ -33,10 +34,13 @@ namespace Robomongo
         void ui_itemDoubleClicked(QTreeWidgetItem *item, int column);
     
     private:
+        // todo: remove
         Indicator *createDatabaseIndicator(const QString &database);
         Indicator *createCollectionIndicator(const QString &collection);
-        QLineEdit *_inputEdit;
-        QLabel *_inputLabel;
-        QDialogButtonBox *_buttonBox;
+
+        QComboBox* _typeComboBox;
+        QLineEdit* _outputFileName;
+        QLineEdit* _outputDir;
+        QDialogButtonBox* _buttonBox;
     };
 }

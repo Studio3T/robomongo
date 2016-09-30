@@ -10,6 +10,7 @@
 #include <QComboBox>
 #include <QGroupBox>
 #include <QApplication>
+#include <QProcess>
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -82,15 +83,15 @@ namespace Robomongo
 
         // Widgets related to Output 
         auto typeLabel = new QLabel("Format");
-        auto typeComboBox = new QComboBox;
-        typeComboBox->addItem("JSON");
-        typeComboBox->addItem("CSV");
+        _typeComboBox = new QComboBox;
+        _typeComboBox->addItem("JSON");
+        _typeComboBox->addItem("CSV");
 
         auto outputFileLabel = new QLabel("File Name:");
-        auto outputFileLineEdit = new QLineEdit;
+        _outputFileName = new QLineEdit;
 
         auto outputDirLabel = new QLabel("Directory:");
-        auto outputDirLineEdit = new QLineEdit;
+        _outputDir = new QLineEdit;
         auto browseButton = new QPushButton("...");
         browseButton->setMaximumWidth(50);
         // Attempt to fix issue for Windows High DPI button height is slightly taller than other widgets 
@@ -100,13 +101,12 @@ namespace Robomongo
 
         auto outputsInnerLay = new QGridLayout;
         outputsInnerLay->addWidget(typeLabel,               0, 0);
-        outputsInnerLay->addWidget(typeComboBox,            0, 1, 1, 2);
+        outputsInnerLay->addWidget(_typeComboBox,           0, 1, 1, 2);
         outputsInnerLay->addWidget(outputFileLabel,         1, 0);
-        outputsInnerLay->addWidget(outputFileLineEdit,      1, 1, 1, 2);
+        outputsInnerLay->addWidget(_outputFileName,         1, 1, 1, 2);
         outputsInnerLay->addWidget(outputDirLabel,          2, 0);
-        outputsInnerLay->addWidget(outputDirLineEdit,       2, 1);
+        outputsInnerLay->addWidget(_outputDir,              2, 1);
         outputsInnerLay->addWidget(browseButton,            2, 2);
-
 
         // Button box
         _buttonBox = new QDialogButtonBox(this);
@@ -158,31 +158,38 @@ namespace Robomongo
         _treeWidget->setFocus();
     }
 
-    QString ExportDialog::databaseName() const
-    {
-        return _inputEdit->text();
-    }
+    // todo: remove
+    //QString ExportDialog::databaseName() const
+    //{
+    //    //return _inputEdit->text();
+    //}
 
     void ExportDialog::setOkButtonText(const QString &text)
     {
         _buttonBox->button(QDialogButtonBox::Save)->setText(text);
     }
 
+    // todo: remove
     void ExportDialog::setInputLabelText(const QString &text)
     {
-        _inputLabel->setText(text);
+        //_inputLabel->setText(text);
     }
 
+    // todo: remove
     void ExportDialog::setInputText(const QString &text)
     {
-        _inputEdit->setText(text);
-        _inputEdit->selectAll();
+        //_inputEdit->setText(text);
+        //_inputEdit->selectAll();
     }
 
     void ExportDialog::accept()
     {
-        if (_inputEdit->text().isEmpty())
-            return;
+        QString mongoexport = "D:\\mongo_export\\bin\\mongoexport.exe";
+        QString args = " --db test --collection coll1 --out D:\\exports\\coll1.json";
+
+        // result: If process cannot be started -2 is returned. If process crashes, -1 is returned. 
+        // Otherwise, the process' exit code is returned.
+        auto result = QProcess::execute(mongoexport+args);
 
         QDialog::accept();
     }

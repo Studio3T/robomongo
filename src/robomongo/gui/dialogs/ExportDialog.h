@@ -32,15 +32,19 @@ namespace Robomongo
     private Q_SLOTS:
         void ui_itemExpanded(QTreeWidgetItem *item);
         void ui_itemDoubleClicked(QTreeWidgetItem *item, int column);
-    
+        void ui_itemClicked(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+        void on_browseButton_clicked();
+
     private:
         // todo: remove
         Indicator *createDatabaseIndicator(const QString &database);
         Indicator *createCollectionIndicator(const QString &collection);
 
-        QComboBox* _typeComboBox;
+        QComboBox* _formatComboBox;
         QLineEdit* _outputFileName;
         QLineEdit* _outputDir;
         QDialogButtonBox* _buttonBox;
+
+        QString _mongoExportArgs;
     };
 }

@@ -11,13 +11,18 @@
 #include <QGroupBox>
 #include <QApplication>
 #include <QProcess>
+#include <QDir>
+#include <QFileDialog>
+#include <QDateTime>
+#include <QMessageBox>
 
-#include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
-#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/MongoCollection.h"
+#include "robomongo/core/domain/MongoDatabase.h"
+#include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
+#include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerTreeWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerServerTreeItem.h"
@@ -26,18 +31,39 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h"
 #include "robomongo/gui/utils/GuiConstants.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 namespace Robomongo
 {
-    const QSize ExportDialog::dialogSize = QSize(300, 150);
+    const QSize ExportDialog::dialogSize = QSize(500, 200);     // todo: remove
+
+    namespace
+    {
+        const QString defaultDir = "D:\\exports\\";     // Default location
+
+        // This structure represents the arguments as in "mongoexport.exe --help"
+        // See http://docs.mongodb.org/manual/reference/program/mongoexport/ for more information
+        struct MongoExportArgs
+        {
+            static QString db(const QString& dbName) { return ("--db" + dbName); }
+            static QString collection(const QString& collection) { return ("--collection" + collection); }
+            
+            // i.e. absFilePath: "/exports/coll1.json"
+            static QString out(const QString& absFilePath) { return ("--out " + absFilePath); }  
+        };
+    }
 
     ExportDialog::ExportDialog(QWidget *parent) :
-        QDialog(parent)
+        QDialog(parent), _mongoExportArgs()
     {
         setWindowTitle("Export Collection");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         //setFixedSize(dialogSize);
-        setMinimumWidth(400);
+        setMinimumSize(350, 250);
+
+        // todo: move to a global location
+        // Enable copyable text for QMessageBox
+        qApp->setStyleSheet("QMessageBox { messagebox-text-interaction-flags: 5; }");
 
         const QString serverName = "localhost:20017"; // todo: remove
         Indicator *serverIndicator = new Indicator(GuiRegistry::instance().serverIcon(), serverName);
@@ -71,7 +97,14 @@ namespace Robomongo
         _treeWidget->setHeaderHidden(true);
         //_treeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
         VERIFY(connect(_treeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(ui_itemExpanded(QTreeWidgetItem *))));
-        VERIFY(connect(_treeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(ui_itemDoubleClicked(QTreeWidgetItem *, int))));
+       
+        VERIFY(connect(_treeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), 
+                       this, SLOT(ui_itemDoubleClicked(QTreeWidgetItem *, int))));
+
+        // todo: use diffirent signal
+        VERIFY(connect(_treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
+                       this, SLOT(ui_itemClicked(QTreeWidgetItem *, QTreeWidgetItem *))));
+        
         //
         auto const& serversVec = AppRegistry::instance().app()->getServers();
         if (!serversVec.empty()){
@@ -83,9 +116,9 @@ namespace Robomongo
 
         // Widgets related to Output 
         auto typeLabel = new QLabel("Format");
-        _typeComboBox = new QComboBox;
-        _typeComboBox->addItem("JSON");
-        _typeComboBox->addItem("CSV");
+        _formatComboBox = new QComboBox;
+        _formatComboBox->addItem("JSON");
+        _formatComboBox->addItem("CSV");
 
         auto outputFileLabel = new QLabel("File Name:");
         _outputFileName = new QLineEdit;
@@ -94,6 +127,8 @@ namespace Robomongo
         _outputDir = new QLineEdit;
         auto browseButton = new QPushButton("...");
         browseButton->setMaximumWidth(50);
+        VERIFY(connect(browseButton, SIGNAL(clicked()), this, SLOT(on_browseButton_clicked())));
+
         // Attempt to fix issue for Windows High DPI button height is slightly taller than other widgets 
 #ifdef Q_OS_WIN
         browseButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
@@ -101,7 +136,7 @@ namespace Robomongo
 
         auto outputsInnerLay = new QGridLayout;
         outputsInnerLay->addWidget(typeLabel,               0, 0);
-        outputsInnerLay->addWidget(_typeComboBox,           0, 1, 1, 2);
+        outputsInnerLay->addWidget(_formatComboBox,         0, 1, 1, 2);
         outputsInnerLay->addWidget(outputFileLabel,         1, 0);
         outputsInnerLay->addWidget(_outputFileName,         1, 1, 1, 2);
         outputsInnerLay->addWidget(outputDirLabel,          2, 0);
@@ -184,14 +219,23 @@ namespace Robomongo
 
     void ExportDialog::accept()
     {
-        QString mongoexport = "D:\\mongo_export\\bin\\mongoexport.exe";
-        QString args = " --db test --collection coll1 --out D:\\exports\\coll1.json";
+        QString mongoExport = "D:\\mongo_export\\bin\\mongoexport.exe";
+        
+        // Append file path and name
+        auto absFilePath = _outputDir->text() + _outputFileName->text();
+        _mongoExportArgs.append(" --out " + absFilePath);
 
         // result: If process cannot be started -2 is returned. If process crashes, -1 is returned. 
-        // Otherwise, the process' exit code is returned.
-        auto result = QProcess::execute(mongoexport+args);
+        // If successful returns 0, otherwise, the process' exit code is returned.
+        auto const result = QProcess::execute(mongoExport + _mongoExportArgs);
 
-        QDialog::accept();
+        if (0 == result) {
+            QMessageBox::information(this, "Export Successful", "Ouput File: \n" + absFilePath);
+        }
+        else {
+            // todo: more error details
+            QMessageBox::critical(this, "Export Failed", "Error Code: " + QString::number(result));
+        }
     }
 
     void ExportDialog::ui_itemExpanded(QTreeWidgetItem *item)
@@ -216,24 +260,54 @@ namespace Robomongo
 
     void ExportDialog::ui_itemDoubleClicked(QTreeWidgetItem *item, int column)
     {
-        auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(item);
-        if (collectionItem) {
-            AppRegistry::instance().app()->openShell(collectionItem->collection());
-            return;
-        }
-
-        auto replicaMemberItem = dynamic_cast<ExplorerReplicaSetTreeItem*>(item);
-        if (replicaMemberItem) {
-            auto const scriptStr = Robomongo::ScriptInfo("", true);
-            AppRegistry::instance().app()->openShell(replicaMemberItem->connectionSettings(), scriptStr);
-            return;
-        }
+        //auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(item);
+        //if (collectionItem) {
+        //    AppRegistry::instance().app()->openShell(collectionItem->collection());
+        //    return;
+        //}
 
         // todo
         //auto dbTreeItem = dynamic_cast<ExplorerDatabaseTreeItem*>(item);
         //if (dbTreeItem) {
         //    dbTreeItem->applySettingsForExportDialog();
         //}
+    }
+
+    void ExportDialog::ui_itemClicked(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+    {
+        auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(current);
+        if (!collectionItem)
+            return;
+
+        auto dbName = QString::fromStdString(collectionItem->collection()->database()->name());
+        auto collName = QString::fromStdString(collectionItem->collection()->name());
+        auto date = QDateTime::currentDateTime().toString("dd.MM.yyyy");
+        auto time = QDateTime::currentDateTime().toString("hh.mm.ss");
+        auto timeStamp = date + "_" + time;
+        auto format = _formatComboBox->currentIndex() == 0 ? "json" : "csv";
+
+        _outputFileName->setText(dbName + "." + collName + "_" + timeStamp + "." + format);
+        _outputDir->setText(defaultDir);
+        
+        // todo: setExportArgs()
+        // For now set only db and coll 
+        _mongoExportArgs = " --db " + dbName + " --collection " + collName;
+    }
+
+    void ExportDialog::on_browseButton_clicked()
+    {
+        // Select output directory
+        QString origDir = QFileDialog::getExistingDirectory(this, tr("Select Directory"), defaultDir,
+                                             QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+        auto dir = QDir::toNativeSeparators(origDir);
+
+        QApplication::activeModalWidget()->raise();
+        QApplication::activeModalWidget()->activateWindow();
+
+        if (dir.isNull())
+            return;
+
+        _outputDir->setText(dir + "\\");
     }
 
     Indicator *ExportDialog::createDatabaseIndicator(const QString &database)

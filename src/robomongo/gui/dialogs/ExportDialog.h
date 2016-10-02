@@ -6,6 +6,7 @@ class QLabel;
 class QDialogButtonBox;
 class QLineEdit;
 class QTreeWidgetItem;
+class QTreeWidget;
 class QComboBox;
 QT_END_NAMESPACE
 
@@ -32,8 +33,9 @@ namespace Robomongo
     private Q_SLOTS:
         void ui_itemExpanded(QTreeWidgetItem *item);
         void ui_itemDoubleClicked(QTreeWidgetItem *item, int column);
-        void ui_itemClicked(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+        void ui_itemClicked(QTreeWidgetItem *current);
         void on_browseButton_clicked();
+        void on_formatComboBox_change(int index);
 
     private:
         // todo: remove
@@ -41,9 +43,12 @@ namespace Robomongo
         Indicator *createCollectionIndicator(const QString &collection);
 
         QComboBox* _formatComboBox;
+        QLabel* _fieldsLabel;
+        QLineEdit* _fields;
         QLineEdit* _outputFileName;
         QLineEdit* _outputDir;
         QDialogButtonBox* _buttonBox;
+        QTreeWidget* _treeWidget;
 
         QString _mongoExportArgs;
     };

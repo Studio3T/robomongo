@@ -4,6 +4,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QLineEdit>
+#include <QTextEdit>
 #include <QLabel>
 #include <QDialogButtonBox>
 #include <QTreeWidget>
@@ -91,7 +92,7 @@ namespace Robomongo
         
 
         // Tree Widget
-        auto _treeWidget = new QTreeWidget;
+        _treeWidget = new QTreeWidget;
         _treeWidget->setContextMenuPolicy(Qt::DefaultContextMenu);
         _treeWidget->setIndentation(15);
         _treeWidget->setHeaderHidden(true);
@@ -103,7 +104,7 @@ namespace Robomongo
 
         // todo: use diffirent signal
         VERIFY(connect(_treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
-                       this, SLOT(ui_itemClicked(QTreeWidgetItem *, QTreeWidgetItem *))));
+                       this, SLOT(ui_itemClicked(QTreeWidgetItem *))));
         
         //
         auto const& serversVec = AppRegistry::instance().app()->getServers();
@@ -119,6 +120,13 @@ namespace Robomongo
         _formatComboBox = new QComboBox;
         _formatComboBox->addItem("JSON");
         _formatComboBox->addItem("CSV");
+        VERIFY(connect(_formatComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_formatComboBox_change(int))));
+
+        _fieldsLabel = new QLabel("Fields:");
+        _fields = new QLineEdit; // todo: make textedit
+        // Initially hidden
+        _fieldsLabel->setHidden(true);
+        _fields->setHidden(true);
 
         auto outputFileLabel = new QLabel("File Name:");
         _outputFileName = new QLineEdit;
@@ -133,15 +141,16 @@ namespace Robomongo
 #ifdef Q_OS_WIN
         browseButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
 #endif
-
         auto outputsInnerLay = new QGridLayout;
         outputsInnerLay->addWidget(typeLabel,               0, 0);
         outputsInnerLay->addWidget(_formatComboBox,         0, 1, 1, 2);
-        outputsInnerLay->addWidget(outputFileLabel,         1, 0);
-        outputsInnerLay->addWidget(_outputFileName,         1, 1, 1, 2);
-        outputsInnerLay->addWidget(outputDirLabel,          2, 0);
-        outputsInnerLay->addWidget(_outputDir,              2, 1);
-        outputsInnerLay->addWidget(browseButton,            2, 2);
+        outputsInnerLay->addWidget(_fieldsLabel,            1, 0, Qt::AlignTop);
+        outputsInnerLay->addWidget(_fields,                 1, 1, 1, 2);
+        outputsInnerLay->addWidget(outputFileLabel,         2, 0);
+        outputsInnerLay->addWidget(_outputFileName,         2, 1, 1, 2);
+        outputsInnerLay->addWidget(outputDirLabel,          3, 0);
+        outputsInnerLay->addWidget(_outputDir,              3, 1);
+        outputsInnerLay->addWidget(browseButton,            3, 2);
 
         // Button box
         _buttonBox = new QDialogButtonBox(this);
@@ -150,6 +159,9 @@ namespace Robomongo
         _buttonBox->button(QDialogButtonBox::Save)->setText("E&xport");
         VERIFY(connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
         VERIFY(connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
+
+        // todo:
+        // _manualModeButton = new QPushButton(this);
 
         // Sub layouts
         auto serverIndicatorlayout = new QHBoxLayout();
@@ -221,6 +233,16 @@ namespace Robomongo
     {
         QString mongoExport = "D:\\mongo_export\\bin\\mongoexport.exe";
         
+        // If CSV append output format and fields
+        if (_formatComboBox->currentIndex() == 1) {
+            if (_fields->text().isEmpty()) {
+                QMessageBox::critical(this, "Error", "Failed: \"Fields\" option is required in CSV mode.");
+                return;
+            }
+            _mongoExportArgs.append(" --type=csv");
+            _mongoExportArgs.append(" --fields " + _fields->text().replace(" ", ""));
+        }
+
         // Append file path and name
         auto absFilePath = _outputDir->text() + _outputFileName->text();
         _mongoExportArgs.append(" --out " + absFilePath);
@@ -229,8 +251,17 @@ namespace Robomongo
         // If successful returns 0, otherwise, the process' exit code is returned.
         auto const result = QProcess::execute(mongoExport + _mongoExportArgs);
 
+        // todo: show error for manual mode
+        //process.start(mongoExport + _mongoExportArgs);
+        // process.setProcessChannelMode(QProcess::MergedChannels);
+        //auto const result = process.exitCode();
+        //auto error = process.error();
+        //process.waitForFinished(); 
+        //QString output = process.readAllStandardError();
+
+        // todo: consider checking output file existence for success check
         if (0 == result) {
-            QMessageBox::information(this, "Export Successful", "Ouput File: \n" + absFilePath);
+            QMessageBox::information(this, "Export Successful", "Exported File: \n" + absFilePath);
         }
         else {
             // todo: more error details
@@ -273,7 +304,7 @@ namespace Robomongo
         //}
     }
 
-    void ExportDialog::ui_itemClicked(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+    void ExportDialog::ui_itemClicked(QTreeWidgetItem *current)
     {
         auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(current);
         if (!collectionItem)
@@ -281,6 +312,7 @@ namespace Robomongo
 
         auto dbName = QString::fromStdString(collectionItem->collection()->database()->name());
         auto collName = QString::fromStdString(collectionItem->collection()->name());
+
         auto date = QDateTime::currentDateTime().toString("dd.MM.yyyy");
         auto time = QDateTime::currentDateTime().toString("hh.mm.ss");
         auto timeStamp = date + "_" + time;
@@ -288,7 +320,7 @@ namespace Robomongo
 
         _outputFileName->setText(dbName + "." + collName + "_" + timeStamp + "." + format);
         _outputDir->setText(defaultDir);
-        
+
         // todo: setExportArgs()
         // For now set only db and coll 
         _mongoExportArgs = " --db " + dbName + " --collection " + collName;
@@ -308,6 +340,16 @@ namespace Robomongo
             return;
 
         _outputDir->setText(dir + "\\");
+    }
+
+    void ExportDialog::on_formatComboBox_change(int index)
+    {
+        bool const isCsv = static_cast<bool>(index);
+        _fieldsLabel->setVisible(isCsv);
+        _fields->setVisible(isCsv);
+        
+        // todo: divide ui_itemClicked()
+        ui_itemClicked(_treeWidget->currentItem());
     }
 
     Indicator *ExportDialog::createDatabaseIndicator(const QString &database)

@@ -116,7 +116,6 @@ namespace Robomongo
         }
 
         // Widgets related to Output 
-        auto typeLabel = new QLabel("Format");
         _formatComboBox = new QComboBox;
         _formatComboBox->addItem("JSON");
         _formatComboBox->addItem("CSV");
@@ -127,6 +126,8 @@ namespace Robomongo
         // Initially hidden
         _fieldsLabel->setHidden(true);
         _fields->setHidden(true);
+
+        _query = new QLineEdit; // todo: can use JSON frame
 
         auto outputFileLabel = new QLabel("File Name:");
         _outputFileName = new QLineEdit;
@@ -142,15 +143,17 @@ namespace Robomongo
         browseButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
 #endif
         auto outputsInnerLay = new QGridLayout;
-        outputsInnerLay->addWidget(typeLabel,               0, 0);
+        outputsInnerLay->addWidget(new QLabel("Format"),    0, 0);
         outputsInnerLay->addWidget(_formatComboBox,         0, 1, 1, 2);
         outputsInnerLay->addWidget(_fieldsLabel,            1, 0, Qt::AlignTop);
         outputsInnerLay->addWidget(_fields,                 1, 1, 1, 2);
-        outputsInnerLay->addWidget(outputFileLabel,         2, 0);
-        outputsInnerLay->addWidget(_outputFileName,         2, 1, 1, 2);
-        outputsInnerLay->addWidget(outputDirLabel,          3, 0);
-        outputsInnerLay->addWidget(_outputDir,              3, 1);
-        outputsInnerLay->addWidget(browseButton,            3, 2);
+        outputsInnerLay->addWidget(new QLabel("Query"),     2, 0);
+        outputsInnerLay->addWidget(_query,                  2, 1, 1, 2);
+        outputsInnerLay->addWidget(outputFileLabel,         3, 0);
+        outputsInnerLay->addWidget(_outputFileName,         3, 1, 1, 2);
+        outputsInnerLay->addWidget(outputDirLabel,          4, 0);
+        outputsInnerLay->addWidget(_outputDir,              4, 1);
+        outputsInnerLay->addWidget(browseButton,            4, 2);
 
         // Button box
         _buttonBox = new QDialogButtonBox(this);
@@ -233,6 +236,10 @@ namespace Robomongo
     {
         QString mongoExport = "D:\\mongo_export\\bin\\mongoexport.exe";
         
+        // todo: setExportArgs()
+        // First set db and coll 
+        _mongoExportArgs = " --db " + _dbName + " --collection " + _collName;
+
         // If CSV append output format and fields
         if (_formatComboBox->currentIndex() == 1) {
             if (_fields->text().isEmpty()) {
@@ -241,6 +248,10 @@ namespace Robomongo
             }
             _mongoExportArgs.append(" --type=csv");
             _mongoExportArgs.append(" --fields " + _fields->text().replace(" ", ""));
+        }
+
+        if (!_query->text().isEmpty()) {
+            _mongoExportArgs.append(" --query " + _query->text());
         }
 
         // Append file path and name
@@ -310,20 +321,16 @@ namespace Robomongo
         if (!collectionItem)
             return;
 
-        auto dbName = QString::fromStdString(collectionItem->collection()->database()->name());
-        auto collName = QString::fromStdString(collectionItem->collection()->name());
+        _dbName = QString::fromStdString(collectionItem->collection()->database()->name());
+        _collName = QString::fromStdString(collectionItem->collection()->name());
 
         auto date = QDateTime::currentDateTime().toString("dd.MM.yyyy");
         auto time = QDateTime::currentDateTime().toString("hh.mm.ss");
         auto timeStamp = date + "_" + time;
         auto format = _formatComboBox->currentIndex() == 0 ? "json" : "csv";
 
-        _outputFileName->setText(dbName + "." + collName + "_" + timeStamp + "." + format);
+        _outputFileName->setText(_dbName + "." + _collName + "_" + timeStamp + "." + format);
         _outputDir->setText(defaultDir);
-
-        // todo: setExportArgs()
-        // For now set only db and coll 
-        _mongoExportArgs = " --db " + dbName + " --collection " + collName;
     }
 
     void ExportDialog::on_browseButton_clicked()

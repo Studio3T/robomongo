@@ -45,11 +45,14 @@ namespace Robomongo
         QComboBox* _formatComboBox;
         QLabel* _fieldsLabel;
         QLineEdit* _fields;
+        QLineEdit* _query;
         QLineEdit* _outputFileName;
         QLineEdit* _outputDir;
         QDialogButtonBox* _buttonBox;
         QTreeWidget* _treeWidget;
 
+        QString _dbName;
+        QString _collName;
         QString _mongoExportArgs;
     };
 }

@@ -258,6 +258,7 @@ namespace Robomongo
         {
             saveWindowSettings();       // save expanded geometry first
             setMinimumSize(300, 150);
+            _validateJsonButton->setVisible(false);
             adjustSize();
         }
     }

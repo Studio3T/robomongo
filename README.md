@@ -20,7 +20,7 @@ Central feature of this release is full size editor with dockable output window 
 
 Blog:     http://blog.robomongo.org/robomongo-0-9-0-final/  
 Download: https://robomongo.org/download  
-Watch: [Robomongo Youtube Channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
+Watch: [Robomongo youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo
 
 What's Planned for the Next Releases?
@@ -47,20 +47,19 @@ Plans for Future:
 Supported Platforms
 ===============
 
-**Supported MongoDB Platforms:**
+| MongoDB Versions      |
+| :-------------------- |
+| 3.2                   |
+| 3.0                   |
+| 2.6                   |
 
-| MongoDB Versions      | MongoDB Cloud |
-| :-------------------- | :------------ |
-| 3.2                   | MongoDB Atlas |
-| 3.0                   | Compose       |
-| 2.6                   | mLab          |
-|                       | ObjectRocket  |
-|                       | Amazon EC2    |
-
-
-**Note**: Currently Robomongo supports connection to single server of a replica set. Support for connection to **Replica Sets** is planned in next release Robomongo 1.0.0.
-
-**Supported OS Platforms:**
+| MongoDB Cloud Platforms|
+| :------------ |
+| MongoDB Atlas |
+| Compose       |
+| mLab          |
+| ObjectRocket  |
+| Amazon EC2    |
 
 | Windows                |   Mac            | Linux                       |        
 |:---------------------- | :---------------| :---------------------------|
@@ -70,6 +69,9 @@ Supported Platforms
 |                        |                  | Linux CentOS 6 64-bit*      |
 
 \* latest stable build
+
+**Note**: Currently Robomongo supports connection to single server of a replica set. Support for connection to **Replica Sets** is planned in next release Robomongo 1.0.0.
+
 
 Download
 ========

@@ -1050,7 +1050,7 @@ namespace Robomongo
     void MainWindow::hideEvent(QHideEvent *event)
     {
 #if defined(Q_OS_WIN)
-        if (_trayIcon->contextMenu()->actions().size() > 0) {
+        if (_trayIcon->contextMenu()->actions().size() > 0 && isHidden()) {
             _trayIcon->contextMenu()->actions().at(0)->setText("Show Robomongo");
         }
 #endif

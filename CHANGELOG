@@ -17,7 +17,7 @@ Robomongo 0.9.0:
       (Supporting all major mongoDB versions 3.2, 3.0, 2.6 and all storage engine types (WiredTiger 
       and MMAPV1) is added.) 
     - Windows High DPI support.
-    - First full size editor with dockable output window.
+    - Full size editor with dockable output window.
     
   Fixed:
     - Incorrect representation of floating-point numbers (fixed since RC3). This bug was a reason of a big number of issues:
@@ -31,9 +31,8 @@ Robomongo 0.9.0:
   
     New Features:
       - Full size editor with dockable output window.
-        (Becoming the first and only MongoDB admin tool providing this feature)
-      - Two result object context menu items: "Copy Name" and "Copy Path" added.
-      - Two database context menu items: "Copy Name" and "Copy Path" added.
+      - New JSON object context menu items: "Copy Name" and "Copy Path" are added.
+      - New database context menu items: "Current Operations" and "Kill Operation" are added.
       - Minimize to Tray Icon for Windows.
         
     Other Changes

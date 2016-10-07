@@ -92,10 +92,9 @@ namespace Robomongo
         
         QGridLayout *connectionLayout = new QGridLayout;
         connectionLayout->setAlignment(Qt::AlignTop);
-        //// Temporarily disable Replica Set - feature is under development
-        //connectionLayout->addWidget(_typeLabel,                     1, 0);
-        //connectionLayout->addWidget(_connectionType,                1, 1, 1, 3);        
-        //connectionLayout->addWidget(new QLabel(""),                 2, 0);
+        connectionLayout->addWidget(_typeLabel,                     1, 0);
+        connectionLayout->addWidget(_connectionType,                1, 1, 1, 3);        
+        connectionLayout->addWidget(new QLabel(""),                 2, 0);
         connectionLayout->addWidget(_nameLabel,                     3, 0);
         connectionLayout->addWidget(_connectionName,                3, 1, 1, 3);
         connectionLayout->addWidget(_connInfoLabel,                 4, 1, 1, 3);

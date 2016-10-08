@@ -45,6 +45,9 @@ namespace Robomongo
     {
         const QString defaultDir = "D:\\exports\\";     // Default location
 
+        auto const AUTO_MODE_SIZE = QSize(500, 550);
+        auto const MANUAL_MODE_SIZE = QSize(500, 650);
+
         // This structure represents the arguments as in "mongoexport.exe --help"
         // See http://docs.mongodb.org/manual/reference/program/mongoexport/ for more information
         struct MongoExportArgs
@@ -63,7 +66,7 @@ namespace Robomongo
         setWindowTitle("Export Collection");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         //setFixedSize(dialogSize);
-        setMinimumSize(450, 450);
+        setMinimumSize(AUTO_MODE_SIZE);
 
         // todo: move to a global location
         // Enable copyable text for QMessageBox
@@ -274,7 +277,7 @@ namespace Robomongo
             // If CSV append output format and fields
             if (_formatComboBox->currentIndex() == 1) {
                 if (_fields->text().isEmpty()) {
-                    QMessageBox::critical(this, "Error", "Failed: \"Fields\" option is required in CSV mode.");
+                    QMessageBox::critical(this, "Error", "\"Fields\" option is required in CSV mode.");
                     return;
                 }
                 _mongoExportArgs.append(" --type=csv");
@@ -289,17 +292,32 @@ namespace Robomongo
             auto absFilePath = _outputDir->text() + _outputFileName->text();
             _mongoExportArgs.append(" --out " + absFilePath);
 
-            // result: If process cannot be started -2 is returned. If process crashes, -1 is returned. 
-            // If successful returns 0, otherwise, the process' exit code is returned.
-            auto const result = QProcess::execute(mongoExport + _mongoExportArgs);
-
-            // todo: consider checking output file existence for success check
-            if (0 == result) {
-                QMessageBox::information(this, "Export Successful", "Exported File: \n" + absFilePath);
+            // Run mongoexport process
+            QProcess process(this);
+            process.start(mongoExport + _mongoExportArgs);
+            process.setProcessChannelMode(QProcess::MergedChannels);
+            auto const error = process.error();
+            process.waitForFinished();
+            if (QProcess::FailedToStart == error) {
+                // todo: make error str const string
+                QMessageBox::critical(this, "Export Failed", "Error: \"mongoexport\" failed to start. "
+                    "Either the invoked program is missing, or you may have insufficient permissions to "
+                    "invoke the program.");
             }
-            else {
-                // todo: more error details
-                QMessageBox::critical(this, "Export Failed", "Error Code: " + QString::number(result));
+            // todo: else if crashed
+            else {  // process has run and finished normally
+                absFilePath.replace(" ", "");  // todo: handle white spaces inside the path as well
+                QFileInfo const file(absFilePath);
+                // Extract mongoexport command output
+                QString output = process.readAllStandardError();
+                // check if file exists and if yes: Is it really a file and no directory?
+                if (file.exists() && file.isFile() && !output.contains("error")) {
+                    QMessageBox::information(this, "Export Successful", "Exported File: \n" + absFilePath + "\n\n" +
+                        "Output:\n" + output );
+                }
+                else {
+                    QMessageBox::critical(this, "Export Failed", "Output:\n" + output);
+                }
             }
         }
         else if (MANUAL_MODE == _mode)
@@ -308,7 +326,6 @@ namespace Robomongo
             QProcess process(this);
             process.start("D:\\mongo_export\\bin\\" + _manualExportCmd->toPlainText());
             process.setProcessChannelMode(QProcess::MergedChannels);
-            auto const result = process.exitCode();
             auto const error = process.error();
             process.waitForFinished();
             if (QProcess::FailedToStart == error) {
@@ -337,11 +354,11 @@ namespace Robomongo
                 // check if file exists and if yes: Is it really a file and no directory?
                 if (file.exists() && file.isFile() && !output.contains("error")) {
                     _manualExportOutput->setText("Export Successful: \n""Exported file: " + absFilePath + "\n");
-                    _manualExportOutput->append("MongoExport Output:\n" + output);
+                    _manualExportOutput->append("Output:\n" + output);
                 }
                 else {
                     _manualExportOutput->setText("Export Failed.\n");
-                    _manualExportOutput->append("MongoExport output:\n" + output);
+                    _manualExportOutput->append("Output:\n" + output);
                 }
             }
         }
@@ -434,7 +451,7 @@ namespace Robomongo
         _modeButton->setText(SMART_MODE == _mode ? "Manual Mode" : "Auto Mode");
         _outputsGroupBox->setVisible(SMART_MODE == _mode);
         _manualGroupBox->setVisible(MANUAL_MODE == _mode);
-        setMinimumSize(SMART_MODE == _mode ? QSize(450, 450) : QSize(500, 650));
+        setMinimumSize(SMART_MODE == _mode ? AUTO_MODE_SIZE : MANUAL_MODE_SIZE);
         adjustSize();
     }
 

@@ -16,6 +16,9 @@
 #include <QFileDialog>
 #include <QDateTime>
 #include <QMessageBox>
+#include <QPlainTextEdit>
+#include <QFileInfo>
+#include <QSizePolicy>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/domain/App.h"
@@ -36,7 +39,7 @@
 
 namespace Robomongo
 {
-    const QSize ExportDialog::dialogSize = QSize(500, 200);     // todo: remove
+    //const QSize ExportDialog::dialogSize = QSize(500, 250);     // todo: remove
 
     namespace
     {
@@ -55,12 +58,12 @@ namespace Robomongo
     }
 
     ExportDialog::ExportDialog(QWidget *parent) :
-        QDialog(parent), _mongoExportArgs()
+        QDialog(parent), _mode(SMART_MODE), _mongoExportArgs()
     {
         setWindowTitle("Export Collection");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         //setFixedSize(dialogSize);
-        setMinimumSize(350, 250);
+        setMinimumSize(450, 450);
 
         // todo: move to a global location
         // Enable copyable text for QMessageBox
@@ -155,16 +158,35 @@ namespace Robomongo
         outputsInnerLay->addWidget(_outputDir,              4, 1);
         outputsInnerLay->addWidget(browseButton,            4, 2);
 
-        // Button box
+        auto manualLayout = new QGridLayout;
+        
+        auto cmdLabel = new QLabel("Command:");
+        cmdLabel->setFixedHeight(cmdLabel->sizeHint().height());
+        _manualExportCmd = new QTextEdit;
+        QFontMetrics font(_manualExportCmd->font());
+        _manualExportCmd->setFixedHeight(2 * (font.lineSpacing()+8));  // 2-line text edit
+        auto resultLabel = new QLabel("Result:");
+        resultLabel->setFixedHeight(cmdLabel->sizeHint().height());
+        _manualExportOutput = new QTextEdit;
+        _manualExportOutput->setFixedHeight(6 * (font.lineSpacing()+8));  // 6-line text edit
+        _manualExportOutput->setReadOnly(true);
+        
+        manualLayout->addWidget(cmdLabel,                   0, 0, Qt::AlignTop);
+        manualLayout->addWidget(_manualExportCmd,           1, 0, Qt::AlignTop);
+        manualLayout->addWidget(resultLabel,                2, 0, Qt::AlignTop);
+        manualLayout->addWidget(_manualExportOutput,        3, 0, Qt::AlignTop);
+
+        // Button box and Manual Mode button
+        _modeButton = new QPushButton("Manual Mode");
+        VERIFY(connect(_modeButton, SIGNAL(clicked()), this, SLOT(on_modeButton_clicked())));
         _buttonBox = new QDialogButtonBox(this);
         _buttonBox->setOrientation(Qt::Horizontal);
         _buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
         _buttonBox->button(QDialogButtonBox::Save)->setText("E&xport");
+        _buttonBox->button(QDialogButtonBox::Save)->setMaximumWidth(70);
+        _buttonBox->button(QDialogButtonBox::Cancel)->setMaximumWidth(70);
         VERIFY(connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
         VERIFY(connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
-
-        // todo:
-        // _manualModeButton = new QPushButton(this);
 
         // Sub layouts
         auto serverIndicatorlayout = new QHBoxLayout();
@@ -183,16 +205,22 @@ namespace Robomongo
         inputsGroupBox->setStyleSheet("QGroupBox::title { left: 0px }");
         //inputsGroupBox->setFlat(true);
 
-        // Output layout
-        auto outputsGroupBox = new QGroupBox("Output Properties");
-        outputsGroupBox->setLayout(outputsInnerLay);
-        outputsGroupBox->setStyleSheet("QGroupBox::title { left: 0px }");
+        // Outputs
+        _outputsGroupBox = new QGroupBox("Output Properties");
+        _outputsGroupBox->setLayout(outputsInnerLay);
+        _outputsGroupBox->setStyleSheet("QGroupBox::title { left: 0px }");
+
+        // Manual Groupbox
+        _manualGroupBox = new QGroupBox("Manual Export");
+        _manualGroupBox->setLayout(manualLayout);
+        _manualGroupBox->setStyleSheet("QGroupBox::title { left: 0px }");
+        _manualGroupBox->setHidden(true);
 
         // Buttonbox layout
         auto hButtonBoxlayout = new QHBoxLayout();
         hButtonBoxlayout->addStretch(1);
         hButtonBoxlayout->addWidget(_buttonBox);
-
+        hButtonBoxlayout->addWidget(_modeButton);
 
         // Main Layout
         auto layout = new QVBoxLayout();
@@ -201,7 +229,8 @@ namespace Robomongo
         layout->addWidget(inputsGroupBox);
         //layout->addWidget(_treeWidget);
         layout->addWidget(horline);
-        layout->addWidget(outputsGroupBox);
+        layout->addWidget(_outputsGroupBox);
+        layout->addWidget(_manualGroupBox);
         layout->addLayout(hButtonBoxlayout);
         setLayout(layout);
 
@@ -236,47 +265,85 @@ namespace Robomongo
     {
         QString mongoExport = "D:\\mongo_export\\bin\\mongoexport.exe";
         
-        // todo: setExportArgs()
-        // First set db and coll 
-        _mongoExportArgs = " --db " + _dbName + " --collection " + _collName;
+        if (SMART_MODE == _mode)
+        {
+            // todo: setExportArgs()
+            // First set db and coll 
+            _mongoExportArgs = " --db " + _dbName + " --collection " + _collName;
 
-        // If CSV append output format and fields
-        if (_formatComboBox->currentIndex() == 1) {
-            if (_fields->text().isEmpty()) {
-                QMessageBox::critical(this, "Error", "Failed: \"Fields\" option is required in CSV mode.");
-                return;
+            // If CSV append output format and fields
+            if (_formatComboBox->currentIndex() == 1) {
+                if (_fields->text().isEmpty()) {
+                    QMessageBox::critical(this, "Error", "Failed: \"Fields\" option is required in CSV mode.");
+                    return;
+                }
+                _mongoExportArgs.append(" --type=csv");
+                _mongoExportArgs.append(" --fields " + _fields->text().replace(" ", ""));
             }
-            _mongoExportArgs.append(" --type=csv");
-            _mongoExportArgs.append(" --fields " + _fields->text().replace(" ", ""));
+
+            if (!_query->text().isEmpty()) {
+                _mongoExportArgs.append(" --query " + _query->text());
+            }
+
+            // Append file path and name
+            auto absFilePath = _outputDir->text() + _outputFileName->text();
+            _mongoExportArgs.append(" --out " + absFilePath);
+
+            // result: If process cannot be started -2 is returned. If process crashes, -1 is returned. 
+            // If successful returns 0, otherwise, the process' exit code is returned.
+            auto const result = QProcess::execute(mongoExport + _mongoExportArgs);
+
+            // todo: consider checking output file existence for success check
+            if (0 == result) {
+                QMessageBox::information(this, "Export Successful", "Exported File: \n" + absFilePath);
+            }
+            else {
+                // todo: more error details
+                QMessageBox::critical(this, "Export Failed", "Error Code: " + QString::number(result));
+            }
         }
-
-        if (!_query->text().isEmpty()) {
-            _mongoExportArgs.append(" --query " + _query->text());
-        }
-
-        // Append file path and name
-        auto absFilePath = _outputDir->text() + _outputFileName->text();
-        _mongoExportArgs.append(" --out " + absFilePath);
-
-        // result: If process cannot be started -2 is returned. If process crashes, -1 is returned. 
-        // If successful returns 0, otherwise, the process' exit code is returned.
-        auto const result = QProcess::execute(mongoExport + _mongoExportArgs);
-
-        // todo: show error for manual mode
-        //process.start(mongoExport + _mongoExportArgs);
-        // process.setProcessChannelMode(QProcess::MergedChannels);
-        //auto const result = process.exitCode();
-        //auto error = process.error();
-        //process.waitForFinished(); 
-        //QString output = process.readAllStandardError();
-
-        // todo: consider checking output file existence for success check
-        if (0 == result) {
-            QMessageBox::information(this, "Export Successful", "Exported File: \n" + absFilePath);
-        }
-        else {
-            // todo: more error details
-            QMessageBox::critical(this, "Export Failed", "Error Code: " + QString::number(result));
+        else if (MANUAL_MODE == _mode)
+        {
+            _manualExportOutput->clear();
+            QProcess process(this);
+            process.start("D:\\mongo_export\\bin\\" + _manualExportCmd->toPlainText());
+            process.setProcessChannelMode(QProcess::MergedChannels);
+            auto const result = process.exitCode();
+            auto const error = process.error();
+            process.waitForFinished();
+            if (QProcess::FailedToStart == error) {
+                _manualExportOutput->setText("Error: \"mongoexport\" failed to start. Either the "
+                    "invoked program is missing, or you may have insufficient permissions to invoke the program.");
+            }
+            // todo: else if crashed
+            else {  // process has run and finished normally
+                // extract absolute file path string
+                QString absFilePath;
+                QStringList strlist1 = _manualExportCmd->toPlainText().split("--out");
+                if (strlist1.size() > 1) {
+                    QString str1 = strlist1[1]; 
+                    QStringList strlist2 = str1.split("--");
+                    if (strlist2.size() > 1) {
+                        absFilePath = strlist2[0];
+                    }
+                    else {
+                        absFilePath = str1;
+                    }
+                }
+                absFilePath.replace(" ", "");  // todo: handle path with white spaces
+                QFileInfo const file(absFilePath);
+                // Extract mongoexport command output
+                QString output = process.readAllStandardError();
+                // check if file exists and if yes: Is it really a file and no directory?
+                if (file.exists() && file.isFile() && !output.contains("error")) {
+                    _manualExportOutput->setText("Export Successful: \n""Exported file: " + absFilePath + "\n");
+                    _manualExportOutput->append("MongoExport Output:\n" + output);
+                }
+                else {
+                    _manualExportOutput->setText("Export Failed.\n");
+                    _manualExportOutput->append("MongoExport output:\n" + output);
+                }
+            }
         }
     }
 
@@ -331,6 +398,8 @@ namespace Robomongo
 
         _outputFileName->setText(_dbName + "." + _collName + "_" + timeStamp + "." + format);
         _outputDir->setText(defaultDir);
+        _manualExportCmd->setText("mongoexport --db " + _dbName + " --collection " + _collName +
+                                             " --out " + _outputDir->text() + _outputFileName->text());
     }
 
     void ExportDialog::on_browseButton_clicked()
@@ -357,6 +426,16 @@ namespace Robomongo
         
         // todo: divide ui_itemClicked()
         ui_itemClicked(_treeWidget->currentItem());
+    }
+
+    void ExportDialog::on_modeButton_clicked()
+    {
+        _mode = (SMART_MODE == _mode ? MANUAL_MODE : SMART_MODE);
+        _modeButton->setText(SMART_MODE == _mode ? "Manual Mode" : "Auto Mode");
+        _outputsGroupBox->setVisible(SMART_MODE == _mode);
+        _manualGroupBox->setVisible(MANUAL_MODE == _mode);
+        setMinimumSize(SMART_MODE == _mode ? QSize(450, 450) : QSize(500, 650));
+        adjustSize();
     }
 
     Indicator *ExportDialog::createDatabaseIndicator(const QString &database)

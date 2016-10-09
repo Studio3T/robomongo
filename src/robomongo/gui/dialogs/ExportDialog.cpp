@@ -19,6 +19,7 @@
 #include <QPlainTextEdit>
 #include <QFileInfo>
 #include <QSizePolicy>
+#include <QProgressDialog>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/domain/App.h"
@@ -292,12 +293,20 @@ namespace Robomongo
             auto absFilePath = _outputDir->text() + _outputFileName->text();
             _mongoExportArgs.append(" --out " + absFilePath);
 
+            // 
+            auto progressDialog = new QProgressDialog("Exporting...", "Cancel", 0, 0, this);
+            progressDialog->setAttribute(Qt::WA_DeleteOnClose);
+            progressDialog->setRange(0, 0);
+
             // Run mongoexport process
             QProcess process(this);
+            VERIFY(connect(&process, SIGNAL(finished(int)), progressDialog, SLOT(close())));
             process.start(mongoExport + _mongoExportArgs);
+            progressDialog->exec();
             process.setProcessChannelMode(QProcess::MergedChannels);
             auto const error = process.error();
             process.waitForFinished();
+
             if (QProcess::FailedToStart == error) {
                 // todo: make error str const string
                 QMessageBox::critical(this, "Export Failed", "Error: \"mongoexport\" failed to start. "
@@ -322,7 +331,10 @@ namespace Robomongo
         }
         else if (MANUAL_MODE == _mode)
         {
+            // todo: clear and settext doesnt work
             _manualExportOutput->clear();
+            _manualExportOutput->setText("Exporting...");
+            
             QProcess process(this);
             process.start("D:\\mongo_export\\bin\\" + _manualExportCmd->toPlainText());
             process.setProcessChannelMode(QProcess::MergedChannels);

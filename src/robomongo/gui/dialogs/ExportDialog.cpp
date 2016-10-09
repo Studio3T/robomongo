@@ -62,12 +62,20 @@ namespace Robomongo
     }
 
     ExportDialog::ExportDialog(QWidget *parent) :
-        QDialog(parent), _mode(SMART_MODE), _mongoExportArgs()
+        QDialog(parent), _mode(SMART_MODE), _mongoExportArgs(), _activeProcess(nullptr)
     {
         setWindowTitle("Export Collection");
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         //setFixedSize(dialogSize);
         setMinimumSize(AUTO_MODE_SIZE);
+
+        //
+        _activeProcess = new QProcess(this);
+        //_activeProcess->setProcessChannelMode(QProcess::MergedChannels);
+        VERIFY(connect(_activeProcess, SIGNAL(finished(int, QProcess::ExitStatus)),
+            this, SLOT(on_exportFinished(int, QProcess::ExitStatus))));
+        VERIFY(connect(_activeProcess, SIGNAL(errorOccurred(QProcess::ProcessError)),
+            this, SLOT(on_processErrorOccurred(QProcess::ProcessError))));
 
         // todo: move to a global location
         // Enable copyable text for QMessageBox
@@ -297,13 +305,14 @@ namespace Robomongo
             auto progressDialog = new QProgressDialog("Exporting...", "Cancel", 0, 0, this);
             progressDialog->setAttribute(Qt::WA_DeleteOnClose);
             progressDialog->setRange(0, 0);
+            progressDialog->setWindowFlags(progressDialog->windowFlags() | Qt::Tool);
 
             // Run mongoexport process
             QProcess process(this);
             VERIFY(connect(&process, SIGNAL(finished(int)), progressDialog, SLOT(close())));
             process.start(mongoExport + _mongoExportArgs);
             progressDialog->exec();
-            process.setProcessChannelMode(QProcess::MergedChannels);
+            //process.setProcessChannelMode(QProcess::MergedChannels);
             auto const error = process.error();
             process.waitForFinished();
 
@@ -334,45 +343,11 @@ namespace Robomongo
             // todo: clear and settext doesnt work
             _manualExportOutput->clear();
             _manualExportOutput->setText("Exporting...");
-            
-            QProcess process(this);
-            process.start("D:\\mongo_export\\bin\\" + _manualExportCmd->toPlainText());
-            process.setProcessChannelMode(QProcess::MergedChannels);
-            auto const error = process.error();
-            process.waitForFinished();
-            if (QProcess::FailedToStart == error) {
-                _manualExportOutput->setText("Error: \"mongoexport\" failed to start. Either the "
-                    "invoked program is missing, or you may have insufficient permissions to invoke the program.");
-            }
-            // todo: else if crashed
-            else {  // process has run and finished normally
-                // extract absolute file path string
-                QString absFilePath;
-                QStringList strlist1 = _manualExportCmd->toPlainText().split("--out");
-                if (strlist1.size() > 1) {
-                    QString str1 = strlist1[1]; 
-                    QStringList strlist2 = str1.split("--");
-                    if (strlist2.size() > 1) {
-                        absFilePath = strlist2[0];
-                    }
-                    else {
-                        absFilePath = str1;
-                    }
-                }
-                absFilePath.replace(" ", "");  // todo: handle path with white spaces
-                QFileInfo const file(absFilePath);
-                // Extract mongoexport command output
-                QString output = process.readAllStandardError();
-                // check if file exists and if yes: Is it really a file and no directory?
-                if (file.exists() && file.isFile() && !output.contains("error")) {
-                    _manualExportOutput->setText("Export Successful: \n""Exported file: " + absFilePath + "\n");
-                    _manualExportOutput->append("Output:\n" + output);
-                }
-                else {
-                    _manualExportOutput->setText("Export Failed.\n");
-                    _manualExportOutput->append("Output:\n" + output);
-                }
-            }
+
+            _buttonBox->button(QDialogButtonBox::Save)->setDisabled(true);
+            _modeButton->setDisabled(true);
+            // todo: check if _activeProcess->state() is QProcess::NotRunning
+            _activeProcess->start("D:\\mongo_export\\bin\\" + _manualExportCmd->toPlainText());
         }
     }
 
@@ -429,6 +404,7 @@ namespace Robomongo
         _outputDir->setText(defaultDir);
         _manualExportCmd->setText("mongoexport --db " + _dbName + " --collection " + _collName +
                                              " --out " + _outputDir->text() + _outputFileName->text());
+        _manualExportOutput->clear();
     }
 
     void ExportDialog::on_browseButton_clicked()
@@ -467,6 +443,58 @@ namespace Robomongo
         adjustSize();
     }
 
+    void ExportDialog::on_exportFinished(int exitCode, QProcess::ExitStatus exitStatus)
+    {
+        _buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
+        _modeButton->setEnabled(true);
+
+        // extract absolute file path string
+        QString absFilePath;
+        QStringList strlist1 = _manualExportCmd->toPlainText().split("--out");
+        if (strlist1.size() > 1) {
+            QString str1 = strlist1[1];
+            QStringList strlist2 = str1.split("--");
+            if (strlist2.size() > 1) {
+                absFilePath = strlist2[0];
+            }
+            else {
+                absFilePath = str1;
+            }
+        }
+        absFilePath.replace(" ", "");  // todo: handle path with white spaces
+        QFileInfo const file(absFilePath);
+        // Extract mongoexport command output
+        QString output = _activeProcess->readAllStandardError();
+        // check if file exists and if yes: Is it really a file and no directory?
+        if (file.exists() && file.isFile() && !output.contains("error")) {
+            _manualExportOutput->setText("Export Successful: \n""Exported file: " + absFilePath + "\n");
+            _manualExportOutput->append("Output:\n" + output);
+        }
+        else {
+            _manualExportOutput->setText("Export Failed.\n");
+            _manualExportOutput->append("Output:\n" + output);
+        }
+    }
+
+    void ExportDialog::on_processErrorOccurred(QProcess::ProcessError error)
+    {
+        _buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
+        _modeButton->setEnabled(true);
+
+        if (QProcess::FailedToStart == error) {
+            _manualExportOutput->setText("Error: \"mongoexport\" process failed to start. Either the "
+                "invoked program is missing, or you may have insufficient permissions to invoke the program.");
+        }
+        else if (QProcess::Crashed == error) {
+            _manualExportOutput->setText("Error: \"mongoexport\" process crashed some time after starting" 
+                " successfully..");
+        }
+        else {
+            _manualExportOutput->setText("Error: \"mongoexport\" process failed. Error code: " 
+                + QString::number(error));
+        }
+    }
+    
     Indicator *ExportDialog::createDatabaseIndicator(const QString &database)
     {
         return new Indicator(GuiRegistry::instance().databaseIcon(), database);

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QDialog>
+#include <QProcess>
+
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QDialogButtonBox;
@@ -11,6 +13,7 @@ class QComboBox;
 class QPushButton;
 class QGroupBox;
 class QTextEdit;
+class QProcess;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -46,6 +49,8 @@ namespace Robomongo
         void on_browseButton_clicked();
         void on_formatComboBox_change(int index);
         void on_modeButton_clicked();
+        void on_exportFinished(int exitCode, QProcess::ExitStatus exitStatus);
+        void on_processErrorOccurred(QProcess::ProcessError);
 
     private:
         // todo: remove
@@ -73,5 +78,6 @@ namespace Robomongo
         QString _dbName;
         QString _collName;
         QString _mongoExportArgs;
+        QProcess* _activeProcess;          // pointer to running/finished process
     };
 }

@@ -864,8 +864,8 @@ namespace Robomongo
 
     void MainWindow::openExportDialog()
     {
-        ExportDialog dlg(this);
-        dlg.exec();
+        auto dialog = new ExportDialog(this);
+        dialog->show(); // show it mode-less so that user can perform multiple simultaneous exports
     }
 
     void MainWindow::setDefaultUuidEncoding()

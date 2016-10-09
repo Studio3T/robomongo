@@ -26,8 +26,8 @@ namespace Robomongo
 
         enum MODE 
         {
-            SMART_MODE = 0,
-            MANUAL_MODE = 1
+            AUTO = 0,
+            MANUAL = 1
         };
 
     public:
@@ -57,14 +57,20 @@ namespace Robomongo
         Indicator *createDatabaseIndicator(const QString &database);
         Indicator *createCollectionIndicator(const QString &collection);
 
-        // Smart Mode
+        // Enable/Disable widgets during/after export operation
+        // @param enable: true to enable, false to disable widgets
+        void enableDisableWidgets(bool enable) const;
+
+        // Auto Mode
         QComboBox* _formatComboBox;
         QLabel* _fieldsLabel;
         QLineEdit* _fields;
         QLineEdit* _query;
         QLineEdit* _outputFileName;
         QLineEdit* _outputDir;
-        QGroupBox* _outputsGroupBox;
+        QPushButton* _browseButton;
+        QGroupBox* _autoOutputsGroup;
+        QTextEdit* _autoExportOutput;
         // Manual Mode
         QTextEdit* _manualExportCmd;
         QTextEdit* _manualExportOutput;

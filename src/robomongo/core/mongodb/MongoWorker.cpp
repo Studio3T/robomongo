@@ -682,8 +682,8 @@ namespace Robomongo
         // --- Perform connection ---
         if (_connSettings->isReplicaSet()) {  // connection to replica set 
             if (!_dbclientRepSet) {
+                // todo: where to get name of replica? (i.e. repset) - todo: this if causes crash after app close
                 _dbclientRepSet = std::unique_ptr<mongo::DBClientReplicaSet>(
-                    // todo: where to get name of replica? (i.e. repset) - todo: this if causes crash after app close
                     new mongo::DBClientReplicaSet("repset",_connSettings->replicaSetSettings()->membersToHostAndPort(), _mongoTimeoutSec));
 
                 bool const connStatus = _dbclientRepSet->connect();

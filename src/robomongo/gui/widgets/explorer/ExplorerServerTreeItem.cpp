@@ -14,6 +14,7 @@
 #include "robomongo/core/EventBus.h"
 
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -87,6 +88,7 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::expand()
     {
+        _server->tryRefresh();
         _server->loadDatabases();
     }
 
@@ -100,7 +102,7 @@ namespace Robomongo
 
         if (_server->connectionRecord()->isReplicaSet()) {
             // Add 'Replica Set' folder
-            auto repSetFolder = new ExplorerTreeItem(this);
+            auto repSetFolder = new ExplorerReplicaSetFolderItem(this, _server);
             repSetFolder->setIcon(0, GuiRegistry::instance().folderIcon());
             repSetFolder->setText(0, "Replica Set Members");
             addChild(repSetFolder);
@@ -116,6 +118,7 @@ namespace Robomongo
                 repSetFolder->addChild(new ExplorerReplicaSetTreeItem(repSetFolder, _server, repMembers[i], isPrimary,
                                        repMembersHealths[i]));
             }
+            repSetFolder->setExpanded(true);
         }
 
         // Add 'System' folder

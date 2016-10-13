@@ -90,9 +90,7 @@ namespace Robomongo
         void onOpenSaveToolbarVisibilityChanged(bool isVisisble);
         void onExecToolbarVisibilityChanged(bool isVisisble);
         void onExplorerVisibilityChanged(bool isVisisble);
-<<<<<<< HEAD
         void onExplorerItemSelected(QTreeWidgetItem *selectedItem);
-=======
         void on_tabChange();
 
         void toggleMinimize();
@@ -101,7 +99,6 @@ namespace Robomongo
 
         // On application focus changes
         void on_focusChanged();
->>>>>>> master
 
     private:
         void updateConnectionsMenu();
@@ -134,18 +131,15 @@ namespace Robomongo
         QAction *_stopAction;
         QAction *_orientationAction;
         QToolBar *_execToolBar;
-<<<<<<< HEAD
         // Export/import tool bar
         QAction *_exportAction;
         QAction *_importAction;
-=======
 
 #if defined(Q_OS_WIN)
         QSystemTrayIcon *_trayIcon;
 #endif
 
         bool _allowExit;
->>>>>>> master
     };
 
 }

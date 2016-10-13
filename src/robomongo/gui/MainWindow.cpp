@@ -110,23 +110,16 @@ namespace Robomongo
 /* ------ MainWindow ------ */
     MainWindow::MainWindow()
         : BaseClass(),
-<<<<<<< HEAD
         _logDock(nullptr), _workArea(nullptr), _explorer(nullptr), _app(AppRegistry::instance().app()), 
         _connectionsMenu(nullptr), _connectButton(nullptr), _viewMenu(nullptr), _toolbarsMenu(nullptr), 
         _connectAction(nullptr), _openAction(nullptr), _saveAction(nullptr), _saveAsAction(nullptr),
         _executeAction(nullptr), _stopAction(nullptr), _orientationAction(nullptr), _execToolBar(nullptr),
-        _exportAction(nullptr), _importAction(nullptr)
-     {
-=======
-        _workArea(nullptr),
-        _app(AppRegistry::instance().app()),
-        _connectionsMenu(nullptr),
+        _exportAction(nullptr), _importAction(nullptr),
 #if defined(Q_OS_WIN)
         _trayIcon(nullptr),
 #endif
         _allowExit(false)
-    {
->>>>>>> master
+     {
         QColor background = palette().window().color();
         QString controlKey = "Ctrl";
 
@@ -1213,7 +1206,6 @@ namespace Robomongo
         AppRegistry::instance().settingsManager()->save();
     }
 
-<<<<<<< HEAD
     void MainWindow::onExplorerItemSelected(QTreeWidgetItem *selectedItem)
     {
         auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(selectedItem);
@@ -1222,7 +1214,9 @@ namespace Robomongo
         }
         else {
             _exportAction->setDisabled(true);
-=======
+        }
+    }
+
     void MainWindow::on_tabChange()
     {
         auto activeTab = dynamic_cast<QueryWidget*>(_workArea->currentWidget());
@@ -1260,7 +1254,6 @@ namespace Robomongo
         auto const activeDock = dynamic_cast<QueryWidget::CustomDockWidget*>(qApp->activeWindow());
         if (activeDock) {
             _workArea->setCurrentWidget(activeDock->getParentQueryWidget());
->>>>>>> master
         }
     }
 }

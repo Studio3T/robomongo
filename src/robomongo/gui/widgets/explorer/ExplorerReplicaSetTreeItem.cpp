@@ -86,8 +86,8 @@ namespace Robomongo
 
         auto status = _isPrimary ? "Primary" : "Secondary";
         auto health = _isUp ? "Up" : "Down";
-        setText(0, QString::fromStdString(_repMemberHostAndPort.toString()) + " - [" + status + "] [" + health + "]");
-        setIcon(0, GuiRegistry::instance().serverIcon());
+        setText(0, QString::fromStdString(_repMemberHostAndPort.toString()) + " - [" + status + "] [" + health + "] ");
+        setIcon(0, _isUp ? GuiRegistry::instance().serverIcon() : GuiRegistry::instance().serverImportedIcon());
         setExpanded(true);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }

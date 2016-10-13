@@ -1,7 +1,6 @@
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 
 #include <QAction>
-#include <QApplication>
 #include <QMenu>
 
 #include "robomongo/gui/widgets/explorer/EditIndexDialog.h"
@@ -9,7 +8,6 @@
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 #include "robomongo/gui/dialogs/CopyCollectionDialog.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
-#include "robomongo/gui/dialogs/ExportDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/utils/DialogUtils.h"
 
@@ -269,21 +267,15 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(shardVersion);
         BaseClass::_contextMenu->addAction(shardDistribution);
 
-        auto exportDialog = qobject_cast<ExportDialog*>(qApp->activeWindow());
-        if (!exportDialog)
-        {
-            AppRegistry::instance().bus()->subscribe(_databaseItem, LoadCollectionIndexesResponse::Type, this);
-            AppRegistry::instance().bus()->subscribe(_databaseItem, DeleteCollectionIndexResponse::Type, this);
-            AppRegistry::instance().bus()->subscribe(this, CollectionIndexesLoadingEvent::Type, this);
-        }
+        AppRegistry::instance().bus()->subscribe(_databaseItem, LoadCollectionIndexesResponse::Type, this);
+        AppRegistry::instance().bus()->subscribe(_databaseItem, DeleteCollectionIndexResponse::Type, this);
+        AppRegistry::instance().bus()->subscribe(this, CollectionIndexesLoadingEvent::Type, this);
+
         setText(0, QtUtils::toQString(_collection->name()));
         setIcon(0, GuiRegistry::instance().collectionIcon());
 
-        if (!exportDialog)
-        {
-            _indexDir = new ExplorerCollectionDirIndexesTreeItem(this);
-            addChild(_indexDir);
-        }
+        _indexDir = new ExplorerCollectionDirIndexesTreeItem(this);
+        addChild(_indexDir);
 
         setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);

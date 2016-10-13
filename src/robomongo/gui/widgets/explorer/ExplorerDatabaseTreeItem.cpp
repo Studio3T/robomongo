@@ -3,7 +3,6 @@
 #include <QMessageBox>
 #include <QAction>
 #include <QMenu>
-#include <QApplication>
 
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoCollection.h"
@@ -20,7 +19,6 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerFunctionTreeItem.h"
-#include "robomongo/gui/dialogs/ExportDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 
 
@@ -100,20 +98,15 @@ namespace Robomongo
         _collectionFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_collectionFolderItem);
 
-        // todo: make member
-        auto exportDialog = qobject_cast<ExportDialog*>(qApp->activeWindow());
-        if (!exportDialog)
-        {
-            _functionsFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Functions);
-            _functionsFolderItem->setText(0, "Functions");
-            _functionsFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-            addChild(_functionsFolderItem);
+        _functionsFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Functions);
+        _functionsFolderItem->setText(0, "Functions");
+        _functionsFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
+        addChild(_functionsFolderItem);
 
-            _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Users);
-            _usersFolderItem->setText(0, "Users");
-            _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
-            addChild(_usersFolderItem);
-        }
+        _usersFolderItem = new ExplorerDatabaseCategoryTreeItem(this, Users);
+        _usersFolderItem->setText(0, "Users");
+        _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
+        addChild(_usersFolderItem);
     }
 
     void ExplorerDatabaseTreeItem::expandCollections()
@@ -144,13 +137,6 @@ namespace Robomongo
     void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &oldIndexText, const std::string &newIndexText)
     {
          _bus->send(_database->server()->client(), new EditIndexRequest(item, item->collection()->info(), oldIndexText, newIndexText));
-    }
-
-    // todo: remove
-    void ExplorerDatabaseTreeItem::applySettingsForExportDialog()
-    {
-        _functionsFolderItem->setHidden(true);
-        _usersFolderItem->setHidden(true);
     }
 
     void ExplorerDatabaseTreeItem::expandFunctions()

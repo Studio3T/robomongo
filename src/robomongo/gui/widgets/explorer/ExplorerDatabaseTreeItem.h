@@ -40,9 +40,6 @@ namespace Robomongo
         void dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &indexName);
         void enshureIndex(ExplorerCollectionTreeItem *const item, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo);
         void editIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string& oldIndexText, const std::string& newIndexText);
-        
-        // Customize this to use inside Export Dialog
-        void applySettingsForExportDialog();
 
     public Q_SLOTS:
         void handle(MongoDatabaseCollectionListLoadedEvent *event);

@@ -25,8 +25,11 @@ namespace Robomongo
 
     public:
         typedef QWidget BaseClass;
-        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &text, double secs, QWidget *parent = NULL);
-        OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent = NULL);
+        OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &text, double secs,
+                                bool multipleResults, bool firstItem, bool lastItem, QWidget *parent);
+        OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &type,
+                                const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, 
+                                double secs, bool multipleResults, bool firstItem, bool lastItem, QWidget *parent);
         int _initialSkip;
         int _initialLimit;
         void update(const MongoQueryInfo &inf, const std::vector<MongoDocumentPtr> &documents);
@@ -38,6 +41,9 @@ namespace Robomongo
 
         void refreshOutputItem();
         void markUninitialized();
+
+        void applyDockUndockSettings(bool isDocking) const;
+        void toggleOrientation(Qt::Orientation orientation) const;
 
     Q_SIGNALS:
         void restoredSize();
@@ -56,7 +62,7 @@ namespace Robomongo
         void paging_leftClicked(int skip, int limit);      
 
     private:
-        void setup(double secs);
+        void setup(double secs, bool multipleResults, bool firstItem, bool lastItem);
         FindFrame *configureLogText();
         BsonTreeModel *configureModel();
 
@@ -76,7 +82,7 @@ namespace Robomongo
 
         MongoShell *_shell;
         OutputItemHeaderWidget *_header;
-        OutputWidget *_out;
+        OutputWidget *_outputWidget;
         bool _isTextModeSupported;
         bool _isTreeModeSupported;
         bool _isTableModeSupported;

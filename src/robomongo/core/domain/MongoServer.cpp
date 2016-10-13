@@ -51,8 +51,14 @@ namespace Robomongo {
      * @brief Try to connect to MongoDB server.
      * @throws MongoException, if fails
      */
-    void MongoServer::tryConnect() {
+    void MongoServer::tryConnect() 
+    {
         _bus->send(_client, new EstablishConnectionRequest(this, _connectionType));
+    }
+
+    void MongoServer::tryRefresh() 
+    {
+        _bus->send(_client, new EstablishConnectionRequest(this, ConnectionRefresh));
     }
 
     QStringList MongoServer::getDatabasesNames() const {
@@ -168,10 +174,15 @@ namespace Robomongo {
             _settings->setServerPort(_repPrimary.port());
         }
 
+        // ConnectionRefresh is used just to update connection view (_version, _storageEngineType, _repPrimary etc..)
+        // So we return here after updating(refreshing) information related to connection view.
+        if (ConnectionRefresh == event->connectionType)
+            return;
+
         _bus->publish(new ConnectionEstablishedEvent(this, _connectionType));
 
         // Do nothing if this is not a "primary" connection
-        if (_connectionType != ConnectionPrimary)
+        if (ConnectionPrimary != _connectionType)
             return;
 
         clearDatabases();

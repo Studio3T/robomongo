@@ -25,6 +25,7 @@ namespace Robomongo
         ConnectionSettings const* connectionSettings() const { return _connSettings.get(); }
 
     public Q_SLOTS:
+        // Todo: remove or update
         //void databaseRefreshed(const QList<MongoDatabase *> &dbs);
         //void handle(DatabaseListLoadedEvent *event);
         //void handle(MongoServerLoadingDatabasesEvent *event);

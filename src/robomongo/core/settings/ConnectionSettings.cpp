@@ -30,8 +30,8 @@ namespace Robomongo
         _imported(false),
         _sshSettings(new SshSettings()),
         _sslSettings(new SslSettings()),
-        _replicaSetSettings(new ReplicaSetSettings()),
-        _isReplicaSet(false)
+        _isReplicaSet(false),
+        _replicaSetSettings(new ReplicaSetSettings())
     { }
 
     void ConnectionSettings::fromVariant(const QVariantMap &map) {

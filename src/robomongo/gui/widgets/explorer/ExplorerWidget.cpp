@@ -15,6 +15,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.h"
 
 namespace Robomongo
 {
@@ -118,19 +119,19 @@ namespace Robomongo
 
     void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)
     {
-        ExplorerDatabaseCategoryTreeItem *categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
+        auto categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(item);
         if (categoryItem) {
             categoryItem->expand();
             return;
         }
 
-        ExplorerServerTreeItem *serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
+        auto serverItem = dynamic_cast<ExplorerServerTreeItem *>(item);
         if (serverItem) {
             serverItem->expand();
             return;
         }
        
-        ExplorerCollectionDirIndexesTreeItem * dirItem = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(item);
+        auto dirItem = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(item);
         if (dirItem) {
             dirItem->expand();
         }
@@ -146,8 +147,7 @@ namespace Robomongo
 
         auto replicaMemberItem = dynamic_cast<ExplorerReplicaSetTreeItem*>(item);
         if (replicaMemberItem) {
-            auto const scriptStr = Robomongo::ScriptInfo("", true);
-            AppRegistry::instance().app()->openShell(replicaMemberItem->connectionSettings(), scriptStr);
+            AppRegistry::instance().app()->openShell(replicaMemberItem->connectionSettings(), ScriptInfo("", true));
             return;
         }
 

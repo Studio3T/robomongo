@@ -44,6 +44,15 @@ namespace Robomongo
          * @throws MongoException, if fails
          */
         void tryConnect();
+
+        /**
+        * @brief Try to re-connect to MongoDB server in order to refresh connection view.
+        *        Never shown in Explorer and can be used to refresh (via reconnecting) current connection view.
+        *        (i.e. db version, storage engine, current replica set primary, status of replica set etc...)
+        * @throws MongoException, if fails
+        */
+        void tryRefresh();
+
         bool isConnected()const;
 
         void createDatabase(const std::string &dbName);

@@ -243,6 +243,7 @@ namespace Robomongo
         if (state)  // resize, dialog is expanding
         {
             setMinimumSize(560, 440);
+            _validateJsonButton->setHidden(_advancedOptions->currentIndex() == OPTIONS_TAB);
             QSettings settings("Paralect", "Robomongo");
             if (settings.contains("CreateCollectionDialog/size"))
             {
@@ -257,7 +258,8 @@ namespace Robomongo
         else        // resize, dialog is shrinking
         {
             saveWindowSettings();       // save expanded geometry first
-            setMinimumSize(300, 150);
+            _validateJsonButton->hide();
+            setFixedSize(300, 150);
             adjustSize();
         }
     }

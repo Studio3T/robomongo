@@ -19,7 +19,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        explicit OutputWidget(QWidget *parent = 0);
+        explicit OutputWidget(QWidget *parent);
 
         void present(MongoShell *shell, const std::vector<MongoShellResult> &documents);
         void updatePart(int partIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents);
@@ -31,10 +31,12 @@ namespace Robomongo
         void enterCustomMode();
 
         int resultIndex(OutputItemContentWidget *result);
-        
 
         void showProgress();
         void hideProgress();
+
+        void applyDockUndockSettings(bool isDocking) const;
+        Qt::Orientation getOrientation() const;
 
     private Q_SLOTS:
         void restoreSize();
@@ -46,5 +48,6 @@ namespace Robomongo
         void tryToMakeAllPartsEqualInSize();
         QSplitter *_splitter;
         ProgressBarPopup *_progressBarPopup;
+        std::vector<OutputItemContentWidget*> _outputItemContentWidgets;
     };
 }

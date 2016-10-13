@@ -45,6 +45,7 @@ namespace Robomongo
         QPushButton *_discoverButton;
         QLabel *_readPrefLabel;
         QComboBox *_readPreference;
+
         ConnectionSettings *const _settings;
     };
 }

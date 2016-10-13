@@ -26,10 +26,7 @@ namespace Robomongo
 {
     MongoWorker::MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
                              int mongoTimeoutSec, int shellTimeoutSec, QObject *parent) : QObject(parent),
-        _connSettings(connection),
         _scriptEngine(NULL),
-        _dbclient(nullptr),
-        _dbclientRepSet(nullptr),
         _isAdmin(true),
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
@@ -37,7 +34,10 @@ namespace Robomongo
         _dbAutocompleteCacheTimerId(-1),
         _mongoTimeoutSec(mongoTimeoutSec),
         _shellTimeoutSec(shellTimeoutSec),
-        _isQuiting(0)
+        _isQuiting(0),
+        _dbclient(nullptr),
+        _dbclientRepSet(nullptr),
+        _connSettings(connection)
     {
         _thread = new QThread();
         moveToThread(_thread);
@@ -663,11 +663,10 @@ namespace Robomongo
 
     mongo::DBClientBase *MongoWorker::getConnection(bool mayReturnNull /* = false */)
     {
-        // --- Configure SSL first --- Todo: move to function?
+        // --- Configure SSL first --- // todo: move to function?
         // As a precaution reset SSL global params for any kind of connection request (SSL or non-SSL)
         resetGlobalSSLparams();
-
-        // Update global mongo SSL settings according to SSL enable/disabled status
+        // Update global SSL mode and global mongo SSL settings
         if (_connSettings->sslSettings()->sslEnabled())
         {
             // Force SSL mode for outgoing connections
@@ -683,8 +682,8 @@ namespace Robomongo
         // --- Perform connection ---
         if (_connSettings->isReplicaSet()) {  // connection to replica set 
             if (!_dbclientRepSet) {
+                // todo: where to get name of replica? (i.e. repset) - todo: this if causes crash after app close
                 _dbclientRepSet = std::unique_ptr<mongo::DBClientReplicaSet>(
-                    // todo: where to get name of replica? (i.e. repset) - todo: this if causes crash after app close
                     new mongo::DBClientReplicaSet("repset",_connSettings->replicaSetSettings()->membersToHostAndPort(), _mongoTimeoutSec));
 
                 bool const connStatus = _dbclientRepSet->connect();

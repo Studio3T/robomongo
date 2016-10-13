@@ -17,6 +17,7 @@
 #include <QStatusBar>
 #include <QHBoxLayout>
 #include <QSettings>
+#include <QSystemTrayIcon>
 
 #include <mongo/logger/log_severity.h>
 #include "robomongo/core/settings/SettingsManager.h"
@@ -40,6 +41,7 @@
 #include "robomongo/gui/dialogs/ExportDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/AppStyle.h"
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 
 namespace
 {
@@ -71,21 +73,30 @@ namespace
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
 
+    void saveMinimizeToTraySettings(bool isMinimizingToTray)
+    {
+        Robomongo::AppRegistry::instance().settingsManager()->setMinimizeToTray(isMinimizingToTray);
+        Robomongo::AppRegistry::instance().settingsManager()->save();
+    }
+
     void saveLineNumbers(bool showLineNumbers)
     {
         Robomongo::AppRegistry::instance().settingsManager()->setLineNumbers(showLineNumbers);
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
-}
+} 
+/* End of anonymous namespace */
+
 
 namespace Robomongo
 {
+/* ------ ConnectionMenu ------ */
     class ConnectionMenu : public QMenu
     {
     public:
         ConnectionMenu(QWidget *parent) : QMenu(parent) {}
     protected:
-        virtual void keyPressEvent(QKeyEvent *event)
+        virtual void keyPressEvent(QKeyEvent *event) override
         {
             if (event->key() == Qt::Key_F12) {
                 hide();
@@ -96,14 +107,26 @@ namespace Robomongo
         }
     };
 
+/* ------ MainWindow ------ */
     MainWindow::MainWindow()
         : BaseClass(),
+<<<<<<< HEAD
         _logDock(nullptr), _workArea(nullptr), _explorer(nullptr), _app(AppRegistry::instance().app()), 
         _connectionsMenu(nullptr), _connectButton(nullptr), _viewMenu(nullptr), _toolbarsMenu(nullptr), 
         _connectAction(nullptr), _openAction(nullptr), _saveAction(nullptr), _saveAsAction(nullptr),
         _executeAction(nullptr), _stopAction(nullptr), _orientationAction(nullptr), _execToolBar(nullptr),
         _exportAction(nullptr), _importAction(nullptr)
      {
+=======
+        _workArea(nullptr),
+        _app(AppRegistry::instance().app()),
+        _connectionsMenu(nullptr),
+#if defined(Q_OS_WIN)
+        _trayIcon(nullptr),
+#endif
+        _allowExit(false)
+    {
+>>>>>>> master
         QColor background = palette().window().color();
         QString controlKey = "Ctrl";
 
@@ -140,7 +163,7 @@ namespace Robomongo
         // Exit action
         QAction *exitAction = new QAction("&Exit", this);
         exitAction->setShortcuts(QKeySequence::Quit);
-        VERIFY(connect(exitAction, SIGNAL(triggered()), this, SLOT(close())));
+        VERIFY(connect(exitAction, SIGNAL(triggered()), this, SLOT(exit())));
 
         // Connect action
         _connectAction = new QAction("&Connect...", this);
@@ -170,6 +193,26 @@ namespace Robomongo
 
         QWidgetAction *connectButtonAction = new QWidgetAction(this);
         connectButtonAction->setDefaultWidget(_connectButton);
+
+        // Tray icon
+    #if defined(Q_OS_WIN)
+        _trayIcon = new QSystemTrayIcon(GuiRegistry::instance().mainWindowIcon());
+        VERIFY(connect(_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), 
+                       this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason))));
+
+        QAction *trayMinimizeAction = new QAction("Minimize to Tray", _trayIcon);
+        VERIFY(connect(trayMinimizeAction, SIGNAL(triggered()), this, SLOT(toggleMinimize())));
+
+        QAction *trayExitAction = new QAction("Exit", _trayIcon);
+        VERIFY(connect(trayExitAction, SIGNAL(triggered()), this, SLOT(exit())));
+       
+        QMenu *contextMenu = new QMenu();
+        contextMenu->addAction(trayMinimizeAction);
+        contextMenu->addSeparator();
+        contextMenu->addAction(trayExitAction);
+
+        _trayIcon->setContextMenu(contextMenu);
+    #endif
 
         // Orientation action
         _orientationAction = new QAction("&Rotate", this);
@@ -387,6 +430,14 @@ namespace Robomongo
         VERIFY(connect(autoExec, SIGNAL(triggered()), this, SLOT(toggleAutoExec())));
         optionsMenu->addAction(autoExec);
 
+    #if defined(Q_OS_WIN)
+        QAction *minimizeTray = new QAction("Close button should minimize to system tray");
+        minimizeTray->setCheckable(true);
+        minimizeTray->setChecked(AppRegistry::instance().settingsManager()->minimizeToTray());
+        VERIFY(connect(minimizeTray, SIGNAL(triggered()), this, SLOT(toggleMinimizeToTray())));
+        optionsMenu->addAction(minimizeTray);
+    #endif
+
         QAction *preferencesAction = new QAction("Preferences", this);
         VERIFY(connect(preferencesAction, SIGNAL(triggered()), this, SLOT(openPreferences())));
         preferencesAction->setVisible(false);
@@ -533,6 +584,9 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(this, OperationFailedEvent::Type);
 
         restoreWindowsSettings();
+
+        // Catch application windows focus changes
+        VERIFY(connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(on_focusChanged())));
     }
 
     void MainWindow::createStylesMenu()
@@ -592,6 +646,12 @@ namespace Robomongo
         AppStyleUtils::applyStyle(text);
         AppRegistry::instance().settingsManager()->setCurrentStyle(text);
         AppRegistry::instance().settingsManager()->save();
+    }
+
+    void MainWindow::exit()
+    {
+        _allowExit = true;
+        close();
     }
 
     void MainWindow::restoreWindowsSettings()
@@ -658,16 +718,6 @@ namespace Robomongo
         }
     }
 
-    void MainWindow::keyPressEvent(QKeyEvent *event)
-    {
-        if (event->key() == Qt::Key_F12) {
-           _connectButton->showMenu();
-            return;
-        }
-
-        BaseClass::keyPressEvent(event);
-    }
-
     void MainWindow::updateConnectionsMenu()
     {
         _connectionsMenu->clear();
@@ -701,6 +751,10 @@ namespace Robomongo
 
     void MainWindow::manageConnections()
     {
+    #if defined(Q_OS_WIN)
+        _trayIcon->hide(); // hide the tray icon so the main window can't be hidden behind the connections dialog
+    #endif
+
         static bool checkForImported = true;
         ConnectionsDialog dialog(AppRegistry::instance().settingsManager(), checkForImported, this);
         int result = dialog.exec();
@@ -731,6 +785,10 @@ namespace Robomongo
                 QMessageBox::information(this, "Error", message);
             }
         }
+
+    #if defined(Q_OS_WIN)
+        _trayIcon->show(); // show the tray icon once the connections dialog is gone
+    #endif
 
         // on linux focus is lost - we need to activate main window back
         activateWindow();
@@ -1002,10 +1060,51 @@ namespace Robomongo
         QMessageBox::information(NULL, "Operation failed", QtUtils::toQString(ss.str()));
     }
 
+    void MainWindow::keyPressEvent(QKeyEvent *event)
+    {
+        if (event->key() == Qt::Key_F12) {
+            _connectButton->showMenu();
+            return;
+        }
+
+        BaseClass::keyPressEvent(event);
+    }
+
     void MainWindow::closeEvent(QCloseEvent *event)
     {
         saveWindowsSettings();
+    #if defined(Q_OS_WIN)
+        if (AppRegistry::instance().settingsManager()->minimizeToTray() && !_allowExit) {
+            event->ignore();
+            hide(); // hide the window because it can be reopened with the tray icon
+        }
+        else {
+            if (_trayIcon->isVisible())
+                _trayIcon->hide();
+
+            QMainWindow::closeEvent(event);
+        }
+    #else
         QMainWindow::closeEvent(event);
+    #endif
+    }
+
+    void MainWindow::hideEvent(QHideEvent *event)
+    {
+#if defined(Q_OS_WIN)
+        if (_trayIcon->contextMenu()->actions().size() > 0 && isHidden()) {
+            _trayIcon->contextMenu()->actions().at(0)->setText("Show Robomongo");
+        }
+#endif
+    }
+    
+    void MainWindow::showEvent(QShowEvent *event)
+    {
+#if defined(Q_OS_WIN)
+        if (_trayIcon->contextMenu()->actions().size() > 0) {
+            _trayIcon->contextMenu()->actions().at(0)->setText("Minimize to Tray");
+        }
+#endif
     }
 
     void MainWindow::handle(QueryWidgetUpdatedEvent *event)
@@ -1049,7 +1148,7 @@ namespace Robomongo
         _logDock = new QDockWidget(tr("Logs"));
         _logDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea | Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
         _logDock->setWidget(log);
-        _logDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
+        _logDock->setFeatures(QDockWidget::DockWidgetClosable);
         _logDock->setVisible(false);
 
         QAction *action = _logDock->toggleViewAction();
@@ -1079,6 +1178,7 @@ namespace Robomongo
         _workArea = new WorkAreaTabWidget(this);
         AppRegistry::instance().bus()->subscribe(_workArea, OpeningShellEvent::Type);
         VERIFY(connect(_workArea, SIGNAL(currentChanged(int)), this, SLOT(updateMenus())));
+        VERIFY(connect(_workArea, SIGNAL(currentChanged(int)), this, SLOT(on_tabChange())));
 
         QHBoxLayout *hlayout = new QHBoxLayout;
         hlayout->setContentsMargins(0, 3, 0, 0);
@@ -1113,6 +1213,7 @@ namespace Robomongo
         AppRegistry::instance().settingsManager()->save();
     }
 
+<<<<<<< HEAD
     void MainWindow::onExplorerItemSelected(QTreeWidgetItem *selectedItem)
     {
         auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(selectedItem);
@@ -1121,6 +1222,45 @@ namespace Robomongo
         }
         else {
             _exportAction->setDisabled(true);
+=======
+    void MainWindow::on_tabChange()
+    {
+        auto activeTab = dynamic_cast<QueryWidget*>(_workArea->currentWidget());
+        if (activeTab) {
+            activeTab->bringDockToFront();
+        }
+    }
+
+    void MainWindow::toggleMinimize()
+    {
+        if (isHidden()) {
+            show();
+        }
+        else {
+            hide();
+        }
+    }
+
+    void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason)
+    {
+        if (QSystemTrayIcon::DoubleClick == reason && isHidden()) {
+            show();
+        }
+    }
+
+    void MainWindow::toggleMinimizeToTray()
+    {
+        QAction *send = qobject_cast<QAction*>(sender());
+        saveMinimizeToTraySettings(send->isChecked());
+    }
+
+    void MainWindow::on_focusChanged()
+    {
+        // If focus is on floating output window, make it's parent (which is a QueryWidget tab) as active tab
+        auto const activeDock = dynamic_cast<QueryWidget::CustomDockWidget*>(qApp->activeWindow());
+        if (activeDock) {
+            _workArea->setCurrentWidget(activeDock->getParentQueryWidget());
+>>>>>>> master
         }
     }
 }

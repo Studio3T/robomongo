@@ -1,61 +1,78 @@
 
 Latest Release: 
-Robomongo 0.9.0 RC10 (Aug 8, 2016)
-http://blog.robomongo.org/robomongo-rc10/
+Robomongo 0.9.0 Final (30 Sep, 2016)
+http://blog.robomongo.org/robomongo-0-9-0-final/
 
-  Highlights from Robomongo 0.9.0 RCs:
-    Major Features: 
-	  - Support for MongoDB 3.x and WiredTiger engine. Robomongo now embeds MongoDB 3.2 shell. 
-		(Ability to use the latest shell functionality)
-	  - SSH tunnel support for connections added.
-  	  - Support for SSL connections added. 
-	  - MongoDB Atlas (Cloud MongoDB) support added.
-	  - Both MONGODB-CR and SCRAM-SHA-1 authentication mechanisms are supported. 
-	  - Allow direct connections to Replica Set members and support IPv6 protocol. 
-	  - Loading of huge list of collections is now faster.
-	  - Create Collection dialog is now expandable to support all advanced options.
-	    (Supporting all major mongoDB versions 3.2, 3.0, 2.6 and all storage engine types (WiredTiger 
-	    and MMAPV1) is added.) 
-	  - Windows High DPI support.
-	  
-    Fixed:
-	  - Incorrect representation of floating-point numbers (fixed since RC3). This bug was a reason of a big number of issues:
-        #910, #748, #697, #699, #760, #815, #870, #892, 
-        #894, #905, #945, #974, #978, #990, #831, #842
-	  - SSH connection failure to servers on Ubuntu and OS X with the following error:
-		"Resource temporarily unavailable. Error when starting up SSH session: -8"  (#1090)
-		  
+Robomongo 0.9.0:
+  Major Features: 
+    - Support for MongoDB 3.x and WiredTiger engine. Robomongo now embeds MongoDB 3.2 shell. 
+      (Ability to use the latest shell functionality)
+    - SSH tunnel support for connections added.
+    - SSL tunnel support added. 
+    - MongoDB Atlas (Cloud MongoDB) support added.
+    - Both MONGODB-CR and SCRAM-SHA-1 authentication mechanisms are supported. 
+    - Allow direct connections to Replica Set members and support IPv6 protocol. 
+    - Loading of huge list of collections is now faster.
+    - Create Collection dialog is now expandable to support all advanced options.
+      (Supporting all major mongoDB versions 3.2, 3.0, 2.6 and all storage engine types (WiredTiger 
+      and MMAPV1) is added.) 
+    - Windows High DPI support.
+    - Full size editor with dockable output window.
+    
+  Fixed:
+    - Incorrect representation of floating-point numbers (fixed since RC3). This bug was a reason of a big number of issues:
+      #910, #748, #697, #699, #760, #815, #870, #892, 
+      #894, #905, #945, #974, #978, #990, #831, #842
+    - SSH connection failure to servers on Ubuntu and OS X with the following error:
+      "Resource temporarily unavailable. Error when starting up SSH session: -8"  (#1090)
+
+  What's new in 0.9.0 Final (30 Sep, 2016)
+  http://blog.robomongo.org/robomongo-0-9-0-final/
+  
+    New Features:
+      - Full size editor with dockable output window.
+      - New JSON object context menu items: "Copy Name" and "Copy Path" are added.
+      - New database context menu items: "Current Operations" and "Kill Operation" are added.
+      - Minimize to Tray Icon for Windows.
+        
+    Other Changes
+      - Cloud platforms Compose, mLab and Amazon EC2 were tested and added as supported platforms.
+      - Maximize/Restore result button behavior and icon have been improved.
+      - For better code quality and code reviews, Robomongo Code Quality and Robomongo Code Review pages have been created.
+        https://github.com/paralect/robomongo/wiki/Robomongo-Code-Review
+        https://github.com/paralect/robomongo/wiki/Robomongo-Code-Quality
+ 
   What's new in RC10 (Aug 8, 2016)
   http://blog.robomongo.org/robomongo-rc10/
   
-	  New Features:
-		- SSL connections with advanced options are now supported.
-		- MongoDB Atlas (Cloud MongoDB) is supported.
-		- Cross Platform High DPI enhancements. 
-
-	  Enhancements:
-		- For better security, OpenSSL has been upgraded to OpenSSL 1.0.1p.
-		- Qt has been updated from Qt 5.5 to latest Qt 5.7. With this update there are many 
-		  enhancements including cross platform High DPI support.
+    New Features:
+      - SSL connections with advanced options are now supported.
+      - MongoDB Atlas (Cloud MongoDB) is supported.
+      - Cross Platform High DPI enhancements. 
+    
+    Enhancements:
+      - For better security, OpenSSL has been upgraded to OpenSSL 1.0.1p.
+      - Qt has been updated from Qt 5.5 to latest Qt 5.7. With this update there are many 
+        enhancements including cross platform High DPI support.
 
   What's new in RC9 (May 30, 2016)
   http://blog.robomongo.org/robomongo-rc9/
   
-	  New Features:
-		- Create Collection dialog with advanced options.
-		- New feature has been added to save/restore window sizes. (#1102)
-		- Connection settings from previous versions of Robomongo are 
-		  now automatically imported starting from Robomongo 0.9.0 RC9. (#1086)
-		- Support for querying documents by UUIDs is added, both in legacy and new encoding. (#432)
-		 
-	  Fixed:
-		- SSH connection failure to servers on Ubuntu and OS X with the following error:
-		  "Resource temporarily unavailable. Error when starting up SSH session: -8"  (#1090)
-		- Correct handling of create/drop of databases and collections. (#1083)
-	
+    New Features:
+      - Create Collection dialog with advanced options.
+      - New feature has been added to save/restore window sizes. (#1102)
+      - Connection settings from previous versions of Robomongo are 
+        now automatically imported starting from Robomongo 0.9.0 RC9. (#1086)
+      - Support for querying documents by UUIDs is added, both in legacy and new encoding. (#432)
+       
+    Fixed:
+      - SSH connection failure to servers on Ubuntu and OS X with the following error:
+        "Resource temporarily unavailable. Error when starting up SSH session: -8"  (#1090)
+      - Correct handling of create/drop of databases and collections. (#1083)
+    
   What's new in RC8 (April 14, 2016)
   http://blog.robomongo.org/robomongo-rc8/
-	 
+     
   What's new in RC7 (March 4, 2016)
   http://blog.robomongo.org/robomongo-rc7
 
@@ -130,7 +147,7 @@ http://blog.robomongo.org/robomongo-rc10/
   * [Andres Kievsky]
     - Added new app icon in a variety of png and iDraw formats (#693)
   * [Michael Steinacher]
-	- Retina text display support (#724)
+    - Retina text display support (#724)
 
 0.8.4 / November 27, 2013
 

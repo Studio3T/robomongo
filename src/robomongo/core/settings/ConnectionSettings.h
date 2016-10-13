@@ -160,7 +160,7 @@ namespace Robomongo
 
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
-        bool _isReplicaSet;
+
         std::string _connectionName;
         std::string _host;
         int _port;
@@ -168,6 +168,7 @@ namespace Robomongo
         QList<CredentialSettings *> _credentials;
         SshSettings *_sshSettings;
         SslSettings *_sslSettings;
+        bool _isReplicaSet;
         ReplicaSetSettings *_replicaSetSettings;
 
         // Was this connection imported from somewhere?

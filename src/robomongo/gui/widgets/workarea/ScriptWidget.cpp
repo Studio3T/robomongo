@@ -4,7 +4,6 @@
 #include <QKeyEvent>
 #include <QCompleter>
 #include <QStringListModel>
-#include <QMessageBox>
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qsciscintilla.h>
 
@@ -14,6 +13,7 @@
 #include "robomongo/core/utils/QtUtils.h"
 
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/editors/JSLexer.h"
 #include "robomongo/gui/editors/FindFrame.h"
@@ -49,8 +49,9 @@ namespace
 
 namespace Robomongo
 {
-    ScriptWidget::ScriptWidget(MongoShell *shell) :
+    ScriptWidget::ScriptWidget(MongoShell *shell, QueryWidget *parent) :
         _shell(shell),
+        _parent(parent),
         _textChanged(false),
         _disableTextAndCursorNotifications(false)
     {
@@ -63,7 +64,7 @@ namespace Robomongo
         layout->setSpacing(0);
         layout->setContentsMargins(5, 1, 5, 5);
         layout->addWidget(_topStatusBar, 0, Qt::AlignTop);
-        layout->addWidget(_queryText, 1, Qt::AlignTop);
+        layout->addWidget(_queryText);
         setLayout(layout);
 
         // Query text widget
@@ -215,23 +216,36 @@ namespace Robomongo
         scin->setIgnoreTabKey(false);
     }
 
+    void ScriptWidget::disableFixedHeight() const
+    {
+        _queryText->setMinimumSize(0, 0);
+        _queryText->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+        _queryText->sciScintilla()->setMinimumSize(0, 0);
+        _queryText->sciScintilla()->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+        _queryText->sciScintilla()->setFocus();
+    }
+
     void ScriptWidget::ui_queryLinesCountChanged()
     {
-        int lines = _queryText->sciScintilla()->lines();
-        int height = editorHeight(lines);
+        // Set fixed size only if output widget is docked
+        if (_parent->outputWindowDocked())
+        {
+            int lines = _queryText->sciScintilla()->lines();
+            int editorTotalHeight = editorHeight(lines);
 
-        int maxHeight = editorHeight(18);
-        if (height > maxHeight)
-            height = maxHeight;
-
-        // Hide & Show solves problem of UI blinking
-        _queryText->hide();
-        _queryText->setFixedHeight(height);
-        _queryText->sciScintilla()->setFixedHeight(height);
-        _queryText->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-        _queryText->setMaximumHeight(height+FindFrame::HeightFindPanel);
-        _queryText->sciScintilla()->setFocus();
-        _queryText->show();
+            int maxHeight = editorHeight(18);
+            if (editorTotalHeight > maxHeight) {
+                editorTotalHeight = maxHeight;
+            }
+            // Hide & Show solves problem of UI blinking
+            _queryText->hide();
+            _queryText->setFixedHeight(editorTotalHeight);
+            _queryText->sciScintilla()->setFixedHeight(editorTotalHeight);
+            _queryText->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+            _queryText->setMaximumHeight(editorTotalHeight + FindFrame::HeightFindPanel);
+            _queryText->sciScintilla()->setFocus();
+            _queryText->show();
+        }
     }
 
     void ScriptWidget::onTextChanged()

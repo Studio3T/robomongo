@@ -130,11 +130,10 @@ namespace Robomongo
          * @brief Send event to this MongoWorker
          */
         void send(Event *event);
+
         DatabasesContainerType getDatabaseNamesSafe();
         std::string getAuthBase() const;
 
-        std::unique_ptr<mongo::DBClientConnection> _dbclient;
-        std::unique_ptr<mongo::DBClientReplicaSet> _dbclientRepSet;
         mongo::DBClientBase *getConnection(bool mayReturnNull = false);
         MongoClient *getClient();
 
@@ -153,6 +152,7 @@ namespace Robomongo
          * @brief Send reply event to object 'obj'
          */
         void reply(QObject *receiver, Event *event);
+
         QThread *_thread;
         QMutex _firstConnectionMutex;
 
@@ -166,6 +166,9 @@ namespace Robomongo
         int _mongoTimeoutSec;
         int _shellTimeoutSec;
         QAtomicInteger<int> _isQuiting;
+
+        std::unique_ptr<mongo::DBClientConnection> _dbclient;
+        std::unique_ptr<mongo::DBClientReplicaSet> _dbclientRepSet;
 
         ConnectionSettings *_connSettings;
 

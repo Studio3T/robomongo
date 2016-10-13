@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QSystemTrayIcon>
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QToolBar;
@@ -29,7 +30,6 @@ namespace Robomongo
     public:
         typedef QMainWindow BaseClass;
         MainWindow();
-        void keyPressEvent(QKeyEvent *event);
 
     public Q_SLOTS:
         void manageConnections();
@@ -53,6 +53,7 @@ namespace Robomongo
         void save();
         void saveAs();
         void changeStyle(QAction *);
+        void exit();
 
         void setDefaultUuidEncoding();
         void setJavaUuidEncoding();
@@ -73,7 +74,10 @@ namespace Robomongo
         void handle(OperationFailedEvent *event);
 
     protected:
-        void closeEvent(QCloseEvent *event);
+        void keyPressEvent(QKeyEvent *event) override;
+        void closeEvent(QCloseEvent *event) override;
+        void hideEvent(QHideEvent *event) override;
+        void showEvent(QShowEvent *event) override;
 
     private Q_SLOTS:
         void updateMenus();
@@ -86,7 +90,18 @@ namespace Robomongo
         void onOpenSaveToolbarVisibilityChanged(bool isVisisble);
         void onExecToolbarVisibilityChanged(bool isVisisble);
         void onExplorerVisibilityChanged(bool isVisisble);
+<<<<<<< HEAD
         void onExplorerItemSelected(QTreeWidgetItem *selectedItem);
+=======
+        void on_tabChange();
+
+        void toggleMinimize();
+        void trayActivated(QSystemTrayIcon::ActivationReason reason);
+        void toggleMinimizeToTray();
+
+        // On application focus changes
+        void on_focusChanged();
+>>>>>>> master
 
     private:
         void updateConnectionsMenu();
@@ -119,9 +134,18 @@ namespace Robomongo
         QAction *_stopAction;
         QAction *_orientationAction;
         QToolBar *_execToolBar;
+<<<<<<< HEAD
         // Export/import tool bar
         QAction *_exportAction;
         QAction *_importAction;
+=======
+
+#if defined(Q_OS_WIN)
+        QSystemTrayIcon *_trayIcon;
+#endif
+
+        bool _allowExit;
+>>>>>>> master
     };
 
 }

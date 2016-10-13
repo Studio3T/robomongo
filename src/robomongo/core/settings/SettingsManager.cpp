@@ -47,15 +47,16 @@ namespace Robomongo
         _timeZone(Utc),
         _viewMode(Robomongo::Tree),
         _autocompletionMode(AutocompleteAll),
-        _batchSize(50),
-        _disableConnectionShortcuts(false),
-        _textFontFamily(""),
-        _textFontPointSize(-1),
-        _lineNumbers(false),
         _loadMongoRcJs(false),
-        _imported(false),
+        _minimizeToTray(false),
+        _lineNumbers(false),
+        _disableConnectionShortcuts(false),
+        _batchSize(50),
+        _textFontFamily(""),
+        _textFontPointSize(-1), 
         _mongoTimeoutSec(10),
-        _shellTimeoutSec(15)
+        _shellTimeoutSec(15),
+        _imported(false)
     {
         load();
         LOG_MSG("SettingsManager initialized in " + _configPath, mongo::logger::LogSeverity::Info(), false);
@@ -145,17 +146,11 @@ namespace Robomongo
             _viewMode = Custom; // Default View Mode
         }
 
-        _autoExpand = map.contains("autoExpand") ?
-            map.value("autoExpand").toBool() : true;
-
-        _autoExec = map.contains("autoExec") ?
-            map.value("autoExec").toBool() : true;
-
-        _lineNumbers = map.contains("lineNumbers") ?
-            map.value("lineNumbers").toBool() : false;
-
-        _imported = map.contains("imported") ?
-            map.value("imported").toBool() : false;
+        _autoExpand = map.contains("autoExpand") ? map.value("autoExpand").toBool() : true;
+        _autoExec = map.contains("autoExec") ? map.value("autoExec").toBool() : true;
+        _minimizeToTray = map.contains("minimizeToTray") ? map.value("minimizeToTray").toBool() : false;
+        _lineNumbers = map.contains("lineNumbers") ? map.value("lineNumbers").toBool() : false;
+        _imported = map.contains("imported") ? map.value("imported").toBool() : false;
 
         // 4. Load TimeZone
         int timeZone = map.value("timeZone").toInt();
@@ -280,11 +275,9 @@ namespace Robomongo
         }
 
         map.insert("connections", list);
-
         map.insert("autoExec", _autoExec);
-
+        map.insert("minimizeToTray", _minimizeToTray);
         map.insert("toolbars", _toolbars);
-
         map.insert("imported", _imported);
 
         return map;

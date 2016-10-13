@@ -1,10 +1,14 @@
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 
+#include <QObject>
+#include <QPushButton>
 #include <QApplication>
 #include <QLabel>
 #include <QFileInfo>
 #include <QVBoxLayout>
 #include <QMessageBox>
+#include <QMainWindow>
+#include <QDockWidget>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerjavascript.h>
 #include <mongo/client/dbclientinterface.h>
@@ -24,6 +28,8 @@
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/ScriptWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/editors/JSLexer.h"
 
@@ -34,33 +40,45 @@ namespace Robomongo
     QueryWidget::QueryWidget(MongoShell *shell, QWidget *parent) :
         QWidget(parent),
         _shell(shell),
-        _viewer(NULL),
+        _viewer(nullptr),
+        _dock(nullptr),
         _isTextChanged(false)
     {
         AppRegistry::instance().bus()->subscribe(this, DocumentListLoadedEvent::Type, shell);
         AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type, shell);
         AppRegistry::instance().bus()->subscribe(this, AutocompleteResponse::Type, shell);
 
-        _scriptWidget = new ScriptWidget(_shell);
+        _scriptWidget = new ScriptWidget(_shell, this);
         VERIFY(connect(_scriptWidget, SIGNAL(textChanged()), this, SLOT(textChange())));
 
-        _viewer = new OutputWidget();
+        // Need to use QMainWindow in order to make use of all features of docking.
+        // (Note: Qt full support for dock windows implemented only for QMainWindow)
+        _viewer = new OutputWidget(this);
+        _outputWindow = new QMainWindow;
+        _dock = new CustomDockWidget(this);
+        _dock->setAllowedAreas(Qt::NoDockWidgetArea);
+        _dock->setFeatures(QDockWidget::DockWidgetFloatable);
+        _dock->setWidget(_viewer);
+        _dock->setTitleBarWidget(new QWidget);
+        VERIFY(connect(_dock, SIGNAL(topLevelChanged(bool)), this, SLOT(on_dock_undock())));
+        _outputWindow->addDockWidget(Qt::BottomDockWidgetArea, _dock);
+
         _outputLabel = new QLabel(this);
         _outputLabel->setContentsMargins(0, 5, 0, 0);
         _outputLabel->setVisible(false);
 
-        QFrame *line = new QFrame(this);
-        line->setFrameShape(QFrame::HLine);
-        line->setFrameShadow(QFrame::Raised);
+        _line = new QFrame(this);
+        _line->setFrameShape(QFrame::HLine);
+        _line->setFrameShadow(QFrame::Raised);
 
-        QVBoxLayout *layout = new QVBoxLayout;
-        layout->setSpacing(0);
-        layout->setContentsMargins(0, 0, 0, 0);
-        layout->addWidget(_scriptWidget, 0, Qt::AlignTop);
-        layout->addWidget(line);
-        layout->addWidget(_outputLabel, 0, Qt::AlignTop);
-        layout->addWidget(_viewer, 1);
-        setLayout(layout);
+        _mainLayout = new QVBoxLayout;
+        _mainLayout->setSpacing(0);
+        _mainLayout->setContentsMargins(0, 0, 0, 0);
+        _mainLayout->addWidget(_scriptWidget); 
+        _mainLayout->addWidget(_line);
+        _mainLayout->addWidget(_outputLabel, 0, Qt::AlignTop);
+        _mainLayout->addWidget(_outputWindow, 1);      
+        setLayout(_mainLayout);
     }
 
     void QueryWidget::setScriptFocus()
@@ -76,6 +94,22 @@ namespace Robomongo
     void QueryWidget::hideAutocompletion()
     {
         _scriptWidget->hideAutocompletion();
+    }
+
+    void QueryWidget::bringDockToFront()
+    {
+        _dock->raise(); // required for MAC only; possible Qt bug
+        _dock->activateWindow();
+    }
+
+    bool QueryWidget::outputWindowDocked() const
+    {
+        if (_dock) {
+            return !_dock->isFloating();
+        }
+        else {  // _dock is not initialized yet, but it will be docked when initialized
+            return true;
+        }
     }
 
     void QueryWidget::execute()
@@ -186,11 +220,16 @@ namespace Robomongo
         _viewer->showProgress();
     }
 
+    void QueryWidget::dockUndock() 
+    {
+        // Toggle between dock/undock
+        _dock->setFloating(!_dock->isFloating());
+    };
+
     void QueryWidget::hideProgress()
     {
         _viewer->hideProgress();
     }
-
 
     void QueryWidget::handle(DocumentListLoadedEvent *event)
     {
@@ -239,6 +278,30 @@ namespace Robomongo
         }
 
         _scriptWidget->showAutocompletion(event->list, QtUtils::toQString(event->prefix) );
+    }
+
+    void QueryWidget::on_dock_undock()
+    {
+        if (!_dock->isFloating()) {    // If output window docked 
+            // Settings to revert to docked mode
+            _scriptWidget->ui_queryLinesCountChanged();
+            _mainLayout->addWidget(_scriptWidget);                     
+            _mainLayout->addWidget(_line);
+            _mainLayout->addWidget(_outputWindow, 1);
+            _dock->setFeatures(QDockWidget::DockWidgetFloatable);
+            _dock->setTitleBarWidget(new QWidget);
+            _viewer->applyDockUndockSettings(true);
+        }
+        else {              // output window undocked(floating)
+            // Settings for query window in order to use maximum space
+            _scriptWidget->disableFixedHeight();
+            _mainLayout->addWidget(_scriptWidget, 1); 
+            _mainLayout->addWidget(_line);
+            _mainLayout->addWidget(_outputWindow);
+            _dock->setFeatures(QDockWidget::DockWidgetClosable);
+            _dock->setTitleBarWidget(nullptr);
+            _viewer->applyDockUndockSettings(false);
+        }
     }
 
     void QueryWidget::updateCurrentTab()

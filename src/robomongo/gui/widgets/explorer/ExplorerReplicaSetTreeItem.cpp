@@ -13,7 +13,6 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
-
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/dialogs/CreateDatabaseDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -21,8 +20,8 @@
 
 namespace
 {
-    // todo : modify or move to common header
-     void openCurrentServerShell(Robomongo::ConnectionSettings* connSettings, const QString &script)
+    // todo : modify or move to a common header
+     void openCurrentServerShell(Robomongo::ConnectionSettings const *connSettings, const QString &script)
      {
          auto const scriptStr = Robomongo::ScriptInfo(script, true);
          Robomongo::AppRegistry::instance().app()->openShell(connSettings, scriptStr);
@@ -81,13 +80,14 @@ namespace Robomongo
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(showLog);
 
+        // Todo: remove ?
         //_bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
         //_bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
 
         auto status = _isPrimary ? "Primary" : "Secondary";
         auto health = _isUp ? "Up" : "Down";
-        setText(0, QString::fromStdString(_repMemberHostAndPort.toString()) + " - [" + status + "] [" + health + "]");
-        setIcon(0, GuiRegistry::instance().serverIcon());
+        setText(0, QString::fromStdString(_repMemberHostAndPort.toString()) + " - [" + status + "] [" + health + "] ");
+        setIcon(0, _isUp ? GuiRegistry::instance().serverIcon() : GuiRegistry::instance().serverImportedIcon());
         setExpanded(true);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }

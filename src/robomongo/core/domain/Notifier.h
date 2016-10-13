@@ -18,10 +18,10 @@ namespace Robomongo
 
     namespace detail
     {
-        bool isSimpleType(BsonTreeItem *item);
+        bool isSimpleType(BsonTreeItem const *item);
         bool isObjectIdType(BsonTreeItem *item);
         bool isMultiSelection(const QModelIndexList &indexes);
-        bool isDocumentType(BsonTreeItem *item);
+        bool isDocumentType(BsonTreeItem const *item);
         QModelIndexList uniqueRows(QModelIndexList indexes, bool returnSuperParents = false);
     }
 
@@ -55,12 +55,14 @@ namespace Robomongo
         void onViewDocument();
         void onInsertDocument();
         void onCopyDocument();
-        void onCopyNameDocument();
-        void onCopyPathDocument();
         void onCopyTimestamp();
         void onCopyJson();
         void handle(InsertDocumentResponse *event);
         void handle(RemoveDocumentResponse *event);
+
+    private Q_SLOTS:
+        void onCopyNameDocument();
+        void onCopyPathDocument();
 
     private:
         QAction *_deleteDocumentAction;

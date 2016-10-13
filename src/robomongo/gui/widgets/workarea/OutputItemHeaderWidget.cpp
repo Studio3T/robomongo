@@ -7,6 +7,8 @@
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
+#include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
 #include "robomongo/core/AppRegistry.h"
@@ -27,19 +29,16 @@ namespace
 namespace Robomongo
 {
 
-    OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemContentWidget *output, QWidget *parent) : 
+    OutputItemHeaderWidget::OutputItemHeaderWidget(OutputItemContentWidget *outputItemContentWidget, bool multipleResults, 
+                                                   bool firstItem, bool lastItem, QWidget *parent) :
         QFrame(parent),
-        _maximized(false)
+        _maxButton(nullptr), _dockUndockButton(nullptr), _maximized(false), _multipleResults(multipleResults), 
+        _firstItem(firstItem), _lastItem(lastItem), _orientation(Qt::Vertical)
     {
         setContentsMargins(5, 0, 0, 0);
-        
-        // Maximize button
-        _maxButton = new QPushButton;
-        _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
-        _maxButton->setToolTip("Maximize or restore back this output result. You also can double-click on result's header.");
-        _maxButton->setFixedSize(18, 18);
-        _maxButton->setFlat(true);
-        VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizePart())));
+
+        auto const* outputWidget = qobject_cast<OutputWidget*>(outputItemContentWidget->parentWidget());
+        _orientation = outputWidget->getOrientation();
 
         // Text mode button
         _textButton = new QPushButton(this);
@@ -78,10 +77,30 @@ namespace Robomongo
         _customButton->setFlat(true);
         _customButton->setCheckable(true);
 
-        VERIFY(connect(_textButton, SIGNAL(clicked()), output, SLOT(showText())));
-        VERIFY(connect(_treeButton, SIGNAL(clicked()), output, SLOT(showTree())));
-        VERIFY(connect(_tableButton, SIGNAL(clicked()), output, SLOT(showTable())));
-        VERIFY(connect(_customButton, SIGNAL(clicked()), output, SLOT(showCustom())));
+        // Create maximize button only if there are multiple results
+        if (_multipleResults) {
+            _maxButton = new QPushButton;
+            _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
+            _maxButton->setToolTip("Maximize this output result (double-click on result's header)");
+            _maxButton->setFixedSize(18, 18);
+            _maxButton->setFlat(true);
+            VERIFY(connect(_maxButton, SIGNAL(clicked()), this, SLOT(maximizeMinimizePart())));
+        }
+
+        auto dockWidget = qobject_cast<QueryWidget::CustomDockWidget*>(outputItemContentWidget->parentWidget()->parentWidget());
+        auto queryWidget = dockWidget->getParentQueryWidget();
+        
+        _dockUndockButton = new QPushButton;
+        _dockUndockButton->setFixedSize(18, 18);
+        _dockUndockButton->setFlat(true);
+        _dockUndockButton->setHidden(true);
+        applyDockUndockSettings(!dockWidget->isFloating());
+        VERIFY(connect(_dockUndockButton, SIGNAL(clicked()), queryWidget, SLOT(dockUndock())));
+
+        VERIFY(connect(_textButton, SIGNAL(clicked()), outputItemContentWidget, SLOT(showText())));
+        VERIFY(connect(_treeButton, SIGNAL(clicked()), outputItemContentWidget, SLOT(showTree())));
+        VERIFY(connect(_tableButton, SIGNAL(clicked()), outputItemContentWidget, SLOT(showTable())));
+        VERIFY(connect(_customButton, SIGNAL(clicked()), outputItemContentWidget, SLOT(showCustom())));
 
         _collectionIndicator = new Indicator(GuiRegistry::instance().collectionIcon());
         _timeIndicator = new Indicator(GuiRegistry::instance().timeIcon());
@@ -103,33 +122,49 @@ namespace Robomongo
         layout->addWidget(createVerticalLine());
         layout->addSpacing(2);
 
-        if (output->isCustomModeSupported()) {
+        if (outputItemContentWidget->isCustomModeSupported()) {
             layout->addWidget(_customButton, 0, Qt::AlignRight);
             _customButton->show();
         }
 
-        if (output->isTreeModeSupported()) {
+        if (outputItemContentWidget->isTreeModeSupported()) {
             layout->addWidget(_treeButton, 0, Qt::AlignRight);
             _treeButton->show();
         }
 
-        if (output->isTableModeSupported()) {
+        if (outputItemContentWidget->isTableModeSupported()) {
             layout->addWidget(_tableButton, 0, Qt::AlignRight);
             _tableButton->show();
         }
 
-        if (output->isTextModeSupported())
+        if (outputItemContentWidget->isTextModeSupported())
             layout->addWidget(_textButton, 0, Qt::AlignRight);
 
+        if (_multipleResults) {
+            layout->addWidget(_maxButton, 0, Qt::AlignRight);
+        }
+
         layout->addSpacing(3);
-        layout->addWidget(createVerticalLine());
-        layout->addWidget(_maxButton, 0, Qt::AlignRight);
+        _verticalLine = createVerticalLine();
+        _verticalLine->setHidden(true);
+        layout->addWidget(_verticalLine);
+        layout->addWidget(_dockUndockButton);
+
         setLayout(layout);
+
+        // Update dock/undock button visibility
+        if (_multipleResults) {
+            updateDockButtonOnToggleOrientation();
+        }
+        else {
+            _verticalLine->setVisible(true);
+            _dockUndockButton->setVisible(true);
+        }
     }
 
     void OutputItemHeaderWidget::mouseDoubleClickEvent(QMouseEvent *)
     {
-        maximizePart();
+        maximizeMinimizePart();
     }
 
     void OutputItemHeaderWidget::showText()
@@ -180,6 +215,27 @@ namespace Robomongo
         _customButton->setChecked(true);
     }
 
+    void OutputItemHeaderWidget::applyDockUndockSettings(bool isDocking)
+    {
+        if (isDocking) {
+            _dockUndockButton->setIcon(GuiRegistry::instance().undockIcon());
+            _dockUndockButton->setToolTip("Undock into separate window");
+        }
+        else {
+            _dockUndockButton->setIcon(GuiRegistry::instance().dockIcon());
+            _dockUndockButton->setToolTip("Dock into main window");
+        }
+    }
+
+    void OutputItemHeaderWidget::toggleOrientation(Qt::Orientation orientation)
+    {
+        if (!_firstItem && !_lastItem) 
+            return;
+
+        _orientation = orientation;
+        updateDockButtonOnToggleOrientation();
+    }
+
     void OutputItemHeaderWidget::setTime(const QString &time)
     {
         _timeIndicator->setVisible(!time.isEmpty());
@@ -192,20 +248,47 @@ namespace Robomongo
         _collectionIndicator->setText(collection);
     }
 
-    void OutputItemHeaderWidget::maximizePart()
+    void OutputItemHeaderWidget::maximizeMinimizePart()
     {
-        if (_maximized) {
-            //item->_output->restoreSize();
+        // No maximize/minimize behaviour if there is only one query result
+        if (!_multipleResults) {
+            return;
+        }
+
+        if (_maximized) {   // restoring original size
             emit restoredSize();
             _maxButton->setIcon(GuiRegistry::instance().maximizeIcon());
+            _maxButton->setToolTip("Maximize this output result (double-click on result header)");
+            updateDockButtonOnToggleOrientation();
         }
-        else {
-            //item->_output->maximizePart(item);
+        else {              // maximizing
             emit maximizedPart();
-            _maxButton->setIcon(GuiRegistry::instance().maximizeHighlightedIcon());
+            _maxButton->setIcon(GuiRegistry::instance().minimizeIcon());
+            _maxButton->setToolTip("Restore back to original size (double-click on result header)");
+            _verticalLine->setVisible(true);
+            _dockUndockButton->setVisible(true);
         }
 
         _maximized = !_maximized;
+    }
+    
+    void OutputItemHeaderWidget::updateDockButtonOnToggleOrientation() const
+    {
+        if (!_multipleResults)
+            return;
+
+        if (_firstItem) {
+            _verticalLine->setVisible(Qt::Vertical == _orientation);
+            _dockUndockButton->setVisible(Qt::Vertical == _orientation);
+        }
+        else if (_lastItem) {
+            _verticalLine->setVisible(Qt::Horizontal == _orientation);
+            _dockUndockButton->setVisible(Qt::Horizontal == _orientation);
+        }
+        else {
+            _verticalLine->setVisible(false);
+            _dockUndockButton->setVisible(false);
+        }
     }
 
 }

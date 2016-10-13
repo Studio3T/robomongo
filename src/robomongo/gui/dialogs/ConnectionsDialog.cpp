@@ -48,7 +48,7 @@ namespace Robomongo
             if (connection->isReplicaSet()) {
                 setText(0, QtUtils::toQString(connection->connectionName()) + " [Replica Set]");
                 auto const repSetSize = connection->replicaSetSettings()->members().size();
-                setText(1, QString::number(repSetSize) + " Servers (" + QtUtils::toQString(connection->getFullAddress()) + ")");
+                setText(1, QString::number(repSetSize) + " Node(s) (" + QtUtils::toQString(connection->getFullAddress()) + ")");
             }
             else {
                 setText(0, QtUtils::toQString(connection->connectionName()));

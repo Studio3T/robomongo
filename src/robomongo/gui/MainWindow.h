@@ -6,7 +6,6 @@ class QLabel;
 class QToolBar;
 class QDockWidget;
 class QToolButton;
-class QTreeWidgetItem;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -20,7 +19,6 @@ namespace Robomongo
     class WorkAreaTabWidget;
     class ConnectionMenu;
     class App;
-    class ExplorerWidget;
 
     class MainWindow : public QMainWindow
     {
@@ -80,13 +78,11 @@ namespace Robomongo
         void setUtcTimeZone();
         void setLocalTimeZone();
         void openPreferences();
-        void openExportDialog();
-
+        
         void onConnectToolbarVisibilityChanged(bool isVisisble);
         void onOpenSaveToolbarVisibilityChanged(bool isVisisble);
         void onExecToolbarVisibilityChanged(bool isVisisble);
         void onExplorerVisibilityChanged(bool isVisisble);
-        void onExplorerItemSelected(QTreeWidgetItem *selectedItem);
 
     private:
         void updateConnectionsMenu();
@@ -101,8 +97,6 @@ namespace Robomongo
 
         WorkAreaTabWidget *_workArea;
 
-        ExplorerWidget* _explorer;
-
         App *_app;
 
         ConnectionMenu *_connectionsMenu;
@@ -110,18 +104,14 @@ namespace Robomongo
         QMenu *_viewMenu;
         QMenu *_toolbarsMenu;
         QAction *_connectAction;
-        // Open/Save tool bar
         QAction *_openAction;
         QAction *_saveAction;
         QAction *_saveAsAction;
-        // Execution tool bar
         QAction *_executeAction;
         QAction *_stopAction;
         QAction *_orientationAction;
         QToolBar *_execToolBar;
-        // Export/import tool bar
-        QAction *_exportAction;
-        QAction *_importAction;
+
     };
 
 }

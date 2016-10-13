@@ -30,14 +30,11 @@
 
 #include "robomongo/gui/widgets/LogWidget.h"
 #include "robomongo/gui/widgets/explorer/ExplorerWidget.h"
-#include "robomongo/gui/widgets/explorer/ExplorerCollectionTreeItem.h"
-#include "robomongo/gui/widgets/explorer/ExplorerTreeWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 #include "robomongo/gui/dialogs/AboutDialog.h"
 #include "robomongo/gui/dialogs/PreferencesDialog.h"
-#include "robomongo/gui/dialogs/ExportDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/AppStyle.h"
 
@@ -98,12 +95,10 @@ namespace Robomongo
 
     MainWindow::MainWindow()
         : BaseClass(),
-        _logDock(nullptr), _workArea(nullptr), _explorer(nullptr), _app(AppRegistry::instance().app()), 
-        _connectionsMenu(nullptr), _connectButton(nullptr), _viewMenu(nullptr), _toolbarsMenu(nullptr), 
-        _connectAction(nullptr), _openAction(nullptr), _saveAction(nullptr), _saveAsAction(nullptr),
-        _executeAction(nullptr), _stopAction(nullptr), _orientationAction(nullptr), _execToolBar(nullptr),
-        _exportAction(nullptr), _importAction(nullptr)
-     {
+        _app(AppRegistry::instance().app()),
+        _workArea(NULL),
+        _connectionsMenu(NULL)
+    {
         QColor background = palette().window().color();
         QString controlKey = "Ctrl";
 
@@ -498,26 +493,6 @@ namespace Robomongo
         _toolbarsMenu->addAction(_execToolBar->toggleViewAction());
         VERIFY(connect(_execToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onExecToolbarVisibilityChanged(bool))));
 
-        // Export/Import Toolbar
-        auto expImpToolBar = new QToolBar(tr("Export/Import Toolbar"), this);
-        expImpToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        expImpToolBar->setMovable(false);
-        // Add export action
-        _exportAction = new QAction(this);
-        _exportAction->setData("Export");
-        _exportAction->setIcon(GuiRegistry::instance().exportIcon());
-        _exportAction->setDisabled(true);
-        VERIFY(connect(_exportAction, SIGNAL(triggered()), this, SLOT(openExportDialog())));
-        addToolBar(expImpToolBar);
-        expImpToolBar->addAction(_exportAction);
-        // Add import action
-        _importAction = new QAction(this);
-        _importAction->setData("Import");
-        _importAction->setIcon(GuiRegistry::instance().importIcon());
-        _importAction->setDisabled(true);
-        addToolBar(expImpToolBar);
-        expImpToolBar->addAction(_importAction);
-
         createTabs();
         createStatusBar();
         setWindowTitle(PROJECT_NAME_TITLE " " PROJECT_VERSION);
@@ -601,6 +576,8 @@ namespace Robomongo
         if (settings.contains("MainWindow/geometry"))
         {
             restoreGeometry(settings.value("MainWindow/geometry").toByteArray());
+            restoreState(settings.value("MainWindow/windowState").toByteArray());
+            settings.setValue("windowState", saveState());
         }
         else
         {
@@ -623,6 +600,7 @@ namespace Robomongo
     {
         QSettings settings("Paralect", "Robomongo");
         settings.setValue("MainWindow/geometry", saveGeometry());
+        settings.setValue("MainWindow/windowState", saveState());
     }
 
     void MainWindow::open()
@@ -866,16 +844,6 @@ namespace Robomongo
         dlg.exec();
     }
 
-    void MainWindow::openExportDialog()
-    {
-        auto selectedItem = dynamic_cast<ExplorerCollectionTreeItem*>(_explorer->getSelectedTreeItem());
-        auto dbName = QString::fromStdString(selectedItem->collection()->database()->name());
-        auto collName = QString::fromStdString(selectedItem->collection()->name());
-
-        auto dialog = new ExportDialog(dbName, collName, this);
-        dialog->show(); // show it mode-less so that user can perform multiple simultaneous exports
-    }
-
     void MainWindow::setDefaultUuidEncoding()
     {
         AppRegistry::instance().settingsManager()->setUuidEncoding(DefaultEncoding);
@@ -1015,14 +983,14 @@ namespace Robomongo
 
     void MainWindow::createDatabaseExplorer()
     {
-        _explorer = new ExplorerWidget(this);
-        AppRegistry::instance().bus()->subscribe(_explorer, ConnectingEvent::Type);
-        AppRegistry::instance().bus()->subscribe(_explorer, ConnectionFailedEvent::Type);
-        AppRegistry::instance().bus()->subscribe(_explorer, ConnectionEstablishedEvent::Type);
+        ExplorerWidget *explorer = new ExplorerWidget(this);
+        AppRegistry::instance().bus()->subscribe(explorer, ConnectingEvent::Type);
+        AppRegistry::instance().bus()->subscribe(explorer, ConnectionFailedEvent::Type);
+        AppRegistry::instance().bus()->subscribe(explorer, ConnectionEstablishedEvent::Type);
 
         QDockWidget *explorerDock = new QDockWidget(tr("Database Explorer"));
         explorerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-        explorerDock->setWidget(_explorer);
+        explorerDock->setWidget(explorer);
         explorerDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
 
         QWidget *titleWidget = new QWidget(this);         // this lines simply remove
@@ -1111,16 +1079,5 @@ namespace Robomongo
     {
         AppRegistry::instance().settingsManager()->setToolbarSettings("explorer", isVisible);
         AppRegistry::instance().settingsManager()->save();
-    }
-
-    void MainWindow::onExplorerItemSelected(QTreeWidgetItem *selectedItem)
-    {
-        auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(selectedItem);
-        if (collectionItem) {
-            _exportAction->setEnabled(true);
-        }
-        else {
-            _exportAction->setDisabled(true);
-        }
     }
 }

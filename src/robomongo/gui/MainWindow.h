@@ -6,6 +6,7 @@ class QLabel;
 class QToolBar;
 class QDockWidget;
 class QToolButton;
+class QTreeWidgetItem;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -19,6 +20,7 @@ namespace Robomongo
     class WorkAreaTabWidget;
     class ConnectionMenu;
     class App;
+    class ExplorerWidget;
 
     class MainWindow : public QMainWindow
     {
@@ -84,6 +86,7 @@ namespace Robomongo
         void onOpenSaveToolbarVisibilityChanged(bool isVisisble);
         void onExecToolbarVisibilityChanged(bool isVisisble);
         void onExplorerVisibilityChanged(bool isVisisble);
+        void onExplorerItemSelected(QTreeWidgetItem *selectedItem);
 
     private:
         void updateConnectionsMenu();
@@ -97,6 +100,8 @@ namespace Robomongo
         QDockWidget *_logDock;
 
         WorkAreaTabWidget *_workArea;
+
+        ExplorerWidget* _explorer;
 
         App *_app;
 

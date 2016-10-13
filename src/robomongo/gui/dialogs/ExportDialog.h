@@ -31,7 +31,7 @@ namespace Robomongo
         };
 
     public:
-        explicit ExportDialog(QWidget *parent = 0);
+        explicit ExportDialog(QString const& dbName, QString const& collName, QWidget *parent = 0);
         //QString databaseName() const;
         void setOkButtonText(const QString &text);
         void setInputLabelText(const QString &text);
@@ -45,12 +45,12 @@ namespace Robomongo
     private Q_SLOTS:
         void ui_itemExpanded(QTreeWidgetItem *item);
         void ui_itemDoubleClicked(QTreeWidgetItem *item, int column);
-        void ui_itemClicked(QTreeWidgetItem *current);
         void on_browseButton_clicked();
         void on_formatComboBox_change(int index);
         void on_modeButton_clicked();
         void on_exportFinished(int exitCode, QProcess::ExitStatus exitStatus);
         void on_processErrorOccurred(QProcess::ProcessError);
+        void on_viewOutputLink(QString);
 
     private:
         // todo: remove
@@ -62,6 +62,7 @@ namespace Robomongo
         void enableDisableWidgets(bool enable) const;
 
         // Auto Mode
+        QGroupBox* _inputsGroupBox;
         QComboBox* _formatComboBox;
         QLabel* _fieldsLabel;
         QLineEdit* _fields;
@@ -70,20 +71,24 @@ namespace Robomongo
         QLineEdit* _outputDir;
         QPushButton* _browseButton;
         QGroupBox* _autoOutputsGroup;
-        QTextEdit* _autoExportOutput;
+        QTextEdit* _exportOutput;
+        QLabel* _viewOutputLink;
+        //
+        QTextEdit* _mongoExportOutput;
+
         // Manual Mode
         QTextEdit* _manualExportCmd;
-        QTextEdit* _manualExportOutput;
         QPushButton* _modeButton;
         QGroupBox* _manualGroupBox;
         // Common
         QDialogButtonBox* _buttonBox;
-        QTreeWidget* _treeWidget;
 
         MODE _mode;
         QString _dbName;
         QString _collName;
         QString _mongoExportArgs;
+        QString _exportResult;
+        QString _mongoExportOutputStr;
         QProcess* _activeProcess;          // pointer to running/finished process
     };
 }

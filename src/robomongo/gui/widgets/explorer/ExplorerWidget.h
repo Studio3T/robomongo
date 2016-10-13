@@ -11,6 +11,8 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
+    class MainWindow;
+
     /**
      * @brief Explorer widget (usually you'll see it at the left of main window)
      */
@@ -20,7 +22,8 @@ namespace Robomongo
 
     public:
         typedef QWidget BaseClass;
-        ExplorerWidget(QWidget *parent);
+        ExplorerWidget(MainWindow *parent);
+        QTreeWidgetItem* getSelectedTreeItem() const;
 
     protected Q_SLOTS:
         void handle(ConnectingEvent *event);

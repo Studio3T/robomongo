@@ -80,8 +80,9 @@ namespace Robomongo
         MongoWorker *const client() const { return _client; }
 
         // --- Getters ---
-        const mongo::HostAndPort& getRepPrimary() const { return _repPrimary; }
-        const std::vector<bool>& getRepMembersHealths() const { return _repMembersHealths; }
+        std::string getRepSetName() const { return _repSetName; }
+        mongo::HostAndPort getRepPrimary() const { return _repPrimary; }
+        std::vector<bool> getRepMembersHealths() const { return _repMembersHealths; }
 
     protected Q_SLOTS:
         void handle(EstablishConnectionResponse *event);
@@ -109,7 +110,8 @@ namespace Robomongo
 
         QList<MongoDatabase *> _databases;
 
-        // Replica Set Status
+        // Replica Set Info
+        std::string _repSetName;
         mongo::HostAndPort _repPrimary;
         std::vector<bool> _repMembersHealths;   // todo: vector of pairs of host and health
     };

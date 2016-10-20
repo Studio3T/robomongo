@@ -146,7 +146,7 @@ namespace Robomongo
         }
 
         auto replicaMemberItem = dynamic_cast<ExplorerReplicaSetTreeItem*>(item);
-        if (replicaMemberItem) {
+        if (replicaMemberItem && replicaMemberItem->isUp()) {
             AppRegistry::instance().app()->openShell(replicaMemberItem->connectionSettings(), ScriptInfo("", true));
             return;
         }

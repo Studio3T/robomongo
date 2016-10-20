@@ -104,7 +104,7 @@ namespace Robomongo
             // Add 'Replica Set' folder
             auto repSetFolder = new ExplorerReplicaSetFolderItem(this, _server);
             repSetFolder->setIcon(0, GuiRegistry::instance().folderIcon());
-            repSetFolder->setText(0, "Replica Set Members");
+            repSetFolder->setText(0, "Replica Set: " + QString::fromStdString(_server->getRepSetName()));
             addChild(repSetFolder);
             // Add replica members
             ReplicaSetSettings const* repSetSettings = _server->connectionRecord()->replicaSetSettings();

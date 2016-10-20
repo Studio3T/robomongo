@@ -167,6 +167,7 @@ namespace Robomongo {
         _storageEngineType = info._storageEngineType;
         _isConnected = true;
         // Save Replica Set Status  
+        _repSetName = event->getRepSetName();
         _repPrimary = event->getRepPrimary();                   // todo: what happens to this member if not replica set?
         _repMembersHealths = event->getRepMembersHealths();
         if (_settings->isReplicaSet()) {

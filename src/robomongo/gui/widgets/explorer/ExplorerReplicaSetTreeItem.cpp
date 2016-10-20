@@ -48,26 +48,26 @@ namespace Robomongo
         _connSettings->replicaSetSettings()->setMembers(std::vector<std::string>()); // todo: replicaSetSettings->clear()
 
         // Add Actions
-        QAction *openShellAction = new QAction("Open Shell", this);
+        auto openShellAction = new QAction("Open Shell", this);
         openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
         VERIFY(connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell())));
 
-        QAction *openDirectConnection = new QAction("Open Direct Connection", this);
+        auto openDirectConnection = new QAction("Open Direct Connection", this);
         VERIFY(connect(openDirectConnection, SIGNAL(triggered()), SLOT(ui_openDirectConnection())));
 
-        QAction *refreshServer = new QAction("Refresh", this);
+        auto refreshServer = new QAction("Refresh", this);
         VERIFY(connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer())));
 
-        QAction *serverStatus = new QAction("Server Status", this);
+        auto serverStatus = new QAction("Server Status", this);
         VERIFY(connect(serverStatus, SIGNAL(triggered()), SLOT(ui_serverStatus())));
 
-        QAction *serverVersion = new QAction("MongoDB Version", this);
+        auto serverVersion = new QAction("MongoDB Version", this);
         VERIFY(connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion())));
 
-        QAction *serverHostInfo = new QAction("Host Info", this);
+        auto serverHostInfo = new QAction("Host Info", this);
         VERIFY(connect(serverHostInfo, SIGNAL(triggered()), SLOT(ui_serverHostInfo())));        
 
-        QAction *showLog = new QAction("Show Log", this);
+        auto showLog = new QAction("Show Log", this);
         VERIFY(connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog()))); 
 
         BaseClass::_contextMenu->addAction(openShellAction);
@@ -80,12 +80,15 @@ namespace Robomongo
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(showLog);
 
+        //BaseClass::_contextMenu->setHidden(!_isUp);
+
         // Todo: remove ?
         //_bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
         //_bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
 
         auto status = _isPrimary ? "Primary" : "Secondary";
         auto health = _isUp ? "Up" : "Down";
+        setDisabled(_isUp ? false : true);
         setText(0, QString::fromStdString(_repMemberHostAndPort.toString()) + " - [" + status + "] [" + health + "] ");
         setIcon(0, _isUp ? GuiRegistry::instance().serverIcon() : GuiRegistry::instance().serverImportedIcon());
         setExpanded(true);

@@ -1,5 +1,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerTreeWidget.h"
+
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h"
 #include <QContextMenuEvent>
 #include <robomongo/gui/GuiRegistry.h>
 
@@ -24,6 +26,12 @@ namespace Robomongo
     void ExplorerTreeWidget::contextMenuEvent(QContextMenuEvent *event)
     {
         QTreeWidgetItem *item = itemAt(event->pos());
+        auto replicaSetItem = dynamic_cast<ExplorerReplicaSetTreeItem*>(item);
+        // If the replica set item is down, hide context menu
+        if (replicaSetItem && !replicaSetItem->isUp()) {
+            return;
+        }
+
         if (item) {
             ExplorerTreeItem *expItem = dynamic_cast<ExplorerTreeItem *>(item);
             if (expItem) {

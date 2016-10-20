@@ -23,6 +23,7 @@ namespace Robomongo
 
         // Getters
         ConnectionSettings const* connectionSettings() const { return _connSettings.get(); }
+        bool isUp() const { return _isUp; }
 
     public Q_SLOTS:
         // Todo: remove or update

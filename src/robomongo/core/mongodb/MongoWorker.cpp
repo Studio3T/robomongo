@@ -192,6 +192,7 @@ namespace Robomongo
                 throw mongo::DBException("Failed to execute \"listdatabases\" command.", 0);
 
             // todo: move to func. getRepSetStatus();
+            std::string repSetName;
             mongo::HostAndPort repPrimary;
             std::vector<bool> repMembersHealths;
             if (_connSettings->isReplicaSet()) 
@@ -199,6 +200,8 @@ namespace Robomongo
                 // Refresh view of Replica Set Monitor to get live data
                 auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
                 repSetMonitor->startOrContinueRefresh().refreshAll();
+
+                repSetName = repSetMonitor->getName();
 
                 // Update connection settings with primary(master) address and port
                 repPrimary = repSetMonitor->getMasterOrUassert();
@@ -217,8 +220,8 @@ namespace Robomongo
 
             resetGlobalSSLparams();
 
-            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connSettings->getFullAddress(), 
-                dbNames, client->getVersion(), client->getStorageEngineType()), event->connectionType, repPrimary, repMembersHealths));
+            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connSettings->getFullAddress(), dbNames, 
+                client->getVersion(), client->getStorageEngineType()), event->connectionType, repSetName, repPrimary, repMembersHealths));
         } catch(const std::exception &ex) {
             resetGlobalSSLparams();
 

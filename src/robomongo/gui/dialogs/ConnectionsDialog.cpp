@@ -14,6 +14,8 @@
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/ReplicaSetSettings.h"
+#include "robomongo/core/settings/SslSettings.h"
+#include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
@@ -47,9 +49,10 @@ namespace Robomongo
         void setConnection(ConnectionSettings *connection)
         {
             if (connection->isReplicaSet()) {
-                setText(0, QtUtils::toQString(connection->connectionName()) + " [Replica Set]");
+                setText(0, QtUtils::toQString(connection->connectionName()));
                 auto const repSetSize = connection->replicaSetSettings()->members().size();
-                setText(1, QString::number(repSetSize) + " Node(s) (" + QtUtils::toQString(connection->getFullAddress()) + ")");
+                setText(1, QString::number(repSetSize) + " Node(s) [Replica Set] (" + QtUtils::toQString(connection->getFullAddress()) + ")");
+
             }
             else {
                 setText(0, QtUtils::toQString(connection->connectionName()));
@@ -75,6 +78,14 @@ namespace Robomongo
 
             if (connection->imported()) {
                 setIcon(0, GuiRegistry::instance().serverImportedIcon());
+            }
+
+            // Security header column 3
+            if (connection->sslSettings()->sslEnabled()) {
+                setText(3, " [SSL]");
+            }
+            if (connection->sshSettings()->enabled()) {
+                setText(3, text(3) + " [SSH]");
             }
         }
 
@@ -114,12 +125,13 @@ namespace Robomongo
         _listWidget->setIndentation(5);
 
         QStringList colums;
-        colums << "Name" << "Address" << "Auth. Database / User";
+        colums << "Name" << "Address" << "Auth. Database / User" << "Security";
         _listWidget->setHeaderLabels(colums);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         _listWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(1, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(2, QHeaderView::Stretch);
+        _listWidget->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
 #endif
         //_listWidget->setViewMode(QListView::ListMode);
         _listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);

@@ -31,17 +31,19 @@ namespace Robomongo
         CreateConnectionDialog(ConnectionsDialog *parent);
         ConnectionSettings *const connection() const { return _connection; }
 
-        public Q_SLOTS:
+    public Q_SLOTS:
         /**
         * @brief Accept() is called when user agree with entered data.
         */
         virtual void accept();
 
-        private Q_SLOTS:
+    private Q_SLOTS:
         /**
         * @brief Test current connection
         */
         void testConnection();
+
+        void on_createConnLinkActivated();
 
     private:
         bool validateAndApply();

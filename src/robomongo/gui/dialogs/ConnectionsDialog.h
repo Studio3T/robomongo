@@ -47,6 +47,9 @@ namespace Robomongo
         */
         void add(ConnectionSettings *connection);
 
+        // todo: 
+        void addManually();
+
     protected:
         /**
         * @brief Reimplementing closeEvent in order to do some pre-close actions.
@@ -55,8 +58,6 @@ namespace Robomongo
 
     private Q_SLOTS:
         void linkActivated(const QString &link);
-
-
 
         /**
          * @brief Initiate 'add' action, usually when user clicked on Add button

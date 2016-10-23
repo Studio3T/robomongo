@@ -34,6 +34,7 @@ namespace Robomongo
         setWindowIcon(GuiRegistry::instance().serverIcon());
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint); // Remove help button (?)
         setMinimumWidth(450);
+        //setAttribute(Qt::WA_DeleteOnClose);
 
         // Splitter-Left
         auto label01 = new QLabel("Replica Set or Sharded Cluster");
@@ -43,6 +44,10 @@ namespace Robomongo
         wid1->setPixmap(repSetImage);
         
         _uriLineEdit = new QLineEdit("mongodb://localhost:27017,localhost:27018,localhost:27019/admin?replicaSet=repset");
+
+        auto const& createConnStr= QString("b) <a style='color: %1' href='create'>Create connection manually</a>").arg("#106CD6");
+        auto createConnLabel = new QLabel(createConnStr);
+        VERIFY(connect(createConnLabel, SIGNAL(linkActivated(QString)), this, SLOT(on_createConnLinkActivated())));
 
         //auto nameLineEdit = new QLineEdit("New Connection");
         //auto nameLay = new QGridLayout;
@@ -64,7 +69,7 @@ namespace Robomongo
         splitterL->addWidget(new QLabel("a) I have a connection string URI:"));
         splitterL->addWidget(_uriLineEdit);
         splitterL->addWidget(new QLabel(""));
-        splitterL->addWidget(new QLabel(QString("b) <a style='color: %1' href='create'>Create connection manually</a>").arg("#106CD6")));
+        splitterL->addWidget(createConnLabel);
         splitterL->addWidget(new QLabel(""));
 
 
@@ -181,5 +186,11 @@ namespace Robomongo
             return;
 
         diag.exec();
+    }
+
+    void CreateConnectionDialog::on_createConnLinkActivated()
+    {
+        close();
+        _connectionsDialog->addManually();
     }
 }

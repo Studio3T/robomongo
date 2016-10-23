@@ -52,7 +52,6 @@ namespace Robomongo
                 setText(0, QtUtils::toQString(connection->connectionName()));
                 auto const repSetSize = connection->replicaSetSettings()->members().size();
                 setText(1, QString::number(repSetSize) + " Node(s) [Replica Set] (" + QtUtils::toQString(connection->getFullAddress()) + ")");
-
             }
             else {
                 setText(0, QtUtils::toQString(connection->connectionName()));
@@ -80,7 +79,7 @@ namespace Robomongo
                 setIcon(0, GuiRegistry::instance().serverImportedIcon());
             }
 
-            // Security header column 3
+            // Security header column (column 3)
             if (connection->sslSettings()->sslEnabled()) {
                 setText(3, " [SSL]");
             }
@@ -259,19 +258,25 @@ namespace Robomongo
     {
         auto createConnection = new CreateConnectionDialog(this);
         createConnection->exec();
+    }
 
-        //ConnectionSettings *newModel = new ConnectionSettings();
-        //ConnectionDialog editDialog(newModel);
+    /**
+    * @brief Initiate 'add' action, usually when user clicked on Add button
+    */
+    void ConnectionsDialog::addManually()
+    {
+        auto newModel = new ConnectionSettings();
+        ConnectionDialog editDialog(newModel);
 
-        //// Do nothing if not accepted
-        //if (editDialog.exec() != QDialog::Accepted) {
-        //    delete newModel;
-        //    return;
-        //}
+        // Do nothing if not accepted
+        if (editDialog.exec() != QDialog::Accepted) {
+            delete newModel;
+            return;
+        }
 
-        //_settingsManager->addConnection(newModel);
-        //_listWidget->setFocus();
-        //add(newModel);
+        _settingsManager->addConnection(newModel);
+        _listWidget->setFocus();
+        add(newModel);
     }
 
     /**
@@ -279,14 +284,13 @@ namespace Robomongo
      */
     void ConnectionsDialog::edit()
     {
-        ConnectionListWidgetItem *currentItem =
-            (ConnectionListWidgetItem *) _listWidget->currentItem();
+        auto currentItem = dynamic_cast<ConnectionListWidgetItem*>(_listWidget->currentItem());
 
         // Do nothing if no item selected
-        if (currentItem == 0)
+        if (!currentItem)
             return;
 
-        ConnectionSettings *connection = currentItem->connection();
+        auto connection = currentItem->connection();
         boost::scoped_ptr<ConnectionSettings> clonedConnection(connection->clone());
         ConnectionDialog editDialog(clonedConnection.get());
 

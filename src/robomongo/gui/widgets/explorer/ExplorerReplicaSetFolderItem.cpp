@@ -8,6 +8,7 @@
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 namespace
 {
@@ -36,6 +37,10 @@ namespace Robomongo
         BaseClass::_contextMenu->addAction(repSetStatus);
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(refresh);
+
+        setIcon(0, GuiRegistry::instance().folderIcon());
+        // todo: use repSize()
+        setText(0, "Replica Set (" + QString::number(_server->getRepMembersHealths().size()) + " nodes)");
 
         setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);

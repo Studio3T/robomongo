@@ -682,7 +682,7 @@ namespace Robomongo
             mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
         }
 
-        // --- Perform connection ---
+        // --- Perform connection attempt ---
         if (_connSettings->isReplicaSet()) {  // connection to replica set 
             if (!_dbclientRepSet) {
                 // todo: where to get name of replica? (i.e. repset) - todo: this if causes crash after app close

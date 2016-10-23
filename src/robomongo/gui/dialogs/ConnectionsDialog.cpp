@@ -20,6 +20,7 @@
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/ConnectionDialog.h"
+#include "robomongo/gui/dialogs/CreateConnectionDialog.h"
 
 namespace Robomongo
 {
@@ -244,18 +245,21 @@ namespace Robomongo
      */
     void ConnectionsDialog::add()
     {
-        ConnectionSettings *newModel = new ConnectionSettings();
-        ConnectionDialog editDialog(newModel);
+        auto createConnection = new CreateConnectionDialog(this);
+        createConnection->exec();
 
-        // Do nothing if not accepted
-        if (editDialog.exec() != QDialog::Accepted) {
-            delete newModel;
-            return;
-        }
+        //ConnectionSettings *newModel = new ConnectionSettings();
+        //ConnectionDialog editDialog(newModel);
 
-        _settingsManager->addConnection(newModel);
-        _listWidget->setFocus();
-        add(newModel);
+        //// Do nothing if not accepted
+        //if (editDialog.exec() != QDialog::Accepted) {
+        //    delete newModel;
+        //    return;
+        //}
+
+        //_settingsManager->addConnection(newModel);
+        //_listWidget->setFocus();
+        //add(newModel);
     }
 
     /**
@@ -389,8 +393,9 @@ namespace Robomongo
      */
     void ConnectionsDialog::add(ConnectionSettings *connection)
     {
-        ConnectionListWidgetItem *item = new ConnectionListWidgetItem(connection);
+        auto item = new ConnectionListWidgetItem(connection);
         _listWidget->addTopLevelItem(item);
+        _listWidget->setCurrentItem(item);
         _connectionItems.push_back(item);
     }
 

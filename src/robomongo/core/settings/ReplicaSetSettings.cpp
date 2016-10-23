@@ -9,6 +9,14 @@ namespace Robomongo
         : _members(), _readPreference(ReadPreference::PRIMARY) 
     {}
 
+    ReplicaSetSettings::ReplicaSetSettings(const mongo::MongoURI& uri)
+        : ReplicaSetSettings()
+    {
+        for (auto const& server : uri.getServers()) {
+            _members.push_back(server.host() + ":" + std::to_string(server.port()));
+        }
+    }
+
     ReplicaSetSettings *ReplicaSetSettings::clone() const 
     {
         ReplicaSetSettings *cloned = new ReplicaSetSettings(*this);

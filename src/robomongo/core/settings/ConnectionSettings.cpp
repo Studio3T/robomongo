@@ -8,6 +8,8 @@
 #include "robomongo/core/settings/SslSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
 
+#include <mongo/client/mongo_uri.h>
+
 namespace
 {
     const unsigned port = 27017;
@@ -31,8 +33,25 @@ namespace Robomongo
         _sshSettings(new SshSettings()),
         _sslSettings(new SslSettings()),
         _isReplicaSet(false),
-        _replicaSetSettings(new ReplicaSetSettings())
+        _replicaSetSettings(new ReplicaSetSettings())       // todo: dont create if not replica set
     { }
+
+    ConnectionSettings::ConnectionSettings(const mongo::MongoURI& uri) 
+        : _connectionName(defaultNameConnection),
+        _host(defaultServerHost),
+        _port(port),
+        _imported(false),
+        _sshSettings(new SshSettings()),
+        _sslSettings(new SslSettings()),
+        _isReplicaSet((uri.type() == mongo::ConnectionString::ConnectionType::SET)),
+        _replicaSetSettings(new ReplicaSetSettings(uri))    // todo: dont create if not replica set
+    {
+        if (!uri.getServers().empty()) {
+            _host = uri.getServers().front().host();
+            _port = uri.getServers().front().port();
+        }
+
+    }
 
     void ConnectionSettings::fromVariant(const QVariantMap &map) {
         setConnectionName(QtUtils::toStdString(map.value("connectionName").toString()));

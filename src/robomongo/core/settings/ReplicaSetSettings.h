@@ -5,6 +5,7 @@
 #include <QVariantMap>
 
 #include <mongo/util/net/hostandport.h>
+#include <mongo/client/mongo_uri.h>
 
 namespace Robomongo
 {
@@ -18,6 +19,8 @@ namespace Robomongo
         };
 
         ReplicaSetSettings();
+        
+        ReplicaSetSettings(const mongo::MongoURI& uri);
 
         /**
          * Clones Replica Set settings.
@@ -40,7 +43,7 @@ namespace Robomongo
         void setReadPreference(ReadPreference readPreference) { _readPreference = readPreference; }
 
     private:
-        std::vector<std::string> _members;
+        std::vector<std::string> _members;  // todo: refactor to std::vector<HostAndPort>
         ReadPreference _readPreference;
     };
 }

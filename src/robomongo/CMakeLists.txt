@@ -75,6 +75,7 @@ set(SOURCES
     # Isolated scope #4
     gui/dialogs/PreferencesDialog.cpp
     gui/dialogs/ConnectionsDialog.cpp
+    gui/dialogs/CreateConnectionDialog.cpp
     gui/dialogs/ExportDialog.cpp
 
     # Isolated scope #5

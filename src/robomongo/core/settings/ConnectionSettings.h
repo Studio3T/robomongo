@@ -3,7 +3,10 @@
 #include <QString>
 #include <QVariant>
 #include <QVariantMap>
+
 #include <mongo/client/dbclientinterface.h>
+#include "mongo/client/mongo_uri.h"
+
 #include <boost/algorithm/string.hpp>
 
 namespace Robomongo
@@ -25,6 +28,11 @@ namespace Robomongo
          * @brief Creates ConnectionSettings with default values
          */
         ConnectionSettings();
+        
+        /**
+        * @brief Creates ConnectionSettings from mongo connection string URI
+        */
+        ConnectionSettings(const mongo::MongoURI& uri);
 
         explicit ConnectionSettings(QVariantMap map);
 

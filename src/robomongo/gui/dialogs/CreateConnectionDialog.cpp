@@ -180,7 +180,7 @@ namespace Robomongo
         }
 
         auto uri = uriWithStatus->getValue();
-        auto connection = ConnectionSettings(uri);    // todo: refactor
+        ConnectionSettings connection(uri);    // todo: refactor
         ConnectionDiagnosticDialog diag(&connection, this);
         if (!diag.continueExec())
             return;

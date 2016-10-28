@@ -51,7 +51,7 @@ namespace Robomongo
             if (connection->isReplicaSet()) {
                 setText(0, QtUtils::toQString(connection->connectionName()));
                 auto const repSetSize = connection->replicaSetSettings()->members().size();
-                setText(1, QString::number(repSetSize) + " Node(s) [Replica Set] (" + QtUtils::toQString(connection->getFullAddress()) + ")");
+                setText(1, QString::number(repSetSize) + " Node(s) (" + QtUtils::toQString(connection->getFullAddress()) + ")");
             }
             else {
                 setText(0, QtUtils::toQString(connection->connectionName()));
@@ -79,12 +79,17 @@ namespace Robomongo
                 setIcon(0, GuiRegistry::instance().serverImportedIcon());
             }
 
-            // Security header column (column 3)
+            // Security header column (column[3])
             if (connection->sslSettings()->sslEnabled()) {
                 setText(3, " [SSL]");
             }
             if (connection->sshSettings()->enabled()) {
                 setText(3, text(3) + " [SSH]");
+            }
+
+            // Security header column (column[4])
+            if (connection->isReplicaSet()) {
+                setText(4, "Replica Set");
             }
         }
 
@@ -124,13 +129,14 @@ namespace Robomongo
         _listWidget->setIndentation(5);
 
         QStringList colums;
-        colums << "Name" << "Address" << "Auth. Database / User" << "Security";
+        colums << "Name" << "Address" << "Auth. Database / User" << "Security" << "Topology";
         _listWidget->setHeaderLabels(colums);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         _listWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(1, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(2, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+        _listWidget->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
 #endif
         //_listWidget->setViewMode(QListView::ListMode);
         _listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -215,7 +221,7 @@ namespace Robomongo
      */
     void ConnectionsDialog::accept()
     {
-        ConnectionListWidgetItem *currentItem = (ConnectionListWidgetItem *) _listWidget->currentItem();
+        auto currentItem = dynamic_cast<ConnectionListWidgetItem*>(_listWidget->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
@@ -255,9 +261,31 @@ namespace Robomongo
      * @brief Initiate 'add' action, usually when user clicked on Add button
      */
     void ConnectionsDialog::add()
-    {
+    {       
         auto createConnection = new CreateConnectionDialog(this);
-        createConnection->exec();
+        if (createConnection->exec() != QDialog::Accepted) { // Do nothing if not accepted
+            return;
+        }
+
+        std::unique_ptr<ConnectionSettings> newConnection = nullptr;    // todo: refactor
+        if (createConnection->fromURI())
+        {
+            auto mongoUriWithStatus = createConnection->getMongoUriWithStatus();
+            newConnection.reset(new ConnectionSettings(mongoUriWithStatus->getValue()));
+        }
+        else // to manual configuration
+        {
+            newConnection.reset(new ConnectionSettings);
+        }
+
+        ConnectionDialog editDialog(newConnection.get());
+        if (editDialog.exec() != QDialog::Accepted) {  // Do nothing if not accepted
+            return;
+        }
+
+        add(newConnection.get());
+        _settingsManager->addConnection(newConnection.release());
+        _listWidget->setFocus();
     }
 
     /**
@@ -265,7 +293,7 @@ namespace Robomongo
     */
     void ConnectionsDialog::addManually()
     {
-        auto newModel = new ConnectionSettings();
+        auto newModel = new ConnectionSettings;
         ConnectionDialog editDialog(newModel);
 
         // Do nothing if not accepted

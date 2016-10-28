@@ -687,26 +687,30 @@ namespace Robomongo
         if (_connSettings->isReplicaSet()) {  // connection to replica set 
             if (!_dbclientRepSet) {
 
+                std::string setName = _connSettings->replicaSetSettings()->setName();
                 // todo: move to func. "getSetName()"
-                std::string setName = "";
-                auto dbclientTemp = upDBClientConnection(new mongo::DBClientConnection(true, 10));
-                
-                // Try connecting to the nodes one by one until getting replica set name.
-                for (auto const& node : _connSettings->replicaSetSettings()->membersToHostAndPort())
+                // If set name doesn't exist in the settings, get it from an on-line replica node
+                if (setName.empty())
                 {
-                    mongo::Status const status = dbclientTemp->connect(node);
-                    if (status.isOK()) 
+                    auto dbclientTemp = upDBClientConnection(new mongo::DBClientConnection(true, 10));
+
+                    // Try connecting to the nodes one by one until getting replica set name.
+                    for (auto const& node : _connSettings->replicaSetSettings()->membersToHostAndPort())
                     {
-                        init();
-                        MongoShellExecResult result = _scriptEngine->exec("rs.status()", "");
-                        if (!result.results().empty()) 
+                        mongo::Status const status = dbclientTemp->connect(node);
+                        if (status.isOK())
                         {
-                            auto resultDocs = result.results().front().documents();
-                            if (!resultDocs.empty()) 
+                            init();
+                            MongoShellExecResult result = _scriptEngine->exec("rs.status()", "");
+                            if (!result.results().empty())
                             {
-                                setName = resultDocs.front()->bsonObj().getStringField("set");
-                                if(!setName.empty()) // We get the information, finish the loop
-                                    break;
+                                auto resultDocs = result.results().front().documents();
+                                if (!resultDocs.empty())
+                                {
+                                    setName = resultDocs.front()->bsonObj().getStringField("set");
+                                    if (!setName.empty()) // We get the information, finish the loop
+                                        break;
+                                }
                             }
                         }
                     }

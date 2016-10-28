@@ -28,7 +28,7 @@ namespace Robomongo
     {
         //VERIFY(connect(this, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(on_expanded())));
 
-        auto repSetStatus = new QAction("Status", this);
+        auto repSetStatus = new QAction("Status of Replica Set", this);
         VERIFY(connect(repSetStatus, SIGNAL(triggered()), SLOT(on_repSetStatus())));
 
         auto refresh = new QAction("Refresh", this);
@@ -56,6 +56,5 @@ namespace Robomongo
         _server->tryRefresh();
         _server->loadDatabases();
     }
-
 }
 

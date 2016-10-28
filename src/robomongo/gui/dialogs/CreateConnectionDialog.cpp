@@ -28,7 +28,8 @@ namespace Robomongo
     * @brief Constructs dialog with specified connection
     */
     CreateConnectionDialog::CreateConnectionDialog(ConnectionsDialog* parent)
-        : QDialog(), _connectionsDialog(parent), _connection(nullptr)
+        : QDialog(), _connectionsDialog(parent), _connection(nullptr), _fromURI(true),   // todo: _fromURI:false
+        _mongoUriWithStatus(nullptr)
     {
         setWindowTitle("Create New Connection");
         setWindowIcon(GuiRegistry::instance().serverIcon());
@@ -100,10 +101,10 @@ namespace Robomongo
         QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Save);
+        buttonBox->button(QDialogButtonBox::Save)->setText("Next");
         VERIFY(connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept())));
         VERIFY(connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject())));
         bottomLayout->addWidget(buttonBox);
-
 
         // main layout
         auto mainLayout = new QVBoxLayout;
@@ -127,15 +128,11 @@ namespace Robomongo
         //    QDialog::accept();
         //}
 
-        auto uriWithStatus = getUriWithStatus();
+        std::unique_ptr<mongo::StatusWith<mongo::MongoURI>> uriWithStatus = getUriWithStatus();
         if (!uriWithStatus || !uriWithStatus->isOK()) {
             return;
         }
-
-        auto uri = uriWithStatus->getValue();
-        auto connection = new ConnectionSettings(uri);    // todo: refactor
-        _connectionsDialog->add(connection);
-
+        _mongoUriWithStatus.reset(uriWithStatus.release());
         QDialog::accept();
     }
 
@@ -144,13 +141,13 @@ namespace Robomongo
         return true;
     }
 
-    std::unique_ptr<CreateConnectionDialog::MongoURIwithStatus> CreateConnectionDialog::getUriWithStatus()
+    std::unique_ptr<mongo::StatusWith<mongo::MongoURI>> CreateConnectionDialog::getUriWithStatus()
     {
         const std::string& url = _uriLineEdit->text().toStdString();
 
-        std::unique_ptr<MongoURIwithStatus> uriWithStatus = nullptr;
+        std::unique_ptr<mongo::StatusWith<mongo::MongoURI>> uriWithStatus = nullptr;
         try {
-            uriWithStatus.reset(new MongoURIwithStatus(mongo::MongoURI::parse(url)));
+            uriWithStatus.reset(new mongo::StatusWith<mongo::MongoURI>(mongo::MongoURI::parse(url)));
             if (!uriWithStatus->isOK()) {
                 QMessageBox::critical(this, "Error", "Failed to parse connection string URI.\n"
                                       "Reason: " + QString::fromStdString(uriWithStatus->getStatus().reason()));
@@ -190,7 +187,7 @@ namespace Robomongo
 
     void CreateConnectionDialog::on_createConnLinkActivated()
     {
-        close();
-        _connectionsDialog->addManually();
+        _fromURI = false;
+        accept();
     }
 }

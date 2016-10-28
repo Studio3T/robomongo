@@ -59,10 +59,12 @@ namespace Robomongo
         }
 
         auto credential = new CredentialSettings();
-        credential->setUserName(uri.getDatabase());
+        credential->setUserName(uri.getUser());
         credential->setUserPassword(uri.getPassword());
         credential->setDatabaseName(uri.getDatabase());
-        credential->setEnabled(true); 
+        if (!credential->userName().empty() && !credential->userPassword().empty()) {   // todo:
+            credential->setEnabled(true);
+        }
         addCredential(credential);
     }
 

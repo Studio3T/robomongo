@@ -31,6 +31,15 @@ namespace Robomongo
         CreateConnectionDialog(ConnectionsDialog *parent);
         ConnectionSettings *const connection() const { return _connection; }
 
+        // todo:
+        //mongo::MongoURI getMongoUri() const { return _mongoUri; }
+        bool fromURI() const { return _fromURI; }
+
+        std::unique_ptr<mongo::StatusWith<mongo::MongoURI>> getMongoUriWithStatus() 
+        { 
+            return std::move(_mongoUriWithStatus); 
+        }
+
     public Q_SLOTS:
         /**
         * @brief Accept() is called when user agree with entered data.
@@ -64,7 +73,9 @@ namespace Robomongo
         * @brief Edited connection
         */
         ConnectionSettings* _connection;
-        
         ConnectionsDialog* _connectionsDialog;
+
+        std::unique_ptr<mongo::StatusWith<mongo::MongoURI>> _mongoUriWithStatus;
+        bool _fromURI;
     };
 }

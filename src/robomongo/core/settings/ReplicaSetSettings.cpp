@@ -6,12 +6,13 @@ namespace Robomongo
 {
 
     ReplicaSetSettings::ReplicaSetSettings() 
-        : _members(), _readPreference(ReadPreference::PRIMARY) 
+        : _setName(""), _members(), _readPreference(ReadPreference::PRIMARY) 
     {}
 
     ReplicaSetSettings::ReplicaSetSettings(const mongo::MongoURI& uri)
-        : ReplicaSetSettings()
+        : ReplicaSetSettings() 
     {
+        _setName = uri.getSetName();
         for (auto const& server : uri.getServers()) {
             _members.push_back(server.host() + ":" + std::to_string(server.port()));
         }
@@ -26,6 +27,8 @@ namespace Robomongo
     QVariant ReplicaSetSettings::toVariant() const 
     {
         QVariantMap map;
+        map.insert("setName", QString::fromStdString(_setName));
+        // todo: refactor
         int idx = 0;
         for (std::string const& str : _members) {
             map.insert(QString::number(idx), QtUtils::toQString(str));
@@ -37,8 +40,10 @@ namespace Robomongo
 
     void ReplicaSetSettings::fromVariant(const QVariantMap &map) 
     {
+        setSetName(map.value("setName").toString().toStdString());
         // Extract and set replica members
         std::vector<std::string> vec;
+        // todo: refactor
         auto itr = map.begin();
         int idx = 0;
         do

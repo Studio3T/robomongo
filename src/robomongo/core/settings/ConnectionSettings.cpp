@@ -51,6 +51,19 @@ namespace Robomongo
             _port = uri.getServers().front().port();
         }
 
+        auto str = std::string(uri.getOptions().getStringField("ssl"));
+        auto sslEnabled = ("true" == str);
+        if (sslEnabled) {
+            _sslSettings->enableSSL(true);
+            _sslSettings->setAllowInvalidCertificates(true);
+        }
+
+        auto credential = new CredentialSettings();
+        credential->setUserName(uri.getDatabase());
+        credential->setUserPassword(uri.getPassword());
+        credential->setDatabaseName(uri.getDatabase());
+        credential->setEnabled(true); 
+        addCredential(credential);
     }
 
     void ConnectionSettings::fromVariant(const QVariantMap &map) {

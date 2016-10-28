@@ -8,8 +8,8 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QComboBox>
-#include <QListWidget>
-#include <QListWidgetItem>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -47,33 +47,38 @@ namespace Robomongo
         _addInfoLabel->setContentsMargins(0, -2, 0, 20);
 
         _membersLabel = new QLabel("Members:");
-        _members = new QListWidget;
+        _members = new QTreeWidget;
+        _members->setHeaderHidden(true);
+        _members->setIndentation(0);
+
         if (_settings->isReplicaSet()) 
         {
             if (replicaSettings->members().empty()) 
             {
-                auto item = new QListWidgetItem("localhost:27017");
+                auto item = new QTreeWidgetItem;
+                item->setText(0, "localhost:27017");
                 item->setFlags(item->flags() | Qt::ItemIsEditable);
-                _members->addItem(item);
+                _members->addTopLevelItem(item);
             }
             else            
             {
                 for (const std::string& str : replicaSettings->members()) 
                 {
-                    auto item = new QListWidgetItem(QString::fromStdString(str));
+                    auto item = new QTreeWidgetItem;
+                    item->setText(0, QString::fromStdString(str));
                     item->setFlags(item->flags() | Qt::ItemIsEditable);
-                    _members->addItem(item);
+                    _members->addTopLevelItem(item);
                 }
             }
         }
 
         int const BUTTON_SIZE = 60;
-        _addButton = new QPushButton("Add");
-        _addButton->setFixedWidth(BUTTON_SIZE);
-        _removeButton = new QPushButton("Remove");
-        _removeButton->setFixedWidth(BUTTON_SIZE);
-        _discoverButton = new QPushButton("Discover");
-        _discoverButton->setFixedWidth(BUTTON_SIZE);
+        _addButton = new QPushButton("+");
+        _addButton->setFixedWidth(30);
+        _removeButton = new QPushButton("-");
+        _removeButton->setFixedWidth(30);
+        _discoverButton = new QPushButton("Find Set");
+        _discoverButton->setFixedWidth(_discoverButton->sizeHint().width()*0.8);
         VERIFY(connect(_addButton, SIGNAL(clicked()), this, SLOT(on_addButton_clicked())));
 
         auto hLayout = new QHBoxLayout;
@@ -130,10 +135,10 @@ namespace Robomongo
         if (_settings->isReplicaSet()) {
             // save replica members
             std::vector<std::string> members;
-            for (int i = 0; i < _members->count(); ++i)
+            for (int i = 0; i < _members->topLevelItemCount(); ++i)
             {
-                QListWidgetItem const* item = _members->item(i);
-                members.push_back(item->text().toStdString());
+                QTreeWidgetItem const* item = _members->topLevelItem(i);
+                members.push_back(item->text(0).toStdString());
             }
             replicaSettings->setMembers(members);
             // save read preference option 
@@ -170,8 +175,9 @@ namespace Robomongo
 
     void ConnectionBasicTab::on_addButton_clicked()
     {
-        auto item = new QListWidgetItem("localhost:27017");
+        auto item = new QTreeWidgetItem;
+        item->setText(0, "localhost:27017");
         item->setFlags(item->flags() | Qt::ItemIsEditable);
-        _members->addItem(item);
+        _members->addTopLevelItem(item);
     }
 }

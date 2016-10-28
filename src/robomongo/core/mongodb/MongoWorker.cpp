@@ -19,6 +19,7 @@
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/settings/SslSettings.h"
+#include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
 
@@ -140,7 +141,7 @@ namespace Robomongo
 
         try {
             mongo::DBClientBase *conn = getConnection(true);
-            if (conn == NULL) {
+            if (nullptr == conn) {
                 // Protection by default value: Logically/ideally, this error should never be seen.
                 auto errorReason = std::string("Connection failure: Unknown error.");
                 if (_connSettings->sslSettings()->sslEnabled())
@@ -685,9 +686,39 @@ namespace Robomongo
         // --- Perform connection attempt ---
         if (_connSettings->isReplicaSet()) {  // connection to replica set 
             if (!_dbclientRepSet) {
-                // todo: where to get name of replica? (i.e. repset) - todo: this if causes crash after app close
-                _dbclientRepSet = std::unique_ptr<mongo::DBClientReplicaSet>(
-                    new mongo::DBClientReplicaSet("repset",_connSettings->replicaSetSettings()->membersToHostAndPort(), _mongoTimeoutSec));
+
+                // todo: move to func. "getSetName()"
+                std::string setName = "";
+                auto dbclientTemp = upDBClientConnection(new mongo::DBClientConnection(true, 10));
+                
+                // Try connecting to the nodes one by one until getting replica set name.
+                for (auto const& node : _connSettings->replicaSetSettings()->membersToHostAndPort())
+                {
+                    mongo::Status const status = dbclientTemp->connect(node);
+                    if (status.isOK()) 
+                    {
+                        init();
+                        MongoShellExecResult result = _scriptEngine->exec("rs.status()", "");
+                        if (!result.results().empty()) 
+                        {
+                            auto resultDocs = result.results().front().documents();
+                            if (!resultDocs.empty()) 
+                            {
+                                setName = resultDocs.front()->bsonObj().getStringField("set");
+                                if(!setName.empty()) // We get the information, finish the loop
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+                if (setName.empty()) {  // It is not possible to continue with empty set name
+                    return nullptr;
+                }
+
+                auto const& membersHostsAndPorts = _connSettings->replicaSetSettings()->membersToHostAndPort();
+                _dbclientRepSet = upDBClientReplicaSet(new mongo::DBClientReplicaSet(setName, membersHostsAndPorts, 
+                                                       _mongoTimeoutSec));
 
                 bool const connStatus = _dbclientRepSet->connect();
                 
@@ -701,7 +732,7 @@ namespace Robomongo
             if (!_dbclient) {
                 // Timeout for operations
                 // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
-                _dbclient = std::unique_ptr<mongo::DBClientConnection>(new mongo::DBClientConnection(true, _mongoTimeoutSec));
+                _dbclient = upDBClientConnection(new mongo::DBClientConnection(true, _mongoTimeoutSec));
 
                 mongo::Status status = _dbclient->connect(_connSettings->info());
 

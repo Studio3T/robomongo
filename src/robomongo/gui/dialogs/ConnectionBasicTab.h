@@ -7,7 +7,7 @@ class QLabel;
 class QCheckBox;
 class QPushButton;
 class QComboBox;
-class QListWidget;
+class QTreeWidget;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -39,7 +39,7 @@ namespace Robomongo
         QLineEdit *_serverPort;
         QLabel *_addInfoLabel;
         QLabel *_membersLabel;
-        QListWidget *_members;
+        QTreeWidget *_members;
         QPushButton *_addButton;
         QPushButton *_removeButton;
         QPushButton *_discoverButton;

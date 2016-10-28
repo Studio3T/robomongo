@@ -27,6 +27,9 @@ namespace Robomongo
         typedef std::vector<std::string> DatabasesContainerType;
         explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
                              int mongoTimeoutSec, int shellTimeoutSec, QObject *parent = NULL);
+        using upDBClientReplicaSet = std::unique_ptr<mongo::DBClientReplicaSet>;
+        using upDBClientConnection = std::unique_ptr<mongo::DBClientConnection>;
+
         ~MongoWorker();
         enum { pingTimeMs = 60 * 1000 };
         void interrupt();

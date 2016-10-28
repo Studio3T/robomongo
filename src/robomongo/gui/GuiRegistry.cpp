@@ -44,6 +44,18 @@ namespace Robomongo
         return importedIcon;
     }
 
+    const QIcon &GuiRegistry::serverPrimaryIcon() const
+    {
+        static const QIcon icon(":/robomongo/icons/server_primary_16x16.png");
+        return icon;
+    }
+
+    const QIcon &GuiRegistry::serverSecondaryIcon() const
+    {
+        static const QIcon icon(":/robomongo/icons/server_secondary_16x16.png");
+        return icon;
+    }
+
     const QIcon &GuiRegistry::replicaSetIcon() const
     {
         static const QIcon replicaSetIc(":/robomongo/icons/replica_set_16x16.png");

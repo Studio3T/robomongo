@@ -30,6 +30,8 @@ namespace Robomongo
          */
         const QIcon& serverIcon() const;
         const QIcon& serverImportedIcon() const;
+        const QIcon& serverPrimaryIcon() const;
+        const QIcon& serverSecondaryIcon() const;
         const QIcon& replicaSetIcon() const;
         const QIcon& saveIcon() const;
         const QIcon& openIcon() const;

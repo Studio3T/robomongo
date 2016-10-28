@@ -34,6 +34,8 @@
         <file>icons/mongodb_16x16.png</file>
         <file>icons/connect_24x24.png</file>
         <file>icons/server_16x16.png</file>
+        <file>icons/server_primary_16x16.png</file>
+        <file>icons/server_secondary_16x16.png</file>
         <file>icons/server_imported_16x16.png</file>
         <file>icons/replica_set_16x16.png</file>
         <file>icons/execute_24x24.png</file>

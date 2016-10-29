@@ -210,7 +210,15 @@ namespace Robomongo
 
         server->runWorkerThread();
 
-        LOG_MSG(QString("Connecting to %1...").arg(QtUtils::toQString(server->connectionRecord()->getFullAddress())), mongo::logger::LogSeverity::Info());
+        QString serverAddress = "unknown";
+        if (settings->isReplicaSet()) {
+            serverAddress = QString::fromStdString(settings->connectionName()) + " [Replica Set]";
+        }
+        else {
+            serverAddress = QString::fromStdString(settings->getFullAddress());
+        }
+
+        LOG_MSG(QString("Connecting to %1...").arg(serverAddress), mongo::logger::LogSeverity::Info());
         server->tryConnect();
         return server;
     }

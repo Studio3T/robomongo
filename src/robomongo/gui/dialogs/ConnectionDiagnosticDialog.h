@@ -41,7 +41,7 @@ namespace Robomongo
         void authStatus(State state);
         void listStatus(State state);
 
-        ConnectionSettings *_connection;
+        ConnectionSettings *_connSettings;
         QIcon _yesIcon;
         QIcon _noIcon;
         QIcon _questionIcon;

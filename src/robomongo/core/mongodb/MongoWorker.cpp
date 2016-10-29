@@ -687,6 +687,7 @@ namespace Robomongo
         if (_connSettings->isReplicaSet()) {  // connection to replica set 
             if (!_dbclientRepSet) {
 
+                // Step-1: Retrieve set name if we do not have it
                 std::string setName = _connSettings->replicaSetSettings()->setName();
                 // todo: move to func. "getSetName()"
                 // If set name doesn't exist in the settings, get it from an on-line replica node
@@ -720,6 +721,7 @@ namespace Robomongo
                     return nullptr;
                 }
 
+                // Step-2: We have the set name, try connect to replica set
                 auto const& membersHostsAndPorts = _connSettings->replicaSetSettings()->membersToHostAndPort();
                 _dbclientRepSet = upDBClientReplicaSet(new mongo::DBClientReplicaSet(setName, membersHostsAndPorts, 
                                                        _mongoTimeoutSec));

@@ -49,48 +49,48 @@ namespace Robomongo
         void setConnection(ConnectionSettings *connection)
         {
             if (connection->isReplicaSet()) {
+                setIcon(0, GuiRegistry::instance().replicaSetIcon());
                 setText(0, QtUtils::toQString(connection->connectionName()));
                 auto const repSetSize = connection->replicaSetSettings()->members().size();
                 setText(1, QString::number(repSetSize) + " Node(s) (" + QtUtils::toQString(connection->getFullAddress()) + ")");
             }
             else {
+                setIcon(0, GuiRegistry::instance().serverIcon());
                 setText(0, QtUtils::toQString(connection->connectionName()));
                 setText(1, QtUtils::toQString(connection->getFullAddress()));
             }
 
-            if (connection->hasEnabledPrimaryCredential()) {
-                QString authString = QString("%1 / %2").arg(QtUtils::toQString(connection->primaryCredential()->databaseName())).arg(QtUtils::toQString(connection->primaryCredential()->userName()));
-                setText(2, authString);
-                setIcon(2, GuiRegistry::instance().keyIcon());
-            } else {
-                setIcon(2, QIcon());
-                setText(2, "");
-            }
-
-            _connection = connection;
-            if (connection->isReplicaSet()) { 
-                setIcon(0, GuiRegistry::instance().replicaSetIcon());
-            }
-            else {
-                setIcon(0, GuiRegistry::instance().serverIcon());
-            }
+            _connection = connection;   // todo: 
 
             if (connection->imported()) {
                 setIcon(0, GuiRegistry::instance().serverImportedIcon());
             }
 
-            // Security header column (column[3])
-            if (connection->sslSettings()->sslEnabled()) {
-                setText(3, " [SSL]");
-            }
-            if (connection->sshSettings()->enabled()) {
-                setText(3, text(3) + " [SSH]");
-            }
 
             // Security header column (column[4])
             if (connection->isReplicaSet()) {
-                setText(4, "Replica Set");
+                setText(2, "[Replica Set]    ");
             }
+
+            if (connection->hasEnabledPrimaryCredential()) {
+                auto authString = QString("%1 / %2").arg(QtUtils::toQString(connection->primaryCredential()->databaseName()))
+                                                    .arg(QtUtils::toQString(connection->primaryCredential()->userName()));
+                setText(3, authString + "    ");
+                setIcon(3, GuiRegistry::instance().keyIcon());
+            }
+            else {
+                setIcon(3, QIcon());
+                setText(3, "");
+            }
+
+            // Security header column (column[4])
+            if (connection->sslSettings()->sslEnabled()) {
+                setText(4, " [SSL]");
+            }
+            if (connection->sshSettings()->enabled()) {
+                setText(4, text(4) + " [SSH]");
+            }
+
         }
 
     private:
@@ -129,12 +129,12 @@ namespace Robomongo
         _listWidget->setIndentation(5);
 
         QStringList colums;
-        colums << "Name" << "Address" << "Auth. Database / User" << "Security" << "Topology";
+        colums << "Name" << "Address" << "Topology" << "Auth. Database / User" << "Security";
         _listWidget->setHeaderLabels(colums);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         _listWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(1, QHeaderView::Stretch);
-        _listWidget->header()->setSectionResizeMode(2, QHeaderView::Stretch);
+        _listWidget->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
         _listWidget->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
         _listWidget->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
 #endif
@@ -201,15 +201,15 @@ namespace Robomongo
         mainLayout->addLayout(firstColumnLayout, 1);
 
         // Populate list with connections
-        SettingsManager::ConnectionSettingsContainerType connections = _settingsManager->connections();
-        for (SettingsManager::ConnectionSettingsContainerType::const_iterator it = connections.begin(); it != connections.end(); ++it) {
+        auto connections = _settingsManager->connections();
+        for (auto& it = connections.begin(); it != connections.end(); ++it) {
             ConnectionSettings *connectionModel = *it;
             add(connectionModel);
         }
 
-        // Highlight first item
+        // Highlight last item
         if (_listWidget->topLevelItemCount() > 0)
-            _listWidget->setCurrentItem(_listWidget->topLevelItem(0));
+            _listWidget->setCurrentItem(_listWidget->topLevelItem(_listWidget->topLevelItemCount()-1));
 
         _listWidget->setFocus();
 
@@ -293,18 +293,18 @@ namespace Robomongo
     */
     void ConnectionsDialog::addManually()
     {
-        auto newModel = new ConnectionSettings;
-        ConnectionDialog editDialog(newModel);
+        //auto newModel = new ConnectionSettings;
+        //ConnectionDialog editDialog(newModel);
 
-        // Do nothing if not accepted
-        if (editDialog.exec() != QDialog::Accepted) {
-            delete newModel;
-            return;
-        }
+        //// Do nothing if not accepted
+        //if (editDialog.exec() != QDialog::Accepted) {
+        //    delete newModel;
+        //    return;
+        //}
 
-        _settingsManager->addConnection(newModel);
-        _listWidget->setFocus();
-        add(newModel);
+        //_settingsManager->addConnection(newModel);
+        //_listWidget->setFocus();
+        //add(newModel);
     }
 
     /**

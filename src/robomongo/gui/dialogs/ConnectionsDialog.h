@@ -46,8 +46,8 @@ namespace Robomongo
         * @brief Add connection to the list widget
         */
         void add(ConnectionSettings *connection);
-
-        // todo: 
+        
+        // todo: remove
         void addManually();
 
     protected:

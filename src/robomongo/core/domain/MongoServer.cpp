@@ -4,6 +4,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/settings/ReplicaSetSettings.h"
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/mongodb/SshTunnelWorker.h"
 #include "robomongo/core/AppRegistry.h"
@@ -43,8 +44,6 @@ namespace Robomongo {
         // another thread (call to moveToThread() made in MongoWorker constructor).
         // It will be deleted by this thread by means of "deleteLater()", which
         // is also specified in MongoWorker constructor.
-
-        delete _settings;
     }
 
     /**
@@ -173,6 +172,9 @@ namespace Robomongo {
         if (_settings->isReplicaSet()) {
             _settings->setServerHost(_repPrimary.host());
             _settings->setServerPort(_repPrimary.port());
+            _settings->replicaSetSettings()->setSetName(_repSetName);
+            // Save replica set settings
+            AppRegistry::instance().settingsManager()->save();
         }
 
         // ConnectionRefresh is used just to update connection view (_version, _storageEngineType, _repPrimary etc..)

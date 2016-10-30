@@ -105,7 +105,7 @@ namespace Robomongo
      * @param connection: ConnectionSettings, that will be owned by MongoServer.
      * @param visible: should this server be visible in UI (explorer) or not.
      */
-    MongoServer *App::openServerInternal(ConnectionSettings const* connection, ConnectionType type) {
+    MongoServer *App::openServerInternal(ConnectionSettings* connSettings, ConnectionType type) {
         ++_lastServerHandle;
 
         if (type == ConnectionPrimary)
@@ -113,16 +113,16 @@ namespace Robomongo
 
         // When connection is SECONDARY or do not have
         // ssh settings enabled, continue without SSH Tunnel
-        if (type == ConnectionSecondary || !connection->sshSettings()->enabled()) {
-            return continueOpenServer(_lastServerHandle, connection, type);
+        if (type == ConnectionSecondary || !connSettings->sshSettings()->enabled()) {
+            return continueOpenServer(_lastServerHandle, connSettings, type);
         }
 
         // Open SSH channel and only after that open connection
         LOG_MSG(QString("Creating SSH tunnel to %1:%2...")
-            .arg(QtUtils::toQString(connection->sshSettings()->host()))
-            .arg(connection->sshSettings()->port()), mongo::logger::LogSeverity::Info());
+            .arg(QtUtils::toQString(connSettings->sshSettings()->host()))
+            .arg(connSettings->sshSettings()->port()), mongo::logger::LogSeverity::Info());
 
-        ConnectionSettings* settingsCopy = connection->clone();
+        ConnectionSettings* settingsCopy = connSettings->clone();
         SshTunnelWorker* sshWorker = new SshTunnelWorker(settingsCopy);
         _bus->send(sshWorker, new EstablishSshConnectionRequest(this, _lastServerHandle, sshWorker, settingsCopy, type));
         return NULL;
@@ -166,7 +166,7 @@ namespace Robomongo
         openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName, filePathToSave));
     }
 
-    void App::openShell(ConnectionSettings const* connection, const ScriptInfo &scriptInfo)
+    void App::openShell(ConnectionSettings* connection, const ScriptInfo &scriptInfo)
     {
         MongoServer *server = openServerInternal(connection, ConnectionSecondary);
         if (!server)
@@ -195,27 +195,27 @@ namespace Robomongo
         delete shell;
     }
 
-    MongoServer *App::continueOpenServer(int serverHandle, ConnectionSettings const* connection, ConnectionType type, int localport) {
-        ConnectionSettings* settings = connection->clone();
+    MongoServer *App::continueOpenServer(int serverHandle, ConnectionSettings* connSettings, ConnectionType type, int localport) {
+        ConnectionSettings* connSettingsClone = connSettings->clone();
 
         // Modify connection settings when SSH tunnel is used
         if ((type == ConnectionPrimary || type == ConnectionTest)
-            && settings->sshSettings()->enabled()) {
-            settings->setServerHost("127.0.0.1");
-            settings->setServerPort(localport);
+            && connSettingsClone->sshSettings()->enabled()) {
+            connSettingsClone->setServerHost("127.0.0.1");
+            connSettingsClone->setServerPort(localport);
         }
 
-        MongoServer *server = new MongoServer(serverHandle, settings, type);
+        MongoServer *server = new MongoServer(serverHandle, connSettings, type);
         _servers.push_back(server);
 
         server->runWorkerThread();
 
         QString serverAddress = "unknown";
-        if (settings->isReplicaSet()) {
-            serverAddress = QString::fromStdString(settings->connectionName()) + " [Replica Set]";
+        if (connSettings->isReplicaSet()) {
+            serverAddress = QString::fromStdString(connSettings->connectionName()) + " [Replica Set]";
         }
         else {
-            serverAddress = QString::fromStdString(settings->getFullAddress());
+            serverAddress = QString::fromStdString(connSettings->getFullAddress());
         }
 
         LOG_MSG(QString("Connecting to %1...").arg(serverAddress), mongo::logger::LogSeverity::Info());

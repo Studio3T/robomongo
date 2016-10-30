@@ -22,7 +22,7 @@ namespace Robomongo
                                    const bool isPrimary, const bool isUp);
 
         // Getters
-        ConnectionSettings const* connectionSettings() const { return _connSettings.get(); }
+        ConnectionSettings* connectionSettings() { return _connSettings.get(); }
         bool isUp() const { return _isUp; }
 
     public Q_SLOTS:

@@ -74,7 +74,7 @@ namespace Robomongo
 //        _engine = NULL;
     }
 
-    void ScriptEngine::init(bool isLoadMongoRcJs)
+    void ScriptEngine::init(bool isLoadMongoRcJs, const std::string& serverAddr)
     {
         QMutexLocker lock(&_mutex);
 
@@ -84,7 +84,8 @@ namespace Robomongo
             connectDatabase = _connection->primaryCredential()->databaseName();
 
         std::stringstream ss;
-        ss << "db = connect('" << _connection->info().toString() << "/" << connectDatabase;
+        auto hostAndPort = serverAddr.empty() ? _connection->info().toString() : serverAddr;
+        ss << "db = connect('" << hostAndPort << "/" << connectDatabase;
 
 //        v0.9
 //        ss << "db = connect('" << _connection->serverHost() << ":" << _connection->serverPort() << _connection->sslInfo() << _connection->sshInfo() << "/" << connectDatabase;

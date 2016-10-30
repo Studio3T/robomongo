@@ -64,10 +64,12 @@ namespace Robomongo
             {
                 for (const std::string& str : replicaSettings->members()) 
                 {
-                    auto item = new QTreeWidgetItem;
-                    item->setText(0, QString::fromStdString(str));
-                    item->setFlags(item->flags() | Qt::ItemIsEditable);
-                    _members->addTopLevelItem(item);
+                    if (!str.empty()) {  // todo: refactor
+                        auto item = new QTreeWidgetItem;
+                        item->setText(0, QString::fromStdString(str));
+                        item->setFlags(item->flags() | Qt::ItemIsEditable);
+                        _members->addTopLevelItem(item);
+                    }
                 }
             }
         }
@@ -80,6 +82,7 @@ namespace Robomongo
         _discoverButton = new QPushButton("Find Set");
         _discoverButton->setFixedWidth(_discoverButton->sizeHint().width()*0.8);
         VERIFY(connect(_addButton, SIGNAL(clicked()), this, SLOT(on_addButton_clicked())));
+        VERIFY(connect(_removeButton, SIGNAL(clicked()), this, SLOT(on_removeButton_clicked())));
 
         auto hLayout = new QHBoxLayout;
         hLayout->addWidget(_addButton);
@@ -138,7 +141,9 @@ namespace Robomongo
             for (int i = 0; i < _members->topLevelItemCount(); ++i)
             {
                 QTreeWidgetItem const* item = _members->topLevelItem(i);
-                members.push_back(item->text(0).toStdString());
+                if (!item->text(0).isEmpty()) {
+                    members.push_back(item->text(0).toStdString());
+                }
             }
             replicaSettings->setMembers(members);
             // save read preference option 
@@ -179,5 +184,18 @@ namespace Robomongo
         item->setText(0, "localhost:27017");
         item->setFlags(item->flags() | Qt::ItemIsEditable);
         _members->addTopLevelItem(item);
+    }
+
+    void ConnectionBasicTab::on_removeButton_clicked()
+    {
+        if (_members->topLevelItemCount() <= 0)
+            return;
+
+        if (_members->currentItem()) {
+            delete _members->currentItem();
+        }
+        else {
+            delete _members->topLevelItem(_members->topLevelItemCount() - 1);
+        }
     }
 }

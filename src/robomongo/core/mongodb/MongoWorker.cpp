@@ -88,8 +88,9 @@ namespace Robomongo
 
     void MongoWorker::init()
     {        
+        // todo: if (_initialized) return;
         try {
-            _scriptEngine = new ScriptEngine(_connSettings, _shellTimeoutSec);
+            _scriptEngine = new ScriptEngine(_connSettings, _shellTimeoutSec);  // todo: unique_ptr.reset()
             _scriptEngine->init(_isLoadMongoRcJs);
             _scriptEngine->use(_connSettings->defaultDatabase());
             _scriptEngine->setBatchSize(_batchSize);
@@ -140,8 +141,11 @@ namespace Robomongo
         QMutexLocker lock(&_firstConnectionMutex);
 
         try {
+            // Init MongoWorker
+            init();
+            
             mongo::DBClientBase *conn = getConnection(true);
-            if (nullptr == conn) {
+            if (!conn) {
                 // Protection by default value: Logically/ideally, this error should never be seen.
                 auto errorReason = std::string("Connection failure: Unknown error.");
                 if (_connSettings->sslSettings()->sslEnabled())
@@ -162,6 +166,33 @@ namespace Robomongo
                     EstablishConnectionResponse::MongoConnection));
                 return;
             }
+
+            // todo: move to func. getRepSetStatus();
+            std::string repSetName;
+            mongo::HostAndPort repPrimary;
+            std::vector<bool> repMembersHealths;
+            if (_connSettings->isReplicaSet())
+            {
+                // Refresh view of Replica Set Monitor to get live data
+                auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
+                repSetMonitor->startOrContinueRefresh().refreshAll();
+
+                repSetName = repSetMonitor->getName();
+
+                // Update connection settings with primary(master) address and port
+                repPrimary = repSetMonitor->getMasterOrUassert();
+                _connSettings->setServerHost(repPrimary.host());
+                _connSettings->setServerPort(repPrimary.port());
+
+                // Save health of members
+                for (auto const& member : _connSettings->replicaSetSettings()->membersToHostAndPort())
+                {
+                    repMembersHealths.push_back(repSetMonitor->isHostUp(member));
+                }
+            }
+
+            // Update script engine with primary node
+            _scriptEngine->init(_isLoadMongoRcJs, repPrimary.toString());
 
             if (_connSettings->hasEnabledPrimaryCredential()) {
                 CredentialSettings *credentials = _connSettings->primaryCredential();
@@ -191,33 +222,6 @@ namespace Robomongo
             // execute "listdatabases" command and we have nothing to show.
             if (dbNames.size() == 0)
                 throw mongo::DBException("Failed to execute \"listdatabases\" command.", 0);
-
-            // todo: move to func. getRepSetStatus();
-            std::string repSetName;
-            mongo::HostAndPort repPrimary;
-            std::vector<bool> repMembersHealths;
-            if (_connSettings->isReplicaSet()) 
-            {
-                // Refresh view of Replica Set Monitor to get live data
-                auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
-                repSetMonitor->startOrContinueRefresh().refreshAll();
-
-                repSetName = repSetMonitor->getName();
-
-                // Update connection settings with primary(master) address and port
-                repPrimary = repSetMonitor->getMasterOrUassert();
-                _connSettings->setServerHost(repPrimary.host());
-                _connSettings->setServerPort(repPrimary.port());
-
-                // Save health of members
-                for (auto const& member : _connSettings->replicaSetSettings()->membersToHostAndPort()) 
-                {
-                    repMembersHealths.push_back(repSetMonitor->isHostUp(member));
-                }
-            }
-
-            // Init MongoWorker
-            init();
 
             resetGlobalSSLparams();
 
@@ -701,7 +705,7 @@ namespace Robomongo
                         mongo::Status const status = dbclientTemp->connect(node);
                         if (status.isOK())
                         {
-                            init();
+                            _scriptEngine->init(_isLoadMongoRcJs, node.toString());
                             MongoShellExecResult result = _scriptEngine->exec("rs.status()", "");
                             if (!result.results().empty())
                             {

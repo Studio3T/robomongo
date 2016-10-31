@@ -52,7 +52,11 @@ namespace Robomongo
                 setIcon(0, GuiRegistry::instance().replicaSetIcon());
                 setText(0, QtUtils::toQString(connection->connectionName()));
                 auto const repSetSize = connection->replicaSetSettings()->members().size();
-                setText(1, QString::number(repSetSize) + " Node(s) (" + QtUtils::toQString(connection->getFullAddress()) + ")");
+                auto addrText = QString::number(repSetSize) + " Node(s)";
+                if (!connection->replicaSetSettings()->members().empty()) {
+                    addrText += QString::fromStdString(" (" + connection->replicaSetSettings()->members().front() + ")");
+                }
+                setText(1, addrText);
             }
             else {
                 setIcon(0, GuiRegistry::instance().serverIcon());

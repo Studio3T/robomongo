@@ -53,12 +53,12 @@ namespace Robomongo
 
         if (_settings->isReplicaSet()) 
         {
-            if (replicaSettings->members().empty()) 
+            if (replicaSettings->members().empty()) // todo: remove
             {
-                auto item = new QTreeWidgetItem;
-                item->setText(0, "localhost:27017");
-                item->setFlags(item->flags() | Qt::ItemIsEditable);
-                _members->addTopLevelItem(item);
+                //auto item = new QTreeWidgetItem;
+                //item->setText(0, "localhost:27017");
+                //item->setFlags(item->flags() | Qt::ItemIsEditable);
+                //_members->addTopLevelItem(item);
             }
             else            
             {

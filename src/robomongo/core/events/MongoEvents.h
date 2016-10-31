@@ -49,13 +49,13 @@ namespace Robomongo
 
         EstablishConnectionResponse(QObject *sender, const ConnectionInfo &info, ConnectionType connectionType, 
                                     const std::string& repSetName, const mongo::HostAndPort& repPrimary, 
-                                    const std::vector<bool>& repMembersHealths) :
+                                    const std::vector<std::pair<std::string, bool>>& repMembersAndHealths) :
             Event(sender),
             _info(info),
             connectionType(connectionType),
             _repSetName(repSetName),
             _repPrimary(repPrimary),
-            _repMembersHealths(repMembersHealths)
+            _repMembersAndHealths(repMembersAndHealths)
             {}
 
         EstablishConnectionResponse(QObject *sender, const EventError &error, ConnectionType connectionType, ErrorReason errorReason) :
@@ -68,14 +68,14 @@ namespace Robomongo
         ConnectionInfo info() const { return _info; }
         std::string getRepSetName() const { return _repSetName; }
         mongo::HostAndPort getRepPrimary() const { return _repPrimary; }
-        std::vector<bool> getRepMembersHealths() const { return _repMembersHealths; }
+        std::vector<std::pair<std::string, bool>> getRepMembersAndHealths() const { return _repMembersAndHealths; }
 
         const ConnectionInfo _info;
         ConnectionType connectionType;
         ErrorReason errorReason;
         std::string _repSetName;
         mongo::HostAndPort _repPrimary;
-        std::vector<bool> _repMembersHealths;    // todo: vector of host and health pair
+        std::vector<std::pair<std::string, bool>> _repMembersAndHealths;    // todo: vector of host and health pair
     };
 
 

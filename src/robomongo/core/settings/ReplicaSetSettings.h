@@ -46,7 +46,7 @@ namespace Robomongo
 
     private:
         std::string _setName;
-        std::vector<std::string> _members;  // todo: refactor to std::vector<HostAndPort>
+        std::vector<std::string> _members;  // todo: const std::string and refactor to std::vector<HostAndPort>
         ReadPreference _readPreference;
     };
 }

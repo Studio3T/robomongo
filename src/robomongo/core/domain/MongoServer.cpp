@@ -166,13 +166,18 @@ namespace Robomongo {
         _storageEngineType = info._storageEngineType;
         _isConnected = true;
         // Save Replica Set Status  
-        _repSetName = event->getRepSetName();
+        //_repSetName = event->getRepSetName();
         _repPrimary = event->getRepPrimary();                   // todo: what happens to this member if not replica set?
-        _repMembersHealths = event->getRepMembersHealths();
+        _repMembersAndHealths = event->getRepMembersAndHealths();
         if (_settings->isReplicaSet()) {
             _settings->setServerHost(_repPrimary.host());
             _settings->setServerPort(_repPrimary.port());
-            _settings->replicaSetSettings()->setSetName(_repSetName);
+            _settings->replicaSetSettings()->setSetName(event->getRepSetName());
+            std::vector<std::string> members;
+            for (auto const& memberAndHealth : event->getRepMembersAndHealths()) {
+                members.push_back(memberAndHealth.first);
+            }
+            _settings->replicaSetSettings()->setMembers(members);
             // Save replica set settings
             AppRegistry::instance().settingsManager()->save();
         }

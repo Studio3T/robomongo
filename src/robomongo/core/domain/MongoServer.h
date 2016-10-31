@@ -79,10 +79,11 @@ namespace Robomongo
         void loadDatabases();
         MongoWorker *const client() const { return _client; }
 
+        // todo: remove if not used
         // --- Getters ---
-        std::string getRepSetName() const { return _repSetName; }
+        //std::string getRepSetName() const { return _repSetName; }
         mongo::HostAndPort getRepPrimary() const { return _repPrimary; }
-        std::vector<bool> getRepMembersHealths() const { return _repMembersHealths; }
+        std::vector<std::pair<std::string, bool>> getRepMembersHealths() const { return _repMembersAndHealths; }
 
     protected Q_SLOTS:
         void handle(EstablishConnectionResponse *event);
@@ -113,7 +114,7 @@ namespace Robomongo
         // Replica Set Info
         std::string _repSetName;
         mongo::HostAndPort _repPrimary;
-        std::vector<bool> _repMembersHealths;   // todo: vector of pairs of host and health
+        std::vector<std::pair<std::string, bool>> _repMembersAndHealths;   // todo: vector of pairs of host and health
     };
 
     class MongoServerLoadingDatabasesEvent : public Event

@@ -86,10 +86,15 @@ namespace Robomongo
         //_bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
         //_bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
 
-        auto status = _isPrimary ? "[Primary] " : "[Secondary] ";
-        auto health = _isUp ? "[Up]" : "[Down]";
+        QString stateStr("unknown");
+        if (!_isUp) {   
+            stateStr = "[Not Reachable]";
+        }
+        else {
+            stateStr = _isPrimary ? "[Primary]" : "[Secondary]";
+        }
         setDisabled(_isUp ? false : true);
-        setText(0, QString::fromStdString(_repMemberHostAndPort.toString()) + " - " + status + health);
+        setText(0, QString::fromStdString(_repMemberHostAndPort.toString()) + " " + stateStr);
         setIcon(0, _isPrimary ? GuiRegistry::instance().serverPrimaryIcon() 
                               : GuiRegistry::instance().serverSecondaryIcon());
         setExpanded(true);

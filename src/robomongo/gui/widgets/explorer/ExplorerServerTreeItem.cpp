@@ -108,13 +108,12 @@ namespace Robomongo
             ReplicaSetSettings const* repSetSettings = _server->connectionRecord()->replicaSetSettings();
             auto const& repMembers = repSetSettings->membersToHostAndPort();
             bool isPrimary;
-            auto const& repMembersHealths = _server->getRepMembersHealths();
-            // todo: refactor loop to do without "i"
-            for (int i = 0; i < repMembers.size() && i < repMembersHealths.size(); ++i)
+            for (auto const& memberAndHealth : _server->getRepMembersHealths())
             {
-                isPrimary = (_server->getRepPrimary() == repMembers[i]);
-                repSetFolder->addChild(new ExplorerReplicaSetTreeItem(repSetFolder, _server, repMembers[i], isPrimary,
-                                       repMembersHealths[i]));
+                isPrimary = (_server->getRepPrimary().toString() == memberAndHealth.first);
+                auto hostAndPort = mongo::HostAndPort(mongo::StringData(memberAndHealth.first));
+                repSetFolder->addChild(new ExplorerReplicaSetTreeItem(repSetFolder, _server, hostAndPort, isPrimary,
+                                       memberAndHealth.second));
             }
             repSetFolder->setExpanded(true);
         }

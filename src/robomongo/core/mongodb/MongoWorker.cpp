@@ -170,7 +170,8 @@ namespace Robomongo
             // todo: move to func. getRepSetStatus();
             std::string repSetName;
             mongo::HostAndPort repPrimary;
-            std::vector<bool> repMembersHealths;
+            //std::vector<bool> repMembersHealths;
+            std::vector<std::pair<std::string, bool>> repMembersAndHealths;
             if (_connSettings->isReplicaSet())
             {
                 // Refresh view of Replica Set Monitor to get live data
@@ -184,10 +185,19 @@ namespace Robomongo
                 _connSettings->setServerHost(repPrimary.host());
                 _connSettings->setServerPort(repPrimary.port());
 
-                // Save health of members
-                for (auto const& member : _connSettings->replicaSetSettings()->membersToHostAndPort())
+                // i.e. "repset/localhost:27017,localhost:27018,localhost:27019"
+                QStringList servers;
+                auto fullAddress = QString::fromStdString(repSetMonitor->getServerAddress());
+                QStringList result = fullAddress.split("/");
+                if (result.size() > 1) {
+                    servers = result[1].split(",");
+                }
+
+                // Save address and health of members
+                for (QString const& server : servers)
                 {
-                    repMembersHealths.push_back(repSetMonitor->isHostUp(member));
+                    auto hostAndPort = mongo::HostAndPort(mongo::StringData(server.toStdString()));
+                    repMembersAndHealths.push_back({ server.toStdString(), repSetMonitor->isHostUp(hostAndPort) });
                 }
             }
 
@@ -225,8 +235,9 @@ namespace Robomongo
 
             resetGlobalSSLparams();
 
+            // todo: wrap rep. parameters into a struct
             reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connSettings->getFullAddress(), dbNames, 
-                client->getVersion(), client->getStorageEngineType()), event->connectionType, repSetName, repPrimary, repMembersHealths));
+                client->getVersion(), client->getStorageEngineType()), event->connectionType, repSetName, repPrimary, repMembersAndHealths));
         } catch(const std::exception &ex) {
             resetGlobalSSLparams();
 

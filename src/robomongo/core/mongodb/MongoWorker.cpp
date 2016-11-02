@@ -185,6 +185,9 @@ namespace Robomongo
                 _connSettings->setServerHost(repPrimary.host());
                 _connSettings->setServerPort(repPrimary.port());
 
+                // Update script engine with primary node
+                _scriptEngine->init(_isLoadMongoRcJs, repPrimary.toString());
+                
                 // i.e. "repset/localhost:27017,localhost:27018,localhost:27019"
                 QStringList servers;
                 auto fullAddress = QString::fromStdString(repSetMonitor->getServerAddress());
@@ -200,9 +203,6 @@ namespace Robomongo
                     repMembersAndHealths.push_back({ server.toStdString(), repSetMonitor->isHostUp(hostAndPort) });
                 }
             }
-
-            // Update script engine with primary node
-            _scriptEngine->init(_isLoadMongoRcJs, repPrimary.toString());
 
             if (_connSettings->hasEnabledPrimaryCredential()) {
                 CredentialSettings *credentials = _connSettings->primaryCredential();

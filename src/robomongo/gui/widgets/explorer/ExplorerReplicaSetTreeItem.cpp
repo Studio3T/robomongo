@@ -41,7 +41,7 @@ namespace Robomongo
         _bus(AppRegistry::instance().bus())
     { 
         // Set connection settings of this replica member
-        _connSettings->setConnectionName(_repMemberHostAndPort.toString() + " - [member of " + _connSettings->connectionName() + "]");
+        _connSettings->setConnectionName(_repMemberHostAndPort.toString() + " [member of " + _connSettings->connectionName() + "]");
         _connSettings->setServerHost(_repMemberHostAndPort.host());
         _connSettings->setServerPort(_repMemberHostAndPort.port());
         _connSettings->setReplicaSet(false);  

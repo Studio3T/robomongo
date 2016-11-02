@@ -206,7 +206,7 @@ namespace Robomongo
      * @brief Checks whether this connection has primary credential
      * which is also enabled.
      */
-    bool ConnectionSettings::hasEnabledPrimaryCredential()
+    bool ConnectionSettings::hasEnabledPrimaryCredential() const
     {
         if (_credentials.count() == 0)
             return false;
@@ -217,7 +217,7 @@ namespace Robomongo
     /**
      * @brief Returns primary credential
      */
-    CredentialSettings *ConnectionSettings::primaryCredential()
+    CredentialSettings *ConnectionSettings::primaryCredential() const
     {
         if (_credentials.count() == 0) {
             _credentials.append(new CredentialSettings());

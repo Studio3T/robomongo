@@ -12,6 +12,7 @@
 #include "robomongo/core/events/MongoEventsInfo.h"
 #include "robomongo/core/Event.h"
 #include "robomongo/core/Enums.h"
+#include "robomongo/core/mongodb/ReplicaSet.h"
 
 namespace Robomongo
 {
@@ -48,34 +49,30 @@ namespace Robomongo
         };
 
         EstablishConnectionResponse(QObject *sender, const ConnectionInfo &info, ConnectionType connectionType, 
-                                    const std::string& repSetName, const mongo::HostAndPort& repPrimary, 
-                                    const std::vector<std::pair<std::string, bool>>& repMembersAndHealths) :
+                                    const ReplicaSet replicaSet) :
             Event(sender),
             _info(info),
-            connectionType(connectionType),
-            _repSetName(repSetName),
-            _repPrimary(repPrimary),
-            _repMembersAndHealths(repMembersAndHealths)
+            _connectionType(connectionType),
+            _replicaSet(replicaSet)
             {}
 
-        EstablishConnectionResponse(QObject *sender, const EventError &error, ConnectionType connectionType, ErrorReason errorReason) :
+        EstablishConnectionResponse(QObject *sender, const EventError &error, ConnectionType connectionType, 
+                                    ErrorReason errorReason) :
             Event(sender, error),
             _info(),
-            connectionType(connectionType),
-            errorReason(errorReason) {}
+            _connectionType(connectionType),
+            _errorReason(errorReason),
+            _replicaSet()
+        {}
 
         // Getters - todo: refactor return copy
         ConnectionInfo info() const { return _info; }
-        std::string getRepSetName() const { return _repSetName; }
-        mongo::HostAndPort getRepPrimary() const { return _repPrimary; }
-        std::vector<std::pair<std::string, bool>> getRepMembersAndHealths() const { return _repMembersAndHealths; }
+        ReplicaSet replicaSet() const { return _replicaSet; }
 
         const ConnectionInfo _info;
-        ConnectionType connectionType;
-        ErrorReason errorReason;
-        std::string _repSetName;
-        mongo::HostAndPort _repPrimary;
-        std::vector<std::pair<std::string, bool>> _repMembersAndHealths;    // todo: vector of host and health pair
+        ConnectionType _connectionType;
+        ErrorReason _errorReason;
+        const ReplicaSet _replicaSet;
     };
 
 

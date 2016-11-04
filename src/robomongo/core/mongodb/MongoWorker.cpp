@@ -161,47 +161,17 @@ namespace Robomongo
 
                 resetGlobalSSLparams();
 
-                reply(event->sender(), new EstablishConnectionResponse(this,
-                    EventError(errorReason), event->connectionType,
-                    EstablishConnectionResponse::MongoConnection));
+                reply(event->sender(), new EstablishConnectionResponse(this, EventError(errorReason), event->connectionType, 
+                                                                       EstablishConnectionResponse::MongoConnection));
                 return;
             }
 
-            // todo: move to func. getRepSetStatus();
-            std::string repSetName;
-            mongo::HostAndPort repPrimary;
-            //std::vector<bool> repMembersHealths;
-            std::vector<std::pair<std::string, bool>> repMembersAndHealths;
+            ReplicaSet repSetInfo = getReplicaSetInfo(); // todo:
             if (_connSettings->isReplicaSet())
             {
-                // Refresh view of Replica Set Monitor to get live data
-                auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
-                repSetMonitor->startOrContinueRefresh().refreshAll();
-
-                repSetName = repSetMonitor->getName();
-
-                // Update connection settings with primary(master) address and port
-                repPrimary = repSetMonitor->getMasterOrUassert();
-                _connSettings->setServerHost(repPrimary.host());
-                _connSettings->setServerPort(repPrimary.port());
-
-                // Update script engine with primary node
-                _scriptEngine->init(_isLoadMongoRcJs, repPrimary.toString());
-                
-                // i.e. "repset/localhost:27017,localhost:27018,localhost:27019"
-                QStringList servers;
-                auto fullAddress = QString::fromStdString(repSetMonitor->getServerAddress());
-                QStringList result = fullAddress.split("/");
-                if (result.size() > 1) {
-                    servers = result[1].split(",");
-                }
-
-                // Save address and health of members
-                for (QString const& server : servers)
-                {
-                    auto hostAndPort = mongo::HostAndPort(mongo::StringData(server.toStdString()));
-                    repMembersAndHealths.push_back({ server.toStdString(), repSetMonitor->isHostUp(hostAndPort) });
-                }
+                //repSetInfo = getReplicaSetInfo();
+                _connSettings->setServerHost(repSetInfo.primary.host());
+                _connSettings->setServerPort(repSetInfo.primary.port());
             }
 
             if (_connSettings->hasEnabledPrimaryCredential()) {
@@ -236,8 +206,9 @@ namespace Robomongo
             resetGlobalSSLparams();
 
             // todo: wrap rep. parameters into a struct
-            reply(event->sender(), new EstablishConnectionResponse(this, ConnectionInfo(_connSettings->getFullAddress(), dbNames, 
-                client->getVersion(), client->getStorageEngineType()), event->connectionType, repSetName, repPrimary, repMembersAndHealths));
+            auto connInfo = ConnectionInfo(_connSettings->getFullAddress(), dbNames, client->getVersion(), 
+                                           client->getStorageEngineType());
+            reply(event->sender(), new EstablishConnectionResponse(this, connInfo, event->connectionType, repSetInfo));
         } catch(const std::exception &ex) {
             resetGlobalSSLparams();
 
@@ -478,7 +449,21 @@ namespace Robomongo
                 return;
             }
 
+            // todo: ideally this should be done after failed ExecuteScriptRequest event, not before.
+            if (_connSettings->isReplicaSet()) {
+                // Refresh view of Replica Set Monitor to get latest status
+                auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
+                repSetMonitor->startOrContinueRefresh().refreshAll();
+
+                // Update connection settings with primary(master) address and port
+                mongo::HostAndPort repPrimary = repSetMonitor->getMasterOrUassert();
+
+                // Update script engine with primary node
+                _scriptEngine->init(_isLoadMongoRcJs, repPrimary.toString());
+            }
+
             MongoShellExecResult result = _scriptEngine->exec(event->script, event->databaseName);
+
             reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty()));
         } catch(const mongo::DBException &ex) {
             reply(event->sender(), new ExecuteScriptResponse(this, EventError(ex.what())));
@@ -699,9 +684,10 @@ namespace Robomongo
         }
 
         // --- Perform connection attempt ---
-        if (_connSettings->isReplicaSet()) {  // connection to replica set 
-            if (!_dbclientRepSet) {
-
+        if (_connSettings->isReplicaSet()) // connection to replica set 
+        {  
+            if (!_dbclientRepSet) 
+            {
                 // Step-1: Retrieve set name if we do not have it
                 std::string setName = _connSettings->replicaSetSettings()->setName();
                 // todo: move to func. "getSetName()"
@@ -799,6 +785,44 @@ namespace Robomongo
         mongo::sslGlobalParams.sslPEMKeyPassword = "";
         mongo::sslGlobalParams.sslCRLFile = "";
         mongo::sslGlobalParams.sslAllowInvalidHostnames = false;
+    }
+
+    ReplicaSet MongoWorker::getReplicaSetInfo() const
+    {
+        if (!_connSettings->isReplicaSet()) // todo
+            return ReplicaSet{};
+
+        std::string repSetName;
+        mongo::HostAndPort repPrimary;
+        std::vector<std::pair<std::string, bool>> repMembersAndHealths;
+
+        // Refresh view of Replica Set Monitor to get live data
+        auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
+        repSetMonitor->startOrContinueRefresh().refreshAll();
+
+        repSetName = repSetMonitor->getName();
+
+        // Update connection settings with primary(master) address and port
+        repPrimary = repSetMonitor->getMasterOrUassert();
+
+        // Update script engine with primary node
+        _scriptEngine->init(_isLoadMongoRcJs, repPrimary.toString());
+
+        // i.e. "repset/localhost:27017,localhost:27018,localhost:27019"
+        QStringList servers;
+        auto fullAddress = QString::fromStdString(repSetMonitor->getServerAddress());
+        QStringList result = fullAddress.split("/");
+        if (result.size() > 1) {
+            servers = result[1].split(",");
+        }
+
+        // Save address and health of members
+        for (QString const& server : servers)
+        {
+            auto hostAndPort = mongo::HostAndPort(mongo::StringData(server.toStdString()));
+            repMembersAndHealths.push_back({ server.toStdString(), repSetMonitor->isHostUp(hostAndPort) });
+        }
+        return ReplicaSet(repSetName, repPrimary, repMembersAndHealths);
     }
 
     /**

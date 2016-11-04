@@ -54,7 +54,7 @@ namespace Robomongo
     void ExplorerReplicaSetFolderItem::on_refresh()
     {
         _server->tryRefresh();
-        _server->loadDatabases();
+        _server->loadDatabases();   // todo: refactor
     }
 }
 

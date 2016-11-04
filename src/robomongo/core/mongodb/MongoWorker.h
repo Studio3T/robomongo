@@ -152,6 +152,11 @@ namespace Robomongo
         void resetGlobalSSLparams() const;
 
         /**
+        *@brief Update Replica Set related parameters/settings
+        */
+        ReplicaSet getReplicaSetInfo() const;
+
+        /**
          * @brief Send reply event to object 'obj'
          */
         void reply(QObject *receiver, Event *event);

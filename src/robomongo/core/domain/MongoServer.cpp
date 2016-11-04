@@ -131,7 +131,7 @@ namespace Robomongo {
             _isConnected = false;
 
             std::stringstream ss("Unknown error");
-            auto eventErrorReason = event->errorReason;
+            auto eventErrorReason = event->_errorReason;
             if (EstablishConnectionResponse::ErrorReason::MongoSslConnection == eventErrorReason)
             {
                 auto reason = ConnectionFailedEvent::SslConnection;
@@ -167,14 +167,14 @@ namespace Robomongo {
         _isConnected = true;
         // Save Replica Set Status  
         //_repSetName = event->getRepSetName();
-        _repPrimary = event->getRepPrimary();                   // todo: what happens to this member if not replica set?
-        _repMembersAndHealths = event->getRepMembersAndHealths();
+        _repPrimary = event->replicaSet().primary;                   // todo: what happens to this member if not replica set?
+        _repMembersAndHealths = event->replicaSet().membersAndHealths;
         if (_settings->isReplicaSet()) {
             _settings->setServerHost(_repPrimary.host());
             _settings->setServerPort(_repPrimary.port());
-            _settings->replicaSetSettings()->setSetName(event->getRepSetName());
+            _settings->replicaSetSettings()->setSetName(event->replicaSet().setName);
             std::vector<std::string> members;
-            for (auto const& memberAndHealth : event->getRepMembersAndHealths()) {
+            for (auto const& memberAndHealth : event->replicaSet().membersAndHealths) {
                 members.push_back(memberAndHealth.first);
             }
             _settings->replicaSetSettings()->setMembers(members);
@@ -184,7 +184,7 @@ namespace Robomongo {
 
         // ConnectionRefresh is used just to update connection view (_version, _storageEngineType, _repPrimary etc..)
         // So we return here after updating(refreshing) information related to connection view.
-        if (ConnectionRefresh == event->connectionType)
+        if (ConnectionRefresh == event->_connectionType)
             return;
 
         _bus->publish(new ConnectionEstablishedEvent(this, _connectionType));

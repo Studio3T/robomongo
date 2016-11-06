@@ -159,7 +159,7 @@ namespace Robomongo
         /**
         *@brief Update Replica Set related parameters/settings
         */
-        ReplicaSet getReplicaSetInfo() const;   // todo: throws
+        ReplicaSet getReplicaSetInfo() const;   // todo: throws ??
 
         /**
          * @brief Send reply event to object 'obj'

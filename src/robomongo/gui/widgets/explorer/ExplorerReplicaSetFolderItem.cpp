@@ -40,7 +40,7 @@ namespace Robomongo
 
         setIcon(0, GuiRegistry::instance().folderIcon());
         // todo: use repSize()
-        setText(0, "Replica Set (" + QString::number(_server->getRepMembersHealths().size()) + " nodes)");
+        setText(0, "Replica Set (" + QString::number(_server->replicaSetInfo()->membersAndHealths.size()) + " nodes)");
 
         setExpanded(false);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
@@ -48,7 +48,7 @@ namespace Robomongo
 
     void ExplorerReplicaSetFolderItem::updateText()
     {
-        setText(0, "Replica Set (" + QString::number(_server->getRepMembersHealths().size()) + " nodes)");
+        setText(0, "Replica Set (" + QString::number(_server->replicaSetInfo()->membersAndHealths.size()) + " nodes)");
     }
 
     void ExplorerReplicaSetFolderItem::on_repSetStatus()

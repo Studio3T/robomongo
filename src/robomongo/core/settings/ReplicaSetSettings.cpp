@@ -58,6 +58,14 @@ namespace Robomongo
         setReadPreference(static_cast<ReadPreference>(map.value("readPreference").toInt()));
     }
 
+    void ReplicaSetSettings::setMembers(const std::vector<std::pair<std::string, bool>>& membersAndHealts)
+    {
+        _members.clear();
+
+        for (auto const& memberAndHealth : membersAndHealts)
+            _members.push_back(memberAndHealth.first);
+    }
+
     const std::vector<mongo::HostAndPort> ReplicaSetSettings::membersToHostAndPort() const 
     {
         std::vector<mongo::HostAndPort> membersHostAndPort;

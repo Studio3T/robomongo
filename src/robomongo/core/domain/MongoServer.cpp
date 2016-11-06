@@ -18,12 +18,14 @@ namespace Robomongo {
     MongoServer::MongoServer(int handle, ConnectionSettings *settings, ConnectionType connectionType) : QObject(),
         _version(0.0f),
         _connectionType(connectionType),
-        _client(NULL),
+        _client(nullptr),
         _isConnected(false),
         _settings(settings),
         _handle(handle),
         _bus(AppRegistry::instance().bus()),
-        _app(AppRegistry::instance().app()) { }
+        _app(AppRegistry::instance().app()),
+        _replicaSetInfo(nullptr)
+    { }
 
     bool MongoServer::isConnected() const {
         return _isConnected;
@@ -131,7 +133,8 @@ namespace Robomongo {
         _databases.append(database);
     }
 
-    void MongoServer::handle(EstablishConnectionResponse *event) {
+    void MongoServer::handle(EstablishConnectionResponse *event) 
+    {
         if (event->isError()) {
             _isConnected = false;
 
@@ -170,21 +173,15 @@ namespace Robomongo {
         _version = info._version;
         _storageEngineType = info._storageEngineType;
         _isConnected = true;
-        // todo: move to func
-        // Save Replica Set Status  
-        //_repSetName = event->getRepSetName();
-        _repPrimary = event->replicaSet().primary;                   // todo: what happens to this member if not replica set?
-        _repMembersAndHealths = event->replicaSet().membersAndHealths;
+
         if (_settings->isReplicaSet()) {
-            _settings->setServerHost(_repPrimary.host());
-            _settings->setServerPort(_repPrimary.port());
-            _settings->replicaSetSettings()->setSetName(event->replicaSet().setName);
-            std::vector<std::string> members;
-            for (auto const& memberAndHealth : event->replicaSet().membersAndHealths) {
-                members.push_back(memberAndHealth.first);
-            }
-            _settings->replicaSetSettings()->setMembers(members);
-            // Save replica set settings
+            // Update replica set settings and mongo server _replicaSetInfo 
+            _replicaSetInfo.reset(new ReplicaSet(event->replicaSet()));
+            // todo: move to funct.
+            _settings->setServerHost(_replicaSetInfo->primary.host());
+            _settings->setServerPort(_replicaSetInfo->primary.port());
+            _settings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
+            _settings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);
             AppRegistry::instance().settingsManager()->save();
         }
 
@@ -209,25 +206,19 @@ namespace Robomongo {
 
     void MongoServer::handle(RefreshReplicaSetResponse *event)
     {
-        if (event->isError()) {
+        if (event->isError()) { // Primary is unreachable
             _bus->publish(new ReplicaSetUpdated(this, event->error()));
             return;
         }
 
-        _repPrimary = event->replicaSet.primary;                   // todo: what happens to this member if not replica set?
-        _repMembersAndHealths = event->replicaSet.membersAndHealths;
-        if (_settings->isReplicaSet()) {
-            _settings->setServerHost(_repPrimary.host());
-            _settings->setServerPort(_repPrimary.port());
-            _settings->replicaSetSettings()->setSetName(event->replicaSet.setName);
-            std::vector<std::string> members;
-            for (auto const& memberAndHealth : event->replicaSet.membersAndHealths) {
-                members.push_back(memberAndHealth.first);
-            }
-            _settings->replicaSetSettings()->setMembers(members);
-            // Save replica set settings
-            AppRegistry::instance().settingsManager()->save();
-        }
+        // Primary is reachable
+        // Update replica set settings and mongo server _replicaSetInfo 
+        _replicaSetInfo.reset(new ReplicaSet(event->replicaSet));
+        _settings->setServerHost(_replicaSetInfo->primary.host());
+        _settings->setServerPort(_replicaSetInfo->primary.port());
+        _settings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
+        _settings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);
+        AppRegistry::instance().settingsManager()->save();
 
         _bus->publish(new ReplicaSetUpdated(this));
     }

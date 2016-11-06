@@ -144,7 +144,8 @@ namespace Robomongo
             init();
             
             mongo::DBClientBase *conn = getConnection(true);
-            if (!conn) {
+            if (!conn) 
+            {
                 // Protection by default value: Logically/ideally, this error should never be seen.
                 auto errorReason = std::string("Connection failure: Unknown error.");
                 if (_connSettings->sslSettings()->sslEnabled())
@@ -168,7 +169,6 @@ namespace Robomongo
             ReplicaSet repSetInfo = getReplicaSetInfo(); // todo:
             if (_connSettings->isReplicaSet())
             {
-                //repSetInfo = getReplicaSetInfo();
                 _connSettings->setServerHost(repSetInfo.primary.host());
                 _connSettings->setServerPort(repSetInfo.primary.port());
             }
@@ -222,17 +222,15 @@ namespace Robomongo
 
     void MongoWorker::handle(RefreshReplicaSetRequest *event)
     {
-        if (!_connSettings->isReplicaSet())  // todo
-            return;
-                
-        try {
-            ReplicaSet replicaSet = getReplicaSetInfo();
-            reply(event->sender(), new RefreshReplicaSetResponse(this, replicaSet));
+        ReplicaSet const replicaSetInfo = getReplicaSetInfo();
+
+        if (replicaSetInfo.primary.empty()) { // Primary is unreachable
+            reply(event->sender(), new RefreshReplicaSetResponse(this, EventError(replicaSetInfo.errorStr)));
+            LOG_MSG(replicaSetInfo.errorStr, mongo::logger::LogSeverity::Error());
         }
-        catch (const std::exception &ex) {
-            reply(event->sender(), new RefreshReplicaSetResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
-        }
+
+        // Primary is reachable
+        reply(event->sender(), new RefreshReplicaSetResponse(this, replicaSetInfo));
     }
 
     std::string MongoWorker::getAuthBase() const
@@ -804,24 +802,19 @@ namespace Robomongo
 
     ReplicaSet MongoWorker::getReplicaSetInfo() const
     {
-        if (!_connSettings->isReplicaSet()) // todo
-            return ReplicaSet{};
-
-        std::string repSetName;
-        mongo::HostAndPort repPrimary;
-        std::vector<std::pair<std::string, bool>> repMembersAndHealths;
+        std::string setName;
+        mongo::HostAndPort primary;
+        std::vector<std::pair<std::string, bool>> membersAndHealths;
 
         // Refresh view of Replica Set Monitor to get live data
         auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
         repSetMonitor->startOrContinueRefresh().refreshAll();
 
-        repSetName = repSetMonitor->getName();
-
-        // Update connection settings with primary(master) address and port
-        repPrimary = repSetMonitor->getMasterOrUassert();
-
-        // Update script engine with primary node
-        _scriptEngine->init(_isLoadMongoRcJs, repPrimary.toString());
+        setName = repSetMonitor->getName();
+        auto const primaryOnly = mongo::ReadPreferenceSetting(mongo::ReadPreference::PrimaryOnly, mongo::TagSet());
+        auto res = repSetMonitor->getHostOrRefresh(primaryOnly);
+        if (res.isOK())
+            primary = res.getValue();
 
         // i.e. "repset/localhost:27017,localhost:27018,localhost:27019"
         QStringList servers;
@@ -831,13 +824,13 @@ namespace Robomongo
             servers = result[1].split(",");
         }
 
-        // Save address and health of members
-        for (QString const& server : servers)
-        {
+        // Save address and health of replica members
+        for (QString const& server : servers) {
             auto hostAndPort = mongo::HostAndPort(mongo::StringData(server.toStdString()));
-            repMembersAndHealths.push_back({ server.toStdString(), repSetMonitor->isHostUp(hostAndPort) });
+            membersAndHealths.push_back({ server.toStdString(), repSetMonitor->isHostUp(hostAndPort) });
         }
-        return ReplicaSet(repSetName, repPrimary, repMembersAndHealths);
+
+        return ReplicaSet(setName, primary, membersAndHealths, res.getStatus().reason());
     }
 
     /**

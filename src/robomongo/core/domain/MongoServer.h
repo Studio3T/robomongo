@@ -85,6 +85,7 @@ namespace Robomongo
 
         // todo: remove if not used
         // --- Getters ---
+        ReplicaSet* replicaSetInfo() const { return _replicaSetInfo.get(); }
         std::string getRepSetName() const { return _repSetName; }
         mongo::HostAndPort getRepPrimary() const { return _repPrimary; }
         std::vector<std::pair<std::string, bool>> getRepMembersHealths() const { return _repMembersAndHealths; }
@@ -117,6 +118,8 @@ namespace Robomongo
         QList<MongoDatabase *> _databases;
 
         // Replica Set Info
+        std::unique_ptr<ReplicaSet> _replicaSetInfo;
+        // todo: remove
         std::string _repSetName;
         mongo::HostAndPort _repPrimary;
         std::vector<std::pair<std::string, bool>> _repMembersAndHealths;   // todo: vector of pairs of host and health

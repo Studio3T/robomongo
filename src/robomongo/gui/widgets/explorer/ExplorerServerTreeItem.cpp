@@ -105,12 +105,10 @@ namespace Robomongo
             _replicaSetFolder = new ExplorerReplicaSetFolderItem(this, _server);
             addChild(_replicaSetFolder);
             // Add replica members
-            ReplicaSetSettings const* repSetSettings = _server->connectionRecord()->replicaSetSettings();
-            auto const& repMembers = repSetSettings->membersToHostAndPort();
             bool isPrimary;
-            for (auto const& memberAndHealth : _server->getRepMembersHealths())
+            for (auto const& memberAndHealth : _server->replicaSetInfo()->membersAndHealths)
             {
-                isPrimary = (_server->getRepPrimary().toString() == memberAndHealth.first);
+                isPrimary = (_server->replicaSetInfo()->primary.toString() == memberAndHealth.first);
                 auto hostAndPort = mongo::HostAndPort(mongo::StringData(memberAndHealth.first));
                 _replicaSetFolder->addChild(new ExplorerReplicaSetTreeItem(_replicaSetFolder, _server, hostAndPort, 
                                             isPrimary, memberAndHealth.second));
@@ -197,12 +195,10 @@ namespace Robomongo
             // Update replica set folder
             _replicaSetFolder->updateText();
             // Add replica members
-            ReplicaSetSettings const* repSetSettings = _server->connectionRecord()->replicaSetSettings();
-            auto const& repMembers = repSetSettings->membersToHostAndPort();
             bool isPrimary;
-            for (auto const& memberAndHealth : _server->getRepMembersHealths())
+            for (auto const& memberAndHealth : _server->replicaSetInfo()->membersAndHealths)
             {
-                isPrimary = (_server->getRepPrimary().toString() == memberAndHealth.first);
+                isPrimary = (_server->replicaSetInfo()->primary.toString() == memberAndHealth.first);
                 auto hostAndPort = mongo::HostAndPort(mongo::StringData(memberAndHealth.first));
                 _replicaSetFolder->addChild(new ExplorerReplicaSetTreeItem(_replicaSetFolder, _server, hostAndPort, 
                                             isPrimary, memberAndHealth.second));

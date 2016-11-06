@@ -86,8 +86,19 @@ namespace Robomongo
         //_bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
         //_bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
 
-        QString stateStr("unknown");
-        if (!_isUp) {   
+        updateState(_isUp, _isPrimary);
+
+        setExpanded(true);
+        setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicator);
+    }
+
+    void ExplorerReplicaSetTreeItem::updateState(bool isUp, bool isPrimary)
+    {
+        _isUp = isUp;
+        _isPrimary = isPrimary;
+
+        QString stateStr("[Unknown]");
+        if (!_isUp) {
             stateStr = "[Not Reachable]";
         }
         else {
@@ -95,10 +106,8 @@ namespace Robomongo
         }
         setDisabled(_isUp ? false : true);
         setText(0, QString::fromStdString(_repMemberHostAndPort.toString()) + " " + stateStr);
-        setIcon(0, _isPrimary ? GuiRegistry::instance().serverPrimaryIcon() 
+        setIcon(0, _isPrimary ? GuiRegistry::instance().serverPrimaryIcon()                               
                               : GuiRegistry::instance().serverSecondaryIcon());
-        setExpanded(true);
-        setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }
 
     void ExplorerReplicaSetTreeItem::ui_serverHostInfo()

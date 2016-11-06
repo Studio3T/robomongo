@@ -5,6 +5,9 @@ namespace Robomongo
 {
     R_REGISTER_EVENT(EstablishConnectionRequest)
     R_REGISTER_EVENT(EstablishConnectionResponse)
+    R_REGISTER_EVENT(RefreshReplicaSetRequest)
+    R_REGISTER_EVENT(RefreshReplicaSetResponse)
+    R_REGISTER_EVENT(ReplicaSetUpdated)
     R_REGISTER_EVENT(LoadDatabaseNamesRequest)
     R_REGISTER_EVENT(LoadDatabaseNamesResponse)
     R_REGISTER_EVENT(LoadCollectionNamesRequest)

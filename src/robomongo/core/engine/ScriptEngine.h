@@ -42,7 +42,7 @@ namespace Robomongo
 
         int _timeoutSec;
         mongo::ScriptEngine *_engine;
-        mongo::Scope *_scope;
+        std::unique_ptr<mongo::Scope> _scope;
         QMutex _mutex;
         bool _initialized;
     };

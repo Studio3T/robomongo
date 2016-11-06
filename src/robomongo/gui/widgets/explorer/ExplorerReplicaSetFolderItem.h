@@ -13,6 +13,9 @@ namespace Robomongo
         typedef ExplorerTreeItem BaseClass;
         ExplorerReplicaSetFolderItem(ExplorerTreeItem *item, MongoServer *const server);
 
+        // todo
+        void updateText();
+
     private Q_SLOTS:
         void on_refresh();
         void on_repSetStatus();

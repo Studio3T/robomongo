@@ -7,6 +7,7 @@ namespace Robomongo
 {
     class EventBus;
     class MongoServerLoadingDatabasesEvent;
+    class ExplorerReplicaSetFolderItem;
 
     class ExplorerServerTreeItem : public ExplorerTreeItem
     {
@@ -29,6 +30,7 @@ namespace Robomongo
         void databaseRefreshed(const QList<MongoDatabase *> &dbs);
         void handle(DatabaseListLoadedEvent *event);
         void handle(MongoServerLoadingDatabasesEvent *event);
+        void handle(ReplicaSetUpdated *event);
 
     private Q_SLOTS:
         void ui_showLog();
@@ -41,6 +43,8 @@ namespace Robomongo
         void ui_serverVersion();
 
     private:
+
+        ExplorerReplicaSetFolderItem *_replicaSetFolder;
 
         /**
          * @brief Builds server

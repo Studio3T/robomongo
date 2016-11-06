@@ -60,6 +60,11 @@ namespace Robomongo {
         _bus->send(_client, new EstablishConnectionRequest(this, ConnectionRefresh));
     }
 
+    void MongoServer::tryRefreshReplicaSet()
+    {
+        _bus->send(_client, new RefreshReplicaSetRequest(this));
+    }
+    
     QStringList MongoServer::getDatabasesNames() const {
         QStringList result;
         for (QList<MongoDatabase *>::const_iterator it = _databases.begin(); it != _databases.end(); ++it) {
@@ -165,6 +170,7 @@ namespace Robomongo {
         _version = info._version;
         _storageEngineType = info._storageEngineType;
         _isConnected = true;
+        // todo: move to func
         // Save Replica Set Status  
         //_repSetName = event->getRepSetName();
         _repPrimary = event->replicaSet().primary;                   // todo: what happens to this member if not replica set?
@@ -199,6 +205,31 @@ namespace Robomongo {
             MongoDatabase *db  = new MongoDatabase(this, name);
             addDatabase(db);
         }
+    }
+
+    void MongoServer::handle(RefreshReplicaSetResponse *event)
+    {
+        if (event->isError()) {
+            _bus->publish(new ReplicaSetUpdated(this, event->error()));
+            return;
+        }
+
+        _repPrimary = event->replicaSet.primary;                   // todo: what happens to this member if not replica set?
+        _repMembersAndHealths = event->replicaSet.membersAndHealths;
+        if (_settings->isReplicaSet()) {
+            _settings->setServerHost(_repPrimary.host());
+            _settings->setServerPort(_repPrimary.port());
+            _settings->replicaSetSettings()->setSetName(event->replicaSet.setName);
+            std::vector<std::string> members;
+            for (auto const& memberAndHealth : event->replicaSet.membersAndHealths) {
+                members.push_back(memberAndHealth.first);
+            }
+            _settings->replicaSetSettings()->setMembers(members);
+            // Save replica set settings
+            AppRegistry::instance().settingsManager()->save();
+        }
+
+        _bus->publish(new ReplicaSetUpdated(this));
     }
 
     void MongoServer::handle(LoadDatabaseNamesResponse *event) {

@@ -46,6 +46,11 @@ namespace Robomongo
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
     }
 
+    void ExplorerReplicaSetFolderItem::updateText()
+    {
+        setText(0, "Replica Set (" + QString::number(_server->getRepMembersHealths().size()) + " nodes)");
+    }
+
     void ExplorerReplicaSetFolderItem::on_repSetStatus()
     {
         openCurrentServerShell(_server, "rs.status()");
@@ -53,8 +58,11 @@ namespace Robomongo
 
     void ExplorerReplicaSetFolderItem::on_refresh()
     {
-        _server->tryRefresh();
-        _server->loadDatabases();   // todo: refactor
+        setText(0, "Replica Set (...)");
+        
+        //_server->tryRefresh();      // todo: is it needed?
+        _server->tryRefreshReplicaSet();
+        //_server->loadDatabases();   // todo: refactor
     }
 }
 

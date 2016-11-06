@@ -75,6 +75,37 @@ namespace Robomongo
         const ReplicaSet _replicaSet;
     };
 
+    struct RefreshReplicaSetRequest : public Event
+    {
+        R_EVENT
+
+        RefreshReplicaSetRequest(QObject *sender) :
+            Event(sender) {}
+    };
+
+    struct RefreshReplicaSetResponse : public Event
+    {
+        R_EVENT
+
+        RefreshReplicaSetResponse(QObject *sender, ReplicaSet replicaSet) :     
+            Event(sender), replicaSet(replicaSet) {}
+         
+        RefreshReplicaSetResponse(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
+
+        ReplicaSet const replicaSet;
+    };
+
+    struct ReplicaSetUpdated : public Event
+    {
+        R_EVENT
+
+        ReplicaSetUpdated(QObject *sender) :
+            Event(sender) {}
+
+        ReplicaSetUpdated(QObject *sender, const EventError &error) :
+            Event(sender, error) {}
+    };
 
     /**
      * @brief LoadDatabaseNames

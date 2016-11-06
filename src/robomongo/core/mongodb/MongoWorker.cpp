@@ -27,7 +27,7 @@ namespace Robomongo
 {
     MongoWorker::MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
                              int mongoTimeoutSec, int shellTimeoutSec, QObject *parent) : QObject(parent),
-        _scriptEngine(NULL),
+        _scriptEngine(nullptr),
         _isAdmin(true),
         _isLoadMongoRcJs(isLoadMongoRcJs),
         _batchSize(batchSize),
@@ -54,8 +54,7 @@ namespace Robomongo
             return;
         }
 
-        if (_dbAutocompleteCacheTimerId == event->timerId() &&
-            _scriptEngine != NULL) {
+        if (_dbAutocompleteCacheTimerId == event->timerId() && !_scriptEngine) {
             _scriptEngine->invalidateDbCollectionsCache();
             return;
         }
@@ -218,6 +217,21 @@ namespace Robomongo
 
             reply(event->sender(), 
                 new EstablishConnectionResponse(this, EventError(ex.what()), event->connectionType, errorReason));
+        }
+    }
+
+    void MongoWorker::handle(RefreshReplicaSetRequest *event)
+    {
+        if (!_connSettings->isReplicaSet())  // todo
+            return;
+                
+        try {
+            ReplicaSet replicaSet = getReplicaSetInfo();
+            reply(event->sender(), new RefreshReplicaSetResponse(this, replicaSet));
+        }
+        catch (const std::exception &ex) {
+            reply(event->sender(), new RefreshReplicaSetResponse(this, EventError(ex.what())));
+            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -449,7 +463,7 @@ namespace Robomongo
                 return;
             }
 
-            // todo: ideally this should be done after failed ExecuteScriptRequest event, not before.
+            // If this is replica set, update script engine's server address
             if (_connSettings->isReplicaSet()) {
                 // Refresh view of Replica Set Monitor to get latest status
                 auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
@@ -465,7 +479,8 @@ namespace Robomongo
             MongoShellExecResult result = _scriptEngine->exec(event->script, event->databaseName);
 
             reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty()));
-        } catch(const mongo::DBException &ex) {
+        } 
+        catch(const mongo::DBException &ex) {
             reply(event->sender(), new ExecuteScriptResponse(this, EventError(ex.what())));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }

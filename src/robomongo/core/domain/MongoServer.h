@@ -13,6 +13,7 @@ namespace Robomongo
 
     // Messages
     class EstablishConnectionResponse;
+    struct RefreshReplicaSetResponse;
     class LoadDatabaseNamesResponse;
     class InsertDocumentResponse;
     class CreateDatabaseResponse;
@@ -53,6 +54,9 @@ namespace Robomongo
         */
         void tryRefresh();
 
+        // todo
+        void tryRefreshReplicaSet();
+
         bool isConnected()const;
 
         void createDatabase(const std::string &dbName);
@@ -81,12 +85,13 @@ namespace Robomongo
 
         // todo: remove if not used
         // --- Getters ---
-        //std::string getRepSetName() const { return _repSetName; }
+        std::string getRepSetName() const { return _repSetName; }
         mongo::HostAndPort getRepPrimary() const { return _repPrimary; }
         std::vector<std::pair<std::string, bool>> getRepMembersHealths() const { return _repMembersAndHealths; }
 
     protected Q_SLOTS:
         void handle(EstablishConnectionResponse *event);
+        void handle(RefreshReplicaSetResponse *event);
         void handle(LoadDatabaseNamesResponse *event);
         void handle(InsertDocumentResponse *event);
         void handle(RemoveDocumentResponse *event);

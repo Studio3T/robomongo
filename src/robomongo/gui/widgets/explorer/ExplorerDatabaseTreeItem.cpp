@@ -107,6 +107,8 @@ namespace Robomongo
         _usersFolderItem->setText(0, "Users");
         _usersFolderItem->setIcon(0, GuiRegistry::instance().folderIcon());
         addChild(_usersFolderItem);
+
+        setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
     }
 
     void ExplorerDatabaseTreeItem::expandCollections()

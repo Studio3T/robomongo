@@ -391,13 +391,16 @@ namespace Robomongo
         setContentsMargins(0, 0, 0, 0);
         _textColor = palette().text().color().lighter(200);
 
-        _currentConnectionLabel = new Indicator(GuiRegistry::instance().connectIcon(), QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(connectionName.c_str()));
+        _currentConnectionLabel = new Indicator(GuiRegistry::instance().connectIcon(), 
+            QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(connectionName.c_str()));
         _currentConnectionLabel->setDisabled(true);
         
-        _currentServerLabel = new Indicator(GuiRegistry::instance().serverIcon(), QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(serverName.c_str()));
+        _currentServerLabel = new Indicator(GuiRegistry::instance().serverIcon(), 
+            QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(serverName.c_str()));
         _currentServerLabel->setDisabled(true);
 
-        _currentDatabaseLabel = new Indicator(GuiRegistry::instance().databaseIcon(), QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(dbName.c_str()));
+        _currentDatabaseLabel = new Indicator(GuiRegistry::instance().databaseIcon(), 
+            QString("<font color='%1'>%2</font>").arg(_textColor.name()).arg(dbName.c_str()));
         _currentDatabaseLabel->setDisabled(true);
         
         QHBoxLayout *topLayout = new QHBoxLayout;

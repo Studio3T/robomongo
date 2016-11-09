@@ -72,7 +72,7 @@ namespace Robomongo
         /**
          * @brief Port of server
          */
-        unsigned short serverPort() const { return _port; }
+        int serverPort() const { return _port; }
         void setServerPort(const int port) { _port = port; }
 
         /**

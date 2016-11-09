@@ -57,12 +57,12 @@ namespace Robomongo
             {}
 
         EstablishConnectionResponse(QObject *sender, const EventError &error, ConnectionType connectionType, 
-                                    ErrorReason errorReason) :
+                                    const ReplicaSet replicaSet, ErrorReason errorReason) :
             Event(sender, error),
             _info(),
             _connectionType(connectionType),
             _errorReason(errorReason),
-            _replicaSet()
+            _replicaSet(replicaSet)
         {}
 
         // Getters - todo: refactor return copy
@@ -87,11 +87,13 @@ namespace Robomongo
     {
         R_EVENT
 
+        // Primary is reachable
         RefreshReplicaSetResponse(QObject *sender, ReplicaSet replicaSet) :     
             Event(sender), replicaSet(replicaSet) {}
-         
-        RefreshReplicaSetResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        
+        // Primary is unreachable, secondary(ies) might be reachable
+        RefreshReplicaSetResponse(QObject *sender, ReplicaSet replicaSet, const EventError &error) :
+            Event(sender, error), replicaSet(replicaSet) {}
 
         ReplicaSet const replicaSet;
     };

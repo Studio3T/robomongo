@@ -67,11 +67,11 @@ namespace Robomongo
     {
     }
 
-    void ScriptEngine::init(bool isLoadMongoRcJs, const std::string& serverAddr)
+    void ScriptEngine::init(bool isLoadMongoRcJs, const std::string& serverAddr, const std::string& dbName)
     {
         QMutexLocker lock(&_mutex);
 
-        std::string connectDatabase = "test";
+        std::string connectDatabase = dbName.empty() ? "test" : dbName;
 
         if (_connection->hasEnabledPrimaryCredential())
             connectDatabase = _connection->primaryCredential()->databaseName();

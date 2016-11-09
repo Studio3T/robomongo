@@ -91,11 +91,11 @@ namespace Robomongo
                 "Please use one of them.");
             return false;
         }
-        _basicTab->accept();
+        
         _authTab->accept();
         _advancedTab->accept();
 
-        if (!_sshTab->accept() || !_sslTab->accept())
+        if (!_basicTab->accept() || !_sshTab->accept() || !_sslTab->accept())
         {
             return false;
         }

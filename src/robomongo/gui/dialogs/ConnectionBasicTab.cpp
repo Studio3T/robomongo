@@ -10,6 +10,7 @@
 #include <QComboBox>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QMessageBox>
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -127,14 +128,29 @@ namespace Robomongo
         on_ConnectionTypeChange(_connectionType->currentIndex());
     }
 
-    void ConnectionBasicTab::accept()
+    bool ConnectionBasicTab::accept()
     {
+        if (_settings->isReplicaSet() && _members->topLevelItemCount() == 0) {
+            QMessageBox::critical(this, "Error", "Replica set members cannot be empty. "  
+                                                 "Please enter at least one member.");
+            return false;
+        }
+        
         ReplicaSetSettings* const replicaSettings = _settings->replicaSetSettings();
        
         _settings->setReplicaSet(static_cast<bool>(_connectionType->currentIndex()));
         _settings->setConnectionName(QtUtils::toStdString(_connectionName->text()));
-        _settings->setServerHost(QtUtils::toStdString(_serverAddress->text()));
-        _settings->setServerPort(_serverPort->text().toInt());
+
+        if (_settings->isReplicaSet()) {
+            QStringList const hostAndPort = _members->topLevelItem(0)->text(0).split(":");
+            _settings->setServerHost(hostAndPort[0].toStdString());
+            _settings->setServerPort(hostAndPort[1].toInt());
+        }
+        else {  // single server
+            _settings->setServerHost(QtUtils::toStdString(_serverAddress->text()));
+            _settings->setServerPort(_serverPort->text().toInt());
+        }
+
         if (_settings->isReplicaSet()) {
             // save replica members
             std::vector<std::string> members;
@@ -150,6 +166,8 @@ namespace Robomongo
             replicaSettings->setReadPreference(
                 static_cast<ReplicaSetSettings::ReadPreference>(_readPreference->currentIndex()));
         }
+
+        return true;
     }
 
     void ConnectionBasicTab::on_ConnectionTypeChange(int index)

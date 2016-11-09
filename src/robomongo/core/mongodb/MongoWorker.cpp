@@ -139,40 +139,71 @@ namespace Robomongo
     {
         QMutexLocker lock(&_firstConnectionMutex);
 
+        std::unique_ptr<ReplicaSet> repSetInfo(new ReplicaSet); // todo
+
         try {
             // Init MongoWorker
             init();
             
             mongo::DBClientBase *conn = getConnection(true);
+
             if (!conn) 
             {
-                // Protection by default value: Logically/ideally, this error should never be seen.
+                // Protection as default value: Logically/ideally, this error should never be seen.
                 auto errorReason = std::string("Connection failure: Unknown error.");
-                if (_connSettings->sslSettings()->sslEnabled())
-                {
-                    // Note: Currently mongo-shell does not provide any interface to fetch actual error details
-                    // for some SSL connection failures that's why we are unable to show exact error here. 
-                    errorReason = "SSL tunnel failure: Network is unreachable or SSL connection rejected by server.";
+
+                if (_connSettings->isReplicaSet()) {   
+                    errorReason = "No member of the set is reachable.";
+
+                    // Build ReplicaSet with no member reachable
+                    std::vector<std::pair<std::string, bool>> membersAndHealths;
+                    for (auto const& member : _connSettings->replicaSetSettings()->members()) {
+                        membersAndHealths.push_back({ member, false });
+                    }
+                    repSetInfo.reset(new ReplicaSet(_connSettings->replicaSetSettings()->setName(), mongo::HostAndPort(),
+                                                    membersAndHealths, "No member of the set is reachable."));
+
+                    // todo: SSL case
+                    // ...
                 }
-                else
+                else    // single server
                 {
-                    errorReason = "Network is unreachable.";
+                    if (_connSettings->sslSettings()->sslEnabled())
+                    {
+                        // Note: Currently mongo-shell does not provide any interface to fetch actual error details
+                        // for some SSL connection failures that's why we are unable to show exact error here. 
+                        errorReason = "SSL tunnel failure: Network is unreachable or SSL connection rejected by server.";
+                    }
+                    else
+                    {
+                        errorReason = "Network is unreachable.";
+                    }
                 }
 
                 resetGlobalSSLparams();
 
                 reply(event->sender(), new EstablishConnectionResponse(this, EventError(errorReason), event->connectionType, 
-                                                                       EstablishConnectionResponse::MongoConnection));
+                    *repSetInfo.release(), EstablishConnectionResponse::MongoConnection));
+
                 return;
             }
 
-            ReplicaSet repSetInfo = getReplicaSetInfo(); // todo:
-            if (_connSettings->isReplicaSet())
-            {
-                _connSettings->setServerHost(repSetInfo.primary.host());
-                _connSettings->setServerPort(repSetInfo.primary.port());
+            // There is no reachable primary with reachable secondary(ies) throw else primary is reachable so continue.
+            if (_connSettings->isReplicaSet()) {
+                ReplicaSet setInfo = getReplicaSetInfo();
+                if (setInfo.primary.empty()) {  // No reachable primary, pass possible reachable secondary(ies)
+                    repSetInfo.reset(new ReplicaSet(setInfo)); // todo: might be redundant
+                    
+                    reply(event->sender(), new RefreshReplicaSetResponse(this, setInfo, EventError(setInfo.errorStr)));
+                    LOG_MSG(setInfo.errorStr, mongo::logger::LogSeverity::Error());
+                    throw std::runtime_error(setInfo.errorStr);
+                }
+                else {  // Primary is reachable, save setInfo and continue
+                    repSetInfo.reset(new ReplicaSet(setInfo.setName, setInfo.primary, setInfo.membersAndHealths));
+                }
             }
 
+            // For single server, connection is successful & For replica set, primary is reachable (=connection successful)
             if (_connSettings->hasEnabledPrimaryCredential()) {
                 CredentialSettings *credentials = _connSettings->primaryCredential();
 
@@ -207,7 +238,10 @@ namespace Robomongo
             // todo: wrap rep. parameters into a struct
             auto connInfo = ConnectionInfo(_connSettings->getFullAddress(), dbNames, client->getVersion(), 
                                            client->getStorageEngineType());
-            reply(event->sender(), new EstablishConnectionResponse(this, connInfo, event->connectionType, repSetInfo));
+
+            // todo: two ctors for rep.set and single server.
+            reply(event->sender(), new EstablishConnectionResponse(this, connInfo, event->connectionType, 
+                                                                   *repSetInfo.release()));
         } catch(const std::exception &ex) {
             resetGlobalSSLparams();
 
@@ -215,8 +249,8 @@ namespace Robomongo
                 EstablishConnectionResponse::ErrorReason::MongoSslConnection : 
                 EstablishConnectionResponse::ErrorReason::MongoAuth;
 
-            reply(event->sender(), 
-                new EstablishConnectionResponse(this, EventError(ex.what()), event->connectionType, errorReason));
+            reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what()), event->connectionType, 
+                *repSetInfo.release(), errorReason));
         }
     }
 
@@ -224,9 +258,10 @@ namespace Robomongo
     {
         ReplicaSet const replicaSetInfo = getReplicaSetInfo();
 
-        if (replicaSetInfo.primary.empty()) { // Primary is unreachable
-            reply(event->sender(), new RefreshReplicaSetResponse(this, EventError(replicaSetInfo.errorStr)));
+        if (replicaSetInfo.primary.empty()) { // Primary is unreachable, but there might have reachable secondary(ies) 
+            reply(event->sender(), new RefreshReplicaSetResponse(this, replicaSetInfo, EventError(replicaSetInfo.errorStr)));
             LOG_MSG(replicaSetInfo.errorStr, mongo::logger::LogSeverity::Error());
+            return;
         }
 
         // Primary is reachable
@@ -470,11 +505,13 @@ namespace Robomongo
                 // Update connection settings with primary(master) address and port
                 mongo::HostAndPort repPrimary = repSetMonitor->getMasterOrUassert();
 
+                // todo:
                 // Update script engine with primary node
-                _scriptEngine->init(_isLoadMongoRcJs, repPrimary.toString());
+                _scriptEngine->init(_isLoadMongoRcJs, repPrimary.toString(), _connSettings->defaultDatabase());
             }
 
-            MongoShellExecResult result = _scriptEngine->exec(event->script, event->databaseName);
+            // todo: should we use dbName from event or _connSettings? 
+            MongoShellExecResult result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
 
             reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty()));
         } 
@@ -816,10 +853,10 @@ namespace Robomongo
         if (res.isOK())
             primary = res.getValue();
 
-        // i.e. "repset/localhost:27017,localhost:27018,localhost:27019"
         QStringList servers;
-        auto fullAddress = QString::fromStdString(repSetMonitor->getServerAddress());
-        QStringList result = fullAddress.split("/");
+        // i.e. setNameAndMembers: "repset/localhost:27017,localhost:27018,localhost:27019"
+        auto setNameAndMembers = QString::fromStdString(repSetMonitor->getServerAddress());
+        QStringList result = setNameAndMembers.split("/");
         if (result.size() > 1) {
             servers = result[1].split(",");
         }

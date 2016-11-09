@@ -8,6 +8,7 @@ namespace Robomongo
     class EventBus;
     class MongoServerLoadingDatabasesEvent;
     class ExplorerReplicaSetFolderItem;
+    class ExplorerTreeItem;
 
     class ExplorerServerTreeItem : public ExplorerTreeItem
     {
@@ -44,7 +45,11 @@ namespace Robomongo
 
     private:
 
+        // todo: 
+        void buildReplicaSetFolder();        
+
         ExplorerReplicaSetFolderItem *_replicaSetFolder;
+        ExplorerTreeItem *_systemFolder;
 
         /**
          * @brief Builds server
@@ -56,5 +61,8 @@ namespace Robomongo
 
         MongoServer *const _server;
         EventBus *_bus;
+
+        // todo: @brief
+        bool _primaryWasUnreachable;
     };
 }

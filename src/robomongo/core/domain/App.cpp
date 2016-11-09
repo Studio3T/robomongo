@@ -134,7 +134,8 @@ namespace Robomongo
      */
     void App::closeServer(MongoServer *server)
     {
-        _servers.erase(std::remove_if(_servers.begin(), _servers.end(), stdutils::RemoveIfFound<MongoServer*>(server)), _servers.end());
+        _servers.erase(std::remove_if(_servers.begin(), _servers.end(), stdutils::RemoveIfFound<MongoServer*>(server)), 
+                       _servers.end());
     }
 
     void App::openShell(MongoCollection *collection, const QString &filePathToSave)
@@ -142,7 +143,8 @@ namespace Robomongo
         ConnectionSettings *connection = collection->database()->server()->connectionRecord();
         connection->setDefaultDatabase(collection->database()->name());
         QString script = detail::buildCollectionQuery(collection->name(), "find({})");
-        openShell(connection, ScriptInfo(script, true, CursorPosition(0, -2), QtUtils::toQString(collection->database()->name()), filePathToSave));
+        openShell(connection, ScriptInfo(script, true, CursorPosition(0, -2), 
+                                         QtUtils::toQString(collection->database()->name()), filePathToSave));
     }
 
     void App::openShell(MongoServer *server, const QString &script, const std::string &dbName,

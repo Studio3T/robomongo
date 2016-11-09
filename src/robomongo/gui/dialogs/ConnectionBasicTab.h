@@ -20,7 +20,7 @@ namespace Robomongo
 
     public:
         ConnectionBasicTab(ConnectionSettings *settings);
-        void accept();
+        bool accept();
 
     private Q_SLOTS:
         void on_ConnectionTypeChange(int index);

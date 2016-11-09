@@ -135,45 +135,8 @@ namespace Robomongo {
 
     void MongoServer::handle(EstablishConnectionResponse *event) 
     {
-        if (event->isError()) {
-            _isConnected = false;
-
-            std::stringstream ss("Unknown error");
-            auto eventErrorReason = event->_errorReason;
-            if (EstablishConnectionResponse::ErrorReason::MongoSslConnection == eventErrorReason)
-            {
-                auto reason = ConnectionFailedEvent::SslConnection;
-                ss.clear();
-                ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
-                    << ".\n\nError:\n" << "SSL connection failure: " << event->error().errorMessage();
-                _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
-            }
-            else
-            {
-                auto reason = (EstablishConnectionResponse::ErrorReason::MongoAuth == eventErrorReason) ?
-                    ConnectionFailedEvent::MongoAuth : ConnectionFailedEvent::MongoConnection;
-                ss.clear();
-                ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
-                    << ".\n\nError:\n" << event->error().errorMessage();
-                _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
-            }
-
-            // When connection cannot be established, we should cleanup this instance of MongoServer if it wasn't
-            // shown in UI (i.e. it is not a Secondary connection that is used for shells tab)
-            if (_connectionType == ConnectionPrimary || _connectionType == ConnectionTest)
-            {
-                _app->closeServer(this);
-            }
-
-            return;
-        }
-
-        // Save various information after successful connection
-        const ConnectionInfo &info = event->info();
-        _version = info._version;
-        _storageEngineType = info._storageEngineType;
-        _isConnected = true;
-
+        // Even connection failed, need to update replica set info, 
+        // there might be reachable secondary(ies).
         if (_settings->isReplicaSet()) {
             // Update replica set settings and mongo server _replicaSetInfo 
             _replicaSetInfo.reset(new ReplicaSet(event->replicaSet()));
@@ -181,9 +144,71 @@ namespace Robomongo {
             _settings->setServerHost(_replicaSetInfo->primary.host());
             _settings->setServerPort(_replicaSetInfo->primary.port());
             _settings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
-            _settings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);
+            //_settings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);
             AppRegistry::instance().settingsManager()->save();
+            //_bus->publish(new ReplicaSetUpdated(this)); // todo
         }
+
+        // --- Connection Failed
+        if (event->isError()) {
+            _isConnected = false;
+
+            std::stringstream ss("Unknown error");
+            auto eventErrorReason = event->_errorReason;
+
+            // todo:
+            if(_settings->isReplicaSet()) {
+                ss.clear();
+                std::string server = "";
+                if (_settings->replicaSetSettings()->members().size() > 0 )    
+                    server = " [" + _settings->replicaSetSettings()->members().front() + "]";
+
+                ss << "Cannot connect to replica set " << _settings->connectionName() << server
+                    << ".\n\nError:\n" << "Replica set connection failure: " << event->error().errorMessage();
+                _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), ConnectionFailedEvent::MongoConnection);
+            }
+            else    // single server 
+            {  
+                if (EstablishConnectionResponse::ErrorReason::MongoSslConnection == eventErrorReason)
+                {
+                    auto reason = ConnectionFailedEvent::SslConnection;
+                    ss.clear();
+                    ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
+                        << ".\n\nError:\n" << "SSL connection failure: " << event->error().errorMessage();
+                    _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
+                }
+                else
+                {
+                    auto reason = (EstablishConnectionResponse::ErrorReason::MongoAuth == eventErrorReason) ?
+                        ConnectionFailedEvent::MongoAuth : ConnectionFailedEvent::MongoConnection;
+                    ss.clear();
+                    ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
+                        << ".\n\nError:\n" << event->error().errorMessage();
+                    _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
+                }
+
+                // todo: commented because, for successful connections, this update is being done 
+                //       in ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabase *> &dbs)
+                //
+                //if (_settings->isReplicaSet())
+                //    _bus->publish(new ReplicaSetUpdated(this, event->error()));
+
+                // When connection cannot be established, we should cleanup this instance of MongoServer if it wasn't
+                // shown in UI (i.e. it is not a Secondary connection that is used for shells tab)
+                if (_connectionType == ConnectionPrimary || _connectionType == ConnectionTest)
+                {
+                    _app->closeServer(this);
+                }
+            }
+            return;
+        }
+
+        // --- Connections Successful
+        // Save various information after successful connection
+        const ConnectionInfo &info = event->info();
+        _version = info._version;
+        _storageEngineType = info._storageEngineType;
+        _isConnected = true;
 
         // ConnectionRefresh is used just to update connection view (_version, _storageEngineType, _repPrimary etc..)
         // So we return here after updating(refreshing) information related to connection view.
@@ -207,6 +232,8 @@ namespace Robomongo {
     void MongoServer::handle(RefreshReplicaSetResponse *event)
     {
         if (event->isError()) { // Primary is unreachable
+            _replicaSetInfo.reset(new ReplicaSet(event->replicaSet));
+            // todo: should we save set name?
             _bus->publish(new ReplicaSetUpdated(this, event->error()));
             return;
         }
@@ -217,13 +244,14 @@ namespace Robomongo {
         _settings->setServerHost(_replicaSetInfo->primary.host());
         _settings->setServerPort(_replicaSetInfo->primary.port());
         _settings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
-        _settings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);
-        AppRegistry::instance().settingsManager()->save();
+        //_settings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);  // todo
+        AppRegistry::instance().settingsManager()->save();    // todo
 
         _bus->publish(new ReplicaSetUpdated(this));
     }
 
-    void MongoServer::handle(LoadDatabaseNamesResponse *event) {
+    void MongoServer::handle(LoadDatabaseNamesResponse *event) 
+    {
         if (event->isError()) {
             _bus->publish(new DatabaseListLoadedEvent(this, event->error()));
             return;

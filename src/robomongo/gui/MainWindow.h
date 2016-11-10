@@ -84,13 +84,18 @@ namespace Robomongo
         void setUtcTimeZone();
         void setLocalTimeZone();
         void openPreferences();
-        void openExportDialog();
+        
+        // Temporarily disabling export/import feature
+        //void openExportDialog();
 
         void onConnectToolbarVisibilityChanged(bool isVisisble);
         void onOpenSaveToolbarVisibilityChanged(bool isVisisble);
         void onExecToolbarVisibilityChanged(bool isVisisble);
         void onExplorerVisibilityChanged(bool isVisisble);
-        void onExplorerItemSelected(QTreeWidgetItem *selectedItem);
+
+        // Temporarily disabling export/import feature
+        //void onExplorerItemSelected(QTreeWidgetItem *selectedItem);
+
         void on_tabChange();
 
         void toggleMinimize();
@@ -131,9 +136,11 @@ namespace Robomongo
         QAction *_stopAction;
         QAction *_orientationAction;
         QToolBar *_execToolBar;
-        // Export/import tool bar
-        QAction *_exportAction;
-        QAction *_importAction;
+        
+        // Temporarily disabling export/import feature
+        //// Export/import tool bar
+        //QAction *_exportAction;
+        //QAction *_importAction;
 
 #if defined(Q_OS_WIN)
         QSystemTrayIcon *_trayIcon;

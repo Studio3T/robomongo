@@ -114,7 +114,7 @@ namespace Robomongo
         _connectionsMenu(nullptr), _connectButton(nullptr), _viewMenu(nullptr), _toolbarsMenu(nullptr), 
         _connectAction(nullptr), _openAction(nullptr), _saveAction(nullptr), _saveAsAction(nullptr),
         _executeAction(nullptr), _stopAction(nullptr), _orientationAction(nullptr), _execToolBar(nullptr),
-        _exportAction(nullptr), _importAction(nullptr),
+        //_exportAction(nullptr), _importAction(nullptr), // Temporarily disabling export/import feature
 #if defined(Q_OS_WIN)
         _trayIcon(nullptr),
 #endif
@@ -542,25 +542,26 @@ namespace Robomongo
         _toolbarsMenu->addAction(_execToolBar->toggleViewAction());
         VERIFY(connect(_execToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onExecToolbarVisibilityChanged(bool))));
 
-        // Export/Import Toolbar
-        auto expImpToolBar = new QToolBar(tr("Export/Import Toolbar"), this);
-        expImpToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        expImpToolBar->setMovable(false);
-        // Add export action
-        _exportAction = new QAction(this);
-        _exportAction->setData("Export");
-        _exportAction->setIcon(GuiRegistry::instance().exportIcon());
-        _exportAction->setDisabled(true);
-        VERIFY(connect(_exportAction, SIGNAL(triggered()), this, SLOT(openExportDialog())));
-        addToolBar(expImpToolBar);
-        expImpToolBar->addAction(_exportAction);
-        // Add import action
-        _importAction = new QAction(this);
-        _importAction->setData("Import");
-        _importAction->setIcon(GuiRegistry::instance().importIcon());
-        _importAction->setDisabled(true);
-        addToolBar(expImpToolBar);
-        expImpToolBar->addAction(_importAction);
+        // Temporarily disabling export/import feature
+        //// Export/Import Toolbar
+        //auto expImpToolBar = new QToolBar(tr("Export/Import Toolbar"), this);
+        //expImpToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        //expImpToolBar->setMovable(false);
+        //// Add export action
+        //_exportAction = new QAction(this);
+        //_exportAction->setData("Export");
+        //_exportAction->setIcon(GuiRegistry::instance().exportIcon());
+        //_exportAction->setDisabled(true);
+        //VERIFY(connect(_exportAction, SIGNAL(triggered()), this, SLOT(openExportDialog())));
+        //addToolBar(expImpToolBar);
+        //expImpToolBar->addAction(_exportAction);
+        //// Add import action
+        //_importAction = new QAction(this);
+        //_importAction->setData("Import");
+        //_importAction->setIcon(GuiRegistry::instance().importIcon());
+        //_importAction->setDisabled(true);
+        //addToolBar(expImpToolBar);
+        //expImpToolBar->addAction(_importAction);
 
         createTabs();
         createStatusBar();
@@ -917,15 +918,16 @@ namespace Robomongo
         dlg.exec();
     }
 
-    void MainWindow::openExportDialog()
-    {
-        auto selectedItem = dynamic_cast<ExplorerCollectionTreeItem*>(_explorer->getSelectedTreeItem());
-        auto dbName = QString::fromStdString(selectedItem->collection()->database()->name());
-        auto collName = QString::fromStdString(selectedItem->collection()->name());
+    // Temporarily disabling export/import feature
+    //void MainWindow::openExportDialog()
+    //{
+    //    auto selectedItem = dynamic_cast<ExplorerCollectionTreeItem*>(_explorer->getSelectedTreeItem());
+    //    auto dbName = QString::fromStdString(selectedItem->collection()->database()->name());
+    //    auto collName = QString::fromStdString(selectedItem->collection()->name());
 
-        auto dialog = new ExportDialog(dbName, collName, this);
-        dialog->show(); // show it mode-less so that user can perform multiple simultaneous exports
-    }
+    //    auto dialog = new ExportDialog(dbName, collName, this);
+    //    dialog->show(); // show it mode-less so that user can perform multiple simultaneous exports
+    //}
 
     void MainWindow::setDefaultUuidEncoding()
     {
@@ -1205,16 +1207,17 @@ namespace Robomongo
         AppRegistry::instance().settingsManager()->save();
     }
 
-    void MainWindow::onExplorerItemSelected(QTreeWidgetItem *selectedItem)
-    {
-        auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(selectedItem);
-        if (collectionItem) {
-            _exportAction->setEnabled(true);
-        }
-        else {
-            _exportAction->setDisabled(true);
-        }
-    }
+    // Temporarily disabling export/import feature
+    //void MainWindow::onExplorerItemSelected(QTreeWidgetItem *selectedItem)
+    //{
+    //    auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(selectedItem);
+    //    if (collectionItem) {
+    //        _exportAction->setEnabled(true);
+    //    }
+    //    else {
+    //        _exportAction->setDisabled(true);
+    //    }
+    //}
 
     void MainWindow::on_tabChange()
     {

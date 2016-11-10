@@ -93,9 +93,9 @@ namespace Robomongo
 
     protected:
         /**
-        * @brief Reimplementing closeEvent in order to do implement functioanlites before close this dialog.
+        * @brief Reimplementing closeEvent in order to do implement functionalities before close this dialog.
         */
-        void closeEvent(QCloseEvent *event);
+        void closeEvent(QCloseEvent *event) override;
 
     private Q_SLOTS:
         /**

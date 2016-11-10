@@ -106,8 +106,8 @@ namespace Robomongo
         void createTabs();
         void createStylesMenu();
         void createStatusBar();
-        void restoreWindowsSettings();
-        void saveWindowsSettings() const;
+        void restoreWindowSettings();
+        void saveWindowSettings() const;
 
         QDockWidget *_logDock;
 

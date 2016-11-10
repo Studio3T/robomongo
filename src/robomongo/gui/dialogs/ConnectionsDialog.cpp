@@ -216,7 +216,7 @@ namespace Robomongo
 
         _listWidget->setFocus();
 
-        restoreWindowsSettings();
+        restoreWindowSettings();
     }
 
     /**
@@ -231,20 +231,20 @@ namespace Robomongo
             return;
 
         _selectedConnection = currentItem->connection();
-        saveWindowsSettings();
+        saveWindowSettings();
 
         QDialog::accept();
     }
 
     void ConnectionsDialog::reject()
     {
-        saveWindowsSettings();
+        saveWindowSettings();
         QDialog::reject();
     }
 
     void ConnectionsDialog::closeEvent(QCloseEvent *event)
     {
-        saveWindowsSettings();
+        saveWindowSettings();
         QWidget::closeEvent(event);
     }
 
@@ -468,13 +468,13 @@ namespace Robomongo
         QDialog::keyPressEvent(event);
     }
 
-    void ConnectionsDialog::restoreWindowsSettings()
+    void ConnectionsDialog::restoreWindowSettings()
     {
         QSettings settings("Paralect", "Robomongo");
         resize(settings.value("ConnectionsDialog/size").toSize());
     }
 
-    void ConnectionsDialog::saveWindowsSettings() const
+    void ConnectionsDialog::saveWindowSettings() const
     {
         QSettings settings("Paralect", "Robomongo");
         settings.setValue("ConnectionsDialog/size", size());

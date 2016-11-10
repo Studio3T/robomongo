@@ -576,7 +576,7 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(this, QueryWidgetUpdatedEvent::Type);
         AppRegistry::instance().bus()->subscribe(this, OperationFailedEvent::Type);
 
-        restoreWindowsSettings();
+        restoreWindowSettings();
 
         // Catch application windows focus changes
         VERIFY(connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(on_focusChanged())));
@@ -647,7 +647,7 @@ namespace Robomongo
         close();
     }
 
-    void MainWindow::restoreWindowsSettings()
+    void MainWindow::restoreWindowSettings()
     {
         QSettings settings("Paralect", "Robomongo");
         // Restore settings if registery key exists, otherwise resize as app started for the first time.
@@ -672,7 +672,7 @@ namespace Robomongo
         }
     }
 
-    void MainWindow::saveWindowsSettings() const
+    void MainWindow::saveWindowSettings() const
     {
         QSettings settings("Paralect", "Robomongo");
         settings.setValue("MainWindow/geometry", saveGeometry());
@@ -1064,7 +1064,7 @@ namespace Robomongo
 
     void MainWindow::closeEvent(QCloseEvent *event)
     {
-        saveWindowsSettings();
+        saveWindowSettings();
     #if defined(Q_OS_WIN)
         if (AppRegistry::instance().settingsManager()->minimizeToTray() && !_allowExit) {
             event->ignore();

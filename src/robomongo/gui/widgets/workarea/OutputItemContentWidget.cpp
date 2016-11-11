@@ -78,7 +78,8 @@ namespace Robomongo
     }
 
     void OutputItemContentWidget::setup(double secs)
-    {      
+    {
+        _notifier = new Notifier(this, _shell, _queryInfo);
         setContentsMargins(0, 0, 0, 0);
         _header = new OutputItemHeaderWidget(this);       
 
@@ -241,7 +242,7 @@ namespace Robomongo
         }
 
         if (!_isTreeModeInitialized) {
-            _bsonTreeview = new BsonTreeView(_shell, _queryInfo);
+            _bsonTreeview = new BsonTreeView(_notifier);
             _bsonTreeview->setModel(_mod);
             _stack->addWidget(_bsonTreeview);
 
@@ -293,7 +294,7 @@ namespace Robomongo
         }
 
         if (!_isTableModeInitialized) {
-            _bsonTable = new BsonTableView(_shell, _queryInfo);
+            _bsonTable = new BsonTableView(_notifier);
             BsonTableModelProxy *modp = new BsonTableModelProxy(_bsonTable);
             modp->setSourceModel(_mod);
             _bsonTable->setModel(modp);
@@ -362,5 +363,35 @@ namespace Robomongo
         // even for medium size documents.    
         _logText->sciScintilla()->setStyleSheet("QFrame {background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
         return _logText;
+    }
+
+    QModelIndex OutputItemContentWidget::selectedIndex() const
+    {
+        QModelIndex result;
+        switch(_viewMode) {
+            case Text: return result;
+            case Tree: return _bsonTreeview->selectedIndex();
+            case Table: return _bsonTable->selectedIndex();
+            case Custom:
+                if(!_isCustomModeSupported)
+                    return _bsonTreeview->selectedIndex();
+                return result;
+            default: return _bsonTreeview->selectedIndex();
+        }
+    }
+
+    QModelIndexList OutputItemContentWidget::selectedIndexes() const
+    {
+        QModelIndexList result;
+        switch(_viewMode) {
+            case Text: return result;
+            case Tree: return _bsonTreeview->selectedIndexes();
+            case Table: return _bsonTable->selectedIndexes();
+            case Custom:
+                if(!_isCustomModeSupported)
+                    return _bsonTreeview->selectedIndexes();
+                return result;
+            default: return _bsonTreeview->selectedIndexes();
+        }
     }
 }

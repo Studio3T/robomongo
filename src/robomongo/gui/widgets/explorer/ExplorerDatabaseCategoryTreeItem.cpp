@@ -240,7 +240,52 @@ namespace Robomongo
                 "    value : function() {\n"
                 "         // write your code here\n"
                 "    }\n"
-                "}", false);
+                "}",
+                "New Function", false);
+        }
+    }
+
+    void ExplorerDatabaseCategoryTreeItem::ui_editFunction(const MongoFunction &function)
+    {
+        ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
+        if (!databaseItem)
+            return;
+
+        std::string name = function.name();
+
+        EditWindowMode editWindowMode = AppRegistry::instance().settingsManager()->editWindowMode();
+        if(editWindowMode != Tabbed) {
+            FunctionTextEditor *dlg = new FunctionTextEditor(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
+                QtUtils::toQString(databaseItem->database()->name()),
+                function);
+            dlg->setWindowTitle("Edit Function");
+            switch(editWindowMode)
+            {
+                case Modal:
+                    {
+                        int result = dlg->exec();
+
+                        if (result == QDialog::Accepted) {
+
+                            MongoFunction editedFunction = dlg->function();
+                            databaseItem->database()->updateFunction(name, editedFunction);
+
+                            // refresh list of functions
+                            databaseItem->database()->loadFunctions();
+                        }
+                    }
+                    break;
+                case Modeless:
+                    VERIFY(connect(dlg, SIGNAL(accepted()), SLOT(functionTextEditorEditAccepted())));
+                    dlg->show();
+                    break;
+            }
+        } else {
+            openCurrentCollectionShell(QtUtils::toQString("{\n"
+                "    _id: \""+name+"\",\n"
+                "    value : " + function.code() + ""
+                "}"),
+                "Edit function", false);
         }
     }
 
@@ -264,12 +309,25 @@ namespace Robomongo
         databaseItem->expandFunctions();
     }
 
-    void ExplorerDatabaseCategoryTreeItem::openCurrentCollectionShell(const QString &script, bool execute, const CursorPosition &cursor)
+    void ExplorerDatabaseCategoryTreeItem::functionTextEditorEditAccepted()
+    {
+        ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
+        if (!databaseItem)
+            return;
+        FunctionTextEditor *dlg = (FunctionTextEditor*)QObject::sender();
+        MongoFunction editedFunction = dlg->function();
+        databaseItem->database()->updateFunction(editedFunction.name(), editedFunction);
+
+        // refresh list of functions
+        databaseItem->database()->loadFunctions();
+    }
+
+    void ExplorerDatabaseCategoryTreeItem::openCurrentCollectionShell(const QString &script, const QString &title, bool execute, const CursorPosition &cursor)
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
         if (!databaseItem)
             return;
         QString query = "db.system.js.save(" + script + ")";
-        AppRegistry::instance().app()->openShell(databaseItem->database(), query, execute, "New Function", cursor);
+        AppRegistry::instance().app()->openShell(databaseItem->database(), query, execute, title, cursor);
     }
 }

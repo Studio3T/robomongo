@@ -14,6 +14,7 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
+#include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 
 namespace Robomongo
 {
@@ -46,41 +47,8 @@ namespace Robomongo
 
     void ExplorerFunctionTreeItem::ui_editFunction()
     {
-        std::string name = _function.name();
-
-        EditWindowMode editWindowMode = AppRegistry::instance().settingsManager()->editWindowMode();
-        if(editWindowMode != Tabbed) {
-            FunctionTextEditor *dlg = new FunctionTextEditor(QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),
-                QtUtils::toQString(_database->name()),
-                _function);
-            dlg->setWindowTitle("Edit Function");
-            switch(editWindowMode)
-            {
-                case Modal:
-                    {
-                        int result = dlg->exec();
-
-                        if (result == QDialog::Accepted) {
-
-                            MongoFunction editedFunction = dlg->function();
-                            _database->updateFunction(name, editedFunction);
-
-                            // refresh list of functions
-                            _database->loadFunctions();
-                        }
-                    }
-                    break;
-                case Modeless:
-                    VERIFY(connect(dlg, SIGNAL(accepted()), SLOT(functionTextEditorEditAccepted())));
-                    dlg->show();
-                    break;
-            }
-        } else {
-            openCurrentCollectionShell(QtUtils::toQString("{\n"
-                "    _id: \""+name+"\",\n"
-                "    value : " + _function.code() + ""
-                "}"), false);
-        }
+        ExplorerDatabaseCategoryTreeItem *dcti = (ExplorerDatabaseCategoryTreeItem*)parent();
+        dcti->ui_editFunction(_function);
     }
 
     void ExplorerFunctionTreeItem::ui_dropFunction()
@@ -93,21 +61,5 @@ namespace Robomongo
 
         _database->dropFunction(_function.name());
         _database->loadFunctions(); // refresh list of functions
-    }
-
-    void ExplorerFunctionTreeItem::functionTextEditorEditAccepted()
-    {
-        FunctionTextEditor *dlg = (FunctionTextEditor*)QObject::sender();
-        MongoFunction editedFunction = dlg->function();
-        _database->updateFunction(_function.name(), editedFunction);
-
-        // refresh list of functions
-        _database->loadFunctions();
-    }
-
-    void ExplorerFunctionTreeItem::openCurrentCollectionShell(const QString &script, bool execute, const CursorPosition &cursor)
-    {
-        QString query = "db.system.js.save(" + script + ")";
-        AppRegistry::instance().app()->openShell(_database, query, execute, "Edit Function", cursor);
     }
 }

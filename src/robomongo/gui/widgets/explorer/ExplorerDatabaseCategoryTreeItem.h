@@ -2,6 +2,7 @@
 
 #include "robomongo/gui/widgets/explorer/ExplorerTreeItem.h"
 #include "robomongo/core/domain/CursorPosition.h"
+#include "robomongo/core/domain/MongoFunction.h"
 
 namespace Robomongo
 {
@@ -25,6 +26,7 @@ namespace Robomongo
         typedef ExplorerTreeItem BaseClass;
         ExplorerDatabaseCategoryTreeItem(ExplorerDatabaseTreeItem *databaseItem, ExplorerDatabaseCategory category);
         void expand();
+        void ui_editFunction(const MongoFunction &function);
 
     private Q_SLOTS:
         void ui_createCollection();
@@ -37,10 +39,11 @@ namespace Robomongo
         void ui_viewUsers();
         void ui_viewFunctions();
         void functionTextEditorAddAccepted();
+        void functionTextEditorEditAccepted();
 
     private:
         ExplorerDatabaseTreeItem *databaseItem() const;
         const ExplorerDatabaseCategory _category;
-        void openCurrentCollectionShell(const QString &script, bool execute = true, const CursorPosition &cursor = CursorPosition());
+        void openCurrentCollectionShell(const QString &script, const QString &title, bool execute = true, const CursorPosition &cursor = CursorPosition());
     };
 }

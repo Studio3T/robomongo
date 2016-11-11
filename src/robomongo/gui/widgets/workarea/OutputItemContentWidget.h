@@ -5,6 +5,7 @@
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
 #include "robomongo/core/Enums.h"
+#include "robomongo/core/domain/Notifier.h"
 #include <vector>
 
 namespace Robomongo
@@ -19,7 +20,7 @@ namespace Robomongo
     class OutputItemHeaderWidget;
     class OutputWidget;
 
-    class OutputItemContentWidget : public QWidget
+    class OutputItemContentWidget : public QWidget, public INotifierObserver
     {
         Q_OBJECT
 
@@ -38,6 +39,9 @@ namespace Robomongo
 
         void refreshOutputItem();
         void markUninitialized();
+
+        virtual QModelIndex selectedIndex() const;
+        virtual QModelIndexList selectedIndexes() const;
 
     Q_SIGNALS:
         void restoredSize();
@@ -89,5 +93,6 @@ namespace Robomongo
 
         bool _isFirstPartRendered;
         ViewMode _viewMode;
+        Notifier *_notifier;
     };
 }

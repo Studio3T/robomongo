@@ -12,12 +12,13 @@
 
 namespace Robomongo
 {
-    BsonTreeView::BsonTreeView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent)
-        : BaseClass(parent), _notifier(this, shell, queryInfo)
+    BsonTreeView::BsonTreeView(Notifier *notifier, QWidget *parent)
+        : BaseClass(parent)
     {
 #if defined(Q_OS_MAC)
         setAttribute(Qt::WA_MacShowFocusRect, false);
 #endif
+        _notifier = notifier;
         GuiRegistry::instance().setAlternatingColor(this);
         setSelectionMode(QAbstractItemView::ExtendedSelection);
         setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -51,7 +52,7 @@ namespace Robomongo
             menu.addAction(_collapseRecursive);
             menu.addSeparator();
             
-            _notifier.initMultiSelectionMenu(&menu);
+            _notifier->initMultiSelectionMenu(&menu);
             menu.exec(menuPoint);
         }
         else {
@@ -70,7 +71,7 @@ namespace Robomongo
                 }
             }
 
-            _notifier.initMenu(&menu, documentItem);
+            _notifier->initMenu(&menu, documentItem);
             menu.exec(menuPoint);
         }
     }
@@ -85,12 +86,12 @@ namespace Robomongo
     {
         switch (event->key()) {
             case Qt::Key_Delete:
-                _notifier.handleDeleteCommand();
+                _notifier->handleDeleteCommand();
                 break;
             case Qt::Key_Backspace:
                 // Cmd/Ctrl + Backspace
                 if (event->modifiers() & Qt::ControlModifier)
-                    _notifier.handleDeleteCommand();
+                    _notifier->handleDeleteCommand();
                 break;
             case Qt::Key_Right:
                 if (event->modifiers() & Qt::AltModifier)

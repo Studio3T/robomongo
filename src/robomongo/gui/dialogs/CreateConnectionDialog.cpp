@@ -67,7 +67,7 @@ namespace Robomongo
         //splitterL->addWidget(new QLabel(""));
         //splitterL->addWidget(nameWid);
         splitterL->addWidget(new QLabel(""));
-        splitterL->addWidget(new QLabel("a) I have a connection string URI:"));
+        splitterL->addWidget(new QLabel("a) I have a URI connection string:"));
         splitterL->addWidget(_uriLineEdit);
         splitterL->addWidget(new QLabel(""));
         splitterL->addWidget(createConnLabel);

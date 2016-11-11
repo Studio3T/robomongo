@@ -791,7 +791,7 @@ namespace Robomongo
                 // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
                 _dbclient = upDBClientConnection(new mongo::DBClientConnection(true, _mongoTimeoutSec));
 
-                mongo::Status status = _dbclient->connect(_connSettings->info());
+                mongo::Status status = _dbclient->connect(_connSettings->hostAndPort());
 
                 if (!status.isOK() && mayReturnNull) {
                     return nullptr;

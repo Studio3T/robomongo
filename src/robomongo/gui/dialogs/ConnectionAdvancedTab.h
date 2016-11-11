@@ -16,10 +16,15 @@ namespace Robomongo
 
     public:
         ConnectionAdvancedTab(ConnectionSettings *settings);
-        QLineEdit *_defaultDatabaseName;
         void accept();
 
+    private Q_SLOTS :
+        void on_copyButton_clicked();
+
     private:
+        QLineEdit *_defaultDatabaseName;
+        QLineEdit *_uriString;
+
         ConnectionSettings *_settings;
     };
 }

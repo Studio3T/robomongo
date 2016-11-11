@@ -77,7 +77,7 @@ namespace Robomongo
             connectDatabase = _connection->primaryCredential()->databaseName();
 
         std::stringstream ss;
-        auto hostAndPort = serverAddr.empty() ? _connection->info().toString() : serverAddr;
+        auto hostAndPort = serverAddr.empty() ? _connection->hostAndPort().toString() : serverAddr;
         ss << "db = connect('" << hostAndPort << "/" << connectDatabase;
 
 //        v0.9

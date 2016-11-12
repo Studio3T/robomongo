@@ -4,6 +4,8 @@
 
 QT_BEGIN_NAMESPACE
 class QLineEdit;
+class QCheckBox;
+class QPushButton;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -19,11 +21,15 @@ namespace Robomongo
         void accept();
 
     private Q_SLOTS :
+        void on_generateButton_clicked();
         void on_copyButton_clicked();
+        void on_includePasswordsCheckBox_toggle(bool checked);
 
     private:
         QLineEdit *_defaultDatabaseName;
         QLineEdit *_uriString;
+        QCheckBox *_includePasswordCheckBox;
+        QPushButton *_copyButton;
 
         ConnectionSettings *_settings;
     };

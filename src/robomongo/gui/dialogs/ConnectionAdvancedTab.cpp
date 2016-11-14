@@ -79,6 +79,7 @@ namespace Robomongo
             // todo: handle setname will be empty initially
             std::string connStr = { "mongodb://" };
 
+            // todo: 
             if (_settings->hasEnabledPrimaryCredential() && !_settings->credentials().isEmpty()) {
                 connStr.append(_settings->primaryCredential()->userName() + ":");
                 connStr.append(_includePasswordCheckBox->isChecked() ? 
@@ -138,6 +139,9 @@ namespace Robomongo
 
     void ConnectionAdvancedTab::on_includePasswordsCheckBox_toggle(bool checked)
     {
+        if (_uriString->text().isEmpty())
+            return;
+
         on_generateButton_clicked();
     }
 

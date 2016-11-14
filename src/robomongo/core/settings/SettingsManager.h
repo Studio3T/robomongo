@@ -137,7 +137,9 @@ namespace Robomongo
         /**
          * Load connection settings from previous versions of Robomongo
          */
-        void importPreviousConnections();
+        void importConnections();
+        void importConnectionsFrom_0_8_5_to_0_9();
+        void importConnectionsFrom_0_9_to_1_0();
 
         /**
          * @brief Version of settings schema currently loaded

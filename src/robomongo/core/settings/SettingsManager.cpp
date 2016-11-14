@@ -26,13 +26,13 @@ namespace
          * @brief Config file absolute path
          *        (usually: /home/user/.config/robomongo/robomongo.json)
          */
-        const QString _configPath = QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath());
+        const QString _configPath = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
 
         /**
          * @brief Config file containing directory path
          *        (usually: /home/user/.config/robomongo)
          */
-        const QString _configDir = QString("%1/.config/robomongo/0.9").arg(QDir::homePath());
+        const QString _configDir = QString("%1/.config/robomongo/1.0").arg(QDir::homePath());
 }
 
 namespace Robomongo
@@ -175,6 +175,7 @@ namespace Robomongo
         _batchSize = map.value("batchSize").toInt();
         if (_batchSize == 0)
             _batchSize = 50;
+
         _currentStyle = map.value("style").toString();
         if (_currentStyle.isEmpty()) {
             _currentStyle = AppStyle::StyleName;
@@ -206,22 +207,25 @@ namespace Robomongo
         ToolbarSettingsContainerType::const_iterator it = _toolbars.find("connect");
         if (_toolbars.end() == it)
             _toolbars["connect"] = true;
+
         it = _toolbars.find("open_save");
         if (_toolbars.end() == it)
             _toolbars["open_save"] = true;
+
         it = _toolbars.find("exec");
         if (_toolbars.end() == it)
             _toolbars["exec"] = true;
+
         it = _toolbars.find("explorer");
         if (_toolbars.end() == it)
             _toolbars["explorer"] = true;
+
         it = _toolbars.find("logs");
         if (_toolbars.end() == it)
             _toolbars["logs"] = false;
 
-        // Load connection settings from previous
-        // versions of Robomongo
-        importPreviousConnections();
+        // Load connection settings from previous versions of Robomongo
+        importConnections();
     }
 
     /**
@@ -327,29 +331,41 @@ namespace Robomongo
         _toolbars[toolbarName] = visible;
     }
 
-    void SettingsManager::importPreviousConnections() {
+    void SettingsManager::importConnections()
+    {
         // Skip when settings already imported
         if (_imported)
             return;
 
+        // todo: these functions should return bool
+        importConnectionsFrom_0_8_5_to_0_9();
+        importConnectionsFrom_0_9_to_1_0();
+
+        // Mark as imported
+        setImported(true);
+    }
+
+    void SettingsManager::importConnectionsFrom_0_8_5_to_0_9() 
+    {
         // Load old configuration file (used till version 0.8.5)
         const QString oldConfigPath = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
 
         if (!QFile::exists(oldConfigPath))
             return;
 
-        QFile f(oldConfigPath);
-        if (!f.open(QIODevice::ReadOnly))
+        QFile oldConfigFile(oldConfigPath);
+        if (!oldConfigFile.open(QIODevice::ReadOnly))
             return;
 
         bool ok;
         QJson::Parser parser;
-        QVariantMap vmap = parser.parse(f.readAll(), &ok).toMap();
+        QVariantMap vmap = parser.parse(oldConfigFile.readAll(), &ok).toMap();
         if (!ok)
             return;
 
         QVariantList vconns = vmap.value("connections").toList();
-        for (QVariantList::iterator itconn = vconns.begin(); itconn != vconns.end(); ++itconn) {
+        for (QVariantList::iterator itconn = vconns.begin(); itconn != vconns.end(); ++itconn) 
+        {
             QVariantMap vconn = (*itconn).toMap();
 
             ConnectionSettings *conn = new ConnectionSettings();
@@ -433,9 +449,36 @@ namespace Robomongo
             if (!matched)
                 addConnection(conn);
         }
+    }
 
-        // Mark as imported
-        setImported(true);
+
+    void SettingsManager::importConnectionsFrom_0_9_to_1_0()
+    {
+        auto const& oldConfigPath = QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath());
+
+        if (!QFile::exists(oldConfigPath))
+            return;
+
+        QFile oldConfigFile(oldConfigPath);
+        if (!oldConfigFile.open(QIODevice::ReadOnly))
+            return;
+
+        bool ok;
+        QJson::Parser parser;
+        QVariantMap vmap = parser.parse(oldConfigFile.readAll(), &ok).toMap();
+        if (!ok)
+            return;
+
+        QVariantList const& vconns = vmap.value("connections").toList();
+        for (auto const& vcon : vconns)
+        {
+            QVariantMap const& vconn = vcon.toMap();
+            auto connSettings = new ConnectionSettings();
+            connSettings->fromVariant(vconn);
+            connSettings->setImported(true);
+
+            addConnection(connSettings);
+        }
     }
 
     int SettingsManager::importedConnectionsCount() {

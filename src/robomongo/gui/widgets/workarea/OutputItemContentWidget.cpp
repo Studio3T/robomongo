@@ -77,6 +77,10 @@ namespace Robomongo
         setup(secs);
     }
 
+    OutputItemContentWidget::~OutputItemContentWidget(){
+        delete _notifier;
+    }
+
     void OutputItemContentWidget::setup(double secs)
     {
         _notifier = new Notifier(this, _shell, _queryInfo);

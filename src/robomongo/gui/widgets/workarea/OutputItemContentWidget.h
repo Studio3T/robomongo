@@ -28,6 +28,7 @@ namespace Robomongo
         typedef QWidget BaseClass;
         OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &text, double secs, QWidget *parent = NULL);
         OutputItemContentWidget(OutputWidget *out, ViewMode viewMode, MongoShell *shell, const QString &type, const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, double secs, QWidget *parent = NULL);
+        ~OutputItemContentWidget();
         int _initialSkip;
         int _initialLimit;
         void update(const MongoQueryInfo &inf, const std::vector<MongoDocumentPtr> &documents);

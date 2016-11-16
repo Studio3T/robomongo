@@ -189,10 +189,10 @@ namespace Robomongo
 
         // Attempt to fix issue for Windows High DPI button height is slightly taller than other widgets 
 #ifdef Q_OS_WIN
-        _caFileBrowseButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
-        _pemFileBrowseButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
-        _pemPassShowButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
-        _crlFileBrowseButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _caFileBrowseButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _pemFileBrowseButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _pemPassShowButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _crlFileBrowseButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
 #endif
 
     }

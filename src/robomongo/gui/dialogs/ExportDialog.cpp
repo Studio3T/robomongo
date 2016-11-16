@@ -154,7 +154,7 @@ namespace Robomongo
 
         // Attempt to fix issue for Windows High DPI button height is slightly taller than other widgets 
 #ifdef Q_OS_WIN
-        _browseButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _browseButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
 #endif
         auto outputsInnerLay = new QGridLayout;
         outputsInnerLay->addWidget(new QLabel("Format:"),       0, 0);

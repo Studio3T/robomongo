@@ -43,12 +43,12 @@ namespace Robomongo
 
         auto generateButton = new QPushButton("Generate");
         generateButton->setFixedWidth(70);
-        generateButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        generateButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
         VERIFY(connect(generateButton, SIGNAL(clicked()), this, SLOT(on_generateButton_clicked())));
 
         _copyButton = new QPushButton("Copy");
         _copyButton->setFixedWidth(50);
-        _copyButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _copyButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
         VERIFY(connect(_copyButton, SIGNAL(clicked()), this, SLOT(on_copyButton_clicked())));
 
         auto hlay = new QHBoxLayout;

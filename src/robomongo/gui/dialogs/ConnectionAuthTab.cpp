@@ -54,7 +54,7 @@ namespace Robomongo
 #endif
         // Attempt to fix the issue for Windows High DPI button height is slightly taller than other widgets 
 #ifdef Q_OS_WIN
-        _echoModeButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _echoModeButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
 #endif
         VERIFY(connect(_echoModeButton, SIGNAL(clicked()), this, SLOT(toggleEchoMode())));
 

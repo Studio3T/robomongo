@@ -152,9 +152,9 @@ namespace Robomongo
 #endif
         // Attempt to fix the issue for Windows High DPI button height is slightly taller than other widgets 
 #ifdef Q_OS_WIN
-        _passwordEchoModeButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
-        _passphraseEchoModeButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
-        _selectPrivateFileButton->setMaximumHeight(HighDpiContants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _passwordEchoModeButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _passphraseEchoModeButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
+        _selectPrivateFileButton->setMaximumHeight(HighDpiConstants::WIN_HIGH_DPI_BUTTON_HEIGHT);
 #endif
 
     }

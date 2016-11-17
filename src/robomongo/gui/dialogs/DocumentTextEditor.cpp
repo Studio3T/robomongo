@@ -6,7 +6,9 @@
 #include <QMessageBox>
 #include <QDialogButtonBox>
 #include <QDesktopWidget>
+#include <QSettings>
 #include <Qsci/qscilexerjavascript.h>
+
 #include <mongo/client/dbclientinterface.h>
 
 #include "robomongo/gui/editors/JSLexer.h"
@@ -34,7 +36,15 @@ namespace Robomongo
         QSize size(screenGeometry.width() - horizontalMargin,
                    screenGeometry.height() - verticalMargin);
 
-        resize(size);
+        QSettings settings("Paralect", "Robomongo");
+        if (settings.contains("DocumentTextEditor/size"))
+        {
+            restoreWindowSettings();
+        }
+        else
+        {
+            resize(size);
+        }
 
         setWindowFlags(Qt::Window | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
 
@@ -105,6 +115,8 @@ namespace Robomongo
         if (!validate())
             return;
 
+        saveWindowSettings();
+
         QDialog::accept();
     }
 
@@ -126,6 +138,8 @@ namespace Robomongo
 
             return;
         }
+
+        saveWindowSettings();
 
         QDialog::reject();
     }
@@ -186,6 +200,12 @@ namespace Robomongo
         validate(false);
     }
 
+    void DocumentTextEditor::closeEvent(QCloseEvent *event)
+    {
+        saveWindowSettings();
+        QWidget::closeEvent(event);
+    }
+
     /*
     ** Configure QsciScintilla query widget
     */
@@ -204,4 +224,17 @@ namespace Robomongo
 
         _queryText->sciScintilla()->setStyleSheet("QFrame { background-color: rgb(73, 76, 78); border: 1px solid #c7c5c4; border-radius: 4px; margin: 0px; padding: 0px;}");
     }
+
+    void DocumentTextEditor::saveWindowSettings() const
+    {
+        QSettings settings("Paralect", "Robomongo");
+        settings.setValue("DocumentTextEditor/size", size());
+    }
+
+    void DocumentTextEditor::restoreWindowSettings()
+    {
+        QSettings settings("Paralect", "Robomongo");
+        resize(settings.value("DocumentTextEditor/size").toSize());
+    }
+
 }

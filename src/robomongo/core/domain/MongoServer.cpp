@@ -82,6 +82,10 @@ namespace Robomongo {
         return result;
     }
 
+    void MongoServer::addDatabase(MongoDatabase *database) {
+        _databases.append(database);
+    }
+
     void MongoServer::createDatabase(const std::string &dbName) 
     {
         _bus->send(_client, new CreateDatabaseRequest(this, dbName));
@@ -129,16 +133,17 @@ namespace Robomongo {
 
     void MongoServer::loadDatabases() {
         _bus->publish(new MongoServerLoadingDatabasesEvent(this));
-        _bus->send(_client, new LoadDatabaseNamesRequest(this));
+        if (_settings->isReplicaSet()) { // todo
+            tryRefreshReplicaSet();
+        }
+        else {  // single server
+            _bus->send(_client, new LoadDatabaseNamesRequest(this));
+        }
     }
 
     void MongoServer::clearDatabases() {
         qDeleteAll(_databases);
         _databases.clear();
-    }
-
-    void MongoServer::addDatabase(MongoDatabase *database) {
-        _databases.append(database);
     }
 
     void MongoServer::handle(EstablishConnectionResponse *event) 
@@ -286,6 +291,7 @@ namespace Robomongo {
         }
 
         clearDatabases();
+
         for (std::vector<std::string>::iterator it = event->databaseNames.begin(); it != event->databaseNames.end(); ++it) {
             const std::string &name = *it;
             MongoDatabase *db  = new MongoDatabase(this, name);

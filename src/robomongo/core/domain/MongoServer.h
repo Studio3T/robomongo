@@ -60,6 +60,7 @@ namespace Robomongo
 
         bool isConnected()const;
 
+        void addDatabase(MongoDatabase *database);
         void createDatabase(const std::string &dbName);
         void dropDatabase(const std::string &dbName);
         QStringList getDatabasesNames() const;
@@ -103,7 +104,6 @@ namespace Robomongo
 
     private:
         void clearDatabases();
-        void addDatabase(MongoDatabase *database);
         void genericResponseHandler(Event *event, const std::string &userFriendlyMessage);
 
         MongoWorker *_client;

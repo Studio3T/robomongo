@@ -303,10 +303,20 @@ namespace Robomongo
         dlg.setInputLabelText("Database Name:");
         int result = dlg.exec();
         if (result == QDialog::Accepted) {
-            _server->createDatabase(QtUtils::toStdStringSafe(dlg.databaseName()));
+            if (_server->connectionRecord()->isReplicaSet()) {
+                auto newDb = new MongoDatabase(_server, dlg.databaseName().toStdString());
+                _server->addDatabase(newDb);
+                int dbCount = _server->databases().count();
+                setText(0, buildServerName(&dbCount));
+                auto dbItem = new ExplorerDatabaseTreeItem(this, newDb);
+                addChild(dbItem);
+            }
+            else {  // single server
+                _server->createDatabase(QtUtils::toStdStringSafe(dlg.databaseName()));
 
-            // refresh list of databases
-            expand();
+                // refresh list of databases
+                expand();
+            }
         }
     }
     
@@ -390,6 +400,7 @@ namespace Robomongo
         setText(0, buildServerName(&dbCount, false));
         setIcon(0, GuiRegistry::instance().replicaSetOfflineIcon());
 
+        // todo: move to a func.
         // For system folder and database items - delete children then set disable
         QtUtils::clearChildItems(_systemFolder);
         _systemFolder->setDisabled(true);

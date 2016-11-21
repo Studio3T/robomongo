@@ -84,7 +84,7 @@ namespace Robomongo
          * @brief Loads databases of this server asynchronously.
          */
         void loadDatabases();
-        MongoWorker *const client() const { return _client; }
+        MongoWorker *const worker() const { return _worker; }
 
         // todo: remove if not used
         // --- Getters ---
@@ -106,7 +106,7 @@ namespace Robomongo
         void clearDatabases();
         void genericResponseHandler(Event *event, const std::string &userFriendlyMessage);
 
-        MongoWorker *_client;
+        MongoWorker *_worker;
         ConnectionSettings *_settings;
         EventBus *_bus;
         App *_app;

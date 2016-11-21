@@ -24,7 +24,7 @@ namespace Robomongo
     {
         AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
         _scriptInfo.setScript(QtUtils::toQString(script));
-        AppRegistry::instance().bus()->send(_server->client(), new ExecuteScriptRequest(this, query(), dbName));
+        AppRegistry::instance().bus()->send(_server->worker(), new ExecuteScriptRequest(this, query(), dbName));
         LOG_MSG(_scriptInfo.script(), mongo::logger::LogSeverity::Info());
     }
 
@@ -37,19 +37,19 @@ namespace Robomongo
     {
         if (_scriptInfo.execute()) {
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
-            AppRegistry::instance().bus()->send(_server->client(), new ExecuteScriptRequest(this, query(), dbName));
+            AppRegistry::instance().bus()->send(_server->worker(), new ExecuteScriptRequest(this, query(), dbName));
             if (!_scriptInfo.script().isEmpty())
                 LOG_MSG(_scriptInfo.script(), mongo::logger::LogSeverity::Info());
         } else {
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             _scriptInfo.setScript("");
-            AppRegistry::instance().bus()->send(_server->client(), new ExecuteScriptRequest(this, query() , dbName));
+            AppRegistry::instance().bus()->send(_server->worker(), new ExecuteScriptRequest(this, query() , dbName));
         }
     }
 
     void MongoShell::query(int resultIndex, const MongoQueryInfo &info)
     {
-        AppRegistry::instance().bus()->send(_server->client(), new ExecuteQueryRequest(this, resultIndex, info));
+        AppRegistry::instance().bus()->send(_server->worker(), new ExecuteQueryRequest(this, resultIndex, info));
     }
 
     void MongoShell::autocomplete(const std::string &prefix)
@@ -57,12 +57,12 @@ namespace Robomongo
         AutocompletionMode autocompletionMode = AppRegistry::instance().settingsManager()->autocompletionMode();
         if (autocompletionMode == AutocompleteNone)
             return;
-        AppRegistry::instance().bus()->send(_server->client(), new AutocompleteRequest(this, prefix, autocompletionMode));
+        AppRegistry::instance().bus()->send(_server->worker(), new AutocompleteRequest(this, prefix, autocompletionMode));
     }
 
     void MongoShell::stop()
     {
-        // _server->client()->interrupt();
+        // _server->worker()->interrupt();
         // mongo::Scope::setInterruptFlag(true);
     }
 

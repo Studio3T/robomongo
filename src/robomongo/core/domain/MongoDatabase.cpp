@@ -37,70 +37,70 @@ namespace Robomongo
     void MongoDatabase::loadCollections()
     {
         _bus->publish(new MongoDatabaseCollectionsLoadingEvent(this));
-        _bus->send(_server->client(), new LoadCollectionNamesRequest(this, _name));
+        _bus->send(_server->worker(), new LoadCollectionNamesRequest(this, _name));
     }
 
     void MongoDatabase::loadUsers()
     {
         _bus->publish(new MongoDatabaseUsersLoadingEvent(this));
-        _bus->send(_server->client(), new LoadUsersRequest(this, _name));
+        _bus->send(_server->worker(), new LoadUsersRequest(this, _name));
     }
 
     void MongoDatabase::loadFunctions()
     {
         _bus->publish(new MongoDatabaseFunctionsLoadingEvent(this));
-        _bus->send(_server->client(), new LoadFunctionsRequest(this, _name));
+        _bus->send(_server->worker(), new LoadFunctionsRequest(this, _name));
     }
 
     void MongoDatabase::createCollection(const std::string &collection, long long size, bool capped, int maxDocNum, const mongo::BSONObj& extraOptions)
     {
-        _bus->send(_server->client(), 
+        _bus->send(_server->worker(), 
             new CreateCollectionRequest(this, MongoNamespace(_name, collection), extraOptions, size, capped, maxDocNum));
     }
 
     void MongoDatabase::dropCollection(const std::string &collection)
     {
-        _bus->send(_server->client(), new DropCollectionRequest(this, MongoNamespace(_name, collection)));
+        _bus->send(_server->worker(), new DropCollectionRequest(this, MongoNamespace(_name, collection)));
     }
 
     void MongoDatabase::renameCollection(const std::string &collection, const std::string &newCollection)
     {
-        _bus->send(_server->client(), new RenameCollectionRequest(this, MongoNamespace(_name, collection), newCollection));
+        _bus->send(_server->worker(), new RenameCollectionRequest(this, MongoNamespace(_name, collection), newCollection));
     }
 
     void MongoDatabase::duplicateCollection(const std::string &collection, const std::string &newCollection)
     {
-        _bus->send(_server->client(), new DuplicateCollectionRequest(this, MongoNamespace(_name, collection), newCollection));
+        _bus->send(_server->worker(), new DuplicateCollectionRequest(this, MongoNamespace(_name, collection), newCollection));
     }
 
     void MongoDatabase::copyCollection(MongoServer *server, const std::string &sourceDatabase, const std::string &collection)
     {
-        _bus->send(_server->client(), new CopyCollectionToDiffServerRequest(this, server->client(), sourceDatabase, collection, _name));
+        _bus->send(_server->worker(), new CopyCollectionToDiffServerRequest(this, server->worker(), sourceDatabase, collection, _name));
     }
 
     void MongoDatabase::createUser(const MongoUser &user, bool overwrite)
     {
-        _bus->send(_server->client(), new CreateUserRequest(this, _name, user, overwrite));
+        _bus->send(_server->worker(), new CreateUserRequest(this, _name, user, overwrite));
     }
 
     void MongoDatabase::dropUser(const mongo::OID &id)
     {
-        _bus->send(_server->client(), new DropUserRequest(this, _name, id));
+        _bus->send(_server->worker(), new DropUserRequest(this, _name, id));
     }
 
     void MongoDatabase::createFunction(const MongoFunction &fun)
     {
-        _bus->send(_server->client(), new CreateFunctionRequest(this, _name, fun));
+        _bus->send(_server->worker(), new CreateFunctionRequest(this, _name, fun));
     }
 
     void MongoDatabase::updateFunction(const std::string &name, const MongoFunction &fun)
     {
-        _bus->send(_server->client(), new CreateFunctionRequest(this, _name, fun, name));
+        _bus->send(_server->worker(), new CreateFunctionRequest(this, _name, fun, name));
     }
 
     void MongoDatabase::dropFunction(const std::string &name)
     {
-        _bus->send(_server->client(), new DropFunctionRequest(this, _name, name));
+        _bus->send(_server->worker(), new DropFunctionRequest(this, _name, name));
     }
 
     void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)

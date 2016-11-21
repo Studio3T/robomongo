@@ -123,22 +123,22 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::expandColection(ExplorerCollectionTreeItem *const item)
     {        
-         _bus->send(_database->server()->client(), new LoadCollectionIndexesRequest(item, item->collection()->info()));
+         _bus->send(_database->server()->worker(), new LoadCollectionIndexesRequest(item, item->collection()->info()));
     }
 
     void ExplorerDatabaseTreeItem::dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &indexName)
     {
-        _bus->send(_database->server()->client(), new DropCollectionIndexRequest(item, item->collection()->info(), indexName));
+        _bus->send(_database->server()->worker(), new DropCollectionIndexRequest(item, item->collection()->info(), indexName));
     }
 
     void ExplorerDatabaseTreeItem::enshureIndex(ExplorerCollectionTreeItem *const item, const EnsureIndexInfo &oldInfo, const EnsureIndexInfo &newInfo)
     {
-        _bus->send(_database->server()->client(), new EnsureIndexRequest(item, oldInfo, newInfo));
+        _bus->send(_database->server()->worker(), new EnsureIndexRequest(item, oldInfo, newInfo));
     }
 
     void ExplorerDatabaseTreeItem::editIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &oldIndexText, const std::string &newIndexText)
     {
-         _bus->send(_database->server()->client(), new EditIndexRequest(item, item->collection()->info(), oldIndexText, newIndexText));
+         _bus->send(_database->server()->worker(), new EditIndexRequest(item, item->collection()->info(), oldIndexText, newIndexText));
     }
 
     void ExplorerDatabaseTreeItem::expandFunctions()

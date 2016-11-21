@@ -18,7 +18,7 @@ namespace Robomongo {
     MongoServer::MongoServer(int handle, ConnectionSettings *settings, ConnectionType connectionType) : QObject(),
         _version(0.0f),
         _connectionType(connectionType),
-        _client(nullptr),
+        _worker(nullptr),
         _isConnected(false),
         _settings(settings),
         _handle(handle),
@@ -38,11 +38,11 @@ namespace Robomongo {
     MongoServer::~MongoServer() {
         clearDatabases();
 
-        if (_client != NULL) {
-            _client->stopAndDelete();
+        if (_worker) {
+            _worker->stopAndDelete();
         }
 
-        // MongoWorker "_client" does not deleted here, because it is now owned by
+        // MongoWorker "_worker" does not deleted here, because it is now owned by
         // another thread (call to moveToThread() made in MongoWorker constructor).
         // It will be deleted by this thread by means of "deleteLater()", which
         // is also specified in MongoWorker constructor.
@@ -54,22 +54,22 @@ namespace Robomongo {
      */
     void MongoServer::tryConnect() 
     {
-        _bus->send(_client, new EstablishConnectionRequest(this, _connectionType));
+        _bus->send(_worker, new EstablishConnectionRequest(this, _connectionType));
     }
 
     void MongoServer::tryRefresh() 
     {
-        _bus->send(_client, new EstablishConnectionRequest(this, ConnectionRefresh));
+        _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh));
     }
 
     void MongoServer::tryRefreshReplicaSet()
     {
-        _bus->send(_client, new EstablishConnectionRequest(this, ConnectionRefresh));
+        _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh));
     }
     
     void MongoServer::tryRefreshReplicaSetFolder()
     {
-        _bus->send(_client, new RefreshReplicaSetFolderRequest(this));
+        _bus->send(_worker, new RefreshReplicaSetFolderRequest(this));
     }
 
     QStringList MongoServer::getDatabasesNames() const 
@@ -88,7 +88,7 @@ namespace Robomongo {
 
     void MongoServer::createDatabase(const std::string &dbName) 
     {
-        _bus->send(_client, new CreateDatabaseRequest(this, dbName));
+        _bus->send(_worker, new CreateDatabaseRequest(this, dbName));
     }
 
     MongoDatabase *MongoServer::findDatabaseByName(const std::string &dbName) const 
@@ -103,7 +103,7 @@ namespace Robomongo {
     }
 
     void MongoServer::dropDatabase(const std::string &dbName) {
-        _bus->send(_client, new DropDatabaseRequest(this, dbName));
+        _bus->send(_worker, new DropDatabaseRequest(this, dbName));
     }
 
     void MongoServer::insertDocuments(const std::vector<mongo::BSONObj> &objCont,
@@ -114,7 +114,7 @@ namespace Robomongo {
     }
 
     void MongoServer::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns) {
-        _bus->send(_client, new InsertDocumentRequest(this, obj, ns));
+        _bus->send(_worker, new InsertDocumentRequest(this, obj, ns));
     }
 
     void MongoServer::saveDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns) {
@@ -124,11 +124,11 @@ namespace Robomongo {
     }
 
     void MongoServer::saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns) {
-        _bus->send(_client, new InsertDocumentRequest(this, obj, ns, true));
+        _bus->send(_worker, new InsertDocumentRequest(this, obj, ns, true));
     }
 
     void MongoServer::removeDocuments(mongo::Query query, const MongoNamespace &ns, bool justOne) {
-        _bus->send(_client, new RemoveDocumentRequest(this, query, ns, justOne));
+        _bus->send(_worker, new RemoveDocumentRequest(this, query, ns, justOne));
     }
 
     void MongoServer::loadDatabases() {
@@ -137,7 +137,7 @@ namespace Robomongo {
             tryRefreshReplicaSet();
         }
         else {  // single server
-            _bus->send(_client, new LoadDatabaseNamesRequest(this));
+            _bus->send(_worker, new LoadDatabaseNamesRequest(this));
         }
     }
 
@@ -310,11 +310,11 @@ namespace Robomongo {
     }
 
     void MongoServer::runWorkerThread() {
-        _client = new MongoWorker(_settings->clone(),
-            AppRegistry::instance().settingsManager()->loadMongoRcJs(),
-            AppRegistry::instance().settingsManager()->batchSize(),
-            AppRegistry::instance().settingsManager()->mongoTimeoutSec(),
-            AppRegistry::instance().settingsManager()->shellTimeoutSec());
+        _worker = new MongoWorker(_settings->clone(),
+                  AppRegistry::instance().settingsManager()->loadMongoRcJs(),
+                  AppRegistry::instance().settingsManager()->batchSize(),
+                  AppRegistry::instance().settingsManager()->mongoTimeoutSec(),
+                  AppRegistry::instance().settingsManager()->shellTimeoutSec());
     }
 
     void MongoServer::handle(CreateDatabaseResponse *event) {

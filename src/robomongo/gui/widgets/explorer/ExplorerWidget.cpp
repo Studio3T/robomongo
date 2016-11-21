@@ -108,7 +108,7 @@ namespace Robomongo
 
         decreaseProgress();
 
-        auto item = new ExplorerServerTreeItem(_treeWidget, event->server);
+        auto item = new ExplorerServerTreeItem(_treeWidget, event->server, event->connInfo);
         _treeWidget->addTopLevelItem(item);
         _treeWidget->setCurrentItem(item);
         _treeWidget->setFocus();

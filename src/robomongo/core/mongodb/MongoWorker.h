@@ -46,12 +46,17 @@ namespace Robomongo
         /**
          * @brief Initiate connection to MongoDB
          */
-        void handle(EstablishConnectionRequest *event);
+        bool handle(EstablishConnectionRequest *event);
 
         /**
         * @brief todo
         */
         void handle(RefreshReplicaSetRequest *event);
+
+        /**
+        * @brief todo
+        */
+        void handle(RefreshReplicaSetFolderRequest *event);
 
         /**
          * @brief Load list of all database names

@@ -13,7 +13,7 @@ namespace Robomongo
 
     // Messages
     class EstablishConnectionResponse;
-    struct RefreshReplicaSetResponse;
+    struct RefreshReplicaSetFolderResponse;
     class LoadDatabaseNamesResponse;
     class InsertDocumentResponse;
     class CreateDatabaseResponse;
@@ -56,12 +56,14 @@ namespace Robomongo
 
         // todo
         void tryRefreshReplicaSet();
+        void tryRefreshReplicaSetFolder();
 
         bool isConnected()const;
 
         void createDatabase(const std::string &dbName);
         void dropDatabase(const std::string &dbName);
         QStringList getDatabasesNames() const;
+        QList<MongoDatabase*> const& databases() const { return _databases; }; // todo
         MongoDatabase *findDatabaseByName(const std::string &dbName) const;
 
         void insertDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns);
@@ -92,7 +94,7 @@ namespace Robomongo
 
     protected Q_SLOTS:
         void handle(EstablishConnectionResponse *event);
-        void handle(RefreshReplicaSetResponse *event);
+        void handle(RefreshReplicaSetFolderResponse *event);
         void handle(LoadDatabaseNamesResponse *event);
         void handle(InsertDocumentResponse *event);
         void handle(RemoveDocumentResponse *event);

@@ -135,7 +135,7 @@ namespace Robomongo
     /**
      * @brief Initiate connection to MongoDB
      */
-    void MongoWorker::handle(EstablishConnectionRequest *event)
+    bool MongoWorker::handle(EstablishConnectionRequest *event)
     {
         QMutexLocker lock(&_firstConnectionMutex);
 
@@ -185,7 +185,7 @@ namespace Robomongo
                 reply(event->sender(), new EstablishConnectionResponse(this, EventError(errorReason), event->connectionType, 
                     *repSetInfo.release(), EstablishConnectionResponse::MongoConnection));
 
-                return;
+                return false;
             }
 
             // There is no reachable primary with reachable secondary(ies) throw else primary is reachable so continue.
@@ -194,7 +194,7 @@ namespace Robomongo
                 if (setInfo.primary.empty()) {  // No reachable primary, pass possible reachable secondary(ies)
                     repSetInfo.reset(new ReplicaSet(setInfo)); // todo: might be redundant
                     
-                    reply(event->sender(), new RefreshReplicaSetResponse(this, setInfo, EventError(setInfo.errorStr)));
+                    //reply(event->sender(), new RefreshReplicaSetFolderResponse(this, setInfo, EventError(setInfo.errorStr)));
                     LOG_MSG(setInfo.errorStr, mongo::logger::LogSeverity::Error());
                     throw std::runtime_error(setInfo.errorStr);
                 }
@@ -242,6 +242,7 @@ namespace Robomongo
             // todo: two ctors for rep.set and single server.
             reply(event->sender(), new EstablishConnectionResponse(this, connInfo, event->connectionType, 
                                                                    *repSetInfo.release()));
+            return true;
         } catch(const std::exception &ex) {
             resetGlobalSSLparams();
 
@@ -252,20 +253,34 @@ namespace Robomongo
             reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what()), event->connectionType, 
                 *repSetInfo.release(), errorReason));
         }
+        return false;
     }
 
     void MongoWorker::handle(RefreshReplicaSetRequest *event)
     {
+        // todo
+        // 1. Refresh replica set view 
+        // 2. Refresh database names
+
+        //if (handle(new EstablishConnectionRequest(event->sender(), ConnectionRefresh))) {
+
+        //}
+    }
+
+    void MongoWorker::handle(RefreshReplicaSetFolderRequest *event)
+    {
         ReplicaSet const replicaSetInfo = getReplicaSetInfo();
 
-        if (replicaSetInfo.primary.empty()) { // Primary is unreachable, but there might have reachable secondary(ies) 
-            reply(event->sender(), new RefreshReplicaSetResponse(this, replicaSetInfo, EventError(replicaSetInfo.errorStr)));
+        // Primary is unreachable, but there might have reachable secondary(ies)
+        if (replicaSetInfo.primary.empty()) {  
+            reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo, 
+                                                                       EventError(replicaSetInfo.errorStr)));
             LOG_MSG(replicaSetInfo.errorStr, mongo::logger::LogSeverity::Error());
             return;
         }
 
         // Primary is reachable
-        reply(event->sender(), new RefreshReplicaSetResponse(this, replicaSetInfo));
+        reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo));
     }
 
     std::string MongoWorker::getAuthBase() const

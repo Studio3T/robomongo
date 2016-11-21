@@ -32,10 +32,10 @@ namespace
 
 namespace Robomongo
 {
-    ExplorerServerTreeItem::ExplorerServerTreeItem(QTreeWidget *view, MongoServer *const server) : 
-        BaseClass(view), _server(server), _bus(AppRegistry::instance().bus()), _replicaSetFolder(nullptr),
+    ExplorerServerTreeItem::ExplorerServerTreeItem(QTreeWidget *view, MongoServer *const server, ConnectionInfo connInfo)
+        : BaseClass(view), _server(server), _bus(AppRegistry::instance().bus()), _replicaSetFolder(nullptr),
         _primaryWasUnreachable(false), _systemFolder(nullptr)
-    { 
+    {
         QAction *openShellAction = new QAction("Open Shell", this);
         openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
         VERIFY(connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell())));
@@ -53,10 +53,10 @@ namespace Robomongo
         VERIFY(connect(serverVersion, SIGNAL(triggered()), SLOT(ui_serverVersion())));
 
         QAction *serverHostInfo = new QAction("Host Info", this);
-        VERIFY(connect(serverHostInfo, SIGNAL(triggered()), SLOT(ui_serverHostInfo())));        
+        VERIFY(connect(serverHostInfo, SIGNAL(triggered()), SLOT(ui_serverHostInfo())));
 
         QAction *showLog = new QAction("Show Log", this);
-        VERIFY(connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog()))); 
+        VERIFY(connect(showLog, SIGNAL(triggered()), SLOT(ui_showLog())));
 
         QAction *disconnectAction = new QAction("Disconnect", this);
         disconnectAction->setIconText("Disconnect");
@@ -75,25 +75,31 @@ namespace Robomongo
 
         _bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
         _bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
-        _bus->subscribe(this, ReplicaSetUpdated::Type, _server);
+        _bus->subscribe(this, ReplicaSetFolderRefreshed::Type, _server);
+        _bus->subscribe(this, ConnectionEstablishedEvent::Type, _server);
+        _bus->subscribe(this, ConnectionFailedEvent::Type);
 
         setText(0, buildServerName());
-        if (_server->connectionRecord()->isReplicaSet())
-        {
-            setIcon(0, GuiRegistry::instance().replicaSetIcon());
-        }
-        else {
-            setIcon(0, GuiRegistry::instance().serverIcon());
-        }
+        setIcon(0, _server->connectionRecord()->isReplicaSet() ? GuiRegistry::instance().replicaSetIcon()
+                                                               : GuiRegistry::instance().serverIcon());
         setExpanded(true);
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+
+        if (_server->connectionRecord()->isReplicaSet()) {
+            buildReplicaSetFolder();
+            buildDatabaseItems();
+        }
     }
 
     void ExplorerServerTreeItem::expand()
     {
-        _server->tryRefresh();
-        //buildReplicaSetFolder();  // todo
-        _server->loadDatabases();
+        if (_server->connectionRecord()->isReplicaSet()) {
+            //_server->tryRefreshReplicaSet();  // todo
+        }
+        else {
+            _server->tryRefresh();
+            _server->loadDatabases();
+        }
     }
 
     void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabase *> &dbs)
@@ -102,13 +108,7 @@ namespace Robomongo
         setText(0, buildServerName(&count));
 
         // Delete system folder and database items
-        QtUtils::clearChildItems(this); // todo: clear database items
-
-        // todo: 
-        if (_server->connectionRecord()->isReplicaSet()) {
-            _replicaSetFolder = nullptr;    // todo
-            buildReplicaSetFolder();
-        }
+        QtUtils::clearChildItems(this);
 
         // Add 'System' folder
         QIcon folderIcon = GuiRegistry::instance().folderIcon();
@@ -139,9 +139,9 @@ namespace Robomongo
     {
         if (event->isError()) {
             setText(0, buildServerName(0));     // Restore normal name (without "...")
-            
+
             // Todo
-            if (!_server->connectionRecord()->isReplicaSet()) 
+            if (!_server->connectionRecord()->isReplicaSet())
                 setExpanded(false);                 // Collapse
 
             // We should clear all child items, but we are not
@@ -168,42 +168,61 @@ namespace Robomongo
         setText(0, buildServerName(&count));
     }
 
-    void ExplorerServerTreeItem::handle(ReplicaSetUpdated *event)
+    void ExplorerServerTreeItem::handle(ReplicaSetFolderRefreshed *event)
     {
+        // In any case rebuild replica set folder
         buildReplicaSetFolder();
 
-        if (event->isError())  // ---Primary is unreachable
-        { 
-            _primaryWasUnreachable = true;
-
-            // For system folder and database items - delete children then set disable
-            QtUtils::clearChildItems(_systemFolder);
-            _systemFolder->setDisabled(true);
-            for ( int i = 0 ; i < childCount(); ++i)  {
-                auto dbItem = dynamic_cast<ExplorerDatabaseTreeItem*>(child(i));
-                if (dbItem) {
-                    QtUtils::clearChildItems(dbItem);
-                    dbItem->setDisabled(true);
-                }
-            }
-
-            // Show error dialog
-            std::string const errorStr = "Set's primary is unreachable.\n\nError:\n" +
-                                          event->error().errorMessage();
+        // ---Primary is unreachable
+        if (event->isError())  
+        {
+            replicaSetPrimaryUnreachable();
+            std::string const errorStr = "Set's primary is unreachable.\n\nReason:\n"
+                                         "Connection failure, " + event->error().errorMessage();
             QMessageBox::critical(nullptr, "Error", QString::fromStdString(errorStr));
             return;
         }
 
         // --- Primary is reachable
-        // If primary was unreachable previously, rebuild db items 
-        if (_primaryWasUnreachable) {
-            //_server->tryRefresh();
+        if (_primaryWasUnreachable) {   // If primary was unreachable previously, rebuild db items
             _server->loadDatabases();
         }
+
         _primaryWasUnreachable = false;
     }
 
-    QString ExplorerServerTreeItem::buildServerName(int *count /* = NULL */)
+    void ExplorerServerTreeItem::handle(ReplicaSetRefreshed *event)
+    {
+        // todo
+    }
+
+    void ExplorerServerTreeItem::handle(ConnectionEstablishedEvent *event)
+    {
+        // todo: this case is server refresh for replica set conn.
+
+        if (!_server->connectionRecord()->isReplicaSet() || 
+            !ConnectionType::ConnectionRefresh == event->connectionType)
+            return;
+
+        setIcon(0, GuiRegistry::instance().replicaSetIcon());
+        buildServerItem();
+    }
+
+    void ExplorerServerTreeItem::handle(ConnectionFailedEvent *event)
+    {
+        // todo: this case is server refresh for replica set conn.
+
+        if (!_server->connectionRecord()->isReplicaSet() ||
+            !ConnectionType::ConnectionRefresh == event->connectionType)
+            return;
+
+        buildReplicaSetFolder();
+        replicaSetPrimaryUnreachable();
+
+        QMessageBox::critical(nullptr, "Error", QString::fromStdString(event->message));
+    }
+
+    QString ExplorerServerTreeItem::buildServerName(int *count /* = NULL */, bool online /* = true*/)
     {
         QString name = QtUtils::toQString(_server->connectionRecord()->getReadableName());
 
@@ -213,7 +232,12 @@ namespace Robomongo
         if (*count == -1)
             return name + " ...";
 
-        return QString("%1 (%2)").arg(name).arg(*count);
+        if (online) {
+            return QString("%1 (%2)").arg(name).arg(*count);
+        }
+        else {
+            return QString("%1").arg(name) + " [Offline]";
+        }
     }
 
     void ExplorerServerTreeItem::ui_serverHostInfo()
@@ -261,13 +285,20 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::ui_refreshServer()
     {
-        expand();
+        if (_server->connectionRecord()->isReplicaSet()) {
+            int count = -1;
+            setText(0, buildServerName(&count));    // Append "..." into root item text
+            _server->tryRefreshReplicaSet();
+        }
+        else {  // single server
+            expand();
+        }
     }
 
     void ExplorerServerTreeItem::ui_createDatabase()
     {
-        CreateDatabaseDialog dlg(QString::fromStdString(_server->connectionRecord()->getFullAddress()), 
-                                 QString(), QString(), treeWidget());
+        CreateDatabaseDialog dlg(QString::fromStdString(_server->connectionRecord()->getFullAddress()),
+            QString(), QString(), treeWidget());
         dlg.setOkButtonText("&Create");
         dlg.setInputLabelText("Database Name:");
         int result = dlg.exec();
@@ -277,22 +308,39 @@ namespace Robomongo
             // refresh list of databases
             expand();
         }
-    } 
+    }
+    
+    void ExplorerServerTreeItem::buildServerItem()
+    {
+        // Delete all children (replica set folder, system folder and database items)
+        QtUtils::clearChildItems(this);  
+        _replicaSetFolder = nullptr;
 
+        buildReplicaSetFolder();
+        buildDatabaseItems();
+    }
+    
     void ExplorerServerTreeItem::buildReplicaSetFolder()
     {
         // todo: use event object instead if using _server for fresh replica set information
 
-        if (_replicaSetFolder) {
-            if (_replicaSetFolder->childCount()>0)
+        if (_replicaSetFolder) {    // delete and rebuild existing folder child items
+            if (_replicaSetFolder->childCount() > 0)
                 QtUtils::clearChildItems(_replicaSetFolder);
 
             _replicaSetFolder->updateText();
         }
-        else {
+        else {                      // build folder from scratch
             _replicaSetFolder = new ExplorerReplicaSetFolderItem(this, _server);
             addChild(_replicaSetFolder);
         }
+
+        //// todo: put this into refresh refreshReplicaSetFolder()
+        //if (_replicaSetFolder)
+        //    QtUtils::clearChildItems(_replicaSetFolder);
+
+        //_replicaSetFolder = new ExplorerReplicaSetFolderItem(this, _server);
+        //addChild(_replicaSetFolder);
 
         // Add replica members
         bool isPrimary;
@@ -300,9 +348,58 @@ namespace Robomongo
         {
             isPrimary = (_server->replicaSetInfo()->primary.toString() == memberAndHealth.first);
             auto hostAndPort = mongo::HostAndPort(mongo::StringData(memberAndHealth.first));
-            _replicaSetFolder->addChild(new ExplorerReplicaSetTreeItem(_replicaSetFolder, _server, hostAndPort, 
-                                        isPrimary, memberAndHealth.second));
+            _replicaSetFolder->addChild(new ExplorerReplicaSetTreeItem(_replicaSetFolder, _server, hostAndPort,
+                                                                        isPrimary, memberAndHealth.second));
         }
+
         _replicaSetFolder->setExpanded(true);
+    }
+
+    void ExplorerServerTreeItem::buildDatabaseItems()
+    {
+        int dbCount = _server->databases().count();
+        setText(0, buildServerName(&dbCount));
+
+        // Add 'System' folder
+        _systemFolder = new ExplorerTreeItem(this);
+        _systemFolder->setIcon(0, GuiRegistry::instance().folderIcon());
+        _systemFolder->setText(0, "System");
+        addChild(_systemFolder);
+
+        for (auto const& database : _server->databases())
+        {
+            if (database->isSystem()) {
+                auto dbItem = new ExplorerDatabaseTreeItem(_systemFolder, database);
+                _systemFolder->addChild(dbItem);
+                continue;
+            }
+
+            auto dbItem = new ExplorerDatabaseTreeItem(this, database);
+            addChild(dbItem);
+        }
+
+        // Show 'System' folder only if it has items
+        _systemFolder->setHidden(_systemFolder->childCount() == 0);
+    }
+
+    void ExplorerServerTreeItem::replicaSetPrimaryUnreachable()
+    {
+        _primaryWasUnreachable = true;
+
+        int dbCount = 0;
+        setText(0, buildServerName(&dbCount, false));
+        setIcon(0, GuiRegistry::instance().replicaSetOfflineIcon());
+
+        // For system folder and database items - delete children then set disable
+        QtUtils::clearChildItems(_systemFolder);
+        _systemFolder->setDisabled(true);
+        for (int i = 0; i < childCount(); ++i)  {
+            auto dbItem = dynamic_cast<ExplorerDatabaseTreeItem*>(child(i));
+            if (dbItem) {
+                QtUtils::clearChildItems(dbItem);
+                dbItem->setDisabled(true);
+            }
+        }
+
     }
 }

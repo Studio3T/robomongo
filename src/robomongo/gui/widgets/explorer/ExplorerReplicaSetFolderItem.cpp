@@ -59,10 +59,7 @@ namespace Robomongo
     void ExplorerReplicaSetFolderItem::on_refresh()
     {
         setText(0, "Replica Set ...");
-        
-        //_server->tryRefresh();      // todo: is it needed?
-        _server->tryRefreshReplicaSet();
-        //_server->loadDatabases();   // todo: refactor
+        _server->tryRefreshReplicaSetFolder();
     }
 }
 

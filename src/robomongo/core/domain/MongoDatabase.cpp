@@ -160,7 +160,18 @@ namespace Robomongo
     }
 
     void MongoDatabase::handle(CreateCollectionResponse *event) {
-        genericResponseHandler(event, "Failed to create collection.");
+        if (_server->connectionRecord()->isReplicaSet()) // replica set
+        {
+            if (event->isError())
+                genericResponseHandler(event, "Failed to create collection.");
+            else
+                loadCollections();
+
+            _server->tryRefreshReplicaSetFolder();
+        }
+        else {  // single server
+            genericResponseHandler(event, "Failed to create collection.");
+        }
     }
 
     void MongoDatabase::handle(DropCollectionResponse *event) {

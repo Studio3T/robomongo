@@ -5,6 +5,7 @@
 namespace Robomongo
 {
     class MongoServer;
+    struct ReplicaSetFolderLoading;
 
     class ExplorerReplicaSetFolderItem : public ExplorerTreeItem
     {
@@ -19,6 +20,8 @@ namespace Robomongo
     private Q_SLOTS:
         void on_refresh();
         void on_repSetStatus();
+
+        void handle(ReplicaSetFolderLoading *event);
 
     private:
         MongoServer *const _server;

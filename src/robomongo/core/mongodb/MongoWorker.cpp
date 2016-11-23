@@ -864,7 +864,7 @@ namespace Robomongo
 
         setName = repSetMonitor->getName();
         auto const primaryOnly = mongo::ReadPreferenceSetting(mongo::ReadPreference::PrimaryOnly, mongo::TagSet());
-        auto res = repSetMonitor->getHostOrRefresh(primaryOnly);
+        auto res = repSetMonitor->getHostOrRefresh(primaryOnly, mongo::Milliseconds(3000)); // todo
         if (res.isOK())
             primary = res.getValue();
 

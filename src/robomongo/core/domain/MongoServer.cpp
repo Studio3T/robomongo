@@ -69,6 +69,7 @@ namespace Robomongo {
     
     void MongoServer::tryRefreshReplicaSetFolder()
     {
+        _bus->publish(new ReplicaSetFolderLoading(this));
         _bus->send(_worker, new RefreshReplicaSetFolderRequest(this));
     }
 

@@ -132,6 +132,14 @@ namespace Robomongo
         ReplicaSet const replicaSet;
     };
 
+    struct ReplicaSetFolderLoading : public Event
+    {
+        R_EVENT
+
+            ReplicaSetFolderLoading(QObject *sender) :
+            Event(sender) {}
+    };
+
     struct ReplicaSetFolderRefreshed : public Event
     {
         R_EVENT

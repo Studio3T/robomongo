@@ -16,6 +16,7 @@ namespace Robomongo
 
         // todo
         void updateText();
+        void disableSomeContextMenuActions(/*bool disable*/); // todo: rename toggle*
 
     private Q_SLOTS:
         void on_refresh();

@@ -4,6 +4,7 @@
 #include <QMenu>
 
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/ReplicaSetSettings.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/AppRegistry.h"
@@ -18,6 +19,13 @@ namespace
     {
         Robomongo::AppRegistry::instance().app()->openShell(server, script, std::string(), execute, 
             Robomongo::QtUtils::toQString(server->connectionRecord()->getReadableName()), cursor);
+    }
+
+    // todo : modify or move to a common header
+    void openCurrentServerShell(Robomongo::ConnectionSettings* connSettings, const QString &script)
+    {
+        auto const scriptStr = Robomongo::ScriptInfo(script, true);
+        Robomongo::AppRegistry::instance().app()->openShell(connSettings, scriptStr);
     }
 }
 
@@ -54,9 +62,58 @@ namespace Robomongo
         setText(0, "Replica Set (" + QString::number(_server->replicaSetInfo()->membersAndHealths.size()) + " nodes)");
     }
 
+    void ExplorerReplicaSetFolderItem::disableSomeContextMenuActions(/*bool disable*/)
+    {
+        // todo: refactor
+        if (BaseClass::_contextMenu->actions().size() < 1)
+            return;
+
+        // Break if there is at least one online set member  
+        mongo::HostAndPort onlineMember;
+        for (auto const& member : _server->replicaSetInfo()->membersAndHealths) {
+            if (member.second) {
+                onlineMember = mongo::HostAndPort(member.first);
+                break;
+            }
+        }
+
+        // Show menu item "Status of Replica Set" only if there is at least one online member
+        if (onlineMember.empty()) 
+            BaseClass::_contextMenu->actions().at(0)->setDisabled(true);
+        else
+            BaseClass::_contextMenu->actions().at(0)->setDisabled(false);
+    }
+
     void ExplorerReplicaSetFolderItem::on_repSetStatus()
     {
-        openCurrentServerShell(_server, "rs.status()");
+        if (!_server->replicaSetInfo()->primary.empty()) {
+            openCurrentServerShell(_server, "rs.status()");
+        }
+        else // primary is unreachable
+        {
+            // Todo: do this before 
+            // Run rs.status only if there is a reachable secondary
+            mongo::HostAndPort onlineMember;
+            for (auto const& member : _server->replicaSetInfo()->membersAndHealths) {
+                if (member.second) {
+                    onlineMember = mongo::HostAndPort(member.first);
+                    break;
+                }
+            }
+            if (onlineMember.empty())   // todo: throw error
+                return;
+
+            auto connSetting = _server->connectionRecord()->clone();    // todo: unique_ptr
+            // Set connection settings of this replica member
+            connSetting->setConnectionName(onlineMember.toString() + 
+                                           " [member of " + connSetting->connectionName() + "]");
+            connSetting->setServerHost(onlineMember.host());
+            connSetting->setServerPort(onlineMember.port());
+            connSetting->setReplicaSet(false);
+            connSetting->replicaSetSettings()->setMembers(std::vector<std::string>()); 
+
+            openCurrentServerShell(connSetting, "rs.status()");
+        }
     }
 
     void ExplorerReplicaSetFolderItem::handle(ReplicaSetFolderLoading *event)

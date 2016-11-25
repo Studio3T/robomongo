@@ -27,6 +27,9 @@ namespace Robomongo
         */
         void expand();
 
+        // todo
+        void disableSomeContextMenuActions(bool disable);
+
     public Q_SLOTS:
         void databaseRefreshed(const QList<MongoDatabase *> &dbs);
         void handle(DatabaseListLoadedEvent *event);
@@ -55,6 +58,7 @@ namespace Robomongo
         // This function assumes there is no existing db items (system folder and other db tree items), 
         // so existing db items should be deleted before calling this function.
         void buildDatabaseItems();  
+        void replicaSetPrimaryReachable();
         void replicaSetPrimaryUnreachable();
 
         ExplorerReplicaSetFolderItem *_replicaSetFolder;

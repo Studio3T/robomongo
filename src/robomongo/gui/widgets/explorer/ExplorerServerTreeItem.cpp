@@ -102,6 +102,22 @@ namespace Robomongo
         }
     }
 
+    void ExplorerServerTreeItem::disableSomeContextMenuActions(bool disable)
+    {
+        // todo: refactor
+        if (BaseClass::_contextMenu->actions().size() < 9)
+            return;
+
+        // [1]:Refresh and [9]:Disconnect are always enabled
+        BaseClass::_contextMenu->actions().at(0)->setDisabled(disable);
+        BaseClass::_contextMenu->actions().at(2)->setDisabled(disable);
+        BaseClass::_contextMenu->actions().at(3)->setDisabled(disable);
+        BaseClass::_contextMenu->actions().at(4)->setDisabled(disable);
+        BaseClass::_contextMenu->actions().at(5)->setDisabled(disable);
+        BaseClass::_contextMenu->actions().at(6)->setDisabled(disable);
+        BaseClass::_contextMenu->actions().at(8)->setDisabled(disable);
+    }
+
     void ExplorerServerTreeItem::databaseRefreshed(const QList<MongoDatabase *> &dbs)
     {
         int count = dbs.count();
@@ -177,6 +193,8 @@ namespace Robomongo
         if (event->isError())  
         {
             replicaSetPrimaryUnreachable();
+            disableSomeContextMenuActions(true);
+
             std::string const errorStr = "Set's primary is unreachable.\n\nReason:\n"
                                          "Connection failure, " + event->error().errorMessage();
             QMessageBox::critical(nullptr, "Error", QString::fromStdString(errorStr));
@@ -184,11 +202,10 @@ namespace Robomongo
         }
 
         // --- Primary is reachable
-        if (_primaryWasUnreachable) {   // If primary was unreachable previously, rebuild db items
+        replicaSetPrimaryReachable();
+        
+        if (_primaryWasUnreachable)    // If primary was unreachable previously, rebuild db items
             _server->loadDatabases();
-        }
-
-        _primaryWasUnreachable = false;
     }
 
     void ExplorerServerTreeItem::handle(ReplicaSetRefreshed *event)
@@ -203,6 +220,9 @@ namespace Robomongo
         if (!_server->connectionRecord()->isReplicaSet() || 
             !ConnectionType::ConnectionRefresh == event->connectionType)
             return;
+
+        if (_primaryWasUnreachable)
+            replicaSetPrimaryReachable();
 
         setIcon(0, GuiRegistry::instance().replicaSetIcon());
         buildServerItem();
@@ -392,9 +412,18 @@ namespace Robomongo
         _systemFolder->setHidden(_systemFolder->childCount() == 0);
     }
 
+    void ExplorerServerTreeItem::replicaSetPrimaryReachable()
+    {
+        _primaryWasUnreachable = false;
+        disableSomeContextMenuActions(false);
+        _replicaSetFolder->disableSomeContextMenuActions(/*false*/);
+    }
+
     void ExplorerServerTreeItem::replicaSetPrimaryUnreachable()
     {
         _primaryWasUnreachable = true;
+        disableSomeContextMenuActions(true);
+        _replicaSetFolder->disableSomeContextMenuActions(/*true*/);
 
         int dbCount = 0;
         setText(0, buildServerName(&dbCount, false));

@@ -1030,7 +1030,7 @@ namespace Robomongo
             return;
 
         lastServerHandle = event->serverHandle;
-        QMessageBox::information(this, "Error", QtUtils::toQString(event->message));
+        QMessageBox::critical(this, "Error", QtUtils::toQString(event->message));
     }
 
     void MainWindow::handle(ScriptExecutingEvent *)

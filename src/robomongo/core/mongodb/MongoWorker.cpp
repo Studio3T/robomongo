@@ -160,8 +160,8 @@ namespace Robomongo
                     for (auto const& member : _connSettings->replicaSetSettings()->members()) {
                         membersAndHealths.push_back({ member, false });
                     }
-                    repSetInfo.reset(new ReplicaSet(_connSettings->replicaSetSettings()->setName(), mongo::HostAndPort(),
-                                                    membersAndHealths, "No member of the set is reachable."));
+                    repSetInfo.reset(new ReplicaSet("", mongo::HostAndPort(), membersAndHealths,
+                                                    "No member of the set is reachable."));
 
                     // todo: SSL case
                     // ...
@@ -756,6 +756,7 @@ namespace Robomongo
             {
                 // Step-1: Retrieve set name if we do not have it
                 std::string setName = _connSettings->replicaSetSettings()->setName();
+
                 // todo: move to func. "getSetName()"
                 // If set name doesn't exist in the settings, get it from an on-line replica node
                 if (setName.empty())

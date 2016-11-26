@@ -162,9 +162,10 @@ namespace Robomongo
         void resetGlobalSSLparams() const;
 
         /**
-        *@brief Update Replica Set related parameters/settings
+        *@brief Update Replica Set related parameters/settings.
+        *       Warning: Using refresh false might return not-updated values.
         */
-        ReplicaSet getReplicaSetInfo() const;   // todo: throws ??
+        ReplicaSet getReplicaSetInfo(bool refresh = true) const;   // todo: throws ??
 
         /**
          * @brief Send reply event to object 'obj'

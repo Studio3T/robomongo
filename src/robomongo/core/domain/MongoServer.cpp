@@ -260,6 +260,9 @@ namespace Robomongo {
 
         if (_settings->isReplicaSet()) {
             _bus->publish(new ConnectionEstablishedEvent(this, event->_connectionType, info));
+            // In order to connect much faster, time consuming refresh (repSetMonitor->startOrContinueRefresh().
+            // refreshAll()) is being requested after successful connection.
+            _bus->send(_worker, new RefreshReplicaSetFolderRequest(this));
         }
     }
 

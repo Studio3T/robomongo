@@ -142,8 +142,8 @@ namespace Robomongo
         std::unique_ptr<ReplicaSet> repSetInfo(new ReplicaSet); // todo
 
         try {
-            // Init MongoWorker
-            init();
+            
+            init(); // Init. MongoWorker
             
             mongo::DBClientBase *conn = getConnection(true);
 
@@ -190,7 +190,8 @@ namespace Robomongo
 
             // There is no reachable primary with reachable secondary(ies) throw else primary is reachable so continue.
             if (_connSettings->isReplicaSet()) {
-                ReplicaSet setInfo = getReplicaSetInfo();
+                bool refresh = (ConnectionType::ConnectionRefresh == event->connectionType);
+                ReplicaSet setInfo = getReplicaSetInfo(refresh);
                 if (setInfo.primary.empty()) {  // No reachable primary, pass possible reachable secondary(ies)
                     repSetInfo.reset(new ReplicaSet(setInfo)); // todo: might be redundant
                     
@@ -269,7 +270,7 @@ namespace Robomongo
 
     void MongoWorker::handle(RefreshReplicaSetFolderRequest *event)
     {
-        ReplicaSet const replicaSetInfo = getReplicaSetInfo();
+        ReplicaSet const replicaSetInfo = getReplicaSetInfo(true);
 
         // Primary is unreachable, but there might have reachable secondary(ies)
         if (replicaSetInfo.primary.empty()) {  
@@ -852,7 +853,7 @@ namespace Robomongo
         mongo::sslGlobalParams.sslAllowInvalidHostnames = false;
     }
 
-    ReplicaSet MongoWorker::getReplicaSetInfo() const
+    ReplicaSet MongoWorker::getReplicaSetInfo(bool refresh /*= true*/) const
     {
         std::string setName;
         mongo::HostAndPort primary;
@@ -860,13 +861,17 @@ namespace Robomongo
 
         // Refresh view of Replica Set Monitor to get live data
         auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
-        repSetMonitor->startOrContinueRefresh().refreshAll();
+        
+        // refreshAll() takes long time, in order to do very first establish connection request much faster
+        // refreshAll() will be by-passed and it will be requested after successful connection response.
+        if (refresh)
+            repSetMonitor->startOrContinueRefresh().refreshAll();
 
         setName = repSetMonitor->getName();
         auto const primaryOnly = mongo::ReadPreferenceSetting(mongo::ReadPreference::PrimaryOnly, mongo::TagSet());
-        auto res = repSetMonitor->getHostOrRefresh(primaryOnly, mongo::Milliseconds(3000)); // todo
-        if (res.isOK())
-            primary = res.getValue();
+        auto primaryWithStatus = repSetMonitor->getHostOrRefresh(primaryOnly, mongo::Milliseconds(3000)); // todo
+        if (primaryWithStatus.isOK())
+            primary = primaryWithStatus.getValue();
 
         QStringList servers;
         // i.e. setNameAndMembers: "repset/localhost:27017,localhost:27018,localhost:27019"
@@ -882,7 +887,7 @@ namespace Robomongo
             membersAndHealths.push_back({ server.toStdString(), repSetMonitor->isHostUp(hostAndPort) });
         }
 
-        return ReplicaSet(setName, primary, membersAndHealths, res.getStatus().reason());
+        return ReplicaSet(setName, primary, membersAndHealths, primaryWithStatus.getStatus().reason());
     }
 
     /**

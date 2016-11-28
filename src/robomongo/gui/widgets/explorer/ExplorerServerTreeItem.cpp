@@ -382,7 +382,9 @@ namespace Robomongo
                                                                         isPrimary, memberAndHealth.second));
         }
 
+        _replicaSetFolder->setRefreshFlag(false);
         _replicaSetFolder->setExpanded(true);
+        _replicaSetFolder->setRefreshFlag(true);
     }
 
     void ExplorerServerTreeItem::buildDatabaseItems()

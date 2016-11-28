@@ -132,6 +132,12 @@ namespace Robomongo
             serverItem->expand();
             return;
         }
+
+        auto replicaFolder = dynamic_cast<ExplorerReplicaSetFolderItem *>(item);
+        if (replicaFolder) {
+            replicaFolder->expand();
+            return;
+        }
        
         auto dirItem = dynamic_cast<ExplorerCollectionDirIndexesTreeItem *>(item);
         if (dirItem) {

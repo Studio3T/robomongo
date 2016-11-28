@@ -84,6 +84,15 @@ namespace Robomongo
             BaseClass::_contextMenu->actions().at(0)->setDisabled(false);
     }
 
+    void ExplorerReplicaSetFolderItem::expand()
+    {
+        if (!_refreshFlag) {
+            _refreshFlag = true;
+            return;
+        }
+        _server->tryRefreshReplicaSetFolder();
+    }
+
     void ExplorerReplicaSetFolderItem::on_repSetStatus()
     {
         if (!_server->replicaSetInfo()->primary.empty()) {

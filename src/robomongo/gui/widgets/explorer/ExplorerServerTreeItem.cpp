@@ -202,10 +202,10 @@ namespace Robomongo
         }
 
         // --- Primary is reachable
-        replicaSetPrimaryReachable();
-        
         if (_primaryWasUnreachable)    // If primary was unreachable previously, rebuild db items
             _server->loadDatabases();
+
+        replicaSetPrimaryReachable();
     }
 
     void ExplorerServerTreeItem::handle(ReplicaSetRefreshed *event)

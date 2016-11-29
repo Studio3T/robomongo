@@ -182,10 +182,10 @@ namespace Robomongo {
                     server = "[" + _settings->replicaSetSettings()->members().front() + "]";
 
                 ss << "Cannot connect to replica set \"" << _settings->connectionName() << "\"" << server
-                   << ". \nSet's primary is unreachable.\n\nReason:\n" << "Connection failure, " << 
-                      event->error().errorMessage();
+                   << ". \nSet's primary is unreachable.\n\nReason:\n" << event->error().errorMessage();
+
                 _app->fireConnectionFailedEvent(_handle, event->_connectionType, ss.str(), 
-                    ConnectionFailedEvent::MongoConnection);
+                                                ConnectionFailedEvent::MongoConnection);
             }
             else    // single server 
             {  

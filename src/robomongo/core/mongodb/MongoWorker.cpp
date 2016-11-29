@@ -152,34 +152,27 @@ namespace Robomongo
                 // Protection as default value: Logically/ideally, this error should never be seen.
                 auto errorReason = std::string("Connection failure: Unknown error.");
 
-                if (_connSettings->isReplicaSet()) {   
-                    errorReason = "No member of the set is reachable.";
-
-                    // Build ReplicaSet with no member reachable
-                    std::vector<std::pair<std::string, bool>> membersAndHealths;
-                    for (auto const& member : _connSettings->replicaSetSettings()->members()) {
-                        membersAndHealths.push_back({ member, false });
-                    }
-                    repSetInfo.reset(new ReplicaSet("", mongo::HostAndPort(), membersAndHealths,
-                                                    "No member of the set is reachable."));
-
-                    // todo: SSL case
-                    // ...
+                if (_connSettings->sslSettings()->sslEnabled()) {
+                    // Note: Currently mongo-shell does not provide any interface to fetch actual error details
+                    // for some SSL connection failures that's why we are unable to show exact error here. 
+                    errorReason = "SSL tunnel failure: Network is unreachable or SSL connection rejected by server.";
                 }
-                else    // single server
-                {
-                    if (_connSettings->sslSettings()->sslEnabled())
-                    {
-                        // Note: Currently mongo-shell does not provide any interface to fetch actual error details
-                        // for some SSL connection failures that's why we are unable to show exact error here. 
-                        errorReason = "SSL tunnel failure: Network is unreachable or SSL connection rejected by server.";
+                else {  // Non-SSL connections
+                    if (_connSettings->isReplicaSet()) {
+                        errorReason = "No member of the set is reachable.";
+
+                        // Build ReplicaSet with no member reachable
+                        std::vector<std::pair<std::string, bool>> membersAndHealths;
+                        for (auto const& member : _connSettings->replicaSetSettings()->members()) {
+                            membersAndHealths.push_back({ member, false });
+                        }
+                        repSetInfo.reset(new ReplicaSet("", mongo::HostAndPort(), membersAndHealths,
+                            "No member of the set is reachable."));
                     }
-                    else
-                    {
+                    else {   // single server
                         errorReason = "Network is unreachable.";
                     }
                 }
-
                 resetGlobalSSLparams();
 
                 reply(event->sender(), new EstablishConnectionResponse(this, EventError(errorReason), event->connectionType, 
@@ -248,11 +241,13 @@ namespace Robomongo
             resetGlobalSSLparams();
 
             auto errorReason = _connSettings->sslSettings()->sslEnabled() ?
-                EstablishConnectionResponse::ErrorReason::MongoSslConnection : 
-                EstablishConnectionResponse::ErrorReason::MongoAuth;
+                               EstablishConnectionResponse::ErrorReason::MongoSslConnection : 
+                               EstablishConnectionResponse::ErrorReason::MongoAuth;
 
-            reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what()), event->connectionType, 
-                *repSetInfo.release(), errorReason));
+            std::string errorPrefix = (_connSettings->isReplicaSet()) ? "Connection failure, " : "";
+
+            reply(event->sender(), new EstablishConnectionResponse(this, EventError(errorPrefix + ex.what()), 
+                event->connectionType, *repSetInfo.release(), errorReason));
         }
         return false;
     }

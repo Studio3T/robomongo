@@ -88,12 +88,8 @@ namespace Robomongo
             }
 
             // Security header column (column[4])
-            if (_connection->sslSettings()->sslEnabled()) {
-                setText(4, " [SSL]");
-            }
-            if (_connection->sshSettings()->enabled()) {
-                setText(4, text(4) + " [SSH]");
-            }
+            setText(4, _connection->sslSettings()->sslEnabled() ? " [SSL]" : "");
+            setText(4, text(4) + (_connection->sshSettings()->enabled() ? " [SSH]" : ""));
         }
 
     private:

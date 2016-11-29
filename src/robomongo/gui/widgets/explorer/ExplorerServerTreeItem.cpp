@@ -96,8 +96,7 @@ namespace Robomongo
         if (_server->connectionRecord()->isReplicaSet()) {
             //_server->tryRefreshReplicaSet();  // todo
         }
-        else {
-            _server->tryRefresh();
+        else {  // single server
             _server->loadDatabases();
         }
     }

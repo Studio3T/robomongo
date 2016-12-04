@@ -118,6 +118,7 @@ namespace Robomongo
             if (QFile::exists(robomongorcPath)) {
                 _scope->execFile(QtUtils::toStdString(robomongorcPath), false, false);
             }
+            _failedScope = false;
         }
 
         // Esprima ECMAScript parser: http://esprima.org/
@@ -154,8 +155,10 @@ namespace Robomongo
     {
         QMutexLocker lock(&_mutex);
 
-        if (!_scope)
-            return MongoShellExecResult();
+        if (!_scope) {
+            _failedScope = true;
+            return MongoShellExecResult(true, "Connection error. Uninitialized mongo scope.");
+        }
 
         /*
          * Replace all commands ('show dbs', 'use db' etc.) with call
@@ -195,6 +198,7 @@ namespace Robomongo
 
             if (true /* ! wascmd */) {
                 try {
+                    bool failed = false;
                     QElapsedTimer timer;
                     timer.start();
                     if ( _scope->exec( statement , "(shell)" , false , true , false, _timeoutSec * 1000) ) {
@@ -202,7 +206,7 @@ namespace Robomongo
                                       "(shell2)" , true , true , false, _timeoutSec * 1000);
                     }
                     else {  // failed to run script 
-                        return MongoShellExecResult(true);
+                        failed = true;                        
                     }
 
                     qint64 elapsed = timer.elapsed();
@@ -210,6 +214,10 @@ namespace Robomongo
                     std::string logs = __logs.str();
                     std::string answer = logs.c_str();
                     std::string type = __type.c_str();
+
+                    if (failed)
+                        return MongoShellExecResult(true, answer);
+
                     std::vector<MongoDocumentPtr> docs = MongoDocument::fromBsonObj(__objects);
 
                     if (!answer.empty() || docs.size() > 0)

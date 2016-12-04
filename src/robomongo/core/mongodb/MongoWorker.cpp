@@ -507,28 +507,49 @@ namespace Robomongo
                 return;
             }
 
+            // Try to handle case where new shell (which was opened when server unreachable) was re-executed
+            if (_scriptEngine->failedScope()) {
+                try {
+                    _scriptEngine->init(_isLoadMongoRcJs);
+                }
+                catch (std::exception const& ex) {           
+                    std::string errorMsg = ex.what();
+                    if (!errorMsg.empty()) {
+                        errorMsg[0] = static_cast<char>(std::toupper(errorMsg[0]));
+                    }
+                    LOG_MSG(errorMsg + ", cannot init mongo scope", mongo::logger::LogSeverity::Error());
+                }
+            }
+
             // todo: should we use dbName from event or _connSettings? 
             MongoShellExecResult result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
 
-            // If failed and this is replica set, update script engine with primary node and try again
-            if (result.error() && _connSettings->isReplicaSet()) {
-                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
-                if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new ExecuteScriptResponse(this, EventError("Set's primary is unreachable.", 
-                                                                                       replicaSetInfo, false)));
-                    return;
+            if (result.error()) {
+                // If this is replica set, try again
+                if (_connSettings->isReplicaSet()) {
+                    ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
+                    if (replicaSetInfo.primary.empty()) {  // primary not reachable
+                        reply(event->sender(), new ExecuteScriptResponse(this, EventError("Set's primary is unreachable.",
+                            replicaSetInfo, false)));
+                        return;
+                    }
+                    else {  // primary reachable
+                        _scriptEngine->init(_isLoadMongoRcJs, replicaSetInfo.primary.toString(),
+                            _connSettings->defaultDatabase());
+                        result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
+                    }
                 }
-                else {  // primary reachable
-                    _scriptEngine->init(_isLoadMongoRcJs, replicaSetInfo.primary.toString(), 
-                                        _connSettings->defaultDatabase());
-                    result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
+                else { // single server
+                    reply(event->sender(), new ExecuteScriptResponse(this, EventError(result.errorMessage())));
+                    LOG_MSG(result.errorMessage(), mongo::logger::LogSeverity::Error());
+                    return;
                 }
             }
 
             reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty()));
         } 
         catch(const std::exception &ex) {
-            reply(event->sender(), new ExecuteScriptResponse(this, EventError(ex.what())));
+            reply(event->sender(), new ExecuteScriptResponse(this, EventError(ex.what(), EventError::Unknown, false)));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }

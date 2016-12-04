@@ -234,7 +234,7 @@ namespace Robomongo
         // todo: this case is server refresh for replica set conn.
 
         if (!_server->connectionRecord()->isReplicaSet() ||
-            !ConnectionType::ConnectionRefresh == event->connectionType)
+            ConnectionType::ConnectionRefresh != event->connectionType)
             return;
 
         buildReplicaSetFolder();

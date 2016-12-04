@@ -6,8 +6,10 @@ namespace Robomongo
     EventError::EventError() :
         _isNull(true) {}
 
-    EventError::EventError(const std::string &errorMessage, ErrorCode errorCode /*= Unknown*/) :
+    EventError::EventError(const std::string &errorMessage, ErrorCode errorCode /*= Unknown*/,
+                           bool showErrorWindow /* = true */) :
         _errorMessage(errorMessage),
+        _showErrorWindow(showErrorWindow),
         _isNull(false) {}
 
     EventError::EventError(const std::string &errorMessage, ReplicaSet replicaSetInfo, 

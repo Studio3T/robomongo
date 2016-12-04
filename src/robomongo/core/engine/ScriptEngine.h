@@ -29,6 +29,9 @@ namespace Robomongo
 
         void invalidateDbCollectionsCache();
 
+        // todo: to handle case: empty scope due to unreachable server when opening new shell
+        bool failedScope() const { return _failedScope; }
+
     private:
         ConnectionSettings *_connection;
 
@@ -43,6 +46,7 @@ namespace Robomongo
         int _timeoutSec;
         mongo::ScriptEngine *_engine;
         std::unique_ptr<mongo::Scope> _scope;
+        bool _failedScope = false;
         QMutex _mutex;
         bool _initialized;
     };

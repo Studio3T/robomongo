@@ -249,19 +249,24 @@ namespace Robomongo
     {
         hideProgress();
 
-        if (event->isError()) {
-            QString message = QString("Failed to execute script.\n\nError:\n%1")
-                .arg(QtUtils::toQString(event->error().errorMessage()));
-            QMessageBox::critical(this, "Error", message);
-            return;
-        }
-
         _currentResult = event->result();
 
         updateCurrentTab();
         displayData(event->result().results(), event->empty());
         _scriptWidget->setup(event->result()); // this should be in ScriptWidget, which is subscribed to ScriptExecutedEvent              
         activateTabContent();
+
+        if (event->isError()) {
+            // For some cases, event error message already contains string "Error:"
+            QString const& subStr =
+                QString::fromStdString(event->error().errorMessage()).startsWith("Error", Qt::CaseInsensitive) ?
+                "" : "Error:\n";
+
+            QString const& message = "Failed to execute script.\n\n" + subStr +
+                QString::fromStdString((event->error().errorMessage()));
+
+            QMessageBox::critical(this, "Error", message);
+        }
     }
 
     void QueryWidget::activateTabContent()

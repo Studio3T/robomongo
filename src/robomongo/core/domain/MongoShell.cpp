@@ -95,9 +95,8 @@ namespace Robomongo
     {
         if (event->isError()) {
             if (_server->connectionRecord()->isReplicaSet()) {
-
-                AppRegistry::instance().bus()->publish(new ReplicaSetRefreshed(this, event->error(), 
-                                                                               event->error().replicaSetInfo()));
+                AppRegistry::instance().bus()->publish(
+                    new ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
 
                 AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->error()));
                 return;

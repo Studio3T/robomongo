@@ -55,10 +55,12 @@ namespace Robomongo
         _textChanged(false),
         _disableTextAndCursorNotifications(false)
     {
-        setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4; border-radius: 0px; margin: 0px; padding: 0px;}");
+        setStyleSheet("QFrame {background-color: rgb(255, 255, 255); border: 0px solid #c7c5c4;"
+                      "border-radius: 0px; margin: 0px; padding: 0px;}");
 
         _queryText = new FindFrame(this);
-        _topStatusBar = new TopStatusBar(_shell->server()->connectionRecord()->connectionName(), _shell->server()->connectionRecord()->getFullAddress(), "loading...");
+        _topStatusBar = new TopStatusBar(_shell->server()->connectionRecord()->connectionName(), 
+                                         _shell->server()->connectionRecord()->getFullAddress(), "loading...");
 
         QVBoxLayout *layout = new QVBoxLayout;
         layout->setSpacing(0);

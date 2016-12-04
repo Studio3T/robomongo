@@ -25,7 +25,10 @@ namespace Robomongo {
         _bus(AppRegistry::instance().bus()),
         _app(AppRegistry::instance().app()),
         _replicaSetInfo(nullptr)
-    { }
+    {
+        if (ConnectionType::ConnectionPrimary == _connectionType)
+            _bus->subscribe(this, ReplicaSetRefreshed::Type);
+    }
 
     bool MongoServer::isConnected() const {
         return _isConnected;
@@ -67,9 +70,14 @@ namespace Robomongo {
         _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh));
     }
     
-    void MongoServer::tryRefreshReplicaSetFolder()
+    void MongoServer::tryRefreshReplicaSetFolder(bool showLoading /*= true*/)
     {
-        _bus->publish(new ReplicaSetFolderLoading(this));
+        if (!_settings->isReplicaSet())
+            return;
+
+        if (showLoading)
+            _bus->publish(new ReplicaSetFolderLoading(this));
+
         _bus->send(_worker, new RefreshReplicaSetFolderRequest(this));
     }
 
@@ -268,23 +276,7 @@ namespace Robomongo {
 
     void MongoServer::handle(RefreshReplicaSetFolderResponse *event)
     {
-        if (event->isError()) { // Primary is unreachable
-            _replicaSetInfo.reset(new ReplicaSet(event->replicaSet));
-            // todo: should we save set name?
-            _bus->publish(new ReplicaSetFolderRefreshed(this, event->error()));
-            return;
-        }
-
-        // Primary is reachable
-        // Update replica set settings and mongo server _replicaSetInfo 
-        _replicaSetInfo.reset(new ReplicaSet(event->replicaSet));
-        _settings->setServerHost(_replicaSetInfo->primary.host());
-        _settings->setServerPort(_replicaSetInfo->primary.port());
-        _settings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
-        //_settings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);  // todo
-        AppRegistry::instance().settingsManager()->save();    // todo
-
-        _bus->publish(new ReplicaSetFolderRefreshed(this));
+        handleReplicaSetRefreshEvents(event->isError(), event->error(), event->replicaSet);
     }
 
     void MongoServer::handle(LoadDatabaseNamesResponse *event) 
@@ -313,7 +305,8 @@ namespace Robomongo {
         _bus->publish(new RemoveDocumentResponse(event->sender(), event->error()));
     }
 
-    void MongoServer::runWorkerThread() {
+    void MongoServer::runWorkerThread() 
+    {
         _worker = new MongoWorker(_settings->clone(),
                   AppRegistry::instance().settingsManager()->loadMongoRcJs(),
                   AppRegistry::instance().settingsManager()->batchSize(),
@@ -321,18 +314,49 @@ namespace Robomongo {
                   AppRegistry::instance().settingsManager()->shellTimeoutSec());
     }
 
-    void MongoServer::handle(CreateDatabaseResponse *event) {
+    void MongoServer::handle(CreateDatabaseResponse *event) 
+    {
         genericResponseHandler(event, "Failed to create database.");
     }
 
-    void MongoServer::handle(DropDatabaseResponse *event) {
+    void MongoServer::handle(DropDatabaseResponse *event) 
+    {
         genericResponseHandler(event, "Failed to drop database.");
     }
 
-    void MongoServer::genericResponseHandler(Event *event, const std::string &userFriendlyMessage) {
+    void MongoServer::handle(ReplicaSetRefreshed *event) 
+    {
+        handleReplicaSetRefreshEvents(event->isError(), event->error(), event->replicaSet);
+    }
+
+    void MongoServer::genericResponseHandler(Event *event, const std::string &userFriendlyMessage) 
+    {
         if (!event->isError())
             return;
 
         _bus->publish(new OperationFailedEvent(this, event->error().errorMessage(), userFriendlyMessage));
     }
+
+    void MongoServer::handleReplicaSetRefreshEvents(bool isError, EventError eventError, 
+                                                    ReplicaSet const& replicaSet)
+    {
+        if (isError) { // Primary is unreachable
+            _replicaSetInfo.reset(new ReplicaSet(replicaSet));
+            // todo: should we save set name?
+            _bus->publish(new ReplicaSetFolderRefreshed(this, eventError));
+            return;
+        }
+
+        // Primary is reachable
+        // Update replica set settings and mongo server _replicaSetInfo 
+        _replicaSetInfo.reset(new ReplicaSet(replicaSet));
+        _settings->setServerHost(_replicaSetInfo->primary.host());
+        _settings->setServerPort(_replicaSetInfo->primary.port());
+        _settings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
+        //_settings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);  // todo
+        AppRegistry::instance().settingsManager()->save();    // todo
+
+        _bus->publish(new ReplicaSetFolderRefreshed(this));
+    }
+
 }

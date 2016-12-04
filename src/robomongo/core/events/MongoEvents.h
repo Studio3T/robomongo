@@ -105,8 +105,10 @@ namespace Robomongo
         ReplicaSetRefreshed(QObject *sender) :
             Event(sender) {}
 
-        ReplicaSetRefreshed(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        ReplicaSetRefreshed(QObject *sender, const EventError &error, ReplicaSet replicaSet) :
+            Event(sender, error), replicaSet(replicaSet) {}
+
+        ReplicaSet const replicaSet;
     };
 
     struct RefreshReplicaSetFolderRequest : public Event
@@ -149,6 +151,11 @@ namespace Robomongo
 
         ReplicaSetFolderRefreshed(QObject *sender, const EventError &error) :
             Event(sender, error) {}
+
+        ReplicaSetFolderRefreshed(QObject *sender, const EventError &error, ReplicaSet replicaSet) :
+            Event(sender, error), replicaSet(replicaSet) {}
+
+        ReplicaSet const replicaSet;
     };
 
     /**

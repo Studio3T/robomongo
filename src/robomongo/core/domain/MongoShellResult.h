@@ -32,12 +32,14 @@ namespace Robomongo
         MongoShellExecResult(const std::vector<MongoShellResult> &results,
                              const std::string &currentServer, bool isCurrentServerValid,
                              const std::string &currentDatabase, bool isCurrentDatabaseValid);
+        MongoShellExecResult(bool error) : _error(error) { }
 
         std::vector<MongoShellResult> results() const { return _results; }
         std::string currentServer() const { return _currentServer; }
         std::string currentDatabase() const { return _currentDatabase; }
         bool isCurrentServerValid() const { return _isCurrentServerValid; }
         bool isCurrentDatabaseValid() const { return _isCurrentDatabaseValid; }
+        bool error() const { return _error; }
 
     private:
         std::vector<MongoShellResult> _results;
@@ -45,5 +47,6 @@ namespace Robomongo
         std::string _currentDatabase;
         bool _isCurrentServerValid;
         bool _isCurrentDatabaseValid;
+        bool _error = false;
     };
 }

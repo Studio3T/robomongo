@@ -56,9 +56,9 @@ namespace Robomongo
 
         // todo
         void tryRefreshReplicaSet();
-        void tryRefreshReplicaSetFolder();
+        void tryRefreshReplicaSetFolder(bool showLoading = true);
 
-        bool isConnected()const;
+        bool isConnected() const;
 
         void addDatabase(MongoDatabase *database);
         void createDatabase(const std::string &dbName);
@@ -101,10 +101,12 @@ namespace Robomongo
         void handle(RemoveDocumentResponse *event);
         void handle(CreateDatabaseResponse *event);
         void handle(DropDatabaseResponse *event);
+        void handle(ReplicaSetRefreshed *event);
 
-    private:
+    private:                 
         void clearDatabases();
         void genericResponseHandler(Event *event, const std::string &userFriendlyMessage);
+        void handleReplicaSetRefreshEvents(bool isError, EventError eventError, ReplicaSet const& replicaSet);
 
         MongoWorker *_worker;
         ConnectionSettings *_settings;

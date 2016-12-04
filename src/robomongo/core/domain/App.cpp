@@ -170,11 +170,11 @@ namespace Robomongo
 
     void App::openShell(ConnectionSettings* connection, const ScriptInfo &scriptInfo)
     {
-        MongoServer *server = openServerInternal(connection, ConnectionSecondary);
-        if (!server)
+        MongoServer *serverClone = openServerInternal(connection, ConnectionSecondary);
+        if (!serverClone)
             return;
 
-        MongoShell *shell = new MongoShell(server, scriptInfo);
+        MongoShell *shell = new MongoShell(serverClone, scriptInfo);
         _shells.push_back(shell);
         _bus->publish(new OpeningShellEvent(this, shell));
         shell->execute();
@@ -197,7 +197,9 @@ namespace Robomongo
         delete shell;
     }
 
-    MongoServer *App::continueOpenServer(int serverHandle, ConnectionSettings* connSettings, ConnectionType type, int localport) {
+    MongoServer *App::continueOpenServer(int serverHandle, ConnectionSettings* connSettings, ConnectionType type, 
+                                         int localport) 
+    {
         ConnectionSettings* connSettingsClone = connSettings->clone();
 
         // Modify connection settings when SSH tunnel is used

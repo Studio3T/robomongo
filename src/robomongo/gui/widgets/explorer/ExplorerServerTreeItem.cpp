@@ -75,7 +75,7 @@ namespace Robomongo
 
         _bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
         _bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
-        _bus->subscribe(this, ReplicaSetFolderRefreshed::Type, _server);
+        _bus->subscribe(this, ReplicaSetFolderRefreshed::Type);
         _bus->subscribe(this, ConnectionEstablishedEvent::Type, _server);
         _bus->subscribe(this, ConnectionFailedEvent::Type);
 
@@ -194,9 +194,11 @@ namespace Robomongo
             replicaSetPrimaryUnreachable();
             disableSomeContextMenuActions(true);
 
-            std::string const errorStr = "Set's primary is unreachable.\n\nReason:\n"
-                                         "Connection failure, " + event->error().errorMessage();
-            QMessageBox::critical(nullptr, "Error", QString::fromStdString(errorStr));
+            if (event->error().showErrorWindow()) {
+                std::string const errorStr = "Set's primary is unreachable.\n\nReason:\n"
+                    "Connection failure, " + event->error().errorMessage();
+                QMessageBox::critical(nullptr, "Error", QString::fromStdString(errorStr));
+            }
             return;
         }
 

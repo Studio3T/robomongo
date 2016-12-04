@@ -198,7 +198,11 @@ namespace Robomongo
                     QElapsedTimer timer;
                     timer.start();
                     if ( _scope->exec( statement , "(shell)" , false , true , false, _timeoutSec * 1000) ) {
-                        _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );" , "(shell2)" , true , true , false, _timeoutSec * 1000);
+                         _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );", 
+                                      "(shell2)" , true , true , false, _timeoutSec * 1000);
+                    }
+                    else {  // failed to run script 
+                        return MongoShellExecResult(true);
                     }
 
                     qint64 elapsed = timer.elapsed();

@@ -11,7 +11,7 @@
 #include "robomongo/core/settings/SettingsManager.h"
 
 namespace Robomongo
-{
+{  
 
     MongoShell::MongoShell(MongoServer *server, const ScriptInfo &scriptInfo) :
         QObject(),
@@ -94,8 +94,18 @@ namespace Robomongo
     void MongoShell::handle(ExecuteScriptResponse *event)
     {
         if (event->isError()) {
-            AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->error()));
-            return;
+            if (_server->connectionRecord()->isReplicaSet()) {
+
+                AppRegistry::instance().bus()->publish(new ReplicaSetRefreshed(this, event->error(), 
+                                                                               event->error().replicaSetInfo()));
+
+                AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->error()));
+                return;
+            }
+            else {  // single server
+                AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->error()));
+                return;
+            }
         }
 
         AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->result, event->empty));

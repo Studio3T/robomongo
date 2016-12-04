@@ -507,26 +507,27 @@ namespace Robomongo
                 return;
             }
 
-            // If this is replica set, update script engine's server address
-            if (_connSettings->isReplicaSet()) {
-                // Refresh view of Replica Set Monitor to get latest status
-                auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
-                repSetMonitor->startOrContinueRefresh().refreshAll();
-
-                // Update connection settings with primary(master) address and port
-                mongo::HostAndPort repPrimary = repSetMonitor->getMasterOrUassert();
-
-                // todo:
-                // Update script engine with primary node
-                _scriptEngine->init(_isLoadMongoRcJs, repPrimary.toString(), _connSettings->defaultDatabase());
-            }
-
             // todo: should we use dbName from event or _connSettings? 
             MongoShellExecResult result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
 
+            // If failed and this is replica set, update script engine with primary node and try again
+            if (result.error() && _connSettings->isReplicaSet()) {
+                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
+                if (replicaSetInfo.primary.empty()) {  // primary not reachable
+                    reply(event->sender(), new ExecuteScriptResponse(this, EventError("Set's primary is unreachable.", 
+                                                                                       replicaSetInfo, false)));
+                    return;
+                }
+                else {  // primary reachable
+                    _scriptEngine->init(_isLoadMongoRcJs, replicaSetInfo.primary.toString(), 
+                                        _connSettings->defaultDatabase());
+                    result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
+                }
+            }
+
             reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty()));
         } 
-        catch(const mongo::DBException &ex) {
+        catch(const std::exception &ex) {
             reply(event->sender(), new ExecuteScriptResponse(this, EventError(ex.what())));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }

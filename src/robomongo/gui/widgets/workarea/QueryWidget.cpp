@@ -252,7 +252,7 @@ namespace Robomongo
         if (event->isError()) {
             QString message = QString("Failed to execute script.\n\nError:\n%1")
                 .arg(QtUtils::toQString(event->error().errorMessage()));
-            QMessageBox::information(this, "Error", message);
+            QMessageBox::critical(this, "Error", message);
             return;
         }
 

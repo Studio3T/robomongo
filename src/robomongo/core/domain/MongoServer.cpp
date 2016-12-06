@@ -10,6 +10,7 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo {
@@ -20,7 +21,7 @@ namespace Robomongo {
         _connectionType(connectionType),
         _worker(nullptr),
         _isConnected(false),
-        _settings(settings),
+        _connSettings(settings),
         _handle(handle),
         _bus(AppRegistry::instance().bus()),
         _app(AppRegistry::instance().app()),
@@ -32,7 +33,7 @@ namespace Robomongo {
     }
 
     ConnectionSettings *MongoServer::connectionRecord() const {
-        return _settings;
+        return _connSettings;
     }
 
     MongoServer::~MongoServer() {
@@ -69,7 +70,7 @@ namespace Robomongo {
     
     void MongoServer::tryRefreshReplicaSetFolder(bool showLoading /*= true*/)
     {
-        if (!_settings->isReplicaSet())
+        if (!_connSettings->isReplicaSet())
             return;
 
         if (showLoading)
@@ -139,7 +140,7 @@ namespace Robomongo {
 
     void MongoServer::loadDatabases() {
         _bus->publish(new MongoServerLoadingDatabasesEvent(this));
-        if (_settings->isReplicaSet()) { // todo
+        if (_connSettings->isReplicaSet()) { // todo
             tryRefreshReplicaSet();
         }
         else {  // single server
@@ -159,14 +160,14 @@ namespace Robomongo {
         // _connectionType = event->_connectionType;
 
         // In any case, replica set info must be updated, there might be reachable secondary(ies).
-        if (_settings->isReplicaSet()) {
+        if (_connSettings->isReplicaSet()) {
             _replicaSetInfo.reset(new ReplicaSet(event->replicaSet()));
             // todo: move to funct.
             // todo: for primary unreachable, serverhost is set empty
-            _settings->setServerHost(_replicaSetInfo->primary.host());
-            _settings->setServerPort(_replicaSetInfo->primary.port());
-            _settings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
-            //_settings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);
+            _connSettings->setServerHost(_replicaSetInfo->primary.host());
+            _connSettings->setServerPort(_replicaSetInfo->primary.port());
+            _connSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
+            //_connSettings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);
             AppRegistry::instance().settingsManager()->save();
         }
 
@@ -179,14 +180,14 @@ namespace Robomongo {
             auto eventErrorReason = event->_errorReason;
 
             // todo: 
-            if(_settings->isReplicaSet()) 
+            if(_connSettings->isReplicaSet()) 
             {
                 ss.clear();
                 std::string server = "";
-                if (_settings->replicaSetSettings()->members().size() > 0 )    
-                    server = "[" + _settings->replicaSetSettings()->members().front() + "]";
+                if (_connSettings->replicaSetSettings()->members().size() > 0 )    
+                    server = "[" + _connSettings->replicaSetSettings()->members().front() + "]";
 
-                ss << "Cannot connect to replica set \"" << _settings->connectionName() << "\"" << server
+                ss << "Cannot connect to replica set \"" << _connSettings->connectionName() << "\"" << server
                    << ". \nSet's primary is unreachable.\n\nReason:\n" << event->error().errorMessage();
 
                 _app->fireConnectionFailedEvent(_handle, event->_connectionType, ss.str(), 
@@ -232,7 +233,7 @@ namespace Robomongo {
         // ConnectionRefresh is used just to update connection view (_version, _storageEngineType, _repPrimary etc..)
         // So we return here after updating(refreshing) information related to connection view.
         if (ConnectionRefresh == event->_connectionType) {
-            if (_settings->isReplicaSet()) {
+            if (_connSettings->isReplicaSet()) {
                 // todo
                 // If it is replica set connection, do not return yet.
             }
@@ -242,11 +243,11 @@ namespace Robomongo {
         }
 
         // If it is replica set connection, do not send ConnectionEstablishedEvent yet.
-        if (!_settings->isReplicaSet()) {
+        if (!_connSettings->isReplicaSet()) {
             _bus->publish(new ConnectionEstablishedEvent(this, _connectionType, info));
         }
 
-        if (_settings->isReplicaSet()) {
+        if (_connSettings->isReplicaSet()) {
             // todo
             // If it is replica set connection, do not return yet.
         }
@@ -263,7 +264,7 @@ namespace Robomongo {
             addDatabase(db);
         }
 
-        if (_settings->isReplicaSet()) {
+        if (_connSettings->isReplicaSet()) {
             _bus->publish(new ConnectionEstablishedEvent(this, event->_connectionType, info));
             // In order to connect much faster, time consuming refresh (repSetMonitor->startOrContinueRefresh().
             // refreshAll()) is being requested after successful connection.
@@ -294,17 +295,32 @@ namespace Robomongo {
         _bus->publish(new DatabaseListLoadedEvent(this, _databases));
     }
 
-    void MongoServer::handle(InsertDocumentResponse *event) {
-        _bus->publish(new InsertDocumentResponse(event->sender(), event->error()));
+    void MongoServer::handle(InsertDocumentResponse *event) 
+    {
+        if (_connSettings->isReplicaSet()) // replica set
+        {
+            if (event->isError()) {
+                if (EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                    handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                }
+                genericResponseHandler(event, "Failed to insert document.");
+                return;
+            }
+            LOG_MSG("Document inserted.", mongo::logger::LogSeverity::Info());
+        }
+        else {  // single server
+            _bus->publish(new InsertDocumentResponse(event->sender(), event->error()));
+        }
     }
 
-    void MongoServer::handle(RemoveDocumentResponse *event) {
+    void MongoServer::handle(RemoveDocumentResponse *event) 
+    {
         _bus->publish(new RemoveDocumentResponse(event->sender(), event->error()));
     }
 
     void MongoServer::runWorkerThread() 
     {
-        _worker = new MongoWorker(_settings->clone(),
+        _worker = new MongoWorker(_connSettings->clone(),
                   AppRegistry::instance().settingsManager()->loadMongoRcJs(),
                   AppRegistry::instance().settingsManager()->batchSize(),
                   AppRegistry::instance().settingsManager()->mongoTimeoutSec(),
@@ -331,6 +347,8 @@ namespace Robomongo {
         if (!event->isError())
             return;
 
+        LOG_MSG(userFriendlyMessage + " " + event->error().errorMessage(), 
+                mongo::logger::LogSeverity::Error());
         _bus->publish(new OperationFailedEvent(this, event->error().errorMessage(), userFriendlyMessage));
     }
 
@@ -347,10 +365,10 @@ namespace Robomongo {
         // Primary is reachable
         // Update replica set settings and mongo server _replicaSetInfo 
         _replicaSetInfo.reset(new ReplicaSet(replicaSet));
-        _settings->setServerHost(_replicaSetInfo->primary.host());
-        _settings->setServerPort(_replicaSetInfo->primary.port());
-        _settings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
-        //_settings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);  // todo
+        _connSettings->setServerHost(_replicaSetInfo->primary.host());
+        _connSettings->setServerPort(_replicaSetInfo->primary.port());
+        _connSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
+        //_connSettings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);  // todo
         AppRegistry::instance().settingsManager()->save();    // todo
 
         _bus->publish(new ReplicaSetFolderRefreshed(this));

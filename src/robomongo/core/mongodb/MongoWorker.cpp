@@ -460,9 +460,23 @@ namespace Robomongo
 
             reply(event->sender(), new InsertDocumentResponse(this));
         } catch(const mongo::DBException &ex) {
-            EventError error = EventError("Error when saving document: " + ex.toString());
-            reply(event->sender(), new InsertDocumentResponse(this, error));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            if (_connSettings->isReplicaSet()) {
+                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
+                if (replicaSetInfo.primary.empty()) {  // primary not reachable
+                    reply(event->sender(), new InsertDocumentResponse(this,
+                        EventError("Set's primary is unreachable.", replicaSetInfo, false)));
+                }
+                else {   // other errors
+                    EventError error = EventError(ex.toString()); // todo
+                    reply(event->sender(), new InsertDocumentResponse(this, error));
+                }
+                LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            }
+            else { // single server
+                EventError error = EventError("Error when saving document: " + ex.toString());
+                reply(event->sender(), new InsertDocumentResponse(this, error));
+                LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            }
         }
     }
 
@@ -512,7 +526,8 @@ namespace Robomongo
                 try {
                     _scriptEngine->init(_isLoadMongoRcJs);
                 }
-                catch (std::exception const& ex) {           
+                catch (std::exception const& ex) {     
+                    // todo: move to common header - capitalize first letter of a str
                     std::string errorMsg = ex.what();
                     if (!errorMsg.empty()) {
                         errorMsg[0] = static_cast<char>(std::toupper(errorMsg[0]));

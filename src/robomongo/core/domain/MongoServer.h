@@ -109,7 +109,7 @@ namespace Robomongo
         void handleReplicaSetRefreshEvents(bool isError, EventError eventError, ReplicaSet const& replicaSet);
 
         MongoWorker *_worker;
-        ConnectionSettings *_settings;
+        ConnectionSettings *_connSettings;
         EventBus *_bus;
         App *_app;
 

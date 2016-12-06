@@ -147,7 +147,7 @@ namespace Robomongo
 
     void ExplorerWidget::ui_itemDoubleClicked(QTreeWidgetItem *item, int column)
     {
-        ExplorerCollectionTreeItem *collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
+        auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
         if (collectionItem) {
             AppRegistry::instance().app()->openShell(collectionItem->collection());
             return;
@@ -155,7 +155,8 @@ namespace Robomongo
 
         auto replicaMemberItem = dynamic_cast<ExplorerReplicaSetTreeItem*>(item);
         if (replicaMemberItem && replicaMemberItem->isUp()) {
-            AppRegistry::instance().app()->openShell(replicaMemberItem->connectionSettings(), ScriptInfo("", true));
+            AppRegistry::instance().app()->openShell(replicaMemberItem->server(), 
+                replicaMemberItem->connectionSettings(), ScriptInfo("", true));
             return;
         }
 

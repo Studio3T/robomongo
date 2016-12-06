@@ -529,8 +529,9 @@ namespace Robomongo
                 if (_connSettings->isReplicaSet()) {
                     ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                     if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                        reply(event->sender(), new ExecuteScriptResponse(this, EventError("Set's primary is unreachable.",
-                            replicaSetInfo, false)));
+                        reply(event->sender(), new ExecuteScriptResponse(this, 
+                            EventError("Set's primary is unreachable.", replicaSetInfo, false)));
+
                         return;
                     }
                     else {  // primary reachable

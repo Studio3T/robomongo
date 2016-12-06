@@ -70,7 +70,8 @@ namespace Robomongo
                               bool execute = true, const QString &shellName = QString(),
                               const CursorPosition &cursorPosition = CursorPosition(), const QString &filePathToSave = QString());
 
-        void openShell(ConnectionSettings* connSettings, const ScriptInfo &scriptInfo);
+        // todo: server: explorer's MongoServer (ExplorerServerTreeItem's _server)
+        void openShell(MongoServer* server, ConnectionSettings* connSettings, const ScriptInfo &scriptInfo);
         MongoServersContainerType getServers() const { return _servers; };
 
         /**

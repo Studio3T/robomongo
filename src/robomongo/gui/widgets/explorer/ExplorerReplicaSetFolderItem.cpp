@@ -22,10 +22,11 @@ namespace
     }
 
     // todo : modify or move to a common header
-    void openCurrentServerShell(Robomongo::ConnectionSettings* connSettings, const QString &script)
+    void openCurrentServerShell(Robomongo::MongoServer* server, Robomongo::ConnectionSettings* connSettings,
+                                const QString &script)
     {
         auto const scriptStr = Robomongo::ScriptInfo(script, true);
-        Robomongo::AppRegistry::instance().app()->openShell(connSettings, scriptStr);
+        Robomongo::AppRegistry::instance().app()->openShell(server, connSettings, scriptStr);
     }
 }
 
@@ -121,7 +122,7 @@ namespace Robomongo
             connSetting->setReplicaSet(false);
             connSetting->replicaSetSettings()->setMembers(std::vector<std::string>()); 
 
-            openCurrentServerShell(connSetting, "rs.status()");
+            openCurrentServerShell(_server, connSetting, "rs.status()");
         }
     }
 

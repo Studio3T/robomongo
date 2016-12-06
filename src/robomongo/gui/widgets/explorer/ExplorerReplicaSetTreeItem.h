@@ -27,6 +27,7 @@ namespace Robomongo
         // Getters
         ConnectionSettings* connectionSettings() { return _connSettings.get(); }
         bool isUp() const { return _isUp; }
+        MongoServer* server() const { return _server; }
 
     public Q_SLOTS:
         // Todo: remove or update

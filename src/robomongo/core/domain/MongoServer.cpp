@@ -25,10 +25,7 @@ namespace Robomongo {
         _bus(AppRegistry::instance().bus()),
         _app(AppRegistry::instance().app()),
         _replicaSetInfo(nullptr)
-    {
-        if (ConnectionType::ConnectionPrimary == _connectionType)
-            _bus->subscribe(this, ReplicaSetRefreshed::Type);
-    }
+    {}
 
     bool MongoServer::isConnected() const {
         return _isConnected;

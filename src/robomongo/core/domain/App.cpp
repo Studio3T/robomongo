@@ -143,8 +143,8 @@ namespace Robomongo
         ConnectionSettings *connection = collection->database()->server()->connectionRecord();
         connection->setDefaultDatabase(collection->database()->name());
         QString script = detail::buildCollectionQuery(collection->name(), "find({})");
-        openShell(connection, ScriptInfo(script, true, CursorPosition(0, -2), 
-                                         QtUtils::toQString(collection->database()->name()), filePathToSave));
+        openShell(collection->database()->server(), connection, ScriptInfo(script, true, CursorPosition(0, -2), 
+            QtUtils::toQString(collection->database()->name()), filePathToSave));
     }
 
     void App::openShell(MongoServer *server, const QString &script, const std::string &dbName,
@@ -156,7 +156,7 @@ namespace Robomongo
         if (!dbName.empty())
             connection->setDefaultDatabase(dbName);
 
-        openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName, filePathToSave));
+        openShell(server, connection, ScriptInfo(script, execute, cursorPosition, shellName, filePathToSave));
     }
 
     void App::openShell(MongoDatabase *database, const QString &script,
@@ -165,16 +165,19 @@ namespace Robomongo
     {
         ConnectionSettings *connection = database->server()->connectionRecord();
         connection->setDefaultDatabase(database->name());
-        openShell(connection, ScriptInfo(script, execute, cursorPosition, shellName, filePathToSave));
+        openShell(database->server(), connection, ScriptInfo(script, execute, cursorPosition, 
+                                                             shellName, filePathToSave));
     }
 
-    void App::openShell(ConnectionSettings* connection, const ScriptInfo &scriptInfo)
+    void App::openShell(MongoServer* server, ConnectionSettings* connection, const ScriptInfo &scriptInfo)
     {
         MongoServer *serverClone = openServerInternal(connection, ConnectionSecondary);
-        if (!serverClone)
+        if (!serverClone || !server)
             return;
 
         MongoShell *shell = new MongoShell(serverClone, scriptInfo);
+        // Connection between explorer's server and tab's MongoShells
+        _bus->subscribe(server, ReplicaSetRefreshed::Type, shell); 
         _shells.push_back(shell);
         _bus->publish(new OpeningShellEvent(this, shell));
         shell->execute();

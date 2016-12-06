@@ -21,10 +21,11 @@
 namespace
 {
     // todo : modify or move to a common header
-     void openCurrentServerShell(Robomongo::ConnectionSettings* connSettings, const QString &script)
+     void openCurrentServerShell(Robomongo::MongoServer* server, Robomongo::ConnectionSettings* connSettings, 
+                                 const QString &script)
      {
          auto const scriptStr = Robomongo::ScriptInfo(script, true);
-         Robomongo::AppRegistry::instance().app()->openShell(connSettings, scriptStr);
+         Robomongo::AppRegistry::instance().app()->openShell(server, connSettings, scriptStr);
      }
 }
 
@@ -112,27 +113,27 @@ namespace Robomongo
 
     void ExplorerReplicaSetTreeItem::ui_serverHostInfo()
     {
-        openCurrentServerShell(_connSettings.get(), "db.hostInfo()");
+        openCurrentServerShell(_server, _connSettings.get(), "db.hostInfo()");
     }
 
     void ExplorerReplicaSetTreeItem::ui_serverStatus()
     {
-        openCurrentServerShell(_connSettings.get(), "db.serverStatus()");
+        openCurrentServerShell(_server, _connSettings.get(), "db.serverStatus()");
     }
 
     void ExplorerReplicaSetTreeItem::ui_serverVersion()
     {
-        openCurrentServerShell(_connSettings.get(), "db.version()");
+        openCurrentServerShell(_server, _connSettings.get(), "db.version()");
     }
 
     void ExplorerReplicaSetTreeItem::ui_showLog()
     {
-        openCurrentServerShell(_connSettings.get(), "show log");
+        openCurrentServerShell(_server, _connSettings.get(), "show log");
     }
 
     void ExplorerReplicaSetTreeItem::ui_openShell()
     {
-        openCurrentServerShell(_connSettings.get(), "");
+        openCurrentServerShell(_server, _connSettings.get(), "");
     }
 
     void ExplorerReplicaSetTreeItem::ui_openDirectConnection()

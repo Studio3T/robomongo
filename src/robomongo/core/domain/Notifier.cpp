@@ -102,7 +102,7 @@ namespace Robomongo
         _queryInfo(queryInfo)
     {
         QWidget *wid = dynamic_cast<QWidget*>(_observer);
-        AppRegistry::instance().bus()->subscribe(this, InsertDocumentResponse::Type);
+        AppRegistry::instance().bus()->subscribe(this, InsertDocumentResponse::Type, _shell->server());
         AppRegistry::instance().bus()->subscribe(this, RemoveDocumentResponse::Type);
 
         _deleteDocumentAction = new QAction("Delete Document...", wid);
@@ -223,7 +223,16 @@ namespace Robomongo
     void Notifier::handle(InsertDocumentResponse *event)
     {
         if (event->isError()) {
-            QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
+            if (_shell->server()->connectionRecord()->isReplicaSet()) {
+                // Insert document from tab results window (Notifier, OutputWindow widget)
+                if (EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                    AppRegistry::instance().bus()->publish(
+                        new ReplicaSetRefreshed(_shell, event->error(), event->error().replicaSetInfo()));
+                }
+            }
+            else { // single server
+                QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
+            }
             return;
         }
 
@@ -412,7 +421,9 @@ namespace Robomongo
             _shell->server()->insertDocument(*it, _queryInfo._info._ns);
         }
 
-        _shell->query(0, _queryInfo);
+        // For replica set do this in response (InsertDocumentResponse)
+        if (!_shell->server()->connectionRecord()->isReplicaSet())  // single server
+            _shell->query(0, _queryInfo);
     }
 
     void Notifier::onCopyDocument()

@@ -300,16 +300,21 @@ namespace Robomongo {
         if (_connSettings->isReplicaSet()) // replica set
         {
             if (event->isError()) {
-                if (EventError::SetPrimaryUnreachable == event->error().errorCode()) {
-                    handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                if (ConnectionPrimary == _connectionType) { // Insert document from explorer context menu
+                    if (EventError::SetPrimaryUnreachable == event->error().errorCode())
+                        handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                }
+                else {  // Insert document from tab results window (Notifier, OutputWindow widget)
+                    _bus->publish(new InsertDocumentResponse(this, event->error()));
                 }
                 genericResponseHandler(event, "Failed to insert document.");
                 return;
             }
+            _bus->publish(new InsertDocumentResponse(this));
             LOG_MSG("Document inserted.", mongo::logger::LogSeverity::Info());
         }
         else {  // single server
-            _bus->publish(new InsertDocumentResponse(event->sender(), event->error()));
+            _bus->publish(new InsertDocumentResponse(this, event->error()));
         }
     }
 
@@ -347,8 +352,7 @@ namespace Robomongo {
         if (!event->isError())
             return;
 
-        LOG_MSG(userFriendlyMessage + " " + event->error().errorMessage(), 
-                mongo::logger::LogSeverity::Error());
+        LOG_MSG(userFriendlyMessage + " " + event->error().errorMessage(), mongo::logger::LogSeverity::Error());
         _bus->publish(new OperationFailedEvent(this, event->error().errorMessage(), userFriendlyMessage));
     }
 

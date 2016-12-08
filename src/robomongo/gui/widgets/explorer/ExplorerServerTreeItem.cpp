@@ -77,7 +77,7 @@ namespace Robomongo
         _bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
         _bus->subscribe(this, ReplicaSetFolderRefreshed::Type, _server);
         _bus->subscribe(this, ConnectionEstablishedEvent::Type, _server);
-        _bus->subscribe(this, ConnectionFailedEvent::Type, _server);
+        _bus->subscribe(this, ConnectionFailedEvent::Type/*, _server*/);  // todo: do we neeed this?
 
         setText(0, buildServerName());
         setIcon(0, _server->connectionRecord()->isReplicaSet() ? GuiRegistry::instance().replicaSetIcon()

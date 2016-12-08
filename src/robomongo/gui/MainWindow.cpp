@@ -1053,7 +1053,7 @@ namespace Robomongo
         ss << event->userFriendlyErrorMessage << std::endl << std::endl
             << "Error:" << std::endl << event->technicalErrorMessage;
 
-        QMessageBox::information(NULL, "Operation failed", QtUtils::toQString(ss.str()));
+        QMessageBox::critical(NULL, "Operation failed", QtUtils::toQString(ss.str()));
     }
 
     void MainWindow::keyPressEvent(QKeyEvent *event)

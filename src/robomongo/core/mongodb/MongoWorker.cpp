@@ -470,12 +470,10 @@ namespace Robomongo
                     EventError error = EventError(ex.toString()); // todo
                     reply(event->sender(), new InsertDocumentResponse(this, error));
                 }
-                LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
             }
             else { // single server
                 EventError error = EventError("Error when saving document: " + ex.toString());
                 reply(event->sender(), new InsertDocumentResponse(this, error));
-                LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
             }
         }
     }
@@ -489,10 +487,10 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new RemoveDocumentResponse(this));
-        } catch(const mongo::DBException &ex) {
+        } 
+        catch(const mongo::DBException &ex) {
             EventError error = EventError("Error when deleting document: " + ex.toString());
             reply(event->sender(), new RemoveDocumentResponse(this, error));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 

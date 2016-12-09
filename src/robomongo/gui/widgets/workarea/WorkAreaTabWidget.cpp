@@ -245,9 +245,7 @@ namespace Robomongo
 #if !defined(Q_OS_MAC)
         setTabIcon(count() - 1, GuiRegistry::instance().mongodbIcon());
 #endif
-        if (event->shell->isExecutable()) {
-            queryWidget->showProgress();
-        }
+        queryWidget->showProgress();
     }
 }
 

@@ -483,9 +483,9 @@ namespace Robomongo
     {
         MongoDatabase *database = _collection->database();
         MongoServer *server = database->server();
-        ConnectionSettings *settings = server->connectionRecord();
+        ConnectionSettings *connSettings = server->connectionRecord();
 
-        CreateDatabaseDialog dlg(QtUtils::toQString(settings->getFullAddress()),
+        CreateDatabaseDialog dlg(QtUtils::toQString(connSettings->getFullAddress()),
             QtUtils::toQString(database->name()),
             QtUtils::toQString(_collection->name()), treeWidget());
         dlg.setWindowTitle("Rename Collection");
@@ -496,8 +496,6 @@ namespace Robomongo
 
         if (result == QDialog::Accepted) {
             database->renameCollection(_collection->name(), QtUtils::toStdString(dlg.databaseName()));
-            // refresh list of collections
-            database->loadCollections();
         }
     }
 

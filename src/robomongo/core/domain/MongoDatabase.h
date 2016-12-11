@@ -86,6 +86,7 @@ namespace Robomongo
         void handle(CreateUserResponse *event);
         void handle(CreateCollectionResponse *event);
         void handle(DropCollectionResponse *event);
+        void handle(RenameCollectionResponse *event);
 
     private:
         void clearCollections();

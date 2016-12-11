@@ -261,7 +261,7 @@ namespace Robomongo {
         for (std::vector<std::string>::const_iterator it = info._databases.begin(); it != info._databases.end(); ++it) {
             const std::string &name = *it;
             MongoDatabase *db  = new MongoDatabase(this, name);
-            addDatabase(db);
+            addDatabase(db);    // todo: serverClones for replica sets should not do this
         }
 
         if (_connSettings->isReplicaSet()) {

@@ -670,10 +670,23 @@ namespace Robomongo
             client->renameCollection(event->ns(), event->newCollection());
             client->done();
 
-            reply(event->sender(), new RenameCollectionResponse(this));
+            reply(event->sender(), new RenameCollectionResponse(this, event->ns().collectionName(),
+                  event->newCollection()));
         } catch(const mongo::DBException &ex) {
-            reply(event->sender(), new RenameCollectionResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            if (_connSettings->isReplicaSet()) {
+                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
+                if (replicaSetInfo.primary.empty()) {  // primary not reachable
+                    reply(event->sender(), new RenameCollectionResponse(this,
+                        EventError("Replica set primary is unreachable.", replicaSetInfo, false)));
+                }
+                else {   // other errors
+                    EventError error = EventError(ex.toString()); // todo
+                    reply(event->sender(), new RenameCollectionResponse(this, error));
+                }
+            }
+            else { // single server
+                reply(event->sender(), new RenameCollectionResponse(this, EventError(ex.what())));
+            }
         }
     }
 

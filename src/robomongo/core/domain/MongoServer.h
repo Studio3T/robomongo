@@ -93,6 +93,9 @@ namespace Robomongo
         mongo::HostAndPort getRepPrimary() const { return _repPrimary; }
         std::vector<std::pair<std::string, bool>> getRepMembersHealths() const { return _repMembersAndHealths; }
 
+        // todo
+        void handle(ReplicaSetRefreshed *event);
+
     protected Q_SLOTS:
         void handle(EstablishConnectionResponse *event);
         void handle(RefreshReplicaSetFolderResponse *event);
@@ -101,7 +104,6 @@ namespace Robomongo
         void handle(RemoveDocumentResponse *event);
         void handle(CreateDatabaseResponse *event);
         void handle(DropDatabaseResponse *event);
-        void handle(ReplicaSetRefreshed *event);
 
     private:                 
         void clearDatabases();

@@ -636,16 +636,19 @@ namespace Robomongo
         std::string _newCollection;
     };
 
-    class RenameCollectionResponse : public Event
+    struct RenameCollectionResponse : public Event
     {
         R_EVENT
 
-    public:
-        RenameCollectionResponse(QObject *sender) :
-            Event(sender) {}
+            RenameCollectionResponse(QObject *sender, std::string const& oldCollection, 
+                                     std::string const& newCollection) :
+            Event(sender), oldCollection(oldCollection), newCollection(newCollection) {}
 
         RenameCollectionResponse(QObject *sender, const EventError &error) :
             Event(sender, error) {}
+
+        std::string const oldCollection;
+        std::string const newCollection;
     };
 
     /**

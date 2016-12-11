@@ -5,6 +5,7 @@
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/core/utils/Logger.h"
 
 namespace Robomongo
 {
@@ -65,7 +66,8 @@ namespace Robomongo
 
     void MongoDatabase::renameCollection(const std::string &collection, const std::string &newCollection)
     {
-        _bus->send(_server->worker(), new RenameCollectionRequest(this, MongoNamespace(_name, collection), newCollection));
+        _bus->send(_server->worker(), new RenameCollectionRequest(this, MongoNamespace(_name, collection), 
+                                                                  newCollection));
     }
 
     void MongoDatabase::duplicateCollection(const std::string &collection, const std::string &newCollection)
@@ -159,7 +161,8 @@ namespace Robomongo
         _collections.push_back(collection);
     }
 
-    void MongoDatabase::handle(CreateCollectionResponse *event) {
+    void MongoDatabase::handle(CreateCollectionResponse *event) 
+    {
         if (_server->connectionRecord()->isReplicaSet()) // replica set
         {
             if (event->isError())
@@ -167,21 +170,44 @@ namespace Robomongo
             else
                 loadCollections();
 
-            _server->tryRefreshReplicaSetFolder();
+            _server->tryRefreshReplicaSetFolder();  // todo
         }
         else {  // single server
             genericResponseHandler(event, "Failed to create collection.");
         }
     }
 
-    void MongoDatabase::handle(DropCollectionResponse *event) {
+    void MongoDatabase::handle(DropCollectionResponse *event) 
+    {
         genericResponseHandler(event, "Failed to drop collection.");
+    }
+
+    void MongoDatabase::handle(RenameCollectionResponse *event)
+    {
+        if (event->isError()) {
+            if (_server->connectionRecord()->isReplicaSet() &&
+                EventError::SetPrimaryUnreachable == event->error().errorCode())
+                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+
+            genericResponseHandler(event, "Failed to rename collection.");
+        }
+        else {
+            loadCollections();
+            LOG_MSG("Collection \'" + event->oldCollection + "\' renamed to \'" + 
+                    event->newCollection +"\'." , mongo::logger::LogSeverity::Info());
+        }
     }
 
     void MongoDatabase::genericResponseHandler(Event *event, const std::string &userFriendlyMessage) {
         if (!event->isError())
             return;
 
-        _bus->publish(new OperationFailedEvent(this, event->error().errorMessage(), userFriendlyMessage));
+        // Capitalize first char. (Mongo errors often come all lower case)
+        std::string errMsg = event->error().errorMessage();
+        if (!errMsg.empty())
+            errMsg[0] = static_cast<char>(toupper(errMsg[0]));
+
+        LOG_MSG(userFriendlyMessage + " " + errMsg, mongo::logger::LogSeverity::Error());
+        _bus->publish(new OperationFailedEvent(this, errMsg, userFriendlyMessage));
     }
 }

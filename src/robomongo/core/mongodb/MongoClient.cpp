@@ -404,7 +404,13 @@ namespace Robomongo
         command.append("to", to.toString());
 
         mongo::BSONObj result;
-        _dbclient->runCommand("admin", command.obj(), result); // this command should be run against "admin" db
+        if (!_dbclient->runCommand("admin", command.obj(), result)) { // this command should be run against "admin" db
+            std::string errStr = result.getStringField("errmsg");
+            if (errStr.empty())
+                errStr = "Failed to get error message.";
+
+            throw mongo::DBException(errStr, 0);
+        }
     }
 
     void MongoClient::duplicateCollection(const MongoNamespace &ns, const std::string &newCollectionName)

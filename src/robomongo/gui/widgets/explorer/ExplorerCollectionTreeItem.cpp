@@ -457,9 +457,6 @@ namespace Robomongo
 
         if (result == QDialog::Accepted) {
             database->duplicateCollection(_collection->name(), QtUtils::toStdString(dlg.databaseName()));
-
-            // refresh list of collections
-            database->loadCollections();
         }
     }
 

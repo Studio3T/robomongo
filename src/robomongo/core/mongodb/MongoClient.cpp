@@ -370,7 +370,8 @@ namespace Robomongo
         _dbclient->dropDatabase(dbName);
     }
 
-    void MongoClient::createCollection(const std::string& ns, long long size, bool capped, int max, const mongo::BSONObj& extraOptions, mongo::BSONObj* info)
+    void MongoClient::createCollection(const std::string& ns, long long size, bool capped, int max, 
+                                       const mongo::BSONObj& extraOptions, mongo::BSONObj* info)
     {
         verify(!capped || size);
         mongo::BSONObj o;
@@ -415,13 +416,24 @@ namespace Robomongo
 
     void MongoClient::duplicateCollection(const MongoNamespace &ns, const std::string &newCollectionName)
     {
-        MongoNamespace from(ns);
-        MongoNamespace to(ns.databaseName(), newCollectionName);
+        MongoNamespace sourceCollection(ns);
+        MongoNamespace newCollection(ns.databaseName(), newCollectionName);
 
-        if (!_dbclient->exists(to.toString()))
-            _dbclient->createCollection(to.toString());
+        if (!_dbclient->exists(newCollection.toString())) {
+            mongo::BSONObj result;
+            // todo: Issue #1258 : Duplicate Collection should pass advanced collection options.
+            //       _dbclient->createCollection() should be called with properties of source collection
+            //       not with default parameters as below.
+            if (!_dbclient->createCollection(newCollection.toString(), 0, false, 0, &result)) {
+                std::string errStr = result.getStringField("errmsg");
+                if (errStr.empty())
+                    errStr = "Failed to get error message.";
 
-        std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(from.toString(), mongo::Query()));
+                throw mongo::DBException(errStr, 0);
+            }
+        }
+
+        std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(sourceCollection.toString(), mongo::Query()));
 
         // Cursor may be NULL, it means we have connectivity problem
         if (!cursor)
@@ -429,11 +441,12 @@ namespace Robomongo
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
-            _dbclient->insert(to.toString(), bsonObj);
+            _dbclient->insert(newCollection.toString(), bsonObj);
         }
     }
 
-    void MongoClient::copyCollectionToDiffServer(mongo::DBClientBase *const fromServ, const MongoNamespace &from, const MongoNamespace &to)
+    void MongoClient::copyCollectionToDiffServer(mongo::DBClientBase *const fromServ, const MongoNamespace &from, 
+                                                 const MongoNamespace &to)
     {
         if (!_dbclient->exists(to.toString()))
             _dbclient->createCollection(to.toString());

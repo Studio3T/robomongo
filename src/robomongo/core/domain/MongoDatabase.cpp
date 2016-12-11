@@ -198,6 +198,22 @@ namespace Robomongo
         }
     }
 
+    void MongoDatabase::handle(DuplicateCollectionResponse *event)
+    {
+        if (event->isError()) {
+            if (_server->connectionRecord()->isReplicaSet() &&
+                EventError::SetPrimaryUnreachable == event->error().errorCode())
+                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+
+            genericResponseHandler(event, "Failed to duplicate collection \'" + event->sourceCollection + "\'.");
+        }
+        else {
+            loadCollections();
+            LOG_MSG("Collection \'" + event->sourceCollection + "\' duplicated as \'" +
+                    event->duplicateCollection + "\'.", mongo::logger::LogSeverity::Info());
+        }
+    }
+
     void MongoDatabase::genericResponseHandler(Event *event, const std::string &userFriendlyMessage) {
         if (!event->isError())
             return;

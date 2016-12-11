@@ -673,16 +673,20 @@ namespace Robomongo
         std::string _newCollection;
     };
 
-    class DuplicateCollectionResponse : public Event
+    struct DuplicateCollectionResponse : public Event
     {
         R_EVENT
 
     public:
-        DuplicateCollectionResponse(QObject *sender) :
-            Event(sender) {}
+        DuplicateCollectionResponse(QObject *sender, std::string const& sourceCollection,
+                                    std::string const& duplicateCollection) :
+            Event(sender), sourceCollection(sourceCollection), duplicateCollection(duplicateCollection) {}
 
-        DuplicateCollectionResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        DuplicateCollectionResponse(QObject *sender, std::string const& sourceCollection, const EventError &error) :
+            Event(sender, error), sourceCollection(sourceCollection) {}
+
+        std::string const sourceCollection;
+        std::string const duplicateCollection;
     };
 
      /**

@@ -671,7 +671,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new RenameCollectionResponse(this, event->ns().collectionName(),
-                  event->newCollection()));
+                                                                event->newCollection()));
         } catch(const mongo::DBException &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
@@ -692,15 +692,29 @@ namespace Robomongo
 
     void MongoWorker::handle(DuplicateCollectionRequest *event)
     {
+        std::string const& sourceCollection = event->ns().collectionName();
+
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             client->duplicateCollection(event->ns(), event->newCollection());
             client->done();
 
-            reply(event->sender(), new DuplicateCollectionResponse(this));
-        } catch(const mongo::DBException &ex) {
-            reply(event->sender(), new DuplicateCollectionResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection, event->newCollection()));
+        }
+        catch (const mongo::DBException &ex) {
+            if (_connSettings->isReplicaSet()) {
+                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
+                if (replicaSetInfo.primary.empty()) {  // primary not reachable
+                    reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection,
+                          EventError("Replica set primary is unreachable.", replicaSetInfo, false)));
+                }
+                else {   // other errors
+                    reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection, EventError(ex.what())));
+                }
+            }
+            else { // single server
+                reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection, EventError(ex.what())));
+            }
         }
     }
 

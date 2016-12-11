@@ -179,7 +179,17 @@ namespace Robomongo
 
     void MongoDatabase::handle(DropCollectionResponse *event) 
     {
-        genericResponseHandler(event, "Failed to drop collection.");
+        if (event->isError()) {
+            if (_server->connectionRecord()->isReplicaSet() &&
+                EventError::SetPrimaryUnreachable == event->error().errorCode())
+                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+
+            genericResponseHandler(event, "Failed to drop collection \'" + event->collection + "\'.");
+        }
+        else {
+            loadCollections();
+            LOG_MSG("Collection \'" + event->collection + "\' dropped", mongo::logger::LogSeverity::Info());
+        }
     }
 
     void MongoDatabase::handle(RenameCollectionResponse *event)

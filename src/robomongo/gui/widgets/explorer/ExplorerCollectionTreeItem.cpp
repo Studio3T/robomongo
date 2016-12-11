@@ -436,7 +436,6 @@ namespace Robomongo
         if (answer == QMessageBox::Yes) {
             MongoDatabase *database = _collection->database();
             database->dropCollection(_collection->name());
-            database->loadCollections();
         }
     }
 

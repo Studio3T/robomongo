@@ -651,15 +651,29 @@ namespace Robomongo
 
     void MongoWorker::handle(DropCollectionRequest *event)
     {
+        std::string const& collection = event->ns().collectionName();
+
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
             client->dropCollection(event->ns());
             client->done();
 
-            reply(event->sender(), new DropCollectionResponse(this));
+            reply(event->sender(), new DropCollectionResponse(this, collection));
         } catch(const mongo::DBException &ex) {
-            reply(event->sender(), new DropCollectionResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            if (_connSettings->isReplicaSet()) {
+                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
+                if (replicaSetInfo.primary.empty()) {  // primary not reachable
+                    reply(event->sender(), new DropCollectionResponse(this, collection,
+                        EventError("Replica set primary is unreachable.", replicaSetInfo, false)));
+                }
+                else {   // other errors
+                    EventError error = EventError(ex.toString()); // todo
+                    reply(event->sender(), new DropCollectionResponse(this, collection, error));
+                }
+            }
+            else { // single server
+                reply(event->sender(), new DropCollectionResponse(this, collection, EventError(ex.what())));
+            }
         }
     }
 

@@ -602,16 +602,18 @@ namespace Robomongo
         MongoNamespace _ns;
     };
 
-    class DropCollectionResponse : public Event
+    struct DropCollectionResponse : public Event
     {
         R_EVENT
 
     public:
-        DropCollectionResponse(QObject *sender) :
-            Event(sender) {}
+        DropCollectionResponse(QObject *sender, std::string const& collection) :
+            Event(sender), collection(collection) {}
 
-        DropCollectionResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        DropCollectionResponse(QObject *sender, std::string const& collection, const EventError &error) :
+            Event(sender, error), collection(collection) {}
+
+        std::string const collection;
     };
 
     /**

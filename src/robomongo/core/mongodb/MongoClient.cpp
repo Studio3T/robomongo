@@ -468,7 +468,19 @@ namespace Robomongo
 
     void MongoClient::dropCollection(const MongoNamespace &ns)
     {
-        _dbclient->dropCollection(ns.toString());
+        if (_dbclient->exists(ns.toString())) {
+            mongo::BSONObj result;
+            if (!_dbclient->dropCollection(ns.toString(), &result)) {
+                std::string errStr = result.getStringField("errmsg");
+                if (errStr.empty())
+                    errStr = "Failed to get error message.";
+
+                throw mongo::DBException(errStr, 0);
+            }
+        }
+        else {
+            throw mongo::DBException("Collection does not exist.", 0);
+        }
     }
 
     void MongoClient::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)

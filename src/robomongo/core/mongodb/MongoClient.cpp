@@ -432,6 +432,9 @@ namespace Robomongo
                 throw mongo::DBException(errStr, 0);
             }
         }
+        else {
+            throw mongo::DBException("Collection with same name already exists.", 0);
+        }
 
         std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(sourceCollection.toString(), mongo::Query()));
 

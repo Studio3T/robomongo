@@ -166,15 +166,6 @@ namespace Robomongo
         std::string collectionName = QtUtils::toStdString(dlg.getCollectionName());
         databaseItem->database()->createCollection(collectionName, 
             dlg.getSizeInputValue(), dlg.isCapped(), dlg.getMaxDocNumberInputValue(), dlg.getExtraOptions());
-        
-        
-        if (databaseItem->database()->server()->connectionRecord()->isReplicaSet()) {
-            // todo: refresh in the response
-        }
-        else {
-            // refresh list of databases
-            databaseItem->expandCollections();
-        }
     }
 
     void ExplorerDatabaseCategoryTreeItem::ui_addUser()

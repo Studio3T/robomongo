@@ -555,7 +555,7 @@ namespace Robomongo
             Event(sender), _ns(ns), _extraOptions(extraOptions),
             _size(size), _capped(capped), _maxDocNum(maxDocNum) {}
 
-        MongoNamespace getNs() const { return _ns; }
+        MongoNamespace ns() const { return _ns; }
         long long getSize() const { return _size; }
         bool getCapped() const { return _capped; }
         int getMaxDocNum() const { return _maxDocNum; }
@@ -569,16 +569,17 @@ namespace Robomongo
         const mongo::BSONObj _extraOptions;
     };
 
-    class CreateCollectionResponse : public Event
+    struct CreateCollectionResponse : public Event
     {
         R_EVENT
 
-    public:
-        CreateCollectionResponse(QObject *sender) :
-            Event(sender) {}
+        CreateCollectionResponse(QObject *sender, std::string const& collection) :
+        Event(sender), collection(collection) {}
 
-        CreateCollectionResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        CreateCollectionResponse(QObject *sender, std::string const& collection, const EventError &error) :
+            Event(sender, error), collection(collection) {}
+
+        std::string const collection;
     };
 
 

@@ -163,17 +163,16 @@ namespace Robomongo
 
     void MongoDatabase::handle(CreateCollectionResponse *event) 
     {
-        if (_server->connectionRecord()->isReplicaSet()) // replica set
-        {
-            if (event->isError())
-                genericResponseHandler(event, "Failed to create collection.");
-            else
-                loadCollections();
+        if (event->isError()) {
+            if (_server->connectionRecord()->isReplicaSet() &&
+                EventError::SetPrimaryUnreachable == event->error().errorCode())
+                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
 
-            _server->tryRefreshReplicaSetFolder();  // todo
+            genericResponseHandler(event, "Failed to create collection \'" + event->collection + "\'.");
         }
-        else {  // single server
-            genericResponseHandler(event, "Failed to create collection.");
+        else {
+            loadCollections();
+            LOG_MSG("Collection \'" + event->collection + "\' created.", mongo::logger::LogSeverity::Info());
         }
     }
 

@@ -111,15 +111,9 @@ namespace Robomongo
         setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
     }
 
-    void ExplorerDatabaseTreeItem::expandCollections()
-    {
-        _database->loadCollections();
-    }
+    void ExplorerDatabaseTreeItem::expandCollections() { _database->loadCollections(); }
 
-    void ExplorerDatabaseTreeItem::expandUsers()
-    {
-        _database->loadUsers();
-    }
+    void ExplorerDatabaseTreeItem::expandUsers() { _database->loadUsers(); }
 
     void ExplorerDatabaseTreeItem::expandColection(ExplorerCollectionTreeItem *const item)
     {        

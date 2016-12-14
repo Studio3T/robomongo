@@ -391,7 +391,19 @@ namespace Robomongo
         }
         b.appendElements(extraOptions);
 
-        _dbclient->runCommand(db.c_str(), b.done(), *info);
+        if (!_dbclient->exists(ns)) {
+            mongo::BSONObj result;
+            if (!_dbclient->runCommand(db.c_str(), b.done(), result)) {
+                std::string errStr = result.getStringField("errmsg");
+                if (errStr.empty())
+                    errStr = "Failed to get error message.";
+
+                throw mongo::DBException(errStr, 0);
+            }
+        }
+        else {
+            throw mongo::DBException("Collection with same name already exists.", 0);
+        }
     }
 
     void MongoClient::renameCollection(const MongoNamespace &ns, const std::string &newCollectionName)

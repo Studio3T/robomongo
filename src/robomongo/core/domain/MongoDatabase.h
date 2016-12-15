@@ -83,6 +83,7 @@ namespace Robomongo
         void handle(LoadCollectionNamesResponse *event);
         void handle(LoadUsersResponse *event);
         void handle(LoadFunctionsResponse *event);
+        void handle(CreateFunctionResponse *event);
         void handle(CreateUserResponse *event);
         void handle(CreateCollectionResponse *event);
         void handle(DropCollectionResponse *event);

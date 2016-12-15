@@ -123,11 +123,25 @@ namespace Robomongo
         _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, _collections));
     }
 
+    void MongoDatabase::handle(CreateFunctionResponse *event)
+    {
+        if (event->isError()) {
+            if (_server->connectionRecord()->isReplicaSet() &&
+                EventError::SetPrimaryUnreachable == event->error().errorCode())
+                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+
+            genericResponseHandler(event, "Failed to create function \'" + event->functionName + "\'.");
+        }
+        else {
+            loadFunctions();
+            LOG_MSG("Function \'" + event->functionName + "\' created.", mongo::logger::LogSeverity::Info());
+        }
+    }
+
     void MongoDatabase::handle(CreateUserResponse *event)
     {
         if (event->isError())
             return;
-
     }
 
     void MongoDatabase::handle(LoadUsersResponse *event)

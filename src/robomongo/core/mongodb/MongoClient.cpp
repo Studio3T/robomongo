@@ -293,35 +293,45 @@ namespace Robomongo
         _dbclient->dropIndex(collection.ns().toString(), indexName);
     }
 
-    void MongoClient::createFunction(const std::string &dbName, const MongoFunction &fun, const std::string &existingFunctionName /* = QString() */)
+    void MongoClient::createFunction(const std::string &dbName, const MongoFunction &fun, 
+                                     const std::string &existingFunctionName /* = QString() */)
     {
         MongoNamespace ns(dbName, "system.js");
         mongo::BSONObj obj = fun.toBson();
 
-        if (existingFunctionName.empty()) { // this is insert
+        if (existingFunctionName.empty()) { // create new function
             _dbclient->insert(ns.toString(), obj);
+            std::string errorStr = _dbclient->getLastError();
+            if (!errorStr.empty())
+                throw mongo::DBException(errorStr, 0);
         } else { // this is update
 
             std::string name = fun.name();
 
-            if (existingFunctionName == name) {
+            if (existingFunctionName == name) { // update existing function code
                 mongo::BSONObjBuilder builder;
                 builder.append("_id", name);
                 mongo::BSONObj bsonQuery = builder.obj();
                 mongo::Query query(bsonQuery);
 
                 _dbclient->update(ns.toString(), query, obj, true, false);
-            } else {
+                std::string errorStr = _dbclient->getLastError();
+                if (!errorStr.empty())
+                    throw mongo::DBException(errorStr, 0);
+            } else {    // update function name (remove & insert)
                 _dbclient->insert(ns.toString(), obj);
-                std::string res = _dbclient->getLastError();
+                std::string errorStr = _dbclient->getLastError();
 
                 // if no errors
-                if (res.empty()) {
+                if (errorStr.empty()) {
                     mongo::BSONObjBuilder builder;
                     builder.append("_id", existingFunctionName);
                     mongo::BSONObj bsonQuery = builder.obj();
                     mongo::Query query(bsonQuery);
                     _dbclient->remove(ns.toString(), query, true);
+                }
+                else {
+                    throw mongo::DBException(errorStr, 0);
                 }
             }
         }

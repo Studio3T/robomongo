@@ -215,8 +215,6 @@ namespace Robomongo
 
         MongoFunction function = dlg.function();
         databaseItem->database()->createFunction(function);
-        // refresh list of functions
-        databaseItem->expandFunctions();
     }
 
     void ExplorerDatabaseCategoryTreeItem::ui_refreshCollections()

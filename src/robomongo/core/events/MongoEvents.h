@@ -831,18 +831,20 @@ namespace Robomongo
         bool _overwrite;
     };
 
-    class CreateFunctionResponse : public Event
+    struct CreateFunctionResponse : public Event
     {
         R_EVENT
+        
+        enum Operation { NewFunction, NameUpdate, CodeUpdate }; // todo
 
-    public:
-        CreateFunctionResponse(QObject *sender) :
-            Event(sender) {}
+        CreateFunctionResponse(QObject *sender, std::string const& functionName) :
+            Event(sender), functionName(functionName) {}
 
-        CreateFunctionResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        CreateFunctionResponse(QObject *sender, std::string const& functionName, const EventError &error) :
+            Event(sender, error), functionName(functionName) {}
+
+        std::string const functionName;
     };
-
 
     /**
      * @brief Drop Function

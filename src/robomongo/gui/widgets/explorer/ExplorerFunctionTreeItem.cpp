@@ -45,19 +45,13 @@ namespace Robomongo
     {
         std::string name = _function.name();
 
-        FunctionTextEditor dlg(QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()),
-            QtUtils::toQString(_database->name()),
-            _function);
+        FunctionTextEditor dlg(QString::fromStdString(_database->server()->connectionRecord()->getFullAddress()),
+                               QString::fromStdString(_database->name()), _function);
         dlg.setWindowTitle("Edit Function");
-        int result = dlg.exec();
 
-        if (result == QDialog::Accepted) {
-
+        if (dlg.exec() == QDialog::Accepted) {
             MongoFunction editedFunction = dlg.function();
             _database->updateFunction(name, editedFunction);
-
-            // refresh list of functions
-            _database->loadFunctions();
         }
     }
 

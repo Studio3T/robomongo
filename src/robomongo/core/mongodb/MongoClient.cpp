@@ -347,6 +347,9 @@ namespace Robomongo
         mongo::Query query(bsonQuery);
 
         _dbclient->remove(ns.toString(), query, true);
+        std::string errorStr = _dbclient->getLastError();
+        if (!errorStr.empty())
+            throw mongo::DBException(errorStr, 0);
     }
 
     void MongoClient::createDatabase(const std::string &dbName)

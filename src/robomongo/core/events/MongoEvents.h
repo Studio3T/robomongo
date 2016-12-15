@@ -855,29 +855,30 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DropFunctionRequest(QObject *sender, const std::string &database, const std::string &name) :
+        DropFunctionRequest(QObject *sender, const std::string &database, const std::string &funcName) :
             Event(sender),
             _database(database),
-            _name(name) {}
+            _functionName(funcName) {}
 
         std::string database() const { return _database; }
-        std::string name() const { return _name; }
+        std::string functionName() const { return _functionName; }
 
     private:
         std::string _database;
-        std::string _name;
+        std::string _functionName;
     };
 
-    class DropFunctionResponse : public Event
+    struct DropFunctionResponse : public Event
     {
         R_EVENT
 
-    public:
-        DropFunctionResponse(QObject *sender) :
-            Event(sender) {}
+        DropFunctionResponse(QObject *sender, const std::string &functionName) :
+        Event(sender), functionName(functionName) {}
 
-        DropFunctionResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        DropFunctionResponse(QObject *sender, const std::string &functionName, const EventError &error) :
+            Event(sender, error), functionName(functionName) {}
+
+        std::string const functionName;
     };
 
     /**

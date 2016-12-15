@@ -64,6 +64,5 @@ namespace Robomongo
             return;
 
         _database->dropFunction(_function.name());
-        _database->loadFunctions(); // refresh list of functions
     }
 }

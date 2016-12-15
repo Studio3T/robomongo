@@ -205,6 +205,22 @@ namespace Robomongo
         }
     }
 
+    
+    void MongoDatabase::handle(DropFunctionResponse *event)
+    {
+        if (event->isError()) {
+            if (_server->connectionRecord()->isReplicaSet() &&
+                EventError::SetPrimaryUnreachable == event->error().errorCode())
+                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+
+            genericResponseHandler(event, "Failed to remove function \'" + event->functionName + "\'.");
+        }
+        else {
+            loadFunctions();
+            LOG_MSG("Function \'" + event->functionName + "\' removed", mongo::logger::LogSeverity::Info());
+        }
+    }
+
     void MongoDatabase::handle(RenameCollectionResponse *event)
     {
         if (event->isError()) {

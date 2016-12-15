@@ -820,13 +820,25 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->dropFunction(event->database(), event->name());
+            client->dropFunction(event->database(), event->functionName());
             client->done();
 
-            reply(event->sender(), new DropFunctionResponse(this));
-        } catch(const mongo::DBException &ex) {
-            reply(event->sender(), new DropFunctionResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            reply(event->sender(), new DropFunctionResponse(this, event->functionName()));
+        }
+        catch (const mongo::DBException &ex) {
+            if (_connSettings->isReplicaSet()) {
+                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
+                if (replicaSetInfo.primary.empty()) {  // primary not reachable
+                    reply(event->sender(), new CreateFunctionResponse(this, event->functionName(),
+                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                }
+                else {   // other errors
+                    reply(event->sender(), new CreateFunctionResponse(this, event->functionName(), EventError(ex.what())));
+                }
+            }
+            else { // single server
+                reply(event->sender(), new DropFunctionResponse(this, event->functionName(), EventError(ex.what())));
+            }
         }
     }
 

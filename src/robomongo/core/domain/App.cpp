@@ -212,7 +212,7 @@ namespace Robomongo
             connSettingsClone->setServerPort(localport);
         }
 
-        MongoServer *server = new MongoServer(serverHandle, connSettings, type);
+        MongoServer *server = new MongoServer(serverHandle, connSettingsClone, type);
         _servers.push_back(server);
 
         server->runWorkerThread();

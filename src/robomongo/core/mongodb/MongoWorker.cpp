@@ -142,9 +142,6 @@ namespace Robomongo
         std::unique_ptr<ReplicaSet> repSetInfo(new ReplicaSet); // todo
 
         try {
-            
-            init(); // Init. MongoWorker
-            
             mongo::DBClientBase *conn = getConnection(true);
 
             if (!conn) 
@@ -226,6 +223,9 @@ namespace Robomongo
             // execute "listdatabases" command and we have nothing to show.
             if (dbNames.size() == 0)
                 throw mongo::DBException("Failed to execute \"listdatabases\" command.", 0);
+
+            if (!_connSettings->isReplicaSet())
+                init(); // Init MongoWorker (for replica set connections early init is used)
 
             resetGlobalSSLparams();
 
@@ -865,6 +865,9 @@ namespace Robomongo
         {  
             if (!_dbclientRepSet) 
             {
+                // Init mongoworker for early-use of _scriptEngine
+                init();
+
                 // Step-1: Retrieve set name if we do not have it
                 std::string setName = _connSettings->replicaSetSettings()->setName();
 

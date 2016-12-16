@@ -33,7 +33,7 @@ namespace Robomongo {
     }
 
     ConnectionSettings *MongoServer::connectionRecord() const {
-        return _connSettings;
+        return _connSettings.get();
     }
 
     MongoServer::~MongoServer() {
@@ -43,7 +43,7 @@ namespace Robomongo {
             _worker->stopAndDelete();
         }
 
-        // MongoWorker "_worker" does not deleted here, because it is now owned by
+        // MongoWorker "_worker" is not deleted here, because it is now owned by
         // another thread (call to moveToThread() made in MongoWorker constructor).
         // It will be deleted by this thread by means of "deleteLater()", which
         // is also specified in MongoWorker constructor.

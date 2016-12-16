@@ -111,7 +111,7 @@ namespace Robomongo
         void handleReplicaSetRefreshEvents(bool isError, EventError eventError, ReplicaSet const& replicaSet);
 
         MongoWorker *_worker;
-        ConnectionSettings *_connSettings;
+        std::unique_ptr<ConnectionSettings> _connSettings;
         EventBus *_bus;
         App *_app;
 

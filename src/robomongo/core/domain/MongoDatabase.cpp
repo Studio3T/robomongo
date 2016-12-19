@@ -172,11 +172,20 @@ namespace Robomongo
     void MongoDatabase::handle(LoadFunctionsResponse *event)
     {
         if (event->isError()) {
-            _bus->publish(new MongoDatabaseFunctionsLoadedEvent(this, event->error()));
+            if (_server->connectionRecord()->isReplicaSet()) {  // replica set
+                if (EventError::SetPrimaryUnreachable == event->error().errorCode())
+                    _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+            }
+            else { // single server
+                _bus->publish(new MongoDatabaseFunctionsLoadedEvent(this, event->error()));
+            }
+
+            genericResponseHandler(event, "Failed to refresh 'Functions'.");
             return;
         }
 
         _bus->publish(new MongoDatabaseFunctionsLoadedEvent(this, this, event->functions()));
+        LOG_MSG("'Functions' refreshed.", mongo::logger::LogSeverity::Info());
     }
 
     void MongoDatabase::clearCollections()

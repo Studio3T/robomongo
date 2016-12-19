@@ -211,11 +211,6 @@ namespace Robomongo
         if (event->isError()) {
             _functionsFolderItem->setText(0, "Functions");
             _functionsFolderItem->setExpanded(false);
-
-            std::stringstream ss;
-            ss << "Cannot load list of functions.\n\nError:\n" << event->error().errorMessage();
-
-            QMessageBox::information(NULL, "Error", QtUtils::toQString(ss.str()));
             return;
         }
 

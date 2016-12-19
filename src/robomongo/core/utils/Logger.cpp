@@ -49,7 +49,7 @@ namespace Robomongo
 //        LOG(level) << "[" PROJECT_NAME_TITLE "] " << QtUtils::toStdString(mess) << std::endl;
         if (notify) {
             // Make uniform log level strings e.g "Error: ", "Info: " etc...
-            auto& logLevelStr = QString::fromStdString(level.toStringData().toString());
+            auto logLevelStr = QString::fromStdString(level.toStringData().toString());
             if (!logLevelStr.isEmpty()) {
                 logLevelStr = logLevelStr.toLower();
                 logLevelStr[0] = logLevelStr[0].toUpper();

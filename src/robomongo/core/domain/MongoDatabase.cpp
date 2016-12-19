@@ -109,8 +109,10 @@ namespace Robomongo
     {
         if (event->isError()) {
             if (_server->connectionRecord()->isReplicaSet()) {  // replica set
-                if (EventError::SetPrimaryUnreachable == event->error().errorCode())
-                    _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                if (EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                    auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                    _server->handle(&refreshEvent);
+                }
             }
             else { // single server
                 _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, event->error()));
@@ -133,8 +135,10 @@ namespace Robomongo
     {
         if (event->isError()) {
             if (_server->connectionRecord()->isReplicaSet() &&
-                EventError::SetPrimaryUnreachable == event->error().errorCode())
-                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                _server->handle(&refreshEvent);
+            }
 
             genericResponseHandler(event, "Failed to create function \'" + event->functionName + "\'.");
         }
@@ -148,8 +152,10 @@ namespace Robomongo
     {
         if (event->isError()) {
             if (_server->connectionRecord()->isReplicaSet() &&
-                EventError::SetPrimaryUnreachable == event->error().errorCode())
-                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                _server->handle(&refreshEvent);
+            }
 
             genericResponseHandler(event, "Failed to create user \'" + event->userName + "\'.");
         }
@@ -163,8 +169,10 @@ namespace Robomongo
     {
         if (event->isError()) {
             if (_server->connectionRecord()->isReplicaSet()) {  // replica set
-                if (EventError::SetPrimaryUnreachable == event->error().errorCode())
-                    _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                if (EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                    auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                    _server->handle(&refreshEvent);
+                }
             }
             else { // single server
                 _bus->publish(new MongoDatabaseUsersLoadedEvent(this, event->error()));
@@ -182,8 +190,10 @@ namespace Robomongo
     {
         if (event->isError()) {
             if (_server->connectionRecord()->isReplicaSet()) {  // replica set
-                if (EventError::SetPrimaryUnreachable == event->error().errorCode())
-                    _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                if (EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                    auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                    _server->handle(&refreshEvent);
+                }
             }
             else { // single server
                 _bus->publish(new MongoDatabaseFunctionsLoadedEvent(this, event->error()));
@@ -212,8 +222,10 @@ namespace Robomongo
     {
         if (event->isError()) {
             if (_server->connectionRecord()->isReplicaSet() &&
-                EventError::SetPrimaryUnreachable == event->error().errorCode())
-                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                _server->handle(&refreshEvent);
+            }
 
             genericResponseHandler(event, "Failed to create collection \'" + event->collection + "\'.");
         }
@@ -227,8 +239,10 @@ namespace Robomongo
     {
         if (event->isError()) {
             if (_server->connectionRecord()->isReplicaSet() &&
-                EventError::SetPrimaryUnreachable == event->error().errorCode())
-                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                _server->handle(&refreshEvent);
+            }
 
             genericResponseHandler(event, "Failed to drop collection \'" + event->collection + "\'.");
         }
@@ -243,8 +257,10 @@ namespace Robomongo
     {
         if (event->isError()) {
             if (_server->connectionRecord()->isReplicaSet() &&
-                EventError::SetPrimaryUnreachable == event->error().errorCode())
-                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                _server->handle(&refreshEvent);
+            }
 
             genericResponseHandler(event, "Failed to remove function \'" + event->functionName + "\'.");
         }
@@ -258,8 +274,10 @@ namespace Robomongo
     {
         if (event->isError()) {
             if (_server->connectionRecord()->isReplicaSet() &&
-                EventError::SetPrimaryUnreachable == event->error().errorCode())
-                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                _server->handle(&refreshEvent);
+            }
 
             genericResponseHandler(event, "Failed to drop user \'" + event->username + "\'.");
         }
@@ -273,8 +291,10 @@ namespace Robomongo
     {
         if (event->isError()) {
             if (_server->connectionRecord()->isReplicaSet() &&
-                EventError::SetPrimaryUnreachable == event->error().errorCode())
-                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                _server->handle(&refreshEvent);
+            }
 
             genericResponseHandler(event, "Failed to rename collection.");
         }
@@ -289,8 +309,10 @@ namespace Robomongo
     {
         if (event->isError()) {
             if (_server->connectionRecord()->isReplicaSet() &&
-                EventError::SetPrimaryUnreachable == event->error().errorCode())
-                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                _server->handle(&refreshEvent);
+            }
 
             genericResponseHandler(event, "Failed to duplicate collection \'" + event->sourceCollection + "\'.");
         }

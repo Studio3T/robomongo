@@ -301,8 +301,10 @@ namespace Robomongo {
         {
             if (event->isError()) {
                 if (ConnectionPrimary == _connectionType) { // Insert document from explorer context menu
-                    if (EventError::SetPrimaryUnreachable == event->error().errorCode())
-                        handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                    if (EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                        auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                        handle(&refreshEvent);
+                    }
                 }
                 else {  // Insert document from tab results window (Notifier, OutputWindow widget)
                     _bus->publish(new InsertDocumentResponse(this, event->error()));
@@ -341,8 +343,10 @@ namespace Robomongo {
     {
         if (event->isError()) {
             if (_connSettings->isReplicaSet() &&
-                EventError::SetPrimaryUnreachable == event->error().errorCode())
-                    handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+                EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                handle(&refreshEvent);
+            }
 
             genericResponseHandler(event, "Failed to drop database \'" + event->database + "\'.");
         }

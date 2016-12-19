@@ -52,11 +52,11 @@ namespace Robomongo
     void ExplorerUserTreeItem::ui_dropUser()
     {
         // Ask user
-        int answer = utils::questionDialog(treeWidget(), "Drop", "User", QtUtils::toQString(_user.name()));
+        int const answer = utils::questionDialog(treeWidget(), "Drop", "User", 
+                                                 QtUtils::toQString(_user.name()));
 
         if (answer == QMessageBox::Yes) {
-            _database->dropUser(_user.id());
-            _database->loadUsers(); // refresh list of users
+            _database->dropUser(_user.id(), _user.name());
         }
     }
 

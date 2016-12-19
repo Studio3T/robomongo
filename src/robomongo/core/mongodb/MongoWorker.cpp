@@ -795,10 +795,21 @@ namespace Robomongo
             client->dropUser(event->database(), event->id());
             client->done();
 
-            reply(event->sender(), new DropUserResponse(this));
+            reply(event->sender(), new DropUserResponse(this, event->username()));
         } catch(const mongo::DBException &ex) {
-            reply(event->sender(), new DropUserResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            if (_connSettings->isReplicaSet()) {
+                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
+                if (replicaSetInfo.primary.empty()) {  // primary not reachable
+                    reply(event->sender(), new DropUserResponse(this, event->username(),
+                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                }
+                else {   // other errors
+                    reply(event->sender(), new DropUserResponse(this, event->username(), EventError(ex.what())));
+                }
+            }
+            else { // single server
+                reply(event->sender(), new DropUserResponse(this, event->username(), EventError(ex.what())));
+            }
         }
     }
 

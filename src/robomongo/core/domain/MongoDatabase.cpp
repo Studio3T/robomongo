@@ -85,9 +85,9 @@ namespace Robomongo
         _bus->send(_server->worker(), new CreateUserRequest(this, _name, user, overwrite));
     }
 
-    void MongoDatabase::dropUser(const mongo::OID &id)
+    void MongoDatabase::dropUser(const mongo::OID &id, std::string const& userName)
     {
-        _bus->send(_server->worker(), new DropUserRequest(this, _name, id));
+        _bus->send(_server->worker(), new DropUserRequest(this, _name, id, userName));
     }
 
     void MongoDatabase::createFunction(const MongoFunction &fun)
@@ -227,6 +227,21 @@ namespace Robomongo
         else {
             loadFunctions();
             LOG_MSG("Function \'" + event->functionName + "\' removed", mongo::logger::LogSeverity::Info());
+        }
+    }
+
+    void MongoDatabase::handle(DropUserResponse *event)
+    {
+        if (event->isError()) {
+            if (_server->connectionRecord()->isReplicaSet() &&
+                EventError::SetPrimaryUnreachable == event->error().errorCode())
+                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+
+            genericResponseHandler(event, "Failed to drop user \'" + event->username + "\'.");
+        }
+        else {
+            loadUsers();
+            LOG_MSG("User \'" + event->username + "\' dropped", mongo::logger::LogSeverity::Info());
         }
     }
 

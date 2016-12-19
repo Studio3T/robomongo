@@ -162,11 +162,20 @@ namespace Robomongo
     void MongoDatabase::handle(LoadUsersResponse *event)
     {
         if (event->isError()) {
-            _bus->publish(new MongoDatabaseUsersLoadedEvent(this, event->error()));
+            if (_server->connectionRecord()->isReplicaSet()) {  // replica set
+                if (EventError::SetPrimaryUnreachable == event->error().errorCode())
+                    _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+            }
+            else { // single server
+                _bus->publish(new MongoDatabaseUsersLoadedEvent(this, event->error()));
+            }
+
+            genericResponseHandler(event, "Failed to refresh 'Users'.");
             return;
         }
 
         _bus->publish(new MongoDatabaseUsersLoadedEvent(this, this, event->users()));
+        LOG_MSG("'Users' refreshed.", mongo::logger::LogSeverity::Info());
     }
 
     void MongoDatabase::handle(LoadFunctionsResponse *event)

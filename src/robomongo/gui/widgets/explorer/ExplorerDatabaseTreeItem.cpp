@@ -183,10 +183,6 @@ namespace Robomongo
             _usersFolderItem->setText(0, "Users");
             _usersFolderItem->setExpanded(false);
 
-            std::stringstream ss;
-            ss << "Cannot load list of users.\n\nError:\n" << event->error().errorMessage();
-
-            QMessageBox::information(NULL, "Error", QtUtils::toQString(ss.str()));
             return;
         }
 

@@ -108,9 +108,10 @@ namespace Robomongo
         MongoNamespace ns(dbName, "system.users");
         mongo::BSONObj obj = user.toBson();
 
-        if (!overwrite) {
+        if (!overwrite) {   // create new user
             _dbclient->insert(ns.toString(), obj);
-        } else {
+        } 
+        else {  // update existing user
             mongo::BSONElement id = obj.getField("_id");
             mongo::BSONObjBuilder builder;
             builder.append(id);
@@ -119,6 +120,10 @@ namespace Robomongo
 
             _dbclient->update(ns.toString(), query, obj, true, false);
         }
+
+        std::string errorStr = _dbclient->getLastError();
+        if (!errorStr.empty())
+            throw mongo::DBException(errorStr, 0);
     }
 
     void MongoClient::dropUser(const std::string &dbName, const mongo::OID &id)

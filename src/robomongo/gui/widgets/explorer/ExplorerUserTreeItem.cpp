@@ -62,28 +62,26 @@ namespace Robomongo
 
     void ExplorerUserTreeItem::ui_editUser()
     {
-        float version = _user.version();
-        CreateUserDialog *dlg = NULL;
+        std::unique_ptr<CreateUserDialog> dlg = nullptr;
 
+        float const version = _user.version();
         if (version < MongoUser::minimumSupportedVersion) {
-            dlg = new CreateUserDialog(QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(_database->name()), _user, treeWidget());
+            dlg.reset(new CreateUserDialog(
+                QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()), 
+                QtUtils::toQString(_database->name()), _user, treeWidget()));
         }
         else {
-           dlg = new CreateUserDialog(_database->server()->getDatabasesNames(), QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(_database->name()), _user, treeWidget());
+           dlg.reset(new CreateUserDialog(_database->server()->getDatabasesNames(), 
+               QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()), 
+               QtUtils::toQString(_database->name()), _user, treeWidget()));
         }
         
         dlg->setWindowTitle("Edit User");
         dlg->setUserPasswordLabelText("New Password:");
-        int result = dlg->exec();
 
-        if (result == QDialog::Accepted) {
-
+        if (dlg->exec() == QDialog::Accepted) {
             MongoUser user = dlg->user();
             _database->createUser(user, true);
-
-            // refresh list of users
-            _database->loadUsers();
         }
-        delete dlg;
     }
 }

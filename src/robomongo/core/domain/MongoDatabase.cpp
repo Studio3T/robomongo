@@ -140,8 +140,17 @@ namespace Robomongo
 
     void MongoDatabase::handle(CreateUserResponse *event)
     {
-        if (event->isError())
-            return;
+        if (event->isError()) {
+            if (_server->connectionRecord()->isReplicaSet() &&
+                EventError::SetPrimaryUnreachable == event->error().errorCode())
+                _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+
+            genericResponseHandler(event, "Failed to create user \'" + event->userName + "\'.");
+        }
+        else {
+            loadUsers();
+            LOG_MSG("User \'" + event->userName + "\' created.", mongo::logger::LogSeverity::Info());
+        }
     }
 
     void MongoDatabase::handle(LoadUsersResponse *event)

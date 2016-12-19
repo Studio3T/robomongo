@@ -754,16 +754,17 @@ namespace Robomongo
         bool _overwrite;
     };
 
-    class CreateUserResponse : public Event
+    struct CreateUserResponse : public Event
     {
         R_EVENT
 
-    public:
-        CreateUserResponse(QObject *sender) :
-            Event(sender) {}
+        CreateUserResponse(QObject *sender, std::string const& userName) :
+            Event(sender), userName(userName) {}
 
-        CreateUserResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        CreateUserResponse(QObject *sender, std::string const& userName, const EventError &error) :
+            Event(sender, error), userName(userName) {}
+
+        std::string const userName;
     };
 
 

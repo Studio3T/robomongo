@@ -174,26 +174,25 @@ namespace Robomongo
         if (!databaseItem)
             return;
 
-        float version = databaseItem->database()->server()->version();
-        CreateUserDialog *dlg = NULL;
+        std::unique_ptr<CreateUserDialog> dlg = nullptr;
 
+        float const version = databaseItem->database()->server()->version();
         if (version < MongoUser::minimumSupportedVersion) {
-            dlg = new CreateUserDialog(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
-                QtUtils::toQString(databaseItem->database()->name()), MongoUser(version), treeWidget());
+            dlg.reset(new CreateUserDialog(
+                QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
+                QtUtils::toQString(databaseItem->database()->name()), MongoUser(version), treeWidget()));
         }
         else {
-            dlg = new CreateUserDialog(databaseItem->database()->server()->getDatabasesNames(), QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
-            QtUtils::toQString(databaseItem->database()->name()), MongoUser(version), treeWidget());
+            dlg.reset(new CreateUserDialog(databaseItem->database()->server()->getDatabasesNames(), 
+                QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()),
+                QtUtils::toQString(databaseItem->database()->name()), MongoUser(version), treeWidget()));
         }
 
-        int result = dlg->exec();
-        if (result != QDialog::Accepted)
+        if (dlg->exec() != QDialog::Accepted)
             return;
 
         MongoUser user = dlg->user();
         databaseItem->database()->createUser(user, false);
-        // refresh list of users
-        databaseItem->expandUsers();
     }
 
     void ExplorerDatabaseCategoryTreeItem::ui_addFunction()

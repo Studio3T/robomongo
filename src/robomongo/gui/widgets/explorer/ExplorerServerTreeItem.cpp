@@ -12,6 +12,7 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/core/utils/Logger.h"
 
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.h"
@@ -319,24 +320,22 @@ namespace Robomongo
     void ExplorerServerTreeItem::ui_createDatabase()
     {
         CreateDatabaseDialog dlg(QString::fromStdString(_server->connectionRecord()->getFullAddress()),
-            QString(), QString(), treeWidget());
+                                 QString(), QString(), treeWidget());
         dlg.setOkButtonText("&Create");
         dlg.setInputLabelText("Database Name:");
-        int result = dlg.exec();
-        if (result == QDialog::Accepted) {
-            if (_server->connectionRecord()->isReplicaSet()) {
+
+        if (dlg.exec() == QDialog::Accepted) {
+            if (_server->connectionRecord()->isReplicaSet()) {  // Replica Set
                 auto newDb = new MongoDatabase(_server, dlg.databaseName().toStdString());
                 _server->addDatabase(newDb);
                 int dbCount = _server->databases().count();
                 setText(0, buildServerName(&dbCount));
                 auto dbItem = new ExplorerDatabaseTreeItem(this, newDb);
                 addChild(dbItem);
+                LOG_MSG("Database \'" + newDb->name() + "\' created.", mongo::logger::LogSeverity::Info());
             }
             else {  // single server
                 _server->createDatabase(QtUtils::toStdStringSafe(dlg.databaseName()));
-
-                // refresh list of databases
-                expand();
             }
         }
     }

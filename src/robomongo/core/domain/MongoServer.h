@@ -16,7 +16,7 @@ namespace Robomongo
     struct RefreshReplicaSetFolderResponse;
     class LoadDatabaseNamesResponse;
     class InsertDocumentResponse;
-    class CreateDatabaseResponse;
+    struct CreateDatabaseResponse;
     struct DropDatabaseResponse;
 
     /**

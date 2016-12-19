@@ -492,18 +492,18 @@ namespace Robomongo
         std::string _database;
     };
 
-    class CreateDatabaseResponse : public Event
+    struct CreateDatabaseResponse : public Event
     {
         R_EVENT
 
-    public:
-        CreateDatabaseResponse(QObject *sender) :
-            Event(sender) {}
+        CreateDatabaseResponse(QObject *sender, const std::string &database) :
+            Event(sender), database(database) {}
 
-        CreateDatabaseResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        CreateDatabaseResponse(QObject *sender, const std::string &database, const EventError &error) :
+            Event(sender, error), database(database) {}
+
+        std::string const database;
     };
-
 
 
     /**

@@ -336,7 +336,18 @@ namespace Robomongo {
 
     void MongoServer::handle(CreateDatabaseResponse *event) 
     {
-        genericResponseHandler(event, "Failed to create database.");
+        if (event->isError()) {
+            if (_connSettings->isReplicaSet() &&
+                EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                handle(&refreshEvent);
+            }
+            genericResponseHandler(event, "Failed to create database \'" + event->database + "\'.");
+        }
+        else {
+            loadDatabases();
+            LOG_MSG("Database \'" + event->database + "\' created.", mongo::logger::LogSeverity::Info());
+        }
     }
 
     void MongoServer::handle(DropDatabaseResponse *event) 
@@ -347,7 +358,6 @@ namespace Robomongo {
                 auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
                 handle(&refreshEvent);
             }
-
             genericResponseHandler(event, "Failed to drop database \'" + event->database + "\'.");
         }
         else {

@@ -639,14 +639,25 @@ namespace Robomongo
             boost::scoped_ptr<MongoClient> client(getClient());
             client->createDatabase(event->database());
 
-            // Insert to list of created database
-            // Read docs for this hashset in the header
+            // Insert to list of created database. Read docs for this hashset in the header
             _createdDbs.insert(event->database());
 
-            reply(event->sender(), new CreateDatabaseResponse(this));
+            reply(event->sender(), new CreateDatabaseResponse(this, event->database()));
         } catch(const mongo::DBException &ex) {
-            reply(event->sender(), new CreateDatabaseResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            if (_connSettings->isReplicaSet()) {
+                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
+                if (replicaSetInfo.primary.empty()) {  // primary not reachable
+                    reply(event->sender(), new CreateDatabaseResponse(this, event->database(),
+                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                }
+                else {   // other errors
+                    EventError error = EventError(ex.toString()); // todo
+                    reply(event->sender(), new CreateDatabaseResponse(this, event->database(), error));
+                }
+            }
+            else { // single server
+                reply(event->sender(), new CreateDatabaseResponse(this, event->database(), EventError(ex.what())));
+            }
         }
     }
 

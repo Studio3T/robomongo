@@ -373,7 +373,7 @@ namespace Robomongo
 
         // If <dbName>.temp already exists, stop.
         if (_dbclient->exists(ns.toString()))
-            return;
+            throw mongo::DBException(dbName + ".temp already exists.", 0);
 
         // Building { _id : "temp" } document
         mongo::BSONObjBuilder builder;
@@ -382,6 +382,9 @@ namespace Robomongo
 
         // Insert this document
         _dbclient->insert(ns.toString(), obj);
+        std::string errorStr = _dbclient->getLastError();
+        if (!errorStr.empty())
+            throw mongo::DBException(errorStr, 0);
 
         // Drop temp collection
         _dbclient->dropCollection(ns.toString());

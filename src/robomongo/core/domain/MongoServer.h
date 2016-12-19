@@ -17,7 +17,7 @@ namespace Robomongo
     class LoadDatabaseNamesResponse;
     class InsertDocumentResponse;
     class CreateDatabaseResponse;
-    class DropDatabaseResponse;
+    struct DropDatabaseResponse;
 
     /**
      * @brief MongoServer represents active connection to MongoDB server.

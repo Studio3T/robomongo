@@ -301,6 +301,7 @@ namespace Robomongo
         }
     }
 
+    // todo: move to common header - identical function exists in MongoSever
     void MongoDatabase::genericResponseHandler(Event *event, const std::string &userFriendlyMessage) {
         if (!event->isError())
             return;

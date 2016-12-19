@@ -339,7 +339,17 @@ namespace Robomongo {
 
     void MongoServer::handle(DropDatabaseResponse *event) 
     {
-        genericResponseHandler(event, "Failed to drop database.");
+        if (event->isError()) {
+            if (_connSettings->isReplicaSet() &&
+                EventError::SetPrimaryUnreachable == event->error().errorCode())
+                    handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+
+            genericResponseHandler(event, "Failed to drop database \'" + event->database + "\'.");
+        }
+        else {
+            loadDatabases();
+            LOG_MSG("Database \'" + event->database + "\' dropped.", mongo::logger::LogSeverity::Info());
+        }
     }
 
     void MongoServer::handle(ReplicaSetRefreshed *event) 
@@ -352,8 +362,13 @@ namespace Robomongo {
         if (!event->isError())
             return;
 
-        LOG_MSG(userFriendlyMessage + " " + event->error().errorMessage(), mongo::logger::LogSeverity::Error());
-        _bus->publish(new OperationFailedEvent(this, event->error().errorMessage(), userFriendlyMessage));
+        // Capitalize first char. (Mongo errors often come all lower case)
+        std::string errMsg = event->error().errorMessage();
+        if (!errMsg.empty())
+            errMsg[0] = static_cast<char>(toupper(errMsg[0]));
+
+        LOG_MSG(userFriendlyMessage + " " + errMsg, mongo::logger::LogSeverity::Error());
+        _bus->publish(new OperationFailedEvent(this, errMsg, userFriendlyMessage));
     }
 
     void MongoServer::handleReplicaSetRefreshEvents(bool isError, EventError eventError, 

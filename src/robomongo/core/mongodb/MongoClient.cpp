@@ -389,7 +389,14 @@ namespace Robomongo
 
     void MongoClient::dropDatabase(const std::string &dbName)
     {
-        _dbclient->dropDatabase(dbName);
+        mongo::BSONObj result;
+        if (!_dbclient->dropDatabase(dbName, &result)) { 
+            std::string errStr = result.getStringField("errmsg");
+            if (errStr.empty())
+                errStr = "Failed to get error message.";
+
+            throw mongo::DBException(errStr, 0);
+        }
     }
 
     void MongoClient::createCollection(const std::string& ns, long long size, bool capped, int max, 

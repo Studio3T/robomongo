@@ -295,15 +295,13 @@ namespace Robomongo
     void ExplorerDatabaseTreeItem::ui_dbDrop()
     {
         // Ask user
-        QString buff = QString("Drop <b>%1</b> database?").arg(QtUtils::toQString(_database->name()));
-        int answer = QMessageBox::question(treeWidget(),
-            "Drop Database", buff,
-            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+        auto const& buff = QString("Drop <b>%1</b> database?").arg(QtUtils::toQString(_database->name()));
+        int const answer = QMessageBox::question(treeWidget(), "Drop Database", buff, 
+                                                 QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
         if (answer != QMessageBox::Yes)
             return;
 
         _database->server()->dropDatabase(_database->name());
-        _database->server()->loadDatabases(); // refresh list of databases
     }
 
     void ExplorerDatabaseTreeItem::ui_dbRepair()

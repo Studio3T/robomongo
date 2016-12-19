@@ -510,31 +510,28 @@ namespace Robomongo
      * @brief Drop Database
      */
 
-    class DropDatabaseRequest : public Event
+    struct DropDatabaseRequest : public Event
     {
         R_EVENT
 
-    public:
         DropDatabaseRequest(QObject *sender, const std::string &database) :
-            Event(sender),
-            _database(database) {}
+            Event(sender), database(database) {}
 
-        std::string database() const { return _database; }
-
-    private:
-        std::string _database;
+        std::string const database;
     };
 
-    class DropDatabaseResponse : public Event
+    struct DropDatabaseResponse : public Event
     {
         R_EVENT
 
     public:
-        DropDatabaseResponse(QObject *sender) :
-            Event(sender) {}
+        DropDatabaseResponse(QObject *sender, const std::string &database) :
+            Event(sender), database(database) {}
 
-        DropDatabaseResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        DropDatabaseResponse(QObject *sender, const std::string &database, const EventError &error) :
+            Event(sender, error), database(database) {}
+
+        std::string const database;
     };
 
     /**

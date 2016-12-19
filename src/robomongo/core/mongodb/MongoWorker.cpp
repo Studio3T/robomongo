@@ -654,16 +654,28 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->dropDatabase(event->database());
+            client->dropDatabase(event->database);
 
-            // Remove from the list of created database
-            // Read docs for this hashset in the header
-            _createdDbs.erase(event->database());
+            // Remove from the list of created database, Read docs for this hashset in the header
+            _createdDbs.erase(event->database);
 
-            reply(event->sender(), new DropDatabaseResponse(this));
-        } catch(const mongo::DBException &ex) {
-            reply(event->sender(), new DropDatabaseResponse(this, EventError(ex.what())));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            reply(event->sender(), new DropDatabaseResponse(this, event->database));
+        } 
+        catch(const mongo::DBException &ex) {
+            if (_connSettings->isReplicaSet()) {
+                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
+                if (replicaSetInfo.primary.empty()) {  // primary not reachable
+                    reply(event->sender(), new DropDatabaseResponse(this, event->database,
+                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                }
+                else {   // other errors
+                    EventError error = EventError(ex.toString()); // todo
+                    reply(event->sender(), new DropDatabaseResponse(this, event->database, error));
+                }
+            }
+            else { // single server
+                reply(event->sender(), new DropDatabaseResponse(this, event->database, EventError(ex.what())));
+            }
         }
     }
 

@@ -105,22 +105,28 @@ namespace Robomongo
         _bus->send(_server->worker(), new DropFunctionRequest(this, _name, name));
     }
 
-    void MongoDatabase::handle(LoadCollectionNamesResponse *loaded)
+    void MongoDatabase::handle(LoadCollectionNamesResponse *event)
     {
-        if (loaded->isError()) {
-            _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, loaded->error()));
+        if (event->isError()) {
+            if (_server->connectionRecord()->isReplicaSet()) {  // replica set
+                if (EventError::SetPrimaryUnreachable == event->error().errorCode())
+                    _server->handle(&ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
+            }
+            else { // single server
+                _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, event->error()));
+            }
+
+            genericResponseHandler(event, "Failed to refresh 'Collections'.");
             return;
         }
 
         clearCollections();
-        const std::vector<MongoCollectionInfo> &colectionsInfos = loaded->collectionInfos();
-        for (std::vector<MongoCollectionInfo>::const_iterator it = colectionsInfos.begin(); it != colectionsInfos.end(); ++it) {
-            const MongoCollectionInfo &info = *it;
-            MongoCollection *collection = new MongoCollection(this, info);
-            addCollection(collection);
-        }
+
+        for (auto const& collectionInfo : event->collectionInfos())
+            addCollection(new MongoCollection(this, collectionInfo));
 
         _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, _collections));
+        LOG_MSG("'Collections' refreshed.", mongo::logger::LogSeverity::Info());
     }
 
     void MongoDatabase::handle(CreateFunctionResponse *event)

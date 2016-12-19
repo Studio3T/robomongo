@@ -592,11 +592,10 @@ namespace Robomongo
     std::vector<MongoCollectionInfo> MongoClient::runCollStatsCommand(const std::vector<std::string> &namespaces)
     {
         std::vector<MongoCollectionInfo> infos;
-        for (std::vector<std::string>::const_iterator it = namespaces.begin(); it != namespaces.end(); ++it) {
-            MongoCollectionInfo info = runCollStatsCommand(*it);
-            if (info.ns().isValid()) {
+        for (auto const& ns : namespaces) {
+            MongoCollectionInfo info = runCollStatsCommand(ns);
+            if (info.ns().isValid()) 
                 infos.push_back(info);
-            }            
         }
         return infos;
     }

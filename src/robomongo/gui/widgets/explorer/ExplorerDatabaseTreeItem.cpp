@@ -145,11 +145,6 @@ namespace Robomongo
         if (event->isError()) {
             _collectionFolderItem->setText(0, "Collections");
             _collectionFolderItem->setExpanded(false);
-
-            std::stringstream ss;
-            ss << "Cannot load list of collections.\n\nError:\n" << event->error().errorMessage();
-
-            QMessageBox::information(NULL, "Error", QtUtils::toQString(ss.str()));
             return;
         }
 

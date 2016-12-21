@@ -271,7 +271,6 @@ namespace Robomongo
         _bus->publish(new ConnectionFailedEvent(this, serverHandle, type, errormsg, reason));
     }
 
-
     bool App::askSslPassphrasePromptDialog(ConnectionSettings *connSettings) const
     {
         auto sslSettings = connSettings->sslSettings();

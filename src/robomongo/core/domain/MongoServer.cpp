@@ -192,6 +192,9 @@ namespace Robomongo {
 
                 _app->fireConnectionFailedEvent(_handle, event->_connectionType, ss.str(), 
                                                 ConnectionFailedEvent::MongoConnection);
+                LOG_MSG("Establish connection failed. " + event->error().errorMessage() + 
+                        ". Connection: " + _connSettings->connectionName(), 
+                        mongo::logger::LogSeverity::Error());
             }
             else    // single server 
             {  
@@ -217,9 +220,13 @@ namespace Robomongo {
                 // shown in UI (i.e. it is not a Secondary connection that is used for shells tab)
                 if (_connectionType == ConnectionPrimary || _connectionType == ConnectionTest)
                 {
+                    LOG_MSG("Establish connection failed. " + event->error().errorMessage() + 
+                            ". Connection: " + _connSettings->connectionName(), 
+                            mongo::logger::LogSeverity::Error());
                     _app->closeServer(this);
                 }
             }
+
             return;
         }
 
@@ -236,8 +243,11 @@ namespace Robomongo {
             if (_connSettings->isReplicaSet()) {
                 // todo
                 // If it is replica set connection, do not return yet.
+                LOG_MSG("Replica set refreshed. [" + _connSettings->connectionName() + ']', 
+                         mongo::logger::LogSeverity::Info());
             }
             else {  // single server
+                LOG_MSG("Server refreshed.", mongo::logger::LogSeverity::Info());
                 return;
             }
         }
@@ -256,6 +266,10 @@ namespace Robomongo {
             if (ConnectionPrimary != _connectionType)
                 return;
         }
+
+        if (ConnectionPrimary == _connectionType)
+            LOG_MSG("Establish connection successful. Connection: " + _connSettings->connectionName(),
+                     mongo::logger::LogSeverity::Info());
 
         clearDatabases();
         for (std::vector<std::string>::const_iterator it = info._databases.begin(); it != info._databases.end(); ++it) {
@@ -293,6 +307,8 @@ namespace Robomongo {
         }
 
         _bus->publish(new DatabaseListLoadedEvent(this, _databases));
+        LOG_MSG("Database list refreshed. Connection: " + _connSettings->connectionName(), 
+                 mongo::logger::LogSeverity::Info());
     }
 
     void MongoServer::handle(InsertDocumentResponse *event) 
@@ -391,6 +407,8 @@ namespace Robomongo {
         if (isError) { // Primary is unreachable
             _replicaSetInfo.reset(new ReplicaSet(replicaSet));
             // todo: should we save set name?
+            LOG_MSG("Replica set folder refresh failed. Connection: " + _connSettings->connectionName() +                 
+                    eventError.errorMessage(), mongo::logger::LogSeverity::Error());
             _bus->publish(new ReplicaSetFolderRefreshed(this, eventError));
             return;
         }
@@ -404,6 +422,8 @@ namespace Robomongo {
         //_connSettings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);  // todo
         AppRegistry::instance().settingsManager()->save();    // todo
 
+        LOG_MSG("Replica set folder refreshed. Connection: " + _connSettings->connectionName(), 
+                 mongo::logger::LogSeverity::Info());
         _bus->publish(new ReplicaSetFolderRefreshed(this));
     }
 

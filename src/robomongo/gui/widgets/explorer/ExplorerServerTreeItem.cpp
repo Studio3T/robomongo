@@ -197,7 +197,7 @@ namespace Robomongo
 
             if (event->error().showErrorWindow()) {
                 std::string const errorStr = "Set's primary is unreachable.\n\nReason:\n"
-                    "Connection failure, " + event->error().errorMessage();
+                    "Connection failure. " + event->error().errorMessage();
                 QMessageBox::critical(nullptr, "Error", QString::fromStdString(errorStr));
             }
             return;

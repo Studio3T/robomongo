@@ -244,9 +244,7 @@ namespace Robomongo
                                EstablishConnectionResponse::ErrorReason::MongoSslConnection : 
                                EstablishConnectionResponse::ErrorReason::MongoAuth;
 
-            std::string errorPrefix = (_connSettings->isReplicaSet()) ? "Connection failure, " : "";
-
-            reply(event->sender(), new EstablishConnectionResponse(this, EventError(errorPrefix + ex.what()), 
+            reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what()), 
                 event->connectionType, *repSetInfo.release(), errorReason));
         }
         return false;

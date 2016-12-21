@@ -58,7 +58,11 @@ namespace Robomongo
         _shellTimeoutSec(15),
         _imported(false)
     {
-        load();
+        if (!load()) {  // if load fails (probably due to non-existing config file or directory)
+            save();     // create empty settings file
+            load();     // try loading again for the purpose of import from previous Robomongo versions
+        }
+
         LOG_MSG("SettingsManager initialized in " + _configPath, mongo::logger::LogSeverity::Info(), false);
     }
 

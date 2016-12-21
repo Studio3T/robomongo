@@ -406,9 +406,9 @@ namespace Robomongo {
     {
         if (isError) { // Primary is unreachable
             _replicaSetInfo.reset(new ReplicaSet(replicaSet));
-            // todo: should we save set name?
-            LOG_MSG("Replica set folder refresh failed. Connection: " + _connSettings->connectionName() +                 
-                    eventError.errorMessage(), mongo::logger::LogSeverity::Error());
+            // todo: should we save set name?;
+            LOG_MSG("Replica set folder refreshed with error. " + eventError.errorMessage() +
+                    ". Connection: " + _connSettings->connectionName(), mongo::logger::LogSeverity::Error());
             _bus->publish(new ReplicaSetFolderRefreshed(this, eventError));
             return;
         }
@@ -422,7 +422,7 @@ namespace Robomongo {
         //_connSettings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);  // todo
         AppRegistry::instance().settingsManager()->save();    // todo
 
-        LOG_MSG("Replica set folder refreshed. Connection: " + _connSettings->connectionName(), 
+        LOG_MSG("Replica set folder refreshed. Connection: " + _connSettings->connectionName(),
                  mongo::logger::LogSeverity::Info());
         _bus->publish(new ReplicaSetFolderRefreshed(this));
     }

@@ -56,9 +56,6 @@ namespace Robomongo
         auto openDirectConnection = new QAction("Open Direct Connection", this);
         VERIFY(connect(openDirectConnection, SIGNAL(triggered()), SLOT(ui_openDirectConnection())));
 
-        auto refreshServer = new QAction("Refresh", this);
-        VERIFY(connect(refreshServer, SIGNAL(triggered()), SLOT(ui_refreshServer())));
-
         auto serverStatus = new QAction("Server Status", this);
         VERIFY(connect(serverStatus, SIGNAL(triggered()), SLOT(ui_serverStatus())));
 
@@ -73,7 +70,6 @@ namespace Robomongo
 
         BaseClass::_contextMenu->addAction(openShellAction);
         BaseClass::_contextMenu->addAction(openDirectConnection);
-        BaseClass::_contextMenu->addAction(refreshServer);
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(serverStatus);
         BaseClass::_contextMenu->addAction(serverHostInfo);
@@ -140,10 +136,4 @@ namespace Robomongo
     {
         AppRegistry::instance().app()->openServer(_connSettings.get(), ConnectionPrimary);
     }
-
-    void ExplorerReplicaSetTreeItem::ui_refreshServer()
-    {
-        // todo
-    }
-
 }

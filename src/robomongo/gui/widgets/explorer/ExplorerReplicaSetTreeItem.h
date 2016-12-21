@@ -38,7 +38,6 @@ namespace Robomongo
     private Q_SLOTS:
         void ui_openShell();
         void ui_openDirectConnection();
-        void ui_refreshServer();
         void ui_serverHostInfo();
         void ui_serverStatus();
         void ui_serverVersion();

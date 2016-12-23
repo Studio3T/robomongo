@@ -168,7 +168,7 @@ namespace Robomongo {
             _connSettings->setServerPort(_replicaSetInfo->primary.port());
             _connSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
             //_connSettings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);
-            AppRegistry::instance().settingsManager()->save();
+            //AppRegistry::instance().settingsManager()->save();
         }
 
         // --- Connection Failed
@@ -282,9 +282,11 @@ namespace Robomongo {
 
         if (_connSettings->isReplicaSet()) {
             _bus->publish(new ConnectionEstablishedEvent(this, event->_connectionType, info));
-            // In order to connect much faster, time consuming refresh (repSetMonitor->startOrContinueRefresh().
-            // refreshAll()) is being requested after successful connection.
-            _bus->send(_worker, new RefreshReplicaSetFolderRequest(this));
+            // In order to do first connection much faster, time consuming refresh 
+            // "repSetMonitor->startOrContinueRefresh(). refreshAll()" is being requested after 
+            // successful connection.
+            if (ConnectionPrimary == event->_connectionType)
+                _bus->send(_worker, new RefreshReplicaSetFolderRequest(this));
         }
     }
 
@@ -422,7 +424,7 @@ namespace Robomongo {
         _connSettings->setServerPort(_replicaSetInfo->primary.port());
         _connSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
         //_connSettings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);  // todo
-        AppRegistry::instance().settingsManager()->save();    // todo
+        //AppRegistry::instance().settingsManager()->save();    // todo
 
         LOG_MSG("Replica set folder refreshed. Connection: " + _connSettings->connectionName(),
                  mongo::logger::LogSeverity::Info());

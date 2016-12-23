@@ -178,7 +178,6 @@ namespace Robomongo
                 return false;
             }
 
-            // There is no reachable primary with reachable secondary(ies) throw else primary is reachable so continue.
             if (_connSettings->isReplicaSet()) {
                 bool refresh = (ConnectionType::ConnectionRefresh == event->connectionType);
                 ReplicaSet setInfo = getReplicaSetInfo(refresh);
@@ -985,7 +984,6 @@ namespace Robomongo
                 auto const& membersHostsAndPorts = _connSettings->replicaSetSettings()->membersToHostAndPort();
                 _dbclientRepSet = upDBClientReplicaSet(new mongo::DBClientReplicaSet(setName, membersHostsAndPorts, 
                                                        _mongoTimeoutSec));
-
                 bool const connStatus = _dbclientRepSet->connect();
                 
                 if (!connStatus) {
@@ -1062,7 +1060,7 @@ namespace Robomongo
 
         setName = repSetMonitor->getName();
         auto const primaryOnly = mongo::ReadPreferenceSetting(mongo::ReadPreference::PrimaryOnly, mongo::TagSet());
-        auto primaryWithStatus = repSetMonitor->getHostOrRefresh(primaryOnly, mongo::Milliseconds(3000)); // todo
+        auto primaryWithStatus = repSetMonitor->getHostOrRefresh(primaryOnly, mongo::Milliseconds(2000)); // todo
         if (primaryWithStatus.isOK())
             primary = primaryWithStatus.getValue();
 

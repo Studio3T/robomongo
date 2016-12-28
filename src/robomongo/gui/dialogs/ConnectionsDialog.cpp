@@ -22,7 +22,6 @@
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/ConnectionDialog.h"
-#include "robomongo/gui/dialogs/CreateConnectionDialog.h"
 
 namespace Robomongo
 {
@@ -261,24 +260,11 @@ namespace Robomongo
      */
     void ConnectionsDialog::add()
     {       
-        auto createConnection = new CreateConnectionDialog(this);
-        if (createConnection->exec() != QDialog::Accepted) { // Do nothing if not accepted
-            return;
-        }
-
-        std::unique_ptr<ConnectionSettings> newConnection = nullptr;    // todo: refactor
-        if (createConnection->fromURI())
-        {
-            auto mongoUriWithStatus = createConnection->getMongoUriWithStatus();
-            newConnection.reset(new ConnectionSettings(mongoUriWithStatus->getValue()));
-        }
-        else // to manual configuration
-        {
-            newConnection.reset(new ConnectionSettings);
-        }
-
+        auto newConnection = std::unique_ptr<ConnectionSettings>(new ConnectionSettings());
         ConnectionDialog editDialog(newConnection.get());
-        if (editDialog.exec() != QDialog::Accepted) {  // Do nothing if not accepted
+
+        // Do nothing if not accepted
+        if (editDialog.exec() != QDialog::Accepted) {
             return;
         }
 

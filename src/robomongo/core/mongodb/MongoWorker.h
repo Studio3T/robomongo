@@ -172,6 +172,9 @@ namespace Robomongo
          */
         void reply(QObject *receiver, Event *event);
 
+        // todo
+        void pingDatabase(mongo::DBClientBase *dbclient) const;
+
         QThread *_thread;
         QMutex _firstConnectionMutex;
 

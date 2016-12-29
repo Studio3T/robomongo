@@ -64,16 +64,11 @@ namespace Robomongo
     {
         try {
             if (_dbclient) {
-                // Building { ping: 1 }
-                mongo::BSONObjBuilder command;
-                command.append("ping", 1);
-                mongo::BSONObj result;
-                std::string authBase = getAuthBase();
-                if (authBase.empty()) {
-                    _dbclient->runCommand("admin", command.obj(), result);
-                } else {
-                    _dbclient->runCommand(authBase, command.obj(), result);
-                }
+                pingDatabase(_dbclient.get());
+            }
+
+            if (_dbclientRepSet) {
+                pingDatabase(_dbclientRepSet.get());
             }
 
             if (_scriptEngine) {
@@ -1101,5 +1096,20 @@ namespace Robomongo
             return;
 
         AppRegistry::instance().bus()->send(receiver, event);
+    }
+
+    void MongoWorker::pingDatabase(mongo::DBClientBase *dbclient) const
+    {
+        // Building { ping: 1 }
+        mongo::BSONObjBuilder command;
+        command.append("ping", 1);
+        mongo::BSONObj result;
+        std::string authBase = getAuthBase();
+        if (authBase.empty()) {
+            dbclient->runCommand("admin", command.obj(), result);
+        }
+        else {
+            dbclient->runCommand(authBase, command.obj(), result);
+        }
     }
 }

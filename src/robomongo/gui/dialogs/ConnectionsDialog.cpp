@@ -71,9 +71,7 @@ namespace Robomongo
 
 
             // Security header column (column[4])
-            if (_connection->isReplicaSet()) {
-                setText(2, "[Replica Set]    ");
-            }
+            setText(2, _connection->isReplicaSet() ? "[Replica Set]    " : " ");
 
             if (_connection->hasEnabledPrimaryCredential()) {
                 auto authString = QString("%1 / %2").arg(QtUtils::toQString(_connection->primaryCredential()->databaseName()))

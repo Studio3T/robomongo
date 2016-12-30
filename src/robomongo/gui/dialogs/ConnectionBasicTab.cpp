@@ -130,18 +130,16 @@ namespace Robomongo
 
     bool ConnectionBasicTab::accept()
     {
+        _settings->setReplicaSet(static_cast<bool>(_connectionType->currentIndex()));
+        _settings->setConnectionName(QtUtils::toStdString(_connectionName->text()));
+
         if (_settings->isReplicaSet() && _members->topLevelItemCount() == 0) {
             QMessageBox::critical(this, "Error", "Replica set members cannot be empty. "  
                                                  "Please enter at least one member.");
             return false;
         }
-        
-        ReplicaSetSettings* const replicaSettings = _settings->replicaSetSettings();
-       
-        _settings->setReplicaSet(static_cast<bool>(_connectionType->currentIndex()));
-        _settings->setConnectionName(QtUtils::toStdString(_connectionName->text()));
 
-        if (_settings->isReplicaSet()) {
+        if (_settings->isReplicaSet() && _members->topLevelItemCount() > 0) {
             QStringList const hostAndPort = _members->topLevelItem(0)->text(0).split(":");
             _settings->setServerHost(hostAndPort[0].toStdString());
             _settings->setServerPort(hostAndPort[1].toInt());
@@ -161,9 +159,9 @@ namespace Robomongo
                     members.push_back(item->text(0).toStdString());
                 }
             }
-            replicaSettings->setMembers(members);
+            _settings->replicaSetSettings()->setMembers(members);
             // save read preference option 
-            replicaSettings->setReadPreference(
+            _settings->replicaSetSettings()->setReadPreference(
                 static_cast<ReplicaSetSettings::ReadPreference>(_readPreference->currentIndex()));
         }
 

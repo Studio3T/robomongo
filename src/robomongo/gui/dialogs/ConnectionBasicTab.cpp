@@ -199,7 +199,24 @@ namespace Robomongo
     void ConnectionBasicTab::on_addButton_clicked()
     {
         auto item = new QTreeWidgetItem;
-        item->setText(0, "localhost:27017");
+
+        // Make member addition little smarter than expected
+        if (_members->topLevelItemCount() == 0) {
+            item->setText(0, "localhost:27017");
+        }
+        else {  // Add the next member using last entered hostname and incremented port by one
+            QString const& lastMember = _members->topLevelItem(_members->topLevelItemCount()-1)->text(0);
+            QStringList const& hostAndPort = lastMember.split(':');
+            if (hostAndPort.size() == 2) {  
+                auto const& hostName = hostAndPort[0];
+                auto const& port = hostAndPort[1].toInt();
+                item->setText(0, hostName + ':' + QString::number(port + 1));
+            }
+            else {  
+                item->setText(0, "localhost:" + QString::number(_members->topLevelItemCount() + 27017));
+            }
+        }
+
         item->setFlags(item->flags() | Qt::ItemIsEditable);
         _members->addTopLevelItem(item);
     }

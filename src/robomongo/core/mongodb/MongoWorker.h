@@ -4,7 +4,7 @@
 #include <QMutex>
 #include <unordered_set>
 
-#include <mongo/client/dbclient_rs.h> // todo: move
+#include <mongo/client/dbclient_rs.h> 
 
 #include "robomongo/core/events/MongoEvents.h"
 
@@ -24,19 +24,23 @@ namespace Robomongo
         Q_OBJECT
 
     public:
+        enum { pingTimeMs = 60 * 1000 };
+
         typedef std::vector<std::string> DatabasesContainerType;
+        using DBClientReplicaSet = std::unique_ptr<mongo::DBClientReplicaSet>;
+        using DBClientConnection = std::unique_ptr<mongo::DBClientConnection>;
+
         explicit MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
                              int mongoTimeoutSec, int shellTimeoutSec, QObject *parent = NULL);
-        using upDBClientReplicaSet = std::unique_ptr<mongo::DBClientReplicaSet>;
-        using upDBClientConnection = std::unique_ptr<mongo::DBClientConnection>;
 
         ~MongoWorker();
-        enum { pingTimeMs = 60 * 1000 };
         void interrupt();
         void stopAndDelete();
         
-    protected Q_SLOTS: // handlers:
+    protected Q_SLOTS:
+
         void init();
+
         /**
          * @brief Every minute we are issuing { ping : 1 } command to every used connection
          * in order to avoid dropped connections.
@@ -49,12 +53,8 @@ namespace Robomongo
         bool handle(EstablishConnectionRequest *event);
 
         /**
-        * @brief todo
-        */
-        void handle(RefreshReplicaSetRequest *event);
-
-        /**
-        * @brief todo
+        * @brief Try to re-connect to MongoDB replica set in order to refresh connection view.
+        *        For more details, see MongoServer::tryRefreshReplicaSetFolder()
         */
         void handle(RefreshReplicaSetFolderRequest *event);
 
@@ -151,6 +151,11 @@ namespace Robomongo
         MongoClient *getClient();
 
         /**
+        *@brief Reset and update global mongo SSL settings (mongo::sslGlobalParams)
+        */
+        void configureSSL();
+
+        /**
         *@brief Update global mongo SSL settings (mongo::sslGlobalParams) according to active connection 
         *       request's SSL settings.
         */
@@ -163,22 +168,32 @@ namespace Robomongo
 
         /**
         *@brief Update Replica Set related parameters/settings.
-        *       Warning: Using refresh false might return not-updated values.
+        *       Warning: Using refresh false might return incorrect cached values for status 
+        *                of secondary members.
+        * @param refresh : If true it will be deep scan of replica set status which 
+        *                  might take quite some time. If false, it will be quick scan
+        *                  which might return incorrect cached values for status of secondary members.
+        *                  Use false only to achieve quick first connection, in all other cases true 
+        *                  should be used.
         */
-        ReplicaSet getReplicaSetInfo(bool refresh = true) const;   // todo: throws ??
+        ReplicaSet getReplicaSetInfo(bool refresh = true) const;
+
+        std::string connectAndGetReplicaSetName() const;
 
         /**
          * @brief Send reply event to object 'obj'
          */
         void reply(QObject *receiver, Event *event);
 
-        // todo
+        /**
+        * @brief Send hear beat messages to database in order to keep connection alive
+        */
         void pingDatabase(mongo::DBClientBase *dbclient) const;
 
         QThread *_thread;
         QMutex _firstConnectionMutex;
 
-        ScriptEngine *_scriptEngine;
+        std::unique_ptr<ScriptEngine> _scriptEngine;
 
         bool _isAdmin;
         const bool _isLoadMongoRcJs;

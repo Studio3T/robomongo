@@ -22,6 +22,7 @@
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/utils/string_operations.h"
 
 namespace Robomongo
 {
@@ -82,16 +83,16 @@ namespace Robomongo
 
     void MongoWorker::init()
     {        
-        // todo: if (_initialized) return;
         try {
-            _scriptEngine = new ScriptEngine(_connSettings, _shellTimeoutSec);  // todo: unique_ptr.reset()
+            _scriptEngine.reset(new ScriptEngine(_connSettings, _shellTimeoutSec));
             _scriptEngine->init(_isLoadMongoRcJs);
             _scriptEngine->use(_connSettings->defaultDatabase());
             _scriptEngine->setBatchSize(_batchSize);
             _timerId = startTimer(pingTimeMs);
             _dbAutocompleteCacheTimerId = startTimer(30000);
         } catch (const std::exception &ex) {
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            LOG_MSG("Failed to initialize MongoWorker. " + std::string(ex.what()), 
+                     mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -115,7 +116,6 @@ namespace Robomongo
             killTimer(_dbAutocompleteCacheTimerId);
 
         delete _connSettings;
-        delete _scriptEngine;
 
         // QThread "_thread" and MongoWorker itself will be deleted later
         // (see MongoWorker() constructor)
@@ -134,11 +134,13 @@ namespace Robomongo
     {
         QMutexLocker lock(&_firstConnectionMutex);
 
-        std::unique_ptr<ReplicaSet> repSetInfo(new ReplicaSet); // todo
+        std::unique_ptr<ReplicaSet> repSetInfo(new ReplicaSet);
 
         try {
             mongo::DBClientBase *conn = getConnection(true);
 
+            // --- Single server: Connection failed 
+            // --- Replica set: Connection failed (no reachable primary)
             if (!conn) 
             {
                 // Protection as default value: Logically/ideally, this error should never be seen.
@@ -153,7 +155,7 @@ namespace Robomongo
                     if (_connSettings->isReplicaSet()) {
                         errorReason = "No member of the set is reachable.";
 
-                        // Build ReplicaSet with no member reachable
+                        // todo: Build ReplicaSet with no member reachable
                         std::vector<std::pair<std::string, bool>> membersAndHealths;
                         for (auto const& member : _connSettings->replicaSetSettings()->members()) {
                             membersAndHealths.push_back({ member, false });
@@ -174,22 +176,22 @@ namespace Robomongo
                 return false;
             }
 
+            // --- Single server: Connection successful 
+            // --- Replica set: Connection successful (primary reachable) or 
+            //                  Connection failed (primary unreachable with at least one reachable member)
             if (_connSettings->isReplicaSet()) {
                 bool refresh = (ConnectionType::ConnectionRefresh == event->connectionType);
-                ReplicaSet setInfo = getReplicaSetInfo(refresh);
-                if (setInfo.primary.empty()) {  // No reachable primary, pass possible reachable secondary(ies)
-                    repSetInfo.reset(new ReplicaSet(setInfo)); // todo: might be redundant
-                    
-                    //reply(event->sender(), new RefreshReplicaSetFolderResponse(this, setInfo, EventError(setInfo.errorStr)));
+                ReplicaSet const& setInfo = getReplicaSetInfo(refresh);
+                if (setInfo.primary.empty()) {  // No reachable primary
+                    repSetInfo.reset(new ReplicaSet(setInfo)); // Pass possible reachable secondary(ies) info 
                     LOG_MSG(setInfo.errorStr, mongo::logger::LogSeverity::Error());
                     throw std::runtime_error(setInfo.errorStr);
                 }
                 else {  // Primary is reachable, save setInfo and continue
-                    repSetInfo.reset(new ReplicaSet(setInfo.setName, setInfo.primary, setInfo.membersAndHealths));
+                    repSetInfo.reset(new ReplicaSet(setInfo));
                 }
             }
 
-            // For single server, connection is successful & For replica set, primary is reachable (=connection successful)
             if (_connSettings->hasEnabledPrimaryCredential()) {
                 CredentialSettings *credentials = _connSettings->primaryCredential();
 
@@ -224,7 +226,6 @@ namespace Robomongo
 
             resetGlobalSSLparams();
 
-            // todo: wrap rep. parameters into a struct
             auto connInfo = ConnectionInfo(_connSettings->getFullAddress(), dbNames, client->getVersion(), 
                                            client->getStorageEngineType(), event->originalConnectionSettingsId);
 
@@ -232,7 +233,8 @@ namespace Robomongo
             reply(event->sender(), new EstablishConnectionResponse(this, connInfo, event->connectionType, 
                                                                    *repSetInfo.release()));
             return true;
-        } catch(const std::exception &ex) {
+        } 
+        catch(const std::exception &ex) {
             resetGlobalSSLparams();
 
             auto errorReason = _connSettings->sslSettings()->sslEnabled() ?
@@ -240,26 +242,16 @@ namespace Robomongo
                                EstablishConnectionResponse::ErrorReason::MongoAuth;
 
             reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what()), 
-                event->connectionType, ConnectionInfo(event->originalConnectionSettingsId),
-                *repSetInfo.release(), errorReason));
+                  event->connectionType, ConnectionInfo(event->originalConnectionSettingsId),
+                  *repSetInfo.release(), errorReason));
         }
+
         return false;
-    }
-
-    void MongoWorker::handle(RefreshReplicaSetRequest *event)
-    {
-        // todo
-        // 1. Refresh replica set view 
-        // 2. Refresh database names
-
-        //if (handle(new EstablishConnectionRequest(event->sender(), ConnectionRefresh))) {
-
-        //}
     }
 
     void MongoWorker::handle(RefreshReplicaSetFolderRequest *event)
     {
-        ReplicaSet const replicaSetInfo = getReplicaSetInfo(true);
+        ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
 
         // Primary is unreachable, but there might have reachable secondary(ies)
         if (replicaSetInfo.primary.empty()) {  
@@ -268,9 +260,8 @@ namespace Robomongo
             LOG_MSG(replicaSetInfo.errorStr, mongo::logger::LogSeverity::Error());
             return;
         }
-
-        // Primary is reachable
-        reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo));
+        else // Primary is reachable
+            reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo));
     }
 
     std::string MongoWorker::getAuthBase() const
@@ -486,21 +477,20 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new InsertDocumentResponse(this));
-        } catch(const mongo::DBException &ex) {
+        } 
+        catch(const mongo::DBException &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new InsertDocumentResponse(this,
-                        EventError("Set's primary is unreachable.", replicaSetInfo, false)));
+                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                 }
-                else {   // other errors
-                    EventError error = EventError(ex.toString()); // todo
-                    reply(event->sender(), new InsertDocumentResponse(this, error));
-                }
+                else    // other errors
+                    reply(event->sender(), new InsertDocumentResponse(this, EventError(ex.toString())));
             }
             else { // single server
-                EventError error = EventError("Error when saving document: " + ex.toString());
-                reply(event->sender(), new InsertDocumentResponse(this, error));
+                    reply(event->sender(), new InsertDocumentResponse(this, 
+                        EventError("Error when saving document: " + ex.toString())));
             }
         }
     }
@@ -516,8 +506,8 @@ namespace Robomongo
             reply(event->sender(), new RemoveDocumentResponse(this));
         } 
         catch(const mongo::DBException &ex) {
-            EventError error = EventError("Error when deleting document: " + ex.toString());
-            reply(event->sender(), new RemoveDocumentResponse(this, error));
+            reply(event->sender(), new RemoveDocumentResponse(this, 
+                EventError("Error when deleting document: " + ex.toString())));
         }
     }
 
@@ -552,12 +542,8 @@ namespace Robomongo
                     _scriptEngine->init(_isLoadMongoRcJs);
                 }
                 catch (std::exception const& ex) {     
-                    // todo: move to common header - capitalize first letter of a str
-                    std::string errorMsg = ex.what();
-                    if (!errorMsg.empty()) {
-                        errorMsg[0] = static_cast<char>(std::toupper(errorMsg[0]));
-                    }
-                    LOG_MSG(errorMsg + ", cannot init mongo scope", mongo::logger::LogSeverity::Error());
+                    LOG_MSG(captilizeFirstChar(ex.what()) + ", cannot init mongo scope", 
+                            mongo::logger::LogSeverity::Error());
                 }
             }
 
@@ -565,18 +551,17 @@ namespace Robomongo
             MongoShellExecResult result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
 
             if (result.error()) {
-                // If this is replica set, try again
+                // If this is replica set, update script engine and try again
                 if (_connSettings->isReplicaSet()) {
                     ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                     if (replicaSetInfo.primary.empty()) {  // primary not reachable
                         reply(event->sender(), new ExecuteScriptResponse(this, 
-                            EventError("Set's primary is unreachable.", replicaSetInfo, false)));
-
+                             EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                         return;
                     }
                     else {  // primary reachable
                         _scriptEngine->init(_isLoadMongoRcJs, replicaSetInfo.primary.toString(),
-                            _connSettings->defaultDatabase());
+                                            _connSettings->defaultDatabase());
                         result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
                     }
                 }
@@ -644,14 +629,12 @@ namespace Robomongo
                     reply(event->sender(), new CreateDatabaseResponse(this, event->database(),
                         EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                 }
-                else {   // other errors
-                    EventError error = EventError(ex.toString()); // todo
-                    reply(event->sender(), new CreateDatabaseResponse(this, event->database(), error));
-                }
+                else    // other errors
+                    reply(event->sender(), new CreateDatabaseResponse(this, event->database(), 
+                                                                      EventError(ex.toString())));
             }
-            else { // single server
+            else  // single server
                 reply(event->sender(), new CreateDatabaseResponse(this, event->database(), EventError(ex.what())));
-            }
         }
     }
 
@@ -673,14 +656,11 @@ namespace Robomongo
                     reply(event->sender(), new DropDatabaseResponse(this, event->database,
                         EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                 }
-                else {   // other errors
-                    EventError error = EventError(ex.toString()); // todo
-                    reply(event->sender(), new DropDatabaseResponse(this, event->database, error));
-                }
+                else // other errors
+                    reply(event->sender(), new DropDatabaseResponse(this, event->database, EventError(ex.toString())));
             }
-            else { // single server
+            else  // single server
                 reply(event->sender(), new DropDatabaseResponse(this, event->database, EventError(ex.what())));
-            }
         }
     }
 
@@ -702,14 +682,11 @@ namespace Robomongo
                     reply(event->sender(), new CreateCollectionResponse(this, collection,
                         EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                 }
-                else {   // other errors
-                    EventError error = EventError(ex.toString()); // todo
-                    reply(event->sender(), new CreateCollectionResponse(this, collection, error));
-                }
+                else // other errors
+                    reply(event->sender(), new CreateCollectionResponse(this, collection, EventError(ex.toString())));
             }
-            else { // single server
+            else // single server
                 reply(event->sender(), new CreateCollectionResponse(this, collection, EventError(ex.what())));
-            }
         }
     }
 
@@ -728,16 +705,13 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new DropCollectionResponse(this, collection,
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                 }
-                else {   // other errors
-                    EventError error = EventError(ex.toString()); // todo
-                    reply(event->sender(), new DropCollectionResponse(this, collection, error));
-                }
+                else // other errors
+                    reply(event->sender(), new DropCollectionResponse(this, collection, EventError(ex.toString())));
             }
-            else { // single server
+            else // single server
                 reply(event->sender(), new DropCollectionResponse(this, collection, EventError(ex.what())));
-            }
         }
     }
 
@@ -757,14 +731,11 @@ namespace Robomongo
                     reply(event->sender(), new RenameCollectionResponse(this,
                         EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                 }
-                else {   // other errors
-                    EventError error = EventError(ex.toString()); // todo
-                    reply(event->sender(), new RenameCollectionResponse(this, error));
-                }
+                else // other errors
+                    reply(event->sender(), new RenameCollectionResponse(this, EventError(ex.toString())));
             }
-            else { // single server
+            else // single server
                 reply(event->sender(), new RenameCollectionResponse(this, EventError(ex.what())));
-            }
         }
     }
 
@@ -786,13 +757,11 @@ namespace Robomongo
                     reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection,
                           EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                 }
-                else {   // other errors
+                else    // other errors
                     reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection, EventError(ex.what())));
-                }
             }
-            else { // single server
+            else  // single server
                 reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection, EventError(ex.what())));
-            }
         }
     }
 
@@ -826,15 +795,13 @@ namespace Robomongo
                     reply(event->sender(), new CreateUserResponse(this, event->user().name(),
                         EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                 }
-                else {   // other errors
+                else   // other errors
                     reply(event->sender(), new CreateUserResponse(this, event->user().name(), 
                                                                   EventError(ex.what())));
-                }
             }
-            else { // single server
+            else  // single server
                 reply(event->sender(), new CreateUserResponse(this, event->user().name(), 
                                                               EventError(ex.what())));
-            }
         }
     }
 
@@ -853,13 +820,11 @@ namespace Robomongo
                     reply(event->sender(), new DropUserResponse(this, event->username(),
                         EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                 }
-                else {   // other errors
+                else   // other errors
                     reply(event->sender(), new DropUserResponse(this, event->username(), EventError(ex.what())));
-                }
             }
-            else { // single server
+            else  // single server
                 reply(event->sender(), new DropUserResponse(this, event->username(), EventError(ex.what())));
-            }
         }
     }
 
@@ -880,13 +845,11 @@ namespace Robomongo
                     reply(event->sender(), new CreateFunctionResponse(this, functionName,
                         EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                 }
-                else {   // other errors
+                else    // other errors
                     reply(event->sender(), new CreateFunctionResponse(this, functionName, EventError(ex.what())));
-                }
             }
-            else { // single server
+            else  // single server
                 reply(event->sender(), new CreateFunctionResponse(this, functionName, EventError(ex.what())));
-            }
         }
     }
 
@@ -906,80 +869,36 @@ namespace Robomongo
                     reply(event->sender(), new CreateFunctionResponse(this, event->functionName(),
                         EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                 }
-                else {   // other errors
+                else  // other errors
                     reply(event->sender(), new CreateFunctionResponse(this, event->functionName(), EventError(ex.what())));
-                }
             }
-            else { // single server
+            else  // single server
                 reply(event->sender(), new DropFunctionResponse(this, event->functionName(), EventError(ex.what())));
-            }
         }
     }
 
     mongo::DBClientBase *MongoWorker::getConnection(bool mayReturnNull /* = false */)
     {
-        // --- Configure SSL first --- // todo: move to function?
-        // As a precaution reset SSL global params for any kind of connection request (SSL or non-SSL)
-        resetGlobalSSLparams();
-        // Update global SSL mode and global mongo SSL settings
-        if (_connSettings->sslSettings()->sslEnabled())
-        {
-            // Force SSL mode for outgoing connections
-            mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
-            updateGlobalSSLparams();
-        }
-        else
-        {
-            // Disable forced SSL mode for outgoing connections
-            mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
-        }
+        configureSSL();
 
-        // --- Perform connection attempt ---
+        // --- Perform connection ---
         if (_connSettings->isReplicaSet()) // connection to replica set 
         {  
             if (!_dbclientRepSet) 
             {
-                // Init mongoworker for early-use of _scriptEngine
-                init();
+                init(); // Init mongoworker for early-use of _scriptEngine
 
-                // Step-1: Retrieve set name if we do not have it
+                // Step-1: Retrieve set name from cache or from a reachable member
                 std::string setName = _connSettings->replicaSetSettings()->setName();
+                if (setName.empty()) // If there is no cached set name, get it from an on-line replica node
+                    setName = connectAndGetReplicaSetName();
 
-                // todo: move to func. "getSetName()"
-                // If set name doesn't exist in the settings, get it from an on-line replica node
-                if (setName.empty())
-                {
-                    auto dbclientTemp = upDBClientConnection(new mongo::DBClientConnection(true, 10));
-
-                    // Try connecting to the nodes one by one until getting replica set name.
-                    for (auto const& node : _connSettings->replicaSetSettings()->membersToHostAndPort())
-                    {
-                        mongo::Status const status = dbclientTemp->connect(node);
-                        if (status.isOK())
-                        {
-                            _scriptEngine->init(_isLoadMongoRcJs, node.toString());
-                            MongoShellExecResult result = _scriptEngine->exec("rs.status()", "");
-                            if (!result.results().empty())
-                            {
-                                auto resultDocs = result.results().front().documents();
-                                if (!resultDocs.empty())
-                                {
-                                    setName = resultDocs.front()->bsonObj().getStringField("set");
-                                    if (!setName.empty()) // We get the information, finish the loop
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (setName.empty()) {  // It is not possible to continue with empty set name
+                if (setName.empty())   // It is not possible to continue with empty set name
                     return nullptr;
-                }
 
-                // Step-2: We have the set name, try connect to replica set
+                // Step-2: Try connect to replica set with set name
                 auto const& membersHostsAndPorts = _connSettings->replicaSetSettings()->membersToHostAndPort();
-                _dbclientRepSet = upDBClientReplicaSet(new mongo::DBClientReplicaSet(setName, membersHostsAndPorts, 
+                _dbclientRepSet = DBClientReplicaSet(new mongo::DBClientReplicaSet(setName, membersHostsAndPorts, 
                                                        _mongoTimeoutSec));
                 bool const connStatus = _dbclientRepSet->connect();
                 
@@ -989,11 +908,11 @@ namespace Robomongo
             }
             return _dbclientRepSet.get();
         }
-        else {                              // connection to single server
+        else {  // connection to single server
             if (!_dbclient) {
                 // Timeout for operations
                 // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
-                _dbclient = upDBClientConnection(new mongo::DBClientConnection(true, _mongoTimeoutSec));
+                _dbclient = DBClientConnection(new mongo::DBClientConnection(true, _mongoTimeoutSec));
 
                 mongo::Status status = _dbclient->connect(_connSettings->hostAndPort());
 
@@ -1008,6 +927,22 @@ namespace Robomongo
     MongoClient *MongoWorker::getClient()
     {
         return new MongoClient(getConnection());
+    }
+
+    void MongoWorker::configureSSL()
+    {
+        // As a precaution reset SSL global params for any kind of connection request (SSL or non-SSL)
+        resetGlobalSSLparams();
+        // Update global SSL mode and global mongo SSL settings
+        if (_connSettings->sslSettings()->sslEnabled()) {
+            // Force SSL mode for outgoing connections
+            mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_requireSSL);
+            updateGlobalSSLparams();
+        }
+        else {
+            // Disable forced SSL mode for outgoing connections
+            mongo::sslGlobalParams.sslMode.store(mongo::SSLParams::SSLMode_allowSSL);
+        }
     }
 
     void MongoWorker::updateGlobalSSLparams() const
@@ -1050,8 +985,8 @@ namespace Robomongo
         // Refresh view of Replica Set Monitor to get live data
         auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
         
-        // refreshAll() takes long time, in order to do very first establish connection request much faster
-        // refreshAll() will be by-passed and it will be requested after successful connection response.
+        // refreshAll() takes long time, in order to do first establish connection request much faster
+        // refreshAll() will be by-passed first and it will/must be done after a successful connection.
         if (refresh)
             repSetMonitor->startOrContinueRefresh().refreshAll();
 
@@ -1065,9 +1000,8 @@ namespace Robomongo
         // i.e. setNameAndMembers: "repset/localhost:27017,localhost:27018,localhost:27019"
         auto setNameAndMembers = QString::fromStdString(repSetMonitor->getServerAddress());
         QStringList result = setNameAndMembers.split("/");
-        if (result.size() > 1) {
+        if (result.size() > 1) 
             servers = result[1].split(",");
-        }
 
         // Save address and health of replica members
         for (QString const& server : servers) {
@@ -1076,6 +1010,35 @@ namespace Robomongo
         }
 
         return ReplicaSet(setName, primary, membersAndHealths, primaryWithStatus.getStatus().reason());
+    }
+
+    std::string MongoWorker::connectAndGetReplicaSetName() const
+    {
+        auto dbclientTemp = DBClientConnection(new mongo::DBClientConnection(true, 10));
+        std::string setName = "";
+
+        // Try connecting to the nodes one by one until getting replica set name.
+        for (auto const& node : _connSettings->replicaSetSettings()->membersToHostAndPort())
+        {
+            mongo::Status const status = dbclientTemp->connect(node);
+            if (status.isOK())
+            {
+                _scriptEngine->init(_isLoadMongoRcJs, node.toString());
+                MongoShellExecResult result = _scriptEngine->exec("rs.status()", "");
+                if (!result.results().empty())
+                {
+                    auto resultDocs = result.results().front().documents();
+                    if (!resultDocs.empty())
+                    {
+                        setName = resultDocs.front()->bsonObj().getStringField("set");
+                        if (!setName.empty()) // We get the information, finish the loop
+                            break;
+                    }
+                }
+            }
+        }
+
+        return setName;
     }
 
     /**

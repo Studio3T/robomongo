@@ -12,10 +12,10 @@ namespace Robomongo
 
         ReplicaSet() {};
 
-        const std::string setName;
-        const mongo::HostAndPort primary;
-        const std::vector<std::pair<std::string, bool>> membersAndHealths;
-        const std::string errorStr;
+        std::string const setName;
+        mongo::HostAndPort const primary;
+        std::vector<std::pair<std::string, bool>> const membersAndHealths;
+        std::string const errorStr;
     };
 
 }

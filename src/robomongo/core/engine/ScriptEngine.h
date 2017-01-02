@@ -29,7 +29,6 @@ namespace Robomongo
 
         void invalidateDbCollectionsCache();
 
-        // todo: to handle case: empty scope due to unreachable server when opening new shell
         bool failedScope() const { return _failedScope; }
 
     private:

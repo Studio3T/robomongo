@@ -75,29 +75,6 @@ namespace Robomongo
         ReplicaSet const replicaSet;
     };
 
-    struct RefreshReplicaSetRequest : public Event
-    {
-        R_EVENT
-
-        RefreshReplicaSetRequest(QObject *sender) :
-            Event(sender) {}
-    };
-
-    struct RefreshReplicaSetResponse : public Event
-    {
-        R_EVENT
-
-        // Primary is reachable
-        RefreshReplicaSetResponse(QObject *sender, ReplicaSet replicaSet) :
-            Event(sender), replicaSet(replicaSet) {}
-
-        // Primary is unreachable and secondary(ies) might be reachable
-        RefreshReplicaSetResponse(QObject *sender, ReplicaSet replicaSet, const EventError &error) :
-            Event(sender, error), replicaSet(replicaSet) {}
-
-        ReplicaSet const replicaSet;
-    };
-
     struct ReplicaSetRefreshed : public Event
     {
         R_EVENT
@@ -432,7 +409,7 @@ namespace Robomongo
         InsertDocumentResponse(QObject *sender) :
             Event(sender) {}
 
-        InsertDocumentResponse(QObject *sender, const EventError &error) :
+        InsertDocumentResponse(QObject *sender, EventError const error) :
             Event(sender, error) {}
     };
 
@@ -1045,10 +1022,9 @@ namespace Robomongo
             connectionType(type),
             connInfo(connInfo) { }       
 
-    public: // todo
         MongoServer *server;
-        ConnectionType connectionType;
-        ConnectionInfo connInfo;
+        ConnectionType const connectionType;
+        ConnectionInfo const connInfo;
     };
 
     class DatabaseListLoadedEvent : public Event

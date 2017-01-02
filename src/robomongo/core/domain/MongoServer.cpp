@@ -51,10 +51,6 @@ namespace Robomongo {
         // is also specified in MongoWorker constructor.
     }
 
-    /**
-     * @brief Try to connect to MongoDB server.
-     * @throws MongoException, if fails
-     */
     void MongoServer::tryConnect() 
     {
         _bus->send(_worker, new EstablishConnectionRequest(this, _connectionType, _connSettings->uniqueId()));
@@ -65,7 +61,7 @@ namespace Robomongo {
         _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh, _connSettings->uniqueId()));
     }
 
-    void MongoServer::tryRefreshReplicaSet()
+    void MongoServer::tryRefreshReplicaSetConnection()
     {
         _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh, _connSettings->uniqueId()));
     }
@@ -144,7 +140,7 @@ namespace Robomongo {
     {
         _bus->publish(new MongoServerLoadingDatabasesEvent(this));
         if (_connSettings->isReplicaSet()) {
-            tryRefreshReplicaSet();
+            tryRefreshReplicaSetConnection();
         }
         else {  // single server
             _bus->send(_worker, new LoadDatabaseNamesRequest(this));

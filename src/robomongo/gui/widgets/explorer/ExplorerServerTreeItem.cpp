@@ -95,7 +95,7 @@ namespace Robomongo
     void ExplorerServerTreeItem::expand()
     {
         if (_server->connectionRecord()->isReplicaSet()) {
-            //_server->tryRefreshReplicaSet();  // todo
+            //_server->tryRefreshReplicaSetConnection();  // todo
         }
         else {  // single server
             _server->loadDatabases();
@@ -310,7 +310,7 @@ namespace Robomongo
         if (_server->connectionRecord()->isReplicaSet()) {
             int count = -1;
             setText(0, buildServerName(&count));    // Append "..." into root item text
-            _server->tryRefreshReplicaSet();
+            _server->tryRefreshReplicaSetConnection();
         }
         else {  // single server
             expand();

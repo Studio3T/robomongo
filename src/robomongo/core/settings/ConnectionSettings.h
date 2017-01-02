@@ -26,14 +26,14 @@ namespace Robomongo
         /**
          * @brief Creates ConnectionSettings with default values
          */
-        ConnectionSettings();
+        ConnectionSettings(bool isClone);
         
         /**
         * @brief Creates ConnectionSettings from mongo connection string URI
         */
-        ConnectionSettings(const mongo::MongoURI& uri);
+        ConnectionSettings(const mongo::MongoURI& uri, bool isClone);
 
-        explicit ConnectionSettings(QVariantMap map);
+        explicit ConnectionSettings(QVariantMap map, bool isClone);
 
         /**
          * @brief Cleanup used resources
@@ -148,6 +148,10 @@ namespace Robomongo
         bool isReplicaSet() const { return _isReplicaSet; }
         void setReplicaSet(bool flag) { _isReplicaSet = flag; }
 
+        // todo
+        void setUniqueId(int id) { _uniqueId = id; }
+        int uniqueId() { return _uniqueId; }
+
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
 
@@ -163,6 +167,10 @@ namespace Robomongo
 
         // Was this connection imported from somewhere?
         bool _imported;
+
+        // todo
+        bool _clone = false;
+        int _uniqueId = -1;     // -1 for clones
     };
 }
 

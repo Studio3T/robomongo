@@ -12,7 +12,7 @@ namespace Robomongo
     class App;
 
     // Messages
-    class EstablishConnectionResponse;
+    struct EstablishConnectionResponse;
     struct RefreshReplicaSetFolderResponse;
     class LoadDatabaseNamesResponse;
     class InsertDocumentResponse;

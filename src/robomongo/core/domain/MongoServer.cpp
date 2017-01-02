@@ -10,6 +10,7 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/EventBus.h"
+#include "robomongo/core/events/MongoEventsInfo.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
 
@@ -55,17 +56,17 @@ namespace Robomongo {
      */
     void MongoServer::tryConnect() 
     {
-        _bus->send(_worker, new EstablishConnectionRequest(this, _connectionType));
+        _bus->send(_worker, new EstablishConnectionRequest(this, _connectionType, _connSettings->uniqueId()));
     }
 
     void MongoServer::tryRefresh() 
     {
-        _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh));
+        _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh, _connSettings->uniqueId()));
     }
 
     void MongoServer::tryRefreshReplicaSet()
     {
-        _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh));
+        _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh, _connSettings->uniqueId()));
     }
     
     void MongoServer::tryRefreshReplicaSetFolder(bool showLoading /*= true*/)
@@ -160,15 +161,28 @@ namespace Robomongo {
         // _connectionType = event->_connectionType;
 
         // In any case, replica set info must be updated, there might be reachable secondary(ies).
+        // Also cached set name must be updated or cleared for failed connections.
         if (_connSettings->isReplicaSet()) {
-            _replicaSetInfo.reset(new ReplicaSet(event->replicaSet()));
+            _replicaSetInfo.reset(new ReplicaSet(event->replicaSet));
             // todo: move to funct.
             // todo: for primary unreachable, serverhost is set empty
             _connSettings->setServerHost(_replicaSetInfo->primary.host());
             _connSettings->setServerPort(_replicaSetInfo->primary.port());
             _connSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
-            //_connSettings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);
-            //AppRegistry::instance().settingsManager()->save();
+
+            // Cache replica set name for 2 times faster first connection 
+            if (event->connectionType == ConnectionPrimary) {
+                ConnectionSettings* originalConnSettings = AppRegistry::instance().settingsManager()
+                    ->getConnectionSettings(event->info._originalConnectionSettingsId);
+                if (originalConnSettings) {
+                    originalConnSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
+                    AppRegistry::instance().settingsManager()->save();
+                    LOG_MSG("Replica set name cached as \"" + _replicaSetInfo->setName + "\".",
+                        mongo::logger::LogSeverity::Info());
+                }
+                else
+                    LOG_MSG("Failed to cache the replica set name.", mongo::logger::LogSeverity::Warning());
+            }
         }
 
         // --- Connection Failed
@@ -177,7 +191,7 @@ namespace Robomongo {
             _isConnected = false;
 
             std::stringstream ss("Unknown error");
-            auto eventErrorReason = event->_errorReason;
+            auto eventErrorReason = event->errorReason;
 
             // todo: 
             if(_connSettings->isReplicaSet()) 
@@ -190,9 +204,9 @@ namespace Robomongo {
                 ss << "Cannot connect to replica set \"" << _connSettings->connectionName() << "\"" << server
                    << ". \nSet's primary is unreachable.\n\nReason:\n" << event->error().errorMessage();
 
-                _bus->publish(new ConnectionFailedEvent(this, _handle, event->_connectionType, ss.str(),
+                _bus->publish(new ConnectionFailedEvent(this, _handle, event->connectionType, ss.str(),
                                                         ConnectionFailedEvent::MongoConnection));
-                _app->fireConnectionFailedEvent(_handle, event->_connectionType, ss.str(), 
+                _app->fireConnectionFailedEvent(_handle, event->connectionType, ss.str(), 
                                                 ConnectionFailedEvent::MongoConnection);
                 LOG_MSG("Establish connection failed. " + event->error().errorMessage() + 
                         ". Connection: " + _connSettings->connectionName(), 
@@ -234,14 +248,14 @@ namespace Robomongo {
 
         // --- Connections Successful
         // Save various information after successful connection
-        const ConnectionInfo &info = event->info();
+        const ConnectionInfo &info = event->info;
         _version = info._version;
         _storageEngineType = info._storageEngineType;
         _isConnected = true;
 
         // ConnectionRefresh is used just to update connection view (_version, _storageEngineType, _repPrimary etc..)
         // So we return here after updating(refreshing) information related to connection view.
-        if (ConnectionRefresh == event->_connectionType) {
+        if (ConnectionRefresh == event->connectionType) {
             if (_connSettings->isReplicaSet()) {
                 // todo
                 // If it is replica set connection, do not return yet.
@@ -281,11 +295,11 @@ namespace Robomongo {
         }
 
         if (_connSettings->isReplicaSet()) {
-            _bus->publish(new ConnectionEstablishedEvent(this, event->_connectionType, info));
+            _bus->publish(new ConnectionEstablishedEvent(this, event->connectionType, info));
             // In order to do first connection much faster, time consuming refresh 
             // "repSetMonitor->startOrContinueRefresh(). refreshAll()" is being requested after 
             // successful connection.
-            if (ConnectionPrimary == event->_connectionType)
+            if (ConnectionPrimary == event->connectionType)
                 _bus->send(_worker, new RefreshReplicaSetFolderRequest(this));
         }
     }

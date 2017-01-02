@@ -57,6 +57,9 @@ namespace Robomongo
          */
         void removeConnection(ConnectionSettings *connection);
 
+        // todo
+        ConnectionSettings* getConnectionSettings(int uniqueId);
+
         void reorderConnections(const ConnectionSettingsContainerType &connections);
 
         void setToolbarSettings(QString toolbarName, bool visible);
@@ -122,6 +125,7 @@ namespace Robomongo
          * Returns number of imported connections
          */
         int importedConnectionsCount();
+
     private:
 
         /**
@@ -173,5 +177,8 @@ namespace Robomongo
          */
         ConnectionSettingsContainerType _connections;
         ToolbarSettingsContainerType _toolbars;
+
+        // todo: 
+        static int _uniqueIdCounter;
     };
 }

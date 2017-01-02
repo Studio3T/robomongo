@@ -27,52 +27,52 @@ namespace Robomongo
      * @brief EstablishConnection
      */
 
-    class EstablishConnectionRequest : public Event
+    struct EstablishConnectionRequest : public Event
     {
         R_EVENT
 
-        EstablishConnectionRequest(QObject *sender, ConnectionType connectionType) :
+            EstablishConnectionRequest(QObject *sender, ConnectionType connectionType, 
+                                       int const originalConnectionSettingsId) :
             Event(sender),
-            connectionType(connectionType) {}
+            connectionType(connectionType),
+            originalConnectionSettingsId(originalConnectionSettingsId) {}
 
-        ConnectionType connectionType;
+        ConnectionType const connectionType;
+        int const originalConnectionSettingsId = -1;
     };
 
-    class EstablishConnectionResponse : public Event
+    struct EstablishConnectionResponse : public Event
     {
         R_EVENT
 
         enum ErrorReason {
-            MongoConnection     = 0,
-            MongoAuth           = 1,
-            MongoSslConnection  = 2
+            NoError             = 0,
+            MongoConnection     = 1,
+            MongoAuth           = 2,
+            MongoSslConnection  = 3
         };
 
         EstablishConnectionResponse(QObject *sender, const ConnectionInfo &info, ConnectionType connectionType, 
                                     const ReplicaSet replicaSet) :
             Event(sender),
-            _info(info),
-            _connectionType(connectionType),
-            _replicaSet(replicaSet)
+            info(info),
+            connectionType(connectionType),
+            replicaSet(replicaSet)
             {}
 
         EstablishConnectionResponse(QObject *sender, const EventError &error, ConnectionType connectionType, 
-                                    const ReplicaSet replicaSet, ErrorReason errorReason) :
+                                    ConnectionInfo const& info, const ReplicaSet replicaSet, ErrorReason errorReason) :
             Event(sender, error),
-            _info(),
-            _connectionType(connectionType),
-            _errorReason(errorReason),
-            _replicaSet(replicaSet)
+            info(info),
+            connectionType(connectionType),
+            errorReason(errorReason),
+            replicaSet(replicaSet)
         {}
 
-        // Getters - todo: refactor return copy
-        ConnectionInfo info() const { return _info; }
-        ReplicaSet replicaSet() const { return _replicaSet; }
-
-        const ConnectionInfo _info;
-        ConnectionType _connectionType;
-        ErrorReason _errorReason;
-        const ReplicaSet _replicaSet;
+        ConnectionInfo const info;
+        ConnectionType const connectionType;
+        ErrorReason const errorReason = NoError;
+        ReplicaSet const replicaSet;
     };
 
     struct RefreshReplicaSetRequest : public Event

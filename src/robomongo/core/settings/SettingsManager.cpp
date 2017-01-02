@@ -37,6 +37,8 @@ namespace
 
 namespace Robomongo
 {
+    int SettingsManager::_uniqueIdCounter = 0;    // todo
+
     /**
      * Creates SettingsManager for config file in default location
      * ~/.config/robomongo/robomongo.json
@@ -53,7 +55,7 @@ namespace Robomongo
         _disableConnectionShortcuts(false),
         _batchSize(50),
         _textFontFamily(""),
-        _textFontPointSize(-1), 
+        _textFontPointSize(-1),
         _mongoTimeoutSec(10),
         _shellTimeoutSec(15),
         _imported(false)
@@ -137,7 +139,7 @@ namespace Robomongo
         if (encoding > 3 || encoding < 0)
             encoding = 0;
 
-        _uuidEncoding = (UUIDEncoding) encoding;
+        _uuidEncoding = (UUIDEncoding)encoding;
 
 
         // 3. Load view mode
@@ -145,8 +147,9 @@ namespace Robomongo
             int viewMode = map.value("viewMode").toInt();
             if (viewMode > 2 || viewMode < 0)
                 viewMode = Custom; // Default View Mode
-            _viewMode = (ViewMode) viewMode;
-        } else {
+            _viewMode = (ViewMode)viewMode;
+        }
+        else {
             _viewMode = Custom; // Default View Mode
         }
 
@@ -161,7 +164,7 @@ namespace Robomongo
         if (timeZone > 1 || timeZone < 0)
             timeZone = 0;
 
-        _timeZone = (SupportedTimes) timeZone;
+        _timeZone = (SupportedTimes)timeZone;
         _loadMongoRcJs = map.value("loadMongoRcJs").toBool();
         _disableConnectionShortcuts = map.value("disableConnectionShortcuts").toBool();
 
@@ -170,8 +173,9 @@ namespace Robomongo
             int autocompletionMode = map.value("autocompletionMode").toInt();
             if (autocompletionMode < 0 || autocompletionMode > 2)
                 autocompletionMode = AutocompleteAll; // Default Mode
-            _autocompletionMode = (AutocompletionMode) autocompletionMode;
-        } else {
+            _autocompletionMode = (AutocompletionMode)autocompletionMode;
+        }
+        else {
             _autocompletionMode = AutocompleteAll; // Default Mode
         }
 
@@ -202,9 +206,9 @@ namespace Robomongo
 
         QVariantList list = map.value("connections").toList();
         for (QVariantList::iterator it = list.begin(); it != list.end(); ++it) {
-            ConnectionSettings *record = new ConnectionSettings();
-            record->fromVariant((*it).toMap());
-            addConnection(record);
+            ConnectionSettings *connSettings = new ConnectionSettings(false);
+            connSettings->fromVariant((*it).toMap());
+            addConnection(connSettings);
         }
 
         _toolbars = map.value("toolbars").toMap();
@@ -292,11 +296,12 @@ namespace Robomongo
     }
 
     /**
-     * Adds connection to the end of list
+     * Adds connection to the end of list and set it's uniqueID
      */
     void SettingsManager::addConnection(ConnectionSettings *connection)
     {
         _connections.push_back(connection);
+        connection->setUniqueId(_uniqueIdCounter++);
     }
 
     /**
@@ -309,6 +314,17 @@ namespace Robomongo
             _connections.erase(it);
             delete connection;
         }
+    }
+
+    ConnectionSettings* SettingsManager::getConnectionSettings(int uniqueId)
+    {
+        for (auto const& connSettings : _connections){
+            if (connSettings->uniqueId() == uniqueId)
+                return connSettings;
+        }
+
+        LOG_MSG("Failed to get connection settings.", mongo::logger::LogSeverity::Warning());
+        return nullptr;
     }
 
     void SettingsManager::setCurrentStyle(const QString& style)
@@ -349,7 +365,7 @@ namespace Robomongo
         setImported(true);
     }
 
-    void SettingsManager::importConnectionsFrom_0_8_5_to_0_9() 
+    void SettingsManager::importConnectionsFrom_0_8_5_to_0_9()
     {
         // Load old configuration file (used till version 0.8.5)
         const QString oldConfigPath = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
@@ -368,11 +384,11 @@ namespace Robomongo
             return;
 
         QVariantList vconns = vmap.value("connections").toList();
-        for (QVariantList::iterator itconn = vconns.begin(); itconn != vconns.end(); ++itconn) 
+        for (QVariantList::iterator itconn = vconns.begin(); itconn != vconns.end(); ++itconn)
         {
             QVariantMap vconn = (*itconn).toMap();
 
-            ConnectionSettings *conn = new ConnectionSettings();
+            ConnectionSettings *conn = new ConnectionSettings(false);
             conn->setImported(true);
             conn->setConnectionName(QtUtils::toStdString(vconn.value("connectionName").toString()));
             conn->setServerHost(QtUtils::toStdString(vconn.value("serverHost").toString().left(300)));
@@ -477,7 +493,7 @@ namespace Robomongo
         for (auto const& vcon : vconns)
         {
             QVariantMap const& vconn = vcon.toMap();
-            auto connSettings = new ConnectionSettings();
+            auto connSettings = new ConnectionSettings(false);
             connSettings->fromVariant(vconn);
             connSettings->setImported(true);
 

@@ -21,11 +21,10 @@ namespace
 
 namespace Robomongo
 {
-
     /**
      * Creates ConnectionSettings with default values
      */
-    ConnectionSettings::ConnectionSettings() : QObject(),
+    ConnectionSettings::ConnectionSettings(bool isClone) : QObject(),
         _connectionName(defaultNameConnection),
         _host(defaultServerHost),
         _port(port),
@@ -33,10 +32,11 @@ namespace Robomongo
         _sshSettings(new SshSettings()),
         _sslSettings(new SslSettings()),
         _isReplicaSet(false),
-        _replicaSetSettings(new ReplicaSetSettings())       // todo: dont create if not replica set
+        _replicaSetSettings(new ReplicaSetSettings()),       // todo: dont create if not replica set
+        _clone(isClone)
     { }
 
-    ConnectionSettings::ConnectionSettings(const mongo::MongoURI& uri) 
+    ConnectionSettings::ConnectionSettings(const mongo::MongoURI& uri, bool isClone)  // todo: remove or add clone support
         : _connectionName(defaultNameConnection),
         _host(defaultServerHost),
         _port(port),
@@ -44,7 +44,8 @@ namespace Robomongo
         _sshSettings(new SshSettings()),
         _sslSettings(new SslSettings()),
         _isReplicaSet((uri.type() == mongo::ConnectionString::ConnectionType::SET)),
-        _replicaSetSettings(new ReplicaSetSettings(uri))    // todo: dont create if not replica set
+        _replicaSetSettings(new ReplicaSetSettings(uri)),    // todo: dont create if not replica set
+        _clone(isClone)
     {
         if (!uri.getServers().empty()) {
             _host = uri.getServers().front().host();
@@ -115,9 +116,10 @@ namespace Robomongo
      */
     ConnectionSettings *ConnectionSettings::clone() const
     {
-        ConnectionSettings *record = new ConnectionSettings();
-        record->apply(this);
-        return record;
+        auto settings = new ConnectionSettings(true);
+        settings->setUniqueId(_uniqueId);
+        settings->apply(this);
+        return settings;
     }
 
     /**

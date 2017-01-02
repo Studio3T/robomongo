@@ -12,8 +12,10 @@
 #include <QApplication>
 #include <QSettings>
 
+#include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/ReplicaSetSettings.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/settings/SslSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/settings/CredentialSettings.h"
@@ -258,16 +260,17 @@ namespace Robomongo
      */
     void ConnectionsDialog::add()
     {       
-        auto newConnection = std::unique_ptr<ConnectionSettings>(new ConnectionSettings());
-        ConnectionDialog editDialog(newConnection.get());
+        auto newConnSettings = std::unique_ptr<ConnectionSettings>(new ConnectionSettings(false));
+        ConnectionDialog editDialog(newConnSettings.get());
 
         // Do nothing if not accepted
         if (editDialog.exec() != QDialog::Accepted) {
             return;
         }
 
-        add(newConnection.get());
-        _settingsManager->addConnection(newConnection.release());
+        add(newConnSettings.get());
+        _settingsManager->addConnection(newConnSettings.release());
+        
         _listWidget->setFocus();
     }
 
@@ -340,18 +343,18 @@ namespace Robomongo
         if (!currentItem)
             return;
 
-        ConnectionSettings *connectionModel = currentItem->connection();
+        ConnectionSettings *connSettings = currentItem->connection();
 
         // Ask user
         int answer = QMessageBox::question(this,
             "Connections",
-            QString("Really delete \"%1\" connection?").arg(QtUtils::toQString(connectionModel->getReadableName())),
+            QString("Really delete \"%1\" connection?").arg(QtUtils::toQString(connSettings->getReadableName())),
             QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
 
         if (answer != QMessageBox::Yes)
             return;
 
-        _settingsManager->removeConnection(connectionModel);
+        _settingsManager->removeConnection(connSettings);
         delete currentItem;
     }
 

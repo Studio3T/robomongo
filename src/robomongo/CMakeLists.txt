@@ -56,6 +56,8 @@ set(SOURCES
     core/mongodb/ReplicaSet.cpp
     core/settings/SettingsManager.cpp
     core/AppRegistry.cpp
+    utils/string_operations.cpp
+    utils/common.cpp
 
     # Isolated Scope #3
     gui/GuiRegistry.cpp

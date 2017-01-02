@@ -107,8 +107,9 @@ namespace Robomongo
 
     private:                 
         void clearDatabases();
-        void genericResponseHandler(Event *event, const std::string &userFriendlyMessage);
         void handleReplicaSetRefreshEvents(bool isError, EventError eventError, ReplicaSet const& replicaSet);
+        void updateReplicaSetSettings(EstablishConnectionResponse* event);
+        void handleConnectionFailure(EstablishConnectionResponse* event);
 
         MongoWorker *_worker;
         std::unique_ptr<ConnectionSettings> _connSettings;

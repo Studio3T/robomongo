@@ -6,6 +6,7 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/Logger.h"
+#include "robomongo/utils/common.h"
 
 namespace Robomongo
 {
@@ -118,7 +119,7 @@ namespace Robomongo
                 _bus->publish(new MongoDatabaseCollectionListLoadedEvent(this, event->error()));
             }
 
-            genericResponseHandler(event, "Failed to refresh 'Collections'.");
+            genericResponseHandler(event, "Failed to refresh 'Collections'.", _bus, this);
             return;
         }
 
@@ -140,7 +141,7 @@ namespace Robomongo
                 _server->handle(&refreshEvent);
             }
 
-            genericResponseHandler(event, "Failed to create function \'" + event->functionName + "\'.");
+            genericResponseHandler(event, "Failed to create function \'" + event->functionName + "\'.", _bus, this);
         }
         else {
             loadFunctions();
@@ -157,7 +158,7 @@ namespace Robomongo
                 _server->handle(&refreshEvent);
             }
 
-            genericResponseHandler(event, "Failed to create user \'" + event->userName + "\'.");
+            genericResponseHandler(event, "Failed to create user \'" + event->userName + "\'.", _bus, this);
         }
         else {
             loadUsers();
@@ -178,7 +179,7 @@ namespace Robomongo
                 _bus->publish(new MongoDatabaseUsersLoadedEvent(this, event->error()));
             }
 
-            genericResponseHandler(event, "Failed to refresh 'Users'.");
+            genericResponseHandler(event, "Failed to refresh 'Users'.", _bus, this);
             return;
         }
 
@@ -199,7 +200,7 @@ namespace Robomongo
                 _bus->publish(new MongoDatabaseFunctionsLoadedEvent(this, event->error()));
             }
 
-            genericResponseHandler(event, "Failed to refresh 'Functions'.");
+            genericResponseHandler(event, "Failed to refresh 'Functions'.", _bus, this);
             return;
         }
 
@@ -227,7 +228,7 @@ namespace Robomongo
                 _server->handle(&refreshEvent);
             }
 
-            genericResponseHandler(event, "Failed to create collection \'" + event->collection + "\'.");
+            genericResponseHandler(event, "Failed to create collection \'" + event->collection + "\'.", _bus, this);
         }
         else {
             loadCollections();
@@ -244,7 +245,7 @@ namespace Robomongo
                 _server->handle(&refreshEvent);
             }
 
-            genericResponseHandler(event, "Failed to drop collection \'" + event->collection + "\'.");
+            genericResponseHandler(event, "Failed to drop collection \'" + event->collection + "\'.", _bus, this);
         }
         else {
             loadCollections();
@@ -262,7 +263,7 @@ namespace Robomongo
                 _server->handle(&refreshEvent);
             }
 
-            genericResponseHandler(event, "Failed to remove function \'" + event->functionName + "\'.");
+            genericResponseHandler(event, "Failed to remove function \'" + event->functionName + "\'.", _bus, this);
         }
         else {
             loadFunctions();
@@ -279,7 +280,7 @@ namespace Robomongo
                 _server->handle(&refreshEvent);
             }
 
-            genericResponseHandler(event, "Failed to drop user \'" + event->username + "\'.");
+            genericResponseHandler(event, "Failed to drop user \'" + event->username + "\'.", _bus, this);
         }
         else {
             loadUsers();
@@ -296,7 +297,7 @@ namespace Robomongo
                 _server->handle(&refreshEvent);
             }
 
-            genericResponseHandler(event, "Failed to rename collection.");
+            genericResponseHandler(event, "Failed to rename collection.", _bus, this);
         }
         else {
             loadCollections();
@@ -314,7 +315,8 @@ namespace Robomongo
                 _server->handle(&refreshEvent);
             }
 
-            genericResponseHandler(event, "Failed to duplicate collection \'" + event->sourceCollection + "\'.");
+            genericResponseHandler(event, "Failed to duplicate collection \'" + event->sourceCollection + "\'.", 
+                                   _bus, this);
         }
         else {
             loadCollections();
@@ -323,17 +325,4 @@ namespace Robomongo
         }
     }
 
-    // todo: move to common header - identical function exists in MongoSever
-    void MongoDatabase::genericResponseHandler(Event *event, const std::string &userFriendlyMessage) {
-        if (!event->isError())
-            return;
-
-        // Capitalize first char. (Mongo errors often come all lower case)
-        std::string errMsg = event->error().errorMessage();
-        if (!errMsg.empty())
-            errMsg[0] = static_cast<char>(toupper(errMsg[0]));
-
-        LOG_MSG(userFriendlyMessage + " " + errMsg, mongo::logger::LogSeverity::Error());
-        _bus->publish(new OperationFailedEvent(this, errMsg, userFriendlyMessage));
-    }
 }

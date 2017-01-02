@@ -14,7 +14,7 @@ namespace Robomongo
     {
 
     public:
-        // Todo
+
         enum ErrorCode { Unknown, SetPrimaryUnreachable };
 
         /**
@@ -30,7 +30,9 @@ namespace Robomongo
         explicit EventError(const std::string &errorMessage, ErrorCode errorCode = Unknown, 
                             bool showErrorWindow = true);
         
-        // todo
+        /**
+        * @brief Creates error object only for replica set connection failures
+        */
         explicit EventError(const std::string &errorMessage, ReplicaSet replicaSetInfo, 
                             bool showErrorWindow = true);
 
@@ -47,7 +49,6 @@ namespace Robomongo
          */
         const std::string &errorMessage() const;
         
-        // todo
         ErrorCode errorCode() const { return _errorCode; }
         ReplicaSet replicaSetInfo() const { return _replicaSetInfo; }
         bool showErrorWindow() const { return _showErrorWindow; }
@@ -57,7 +58,7 @@ namespace Robomongo
          * @brief Error message
          */
         const std::string _errorMessage;
-        const ErrorCode _errorCode = Unknown;   // todo: not needed?
+        const ErrorCode _errorCode = Unknown;
         ReplicaSet _replicaSetInfo;
         bool _showErrorWindow = true;
         bool _isNull;

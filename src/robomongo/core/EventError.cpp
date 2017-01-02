@@ -1,11 +1,9 @@
 #include "robomongo/core/EventError.h"
 
+#include "robomongo/utils/string_operations.h"
 
 namespace Robomongo
 {
-    // Capitalize first char. (Mongo errors often come all lower case)
-    std::string captilizeFirstChar(std::string str);    // todo: move to utils header
-
     EventError::EventError() :
         _isNull(true) {}
 
@@ -33,11 +31,4 @@ namespace Robomongo
         return _errorMessage;
     }
 
-    std::string captilizeFirstChar(std::string str)
-    {
-        if (!str.empty())
-            str[0] = static_cast<char>(toupper(str[0]));
-
-        return str;
-    }
 }

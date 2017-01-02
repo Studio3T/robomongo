@@ -95,7 +95,6 @@ namespace Robomongo
     private:
         void clearCollections();
         void addCollection(MongoCollection *collection);
-        void genericResponseHandler(Event *event, const std::string &userFriendlyMessage);
 
     private:
         MongoServer *_server;

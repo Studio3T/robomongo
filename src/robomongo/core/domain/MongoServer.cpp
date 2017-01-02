@@ -13,6 +13,7 @@
 #include "robomongo/core/events/MongoEventsInfo.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/utils/common.h"
 
 namespace Robomongo {
     R_REGISTER_EVENT(MongoServerLoadingDatabasesEvent)
@@ -139,9 +140,10 @@ namespace Robomongo {
         _bus->send(_worker, new RemoveDocumentRequest(this, query, ns, justOne));
     }
 
-    void MongoServer::loadDatabases() {
+    void MongoServer::loadDatabases() 
+    {
         _bus->publish(new MongoServerLoadingDatabasesEvent(this));
-        if (_connSettings->isReplicaSet()) { // todo
+        if (_connSettings->isReplicaSet()) {
             tryRefreshReplicaSet();
         }
         else {  // single server
@@ -149,100 +151,23 @@ namespace Robomongo {
         }
     }
 
-    void MongoServer::clearDatabases() {
+    void MongoServer::clearDatabases() 
+    {
         qDeleteAll(_databases);
         _databases.clear();
     }
 
     void MongoServer::handle(EstablishConnectionResponse *event) 
     {
-
-        // todo
-        // _connectionType = event->_connectionType;
+        _connectionType = event->connectionType;
 
         // In any case, replica set info must be updated, there might be reachable secondary(ies).
         // Also cached set name must be updated or cleared for failed connections.
-        if (_connSettings->isReplicaSet()) {
-            _replicaSetInfo.reset(new ReplicaSet(event->replicaSet));
-            // todo: move to funct.
-            // todo: for primary unreachable, serverhost is set empty
-            _connSettings->setServerHost(_replicaSetInfo->primary.host());
-            _connSettings->setServerPort(_replicaSetInfo->primary.port());
-            _connSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
-
-            // Cache replica set name for 2 times faster first connection 
-            if (event->connectionType == ConnectionPrimary) {
-                ConnectionSettings* originalConnSettings = AppRegistry::instance().settingsManager()
-                    ->getConnectionSettings(event->info._originalConnectionSettingsId);
-                if (originalConnSettings) {
-                    originalConnSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
-                    AppRegistry::instance().settingsManager()->save();
-                    LOG_MSG("Replica set name cached as \"" + _replicaSetInfo->setName + "\".",
-                        mongo::logger::LogSeverity::Info());
-                }
-                else
-                    LOG_MSG("Failed to cache the replica set name.", mongo::logger::LogSeverity::Warning());
-            }
-        }
+        updateReplicaSetSettings(event);
 
         // --- Connection Failed
-        if (event->isError()) 
-        {
-            _isConnected = false;
-
-            std::stringstream ss("Unknown error");
-            auto eventErrorReason = event->errorReason;
-
-            // todo: 
-            if(_connSettings->isReplicaSet()) 
-            {
-                ss.clear();
-                std::string server = "";
-                if (_connSettings->replicaSetSettings()->members().size() > 0 )    
-                    server = "[" + _connSettings->replicaSetSettings()->members().front() + "]";
-
-                ss << "Cannot connect to replica set \"" << _connSettings->connectionName() << "\"" << server
-                   << ". \nSet's primary is unreachable.\n\nReason:\n" << event->error().errorMessage();
-
-                _bus->publish(new ConnectionFailedEvent(this, _handle, event->connectionType, ss.str(),
-                                                        ConnectionFailedEvent::MongoConnection));
-                _app->fireConnectionFailedEvent(_handle, event->connectionType, ss.str(), 
-                                                ConnectionFailedEvent::MongoConnection);
-                LOG_MSG("Establish connection failed. " + event->error().errorMessage() + 
-                        ". Connection: " + _connSettings->connectionName(), 
-                        mongo::logger::LogSeverity::Error());
-            }
-            else    // single server 
-            {  
-                if (EstablishConnectionResponse::ErrorReason::MongoSslConnection == eventErrorReason)
-                {
-                    auto reason = ConnectionFailedEvent::SslConnection;
-                    ss.clear();
-                    ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
-                        << ".\n\nError:\n" << "SSL connection failure: " << event->error().errorMessage();
-                    _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
-                }
-                else
-                {
-                    auto reason = (EstablishConnectionResponse::ErrorReason::MongoAuth == eventErrorReason) ?
-                        ConnectionFailedEvent::MongoAuth : ConnectionFailedEvent::MongoConnection;
-                    ss.clear();
-                    ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
-                        << ".\n\nError:\n" << event->error().errorMessage();
-                    _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
-                }
-
-                // When connection cannot be established, we should cleanup this instance of MongoServer if it wasn't
-                // shown in UI (i.e. it is not a Secondary connection that is used for shells tab)
-                if (_connectionType == ConnectionPrimary || _connectionType == ConnectionTest)
-                {
-                    LOG_MSG("Establish connection failed. " + event->error().errorMessage() + 
-                            ". Connection: " + _connSettings->connectionName(), 
-                            mongo::logger::LogSeverity::Error());
-                    _app->closeServer(this);
-                }
-            }
-
+        if (event->isError()) {
+            handleConnectionFailure(event);
             return;
         }
 
@@ -257,7 +182,6 @@ namespace Robomongo {
         // So we return here after updating(refreshing) information related to connection view.
         if (ConnectionRefresh == event->connectionType) {
             if (_connSettings->isReplicaSet()) {
-                // todo
                 // If it is replica set connection, do not return yet.
                 LOG_MSG("Replica set refreshed. [" + _connSettings->connectionName() + ']', 
                          mongo::logger::LogSeverity::Info());
@@ -268,16 +192,9 @@ namespace Robomongo {
             }
         }
 
-        // If it is replica set connection, do not send ConnectionEstablishedEvent yet.
+        // Only for single servers
         if (!_connSettings->isReplicaSet()) {
             _bus->publish(new ConnectionEstablishedEvent(this, _connectionType, info));
-        }
-
-        if (_connSettings->isReplicaSet()) {
-            // todo
-            // If it is replica set connection, do not return yet.
-        }
-        else {  // single server
             // Do nothing if this is not a "primary" connection
             if (ConnectionPrimary != _connectionType)
                 return;
@@ -288,9 +205,8 @@ namespace Robomongo {
                      mongo::logger::LogSeverity::Info());
 
         clearDatabases();
-        for (std::vector<std::string>::const_iterator it = info._databases.begin(); it != info._databases.end(); ++it) {
-            const std::string &name = *it;
-            MongoDatabase *db  = new MongoDatabase(this, name);
+        for (auto const& dbname : info._databases) {
+            MongoDatabase *db  = new MongoDatabase(this, dbname);
             addDatabase(db);    // todo: serverClones for replica sets should not do this
         }
 
@@ -318,9 +234,8 @@ namespace Robomongo {
 
         clearDatabases();
 
-        for (std::vector<std::string>::iterator it = event->databaseNames.begin(); it != event->databaseNames.end(); ++it) {
-            const std::string &name = *it;
-            MongoDatabase *db  = new MongoDatabase(this, name);
+        for (auto const& dbname : event->databaseNames) {
+            MongoDatabase *db  = new MongoDatabase(this, dbname);
             addDatabase(db);
         }
 
@@ -343,7 +258,7 @@ namespace Robomongo {
                 else {  // Insert document from tab results window (Notifier, OutputWindow widget)
                     _bus->publish(new InsertDocumentResponse(this, event->error()));
                 }
-                genericResponseHandler(event, "Failed to insert document.");
+                genericResponseHandler(event, "Failed to insert document.", _bus, this);
                 return;
             }
             _bus->publish(new InsertDocumentResponse(this));
@@ -362,10 +277,10 @@ namespace Robomongo {
     void MongoServer::runWorkerThread() 
     {
         _worker = new MongoWorker(_connSettings->clone(),
-                  AppRegistry::instance().settingsManager()->loadMongoRcJs(),
-                  AppRegistry::instance().settingsManager()->batchSize(),
-                  AppRegistry::instance().settingsManager()->mongoTimeoutSec(),
-                  AppRegistry::instance().settingsManager()->shellTimeoutSec());
+                                  AppRegistry::instance().settingsManager()->loadMongoRcJs(),
+                                  AppRegistry::instance().settingsManager()->batchSize(),
+                                  AppRegistry::instance().settingsManager()->mongoTimeoutSec(),
+                                  AppRegistry::instance().settingsManager()->shellTimeoutSec());
     }
 
     void MongoServer::handle(CreateDatabaseResponse *event) 
@@ -376,7 +291,7 @@ namespace Robomongo {
                 auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
                 handle(&refreshEvent);
             }
-            genericResponseHandler(event, "Failed to create database \'" + event->database + "\'.");
+            genericResponseHandler(event, "Failed to create database \'" + event->database + "\'.", _bus, this);
         }
         else {
             loadDatabases();
@@ -392,7 +307,7 @@ namespace Robomongo {
                 auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
                 handle(&refreshEvent);
             }
-            genericResponseHandler(event, "Failed to drop database \'" + event->database + "\'.");
+            genericResponseHandler(event, "Failed to drop database \'" + event->database + "\'.", _bus, this);
         }
         else {
             loadDatabases();
@@ -405,26 +320,11 @@ namespace Robomongo {
         handleReplicaSetRefreshEvents(event->isError(), event->error(), event->replicaSet);
     }
 
-    void MongoServer::genericResponseHandler(Event *event, const std::string &userFriendlyMessage) 
-    {
-        if (!event->isError())
-            return;
-
-        // Capitalize first char. (Mongo errors often come all lower case)
-        std::string errMsg = event->error().errorMessage();
-        if (!errMsg.empty())
-            errMsg[0] = static_cast<char>(toupper(errMsg[0]));
-
-        LOG_MSG(userFriendlyMessage + " " + errMsg, mongo::logger::LogSeverity::Error());
-        _bus->publish(new OperationFailedEvent(this, errMsg, userFriendlyMessage));
-    }
-
     void MongoServer::handleReplicaSetRefreshEvents(bool isError, EventError eventError, 
                                                     ReplicaSet const& replicaSet)
     {
         if (isError) { // Primary is unreachable
             _replicaSetInfo.reset(new ReplicaSet(replicaSet));
-            // todo: should we save set name?;
             LOG_MSG("Replica set folder refreshed with error. " + eventError.errorMessage() +
                     ". Connection: " + _connSettings->connectionName(), mongo::logger::LogSeverity::Error());
             _bus->publish(new ReplicaSetFolderRefreshed(this, eventError));
@@ -437,12 +337,91 @@ namespace Robomongo {
         _connSettings->setServerHost(_replicaSetInfo->primary.host());
         _connSettings->setServerPort(_replicaSetInfo->primary.port());
         _connSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
-        //_connSettings->replicaSetSettings()->setMembers(_replicaSetInfo->membersAndHealths);  // todo
-        //AppRegistry::instance().settingsManager()->save();    // todo
 
         LOG_MSG("Replica set folder refreshed. Connection: " + _connSettings->connectionName(),
                  mongo::logger::LogSeverity::Info());
         _bus->publish(new ReplicaSetFolderRefreshed(this));
     }
 
-}
+    void MongoServer::updateReplicaSetSettings(EstablishConnectionResponse* event)
+    {
+        if (!_connSettings->isReplicaSet())
+            return;
+
+        _replicaSetInfo.reset(new ReplicaSet(event->replicaSet));
+        _connSettings->setServerHost(_replicaSetInfo->primary.host());
+        _connSettings->setServerPort(_replicaSetInfo->primary.port());
+        _connSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
+
+        // Cache replica set name for 2 times faster first connection 
+        if (ConnectionPrimary == _connectionType) {
+            ConnectionSettings* originalConnSettings = AppRegistry::instance().settingsManager()
+                ->getConnectionSettings(event->info._originalConnectionSettingsId);
+            if (originalConnSettings) {
+                originalConnSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
+                AppRegistry::instance().settingsManager()->save();
+                LOG_MSG("Replica set name cached as \"" + _replicaSetInfo->setName + "\".",
+                    mongo::logger::LogSeverity::Info());
+            }
+            else
+                LOG_MSG("Failed to cache the replica set name.", mongo::logger::LogSeverity::Warning());
+        }
+    }
+
+    void MongoServer::handleConnectionFailure(EstablishConnectionResponse* event)
+    {
+        _isConnected = false;
+
+        std::stringstream ss("Unknown error");
+        auto eventErrorReason = event->errorReason;
+
+        if (_connSettings->isReplicaSet())
+        {
+            ss.clear();
+            std::string server = "";
+            if (_connSettings->replicaSetSettings()->members().size() > 0)
+                server = "[" + _connSettings->replicaSetSettings()->members().front() + "]";
+
+            ss << "Cannot connect to replica set \"" << _connSettings->connectionName() << "\"" << server
+                << ". \nSet's primary is unreachable.\n\nReason:\n" << event->error().errorMessage();
+
+            _bus->publish(new ConnectionFailedEvent(this, _handle, event->connectionType, ss.str(),
+                ConnectionFailedEvent::MongoConnection));
+            _app->fireConnectionFailedEvent(_handle, event->connectionType, ss.str(),
+                ConnectionFailedEvent::MongoConnection);
+            LOG_MSG("Establish connection failed. " + event->error().errorMessage() + ". Connection: "
+                + _connSettings->connectionName(), mongo::logger::LogSeverity::Error());
+        }
+        else    // single server 
+        {
+            if (EstablishConnectionResponse::ErrorReason::MongoSslConnection == eventErrorReason)
+            {
+                auto reason = ConnectionFailedEvent::SslConnection;
+                ss.clear();
+                ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
+                    << ".\n\nError:\n" << "SSL connection failure: " << event->error().errorMessage();
+                _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
+            }
+            else
+            {
+                auto reason = (EstablishConnectionResponse::ErrorReason::MongoAuth == eventErrorReason) ?
+                    ConnectionFailedEvent::MongoAuth : ConnectionFailedEvent::MongoConnection;
+                ss.clear();
+                ss << "Cannot connect to the MongoDB at " << connectionRecord()->getFullAddress()
+                    << ".\n\nError:\n" << event->error().errorMessage();
+                _app->fireConnectionFailedEvent(_handle, _connectionType, ss.str(), reason);
+            }
+
+            // When connection cannot be established, we should cleanup this instance of MongoServer if it wasn't
+            // shown in UI (i.e. it is not a Secondary connection that is used for shells tab)
+            if (_connectionType == ConnectionPrimary || _connectionType == ConnectionTest)
+            {
+                LOG_MSG("Establish connection failed. " + event->error().errorMessage() +
+                    ". Connection: " + _connSettings->connectionName(),
+                    mongo::logger::LogSeverity::Error());
+                _app->closeServer(this);
+            }
+        }
+    }
+
+}   // namespace Robomongo

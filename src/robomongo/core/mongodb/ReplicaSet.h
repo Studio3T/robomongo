@@ -4,7 +4,6 @@
 
 namespace Robomongo
 {
-    // todo: rename ReplicaSetInfo
     struct ReplicaSet
     {
         ReplicaSet(const std::string& setName, const mongo::HostAndPort primary,
@@ -14,6 +13,7 @@ namespace Robomongo
 
         std::string const setName;
         mongo::HostAndPort const primary;
+        // pair: {HostNameAndPort, Health}
         std::vector<std::pair<std::string, bool>> const membersAndHealths;
         std::string const errorStr;
     };

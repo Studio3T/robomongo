@@ -57,7 +57,12 @@ namespace Robomongo
          */
         void removeConnection(ConnectionSettings *connection);
 
-        // todo
+        /**
+        * @brief Finds and returns original (non-clone) connection settings.
+        * @param uniqueID : Unique ID for an original (non-clone) connection settings.
+        * @return If uniqueID is valid returns original (non-clone) connection settings, 
+        *         nullptr otherwise.
+        */
         ConnectionSettings* getConnectionSettings(int uniqueId);
 
         void reorderConnections(const ConnectionSettingsContainerType &connections);
@@ -178,7 +183,9 @@ namespace Robomongo
         ConnectionSettingsContainerType _connections;
         ToolbarSettingsContainerType _toolbars;
 
-        // todo: 
+        // Unique Id counter which is incremented only when a non-clone ConnectionSettings 
+        // object is created and assigned can be assigned to clone or non-clone 
+        // ConnectionSettings objects in order to identify source object ID for a clone.
         static int _uniqueIdCounter;
     };
 }

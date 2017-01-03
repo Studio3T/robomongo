@@ -28,7 +28,6 @@ namespace Robomongo
     {
         QVariantMap map;
         map.insert("setName", QString::fromStdString(_setName));
-        // todo: refactor
         int idx = 0;
         for (std::string const& str : _members) {
             map.insert(QString::number(idx), QtUtils::toQString(str));
@@ -42,8 +41,7 @@ namespace Robomongo
     {
         setSetName(map.value("setName").toString().toStdString());
         // Extract and set replica members
-        std::vector<std::string> vec;
-        // todo: refactor
+        std::vector<const std::string> vec;
         auto itr = map.begin();
         int idx = 0;
         do

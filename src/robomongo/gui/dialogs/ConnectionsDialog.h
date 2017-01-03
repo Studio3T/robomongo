@@ -47,9 +47,6 @@ namespace Robomongo
         */
         void add(ConnectionSettings *connection);
         
-        // todo: remove
-        void addManually();
-
     protected:
         /**
         * @brief Reimplementing closeEvent in order to do some pre-close actions.

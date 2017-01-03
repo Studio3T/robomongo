@@ -76,10 +76,12 @@ namespace Robomongo
     void ConnectionAdvancedTab::on_generateButton_clicked()
     {
         if (_settings->isReplicaSet()) {
-            // todo: handle setname will be empty initially
+            // todo: 
+            // handle set name will be empty initially. It will be available(cached) after first
+            // successful connection.
             std::string connStr = { "mongodb://" };
 
-            // todo: 
+            // todo: which credential to use if there are more than one?
             if (_settings->hasEnabledPrimaryCredential() && !_settings->credentials().isEmpty()) {
                 connStr.append(_settings->primaryCredential()->userName() + ":");
                 connStr.append(_includePasswordCheckBox->isChecked() ? 
@@ -96,7 +98,6 @@ namespace Robomongo
 
             connStr.append("replicaSet=" + _settings->replicaSetSettings()->setName());
 
-            // todo: move ssl enabled into settings
             if (_settings->sslSettings()->sslEnabled())
                 connStr.append("&ssl=true");
 
@@ -104,9 +105,6 @@ namespace Robomongo
                 connStr.append("&authSource=" + _settings->primaryCredential()->databaseName());
 
             // todo: validate connStr
-            //auto uriWithStatus = mongo::StatusWith<mongo::MongoURI>(mongo::MongoURI::parse(connStr));
-            //auto str2 = uriWithStatus.getValue().toString();
-
             _uriString->setText(QString::fromStdString(connStr));
             _uriString->setCursorPosition(QTextCursor::Start);
 
@@ -134,7 +132,6 @@ namespace Robomongo
 
         auto posUnderGenerateButton = QPoint(_copyButton->pos().x()-100, _copyButton->y()+20);
         QToolTip::showText(mapToGlobal(posUnderGenerateButton), "Copied into clipboard", nullptr, QRect(), 2000);
-        //QMessageBox::information(this, tr("Robomongo"), tr("Copied into clipboard"));
     }
 
     void ConnectionAdvancedTab::on_includePasswordsCheckBox_toggle(bool checked)

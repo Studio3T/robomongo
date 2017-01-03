@@ -660,8 +660,8 @@ namespace Robomongo
         {
             // Resize main window. We are trying to keep it "almost" maximized.
             QRect screenGeometry = QApplication::desktop()->availableGeometry();
-            int horizontalMargin = (int)(screenGeometry.width() * 0.1);     // todo: use C++ static cast instead of C-style cast
-            int verticalMargin = (int)(screenGeometry.height() * 0.1);
+            int horizontalMargin = static_cast<int>(screenGeometry.width() * 0.1);
+            int verticalMargin = static_cast<int>(screenGeometry.height() * 0.1);
             int _width = screenGeometry.width() - horizontalMargin;
             int _height = screenGeometry.height() - verticalMargin;
             resize(QSize(_width, _height));

@@ -52,25 +52,14 @@ namespace Robomongo
         _members->setHeaderHidden(true);
         _members->setIndentation(0);
 
-        if (_settings->isReplicaSet()) 
-        {
-            if (replicaSettings->members().empty()) // todo: remove
+        if (_settings->isReplicaSet()) {
+            for (const std::string& str : replicaSettings->members()) 
             {
-                //auto item = new QTreeWidgetItem;
-                //item->setText(0, "localhost:27017");
-                //item->setFlags(item->flags() | Qt::ItemIsEditable);
-                //_members->addTopLevelItem(item);
-            }
-            else            
-            {
-                for (const std::string& str : replicaSettings->members()) 
-                {
-                    if (!str.empty()) {  // todo: refactor
-                        auto item = new QTreeWidgetItem;
-                        item->setText(0, QString::fromStdString(str));
-                        item->setFlags(item->flags() | Qt::ItemIsEditable);
-                        _members->addTopLevelItem(item);
-                    }
+                if (!str.empty()) {
+                    auto item = new QTreeWidgetItem;
+                    item->setText(0, QString::fromStdString(str));
+                    item->setFlags(item->flags() | Qt::ItemIsEditable);
+                    _members->addTopLevelItem(item);
                 }
             }
         }
@@ -151,7 +140,7 @@ namespace Robomongo
 
         if (_settings->isReplicaSet()) {
             // save replica members
-            std::vector<std::string> members;
+            std::vector<const std::string> members;
             for (int i = 0; i < _members->topLevelItemCount(); ++i)
             {
                 QTreeWidgetItem const* item = _members->topLevelItem(i);

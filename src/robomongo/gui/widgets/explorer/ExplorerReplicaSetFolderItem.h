@@ -14,9 +14,8 @@ namespace Robomongo
         typedef ExplorerTreeItem BaseClass;
         ExplorerReplicaSetFolderItem(ExplorerTreeItem *item, MongoServer *const server);
 
-        // todo
         void updateText();
-        void disableSomeContextMenuActions(/*bool disable*/); // todo: rename toggle*
+        void disableSomeContextMenuActions();
         void expand();
         void setRefreshFlag(bool state) { _refreshFlag = state; }
         bool refreshFlag() const { return _refreshFlag; }

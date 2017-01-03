@@ -32,12 +32,10 @@ namespace Robomongo
 
     public:
         explicit ExportDialog(QString const& dbName, QString const& collName, QWidget *parent = 0);
-        //QString databaseName() const;
         void setOkButtonText(const QString &text);
         void setInputLabelText(const QString &text);
         void setInputText(const QString &text);
         enum { maxLenghtName = 60 };
-        //const static QSize dialogSize;
 
     public Q_SLOTS:
         virtual void accept();
@@ -53,7 +51,7 @@ namespace Robomongo
         void on_viewOutputLink(QString);
 
     private:
-        // todo: remove
+        // todo: remove if unused
         Indicator *createDatabaseIndicator(const QString &database);
         Indicator *createCollectionIndicator(const QString &collection);
 

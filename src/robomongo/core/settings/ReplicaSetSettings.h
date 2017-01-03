@@ -35,19 +35,21 @@ namespace Robomongo
 
         // Getters
         std::string setName() const { return _setName; }
-        const std::vector<std::string>& members() const { return _members; }
+        const std::vector<const std::string>& members() const { return _members; }
         const std::vector<mongo::HostAndPort> membersToHostAndPort() const;
         ReadPreference readPreference() const { return _readPreference; }
 
         // Setters
         void setSetName(const std::string& setName) { _setName = setName; }
-        void setMembers(const std::vector<std::string>& members) { _members = members; }
+        void setMembers(const std::vector<const std::string>& members) { _members = members; }
         void setMembers(const std::vector<std::pair<std::string,bool>>& membersAndHealts);
+        void deleteAllMembers() { _members.clear(); }
         void setReadPreference(ReadPreference readPreference) { _readPreference = readPreference; }
+
 
     private:
         std::string _setName;
-        std::vector<std::string> _members;  // todo: const std::string and refactor to std::vector<HostAndPort>
+        std::vector<const std::string> _members;
         ReadPreference _readPreference;
     };
 }

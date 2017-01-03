@@ -866,11 +866,11 @@ namespace Robomongo
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new CreateFunctionResponse(this, event->functionName(),
+                    reply(event->sender(), new DropFunctionResponse(this, event->functionName(),
                         EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
                 }
                 else  // other errors
-                    reply(event->sender(), new CreateFunctionResponse(this, event->functionName(), EventError(ex.what())));
+                    reply(event->sender(), new DropFunctionResponse(this, event->functionName(), EventError(ex.what())));
             }
             else  // single server
                 reply(event->sender(), new DropFunctionResponse(this, event->functionName(), EventError(ex.what())));

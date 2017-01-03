@@ -37,7 +37,7 @@ namespace
 
 namespace Robomongo
 {
-    int SettingsManager::_uniqueIdCounter = 0;    // todo
+    int SettingsManager::_uniqueIdCounter = 0;
 
     /**
      * Creates SettingsManager for config file in default location
@@ -323,7 +323,7 @@ namespace Robomongo
                 return connSettings;
         }
 
-        LOG_MSG("Failed to get connection settings.", mongo::logger::LogSeverity::Warning());
+        LOG_MSG("Failed to find connection settings object by unique ID.", mongo::logger::LogSeverity::Warning());
         return nullptr;
     }
 

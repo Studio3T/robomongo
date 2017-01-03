@@ -275,25 +275,6 @@ namespace Robomongo
     }
 
     /**
-    * @brief Initiate 'add' action, usually when user clicked on Add button
-    */
-    void ConnectionsDialog::addManually()
-    {
-        //auto newModel = new ConnectionSettings;
-        //ConnectionDialog editDialog(newModel);
-
-        //// Do nothing if not accepted
-        //if (editDialog.exec() != QDialog::Accepted) {
-        //    delete newModel;
-        //    return;
-        //}
-
-        //_settingsManager->addConnection(newModel);
-        //_listWidget->setFocus();
-        //add(newModel);
-    }
-
-    /**
      * @brief Initiate 'edit' action, usually when user clicked on Edit button
      */
     void ConnectionsDialog::edit()

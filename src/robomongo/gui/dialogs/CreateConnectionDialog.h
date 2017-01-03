@@ -32,7 +32,7 @@ namespace Robomongo
         ConnectionSettings *const connection() const { return _connection; }
 
         // todo:
-        //mongo::MongoURI getMongoUri() const { return _mongoUri; }
+        // mongo::MongoURI getMongoUri() const { return _mongoUri; }
         bool fromURI() const { return _fromURI; }
 
         std::unique_ptr<mongo::StatusWith<mongo::MongoURI>> getMongoUriWithStatus() 

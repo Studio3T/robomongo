@@ -10,6 +10,7 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/utils/Logger.h"
 #include "robomongo/gui/GuiRegistry.h"
 
 namespace
@@ -21,12 +22,10 @@ namespace
             Robomongo::QtUtils::toQString(server->connectionRecord()->getReadableName()), cursor);
     }
 
-    // todo : modify or move to a common header
     void openCurrentServerShell(Robomongo::MongoServer* server, Robomongo::ConnectionSettings* connSettings,
                                 const QString &script)
     {
-        auto const scriptStr = Robomongo::ScriptInfo(script, true);
-        Robomongo::AppRegistry::instance().app()->openShell(server, connSettings, scriptStr);
+        Robomongo::AppRegistry::instance().app()->openShell(server, connSettings, Robomongo::ScriptInfo(script, true));
     }
 }
 
@@ -36,8 +35,6 @@ namespace Robomongo
     ExplorerReplicaSetFolderItem::ExplorerReplicaSetFolderItem(ExplorerTreeItem *parent, MongoServer *const server) :
         BaseClass(parent), _server(server)
     {
-        //VERIFY(connect(this, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(on_expanded())));
-
         auto repSetStatus = new QAction("Status of Replica Set", this);
         VERIFY(connect(repSetStatus, SIGNAL(triggered()), SLOT(on_repSetStatus())));
 
@@ -51,7 +48,6 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(this, ReplicaSetFolderLoading::Type, _server);
 
         setIcon(0, GuiRegistry::instance().folderIcon());
-        // todo: use repSize()
         setText(0, "Replica Set (" + QString::number(_server->replicaSetInfo()->membersAndHealths.size()) + " nodes)");
 
         setExpanded(false);
@@ -63,13 +59,12 @@ namespace Robomongo
         setText(0, "Replica Set (" + QString::number(_server->replicaSetInfo()->membersAndHealths.size()) + " nodes)");
     }
 
-    void ExplorerReplicaSetFolderItem::disableSomeContextMenuActions(/*bool disable*/)
+    void ExplorerReplicaSetFolderItem::disableSomeContextMenuActions()
     {
-        // todo: refactor
         if (BaseClass::_contextMenu->actions().size() < 1)
             return;
 
-        // Break if there is at least one online set member  
+        // Find out if there is at least one reachable member  
         mongo::HostAndPort onlineMember;
         for (auto const& member : _server->replicaSetInfo()->membersAndHealths) {
             if (member.second) {
@@ -78,11 +73,9 @@ namespace Robomongo
             }
         }
 
-        // Show menu item "Status of Replica Set" only if there is at least one online member
-        if (onlineMember.empty()) 
-            BaseClass::_contextMenu->actions().at(0)->setDisabled(true);
-        else
-            BaseClass::_contextMenu->actions().at(0)->setDisabled(false);
+        // Show menu item "Status of Replica Set" only if there is at least one reachable member
+        // If there is no reachable member, disable it.
+        BaseClass::_contextMenu->actions().at(0)->setDisabled(onlineMember.empty());
     }
 
     void ExplorerReplicaSetFolderItem::expand()
@@ -91,6 +84,7 @@ namespace Robomongo
             _refreshFlag = true;
             return;
         }
+
         _server->tryRefreshReplicaSetFolder();
     }
 
@@ -99,10 +93,8 @@ namespace Robomongo
         if (!_server->replicaSetInfo()->primary.empty()) {
             openCurrentServerShell(_server, "rs.status()");
         }
-        else // primary is unreachable
+        else // Primary is unreachable, try to find and run rs.status on a reachable secondary
         {
-            // Todo: do this before 
-            // Run rs.status only if there is a reachable secondary
             mongo::HostAndPort onlineMember;
             for (auto const& member : _server->replicaSetInfo()->membersAndHealths) {
                 if (member.second) {
@@ -110,19 +102,23 @@ namespace Robomongo
                     break;
                 }
             }
-            if (onlineMember.empty())   // todo: throw error
-                return;
 
-            auto connSetting = _server->connectionRecord()->clone();    // todo: unique_ptr
+            if (onlineMember.empty()) {
+                LOG_MSG("Unable to find a reachable replica set member to run rs.status().", 
+                        mongo::logger::LogSeverity::Error());
+                return;
+            }
+
+            auto connSetting = std::unique_ptr<ConnectionSettings>(_server->connectionRecord()->clone());
             // Set connection settings of this replica member
             connSetting->setConnectionName(onlineMember.toString() + 
                                            " [member of " + connSetting->connectionName() + "]");
             connSetting->setServerHost(onlineMember.host());
             connSetting->setServerPort(onlineMember.port());
             connSetting->setReplicaSet(false);
-            connSetting->replicaSetSettings()->setMembers(std::vector<std::string>()); 
+            connSetting->replicaSetSettings()->setMembers(std::vector<const std::string>()); 
 
-            openCurrentServerShell(_server, connSetting, "rs.status()");
+            openCurrentServerShell(_server, connSetting.get(), "rs.status()");
         }
     }
 

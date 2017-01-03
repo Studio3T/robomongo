@@ -40,8 +40,6 @@
 
 namespace Robomongo
 {
-    //const QSize ExportDialog::dialogSize = QSize(500, 250);     // todo: remove
-
     namespace
     {
         const QString defaultDir = "D:\\exports\\";     // Default location
@@ -129,12 +127,12 @@ namespace Robomongo
         VERIFY(connect(_formatComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_formatComboBox_change(int))));
 
         _fieldsLabel = new QLabel("Fields:");
-        _fields = new QLineEdit; // todo: make textedit
+        _fields = new QLineEdit; // todo: use textedit
         // Initially hidden
         _fieldsLabel->setHidden(true);
         _fields->setHidden(true);
 
-        _query = new QLineEdit("{}"); // todo: can use JSON frame
+        _query = new QLineEdit("{}"); // todo: JSON frame can be used
         _outputFileName = new QLineEdit;
         _outputDir = new QLineEdit;
         _browseButton = new QPushButton("...");
@@ -246,7 +244,7 @@ namespace Robomongo
         layout->addLayout(hButtonBoxlayout);
         setLayout(layout);
 
-        // todo: move to function
+        // todo: move to a function
         // Help user filling inputs automatically
         auto date = QDateTime::currentDateTime().toString("dd.MM.yyyy");
         auto time = QDateTime::currentDateTime().toString("hh.mm.ss");
@@ -274,13 +272,6 @@ namespace Robomongo
     void ExportDialog::setInputLabelText(const QString &text)
     {
         //_inputLabel->setText(text);
-    }
-
-    // todo: remove
-    void ExportDialog::setInputText(const QString &text)
-    {
-        //_inputEdit->setText(text);
-        //_inputEdit->selectAll();
     }
 
     void ExportDialog::accept()
@@ -349,17 +340,7 @@ namespace Robomongo
 
     void ExportDialog::ui_itemDoubleClicked(QTreeWidgetItem *item, int column)
     {
-        //auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem*>(item);
-        //if (collectionItem) {
-        //    AppRegistry::instance().app()->openShell(collectionItem->collection());
-        //    return;
-        //}
-
         // todo
-        //auto dbTreeItem = dynamic_cast<ExplorerDatabaseTreeItem*>(item);
-        //if (dbTreeItem) {
-        //    dbTreeItem->applySettingsForExportDialog();
-        //}
     }
 
     void ExportDialog::on_browseButton_clicked()

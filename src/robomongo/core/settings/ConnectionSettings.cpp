@@ -32,11 +32,12 @@ namespace Robomongo
         _sshSettings(new SshSettings()),
         _sslSettings(new SslSettings()),
         _isReplicaSet(false),
-        _replicaSetSettings(new ReplicaSetSettings()),       // todo: dont create if not replica set
+        _replicaSetSettings(new ReplicaSetSettings()),
         _clone(isClone)
     { }
 
-    ConnectionSettings::ConnectionSettings(const mongo::MongoURI& uri, bool isClone)  // todo: remove or add clone support
+    // todo: remove or add clone support
+    ConnectionSettings::ConnectionSettings(const mongo::MongoURI& uri, bool isClone)  
         : _connectionName(defaultNameConnection),
         _host(defaultServerHost),
         _port(port),
@@ -44,7 +45,7 @@ namespace Robomongo
         _sshSettings(new SshSettings()),
         _sslSettings(new SslSettings()),
         _isReplicaSet((uri.type() == mongo::ConnectionString::ConnectionType::SET)),
-        _replicaSetSettings(new ReplicaSetSettings(uri)),    // todo: dont create if not replica set
+        _replicaSetSettings(new ReplicaSetSettings(uri)),
         _clone(isClone)
     {
         if (!uri.getServers().empty()) {
@@ -106,9 +107,6 @@ namespace Robomongo
     ConnectionSettings::~ConnectionSettings()
     {
         clearCredentials();
-        delete _sshSettings;
-        delete _sslSettings;
-        delete _replicaSetSettings; // todo: unique_ptr
     }
 
     /**
@@ -140,9 +138,9 @@ namespace Robomongo
             addCredential((*it)->clone());
         }
 
-        _sshSettings = source->sshSettings()->clone();
-        _sslSettings = source->sslSettings()->clone();
-        _replicaSetSettings = source->_replicaSetSettings->clone(); // todo: leak candidate
+        _sshSettings.reset(source->sshSettings()->clone());
+        _sslSettings.reset(source->sslSettings()->clone());
+        _replicaSetSettings.reset(source->_replicaSetSettings->clone());
 
 //#ifdef MONGO_SSL
 //        setSslInfo(source->sslInfo());
@@ -184,7 +182,7 @@ namespace Robomongo
 
      CredentialSettings *ConnectionSettings::findCredential(const std::string &databaseName) const
      {
-         CredentialSettings *result = NULL;
+         CredentialSettings *result = nullptr;
          for (QList<CredentialSettings *>::const_iterator it = _credentials.begin(); it != _credentials.end(); ++it) {
              CredentialSettings *cred = *it;
              if (cred->databaseName() == databaseName) {

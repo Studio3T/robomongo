@@ -20,7 +20,6 @@
 
 namespace
 {
-    // todo : modify or move to a common header
      void openCurrentServerShell(Robomongo::MongoServer* server, Robomongo::ConnectionSettings* connSettings, 
                                  const QString &script)
      {
@@ -33,7 +32,8 @@ namespace Robomongo
 {
     ExplorerReplicaSetTreeItem::ExplorerReplicaSetTreeItem(QTreeWidgetItem *parent, MongoServer *const server, 
         const mongo::HostAndPort& repMemberHostAndPort, const bool isPrimary, const bool isUp)
-        : BaseClass(parent),
+        : 
+        BaseClass(parent),
         _repMemberHostAndPort(repMemberHostAndPort),
         _isPrimary(isPrimary),
         _isUp(isUp),
@@ -46,7 +46,7 @@ namespace Robomongo
         _connSettings->setServerHost(_repMemberHostAndPort.host());
         _connSettings->setServerPort(_repMemberHostAndPort.port());
         _connSettings->setReplicaSet(false);  
-        _connSettings->replicaSetSettings()->setMembers(std::vector<std::string>()); // todo: replicaSetSettings->clear()
+        _connSettings->replicaSetSettings()->deleteAllMembers();
 
         // Add Actions
         auto openShellAction = new QAction("Open Shell", this);
@@ -77,12 +77,6 @@ namespace Robomongo
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(showLog);
 
-        //BaseClass::_contextMenu->setHidden(!_isUp);
-
-        // Todo: remove ?
-        //_bus->subscribe(this, DatabaseListLoadedEvent::Type, _server);
-        //_bus->subscribe(this, MongoServerLoadingDatabasesEvent::Type, _server);
-
         updateState(_isUp, _isPrimary);
 
         setExpanded(true);
@@ -95,12 +89,11 @@ namespace Robomongo
         _isPrimary = isPrimary;
 
         QString stateStr("[Unknown]");
-        if (!_isUp) {
-            stateStr = "[Not Reachable]";
-        }
-        else {
+        if (_isUp)
             stateStr = _isPrimary ? "[Primary]" : "[Secondary]";
-        }
+        else
+            stateStr = "[Not Reachable]";
+
         setDisabled(_isUp ? false : true);
         setText(0, QString::fromStdString(_repMemberHostAndPort.toString()) + " " + stateStr);
         setIcon(0, _isPrimary ? GuiRegistry::instance().serverPrimaryIcon()                               

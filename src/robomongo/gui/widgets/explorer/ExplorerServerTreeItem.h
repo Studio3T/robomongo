@@ -27,17 +27,20 @@ namespace Robomongo
         */
         void expand();
 
-        // todo
+        // Disable/enable menu items, except [1]:Refresh and [9]:Disconnect which are 
+        // always enabled, according to replica set online or offline status.
         void disableSomeContextMenuActions(bool disable);
 
     public Q_SLOTS:
         void databaseRefreshed(const QList<MongoDatabase *> &dbs);
         void handle(DatabaseListLoadedEvent *event);
         void handle(MongoServerLoadingDatabasesEvent *event);
-        // todo
         void handle(ReplicaSetFolderRefreshed *event);
-        void handle(ReplicaSetRefreshed *event);
+
+        // Special handle for server refresh events for replica set connections only
         void handle(ConnectionEstablishedEvent *event);
+
+        // Special handle for server refresh events for replica set connections only
         void handle(ConnectionFailedEvent *event);
 
     private Q_SLOTS:
@@ -52,17 +55,18 @@ namespace Robomongo
 
     private:
 
-        // todo: 
-        void buildServerItem();  // build root item for single server or replica set
+        // Build all items for a root replica set server item
+        void buildReplicaSetServerItem();
+
+        // Build only replica set folder and member items
         void buildReplicaSetFolder();
+
         // This function assumes there is no existing db items (system folder and other db tree items), 
         // so existing db items should be deleted before calling this function.
         void buildDatabaseItems();  
+
         void replicaSetPrimaryReachable();
         void replicaSetPrimaryUnreachable();
-
-        ExplorerReplicaSetFolderItem *_replicaSetFolder;
-        ExplorerTreeItem *_systemFolder;
 
         /**
          * @brief Builds server
@@ -72,10 +76,13 @@ namespace Robomongo
          */
         QString buildServerName(int *count = NULL, bool isOnline = true);
 
+        ExplorerReplicaSetFolderItem *_replicaSetFolder;
+        ExplorerTreeItem *_systemFolder;
+
         MongoServer *const _server;
         EventBus *_bus;
 
-        // todo: @brief
-        bool _primaryWasUnreachable;
+        // Flag to track last replica set connection's primary status
+        bool _primaryWasUnreachable = false;
     };
 }

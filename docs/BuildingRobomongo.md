@@ -125,4 +125,7 @@ Install Robomongo to `build/release/install` folder:
 Create package for your OS in `build/release/package` folder:
 
     $ bin/pack
-    
+
+**Notes**
+- For Ubuntu 16.04 builds, it has been reported that Robomongo /bin/configure step might fail and installing mesa-common-dev package solves it. Details: https://github.com/paralect/robomongo/issues/1268 
+

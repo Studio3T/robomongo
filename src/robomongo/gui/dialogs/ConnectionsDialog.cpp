@@ -372,15 +372,13 @@ namespace Robomongo
      */
     void ConnectionsDialog::listWidget_layoutChanged()
     {
-        int count = _listWidget->topLevelItemCount();
-
         // Make childrens toplevel again. This is a bad, but quickiest item reordering
         // implementation.
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < _listWidget->topLevelItemCount(); i++)
         {
-            ConnectionListWidgetItem * item = (ConnectionListWidgetItem *) _listWidget->topLevelItem(i);
+            auto item = (ConnectionListWidgetItem *) _listWidget->topLevelItem(i);
             if (item->childCount() > 0) {
-                ConnectionListWidgetItem *childItem = (ConnectionListWidgetItem *) item->child(0);
+                auto childItem = (ConnectionListWidgetItem *) item->child(0);
                 item->removeChild(childItem);
                 _listWidget->insertTopLevelItem(++i, childItem);
                 _listWidget->setCurrentItem(childItem);
@@ -388,11 +386,10 @@ namespace Robomongo
             }
         }
 
-        count = _listWidget->topLevelItemCount();
         SettingsManager::ConnectionSettingsContainerType items;
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < _listWidget->topLevelItemCount(); i++)
         {
-            ConnectionListWidgetItem * item = (ConnectionListWidgetItem *) _listWidget->topLevelItem(i);
+            auto item = (ConnectionListWidgetItem *) _listWidget->topLevelItem(i);
             items.push_back(item->connection());
         }
 

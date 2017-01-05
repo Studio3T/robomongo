@@ -26,6 +26,8 @@
 
 namespace Robomongo
 {
+    std::string const PRIMARY_UNREACHABLE = "Replica set's primary is unreachable.";
+
     MongoWorker::MongoWorker(ConnectionSettings *connection, bool isLoadMongoRcJs, int batchSize,
                              int mongoTimeoutSec, int shellTimeoutSec, QObject *parent) : QObject(parent),
         _scriptEngine(nullptr),
@@ -343,15 +345,13 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new LoadCollectionNamesResponse(this,
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
-                else {   // other errors
+                else // other errors
                     reply(event->sender(), new LoadCollectionNamesResponse(this, EventError(ex.what())));
-                }
             }
-            else { // single server
+            else // single server
                 reply(event->sender(), new LoadCollectionNamesResponse(this, EventError(ex.what())));
-            }
         }
     }
 
@@ -368,15 +368,13 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new LoadUsersResponse(this,
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
-                else {   // other errors
+                else // other errors
                     reply(event->sender(), new LoadUsersResponse(this, EventError(ex.what())));
-                }
             }
-            else { // single server
+            else // single server
                 reply(event->sender(), new LoadUsersResponse(this, EventError(ex.what())));
-            }
         }
     }
 
@@ -452,15 +450,13 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new LoadFunctionsResponse(this,
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
-                else {   // other errors
+                else // other errors
                     reply(event->sender(), new LoadFunctionsResponse(this, EventError(ex.what())));
-                }
             }
-            else { // single server
+            else // single server
                 reply(event->sender(), new LoadFunctionsResponse(this, EventError(ex.what())));
-            }
         }
     }
 
@@ -475,7 +471,6 @@ namespace Robomongo
                 client->insertDocument(event->obj(), event->ns());
 
             client->done();
-
             reply(event->sender(), new InsertDocumentResponse(this));
         } 
         catch(const mongo::DBException &ex) {
@@ -483,14 +478,14 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new InsertDocumentResponse(this,
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
                 else    // other errors
                     reply(event->sender(), new InsertDocumentResponse(this, EventError(ex.toString())));
             }
             else { // single server
                     reply(event->sender(), new InsertDocumentResponse(this, 
-                        EventError("Error when saving document: " + ex.toString())));
+                          EventError("Error when saving document: " + ex.toString())));
             }
         }
     }
@@ -503,11 +498,22 @@ namespace Robomongo
             client->removeDocuments(event->ns(), event->query(), event->justOne());
             client->done();
 
-            reply(event->sender(), new RemoveDocumentResponse(this));
+            reply(event->sender(), new RemoveDocumentResponse(this, !event->justOne()));
         } 
         catch(const mongo::DBException &ex) {
-            reply(event->sender(), new RemoveDocumentResponse(this, 
-                EventError("Error when deleting document: " + ex.toString())));
+            if (_connSettings->isReplicaSet()) {
+                ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
+                if (replicaSetInfo.primary.empty()) {  // primary not reachable
+                    reply(event->sender(), new RemoveDocumentResponse(this,
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false), !event->justOne()));
+                }
+                else // other errors
+                    reply(event->sender(), new RemoveDocumentResponse(this, EventError(ex.what()), 
+                          !event->justOne()));
+            }
+            else // single server
+                reply(event->sender(), new RemoveDocumentResponse(this,
+                      EventError("Error when deleting document: " + ex.toString()), !event->justOne()));
         }
     }
 
@@ -556,7 +562,7 @@ namespace Robomongo
                     ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                     if (replicaSetInfo.primary.empty()) {  // primary not reachable
                         reply(event->sender(), new ExecuteScriptResponse(this, 
-                             EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                              EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                         return;
                     }
                     else {  // primary reachable
@@ -627,7 +633,7 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new CreateDatabaseResponse(this, event->database(),
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
                 else    // other errors
                     reply(event->sender(), new CreateDatabaseResponse(this, event->database(), 
@@ -654,7 +660,7 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new DropDatabaseResponse(this, event->database,
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
                 else // other errors
                     reply(event->sender(), new DropDatabaseResponse(this, event->database, EventError(ex.toString())));
@@ -680,7 +686,7 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new CreateCollectionResponse(this, collection,
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
                 else // other errors
                     reply(event->sender(), new CreateCollectionResponse(this, collection, EventError(ex.toString())));
@@ -705,7 +711,7 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new DropCollectionResponse(this, collection,
-                          EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
                 else // other errors
                     reply(event->sender(), new DropCollectionResponse(this, collection, EventError(ex.toString())));
@@ -729,7 +735,7 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new RenameCollectionResponse(this,
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
                 else // other errors
                     reply(event->sender(), new RenameCollectionResponse(this, EventError(ex.toString())));
@@ -755,7 +761,7 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection,
-                          EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
                 else    // other errors
                     reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection, EventError(ex.what())));
@@ -793,7 +799,7 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new CreateUserResponse(this, event->user().name(),
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
                 else   // other errors
                     reply(event->sender(), new CreateUserResponse(this, event->user().name(), 
@@ -818,7 +824,7 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new DropUserResponse(this, event->username(),
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
                 else   // other errors
                     reply(event->sender(), new DropUserResponse(this, event->username(), EventError(ex.what())));
@@ -843,7 +849,7 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new CreateFunctionResponse(this, functionName,
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
                 else    // other errors
                     reply(event->sender(), new CreateFunctionResponse(this, functionName, EventError(ex.what())));
@@ -867,7 +873,7 @@ namespace Robomongo
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new DropFunctionResponse(this, event->functionName(),
-                        EventError("Replica set's primary is unreachable.", replicaSetInfo, false)));
+                        EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
                 else  // other errors
                     reply(event->sender(), new DropFunctionResponse(this, event->functionName(), EventError(ex.what())));
@@ -915,10 +921,8 @@ namespace Robomongo
                 _dbclient = DBClientConnection(new mongo::DBClientConnection(true, _mongoTimeoutSec));
 
                 mongo::Status status = _dbclient->connect(_connSettings->hostAndPort());
-
-                if (!status.isOK() && mayReturnNull) {
+                if (!status.isOK() && mayReturnNull) 
                     return nullptr;
-                }
             }
             return _dbclient.get();
         }

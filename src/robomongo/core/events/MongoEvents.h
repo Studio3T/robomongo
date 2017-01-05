@@ -438,16 +438,18 @@ namespace Robomongo
         bool _justOne;
     };
 
-    class RemoveDocumentResponse : public Event
+    struct RemoveDocumentResponse : public Event
     {
         R_EVENT
 
     public:
-        RemoveDocumentResponse(QObject *sender) :
-            Event(sender) {}
+        RemoveDocumentResponse(QObject *sender, bool removeAll) :
+            Event(sender), removeAll(removeAll) {}
 
-        RemoveDocumentResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        RemoveDocumentResponse(QObject *sender, const EventError &error, bool removeAll) :
+            Event(sender, error), removeAll(removeAll) {}
+
+        bool removeAll = false;
     };
 
     /**

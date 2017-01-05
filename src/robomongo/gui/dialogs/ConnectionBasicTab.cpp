@@ -188,7 +188,7 @@ namespace Robomongo
         auto item = new QTreeWidgetItem;
 
         // Make member addition little smarter than expected
-        if (_members->topLevelItemCount() == 0) {
+        if (_members->topLevelItemCount() < 1) {
             item->setText(0, "localhost:27017");
         }
         else {  // Add the next member using last entered hostname and incremented port by one

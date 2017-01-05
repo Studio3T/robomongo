@@ -14,6 +14,7 @@
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/utils/common.h"
+#include "robomongo/utils/string_operations.h"
 
 namespace Robomongo {
     R_REGISTER_EVENT(MongoServerLoadingDatabasesEvent)
@@ -267,7 +268,19 @@ namespace Robomongo {
 
     void MongoServer::handle(RemoveDocumentResponse *event) 
     {
-        _bus->publish(new RemoveDocumentResponse(event->sender(), event->error()));
+        std::string const& subStr = event->removeAll ? "all documents." : "document.";
+
+        if (event->isError()) {
+            if (_connSettings->isReplicaSet() &&
+                EventError::SetPrimaryUnreachable == event->error().errorCode()) {
+                auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
+                handle(&refreshEvent);
+            }
+            genericResponseHandler(event, "Failed to remove " + subStr, _bus, this);
+        }
+        else {
+            LOG_MSG("Removed " + subStr, mongo::logger::LogSeverity::Info());
+        }
     }
 
     void MongoServer::runWorkerThread() 
@@ -410,11 +423,11 @@ namespace Robomongo {
 
             // When connection cannot be established, we should cleanup this instance of MongoServer if it wasn't
             // shown in UI (i.e. it is not a Secondary connection that is used for shells tab)
-            if (_connectionType == ConnectionPrimary || _connectionType == ConnectionTest)
+            if (_connectionType == ConnectionPrimary || _connectionType == ConnectionTest) 
             {
                 LOG_MSG("Establish connection failed. " + event->error().errorMessage() +
-                    ". Connection: " + _connSettings->connectionName(),
-                    mongo::logger::LogSeverity::Error());
+                        ". Connection: " + _connSettings->connectionName(), 
+                        mongo::logger::LogSeverity::Error());
                 _app->closeServer(this);
             }
         }

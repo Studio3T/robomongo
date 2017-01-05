@@ -14,7 +14,7 @@ namespace Robomongo
     class MongoShell;
     class BsonTreeItem;
     class InsertDocumentResponse;
-    class RemoveDocumentResponse;
+    struct RemoveDocumentResponse;
 
     namespace detail
     {

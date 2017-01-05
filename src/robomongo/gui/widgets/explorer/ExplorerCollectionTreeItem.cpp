@@ -114,16 +114,18 @@ namespace Robomongo
 
     void ExplorerCollectionDirIndexesTreeItem::ui_addIndexGui()
     {
-        ExplorerCollectionTreeItem *par = dynamic_cast<ExplorerCollectionTreeItem *const>(parent());
+        auto par = dynamic_cast<ExplorerCollectionTreeItem *const>(parent());
         if (!par)
             return;
         EnsureIndexInfo fakeInfo(par->collection()->info(), "");
-        EditIndexDialog dlg(fakeInfo , QtUtils::toQString(par->databaseItem()->database()->name()), QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()), treeWidget());
+        EditIndexDialog dlg(fakeInfo , QtUtils::toQString(par->databaseItem()->database()->name()), 
+            QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()), 
+                               treeWidget());
         int result = dlg.exec();
         if (result != QDialog::Accepted)
             return;
 
-        ExplorerDatabaseTreeItem *databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *>(par->databaseItem());
+        auto databaseTreeItem = static_cast<ExplorerDatabaseTreeItem *>(par->databaseItem());
         if (!databaseTreeItem)
             return;
 

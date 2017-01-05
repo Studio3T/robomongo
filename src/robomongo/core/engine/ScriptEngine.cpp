@@ -218,6 +218,12 @@ namespace Robomongo
                     if (failed)
                         return MongoShellExecResult(true, answer);
 
+                    // In some cases, need to find the error manually and if found return.
+                    auto answerCopy = answer;
+                    std::transform(answerCopy.begin(), answerCopy.end(), answerCopy.begin(), ::tolower);
+                    if (answerCopy.find("error") != std::string::npos)  
+                        return MongoShellExecResult(true, answer);
+
                     std::vector<MongoDocumentPtr> docs = MongoDocument::fromBsonObj(__objects);
 
                     if (!answer.empty() || docs.size() > 0)

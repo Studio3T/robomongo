@@ -573,7 +573,6 @@ namespace Robomongo
                 }
                 else { // single server
                     reply(event->sender(), new ExecuteScriptResponse(this, EventError(result.errorMessage())));
-                    LOG_MSG(result.errorMessage(), mongo::logger::LogSeverity::Error());
                     return;
                 }
             }
@@ -582,7 +581,6 @@ namespace Robomongo
         } 
         catch(const std::exception &ex) {
             reply(event->sender(), new ExecuteScriptResponse(this, EventError(ex.what(), EventError::Unknown, false)));
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
 

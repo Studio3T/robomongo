@@ -495,25 +495,25 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
 
-            client->removeDocuments(event->ns(), event->query(), event->justOne());
+            client->removeDocuments(event->ns(), event->query(), (event->removeCount() == RemoveDocumentCount::ONE));
             client->done();
 
-            reply(event->sender(), new RemoveDocumentResponse(this, !event->justOne()));
+            reply(event->sender(), new RemoveDocumentResponse(this, event->removeCount(), event->index()));
         } 
         catch(const mongo::DBException &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
                     reply(event->sender(), new RemoveDocumentResponse(this,
-                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false), !event->justOne()));
+                          EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false), event->removeCount(), event->index()));
                 }
                 else // other errors
                     reply(event->sender(), new RemoveDocumentResponse(this, EventError(ex.what()), 
-                          !event->justOne()));
+                          event->removeCount(), event->index()));
             }
             else // single server
                 reply(event->sender(), new RemoveDocumentResponse(this,
-                      EventError("Error when deleting document: " + ex.toString()), !event->justOne()));
+                      EventError("Error when deleting document: " + ex.toString()), event->removeCount(), event->index()));
         }
     }
 

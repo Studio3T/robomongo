@@ -184,8 +184,9 @@ namespace Robomongo
     void Notifier::deleteDocuments(std::vector<BsonTreeItem*> items, bool force)
     {
         bool isNeededRefresh = false;
-        for (std::vector<BsonTreeItem*>::const_iterator it = items.begin(); it != items.end(); ++it) {
-            BsonTreeItem * documentItem = *it;
+
+        int index = 0;
+        for (auto documentItem : items) {
             if (!documentItem)
                 break;
 
@@ -213,11 +214,12 @@ namespace Robomongo
             }
 
             isNeededRefresh = true;
-            _shell->server()->removeDocuments(query, _queryInfo._info._ns);
-        }
 
-        if (isNeededRefresh)
-            _shell->query(0, _queryInfo);
+            RemoveDocumentCount removeCount = items.size() == 1 ? RemoveDocumentCount::ONE :  
+                                                                  RemoveDocumentCount::MULTI;
+            _shell->server()->removeDocuments(query, _queryInfo._info._ns, removeCount, index);
+            ++index;
+        }
     }
 
     void Notifier::handle(InsertDocumentResponse *event)
@@ -241,16 +243,12 @@ namespace Robomongo
 
     void Notifier::handle(RemoveDocumentResponse *event)
     {
-        if (event->isError()) {
-            // Commented because when you'll delete multiple documents,
-            // we'll receive this event as many times as many selected
-            // documents you have. This is incorrect and remove of
-            // multiple documents should be a single command, instead
-            // of many. Error message should be printed in the logs.
-
-            // QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
-            return;
-        }
+       if (event->isError()) {
+            if (!(event->removeCount == RemoveDocumentCount::MULTI && event->index > 0))
+                QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
+       }
+       else 
+            _shell->query(0, _queryInfo);
     }
 
     void Notifier::onCopyNameDocument()
@@ -318,13 +316,14 @@ namespace Robomongo
         if (!detail::isMultiSelection(selectedIndexes))
             return;
 
-        int answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", QString("Do you want to delete %1 selected documents?").arg(selectedIndexes.count()));
-        if (answer == QMessageBox::Yes) {
+        int const answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", 
+                                           QString("Do you want to delete %1 selected documents?").
+                                           arg(selectedIndexes.count()));
+        if (QMessageBox::Yes == answer) {
             std::vector<BsonTreeItem*> items;
-            for (QModelIndexList::const_iterator it = selectedIndexes.begin(); it != selectedIndexes.end(); ++it) {
-                BsonTreeItem *item = QtUtils::item<BsonTreeItem*>(*it);
-                items.push_back(item);                
-            }
+            for (auto index : selectedIndexes) 
+                items.push_back(QtUtils::item<BsonTreeItem*>(index));
+            
             deleteDocuments(items, true);
         }
     }
@@ -420,10 +419,6 @@ namespace Robomongo
         for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
             _shell->server()->insertDocument(*it, _queryInfo._info._ns);
         }
-
-        // For replica set do this in response (InsertDocumentResponse)
-        if (!_shell->server()->connectionRecord()->isReplicaSet())  // single server
-            _shell->query(0, _queryInfo);
     }
 
     void Notifier::onCopyDocument()

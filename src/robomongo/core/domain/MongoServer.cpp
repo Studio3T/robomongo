@@ -133,8 +133,10 @@ namespace Robomongo {
         _bus->send(_worker, new InsertDocumentRequest(this, obj, ns, true));
     }
 
-    void MongoServer::removeDocuments(mongo::Query query, const MongoNamespace &ns, bool justOne) {
-        _bus->send(_worker, new RemoveDocumentRequest(this, query, ns, justOne));
+    void MongoServer::removeDocuments(mongo::Query query, const MongoNamespace &ns, 
+                                      RemoveDocumentCount removeCount, int index) 
+    {
+        _bus->send(_worker, new RemoveDocumentRequest(this, query, ns, removeCount, index));
     }
 
     void MongoServer::loadDatabases() 
@@ -243,9 +245,8 @@ namespace Robomongo {
 
     void MongoServer::handle(InsertDocumentResponse *event) 
     {
-        if (_connSettings->isReplicaSet()) // replica set
-        {
-            if (event->isError()) {
+        if (event->isError()) {
+            if (_connSettings->isReplicaSet()) {
                 if (ConnectionPrimary == _connectionType) { // Insert document from explorer context menu
                     if (EventError::SetPrimaryUnreachable == event->error().errorCode()) {
                         auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
@@ -255,20 +256,28 @@ namespace Robomongo {
                 else {  // Insert document from tab results window (Notifier, OutputWindow widget)
                     _bus->publish(new InsertDocumentResponse(this, event->error()));
                 }
-                genericResponseHandler(event, "Failed to insert document.", _bus, this);
-                return;
             }
-            _bus->publish(new InsertDocumentResponse(this));
+            genericResponseHandler(event, "Failed to insert document.", _bus, this);
+        }
+        else {
+            _bus->publish(new InsertDocumentResponse(this, event->error()));
             LOG_MSG("Document inserted.", mongo::logger::LogSeverity::Info());
         }
-        else {  // single server
-            _bus->publish(new InsertDocumentResponse(this, event->error()));
-        }
+
     }
 
     void MongoServer::handle(RemoveDocumentResponse *event) 
     {
-        std::string const& subStr = event->removeAll ? "all documents." : "document.";
+        if (event->removeCount == RemoveDocumentCount::MULTI && event->index > 0)
+            return;
+
+        std::string subStr;
+        switch (event->removeCount) {
+            case RemoveDocumentCount::ONE:    subStr = "document."; break;
+            case RemoveDocumentCount::MULTI:  subStr = "documents."; break;
+            case RemoveDocumentCount::ALL:    subStr = "all documents."; break;
+            default:                          subStr = " (logic error)."; break;
+        }
 
         if (event->isError()) {
             if (_connSettings->isReplicaSet() &&
@@ -278,7 +287,8 @@ namespace Robomongo {
             }
             genericResponseHandler(event, "Failed to remove " + subStr, _bus, this);
         }
-        else {
+        else {  // success
+            _bus->publish(new RemoveDocumentResponse(this, event->error(), event->removeCount, event->index));
             LOG_MSG("Removed " + subStr, mongo::logger::LogSeverity::Info());
         }
     }

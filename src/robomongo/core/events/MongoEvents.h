@@ -417,25 +417,32 @@ namespace Robomongo
      * @brief Remove Document
      */
 
+    enum class RemoveDocumentCount { ONE, MULTI, ALL };
+
     class RemoveDocumentRequest : public Event
     {
         R_EVENT
 
     public:
-        RemoveDocumentRequest(QObject *sender, mongo::Query query, const MongoNamespace &ns, bool justOne = true) :
+        RemoveDocumentRequest(QObject *sender, mongo::Query query, const MongoNamespace &ns, 
+                              RemoveDocumentCount removeCount, int index) :
             Event(sender),
             _query(query),
             _ns(ns),
-            _justOne(justOne) {}
+            _removeCount(removeCount),
+            _index(index) {}
 
         mongo::Query query() const { return _query; }
         MongoNamespace ns() const { return _ns; }
-        bool justOne() const { return _justOne; }
+        RemoveDocumentCount removeCount() const { return _removeCount; }
+        int index() const { return _index; }
 
     private:
         mongo::Query _query;
         const MongoNamespace _ns;
-        bool _justOne;
+        RemoveDocumentCount _removeCount;
+        // if this is a multi remove, this is the index of current document deleted. 0 for first document.
+        int _index;     
     };
 
     struct RemoveDocumentResponse : public Event
@@ -443,13 +450,14 @@ namespace Robomongo
         R_EVENT
 
     public:
-        RemoveDocumentResponse(QObject *sender, bool removeAll) :
-            Event(sender), removeAll(removeAll) {}
+        RemoveDocumentResponse(QObject *sender, RemoveDocumentCount removeCount, int index) :
+            Event(sender), removeCount(removeCount), index(index) {}
 
-        RemoveDocumentResponse(QObject *sender, const EventError &error, bool removeAll) :
-            Event(sender, error), removeAll(removeAll) {}
+        RemoveDocumentResponse(QObject *sender, const EventError &error, RemoveDocumentCount removeCount, int index) :
+            Event(sender, error), removeCount(removeCount), index(index) {}
 
-        bool removeAll = false;
+        RemoveDocumentCount const removeCount;
+        int const index;
     };
 
     /**

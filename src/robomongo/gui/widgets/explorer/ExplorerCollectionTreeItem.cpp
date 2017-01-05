@@ -400,7 +400,8 @@ namespace Robomongo
             mongo::BSONObjBuilder builder;
             mongo::BSONObj bsonQuery = builder.obj();
             mongo::Query query(bsonQuery);
-            server->removeDocuments(query, MongoNamespace(database->name(), _collection->name()), false);
+            server->removeDocuments(query, MongoNamespace(database->name(), _collection->name()), 
+                                    RemoveDocumentCount::ALL);
         }
     }
 

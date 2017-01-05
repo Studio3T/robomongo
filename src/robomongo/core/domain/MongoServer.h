@@ -85,7 +85,8 @@ namespace Robomongo
         void insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
         void saveDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns);
         void saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns);
-        void removeDocuments(mongo::Query query, const MongoNamespace &ns, bool justOne = true);
+        void removeDocuments(mongo::Query query, const MongoNamespace &ns, RemoveDocumentCount removeCount, 
+                             int index = 0);
         float version() const{ return _version; }
         const std::string& getStorageEngineType() const { return _storageEngineType; }
 

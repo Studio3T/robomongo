@@ -55,6 +55,13 @@ namespace Robomongo
         // Extract and set read reference
         setReadPreference(static_cast<ReadPreference>(map.value("readPreference").toInt()));
     }
+    
+    void ReplicaSetSettings::setMembers(const std::vector<const std::string>& members)
+    {
+        _members.clear();
+        for (auto const& member : members)
+            _members.push_back(member);
+    }
 
     void ReplicaSetSettings::setMembers(const std::vector<std::pair<std::string, bool>>& membersAndHealts)
     {

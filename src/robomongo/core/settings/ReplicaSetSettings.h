@@ -41,7 +41,7 @@ namespace Robomongo
 
         // Setters
         void setSetName(const std::string& setName) { _setName = setName; }
-        void setMembers(const std::vector<const std::string>& members) { _members = members; }
+        void setMembers(const std::vector<const std::string>& members);
         void setMembers(const std::vector<std::pair<std::string,bool>>& membersAndHealts);
         void deleteAllMembers() { _members.clear(); }
         void setReadPreference(ReadPreference readPreference) { _readPreference = readPreference; }

@@ -987,6 +987,17 @@ namespace Robomongo
         // Refresh view of Replica Set Monitor to get live data
         auto repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
         
+        // Handle long lasting (e.g. overnight) connections which causes replica set monitor to be null
+        if (!repSetMonitor) {
+            mongo::ReplicaSetMonitor::createIfNeeded(_dbclientRepSet->getSetName(),
+                                                     _connSettings->replicaSetSettings()->membersToHostAndPortAsSet());
+            repSetMonitor = mongo::globalRSMonitorManager.getMonitor(_dbclientRepSet->getSetName());
+            if (!repSetMonitor) // if nullptr again even if the set is reachable, something went really wrong.
+                return ReplicaSet(setName, primary, membersAndHealths, 
+                                  "Unexpected error. Unable to get replica set monitor for set name: " + 
+                                  _dbclientRepSet->getSetName() + "\nPlease open a new connection.");
+        }
+
         // refreshAll() takes long time, in order to do first establish connection request much faster
         // refreshAll() will be by-passed first and it will/must be done after a successful connection.
         if (refresh)

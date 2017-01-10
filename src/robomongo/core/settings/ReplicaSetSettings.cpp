@@ -74,10 +74,9 @@ namespace Robomongo
     const std::vector<mongo::HostAndPort> ReplicaSetSettings::membersToHostAndPort() const 
     {
         std::vector<mongo::HostAndPort> membersHostAndPort;
-        for (auto const& member : _members)
-        {
+        for (auto const& member : _members)        
             membersHostAndPort.push_back(mongo::HostAndPort(member));
-        }
+        
         return membersHostAndPort;
     }
 

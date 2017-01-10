@@ -37,6 +37,13 @@ namespace Robomongo
         std::string setName() const { return _setName; }
         const std::vector<const std::string>& members() const { return _members; }
         const std::vector<mongo::HostAndPort> membersToHostAndPort() const;
+
+        const std::set<mongo::HostAndPort> ReplicaSetSettings::membersToHostAndPortAsSet() const
+        {
+            auto const& members = membersToHostAndPort();
+            return std::set<mongo::HostAndPort>(members.begin(), members.end());
+        }
+        
         ReadPreference readPreference() const { return _readPreference; }
 
         // Setters

@@ -41,7 +41,7 @@ namespace Robomongo
     {
         setSetName(map.value("setName").toString().toStdString());
         // Extract and set replica members
-        std::vector<const std::string> vec;
+        std::vector<std::string> vec;
         auto itr = map.begin();
         int idx = 0;
         do
@@ -56,7 +56,7 @@ namespace Robomongo
         setReadPreference(static_cast<ReadPreference>(map.value("readPreference").toInt()));
     }
     
-    void ReplicaSetSettings::setMembers(const std::vector<const std::string>& members)
+    void ReplicaSetSettings::setMembers(const std::vector<std::string>& members)
     {
         _members.clear();
         for (auto const& member : members)

@@ -140,7 +140,7 @@ namespace Robomongo
 
         if (_settings->isReplicaSet()) {
             // save replica members
-            std::vector<const std::string> members;
+            std::vector<std::string> members;
             for (int i = 0; i < _members->topLevelItemCount(); ++i)
             {
                 QTreeWidgetItem const* item = _members->topLevelItem(i);

@@ -116,7 +116,7 @@ namespace Robomongo
             connSetting->setServerHost(onlineMember.host());
             connSetting->setServerPort(onlineMember.port());
             connSetting->setReplicaSet(false);
-            connSetting->replicaSetSettings()->setMembers(std::vector<const std::string>()); 
+            connSetting->replicaSetSettings()->setMembers(std::vector<std::string>()); 
 
             openCurrentServerShell(_server, connSetting.get(), "rs.status()");
         }

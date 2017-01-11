@@ -35,10 +35,10 @@ namespace Robomongo
 
         // Getters
         std::string setName() const { return _setName; }
-        const std::vector<const std::string>& members() const { return _members; }
+        const std::vector<std::string>& members() const { return _members; }
         const std::vector<mongo::HostAndPort> membersToHostAndPort() const;
 
-        const std::set<mongo::HostAndPort> ReplicaSetSettings::membersToHostAndPortAsSet() const
+        const std::set<mongo::HostAndPort> membersToHostAndPortAsSet() const
         {
             auto const& members = membersToHostAndPort();
             return std::set<mongo::HostAndPort>(members.begin(), members.end());
@@ -48,7 +48,7 @@ namespace Robomongo
 
         // Setters
         void setSetName(const std::string& setName) { _setName = setName; }
-        void setMembers(const std::vector<const std::string>& members);
+        void setMembers(const std::vector<std::string>& members);
         void setMembers(const std::vector<std::pair<std::string,bool>>& membersAndHealts);
         void deleteAllMembers() { _members.clear(); }
         void setReadPreference(ReadPreference readPreference) { _readPreference = readPreference; }
@@ -56,7 +56,7 @@ namespace Robomongo
 
     private:
         std::string _setName;
-        std::vector<const std::string> _members;
+        std::vector<std::string> _members;
         ReadPreference _readPreference;
     };
 }

@@ -210,7 +210,7 @@ namespace Robomongo
     void ExplorerServerTreeItem::handle(ConnectionEstablishedEvent *event)
     {
         if (!_server->connectionRecord()->isReplicaSet() || 
-            !ConnectionType::ConnectionRefresh == event->connectionType)
+            ConnectionType::ConnectionRefresh != event->connectionType)
             return;
 
         if (_primaryWasUnreachable)

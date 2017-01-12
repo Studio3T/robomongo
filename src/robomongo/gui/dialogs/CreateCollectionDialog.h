@@ -84,12 +84,12 @@ namespace Robomongo
         /**
         * @brief Validate all input fields and make extraOptions object if all valid when create button clicked.
         */
-        virtual void accept();
+        void accept() override;
 
         /**
         * @brief Called when "Cancel" button clicked.
         */
-        virtual void reject();
+        void reject() override;
 
     protected:
         /**

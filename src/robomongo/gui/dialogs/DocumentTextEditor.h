@@ -28,8 +28,8 @@ namespace Robomongo
         void setCursorPosition(int line, int column);
 
     public Q_SLOTS:
-        virtual void accept();
-        virtual void reject();
+        void accept() override;
+        void reject() override;
         bool validate(bool silentOnSuccess = true);
 
     private Q_SLOTS:

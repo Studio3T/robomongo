@@ -35,12 +35,12 @@ namespace Robomongo
         /**
          * @brief This function is called when user clicks on "Connect" button.
          */
-        virtual void accept();
+        void accept() override;
 
         /**
         * @brief Called when "Cancel" button clicked.
         */
-        virtual void reject();
+        void reject() override;
 
         /**
         * @brief Add connection to the list widget
@@ -84,7 +84,7 @@ namespace Robomongo
          */
         void listWidget_layoutChanged();
 
-        void keyPressEvent(QKeyEvent* event);
+        void keyPressEvent(QKeyEvent* event) override;
 
     private:
 

@@ -1,4 +1,4 @@
-#include "robomongo/gui/dialogs/ConnectionBasicTab.h"
+﻿#include "robomongo/gui/dialogs/ConnectionBasicTab.h"
 
 #include <QLabel>
 #include <QLineEdit>
@@ -15,6 +15,7 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/ReplicaSetSettings.h"
+#include "robomongo/gui/GuiRegistry.h"
 
 namespace Robomongo
 {
@@ -48,6 +49,7 @@ namespace Robomongo
         _addInfoLabel->setContentsMargins(0, -2, 0, 20);
 
         _membersLabel = new QLabel("Members:");
+        _membersLabel->setFixedWidth(_membersLabel->sizeHint().width());
         _members = new QTreeWidget;
         _members->setHeaderHidden(true);
         _members->setIndentation(0);
@@ -65,29 +67,20 @@ namespace Robomongo
         }
 
         int const BUTTON_SIZE = 60;
-        _addButton = new QPushButton("+");
+        _addButton = new QPushButton;
         _addButton->setFixedWidth(30);
-        _removeButton = new QPushButton("-");
+        _addButton->setIcon(GuiRegistry::instance().plusIcon());
+        _removeButton = new QPushButton;
         _removeButton->setFixedWidth(30);
-        _discoverButton = new QPushButton("Find Set");
-        _discoverButton->setFixedWidth(_discoverButton->sizeHint().width()*0.8);
+        _removeButton->setIcon(GuiRegistry::instance().minusIcon());
         VERIFY(connect(_addButton, SIGNAL(clicked()), this, SLOT(on_addButton_clicked())));
         VERIFY(connect(_removeButton, SIGNAL(clicked()), this, SLOT(on_removeButton_clicked())));
 
         auto hLayout = new QHBoxLayout;
         hLayout->addWidget(_addButton);
         hLayout->addWidget(_removeButton);
-        hLayout->addWidget(_discoverButton);
         hLayout->setAlignment(Qt::AlignRight);
 
-        _readPrefLabel = new QLabel("Read Preference:");
-        _readPrefLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        _readPreference = new QComboBox;
-        _readPreference->addItems(QStringList({ "Primary", "Primary Preferred" }));  //todo
-        if (_settings->isReplicaSet()) {
-            _readPreference->setCurrentIndex(static_cast<int>(replicaSettings->readPreference()));
-        }
-        
         QGridLayout *connectionLayout = new QGridLayout;
         connectionLayout->setAlignment(Qt::AlignTop);
         connectionLayout->addWidget(_typeLabel,                     1, 0);
@@ -105,9 +98,6 @@ namespace Robomongo
         connectionLayout->addWidget(_members,                       7, 1, 1, 3);        
         connectionLayout->addLayout(hLayout,                        8, 1, 1, 3, Qt::AlignRight);
         connectionLayout->addWidget(new QLabel(""),                 9, 0);
-        connectionLayout->addWidget(_readPrefLabel,                 10, 0);
-        connectionLayout->addWidget(_readPreference,                10, 1, 1, 3);        
-        connectionLayout->addWidget(new QLabel(""),                 11, 0);
 
         QVBoxLayout *mainLayout = new QVBoxLayout;
         mainLayout->addLayout(connectionLayout);
@@ -126,6 +116,23 @@ namespace Robomongo
             QMessageBox::critical(this, "Error", "Replica set members cannot be empty. "  
                                                  "Please enter at least one member.");
             return false;
+        }
+        
+        // Check if same member exists
+        if (_settings->isReplicaSet() && _members->topLevelItemCount() > 1) {
+            QStringList members;
+            for (int i = 0; i < _members->topLevelItemCount(); ++i) {
+                QTreeWidgetItem const* item = _members->topLevelItem(i);
+                if (!item->text(0).isEmpty()) 
+                    members.push_back(item->text(0));
+            }
+            if (members.size() > 1) {
+                if (members.removeDuplicates() > 0) {
+                    QMessageBox::critical(this, "Error", "Please remove duplicate member, two replica"
+                                                " set members cannot have the same hostname and port.");
+                    return false;
+                }
+            }
         }
 
         if (_settings->isReplicaSet() && _members->topLevelItemCount() > 0) {
@@ -149,9 +156,6 @@ namespace Robomongo
                 }
             }
             _settings->replicaSetSettings()->setMembers(members);
-            // save read preference option 
-            _settings->replicaSetSettings()->setReadPreference(
-                static_cast<ReplicaSetSettings::ReadPreference>(_readPreference->currentIndex()));
         }
 
         return true;
@@ -166,10 +170,6 @@ namespace Robomongo
         _members->setVisible(isReplica);
         _addButton->setVisible(isReplica);
         _removeButton->setVisible(isReplica);
-        _discoverButton->setVisible(isReplica);
-        _readPrefLabel->setVisible(isReplica);
-        _readPreference->setVisible(isReplica);
-        
         // Direct Connection
         _addressLabel->setVisible(!isReplica);
         _serverAddress->setVisible(!isReplica);

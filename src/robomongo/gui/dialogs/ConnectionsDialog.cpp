@@ -55,7 +55,7 @@ namespace Robomongo
                 setIcon(0, GuiRegistry::instance().replicaSetIcon());
                 setText(0, QtUtils::toQString(_connection->connectionName()));
                 auto const repSetSize = _connection->replicaSetSettings()->members().size();
-                auto addrText = QString::number(repSetSize) + " Node(s)";
+                auto addrText = QString::number(repSetSize) + ((repSetSize > 1) ? " nodes" : " node");
                 if (!_connection->replicaSetSettings()->members().empty()) {
                     addrText += QString::fromStdString(" (" + _connection->replicaSetSettings()->members().front() + ")");
                 }
@@ -71,10 +71,16 @@ namespace Robomongo
                 setIcon(0, GuiRegistry::instance().serverImportedIcon());
             }
 
+            // Header "Attributes" (column[2])
+            setText(2, _connection->isReplicaSet() ? "Replica Set" : "");
+            
+            if (_connection->sslSettings()->sslEnabled())
+                setText(2, text(2) + (text(2).isEmpty() ? "SSL" : ", SSL"));
 
-            // Security header column (column[4])
-            setText(2, _connection->isReplicaSet() ? "[Replica Set]    " : " ");
+            if (_connection->sshSettings()->enabled())
+                setText(2, text(2) + (text(2).isEmpty() ? "SSH" : ", SSH"));
 
+            // Header "Auth. Database/User" (column[3])
             if (_connection->hasEnabledPrimaryCredential()) {
                 auto authString = QString("%1 / %2").arg(QtUtils::toQString(_connection->primaryCredential()->databaseName()))
                                                     .arg(QtUtils::toQString(_connection->primaryCredential()->userName()));
@@ -86,9 +92,6 @@ namespace Robomongo
                 setText(3, "");
             }
 
-            // Security header column (column[4])
-            setText(4, _connection->sslSettings()->sslEnabled() ? " [SSL]" : "");
-            setText(4, text(4) + (_connection->sshSettings()->enabled() ? " [SSH]" : ""));
         }
 
     private:
@@ -127,14 +130,13 @@ namespace Robomongo
         _listWidget->setIndentation(5);
 
         QStringList colums;
-        colums << "Name" << "Address" << "Topology" << "Auth. Database / User" << "Security";
+        colums << "Name" << "Address" << "Attributes" << "Auth. Database / User";
         _listWidget->setHeaderLabels(colums);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         _listWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(1, QHeaderView::Stretch);
         _listWidget->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
         _listWidget->header()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-        _listWidget->header()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
 #endif
         //_listWidget->setViewMode(QListView::ListMode);
         _listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);

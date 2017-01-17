@@ -103,7 +103,7 @@ namespace Robomongo
     {
         QWidget *wid = dynamic_cast<QWidget*>(_observer);
         AppRegistry::instance().bus()->subscribe(this, InsertDocumentResponse::Type, _shell->server());
-        AppRegistry::instance().bus()->subscribe(this, RemoveDocumentResponse::Type);
+        AppRegistry::instance().bus()->subscribe(this, RemoveDocumentResponse::Type, _shell->server());
 
         _deleteDocumentAction = new QAction("Delete Document...", wid);
         VERIFY(connect(_deleteDocumentAction, SIGNAL(triggered()), SLOT(onDeleteDocument())));

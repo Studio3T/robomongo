@@ -53,6 +53,8 @@ namespace Robomongo
         _members = new QTreeWidget;
         _members->setHeaderHidden(true);
         _members->setIndentation(0);
+        VERIFY(connect(_members, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
+                       this, SLOT(on_replicaItemEdit(QTreeWidgetItem*, int))));
 
         if (_settings->isReplicaSet()) {
             for (const std::string& str : replicaSettings->members()) 
@@ -118,7 +120,7 @@ namespace Robomongo
             return false;
         }
         
-        // Check if same member exists
+        // Check and warn if there is duplicate member
         if (_settings->isReplicaSet() && _members->topLevelItemCount() > 1) {
             QStringList members;
             for (int i = 0; i < _members->topLevelItemCount(); ++i) {
@@ -135,6 +137,7 @@ namespace Robomongo
             }
         }
 
+        // Save to settings
         if (_settings->isReplicaSet() && _members->topLevelItemCount() > 0) {
             QStringList const hostAndPort = _members->topLevelItem(0)->text(0).split(":");
             _settings->setServerHost(hostAndPort[0].toStdString());
@@ -151,9 +154,8 @@ namespace Robomongo
             for (int i = 0; i < _members->topLevelItemCount(); ++i)
             {
                 QTreeWidgetItem const* item = _members->topLevelItem(i);
-                if (!item->text(0).isEmpty()) {
+                if (!item->text(0).isEmpty()) 
                     members.push_back(item->text(0).toStdString());
-                }
             }
             _settings->replicaSetSettings()->setMembers(members);
         }
@@ -219,5 +221,36 @@ namespace Robomongo
         else {
             delete _members->topLevelItem(_members->topLevelItemCount() - 1);
         }
+    }
+
+    void ConnectionBasicTab::on_replicaItemEdit(QTreeWidgetItem* item, int column)
+    {
+        if (!item)
+            return;
+
+        auto str = item->text(0);
+
+        // Remove white spaces
+        str = str.simplified();
+        str.remove(" ");
+
+        // Remove item from tree widget if it has empty text
+        if (str.isEmpty()) {
+            delete item;
+            return;
+        }
+
+        // Force port as integer
+        QStringList const& hostAndPort = str.split(':');
+        if (hostAndPort.size() >= 2) {
+            auto const& hostName = hostAndPort[0];
+            auto portStr = hostAndPort[1];
+            portStr.remove(QRegExp("[^\\d]"));
+            str = hostName + ':' + QString::number(portStr.toInt());
+        }
+        else 
+            str += ":27017";
+
+        item->setText(0, str);
     }
 }

@@ -8,6 +8,7 @@ class QCheckBox;
 class QPushButton;
 class QComboBox;
 class QTreeWidget;
+class QTreeWidgetItem;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -27,6 +28,7 @@ namespace Robomongo
         void deleteItem();
         void on_addButton_clicked();
         void on_removeButton_clicked();
+        void on_replicaItemEdit(QTreeWidgetItem* item, int column);
 
     private:
         QLabel *_typeLabel;

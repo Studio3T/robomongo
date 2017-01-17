@@ -26,13 +26,20 @@ namespace
          * @brief Config file absolute path
          *        (usually: /home/user/.config/robomongo/robomongo.json)
          */
-        const QString _configPath = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
+        const auto _configPath = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
 
         /**
          * @brief Config file containing directory path
          *        (usually: /home/user/.config/robomongo)
          */
-        const QString _configDir = QString("%1/.config/robomongo/1.0").arg(QDir::homePath());
+        const auto _configDir = QString("%1/.config/robomongo/1.0").arg(QDir::homePath());
+
+        /**
+        * @brief Robomongo config. files 
+        */
+        const auto CONFIG_FILE_0_8_5 = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
+        const auto CONFIG_FILE_0_9 = QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath());
+        const auto CONFIG_FILE_1_0 = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
 }
 
 namespace Robomongo
@@ -357,12 +364,20 @@ namespace Robomongo
         if (_imported)
             return;
 
-        // todo: these functions should return bool
-        importConnectionsFrom_0_8_5_to_0_9();
-        importConnectionsFrom_0_9_to_1_0();
+        // Find and import from the latest version
+        // todo: This process should be done in a function accepting function pointers 
+        //       to version specific import functions within a loop to avoid code repetition.
+        if (QFile::exists(CONFIG_FILE_0_9)) {
+            importConnectionsFrom_0_9_to_1_0();
+            setImported(true);  // Mark as imported
+            return;
+        }
 
-        // Mark as imported
-        setImported(true);
+        if (QFile::exists(CONFIG_FILE_0_8_5)) {
+            importConnectionsFrom_0_8_5_to_0_9();
+            setImported(true);  // Mark as imported
+            return;
+        }       
     }
 
     void SettingsManager::importConnectionsFrom_0_8_5_to_0_9()

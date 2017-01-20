@@ -118,11 +118,18 @@ namespace Robomongo
             return false;
         }
         
-        // Check and warn if there is duplicate member
+        // Check and warn if there is duplicate member or 
+        // if any of the replica set member items does not contain ":" character between hostname and port.
         if (_settings->isReplicaSet() && _members->topLevelItemCount() > 1) {
             QStringList members;
             for (int i = 0; i < _members->topLevelItemCount(); ++i) {
                 QTreeWidgetItem const* item = _members->topLevelItem(i);
+                QStringList const hostAndPort = item->text(0).split(":");
+                if (hostAndPort.size() < 2) {
+                    QMessageBox::critical(this, "Error", "Replica set member items must all contain ':' between"
+                                                " hostname and port.");
+                    return false;
+                }
                 if (!item->text(0).isEmpty()) 
                     members.push_back(item->text(0));
             }

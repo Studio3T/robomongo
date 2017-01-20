@@ -92,8 +92,10 @@ namespace Robomongo
     {
         R_EVENT
 
-        RefreshReplicaSetFolderRequest(QObject *sender) :
-            Event(sender) {}
+        RefreshReplicaSetFolderRequest(QObject *sender, bool expanded) :
+            Event(sender), expanded(expanded) {}
+
+        bool const expanded = false;
     };
 
     struct RefreshReplicaSetFolderResponse : public Event
@@ -101,14 +103,16 @@ namespace Robomongo
         R_EVENT
 
         // Primary is reachable
-        RefreshReplicaSetFolderResponse(QObject *sender, ReplicaSet const& replicaSet) :
-            Event(sender), replicaSet(replicaSet) {}
+        RefreshReplicaSetFolderResponse(QObject *sender, ReplicaSet const& replicaSet, bool expanded) :
+            Event(sender), replicaSet(replicaSet), expanded(expanded) {}
         
         // Primary is unreachable, secondary(ies) might be reachable
-        RefreshReplicaSetFolderResponse(QObject *sender, ReplicaSet const&  replicaSet, const EventError &error) :
-            Event(sender, error), replicaSet(replicaSet) {}
+        RefreshReplicaSetFolderResponse(QObject *sender, ReplicaSet const&  replicaSet, bool expanded,
+                                        const EventError &error) :
+            Event(sender, error), replicaSet(replicaSet), expanded(expanded) {}
 
         ReplicaSet const replicaSet;
+        bool const expanded = false;
     };
 
     struct ReplicaSetFolderLoading : public Event
@@ -123,16 +127,18 @@ namespace Robomongo
     {
         R_EVENT
 
-        ReplicaSetFolderRefreshed(QObject *sender) :
-            Event(sender) {}
+        ReplicaSetFolderRefreshed(QObject *sender, bool expanded) :
+            Event(sender), expanded(expanded) {}
 
-        ReplicaSetFolderRefreshed(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        ReplicaSetFolderRefreshed(QObject *sender, const EventError &error, bool expanded) :
+            Event(sender, error), expanded(expanded) {}
 
-        ReplicaSetFolderRefreshed(QObject *sender, const EventError &error, ReplicaSet const& replicaSet) :
-            Event(sender, error), replicaSet(replicaSet) {}
+        ReplicaSetFolderRefreshed(QObject *sender, const EventError &error, ReplicaSet const& replicaSet,
+                                  bool expanded) :
+            Event(sender, error), replicaSet(replicaSet), expanded(expanded) {}
 
         ReplicaSet const replicaSet;
+        bool const expanded = false;
     };
 
     /**

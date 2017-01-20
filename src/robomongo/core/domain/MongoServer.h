@@ -70,7 +70,7 @@ namespace Robomongo
         *        It will update only 'Replica Set' folder widgets depending on replica set status 
         *       (online if primary reachable and offline otherwise)
         */
-        void tryRefreshReplicaSetFolder(bool showLoading = true);
+        void tryRefreshReplicaSetFolder(bool expanded, bool showLoading = true);
 
         bool isConnected() const;
 
@@ -116,7 +116,8 @@ namespace Robomongo
 
     private:                 
         void clearDatabases();
-        void handleReplicaSetRefreshEvents(bool isError, EventError eventError, ReplicaSet const& replicaSet);
+        void handleReplicaSetRefreshEvents(bool isError, EventError eventError, ReplicaSet const& replicaSet,
+                                           bool expanded);
         void updateReplicaSetSettings(EstablishConnectionResponse* event);
         void handleConnectionFailure(EstablishConnectionResponse* event);
 

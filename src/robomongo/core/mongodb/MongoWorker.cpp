@@ -252,13 +252,13 @@ namespace Robomongo
 
         // Primary is unreachable, but there might be reachable secondary(ies)
         if (replicaSetInfo.primary.empty()) {  
-            reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo, 
+            reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo, event->expanded,
                                                                        EventError(replicaSetInfo.errorStr)));
             LOG_MSG(replicaSetInfo.errorStr, mongo::logger::LogSeverity::Error());
             return;
         }
         else // Primary is reachable
-            reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo));
+            reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo, event->expanded));
     }
 
     std::string MongoWorker::getAuthBase() const

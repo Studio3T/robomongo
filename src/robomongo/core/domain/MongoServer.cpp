@@ -67,7 +67,7 @@ namespace Robomongo {
         _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh, _connSettings->uniqueId()));
     }
     
-    void MongoServer::tryRefreshReplicaSetFolder(bool showLoading /*= true*/)
+    void MongoServer::tryRefreshReplicaSetFolder(bool expanded, bool showLoading /*= true*/)
     {
         if (!_connSettings->isReplicaSet())
             return;
@@ -75,7 +75,7 @@ namespace Robomongo {
         if (showLoading)
             _bus->publish(new ReplicaSetFolderLoading(this));
 
-        _bus->send(_worker, new RefreshReplicaSetFolderRequest(this));
+        _bus->send(_worker, new RefreshReplicaSetFolderRequest(this, expanded));
     }
 
     QStringList MongoServer::getDatabasesNames() const 
@@ -215,13 +215,13 @@ namespace Robomongo {
             // "repSetMonitor->startOrContinueRefresh(). refreshAll()" is being requested after 
             // successful connection.
             if (ConnectionPrimary == event->connectionType)
-                _bus->send(_worker, new RefreshReplicaSetFolderRequest(this));
+                _bus->send(_worker, new RefreshReplicaSetFolderRequest(this, false));
         }
     }
 
     void MongoServer::handle(RefreshReplicaSetFolderResponse *event)
     {
-        handleReplicaSetRefreshEvents(event->isError(), event->error(), event->replicaSet);
+        handleReplicaSetRefreshEvents(event->isError(), event->error(), event->replicaSet, event->expanded);
     }
 
     void MongoServer::handle(LoadDatabaseNamesResponse *event) 
@@ -336,17 +336,17 @@ namespace Robomongo {
 
     void MongoServer::handle(ReplicaSetRefreshed *event) 
     {
-        handleReplicaSetRefreshEvents(event->isError(), event->error(), event->replicaSet);
+        handleReplicaSetRefreshEvents(event->isError(), event->error(), event->replicaSet, false);
     }
 
     void MongoServer::handleReplicaSetRefreshEvents(bool isError, EventError eventError, 
-                                                    ReplicaSet const& replicaSet)
+                                                    ReplicaSet const& replicaSet, bool expanded)
     {
         if (isError) { // Primary is unreachable
             _replicaSetInfo.reset(new ReplicaSet(replicaSet));
             LOG_MSG("Replica set folder refreshed with error. " + eventError.errorMessage() +
                     ". Connection: " + _connSettings->connectionName(), mongo::logger::LogSeverity::Error());
-            _bus->publish(new ReplicaSetFolderRefreshed(this, eventError));
+            _bus->publish(new ReplicaSetFolderRefreshed(this, eventError, expanded));
             return;
         }
 
@@ -359,7 +359,7 @@ namespace Robomongo {
 
         LOG_MSG("Replica set folder refreshed. Connection: " + _connSettings->connectionName(),
                  mongo::logger::LogSeverity::Info());
-        _bus->publish(new ReplicaSetFolderRefreshed(this));
+        _bus->publish(new ReplicaSetFolderRefreshed(this, expanded));
     }
 
     void MongoServer::updateReplicaSetSettings(EstablishConnectionResponse* event)

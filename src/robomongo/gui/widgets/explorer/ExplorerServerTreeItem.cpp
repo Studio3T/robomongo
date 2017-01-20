@@ -86,7 +86,7 @@ namespace Robomongo
         setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
         if (_server->connectionRecord()->isReplicaSet()) {
-            buildReplicaSetFolder();
+            buildReplicaSetFolder(false);
             buildDatabaseItems();
         }
     }
@@ -184,7 +184,7 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::handle(ReplicaSetFolderRefreshed *event)
     {
-        buildReplicaSetFolder();    // Rebuild replica set folder in any case
+        buildReplicaSetFolder(event->expanded);    // Rebuild replica set folder in any case
 
         // ---Primary is unreachable
         if (event->isError()) {
@@ -225,7 +225,7 @@ namespace Robomongo
             ConnectionType::ConnectionRefresh != event->connectionType)
             return;
 
-        buildReplicaSetFolder();
+        buildReplicaSetFolder(true);
         replicaSetPrimaryUnreachable();
 
         QMessageBox::critical(nullptr, "Error", QString::fromStdString(event->message));
@@ -329,11 +329,11 @@ namespace Robomongo
         QtUtils::clearChildItems(this);  
         _replicaSetFolder = nullptr;
 
-        buildReplicaSetFolder();
+        buildReplicaSetFolder(false);
         buildDatabaseItems();
     }
     
-    void ExplorerServerTreeItem::buildReplicaSetFolder()
+    void ExplorerServerTreeItem::buildReplicaSetFolder(bool expanded)
     {
         if (_replicaSetFolder) {    // delete and rebuild existing folder child items
             if (_replicaSetFolder->childCount() > 0)
@@ -357,7 +357,7 @@ namespace Robomongo
         }
 
         _replicaSetFolder->setRefreshFlag(false);
-        _replicaSetFolder->setExpanded(true);
+        _replicaSetFolder->setExpanded(expanded);
         _replicaSetFolder->setRefreshFlag(true);
     }
 

@@ -55,11 +55,12 @@ namespace Robomongo
 
     private:
 
-        // Build all items for a root replica set server item
+        // Build all items for a root replica set server item, only used in refresh events
+        // (not designed to be used in primary connection)
         void buildReplicaSetServerItem();
 
         // Build only replica set folder and member items
-        void buildReplicaSetFolder();
+        void buildReplicaSetFolder(bool expanded);
 
         // This function assumes there is no existing db items (system folder and other db tree items), 
         // so existing db items should be deleted before calling this function.

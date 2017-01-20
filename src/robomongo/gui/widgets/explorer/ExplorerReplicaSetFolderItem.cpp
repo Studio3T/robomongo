@@ -85,7 +85,7 @@ namespace Robomongo
             return;
         }
 
-        _server->tryRefreshReplicaSetFolder();
+        _server->tryRefreshReplicaSetFolder(true);
     }
 
     void ExplorerReplicaSetFolderItem::on_repSetStatus()
@@ -129,7 +129,7 @@ namespace Robomongo
 
     void ExplorerReplicaSetFolderItem::on_refresh()
     {
-        _server->tryRefreshReplicaSetFolder();
+        _server->tryRefreshReplicaSetFolder(true);
     }
 }
 

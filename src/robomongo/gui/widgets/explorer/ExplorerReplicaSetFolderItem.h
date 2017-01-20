@@ -10,8 +10,10 @@ namespace Robomongo
     class ExplorerReplicaSetFolderItem : public ExplorerTreeItem
     {
         Q_OBJECT
+
     public:
-        typedef ExplorerTreeItem BaseClass;
+        using BaseClass = ExplorerTreeItem;
+
         ExplorerReplicaSetFolderItem(ExplorerTreeItem *item, MongoServer *const server);
 
         void updateText();
@@ -27,7 +29,7 @@ namespace Robomongo
         void handle(ReplicaSetFolderLoading *event);
 
     private:
-        MongoServer *const _server;
+        MongoServer *const _server = nullptr;
         bool _refreshFlag = true;
     };
 }

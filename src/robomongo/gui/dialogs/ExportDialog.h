@@ -20,6 +20,20 @@ namespace Robomongo
 {
     class Indicator;
 
+    /**
+    * @brief This class is not finished, it is still under development.
+    *        Currently export is disabled in the GUI. If enabled in GUI, export 
+    *        will work with current code. However, the code is unfinished; 
+    *        it needs to finished, reviewed and tested.
+    *        Currently, there is support for simultaneous export which can be done 
+    *        on multiple export dialogs without blocking each other or main window. 
+    *        So user can still work while multiple export dialogs are doing export. 
+    *        This achieved by the assumption that there will be usable export executable for 
+    *        Robomongo to use. Currently, this location is hard coded as 
+    *        "D:\\mongo_export\\bin\\mongoexport.exe". One of the next actions will be 
+    *        to design the location of mongoexport which should be cross-platform, 
+    *        generic and not hard coded.
+    */
     class ExportDialog : public QDialog
     {
         Q_OBJECT

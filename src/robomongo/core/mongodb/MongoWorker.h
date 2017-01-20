@@ -168,7 +168,7 @@ namespace Robomongo
 
         /**
         *@brief Update Replica Set related parameters/settings.
-        *       Warning: Using refresh false might return incorrect cached values for status 
+        *       Warning: Using parameter 'refresh' as false might return incorrect cached values for status 
         *                of secondary members.
         * @param refresh : If true it will be deep scan of replica set status which 
         *                  might take quite some time. If false, it will be quick scan

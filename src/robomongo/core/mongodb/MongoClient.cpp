@@ -465,7 +465,7 @@ namespace Robomongo
 
         if (!_dbclient->exists(newCollection.toString())) {
             mongo::BSONObj result;
-            // todo: Issue #1258 : Duplicate Collection should pass advanced collection options.
+            // todo: Issue #1258 : Duplicate Collection should support advanced collection options.
             //       _dbclient->createCollection() should be called with properties of source collection
             //       not with default parameters as below.
             if (!_dbclient->createCollection(newCollection.toString(), 0, false, 0, &result)) {

@@ -3,8 +3,7 @@
 #include <QLabel>
 #include <QGridLayout>
 #include <QLineEdit>
-//// Disabling unfinished export URI connection string feature 
-/* 
+/* --- Disabling unfinished export URI connection string feature 
 #include <QPushButton>
 #include <QMessageBox>
 #include <QClipboard>
@@ -17,8 +16,7 @@
 
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/utils/QtUtils.h"
-//// Disabling unfinished export URI connection string feature 
-/*
+/* --- Disabling unfinished export URI connection string feature 
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/ReplicaSetSettings.h"
 #include "robomongo/core/settings/SslSettings.h"
@@ -40,8 +38,7 @@ namespace Robomongo
 
         _defaultDatabaseName = new QLineEdit(QtUtils::toQString(_settings->defaultDatabase()));
 
-        //// Disabling unfinished export URI connection string feature 
-        /*
+        /* --- Disabling unfinished export URI connection string feature
         _uriString = new QLineEdit;
         _uriString->setReadOnly(true);
 
@@ -70,8 +67,7 @@ namespace Robomongo
         mainLayout->addWidget(new QLabel("Default Database:"),          1, 0);
         mainLayout->addWidget(_defaultDatabaseName,                     1, 1, 1, 2);
         mainLayout->addWidget(defaultDatabaseDescriptionLabel,          2, 1, 1, 2);
-        //// Disabling unfinished export URI connection string feature 
-        /*
+        /* --- Disabling unfinished export URI connection string feature
         mainLayout->addWidget(new QLabel{ "URI Connection String:" },   3, 0);
         mainLayout->addWidget(_uriString,                               3, 1);
         mainLayout->addLayout(hlay,                                     4, 1);
@@ -84,8 +80,7 @@ namespace Robomongo
         _settings->setDefaultDatabase(QtUtils::toStdString(_defaultDatabaseName->text()));
     }
 
-    //// Disabling unfinished export URI connection string feature     
-    /*
+    /* --- Disabling unfinished export URI connection string feature
     void ConnectionAdvancedTab::on_generateButton_clicked()
     {
         if (_settings->isReplicaSet()) {

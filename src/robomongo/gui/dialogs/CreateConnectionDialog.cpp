@@ -50,16 +50,6 @@ namespace Robomongo
         auto createConnLabel = new QLabel(createConnStr);
         VERIFY(connect(createConnLabel, SIGNAL(linkActivated(QString)), this, SLOT(on_createConnLinkActivated())));
 
-        //auto nameLineEdit = new QLineEdit("New Connection");
-        //auto nameLay = new QGridLayout;
-        ////connectionLayout->setAlignment(Qt::AlignTop);
-        //nameLay->setColumnStretch(1, 1);
-        ////nameLay->setColumnMinimumWidth(0, _passwordLabel->sizeHint().width() + 5);
-        //nameLay->addWidget(new QLabel("Connection Name:"),  0, 0, Qt::AlignLeft);
-        //nameLay->addWidget(nameLineEdit,                    0, 1);
-        //auto nameWid = new QWidget;
-        //nameWid->setLayout(nameLay);
-
         auto splitterL = new QSplitter;
         splitterL->setOrientation(Qt::Vertical);
         splitterL->addWidget(label01);

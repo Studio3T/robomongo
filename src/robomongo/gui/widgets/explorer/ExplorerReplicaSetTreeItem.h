@@ -13,7 +13,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        typedef ExplorerTreeItem BaseClass;
+        using BaseClass = ExplorerTreeItem;
 
         /*
         ** Constructs ExplorerReplicaSetTreeItem
@@ -21,19 +21,17 @@ namespace Robomongo
         ExplorerReplicaSetTreeItem(QTreeWidgetItem *parent, MongoServer *const server, const mongo::HostAndPort& repMemberHostAndPort,
                                    const bool isPrimary, const bool isUp);
 
-        // todo
-        void updateState(bool isUp, bool isPrimary);
+        /**
+        * @brief Updates this widget's text and icon
+        * @param isUp: true if this set member is reachable, false otherwise
+        * @param isPrimary: true if this set member is primary, false otherwise
+        */
+        void updateTextAndIcon(bool isUp, bool isPrimary);
 
         // Getters
         ConnectionSettings* connectionSettings() { return _connSettings.get(); }
         bool isUp() const { return _isUp; }
         MongoServer* server() const { return _server; }
-
-    public Q_SLOTS:
-        // Todo: remove or update
-        //void databaseRefreshed(const QList<MongoDatabase *> &dbs);
-        //void handle(DatabaseListLoadedEvent *event);
-        //void handle(MongoServerLoadingDatabasesEvent *event);
 
     private Q_SLOTS:
         void ui_openShell();
@@ -45,8 +43,9 @@ namespace Robomongo
 
     private:
         mongo::HostAndPort _repMemberHostAndPort;
-        bool _isPrimary;
-        bool _isUp;
+        
+        bool _isPrimary;    // true if this set member is primary, false otherwise
+        bool _isUp;         // true if this set member is reachable, false otherwise
 
         MongoServer *const _server;
         std::unique_ptr<ConnectionSettings> _connSettings;

@@ -22,8 +22,6 @@ namespace Robomongo
     ConnectionBasicTab::ConnectionBasicTab(ConnectionSettings *settings) :
         _settings(settings)
     {
-        const ReplicaSetSettings* const replicaSettings = _settings->replicaSetSettings();
-
         _typeLabel = new QLabel("Type:");
         _connectionType = new QComboBox;
         _connectionType->addItem(tr("Direct Connection"));
@@ -54,10 +52,10 @@ namespace Robomongo
         _members->setHeaderHidden(true);
         _members->setIndentation(0);
         VERIFY(connect(_members, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
-                       this, SLOT(on_replicaItemEdit(QTreeWidgetItem*, int))));
+                       this, SLOT(on_replicaMemberItemEdit(QTreeWidgetItem*, int))));
 
         if (_settings->isReplicaSet()) {
-            for (const std::string& str : replicaSettings->members()) 
+            for (const std::string& str : _settings->replicaSetSettings()->members())
             {
                 if (!str.empty()) {
                     auto item = new QTreeWidgetItem;
@@ -215,15 +213,13 @@ namespace Robomongo
         if (_members->topLevelItemCount() <= 0)
             return;
 
-        if (_members->currentItem()) {
+        if (_members->currentItem()) 
             delete _members->currentItem();
-        }
-        else {
+        else
             delete _members->topLevelItem(_members->topLevelItemCount() - 1);
-        }
     }
 
-    void ConnectionBasicTab::on_replicaItemEdit(QTreeWidgetItem* item, int column)
+    void ConnectionBasicTab::on_replicaMemberItemEdit(QTreeWidgetItem* item, int column)
     {
         if (!item)
             return;

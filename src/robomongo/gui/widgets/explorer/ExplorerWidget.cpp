@@ -133,9 +133,9 @@ namespace Robomongo
             return;
         }
 
-        auto replicaFolder = dynamic_cast<ExplorerReplicaSetFolderItem *>(item);
-        if (replicaFolder) {
-            replicaFolder->expand();
+        auto replicaSetFolder = dynamic_cast<ExplorerReplicaSetFolderItem *>(item);
+        if (replicaSetFolder) {
+            replicaSetFolder->expand();
             return;
         }
        

@@ -144,7 +144,7 @@ namespace Robomongo
         connection->setDefaultDatabase(collection->database()->name());
         QString script = detail::buildCollectionQuery(collection->name(), "find({})");
         openShell(collection->database()->server(), connection, ScriptInfo(script, true, CursorPosition(0, -2), 
-            QtUtils::toQString(collection->database()->name()), filePathToSave));
+                  QtUtils::toQString(collection->database()->name()), filePathToSave));
     }
 
     void App::openShell(MongoServer *server, const QString &script, const std::string &dbName,
@@ -217,13 +217,9 @@ namespace Robomongo
 
         server->runWorkerThread();
 
-        QString serverAddress = "unknown";
-        if (connSettings->isReplicaSet()) {
-            serverAddress = QString::fromStdString(connSettings->connectionName()) + " [Replica Set]";
-        }
-        else {
-            serverAddress = QString::fromStdString(connSettings->getFullAddress());
-        }
+        QString serverAddress = connSettings->isReplicaSet()
+                                ? QString::fromStdString(connSettings->connectionName()) + " [Replica Set]"
+                                : QString::fromStdString(connSettings->getFullAddress());
 
         LOG_MSG(QString("Connecting to %1...").arg(serverAddress), mongo::logger::LogSeverity::Info());
         server->tryConnect();

@@ -33,7 +33,7 @@ namespace Robomongo
         /**
         * @brief Creates error object only for replica set connection failures
         */
-        explicit EventError(const std::string &errorMessage, ReplicaSet replicaSetInfo, 
+        explicit EventError(const std::string &errorMessage, ReplicaSet const& replicaSetInfo, 
                             bool showErrorWindow = true);
 
         /**
@@ -57,10 +57,10 @@ namespace Robomongo
         /**
          * @brief Error message
          */
-        const std::string _errorMessage;
-        const ErrorCode _errorCode = Unknown;
-        ReplicaSet _replicaSetInfo;
-        bool _showErrorWindow = true;
-        bool _isNull;
+        std::string const _errorMessage;
+        ErrorCode const _errorCode = Unknown;
+        ReplicaSet const _replicaSetInfo;
+        bool const _showErrorWindow = true;
+        bool const _isNull;
     };
 }

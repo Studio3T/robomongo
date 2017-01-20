@@ -79,7 +79,8 @@ namespace Robomongo
             }
 
         } catch(std::exception &ex) {
-            LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
+            LOG_MSG("Failed to ping the server. MongoWorker::keepAlive() failed. " + std::string(ex.what()), 
+                    mongo::logger::LogSeverity::Error());
         }
     }
 
@@ -140,12 +141,10 @@ namespace Robomongo
 
         try {
             mongo::DBClientBase *conn = getConnection(true);
-
-            // --- Single server: Connection failed 
-            // --- Replica set: Connection failed (no reachable primary)
+            
+            // --- Connection failed for single server & replica set (no member of the set is reachable)
             if (!conn) 
             {
-                // Protection as default value: Logically/ideally, this error should never be seen.
                 auto errorReason = std::string("Connection failure: Unknown error.");
 
                 if (_connSettings->sslSettings()->sslEnabled()) {
@@ -156,31 +155,28 @@ namespace Robomongo
                 else {  // Non-SSL connections
                     if (_connSettings->isReplicaSet()) {
                         errorReason = "No member of the set is reachable.";
-
-                        // todo: Build ReplicaSet with no member reachable
                         std::vector<std::pair<std::string, bool>> membersAndHealths;
                         for (auto const& member : _connSettings->replicaSetSettings()->members()) {
                             membersAndHealths.push_back({ member, false });
                         }
                         repSetInfo.reset(new ReplicaSet("", mongo::HostAndPort(), membersAndHealths,
-                            "No member of the set is reachable."));
+                                                        "No member of the set is reachable."));
                     }
-                    else {   // single server
-                        errorReason = "Network is unreachable.";
-                    }
+                    else    // single server
+                        errorReason = "Network is unreachable.";                    
                 }
                 resetGlobalSSLparams();
 
                 reply(event->sender(), new EstablishConnectionResponse(this, EventError(errorReason),             
-                    event->connectionType, event->originalConnectionSettingsId, *repSetInfo.release(), 
-                    EstablishConnectionResponse::MongoConnection));
+                      event->connectionType, event->originalConnectionSettingsId, *repSetInfo.release(), 
+                      EstablishConnectionResponse::MongoConnection));
 
                 return false;
             }
 
             // --- Single server: Connection successful 
-            // --- Replica set: Connection successful (primary reachable) or 
-            //                  Connection failed (primary unreachable with at least one reachable member)
+            // --- Replica set:   Connection successful (primary reachable) or 
+            //                    Connection failed (primary unreachable with at least one reachable member)
             if (_connSettings->isReplicaSet()) {
                 bool refresh = (ConnectionType::ConnectionRefresh == event->connectionType);
                 ReplicaSet const& setInfo = getReplicaSetInfo(refresh);
@@ -224,7 +220,7 @@ namespace Robomongo
                 throw mongo::DBException("Failed to execute \"listdatabases\" command.", 0);
 
             if (!_connSettings->isReplicaSet())
-                init(); // Init MongoWorker (for replica set connections early init is used)
+                init(); // Init MongoWorker for single server (for replica set connections early init is used)
 
             resetGlobalSSLparams();
 
@@ -238,7 +234,6 @@ namespace Robomongo
         } 
         catch(const std::exception &ex) {
             resetGlobalSSLparams();
-
             auto errorReason = _connSettings->sslSettings()->sslEnabled() ?
                                EstablishConnectionResponse::ErrorReason::MongoSslConnection : 
                                EstablishConnectionResponse::ErrorReason::MongoAuth;
@@ -255,7 +250,7 @@ namespace Robomongo
     {
         ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
 
-        // Primary is unreachable, but there might have reachable secondary(ies)
+        // Primary is unreachable, but there might be reachable secondary(ies)
         if (replicaSetInfo.primary.empty()) {  
             reply(event->sender(), new RefreshReplicaSetFolderResponse(this, replicaSetInfo, 
                                                                        EventError(replicaSetInfo.errorStr)));

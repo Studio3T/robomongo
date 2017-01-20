@@ -257,7 +257,7 @@ namespace Robomongo {
                     _bus->publish(new InsertDocumentResponse(this, event->error()));
                 }
             }
-            genericResponseHandler(event, "Failed to insert document.", _bus, this);
+            genericEventErrorHandler(event, "Failed to insert document.", _bus, this);
         }
         else {
             _bus->publish(new InsertDocumentResponse(this, event->error()));
@@ -276,7 +276,7 @@ namespace Robomongo {
             case RemoveDocumentCount::ONE:    subStr = "document."; break;
             case RemoveDocumentCount::MULTI:  subStr = "documents."; break;
             case RemoveDocumentCount::ALL:    subStr = "all documents."; break;
-            default:                          subStr = " (logic error)."; break;
+            default:                          subStr = "(logic error)."; break;
         }
 
         if (event->isError()) {
@@ -285,7 +285,7 @@ namespace Robomongo {
                 auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
                 handle(&refreshEvent);
             }
-            genericResponseHandler(event, "Failed to remove " + subStr, _bus, this);
+            genericEventErrorHandler(event, "Failed to remove " + subStr, _bus, this);
         }
         else {  // success
             _bus->publish(new RemoveDocumentResponse(this, event->error(), event->removeCount, event->index));
@@ -310,7 +310,7 @@ namespace Robomongo {
                 auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
                 handle(&refreshEvent);
             }
-            genericResponseHandler(event, "Failed to create database \'" + event->database + "\'.", _bus, this);
+            genericEventErrorHandler(event, "Failed to create database \'" + event->database + "\'.", _bus, this);
         }
         else {
             loadDatabases();
@@ -326,7 +326,7 @@ namespace Robomongo {
                 auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());
                 handle(&refreshEvent);
             }
-            genericResponseHandler(event, "Failed to drop database \'" + event->database + "\'.", _bus, this);
+            genericEventErrorHandler(event, "Failed to drop database \'" + event->database + "\'.", _bus, this);
         }
         else {
             loadDatabases();
@@ -380,7 +380,7 @@ namespace Robomongo {
                 originalConnSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
                 AppRegistry::instance().settingsManager()->save();
                 LOG_MSG("Replica set name cached as \"" + _replicaSetInfo->setName + "\".",
-                    mongo::logger::LogSeverity::Info());
+                         mongo::logger::LogSeverity::Info());
             }
             else
                 LOG_MSG("Failed to cache the replica set name.", mongo::logger::LogSeverity::Warning());

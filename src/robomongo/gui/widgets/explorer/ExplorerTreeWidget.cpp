@@ -30,21 +30,18 @@ namespace Robomongo
        
         // If the replica set item is not reachable, do not show context menu
         auto replicaSetItem = dynamic_cast<ExplorerReplicaSetTreeItem*>(item);
-        if (replicaSetItem && !replicaSetItem->isUp()) {
+        if (replicaSetItem && !replicaSetItem->isUp())
             return;
-        }
 
         // If the database set item is disabled, do not show context menu
         auto dbItem = dynamic_cast<ExplorerDatabaseTreeItem*>(item);
-        if (dbItem && dbItem->isDisabled()) {
+        if (dbItem && dbItem->isDisabled()) 
             return;
-        }
 
         if (item) {
             auto explorerItem = dynamic_cast<ExplorerTreeItem *>(item);
-            if (explorerItem) {
+            if (explorerItem) 
                 explorerItem->showContextMenuAtPos(mapToGlobal(event->pos()));
-            }
         }
     }
 }

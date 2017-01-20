@@ -425,6 +425,7 @@ namespace Robomongo
             _exportOutput->setText("Export Failed.\n");
             _exportOutput->append("Output:\n" + _mongoExportOutputStr);
         }
+
         _exportOutput->moveCursor(QTextCursor::Start);
     }
 
@@ -445,6 +446,7 @@ namespace Robomongo
             _exportOutput->setText("Error: \"mongoexport\" process failed. Error code: "
                 + QString::number(error));
         }
+
         _exportOutput->moveCursor(QTextCursor::Start);
     }
 

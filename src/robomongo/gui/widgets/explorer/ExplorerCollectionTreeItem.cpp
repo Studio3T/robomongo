@@ -117,6 +117,7 @@ namespace Robomongo
         auto par = dynamic_cast<ExplorerCollectionTreeItem *const>(parent());
         if (!par)
             return;
+
         EnsureIndexInfo fakeInfo(par->collection()->info(), "");
         EditIndexDialog dlg(fakeInfo , QtUtils::toQString(par->databaseItem()->database()->name()), 
             QtUtils::toQString(par->databaseItem()->database()->server()->connectionRecord()->getFullAddress()), 

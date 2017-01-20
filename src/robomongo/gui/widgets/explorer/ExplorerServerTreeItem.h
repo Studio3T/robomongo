@@ -28,7 +28,7 @@ namespace Robomongo
         void expand();
 
         // Disable/enable menu items, except [1]:Refresh and [9]:Disconnect which are 
-        // always enabled, according to replica set online or offline status.
+        // always enabled, according to replica set status (online or offline).
         void disableSomeContextMenuActions(bool disable);
 
     public Q_SLOTS:

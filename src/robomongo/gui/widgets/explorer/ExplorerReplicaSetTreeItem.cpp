@@ -77,13 +77,13 @@ namespace Robomongo
         BaseClass::_contextMenu->addSeparator();
         BaseClass::_contextMenu->addAction(showLog);
 
-        updateState(_isUp, _isPrimary);
+        updateTextAndIcon(_isUp, _isPrimary);
 
         setExpanded(true);
         setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicator);
     }
 
-    void ExplorerReplicaSetTreeItem::updateState(bool isUp, bool isPrimary)
+    void ExplorerReplicaSetTreeItem::updateTextAndIcon(bool isUp, bool isPrimary)
     {
         _isUp = isUp;
         _isPrimary = isPrimary;

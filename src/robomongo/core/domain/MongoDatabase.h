@@ -95,6 +95,7 @@ namespace Robomongo
     private:
         void clearCollections();
         void addCollection(MongoCollection *collection);
+        void handleIfReplicaSetUnreachable(Event *event);
 
     private:
         MongoServer *_server;

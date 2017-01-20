@@ -27,8 +27,8 @@ namespace Robomongo
     {
         bool isSimpleType(Robomongo::BsonTreeItem const *item)
         {
-            return BsonUtils::isSimpleType(item->type())
-                || BsonUtils::isUuidType(item->type(), item->binType());
+            return BsonUtils::isSimpleType(item->type()) ||
+                   BsonUtils::isUuidType(item->type(), item->binType());
         }
 
         bool isObjectIdType(Robomongo::BsonTreeItem *item)
@@ -181,12 +181,12 @@ namespace Robomongo
         if (isEditable) menu->addAction(_deleteDocumentsAction);
     }
 
-    void Notifier::deleteDocuments(std::vector<BsonTreeItem*> items, bool force)
+    void Notifier::deleteDocuments(std::vector<BsonTreeItem*> const& items, bool force)
     {
         bool isNeededRefresh = false;
 
         int index = 0;
-        for (auto documentItem : items) {
+        for (auto const * const documentItem : items) {
             if (!documentItem)
                 break;
 
@@ -194,7 +194,8 @@ namespace Robomongo
             mongo::BSONElement id = obj.getField("_id");
 
             if (id.eoo()) {
-                QMessageBox::warning(dynamic_cast<QWidget*>(_observer), "Cannot delete", "Selected document doesn't have _id field. \n"
+                QMessageBox::warning(dynamic_cast<QWidget*>(_observer), "Cannot delete", 
+                    "Selected document doesn't have _id field. \n"
                     "Maybe this is a system document that should be managed in a special way?");
                 break;
             }
@@ -224,7 +225,7 @@ namespace Robomongo
 
     void Notifier::handle(InsertDocumentResponse *event)
     {
-        if (event->isError()) {
+        if (event->isError()) { // Error
             if (_shell->server()->connectionRecord()->isReplicaSet()) {
                 // Insert document from tab results window (Notifier, OutputWindow widget)
                 if (EventError::SetPrimaryUnreachable == event->error().errorCode()) {
@@ -232,12 +233,13 @@ namespace Robomongo
                         new ReplicaSetRefreshed(_shell, event->error(), event->error().replicaSetInfo()));
                 }
             }
-            else { // single server
+            else  // single server
                 QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
-            }
+            
             return;
         }
 
+        // Success
         _shell->query(0, _queryInfo);
     }
 
@@ -247,7 +249,7 @@ namespace Robomongo
             if (!(event->removeCount == RemoveDocumentCount::MULTI && event->index > 0))
                 QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
        }
-       else 
+       else // Success
             _shell->query(0, _queryInfo);
     }
 
@@ -300,11 +302,10 @@ namespace Robomongo
 
     void Notifier::handleDeleteCommand()
     {
-        if (_observer->selectedIndexes().count() > 1) {
+        if (_observer->selectedIndexes().count() > 1) 
             onDeleteDocuments();
-        } else {
-            onDeleteDocument();
-        }
+        else 
+            onDeleteDocument();        
     }
 
     void Notifier::onDeleteDocuments()
@@ -319,6 +320,7 @@ namespace Robomongo
         int const answer = QMessageBox::question(dynamic_cast<QWidget*>(_observer), "Delete", 
                                            QString("Do you want to delete %1 selected documents?").
                                            arg(selectedIndexes.count()));
+
         if (QMessageBox::Yes == answer) {
             std::vector<BsonTreeItem*> items;
             for (auto index : selectedIndexes) 

@@ -78,7 +78,7 @@ namespace Robomongo
         void createDatabase(const std::string &dbName);
         void dropDatabase(const std::string &dbName);
         QStringList getDatabasesNames() const;
-        QList<MongoDatabase*> const& databases() const { return _databases; }; // todo
+        QList<MongoDatabase*> const& databases() const { return _databases; };
         MongoDatabase *findDatabaseByName(const std::string &dbName) const;
 
         void insertDocuments(const std::vector<mongo::BSONObj> &objCont, const MongoNamespace &ns);

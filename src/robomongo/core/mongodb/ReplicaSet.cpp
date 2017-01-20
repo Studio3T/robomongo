@@ -3,9 +3,9 @@
 
 namespace Robomongo
 {
-    ReplicaSet::ReplicaSet(const std::string& setName, const mongo::HostAndPort primary,
-                           const std::vector<std::pair<std::string, bool>> membersAndHealths, 
-                           const std::string errorStr)
+    ReplicaSet::ReplicaSet(std::string const& setName, const mongo::HostAndPort primary,
+                           std::vector<std::pair<std::string, bool>> const& membersAndHealths, 
+                           std::string const& errorStr)
                            : setName(setName), primary(primary), membersAndHealths(membersAndHealths), 
                            errorStr(errorStr)
     {}

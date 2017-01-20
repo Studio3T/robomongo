@@ -61,9 +61,10 @@ namespace Robomongo
         void removeConnection(ConnectionSettings *connection);
 
         /**
-        * @brief Finds and returns original (non-clone) connection settings.
-        * @param uniqueID : Unique ID for an original (non-clone) connection settings.
-        * @return If uniqueID is valid returns original (non-clone) connection settings, 
+        * @brief  Finds and returns original (non-clone) connection settings which is 
+        *         loaded/saved from/into Robomongo config. file.
+        * @param  uniqueID : Unique ID for an original connection settings.
+        * @return If uniqueID is valid returns original connection settings, 
         *         nullptr otherwise.
         */
         ConnectionSettings* getConnectionSettings(int uniqueId);
@@ -183,13 +184,13 @@ namespace Robomongo
         /**
          * @brief List of connections
          */
-        static ConnectionSettingsContainerType _connections;
+        static std::vector<ConnectionSettings*> _connections;
         
         ToolbarSettingsContainerType _toolbars;
 
         // List of config. file absolute paths and related import functions. 
         // Must be updated with care and with every new version. Details on cpp file.       
-        static std::vector<ConfigFileAndImportFunction> const _configFilesAndImportFunctions;
+        static const std::vector<ConfigFileAndImportFunction> _configFilesAndImportFunctions;
 
         // Unique Id counter which is incremented only when a non-clone ConnectionSettings 
         // object is created and assigned can be assigned to clone or non-clone 

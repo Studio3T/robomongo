@@ -71,7 +71,7 @@ namespace Robomongo
             _members.push_back(memberAndHealth.first);
     }
 
-    const std::vector<mongo::HostAndPort> ReplicaSetSettings::membersToHostAndPort() const 
+    std::vector<mongo::HostAndPort> ReplicaSetSettings::membersToHostAndPort() const 
     {
         std::vector<mongo::HostAndPort> membersHostAndPort;
         for (auto const& member : _members)        

@@ -9,7 +9,9 @@ namespace
 {
     std::string getLoggerPath()
     {
-        static std::string path = Robomongo::QtUtils::toStdString(QString("%1/" PROJECT_NAME_LOWERCASE ".log").arg(QDir::tempPath()));
+        static std::string path = 
+            Robomongo::QtUtils::toStdString(QString("%1/" PROJECT_NAME_LOWERCASE ".log").arg(QDir::tempPath()));
+
         return path;
     }
 }

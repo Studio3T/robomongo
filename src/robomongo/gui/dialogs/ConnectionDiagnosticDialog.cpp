@@ -24,13 +24,11 @@ namespace Robomongo
 {
     ConnectionDiagnosticDialog::ConnectionDiagnosticDialog(ConnectionSettings *connection, QWidget *parent) :
         QDialog(parent),
-        _connSettings(nullptr),
+        _connSettings(connection->clone()),
         _server(NULL),
         _serverHandle(0),
         _continueExec(true)
     {
-        _connSettings = connection->clone();
-
         AppRegistry::instance().bus()->subscribe(this, ConnectionEstablishedEvent::Type);
         AppRegistry::instance().bus()->subscribe(this, ConnectionFailedEvent::Type);
 
@@ -149,23 +147,15 @@ namespace Robomongo
         // Add info about tunneling if SSH or SSL is used
         QString tunnelNote("");    // No tunnel info when neither SSH nor SSL enabled
         if (_connSettings->sshSettings()->enabled()) 
-        {
             tunnelNote = " via SSH tunnel";
-        }
-        else if (_connSettings->sslSettings()->sslEnabled()) 
-        {
+        else if (_connSettings->sslSettings()->sslEnabled())
             tunnelNote = " via SSL tunnel";
-        }
-       
-        QString serverAddress = "unknown";
-        if (_connSettings->isReplicaSet()) {
-            serverAddress = QString::fromStdString(_connSettings->connectionName()) + " [Replica Set]"; 
-            //(" + QString::number(_connSettings->replicaSetSettings()->members().size()) + " node(s))";
-        }
-        else {
-            serverAddress = QString::fromStdString(_connSettings->getFullAddress());
-        }
-
+        else
+            tunnelNote = "";
+         
+        QString const& serverAddress = _connSettings->isReplicaSet() ?
+                                        QString::fromStdString(_connSettings->connectionName()) + " [Replica Set]"
+                                        : QString::fromStdString(_connSettings->getFullAddress());
         // Set main info text at dialog
         if (state == InitialState) {
             _connectionIconLabel->setMovie(_loadingMovie);

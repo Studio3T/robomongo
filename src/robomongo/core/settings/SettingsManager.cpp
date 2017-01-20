@@ -55,8 +55,8 @@ namespace Robomongo
         std::function<bool()> import;
     };
 
-    // Warning: Config. file and import function of a new release must be placed into first element of 
-    //          vector initializer list below.
+    // Warning: Config. file and import function of a new release must be placed as first element of 
+    //          vector initializer list below in order.
     std::vector<ConfigFileAndImportFunction> const SettingsManager::_configFilesAndImportFunctions
     {
         ConfigFileAndImportFunction(CONFIG_FILE_0_9, SettingsManager::importConnectionsFrom_0_9_to_1_0),
@@ -86,7 +86,7 @@ namespace Robomongo
         _shellTimeoutSec(15),
         _imported(false)
     {
-        if (!load()) {  // if load fails (probably due to non-existing config file or directory)
+        if (!load()) {  // if load fails (probably due to non-existing config. file or directory)
             save();     // create empty settings file
             load();     // try loading again for the purpose of import from previous Robomongo versions
         }
@@ -232,7 +232,7 @@ namespace Robomongo
 
         QVariantList list = map.value("connections").toList();
         for (QVariantList::iterator it = list.begin(); it != list.end(); ++it) {
-            ConnectionSettings *connSettings = new ConnectionSettings(false);
+            auto connSettings = new ConnectionSettings(false);
             connSettings->fromVariant((*it).toMap());
             addConnection(connSettings);
         }
@@ -396,12 +396,11 @@ namespace Robomongo
     bool SettingsManager::importConnectionsFrom_0_8_5_to_0_9()
     {
         // Load old configuration file (used till version 0.8.5)
-        const QString oldConfigPath = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
 
-        if (!QFile::exists(oldConfigPath))
+        if (!QFile::exists(CONFIG_FILE_0_8_5))
             return false;
 
-        QFile oldConfigFile(oldConfigPath);
+        QFile oldConfigFile(CONFIG_FILE_0_8_5);
         if (!oldConfigFile.open(QIODevice::ReadOnly))
             return false;
 
@@ -416,7 +415,7 @@ namespace Robomongo
         {
             QVariantMap vconn = (*itconn).toMap();
 
-            ConnectionSettings *conn = new ConnectionSettings(false);
+            auto conn = new ConnectionSettings(false);
             conn->setImported(true);
             conn->setConnectionName(QtUtils::toStdString(vconn.value("connectionName").toString()));
             conn->setServerHost(QtUtils::toStdString(vconn.value("serverHost").toString().left(300)));
@@ -451,7 +450,7 @@ namespace Robomongo
             for (QVariantList::const_iterator itcred = vcreds.begin(); itcred != vcreds.end(); ++itcred) {
                 QVariantMap vcred = (*itcred).toMap();
 
-                CredentialSettings *cred = new CredentialSettings();
+                auto cred = new CredentialSettings();
                 cred->setUserName(QtUtils::toStdString(vcred.value("userName").toString()));
                 cred->setUserPassword(QtUtils::toStdString(vcred.value("userPassword").toString()));
                 cred->setDatabaseName(QtUtils::toStdString(vcred.value("databaseName").toString()));
@@ -504,12 +503,10 @@ namespace Robomongo
 
     bool SettingsManager::importConnectionsFrom_0_9_to_1_0()
     {
-        auto const& oldConfigPath = QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath());
-
-        if (!QFile::exists(oldConfigPath))
+        if (!QFile::exists(CONFIG_FILE_0_9))
             return false;
 
-        QFile oldConfigFile(oldConfigPath);
+        QFile oldConfigFile(CONFIG_FILE_0_9);
         if (!oldConfigFile.open(QIODevice::ReadOnly))
             return false;
 

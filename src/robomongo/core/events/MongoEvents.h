@@ -53,7 +53,7 @@ namespace Robomongo
         };
 
         EstablishConnectionResponse(QObject *sender, const ConnectionInfo &info, ConnectionType connectionType, 
-                                    const ReplicaSet replicaSet) :
+                                    const ReplicaSet& replicaSet) :
             Event(sender),
             info(info),
             connectionType(connectionType),
@@ -61,7 +61,7 @@ namespace Robomongo
             {}
 
         EstablishConnectionResponse(QObject *sender, const EventError &error, ConnectionType connectionType, 
-                                    ConnectionInfo const& info, const ReplicaSet replicaSet, ErrorReason errorReason) :
+                                    ConnectionInfo const& info, const ReplicaSet& replicaSet, ErrorReason errorReason) :
             Event(sender, error),
             info(info),
             connectionType(connectionType),
@@ -82,7 +82,7 @@ namespace Robomongo
         ReplicaSetRefreshed(QObject *sender) :
             Event(sender) {}
 
-        ReplicaSetRefreshed(QObject *sender, const EventError &error, ReplicaSet replicaSet) :
+        ReplicaSetRefreshed(QObject *sender, const EventError &error, ReplicaSet const& replicaSet) :
             Event(sender, error), replicaSet(replicaSet) {}
 
         ReplicaSet const replicaSet;
@@ -101,11 +101,11 @@ namespace Robomongo
         R_EVENT
 
         // Primary is reachable
-        RefreshReplicaSetFolderResponse(QObject *sender, ReplicaSet replicaSet) :
+        RefreshReplicaSetFolderResponse(QObject *sender, ReplicaSet const& replicaSet) :
             Event(sender), replicaSet(replicaSet) {}
         
         // Primary is unreachable, secondary(ies) might be reachable
-        RefreshReplicaSetFolderResponse(QObject *sender, ReplicaSet replicaSet, const EventError &error) :
+        RefreshReplicaSetFolderResponse(QObject *sender, ReplicaSet const&  replicaSet, const EventError &error) :
             Event(sender, error), replicaSet(replicaSet) {}
 
         ReplicaSet const replicaSet;
@@ -129,7 +129,7 @@ namespace Robomongo
         ReplicaSetFolderRefreshed(QObject *sender, const EventError &error) :
             Event(sender, error) {}
 
-        ReplicaSetFolderRefreshed(QObject *sender, const EventError &error, ReplicaSet replicaSet) :
+        ReplicaSetFolderRefreshed(QObject *sender, const EventError &error, ReplicaSet const& replicaSet) :
             Event(sender, error), replicaSet(replicaSet) {}
 
         ReplicaSet const replicaSet;
@@ -409,7 +409,7 @@ namespace Robomongo
         InsertDocumentResponse(QObject *sender) :
             Event(sender) {}
 
-        InsertDocumentResponse(QObject *sender, EventError const error) :
+        InsertDocumentResponse(QObject *sender, EventError const& error) :
             Event(sender, error) {}
     };
 
@@ -438,18 +438,17 @@ namespace Robomongo
         int index() const { return _index; }
 
     private:
-        mongo::Query _query;
-        const MongoNamespace _ns;
-        RemoveDocumentCount _removeCount;
+        mongo::Query const _query;
+        MongoNamespace const _ns;
+        RemoveDocumentCount const _removeCount;
         // if this is a multi remove, this is the index of current document deleted. 0 for first document.
-        int _index;     
+        int const _index;     
     };
 
     struct RemoveDocumentResponse : public Event
     {
         R_EVENT
 
-    public:
         RemoveDocumentResponse(QObject *sender, RemoveDocumentCount removeCount, int index) :
             Event(sender), removeCount(removeCount), index(index) {}
 
@@ -476,7 +475,7 @@ namespace Robomongo
         std::string database() const { return _database; }
 
     private:
-        std::string _database;
+        std::string const _database;
     };
 
     struct CreateDatabaseResponse : public Event
@@ -546,11 +545,11 @@ namespace Robomongo
         const mongo::BSONObj getExtraOptions() const { return _extraOptions; }
 
     private:
-        const MongoNamespace _ns;
-        const long long _size;
-        const bool _capped;
-        const int _maxDocNum;
-        const mongo::BSONObj _extraOptions;
+        MongoNamespace const _ns;
+        long long const _size;
+        bool const _capped;
+        int const _maxDocNum;
+        mongo::BSONObj const _extraOptions;
     };
 
     struct CreateCollectionResponse : public Event
@@ -619,8 +618,8 @@ namespace Robomongo
         std::string newCollection() const { return _newCollection; }
 
     private:
-        MongoNamespace _ns;
-        std::string _newCollection;
+        MongoNamespace const _ns;
+        std::string const _newCollection;
     };
 
     struct RenameCollectionResponse : public Event
@@ -656,8 +655,8 @@ namespace Robomongo
         std::string newCollection() const { return _newCollection; }
 
     private:
-        MongoNamespace _ns;
-        std::string _newCollection;
+        MongoNamespace const _ns;
+        std::string const _newCollection;
     };
 
     struct DuplicateCollectionResponse : public Event

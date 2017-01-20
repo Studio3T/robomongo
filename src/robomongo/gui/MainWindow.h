@@ -138,9 +138,11 @@ namespace Robomongo
         QToolBar *_execToolBar;
         
         // Temporarily disabling export/import feature
-        //// Export/import tool bar
-        //QAction *_exportAction;
-        //QAction *_importAction;
+        /*
+        // Export/import tool bar
+        QAction *_exportAction;
+        QAction *_importAction;
+        */
 
 #if defined(Q_OS_WIN)
         QSystemTrayIcon *_trayIcon;

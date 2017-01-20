@@ -168,13 +168,13 @@ namespace Robomongo
         bool _imported;
 
         // Flag to check if this is a clone(copy) or original ConnectionSettings
+        // Note: If this is not a clone connection settings, this object is original connection 
+        //       ConnectionSettings object which is loaded/saved into Robomongo config. file.
         bool _clone = false;
 
-        // If this is not a clone connection settings, this will be original unique ID.
-        // If this is a clone connection settings, unique ID will identify which original 
-        // connection settings is the cloning source.
-        // -1 for invalid(uninitialized) unique ID which should not be seen in theory and
-        // in practice.
+        // If this is a clone connection settings, unique ID will be used to identify from which 
+        // original connection settings this object is cloned.
+        // -1 for invalid(uninitialized) unique ID which should not be seen in theory
         int _uniqueId = -1;
     };
 }

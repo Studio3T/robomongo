@@ -7,7 +7,7 @@
 
 namespace Robomongo
 {
-    void genericResponseHandler(Event *event, const std::string &userFriendlyMessage, EventBus* bus, QObject* sender) 
+    void genericEventErrorHandler(Event *event, const std::string &userFriendlyMessage, EventBus* bus, QObject* sender)
     {
         if (!event->isError())
             return;

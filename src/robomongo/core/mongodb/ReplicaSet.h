@@ -4,18 +4,19 @@
 
 namespace Robomongo
 {
+    /**
+    * @brief Struct to represent live information of a replica set.
+    */
     struct ReplicaSet
     {
-        ReplicaSet(const std::string& setName, const mongo::HostAndPort primary,
-                   const std::vector<std::pair<std::string, bool>> membersAndHealths, const std::string errorStr = "");
+        ReplicaSet(std::string const& setName, const mongo::HostAndPort primary,
+                   std::vector<std::pair<std::string, bool>> const& membersAndHealths, std::string const& errorStr = "");
 
         ReplicaSet() {};
 
         std::string const setName;
         mongo::HostAndPort const primary;
-        // pair: {HostNameAndPort, Health}
-        std::vector<std::pair<std::string, bool>> const membersAndHealths;
+        std::vector<std::pair<std::string, bool>> const membersAndHealths;  // pair: {HostNameAndPort, Health}
         std::string const errorStr;
     };
-
 }

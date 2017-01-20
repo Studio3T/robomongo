@@ -55,9 +55,8 @@ namespace Robomongo
         int const answer = utils::questionDialog(treeWidget(), "Drop", "User", 
                                                  QtUtils::toQString(_user.name()));
 
-        if (answer == QMessageBox::Yes) {
+        if (answer == QMessageBox::Yes)
             _database->dropUser(_user.id(), _user.name());
-        }
     }
 
     void ExplorerUserTreeItem::ui_editUser()

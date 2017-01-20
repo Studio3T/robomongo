@@ -24,9 +24,11 @@
 
 namespace
 {
-    void openCurrentDatabaseShell(Robomongo::MongoDatabase *database, const QString &script, bool execute = true, const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
+    void openCurrentDatabaseShell(Robomongo::MongoDatabase *database, const QString &script, bool execute = true, 
+                                  const Robomongo::CursorPosition &cursor = Robomongo::CursorPosition())
     {
-        Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, Robomongo::QtUtils::toQString(database->name()), cursor);
+        Robomongo::AppRegistry::instance().app()->openShell(database, script, execute, 
+                                                            Robomongo::QtUtils::toQString(database->name()), cursor);
     }
 }
 

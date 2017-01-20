@@ -13,7 +13,6 @@
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/utils/Logger.h"
-
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h"
@@ -95,7 +94,7 @@ namespace Robomongo
     void ExplorerServerTreeItem::expand()
     {
         if (_server->connectionRecord()->isReplicaSet()) {
-            //_server->tryRefreshReplicaSetConnection();  // todo
+            // do nothing since replica set refresh/reload can take very long times.
         }
         else {  // single server
             _server->loadDatabases();
@@ -104,8 +103,8 @@ namespace Robomongo
 
     void ExplorerServerTreeItem::disableSomeContextMenuActions(bool disable)
     {
-        if (BaseClass::_contextMenu->actions().size() < 10 
-            || !_server->connectionRecord()->isReplicaSet())
+        if (BaseClass::_contextMenu->actions().size() < 10 || 
+            !_server->connectionRecord()->isReplicaSet())
             return;
 
         // [1]:Refresh and [9]:Disconnect are always enabled
@@ -201,7 +200,7 @@ namespace Robomongo
         }
 
         // --- Primary is reachable
-        if (_primaryWasUnreachable)    // Only if primary was unreachable previously, rebuild db items.
+        if (_primaryWasUnreachable)    // Rebuild db items only when primary was unreachable previously.
             _server->loadDatabases();
 
         replicaSetPrimaryReachable();

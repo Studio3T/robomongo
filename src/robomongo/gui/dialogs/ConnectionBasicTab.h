@@ -28,7 +28,7 @@ namespace Robomongo
         void deleteItem();
         void on_addButton_clicked();
         void on_removeButton_clicked();
-        void on_replicaItemEdit(QTreeWidgetItem* item, int column);
+        void on_replicaMemberItemEdit(QTreeWidgetItem* item, int column);
 
     private:
         QLabel *_typeLabel;

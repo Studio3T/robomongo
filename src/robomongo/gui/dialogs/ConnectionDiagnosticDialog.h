@@ -29,7 +29,8 @@ namespace Robomongo
 
     private:
 
-        enum State {
+        enum State 
+        {
             InitialState,
             CompletedState,
             FailedState,

@@ -20,8 +20,7 @@ namespace Robomongo
         ConnectionAdvancedTab(ConnectionSettings *settings);
         void accept();
 
-    //// Disabling unfinished export URI connection string feature 
-    /*
+    /* --- Disabling unfinished export URI connection string feature
     private Q_SLOTS :
         void on_generateButton_clicked();
         void on_copyButton_clicked();
@@ -31,8 +30,7 @@ namespace Robomongo
     private:
         QLineEdit *_defaultDatabaseName;
 
-        //// Disabling unfinished export URI connection string feature
-        /*
+        /* --- Disabling unfinished export URI connection string feature
         QLineEdit *_uriString;
         QCheckBox *_includePasswordCheckBox;
         QPushButton *_copyButton;

@@ -355,6 +355,7 @@ namespace Robomongo
         std::string newConnectionName = "Copy of "+connection->connectionName();
 
         connection->setConnectionName(newConnectionName);
+        connection->replicaSetSettings()->setSetName("");
 
         ConnectionDialog editDialog(connection);
 

@@ -346,7 +346,7 @@ namespace Robomongo {
             _replicaSetInfo.reset(new ReplicaSet(replicaSet));
             LOG_MSG("Replica set folder refreshed with error. " + eventError.errorMessage() +
                     ". Connection: " + _connSettings->connectionName(), mongo::logger::LogSeverity::Error());
-            _bus->publish(new ReplicaSetFolderRefreshed(this, eventError, expanded));
+            _bus->publish(new ReplicaSetFolderRefreshed(this, eventError, true));
             return;
         }
 

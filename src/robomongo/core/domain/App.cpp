@@ -6,6 +6,7 @@
 #include "robomongo/core/domain/MongoShell.h"
 #include "robomongo/core/domain/MongoCollection.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
+#include "robomongo/core/settings/ReplicaSetSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
 #include "robomongo/core/settings/SslSettings.h"
 #include "robomongo/core/mongodb/SshTunnelWorker.h"
@@ -217,8 +218,13 @@ namespace Robomongo
 
         server->runWorkerThread();
 
+        auto replicaSetStr = QString::fromStdString(connSettings->connectionName()) + " [Replica Set]";
+        replicaSetStr = (connSettings->replicaSetSettings()->members().size() > 0) 
+                        ? replicaSetStr + QString::fromStdString(connSettings->replicaSetSettings()->members()[0])
+                        : replicaSetStr + "";
+        
         QString serverAddress = connSettings->isReplicaSet()
-                                ? QString::fromStdString(connSettings->connectionName()) + " [Replica Set]"
+                                ? replicaSetStr
                                 : QString::fromStdString(connSettings->getFullAddress());
 
         LOG_MSG(QString("Connecting to %1...").arg(serverAddress), mongo::logger::LogSeverity::Info());

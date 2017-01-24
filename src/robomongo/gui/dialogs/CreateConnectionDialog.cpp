@@ -38,7 +38,7 @@ namespace Robomongo
         //setAttribute(Qt::WA_DeleteOnClose);
 
         // Splitter-Left
-        auto label01 = new QLabel("Replica Set or Sharded Cluster");
+        auto label01 = new QLabel("Replica Set");
         label01->setStyleSheet("font-weight: bold");
         auto wid1 = new QLabel;
         auto repSetImage = QPixmap("C:\\Users\\gsimsek\\Google Drive\\Cases - Drive\\replica_sets\\icons\\repset.png");

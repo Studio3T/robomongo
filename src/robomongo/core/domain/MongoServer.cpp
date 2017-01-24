@@ -377,10 +377,10 @@ namespace Robomongo {
             ConnectionSettings* originalConnSettings = AppRegistry::instance().settingsManager()
                 ->getConnectionSettings(event->info._originalConnectionSettingsId);
             if (originalConnSettings) {
-                originalConnSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
+                auto setName = event->isError() ? "" : _replicaSetInfo->setName;
+                originalConnSettings->replicaSetSettings()->setSetName(setName);
                 AppRegistry::instance().settingsManager()->save();
-                LOG_MSG("Replica set name cached as \"" + _replicaSetInfo->setName + "\".",
-                         mongo::logger::LogSeverity::Info());
+                LOG_MSG("Replica set name cached as \"" + setName + "\".", mongo::logger::LogSeverity::Info());
             }
             else
                 LOG_MSG("Failed to cache the replica set name.", mongo::logger::LogSeverity::Warning());

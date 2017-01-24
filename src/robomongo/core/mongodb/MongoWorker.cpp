@@ -898,7 +898,7 @@ namespace Robomongo
                 // Step-2: Try connect to replica set with set name
                 auto const& membersHostsAndPorts = _connSettings->replicaSetSettings()->membersToHostAndPort();
                 _dbclientRepSet = DBClientReplicaSet(new mongo::DBClientReplicaSet(setName, membersHostsAndPorts, 
-                                                       _mongoTimeoutSec));
+                                                     _mongoTimeoutSec));
                 bool const connStatus = _dbclientRepSet->connect();
                 
                 if (!connStatus) {

@@ -153,9 +153,16 @@ namespace Robomongo
         else
             tunnelNote = "";
          
-        QString const& serverAddress = _connSettings->isReplicaSet() ?
-                                        QString::fromStdString(_connSettings->connectionName()) + " [Replica Set]"
-                                        : QString::fromStdString(_connSettings->getFullAddress());
+
+        auto replicaSetStr = QString::fromStdString(_connSettings->connectionName()) + " [Replica Set]";
+        replicaSetStr = (_connSettings->replicaSetSettings()->members().size() > 0) 
+                        ? replicaSetStr + QString::fromStdString(_connSettings->replicaSetSettings()->members()[0])
+                        : replicaSetStr + "";
+
+        QString const& serverAddress = _connSettings->isReplicaSet()
+                                       ? replicaSetStr
+                                       : QString::fromStdString(_connSettings->getFullAddress());
+
         // Set main info text at dialog
         if (state == InitialState) {
             _connectionIconLabel->setMovie(_loadingMovie);

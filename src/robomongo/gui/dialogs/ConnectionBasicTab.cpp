@@ -25,7 +25,7 @@ namespace Robomongo
         _typeLabel = new QLabel("Type:");
         _connectionType = new QComboBox;
         _connectionType->addItem(tr("Direct Connection"));
-        _connectionType->addItem(tr("Replica Set or Sharded Cluster")); 
+        _connectionType->addItem(tr("Replica Set")); 
         _connectionType->setCurrentIndex(static_cast<int>(_settings->isReplicaSet()));
         VERIFY(connect(_connectionType, SIGNAL(currentIndexChanged(int)), this, SLOT(on_ConnectionTypeChange(int))));
         
@@ -148,13 +148,13 @@ namespace Robomongo
             _settings->setServerHost(hostAndPort[0].toStdString());
             _settings->setServerPort(hostAndPort[1].toInt());
         }
-        else {  // single server
+        else {  // Single server
             _settings->setServerHost(QtUtils::toStdString(_serverAddress->text()));
             _settings->setServerPort(_serverPort->text().toInt());
         }
 
         if (_settings->isReplicaSet()) {
-            // save replica members
+            // Save replica members
             std::vector<std::string> members;
             for (int i = 0; i < _members->topLevelItemCount(); ++i)
             {
@@ -163,6 +163,8 @@ namespace Robomongo
                     members.push_back(item->text(0).toStdString());
             }
             _settings->replicaSetSettings()->setMembers(members);
+            // Clear cached set name
+            _settings->replicaSetSettings()->setSetName("");
         }
 
         return true;

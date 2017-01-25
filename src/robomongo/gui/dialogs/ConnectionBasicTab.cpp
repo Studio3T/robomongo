@@ -11,6 +11,8 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QMessageBox>
+#include <QDialogButtonBox>
+
 
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -68,23 +70,27 @@ namespace Robomongo
 
         int const BUTTON_SIZE = 60;
         _addButton = new QPushButton;
-        _addButton->setFixedWidth(30);
         _addButton->setIcon(GuiRegistry::instance().plusIcon());
         _removeButton = new QPushButton;
-        _removeButton->setFixedWidth(30);
         _removeButton->setIcon(GuiRegistry::instance().minusIcon());
         VERIFY(connect(_addButton, SIGNAL(clicked()), this, SLOT(on_addButton_clicked())));
         VERIFY(connect(_removeButton, SIGNAL(clicked()), this, SLOT(on_removeButton_clicked())));
 
-        auto hLayout = new QHBoxLayout;
-        hLayout->addWidget(_addButton);
-        hLayout->addWidget(_removeButton);
-        hLayout->setAlignment(Qt::AlignRight);
-
-        QGridLayout *connectionLayout = new QGridLayout;
+        _minusPlusButtonBox = new QDialogButtonBox(this);
+        _minusPlusButtonBox->setOrientation(Qt::Horizontal);
+#ifdef _WIN32
+        _minusPlusButtonBox->addButton(_addButton, QDialogButtonBox::NoRole);
+        _minusPlusButtonBox->addButton(_removeButton, QDialogButtonBox::NoRole);
+#else
+        _minusPlusButtonBox->addButton(_removeButton, QDialogButtonBox::NoRole);
+        _minusPlusButtonBox->addButton(_addButton, QDialogButtonBox::NoRole);
+#endif
+        
+        auto connectionLayout = new QGridLayout;
+        connectionLayout->setVerticalSpacing(10);
         connectionLayout->setAlignment(Qt::AlignTop);
         connectionLayout->addWidget(_typeLabel,                     1, 0);
-        connectionLayout->addWidget(_connectionType,                1, 1, 1, 3);        
+        connectionLayout->addWidget(_connectionType,                1, 1, 1, 3);
         connectionLayout->addWidget(new QLabel(""),                 2, 0);
         connectionLayout->addWidget(_nameLabel,                     3, 0);
         connectionLayout->addWidget(_connectionName,                3, 1, 1, 3);
@@ -95,11 +101,11 @@ namespace Robomongo
         connectionLayout->addWidget(_serverPort,                    5, 3);
         connectionLayout->addWidget(_addInfoLabel,                  6, 1, 1, 3);
         connectionLayout->addWidget(_membersLabel,                  7, 0, Qt::AlignTop);
-        connectionLayout->addWidget(_members,                       7, 1, 1, 3);        
-        connectionLayout->addLayout(hLayout,                        8, 1, 1, 3, Qt::AlignRight);
+        connectionLayout->addWidget(_members,                       7, 1, 1, 3);
+        connectionLayout->addWidget(_minusPlusButtonBox,            8, 3, Qt::AlignRight | Qt::AlignTop);
         connectionLayout->addWidget(new QLabel(""),                 9, 0);
 
-        QVBoxLayout *mainLayout = new QVBoxLayout;
+        auto mainLayout = new QVBoxLayout;
         mainLayout->addLayout(connectionLayout);
         setLayout(mainLayout);
 
@@ -177,8 +183,7 @@ namespace Robomongo
         // Replica set
         _membersLabel->setVisible(isReplica);
         _members->setVisible(isReplica);
-        _addButton->setVisible(isReplica);
-        _removeButton->setVisible(isReplica);
+        _minusPlusButtonBox->setVisible(isReplica);
         // Direct Connection
         _addressLabel->setVisible(!isReplica);
         _serverAddress->setVisible(!isReplica);

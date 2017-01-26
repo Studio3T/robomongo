@@ -60,6 +60,7 @@ namespace Robomongo
         const QIcon& leftIcon() const;
         const QIcon& rightIcon() const;
         const QIcon& mongodbIcon() const;
+        const QIcon& mongodbIconForMAC() const;
         const QIcon& connectIcon() const;
         const QIcon& executeIcon() const;
         const QIcon& stopIcon() const;

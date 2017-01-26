@@ -36,8 +36,12 @@ namespace Robomongo
         : BaseClass(view), _server(server), _bus(AppRegistry::instance().bus()), _replicaSetFolder(nullptr),
         _primaryWasUnreachable(false), _systemFolder(nullptr)
     {
-        QAction *openShellAction = new QAction("Open Shell", this);
+        auto openShellAction = new QAction("Open Shell", this);        
+#ifdef __APPLE__
+        openShellAction->setIcon(GuiRegistry::instance().mongodbIconForMAC());
+#else
         openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
+#endif
         VERIFY(connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell())));
 
         QAction *refreshServer = new QAction("Refresh", this);

@@ -50,8 +50,12 @@ namespace Robomongo
         _bus(AppRegistry::instance().bus()),
         _collectionSystemFolderItem(NULL)
     {
-        QAction *openDbShellAction = new QAction("Open Shell", this);
+        auto openDbShellAction = new QAction("Open Shell", this);
+#ifdef __APPLE__
+        openDbShellAction->setIcon(GuiRegistry::instance().mongodbIconForMAC());
+#else
         openDbShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
+#endif
         VERIFY(connect(openDbShellAction, SIGNAL(triggered()), SLOT(ui_dbOpenShell())));
 
         QAction *dbStats = new QAction("Database Statistics", this);

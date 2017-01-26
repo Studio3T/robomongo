@@ -347,6 +347,12 @@ namespace Robomongo
         static const QIcon mongodbIc = QIcon(":/robomongo/icons/mongodb_16x16.png");
         return mongodbIc;
     }
+    
+    const QIcon &GuiRegistry::mongodbIconForMAC() const
+    {
+        static const QIcon mongodbIc = QIcon(":/robomongo/icons/mongodb_icon_for_MAC.png");
+        return mongodbIc;
+    }
 
     const QIcon &GuiRegistry::connectIcon() const
     {

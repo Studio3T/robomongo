@@ -50,7 +50,11 @@ namespace Robomongo
 
         // Add Actions
         auto openShellAction = new QAction("Open Shell", this);
+#ifdef __APPLE__
+        openShellAction->setIcon(GuiRegistry::instance().mongodbIconForMAC());
+#else
         openShellAction->setIcon(GuiRegistry::instance().mongodbIcon());
+#endif
         VERIFY(connect(openShellAction, SIGNAL(triggered()), SLOT(ui_openShell())));
 
         auto openDirectConnection = new QAction("Open Direct Connection", this);

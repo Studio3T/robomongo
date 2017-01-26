@@ -566,7 +566,7 @@ namespace Robomongo
 
         createTabs();
         createStatusBar();
-        setWindowTitle(PROJECT_NAME_TITLE " " PROJECT_VERSION);
+        setWindowTitle("Robomongo 1.0-RC1");
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
         QTimer::singleShot(0, this, SLOT(manageConnections()));

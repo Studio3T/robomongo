@@ -156,7 +156,8 @@ namespace Robomongo
 
         auto replicaSetStr = QString::fromStdString(_connSettings->connectionName()) + " [Replica Set]";
         replicaSetStr = (_connSettings->replicaSetSettings()->members().size() > 0) 
-                        ? replicaSetStr + QString::fromStdString(_connSettings->replicaSetSettings()->members()[0])
+                        ? replicaSetStr + '(' + QString::fromStdString(
+                                                    _connSettings->replicaSetSettings()->members()[0]) + ')'
                         : replicaSetStr + "";
 
         QString const& serverAddress = _connSettings->isReplicaSet()

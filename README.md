@@ -11,13 +11,13 @@ What's new in latest Robomongo 1.0-RC1?
 ====================================
 Latest release of Robomongo 1.0-RC1 includes: 
   - Replica Set Support
-  - For almost all operations, improved error handling (no double error windows) and new operation logging.
+  - Improved error handling (no double error windows) and new operation logging for almost all operations.
   - New 'Attributes' column in connections list window showing connection properties such as 'Replica Set', 'SSL' and 'SSH'.
   - Windows size is saved/restored for Edit, View and Insert Document dialogs.
   
 Central feature of this release is Replica Set feature. With this new feature, Robomongo can be used to work with replica set clusters with SSL, hosted on localhost, LAN or in the cloud. Even when primary is unreachable, it is possible to work on a secondary with a couple of clicks.
 
-Blog:     http://blog.robomongo.org/robomongo-1-rc1/
+Blog:     http://blog.robomongo.org/robomongo-1-rc1/  
 Download: https://robomongo.org/download  
 Watch: [Robomongo youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo
@@ -74,7 +74,7 @@ Download
 
 You can download tested install packages for OS X, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
 
-The latest stable release is currently [**Robomongo 1.0-RC1**](http://blog.robomongo.org/robomongo-1-rc1/).
+The latest stable release is currently [**Robomongo 0.9.0**](http://blog.robomongo.org/robomongo-0-9-0-final/).
 
 Support
 =======

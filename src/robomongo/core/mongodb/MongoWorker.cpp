@@ -550,6 +550,10 @@ namespace Robomongo
 
             // todo: should we use dbName from event or _connSettings? 
             MongoShellExecResult result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
+            // To fix the problem where 'result' comes with old primary address.
+            if (_connSettings->isReplicaSet()) 
+                result.setCurrentServer(_dbclientRepSet->getSuspectedPrimaryHostAndPort().toString());
+
 
             if (result.error()) {
                 // If this is replica set, update script engine and try again

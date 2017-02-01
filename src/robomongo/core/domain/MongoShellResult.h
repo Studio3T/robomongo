@@ -39,7 +39,8 @@ namespace Robomongo
 
         std::vector<MongoShellResult> results() const { return _results; }
         std::string currentServer() const { return _currentServer; }
-        std::string currentDatabase() const { return _currentDatabase; }
+        void setCurrentServer(std::string const& server) { _currentServer = server; }
+        std::string currentDatabase() const { return _currentDatabase; }        
         bool isCurrentServerValid() const { return _isCurrentServerValid; }
         bool isCurrentDatabaseValid() const { return _isCurrentDatabaseValid; }
         std::string errorMessage() const { return _errorMessage; }

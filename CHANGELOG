@@ -1,9 +1,59 @@
 
-Latest Release: 
-Robomongo 0.9.0 Final (30 Sep, 2016)
-http://blog.robomongo.org/robomongo-0-9-0-final/
+Latest Version: 
+Robomongo 1.0-RC1 (1 Feb, 2017)
+http://blog.robomongo.org/robomongo-1-0-RC1
 
-Robomongo 0.9.0:
+Robomongo 1.x:
+  Major Features: 
+    - Replica set support.
+    - New operation logging for almost all operations.
+
+  Major Improvements:
+    - Improved error handling (no double error windows) for almost all operations.
+    
+  * What's new in 1.0-RC1 (1 Feb, 2017)
+    New Features:
+      - Replica set support.
+      - New 'Attributes' column in connections list window showing connection properties such as 'Replica Set', 'SSL' and 'SSH'.  
+      - New operation logging for almost all operations.
+
+    Improvements:
+      - Improved error handling (no double error windows) for all fail and success conditions for the following operations:
+          . Create, Drop Database
+          . Create, Edit User
+          . Create, Drop, Duplicate, Rename Collection
+          . Insert Document
+          . Remove document, Delete document, Remove all documents (triggered both from explorer and from result widget)
+          . Refresh Users
+          . Refresh Functions
+          . Refresh Collections
+          . Connection establish & refresh server fail and success cases.
+      - Windows size is saved and restored for Edit, View and Insert Document dialogs.
+      - Connections are automatically imported from the latest Robomongo version.
+      - Better error reporting/handling and logging have been added for the operations below:
+          . Create, Drop Function
+          . Drop User
+      - More informative and adjusted log level prefix strings haven added for log window. (Error, Warn, Info etc..).
+      - After a new connection is created, now the focus goes to the newly created connection (end of list) instead of the 
+        beginning of connections list. And when Robomongo is opened, the focus goes to the end of the connection list instead 
+        of beginning. 
+      - Error messages added and error handling for 'remove document', 'remove all documents' operations triggered explorer 
+        and single or multi 'delete document' from results window have been re-implemented and improved.
+      - Relevant errors are shown for the following cases now:        
+          . Drop attempt of non-existing collection.
+          . Duplicating a collection with a collection name which already exists finishes silently.
+    
+    Fixes:
+      - Fix for the problem where the connections list comes empty if the Robomongo config file or it's directory do not exist.
+      - Fix for the problem where 'in-progress bar' widget was not centered on main window for "Update Documents/Remove Documents" 
+        operations. https://github.com/paralect/robomongo/issues/1256
+      - Fix for two problems where the operations 'insert or update documents' in one tab was causing auto reloading of other 
+        unrelated tabs and also multiple error windows to popup. https://github.com/paralect/robomongo/issues/1236
+      - Fix for the problem where the operations 'remove document', 'remove all documents' triggered explorer and single or 
+        multi 'delete document' from results window were causing auto reloading of other unrelated tabs.
+        
+      
+Robomongo 0.9:
   Major Features: 
     - Support for MongoDB 3.x and WiredTiger engine. Robomongo now embeds MongoDB 3.2 shell. 
       (Ability to use the latest shell functionality)
@@ -26,6 +76,8 @@ Robomongo 0.9.0:
     - SSH connection failure to servers on Ubuntu and OS X with the following error:
       "Resource temporarily unavailable. Error when starting up SSH session: -8"  (#1090)
 
+      
+      
   What's new in 0.9.0 Final (30 Sep, 2016)
   http://blog.robomongo.org/robomongo-0-9-0-final/
   

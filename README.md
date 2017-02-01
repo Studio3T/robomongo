@@ -7,18 +7,17 @@ Starting from version 0.9, Robomongo is compatibile with MongoDB 3.x (including 
 
 Robomongo 0.8.x embeds the **MongoDB 2.4.0** shell.
 
-What's new in latest Robomongo 0.9.0 Final?
+What's new in latest Robomongo 1.0-RC1?
 ====================================
-Latest release of Robomongo 0.9.0 Final includes: 
-  - Full size editor with dockable output window.
-    (Becoming the first and only MongoDB admin tool providing this feature)
-  - Two result object context menu items: "Copy Name" and "Copy Path" added.
-  - Two database context menu items: "Copy Name" and "Copy Path" added.
-  - Minimize to Tray Icon for Windows.
+Latest release of Robomongo 1.0-RC1 includes: 
+  - Replica Set Support
+  - For almost all operations, improved error handling (no double error windows) and new operation logging.
+  - New 'Attributes' column in connections list window showing connection properties such as 'Replica Set', 'SSL' and 'SSH'.
+  - Windows size is saved/restored for Edit, View and Insert Document dialogs.
   
-Central feature of this release is full size editor with dockable output window feature. With this new feature, Robomongo can be used with maximized/full size query editor with dockable/floating output window. This feature is very useful especially when you have long scripts or you just want to see output window in your second monitor.
+Central feature of this release is Replica Set feature. With this new feature, Robomongo can be used to work with replica set clusters with SSL, hosted on localhost, LAN or in the cloud. Even when primary is unreachable, it is possible to work on a secondary with a couple of clicks.
 
-Blog:     http://blog.robomongo.org/robomongo-0-9-0-final/  
+Blog:     http://blog.robomongo.org/robomongo-1-rc1/
 Download: https://robomongo.org/download  
 Watch: [Robomongo youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo
@@ -26,15 +25,13 @@ Follow: https://twitter.com/Robomongo
 What's Planned for the Next Releases?
 ====================================
 
-We are currently working towards [Robomongo 1.0.0 milestone](https://github.com/paralect/robomongo/milestone/18).  
+We are currently working towards [Robomongo 1.0 milestone](https://github.com/paralect/robomongo/milestone/20).  
  
 Currently in progress:
-- Replica Sets
-- Export/Import
+- Robomongo 1.0 Planning (ETA: 22 Feb 2017)
 
 Planned for Next Release:
-- Support creating connections from connections strings
-- Support enabling SSH and SSL at the same time
+- Robomongo 1.0 Planning
 
 Plans for Future:
 - User Roles
@@ -71,15 +68,13 @@ Supported Platforms
 
 \* latest stable build
 
-**Note**: Currently Robomongo supports connection to single server of a replica set. Support for connection to **Replica Sets** is planned in next release Robomongo 1.0.0.
-
 
 Download
 ========
 
 You can download tested install packages for OS X, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
 
-The latest stable release is currently [**Robomongo 0.9.0 Final**](http://blog.robomongo.org/robomongo-0-9-0-final/).
+The latest stable release is currently [**Robomongo 1.0-RC1**](http://blog.robomongo.org/robomongo-1-rc1/).
 
 Support
 =======
@@ -138,7 +133,7 @@ There are a number of issues we could use help with reproducing. They are marked
 License
 =======
 
-Copyright (C) 2013-2016 [Paralect, Inc](http://www.paralect.com)
+Copyright (C) 2013-2017 [Paralect, Inc](http://www.paralect.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 as 

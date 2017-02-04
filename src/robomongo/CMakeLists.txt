@@ -62,6 +62,7 @@ set(SOURCES
     # Isolated Scope #3
     gui/GuiRegistry.cpp
     gui/dialogs/AboutDialog.cpp
+    gui/dialogs/EulaDialog.cpp
     gui/dialogs/ConnectionAdvancedTab.cpp
     gui/dialogs/ConnectionAuthTab.cpp
     gui/dialogs/ConnectionBasicTab.cpp
@@ -135,6 +136,7 @@ set(SOURCES
     core/settings/ReplicaSetSettings.cpp
     core/mongodb/SshTunnelWorker.cpp
 
+    resources/robo.qrc
     gui/resources/gui.qrc
 )
 

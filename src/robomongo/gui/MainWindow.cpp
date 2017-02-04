@@ -569,7 +569,7 @@ namespace Robomongo
         setWindowTitle("Robomongo 1.0-RC1");
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
-        QTimer::singleShot(0, this, SLOT(manageConnections()));
+        //QTimer::singleShot(0, this, SLOT(manageConnections()));   // todo: uncomment
         updateMenus();
 
         AppRegistry::instance().bus()->subscribe(this, ConnectionFailedEvent::Type);

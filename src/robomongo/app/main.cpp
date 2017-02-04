@@ -12,14 +12,14 @@
 
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/AppStyle.h"
+#include "robomongo/gui/dialogs/EulaDialog.h"
 #include "robomongo/ssh/ssh.h"
 
 
 int main(int argc, char *argv[], char** envp)
 {
-    if (rbm_ssh_init()) {
+    if (rbm_ssh_init()) 
         return 1;
-    }
 
     // Please check, do we really need envp for other OSes?
 #ifdef Q_OS_WIN
@@ -56,6 +56,11 @@ int main(int argc, char *argv[], char** envp)
 
     // Init GUI style
     Robomongo::AppStyleUtils::initStyle();
+
+    // EULA License Agreement
+    Robomongo::EulaDialog eulaDialog;
+    if (eulaDialog.exec() == QDialog::Rejected)
+        return 1;   // todo: ssh_cleanup
 
     // Application main window
     Robomongo::MainWindow mainWindow;

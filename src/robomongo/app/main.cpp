@@ -10,6 +10,8 @@
 #include <mongo/base/initializer.h>
 #include <mongo/util/net/ssl_options.h>
 
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/AppStyle.h"
 #include "robomongo/gui/dialogs/EulaDialog.h"
@@ -54,13 +56,18 @@ int main(int argc, char *argv[], char** envp)
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 
+    // EULA License Agreement
+    if (!Robomongo::AppRegistry::instance().settingsManager()->eulaAccepted()) {
+        Robomongo::EulaDialog eulaDialog;
+        if (eulaDialog.exec() == QDialog::Rejected) {
+            Robomongo::AppRegistry::instance().settingsManager()->setEulaAccepted(false);   // todo: need to save
+            return 1;   // todo: ssh_cleanup
+        }
+    }
+    Robomongo::AppRegistry::instance().settingsManager()->setEulaAccepted(true);
+
     // Init GUI style
     Robomongo::AppStyleUtils::initStyle();
-
-    // EULA License Agreement
-    Robomongo::EulaDialog eulaDialog;
-    if (eulaDialog.exec() == QDialog::Rejected)
-        return 1;   // todo: ssh_cleanup
 
     // Application main window
     Robomongo::MainWindow mainWindow;

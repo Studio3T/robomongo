@@ -110,6 +110,9 @@ namespace Robomongo
         void setDisableConnectionShortcuts(bool isDisable) { _disableConnectionShortcuts = isDisable; }
         bool disableConnectionShortcuts() const { return _disableConnectionShortcuts; }
 
+        void setEulaAccepted(bool accepted) { _eulaAccepted = accepted; }
+        bool eulaAccepted() const { return _eulaAccepted; }
+
         void setBatchSize(int batchSize) { _batchSize = batchSize; }
         int batchSize() const { return _batchSize; }
 
@@ -169,6 +172,7 @@ namespace Robomongo
         bool _minimizeToTray;
         bool _lineNumbers;
         bool _disableConnectionShortcuts;
+        bool _eulaAccepted = false;
         int _batchSize;
         QString _currentStyle;
         QString _textFontFamily;
@@ -180,6 +184,9 @@ namespace Robomongo
         // True when settings from previous versions of
         // Robomongo are imported
         bool _imported;
+
+        // todo: 
+        QString _uuid;
 
         /**
          * @brief List of connections

@@ -3,6 +3,8 @@
 #include <QDir>
 #include <QFile>
 #include <QVariantList>
+#include <QUuid>
+
 #include <parser.h>
 #include <serializer.h>
 
@@ -193,6 +195,13 @@ namespace Robomongo
         _timeZone = (SupportedTimes)timeZone;
         _loadMongoRcJs = map.value("loadMongoRcJs").toBool();
         _disableConnectionShortcuts = map.value("disableConnectionShortcuts").toBool();
+        _eulaAccepted = map.value("eulaAccepted").toBool();
+
+        // If UUID has never been created or is empty, create a new one. Otherwise load the existing.
+        if (!map.contains("uuid") || map.value("uuid").toString().isEmpty())
+            _uuid = QUuid::createUuid().toString();
+        else
+            _uuid = map.value("uuid").toString();
 
         // Load AutocompletionMode
         if (map.contains("autocompletionMode")) {
@@ -291,20 +300,23 @@ namespace Robomongo
 
         // 7. Save disableConnectionShortcuts
         map.insert("disableConnectionShortcuts", _disableConnectionShortcuts);
+        
+        // 8. Save eulaAccepted
+        map.insert("eulaAccepted", _eulaAccepted);
 
-        // 8. Save batchSize
+        // 9. Save batchSize
         map.insert("batchSize", _batchSize);
         map.insert("mongoTimeoutSec", _mongoTimeoutSec);
         map.insert("shellTimeoutSec", _shellTimeoutSec);
 
-        // 9. Save style
+        // 10. Save style
         map.insert("style", _currentStyle);
 
-        // 10. Save font information
+        // 11. Save font information
         map.insert("textFontFamily", _textFontFamily);
         map.insert("textFontPointSize", _textFontPointSize);
 
-        // 11. Save connections
+        // 12. Save connections
         QVariantList list;
 
         for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it != _connections.end(); ++it) {
@@ -317,6 +329,7 @@ namespace Robomongo
         map.insert("minimizeToTray", _minimizeToTray);
         map.insert("toolbars", _toolbars);
         map.insert("imported", _imported);
+        map.insert("uuid", _uuid);
 
         return map;
     }

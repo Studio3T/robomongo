@@ -2,6 +2,15 @@
 
 #include <QDialog>
 
+QT_BEGIN_NAMESPACE
+class QLabel;
+class QLineEdit;
+class QCheckBox;
+class QPushButton;
+class QDialogButtonBox;
+class QComboBox;
+QT_END_NAMESPACE
+
 namespace Robomongo
 {
 
@@ -24,6 +33,10 @@ namespace Robomongo
         */
         void closeEvent(QCloseEvent *event) override;
 
+
+    private Q_SLOTS:
+        void enableOkButton(int state);
+
     private:
 
         /**
@@ -35,6 +48,10 @@ namespace Robomongo
         * @brief Save window settings into system registry
         */
         void saveWindowSettings() const;
+
+        
+        QCheckBox* _checkBox = nullptr;
+        QDialogButtonBox* _buttonBox;
 
     };
 }

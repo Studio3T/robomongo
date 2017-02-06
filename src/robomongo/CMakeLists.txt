@@ -124,6 +124,7 @@ set(SOURCES
     gui/widgets/workarea/QueryWidget.cpp
     gui/widgets/workarea/WorkAreaTabBar.cpp
     gui/widgets/workarea/WorkAreaTabWidget.cpp
+    gui/widgets/workarea/WelcomeTab.cpp
 
     # Final scope
     gui/widgets/LogWidget.cpp

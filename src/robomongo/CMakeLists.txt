@@ -148,6 +148,7 @@ add_executable(robomongo MACOSX_BUNDLE WIN32 app/main.cpp ${SOURCES})
 target_link_libraries(robomongo
     PRIVATE
         Qt5::Widgets
+        Qt5::Network
         qjson
         qscintilla
         mongodb

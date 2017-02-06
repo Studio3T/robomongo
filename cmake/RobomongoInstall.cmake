@@ -93,7 +93,7 @@ install(
     DESTINATION ${license_dir})
 
 # Install common dependencies
-install_qt_lib(Core Gui Widgets PrintSupport)
+install_qt_lib(Core Gui Widgets PrintSupport Network)
 install_qt_plugins(QGifPlugin QICOPlugin)
 install_icu_libs()
 

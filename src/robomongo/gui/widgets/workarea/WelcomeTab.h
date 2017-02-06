@@ -4,6 +4,8 @@
 
 QT_BEGIN_NAMESPACE
 class QPushButton;
+class QNetworkReply;
+class QLabel;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -16,6 +18,14 @@ namespace Robomongo
     public:
         WelcomeTab(QWidget *parent = nullptr);
         ~WelcomeTab();
+
+    private Q_SLOTS:
+        void downloadFinished(QNetworkReply* reply);
+        void on_allBlogsButton_clicked();
+
+    private:
+        QLabel* _pic1 = nullptr;
+        QPushButton* _allBlogsButton = nullptr;
 
     };
 

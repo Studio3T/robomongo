@@ -1027,7 +1027,7 @@ namespace Robomongo
 
 //    class ScriptExecute
 
-    class ConnectionEstablishedEvent : public Event
+    struct ConnectionEstablishedEvent : public Event
     {
         R_EVENT
 

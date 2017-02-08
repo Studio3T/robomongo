@@ -8,7 +8,7 @@ class QMovie;
 
 namespace Robomongo
 {
-    class ConnectionEstablishedEvent;
+    struct ConnectionEstablishedEvent;
     class ConnectionFailedEvent;
     class ConnectionSettings;
     class MongoServer;

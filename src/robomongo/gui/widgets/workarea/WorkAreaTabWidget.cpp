@@ -66,7 +66,7 @@ namespace Robomongo
 
         // todo: change icon
         auto scrollArea = new QScrollArea;
-        scrollArea->setWidget(new WelcomeTab(this));
+        scrollArea->setWidget(new WelcomeTab(scrollArea));
         addTab(scrollArea, GuiRegistry::instance().mainWindowIcon(), "Welcome");
         scrollArea->setFrameShape(QFrame::NoFrame);
     }

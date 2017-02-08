@@ -24,7 +24,7 @@
 
 namespace Robomongo
 {
-    QString const recentConnections = "<p><h1><font color=\"#2d862d\">Recent Connections</h1></p>";
+    QString const recentConnectionsStr = "<p><h1><font color=\"#2d862d\">Recent Connections</h1></p>";
 
     QString const connLabelTemplate = "<p><a style='font-size:14px; color: #106CD6; text-decoration:none'"
                                       "href='%1'>%2</a></p>";
@@ -56,7 +56,7 @@ namespace Robomongo
     QString const blog4 = blog.arg("http://blog.robomongo.org/robomongo-1-rc1/",
         "Robomongo RC8", "14 Apr 2016");
 
-    // todo: move to in-class
+    
 
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
@@ -65,15 +65,25 @@ namespace Robomongo
 
         AppRegistry::instance().bus()->subscribe(this, ConnectionEstablishedEvent::Type);
 
+        auto const settingsManager = AppRegistry::instance().settingsManager();
+
         _recentConnsLay = new QVBoxLayout;       
-        auto recentConnLabel = new QLabel(recentConnections);
+        auto recentConnLabel = new QLabel(recentConnectionsStr);
 
         auto clearButtonLay = new QHBoxLayout;
         _clearButton = new QPushButton("Clear Recent Connections");
-        if (/*no recent connections*/1)
+
+        // Load and add recent connections from settings
+        auto const& recentConnections = AppRegistry::instance().settingsManager()->recentConnections();
+        if (recentConnections.size() < 1) 
             _clearButton->setDisabled(true);
-        else 
+        else {
             _clearButton->setStyleSheet("color: #106CD6");
+            for (auto const& rconn : recentConnections) {
+                ConnectionSettings const* conn = settingsManager->getConnectionSettings(rconn.uniqueId);
+                addRecentConnectionLabel(conn, false);
+            }
+        }
 
         VERIFY(connect(_clearButton, SIGNAL(clicked()), this, SLOT(on_clearButton_clicked())));
         _clearButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -174,6 +184,9 @@ namespace Robomongo
         _clearButton->setStyleSheet("");
         
         _parent->verticalScrollBar()->setValue(0);
+
+        AppRegistry::instance().settingsManager()->clearRecentConnections();
+        AppRegistry::instance().settingsManager()->save();
     }
 
     void WelcomeTab::linkActivated(QString const& link)
@@ -197,27 +210,44 @@ namespace Robomongo
         if (event->connectionType != ConnectionPrimary)
             return;
 
-        auto conn = AppRegistry::instance().settingsManager()
-            ->getConnectionSettings(event->connInfo._originalConnectionSettingsId);
+        auto const settingsManager = AppRegistry::instance().settingsManager();
+        auto conn = settingsManager->getConnectionSettings(event->connInfo._originalConnectionSettingsId);
 
-        //// Quick duplicate detection
-        //if (conn->uniqueId() == _lastAddedConnId)
-        //    return;
-
-        auto xx = _recentConnsLay->count();
-
-        // Duplicate detection
+        // Remove duplicate label
         for (int i = 0; i < _recentConnsLay->count(); ++i) {
             auto label = dynamic_cast<QLabel*>(_recentConnsLay->itemAt(i)->widget());
             if (label) {
                 // todo:
                 //"href='uniqueID'>%2</a></p>");
                 auto const unqID = label->text().split("href='")[1].split("'")[0].toInt();
-                if (unqID == conn->uniqueId())
-                    return;
+                if (unqID == conn->uniqueId()) {
+                    auto item = _recentConnsLay->takeAt(i);
+                    delete item->widget();
+                }
             }
         }
 
+        addRecentConnectionLabel(conn, true);
+
+        // todo: Clear and rebuild recent connections vector and save into config. file
+        _recentConnections.clear();
+        for (int i = 0; i < _recentConnsLay->count(); ++i) {
+            auto label = dynamic_cast<QLabel*>(_recentConnsLay->itemAt(i)->widget());
+            if (label) {
+                // todo:
+                //"href='uniqueID'>%2</a></p>");
+                auto const unqID = label->text().split("href='")[1].split("'")[0].toInt();
+                _recentConnections.push_back(settingsManager->getConnectionSettings(unqID));
+            }
+        }
+        AppRegistry::instance().settingsManager()->setRecentConnections(_recentConnections);
+        AppRegistry::instance().settingsManager()->save();
+    }
+
+    void WelcomeTab::addRecentConnectionLabel(ConnectionSettings const* conn, bool insertTop)
+    {
+        if (!conn)
+            return;
 
         // Add conn into recent conns list
         auto connLabel = new QLabel(connLabelTemplate.arg(QString::number(conn->uniqueId()),
@@ -226,9 +256,13 @@ namespace Robomongo
         connLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
         VERIFY(connect(connLabel, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString))));
         VERIFY(connect(connLabel, SIGNAL(linkHovered(QString)), this, SLOT(linkHovered(QString))));
-        _recentConnsLay->insertWidget(0, connLabel);
+        if (insertTop)
+            _recentConnsLay->insertWidget(0, connLabel);
+        else
+            _recentConnsLay->addWidget(connLabel);
+
         _clearButton->setEnabled(true);
         _clearButton->setStyleSheet("color: #106CD6");
-        _lastAddedConnId = conn->uniqueId();
     }
+
 }

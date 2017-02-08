@@ -66,6 +66,7 @@ namespace Robomongo
     };
 
     std::vector<ConnectionSettings*>  SettingsManager::_connections;
+    std::vector<const RecentConnection> SettingsManager::_recentConnections;
 
     /**
      * Creates SettingsManager for config file in default location
@@ -240,10 +241,18 @@ namespace Robomongo
         _connections.clear();
 
         QVariantList list = map.value("connections").toList();
-        for (QVariantList::iterator it = list.begin(); it != list.end(); ++it) {
+        for (auto conn : list) {
             auto connSettings = new ConnectionSettings(false);
-            connSettings->fromVariant((*it).toMap());
+            connSettings->fromVariant(conn.toMap());
             addConnection(connSettings);
+        }
+
+        // Load recent connections
+        _recentConnections.clear();
+        QVariantList const& rlist = map.value("recentConnections").toList();
+        for (auto const& rconn : rlist) {
+            _recentConnections.push_back(RecentConnection(rconn.toMap().value("uniqueId").toInt(),
+                                                          rconn.toMap().value("name").toString().toStdString()));
         }
 
         _toolbars = map.value("toolbars").toMap();
@@ -318,13 +327,22 @@ namespace Robomongo
 
         // 12. Save connections
         QVariantList list;
-
-        for (ConnectionSettingsContainerType::const_iterator it = _connections.begin(); it != _connections.end(); ++it) {
-            QVariantMap rm = (*it)->toVariant().toMap();
-            list.append(rm);
-        }
+        for (auto const conn : _connections) 
+            list.append(conn->toVariant().toMap());
 
         map.insert("connections", list);
+
+        // 13. Save recent connections
+        // todo: refactor
+        QVariantList tlist;
+        QVariantMap tmap;
+        for (auto const& rconn : _recentConnections) {
+            tmap.insert("uniqueId", QString::number(rconn.uniqueId));
+            tmap.insert("name", QString::fromStdString(rconn.name));
+            tlist.append(tmap);
+        }
+        map.insert("recentConnections", tlist);
+
         map.insert("autoExec", _autoExec);
         map.insert("minimizeToTray", _minimizeToTray);
         map.insert("toolbars", _toolbars);
@@ -353,6 +371,31 @@ namespace Robomongo
             _connections.erase(it);
             delete connection;
         }
+    }
+
+    void SettingsManager::addRecentConnection(ConnectionSettings *connection)
+    {
+        _recentConnections.push_back(RecentConnection(connection->uniqueId(), connection->connectionName()));
+    }
+
+    void SettingsManager::deleteRecentConnection(ConnectionSettings *conn)
+    {
+        for (int i = 0; i < _recentConnections.size(); ++i) {
+            if (_recentConnections[i].uniqueId == conn->uniqueId())
+                _recentConnections.erase(_recentConnections.begin() + 0);   // todo
+        }
+    }
+
+    void SettingsManager::setRecentConnections(std::vector<ConnectionSettings const*> const& recentConns)
+    {
+        _recentConnections.clear();
+        for(auto rconn : recentConns)
+            _recentConnections.push_back(RecentConnection(rconn->uniqueId(), rconn->connectionName()));
+    }
+
+    void SettingsManager::clearRecentConnections()
+    {
+        _recentConnections.clear();
     }
 
     ConnectionSettings* SettingsManager::getConnectionSettings(int uniqueId)

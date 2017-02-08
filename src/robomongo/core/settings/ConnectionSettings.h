@@ -149,7 +149,7 @@ namespace Robomongo
         void setReplicaSet(bool flag) { _isReplicaSet = flag; }
 
         void setUniqueId(int id) { _uniqueId = id; }
-        int uniqueId() { return _uniqueId; }
+        int uniqueId() const { return _uniqueId; }
 
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;

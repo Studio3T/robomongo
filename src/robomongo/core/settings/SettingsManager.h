@@ -9,6 +9,24 @@ namespace Robomongo
 {
     class ConnectionSettings;
     struct ConfigFileAndImportFunction;
+    //struct RecentConnection;
+
+    struct RecentConnection
+    {
+        RecentConnection(int uniqueId, std::string const& name)
+            : uniqueId(uniqueId), name(name) {}
+
+        // todo: remove
+        RecentConnection& operator=(const RecentConnection &other)
+        {
+            //uniqueId = other.uniqueId;
+            //name = other.name;
+            return *this;
+        }
+
+        int const uniqueId = -1;
+        std::string const name;
+    };
 
     /**
      * @brief SettingsManager gives you access to all settings, that is used
@@ -61,6 +79,14 @@ namespace Robomongo
         void removeConnection(ConnectionSettings *connection);
 
         /**
+        * @brief todo
+        */
+        static void addRecentConnection(ConnectionSettings *connection);
+        static void deleteRecentConnection(ConnectionSettings *connection);
+        static void setRecentConnections(std::vector<ConnectionSettings const*> const& recentConns);
+        static void clearRecentConnections();
+
+        /**
         * @brief  Finds and returns original (non-clone) connection settings which is 
         *         loaded/saved from/into Robomongo config. file.
         * @param  uniqueID : Unique ID for an original connection settings.
@@ -77,6 +103,9 @@ namespace Robomongo
          * @brief Returns list of connections
          */
         ConnectionSettingsContainerType connections() const { return _connections; }
+        
+
+        std::vector<const RecentConnection>& recentConnections() const { return _recentConnections; }
 
         ToolbarSettingsContainerType toolbars() const { return _toolbars; }
 
@@ -192,6 +221,9 @@ namespace Robomongo
          * @brief List of connections
          */
         static std::vector<ConnectionSettings*> _connections;
+
+        // todo
+        static std::vector<const RecentConnection> _recentConnections;
         
         ToolbarSettingsContainerType _toolbars;
 

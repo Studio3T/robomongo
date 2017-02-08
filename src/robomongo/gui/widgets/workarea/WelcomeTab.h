@@ -13,6 +13,7 @@ QT_END_NAMESPACE
 namespace Robomongo
 {
     struct ConnectionEstablishedEvent;
+    class ConnectionSettings;
 
     class WelcomeTab : public QWidget
     {
@@ -31,12 +32,15 @@ namespace Robomongo
         void handle(ConnectionEstablishedEvent *event);
 
     private:
+        void addRecentConnectionLabel(ConnectionSettings const* conn, bool insertTop);
+
         QLabel* _pic1 = nullptr;
         QPushButton* _allBlogsButton = nullptr;
         QVBoxLayout* _recentConnsLay;
         QPushButton* _clearButton;
         QScrollArea* _parent;
 
+        std::vector<ConnectionSettings const*> _recentConnections;
         int _lastAddedConnId = -1;
     };
 

@@ -11,6 +11,7 @@
 #include <QKeyEvent>
 #include <QApplication>
 #include <QSettings>
+#include <QUuid>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -343,8 +344,7 @@ namespace Robomongo
 
     void ConnectionsDialog::clone()
     {
-        ConnectionListWidgetItem *currentItem =
-            (ConnectionListWidgetItem *) _listWidget->currentItem();
+        auto currentItem = dynamic_cast<ConnectionListWidgetItem*>(_listWidget->currentItem());
 
         // Do nothing if no item selected
         if (currentItem == 0)
@@ -352,7 +352,9 @@ namespace Robomongo
 
         // Clone connection
         ConnectionSettings *connection = currentItem->connection()->clone();
-        std::string newConnectionName = "Copy of "+connection->connectionName();
+        // this is a special clone which will actually be a new connection and must have unique UUID
+        connection->setUuid(QUuid::createUuid().toString());    
+        std::string newConnectionName = "Copy of " + connection->connectionName();
 
         connection->setConnectionName(newConnectionName);
         connection->replicaSetSettings()->setSetName("");

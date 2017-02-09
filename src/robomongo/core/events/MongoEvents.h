@@ -31,14 +31,13 @@ namespace Robomongo
     {
         R_EVENT
 
-            EstablishConnectionRequest(QObject *sender, ConnectionType connectionType, 
-                                       int const originalConnectionSettingsId) :
+            EstablishConnectionRequest(QObject *sender, ConnectionType connectionType, std::string const& uuid) :
             Event(sender),
             connectionType(connectionType),
-            originalConnectionSettingsId(originalConnectionSettingsId) {}
+            uuid(uuid) {}
 
         ConnectionType const connectionType;
-        int const originalConnectionSettingsId = -1;
+        std::string const uuid;
     };
 
     struct EstablishConnectionResponse : public Event

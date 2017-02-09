@@ -17,19 +17,19 @@ namespace Robomongo
         _languageOverride(languageOverride),
         _textWeights(textWeights) {}
 
-        ConnectionInfo::ConnectionInfo(int originalConnectionSettingsId) :
+        ConnectionInfo::ConnectionInfo(std::string const& uuid) :
             _address(),
             _databases(),
             _version(0.0f),
-            _originalConnectionSettingsId(originalConnectionSettingsId) 
+            _uuid(uuid)
         {}
 
         ConnectionInfo::ConnectionInfo(const std::string &address, const std::vector<std::string> &databases, 
-            float version, const std::string& storageEngine, int originalConnectionSettingsId) :
+            float version, const std::string& storageEngine, std::string const& uuid) :
            _address(address),
            _databases(databases),
            _version(version),
            _storageEngineType(storageEngine),
-           _originalConnectionSettingsId(originalConnectionSettingsId)
+           _uuid(uuid)
         {}
 }

@@ -168,7 +168,7 @@ namespace Robomongo
                 resetGlobalSSLparams();
 
                 reply(event->sender(), new EstablishConnectionResponse(this, EventError(errorReason),             
-                      event->connectionType, event->originalConnectionSettingsId, *repSetInfo.release(), 
+                      event->connectionType, event->uuid, *repSetInfo.release(), 
                       EstablishConnectionResponse::MongoConnection));
 
                 return false;
@@ -225,7 +225,7 @@ namespace Robomongo
             resetGlobalSSLparams();
 
             auto connInfo = ConnectionInfo(_connSettings->getFullAddress(), dbNames, client->getVersion(), 
-                                           client->getStorageEngineType(), event->originalConnectionSettingsId);
+                                           client->getStorageEngineType(), event->uuid);
 
             // todo: two ctors for rep.set and single server.
             reply(event->sender(), new EstablishConnectionResponse(this, connInfo, event->connectionType, 
@@ -239,8 +239,7 @@ namespace Robomongo
                                EstablishConnectionResponse::ErrorReason::MongoAuth;
 
             reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what()), 
-                  event->connectionType, ConnectionInfo(event->originalConnectionSettingsId),
-                  *repSetInfo.release(), errorReason));
+                  event->connectionType, ConnectionInfo(event->uuid), *repSetInfo.release(), errorReason));
         }
 
         return false;

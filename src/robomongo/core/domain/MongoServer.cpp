@@ -54,17 +54,17 @@ namespace Robomongo {
 
     void MongoServer::tryConnect() 
     {
-        _bus->send(_worker, new EstablishConnectionRequest(this, _connectionType, _connSettings->uniqueId()));
+        _bus->send(_worker, new EstablishConnectionRequest(this, _connectionType, _connSettings->uuid().toStdString()));
     }
 
     void MongoServer::tryRefresh() 
     {
-        _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh, _connSettings->uniqueId()));
+        _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh, _connSettings->uuid().toStdString()));
     }
 
     void MongoServer::tryRefreshReplicaSetConnection()
     {
-        _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh, _connSettings->uniqueId()));
+        _bus->send(_worker, new EstablishConnectionRequest(this, ConnectionRefresh, _connSettings->uuid().toStdString()));
     }
     
     void MongoServer::tryRefreshReplicaSetFolder(bool expanded, bool showLoading /*= true*/)
@@ -375,7 +375,7 @@ namespace Robomongo {
         // Cache replica set name for 2 times faster first connection 
         if (ConnectionPrimary == _connectionType) {
             ConnectionSettings* originalConnSettings = AppRegistry::instance().settingsManager()
-                ->getConnectionSettings(event->info._originalConnectionSettingsId);
+                ->getConnectionSettingsByUuid(event->info._uuid);
             if (originalConnSettings) {
                 auto setName = event->isError() ? "" : _replicaSetInfo->setName;
                 originalConnSettings->replicaSetSettings()->setSetName(setName);

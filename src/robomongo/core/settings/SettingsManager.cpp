@@ -251,7 +251,7 @@ namespace Robomongo
         _recentConnections.clear();
         QVariantList const& rlist = map.value("recentConnections").toList();
         for (auto const& rconn : rlist) {
-            _recentConnections.push_back(RecentConnection(rconn.toMap().value("uniqueId").toInt(),
+            _recentConnections.push_back(RecentConnection(rconn.toMap().value("uuid").toString(),
                                                           rconn.toMap().value("name").toString().toStdString()));
         }
 
@@ -337,7 +337,7 @@ namespace Robomongo
         QVariantList tlist;
         QVariantMap tmap;
         for (auto const& rconn : _recentConnections) {
-            tmap.insert("uniqueId", QString::number(rconn.uniqueId));
+            tmap.insert("uuid", rconn.uuid);
             tmap.insert("name", QString::fromStdString(rconn.name));
             tlist.append(tmap);
         }
@@ -375,13 +375,13 @@ namespace Robomongo
 
     void SettingsManager::addRecentConnection(ConnectionSettings *connection)
     {
-        _recentConnections.push_back(RecentConnection(connection->uniqueId(), connection->connectionName()));
+        _recentConnections.push_back(RecentConnection(connection->uuid(), connection->connectionName()));
     }
 
     void SettingsManager::deleteRecentConnection(ConnectionSettings *conn)
     {
         for (int i = 0; i < _recentConnections.size(); ++i) {
-            if (_recentConnections[i].uniqueId == conn->uniqueId())
+            if (_recentConnections[i].uuid == conn->uuid())
                 _recentConnections.erase(_recentConnections.begin() + 0);   // todo
         }
     }
@@ -390,7 +390,7 @@ namespace Robomongo
     {
         _recentConnections.clear();
         for(auto rconn : recentConns)
-            _recentConnections.push_back(RecentConnection(rconn->uniqueId(), rconn->connectionName()));
+            _recentConnections.push_back(RecentConnection(rconn->uuid(), rconn->connectionName()));
     }
 
     void SettingsManager::clearRecentConnections()
@@ -407,6 +407,22 @@ namespace Robomongo
 
         LOG_MSG("Failed to find connection settings object by unique ID.", mongo::logger::LogSeverity::Warning());
         return nullptr;
+    }
+
+    ConnectionSettings* SettingsManager::getConnectionSettingsByUuid(QString const& uuid) const
+    {
+        for (auto const& connSettings : _connections){
+            if (connSettings->uuid() == uuid)
+                return connSettings;
+        }
+
+        LOG_MSG("Failed to find connection settings object by UUID.", mongo::logger::LogSeverity::Warning());
+        return nullptr;
+    }
+
+    ConnectionSettings* SettingsManager::getConnectionSettingsByUuid(std::string const& uuid) const
+    {
+        return getConnectionSettingsByUuid(QString::fromStdString(uuid));
     }
 
     void SettingsManager::setCurrentStyle(const QString& style)

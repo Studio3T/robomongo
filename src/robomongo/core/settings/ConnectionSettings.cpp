@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include <QUuid>
+
 #include "robomongo/core/settings/CredentialSettings.h"
 #include "robomongo/core/settings/ReplicaSetSettings.h"
 #include "robomongo/core/settings/SshSettings.h"
@@ -33,7 +35,8 @@ namespace Robomongo
         _sslSettings(new SslSettings()),
         _isReplicaSet(false),
         _replicaSetSettings(new ReplicaSetSettings()),
-        _clone(isClone)
+        _clone(isClone),
+        _uuid(isClone ? "" : QUuid::createUuid().toString())
     { }
 
     // todo: remove or add clone support
@@ -46,7 +49,8 @@ namespace Robomongo
         _sslSettings(new SslSettings()),
         _isReplicaSet((uri.type() == mongo::ConnectionString::ConnectionType::SET)),
         _replicaSetSettings(new ReplicaSetSettings(uri)),
-        _clone(isClone)
+        _clone(isClone),
+        _uuid(QUuid::createUuid().toString())   // todo
     {
         if (!uri.getServers().empty()) {
             _host = uri.getServers().front().host();
@@ -96,6 +100,13 @@ namespace Robomongo
             _replicaSetSettings->fromVariant(map.value("replicaSet").toMap());
         }
 
+        // If UUID has never been created or is empty, create a new one. Otherwise load the existing.
+        if (!map.contains("uuid") || map.value("uuid").toString().isEmpty())
+            _uuid = QUuid::createUuid().toString();
+        else
+            _uuid = map.value("uuid").toString();
+
+
 //#ifdef MONGO_SSL
 //      ,SSLInfo(map.value("sslEnabled").toBool(),QtUtils::toStdString(map.value("sslPemKeyFile").toString()))
 //#endif
@@ -116,6 +127,7 @@ namespace Robomongo
     {
         auto settings = new ConnectionSettings(true);
         settings->setUniqueId(_uniqueId);
+        settings->setUuid(_uuid);
         settings->apply(this);
         return settings;
     }
@@ -176,6 +188,7 @@ namespace Robomongo
 
         map.insert("ssh", _sshSettings->toVariant());
         map.insert("ssl", _sslSettings->toVariant());
+        map.insert("uuid", _uuid); 
 
         return map;
     }

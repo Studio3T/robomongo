@@ -13,8 +13,8 @@ namespace Robomongo
 
     struct RecentConnection
     {
-        RecentConnection(int uniqueId, std::string const& name)
-            : uniqueId(uniqueId), name(name) {}
+        RecentConnection(QString const& uuid, std::string const& name)
+            : uuid(uuid), name(name) {}
 
         // todo: remove
         RecentConnection& operator=(const RecentConnection &other)
@@ -24,7 +24,7 @@ namespace Robomongo
             return *this;
         }
 
-        int const uniqueId = -1;
+        QString const uuid;
         std::string const name;
     };
 
@@ -94,6 +94,10 @@ namespace Robomongo
         *         nullptr otherwise.
         */
         ConnectionSettings* getConnectionSettings(int uniqueId);
+
+        // todo
+        ConnectionSettings* getConnectionSettingsByUuid(QString const& uuid) const;
+        ConnectionSettings* getConnectionSettingsByUuid(std::string const& uuid) const;
 
         void reorderConnections(const ConnectionSettingsContainerType &connections);
 

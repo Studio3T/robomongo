@@ -80,7 +80,7 @@ namespace Robomongo
         else {
             _clearButton->setStyleSheet("color: #106CD6");
             for (auto const& rconn : recentConnections) {
-                ConnectionSettings const* conn = settingsManager->getConnectionSettings(rconn.uniqueId);
+                ConnectionSettings const* conn = settingsManager->getConnectionSettingsByUuid(rconn.uuid);
                 addRecentConnectionLabel(conn, false);
             }
         }
@@ -192,7 +192,7 @@ namespace Robomongo
     void WelcomeTab::linkActivated(QString const& link)
     {
         for (auto const conn : AppRegistry::instance().settingsManager()->connections()) {
-            if (QString::number(conn->uniqueId()) == link) {
+            if (conn->uuid() == link) {
                 AppRegistry::instance().app()->openServer(conn, ConnectionPrimary);
                 return;
             }
@@ -211,16 +211,16 @@ namespace Robomongo
             return;
 
         auto const settingsManager = AppRegistry::instance().settingsManager();
-        auto conn = settingsManager->getConnectionSettings(event->connInfo._originalConnectionSettingsId);
+        auto conn = settingsManager->getConnectionSettingsByUuid(event->connInfo._uuid);
 
         // Remove duplicate label
         for (int i = 0; i < _recentConnsLay->count(); ++i) {
             auto label = dynamic_cast<QLabel*>(_recentConnsLay->itemAt(i)->widget());
             if (label) {
                 // todo:
-                //"href='uniqueID'>%2</a></p>");
-                auto const unqID = label->text().split("href='")[1].split("'")[0].toInt();
-                if (unqID == conn->uniqueId()) {
+                //"href='uuid'>%2</a></p>");
+                auto const uuid = label->text().split("href='")[1].split("'")[0];
+                if (uuid == conn->uuid()) {
                     auto item = _recentConnsLay->takeAt(i);
                     delete item->widget();
                 }
@@ -235,9 +235,9 @@ namespace Robomongo
             auto label = dynamic_cast<QLabel*>(_recentConnsLay->itemAt(i)->widget());
             if (label) {
                 // todo:
-                //"href='uniqueID'>%2</a></p>");
-                auto const unqID = label->text().split("href='")[1].split("'")[0].toInt();
-                _recentConnections.push_back(settingsManager->getConnectionSettings(unqID));
+                //"href='uuid'>%2</a></p>");
+                auto const uuid = label->text().split("href='")[1].split("'")[0];
+                _recentConnections.push_back(settingsManager->getConnectionSettingsByUuid(uuid));
             }
         }
         AppRegistry::instance().settingsManager()->setRecentConnections(_recentConnections);
@@ -250,7 +250,7 @@ namespace Robomongo
             return;
 
         // Add conn into recent conns list
-        auto connLabel = new QLabel(connLabelTemplate.arg(QString::number(conn->uniqueId()),
+        auto connLabel = new QLabel(connLabelTemplate.arg(conn->uuid(),
             QString::fromStdString(conn->connectionName() + " (" + conn->hostAndPort().toString() + ')')));
 
         connLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);

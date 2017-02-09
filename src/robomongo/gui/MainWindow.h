@@ -22,6 +22,7 @@ namespace Robomongo
     class ConnectionMenu;
     class App;
     class ExplorerWidget;
+    class WelcomeTab;
 
     class MainWindow : public QMainWindow
     {
@@ -30,6 +31,8 @@ namespace Robomongo
     public:
         typedef QMainWindow BaseClass;
         MainWindow();
+
+        WelcomeTab* getWelcomeTab();
 
     public Q_SLOTS:
         void manageConnections();

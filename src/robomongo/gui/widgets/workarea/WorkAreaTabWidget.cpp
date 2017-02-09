@@ -66,7 +66,8 @@ namespace Robomongo
 
         // todo: change icon
         auto scrollArea = new QScrollArea;
-        scrollArea->setWidget(new WelcomeTab(scrollArea));
+        _welcomeTab = new WelcomeTab(scrollArea);
+        scrollArea->setWidget(_welcomeTab);
         addTab(scrollArea, GuiRegistry::instance().mainWindowIcon(), "Welcome");
         scrollArea->setFrameShape(QFrame::NoFrame);
     }
@@ -119,7 +120,12 @@ namespace Robomongo
 
     QueryWidget *WorkAreaTabWidget::queryWidget(int index)
     {
-        return qobject_cast<QueryWidget *>(widget(index));
+        return qobject_cast<QueryWidget*>(widget(index));
+    }
+
+    WelcomeTab* WorkAreaTabWidget::getWelcomeTab()
+    {
+        return _welcomeTab;
     }
 
     /**

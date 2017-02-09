@@ -746,6 +746,11 @@ namespace Robomongo
         _connectionsMenu->addAction(connectAction);
     }
 
+    WelcomeTab* MainWindow::getWelcomeTab()
+    {
+        return _workArea->getWelcomeTab();
+    }
+    
     void MainWindow::manageConnections()
     {
     #if defined(Q_OS_WIN)

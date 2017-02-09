@@ -25,6 +25,8 @@
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/dialogs/ConnectionDialog.h"
+#include "robomongo/gui/MainWindow.h"
+#include "robomongo/gui/widgets/workarea/WelcomeTab.h"
 
 namespace Robomongo
 {
@@ -320,8 +322,7 @@ namespace Robomongo
      */
     void ConnectionsDialog::remove()
     {
-        ConnectionListWidgetItem *currentItem =
-            (ConnectionListWidgetItem *)_listWidget->currentItem();
+        auto currentItem = dynamic_cast<ConnectionListWidgetItem*>(_listWidget->currentItem());
 
         // Do nothing if no item selected
         if (!currentItem)
@@ -330,7 +331,7 @@ namespace Robomongo
         ConnectionSettings *connSettings = currentItem->connection();
 
         // Ask user
-        int answer = QMessageBox::question(this,
+        int const answer = QMessageBox::question(this,
             "Connections",
             QString("Really delete \"%1\" connection?").arg(QtUtils::toQString(connSettings->getReadableName())),
             QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
@@ -338,7 +339,15 @@ namespace Robomongo
         if (answer != QMessageBox::Yes)
             return;
 
+        _settingsManager->deleteRecentConnection(connSettings);
+        // Remove from WelcomeTab
+        for (auto widget : QApplication::topLevelWidgets()) {
+            if (auto mainWin = dynamic_cast<MainWindow*>(widget))
+                mainWin->getWelcomeTab()->removeRecentConnection(connSettings);
+        }
+
         _settingsManager->removeConnection(connSettings);
+
         delete currentItem;
     }
 

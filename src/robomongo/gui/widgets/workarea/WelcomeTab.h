@@ -23,6 +23,8 @@ namespace Robomongo
         WelcomeTab(QScrollArea *parent = nullptr);
         ~WelcomeTab();
 
+        void removeRecentConnectionLabel(ConnectionSettings const* conn);
+
     private Q_SLOTS:
         void downloadFinished(QNetworkReply* reply);
         void on_allBlogsButton_clicked();

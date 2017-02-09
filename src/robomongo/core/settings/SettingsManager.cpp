@@ -382,7 +382,7 @@ namespace Robomongo
     {
         for (int i = 0; i < _recentConnections.size(); ++i) {
             if (_recentConnections[i].uuid == conn->uuid())
-                _recentConnections.erase(_recentConnections.begin() + 0);   // todo
+                _recentConnections.erase(_recentConnections.begin() + i);   // todo
         }
     }
 

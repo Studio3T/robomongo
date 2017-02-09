@@ -265,4 +265,22 @@ namespace Robomongo
         _clearButton->setStyleSheet("color: #106CD6");
     }
 
+    void WelcomeTab::removeRecentConnectionLabel(ConnectionSettings const* conn)
+    {
+        for (int i = 0; i < _recentConnsLay->count(); ++i) {
+            auto label = dynamic_cast<QLabel*>(_recentConnsLay->itemAt(i)->widget());
+            if (label) {
+                // todo:
+                //"href='uuid'>%2</a></p>");
+                auto const uuid = label->text().split("href='")[1].split("'")[0];
+                if (uuid == conn->uuid()) {
+                    auto item = _recentConnsLay->takeAt(i);
+                    delete item->widget();
+                }
+            }
+
+        }
+
+    }
+
 }

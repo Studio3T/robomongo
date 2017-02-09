@@ -19,13 +19,13 @@ namespace Robomongo
         // todo: remove
         RecentConnection& operator=(const RecentConnection &other)
         {
-            //uniqueId = other.uniqueId;
-            //name = other.name;
+            uuid = other.uuid;
+            name = other.name;
             return *this;
         }
 
-        QString const uuid;
-        std::string const name;
+        QString uuid;
+        std::string name;
     };
 
     /**

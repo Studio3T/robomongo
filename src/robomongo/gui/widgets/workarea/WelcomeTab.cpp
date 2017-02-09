@@ -13,6 +13,7 @@
 #include <QDesktopServices>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QEvent>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/domain/App.h"
@@ -26,7 +27,7 @@ namespace Robomongo
 {
     QString const recentConnectionsStr = "<p><h1><font color=\"#2d862d\">Recent Connections</h1></p>";
 
-    QString const connLabelTemplate = "<p><a style='font-size:14px; color: #106CD6; text-decoration:none'"
+    QString const connLabelTemplate = "<p><a style='font-size:14px; color: #106CD6; text-decoration: none;'"
                                       "href='%1'>%2</a></p>";
     
     QString const whatsNew = "<p><h1><font color=\"#2d862d\">What's New</h1></p>";
@@ -200,7 +201,7 @@ namespace Robomongo
     }
 
     void WelcomeTab::linkHovered(QString const& link)
-    {
+    {       
         //setStyleSheet("QLabel { color: green; text-decoration: underline; }");        
     }
 
@@ -253,6 +254,10 @@ namespace Robomongo
         auto connLabel = new QLabel(connLabelTemplate.arg(conn->uuid(),
             QString::fromStdString(conn->connectionName() + " (" + conn->hostAndPort().toString() + ')')));
 
+        connLabel->setMouseTracking(true);
+        connLabel->setAttribute(Qt::WA_Hover);
+        connLabel->installEventFilter(this);
+
         connLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
         VERIFY(connect(connLabel, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString))));
         VERIFY(connect(connLabel, SIGNAL(linkHovered(QString)), this, SLOT(linkHovered(QString))));
@@ -281,6 +286,26 @@ namespace Robomongo
 
         }
 
+    }
+
+    bool WelcomeTab::eventFilter(QObject *target, QEvent *event)
+    {
+        auto label = qobject_cast<QLabel*>(target);
+        if (!label)
+            return false;
+
+        if (event->type() == QEvent::HoverEnter) {
+            label->setText(label->text().replace("text-decoration: none;", "text-decoration: ;"));
+            setCursor(Qt::PointingHandCursor);
+            return true;
+        }
+        else  if (event->type() == QEvent::HoverLeave) {
+            label->setText(label->text().replace("text-decoration: ;", "text-decoration: none;"));
+            setCursor(Qt::ArrowCursor);
+            return true;
+        }
+
+        return QWidget::eventFilter(target, event);
     }
 
 }

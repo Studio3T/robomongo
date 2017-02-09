@@ -8,6 +8,7 @@ class QNetworkReply;
 class QLabel;
 class QVBoxLayout;
 class QScrollArea;
+class QEvent;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -22,8 +23,10 @@ namespace Robomongo
     public:
         WelcomeTab(QScrollArea *parent = nullptr);
         ~WelcomeTab();
-
         void removeRecentConnectionLabel(ConnectionSettings const* conn);
+
+    protected:
+        bool eventFilter(QObject *target, QEvent *event) override;
 
     private Q_SLOTS:
         void downloadFinished(QNetworkReply* reply);

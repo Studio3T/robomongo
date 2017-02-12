@@ -343,7 +343,7 @@ namespace Robomongo
         // Remove from WelcomeTab
         for (auto widget : QApplication::topLevelWidgets()) {
             if (auto mainWin = dynamic_cast<MainWindow*>(widget))
-                mainWin->getWelcomeTab()->removeRecentConnectionLabel(connSettings);
+                mainWin->getWelcomeTab()->removeRecentConnectionItem(connSettings);
         }
 
         _settingsManager->removeConnection(connSettings);

@@ -74,5 +74,7 @@
         <file>icons/import_64x64.png</file>
         <file>icons/plus_sign.png</file>
         <file>icons/minus_sign.png</file>
+        <file>icons/delete.png</file>
+        <file>icons/delete_mouse_hovered.png</file>
     </qresource>
 </RCC>

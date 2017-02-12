@@ -16,6 +16,7 @@
 #include <QEvent>
 
 #include "robomongo/core/AppRegistry.h"
+#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/settings/SettingsManager.h"
@@ -25,6 +26,20 @@
 
 namespace Robomongo
 {
+    /* todo: brief: Special button to use on the right side of a recent connection label */
+    struct CustomButton : public QPushButton
+    {
+        void setLabelOnLeft(QLabel* lab) { label = lab; }
+        void setParentLayout(QLayout* lay) { parentLayout = lay; }
+
+        QLabel* label = nullptr;
+        QLayout* parentLayout = nullptr;
+    };
+
+    // todo: brief
+    std::once_flag onceFlag1;
+    int CustomButtonHeight = -1;
+
     QString const recentConnectionsStr = "<p><h1><font color=\"#2d862d\">Recent Connections</h1></p>";
 
     QString const connLabelTemplate = "<p><a style='font-size:14px; color: #106CD6; text-decoration: none;'"
@@ -82,7 +97,7 @@ namespace Robomongo
             _clearButton->setStyleSheet("color: #106CD6");
             for (auto const& rconn : recentConnections) {
                 ConnectionSettings const* conn = settingsManager->getConnectionSettingsByUuid(rconn.uuid);
-                addRecentConnectionLabel(conn, false);
+                addRecentConnectionItem(conn, false);
             }
         }
 
@@ -177,16 +192,58 @@ namespace Robomongo
     
     void WelcomeTab::on_clearButton_clicked()
     {
-        while (auto item = _recentConnsLay->takeAt(0)) 
-            delete item->widget();
+        // Delete all recent connection entries
+        while (auto hlay = dynamic_cast<QHBoxLayout*>(_recentConnsLay->takeAt(0))) {
+            while (auto item = hlay->takeAt(0))
+                delete item->widget();
+
+            delete hlay;
+        }
         
         _clearButton->setDisabled(true);
         _clearButton->setFocus();
         _clearButton->setStyleSheet("");
-        
-        _parent->verticalScrollBar()->setValue(0);
+        _parent->verticalScrollBar()->setValue(0);  
 
+        // Clear recent connections in config. file
         AppRegistry::instance().settingsManager()->clearRecentConnections();
+        AppRegistry::instance().settingsManager()->save();
+    }
+
+    void WelcomeTab::on_deleteButton_clicked()
+    {
+        auto button = dynamic_cast<CustomButton*>(sender());
+        if (!button)
+            return;
+
+        // Remove label and button from UI
+        _recentConnsLay->removeItem(button->parentLayout);
+        delete button->label;
+        delete button;
+
+        // Disable clear all button conditionally
+        if (_recentConnsLay->count() == 0) {
+            _clearButton->setDisabled(true);
+            _clearButton->setFocus();
+            _clearButton->setStyleSheet("");
+            _parent->verticalScrollBar()->setValue(0);
+        }
+
+        // todo: Clear and rebuild recent connections vector and save into config. file
+        auto const settingsManager = AppRegistry::instance().settingsManager();
+        _recentConnections.clear();
+        for (int i = 0; i < _recentConnsLay->count(); ++i) {
+            auto hlay = dynamic_cast<QHBoxLayout*>(_recentConnsLay->itemAt(i));
+            for (int i = 0; i < hlay->count(); ++i) {
+                auto label = dynamic_cast<QLabel*>(hlay->itemAt(i)->widget());
+                if (label) {
+                    // todo: "href='uuid'>%2</a></p>");
+                    auto const uuid = label->text().split("href='")[1].split("'")[0];
+                    _recentConnections.push_back(settingsManager->getConnectionSettingsByUuid(uuid));
+                }
+            }
+        }
+        AppRegistry::instance().settingsManager()->setRecentConnections(_recentConnections);
         AppRegistry::instance().settingsManager()->save();
     }
 
@@ -214,98 +271,147 @@ namespace Robomongo
         auto const settingsManager = AppRegistry::instance().settingsManager();
         auto conn = settingsManager->getConnectionSettingsByUuid(event->connInfo._uuid);
 
-        // Remove duplicate label
-        for (int i = 0; i < _recentConnsLay->count(); ++i) {
-            auto label = dynamic_cast<QLabel*>(_recentConnsLay->itemAt(i)->widget());
-            if (label) {
-                // todo:
-                //"href='uuid'>%2</a></p>");
-                auto const uuid = label->text().split("href='")[1].split("'")[0];
-                if (uuid == conn->uuid()) {
-                    auto item = _recentConnsLay->takeAt(i);
-                    delete item->widget();
+        // Remove duplicate label and it's button
+        for (int i = 0; i < _recentConnsLay->count(); ++i) 
+        {
+            auto hlay = dynamic_cast<QHBoxLayout*>(_recentConnsLay->itemAt(i));
+            for (int i = 0; i < hlay->count(); ++i) 
+            {
+                auto label = dynamic_cast<QLabel*>(hlay->itemAt(i)->widget());
+                if (label) 
+                {
+                    // todo: "href='uuid'>%2</a></p>");
+                    auto const uuid = label->text().split("href='")[1].split("'")[0];
+                    if (uuid == conn->uuid()) 
+                    {
+                        while (auto item = hlay->takeAt(0)) // delete label and button
+                            delete item->widget();
+
+                        _recentConnsLay->removeItem(hlay);
+                    }
                 }
             }
         }
 
-        addRecentConnectionLabel(conn, true);
+        addRecentConnectionItem(conn, true);
 
         // todo: Clear and rebuild recent connections vector and save into config. file
         _recentConnections.clear();
         for (int i = 0; i < _recentConnsLay->count(); ++i) {
-            auto label = dynamic_cast<QLabel*>(_recentConnsLay->itemAt(i)->widget());
-            if (label) {
-                // todo:
-                //"href='uuid'>%2</a></p>");
-                auto const uuid = label->text().split("href='")[1].split("'")[0];
-                _recentConnections.push_back(settingsManager->getConnectionSettingsByUuid(uuid));
+            auto hlay = dynamic_cast<QHBoxLayout*>(_recentConnsLay->itemAt(i));
+            for (int i = 0; i < hlay->count(); ++i) {
+                auto label = dynamic_cast<QLabel*>(hlay->itemAt(i)->widget());
+                if (label) {
+                    // todo: "href='uuid'>%2</a></p>");
+                    auto const uuid = label->text().split("href='")[1].split("'")[0];
+                    _recentConnections.push_back(settingsManager->getConnectionSettingsByUuid(uuid));
+                }
             }
         }
         AppRegistry::instance().settingsManager()->setRecentConnections(_recentConnections);
         AppRegistry::instance().settingsManager()->save();
     }
 
-    void WelcomeTab::addRecentConnectionLabel(ConnectionSettings const* conn, bool insertTop)
+    void WelcomeTab::addRecentConnectionItem(ConnectionSettings const* conn, bool insertTop)
     {
         if (!conn)
             return;
 
-        // Add conn into recent conns list
         auto connLabel = new QLabel(connLabelTemplate.arg(conn->uuid(),
             QString::fromStdString(conn->connectionName() + " (" + conn->hostAndPort().toString() + ')')));
 
         connLabel->setMouseTracking(true);
         connLabel->setAttribute(Qt::WA_Hover);
         connLabel->installEventFilter(this);
-
         connLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
         VERIFY(connect(connLabel, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString))));
         VERIFY(connect(connLabel, SIGNAL(linkHovered(QString)), this, SLOT(linkHovered(QString))));
+
+        auto button = new CustomButton;
+        std::call_once(onceFlag1, [&]{ CustomButtonHeight = button->iconSize().height()*0.7; });
+        button->setStyleSheet("border: none;");
+        button->installEventFilter(this);
+        VERIFY(connect(button, SIGNAL(clicked()), this, SLOT(on_deleteButton_clicked())));
+        
+        connLabel->setBuddy(button);
+        button->setLabelOnLeft(connLabel);
+
+        auto hlay = new QHBoxLayout;
+        hlay->addWidget(connLabel);
+        hlay->addWidget(button);
+        hlay->setAlignment(Qt::AlignLeft);
+        hlay->setSpacing(0);
+
+        button->setParentLayout(hlay);
+
         if (insertTop)
-            _recentConnsLay->insertWidget(0, connLabel);
+            _recentConnsLay->insertLayout(0, hlay);
         else
-            _recentConnsLay->addWidget(connLabel);
+            _recentConnsLay->addLayout(hlay);
 
         _clearButton->setEnabled(true);
         _clearButton->setStyleSheet("color: #106CD6");
     }
 
-    void WelcomeTab::removeRecentConnectionLabel(ConnectionSettings const* conn)
+    void WelcomeTab::removeRecentConnectionItem(ConnectionSettings const* conn)
     {
+        // todo: to func.
         for (int i = 0; i < _recentConnsLay->count(); ++i) {
-            auto label = dynamic_cast<QLabel*>(_recentConnsLay->itemAt(i)->widget());
-            if (label) {
-                // todo:
-                //"href='uuid'>%2</a></p>");
-                auto const uuid = label->text().split("href='")[1].split("'")[0];
-                if (uuid == conn->uuid()) {
-                    auto item = _recentConnsLay->takeAt(i);
-                    delete item->widget();
+            auto hlay = dynamic_cast<QHBoxLayout*>(_recentConnsLay->itemAt(i));
+            for (int i = 0; i < hlay->count(); ++i) {
+                auto label = dynamic_cast<QLabel*>(hlay->itemAt(i)->widget());
+                if (label) {
+                    // todo: "href='uuid'>%2</a></p>");
+                    auto const uuid = label->text().split("href='")[1].split("'")[0];
+                    if (uuid == conn->uuid()) {
+                        // Remove label & button and their hlayout from UI
+                        while (auto item = hlay->takeAt(0)) // delete label and button
+                            delete item->widget();
+
+                        _recentConnsLay->removeItem(hlay);
+                    }
                 }
             }
-
         }
-
     }
 
     bool WelcomeTab::eventFilter(QObject *target, QEvent *event)
     {
         auto label = qobject_cast<QLabel*>(target);
-        if (!label)
-            return false;
-
-        if (event->type() == QEvent::HoverEnter) {
-            label->setText(label->text().replace("text-decoration: none;", "text-decoration: ;"));
-            setCursor(Qt::PointingHandCursor);
-            return true;
+        if (label) {
+            auto but = qobject_cast<QPushButton*>(label->buddy());
+            if (event->type() == QEvent::HoverEnter) {
+                label->setText(label->text().replace("text-decoration: none;", "text-decoration: ;"));
+                setCursor(Qt::PointingHandCursor);
+                but->setIcon(GuiRegistry::instance().deleteIcon());
+                but->setIconSize(QSize(but->iconSize().width(), CustomButtonHeight ));
+                return true;
+            }
+            else  if (event->type() == QEvent::HoverLeave) {
+                label->setText(label->text().replace("text-decoration: ;", "text-decoration: none;"));
+                setCursor(Qt::ArrowCursor);
+                but->setIcon(QIcon(""));
+                return true;
+            }
         }
-        else  if (event->type() == QEvent::HoverLeave) {
-            label->setText(label->text().replace("text-decoration: ;", "text-decoration: none;"));
-            setCursor(Qt::ArrowCursor);
-            return true;
+
+        auto but = qobject_cast<QPushButton*>(target);
+        if (but) {
+            if (event->type() == QEvent::HoverEnter) {
+                but->setIcon(GuiRegistry::instance().deleteIconMouseHovered());
+                but->setIconSize(QSize(but->iconSize().width(), CustomButtonHeight));
+                setCursor(Qt::PointingHandCursor);
+                return true;
+            }
+            else  if (event->type() == QEvent::HoverLeave) {
+                but->setIcon(QIcon(""));
+                setCursor(Qt::ArrowCursor);
+                return true;
+            }
         }
 
         return QWidget::eventFilter(target, event);
     }
+
 
 }

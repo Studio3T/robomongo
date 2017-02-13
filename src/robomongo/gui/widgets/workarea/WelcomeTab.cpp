@@ -10,6 +10,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QDir>
+#include <QFileInfo>
 #include <QDesktopServices>
 #include <QScrollArea>
 #include <QScrollBar>
@@ -72,7 +73,7 @@ namespace Robomongo
     QString const blog4 = blog.arg("http://blog.robomongo.org/robomongo-1-rc1/",
         "Robomongo RC8", "14 Apr 2016");
 
-    
+    QUrl const pic1_URL = "http://blog.robomongo.org/content/images/2017/02/bottom.png";
 
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
@@ -111,16 +112,26 @@ namespace Robomongo
         section1->setWordWrap(true);
         section1->setMinimumWidth(700);
 
-        auto manager = new QNetworkAccessManager;
-        VERIFY(connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*))));
-        manager->get(QNetworkRequest(
-            QUrl("http://blog.robomongo.org/content/images/2017/02/bottom.png")));
-
         _pic1 = new QLabel;
         //pic1->setPixmap(pic1URL);
         //_pic1->setMaximumSize(800,400);
         _pic1->setTextInteractionFlags(Qt::TextSelectableByMouse);
         //pic1->setStyleSheet("background-color: gray");
+
+        auto manager = new QNetworkAccessManager;
+        VERIFY(connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*))));
+
+        auto const& cacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());
+        if (QDir(cacheDir).exists()) {
+            QFileInfo check_file(cacheDir + pic1_URL.fileName());
+            if (check_file.exists() && check_file.isFile()) {   // Use cached file
+                QPixmap img(cacheDir + pic1_URL.fileName());
+                _pic1->setPixmap(img.scaled(800, 600, Qt::AspectRatioMode::KeepAspectRatio));
+            }
+            else {  // Get file from Internet
+                manager->get(QNetworkRequest(pic1_URL));
+            }
+        }
 
         auto section2 = new QLabel(blogPosts + blog0 + blog1 + blog2 + blog3 + blog4);
         section2->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -173,15 +184,23 @@ namespace Robomongo
             return;
         }
 
-        auto const& cacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());
-        if(!QDir(cacheDir).exists())
-            QDir().mkdir(cacheDir);
-
-        //img->save(cacheDir + "img.png");
-
-        _pic1->setPixmap(*img);
         _pic1->setPixmap(img->scaled(800, 600, Qt::AspectRatioMode::KeepAspectRatio));
-        
+
+        // Save to cache
+        auto const& cacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());
+        if (!QDir(cacheDir).exists())
+            QDir().mkdir(cacheDir);
+        else {  // cache dir. exists
+            QFileInfo check_file(cacheDir + pic1_URL.fileName());
+            // Make sure we delete the old file in order to cache the newly downloaded file
+            if (check_file.exists() && check_file.isFile()) {
+                if (!QFile::remove(cacheDir + pic1_URL.fileName())) {
+                    LOG_MSG("WelcomeTab: Failed to delete cached file at: " + cacheDir + pic1_URL.fileName(),
+                             mongo::logger::LogSeverity::Warning());
+                }
+            }
+        }
+        img->save(cacheDir + reply->url().fileName());
     }
 
     void WelcomeTab::on_allBlogsButton_clicked()
@@ -272,18 +291,14 @@ namespace Robomongo
         auto conn = settingsManager->getConnectionSettingsByUuid(event->connInfo._uuid);
 
         // Remove duplicate label and it's button
-        for (int i = 0; i < _recentConnsLay->count(); ++i) 
-        {
+        for (int i = 0; i < _recentConnsLay->count(); ++i) {
             auto hlay = dynamic_cast<QHBoxLayout*>(_recentConnsLay->itemAt(i));
-            for (int i = 0; i < hlay->count(); ++i) 
-            {
+            for (int i = 0; i < hlay->count(); ++i) {
                 auto label = dynamic_cast<QLabel*>(hlay->itemAt(i)->widget());
-                if (label) 
-                {
+                if (label) {
                     // todo: "href='uuid'>%2</a></p>");
                     auto const uuid = label->text().split("href='")[1].split("'")[0];
-                    if (uuid == conn->uuid()) 
-                    {
+                    if (uuid == conn->uuid()) {
                         while (auto item = hlay->takeAt(0)) // delete label and button
                             delete item->widget();
 

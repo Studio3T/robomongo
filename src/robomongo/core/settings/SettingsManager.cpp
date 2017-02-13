@@ -66,7 +66,7 @@ namespace Robomongo
     };
 
     std::vector<ConnectionSettings*>  SettingsManager::_connections;
-    std::vector<const RecentConnection> SettingsManager::_recentConnections;
+    std::vector<RecentConnection> SettingsManager::_recentConnections;
 
     /**
      * Creates SettingsManager for config file in default location

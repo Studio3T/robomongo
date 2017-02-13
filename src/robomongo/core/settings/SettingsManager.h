@@ -17,7 +17,7 @@ namespace Robomongo
             : uuid(uuid), name(name) {}
 
         // todo: remove
-        RecentConnection& operator=(const RecentConnection &other)
+        RecentConnection& operator=(const RecentConnection& other)
         {
             uuid = other.uuid;
             name = other.name;
@@ -109,7 +109,7 @@ namespace Robomongo
         ConnectionSettingsContainerType connections() const { return _connections; }
         
 
-        std::vector<const RecentConnection>& recentConnections() const { return _recentConnections; }
+        std::vector<RecentConnection>& recentConnections() const { return _recentConnections; }
 
         ToolbarSettingsContainerType toolbars() const { return _toolbars; }
 
@@ -227,7 +227,7 @@ namespace Robomongo
         static std::vector<ConnectionSettings*> _connections;
 
         // todo
-        static std::vector<const RecentConnection> _recentConnections;
+        static std::vector<RecentConnection> _recentConnections;
         
         ToolbarSettingsContainerType _toolbars;
 

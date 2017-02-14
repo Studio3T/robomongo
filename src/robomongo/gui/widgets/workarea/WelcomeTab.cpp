@@ -78,8 +78,6 @@ namespace Robomongo
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
     {
-        //setStyleSheet("background-color: yellow");    // todo: to be removed, debug only
-
         AppRegistry::instance().bus()->subscribe(this, ConnectionEstablishedEvent::Type);
 
         auto const settingsManager = AppRegistry::instance().settingsManager();
@@ -107,10 +105,12 @@ namespace Robomongo
         clearButtonLay->addWidget(_clearButton);
         clearButtonLay->addStretch();
 
-        auto section1 = new QLabel(whatsNew + str1 + str2);
-        section1->setTextInteractionFlags(Qt::TextSelectableByMouse);
-        section1->setWordWrap(true);
-        section1->setMinimumWidth(700);
+        _whatsNewSection = new QLabel(whatsNew + str1 + str2);
+        _whatsNewSection->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        _whatsNewSection->setWordWrap(true);
+        _whatsNewSection->setMinimumWidth(500);
+        _whatsNewSection->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+        _whatsNewSection->setMinimumHeight(_whatsNewSection->sizeHint().height());
 
         _pic1 = new QLabel;
         //pic1->setPixmap(pic1URL);
@@ -126,19 +126,19 @@ namespace Robomongo
             QFileInfo check_file(cacheDir + pic1_URL.fileName());
             if (check_file.exists() && check_file.isFile()) {   // Use cached file
                 QPixmap img(cacheDir + pic1_URL.fileName());
-                _pic1->setPixmap(img.scaled(800, 600, Qt::AspectRatioMode::KeepAspectRatio));
+                _pic1->setPixmap(img.scaledToWidth(_whatsNewSection->width()));
             }
             else {  // Get file from Internet
                 manager->get(QNetworkRequest(pic1_URL));
             }
         }
 
-        auto section2 = new QLabel(blogPosts + blog0 + blog1 + blog2 + blog3 + blog4);
-        section2->setTextInteractionFlags(Qt::TextSelectableByMouse);
-        section2->setWordWrap(true);
-        section2->setTextFormat(Qt::RichText);
-        section2->setTextInteractionFlags(Qt::TextBrowserInteraction);
-        section2->setOpenExternalLinks(true);
+        auto blogsSection = new QLabel(blogPosts + blog0 + blog1 + blog2 + blog3 + blog4);
+        blogsSection->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        blogsSection->setWordWrap(true);
+        blogsSection->setTextFormat(Qt::RichText);
+        blogsSection->setTextInteractionFlags(Qt::TextBrowserInteraction);
+        blogsSection->setOpenExternalLinks(true);
 
         auto buttonLay = new QHBoxLayout;
         _allBlogsButton = new QPushButton("All Blog Posts");
@@ -149,23 +149,32 @@ namespace Robomongo
         buttonLay->addWidget(_allBlogsButton);
         buttonLay->addStretch();
 
-        auto mainLayout = new QVBoxLayout;
+        auto rightLayout = new QVBoxLayout;
+        rightLayout->setContentsMargins(20, -1, -1, -1);
+        rightLayout->addWidget(blogsSection, 0, Qt::AlignTop);
+        rightLayout->addSpacing(15);
+        rightLayout->addLayout(buttonLay);
+        rightLayout->addStretch();
+
+        auto leftLayout = new QVBoxLayout;
+        leftLayout->addWidget(recentConnLabel, 0, Qt::AlignTop);
+        leftLayout->addLayout(_recentConnsLay);
+        leftLayout->addSpacing(10);
+        leftLayout->addLayout(clearButtonLay);
+        leftLayout->addStretch();
+        leftLayout->addSpacing(30);
+        leftLayout->addWidget(_whatsNewSection, 0, Qt::AlignTop);
+        leftLayout->addWidget(_pic1, 0, Qt::AlignTop);
+
+        auto mainLayout = new QHBoxLayout;
         mainLayout->setContentsMargins(20, -1, -1, -1);
+        mainLayout->addLayout(leftLayout);
+        mainLayout->addLayout(rightLayout);
+        //mainLayout->addStretch();
         mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
-        mainLayout->addSpacing(30);
-        mainLayout->addWidget(recentConnLabel, 0, Qt::AlignTop);
-        mainLayout->addLayout(_recentConnsLay);
-        mainLayout->addSpacing(10);
-        mainLayout->addLayout(clearButtonLay);
-        mainLayout->addSpacing(30);
-        mainLayout->addWidget(section1, 0, Qt::AlignTop);
-        mainLayout->addWidget(_pic1, 0, Qt::AlignTop);
-        mainLayout->addSpacing(30);
-        mainLayout->addWidget(section2, 0, Qt::AlignTop);
-        mainLayout->addSpacing(15);
-        mainLayout->addLayout(buttonLay);
-        mainLayout->addStretch();
         setLayout(mainLayout);
+
+        //setStyleSheet("background-color: yellow");
     }
 
     WelcomeTab::~WelcomeTab()
@@ -184,7 +193,7 @@ namespace Robomongo
             return;
         }
 
-        _pic1->setPixmap(img->scaled(800, 600, Qt::AspectRatioMode::KeepAspectRatio));
+        _pic1->setPixmap(img->scaledToWidth(_whatsNewSection->width()));
 
         // Save to cache
         auto const& cacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());

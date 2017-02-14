@@ -43,6 +43,7 @@ namespace Robomongo
         QLabel* _pic1 = nullptr;
         QPushButton* _allBlogsButton = nullptr;
         QVBoxLayout* _recentConnsLay;
+        QLabel* _whatsNewSection;
         QPushButton* _clearButton;
         QScrollArea* _parent;
 

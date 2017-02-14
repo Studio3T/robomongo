@@ -73,7 +73,7 @@ namespace Robomongo
     QString const blog4 = blog.arg("http://blog.robomongo.org/robomongo-1-rc1/",
         "Robomongo RC8", "14 Apr 2016");
 
-    QUrl const pic1_URL = "http://blog.robomongo.org/content/images/2017/02/bottom.png";
+    QUrl const pic1_URL = QString("http://blog.robomongo.org/content/images/2017/02/bottom.png");
 
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)

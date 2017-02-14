@@ -1,6 +1,6 @@
 # Show configuration summary and build tip
 message("")
-message(" _______________[ Robomongo configuration summary ]________________")
+message(" _______________[ Studio 3T Robo configuration summary ]________________")
 message("| ")
 message("|-- Dependencies:")
 message("| ")

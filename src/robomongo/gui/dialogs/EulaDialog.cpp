@@ -20,7 +20,7 @@ namespace Robomongo
     EulaDialog::EulaDialog(QWidget *parent) 
         : QDialog(parent)
     {
-        setWindowTitle("Robomongo Setup");
+        setWindowTitle("Studio 3T Robo - Setup");
 
         QSettings settings("Paralect", "Robomongo");
         if (settings.contains("EulaDialog/size"))

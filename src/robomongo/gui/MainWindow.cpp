@@ -499,7 +499,7 @@ namespace Robomongo
 
     /*** About menu ***/
 
-        QAction *aboutRobomongoAction = new QAction("&About Robomongo...", this);
+        QAction *aboutRobomongoAction = new QAction("&About Studio 3T Robo...", this);
         VERIFY(connect(aboutRobomongoAction, SIGNAL(triggered()), this, SLOT(aboutRobomongo())));
 
         // Options menu
@@ -566,7 +566,7 @@ namespace Robomongo
 
         createTabs();
         createStatusBar();
-        setWindowTitle("Robomongo 1.0");
+        setWindowTitle("Studio 3T Robo 1.0");
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
         //QTimer::singleShot(0, this, SLOT(manageConnections()));   // todo: uncomment
@@ -1096,7 +1096,7 @@ namespace Robomongo
     {
 #if defined(Q_OS_WIN)
         if (_trayIcon->contextMenu()->actions().size() > 0 && isHidden()) {
-            _trayIcon->contextMenu()->actions().at(0)->setText("Show Robomongo");
+            _trayIcon->contextMenu()->actions().at(0)->setText("Show Studio 3T Robo");
         }
 #endif
     }

@@ -1,5 +1,6 @@
 <RCC>
     <qresource>
-        <file>eula.html</file>        
+        <file>eula.html</file>   
+        <file>gnu_gpl3_license.html</file>                
     </qresource>
 </RCC>

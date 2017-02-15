@@ -187,7 +187,7 @@ if(SYSTEM_WINDOWS)
 
     # Rename output name for Windows
     set_target_properties(robomongo PROPERTIES
-        OUTPUT_NAME "Studio 3T Robo")
+        OUTPUT_NAME "studio-3t-robo")
 
     # Seems that we do not need to do this with recent versions of Qt
     target_link_libraries(robomongo
@@ -210,7 +210,8 @@ elseif(SYSTEM_MACOSX)
 
 elseif(SYSTEM_LINUX)
     set_target_properties(robomongo PROPERTIES
-        INSTALL_RPATH "$ORIGIN/../lib")
+        INSTALL_RPATH "$ORIGIN/../lib"
+        OUTPUT_NAME "studio-3t-robo")
 endif()
 
 # Install

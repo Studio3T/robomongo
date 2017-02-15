@@ -15,7 +15,7 @@ execute_process(
 string(TIMESTAMP timestamp "%Y-%m-%d")
 
 # Package name (as it should appear in UI)
-set(CPACK_PACKAGE_NAME studio3trobo)
+set(CPACK_PACKAGE_NAME studio_3t_robo)
 
 # Version of the package
 set(CPACK_PACKAGE_VERSION_MAJOR     ${PROJECT_VERSION_MAJOR})

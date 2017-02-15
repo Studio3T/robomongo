@@ -24,7 +24,7 @@ if(SYSTEM_LINUX)
     set(qt_conf_dir         ${bin_dir})
     set(qt_conf_plugins     "../lib")
 elseif(SYSTEM_MACOSX)
-    set(bundle_name         studio-3t-robo.app)
+    set(bundle_name         "Studio 3T Robo.app")
     set(contents_path       ${bundle_name}/Contents)
 
     set(bin_dir             ${contents_path}/MacOS)
@@ -111,7 +111,7 @@ elseif(SYSTEM_MACOSX)
 
     # Install icon
     install(
-        FILES       "${CMAKE_SOURCE_DIR}/install/macosx/Robomongo.icns"
+        FILES       "${CMAKE_SOURCE_DIR}/install/macosx/studio-3t-robo.icns"
         DESTINATION "${resources_dir}")
 elseif(SYSTEM_WINDOWS)
     install_qt_plugins(

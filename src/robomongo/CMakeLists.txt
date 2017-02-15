@@ -187,7 +187,7 @@ if(SYSTEM_WINDOWS)
 
     # Rename output name for Windows
     set_target_properties(robomongo PROPERTIES
-        OUTPUT_NAME "studio-3t-robo")
+        OUTPUT_NAME "Studio 3T Robo")
 
     # Seems that we do not need to do this with recent versions of Qt
     target_link_libraries(robomongo
@@ -200,13 +200,13 @@ elseif(SYSTEM_MACOSX)
         OUTPUT_NAME "Studio 3T Robo"
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/install/macosx/Info.plist.in"
         MACOSX_BUNDLE_BUNDLE_NAME "Studio 3T Robo"
-        MACOSX_BUNDLE_GUI_IDENTIFIER "com.paralect.Robomongo"
-        MACOSX_BUNDLE_INFO_STRING "Studio 3T Robo ${PROJECT_VERSION}. Copyright 3T Software Labs, 2013 - 2017"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "com.3tsoftwarelabs.studio3trobo"
+        MACOSX_BUNDLE_INFO_STRING "Studio 3T Robo ${PROJECT_VERSION}. Copyright 3T Software Labs, 2014 - 2017"
         MACOSX_BUNDLE_SHORT_VERSION "${PROJECT_VERSION}"
         MACOSX_BUNDLE_LONG_VERSION "${PROJECT_VERSION}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
-        MACOSX_BUNDLE_COPYRIGHT "Copyright 3T Software Labs, 2013 - 2017"
-        MACOSX_BUNDLE_ICON_FILE "Studio 3T Robo")
+        MACOSX_BUNDLE_COPYRIGHT "Copyright 3T Software Labs, 2014 - 2017"
+        MACOSX_BUNDLE_ICON_FILE "studio-3t-robo")
 
 elseif(SYSTEM_LINUX)
     set_target_properties(robomongo PROPERTIES

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(Robomongo)
+project(studio-3t-robo)
 
 # Where to look first for CMake modules, before "${CMAKE_ROOT}/Modules" is checked
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")

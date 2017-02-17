@@ -57,14 +57,16 @@ int main(int argc, char *argv[], char** envp)
 #endif
 
     // EULA License Agreement
-    if (!Robomongo::AppRegistry::instance().settingsManager()->eulaAccepted()) {
+    auto settingsManager = Robomongo::AppRegistry::instance().settingsManager();
+    if (!settingsManager->acceptedEulaVersions().contains(PROJECT_VERSION)) {
         Robomongo::EulaDialog eulaDialog;
         if (eulaDialog.exec() == QDialog::Rejected) {
-            Robomongo::AppRegistry::instance().settingsManager()->setEulaAccepted(false); // todo: need to save
             return 1;   // todo: ssh_cleanup
         }
+        // EULA accepted
+        settingsManager->addAcceptedEulaVersion(PROJECT_VERSION);
+        settingsManager->save();
     }
-    Robomongo::AppRegistry::instance().settingsManager()->setEulaAccepted(true);
 
     // Init GUI style
     Robomongo::AppStyleUtils::initStyle();

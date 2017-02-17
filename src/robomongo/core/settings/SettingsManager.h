@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QVariantMap>
+#include <QSet>
 #include <vector>
 #include "robomongo/core/Enums.h"
 
@@ -143,8 +144,8 @@ namespace Robomongo
         void setDisableConnectionShortcuts(bool isDisable) { _disableConnectionShortcuts = isDisable; }
         bool disableConnectionShortcuts() const { return _disableConnectionShortcuts; }
 
-        void setEulaAccepted(bool accepted) { _eulaAccepted = accepted; }
-        bool eulaAccepted() const { return _eulaAccepted; }
+        void addAcceptedEulaVersion(QString const& version) { _acceptedEulaVersions.insert(version); }
+        QSet<QString> const& acceptedEulaVersions() const { return _acceptedEulaVersions; }
 
         void setBatchSize(int batchSize) { _batchSize = batchSize; }
         int batchSize() const { return _batchSize; }
@@ -205,7 +206,7 @@ namespace Robomongo
         bool _minimizeToTray;
         bool _lineNumbers;
         bool _disableConnectionShortcuts;
-        bool _eulaAccepted = false;
+        QSet<QString> _acceptedEulaVersions;
         int _batchSize;
         QString _currentStyle;
         QString _textFontFamily;

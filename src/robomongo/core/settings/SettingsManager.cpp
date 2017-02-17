@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QVariantList>
 #include <QUuid>
+#include <QJsonArray>
 
 #include <parser.h>
 #include <serializer.h>
@@ -196,7 +197,10 @@ namespace Robomongo
         _timeZone = (SupportedTimes)timeZone;
         _loadMongoRcJs = map.value("loadMongoRcJs").toBool();
         _disableConnectionShortcuts = map.value("disableConnectionShortcuts").toBool();
-        _eulaAccepted = map.value("eulaAccepted").toBool();
+        
+        if (map.contains("acceptedEulaVersions")) {
+            _acceptedEulaVersions = map.value("acceptedEulaVersions").toStringList().toSet();
+        }
 
         // If UUID has never been created or is empty, create a new one. Otherwise load the existing.
         if (!map.contains("uuid") || map.value("uuid").toString().isEmpty())
@@ -310,8 +314,12 @@ namespace Robomongo
         // 7. Save disableConnectionShortcuts
         map.insert("disableConnectionShortcuts", _disableConnectionShortcuts);
         
-        // 8. Save eulaAccepted
-        map.insert("eulaAccepted", _eulaAccepted);
+        // 8. Save acceptedEulaVersions array
+        QJsonArray arr;
+        for (auto const& str : _acceptedEulaVersions)
+            arr.push_back(str);
+
+        map.insert("acceptedEulaVersions", arr.toVariantList());
 
         // 9. Save batchSize
         map.insert("batchSize", _batchSize);

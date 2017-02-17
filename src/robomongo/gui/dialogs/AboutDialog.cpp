@@ -22,7 +22,7 @@ namespace
         "<br/>"
         "<a href=\"https://" PROJECT_GITHUB_ISSUES "\">Submit</a> issues/proposals on GitHub.  <br/>"
         "<br/>"
-        "Copyright 2014-2017 <a href=\"http://" PROJECT_COMPANYNAME_DOMAIN "\">" PROJECT_COMPANYNAME "</a>. All rights reserved.<br/>"
+        "Copyright 2014-2017 <a href= "PROJECT_COMPANYNAME_DOMAIN" >" PROJECT_COMPANYNAME "</a>. All rights reserved.<br/>"
         "<br/>"
         "The program is provided AS IS with NO WARRANTY OF ANY KIND, "
         "INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A "
@@ -65,16 +65,15 @@ namespace Robomongo
 
         //// License Agreement tab
         auto licenseTab = new QWidget;
-        auto textEdit = new QTextBrowser;
-        textEdit->setOpenExternalLinks(true);
-        textEdit->setOpenLinks(true);
-        //textEdit->setFont(QFont("Arial", 14));
+        auto textBrowser = new QTextBrowser;
+        textBrowser->setOpenExternalLinks(true);
+        textBrowser->setOpenLinks(true);
         QFile file(":gnu_gpl3_license.html");
         if (file.open(QFile::ReadOnly | QFile::Text))
-            textEdit->setText(file.readAll());
+            textBrowser->setText(file.readAll());
         
         auto licenseTabLay = new QVBoxLayout;
-        licenseTabLay->addWidget(textEdit);
+        licenseTabLay->addWidget(textBrowser);
         licenseTab->setLayout(licenseTabLay);
 
         //// Button box

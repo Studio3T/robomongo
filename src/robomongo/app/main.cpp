@@ -60,7 +60,7 @@ int main(int argc, char *argv[], char** envp)
     if (!Robomongo::AppRegistry::instance().settingsManager()->eulaAccepted()) {
         Robomongo::EulaDialog eulaDialog;
         if (eulaDialog.exec() == QDialog::Rejected) {
-            Robomongo::AppRegistry::instance().settingsManager()->setEulaAccepted(false);   // todo: need to save
+            Robomongo::AppRegistry::instance().settingsManager()->setEulaAccepted(false); // todo: need to save
             return 1;   // todo: ssh_cleanup
         }
     }

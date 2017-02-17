@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QDialog>
+#include <QWizard>
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -14,7 +14,7 @@ QT_END_NAMESPACE
 namespace Robomongo
 {
 
-    class EulaDialog : public QDialog
+    class EulaDialog : public QWizard
     {
         Q_OBJECT
 
@@ -35,7 +35,11 @@ namespace Robomongo
 
 
     private Q_SLOTS:
-        void enableOkButton(int state);
+        void on_agreeButton_clicked();
+        void on_notAgreeButton_clicked();
+        void on_next_clicked();
+        void on_back_clicked();
+        void on_finish_clicked();
 
     private:
 
@@ -48,10 +52,6 @@ namespace Robomongo
         * @brief Save window settings into system registry
         */
         void saveWindowSettings() const;
-
-        
-        QCheckBox* _checkBox = nullptr;
-        QDialogButtonBox* _buttonBox;
 
     };
 }

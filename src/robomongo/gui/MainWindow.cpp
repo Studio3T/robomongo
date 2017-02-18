@@ -18,6 +18,10 @@
 #include <QHBoxLayout>
 #include <QSettings>
 #include <QSystemTrayIcon>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QUrl>
 
 #include <mongo/logger/log_severity.h>
 #include "robomongo/core/settings/SettingsManager.h"
@@ -539,6 +543,35 @@ namespace Robomongo
         setToolBarIconSize(_execToolBar);
         addToolBar(_execToolBar);
 
+        _updateBar = new QToolBar("Updates Toolbar");
+        _updateLabel = new QLabel;
+        //_updateLabel->setWordWrap(true);
+        _updateLabel->setOpenExternalLinks(true);
+        auto closeButton = new QPushButton;
+        closeButton->setIcon(QIcon(":/robomongo/icons/close_hover_16x16.png"));
+        //closeButton->setStyleSheet("background-color: red");
+        closeButton->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+        closeButton->setMouseTracking(true);
+        closeButton->setAttribute(Qt::WA_Hover);
+        closeButton->installEventFilter(this);
+        VERIFY(connect(closeButton, SIGNAL(clicked()), this, SLOT(on_closeButton_clicked())));
+
+        auto updateBarLay = new QHBoxLayout;
+        updateBarLay->addWidget(_updateLabel, Qt::AlignLeft);
+        updateBarLay->addStretch();
+        updateBarLay->addWidget(closeButton, Qt::AlignRight);
+        //updateBarLay->setSpacing(0);
+        updateBarLay->setMargin(0);
+
+        auto updateBarWid = new QWidget;
+        updateBarWid->setLayout(updateBarLay);
+
+        _updateBar->addWidget(updateBarWid);
+        _updateBar->setStyleSheet("background-color: #b3e6b3; border: none;");
+        addToolBarBreak();
+        addToolBar(_updateBar);
+        _updateBar->setHidden(true);
+
         _toolbarsMenu->addAction(_execToolBar->toggleViewAction());
         VERIFY(connect(_execToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onExecToolbarVisibilityChanged(bool))));
 
@@ -582,6 +615,21 @@ namespace Robomongo
 
         // Catch application windows focus changes
         VERIFY(connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(on_focusChanged())));
+
+        auto manager = new QNetworkAccessManager;
+        VERIFY(connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_networkReply(QNetworkReply*))));
+
+        // returns NO-UPDATES-ANNOUNCED
+        QUrl url("http://updates.3tsoftwarelabs.com/check.php?softwareId=8&softwareVersion=1.0.0&licenseInfo=FREE"
+            "&setup=5b3bd8ca-33ab-407c-b7ca-fd15a17ece43&notify=true#");
+
+        QUrl url2("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=4.3.0&licenseInfo=FREE"
+            "&setup=760f6182-13e4-4357-8f5e-d51bc7ca27fe&notify=true#");
+
+        QUrl url3("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=" + QString(PROJECT_VERSION) 
+            + "&licenseInfo=FREE&setup=" + AppRegistry::instance().settingsManager()->anonymousID() + "&notify=true#");
+
+        manager->get(QNetworkRequest(url3));
     }
 
     void MainWindow::createStylesMenu()
@@ -1110,6 +1158,25 @@ namespace Robomongo
 #endif
     }
 
+    bool MainWindow::eventFilter(QObject *target, QEvent *event)
+    {
+        auto button = qobject_cast<QPushButton*>(target);
+        if (!button)
+            return false;
+
+        // todo: rename icons
+        if (event->type() == QEvent::HoverEnter) {
+            button->setIcon(QIcon(":/robomongo/icons/close_hover_16x16_original.png")); 
+            return true;
+        }
+        else  if (event->type() == QEvent::HoverLeave) {
+            button->setIcon(QIcon(":/robomongo/icons/close_hover_16x16.png"));
+            return true;
+        }
+
+        return QWidget::eventFilter(target, event);
+    }
+
     void MainWindow::handle(QueryWidgetUpdatedEvent *event)
     {
         _orientationAction->setEnabled(event->numOfResults() > 1);
@@ -1268,4 +1335,27 @@ namespace Robomongo
             _workArea->setCurrentWidget(activeDock->getParentQueryWidget());
         }
     }
+
+    void MainWindow::on_networkReply(QNetworkReply* reply)
+    {
+        QString str(QUrl::fromPercentEncoding(reply->readAll()));
+        auto xx = str.toStdString();
+
+        if ("NO-UPDATES-ANNOUNCED.\n" == str) {
+            _updateLabel->setText("");
+            _updateBar->setVisible(false);
+            return;
+        }
+
+        str.replace('+', ' ');
+        str.remove("Update,");
+        _updateLabel->setText(str);
+        _updateBar->setVisible(true);
+    }
+
+    void MainWindow::on_closeButton_clicked()
+    {
+        _updateBar->setVisible(false);
+    }
+
 }

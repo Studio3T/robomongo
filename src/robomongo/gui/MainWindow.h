@@ -2,12 +2,14 @@
 
 #include <QMainWindow>
 #include <QSystemTrayIcon>
+
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QToolBar;
 class QDockWidget;
 class QToolButton;
 class QTreeWidgetItem;
+class QNetworkReply;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -81,6 +83,7 @@ namespace Robomongo
         void closeEvent(QCloseEvent *event) override;
         void hideEvent(QHideEvent *event) override;
         void showEvent(QShowEvent *event) override;
+        bool eventFilter(QObject *target, QEvent *event) override;
 
     private Q_SLOTS:
         void updateMenus();
@@ -107,6 +110,9 @@ namespace Robomongo
 
         // On application focus changes
         void on_focusChanged();
+
+        void on_networkReply(QNetworkReply* reply);
+        void on_closeButton_clicked();
 
     private:
         void updateConnectionsMenu();
@@ -139,7 +145,9 @@ namespace Robomongo
         QAction *_stopAction;
         QAction *_orientationAction;
         QToolBar *_execToolBar;
-        
+        QToolBar *_updateBar;
+        QLabel *_updateLabel;
+
         // Temporarily disabling export/import feature
         /*
         // Export/import tool bar

@@ -162,10 +162,11 @@ namespace Robomongo
         int mongoTimeoutSec() const { return _mongoTimeoutSec; }
         int shellTimeoutSec() const { return _shellTimeoutSec; }
 
-        // True when settings from previous versions of
-        // Robomongo are imported
+        // True when settings from previous versions of Robomongo are imported
         void setImported(bool imported) { _imported = imported; }
         bool imported() const { return _imported; }
+
+        QString anonymousID() const { return _anonymousID; }
 
         /**
          * Returns number of imported connections

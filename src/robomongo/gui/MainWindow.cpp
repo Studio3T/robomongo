@@ -616,20 +616,16 @@ namespace Robomongo
         // Catch application windows focus changes
         VERIFY(connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(on_focusChanged())));
 
-        auto manager = new QNetworkAccessManager;
-        VERIFY(connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_networkReply(QNetworkReply*))));
+        _networkAccessManager = new QNetworkAccessManager;
+        VERIFY(connect(_networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_networkReply(QNetworkReply*))));
+        
+        // First check for updates 30 secs after program start
+        //QTimer::singleShot(3000, this, SLOT(checkUpdates()));   //todo: make it 30000
 
-        // returns NO-UPDATES-ANNOUNCED
-        QUrl url("http://updates.3tsoftwarelabs.com/check.php?softwareId=8&softwareVersion=1.0.0&licenseInfo=FREE"
-            "&setup=5b3bd8ca-33ab-407c-b7ca-fd15a17ece43&notify=true#");
-
-        QUrl url2("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=4.3.0&licenseInfo=FREE"
-            "&setup=760f6182-13e4-4357-8f5e-d51bc7ca27fe&notify=true#");
-
-        QUrl url3("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=" + QString(PROJECT_VERSION) 
-            + "&licenseInfo=FREE&setup=" + AppRegistry::instance().settingsManager()->anonymousID() + "&notify=true#");
-
-        manager->get(QNetworkRequest(url3));
+        // Check for updates every 1 hour
+        auto timer = new QTimer(this);
+        VERIFY(connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdates())));
+        timer->start(5000);     //todo: make it 1 hour (3600000 msec = 60 * 60 * 1000 msec)
     }
 
     void MainWindow::createStylesMenu()
@@ -1356,6 +1352,21 @@ namespace Robomongo
     void MainWindow::on_closeButton_clicked()
     {
         _updateBar->setVisible(false);
+    }
+
+    void MainWindow::checkUpdates()
+    {
+        // returns NO-UPDATES-ANNOUNCED
+        QUrl url("http://updates.3tsoftwarelabs.com/check.php?softwareId=8&softwareVersion=1.0.0&licenseInfo=FREE"
+            "&setup=5b3bd8ca-33ab-407c-b7ca-fd15a17ece43&notify=true#");
+
+        QUrl url2("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=4.3.0&licenseInfo=FREE"
+            "&setup=760f6182-13e4-4357-8f5e-d51bc7ca27fe&notify=true#");
+
+        QUrl url3("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=" + QString(PROJECT_VERSION)
+            + "&licenseInfo=FREE&setup=" + AppRegistry::instance().settingsManager()->anonymousID() + "&notify=true#");
+
+        _networkAccessManager->get(QNetworkRequest(url3));
     }
 
 }

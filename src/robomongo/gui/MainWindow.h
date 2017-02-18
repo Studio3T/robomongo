@@ -10,6 +10,7 @@ class QDockWidget;
 class QToolButton;
 class QTreeWidgetItem;
 class QNetworkReply;
+class QNetworkAccessManager;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -113,6 +114,8 @@ namespace Robomongo
 
         void on_networkReply(QNetworkReply* reply);
         void on_closeButton_clicked();
+        
+        void checkUpdates();
 
     private:
         void updateConnectionsMenu();
@@ -147,6 +150,8 @@ namespace Robomongo
         QToolBar *_execToolBar;
         QToolBar *_updateBar;
         QLabel *_updateLabel;
+
+        QNetworkAccessManager *_networkAccessManager;
 
         // Temporarily disabling export/import feature
         /*

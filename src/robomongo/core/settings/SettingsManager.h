@@ -147,6 +147,9 @@ namespace Robomongo
         void addAcceptedEulaVersion(QString const& version) { _acceptedEulaVersions.insert(version); }
         QSet<QString> const& acceptedEulaVersions() const { return _acceptedEulaVersions; }
 
+        void setCheckForUpdates(bool checkForUpdates) { _checkForUpdates = checkForUpdates; }
+        bool checkForUpdates() const { return _checkForUpdates; }
+
         void setBatchSize(int batchSize) { _batchSize = batchSize; }
         int batchSize() const { return _batchSize; }
 
@@ -209,6 +212,7 @@ namespace Robomongo
         bool _disableConnectionShortcuts;
         QSet<QString> _acceptedEulaVersions;
         int _batchSize;
+        bool _checkForUpdates = true;   // true or false
         QString _currentStyle;
         QString _textFontFamily;
         int _textFontPointSize;

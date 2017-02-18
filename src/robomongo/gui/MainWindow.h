@@ -116,6 +116,7 @@ namespace Robomongo
         void on_closeButton_clicked();
         
         void checkUpdates();
+        void toggleCheckUpdates();
 
     private:
         void updateConnectionsMenu();

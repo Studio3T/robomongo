@@ -435,6 +435,12 @@ namespace Robomongo
         optionsMenu->addAction(minimizeTray);
     #endif
 
+        auto *checkUpdates = new QAction(tr("Check for updates"), this);
+        checkUpdates->setCheckable(true);
+        checkUpdates->setChecked(AppRegistry::instance().settingsManager()->checkForUpdates());
+        VERIFY(connect(checkUpdates, SIGNAL(triggered()), this, SLOT(toggleCheckUpdates())));
+        optionsMenu->addAction(checkUpdates);
+
         QAction *preferencesAction = new QAction("Preferences", this);
         VERIFY(connect(preferencesAction, SIGNAL(triggered()), this, SLOT(openPreferences())));
         preferencesAction->setVisible(false);
@@ -543,7 +549,6 @@ namespace Robomongo
         setToolBarIconSize(_execToolBar);
         addToolBar(_execToolBar);
 
-        _updateBar = new QToolBar("Updates Toolbar");
         _updateLabel = new QLabel;
         //_updateLabel->setWordWrap(true);
         _updateLabel->setOpenExternalLinks(true);
@@ -566,8 +571,10 @@ namespace Robomongo
         auto updateBarWid = new QWidget;
         updateBarWid->setLayout(updateBarLay);
 
+        _updateBar = new QToolBar("Updates Toolbar");
         _updateBar->addWidget(updateBarWid);
-        _updateBar->setStyleSheet("background-color: #b3e6b3; border: none;");
+        //_updateBar->setStyleSheet("background-color: #b3e6b3; border: none;");  // green
+        _updateBar->setStyleSheet("background-color: #b3e0ff; border: none;");  // blue
         addToolBarBreak();
         addToolBar(_updateBar);
         _updateBar->setHidden(true);
@@ -899,6 +906,13 @@ namespace Robomongo
     {
         QAction *send = qobject_cast<QAction*>(sender());
         saveAutoExec(send->isChecked());
+    }
+
+    void MainWindow::toggleCheckUpdates()
+    {
+        QAction *action = qobject_cast<QAction*>(sender());
+        Robomongo::AppRegistry::instance().settingsManager()->setCheckForUpdates(action->isChecked());
+        Robomongo::AppRegistry::instance().settingsManager()->save();
     }
 
     void MainWindow::toggleLineNumbers()
@@ -1356,6 +1370,9 @@ namespace Robomongo
 
     void MainWindow::checkUpdates()
     {
+        if (!Robomongo::AppRegistry::instance().settingsManager()->checkForUpdates())
+            return;
+
         // returns NO-UPDATES-ANNOUNCED
         QUrl url("http://updates.3tsoftwarelabs.com/check.php?softwareId=8&softwareVersion=1.0.0&licenseInfo=FREE"
             "&setup=5b3bd8ca-33ab-407c-b7ca-fd15a17ece43&notify=true#");

@@ -220,7 +220,7 @@ namespace Robomongo
         bool _imported;
 
         // todo: 
-        QString _uuid;
+        QString _anonymousID;
 
         /**
          * @brief List of connections

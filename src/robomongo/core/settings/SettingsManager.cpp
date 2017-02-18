@@ -202,11 +202,11 @@ namespace Robomongo
             _acceptedEulaVersions = map.value("acceptedEulaVersions").toStringList().toSet();
         }
 
-        // If UUID has never been created or is empty, create a new one. Otherwise load the existing.
-        if (!map.contains("uuid") || map.value("uuid").toString().isEmpty())
-            _uuid = QUuid::createUuid().toString();
+        // If anonymousID has never been created or is empty, create a new one. Otherwise load the existing.
+        if (!map.contains("anonymousID") || map.value("anonymousID").toString().isEmpty())
+            _anonymousID = QUuid::createUuid().toString();
         else
-            _uuid = map.value("uuid").toString();
+            _anonymousID = map.value("anonymousID").toString();
 
         // Load AutocompletionMode
         if (map.contains("autocompletionMode")) {
@@ -355,7 +355,7 @@ namespace Robomongo
         map.insert("minimizeToTray", _minimizeToTray);
         map.insert("toolbars", _toolbars);
         map.insert("imported", _imported);
-        map.insert("uuid", _uuid);
+        map.insert("anonymousID", _anonymousID);
 
         return map;
     }

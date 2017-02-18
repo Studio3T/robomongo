@@ -5,6 +5,7 @@
 #include <QVariantList>
 #include <QUuid>
 #include <QJsonArray>
+#include <QXmlStreamReader>
 
 #include <parser.h>
 #include <serializer.h>
@@ -20,22 +21,52 @@
 
 namespace
 {
-        /**
-         * @brief Version of schema
-         */
-        const QString SchemaVersion = "2.0";
+    // todo: to common.h
+    bool fileExists(const QString &path) 
+    {
+        QFileInfo fileInfo(path);
+        return fileInfo.exists() && fileInfo.isFile();
+    }
 
-         /**
-         * @brief Config file absolute path
-         *        (usually: /home/user/.config/robomongo/robomongo.json)
-         */
-        const auto _configPath = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
+    QString getAnonymousID(QString const& zipFile, QString const& propfile)
+    {
+        if (!fileExists(zipFile))
+            return QString("");
+
+        QFile file(propfile.arg(QDir::homePath()));
+        if (file.open(QIODevice::ReadOnly)) {
+            QXmlStreamReader reader(file.readAll());
+            file.close();
+            while (!reader.atEnd()) {
+                reader.readNext();
+                if (reader.text().toString() == "AnonymousID") {
+                    reader.readNext();
+                    reader.readNext();
+                    reader.readNext();
+                    reader.readNext();
+                    return reader.text().toString();
+                }
+            }
+        }
+        return QString("");
+    }
+
+    /**
+        * @brief Version of schema
+        */
+    const QString SchemaVersion = "2.0";
 
         /**
-         * @brief Config file containing directory path
-         *        (usually: /home/user/.config/robomongo)
-         */
-        const auto _configDir = QString("%1/.config/robomongo/1.0").arg(QDir::homePath());
+        * @brief Config file absolute path
+        *        (usually: /home/user/.config/robomongo/robomongo.json)
+        */
+    const auto _configPath = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
+
+    /**
+        * @brief Config file containing directory path
+        *        (usually: /home/user/.config/robomongo)
+        */
+    const auto _configDir = QString("%1/.config/robomongo/1.0").arg(QDir::homePath());
 }
 
 namespace Robomongo
@@ -202,11 +233,48 @@ namespace Robomongo
             _acceptedEulaVersions = map.value("acceptedEulaVersions").toStringList().toSet();
         }
 
+
+        //
+        QString anonymousID = "";
+        auto const studio3T_PropertiesDat = QString("%1/.3T/studio-3t/properties.dat").arg(QDir::homePath());
+        auto const dataMongodb_PropertiesDat = QString("%1/.3T/data-man-mongodb/properties.dat").arg(QDir::homePath());
+        auto const mongochefpro_PropertiesDat = QString("%1/.3T/mongochef-pro/properties.dat").arg(QDir::homePath());
+        auto const mongochefent_PropertiesDat = QString("%1/.3T/mongochef-enterprise/properties.dat").arg(QDir::homePath());
+
         // If anonymousID has never been created or is empty, create a new one. Otherwise load the existing.
-        if (!map.contains("anonymousID") || map.value("anonymousID").toString().isEmpty())
-            _anonymousID = QUuid::createUuid().toString();
-        else
-            _anonymousID = map.value("anonymousID").toString();
+        if (map.contains("anonymousID")) {
+            QUuid id = map.value("anonymousID").toString();
+            if (!id.isNull())
+                anonymousID = id.toString();
+        }
+
+        if (anonymousID.isEmpty()) {
+            QUuid id = getAnonymousID(studio3T_PropertiesDat, "%1/.3T/studio-3t/properties/Studio3T.properties");
+            if (!id.isNull())
+                anonymousID = id.toString();
+        }
+
+        if (anonymousID.isEmpty()) {
+            QUuid id = getAnonymousID(dataMongodb_PropertiesDat, "%1/.3T/data-man-mongodb/properties/Studio3T.properties");
+            if (!id.isNull())
+                anonymousID = id.toString();
+        }
+        if (anonymousID.isEmpty()) {
+            QUuid id = getAnonymousID(mongochefpro_PropertiesDat, "%1/.3T/mongochef-pro/properties/Studio3T.properties");
+            if (!id.isNull())
+                anonymousID = id.toString();
+        }
+
+        if (anonymousID.isEmpty()) {
+            QUuid id = getAnonymousID(mongochefent_PropertiesDat, "%1/.3T/mongochef-enterprise/properties/Studio3T.properties");
+            if (!id.isNull())
+                anonymousID = id.toString();
+        }
+
+        if (anonymousID.isEmpty())
+            anonymousID = QUuid::createUuid().toString();
+
+        _anonymousID = anonymousID;
 
         // Load AutocompletionMode
         if (map.contains("autocompletionMode")) {

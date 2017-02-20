@@ -552,6 +552,8 @@ namespace Robomongo
         _updateLabel = new QLabel;
         //_updateLabel->setWordWrap(true);
         _updateLabel->setOpenExternalLinks(true);
+        _updateLabel->setTextFormat(Qt::TextFormat::RichText);
+        _updateLabel->setIndent(_updateLabel->fontMetrics().width("T"));
         auto closeButton = new QPushButton;
         closeButton->setIcon(QIcon(":/robomongo/icons/close_hover_16x16.png"));
         //closeButton->setStyleSheet("background-color: red");
@@ -578,6 +580,7 @@ namespace Robomongo
         addToolBarBreak();
         addToolBar(_updateBar);
         _updateBar->setHidden(true);
+        _updateBar->setMovable(false);
 
         _toolbarsMenu->addAction(_execToolBar->toggleViewAction());
         VERIFY(connect(_execToolBar->toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onExecToolbarVisibilityChanged(bool))));
@@ -1349,7 +1352,6 @@ namespace Robomongo
     void MainWindow::on_networkReply(QNetworkReply* reply)
     {
         QString str(QUrl::fromPercentEncoding(reply->readAll()));
-        auto xx = str.toStdString();
 
         if ("NO-UPDATES-ANNOUNCED.\n" == str) {
             _updateLabel->setText("");

@@ -22,7 +22,7 @@ namespace
         "<br/>"
         "<a href=\"https://" PROJECT_GITHUB_ISSUES "\">Submit</a> issues/proposals on GitHub.  <br/>"
         "<br/>"
-        "Copyright 2014-2017 <a href= "PROJECT_COMPANYNAME_DOMAIN" >" PROJECT_COMPANYNAME "</a>. All rights reserved.<br/>"
+        "Copyright 2014-2017 <a href= " PROJECT_COMPANYNAME_DOMAIN " >" PROJECT_COMPANYNAME "</a>. All rights reserved.<br/>"
         "<br/>"
         "The program is provided AS IS with NO WARRANTY OF ANY KIND, "
         "INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A "

@@ -493,6 +493,12 @@ namespace Robomongo
         duplicateAction->setVisible(true);
         VERIFY(connect(duplicateAction, SIGNAL(triggered()), SLOT(duplicateTab())));
 
+        // Open welcome tab action
+        auto openWelcomeTabAction = new QAction("Open/Refresh Welcome Tab", this);
+        openWelcomeTabAction->setShortcut(Qt::CTRL + Qt::Key_W);
+        openWelcomeTabAction->setVisible(true);
+        VERIFY(connect(openWelcomeTabAction, SIGNAL(triggered()), SLOT(openWelcomeTab())));
+
         // Window menu
         QMenu *windowMenu = menuBar()->addMenu("Window");
         //minimize
@@ -504,8 +510,10 @@ namespace Robomongo
         windowMenu->addSeparator();
         windowMenu->addAction(reloadAction);
         windowMenu->addAction(duplicateAction);
+        windowMenu->addSeparator();
+        windowMenu->addAction(openWelcomeTabAction);
 
-        SettingsManager::ToolbarSettingsContainerType toolbarsSettings = AppRegistry::instance().settingsManager()->toolbars();
+        auto toolbarsSettings = AppRegistry::instance().settingsManager()->toolbars();
 
     /*** About menu ***/
 
@@ -987,6 +995,12 @@ namespace Robomongo
         dlg.exec();
     }
 
+
+    void MainWindow::openWelcomeTab()
+    {
+        _workArea->openWelcomeTab();
+    }
+
     /* --- Temporarily disabling export/import feature
     void MainWindow::openExportDialog()
     {
@@ -1382,6 +1396,7 @@ namespace Robomongo
         QUrl url2("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=4.3.0&licenseInfo=FREE"
             "&setup=760f6182-13e4-4357-8f5e-d51bc7ca27fe&notify=true#");
 
+        // http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=4.3.0&licenseInfo=FREE&setup=760f6182-13e4-4357-8f5e-d51bc7ca27fe&notify=true#
         QUrl url3("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=" + QString(PROJECT_VERSION)
             + "&licenseInfo=FREE&setup=" + AppRegistry::instance().settingsManager()->anonymousID() + "&notify=true#");
 

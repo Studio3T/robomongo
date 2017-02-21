@@ -29,6 +29,7 @@ namespace Robomongo
         QueryWidget *currentQueryWidget();
         QueryWidget *queryWidget(int index);
         WelcomeTab *getWelcomeTab();
+        void openWelcomeTab();
 
     public Q_SLOTS:
         void handle(OpeningShellEvent *event);

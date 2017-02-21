@@ -91,7 +91,8 @@ namespace Robomongo
         void setUtcTimeZone();
         void setLocalTimeZone();
         void openPreferences();
-        
+        void openWelcomeTab();
+
         // Temporarily disabling export/import feature
         //void openExportDialog();
 

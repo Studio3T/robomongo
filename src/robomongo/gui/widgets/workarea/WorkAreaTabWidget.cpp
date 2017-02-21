@@ -128,6 +128,18 @@ namespace Robomongo
         return _welcomeTab;
     }
 
+    void WorkAreaTabWidget::openWelcomeTab()
+    {
+        auto scrollArea = qobject_cast<QScrollArea*>(_welcomeTab->getParent());
+        if (!scrollArea)
+            return;
+
+        _welcomeTab = new WelcomeTab(scrollArea);
+        scrollArea->setWidget(_welcomeTab);
+        addTab(scrollArea, GuiRegistry::instance().mainWindowIcon(), "Welcome");
+        scrollArea->setFrameShape(QFrame::NoFrame);
+    }
+
     /**
      * @brief Overrides QTabWidget::keyPressEvent() in order to intercept
      * tab close key shortcuts (Ctrl+F4 and Ctrl+W)

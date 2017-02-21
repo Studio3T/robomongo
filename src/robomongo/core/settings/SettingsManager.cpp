@@ -6,6 +6,7 @@
 #include <QUuid>
 #include <QJsonArray>
 #include <QXmlStreamReader>
+#include <QtGui\5.7.0\QtGui\private\qzipreader_p.h>
 
 #include <parser.h>
 #include <serializer.h>
@@ -22,6 +23,14 @@
 namespace
 {
     // todo: to common.h
+
+    // Current Config path
+    QString const Cache_Dir = QString("%1/.config/robomongo/%2/cache/").arg(QDir::homePath())
+                                                                       .arg(PROJECT_VERSION_SHORT);
+    // Current config file
+    QString const Config_File = QString("%1/.config/robomongo/%2/robomongo.json/").arg(QDir::homePath())
+                                                                                  .arg(PROJECT_VERSION_SHORT);
+
     bool fileExists(const QString &path) 
     {
         QFileInfo fileInfo(path);
@@ -30,24 +39,40 @@ namespace
 
     QString getAnonymousID(QString const& zipFile, QString const& propfile)
     {
-        if (!fileExists(zipFile))
-            return QString("");
 
-        QFile file(propfile.arg(QDir::homePath()));
+        QZipReader zipReader(zipFile);
+        if (!zipReader.exists() || !zipReader.isReadable()) {
+            // log warning
+            return QString("");
+        }
+
+        zipReader.extractAll(Cache_Dir);
+
+        if (!fileExists(Cache_Dir + propfile)) {
+            // log warning
+            return QString("");
+        }
+
+        QFile file(Cache_Dir + propfile);
         if (file.open(QIODevice::ReadOnly)) {
             QXmlStreamReader reader(file.readAll());
             file.close();
             while (!reader.atEnd()) {
                 reader.readNext();
-                if (reader.text().toString() == "AnonymousID") {
+                if (reader.text().toString() == "AnonymousID") {    // todo: refactor
                     reader.readNext();
                     reader.readNext();
                     reader.readNext();
                     reader.readNext();
+                    if (!QFile::remove(Cache_Dir + propfile)) {
+                        // log 
+                    }
                     return reader.text().toString();
                 }
             }
         }
+
+
         return QString("");
     }
 
@@ -233,7 +258,6 @@ namespace Robomongo
             _acceptedEulaVersions = map.value("acceptedEulaVersions").toStringList().toSet();
         }
 
-
         //
         QString anonymousID = "";
         auto const studio3T_PropertiesDat = QString("%1/.3T/studio-3t/properties.dat").arg(QDir::homePath());
@@ -249,24 +273,24 @@ namespace Robomongo
         }
 
         if (anonymousID.isEmpty()) {
-            QUuid id = getAnonymousID(studio3T_PropertiesDat, "%1/.3T/studio-3t/properties/Studio3T.properties");
+            QUuid id = getAnonymousID(studio3T_PropertiesDat, "Studio3T.properties");
             if (!id.isNull())
                 anonymousID = id.toString();
         }
 
         if (anonymousID.isEmpty()) {
-            QUuid id = getAnonymousID(dataMongodb_PropertiesDat, "%1/.3T/data-man-mongodb/properties/Studio3T.properties");
+            QUuid id = getAnonymousID(dataMongodb_PropertiesDat, "3T.data-man-mongodb.properties");
             if (!id.isNull())
                 anonymousID = id.toString();
         }
         if (anonymousID.isEmpty()) {
-            QUuid id = getAnonymousID(mongochefpro_PropertiesDat, "%1/.3T/mongochef-pro/properties/Studio3T.properties");
+            QUuid id = getAnonymousID(mongochefpro_PropertiesDat, "3T.mongochef-pro.properties");
             if (!id.isNull())
                 anonymousID = id.toString();
         }
 
         if (anonymousID.isEmpty()) {
-            QUuid id = getAnonymousID(mongochefent_PropertiesDat, "%1/.3T/mongochef-enterprise/properties/Studio3T.properties");
+            QUuid id = getAnonymousID(mongochefent_PropertiesDat, "3T.mongochef-enterprise.properties");
             if (!id.isNull())
                 anonymousID = id.toString();
         }

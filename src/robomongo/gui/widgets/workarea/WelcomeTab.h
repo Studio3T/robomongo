@@ -24,12 +24,15 @@ namespace Robomongo
         WelcomeTab(QScrollArea *parent = nullptr);
         ~WelcomeTab();
         void removeRecentConnectionItem(ConnectionSettings const* conn);
+        QScrollArea* getParent() const { return _parent; }
 
     protected:
         bool eventFilter(QObject *target, QEvent *event) override;
 
     private Q_SLOTS:
-        void downloadFinished(QNetworkReply* reply);
+        void on_downloadTextReply(QNetworkReply* reply);
+        void on_downloadPictureReply(QNetworkReply* reply);
+        void on_downloadRssReply(QNetworkReply* reply);
         void on_allBlogsButton_clicked();
         void on_clearButton_clicked();
         void on_deleteButton_clicked();
@@ -41,9 +44,11 @@ namespace Robomongo
         void addRecentConnectionItem(ConnectionSettings const* conn, bool insertTop);
 
         QLabel* _pic1 = nullptr;
+        QLabel *_blogsSection;
         QPushButton* _allBlogsButton = nullptr;
         QVBoxLayout* _recentConnsLay;
-        QLabel* _whatsNewSection;
+        QLabel* _whatsNewHeader;
+        QLabel* _whatsNewText;
         QPushButton* _clearButton;
         QScrollArea* _parent;
 

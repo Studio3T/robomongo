@@ -10,11 +10,13 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QDesktopServices>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QEvent>
+#include <QXmlStreamReader>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -27,6 +29,17 @@
 
 namespace Robomongo
 {
+
+    struct BlogInfo
+    {
+        BlogInfo(QString const& title, QString const& link, QString const& publishDate)
+            : title(title), link(link), publishDate(publishDate) {}
+        
+        QString const title;
+        QString const link;
+        QString const publishDate;
+    };
+
     /* todo: brief: Special button to use on the right side of a recent connection label */
     struct CustomButton : public QPushButton
     {
@@ -47,33 +60,14 @@ namespace Robomongo
                                       "href='%1'>%2</a></p>";
     
     QString const whatsNew = "<p><h1><font color=\"#2d862d\">What's New</h1></p>";
-    QString const str1 = "<h3>Replica set status aka \"rs.status()\" shortcut menu item </h3>";
-    QString const str2 = "With this new feature it is possible to check replica set status even" 
-        " in offline mode (primary is unreachable) if there is at least one reachable member."
-        " In the example shown below, we can get all information about the health of replica set"
-        " and members with right click on replica set folder.";
 
-    QString const blogPosts = "<p><h1><font color=\"#2d862d\">Blog Posts</h1></p>";
+    QString const BlogsHeader = "<p><h1><font color=\"#2d862d\">Blog Posts</h1></p>";
 
-    QString const blog = "<p><a style = 'font-size:14px; color: #106CD6; text-decoration:none'"
+    QString const blogTemplate = "<p><a style = 'font-size:14px; color: #106CD6; text-decoration:none'"
         "href='%1'>%2</p>""<font color=\"gray\">%3</font>";
 
-    QString const blog0 = blog.arg("http://blog.robomongo.org/robomongo-1-rc1/", 
-        "Robomongo 1.0 RC1 brings support to Replica Set Clusters", "02 Feb 2017");
-
-    QString const blog1 = blog.arg("http://blog.robomongo.org/robomongo-1-rc1/",
-        "Robomongo 0.9.0 Final", "06 Oct 2016");
-
-    QString const blog2 = blog.arg("http://blog.robomongo.org/robomongo-1-rc1/",
-        "Robomongo RC10 brings support to SSL", "19 Aug 2016");
-
-    QString const blog3 = blog.arg("http://blog.robomongo.org/robomongo-1-rc1/",
-        "Robomongo RC9", "01 Jun 2016");
-
-    QString const blog4 = blog.arg("http://blog.robomongo.org/robomongo-1-rc1/",
-        "Robomongo RC8", "14 Apr 2016");
-
-    QUrl const pic1_URL = QString("http://blog.robomongo.org/content/images/2017/02/bottom.png");
+    QUrl const pic1_URL = QString("http://files.studio3t.com/robo/1/image.jpg");
+    
 
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
@@ -105,12 +99,37 @@ namespace Robomongo
         clearButtonLay->addWidget(_clearButton);
         clearButtonLay->addStretch();
 
-        _whatsNewSection = new QLabel(whatsNew + str1 + str2);
-        _whatsNewSection->setTextInteractionFlags(Qt::TextSelectableByMouse);
-        _whatsNewSection->setWordWrap(true);
-        _whatsNewSection->setMinimumWidth(500);
-        _whatsNewSection->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-        _whatsNewSection->setMinimumHeight(_whatsNewSection->sizeHint().height());
+        //// What's new section
+        _whatsNewHeader = new QLabel(whatsNew);
+        _whatsNewText = new QLabel;
+        _whatsNewText->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        _whatsNewText->setTextFormat(Qt::RichText);
+        _whatsNewText->setTextInteractionFlags(Qt::TextBrowserInteraction);
+        _whatsNewText->setOpenExternalLinks(true);
+        _whatsNewText->setWordWrap(true);
+        _whatsNewText->setMinimumWidth(650);
+        _whatsNewText->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+        _whatsNewText->setMinimumHeight(_whatsNewText->sizeHint().height());
+
+        QUrl const text1_URL = QString("http://files.studio3t.com/robo/1/contents.txt");
+        auto text1Downloader = new QNetworkAccessManager;
+        VERIFY(connect(text1Downloader, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_downloadTextReply(QNetworkReply*))));
+
+        auto const& cacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());
+        if (QDir(cacheDir).exists()) {
+            QFileInfo check_file(cacheDir + text1_URL.fileName());
+            if (check_file.exists() && check_file.isFile()) {   // Use cached file
+                QFile file(cacheDir + text1_URL.fileName());
+                if (file.open(QFile::ReadOnly | QFile::Text)) {
+                    QTextStream in(&file);
+                    QString str(in.readAll());
+                    _whatsNewText->setText(str);
+                }
+            }
+            else {  // Get file from Internet
+                text1Downloader->get(QNetworkRequest(text1_URL));
+            }
+        }
 
         _pic1 = new QLabel;
         //pic1->setPixmap(pic1URL);
@@ -118,27 +137,32 @@ namespace Robomongo
         _pic1->setTextInteractionFlags(Qt::TextSelectableByMouse);
         //pic1->setStyleSheet("background-color: gray");
 
-        auto manager = new QNetworkAccessManager;
-        VERIFY(connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*))));
+        auto pic1Downloader = new QNetworkAccessManager;
+        VERIFY(connect(pic1Downloader, SIGNAL(finished(QNetworkReply*)), 
+               this, SLOT(on_downloadPictureReply(QNetworkReply*))));
 
-        auto const& cacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());
         if (QDir(cacheDir).exists()) {
             QFileInfo check_file(cacheDir + pic1_URL.fileName());
             if (check_file.exists() && check_file.isFile()) {   // Use cached file
                 QPixmap img(cacheDir + pic1_URL.fileName());
-                _pic1->setPixmap(img.scaledToWidth(_whatsNewSection->width()));
+                _pic1->setPixmap(img.scaledToWidth(_whatsNewText->width()*0.9));
             }
             else {  // Get file from Internet
-                manager->get(QNetworkRequest(pic1_URL));
+                pic1Downloader->get(QNetworkRequest(pic1_URL));
             }
         }
 
-        auto blogsSection = new QLabel(blogPosts + blog0 + blog1 + blog2 + blog3 + blog4);
-        blogsSection->setTextInteractionFlags(Qt::TextSelectableByMouse);
-        blogsSection->setWordWrap(true);
-        blogsSection->setTextFormat(Qt::RichText);
-        blogsSection->setTextInteractionFlags(Qt::TextBrowserInteraction);
-        blogsSection->setOpenExternalLinks(true);
+        _blogsSection = new QLabel;
+        _blogsSection->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        //_blogsSection->setWordWrap(true);
+        _blogsSection->setTextFormat(Qt::RichText);
+        _blogsSection->setTextInteractionFlags(Qt::TextBrowserInteraction);
+        _blogsSection->setOpenExternalLinks(true);
+
+        auto rssDownloader = new QNetworkAccessManager;
+        VERIFY(connect(rssDownloader, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_downloadRssReply(QNetworkReply*))));
+        QUrl const rssURL = QString("http://blog.robomongo.org/rss/");
+        rssDownloader->get(QNetworkRequest(rssURL));
 
         auto buttonLay = new QHBoxLayout;
         _allBlogsButton = new QPushButton("All Blog Posts");
@@ -151,7 +175,7 @@ namespace Robomongo
 
         auto rightLayout = new QVBoxLayout;
         rightLayout->setContentsMargins(20, -1, -1, -1);
-        rightLayout->addWidget(blogsSection, 0, Qt::AlignTop);
+        rightLayout->addWidget(_blogsSection, 0, Qt::AlignTop);
         rightLayout->addSpacing(15);
         rightLayout->addLayout(buttonLay);
         rightLayout->addStretch();
@@ -163,8 +187,9 @@ namespace Robomongo
         leftLayout->addLayout(clearButtonLay);
         leftLayout->addStretch();
         leftLayout->addSpacing(30);
-        leftLayout->addWidget(_whatsNewSection, 0, Qt::AlignTop);
+        leftLayout->addWidget(_whatsNewHeader, 0, Qt::AlignTop);
         leftLayout->addWidget(_pic1, 0, Qt::AlignTop);
+        leftLayout->addWidget(_whatsNewText, 0, Qt::AlignTop);
 
         auto mainLayout = new QHBoxLayout;
         mainLayout->setContentsMargins(20, -1, -1, -1);
@@ -182,18 +207,18 @@ namespace Robomongo
 
     }
 
-    void WelcomeTab::downloadFinished(QNetworkReply* reply)
+    void WelcomeTab::on_downloadPictureReply(QNetworkReply* reply)
     {
         auto img = new QPixmap;
         img->loadFromData(reply->readAll());
 
         if (img->isNull()) {
-            LOG_MSG("WelcomeTab: Failed to download from network. Reason: " + reply->errorString(),
+            LOG_MSG("WelcomeTab: Failed to download image file from URL. Reason: " + reply->errorString(),
                      mongo::logger::LogSeverity::Warning());
             return;
         }
 
-        _pic1->setPixmap(img->scaledToWidth(_whatsNewSection->width()));
+        _pic1->setPixmap(img->scaledToWidth(_whatsNewText->width()));
 
         // Save to cache
         auto const& cacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());
@@ -212,11 +237,79 @@ namespace Robomongo
         img->save(cacheDir + reply->url().fileName());
     }
 
+
+    void WelcomeTab::on_downloadTextReply(QNetworkReply* reply)
+    {
+        QString str(QUrl::fromPercentEncoding(reply->readAll()));
+        if (str.isEmpty()) {
+            LOG_MSG("WelcomeTab: Failed to download text file from URL. Reason: " + reply->errorString(),
+                     mongo::logger::LogSeverity::Warning());
+            return;
+        }
+
+        _whatsNewText->setText(str);
+
+        // Save to cache
+        auto const& cacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());
+        if (!QDir(cacheDir).exists())
+            QDir().mkdir(cacheDir);
+        else {  // cache dir. exists            
+            QFileInfo check_file(cacheDir + reply->url().fileName());
+            // Make sure we delete the old file in order to cache the newly downloaded file
+            if (check_file.exists() && check_file.isFile()) {
+                if (!QFile::remove(cacheDir + reply->url().fileName())) {
+                    LOG_MSG("WelcomeTab: Failed to delete cached file at: " + cacheDir + reply->url().fileName(),
+                        mongo::logger::LogSeverity::Warning());
+                }
+            }
+        }
+        QFile file(cacheDir + reply->url().fileName());
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream out(&file);
+            out << str;
+        }
+    }
+    
+    void WelcomeTab::on_downloadRssReply(QNetworkReply* reply)
+    {
+        // todo: if reply->error(), log and return
+
+        QXmlStreamReader xmlReader(reply->readAll());
+
+        QString blogs;
+        int count = 0;
+        int const MaxBlogCountShown = 10;
+        QString title, link, pubDate;
+        while (!xmlReader.atEnd()) {
+            xmlReader.readNext();
+            if (xmlReader.isStartElement()) {
+                if (xmlReader.name() == "title") 
+                    title = xmlReader.readElementText();
+                else if (xmlReader.name() == "link")
+                    link = xmlReader.readElementText();
+                else if (xmlReader.name() == "pubDate")
+                    pubDate = xmlReader.readElementText().left(16);
+                
+                if (!pubDate.isEmpty()) {
+                    blogs.push_back(blogTemplate.arg(link, title, pubDate));
+                    pubDate.clear();
+                    ++count;
+                    if (MaxBlogCountShown == count)
+                        break;
+                }
+            }
+        }
+
+        // todo: load from cache if download fails
+
+        _blogsSection->setText(BlogsHeader + blogs);
+    }
+
+
     void WelcomeTab::on_allBlogsButton_clicked()
     {
         QDesktopServices::openUrl(QUrl("http://blog.robomongo.org/"));
     }
-
     
     void WelcomeTab::on_clearButton_clicked()
     {

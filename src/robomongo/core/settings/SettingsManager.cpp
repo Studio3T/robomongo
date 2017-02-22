@@ -6,7 +6,20 @@
 #include <QUuid>
 #include <QJsonArray>
 #include <QXmlStreamReader>
-#include <QtGui\5.7.0\QtGui\private\qzipreader_p.h>
+
+// Todo: 
+// Warning: 
+//         Currently, this include statement should be maintained manually.
+//         The Qt version must be updated if Qt is upgraded. Otherwise it will cause build. 
+//         The correct path will be: PROJECT_QT_VERSION/QtGui/private/qzipreader_p.h
+// Details:         
+//         Ideally, private class inside qzipreader_p.h should not be used since it is not 
+//         a publicly/officially supported API by Qt. It is used here since we are doing a 
+//         a very lightweight zip operation which is unzipping a zip archive with one, small 
+//         file.
+//         The alternative solution is time consuming which is including QuaZip and Zlib 
+//         third party libraries into CMAKE project and building them.
+#include <5.7.0/QtGui/private/qzipreader_p.h>
 
 #include <parser.h>
 #include <serializer.h>
@@ -20,16 +33,16 @@
 #include "robomongo/core/utils/StdUtils.h"
 #include "robomongo/gui/AppStyle.h"
 
-namespace
+namespace Robomongo
 {
     // todo: to common.h
-
+    
     // Current Config path
     QString const Cache_Dir = QString("%1/.config/robomongo/%2/cache/").arg(QDir::homePath())
                                                                        .arg(PROJECT_VERSION_SHORT);
     // Current config file
     QString const Config_File = QString("%1/.config/robomongo/%2/robomongo.json/").arg(QDir::homePath())
-                                                                                  .arg(PROJECT_VERSION_SHORT);
+                                                                                  .arg(PROJECT_VERSION_SHORT);    
 
     bool fileExists(const QString &path) 
     {
@@ -39,39 +52,23 @@ namespace
 
     QString getAnonymousID(QString const& zipFile, QString const& propfile)
     {
-
         QZipReader zipReader(zipFile);
         if (!zipReader.exists() || !zipReader.isReadable()) {
             // log warning
             return QString("");
         }
 
-        zipReader.extractAll(Cache_Dir);
-
-        if (!fileExists(Cache_Dir + propfile)) {
-            // log warning
-            return QString("");
-        }
-
-        QFile file(Cache_Dir + propfile);
-        if (file.open(QIODevice::ReadOnly)) {
-            QXmlStreamReader reader(file.readAll());
-            file.close();
-            while (!reader.atEnd()) {
+        QXmlStreamReader reader(zipReader.fileData(propfile));
+        while (!reader.atEnd()) {
+            reader.readNext();
+            if (reader.text().toString() == "AnonymousID") {    // todo: refactor
                 reader.readNext();
-                if (reader.text().toString() == "AnonymousID") {    // todo: refactor
-                    reader.readNext();
-                    reader.readNext();
-                    reader.readNext();
-                    reader.readNext();
-                    if (!QFile::remove(Cache_Dir + propfile)) {
-                        // log 
-                    }
-                    return reader.text().toString();
-                }
+                reader.readNext();
+                reader.readNext();
+                reader.readNext();
+                return reader.text().toString();
             }
         }
-
 
         return QString("");
     }
@@ -107,6 +104,7 @@ namespace Robomongo
 
     struct ConfigFileAndImportFunction
     {
+
         ConfigFileAndImportFunction(QString const& configFile, std::function<bool()> importFunction)
             : file(configFile), import(importFunction) {}
 

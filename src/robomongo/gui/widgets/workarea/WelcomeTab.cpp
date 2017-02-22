@@ -34,10 +34,16 @@ namespace Robomongo
     {
         BlogInfo(QString const& title, QString const& link, QString const& publishDate)
             : title(title), link(link), publishDate(publishDate) {}
-        
+
         QString const title;
         QString const link;
         QString const publishDate;
+    };
+
+    struct BlogLinkLabel : public QLabel
+    {
+        BlogLinkLabel(QString const& args) 
+            : QLabel(args) {}
     };
 
     /* todo: brief: Special button to use on the right side of a recent connection label */
@@ -63,8 +69,8 @@ namespace Robomongo
 
     QString const BlogsHeader = "<p><h1><font color=\"#2d862d\">Blog Posts</h1></p>";
 
-    QString const blogTemplate = "<p><a style = 'font-size:14px; color: #106CD6; text-decoration:none'"
-        "href='%1'>%2</p>""<font color=\"gray\">%3</font>";
+    QString const BlogLinkTemplate = "<p><a style = 'font-size:14px; color: #106CD6; text-decoration: none;'"
+                                     "href='%1'>%2</a></p>";
 
     QUrl const pic1_URL = QString("http://files.studio3t.com/robo/1/image.jpg");
     
@@ -173,9 +179,14 @@ namespace Robomongo
         buttonLay->addWidget(_allBlogsButton);
         buttonLay->addStretch();
 
+        _blogLinksLay = new QVBoxLayout;
+        _blogLinksLay->setAlignment(Qt::AlignLeft);
+        //_blogLinksLay->setSpacing(0);
+
         auto rightLayout = new QVBoxLayout;
         rightLayout->setContentsMargins(20, -1, -1, -1);
-        rightLayout->addWidget(_blogsSection, 0, Qt::AlignTop);
+        rightLayout->addWidget(new QLabel(BlogsHeader), 0, Qt::AlignTop);
+        rightLayout->addLayout(_blogLinksLay);
         rightLayout->addSpacing(15);
         rightLayout->addLayout(buttonLay);
         rightLayout->addStretch();
@@ -273,6 +284,7 @@ namespace Robomongo
     void WelcomeTab::on_downloadRssReply(QNetworkReply* reply)
     {
         // todo: if reply->error(), log and return
+        // todo: load from cache if download fails
 
         QXmlStreamReader xmlReader(reply->readAll());
 
@@ -291,7 +303,16 @@ namespace Robomongo
                     pubDate = xmlReader.readElementText().left(16);
                 
                 if (!pubDate.isEmpty()) {
-                    blogs.push_back(blogTemplate.arg(link, title, pubDate));
+                    blogs.push_back(BlogLinkTemplate.arg(link, title, pubDate));
+                    auto blogLink = new BlogLinkLabel(BlogLinkTemplate.arg(link, title));
+                    blogLink->setMouseTracking(true);
+                    blogLink->setAttribute(Qt::WA_Hover);
+                    blogLink->installEventFilter(this);
+                    blogLink->setTextInteractionFlags(Qt::TextBrowserInteraction);
+                    blogLink->setOpenExternalLinks(true);
+                    _blogLinksLay->addWidget(blogLink);
+                    _blogLinksLay->addWidget(new QLabel("<font color='gray'>" + pubDate + "</font>"));
+                    _blogLinksLay->addSpacing(_blogLinksLay->spacing());
                     pubDate.clear();
                     ++count;
                     if (MaxBlogCountShown == count)
@@ -299,10 +320,6 @@ namespace Robomongo
                 }
             }
         }
-
-        // todo: load from cache if download fails
-
-        _blogsSection->setText(BlogsHeader + blogs);
     }
 
 
@@ -440,7 +457,6 @@ namespace Robomongo
         connLabel->setMouseTracking(true);
         connLabel->setAttribute(Qt::WA_Hover);
         connLabel->installEventFilter(this);
-        connLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
         VERIFY(connect(connLabel, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString))));
         VERIFY(connect(connLabel, SIGNAL(linkHovered(QString)), this, SLOT(linkHovered(QString))));
 
@@ -495,19 +511,34 @@ namespace Robomongo
     bool WelcomeTab::eventFilter(QObject *target, QEvent *event)
     {
         auto label = qobject_cast<QLabel*>(target);
-        if (label) {
+        auto blogLinkLabel = dynamic_cast<BlogLinkLabel*>(target);
+        
+        if (label && !blogLinkLabel) {
             auto but = qobject_cast<QPushButton*>(label->buddy());
             if (event->type() == QEvent::HoverEnter) {
                 label->setText(label->text().replace("text-decoration: none;", "text-decoration: ;"));
                 setCursor(Qt::PointingHandCursor);
                 but->setIcon(GuiRegistry::instance().deleteIcon());
-                but->setIconSize(QSize(but->iconSize().width(), CustomButtonHeight ));
+                but->setIconSize(QSize(but->iconSize().width(), CustomButtonHeight));
                 return true;
             }
             else  if (event->type() == QEvent::HoverLeave) {
                 label->setText(label->text().replace("text-decoration: ;", "text-decoration: none;"));
                 setCursor(Qt::ArrowCursor);
                 but->setIcon(QIcon(""));
+                return true;
+            }
+        }
+
+        if (blogLinkLabel) {
+            if (event->type() == QEvent::HoverEnter) {
+                blogLinkLabel->setText(blogLinkLabel->text().replace("text-decoration: none;", "text-decoration: ;"));
+                setCursor(Qt::PointingHandCursor);
+                return true;
+            }
+            else  if (event->type() == QEvent::HoverLeave) {
+                blogLinkLabel->setText(blogLinkLabel->text().replace("text-decoration: ;", "text-decoration: none;"));
+                setCursor(Qt::ArrowCursor);
                 return true;
             }
         }

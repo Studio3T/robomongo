@@ -32,6 +32,7 @@
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/utils/StdUtils.h"
 #include "robomongo/gui/AppStyle.h"
+#include "robomongo/utils/common.h"
 
 namespace Robomongo
 {
@@ -42,14 +43,7 @@ namespace Robomongo
                                                                        .arg(PROJECT_VERSION_SHORT);
     // Current config file
     QString const Config_File = QString("%1/.config/robomongo/%2/robomongo.json/").arg(QDir::homePath())
-                                                                                  .arg(PROJECT_VERSION_SHORT);    
-
-    bool fileExists(const QString &path) 
-    {
-        QFileInfo fileInfo(path);
-        return fileInfo.exists() && fileInfo.isFile();
-    }
-
+                                                                                  .arg(PROJECT_VERSION_SHORT);  
     QString getAnonymousID(QString const& zipFile, QString const& propfile)
     {
         QZipReader zipReader(zipFile);
@@ -208,6 +202,16 @@ namespace Robomongo
         LOG_MSG("Settings saved to: " + _configPath, mongo::logger::LogSeverity::Info());
 
         return ok;
+    }
+
+    void SettingsManager::addCacheData(QString const& key, QVariant const& value)
+    {
+        _cacheData.insert(key, value);
+    }
+
+    QVariant SettingsManager::cacheData(QString const& key) const
+    {
+        return _cacheData.value(key);
     }
 
     /**
@@ -373,6 +377,8 @@ namespace Robomongo
         if (_toolbars.end() == it)
             _toolbars["logs"] = false;
 
+        _cacheData = map.value("cacheData").toMap();
+
         // Load connection settings from previous versions of Robomongo
         importConnections();
     }
@@ -450,6 +456,7 @@ namespace Robomongo
         map.insert("toolbars", _toolbars);
         map.insert("imported", _imported);
         map.insert("anonymousID", _anonymousID);
+        map.insert("cacheData", _cacheData);
 
         return map;
     }

@@ -26,9 +26,88 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/utils/Logger.h"       
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/utils/common.h"
 
 namespace Robomongo
 {
+
+    QString const Text1_LastModifiedDateKey("wtText1LastModifiedDate");
+    QString const Image1_LastModifiedDateKey("wtImage1LastModifiedDate");
+
+    auto const& CacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());    // todo
+
+    std::unique_ptr<QFile> loadFileFromCache(QString const& fileName)
+    {
+        QFileInfo check_file(CacheDir + fileName);
+        if (check_file.exists() && check_file.isFile()) {   // Use cached file
+            std::unique_ptr<QFile> file(new QFile(CacheDir + fileName));
+            if (file->open(QFile::ReadOnly | QFile::Text)) {
+                return file;
+            }
+        }
+        return nullptr;
+    }
+
+    bool saveIntoCache(QString const& fileName, QString const& fileData, 
+                       QString const& lastModifiedKey, QString const& lastModifiedDate)
+    {
+        // Save file into cache directory
+        if (!QDir(CacheDir).exists())
+            QDir().mkdir(CacheDir);
+        else {  // cache dir. exists            
+            QFileInfo check_file(CacheDir + fileName);
+            // Make sure we delete the old file in order to cache the newly downloaded file
+            if (check_file.exists() && check_file.isFile()) {
+                if (!QFile::remove(CacheDir + fileName)) {
+                    LOG_MSG("WelcomeTab: Failed to delete cached file at: " + CacheDir + fileName,
+                        mongo::logger::LogSeverity::Warning());
+                    return false;
+                }
+            }
+        }
+        QFile file(CacheDir + fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            // todo: log
+            return false;
+        }
+        QTextStream out(&file);
+        out << fileData;
+
+        // Save file's last modified date into settings
+        AppRegistry::instance().settingsManager()->addCacheData(lastModifiedKey, lastModifiedDate);
+        AppRegistry::instance().settingsManager()->save();
+        return true;
+    }
+
+    bool saveIntoCache(QString const& fileName, QPixmap* pixMap, 
+                       QString const& lastModifiedKey, QString const& lastModifiedDate)
+    {
+        // Save file into cache directory
+        if (!QDir(CacheDir).exists())
+            QDir().mkdir(CacheDir);
+        else {  // cache dir. exists            
+            QFileInfo check_file(CacheDir + fileName);
+            // Make sure we delete the old file in order to cache the newly downloaded file
+            if (check_file.exists() && check_file.isFile()) {
+                if (!QFile::remove(CacheDir + fileName)) {
+                    LOG_MSG("WelcomeTab: Failed to delete cached file at: " + CacheDir + fileName,
+                        mongo::logger::LogSeverity::Warning());
+                    return false;
+                }
+            }
+        }
+        QFile file(CacheDir + fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            // todo: log
+            return false;
+        }
+        pixMap->save(CacheDir + fileName);
+
+        // Save file's last modified date into settings
+        AppRegistry::instance().settingsManager()->addCacheData(lastModifiedKey, lastModifiedDate);
+        AppRegistry::instance().settingsManager()->save();
+        return true;
+    }
 
     struct BlogInfo
     {
@@ -72,8 +151,18 @@ namespace Robomongo
     QString const BlogLinkTemplate = "<p><a style = 'font-size:14px; color: #106CD6; text-decoration: none;'"
                                      "href='%1'>%2</a></p>";
 
-    QUrl const pic1_URL = QString("http://files.studio3t.com/robo/1/image.jpg");
+    /*
+    * http://files.studio3t.com/robo/1/image.png (for development)
+    * http://rm-wn.3t.io/robo/1/image.png (when shipping)
+    */
+    QUrl const Pic1_URL = QString("http://files.studio3t.com/robo/1/image.png");
     
+    /*
+    * http://files.studio3t.com/robo/1/contents.txt (for development)
+    * http://rm-wn.3t.io/robo/1/contents.txt (when shipping)
+    */
+    QUrl const Text1_URL = QString("http://files.studio3t.com/robo/1/contents.txt");
+
 
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
@@ -117,25 +206,9 @@ namespace Robomongo
         _whatsNewText->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
         _whatsNewText->setMinimumHeight(_whatsNewText->sizeHint().height());
 
-        QUrl const text1_URL = QString("http://files.studio3t.com/robo/1/contents.txt");
         auto text1Downloader = new QNetworkAccessManager;
         VERIFY(connect(text1Downloader, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_downloadTextReply(QNetworkReply*))));
-
-        auto const& cacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());
-        if (QDir(cacheDir).exists()) {
-            QFileInfo check_file(cacheDir + text1_URL.fileName());
-            if (check_file.exists() && check_file.isFile()) {   // Use cached file
-                QFile file(cacheDir + text1_URL.fileName());
-                if (file.open(QFile::ReadOnly | QFile::Text)) {
-                    QTextStream in(&file);
-                    QString str(in.readAll());
-                    _whatsNewText->setText(str);
-                }
-            }
-            else {  // Get file from Internet
-                text1Downloader->get(QNetworkRequest(text1_URL));
-            }
-        }
+        text1Downloader->head(QNetworkRequest(Text1_URL));
 
         _pic1 = new QLabel;
         //pic1->setPixmap(pic1URL);
@@ -146,17 +219,7 @@ namespace Robomongo
         auto pic1Downloader = new QNetworkAccessManager;
         VERIFY(connect(pic1Downloader, SIGNAL(finished(QNetworkReply*)), 
                this, SLOT(on_downloadPictureReply(QNetworkReply*))));
-
-        if (QDir(cacheDir).exists()) {
-            QFileInfo check_file(cacheDir + pic1_URL.fileName());
-            if (check_file.exists() && check_file.isFile()) {   // Use cached file
-                QPixmap img(cacheDir + pic1_URL.fileName());
-                _pic1->setPixmap(img.scaledToWidth(_whatsNewText->width()*0.9));
-            }
-            else {  // Get file from Internet
-                pic1Downloader->get(QNetworkRequest(pic1_URL));
-            }
-        }
+        pic1Downloader->head(QNetworkRequest(Pic1_URL));
 
         _blogsSection = new QLabel;
         _blogsSection->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -218,69 +281,94 @@ namespace Robomongo
 
     }
 
-    void WelcomeTab::on_downloadPictureReply(QNetworkReply* reply)
-    {
-        auto img = new QPixmap;
-        img->loadFromData(reply->readAll());
-
-        if (img->isNull()) {
-            LOG_MSG("WelcomeTab: Failed to download image file from URL. Reason: " + reply->errorString(),
-                     mongo::logger::LogSeverity::Warning());
-            return;
-        }
-
-        _pic1->setPixmap(img->scaledToWidth(_whatsNewText->width()));
-
-        // Save to cache
-        auto const& cacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());
-        if (!QDir(cacheDir).exists())
-            QDir().mkdir(cacheDir);
-        else {  // cache dir. exists
-            QFileInfo check_file(cacheDir + pic1_URL.fileName());
-            // Make sure we delete the old file in order to cache the newly downloaded file
-            if (check_file.exists() && check_file.isFile()) {
-                if (!QFile::remove(cacheDir + pic1_URL.fileName())) {
-                    LOG_MSG("WelcomeTab: Failed to delete cached file at: " + cacheDir + pic1_URL.fileName(),
-                             mongo::logger::LogSeverity::Warning());
-                }
-            }
-        }
-        img->save(cacheDir + reply->url().fileName());
-    }
-
-
     void WelcomeTab::on_downloadTextReply(QNetworkReply* reply)
     {
-        QString str(QUrl::fromPercentEncoding(reply->readAll()));
-        if (str.isEmpty()) {
-            LOG_MSG("WelcomeTab: Failed to download text file from URL. Reason: " + reply->errorString(),
-                     mongo::logger::LogSeverity::Warning());
-            return;
-        }
-
-        _whatsNewText->setText(str);
-
-        // Save to cache
-        auto const& cacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());
-        if (!QDir(cacheDir).exists())
-            QDir().mkdir(cacheDir);
-        else {  // cache dir. exists            
-            QFileInfo check_file(cacheDir + reply->url().fileName());
-            // Make sure we delete the old file in order to cache the newly downloaded file
-            if (check_file.exists() && check_file.isFile()) {
-                if (!QFile::remove(cacheDir + reply->url().fileName())) {
-                    LOG_MSG("WelcomeTab: Failed to delete cached file at: " + cacheDir + reply->url().fileName(),
-                        mongo::logger::LogSeverity::Warning());
+        if (reply->operation() == QNetworkAccessManager::HeadOperation) {
+            if (reply->error() == QNetworkReply::NoError) { // No network error
+                QString const& createDate = reply->header(QNetworkRequest::LastModifiedHeader).toString();
+                if (createDate == AppRegistry::instance().settingsManager()->cacheData(Text1_LastModifiedDateKey)
+                    && fileExists(CacheDir + Text1_URL.fileName())) 
+                {
+                    // Load from cache
+                    auto file = loadFileFromCache(Text1_URL.fileName());
+                    QTextStream in(file.get());
+                    QString str(in.readAll());
+                    _whatsNewText->setText(str);
+                    return;
+                }
+                else {  // Get from internet
+                    reply->manager()->get(QNetworkRequest(Text1_URL));
                 }
             }
+            else {  // There is a network error 
+                // Load from cache
+                auto file = loadFileFromCache(Text1_URL.fileName());
+                QTextStream in(file.get());
+                QString str(in.readAll());
+                _whatsNewText->setText(str);
+                return;
+            }
         }
-        QFile file(cacheDir + reply->url().fileName());
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QTextStream out(&file);
-            out << str;
+        else if (reply->operation() == QNetworkAccessManager::GetOperation) {
+            // todo: handle get operation fails
+            QString str(QUrl::fromPercentEncoding(reply->readAll()));
+            if (str.isEmpty()) {
+                LOG_MSG("WelcomeTab: Failed to download text file from URL. Reason: " + reply->errorString(),
+                    mongo::logger::LogSeverity::Warning());
+                // todo: load from cache?
+                return;
+            }
+            _whatsNewText->setText(str);
+            saveIntoCache(Text1_URL.fileName(), str, Text1_LastModifiedDateKey, 
+                          reply->header(QNetworkRequest::LastModifiedHeader).toString());
         }
     }
     
+
+    void WelcomeTab::on_downloadPictureReply(QNetworkReply* reply)
+    {
+        if (reply->operation() == QNetworkAccessManager::HeadOperation) {
+            if (reply->error() == QNetworkReply::NoError) { // No network error
+                QString const& createDate = reply->header(QNetworkRequest::LastModifiedHeader).toString();
+                if (createDate == AppRegistry::instance().settingsManager()->cacheData(Image1_LastModifiedDateKey)
+                    && fileExists(CacheDir + Pic1_URL.fileName()))
+                {
+                    // Load from cache
+                    //auto file = loadFileFromCache(Pic1_URL.fileName());   
+                    QPixmap img(CacheDir + Pic1_URL.fileName());
+                    _pic1->setPixmap(img.scaledToWidth(_whatsNewText->width()));
+                    return;
+                }
+                else {  // Get from internet
+                    reply->manager()->get(QNetworkRequest(Pic1_URL));
+                }
+            }
+            else {  // There is a network error 
+                // Load from cache
+                //auto file = loadFileFromCache(Pic1_URL.fileName());
+                QPixmap img(CacheDir + Pic1_URL.fileName());
+                _pic1->setPixmap(img.scaledToWidth(_whatsNewText->width()));
+                return;
+            }
+        }
+        else if (reply->operation() == QNetworkAccessManager::GetOperation) {
+            // todo: handle get operation fails
+            auto img = new QPixmap;
+            img->loadFromData(reply->readAll());
+
+            if (img->isNull()) {
+                LOG_MSG("WelcomeTab: Failed to download image file from URL. Reason: " + reply->errorString(),
+                    mongo::logger::LogSeverity::Warning());
+                return;
+            }
+
+            _pic1->setPixmap(img->scaledToWidth(_whatsNewText->width()));
+
+            saveIntoCache(Pic1_URL.fileName(), img, Image1_LastModifiedDateKey,
+                          reply->header(QNetworkRequest::LastModifiedHeader).toString());
+        }
+    }
+
     void WelcomeTab::on_downloadRssReply(QNetworkReply* reply)
     {
         // todo: if reply->error(), log and return
@@ -445,6 +533,60 @@ namespace Robomongo
         AppRegistry::instance().settingsManager()->setRecentConnections(_recentConnections);
         AppRegistry::instance().settingsManager()->save();
     }
+
+    
+    //void WelcomeTab::genericNetworkReplyHandler(QNetworkReply* reply, QString const& fileName, 
+    //                                            QString const& lastModifiedKey)
+    //{
+    //    if (reply->operation() == QNetworkAccessManager::HeadOperation) {
+    //        if (reply->error() == QNetworkReply::NoError) { // No network error
+    //            QString const& createDate = reply->header(QNetworkRequest::LastModifiedHeader).toString();
+    //            if (createDate == AppRegistry::instance().settingsManager()->cacheData(lastModifiedKey)
+    //                && fileExists(CacheDir + fileName))
+    //            {
+    //                // Load from cache
+    //                auto file = loadFileFromCache(fileName);
+    //                setText1FromCache(file.get());
+    //                return;
+    //            }
+    //            else {  // Get from internet
+    //                reply->manager()->get(QNetworkRequest(reply->url()));
+    //            }
+    //        }
+    //        else {  // There is a network error 
+    //            // Load from cache
+    //            auto file = loadFileFromCache(fileName);
+    //            QTextStream in(file.get());
+    //            QString str(in.readAll());
+    //            _whatsNewText->setText(str);
+    //            return;
+    //        }
+    //    }
+    //    else if (reply->operation() == QNetworkAccessManager::GetOperation) {
+    //        // todo: handle get operation fails
+    //        QString str(QUrl::fromPercentEncoding(reply->readAll()));
+    //        if (str.isEmpty()) {
+    //            LOG_MSG("WelcomeTab: Failed to download text file from URL. Reason: " + reply->errorString(),
+    //                mongo::logger::LogSeverity::Warning());
+    //            // todo: load from cache?
+    //            return;
+    //        }
+    //        _whatsNewText->setText(str);
+    //        saveIntoCache(text1_URL.fileName(), str, Text1_LastModifiedDate,
+    //            reply->header(QNetworkRequest::LastModifiedHeader).toString());
+    //    }
+    //}
+
+
+    //void WelcomeTab::setText1FromCache(QFile* cacheFile)
+    //{
+    //    if (!cacheFile)
+    //        return;
+
+    //    QTextStream in(cacheFile);
+    //    QString str(in.readAll());
+    //    _whatsNewText->setText(str);
+    //}
 
     void WelcomeTab::addRecentConnectionItem(ConnectionSettings const* conn, bool insertTop)
     {

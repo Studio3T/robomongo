@@ -12,4 +12,5 @@ namespace Robomongo
     // is true case.
     void genericEventErrorHandler(Event *event, const std::string &userFriendlyMessage, EventBus* bus, QObject* sender);
 
+    bool fileExists(const QString &path);
 }

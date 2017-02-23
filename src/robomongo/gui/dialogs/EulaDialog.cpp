@@ -15,7 +15,6 @@
 
 #include "robomongo/core/utils/QtUtils.h"
 
-
 namespace Robomongo
 {
 

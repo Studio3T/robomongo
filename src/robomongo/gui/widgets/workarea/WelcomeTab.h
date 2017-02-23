@@ -41,6 +41,8 @@ namespace Robomongo
         void handle(ConnectionEstablishedEvent *event);
 
     private:
+        //void genericNetworkReplyHandler();
+        //void setText1FromCache(QFile* cacheFile);
         void addRecentConnectionItem(ConnectionSettings const* conn, bool insertTop);
 
         QLabel* _pic1 = nullptr;

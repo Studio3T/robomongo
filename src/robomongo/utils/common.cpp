@@ -1,5 +1,7 @@
 #include "robomongo/utils/common.h"
 
+#include <QFileInfo>
+
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/EventBus.h"
@@ -19,6 +21,12 @@ namespace Robomongo
             bus->publish(new OperationFailedEvent(sender, errMsg, userFriendlyMessage));
         else
             LOG_MSG("Failed to publish OperationFailedEvent.", mongo::logger::LogSeverity::Error());
+    }
+
+    bool fileExists(const QString &path)
+    {
+        QFileInfo fileInfo(path);
+        return fileInfo.exists() && fileInfo.isFile();
     }
 
 }   // end of name space Robomongo

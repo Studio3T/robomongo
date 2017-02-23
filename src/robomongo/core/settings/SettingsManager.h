@@ -171,6 +171,9 @@ namespace Robomongo
 
         QString anonymousID() const { return _anonymousID; }
 
+        void addCacheData(QString const& key, QVariant const& value);
+        QVariant cacheData(QString const& key) const;
+
         /**
          * Returns number of imported connections
          */
@@ -226,6 +229,7 @@ namespace Robomongo
 
         // todo: 
         QString _anonymousID;
+        QMap<QString, QVariant> _cacheData;
 
         /**
          * @brief List of connections

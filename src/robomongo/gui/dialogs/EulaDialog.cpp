@@ -26,8 +26,6 @@ namespace Robomongo
         QSettings settings("Paralect", "Robomongo");
         if (settings.contains("EulaDialog/size"))
             restoreWindowSettings();
-        else
-            resize(400, 600);
 
         //// First page
         auto firstPage = new QWizardPage;
@@ -133,8 +131,9 @@ namespace Robomongo
         button(QWizard::CustomButton2)->setDisabled(true);
         button(QWizard::CustomButton3)->setDisabled(true);
 
-
         setWizardStyle(QWizard::ModernStyle);
+
+        setMinimumSize(sizeHint().width()*1.3, sizeHint().height()*1.3);
     }
 
     void EulaDialog::accept()

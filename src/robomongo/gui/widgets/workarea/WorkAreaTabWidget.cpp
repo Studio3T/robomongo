@@ -68,7 +68,11 @@ namespace Robomongo
         auto scrollArea = new QScrollArea;
         _welcomeTab = new WelcomeTab(scrollArea);
         scrollArea->setWidget(_welcomeTab);
+#ifdef __APPLE__
+        addTab(scrollArea, QIcon(), "Welcome");
+#else
         addTab(scrollArea, GuiRegistry::instance().welcomeTabIcon(), "Welcome");
+#endif
         scrollArea->setFrameShape(QFrame::NoFrame);
     }
 
@@ -137,10 +141,16 @@ namespace Robomongo
         _welcomeTab = new WelcomeTab(scrollArea);
         scrollArea->setWidget(_welcomeTab);
 
+#ifdef __APPLE__
+        QIcon icon;
+#else
+        QIcon const& icon = GuiRegistry::instance().welcomeTabIcon();
+#endif
+
         if (indexOf(scrollArea) == -1)  // Welcome Tab is closed
-            insertTab(0, scrollArea, GuiRegistry::instance().welcomeTabIcon(), "Welcome");
+            insertTab(0, scrollArea, icon, "Welcome");
         else 
-            insertTab(indexOf(scrollArea), scrollArea, GuiRegistry::instance().welcomeTabIcon(), "Welcome");
+            insertTab(indexOf(scrollArea), scrollArea, icon, "Welcome");
 
         scrollArea->setFrameShape(QFrame::NoFrame);
         setCurrentIndex(indexOf(scrollArea));

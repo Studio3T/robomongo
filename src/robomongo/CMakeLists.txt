@@ -204,11 +204,11 @@ elseif(SYSTEM_MACOSX)
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/install/macosx/Info.plist.in"
         MACOSX_BUNDLE_BUNDLE_NAME "Studio 3T Robo"
         MACOSX_BUNDLE_GUI_IDENTIFIER "com.3tsoftwarelabs.studio3trobo"
-        MACOSX_BUNDLE_INFO_STRING "Studio 3T Robo ${PROJECT_VERSION}. Copyright 3T Software Labs, 2014 - 2017"
+        MACOSX_BUNDLE_INFO_STRING "Studio 3T Robo ${PROJECT_VERSION}. Copyright 3T Software Labs Ltd, 2014 - 2017"
         MACOSX_BUNDLE_SHORT_VERSION "${PROJECT_VERSION}"
         MACOSX_BUNDLE_LONG_VERSION "${PROJECT_VERSION}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
-        MACOSX_BUNDLE_COPYRIGHT "Copyright 3T Software Labs, 2014 - 2017"
+        MACOSX_BUNDLE_COPYRIGHT "Copyright 3T Software Labs Ltd, 2014 - 2017"
         MACOSX_BUNDLE_ICON_FILE "studio-3t-robo")
 
 elseif(SYSTEM_LINUX)

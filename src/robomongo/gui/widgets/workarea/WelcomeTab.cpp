@@ -417,7 +417,6 @@ namespace Robomongo
         
         QXmlStreamReader xmlReader(data);
 
-        QString blogs;
         int count = 0;
         int const MaxBlogCountShown = 10;
         QString title, link, pubDate;
@@ -432,7 +431,6 @@ namespace Robomongo
                     pubDate = xmlReader.readElementText().left(16);
                 
                 if (!pubDate.isEmpty()) {
-                    blogs.push_back(BlogLinkTemplate.arg(link, title, pubDate));
                     auto blogLink = new BlogLinkLabel(BlogLinkTemplate.arg(link, title));
                     blogLink->setMouseTracking(true);
                     blogLink->setAttribute(Qt::WA_Hover);

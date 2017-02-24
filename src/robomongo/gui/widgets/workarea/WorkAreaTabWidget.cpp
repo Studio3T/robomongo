@@ -136,8 +136,14 @@ namespace Robomongo
 
         _welcomeTab = new WelcomeTab(scrollArea);
         scrollArea->setWidget(_welcomeTab);
-        addTab(scrollArea, GuiRegistry::instance().mainWindowIcon(), "Welcome");
+
+        if (indexOf(scrollArea) == -1)  // Welcome Tab is closed
+            insertTab(0, scrollArea, GuiRegistry::instance().mainWindowIcon(), "Welcome");
+        else 
+            insertTab(indexOf(scrollArea), scrollArea, GuiRegistry::instance().mainWindowIcon(), "Welcome");
+
         scrollArea->setFrameShape(QFrame::NoFrame);
+        setCurrentIndex(indexOf(scrollArea));
     }
 
     /**

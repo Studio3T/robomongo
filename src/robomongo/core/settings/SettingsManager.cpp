@@ -37,13 +37,7 @@
 namespace Robomongo
 {
     // todo: to common.h
-    
-    // Current Config path
-    QString const Cache_Dir = QString("%1/.config/robomongo/%2/cache/").arg(QDir::homePath())
-                                                                       .arg(PROJECT_VERSION_SHORT);
-    // Current config file
-    QString const Config_File = QString("%1/.config/robomongo/%2/robomongo.json/").arg(QDir::homePath())
-                                                                                  .arg(PROJECT_VERSION_SHORT);  
+
     QString getAnonymousID(QString const& zipFile, QString const& propfile)
     {
         QZipReader zipReader(zipFile);
@@ -72,17 +66,6 @@ namespace Robomongo
         */
     const QString SchemaVersion = "2.0";
 
-        /**
-        * @brief Config file absolute path
-        *        (usually: /home/user/.config/robomongo/robomongo.json)
-        */
-    const auto _configPath = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
-
-    /**
-        * @brief Config file containing directory path
-        *        (usually: /home/user/.config/robomongo)
-        */
-    const auto _configDir = QString("%1/.config/robomongo/1.0").arg(QDir::homePath());
 }
 
 namespace Robomongo
@@ -143,7 +126,7 @@ namespace Robomongo
             load();     // try loading again for the purpose of import from previous Robomongo versions
         }
 
-        LOG_MSG("SettingsManager initialized in " + _configPath, mongo::logger::LogSeverity::Info(), false);
+        LOG_MSG("SettingsManager initialized in " + ConfigFilePath, mongo::logger::LogSeverity::Info(), false);
     }
 
     SettingsManager::~SettingsManager()
@@ -157,10 +140,10 @@ namespace Robomongo
      */
     bool SettingsManager::load()
     {
-        if (!QFile::exists(_configPath))
+        if (!QFile::exists(ConfigFilePath))
             return false;
 
-        QFile f(_configPath);
+        QFile f(ConfigFilePath);
         if (!f.open(QIODevice::ReadOnly))
             return false;
 
@@ -183,14 +166,14 @@ namespace Robomongo
     {
         QVariantMap map = convertToMap();
 
-        if (!QDir().mkpath(_configDir)) {
-            LOG_MSG("ERROR: Could not create settings path: " + _configDir, mongo::logger::LogSeverity::Error());
+        if (!QDir().mkpath(ConfigDir)) {
+            LOG_MSG("ERROR: Could not create settings path: " + ConfigDir, mongo::logger::LogSeverity::Error());
             return false;
         }
 
-        QFile f(_configPath);
+        QFile f(ConfigFilePath);
         if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-            LOG_MSG("ERROR: Could not write settings to: " + _configPath, mongo::logger::LogSeverity::Error());
+            LOG_MSG("ERROR: Could not write settings to: " + ConfigFilePath, mongo::logger::LogSeverity::Error());
             return false;
         }
 
@@ -199,7 +182,7 @@ namespace Robomongo
         s.setIndentMode(QJson::IndentFull);
         s.serialize(map, &f, &ok);
 
-        LOG_MSG("Settings saved to: " + _configPath, mongo::logger::LogSeverity::Info());
+        LOG_MSG("Settings saved to: " + ConfigFilePath, mongo::logger::LogSeverity::Info());
 
         return ok;
     }

@@ -3,6 +3,7 @@
 #include <QString>
 #include <QVariantMap>
 #include <QSet>
+#include <QDir>
 #include <vector>
 #include "robomongo/core/Enums.h"
 
@@ -10,7 +11,16 @@ namespace Robomongo
 {
     class ConnectionSettings;
     struct ConfigFileAndImportFunction;
-    //struct RecentConnection;
+        
+    // Current cache directory
+    QString const CacheDir = QString("%1/.config/robomongo/%2/cache/").arg(QDir::homePath())
+                                                                      .arg(PROJECT_VERSION);
+    // Current config file
+    QString const ConfigFilePath = QString("%1/.config/robomongo/%2/robomongo.json").arg(QDir::homePath())
+                                                                                    .arg(PROJECT_VERSION);  
+    // Current config file directory
+    QString const ConfigDir = QString("%1/.config/robomongo/%2/").arg(QDir::homePath())
+                                                                 .arg(PROJECT_VERSION);  
 
     struct RecentConnection
     {

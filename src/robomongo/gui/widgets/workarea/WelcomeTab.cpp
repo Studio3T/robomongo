@@ -33,8 +33,12 @@ namespace Robomongo
 
     QString const Text1_LastModifiedDateKey("wtText1LastModifiedDate");
     QString const Image1_LastModifiedDateKey("wtImage1LastModifiedDate");
+    QString const Rss_LastModifiedDateKey("wtRssLastModifiedDate");
 
-    auto const& CacheDir = QString("%1/.config/robomongo/1.0/cache/").arg(QDir::homePath());    // todo
+    QString const RssFileName = "rss.xml";
+
+    // todo: make generic, move to a header 
+    //auto const& CacheDir = QString("%1/.config/robomongo/1.0.0/cache/").arg(QDir::homePath());    // todo
 
     std::unique_ptr<QFile> loadFileFromCache(QString const& fileName)
     {
@@ -102,6 +106,36 @@ namespace Robomongo
             return false;
         }
         pixMap->save(CacheDir + fileName);
+
+        // Save file's last modified date into settings
+        AppRegistry::instance().settingsManager()->addCacheData(lastModifiedKey, lastModifiedDate);
+        AppRegistry::instance().settingsManager()->save();
+        return true;
+    }
+
+    bool saveIntoCache(QString const& fileName, QByteArray* data, 
+                       QString const& lastModifiedKey, QString const& lastModifiedDate)
+    {
+        // Save file into cache directory
+        if (!QDir(CacheDir).exists())
+            QDir().mkdir(CacheDir);
+        else {  // cache dir. exists            
+            QFileInfo check_file(CacheDir + fileName);
+            // Make sure we delete the old file in order to cache the newly downloaded file
+            if (check_file.exists() && check_file.isFile()) {
+                if (!QFile::remove(CacheDir + fileName)) {
+                    LOG_MSG("WelcomeTab: Failed to delete cached file at: " + CacheDir + fileName,
+                        mongo::logger::LogSeverity::Warning());
+                    return false;
+                }
+            }
+        }
+        QFile file(CacheDir + fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            // todo: log
+            return false;
+        }
+        file.write(*data);
 
         // Save file's last modified date into settings
         AppRegistry::instance().settingsManager()->addCacheData(lastModifiedKey, lastModifiedDate);
@@ -374,7 +408,14 @@ namespace Robomongo
         // todo: if reply->error(), log and return
         // todo: load from cache if download fails
 
-        QXmlStreamReader xmlReader(reply->readAll());
+        QByteArray data = reply->readAll();
+        if (data.isEmpty() || reply->error() != QNetworkReply::NoError) {
+            // Load from cache
+            if (auto file = loadFileFromCache(RssFileName)) 
+                data = file->readAll();
+        }
+        
+        QXmlStreamReader xmlReader(data);
 
         QString blogs;
         int count = 0;
@@ -408,6 +449,9 @@ namespace Robomongo
                 }
             }
         }
+
+        // Save into cache
+        saveIntoCache(RssFileName, data, Rss_LastModifiedDateKey, "NotImplemented");
     }
 
 

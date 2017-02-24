@@ -68,7 +68,7 @@ namespace Robomongo
         auto scrollArea = new QScrollArea;
         _welcomeTab = new WelcomeTab(scrollArea);
         scrollArea->setWidget(_welcomeTab);
-        addTab(scrollArea, GuiRegistry::instance().mainWindowIcon(), "Welcome");
+        addTab(scrollArea, GuiRegistry::instance().welcomeTabIcon(), "Welcome");
         scrollArea->setFrameShape(QFrame::NoFrame);
     }
 
@@ -138,9 +138,9 @@ namespace Robomongo
         scrollArea->setWidget(_welcomeTab);
 
         if (indexOf(scrollArea) == -1)  // Welcome Tab is closed
-            insertTab(0, scrollArea, GuiRegistry::instance().mainWindowIcon(), "Welcome");
+            insertTab(0, scrollArea, GuiRegistry::instance().welcomeTabIcon(), "Welcome");
         else 
-            insertTab(indexOf(scrollArea), scrollArea, GuiRegistry::instance().mainWindowIcon(), "Welcome");
+            insertTab(indexOf(scrollArea), scrollArea, GuiRegistry::instance().welcomeTabIcon(), "Welcome");
 
         scrollArea->setFrameShape(QFrame::NoFrame);
         setCurrentIndex(indexOf(scrollArea));

@@ -399,8 +399,13 @@ namespace Robomongo
     const QIcon &GuiRegistry::mainWindowIcon() const
     {
         static const QIcon mainWindowIc = QIcon(":/robomongo/icons/logo-256x256.png");
-//        static const QIcon mainWindowIc = QIcon(":/robomongo/icons/main_window_icon.png");
         return mainWindowIc;
+    }
+
+    const QIcon& GuiRegistry::welcomeTabIcon() const
+    {
+        static const QIcon icon(":/robomongo/icons/welcome_tab_icon.png");
+        return icon;
     }
 
     const QFont &GuiRegistry::font() const

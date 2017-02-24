@@ -88,6 +88,7 @@ namespace Robomongo
         const QIcon& hideIcon() const;
         const QIcon& plusIcon() const;
         const QIcon& minusIcon() const;
+        const QIcon& welcomeTabIcon() const;
 
         const QBrush& typeBrush() const;
 

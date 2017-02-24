@@ -77,7 +77,8 @@ namespace Robomongo
     */
     const auto CONFIG_FILE_0_8_5 = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
     const auto CONFIG_FILE_0_9 = QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath());
-    const auto CONFIG_FILE_1_0 = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
+    const auto CONFIG_FILE_1_0_RC1 = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
+    const auto CONFIG_FILE_1_0_0 = QString("%1/.config/robomongo/1.0.0/robomongo.json").arg(QDir::homePath());
 
     struct ConfigFileAndImportFunction
     {
@@ -93,7 +94,8 @@ namespace Robomongo
     //          vector initializer list below in order.
     std::vector<ConfigFileAndImportFunction> const SettingsManager::_configFilesAndImportFunctions
     {
-        ConfigFileAndImportFunction(CONFIG_FILE_0_9, SettingsManager::importConnectionsFrom_0_9_to_1_0),
+        ConfigFileAndImportFunction(CONFIG_FILE_1_0_RC1, SettingsManager::importConnectionsFrom_1_0_RC1_to_1_0_0),
+        ConfigFileAndImportFunction(CONFIG_FILE_0_9, SettingsManager::importConnectionsFrom_0_9_to_1_0_RC1),
         ConfigFileAndImportFunction(CONFIG_FILE_0_8_5, SettingsManager::importConnectionsFrom_0_8_5_to_0_9)
     };
 
@@ -665,12 +667,41 @@ namespace Robomongo
     }
 
 
-    bool SettingsManager::importConnectionsFrom_0_9_to_1_0()
+    bool SettingsManager::importConnectionsFrom_0_9_to_1_0_RC1()
     {
         if (!QFile::exists(CONFIG_FILE_0_9))
             return false;
 
         QFile oldConfigFile(CONFIG_FILE_0_9);
+        if (!oldConfigFile.open(QIODevice::ReadOnly))
+            return false;
+
+        bool ok;
+        QJson::Parser parser;
+        QVariantMap vmap = parser.parse(oldConfigFile.readAll(), &ok).toMap();
+        if (!ok)
+            return false;
+
+        QVariantList const& vconns = vmap.value("connections").toList();
+        for (auto const& vcon : vconns)
+        {
+            QVariantMap const& vconn = vcon.toMap();
+            auto connSettings = new ConnectionSettings(false);
+            connSettings->fromVariant(vconn);
+            connSettings->setImported(true);
+
+            addConnection(connSettings);
+        }
+
+        return true;
+    }
+
+    bool SettingsManager::importConnectionsFrom_1_0_RC1_to_1_0_0()
+    {
+        if (!QFile::exists(CONFIG_FILE_1_0_RC1))
+            return false;
+
+        QFile oldConfigFile(CONFIG_FILE_1_0_RC1);
         if (!oldConfigFile.open(QIODevice::ReadOnly))
             return false;
 

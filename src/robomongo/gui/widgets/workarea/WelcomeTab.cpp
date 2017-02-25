@@ -17,6 +17,7 @@
 #include <QScrollBar>
 #include <QEvent>
 #include <QXmlStreamReader>
+#include <QMessageBox>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -83,7 +84,7 @@ namespace Robomongo
         return true;
     }
 
-    bool saveIntoCache(QString const& fileName, QPixmap* pixMap, 
+    bool saveIntoCache(QString const& fileName, QPixmap const& pixMap, 
                        QString const& lastModifiedKey, QString const& lastModifiedDate)
     {
         // Save file into cache directory
@@ -105,7 +106,7 @@ namespace Robomongo
             // todo: log
             return false;
         }
-        pixMap->save(CacheDir + fileName);
+        pixMap.save(CacheDir + fileName);
 
         // Save file's last modified date into settings
         AppRegistry::instance().settingsManager()->addCacheData(lastModifiedKey, lastModifiedDate);
@@ -189,13 +190,13 @@ namespace Robomongo
     * http://files.studio3t.com/robo/1/image.png (for development)
     * http://rm-wn.3t.io/robo/1/image.png (when shipping)
     */
-    QUrl const Pic1_URL = QString("http://files.studio3t.com/robo/1/image.png");
+    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/1/image.png");
     
     /*
     * http://files.studio3t.com/robo/1/contents.txt (for development)
     * http://rm-wn.3t.io/robo/1/contents.txt (when shipping)
     */
-    QUrl const Text1_URL = QString("http://files.studio3t.com/robo/1/contents.txt");
+    QUrl const Text1_URL = QString("https://rm-feed.3t.io/1/contents.txt");
 
 
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
@@ -224,7 +225,7 @@ namespace Robomongo
         }
 
         VERIFY(connect(_clearButton, SIGNAL(clicked()), this, SLOT(on_clearButton_clicked())));
-        _clearButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        //_clearButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         clearButtonLay->addWidget(_clearButton);
         clearButtonLay->addStretch();
 
@@ -236,9 +237,9 @@ namespace Robomongo
         _whatsNewText->setTextInteractionFlags(Qt::TextBrowserInteraction);
         _whatsNewText->setOpenExternalLinks(true);
         _whatsNewText->setWordWrap(true);
-        _whatsNewText->setMinimumWidth(650);
-        _whatsNewText->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-        _whatsNewText->setMinimumHeight(_whatsNewText->sizeHint().height());
+        _whatsNewText->setMinimumWidth(750);
+        _whatsNewText->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        //_whatsNewText->setMinimumHeight(_whatsNewText->sizeHint().height());
 
         auto text1Downloader = new QNetworkAccessManager;
         VERIFY(connect(text1Downloader, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_downloadTextReply(QNetworkReply*))));
@@ -249,6 +250,7 @@ namespace Robomongo
         //_pic1->setMaximumSize(800,400);
         _pic1->setTextInteractionFlags(Qt::TextSelectableByMouse);
         //pic1->setStyleSheet("background-color: gray");
+        _pic1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
         auto pic1Downloader = new QNetworkAccessManager;
         VERIFY(connect(pic1Downloader, SIGNAL(finished(QNetworkReply*)), 
@@ -293,15 +295,17 @@ namespace Robomongo
         leftLayout->addLayout(_recentConnsLay);
         leftLayout->addSpacing(10);
         leftLayout->addLayout(clearButtonLay);
-        leftLayout->addStretch();
-        leftLayout->addSpacing(30);
+        //leftLayout->addStretch();
+        leftLayout->addSpacing(20);
         leftLayout->addWidget(_whatsNewHeader, 0, Qt::AlignTop);
         leftLayout->addWidget(_pic1, 0, Qt::AlignTop);
         leftLayout->addWidget(_whatsNewText, 0, Qt::AlignTop);
+        leftLayout->setSizeConstraint(QLayout::SetMinimumSize);
 
         auto mainLayout = new QHBoxLayout;
-        mainLayout->setContentsMargins(20, -1, -1, -1);
+        mainLayout->setContentsMargins(20, 20, -1, -1);
         mainLayout->addLayout(leftLayout);
+        mainLayout->addSpacing(20);
         mainLayout->addLayout(rightLayout);
         //mainLayout->addStretch();
         mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
@@ -357,50 +361,48 @@ namespace Robomongo
                           reply->header(QNetworkRequest::LastModifiedHeader).toString());
         }
     }
-    
 
     void WelcomeTab::on_downloadPictureReply(QNetworkReply* reply)
     {
+        QPixmap image;
+        auto const ImageToTextRatio = 0.9;  // todo: make static
+
+        if (reply->error() != QNetworkReply::NoError) { // Network error, load from cache
+            image = QPixmap(CacheDir + Pic1_URL.fileName());
+            _pic1->setPixmap(image.scaledToWidth(_whatsNewText->width()*ImageToTextRatio));
+            return;
+        }
+
+        // No network error
         if (reply->operation() == QNetworkAccessManager::HeadOperation) {
-            if (reply->error() == QNetworkReply::NoError) { // No network error
                 QString const& createDate = reply->header(QNetworkRequest::LastModifiedHeader).toString();
+                // If the file in URL is not newer load from cache, otherwise get from internet
                 if (createDate == AppRegistry::instance().settingsManager()->cacheData(Image1_LastModifiedDateKey)
-                    && fileExists(CacheDir + Pic1_URL.fileName()))
+                    && fileExists(CacheDir + Pic1_URL.fileName())) 
                 {
-                    // Load from cache
-                    //auto file = loadFileFromCache(Pic1_URL.fileName());   
-                    QPixmap img(CacheDir + Pic1_URL.fileName());
-                    _pic1->setPixmap(img.scaledToWidth(_whatsNewText->width()));
+                    image = QPixmap(CacheDir + Pic1_URL.fileName());    // Load from cache
+                }
+                else {   // Get from internet
+                    reply->manager()->get(QNetworkRequest(Pic1_URL));
                     return;
                 }
-                else {  // Get from internet
-                    reply->manager()->get(QNetworkRequest(Pic1_URL));
-                }
-            }
-            else {  // There is a network error 
-                // Load from cache
-                //auto file = loadFileFromCache(Pic1_URL.fileName());
-                QPixmap img(CacheDir + Pic1_URL.fileName());
-                _pic1->setPixmap(img.scaledToWidth(_whatsNewText->width()));
-                return;
-            }
         }
         else if (reply->operation() == QNetworkAccessManager::GetOperation) {
-            // todo: handle get operation fails
-            auto img = new QPixmap;
-            img->loadFromData(reply->readAll());
+            image.loadFromData(reply->readAll());
 
-            if (img->isNull()) {
-                LOG_MSG("WelcomeTab: Failed to download image file from URL. Reason: " + reply->errorString(),
-                    mongo::logger::LogSeverity::Warning());
-                return;
+            if (image.isNull()) {
+                LOG_MSG("WelcomeTab: Failed to download image file from internet. Reason: " + reply->errorString(),
+                         mongo::logger::LogSeverity::Warning());
+                image = QPixmap(CacheDir + Pic1_URL.fileName());
             }
-
-            _pic1->setPixmap(img->scaledToWidth(_whatsNewText->width()));
-
-            saveIntoCache(Pic1_URL.fileName(), img, Image1_LastModifiedDateKey,
-                          reply->header(QNetworkRequest::LastModifiedHeader).toString());
+            else {
+                saveIntoCache(Pic1_URL.fileName(), image, Image1_LastModifiedDateKey,
+                              reply->header(QNetworkRequest::LastModifiedHeader).toString());
+            }
         }
+
+        // Set the image
+        _pic1->setPixmap(image.scaledToWidth(_whatsNewText->width()*ImageToTextRatio));
     }
 
     void WelcomeTab::on_downloadRssReply(QNetworkReply* reply)
@@ -460,6 +462,14 @@ namespace Robomongo
     
     void WelcomeTab::on_clearButton_clicked()
     {
+        // Ask user
+        int const answer = QMessageBox::question(this,
+            "Clear Recent Connections", "This will delete all recent connections, are you sure?",
+            QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+        if (answer != QMessageBox::Yes)
+            return;
+
         // Delete all recent connection entries
         while (auto hlay = dynamic_cast<QHBoxLayout*>(_recentConnsLay->takeAt(0))) {
             while (auto item = hlay->takeAt(0))

@@ -1,6 +1,8 @@
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
 
 #include <QMouseEvent>
+#include <QTabWidget>
+#include <QScrollArea>
 
 namespace Robomongo
 {
@@ -40,7 +42,6 @@ namespace Robomongo
         _menu->addAction(_closeShellAction);
         _menu->addAction(_closeOtherShellsAction);
         _menu->addAction(_closeShellsToTheRightAction);
-
     }
 
     /**
@@ -94,6 +95,11 @@ namespace Robomongo
     {
         int tabIndex = tabAt(event->pos());
         if (tabIndex < 0)
+            return;
+
+        // If this is a Welcome tab, return. Note: Scroll area represents a WelcomeTab.
+        auto tabWidget = qobject_cast<QTabWidget*>(parentWidget());
+        if (qobject_cast<QScrollArea*>(tabWidget->widget(tabIndex)))
             return;
 
         QAction *selected = _menu->exec(QCursor::pos());

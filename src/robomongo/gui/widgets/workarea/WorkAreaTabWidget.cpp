@@ -207,7 +207,8 @@ namespace Robomongo
 
     void WorkAreaTabWidget::ui_newTabRequested(int index)
     {
-        queryWidget(index)->openNewTab();
+        if (QueryWidget *query = queryWidget(index))
+            query->openNewTab();
     }
 
     void WorkAreaTabWidget::ui_reloadTabRequested(int index)

@@ -1367,7 +1367,7 @@ namespace Robomongo
     {
         QString str(QUrl::fromPercentEncoding(reply->readAll()));
 
-        if ("NO-UPDATES-ANNOUNCED.\n" == str) {
+        if ("NO-UPDATES-ANNOUNCED.\n" == str || reply->error() != QNetworkReply::NoError) {
             _updateLabel->setText("");
             _updateBar->setVisible(false);
             return;

@@ -190,13 +190,13 @@ namespace Robomongo
     * http://files.studio3t.com/robo/1/image.png (for development)
     * http://rm-wn.3t.io/robo/1/image.png (when shipping)
     */
-    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/1/image1.png");
+    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/1/image.png");
     
     /*
     * http://files.studio3t.com/robo/1/contents.txt (for development)
     * http://rm-wn.3t.io/robo/1/contents.txt (when shipping)
     */
-    QUrl const Text1_URL = QString("https://rm-feed.3t.io/1/contents1.txt");
+    QUrl const Text1_URL = QString("https://rm-feed.3t.io/1/contents.txt");
 
 
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
@@ -267,7 +267,7 @@ namespace Robomongo
 
         auto rssDownloader = new QNetworkAccessManager;
         VERIFY(connect(rssDownloader, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_downloadRssReply(QNetworkReply*))));
-        QUrl const rssURL = QString("http://blog.robomongo.org/rss/");
+        QUrl const rssURL = QString("https://blog.robomongo.org/rss/");
         rssDownloader->get(QNetworkRequest(rssURL));
 
         auto buttonLay = new QHBoxLayout;
@@ -325,7 +325,8 @@ namespace Robomongo
     void WelcomeTab::on_downloadTextReply(QNetworkReply* reply)
     {
         auto hideOrShowWhatsNewHeader = [this]() {
-            _whatsNewHeader->setHidden(_pic1->pixmap()->isNull() && _whatsNewText->text().isEmpty() ? true : false);
+            _whatsNewHeader->setHidden( (!_pic1->pixmap() || _pic1->pixmap()->isNull()) 
+                                        && _whatsNewText->text().isEmpty() ? true : false);
         };
 
         if (reply->operation() == QNetworkAccessManager::HeadOperation) {
@@ -377,7 +378,8 @@ namespace Robomongo
         QPixmap image;
         auto const ImageToTextRatio = 0.9;  // todo: make static
         auto hideOrShowWhatsNewHeader = [this]() {
-            _whatsNewHeader->setHidden(_pic1->pixmap()->isNull() && _whatsNewText->text().isEmpty() ? true : false); 
+            _whatsNewHeader->setHidden( (!_pic1->pixmap() || _pic1->pixmap()->isNull()) 
+                                        && _whatsNewText->text().isEmpty() ? true : false);        
         };
 
         if (reply->error() != QNetworkReply::NoError) { // Network error, load from cache

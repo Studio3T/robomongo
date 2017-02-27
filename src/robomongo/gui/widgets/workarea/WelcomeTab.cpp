@@ -199,6 +199,7 @@ namespace Robomongo
     QUrl const Text1_URL = QString("https://rm-feed.3t.io/1/contents.txt");
 
 
+/* -------------- Welcome Tab -------------- */
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
     {
@@ -208,6 +209,7 @@ namespace Robomongo
 
         _recentConnsLay = new QVBoxLayout;       
         auto recentConnHeader = new QLabel(Recent_Connections_Header);
+        //recentConnHeader->setMinimumWidth(_parent->width()*0.6);
 
         auto clearButtonLay = new QHBoxLayout;
         _clearButton = new QPushButton("Clear Recent Connections");
@@ -238,7 +240,7 @@ namespace Robomongo
         _whatsNewText->setTextInteractionFlags(Qt::TextBrowserInteraction);
         _whatsNewText->setOpenExternalLinks(true);
         _whatsNewText->setWordWrap(true);
-        _whatsNewText->setMinimumWidth(750);
+        //_whatsNewText->setMinimumWidth(750);
         _whatsNewText->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         //_whatsNewText->setMinimumHeight(_whatsNewText->sizeHint().height());
 
@@ -270,6 +272,9 @@ namespace Robomongo
         QUrl const rssURL = QString("https://blog.robomongo.org/rss/");
         rssDownloader->get(QNetworkRequest(rssURL));
 
+        auto blogsHeader = new QLabel(BlogsHeader);
+        //blogsHeader->setStyleSheet("background-color: yellow;");        
+
         auto buttonLay = new QHBoxLayout;
         _allBlogsButton = new QPushButton("All Blog Posts");
         //button->setStyleSheet("font-size: 14pt; background-color: green; border: 2px; color: white");        
@@ -285,7 +290,7 @@ namespace Robomongo
 
         auto rightLayout = new QVBoxLayout;
         rightLayout->setContentsMargins(20, -1, -1, -1);
-        rightLayout->addWidget(new QLabel(BlogsHeader), 0, Qt::AlignTop);
+        rightLayout->addWidget(blogsHeader, 0, Qt::AlignTop);
         rightLayout->addLayout(_blogLinksLay);
         rightLayout->addSpacing(15);
         rightLayout->addLayout(buttonLay);
@@ -324,6 +329,9 @@ namespace Robomongo
 
     void WelcomeTab::on_downloadTextReply(QNetworkReply* reply)
     {
+        auto const TextToTabRatio = 0.6;  // todo: make static
+        auto const SIXTY_PERCENT_OF_TAB = _parent->width() * TextToTabRatio;
+
         auto hideOrShowWhatsNewHeader = [this]() {
             _whatsNewHeader->setHidden( (!_pic1->pixmap() || _pic1->pixmap()->isNull()) 
                                         && _whatsNewText->text().isEmpty() ? true : false);
@@ -340,6 +348,8 @@ namespace Robomongo
                     QTextStream in(file.get());
                     QString str(in.readAll());
                     _whatsNewText->setText(str);
+                    _whatsNewText->setMinimumWidth(SIXTY_PERCENT_OF_TAB);
+                    adjustSize();
                     hideOrShowWhatsNewHeader();
                     return;
                 }
@@ -353,6 +363,8 @@ namespace Robomongo
                 QTextStream in(file.get());
                 QString str(in.readAll());
                 _whatsNewText->setText(str);
+                _whatsNewText->setMinimumWidth(SIXTY_PERCENT_OF_TAB);
+                adjustSize();
                 hideOrShowWhatsNewHeader();
                 return;
             }
@@ -368,15 +380,19 @@ namespace Robomongo
                 return;
             }
             _whatsNewText->setText(str);
-            saveIntoCache(Text1_URL.fileName(), str, Text1_LastModifiedDateKey, 
+            _whatsNewText->setMinimumWidth(SIXTY_PERCENT_OF_TAB);
+            adjustSize();
+            saveIntoCache(Text1_URL.fileName(), str, Text1_LastModifiedDateKey,
                           reply->header(QNetworkRequest::LastModifiedHeader).toString());
         }
     }
 
     void WelcomeTab::on_downloadPictureReply(QNetworkReply* reply)
     {
+        auto const ImageToTabRatio = 0.5;  // todo: make static
+        auto const FIFTY_PERCENT_OF_TAB = _parent->width() * ImageToTabRatio;
+
         QPixmap image;
-        auto const ImageToTextRatio = 0.9;  // todo: make static
         auto hideOrShowWhatsNewHeader = [this]() {
             _whatsNewHeader->setHidden( (!_pic1->pixmap() || _pic1->pixmap()->isNull()) 
                                         && _whatsNewText->text().isEmpty() ? true : false);        
@@ -384,7 +400,8 @@ namespace Robomongo
 
         if (reply->error() != QNetworkReply::NoError) { // Network error, load from cache
             image = QPixmap(CacheDir + Pic1_URL.fileName());
-            _pic1->setPixmap(image.scaledToWidth(_whatsNewText->width()*ImageToTextRatio));
+            _pic1->setPixmap(image.scaledToWidth(FIFTY_PERCENT_OF_TAB));
+            adjustSize();
             hideOrShowWhatsNewHeader();
             return;
         }
@@ -419,7 +436,8 @@ namespace Robomongo
         }
 
         // Set the image
-        _pic1->setPixmap(image.scaledToWidth(_whatsNewText->width()*ImageToTextRatio));
+        _pic1->setPixmap(image.scaledToWidth(FIFTY_PERCENT_OF_TAB));
+        adjustSize();
         hideOrShowWhatsNewHeader();
     }
 
@@ -427,6 +445,9 @@ namespace Robomongo
     {
         // todo: if reply->error(), log and return
         // todo: load from cache if download fails
+        
+        auto const BlogToTabRatio = 0.28;  // todo: make static
+        auto const THIRTY_PERCENT_OF_TAB = _parent->width() * BlogToTabRatio;
 
         QByteArray data = reply->readAll();
         if (data.isEmpty() || reply->error() != QNetworkReply::NoError) {
@@ -457,6 +478,8 @@ namespace Robomongo
                     blogLink->installEventFilter(this);
                     blogLink->setTextInteractionFlags(Qt::TextBrowserInteraction);
                     blogLink->setOpenExternalLinks(true);
+                    blogLink->setWordWrap(true);
+                    blogLink->setMinimumWidth(THIRTY_PERCENT_OF_TAB);
                     _blogLinksLay->addWidget(blogLink);
                     _blogLinksLay->addWidget(new QLabel("<font color='gray'>" + pubDate + "</font>"));
                     _blogLinksLay->addSpacing(_blogLinksLay->spacing());
@@ -467,6 +490,7 @@ namespace Robomongo
                 }
             }
         }
+        adjustSize();
 
         // Save into cache
         saveIntoCache(RssFileName, data, Rss_LastModifiedDateKey, "NotImplemented");

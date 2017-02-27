@@ -174,7 +174,7 @@ namespace Robomongo
     std::once_flag onceFlag1;
     int CustomButtonHeight = -1;
 
-    QString const recentConnectionsStr = "<p><h1><font color=\"#2d862d\">Recent Connections</h1></p>";
+    QString const Recent_Connections_Header = "<p><h1><font color=\"#2d862d\">Recent Connections</h1></p>";
 
     QString const connLabelTemplate = "<p><a style='font-size:14px; color: #106CD6; text-decoration: none;'"
                                       "href='%1'>%2</a></p>";
@@ -190,13 +190,13 @@ namespace Robomongo
     * http://files.studio3t.com/robo/1/image.png (for development)
     * http://rm-wn.3t.io/robo/1/image.png (when shipping)
     */
-    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/1/image.png");
+    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/1/image1.png");
     
     /*
     * http://files.studio3t.com/robo/1/contents.txt (for development)
     * http://rm-wn.3t.io/robo/1/contents.txt (when shipping)
     */
-    QUrl const Text1_URL = QString("https://rm-feed.3t.io/1/contents.txt");
+    QUrl const Text1_URL = QString("https://rm-feed.3t.io/1/contents1.txt");
 
 
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
@@ -207,7 +207,7 @@ namespace Robomongo
         auto const settingsManager = AppRegistry::instance().settingsManager();
 
         _recentConnsLay = new QVBoxLayout;       
-        auto recentConnLabel = new QLabel(recentConnectionsStr);
+        auto recentConnHeader = new QLabel(Recent_Connections_Header);
 
         auto clearButtonLay = new QHBoxLayout;
         _clearButton = new QPushButton("Clear Recent Connections");
@@ -231,6 +231,7 @@ namespace Robomongo
 
         //// What's new section
         _whatsNewHeader = new QLabel(whatsNew);
+        _whatsNewHeader->setHidden(true);
         _whatsNewText = new QLabel;
         _whatsNewText->setTextInteractionFlags(Qt::TextSelectableByMouse);
         _whatsNewText->setTextFormat(Qt::RichText);
@@ -291,7 +292,8 @@ namespace Robomongo
         rightLayout->addStretch();
 
         auto leftLayout = new QVBoxLayout;
-        leftLayout->addWidget(recentConnLabel, 0, Qt::AlignTop);
+        //leftLayout->setSpacing(0);
+        leftLayout->addWidget(recentConnHeader, 0, Qt::AlignTop);
         leftLayout->addLayout(_recentConnsLay);
         leftLayout->addSpacing(10);
         leftLayout->addLayout(clearButtonLay);
@@ -300,6 +302,7 @@ namespace Robomongo
         leftLayout->addWidget(_whatsNewHeader, 0, Qt::AlignTop);
         leftLayout->addWidget(_pic1, 0, Qt::AlignTop);
         leftLayout->addWidget(_whatsNewText, 0, Qt::AlignTop);
+        leftLayout->addStretch();
         leftLayout->setSizeConstraint(QLayout::SetMinimumSize);
 
         auto mainLayout = new QHBoxLayout;
@@ -321,6 +324,10 @@ namespace Robomongo
 
     void WelcomeTab::on_downloadTextReply(QNetworkReply* reply)
     {
+        auto hideOrShowWhatsNewHeader = [this]() {
+            _whatsNewHeader->setHidden(_pic1->pixmap()->isNull() && _whatsNewText->text().isEmpty() ? true : false);
+        };
+
         if (reply->operation() == QNetworkAccessManager::HeadOperation) {
             if (reply->error() == QNetworkReply::NoError) { // No network error
                 QString const& createDate = reply->header(QNetworkRequest::LastModifiedHeader).toString();
@@ -332,6 +339,7 @@ namespace Robomongo
                     QTextStream in(file.get());
                     QString str(in.readAll());
                     _whatsNewText->setText(str);
+                    hideOrShowWhatsNewHeader();
                     return;
                 }
                 else {  // Get from internet
@@ -344,6 +352,7 @@ namespace Robomongo
                 QTextStream in(file.get());
                 QString str(in.readAll());
                 _whatsNewText->setText(str);
+                hideOrShowWhatsNewHeader();
                 return;
             }
         }
@@ -354,6 +363,7 @@ namespace Robomongo
                 LOG_MSG("WelcomeTab: Failed to download text file from URL. Reason: " + reply->errorString(),
                     mongo::logger::LogSeverity::Warning());
                 // todo: load from cache?
+                hideOrShowWhatsNewHeader();
                 return;
             }
             _whatsNewText->setText(str);
@@ -366,10 +376,14 @@ namespace Robomongo
     {
         QPixmap image;
         auto const ImageToTextRatio = 0.9;  // todo: make static
+        auto hideOrShowWhatsNewHeader = [this]() {
+            _whatsNewHeader->setHidden(_pic1->pixmap()->isNull() && _whatsNewText->text().isEmpty() ? true : false); 
+        };
 
         if (reply->error() != QNetworkReply::NoError) { // Network error, load from cache
             image = QPixmap(CacheDir + Pic1_URL.fileName());
             _pic1->setPixmap(image.scaledToWidth(_whatsNewText->width()*ImageToTextRatio));
+            hideOrShowWhatsNewHeader();
             return;
         }
 
@@ -384,6 +398,7 @@ namespace Robomongo
                 }
                 else {   // Get from internet
                     reply->manager()->get(QNetworkRequest(Pic1_URL));
+                    hideOrShowWhatsNewHeader();
                     return;
                 }
         }
@@ -403,6 +418,7 @@ namespace Robomongo
 
         // Set the image
         _pic1->setPixmap(image.scaledToWidth(_whatsNewText->width()*ImageToTextRatio));
+        hideOrShowWhatsNewHeader();
     }
 
     void WelcomeTab::on_downloadRssReply(QNetworkReply* reply)

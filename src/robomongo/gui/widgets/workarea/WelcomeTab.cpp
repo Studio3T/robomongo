@@ -38,9 +38,6 @@ namespace Robomongo
 
     QString const RssFileName = "rss.xml";
 
-    // todo: make generic, move to a header 
-    //auto const& CacheDir = QString("%1/.config/robomongo/1.0.0/cache/").arg(QDir::homePath());    // todo
-
     std::unique_ptr<QFile> loadFileFromCache(QString const& fileName)
     {
         QFileInfo check_file(CacheDir + fileName);

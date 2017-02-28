@@ -50,6 +50,7 @@ namespace Robomongo
         * tab close key shortcuts (Ctrl+F4 and Ctrl+W)
         */
         virtual void keyPressEvent(QKeyEvent *event);
+        void resizeEvent(QResizeEvent* event) override;
 
     private:
         WelcomeTab* _welcomeTab;

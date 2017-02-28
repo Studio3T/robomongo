@@ -25,6 +25,7 @@ namespace Robomongo
         ~WelcomeTab();
         void removeRecentConnectionItem(ConnectionSettings const* conn);
         QScrollArea* getParent() const { return _parent; }
+        void resize();
 
     protected:
         bool eventFilter(QObject *target, QEvent *event) override;
@@ -46,7 +47,8 @@ namespace Robomongo
         void addRecentConnectionItem(ConnectionSettings const* conn, bool insertTop);
 
         QLabel* _pic1 = nullptr;
-        QLabel *_blogsSection;
+        QLabel* _blogsSection;
+        QLabel* _blogsHeader;
         QPushButton* _allBlogsButton = nullptr;
         QVBoxLayout* _blogLinksLay;
         QVBoxLayout* _recentConnsLay;
@@ -54,6 +56,7 @@ namespace Robomongo
         QLabel* _whatsNewText;
         QPushButton* _clearButton;
         QScrollArea* _parent;
+        QPixmap _image;
 
         std::vector<ConnectionSettings const*> _recentConnections;
         int _lastAddedConnId = -1;

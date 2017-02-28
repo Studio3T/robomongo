@@ -183,8 +183,8 @@ namespace Robomongo
 
     QString const BlogsHeader = "<p><h1><font color=\"#2d862d\">Blog Posts</h1></p>";
 
-    QString const BlogLinkTemplate = "<p><a style = 'font-size:14px; color: #106CD6; text-decoration: none;'"
-                                     "href='%1'>%2</a></p>";
+    QString const BlogLinkTemplate = "<a style = 'color: #106CD6; text-decoration: none;'"
+                                     "href='%1'>%2</a>";
 
     /*
     * http://files.studio3t.com/robo/1/image.png (for development)
@@ -198,6 +198,10 @@ namespace Robomongo
     */
     QUrl const Text1_URL = QString("https://rm-feed.3t.io/1/contents.txt");
 
+    // todo: static
+    auto const TEXT_TO_TAB_RATIO = 0.6; 
+    auto const IMAGE_TO_TAB_RATIO = 0.5;
+    auto const BLOG_TO_TAB_RATIO = 0.28;
 
 /* -------------- Welcome Tab -------------- */
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
@@ -260,20 +264,13 @@ namespace Robomongo
                this, SLOT(on_downloadPictureReply(QNetworkReply*))));
         pic1Downloader->head(QNetworkRequest(Pic1_URL));
 
-        _blogsSection = new QLabel;
-        _blogsSection->setTextInteractionFlags(Qt::TextSelectableByMouse);
-        //_blogsSection->setWordWrap(true);
-        _blogsSection->setTextFormat(Qt::RichText);
-        _blogsSection->setTextInteractionFlags(Qt::TextBrowserInteraction);
-        _blogsSection->setOpenExternalLinks(true);
-
         auto rssDownloader = new QNetworkAccessManager;
         VERIFY(connect(rssDownloader, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_downloadRssReply(QNetworkReply*))));
         QUrl const rssURL = QString("https://blog.robomongo.org/rss/");
         rssDownloader->get(QNetworkRequest(rssURL));
 
-        auto blogsHeader = new QLabel(BlogsHeader);
-        //blogsHeader->setStyleSheet("background-color: yellow;");        
+        _blogsHeader = new QLabel(BlogsHeader);
+        _blogsHeader->setStyleSheet("background-color: yellow;");        
 
         auto buttonLay = new QHBoxLayout;
         _allBlogsButton = new QPushButton("All Blog Posts");
@@ -290,7 +287,7 @@ namespace Robomongo
 
         auto rightLayout = new QVBoxLayout;
         rightLayout->setContentsMargins(20, -1, -1, -1);
-        rightLayout->addWidget(blogsHeader, 0, Qt::AlignTop);
+        rightLayout->addWidget(_blogsHeader, 0, Qt::AlignTop);
         rightLayout->addLayout(_blogLinksLay);
         rightLayout->addSpacing(15);
         rightLayout->addLayout(buttonLay);
@@ -329,8 +326,7 @@ namespace Robomongo
 
     void WelcomeTab::on_downloadTextReply(QNetworkReply* reply)
     {
-        auto const TextToTabRatio = 0.6;  // todo: make static
-        auto const SIXTY_PERCENT_OF_TAB = _parent->width() * TextToTabRatio;
+        auto const SIXTY_PERCENT_OF_TAB = _parent->width() * TEXT_TO_TAB_RATIO;
 
         auto hideOrShowWhatsNewHeader = [this]() {
             _whatsNewHeader->setHidden( (!_pic1->pixmap() || _pic1->pixmap()->isNull()) 
@@ -389,8 +385,7 @@ namespace Robomongo
 
     void WelcomeTab::on_downloadPictureReply(QNetworkReply* reply)
     {
-        auto const ImageToTabRatio = 0.5;  // todo: make static
-        auto const FIFTY_PERCENT_OF_TAB = _parent->width() * ImageToTabRatio;
+        auto const FIFTY_PERCENT_OF_TAB = _parent->width() * IMAGE_TO_TAB_RATIO;
 
         QPixmap image;
         auto hideOrShowWhatsNewHeader = [this]() {
@@ -436,7 +431,8 @@ namespace Robomongo
         }
 
         // Set the image
-        _pic1->setPixmap(image.scaledToWidth(FIFTY_PERCENT_OF_TAB));
+        _image = image;
+        _pic1->setPixmap(_image.scaledToWidth(FIFTY_PERCENT_OF_TAB));
         adjustSize();
         hideOrShowWhatsNewHeader();
     }
@@ -445,9 +441,8 @@ namespace Robomongo
     {
         // todo: if reply->error(), log and return
         // todo: load from cache if download fails
-        
-        auto const BlogToTabRatio = 0.28;  // todo: make static
-        auto const THIRTY_PERCENT_OF_TAB = _parent->width() * BlogToTabRatio;
+
+        auto const THIRTY_PERCENT_OF_TAB = _parent->width() * BLOG_TO_TAB_RATIO;
 
         QByteArray data = reply->readAll();
         if (data.isEmpty() || reply->error() != QNetworkReply::NoError) {
@@ -480,6 +475,7 @@ namespace Robomongo
                     blogLink->setOpenExternalLinks(true);
                     blogLink->setWordWrap(true);
                     blogLink->setMinimumWidth(THIRTY_PERCENT_OF_TAB);
+                    //blogLink->setStyleSheet("background-color: yellow;");
                     _blogLinksLay->addWidget(blogLink);
                     _blogLinksLay->addWidget(new QLabel("<font color='gray'>" + pubDate + "</font>"));
                     _blogLinksLay->addSpacing(_blogLinksLay->spacing());
@@ -744,6 +740,22 @@ namespace Robomongo
         }
     }
 
+    void WelcomeTab::resize()
+    {
+        auto const tabWidth = _parent->width();
+
+        _whatsNewText->setFixedWidth(tabWidth * TEXT_TO_TAB_RATIO);
+        _pic1->setPixmap(_image.scaledToWidth(tabWidth * IMAGE_TO_TAB_RATIO));
+
+        _blogsHeader->setFixedWidth(tabWidth * BLOG_TO_TAB_RATIO);
+        for (int i = 0; i < _blogLinksLay->count(); ++i) {
+            if(auto wid = _blogLinksLay->itemAt(i)->widget())
+                wid->setFixedWidth(tabWidth * BLOG_TO_TAB_RATIO);
+        }
+
+        adjustSize();
+    }
+
     bool WelcomeTab::eventFilter(QObject *target, QEvent *event)
     {
         auto label = qobject_cast<QLabel*>(target);
@@ -796,6 +808,5 @@ namespace Robomongo
 
         return QWidget::eventFilter(target, event);
     }
-
 
 }

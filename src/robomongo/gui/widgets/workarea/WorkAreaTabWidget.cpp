@@ -200,6 +200,14 @@ namespace Robomongo
         QTabWidget::keyPressEvent(keyEvent);
     }
 
+    void WorkAreaTabWidget::resizeEvent(QResizeEvent* event)
+    {
+        QTabWidget::resizeEvent(event);
+
+        if (_welcomeTab->isVisible())
+            _welcomeTab->resize();
+    }
+
     void WorkAreaTabWidget::tabBar_tabCloseRequested(int index)
     {
         closeTab(index);

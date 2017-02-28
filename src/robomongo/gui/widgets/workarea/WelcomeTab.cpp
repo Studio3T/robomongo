@@ -270,7 +270,7 @@ namespace Robomongo
         rssDownloader->get(QNetworkRequest(rssURL));
 
         _blogsHeader = new QLabel(BlogsHeader);
-        _blogsHeader->setStyleSheet("background-color: yellow;");        
+        //_blogsHeader->setStyleSheet("background-color: yellow;");        
 
         auto buttonLay = new QHBoxLayout;
         _allBlogsButton = new QPushButton("All Blog Posts");

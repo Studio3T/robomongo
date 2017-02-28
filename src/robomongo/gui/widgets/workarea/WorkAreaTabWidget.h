@@ -49,7 +49,7 @@ namespace Robomongo
         * @brief Overrides QTabWidget::keyPressEvent() in order to intercept
         * tab close key shortcuts (Ctrl+F4 and Ctrl+W)
         */
-        virtual void keyPressEvent(QKeyEvent *event);
+        virtual void keyPressEvent(QKeyEvent *event) override;
         void resizeEvent(QResizeEvent* event) override;
 
     private:

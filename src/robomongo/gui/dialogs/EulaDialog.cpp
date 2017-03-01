@@ -94,7 +94,7 @@ namespace Robomongo
         auto emailEdit = new QLineEdit;
 
         auto buttomLabel = new QLabel("By submitting this form I agree to 3T Software Labs " 
-                                      "<a href='http://3t.io/privacy-policy/'>Privacy Policy</a>.");
+                                      "<a href='http://studio3t.com/privacy-policy'>Privacy Policy</a>.");
         buttomLabel->setOpenExternalLinks(true);
 
         auto mainLayout2 = new QVBoxLayout();
@@ -112,7 +112,9 @@ namespace Robomongo
 
         secondPage->setLayout(mainLayout2);
 
-        addPage(firstPage);
+#ifndef _WIN32
+        addPage(firstPage);     // Disable license page on Windows, it is already shown in installer
+#endif
         addPage(secondPage);
 
         //// Buttons
@@ -127,9 +129,15 @@ namespace Robomongo
         setButtonLayout(QList<WizardButton>{ QWizard::Stretch, QWizard::CustomButton1, QWizard::CustomButton2,
                                              QWizard::CancelButton, QWizard::CustomButton3});
 
+#ifdef _WIN32
+        button(QWizard::CustomButton1)->setHidden(true);
+        button(QWizard::CustomButton2)->setHidden(true);
+        button(QWizard::CustomButton3)->setEnabled(true);
+#else
         button(QWizard::CustomButton1)->setDisabled(true);
         button(QWizard::CustomButton2)->setDisabled(true);
         button(QWizard::CustomButton3)->setDisabled(true);
+#endif
 
         setWizardStyle(QWizard::ModernStyle);
 

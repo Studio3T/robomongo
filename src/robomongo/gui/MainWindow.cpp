@@ -94,7 +94,7 @@ namespace
 
 namespace Robomongo
 {
-/* ------ ConnectionMenu ------ */
+/* -------------------------------- ConnectionMenu ---------------------------- */
     class ConnectionMenu : public QMenu
     {
     public:
@@ -111,7 +111,7 @@ namespace Robomongo
         }
     };
 
-/* ------ MainWindow ------ */
+/* -------------------------------- MainWindow --------------------------------- */
     MainWindow::MainWindow()
         : BaseClass(),
         _logDock(nullptr), _workArea(nullptr), _explorer(nullptr), _app(AppRegistry::instance().app()), 
@@ -1367,7 +1367,7 @@ namespace Robomongo
     {
         QString str(QUrl::fromPercentEncoding(reply->readAll()));
 
-        if ("NO-UPDATES-ANNOUNCED.\n" == str || reply->error() != QNetworkReply::NoError) {
+        if ("NO-UPDATES-ANNOUNCED.\n" == str || reply->error() != QNetworkReply::NoError || str.isEmpty()) {
             _updateLabel->setText("");
             _updateBar->setVisible(false);
             return;
@@ -1396,6 +1396,7 @@ namespace Robomongo
         QUrl url2("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=4.3.0&licenseInfo=FREE"
             "&setup=760f6182-13e4-4357-8f5e-d51bc7ca27fe&notify=true#");
 
+        // todo:
         // http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=4.3.0&licenseInfo=FREE&setup=760f6182-13e4-4357-8f5e-d51bc7ca27fe&notify=true#
         QUrl url3("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=" + QString(PROJECT_VERSION)
             + "&licenseInfo=FREE&setup=" + AppRegistry::instance().settingsManager()->anonymousID() + "&notify=true#");

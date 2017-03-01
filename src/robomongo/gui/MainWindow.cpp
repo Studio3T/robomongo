@@ -638,12 +638,12 @@ namespace Robomongo
         VERIFY(connect(_networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_networkReply(QNetworkReply*))));
         
         // First check for updates 30 secs after program start
-        //QTimer::singleShot(3000, this, SLOT(checkUpdates()));   //todo: make it 30000
+        QTimer::singleShot(30000, this, SLOT(checkUpdates()));   //todo: make it 30000
 
         // Check for updates every 1 hour
         auto timer = new QTimer(this);
         VERIFY(connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdates())));
-        timer->start(5000);     //todo: make it 1 hour (3600000 msec = 60 * 60 * 1000 msec)
+        timer->start(3600000);     //todo: make it 1 hour (3600000 msec = 60 * 60 * 1000 msec)
     }
 
     void MainWindow::createStylesMenu()

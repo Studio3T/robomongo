@@ -61,7 +61,8 @@ int main(int argc, char *argv[], char** envp)
     if (!settingsManager->acceptedEulaVersions().contains(PROJECT_VERSION)) {
         Robomongo::EulaDialog eulaDialog;
         if (eulaDialog.exec() == QDialog::Rejected) {
-            return 1;   // todo: ssh_cleanup
+            rbm_ssh_cleanup();
+            return 1;
         }
         // EULA accepted
         settingsManager->addAcceptedEulaVersion(PROJECT_VERSION);

@@ -27,7 +27,7 @@ namespace Robomongo
         RecentConnection(QString const& uuid, std::string const& name)
             : uuid(uuid), name(name) {}
 
-        // todo: remove
+        // Not directly used but required by std::vector<T>::erase()
         RecentConnection& operator=(const RecentConnection& other)
         {
             uuid = other.uuid;
@@ -38,6 +38,9 @@ namespace Robomongo
         QString uuid;
         std::string name;
     };
+
+
+/* ----------------------------- SettingsManager ------------------------------ */
 
     /**
      * @brief SettingsManager gives you access to all settings, that is used
@@ -90,7 +93,7 @@ namespace Robomongo
         void removeConnection(ConnectionSettings *connection);
 
         /**
-        * @brief todo
+        * @brief Functions of Recent Connections feature
         */
         static void addRecentConnection(ConnectionSettings *connection);
         static void deleteRecentConnection(ConnectionSettings *connection);
@@ -234,12 +237,17 @@ namespace Robomongo
         int _mongoTimeoutSec;
         int _shellTimeoutSec;
 
-        // True when settings from previous versions of
-        // Robomongo are imported
+        // True when settings from previous versions of Robomongo are imported
         bool _imported;
-
-        // todo: 
+        
+        /**
+        * @brief This is an anonymous UUID that is generated when Robomongo is first 
+        *        installed on a user's machine and then launched for the first time  
+        *        It stays the same throughout all upgrades.
+        */
         QString _anonymousID;
+
+        // Various cache data
         QMap<QString, QVariant> _cacheData;
 
         /**
@@ -247,7 +255,7 @@ namespace Robomongo
          */
         static std::vector<ConnectionSettings*> _connections;
 
-        // todo
+        // List of recent connections that are shown on Welcome Tab
         static std::vector<RecentConnection> _recentConnections;
         
         ToolbarSettingsContainerType _toolbars;

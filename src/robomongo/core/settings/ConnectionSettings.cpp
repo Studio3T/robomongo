@@ -39,7 +39,6 @@ namespace Robomongo
         _uuid(isClone ? "" : QUuid::createUuid().toString())
     { }
 
-    // todo: remove or add clone support
     ConnectionSettings::ConnectionSettings(const mongo::MongoURI& uri, bool isClone)  
         : _connectionName(defaultNameConnection),
         _host(defaultServerHost),
@@ -50,7 +49,7 @@ namespace Robomongo
         _isReplicaSet((uri.type() == mongo::ConnectionString::ConnectionType::SET)),
         _replicaSetSettings(new ReplicaSetSettings(uri)),
         _clone(isClone),
-        _uuid(QUuid::createUuid().toString())   // todo
+        _uuid(isClone ? "" : QUuid::createUuid().toString())
     {
         if (!uri.getServers().empty()) {
             _host = uri.getServers().front().host();

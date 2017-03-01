@@ -37,8 +37,7 @@ namespace Robomongo
         void on_allBlogsButton_clicked();
         void on_clearButton_clicked();
         void on_deleteButton_clicked();
-        void linkActivated(QString const& link);
-        void linkHovered(QString const& link);
+        void on_recentConnectionLinkClicked(QString const& link);
         void handle(ConnectionEstablishedEvent *event);
 
     private:

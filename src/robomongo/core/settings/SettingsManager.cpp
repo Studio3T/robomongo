@@ -10,15 +10,14 @@
 // Todo: 
 // Warning: 
 //         Currently, this include statement should be maintained manually.
-//         The Qt version must be updated if Qt is upgraded. Otherwise it will cause build. 
+//         The Qt version must be updated if Qt is upgraded. Otherwise it might cause build error. 
 //         The correct path will be: PROJECT_QT_VERSION/QtGui/private/qzipreader_p.h
 // Details:         
 //         Ideally, private class inside qzipreader_p.h should not be used since it is not 
 //         a publicly/officially supported API by Qt. It is used here since we are doing a 
-//         a very lightweight zip operation which is unzipping a zip archive with one, small 
-//         file.
-//         The alternative solution is time consuming which is including QuaZip and Zlib 
-//         third party libraries into CMAKE project and building them.
+//         a very lightweight zip operation which is unzipping a zip archive with one, small file.
+//         The alternative is including QuaZip and Zlib third party libraries into CMAKE project and 
+//         building, and using them which might be time consuming.
 #include <5.7.0/QtGui/private/qzipreader_p.h>
 
 #include <parser.h>
@@ -36,8 +35,7 @@
 
 namespace Robomongo
 {
-    // todo: to common.h
-
+    // todo: 
     QString getAnonymousID(QString const& zipFile, QString const& propfile)
     {
         QZipReader zipReader(zipFile);
@@ -83,7 +81,6 @@ namespace Robomongo
 
     struct ConfigFileAndImportFunction
     {
-
         ConfigFileAndImportFunction(QString const& configFile, std::function<bool()> importFunction)
             : file(configFile), import(importFunction) {}
 
@@ -427,15 +424,14 @@ namespace Robomongo
         map.insert("connections", list);
 
         // 13. Save recent connections
-        // todo: refactor
-        QVariantList tlist;
-        QVariantMap tmap;
+        QVariantList recentConnsList;
+        QVariantMap recentConnMap;
         for (auto const& rconn : _recentConnections) {
-            tmap.insert("uuid", rconn.uuid);
-            tmap.insert("name", QString::fromStdString(rconn.name));
-            tlist.append(tmap);
+            recentConnMap.insert("uuid", rconn.uuid);
+            recentConnMap.insert("name", QString::fromStdString(rconn.name));
+            recentConnsList.append(recentConnMap);
         }
-        map.insert("recentConnections", tlist);
+        map.insert("recentConnections", recentConnsList);
 
         map.insert("autoExec", _autoExec);
         map.insert("minimizeToTray", _minimizeToTray);
@@ -477,13 +473,14 @@ namespace Robomongo
     {
         for (int i = 0; i < _recentConnections.size(); ++i) {
             if (_recentConnections[i].uuid == conn->uuid())
-                _recentConnections.erase(_recentConnections.begin() + i);   // todo
+                _recentConnections.erase(_recentConnections.begin() + i);
         }
     }
 
     void SettingsManager::setRecentConnections(std::vector<ConnectionSettings const*> const& recentConns)
     {
         _recentConnections.clear();
+
         for(auto rconn : recentConns)
             _recentConnections.push_back(RecentConnection(rconn->uuid(), rconn->connectionName()));
     }

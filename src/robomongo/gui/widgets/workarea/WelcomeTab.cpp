@@ -31,116 +31,20 @@
 
 namespace Robomongo
 {
+    bool deleteOldCacheFile(QString const& absFilePath);
 
-    QString const Text1_LastModifiedDateKey("wtText1LastModifiedDate");
-    QString const Image1_LastModifiedDateKey("wtImage1LastModifiedDate");
-    QString const Rss_LastModifiedDateKey("wtRssLastModifiedDate");
+    bool saveIntoCache(QString const& fileName, QString const& fileData,
+                       QString const& lastModifiedKey, QString const& lastModifiedDate);
 
-    QString const RssFileName = "rss.xml";
+    bool saveIntoCache(QString const& fileName, QPixmap const& pixMap,
+                       QString const& lastModifiedKey, QString const& lastModifiedDate);
 
-    std::unique_ptr<QFile> loadFileFromCache(QString const& fileName)
-    {
-        QFileInfo check_file(CacheDir + fileName);
-        if (check_file.exists() && check_file.isFile()) {   // Use cached file
-            std::unique_ptr<QFile> file(new QFile(CacheDir + fileName));
-            if (file->open(QFile::ReadOnly | QFile::Text)) {
-                return file;
-            }
-        }
-        return nullptr;
-    }
+    bool saveIntoCache(QString const& fileName, QByteArray* data,
+                       QString const& lastModifiedKey, QString const& lastModifiedDate);
 
-    bool saveIntoCache(QString const& fileName, QString const& fileData, 
-                       QString const& lastModifiedKey, QString const& lastModifiedDate)
-    {
-        // Save file into cache directory
-        if (!QDir(CacheDir).exists())
-            QDir().mkdir(CacheDir);
-        else {  // cache dir. exists            
-            QFileInfo check_file(CacheDir + fileName);
-            // Make sure we delete the old file in order to cache the newly downloaded file
-            if (check_file.exists() && check_file.isFile()) {
-                if (!QFile::remove(CacheDir + fileName)) {
-                    LOG_MSG("WelcomeTab: Failed to delete cached file at: " + CacheDir + fileName,
-                        mongo::logger::LogSeverity::Warning());
-                    return false;
-                }
-            }
-        }
-        QFile file(CacheDir + fileName);
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            // todo: log
-            return false;
-        }
-        QTextStream out(&file);
-        out << fileData;
-
-        // Save file's last modified date into settings
-        AppRegistry::instance().settingsManager()->addCacheData(lastModifiedKey, lastModifiedDate);
-        AppRegistry::instance().settingsManager()->save();
-        return true;
-    }
-
-    bool saveIntoCache(QString const& fileName, QPixmap const& pixMap, 
-                       QString const& lastModifiedKey, QString const& lastModifiedDate)
-    {
-        // Save file into cache directory
-        if (!QDir(CacheDir).exists())
-            QDir().mkdir(CacheDir);
-        else {  // cache dir. exists            
-            QFileInfo check_file(CacheDir + fileName);
-            // Make sure we delete the old file in order to cache the newly downloaded file
-            if (check_file.exists() && check_file.isFile()) {
-                if (!QFile::remove(CacheDir + fileName)) {
-                    LOG_MSG("WelcomeTab: Failed to delete cached file at: " + CacheDir + fileName,
-                        mongo::logger::LogSeverity::Warning());
-                    return false;
-                }
-            }
-        }
-        QFile file(CacheDir + fileName);
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            // todo: log
-            return false;
-        }
-        pixMap.save(CacheDir + fileName);
-
-        // Save file's last modified date into settings
-        AppRegistry::instance().settingsManager()->addCacheData(lastModifiedKey, lastModifiedDate);
-        AppRegistry::instance().settingsManager()->save();
-        return true;
-    }
-
-    bool saveIntoCache(QString const& fileName, QByteArray* data, 
-                       QString const& lastModifiedKey, QString const& lastModifiedDate)
-    {
-        // Save file into cache directory
-        if (!QDir(CacheDir).exists())
-            QDir().mkdir(CacheDir);
-        else {  // cache dir. exists            
-            QFileInfo check_file(CacheDir + fileName);
-            // Make sure we delete the old file in order to cache the newly downloaded file
-            if (check_file.exists() && check_file.isFile()) {
-                if (!QFile::remove(CacheDir + fileName)) {
-                    LOG_MSG("WelcomeTab: Failed to delete cached file at: " + CacheDir + fileName,
-                        mongo::logger::LogSeverity::Warning());
-                    return false;
-                }
-            }
-        }
-        QFile file(CacheDir + fileName);
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            // todo: log
-            return false;
-        }
-        file.write(*data);
-
-        // Save file's last modified date into settings
-        AppRegistry::instance().settingsManager()->addCacheData(lastModifiedKey, lastModifiedDate);
-        AppRegistry::instance().settingsManager()->save();
-        return true;
-    }
-
+    /**
+    * @brief Container structure to hold data of a blog link
+    */
     struct BlogInfo
     {
         BlogInfo(QString const& title, QString const& link, QString const& publishDate)
@@ -151,6 +55,9 @@ namespace Robomongo
         QString const publishDate;
     };
 
+    /**
+    * @brief Custom label for identifying a blog link label
+    */
     struct BlogLinkLabel : public QLabel
     {
         BlogLinkLabel(QString const& args) 
@@ -158,8 +65,9 @@ namespace Robomongo
     };
 
     /* todo: brief: Special button to use on the right side of a recent connection label */
-    struct CustomButton : public QPushButton
+    struct CustomDeleteButton : public QPushButton
     {
+        // todo: use ctor. instead of two funcs.
         void setLabelOnLeft(QLabel* lab) { label = lab; }
         void setParentLayout(QLayout* lay) { parentLayout = lay; }
 
@@ -180,33 +88,27 @@ namespace Robomongo
 
     QString const BlogsHeader = "<p><h1><font color=\"#2d862d\">Blog Posts</h1></p>";
 
-    QString const BlogLinkTemplate = "<a style = 'color: #106CD6; text-decoration: none;'"
+    QString const BlogLinkTemplate = "<a style = 'font-size:14px; color: #106CD6; text-decoration: none;'"
                                      "href='%1'>%2</a>";
 
-    /*
-    * http://files.studio3t.com/robo/1/image.png (for development)
-    * http://rm-wn.3t.io/robo/1/image.png (when shipping)
-    */
     QUrl const Pic1_URL = QString("https://rm-feed.3t.io/1/image.png");
-    
-    /*
-    * http://files.studio3t.com/robo/1/contents.txt (for development)
-    * http://rm-wn.3t.io/robo/1/contents.txt (when shipping)
-    */
     QUrl const Text1_URL = QString("https://rm-feed.3t.io/1/contents.txt");
+    QString const RssFileName = "rss.xml";
 
-    // todo: static
+    QString const Text1_LastModifiedDateKey("wtText1LastModifiedDate");
+    QString const Image1_LastModifiedDateKey("wtImage1LastModifiedDate");
+    QString const Rss_LastModifiedDateKey("wtRssLastModifiedDate");
+
     auto const TEXT_TO_TAB_RATIO = 0.6; 
     auto const IMAGE_TO_TAB_RATIO = 0.5;
     auto const BLOG_TO_TAB_RATIO = 0.28;
 
-/* -------------- Welcome Tab -------------- */
+/* ------------------------------------- Welcome Tab --------------------------------------- */
+
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
     {
         AppRegistry::instance().bus()->subscribe(this, ConnectionEstablishedEvent::Type);
-
-        auto const settingsManager = AppRegistry::instance().settingsManager();
 
         _recentConnsLay = new QVBoxLayout;       
         auto recentConnHeader = new QLabel(Recent_Connections_Header);
@@ -216,15 +118,14 @@ namespace Robomongo
         _clearButton = new QPushButton("Clear Recent Connections");
 
         // Load and add recent connections from settings
-        auto const& recentConnections = AppRegistry::instance().settingsManager()->recentConnections();
+        auto const settingsManager = AppRegistry::instance().settingsManager();
+        auto const& recentConnections = settingsManager->recentConnections();
         if (recentConnections.size() < 1) 
             _clearButton->setDisabled(true);
         else {
             _clearButton->setStyleSheet("color: #106CD6");
-            for (auto const& rconn : recentConnections) {
-                ConnectionSettings const* conn = settingsManager->getConnectionSettingsByUuid(rconn.uuid);
-                addRecentConnectionItem(conn, false);
-            }
+            for (auto const& rconn : recentConnections) 
+                addRecentConnectionItem(settingsManager->getConnectionSettingsByUuid(rconn.uuid), false);
         }
 
         VERIFY(connect(_clearButton, SIGNAL(clicked()), this, SLOT(on_clearButton_clicked())));
@@ -241,20 +142,19 @@ namespace Robomongo
         _whatsNewText->setTextInteractionFlags(Qt::TextBrowserInteraction);
         _whatsNewText->setOpenExternalLinks(true);
         _whatsNewText->setWordWrap(true);
-        //_whatsNewText->setMinimumWidth(750);
         _whatsNewText->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-        //_whatsNewText->setMinimumHeight(_whatsNewText->sizeHint().height());
 
+        _pic1 = new QLabel;
+        _pic1->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        _pic1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+        _blogsHeader = new QLabel(BlogsHeader);
+        //_blogsHeader->setStyleSheet("background-color: yellow;");     
+
+        //// --- Network Access Managers
         auto text1Downloader = new QNetworkAccessManager;
         VERIFY(connect(text1Downloader, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_downloadTextReply(QNetworkReply*))));
         text1Downloader->head(QNetworkRequest(Text1_URL));
-
-        _pic1 = new QLabel;
-        //pic1->setPixmap(pic1URL);
-        //_pic1->setMaximumSize(800,400);
-        _pic1->setTextInteractionFlags(Qt::TextSelectableByMouse);
-        //pic1->setStyleSheet("background-color: gray");
-        _pic1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
         auto pic1Downloader = new QNetworkAccessManager;
         VERIFY(connect(pic1Downloader, SIGNAL(finished(QNetworkReply*)), 
@@ -266,9 +166,7 @@ namespace Robomongo
         QUrl const rssURL = QString("https://blog.robomongo.org/rss/");
         rssDownloader->get(QNetworkRequest(rssURL));
 
-        _blogsHeader = new QLabel(BlogsHeader);
-        //_blogsHeader->setStyleSheet("background-color: yellow;");        
-
+        //// --- Layouts
         auto buttonLay = new QHBoxLayout;
         _allBlogsButton = new QPushButton("All Blog Posts");
         //button->setStyleSheet("font-size: 14pt; background-color: green; border: 2px; color: white");        
@@ -337,8 +235,11 @@ namespace Robomongo
                     && fileExists(CacheDir + Text1_URL.fileName())) 
                 {
                     // Load from cache
-                    auto file = loadFileFromCache(Text1_URL.fileName());
-                    QTextStream in(file.get());
+                    QFile file(CacheDir + Text1_URL.fileName());
+                    if (!file.open(QFile::ReadOnly | QFile::Text))
+                        return;
+
+                    QTextStream in(&file);
                     QString str(in.readAll());
                     _whatsNewText->setText(str);
                     _whatsNewText->setMinimumWidth(SIXTY_PERCENT_OF_TAB);
@@ -352,8 +253,11 @@ namespace Robomongo
             }
             else {  // There is a network error 
                 // Load from cache
-                auto file = loadFileFromCache(Text1_URL.fileName());
-                QTextStream in(file.get());
+                QFile file(CacheDir + Text1_URL.fileName());
+                if (!file.open(QFile::ReadOnly | QFile::Text))
+                    return;
+
+                QTextStream in(&file);
                 QString str(in.readAll());
                 _whatsNewText->setText(str);
                 _whatsNewText->setMinimumWidth(SIXTY_PERCENT_OF_TAB);
@@ -392,6 +296,9 @@ namespace Robomongo
 
         if (reply->error() != QNetworkReply::NoError) { // Network error, load from cache
             image = QPixmap(CacheDir + Pic1_URL.fileName());
+            if (image.isNull())
+                return;
+
             _pic1->setPixmap(image.scaledToWidth(FIFTY_PERCENT_OF_TAB));
             adjustSize();
             hideOrShowWhatsNewHeader();
@@ -428,6 +335,9 @@ namespace Robomongo
         }
 
         // Set the image
+        if (image.isNull())
+            return;
+
         _image = image;
         _pic1->setPixmap(_image.scaledToWidth(FIFTY_PERCENT_OF_TAB));
         adjustSize();
@@ -444,8 +354,11 @@ namespace Robomongo
         QByteArray data = reply->readAll();
         if (data.isEmpty() || reply->error() != QNetworkReply::NoError) {
             // Load from cache
-            if (auto file = loadFileFromCache(RssFileName)) 
-                data = file->readAll();
+            QFile file(CacheDir + RssFileName);
+            if (!file.open(QFile::ReadOnly | QFile::Text))
+                return;
+
+            data = file.readAll();
         }
         
         QXmlStreamReader xmlReader(data);
@@ -486,13 +399,12 @@ namespace Robomongo
         adjustSize();
 
         // Save into cache
-        saveIntoCache(RssFileName, data, Rss_LastModifiedDateKey, "NotImplemented");
+        saveIntoCache(RssFileName, data, Rss_LastModifiedDateKey, "NotImplemented");    // todo
     }
-
 
     void WelcomeTab::on_allBlogsButton_clicked()
     {
-        QDesktopServices::openUrl(QUrl("http://blog.robomongo.org/"));
+        QDesktopServices::openUrl(QUrl("https://blog.robomongo.org/"));
     }
     
     void WelcomeTab::on_clearButton_clicked()
@@ -525,7 +437,15 @@ namespace Robomongo
 
     void WelcomeTab::on_deleteButton_clicked()
     {
-        auto button = dynamic_cast<CustomButton*>(sender());
+        //// Ask user
+        //int const answer = QMessageBox::question(this,
+        //    "Delete Recent Connection", "This will delete this recent connection link, are you sure?",
+        //    QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+
+        //if (answer != QMessageBox::Yes)
+        //    return;
+
+        auto button = dynamic_cast<CustomDeleteButton*>(sender());
         if (!button)
             return;
 
@@ -534,7 +454,7 @@ namespace Robomongo
         delete button->label;
         delete button;
 
-        // Disable clear all button conditionally
+        // Disable "clear all" button conditionally
         if (_recentConnsLay->count() == 0) {
             _clearButton->setDisabled(true);
             _clearButton->setFocus();
@@ -556,11 +476,11 @@ namespace Robomongo
                 }
             }
         }
-        AppRegistry::instance().settingsManager()->setRecentConnections(_recentConnections);
-        AppRegistry::instance().settingsManager()->save();
+        settingsManager->setRecentConnections(_recentConnections);
+        settingsManager->save();
     }
 
-    void WelcomeTab::linkActivated(QString const& link)
+    void WelcomeTab::on_recentConnectionLinkClicked(QString const& link)
     {
         for (auto const conn : AppRegistry::instance().settingsManager()->connections()) {
             if (conn->uuid() == link) {
@@ -568,11 +488,6 @@ namespace Robomongo
                 return;
             }
         }
-    }
-
-    void WelcomeTab::linkHovered(QString const& link)
-    {       
-        //setStyleSheet("QLabel { color: green; text-decoration: underline; }");        
     }
 
     void WelcomeTab::handle(ConnectionEstablishedEvent *event)
@@ -583,6 +498,9 @@ namespace Robomongo
 
         auto const settingsManager = AppRegistry::instance().settingsManager();
         auto conn = settingsManager->getConnectionSettingsByUuid(event->connInfo._uuid);
+
+        if (!conn)
+            return;
 
         // Remove duplicate label and it's button
         for (int i = 0; i < _recentConnsLay->count(); ++i) {
@@ -617,63 +535,9 @@ namespace Robomongo
                 }
             }
         }
-        AppRegistry::instance().settingsManager()->setRecentConnections(_recentConnections);
-        AppRegistry::instance().settingsManager()->save();
+        settingsManager->setRecentConnections(_recentConnections);
+        settingsManager->save();
     }
-
-    
-    //void WelcomeTab::genericNetworkReplyHandler(QNetworkReply* reply, QString const& fileName, 
-    //                                            QString const& lastModifiedKey)
-    //{
-    //    if (reply->operation() == QNetworkAccessManager::HeadOperation) {
-    //        if (reply->error() == QNetworkReply::NoError) { // No network error
-    //            QString const& createDate = reply->header(QNetworkRequest::LastModifiedHeader).toString();
-    //            if (createDate == AppRegistry::instance().settingsManager()->cacheData(lastModifiedKey)
-    //                && fileExists(CacheDir + fileName))
-    //            {
-    //                // Load from cache
-    //                auto file = loadFileFromCache(fileName);
-    //                setText1FromCache(file.get());
-    //                return;
-    //            }
-    //            else {  // Get from internet
-    //                reply->manager()->get(QNetworkRequest(reply->url()));
-    //            }
-    //        }
-    //        else {  // There is a network error 
-    //            // Load from cache
-    //            auto file = loadFileFromCache(fileName);
-    //            QTextStream in(file.get());
-    //            QString str(in.readAll());
-    //            _whatsNewText->setText(str);
-    //            return;
-    //        }
-    //    }
-    //    else if (reply->operation() == QNetworkAccessManager::GetOperation) {
-    //        // todo: handle get operation fails
-    //        QString str(QUrl::fromPercentEncoding(reply->readAll()));
-    //        if (str.isEmpty()) {
-    //            LOG_MSG("WelcomeTab: Failed to download text file from URL. Reason: " + reply->errorString(),
-    //                mongo::logger::LogSeverity::Warning());
-    //            // todo: load from cache?
-    //            return;
-    //        }
-    //        _whatsNewText->setText(str);
-    //        saveIntoCache(text1_URL.fileName(), str, Text1_LastModifiedDate,
-    //            reply->header(QNetworkRequest::LastModifiedHeader).toString());
-    //    }
-    //}
-
-
-    //void WelcomeTab::setText1FromCache(QFile* cacheFile)
-    //{
-    //    if (!cacheFile)
-    //        return;
-
-    //    QTextStream in(cacheFile);
-    //    QString str(in.readAll());
-    //    _whatsNewText->setText(str);
-    //}
 
     void WelcomeTab::addRecentConnectionItem(ConnectionSettings const* conn, bool insertTop)
     {
@@ -686,10 +550,9 @@ namespace Robomongo
         connLabel->setMouseTracking(true);
         connLabel->setAttribute(Qt::WA_Hover);
         connLabel->installEventFilter(this);
-        VERIFY(connect(connLabel, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString))));
-        VERIFY(connect(connLabel, SIGNAL(linkHovered(QString)), this, SLOT(linkHovered(QString))));
+        VERIFY(connect(connLabel, SIGNAL(linkActivated(QString)), this, SLOT(on_recentConnectionLinkClicked(QString))));
 
-        auto button = new CustomButton;
+        auto button = new CustomDeleteButton;
         std::call_once(onceFlag1, [&]{ CustomButtonHeight = button->iconSize().height()*0.7; });
         button->setStyleSheet("border: none;");
         button->installEventFilter(this);
@@ -805,5 +668,103 @@ namespace Robomongo
 
         return QWidget::eventFilter(target, event);
     }
+
+    bool deleteOldCacheFile(QString const& absFilePath)
+    {
+        if (!QFile::remove(absFilePath)) {
+            LOG_MSG("WelcomeTab: Failed to delete cached file at: " + absFilePath,
+                     mongo::logger::LogSeverity::Warning());
+            return false;
+        }
+
+        return true;
+    }
+
+    bool saveIntoCache(QString const& fileName, QString const& fileData,
+                       QString const& lastModifiedKey, QString const& lastModifiedDate)
+    {
+        // Save file into cache directory
+        if (!QDir(CacheDir).exists())
+            QDir().mkdir(CacheDir);
+        else {
+            // Make sure we delete the old file in order to cache the newly downloaded file            
+            if (!deleteOldCacheFile(CacheDir + fileName))
+                return false;
+        }
+
+        QFile file(CacheDir + fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+            return false;
+
+        QTextStream out(&file);
+        out << fileData;
+
+        // Save file's last modified date into settings
+        AppRegistry::instance().settingsManager()->addCacheData(lastModifiedKey, lastModifiedDate);
+        AppRegistry::instance().settingsManager()->save();
+        return true;
+    }
+
+    bool saveIntoCache(QString const& fileName, QPixmap const& pixMap,
+                       QString const& lastModifiedKey, QString const& lastModifiedDate)
+    {
+        // Save file into cache directory
+        if (!QDir(CacheDir).exists())
+            QDir().mkdir(CacheDir);
+        else {
+            // Make sure we delete the old file in order to cache the newly downloaded file            
+            if (!deleteOldCacheFile(CacheDir + fileName))
+                return false;
+        }
+
+        QFile file(CacheDir + fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+            return false;
+
+        pixMap.save(CacheDir + fileName);
+
+        // Save file's last modified date into settings
+        AppRegistry::instance().settingsManager()->addCacheData(lastModifiedKey, lastModifiedDate);
+        AppRegistry::instance().settingsManager()->save();
+        return true;
+    }
+
+    bool saveIntoCache(QString const& fileName, QByteArray* data,
+                       QString const& lastModifiedKey, QString const& lastModifiedDate)
+    {
+        // Save file into cache directory
+        if (!QDir(CacheDir).exists())
+            QDir().mkdir(CacheDir);
+        else {
+            // Make sure we delete the old file in order to cache the newly downloaded file            
+            if (!deleteOldCacheFile(CacheDir + fileName))
+                return false;
+        }
+
+        QFile file(CacheDir + fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+            return false;
+
+        file.write(*data);
+
+        // Save file's last modified date into settings
+        AppRegistry::instance().settingsManager()->addCacheData(lastModifiedKey, lastModifiedDate);
+        AppRegistry::instance().settingsManager()->save();
+        return true;
+    }
+
+
+    // todo: remove
+    //    std::unique_ptr<QFile> loadFileFromCache(QString const& fileName)
+    //    {
+    ////        if (fileExists(CacheDir + fileName)) {   // Use cached file
+    //            std::unique_ptr<QFile> file(new QFile(CacheDir + fileName));
+    //            if (file->open(QFile::ReadOnly | QFile::Text)) {
+    //                return file;
+    //            }
+    ////        }
+    //
+    //        return nullptr;
+    //    }
 
 }

@@ -1396,10 +1396,21 @@ namespace Robomongo
         QUrl url2("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=4.3.0&licenseInfo=FREE"
             "&setup=760f6182-13e4-4357-8f5e-d51bc7ca27fe&notify=true#");
 
+#ifdef _WIN32
+        QString const OS = "win";
+#elif __APPLE__
+        QString const OS = "osx";
+#elif __linux__
+        QString const OS = "linux";
+#else
+        QString const OS = "unknown";
+#endif
+
         // todo:
         // http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=4.3.0&licenseInfo=FREE&setup=760f6182-13e4-4357-8f5e-d51bc7ca27fe&notify=true#
-        QUrl url3("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=" + QString(PROJECT_VERSION)
-            + "&licenseInfo=FREE&setup=" + AppRegistry::instance().settingsManager()->anonymousID() + "&notify=true#");
+        QUrl url3("http://updates.3tsoftwarelabs.com/check.php?os=" + OS + "&softwareId=1&softwareVersion=" +
+                   QString(PROJECT_VERSION) + "&licenseInfo=FREE&setup=" + 
+                   AppRegistry::instance().settingsManager()->anonymousID() + "&notify=true#");
 
         _networkAccessManager->get(QNetworkRequest(url3));
     }

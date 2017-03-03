@@ -61,7 +61,7 @@ namespace Robomongo
 
     /**
         * @brief Version of schema
-        */
+    */
     const QString SchemaVersion = "2.0";
 
 }
@@ -77,7 +77,7 @@ namespace Robomongo
     const auto CONFIG_FILE_0_9 = QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath());
     const auto CONFIG_FILE_1_0_RC1 = QString("%1/.config/robomongo/1.0/robomongo.json").arg(QDir::homePath());
     // Change of path due to re-branding to 3T
-    const auto CONFIG_FILE_1_0_0 = QString("%1/.3T/robomongo/1.0.0/robomongo.json").arg(QDir::homePath());
+    const auto CONFIG_FILE_1_0_0 = QString("%1/.3T/robom/1.0.0/robom.json").arg(QDir::homePath());
 
     struct ConfigFileAndImportFunction
     {

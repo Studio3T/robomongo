@@ -15,7 +15,7 @@ execute_process(
 string(TIMESTAMP timestamp "%Y-%m-%d")
 
 # Package name (as it should appear in UI)
-set(CPACK_PACKAGE_NAME studio_3t_robo)
+set(CPACK_PACKAGE_NAME robom)
 
 # Version of the package
 set(CPACK_PACKAGE_VERSION_MAJOR     ${PROJECT_VERSION_MAJOR})
@@ -34,10 +34,10 @@ set(CPACK_MONOLITHIC_INSTALL ON)
 set(CPACK_STRIP_FILES ON)
 
 # Additional information
-set(CPACK_PACKAGE_VENDOR 3T Software Labs)
-set(CPACK_PACKAGE_CONTACT robomongo@paralect.com)
+set(CPACK_PACKAGE_VENDOR 3T Software Labs Ltd)
+set(CPACK_PACKAGE_CONTACT robom@3t.io)
 set(CPACK_PACKAGE_DESCRIPTION "Shell-centric cross-platform MongoDB management tool.")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Studio 3T Robo is a shell-centric cross-platform MongoDB management tool.")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "RoboM is a shell-centric cross-platform MongoDB management tool.")
 
 # Use lowercase for system name and package file name
 string(TOLOWER ${CMAKE_SYSTEM_NAME} system_name)
@@ -62,7 +62,7 @@ elseif(SYSTEM_MACOSX)
 
 elseif(SYSTEM_WINDOWS)
     set(files_dir "${CMAKE_SOURCE_DIR}/install/windows")
-    set(exe_name "studio-3t-robo.exe")
+    set(exe_name "robom.exe")
 
     set(CPACK_GENERATOR NSIS ZIP)
     set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/DESCRIPTION")

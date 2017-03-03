@@ -27,7 +27,7 @@ namespace Robomongo
     {
         setWindowTitle("Thank you!");
 
-        QSettings settings("Paralect", "Robomongo");
+        QSettings settings("3T", "RoboM");
         if (settings.contains("EulaDialog/size"))
             restoreWindowSettings();
 
@@ -229,13 +229,13 @@ namespace Robomongo
 
     void EulaDialog::saveWindowSettings() const
     {
-        QSettings settings("Paralect", "Robomongo");
+        QSettings settings("3T", "RoboM");
         settings.setValue("EulaDialog/size", size());
     }
 
     void EulaDialog::restoreWindowSettings()
     {
-        QSettings settings("Paralect", "Robomongo");
+        QSettings settings("3T", "RoboM");
         resize(settings.value("EulaDialog/size").toSize());
     }
 

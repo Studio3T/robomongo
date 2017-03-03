@@ -1,6 +1,6 @@
-Robomongo shortcut key reference
+RoboM shortcut key reference
 ================================
-
+"3T", "RoboM"
 ### Windows/Linux users
 
    Ctrl+Enter or F5 or Ctrl+R
@@ -8,7 +8,7 @@ Robomongo shortcut key reference
       only selected text will be executed.
 
    Ctrl+M
-      Minimize Robomongo Window
+      Minimize RoboM Window
 
    Ctrl+N
       Open new connection dialog.
@@ -91,7 +91,7 @@ Robomongo shortcut key reference
       selected text will be executed.
 
    Cmd+M
-      Minimize Robomongo Window
+      Minimize RoboM Window
 
    Cmd+N
       Open new connection dialog.

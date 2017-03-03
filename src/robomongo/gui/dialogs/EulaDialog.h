@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWizard>
+#include <QNetworkReply>
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -40,6 +41,10 @@ namespace Robomongo
         void on_next_clicked();
         void on_back_clicked();
         void on_finish_clicked();
+        void on_postAnswer(QNetworkReply*);
+
+        void postReplyReadyRead();
+        void postReplyError(QNetworkReply::NetworkError);
 
     private:
 
@@ -52,6 +57,13 @@ namespace Robomongo
         * @brief Save window settings into system registry
         */
         void saveWindowSettings() const;
+
+        QLineEdit* _nameEdit;
+        QLineEdit* _lastNameEdit;
+        QLineEdit* _emailEdit;
+
+        QByteArray _postData;
+        QNetworkReply* _reply;
 
     };
 }

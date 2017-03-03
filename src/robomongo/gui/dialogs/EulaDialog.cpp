@@ -8,20 +8,24 @@
 #include <QFile>
 #include <QSettings>
 #include <QLabel>
-#include <QCheckBox>
 #include <QTextBrowser>
 #include <QLineEdit>
 #include <QRadioButton>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QUrlQuery>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
 
-    EulaDialog::EulaDialog(QWidget *parent) 
+    EulaDialog::EulaDialog(QWidget *parent)
         : QWizard(parent)
     {
-        setWindowTitle("Studio 3T Robo: Let's get started");
+        setWindowTitle("Thank you!");
 
         QSettings settings("Paralect", "Robomongo");
         if (settings.contains("EulaDialog/size"))
@@ -29,15 +33,15 @@ namespace Robomongo
 
         //// First page
         auto firstPage = new QWizardPage;
-        
+
         auto agreeButton = new QRadioButton("I agree");
         VERIFY(connect(agreeButton, SIGNAL(clicked()),
-                       this, SLOT(on_agreeButton_clicked())));
+            this, SLOT(on_agreeButton_clicked())));
 
         auto notAgreeButton = new QRadioButton("I don't agree");
         notAgreeButton->setChecked(true);
         VERIFY(connect(notAgreeButton, SIGNAL(clicked()),
-                       this, SLOT(on_notAgreeButton_clicked())));
+            this, SLOT(on_notAgreeButton_clicked())));
 
         auto radioButtonsLay = new QHBoxLayout;
         radioButtonsLay->setAlignment(Qt::AlignHCenter);
@@ -70,45 +74,35 @@ namespace Robomongo
         //// Second page
         auto secondPage = new QWizardPage;
 
-        auto firstCheckBox = new QCheckBox("Send me helpful tips and tricks during evaluation");
-        auto secondCheckBox = new QCheckBox("Tell me about new product features as they come out");
+        auto nameLabel = new QLabel("<b>First Name:</b>");
+        _nameEdit = new QLineEdit;
+        auto lastNameLabel = new QLabel("<b>Last Name:</b>");
+        _lastNameEdit = new QLineEdit;
 
-        auto nameLabel = new QLabel("<b>First Name</b>");
-        auto nameEdit = new QLineEdit;
-        auto lastNameLabel = new QLabel("<b>Last Name</b>");
-        auto lastNameEdit = new QLineEdit;
+        auto emailLabel = new QLabel("<b>Email:</b>");
+        _emailEdit = new QLineEdit;
 
-        auto nameLay = new QVBoxLayout;
-        nameLay->addWidget(nameLabel);
-        nameLay->addWidget(nameEdit);
-
-        auto lastNameLay = new QVBoxLayout;
-        lastNameLay->addWidget(lastNameLabel);
-        lastNameLay->addWidget(lastNameEdit);
-
-        auto namesLay = new QHBoxLayout;
-        namesLay->addLayout(nameLay);
-        namesLay->addLayout(lastNameLay);
-
-        auto emailLabel = new QLabel("<b>Email</b>");
-        auto emailEdit = new QLineEdit;
-
-        auto buttomLabel = new QLabel("By submitting this form I agree to 3T Software Labs " 
-                                      "<a href='http://studio3t.com/privacy-policy'>Privacy Policy</a>.");
+        auto buttomLabel = new QLabel("By submitting this form I agree to 3T Software Labs "
+            "<a href='https://studio3t.com/privacy-policy'>Privacy Policy</a>.");
         buttomLabel->setOpenExternalLinks(true);
 
-        auto mainLayout2 = new QVBoxLayout();
-        mainLayout2->addWidget(new QLabel("<h3>New to Studio 3T Robo?</h3>"));
-        mainLayout2->addWidget(new QLabel);
-        mainLayout2->addWidget(firstCheckBox);
-        mainLayout2->addWidget(secondCheckBox);
-        mainLayout2->addWidget(new QLabel);
-        mainLayout2->addLayout(namesLay);
-        mainLayout2->addWidget(emailLabel);
-        mainLayout2->addWidget(emailEdit);
-        mainLayout2->addWidget(new QLabel);
-        mainLayout2->addWidget(buttomLabel);
-        mainLayout2->addStretch();
+        auto bodyLabel = new QLabel("Share your email address with us and we'll keep you"
+            "up-to-date with updates from us and new features as they come out.");
+        bodyLabel->setWordWrap(true);
+
+        auto mainLayout2 = new QGridLayout();
+        mainLayout2->addWidget(new QLabel,          0, 0, 1, 2);
+        mainLayout2->addWidget(new QLabel("<h3>Thank you for choosing RoboM!</h3>"), 1, 0, 1, 2);
+        mainLayout2->addWidget(bodyLabel,           2, 0 , 1, 2);
+        mainLayout2->addWidget(new QLabel,          3, 0, 1, 2);
+        mainLayout2->addWidget(nameLabel,           4, 0);
+        mainLayout2->addWidget(_nameEdit,            4, 1);
+        mainLayout2->addWidget(lastNameLabel,       5, 0);
+        mainLayout2->addWidget(_lastNameEdit,        5, 1);
+        mainLayout2->addWidget(emailLabel,          6, 0);
+        mainLayout2->addWidget(_emailEdit,           6, 1);
+        mainLayout2->addWidget(new QLabel,          7, 0, 1, 2);
+        mainLayout2->addWidget(buttomLabel,         8, 0, 1, 2);
 
         secondPage->setLayout(mainLayout2);
 
@@ -127,7 +121,7 @@ namespace Robomongo
         VERIFY(connect(button(QWizard::CustomButton3), SIGNAL(clicked()), this, SLOT(on_finish_clicked())));
 
         setButtonLayout(QList<WizardButton>{ QWizard::Stretch, QWizard::CustomButton1, QWizard::CustomButton2,
-                                             QWizard::CancelButton, QWizard::CustomButton3});
+            QWizard::CancelButton, QWizard::CustomButton3});
 
 #ifdef _WIN32
         button(QWizard::CustomButton1)->setHidden(true);
@@ -147,6 +141,27 @@ namespace Robomongo
     void EulaDialog::accept()
     {
         saveWindowSettings();
+
+        // Build post data and send
+        QJsonObject jsonStr{
+            { "email", _emailEdit->text() },
+            { "firstName", _nameEdit->text() },
+            { "lastName", _lastNameEdit->text() }
+        };
+
+        QJsonDocument jsonDoc(jsonStr);
+        QUrlQuery postData(jsonDoc.toJson());
+        postData = QUrlQuery("rd=" + postData.toString(QUrl::FullyEncoded).toUtf8());
+
+        QNetworkRequest request(QUrl("https://rm-form.3t.io/"));
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+
+        auto networkManager = new QNetworkAccessManager(this);
+        VERIFY(connect(networkManager, SIGNAL(finished(QNetworkReply*)), SLOT(on_postAnswer(QNetworkReply*))));
+        _reply = networkManager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
+        connect(_reply, SIGNAL(readyRead()), this, SLOT(postReplyReadyRead()));
+        connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(postReplyError(QNetworkReply::NetworkError)));
+
         QDialog::accept();
     }
 
@@ -191,6 +206,25 @@ namespace Robomongo
     void EulaDialog::on_finish_clicked()
     {
         accept();
+    }
+
+    void EulaDialog::on_postAnswer(QNetworkReply* reply)
+    {
+        //todo
+        //auto xx = reply->readAll().toStdString();
+    }
+
+    void EulaDialog::postReplyReadyRead()
+    {
+        // todo
+        //auto xx = _reply->readAll().toStdString();
+    }
+
+    void EulaDialog::postReplyError(QNetworkReply::NetworkError error)
+    {
+        // todo
+        //auto xx = 55;
+        //++xx;
     }
 
     void EulaDialog::saveWindowSettings() const

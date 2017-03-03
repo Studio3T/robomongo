@@ -671,6 +671,9 @@ namespace Robomongo
 
     bool deleteOldCacheFile(QString const& absFilePath)
     {
+        if (!fileExists(absFilePath))
+            return true;
+
         if (!QFile::remove(absFilePath)) {
             LOG_MSG("WelcomeTab: Failed to delete cached file at: " + absFilePath,
                      mongo::logger::LogSeverity::Warning());
@@ -683,14 +686,10 @@ namespace Robomongo
     bool saveIntoCache(QString const& fileName, QString const& fileData,
                        QString const& lastModifiedKey, QString const& lastModifiedDate)
     {
-        // Save file into cache directory
         if (!QDir(CacheDir).exists())
             QDir().mkdir(CacheDir);
-        else {
-            // Make sure we delete the old file in order to cache the newly downloaded file            
-            if (!deleteOldCacheFile(CacheDir + fileName))
-                return false;
-        }
+        else 
+            deleteOldCacheFile(CacheDir + fileName);
 
         QFile file(CacheDir + fileName);
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -708,14 +707,10 @@ namespace Robomongo
     bool saveIntoCache(QString const& fileName, QPixmap const& pixMap,
                        QString const& lastModifiedKey, QString const& lastModifiedDate)
     {
-        // Save file into cache directory
         if (!QDir(CacheDir).exists())
             QDir().mkdir(CacheDir);
-        else {
-            // Make sure we delete the old file in order to cache the newly downloaded file            
-            if (!deleteOldCacheFile(CacheDir + fileName))
-                return false;
-        }
+        else 
+            deleteOldCacheFile(CacheDir + fileName);
 
         QFile file(CacheDir + fileName);
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -732,14 +727,10 @@ namespace Robomongo
     bool saveIntoCache(QString const& fileName, QByteArray* data,
                        QString const& lastModifiedKey, QString const& lastModifiedDate)
     {
-        // Save file into cache directory
         if (!QDir(CacheDir).exists())
             QDir().mkdir(CacheDir);
-        else {
-            // Make sure we delete the old file in order to cache the newly downloaded file            
-            if (!deleteOldCacheFile(CacheDir + fileName))
-                return false;
-        }
+        else 
+            deleteOldCacheFile(CacheDir + fileName);
 
         QFile file(CacheDir + fileName);
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))

@@ -68,7 +68,8 @@ namespace Robomongo
             : QLabel(args) {}
     };
 
-    /* todo: brief: Special button to use on the right side of a recent connection label */
+    /* Temporarily disabling Recent Connections feature
+    // todo: brief: Special button to use on the right side of a recent connection label
     struct CustomDeleteButton : public QPushButton
     {
         // todo: use ctor. instead of two funcs.
@@ -77,16 +78,17 @@ namespace Robomongo
 
         QLabel* label = nullptr;
         QLayout* parentLayout = nullptr;
-    };
+    };   
 
     // todo: brief
     std::once_flag onceFlag1;
     int CustomButtonHeight = -1;
 
     QString const Recent_Connections_Header = "<p><h1><font color=\"#2d862d\">Recent Connections</h1></p>";
-
+   
     QString const connLabelTemplate = "<p><a style='font-size:14px; color: #106CD6; text-decoration: none;'"
                                       "href='%1'>%2</a></p>";
+    */
     
     QString const whatsNew = "<p><h1><font color=\"#2d862d\">What's New</h1></p>";
 
@@ -112,9 +114,10 @@ namespace Robomongo
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
     {
+        /* Temporarily disabling Recent Connections feature
         AppRegistry::instance().bus()->subscribe(this, ConnectionEstablishedEvent::Type);
 
-        _recentConnsLay = new QVBoxLayout;       
+       _recentConnsLay = new QVBoxLayout;       
         auto recentConnHeader = new QLabel(Recent_Connections_Header);
         //recentConnHeader->setMinimumWidth(_parent->width()*0.6);
 
@@ -158,6 +161,7 @@ namespace Robomongo
         auto connectButtonLay = new QHBoxLayout;
         connectButtonLay->addWidget(_connectButton);
         connectButtonLay->addStretch();
+        */
 
         //// What's new section
         _whatsNewHeader = new QLabel(whatsNew);
@@ -216,12 +220,14 @@ namespace Robomongo
 
         auto leftLayout = new QVBoxLayout;
         //leftLayout->setSpacing(0);
+        /* Temporarily disabling Recent Connections feature
         leftLayout->addWidget(recentConnHeader, 0, Qt::AlignTop);
         leftLayout->addLayout(_recentConnsLay);
         leftLayout->addSpacing(10);
         leftLayout->addLayout(connectButtonLay);
         //leftLayout->addStretch();
         leftLayout->addSpacing(20);
+        */
         leftLayout->addWidget(_whatsNewHeader, 0, Qt::AlignTop);
         leftLayout->addWidget(_pic1, 0, Qt::AlignTop);
         leftLayout->addWidget(_whatsNewText, 0, Qt::AlignTop);
@@ -250,15 +256,15 @@ namespace Robomongo
         auto const SIXTY_PERCENT_OF_TAB = _parent->width() * TEXT_TO_TAB_RATIO;
 
         auto hideOrShowWhatsNewHeader = [this]() {
-            _whatsNewHeader->setHidden( (!_pic1->pixmap() || _pic1->pixmap()->isNull()) 
-                                        && _whatsNewText->text().isEmpty() ? true : false);
+            _whatsNewHeader->setHidden((!_pic1->pixmap() || _pic1->pixmap()->isNull())
+                && _whatsNewText->text().isEmpty() ? true : false);
         };
 
         if (reply->operation() == QNetworkAccessManager::HeadOperation) {
             if (reply->error() == QNetworkReply::NoError) { // No network error
                 QString const& createDate = reply->header(QNetworkRequest::LastModifiedHeader).toString();
                 if (createDate == AppRegistry::instance().settingsManager()->cacheData(Text1_LastModifiedDateKey)
-                    && fileExists(CacheDir + Text1_URL.fileName())) 
+                    && fileExists(CacheDir + Text1_URL.fileName()))
                 {
                     // Load from cache
                     QFile file(CacheDir + Text1_URL.fileName());
@@ -306,7 +312,7 @@ namespace Robomongo
             _whatsNewText->setMinimumWidth(SIXTY_PERCENT_OF_TAB);
             adjustSize();
             saveIntoCache(Text1_URL.fileName(), str, Text1_LastModifiedDateKey,
-                          reply->header(QNetworkRequest::LastModifiedHeader).toString());
+                reply->header(QNetworkRequest::LastModifiedHeader).toString());
         }
     }
 
@@ -433,6 +439,7 @@ namespace Robomongo
         QDesktopServices::openUrl(QUrl("https://blog.robomongo.org/"));
     }
     
+/* Temporarily disabling Recent Connections feature
     void WelcomeTab::on_clearButton_clicked()
     {
         // Ask user
@@ -625,6 +632,7 @@ namespace Robomongo
             }
         }
     }
+*/
 
     void WelcomeTab::resize()
     {
@@ -644,9 +652,12 @@ namespace Robomongo
 
     bool WelcomeTab::eventFilter(QObject *target, QEvent *event)
     {
-        auto label = qobject_cast<QLabel*>(target);
+        /* Temporarily disabling Recent Connections feature
+        auto label = qobject_cast<QLabel*>(target);     // todo: recentConnLabel
+        */
         auto blogLinkLabel = dynamic_cast<BlogLinkLabel*>(target);
         
+        /* Temporarily disabling Recent Connections feature
         if (label && !blogLinkLabel) {
             auto but = qobject_cast<QPushButton*>(label->buddy());
             if (event->type() == QEvent::HoverEnter) {
@@ -663,6 +674,7 @@ namespace Robomongo
                 return true;
             }
         }
+        */
 
         if (blogLinkLabel) {
             if (event->type() == QEvent::HoverEnter) {
@@ -677,6 +689,8 @@ namespace Robomongo
             }
         }
 
+        /* Temporarily disabling Recent Connections feature
+        // todo: refactor to delete recent conn button
         auto but = qobject_cast<QPushButton*>(target);
         if (but) {
             if (event->type() == QEvent::HoverEnter) {
@@ -691,6 +705,7 @@ namespace Robomongo
                 return true;
             }
         }
+        */
 
         return QWidget::eventFilter(target, event);
     }

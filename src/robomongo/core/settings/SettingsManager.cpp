@@ -98,7 +98,8 @@ namespace Robomongo
     };
 
     std::vector<ConnectionSettings*>  SettingsManager::_connections;
-    std::vector<RecentConnection> SettingsManager::_recentConnections;
+    // Temporarily disabling Recent Connections feature
+    // std::vector<RecentConnection> SettingsManager::_recentConnections;
 
     /**
      * Creates SettingsManager for config file in default location
@@ -331,6 +332,7 @@ namespace Robomongo
             addConnection(connSettings);
         }
 
+        /* Temporarily disabling Recent Connections feature
         // Load recent connections
         _recentConnections.clear();
         QVariantList const& rlist = map.value("recentConnections").toList();
@@ -338,6 +340,7 @@ namespace Robomongo
             _recentConnections.push_back(RecentConnection(rconn.toMap().value("uuid").toString(),
                                                           rconn.toMap().value("name").toString().toStdString()));
         }
+        */
 
         _toolbars = map.value("toolbars").toMap();
         ToolbarSettingsContainerType::const_iterator it = _toolbars.find("connect");
@@ -423,6 +426,7 @@ namespace Robomongo
 
         map.insert("connections", list);
 
+        /* Temporarily disabling Recent Connections feature
         // 13. Save recent connections
         QVariantList recentConnsList;
         QVariantMap recentConnMap;
@@ -432,6 +436,7 @@ namespace Robomongo
             recentConnsList.append(recentConnMap);
         }
         map.insert("recentConnections", recentConnsList);
+        */
 
         map.insert("autoExec", _autoExec);
         map.insert("minimizeToTray", _minimizeToTray);
@@ -464,6 +469,7 @@ namespace Robomongo
         }
     }
 
+/* Temporarily disabling Recent Connections feature
     void SettingsManager::addRecentConnection(ConnectionSettings *connection)
     {
         _recentConnections.push_back(RecentConnection(connection->uuid(), connection->connectionName()));
@@ -489,6 +495,7 @@ namespace Robomongo
     {
         _recentConnections.clear();
     }
+*/
 
     ConnectionSettings* SettingsManager::getConnectionSettings(int uniqueId)
     {

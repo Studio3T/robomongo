@@ -339,12 +339,14 @@ namespace Robomongo
         if (answer != QMessageBox::Yes)
             return;
 
+        /* Temporarily disabling Recent Connections feature
         _settingsManager->deleteRecentConnection(connSettings);
         // Remove from WelcomeTab
         for (auto widget : QApplication::topLevelWidgets()) {
             if (auto mainWin = dynamic_cast<MainWindow*>(widget))
                 mainWin->getWelcomeTab()->removeRecentConnectionItem(connSettings);
         }
+        */
 
         _settingsManager->removeConnection(connSettings);
 

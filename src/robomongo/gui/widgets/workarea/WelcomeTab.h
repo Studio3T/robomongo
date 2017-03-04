@@ -23,7 +23,8 @@ namespace Robomongo
     public:
         WelcomeTab(QScrollArea *parent = nullptr);
         ~WelcomeTab();
-        void removeRecentConnectionItem(ConnectionSettings const* conn);
+        // Temporarily disabling Recent Connections feature
+        // void removeRecentConnectionItem(ConnectionSettings const* conn);
         QScrollArea* getParent() const { return _parent; }
         void resize();
 
@@ -35,30 +36,32 @@ namespace Robomongo
         void on_downloadPictureReply(QNetworkReply* reply);
         void on_downloadRssReply(QNetworkReply* reply);
         void on_allBlogsButton_clicked();
+        /* Temporarily disabling Recent Connections feature
         void on_clearButton_clicked();
         void on_deleteButton_clicked();
         void on_recentConnectionLinkClicked(QString const& link);
         void handle(ConnectionEstablishedEvent *event);
+        */
 
     private:
-        //void genericNetworkReplyHandler();
-        //void setText1FromCache(QFile* cacheFile);
-        void addRecentConnectionItem(ConnectionSettings const* conn, bool insertTop);
+        // Temporarily disabling Recent Connections feature
+        // void addRecentConnectionItem(ConnectionSettings const* conn, bool insertTop);
 
         QLabel* _pic1 = nullptr;
         QLabel* _blogsSection;
         QLabel* _blogsHeader;
         QPushButton* _allBlogsButton = nullptr;
         QVBoxLayout* _blogLinksLay;
-        QVBoxLayout* _recentConnsLay;
+        // Temporarily disabling Recent Connections feature
+        // QVBoxLayout* _recentConnsLay;
         QLabel* _whatsNewHeader;
         QLabel* _whatsNewText;
         QPushButton* _clearButton;
         QScrollArea* _parent;
         QPixmap _image;
 
-        std::vector<ConnectionSettings const*> _recentConnections;
-        int _lastAddedConnId = -1;
+        // Temporarily disabling Recent Connections feature
+        // std::vector<ConnectionSettings const*> _recentConnections;
     };
 
 }

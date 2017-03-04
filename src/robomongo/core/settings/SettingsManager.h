@@ -21,7 +21,7 @@ namespace Robomongo
     // Current config file directory
     QString const ConfigDir = QString("%1/.3T/robom/%2/").arg(QDir::homePath())
                                                          .arg(PROJECT_VERSION);  
-
+    /* Temporarily disabling Recent Connections feature
     struct RecentConnection
     {
         RecentConnection(QString const& uuid, std::string const& name)
@@ -38,7 +38,7 @@ namespace Robomongo
         QString uuid;
         std::string name;
     };
-
+    */
 
 /* ----------------------------- SettingsManager ------------------------------ */
 
@@ -95,10 +95,12 @@ namespace Robomongo
         /**
         * @brief Functions of Recent Connections feature
         */
+        /* Temporarily disabling Recent Connections feature
         static void addRecentConnection(ConnectionSettings *connection);
         static void deleteRecentConnection(ConnectionSettings *connection);
         static void setRecentConnections(std::vector<ConnectionSettings const*> const& recentConns);
         static void clearRecentConnections();
+        */
 
         /**
         * @brief  Finds and returns original (non-clone) connection settings which is 
@@ -122,8 +124,8 @@ namespace Robomongo
          */
         ConnectionSettingsContainerType connections() const { return _connections; }
         
-
-        std::vector<RecentConnection>& recentConnections() const { return _recentConnections; }
+        // Temporarily disabling Recent Connections feature
+        // std::vector<RecentConnection>& recentConnections() const { return _recentConnections; }
 
         ToolbarSettingsContainerType toolbars() const { return _toolbars; }
 
@@ -255,9 +257,11 @@ namespace Robomongo
          */
         static std::vector<ConnectionSettings*> _connections;
 
+        /* Temporarily disabling Recent Connections feature
         // List of recent connections that are shown on Welcome Tab
         static std::vector<RecentConnection> _recentConnections;
-        
+        */
+
         ToolbarSettingsContainerType _toolbars;
 
         // List of config. file absolute paths and related import functions. 

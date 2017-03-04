@@ -67,6 +67,7 @@ namespace Robomongo
         const QIcon& exportIcon() const;
         const QIcon& importIcon() const;
         const QIcon& deleteIcon() const;
+        const QIcon& deleteIconRed() const;
         const QIcon& deleteIconMouseHovered() const;
         const QIcon& mainWindowIcon() const;
         const QIcon& bsonObjectIcon() const;

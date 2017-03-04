@@ -18,9 +18,13 @@
 #include <QEvent>
 #include <QXmlStreamReader>
 #include <QMessageBox>
+#include <QToolButton>
+#include <QMenu>
+#include <QPixMap>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/MainWindow.h"
 #include "robomongo/core/domain/App.h"
 #include "robomongo/core/EventBus.h"
 #include "robomongo/core/settings/SettingsManager.h"
@@ -114,24 +118,46 @@ namespace Robomongo
         auto recentConnHeader = new QLabel(Recent_Connections_Header);
         //recentConnHeader->setMinimumWidth(_parent->width()*0.6);
 
-        auto clearButtonLay = new QHBoxLayout;
-        _clearButton = new QPushButton("Clear Recent Connections");
+        auto _connectButton = new QToolButton;
+        _connectButton->setText("Connect");
+        _connectButton->setIcon(GuiRegistry::instance().connectIcon().pixmap(16, 16));
+        _connectButton->setFocusPolicy(Qt::NoFocus);
+        _connectButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+
+        MainWindow* mainWindow;
+        for (auto wid : QApplication::topLevelWidgets()) {
+            if (qobject_cast<MainWindow*>(wid)) {
+                mainWindow = qobject_cast<MainWindow*>(wid);
+                break;
+            }
+        }
+        VERIFY(connect(_connectButton, SIGNAL(clicked()), mainWindow, SLOT(manageConnections())));
+
+        auto connectButtonMenu = new QMenu;
+        auto action = new QAction("Clear Recent Connections", this);
+        action->setIcon(GuiRegistry::instance().deleteIconRed().pixmap(14, 14));
+
+        VERIFY(connect(action, SIGNAL(triggered()), this, SLOT(on_clearButton_clicked())));
+        connectButtonMenu->addAction(action);
+
+#if !defined(Q_OS_MAC)
+        _connectButton->setMenu(connectButtonMenu);
+        _connectButton->setPopupMode(QToolButton::MenuButtonPopup);
+#endif
 
         // Load and add recent connections from settings
         auto const settingsManager = AppRegistry::instance().settingsManager();
         auto const& recentConnections = settingsManager->recentConnections();
         if (recentConnections.size() < 1) 
-            _clearButton->setDisabled(true);
+            action->setDisabled(true);
         else {
-            _clearButton->setStyleSheet("color: #106CD6");
             for (auto const& rconn : recentConnections) 
                 addRecentConnectionItem(settingsManager->getConnectionSettingsByUuid(rconn.uuid), false);
         }
 
-        VERIFY(connect(_clearButton, SIGNAL(clicked()), this, SLOT(on_clearButton_clicked())));
-        //_clearButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-        clearButtonLay->addWidget(_clearButton);
-        clearButtonLay->addStretch();
+        auto connectButtonLay = new QHBoxLayout;
+        connectButtonLay->addWidget(_connectButton);
+        connectButtonLay->addStretch();
 
         //// What's new section
         _whatsNewHeader = new QLabel(whatsNew);
@@ -193,7 +219,7 @@ namespace Robomongo
         leftLayout->addWidget(recentConnHeader, 0, Qt::AlignTop);
         leftLayout->addLayout(_recentConnsLay);
         leftLayout->addSpacing(10);
-        leftLayout->addLayout(clearButtonLay);
+        leftLayout->addLayout(connectButtonLay);
         //leftLayout->addStretch();
         leftLayout->addSpacing(20);
         leftLayout->addWidget(_whatsNewHeader, 0, Qt::AlignTop);
@@ -425,9 +451,7 @@ namespace Robomongo
             delete hlay;
         }
         
-        _clearButton->setDisabled(true);
-        _clearButton->setFocus();
-        _clearButton->setStyleSheet("");
+        // todo: disable clear all action
         _parent->verticalScrollBar()->setValue(0);  
 
         // Clear recent connections in config. file
@@ -454,13 +478,14 @@ namespace Robomongo
         delete button->label;
         delete button;
 
-        // Disable "clear all" button conditionally
-        if (_recentConnsLay->count() == 0) {
-            _clearButton->setDisabled(true);
-            _clearButton->setFocus();
-            _clearButton->setStyleSheet("");
-            _parent->verticalScrollBar()->setValue(0);
-        }
+        // todo: Refactor for clear all action
+        //// Disable "clear all" button conditionally
+        //if (_recentConnsLay->count() == 0) {
+        //    _clearButton->setDisabled(true);
+        //    _clearButton->setFocus();
+        //    _clearButton->setStyleSheet("");
+        //    _parent->verticalScrollBar()->setValue(0);
+        //}
 
         // todo: Clear and rebuild recent connections vector and save into config. file
         auto const settingsManager = AppRegistry::instance().settingsManager();
@@ -574,8 +599,9 @@ namespace Robomongo
         else
             _recentConnsLay->addLayout(hlay);
 
-        _clearButton->setEnabled(true);
-        _clearButton->setStyleSheet("color: #106CD6");
+        // todo: refactor for clear all action
+        //_clearButton->setEnabled(true);
+        //_clearButton->setStyleSheet("color: #106CD6");
     }
 
     void WelcomeTab::removeRecentConnectionItem(ConnectionSettings const* conn)

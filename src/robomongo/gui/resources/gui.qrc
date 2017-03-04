@@ -76,6 +76,7 @@
         <file>icons/plus_sign.png</file>
         <file>icons/minus_sign.png</file>
         <file>icons/delete.png</file>
+        <file>icons/delete_red_color.png</file>
         <file>icons/delete_mouse_hovered.png</file>
         <file>icons/welcome_tab_icon.png</file>
     </qresource>

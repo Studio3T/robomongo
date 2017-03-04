@@ -390,6 +390,12 @@ namespace Robomongo
         return icon;
     }
 
+    const QIcon &GuiRegistry::deleteIconRed() const
+    {
+        static const QIcon icon(":/robomongo/icons/delete_red_color.png");
+        return icon;
+    }
+
     const QIcon &GuiRegistry::deleteIconMouseHovered() const
     {
         static const QIcon icon(":/robomongo/icons/delete_mouse_hovered.png");

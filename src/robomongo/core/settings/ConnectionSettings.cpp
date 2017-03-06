@@ -35,8 +35,7 @@ namespace Robomongo
         _sslSettings(new SslSettings()),
         _isReplicaSet(false),
         _replicaSetSettings(new ReplicaSetSettings()),
-        _clone(isClone),
-        _uuid(isClone ? "" : QUuid::createUuid().toString())
+        _clone(isClone)
     { }
 
     ConnectionSettings::ConnectionSettings(const mongo::MongoURI& uri, bool isClone)  
@@ -48,8 +47,7 @@ namespace Robomongo
         _sslSettings(new SslSettings()),
         _isReplicaSet((uri.type() == mongo::ConnectionString::ConnectionType::SET)),
         _replicaSetSettings(new ReplicaSetSettings(uri)),
-        _clone(isClone),
-        _uuid(isClone ? "" : QUuid::createUuid().toString())
+        _clone(isClone)
     {
         if (!uri.getServers().empty()) {
             _host = uri.getServers().front().host();
@@ -125,7 +123,6 @@ namespace Robomongo
     ConnectionSettings *ConnectionSettings::clone() const
     {
         auto settings = new ConnectionSettings(true);
-        settings->setUniqueId(_uniqueId);
         settings->setUuid(_uuid);
         settings->apply(this);
         return settings;

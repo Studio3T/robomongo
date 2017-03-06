@@ -68,7 +68,6 @@ namespace Robomongo
 
 namespace Robomongo
 {
-    int SettingsManager::_uniqueIdCounter = 0;
 
     /**
     * @brief Robomongo config. files
@@ -454,7 +453,6 @@ namespace Robomongo
     void SettingsManager::addConnection(ConnectionSettings *connection)
     {
         _connections.push_back(connection);
-        connection->setUniqueId(_uniqueIdCounter++);
     }
 
     /**
@@ -496,17 +494,6 @@ namespace Robomongo
         _recentConnections.clear();
     }
 */
-
-    ConnectionSettings* SettingsManager::getConnectionSettings(int uniqueId)
-    {
-        for (auto const& connSettings : _connections){
-            if (connSettings->uniqueId() == uniqueId)
-                return connSettings;
-        }
-
-        LOG_MSG("Failed to find connection settings object by unique ID.", mongo::logger::LogSeverity::Warning());
-        return nullptr;
-    }
 
     ConnectionSettings* SettingsManager::getConnectionSettingsByUuid(QString const& uuid) const
     {

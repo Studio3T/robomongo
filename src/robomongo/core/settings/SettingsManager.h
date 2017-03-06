@@ -105,13 +105,9 @@ namespace Robomongo
         /**
         * @brief  Finds and returns original (non-clone) connection settings which is 
         *         loaded/saved from/into Robomongo config. file.
-        * @param  uniqueID : Unique ID for an original connection settings.
         * @return If uniqueID is valid returns original connection settings, 
         *         nullptr otherwise.
         */
-        ConnectionSettings* getConnectionSettings(int uniqueId);
-
-        // todo
         ConnectionSettings* getConnectionSettingsByUuid(QString const& uuid) const;
         ConnectionSettings* getConnectionSettingsByUuid(std::string const& uuid) const;
 
@@ -243,8 +239,8 @@ namespace Robomongo
         bool _imported;
         
         /**
-        * @brief This is an anonymous UUID that is generated when Robomongo is first 
-        *        installed on a user's machine and then launched for the first time  
+        * @brief This is an anonymous string taken from QUuid that is generated when Robomongo 
+        *        is first installed on a user's machine and then launched for the first time  
         *        It stays the same throughout all upgrades.
         */
         QString _anonymousID;
@@ -267,10 +263,5 @@ namespace Robomongo
         // List of config. file absolute paths and related import functions. 
         // Must be updated with care and with every new version. Details on cpp file.       
         static const std::vector<ConfigFileAndImportFunction> _configFilesAndImportFunctions;
-
-        // Unique Id counter which is incremented only when a non-clone ConnectionSettings 
-        // object is created and assigned can be assigned to clone or non-clone 
-        // ConnectionSettings objects in order to identify source object ID for a clone.
-        static int _uniqueIdCounter;
     };
 }

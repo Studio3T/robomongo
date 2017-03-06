@@ -147,14 +147,9 @@ namespace Robomongo
 
         bool isReplicaSet() const { return _isReplicaSet; }
         void setReplicaSet(bool flag) { _isReplicaSet = flag; }
-
-        void setUniqueId(int id) { _uniqueId = id; }
-        int uniqueId() const { return _uniqueId; }
-
-        // todo
+       
         QString uuid() const { return _uuid; }
         void setUuid(QString const& uuid) { _uuid = uuid; }
-
 
     private:
         CredentialSettings *findCredential(const std::string &databaseName) const;
@@ -182,7 +177,8 @@ namespace Robomongo
         // -1 for invalid(uninitialized) unique ID which should not be seen in theory
         int _uniqueId = -1;
 
-        // todo
+        // UUID string taken from QUuid. 
+        // It is used to identify the unique ID of a connection settings object
         QString _uuid;
     };
 }

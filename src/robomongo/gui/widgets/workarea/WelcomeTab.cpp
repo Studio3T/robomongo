@@ -179,6 +179,7 @@ namespace Robomongo
         _pic1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
         _blogsHeader = new QLabel(BlogsHeader);
+        _blogsHeader->setHidden(true);
         //_blogsHeader->setStyleSheet("background-color: yellow;");     
 
         //// --- Network Access Managers
@@ -199,6 +200,7 @@ namespace Robomongo
         //// --- Layouts
         auto buttonLay = new QHBoxLayout;
         _allBlogsButton = new QPushButton("All Blog Posts");
+        _allBlogsButton->setHidden(true);
         //button->setStyleSheet("font-size: 14pt; background-color: green; border: 2px; color: white");        
         _allBlogsButton->setStyleSheet("color: #106CD6");
         VERIFY(connect(_allBlogsButton, SIGNAL(clicked()), this, SLOT(on_allBlogsButton_clicked())));
@@ -428,6 +430,9 @@ namespace Robomongo
                 }
             }
         }
+
+        _blogsHeader->setVisible(true);
+        _allBlogsButton->setVisible(true);
         adjustSize();
 
         // Save into cache

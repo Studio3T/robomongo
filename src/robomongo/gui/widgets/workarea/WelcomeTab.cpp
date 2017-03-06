@@ -198,15 +198,13 @@ namespace Robomongo
         rssDownloader->get(QNetworkRequest(rssURL));
 
         //// --- Layouts
-        auto buttonLay = new QHBoxLayout;
         _allBlogsButton = new QPushButton("All Blog Posts");
         _allBlogsButton->setHidden(true);
         //button->setStyleSheet("font-size: 14pt; background-color: green; border: 2px; color: white");        
         _allBlogsButton->setStyleSheet("color: #106CD6");
         VERIFY(connect(_allBlogsButton, SIGNAL(clicked()), this, SLOT(on_allBlogsButton_clicked())));
         _allBlogsButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-        buttonLay->addWidget(_allBlogsButton);
-        buttonLay->addStretch();
+
 
         _blogLinksLay = new QVBoxLayout;
         _blogLinksLay->setAlignment(Qt::AlignLeft);
@@ -217,7 +215,7 @@ namespace Robomongo
         rightLayout->addWidget(_blogsHeader, 0, Qt::AlignTop);
         rightLayout->addLayout(_blogLinksLay);
         rightLayout->addSpacing(15);
-        rightLayout->addLayout(buttonLay);
+        rightLayout->addWidget(_allBlogsButton, 0, Qt::AlignLeft);
         rightLayout->addStretch();
 
         auto leftLayout = new QVBoxLayout;

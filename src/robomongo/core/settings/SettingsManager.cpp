@@ -35,29 +35,14 @@
 
 namespace Robomongo
 {
+    // 3T config files
+    auto const Studio3T_PropertiesDat = QString("%1/.3T/studio-3t/properties.dat").arg(QDir::homePath());
+    auto const DataMongodb_PropertiesDat = QString("%1/.3T/data-man-mongodb/properties.dat").arg(QDir::homePath());
+    auto const MongoChefPro_PropertiesDat = QString("%1/.3T/mongochef-pro/properties.dat").arg(QDir::homePath());
+    auto const MongoChefEnt_PropertiesDat = QString("%1/.3T/mongochef-enterprise/properties.dat").arg(QDir::homePath());
+
     // todo: 
-    QString getAnonymousID(QString const& zipFile, QString const& propfile)
-    {
-        QZipReader zipReader(zipFile);
-        if (!zipReader.exists() || !zipReader.isReadable()) {
-            // log warning
-            return QString("");
-        }
-
-        QXmlStreamReader reader(zipReader.fileData(propfile));
-        while (!reader.atEnd()) {
-            reader.readNext();
-            if (reader.text().toString() == "AnonymousID") {    // todo: refactor
-                reader.readNext();
-                reader.readNext();
-                reader.readNext();
-                reader.readNext();
-                return reader.text().toString();
-            }
-        }
-
-        return QString("");
-    }
+    QString getAnonymousID(QString const& zipFile, QString const& propfile);
 
     /**
         * @brief Version of schema
@@ -239,16 +224,11 @@ namespace Robomongo
         _loadMongoRcJs = map.value("loadMongoRcJs").toBool();
         _disableConnectionShortcuts = map.value("disableConnectionShortcuts").toBool();
         
-        if (map.contains("acceptedEulaVersions")) {
+        if (map.contains("acceptedEulaVersions")) 
             _acceptedEulaVersions = map.value("acceptedEulaVersions").toStringList().toSet();
-        }
-
-        //
+        
+        // x. Load anonymousID
         QString anonymousID = "";
-        auto const studio3T_PropertiesDat = QString("%1/.3T/studio-3t/properties.dat").arg(QDir::homePath());
-        auto const dataMongodb_PropertiesDat = QString("%1/.3T/data-man-mongodb/properties.dat").arg(QDir::homePath());
-        auto const mongochefpro_PropertiesDat = QString("%1/.3T/mongochef-pro/properties.dat").arg(QDir::homePath());
-        auto const mongochefent_PropertiesDat = QString("%1/.3T/mongochef-enterprise/properties.dat").arg(QDir::homePath());
 
         // If anonymousID has never been created or is empty, create a new one. Otherwise load the existing.
         if (map.contains("anonymousID")) {
@@ -258,24 +238,25 @@ namespace Robomongo
         }
 
         if (anonymousID.isEmpty()) {
-            QUuid id = getAnonymousID(studio3T_PropertiesDat, "Studio3T.properties");
+            QUuid id = getAnonymousID(Studio3T_PropertiesDat, "Studio3T.properties");
             if (!id.isNull())
                 anonymousID = id.toString();
         }
 
         if (anonymousID.isEmpty()) {
-            QUuid id = getAnonymousID(dataMongodb_PropertiesDat, "3T.data-man-mongodb.properties");
-            if (!id.isNull())
-                anonymousID = id.toString();
-        }
-        if (anonymousID.isEmpty()) {
-            QUuid id = getAnonymousID(mongochefpro_PropertiesDat, "3T.mongochef-pro.properties");
+            QUuid id = getAnonymousID(DataMongodb_PropertiesDat, "3T.data-man-mongodb.properties");
             if (!id.isNull())
                 anonymousID = id.toString();
         }
 
         if (anonymousID.isEmpty()) {
-            QUuid id = getAnonymousID(mongochefent_PropertiesDat, "3T.mongochef-enterprise.properties");
+            QUuid id = getAnonymousID(MongoChefPro_PropertiesDat, "3T.mongochef-pro.properties");
+            if (!id.isNull())
+                anonymousID = id.toString();
+        }
+
+        if (anonymousID.isEmpty()) {
+            QUuid id = getAnonymousID(MongoChefEnt_PropertiesDat, "3T.mongochef-enterprise.properties");
             if (!id.isNull())
                 anonymousID = id.toString();
         }
@@ -324,8 +305,8 @@ namespace Robomongo
         // 5. Load connections
         _connections.clear();
 
-        QVariantList list = map.value("connections").toList();
-        for (auto conn : list) {
+        QVariantList const& list = map.value("connections").toList();
+        for (auto const& conn : list) {
             auto connSettings = new ConnectionSettings(false);
             connSettings->fromVariant(conn.toMap());
             addConnection(connSettings);
@@ -497,7 +478,7 @@ namespace Robomongo
 
     ConnectionSettings* SettingsManager::getConnectionSettingsByUuid(QString const& uuid) const
     {
-        for (auto const& connSettings : _connections){
+        for (auto const connSettings : _connections){
             if (connSettings->uuid() == uuid)
                 return connSettings;
         }
@@ -658,42 +639,22 @@ namespace Robomongo
         return true;
     }
 
-
     bool SettingsManager::importConnectionsFrom_0_9_to_1_0_RC1()
     {
-        if (!QFile::exists(CONFIG_FILE_0_9))
-            return false;
-
-        QFile oldConfigFile(CONFIG_FILE_0_9);
-        if (!oldConfigFile.open(QIODevice::ReadOnly))
-            return false;
-
-        bool ok;
-        QJson::Parser parser;
-        QVariantMap vmap = parser.parse(oldConfigFile.readAll(), &ok).toMap();
-        if (!ok)
-            return false;
-
-        QVariantList const& vconns = vmap.value("connections").toList();
-        for (auto const& vcon : vconns)
-        {
-            QVariantMap const& vconn = vcon.toMap();
-            auto connSettings = new ConnectionSettings(false);
-            connSettings->fromVariant(vconn);
-            connSettings->setImported(true);
-
-            addConnection(connSettings);
-        }
-
-        return true;
+        return importConnectionsFromOldVersion(CONFIG_FILE_0_9);
     }
 
     bool SettingsManager::importConnectionsFrom_1_0_RC1_to_1_0_0()
     {
-        if (!QFile::exists(CONFIG_FILE_1_0_RC1))
+        return importConnectionsFromOldVersion(CONFIG_FILE_1_0_RC1);
+    }
+
+    bool SettingsManager::importConnectionsFromOldVersion(QString const& oldConfigFilePath)
+    {
+        if (!QFile::exists(oldConfigFilePath))
             return false;
 
-        QFile oldConfigFile(CONFIG_FILE_1_0_RC1);
+        QFile oldConfigFile(oldConfigFilePath);
         if (!oldConfigFile.open(QIODevice::ReadOnly))
             return false;
 
@@ -727,4 +688,28 @@ namespace Robomongo
 
         return count;
     }
+
+    QString getAnonymousID(QString const& zipFile, QString const& propfile)
+    {
+        QZipReader zipReader(zipFile);
+        if (!zipReader.exists() || !zipReader.isReadable()) {
+            // log warning
+            return QString("");
+        }
+
+        QXmlStreamReader reader(zipReader.fileData(propfile));
+        while (!reader.atEnd()) {
+            reader.readNext();
+            if (reader.text().toString() == "AnonymousID") {    // todo: refactor
+                reader.readNext();
+                reader.readNext();
+                reader.readNext();
+                reader.readNext();
+                return reader.text().toString();
+            }
+        }
+
+        return QString("");
+    }
+
 }

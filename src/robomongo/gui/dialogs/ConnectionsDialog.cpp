@@ -358,12 +358,12 @@ namespace Robomongo
         auto currentItem = dynamic_cast<ConnectionListWidgetItem*>(_listWidget->currentItem());
 
         // Do nothing if no item selected
-        if (currentItem == 0)
+        if (!currentItem)
             return;
 
         // Clone connection
         ConnectionSettings *connection = currentItem->connection()->clone();
-        // this is a special clone which will actually be a new connection and must have unique UUID
+        // This is a special clone which will actually be a new connection and must have unique UUID
         connection->setUuid(QUuid::createUuid().toString());    
         std::string newConnectionName = "Copy of " + connection->connectionName();
 

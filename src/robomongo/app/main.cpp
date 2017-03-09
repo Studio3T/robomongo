@@ -57,7 +57,7 @@ int main(int argc, char *argv[], char** envp)
 #endif
 
     // EULA License Agreement
-    auto settingsManager = Robomongo::AppRegistry::instance().settingsManager();
+    auto const settingsManager = Robomongo::AppRegistry::instance().settingsManager();
     if (!settingsManager->acceptedEulaVersions().contains(PROJECT_VERSION)) {
         Robomongo::EulaDialog eulaDialog;
         if (eulaDialog.exec() == QDialog::Rejected) {

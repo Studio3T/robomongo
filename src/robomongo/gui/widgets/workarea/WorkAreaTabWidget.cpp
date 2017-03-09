@@ -64,7 +64,6 @@ namespace Robomongo
         VERIFY(connect(tab, SIGNAL(closeOtherTabsRequested(int)), SLOT(ui_closeOtherTabsRequested(int))));
         VERIFY(connect(tab, SIGNAL(closeTabsToTheRightRequested(int)), SLOT(ui_closeTabsToTheRightRequested(int))));
 
-        // todo: change icon
         auto scrollArea = new QScrollArea;
         _welcomeTab = new WelcomeTab(scrollArea);
         scrollArea->setWidget(_welcomeTab);
@@ -146,7 +145,8 @@ namespace Robomongo
 #else
         QIcon const& icon = GuiRegistry::instance().welcomeTabIcon();
 #endif
-
+        // If welcome tab is closed open it as first tab otherwise refresh on 
+        // it's current place.
         if (indexOf(scrollArea) == -1)  // Welcome Tab is closed
             insertTab(0, scrollArea, icon, "Welcome");
         else 

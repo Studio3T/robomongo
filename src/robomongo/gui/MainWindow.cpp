@@ -638,12 +638,12 @@ namespace Robomongo
         VERIFY(connect(_networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_networkReply(QNetworkReply*))));
         
         // First check for updates 30 secs after program start
-        QTimer::singleShot(30000, this, SLOT(checkUpdates()));   //todo: make it 30000
+        QTimer::singleShot(30000, this, SLOT(checkUpdates()));   // 30000 for 30secs
 
         // Check for updates every 1 hour
         auto timer = new QTimer(this);
         VERIFY(connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdates())));
-        timer->start(3600000);     //todo: make it 1 hour (3600000 msec = 60 * 60 * 1000 msec)
+        timer->start(3600000);     // 1 hour = (3600000 msec = 60 * 60 * 1000 msec)
     }
 
     void MainWindow::createStylesMenu()
@@ -921,9 +921,9 @@ namespace Robomongo
 
     void MainWindow::toggleCheckUpdates()
     {
-        QAction *action = qobject_cast<QAction*>(sender());
-        Robomongo::AppRegistry::instance().settingsManager()->setCheckForUpdates(action->isChecked());
-        Robomongo::AppRegistry::instance().settingsManager()->save();
+        auto action = qobject_cast<QAction*>(sender());
+        AppRegistry::instance().settingsManager()->setCheckForUpdates(action->isChecked());
+        AppRegistry::instance().settingsManager()->save();
     }
 
     void MainWindow::toggleLineNumbers()
@@ -1187,17 +1187,16 @@ namespace Robomongo
 
     bool MainWindow::eventFilter(QObject *target, QEvent *event)
     {
-        auto button = qobject_cast<QPushButton*>(target);
-        if (!button)
+        auto closeUpdatesBarButton = qobject_cast<QPushButton*>(target);
+        if (!closeUpdatesBarButton)
             return false;
 
-        // todo: rename icons
         if (event->type() == QEvent::HoverEnter) {
-            button->setIcon(QIcon(":/robomongo/icons/close_hover_16x16_original.png")); 
+            closeUpdatesBarButton->setIcon(QIcon(":/robomongo/icons/close_hover_16x16_original.png"));
             return true;
         }
         else  if (event->type() == QEvent::HoverLeave) {
-            button->setIcon(QIcon(":/robomongo/icons/close_hover_16x16.png"));
+            closeUpdatesBarButton->setIcon(QIcon(":/robomongo/icons/close_hover_16x16.png"));
             return true;
         }
 

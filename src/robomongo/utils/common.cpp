@@ -9,7 +9,8 @@
 
 namespace Robomongo
 {
-    void genericEventErrorHandler(Event *event, const std::string &userFriendlyMessage, EventBus* bus, QObject* sender)
+    void genericEventErrorHandler(Event *event, const std::string &userFriendlyMessage, EventBus* bus, 
+                                  QObject* sender)
     {
         if (!event->isError())
             return;
@@ -23,9 +24,9 @@ namespace Robomongo
             LOG_MSG("Failed to publish OperationFailedEvent.", mongo::logger::LogSeverity::Error());
     }
 
-    bool fileExists(const QString &path)
+    bool fileExists(const QString &filePath)
     {
-        QFileInfo fileInfo(path);
+        QFileInfo fileInfo(filePath);
         return fileInfo.exists() && fileInfo.isFile();
     }
 

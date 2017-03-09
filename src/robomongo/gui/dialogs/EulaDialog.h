@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QWizard>
-#include <QNetworkReply>
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -10,6 +9,7 @@ class QCheckBox;
 class QPushButton;
 class QDialogButtonBox;
 class QComboBox;
+class QNetworkReply;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -29,11 +29,7 @@ namespace Robomongo
         void reject() override;
 
     protected:
-        /**
-        * @brief Reimplementing closeEvent in order to do some pre-close actions.
-        */
         void closeEvent(QCloseEvent *event) override;
-
 
     private Q_SLOTS:
         void on_agreeButton_clicked();
@@ -41,12 +37,11 @@ namespace Robomongo
         void on_next_clicked();
         void on_back_clicked();
         void on_finish_clicked();
-        void on_postAnswer(QNetworkReply*);
-
-        void postReplyReadyRead();
-        void postReplyError(QNetworkReply::NetworkError);
 
     private:
+
+        // Send name, last name and email data of user to home server
+        void postUserData() const;
 
         /**
         * @brief Restore window settings from system registry
@@ -63,7 +58,7 @@ namespace Robomongo
         QLineEdit* _emailEdit;
 
         QByteArray _postData;
-        QNetworkReply* _reply;
+        mutable QNetworkReply* _reply;
 
     };
 }

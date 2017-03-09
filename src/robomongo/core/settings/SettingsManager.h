@@ -206,6 +206,10 @@ namespace Robomongo
          * Load connection settings from previous versions of Robomongo
          */
         void importConnections();
+
+        // Imports connections from oldConfigFilePath into current config file
+        static bool importConnectionsFromOldVersion(QString const& oldConfigFilePath);
+        
         static bool importConnectionsFrom_0_8_5_to_0_9();
         static bool importConnectionsFrom_0_9_to_1_0_RC1();
         static bool importConnectionsFrom_1_0_RC1_to_1_0_0();
@@ -227,7 +231,7 @@ namespace Robomongo
         bool _disableConnectionShortcuts;
         QSet<QString> _acceptedEulaVersions;
         int _batchSize;
-        bool _checkForUpdates = true;   // true or false
+        bool _checkForUpdates = true;
         QString _currentStyle;
         QString _textFontFamily;
         int _textFontPointSize;

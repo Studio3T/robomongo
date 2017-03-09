@@ -91,14 +91,13 @@ namespace Robomongo
     */
     
     QString const whatsNew = "<p><h1><font color=\"#2d862d\">What's New</h1></p>";
-
     QString const BlogsHeader = "<p><h1><font color=\"#2d862d\">Blog Posts</h1></p>";
-
     QString const BlogLinkTemplate = "<a style = 'font-size:14px; color: #106CD6; text-decoration: none;'"
                                      "href='%1'>%2</a>";
 
     QUrl const Pic1_URL = QString("https://rm-feed.3t.io/1/image.png");
     QUrl const Text1_URL = QString("https://rm-feed.3t.io/1/contents.txt");
+    QUrl const Rss_URL = QString("https://blog.robomongo.org/rss/");
     QString const RssFileName = "rss.xml";
 
     QString const Text1_LastModifiedDateKey("wtText1LastModifiedDate");
@@ -155,6 +154,7 @@ namespace Robomongo
             action->setDisabled(true);
         else {
             for (auto const& rconn : recentConnections) 
+                // check nullptr for settingsManager->getConnectionSettingsByUuid()
                 addRecentConnectionItem(settingsManager->getConnectionSettingsByUuid(rconn.uuid), false);
         }
 
@@ -180,11 +180,11 @@ namespace Robomongo
 
         _blogsHeader = new QLabel(BlogsHeader);
         _blogsHeader->setHidden(true);
-        //_blogsHeader->setStyleSheet("background-color: yellow;");     
 
         //// --- Network Access Managers
         auto text1Downloader = new QNetworkAccessManager;
-        VERIFY(connect(text1Downloader, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_downloadTextReply(QNetworkReply*))));
+        VERIFY(connect(text1Downloader, SIGNAL(finished(QNetworkReply*)), 
+                       this, SLOT(on_downloadTextReply(QNetworkReply*))));
         text1Downloader->head(QNetworkRequest(Text1_URL));
 
         auto pic1Downloader = new QNetworkAccessManager;
@@ -193,14 +193,13 @@ namespace Robomongo
         pic1Downloader->head(QNetworkRequest(Pic1_URL));
 
         auto rssDownloader = new QNetworkAccessManager;
-        VERIFY(connect(rssDownloader, SIGNAL(finished(QNetworkReply*)), this, SLOT(on_downloadRssReply(QNetworkReply*))));
-        QUrl const rssURL = QString("https://blog.robomongo.org/rss/");
-        rssDownloader->get(QNetworkRequest(rssURL));
+        VERIFY(connect(rssDownloader, SIGNAL(finished(QNetworkReply*)), 
+                       this, SLOT(on_downloadRssReply(QNetworkReply*))));
+        rssDownloader->get(QNetworkRequest(Rss_URL));
 
         //// --- Layouts
         _allBlogsButton = new QPushButton("All Blog Posts");
         _allBlogsButton->setHidden(true);
-        //button->setStyleSheet("font-size: 14pt; background-color: green; border: 2px; color: white");        
         _allBlogsButton->setStyleSheet("color: #106CD6");
         VERIFY(connect(_allBlogsButton, SIGNAL(clicked()), this, SLOT(on_allBlogsButton_clicked())));
         _allBlogsButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -208,7 +207,6 @@ namespace Robomongo
 
         _blogLinksLay = new QVBoxLayout;
         _blogLinksLay->setAlignment(Qt::AlignLeft);
-        //_blogLinksLay->setSpacing(0);
 
         auto rightLayout = new QVBoxLayout;
         rightLayout->setContentsMargins(20, -1, -1, -1);
@@ -219,7 +217,6 @@ namespace Robomongo
         rightLayout->addStretch();
 
         auto leftLayout = new QVBoxLayout;
-        //leftLayout->setSpacing(0);
         /* Temporarily disabling Recent Connections feature
         leftLayout->addWidget(recentConnHeader, 0, Qt::AlignTop);
         leftLayout->addLayout(_recentConnsLay);
@@ -239,11 +236,8 @@ namespace Robomongo
         mainLayout->addLayout(leftLayout);
         mainLayout->addSpacing(20);
         mainLayout->addLayout(rightLayout);
-        //mainLayout->addStretch();
         mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
         setLayout(mainLayout);
-
-        //setStyleSheet("background-color: yellow");
     }
 
     WelcomeTab::~WelcomeTab()
@@ -256,8 +250,8 @@ namespace Robomongo
         auto const SIXTY_PERCENT_OF_TAB = _parent->width() * TEXT_TO_TAB_RATIO;
 
         auto hideOrShowWhatsNewHeader = [this]() {
-            _whatsNewHeader->setHidden((!_pic1->pixmap() || _pic1->pixmap()->isNull())
-                && _whatsNewText->text().isEmpty() ? true : false);
+            _whatsNewHeader->setHidden( (!_pic1->pixmap() || _pic1->pixmap()->isNull())
+                                        && _whatsNewText->text().isEmpty() ? true : false);
         };
 
         if (reply->operation() == QNetworkAccessManager::HeadOperation) {
@@ -304,15 +298,15 @@ namespace Robomongo
             if (str.isEmpty()) {
                 LOG_MSG("WelcomeTab: Failed to download text file from URL. Reason: " + reply->errorString(),
                     mongo::logger::LogSeverity::Warning());
-                // todo: load from cache?
                 hideOrShowWhatsNewHeader();
                 return;
             }
+
             _whatsNewText->setText(str);
             _whatsNewText->setMinimumWidth(SIXTY_PERCENT_OF_TAB);
             adjustSize();
             saveIntoCache(Text1_URL.fileName(), str, Text1_LastModifiedDateKey,
-                reply->header(QNetworkRequest::LastModifiedHeader).toString());
+                          reply->header(QNetworkRequest::LastModifiedHeader).toString());
         }
     }
 
@@ -326,7 +320,8 @@ namespace Robomongo
                                         && _whatsNewText->text().isEmpty() ? true : false);        
         };
 
-        if (reply->error() != QNetworkReply::NoError) { // Network error, load from cache
+        // Network error, load from cache
+        if (reply->error() != QNetworkReply::NoError) { 
             image = QPixmap(CacheDir + Pic1_URL.fileName());
             if (image.isNull())
                 return;
@@ -339,18 +334,18 @@ namespace Robomongo
 
         // No network error
         if (reply->operation() == QNetworkAccessManager::HeadOperation) {
-                QString const& createDate = reply->header(QNetworkRequest::LastModifiedHeader).toString();
-                // If the file in URL is not newer load from cache, otherwise get from internet
-                if (createDate == AppRegistry::instance().settingsManager()->cacheData(Image1_LastModifiedDateKey)
-                    && fileExists(CacheDir + Pic1_URL.fileName())) 
-                {
-                    image = QPixmap(CacheDir + Pic1_URL.fileName());    // Load from cache
-                }
-                else {   // Get from internet
-                    reply->manager()->get(QNetworkRequest(Pic1_URL));
-                    hideOrShowWhatsNewHeader();
-                    return;
-                }
+            QString const& createDate = reply->header(QNetworkRequest::LastModifiedHeader).toString();
+            // If the file in URL is not newer load from cache, otherwise get from internet
+            if (createDate == AppRegistry::instance().settingsManager()->cacheData(Image1_LastModifiedDateKey)
+                && fileExists(CacheDir + Pic1_URL.fileName())) 
+            {
+                image = QPixmap(CacheDir + Pic1_URL.fileName());    // Load from cache
+            }
+            else {   // Get from internet
+                reply->manager()->get(QNetworkRequest(Pic1_URL));
+                hideOrShowWhatsNewHeader();
+                return;
+            }
         }
         else if (reply->operation() == QNetworkAccessManager::GetOperation) {
             image.loadFromData(reply->readAll());
@@ -417,7 +412,6 @@ namespace Robomongo
                     blogLink->setOpenExternalLinks(true);
                     blogLink->setWordWrap(true);
                     blogLink->setMinimumWidth(THIRTY_PERCENT_OF_TAB);
-                    //blogLink->setStyleSheet("background-color: yellow;");
                     _blogLinksLay->addWidget(blogLink);
                     _blogLinksLay->addWidget(new QLabel("<font color='gray'>" + pubDate + "</font>"));
                     _blogLinksLay->addSpacing(_blogLinksLay->spacing());
@@ -507,6 +501,7 @@ namespace Robomongo
                 if (label) {
                     // todo: "href='uuid'>%2</a></p>");
                     auto const uuid = label->text().split("href='")[1].split("'")[0];
+                    // check nullptr for settingsManager->getConnectionSettingsByUuid()
                     _recentConnections.push_back(settingsManager->getConnectionSettingsByUuid(uuid));
                 }
             }
@@ -532,6 +527,7 @@ namespace Robomongo
             return;
 
         auto const settingsManager = AppRegistry::instance().settingsManager();
+        // check nullptr for settingsManager->getConnectionSettingsByUuid()
         auto conn = settingsManager->getConnectionSettingsByUuid(event->connInfo._uuid);
 
         if (!conn)
@@ -566,6 +562,7 @@ namespace Robomongo
                 if (label) {
                     // todo: "href='uuid'>%2</a></p>");
                     auto const uuid = label->text().split("href='")[1].split("'")[0];
+                    // check nullptr for settingsManager->getConnectionSettingsByUuid()
                     _recentConnections.push_back(settingsManager->getConnectionSettingsByUuid(uuid));
                 }
             }
@@ -679,6 +676,7 @@ namespace Robomongo
         }
         */
 
+        // Make blog link underlined on mouse hover
         if (blogLinkLabel) {
             if (event->type() == QEvent::HoverEnter) {
                 blogLinkLabel->setText(blogLinkLabel->text().replace("text-decoration: none;", "text-decoration: ;"));
@@ -787,19 +785,5 @@ namespace Robomongo
         AppRegistry::instance().settingsManager()->save();
         return true;
     }
-
-
-    // todo: remove
-    //    std::unique_ptr<QFile> loadFileFromCache(QString const& fileName)
-    //    {
-    ////        if (fileExists(CacheDir + fileName)) {   // Use cached file
-    //            std::unique_ptr<QFile> file(new QFile(CacheDir + fileName));
-    //            if (file->open(QFile::ReadOnly | QFile::Text)) {
-    //                return file;
-    //            }
-    ////        }
-    //
-    //        return nullptr;
-    //    }
 
 }

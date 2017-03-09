@@ -13,6 +13,7 @@
 #include <QRadioButton>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
+#include <QNetworkReply>
 #include <QUrlQuery>
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -46,8 +47,8 @@ namespace Robomongo
         auto radioButtonsLay = new QHBoxLayout;
         radioButtonsLay->setAlignment(Qt::AlignHCenter);
         radioButtonsLay->setSpacing(30);
-        radioButtonsLay->addWidget(agreeButton/*, Qt::AlignCenter*/);
-        radioButtonsLay->addWidget(notAgreeButton/*, Qt::AlignCenter*/);
+        radioButtonsLay->addWidget(agreeButton);
+        radioButtonsLay->addWidget(notAgreeButton);
 
         auto textBrowser = new QTextBrowser;
         textBrowser->setOpenExternalLinks(true);
@@ -86,7 +87,7 @@ namespace Robomongo
             "<a href='https://studio3t.com/privacy-policy'>Privacy Policy</a>.");
         buttomLabel->setOpenExternalLinks(true);
 
-        auto bodyLabel = new QLabel("Share your email address with us and we'll keep you"
+        auto bodyLabel = new QLabel("Share your email address with us and we'll keep you "
             "up-to-date with updates from us and new features as they come out.");
         bodyLabel->setWordWrap(true);
 
@@ -96,18 +97,18 @@ namespace Robomongo
         mainLayout2->addWidget(bodyLabel,           2, 0 , 1, 2);
         mainLayout2->addWidget(new QLabel,          3, 0, 1, 2);
         mainLayout2->addWidget(nameLabel,           4, 0);
-        mainLayout2->addWidget(_nameEdit,            4, 1);
+        mainLayout2->addWidget(_nameEdit,           4, 1);
         mainLayout2->addWidget(lastNameLabel,       5, 0);
-        mainLayout2->addWidget(_lastNameEdit,        5, 1);
+        mainLayout2->addWidget(_lastNameEdit,       5, 1);
         mainLayout2->addWidget(emailLabel,          6, 0);
-        mainLayout2->addWidget(_emailEdit,           6, 1);
+        mainLayout2->addWidget(_emailEdit,          6, 1);
         mainLayout2->addWidget(new QLabel,          7, 0, 1, 2);
         mainLayout2->addWidget(buttomLabel,         8, 0, 1, 2);
 
         secondPage->setLayout(mainLayout2);
 
 #ifndef _WIN32
-        addPage(firstPage);     // Disable license page on Windows, it is already shown in installer
+        addPage(firstPage);     // Disable license page on Windows, it is already shown in windows installer
 #endif
         addPage(secondPage);
 
@@ -143,24 +144,7 @@ namespace Robomongo
         saveWindowSettings();
 
         // Build post data and send
-        QJsonObject jsonStr{
-            { "email", _emailEdit->text() },
-            { "firstName", _nameEdit->text() },
-            { "lastName", _lastNameEdit->text() }
-        };
-
-        QJsonDocument jsonDoc(jsonStr);
-        QUrlQuery postData(jsonDoc.toJson());
-        postData = QUrlQuery("rd=" + postData.toString(QUrl::FullyEncoded).toUtf8());
-
-        QNetworkRequest request(QUrl("https://rm-form.3t.io/"));
-        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-
-        auto networkManager = new QNetworkAccessManager(this);
-        VERIFY(connect(networkManager, SIGNAL(finished(QNetworkReply*)), SLOT(on_postAnswer(QNetworkReply*))));
-        _reply = networkManager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
-        connect(_reply, SIGNAL(readyRead()), this, SLOT(postReplyReadyRead()));
-        connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(postReplyError(QNetworkReply::NetworkError)));
+        postUserData();
 
         QDialog::accept();
     }
@@ -208,23 +192,28 @@ namespace Robomongo
         accept();
     }
 
-    void EulaDialog::on_postAnswer(QNetworkReply* reply)
+    void EulaDialog::postUserData() const
     {
-        //todo
-        //auto xx = reply->readAll().toStdString();
-    }
+        if (_emailEdit->text().isEmpty())
+            return;
 
-    void EulaDialog::postReplyReadyRead()
-    {
-        // todo
-        //auto xx = _reply->readAll().toStdString();
-    }
+        // Build post data and send
+        QJsonObject jsonStr {
+            { "email", _emailEdit->text() },
+            { "firstName", _nameEdit->text() },
+            { "lastName", _lastNameEdit->text() }
+        };
 
-    void EulaDialog::postReplyError(QNetworkReply::NetworkError error)
-    {
-        // todo
-        //auto xx = 55;
-        //++xx;
+        QJsonDocument jsonDoc(jsonStr);
+        QUrlQuery postData(jsonDoc.toJson());
+        postData = QUrlQuery("rd=" + postData.toString(QUrl::FullyEncoded).toUtf8());
+
+        QNetworkRequest request(QUrl("https://rm-form.3t.io/"));
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+
+        auto networkManager = new QNetworkAccessManager;
+        VERIFY(connect(networkManager, SIGNAL(finished(QNetworkReply*)), SLOT(on_postAnswer(QNetworkReply*))));
+        _reply = networkManager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
     }
 
     void EulaDialog::saveWindowSettings() const

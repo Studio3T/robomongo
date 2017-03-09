@@ -97,7 +97,8 @@ namespace Robomongo
         if (tabIndex < 0)
             return;
 
-        // If this is a Welcome tab, return. Note: Scroll area represents a WelcomeTab.
+        // If this is a Welcome tab, do not show right click menu. 
+        // Note: Scroll area represents a WelcomeTab.
         auto tabWidget = qobject_cast<QTabWidget*>(parentWidget());
         if (qobject_cast<QScrollArea*>(tabWidget->widget(tabIndex)))
             return;

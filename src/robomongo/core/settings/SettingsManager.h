@@ -202,6 +202,10 @@ namespace Robomongo
          */
         QVariantMap convertToMap() const;
 
+        // Find existing anonymousID from RoboM and 3T config files, if not found create
+        // a new anonymousID.
+        QString getOrCreateAnonymousID(QVariantMap const& map) const;
+
         /**
          * Load connection settings from previous versions of Robomongo
          */

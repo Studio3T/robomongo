@@ -41,8 +41,16 @@ namespace Robomongo
     auto const MongoChefPro_PropertiesDat = QString("%1/.3T/mongochef-pro/properties.dat").arg(QDir::homePath());
     auto const MongoChefEnt_PropertiesDat = QString("%1/.3T/mongochef-enterprise/properties.dat").arg(QDir::homePath());
 
-    // todo: 
-    QString getAnonymousID(QString const& zipFile, QString const& propfile);
+    const std::vector<std::pair<QString, QString>> S_3T_ZipFile_And_ConfigFile_List
+    {
+        { Studio3T_PropertiesDat, "Studio3T.properties" },
+        { DataMongodb_PropertiesDat, "3T.data-man-mongodb.properties" },
+        { MongoChefPro_PropertiesDat, "3T.mongochef-pro.properties" },
+        { MongoChefEnt_PropertiesDat, "3T.mongochef-enterprise.properties" }
+    };
+
+    // Extract zipFile and find the value of "anonymousID" field in propFile
+    QString extractAnonymousID(QString const& zipFile, QString const& propfile);
 
     /**
         * @brief Version of schema
@@ -227,44 +235,8 @@ namespace Robomongo
         if (map.contains("acceptedEulaVersions")) 
             _acceptedEulaVersions = map.value("acceptedEulaVersions").toStringList().toSet();
         
-        // x. Load anonymousID
-        QString anonymousID = "";
-
-        // If anonymousID has never been created or is empty, create a new one. Otherwise load the existing.
-        if (map.contains("anonymousID")) {
-            QUuid id = map.value("anonymousID").toString();
-            if (!id.isNull())
-                anonymousID = id.toString();
-        }
-
-        if (anonymousID.isEmpty()) {
-            QUuid id = getAnonymousID(Studio3T_PropertiesDat, "Studio3T.properties");
-            if (!id.isNull())
-                anonymousID = id.toString();
-        }
-
-        if (anonymousID.isEmpty()) {
-            QUuid id = getAnonymousID(DataMongodb_PropertiesDat, "3T.data-man-mongodb.properties");
-            if (!id.isNull())
-                anonymousID = id.toString();
-        }
-
-        if (anonymousID.isEmpty()) {
-            QUuid id = getAnonymousID(MongoChefPro_PropertiesDat, "3T.mongochef-pro.properties");
-            if (!id.isNull())
-                anonymousID = id.toString();
-        }
-
-        if (anonymousID.isEmpty()) {
-            QUuid id = getAnonymousID(MongoChefEnt_PropertiesDat, "3T.mongochef-enterprise.properties");
-            if (!id.isNull())
-                anonymousID = id.toString();
-        }
-
-        if (anonymousID.isEmpty())
-            anonymousID = QUuid::createUuid().toString();
-
-        _anonymousID = anonymousID;
+        // Load anonymousID
+        _anonymousID = getOrCreateAnonymousID(map);
 
         // Load AutocompletionMode
         if (map.contains("autocompletionMode")) {
@@ -426,6 +398,32 @@ namespace Robomongo
         map.insert("cacheData", _cacheData);
 
         return map;
+    }
+
+    QString SettingsManager::getOrCreateAnonymousID(QVariantMap const& map) const
+    {
+        QString anonymousID = "";
+
+        // If anonymousID has never been created or is empty, create a new one. Otherwise load the existing.
+        if (map.contains("anonymousID")) {
+            QUuid id = map.value("anonymousID").toString();
+            if (!id.isNull())
+                anonymousID = id.toString();
+        }
+
+        for (auto const& zipFileAndConfigFile : S_3T_ZipFile_And_ConfigFile_List) {
+            if (!anonymousID.isEmpty())
+                break;
+
+            QUuid const& id = extractAnonymousID(zipFileAndConfigFile.first, zipFileAndConfigFile.second);
+            if (!id.isNull())
+                anonymousID = id.toString();
+        }
+
+        if (anonymousID.isEmpty())
+            anonymousID = QUuid::createUuid().toString();
+
+        return anonymousID;
     }
 
     /**
@@ -689,18 +687,16 @@ namespace Robomongo
         return count;
     }
 
-    QString getAnonymousID(QString const& zipFile, QString const& propfile)
+    QString extractAnonymousID(QString const& zipFile, QString const& propfile)
     {
         QZipReader zipReader(zipFile);
-        if (!zipReader.exists() || !zipReader.isReadable()) {
-            // log warning
-            return QString("");
-        }
+        if (!zipReader.exists() || !zipReader.isReadable()) 
+            return QString("");       
 
         QXmlStreamReader reader(zipReader.fileData(propfile));
         while (!reader.atEnd()) {
             reader.readNext();
-            if (reader.text().toString() == "AnonymousID") {    // todo: refactor
+            if (reader.text().toString() == "AnonymousID") {
                 reader.readNext();
                 reader.readNext();
                 reader.readNext();

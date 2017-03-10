@@ -373,9 +373,6 @@ namespace Robomongo
 
     void WelcomeTab::on_downloadRssReply(QNetworkReply* reply)
     {
-        // todo: if reply->error(), log and return
-        // todo: load from cache if download fails
-
         auto const THIRTY_PERCENT_OF_TAB = _parent->width() * BLOG_TO_TAB_RATIO;
 
         QByteArray data = reply->readAll();

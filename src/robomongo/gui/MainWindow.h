@@ -8,6 +8,7 @@ class QLabel;
 class QToolBar;
 class QDockWidget;
 class QToolButton;
+class QPushButton;
 class QTreeWidgetItem;
 class QNetworkReply;
 class QNetworkAccessManager;
@@ -85,7 +86,8 @@ namespace Robomongo
         void hideEvent(QHideEvent *event) override;
         void showEvent(QShowEvent *event) override;
         bool eventFilter(QObject *target, QEvent *event) override;
-
+        void resizeEvent(QResizeEvent* event) override;
+        
     private Q_SLOTS:
         void updateMenus();
         void setUtcTimeZone();
@@ -127,6 +129,7 @@ namespace Robomongo
         void createStatusBar();
         void restoreWindowSettings();
         void saveWindowSettings() const;
+        void adjustUpdatesBarHeight();
 
         QDockWidget *_logDock;
 
@@ -152,6 +155,7 @@ namespace Robomongo
         QToolBar *_execToolBar;
         QToolBar *_updateBar;
         QLabel *_updateLabel;
+        QPushButton* _closeButton;
 
         QNetworkAccessManager *_networkAccessManager;
 

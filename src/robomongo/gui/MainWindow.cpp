@@ -22,6 +22,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QUrl>
+#include <QTextDocument>
 
 #include <mongo/logger/log_severity.h>
 #include "robomongo/core/settings/SettingsManager.h"
@@ -88,6 +89,8 @@ namespace
         Robomongo::AppRegistry::instance().settingsManager()->setLineNumbers(showLineNumbers);
         Robomongo::AppRegistry::instance().settingsManager()->save();
     }
+
+
 } 
 /* End of anonymous namespace */
 
@@ -558,24 +561,23 @@ namespace Robomongo
         addToolBar(_execToolBar);
 
         _updateLabel = new QLabel;
-        //_updateLabel->setWordWrap(true);
+        _updateLabel->setWordWrap(true);
         _updateLabel->setOpenExternalLinks(true);
         _updateLabel->setTextFormat(Qt::TextFormat::RichText);
         _updateLabel->setIndent(_updateLabel->fontMetrics().width("T"));
-        auto closeButton = new QPushButton;
-        closeButton->setIcon(QIcon(":/robomongo/icons/close_hover_16x16.png"));
-        //closeButton->setStyleSheet("background-color: red");
-        closeButton->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
-        closeButton->setMouseTracking(true);
-        closeButton->setAttribute(Qt::WA_Hover);
-        closeButton->installEventFilter(this);
-        VERIFY(connect(closeButton, SIGNAL(clicked()), this, SLOT(on_closeButton_clicked())));
+
+        _closeButton = new QPushButton;
+        _closeButton->setIcon(QIcon(":/robomongo/icons/close_hover_16x16.png"));
+        _closeButton->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+        _closeButton->setMouseTracking(true);
+        _closeButton->setAttribute(Qt::WA_Hover);
+        _closeButton->installEventFilter(this);
+        VERIFY(connect(_closeButton, SIGNAL(clicked()), this, SLOT(on_closeButton_clicked())));
 
         auto updateBarLay = new QHBoxLayout;
-        updateBarLay->addWidget(_updateLabel, Qt::AlignLeft);
-        updateBarLay->addStretch();
-        updateBarLay->addWidget(closeButton, Qt::AlignRight);
-        //updateBarLay->setSpacing(0);
+        updateBarLay->addWidget(_updateLabel);
+        updateBarLay->addWidget(_closeButton, Qt::AlignRight);
+        updateBarLay->setSpacing(0);
         updateBarLay->setMargin(0);
 
         auto updateBarWid = new QWidget;
@@ -583,7 +585,6 @@ namespace Robomongo
 
         _updateBar = new QToolBar("Updates Toolbar");
         _updateBar->addWidget(updateBarWid);
-        //_updateBar->setStyleSheet("background-color: #b3e6b3; border: none;");  // green
         _updateBar->setStyleSheet("background-color: #b3e0ff; border: none;");  // blue
         addToolBarBreak();
         addToolBar(_updateBar);
@@ -740,6 +741,16 @@ namespace Robomongo
     {
         QSettings settings("3T", "RoboM");
         settings.setValue("MainWindow/geometry", saveGeometry());
+    }
+
+    void MainWindow::adjustUpdatesBarHeight()
+    {
+        QTextDocument doc;
+        doc.setHtml(_updateLabel->text());
+        auto strWidth = _updateLabel->fontMetrics().width(doc.toPlainText());
+        auto lineHeight = _updateLabel->fontMetrics().height();
+        auto widthForUpdateStr = width() - _closeButton->width();
+        _updateLabel->setFixedHeight((strWidth / widthForUpdateStr + 1) * lineHeight);
     }
 
     void MainWindow::open()
@@ -1203,6 +1214,12 @@ namespace Robomongo
         return QWidget::eventFilter(target, event);
     }
 
+    void MainWindow::resizeEvent(QResizeEvent* event)
+    {
+        QMainWindow::resizeEvent(event);
+        adjustUpdatesBarHeight();
+    }
+
     void MainWindow::handle(QueryWidgetUpdatedEvent *event)
     {
         _orientationAction->setEnabled(event->numOfResults() > 1);
@@ -1374,8 +1391,10 @@ namespace Robomongo
 
         str.replace('+', ' ');
         str.remove("Update,");
+
         _updateLabel->setText(str);
         _updateBar->setVisible(true);
+        adjustUpdatesBarHeight();
     }
 
     void MainWindow::on_closeButton_clicked()

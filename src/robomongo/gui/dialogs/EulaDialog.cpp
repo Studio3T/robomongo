@@ -87,7 +87,7 @@ namespace Robomongo
             "<a href='https://studio3t.com/privacy-policy'>Privacy Policy</a>.");
         buttomLabel->setOpenExternalLinks(true);
 
-        auto bodyLabel = new QLabel("Share your email address with us and we'll keep you "
+        auto bodyLabel = new QLabel("\nShare your email address with us and we'll keep you "
             "up-to-date with updates from us and new features as they come out.");
         bodyLabel->setWordWrap(true);
 

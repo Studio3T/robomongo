@@ -126,6 +126,13 @@ Create package for your OS in `build/release/package` folder:
 
     $ bin/pack
 
-**Notes**
+**Important Notes**
 - For Ubuntu 16.04 builds, it has been reported that Robomongo /bin/configure step might fail and installing mesa-common-dev package solves it. Details: https://github.com/paralect/robomongo/issues/1268 
+
+- For Centos builds, Robomongo /bin/configure step might fail due to error: `failed to find gl/gl.h`. In this case, the following packages must be installed:
+  ```sh
+$ sudo yum install mesa-libGL
+$ sudo yum install mesa-libGL-devel
+  ```
+
 

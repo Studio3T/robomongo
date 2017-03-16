@@ -26,7 +26,7 @@ namespace Robomongo
     EulaDialog::EulaDialog(QWidget *parent)
         : QWizard(parent)
     {
-        setWindowTitle("Thank you!");
+        setWindowTitle("EULA");
 
         QSettings settings("3T", "RoboM");
         if (settings.contains("EulaDialog/size"))
@@ -128,9 +128,13 @@ namespace Robomongo
         button(QWizard::CustomButton1)->setHidden(true);
         button(QWizard::CustomButton2)->setHidden(true);
         button(QWizard::CustomButton3)->setEnabled(true);
-#else
+#elif __APPLE__
         button(QWizard::CustomButton1)->setDisabled(true);
         button(QWizard::CustomButton2)->setDisabled(true);
+        button(QWizard::CustomButton3)->setDisabled(true);
+#else   // linux
+        button(QWizard::CustomButton1)->setHidden(true);
+        button(QWizard::CustomButton2)->setHidden(true);
         button(QWizard::CustomButton3)->setDisabled(true);
 #endif
 
@@ -163,12 +167,20 @@ namespace Robomongo
 
     void EulaDialog::on_agreeButton_clicked()
     {
+#ifdef __linux__
+        button(QWizard::CustomButton3)->setEnabled(true);
+#else
         button(QWizard::CustomButton2)->setEnabled(true);
+#endif
     }
 
     void EulaDialog::on_notAgreeButton_clicked()
     {
+#ifdef __linux__
+        button(QWizard::CustomButton3)->setEnabled(false);
+#else
         button(QWizard::CustomButton2)->setEnabled(false);
+#endif
     }
 
     void EulaDialog::on_next_clicked()
@@ -212,7 +224,6 @@ namespace Robomongo
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
         auto networkManager = new QNetworkAccessManager;
-        VERIFY(connect(networkManager, SIGNAL(finished(QNetworkReply*)), SLOT(on_postAnswer(QNetworkReply*))));
         _reply = networkManager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
     }
 

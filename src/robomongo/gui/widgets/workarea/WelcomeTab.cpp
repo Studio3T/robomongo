@@ -20,7 +20,6 @@
 #include <QMessageBox>
 #include <QToolButton>
 #include <QMenu>
-#include <QPixMap>
 
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -92,7 +91,7 @@ namespace Robomongo
     
     QString const whatsNew = "<p><h1><font color=\"#2d862d\">What's New</h1></p>";
     QString const BlogsHeader = "<p><h1><font color=\"#2d862d\">Blog Posts</h1></p>";
-    QString const BlogLinkTemplate = "<a style = 'font-size:14px; color: #106CD6; text-decoration: none;'"
+    QString const BlogLinkTemplate = "<a style = 'color: #106CD6; text-decoration: none;'"
                                      "href='%1'>%2</a>";
 
     QUrl const Pic1_URL = QString("https://rm-feed.3t.io/1/image.png");

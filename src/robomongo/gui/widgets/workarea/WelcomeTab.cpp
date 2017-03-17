@@ -94,9 +94,17 @@ namespace Robomongo
     QString const BlogLinkTemplate = "<a style = 'color: #106CD6; text-decoration: none;'"
                                      "href='%1'>%2</a>";
 
+// Not using https for Linux due to crashes and unstable behaviors experienced.
+#ifdef __linux__
+    QUrl const Pic1_URL = QString("http://rm-feed.3t.io/1/image.png");
+    QUrl const Text1_URL = QString("http://rm-feed.3t.io/1/contents.txt");
+    QUrl const Rss_URL = QString("http://blog.robomongo.org/rss/");
+#else
     QUrl const Pic1_URL = QString("https://rm-feed.3t.io/1/image.png");
     QUrl const Text1_URL = QString("https://rm-feed.3t.io/1/contents.txt");
     QUrl const Rss_URL = QString("https://blog.robomongo.org/rss/");
+#endif
+
     QString const RssFileName = "rss.xml";
 
     QString const Text1_LastModifiedDateKey("wtText1LastModifiedDate");

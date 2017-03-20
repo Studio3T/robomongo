@@ -15,7 +15,7 @@ namespace Robomongo
 
     public:
 
-        enum ErrorCode { Unknown, SetPrimaryUnreachable };
+        enum ErrorCode { Unknown, SetPrimaryUnreachable, SameSetNameNotSupported };
 
         /**
          * @brief Creates "null" (or, in other words, empty) error.

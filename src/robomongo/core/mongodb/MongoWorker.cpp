@@ -1,5 +1,7 @@
 #include "robomongo/core/mongodb/MongoWorker.h"
 
+#include <algorithm>
+
 #include <QThread>
 
 #include "mongo/client/global_conn_pool.h"
@@ -138,6 +140,7 @@ namespace Robomongo
         QMutexLocker lock(&_firstConnectionMutex);
 
         std::unique_ptr<ReplicaSet> repSetInfo(new ReplicaSet);
+        auto errorCode = EventError::ErrorCode::Unknown;
 
         try {
             mongo::DBClientBase *conn = getConnection(true);
@@ -167,7 +170,7 @@ namespace Robomongo
                 }
                 resetGlobalSSLparams();
 
-                reply(event->sender(), new EstablishConnectionResponse(this, EventError(errorReason),             
+                reply(event->sender(), new EstablishConnectionResponse(this, EventError(errorReason, errorCode),             
                       event->connectionType, event->uuid, *repSetInfo.release(), 
                       EstablishConnectionResponse::MongoConnection));
 
@@ -180,8 +183,19 @@ namespace Robomongo
             if (_connSettings->isReplicaSet()) {
                 bool refresh = (ConnectionType::ConnectionRefresh == event->connectionType);
                 ReplicaSet const& setInfo = getReplicaSetInfo(refresh);
+
+                // Check if same set name used with different members which is not supported
+                auto const& members = _connSettings->replicaSetSettings()->members();
+                if (std::find(members.cbegin(), members.cend(), setInfo.primary.toString()) == members.cend()) 
+                {   // primary not found between user entered members
+                    auto const errorStr = "Different members found under same replica set name.";
+                    LOG_MSG(errorStr, mongo::logger::LogSeverity::Error());
+                    throw std::runtime_error(errorStr);
+                }
+
                 if (setInfo.primary.empty()) {  // No reachable primary
                     repSetInfo.reset(new ReplicaSet(setInfo)); // Pass possible reachable secondary(ies) info 
+                    errorCode = EventError::ErrorCode::SameSetNameNotSupported;
                     LOG_MSG(setInfo.errorStr, mongo::logger::LogSeverity::Error());
                     throw std::runtime_error(setInfo.errorStr);
                 }
@@ -238,7 +252,7 @@ namespace Robomongo
                                EstablishConnectionResponse::ErrorReason::MongoSslConnection : 
                                EstablishConnectionResponse::ErrorReason::MongoAuth;
 
-            reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what()), 
+            reply(event->sender(), new EstablishConnectionResponse(this, EventError(ex.what(), errorCode), 
                   event->connectionType, ConnectionInfo(event->uuid), *repSetInfo.release(), errorReason));
         }
 

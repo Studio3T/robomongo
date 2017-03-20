@@ -401,8 +401,17 @@ namespace Robomongo {
             if (_connSettings->replicaSetSettings()->members().size() > 0)
                 server = "[" + _connSettings->replicaSetSettings()->members().front() + "]";
 
-            ss << "Cannot connect to replica set \"" << _connSettings->connectionName() << "\"" << server
-                << ". \nSet's primary is unreachable.\n\nReason:\n" << event->error().errorMessage();
+            if (event->error().errorCode() == EventError::ErrorCode::SameSetNameNotSupported) {
+                ss << "Cannot connect to replica set \"" << _connSettings->connectionName() << "\"" << server
+                   << ". \nSet's primary is unreachable.\n\nReason:\n" << event->error().errorMessage();
+            }
+            else {
+                ss << "Cannot connect to replica set \"" << _connSettings->connectionName() << "\"" << server
+                   << ". \nCurrently, connection to replica sets with same set name is supported only on "
+                   "different instances of Robomongo. \nPlease open a new Robomongo instance for each replica "
+                   "set with the same set name."
+                   "\n\nReason:\n" << event->error().errorMessage();
+            }
 
             _bus->publish(new ConnectionFailedEvent(this, _handle, event->connectionType, ss.str(),
                 ConnectionFailedEvent::MongoConnection));

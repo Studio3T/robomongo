@@ -355,7 +355,8 @@ namespace Robomongo {
         _replicaSetInfo.reset(new ReplicaSet(replicaSet));
         _connSettings->setServerHost(_replicaSetInfo->primary.host());
         _connSettings->setServerPort(_replicaSetInfo->primary.port());
-        _connSettings->replicaSetSettings()->setCachedSetName(_replicaSetInfo->setName);
+        _connSettings->replicaSetSettings()->setCachedSetName(
+            _connSettings->replicaSetSettings()->setNameUserEntered().empty() ? _replicaSetInfo->setName : "");
 
         LOG_MSG("Replica set folder refreshed. Connection: " + _connSettings->connectionName(),
                  mongo::logger::LogSeverity::Info());
@@ -370,20 +371,33 @@ namespace Robomongo {
         _replicaSetInfo.reset(new ReplicaSet(event->replicaSet));
         _connSettings->setServerHost(_replicaSetInfo->primary.host());
         _connSettings->setServerPort(_replicaSetInfo->primary.port());
-        _connSettings->replicaSetSettings()->setCachedSetName(_replicaSetInfo->setName);
+        _connSettings->replicaSetSettings()->setCachedSetName(
+            _connSettings->replicaSetSettings()->setNameUserEntered().empty() ? _replicaSetInfo->setName : "");
 
-        // Cache replica set name for 2 times faster first connection 
-        if (ConnectionPrimary == _connectionType) {
+        if (_connSettings->replicaSetSettings()->setNameUserEntered().empty()) {
+            // Cache replica set name for 2 times faster first connection 
+            if (ConnectionPrimary == _connectionType) {
+                ConnectionSettings* originalConnSettings = AppRegistry::instance().settingsManager()
+                    ->getConnectionSettingsByUuid(event->info._uuid);
+                if (originalConnSettings) {
+                    auto setName = event->isError() ? "" : _replicaSetInfo->setName;
+                    originalConnSettings->replicaSetSettings()->setCachedSetName(setName);
+                    AppRegistry::instance().settingsManager()->save();
+                    LOG_MSG("Replica set name cached as \"" + setName + "\".", mongo::logger::LogSeverity::Info());
+                }
+                else
+                    LOG_MSG("Failed to cache the replica set name.", mongo::logger::LogSeverity::Warning());
+            }
+        }
+        else { // User entered set name is not empty, clear cached set name just in case
             ConnectionSettings* originalConnSettings = AppRegistry::instance().settingsManager()
                 ->getConnectionSettingsByUuid(event->info._uuid);
             if (originalConnSettings) {
-                auto setName = event->isError() ? "" : _replicaSetInfo->setName;
-                originalConnSettings->replicaSetSettings()->setCachedSetName(setName);
+                originalConnSettings->replicaSetSettings()->setCachedSetName("");
                 AppRegistry::instance().settingsManager()->save();
-                LOG_MSG("Replica set name cached as \"" + setName + "\".", mongo::logger::LogSeverity::Info());
+                LOG_MSG("Replica set's cached set name cleared. Using user entered set name.", 
+                        mongo::logger::LogSeverity::Info());
             }
-            else
-                LOG_MSG("Failed to cache the replica set name.", mongo::logger::LogSeverity::Warning());
         }
     }
 
@@ -403,14 +417,14 @@ namespace Robomongo {
 
             if (event->error().errorCode() == EventError::ErrorCode::SameSetNameNotSupported) {
                 ss << "Cannot connect to replica set \"" << _connSettings->connectionName() << "\"" << server
-                   << ". \nSet's primary is unreachable.\n\nReason:\n" << event->error().errorMessage();
+                   << ". \nCurrently, connection to the replica sets with same set name is supported only on "
+                   "different instances of Robomongo. \nPlease open a new Robomongo instance for each replica "
+                   "set which have same set name."
+                   "\n\nReason:\n" << event->error().errorMessage();
             }
             else {
                 ss << "Cannot connect to replica set \"" << _connSettings->connectionName() << "\"" << server
-                   << ". \nCurrently, connection to replica sets with same set name is supported only on "
-                   "different instances of Robomongo. \nPlease open a new Robomongo instance for each replica "
-                   "set with the same set name."
-                   "\n\nReason:\n" << event->error().errorMessage();
+                   << ". \nSet's primary is unreachable.\n\nReason:\n" << event->error().errorMessage();
             }
 
             _bus->publish(new ConnectionFailedEvent(this, _handle, event->connectionType, ss.str(),

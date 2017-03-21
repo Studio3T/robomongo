@@ -189,13 +189,13 @@ namespace Robomongo
                 if (std::find(members.cbegin(), members.cend(), setInfo.primary.toString()) == members.cend()) 
                 {   // primary not found between user entered members
                     auto const errorStr = "Different members found under same replica set name.";
+                    errorCode = EventError::ErrorCode::SameSetNameNotSupported;
                     LOG_MSG(errorStr, mongo::logger::LogSeverity::Error());
                     throw std::runtime_error(errorStr);
                 }
 
                 if (setInfo.primary.empty()) {  // No reachable primary
                     repSetInfo.reset(new ReplicaSet(setInfo)); // Pass possible reachable secondary(ies) info 
-                    errorCode = EventError::ErrorCode::SameSetNameNotSupported;
                     LOG_MSG(setInfo.errorStr, mongo::logger::LogSeverity::Error());
                     throw std::runtime_error(setInfo.errorStr);
                 }
@@ -904,13 +904,16 @@ namespace Robomongo
             {
                 init(); // Init mongoworker for early-use of _scriptEngine
 
-                // Step-1: Retrieve set name from cache or from a reachable member
-                std::string setName = _connSettings->replicaSetSettings()->cachedSetName();
-                if (setName.empty()) // If there is no cached set name, get it from an on-line replica node
-                    setName = connectAndGetReplicaSetName();
+                // Step-1: Use user entered set name or retrieve set name from cache or from a reachable member
+                std::string setName = _connSettings->replicaSetSettings()->setNameUserEntered();
+                if (setName.empty()) {
+                    setName = _connSettings->replicaSetSettings()->cachedSetName();
+                    if (setName.empty()) // If there is no cached set name, get it from an on-line replica node
+                        setName = connectAndGetReplicaSetName();
 
-                if (setName.empty())   // It is not possible to continue with empty set name
-                    return nullptr;
+                    if (setName.empty())   // It is not possible to continue with empty set name
+                        return nullptr;
+                }
 
                 // Step-2: Try connect to replica set with set name
                 auto const& membersHostsAndPorts = _connSettings->replicaSetSettings()->membersToHostAndPort();

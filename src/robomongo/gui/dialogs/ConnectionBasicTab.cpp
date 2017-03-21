@@ -53,12 +53,15 @@ namespace Robomongo
         _members = new QTreeWidget;
         _members->setHeaderHidden(true);
         _members->setIndentation(0);
+#ifndef __APPLE__
+        auto lineHeight = _members->fontMetrics().height();
+        _members->setFixedHeight(lineHeight * 8);
+#endif
         VERIFY(connect(_members, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
                        this, SLOT(on_replicaMemberItemEdit(QTreeWidgetItem*, int))));
 
-        if (_settings->isReplicaSet()) {
-            for (const std::string& str : _settings->replicaSetSettings()->members())
-            {
+        if (_settings->isReplicaSet() && _settings->replicaSetSettings()->members().size() > 0) {
+            for (const std::string& str : _settings->replicaSetSettings()->members()) {
                 if (!str.empty()) {
                     auto item = new QTreeWidgetItem;
                     item->setText(0, QString::fromStdString(str));
@@ -66,6 +69,17 @@ namespace Robomongo
                     _members->addTopLevelItem(item);
                 }
             }
+            // To fix strange MAC alignment issue
+#ifdef __APPLE__
+            auto lineHeight = _members->fontMetrics().height();
+            _members->setFixedHeight(lineHeight * 8);
+#endif
+        }
+        else {  // No members
+            auto item = new QTreeWidgetItem;
+            item->setText(0, "localhost:27017");
+            item->setFlags(item->flags() | Qt::ItemIsEditable);
+            _members->addTopLevelItem(item);
         }
 
         int const BUTTON_SIZE = 60;
@@ -85,6 +99,10 @@ namespace Robomongo
         _minusPlusButtonBox->addButton(_removeButton, QDialogButtonBox::NoRole);
         _minusPlusButtonBox->addButton(_addButton, QDialogButtonBox::NoRole);
 #endif
+
+        _setNameLabel = new QLabel("Set Name:<br><i><font color=\"gray\">(Optional)</font></i>");
+        _setNameEdit = new QLineEdit(QString::fromStdString(_settings->replicaSetSettings()->setNameUserEntered()));
+        auto _optionalLabel = new QLabel("<i><font color=\"gray\">(Optional)</font></i>");
         
         auto connectionLayout = new QGridLayout;
         connectionLayout->setVerticalSpacing(10);
@@ -104,6 +122,10 @@ namespace Robomongo
         connectionLayout->addWidget(_members,                       7, 1, 1, 3);
         connectionLayout->addWidget(_minusPlusButtonBox,            8, 3, Qt::AlignRight | Qt::AlignTop);
         connectionLayout->addWidget(new QLabel(""),                 9, 0);
+        connectionLayout->addWidget(_setNameLabel,                  10, 0/*,  Qt::AlignBottom*/);
+        connectionLayout->addWidget(_setNameEdit,                   10, 1, 1, 3, Qt::AlignTop);
+        //connectionLayout->addWidget(_optionalLabel,                 11, 1, 1, 3, Qt::AlignLeft | Qt::AlignTop);
+        connectionLayout->addWidget(new QLabel(""),                 12, 0);
 
         auto mainLayout = new QVBoxLayout;
         mainLayout->addLayout(connectionLayout);
@@ -111,6 +133,7 @@ namespace Robomongo
 
         _connectionName->setFocus();
         on_ConnectionTypeChange(_connectionType->currentIndex());
+
     }
 
     bool ConnectionBasicTab::accept()
@@ -169,8 +192,9 @@ namespace Robomongo
                     members.push_back(item->text(0).toStdString());
             }
             _settings->replicaSetSettings()->setMembers(members);
+            _settings->replicaSetSettings()->setSetNameUserEntered(_setNameEdit->text().toStdString());
             // Clear cached set name
-            _settings->replicaSetSettings()->setSetName("");
+            _settings->replicaSetSettings()->setCachedSetName("");
         }
 
         return true;
@@ -184,6 +208,9 @@ namespace Robomongo
         _membersLabel->setVisible(isReplica);
         _members->setVisible(isReplica);
         _minusPlusButtonBox->setVisible(isReplica);
+        _setNameLabel->setVisible(isReplica);
+        _setNameEdit->setVisible(isReplica);
+            
         // Direct Connection
         _addressLabel->setVisible(!isReplica);
         _serverAddress->setVisible(!isReplica);

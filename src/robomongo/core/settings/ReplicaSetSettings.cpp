@@ -27,6 +27,7 @@ namespace Robomongo
     QVariant ReplicaSetSettings::toVariant() const 
     {
         QVariantMap map;
+        map.insert("setNameUserEntered", QString::fromStdString(_setNameUserEntered));
         map.insert("cachedSetName", QString::fromStdString(_cachedSetName));
         int idx = 0;
         for (std::string const& str : _members) {
@@ -39,6 +40,7 @@ namespace Robomongo
 
     void ReplicaSetSettings::fromVariant(const QVariantMap &map) 
     {
+        setSetNameUserEntered(map.value("setNameUserEntered").toString().toStdString());
         setCachedSetName(map.value("cachedSetName").toString().toStdString());
         // Extract and set replica members
         std::vector<std::string> vec;

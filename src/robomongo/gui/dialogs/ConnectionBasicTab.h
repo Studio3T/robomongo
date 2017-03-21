@@ -47,6 +47,8 @@ namespace Robomongo
         QPushButton *_addButton;
         QPushButton *_removeButton;
         QDialogButtonBox *_minusPlusButtonBox;
+        QLabel *_setNameLabel;
+        QLineEdit *_setNameEdit;
         QPushButton *_discoverButton;
         QLabel *_readPrefLabel;
         QComboBox *_readPreference;

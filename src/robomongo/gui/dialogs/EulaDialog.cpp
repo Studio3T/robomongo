@@ -107,10 +107,10 @@ namespace Robomongo
 
         secondPage->setLayout(mainLayout2);
 
-#ifndef _WIN32
-        addPage(firstPage);     // Disable license page on Windows, it is already shown in windows installer
-#endif
+        addPage(firstPage);
+#if defined(_WIN32) || defined(__APPLE__)
         addPage(secondPage);
+#endif
 
         //// Buttons
         setButtonText(QWizard::CustomButton1, tr("Back"));
@@ -124,11 +124,7 @@ namespace Robomongo
         setButtonLayout(QList<WizardButton>{ QWizard::Stretch, QWizard::CustomButton1, QWizard::CustomButton2,
             QWizard::CancelButton, QWizard::CustomButton3});
 
-#ifdef _WIN32
-        button(QWizard::CustomButton1)->setHidden(true);
-        button(QWizard::CustomButton2)->setHidden(true);
-        button(QWizard::CustomButton3)->setEnabled(true);
-#elif __APPLE__
+#if defined(_WIN32) || defined(__APPLE__)
         button(QWizard::CustomButton1)->setDisabled(true);
         button(QWizard::CustomButton2)->setDisabled(true);
         button(QWizard::CustomButton3)->setDisabled(true);
@@ -167,19 +163,19 @@ namespace Robomongo
 
     void EulaDialog::on_agreeButton_clicked()
     {
-#ifdef __linux__
-        button(QWizard::CustomButton3)->setEnabled(true);
-#else
+#if defined(_WIN32) || defined(__APPLE__)
         button(QWizard::CustomButton2)->setEnabled(true);
+#else
+        button(QWizard::CustomButton3)->setEnabled(true);
 #endif
     }
 
     void EulaDialog::on_notAgreeButton_clicked()
     {
-#ifdef __linux__
-        button(QWizard::CustomButton3)->setEnabled(false);
-#else
+#if defined(_WIN32) || defined(__APPLE__)
         button(QWizard::CustomButton2)->setEnabled(false);
+#else
+        button(QWizard::CustomButton3)->setEnabled(false);
 #endif
     }
 

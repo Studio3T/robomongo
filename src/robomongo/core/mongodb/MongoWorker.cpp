@@ -905,7 +905,7 @@ namespace Robomongo
                 init(); // Init mongoworker for early-use of _scriptEngine
 
                 // Step-1: Retrieve set name from cache or from a reachable member
-                std::string setName = _connSettings->replicaSetSettings()->setName();
+                std::string setName = _connSettings->replicaSetSettings()->cachedSetName();
                 if (setName.empty()) // If there is no cached set name, get it from an on-line replica node
                     setName = connectAndGetReplicaSetName();
 

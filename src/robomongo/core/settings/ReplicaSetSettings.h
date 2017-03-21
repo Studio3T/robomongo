@@ -35,7 +35,7 @@ namespace Robomongo
         void fromVariant(const QVariantMap &map);
 
         // Getters
-        std::string const& setName() { return _setName; }
+        std::string const& cachedSetName() { return _cachedSetName; }
         std::vector<std::string> const& members() const { return _members; }
         std::vector<mongo::HostAndPort> membersToHostAndPort() const;
 
@@ -48,7 +48,7 @@ namespace Robomongo
         ReadPreference readPreference() const { return _readPreference; }
 
         // Setters
-        void setSetName(const std::string& setName) { _setName = setName; }
+        void setCachedSetName(const std::string& setName) { _cachedSetName = setName; }
         void setMembers(const std::vector<std::string>& members);
         void setMembers(const std::vector<std::pair<std::string,bool>>& membersAndHealts);
         void deleteAllMembers() { _members.clear(); }
@@ -56,7 +56,8 @@ namespace Robomongo
 
 
     private:
-        std::string _setName;
+        //std::string _setNameUserEntered;
+        std::string _cachedSetName;
         std::vector<std::string> _members;
         ReadPreference _readPreference = ReadPreference::PRIMARY;
     };

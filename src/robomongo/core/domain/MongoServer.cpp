@@ -355,7 +355,7 @@ namespace Robomongo {
         _replicaSetInfo.reset(new ReplicaSet(replicaSet));
         _connSettings->setServerHost(_replicaSetInfo->primary.host());
         _connSettings->setServerPort(_replicaSetInfo->primary.port());
-        _connSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
+        _connSettings->replicaSetSettings()->setCachedSetName(_replicaSetInfo->setName);
 
         LOG_MSG("Replica set folder refreshed. Connection: " + _connSettings->connectionName(),
                  mongo::logger::LogSeverity::Info());
@@ -370,7 +370,7 @@ namespace Robomongo {
         _replicaSetInfo.reset(new ReplicaSet(event->replicaSet));
         _connSettings->setServerHost(_replicaSetInfo->primary.host());
         _connSettings->setServerPort(_replicaSetInfo->primary.port());
-        _connSettings->replicaSetSettings()->setSetName(_replicaSetInfo->setName);
+        _connSettings->replicaSetSettings()->setCachedSetName(_replicaSetInfo->setName);
 
         // Cache replica set name for 2 times faster first connection 
         if (ConnectionPrimary == _connectionType) {
@@ -378,7 +378,7 @@ namespace Robomongo {
                 ->getConnectionSettingsByUuid(event->info._uuid);
             if (originalConnSettings) {
                 auto setName = event->isError() ? "" : _replicaSetInfo->setName;
-                originalConnSettings->replicaSetSettings()->setSetName(setName);
+                originalConnSettings->replicaSetSettings()->setCachedSetName(setName);
                 AppRegistry::instance().settingsManager()->save();
                 LOG_MSG("Replica set name cached as \"" + setName + "\".", mongo::logger::LogSeverity::Info());
             }

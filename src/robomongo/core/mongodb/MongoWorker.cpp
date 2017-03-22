@@ -188,8 +188,10 @@ namespace Robomongo
                 auto const& members = _connSettings->replicaSetSettings()->members();
                 if (std::find(members.cbegin(), members.cend(), setInfo.primary.toString()) == members.cend()) 
                 {   // primary not found between user entered members
-                    auto const errorStr = "Different members found under same replica set name.";
-                    errorCode = EventError::ErrorCode::SameSetNameNotSupported;
+                    std::string const errorStr = "Different members found under same replica set name \"" + 
+                         setInfo.setName + "\".";
+                    repSetInfo.reset(new ReplicaSet(setInfo));
+                    errorCode = EventError::ErrorCode::ServerHasDifferentMembers;
                     LOG_MSG(errorStr, mongo::logger::LogSeverity::Error());
                     throw std::runtime_error(errorStr);
                 }

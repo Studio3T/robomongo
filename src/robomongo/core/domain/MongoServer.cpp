@@ -415,11 +415,14 @@ namespace Robomongo {
             if (_connSettings->replicaSetSettings()->members().size() > 0)
                 server = "[" + _connSettings->replicaSetSettings()->members().front() + "]";
 
-            if (event->error().errorCode() == EventError::ErrorCode::SameSetNameNotSupported) {
+            if (event->error().errorCode() == EventError::ErrorCode::ServerHasDifferentMembers) {
                 ss << "Cannot connect to replica set \"" << _connSettings->connectionName() << "\"" << server
-                   << ". \nCurrently, connection to the replica sets with same set name is supported only on "
-                   "different instances of Robomongo. \nPlease open a new Robomongo instance for each replica "
-                   "set which have same set name."
+                   << ". \n\nA primary with different host name [" << event->replicaSet.primary << 
+                   "] found in server side. "
+                   "Please double check if same host names and ports are used as in server's replica set"
+                   " configuration. \nIf same set name is used for different replica sets, this configuration"
+                   " is supported only on different instances of Robomongo. "
+                   " Please open a new Robomongo instance for each replica set which has the same set name."
                    "\n\nReason:\n" << event->error().errorMessage();
             }
             else {

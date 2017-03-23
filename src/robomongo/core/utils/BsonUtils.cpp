@@ -80,6 +80,7 @@ namespace Robomongo
             s << (isArray ? "[" : "{");
             BSONObjIterator i(obj);
             BSONElement e = i.next();
+
             if ( !e.eoo() ) {
                 while ( 1 ) {
                     if ( pretty ) {
@@ -91,6 +92,7 @@ namespace Robomongo
                     else {
                         s << " ";
                     }
+
                     s << jsonString(e, format, true, pretty ? pretty + 1 : 0, uuidEncoding, timeFormat, isArray);
                     e = i.next();
 
@@ -109,7 +111,8 @@ namespace Robomongo
             return s.str();
         }
 
-        std::string jsonString(const BSONElement &elem, JsonStringFormat format, bool includeFieldNames, int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat, bool isArray)
+        std::string jsonString(const BSONElement &elem, JsonStringFormat format, bool includeFieldNames, 
+                               int pretty, UUIDEncoding uuidEncoding, SupportedTimes timeFormat, bool isArray)
         {
             using namespace std;
             BSONType t = elem.type();            
@@ -331,12 +334,11 @@ namespace Robomongo
                 break;
 
             case bsonTimestamp:
-                if ( format == TenGen ) {
-                    s << "Timestamp(" << ( elem.timestampValue() / 1000 ) << ", " << elem.timestampInc() << ")";
-                }
-                else {
-                    s << "{ \"$timestamp\" : { \"t\" : " << ( elem.timestampValue() / 1000 ) << ", \"i\" : " << elem.timestampInc() << " } }";
-                }
+                if ( format == TenGen )
+                    s << "Timestamp(" << elem.timestamp().getSecs() << ", " << elem.timestampInc() << ")";
+                else 
+                    s << "{ \"$timestamp\" : { \"t\" : " << elem.timestamp().getSecs() << ", \"i\" : " 
+                      << elem.timestampInc() << " } }";
                 break;
 
             case MinKey:

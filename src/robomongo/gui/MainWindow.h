@@ -171,6 +171,7 @@ namespace Robomongo
 #endif
 
         bool _allowExit;
+        bool _updateMenusAtStart = true;
     };
 
 }

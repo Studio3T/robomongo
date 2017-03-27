@@ -40,13 +40,15 @@
 #include "robomongo/gui/widgets/explorer/ExplorerTreeWidget.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabWidget.h"
 #include "robomongo/gui/widgets/workarea/QueryWidget.h"
+#include "robomongo/gui/widgets/workarea/QueryWidget.h"
+#include "robomongo/gui/widgets/workarea/WelcomeTab.h"
 #include "robomongo/gui/dialogs/ConnectionsDialog.h"
 #include "robomongo/gui/dialogs/AboutDialog.h"
 #include "robomongo/gui/dialogs/PreferencesDialog.h"
 #include "robomongo/gui/dialogs/ExportDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/AppStyle.h"
-#include "robomongo/gui/widgets/workarea/QueryWidget.h"
+
 
 namespace
 {
@@ -498,7 +500,7 @@ namespace Robomongo
 
         // Open welcome tab action
         auto openWelcomeTabAction = new QAction("Open/Refresh Welcome Tab", this);
-        openWelcomeTabAction->setShortcut(Qt::CTRL + Qt::Key_W);
+        openWelcomeTabAction->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W);
         openWelcomeTabAction->setVisible(true);
         VERIFY(connect(openWelcomeTabAction, SIGNAL(triggered()), SLOT(openWelcomeTab())));
 
@@ -621,8 +623,9 @@ namespace Robomongo
         setWindowTitle("RoboM 1.0");
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
-        QTimer::singleShot(0, this, SLOT(manageConnections()));
+        QTimer::singleShot(0, this, SLOT(manageConnections()));       
         updateMenus();
+        _updateMenusAtStart = false;
 
         AppRegistry::instance().bus()->subscribe(this, ConnectionFailedEvent::Type);
         AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type);
@@ -1277,8 +1280,9 @@ namespace Robomongo
 
     void MainWindow::updateMenus()
     {
-        int contTab = _workArea->count();
-        bool isEnable = _workArea && contTab > 0;
+        bool const welcomeTabVisible = _updateMenusAtStart ? true : getWelcomeTab() && getWelcomeTab()->isVisible();
+        int const tabCount = _workArea->count() - (welcomeTabVisible ? 1 : 0);
+        bool const isEnable = _workArea && tabCount > 0;
 
         _execToolBar->setEnabled(isEnable);
         _openAction->setEnabled(isEnable);

@@ -209,12 +209,23 @@ namespace miutil
             boost::posix_time::ptime timeP(d, t);
             time_t rawtime;
             time ( &rawtime );
+
             struct tm *ptm = std::gmtime ( &rawtime );
+            int utcD = ptm->tm_mday;
             int utcH = ptm->tm_hour;
             int utcM = ptm->tm_min;
+
             struct tm *timeinfo = std::localtime (&rawtime);
             int diffH = timeinfo->tm_hour - utcH;
+            
+            // Time zone calculation
+            if (timeinfo->tm_mday < utcD && diffH > 0)
+                diffH -= 24;
+            else if (timeinfo->tm_mday > utcD && diffH < 0)
+                diffH += 24;
+
             int diffM = timeinfo->tm_min - utcM;
+
             boost::posix_time::time_duration diffT = boost::posix_time::time_duration(diffH, diffM, 0);
             timeP += diffT;
 

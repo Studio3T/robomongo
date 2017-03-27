@@ -34,7 +34,7 @@ set(CPACK_MONOLITHIC_INSTALL ON)
 set(CPACK_STRIP_FILES ON)
 
 # Additional information
-set(CPACK_PACKAGE_VENDOR 3T Software Labs Ltd)
+set(CPACK_PACKAGE_VENDOR "3T Software Labs Ltd")
 set(CPACK_PACKAGE_CONTACT robom@3t.io)
 set(CPACK_PACKAGE_DESCRIPTION "Shell-centric cross-platform MongoDB management tool.")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "RoboM is a shell-centric cross-platform MongoDB management tool.")

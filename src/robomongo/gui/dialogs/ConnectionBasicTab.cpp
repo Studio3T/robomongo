@@ -53,7 +53,7 @@ namespace Robomongo
         _members = new QTreeWidget;
         _members->setHeaderHidden(true);
         _members->setIndentation(0);
-#ifndef __APPLE__
+#ifdef _WIN32
         auto lineHeight = _members->fontMetrics().height();
         _members->setFixedHeight(lineHeight * 8);
 #endif
@@ -70,7 +70,7 @@ namespace Robomongo
                 }
             }
             // To fix strange MAC alignment issue
-#ifdef __APPLE__
+#ifndef _WIN32
             auto lineHeight = _members->fontMetrics().height();
             _members->setFixedHeight(lineHeight * 8);
 #endif

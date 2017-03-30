@@ -36,7 +36,7 @@ namespace Robomongo
         QSize size(screenGeometry.width() - horizontalMargin,
                    screenGeometry.height() - verticalMargin);
 
-        QSettings settings("3T", "RoboM");
+        QSettings settings("3T", "Robomongo");
         if (settings.contains("DocumentTextEditor/size"))
         {
             restoreWindowSettings();
@@ -227,13 +227,13 @@ namespace Robomongo
 
     void DocumentTextEditor::saveWindowSettings() const
     {
-        QSettings settings("3T", "RoboM");
+        QSettings settings("3T", "Robomongo");
         settings.setValue("DocumentTextEditor/size", size());
     }
 
     void DocumentTextEditor::restoreWindowSettings()
     {
-        QSettings settings("3T", "RoboM");
+        QSettings settings("3T", "Robomongo");
         resize(settings.value("DocumentTextEditor/size").toSize());
     }
 

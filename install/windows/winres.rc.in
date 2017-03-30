@@ -27,13 +27,13 @@ IDI_ICON1               ICON        "@windows_icon@"
 		BLOCK "040904e4"
 		BEGIN
 			VALUE "CompanyName", "3T Software Labs Ltd\0"
-			VALUE "FileDescription", "RoboM, MongoDB management tool\0"
+			VALUE "FileDescription", "Robomongo, MongoDB management tool\0"
 			VALUE "FileVersion", VER_FILEVERSION_STR
 			VALUE "LegalCopyright", "Copyright 3T Software Labs Ltd, 2014 - 2017\0"
-			VALUE "ProductName", "RoboM\0"
+			VALUE "ProductName", "Robomongo\0"
 			VALUE "ProductVersion", VER_PRODUCTVERSION_STR
-			VALUE "OriginalFilename", "RoboM.exe\0"
-			VALUE "InternalName", "RoboM\0"
+			VALUE "OriginalFilename", "Robomongo.exe\0"
+			VALUE "InternalName", "Robomongo\0"
 		END
 	END
 	BLOCK "VarFileInfo"

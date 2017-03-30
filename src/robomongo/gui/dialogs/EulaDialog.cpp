@@ -28,7 +28,7 @@ namespace Robomongo
     {
         setWindowTitle("EULA");
 
-        QSettings settings("3T", "RoboM");
+        QSettings settings("3T", "Robomongo");
         if (settings.contains("EulaDialog/size"))
             restoreWindowSettings();
 
@@ -93,7 +93,7 @@ namespace Robomongo
 
         auto mainLayout2 = new QGridLayout();
         mainLayout2->addWidget(new QLabel,          0, 0, 1, 2);
-        mainLayout2->addWidget(new QLabel("<h3>Thank you for choosing RoboM!</h3>"), 1, 0, 1, 2);
+        mainLayout2->addWidget(new QLabel("<h3>Thank you for choosing Robomongo!</h3>"), 1, 0, 1, 2);
         mainLayout2->addWidget(bodyLabel,           2, 0 , 1, 2);
         mainLayout2->addWidget(new QLabel,          3, 0, 1, 2);
         mainLayout2->addWidget(nameLabel,           4, 0);
@@ -225,13 +225,13 @@ namespace Robomongo
 
     void EulaDialog::saveWindowSettings() const
     {
-        QSettings settings("3T", "RoboM");
+        QSettings settings("3T", "Robomongo");
         settings.setValue("EulaDialog/size", size());
     }
 
     void EulaDialog::restoreWindowSettings()
     {
-        QSettings settings("3T", "RoboM");
+        QSettings settings("3T", "Robomongo");
         resize(settings.value("EulaDialog/size").toSize());
     }
 

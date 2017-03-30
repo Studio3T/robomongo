@@ -522,7 +522,7 @@ namespace Robomongo
 
     /*** About menu ***/
 
-        QAction *aboutRobomongoAction = new QAction("&About RoboM...", this);
+        QAction *aboutRobomongoAction = new QAction("&About Robomongo...", this);
         VERIFY(connect(aboutRobomongoAction, SIGNAL(triggered()), this, SLOT(aboutRobomongo())));
 
         // Options menu
@@ -620,7 +620,7 @@ namespace Robomongo
 
         createTabs();
         createStatusBar();
-        setWindowTitle("RoboM 1.0");
+        setWindowTitle("Robomongo 1.0");
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
         QTimer::singleShot(0, this, SLOT(manageConnections()));       
@@ -717,7 +717,7 @@ namespace Robomongo
 
     void MainWindow::restoreWindowSettings()
     {
-        QSettings settings("3T", "RoboM");
+        QSettings settings("3T", "Robomongo");
         // Restore settings if registery key exists, otherwise resize as app started for the first time.
         if (settings.contains("MainWindow/geometry"))
         {
@@ -742,7 +742,7 @@ namespace Robomongo
 
     void MainWindow::saveWindowSettings() const
     {
-        QSettings settings("3T", "RoboM");
+        QSettings settings("3T", "Robomongo");
         settings.setValue("MainWindow/geometry", saveGeometry());
     }
 
@@ -1185,7 +1185,7 @@ namespace Robomongo
     {
 #if defined(Q_OS_WIN)
         if (_trayIcon->contextMenu()->actions().size() > 0 && isHidden()) {
-            _trayIcon->contextMenu()->actions().at(0)->setText("Show RoboM");
+            _trayIcon->contextMenu()->actions().at(0)->setText("Show Robomongo");
         }
 #endif
     }

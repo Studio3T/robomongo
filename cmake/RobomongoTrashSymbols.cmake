@@ -15,7 +15,7 @@ elseif(SYSTEM_WINDOWS)
     set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} psapi.lib bcrypt.lib Iphlpapi.lib dbghelp.lib ws2_32.lib winmm.lib version.lib")
 endif()
 
-set(PROJECT_NAME "RoboM")
+set(PROJECT_NAME "Robomongo")
 set(PROJECT_NAME_TITLE ${PROJECT_NAME})
 set(PROJECT_DOMAIN "www.robomongo.org")
 set(PROJECT_COMPANYNAME "3T Software Labs Ltd")

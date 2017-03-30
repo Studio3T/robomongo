@@ -6,7 +6,7 @@ source $BIN_DIR/common/setup $1
 
 if [ "$(uname -s)" == "Darwin" ]; then
     # On Mac OS we should run executable from bundle
-    "$BUILD_DIR/src/robomongo/RoboM.app/Contents/MacOS/RoboM"
+    "$BUILD_DIR/src/robomongo/Robomongo.app/Contents/MacOS/Robomongo"
 else
-    "$BUILD_DIR/src/robomongo/robom"
+    "$BUILD_DIR/src/robomongo/robomongo"
 fi

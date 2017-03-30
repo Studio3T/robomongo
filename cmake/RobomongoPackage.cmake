@@ -15,7 +15,7 @@ execute_process(
 string(TIMESTAMP timestamp "%Y-%m-%d")
 
 # Package name (as it should appear in UI)
-set(CPACK_PACKAGE_NAME robom)
+set(CPACK_PACKAGE_NAME robomongo)
 
 # Version of the package
 set(CPACK_PACKAGE_VERSION_MAJOR     ${PROJECT_VERSION_MAJOR})
@@ -35,9 +35,9 @@ set(CPACK_STRIP_FILES ON)
 
 # Additional information
 set(CPACK_PACKAGE_VENDOR "3T Software Labs Ltd")
-set(CPACK_PACKAGE_CONTACT robom@3t.io)
+set(CPACK_PACKAGE_CONTACT robomongo@3t.io)
 set(CPACK_PACKAGE_DESCRIPTION "Shell-centric cross-platform MongoDB management tool.")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "RoboM is a shell-centric cross-platform MongoDB management tool.")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Robomongo is a shell-centric cross-platform MongoDB management tool.")
 
 # Use lowercase for system name and package file name
 string(TOLOWER ${CMAKE_SYSTEM_NAME} system_name)
@@ -62,7 +62,7 @@ elseif(SYSTEM_MACOSX)
 
 elseif(SYSTEM_WINDOWS)
     set(files_dir "${CMAKE_SOURCE_DIR}/install/windows")
-    set(exe_name "robom.exe")
+    set(exe_name "robomongo.exe")
 
     set(CPACK_GENERATOR NSIS ZIP)
     set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/DESCRIPTION")

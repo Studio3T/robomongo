@@ -447,13 +447,13 @@ namespace Robomongo
 
     void ConnectionsDialog::restoreWindowSettings()
     {
-        QSettings settings("3T", "RoboM");
+        QSettings settings("3T", "Robomongo");
         resize(settings.value("ConnectionsDialog/size").toSize());
     }
 
     void ConnectionsDialog::saveWindowSettings() const
     {
-        QSettings settings("3T", "RoboM");
+        QSettings settings("3T", "Robomongo");
         settings.setValue("ConnectionsDialog/size", size());
     }
 

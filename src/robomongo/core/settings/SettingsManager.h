@@ -13,14 +13,14 @@ namespace Robomongo
     struct ConfigFileAndImportFunction;
         
     // Current cache directory
-    QString const CacheDir = QString("%1/.3T/robom/%2/cache/").arg(QDir::homePath())
-                                                              .arg(PROJECT_VERSION);
+    QString const CacheDir = QString("%1/.3T/robomongo/%2/cache/").arg(QDir::homePath())
+                                                                  .arg(PROJECT_VERSION);
     // Current config file
-    QString const ConfigFilePath = QString("%1/.3T/robom/%2/robom.json").arg(QDir::homePath())
-                                                                            .arg(PROJECT_VERSION);  
+    QString const ConfigFilePath = QString("%1/.3T/robomongo/%2/robomongo.json").arg(QDir::homePath())
+                                                                                .arg(PROJECT_VERSION);  
     // Current config file directory
-    QString const ConfigDir = QString("%1/.3T/robom/%2/").arg(QDir::homePath())
-                                                         .arg(PROJECT_VERSION);  
+    QString const ConfigDir = QString("%1/.3T/robomongo/%2/").arg(QDir::homePath())
+                                                             .arg(PROJECT_VERSION);  
     /* Temporarily disabling Recent Connections feature
     struct RecentConnection
     {
@@ -202,7 +202,7 @@ namespace Robomongo
          */
         QVariantMap convertToMap() const;
 
-        // Find existing anonymousID from RoboM and 3T config files, if not found create
+        // Find existing anonymousID from Robomongo and 3T config files, if not found create
         // a new anonymousID.
         QString getOrCreateAnonymousID(QVariantMap const& map) const;
 

@@ -17,6 +17,7 @@
 #include <QUrlQuery>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QDesktopWidget>
 
 #include "robomongo/core/utils/QtUtils.h"
 
@@ -27,10 +28,6 @@ namespace Robomongo
         : QWizard(parent)
     {
         setWindowTitle("EULA");
-
-        QSettings settings("3T", "Robomongo");
-        if (settings.contains("EulaDialog/size"))
-            restoreWindowSettings();
 
         //// First page
         auto firstPage = new QWizardPage;
@@ -136,7 +133,15 @@ namespace Robomongo
 
         setWizardStyle(QWizard::ModernStyle);
 
-        setMinimumSize(sizeHint().width()*1.3, sizeHint().height()*1.3);
+        QSettings const settings("3T", "Robomongo");
+        if (settings.contains("EulaDialog/size")) {
+            restoreWindowSettings();
+        }
+        else {
+            auto const desktop = QApplication::desktop();
+            auto const& mainScreenSize = desktop->availableGeometry(desktop->primaryScreen()).size();
+            resize(mainScreenSize.width()*0.5, mainScreenSize.height()*0.6);
+        }
     }
 
     void EulaDialog::accept()

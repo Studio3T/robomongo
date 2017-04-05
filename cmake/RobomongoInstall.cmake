@@ -72,7 +72,9 @@ elseif(SYSTEM_MACOSX)
 elseif(SYSTEM_LINUX)
     install(
         FILES 
-        "${OpenSSL_DIR}/libssl.so.1.0.0"
+        "${OpenSSL_DIR}/libssl.so"
+        "${OpenSSL_DIR}/libssl.so.1.0.0"        
+        "${OpenSSL_DIR}/libcrypto.so"        
         "${OpenSSL_DIR}/libcrypto.so.1.0.0"
         DESTINATION ${lib_dir})         
 endif()

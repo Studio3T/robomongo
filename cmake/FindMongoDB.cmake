@@ -46,33 +46,33 @@ set(MongoDB_DEFINITIONS
 # Set common compiler include directories
 set(MongoDB_INCLUDE_DIRS
     ${MongoDB_DIR}/src
-    ${MongoDB_DIR}/src/third_party/boost-1.56.0
-    ${MongoDB_DIR}/src/third_party/mozjs-38/include
-    ${MongoDB_DIR}/src/third_party/mozjs-38/mongo_sources
-    ${MongoDB_DIR}/src/third_party/pcre-8.37
+    ${MongoDB_DIR}/src/third_party/boost-1.60.0
+    ${MongoDB_DIR}/src/third_party/mozjs-45/include
+    ${MongoDB_DIR}/src/third_party/mozjs-45/mongo_sources
+    ${MongoDB_DIR}/src/third_party/pcre-8.39
     ${MongoDB_BUILD_DIR}
 )
 
 if(SYSTEM_LINUX)
     set(MongoDB_OBJECT_LIST_PLATFORM_PART linux)
     list(APPEND MongoDB_INCLUDE_DIRS
-        ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/linux/include)
+        ${MongoDB_DIR}/src/third_party/mozjs-45/platform/x86_64/linux/include)
 elseif(SYSTEM_WINDOWS)
     set(MongoDB_OBJECT_LIST_PLATFORM_PART windows)
     list(APPEND MongoDB_INCLUDE_DIRS
-        ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/windows/include)
+        ${MongoDB_DIR}/src/third_party/mozjs-45/platform/x86_64/windows/include)
 elseif(SYSTEM_MACOSX)
     set(MongoDB_OBJECT_LIST_PLATFORM_PART macosx)
     list(APPEND MongoDB_INCLUDE_DIRS
-        ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/osx/include)
+        ${MongoDB_DIR}/src/third_party/mozjs-45/platform/x86_64/osx/include)
 elseif(SYSTEM_FREEBSD)
     set(MongoDB_OBJECT_LIST_PLATFORM_PART freebsd)
     list(APPEND MongoDB_INCLUDE_DIRS
-        ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/freebsd/include)
+        ${MongoDB_DIR}/src/third_party/mozjs-45/platform/x86_64/freebsd/include)
 elseif(SYSTEM_OPENBSD)
     set(MongoDB_OBJECT_LIST_PLATFORM_PART openbsd)
     list(APPEND MongoDB_INCLUDE_DIRS
-        ${MongoDB_DIR}/src/third_party/mozjs-38/platform/x86_64/openbsd/include)
+        ${MongoDB_DIR}/src/third_party/mozjs-45/platform/x86_64/openbsd/include)
 endif()
 
 # Read list of object files
@@ -90,6 +90,9 @@ string(REPLACE " " ";" MongoDB_RELATIVE_LIBS ${MongoDB_RELATIVE_LIBS})
 foreach(lib ${MongoDB_RELATIVE_LIBS})
   list(APPEND MongoDB_LIBS ${MongoDB_DIR}/${lib})
 endforeach()
+
+# todo: move to windows dependencies file/section
+list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/winv6.3/um/x64/Crypt32.Lib)
 
 # Get MongoDB repository recent tag
 execute_process(

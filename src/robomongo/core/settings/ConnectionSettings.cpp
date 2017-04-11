@@ -49,6 +49,8 @@ namespace Robomongo
         _replicaSetSettings(new ReplicaSetSettings(uri)),
         _clone(isClone)
     {
+        // Disabling unfinished feature : Export / Import to / from MongoURI
+        /*
         if (!uri.getServers().empty()) {
             _host = uri.getServers().front().host();
             _port = uri.getServers().front().port();
@@ -69,6 +71,7 @@ namespace Robomongo
             credential->setEnabled(true);
         }
         addCredential(credential);
+        */
     }
 
     void ConnectionSettings::fromVariant(const QVariantMap &map) {

@@ -15,6 +15,7 @@
 //#include <third_party/js-1.7/jsstr.h>
 
 #include <mongo/util/assert_util.h>
+#include <mongo/util/exit_code.h>
 #include <mongo/scripting/engine.h>
 
 // v0.9
@@ -50,7 +51,7 @@ namespace
 namespace mongo {
     extern bool isShell;
     void logProcessDetailsForLogRotate() {}
-    void exitCleanly(ExitCode code) {}
+    // void exitCleanly(ExitCode code) {}   // todo 3.4: 
 }
 
 namespace Robomongo
@@ -98,12 +99,12 @@ namespace Robomongo
             // mongo::isShell = true;
 
             mongo::ScriptEngine::setConnectCallback( mongo::shell_utils::onConnect );
-            mongo::ScriptEngine::setup();
-            mongo::globalScriptEngine->setScopeInitCallback(mongo::shell_utils::initScope);
-            mongo::globalScriptEngine->enableJIT(true);
+            mongo::ScriptEngine::setup();            
+            mongo::getGlobalScriptEngine()->setScopeInitCallback(mongo::shell_utils::initScope);
+            mongo::getGlobalScriptEngine()->enableJIT(true);
 
-            _scope.reset(mongo::globalScriptEngine->newScope());
-            _engine = mongo::globalScriptEngine;
+            _scope.reset(mongo::getGlobalScriptEngine()->newScope());
+            _engine = mongo::getGlobalScriptEngine();
 
             // Load '.mongorc.js' from user's home directory
             if (isLoadMongoRcJs) {

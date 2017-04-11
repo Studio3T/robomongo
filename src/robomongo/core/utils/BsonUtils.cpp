@@ -2,9 +2,11 @@
 
 #include <mongo/client/dbclientinterface.h>
 //#include <mongo/bson/bsonobjiterator.h>
+#include "mongo/util/base64.h"
+#include "mongo/util/stringutils.h"
+
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/HexUtils.h"
-#include "mongo/util/base64.h"
 
 // v0.9
 #include "robomongo/shell/db/ptimeutil.h"

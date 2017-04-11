@@ -41,17 +41,15 @@ namespace Robomongo
 
     std::vector<std::string> MongoClient::getCollectionNames(const std::string &dbname) const
     {
-        typedef std::list<std::string> cont_string_t;
-        cont_string_t dbs = _dbclient->getCollectionNames(dbname);
+        std::list<mongo::BSONObj> collList = _dbclient->getCollectionInfos(dbname);
 
-        std::vector<std::string> stringList;
-        for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); i++) {
-            stringList.push_back(*i);
-        }
-        std::sort(stringList.begin(), stringList.end());
-        return stringList;
+        std::vector<std::string> collNames;	
+        for (auto const& coll : collList)
+            collNames.push_back(coll.getStringField("name")); // todo: verify
+
+        std::sort(collNames.begin(), collNames.end());
+        return collNames;
     }
-
 
     float MongoClient::getVersion() const
     {
@@ -392,9 +390,9 @@ namespace Robomongo
 
     void MongoClient::dropDatabase(const std::string &dbName)
     {
-        mongo::BSONObj result;
-        if (!_dbclient->dropDatabase(dbName, &result)) { 
-            std::string errStr = result.getStringField("errmsg");
+        mongo::BSONObj info;
+        if (!_dbclient->dropDatabase(dbName/*, &info*/)) { // todo: do we catch errorStr via info - test it??
+            std::string errStr = "Unknown";     // todo
             if (errStr.empty())
                 errStr = "Failed to get error message.";
 
@@ -513,9 +511,9 @@ namespace Robomongo
     void MongoClient::dropCollection(const MongoNamespace &ns)
     {
         if (_dbclient->exists(ns.toString())) {
-            mongo::BSONObj result;
-            if (!_dbclient->dropCollection(ns.toString(), &result)) {
-                std::string errStr = result.getStringField("errmsg");
+            mongo::BSONObj info;
+            if (!_dbclient->dropCollection(ns.toString()/*, &info*/)) { // todo: do we catch errorStr via info - test it??
+                std::string errStr = "Unknown";     // todo
                 if (errStr.empty())
                     errStr = "Failed to get error message.";
 

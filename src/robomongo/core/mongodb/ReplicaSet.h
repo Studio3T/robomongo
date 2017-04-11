@@ -2,6 +2,8 @@
 
 #include <mongo/util/net/hostandport.h>
 
+#include <vector>
+
 namespace Robomongo
 {
     /**

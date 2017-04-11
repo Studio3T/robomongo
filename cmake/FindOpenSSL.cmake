@@ -16,7 +16,7 @@
 #-------------------------------------------
 
 find_path(
-    OpenSSL_DIR include/openssl/ssl.h
+    OpenSSL_DIR inc32/openssl/ssl.h
     DOC "Path to OpenSSL (github.com/openssl/openssl) root directory"
 )
 

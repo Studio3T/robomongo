@@ -1280,9 +1280,20 @@ namespace Robomongo
 
     void MainWindow::updateMenus()
     {
-        bool const welcomeTabVisible = _updateMenusAtStart ? true : getWelcomeTab() && getWelcomeTab()->isVisible();
-        int const tabCount = _workArea->count() - (welcomeTabVisible ? 1 : 0);
-        bool const isEnable = _workArea && tabCount > 0;
+        if (!_workArea)
+            return;
+
+        bool isEnable = false;
+        if (_updateMenusAtStart)
+            isEnable = false;
+        else {
+            if (getWelcomeTab() && getWelcomeTab()->isVisible())
+                isEnable = false;
+            else if (_workArea->count() == 0)
+                isEnable = false;
+            else
+                isEnable = true;
+        }
 
         _execToolBar->setEnabled(isEnable);
         _openAction->setEnabled(isEnable);
@@ -1411,13 +1422,6 @@ namespace Robomongo
         if (!Robomongo::AppRegistry::instance().settingsManager()->checkForUpdates())
             return;
 
-        // returns NO-UPDATES-ANNOUNCED
-        QUrl url("http://updates.3tsoftwarelabs.com/check.php?softwareId=8&softwareVersion=1.0.0&licenseInfo=FREE"
-            "&setup=5b3bd8ca-33ab-407c-b7ca-fd15a17ece43&notify=true#");
-
-        QUrl url2("http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=4.3.0&licenseInfo=FREE"
-            "&setup=760f6182-13e4-4357-8f5e-d51bc7ca27fe&notify=true#");
-
 #ifdef _WIN32
         QString const OS = "win";
 #elif __APPLE__
@@ -1428,13 +1432,12 @@ namespace Robomongo
         QString const OS = "unknown";
 #endif
 
-        // todo:
-        // http://updates.3tsoftwarelabs.com/check.php?softwareId=1&softwareVersion=4.3.0&licenseInfo=FREE&setup=760f6182-13e4-4357-8f5e-d51bc7ca27fe&notify=true#
-        QUrl url3("http://updates.3tsoftwarelabs.com/check.php?os=" + OS + "&softwareId=1&softwareVersion=" +
+        // softwareId=8: Robomongo product ID 
+        QUrl url("http://updates.3tsoftwarelabs.com/check.php?os=" + OS + "&softwareId=8&softwareVersion=" +
                    QString(PROJECT_VERSION) + "&licenseInfo=FREE&setup=" + 
                    AppRegistry::instance().settingsManager()->anonymousID() + "&notify=true#");
 
-        _networkAccessManager->get(QNetworkRequest(url3));
+        _networkAccessManager->get(QNetworkRequest(url));
     }
 
 }

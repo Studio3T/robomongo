@@ -15,10 +15,17 @@
 # Try to find OpenSSL directory (uses CMAKE_PREFIX_PATH locations)
 #-------------------------------------------
 
-find_path(
-    OpenSSL_DIR inc32/openssl/ssl.h
-    DOC "Path to OpenSSL (github.com/openssl/openssl) root directory"
-)
+if(SYSTEM_WINDOWS)
+  find_path(
+      OpenSSL_DIR inc32/openssl/ssl.h
+      DOC "Path to OpenSSL (github.com/openssl/openssl) root directory"
+  )
+else()
+  find_path(
+      OpenSSL_DIR include/openssl/ssl.h
+      DOC "Path to OpenSSL (github.com/openssl/openssl) root directory"
+  )
+endif()
 
 # Find OpenSSL version
 #-------------------------------------------

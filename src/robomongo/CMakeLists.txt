@@ -141,7 +141,6 @@ set(SOURCES
     gui/resources/gui.qrc
 )
 
-
 # Robomongo target
 add_executable(robomongo MACOSX_BUNDLE WIN32 app/main.cpp ${SOURCES})
 
@@ -155,6 +154,17 @@ target_link_libraries(robomongo
         mongodb
         ssh
         Threads::Threads)   # Target from FindThreads CMake module
+
+# todo:
+IF(APPLE)
+  FIND_LIBRARY(SECURITY NAMES Security)
+  FIND_LIBRARY(CORE_FOUNDATION NAMES CoreFoundation)
+  SET(SSL_LIBRARIES ${SECURITY} ${CORE_FOUNDATION})
+  
+  target_link_libraries(robomongo
+    PRIVATE
+        ${SSL_LIBRARIES})    
+ENDIF(APPLE)
 
 target_include_directories(robomongo
     PRIVATE

@@ -47,6 +47,8 @@ namespace Robomongo
         // Temporarily disabling Recent Connections feature
         // void addRecentConnectionItem(ConnectionSettings const* conn, bool insertTop);
 
+        void setWhatsNewHeaderAndText(QString const& str);
+
         QLabel* _pic1 = nullptr;
         QLabel* _blogsSection;
         QLabel* _blogsHeader;

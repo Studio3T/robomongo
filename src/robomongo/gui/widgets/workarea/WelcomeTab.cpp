@@ -89,7 +89,7 @@ namespace Robomongo
                                       "href='%1'>%2</a></p>";
     */
     
-    QString const whatsNew = "<p><h1><font color=\"#2d862d\">What's New</h1></p>";
+    QString const WhatsNew = "<p><h1><font color=\"#2d862d\">%1</h1></p>";
     QString const BlogsHeader = "<p><h1><font color=\"#2d862d\">Blog Posts</h1></p>";
     QString const BlogLinkTemplate = "<a style = 'color: #106CD6; text-decoration: none;'"
                                      "href='%1'>%2</a>";
@@ -171,7 +171,7 @@ namespace Robomongo
         */
 
         //// What's new section
-        _whatsNewHeader = new QLabel(whatsNew);
+        _whatsNewHeader = new QLabel;
         _whatsNewHeader->setHidden(true);
         _whatsNewText = new QLabel;
         _whatsNewText->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -245,6 +245,7 @@ namespace Robomongo
         mainLayout->addSpacing(20);
         mainLayout->addLayout(rightLayout);
         mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
+
         setLayout(mainLayout);
     }
 
@@ -255,8 +256,6 @@ namespace Robomongo
 
     void WelcomeTab::on_downloadTextReply(QNetworkReply* reply)
     {
-        auto const SIXTY_PERCENT_OF_TAB = _parent->width() * TEXT_TO_TAB_RATIO;
-
         auto hideOrShowWhatsNewHeader = [this]() {
             _whatsNewHeader->setHidden( (!_pic1->pixmap() || _pic1->pixmap()->isNull())
                                         && _whatsNewText->text().isEmpty() ? true : false);
@@ -275,9 +274,7 @@ namespace Robomongo
 
                     QTextStream in(&file);
                     QString str(in.readAll());
-                    _whatsNewText->setText(str);
-                    _whatsNewText->setMinimumWidth(SIXTY_PERCENT_OF_TAB);
-                    adjustSize();
+                    setWhatsNewHeaderAndText(str);
                     hideOrShowWhatsNewHeader();
                     return;
                 }
@@ -293,9 +290,7 @@ namespace Robomongo
 
                 QTextStream in(&file);
                 QString str(in.readAll());
-                _whatsNewText->setText(str);
-                _whatsNewText->setMinimumWidth(SIXTY_PERCENT_OF_TAB);
-                adjustSize();
+                setWhatsNewHeaderAndText(str);
                 hideOrShowWhatsNewHeader();
                 return;
             }
@@ -310,9 +305,7 @@ namespace Robomongo
                 return;
             }
 
-            _whatsNewText->setText(str);
-            _whatsNewText->setMinimumWidth(SIXTY_PERCENT_OF_TAB);
-            adjustSize();
+            setWhatsNewHeaderAndText(str);
             saveIntoCache(Text1_URL.fileName(), str, Text1_LastModifiedDateKey,
                           reply->header(QNetworkRequest::LastModifiedHeader).toString());
         }
@@ -442,6 +435,21 @@ namespace Robomongo
     void WelcomeTab::on_allBlogsButton_clicked()
     {
         QDesktopServices::openUrl(QUrl("https://blog.robomongo.org/"));
+    }
+
+    void WelcomeTab::setWhatsNewHeaderAndText(QString const& str)
+    {
+        if (!str.contains("\n") || str.size() == 0)
+            return;
+
+        auto const firstNewLineIndex = str.indexOf("\n");
+        auto const leftOfStr = str.left(firstNewLineIndex);
+        auto const rightOfStr = str.right(str.size() - firstNewLineIndex - 7);
+        _whatsNewHeader->setText(WhatsNew.arg(leftOfStr));
+        _whatsNewText->setText(rightOfStr);
+        auto const SIXTY_PERCENT_OF_TAB = _parent->width() * TEXT_TO_TAB_RATIO;
+        _whatsNewText->setMinimumWidth(SIXTY_PERCENT_OF_TAB);
+        adjustSize();
     }
     
 /* Temporarily disabling Recent Connections feature

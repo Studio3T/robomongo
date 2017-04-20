@@ -67,6 +67,8 @@ namespace Robomongo
         auto scrollArea = new QScrollArea;
         _welcomeTab = new WelcomeTab(scrollArea);
         scrollArea->setWidget(_welcomeTab);
+        scrollArea->setBackgroundRole(QPalette::Base);
+
 #ifdef __APPLE__
         addTab(scrollArea, QIcon(), "Welcome");
 #else
@@ -139,6 +141,7 @@ namespace Robomongo
 
         _welcomeTab = new WelcomeTab(scrollArea);
         scrollArea->setWidget(_welcomeTab);
+        scrollArea->setBackgroundRole(QPalette::Base);
 
 #ifdef __APPLE__
         QIcon icon;

@@ -753,7 +753,12 @@ namespace Robomongo
         auto strWidth = _updateLabel->fontMetrics().width(doc.toPlainText());
         auto lineHeight = _updateLabel->fontMetrics().height();
         auto widthForUpdateStr = width() - _closeButton->width();
+
+#ifdef __APPLE__
+        _updateLabel->setFixedHeight((strWidth / widthForUpdateStr + 1) * lineHeight * 1.3);
+#else
         _updateLabel->setFixedHeight((strWidth / widthForUpdateStr + 1) * lineHeight);
+#endif
     }
 
     void MainWindow::open()

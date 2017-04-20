@@ -56,6 +56,11 @@ int main(int argc, char *argv[], char** envp)
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 
+    // Set unified light blue color for all links in application
+    QPalette newPalette(qApp->palette());
+    newPalette.setColor(QPalette::Link, QColor("#106CD6"));
+    qApp->setPalette(newPalette);
+
     // EULA License Agreement
     auto const settingsManager = Robomongo::AppRegistry::instance().settingsManager();
     if (!settingsManager->acceptedEulaVersions().contains(PROJECT_VERSION)) {

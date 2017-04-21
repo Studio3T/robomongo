@@ -1,16 +1,37 @@
 
 Latest Version: 
-Robomongo 1.0-RC1 (1 Feb, 2017)
-http://blog.robomongo.org/robomongo-1-rc1
+Robomongo 1.0 (21 Apr, 2017)
+http://blog.robomongo.org/robomongo-1-0
 
 Robomongo 1.x:
   Major Features: 
     - Replica set support.
+    - Update Notifications Bar
+    - Welcome Tab
     - New operation logging for almost all operations.
 
-  Major Improvements:
+  Major Fixes/Improvements:
     - Improved error handling (no double error windows) for almost all operations.
+    - Timestamp value is represented incorrectly (https://github.com/Studio3T/robomongo/issues/1159)
+    - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
     
+  * What's new in 1.0 (21 Apr , 2017)
+    New Features:
+      - Update Notifications Bar
+      - Welcome Tab
+      - Welcome Wizard
+
+    Improvements:
+      - Replica set name configurable on UI
+      - Configuration file system location change
+      - "About Robomongo" dialog changes
+    
+    Fixes:
+      - Fix to avoid the same set name problem (https://github.com/Studio3T/robomongo/issues/1302)
+      - Timestamp value is represented incorrectly (https://github.com/Studio3T/robomongo/issues/1159)
+      - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
+      - Time zone shown as "000:00" when UTC +00:00 is used as local timezone(https://github.com/Studio3T/robomongo/issues/1309)
+      
   * What's new in 1.0-RC1 (1 Feb, 2017)
     New Features:
       - Replica set support.
@@ -57,9 +78,9 @@ Robomongo 0.9:
   Major Features: 
     - Support for MongoDB 3.x and WiredTiger engine. Robomongo now embeds MongoDB 3.2 shell. 
       (Ability to use the latest shell functionality)
-    - SSH tunnel support for connections added.
-    - SSL tunnel support added. 
-    - MongoDB Atlas (Cloud MongoDB) support added.
+    - SSH tunnel support for connections
+    - SSL support 
+    - MongoDB Atlas (Cloud MongoDB) support
     - Both MONGODB-CR and SCRAM-SHA-1 authentication mechanisms are supported. 
     - Allow direct connections to Replica Set members and support IPv6 protocol. 
     - Loading of huge list of collections is now faster.

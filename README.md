@@ -133,7 +133,7 @@ There are a number of issues we could use help with reproducing. They are marked
 License
 =======
 
-Copyright (C) 2014-2017 [3T Software Labs Ltd](https://studio3t.com/)
+Copyright (C) 2013-2017 [Paralect, Inc](http://www.paralect.com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 as 

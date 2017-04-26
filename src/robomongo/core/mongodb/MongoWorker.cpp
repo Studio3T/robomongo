@@ -263,6 +263,7 @@ namespace Robomongo
 
     void MongoWorker::handle(RefreshReplicaSetFolderRequest *event)
     {
+		configureSSL();
         ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
 
         // Primary is unreachable, but there might be reachable secondary(ies)

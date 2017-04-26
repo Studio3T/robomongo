@@ -167,7 +167,7 @@ namespace Robomongo
                     break;
                 }
             case NumberDecimal:
-                s << "NumberDecimal(" << elem._numberDecimal().toString() << ")";
+                s << "NumberDecimal(\"" << elem._numberDecimal().toString() << "\")";
                 break;
             case mongo::Bool:
                 s << ( elem.boolean() ? "true" : "false" );
@@ -436,7 +436,7 @@ namespace Robomongo
                 /** double precision floating point value */
             case NumberDecimal:
                 {
-                    return "Decimal";
+                    return "Decimal128";
                 }
                 /** character string, stored in utf8 */
             case String:
@@ -715,6 +715,24 @@ namespace Robomongo
                     con.append(num);
                     break; 
                 }
+			case NumberDecimal:
+			{
+				auto str = elem.numberDecimal().toString();
+				if (str.find('.') != std::string::npos) {
+					auto idx = str.size();
+					// Remove trailing zeros: '9.00900' -> '9.009'
+					while (str[idx-1] == '0') {
+						str.erase(idx-1);
+						--idx;
+					}
+					// Remove '.' if it is the last char, so if we have '9.0', make it '9'
+					if (*(str.end()-1) == '.')
+						str.erase(str.end()-1);
+				}
+
+				con.append(str);
+				break;
+			}
             default:
                 con.append("<unsupported>");
                 break;

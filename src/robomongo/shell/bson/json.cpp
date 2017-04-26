@@ -705,21 +705,17 @@ Status JParse::numberLongObject(StringData fieldName, BSONObjBuilder& builder) {
 }
 
 Status JParse::numberDecimalObject(StringData fieldName, BSONObjBuilder& builder) {
-    // Robomongo
-    return parseError("NumberDecimal is an expiremental feature and not yet supported.");
-
-    if (!readToken(COLON)) {
+    if (!readToken(COLON)) 
         return parseError("Expecting ':'");
-    }
+    
     // The number must be a quoted string, since large decimal numbers could overflow other types
     // and thus may not be valid JSON
     std::string numberDecimalString;
     numberDecimalString.reserve(NUMBERDECIMAL_RESERVE_SIZE);
     Status ret = quotedString(&numberDecimalString);
-    if (!ret.isOK()) {
+    if (!ret.isOK()) 
         return ret;
-    }
-
+   
     Decimal128 numberDecimal(numberDecimalString);
 
     builder.appendNumber(fieldName, numberDecimal);
@@ -1008,24 +1004,20 @@ Status JParse::numberLong(StringData fieldName, BSONObjBuilder& builder) {
 }
 
 Status JParse::numberDecimal(StringData fieldName, BSONObjBuilder& builder) {
-    // Robomongo
-    return parseError("NumberDecimal is an expiremental feature and not yet supported.");
-
-    if (!readToken(LPAREN)) {
+    if (!readToken(LPAREN)) 
         return parseError("Expecting '('");
-    }
-
+    
     std::string decString;
     decString.reserve(NUMBERDECIMAL_RESERVE_SIZE);
     Status ret = quotedString(&decString);
-    if (ret != Status::OK()) {
+    if (ret != Status::OK()) 
         return ret;
-    }
+    
     Decimal128 val(decString);
 
-    if (!readToken(RPAREN)) {
+    if (!readToken(RPAREN)) 
         return parseError("Expecting ')'");
-    }
+    
     builder.appendNumber(fieldName, val);
     return Status::OK();
 }

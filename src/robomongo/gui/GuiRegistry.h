@@ -74,7 +74,8 @@ namespace Robomongo
         const QIcon& bsonArrayIcon() const;
         const QIcon& bsonStringIcon() const;
         const QIcon& bsonIntegerIcon() const;
-        const QIcon& bsonDoubleIcon() const;
+		const QIcon& bsonDoubleIcon() const;
+		const QIcon& bsonNumberDecimalIcon() const;
         const QIcon& bsonDateTimeIcon() const;
         const QIcon& bsonBinaryIcon() const;
         const QIcon& bsonNullIcon() const;

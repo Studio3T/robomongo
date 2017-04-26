@@ -239,6 +239,12 @@ namespace Robomongo
         return bsonDoubleIc;
     }
 
+	const QIcon &GuiRegistry::bsonNumberDecimalIcon() const
+	{
+		static const QIcon icon(":/robomongo/icons/bson_decimal128_16x16.png");
+		return icon;
+	}
+
     const QIcon &GuiRegistry::bsonDateTimeIcon() const
     {
         static const QIcon bsonDateTimeIc = QIcon(":/robomongo/icons/bson_datetime_16x16.png");

@@ -8,6 +8,7 @@
         <file>icons/bson_bool_16x16.png</file>
         <file>icons/bson_datetime_16x16.png</file>
         <file>icons/bson_double_16x16.png</file>
+        <file>icons/bson_decimal128_16x16.png</file>
         <file>icons/bson_integer_16x16.png</file>
         <file>icons/bson_null_16x16.png</file>
         <file>icons/bson_string_16x16.png</file>

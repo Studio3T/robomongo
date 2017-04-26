@@ -7,31 +7,28 @@ Starting from version 0.9, Robomongo is compatibile with MongoDB 3.x (including 
 
 Robomongo 0.8.x embeds the **MongoDB 2.4.0** shell.
 
-What's new in latest Robomongo 1.0-RC1?
+What's new in latest Robomongo 1.0?
 ====================================
-Latest release of Robomongo 1.0-RC1 includes: 
-  - Replica Set Support
-  - Improved error handling (no double error windows) and new operation logging for almost all operations.
-  - New 'Attributes' column in connections list window showing connection properties such as 'Replica Set', 'SSL' and 'SSH'.
-  - Windows size is saved/restored for Edit, View and Insert Document dialogs.
-  
-Central feature of this release is Replica Set feature. With this new feature, Robomongo can be used to work with replica set clusters with SSL, hosted on localhost, LAN or in the cloud. Even when primary is unreachable, it is possible to work on a secondary with a couple of clicks.
+Latest release of Robomongo 1.0 includes: 
+  - Update Notifications Bar
+  - Welcome Tab
+  - Welcome Wizard
+  - Replica set name configurable on UI
+  - Fixes to avoid same replica set name problem
+  - Fixes to solve various problems regarding Data and Timestamp data types
 
-Blog:     http://blog.robomongo.org/robomongo-1-rc1/  
+Blog:     http://blog.robomongo.org/robomongo-1-0/  
 Download: https://robomongo.org/download  
-Watch: [Robomongo youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
+Watch: [Robomongo Youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo
 
 What's Planned for the Next Releases?
 ====================================
 
-We are currently working towards [Robomongo 1.0 milestone](https://github.com/paralect/robomongo/milestone/20).  
+We are currently working towards [Robomongo 2.0 milestone](https://github.com/paralect/robomongo/milestone/21).  
  
 Currently in progress:
-- Robomongo 1.0 Planning (ETA: 22 Feb 2017)
-
-Planned for Next Release:
-- Robomongo 1.0 Planning
+- MongoDB 3.4 Support
 
 Plans for Future:
 - User Roles
@@ -74,7 +71,7 @@ Download
 
 You can download tested install packages for OS X, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
 
-The latest stable release is currently [**Robomongo 0.9.0**](http://blog.robomongo.org/robomongo-0-9-0-final/).
+The latest stable release is currently [**Robomongo 1.0**](http://blog.robomongo.org/robomongo-1-0/).
 
 Support
 =======
@@ -112,8 +109,6 @@ Code contributions are always welcome! Just try to follow our pre-commit checks 
 
 If you plan to contribute, please create a Github issue (or comment on the relevant existing issue) so we can help coordinate with upcoming release plans.
 
-For a general workflow, see Github's guide to [Fork a Repo](https://help.github.com/articles/fork-a-repo/).
-
 Pull requests (PRs) should generally be for discrete issues (i.e. one issue per PR please) and be clean to merge against the current master branch. It would also be helpful if you can confirm what testing has been done (specific O/S targets and MongoDB versions if applicable).
 
 A usual naming approach for feature branches is `issue-###`. Include the issue number in your commit message / pull request description to link the PR to the original issue.
@@ -133,7 +128,7 @@ There are a number of issues we could use help with reproducing. They are marked
 License
 =======
 
-Copyright (C) 2013-2017 [Paralect, Inc](http://www.paralect.com)
+Copyright 2014-2017 [3T Software Labs Ltd](https://studio3t.com/). All rights reserved.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 as 

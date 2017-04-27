@@ -15,6 +15,9 @@ Robomongo 1.x:
     - Timestamp value is represented incorrectly (https://github.com/Studio3T/robomongo/issues/1159)
     - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
     
+  * What's new in patch 1.0.2 (28 Apr , 2017)
+      - Support for ES6 (ECMAScript2015) added.
+      
   * What's new in Robomongo 1.0 (21 Apr , 2017)
     http://blog.robomongo.org/robomongo-1-0
     

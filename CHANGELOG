@@ -15,7 +15,9 @@ Robomongo 1.x:
     - Timestamp value is represented incorrectly (https://github.com/Studio3T/robomongo/issues/1159)
     - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
     
-  * What's new in 1.0 (21 Apr , 2017)
+  * What's new in Robomongo 1.0 (21 Apr , 2017)
+    http://blog.robomongo.org/robomongo-1-0
+    
     New Features:
       - Update Notifications Bar
       - Welcome Tab
@@ -32,7 +34,9 @@ Robomongo 1.x:
       - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
       - Time zone shown as "000:00" when UTC +00:00 is used as local timezone(https://github.com/Studio3T/robomongo/issues/1309)
       
-  * What's new in 1.0-RC1 (1 Feb, 2017)
+  * What's new in Robomongo 1.0-RC1 (1 Feb, 2017)
+    http://blog.robomongo.org/robomongo-1-rc1/
+    
     New Features:
       - Replica set support.
       - New 'Attributes' column in connections list window showing connection properties such as 'Replica Set', 'SSL' and 'SSH'.  
@@ -95,9 +99,7 @@ Robomongo 0.9:
       #910, #748, #697, #699, #760, #815, #870, #892, 
       #894, #905, #945, #974, #978, #990, #831, #842
     - SSH connection failure to servers on Ubuntu and OS X with the following error:
-      "Resource temporarily unavailable. Error when starting up SSH session: -8"  (#1090)
-
-      
+      "Resource temporarily unavailable. Error when starting up SSH session: -8"  (#1090)     
       
   What's new in 0.9.0 Final (30 Sep, 2016)
   http://blog.robomongo.org/robomongo-0-9-0-final/

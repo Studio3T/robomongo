@@ -25,7 +25,7 @@ Follow: https://twitter.com/Robomongo
 What's Planned for the Next Releases?
 ====================================
 
-We are currently working towards [Robomongo 2.0 milestone](https://github.com/paralect/robomongo/milestone/21).  
+We are currently working towards next release [Robomongo 2.0](https://github.com/Studio3T/robomongo/projects/1).  
  
 Currently in progress:
 - MongoDB 3.4 Support

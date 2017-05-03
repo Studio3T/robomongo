@@ -154,10 +154,10 @@ namespace Robomongo
     void MongoDatabase::handle(LoadUsersResponse *event)
     {
         if (event->isError()) {
+            _bus->publish(new MongoDatabaseUsersLoadedEvent(this, event->error()));
+
             if (_server->connectionRecord()->isReplicaSet()) // replica set
                 handleIfReplicaSetUnreachable(event);           
-            else // single server
-                _bus->publish(new MongoDatabaseUsersLoadedEvent(this, event->error()));            
 
             genericEventErrorHandler(event, "Failed to refresh 'Users'.", _bus, this);
             return;

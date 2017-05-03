@@ -718,14 +718,15 @@ namespace Robomongo
 			case NumberDecimal:
 			{
 				auto str = elem.numberDecimal().toString();
-				if (str.find('.') != std::string::npos) {
-					auto idx = str.size();
-					// Remove trailing zeros: '9.00900' -> '9.009'
-					while (str[idx-1] == '0') {
-						str.erase(idx-1);
-						--idx;
+                // Remove trailing zeros (and '.' conditionally) only if there is '.' and no 'E'
+				if (str.find('.') != std::string::npos && str.find('E') == std::string::npos) {
+					auto i = str.size();
+					// Start checking trailing zeros from last char: i.e. '9.00900' -> '9.009'
+					while (str[i-1] == '0') {
+						str.erase(i-1);
+						--i;
 					}
-					// Remove '.' if it is the last char, so if we have '9.0', make it '9'
+					// Remove '.' if it is the last char. i.e. '9.0' -> '9'
 					if (*(str.end()-1) == '.')
 						str.erase(str.end()-1);
 				}

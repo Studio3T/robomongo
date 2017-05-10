@@ -25,10 +25,17 @@ Follow: https://twitter.com/Robomongo
 What's Planned for the Next Releases?
 ====================================
 
-We are currently working towards next release [Robomongo 2.0](https://github.com/Studio3T/robomongo/projects/1).  
+We are currently working towards next release [Robomongo 1.1](https://github.com/Studio3T/robomongo/projects/1).  
  
 Currently in progress:
-- MongoDB 3.4 Support
+- [MongoDB 3.4 Support](https://github.com/Studio3T/robomongo/issues/1250)
+- [New NumberDecimal (Decimal128) data type support](https://github.com/Studio3T/robomongo/issues/1248)
+    
+- [ECMAScript 2015 (Modernized JavaScript Implementation aka ES6) Support](https://github.com/Studio3T/robomongo/issues/1197)  
+    http://www.ecma-international.org/ecma-262/6.0/index.html
+
+- Security Improvements: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
+- Tool Chain Improvements: Modern C++14 features are enabled 
 
 Plans for Future:
 - User Roles

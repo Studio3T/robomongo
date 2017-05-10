@@ -717,21 +717,7 @@ namespace Robomongo
                 }
 			case NumberDecimal:
 			{
-				auto str = elem.numberDecimal().toString();
-                // Remove trailing zeros (and '.' conditionally) only if there is '.' and no 'E'
-				if (str.find('.') != std::string::npos && str.find('E') == std::string::npos) {
-					auto i = str.size();
-					// Start checking trailing zeros from last char: i.e. '9.00900' -> '9.009'
-					while (str[i-1] == '0') {
-						str.erase(i-1);
-						--i;
-					}
-					// Remove '.' if it is the last char. i.e. '9.0' -> '9'
-					if (*(str.end()-1) == '.')
-						str.erase(str.end()-1);
-				}
-
-				con.append(str);
+				con.append(elem.numberDecimal().toString());
 				break;
 			}
             default:

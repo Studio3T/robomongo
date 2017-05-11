@@ -63,12 +63,12 @@ Supported Platforms
 | ObjectRocket  |
 | Amazon EC2    |
 
-| Windows                |   Mac            | Linux                       |        
-|:---------------------- | :---------------| :---------------------------|
-| Windows 64-bit 10      |  Mac OS X 10.11  | Linux Ubuntu 16.04 64-bit*  |
-  Windows 64-bit 8.1     |  Mac OS X 10.10  | Linux Ubuntu 14.04 64-bit*  |
-| Windows 64-bit 7       |                  | Linux CentOS 7 64-bit*      |
-|                        |                  | Linux CentOS 6 64-bit*      |
+| Windows                |   Mac                            | Linux                       |        
+|:---------------------- | :--------------------------------| :---------------------------|
+| Windows 64-bit 10      |  Mac OS X 10.12 (Sierra)         | Linux Ubuntu 16.04 64-bit*  |
+  Windows 64-bit 8.1     |  Mac OS X 10.11 (El Capitan)     | Linux Ubuntu 14.04 64-bit*  |
+| Windows 64-bit 7       |  Mac OS X 10.10 (Yosemite)       | Linux CentOS 7 64-bit*      |
+|                        |                                  | Linux CentOS 6 64-bit*      |
 
 \* latest stable build
 

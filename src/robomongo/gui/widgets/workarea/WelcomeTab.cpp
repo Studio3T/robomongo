@@ -96,12 +96,12 @@ namespace Robomongo
 
 // Not using https for Linux due to crashes and unstable behaviors experienced.
 #ifdef __linux__
-    QUrl const Pic1_URL = QString("http://rm-feed.3t.io/1/image.png");
-    QUrl const Text1_URL = QString("http://rm-feed.3t.io/1/contents.txt");
+    QUrl const Pic1_URL = QString("http://rm-feed.3t.io/2/image.png");
+    QUrl const Text1_URL = QString("http://rm-feed.3t.io/2/contents.txt");
     QUrl const Rss_URL = QString("http://blog.robomongo.org/rss/");
 #else
-    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/1/image.png");
-    QUrl const Text1_URL = QString("https://rm-feed.3t.io/1/contents.txt");
+    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/2/image.png");
+    QUrl const Text1_URL = QString("https://rm-feed.3t.io/2/contents.txt");
     QUrl const Rss_URL = QString("https://blog.robomongo.org/rss/");
 #endif
 

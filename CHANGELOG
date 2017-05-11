@@ -17,11 +17,16 @@ Robomongo 1.x:
     - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
     
   * What's new in Robomongo 1.1 Beta (12 May, 2017)   
-    - MongoDB 3.4 Support 
-    - New NumberDecimal (Decimal128) data type support
-    - ECMAScript 2015 (Modernized JavaScript Implementation aka ES6) Support  
-    - Security Improvements: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
-    - Tool Chain Improvements: Modern C++14 features are enabled 
+    https://github.com/Studio3T/robomongo/releases/tag/v1.1.0-beta
+    
+    New Features:
+      - MongoDB 3.4 Support 
+      - New NumberDecimal (Decimal128) data type support
+      - ECMAScript 2015 (Modernized JavaScript Implementation aka ES6) Support  
+        
+    Improvements:
+      - Security Improvements: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
+      - Tool Chain Improvements: Modern C++14 features are enabled 
 
   * What's new in Robomongo 1.0 (21 Apr, 2017)
     http://blog.robomongo.org/robomongo-1-0

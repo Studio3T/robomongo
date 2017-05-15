@@ -346,11 +346,11 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
 
-            std::vector<std::string> stringList = client->getCollectionNames(event->databaseName());
-            const std::vector<MongoCollectionInfo> &infos = client->runCollStatsCommand(stringList);
+            auto const& namespaces = client->getCollectionNamesWithDbname(event->databaseName());
+            std::vector<MongoCollectionInfo> const& collInfos = client->runCollStatsCommand(namespaces);
             client->done();
 
-            reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName(), infos));
+            reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName(), collInfos));
         } catch(const mongo::DBException &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);

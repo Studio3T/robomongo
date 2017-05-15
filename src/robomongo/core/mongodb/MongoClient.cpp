@@ -39,13 +39,13 @@ namespace Robomongo
     MongoClient::MongoClient(mongo::DBClientBase *const dbclient) :
         _dbclient(dbclient) { }
 
-    std::vector<std::string> MongoClient::getCollectionNames(const std::string &dbname) const
+    std::vector<std::string> MongoClient::getCollectionNamesWithDbname(const std::string &dbname) const
     {
         std::list<mongo::BSONObj> collList = _dbclient->getCollectionInfos(dbname);
 
         std::vector<std::string> collNames;	
         for (auto const& coll : collList)
-            collNames.push_back(coll.getStringField("name")); // todo: verify
+            collNames.push_back(dbname + '.' + coll.getStringField("name")); // todo: verify
 
         std::sort(collNames.begin(), collNames.end());
         return collNames;

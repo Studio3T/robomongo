@@ -16,7 +16,7 @@ namespace Robomongo
     public:
         MongoClient(mongo::DBClientBase *const scopedConnection);
 
-        std::vector<std::string> getCollectionNames(const std::string &dbname) const;
+        std::vector<std::string> getCollectionNamesWithDbname(const std::string &dbname) const;
         std::vector<std::string> getDatabaseNames() const;
         float getVersion() const;
         std::string getStorageEngineType() const;

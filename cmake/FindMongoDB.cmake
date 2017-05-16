@@ -91,8 +91,6 @@ foreach(lib ${MongoDB_RELATIVE_LIBS})
   list(APPEND MongoDB_LIBS ${MongoDB_DIR}/${lib})
 endforeach()
 
-
-# todo: move to windows dependencies file/section
 if(SYSTEM_WINDOWS)
   list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/winv6.3/um/x64/Crypt32.Lib)
 endif()

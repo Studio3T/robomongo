@@ -155,16 +155,15 @@ target_link_libraries(robomongo
         ssh
         Threads::Threads)   # Target from FindThreads CMake module
 
-# todo:
-IF(APPLE)
-  FIND_LIBRARY(SECURITY NAMES Security)
-  FIND_LIBRARY(CORE_FOUNDATION NAMES CoreFoundation)
-  SET(SSL_LIBRARIES ${SECURITY} ${CORE_FOUNDATION})
+if(APPLE)
+  find_library(SECURITY NAMES Security)
+  find_library(CORE_FOUNDATION NAMES CoreFoundation)
+  set(SSL_LIBRARIES ${SECURITY} ${CORE_FOUNDATION})
   
   target_link_libraries(robomongo
     PRIVATE
         ${SSL_LIBRARIES})    
-ENDIF(APPLE)
+endif(APPLE)
 
 target_include_directories(robomongo
     PRIVATE

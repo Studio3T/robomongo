@@ -51,7 +51,6 @@ namespace
 namespace mongo {
     extern bool isShell;
     void logProcessDetailsForLogRotate() {}
-    // void exitCleanly(ExitCode code) {}   // todo 3.4: 
 }
 
 namespace Robomongo

@@ -8,7 +8,7 @@
 #include <QXmlStreamReader>
 
 // Todo: 
-// Warning: 
+// Note: 
 //         Currently, this include statement should be maintained manually.
 //         The Qt version must be updated if Qt is upgraded. Otherwise it might cause build error. 
 //         The correct path will be: PROJECT_QT_VERSION/QtGui/private/qzipreader_p.h
@@ -57,13 +57,8 @@ namespace Robomongo
     */
     const QString SchemaVersion = "2.0";
 
-}
-
-namespace Robomongo
-{
-
     /**
-    * @brief Robomongo config. files
+    * @brief Robomongo config. files of old versions
     */
     const auto CONFIG_FILE_0_8_5 = QString("%1/.config/robomongo/robomongo.json").arg(QDir::homePath());
     const auto CONFIG_FILE_0_9 = QString("%1/.config/robomongo/0.9/robomongo.json").arg(QDir::homePath());
@@ -71,26 +66,18 @@ namespace Robomongo
     // Change of path due to re-branding to 3T
     const auto CONFIG_FILE_1_0_0 = QString("%1/.3T/robomongo/1.0.0/robomongo.json").arg(QDir::homePath());
 
-    struct ConfigFileAndImportFunction
+    // Important Note: In order to import connections from the latest version found, config. file path of an 
+    //                 old version must be defined and placed into the vector initializer list below in order.
+    std::vector<QString> const SettingsManager::_configFilesOfOldVersions
     {
-        ConfigFileAndImportFunction(QString const& configFile, std::function<bool()> importFunction)
-            : file(configFile), import(importFunction) {}
-
-        QString file;
-        std::function<bool()> import;
-    };
-
-    // Warning: Config. file and import function of a new release must be placed as FIRST element of 
-    //          vector initializer list below in order.
-    std::vector<ConfigFileAndImportFunction> const SettingsManager::_configFilesAndImportFunctions
-    {
-        ConfigFileAndImportFunction(CONFIG_FILE_1_0_0, SettingsManager::importConnectionsFrom_1_0_0_to_1_1_0),
-        ConfigFileAndImportFunction(CONFIG_FILE_1_0_RC1, SettingsManager::importConnectionsFrom_1_0_RC1_to_1_0_0),
-        ConfigFileAndImportFunction(CONFIG_FILE_0_9, SettingsManager::importConnectionsFrom_0_9_to_1_0_RC1),
-        ConfigFileAndImportFunction(CONFIG_FILE_0_8_5, SettingsManager::importConnectionsFrom_0_8_5_to_0_9)
+        CONFIG_FILE_1_0_0,
+        CONFIG_FILE_1_0_RC1,
+        CONFIG_FILE_0_9,
+        CONFIG_FILE_0_8_5,
     };
 
     std::vector<ConnectionSettings*>  SettingsManager::_connections;
+    
     // Temporarily disabling Recent Connections feature
     // std::vector<RecentConnection> SettingsManager::_recentConnections;
 
@@ -517,21 +504,21 @@ namespace Robomongo
 
     void SettingsManager::importConnections()
     {
-        // Skip when settings already imported
+        // Do not import if already imported
         if (_imported)
             return;
 
-        // Find and import 'only' from the latest version
-        for (auto const& configFileAndImportFunction : _configFilesAndImportFunctions) {
-            if (QFile::exists(configFileAndImportFunction.file)) {
-                configFileAndImportFunction.import();
+        // Find and import 'only' from the latest version to current version
+        for (auto const& configFile : _configFilesOfOldVersions) {
+            if (QFile::exists(configFile)) {
+                importConnectionsFromOldVersion(configFile);
                 setImported(true);  // Mark as imported
                 return;
             }
         }
     }
 
-    bool SettingsManager::importConnectionsFrom_0_8_5_to_0_9()
+    bool SettingsManager::importConnectionsFrom_0_8_5()
     {
         // Load old configuration file (used till version 0.8.5)
 
@@ -638,23 +625,13 @@ namespace Robomongo
         return true;
     }
 
-    bool SettingsManager::importConnectionsFrom_0_9_to_1_0_RC1()
-    {
-        return importConnectionsFromOldVersion(CONFIG_FILE_0_9);
-    }
-
-    bool SettingsManager::importConnectionsFrom_1_0_RC1_to_1_0_0()
-    {
-        return importConnectionsFromOldVersion(CONFIG_FILE_1_0_RC1);
-    }
-
-    bool SettingsManager::importConnectionsFrom_1_0_0_to_1_1_0()
-    {
-        return importConnectionsFromOldVersion(CONFIG_FILE_1_0_0);
-    }
-
     bool SettingsManager::importConnectionsFromOldVersion(QString const& oldConfigFilePath)
     {
+        if (oldConfigFilePath == CONFIG_FILE_0_8_5) {
+            importConnectionsFrom_0_8_5();
+            return true;
+        }
+
         if (!QFile::exists(oldConfigFilePath))
             return false;
 

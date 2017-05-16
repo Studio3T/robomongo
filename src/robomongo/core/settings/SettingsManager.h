@@ -214,10 +214,7 @@ namespace Robomongo
         // Imports connections from oldConfigFilePath into current config file
         static bool importConnectionsFromOldVersion(QString const& oldConfigFilePath);
         
-        static bool importConnectionsFrom_0_8_5_to_0_9();
-        static bool importConnectionsFrom_0_9_to_1_0_RC1();
-        static bool importConnectionsFrom_1_0_RC1_to_1_0_0();
-        static bool importConnectionsFrom_1_0_0_to_1_1_0();
+        static bool importConnectionsFrom_0_8_5();
 
         /**
          * @brief Version of settings schema currently loaded
@@ -269,8 +266,8 @@ namespace Robomongo
 
         ToolbarSettingsContainerType _toolbars;
 
-        // List of config. file absolute paths and related import functions. 
+        // List of config. file absolute paths of old versions
         // Must be updated with care and with every new version. Details on cpp file.       
-        static const std::vector<ConfigFileAndImportFunction> _configFilesAndImportFunctions;
+        static std::vector<QString> const SettingsManager::_configFilesOfOldVersions;
     };
 }

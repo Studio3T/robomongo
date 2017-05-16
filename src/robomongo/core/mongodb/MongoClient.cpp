@@ -391,8 +391,8 @@ namespace Robomongo
     void MongoClient::dropDatabase(const std::string &dbName)
     {
         mongo::BSONObj info;
-        if (!_dbclient->dropDatabase(dbName/*, &info*/)) { // todo: do we catch errorStr via info - test it??
-            std::string errStr = "Unknown";     // todo
+        if (!_dbclient->dropDatabase(dbName, mongo::WriteConcernOptions(), &info)) { // todo: do we catch errorStr via info - test it??
+            std::string errStr = info.toString();
             if (errStr.empty())
                 errStr = "Failed to get error message.";
 
@@ -512,8 +512,8 @@ namespace Robomongo
     {
         if (_dbclient->exists(ns.toString())) {
             mongo::BSONObj info;
-            if (!_dbclient->dropCollection(ns.toString()/*, &info*/)) { // todo: do we catch errorStr via info - test it??
-                std::string errStr = "Unknown";     // todo
+            if (!_dbclient->dropCollection(ns.toString(), mongo::WriteConcernOptions(), &info)) { 
+                std::string errStr = info.toString();
                 if (errStr.empty())
                     errStr = "Failed to get error message.";
 

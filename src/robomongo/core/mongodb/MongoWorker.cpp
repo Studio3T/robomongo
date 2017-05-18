@@ -210,20 +210,31 @@ namespace Robomongo
                 CredentialSettings *credentials = _connSettings->primaryCredential();
 
                 // Building BSON object:
-                mongo::BSONObj authParams(mongo::BSONObjBuilder()
-                    .append("user", credentials->userName())
-                    .append("db", credentials->databaseName())
-                    .append("pwd", credentials->userPassword())
-                    .append("mechanism", credentials->mechanism())
-                    .obj());
+                if (credentials->mechanism() == "PLAIN") {
+                    mongo::BSONObj authParams(mongo::BSONObjBuilder()
+                        .append("user", credentials->userName())
+                        .append("db", credentials->databaseName())
+                        .append("pwd", credentials->userPassword())
+                        .append("mechanism", credentials->mechanism())
+                        .append("digestPassword", false)
+                        .obj());
+                    conn->auth(authParams);
+                } else {
+                    mongo::BSONObj authParams(mongo::BSONObjBuilder()
+                        .append("user", credentials->userName())
+                        .append("db", credentials->databaseName())
+                        .append("pwd", credentials->userPassword())
+                        .append("mechanism", credentials->mechanism())
+                        .obj());
 
-                conn->auth(authParams);
+                    conn->auth(authParams);
+                }
 
                 // If authentication succeed and database name is 'admin' -
                 // then user is admin, otherwise user is not admin
                 std::string dbName = credentials->databaseName();
                 std::transform(dbName.begin(), dbName.end(), dbName.begin(), ::tolower);
-                if (dbName.compare("admin") != 0) // dbName is NOT "admin"
+                if (dbName.compare("admin") != 0 && dbName.compare("$external") != 0) // dbName is NOT "admin"
                     _isAdmin = false;
             }
 

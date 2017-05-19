@@ -90,7 +90,7 @@ namespace Robomongo
 
         auto mainLayout2 = new QGridLayout();
         mainLayout2->addWidget(new QLabel,          0, 0, 1, 2);
-        mainLayout2->addWidget(new QLabel("<h3>Thank you for choosing Robomongo!</h3>"), 1, 0, 1, 2);
+        mainLayout2->addWidget(new QLabel("<h3>Thank you for choosing Robo 3T!</h3>"), 1, 0, 1, 2);
         mainLayout2->addWidget(bodyLabel,           2, 0 , 1, 2);
         mainLayout2->addWidget(new QLabel,          3, 0, 1, 2);
         mainLayout2->addWidget(nameLabel,           4, 0);

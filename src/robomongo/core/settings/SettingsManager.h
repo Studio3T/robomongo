@@ -13,14 +13,14 @@ namespace Robomongo
     struct ConfigFileAndImportFunction;
         
     // Current cache directory
-    QString const CacheDir = QString("%1/.3T/robomongo/%2/cache/").arg(QDir::homePath())
-                                                                  .arg(PROJECT_VERSION);
+    QString const CacheDir = QString("%1/.3T/robo3t/%2/cache/").arg(QDir::homePath())
+                                                               .arg(PROJECT_VERSION);
     // Current config file
-    QString const ConfigFilePath = QString("%1/.3T/robomongo/%2/robomongo.json").arg(QDir::homePath())
-                                                                                .arg(PROJECT_VERSION);  
+    QString const ConfigFilePath = QString("%1/.3T/robo3t/%2/robomongo.json").arg(QDir::homePath())
+                                                                             .arg(PROJECT_VERSION);  
     // Current config file directory
-    QString const ConfigDir = QString("%1/.3T/robomongo/%2/").arg(QDir::homePath())
-                                                             .arg(PROJECT_VERSION);  
+    QString const ConfigDir = QString("%1/.3T/robo3t/%2/").arg(QDir::homePath())
+                                                          .arg(PROJECT_VERSION);  
     /* Temporarily disabling Recent Connections feature
     struct RecentConnection
     {
@@ -268,6 +268,6 @@ namespace Robomongo
 
         // List of config. file absolute paths of old versions
         // Must be updated with care and with every new version. Details on cpp file.       
-        static std::vector<QString> const SettingsManager::_configFilesOfOldVersions;
+        static std::vector<QString> const _configFilesOfOldVersions;
     };
 }

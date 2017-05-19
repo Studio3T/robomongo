@@ -24,7 +24,7 @@ if(SYSTEM_LINUX)
     set(qt_conf_dir         ${bin_dir})
     set(qt_conf_plugins     "../lib")
 elseif(SYSTEM_MACOSX)
-    set(bundle_name         "Robomongo.app")
+    set(bundle_name         "Robo 3T.app")
     set(contents_path       ${bundle_name}/Contents)
 
     set(bin_dir             ${contents_path}/MacOS)

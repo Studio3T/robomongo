@@ -14,7 +14,7 @@ File `robomongo.ico` will be generated.
 Which icon sizes are used on Windows?
 =====================================
 
-The most important sizes are the one that is small. Robomongo should include 
+The most important sizes are the one that is small. Robo 3T should include 
 16, 20, 24, 40, 48. The bigger sizes are usually scaled well, without notable
 degrading in quality. 
 

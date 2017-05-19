@@ -160,6 +160,9 @@ namespace Robomongo
             return MongoShellExecResult(true, "Connection error. Uninitialized mongo scope.");
         }
 
+        // robomongo shell timeout
+        bool timeoutReached = false;
+
         /*
          * Replace all commands ('show dbs', 'use db' etc.) with call
          * to shellHelper('show', 'dbs') and so on.
@@ -205,17 +208,19 @@ namespace Robomongo
                          _scope->exec( "__robomongoLastRes = __lastres__; shellPrintHelper( __lastres__ );", 
                                       "(shell2)" , true , true , false, _timeoutSec * 1000);
                     }
-                    else {  // failed to run script 
-                        failed = true;                        
-                    }
+                    else   // failed to run script 
+                        failed = true;                                            
 
-                    qint64 elapsed = timer.elapsed();
+                    qint64 elapsed = timer.elapsed();   // milliseconds 
+
+                    if (elapsed > _timeoutSec * 1000)
+                        timeoutReached = true;
 
                     std::string logs = __logs.str();
                     std::string answer = logs.c_str();
                     std::string type = __type.c_str();
 
-                    if (failed)
+                    if (failed && !timeoutReached)
                         return MongoShellExecResult(true, answer);
 
                     std::vector<MongoDocumentPtr> docs = MongoDocument::fromBsonObj(__objects);
@@ -229,7 +234,7 @@ namespace Robomongo
             }
         }
 
-        return prepareExecResult(results);
+        return prepareExecResult(results, timeoutReached);
     }
 
     void ScriptEngine::interrupt()
@@ -358,7 +363,8 @@ namespace Robomongo
         return MongoShellResult(type, output, objects, MongoQueryInfo(), elapsedms);
     }
 
-    MongoShellExecResult ScriptEngine::prepareExecResult(const std::vector<MongoShellResult> &results)
+    MongoShellExecResult ScriptEngine::prepareExecResult(const std::vector<MongoShellResult> &results, 
+                                                         bool timeoutReached /* = false */)
     {
         const char *script =
             "__robomongoServerAddress = '[invalid connection]'; \n"
@@ -380,7 +386,7 @@ namespace Robomongo
         std::string dbName = getString("__robomongoDbName");
         bool dbIsValid = _scope->getBoolean("__robomongoDbIsValid");
 
-        return MongoShellExecResult(results, serverName, serverIsValid, dbName, dbIsValid);
+        return MongoShellExecResult(results, serverName, serverIsValid, dbName, dbIsValid, timeoutReached);
     }
 
     std::string ScriptEngine::getString(const char *fieldName)

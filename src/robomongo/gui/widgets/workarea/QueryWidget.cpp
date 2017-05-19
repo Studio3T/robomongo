@@ -24,6 +24,7 @@
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/utils/Logger.h"
 
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
@@ -47,6 +48,9 @@ namespace Robomongo
         AppRegistry::instance().bus()->subscribe(this, DocumentListLoadedEvent::Type, shell);
         AppRegistry::instance().bus()->subscribe(this, ScriptExecutedEvent::Type, shell);
         AppRegistry::instance().bus()->subscribe(this, AutocompleteResponse::Type, shell);
+
+        // Make QMessageBox text selectable
+        // setStyleSheet("QMessageBox { messagebox-text-interaction-flags: 5; }");
 
         _scriptWidget = new ScriptWidget(_shell, this);
         VERIFY(connect(_scriptWidget, SIGNAL(textChanged()), this, SLOT(textChange())));
@@ -138,7 +142,8 @@ namespace Robomongo
         if (_shell) {
             MongoServer *server = _shell->server();
             QString query = _scriptWidget->selectedText();
-            AppRegistry::instance().app()->openShell(server, query, _currentResult.currentDatabase(), AppRegistry::instance().settingsManager()->autoExec());
+            AppRegistry::instance().app()->openShell(server, query, _currentResult.currentDatabase(), 
+                AppRegistry::instance().settingsManager()->autoExec());
         }
     }
 
@@ -253,7 +258,8 @@ namespace Robomongo
 
         updateCurrentTab();
         displayData(event->result().results(), event->empty());
-        _scriptWidget->setup(event->result()); // this should be in ScriptWidget, which is subscribed to ScriptExecutedEvent              
+        // this should be in ScriptWidget, which is subscribed to ScriptExecutedEvent              
+        _scriptWidget->setup(event->result()); 
         activateTabContent();
 
         if (event->isError()) {
@@ -266,6 +272,20 @@ namespace Robomongo
                 QString::fromStdString((event->error().errorMessage()));
 
             QMessageBox::critical(this, "Error", message);
+        }
+
+        if (event->timeoutReached()) {
+            auto const shellTimeoutSec = AppRegistry::instance().settingsManager()->shellTimeoutSec();
+            QString const subStr = _currentResult.results().size() > 1 ?
+                "At least one of the scripts has reached shell timeout" :
+                "The script has reached shell timeout";
+            QString const secondStr = (shellTimeoutSec > 1) ? " seconds)" : " second)";
+            QString message = "Failed to execute all of the script. " + subStr + " (" + 
+                QString::number(shellTimeoutSec) + secondStr + " limit. "
+                + "\n\nHint: Please increase the value of \"shellTimeoutSec\" in the settings file and restart"
+                + " Robomongo in order to perform long lasting operations. Config file path: " + ConfigFilePath ;
+            QMessageBox::critical(this, "Error", message);
+            LOG_MSG(message.remove("\n"), mongo::logger::LogSeverity::Error());
         }
     }
 

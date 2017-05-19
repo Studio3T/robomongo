@@ -548,6 +548,7 @@ namespace Robomongo
     void MongoWorker::handle(ExecuteScriptRequest *event)
     {
         try {
+
             if (!_scriptEngine) {
                 reply(event->sender(), new ExecuteScriptResponse(this, EventError("MongoDB Shell was not initialized")));
                 return;
@@ -566,18 +567,23 @@ namespace Robomongo
 
             // todo: should we use dbName from event or _connSettings? 
             MongoShellExecResult result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
+
             // To fix the problem where 'result' comes with old primary address.
             if (_connSettings->isReplicaSet()) 
                 result.setCurrentServer(_dbclientRepSet->getSuspectedPrimaryHostAndPort().toString());
 
+            // Robomongo shell timeout
+            bool timeoutReached = false;
+            if (result.timeoutReached()) 
+                timeoutReached = true;          
 
             if (result.error()) {
                 // If this is replica set, update script engine and try again
                 if (_connSettings->isReplicaSet()) {
                     ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                     if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                        reply(event->sender(), new ExecuteScriptResponse(this, 
-                              EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
+                        reply(event->sender(), 
+                            new ExecuteScriptResponse(this, EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                         return;
                     }
                     else {  // primary reachable
@@ -587,12 +593,13 @@ namespace Robomongo
                     }
                 }
                 else { // single server
-                    reply(event->sender(), new ExecuteScriptResponse(this, EventError(result.errorMessage())));
+                    reply(event->sender(), 
+                        new ExecuteScriptResponse(this, EventError(result.errorMessage())));
                     return;
                 }
             }
 
-            reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty()));
+            reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty(), timeoutReached));
         } 
         catch(const std::exception &ex) {
             reply(event->sender(), new ExecuteScriptResponse(this, EventError(ex.what(), EventError::Unknown, false)));

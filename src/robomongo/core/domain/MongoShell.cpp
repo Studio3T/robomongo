@@ -98,16 +98,19 @@ namespace Robomongo
                 AppRegistry::instance().bus()->publish(
                     new ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo()));
 
-                AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->error()));
+                AppRegistry::instance().bus()->publish(
+                    new ScriptExecutedEvent(this, event->error(), event->timeoutReached()));
                 return;
             }
             else {  // single server
-                AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->error()));
+                AppRegistry::instance().bus()->publish(
+                    new ScriptExecutedEvent(this, event->error(), event->timeoutReached()));
                 return;
             }
         }
 
-        AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->result, event->empty));
+        AppRegistry::instance().bus()->publish(new ScriptExecutedEvent(this, event->result, event->empty,
+                                                                       event->timeoutReached()));
     }
 
     void MongoShell::handle(AutocompleteResponse *event)

@@ -34,12 +34,14 @@ namespace Robomongo
     private:
         ConnectionSettings *_connection;
 
-        MongoShellResult prepareResult(const std::string &type, const std::string &output, const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms);
-        MongoShellExecResult prepareExecResult(const std::vector<MongoShellResult> &results);
+        MongoShellResult prepareResult(const std::string &type, const std::string &output, 
+                                       const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms);
+
+        MongoShellExecResult prepareExecResult(const std::vector<MongoShellResult> &results, 
+                                               bool timeoutReached = false);
+
         std::string loadFile(const QString &path, bool throwOnError);
-
         std::string getString(const char *fieldName);
-
         bool statementize(const std::string &script, std::vector<std::string> &outList, std::string &outError);
 
         int _timeoutSec;

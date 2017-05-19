@@ -967,16 +967,18 @@ namespace Robomongo
     {
         R_EVENT
 
-        ExecuteScriptResponse(QObject *sender, const MongoShellExecResult &result, bool empty) :
-            Event(sender),
-            result(result),
-            empty(empty) { }
+        ExecuteScriptResponse(QObject *sender, const MongoShellExecResult &result, bool empty,
+                              bool timeoutReached = false) :
+            Event(sender), result(result), empty(empty), _timeoutReached(timeoutReached) {}
 
-        ExecuteScriptResponse(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        ExecuteScriptResponse(QObject *sender, const EventError &error, bool timeoutReached = false) :
+            Event(sender, error), _timeoutReached(timeoutReached) {}
+
+        bool timeoutReached() const { return _timeoutReached; }
 
         MongoShellExecResult result;
         bool empty;
+        bool const _timeoutReached = false;
     };
 
     class ConnectingEvent : public Event
@@ -1087,20 +1089,21 @@ namespace Robomongo
         R_EVENT
 
     public:
-        ScriptExecutedEvent(QObject *sender, const MongoShellExecResult &result, bool empty) :
-            Event(sender),
-            _result(result),
-            _empty(empty) { }
+        ScriptExecutedEvent(QObject *sender, const MongoShellExecResult &result, bool empty,
+                            bool timeoutReached = false) :
+            Event(sender), _result(result), _empty(empty), _timeoutReached(timeoutReached) {}
 
-        ScriptExecutedEvent(QObject *sender, const EventError &error) :
-            Event(sender, error) {}
+        ScriptExecutedEvent(QObject *sender, const EventError &error, bool timeoutReached = false) :
+            Event(sender, error), _timeoutReached(timeoutReached) {}
 
         MongoShellExecResult result() const { return _result; }
         bool empty() const { return _empty; }
+        bool timeoutReached() const { return _timeoutReached; }
 
     private:
         MongoShellExecResult _result;
         bool _empty;
+        bool const _timeoutReached = false;
     };
 
     class ScriptExecutingEvent : public Event

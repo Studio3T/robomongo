@@ -67,7 +67,7 @@ int main(int argc, char *argv[], char** envp)
         // EULA accepted
         settingsManager->addAcceptedEulaVersion(PROJECT_VERSION);
         settingsManager->save();
-    }
+    }  
 
     // Init GUI style
     Robomongo::AppStyleUtils::initStyle();

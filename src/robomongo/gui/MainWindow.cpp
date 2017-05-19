@@ -145,9 +145,9 @@ namespace Robomongo
         qApp->setStyleSheet(QString(
             "QWidget#queryWidget { background-color:#E7E5E4; margin: 0px; padding:0px; } \n"
             "Robomongo--ExplorerTreeWidget#explorerTree { padding: 1px 0px 0px 0px; background-color: %1; border: 0px; } \n"
-            "QMainWindow::separator { background: #E7E5E4; width: 1px; } "
+            "QMainWindow::separator { background: #E7E5E4; width: 1px; } \n"
+            "QMessageBox { messagebox-text-interaction-flags: 5; }"  // Make QMessageBox text selectable
         ).arg(explorerColor));
-
         _openAction = new QAction(GuiRegistry::instance().openIcon(), tr("&Open..."), this);
         _openAction->setToolTip(QString("Load script from the file to the currently opened shell <b>(%1 + O)</b>").arg(controlKey));
         _openAction->setShortcuts(QKeySequence::Open);

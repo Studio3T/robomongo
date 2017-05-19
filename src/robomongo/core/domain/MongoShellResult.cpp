@@ -2,8 +2,9 @@
 
 namespace Robomongo
 {
-    MongoShellResult::MongoShellResult(const std::string &type, const std::string &response, const MongoDocumentPtrContainerType &documents,
-                     const MongoQueryInfo &queryInfo, qint64 elapsedms) :
+    MongoShellResult::MongoShellResult(const std::string &type, const std::string &response, 
+                                       const MongoDocumentPtrContainerType &documents,
+                                       const MongoQueryInfo &queryInfo, qint64 elapsedms) :
         _type(type),
         _response(response),
         _documents(documents),
@@ -12,10 +13,13 @@ namespace Robomongo
 
     MongoShellExecResult::MongoShellExecResult(const std::vector<MongoShellResult> &results,
                          const std::string &currentServer, bool isCurrentServerValid,
-                         const std::string &currentDatabase, bool isCurrentDatabaseValid) :
+                         const std::string &currentDatabase, bool isCurrentDatabaseValid,
+                         bool timeoutReached /* = false */) :
         _results(results),
         _currentServer(currentServer),
         _currentDatabase(currentDatabase),
         _isCurrentServerValid(isCurrentServerValid),
-        _isCurrentDatabaseValid(isCurrentDatabaseValid) { }
+        _isCurrentDatabaseValid(isCurrentDatabaseValid),
+        _timeoutReached(timeoutReached) 
+        { }
 }

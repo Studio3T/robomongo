@@ -60,8 +60,8 @@ typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
 
 /* Robomongo:
-/*    To fix macro redefinition compiler warnings
-/*
+      To fix macro redefinition compiler warnings
+
 // Limits of integral types
 #ifndef INT8_MIN
 #define INT8_MIN               (-128)

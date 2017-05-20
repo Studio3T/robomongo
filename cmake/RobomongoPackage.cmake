@@ -15,7 +15,7 @@ execute_process(
 string(TIMESTAMP timestamp "%Y-%m-%d")
 
 # Package name (as it should appear in UI)
-set(CPACK_PACKAGE_NAME robomongo)
+set(CPACK_PACKAGE_NAME robo3t)
 
 # Version of the package
 set(CPACK_PACKAGE_VERSION_MAJOR     ${PROJECT_VERSION_MAJOR})

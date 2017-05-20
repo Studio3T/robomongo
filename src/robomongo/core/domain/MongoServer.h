@@ -105,6 +105,8 @@ namespace Robomongo
 
         void handle(ReplicaSetRefreshed *event);
 
+        void changeWorkerShellTimeout(int newTimeout);
+
     protected Q_SLOTS:
         void handle(EstablishConnectionResponse *event);
         void handle(RefreshReplicaSetFolderResponse *event);

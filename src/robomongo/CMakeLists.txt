@@ -81,6 +81,7 @@ set(SOURCES
     gui/dialogs/ConnectionsDialog.cpp
     gui/dialogs/CreateConnectionDialog.cpp
     gui/dialogs/ExportDialog.cpp
+    gui/dialogs/ChangeShellTimeoutDialog.cpp
 
     # Isolated scope #5
     gui/editors/PlainJavaScriptEditor.cpp

@@ -132,6 +132,11 @@ namespace Robomongo
         _thread->quit();
     }
 
+    void MongoWorker::changeTimeout(int newTimeout)
+    {
+        _scriptEngine->changeTimeout(newTimeout);
+    }
+
     /**
      * @brief Initiate connection to MongoDB
      */

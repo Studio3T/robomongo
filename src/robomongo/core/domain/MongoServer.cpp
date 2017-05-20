@@ -339,6 +339,11 @@ namespace Robomongo {
         handleReplicaSetRefreshEvents(event->isError(), event->error(), event->replicaSet, false);
     }
 
+    void MongoServer::changeWorkerShellTimeout(int newTimeout)
+    {
+        _worker->changeTimeout(newTimeout);
+    }
+
     void MongoServer::handleReplicaSetRefreshEvents(bool isError, EventError eventError, 
                                                     ReplicaSet const& replicaSet, bool expanded)
     {

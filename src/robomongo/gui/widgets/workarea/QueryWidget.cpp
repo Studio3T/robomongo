@@ -33,6 +33,7 @@
 #include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/editors/JSLexer.h"
+#include "robomongo/gui/dialogs/ChangeShellTimeoutDialog.h"
 
 using namespace mongo;
 
@@ -230,6 +231,11 @@ namespace Robomongo
         // Toggle between dock/undock
         _dock->setFloating(!_dock->isFloating());
     };
+    
+    void QueryWidget::changeShellTimeout() 
+    {
+        changeShellTimeoutDialog();
+    }
 
     void QueryWidget::hideProgress()
     {
@@ -280,12 +286,18 @@ namespace Robomongo
                 "At least one of the scripts has reached shell timeout" :
                 "The script has reached shell timeout";
             QString const secondStr = (shellTimeoutSec > 1) ? " seconds)" : " second)";
-            QString message = "Failed to execute all of the script. " + subStr + " (" + 
-                QString::number(shellTimeoutSec) + secondStr + " limit. "
-                + "\n\nHint: Please increase the value of \"shellTimeoutSec\" in the settings file and restart"
-                + " Robomongo in order to perform long lasting operations. Config file path: " + ConfigFilePath ;
-            QMessageBox::critical(this, "Error", message);
-            LOG_MSG(message.remove("\n"), mongo::logger::LogSeverity::Error());
+            QString messageShort = "Failed to execute all of the script. " + subStr + " (" +
+                                    QString::number(shellTimeoutSec) + secondStr + " limit. ";
+            QString messageLong = messageShort + 
+                                  "\n\nPlease increase the value of shell timeout using button below "
+                                  " or from the main window menu \"Options->Change Shell Timeout\".";
+            LOG_MSG(messageShort, mongo::logger::LogSeverity::Error());
+
+            auto errorDia = new QMessageBox(QMessageBox::Icon::Critical, "Error", messageLong);
+            auto but = new QPushButton("Change Shell Timeout");
+            VERIFY(connect(but, SIGNAL(clicked()), this, SLOT(changeShellTimeout())));
+            errorDia->addButton(but, QMessageBox::NoRole);
+            errorDia->exec();
         }
     }
 

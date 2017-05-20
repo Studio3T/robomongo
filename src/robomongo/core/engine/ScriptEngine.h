@@ -31,6 +31,8 @@ namespace Robomongo
 
         bool failedScope() const { return _failedScope; }
 
+        void changeTimeout(int newTimeout) { _timeoutSec = newTimeout; }
+
     private:
         ConnectionSettings *_connection;
 

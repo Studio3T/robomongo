@@ -46,9 +46,9 @@
 #include "robomongo/gui/dialogs/AboutDialog.h"
 #include "robomongo/gui/dialogs/PreferencesDialog.h"
 #include "robomongo/gui/dialogs/ExportDialog.h"
+#include "robomongo/gui/dialogs/ChangeShellTimeoutDialog.h"
 #include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/gui/AppStyle.h"
-
 
 namespace
 {
@@ -440,11 +440,15 @@ namespace Robomongo
         optionsMenu->addAction(minimizeTray);
     #endif
 
-        auto *checkUpdates = new QAction(tr("Check for updates"), this);
+        auto checkUpdates = new QAction(tr("Check For Updates"), this);
         checkUpdates->setCheckable(true);
         checkUpdates->setChecked(AppRegistry::instance().settingsManager()->checkForUpdates());
         VERIFY(connect(checkUpdates, SIGNAL(triggered()), this, SLOT(toggleCheckUpdates())));
         optionsMenu->addAction(checkUpdates);
+
+        auto changeShellTimeout = new QAction(tr("Change Shell Timeout"), this);
+        VERIFY(connect(changeShellTimeout, SIGNAL(triggered()), this, SLOT(openShellTimeoutDialog())));
+        optionsMenu->addAction(changeShellTimeout);
 
         QAction *preferencesAction = new QAction("Preferences", this);
         VERIFY(connect(preferencesAction, SIGNAL(triggered()), this, SLOT(openPreferences())));
@@ -943,6 +947,11 @@ namespace Robomongo
         auto action = qobject_cast<QAction*>(sender());
         AppRegistry::instance().settingsManager()->setCheckForUpdates(action->isChecked());
         AppRegistry::instance().settingsManager()->save();
+    }
+
+    void MainWindow::openShellTimeoutDialog()
+    {
+        changeShellTimeoutDialog();
     }
 
     void MainWindow::toggleLineNumbers()

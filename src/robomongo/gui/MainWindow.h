@@ -120,6 +120,7 @@ namespace Robomongo
         
         void checkUpdates();
         void toggleCheckUpdates();
+        void openShellTimeoutDialog();
 
     private:
         void updateConnectionsMenu();

@@ -36,7 +36,8 @@ namespace Robomongo
         ~MongoWorker();
         void interrupt();
         void stopAndDelete();
-        
+        void changeTimeout(int newTimeout);
+
     protected Q_SLOTS:
 
         void init();

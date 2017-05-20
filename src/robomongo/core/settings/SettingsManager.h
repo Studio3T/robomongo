@@ -176,6 +176,8 @@ namespace Robomongo
         int mongoTimeoutSec() const { return _mongoTimeoutSec; }
         int shellTimeoutSec() const { return _shellTimeoutSec; }
 
+        void setShellTimeoutSec(int newValue) { _shellTimeoutSec = std::abs(newValue); }
+
         // True when settings from previous versions of Robomongo are imported
         void setImported(bool imported) { _imported = imported; }
         bool imported() const { return _imported; }

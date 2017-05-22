@@ -38,7 +38,8 @@ Currently in progress:
 - Tool Chain Improvements: Modern C++14 features are enabled 
 
 Plans for Future:
-- User Roles
+- User Roles [High Vote]
+- Export/Import [High Vote] 
 - Support execution of multiple simultaneous queries [#1161](https://github.com/paralect/robomongo/issues/1161)
 - Selectable mongodb engines [#1249](https://github.com/paralect/robomongo/issues/1249)
 - Enhancements for stability, running without crashes ([Stability Milestone](https://github.com/paralect/robomongo/milestone/15))

@@ -4,7 +4,10 @@
 #include <QVariantMap>
 #include <QSet>
 #include <QDir>
+
 #include <vector>
+#include <cstdlib>
+
 #include "robomongo/core/Enums.h"
 
 namespace Robomongo

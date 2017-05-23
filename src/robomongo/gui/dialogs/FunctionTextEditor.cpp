@@ -66,6 +66,8 @@ namespace Robomongo
         layout->addWidget(_queryText);
         layout->addLayout(bottomlayout);
         setLayout(layout);
+
+        _nameEdit->setFocus();
     }
 
     void FunctionTextEditor::setCursorPosition(int line, int column)

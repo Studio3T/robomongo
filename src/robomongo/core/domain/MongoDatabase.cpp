@@ -93,17 +93,17 @@ namespace Robomongo
 
     void MongoDatabase::createFunction(const MongoFunction &fun)
     {
-        _bus->send(_server->worker(), new CreateFunctionRequest(this, _name, fun));
+        _bus->send(_server->worker(), new CreateFunctionRequest(this, _name, _server->version(), fun));
     }
 
     void MongoDatabase::updateFunction(const std::string &name, const MongoFunction &fun)
     {
-        _bus->send(_server->worker(), new CreateFunctionRequest(this, _name, fun, name));
+        _bus->send(_server->worker(), new CreateFunctionRequest(this, _name, _server->version(), fun, name));
     }
 
     void MongoDatabase::dropFunction(const std::string &name)
     {
-        _bus->send(_server->worker(), new DropFunctionRequest(this, _name, name));
+        _bus->send(_server->worker(), new DropFunctionRequest(this, _name, _server->version(), name));
     }
 
     void MongoDatabase::handle(LoadCollectionNamesResponse *event)

@@ -877,9 +877,17 @@ namespace Robomongo
         std::string const& functionName = event->function().name();
 
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->createFunction(event->database(), event->function(), event->existingFunctionName());
-            client->done();
+            if (event->dbVersion() >= 3.4) {
+                auto const cmd = "db.system.js.save(" + event->function().toBson().toString() + ')';
+                MongoShellExecResult const& result = _scriptEngine->exec(cmd, event->database());
+                if (result.error())
+                    throw mongo::DBException(result.errorMessage(), 0);
+            }
+            else {
+                boost::scoped_ptr<MongoClient> client(getClient());
+                client->createFunction(event->database(), event->function(), event->existingFunctionName());
+                client->done();
+            }
 
             reply(event->sender(), new CreateFunctionResponse(this, functionName));
         } catch(const mongo::DBException &ex) {
@@ -900,9 +908,17 @@ namespace Robomongo
     void MongoWorker::handle(DropFunctionRequest *event)
     {
         try {
-            boost::scoped_ptr<MongoClient> client(getClient());
-            client->dropFunction(event->database(), event->functionName());
-            client->done();
+            if (event->dbVersion() >= 3.4) {
+                auto const cmd = "db.system.js.remove( { _id : \"" + event->functionName() + "\" } )";
+                MongoShellExecResult const& result = _scriptEngine->exec(cmd, event->database());
+                if (result.error())
+                    throw mongo::DBException(result.errorMessage(), 0);
+            }
+            else {
+                boost::scoped_ptr<MongoClient> client(getClient());
+                client->dropFunction(event->database(), event->functionName());
+                client->done();
+            }
 
             reply(event->sender(), new DropFunctionResponse(this, event->functionName()));
         }
@@ -1078,9 +1094,9 @@ namespace Robomongo
             if (status.isOK())
             {
                 _scriptEngine->init(_isLoadMongoRcJs, node.toString());
-                MongoShellExecResult result = _scriptEngine->exec("rs.status()", "");
+                MongoShellExecResult const& result = _scriptEngine->exec("rs.status()", "");
                 if (!result.results().empty()) {
-                    auto resultDocs = result.results().front().documents();
+                    auto const& resultDocs = result.results().front().documents();
                     if (!resultDocs.empty()) {
                         setName = resultDocs.front()->bsonObj().getStringField("set");
                         if (!setName.empty()) // We get the information, finish the loop

@@ -802,21 +802,25 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateFunctionRequest(QObject *sender, const std::string &database, const MongoFunction &function,
-                              const std::string &existingFunctionName = std::string(), bool overwrite = false) :
+        CreateFunctionRequest(QObject *sender, const std::string &database, float dbVersion, 
+                              const MongoFunction &function, const std::string &existingFunctionName = std::string(), 
+                              bool overwrite = false) :
             Event(sender),
             _database(database),
+            _dbVersion(dbVersion),
             _existingFunctionName(existingFunctionName),
             _function(function),
             _overwrite(overwrite) {}
 
         std::string database() const { return _database; }
+        float dbVersion() const { return _dbVersion; }
         std::string existingFunctionName() const { return _existingFunctionName; }
         MongoFunction function() const { return _function; }
         bool overwrite() const { return _overwrite; }
 
     private:
         std::string _database;
+        float const _dbVersion = 0.0f;
         std::string _existingFunctionName;
         MongoFunction _function;
         bool _overwrite;
@@ -846,16 +850,20 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DropFunctionRequest(QObject *sender, const std::string &database, const std::string &funcName) :
+        DropFunctionRequest(QObject *sender, const std::string &database, float dbVersion, 
+                            const std::string &funcName) :
             Event(sender),
             _database(database),
+            _dbVersion(dbVersion),
             _functionName(funcName) {}
 
         std::string database() const { return _database; }
+        float dbVersion() const { return _dbVersion; }
         std::string functionName() const { return _functionName; }
 
     private:
         std::string _database;
+        float const _dbVersion = 0.0f;
         std::string _functionName;
     };
 

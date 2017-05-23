@@ -201,15 +201,17 @@ namespace Robomongo
         if (!databaseItem)
             return;
 
-        FunctionTextEditor dlg(QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()), QtUtils::toQString(databaseItem->database()->name()), MongoFunction());
+        FunctionTextEditor dlg(
+            QtUtils::toQString(databaseItem->database()->server()->connectionRecord()->getFullAddress()), 
+            QtUtils::toQString(databaseItem->database()->name()), MongoFunction());
+
         dlg.setWindowTitle("Create Function");
         dlg.setCode(
             "function() {\n"
             "    // write your code here\n"
             "}");
-        dlg.setCursorPosition(1, 4);
-        int result = dlg.exec();
-        if (result != QDialog::Accepted)
+        
+        if (dlg.exec() != QDialog::Accepted)
             return;
 
         MongoFunction function = dlg.function();

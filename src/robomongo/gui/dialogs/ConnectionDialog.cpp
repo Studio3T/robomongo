@@ -84,14 +84,6 @@ namespace Robomongo
 
     bool ConnectionDialog::validateAndApply()
     {
-        bool sshAndSslChecked = (_sslTab->sslEnabled() && _sshTab->sshEnabled());
-        if (sshAndSslChecked) 
-        {
-            QMessageBox::warning(this, "Invalid Configuration", "SSH and SSL cannot be enabled simultaneously. "
-                "Please use one of them.");
-            return false;
-        }
-        
         _authTab->accept();
         _advancedTab->accept();
 

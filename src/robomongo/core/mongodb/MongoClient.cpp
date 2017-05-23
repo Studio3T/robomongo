@@ -153,10 +153,9 @@ namespace Robomongo
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
-
             try {
-                MongoFunction user(bsonObj);
-                functions.push_back(user);
+                MongoFunction func(bsonObj);
+                functions.push_back(func);
             } catch (const std::exception &) {
                 // skip invalid docs
             }
@@ -168,8 +167,6 @@ namespace Robomongo
     {
         std::vector<EnsureIndexInfo> result;
         std::list<mongo::BSONObj> indexes = _dbclient->getIndexSpecs(collection.ns().toString());
-
-//        std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->getIndexSpecs(collection.ns().toString()));
 
         for (std::list<mongo::BSONObj>::iterator it = indexes.begin(); it != indexes.end(); ++it) {
             mongo::BSONObj bsonObj = *it;

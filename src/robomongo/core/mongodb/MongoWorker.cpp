@@ -457,10 +457,23 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            const std::vector<MongoFunction> &funs = client->getFunctions(event->databaseName());
+            const std::vector<MongoFunction> &funcs = client->getFunctions(event->databaseName());
             client->done();
 
-            reply(event->sender(), new LoadFunctionsResponse(this, event->databaseName(), funs));
+            // If list of functions from client is empty, try getting it with script engine
+            if (funcs.empty()) {
+                MongoShellExecResult const& result = _scriptEngine->exec("db.system.js.find()", event->databaseName());
+                std::vector<MongoFunction> functions;
+                if (!result.results().empty()) {
+                    auto const& resultDocs = result.results().front().documents();
+                    for (auto const res : resultDocs)
+                        functions.push_back(MongoFunction(res->bsonObj()));
+                }
+                reply(event->sender(), new LoadFunctionsResponse(this, event->databaseName(), functions));
+                return;
+            }
+
+            reply(event->sender(), new LoadFunctionsResponse(this, event->databaseName(), funcs));
         } catch(const mongo::DBException &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
@@ -1066,11 +1079,9 @@ namespace Robomongo
             {
                 _scriptEngine->init(_isLoadMongoRcJs, node.toString());
                 MongoShellExecResult result = _scriptEngine->exec("rs.status()", "");
-                if (!result.results().empty())
-                {
+                if (!result.results().empty()) {
                     auto resultDocs = result.results().front().documents();
-                    if (!resultDocs.empty())
-                    {
+                    if (!resultDocs.empty()) {
                         setName = resultDocs.front()->bsonObj().getStringField("set");
                         if (!setName.empty()) // We get the information, finish the loop
                             break;

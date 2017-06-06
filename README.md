@@ -38,8 +38,8 @@ We are currently working towards next release [Robomongo 1.1](https://github.com
 - Tool Chain Improvements: Modern C++14 features are enabled 
 
 **Plans for Future:**
-- User Roles [High Vote]
 - Export/Import [High Vote] 
+- User Roles [High Vote]
 - Support execution of multiple simultaneous queries [#1161](https://github.com/paralect/robomongo/issues/1161)
 - Selectable mongodb engines [#1249](https://github.com/paralect/robomongo/issues/1249)
 - Enhancements for stability, running without crashes ([Stability Milestone](https://github.com/paralect/robomongo/milestone/15))

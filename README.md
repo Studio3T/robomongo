@@ -27,7 +27,7 @@ What's Planned for the Next Releases?
 
 We are currently working towards next release [Robomongo 1.1](https://github.com/Studio3T/robomongo/projects/1).  
  
-Currently in progress:
+**Currently in progress:**
 - [MongoDB 3.4 Support](https://github.com/Studio3T/robomongo/issues/1250)
 - [New NumberDecimal (Decimal128) data type support](https://github.com/Studio3T/robomongo/issues/1248)
     
@@ -37,7 +37,7 @@ Currently in progress:
 - Security Improvements: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
 - Tool Chain Improvements: Modern C++14 features are enabled 
 
-Plans for Future:
+**Plans for Future:**
 - User Roles [High Vote]
 - Export/Import [High Vote] 
 - Support execution of multiple simultaneous queries [#1161](https://github.com/paralect/robomongo/issues/1161)

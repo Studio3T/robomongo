@@ -752,11 +752,17 @@ namespace Robomongo
 
     void MainWindow::adjustUpdatesBarHeight()
     {
+        if (!AppRegistry::instance().settingsManager()->checkForUpdates() || !_updateBar->isVisible())
+            return;
+
         QTextDocument doc;
         doc.setHtml(_updateLabel->text());
-        auto strWidth = _updateLabel->fontMetrics().width(doc.toPlainText());
-        auto lineHeight = _updateLabel->fontMetrics().height();
-        auto widthForUpdateStr = width() - _closeButton->width();
+        int const strWidth = _updateLabel->fontMetrics().width(doc.toPlainText());
+        int const lineHeight = _updateLabel->fontMetrics().height();
+        int const widthForUpdateStr = width() - _closeButton->width();
+
+        if (0 == widthForUpdateStr)
+            return;
 
 #ifdef __APPLE__
         _updateLabel->setFixedHeight((strWidth / widthForUpdateStr + 1) * lineHeight * 1.3);

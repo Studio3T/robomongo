@@ -446,7 +446,7 @@ namespace Robomongo
         VERIFY(connect(checkUpdates, SIGNAL(triggered()), this, SLOT(toggleCheckUpdates())));
         optionsMenu->addAction(checkUpdates);
 
-        auto changeShellTimeout = new QAction(tr("Change Shell Timeout"), this);
+        auto changeShellTimeout = new QAction(tr("Change Shell Timeout..."), this);
         VERIFY(connect(changeShellTimeout, SIGNAL(triggered()), this, SLOT(openShellTimeoutDialog())));
         optionsMenu->addAction(changeShellTimeout);
 

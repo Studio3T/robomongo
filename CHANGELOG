@@ -15,7 +15,10 @@ Robomongo 1.x:
     - Timestamp value is represented incorrectly (https://github.com/Studio3T/robomongo/issues/1159)
     - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
     
-  * What's new in 1.0 (21 Apr , 2017)
+  * What's new in patch 1.0.3 (7 June, 2017)
+      - Attempt to prevent MAC OS Sierra crash related to updates notification bar
+
+  * What's new in 1.0 (21 Apr, 2017)
     New Features:
       - Update Notifications Bar
       - Welcome Tab

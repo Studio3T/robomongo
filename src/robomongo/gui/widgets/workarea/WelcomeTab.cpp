@@ -94,14 +94,23 @@ namespace Robomongo
     QString const BlogLinkTemplate = "<a style = 'color: #106CD6; text-decoration: none;'"
                                      "href='%1'>%2</a>";
 
+    // URL Folder number for Pic1 and Text1
+    enum {
+        URL_FOLDER_1_0_0      = 1,
+        URL_FOLDER_1_1_0_BETA = 2,
+        URL_FOLDER_1_1_0      = 3
+    };
+
+    auto const CURRENT_URL_FOLDER = URL_FOLDER_1_1_0;
+
 // Not using https for Linux due to crashes and unstable behaviors experienced.
 #ifdef __linux__
-    QUrl const Pic1_URL = QString("http://rm-feed.3t.io/2/image.png");
-    QUrl const Text1_URL = QString("http://rm-feed.3t.io/2/contents.txt");
+    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/" + QString::number(CURRENT_URL_FOLDER) + "/image.png");
+    QUrl const Text1_URL = QString("https://rm-feed.3t.io/" + QString::number(CURRENT_URL_FOLDER) + "/contents.txt");
     QUrl const Rss_URL = QString("http://blog.robomongo.org/rss/");
 #else
-    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/2/image.png");
-    QUrl const Text1_URL = QString("https://rm-feed.3t.io/2/contents.txt");
+    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/" + QString::number(CURRENT_URL_FOLDER) + "/image.png");
+    QUrl const Text1_URL = QString("https://rm-feed.3t.io/" + QString::number(CURRENT_URL_FOLDER) + "/contents.txt");
     QUrl const Rss_URL = QString("https://blog.robomongo.org/rss/");
 #endif
 

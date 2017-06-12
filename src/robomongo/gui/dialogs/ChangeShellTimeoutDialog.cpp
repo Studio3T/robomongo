@@ -29,7 +29,7 @@ namespace Robomongo
         QObject::connect(buttonBox, SIGNAL(accepted()), changeShellTimeoutDialog, SLOT(accept()));
         QObject::connect(buttonBox, SIGNAL(rejected()), changeShellTimeoutDialog, SLOT(reject()));
         auto lay = new QGridLayout;
-        auto firstLabel = new QLabel("Enter new value for robomongo shell timeout in seconds:\n");
+        auto firstLabel = new QLabel("Enter new value for Robo 3T shell timeout in seconds:\n");
         lay->addWidget(firstLabel,                      0, 0, 1, 2, Qt::AlignLeft);
         lay->addWidget(new QLabel("Current Value: "),   1, 0);
         lay->addWidget(currentShellTimeout,             1, 1);

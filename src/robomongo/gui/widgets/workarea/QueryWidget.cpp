@@ -290,7 +290,7 @@ namespace Robomongo
                                     QString::number(shellTimeoutSec) + secondStr + " limit. ";
             QString messageLong = messageShort + 
                                   "\n\nPlease increase the value of shell timeout using button below "
-                                  " or from the main window menu \"Options->Change Shell Timeout\".";
+                                  "or from the main window menu \"Options->Change Shell Timeout\".";
             LOG_MSG(messageShort, mongo::logger::LogSeverity::Error());
 
             auto errorDia = new QMessageBox(QMessageBox::Icon::Critical, "Error", messageLong);

@@ -336,8 +336,13 @@ namespace Robomongo
             if (image.isNull())
                 return;
 
+            _image = image;
             _pic1->setPixmap(_image);
-            _pic1->setFixedSize(FIFTY_PERCENT_OF_TAB, (FIFTY_PERCENT_OF_TAB / _image.size().width())*_image.size().height());
+
+            if (0 == _image.size().width())
+                return;
+
+            _pic1->setFixedSize(FIFTY_PERCENT_OF_TAB, (FIFTY_PERCENT_OF_TAB / _image.size().width()) * _image.size().height());
             adjustSize();
             hideOrShowWhatsNewHeader();
             return;
@@ -378,6 +383,10 @@ namespace Robomongo
 
         _image = image;
         _pic1->setPixmap(_image);
+
+        if (0 == _image.size().width()) 
+            return
+
         _pic1->setFixedSize(FIFTY_PERCENT_OF_TAB, (FIFTY_PERCENT_OF_TAB / _image.size().width())*_image.size().height());
 
         adjustSize();
@@ -666,6 +675,10 @@ namespace Robomongo
 
         _whatsNewText->setFixedWidth(tabWidth * TEXT_TO_TAB_RATIO);
         _pic1->setPixmap(_image);
+
+        if (0 == _image.size().width())
+            return;
+
         _pic1->setFixedSize(FIFTY_PERCENT_OF_TAB, (FIFTY_PERCENT_OF_TAB / _image.size().width())*_image.size().height());
 
         _blogsHeader->setFixedWidth(tabWidth * BLOG_TO_TAB_RATIO);

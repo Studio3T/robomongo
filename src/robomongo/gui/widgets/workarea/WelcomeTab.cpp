@@ -266,8 +266,10 @@ namespace Robomongo
     void WelcomeTab::on_downloadTextReply(QNetworkReply* reply)
     {
         auto hideOrShowWhatsNewHeader = [this]() {
-            _whatsNewHeader->setHidden( (!_pic1->pixmap() || _pic1->pixmap()->isNull())
-                                        && _whatsNewText->text().isEmpty() ? true : false);
+            if ((!_pic1->pixmap() || _pic1->pixmap()->isNull()) && _whatsNewText->text().isEmpty())
+                _whatsNewHeader->setHidden(true);
+            else 
+                _whatsNewHeader->setVisible(true);
         };
 
         if (reply->operation() == QNetworkAccessManager::HeadOperation) {
@@ -315,6 +317,7 @@ namespace Robomongo
             }
 
             setWhatsNewHeaderAndText(str);
+            hideOrShowWhatsNewHeader();
             saveIntoCache(Text1_URL.fileName(), str, Text1_LastModifiedDateKey,
                           reply->header(QNetworkRequest::LastModifiedHeader).toString());
         }
@@ -326,8 +329,10 @@ namespace Robomongo
 
         QPixmap image;
         auto hideOrShowWhatsNewHeader = [this]() {
-            _whatsNewHeader->setHidden( (!_pic1->pixmap() || _pic1->pixmap()->isNull()) 
-                                        && _whatsNewText->text().isEmpty() ? true : false);        
+            if ((!_pic1->pixmap() || _pic1->pixmap()->isNull()) && _whatsNewText->text().isEmpty())
+                _whatsNewHeader->setHidden(true);
+            else
+                _whatsNewHeader->setVisible(true);
         };
 
         // Network error, load from cache
@@ -359,7 +364,6 @@ namespace Robomongo
             }
             else {   // Get from internet
                 reply->manager()->get(QNetworkRequest(Pic1_URL));
-                hideOrShowWhatsNewHeader();
                 return;
             }
         }

@@ -382,15 +382,12 @@ namespace Robomongo
             return;
 
         _image = image;
-        _pic1->setPixmap(_image);
 
         if (0 == _image.size().width()) 
             return
 
-        _pic1->setFixedSize(FIFTY_PERCENT_OF_TAB, (FIFTY_PERCENT_OF_TAB / _image.size().width())*_image.size().height());
-
-        adjustSize();
         hideOrShowWhatsNewHeader();
+        resize();
     }
 
     void WelcomeTab::on_downloadRssReply(QNetworkReply* reply)

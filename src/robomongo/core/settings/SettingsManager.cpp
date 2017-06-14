@@ -721,17 +721,17 @@ namespace Robomongo
     QString extractAnonymousID(QString const& oldConfigFilePath)
     {
         if (!QFile::exists(oldConfigFilePath))
-            return false;
+            return QString("");
 
         QFile oldConfigFile(oldConfigFilePath);
         if (!oldConfigFile.open(QIODevice::ReadOnly))
-            return false;
+            return QString("");
 
         bool ok = false;
         QJson::Parser parser;
         QVariantMap const& map = parser.parse(oldConfigFile.readAll(), &ok).toMap();
         if (!ok)
-            return false;
+            return QString("");
 
         QString anonymousID;
         if (map.contains("anonymousID")) {

@@ -50,7 +50,10 @@ namespace Robomongo
     };
 
     // Extract zipFile and find the value of "anonymousID" field in propFile
-    QString extractAnonymousID(QString const& zipFile, QString const& propfile);
+    QString extractAnonymousIDFromZip(QString const& zipFile, QString const& propfile);
+
+    // Extract "anonymousID" from old config file
+    QString extractAnonymousID(QString const& oldConfigFile);
 
     /**
         * @brief Version of schema
@@ -402,17 +405,38 @@ namespace Robomongo
                 anonymousID = id.toString();
         }
 
+        // Search and import "anonymousID" from other Studio 3T config files
         for (auto const& zipFileAndConfigFile : S_3T_ZipFile_And_ConfigFile_List) {
             if (!anonymousID.isEmpty())
                 break;
 
-            QUuid const& id = extractAnonymousID(zipFileAndConfigFile.first, zipFileAndConfigFile.second);
+            QUuid const& id = extractAnonymousIDFromZip(zipFileAndConfigFile.first, zipFileAndConfigFile.second);
             if (!id.isNull())
                 anonymousID = id.toString();
         }
+                 
+        // Search and import "anonymousID" from other Robo 3T old config files starting from latest
+        for (auto const& oldConfigFile : _configFilesOfOldVersions) {         
+            if (!anonymousID.isEmpty())
+                break;
 
+            // Don't import from 1.1-Beta due to a problem where Beta might have redundantly created new UUID 
+            if (oldConfigFile == CONFIG_FILE_1_1_0_BETA)
+                continue;
+
+            // Stop searching in 1_0_RC1 or older versions, "anonymousID" is introduced in version 1.0
+            if (oldConfigFile == CONFIG_FILE_1_0_RC1)
+                break;
+
+            anonymousID = extractAnonymousID(oldConfigFile);
+        }
+
+        // Couldn't find/import any, create a new anonymousID
         if (anonymousID.isEmpty())
             anonymousID = QUuid::createUuid().toString();
+
+        anonymousID.remove('{');
+        anonymousID.remove('}');
 
         return anonymousID;
     }
@@ -673,7 +697,7 @@ namespace Robomongo
         return count;
     }
 
-    QString extractAnonymousID(QString const& zipFile, QString const& propfile)
+    QString extractAnonymousIDFromZip(QString const& zipFile, QString const& propfile)
     {
         QZipReader zipReader(zipFile);
         if (!zipReader.exists() || !zipReader.isReadable()) 
@@ -694,4 +718,31 @@ namespace Robomongo
         return QString("");
     }
 
+    QString extractAnonymousID(QString const& oldConfigFilePath)
+    {
+        if (!QFile::exists(oldConfigFilePath))
+            return false;
+
+        QFile oldConfigFile(oldConfigFilePath);
+        if (!oldConfigFile.open(QIODevice::ReadOnly))
+            return false;
+
+        bool ok = false;
+        QJson::Parser parser;
+        QVariantMap const& map = parser.parse(oldConfigFile.readAll(), &ok).toMap();
+        if (!ok)
+            return false;
+
+        QString anonymousID;
+        if (map.contains("anonymousID")) {
+            QUuid const& id = map.value("anonymousID").toString();
+            if (!id.isNull())
+                anonymousID = id.toString();
+        }
+
+        anonymousID.remove('{');
+        anonymousID.remove('}');
+
+        return anonymousID;
+    }
 }

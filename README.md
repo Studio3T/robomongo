@@ -24,7 +24,7 @@ Latest release of Robo 3T 1.1 includes:
   - Security Improvement: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
   - Tool chain upgrades: Modern C++14 features are enabled and usable for developers
 
-Blog:     http://blog.robomongo.org/robomongo-1-1/  
+Blog:     http://blog.robomongo.org/robomongo-is-robo-3t/ 
 Download: https://robomongo.org/download  
 Watch: [Robo 3T Youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo
@@ -32,7 +32,7 @@ Follow: https://twitter.com/Robomongo
 What's Planned for the Next Releases?
 ====================================
 
-We are currently working towards next release [Robo 3T 1.1](https://github.com/Studio3T/robomongo/projects/1).  
+We are currently working towards next release [Robo 3T 1.2](https://github.com/Studio3T/robomongo/projects/3).  
  
 **Currently in progress:**
 - Under discussion
@@ -80,7 +80,7 @@ Download
 
 You can download tested install packages for OS X, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
 
-The latest stable release is currently [**Robo 3T 1.1**](http://blog.robomongo.org/robomongo-1-1/).
+The latest stable release is currently [**Robo 3T 1.1**](http://blog.robomongo.org/robomongo-is-robo-3t/).
 
 Support
 =======
@@ -114,6 +114,7 @@ This project is powered by open source volunteers, so we have a limited amount o
 
 Code contributions are always welcome! Just try to follow our pre-commit checks and coding style: 
 - [Robo 3T Code Quality](https://github.com/paralect/robomongo/wiki/Robomongo-Code-Quality)
+- [Robomongo C++11/14 Transition Guide](wiki/Robomongo-Cplusplus-11,-14-Transition-Guide)
 - [Robo 3T Coding Style](https://github.com/paralect/robomongo/wiki/Robomongo-Coding-Style)
 
 If you plan to contribute, please create a Github issue (or comment on the relevant existing issue) so we can help coordinate with upcoming release plans.

@@ -24,7 +24,7 @@ Latest release of Robo 3T 1.1 includes:
   - Security Improvement: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
   - Tool chain upgrades: Modern C++14 features are enabled and usable for developers
 
-Blog:     http://blog.robomongo.org/robomongo-is-robo-3t/ 
+Blog:     http://blog.robomongo.org/robomongo-is-robo-3t/  
 Download: https://robomongo.org/download  
 Watch: [Robo 3T Youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo

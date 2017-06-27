@@ -1,8 +1,9 @@
-Building Robomongo Shell
+
+Building Robo 3T Shell
 ========================
 
-Robomongo uses [modified version](https://github.com/paralect/robomongo-shell/tree/roboshell-v3.4) of MongoDB that we call Robomongo Shell.  
-Before you can build Robomongo, you have to build Robomongo Shell. The following instructions are applicable only for Mac OS X and Linux. For Windows instructions please check [Building Robo 3T on Windows](BuildRobo3TOnWindows.md).
+Robo 3T uses [modified version](https://github.com/paralect/robomongo-shell/tree/roboshell-v3.4) of MongoDB that we call Robo 3T Shell.  
+Before you can build Robo 3T, you have to build Robo 3T Shell. The following instructions are applicable only for Mac OS X and Linux. For Windows instructions please check [Building Robo 3T on Windows](BuildRobo3TOnWindows.md).
 
 Build for Mac OS X or Linux
 ---------------------------
@@ -12,7 +13,7 @@ Build for Mac OS X or Linux
 1. Install [Scons](http://scons.org/tag/releases.html) (2.3.5 or newer)
 
 
-2. Clone Robomongo Shell and checkout to `roboshell-v3.4` branch:
+2. Clone Robo 3T Shell and checkout to `roboshell-v3.4` branch:
 
   ```sh
   $ git clone https://github.com/paralect/robomongo-shell.git
@@ -20,13 +21,13 @@ Build for Mac OS X or Linux
   $ git checkout roboshell-v3.4
   ```
 
-3. Build Robomongo Shell:
+3. Build Robo 3T Shell:
 
   ```sh
   $ bin/build
   ```
 
-Done! Now you can continue with building Robomongo 
+Done! Now you can continue with building Robo 3T 
 with embedded MongoDB 3.4 shell (that you've just built).
 
 
@@ -34,7 +35,7 @@ with embedded MongoDB 3.4 shell (that you've just built).
 #### Advanced helper commands
 
 The following commands are needed only if you are planning to develop or deeper understand
-Robomongo or Robomongo Shell build processes.
+Robo 3T or Robo 3T Shell build processes.
 
 Clean build files for release mode (folder `build/opt` will be removed):
 

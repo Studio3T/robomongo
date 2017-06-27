@@ -45,7 +45,7 @@ cd /Users/<user>/Downloads/openssl-1.0.1u
 ./Configure darwin64-x86_64-cc shared --openssldir="@rpath"
 make (or sudo make)
 mkdir lib
-cp libssl.1.0.0.dylib libcrypto.1.0.0.dylib lib/
+cp libssl*.dylib libcrypto*.dylib lib/
 ```
 Helper Commands
   ```sh

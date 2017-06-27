@@ -1,6 +1,10 @@
 Building Robomongo (Windows)
 ==============================
 
+**Important Note:**  
+This document is for versions 1.0 and earlier and for MongoDB 3.2.  
+See latest documents here: https://github.com/Studio3T/robomongo/wiki
+
 A. Prerequisites
 -------------
 

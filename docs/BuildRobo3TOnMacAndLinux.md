@@ -97,7 +97,7 @@ Build Robo 3T Shell:
   $ bin/build
   ```
 
-For more information refer to [Building Robo 3T Shell](BuildingMongoDB.md) 
+For more information refer to [Building Robo 3T Shell](BuildRobo3TShell.md) 
 
 #### Step 3. Build Robo 3T
 

@@ -114,7 +114,7 @@ This project is powered by open source volunteers, so we have a limited amount o
 
 Code contributions are always welcome! Just try to follow our pre-commit checks and coding style: 
 - [Robo 3T Code Quality](https://github.com/paralect/robomongo/wiki/Robomongo-Code-Quality)
-- [Robomongo C++11/14 Transition Guide](wiki/Robomongo-Cplusplus-11,-14-Transition-Guide)
+- [Robo 3T C++11/14 Transition Guide](https://github.com/Studio3T/robomongo/wiki/Robomongo-Cplusplus-11,-14-Transition-Guide)
 - [Robo 3T Coding Style](https://github.com/paralect/robomongo/wiki/Robomongo-Coding-Style)
 
 If you plan to contribute, please create a Github issue (or comment on the relevant existing issue) so we can help coordinate with upcoming release plans.

@@ -91,12 +91,28 @@ Separate directories by semicolon `;` (not colon):
     $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.7.0/5.7/gcc_64;/path/to/robomongo-shell;/path/to/openssl-1.0.1u"
 
 
-Build Robo 3T Shell:
+Build Robo 3T Shell (in release mode by default):
 
   ```sh
   $ bin/build
   ```
 
+Build Robo 3T Shell in debug mode:
+
+  ```sh
+  $ bin/build --dbg
+  ```
+  
+Clean build files for release mode:
+  ```sh
+  $ bin/clean
+  ```
+
+Clean build files for debug mode:
+  ```sh
+  $ bin/clean --dbg
+  ```
+  
 For more information refer to [Building Robo 3T Shell](BuildRobo3TShell.md) 
 
 #### Step 3. Build Robo 3T
@@ -118,6 +134,11 @@ To run robomongo:
 
     $ bin/run
     
+
+**Debug mode**
+
+For debug mode append `debug` for each command
+e.g. `bin/configure debug` or  `bin/build debug` etc..
 
 **Helper commands**
     

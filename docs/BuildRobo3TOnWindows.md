@@ -129,15 +129,23 @@ Separate directories by semicolon `;` (not colon). You can do this in Command Pr
 
 Open VS2015 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.
 
-Build shell:
+Build shell in release mode:
 
     > bin\build
     
+Build shell in debug mode:
+
+    > bin\build --dbg 
+    
 Note that backslash is used (`\`), and not forward slash (`/`).
 
-Clean build files:
+Clean build files for release mode:
 
     > bin\clean
+
+Clean build files for debug mode:
+
+    > bin\clean --dbg
 
 Refer to MongoDB documentation for additional information:
 https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source/#windows-specific-instructions
@@ -172,8 +180,13 @@ And run Robo 3T
 
     > \robomongo\build\Release\install\robo3t.exe
 
+**Debug mode**
+
+For debug mode append `debug` for each command
+e.g. `bin\configure debug` or  `bin\build debug` etc..
+
 **Helper commands**
-    
+
 Clean build files (in order to start build from scratch):
 
     > bin\clean

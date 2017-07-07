@@ -1,21 +1,41 @@
 
 Latest Version: 
-Robomongo 1.0 (21 Apr, 2017)
-http://blog.robomongo.org/robomongo-1-0
+Robo 3T 1.1 (13 June, 2017)
+http://blog.robomongo.org/robomongo-1-1/
 https://robomongo.org/download
 
-Robomongo 1.x:
+Robo 3T 1.x:
   Major Features: 
+    - MongoDB 3.4 support
     - Replica set support.
+    - ECMAScript 2015 aka ES6 Support (Modernized JavaScript Implementation)
     - Update Notifications Bar
     - Welcome Tab
     - New operation logging for almost all operations.
 
   Major Fixes/Improvements:
+    - Fix for Robomongo Shell Timeout Issue (silently, prematurely finishing long lasting scripts) 
+    - New NumberDecimal (Decimal128) data type support
     - Improved error handling (no double error windows) for almost all operations.
     - Timestamp value is represented incorrectly (https://github.com/Studio3T/robomongo/issues/1159)
     - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
-    
+      
+  * What's new in Robo 3T 1.1 (13 June, 2017)
+    http://blog.robomongo.org/robomongo-1-1/
+
+    New Features:
+      - MongoDB 3.4 support
+      - New NumberDecimal (Decimal128) data type support
+      - ECMAScript 2015 aka ES6 Support (Modernized JavaScript Implementation)
+      - Re-naming from Robomongo to Robo 3T
+
+    Improvements & Fixes:
+      - Stability Improvements: Fix included to prevent a crash on MACOS Sierra
+      - Shell timeout is configurable on UI now 'Options->Change Shell Timeout'
+      - Fix for Robomongo Shell Timeout Issue (silently, prematurely finishing long lasting scripts) 
+      - Security Improvements: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
+      - Tool chain upgrades: Modern C++14 features are enabled and usable for developers
+                
   * What's new in Robomongo 1.1 Beta (12 May, 2017)   
     https://github.com/Studio3T/robomongo/releases/tag/v1.1.0-beta
     
@@ -46,7 +66,7 @@ Robomongo 1.x:
       - Timestamp value is represented incorrectly (https://github.com/Studio3T/robomongo/issues/1159)
       - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
       - Time zone shown as "000:00" when UTC +00:00 is used as local timezone(https://github.com/Studio3T/robomongo/issues/1309)
-      
+  
   * What's new in Robomongo 1.0-RC1 (1 Feb, 2017)
     http://blog.robomongo.org/robomongo-1-rc1/
     

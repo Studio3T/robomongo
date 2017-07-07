@@ -1,45 +1,45 @@
-About Robomongo [![Join the chat at https://gitter.im/paralect/robomongo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/paralect/robomongo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+About Robo 3T [![Join the chat at https://gitter.im/paralect/robomongo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/paralect/robomongo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ===============
 
-[Robomongo](http://www.robomongo.org) is a shell-centric cross-platform MongoDB management tool. Unlike most other MongoDB admin UI tools, Robomongo embeds the actual `mongo` shell in a tabbed interface with access to a shell command line as well as GUI interaction.
+[Robo 3T](http://www.robomongo.org) (formerly Robomongo *) is a shell-centric cross-platform MongoDB management tool. Unlike most other MongoDB admin UI tools, Robo 3T embeds the actual `mongo` shell in a tabbed interface with access to a shell command line as well as GUI interaction.
 
-Starting from version 0.9, Robomongo is compatibile with MongoDB 3.x (including SCRAM-SHA-1 auth and support for WiredTiger storage engine). Robomongo 0.9 embeds the **MongoDB 3.2** shell.
+Starting from version 1.1, Robo 3T embeds the **MongoDB 3.4** shell.
 
-Robomongo 0.8.x embeds the **MongoDB 2.4.0** shell.
+Starting from version 0.9, Robo 3T is compatibile with MongoDB 3.x (including SCRAM-SHA-1 auth and support for WiredTiger storage engine). Robo 3T 0.9 embeds the **MongoDB 3.2** shell.
 
-What's new in latest Robomongo 1.0?
+Robo 3T 0.8.x embeds the **MongoDB 2.4.0** shell.
+
+\* [Renaming from Robomongo to Robo 3T](http://blog.robomongo.org/robomongo-is-robo-3t/#5)
+
+What's new in latest Robo 3T 1.1?
 ====================================
-Latest release of Robomongo 1.0 includes: 
-  - Update Notifications Bar
-  - Welcome Tab
-  - Welcome Wizard
-  - Replica set name configurable on UI
-  - Fixes to avoid same replica set name problem
-  - Fixes to solve various problems regarding Data and Timestamp data types
+Latest release of Robo 3T 1.1 includes: 
+  - MongoDB 3.4 support
+  - New NumberDecimal (Decimal128) data type support
+  - ECMAScript 2015 aka ES6 Support (Modernized JavaScript Implementation)
+  - Renaming Robomongo to Robo 3T
+  - Shell timeout is configurable on UI now 'Options->Change Shell Timeout'
+  - Fix for Robo 3T Shell Timeout Issue (silently, prematurely finishing long lasting scripts)
+  - Stability Improvement: Fix included to prevent a on start crash on MACOS Sierra
+  - Security Improvement: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
+  - Tool chain upgrades: Modern C++14 features are enabled and usable for developers
 
-Blog:     http://blog.robomongo.org/robomongo-1-0/  
+Blog:     http://blog.robomongo.org/robomongo-is-robo-3t/  
 Download: https://robomongo.org/download  
-Watch: [Robomongo Youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
+Watch: [Robo 3T Youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo
 
 What's Planned for the Next Releases?
 ====================================
 
-We are currently working towards next release [Robomongo 1.1](https://github.com/Studio3T/robomongo/projects/1).  
+We are currently working towards next release [Robo 3T 1.2](https://github.com/Studio3T/robomongo/projects/3).  
  
-Currently in progress:
-- [MongoDB 3.4 Support](https://github.com/Studio3T/robomongo/issues/1250)
-- [New NumberDecimal (Decimal128) data type support](https://github.com/Studio3T/robomongo/issues/1248)
-    
-- [ECMAScript 2015 (Modernized JavaScript Implementation aka ES6) Support](https://github.com/Studio3T/robomongo/issues/1197)  
-    http://www.ecma-international.org/ecma-262/6.0/index.html
+**Currently in progress:**
+- Under discussion
 
-- Security Improvements: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
-- Tool Chain Improvements: Modern C++14 features are enabled 
-
-Plans for Future:
-- User Roles [High Vote]
+**Plans for Future:**
 - Export/Import [High Vote] 
+- User Roles [High Vote]
 - Support execution of multiple simultaneous queries [#1161](https://github.com/paralect/robomongo/issues/1161)
 - Selectable mongodb engines [#1249](https://github.com/paralect/robomongo/issues/1249)
 - Enhancements for stability, running without crashes ([Stability Milestone](https://github.com/paralect/robomongo/milestone/15))
@@ -52,6 +52,7 @@ Supported Platforms
 
 | MongoDB Versions      |
 | :-------------------- |
+| 3.4                   |
 | 3.2                   |
 | 3.0                   |
 | 2.6                   |
@@ -68,23 +69,23 @@ Supported Platforms
 |:---------------------- | :--------------------------------| :---------------------------|
 | Windows 64-bit 10      |  Mac OS X 10.12 (Sierra)         | Linux Ubuntu 16.04 64-bit*  |
   Windows 64-bit 8.1     |  Mac OS X 10.11 (El Capitan)     | Linux Ubuntu 14.04 64-bit*  |
-| Windows 64-bit 7       |  Mac OS X 10.10 (Yosemite)       | Linux CentOS 7 64-bit*      |
-|                        |                                  | Linux CentOS 6 64-bit*      |
+| Windows 64-bit 7       |  Mac OS X 10.10 (Yosemite)       | Linux CentOS 7 64-bit* **   |
+|                        |                                  | Linux CentOS 6 64-bit*  **  |
 
-\* latest stable build
-
+\* Latest stable build  
+\** Support for CentOS temporarily dropped starting from version 1.1  
 
 Download
 ========
 
 You can download tested install packages for OS X, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
 
-The latest stable release is currently [**Robomongo 1.0**](http://blog.robomongo.org/robomongo-1-0/).
+The latest stable release is currently [**Robo 3T 1.1**](http://blog.robomongo.org/robomongo-is-robo-3t/).
 
 Support
 =======
 
-Robomongo is an open source project driven by volunteers. We'll try to get to your questions as soon as we can, but please be patient :).
+Robo 3T is an open source project driven by volunteers. We'll try to get to your questions as soon as we can, but please be patient :).
 
 You can:
 
@@ -95,7 +96,7 @@ You can:
 Build
 =====
 
-The wiki contains prerequisites and instructions to [Build Robomongo](https://github.com/paralect/robomongo/wiki).
+The wiki contains prerequisites and instructions to [Build Robo 3T](https://github.com/paralect/robomongo/wiki).
 
 If you want to compile from source yourself, you should be able to do so cleanly from a [release branch](https://github.com/paralect/robomongo/releases).
 
@@ -112,8 +113,9 @@ This project is powered by open source volunteers, so we have a limited amount o
 ### Code Contributions
 
 Code contributions are always welcome! Just try to follow our pre-commit checks and coding style: 
-- [Robomongo Code Quality](https://github.com/paralect/robomongo/wiki/Robomongo-Code-Quality)
-- [Robomongo Coding Style](https://github.com/paralect/robomongo/wiki/Robomongo-Coding-Style)
+- [Robo 3T Code Quality](https://github.com/paralect/robomongo/wiki/Robomongo-Code-Quality)
+- [Robo 3T C++11/14 Transition Guide](https://github.com/Studio3T/robomongo/wiki/Robomongo-Cplusplus-11,-14-Transition-Guide)
+- [Robo 3T Coding Style](https://github.com/paralect/robomongo/wiki/Robomongo-Coding-Style)
 
 If you plan to contribute, please create a Github issue (or comment on the relevant existing issue) so we can help coordinate with upcoming release plans.
 

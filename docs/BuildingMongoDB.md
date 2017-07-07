@@ -1,5 +1,9 @@
-Building Robomongo Shell
+Building Robomongo Shell (Old Document)
 ========================
+
+**Important Note:**  
+This document is for versions 1.0 and earlier and for MongoDB 3.2.  
+See latest documents here: https://github.com/Studio3T/robomongo/wiki
 
 Robomongo uses [modified version](https://github.com/paralect/robomongo-shell/tree/roboshell-v3.2) of MongoDB that we call Robomongo Shell. Before you can build Robomongo, you have to build Robomongo Shell. The following instructions are applicable only for Mac OS X and Linux. For Windows instructions please check [Building Robomongo on Windows](BuildingRobomongoOnWindows.md).
 

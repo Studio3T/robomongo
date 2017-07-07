@@ -1,9 +1,5 @@
-Building Robomongo (Windows)
+Building Robo 3T (Windows)
 ==============================
-
-**Important Note:**  
-This document is for versions 1.0 and earlier and for MongoDB 3.2.  
-See latest documents here: https://github.com/Studio3T/robomongo/wiki
 
 A. Prerequisites
 -------------
@@ -15,12 +11,12 @@ A. Prerequisites
  When you'll see "Adjusting your PATH environment" wizard page, select
  "Use Git from the Windows Command Prompt" option. This will allow to 
  execute Git from both Windows Command Prompt and Bash. This is required,
- because both MongoDB and Robomongo uses `git` command during build process
+ because both MongoDB and Robo 3T uses `git` command during build process
  which must be perfomed from Windows Command Prompt (not Bash).
  
  On "Configuring the line ending conversion" wizard page, select "Checkout
  Windows-style, commit Unix-style line ending" option. This is a common mode
- for cross-platform projects and required by both MongoDB and Robomongo.
+ for cross-platform projects and required by both MongoDB and Robo 3T.
   
  All other Git installer options are not important (use defaults).
  
@@ -30,17 +26,12 @@ A. Prerequisites
     $ eval `ssh-agent`       # starts ssh agent
     $ ssh-add ~/.ssh/mykey   # add your key (which can be in any folder)
   
-#### 1. Visual Studio 2013 (i.e. MSVC12) Update 4 or newer
+#### 1. Visual Studio 2015 (i.e. MSVC14) Update 2 or newer
 
- We use Visual Studio 2013 Update 5, and recommend to use this version to save
+ We use Visual Studio 2015 Update 3, and recommend to use this version to save
  time for Qt compilation. Currently prebuilt binaries for Qt are available 
  from official Qt site. But you can use any newer version and compile Qt library
  yourself.
- 
- If you already have VS2013, you can download Update 5 here: 
- https://www.microsoft.com/en-us/download/details.aspx?id=48129
- 
- Update 4 or newer version is required to compile MongoDB.
 
 #### 2. ActivePython 2.7 
    
@@ -49,11 +40,13 @@ A. Prerequisites
  Download MSI x64 version. Use default settings in installation wizard. 
  This installer will add path to `python.exe` to your `PATH` variable.
 
-#### 3. Scons 2.3.4 
+#### 3. SCons 2.3.5 or newer
+
+We use SCons 2.5.0.
 
  Download Scons from http://scons.org/tag/releases.html
    
- Use ZIP archive, not MSI (we use scons-2.3.4.zip)
+ Use ZIP archive, not MSI
    
  Open Command Prompt, navigate to Scons directory and run:
    
@@ -62,7 +55,8 @@ A. Prerequisites
  This command will make `scons` command accessible from Command Prompt
 
 #### 4. CMake 
- Download CMake from https://cmake.org/download (we use cmake-3.3.2-win32-x86.exe)
+We use CMake 3.6.0-rc3
+ Download CMake from https://cmake.org/download
  
  Use installer package, it will allow you to configure your PATH variable and `cmake`
  command will be available from Command Prompt. For this set "Add CMake to the system
@@ -72,24 +66,24 @@ A. Prerequisites
 
  Download Qt from http://www.qt.io/download-open-source/ (we use Qt Online installer)
    
- When installing Qt, only one component is required by Robomongo: 
+ When installing Qt, only one component is required by Robo 3T: 
    
     Qt 5.7 
-      [x] msvc2013 64-bit.
+      [x] msvc2015 64-bit.
     
- This components contains prebuilt 64-bit binaries for Visual Studio 2013. 
+ This components contains prebuilt 64-bit binaries for Visual Studio 2015. 
    
  You may uncheck all other components to download as little as possible. 
 
-#### 6. OpenSSL (1.0.1p)
-Download openssl-1.0.1p (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1p.tar.gz)
+#### 6. OpenSSL (1.0.1u)
+Download openssl-1.0.1u (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1u.tar.gz)
   
   
 
-B. Building Robomongo and Dependencies
+B. Building Robo 3T and Dependencies
 -------------
 
-#### 1. Build OpenSSL (1.0.1p)
+#### 1. Build OpenSSL (1.0.1u)
 
 Steps to build OpenSSL on windows:
   ```sh
@@ -112,74 +106,87 @@ nmake -f ms\ntdll.mak clean
 Refer to OpenSSL documentation for more information:  
 https://wiki.openssl.org/index.php/Compilation_and_Installation#W64
 
-#### 2. Build Robomongo Shell (fork of MongoDB)
+#### 2. Build Robo 3T Shell (fork of MongoDB)
 
-Clone Robomongo Shell and checkout to roboshell-v3.2 branch:
+Clone Robo 3T Shell and checkout to roboshell-v3.4 branch:
 
   ```sh
   $ git clone https://github.com/paralect/robomongo-shell.git
   $ cd robomongo-shell
-  $ git checkout roboshell-v3.2
+  $ git checkout roboshell-v3.4
   ```
 
-Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robomongo-Shell and Robomongo build scripts, needs to be set according to the following directories:
+Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robo 3T-Shell and Robo 3T build scripts, needs to be set according to the following directories:
 
 1. Location of Qt SDK
-2. Location of Robomongo Shell
+2. Location of Robo 3T Shell
 3. Location of OpenSSL
 
 Separate directories by semicolon `;` (not colon). You can do this in Command Prompt:
 
-    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.7\msvc2013_64;d:\Projects\robomongo-shell;c:\myPath\openssl-1.0.1p"
+    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.7\msvc2015_64;d:\Projects\robomongo-shell;c:\myPath\openssl-1.0.1u"
 
 
-Open VS2013 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.
+Open VS2015 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.
 
-Build shell:
+Build shell in release mode:
 
     > bin\build
     
+Build shell in debug mode:
+
+    > bin\build --dbg 
+    
 Note that backslash is used (`\`), and not forward slash (`/`).
 
-Clean build files:
+Clean build files for release mode:
 
     > bin\clean
+
+Clean build files for debug mode:
+
+    > bin\clean --dbg
 
 Refer to MongoDB documentation for additional information:
 https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source/#windows-specific-instructions
 
 
-#### 3. Build Robomongo   
+#### 3. Build Robo 3T   
 
-Clone Robomongo:
+Clone Robo 3T:
 
   ```sh
   $ git clone https://github.com/paralect/robomongo.git
   ```
   
-Open VS2013 x64 Native Tools Command Prompt and navigate to `robomongo` folder.
+Open VS2015 x64 Native Tools Command Prompt and navigate to `robomongo` folder.
  
 Run configuration step:
     
     > bin\configure 
     
-And finally, build Robomongo:
+And finally, build Robo 3T:
     
     > bin\build 
  
 
-**Run Robomongo**
+**Run Robo 3T**
 
-Install Robomongo to `build\Release\install` folder:
+Install Robo 3T to `build\Release\install` folder:
 
     > bin\install
    
-And run Robomongo
+And run Robo 3T
 
-    > \robomongo\build\Release\install\Robomongo.exe
+    > \robomongo\build\Release\install\robo3t.exe
+
+**Debug mode**
+
+For debug mode append `debug` for each command
+e.g. `bin\configure debug` or  `bin\build debug` etc..
 
 **Helper commands**
-    
+
 Clean build files (in order to start build from scratch):
 
     > bin\clean

@@ -94,14 +94,23 @@ namespace Robomongo
     QString const BlogLinkTemplate = "<a style = 'color: #106CD6; text-decoration: none;'"
                                      "href='%1'>%2</a>";
 
+    // URL Folder number for Pic1 and Text1
+    enum {
+        URL_FOLDER_1_0_0      = 1,
+        URL_FOLDER_1_1_0_BETA = 2,
+        URL_FOLDER_1_1_0      = 3
+    };
+
+    auto const CURRENT_URL_FOLDER = URL_FOLDER_1_1_0;
+
 // Not using https for Linux due to crashes and unstable behaviors experienced.
 #ifdef __linux__
-    QUrl const Pic1_URL = QString("http://rm-feed.3t.io/2/image.png");
-    QUrl const Text1_URL = QString("http://rm-feed.3t.io/2/contents.txt");
+    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/" + QString::number(CURRENT_URL_FOLDER) + "/image.png");
+    QUrl const Text1_URL = QString("https://rm-feed.3t.io/" + QString::number(CURRENT_URL_FOLDER) + "/contents.txt");
     QUrl const Rss_URL = QString("http://blog.robomongo.org/rss/");
 #else
-    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/2/image.png");
-    QUrl const Text1_URL = QString("https://rm-feed.3t.io/2/contents.txt");
+    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/" + QString::number(CURRENT_URL_FOLDER) + "/image.png");
+    QUrl const Text1_URL = QString("https://rm-feed.3t.io/" + QString::number(CURRENT_URL_FOLDER) + "/contents.txt");
     QUrl const Rss_URL = QString("https://blog.robomongo.org/rss/");
 #endif
 
@@ -257,8 +266,10 @@ namespace Robomongo
     void WelcomeTab::on_downloadTextReply(QNetworkReply* reply)
     {
         auto hideOrShowWhatsNewHeader = [this]() {
-            _whatsNewHeader->setHidden( (!_pic1->pixmap() || _pic1->pixmap()->isNull())
-                                        && _whatsNewText->text().isEmpty() ? true : false);
+            if ((!_pic1->pixmap() || _pic1->pixmap()->isNull()) && _whatsNewText->text().isEmpty())
+                _whatsNewHeader->setHidden(true);
+            else 
+                _whatsNewHeader->setVisible(true);
         };
 
         if (reply->operation() == QNetworkAccessManager::HeadOperation) {
@@ -306,6 +317,7 @@ namespace Robomongo
             }
 
             setWhatsNewHeaderAndText(str);
+            hideOrShowWhatsNewHeader();
             saveIntoCache(Text1_URL.fileName(), str, Text1_LastModifiedDateKey,
                           reply->header(QNetworkRequest::LastModifiedHeader).toString());
         }
@@ -317,8 +329,10 @@ namespace Robomongo
 
         QPixmap image;
         auto hideOrShowWhatsNewHeader = [this]() {
-            _whatsNewHeader->setHidden( (!_pic1->pixmap() || _pic1->pixmap()->isNull()) 
-                                        && _whatsNewText->text().isEmpty() ? true : false);        
+            if ((!_pic1->pixmap() || _pic1->pixmap()->isNull()) && _whatsNewText->text().isEmpty())
+                _whatsNewHeader->setHidden(true);
+            else
+                _whatsNewHeader->setVisible(true);
         };
 
         // Network error, load from cache
@@ -327,8 +341,13 @@ namespace Robomongo
             if (image.isNull())
                 return;
 
+            _image = image;
             _pic1->setPixmap(_image);
-            _pic1->setFixedSize(FIFTY_PERCENT_OF_TAB, (FIFTY_PERCENT_OF_TAB / _image.size().width())*_image.size().height());
+
+            if (0 == _image.size().width())
+                return;
+
+            _pic1->setFixedSize(FIFTY_PERCENT_OF_TAB, (FIFTY_PERCENT_OF_TAB / _image.size().width()) * _image.size().height());
             adjustSize();
             hideOrShowWhatsNewHeader();
             return;
@@ -345,7 +364,6 @@ namespace Robomongo
             }
             else {   // Get from internet
                 reply->manager()->get(QNetworkRequest(Pic1_URL));
-                hideOrShowWhatsNewHeader();
                 return;
             }
         }
@@ -368,11 +386,12 @@ namespace Robomongo
             return;
 
         _image = image;
-        _pic1->setPixmap(_image);
-        _pic1->setFixedSize(FIFTY_PERCENT_OF_TAB, (FIFTY_PERCENT_OF_TAB / _image.size().width())*_image.size().height());
 
-        adjustSize();
+        if (0 == _image.size().width()) 
+            return
+
         hideOrShowWhatsNewHeader();
+        resize();
     }
 
     void WelcomeTab::on_downloadRssReply(QNetworkReply* reply)
@@ -657,6 +676,10 @@ namespace Robomongo
 
         _whatsNewText->setFixedWidth(tabWidth * TEXT_TO_TAB_RATIO);
         _pic1->setPixmap(_image);
+
+        if (0 == _image.size().width())
+            return;
+
         _pic1->setFixedSize(FIFTY_PERCENT_OF_TAB, (FIFTY_PERCENT_OF_TAB / _image.size().width())*_image.size().height());
 
         _blogsHeader->setFixedWidth(tabWidth * BLOG_TO_TAB_RATIO);

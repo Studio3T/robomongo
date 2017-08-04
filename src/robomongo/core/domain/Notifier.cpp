@@ -171,6 +171,7 @@ namespace Robomongo
             menu->addAction(_copyValuePathAction);
 
         if (onItem && isObjectId) menu->addAction(_copyTimestampAction);
+        if (onItem && isObjectId) menu->addAction(_copyIdentifierAction);
         if (onItem && isDocument) menu->addAction(_copyJsonAction);
         if (onItem && isEditable) menu->addSeparator();
         if (onItem && isEditable) menu->addAction(_deleteDocumentAction);

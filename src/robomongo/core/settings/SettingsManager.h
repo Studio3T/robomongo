@@ -16,14 +16,14 @@ namespace Robomongo
     struct ConfigFileAndImportFunction;
         
     // Current cache directory
-    QString const CacheDir = QString("%1/.3T/robo-3t/%2/cache/").arg(QDir::homePath())
-                                                               .arg(PROJECT_VERSION);
+    auto const CacheDir = QString("%1/.3T/robo-3t/%2/cache/").arg(QDir::homePath())
+                                                             .arg(PROJECT_VERSION);
     // Current config file
-    QString const ConfigFilePath = QString("%1/.3T/robo-3t/%2/robo3t.json").arg(QDir::homePath())
-                                                                             .arg(PROJECT_VERSION);  
+    auto const ConfigFilePath = QString("%1/.3T/robo-3t/%2/robo3t.json").arg(QDir::homePath())
+                                                                        .arg(PROJECT_VERSION);  
     // Current config file directory
-    QString const ConfigDir = QString("%1/.3T/robo-3t/%2/").arg(QDir::homePath())
-                                                          .arg(PROJECT_VERSION);  
+    auto const ConfigDir = QString("%1/.3T/robo-3t/%2/").arg(QDir::homePath())
+                                                        .arg(PROJECT_VERSION);  
     /* Temporarily disabling Recent Connections feature
     struct RecentConnection
     {

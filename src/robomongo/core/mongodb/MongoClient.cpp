@@ -14,22 +14,23 @@ namespace
     {
         using namespace Robomongo::BsonUtils;
         Robomongo::EnsureIndexInfo info(collection);
-        info._name = getField<mongo::String>(obj, "name");
-        mongo::BSONObj keyObj = getField<mongo::Object>(obj, "key");
-        if (keyObj.isValid()) {
+        info._name = obj.getStringField("name");
+        mongo::BSONObj keyObj = obj.getObjectField("key");
+        if (keyObj.isValid()) 
             info._request = jsonString(keyObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
-        }
-        info._unique = getField<mongo::Bool>(obj, "unique");
-        info._backGround = getField<mongo::Bool>(obj, "background");
-        info._dropDups = getField<mongo::Bool>(obj, "dropDups");
-        info._sparse = getField<mongo::Bool>(obj, "sparse");
+
+        info._unique = obj.getBoolField("unique");
+        info._backGround = obj.getBoolField("background");
+        info._dropDups = obj.getBoolField("dropDups");
+        info._sparse = obj.getBoolField("sparse");
         info._ttl = obj.getIntField("expireAfterSeconds");
-        info._defaultLanguage = getField<mongo::String>(obj, "default_language");
-        info._languageOverride = getField<mongo::String>(obj, "language_override");
-        mongo::BSONObj weightsObj = getField<mongo::Object>(obj, "weights");
-        if (weightsObj.isValid()) {
-            info._textWeights = jsonString(weightsObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, Robomongo::Utc);
-        }
+        info._defaultLanguage = obj.getStringField("default_language");
+        info._languageOverride = obj.getStringField("language_override");
+        mongo::BSONObj weightsObj = obj.getObjectField("weights");
+        if (weightsObj.isValid()) 
+            info._textWeights = jsonString(weightsObj, mongo::TenGen, 1, Robomongo::DefaultEncoding, 
+                                           Robomongo::Utc);
+
         return info;
     }
 }

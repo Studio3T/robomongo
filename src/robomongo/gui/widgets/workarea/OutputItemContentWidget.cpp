@@ -94,7 +94,7 @@ namespace Robomongo
             }
         }
 
-        _header->setTime(QString("%1 sec.").arg(secs));
+        _header->setTime(QString("%1 sec.").arg(secs, 0, 'g', 3));
 
         QVBoxLayout *layout = new QVBoxLayout();
         layout->setContentsMargins(0, 0, 0, 0);

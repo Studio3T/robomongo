@@ -119,7 +119,7 @@ For more information refer to [Building Robo 3T Shell](BuildRobo3TShell.md)
 
 Download Robo 3T: 
 
-    $ git clone https://github.com/paralect/robomongo
+    $ git clone https://github.com/Studio3T/robomongo
     $ cd robomongo
 
 Run configuration step:
@@ -155,6 +155,8 @@ Create package for your OS in `build/release/package` folder:
     $ bin/pack
 
 **Important Notes**
+- For macOS builds, it might be needed to patch QScintilla with `QScintilla-2.9.3-xcode8.patch` found at robomongo repository's root.
+
 - For Ubuntu 16.04 builds, it has been reported that Robo 3T /bin/configure step might fail and installing mesa-common-dev package solves it. Details: https://github.com/paralect/robomongo/issues/1268 
 
 - For Centos builds, Robo 3T /bin/configure step might fail due to error: `failed to find gl/gl.h`. In this case, the following packages must be installed:

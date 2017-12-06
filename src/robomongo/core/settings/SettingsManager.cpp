@@ -18,7 +18,7 @@
 //         a very lightweight zip operation which is unzipping a zip archive with one, small file.
 //         The alternative is including QuaZip and Zlib third party libraries into CMAKE project and 
 //         building, and using them which might be time consuming.
-#include <5.7.0/QtGui/private/qzipreader_p.h>
+#include <5.9.3/QtGui/private/qzipreader_p.h>
 
 #include <parser.h>
 #include <serializer.h>

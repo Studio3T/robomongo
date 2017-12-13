@@ -962,7 +962,7 @@ namespace Robomongo
                 // Step-2: Try connect to replica set with set name
                 auto const& membersHostsAndPorts = _connSettings->replicaSetSettings()->membersToHostAndPort();
                 _dbclientRepSet = DBClientReplicaSet(new mongo::DBClientReplicaSet(setName, membersHostsAndPorts, 
-                                                     "Robomongo", _mongoTimeoutSec));
+                                                     "robo3t", _mongoTimeoutSec));
                 
                 if (!_dbclientRepSet->connect()) 
                     return nullptr;
@@ -975,7 +975,7 @@ namespace Robomongo
                 // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
                 _dbclient = DBClientConnection(new mongo::DBClientConnection(true, _mongoTimeoutSec));
 
-                mongo::Status status = _dbclient->connect(_connSettings->hostAndPort(), "Robomongo");
+                mongo::Status status = _dbclient->connect(_connSettings->hostAndPort(), "robo3t");
                 if (!status.isOK() && mayReturnNull) 
                     return nullptr;
             }
@@ -1090,7 +1090,7 @@ namespace Robomongo
         // Try connecting to the nodes one by one until getting replica set name.
         for (auto const& node : _connSettings->replicaSetSettings()->membersToHostAndPort())
         {
-            mongo::Status const status = dbclientTemp->connect(node, "Robomongo");
+            mongo::Status const status = dbclientTemp->connect(node, "robo3t");
             if (status.isOK())
             {
                 _scriptEngine->init(_isLoadMongoRcJs, node.toString());

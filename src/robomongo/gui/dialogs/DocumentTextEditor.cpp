@@ -123,7 +123,7 @@ namespace Robomongo
     void DocumentTextEditor::reject()
     {
         if (_queryText->sciScintilla()->isModified()) {
-            int ret = QMessageBox::warning(this, tr("Robomongo"),
+            int ret = QMessageBox::warning(this, tr("Robo 3T"),
                                tr("The document has been modified.\n"
                                   "Do you want to save your changes?"),
                                QMessageBox::Save | QMessageBox::Discard

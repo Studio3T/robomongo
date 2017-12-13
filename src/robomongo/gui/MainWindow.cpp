@@ -1184,6 +1184,8 @@ namespace Robomongo
 
     void MainWindow::closeEvent(QCloseEvent *event)
     {
+        AppRegistry::instance().settingsManager()->setProgramExitedNormally(true);
+        AppRegistry::instance().settingsManager()->save();
         saveWindowSettings();
     #if defined(Q_OS_WIN)
         if (AppRegistry::instance().settingsManager()->minimizeToTray() && !_allowExit) {

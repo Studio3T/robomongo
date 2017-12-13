@@ -190,6 +190,12 @@ namespace Robomongo
         void addCacheData(QString const& key, QVariant const& value);
         QVariant cacheData(QString const& key) const;
 
+        void setProgramExitedNormally(bool value) { _programExitedNormally = value; }
+        bool programExitedNormally() const { return _programExitedNormally; }
+
+        bool useHttps() const { return _useHttps; }
+        void setUseHttps(bool status) { _useHttps = status; }
+
         /**
          * Returns number of imported connections
          */
@@ -236,6 +242,8 @@ namespace Robomongo
         bool _minimizeToTray;
         bool _lineNumbers;
         bool _disableConnectionShortcuts;
+        bool _programExitedNormally = true;
+        bool _useHttps = true;
         QSet<QString> _acceptedEulaVersions;
         int _batchSize;
         bool _checkForUpdates = true;

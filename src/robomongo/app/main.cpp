@@ -23,6 +23,8 @@ int main(int argc, char *argv[], char** envp)
     if (rbm_ssh_init()) 
         return 1;
 
+    auto const settingsManager = Robomongo::AppRegistry::instance().settingsManager();
+
     // Please check, do we really need envp for other OSes?
 #ifdef Q_OS_WIN
     envp = NULL;
@@ -56,11 +58,25 @@ int main(int argc, char *argv[], char** envp)
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 
+    bool showEulaDialogForm = true;
+    if (!settingsManager->programExitedNormally()) {
+        showEulaDialogForm = false;
+        settingsManager->setUseHttps(false);
+        settingsManager->save();
+    }
+    
+    if (!settingsManager->useHttps())
+        showEulaDialogForm = false;
+    
     // EULA License Agreement
-    auto const settingsManager = Robomongo::AppRegistry::instance().settingsManager();
     if (!settingsManager->acceptedEulaVersions().contains(PROJECT_VERSION)) {
-        Robomongo::EulaDialog eulaDialog;
-        if (eulaDialog.exec() == QDialog::Rejected) {
+        Robomongo::EulaDialog eulaDialog(showEulaDialogForm);
+        settingsManager->setProgramExitedNormally(false);
+        settingsManager->save();
+        int const result = eulaDialog.exec();
+        settingsManager->setProgramExitedNormally(true);
+        settingsManager->save();
+        if (QDialog::Rejected == result) {
             rbm_ssh_cleanup();
             return 1;
         }
@@ -71,6 +87,10 @@ int main(int argc, char *argv[], char** envp)
 
     // Init GUI style
     Robomongo::AppStyleUtils::initStyle();
+
+    // To be set true at normal program exit
+    settingsManager->setProgramExitedNormally(false);
+    settingsManager->save();
 
     // Application main window
     Robomongo::MainWindow mainWindow;

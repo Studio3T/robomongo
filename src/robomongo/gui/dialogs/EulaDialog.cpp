@@ -19,13 +19,15 @@
 #include <QJsonDocument>
 #include <QDesktopWidget>
 
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
 
 namespace Robomongo
 {
 
-    EulaDialog::EulaDialog(QWidget *parent)
-        : QWizard(parent)
+    EulaDialog::EulaDialog(bool showFormPage, QWidget *parent)
+        : QWizard(parent), _showFormPage(showFormPage)
     {
         setWindowTitle("EULA");
 
@@ -106,7 +108,8 @@ namespace Robomongo
 
         addPage(firstPage);
 #if defined(_WIN32) || defined(__APPLE__)
-        addPage(secondPage);
+        if(_showFormPage)
+            addPage(secondPage);
 #endif
 
         //// Buttons
@@ -124,6 +127,7 @@ namespace Robomongo
 #if defined(_WIN32) || defined(__APPLE__)
         button(QWizard::CustomButton1)->setDisabled(true);
         button(QWizard::CustomButton2)->setDisabled(true);
+        button(QWizard::CustomButton2)->setHidden(!_showFormPage);
         button(QWizard::CustomButton3)->setDisabled(true);
 #else   // linux
         button(QWizard::CustomButton1)->setHidden(true);
@@ -169,7 +173,10 @@ namespace Robomongo
     void EulaDialog::on_agreeButton_clicked()
     {
 #if defined(_WIN32) || defined(__APPLE__)
-        button(QWizard::CustomButton2)->setEnabled(true);
+        if(_showFormPage)
+            button(QWizard::CustomButton2)->setEnabled(true);
+        else
+            button(QWizard::CustomButton3)->setEnabled(true);
 #else
         button(QWizard::CustomButton3)->setEnabled(true);
 #endif
@@ -178,7 +185,10 @@ namespace Robomongo
     void EulaDialog::on_notAgreeButton_clicked()
     {
 #if defined(_WIN32) || defined(__APPLE__)
-        button(QWizard::CustomButton2)->setEnabled(false);
+        if (_showFormPage)
+            button(QWizard::CustomButton2)->setEnabled(false);
+        else
+            button(QWizard::CustomButton3)->setEnabled(false);
 #else
         button(QWizard::CustomButton3)->setEnabled(false);
 #endif
@@ -207,7 +217,7 @@ namespace Robomongo
 
     void EulaDialog::postUserData() const
     {
-        if (_emailEdit->text().isEmpty())
+        if (!_showFormPage && _emailEdit->text().isEmpty())
             return;
 
         // Build post data and send
@@ -220,8 +230,10 @@ namespace Robomongo
         QJsonDocument jsonDoc(jsonStr);
         QUrlQuery postData(jsonDoc.toJson());
         postData = QUrlQuery("rd=" + postData.toString(QUrl::FullyEncoded).toUtf8());
+      
+        QString const prefix = AppRegistry::instance().settingsManager()->useHttps() ? "https" : "http";
+        QNetworkRequest request(QUrl(prefix + "://rm-form.3t.io/"));
 
-        QNetworkRequest request(QUrl("https://rm-form.3t.io/"));
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
         auto networkManager = new QNetworkAccessManager;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QUrl>
 
 QT_BEGIN_NAMESPACE
 class QPushButton;
@@ -9,6 +10,7 @@ class QLabel;
 class QVBoxLayout;
 class QScrollArea;
 class QEvent;
+class QUrl;
 QT_END_NAMESPACE
 
 namespace Robomongo
@@ -61,6 +63,10 @@ namespace Robomongo
         QPushButton* _clearButton;
         QScrollArea* _parent;
         QPixmap _image;
+
+        QUrl _pic1_URL;
+        QUrl _text1_URL;
+        QUrl _rss_URL;
 
         // Temporarily disabling Recent Connections feature
         // std::vector<ConnectionSettings const*> _recentConnections;

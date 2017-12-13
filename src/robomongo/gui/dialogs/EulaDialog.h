@@ -22,7 +22,7 @@ namespace Robomongo
     public:
         static const QSize minimumSize;
 
-        explicit EulaDialog(QWidget *parent = nullptr);
+        explicit EulaDialog(bool showFormPage, QWidget *parent = nullptr);
         
     public Q_SLOTS:
         void accept() override;
@@ -59,7 +59,7 @@ namespace Robomongo
 
         QByteArray _postData;
         mutable QNetworkReply* _reply;
-
+        bool _showFormPage = true;
     };
 }
 

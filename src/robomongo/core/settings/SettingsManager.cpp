@@ -218,6 +218,10 @@ namespace Robomongo
         _minimizeToTray = map.contains("minimizeToTray") ? map.value("minimizeToTray").toBool() : false;
         _lineNumbers = map.contains("lineNumbers") ? map.value("lineNumbers").toBool() : false;
         _imported = map.contains("imported") ? map.value("imported").toBool() : false;
+        _programExitedNormally = map.contains("programExitedNormally") ? 
+                                 map.value("programExitedNormally").toBool() : true;
+
+        _useHttps = map.contains("useHttps") ? map.value("useHttps").toBool() : true;
 
         // 4. Load TimeZone
         int timeZone = map.value("timeZone").toInt();
@@ -392,6 +396,8 @@ namespace Robomongo
         map.insert("imported", _imported);
         map.insert("anonymousID", _anonymousID);
         map.insert("cacheData", _cacheData);
+        map.insert("programExitedNormally", _programExitedNormally);
+        map.insert("useHttps", _useHttps);
 
         return map;
     }

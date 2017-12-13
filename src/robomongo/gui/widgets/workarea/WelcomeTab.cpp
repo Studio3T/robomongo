@@ -102,17 +102,8 @@ namespace Robomongo
     };
 
     auto const CURRENT_URL_FOLDER = URL_FOLDER_1_1_0;
-
-// Not using https for Linux due to crashes and unstable behaviors experienced.
-#ifdef __linux__
-    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/" + QString::number(CURRENT_URL_FOLDER) + "/image.png");
-    QUrl const Text1_URL = QString("https://rm-feed.3t.io/" + QString::number(CURRENT_URL_FOLDER) + "/contents.txt");
-    QUrl const Rss_URL = QString("http://blog.robomongo.org/rss/");
-#else
-    QUrl const Pic1_URL = QString("https://rm-feed.3t.io/" + QString::number(CURRENT_URL_FOLDER) + "/image.png");
-    QUrl const Text1_URL = QString("https://rm-feed.3t.io/" + QString::number(CURRENT_URL_FOLDER) + "/contents.txt");
-    QUrl const Rss_URL = QString("https://blog.robomongo.org/rss/");
-#endif
+    QString const IMAGE_PATH = QString::number(CURRENT_URL_FOLDER) + "/image.png";
+    QString const CONTENTS_PATH = QString::number(CURRENT_URL_FOLDER) + "/contents.txt";
 
     QString const RssFileName = "rss.xml";
 
@@ -129,6 +120,18 @@ namespace Robomongo
     WelcomeTab::WelcomeTab(QScrollArea *parent) :
         QWidget(parent), _parent(parent)
     {
+        // Not using https for Linux due to crashes and unstable behaviors
+#ifdef __linux__
+        _pic1_URL = QString("http://rm-feed.3t.io/" + IMAGE_PATH);
+        _text1_URL = QString("http://rm-feed.3t.io/" + CONTENTS_PATH;
+        _rss_URL = QString("http://blog.robomongo.org/rss/");
+#else
+        QString const prefix = AppRegistry::instance().settingsManager()->useHttps() ? "https" : "http";
+        _pic1_URL = prefix + QString("://rm-feed.3t.io/" + IMAGE_PATH);
+        _text1_URL = prefix + QString("://rm-feed.3t.io/" + CONTENTS_PATH);
+        _rss_URL = prefix + QString("://blog.robomongo.org/rss/");
+#endif
+
         /* Temporarily disabling Recent Connections feature
         AppRegistry::instance().bus()->subscribe(this, ConnectionEstablishedEvent::Type);
 
@@ -202,17 +205,17 @@ namespace Robomongo
         auto text1Downloader = new QNetworkAccessManager;
         VERIFY(connect(text1Downloader, SIGNAL(finished(QNetworkReply*)), 
                        this, SLOT(on_downloadTextReply(QNetworkReply*))));
-        text1Downloader->head(QNetworkRequest(Text1_URL));
+        text1Downloader->head(QNetworkRequest(_text1_URL));
 
         auto pic1Downloader = new QNetworkAccessManager;
         VERIFY(connect(pic1Downloader, SIGNAL(finished(QNetworkReply*)), 
                this, SLOT(on_downloadPictureReply(QNetworkReply*))));
-        pic1Downloader->head(QNetworkRequest(Pic1_URL));
+        pic1Downloader->head(QNetworkRequest(_pic1_URL));
 
         auto rssDownloader = new QNetworkAccessManager;
         VERIFY(connect(rssDownloader, SIGNAL(finished(QNetworkReply*)), 
                        this, SLOT(on_downloadRssReply(QNetworkReply*))));
-        rssDownloader->get(QNetworkRequest(Rss_URL));
+        rssDownloader->get(QNetworkRequest(_rss_URL));
 
         //// --- Layouts
         _allBlogsButton = new QPushButton("All Blog Posts");
@@ -276,10 +279,10 @@ namespace Robomongo
             if (reply->error() == QNetworkReply::NoError) { // No network error
                 QString const& createDate = reply->header(QNetworkRequest::LastModifiedHeader).toString();
                 if (createDate == AppRegistry::instance().settingsManager()->cacheData(Text1_LastModifiedDateKey)
-                    && fileExists(CacheDir + Text1_URL.fileName()))
+                    && fileExists(CacheDir + _text1_URL.fileName()))
                 {
                     // Load from cache
-                    QFile file(CacheDir + Text1_URL.fileName());
+                    QFile file(CacheDir + _text1_URL.fileName());
                     if (!file.open(QFile::ReadOnly | QFile::Text))
                         return;
 
@@ -290,12 +293,12 @@ namespace Robomongo
                     return;
                 }
                 else {  // Get from internet
-                    reply->manager()->get(QNetworkRequest(Text1_URL));
+                    reply->manager()->get(QNetworkRequest(_text1_URL));
                 }
             }
             else {  // There is a network error 
                 // Load from cache
-                QFile file(CacheDir + Text1_URL.fileName());
+                QFile file(CacheDir + _text1_URL.fileName());
                 if (!file.open(QFile::ReadOnly | QFile::Text))
                     return;
 
@@ -318,7 +321,7 @@ namespace Robomongo
 
             setWhatsNewHeaderAndText(str);
             hideOrShowWhatsNewHeader();
-            saveIntoCache(Text1_URL.fileName(), str, Text1_LastModifiedDateKey,
+            saveIntoCache(_text1_URL.fileName(), str, Text1_LastModifiedDateKey,
                           reply->header(QNetworkRequest::LastModifiedHeader).toString());
         }
     }
@@ -337,7 +340,7 @@ namespace Robomongo
 
         // Network error, load from cache
         if (reply->error() != QNetworkReply::NoError) { 
-            image = QPixmap(CacheDir + Pic1_URL.fileName());
+            image = QPixmap(CacheDir + _pic1_URL.fileName());
             if (image.isNull())
                 return;
 
@@ -358,12 +361,12 @@ namespace Robomongo
             QString const& createDate = reply->header(QNetworkRequest::LastModifiedHeader).toString();
             // If the file in URL is not newer load from cache, otherwise get from internet
             if (createDate == AppRegistry::instance().settingsManager()->cacheData(Image1_LastModifiedDateKey)
-                && fileExists(CacheDir + Pic1_URL.fileName())) 
+                && fileExists(CacheDir + _pic1_URL.fileName())) 
             {
-                image = QPixmap(CacheDir + Pic1_URL.fileName());    // Load from cache
+                image = QPixmap(CacheDir + _pic1_URL.fileName());    // Load from cache
             }
             else {   // Get from internet
-                reply->manager()->get(QNetworkRequest(Pic1_URL));
+                reply->manager()->get(QNetworkRequest(_pic1_URL));
                 return;
             }
         }
@@ -373,10 +376,10 @@ namespace Robomongo
             if (image.isNull()) {
                 LOG_MSG("WelcomeTab: Failed to download image file from internet. Reason: " + reply->errorString(),
                          mongo::logger::LogSeverity::Warning());
-                image = QPixmap(CacheDir + Pic1_URL.fileName());
+                image = QPixmap(CacheDir + _pic1_URL.fileName());
             }
             else {
-                saveIntoCache(Pic1_URL.fileName(), image, Image1_LastModifiedDateKey,
+                saveIntoCache(_pic1_URL.fileName(), image, Image1_LastModifiedDateKey,
                               reply->header(QNetworkRequest::LastModifiedHeader).toString());
             }
         }

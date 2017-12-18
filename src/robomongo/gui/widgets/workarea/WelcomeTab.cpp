@@ -98,10 +98,11 @@ namespace Robomongo
     enum {
         URL_FOLDER_1_0_0      = 1,
         URL_FOLDER_1_1_0_BETA = 2,
-        URL_FOLDER_1_1_0      = 3
+        URL_FOLDER_1_1_0      = 3,
+        URL_FOLDER_1_2_0_BETA = 4,
     };
 
-    auto const CURRENT_URL_FOLDER = URL_FOLDER_1_1_0;
+    auto const CURRENT_URL_FOLDER = URL_FOLDER_1_2_0_BETA;
     QString const IMAGE_PATH = QString::number(CURRENT_URL_FOLDER) + "/image.png";
     QString const CONTENTS_PATH = QString::number(CURRENT_URL_FOLDER) + "/contents.txt";
 

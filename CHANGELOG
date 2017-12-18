@@ -20,6 +20,18 @@ Robo 3T 1.x:
     - Timestamp value is represented incorrectly (https://github.com/Studio3T/robomongo/issues/1159)
     - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
       
+  * What's new in Robo 3T 1.2.0 Beta (18 Dec, 2017)   
+    https://github.com/Studio3T/robomongo/releases/tag/v1.2.0-beta
+    
+    Improvements & Fixes:
+      - Qt version upgraded from Qt 5.7.0 to Qt 5.9.3
+      - Fix for "Cannot load list of indexes #1454"
+      - Improvements for Robo 3T is crashing constantly on High Sierra #1412
+      - PR: Improved query time formatting (#1358) #1455
+      - Fix for "Robo 3T is not buildable on latest MacOS vesion High Sierra"
+      - Fix attempt for "Error: Resources temporarily unavailable. Error when starting up SSH session: -8 #1426"
+      - Fix for "robo3t 1.1 failed to start on Ubuntu 17.04 #1385"      
+      
   * What's new in Robo 3T 1.1 (13 June, 2017)
     http://blog.robomongo.org/robomongo-1-1/
 

@@ -123,13 +123,13 @@ namespace Robomongo
     {
         // Not using https for Linux due to crashes and unstable behaviors
 #ifdef __linux__
-        _pic1_URL = QString("http://rm-feed.3t.io/" + IMAGE_PATH);
-        _text1_URL = QString("http://rm-feed.3t.io/" + CONTENTS_PATH;
+        _pic1_URL = QString("http://rm-feed.3t.io/") + IMAGE_PATH;
+        _text1_URL = QString("http://rm-feed.3t.io/") + CONTENTS_PATH;
         _rss_URL = QString("http://blog.robomongo.org/rss/");
 #else
         QString const prefix = AppRegistry::instance().settingsManager()->useHttps() ? "https" : "http";
-        _pic1_URL = prefix + QString("://rm-feed.3t.io/" + IMAGE_PATH);
-        _text1_URL = prefix + QString("://rm-feed.3t.io/" + CONTENTS_PATH);
+        _pic1_URL = prefix + QString("://rm-feed.3t.io/") + IMAGE_PATH;
+        _text1_URL = prefix + QString("://rm-feed.3t.io/") + CONTENTS_PATH;
         _rss_URL = prefix + QString("://blog.robomongo.org/rss/");
 #endif
 

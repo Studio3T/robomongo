@@ -138,8 +138,9 @@ namespace Robomongo
 
     void Notifier::initMenu(QMenu *const menu, BsonTreeItem *const item)
     {
-        bool isEditable = _queryInfo._info.isValid();
-        bool onItem = item ? true : false;
+        bool const isProjection = !_queryInfo._fields.isEmpty();
+        bool const isEditable = _queryInfo._info.isValid() && !isProjection;
+        bool const onItem = item ? true : false;
         
         bool isSimple = false;
         bool isDocument = false;

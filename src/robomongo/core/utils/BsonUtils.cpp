@@ -5,6 +5,7 @@
 #include "mongo/util/base64.h"
 #include "mongo/util/stringutils.h"
 
+#include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/HexUtils.h"
 
@@ -139,30 +140,22 @@ namespace Robomongo
                 break;
             case NumberDouble:
                 {
-                    int sign = 0;
                     if ( elem.number() >= -std::numeric_limits< double >::max() &&
-                            elem.number() <= std::numeric_limits< double >::max() ) {
-
-                        // was 16
-                        s.precision(std::numeric_limits<double>::digits10);
-                        s << elem.number();
-
-                        // Leave trailing zero if needed
-                        if (elem.number() == (long long)elem.number())
-                            s << ".0";
+                         elem.number() <= std::numeric_limits< double >::max() ) {
+                        auto const PRECISION = std::numeric_limits<double>::digits10 + 1;
+                        s << QString::number(elem.Double(), 'g', PRECISION).toStdString();
                     }
-                    else if (std::isnan(elem.number()) ) {
+                    else if (std::isnan(elem.number()) ) {                        
                         s << "NaN";
                     }
                     else if (std::isinf(elem.number()) ) {
-                        s << "Infinity";
-//                        s << ( sign == 1 ? "Infinity" : "-Infinity");
+                        s << (std::to_string(elem.number()) == "inf" ? "Infinity" : "-Infinity");
                     }
                     else {
                         StringBuilder ss;
-                        ss << "Number " << elem.number() << " cannot be represented in JSON";
-                        string message = ss.str();
-                        //massert( 10311 ,  message.c_str(), false );
+                        ss << "BsonUtils::jsonString(): Number " << elem.number() 
+                           << " cannot be represented in JSON";
+                        LOG_MSG(ss.str(), mongo::logger::LogSeverity::Error());
                     }
                     break;
                 }
@@ -585,15 +578,23 @@ namespace Robomongo
             {
             case NumberDouble:
                 {
-                    std::stringstream s;
-                    s.precision(std::numeric_limits<double>::digits10);
-                    s << elem.Double();
-
-                    // Leave trailing zero if needed
-                    if (elem.Double() == (long long)elem.Double())
-                        s << ".0";
-
-                    con.append(s.str());
+                    if (elem.number() >= -std::numeric_limits< double >::max() &&
+                        elem.number() <= std::numeric_limits< double >::max()) {
+                        auto const PRECISION = std::numeric_limits<double>::digits10 + 1;
+                        con.append(QString::number(elem.Double(), 'g', PRECISION).toStdString());
+                    }
+                    else if (std::isnan(elem.number())) {
+                        con.append("NaN");
+                    }
+                    else if (std::isinf(elem.number())) {
+                        con.append(std::to_string(elem.number()) == "inf" ? "Infinity" : "-Infinity");
+                    }
+                    else {
+                        StringBuilder ss;
+                        ss << "BsonUtils::buildJsonString(): Number " << elem.number() 
+                           << " cannot be represented in JSON";
+                        LOG_MSG(ss.str(), mongo::logger::LogSeverity::Error());
+                    }
                 }
                 break;
             case String:

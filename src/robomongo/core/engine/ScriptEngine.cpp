@@ -227,7 +227,9 @@ namespace Robomongo
                     std::vector<MongoDocumentPtr> docs = MongoDocument::fromBsonObj(__objects);
 
                     if (!answer.empty() || docs.size() > 0)
-                        results.push_back(prepareResult(type, answer, docs, elapsed, isAggregate, aggrInfo));
+                        results.push_back(
+                            prepareResult(type, answer, docs, elapsed, statement, isAggregate, aggrInfo)
+                        );
                 }
                 catch (const std::exception &e) {
                     std::cout << "error:" << e.what() << std::endl;
@@ -318,7 +320,8 @@ namespace Robomongo
 
     MongoShellResult ScriptEngine::prepareResult(const std::string &type, const std::string &output,
                                                  const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms,
-                                                 bool isAggregate /* = false */, AggrInfo aggrInfo /*= AggrInfo()*/)
+                                                 const std::string &statement, bool isAggregate /* = false */, 
+                                                 AggrInfo aggrInfo /*= AggrInfo()*/)
     {
         const char *script =
             "__robomongoQuery = false; \n"
@@ -351,10 +354,17 @@ namespace Robomongo
 
         _scope->exec(script, "(getresultinfo)", false, false, false);
 
-        std::string xx = script;
+        // Remove white space and spaces first
+        QString statementSimp = QString::fromStdString(statement).simplified();        
+        statementSimp.replace(" ", "");
+        bool const isAggrStatement = statementSimp.contains("aggregate(");
 
         bool const isQuery = _scope->getBoolean("__robomongoQuery");
-        bool const isAggregateQuery = _scope->getBoolean("__robomongoAggregate") || isAggregate;
+        // Double confirm if statement is an aggregate query by firstly checking query output 
+        // and secondly by checking if the statement itself contains "aggregate(" string.
+        // Finally, "isAggregate" comes from the event when the user makes paging requests.
+        bool const isAggregateQuery = 
+            (_scope->getBoolean("__robomongoAggregate") && isAggrStatement) || isAggregate;
 
         if (isQuery) {
             std::string serverAddress = getString("__robomongoServerAddress");

@@ -39,7 +39,8 @@ namespace Robomongo
 
         MongoShellResult prepareResult(const std::string &type, const std::string &output, 
                                        const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms,
-                                       bool isAggregate = false, AggrInfo aggrInfo = AggrInfo());
+                                       const std::string &statement, bool isAggregate = false, 
+                                       AggrInfo aggrInfo = AggrInfo());
 
         MongoShellExecResult prepareExecResult(const std::vector<MongoShellResult> &results, 
                                                bool timeoutReached = false);

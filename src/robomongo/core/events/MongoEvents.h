@@ -10,6 +10,7 @@
 #include "robomongo/core/domain/MongoUser.h"
 #include "robomongo/core/domain/MongoFunction.h"
 #include "robomongo/core/events/MongoEventsInfo.h"
+#include "robomongo/core/domain/MongoAggregateInfo.h"
 #include "robomongo/core/Event.h"
 #include "robomongo/core/Enums.h"
 #include "robomongo/core/mongodb/ReplicaSet.h"
@@ -958,17 +959,24 @@ namespace Robomongo
     {
         R_EVENT
 
-        ExecuteScriptRequest(QObject *sender, const std::string &script, const std::string &dbName, int take = 0, int skip = 0) :
+        ExecuteScriptRequest(QObject *sender, const std::string &script, const std::string &dbName, 
+                             bool isAggregate = false, AggrInfo aggrInfo = AggrInfo(), int take = 0, 
+                             int skip = 0) :
             Event(sender),
             script(script),
             databaseName(dbName),
+            isAggregate(isAggregate),
+            aggrInfo(aggrInfo),
             take(take),
-            skip(skip) {}
+            skip(skip)
+            {}
 
         std::string script;
         std::string databaseName;
         int take; //
         int skip;
+        bool const isAggregate = false;
+        AggrInfo const aggrInfo;
     };
 
     class ExecuteScriptResponse : public Event
@@ -976,8 +984,9 @@ namespace Robomongo
         R_EVENT
 
         ExecuteScriptResponse(QObject *sender, const MongoShellExecResult &result, bool empty,
-                              bool timeoutReached = false) :
-            Event(sender), result(result), empty(empty), _timeoutReached(timeoutReached) {}
+                              AggrInfo aggrInfo = AggrInfo(), bool timeoutReached = false) :
+            Event(sender), result(result), empty(empty), aggrInfo(aggrInfo),
+            _timeoutReached(timeoutReached) {}
 
         ExecuteScriptResponse(QObject *sender, const EventError &error, bool timeoutReached = false) :
             Event(sender, error), _timeoutReached(timeoutReached) {}
@@ -986,6 +995,7 @@ namespace Robomongo
 
         MongoShellExecResult result;
         bool empty;
+        AggrInfo const aggrInfo;
         bool const _timeoutReached = false;
     };
 

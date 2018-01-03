@@ -4,6 +4,7 @@
 
 #include "robomongo/core/Core.h"
 #include "robomongo/core/domain/MongoQueryInfo.h"
+#include "robomongo/core/domain/MongoAggregateInfo.h"
 #include "robomongo/core/Enums.h"
 #include <vector>
 
@@ -26,10 +27,13 @@ namespace Robomongo
     public:
         typedef QWidget BaseClass;
         OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &text, double secs,
-                                bool multipleResults, bool firstItem, bool lastItem, QWidget *parent);
+                                bool multipleResults, bool firstItem, bool lastItem, bool isAggregate, 
+                                QWidget *parent);
+
         OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &type,
-                                const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, 
-                                double secs, bool multipleResults, bool firstItem, bool lastItem, QWidget *parent);
+                                const std::vector<MongoDocumentPtr> &documents, 
+                                const MongoQueryInfo &queryInfo, double secs, bool multipleResults, 
+                                bool firstItem, bool lastItem, bool isAggregate, AggrInfo aggrInfo, QWidget *parent);
         int _initialSkip;
         int _initialLimit;
         void update(const MongoQueryInfo &inf, const std::vector<MongoDocumentPtr> &documents);
@@ -76,6 +80,8 @@ namespace Robomongo
         QString _type; // type of request
         std::vector<MongoDocumentPtr> _documents;
         MongoQueryInfo _queryInfo;
+        AggrInfo _aggrInfo;
+        bool _isAggregate = false;
 
         QStackedWidget *_stack;
         JsonPrepareThread *_thread;

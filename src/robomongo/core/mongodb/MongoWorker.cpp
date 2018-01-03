@@ -564,11 +564,11 @@ namespace Robomongo
      * @brief Execute javascript
      */
     void MongoWorker::handle(ExecuteScriptRequest *event)
-    {
+    {        
         try {
-
             if (!_scriptEngine) {
-                reply(event->sender(), new ExecuteScriptResponse(this, EventError("MongoDB Shell was not initialized")));
+                reply(event->sender(), new ExecuteScriptResponse(this, 
+                    EventError("MongoDB Shell was not initialized")));
                 return;
             }
 
@@ -583,9 +583,13 @@ namespace Robomongo
                 }
             }
 
+            bool const isAggr = event->isAggregate;
+            AggrInfo const aggrInfo = event->aggrInfo;
+            
             // todo: should we use dbName from event or _connSettings? 
-            MongoShellExecResult result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
-
+            MongoShellExecResult result = 
+                _scriptEngine->exec(event->script, _connSettings->defaultDatabase(), isAggr, aggrInfo);
+                       
             // To fix the problem where 'result' comes with old primary address.
             if (_connSettings->isReplicaSet()) 
                 result.setCurrentServer(_dbclientRepSet->getSuspectedPrimaryHostAndPort().toString());
@@ -617,10 +621,12 @@ namespace Robomongo
                 }
             }
 
-            reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty(), timeoutReached));
+            reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty(),
+                                                             event->aggrInfo, timeoutReached));
         } 
         catch(const std::exception &ex) {
-            reply(event->sender(), new ExecuteScriptResponse(this, EventError(ex.what(), EventError::Unknown, false)));
+            reply(event->sender(), new ExecuteScriptResponse(this, EventError(ex.what(), 
+                                                             EventError::Unknown, false)));
         }
     }
 

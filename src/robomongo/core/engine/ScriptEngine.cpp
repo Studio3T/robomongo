@@ -151,7 +151,8 @@ namespace Robomongo
         _initialized = true;
     }
 
-    MongoShellExecResult ScriptEngine::exec(const std::string &originalScript, const std::string &dbName)
+    MongoShellExecResult ScriptEngine::exec(const std::string &originalScript, const std::string &dbName, 
+                                            bool isAggregate /* = false */, AggrInfo aggrInfo /* = AggrInfo() */)
     {
         QMutexLocker lock(&_mutex);
 
@@ -226,7 +227,7 @@ namespace Robomongo
                     std::vector<MongoDocumentPtr> docs = MongoDocument::fromBsonObj(__objects);
 
                     if (!answer.empty() || docs.size() > 0)
-                        results.push_back(prepareResult(type, answer, docs, elapsed));
+                        results.push_back(prepareResult(type, answer, docs, elapsed, isAggregate, aggrInfo));
                 }
                 catch (const std::exception &e) {
                     std::cout << "error:" << e.what() << std::endl;
@@ -316,14 +317,17 @@ namespace Robomongo
     }
 
     MongoShellResult ScriptEngine::prepareResult(const std::string &type, const std::string &output,
-                                                 const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms)
+                                                 const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms,
+                                                 bool isAggregate /* = false */, AggrInfo aggrInfo /*= AggrInfo()*/)
     {
         const char *script =
             "__robomongoQuery = false; \n"
+            "__robomongoAggregate = false; \n"
             "__robomongoDbName = '[invalid database]'; \n"
             "__robomongoServerAddress = '[invalid connection]'; \n"
             "__robomongoCollectionName = '[invalid collection]'; \n"
-            "if (typeof __robomongoLastRes == 'object' && __robomongoLastRes != null && __robomongoLastRes instanceof DBQuery) { \n"
+            "if (typeof __robomongoLastRes == 'object' && __robomongoLastRes != null \n"
+            "    && __robomongoLastRes instanceof DBQuery) { \n"
             "    __robomongoQuery = true; \n"
             "    __robomongoDbName = __robomongoLastRes._db.getName();\n "
             "    __robomongoServerAddress = __robomongoLastRes._mongo.host; \n"
@@ -335,16 +339,28 @@ namespace Robomongo
             "    __robomongoBatchSize = __robomongoLastRes._batchSize; \n"
             "    __robomongoOptions = __robomongoLastRes._options; \n"
             "    __robomongoSpecial = __robomongoLastRes._special; \n"
-            "} \n";
+            "} \n"
+            "else if (typeof __robomongoLastRes == 'object' && __robomongoLastRes != null \n"
+            "         && __robomongoLastRes instanceof DBCommandCursor) { \n"
+            "    __robomongoAggregate = true; \n"
+            "    __robomongoDbName = __robomongoLastRes._db.getName();\n "
+            "    __robomongoServerAddress = __robomongoLastRes._db._mongo.host; \n"
+            "    __robomongoCollectionName = __robomongoLastRes._collName; \n"
+            "} \n"
+            ;
 
         _scope->exec(script, "(getresultinfo)", false, false, false);
 
-        bool isQuery = _scope->getBoolean("__robomongoQuery");
+        std::string xx = script;
+
+        bool const isQuery = _scope->getBoolean("__robomongoQuery");
+        bool const isAggregateQuery = _scope->getBoolean("__robomongoAggregate") || isAggregate;
 
         if (isQuery) {
             std::string serverAddress = getString("__robomongoServerAddress");
             std::string dbName = getString("__robomongoDbName");
             std::string collectionName = getString("__robomongoCollectionName");
+               
             mongo::BSONObj query = _scope->getObject("__robomongoQuery");
             mongo::BSONObj fields = _scope->getObject("__robomongoFields");
 
@@ -355,9 +371,23 @@ namespace Robomongo
 
             bool special = _scope->getBoolean("__robomongoSpecial");
 
+            auto xx = query.toString();
+
             MongoQueryInfo info = MongoQueryInfo(CollectionInfo(serverAddress, dbName, collectionName),
                                        query, fields, limit, skip, batchSize, options, special);
             return MongoShellResult(type, output, objects, info, elapsedms);
+        }
+        else if (isAggregateQuery) {
+            std::string const serverAddress = getString("__robomongoServerAddress");
+            std::string const dbName = getString("__robomongoDbName");
+            std::string const collectionName = getString("__robomongoCollectionName");
+            int const batchSize = _scope->getNumberInt("__robomongoBatchSize"); // todo
+
+            AggrInfo newAggrInfo { collectionName, 0, 50 };
+            if ("[invalid collection]" == collectionName)
+                newAggrInfo = aggrInfo;
+
+            return MongoShellResult(type, output, objects, MongoQueryInfo(), elapsedms, true, newAggrInfo);
         }
 
         return MongoShellResult(type, output, objects, MongoQueryInfo(), elapsedms);
@@ -463,3 +493,4 @@ namespace Robomongo
         return QtUtils::toStdString(content);
     }
 }
+

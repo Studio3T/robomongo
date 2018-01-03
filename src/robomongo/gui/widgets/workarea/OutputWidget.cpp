@@ -52,14 +52,18 @@ namespace Robomongo
             bool const firstItem = (0 == i);
             bool const lastItem = (RESULTS_SIZE-1 == i);
 
+            AggrInfo const& aggrInfo = shellResult.aggrInfo();
+
             OutputItemContentWidget* item = nullptr;
             if (shellResult.documents().size() > 0) {
                 item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.type()),
-                                                   shellResult.documents(), shellResult.queryInfo(), secs, multipleResults,
-                                                   firstItem, lastItem, this);
+                                                   shellResult.documents(), shellResult.queryInfo(), secs, 
+                                                   multipleResults, firstItem, lastItem, 
+                                                   shellResult.isAggregate(), aggrInfo, this);
             } else {
-                item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.response()), secs,
-                                                   multipleResults, firstItem, lastItem, this);
+                item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.response()), 
+                                                   secs, multipleResults, firstItem, lastItem, 
+                                                   shellResult.isAggregate(), this);
             }
             VERIFY(connect(item, SIGNAL(maximizedPart()), this, SLOT(maximizePart())));
             VERIFY(connect(item, SIGNAL(restoredSize()), this, SLOT(restoreSize())));

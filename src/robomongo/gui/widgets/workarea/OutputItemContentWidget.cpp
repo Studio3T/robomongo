@@ -7,6 +7,7 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/utils/QtUtils.h"
 #include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/core/domain/MongoAggregateInfo.h"
 
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemHeaderWidget.h"
@@ -23,8 +24,10 @@
 
 namespace Robomongo
 {
-    OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &text, double secs, 
-                                                     bool multipleResults, bool firstItem, bool lastItem, QWidget *parent) :
+    OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, 
+                                                     const QString &text, double secs, 
+                                                     bool multipleResults, bool firstItem, 
+                                                     bool lastItem, bool isAggregate, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -45,14 +48,20 @@ namespace Robomongo
         _initialSkip(0),
         _initialLimit(0),
         _mod(NULL),
-        _viewMode(viewMode)
+        _viewMode(viewMode),
+        _isAggregate(isAggregate)
+
     {
         setup(secs, multipleResults, firstItem, lastItem);
     }
 
-    OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &type,
-                                                     const std::vector<MongoDocumentPtr> &documents, const MongoQueryInfo &queryInfo, 
-                                                     double secs, bool multipleResults, bool firstItem, bool lastItem, QWidget *parent) :
+    OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, 
+                                                     const QString &type, 
+                                                     const std::vector<MongoDocumentPtr> &documents, 
+                                                     const MongoQueryInfo &queryInfo, double secs, 
+                                                     bool multipleResults, bool firstItem, 
+                                                     bool lastItem, bool isAggregate, AggrInfo aggrInfo,
+                                                     QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -75,7 +84,9 @@ namespace Robomongo
         _initialLimit(queryInfo._limit),
         _outputWidget(dynamic_cast<OutputWidget*>(parentWidget())),
         _mod(NULL),
-        _viewMode(viewMode)
+        _viewMode(viewMode),
+        _isAggregate(isAggregate),
+        _aggrInfo(aggrInfo)
     {
         setup(secs, multipleResults, firstItem, lastItem);
     }
@@ -89,9 +100,16 @@ namespace Robomongo
             _header->setCollection(QtUtils::toQString(_queryInfo._info._ns.collectionName()));
             _header->paging()->setBatchSize(_queryInfo._batchSize);
             _header->paging()->setSkip(_queryInfo._skip);
-            if (!_queryInfo._limit) {
-            _queryInfo._limit = 50;
-            }
+            if (!_queryInfo._limit)
+                _queryInfo._limit = 50;
+        }
+        else if (_aggrInfo.isValid) {
+            _isAggregate = true;
+            _initialLimit = 0;
+            _initialSkip = 0;
+            _header->setCollection(QtUtils::toQString(_aggrInfo.collectionName));
+            _header->paging()->setBatchSize(_aggrInfo.batchSize);
+            _header->paging()->setSkip(_aggrInfo.skip);
         }
 
         _header->setTime(QString("%1 sec.").arg(secs, 0, 'g', 3));
@@ -168,7 +186,18 @@ namespace Robomongo
         info._skip = skip;
         info._batchSize = batchSize;
         _outputWidget->showProgress();
-        _shell->query(_outputWidget->resultIndex(this), info);
+        
+        if (_isAggregate) {
+            AggrInfo aggrInfo { _aggrInfo.collectionName, skip, batchSize };
+            _shell->setAggrInfo(aggrInfo);
+            _shell->setScriptAggregate(true);
+            std::string const forEach = ".forEach(e => print(e))";
+            std::string const script = _shell->query() + "._batch.reverse().slice(" + std::to_string(skip)
+                                       + ',' + std::to_string(skip + batchSize) + ')' + forEach;
+            _shell->execute(script, "", aggrInfo);
+        }
+        else
+            _shell->query(_outputWidget->resultIndex(this), info);
     }
 
     void OutputItemContentWidget::update(const MongoQueryInfo &inf, const std::vector<MongoDocumentPtr> &documents)

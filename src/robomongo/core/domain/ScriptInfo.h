@@ -18,6 +18,8 @@ namespace Robomongo
         const QString &title() const { return _title; }
         const CursorPosition &cursor() const { return _cursor; }
         void setScript(const QString &script) { _script = script; }
+        void setAggregate(bool isAggregate) { _isAggregate = isAggregate; }
+        bool isAggregate() const { return _isAggregate; }
         QString filePath() const { return _filePath; }
         bool loadFromFile(const QString &filePath);
         bool loadFromFile();
@@ -30,5 +32,6 @@ namespace Robomongo
         const QString _title;
         const CursorPosition _cursor;
         QString _filePath;
+        bool _isAggregate = false;
     };
 }

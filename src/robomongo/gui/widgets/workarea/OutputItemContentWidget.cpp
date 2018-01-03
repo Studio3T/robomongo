@@ -191,8 +191,13 @@ namespace Robomongo
             AggrInfo aggrInfo { _aggrInfo.collectionName, skip, batchSize };
             _shell->setAggrInfo(aggrInfo);
             _shell->setScriptAggregate(true);
-            std::string const forEach = ".forEach(e => print(e))";
-            std::string const script = _shell->query() + "._batch.reverse().slice(" + std::to_string(skip)
+
+            std::string query = _shell->query();
+            while (query.back() == ';' || query.back() == '\r' || query.back() == '\n')
+                query.pop_back();
+
+            std::string const forEach = ".forEach(doc => print(doc))";
+            std::string const script = query + "._batch.reverse().slice(" + std::to_string(skip)
                                        + ',' + std::to_string(skip + batchSize) + ')' + forEach;
             _shell->execute(script, "", aggrInfo);
         }

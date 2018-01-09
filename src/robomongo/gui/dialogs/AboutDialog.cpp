@@ -14,7 +14,7 @@
 namespace
 {
     const QString description = QObject::tr(
-        "<h3>" PROJECT_NAME_TITLE " " PROJECT_VERSION " - Beta</h3>"
+        "<h3>" PROJECT_NAME_TITLE " " PROJECT_VERSION "</h3>"
         "Shell-centric MongoDB management tool."
         "<br/>"
         "<br/>"

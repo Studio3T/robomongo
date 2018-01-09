@@ -7,19 +7,6 @@
 #include <QJsonArray>
 #include <QXmlStreamReader>
 
-// Todo: 
-// Note: 
-//         Currently, this include statement should be maintained manually.
-//         The Qt version must be updated if Qt is upgraded. Otherwise it might cause build error. 
-//         The correct path will be: PROJECT_QT_VERSION/QtGui/private/qzipreader_p.h
-// Details:         
-//         Ideally, private class inside qzipreader_p.h should not be used since it is not 
-//         a publicly/officially supported API by Qt. It is used here since we are doing a 
-//         a very lightweight zip operation which is unzipping a zip archive with one, small file.
-//         The alternative is including QuaZip and Zlib third party libraries into CMAKE project and 
-//         building, and using them which might be time consuming.
-#include <5.9.3/QtGui/private/qzipreader_p.h>
-
 #include <parser.h>
 #include <serializer.h>
 
@@ -32,6 +19,7 @@
 #include "robomongo/core/utils/StdUtils.h"
 #include "robomongo/gui/AppStyle.h"
 #include "robomongo/utils/common.h"
+#include "robomongo/utils/qzip/qzipreader_p.h"
 
 namespace Robomongo
 {

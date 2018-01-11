@@ -15,13 +15,9 @@ namespace Robomongo
         : QTabBar(parent)
     {
         setDrawBase(false);
-
-    #if !defined(Q_OS_MAC)
         setStyleSheet(buildStyleSheet());
-    #endif
 
         _menu = new QMenu(this);
-
         _newShellAction = new QAction("&New Shell", _menu);
         _newShellAction->setShortcut(QKeySequence(QKeySequence::AddTab));
         _reloadShellAction = new QAction("&Re-execute Query", _menu);
@@ -151,14 +147,20 @@ namespace Robomongo
         QString aga3 = background.name();
 
         QString styles = QString(
+            #ifndef __APPLE__
             "QTabBar::tab:first {"
                 "margin-left: 4px;"
             "}  "
             "QTabBar::tab:last {"
                 "margin-right: 1px;"
             "}  "
+            #endif
             "QTabBar::close-button { "
+            #ifdef __APPLE__           
+                "image: url(:/robomongo/icons/close_2_Mac_16x16.png);"                
+            #else      
                 "image: url(:/robomongo/icons/close_2_16x16.png);"
+            #endif      
                 "width: 10px;"
                 "height: 10px;"
             "}"
@@ -175,13 +177,14 @@ namespace Robomongo
                 "border-bottom-color: #B8B7B6;" // #C2C7CB same as the pane color
                 "border-top-left-radius: 6px;"
                 "border-top-right-radius: 6px;"
-    //            "min-width: 8ex;"
-                "max-width: 200px;"
                 "padding: 4px 0px 5px 0px;"
+                #ifndef __APPLE__
+                "max-width: 200px;"
                 "margin: 0px;"
                 "margin-left: 1px;"
-                "margin-right: -3px;"  // it should be -(tab:first:margin-left + tab:last:margin-left) to fix incorrect text elidement
-            "}"
+                "margin-right: -3px;"  // it should be -(tab:first:margin-left + tab:last:margin-left) to fix incorrect text elidement                
+                #endif
+                "}"
 
             "QTabBar::tab:selected, QTabBar::tab:hover {"
                 "/* background: qlineargradient(x1: 0, y1: 1, x2: 0, y2: 0,"
@@ -198,7 +201,9 @@ namespace Robomongo
             "QTabBar::tab:!selected {"
                 "margin-top: 2px;" // make non-selected tabs look smaller
             "}  "
+            #ifndef __APPLE__
             "QTabBar::tab:only-one { margin-top: 2px; margin-left:4px; }"
+            #endif
         ).arg(gradientZero.name(), gradientOne.name(), gradientTwo.name(), "#ffffff");
 
         QString aga = palette().window().color().name();

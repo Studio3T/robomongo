@@ -137,7 +137,7 @@ namespace Robomongo
 
         // Cache result of original "DB.autocomplete"
         // Cache invalidated by the invalidateDbCollectionsCache() method.
-        std::string cacheAutocompletion =
+        std::string const cacheAutocompletion =
             "__robomongoAutocompletionCache = null;"
             "DB.autocompleteCached = function(obj) { "
             "   if (__robomongoAutocompletionCache == null) {"
@@ -147,6 +147,21 @@ namespace Robomongo
             "}";
 
         _scope->exec(cacheAutocompletion, "", false, false, false);
+
+        // Capture aggregate parameters: pipeline, options
+        std::string const aggregateInterceptor =
+            "__robomongoAggregate = DBCollection.prototype.aggregate;"
+            "__robomongoIsAggregate = false;"
+            "__robomongoAggregatePipeline = null;"
+            "__robomongoAggregateOptions = null;"
+            "DBCollection.prototype.aggregate = function(pipeline, options) { "
+            "   __robomongoIsAggregate = true;"
+            "   __robomongoAggregatePipeline = pipeline;"
+            "   __robomongoAggregateOptions = options;"
+            "   return __robomongoAggregate.call(this, pipeline, options);"
+            "}";
+
+        _scope->exec(aggregateInterceptor, "", false, false, false);
 
         _initialized = true;
     }
@@ -325,7 +340,6 @@ namespace Robomongo
     {
         const char *script =
             "__robomongoQuery = false; \n"
-            "__robomongoAggregate = false; \n"
             "__robomongoDbName = '[invalid database]'; \n"
             "__robomongoServerAddress = '[invalid connection]'; \n"
             "__robomongoCollectionName = '[invalid collection]'; \n"
@@ -345,7 +359,6 @@ namespace Robomongo
             "} \n"
             "else if (typeof __robomongoLastRes == 'object' && __robomongoLastRes != null \n"
             "         && __robomongoLastRes instanceof DBCommandCursor) { \n"
-            "    __robomongoAggregate = true; \n"
             "    __robomongoDbName = __robomongoLastRes._db.getName();\n "
             "    __robomongoServerAddress = __robomongoLastRes._db._mongo.host; \n"
             "    __robomongoCollectionName = __robomongoLastRes._collName; \n"
@@ -354,17 +367,8 @@ namespace Robomongo
 
         _scope->exec(script, "(getresultinfo)", false, false, false);
 
-        // Remove white space and spaces first
-        QString statementSimp = QString::fromStdString(statement).simplified();        
-        statementSimp.replace(" ", "");
-        bool const isAggrStatement = statementSimp.contains("aggregate(");
-
         bool const isQuery = _scope->getBoolean("__robomongoQuery");
-        // Double confirm if statement is an aggregate query by firstly checking query output 
-        // and secondly by checking if the statement itself contains "aggregate(" string.
-        // Finally, "isAggregate" comes from the event when the user makes paging requests.
-        bool const isAggregateQuery = 
-            (_scope->getBoolean("__robomongoAggregate") && isAggrStatement) || isAggregate;
+        bool const isAggregateQuery = _scope->getBoolean("__robomongoIsAggregate");
 
         if (isQuery) {
             std::string serverAddress = getString("__robomongoServerAddress");
@@ -391,12 +395,15 @@ namespace Robomongo
             std::string const serverAddress = getString("__robomongoServerAddress");
             std::string const dbName = getString("__robomongoDbName");
             std::string const collectionName = getString("__robomongoCollectionName");
-            int const batchSize = _scope->getNumberInt("__robomongoBatchSize"); // todo
+            mongo::BSONObj const pipeline = _scope->getObject("__robomongoAggregatePipeline");
+            mongo::BSONObj const options = _scope->getObject("__robomongoAggregateOptions");
 
-            AggrInfo newAggrInfo { collectionName, 0, 50 };
-            if ("[invalid collection]" == collectionName)
-                newAggrInfo = aggrInfo;
+            mongo::BSONObj const origPipeline = aggrInfo.isValid ? aggrInfo.pipeline : pipeline;
+            int const skip = aggrInfo.isValid ? aggrInfo.skip : 0;
+            int const batchSize = aggrInfo.isValid ? aggrInfo.batchSize : 50;
 
+            AggrInfo const newAggrInfo { collectionName, skip, batchSize, origPipeline, options };
+                        
             return MongoShellResult(type, output, objects, MongoQueryInfo(), elapsedms, true, newAggrInfo);
         }
 

@@ -26,8 +26,8 @@ namespace Robomongo
 {
     OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, 
                                                      const QString &text, double secs, 
-                                                     bool multipleResults, bool firstItem, 
-                                                     bool lastItem, bool isAggregate, QWidget *parent) :
+                                                     bool multipleResults, bool firstItem, bool lastItem, 
+                                                     bool isAggregate, AggrInfo aggrInfo, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -49,8 +49,8 @@ namespace Robomongo
         _initialLimit(0),
         _mod(NULL),
         _viewMode(viewMode),
-        _isAggregate(isAggregate)
-
+        _isAggregate(isAggregate),
+        _aggrInfo(aggrInfo)
     {
         setup(secs, multipleResults, firstItem, lastItem);
     }
@@ -188,18 +188,26 @@ namespace Robomongo
         _outputWidget->showProgress();
         
         if (_isAggregate) {
-            AggrInfo aggrInfo { _aggrInfo.collectionName, skip, batchSize };
+            AggrInfo aggrInfo { _aggrInfo.collectionName, skip, batchSize, _aggrInfo.pipeline, 
+                                _aggrInfo.options };
             _shell->setAggrInfo(aggrInfo);
             _shell->setScriptAggregate(true);
 
-            std::string query = _shell->query();
-            while (query.back() == ';' || query.back() == '\r' || query.back() == '\n')
-                query.pop_back();
+            // Build original pipeline object, add skip and limit
+            std::string pipelineModified = "[";
+            int i = 0;
+            while (!_aggrInfo.pipeline.getObjectField(std::to_string(i)).isEmpty()) {
+                pipelineModified.append(_aggrInfo.pipeline.getObjectField(std::to_string(i)).toString() + ",");
+                ++i;
+            }
+            pipelineModified.append("{$skip:" + std::to_string(skip) + "}, " +
+                                    "{$limit:" + std::to_string(batchSize) + "}" + 
+                                    "]");
 
-            std::string const forEach = ".forEach(doc => print(doc))";
-            std::string const script = query + "._batch.reverse().slice(" + std::to_string(skip)
-                                       + ',' + std::to_string(skip + batchSize) + ')' + forEach;
-            _shell->execute(script, "", aggrInfo);
+            std::string const query = "db.getCollection('" + _aggrInfo.collectionName + "').aggregate(" +
+                                      pipelineModified + ", " + _aggrInfo.options.toString() + ")";
+
+            _shell->execute(query, "", aggrInfo);
         }
         else
             _shell->query(_outputWidget->resultIndex(this), info);

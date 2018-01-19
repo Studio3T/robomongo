@@ -63,7 +63,7 @@ namespace Robomongo
             } else {
                 item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.response()), 
                                                    secs, multipleResults, firstItem, lastItem, 
-                                                   shellResult.isAggregate(), this);
+                                                   shellResult.isAggregate(), aggrInfo, this);
             }
             VERIFY(connect(item, SIGNAL(maximizedPart()), this, SLOT(maximizePart())));
             VERIFY(connect(item, SIGNAL(restoredSize()), this, SLOT(restoreSize())));

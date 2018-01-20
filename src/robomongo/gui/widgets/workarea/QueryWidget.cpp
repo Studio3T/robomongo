@@ -379,11 +379,6 @@ namespace Robomongo
 
     void QueryWidget::displayData(const std::vector<MongoShellResult> &results, bool empty)
     {
-        if (_shell->isScriptAggregate() && results.empty()) {
-            QMessageBox::information(this, "Info", "No aggr results to show.");
-            return;
-        }
-
         if (!empty) {
             bool isOutVisible = results.size() == 0 && !_scriptWidget->text().isEmpty();
             if (isOutVisible) {

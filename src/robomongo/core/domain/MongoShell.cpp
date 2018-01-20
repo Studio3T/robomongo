@@ -32,23 +32,21 @@ namespace Robomongo
         return QtUtils::toStdString(_scriptInfo.script()); 
     }
 
-    void MongoShell::execute(const std::string &script /* = "" */, const std::string &dbName /* = "" */,
-                             AggrInfo aggrInfo /* = AggrInfo() */)
+    void MongoShell::execute(const std::string &script /* = "" */, const std::string &dbName /* = "" */)
     {
         std::string const finalScript = script.empty() ? query() : script;
-        bool const isAggregate = _scriptInfo.isAggregate();     // todo: use aggrInfo.isValid()
 
         if (_scriptInfo.execute()) {
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             AppRegistry::instance().bus()->send(_server->worker(), 
-                new ExecuteScriptRequest(this, finalScript, dbName, isAggregate, aggrInfo));
+                new ExecuteScriptRequest(this, finalScript, dbName, _aggrInfo));
             if (!_scriptInfo.script().isEmpty())
                 LOG_MSG(_scriptInfo.script(), mongo::logger::LogSeverity::Info());
         } else {
             AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
             _scriptInfo.setScript("");
             AppRegistry::instance().bus()->send(_server->worker(), 
-                new ExecuteScriptRequest(this, finalScript, dbName, isAggregate, aggrInfo));
+                new ExecuteScriptRequest(this, finalScript, dbName, _aggrInfo));
         }
     }
 

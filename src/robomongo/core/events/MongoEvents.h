@@ -960,12 +960,10 @@ namespace Robomongo
         R_EVENT
 
         ExecuteScriptRequest(QObject *sender, const std::string &script, const std::string &dbName, 
-                             bool isAggregate = false, AggrInfo aggrInfo = AggrInfo(), int take = 0, 
-                             int skip = 0) :
+                             AggrInfo aggrInfo = AggrInfo(), int take = 0, int skip = 0) :
             Event(sender),
             script(script),
             databaseName(dbName),
-            isAggregate(isAggregate),
             aggrInfo(aggrInfo),
             take(take),
             skip(skip)
@@ -975,7 +973,6 @@ namespace Robomongo
         std::string databaseName;
         int take; //
         int skip;
-        bool const isAggregate = false;
         AggrInfo const aggrInfo;
     };
 

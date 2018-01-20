@@ -27,7 +27,7 @@ namespace Robomongo
     OutputItemContentWidget::OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, 
                                                      const QString &text, double secs, 
                                                      bool multipleResults, bool firstItem, bool lastItem, 
-                                                     bool isAggregate, AggrInfo aggrInfo, QWidget *parent) :
+                                                     AggrInfo aggrInfo, QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
         _bsonTreeview(NULL),
@@ -49,7 +49,6 @@ namespace Robomongo
         _initialLimit(0),
         _mod(NULL),
         _viewMode(viewMode),
-        _isAggregate(isAggregate),
         _aggrInfo(aggrInfo)
     {
         setup(secs, multipleResults, firstItem, lastItem);
@@ -60,7 +59,7 @@ namespace Robomongo
                                                      const std::vector<MongoDocumentPtr> &documents, 
                                                      const MongoQueryInfo &queryInfo, double secs, 
                                                      bool multipleResults, bool firstItem, 
-                                                     bool lastItem, bool isAggregate, AggrInfo aggrInfo,
+                                                     bool lastItem, AggrInfo aggrInfo,
                                                      QWidget *parent) :
         BaseClass(parent),
         _textView(NULL),
@@ -85,7 +84,6 @@ namespace Robomongo
         _outputWidget(dynamic_cast<OutputWidget*>(parentWidget())),
         _mod(NULL),
         _viewMode(viewMode),
-        _isAggregate(isAggregate),
         _aggrInfo(aggrInfo)
     {
         setup(secs, multipleResults, firstItem, lastItem);
@@ -104,7 +102,6 @@ namespace Robomongo
                 _queryInfo._limit = 50;
         }
         else if (_aggrInfo.isValid) {
-            _isAggregate = true;
             _initialLimit = 0;
             _initialSkip = 0;
             _header->setCollection(QtUtils::toQString(_aggrInfo.collectionName));
@@ -187,13 +184,8 @@ namespace Robomongo
         info._batchSize = batchSize;
         _outputWidget->showProgress();
         
-        if (_isAggregate) {
-            AggrInfo aggrInfo { _aggrInfo.collectionName, skip, batchSize, _aggrInfo.pipeline, 
-                                _aggrInfo.options };
-            _shell->setAggrInfo(aggrInfo);
-            _shell->setScriptAggregate(true);
-
-            // Build original pipeline object, add skip and limit
+        if (_aggrInfo.isValid) {
+            // Build original pipeline object, and append extra skip and limit for paging
             std::string pipelineModified = "[";
             int i = 0;
             while (!_aggrInfo.pipeline.getObjectField(std::to_string(i)).isEmpty()) {
@@ -206,8 +198,12 @@ namespace Robomongo
 
             std::string const query = "db.getCollection('" + _aggrInfo.collectionName + "').aggregate(" +
                                       pipelineModified + ", " + _aggrInfo.options.toString() + ")";
-
-            _shell->execute(query, "", aggrInfo);
+            
+            // Create aggr. info with new skip and batchsize
+            AggrInfo const aggrInfo { _aggrInfo.collectionName, skip, batchSize, _aggrInfo.pipeline, 
+                                      _aggrInfo.options };
+            _shell->setAggrInfo(aggrInfo);
+            _shell->execute(query);
         }
         else
             _shell->query(_outputWidget->resultIndex(this), info);

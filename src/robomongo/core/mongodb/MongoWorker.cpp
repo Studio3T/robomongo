@@ -567,8 +567,8 @@ namespace Robomongo
     {        
         try {
             if (!_scriptEngine) {
-                reply(event->sender(), new ExecuteScriptResponse(this, 
-                    EventError("MongoDB Shell was not initialized")));
+                reply(event->sender(), 
+                    new ExecuteScriptResponse(this, EventError("MongoDB Shell was not initialized")));
                 return;
             }
 
@@ -583,12 +583,11 @@ namespace Robomongo
                 }
             }
 
-            bool const isAggr = event->isAggregate;
-            AggrInfo const aggrInfo = event->aggrInfo;
+            AggrInfo const& aggrInfo = event->aggrInfo;
             
             // todo: should we use dbName from event or _connSettings? 
             MongoShellExecResult result = 
-                _scriptEngine->exec(event->script, _connSettings->defaultDatabase(), isAggr, aggrInfo);
+                _scriptEngine->exec(event->script, _connSettings->defaultDatabase(), aggrInfo);
                        
             // To fix the problem where 'result' comes with old primary address.
             if (_connSettings->isReplicaSet()) 

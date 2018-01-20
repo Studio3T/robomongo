@@ -167,7 +167,7 @@ namespace Robomongo
     }
 
     MongoShellExecResult ScriptEngine::exec(const std::string &originalScript, const std::string &dbName, 
-                                            bool isAggregate /* = false */, AggrInfo aggrInfo /* = AggrInfo() */)
+                                            AggrInfo aggrInfo /* = AggrInfo() */)
     {
         QMutexLocker lock(&_mutex);
 
@@ -243,7 +243,7 @@ namespace Robomongo
 
                     if (!answer.empty() || docs.size() > 0)
                         results.push_back(
-                            prepareResult(type, answer, docs, elapsed, statement, isAggregate, aggrInfo)
+                            prepareResult(type, answer, docs, elapsed, statement, aggrInfo)
                         );
                 }
                 catch (const std::exception &e) {
@@ -335,8 +335,7 @@ namespace Robomongo
 
     MongoShellResult ScriptEngine::prepareResult(const std::string &type, const std::string &output,
                                                  const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms,
-                                                 const std::string &statement, bool isAggregate /* = false */, 
-                                                 AggrInfo aggrInfo /*= AggrInfo()*/)
+                                                 const std::string &statement, AggrInfo aggrInfo /*= AggrInfo()*/)
     {
         const char *script =
             "__robomongoQuery = false; \n"
@@ -368,7 +367,7 @@ namespace Robomongo
         _scope->exec(script, "(getresultinfo)", false, false, false);
 
         bool const isQuery = _scope->getBoolean("__robomongoQuery");
-        bool const isAggregateQuery = _scope->getBoolean("__robomongoIsAggregate");
+        bool const isAggregate = _scope->getBoolean("__robomongoIsAggregate");
 
         if (isQuery) {
             std::string serverAddress = getString("__robomongoServerAddress");
@@ -385,26 +384,25 @@ namespace Robomongo
 
             bool special = _scope->getBoolean("__robomongoSpecial");
 
-            auto xx = query.toString();
-
             MongoQueryInfo info = MongoQueryInfo(CollectionInfo(serverAddress, dbName, collectionName),
                                        query, fields, limit, skip, batchSize, options, special);
             return MongoShellResult(type, output, objects, info, elapsedms);
         }
-        else if (isAggregateQuery) {
+        else if (isAggregate) {
             std::string const serverAddress = getString("__robomongoServerAddress");
             std::string const dbName = getString("__robomongoDbName");
             std::string const collectionName = getString("__robomongoCollectionName");
             mongo::BSONObj const pipeline = _scope->getObject("__robomongoAggregatePipeline");
             mongo::BSONObj const options = _scope->getObject("__robomongoAggregateOptions");
 
+            // This query can be paging of an original aggr. query, we store the original/unpaged 
+            // pipeline object here.
             mongo::BSONObj const origPipeline = aggrInfo.isValid ? aggrInfo.pipeline : pipeline;
             int const skip = aggrInfo.isValid ? aggrInfo.skip : 0;
             int const batchSize = aggrInfo.isValid ? aggrInfo.batchSize : 50;
 
             AggrInfo const newAggrInfo { collectionName, skip, batchSize, origPipeline, options };
-                        
-            return MongoShellResult(type, output, objects, MongoQueryInfo(), elapsedms, true, newAggrInfo);
+            return MongoShellResult(type, output, objects, MongoQueryInfo(), elapsedms, newAggrInfo);
         }
 
         return MongoShellResult(type, output, objects, MongoQueryInfo(), elapsedms);

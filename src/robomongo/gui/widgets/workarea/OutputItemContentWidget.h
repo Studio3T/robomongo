@@ -27,13 +27,13 @@ namespace Robomongo
     public:
         typedef QWidget BaseClass;
         OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &text, double secs,
-                                bool multipleResults, bool firstItem, bool lastItem, bool isAggregate, 
+                                bool multipleResults, bool firstItem, bool lastItem,
                                 AggrInfo aggrInfo, QWidget *parent);
 
         OutputItemContentWidget(ViewMode viewMode, MongoShell *shell, const QString &type,
                                 const std::vector<MongoDocumentPtr> &documents, 
                                 const MongoQueryInfo &queryInfo, double secs, bool multipleResults, 
-                                bool firstItem, bool lastItem, bool isAggregate, AggrInfo aggrInfo,
+                                bool firstItem, bool lastItem, AggrInfo aggrInfo,
                                 QWidget *parent);
         int _initialSkip;
         int _initialLimit;
@@ -82,7 +82,6 @@ namespace Robomongo
         std::vector<MongoDocumentPtr> _documents;
         MongoQueryInfo _queryInfo;
         AggrInfo _aggrInfo;
-        bool _isAggregate = false;
 
         QStackedWidget *_stack;
         JsonPrepareThread *_thread;

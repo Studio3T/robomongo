@@ -12,15 +12,13 @@ namespace Robomongo
         MongoShellResult(const std::string &type, const std::string &response, 
                          const MongoDocumentPtrContainerType &documents,
                          const MongoQueryInfo &queryInfo, qint64 elapsedms,
-                         bool isAggregate = false, AggrInfo aggrInfo = AggrInfo());
+                         AggrInfo aggrInfo = AggrInfo());
 
         std::string response() const { return _response; }
         std::string type() const { return _type; }
         MongoDocumentPtrContainerType documents() const { return _documents; }
         MongoQueryInfo queryInfo() const { return _queryInfo; }
         qint64 elapsedMs() const { return _elapsedms; }
-        bool isAggregate() const { return _isAggregate; }
-        void setAggrInfo(AggrInfo aggrInfo) { _aggrInfo = aggrInfo; }
         AggrInfo const& aggrInfo() const { return _aggrInfo; }
 
     private:
@@ -29,7 +27,6 @@ namespace Robomongo
         MongoDocumentPtrContainerType _documents;
         MongoQueryInfo _queryInfo;
         qint64 _elapsedms;
-        bool _isAggregate = false;
         AggrInfo _aggrInfo = AggrInfo();
     };
 

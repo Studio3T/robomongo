@@ -5,13 +5,12 @@ namespace Robomongo
     MongoShellResult::MongoShellResult(const std::string &type, const std::string &response, 
                                        const MongoDocumentPtrContainerType &documents,
                                        const MongoQueryInfo &queryInfo, qint64 elapsedms,
-                                       bool isAggregate /*= false*/, AggrInfo aggrInfo /*= AggrInfo()*/) :
+                                       AggrInfo aggrInfo /*= AggrInfo()*/) :
         _type(type),
         _response(response),
         _documents(documents),
         _queryInfo(queryInfo),
         _elapsedms(elapsedms),
-        _isAggregate(isAggregate),
         _aggrInfo(aggrInfo)
         { }
 

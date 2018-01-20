@@ -20,7 +20,7 @@ namespace Robomongo
 
         void init(bool isLoadMongoJs, const std::string& serverAddr = "", const std::string& dbName = "");
         MongoShellExecResult exec(const std::string &script, const std::string &dbName = std::string(),
-                                  bool isAggregate = false, AggrInfo aggrInfo = AggrInfo());
+                                  AggrInfo aggrInfo = AggrInfo());
         void interrupt();
 
         void use(const std::string &dbName);
@@ -39,8 +39,7 @@ namespace Robomongo
 
         MongoShellResult prepareResult(const std::string &type, const std::string &output, 
                                        const std::vector<MongoDocumentPtr> &objects, qint64 elapsedms,
-                                       const std::string &statement, bool isAggregate = false, 
-                                       AggrInfo aggrInfo = AggrInfo());
+                                       const std::string &statement, AggrInfo aggrInfo = AggrInfo());
 
         MongoShellExecResult prepareExecResult(const std::vector<MongoShellResult> &results, 
                                                bool timeoutReached = false);

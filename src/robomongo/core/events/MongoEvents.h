@@ -981,9 +981,8 @@ namespace Robomongo
         R_EVENT
 
         ExecuteScriptResponse(QObject *sender, const MongoShellExecResult &result, bool empty,
-                              AggrInfo aggrInfo = AggrInfo(), bool timeoutReached = false) :
-            Event(sender), result(result), empty(empty), aggrInfo(aggrInfo),
-            _timeoutReached(timeoutReached) {}
+                              bool timeoutReached = false) :
+            Event(sender), result(result), empty(empty), _timeoutReached(timeoutReached) {}
 
         ExecuteScriptResponse(QObject *sender, const EventError &error, bool timeoutReached = false) :
             Event(sender, error), _timeoutReached(timeoutReached) {}
@@ -992,7 +991,6 @@ namespace Robomongo
 
         MongoShellExecResult result;
         bool empty;
-        AggrInfo const aggrInfo;
         bool const _timeoutReached = false;
     };
 

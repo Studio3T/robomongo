@@ -14,13 +14,14 @@ namespace Robomongo
             pipeline = aggrInfo.pipeline;
             options = aggrInfo.options;
             isValid = aggrInfo.isValid;
+            resultIndex = aggrInfo.resultIndex;
             return *this;
         };
 
         AggrInfo(const std::string& collectionName, int skip, int batchSize, 
-                 mongo::BSONObj const& pipeline, mongo::BSONObj const& options) :
+                 mongo::BSONObj const& pipeline, mongo::BSONObj const& options, int resultIndex) :
             collectionName(collectionName), skip(skip), batchSize(batchSize), pipeline(pipeline), 
-            options(options), isValid(true)
+            options(options), isValid(true), resultIndex(resultIndex)
         {}
 
         std::string collectionName = "";
@@ -29,5 +30,6 @@ namespace Robomongo
         mongo::BSONObj pipeline;
         mongo::BSONObj options;
         bool isValid = false;
+        int resultIndex = -1;
     };
 }

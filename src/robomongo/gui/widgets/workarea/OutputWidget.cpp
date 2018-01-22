@@ -72,13 +72,25 @@ namespace Robomongo
         tryToMakeAllPartsEqualInSize();
     }
 
-    void OutputWidget::updatePart(int partIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents)
+    void OutputWidget::updatePart(int partIndex, const MongoQueryInfo &queryInfo, 
+                                  const std::vector<MongoDocumentPtr> &documents)
     {
         if (partIndex >= _splitter->count())
             return;
 
         auto outputItemContentWidget = qobject_cast<OutputItemContentWidget*>(_splitter->widget(partIndex));
-        outputItemContentWidget->update(queryInfo, documents);
+        outputItemContentWidget->updateWithInfo(queryInfo, documents);
+        outputItemContentWidget->refreshOutputItem();
+    }
+
+    void OutputWidget::updatePart(int partIndex, const AggrInfo &agrrInfo, 
+                                  const std::vector<MongoDocumentPtr> &documents)
+    {
+        if (partIndex >= _splitter->count())
+            return;
+
+        auto outputItemContentWidget = qobject_cast<OutputItemContentWidget*>(_splitter->widget(partIndex));
+        outputItemContentWidget->updateWithInfo(agrrInfo, documents);
         outputItemContentWidget->refreshOutputItem();
     }
 

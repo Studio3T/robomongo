@@ -22,7 +22,10 @@ namespace Robomongo
         explicit OutputWidget(QWidget *parent);
 
         void present(MongoShell *shell, const std::vector<MongoShellResult> &documents);
-        void updatePart(int partIndex, const MongoQueryInfo &queryInfo, const std::vector<MongoDocumentPtr> &documents);
+        void updatePart(int partIndex, const MongoQueryInfo &queryInfo, 
+                        const std::vector<MongoDocumentPtr> &documents);
+        void updatePart(int partIndex, const AggrInfo &agrrInfo,
+                        const std::vector<MongoDocumentPtr> &documents);
         void toggleOrientation();
 
         void enterTreeMode();

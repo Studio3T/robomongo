@@ -621,7 +621,7 @@ namespace Robomongo
             }
 
             reply(event->sender(), new ExecuteScriptResponse(this, result, event->script.empty(),
-                                                             event->aggrInfo, timeoutReached));
+                                                             timeoutReached));
         } 
         catch(const std::exception &ex) {
             reply(event->sender(), new ExecuteScriptResponse(this, EventError(ex.what(), 

@@ -20,6 +20,7 @@
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/core/domain/MongoAggregateInfo.h"
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
 #include "robomongo/core/settings/SettingsManager.h"
@@ -258,8 +259,18 @@ namespace Robomongo
 
     void QueryWidget::handle(ScriptExecutedEvent *event)
     {
-        hideProgress();
+        hideProgress();        
         _currentResult = event->result();
+
+        if (_currentResult.results().size() == 1) {
+            MongoShellResult const& result = _currentResult.results().front();
+            AggrInfo const& aggrInfo = result.aggrInfo();
+            if (aggrInfo.isValid && aggrInfo.resultIndex > -1) {
+                _viewer->updatePart(aggrInfo.resultIndex, aggrInfo, _currentResult.results().front().documents());
+                return;
+            }
+        }
+
         updateCurrentTab();
 
         displayData(event->result().results(), event->empty());

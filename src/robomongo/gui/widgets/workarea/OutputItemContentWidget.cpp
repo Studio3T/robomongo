@@ -201,7 +201,7 @@ namespace Robomongo
             
             // Create aggr. info with new skip and batchsize
             AggrInfo const aggrInfo { _aggrInfo.collectionName, skip, batchSize, _aggrInfo.pipeline, 
-                                      _aggrInfo.options };
+                                      _aggrInfo.options, _outputWidget->resultIndex(this) };
             _shell->setAggrInfo(aggrInfo);
             _shell->execute(query);
         }
@@ -209,13 +209,24 @@ namespace Robomongo
             _shell->query(_outputWidget->resultIndex(this), info);
     }
 
-    void OutputItemContentWidget::update(const MongoQueryInfo &inf, const std::vector<MongoDocumentPtr> &documents)
+    void OutputItemContentWidget::updateWithInfo(const MongoQueryInfo &inf, 
+                                                 const std::vector<MongoDocumentPtr> &documents)
     {
-        _queryInfo = inf;
+        update(documents, inf._skip, inf._batchSize);
+    }
+
+    void OutputItemContentWidget::updateWithInfo(const AggrInfo &aggrInfo, 
+                                                 const std::vector<MongoDocumentPtr> &documents)
+    {
+        update(documents, aggrInfo.skip, aggrInfo.batchSize);
+    }
+
+    void OutputItemContentWidget::update(const std::vector<MongoDocumentPtr> &documents, int skip, int batchSize)
+    {
         _documents = documents;
 
-        _header->paging()->setSkip(_queryInfo._skip);
-        _header->paging()->setBatchSize(_queryInfo._batchSize);
+        _header->paging()->setSkip(skip);
+        _header->paging()->setBatchSize(batchSize);
 
         _text.clear();
         _isFirstPartRendered = false;

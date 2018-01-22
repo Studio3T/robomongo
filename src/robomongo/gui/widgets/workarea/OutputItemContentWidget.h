@@ -37,7 +37,9 @@ namespace Robomongo
                                 QWidget *parent);
         int _initialSkip;
         int _initialLimit;
-        void update(const MongoQueryInfo &inf, const std::vector<MongoDocumentPtr> &documents);
+        void updateWithInfo(const MongoQueryInfo &inf, const std::vector<MongoDocumentPtr> &documents);
+        void updateWithInfo(const AggrInfo &aggrInfo, const std::vector<MongoDocumentPtr> &documents);
+        void update(const std::vector<MongoDocumentPtr> &documents, int skip, int batchSize);
         bool isTextModeSupported() const { return _isTextModeSupported; }
         bool isTreeModeSupported() const { return _isTreeModeSupported; }
         bool isCustomModeSupported() const { return _isCustomModeSupported; }

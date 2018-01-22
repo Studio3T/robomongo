@@ -151,11 +151,9 @@ namespace Robomongo
         // Capture aggregate parameters: pipeline, options
         std::string const aggregateInterceptor =
             "__robomongoAggregate = DBCollection.prototype.aggregate;"
-            "__robomongoIsAggregate = false;"
             "__robomongoAggregatePipeline = null;"
             "__robomongoAggregateOptions = null;"
             "DBCollection.prototype.aggregate = function(pipeline, options) { "
-            "   __robomongoIsAggregate = true;"
             "   __robomongoAggregatePipeline = pipeline;"
             "   __robomongoAggregateOptions = options;"
             "   return __robomongoAggregate.call(this, pipeline, options);"
@@ -339,6 +337,7 @@ namespace Robomongo
     {
         const char *script =
             "__robomongoQuery = false; \n"
+            "__robomongoIsAggregate = false; \n"
             "__robomongoDbName = '[invalid database]'; \n"
             "__robomongoServerAddress = '[invalid connection]'; \n"
             "__robomongoCollectionName = '[invalid collection]'; \n"
@@ -358,6 +357,7 @@ namespace Robomongo
             "} \n"
             "else if (typeof __robomongoLastRes == 'object' && __robomongoLastRes != null \n"
             "         && __robomongoLastRes instanceof DBCommandCursor) { \n"
+            "    __robomongoIsAggregate = true; \n"
             "    __robomongoDbName = __robomongoLastRes._db.getName();\n "
             "    __robomongoServerAddress = __robomongoLastRes._db._mongo.host; \n"
             "    __robomongoCollectionName = __robomongoLastRes._collName; \n"
@@ -400,8 +400,9 @@ namespace Robomongo
             mongo::BSONObj const origPipeline = aggrInfo.isValid ? aggrInfo.pipeline : pipeline;
             int const skip = aggrInfo.isValid ? aggrInfo.skip : 0;
             int const batchSize = aggrInfo.isValid ? aggrInfo.batchSize : 50;
+            int const resultIndex = aggrInfo.isValid ? aggrInfo.resultIndex : -1;
 
-            AggrInfo const newAggrInfo { collectionName, skip, batchSize, origPipeline, options };
+            AggrInfo const newAggrInfo { collectionName, skip, batchSize, origPipeline, options, resultIndex };
             return MongoShellResult(type, output, objects, MongoQueryInfo(), elapsedms, newAggrInfo);
         }
 

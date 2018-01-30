@@ -142,8 +142,27 @@ namespace Robomongo
                 {
                     if ( elem.number() >= -std::numeric_limits< double >::max() &&
                          elem.number() <= std::numeric_limits< double >::max() ) {
-                        auto const PRECISION = std::numeric_limits<double>::digits10 + 1;
-                        s << QString::number(elem.Double(), 'g', PRECISION).toStdString();
+                        std::stringstream ss;
+                        ss.precision(std::numeric_limits<double>::digits10);
+                        ss << elem.Double();
+                        QString str = QString::fromStdString(ss.str());
+
+                        // Leave trailing zero if needed
+                        if (!(str.contains("e+") || str.contains("e-"))) {
+                            if (elem.Double() == (long long)elem.Double())
+                                ss << ".0";
+                        }                        
+                        else if (str.endsWith("e+15") || str.endsWith("e+16")) {
+                            // Disable scientific format
+                            std::stringstream ss2;
+                            ss2.precision(std::numeric_limits<double>::digits10);
+                            ss2 << std::fixed << elem.Double();
+                            str = QString::fromStdString(ss2.str());
+                            while (str.contains('.') && str.endsWith("00"))
+                                str.chop(1);
+                        }
+
+                        s << (str.toStdString());
                     }
                     else if (std::isnan(elem.number()) ) {                        
                         s << "NaN";
@@ -580,8 +599,27 @@ namespace Robomongo
                 {
                     if (elem.number() >= -std::numeric_limits< double >::max() &&
                         elem.number() <= std::numeric_limits< double >::max()) {
-                        auto const PRECISION = std::numeric_limits<double>::digits10 + 1;
-                        con.append(QString::number(elem.Double(), 'g', PRECISION).toStdString());
+                        std::stringstream ss;
+                        ss.precision(std::numeric_limits<double>::digits10);
+                        ss << elem.Double();
+                        QString str = QString::fromStdString(ss.str());
+
+                        // Leave trailing zero if needed
+                        if (!(str.contains("e+") || str.contains("e-"))) {
+                            if (elem.Double() == (long long)elem.Double())
+                                ss << ".0";
+                        }
+                        else if (str.endsWith("e+15") || str.endsWith("e+16")) {
+                            // Disable scientific format
+                            std::stringstream ss2;
+                            ss2.precision(std::numeric_limits<double>::digits10);
+                            ss2 << std::fixed << elem.Double();
+                            str = QString::fromStdString(ss2.str());
+                            while (str.contains('.') && str.endsWith("00"))
+                                str.chop(1);
+                        }
+                        
+                        con.append(str.toStdString());
                     }
                     else if (std::isnan(elem.number())) {
                         con.append("NaN");

@@ -150,10 +150,12 @@ namespace Robomongo
 
         // Capture aggregate parameters: pipeline, options
         std::string const aggregateInterceptor =
+            "__robomongoAggregateUsed = false;"
             "__robomongoAggregate = DBCollection.prototype.aggregate;"
             "__robomongoAggregatePipeline = null;"
             "__robomongoAggregateOptions = null;"
             "DBCollection.prototype.aggregate = function(pipeline, options) { "
+            "   __robomongoAggregateUsed = true;"
             "   __robomongoAggregatePipeline = pipeline;"
             "   __robomongoAggregateOptions = options;"
             "   return __robomongoAggregate.call(this, pipeline, options);"
@@ -356,7 +358,9 @@ namespace Robomongo
             "    __robomongoSpecial = __robomongoLastRes._special; \n"
             "} \n"
             "else if (typeof __robomongoLastRes == 'object' && __robomongoLastRes != null \n"
-            "         && __robomongoLastRes instanceof DBCommandCursor) { \n"
+            "         && __robomongoLastRes instanceof DBCommandCursor \n"
+            "         && __robomongoAggregateUsed) { \n"
+            "    __robomongoAggregateUsed = false; \n"    
             "    __robomongoIsAggregate = true; \n"
             "    __robomongoDbName = __robomongoLastRes._db.getName();\n "
             "    __robomongoServerAddress = __robomongoLastRes._db._mongo.host; \n"

@@ -5,6 +5,8 @@
 
 #include "robomongo/core/Enums.h"
 
+class QString;
+
 namespace Robomongo
 {
     namespace BsonUtils
@@ -105,6 +107,8 @@ namespace Robomongo
 
         mongo::BSONElement indexOf(const mongo::BSONObj &doc, int index);
         int elementsCount(const mongo::BSONObj &doc);
+
+        std::string reformatDoubleString(QString str, double elemDouble);
     }
 }
 

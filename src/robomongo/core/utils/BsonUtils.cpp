@@ -145,24 +145,10 @@ namespace Robomongo
                         std::stringstream ss;
                         ss.precision(std::numeric_limits<double>::digits10);
                         ss << elem.Double();
-                        QString str = QString::fromStdString(ss.str());
+                        std::string const str =
+                            reformatDoubleString(QString::fromStdString(ss.str()), elem.Double());
 
-                        // Leave trailing zero if needed
-                        if (!(str.contains("e+") || str.contains("e-"))) {
-                            if (elem.Double() == (long long)elem.Double())
-                                ss << ".0";
-                        }                        
-                        else if (str.endsWith("e+15") || str.endsWith("e+16")) {
-                            // Disable scientific format
-                            std::stringstream ss2;
-                            ss2.precision(std::numeric_limits<double>::digits10);
-                            ss2 << std::fixed << elem.Double();
-                            str = QString::fromStdString(ss2.str());
-                            while (str.contains('.') && str.endsWith("00"))
-                                str.chop(1);
-                        }
-
-                        s << (str.toStdString());
+                        s << (str);
                     }
                     else if (std::isnan(elem.number()) ) {                        
                         s << "NaN";
@@ -601,25 +587,11 @@ namespace Robomongo
                         elem.number() <= std::numeric_limits< double >::max()) {
                         std::stringstream ss;
                         ss.precision(std::numeric_limits<double>::digits10);
-                        ss << elem.Double();
-                        QString str = QString::fromStdString(ss.str());
+                        ss << elem.Double();          
+                        std::string const str = 
+                            reformatDoubleString(QString::fromStdString(ss.str()), elem.Double());
 
-                        // Leave trailing zero if needed
-                        if (!(str.contains("e+") || str.contains("e-"))) {
-                            if (elem.Double() == (long long)elem.Double())
-                                ss << ".0";
-                        }
-                        else if (str.endsWith("e+15") || str.endsWith("e+16")) {
-                            // Disable scientific format
-                            std::stringstream ss2;
-                            ss2.precision(std::numeric_limits<double>::digits10);
-                            ss2 << std::fixed << elem.Double();
-                            str = QString::fromStdString(ss2.str());
-                            while (str.contains('.') && str.endsWith("00"))
-                                str.chop(1);
-                        }
-                        
-                        con.append(str.toStdString());
+                        con.append(str);
                     }
                     else if (std::isnan(elem.number())) {
                         con.append("NaN");
@@ -787,6 +759,24 @@ namespace Robomongo
                 iterator.next();                
             }
             return i;
+        }
+
+        std::string reformatDoubleString(QString str, double elemDouble)
+        {
+            // Leave trailing zero if needed
+            if (!str.contains("e+") && !str.contains("e-") && elemDouble == (long long)elemDouble)
+                str.append(".0");          
+            else if (str.endsWith("e+15") || str.endsWith("e+16")) {
+                // Disable scientific format
+                std::stringstream ss2;
+                ss2.precision(std::numeric_limits<double>::digits10);
+                ss2 << std::fixed << elemDouble;
+                str = QString::fromStdString(ss2.str());
+                while (str.contains('.') && str.endsWith("00"))
+                    str.chop(1);
+            }
+
+            return str.toStdString();
         }
 
     } // BsonUtils

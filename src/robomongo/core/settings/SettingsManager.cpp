@@ -6,6 +6,7 @@
 #include <QUuid>
 #include <QJsonArray>
 #include <QXmlStreamReader>
+#include <QDirIterator>
 
 #include <parser.h>
 #include <serializer.h>
@@ -40,8 +41,8 @@ namespace Robomongo
     // Extract zipFile and find the value of "anonymousID" field in propFile
     QString extractAnonymousIDFromZip(QString const& zipFile, QString const& propfile);
 
-    // Extract "anonymousID" from old config file
-    QString extractAnonymousID(QString const& oldConfigFile);
+    // Extract "anonymousID" from a config file
+    QString extractAnonymousID(QString const& configFile);
 
     /**
         * @brief Version of schema
@@ -429,6 +430,29 @@ namespace Robomongo
             anonymousID = extractAnonymousID(oldConfigFile);
         }
 
+        // Search and import "anonymousID" from any other (ideally newer version) Robo 3T config files 
+        if (anonymousID.isEmpty()) {
+            auto const dir1 = QString("%1/.3T/robo-3t").arg(QDir::homePath());
+            QDirIterator iter1 { dir1, QStringList() << "robo*.json", QDir::Files, 
+                                 QDirIterator::Subdirectories };
+            while (iter1.hasNext()) {
+                anonymousID = extractAnonymousID(iter1.next());
+                if (!anonymousID.isEmpty())
+                    break;
+            }
+
+            if (anonymousID.isEmpty()) {
+                auto const dir2 = QString("%1/.3T/robomongo").arg(QDir::homePath());
+                QDirIterator iter2 { dir2, QStringList() << "robo*.json", QDir::Files, 
+                                     QDirIterator::Subdirectories };
+                while (iter2.hasNext()) {
+                    anonymousID = extractAnonymousID(iter2.next());
+                    if (!anonymousID.isEmpty())
+                        break;
+                }
+            }
+        }
+
         // Couldn't find/import any, create a new anonymousID
         if (anonymousID.isEmpty())
             anonymousID = QUuid::createUuid().toString();
@@ -716,12 +740,12 @@ namespace Robomongo
         return QString("");
     }
 
-    QString extractAnonymousID(QString const& oldConfigFilePath)
+    QString extractAnonymousID(QString const& configFilePath)
     {
-        if (!QFile::exists(oldConfigFilePath))
+        if (!QFile::exists(configFilePath))
             return QString("");
 
-        QFile oldConfigFile(oldConfigFilePath);
+        QFile oldConfigFile(configFilePath);
         if (!oldConfigFile.open(QIODevice::ReadOnly))
             return QString("");
 

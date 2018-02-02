@@ -226,6 +226,9 @@ namespace Robomongo
         if (map.contains("acceptedEulaVersions")) 
             _acceptedEulaVersions = map.value("acceptedEulaVersions").toStringList().toSet();
         
+        if (map.contains("dbVersionsConnected"))
+            _dbVersionsConnected = map.value("dbVersionsConnected").toStringList().toSet();
+        
         // Load anonymousID
         _anonymousID = getOrCreateAnonymousID(map);
 
@@ -348,6 +351,13 @@ namespace Robomongo
             arr.push_back(str);
 
         map.insert("acceptedEulaVersions", arr.toVariantList());
+
+        // x. Save unique set of db versions connected
+        QJsonArray dbVersionsArr;
+        for (auto const& version : _dbVersionsConnected)
+            dbVersionsArr.push_back(version);
+
+        map.insert("dbVersionsConnected", dbVersionsArr.toVariantList());
 
         // 9. Save batchSize
         map.insert("batchSize", _batchSize);

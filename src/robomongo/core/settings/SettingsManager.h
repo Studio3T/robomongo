@@ -161,6 +161,11 @@ namespace Robomongo
         void addAcceptedEulaVersion(QString const& version) { _acceptedEulaVersions.insert(version); }
         QSet<QString> const& acceptedEulaVersions() const { return _acceptedEulaVersions; }
 
+        QSet<QString>::iterator addDbVersionConnected(QString const& version) { 
+            return _dbVersionsConnected.insert(version); 
+        }
+        QSet<QString> const& dbVersionsConnected() const { return _dbVersionsConnected; }
+
         void setCheckForUpdates(bool checkForUpdates) { _checkForUpdates = checkForUpdates; }
         bool checkForUpdates() const { return _checkForUpdates; }
 
@@ -245,6 +250,7 @@ namespace Robomongo
         bool _programExitedNormally = true;
         bool _useHttps = true;
         QSet<QString> _acceptedEulaVersions;
+        QSet<QString> _dbVersionsConnected;
         int _batchSize;
         bool _checkForUpdates = true;
         QString _currentStyle;

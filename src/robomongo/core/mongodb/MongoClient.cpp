@@ -52,6 +52,9 @@ namespace Robomongo
         return collNames;
     }
 
+    // Warning: 
+    // Use string version dbVersionStr(), version number is corrupted after conversion to float
+    // Todo: Remove this function
     float MongoClient::getVersion() const
     {
         float result = 0.0f;
@@ -60,6 +63,14 @@ namespace Robomongo
         std::string resultStr = BsonUtils::getField<mongo::String>(resultObj, "version");
         result = atof(resultStr.c_str());
         return result;
+    }
+
+    std::string MongoClient::dbVersionStr() const
+    {
+        mongo::BSONObj resultObj;
+        _dbclient->runCommand("db", BSON("buildInfo" << "1"), resultObj);
+        std::string const resultStr = BsonUtils::getField<mongo::String>(resultObj, "version");
+        return resultStr;
     }
 
     std::string MongoClient::getStorageEngineType() const

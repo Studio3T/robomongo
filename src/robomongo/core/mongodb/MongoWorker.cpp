@@ -181,7 +181,7 @@ namespace Robomongo
 
                 return false;
             }
-
+            
             // --- Single server: Connection successful 
             // --- Replica set:   Connection successful (primary reachable) or 
             //                    Connection failed (primary unreachable with at least one reachable member)
@@ -246,7 +246,7 @@ namespace Robomongo
             resetGlobalSSLparams();
 
             auto connInfo = ConnectionInfo(_connSettings->getFullAddress(), dbNames, client->getVersion(), 
-                                           client->getStorageEngineType(), event->uuid);
+                                           client->dbVersionStr(), client->getStorageEngineType(), event->uuid);
 
             // todo: two ctors for rep.set and single server.
             reply(event->sender(), new EstablishConnectionResponse(this, connInfo, event->connectionType, 

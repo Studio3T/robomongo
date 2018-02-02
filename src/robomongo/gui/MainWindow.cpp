@@ -1441,7 +1441,8 @@ namespace Robomongo
 
     void MainWindow::checkUpdates()
     {
-        if (!Robomongo::AppRegistry::instance().settingsManager()->checkForUpdates())
+        auto const& settingsManager = Robomongo::AppRegistry::instance().settingsManager();
+        if (!settingsManager->checkForUpdates())
             return;
 
 #ifdef _WIN32
@@ -1454,10 +1455,18 @@ namespace Robomongo
         QString const OS = "unknown";
 #endif
 
+        // Prepare dbVersionsConnected: "3.4.3,2.6.12,..."
+        QString dbVersionsConnected;
+        for (auto const& version : settingsManager->dbVersionsConnected())
+            dbVersionsConnected.append(version + ',');
+        
+        if (dbVersionsConnected.endsWith(','))
+            dbVersionsConnected.chop(1);
+
         // softwareId=8: Robomongo product ID 
         QUrl url("http://updates.3tsoftwarelabs.com/check.php?os=" + OS + "&softwareId=8&softwareVersion=" +
-                   QString(PROJECT_VERSION) + "&licenseInfo=FREE&setup=" + 
-                   AppRegistry::instance().settingsManager()->anonymousID() + "&notify=true#");
+                  QString(PROJECT_VERSION) + "&licenseInfo=FREE&setup=" + settingsManager->anonymousID() + 
+                  "&dbVersionsConnected=" + dbVersionsConnected + "&notify=true#");
 
         _networkAccessManager->get(QNetworkRequest(url));
     }

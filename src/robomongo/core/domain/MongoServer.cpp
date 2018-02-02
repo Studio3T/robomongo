@@ -16,13 +16,6 @@
 #include "robomongo/utils/common.h"
 #include "robomongo/utils/string_operations.h"
 
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QUrlQuery>
-#include <QJsonObject>
-#include <QJsonDocument>
-
 namespace Robomongo {
     R_REGISTER_EVENT(MongoServerLoadingDatabasesEvent)
 
@@ -227,31 +220,12 @@ namespace Robomongo {
         }
 
         // Save connected db version if not saved before and if this is primary connection.
-        // And send it to the server
         QString const versionStr = QString::fromStdString(info._dbVersionStr);
         auto const& settingsManager = AppRegistry::instance().settingsManager();
         if (ConnectionPrimary == _connectionType &&
             !settingsManager->dbVersionsConnected().contains(versionStr)) {
-            
             settingsManager->addDbVersionConnected(versionStr);
             settingsManager->save();
-
-            // Build post data and send
-            QJsonObject jsonStr {
-                { "anonymousID", settingsManager->anonymousID() },
-                { "dbVersionConnected", versionStr }
-            };
-            
-            QUrlQuery postData(QJsonDocument(jsonStr).toJson());
-            postData = QUrlQuery("rd=" + postData.toString(QUrl::FullyEncoded).toUtf8());
-
-            QString const prefix = settingsManager->useHttps() ? "https" : "http";
-            QNetworkRequest request(QUrl(prefix + "://rm-form.3t.io/"));
-            request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-
-            auto const networkManager = new QNetworkAccessManager;
-            // Todo: Handle reply
-            auto const reply = networkManager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
         }
 
     }

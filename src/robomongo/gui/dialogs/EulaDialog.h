@@ -56,6 +56,8 @@ namespace Robomongo
         QLineEdit* _nameEdit;
         QLineEdit* _lastNameEdit;
         QLineEdit* _emailEdit;
+        QLineEdit* _phone;
+        QLineEdit* _company;
 
         QByteArray _postData;
         mutable QNetworkReply* _reply;

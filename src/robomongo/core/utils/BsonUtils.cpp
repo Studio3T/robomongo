@@ -764,9 +764,11 @@ namespace Robomongo
         std::string reformatDoubleString(QString str, double elemDouble)
         {
             // Leave trailing zero if needed
-            if (!str.contains("e+") && !str.contains("e-") && elemDouble == (long long)elemDouble)
+            if (!str.contains("e+", Qt::CaseInsensitive) && 
+                !str.contains("e-", Qt::CaseInsensitive) && elemDouble == (long long)elemDouble)
                 str.append(".0");          
-            else if (str.endsWith("e+15") || str.endsWith("e+16")) {
+            else if (str.endsWith("e+15", Qt::CaseInsensitive) || 
+                     str.endsWith("e+16", Qt::CaseInsensitive)) {
                 // Disable scientific format
                 std::stringstream ss2;
                 ss2.precision(std::numeric_limits<double>::digits10);

@@ -115,10 +115,8 @@ namespace Robomongo
         secondPage->setLayout(mainLayout2);
 
         addPage(firstPage);
-#if defined(_WIN32) || defined(__APPLE__)
         if(_showFormPage)
             addPage(secondPage);
-#endif
 
         //// Buttons
         setButtonText(QWizard::CustomButton1, tr("Back"));
@@ -130,18 +128,12 @@ namespace Robomongo
         VERIFY(connect(button(QWizard::CustomButton3), SIGNAL(clicked()), this, SLOT(on_finish_clicked())));
 
         setButtonLayout(QList<WizardButton>{ QWizard::Stretch, QWizard::CustomButton1, QWizard::CustomButton2,
-            QWizard::CancelButton, QWizard::CustomButton3});
+                                             QWizard::CancelButton, QWizard::CustomButton3});
 
-#if defined(_WIN32) || defined(__APPLE__)
         button(QWizard::CustomButton1)->setDisabled(true);
         button(QWizard::CustomButton2)->setDisabled(true);
         button(QWizard::CustomButton2)->setHidden(!_showFormPage);
         button(QWizard::CustomButton3)->setDisabled(true);
-#else   // linux
-        button(QWizard::CustomButton1)->setHidden(true);
-        button(QWizard::CustomButton2)->setHidden(true);
-        button(QWizard::CustomButton3)->setDisabled(true);
-#endif
 
         setWizardStyle(QWizard::ModernStyle);
 
@@ -180,26 +172,18 @@ namespace Robomongo
 
     void EulaDialog::on_agreeButton_clicked()
     {
-#if defined(_WIN32) || defined(__APPLE__)
         if(_showFormPage)
             button(QWizard::CustomButton2)->setEnabled(true);
         else
             button(QWizard::CustomButton3)->setEnabled(true);
-#else
-        button(QWizard::CustomButton3)->setEnabled(true);
-#endif
     }
 
     void EulaDialog::on_notAgreeButton_clicked()
     {
-#if defined(_WIN32) || defined(__APPLE__)
         if (_showFormPage)
             button(QWizard::CustomButton2)->setEnabled(false);
         else
             button(QWizard::CustomButton3)->setEnabled(false);
-#else
-        button(QWizard::CustomButton3)->setEnabled(false);
-#endif
     }
 
     void EulaDialog::on_next_clicked()

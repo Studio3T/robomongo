@@ -94,18 +94,18 @@ namespace Robomongo
     QString const BlogLinkTemplate = "<a style = 'color: #106CD6; text-decoration: none;'"
                                      "href='%1'>%2</a>";
 
+    // For info only. Starting from 1.2.1, PROJECT_VERSION is used.
     // URL Folder number for Pic1 and Text1
     enum {
         URL_FOLDER_1_0_0      = 1,
         URL_FOLDER_1_1_0_BETA = 2,
         URL_FOLDER_1_1_1      = 3,
-        URL_FOLDER_1_2_0_BETA = 4,
-        URL_FOLDER_1_2_1      = 5,
+        URL_FOLDER_1_2_0_BETA = 4,        
+        // Starting from 1.2.1, PROJECT_VERSION is used.
     };
 
-    auto const CURRENT_URL_FOLDER = URL_FOLDER_1_2_1;
-    QString const IMAGE_PATH = QString::number(CURRENT_URL_FOLDER) + "/image.png";
-    QString const CONTENTS_PATH = QString::number(CURRENT_URL_FOLDER) + "/contents.txt";
+    QString const IMAGE_PATH = QString(PROJECT_VERSION) + "/image.png";
+    QString const CONTENTS_PATH = QString(PROJECT_VERSION) + "/contents.txt";
 
     QString const RssFileName = "rss.xml";
 

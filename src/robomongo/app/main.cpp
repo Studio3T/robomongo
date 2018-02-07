@@ -23,8 +23,6 @@ int main(int argc, char *argv[], char** envp)
     if (rbm_ssh_init()) 
         return 1;
 
-    auto const settingsManager = Robomongo::AppRegistry::instance().settingsManager();
-
     // Please check, do we really need envp for other OSes?
 #ifdef Q_OS_WIN
     envp = NULL;
@@ -58,6 +56,8 @@ int main(int argc, char *argv[], char** envp)
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 
+    auto const& settingsManager = Robomongo::AppRegistry::instance().settingsManager();    
+    // Disable HTTPS and do not show EULA form if program exited abnormally
     bool showEulaDialogForm = true;
     if (!settingsManager->programExitedNormally()) {
         showEulaDialogForm = false;

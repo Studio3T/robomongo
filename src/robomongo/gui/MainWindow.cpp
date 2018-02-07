@@ -1455,7 +1455,7 @@ namespace Robomongo
         QString const OS = "unknown";
 #endif
 
-        // Prepare dbVersionsConnected: "3.4.3,2.6.12,..."
+        // Build dbVersionsConnected in following format: "3.4.3,2.6.0,..."
         QString dbVersionsConnected;
         for (auto const& version : settingsManager->dbVersionsConnected())
             dbVersionsConnected.append(version + ',');

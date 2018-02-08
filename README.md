@@ -11,18 +11,24 @@ Robo 3T 0.8.x embeds the **MongoDB 2.4.0** shell.
 
 \* [Renaming from Robomongo to Robo 3T](http://blog.robomongo.org/robomongo-is-robo-3t/#5)
 
-What's new in latest Robo 3T 1.1?
+What's new in latest Robo 3T 1.2?
 ====================================
-Latest release of Robo 3T 1.1 includes: 
-  - MongoDB 3.4 support
-  - New NumberDecimal (Decimal128) data type support
-  - ECMAScript 2015 aka ES6 Support (Modernized JavaScript Implementation)
-  - Renaming Robomongo to Robo 3T
-  - Shell timeout is configurable on UI now 'Options->Change Shell Timeout'
-  - Fix for Robo 3T Shell Timeout Issue (silently, prematurely finishing long lasting scripts)
-  - Stability Improvement: Fix included to prevent a on start crash on MACOS Sierra
-  - Security Improvement: OpenSSL version upgrade to openssl-1.0.1u (22-Sep-2016)
-  - Tool chain upgrades: Modern C++14 features are enabled and usable for developers
+
+Fixes:  
+  - Aggregate query results are not pagaeble [#1058](https://github.com/Studio3T/robomongo/issues/1058)      
+  - Big double numbers are showing incorrectly [#1447](https://github.com/Studio3T/robomongo/issues/1447)  
+  - Editing a document from a projection causes data loss (override) [#881](https://github.com/Studio3T/robomongo/issues/881)
+  - SSH: Resources temporarily unavailable. Error when starting up SSH session [#1189](https://github.com/Studio3T/robomongo/issues/1189#issuecomment-353279070)
+  - robo3t 1.1 failed to start on Ubuntu 17.04 [#1385](https://github.com/Studio3T/robomongo/issues/1385)
+  - Robo 3T is not opening on MacOS High Sierra [#1412](https://github.com/Studio3T/robomongo/issues/1412#issuecomment-353276002)
+  - Cannot load list of indexes [#1454](https://github.com/Studio3T/robomongo/issues/1454)
+  - Robo 3T is not buildable on latest MacOS High Sierra  
+  
+Improvements 
+  - Qt version upgraded from Qt 5.7.0 to Qt 5.9.3
+  - Auto switch to HTTP from HTTPS if the program crashes due to HTTPS related operations 
+  - Improvements for Robo 3T is crashing constantly on High Sierra [#1412](https://github.com/Studio3T/robomongo/issues/1412#issuecomment-353276002)
+  - PR: Improved query time formatting (#1358) [#1455](https://github.com/Studio3T/robomongo/issues/1455)
 
 Blog:     http://blog.robomongo.org/robomongo-is-robo-3t/  
 Download: https://robomongo.org/download  
@@ -67,9 +73,9 @@ Supported Platforms
 
 | Windows                |   Mac                            | Linux                       |        
 |:---------------------- | :--------------------------------| :---------------------------|
-| Windows 64-bit 10      |  Mac OS X 10.12 (Sierra)         | Linux Ubuntu 16.04 64-bit*  |
-  Windows 64-bit 8.1     |  Mac OS X 10.11 (El Capitan)     | Linux Ubuntu 14.04 64-bit*  |
-| Windows 64-bit 7       |  Mac OS X 10.10 (Yosemite)       | Linux CentOS 7 64-bit* **   |
+| Windows 64-bit 10      |  Mac OS X 10.13 (High Sierra)    | Linux Ubuntu 17.10 64-bit*  |
+  Windows 64-bit 8.1     |  Mac OS X 10.12 (Sierra)         | Linux Ubuntu 16.04 64-bit*  |
+| Windows 64-bit 7       |  Mac OS X 10.11 (El Capitan)     | Linux CentOS 7 64-bit* **   |
 |                        |                                  | Linux CentOS 6 64-bit*  **  |
 
 \* Latest stable build  
@@ -80,7 +86,7 @@ Download
 
 You can download tested install packages for OS X, Windows, and Linux from our site: [www.robomongo.org](http://www.robomongo.org).
 
-The latest stable release is currently [**Robo 3T 1.1**](http://blog.robomongo.org/robomongo-is-robo-3t/).
+The latest stable release is currently [**Robo 3T 1.2**](http://blog.robomongo.org/robo-3t-1-2/).
 
 Support
 =======
@@ -138,7 +144,7 @@ There are a number of issues we could use help with reproducing. They are marked
 License
 =======
 
-Copyright 2014-2017 [3T Software Labs Ltd](https://studio3t.com/). All rights reserved.
+Copyright 2014-2018 [3T Software Labs Ltd](https://studio3t.com/). All rights reserved.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 as 

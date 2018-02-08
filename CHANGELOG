@@ -1,7 +1,7 @@
 
 Latest Version: 
-Robo 3T 1.1 (13 June, 2017)
-http://blog.robomongo.org/robomongo-1-1/
+Robo 3T 1.2 (14 Feb, 2018)
+http://blog.robomongo.org/robo-3t-1-2
 https://robomongo.org/download
 
 Robo 3T 1.x:
@@ -16,10 +16,31 @@ Robo 3T 1.x:
   Major Fixes/Improvements:
     - Fix for Robomongo Shell Timeout Issue (silently, prematurely finishing long lasting scripts) 
     - New NumberDecimal (Decimal128) data type support
+    - Aggregate query results are pagaeble now
+    - Fix for Big double numbers are showing incorrectly #1447
+    - Fix for Editing a document from a projection causes data loss (override) (#881)
     - Improved error handling (no double error windows) for almost all operations.
     - Timestamp value is represented incorrectly (https://github.com/Studio3T/robomongo/issues/1159)
     - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
-      
+
+  * What's new in Robo 3T 1.2.1 (14 Feb, 2018)   
+    http://blog.robomongo.org/robo-3t-1-2
+    
+    Fixes:
+      - Aggregate query results are not pagaeble 
+      - Big double numbers are showing incorrectly #1447
+      - Editing a document from a projection causes data loss (override) (#881)
+      - Error: Resources temporarily unavailable. Error when starting up SSH session: -8 #1426
+      - robo3t 1.1 failed to start on Ubuntu 17.04 #1385
+      - Robo 3T is not opening on MacOS High Sierra (#1412)
+      - Cannot load list of indexes #1454
+      - Robo 3T is not buildable on latest MacOS High Sierra
+    Improvements 
+      - Qt version upgraded from Qt 5.7.0 to Qt 5.9.3
+      - Auto switch to HTTP from HTTPS if the program crashes due to HTTPS related operations 
+      - Improvements for Robo 3T is crashing constantly on High Sierra #1412
+      - PR: Improved query time formatting (#1358) #1455
+            
   * What's new in Robo 3T 1.2.0 Beta (18 Dec, 2017)   
     https://github.com/Studio3T/robomongo/releases/tag/v1.2.0-beta
     

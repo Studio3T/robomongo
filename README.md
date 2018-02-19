@@ -1,4 +1,4 @@
-About Robo 3T [![Join the chat at https://gitter.im/paralect/robomongo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/paralect/robomongo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+About Robo 3T
 ===============
 
 [Robo 3T](http://www.robomongo.org) (formerly Robomongo *) is a shell-centric cross-platform MongoDB management tool. Unlike most other MongoDB admin UI tools, Robo 3T embeds the actual `mongo` shell in a tabbed interface with access to a shell command line as well as GUI interaction.
@@ -9,7 +9,7 @@ Starting from version 0.9, Robo 3T is compatibile with MongoDB 3.x (including SC
 
 Robo 3T 0.8.x embeds the **MongoDB 2.4.0** shell.
 
-\* [Renaming from Robomongo to Robo 3T](http://blog.robomongo.org/robomongo-is-robo-3t/#5)
+\* [Robomongo has been acquired by 3T](https://studio3t.com/press/3t-software-labs-acquires-robomongo-the-most-widely-used-mongodb-tool/)
 
 What's new in latest Robo 3T 1.2?
 ====================================
@@ -34,24 +34,6 @@ Blog:     http://blog.robomongo.org/robo-3t-1-2/
 Download: https://robomongo.org/download  
 Watch: [Robo 3T Youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo
-
-What's Planned for the Next Releases?
-====================================
-
-We are currently working towards next release [Robo 3T 1.2](https://github.com/Studio3T/robomongo/projects/3).  
- 
-**Currently in progress:**
-- Under discussion
-
-**Plans for Future:**
-- Export/Import [High Vote] 
-- User Roles [High Vote]
-- Support execution of multiple simultaneous queries [#1161](https://github.com/paralect/robomongo/issues/1161)
-- Selectable mongodb engines [#1249](https://github.com/paralect/robomongo/issues/1249)
-- Enhancements for stability, running without crashes ([Stability Milestone](https://github.com/paralect/robomongo/milestone/15))
-- More Documentation
-- Unit Tests
-- Refactoring Debug Log module
 
 Supported Platforms
 ===============
@@ -98,13 +80,6 @@ You can:
  - [Create a new issue in the Github issue queue](https://github.com/paralect/robomongo/issues)
 
  - [Join developer discussion on Gitter](https://gitter.im/paralect/robomongo)
-
-Build
-=====
-
-The wiki contains prerequisites and instructions to [Build Robo 3T](https://github.com/paralect/robomongo/wiki).
-
-If you want to compile from source yourself, you should be able to do so cleanly from a [release branch](https://github.com/paralect/robomongo/releases).
 
 Contribute!
 ===========

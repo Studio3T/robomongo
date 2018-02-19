@@ -1,10 +1,10 @@
 
 Latest Version: 
-Robo 3T 1.2 (14 Feb, 2018)
+Robo 3T 1.2.1 (19 Feb, 2018)
 http://blog.robomongo.org/robo-3t-1-2
 https://robomongo.org/download
 
-Robo 3T 1.x:
+Robo 3T 1.2.1:
   Major Features: 
     - MongoDB 3.4 support
     - Replica set support.
@@ -23,7 +23,7 @@ Robo 3T 1.x:
     - Timestamp value is represented incorrectly (https://github.com/Studio3T/robomongo/issues/1159)
     - Local Timezone shows wrong date (https://github.com/Studio3T/robomongo/issues/501)
 
-  * What's new in Robo 3T 1.2.1 (14 Feb, 2018)   
+  * What's new in Robo 3T 1.2.1 (19 Feb, 2018)   
     http://blog.robomongo.org/robo-3t-1-2
     
     Fixes:

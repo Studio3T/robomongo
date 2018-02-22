@@ -30,7 +30,7 @@ Improvements
   - Improvements for Robo 3T is crashing constantly on High Sierra [#1412](https://github.com/Studio3T/robomongo/issues/1412#issuecomment-353276002)
   - PR: Improved query time formatting (#1358) [#1455](https://github.com/Studio3T/robomongo/issues/1455)
 
-Blog:     http://blog.robomongo.org/robo-3t-1-2/ 
+Blog:     http://blog.robomongo.org/robo-3t-1-2/  
 Download: https://robomongo.org/download  
 Watch: [Robo 3T Youtube channel](https://www.youtube.com/channel/UCM_7WAseRWeeiBikExppstA)  
 Follow: https://twitter.com/Robomongo

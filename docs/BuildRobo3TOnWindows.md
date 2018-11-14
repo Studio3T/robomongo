@@ -62,22 +62,12 @@ We use CMake 3.6.0-rc3
  command will be available from Command Prompt. For this set "Add CMake to the system
  PATH for current user" in the installer wizard page. 
    
-#### 5. Qt 5.7
+#### 5. Qt 5.9.3
 
- Download Qt from http://www.qt.io/download-open-source/ (we use Qt Online installer)
-   
- When installing Qt, only one component is required by Robo 3T: 
-   
-    Qt 5.7 
-      [x] msvc2015 64-bit.
-    
- This components contains prebuilt 64-bit binaries for Visual Studio 2015. 
-   
- You may uncheck all other components to download as little as possible. 
+ Download and install Qt from http://download.qt.io/archive/qt
 
 #### 6. OpenSSL (1.0.1u)
 Download openssl-1.0.1u (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1u.tar.gz)
-  
   
 
 B. Building Robo 3T and Dependencies
@@ -113,7 +103,7 @@ Clone Robo 3T Shell and checkout to roboshell-v3.4 branch:
   ```sh
   $ git clone https://github.com/paralect/robomongo-shell.git
   $ cd robomongo-shell
-  $ git checkout roboshell-v3.4
+  $ git branch // roboshell-v3.4
   ```
 
 Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robo 3T-Shell and Robo 3T build scripts, needs to be set according to the following directories:
@@ -124,7 +114,7 @@ Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robo 3T-Shel
 
 Separate directories by semicolon `;` (not colon). You can do this in Command Prompt:
 
-    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt-5\5.7\msvc2015_64;d:\Projects\robomongo-shell;c:\myPath\openssl-1.0.1u"
+    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt\Qt5.9.3\5.9.3\msvc2015_64;d:\path-to\robomongo-shell;c:\path-to\openssl-1.0.1u"
 
 
 Open VS2015 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.

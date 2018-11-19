@@ -125,7 +125,7 @@ Build shell in release mode:
     
 Build shell in debug mode:
 
-    > bin\build --dbg 
+    > bin\build debug 
     
 Note that backslash is used (`\`), and not forward slash (`/`).
 
@@ -135,7 +135,7 @@ Clean build files for release mode:
 
 Clean build files for debug mode:
 
-    > bin\clean --dbg
+    > bin\clean debug
 
 Refer to MongoDB documentation for additional information:
 https://docs.mongodb.org/manual/contributors/tutorial/build-mongodb-from-source/#windows-specific-instructions

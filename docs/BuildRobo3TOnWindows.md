@@ -67,14 +67,14 @@ We use CMake 3.6.0-rc3
  Download and install Qt from http://download.qt.io/archive/qt 
  Run the installer and select only 'msvc2015 64-bit'
 
-#### 6. OpenSSL (1.0.1u)
-Download openssl-1.0.1u (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1u.tar.gz)
+#### 6. OpenSSL (1.0.2o)
+Download openssl-1.0.1u (https://www.openssl.org/source/old/1.0.2/)
   
 
 B. Building Robo 3T and Dependencies
 -------------
 
-#### 1. Build OpenSSL (1.0.1u)
+#### 1. Build OpenSSL
 
 Steps to build OpenSSL on windows:
   ```sh
@@ -115,7 +115,7 @@ Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robo 3T-Shel
 
 Separate directories by semicolon `;` (not colon). You can do this in Command Prompt:
 
-    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt\Qt5.9.3\5.9.3\msvc2015_64;d:\path-to\robomongo-shell;c:\path-to\openssl-1.0.1u"
+    > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt\Qt5.9.3\5.9.3\msvc2015_64;d:\path-to\robomongo-shell;c:\path-to\openssl-1.0.2o"
 
 
 Open VS2015 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.

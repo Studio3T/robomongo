@@ -64,7 +64,8 @@ We use CMake 3.6.0-rc3
    
 #### 5. Qt 5.9.3
 
- Download and install Qt from http://download.qt.io/archive/qt
+ Download and install Qt from http://download.qt.io/archive/qt 
+ Run the installer and select only 'msvc2015 64-bit'
 
 #### 6. OpenSSL (1.0.1u)
 Download openssl-1.0.1u (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1u.tar.gz)

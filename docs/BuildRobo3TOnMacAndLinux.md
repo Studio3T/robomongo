@@ -12,36 +12,42 @@ Clang 3.4 (or Apple XCode 5.1.1 Clang) or newer
 ```
 
 2. Install CMake (3.2 or later)
-3. Install [Scons](http://scons.org/tag/releases.html) (2.4 or later)
-4. Install Qt 5.7
+3. Install [Scons](http://scons.org/tag/releases.html) (2.5 or later) 
+
+```
+cd scons-**
+python setup.py install
+```
+   
+4. Install Qt 5.9.3
 
   ```sh
 Example installation for MAC OSX and Ubuntu:
-    Go to http://download.qt.io/archive/qt/5.7/5.7.0/
+    Go to http://download.qt.io/archive/qt/5.9/5.9.3/
     Download, run and install 
-      qt-opensource-mac-x64-clang-5.7.0.dmg (for MAC OSX) 
-      qt-opensource-linux-x64-5.7.0.run (for Linux)
+      qt-opensource-mac-x64-clang-5.9.3.dmg (for MAC OSX) 
+      qt-opensource-linux-x64-5.9.0.run (for Linux)
     After successful installation you should have 
-      /path/to/qt-5.7.0/5.7/clang_64 (for MAC OSX)
-      /path/to/qt-5.7.0/5.7/gcc_64 (for Linux)
+      /path/to/qt-5.9.3/5.7/clang_64 (for MAC OSX)
+      /path/to/qt-5.9.3/5.7/gcc_64 (for Linux)
 
 More information for installing on Ubuntu:
 https://wiki.qt.io/Install_Qt_5_on_Ubuntu
 ```
 
-5. Download and Build OpenSSL (1.0.1u) - (explained below in section B)
+5. Download and Build OpenSSL (1.0.2o) - (explained below in section B)
 
 B. Building Robo 3T and Dependencies
 -------------
 
-#### Step 1. Build OpenSSL (1.0.1u)
+#### Step 1. Build OpenSSL (1.0.2o)
 
 Steps to build OpenSSL on MAC:
 
   ```sh
-Download openssl-1.0.1u (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1u.tar.gz)
-tar -xvzf openssl-1.0.1u.tar.gz
-cd /Users/<user>/Downloads/openssl-1.0.1u
+Download openssl-1.0.2o (https://www.openssl.org/source/old/1.0.2/)
+tar -xvzf openssl-1.0.2o.tar.gz
+cd openssl-1.0.2o
 ./Configure darwin64-x86_64-cc shared --openssldir="@rpath"
 make (or sudo make)
 mkdir lib
@@ -53,13 +59,12 @@ Helper Commands
 make clean
 ```
 
-
 Steps to build OpenSSL on Linux:
 
   ```sh
-Download openssl-1.0.1u (ftp://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1u.tar.gz)
-tar -xvzf openssl-1.0.1u.tar.gz
-cd /home/<user>/Downloads/openssl-1.0.1u
+Download openssl-1.0.x (ftp://ftp.openssl.org/source/old/1.0.x/openssl-1.0.x.tar.gz)
+tar -xvzf openssl-1.0.x.tar.gz
+cd /home/<user>/Downloads/openssl-1.0.x
 ./config shared
 make
 mkdir lib
@@ -68,12 +73,12 @@ cp libssl* libcrypto* lib/
 
 #### Step 2. Build Robo 3T Shell (fork of MongoDB)
 
-Clone Robo 3T Shell and checkout to `roboshell-v3.4` branch:
+Clone Robo 3T Shell and checkout to `roboshell-v4.0` branch:
 
   ```sh
   $ git clone https://github.com/paralect/robomongo-shell.git
   $ cd robomongo-shell
-  $ git checkout roboshell-v3.4
+  $ git branch // make sure it is "roboshell-v4.0"
   ```
 
 Set special environment variable `ROBOMONGO_CMAKE_PREFIX_PATH` to point to a set of 
@@ -86,9 +91,9 @@ directories:
 Separate directories by semicolon `;` (not colon):
 
     // MAC OSX example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.7.0/5.7/clang_64;/path/to/robomongo-shell;/path/to/openssl-1.0.1u"
+    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.x.x/5.x/clang_64;/path/to/robomongo-shell;/path/to/openssl-1.0.xx"
     // Ubuntu example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.7.0/5.7/gcc_64;/path/to/robomongo-shell;/path/to/openssl-1.0.1u"
+    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.x.x/5.x/gcc_64;/path/to/robomongo-shell;/path/to/openssl-1.0.xx"
 
 
 Build Robo 3T Shell (in release mode by default):
@@ -96,6 +101,16 @@ Build Robo 3T Shell (in release mode by default):
   ```sh
   $ bin/build
   ```
+
+Known Issues & Solutions about building: 
+```
+// macOS / Linux assuming python = python 2.7
+pip install --user -r etc/pip/dev-requirements.txt
+pip install typing
+
+Also see:
+https://github.com/mongodb/mongo/wiki/Build-Mongodb-From-Source
+```
 
 Build Robo 3T Shell in debug mode:
 

@@ -102,6 +102,10 @@ namespace Robomongo
         // Cursor may be NULL, it means we have connectivity problem
         if (!cursor)
             throw mongo::DBException("Network error while attempting to load list of users", 0);
+        
+        std::string errorStr = _dbclient->getLastError();
+        if (!errorStr.empty())
+            throw mongo::DBException(errorStr, 0);
 
         float ver = getVersion();
         while (cursor->more()) {

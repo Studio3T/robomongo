@@ -172,6 +172,7 @@ target_include_directories(robomongo
 
 target_compile_definitions(robomongo
     PRIVATE
+        BUILDING_ROBO
         PROJECT_NAME="${PROJECT_NAME}"
         PROJECT_NAME_TITLE="${PROJECT_NAME_TITLE}"
         PROJECT_COPYRIGHT="${PROJECT_COPYRIGHT}"

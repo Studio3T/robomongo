@@ -49,7 +49,7 @@ set(MongoDB_INCLUDE_DIRS
     ${MongoDB_DIR}/src/third_party/boost-1.60.0
     ${MongoDB_DIR}/src/third_party/mozjs-45/include
     ${MongoDB_DIR}/src/third_party/mozjs-45/mongo_sources
-    ${MongoDB_DIR}/src/third_party/pcre-8.39
+    ${MongoDB_DIR}/src/third_party/pcre-8.41
     ${MongoDB_BUILD_DIR}
 )
 
@@ -92,7 +92,9 @@ foreach(lib ${MongoDB_RELATIVE_LIBS})
 endforeach()
 
 if(SYSTEM_WINDOWS)
-  list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/winv6.3/um/x64/Crypt32.Lib)
+  list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/10.0.17763.0/um/x64/Crypt32.Lib) # todo generic SDK version
+  list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/10.0.17763.0/um/x64/Secur32.Lib)  
+  list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/10.0.17763.0/um/x64/Dnsapi.lib) 
 endif()
 
 # Get MongoDB repository recent tag

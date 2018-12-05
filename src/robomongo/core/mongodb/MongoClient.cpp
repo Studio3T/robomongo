@@ -82,12 +82,8 @@ namespace Robomongo
 
     std::vector<std::string> MongoClient::getDatabaseNames() const
     {
-        typedef std::list<std::string> cont_string_t;
-        cont_string_t dbs = _dbclient->getDatabaseNames();
-        std::vector<std::string> dbNames;
-        for (cont_string_t::const_iterator i = dbs.begin(); i != dbs.end(); ++i) {
-            dbNames.push_back(*i);
-        }
+        std::list<std::string> const& dbs = _dbclient->getDatabaseNames();
+        std::vector<std::string> dbNames = {dbs.begin(), dbs.end()};
         std::sort(dbNames.begin(), dbNames.end());
         return dbNames;
     }
@@ -101,7 +97,7 @@ namespace Robomongo
 
         // Cursor may be NULL, it means we have connectivity problem
         if (!cursor)
-            throw mongo::DBException("Network error while attempting to load list of users", 0);
+            throw std::runtime_error("Network error while attempting to load list of users"/*, 0*/);
 
         float ver = getVersion();
         while (cursor->more()) {
@@ -133,7 +129,7 @@ namespace Robomongo
 
         std::string errorStr = _dbclient->getLastError();
         if (!errorStr.empty())
-            throw mongo::DBException(errorStr, 0);
+            throw std::runtime_error(errorStr/*, 0*/);
     }
 
     void MongoClient::dropUser(const std::string &dbName, const mongo::OID &id)
@@ -149,7 +145,7 @@ namespace Robomongo
 
         std::string errorStr = _dbclient->getLastError();
         if (!errorStr.empty())
-            throw mongo::DBException(errorStr, 0);
+            throw std::runtime_error(errorStr/*, 0*/);
     }
 
     std::vector<MongoFunction> MongoClient::getFunctions(const std::string &dbName)
@@ -161,7 +157,7 @@ namespace Robomongo
 
         // Cursor may be NULL, it means we have connectivity problem
         if (!cursor)
-            throw mongo::DBException("Network error while attempting to load list of functions.", 0);
+            throw std::runtime_error("Network error while attempting to load list of functions."/*, 0*/);
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -319,7 +315,7 @@ namespace Robomongo
             _dbclient->insert(ns.toString(), obj);
             std::string errorStr = _dbclient->getLastError();
             if (!errorStr.empty())
-                throw mongo::DBException(errorStr, 0);
+                throw std::runtime_error(errorStr/* , 0 */);
         } else { // this is update
 
             std::string name = fun.name();
@@ -333,7 +329,7 @@ namespace Robomongo
                 _dbclient->update(ns.toString(), query, obj, true, false);
                 std::string errorStr = _dbclient->getLastError();
                 if (!errorStr.empty())
-                    throw mongo::DBException(errorStr, 0);
+                    throw std::runtime_error(errorStr/*, 0*/);
             } else {    // update function name (remove & insert)
                 _dbclient->insert(ns.toString(), obj);
                 std::string errorStr = _dbclient->getLastError();
@@ -347,7 +343,7 @@ namespace Robomongo
                     _dbclient->remove(ns.toString(), query, true);
                 }
                 else {
-                    throw mongo::DBException(errorStr, 0);
+                    throw std::runtime_error(errorStr/*, 0*/);
                 }
             }
         }
@@ -365,7 +361,7 @@ namespace Robomongo
         _dbclient->remove(ns.toString(), query, true);
         std::string errorStr = _dbclient->getLastError();
         if (!errorStr.empty())
-            throw mongo::DBException(errorStr, 0);
+            throw std::runtime_error(errorStr/*, 0*/);
     }
 
     void MongoClient::createDatabase(const std::string &dbName)
@@ -380,7 +376,7 @@ namespace Robomongo
 
         // If <dbName>.temp already exists, stop.
         if (_dbclient->exists(ns.toString()))
-            throw mongo::DBException(dbName + ".temp already exists.", 0);
+            throw std::runtime_error(dbName + ".temp already exists."/*, 0*/);
 
         // Building { _id : "temp" } document
         mongo::BSONObjBuilder builder;
@@ -391,7 +387,7 @@ namespace Robomongo
         _dbclient->insert(ns.toString(), obj);
         std::string errorStr = _dbclient->getLastError();
         if (!errorStr.empty())
-            throw mongo::DBException(errorStr, 0);
+            throw std::runtime_error(errorStr/*, 0*/);
 
         // Drop temp collection
         _dbclient->dropCollection(ns.toString());
@@ -405,7 +401,7 @@ namespace Robomongo
             if (errStr.empty())
                 errStr = "Failed to get error message.";
 
-            throw mongo::DBException(errStr, 0);
+            throw std::runtime_error(errStr/*, 0*/);
         }
     }
 
@@ -437,11 +433,11 @@ namespace Robomongo
                 if (errStr.empty())
                     errStr = "Failed to get error message.";
 
-                throw mongo::DBException(errStr, 0);
+                throw std::runtime_error(errStr/*, 0*/);
             }
         }
         else {
-            throw mongo::DBException("Collection with same name already exists.", 0);
+            throw std::runtime_error("Collection with same name already exists."/*, 0*/);
         }
     }
 
@@ -461,7 +457,7 @@ namespace Robomongo
             if (errStr.empty())
                 errStr = "Failed to get error message.";
 
-            throw mongo::DBException(errStr, 0);
+            throw std::runtime_error(errStr/*, 0*/);
         }
     }
 
@@ -480,18 +476,18 @@ namespace Robomongo
                 if (errStr.empty())
                     errStr = "Failed to get error message.";
 
-                throw mongo::DBException(errStr, 0);
+                throw std::runtime_error(errStr/*, 0*/);
             }
         }
         else {
-            throw mongo::DBException("Collection with same name already exists.", 0);
+            throw std::runtime_error("Collection with same name already exists."/*, 0*/);
         }
 
         std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(sourceCollection.toString(), mongo::Query()));
 
         // Cursor may be NULL, it means we have connectivity problem
         if (!cursor)
-            throw mongo::DBException("Network error while attempting to run query", 0);
+            throw std::runtime_error("Network error while attempting to run query"/*, 0*/);
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -509,7 +505,7 @@ namespace Robomongo
 
         // Cursor may be NULL, it means we have connectivity problem
         if (!cursor)
-            throw mongo::DBException("Network error while attempting to run query", 0);
+            throw std::runtime_error("Network error while attempting to run query"/*, 0*/);
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -526,11 +522,11 @@ namespace Robomongo
                 if (errStr.empty())
                     errStr = "Failed to get error message.";
 
-                throw mongo::DBException(errStr, 0);
+                throw std::runtime_error(errStr/*, 0*/);
             }
         }
         else {
-            throw mongo::DBException("Collection does not exist.", 0);
+            throw std::runtime_error("Collection does not exist."/*, 0*/);
         }
     }
 
@@ -575,7 +571,7 @@ namespace Robomongo
 
         // DBClientBase::query may return nullptr
         if (!cursor)
-            throw mongo::DBException("Network error while attempting to run query", 0);
+            throw std::runtime_error("Network error while attempting to run query"/*, 0*/);
 
         while (cursor->more()) {
             mongo::BSONObj bsonObj = cursor->next();
@@ -631,6 +627,6 @@ namespace Robomongo
         if (lastError.empty())
             return;
 
-        throw mongo::DBException(lastError, mongo::ErrorCodes::InternalError);
+        throw std::runtime_error(lastError/*, mongo::ErrorCodes::InternalError*/);
     }
 }

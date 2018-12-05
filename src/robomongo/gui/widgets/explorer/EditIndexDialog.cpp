@@ -34,7 +34,7 @@ namespace
                 mongo::Robomongo::fromjson(text.toUtf8());
                 result = true;
             }
-            catch (const mongo::MsgAssertionException &) {
+            catch (const std::exception &) {
             }
         }
         return result;

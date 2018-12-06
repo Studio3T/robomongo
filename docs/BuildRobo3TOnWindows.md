@@ -68,7 +68,7 @@ We use CMake 3.6.0-rc3
  Run the installer and select only 'msvc2015 64-bit'
 
 #### 6. OpenSSL (1.0.2o)
-Download openssl-1.0.1u (https://www.openssl.org/source/old/1.0.2/)
+Download openssl from (https://www.openssl.org/source/old/1.0.2/)
   
 
 B. Building Robo 3T and Dependencies
@@ -99,12 +99,12 @@ https://wiki.openssl.org/index.php/Compilation_and_Installation#W64
 
 #### 2. Build Robo 3T Shell (fork of MongoDB)
 
-Clone Robo 3T Shell and checkout to roboshell-v3.4 branch:
+Clone Robo 3T Shell and checkout to roboshell-v4.0.4 branch:
 
   ```sh
   $ git clone https://github.com/paralect/robomongo-shell.git
   $ cd robomongo-shell
-  $ git branch // roboshell-v3.4
+  $ git branch // roboshell-v4.0.4
   ```
 
 Set environment variable `ROBOMONGO_CMAKE_PREFIX_PATH`, required by Robo 3T-Shell and Robo 3T build scripts, needs to be set according to the following directories:
@@ -118,7 +118,7 @@ Separate directories by semicolon `;` (not colon). You can do this in Command Pr
     > setx ROBOMONGO_CMAKE_PREFIX_PATH "d:\Qt\Qt5.9.3\5.9.3\msvc2015_64;d:\path-to\robomongo-shell;c:\path-to\openssl-1.0.2o"
 
 
-Open VS2015 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.
+Open '**a new**' VS2015 x64 Native Tools Command Prompt and navigate to `robomongo-shell` folder.
 
 Build shell in release mode:
 
@@ -159,7 +159,15 @@ Run configuration step:
 And finally, build Robo 3T:
     
     > bin\build 
- 
+  
+  ```
+  // Scons error on Windows: cheetah module not found
+    copy C:\Users\<user>\AppData\Roaming\Python\Python27\site-packages
+    to C:\Python27\Lib\site-packages 
+    // Also 
+    pip install Typing
+    pip install Cheetah
+  ```  
 
 **Run Robo 3T**
 
@@ -171,6 +179,12 @@ And run Robo 3T
 
     > \robomongo\build\Release\install\robo3t.exe
 
+**Package Robo 3T**
+
+Install Robo 3T to `build\Release\install` folder:
+
+    > bin\pack
+    
 **Debug mode**
 
 For debug mode append `debug` for each command

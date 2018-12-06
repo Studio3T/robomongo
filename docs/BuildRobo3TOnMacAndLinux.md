@@ -115,7 +115,7 @@ https://github.com/mongodb/mongo/wiki/Build-Mongodb-From-Source
 Build Robo 3T Shell in debug mode:
 
   ```sh
-  $ bin/build --dbg
+  $ bin/build debug
   ```
   
 Clean build files for release mode:
@@ -125,7 +125,7 @@ Clean build files for release mode:
 
 Clean build files for debug mode:
   ```sh
-  $ bin/clean --dbg
+  $ bin/clean debug
   ```
   
 For more information refer to [Building Robo 3T Shell](BuildRobo3TShell.md) 

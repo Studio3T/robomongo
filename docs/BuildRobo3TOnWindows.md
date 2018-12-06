@@ -184,7 +184,10 @@ And run Robo 3T
 Install Robo 3T to `build\Release\install` folder:
 
     > bin\pack
-    
+
+Note: nsis-2.46-setup.exe with Full setup must be present.
+
+
 **Debug mode**
 
 For debug mode append `debug` for each command

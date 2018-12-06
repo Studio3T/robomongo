@@ -64,7 +64,7 @@ elseif(SYSTEM_WINDOWS)
 elseif(SYSTEM_MACOSX)
     set(MongoDB_OBJECT_LIST_PLATFORM_PART macosx)
     list(APPEND MongoDB_INCLUDE_DIRS
-        ${MongoDB_DIR}/src/third_party/mozjs-45/platform/x86_64/osx/include)
+        ${MongoDB_DIR}/src/third_party/mozjs-45/platform/x86_64/macOS/include)
 elseif(SYSTEM_FREEBSD)
     set(MongoDB_OBJECT_LIST_PLATFORM_PART freebsd)
     list(APPEND MongoDB_INCLUDE_DIRS

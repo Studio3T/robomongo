@@ -163,7 +163,8 @@ if(APPLE)
   
   target_link_libraries(robomongo
     PRIVATE
-        ${SSL_LIBRARIES})    
+        ${SSL_LIBRARIES}
+        -lresolv)
 endif(APPLE)
 
 target_include_directories(robomongo

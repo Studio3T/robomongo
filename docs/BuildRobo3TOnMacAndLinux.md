@@ -93,7 +93,7 @@ Separate directories by semicolon `;` (not colon):
     // MAC OSX example:
     $ export ROBOMONGO_CMAKE_PREFIX_PATH="/path/to/qt-5.x.x/5.x/clang_64;/path/to/robomongo-shell;/path/to/openssl-1.0.xx"
     // Ubuntu example:
-    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/home/<user>/Qt5.x.x/5.x.x/gcc_64/;/home/<user>/robomongo-shell;//home/<user>/Downloads/oopenssl-1.0.xx"
+    $ export ROBOMONGO_CMAKE_PREFIX_PATH="/home/<user>/Qt5.x.x/5.x.x/gcc_64/;/home/<user>/robomongo-shell;/home/<user>/Downloads/openssl-1.0.xx"
 
 
 Build Robo 3T Shell (in release mode by default):

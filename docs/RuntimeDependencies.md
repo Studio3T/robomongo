@@ -12,7 +12,7 @@ Runtime dependencies that are not privided by platforms but required by Robomong
 Diagnostic of dependencies
 --------------------------
 
-#### Linux
+### Linux
 
 a. View dependencies of executable or shared library: 
 
@@ -51,7 +51,7 @@ More:
 https://linux.die.net/man/1/chrpath
 http://www.programering.com/a/MTOwcDNwATU.html	// examples
 
-#### Mac OS X
+### Mac OS X
 
 Show dependencies of executable or shared library:
 

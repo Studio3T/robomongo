@@ -624,7 +624,7 @@ namespace Robomongo
 
         createTabs();
         createStatusBar();
-        setWindowTitle("Robo 3T - " + QString(PROJECT_VERSION_SHORT));
+        setWindowTitle("Robo 3T - " + QString(PROJECT_VERSION_SHORT) + " Beta");
         setWindowIcon(GuiRegistry::instance().mainWindowIcon());
 
         QTimer::singleShot(0, this, SLOT(manageConnections()));       

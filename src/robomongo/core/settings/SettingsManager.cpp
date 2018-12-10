@@ -60,12 +60,14 @@ namespace Robomongo
     const auto CONFIG_FILE_1_1_0_BETA = QString("%1/.3T/robomongo/1.1.0-Beta/robomongo.json").arg(QDir::homePath());
     const auto CONFIG_FILE_1_1_1 = QString("%1/.3T/robo-3t/1.1.1/robo3t.json").arg(QDir::homePath());
     const auto CONFIG_FILE_1_2_0_BETA = QString("%1/.3T/robo-3t/1.2.0/robo3t.json").arg(QDir::homePath());
+    const auto CONFIG_FILE_1_2_1 = QString("%1/.3T/robo-3t/1.2.1/robo3t.json").arg(QDir::homePath());
 
     // Important Note: In order to import connections from the latest version found, config. file path of an 
     //                 old version must be defined (i.e. CONFIG_FILE_1_0_0 seen above) and placed into the 
     //                 vector initializer list below in order.
     std::vector<QString> const SettingsManager::_configFilesOfOldVersions
     {
+        CONFIG_FILE_1_2_1,
         CONFIG_FILE_1_2_0_BETA,
         CONFIG_FILE_1_1_1,
         CONFIG_FILE_1_1_0_BETA,

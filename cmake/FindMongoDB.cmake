@@ -95,6 +95,8 @@ if(SYSTEM_WINDOWS)
   list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/10.0.17763.0/um/x64/Crypt32.Lib) # todo generic SDK version
   list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/10.0.17763.0/um/x64/Secur32.Lib)  
   list(APPEND MongoDB_LIBS $ENV{WindowsSdkDir}/Lib/10.0.17763.0/um/x64/Dnsapi.lib) 
+elseif(SYSTEM_LINUX)  
+  list(APPEND MongoDB_LIBS /lib/x86_64-linux-gnu/libresolv.so.2) 
 endif()
 
 # Get MongoDB repository recent tag

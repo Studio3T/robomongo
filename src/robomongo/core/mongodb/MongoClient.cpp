@@ -371,7 +371,6 @@ namespace Robomongo
         *  This will create <dbName> database for us.
         *  Finally we are dropping just created temporary collection.
         */
-
         MongoNamespace ns(dbName, "temp");
 
         // If <dbName>.temp already exists, stop.

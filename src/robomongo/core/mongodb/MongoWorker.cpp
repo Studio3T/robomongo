@@ -108,7 +108,7 @@ namespace Robomongo
                 return;
 
             _scriptEngine->interrupt();
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
@@ -338,7 +338,7 @@ namespace Robomongo
             } else {
                 reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError("Failed to execute \"listdatabases\" command.")));
             }
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             reply(event->sender(), new LoadDatabaseNamesResponse(this, EventError(ex.what())));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
@@ -357,7 +357,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new LoadCollectionNamesResponse(this, event->databaseName(), collInfos));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -380,7 +380,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new LoadUsersResponse(this, event->databaseName(), users));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -403,7 +403,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             reply(event->sender(), new LoadCollectionIndexesResponse(this, EventError(ex.what())));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
@@ -420,7 +420,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             reply(event->sender(), new LoadCollectionIndexesResponse(this, EventError(ex.what())));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
@@ -433,7 +433,7 @@ namespace Robomongo
             client->dropIndexFromCollection(event->collection(), event->name());
             client->done();
             reply(event->sender(), new DeleteCollectionIndexResponse(this, event->collection(), event->name()));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             reply(event->sender(), new DeleteCollectionIndexResponse(this, EventError(ex.what())));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }            
@@ -448,7 +448,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new LoadCollectionIndexesResponse(this, ind));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             reply(event->sender(), new LoadCollectionIndexesResponse(this, EventError(ex.what())));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         } 
@@ -475,7 +475,7 @@ namespace Robomongo
             }
 
             reply(event->sender(), new LoadFunctionsResponse(this, event->databaseName(), funcs));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -503,7 +503,7 @@ namespace Robomongo
             client->done();
             reply(event->sender(), new InsertDocumentResponse(this));
         } 
-        catch(const std::runtime_error &ex) {
+        catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -530,7 +530,7 @@ namespace Robomongo
 
             reply(event->sender(), new RemoveDocumentResponse(this, event->removeCount(), event->index()));
         } 
-        catch(const std::runtime_error &ex) {
+        catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -555,7 +555,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new ExecuteQueryResponse(this, event->resultIndex(), event->queryInfo(), docs));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             reply(event->sender(), new ExecuteQueryResponse(this, EventError(ex.what())));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
@@ -641,7 +641,7 @@ namespace Robomongo
             }
 
             _scriptEngine->interrupt();
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
     }
@@ -656,7 +656,7 @@ namespace Robomongo
 
             QStringList list = _scriptEngine->complete(event->prefix, event->mode);
             reply(event->sender(), new AutocompleteResponse(this, list, event->prefix));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             reply(event->sender(), new AutocompleteResponse(this, EventError(ex.what())));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
@@ -664,27 +664,29 @@ namespace Robomongo
 
     void MongoWorker::handle(CreateDatabaseRequest *event)
     {
+        std::string dbname = event->database();
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->createDatabase(event->database());
+            //remove_if(dbname.begin(), dbname.end(), isspace);
+            client->createDatabase(dbname);
 
             // Insert to list of created database. Read docs for this hashset in the header
-            _createdDbs.insert(event->database());
+            _createdDbs.insert(dbname);
 
-            reply(event->sender(), new CreateDatabaseResponse(this, event->database()));
-        } catch(const std::runtime_error &ex) {
+            reply(event->sender(), new CreateDatabaseResponse(this, dbname));
+        } catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
-                    reply(event->sender(), new CreateDatabaseResponse(this, event->database(),
+                    reply(event->sender(), new CreateDatabaseResponse(this, dbname,
                           EventError(PRIMARY_UNREACHABLE, replicaSetInfo, false)));
                 }
                 else    // other errors
-                    reply(event->sender(), new CreateDatabaseResponse(this, event->database(), 
+                    reply(event->sender(), new CreateDatabaseResponse(this, dbname, 
                                                                       EventError(ex.what())));
             }
             else  // single server
-                reply(event->sender(), new CreateDatabaseResponse(this, event->database(), EventError(ex.what())));
+                reply(event->sender(), new CreateDatabaseResponse(this, dbname, EventError(ex.what())));
         }
     }
 
@@ -699,7 +701,7 @@ namespace Robomongo
 
             reply(event->sender(), new DropDatabaseResponse(this, event->database));
         } 
-        catch(const std::runtime_error &ex) {
+        catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -725,7 +727,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new CreateCollectionResponse(this, collection));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -750,7 +752,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new DropCollectionResponse(this, collection));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -774,7 +776,7 @@ namespace Robomongo
 
             reply(event->sender(), new RenameCollectionResponse(this, event->ns().collectionName(),
                                                                 event->newCollection()));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -800,7 +802,7 @@ namespace Robomongo
 
             reply(event->sender(), new DuplicateCollectionResponse(this, sourceCollection, event->newCollection()));
         }
-        catch (const std::runtime_error &ex) {
+        catch (const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -824,7 +826,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new CopyCollectionToDiffServerResponse(this));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             reply(event->sender(), new CopyCollectionToDiffServerResponse(this, EventError(ex.what())));
             LOG_MSG(ex.what(), mongo::logger::LogSeverity::Error());
         }
@@ -838,7 +840,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new CreateUserResponse(this, event->user().name()));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -863,7 +865,7 @@ namespace Robomongo
             client->done();
 
             reply(event->sender(), new DropUserResponse(this, event->username()));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -896,7 +898,7 @@ namespace Robomongo
             }
 
             reply(event->sender(), new CreateFunctionResponse(this, functionName));
-        } catch(const std::runtime_error &ex) {
+        } catch(const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable
@@ -928,7 +930,7 @@ namespace Robomongo
 
             reply(event->sender(), new DropFunctionResponse(this, event->functionName()));
         }
-        catch (const std::runtime_error &ex) {
+        catch (const std::exception &ex) {
             if (_connSettings->isReplicaSet()) {
                 ReplicaSet const& replicaSetInfo = getReplicaSetInfo(true);
                 if (replicaSetInfo.primary.empty()) {  // primary not reachable

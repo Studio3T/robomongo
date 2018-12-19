@@ -300,7 +300,6 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::ui_dbDrop()
     {
-        // Ask user
         auto const& buff = QString("Drop <b>%1</b> database?").arg(QtUtils::toQString(_database->name()));
         int const answer = QMessageBox::question(treeWidget(), "Drop Database", buff, 
                                                  QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
@@ -312,6 +311,12 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::ui_dbRepair()
     {
+        auto const& buff = QString("Repair <b>%1</b> database?").arg(QtUtils::toQString(_database->name()));
+        int const answer = QMessageBox::question(treeWidget(), "Repair Database", buff,
+                                                 QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton);
+        if (answer != QMessageBox::Yes)
+            return;
+
         openCurrentDatabaseShell(_database, "db.repairDatabase()", false);
     }
 

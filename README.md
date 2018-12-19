@@ -38,6 +38,9 @@ Follow: https://twitter.com/Robomongo
 Supported Platforms
 ===============
 
+Note: This sections is for Robo 3T and it directly depends on what MongoDB suppports  
+(See: https://docs.mongodb.com/manual/administration/production-notes/#prod-notes-supported-platforms)
+
 | MongoDB Versions      |
 | :-------------------- |
 | 3.4                   |

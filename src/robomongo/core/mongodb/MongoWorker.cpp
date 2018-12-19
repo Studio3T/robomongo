@@ -46,6 +46,8 @@ namespace Robomongo
         _dbclientRepSet(nullptr),
         _connSettings(connection)
     {
+        // Whitespace removed from the start and the end of host string
+        _connSettings->setServerHost(QString::fromStdString(_connSettings->serverHost()).trimmed().toStdString());
         _thread = new QThread();
         moveToThread(_thread);
         VERIFY(connect( _thread, SIGNAL(finished()), _thread, SLOT(deleteLater()) ));

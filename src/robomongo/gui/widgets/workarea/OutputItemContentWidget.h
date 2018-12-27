@@ -52,6 +52,8 @@ namespace Robomongo
         void applyDockUndockSettings(bool isDocking) const;
         void toggleOrientation(Qt::Orientation orientation) const;
 
+        const OutputWidget* outputWidget() const { return _outputWidget; }
+
     Q_SIGNALS:
         void restoredSize();
         void maximizedPart();

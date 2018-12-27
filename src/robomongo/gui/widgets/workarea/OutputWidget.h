@@ -37,6 +37,7 @@ namespace Robomongo
 
         void showProgress();
         void hideProgress();
+        bool progressBarActive() const;
 
         void applyDockUndockSettings(bool isDocking) const;
         Qt::Orientation getOrientation() const;

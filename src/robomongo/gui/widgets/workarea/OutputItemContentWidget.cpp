@@ -293,7 +293,7 @@ namespace Robomongo
         }
 
         if (!_isTreeModeInitialized) {
-            _bsonTreeview = new BsonTreeView(_shell, _queryInfo);
+            _bsonTreeview = new BsonTreeView(_shell, _queryInfo, this);
             _bsonTreeview->setModel(_mod);
             _stack->addWidget(_bsonTreeview);
 

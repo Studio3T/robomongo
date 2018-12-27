@@ -3,6 +3,7 @@
 #include <QTreeView>
 
 #include "robomongo/core/domain/Notifier.h"
+#include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 
 namespace Robomongo
 {
@@ -33,5 +34,6 @@ namespace Robomongo
         Notifier _notifier;
         QAction *_expandRecursive;
         QAction *_collapseRecursive;
+        const OutputItemContentWidget* _outputItemContentWidget;
     };
 }

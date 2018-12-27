@@ -5,15 +5,16 @@
 #include <QMenu>
 #include <QKeyEvent>
 
-#include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
-
-#include "robomongo/gui/GuiRegistry.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
+#include "robomongo/gui/widgets/workarea/OutputWidget.h"
 
 namespace Robomongo
 {
     BsonTreeView::BsonTreeView(MongoShell *shell, const MongoQueryInfo &queryInfo, QWidget *parent)
-        : BaseClass(parent), _notifier(this, shell, queryInfo)
+        : BaseClass(parent), _notifier(this, shell, queryInfo), 
+          _outputItemContentWidget(dynamic_cast<const OutputItemContentWidget*>(parent))
     {
 #if defined(Q_OS_MAC)
         setAttribute(Qt::WA_MacShowFocusRect, false);
@@ -40,6 +41,9 @@ namespace Robomongo
 
     void BsonTreeView::showContextMenu(const QPoint &point)
     {        
+        if (_outputItemContentWidget->outputWidget()->progressBarActive())
+            return;
+
         QPoint menuPoint = mapToGlobal(point);
         menuPoint.setY(menuPoint.y() + header()->height());
 

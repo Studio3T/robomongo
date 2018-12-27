@@ -125,10 +125,6 @@ namespace Robomongo
         std::string esprima = loadFile(":/robomongo/scripts/esprima.js", true);
         _scope->exec(esprima, "(esprima)", false, true, true);
 
-        // UUID helpers
-        std::string uuidhelpers = loadFile(":/robomongo/scripts/uuidhelpers.js", true);
-        _scope->exec(uuidhelpers, "(uuidhelpers)", false, true, true);
-
         // Enable verbose shell reporting
         _scope->exec("_verboseShell = true;", "(verboseShell)", false, false, false);
 
@@ -225,7 +221,7 @@ namespace Robomongo
                                       "(shell2)" , true , true , false, _timeoutSec * 1000);
                     }
                     else   // failed to run script 
-                        failed = true;                                            
+                        failed = true;                               
 
                     qint64 elapsed = timer.elapsed();   // milliseconds 
 

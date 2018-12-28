@@ -520,7 +520,7 @@ private:
 };
 
 //#ifdef ROBOMONGO
-    class ParseMsgAssertionException{
+    class ParseMsgAssertionException : public std::exception {
     public:
         ParseMsgAssertionException(int c, const std::string& m, int offset, const std::string reason) :
             _reason(reason),

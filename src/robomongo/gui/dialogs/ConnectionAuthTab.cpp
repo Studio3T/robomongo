@@ -39,6 +39,7 @@ namespace Robomongo
 
         _mechanismComboBox = new QComboBox();
         _mechanismComboBox->addItem("SCRAM-SHA-1");
+        _mechanismComboBox->addItem("SCRAM-SHA-256");
         _mechanismComboBox->addItem("MONGODB-CR");
 
         _useAuth = new QCheckBox("Perform authentication");

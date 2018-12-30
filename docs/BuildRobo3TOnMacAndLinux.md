@@ -73,12 +73,12 @@ cp libssl* libcrypto* lib/
 
 #### Step 2. Build Robo 3T Shell (fork of MongoDB)
 
-Clone Robo 3T Shell and checkout to `roboshell-v4.0` branch:
+Clone Robo 3T Shell and checkout to `roboshell-v4.0.4` branch:
 
   ```sh
   $ git clone https://github.com/paralect/robomongo-shell.git
   $ cd robomongo-shell
-  $ git branch // make sure it is "roboshell-v4.0"
+  $ git branch // make sure it is "roboshell-v4.0.4"
   ```
 
 Set special environment variable `ROBOMONGO_CMAKE_PREFIX_PATH` to point to a set of 

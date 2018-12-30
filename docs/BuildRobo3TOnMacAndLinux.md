@@ -35,7 +35,14 @@ More information for installing on Ubuntu:
 https://wiki.qt.io/Install_Qt_5_on_Ubuntu
 ```
 
-5. Download and Build OpenSSL (1.0.2o) - (explained below in section B)
+5. Download and Build OpenSSL (1.0.2o) - (explained below in section B) 
+
+6. Install pip requirements
+
+```
+   // macOS / Linux assuming python = python 2.7
+   pip install --user -r etc/pip/dev-requirements.txt
+```
 
 B. Building Robo 3T and Dependencies
 -------------

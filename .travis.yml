@@ -1,0 +1,16 @@
+os:
+  - linux
+  # - osx
+  # - windows
+
+dist: xenial
+sudo: require
+language: cpp
+
+script:
+  - bash bin/clean
+  - bash bin/configure 
+  # - bash bin/build
+  # - bash bin/run-unit-tests 
+
+# end of file

@@ -232,7 +232,6 @@ endif()
 # Install
 include(RobomongoInstall)
 
-
 #
 # Tests targets (code below should be moved to separate file)
 #
@@ -248,3 +247,21 @@ add_executable(shell EXCLUDE_FROM_ALL shell/shell/dbshell.cpp)
 target_link_libraries(shell
     mongodb
     Threads::Threads)       # Target from FindThreads CMake module
+    
+#
+# Unit Testing using Google Test
+#    
+enable_testing()
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
+set(SOURCES_TEST
+    utils/string_operations_test.cpp
+)
+add_executable(robo_unit_tests ${SOURCES_TEST})
+target_link_libraries(robo_unit_tests 
+    gtest gtest_main 
+    # todo: Add case for Linux and Mac or better find better solution
+    # ${CMAKE_SOURCE_DIR}/build/Release/src/robomongo/robomongo.dir/Release/string_operations.obj
+)
+
+# ------------------

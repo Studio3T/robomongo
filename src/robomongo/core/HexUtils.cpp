@@ -37,7 +37,7 @@ namespace Robomongo
 
             const char *p = s.c_str();
             for (size_t i = 0; i < bytes; i++) {
-                data[i] = mongo::fromHex(p);
+                data[i] = mongo::fromHex(p).getValue();
                 p += 2;
             }
 

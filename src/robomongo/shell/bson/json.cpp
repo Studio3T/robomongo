@@ -446,7 +446,7 @@ Status JParse::binaryObject(StringData fieldName, BSONObjBuilder& builder) {
             "byte");
     }
     builder.appendBinData(
-        fieldName, binData.length(), BinDataType(fromHex(binDataType)), binData.data());
+        fieldName, binData.length(), BinDataType(fromHex(binDataType).getValue()), binData.data());
     return Status::OK();
 }
 
@@ -1287,8 +1287,8 @@ Status JParse::chars(std::string* result, const char* terminalSet, const char* a
                     if (!isHexString(StringData(q, 4))) {
                         return parseError("Expecting 4 hex digits");
                     }
-                    unsigned char first = fromHex(q);
-                    unsigned char second = fromHex(q += 2);
+                    unsigned char first = fromHex(q).getValue();
+                    unsigned char second = fromHex(q += 2).getValue();
                     const std::string& utf8str = encodeUTF8(first, second);
                     for (unsigned int i = 0; i < utf8str.size(); i++) {
                         result->push_back(utf8str[i]);

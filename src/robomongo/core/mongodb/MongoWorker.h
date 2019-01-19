@@ -140,6 +140,9 @@ namespace Robomongo
         virtual void timerEvent(QTimerEvent *);
 
     private:
+        // Added after Mongo 4.0 to fix connection failures seen after a first edit/add/remove doc. operation
+        void restartReplicaSetConnection();
+
         /**
          * @brief Send event to this MongoWorker
          */

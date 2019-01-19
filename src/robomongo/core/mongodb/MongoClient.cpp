@@ -535,7 +535,7 @@ namespace Robomongo
         checkLastErrorAndThrow(ns.databaseName());
     }
 
-    void MongoClient::saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
+    void MongoClient::saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns, bool const replicaSetConnectionWithAuth)
     {
         mongo::BSONElement id = obj.getField("_id");
         mongo::BSONObjBuilder builder;
@@ -544,7 +544,9 @@ namespace Robomongo
         mongo::Query query(bsonQuery);
 
         _dbclient->update(ns.toString(), query, obj, true, false);
-        checkLastErrorAndThrow(ns.databaseName());
+
+        if(!replicaSetConnectionWithAuth)
+            checkLastErrorAndThrow(ns.databaseName());
     }
 
     void MongoClient::removeDocuments(const MongoNamespace &ns, mongo::Query query, bool justOne /*= true*/)

@@ -68,6 +68,24 @@ namespace Robomongo
         }
     }
 
+    void MongoWorker::restartReplicaSetConnection()
+    {
+        if (!_connSettings->hasEnabledPrimaryCredential())
+            return;
+
+        CredentialSettings *credentials = _connSettings->primaryCredential();
+        mongo::BSONObj authParams(mongo::BSONObjBuilder()
+            .append("user", credentials->userName())
+            .append("db", credentials->databaseName())
+            .append("pwd", credentials->userPassword())
+            .append("mechanism", credentials->mechanism())
+            .obj());
+
+        _dbclientRepSet.release();
+        mongo::DBClientBase *conn = getConnection(true);
+        conn->auth(authParams);
+    }
+
     void MongoWorker::keepAlive()
     {
         try {
@@ -496,9 +514,17 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
+    
+            // Added after Mongo 4.0 due to connection problems after first edit/insert/remove operation
+            bool replicaSetConnectionWithAuth = false;
+            if (_connSettings->isReplicaSet()) {
+                restartReplicaSetConnection();  
+                if (_connSettings->hasEnabledPrimaryCredential())
+                    replicaSetConnectionWithAuth = true;
+            }
 
             if (event->overwrite())
-                client->saveDocument(event->obj(), event->ns());
+                client->saveDocument(event->obj(), event->ns(), replicaSetConnectionWithAuth);
             else
                 client->insertDocument(event->obj(), event->ns());
 
@@ -985,7 +1011,7 @@ namespace Robomongo
                 // Connect timeout is fixed, but short, at 5 seconds (see headers for DBClientConnection)
                 _dbclient = DBClientConnection(new mongo::DBClientConnection(true, _mongoTimeoutSec));
 
-                mongo::Status status = _dbclient->connect(_connSettings->hostAndPort(), "robo3t");
+                mongo::Status const& status = _dbclient->connect(_connSettings->hostAndPort(), "robo3t");
                 if (!status.isOK() && mayReturnNull) 
                     return nullptr;
             }

@@ -15,6 +15,7 @@
 
 #include "robomongo/shell/db/ptimeutil.h"
 
+#include "robomongo/gui/MainWindow.h"
 #include "robomongo/gui/widgets/workarea/BsonTreeItem.h"
 #include "robomongo/gui/dialogs/DocumentTextEditor.h"
 #include "robomongo/gui/utils/DialogUtils.h"
@@ -227,6 +228,7 @@ namespace Robomongo
     void Notifier::handle(InsertDocumentResponse *event)
     {
         if (event->isError()) { // Error
+            mainWindow()->hideQueryWidgetProgressBar();            
             if (_shell->server()->connectionRecord()->isReplicaSet()) {
                 // Insert document from tab results window (Notifier, OutputWindow widget)
                 if (EventError::SetPrimaryUnreachable == event->error().errorCode()) {
@@ -236,7 +238,7 @@ namespace Robomongo
             }
             else  // single server
                 QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
-            
+
             return;
         }
 
@@ -299,6 +301,16 @@ namespace Robomongo
 
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(namesList.join("."));
+    }
+
+    MainWindow* Notifier::mainWindow() const
+    {
+        MainWindow* mainWindow;
+        for (auto wid : QApplication::topLevelWidgets()) {
+            if (mainWindow = qobject_cast<MainWindow*>(wid))
+                break;
+        }
+        return mainWindow;
     }
 
     void Notifier::handleDeleteCommand()
@@ -374,6 +386,7 @@ namespace Robomongo
         int result = editor.exec();
 
         if (result == QDialog::Accepted) {
+            mainWindow()->showQueryWidgetProgressBar();
             _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo._info._ns);
         }
     }

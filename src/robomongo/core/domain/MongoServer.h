@@ -122,6 +122,7 @@ namespace Robomongo
                                            bool expanded);
         void updateReplicaSetSettings(EstablishConnectionResponse* event);
         void handleConnectionFailure(EstablishConnectionResponse* event);
+        void hideProgressBar() const;
 
         MongoWorker *_worker;
         std::unique_ptr<ConnectionSettings> _connSettings;

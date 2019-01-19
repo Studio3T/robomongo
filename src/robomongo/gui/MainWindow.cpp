@@ -841,6 +841,18 @@ namespace Robomongo
     {
         return _workArea->getWelcomeTab();
     }
+
+    void MainWindow::showQueryWidgetProgressBar() const
+    {
+        if (QueryWidget *widget = _workArea->currentQueryWidget())
+            widget->showProgress();
+    }
+
+    void MainWindow::hideQueryWidgetProgressBar() const
+    {
+        if (QueryWidget *widget = _workArea->currentQueryWidget())
+            widget->hideProgress();
+    }
     
     void MainWindow::manageConnections()
     {

@@ -11,6 +11,7 @@ QT_END_NAMESPACE
 
 namespace Robomongo
 {
+    class MainWindow;
     class MongoShell;
     class BsonTreeItem;
     class InsertDocumentResponse;
@@ -65,6 +66,8 @@ namespace Robomongo
         void onCopyPathDocument();
 
     private:
+        MainWindow* mainWindow() const;
+
         QAction *_deleteDocumentAction;
         QAction *_deleteDocumentsAction;
         QAction *_editDocumentAction;

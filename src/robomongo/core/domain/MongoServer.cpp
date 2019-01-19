@@ -13,8 +13,11 @@
 #include "robomongo/core/events/MongoEventsInfo.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/gui/MainWindow.h"
 #include "robomongo/utils/common.h"
 #include "robomongo/utils/string_operations.h"
+
+#include <QApplication>
 
 namespace Robomongo {
     R_REGISTER_EVENT(MongoServerLoadingDatabasesEvent)
@@ -257,6 +260,7 @@ namespace Robomongo {
     void MongoServer::handle(InsertDocumentResponse *event) 
     {
         if (event->isError()) {
+            hideProgressBar();
             if (_connSettings->isReplicaSet()) {
                 if (ConnectionPrimary == _connectionType) { // Insert document from explorer context menu
                     if (EventError::SetPrimaryUnreachable == event->error().errorCode()) {
@@ -483,6 +487,16 @@ namespace Robomongo {
                 _app->closeServer(this);
             }
         }
+    }
+
+    void MongoServer::hideProgressBar() const
+    {
+        MainWindow* mainWindow;
+        for (auto wid : QApplication::topLevelWidgets()) {
+            if (mainWindow = qobject_cast<MainWindow*>(wid))
+                break;
+        }
+        mainWindow->hideQueryWidgetProgressBar();
     }
 
 }   // namespace Robomongo

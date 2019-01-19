@@ -37,6 +37,8 @@ namespace Robomongo
         MainWindow();
 
         WelcomeTab* getWelcomeTab();
+        void showQueryWidgetProgressBar() const;
+        void hideQueryWidgetProgressBar() const;
 
     public Q_SLOTS:
         void manageConnections();

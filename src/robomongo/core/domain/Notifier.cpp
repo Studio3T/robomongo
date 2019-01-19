@@ -1,5 +1,8 @@
 #include "robomongo/core/domain/Notifier.h"
 
+#include <thread>
+#include <chrono>
+
 #include <QAction>
 #include <QClipboard>
 #include <QApplication>
@@ -244,6 +247,7 @@ namespace Robomongo
         }
 
         // Success
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         _shell->query(0, _queryInfo);
     }
 
@@ -253,8 +257,10 @@ namespace Robomongo
             if (!(event->removeCount == RemoveDocumentCount::MULTI && event->index > 0))
                 QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
        }
-       else // Success
-            _shell->query(0, _queryInfo);
+       else {   // Success
+           std::this_thread::sleep_for(std::chrono::milliseconds(100));
+           _shell->query(0, _queryInfo);
+       }
     }
 
     void Notifier::onCopyNameDocument()

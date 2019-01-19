@@ -82,8 +82,8 @@ namespace Robomongo
             .obj());
 
         _dbclientRepSet.release();
-        mongo::DBClientBase *conn = getConnection(true);
-        conn->auth(authParams);
+        if(mongo::DBClientBase *conn = getConnection(true))
+            conn->auth(authParams);
     }
 
     void MongoWorker::keepAlive()
@@ -553,7 +553,16 @@ namespace Robomongo
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
 
-            client->removeDocuments(event->ns(), event->query(), (event->removeCount() == RemoveDocumentCount::ONE));
+            // Added after Mongo 4.0 due to connection problems after first edit/insert/remove operation
+            bool replicaSetConnectionWithAuth = false;
+            if (_connSettings->isReplicaSet()) {
+                restartReplicaSetConnection();
+                if (_connSettings->hasEnabledPrimaryCredential())
+                    replicaSetConnectionWithAuth = true;
+            }
+
+            client->removeDocuments(event->ns(), event->query(), replicaSetConnectionWithAuth, 
+                                    event->removeCount() == RemoveDocumentCount::ONE);
             client->done();
 
             reply(event->sender(), new RemoveDocumentResponse(this, event->removeCount(), event->index()));

@@ -278,11 +278,10 @@ namespace Robomongo {
             _bus->publish(new InsertDocumentResponse(this, event->error()));
             LOG_MSG("Document inserted.", mongo::logger::LogSeverity::Info());
         }
-
     }
 
     void MongoServer::handle(RemoveDocumentResponse *event) 
-    {
+    {        
         if (event->removeCount == RemoveDocumentCount::MULTI && event->index > 0)
             return;
 
@@ -295,6 +294,7 @@ namespace Robomongo {
         }
 
         if (event->isError()) {
+            hideProgressBar();
             if (_connSettings->isReplicaSet() &&
                 EventError::SetPrimaryUnreachable == event->error().errorCode()) {
                 auto refreshEvent = ReplicaSetRefreshed(this, event->error(), event->error().replicaSetInfo());

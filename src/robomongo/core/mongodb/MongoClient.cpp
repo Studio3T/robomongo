@@ -549,10 +549,12 @@ namespace Robomongo
             checkLastErrorAndThrow(ns.databaseName());
     }
 
-    void MongoClient::removeDocuments(const MongoNamespace &ns, mongo::Query query, bool justOne /*= true*/)
+    void MongoClient::removeDocuments(const MongoNamespace &ns, mongo::Query query, bool const replicaSetConnectionWithAuth, 
+                                      bool justOne /*= true*/)
     {
         _dbclient->remove(ns.toString(), query, justOne);
-        checkLastErrorAndThrow(ns.databaseName());
+        if (!replicaSetConnectionWithAuth)
+            checkLastErrorAndThrow(ns.databaseName());
     }
 
     std::vector<MongoDocumentPtr> MongoClient::query(const MongoQueryInfo &info)

@@ -222,6 +222,7 @@ namespace Robomongo
                                                                   RemoveDocumentCount::MULTI;
             _shell->server()->removeDocuments(query, _queryInfo._info._ns, removeCount, index);
             ++index;
+            mainWindow()->showQueryWidgetProgressBar();
         }
     }
 

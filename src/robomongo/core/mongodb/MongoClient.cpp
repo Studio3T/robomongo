@@ -529,10 +529,11 @@ namespace Robomongo
         }
     }
 
-    void MongoClient::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns)
+    void MongoClient::insertDocument(const mongo::BSONObj &obj, const MongoNamespace &ns, bool const replicaSetConnectionWithAuth)
     {
         _dbclient->insert(ns.toString(), obj);
-        checkLastErrorAndThrow(ns.databaseName());
+        if (!replicaSetConnectionWithAuth)
+            checkLastErrorAndThrow(ns.databaseName());
     }
 
     void MongoClient::saveDocument(const mongo::BSONObj &obj, const MongoNamespace &ns, bool const replicaSetConnectionWithAuth)
@@ -544,7 +545,6 @@ namespace Robomongo
         mongo::Query query(bsonQuery);
 
         _dbclient->update(ns.toString(), query, obj, true, false);
-
         if(!replicaSetConnectionWithAuth)
             checkLastErrorAndThrow(ns.databaseName());
     }

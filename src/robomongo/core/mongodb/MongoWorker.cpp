@@ -526,7 +526,7 @@ namespace Robomongo
             if (event->overwrite())
                 client->saveDocument(event->obj(), event->ns(), replicaSetConnectionWithAuth);
             else
-                client->insertDocument(event->obj(), event->ns());
+                client->insertDocument(event->obj(), event->ns(), replicaSetConnectionWithAuth);
 
             client->done();
             reply(event->sender(), new InsertDocumentResponse(this));

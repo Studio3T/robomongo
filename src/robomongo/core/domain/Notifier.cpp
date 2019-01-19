@@ -228,7 +228,7 @@ namespace Robomongo
     void Notifier::handle(InsertDocumentResponse *event)
     {
         if (event->isError()) { // Error
-            mainWindow()->hideQueryWidgetProgressBar();            
+            mainWindow()->hideQueryWidgetProgressBar();        
             if (_shell->server()->connectionRecord()->isReplicaSet()) {
                 // Insert document from tab results window (Notifier, OutputWindow widget)
                 if (EventError::SetPrimaryUnreachable == event->error().errorCode()) {
@@ -371,23 +371,20 @@ namespace Robomongo
         if (!documentItem)
             return;
 
-        mongo::BSONObj obj = documentItem->superRoot();
-
-        std::string str = BsonUtils::jsonString(obj, mongo::TenGen, 1,
-            AppRegistry::instance().settingsManager()->uuidEncoding(),
-            AppRegistry::instance().settingsManager()->timeZone());
+        std::string str = BsonUtils::jsonString(documentItem->superRoot(), mongo::TenGen, 1,
+                                                AppRegistry::instance().settingsManager()->uuidEncoding(),
+                                                AppRegistry::instance().settingsManager()->timeZone());
 
         const QString &json = QtUtils::toQString(str);
 
-        DocumentTextEditor editor(_queryInfo._info,
-            json, false, dynamic_cast<QWidget*>(_observer));
+        DocumentTextEditor editor(_queryInfo._info, json, false, dynamic_cast<QWidget*>(_observer));
 
         editor.setWindowTitle("Edit Document");
         int result = editor.exec();
 
         if (result == QDialog::Accepted) {
-            mainWindow()->showQueryWidgetProgressBar();
             _shell->server()->saveDocuments(editor.bsonObj(), _queryInfo._info._ns);
+            mainWindow()->showQueryWidgetProgressBar();
         }
     }
 
@@ -434,6 +431,7 @@ namespace Robomongo
         DocumentTextEditor::ReturnType obj = editor.bsonObj();
         for (DocumentTextEditor::ReturnType::const_iterator it = obj.begin(); it != obj.end(); ++it) {
             _shell->server()->insertDocument(*it, _queryInfo._info._ns);
+            mainWindow()->showQueryWidgetProgressBar();
         }
     }
 

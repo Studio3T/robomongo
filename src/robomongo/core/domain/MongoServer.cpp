@@ -491,9 +491,9 @@ namespace Robomongo {
 
     void MongoServer::hideProgressBar() const
     {
-        MainWindow* mainWindow;
+        MainWindow* mainWindow = nullptr;
         for (auto wid : QApplication::topLevelWidgets()) {
-            if (mainWindow = qobject_cast<MainWindow*>(wid))
+            if ((mainWindow = qobject_cast<MainWindow*>(wid)))
                 break;
         }
         mainWindow->hideQueryWidgetProgressBar();

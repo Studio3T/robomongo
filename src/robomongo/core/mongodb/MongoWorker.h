@@ -151,7 +151,8 @@ namespace Robomongo
         DatabasesContainerType getDatabaseNamesSafe();
         std::string getAuthBase() const;
 
-        mongo::DBClientBase *getConnection(bool mayReturnNull = false);
+        // Returns a pair of DBClientBase* connection and error string
+        std::pair<mongo::DBClientBase*, std::string> getConnection(bool mayReturnNull = false);
         MongoClient *getClient();
 
         /**

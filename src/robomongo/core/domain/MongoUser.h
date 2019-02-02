@@ -20,10 +20,12 @@ namespace Robomongo
 
         mongo::OID id() const { return _id; }
         std::string name() const { return _name; }
+        std::string password() const { return _password; }
         RoleType role() const { return _role; }
         std::string passwordHash() const { return _passwordHash; }
 
         void setName(const std::string &name) { _name = name; }
+        void setPassword(const std::string &pwd) { _password = pwd; }
         void setRole(const RoleType &role) { _role = role; }
         void setPasswordHash(const std::string &hash) { _passwordHash = hash; }
 
@@ -41,6 +43,7 @@ namespace Robomongo
         std::string _name;
         bool _readOnly;
         RoleType _role;
+        std::string _password;
         std::string _passwordHash;
         std::string _userSource;
     };

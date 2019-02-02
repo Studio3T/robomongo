@@ -111,25 +111,28 @@ namespace Robomongo
 
     void MongoClient::createUser(const std::string &dbName, const MongoUser &user, bool overwrite)
     {
-        MongoNamespace ns(dbName, "system.users");
-        mongo::BSONObj obj = user.toBson();
-
-        if (!overwrite) {   // create new user
-            _dbclient->insert(ns.toString(), obj);
-        } 
-        else {  // update existing user
-            mongo::BSONElement id = obj.getField("_id");
-            mongo::BSONObjBuilder builder;
-            builder.append(id);
-            mongo::BSONObj bsonQuery = builder.obj();
-            mongo::Query query(bsonQuery);
-
-            _dbclient->update(ns.toString(), query, obj, true, false);
+        mongo::BSONObjBuilder cmd;
+        cmd.append("createUser", user.name());
+        cmd.append("pwd", user.password());
+        
+        mongo::BSONArrayBuilder roles;
+        auto const& rolesStrs = user.role();
+        for (auto const& roleStr : rolesStrs) {
+            mongo::BSONObjBuilder role;
+            role.append("role", roleStr).append("db", user.userSource());
+            roles.append(role.done());
         }
+        cmd.appendArray("roles", roles.done());
+        auto yy = cmd.done().toString();
 
-        std::string errorStr = _dbclient->getLastError();
-        if (!errorStr.empty())
-            throw std::runtime_error(errorStr/*, 0*/);
+        mongo::BSONObj result;
+        if (!_dbclient->runCommand(dbName, cmd.done(), result)) {
+            std::string errStr = result.getStringField("errmsg");
+            if (errStr.empty())
+                errStr = "Failed to get error message.";
+   
+            throw std::runtime_error(errStr/*, 0*/);
+        }       
     }
 
     void MongoClient::dropUser(const std::string &dbName, const mongo::OID &id)

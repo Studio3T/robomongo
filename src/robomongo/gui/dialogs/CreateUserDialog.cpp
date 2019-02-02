@@ -74,7 +74,8 @@ namespace Robomongo
         _userPassEdit->setEchoMode(QLineEdit::Password);
         _userSourceLabel = new QLabel("UserSource:");
         _userSourceComboBox = new QComboBox();
-        _userSourceComboBox->addItems(QStringList() << "" << databases); //setText(QtUtils::toQString(user.userSource()));
+        _userSourceComboBox->addItems(QStringList() << databases); //setText(QtUtils::toQString(user.userSource()));    
+        _userSourceComboBox->setCurrentIndex(databases.indexOf(database));
         utils::setCurrentText(_userSourceComboBox, QtUtils::toQString(user.userSource()));
 
         QGridLayout *gridRoles = new QGridLayout();
@@ -198,6 +199,7 @@ namespace Robomongo
             std::string hash = MongoUtils::buildPasswordHash(username, pass);
 
             _user.setName(username);
+            _user.setPassword(pass);
             _user.setPasswordHash(hash);
             _user.setReadOnly(_readOnlyCheckBox->isChecked());
         }
@@ -222,6 +224,7 @@ namespace Robomongo
 
             _user.setPasswordHash(hash);
             _user.setName(username);        
+            _user.setPassword(pass);
             _user.setUserSource(userSource);
 
             MongoUser::RoleType roles;

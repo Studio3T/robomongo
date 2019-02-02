@@ -136,7 +136,7 @@ namespace Robomongo
     {
         ExplorerDatabaseTreeItem *databaseItem = ExplorerDatabaseCategoryTreeItem::databaseItem();
         if (databaseItem) {
-            openDatabaseShell(databaseItem->database(), "db.system.users.find()");
+            openDatabaseShell(databaseItem->database(), "db.getUsers()");
         }
     }
 

@@ -212,11 +212,6 @@ namespace Robomongo
             if (userSource.empty() && pass.empty())
                 return;
 
-            if (!userSource.empty() && !pass.empty()) {
-                QMessageBox::warning(this, "Invalid input", "The UserSource field and the Password field are mutually exclusive. The document cannot contain both.\n");
-                return;
-            }
-
             std::string hash;
             if (!pass.empty()) {
                 hash = MongoUtils::buildPasswordHash(username, pass);

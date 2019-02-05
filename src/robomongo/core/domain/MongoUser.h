@@ -22,16 +22,13 @@ namespace Robomongo
         std::string name() const { return _name; }
         std::string password() const { return _password; }
         RoleType role() const { return _role; }
-        std::string passwordHash() const { return _passwordHash; }
 
         void setName(const std::string &name) { _name = name; }
         void setPassword(const std::string &pwd) { _password = pwd; }
         void setRole(const RoleType &role) { _role = role; }
-        void setPasswordHash(const std::string &hash) { _passwordHash = hash; }
 
         std::string userSource() const { return _userSource; }
         void setUserSource(const std::string &source) { _userSource = source; }
-        mongo::BSONObj toBson() const;
         bool readOnly() const { return _readOnly; }
         void setReadOnly(bool readonly) { _readOnly = readonly; }
 

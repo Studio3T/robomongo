@@ -196,11 +196,8 @@ namespace Robomongo
             if (username.empty() || pass.empty())
                 return;
 
-            std::string hash = MongoUtils::buildPasswordHash(username, pass);
-
             _user.setName(username);
             _user.setPassword(pass);
-            _user.setPasswordHash(hash);
             _user.setReadOnly(_readOnlyCheckBox->isChecked());
         }
         else {
@@ -212,12 +209,6 @@ namespace Robomongo
             if (userSource.empty() && pass.empty())
                 return;
 
-            std::string hash;
-            if (!pass.empty()) {
-                hash = MongoUtils::buildPasswordHash(username, pass);
-            }
-
-            _user.setPasswordHash(hash);
             _user.setName(username);        
             _user.setPassword(pass);
             _user.setUserSource(userSource);

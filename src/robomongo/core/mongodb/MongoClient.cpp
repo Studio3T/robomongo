@@ -90,21 +90,21 @@ namespace Robomongo
 
     std::vector<MongoUser> MongoClient::getUsers(const std::string &dbName)
     {
-        MongoNamespace ns(dbName, "system.users");
-        std::vector<MongoUser> users;
+        mongo::BSONObjBuilder cmd;
+        cmd.append("usersInfo", 1);
 
-        std::unique_ptr<mongo::DBClientCursor> cursor(_dbclient->query(ns.toString(), mongo::Query()));
+        mongo::BSONObj result;
+        if (!_dbclient->runCommand(dbName, cmd.done(), result)) {
+            std::string errStr = result.getStringField("errmsg");
+            if (errStr.empty())
+                errStr = "Failed to get error message.";
 
-        // Cursor may be NULL, it means we have connectivity problem
-        if (!cursor)
-            throw std::runtime_error("Network error while attempting to load list of users"/*, 0*/);
-
-        float ver = getVersion();
-        while (cursor->more()) {
-            mongo::BSONObj bsonObj = cursor->next();
-            MongoUser user(ver, bsonObj);
-            users.push_back(user);
+            throw std::runtime_error(errStr/*, 0*/);
         }
+
+        std::vector<MongoUser> users;
+        for (auto const& usr : result.getField("users").Array())
+            users.push_back(MongoUser(getVersion(), usr.embeddedObject()));
 
         return users;
     }
@@ -123,7 +123,6 @@ namespace Robomongo
             roles.append(role.done());
         }
         cmd.appendArray("roles", roles.done());
-        auto yy = cmd.done().toString();
 
         mongo::BSONObj result;
         if (!_dbclient->runCommand(dbName, cmd.done(), result)) {

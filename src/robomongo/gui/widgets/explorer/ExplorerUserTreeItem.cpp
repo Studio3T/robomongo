@@ -4,9 +4,11 @@
 #include <QMenu>
 
 #include "robomongo/gui/dialogs/CreateUserDialog.h"
-#include "robomongo/gui/utils/DialogUtils.h"
 #include "robomongo/gui/GuiRegistry.h"
+#include "robomongo/gui/utils/DialogUtils.h"
 
+#include "robomongo/core/AppRegistry.h"
+#include "robomongo/core/domain/App.h"
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -23,7 +25,7 @@ namespace
     std::string buildToolTip(const Robomongo::MongoUser &user)
     {
         char buff[2048] = {0};
-        sprintf(buff, tooltipTemplate, user.name().c_str(), user.id().toString().c_str());
+        sprintf(buff, tooltipTemplate, user.name().c_str(), user.id().c_str());
         return buff;
     }
 }
@@ -36,10 +38,10 @@ namespace Robomongo
         QAction *dropUser = new QAction("Drop User", this);
         VERIFY(connect(dropUser, SIGNAL(triggered()), SLOT(ui_dropUser())));
 
-        QAction *editUser = new QAction("Edit User", this);
-        VERIFY(connect(editUser, SIGNAL(triggered()), SLOT(ui_editUser())));
+        QAction *viewUser = new QAction("View User", this);
+        VERIFY(connect(viewUser, SIGNAL(triggered()), SLOT(ui_viewUser())));
 
-        BaseClass::_contextMenu->addAction(editUser);
+        BaseClass::_contextMenu->addAction(viewUser);
         BaseClass::_contextMenu->addAction(dropUser);
 
         setText(0, QtUtils::toQString(_user.name()));
@@ -56,31 +58,13 @@ namespace Robomongo
                                                  QtUtils::toQString(_user.name()));
 
         if (answer == QMessageBox::Yes)
-            _database->dropUser(_user.id(), _user.name());
+            _database->dropUser(_user.name());
     }
 
-    void ExplorerUserTreeItem::ui_editUser()
+    void ExplorerUserTreeItem::ui_viewUser()
     {
-        std::unique_ptr<CreateUserDialog> dlg = nullptr;
-
-        float const version = _user.version();
-        if (version < MongoUser::minimumSupportedVersion) {
-            dlg.reset(new CreateUserDialog(
-                QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()), 
-                QtUtils::toQString(_database->name()), _user, treeWidget()));
-        }
-        else {
-           dlg.reset(new CreateUserDialog(_database->server()->getDatabasesNames(), 
-               QtUtils::toQString(_database->server()->connectionRecord()->getFullAddress()), 
-               QtUtils::toQString(_database->name()), _user, treeWidget()));
-        }
-        
-        dlg->setWindowTitle("Edit User");
-        dlg->setUserPasswordLabelText("New Password:");
-
-        if (dlg->exec() == QDialog::Accepted) {
-            MongoUser user = dlg->user();
-            _database->createUser(user, true);
-        }
+        auto const& app = Robomongo::AppRegistry::instance().app();
+        app->openShell(_database, QString::fromStdString("db.getUser(\"" + _user.name() + "\")"), true,
+                        Robomongo::QtUtils::toQString(_database->name()), Robomongo::CursorPosition());
     }
 }

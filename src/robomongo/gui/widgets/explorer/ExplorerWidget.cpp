@@ -16,6 +16,7 @@
 #include "robomongo/gui/widgets/explorer/ExplorerDatabaseCategoryTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
 
 namespace Robomongo
 {
@@ -146,10 +147,14 @@ namespace Robomongo
     }
 
     void ExplorerWidget::ui_itemDoubleClicked(QTreeWidgetItem *item, int column)
-    {
-        auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item);
-        if (collectionItem) {
+    {        
+        if (auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(item)) {
             AppRegistry::instance().app()->openShell(collectionItem->collection());
+            return;
+        }
+
+        if (auto userItem = dynamic_cast<ExplorerUserTreeItem *>(item)) {
+            userItem->ui_viewUser();
             return;
         }
 

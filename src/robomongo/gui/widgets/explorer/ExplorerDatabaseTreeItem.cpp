@@ -188,24 +188,20 @@ namespace Robomongo
         if (event->isError()) {
             _usersFolderItem->setText(0, "Users");
             _usersFolderItem->setExpanded(false);
-
             return;
         }
 
-        std::vector<MongoUser> users = event->users();
-        int count = users.size();
-        _usersFolderItem->setText(0, detail::buildName("Users", count));
+        auto const& users = event->users();
+        _usersFolderItem->setText(0, detail::buildName("Users", users.size()));
 
-        // Do not expand, when we do not have users
-        if (count == 0)
+        // Do not expand, when we do not have any users
+        if (users.size() == 0)
             _usersFolderItem->setExpanded(false);
 
         QtUtils::clearChildItems(_usersFolderItem);
 
-        for (int i = 0; i < users.size(); ++i) {
-            MongoUser user = users[i];
+        for(auto const& user : users)
             addUserItem(event->database(), user);
-        }
     }
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseFunctionsLoadedEvent *event)

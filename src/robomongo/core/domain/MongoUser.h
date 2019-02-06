@@ -18,7 +18,7 @@ namespace Robomongo
          */
         MongoUser(const float version);
 
-        mongo::OID id() const { return _id; }
+        std::string id() const { return _id; }
         std::string name() const { return _name; }
         std::string password() const { return _password; }
         RoleType role() const { return _role; }
@@ -36,12 +36,11 @@ namespace Robomongo
         static const float minimumSupportedVersion;
     private:
         float _version;
-        mongo::OID _id;
         std::string _name;
         bool _readOnly;
         RoleType _role;
         std::string _password;
-        std::string _passwordHash;
+        std::string _id;
         std::string _userSource;
     };
 }

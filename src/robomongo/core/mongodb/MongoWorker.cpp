@@ -899,7 +899,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->dropUser(event->database(), event->id());
+            client->dropUser(event->database(), event->username());
             client->done();
 
             reply(event->sender(), new DropUserResponse(this, event->username()));

@@ -86,9 +86,9 @@ namespace Robomongo
         _bus->send(_server->worker(), new CreateUserRequest(this, _name, user, overwrite));
     }
 
-    void MongoDatabase::dropUser(const mongo::OID &id, std::string const& userName)
+    void MongoDatabase::dropUser(std::string const& userName)
     {
-        _bus->send(_server->worker(), new DropUserRequest(this, _name, id, userName));
+        _bus->send(_server->worker(), new DropUserRequest(this, _name, userName));
     }
 
     void MongoDatabase::createFunction(const MongoFunction &fun)

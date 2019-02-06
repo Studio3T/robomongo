@@ -24,7 +24,7 @@ namespace Robomongo
 
         std::vector<MongoUser> getUsers(const std::string &dbName);
         void createUser(const std::string &dbName, const MongoUser &user, bool overwrite);
-        void dropUser(const std::string &dbName, const mongo::OID &id);
+        void dropUser(const std::string &dbName, const std::string &user);
 
         std::vector<MongoFunction> getFunctions(const std::string &dbName);
         std::vector<EnsureIndexInfo> getIndexes(const MongoCollectionInfo &collection) const;

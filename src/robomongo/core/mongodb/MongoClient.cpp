@@ -134,20 +134,19 @@ namespace Robomongo
         }       
     }
 
-    void MongoClient::dropUser(const std::string &dbName, const mongo::OID &id)
+    void MongoClient::dropUser(const std::string &dbName, const std::string &user)
     {
-        MongoNamespace ns(dbName, "system.users");
+        mongo::BSONObjBuilder cmd;
+        cmd.append("dropUser", user);
 
-        mongo::BSONObjBuilder builder;
-        builder.append("_id", id);
-        mongo::BSONObj bsonQuery = builder.obj();
-        mongo::Query query(bsonQuery);
+        mongo::BSONObj result;
+        if (!_dbclient->runCommand(dbName, cmd.done(), result)) {
+            std::string errStr = result.getStringField("errmsg");
+            if (errStr.empty())
+                errStr = "Failed to get error message.";
 
-        _dbclient->remove(ns.toString(), query, true);
-
-        std::string errorStr = _dbclient->getLastError();
-        if (!errorStr.empty())
-            throw std::runtime_error(errorStr/*, 0*/);
+            throw std::runtime_error(errStr);
+        }
     }
 
     std::vector<MongoFunction> MongoClient::getFunctions(const std::string &dbName)

@@ -766,17 +766,14 @@ namespace Robomongo
         R_EVENT
 
     public:
-        DropUserRequest(QObject *sender, const std::string &database, const mongo::OID &id,
-                        std::string const& username) :
-            Event(sender), _database(database), _id(id), _username(username) {}
+        DropUserRequest(QObject *sender, const std::string &database, std::string const& username) :
+            Event(sender), _database(database), _username(username) {}
 
         std::string database() const { return _database; }
-        mongo::OID id() const { return _id; }
         std::string username() const { return _username; }
 
     private:
         std::string _database;
-        mongo::OID _id;
         std::string const _username;
     };
 

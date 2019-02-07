@@ -170,10 +170,10 @@ namespace Robomongo
     void MongoDatabase::handle(LoadFunctionsResponse *event)
     {
         if (event->isError()) {
+            _bus->publish(new MongoDatabaseFunctionsLoadedEvent(this, event->error()));
+
             if (_server->connectionRecord()->isReplicaSet()) // replica set
                 handleIfReplicaSetUnreachable(event);           
-            else // single server
-                _bus->publish(new MongoDatabaseFunctionsLoadedEvent(this, event->error()));
 
             genericEventErrorHandler(event, "Failed to refresh 'Functions'.", _bus, this);
             return;

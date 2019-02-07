@@ -81,9 +81,9 @@ namespace Robomongo
         _bus->send(_server->worker(), new CopyCollectionToDiffServerRequest(this, server->worker(), sourceDatabase, collection, _name));
     }
 
-    void MongoDatabase::createUser(const MongoUser &user, bool overwrite)
+    void MongoDatabase::createUser(const MongoUser &user)
     {
-        _bus->send(_server->worker(), new CreateUserRequest(this, _name, user, overwrite));
+        _bus->send(_server->worker(), new CreateUserRequest(this, _name, user));
     }
 
     void MongoDatabase::dropUser(std::string const& userName)

@@ -109,7 +109,7 @@ namespace Robomongo
         return users;
     }
 
-    void MongoClient::createUser(const std::string &dbName, const MongoUser &user, bool overwrite)
+    void MongoClient::createUser(const std::string &dbName, const MongoUser &user)
     {
         mongo::BSONObjBuilder cmd;
         cmd.append("createUser", user.name());

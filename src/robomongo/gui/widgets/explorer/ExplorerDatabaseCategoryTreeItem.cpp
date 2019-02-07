@@ -192,7 +192,7 @@ namespace Robomongo
             return;
 
         MongoUser user = dlg->user();
-        databaseItem->database()->createUser(user, false);
+        databaseItem->database()->createUser(user);
     }
 
     void ExplorerDatabaseCategoryTreeItem::ui_addFunction()

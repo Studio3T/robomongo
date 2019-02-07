@@ -23,7 +23,7 @@ namespace Robomongo
         std::string getStorageEngineType() const;
 
         std::vector<MongoUser> getUsers(const std::string &dbName);
-        void createUser(const std::string &dbName, const MongoUser &user, bool overwrite);
+        void createUser(const std::string &dbName, const MongoUser &user);
         void dropUser(const std::string &dbName, const std::string &user);
 
         std::vector<MongoFunction> getFunctions(const std::string &dbName);

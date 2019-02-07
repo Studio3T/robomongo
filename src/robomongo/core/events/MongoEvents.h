@@ -727,20 +727,17 @@ namespace Robomongo
         R_EVENT
 
     public:
-        CreateUserRequest(QObject *sender, const std::string &database, const MongoUser &user, bool overwrite = false) :
+        CreateUserRequest(QObject *sender, const std::string &database, const MongoUser &user) :
             Event(sender),
             _database(database),
-            _user(user),
-            _overwrite(overwrite) {}
+            _user(user) {}
 
         std::string database() const { return _database; }
         MongoUser user() const { return _user; }
-        bool overwrite() const { return _overwrite; }
 
     private:
         std::string _database;
         MongoUser _user;
-        bool _overwrite;
     };
 
     struct CreateUserResponse : public Event

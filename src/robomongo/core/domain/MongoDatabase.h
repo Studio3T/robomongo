@@ -62,7 +62,7 @@ namespace Robomongo
         void duplicateCollection(const std::string &collection, const std::string &newCollection);
         void copyCollection(MongoServer *server, const std::string &sourceDatabase, const std::string &collection);
 
-        void createUser(const MongoUser &user, bool overwrite);
+        void createUser(const MongoUser &user);
         void dropUser(std::string const& userName);
 
         void createFunction(const MongoFunction &fun);

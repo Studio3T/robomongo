@@ -874,7 +874,7 @@ namespace Robomongo
     {
         try {
             boost::scoped_ptr<MongoClient> client(getClient());
-            client->createUser(event->database(), event->user(), event->overwrite());
+            client->createUser(event->database(), event->user());
             client->done();
 
             reply(event->sender(), new CreateUserResponse(this, event->user().name()));

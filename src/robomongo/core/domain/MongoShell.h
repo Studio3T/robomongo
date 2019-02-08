@@ -13,7 +13,7 @@ namespace Robomongo
         Q_OBJECT
 
     public:
-        MongoShell(MongoServer *server, const ScriptInfo &scriptInfo);
+        MongoShell(MongoServer *server, ScriptInfo scriptInfo);
 
         void open(const std::string &script, const std::string &dbName = std::string());
         void query(int resultIndex, const MongoQueryInfo &info);
@@ -24,6 +24,7 @@ namespace Robomongo
         void execute(const std::string &script = "", const std::string &dbName = "");
         bool isExecutable() const { return _scriptInfo.execute(); }
         const QString &title() const { return _scriptInfo.title(); }
+        std::string dbname() const { return _scriptInfo.dbname(); }
         const CursorPosition &cursor() const { return _scriptInfo.cursor(); }
         void setScript(const QString &script) { return _scriptInfo.setScript(script); }
         void setAggrInfo(AggrInfo const& aggrInfo) { _aggrInfo = aggrInfo; }

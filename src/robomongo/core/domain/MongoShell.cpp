@@ -12,7 +12,7 @@
 
 namespace Robomongo
 {  
-    MongoShell::MongoShell(MongoServer *server, const ScriptInfo &scriptInfo) :
+    MongoShell::MongoShell(MongoServer *server, ScriptInfo scriptInfo) :
         QObject(),
         _scriptInfo(scriptInfo),
         _server(server)      
@@ -21,9 +21,10 @@ namespace Robomongo
 
     void MongoShell::open(const std::string &script, const std::string &dbName)
     {
-        AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
+        auto const& bus = AppRegistry::instance().bus();
+        bus->publish(new ScriptExecutingEvent(this));
         _scriptInfo.setScript(QtUtils::toQString(script));
-        AppRegistry::instance().bus()->send(_server->worker(), new ExecuteScriptRequest(this, query(), dbName));
+        bus->send(_server->worker(), new ExecuteScriptRequest(this, query(), dbName));
         LOG_MSG(_scriptInfo.script(), mongo::logger::LogSeverity::Info());
     }
 
@@ -34,20 +35,15 @@ namespace Robomongo
 
     void MongoShell::execute(const std::string &script /* = "" */, const std::string &dbName /* = "" */)
     {
-        std::string const finalScript = script.empty() ? query() : script;
+        if (!_scriptInfo.execute())
+            return;
 
-        if (_scriptInfo.execute()) {
-            AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
-            AppRegistry::instance().bus()->send(_server->worker(), 
-                new ExecuteScriptRequest(this, finalScript, dbName, _aggrInfo));
-            if (!_scriptInfo.script().isEmpty())
-                LOG_MSG(_scriptInfo.script(), mongo::logger::LogSeverity::Info());
-        } else {
-            AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
-            _scriptInfo.setScript("");
-            AppRegistry::instance().bus()->send(_server->worker(), 
-                new ExecuteScriptRequest(this, finalScript, dbName, _aggrInfo));
-        }
+        std::string const finalScript = script.empty() ? query() : script;
+        AppRegistry::instance().bus()->publish(new ScriptExecutingEvent(this));
+        AppRegistry::instance().bus()->send(_server->worker(), 
+            new ExecuteScriptRequest(this, finalScript, dbName, _aggrInfo));
+        if (!_scriptInfo.script().isEmpty())
+            LOG_MSG(_scriptInfo.script(), mongo::logger::LogSeverity::Info());
     }
 
     void MongoShell::query(int resultIndex, const MongoQueryInfo &info)

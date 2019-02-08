@@ -62,10 +62,11 @@ namespace
 
 namespace Robomongo
 {
-    ScriptInfo::ScriptInfo(const QString &script, bool execute, const CursorPosition &position,
-                           const QString &title, const QString &filePath) :
+    ScriptInfo::ScriptInfo(const QString &script, bool execute, const std::string &dbname, 
+                           const CursorPosition &position, const QString &title, const QString &filePath) :
         _script(script),
         _execute(execute),
+        _dbname(dbname),
         _title(title),
         _cursor(position),
         _filePath(filePath) {}

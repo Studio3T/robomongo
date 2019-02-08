@@ -48,6 +48,7 @@ namespace Robomongo
         void setScriptFocus();
         void showAutocompletion();
         void hideAutocompletion();
+        void setCurrentDatabase(const std::string &dbname);
         
         // Bring active tab's dock into front
         void bringDockToFront();

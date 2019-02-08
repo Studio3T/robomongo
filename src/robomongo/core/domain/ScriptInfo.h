@@ -9,12 +9,13 @@ namespace Robomongo
     class ScriptInfo
     {
     public:
-         ScriptInfo(const QString &script, bool execute = false,
+         ScriptInfo(const QString &script, bool execute = false, const std::string &dbname = "",
                    const CursorPosition &position = CursorPosition(),
                    const QString &title = QString(), const QString &filePath = QString());
 
         bool execute() const { return _execute; }
         QString script() const { return _script; }
+        std::string dbname() const { return _dbname; }
         const QString &title() const { return _title; }
         const CursorPosition &cursor() const { return _cursor; }
         void setScript(const QString &script) { _script = script; }
@@ -26,6 +27,7 @@ namespace Robomongo
 
     private:
         QString _script;
+        std::string _dbname;
         const bool _execute;
         const QString _title;
         const CursorPosition _cursor;

@@ -142,10 +142,11 @@ namespace Robomongo
     void App::openShell(MongoCollection *collection, const QString &filePathToSave)
     {
         ConnectionSettings *connection = collection->database()->server()->connectionRecord();
-        connection->setDefaultDatabase(collection->database()->name());
-        QString script = detail::buildCollectionQuery(collection->name(), "find({})");
-        openShell(collection->database()->server(), connection, ScriptInfo(script, true, CursorPosition(0, -2), 
-                  QtUtils::toQString(collection->database()->name()), filePathToSave));
+        auto const& dbname = collection->database()->name();
+        connection->setDefaultDatabase(dbname);
+        QString const& script = detail::buildCollectionQuery(collection->name(), "find({})");
+        openShell(collection->database()->server(), connection, ScriptInfo(script, true, dbname, CursorPosition(0, -2),
+                                                                           QtUtils::toQString(dbname), filePathToSave));
     }
 
     void App::openShell(MongoServer *server, const QString &script, const std::string &dbName,
@@ -157,7 +158,7 @@ namespace Robomongo
         if (!dbName.empty())
             connection->setDefaultDatabase(dbName);
 
-        openShell(server, connection, ScriptInfo(script, execute, cursorPosition, shellName, filePathToSave));
+        openShell(server, connection, ScriptInfo(script, execute, dbName, cursorPosition, shellName, filePathToSave));
     }
 
     void App::openShell(MongoDatabase *database, const QString &script,
@@ -166,8 +167,8 @@ namespace Robomongo
     {
         ConnectionSettings *connection = database->server()->connectionRecord();
         connection->setDefaultDatabase(database->name());
-        openShell(database->server(), connection, ScriptInfo(script, execute, cursorPosition, 
-                                                             shellName, filePathToSave));
+        openShell(database->server(), connection, ScriptInfo(script, execute, database->name(), 
+                                                             cursorPosition, shellName, filePathToSave));
     }
 
     void App::openShell(MongoServer* server, ConnectionSettings* connection, const ScriptInfo &scriptInfo)

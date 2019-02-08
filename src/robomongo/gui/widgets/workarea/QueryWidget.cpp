@@ -102,6 +102,11 @@ namespace Robomongo
         _scriptWidget->hideAutocompletion();
     }
 
+    void QueryWidget::setCurrentDatabase(const std::string & dbname)
+    {
+        _scriptWidget->setCurrentDatabase(dbname);
+    }
+
     void QueryWidget::bringDockToFront()
     {
         _dock->raise(); // required for MAC only; possible Qt bug

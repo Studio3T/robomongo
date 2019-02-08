@@ -285,19 +285,29 @@ namespace Robomongo
     void WorkAreaTabWidget::handle(OpeningShellEvent *event)
     {
         const QString &title = event->shell->title();
-
-        QString shellName = title.isEmpty() ? " Loading..." : title;
+        QString shellName;
+        if (event->shell->isExecutable())
+            shellName = title.isEmpty() ? " Loading..." : title;
+        else
+            shellName = "New Shell";
 
         auto queryWidget = new QueryWidget(event->shell, this);
-        VERIFY(connect(queryWidget, SIGNAL(titleChanged(const QString &)), this, SLOT(tabTextChange(const QString &))));
-        VERIFY(connect(queryWidget, SIGNAL(toolTipChanged(const QString &)), this, SLOT(tooltipTextChange(const QString &))));
+        VERIFY(connect(queryWidget, SIGNAL(titleChanged(const QString &)), 
+                       this, SLOT(tabTextChange(const QString &))));
+        VERIFY(connect(queryWidget, SIGNAL(toolTipChanged(const QString &)), 
+                       this, SLOT(tooltipTextChange(const QString &))));
         
         addTab(queryWidget, shellName);
-
         setCurrentIndex(count() - 1);
 #if !defined(Q_OS_MAC)
         setTabIcon(count() - 1, GuiRegistry::instance().mongodbIcon());
 #endif
+        if (!event->shell->isExecutable()) {
+            queryWidget->hideProgress();
+            queryWidget->setCurrentDatabase(event->shell->dbname());
+            return;
+        }
+
         queryWidget->showProgress();
     }
 }

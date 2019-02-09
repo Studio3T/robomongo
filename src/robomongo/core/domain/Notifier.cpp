@@ -314,7 +314,7 @@ namespace Robomongo
     {
         MainWindow* mainWindow;
         for (auto wid : QApplication::topLevelWidgets()) {
-            if (mainWindow = qobject_cast<MainWindow*>(wid))
+            if ((mainWindow = qobject_cast<MainWindow*>(wid)))
                 break;
         }
         return mainWindow;

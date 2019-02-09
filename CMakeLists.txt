@@ -46,8 +46,9 @@ add_subdirectory(src/third-party/libssh2)
 add_subdirectory(src/robomongo/ssh)
 add_subdirectory(src/third-party/qjson)
 add_subdirectory(src/third-party/qscintilla)
-add_subdirectory(src/robomongo)
 add_subdirectory(src/third-party/googletest-1.8.1)
+add_subdirectory(src/robomongo)
+add_subdirectory(src/robomongo-unit-tests)
 
 # Show configuration summary
 include(RobomongoConfigurationSummary)

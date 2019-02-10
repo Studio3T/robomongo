@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"       # Get directory of this file
+PROJECT_DIR=$(dirname $BIN_DIR)                                   # Get root directory of project
+source $BIN_DIR/common/setup $1
+
+echo 
+echo "*******************  Running unit tests for $BUILD_TYPE mode *******************"
+echo 
+
+if [ "$(uname -s)" == "Darwin" ]; then
+    EXE="$BUILD_DIR/src/robomongo-unit-tests/robo_unit_tests.app/Contents/MacOS/robo_unit_tests"
+    echo "Running file: $EXE"
+    "$EXE"
+else # Linux
+    # todo 
+    todo=42
+fi 

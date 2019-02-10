@@ -9,16 +9,35 @@ set(SOURCES_TEST
     ${CMAKE_HOME_DIRECTORY}/src/robomongo/core/HexUtils_test.cpp
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-add_executable(robo_unit_tests ${SOURCES_TEST})
+add_executable(robo_unit_tests MACOSX_BUNDLE WIN32 ${SOURCES_TEST})
 add_dependencies(robo_unit_tests robomongo)
 
-set(COMPILE_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/src/robomongo/robomongo.dir/${CMAKE_BUILD_TYPE}/)
-target_link_libraries(robo_unit_tests 
-    gtest gtest_main mongodb
-    # todo: Add case for Linux and Mac or better find better solution
-    ${COMPILE_OUTPUT_DIR}/string_operations.obj
-    ${COMPILE_OUTPUT_DIR}/HexUtils.obj
-)
+if(SYSTEM_WINDOWS)
+    set(OBJ_DIR 
+        ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/src/robomongo/robomongo.dir/${CMAKE_BUILD_TYPE}/
+    )
+    target_link_libraries(robo_unit_tests 
+        gtest gtest_main mongodb
+        # todo: Find better solution instead of this manual adding files
+        ${OBJ_DIR}/string_operations.obj
+        ${OBJ_DIR}/HexUtils.obj
+    )
+elseif(SYSTEM_MACOSX)
+    find_library(SECURITY NAMES Security)
+    find_library(CORE_FOUNDATION NAMES CoreFoundation)
+    set(SSL_LIBRARIES ${SECURITY} ${CORE_FOUNDATION})
+    set(OBJ_DIR 
+        ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/src/robomongo/CMakeFiles/robomongo.dir/
+    )
+    target_link_libraries(robo_unit_tests 
+        gtest gtest_main mongodb ${SSL_LIBRARIES} -lresolv
+        ${OBJ_DIR}/utils/string_operations.cpp.o
+        ${OBJ_DIR}/core/HexUtils.cpp.o
+    )
+elseif(SYSTEM_LINUX)
+    # todo
+endif()
+
 target_include_directories(robo_unit_tests
     PRIVATE
         ${CMAKE_HOME_DIRECTORY}/src)

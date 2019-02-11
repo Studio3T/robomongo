@@ -11,7 +11,7 @@ if(SYSTEM_LINUX)
         # todo
         # ${CMAKE_HOME_DIRECTORY}/src/robomongo/core/HexUtils_test.cpp 
     )
-elseif()
+else()
     set(SOURCES_TEST
         ${ROBO_SRC_DIR}/utils/string_operations_test.cpp
         ${ROBO_SRC_DIR}/core/HexUtils_test.cpp

@@ -3,13 +3,23 @@
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-set(SOURCES_TEST
-    # todo: new var ROBO_SRC_DIR
-    ${CMAKE_HOME_DIRECTORY}/src/robomongo/utils/string_operations_test.cpp
-    ${CMAKE_HOME_DIRECTORY}/src/robomongo/core/HexUtils_test.cpp
-)
+set(ROBO_SRC_DIR ${CMAKE_HOME_DIRECTORY}/src/robomongo)
+
+if(SYSTEM_LINUX)      
+    set(SOURCES_TEST      
+        ${ROBO_SRC_DIR}/utils/string_operations_test.cpp
+        # todo
+        # ${CMAKE_HOME_DIRECTORY}/src/robomongo/core/HexUtils_test.cpp 
+    )
+elseif()
+    set(SOURCES_TEST
+        ${ROBO_SRC_DIR}/utils/string_operations_test.cpp
+        ${ROBO_SRC_DIR}/core/HexUtils_test.cpp
+    )
+endif()
+
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-add_executable(robo_unit_tests MACOSX_BUNDLE WIN32 ${SOURCES_TEST})
+add_executable(robo_unit_tests ${SOURCES_TEST})
 add_dependencies(robo_unit_tests robomongo)
 
 if(SYSTEM_WINDOWS)
@@ -34,8 +44,19 @@ elseif(SYSTEM_MACOSX)
         ${OBJ_DIR}/utils/string_operations.cpp.o
         ${OBJ_DIR}/core/HexUtils.cpp.o
     )
-elseif(SYSTEM_LINUX)
-    # todo
+    
+elseif(SYSTEM_LINUX)  
+    set(CMAKE_BUILD_TYPE_L ${CMAKE_BUILD_TYPE})
+    string(TOLOWER ${CMAKE_BUILD_TYPE_L} CMAKE_BUILD_TYPE_L)
+    set(OBJ_DIR 
+        ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE_L}/src/robomongo/CMakeFiles/robomongo.dir
+    )
+    # todo: Getting openssl link errors when mongodb lib is linked
+    target_link_libraries(robo_unit_tests
+        gtest gtest_main #ssl crypto #mongodb 
+        ${OBJ_DIR}/utils/string_operations.cpp.o
+        # ${OBJ_DIR}/core/HexUtils.cpp.o
+    )
 endif()
 
 target_include_directories(robo_unit_tests

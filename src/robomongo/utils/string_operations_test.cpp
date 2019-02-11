@@ -12,9 +12,18 @@
    }
 */
 
-// (test_case_name, test_name) 
-TEST(string_operations_basic_tests, captilizeFirstChar)
+TEST(basic_tests, captilizeFirstChar)
 {
     // EXPECT_EQ("Abcc", Robomongo::captilizeFirstChar("abc")); // Simulating failing test
     EXPECT_EQ("Abc", Robomongo::captilizeFirstChar("abc")); // Simulating passing test
+}
+
+TEST(adv_tests, test_1)
+{    
+    EXPECT_EQ(42, 42); // Dummy test, delete later
+}
+
+TEST(adv_tests, test_2)
+{    
+    EXPECT_EQ(42, 42); // Dummy test, delete later
 }

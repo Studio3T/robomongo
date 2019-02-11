@@ -13,6 +13,7 @@ if [ "$(uname -s)" == "Darwin" ]; then
     echo "Running file: $EXE"
     "$EXE"
 else # Linux
-    # todo 
-    todo=42
+    EXE="$BUILD_DIR/src/robomongo-unit-tests/robo_unit_tests"
+    echo "Running file: $EXE"
+    "$EXE"
 fi 

@@ -650,6 +650,9 @@ namespace Robomongo
                         _scriptEngine->init(_isLoadMongoRcJs, replicaSetInfo.primary.toString(),
                                             _connSettings->defaultDatabase());
                         result = _scriptEngine->exec(event->script, _connSettings->defaultDatabase());
+                        if(result.error()) 
+                            reply(event->sender(),
+                                new ExecuteScriptResponse(this, EventError(result.errorMessage())));
                     }
                 }
                 else { // single server

@@ -27,6 +27,7 @@ namespace Robomongo
         std::string dbname() const { return _scriptInfo.dbname(); }
         const CursorPosition &cursor() const { return _scriptInfo.cursor(); }
         void setScript(const QString &script) { return _scriptInfo.setScript(script); }
+        void setScriptExecutable(bool execute) { return _scriptInfo.setExecutable(execute); }
         void setAggrInfo(AggrInfo const& aggrInfo) { _aggrInfo = aggrInfo; }
         QString filePath() const { return _scriptInfo.filePath(); }
 

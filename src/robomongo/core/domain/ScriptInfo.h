@@ -14,6 +14,7 @@ namespace Robomongo
                    const QString &title = QString(), const QString &filePath = QString());
 
         bool execute() const { return _execute; }
+        void setExecutable(bool execute) { _execute = execute; }
         QString script() const { return _script; }
         std::string dbname() const { return _dbname; }
         const QString &title() const { return _title; }
@@ -28,7 +29,7 @@ namespace Robomongo
     private:
         QString _script;
         std::string _dbname;
-        const bool _execute;
+        bool _execute;
         const QString _title;
         const CursorPosition _cursor;
         QString _filePath;

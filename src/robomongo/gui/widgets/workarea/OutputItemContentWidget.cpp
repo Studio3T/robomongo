@@ -183,14 +183,17 @@ namespace Robomongo
         info._skip = skip;
         info._batchSize = batchSize;
         _outputWidget->showProgress();
-        
+                
+        _shell->setScriptExecutable(true);
         if (_aggrInfo.isValid) {
             // Build original pipeline object, and append extra skip and limit for paging
             std::string pipelineModified = "[";
-            int i = 0;
-            while (!_aggrInfo.pipeline.getObjectField(std::to_string(i)).isEmpty()) {
-                pipelineModified.append(_aggrInfo.pipeline.getObjectField(std::to_string(i)).toString() + ",");
-                ++i;
+            for (int i = 0; ; i++) {
+                auto const obj = mongo::tojson(_aggrInfo.pipeline.getObjectField(std::to_string(i)));
+                if (obj.empty() || "{}" == obj)
+                    break;
+
+                pipelineModified.append(obj + ",");
             }
             pipelineModified.append("{$skip:" + std::to_string(skip) + "}, " +
                                     "{$limit:" + std::to_string(batchSize) + "}" + 

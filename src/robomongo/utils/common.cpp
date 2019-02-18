@@ -5,7 +5,7 @@
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/EventBus.h"
-#include "robomongo/utils/string_operations.h"
+#include "robomongo/utils/StringOperations.h"
 
 namespace Robomongo
 {

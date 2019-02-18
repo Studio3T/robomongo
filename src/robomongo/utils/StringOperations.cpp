@@ -1,4 +1,4 @@
-#include "robomongo/utils/string_operations.h"
+#include "robomongo/utils/StringOperations.h"
 
 namespace Robomongo
 {

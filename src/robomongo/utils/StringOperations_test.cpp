@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "robomongo/utils/string_operations.h"
+#include "robomongo/utils/StringOperations.h"
 
 #include <string>
 

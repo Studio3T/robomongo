@@ -7,13 +7,13 @@ set(ROBO_SRC_DIR ${CMAKE_HOME_DIRECTORY}/src/robomongo)
 
 if(SYSTEM_LINUX)      
     set(SOURCES_TEST      
-        ${ROBO_SRC_DIR}/utils/string_operations_test.cpp
+        ${ROBO_SRC_DIR}/utils/StringOperations_test.cpp
         # todo
         # ${CMAKE_HOME_DIRECTORY}/src/robomongo/core/HexUtils_test.cpp 
     )
 else()
     set(SOURCES_TEST
-        ${ROBO_SRC_DIR}/utils/string_operations_test.cpp
+        ${ROBO_SRC_DIR}/utils/StringOperations_test.cpp
         ${ROBO_SRC_DIR}/core/HexUtils_test.cpp
     )
 endif()
@@ -29,7 +29,7 @@ if(SYSTEM_WINDOWS)
     target_link_libraries(robo_unit_tests 
         gtest gtest_main mongodb
         # todo: Find better solution instead of this manual adding files
-        ${OBJ_DIR}/string_operations.obj
+        ${OBJ_DIR}/StringOperations.obj
         ${OBJ_DIR}/HexUtils.obj
     )
 elseif(SYSTEM_MACOSX)
@@ -41,7 +41,7 @@ elseif(SYSTEM_MACOSX)
     )
     target_link_libraries(robo_unit_tests 
         gtest gtest_main mongodb ${SSL_LIBRARIES} -lresolv
-        ${OBJ_DIR}/utils/string_operations.cpp.o
+        ${OBJ_DIR}/utils/StringOperations.cpp.o
         ${OBJ_DIR}/core/HexUtils.cpp.o
     )
     
@@ -54,7 +54,7 @@ elseif(SYSTEM_LINUX)
     # todo: Getting openssl link errors when mongodb lib is linked
     target_link_libraries(robo_unit_tests
         gtest gtest_main #ssl crypto #mongodb 
-        ${OBJ_DIR}/utils/string_operations.cpp.o
+        ${OBJ_DIR}/utils/StringOperations.cpp.o
         # ${OBJ_DIR}/core/HexUtils.cpp.o
     )
 endif()

@@ -25,7 +25,7 @@
 #include "robomongo/core/utils/BsonUtils.h"
 #include "robomongo/core/utils/Logger.h"
 #include "robomongo/core/utils/QtUtils.h"
-#include "robomongo/utils/string_operations.h"
+#include "robomongo/utils/StringOperations.h"
 
 namespace Robomongo
 {
